@@ -1,31 +1,47 @@
-Return-Path: <nicolas.dechesne@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <1428416091-31844-1-git-send-email-georgi.djakov@linaro.org>
-References: <1428416091-31844-1-git-send-email-georgi.djakov@linaro.org>
-From: Nicolas Dechesne <nicolas.dechesne@linaro.org>
-Date: Wed, 8 Apr 2015 10:38:41 +0200
-Message-ID: <CAP71WjxnL0_AUSYmMuBPLs+teWeC6rMuO7S8L8to1cWvnM2FBg@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: qcom: Fix parent_map translations
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: arnd@arndb.de,
+	devicetree@vger.kernel.org,
+	ariel.dalessandro@gmail.com,
+	ezequiel@vanguardiasur.com.ar,
+	Joachim Eastwood <manabian@gmail.com>
+Subject: [PATCH 1/6] clk: add table_size member to struct clk_mux
+Date: Thu,  2 Apr 2015 22:31:43 +0200
+Message-Id: <1428006708-13690-2-git-send-email-manabian@gmail.com>
+In-Reply-To: <1428006708-13690-1-git-send-email-manabian@gmail.com>
+References: <1428006708-13690-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 7, 2015 at 4:14 PM, Georgi Djakov <georgi.djakov@linaro.org> wrote:
-> When we introduced the parent_map tables, we missed to update some
-> of the functions where mapping is translated. Fix this.
->
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
->
-> Changes since v1:
->  * Pass parent map to _freq_tbl_determine_rate()
+Adding this field makes it a lot easier to loop through and register
+predefined tables containing struct clk_mux elements.
 
-tested this v2 as well, on ifc6410, I have done the same functional
-tests as mentioned in [1].
+Also reorder members to prevent unnecessary padding in struct.
 
-Tested-by: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+---
+ include/linux/clk-provider.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-[1] https://lkml.org/lkml/2015/4/3/298
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 5591ea71a8d1..d5ee7ec7443c 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -411,9 +411,10 @@ struct clk_mux {
+ 	void __iomem	*reg;
+ 	u32		*table;
+ 	u32		mask;
++	spinlock_t	*lock;
+ 	u8		shift;
+ 	u8		flags;
+-	spinlock_t	*lock;
++	u8		table_size;
+ };
+ 
+ #define CLK_MUX_INDEX_ONE		BIT(0)
+-- 
+1.8.0
