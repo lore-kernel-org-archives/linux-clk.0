@@ -1,224 +1,204 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org,
 	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>,
-	Bill Huang <bilhuang@nvidia.com>
-Subject: [PATCH v2 18/19] clk: tegra: Add Super Gen5 Logic
-Date: Wed, 29 Apr 2015 13:21:48 -0400
-Message-ID: <1430328109-537-19-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430328109-537-1-git-send-email-rklein@nvidia.com>
-References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+	linux-arm-kernel@lists.infradead.org
+Cc: arnd@arndb.de,
+	devicetree@vger.kernel.org,
+	ariel.dalessandro@gmail.com,
+	ezequiel@vanguardiasur.com.ar,
+	Joachim Eastwood <manabian@gmail.com>
+Subject: [PATCH 6/6] ARM: dts: lpc18xx: add clock nodes for cgu and ccu
+Date: Thu,  2 Apr 2015 22:31:48 +0200
+Message-Id: <1428006708-13690-7-git-send-email-manabian@gmail.com>
+In-Reply-To: <1428006708-13690-1-git-send-email-manabian@gmail.com>
+References: <1428006708-13690-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bill Huang <bilhuang@nvidia.com>
-
-Super clock divider control and clock source mux of Tegra210 has changed
-a little against prior SoCs, this patch adds Gen5 logic to address those
-differences.
-
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+Signed-off-by: Joachim Eastwood <manabian@gmail.com>
 ---
-v2:
-  - Fixed sclk divider address (0x370 -> 0x2c)
+ arch/arm/boot/dts/lpc18xx.dtsi | 96 ++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 82 insertions(+), 14 deletions(-)
 
- drivers/clk/tegra/Makefile               |    1 +
- drivers/clk/tegra/clk-tegra-super-gen5.c |  150 ++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk.h                  |    3 +
- 3 files changed, 154 insertions(+)
- create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
-
-diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-index dbc9360e551c..0ba495b852e6 100644
---- a/drivers/clk/tegra/Makefile
-+++ b/drivers/clk/tegra/Makefile
-@@ -11,6 +11,7 @@ obj-y					+= clk-tegra-periph.o
- obj-y					+= clk-tegra-pmc.o
- obj-y					+= clk-tegra-fixed.o
- obj-y					+= clk-tegra-super-gen4.o
-+obj-y					+= clk-tegra-super-gen5.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
- obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
-diff --git a/drivers/clk/tegra/clk-tegra-super-gen5.c b/drivers/clk/tegra/clk-tegra-super-gen5.c
-new file mode 100644
-index 000000000000..14c3c3ad2079
---- /dev/null
-+++ b/drivers/clk/tegra/clk-tegra-super-gen5.c
-@@ -0,0 +1,150 @@
-+/*
-+ * Copyright (c) 2015, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/delay.h>
-+#include <linux/export.h>
-+#include <linux/clk/tegra.h>
-+
-+#include "clk.h"
-+#include "clk-id.h"
-+
-+#define PLLX_BASE 0xe0
-+#define PLLX_MISC 0xe4
-+#define PLLX_MISC2 0x514
-+#define PLLX_MISC3 0x518
-+
-+#define CCLKG_BURST_POLICY 0x368
-+#define CCLKLP_BURST_POLICY 0x370
-+#define SCLK_DIVIDER 0x2c
-+#define SCLK_BURST_POLICY 0x028
-+#define SYSTEM_CLK_RATE 0x030
-+
-+static DEFINE_SPINLOCK(sysrate_lock);
-+
-+static const char *sclk_parents[] = { "clk_m", "pll_c_out1", "pll_c4_out3",
-+			       "pll_p", "pll_p_out2", "pll_c4_out1",
-+			       "clk_32k", "pll_c4_out2" };
-+
-+static const char *cclk_g_parents[] = { "clk_m", "unused", "clk_32k", "unused",
-+					"pll_p", "pll_p_out4", "unused",
-+					"unused", "pll_x", "unused", "unused",
-+					"unused", "unused", "unused", "unused",
-+					"dfllCPU_out" };
-+
-+static const char *cclk_lp_parents[] = { "clk_m", "unused", "clk_32k", "unused",
-+					"pll_p", "pll_p_out4", "unused",
-+					"unused", "pll_x", "unused", "unused",
-+					"unused", "unused", "unused", "unused",
-+					"dfllCPU_out" };
-+
-+static void __init tegra_sclk_init(void __iomem *clk_base,
-+				struct tegra_clk *tegra_clks)
-+{
-+	struct clk *clk;
-+	struct clk **dt_clk;
-+
-+	/* SCLK_MUX */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_sclk_mux, tegra_clks);
-+	if (dt_clk) {
-+		clk = tegra_clk_register_super_mux("sclk_mux", sclk_parents,
-+						ARRAY_SIZE(sclk_parents),
-+						CLK_SET_RATE_PARENT,
-+						clk_base + SCLK_BURST_POLICY,
-+						0, 4, 0, 0, NULL);
-+		*dt_clk = clk;
-+	}
-+	/* SCLK */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_sclk, tegra_clks);
-+	if (dt_clk) {
-+		clk = clk_register_divider(NULL, "sclk", "sclk_mux", 0,
-+						clk_base + SCLK_DIVIDER, 0, 8,
-+						0, &sysrate_lock);
-+		*dt_clk = clk;
-+	}
-+
-+	/* HCLK */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_hclk, tegra_clks);
-+	if (dt_clk) {
-+		clk = clk_register_divider(NULL, "hclk_div", "sclk", 0,
-+				   clk_base + SYSTEM_CLK_RATE, 4, 2, 0,
-+				   &sysrate_lock);
-+		clk = clk_register_gate(NULL, "hclk", "hclk_div",
-+				CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+				clk_base + SYSTEM_CLK_RATE,
-+				7, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
-+		*dt_clk = clk;
-+	}
-+
-+	/* PCLK */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_pclk, tegra_clks);
-+	if (!dt_clk)
-+		return;
-+
-+	clk = clk_register_divider(NULL, "pclk_div", "hclk", 0,
-+				   clk_base + SYSTEM_CLK_RATE, 0, 2, 0,
-+				   &sysrate_lock);
-+	clk = clk_register_gate(NULL, "pclk", "pclk_div", CLK_SET_RATE_PARENT |
-+				CLK_IGNORE_UNUSED, clk_base + SYSTEM_CLK_RATE,
-+				3, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
-+	*dt_clk = clk;
-+}
-+
-+void __init tegra_super_clk_gen5_init(void __iomem *clk_base,
-+				void __iomem *pmc_base,
-+				struct tegra_clk *tegra_clks,
-+				struct tegra_clk_pll_params *params)
-+{
-+	struct clk *clk;
-+	struct clk **dt_clk;
-+
-+	/* CCLKG */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_cclk_g, tegra_clks);
-+	if (dt_clk) {
-+		clk = tegra_clk_register_super_mux("cclk_g", cclk_g_parents,
-+					ARRAY_SIZE(cclk_g_parents),
-+					CLK_SET_RATE_PARENT,
-+					clk_base + CCLKG_BURST_POLICY,
-+					0, 4, 8, 0, NULL);
-+		*dt_clk = clk;
-+	}
-+
-+	/* CCLKLP */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_cclk_lp, tegra_clks);
-+	if (dt_clk) {
-+		clk = tegra_clk_register_super_mux("cclk_lp", cclk_lp_parents,
-+					ARRAY_SIZE(cclk_lp_parents),
-+					CLK_SET_RATE_PARENT,
-+					clk_base + CCLKLP_BURST_POLICY,
-+					0, 4, 8, 0, NULL);
-+		*dt_clk = clk;
-+	}
-+
-+	tegra_sclk_init(clk_base, tegra_clks);
-+
-+	/* PLLX */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_pll_x, tegra_clks);
-+	if (!dt_clk)
-+		return;
-+
-+	clk = tegra_clk_register_pllxc("pll_x", "pll_ref", clk_base,
-+			pmc_base, CLK_IGNORE_UNUSED, params, NULL);
-+	*dt_clk = clk;
-+}
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 84c417576c18..8556837d96f8 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -701,6 +701,9 @@ int tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
- void tegra_super_clk_gen4_init(void __iomem *clk_base,
- 			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
- 			struct tegra_clk_pll_params *pll_params);
-+void tegra_super_clk_gen5_init(void __iomem *clk_base,
-+			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
-+			struct tegra_clk_pll_params *pll_params);
+diff --git a/arch/arm/boot/dts/lpc18xx.dtsi b/arch/arm/boot/dts/lpc18xx.dtsi
+index 161e98b442e0..8e9f51c88fad 100644
+--- a/arch/arm/boot/dts/lpc18xx.dtsi
++++ b/arch/arm/boot/dts/lpc18xx.dtsi
+@@ -13,6 +13,9 @@
  
- #ifdef CONFIG_TEGRA_CLK_EMC
- struct clk *tegra_emc_init(struct device_node *np, void __iomem *clk_regs,
+ #include "armv7-m.dtsi"
+ 
++#include "dt-bindings/clock/lpc18xx-cgu.h"
++#include "dt-bindings/clock/lpc18xx-ccu.h"
++
+ / {
+ 	aliases {
+ 		serial0 = &uart0;
+@@ -29,6 +32,7 @@
+ 			compatible = "arm,cortex-m3";
+ 			device_type = "cpu";
+ 			reg = <0x0>;
++			clocks = <&ccu1 CLK_CPU_CORE>;
+ 		};
+ 	};
+ 
+@@ -39,23 +43,84 @@
+ 			clock-frequency = <12000000>;
+ 		};
+ 
+-		/* Temporary hardcode PLL1 until clk drivers are merged */
+-		pll1: pll1 {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&xtal>;
++		xtal32: xtal32 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++
++		enet_rx_clk: enet_rx_clk {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "enet_rx_clk";
++		};
++
++		enet_tx_clk: enet_tx_clk {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "enet_tx_clk";
++		};
++
++		gp_clkin: gp_clkin {
++			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+-			clock-div = <1>;
+-			clock-mult = <12>;
++			clock-frequency = <0>;
++			clock-output-names = "gp_clkin";
+ 		};
+ 	};
+ 
+ 	soc {
++		cgu: cgu@40050000 {
++			compatible = "nxp,lpc1850-cgu";
++			reg = <0x40050000 0x1000>;
++			#clock-cells = <1>;
++			clocks = <&xtal>, <&xtal32>, <&enet_rx_clk>, <&enet_tx_clk>, <&gp_clkin>;
++			clock-indices =  <0>,  <1>,  <2>,  <3>,  <4>,  <5>,  <6>,  <7>,
++					 <8>,  <9>, <10>, <11>, <12>, <13>, <14>, <15>,
++					<16>, <17>, <18>, <19>, <20>, <25>, <26>, <27>;
++			clock-output-names = "base_safe_clk",    "base_usb0_clk",
++					     "base_periph_clk",  "base_usb1_clk",
++					     "base_cpu_clk",     "base_spifi_clk",
++					     "base_spi_clk",     "base_phy_rx_clk",
++					     "base_phy_tx_clk",  "base_apb1_clk",
++					     "base_apb3_clk",    "base_lcd_clk",
++					     "base_adchs_clk",   "base_sdio_clk",
++					     "base_ssp0_clk",    "base_ssp1_clk",
++					     "base_uart0_clk",   "base_uart1_clk",
++					     "base_uart2_clk",   "base_uart3_clk",
++					     "base_out_clk",     "base_audio_clk",
++					     "base_cgu_out0_clk","base_cgu_out1_clk";
++		};
++
++		ccu1: ccu@40051000 {
++			compatible = "nxp,lpc1850-ccu";
++			reg = <0x40051000 0x1000>;
++			#clock-cells = <1>;
++			clocks = <&cgu BASE_APB3_CLK>,   <&cgu BASE_APB1_CLK>,
++				 <&cgu BASE_SPIFI_CLK>,  <&cgu BASE_CPU_CLK>,
++				 <&cgu BASE_PERIPH_CLK>, <&cgu BASE_USB0_CLK>,
++				 <&cgu BASE_USB1_CLK>,   <&cgu BASE_SPI_CLK>;
++		};
++
++		ccu2: ccu@40052000 {
++			compatible = "nxp,lpc1850-ccu";
++			reg = <0x40052000 0x1000>;
++			#clock-cells = <1>;
++			clocks = <&cgu BASE_AUDIO_CLK>, <&cgu BASE_UART3_CLK>,
++				 <&cgu BASE_UART2_CLK>, <&cgu BASE_UART1_CLK>,
++				 <&cgu BASE_UART0_CLK>, <&cgu BASE_SSP1_CLK>,
++				 <&cgu BASE_SSP0_CLK>,  <&cgu BASE_SDIO_CLK>;
++		};
++
+ 		uart0: serial@40081000 {
+ 			compatible = "ns16550a";
+ 			reg = <0x40081000 0x1000>;
+ 			reg-shift = <2>;
+ 			interrupts = <24>;
+-			clocks = <&pll1>;
++			clocks = <&ccu2 CLK_APB0_UART0>, <&ccu1 CLK_CPU_UART0>;
++			clock-names = "uart", "reg";
+ 			status = "disabled";
+ 		};
+ 
+@@ -64,7 +129,8 @@
+ 			reg = <0x40082000 0x1000>;
+ 			reg-shift = <2>;
+ 			interrupts = <25>;
+-			clocks = <&pll1>;
++			clocks = <&ccu2 CLK_APB0_UART1>, <&ccu1 CLK_CPU_UART1>;
++			clock-names = "uart", "reg";
+ 			status = "disabled";
+ 		};
+ 
+@@ -72,14 +138,14 @@
+ 			compatible = "nxp,lpc3250-timer";
+ 			reg = <0x40084000 0x1000>;
+ 			interrupts = <12>;
+-			clocks = <&pll1>;
++			clocks = <&ccu1 CLK_CPU_TIMER0>;
+ 		};
+ 
+ 		timer1: timer@40085000 {
+ 			compatible = "nxp,lpc3250-timer";
+ 			reg = <0x40085000 0x1000>;
+ 			interrupts = <13>;
+-			clocks = <&pll1>;
++			clocks = <&ccu1 CLK_CPU_TIMER1>;
+ 		};
+ 
+ 		uart2: serial@400c1000 {
+@@ -87,7 +153,8 @@
+ 			reg = <0x400c1000 0x1000>;
+ 			reg-shift = <2>;
+ 			interrupts = <26>;
+-			clocks = <&pll1>;
++			clocks = <&ccu2 CLK_APB2_UART2>, <&ccu1 CLK_CPU_UART2>;
++			clock-names = "uart", "reg";
+ 			status = "disabled";
+ 		};
+ 
+@@ -96,7 +163,8 @@
+ 			reg = <0x400c2000 0x1000>;
+ 			reg-shift = <2>;
+ 			interrupts = <27>;
+-			clocks = <&pll1>;
++			clocks = <&ccu2 CLK_APB2_UART3>, <&ccu1 CLK_CPU_UART3>;
++			clock-names = "uart", "reg";
+ 			status = "disabled";
+ 		};
+ 
+@@ -104,14 +172,14 @@
+ 			compatible = "nxp,lpc3250-timer";
+ 			reg = <0x400c3000 0x1000>;
+ 			interrupts = <14>;
+-			clocks = <&pll1>;
++			clocks = <&ccu1 CLK_CPU_TIMER2>;
+ 		};
+ 
+ 		timer3: timer@400c4000 {
+ 			compatible = "nxp,lpc3250-timer";
+ 			reg = <0x400c4000 0x1000>;
+ 			interrupts = <15>;
+-			clocks = <&pll1>;
++			clocks = <&ccu1 CLK_CPU_TIMER3>;
+ 		};
+ 	};
+ };
 -- 
-1.7.9.5
+1.8.0
