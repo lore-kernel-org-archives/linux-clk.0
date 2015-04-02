@@ -1,166 +1,173 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Paul Walmsley <pwalmsley@nvidia.com>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 16/19] clk: tegra: pll: Add Set_default logic
-Date: Fri, 24 Apr 2015 12:47:56 -0400
-Message-ID: <1429894079-25052-17-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
-References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: arnd@arndb.de,
+	devicetree@vger.kernel.org,
+	ariel.dalessandro@gmail.com,
+	ezequiel@vanguardiasur.com.ar,
+	Joachim Eastwood <manabian@gmail.com>
+Subject: [PATCH 0/6] Clk drivers for NXP LPC18xx family
+Date: Thu,  2 Apr 2015 22:31:42 +0200
+Message-Id: <1428006708-13690-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bill Huang <bilhuang@nvidia.com>
+This patch set adds support for the two main clock peripherals types in
+the LPC18xx/43xx MCU family. For a MCU the clock structure is quite
+complex. Patches are based on Linus master 4.0-rc6.
 
-Add logic which (if specified for a pll) can verify that a PLL is set
-to the proper default value and if not can set it. This can be
-specified per PLL as each will have different default values.
+The Clock Generation Unit (CGU) is the base source of all clocks. It has
+five external inputs and contains PLLs, dividers and muxes. The outputs
+from the CGU are then routed to a Clock Control Unit (CCU) and a few
+peripherals directly. There are two CCUs in the MCU. The CCU is a
+collection of gates and a few dividers that sits between the CGU and
+most of the peripherals. See the bottom for full clock tree.
 
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
- drivers/clk/tegra/clk.h     |   15 ++++++++++++++
- 2 files changed, 50 insertions(+), 11 deletions(-)
+Which clocks that are available depends on the specific device and it's
+peripherals. It's possible in DT to setup the routing between the CGU
+and the CCUs.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 9acd858e0c5b..68b42be060c7 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -660,15 +660,28 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 			unsigned long rate)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	struct tegra_clk_pll_freq_table old_cfg;
- 	int state, ret = 0;
- 
- 	state = clk_pll_is_enabled(hw);
- 
-+	_get_pll_mnp(pll, &old_cfg);
-+
-+	if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
-+			(cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
-+		ret = pll->params->dyn_ramp(pll, cfg);
-+		if (!ret)
-+			return 0;
-+	}
-+
- 	if (state) {
- 		pll_clk_stop_ss(pll);
- 		_clk_pll_disable(hw);
- 	}
- 
-+	if (!pll->params->defaults_set && pll->params->set_defaults)
-+		pll->params->set_defaults(pll);
-+
- 	_update_pll_mnp(pll, cfg);
- 
- 	if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
-@@ -1528,6 +1541,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
- 	if (!pll->params->calc_rate)
- 		pll->params->calc_rate = _calc_rate;
- 
-+	if (pll->params->set_defaults)
-+		pll->params->set_defaults(pll);
-+
- 	/* Data in .init is copied by clk_register(), so stack variable OK */
- 	pll->hw.init = &init;
- 
-@@ -1646,7 +1662,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 	struct tegra_clk_pll *pll;
- 	struct clk *clk, *parent;
- 	unsigned long parent_rate;
--	int err;
- 	u32 val, val_iddq;
- 
- 	parent = __clk_lookup(parent_name);
-@@ -1667,18 +1682,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 		pll_params->vco_min = pll_params->adjust_vco(pll_params,
- 							     parent_rate);
- 
--	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
--	if (err)
--		return ERR_PTR(err);
-+	/*
-+	 * If the pll has a set_defaults callback, it will take care of
-+	 * configuring dynamic ramping and setting IDDQ in that path.
-+	 */
-+	if (!pll_params->set_defaults) {
-+		int err;
- 
--	val = readl_relaxed(clk_base + pll_params->base_reg);
--	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
-+		err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
-+		if (err)
-+			return ERR_PTR(err);
- 
--	if (val & PLL_BASE_ENABLE)
--		WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
--	else {
--		val_iddq |= BIT(pll_params->iddq_bit_idx);
--		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
-+		val = readl_relaxed(clk_base + pll_params->base_reg);
-+		val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
-+
-+		if (val & PLL_BASE_ENABLE)
-+			WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
-+		else {
-+			val_iddq |= BIT(pll_params->iddq_bit_idx);
-+			writel_relaxed(val_iddq,
-+				       clk_base + pll_params->iddq_reg);
-+		}
- 	}
- 
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 850521d42be6..6454c1732dbd 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -239,6 +239,7 @@ struct tegra_clk_pll_params {
- 	int		stepb_shift;
- 	int		lock_delay;
- 	int		max_p;
-+	bool		defaults_set;
- 	struct pdiv_map *pdiv_tohw;
- 	struct div_nmp	*div_nmp;
- 	struct tegra_clk_pll_freq_table	*freq_table;
-@@ -254,6 +255,7 @@ struct tegra_clk_pll_params {
- 				unsigned long parent_rate);
- 	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
- 			struct tegra_clk_pll_freq_table *cfg);
-+	void	(*set_defaults)(struct tegra_clk_pll *pll);
- };
- 
- #define TEGRA_PLL_USE_LOCK BIT(0)
-@@ -588,6 +590,19 @@ struct tegra_periph_init_data {
- 			_clk_num, _gate_flags, _clk_id,\
- 			NULL, 0, NULL)
- 
-+#define PLL_MISC_CHK_DEFAULT(base, params, misc_num, default_val, mask)        \
-+do {									       \
-+	u32 boot_val = readl_relaxed(base + (params)->ext_misc_reg[misc_num]); \
-+	boot_val &= (mask);						       \
-+	default_val &= (mask);						       \
-+	if (boot_val != (default_val)) {				       \
-+		pr_warn("boot misc" #misc_num " 0x%x : expected 0x%x\n",       \
-+			boot_val, (default_val));			       \
-+		pr_warn(" (comparison mask = 0x%x)\n", mask);		       \
-+			(params)->defaults_set = false;			       \
-+	}								       \
-+} while (0)
-+
- /**
-  * struct clk_super_mux - super clock
-  *
+I have tried to use the generic clock elements as much as possible to
+build the driver using composite clocks. For the most part the gates,
+dividers and muxes in cgu and ccu are simple registers.
+
+In patch 4 there is a function called of_clk_get_parent_arg(...) which
+could be moved to more generic place if there is interest.
+
+The last patch shows the full cgu/ccu additions to DT.
+
+See the base support patch set for LPC18xx here:
+http://marc.info/?l=linux-arm-kernel&m=142792344110733&w=2
+
+Joachim Eastwood (6):
+  clk: add table_size member to struct clk_mux
+  clk: add lpc18xx cgu clk driver
+  doc: dt: add documentation for lpc1850-cgu clk driver
+  clk: add lpc18xx ccu clk driver
+  doc: dt: add documentation for lpc1850-ccu clk driver
+  ARM: dts: lpc18xx: add clock nodes for cgu and ccu
+
+ .../devicetree/bindings/clock/lpc1850-ccu.txt      | 146 ++++++
+ .../devicetree/bindings/clock/lpc1850-cgu.txt      | 138 +++++
+ arch/arm/boot/dts/lpc18xx.dtsi                     |  96 +++-
+ drivers/clk/Makefile                               |   2 +
+ drivers/clk/clk-lpc18xx-ccu.c                      | 318 ++++++++++++
+ drivers/clk/clk-lpc18xx-cgu.c                      | 570 +++++++++++++++++++++
+ include/dt-bindings/clock/lpc18xx-ccu.h            |  74 +++
+ include/dt-bindings/clock/lpc18xx-cgu.h            |  41 ++
+ include/linux/clk-provider.h                       |   3 +-
+ 9 files changed, 1373 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-ccu.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
+ create mode 100644 drivers/clk/clk-lpc18xx-ccu.c
+ create mode 100644 drivers/clk/clk-lpc18xx-cgu.c
+ create mode 100644 include/dt-bindings/clock/lpc18xx-ccu.h
+ create mode 100644 include/dt-bindings/clock/lpc18xx-cgu.h
+
+Clock tree from /sys/kernel/debug/clk/clk_summary after bootloader setup.
+
+   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
+ irc                                      0            0    12000000          0 0  
+    base_cgu_out1_clk                     0            0    12000000          0 0  
+    base_cgu_out0_clk                     0            0    12000000          0 0  
+    base_audio_clk                        0            0    12000000          0 0  
+       audio                              0            0    12000000          0 0  
+    base_out_clk                          0            0    12000000          0 0  
+    base_ssp1_clk                         0            0    12000000          0 0  
+       apb2_ssp1                          0            0    12000000          0 0  
+    base_ssp0_clk                         0            0    12000000          0 0  
+       apb0_ssp0                          0            0    12000000          0 0  
+    base_sdio_clk                         0            0    12000000          0 0  
+       sdio                               0            0    12000000          0 0  
+    base_adchs_clk                        0            0    12000000          0 0  
+    base_lcd_clk                          0            0    12000000          0 0  
+    base_apb3_clk                         0            0    12000000          0 0  
+       apb3_bus                           0            0    12000000          0 0  
+          apb3_can0                       0            0    12000000          0 0  
+          apb3_adc1                       0            0    12000000          0 0  
+          apb3_adc0                       0            0    12000000          0 0  
+          apb3_dac                        0            0    12000000          0 0  
+          apb3_i2c1                       0            0    12000000          0 0  
+    base_apb1_clk                         0            0    12000000          0 0  
+       apb1_bus                           0            0    12000000          0 0  
+          apb1_can1                       0            0    12000000          0 0  
+          apb1_i2s                        0            0    12000000          0 0  
+          apb1_i2c0                       0            0    12000000          0 0  
+          apb1_motorcon_pwm               0            0    12000000          0 0  
+    base_phy_tx_clk                       0            0    12000000          0 0  
+    base_phy_rx_clk                       0            0    12000000          0 0  
+    base_spi_clk                          0            0    12000000          0 0  
+       spi                                0            0    12000000          0 0  
+    base_spifi_clk                        0            0    12000000          0 0  
+       spifi                              0            0    12000000          0 0  
+    base_usb1_clk                         0            0    12000000          0 0  
+       usb1                               0            0    12000000          0 0  
+    base_periph_clk                       0            0    12000000          0 0  
+       periph_bus                         0            0    12000000          0 0  
+          periph_sgpio                    0            0    12000000          0 0  
+          periph_core                     0            0    12000000          0 0  
+    base_safe_clk                         0            0    12000000          0 0  
+    idive                                 0            0    12000000          0 0  
+    idivd                                 0            0    12000000          0 0  
+    idivb                                 0            0    12000000          0 0  
+    idiva                                 0            0    12000000          0 0  
+    pll0audio                             0            0    12000000          0 0  
+ gp_clkin                                 0            0           0          0 0  
+ enet_tx_clk                              0            0           0          0 0  
+ enet_rx_clk                              0            0           0          0 0  
+ xtal32                                   0            0       32768          0 0  
+ xtal                                     1            1    12000000          0 0  
+    osc                                   1            1    12000000          0 0  
+       pll1                               2            2   144000000          0 0  
+          base_uart3_clk                  0            0   144000000          0 0  
+             apb2_uart3                   0            0   144000000          0 0  
+          base_uart2_clk                  0            0   144000000          0 0  
+             apb2_uart2                   0            0   144000000          0 0  
+          base_uart1_clk                  0            0   144000000          0 0  
+             apb0_uart1                   0            0   144000000          0 0  
+          base_uart0_clk                  1            1   144000000          0 0  
+             apb0_uart0                   1            1   144000000          0 0  
+          base_cpu_clk                    1            1   144000000          0 0  
+             cpu_bus                      7            7   144000000          0 0  
+                cpu_qei                   0            0   144000000          0 0  
+                cpu_ssp1                  0            0   144000000          0 0  
+                cpu_timer3                0            0   144000000          0 0  
+                cpu_timer2                0            0   144000000          0 0  
+                cpu_uart3                 0            0   144000000          0 0  
+                cpu_uart2                 0            0   144000000          0 0  
+                cpu_ritimer               0            0   144000000          0 0  
+                cpu_creg                  1            1   144000000          0 0  
+                cpu_scu                   0            0   144000000          0 0  
+                cpu_timer1                1            1   144000000          0 0  
+                cpu_timer0                1            1   144000000          0 0  
+                cpu_ssp0                  0            0   144000000          0 0  
+                cpu_uart1                 0            0   144000000          0 0  
+                cpu_uart0                 1            1   144000000          0 0  
+                cpu_wwdt                  0            0   144000000          0 0  
+                cpu_eeprom                0            0   144000000          0 0  
+                cpu_adchs                 0            0   144000000          0 0  
+                cpu_m0app                 0            0   144000000          0 0  
+                cpu_flashb                0            0   144000000          0 0  
+                cpu_flasha                0            0   144000000          0 0  
+                cpu_emcdiv                1            1    72000000          0 0  
+                cpu_usb1                  0            0   144000000          0 0  
+                cpu_sct                   0            0   144000000          0 0  
+                cpu_core                  1            1   144000000          0 0  
+                cpu_dma                   0            0   144000000          0 0  
+                cpu_sdio                  0            0   144000000          0 0  
+                cpu_emc                   1            1   144000000          0 0  
+                cpu_usb0                  0            0   144000000          0 0  
+                cpu_ethernet              0            0   144000000          0 0  
+                cpu_lcd                   0            0   144000000          0 0  
+                cpu_gpio                  0            0   144000000          0 0  
+                cpu_spifi                 0            0   144000000          0 0  
+          idivc                           0            0    48000000          0 0  
+       pll0usb                            0            0   480000000          0 0  
+          base_usb0_clk                   0            0   480000000          0 0  
+             usb0                         0            0   480000000          0 0
+
 -- 
-1.7.9.5
-
+1.8.0
