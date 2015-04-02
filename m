@@ -1,88 +1,173 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Thu, 9 Apr 2015 12:19:48 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Barry Song <baohua@kernel.org>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Ralf Baechle <ralf@linux-mips.org>, linux-kernel@vger.kernel.org,
-	Max Filippov <jcmvbkbc@gmail.com>, Kukjin Kim <kgene@kernel.org>,
-	linux-samsung-soc@vger.kernel.org,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	linux-tegra@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 4/8] clk: tegra: Fix duplicate const for parent names
-Message-ID: <20150409101947.GM12103@ulmo>
-References: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
- <1428499339-29569-5-git-send-email-k.kozlowski@samsung.com>
- <20150409100036.GK12103@ulmo>
- <CAJKOXPd4KsZ-pLDUtyWwyJviZyFWQKVLTVpW_6_Yye2o=3xy0g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="L/bWm/e7/ricERqM"
-In-Reply-To: <CAJKOXPd4KsZ-pLDUtyWwyJviZyFWQKVLTVpW_6_Yye2o=3xy0g@mail.gmail.com>
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: arnd@arndb.de,
+	devicetree@vger.kernel.org,
+	ariel.dalessandro@gmail.com,
+	ezequiel@vanguardiasur.com.ar,
+	Joachim Eastwood <manabian@gmail.com>
+Subject: [PATCH 3/6] doc: dt: add documentation for lpc1850-cgu clk driver
+Date: Thu,  2 Apr 2015 22:31:45 +0200
+Message-Id: <1428006708-13690-4-git-send-email-manabian@gmail.com>
+In-Reply-To: <1428006708-13690-1-git-send-email-manabian@gmail.com>
+References: <1428006708-13690-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add DT binding documentation for lpc1850-cgu driver.
 
---L/bWm/e7/ricERqM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+---
+ .../devicetree/bindings/clock/lpc1850-cgu.txt      | 138 +++++++++++++++++++++
+ 1 file changed, 138 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
 
-On Thu, Apr 09, 2015 at 12:07:59PM +0200, Krzysztof Kozlowski wrote:
-> 2015-04-09 12:00 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> > On Wed, Apr 08, 2015 at 03:22:15PM +0200, Krzysztof Kozlowski wrote:
-> >> Replace duplicated const keyword for 'emc_parent_clk_names' with proper
-> >> array of const pointers to const strings.
-> >>
-> >> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> >> ---
-> >>  drivers/clk/tegra/clk-emc.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > This would probably better go in via the Tegra tree since the patch that
-> > contains this has only made it to linux-next.
-> >
-> > Stephen, Mike, any objections to me taking this?
->=20
-> Applying this without the change for const-ness of parent_names (patch
-> by Sascha Hauer sent before mine [1]) would introduce a warning -
-> assign of const to non-const. Any idea to solve it? Immutable branch?
-
-Right, I had missed that. Immutable branch would work, though perhaps
-it'd be easier to just defer this until after v4.1-rc1. The warning
-shouldn't happen if we leave out this single patch and apply it later
-on, right?
-
-Alternatively the whole series could be deferred until after v4.1-rc1.
-
-Thierry
-
---L/bWm/e7/ricERqM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVJlJDAAoJEN0jrNd/PrOhA/4QAJP3X9ep2pBzKwit0uajH0D9
-RQhdOT5HLfdsHrsajslvA0n/XSWlziT56Wbzc4E6BmQNXcGygzI/RnJJi4NQL81i
-839nygLxVzcwRwGcTl/Ihgm4p0N+/EuoiWQekAX5ZFZIMpbN9MfjETVNyHE3rU4+
-SZhIcwr7J9k/mx4sXZoC/GgHDMstM9Oo6hRaJr+RvC0hdrg7aAHgz+Y/y6whRG8r
-1IaDSTnBET18t16t4eAsDyJ96nuITgWp5NEIpjQoaQ4C5AnDYNpnbEV02xVZUx1b
-3WFcQqSuXybAYVt6Ku4fN2h/joOH7+QI9WqabjDnBmlci4fyjlw+GbXOr8NaEyMO
-i3mIQ2ZRk6aEYYKxxtfLIlpcw0ONgvnu+KFtL0+URFqxrXBnm7+Kv/73j65/L+7z
-rPraKUpzEWqcbfOcV+vBsnuaxjgd8jL7YyyAJpokndL0Ig8xDOfs6QAuzssg/fSc
-sXD1S2MabaNmvVkCTLvLZORr7fbAKO4pCm2pqei0GMPLbvIVCkFbyrirRF9v6gM+
-5au8HZCCm7qBxYH+Bu918tY40t8/HJbI+rr+qgE+UsQByNthwACDwgPjPwaejzTW
-q6vgvkHL3/WXLM0fg4R9UjXp6n26CDVJNH0U/Vm8b4hTudEfuIOcXrXdHwD1SEyl
-52woHtlf/Rb1lXK4w2he
-=1GZ5
------END PGP SIGNATURE-----
-
---L/bWm/e7/ricERqM--
+diff --git a/Documentation/devicetree/bindings/clock/lpc1850-cgu.txt b/Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
+new file mode 100644
+index 000000000000..0b278ca6aee7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
+@@ -0,0 +1,138 @@
++* NXP LPC1850 Clock Generation Unit (CGU)
++
++The CGU generates multiple independent clocks for the core and the
++peripheral blocks of the LPC18xx. Each independent clock is called
++a base clock and itself is one of the inputs to the two Clock
++Control Units (CCUs) which control the branch clocks to the
++individual peripherals.
++
++The CGU selects the inputs to the clock generators from multiple
++clock sources, controls the clock generation, and routes the outputs
++of the clock generators through the clock source bus to the output
++stages. Each output stage provides an independent clock source and
++corresponds to one of the base clocks for the LPC18xx.
++
++ - Above text taken from NXP LPC1850 User Manual.
++
++
++This binding uses the common clock binding:
++    Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible:
++	Should be "nxp,lpc1850-cgu"
++- reg:
++	Shall define the base and range of the address space
++	containing clock control registers
++- #clock-cells:
++	Shall have value <1>.  The permitted clock-specifier values
++	are the base clock numbers defined below.
++- clocks:
++	Shall contain a list of phandles for the external input
++	sources to the CGU. The list shall be in the following
++	order: xtal, 32khz, enet_rx_clk, enet_tx_clk, gp_clkin.
++- clock-indices:
++	Shall be an ordered list of numbers defining the base clock
++	number provided by the CGU.
++- clock-output-names:
++	Shall be an ordered list of strings defining the names of
++	the clocks provided by the CGU.
++
++Which base clocks that are available on the CGU depends on the
++specific LPC part. Base cloks are numbered from 0 to 27.
++
++Number:		Name:			Description:
++ 0		BASE_SAFE_CLK		Base safe clock (always on) for WWDT
++ 1		BASE_USB0_CLK		Base clock for USB0
++ 2		BASE_PERIPH_CLK		Base clock for Cortex-M0SUB subsystem,
++					SPI, and SGPIO
++ 3		BASE_USB1_CLK		Base clock for USB1
++ 4		BASE_CPU_CLK		System base clock for ARM Cortex-M core
++					and APB peripheral blocks #0 and #2
++ 5		BASE_SPIFI_CLK		Base clock for SPIFI
++ 6		BASE_SPI_CLK		Base clock for SPI
++ 7		BASE_PHY_RX_CLK		Base clock for Ethernet PHY Receive clock
++ 8		BASE_PHY_TX_CLK		Base clock for Ethernet PHY Transmit clock
++ 9		BASE_APB1_CLK		Base clock for APB peripheral block # 1
++10		BASE_APB3_CLK		Base clock for APB peripheral block # 3
++11		BASE_LCD_CLK		Base clock for LCD
++12		BASE_ADCHS_CLK		Base clock for ADCHS
++13		BASE_SDIO_CLK		Base clock for SD/MMC
++14		BASE_SSP0_CLK		Base clock for SSP0
++15		BASE_SSP1_CLK		Base clock for SSP1
++16		BASE_UART0_CLK		Base clock for UART0
++17		BASE_UART1_CLK		Base clock for UART1
++18		BASE_UART2_CLK		Base clock for UART2
++19		BASE_UART3_CLK		Base clock for UART3
++20		BASE_OUT_CLK		Base clock for CLKOUT pin
++24-21		-			Reserved
++25		BASE_AUDIO_CLK		Base clock for audio system (I2S)
++26 		BASE_CGU_OUT0_CLK	Base clock for CGU_OUT0 clock output
++27 		BASE_CGU_OUT1_CLK	Base clock for CGU_OUT1 clock output
++
++BASE_PERIPH_CLK and BASE_SPI_CLK is only available on LPC43xx.
++BASE_ADCHS_CLK is only available on LPC4370.
++
++
++Example board file:
++
++/ {
++	clocks {
++		xtal: xtal {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <12000000>;
++		};
++
++		xtal32: xtal32 {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++
++		enet_rx_clk: enet_rx_clk {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "enet_rx_clk";
++		};
++
++		enet_tx_clk: enet_tx_clk {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "enet_tx_clk";
++		};
++
++		gp_clkin: gp_clkin {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "gp_clkin";
++		};
++	};
++
++	soc {
++		cgu: cgu@40050000 {
++			compatible = "nxp,lpc1850-cgu";
++			reg = <0x40050000 0x1000>;
++			#clock-cells = <1>;
++			clocks = <&xtal>, <&creg_clk 1>, <&enet_rx_clk>, <&enet_tx_clk>, <&gp_clkin>;
++			clock-indices =  <0>,  <1>,  <2>,  <3>,  <4>,  <5>,  <6>,  <7>,
++					 <8>,  <9>, <10>, <11>, <12>, <13>, <14>, <15>,
++					<16>, <17>, <18>, <19>, <20>, <25>, <26>, <27>;
++			clock-output-names = "base_safe_clk",    "base_usb0_clk",
++					     "base_periph_clk",  "base_usb1_clk",
++					     "base_cpu_clk",     "base_spifi_clk",
++					     "base_spi_clk",     "base_phy_rx_clk",
++					     "base_phy_tx_clk",  "base_apb1_clk",
++					     "base_apb3_clk",    "base_lcd_clk",
++					     "base_adchs_clk",   "base_sdio_clk",
++					     "base_ssp0_clk",    "base_ssp1_clk",
++					     "base_uart0_clk",   "base_uart1_clk",
++					     "base_uart2_clk",   "base_uart3_clk",
++					     "base_out_clk",     "base_audio_clk",
++					     "base_cgu_out0_clk","base_cgu_out1_clk";
++		};
++	};
++};
+-- 
+1.8.0
