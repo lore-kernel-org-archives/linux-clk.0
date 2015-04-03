@@ -1,168 +1,141 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Mon, 27 Apr 2015 17:19:33 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Rhyland Klein <rklein@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>, Stephen Warren
-	<swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang
-	<bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 16/19] clk: tegra: pll: Add Set_default logic
-Message-ID: <20150427141932.GG3097@tbergstrom-lnx.Nvidia.com>
-References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
- <1429894079-25052-17-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <1429894079-25052-17-git-send-email-rklein@nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: [PATCH] clk: qcom: Fix parent_map translations
+Date: Fri,  3 Apr 2015 17:00:03 +0300
+Message-Id: <1428069603-2641-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 24, 2015 at 12:47:56PM -0400, Rhyland Klein wrote:
-> From: Bill Huang <bilhuang@nvidia.com>
-> 
-> Add logic which (if specified for a pll) can verify that a PLL is set
-> to the proper default value and if not can set it. This can be
-> specified per PLL as each will have different default values.
-> 
+When we introduced the parent_map tables, we missed to update some
+of the functions where mapping is translated. Fix this.
 
-Why can't we just set the default values at init time?
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/clk/qcom/clk-rcg.c  |   13 ++++++++++---
+ drivers/clk/qcom/clk-rcg2.c |   20 +++++++++++++++-----
+ 2 files changed, 25 insertions(+), 8 deletions(-)
 
-> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
->  drivers/clk/tegra/clk.h     |   15 ++++++++++++++
->  2 files changed, 50 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index 9acd858e0c5b..68b42be060c7 100644
-> --- a/drivers/clk/tegra/clk-pll.c
-> +++ b/drivers/clk/tegra/clk-pll.c
-> @@ -660,15 +660,28 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
->  			unsigned long rate)
->  {
->  	struct tegra_clk_pll *pll = to_clk_pll(hw);
-> +	struct tegra_clk_pll_freq_table old_cfg;
->  	int state, ret = 0;
->  
->  	state = clk_pll_is_enabled(hw);
->  
-> +	_get_pll_mnp(pll, &old_cfg);
-> +
-> +	if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
-> +			(cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
-> +		ret = pll->params->dyn_ramp(pll, cfg);
-> +		if (!ret)
-> +			return 0;
-> +	}
-> +
->  	if (state) {
->  		pll_clk_stop_ss(pll);
->  		_clk_pll_disable(hw);
->  	}
->  
-> +	if (!pll->params->defaults_set && pll->params->set_defaults)
-> +		pll->params->set_defaults(pll);
-> +
->  	_update_pll_mnp(pll, cfg);
->  
->  	if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
-> @@ -1528,6 +1541,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
->  	if (!pll->params->calc_rate)
->  		pll->params->calc_rate = _calc_rate;
->  
-> +	if (pll->params->set_defaults)
-> +		pll->params->set_defaults(pll);
-> +
->  	/* Data in .init is copied by clk_register(), so stack variable OK */
->  	pll->hw.init = &init;
->  
-> @@ -1646,7 +1662,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
->  	struct tegra_clk_pll *pll;
->  	struct clk *clk, *parent;
->  	unsigned long parent_rate;
-> -	int err;
->  	u32 val, val_iddq;
->  
->  	parent = __clk_lookup(parent_name);
-> @@ -1667,18 +1682,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
->  		pll_params->vco_min = pll_params->adjust_vco(pll_params,
->  							     parent_rate);
->  
-> -	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
-> -	if (err)
-> -		return ERR_PTR(err);
-> +	/*
-> +	 * If the pll has a set_defaults callback, it will take care of
-> +	 * configuring dynamic ramping and setting IDDQ in that path.
-> +	 */
-> +	if (!pll_params->set_defaults) {
-> +		int err;
->  
-> -	val = readl_relaxed(clk_base + pll_params->base_reg);
-> -	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
-> +		err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
-> +		if (err)
-> +			return ERR_PTR(err);
->  
-> -	if (val & PLL_BASE_ENABLE)
-> -		WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
-> -	else {
-> -		val_iddq |= BIT(pll_params->iddq_bit_idx);
-> -		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
-> +		val = readl_relaxed(clk_base + pll_params->base_reg);
-> +		val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
-> +
-> +		if (val & PLL_BASE_ENABLE)
-> +			WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
-> +		else {
-> +			val_iddq |= BIT(pll_params->iddq_bit_idx);
-> +			writel_relaxed(val_iddq,
-> +				       clk_base + pll_params->iddq_reg);
-> +		}
->  	}
->  
->  	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index 850521d42be6..6454c1732dbd 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -239,6 +239,7 @@ struct tegra_clk_pll_params {
->  	int		stepb_shift;
->  	int		lock_delay;
->  	int		max_p;
-> +	bool		defaults_set;
->  	struct pdiv_map *pdiv_tohw;
->  	struct div_nmp	*div_nmp;
->  	struct tegra_clk_pll_freq_table	*freq_table;
-> @@ -254,6 +255,7 @@ struct tegra_clk_pll_params {
->  				unsigned long parent_rate);
->  	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
->  			struct tegra_clk_pll_freq_table *cfg);
-> +	void	(*set_defaults)(struct tegra_clk_pll *pll);
->  };
->  
->  #define TEGRA_PLL_USE_LOCK BIT(0)
-> @@ -588,6 +590,19 @@ struct tegra_periph_init_data {
->  			_clk_num, _gate_flags, _clk_id,\
->  			NULL, 0, NULL)
->  
-> +#define PLL_MISC_CHK_DEFAULT(base, params, misc_num, default_val, mask)        \
-> +do {									       \
-> +	u32 boot_val = readl_relaxed(base + (params)->ext_misc_reg[misc_num]); \
-> +	boot_val &= (mask);						       \
-> +	default_val &= (mask);						       \
-> +	if (boot_val != (default_val)) {				       \
-> +		pr_warn("boot misc" #misc_num " 0x%x : expected 0x%x\n",       \
-> +			boot_val, (default_val));			       \
-> +		pr_warn(" (comparison mask = 0x%x)\n", mask);		       \
-> +			(params)->defaults_set = false;			       \
-> +	}								       \
-> +} while (0)
-> +
->  /**
->   * struct clk_super_mux - super clock
->   *
-> -- 
-> 1.7.9.5
-> 
+diff --git a/drivers/clk/qcom/clk-rcg.c b/drivers/clk/qcom/clk-rcg.c
+index 8f2f48071a7a..e30821a3ba68 100644
+--- a/drivers/clk/qcom/clk-rcg.c
++++ b/drivers/clk/qcom/clk-rcg.c
+@@ -319,7 +319,7 @@ static int clk_dyn_rcg_set_parent(struct clk_hw *hw, u8 index)
+ 	if (banked_p)
+ 		f.pre_div = ns_to_pre_div(&rcg->p[bank], ns) + 1;
+ 
+-	f.src = index;
++	f.src = qcom_find_src_index(hw, rcg->s[bank].parent_map, index);
+ 	return configure_bank(rcg, &f);
+ }
+ 
+@@ -411,13 +411,19 @@ static long _freq_tbl_determine_rate(struct clk_hw *hw,
+ {
+ 	unsigned long clk_flags;
+ 	struct clk *p;
++	struct clk_rcg *rcg = to_clk_rcg(hw);
++	int index;
+ 
+ 	f = qcom_find_freq(f, rate);
+ 	if (!f)
+ 		return -EINVAL;
+ 
++	index = qcom_find_src_index(hw, rcg->s.parent_map, f->src);
++	if (index < 0)
++		return index;
++
+ 	clk_flags = __clk_get_flags(hw->clk);
+-	p = clk_get_parent_by_index(hw->clk, f->src);
++	p = clk_get_parent_by_index(hw->clk, index);
+ 	if (clk_flags & CLK_SET_RATE_PARENT) {
+ 		rate = rate * f->pre_div;
+ 		if (f->n) {
+@@ -462,8 +468,9 @@ static long clk_rcg_bypass_determine_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_rcg *rcg = to_clk_rcg(hw);
+ 	const struct freq_tbl *f = rcg->freq_tbl;
+ 	struct clk *p;
++	int index = qcom_find_src_index(hw, rcg->s.parent_map, f->src);
+ 
+-	p = clk_get_parent_by_index(hw->clk, f->src);
++	p = clk_get_parent_by_index(hw->clk, index);
+ 	*p_hw = __clk_get_hw(p);
+ 	*p_rate = __clk_round_rate(p, rate);
+ 
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 416becce4170..b95d17fbb8d7 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -182,13 +182,19 @@ static long _freq_tbl_determine_rate(struct clk_hw *hw,
+ {
+ 	unsigned long clk_flags;
+ 	struct clk *p;
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	int index;
+ 
+ 	f = qcom_find_freq(f, rate);
+ 	if (!f)
+ 		return -EINVAL;
+ 
++	index = qcom_find_src_index(hw, rcg->parent_map, f->src);
++	if (index < 0)
++		return index;
++
+ 	clk_flags = __clk_get_flags(hw->clk);
+-	p = clk_get_parent_by_index(hw->clk, f->src);
++	p = clk_get_parent_by_index(hw->clk, index);
+ 	if (clk_flags & CLK_SET_RATE_PARENT) {
+ 		if (f->pre_div) {
+ 			rate /= 2;
+@@ -381,9 +387,10 @@ static long clk_edp_pixel_determine_rate(struct clk_hw *hw, unsigned long rate,
+ 	s64 request;
+ 	u32 mask = BIT(rcg->hid_width) - 1;
+ 	u32 hid_div;
++	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
+ 
+ 	/* Force the correct parent */
+-	*p = __clk_get_hw(clk_get_parent_by_index(hw->clk, f->src));
++	*p = __clk_get_hw(clk_get_parent_by_index(hw->clk, index));
+ 
+ 	if (src_rate == 810000000)
+ 		frac = frac_table_810m;
+@@ -427,6 +434,7 @@ static long clk_byte_determine_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	const struct freq_tbl *f = rcg->freq_tbl;
++	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
+ 	unsigned long parent_rate, div;
+ 	u32 mask = BIT(rcg->hid_width) - 1;
+ 	struct clk *p;
+@@ -434,7 +442,7 @@ static long clk_byte_determine_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (rate == 0)
+ 		return -EINVAL;
+ 
+-	p = clk_get_parent_by_index(hw->clk, f->src);
++	p = clk_get_parent_by_index(hw->clk, index);
+ 	*p_hw = __clk_get_hw(p);
+ 	*p_rate = parent_rate = __clk_round_rate(p, rate);
+ 
+@@ -496,7 +504,8 @@ static long clk_pixel_determine_rate(struct clk_hw *hw, unsigned long rate,
+ 	int delta = 100000;
+ 	const struct freq_tbl *f = rcg->freq_tbl;
+ 	const struct frac_entry *frac = frac_table_pixel;
+-	struct clk *parent = clk_get_parent_by_index(hw->clk, f->src);
++	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
++	struct clk *parent = clk_get_parent_by_index(hw->clk, index);
+ 
+ 	*p = __clk_get_hw(parent);
+ 
+@@ -525,7 +534,8 @@ static int clk_pixel_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	int delta = 100000;
+ 	u32 mask = BIT(rcg->hid_width) - 1;
+ 	u32 hid_div;
+-	struct clk *parent = clk_get_parent_by_index(hw->clk, f.src);
++	int index = qcom_find_src_index(hw, rcg->parent_map, f.src);
++	struct clk *parent = clk_get_parent_by_index(hw->clk, index);
+ 
+ 	for (; frac->num; frac++) {
+ 		request = (rate * frac->den) / frac->num;
