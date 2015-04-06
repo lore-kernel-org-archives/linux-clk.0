@@ -1,167 +1,68 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v2 04/19] clk: tegra: pll: simplify clk_enable_path
-Date: Wed, 29 Apr 2015 13:21:34 -0400
-Message-ID: <1430328109-537-5-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430328109-537-1-git-send-email-rklein@nvidia.com>
-References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <5522F353.90705@codeaurora.org>
+Date: Mon, 06 Apr 2015 13:57:55 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+To: Georgi Djakov <georgi.djakov@linaro.org>
+CC: mturquette@linaro.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: Fix parent_map translations
+References: <1428069603-2641-1-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1428069603-2641-1-git-send-email-georgi.djakov@linaro.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Instead of having multiple similar wrapper functions for
-_clk_pll_[enable|disable], we can simplify it to single
-wrappers and use checks to avoid the logic we don't want to use.
+On 04/03/15 07:00, Georgi Djakov wrote:
+> When we introduced the parent_map tables, we missed to update some
+> of the functions where mapping is translated. Fix this.
+>
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
+>  drivers/clk/qcom/clk-rcg.c  |   13 ++++++++++---
+>  drivers/clk/qcom/clk-rcg2.c |   20 +++++++++++++++-----
+>  2 files changed, 25 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/clk/qcom/clk-rcg.c b/drivers/clk/qcom/clk-rcg.c
+> index 8f2f48071a7a..e30821a3ba68 100644
+> --- a/drivers/clk/qcom/clk-rcg.c
+> +++ b/drivers/clk/qcom/clk-rcg.c
+> @@ -319,7 +319,7 @@ static int clk_dyn_rcg_set_parent(struct clk_hw *hw, u8 index)
+>  	if (banked_p)
+>  		f.pre_div = ns_to_pre_div(&rcg->p[bank], ns) + 1;
+>  
+> -	f.src = index;
+> +	f.src = qcom_find_src_index(hw, rcg->s[bank].parent_map, index);
+>  	return configure_bank(rcg, &f);
+>  }
+>  
+> @@ -411,13 +411,19 @@ static long _freq_tbl_determine_rate(struct clk_hw *hw,
+>  {
+>  	unsigned long clk_flags;
+>  	struct clk *p;
+> +	struct clk_rcg *rcg = to_clk_rcg(hw);
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
-v2:
-  - Moved the iddq settings into _clk_pll_enable/disable. This is because
-    some places in this file call directly into these internal functions,
-    but still need the iddq/reset logic to happen.
+This function is called by both clk_dyn_rcg_determine_rate() and
+clk_rcg_determine_rate() which means struct clk_hw is wrapped by
+different structs. The to_clk_rcg() is wrong here. How about we pass the
+parent map to this function?
 
- drivers/clk/tegra/clk-pll.c |   76 +++++++++++++------------------------------
- 1 file changed, 22 insertions(+), 54 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index b9a739ce4b98..1e1018dd466f 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -295,6 +295,13 @@ static void _clk_pll_enable(struct clk_hw *hw)
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	u32 val;
- 
-+	if (pll->params->iddq_reg) {
-+		val = pll_readl(pll->params->iddq_reg, pll);
-+		val &= ~BIT(pll->params->iddq_bit_idx);
-+		pll_writel(val, pll->params->iddq_reg, pll);
-+		udelay(2);
-+	}
-+
- 	clk_pll_enable_lock(pll);
- 
- 	val = pll_readl_base(pll);
-@@ -326,6 +333,13 @@ static void _clk_pll_disable(struct clk_hw *hw)
- 		val &= ~PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE;
- 		writel_relaxed(val, pll->pmc + PMC_PLLP_WB0_OVERRIDE);
- 	}
-+
-+	if (pll->params->iddq_reg) {
-+		val = pll_readl(pll->params->iddq_reg, pll);
-+		val |= BIT(pll->params->iddq_bit_idx);
-+		pll_writel(val, pll->params->iddq_reg, pll);
-+		udelay(2);
-+	}
- }
- 
- static int clk_pll_enable(struct clk_hw *hw)
-@@ -876,52 +890,6 @@ static int _setup_dynamic_ramp(struct tegra_clk_pll_params *pll_params,
- 	return 0;
- }
- 
--static int clk_pll_iddq_enable(struct clk_hw *hw)
--{
--	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	unsigned long flags = 0;
--
--	u32 val;
--	int ret;
--
--	if (pll->lock)
--		spin_lock_irqsave(pll->lock, flags);
--
--	val = pll_readl(pll->params->iddq_reg, pll);
--	val &= ~BIT(pll->params->iddq_bit_idx);
--	pll_writel(val, pll->params->iddq_reg, pll);
--	udelay(2);
--
--	_clk_pll_enable(hw);
--
--	ret = clk_pll_wait_for_lock(pll);
--
--	if (pll->lock)
--		spin_unlock_irqrestore(pll->lock, flags);
--
--	return 0;
--}
--
--static void clk_pll_iddq_disable(struct clk_hw *hw)
--{
--	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	unsigned long flags = 0;
--	u32 val;
--
--	if (pll->lock)
--		spin_lock_irqsave(pll->lock, flags);
--
--	_clk_pll_disable(hw);
--
--	val = pll_readl(pll->params->iddq_reg, pll);
--	val |= BIT(pll->params->iddq_bit_idx);
--	pll_writel(val, pll->params->iddq_reg, pll);
--	udelay(2);
--
--	if (pll->lock)
--		spin_unlock_irqrestore(pll->lock, flags);
--}
--
- static int _calc_dynamic_ramp_rate(struct clk_hw *hw,
- 				struct tegra_clk_pll_freq_table *cfg,
- 				unsigned long rate, unsigned long parent_rate)
-@@ -1518,8 +1486,8 @@ struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
- 	defined(CONFIG_ARCH_TEGRA_132_SOC)
- static const struct clk_ops tegra_clk_pllxc_ops = {
- 	.is_enabled = clk_pll_is_enabled,
--	.enable = clk_pll_iddq_enable,
--	.disable = clk_pll_iddq_disable,
-+	.enable = clk_pll_enable,
-+	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.round_rate = clk_pll_ramp_round_rate,
- 	.set_rate = clk_pllxc_set_rate,
-@@ -1527,8 +1495,8 @@ static const struct clk_ops tegra_clk_pllxc_ops = {
- 
- static const struct clk_ops tegra_clk_pllm_ops = {
- 	.is_enabled = clk_pll_is_enabled,
--	.enable = clk_pll_iddq_enable,
--	.disable = clk_pll_iddq_disable,
-+	.enable = clk_pll_enable,
-+	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.round_rate = clk_pll_ramp_round_rate,
- 	.set_rate = clk_pllm_set_rate,
-@@ -1545,8 +1513,8 @@ static const struct clk_ops tegra_clk_pllc_ops = {
- 
- static const struct clk_ops tegra_clk_pllre_ops = {
- 	.is_enabled = clk_pll_is_enabled,
--	.enable = clk_pll_iddq_enable,
--	.disable = clk_pll_iddq_disable,
-+	.enable = clk_pll_enable,
-+	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pllre_recalc_rate,
- 	.round_rate = clk_pllre_round_rate,
- 	.set_rate = clk_pllre_set_rate,
-@@ -1815,8 +1783,8 @@ struct clk *tegra_clk_register_plle_tegra114(const char *name,
- #if defined(CONFIG_ARCH_TEGRA_124_SOC) || defined(CONFIG_ARCH_TEGRA_132_SOC)
- static const struct clk_ops tegra_clk_pllss_ops = {
- 	.is_enabled = clk_pll_is_enabled,
--	.enable = clk_pll_iddq_enable,
--	.disable = clk_pll_iddq_disable,
-+	.enable = clk_pll_enable,
-+	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.round_rate = clk_pll_ramp_round_rate,
- 	.set_rate = clk_pllxc_set_rate,
+> +	int index;
+>  
+>  	f = qcom_find_freq(f, rate);
+>  	if (!f)
+>  		return -EINVAL;
+>  
+> +	index = qcom_find_src_index(hw, rcg->s.parent_map, f->src);
+> +	if (index < 0)
+> +		return index;
+> +
+>  	clk_flags = __clk_get_flags(hw->clk);
+> -	p = clk_get_parent_by_index(hw->clk, f->src);
+> +	p = clk_get_parent_by_index(hw->clk, index);
+>  	if (clk_flags & CLK_SET_RATE_PARENT) {
+>  		rate = rate * f->pre_div;
+>  		if (f->n) {
+>
 -- 
-1.7.9.5
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
