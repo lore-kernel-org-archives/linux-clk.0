@@ -1,201 +1,177 @@
-Return-Path: <James.Hogan@imgtec.com>
-Message-ID: <553F5E48.1090905@imgtec.com>
-Date: Tue, 28 Apr 2015 11:17:44 +0100
-From: James Hogan <james.hogan@imgtec.com>
-MIME-Version: 1.0
-To: Paul Burton <paul.burton@imgtec.com>, <linux-mips@linux-mips.org>
-CC: Lars-Peter Clausen <lars@metafoo.de>, Mike Turquette
-	<mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v4 25/37] clk: ingenic: add driver for Ingenic SoC CGU
- clocks
-References: <1429881457-16016-1-git-send-email-paul.burton@imgtec.com> <1429881457-16016-26-git-send-email-paul.burton@imgtec.com>
-In-Reply-To: <1429881457-16016-26-git-send-email-paul.burton@imgtec.com>
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="V3MKO262lO1Wu1ca2A2HWSoAv3KT1K739"
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: [PATCH v2] clk: qcom: Fix parent_map translations
+Date: Tue,  7 Apr 2015 17:14:51 +0300
+Message-Id: <1428416091-31844-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
---V3MKO262lO1Wu1ca2A2HWSoAv3KT1K739
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+When we introduced the parent_map tables, we missed to update some
+of the functions where mapping is translated. Fix this.
 
-Hi Paul,
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
 
-On 24/04/15 14:17, Paul Burton wrote:
-> +static int register_clock(struct ingenic_cgu *cgu, unsigned idx)
-> +{
-> +	const struct ingenic_cgu_clk_info *clk_info =3D &cgu->clock_info[idx]=
-;
-> +	struct clk_init_data clk_init;
-> +	struct ingenic_clk *ingenic_clk =3D NULL;
-> +	struct clk *clk, *parent;
-> +	const char *parent_names[4];
-> +	unsigned caps, i, num_possible;
-> +	int err =3D -EINVAL;
-> +
-> +	BUILD_BUG_ON(ARRAY_SIZE(clk_info->parents) > ARRAY_SIZE(parent_names)=
-);
-> +
-> +	if (clk_info->type =3D=3D CGU_CLK_EXT) {
-> +		clk =3D of_clk_get_by_name(cgu->np, clk_info->name);
-> +		if (IS_ERR(clk)) {
-> +			pr_err("%s: no external clock '%s' provided\n",
-> +			       __func__, clk_info->name);
-> +			err =3D -ENODEV;
-> +			goto out;
-> +		}
-> +		err =3D clk_register_clkdev(clk, clk_info->name, NULL);
-> +		if (err) {
-> +			clk_put(clk);
-> +			goto out;
-> +		}
-> +		cgu->clocks.clks[idx] =3D clk;
-> +		return 0;
-> +	}
-> +
-> +	if (!clk_info->type) {
-> +		pr_err("%s: no clock type specified for '%s'\n", __func__,
-> +		       clk_info->name);
-> +		goto out;
-> +	}
-> +
-> +	ingenic_clk =3D kzalloc(sizeof(*ingenic_clk), GFP_KERNEL);
-> +	if (!ingenic_clk) {
-> +		err =3D -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	ingenic_clk->hw.init =3D &clk_init;
-> +	ingenic_clk->cgu =3D cgu;
-> +	ingenic_clk->idx =3D idx;
-> +
-> +	clk_init.name =3D clk_info->name;
-> +	clk_init.flags =3D 0;
-> +	clk_init.parent_names =3D parent_names;
-> +
-> +	caps =3D clk_info->type;
-> +
-> +	if (caps & (CGU_CLK_MUX | CGU_CLK_CUSTOM)) {
-> +		clk_init.num_parents =3D 0;
-> +
-> +		if (caps & CGU_CLK_MUX)
-> +			num_possible =3D 1 << clk_info->mux.bits;
-> +		else
-> +			num_possible =3D ARRAY_SIZE(clk_info->parents);
-> +
-> +		for (i =3D 0; i < num_possible; i++) {
-> +			if (clk_info->parents[i] =3D=3D -1)
-> +				continue;
-> +
-> +			parent =3D cgu->clocks.clks[clk_info->parents[i]];
-> +			parent_names[clk_init.num_parents] =3D
-> +				__clk_get_name(parent);
-> +			clk_init.num_parents++;
-> +		}
-> +
-> +		BUG_ON(!clk_init.num_parents);
-> +		BUG_ON(clk_init.num_parents > ARRAY_SIZE(parent_names));
-> +	} else {
-> +		BUG_ON(clk_info->parents[0] =3D=3D -1);
-> +		clk_init.num_parents =3D 1;
-> +		parent =3D cgu->clocks.clks[clk_info->parents[0]];
-> +		parent_names[0] =3D __clk_get_name(parent);
-> +	}
-> +
-> +	if (caps & CGU_CLK_CUSTOM) {
-> +		clk_init.ops =3D clk_info->custom.clk_ops;
-> +
-> +		caps &=3D ~CGU_CLK_CUSTOM;
-> +
-> +		if (caps) {
-> +			pr_err("%s: custom clock may not be combined with type 0x%x\n",
-> +			       __func__, caps);
-> +			goto out;
-> +		}
-> +	} else if (caps & CGU_CLK_PLL) {
-> +		clk_init.ops =3D &ingenic_pll_ops;
-> +
-> +		caps &=3D ~CGU_CLK_PLL;
-> +
-> +		if (caps) {
-> +			pr_err("%s: PLL may not be combined with type 0x%x\n",
-> +			       __func__, caps);
-> +			goto out;
-> +		}
-> +	} else {
-> +		clk_init.ops =3D &ingenic_clk_ops;
-> +	}
-> +
-> +	/* nothing to do for gates or fixed dividers */
-> +	caps &=3D ~(CGU_CLK_GATE | CGU_CLK_FIXDIV);
-> +
-> +	if (caps & CGU_CLK_MUX) {
-> +		if (!(caps & CGU_CLK_MUX_GLITCHFREE))
-> +			clk_init.flags |=3D CLK_SET_PARENT_GATE;
-> +
-> +		caps &=3D ~(CGU_CLK_MUX | CGU_CLK_MUX_GLITCHFREE);
-> +	}
-> +
-> +	if (caps & CGU_CLK_DIV) {
-> +		caps &=3D ~CGU_CLK_DIV;
-> +	} else {
-> +		/* pass rate changes to the parent clock */
-> +		clk_init.flags |=3D CLK_SET_RATE_PARENT;
-> +	}
-> +
-> +	if (caps) {
-> +		pr_err("%s: unknown clock type 0x%x\n", __func__, caps);
-> +		goto out;
-> +	}
-> +
-> +	clk =3D clk_register(NULL, &ingenic_clk->hw);
-> +	if (IS_ERR(clk)) {
-> +		pr_err("%s: failed to register clock '%s'\n", __func__,
-> +		       clk_info->name);
-> +		err =3D PTR_ERR(clk);
-> +		goto out;
-> +	}
-> +
-> +	err =3D clk_register_clkdev(clk, clk_info->name, NULL);
-> +	if (err)
-> +		goto out;
+Changes since v1:
+ * Pass parent map to _freq_tbl_determine_rate()
 
-Again, should this unregister the clock in the event of failure?
+ drivers/clk/qcom/clk-rcg.c  |   26 ++++++++++++++++++++------
+ drivers/clk/qcom/clk-rcg2.c |   20 +++++++++++++++-----
+ 2 files changed, 35 insertions(+), 11 deletions(-)
 
-> +
-> +	cgu->clocks.clks[idx] =3D clk;
-> +out:
-> +	if (err)
-> +		kfree(ingenic_clk);
-> +	return err;
-> +}
-
-Cheers
-James
-
-
---V3MKO262lO1Wu1ca2A2HWSoAv3KT1K739
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJVP15PAAoJEGwLaZPeOHZ6MZkP/02jD4YrrJcGeMDEUAH6d+O/
-6EE1rXtGzzjiRUM34WE4ySC2X5SSuWrgc3v9STZAk386/YoGoMgT13eLDu9uMEcO
-jq5rRXGXUQmH2y5Yx0P+VlEtht3nsWM5uawMBZk0WSB/AgY9jE7msJFjxhJ+ZoDV
-I9/WcdeWTUvk4xiWKwwqqijurc/dEeKwveyJkunSIPGT13E8rTSxgzPj9zauu7Fx
-8KhH+MMO8MprRYkAIS8cOy7ok7yosMF9CROmWzi26FzxufgyVJKRD2nWnzyuzyTB
-sc44+gY5UxyuRDSfp3fRdw7/cquOB97AWVm+W27U3UTe2/Y4gxlLrcrXDsg3I9ZM
-/lb/hpcmeWEbdw+5OsL68QrXDKTdhOGWJMyB0rzjgWm/I1te9+Enx4cJbEKqlOJt
-xLDwU9kXC0t6rY3l4P9Y5/T89MfNWg0+j59RVldbm8di1btRwe5B0GUs01niIPW2
-mYZwNeIgHwc71oV9G18CLjp2NQdOJExxOayV53m/4+7KWsK3AWiqfic+fu6hyuAi
-4nbKKPwhn9kTIu+L4VNUU+C1NM7Qq9iB8OYCp2cpgqI/fAdUvmS0k7e1S8nRNCiF
-chA34eSM6ZSV1MFPXUZqYjywjLEgBpgJtDBnCGoJWaGhSH3U8Q2QgaXrZnZJmjPh
-otkvINzOzUtjQXPP77iu
-=ew2k
------END PGP SIGNATURE-----
-
---V3MKO262lO1Wu1ca2A2HWSoAv3KT1K739--
+diff --git a/drivers/clk/qcom/clk-rcg.c b/drivers/clk/qcom/clk-rcg.c
+index 8f2f48071a7a..7b3d62674203 100644
+--- a/drivers/clk/qcom/clk-rcg.c
++++ b/drivers/clk/qcom/clk-rcg.c
+@@ -319,7 +319,7 @@ static int clk_dyn_rcg_set_parent(struct clk_hw *hw, u8 index)
+ 	if (banked_p)
+ 		f.pre_div = ns_to_pre_div(&rcg->p[bank], ns) + 1;
+ 
+-	f.src = index;
++	f.src = qcom_find_src_index(hw, rcg->s[bank].parent_map, index);
+ 	return configure_bank(rcg, &f);
+ }
+ 
+@@ -407,17 +407,23 @@ clk_dyn_rcg_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ static long _freq_tbl_determine_rate(struct clk_hw *hw,
+ 		const struct freq_tbl *f, unsigned long rate,
+ 		unsigned long min_rate, unsigned long max_rate,
+-		unsigned long *p_rate, struct clk_hw **p_hw)
++		unsigned long *p_rate, struct clk_hw **p_hw,
++		const struct parent_map *parent_map)
+ {
+ 	unsigned long clk_flags;
+ 	struct clk *p;
++	int index;
+ 
+ 	f = qcom_find_freq(f, rate);
+ 	if (!f)
+ 		return -EINVAL;
+ 
++	index = qcom_find_src_index(hw, parent_map, f->src);
++	if (index < 0)
++		return index;
++
+ 	clk_flags = __clk_get_flags(hw->clk);
+-	p = clk_get_parent_by_index(hw->clk, f->src);
++	p = clk_get_parent_by_index(hw->clk, index);
+ 	if (clk_flags & CLK_SET_RATE_PARENT) {
+ 		rate = rate * f->pre_div;
+ 		if (f->n) {
+@@ -442,7 +448,7 @@ static long clk_rcg_determine_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_rcg *rcg = to_clk_rcg(hw);
+ 
+ 	return _freq_tbl_determine_rate(hw, rcg->freq_tbl, rate, min_rate,
+-			max_rate, p_rate, p);
++			max_rate, p_rate, p, rcg->s.parent_map);
+ }
+ 
+ static long clk_dyn_rcg_determine_rate(struct clk_hw *hw, unsigned long rate,
+@@ -450,9 +456,16 @@ static long clk_dyn_rcg_determine_rate(struct clk_hw *hw, unsigned long rate,
+ 		unsigned long *p_rate, struct clk_hw **p)
+ {
+ 	struct clk_dyn_rcg *rcg = to_clk_dyn_rcg(hw);
++	u32 reg;
++	int bank;
++	struct src_sel *s;
++
++	regmap_read(rcg->clkr.regmap, rcg->bank_reg, &reg);
++	bank = reg_to_bank(rcg, reg);
++	s = &rcg->s[bank];
+ 
+ 	return _freq_tbl_determine_rate(hw, rcg->freq_tbl, rate, min_rate,
+-			max_rate, p_rate, p);
++			max_rate, p_rate, p, s->parent_map);
+ }
+ 
+ static long clk_rcg_bypass_determine_rate(struct clk_hw *hw, unsigned long rate,
+@@ -462,8 +475,9 @@ static long clk_rcg_bypass_determine_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_rcg *rcg = to_clk_rcg(hw);
+ 	const struct freq_tbl *f = rcg->freq_tbl;
+ 	struct clk *p;
++	int index = qcom_find_src_index(hw, rcg->s.parent_map, f->src);
+ 
+-	p = clk_get_parent_by_index(hw->clk, f->src);
++	p = clk_get_parent_by_index(hw->clk, index);
+ 	*p_hw = __clk_get_hw(p);
+ 	*p_rate = __clk_round_rate(p, rate);
+ 
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 416becce4170..b95d17fbb8d7 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -182,13 +182,19 @@ static long _freq_tbl_determine_rate(struct clk_hw *hw,
+ {
+ 	unsigned long clk_flags;
+ 	struct clk *p;
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	int index;
+ 
+ 	f = qcom_find_freq(f, rate);
+ 	if (!f)
+ 		return -EINVAL;
+ 
++	index = qcom_find_src_index(hw, rcg->parent_map, f->src);
++	if (index < 0)
++		return index;
++
+ 	clk_flags = __clk_get_flags(hw->clk);
+-	p = clk_get_parent_by_index(hw->clk, f->src);
++	p = clk_get_parent_by_index(hw->clk, index);
+ 	if (clk_flags & CLK_SET_RATE_PARENT) {
+ 		if (f->pre_div) {
+ 			rate /= 2;
+@@ -381,9 +387,10 @@ static long clk_edp_pixel_determine_rate(struct clk_hw *hw, unsigned long rate,
+ 	s64 request;
+ 	u32 mask = BIT(rcg->hid_width) - 1;
+ 	u32 hid_div;
++	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
+ 
+ 	/* Force the correct parent */
+-	*p = __clk_get_hw(clk_get_parent_by_index(hw->clk, f->src));
++	*p = __clk_get_hw(clk_get_parent_by_index(hw->clk, index));
+ 
+ 	if (src_rate == 810000000)
+ 		frac = frac_table_810m;
+@@ -427,6 +434,7 @@ static long clk_byte_determine_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	const struct freq_tbl *f = rcg->freq_tbl;
++	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
+ 	unsigned long parent_rate, div;
+ 	u32 mask = BIT(rcg->hid_width) - 1;
+ 	struct clk *p;
+@@ -434,7 +442,7 @@ static long clk_byte_determine_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (rate == 0)
+ 		return -EINVAL;
+ 
+-	p = clk_get_parent_by_index(hw->clk, f->src);
++	p = clk_get_parent_by_index(hw->clk, index);
+ 	*p_hw = __clk_get_hw(p);
+ 	*p_rate = parent_rate = __clk_round_rate(p, rate);
+ 
+@@ -496,7 +504,8 @@ static long clk_pixel_determine_rate(struct clk_hw *hw, unsigned long rate,
+ 	int delta = 100000;
+ 	const struct freq_tbl *f = rcg->freq_tbl;
+ 	const struct frac_entry *frac = frac_table_pixel;
+-	struct clk *parent = clk_get_parent_by_index(hw->clk, f->src);
++	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
++	struct clk *parent = clk_get_parent_by_index(hw->clk, index);
+ 
+ 	*p = __clk_get_hw(parent);
+ 
+@@ -525,7 +534,8 @@ static int clk_pixel_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	int delta = 100000;
+ 	u32 mask = BIT(rcg->hid_width) - 1;
+ 	u32 hid_div;
+-	struct clk *parent = clk_get_parent_by_index(hw->clk, f.src);
++	int index = qcom_find_src_index(hw, rcg->parent_map, f.src);
++	struct clk *parent = clk_get_parent_by_index(hw->clk, index);
+ 
+ 	for (; frac->num; frac++) {
+ 		request = (rate * frac->den) / frac->num;
