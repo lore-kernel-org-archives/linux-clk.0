@@ -1,71 +1,89 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	arnd@arndb.de,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
-	ariel.dalessandro@gmail.com,
-	ezequiel@vanguardiasur.com.ar,
-	Joachim Eastwood <manabian@gmail.com>
-Subject: [PATCH v2 0/4] Clk drivers for NXP LPC18xx family
-Date: Mon, 27 Apr 2015 23:38:09 +0200
-Message-Id: <1430170693-28303-1-git-send-email-manabian@gmail.com>
+Return-Path: <ce3a@gmx.de>
+Message-ID: <552425A9.2020004@gmx.de>
+Date: Tue, 07 Apr 2015 20:44:57 +0200
+From: Sergej Sawazki <ce3a@gmx.de>
+MIME-Version: 1.0
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ mturquette@linaro.org, sboyd@codeaurora.org
+CC: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: si5351: fix .round_rate for multisynth 6-7
+References: <1428330321-25209-1-git-send-email-ce3a@gmx.de> <5522B7CB.40507@gmail.com>
+In-Reply-To: <5522B7CB.40507@gmail.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set adds support for the two main clock peripherals in the
-LPC18xx/43xx MCU family.
+Sebastian,
 
-The Clock Generation Unit (CGU) is the base source of all clocks. It has
-five external inputs and contains PLLs, dividers and muxes. The outputs
-from the CGU are then routed to a Clock Control Unit (CCU) and a few
-peripherals directly. There are two CCUs in the MCU. The CCU is a
-collection of gates and a few dividers that sits between the CGU and
-most of the peripherals.
+thanks for your reply, please find my comments below:
 
-Which clocks that are available depends on the specific device and it's
-peripherals. It's possible in DT to setup the routing between the CGU
-and the CCUs.
+On 06.04.2015 18:43, Sebastian Hesselbarth wrote:
+> On 06.04.2015 16:25, Sergej Sawazki wrote:
+>> The divider calculation for multisynth 6 and 7 differs from the
+>> calculation for multisynth 0-5.
+>>
+>> For MS6 and MS7, set MSx_P1 directly, MSx_P1=divide value
+>> [AN619, p. 6].
+>>
+>> Referenced document:
+>> [AN619] Manually Generating an Si5351 Register Map, Rev. 0.4
+>>
+>> Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
+>
+> Sergej,
+>
+> thanks for the patch, I do have some remarks though.
+>
+>> ---
+>>   drivers/clk/clk-si5351.c | 12 ++++++++++--
+>>   1 file changed, 10 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+>> index 44ea107..310078d 100644
+>> --- a/drivers/clk/clk-si5351.c
+>> +++ b/drivers/clk/clk-si5351.c
+>> @@ -552,7 +552,8 @@ static const struct clk_ops si5351_pll_ops = {
+>>    * MSx_P2[19:0] = 128 * b - c * floor(128 * b/c) = (128*b) mod c
+>>    * MSx_P3[19:0] = c
+>>    *
+>> - * MS[6,7] are integer (P1) divide only, P2 = 0, P3 = 0
+>> + * MS[6,7] are integer (P1) divide only, P1 = divide value,
+>> + * P2 and P3 are not applicable
+>>    *
+>>    * for 150MHz < fOUT <= 160MHz:
+>>    *
+>> @@ -718,11 +719,18 @@ static long si5351_msynth_round_rate(struct
+>> clk_hw *hw, unsigned long rate,
+>>       do_div(lltmp, a * c + b);
+>>       rate  = (unsigned long)lltmp;
+>>
+>> -    /* calculate parameters */
+>> +    /*
+>> +     * calculate parameters
+>> +     * for multisync6-7 set p1 directly, fOUT = fIN / p1
+>
+> I'd say the comment about the differences of MS6,7 in the function's
+> comment block is enough, no need to repeat it again here.
+>
+I agree.
+>> +     */
+>>       if (divby4) {
+>>           hwdata->params.p3 = 1;
+>>           hwdata->params.p2 = 0;
+>>           hwdata->params.p1 = 0;
+>> +    } else if (hwdata->num >= 6) {
+>> +        hwdata->params.p3 = 1;
+>> +        hwdata->params.p2 = 0;
+>> +        hwdata->params.p1 = a;
+>
+> Hmm. Just overruling what will be written in the registers is
+> definitely not enough. If you look at the first two lines of this
+> hunk, you'll admit that the visible representation (rate) of the MS
+> frequency isn't affected by your patch at all.
+>
+> That basically means that real frequency and frequency in the kernel
+> will differ, so we have to put this change in the param calculation
+> above this hunk instead. The extra else-if-path here is ok though.
+>
+You right, I will take a look at that and provide a patch v2.
 
-Changes since v1:
- - reorganize cgu clk structs
- - macros to create cgu clk structs
- - move drivers to nxp subdir
- - rebase on v4.1-rc1
-
-Since there were no comments on v1. I hope that these drivers can
-make it to Linux 4.1.
-
-There are no dependencies in this patch set. The DTS changes will
-be sent separately to arm-soc once this patch set goes upstream.
-
-See the base support patch set for LPC18xx here:
-http://marc.info/?l=linux-arm-kernel&m=143016894704253&w=2
-
-Joachim Eastwood (4):
-  clk: add lpc18xx cgu clk driver
-  doc: dt: add documentation for lpc1850-cgu clk driver
-  clk: add lpc18xx ccu clk driver
-  doc: dt: add documentation for lpc1850-ccu clk driver
-
- .../devicetree/bindings/clock/lpc1850-ccu.txt      | 146 +++++
- .../devicetree/bindings/clock/lpc1850-cgu.txt      | 138 +++++
- drivers/clk/Makefile                               |   1 +
- drivers/clk/nxp/Makefile                           |   2 +
- drivers/clk/nxp/clk-lpc18xx-ccu.c                  | 318 +++++++++++
- drivers/clk/nxp/clk-lpc18xx-cgu.c                  | 628 +++++++++++++++++++++
- include/dt-bindings/clock/lpc18xx-ccu.h            |  74 +++
- include/dt-bindings/clock/lpc18xx-cgu.h            |  41 ++
- 8 files changed, 1348 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-ccu.txt
- create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
- create mode 100644 drivers/clk/nxp/Makefile
- create mode 100644 drivers/clk/nxp/clk-lpc18xx-ccu.c
- create mode 100644 drivers/clk/nxp/clk-lpc18xx-cgu.c
- create mode 100644 include/dt-bindings/clock/lpc18xx-ccu.h
- create mode 100644 include/dt-bindings/clock/lpc18xx-cgu.h
-
--- 
-1.8.0
+Sergej
