@@ -1,68 +1,36 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <5522F353.90705@codeaurora.org>
-Date: Mon, 06 Apr 2015 13:57:55 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-MIME-Version: 1.0
-To: Georgi Djakov <georgi.djakov@linaro.org>
-CC: mturquette@linaro.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: Fix parent_map translations
-References: <1428069603-2641-1-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1428069603-2641-1-git-send-email-georgi.djakov@linaro.org>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <jy0922.shim@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mturquette@linaro.org, sboyd@codeaurora.org,
+ haojian.zhuang@gmail.com, james.hogan@imgtec.com, jy0922.shim@samsung.com
+Subject: [PATCH 1/2] clk: divider: don't set_rate with CLK_DIVIDER_READ_ONLY
+ flag
+Date: Tue, 07 Apr 2015 16:46:45 +0900
+Message-id: <1428392806-14538-1-git-send-email-jy0922.shim@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/03/15 07:00, Georgi Djakov wrote:
-> When we introduced the parent_map tables, we missed to update some
-> of the functions where mapping is translated. Fix this.
->
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
->  drivers/clk/qcom/clk-rcg.c  |   13 ++++++++++---
->  drivers/clk/qcom/clk-rcg2.c |   20 +++++++++++++++-----
->  2 files changed, 25 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/qcom/clk-rcg.c b/drivers/clk/qcom/clk-rcg.c
-> index 8f2f48071a7a..e30821a3ba68 100644
-> --- a/drivers/clk/qcom/clk-rcg.c
-> +++ b/drivers/clk/qcom/clk-rcg.c
-> @@ -319,7 +319,7 @@ static int clk_dyn_rcg_set_parent(struct clk_hw *hw, u8 index)
->  	if (banked_p)
->  		f.pre_div = ns_to_pre_div(&rcg->p[bank], ns) + 1;
->  
-> -	f.src = index;
-> +	f.src = qcom_find_src_index(hw, rcg->s[bank].parent_map, index);
->  	return configure_bank(rcg, &f);
->  }
->  
-> @@ -411,13 +411,19 @@ static long _freq_tbl_determine_rate(struct clk_hw *hw,
->  {
->  	unsigned long clk_flags;
->  	struct clk *p;
-> +	struct clk_rcg *rcg = to_clk_rcg(hw);
+Even if use CLK_DIVIDER_READ_ONLY flag, divider setting can be changed
+by set_rate callback. Don't change divider setting from set_rate
+callback of divider with CLK_DIVIDER_READ_ONLY flag.
 
-This function is called by both clk_dyn_rcg_determine_rate() and
-clk_rcg_determine_rate() which means struct clk_hw is wrapped by
-different structs. The to_clk_rcg() is wrong here. How about we pass the
-parent map to this function?
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+---
+ drivers/clk/clk-divider.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> +	int index;
->  
->  	f = qcom_find_freq(f, rate);
->  	if (!f)
->  		return -EINVAL;
->  
-> +	index = qcom_find_src_index(hw, rcg->s.parent_map, f->src);
-> +	if (index < 0)
-> +		return index;
-> +
->  	clk_flags = __clk_get_flags(hw->clk);
-> -	p = clk_get_parent_by_index(hw->clk, f->src);
-> +	p = clk_get_parent_by_index(hw->clk, index);
->  	if (clk_flags & CLK_SET_RATE_PARENT) {
->  		rate = rate * f->pre_div;
->  		if (f->n) {
->
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index 25006a8..ce34d29a 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -384,6 +384,9 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long flags = 0;
+ 	u32 val;
+ 
++	if (divider->flags & CLK_DIVIDER_READ_ONLY)
++		return 0;
++
+ 	value = divider_get_val(rate, parent_rate, divider->table,
+ 				divider->width, divider->flags);
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
