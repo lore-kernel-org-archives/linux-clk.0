@@ -1,145 +1,59 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Paul Walmsley <pwalmsley@nvidia.com>,
+Return-Path: <javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Olof Johansson <olof@lixom.net>,
+	Doug Anderson <dianders@chromium.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Tyler Baker <tyler.baker@linaro.org>,
+	Abhilash Kesavan <kesavan.abhilash@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
 	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 13/19] clk: tegra: pll: Add support for PLLMB for T210
-Date: Fri, 24 Apr 2015 12:47:53 -0400
-Message-ID: <1429894079-25052-14-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
-References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 1/1] clk: exynos5420: Restore GATE_BUS_TOP on suspend
+Date: Wed,  8 Apr 2015 07:34:12 +0200
+Message-Id: <1428471252-15872-1-git-send-email-javier.martinez@collabora.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-Tegra210 SoC's have a backup PLL for memory usage, PLLMB. Add
-plumbing to register and handle it.
+Commit ae43b3289186 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power
+Management support v12") added pm support for the pl330 dma driver but
+it makes the clock for the Exynos5420 MDMA0 DMA controller to be gated
+during suspend and this in turn makes its parent clock aclk266_g2d to
+be gated. But the clock needs to be ungated prior suspend to allow the
+system to be suspend and resumed correctly.
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Add GATE_BUS_TOP register to the list of registers to be restored when
+the system enters into a suspend state so aclk266_g2d will be ungated.
+
+Thanks to Abhilash Kesavan for figuring out that this was the issue.
+
+Fixes: ae43b32 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12")
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Tested-by: Kevin Hilman <khilman@linaro.org>
+Tested-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- drivers/clk/tegra/clk-pll.c |   46 +++++++++++++++++++++++++++++++++++++++----
- drivers/clk/tegra/clk.h     |    9 +++++++++
- 2 files changed, 51 insertions(+), 4 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index de9e035b59c9..4a248ee1861c 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -549,7 +549,7 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
- 	struct tegra_clk_pll_params *params = pll->params;
- 	struct div_nmp *div_nmp = params->div_nmp;
- 
--	if ((params->flags & TEGRA_PLLM) &&
-+	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
- 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
- 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
- 		val = pll_override_readl(params->pmc_divp_reg, pll);
-@@ -586,7 +586,7 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
- 	struct tegra_clk_pll_params *params = pll->params;
- 	struct div_nmp *div_nmp = params->div_nmp;
- 
--	if ((params->flags & TEGRA_PLLM) &&
-+	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
- 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
- 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
- 		val = pll_override_readl(params->pmc_divp_reg, pll);
-@@ -732,8 +732,8 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (pll->params->flags & TEGRA_PLL_FIXED)
- 		return pll->params->fixed_rate;
- 
--	/* PLLM is used for memory; we do not change rate */
--	if (pll->params->flags & TEGRA_PLLM)
-+	/* PLLM/MB are used for memory; we do not change rate */
-+	if (pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB))
- 		return __clk_get_rate(hw->clk);
- 
- 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
-@@ -2297,4 +2297,42 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
- 
- 	return clk;
- }
-+
-+struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
-+			  void __iomem *clk_base, void __iomem *pmc,
-+			  unsigned long flags,
-+			  struct tegra_clk_pll_params *pll_params,
-+			  spinlock_t *lock)
-+{
-+	struct tegra_clk_pll *pll;
-+	struct clk *clk, *parent;
-+	unsigned long parent_rate;
-+
-+	if (!pll_params->pdiv_tohw)
-+		return ERR_PTR(-EINVAL);
-+
-+	parent = __clk_lookup(parent_name);
-+	if (!parent) {
-+		WARN(1, "parent clk %s of %s must be registered first\n",
-+			name, parent_name);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	parent_rate = __clk_get_rate(parent);
-+
-+	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
-+
-+	pll_params->flags |= TEGRA_PLL_BYPASS;
-+	pll_params->flags |= TEGRA_PLLMB;
-+	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-+	if (IS_ERR(pll))
-+		return ERR_CAST(pll);
-+
-+	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
-+				      &tegra_clk_pllm_ops);
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
-+}
- #endif
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 26e31580dc9e..9e37defb063f 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -201,6 +201,8 @@ struct div_nmp {
-  * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
-  * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
-  *     it may be more accurate (especially if SDM present)
-+ * TEGRA_PLLMB - PLLMB has should be treated similar to PLLM. This
-+ *     flag indicated that it is PLLMB.
-  */
- struct tegra_clk_pll_params {
- 	unsigned long	input_min;
-@@ -260,6 +262,7 @@ struct tegra_clk_pll_params {
- #define TEGRA_PLL_BYPASS BIT(9)
- #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
- #define TEGRA_MDIV_NEW BIT(11)
-+#define TEGRA_PLLMB BIT(12)
- 
- /**
-  * struct tegra_clk_pll - Tegra PLL clock
-@@ -366,6 +369,12 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
- 			   struct tegra_clk_pll_params *pll_params,
- 			   spinlock_t *lock);
- 
-+struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
-+			   void __iomem *clk_base, void __iomem *pmc,
-+			   unsigned long flags,
-+			   struct tegra_clk_pll_params *pll_params,
-+			   spinlock_t *lock);
-+
- /**
-  * struct tegra_clk_pll_out - PLL divider down clock
-  *
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 07d666cc6a29..bea4a173eef5 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -271,6 +271,7 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
+ 	{ .offset = SRC_MASK_PERIC0,		.value = 0x11111110, },
+ 	{ .offset = SRC_MASK_PERIC1,		.value = 0x11111100, },
+ 	{ .offset = SRC_MASK_ISP,		.value = 0x11111000, },
++	{ .offset = GATE_BUS_TOP,		.value = 0xffffffff, },
+ 	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
+ 	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
+ };
 -- 
-1.7.9.5
+2.1.4
