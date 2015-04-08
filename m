@@ -1,66 +1,85 @@
-Return-Path: <jaswinder.singh@linaro.org>
+Return-Path: <ce3a@gmx.de>
 MIME-Version: 1.0
-In-Reply-To: <20150414093028.GB29667@station.rsr.lip6.fr>
-References: <20150414093028.GB29667@station.rsr.lip6.fr>
-Date: Tue, 14 Apr 2015 15:42:19 +0530
-Message-ID: <CAJe_ZhfREnT7Ktq1GcLSP=_+7Ph0whSCVr7gvNu8-9kwWbYhVw@mail.gmail.com>
-Subject: Re: clk: mb86s7x: ARCH_MB86S7X not defined
-From: Jassi Brar <jaswinder.singh@linaro.org>
-To: Valentin Rothberg <valentinrothberg@gmail.com>
-Cc: linux-clk@vger.kernel.org, Andy Green <andy.green@linaro.org>, mturquette@linaro.org,
-	Andreas Ruprecht <rupran@einserver.de>, nuriya.tetsuya@socionext.com, stefan.hengelein@fau.de,
-	vincent.yang@socionext.com, Paul Bolle <pebolle@tiscali.nl>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Content-Type: multipart/alternative; boundary=001a11c148244908470513ac7790
+Message-ID: <trinity-d1320d47-a158-4f77-8ddc-8dbeb74c6f8b-1428501608111@3capp-gmx-bs05>
+From: "S. S." <ce3a@gmx.de>
+To: "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+ mturquette@linaro.org, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Aw: Re: [PATCH v2] clk: si5351: fix .round_rate for multisynth 6-7
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 8 Apr 2015 16:00:08 +0200
+In-Reply-To: <552523BC.7010500@gmail.com>
+References: <1428433918-6339-1-git-send-email-ce3a@gmx.de>,
+ <552523BC.7010500@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---001a11c148244908470513ac7790
-Content-Type: text/plain; charset=UTF-8
-
-Hi Valentin,
-
-On Apr 14, 2015 3:00 PM, "Valentin Rothberg" <valentinrothberg@gmail.com>
-wrote:
+>> @@ -645,7 +646,7 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
+>> struct si5351_hw_data *hwdata =
+>> container_of(hw, struct si5351_hw_data, hw);
+>> unsigned long long lltmp;
+>> - unsigned long a, b, c;
+>> + unsigned long a, b = 0, c = 1;
 >
-> Hi Jassi,
+> Actually, moving b,c initialization up here is neither related
+> to the patch itself nor is it mentioned in the commit log.
 >
-> your commit 1ccdd04f5365 ("clk: Add clock driver for mb86s7x") is in
-> today's Linux next tree.  The clock driver clk-mb86s7x.c is
-> conditionally compiled depending on CONFIG_ARCH_MB86S7X.  This option is
-> nowhere defined in Kconfig, so that the driver cannot be compiled at its
-> current tate.
+> Please do not mix different patches.
+
+I agree. I just thought we could avoid repeating the b,c initialization
+in the code, but You are right, that would be a different patch, if any 
+at all.
+
+>> *parent_rate = a * rate;
 >
-> Is there a patch queued somewhere that adds this feature?
+>> + if (rfrac)
+>> + rational_best_approximation(rfrac, denom,
+>> + SI5351_MULTISYNTH_B_MAX,
+>> + SI5351_MULTISYNTH_C_MAX,
+>> + &b, &c);
+>> + }
 >
-The arch patchset is submitted but not yet merged by Olof.
+> I am still not convinced that this is the right way to calculate the
+> _best_ integer divider for ms6,7.
+>
+> The code above is written to (a) find the _largest_ integer "a" that
+> will match
+>
+> a * rate <= parent_rate
+>
+> and then (b) determines the fractional part of the divider.
+>
+> As you correctly stated, ms6,7 do not support (b) but if we use (a) for
+> those msynths, we will determine an "a" so that "a * rate" is always
+> smaller than parent_rate.
+> 
+> What we actually want is the smallest error between generated and
+> requested rate, so we have to find the closest integer with
+> 
+> a = DIV_ROUND_CLOSEST(parent_rate, rate)
 
-Thanks
+Agreed, that's probably better.
 
---001a11c148244908470513ac7790
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+> IMHO, the special divider calculation for ms6,7 is best dealt with
+> in an extra else-if branch after the check for CLK_SET_RATE_PARENT
+> flag.
 
-<p dir=3D"ltr">Hi Valentin, </p>
-<p dir=3D"ltr">On Apr 14, 2015 3:00 PM, &quot;Valentin Rothberg&quot; &lt;<=
-a href=3D"mailto:valentinrothberg@gmail.com">valentinrothberg@gmail.com</a>=
-&gt; wrote:<br>
-&gt;<br>
-&gt; Hi Jassi,<br>
-&gt;<br>
-&gt; your commit 1ccdd04f5365 (&quot;clk: Add clock driver for mb86s7x&quot=
-;) is in<br>
-&gt; today&#39;s Linux next tree.=C2=A0 The clock driver clk-mb86s7x.c is<b=
-r>
-&gt; conditionally compiled depending on CONFIG_ARCH_MB86S7X.=C2=A0 This op=
-tion is<br>
-&gt; nowhere defined in Kconfig, so that the driver cannot be compiled at i=
-ts<br>
-&gt; current tate.<br>
-&gt;<br>
-&gt; Is there a patch queued somewhere that adds this feature?<br>
-&gt;<br>
-The arch patchset is submitted but not yet merged by Olof.</p>
-<p dir=3D"ltr">Thanks <br>
-</p>
+Agreed.
 
---001a11c148244908470513ac7790--
+> hwdata->params.p3 = 0;
+> hwdata->params.p2 = 0;
+
+Agreed.
+
+> Out of curiosity, do you actually have a device that uses ms6,7 and can
+> you measure the generated frequency - or did you just read the code as
+> a bedtime story? ;)
+
+:) I do have a device and have to use ms6,7, those are connected to pllb.
+I have tested some integer pll dividers in a range from 30 to 130.
+Measured frequencies and the frequencies shown in <debugfs>/clk/clk_summery
+are the same.
+
+I am going to send a patch v3.
+Thanks for your feedback.
+
+Sergej
