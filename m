@@ -1,143 +1,60 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Paul Walmsley <pwalmsley@nvidia.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 10/19] clk: tegra: pll: Add logic for out-of-table rates for T210
-Date: Fri, 24 Apr 2015 12:47:50 -0400
-Message-ID: <1429894079-25052-11-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
-References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>,
+ Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+ Barry Song <baohua@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 8/8] MIPS: Alchemy: Remove unneeded cast removing const
+Date: Wed, 08 Apr 2015 15:22:19 +0200
+Message-id: <1428499339-29569-9-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
+References: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-For Tegra210, the logic to calculate out-of-table rates is different
-from previous generations. Add callbacks that can be overridden to
-allow for different ways of calculating rates. Default to
-_cal_rate when not specified.
+Parent names in clock init data is now array of const pointers to const
+strings so the cast is not needed.
 
-Based on original work by Aleksandr Frid <afrid@nvidia.com>
-
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/clk/tegra/clk-pll.c |   24 ++++++++++++++++++++++--
- drivers/clk/tegra/clk.h     |   10 ++++++++++
- 2 files changed, 32 insertions(+), 2 deletions(-)
+ arch/mips/alchemy/common/clock.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 806ae48020e5..f612a8b65651 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -690,7 +690,7 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	}
+diff --git a/arch/mips/alchemy/common/clock.c b/arch/mips/alchemy/common/clock.c
+index 6a98d2cb402c..6e46abe0dac6 100644
+--- a/arch/mips/alchemy/common/clock.c
++++ b/arch/mips/alchemy/common/clock.c
+@@ -752,12 +752,12 @@ static int __init alchemy_clk_init_fgens(int ctype)
+ 	switch (ctype) {
+ 	case ALCHEMY_CPU_AU1000...ALCHEMY_CPU_AU1200:
+ 		id.ops = &alchemy_clkops_fgenv1;
+-		id.parent_names = (const char **)alchemy_clk_fgv1_parents;
++		id.parent_names = alchemy_clk_fgv1_parents;
+ 		id.num_parents = 2;
+ 		break;
+ 	case ALCHEMY_CPU_AU1300:
+ 		id.ops = &alchemy_clkops_fgenv2;
+-		id.parent_names = (const char **)alchemy_clk_fgv2_parents;
++		id.parent_names = alchemy_clk_fgv2_parents;
+ 		id.num_parents = 3;
+ 		break;
+ 	default:
+@@ -961,7 +961,7 @@ static int __init alchemy_clk_setup_imux(int ctype)
+ 	struct clk *c;
  
- 	if (_get_table_rate(hw, &cfg, rate, parent_rate) &&
--	    _calc_rate(hw, &cfg, rate, parent_rate)) {
-+	    pll->params->calc_rate(hw, &cfg, rate, parent_rate)) {
- 		pr_err("%s: Failed to set %s rate %lu\n", __func__,
- 		       __clk_get_name(hw->clk), rate);
- 		WARN_ON(1);
-@@ -725,7 +725,7 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 		return __clk_get_rate(hw->clk);
+ 	id.ops = &alchemy_clkops_csrc;
+-	id.parent_names = (const char **)alchemy_clk_csrc_parents;
++	id.parent_names = alchemy_clk_csrc_parents;
+ 	id.num_parents = 7;
+ 	id.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE;
  
- 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
--	    _calc_rate(hw, &cfg, rate, *prate))
-+	    pll->params->calc_rate(hw, &cfg, rate, *prate))
- 		return -EINVAL;
- 
- 	return cfg.output_rate;
-@@ -915,12 +915,28 @@ const struct clk_ops tegra_clk_plle_ops = {
- static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
- 			   unsigned long parent_rate)
- {
-+	u16 mdiv = parent_rate / pll_params->cf_min;
-+
-+	if (pll_params->flags & TEGRA_MDIV_NEW)
-+		return (!pll_params->mdiv_default ? mdiv :
-+			min(mdiv, pll_params->mdiv_default));
-+
-+	if (pll_params->mdiv_default)
-+		return pll_params->mdiv_default;
-+
- 	if (parent_rate > pll_params->cf_max)
- 		return 2;
- 	else
- 		return 1;
- }
- 
-+u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+
-+	return (u16)_pll_fixed_mdiv(pll->params, input_rate);
-+}
-+
- static unsigned long _clip_vco_min(unsigned long vco_min,
- 				   unsigned long parent_rate)
- {
-@@ -1495,6 +1511,10 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
- 	init.parent_names = (parent_name ? &parent_name : NULL);
- 	init.num_parents = (parent_name ? 1 : 0);
- 
-+	/* Default to _calc_rate if unspecified */
-+	if (!pll->params->calc_rate)
-+		pll->params->calc_rate = _calc_rate;
-+
- 	/* Data in .init is copied by clk_register(), so stack variable OK */
- 	pll->hw.init = &init;
- 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index f3c1f07d5332..b009c803f277 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -199,6 +199,8 @@ struct div_nmp {
-  *     base register.
-  * TEGRA_PLL_BYPASS - PLL has bypass bit
-  * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
-+ * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
-+ *     it may be more accurate (especially if SDM present)
-  */
- struct tegra_clk_pll_params {
- 	unsigned long	input_min;
-@@ -235,7 +237,13 @@ struct tegra_clk_pll_params {
- 	struct div_nmp	*div_nmp;
- 	struct tegra_clk_pll_freq_table	*freq_table;
- 	unsigned long	fixed_rate;
-+	bool		vco_out;
-+	u16		mdiv_default;
-+	u32	(*round_p_to_pdiv)(u32 p, u32 *pdiv);
- 	void	(*set_gain)(struct tegra_clk_pll_freq_table *cfg);
-+	int	(*calc_rate)(struct clk_hw *hw,
-+			struct tegra_clk_pll_freq_table *cfg,
-+			unsigned long rate, unsigned long parent_rate);
- };
- 
- #define TEGRA_PLL_USE_LOCK BIT(0)
-@@ -249,6 +257,7 @@ struct tegra_clk_pll_params {
- #define TEGRA_PLL_LOCK_MISC BIT(8)
- #define TEGRA_PLL_BYPASS BIT(9)
- #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
-+#define TEGRA_MDIV_NEW BIT(11)
- 
- /**
-  * struct tegra_clk_pll - Tegra PLL clock
-@@ -671,5 +680,6 @@ void tegra114_clock_deassert_dfll_dvco_reset(void);
- typedef void (*tegra_clk_apply_init_table_func)(void);
- extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
- int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
-+u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
- 
- #endif /* TEGRA_CLK_H */
 -- 
-1.7.9.5
+1.9.1
