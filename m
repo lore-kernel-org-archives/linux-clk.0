@@ -1,50 +1,54 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Andrew Bresticker <abrestic@chromium.org>, linux-clk@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, kernel@pengutronix.de, Georgi Djakov <georgi.djakov@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Max Filippov <jcmvbkbc@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Ulf Hansson <ulf.hansson@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Santosh Shilimkar <ssantosh@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Zhangfei Gao <zhangfei.gao@linaro.org>, Barry Song <baohua@kernel.org>, Alex Elder <elder@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Dinh Nguyen <dinguyen@opensource.altera.com>, linux-kernel@vger.kernel.org, emilio@elopez.com.ar, dianders@chromium.org, Jason Cooper <jason@lakedaemon.net>, Chao Xie <chao.xie@marvell.com>, Tero Kristo <t-kristo@ti.com>, Gabriel FERNANDEZ <gabriel.fernandez@st.com>, mturquette@linaro.org, sboyd@codeaurora.org
-Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
-Date: Sat, 25 Apr 2015 15:44:11 +0200
-Message-ID: <8220650.vMaWphVIuC@diego>
-In-Reply-To: <380631359.469897.1429964620007.JavaMail.open-xchange@oxbaltgw01.schlund.de>
-References: <1429735986-18592-1-git-send-email-heiko@sntech.de> <380631359.469897.1429964620007.JavaMail.open-xchange@oxbaltgw01.schlund.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>,
+ Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+ Barry Song <baohua@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 5/8] clk: cdce706: Constify parent names in clock init data
+Date: Wed, 08 Apr 2015 15:22:16 +0200
+Message-id: <1428499339-29569-6-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
+References: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stefan,
+The array of parent names can be made as array of const pointers to
+const strings.
 
-Am Samstag, 25. April 2015, 14:23:39 schrieb Stefan Wahren:
-> > Heiko Stuebner <heiko@sntech.de> hat am 22. April 2015 um 22:53
-> > geschrieben:
-> > 
-> > 
-> > Using orphan clocks can introduce strange behaviour as they don't have
-> > rate information at all and also of course don't track
-> > 
-> > [...]
-> > 
-> > 
-> > As this changes the behaviour for orphan clocks, it would of course
-> > benefit from more testing than on my Rockchip boards. To keep the
-> > recipent-list reasonable and not spam to much I selected one (the topmost)
-> > from the get_maintainer output of each drivers/clk entry.
-> > Hopefully some will provide Tested-by-tags :-)
-> 
-> excuse me for my naive question, but what kind of tests do you expect
-> (beside applying the patches)?
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/clk-cdce706.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-just a "everything that worked before still works" :-)
-
-Using orphaned clocks should already produce strange issues most of the time - 
-for example I see clk_disable mismatches when suspending a rk3288 board, 
-before this patchset.
-
-But nevertheless we now disallow the usage of orphaned clocks completely while 
-before it was possible to knowingly/unknowingly use them.
-
-And while hopefully most drivers should handle an EPROBE_DEFER from clk_get 
-just fine, there may still be one or two lurking around that would need fixing 
-then ;-)
-
-
-Heiko
+diff --git a/drivers/clk/clk-cdce706.c b/drivers/clk/clk-cdce706.c
+index b8e4f8a822e9..8a2dfd0012f3 100644
+--- a/drivers/clk/clk-cdce706.c
++++ b/drivers/clk/clk-cdce706.c
+@@ -94,7 +94,7 @@ static const char * const cdce706_source_name[] = {
+ 	"clk_in0", "clk_in1",
+ };
+ 
+-static const char *cdce706_clkin_name[] = {
++static const char * const cdce706_clkin_name[] = {
+ 	"clk_in",
+ };
+ 
+@@ -102,7 +102,7 @@ static const char * const cdce706_pll_name[] = {
+ 	"pll1", "pll2", "pll3",
+ };
+ 
+-static const char *cdce706_divider_parent_name[] = {
++static const char * const cdce706_divider_parent_name[] = {
+ 	"clk_in", "pll1", "pll2", "pll2", "pll3",
+ };
+ 
+-- 
+1.9.1
