@@ -1,53 +1,31 @@
-Return-Path: <Aisheng.Dong@freescale.com>
-From: Dong Aisheng <aisheng.dong@freescale.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@linaro.org>, <shawn.guo@linaro.org>, <b29396@freescale.com>,
-	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
-	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
-Subject: [PATCH RFC v1 1/5] clk: change clk_core name of __clk_set_parent_after
-Date: Wed, 15 Apr 2015 22:26:35 +0800
-Message-ID: <1429107999-24413-2-git-send-email-aisheng.dong@freescale.com>
-In-Reply-To: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
-References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
-Return-Path: aisheng.dong@freescale.com
+Return-Path: <nicolas.dechesne@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1428416091-31844-1-git-send-email-georgi.djakov@linaro.org>
+References: <1428416091-31844-1-git-send-email-georgi.djakov@linaro.org>
+From: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+Date: Wed, 8 Apr 2015 10:38:41 +0200
+Message-ID: <CAP71WjxnL0_AUSYmMuBPLs+teWeC6rMuO7S8L8to1cWvnM2FBg@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: qcom: Fix parent_map translations
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-To align with __clk_set_parent_before and some others functions,
-change the host clk name to 'clk' instead of 'core'.
+On Tue, Apr 7, 2015 at 4:14 PM, Georgi Djakov <georgi.djakov@linaro.org> wrote:
+> When we introduced the parent_map tables, we missed to update some
+> of the functions where mapping is translated. Fix this.
+>
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
+>
+> Changes since v1:
+>  * Pass parent map to _freq_tbl_determine_rate()
 
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
----
- drivers/clk/clk.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+tested this v2 as well, on ifc6410, I have done the same functional
+tests as mentioned in [1].
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 459ce9d..cc56ba2 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1487,7 +1487,7 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *clk,
- 	return old_parent;
- }
- 
--static void __clk_set_parent_after(struct clk_core *core,
-+static void __clk_set_parent_after(struct clk_core *clk,
- 				   struct clk_core *parent,
- 				   struct clk_core *old_parent)
- {
-@@ -1495,8 +1495,8 @@ static void __clk_set_parent_after(struct clk_core *core,
- 	 * Finish the migration of prepare state and undo the changes done
- 	 * for preventing a race with clk_enable().
- 	 */
--	if (core->prepare_count) {
--		clk_core_disable(core);
-+	if (clk->prepare_count) {
-+		clk_core_disable(clk);
- 		clk_core_disable(old_parent);
- 		clk_core_unprepare(old_parent);
- 	}
--- 
-1.9.1
+Tested-by: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+
+[1] https://lkml.org/lkml/2015/4/3/298
