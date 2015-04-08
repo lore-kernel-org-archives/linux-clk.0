@@ -1,217 +1,69 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Paul Walmsley <pwalmsley@nvidia.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 08/19] clk: tegra: pll: Add logic for handling SDM data
-Date: Fri, 24 Apr 2015 12:47:48 -0400
-Message-ID: <1429894079-25052-9-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
-References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Return-Path: <s.nawrocki@samsung.com>
+Message-id: <5524EFA8.6000800@samsung.com>
+Date: Wed, 08 Apr 2015 11:06:48 +0200
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+MIME-version: 1.0
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+ Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+ Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>,
+ Abhilash Kesavan <kesavan.abhilash@gmail.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] clk: exynos5420: Restore GATE_BUS_TOP on suspend
+References: <1428471252-15872-1-git-send-email-javier.martinez@collabora.co.uk>
+In-reply-to: <1428471252-15872-1-git-send-email-javier.martinez@collabora.co.uk>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds logic for taking SDM_DIN (Sigma Delta Modulator) setting into
-the equation to calculate the effective N value for PLL which supports
-fractional divider.
+Hello,
 
-The effective N = NDIV + 1/2 + SDM_DIN/2^13, where NDIV is the integer
-feedback divider.
+On 08/04/15 07:34, Javier Martinez Canillas wrote:
+> Commit ae43b3289186 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power
+> Management support v12") added pm support for the pl330 dma driver but
+> it makes the clock for the Exynos5420 MDMA0 DMA controller to be gated
+> during suspend and this in turn makes its parent clock aclk266_g2d to
+> be gated. But the clock needs to be ungated prior suspend to allow the
+> system to be suspend and resumed correctly.
+> 
+> Add GATE_BUS_TOP register to the list of registers to be restored when
+> the system enters into a suspend state so aclk266_g2d will be ungated.
+> 
+> Thanks to Abhilash Kesavan for figuring out that this was the issue.
+> 
+> Fixes: ae43b32 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12")
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Tested-by: Kevin Hilman <khilman@linaro.org>
+> Tested-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 07d666cc6a29..bea4a173eef5 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -271,6 +271,7 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
+>  	{ .offset = SRC_MASK_PERIC0,		.value = 0x11111110, },
+>  	{ .offset = SRC_MASK_PERIC1,		.value = 0x11111100, },
+>  	{ .offset = SRC_MASK_ISP,		.value = 0x11111000, },
+> +	{ .offset = GATE_BUS_TOP,		.value = 0xffffffff, },
+>  	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
+>  	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
+>  };
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c |   52 ++++++++++++++++++++++++++++++++++++++++++-
- drivers/clk/tegra/clk.h     |    9 +++++++-
- 2 files changed, 59 insertions(+), 2 deletions(-)
+I'm going to tag this patch for inclusion in the stable tree and send
+it to Mike or Stephen with other clk/samsung fixes after v4.1-rc1 is
+released.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 6dd95fc7f348..31d95cfdf35e 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -187,17 +187,23 @@
- #define pll_readl_base(p) pll_readl(p->params->base_reg, p)
- #define pll_readl_misc(p) pll_readl(p->params->misc_reg, p)
- #define pll_override_readl(offset, p) readl_relaxed(p->pmc + offset)
-+#define pll_readl_sdm_din(p) pll_readl(p->params->sdm_din_reg, p)
-+#define pll_readl_sdm_ctrl(p) pll_readl(p->params->sdm_ctrl_reg, p)
- 
- #define pll_writel(val, offset, p) writel_relaxed(val, p->clk_base + offset)
- #define pll_writel_base(val, p) pll_writel(val, p->params->base_reg, p)
- #define pll_writel_misc(val, p) pll_writel(val, p->params->misc_reg, p)
- #define pll_override_writel(val, offset, p) writel(val, p->pmc + offset)
-+#define pll_writel_sdm_din(val, p) pll_writel(val, p->params->sdm_din_reg, p)
-+#define pll_writel_sdm_ctrl(val, p) pll_writel(val, p->params->sdm_ctrl_reg, p)
- 
- #define mask(w) ((1 << (w)) - 1)
- #define divm_mask(p) mask(p->params->div_nmp->divm_width)
- #define divn_mask(p) mask(p->params->div_nmp->divn_width)
- #define divp_mask(p) (p->params->flags & TEGRA_PLLU ? PLLU_POST_DIVP_MASK :\
- 		      mask(p->params->div_nmp->divp_width))
-+#define sdm_din_mask(p) p->params->sdm_din_mask
-+#define sdm_en_mask(p) p->params->sdm_ctrl_en_mask
- 
- #define divm_shift(p) (p)->params->div_nmp->divm_shift
- #define divn_shift(p) (p)->params->div_nmp->divn_shift
-@@ -211,6 +217,9 @@
- #define divn_max(p) (divn_mask(p))
- #define divp_max(p) (1 << (divp_mask(p)))
- 
-+#define sdin_din_to_data(din)	((u16)((din) ? : 0xFFFFU))
-+#define sdin_data_to_din(dat)	(((dat) == 0xFFFFU) ? 0 : (s16)dat)
-+
- static struct div_nmp default_nmp = {
- 	.divn_shift = PLL_BASE_DIVN_SHIFT,
- 	.divn_width = PLL_BASE_DIVN_WIDTH,
-@@ -432,6 +441,7 @@ static int _get_table_rate(struct clk_hw *hw,
- 	cfg->n = sel->n;
- 	cfg->p = sel->p;
- 	cfg->cpcon = sel->cpcon;
-+	cfg->sdm_data = sel->sdm_data;
- 
- 	return 0;
- }
-@@ -498,6 +508,28 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 	return 0;
- }
- 
-+static void clk_pll_set_sdm_data(struct clk_hw *hw,
-+				 struct tegra_clk_pll_freq_table *cfg)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	u32 val;
-+
-+	if (!pll->params->sdm_din_reg)
-+		return;
-+
-+	if (cfg->sdm_data) {
-+		val = pll_readl_sdm_din(pll) & (~sdm_din_mask(pll));
-+		val |= sdin_data_to_din(cfg->sdm_data) & sdm_din_mask(pll);
-+		pll_writel_sdm_din(val, pll);
-+	}
-+
-+	val = pll_readl_sdm_ctrl(pll);
-+	if (!cfg->sdm_data != !(val & pll->params->sdm_ctrl_en_mask)) {
-+		val ^= pll->params->sdm_ctrl_en_mask;
-+		pll_writel_sdm_ctrl(val, pll);
-+	}
-+}
-+
- static void _update_pll_mnp(struct tegra_clk_pll *pll,
- 			    struct tegra_clk_pll_freq_table *cfg)
- {
-@@ -530,6 +562,8 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
- 		       (cfg->p << divp_shift(pll));
- 
- 		pll_writel_base(val, pll);
-+
-+		clk_pll_set_sdm_data(&pll->hw, cfg);
- 	}
- }
- 
-@@ -555,6 +589,14 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
- 		cfg->m = (val >> div_nmp->divm_shift) & divm_mask(pll);
- 		cfg->n = (val >> div_nmp->divn_shift) & divn_mask(pll);
- 		cfg->p = (val >> div_nmp->divp_shift) & divp_mask(pll);
-+
-+		if (pll->params->sdm_din_reg) {
-+			if (sdm_en_mask(pll) & pll_readl_sdm_ctrl(pll)) {
-+				val = pll_readl_sdm_din(pll);
-+				cfg->sdm_data = val & sdm_din_mask(pll);
-+				cfg->sdm_data = sdin_din_to_data(cfg->sdm_data);
-+			}
-+		}
- 	}
- }
- 
-@@ -636,7 +678,8 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	_get_pll_mnp(pll, &old_cfg);
- 
--	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p)
-+	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p ||
-+		old_cfg.sdm_data != cfg.sdm_data)
- 		ret = _program_pll(hw, &cfg, rate);
- 
- 	if (pll->lock)
-@@ -700,6 +743,9 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
- 		pdiv = 1;
- 	}
- 
-+	if (pll->params->set_gain)
-+		pll->params->set_gain(&cfg);
-+
- 	cfg.m *= pdiv;
- 
- 	rate *= cfg.n;
-@@ -981,6 +1027,7 @@ static int clk_pllxc_set_rate(struct clk_hw *hw, unsigned long rate,
- static long clk_pll_ramp_round_rate(struct clk_hw *hw, unsigned long rate,
- 				unsigned long *prate)
- {
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	struct tegra_clk_pll_freq_table cfg;
- 	int ret, p_div;
- 	u64 output_rate = *prate;
-@@ -993,6 +1040,9 @@ static long clk_pll_ramp_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (p_div < 0)
- 		return p_div;
- 
-+	if (pll->params->set_gain)
-+		pll->params->set_gain(&cfg);
-+
- 	output_rate *= cfg.n;
- 	do_div(output_rate, cfg.m * p_div);
- 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 03babba1c3b4..ef5754f64622 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -110,14 +110,16 @@ struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
-  * @m:			input divider
-  * @p:			post divider
-  * @cpcon:		charge pump current
-+ * @sdm_data:		fraction divider setting (0 = disabled)
-  */
- struct tegra_clk_pll_freq_table {
- 	unsigned long	input_rate;
- 	unsigned long	output_rate;
--	u16		n;
-+	u32		n;
- 	u16		m;
- 	u8		p;
- 	u8		cpcon;
-+	u16		sdm_data;
- };
- 
- /**
-@@ -213,6 +215,10 @@ struct tegra_clk_pll_params {
- 	u32		lock_enable_bit_idx;
- 	u32		iddq_reg;
- 	u32		iddq_bit_idx;
-+	u32		sdm_din_reg;
-+	u32		sdm_din_mask;
-+	u32		sdm_ctrl_reg;
-+	u32		sdm_ctrl_en_mask;
- 	u32		aux_reg;
- 	u32		dyn_ramp_reg;
- 	u32		ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
-@@ -227,6 +233,7 @@ struct tegra_clk_pll_params {
- 	struct div_nmp	*div_nmp;
- 	struct tegra_clk_pll_freq_table	*freq_table;
- 	unsigned long	fixed_rate;
-+	void	(*set_gain)(struct tegra_clk_pll_freq_table *cfg);
- };
- 
- #define TEGRA_PLL_USE_LOCK BIT(0)
+Mike/Stephen, if you're willing to take this patch earlier here is my:
+
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
 -- 
-1.7.9.5
+Thanks,
+Sylwester
