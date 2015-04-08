@@ -1,52 +1,58 @@
-Return-Path: <mwelling79@gmail.com>
-Return-Path: <mwelling79@gmail.com>
-Sender: Michael Welling <mwelling79@gmail.com>
-Date: Thu, 30 Apr 2015 13:30:43 -0500
-From: Michael Welling <mwelling@ieee.org>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Russell King <rmk+linux@arm.linux.org.uk>,
-	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 3/4] clk: si5351: Do not pass struct clk in platform_data
-Message-ID: <20150430183043.GA21890@deathray>
-References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
- <1430415954-29517-4-git-send-email-sebastian.hesselbarth@gmail.com>
- <CAOMZO5BYnE2epGrWbnNnaqEt1r6+xoPYWKtjc8w-Ze22aitgXA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAOMZO5BYnE2epGrWbnNnaqEt1r6+xoPYWKtjc8w-Ze22aitgXA@mail.gmail.com>
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>,
+ Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+ Barry Song <baohua@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 1/8] clk: rockchip: Staticize file-scope declarations
+Date: Wed, 08 Apr 2015 15:22:12 +0200
+Message-id: <1428499339-29569-2-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
+References: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 30, 2015 at 03:20:38PM -0300, Fabio Estevam wrote:
-> On Thu, Apr 30, 2015 at 2:45 PM, Sebastian Hesselbarth
-> <sebastian.hesselbarth@gmail.com> wrote:
-> 
-> >          * property silabs,pll-source : <num src>, [<..>]
-> >          * allow to selectively set pll source
-> > @@ -1328,8 +1321,17 @@ static int si5351_i2c_probe(struct i2c_client *client,
-> >         i2c_set_clientdata(client, drvdata);
-> >         drvdata->client = client;
-> >         drvdata->variant = variant;
-> > -       drvdata->pxtal = pdata->clk_xtal;
-> > -       drvdata->pclkin = pdata->clk_clkin;
-> > +       drvdata->pxtal = devm_clk_get(&client->dev, "xtal");
-> > +       drvdata->pclkin = devm_clk_get(&client->dev, "clkin");
-> > +
-> > +       if (PTR_ERR(drvdata->pxtal) == -EPROBE_DEFER ||
-> > +           PTR_ERR(drvdata->pclkin) == -EPROBE_DEFER)
-> > +               return -EPROBE_DEFER;
-> > +
-> > +       if (IS_ERR(drvdata->pxtal) && IS_ERR(drvdata->pclkin)) {
-> 
-> Don't you want || instead?
+Add missing static to local (file-scope only) symbols.
 
-I doubt it. He is checking if both are not available.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/rockchip/clk-rk3188.c | 2 +-
+ drivers/clk/rockchip/clk-rk3288.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-The driver could work with only one of them.
-
-If you use || then you assume to need both.
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index 7eb684c50d42..d045a6ae4e5f 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -26,7 +26,7 @@ enum rk3188_plls {
+ 	apll, cpll, dpll, gpll,
+ };
+ 
+-struct rockchip_pll_rate_table rk3188_pll_rates[] = {
++static struct rockchip_pll_rate_table rk3188_pll_rates[] = {
+ 	RK3066_PLL_RATE(2208000000, 1, 92, 1),
+ 	RK3066_PLL_RATE(2184000000, 1, 91, 1),
+ 	RK3066_PLL_RATE(2160000000, 1, 90, 1),
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 05d7a0bc0599..fabc4d63a100 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -27,7 +27,7 @@ enum rk3288_plls {
+ 	apll, dpll, cpll, gpll, npll,
+ };
+ 
+-struct rockchip_pll_rate_table rk3288_pll_rates[] = {
++static struct rockchip_pll_rate_table rk3288_pll_rates[] = {
+ 	RK3066_PLL_RATE(2208000000, 1, 92, 1),
+ 	RK3066_PLL_RATE(2184000000, 1, 91, 1),
+ 	RK3066_PLL_RATE(2160000000, 1, 90, 1),
+-- 
+1.9.1
