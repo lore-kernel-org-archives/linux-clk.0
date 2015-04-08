@@ -1,157 +1,53 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Thu, 30 Apr 2015 13:11:42 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Rhyland Klein <rklein@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>, Stephen Warren
-	<swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 13/19] clk: tegra: pll: Add support for PLLMB for T210
-Message-ID: <20150430101142.GT3097@tbergstrom-lnx.Nvidia.com>
-References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
- <1430328109-537-14-git-send-email-rklein@nvidia.com>
+Return-Path: <javier.martinez@collabora.co.uk>
+Message-ID: <5524F229.1060802@collabora.co.uk>
+Date: Wed, 08 Apr 2015 11:17:29 +0200
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <1430328109-537-14-git-send-email-rklein@nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@linaro.org>
+CC: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+ Olof Johansson <olof@lixom.net>,
+ Doug Anderson <dianders@chromium.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>,
+ Abhilash Kesavan <kesavan.abhilash@gmail.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] clk: exynos5420: Restore GATE_BUS_TOP on suspend
+References: <1428471252-15872-1-git-send-email-javier.martinez@collabora.co.uk> <5524EFA8.6000800@samsung.com>
+In-Reply-To: <5524EFA8.6000800@samsung.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 29, 2015 at 01:21:43PM -0400, Rhyland Klein wrote:
-> Tegra210 SoC's have 2 PLLS for memory usage. Add plumbing to register
-> and handle PLLMB.
+Hello Sylwester,
+
+On 04/08/2015 11:06 AM, Sylwester Nawrocki wrote:
+>> 
+>> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+>> index 07d666cc6a29..bea4a173eef5 100644
+>> --- a/drivers/clk/samsung/clk-exynos5420.c
+>> +++ b/drivers/clk/samsung/clk-exynos5420.c
+>> @@ -271,6 +271,7 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
+>>  	{ .offset = SRC_MASK_PERIC0,		.value = 0x11111110, },
+>>  	{ .offset = SRC_MASK_PERIC1,		.value = 0x11111100, },
+>>  	{ .offset = SRC_MASK_ISP,		.value = 0x11111000, },
+>> +	{ .offset = GATE_BUS_TOP,		.value = 0xffffffff, },
+>>  	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
+>>  	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
+>>  };
+> 
+> I'm going to tag this patch for inclusion in the stable tree and send
+> it to Mike or Stephen with other clk/samsung fixes after v4.1-rc1 is
+> released.
+> 
+> Mike/Stephen, if you're willing to take this patch earlier here is my:
+> 
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > 
 
-Seems my comments to v1 never made it to the list :/ trying again:
+Great, thanks a lot for your help!
 
-I think this would be better rephrased as:
-
-'Tegra210 SoC's have 2 PLLs for memory usage. Add plumbing to register and
-handle PLLMB.'
-
-The whole point of PLLMB is exactly that it allows switching between 2 PLLMs
-without having to use an intermediate backup PLL, because the PLL has to have
-locked before we can switch to it.
-
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
-> v2:
->   - Fixed commit description as suggested.
-> 
->  drivers/clk/tegra/clk-pll.c |   46 +++++++++++++++++++++++++++++++++++++++----
->  drivers/clk/tegra/clk.h     |    9 +++++++++
->  2 files changed, 51 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index c938bdc9415f..edc388f02a66 100644
-> --- a/drivers/clk/tegra/clk-pll.c
-> +++ b/drivers/clk/tegra/clk-pll.c
-> @@ -547,7 +547,7 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
->  	struct tegra_clk_pll_params *params = pll->params;
->  	struct div_nmp *div_nmp = params->div_nmp;
->  
-> -	if ((params->flags & TEGRA_PLLM) &&
-> +	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
->  		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
->  			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
->  		val = pll_override_readl(params->pmc_divp_reg, pll);
-> @@ -584,7 +584,7 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
->  	struct tegra_clk_pll_params *params = pll->params;
->  	struct div_nmp *div_nmp = params->div_nmp;
->  
-> -	if ((params->flags & TEGRA_PLLM) &&
-> +	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
->  		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
->  			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
->  		val = pll_override_readl(params->pmc_divp_reg, pll);
-> @@ -730,8 +730,8 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
->  	if (pll->params->flags & TEGRA_PLL_FIXED)
->  		return pll->params->fixed_rate;
->  
-> -	/* PLLM is used for memory; we do not change rate */
-> -	if (pll->params->flags & TEGRA_PLLM)
-> +	/* PLLM/MB are used for memory; we do not change rate */
-> +	if (pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB))
->  		return __clk_get_rate(hw->clk);
->  
->  	if (_get_table_rate(hw, &cfg, rate, *prate) &&
-> @@ -2310,4 +2310,42 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
->  
->  	return clk;
->  }
-> +
-> +struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
-> +			  void __iomem *clk_base, void __iomem *pmc,
-> +			  unsigned long flags,
-> +			  struct tegra_clk_pll_params *pll_params,
-> +			  spinlock_t *lock)
-> +{
-> +	struct tegra_clk_pll *pll;
-> +	struct clk *clk, *parent;
-> +	unsigned long parent_rate;
-> +
-> +	if (!pll_params->pdiv_tohw)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	parent = __clk_lookup(parent_name);
-> +	if (!parent) {
-> +		WARN(1, "parent clk %s of %s must be registered first\n",
-> +			name, parent_name);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	parent_rate = __clk_get_rate(parent);
-> +
-> +	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
-> +
-> +	pll_params->flags |= TEGRA_PLL_BYPASS;
-> +	pll_params->flags |= TEGRA_PLLMB;
-> +	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-> +	if (IS_ERR(pll))
-> +		return ERR_CAST(pll);
-> +
-> +	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
-> +				      &tegra_clk_pllm_ops);
-> +	if (IS_ERR(clk))
-> +		kfree(pll);
-> +
-> +	return clk;
-> +}
->  #endif
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index 26e31580dc9e..9e37defb063f 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -201,6 +201,8 @@ struct div_nmp {
->   * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
->   * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
->   *     it may be more accurate (especially if SDM present)
-> + * TEGRA_PLLMB - PLLMB has should be treated similar to PLLM. This
-> + *     flag indicated that it is PLLMB.
->   */
->  struct tegra_clk_pll_params {
->  	unsigned long	input_min;
-> @@ -260,6 +262,7 @@ struct tegra_clk_pll_params {
->  #define TEGRA_PLL_BYPASS BIT(9)
->  #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
->  #define TEGRA_MDIV_NEW BIT(11)
-> +#define TEGRA_PLLMB BIT(12)
->  
->  /**
->   * struct tegra_clk_pll - Tegra PLL clock
-> @@ -366,6 +369,12 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
->  			   struct tegra_clk_pll_params *pll_params,
->  			   spinlock_t *lock);
->  
-> +struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
-> +			   void __iomem *clk_base, void __iomem *pmc,
-> +			   unsigned long flags,
-> +			   struct tegra_clk_pll_params *pll_params,
-> +			   spinlock_t *lock);
-> +
->  /**
->   * struct tegra_clk_pll_out - PLL divider down clock
->   *
-> -- 
-> 1.7.9.5
-> 
+Best regards,
+Javier
