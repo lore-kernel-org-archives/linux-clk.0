@@ -1,74 +1,88 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 30 Apr 2015 17:19:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@linaro.org, dianders@chromium.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Alex Elder <elder@linaro.org>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Thu, 9 Apr 2015 12:19:48 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Barry Song <baohua@kernel.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
 	Stephen Warren <swarren@wwwdotorg.org>,
-	Max Filippov <jcmvbkbc@gmail.com>, kernel@pengutronix.de,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Chao Xie <chao.xie@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Georgi Djakov <georgi.djakov@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Barry Song <baohua@kernel.org>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Viresh Kumar <viresh.linux@gmail.com>,
-	Gabriel FERNANDEZ <gabriel.fernandez@st.com>, emilio@elopez.com.ar,
 	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
-Message-ID: <20150501001901.GC32407@codeaurora.org>
-References: <1429735986-18592-1-git-send-email-heiko@sntech.de>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Ralf Baechle <ralf@linux-mips.org>, linux-kernel@vger.kernel.org,
+	Max Filippov <jcmvbkbc@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+	linux-samsung-soc@vger.kernel.org,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	linux-tegra@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/8] clk: tegra: Fix duplicate const for parent names
+Message-ID: <20150409101947.GM12103@ulmo>
+References: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
+ <1428499339-29569-5-git-send-email-k.kozlowski@samsung.com>
+ <20150409100036.GK12103@ulmo>
+ <CAJKOXPd4KsZ-pLDUtyWwyJviZyFWQKVLTVpW_6_Yye2o=3xy0g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1429735986-18592-1-git-send-email-heiko@sntech.de>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="L/bWm/e7/ricERqM"
+In-Reply-To: <CAJKOXPd4KsZ-pLDUtyWwyJviZyFWQKVLTVpW_6_Yye2o=3xy0g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/22, Heiko Stuebner wrote:
-> Using orphan clocks can introduce strange behaviour as they don't have
-> rate information at all and also of course don't track 
-> 
-> This v2/v3 takes into account suggestions from Stephen Boyd to not try to
-> walk the clock tree at runtime but instead keep track of orphan states
-> on clock tree changes and making it mandatory for everybody from the
-> start as orphaned clocks should not be used at all.
-> 
-> 
-> This fixes an issue on most rk3288 platforms, where some soc-clocks
-> are supplied by a 32khz clock from an external i2c-chip which often
-> is only probed later in the boot process and maybe even after the
-> drivers using these soc-clocks like the tsadc temperature sensor.
-> In this case the driver using the clock should of course defer probing
-> until the clock is actually usable.
-> 
-> 
-> As this changes the behaviour for orphan clocks, it would of course
-> benefit from more testing than on my Rockchip boards. To keep the
-> recipent-list reasonable and not spam to much I selected one (the topmost)
-> from the get_maintainer output of each drivers/clk entry.
-> Hopefully some will provide Tested-by-tags :-)
-> 
 
-<grumble> I don't see any Tested-by: tags yet </grumble>. I've
-put these two patches on a separate branch "defer-orphans" and
-pushed it to clk-next so we can give it some more exposure.
+--L/bWm/e7/ricERqM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Unfortunately this doesn't solve the orphan problem for non-OF
-providers. What if we did the orphan check in __clk_create_clk()
-instead and returned an error pointer for orphans? I suspect that
-will solve all cases, right?
+On Thu, Apr 09, 2015 at 12:07:59PM +0200, Krzysztof Kozlowski wrote:
+> 2015-04-09 12:00 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+> > On Wed, Apr 08, 2015 at 03:22:15PM +0200, Krzysztof Kozlowski wrote:
+> >> Replace duplicated const keyword for 'emc_parent_clk_names' with proper
+> >> array of const pointers to const strings.
+> >>
+> >> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> >> ---
+> >>  drivers/clk/tegra/clk-emc.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > This would probably better go in via the Tegra tree since the patch that
+> > contains this has only made it to linux-next.
+> >
+> > Stephen, Mike, any objections to me taking this?
+>=20
+> Applying this without the change for const-ness of parent_names (patch
+> by Sascha Hauer sent before mine [1]) would introduce a warning -
+> assign of const to non-const. Any idea to solve it? Immutable branch?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Right, I had missed that. Immutable branch would work, though perhaps
+it'd be easier to just defer this until after v4.1-rc1. The warning
+shouldn't happen if we leave out this single patch and apply it later
+on, right?
+
+Alternatively the whole series could be deferred until after v4.1-rc1.
+
+Thierry
+
+--L/bWm/e7/ricERqM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVJlJDAAoJEN0jrNd/PrOhA/4QAJP3X9ep2pBzKwit0uajH0D9
+RQhdOT5HLfdsHrsajslvA0n/XSWlziT56Wbzc4E6BmQNXcGygzI/RnJJi4NQL81i
+839nygLxVzcwRwGcTl/Ihgm4p0N+/EuoiWQekAX5ZFZIMpbN9MfjETVNyHE3rU4+
+SZhIcwr7J9k/mx4sXZoC/GgHDMstM9Oo6hRaJr+RvC0hdrg7aAHgz+Y/y6whRG8r
+1IaDSTnBET18t16t4eAsDyJ96nuITgWp5NEIpjQoaQ4C5AnDYNpnbEV02xVZUx1b
+3WFcQqSuXybAYVt6Ku4fN2h/joOH7+QI9WqabjDnBmlci4fyjlw+GbXOr8NaEyMO
+i3mIQ2ZRk6aEYYKxxtfLIlpcw0ONgvnu+KFtL0+URFqxrXBnm7+Kv/73j65/L+7z
+rPraKUpzEWqcbfOcV+vBsnuaxjgd8jL7YyyAJpokndL0Ig8xDOfs6QAuzssg/fSc
+sXD1S2MabaNmvVkCTLvLZORr7fbAKO4pCm2pqei0GMPLbvIVCkFbyrirRF9v6gM+
+5au8HZCCm7qBxYH+Bu918tY40t8/HJbI+rr+qgE+UsQByNthwACDwgPjPwaejzTW
+q6vgvkHL3/WXLM0fg4R9UjXp6n26CDVJNH0U/Vm8b4hTudEfuIOcXrXdHwD1SEyl
+52woHtlf/Rb1lXK4w2he
+=1GZ5
+-----END PGP SIGNATURE-----
+
+--L/bWm/e7/ricERqM--
