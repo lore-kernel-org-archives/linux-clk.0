@@ -1,120 +1,52 @@
-Return-Path: <wens@mirror2.csie.ntu.edu.tw>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Lee Jones <lee.jones@linaro.org>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 9 Apr 2015 08:23:38 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>,
 	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/5] ARM: dts: sun9i: Add A80 PRCM clocks and reset control nodes
-Date: Fri,  1 May 2015 00:10:05 +0800
-Message-Id: <1430410206-4410-5-git-send-email-wens@csie.org>
-In-Reply-To: <1430410206-4410-1-git-send-email-wens@csie.org>
-References: <1430410206-4410-1-git-send-email-wens@csie.org>
+	kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] clk: versatile: test returned value
+Message-ID: <20150409152338.GA18835@codeaurora.org>
+References: <1428159570-19467-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1428159570-19467-2-git-send-email-Julia.Lawall@lip6.fr>
+ <CACRpkdYU+hN6gEtVzwahGz+B07dqrDzQkTZz2xikGH0dMdYX1Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CACRpkdYU+hN6gEtVzwahGz+B07dqrDzQkTZz2xikGH0dMdYX1Q@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the PRCM clocks and reset controls to the A80 dtsi.
+On 04/09, Linus Walleij wrote:
+> On Sat, Apr 4, 2015 at 4:59 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> 
+> > Put NULL test on the result of the previous call instead on one of its
+> > arguments.  A simplified version of the semantic match that finds this
+> > problem is as follows (http://coccinelle.lip6.fr/):
+> >
+> > // <smpl>
+> > r@
+> > expression *e1;
+> > expression *e2;
+> > identifier f;
+> > statement S1,S2;
+> > @@
+> >
+> > e1 = f(...,e2,...);
+> > (
+> > if (e1 == NULL || ...) S1 else S2
+> > |
+> > *if (e2 == NULL || ...) S1 else S2
+> > )
+> > // </smpl>
+> >
+> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Yep that's a bug:
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> 
 
-The list of apbs clock gates is incomplete. Tests show that bits 0~20
-are mutable. We will need documents from Allwinner to complete the
-support.
+Thanks. Applied to clk-next.
 
-Also update clock and reset phandles for r_uart.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun9i-a80.dtsi | 64 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 63 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
-index d3dece2eea72..f0869ff8006f 100644
---- a/arch/arm/boot/dts/sun9i-a80.dtsi
-+++ b/arch/arm/boot/dts/sun9i-a80.dtsi
-@@ -169,6 +169,14 @@
- 					     "usb_phy2", "usb_hsic_12M";
- 		};
- 
-+		pll3: clk@06000008 {
-+			/* placeholder until implemented */
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-rate = <0>;
-+			clock-output-names = "pll3";
-+		};
-+
- 		pll4: clk@0600000c {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun9i-a80-pll4-clk";
-@@ -751,13 +759,67 @@
- 			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		prcm@08001400 {
-+			compatible = "allwinner,sun9i-a80-prcm";
-+			reg = <0x08001400 0x200>;
-+
-+			cpus_clk: cpus_clk {
-+				compatible = "allwinner,sun9i-a80-cpus-clk";
-+				#clock-cells = <0>;
-+				clocks = <&osc32k>, <&osc24M>, <&pll4>, <&pll3>;
-+				clock-output-names = "cpus";
-+			};
-+
-+			ahbs: ahbs_clk {
-+				compatible = "fixed-factor-clock";
-+				#clock-cells = <0>;
-+				clock-div = <1>;
-+				clock-mult = <1>;
-+				clocks = <&cpus_clk>;
-+				clock-output-names = "ahbs";
-+			};
-+
-+			apbs: apbs_clk {
-+				compatible = "allwinner,sun8i-a23-apb0-clk";
-+				#clock-cells = <0>;
-+				clocks = <&ahbs>;
-+				clock-output-names = "apbs";
-+			};
-+
-+			apbs_gates: apbs_gates_clk {
-+				compatible = "allwinner,sun9i-a80-apbs-gates-clk";
-+				#clock-cells = <1>;
-+				clocks = <&apbs>;
-+				clock-output-names = "apbs_pio", "apbs_ir",
-+						"apbs_timer", "apbs_rsb",
-+						"apbs_uart", "apbs_1wire",
-+						"apbs_i2c0", "apbs_i2c1",
-+						"apbs_ps2_0", "apbs_ps2_1",
-+						"apbs_dma", "apbs_i2s0",
-+						"apbs_i2s1", "apbs_twd";
-+			};
-+
-+			r_ir_clk: r_ir_clk {
-+				#clock-cells = <0>;
-+				compatible = "allwinner,sun4i-a10-mod0-clk";
-+				clocks = <&osc32k>, <&osc24M>;
-+				clock-output-names = "r_ir";
-+			};
-+
-+			apbs_rst: apbs_rst {
-+				compatible = "allwinner,sun6i-a31-clock-reset";
-+				#reset-cells = <1>;
-+			};
-+		};
-+
- 		r_uart: serial@08002800 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x08002800 0x400>;
- 			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&osc24M>;
-+			clocks = <&apbs_gates 4>;
-+			resets = <&apbs_rst 4>;
- 			status = "disabled";
- 		};
- 	};
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
