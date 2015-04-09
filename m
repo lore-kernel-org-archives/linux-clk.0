@@ -1,101 +1,59 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Paul Walmsley <pwalmsley@nvidia.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 09/19] clk: tegra: pll: Add logic for SS
-Date: Fri, 24 Apr 2015 12:47:49 -0400
-Message-ID: <1429894079-25052-10-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
-References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
+Return-Path: <k.kozlowski.k@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Sender: k.kozlowski.k@gmail.com
+In-Reply-To: <20150409101947.GM12103@ulmo>
+References: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
+	<1428499339-29569-5-git-send-email-k.kozlowski@samsung.com>
+	<20150409100036.GK12103@ulmo>
+	<CAJKOXPd4KsZ-pLDUtyWwyJviZyFWQKVLTVpW_6_Yye2o=3xy0g@mail.gmail.com>
+	<20150409101947.GM12103@ulmo>
+Date: Thu, 9 Apr 2015 12:33:16 +0200
+Message-ID: <CAJKOXPfQW-9m7a5S8oRy7dpHLOodvVq44vHV=wVnG8WjOeP_EA@mail.gmail.com>
+Subject: Re: [PATCH 4/8] clk: tegra: Fix duplicate const for parent names
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alexandre Courbot <gnurou@gmail.com>,
+	Barry Song <baohua@kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Mike Turquette <mturquette@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
+	Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+	Ralf Baechle <ralf@linux-mips.org>, linux-kernel@vger.kernel.org,
+	Max Filippov <jcmvbkbc@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-tegra@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bill Huang <bilhuang@nvidia.com>
+2015-04-09 12:19 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+> On Thu, Apr 09, 2015 at 12:07:59PM +0200, Krzysztof Kozlowski wrote:
+>> 2015-04-09 12:00 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+>> > On Wed, Apr 08, 2015 at 03:22:15PM +0200, Krzysztof Kozlowski wrote:
+>> >> Replace duplicated const keyword for 'emc_parent_clk_names' with proper
+>> >> array of const pointers to const strings.
+>> >>
+>> >> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> >> ---
+>> >>  drivers/clk/tegra/clk-emc.c | 2 +-
+>> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> >
+>> > This would probably better go in via the Tegra tree since the patch that
+>> > contains this has only made it to linux-next.
+>> >
+>> > Stephen, Mike, any objections to me taking this?
+>>
+>> Applying this without the change for const-ness of parent_names (patch
+>> by Sascha Hauer sent before mine [1]) would introduce a warning -
+>> assign of const to non-const. Any idea to solve it? Immutable branch?
+>
+> Right, I had missed that. Immutable branch would work, though perhaps
+> it'd be easier to just defer this until after v4.1-rc1. The warning
+> shouldn't happen if we leave out this single patch and apply it later
+> on, right?
 
-Add some logic for Spread Spectrum control. It is used in conjuncture
-with SDM fractional dividers. SSC has to be disabled when we configure
-the divider settings.
+That would be fine with me. I think it would better to apply patches
+now if they are applicable.
 
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c |   25 ++++++++++++++++++++++++-
- drivers/clk/tegra/clk.h     |    2 ++
- 2 files changed, 26 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 31d95cfdf35e..806ae48020e5 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -624,6 +624,26 @@ static void _update_pll_cpcon(struct tegra_clk_pll *pll,
- 	pll_writel_misc(val, pll);
- }
- 
-+static void pll_clk_start_ss(struct tegra_clk_pll *pll)
-+{
-+	if (pll->params->defaults_set && pll->params->ssc_ctrl_en_mask) {
-+		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
-+
-+		val |= pll->params->ssc_ctrl_en_mask;
-+		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
-+	}
-+}
-+
-+static void pll_clk_stop_ss(struct tegra_clk_pll *pll)
-+{
-+	if (pll->params->defaults_set && pll->params->ssc_ctrl_en_mask) {
-+		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
-+
-+		val &= ~pll->params->ssc_ctrl_en_mask;
-+		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
-+	}
-+}
-+
- static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 			unsigned long rate)
- {
-@@ -632,8 +652,10 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 
- 	state = clk_pll_is_enabled(hw);
- 
--	if (state)
-+	if (state) {
-+		pll_clk_stop_ss(pll);
- 		_clk_pll_disable(hw);
-+	}
- 
- 	_update_pll_mnp(pll, cfg);
- 
-@@ -643,6 +665,7 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 	if (state) {
- 		_clk_pll_enable(hw);
- 		ret = clk_pll_wait_for_lock(pll);
-+		pll_clk_start_ss(pll);
- 	}
- 
- 	return ret;
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index ef5754f64622..f3c1f07d5332 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -219,6 +219,8 @@ struct tegra_clk_pll_params {
- 	u32		sdm_din_mask;
- 	u32		sdm_ctrl_reg;
- 	u32		sdm_ctrl_en_mask;
-+	u32		ssc_ctrl_reg;
-+	u32		ssc_ctrl_en_mask;
- 	u32		aux_reg;
- 	u32		dyn_ramp_reg;
- 	u32		ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
--- 
-1.7.9.5
+Best regards,
+Krzysztof
