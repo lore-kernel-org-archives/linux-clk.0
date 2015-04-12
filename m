@@ -1,32 +1,42 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 30 Apr 2015 18:23:44 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>,
-	Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: at91: Constify irq_domain_ops
-Message-ID: <20150501012344.GH32407@codeaurora.org>
-References: <1430139158-3919-1-git-send-email-k.kozlowski.k@gmail.com>
- <20150427151240.14cb4a0d@bbrezillon>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: dianders@chromium.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux@arm.linux.org.uk
+Subject: [PATCH v2 0/2] clk: improve handling of orphan clocks
+Date: Sun, 12 Apr 2015 13:36:30 +0200
+Message-ID: <75204537.lSvovFhEiG@diego>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20150427151240.14cb4a0d@bbrezillon>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/27, Boris Brezillon wrote:
-> On Mon, 27 Apr 2015 21:52:38 +0900
-> Krzysztof Kozlowski <k.kozlowski.k@gmail.com> wrote:
-> 
-> > The irq_domain_ops are not modified by the driver and the irqdomain core
-> > code accepts pointer to a const data.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-> 
-> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> 
+Using orphan clocks can introduce strange behaviour as they don't have
+rate information at all and also of course don't track
 
-Thanks. Applied to clk-next.
+This v2 takes into account suggestions from Stephen Boyd to not try to
+walk the clock tree at runtime but instead keep track of orphan states
+on clock tree changes and making it mandatory for everybody from the
+start as orphan clocks should not be used at all.
+
+
+This fixes an issue on most rk3288 platforms, where some soc-clocks
+are supplied by a 32khz clock from an external i2c-chip which often
+is only probed later in the boot process and maybe even after the
+drivers using these soc-clocks like the tsadc temperature sensor.
+In this case the driver using the clock should of course defer probing
+until the clock is actually usable.
+
+
+changes since v1:
+- track orphan status on clock tree changes instead of walking the
+  tree on clk_get operations
+- make get-deferals mandatory for everybody
+
+Heiko Stuebner (2):
+  clk: track the orphan status of clocks and their children
+  clk: prevent orphan clocks from being used
+
+ drivers/clk/clk.c | 49 ++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 46 insertions(+), 3 deletions(-)
+
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
