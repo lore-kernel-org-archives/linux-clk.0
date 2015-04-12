@@ -1,63 +1,102 @@
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Return-Path: <sebastian.hesselbarth@gmail.com>
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Michael Welling <mwelling@ieee.org>,
-	Russell King <rmk+linux@arm.linux.org.uk>,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] clk: si5351: Mention clock-names in the binding documentation
-Date: Thu, 30 Apr 2015 19:45:51 +0200
-Message-Id: <1430415954-29517-2-git-send-email-sebastian.hesselbarth@gmail.com>
-In-Reply-To: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
-References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: dianders@chromium.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux@arm.linux.org.uk
+Subject: [PATCH v2 1/2] clk: track the orphan status of clocks and their children
+Date: Sun, 12 Apr 2015 13:37:33 +0200
+Message-ID: <2713774.ah3QzH8epf@diego>
+In-Reply-To: <75204537.lSvovFhEiG@diego>
+References: <75204537.lSvovFhEiG@diego>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Since the introduction of clk-si5351 the way we should deal with DT provided
-clocks has changed from indexed to named clock phandles. Amend the binding
-documentation to reflect named clock phandles by clock-names property.
+While children of orphan clocks are not carried in the orphan-list itself,
+they're nevertheless orphans in their own right as they also don't have an
+input-rate available. To ease tracking if a clock is an orphan or has an
+orphan in its parent path introduce an orphan field into struct clk and
+update it and the fields in child-clocks when a clock gets added or removed
+from the orphan-list.
 
-Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jean-Francois Moine <moinejf@free.fr>
-Cc: Michael Welling <mwelling@ieee.org>
-Cc: Russell King <rmk+linux@arm.linux.org.uk>
-Cc: devicetree@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- Documentation/devicetree/bindings/clock/silabs,si5351.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/clk.c | 33 ++++++++++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.txt b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-index c40711e8e8f7..28b28309f535 100644
---- a/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-+++ b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-@@ -17,7 +17,8 @@ Required properties:
- - #clock-cells: from common clock binding; shall be set to 1.
- - clocks: from common clock binding; list of parent clock
-   handles, shall be xtal reference clock or xtal and clkin for
--  si5351c only.
-+  si5351c only. Corresponding clock input names are "xtal" and
-+  "clkin" respectively.
- - #address-cells: shall be set to 1.
- - #size-cells: shall be set to 0.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f85c8e2..a9fa5ab 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -62,6 +62,7 @@ struct clk_core {
+ 	struct clk_core		*new_parent;
+ 	struct clk_core		*new_child;
+ 	unsigned long		flags;
++	bool			orphan;
+ 	unsigned int		enable_count;
+ 	unsigned int		prepare_count;
+ 	unsigned long		accuracy;
+@@ -1433,18 +1434,40 @@ static int clk_fetch_parent_index(struct clk_core *clk,
+ 	return -EINVAL;
+ }
  
-@@ -71,6 +72,7 @@ i2c-master-node {
++/*
++ * Update the orphan status of @clk and all its children.
++ */
++static void clk_update_orphan_status(struct clk_core *clk, int is_orphan)
++{
++	struct clk_core *child;
++
++	clk->orphan = is_orphan;
++
++	hlist_for_each_entry(child, &clk->children, child_node)
++		clk_update_orphan_status(child, is_orphan);
++}
++
+ static void clk_reparent(struct clk_core *clk, struct clk_core *new_parent)
+ {
++	bool was_orphan = clk->orphan;
++
+ 	hlist_del(&clk->child_node);
  
- 		/* connect xtal input to 25MHz reference */
- 		clocks = <&ref25>;
-+		clock-names = "xtal";
+ 	if (new_parent) {
++		bool becomes_orphan = new_parent->orphan;
++
+ 		/* avoid duplicate POST_RATE_CHANGE notifications */
+ 		if (new_parent->new_child == clk)
+ 			new_parent->new_child = NULL;
  
- 		/* connect xtal input as source of pll0 and pll1 */
- 		silabs,pll-source = <0 0>, <1 0>;
+ 		hlist_add_head(&clk->child_node, &new_parent->children);
++
++		if (was_orphan != becomes_orphan)
++			clk_update_orphan_status(clk, becomes_orphan);
+ 	} else {
+ 		hlist_add_head(&clk->child_node, &clk_orphan_list);
++		if (!was_orphan)
++			clk_update_orphan_status(clk, 1);
+ 	}
+ 
+ 	clk->parent = new_parent;
+@@ -2348,13 +2371,17 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
+ 	 * clocks and re-parent any that are children of the clock currently
+ 	 * being clk_init'd.
+ 	 */
+-	if (clk->parent)
++	if (clk->parent) {
+ 		hlist_add_head(&clk->child_node,
+ 				&clk->parent->children);
+-	else if (clk->flags & CLK_IS_ROOT)
++		clk->orphan = clk->parent->orphan;
++	} else if (clk->flags & CLK_IS_ROOT) {
+ 		hlist_add_head(&clk->child_node, &clk_root_list);
+-	else
++		clk->orphan = 0;
++	} else {
+ 		hlist_add_head(&clk->child_node, &clk_orphan_list);
++		clk->orphan = 1;
++	}
+ 
+ 	/*
+ 	 * Set clk's accuracy.  The preferred method is to use
 -- 
-2.1.0
+2.1.4
