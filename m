@@ -10,37 +10,128 @@ CC: Mike Turquette <mturquette@linaro.org>,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v2 05/19] clk: tegra: pll: update warning msg
-Date: Wed, 29 Apr 2015 13:21:35 -0400
-Message-ID: <1430328109-537-6-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430328109-537-1-git-send-email-rklein@nvidia.com>
-References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
+Subject: [PATCH] clk: tegra: Fix comments for structure definitions
+Date: Mon, 13 Apr 2015 12:38:17 -0400
+Message-ID: <1428943097-2768-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Swap out the generic WARN_ON with a WARN which gives more
-information about what is happening.
+Some fields moved from the tegra_clk_pll struct to
+the tegra_pll_params struct. Update the struct comments
+to reflect where the fields really are.
 
 Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/tegra/clk-pll.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk.h |   74 +++++++++++++++++++++++------------------------
+ 1 file changed, 37 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 1e1018dd466f..0282d9f4f2d7 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -692,7 +692,8 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 751a97966354..4eae99a4f32e 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -171,6 +171,30 @@ struct div_nmp {
+  * @lock_bit_idx:		Bit index for PLL lock status
+  * @lock_enable_bit_idx:	Bit index to enable PLL lock
+  * @lock_delay:			Delay in us if PLL lock is not used
++ * @freq_table:			array of frequencies supported by PLL
++ * @fixed_rate:			PLL rate if it is fixed
++ * @flags:			PLL flags
++ *
++ * Flags:
++ * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
++ *     PLL locking. If not set it will use lock_delay value to wait.
++ * TEGRA_PLL_HAS_CPCON - This flag indicates that CPCON value needs
++ *     to be programmed to change output frequency of the PLL.
++ * TEGRA_PLL_SET_LFCON - This flag indicates that LFCON value needs
++ *     to be programmed to change output frequency of the PLL.
++ * TEGRA_PLL_SET_DCCON - This flag indicates that DCCON value needs
++ *     to be programmed to change output frequency of the PLL.
++ * TEGRA_PLLU - PLLU has inverted post divider. This flags indicated
++ *     that it is PLLU and invert post divider value.
++ * TEGRA_PLLM - PLLM has additional override settings in PMC. This
++ *     flag indicates that it is PLLM and use override settings.
++ * TEGRA_PLL_FIXED - We are not supposed to change output frequency
++ *     of some plls.
++ * TEGRA_PLLE_CONFIGURE - Configure PLLE when enabling.
++ * TEGRA_PLL_LOCK_MISC - Lock bit is in the misc register instead of the
++ *     base register.
++ * TEGRA_PLL_BYPASS - PLL has bypass bit
++ * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
+  */
+ struct tegra_clk_pll_params {
+ 	unsigned long	input_min;
+@@ -203,38 +227,26 @@ struct tegra_clk_pll_params {
+ 	unsigned long	fixed_rate;
+ };
  
- 	pdiv = _hw_to_p_div(hw, cfg.p);
- 	if (pdiv < 0) {
--		WARN_ON(1);
-+		WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
-+			__clk_get_name(hw->clk), cfg.p);
- 		pdiv = 1;
- 	}
++#define TEGRA_PLL_USE_LOCK BIT(0)
++#define TEGRA_PLL_HAS_CPCON BIT(1)
++#define TEGRA_PLL_SET_LFCON BIT(2)
++#define TEGRA_PLL_SET_DCCON BIT(3)
++#define TEGRA_PLLU BIT(4)
++#define TEGRA_PLLM BIT(5)
++#define TEGRA_PLL_FIXED BIT(6)
++#define TEGRA_PLLE_CONFIGURE BIT(7)
++#define TEGRA_PLL_LOCK_MISC BIT(8)
++#define TEGRA_PLL_BYPASS BIT(9)
++#define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
++
+ /**
+  * struct tegra_clk_pll - Tegra PLL clock
+  *
+  * @hw:		handle between common and hardware-specifix interfaces
+  * @clk_base:	address of CAR controller
+  * @pmc:	address of PMC, required to read override bits
+- * @freq_table:	array of frequencies supported by PLL
+- * @params:	PLL parameters
+- * @flags:	PLL flags
+- * @fixed_rate:	PLL rate if it is fixed
+  * @lock:	register lock
+- *
+- * Flags:
+- * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+- *     PLL locking. If not set it will use lock_delay value to wait.
+- * TEGRA_PLL_HAS_CPCON - This flag indicates that CPCON value needs
+- *     to be programmed to change output frequency of the PLL.
+- * TEGRA_PLL_SET_LFCON - This flag indicates that LFCON value needs
+- *     to be programmed to change output frequency of the PLL.
+- * TEGRA_PLL_SET_DCCON - This flag indicates that DCCON value needs
+- *     to be programmed to change output frequency of the PLL.
+- * TEGRA_PLLU - PLLU has inverted post divider. This flags indicated
+- *     that it is PLLU and invert post divider value.
+- * TEGRA_PLLM - PLLM has additional override settings in PMC. This
+- *     flag indicates that it is PLLM and use override settings.
+- * TEGRA_PLL_FIXED - We are not supposed to change output frequency
+- *     of some plls.
+- * TEGRA_PLLE_CONFIGURE - Configure PLLE when enabling.
+- * TEGRA_PLL_LOCK_MISC - Lock bit is in the misc register instead of the
+- *     base register.
+- * TEGRA_PLL_BYPASS - PLL has bypass bit
+- * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
++ * @params:	PLL parameters
+  */
+ struct tegra_clk_pll {
+ 	struct clk_hw	hw;
+@@ -246,18 +258,6 @@ struct tegra_clk_pll {
  
+ #define to_clk_pll(_hw) container_of(_hw, struct tegra_clk_pll, hw)
+ 
+-#define TEGRA_PLL_USE_LOCK BIT(0)
+-#define TEGRA_PLL_HAS_CPCON BIT(1)
+-#define TEGRA_PLL_SET_LFCON BIT(2)
+-#define TEGRA_PLL_SET_DCCON BIT(3)
+-#define TEGRA_PLLU BIT(4)
+-#define TEGRA_PLLM BIT(5)
+-#define TEGRA_PLL_FIXED BIT(6)
+-#define TEGRA_PLLE_CONFIGURE BIT(7)
+-#define TEGRA_PLL_LOCK_MISC BIT(8)
+-#define TEGRA_PLL_BYPASS BIT(9)
+-#define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
+-
+ extern const struct clk_ops tegra_clk_pll_ops;
+ extern const struct clk_ops tegra_clk_plle_ops;
+ struct clk *tegra_clk_register_pll(const char *name, const char *parent_name,
 -- 
 1.7.9.5
