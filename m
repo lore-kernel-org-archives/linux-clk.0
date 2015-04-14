@@ -1,57 +1,31 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>,
-	Bill Huang <bilhuang@nvidia.com>
-Subject: [PATCH v2 06/19] clk: tegra: pll-params: change misc_reg count from 3 -> 6
-Date: Wed, 29 Apr 2015 13:21:36 -0400
-Message-ID: <1430328109-537-7-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430328109-537-1-git-send-email-rklein@nvidia.com>
-References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
+Return-Path: <valentinrothberg@gmail.com>
+Return-Path: <valentinrothberg@gmail.com>
+Date: Tue, 14 Apr 2015 11:30:28 +0200
+From: Valentin Rothberg <valentinrothberg@gmail.com>
+To: jaswinder.singh@linaro.org
+Cc: andy.green@linaro.org, vincent.yang@socionext.com,
+	nuriya.tetsuya@socionext.com, mturquette@linaro.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>,
+	Andreas Ruprecht <rupran@einserver.de>, stefan.hengelein@fau.de
+Subject: clk: mb86s7x: ARCH_MB86S7X not defined
+Message-ID: <20150414093028.GB29667@station.rsr.lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bill Huang <bilhuang@nvidia.com>
+Hi Jassi,
 
-New SoC's may have more then 3 MISC registers, so bump up the
-array size and use a #define to be more informative about the value.
+your commit 1ccdd04f5365 ("clk: Add clock driver for mb86s7x") is in
+today's Linux next tree.  The clock driver clk-mb86s7x.c is
+conditionally compiled depending on CONFIG_ARCH_MB86S7X.  This option is
+nowhere defined in Kconfig, so that the driver cannot be compiled at its
+current tate.
 
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
----
- drivers/clk/tegra/clk.h |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Is there a patch queued somewhere that adds this feature?
 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 4ea8b5b089cd..03babba1c3b4 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -156,6 +156,8 @@ struct div_nmp {
- 	u8		override_divp_shift;
- };
- 
-+#define MAX_PLL_MISC_REG_COUNT	6
-+
- /**
-  * struct clk_pll_params - PLL parameters
-  *
-@@ -213,7 +215,7 @@ struct tegra_clk_pll_params {
- 	u32		iddq_bit_idx;
- 	u32		aux_reg;
- 	u32		dyn_ramp_reg;
--	u32		ext_misc_reg[3];
-+	u32		ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
- 	u32		pmc_divnm_reg;
- 	u32		pmc_divp_reg;
- 	u32		flags;
--- 
-1.7.9.5
+I detected this issue with ./scripts/checkkconfigsymbols.py by diffing
+yesterday's and today's next tree.
+
+Kind regards,
+ Valentin
