@@ -1,76 +1,207 @@
-Return-Path: <wens@mirror2.csie.ntu.edu.tw>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/5] ARM: sun9i: Add support for PRCM on Allwinner A80 SoC
-Date: Fri,  1 May 2015 00:10:01 +0800
-Message-Id: <1430410206-4410-1-git-send-email-wens@csie.org>
+Return-Path: <Aisheng.Dong@freescale.com>
+From: Dong Aisheng <aisheng.dong@freescale.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@linaro.org>, <shawn.guo@linaro.org>, <b29396@freescale.com>,
+	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
+	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
+Subject: [PATCH RFC v1 5/5] clk: introduce clk_core_enable_lock and clk_core_disable_lock functions
+Date: Wed, 15 Apr 2015 22:26:39 +0800
+Message-ID: <1429107999-24413-6-git-send-email-aisheng.dong@freescale.com>
+In-Reply-To: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
+References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
+Return-Path: aisheng.dong@freescale.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+This can be usefully when clock core wants to enable/disable clocks.
+Then we don't have to convert the struct clk_core to struct clk to call
+clk_enable/clk_disable which is a bit un-align with exist using.
 
-This is v2 of the Allwinner A80 PRCM support series. Thanks to
-Allwinner updating their documents, we can now support the essential
-parts of the PRCM.
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
+---
+ drivers/clk/clk.c | 79 +++++++++++++++++++++++++------------------------------
+ 1 file changed, 36 insertions(+), 43 deletions(-)
 
-This series adds support for the Power Reset and Clock Management
-module on Allwinner's A80 SoC. The PRCM manages clocks and resets
-for the "special" block of peripherals, or the R/RTC block in
-earlier SoCs, as well as power domain and resets for various parts
-of the SoC, such as the 2 processor clusters, the GPU and others.
-
-The special peripherals include a standby processor core, a timer
-block, a watchdog, pin controller, 1 wire interface, PS/2 interface,
-a UART, the RSB controller, a DMA controller, a consumer IR receiver
-block, 2 I2C controllers, and 2 I2S controllers. We do not have
-documents for all the peripherals. Support will be added where
-possible.
-
-The first 2 patches add drivers for new clocks.
-
-The 3rd patch adds a compatible string and associated list of sub-
-devices to the prcm mfd driver.
-
-The 4th patch adds the PRCM device nodes to the A80 dtsi.
-
-The last patch adds some comments regarding the 2 system oscillators.
-
-Changes since v1:
-
-    - Added missing clock gates based on updated documents
-
-    - Added new cpus clock driver based on updated documents
-
-    - Added pll3 clock placeholder
-
-    - Added comments about 24M & 32k oscillators
-
-Regards
-ChenYu
-
-
-Chen-Yu Tsai (5):
-  clk: sunxi: sun6i-apb0: Add support for sun9i A80 apbs gates
-  clk: sunxi: support the cpus (cpu special) clock on the Allwinner A80
-  mfd: sun6i-prcm: Add support for PRCM found on Allwinner A80 SoC
-  ARM: dts: sun9i: Add A80 PRCM clocks and reset control nodes
-  ARM: dts: sun9i: Add TODO comments for the main and low power clocks
-
- Documentation/devicetree/bindings/clock/sunxi.txt  |   2 +
- .../devicetree/bindings/mfd/sun6i-prcm.txt         |   3 +-
- arch/arm/boot/dts/sun9i-a80.dtsi                   |  79 ++++++-
- drivers/clk/sunxi/Makefile                         |   2 +-
- drivers/clk/sunxi/clk-sun6i-apb0-gates.c           |   5 +
- drivers/clk/sunxi/clk-sun9i-cpus.c                 | 243 +++++++++++++++++++++
- drivers/mfd/sun6i-prcm.c                           |  58 +++++
- 7 files changed, 389 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/sunxi/clk-sun9i-cpus.c
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f2470e5..6c481e7 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -48,6 +48,8 @@ static int clk_core_prepare(struct clk_core *clk);
+ static void clk_core_unprepare(struct clk_core *clk);
+ static int clk_core_enable(struct clk_core *clk);
+ static void clk_core_disable(struct clk_core *clk);
++static int clk_core_enable_lock(struct clk_core *clk);
++static void clk_core_disable_lock(struct clk_core *clk);
+ 
+ /***    private data structures    ***/
+ 
+@@ -523,9 +525,7 @@ static void clk_disable_unused_subtree(struct clk_core *clk)
+ 
+ 	if (clk->flags & CLK_SET_PARENT_ON && parent) {
+ 		clk_core_prepare(parent->core);
+-		flags = clk_enable_lock();
+-		clk_core_enable(parent->core);
+-		clk_enable_unlock(flags);
++		clk_core_enable_lock(parent->core);
+ 	}
+ 
+ 	flags = clk_enable_lock();
+@@ -553,9 +553,7 @@ static void clk_disable_unused_subtree(struct clk_core *clk)
+ unlock_out:
+ 	clk_enable_unlock(flags);
+ 	if (clk->flags & CLK_SET_PARENT_ON && parent) {
+-		flags = clk_enable_lock();
+-		clk_core_disable(parent->core);
+-		clk_enable_unlock(flags);
++		clk_core_disable_lock(parent->core);
+ 		clk_core_unprepare(parent->core);
+ 	}
+ }
+@@ -1050,6 +1048,15 @@ static void clk_core_disable(struct clk_core *clk)
+ 	clk_core_disable(clk->parent);
+ }
+ 
++static void clk_core_disable_lock(struct clk_core *clk)
++{
++	unsigned long flags;
++
++	flags = clk_enable_lock();
++	clk_core_disable(clk);
++	clk_enable_unlock(flags);
++}
++
+ /**
+  * clk_disable - gate a clock
+  * @clk: the clk being gated
+@@ -1108,6 +1115,18 @@ static int clk_core_enable(struct clk_core *clk)
+ 	return 0;
+ }
+ 
++static int clk_core_enable_lock(struct clk_core *clk)
++{
++	unsigned long flags;
++	int ret;
++
++	flags = clk_enable_lock();
++	ret = clk_core_enable(clk);
++	clk_enable_unlock(flags);
++
++	return ret;
++}
++
+ /**
+  * clk_enable - ungate a clock
+  * @clk: the clk being ungated
+@@ -1489,20 +1508,13 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *clk,
+ 	 */
+ 	if (clk->prepare_count || clk->flags & CLK_SET_PARENT_ON) {
+ 		clk_core_prepare(parent);
+-		flags = clk_enable_lock();
+-		clk_core_enable(parent);
+-		clk_enable_unlock(flags);
++		clk_core_enable_lock(parent);
+ 
+ 		if (clk->prepare_count) {
+-			flags = clk_enable_lock();
+-			clk_core_enable(clk);
+-			clk_enable_unlock(flags);
++			clk_core_enable_lock(clk);
+ 		} else {
+-
+ 			clk_core_prepare(old_parent);
+-			flags = clk_enable_lock();
+-			clk_core_enable(old_parent);
+-			clk_enable_unlock(flags);
++			clk_core_enable_lock(old_parent);
+ 		}
+ 	}
+ 
+@@ -1518,26 +1530,18 @@ static void __clk_set_parent_after(struct clk_core *clk,
+ 				   struct clk_core *parent,
+ 				   struct clk_core *old_parent)
+ {
+-	unsigned long flags;
+-
+ 	/*
+ 	 * Finish the migration of prepare state and undo the changes done
+ 	 * for preventing a race with clk_enable().
+ 	 */
+ 	if (clk->prepare_count || clk->flags & CLK_SET_PARENT_ON) {
+-		flags = clk_enable_lock();
+-		clk_core_disable(old_parent);
+-		clk_enable_unlock(flags);
++		clk_core_disable_lock(old_parent);
+ 		clk_core_unprepare(old_parent);
+ 
+ 		if (clk->prepare_count) {
+-			flags = clk_enable_lock();
+-			clk_core_disable(clk);
+-			clk_enable_unlock(flags);
++			clk_core_disable_lock(clk);
+ 		} else {
+-			flags = clk_enable_lock();
+-			clk_core_disable(parent);
+-			clk_enable_unlock(flags);
++			clk_core_disable_lock(parent);
+ 			clk_core_unprepare(parent);
+ 		}
+ 	}
+@@ -1566,19 +1570,13 @@ static int __clk_set_parent(struct clk_core *clk, struct clk_core *parent,
+ 		clk_enable_unlock(flags);
+ 
+ 		if (clk->prepare_count || clk->flags & CLK_SET_PARENT_ON) {
+-			flags = clk_enable_lock();
+-			clk_core_disable(parent);
+-			clk_enable_unlock(flags);
++			clk_core_disable_lock(parent);
+ 			clk_core_unprepare(parent);
+ 
+ 			if (clk->prepare_count) {
+-				flags = clk_enable_lock();
+-				clk_core_disable(clk);
+-				clk_enable_unlock(flags);
++				clk_core_disable_lock(clk);
+ 			} else {
+-				flags = clk_enable_lock();
+-				clk_core_disable(old_parent);
+-				clk_enable_unlock(flags);
++				clk_core_disable_lock(old_parent);
+ 				clk_core_unprepare(old_parent);
+ 			}
+ 
+@@ -1798,7 +1796,6 @@ static void clk_change_rate(struct clk_core *clk)
+ 	bool skip_set_rate = false;
+ 	struct clk_core *old_parent;
+ 	struct clk_core *parent = NULL;
+-	unsigned long flags;
+ 
+ 	old_rate = clk->rate;
+ 
+@@ -1831,9 +1828,7 @@ static void clk_change_rate(struct clk_core *clk)
+ 
+ 	if (clk->flags & CLK_SET_PARENT_ON && parent) {
+ 		clk_core_prepare(parent);
+-		flags = clk_enable_lock();
+-		clk_core_enable(parent);
+-		clk_enable_unlock(flags);
++		clk_core_enable_lock(parent);
+ 	}
+ 
+ 	if (!skip_set_rate && clk->ops->set_rate)
+@@ -1844,9 +1839,7 @@ static void clk_change_rate(struct clk_core *clk)
+ 	clk->rate = clk_recalc(clk, best_parent_rate);
+ 
+ 	if (clk->flags & CLK_SET_PARENT_ON && parent) {
+-		flags = clk_enable_lock();
+-		clk_core_disable(parent);
+-		clk_enable_unlock(flags);
++		clk_core_disable_lock(parent);
+ 		clk_core_unprepare(parent);
+ 	}
+ 
 -- 
-2.1.4
+1.9.1
