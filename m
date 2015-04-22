@@ -1,90 +1,154 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>,
- Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- Barry Song <baohua@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-tegra@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 6/8] clk: sirf: Constify parent names in clock init data
-Date: Wed, 08 Apr 2015 15:22:17 +0200
-Message-id: <1428499339-29569-7-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
-References: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@linaro.org, sboyd@codeaurora.org
+Cc: dianders@chromium.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Alex Elder <elder@linaro.org>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Max Filippov <jcmvbkbc@gmail.com>, kernel@pengutronix.de,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Chao Xie <chao.xie@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Georgi Djakov <georgi.djakov@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Barry Song <baohua@kernel.org>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Viresh Kumar <viresh.linux@gmail.com>,
+	Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
+	emilio@elopez.com.ar, Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Michal Simek <michal.simek@xilinx.com>
+Subject: [PATCH v3 1/2] clk: track the orphan status of clocks and their children
+Date: Wed, 22 Apr 2015 22:53:05 +0200
+Message-Id: <1429735986-18592-2-git-send-email-heiko@sntech.de>
+In-Reply-To: <1429735986-18592-1-git-send-email-heiko@sntech.de>
+References: <1429735986-18592-1-git-send-email-heiko@sntech.de>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The array of parent names can be made as array of const pointers to
-const strings.
+While children of orphan clocks are not carried in the orphan-list itself,
+they're nevertheless orphans in their own right as they also don't have an
+input-rate available. To ease tracking if a clock is an orphan or has an
+orphan in its parent path introduce an orphan field into struct clk and
+update it and the fields in child-clocks when a clock gets added or removed
+from the orphan-list.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Alex Elder <elder@linaro.org>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: kernel@pengutronix.de
+Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>
+Cc: Chao Xie <chao.xie@marvell.com>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Andrew Bresticker <abrestic@chromium.org>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Barry Song <baohua@kernel.org>
+Cc: Dinh Nguyen <dinguyen@opensource.altera.com>
+Cc: Viresh Kumar <viresh.linux@gmail.com>
+Cc: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+Cc: emilio@elopez.com.ar
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Tero Kristo <t-kristo@ti.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Michal Simek <michal.simek@xilinx.com>
 ---
- drivers/clk/sirf/clk-common.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/clk.c | 33 ++++++++++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sirf/clk-common.c b/drivers/clk/sirf/clk-common.c
-index 37af51c5f213..e9cf5730effe 100644
---- a/drivers/clk/sirf/clk-common.c
-+++ b/drivers/clk/sirf/clk-common.c
-@@ -188,7 +188,7 @@ static struct clk_ops std_pll_ops = {
- 	.set_rate = pll_clk_set_rate,
- };
- 
--static const char *pll_clk_parents[] = {
-+static const char * const pll_clk_parents[] = {
- 	"osc",
- };
- 
-@@ -284,7 +284,7 @@ static struct clk_hw usb_pll_clk_hw = {
-  * clock domains - cpu, mem, sys/io, dsp, gfx
-  */
- 
--static const char *dmn_clk_parents[] = {
-+static const char * const dmn_clk_parents[] = {
- 	"rtc",
- 	"osc",
- 	"pll1",
-@@ -673,7 +673,7 @@ static void std_clk_disable(struct clk_hw *hw)
- 	clkc_writel(val, reg);
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index b2361d4..341904f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -62,6 +62,7 @@ struct clk_core {
+ 	struct clk_core		*new_parent;
+ 	struct clk_core		*new_child;
+ 	unsigned long		flags;
++	bool			orphan;
+ 	unsigned int		enable_count;
+ 	unsigned int		prepare_count;
+ 	unsigned long		accuracy;
+@@ -1401,18 +1402,40 @@ static int clk_fetch_parent_index(struct clk_core *clk,
+ 	return -EINVAL;
  }
  
--static const char *std_clk_io_parents[] = {
-+static const char * const std_clk_io_parents[] = {
- 	"io",
- };
++/*
++ * Update the orphan status of @clk and all its children.
++ */
++static void clk_core_update_orphan_status(struct clk_core *clk, bool is_orphan)
++{
++	struct clk_core *child;
++
++	clk->orphan = is_orphan;
++
++	hlist_for_each_entry(child, &clk->children, child_node)
++		clk_core_update_orphan_status(child, is_orphan);
++}
++
+ static void clk_reparent(struct clk_core *clk, struct clk_core *new_parent)
+ {
++	bool was_orphan = clk->orphan;
++
+ 	hlist_del(&clk->child_node);
  
-@@ -949,7 +949,7 @@ static struct clk_std clk_pulse = {
- 	},
- };
+ 	if (new_parent) {
++		bool becomes_orphan = new_parent->orphan;
++
+ 		/* avoid duplicate POST_RATE_CHANGE notifications */
+ 		if (new_parent->new_child == clk)
+ 			new_parent->new_child = NULL;
  
--static const char *std_clk_dsp_parents[] = {
-+static const char * const std_clk_dsp_parents[] = {
- 	"dsp",
- };
+ 		hlist_add_head(&clk->child_node, &new_parent->children);
++
++		if (was_orphan != becomes_orphan)
++			clk_core_update_orphan_status(clk, becomes_orphan);
+ 	} else {
+ 		hlist_add_head(&clk->child_node, &clk_orphan_list);
++		if (!was_orphan)
++			clk_core_update_orphan_status(clk, true);
+ 	}
  
-@@ -981,7 +981,7 @@ static struct clk_std clk_mf = {
- 	},
- };
+ 	clk->parent = new_parent;
+@@ -2302,13 +2325,17 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
+ 	 * clocks and re-parent any that are children of the clock currently
+ 	 * being clk_init'd.
+ 	 */
+-	if (clk->parent)
++	if (clk->parent) {
+ 		hlist_add_head(&clk->child_node,
+ 				&clk->parent->children);
+-	else if (clk->flags & CLK_IS_ROOT)
++		clk->orphan = clk->parent->orphan;
++	} else if (clk->flags & CLK_IS_ROOT) {
+ 		hlist_add_head(&clk->child_node, &clk_root_list);
+-	else
++		clk->orphan = false;
++	} else {
+ 		hlist_add_head(&clk->child_node, &clk_orphan_list);
++		clk->orphan = true;
++	}
  
--static const char *std_clk_sys_parents[] = {
-+static const char * const std_clk_sys_parents[] = {
- 	"sys",
- };
- 
-@@ -999,7 +999,7 @@ static struct clk_std clk_security = {
- 	},
- };
- 
--static const char *std_clk_usb_parents[] = {
-+static const char * const std_clk_usb_parents[] = {
- 	"usb_pll",
- };
- 
+ 	/*
+ 	 * Set clk's accuracy.  The preferred method is to use
 -- 
-1.9.1
+2.1.4
+
