@@ -1,39 +1,66 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <Aisheng.Dong@freescale.com>
+Date: Wed, 22 Apr 2015 14:12:43 +0800
+From: Dong Aisheng <b29396@freescale.com>
+To: Dong Aisheng <aisheng.dong@freescale.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<sboyd@codeaurora.org>, <mturquette@linaro.org>, <shawn.guo@linaro.org>,
+	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
+	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
+Subject: Re: [PATCH RFC v1 0/5] clk: support clocks which requires parent
+ clock on during operation
+Message-ID: <20150422061240.GA25437@shlinux1.ap.freescale.net>
+References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
 MIME-Version: 1.0
-In-Reply-To: <1430415954-29517-4-git-send-email-sebastian.hesselbarth@gmail.com>
-References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
-	<1430415954-29517-4-git-send-email-sebastian.hesselbarth@gmail.com>
-Date: Thu, 30 Apr 2015 15:20:38 -0300
-Message-ID: <CAOMZO5BYnE2epGrWbnNnaqEt1r6+xoPYWKtjc8w-Ze22aitgXA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] clk: si5351: Do not pass struct clk in platform_data
-From: Fabio Estevam <festevam@gmail.com>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Jean-Francois Moine <moinejf@free.fr>, Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	Michael Welling <mwelling@ieee.org>, Russell King <rmk+linux@arm.linux.org.uk>,
-	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
+Return-Path: b29396@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 30, 2015 at 2:45 PM, Sebastian Hesselbarth
-<sebastian.hesselbarth@gmail.com> wrote:
+On Wed, Apr 15, 2015 at 10:26:34PM +0800, Dong Aisheng wrote:
+> This patch series adds support in clock framework for clocks which operations
+> requires its parent clock is on.
+> 
+> Such clock type is initially met on Freescale i.MX7D platform that all clocks
+> operations, including enable/disable, rate change and re-parent, requires its
+> parent clock on. No sure if any other SoC has the similar clock type.
+> 
+> Current clock core can not support such type of clock well.
+> 
+> This patch introduce a new flag CLK_SET_PARENT_ON to handle this special case
+> in clock core that enable its parent clock firstly for each operation and disable
+> it later after operation complete.
+> 
+> The most special case is for set_parent() operation which requires both parent,
+> old one and new one, to be enabled at the same time during the operation.
+> 
+> Patch 1~3 are minor cleanup & fixes.
+> Patch 4 add CLK_SET_PARENT_ON flags in clock core to support such type clocks
+> Patch 5 show the need of introducing clk_core_enable_lock and
+> 	clk_core_disable_lock to easily use and reduce duplicated code.
+> 	It can be merged into patch 4 if required.
+> 
+> The patch series is based on for-next branch of Michael's git:
+> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+> 
+> Dong Aisheng (5):
+>   clk: change clk_core name of __clk_set_parent_after
+>   clk: add missing lock when call clk_core_enable in clk_set_parent
+>   clk: remove unneeded __clk_enable and __clk_disable
+>   clk: core: add CLK_SET_PARENT_ON flags to support clocks require
+>     parent on
+>   clk: introduce clk_core_enable_lock and clk_core_disable_lock
+>     functions
+> 
 
->          * property silabs,pll-source : <num src>, [<..>]
->          * allow to selectively set pll source
-> @@ -1328,8 +1321,17 @@ static int si5351_i2c_probe(struct i2c_client *client,
->         i2c_set_clientdata(client, drvdata);
->         drvdata->client = client;
->         drvdata->variant = variant;
-> -       drvdata->pxtal = pdata->clk_xtal;
-> -       drvdata->pclkin = pdata->clk_clkin;
-> +       drvdata->pxtal = devm_clk_get(&client->dev, "xtal");
-> +       drvdata->pclkin = devm_clk_get(&client->dev, "clkin");
-> +
-> +       if (PTR_ERR(drvdata->pxtal) == -EPROBE_DEFER ||
-> +           PTR_ERR(drvdata->pclkin) == -EPROBE_DEFER)
-> +               return -EPROBE_DEFER;
-> +
-> +       if (IS_ERR(drvdata->pxtal) && IS_ERR(drvdata->pclkin)) {
+Gentle Ping.
 
-Don't you want || instead?
+Regards
+Dong Aisheng
+
+>  drivers/clk/clk.c            | 112 ++++++++++++++++++++++++++++++++++---------
+>  include/linux/clk-provider.h |   5 ++
+>  2 files changed, 94 insertions(+), 23 deletions(-)
+> 
+> -- 
+> 1.9.1
+> 
