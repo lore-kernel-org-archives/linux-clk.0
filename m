@@ -1,221 +1,140 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Paul Walmsley <pwalmsley@nvidia.com>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 18/19] clk: tegra: Add Super Gen5 Logic
-Date: Fri, 24 Apr 2015 12:47:58 -0400
-Message-ID: <1429894079-25052-19-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
-References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Wed, 22 Apr 2015 12:40:16 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Rhyland Klein <rklein@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>, Stephen Warren
+	<swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: Fix comments for structure definitions
+Message-ID: <20150422094016.GT3097@tbergstrom-lnx.Nvidia.com>
+References: <1428943097-2768-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1428943097-2768-1-git-send-email-rklein@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bill Huang <bilhuang@nvidia.com>
+On Mon, Apr 13, 2015 at 12:38:17PM -0400, Rhyland Klein wrote:
+> Some fields moved from the tegra_clk_pll struct to
+> the tegra_pll_params struct. Update the struct comments
+> to reflect where the fields really are.
+> 
 
-Super clock divider control and clock source mux of Tegra210 has changed
-a little against prior SoCs, this patch adds Gen5 logic to address those
-differences.
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
----
- drivers/clk/tegra/Makefile               |    1 +
- drivers/clk/tegra/clk-tegra-super-gen5.c |  150 ++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk.h                  |    3 +
- 3 files changed, 154 insertions(+)
- create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
-
-diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-index dbc9360e551c..0ba495b852e6 100644
---- a/drivers/clk/tegra/Makefile
-+++ b/drivers/clk/tegra/Makefile
-@@ -11,6 +11,7 @@ obj-y					+= clk-tegra-periph.o
- obj-y					+= clk-tegra-pmc.o
- obj-y					+= clk-tegra-fixed.o
- obj-y					+= clk-tegra-super-gen4.o
-+obj-y					+= clk-tegra-super-gen5.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
- obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
-diff --git a/drivers/clk/tegra/clk-tegra-super-gen5.c b/drivers/clk/tegra/clk-tegra-super-gen5.c
-new file mode 100644
-index 000000000000..c8a117d902a5
---- /dev/null
-+++ b/drivers/clk/tegra/clk-tegra-super-gen5.c
-@@ -0,0 +1,150 @@
-+/*
-+ * Copyright (c) 2015, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/delay.h>
-+#include <linux/export.h>
-+#include <linux/clk/tegra.h>
-+
-+#include "clk.h"
-+#include "clk-id.h"
-+
-+#define PLLX_BASE 0xe0
-+#define PLLX_MISC 0xe4
-+#define PLLX_MISC2 0x514
-+#define PLLX_MISC3 0x518
-+
-+#define CCLKG_BURST_POLICY 0x368
-+#define CCLKLP_BURST_POLICY 0x370
-+#define SCLK_DIVIDER 0x370
-+#define SCLK_BURST_POLICY 0x028
-+#define SYSTEM_CLK_RATE 0x030
-+
-+static DEFINE_SPINLOCK(sysrate_lock);
-+
-+static const char *sclk_parents[] = { "clk_m", "pll_c_out1", "pll_c4_out3",
-+			       "pll_p", "pll_p_out2", "pll_c4_out1",
-+			       "clk_32k", "pll_c4_out2" };
-+
-+static const char *cclk_g_parents[] = { "clk_m", "unused", "clk_32k", "unused",
-+					"pll_p", "pll_p_out4", "unused",
-+					"unused", "pll_x", "unused", "unused",
-+					"unused", "unused", "unused", "unused",
-+					"dfllCPU_out" };
-+
-+static const char *cclk_lp_parents[] = { "clk_m", "unused", "clk_32k", "unused",
-+					"pll_p", "pll_p_out4", "unused",
-+					"unused", "pll_x", "unused", "unused",
-+					"unused", "unused", "unused", "unused",
-+					"dfllCPU_out" };
-+
-+static void __init tegra_sclk_init(void __iomem *clk_base,
-+				struct tegra_clk *tegra_clks)
-+{
-+	struct clk *clk;
-+	struct clk **dt_clk;
-+
-+	/* SCLK_MUX */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_sclk_mux, tegra_clks);
-+	if (dt_clk) {
-+		clk = tegra_clk_register_super_mux("sclk_mux", sclk_parents,
-+						ARRAY_SIZE(sclk_parents),
-+						CLK_SET_RATE_PARENT,
-+						clk_base + SCLK_BURST_POLICY,
-+						0, 4, 0, 0, NULL);
-+		*dt_clk = clk;
-+	}
-+	/* SCLK */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_sclk, tegra_clks);
-+	if (dt_clk) {
-+		clk = clk_register_divider(NULL, "sclk", "sclk_mux", 0,
-+						clk_base + SCLK_DIVIDER, 0, 8,
-+						0, &sysrate_lock);
-+		*dt_clk = clk;
-+	}
-+
-+	/* HCLK */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_hclk, tegra_clks);
-+	if (dt_clk) {
-+		clk = clk_register_divider(NULL, "hclk_div", "sclk", 0,
-+				   clk_base + SYSTEM_CLK_RATE, 4, 2, 0,
-+				   &sysrate_lock);
-+		clk = clk_register_gate(NULL, "hclk", "hclk_div",
-+				CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+				clk_base + SYSTEM_CLK_RATE,
-+				7, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
-+		*dt_clk = clk;
-+	}
-+
-+	/* PCLK */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_pclk, tegra_clks);
-+	if (!dt_clk)
-+		return;
-+
-+	clk = clk_register_divider(NULL, "pclk_div", "hclk", 0,
-+				   clk_base + SYSTEM_CLK_RATE, 0, 2, 0,
-+				   &sysrate_lock);
-+	clk = clk_register_gate(NULL, "pclk", "pclk_div", CLK_SET_RATE_PARENT |
-+				CLK_IGNORE_UNUSED, clk_base + SYSTEM_CLK_RATE,
-+				3, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
-+	*dt_clk = clk;
-+}
-+
-+void __init tegra_super_clk_gen5_init(void __iomem *clk_base,
-+				void __iomem *pmc_base,
-+				struct tegra_clk *tegra_clks,
-+				struct tegra_clk_pll_params *params)
-+{
-+	struct clk *clk;
-+	struct clk **dt_clk;
-+
-+	/* CCLKG */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_cclk_g, tegra_clks);
-+	if (dt_clk) {
-+		clk = tegra_clk_register_super_mux("cclk_g", cclk_g_parents,
-+					ARRAY_SIZE(cclk_g_parents),
-+					CLK_SET_RATE_PARENT,
-+					clk_base + CCLKG_BURST_POLICY,
-+					0, 4, 8, 0, NULL);
-+		*dt_clk = clk;
-+	}
-+
-+	/* CCLKLP */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_cclk_lp, tegra_clks);
-+	if (dt_clk) {
-+		clk = tegra_clk_register_super_mux("cclk_lp", cclk_lp_parents,
-+					ARRAY_SIZE(cclk_lp_parents),
-+					CLK_SET_RATE_PARENT,
-+					clk_base + CCLKLP_BURST_POLICY,
-+					0, 4, 8, 0, NULL);
-+		*dt_clk = clk;
-+	}
-+
-+	tegra_sclk_init(clk_base, tegra_clks);
-+
-+	/* PLLX */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_pll_x, tegra_clks);
-+	if (!dt_clk)
-+		return;
-+
-+	clk = tegra_clk_register_pllxc("pll_x", "pll_ref", clk_base,
-+			pmc_base, CLK_IGNORE_UNUSED, params, NULL);
-+	*dt_clk = clk;
-+}
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 6454c1732dbd..fb12dd0de4cf 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -714,6 +714,9 @@ int tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
- void tegra_super_clk_gen4_init(void __iomem *clk_base,
- 			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
- 			struct tegra_clk_pll_params *pll_params);
-+void tegra_super_clk_gen5_init(void __iomem *clk_base,
-+			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
-+			struct tegra_clk_pll_params *pll_params);
- 
- #ifdef CONFIG_TEGRA_CLK_EMC
- struct clk *tegra_emc_init(struct device_node *np, void __iomem *clk_regs,
--- 
-1.7.9.5
-
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk.h |   74 +++++++++++++++++++++++------------------------
+>  1 file changed, 37 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 751a97966354..4eae99a4f32e 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -171,6 +171,30 @@ struct div_nmp {
+>   * @lock_bit_idx:		Bit index for PLL lock status
+>   * @lock_enable_bit_idx:	Bit index to enable PLL lock
+>   * @lock_delay:			Delay in us if PLL lock is not used
+> + * @freq_table:			array of frequencies supported by PLL
+> + * @fixed_rate:			PLL rate if it is fixed
+> + * @flags:			PLL flags
+> + *
+> + * Flags:
+> + * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+> + *     PLL locking. If not set it will use lock_delay value to wait.
+> + * TEGRA_PLL_HAS_CPCON - This flag indicates that CPCON value needs
+> + *     to be programmed to change output frequency of the PLL.
+> + * TEGRA_PLL_SET_LFCON - This flag indicates that LFCON value needs
+> + *     to be programmed to change output frequency of the PLL.
+> + * TEGRA_PLL_SET_DCCON - This flag indicates that DCCON value needs
+> + *     to be programmed to change output frequency of the PLL.
+> + * TEGRA_PLLU - PLLU has inverted post divider. This flags indicated
+> + *     that it is PLLU and invert post divider value.
+> + * TEGRA_PLLM - PLLM has additional override settings in PMC. This
+> + *     flag indicates that it is PLLM and use override settings.
+> + * TEGRA_PLL_FIXED - We are not supposed to change output frequency
+> + *     of some plls.
+> + * TEGRA_PLLE_CONFIGURE - Configure PLLE when enabling.
+> + * TEGRA_PLL_LOCK_MISC - Lock bit is in the misc register instead of the
+> + *     base register.
+> + * TEGRA_PLL_BYPASS - PLL has bypass bit
+> + * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
+>   */
+>  struct tegra_clk_pll_params {
+>  	unsigned long	input_min;
+> @@ -203,38 +227,26 @@ struct tegra_clk_pll_params {
+>  	unsigned long	fixed_rate;
+>  };
+>  
+> +#define TEGRA_PLL_USE_LOCK BIT(0)
+> +#define TEGRA_PLL_HAS_CPCON BIT(1)
+> +#define TEGRA_PLL_SET_LFCON BIT(2)
+> +#define TEGRA_PLL_SET_DCCON BIT(3)
+> +#define TEGRA_PLLU BIT(4)
+> +#define TEGRA_PLLM BIT(5)
+> +#define TEGRA_PLL_FIXED BIT(6)
+> +#define TEGRA_PLLE_CONFIGURE BIT(7)
+> +#define TEGRA_PLL_LOCK_MISC BIT(8)
+> +#define TEGRA_PLL_BYPASS BIT(9)
+> +#define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
+> +
+>  /**
+>   * struct tegra_clk_pll - Tegra PLL clock
+>   *
+>   * @hw:		handle between common and hardware-specifix interfaces
+>   * @clk_base:	address of CAR controller
+>   * @pmc:	address of PMC, required to read override bits
+> - * @freq_table:	array of frequencies supported by PLL
+> - * @params:	PLL parameters
+> - * @flags:	PLL flags
+> - * @fixed_rate:	PLL rate if it is fixed
+>   * @lock:	register lock
+> - *
+> - * Flags:
+> - * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+> - *     PLL locking. If not set it will use lock_delay value to wait.
+> - * TEGRA_PLL_HAS_CPCON - This flag indicates that CPCON value needs
+> - *     to be programmed to change output frequency of the PLL.
+> - * TEGRA_PLL_SET_LFCON - This flag indicates that LFCON value needs
+> - *     to be programmed to change output frequency of the PLL.
+> - * TEGRA_PLL_SET_DCCON - This flag indicates that DCCON value needs
+> - *     to be programmed to change output frequency of the PLL.
+> - * TEGRA_PLLU - PLLU has inverted post divider. This flags indicated
+> - *     that it is PLLU and invert post divider value.
+> - * TEGRA_PLLM - PLLM has additional override settings in PMC. This
+> - *     flag indicates that it is PLLM and use override settings.
+> - * TEGRA_PLL_FIXED - We are not supposed to change output frequency
+> - *     of some plls.
+> - * TEGRA_PLLE_CONFIGURE - Configure PLLE when enabling.
+> - * TEGRA_PLL_LOCK_MISC - Lock bit is in the misc register instead of the
+> - *     base register.
+> - * TEGRA_PLL_BYPASS - PLL has bypass bit
+> - * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
+> + * @params:	PLL parameters
+>   */
+>  struct tegra_clk_pll {
+>  	struct clk_hw	hw;
+> @@ -246,18 +258,6 @@ struct tegra_clk_pll {
+>  
+>  #define to_clk_pll(_hw) container_of(_hw, struct tegra_clk_pll, hw)
+>  
+> -#define TEGRA_PLL_USE_LOCK BIT(0)
+> -#define TEGRA_PLL_HAS_CPCON BIT(1)
+> -#define TEGRA_PLL_SET_LFCON BIT(2)
+> -#define TEGRA_PLL_SET_DCCON BIT(3)
+> -#define TEGRA_PLLU BIT(4)
+> -#define TEGRA_PLLM BIT(5)
+> -#define TEGRA_PLL_FIXED BIT(6)
+> -#define TEGRA_PLLE_CONFIGURE BIT(7)
+> -#define TEGRA_PLL_LOCK_MISC BIT(8)
+> -#define TEGRA_PLL_BYPASS BIT(9)
+> -#define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
+> -
+>  extern const struct clk_ops tegra_clk_pll_ops;
+>  extern const struct clk_ops tegra_clk_plle_ops;
+>  struct clk *tegra_clk_register_pll(const char *name, const char *parent_name,
+> -- 
+> 1.7.9.5
+> 
