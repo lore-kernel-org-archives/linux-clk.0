@@ -1,46 +1,111 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>,
- Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- Barry Song <baohua@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Alexandre Courbot <gnurou@gmail.com>, linux-mips@linux-mips.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 4/8] clk: tegra: Fix duplicate const for parent names
-Date: Tue, 28 Apr 2015 13:46:19 +0900
-Message-id: <1430196383-9190-5-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
-References: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@linaro.org, sboyd@codeaurora.org
+Cc: dianders@chromium.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Alex Elder <elder@linaro.org>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Max Filippov <jcmvbkbc@gmail.com>, kernel@pengutronix.de,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Chao Xie <chao.xie@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Georgi Djakov <georgi.djakov@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Barry Song <baohua@kernel.org>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Viresh Kumar <viresh.linux@gmail.com>,
+	Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
+	emilio@elopez.com.ar, Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Michal Simek <michal.simek@xilinx.com>
+Subject: [PATCH v3 0/2] clk: improve handling of orphan clocks
+Date: Wed, 22 Apr 2015 22:53:04 +0200
+Message-Id: <1429735986-18592-1-git-send-email-heiko@sntech.de>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace duplicated const keyword for 'emc_parent_clk_names' with proper
-array of const pointers to const strings.
+Using orphan clocks can introduce strange behaviour as they don't have
+rate information at all and also of course don't track 
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/tegra/clk-emc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This v2/v3 takes into account suggestions from Stephen Boyd to not try to
+walk the clock tree at runtime but instead keep track of orphan states
+on clock tree changes and making it mandatory for everybody from the
+start as orphaned clocks should not be used at all.
 
-diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-index 8757feda4a11..59697c61f2f1 100644
---- a/drivers/clk/tegra/clk-emc.c
-+++ b/drivers/clk/tegra/clk-emc.c
-@@ -45,7 +45,7 @@
- #define CLK_SOURCE_EMC_EMC_2X_CLK_SRC(x) (((x) & CLK_SOURCE_EMC_EMC_2X_CLK_SRC_MASK) << \
- 					  CLK_SOURCE_EMC_EMC_2X_CLK_SRC_SHIFT)
- 
--static const char const *emc_parent_clk_names[] = {
-+static const char * const emc_parent_clk_names[] = {
- 	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud",
- 	"pll_c2", "pll_c3", "pll_c_ud"
- };
+
+This fixes an issue on most rk3288 platforms, where some soc-clocks
+are supplied by a 32khz clock from an external i2c-chip which often
+is only probed later in the boot process and maybe even after the
+drivers using these soc-clocks like the tsadc temperature sensor.
+In this case the driver using the clock should of course defer probing
+until the clock is actually usable.
+
+
+As this changes the behaviour for orphan clocks, it would of course
+benefit from more testing than on my Rockchip boards. To keep the
+recipent-list reasonable and not spam to much I selected one (the topmost)
+from the get_maintainer output of each drivers/clk entry.
+Hopefully some will provide Tested-by-tags :-)
+
+
+Thanks
+Heiko
+
+changes since v2:
+adapt to comments from Stephen Boyd
+- rename to clk_core_update_orphan_status
+- use bools instead of 0/1 for the status
+- remove redundant check in clk_is_orphan
+changes since v1:
+- track orphan status on clock tree changes instead of walking the
+  tree on clk_get operations
+- make get-deferals mandatory for everybody
+
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Alex Elder <elder@linaro.org>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: kernel@pengutronix.de
+Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>
+Cc: Chao Xie <chao.xie@marvell.com>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Andrew Bresticker <abrestic@chromium.org>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Barry Song <baohua@kernel.org>
+Cc: Dinh Nguyen <dinguyen@opensource.altera.com>
+Cc: Viresh Kumar <viresh.linux@gmail.com>
+Cc: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+Cc: emilio@elopez.com.ar
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Tero Kristo <t-kristo@ti.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Michal Simek <michal.simek@xilinx.com>
+
+
+Heiko Stuebner (2):
+  clk: track the orphan status of clocks and their children
+  clk: prevent orphan clocks from being used
+
+ drivers/clk/clk.c | 46 +++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 43 insertions(+), 3 deletions(-)
+
 -- 
-1.9.1
+2.1.4
+
