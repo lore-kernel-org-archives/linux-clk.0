@@ -1,35 +1,48 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <55427D83.3060900@codeaurora.org>
-Date: Thu, 30 Apr 2015 12:07:47 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 05/19] clk: tegra: pll: update warning msg
+Date: Fri, 24 Apr 2015 12:47:45 -0400
+Message-ID: <1429894079-25052-6-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
+References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-To: Dong Aisheng <aisheng.dong@freescale.com>, linux-clk@vger.kernel.org
-CC: linux-kernel@vger.kernel.org, mturquette@linaro.org,
- shawn.guo@linaro.org, b29396@freescale.com,
- linux-arm-kernel@lists.infradead.org,
- Ranjani.Vaidyanathan@freescale.com, b20596@freescale.com,
- r64343@freescale.com, b20788@freescale.com
-Subject: Re: [PATCH RFC v1 2/5] clk: add missing lock when call clk_core_enable
- in clk_set_parent
-References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com> <1429107999-24413-3-git-send-email-aisheng.dong@freescale.com>
-In-Reply-To: <1429107999-24413-3-git-send-email-aisheng.dong@freescale.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/15/15 07:26, Dong Aisheng wrote:
-> clk_core_enable is executed without &enable_clock in clk_set_parent function.
-> Adding it to avoid potential race condition issue.
->
-> Fixes: 035a61c314eb ("clk: Make clk API return per-user struct clk instances")
-> Cc: Mike Turquette <mturquette@linaro.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
-> ---
+Swap out the generic WARN_ON with a WARN which gives more
+information about what is happening.
 
-Can you please describe the race condition? From what I can tell there
-is not a race condition here and we've gone around on this part of the
-code before to fix any race conditions.
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index d287df90cfc0..61763c765f4c 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -695,7 +695,8 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 
+ 	pdiv = _hw_to_p_div(hw, cfg.p);
+ 	if (pdiv < 0) {
+-		WARN_ON(1);
++		WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
++			__clk_get_name(hw->clk), cfg.p);
+ 		pdiv = 1;
+ 	}
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
