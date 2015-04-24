@@ -1,59 +1,76 @@
-Return-Path: <wens@mirror2.csie.ntu.edu.tw>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/5] clk: sunxi: sun6i-apb0: Add support for sun9i A80 apbs gates
-Date: Fri,  1 May 2015 00:10:02 +0800
-Message-Id: <1430410206-4410-2-git-send-email-wens@csie.org>
-In-Reply-To: <1430410206-4410-1-git-send-email-wens@csie.org>
-References: <1430410206-4410-1-git-send-email-wens@csie.org>
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 00/19] Tegra210 Clock Support
+Date: Fri, 24 Apr 2015 12:47:40 -0400
+Message-ID: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds support for the PRCM apbs clock gates found on the
-Allwinner A80 SoC.
+This patch series updates the tegra common clock driver and adds
+support for the Tegra210 clocks. The clocks in Tegra210 changed
+significantly in some ways from earlier generations, so to support
+them, we need to extend our base framework a bit and add some new
+features.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
- drivers/clk/sunxi/clk-sun6i-apb0-gates.c          | 5 +++++
- 2 files changed, 6 insertions(+)
+Some patches here also address issues found while adding features
+and other cleanup type work.
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index 4fa11af3d378..2015b2beb957 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -55,6 +55,7 @@ Required properties:
- 	"allwinner,sun9i-a80-apb1-gates-clk" - for the APB1 gates on A80
- 	"allwinner,sun6i-a31-apb2-gates-clk" - for the APB2 gates on A31
- 	"allwinner,sun8i-a23-apb2-gates-clk" - for the APB2 gates on A23
-+	"allwinner,sun9i-a80-apbs-gates-clk" - for the APBS gates on A80
- 	"allwinner,sun5i-a13-mbus-clk" - for the MBUS clock on A13
- 	"allwinner,sun4i-a10-mmc-clk" - for the MMC clock
- 	"allwinner,sun9i-a80-mmc-clk" - for mmc module clocks on A80
-diff --git a/drivers/clk/sunxi/clk-sun6i-apb0-gates.c b/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
-index 64f3e46d383c..ef5560c10447 100644
---- a/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
-+++ b/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
-@@ -29,9 +29,14 @@ static const struct gates_data sun8i_a23_apb0_gates __initconst = {
- 	.mask = {0x5D},
- };
- 
-+static const struct gates_data sun9i_a80_apbs_gates __initconst = {
-+	.mask = {0x1730FF},
-+};
-+
- static const struct of_device_id sun6i_a31_apb0_gates_clk_dt_ids[] = {
- 	{ .compatible = "allwinner,sun6i-a31-apb0-gates-clk", .data = &sun6i_a31_apb0_gates },
- 	{ .compatible = "allwinner,sun8i-a23-apb0-gates-clk", .data = &sun8i_a23_apb0_gates },
-+	{ .compatible = "allwinner,sun9i-a80-apbs-gates-clk", .data = &sun9i_a80_apbs_gates },
- 	{ /* sentinel */ }
- };
- 
+Bill Huang (7):
+  clk: tegra: pll-params: change misc_reg count from 3 -> 6
+  clk: tegra: pll: Add logic for SS
+  clk: tegra: pll: Add code to handle if resets are supported by PLL
+  clk: tegra: pll: Adjust vco_min if SDM present
+  clk: tegra: pll: Add dyn_ramp callback
+  clk: tegra: pll: Add Set_default logic
+  clk: tegra: Add Super Gen5 Logic
+
+Rhyland Klein (12):
+  clk: tegra: Modify tegra_audio_clk_init to accept more plls
+  clk: tegra: periph: add new periph clks and muxes for Tegra210
+  clk: tegra: pll: add tegra_pll_wait_for_lock to clk header
+  clk: tegra: pll: simplify clk_enable_path
+  clk: tegra: pll: update warning msg
+  clk: tegra: pll: Don't unconditionally set LOCK flags
+  clk: tegra: pll: Add logic for handling SDM data
+  clk: tegra: pll: Add logic for out-of-table rates for T210
+  clk: tegra: pll: Add specialized logic for T210
+  clk: tegra: pll: Add support for PLLMB for T210
+  clk: tegra: pll: Fix _pll_ramp_calc_pll logic
+  clk: tegra210: add support for Tegra210 clocks
+
+ .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
+ drivers/clk/tegra/Makefile                         |    2 +
+ drivers/clk/tegra/clk-id.h                         |   61 +-
+ drivers/clk/tegra/clk-pll.c                        |  671 ++++-
+ drivers/clk/tegra/clk-tegra-audio.c                |   25 +-
+ drivers/clk/tegra/clk-tegra-periph.c               |  257 +-
+ drivers/clk/tegra/clk-tegra-super-gen5.c           |  150 ++
+ drivers/clk/tegra/clk-tegra114.c                   |   30 +-
+ drivers/clk/tegra/clk-tegra124.c                   |   31 +-
+ drivers/clk/tegra/clk-tegra20.c                    |   18 +-
+ drivers/clk/tegra/clk-tegra210.c                   | 2704 ++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra30.c                    |   31 +-
+ drivers/clk/tegra/clk.h                            |  103 +-
+ include/dt-bindings/clock/tegra210-car.h           |  401 +++
+ 14 files changed, 4397 insertions(+), 143 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
+ create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
+ create mode 100644 drivers/clk/tegra/clk-tegra210.c
+ create mode 100644 include/dt-bindings/clock/tegra210-car.h
+
 -- 
-2.1.4
+1.7.9.5
