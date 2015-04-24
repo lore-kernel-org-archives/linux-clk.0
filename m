@@ -1,153 +1,432 @@
-Return-Path: <Paul.Burton@imgtec.com>
-From: Paul Burton <paul.burton@imgtec.com>
-To: <linux-mips@linux-mips.org>
-CC: Paul Burton <paul.burton@imgtec.com>, <devicetree@vger.kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, Ian Campbell
-	<ijc+devicetree@hellion.org.uk>, Jason Cooper <jason@lakedaemon.net>, "Jiri
- Slaby" <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>, Lars-Peter
- Clausen <lars@metafoo.de>, <linux-clk@vger.kernel.org>,
-	<linux-serial@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Mike
- Turquette" <mturquette@linaro.org>, Paul Cercueil <paul@crapouillou.net>,
-	Pawel Moll <pawel.moll@arm.com>, Ralf Baechle <ralf@linux-mips.org>, "Rob
- Herring" <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, "Thomas
- Gleixner" <tglx@linutronix.de>
-Subject: [PATCH v4 00/37] JZ4780 & CI20 support
-Date: Fri, 24 Apr 2015 14:17:00 +0100
-Message-ID: <1429881457-16016-1-git-send-email-paul.burton@imgtec.com>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 12/19] clk: tegra: pll: Add specialized logic for T210
+Date: Fri, 24 Apr 2015 12:47:52 -0400
+Message-ID: <1429894079-25052-13-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
+References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This series introduces initial support for the Ingenic JZ4780 SoC and
-the Imagination Technologies MIPS Creator CI20 board which is built
-around it. In the process the existing JZ4740 & qi_lb60 code gains
-initial support for using DeviceTree such that much of the existing
-platform code under arch/mips/jz4740 can be shared.
+On Tegra210 SoC's, the logic to enable several of the plls is different
+from previous generations. Therefore, add registeration functions specific
+to Tegra210 which will handle them appropriately.
 
-The series applies atop next-20150421. Review appreciated, and
-hopefully this can make it in for v4.2.
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c |  332 ++++++++++++++++++++++++++++++++++++++++++-
+ drivers/clk/tegra/clk.h     |   24 ++++
+ 2 files changed, 354 insertions(+), 2 deletions(-)
 
-Thanks,
-    Paul
-
-Paul Burton (37):
-  devicetree/bindings: add Ingenic Semiconductor vendor prefix
-  devicetree/bindings: add Qi Hardware vendor prefix
-  MIPS: JZ4740: introduce CONFIG_MACH_INGENIC
-  MIPS: ingenic: add newer vendor IDs
-  MIPS: JZ4740: require & include DT
-  MIPS: irq_cpu: declare irqchip table entry
-  MIPS: JZ4740: probe CPU interrupt controller via DT
-  MIPS: JZ4740: use generic plat_irq_dispatch
-  MIPS: JZ4740: move arch_init_irq out of arch/mips/jz4740/irq.c
-  devicetree: document Ingenic SoC interrupt controller binding
-  MIPS: JZ4740: probe interrupt controller via DT
-  MIPS: JZ4740: parse SoC interrupt controller parent IRQ from DT
-  MIPS: JZ4740: register an irq_domain for the interrupt controller
-  MIPS: JZ4740: drop intc debugfs code
-  MIPS: JZ4740: remove jz_intc_base global
-  MIPS: JZ4740: support >32 interrupts
-  MIPS: JZ4740: define IRQ numbers based on number of intc IRQs
-  MIPS: JZ4740: read intc base address from DT
-  MIPS: JZ4740: avoid JZ4740-specific naming
-  MIPS: JZ4740: support newer SoC interrupt controllers
-  irqchip: move Ingenic SoC intc driver to drivers/irqchip
-  MIPS: JZ4740: call jz4740_clock_init earlier
-  MIPS: JZ4740: replace use of jz4740_clock_bdata
-  devicetree: add Ingenic CGU binding documentation
-  clk: ingenic: add driver for Ingenic SoC CGU clocks
-  MIPS,clk: migrate JZ4740 to common clock framework
-  MIPS,clk: move jz4740_clock_set_wait_mode to jz4740-cgu
-  MIPS,clk: move jz4740 UDC auto suspend functions to jz4740-cgu
-  MIPS,clk: move jz4740 clock suspend,resume functions to jz4740-cgu
-  clk: ingenic: add JZ4780 CGU support
-  MIPS: JZ4740: remove clock.h
-  MIPS: JZ4740: only detect RAM size if not specified in DT
-  devicetree: document Ingenic SoC UART binding
-  serial: 8250_ingenic: support for Ingenic SoC UARTs
-  MIPS: JZ4740: use Ingenic SoC UART driver
-  MIPS: ingenic: initial JZ4780 support
-  MIPS: ingenic: initial MIPS Creator CI20 support
-
- .../devicetree/bindings/clock/ingenic,cgu.txt      |  53 ++
- .../bindings/interrupt-controller/ingenic,intc.txt |  25 +
- .../devicetree/bindings/serial/ingenic,uart.txt    |  22 +
- .../devicetree/bindings/vendor-prefixes.txt        |   2 +
- arch/mips/Kconfig                                  |  11 +-
- arch/mips/boot/dts/Makefile                        |   1 +
- arch/mips/boot/dts/ingenic/Makefile                |  10 +
- arch/mips/boot/dts/ingenic/ci20.dts                |  21 +
- arch/mips/boot/dts/ingenic/jz4740.dtsi             |  68 ++
- arch/mips/boot/dts/ingenic/jz4780.dtsi             | 101 +++
- arch/mips/boot/dts/ingenic/qi_lb60.dts             |  15 +
- arch/mips/configs/ci20_defconfig                   | 169 ++++
- arch/mips/configs/qi_lb60_defconfig                |   3 +-
- arch/mips/include/asm/cpu-type.h                   |   2 +-
- arch/mips/include/asm/cpu.h                        |   6 +-
- arch/mips/include/asm/mach-jz4740/clock.h          |   3 +
- .../asm/mach-jz4740/cpu-feature-overrides.h        |   3 -
- arch/mips/include/asm/mach-jz4740/irq.h            |  14 +-
- arch/mips/include/asm/mach-jz4740/platform.h       |   2 -
- arch/mips/jz4740/Kconfig                           |  17 +-
- arch/mips/jz4740/Makefile                          |   8 +-
- arch/mips/jz4740/Platform                          |   8 +-
- arch/mips/jz4740/board-qi_lb60.c                   |   7 -
- arch/mips/jz4740/clock-debugfs.c                   | 108 ---
- arch/mips/jz4740/clock.c                           | 924 ---------------------
- arch/mips/jz4740/clock.h                           |  76 --
- arch/mips/jz4740/gpio.c                            |   7 +-
- arch/mips/jz4740/irq.c                             | 162 ----
- arch/mips/jz4740/platform.c                        |  38 +-
- arch/mips/jz4740/pm.c                              |   2 -
- arch/mips/jz4740/prom.c                            |  13 -
- arch/mips/jz4740/reset.c                           |  13 +-
- arch/mips/jz4740/serial.c                          |  33 -
- arch/mips/jz4740/serial.h                          |  23 -
- arch/mips/jz4740/setup.c                           |  36 +-
- arch/mips/jz4740/time.c                            |  19 +-
- arch/mips/kernel/cpu-probe.c                       |   4 +-
- arch/mips/kernel/irq_cpu.c                         |   3 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/ingenic/Makefile                       |   3 +
- drivers/clk/ingenic/cgu.c                          | 712 ++++++++++++++++
- drivers/clk/ingenic/cgu.h                          | 223 +++++
- drivers/clk/ingenic/jz4740-cgu.c                   | 303 +++++++
- drivers/clk/ingenic/jz4780-cgu.c                   | 736 ++++++++++++++++
- drivers/irqchip/Kconfig                            |   5 +
- drivers/irqchip/Makefile                           |   1 +
- drivers/irqchip/irq-ingenic.c                      | 171 ++++
- drivers/tty/serial/8250/8250_ingenic.c             | 261 ++++++
- drivers/tty/serial/8250/Kconfig                    |   9 +
- drivers/tty/serial/8250/Makefile                   |   3 +
- include/dt-bindings/clock/jz4740-cgu.h             |  37 +
- include/dt-bindings/clock/jz4780-cgu.h             |  88 ++
- .../irq.h => include/linux/irqchip/ingenic.h       |   8 +-
- 53 files changed, 3169 insertions(+), 1424 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/ingenic,cgu.txt
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ingenic,intc.txt
- create mode 100644 Documentation/devicetree/bindings/serial/ingenic,uart.txt
- create mode 100644 arch/mips/boot/dts/ingenic/Makefile
- create mode 100644 arch/mips/boot/dts/ingenic/ci20.dts
- create mode 100644 arch/mips/boot/dts/ingenic/jz4740.dtsi
- create mode 100644 arch/mips/boot/dts/ingenic/jz4780.dtsi
- create mode 100644 arch/mips/boot/dts/ingenic/qi_lb60.dts
- create mode 100644 arch/mips/configs/ci20_defconfig
- delete mode 100644 arch/mips/jz4740/clock-debugfs.c
- delete mode 100644 arch/mips/jz4740/clock.c
- delete mode 100644 arch/mips/jz4740/clock.h
- delete mode 100644 arch/mips/jz4740/irq.c
- delete mode 100644 arch/mips/jz4740/serial.c
- delete mode 100644 arch/mips/jz4740/serial.h
- create mode 100644 drivers/clk/ingenic/Makefile
- create mode 100644 drivers/clk/ingenic/cgu.c
- create mode 100644 drivers/clk/ingenic/cgu.h
- create mode 100644 drivers/clk/ingenic/jz4740-cgu.c
- create mode 100644 drivers/clk/ingenic/jz4780-cgu.c
- create mode 100644 drivers/irqchip/irq-ingenic.c
- create mode 100644 drivers/tty/serial/8250/8250_ingenic.c
- create mode 100644 include/dt-bindings/clock/jz4740-cgu.h
- create mode 100644 include/dt-bindings/clock/jz4780-cgu.h
- rename arch/mips/jz4740/irq.h => include/linux/irqchip/ingenic.h (74%)
-
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 5677a5cdd3f7..de9e035b59c9 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -922,7 +922,8 @@ const struct clk_ops tegra_clk_plle_ops = {
+ 
+ #if defined(CONFIG_ARCH_TEGRA_114_SOC) || \
+ 	defined(CONFIG_ARCH_TEGRA_124_SOC) || \
+-	defined(CONFIG_ARCH_TEGRA_132_SOC)
++	defined(CONFIG_ARCH_TEGRA_132_SOC) || \
++	defined(CONFIG_ARCH_TEGRA_210_SOC)
+ 
+ static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
+ 			   unsigned long parent_rate)
+@@ -1591,7 +1592,8 @@ struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
+ 
+ #if defined(CONFIG_ARCH_TEGRA_114_SOC) || \
+ 	defined(CONFIG_ARCH_TEGRA_124_SOC) || \
+-	defined(CONFIG_ARCH_TEGRA_132_SOC)
++	defined(CONFIG_ARCH_TEGRA_132_SOC) || \
++	defined(CONFIG_ARCH_TEGRA_210_SOC)
+ static const struct clk_ops tegra_clk_pllxc_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+ 	.enable = clk_pll_enable,
+@@ -1970,3 +1972,329 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+ 	return clk;
+ }
+ #endif
++
++#if defined(CONFIG_ARCH_TEGRA_210_SOC)
++static int clk_plle_tegra210_enable(struct clk_hw *hw)
++{
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
++	struct tegra_clk_pll_freq_table sel;
++	u32 val;
++	int ret;
++	unsigned long flags = 0;
++	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
++
++	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
++		return -EINVAL;
++
++	if (pll->lock)
++		spin_lock_irqsave(pll->lock, flags);
++
++	val = pll_readl_base(pll);
++	val &= ~BIT(29); /* Disable lock override */
++	pll_writel_base(val, pll);
++
++	val = pll_readl(pll->params->aux_reg, pll);
++	val |= PLLE_AUX_ENABLE_SWCTL;
++	val &= ~PLLE_AUX_SEQ_ENABLE;
++	pll_writel(val, pll->params->aux_reg, pll);
++	udelay(1);
++
++	val = pll_readl_misc(pll);
++	val |= PLLE_MISC_LOCK_ENABLE;
++	val |= PLLE_MISC_IDDQ_SW_CTRL;
++	val &= ~PLLE_MISC_IDDQ_SW_VALUE;
++	val |= PLLE_MISC_PLLE_PTS;
++	val |= PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK;
++	pll_writel_misc(val, pll);
++	udelay(5);
++
++	val = pll_readl(PLLE_SS_CTRL, pll);
++	val |= PLLE_SS_DISABLE;
++	pll_writel(val, PLLE_SS_CTRL, pll);
++
++	val = pll_readl_base(pll);
++	val &= ~(divp_mask_shifted(pll) | divn_mask_shifted(pll) |
++		 divm_mask_shifted(pll));
++	val &= ~(PLLE_BASE_DIVCML_MASK << PLLE_BASE_DIVCML_SHIFT);
++	val |= sel.m << divm_shift(pll);
++	val |= sel.n << divn_shift(pll);
++	val |= sel.cpcon << PLLE_BASE_DIVCML_SHIFT;
++	pll_writel_base(val, pll);
++	udelay(1);
++
++	_clk_pll_enable(hw);
++	ret = clk_pll_wait_for_lock(pll);
++
++	if (ret < 0)
++		goto out;
++
++	val = pll_readl(PLLE_SS_CTRL, pll);
++	val &= ~(PLLE_SS_CNTL_CENTER | PLLE_SS_CNTL_INVERT);
++	val &= ~PLLE_SS_COEFFICIENTS_MASK;
++	val |= PLLE_SS_COEFFICIENTS_VAL;
++	pll_writel(val, PLLE_SS_CTRL, pll);
++	val &= ~(PLLE_SS_CNTL_SSC_BYP | PLLE_SS_CNTL_BYPASS_SS);
++	pll_writel(val, PLLE_SS_CTRL, pll);
++	udelay(1);
++	val &= ~PLLE_SS_CNTL_INTERP_RESET;
++	pll_writel(val, PLLE_SS_CTRL, pll);
++	udelay(1);
++
++	/* Enable hw control of xusb brick pll */
++	val = pll_readl_misc(pll);
++	val &= ~PLLE_MISC_IDDQ_SW_CTRL;
++	pll_writel_misc(val, pll);
++
++	val = pll_readl(pll->params->aux_reg, pll);
++	val |= (PLLE_AUX_USE_LOCKDET | PLLE_AUX_SEQ_START_STATE);
++	val &= ~(PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL);
++	pll_writel(val, pll->params->aux_reg, pll);
++	udelay(1);
++	val |= PLLE_AUX_SEQ_ENABLE;
++	pll_writel(val, pll->params->aux_reg, pll);
++
++	val = pll_readl(XUSBIO_PLL_CFG0, pll);
++	val |= (XUSBIO_PLL_CFG0_PADPLL_USE_LOCKDET |
++		XUSBIO_PLL_CFG0_SEQ_START_STATE);
++	val &= ~(XUSBIO_PLL_CFG0_CLK_ENABLE_SWCTL |
++		 XUSBIO_PLL_CFG0_PADPLL_RESET_SWCTL);
++	pll_writel(val, XUSBIO_PLL_CFG0, pll);
++	udelay(1);
++	val |= XUSBIO_PLL_CFG0_SEQ_ENABLE;
++	pll_writel(val, XUSBIO_PLL_CFG0, pll);
++
++	/* Enable hw control of SATA pll */
++	val = pll_readl(SATA_PLL_CFG0, pll);
++	val &= ~SATA_PLL_CFG0_PADPLL_RESET_SWCTL;
++	val |= SATA_PLL_CFG0_PADPLL_USE_LOCKDET;
++	val |= SATA_PLL_CFG0_SEQ_START_STATE;
++	pll_writel(val, SATA_PLL_CFG0, pll);
++
++	udelay(1);
++
++	val = pll_readl(SATA_PLL_CFG0, pll);
++	val |= SATA_PLL_CFG0_SEQ_ENABLE;
++	pll_writel(val, SATA_PLL_CFG0, pll);
++
++out:
++	if (pll->lock)
++		spin_unlock_irqrestore(pll->lock, flags);
++
++	return ret;
++}
++
++static void clk_plle_tegra210_disable(struct clk_hw *hw)
++{
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
++	unsigned long flags = 0;
++	u32 val;
++
++	if (pll->lock)
++		spin_lock_irqsave(pll->lock, flags);
++
++	_clk_pll_disable(hw);
++
++	val = pll_readl_misc(pll);
++	val |= PLLE_MISC_IDDQ_SW_CTRL | PLLE_MISC_IDDQ_SW_VALUE;
++	pll_writel_misc(val, pll);
++	udelay(1);
++
++	if (pll->lock)
++		spin_unlock_irqrestore(pll->lock, flags);
++}
++
++static const struct clk_ops tegra_clk_plle_tegra210_ops = {
++	.is_enabled =  clk_pll_is_enabled,
++	.enable = clk_plle_tegra210_enable,
++	.disable = clk_plle_tegra210_disable,
++	.recalc_rate = clk_pll_recalc_rate,
++};
++
++struct clk *tegra_clk_register_plle_tegra210(const char *name,
++				const char *parent_name,
++				void __iomem *clk_base, unsigned long flags,
++				struct tegra_clk_pll_params *pll_params,
++				spinlock_t *lock)
++{
++	struct tegra_clk_pll *pll;
++	struct clk *clk;
++	u32 val, val_aux;
++
++	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
++	if (IS_ERR(pll))
++		return ERR_CAST(pll);
++
++	/* ensure parent is set to pll_re_vco */
++
++	val = pll_readl_base(pll);
++	val_aux = pll_readl(pll_params->aux_reg, pll);
++
++	if (val & PLL_BASE_ENABLE) {
++		if ((val_aux & PLLE_AUX_PLLRE_SEL) ||
++			(val_aux & PLLE_AUX_PLLP_SEL))
++			WARN(1, "pll_e enabled with unsupported parent %s\n",
++			  (val_aux & PLLE_AUX_PLLP_SEL) ? "pllp_out0" :
++					"pll_re_vco");
++	} else {
++		val_aux &= ~(PLLE_AUX_PLLRE_SEL | PLLE_AUX_PLLP_SEL);
++		pll_writel(val_aux, pll_params->aux_reg, pll);
++	}
++
++	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
++				      &tegra_clk_plle_tegra210_ops);
++	if (IS_ERR(clk))
++		kfree(pll);
++
++	return clk;
++}
++
++struct clk *tegra_clk_register_pllc_tegra210(const char *name,
++			const char *parent_name, void __iomem *clk_base,
++			void __iomem *pmc, unsigned long flags,
++			struct tegra_clk_pll_params *pll_params,
++			spinlock_t *lock)
++{
++	struct clk *parent, *clk;
++	struct pdiv_map *p_tohw = pll_params->pdiv_tohw;
++	struct tegra_clk_pll *pll;
++	unsigned long parent_rate;
++
++	if (!p_tohw)
++		return ERR_PTR(-EINVAL);
++
++	parent = __clk_lookup(parent_name);
++	if (!parent) {
++		WARN(1, "parent clk %s of %s must be registered first\n",
++			name, parent_name);
++		return ERR_PTR(-EINVAL);
++	}
++
++	parent_rate = __clk_get_rate(parent);
++
++	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
++
++	pll_params->flags |= TEGRA_PLL_BYPASS;
++	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
++	if (IS_ERR(pll))
++		return ERR_CAST(pll);
++
++	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
++				      &tegra_clk_pll_ops);
++	if (IS_ERR(clk))
++		kfree(pll);
++
++	return clk;
++}
++
++struct clk *tegra_clk_register_pllxc_tegra210(const char *name,
++			const char *parent_name, void __iomem *clk_base,
++			void __iomem *pmc, unsigned long flags,
++			struct tegra_clk_pll_params *pll_params,
++			spinlock_t *lock)
++{
++	struct tegra_clk_pll *pll;
++	struct clk *clk, *parent;
++	unsigned long parent_rate;
++	u32 val, val_iddq;
++
++	parent = __clk_lookup(parent_name);
++	if (!parent) {
++		WARN(1, "parent clk %s of %s must be registered first\n",
++			name, parent_name);
++		return ERR_PTR(-EINVAL);
++	}
++
++	if (!pll_params->pdiv_tohw)
++		return ERR_PTR(-EINVAL);
++
++	parent_rate = __clk_get_rate(parent);
++
++	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
++
++	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
++	if (IS_ERR(pll))
++		return ERR_CAST(pll);
++
++	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
++				      &tegra_clk_pll_ops);
++	if (IS_ERR(clk))
++		kfree(pll);
++
++	return clk;
++}
++
++struct clk *tegra_clk_register_pllss_tegra210(const char *name,
++				const char *parent_name, void __iomem *clk_base,
++				unsigned long flags,
++				struct tegra_clk_pll_params *pll_params,
++				spinlock_t *lock)
++{
++	struct tegra_clk_pll *pll;
++	struct clk *clk, *parent;
++	struct tegra_clk_pll_freq_table cfg;
++	unsigned long parent_rate;
++	u32 val;
++	int i;
++
++	if (!pll_params->div_nmp)
++		return ERR_PTR(-EINVAL);
++
++	parent = __clk_lookup(parent_name);
++	if (!parent) {
++		WARN(1, "parent clk %s of %s must be registered first\n",
++			name, parent_name);
++		return ERR_PTR(-EINVAL);
++	}
++
++	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
++	if (IS_ERR(pll))
++		return ERR_CAST(pll);
++
++	val = pll_readl_base(pll);
++	val &= ~PLLSS_REF_SRC_SEL_MASK;
++	pll_writel_base(val, pll);
++
++	parent_rate = __clk_get_rate(parent);
++
++	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
++
++	/* initialize PLL to minimum rate */
++
++	cfg.m = _pll_fixed_mdiv(pll_params, parent_rate);
++	cfg.n = cfg.m * pll_params->vco_min / parent_rate;
++
++	for (i = 0; pll_params->pdiv_tohw[i].pdiv; i++)
++		;
++	if (!i) {
++		kfree(pll);
++		return ERR_PTR(-EINVAL);
++	}
++
++	cfg.p = pll_params->pdiv_tohw[i-1].hw_val;
++
++	_update_pll_mnp(pll, &cfg);
++
++	pll_writel_misc(PLLSS_MISC_DEFAULT, pll);
++
++	val = pll_readl_base(pll);
++	if (val & PLL_BASE_ENABLE) {
++		if (val & BIT(pll_params->iddq_bit_idx)) {
++			WARN(1, "%s is on but IDDQ set\n", name);
++			kfree(pll);
++			return ERR_PTR(-EINVAL);
++		}
++	} else
++		val |= BIT(pll_params->iddq_bit_idx);
++
++	val &= ~PLLSS_LOCK_OVERRIDE;
++	pll_writel_base(val, pll);
++
++	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
++					&tegra_clk_pll_ops);
++
++	if (IS_ERR(clk))
++		kfree(pll);
++
++	return clk;
++}
++#endif
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 142999f1cd24..26e31580dc9e 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -313,6 +313,12 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+ 			    struct tegra_clk_pll_params *pll_params,
+ 			    spinlock_t *lock);
+ 
++struct clk *tegra_clk_register_pllxc_tegra210(const char *name,
++			const char *parent_name, void __iomem *clk_base,
++			void __iomem *pmc, unsigned long flags,
++			struct tegra_clk_pll_params *pll_params,
++			spinlock_t *lock);
++
+ struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
+ 			   void __iomem *clk_base, void __iomem *pmc,
+ 			   unsigned long flags,
+@@ -337,6 +343,24 @@ struct clk *tegra_clk_register_plle_tegra114(const char *name,
+ 				struct tegra_clk_pll_params *pll_params,
+ 				spinlock_t *lock);
+ 
++struct clk *tegra_clk_register_plle_tegra210(const char *name,
++				const char *parent_name,
++				void __iomem *clk_base, unsigned long flags,
++				struct tegra_clk_pll_params *pll_params,
++				spinlock_t *lock);
++
++struct clk *tegra_clk_register_pllc_tegra210(const char *name,
++				const char *parent_name, void __iomem *clk_base,
++				void __iomem *pmc, unsigned long flags,
++				struct tegra_clk_pll_params *pll_params,
++				spinlock_t *lock);
++
++struct clk *tegra_clk_register_pllss_tegra210(const char *name,
++				const char *parent_name, void __iomem *clk_base,
++				unsigned long flags,
++				struct tegra_clk_pll_params *pll_params,
++				spinlock_t *lock);
++
+ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+ 			   void __iomem *clk_base, unsigned long flags,
+ 			   struct tegra_clk_pll_params *pll_params,
 -- 
-2.3.5
+1.7.9.5
