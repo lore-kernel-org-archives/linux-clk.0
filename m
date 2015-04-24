@@ -1,79 +1,178 @@
-Return-Path: <mwelling79@gmail.com>
-Return-Path: <mwelling79@gmail.com>
-Sender: Michael Welling <mwelling79@gmail.com>
-Date: Thu, 30 Apr 2015 13:47:42 -0500
-From: Michael Welling <mwelling@ieee.org>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Russell King <rmk+linux@arm.linux.org.uk>,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] clk: si5351: Some fixes
-Message-ID: <20150430184742.GA22000@deathray>
-References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 04/19] clk: tegra: pll: simplify clk_enable_path
+Date: Fri, 24 Apr 2015 12:47:44 -0400
+Message-ID: <1429894079-25052-5-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
+References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 30, 2015 at 07:45:50PM +0200, Sebastian Hesselbarth wrote:
-> For Si5351 clock driver, Michael Welling and Jean-Francois Moine reported
-> issues with recent v4.x kernels due to broken/missing/wrong parent clock
-> claming. This patch set now deals with the issues reported.
-> 
-> Patch 1 amends the binding documentation mention clock-names property
-> for the "xtal" and "clkin" parent clock inputs of Si5351 variants.
-> 
-> Patch 2 adds the clock-names property for the SolidRun CuBox using Si5351
-> with a fixed oscillator connected to "xtal" input.
-> 
-> Patch 3 reworks the way we claim parent clocks by using devm_clk_get()
-> for both DT and platform_data based registration. Also, properly check
-> for errors returned by devm_clk_get() and prepare/enable the parent clocks.
-> 
-> Patch 4 introduces a function to reset PLLs on rate change. This should
-> improve generated clock output stability. I currently have no scope at hand
-> to actually test that properly, so there may be more issues remaining.
-> 
-> @Michael, Jean-Francois: Please test and report if there are still
-> issues remaining.
+Instead of having multiple similar wrapper functions for
+_clk_pll_[enable|disable], we can simplify it to single
+wrappers and use checks to avoid the logic we don't want to use.
 
-I am in the process of testing this patch series.
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c |   79 ++++++++++++++-----------------------------
+ 1 file changed, 25 insertions(+), 54 deletions(-)
 
-Hopefully this fixes some issues.
-
-> 
-> Sebastian
-> 
-> Sebastian Hesselbarth (4):
->   clk: si5351: Mention clock-names in the binding documentation
->   ARM: dove: Add clock-names to CuBox Si5351 clk generator
->   clk: si5351: Do not pass struct clk in platform_data
->   clk: si5351: Reset PLL after rate change
-> 
->  .../devicetree/bindings/clock/silabs,si5351.txt    |  4 +-
->  arch/arm/boot/dts/dove-cubox.dts                   |  1 +
->  drivers/clk/clk-si5351.c                           | 87 +++++++++++++++++-----
->  include/linux/platform_data/si5351.h               |  4 -
->  4 files changed, 73 insertions(+), 23 deletions(-)
-> 
-> ---
-> Cc: Mike Turquette <mturquette@linaro.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Jean-Francois Moine <moinejf@free.fr>
-> Cc: Michael Welling <mwelling@ieee.org>
-> Cc: Russell King <rmk+linux@arm.linux.org.uk>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Gregory Clement <gregory.clement@free-electrons.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> -- 
-> 2.1.0
-> 
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index b9a739ce4b98..d287df90cfc0 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -332,11 +332,20 @@ static int clk_pll_enable(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+ 	unsigned long flags = 0;
++
++	u32 val;
+ 	int ret;
+ 
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
++	if (pll->params->iddq_reg) {
++		val = pll_readl(pll->params->iddq_reg, pll);
++		val &= ~BIT(pll->params->iddq_bit_idx);
++		pll_writel(val, pll->params->iddq_reg, pll);
++		udelay(2);
++	}
++
+ 	_clk_pll_enable(hw);
+ 
+ 	ret = clk_pll_wait_for_lock(pll);
+@@ -351,12 +360,20 @@ static void clk_pll_disable(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+ 	unsigned long flags = 0;
++	u32 val;
+ 
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
+ 	_clk_pll_disable(hw);
+ 
++	if (pll->params->iddq_reg) {
++		val = pll_readl(pll->params->iddq_reg, pll);
++		val |= BIT(pll->params->iddq_bit_idx);
++		pll_writel(val, pll->params->iddq_reg, pll);
++		udelay(2);
++	}
++
+ 	if (pll->lock)
+ 		spin_unlock_irqrestore(pll->lock, flags);
+ }
+@@ -876,52 +893,6 @@ static int _setup_dynamic_ramp(struct tegra_clk_pll_params *pll_params,
+ 	return 0;
+ }
+ 
+-static int clk_pll_iddq_enable(struct clk_hw *hw)
+-{
+-	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long flags = 0;
+-
+-	u32 val;
+-	int ret;
+-
+-	if (pll->lock)
+-		spin_lock_irqsave(pll->lock, flags);
+-
+-	val = pll_readl(pll->params->iddq_reg, pll);
+-	val &= ~BIT(pll->params->iddq_bit_idx);
+-	pll_writel(val, pll->params->iddq_reg, pll);
+-	udelay(2);
+-
+-	_clk_pll_enable(hw);
+-
+-	ret = clk_pll_wait_for_lock(pll);
+-
+-	if (pll->lock)
+-		spin_unlock_irqrestore(pll->lock, flags);
+-
+-	return 0;
+-}
+-
+-static void clk_pll_iddq_disable(struct clk_hw *hw)
+-{
+-	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long flags = 0;
+-	u32 val;
+-
+-	if (pll->lock)
+-		spin_lock_irqsave(pll->lock, flags);
+-
+-	_clk_pll_disable(hw);
+-
+-	val = pll_readl(pll->params->iddq_reg, pll);
+-	val |= BIT(pll->params->iddq_bit_idx);
+-	pll_writel(val, pll->params->iddq_reg, pll);
+-	udelay(2);
+-
+-	if (pll->lock)
+-		spin_unlock_irqrestore(pll->lock, flags);
+-}
+-
+ static int _calc_dynamic_ramp_rate(struct clk_hw *hw,
+ 				struct tegra_clk_pll_freq_table *cfg,
+ 				unsigned long rate, unsigned long parent_rate)
+@@ -1518,8 +1489,8 @@ struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
+ 	defined(CONFIG_ARCH_TEGRA_132_SOC)
+ static const struct clk_ops tegra_clk_pllxc_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
+ 	.round_rate = clk_pll_ramp_round_rate,
+ 	.set_rate = clk_pllxc_set_rate,
+@@ -1527,8 +1498,8 @@ static const struct clk_ops tegra_clk_pllxc_ops = {
+ 
+ static const struct clk_ops tegra_clk_pllm_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
+ 	.round_rate = clk_pll_ramp_round_rate,
+ 	.set_rate = clk_pllm_set_rate,
+@@ -1545,8 +1516,8 @@ static const struct clk_ops tegra_clk_pllc_ops = {
+ 
+ static const struct clk_ops tegra_clk_pllre_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pllre_recalc_rate,
+ 	.round_rate = clk_pllre_round_rate,
+ 	.set_rate = clk_pllre_set_rate,
+@@ -1815,8 +1786,8 @@ struct clk *tegra_clk_register_plle_tegra114(const char *name,
+ #if defined(CONFIG_ARCH_TEGRA_124_SOC) || defined(CONFIG_ARCH_TEGRA_132_SOC)
+ static const struct clk_ops tegra_clk_pllss_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
+ 	.round_rate = clk_pll_ramp_round_rate,
+ 	.set_rate = clk_pllxc_set_rate,
+-- 
+1.7.9.5
