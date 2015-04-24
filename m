@@ -1,41 +1,101 @@
-Return-Path: <festevam@gmail.com>
-Return-Path: <festevam@gmail.com>
-From: Fabio Estevam <festevam@gmail.com>
-To: shawn.guo@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>,
 	linux-clk@vger.kernel.org,
-	mturquette@linaro.org,
-	Fabio Estevam <fabio.estevam@freescale.com>
-Subject: [PATCH v2] clk: imx: clk-cpu: Include "clk.h" header file
-Date: Wed, 29 Apr 2015 18:34:42 -0300
-Message-Id: <1430343282-13739-1-git-send-email-festevam@gmail.com>
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 09/19] clk: tegra: pll: Add logic for SS
+Date: Fri, 24 Apr 2015 12:47:49 -0400
+Message-ID: <1429894079-25052-10-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
+References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Fabio Estevam <fabio.estevam@freescale.com>
+From: Bill Huang <bilhuang@nvidia.com>
 
-Include the "clk.h" header file to fix the following sparse warning:
+Add some logic for Spread Spectrum control. It is used in conjuncture
+with SDM fractional dividers. SSC has to be disabled when we configure
+the divider settings.
 
-drivers/clk/imx/clk-cpu.c:77:12: warning: symbol 'imx_clk_cpu' was not declared. Should it be static?
-
-Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
 ---
-Changes since v1:
-- Rebased since the clk-cpu moved to drivers/clk/imx 
+ drivers/clk/tegra/clk-pll.c |   25 ++++++++++++++++++++++++-
+ drivers/clk/tegra/clk.h     |    2 ++
+ 2 files changed, 26 insertions(+), 1 deletion(-)
 
- drivers/clk/imx/clk-cpu.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/imx/clk-cpu.c b/drivers/clk/imx/clk-cpu.c
-index aa1c345..9d46eac 100644
---- a/drivers/clk/imx/clk-cpu.c
-+++ b/drivers/clk/imx/clk-cpu.c
-@@ -12,6 +12,7 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/slab.h>
-+#include "clk.h"
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 31d95cfdf35e..806ae48020e5 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -624,6 +624,26 @@ static void _update_pll_cpcon(struct tegra_clk_pll *pll,
+ 	pll_writel_misc(val, pll);
+ }
  
- struct clk_cpu {
- 	struct clk_hw	hw;
++static void pll_clk_start_ss(struct tegra_clk_pll *pll)
++{
++	if (pll->params->defaults_set && pll->params->ssc_ctrl_en_mask) {
++		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
++
++		val |= pll->params->ssc_ctrl_en_mask;
++		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
++	}
++}
++
++static void pll_clk_stop_ss(struct tegra_clk_pll *pll)
++{
++	if (pll->params->defaults_set && pll->params->ssc_ctrl_en_mask) {
++		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
++
++		val &= ~pll->params->ssc_ctrl_en_mask;
++		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
++	}
++}
++
+ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 			unsigned long rate)
+ {
+@@ -632,8 +652,10 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 
+ 	state = clk_pll_is_enabled(hw);
+ 
+-	if (state)
++	if (state) {
++		pll_clk_stop_ss(pll);
+ 		_clk_pll_disable(hw);
++	}
+ 
+ 	_update_pll_mnp(pll, cfg);
+ 
+@@ -643,6 +665,7 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 	if (state) {
+ 		_clk_pll_enable(hw);
+ 		ret = clk_pll_wait_for_lock(pll);
++		pll_clk_start_ss(pll);
+ 	}
+ 
+ 	return ret;
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index ef5754f64622..f3c1f07d5332 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -219,6 +219,8 @@ struct tegra_clk_pll_params {
+ 	u32		sdm_din_mask;
+ 	u32		sdm_ctrl_reg;
+ 	u32		sdm_ctrl_en_mask;
++	u32		ssc_ctrl_reg;
++	u32		ssc_ctrl_en_mask;
+ 	u32		aux_reg;
+ 	u32		dyn_ramp_reg;
+ 	u32		ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
 -- 
-1.9.1
+1.7.9.5
