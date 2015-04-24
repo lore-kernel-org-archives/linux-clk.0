@@ -1,140 +1,79 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Wed, 22 Apr 2015 12:40:16 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Rhyland Klein <rklein@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>, Stephen Warren
-	<swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: tegra: Fix comments for structure definitions
-Message-ID: <20150422094016.GT3097@tbergstrom-lnx.Nvidia.com>
-References: <1428943097-2768-1-git-send-email-rklein@nvidia.com>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 11/19] clk: tegra: pll: Add code to handle if resets are supported by PLL
+Date: Fri, 24 Apr 2015 12:47:51 -0400
+Message-ID: <1429894079-25052-12-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
+References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <1428943097-2768-1-git-send-email-rklein@nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 13, 2015 at 12:38:17PM -0400, Rhyland Klein wrote:
-> Some fields moved from the tegra_clk_pll struct to
-> the tegra_pll_params struct. Update the struct comments
-> to reflect where the fields really are.
-> 
+From: Bill Huang <bilhuang@nvidia.com>
 
-Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+If a PLL has a reset_reg specified, properly handle that in the
+enable/disable logic paths._
 
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
->  drivers/clk/tegra/clk.h |   74 +++++++++++++++++++++++------------------------
->  1 file changed, 37 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index 751a97966354..4eae99a4f32e 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -171,6 +171,30 @@ struct div_nmp {
->   * @lock_bit_idx:		Bit index for PLL lock status
->   * @lock_enable_bit_idx:	Bit index to enable PLL lock
->   * @lock_delay:			Delay in us if PLL lock is not used
-> + * @freq_table:			array of frequencies supported by PLL
-> + * @fixed_rate:			PLL rate if it is fixed
-> + * @flags:			PLL flags
-> + *
-> + * Flags:
-> + * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
-> + *     PLL locking. If not set it will use lock_delay value to wait.
-> + * TEGRA_PLL_HAS_CPCON - This flag indicates that CPCON value needs
-> + *     to be programmed to change output frequency of the PLL.
-> + * TEGRA_PLL_SET_LFCON - This flag indicates that LFCON value needs
-> + *     to be programmed to change output frequency of the PLL.
-> + * TEGRA_PLL_SET_DCCON - This flag indicates that DCCON value needs
-> + *     to be programmed to change output frequency of the PLL.
-> + * TEGRA_PLLU - PLLU has inverted post divider. This flags indicated
-> + *     that it is PLLU and invert post divider value.
-> + * TEGRA_PLLM - PLLM has additional override settings in PMC. This
-> + *     flag indicates that it is PLLM and use override settings.
-> + * TEGRA_PLL_FIXED - We are not supposed to change output frequency
-> + *     of some plls.
-> + * TEGRA_PLLE_CONFIGURE - Configure PLLE when enabling.
-> + * TEGRA_PLL_LOCK_MISC - Lock bit is in the misc register instead of the
-> + *     base register.
-> + * TEGRA_PLL_BYPASS - PLL has bypass bit
-> + * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
->   */
->  struct tegra_clk_pll_params {
->  	unsigned long	input_min;
-> @@ -203,38 +227,26 @@ struct tegra_clk_pll_params {
->  	unsigned long	fixed_rate;
->  };
->  
-> +#define TEGRA_PLL_USE_LOCK BIT(0)
-> +#define TEGRA_PLL_HAS_CPCON BIT(1)
-> +#define TEGRA_PLL_SET_LFCON BIT(2)
-> +#define TEGRA_PLL_SET_DCCON BIT(3)
-> +#define TEGRA_PLLU BIT(4)
-> +#define TEGRA_PLLM BIT(5)
-> +#define TEGRA_PLL_FIXED BIT(6)
-> +#define TEGRA_PLLE_CONFIGURE BIT(7)
-> +#define TEGRA_PLL_LOCK_MISC BIT(8)
-> +#define TEGRA_PLL_BYPASS BIT(9)
-> +#define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
-> +
->  /**
->   * struct tegra_clk_pll - Tegra PLL clock
->   *
->   * @hw:		handle between common and hardware-specifix interfaces
->   * @clk_base:	address of CAR controller
->   * @pmc:	address of PMC, required to read override bits
-> - * @freq_table:	array of frequencies supported by PLL
-> - * @params:	PLL parameters
-> - * @flags:	PLL flags
-> - * @fixed_rate:	PLL rate if it is fixed
->   * @lock:	register lock
-> - *
-> - * Flags:
-> - * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
-> - *     PLL locking. If not set it will use lock_delay value to wait.
-> - * TEGRA_PLL_HAS_CPCON - This flag indicates that CPCON value needs
-> - *     to be programmed to change output frequency of the PLL.
-> - * TEGRA_PLL_SET_LFCON - This flag indicates that LFCON value needs
-> - *     to be programmed to change output frequency of the PLL.
-> - * TEGRA_PLL_SET_DCCON - This flag indicates that DCCON value needs
-> - *     to be programmed to change output frequency of the PLL.
-> - * TEGRA_PLLU - PLLU has inverted post divider. This flags indicated
-> - *     that it is PLLU and invert post divider value.
-> - * TEGRA_PLLM - PLLM has additional override settings in PMC. This
-> - *     flag indicates that it is PLLM and use override settings.
-> - * TEGRA_PLL_FIXED - We are not supposed to change output frequency
-> - *     of some plls.
-> - * TEGRA_PLLE_CONFIGURE - Configure PLLE when enabling.
-> - * TEGRA_PLL_LOCK_MISC - Lock bit is in the misc register instead of the
-> - *     base register.
-> - * TEGRA_PLL_BYPASS - PLL has bypass bit
-> - * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
-> + * @params:	PLL parameters
->   */
->  struct tegra_clk_pll {
->  	struct clk_hw	hw;
-> @@ -246,18 +258,6 @@ struct tegra_clk_pll {
->  
->  #define to_clk_pll(_hw) container_of(_hw, struct tegra_clk_pll, hw)
->  
-> -#define TEGRA_PLL_USE_LOCK BIT(0)
-> -#define TEGRA_PLL_HAS_CPCON BIT(1)
-> -#define TEGRA_PLL_SET_LFCON BIT(2)
-> -#define TEGRA_PLL_SET_DCCON BIT(3)
-> -#define TEGRA_PLLU BIT(4)
-> -#define TEGRA_PLLM BIT(5)
-> -#define TEGRA_PLL_FIXED BIT(6)
-> -#define TEGRA_PLLE_CONFIGURE BIT(7)
-> -#define TEGRA_PLL_LOCK_MISC BIT(8)
-> -#define TEGRA_PLL_BYPASS BIT(9)
-> -#define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
-> -
->  extern const struct clk_ops tegra_clk_pll_ops;
->  extern const struct clk_ops tegra_clk_plle_ops;
->  struct clk *tegra_clk_register_pll(const char *name, const char *parent_name,
-> -- 
-> 1.7.9.5
-> 
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c |   12 ++++++++++++
+ drivers/clk/tegra/clk.h     |    2 ++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index f612a8b65651..5677a5cdd3f7 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -355,6 +355,12 @@ static int clk_pll_enable(struct clk_hw *hw)
+ 		udelay(2);
+ 	}
+ 
++	if (pll->params->reset_reg) {
++		val = pll_readl(pll->params->reset_reg, pll);
++		val &= ~BIT(pll->params->reset_bit_idx);
++		pll_writel(val, pll->params->reset_reg, pll);
++	}
++
+ 	_clk_pll_enable(hw);
+ 
+ 	ret = clk_pll_wait_for_lock(pll);
+@@ -376,6 +382,12 @@ static void clk_pll_disable(struct clk_hw *hw)
+ 
+ 	_clk_pll_disable(hw);
+ 
++	if (pll->params->reset_reg) {
++		val = pll_readl(pll->params->reset_reg, pll);
++		val |= BIT(pll->params->reset_bit_idx);
++		pll_writel(val, pll->params->reset_reg, pll);
++	}
++
+ 	if (pll->params->iddq_reg) {
+ 		val = pll_readl(pll->params->iddq_reg, pll);
+ 		val |= BIT(pll->params->iddq_bit_idx);
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index b009c803f277..142999f1cd24 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -217,6 +217,8 @@ struct tegra_clk_pll_params {
+ 	u32		lock_enable_bit_idx;
+ 	u32		iddq_reg;
+ 	u32		iddq_bit_idx;
++	u32		reset_reg;
++	u32		reset_bit_idx;
+ 	u32		sdm_din_reg;
+ 	u32		sdm_din_mask;
+ 	u32		sdm_ctrl_reg;
+-- 
+1.7.9.5
