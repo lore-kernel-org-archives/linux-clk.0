@@ -1,55 +1,142 @@
-Return-Path: <Aisheng.Dong@freescale.com>
-From: Dong Aisheng <aisheng.dong@freescale.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@linaro.org>, <shawn.guo@linaro.org>, <b29396@freescale.com>,
-	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
-	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
-Subject: [PATCH RFC v1 0/5] clk: support clocks which requires parent clock on during operation
-Date: Wed, 15 Apr 2015 22:26:34 +0800
-Message-ID: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
-Return-Path: aisheng.dong@freescale.com
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 14/19] clk: tegra: pll: Adjust vco_min if SDM present
+Date: Fri, 24 Apr 2015 12:47:54 -0400
+Message-ID: <1429894079-25052-15-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
+References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds support in clock framework for clocks which operations
-requires its parent clock is on.
+From: Bill Huang <bilhuang@nvidia.com>
 
-Such clock type is initially met on Freescale i.MX7D platform that all clocks
-operations, including enable/disable, rate change and re-parent, requires its
-parent clock on. No sure if any other SoC has the similar clock type.
+This code makes use of the SDM fractional divider if present to
+contrain the allowable programming range of the PLL divider register
+bitfields to take advantage of higher frequency granularity that can
+be induced by the SDM divider.
 
-Current clock core can not support such type of clock well.
+Based on original work by Aleksandr Frid <afrid@nvidia.com>
 
-This patch introduce a new flag CLK_SET_PARENT_ON to handle this special case
-in clock core that enable its parent clock firstly for each operation and disable
-it later after operation complete.
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c |   29 ++++++++++++++++++++++++++++-
+ drivers/clk/tegra/clk.h     |    2 ++
+ 2 files changed, 30 insertions(+), 1 deletion(-)
 
-The most special case is for set_parent() operation which requires both parent,
-old one and new one, to be enabled at the same time during the operation.
-
-Patch 1~3 are minor cleanup & fixes.
-Patch 4 add CLK_SET_PARENT_ON flags in clock core to support such type clocks
-Patch 5 show the need of introducing clk_core_enable_lock and
-	clk_core_disable_lock to easily use and reduce duplicated code.
-	It can be merged into patch 4 if required.
-
-The patch series is based on for-next branch of Michael's git:
-git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-
-Dong Aisheng (5):
-  clk: change clk_core name of __clk_set_parent_after
-  clk: add missing lock when call clk_core_enable in clk_set_parent
-  clk: remove unneeded __clk_enable and __clk_disable
-  clk: core: add CLK_SET_PARENT_ON flags to support clocks require
-    parent on
-  clk: introduce clk_core_enable_lock and clk_core_disable_lock
-    functions
-
- drivers/clk/clk.c            | 112 ++++++++++++++++++++++++++++++++++---------
- include/linux/clk-provider.h |   5 ++
- 2 files changed, 94 insertions(+), 23 deletions(-)
-
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 4a248ee1861c..9acd858e0c5b 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -1637,7 +1637,6 @@ static const struct clk_ops tegra_clk_plle_tegra114_ops = {
+ 	.recalc_rate = clk_pll_recalc_rate,
+ };
+ 
+-
+ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+ 			  void __iomem *clk_base, void __iomem *pmc,
+ 			  unsigned long flags,
+@@ -1664,6 +1663,10 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+ 
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+ 	if (err)
+ 		return ERR_PTR(err);
+@@ -1702,6 +1705,10 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
+ 
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+ 	if (IS_ERR(pll))
+ 		return ERR_CAST(pll);
+@@ -1758,6 +1765,10 @@ struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
+ 
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	pll_params->flags |= TEGRA_PLL_BYPASS;
+ 	pll_params->flags |= TEGRA_PLLM;
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+@@ -2173,6 +2184,10 @@ struct clk *tegra_clk_register_pllc_tegra210(const char *name,
+ 
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	pll_params->flags |= TEGRA_PLL_BYPASS;
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+ 	if (IS_ERR(pll))
+@@ -2211,6 +2226,10 @@ struct clk *tegra_clk_register_pllxc_tegra210(const char *name,
+ 
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+ 	if (IS_ERR(pll))
+ 		return ERR_CAST(pll);
+@@ -2258,6 +2277,10 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
+ 
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	/* initialize PLL to minimum rate */
+ 
+ 	cfg.m = _pll_fixed_mdiv(pll_params, parent_rate);
+@@ -2322,6 +2345,10 @@ struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
+ 
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	pll_params->flags |= TEGRA_PLL_BYPASS;
+ 	pll_params->flags |= TEGRA_PLLMB;
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 9e37defb063f..27075a586e79 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -248,6 +248,8 @@ struct tegra_clk_pll_params {
+ 	int	(*calc_rate)(struct clk_hw *hw,
+ 			struct tegra_clk_pll_freq_table *cfg,
+ 			unsigned long rate, unsigned long parent_rate);
++	unsigned long	(*adjust_vco)(struct tegra_clk_pll_params *pll_params,
++				unsigned long parent_rate);
+ };
+ 
+ #define TEGRA_PLL_USE_LOCK BIT(0)
 -- 
-1.9.1
+1.7.9.5
+
