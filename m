@@ -1,210 +1,119 @@
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Return-Path: <sebastian.hesselbarth@gmail.com>
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Michael Welling <mwelling@ieee.org>,
-	Russell King <rmk+linux@arm.linux.org.uk>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] clk: si5351: Do not pass struct clk in platform_data
-Date: Thu, 30 Apr 2015 19:45:53 +0200
-Message-Id: <1430415954-29517-4-git-send-email-sebastian.hesselbarth@gmail.com>
-In-Reply-To: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
-References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
+Return-Path: <Paul.Burton@imgtec.com>
+From: Paul Burton <paul.burton@imgtec.com>
+To: <linux-mips@linux-mips.org>
+CC: Paul Burton <paul.burton@imgtec.com>, Lars-Peter Clausen
+	<lars@metafoo.de>, Mike Turquette <mturquette@linaro.org>, Ralf Baechle
+	<ralf@linux-mips.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH v4 28/37] MIPS,clk: move jz4740 UDC auto suspend functions to jz4740-cgu
+Date: Fri, 24 Apr 2015 14:17:28 +0100
+Message-ID: <1429881457-16016-29-git-send-email-paul.burton@imgtec.com>
+In-Reply-To: <1429881457-16016-1-git-send-email-paul.burton@imgtec.com>
+References: <1429881457-16016-1-git-send-email-paul.burton@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-When registering clk-si5351 by platform_data, we should not pass struct clk
-for the reference clocks. Drop struct clk from platform_data and rework the
-driver to use devm_clk_get of named clock references.
+The jz4740-cgu driver already has access to the CGU, so it makes sense
+to move the few remaining accesses to the CGU from arch/mips/jz4740
+there too. Move the jz4740_clock_udc_{dis,en}able_auto_suspend functions
+there for such consistency.
 
-While at it, check for at least one valid input clock and properly prepare/
-enable valid reference clocks.
-
-Reported-by: Michael Welling <mwelling@ieee.org>
-Reported-by: Jean-Francois Moine <moinejf@free.fr>
-Reported-by: Russell King <rmk+linux@arm.linux.org.uk>
-Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
----
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
 Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
 Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jean-Francois Moine <moinejf@free.fr>
-Cc: Michael Welling <mwelling@ieee.org>
-Cc: Russell King <rmk+linux@arm.linux.org.uk>
 Cc: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
+Cc: linux-mips@linux-mips.org
 ---
- drivers/clk/clk-si5351.c             | 58 +++++++++++++++++++++++++-----------
- include/linux/platform_data/si5351.h |  4 ---
- 2 files changed, 40 insertions(+), 22 deletions(-)
+Changes in v4:
+  - None.
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 44ea107cfc67..beeb57bbb04c 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -1128,13 +1128,6 @@ static int si5351_dt_parse(struct i2c_client *client,
- 	if (!pdata)
- 		return -ENOMEM;
+Changes in v3:
+  - Rebase.
+
+Changes in v2:
+  - None.
+---
+ arch/mips/jz4740/clock.c         | 13 -------------
+ drivers/clk/ingenic/jz4740-cgu.c | 22 ++++++++++++++++++++++
+ 2 files changed, 22 insertions(+), 13 deletions(-)
+
+diff --git a/arch/mips/jz4740/clock.c b/arch/mips/jz4740/clock.c
+index 90b44d7..2a10829 100644
+--- a/arch/mips/jz4740/clock.c
++++ b/arch/mips/jz4740/clock.c
+@@ -33,7 +33,6 @@
  
--	pdata->clk_xtal = of_clk_get(np, 0);
--	if (!IS_ERR(pdata->clk_xtal))
--		clk_put(pdata->clk_xtal);
--	pdata->clk_clkin = of_clk_get(np, 1);
--	if (!IS_ERR(pdata->clk_clkin))
--		clk_put(pdata->clk_clkin);
--
- 	/*
- 	 * property silabs,pll-source : <num src>, [<..>]
- 	 * allow to selectively set pll source
-@@ -1328,8 +1321,17 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 	i2c_set_clientdata(client, drvdata);
- 	drvdata->client = client;
- 	drvdata->variant = variant;
--	drvdata->pxtal = pdata->clk_xtal;
--	drvdata->pclkin = pdata->clk_clkin;
-+	drvdata->pxtal = devm_clk_get(&client->dev, "xtal");
-+	drvdata->pclkin = devm_clk_get(&client->dev, "clkin");
-+
-+	if (PTR_ERR(drvdata->pxtal) == -EPROBE_DEFER ||
-+	    PTR_ERR(drvdata->pclkin) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
-+	if (IS_ERR(drvdata->pxtal) && IS_ERR(drvdata->pclkin)) {
-+		dev_err(&client->dev, "missing at least one parent clock\n");
-+		return -EINVAL;
-+	}
+ #define JZ_CLOCK_GATE_UART0	BIT(0)
+ #define JZ_CLOCK_GATE_TCU	BIT(1)
+-#define JZ_CLOCK_GATE_UDC	BIT(11)
+ #define JZ_CLOCK_GATE_DMAC	BIT(12)
  
- 	drvdata->regmap = devm_regmap_init_i2c(client, &si5351_regmap_config);
- 	if (IS_ERR(drvdata->regmap)) {
-@@ -1393,6 +1395,11 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 		}
- 	}
- 
-+	if (!IS_ERR(drvdata->pxtal))
-+		clk_prepare_enable(drvdata->pxtal);
-+	if (!IS_ERR(drvdata->pclkin))
-+		clk_prepare_enable(drvdata->pclkin);
-+
- 	/* register xtal input clock gate */
- 	memset(&init, 0, sizeof(init));
- 	init.name = si5351_input_names[0];
-@@ -1407,7 +1414,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 	clk = devm_clk_register(&client->dev, &drvdata->xtal);
- 	if (IS_ERR(clk)) {
- 		dev_err(&client->dev, "unable to register %s\n", init.name);
--		return PTR_ERR(clk);
-+		ret = PTR_ERR(clk);
-+		goto err_clk;
- 	}
- 
- 	/* register clkin input clock gate */
-@@ -1425,7 +1433,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 		if (IS_ERR(clk)) {
- 			dev_err(&client->dev, "unable to register %s\n",
- 				init.name);
--			return PTR_ERR(clk);
-+			ret = PTR_ERR(clk);
-+			goto err_clk;
- 		}
- 	}
- 
-@@ -1447,7 +1456,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 	clk = devm_clk_register(&client->dev, &drvdata->pll[0].hw);
- 	if (IS_ERR(clk)) {
- 		dev_err(&client->dev, "unable to register %s\n", init.name);
--		return -EINVAL;
-+		ret = PTR_ERR(clk);
-+		goto err_clk;
- 	}
- 
- 	/* register PLLB or VXCO (Si5351B) */
-@@ -1471,7 +1481,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 	clk = devm_clk_register(&client->dev, &drvdata->pll[1].hw);
- 	if (IS_ERR(clk)) {
- 		dev_err(&client->dev, "unable to register %s\n", init.name);
--		return -EINVAL;
-+		ret = PTR_ERR(clk);
-+		goto err_clk;
- 	}
- 
- 	/* register clk multisync and clk out divider */
-@@ -1492,8 +1503,10 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 		num_clocks * sizeof(*drvdata->onecell.clks), GFP_KERNEL);
- 
- 	if (WARN_ON(!drvdata->msynth || !drvdata->clkout ||
--		    !drvdata->onecell.clks))
--		return -ENOMEM;
-+		    !drvdata->onecell.clks)) {
-+		ret = -ENOMEM;
-+		goto err_clk;
-+	}
- 
- 	for (n = 0; n < num_clocks; n++) {
- 		drvdata->msynth[n].num = n;
-@@ -1511,7 +1524,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 		if (IS_ERR(clk)) {
- 			dev_err(&client->dev, "unable to register %s\n",
- 				init.name);
--			return -EINVAL;
-+			ret = PTR_ERR(clk);
-+			goto err_clk;
- 		}
- 	}
- 
-@@ -1538,7 +1552,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 		if (IS_ERR(clk)) {
- 			dev_err(&client->dev, "unable to register %s\n",
- 				init.name);
--			return -EINVAL;
-+			ret = PTR_ERR(clk);
-+			goto err_clk;
- 		}
- 		drvdata->onecell.clks[n] = clk;
- 
-@@ -1557,10 +1572,17 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 				  &drvdata->onecell);
- 	if (ret) {
- 		dev_err(&client->dev, "unable to add clk provider\n");
--		return ret;
-+		goto err_clk;
- 	}
- 
- 	return 0;
-+
-+err_clk:
-+	if (!IS_ERR(drvdata->pxtal))
-+		clk_disable_unprepare(drvdata->pxtal);
-+	if (!IS_ERR(drvdata->pclkin))
-+		clk_disable_unprepare(drvdata->pclkin);
-+	return ret;
+ #define JZ_CLOCK_PLL_STABLE		BIT(10)
+@@ -64,18 +63,6 @@ static void jz_clk_reg_clear_bits(int reg, uint32_t mask)
+ 	writel(val, jz_clock_base + reg);
  }
  
- static const struct i2c_device_id si5351_i2c_ids[] = {
-diff --git a/include/linux/platform_data/si5351.h b/include/linux/platform_data/si5351.h
-index a947ab8b441a..533d9807e543 100644
---- a/include/linux/platform_data/si5351.h
-+++ b/include/linux/platform_data/si5351.h
-@@ -5,8 +5,6 @@
- #ifndef __LINUX_PLATFORM_DATA_SI5351_H__
- #define __LINUX_PLATFORM_DATA_SI5351_H__
- 
--struct clk;
+-void jz4740_clock_udc_disable_auto_suspend(void)
+-{
+-	jz_clk_reg_clear_bits(JZ_REG_CLOCK_GATE, JZ_CLOCK_GATE_UDC);
+-}
+-EXPORT_SYMBOL_GPL(jz4740_clock_udc_disable_auto_suspend);
 -
- /**
-  * enum si5351_pll_src - Si5351 pll clock source
-  * @SI5351_PLL_SRC_DEFAULT: default, do not change eeprom config
-@@ -107,8 +105,6 @@ struct si5351_clkout_config {
-  * @clkout: array of clkout configuration
-  */
- struct si5351_platform_data {
--	struct clk *clk_xtal;
--	struct clk *clk_clkin;
- 	enum si5351_pll_src pll_src[2];
- 	struct si5351_clkout_config clkout[8];
- };
+-void jz4740_clock_udc_enable_auto_suspend(void)
+-{
+-	jz_clk_reg_set_bits(JZ_REG_CLOCK_GATE, JZ_CLOCK_GATE_UDC);
+-}
+-EXPORT_SYMBOL_GPL(jz4740_clock_udc_enable_auto_suspend);
+-
+ void jz4740_clock_suspend(void)
+ {
+ 	jz_clk_reg_set_bits(JZ_REG_CLOCK_GATE,
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index 0209ed6..0e692ed 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -26,6 +26,7 @@
+ #define CGU_REG_CPCCR		0x00
+ #define CGU_REG_LCR		0x04
+ #define CGU_REG_CPPCR		0x10
++#define CGU_REG_CLKGR		0x20
+ #define CGU_REG_SCR		0x24
+ #define CGU_REG_I2SCDR		0x60
+ #define CGU_REG_LPCDR		0x64
+@@ -47,6 +48,9 @@
+ /* bits within the LCR register */
+ #define LCR_SLEEP		(1 << 0)
+ 
++/* bits within the CLKGR register */
++#define CLKGR_UDC		(1 << 11)
++
+ static struct ingenic_cgu *cgu;
+ 
+ static const s8 pll_od_encoding[4] = {
+@@ -242,3 +246,21 @@ void jz4740_clock_set_wait_mode(enum jz4740_wait_mode mode)
+ 
+ 	writel(lcr, cgu->base + CGU_REG_LCR);
+ }
++
++void jz4740_clock_udc_disable_auto_suspend(void)
++{
++	uint32_t clkgr = readl(cgu->base + CGU_REG_CLKGR);
++
++	clkgr &= ~CLKGR_UDC;
++	writel(clkgr, cgu->base + CGU_REG_CLKGR);
++}
++EXPORT_SYMBOL_GPL(jz4740_clock_udc_disable_auto_suspend);
++
++void jz4740_clock_udc_enable_auto_suspend(void)
++{
++	uint32_t clkgr = readl(cgu->base + CGU_REG_CLKGR);
++
++	clkgr |= CLKGR_UDC;
++	writel(clkgr, cgu->base + CGU_REG_CLKGR);
++}
++EXPORT_SYMBOL_GPL(jz4740_clock_udc_enable_auto_suspend);
 -- 
-2.1.0
+2.3.5
