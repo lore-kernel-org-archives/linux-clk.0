@@ -1,444 +1,153 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	arnd@arndb.de,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org,
-	ariel.dalessandro@gmail.com,
-	ezequiel@vanguardiasur.com.ar,
-	Joachim Eastwood <manabian@gmail.com>
-Subject: [PATCH v2 3/4] clk: add lpc18xx ccu clk driver
-Date: Mon, 27 Apr 2015 23:38:12 +0200
-Message-Id: <1430170693-28303-4-git-send-email-manabian@gmail.com>
-In-Reply-To: <1430170693-28303-1-git-send-email-manabian@gmail.com>
-References: <1430170693-28303-1-git-send-email-manabian@gmail.com>
+Return-Path: <Paul.Burton@imgtec.com>
+From: Paul Burton <paul.burton@imgtec.com>
+To: <linux-mips@linux-mips.org>
+CC: Paul Burton <paul.burton@imgtec.com>, <devicetree@vger.kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, Ian Campbell
+	<ijc+devicetree@hellion.org.uk>, Jason Cooper <jason@lakedaemon.net>, "Jiri
+ Slaby" <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>, Lars-Peter
+ Clausen <lars@metafoo.de>, <linux-clk@vger.kernel.org>,
+	<linux-serial@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Mike
+ Turquette" <mturquette@linaro.org>, Paul Cercueil <paul@crapouillou.net>,
+	Pawel Moll <pawel.moll@arm.com>, Ralf Baechle <ralf@linux-mips.org>, "Rob
+ Herring" <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, "Thomas
+ Gleixner" <tglx@linutronix.de>
+Subject: [PATCH v4 00/37] JZ4780 & CI20 support
+Date: Fri, 24 Apr 2015 14:17:00 +0100
+Message-ID: <1429881457-16016-1-git-send-email-paul.burton@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add driver for NXP LPC18xx/43xx Clock Control Unit (CCU). The CCU
-provides fine grained gating of most clocks present in the SoC.
+This series introduces initial support for the Ingenic JZ4780 SoC and
+the Imagination Technologies MIPS Creator CI20 board which is built
+around it. In the process the existing JZ4740 & qi_lb60 code gains
+initial support for using DeviceTree such that much of the existing
+platform code under arch/mips/jz4740 can be shared.
 
-Signed-off-by: Joachim Eastwood <manabian@gmail.com>
----
- drivers/clk/nxp/Makefile                |   1 +
- drivers/clk/nxp/clk-lpc18xx-ccu.c       | 318 ++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/lpc18xx-ccu.h |  74 ++++++++
- 3 files changed, 393 insertions(+)
- create mode 100644 drivers/clk/nxp/clk-lpc18xx-ccu.c
- create mode 100644 include/dt-bindings/clock/lpc18xx-ccu.h
+The series applies atop next-20150421. Review appreciated, and
+hopefully this can make it in for v4.2.
 
-diff --git a/drivers/clk/nxp/Makefile b/drivers/clk/nxp/Makefile
-index aca9d3e4f7fe..7f608b0ad7b4 100644
---- a/drivers/clk/nxp/Makefile
-+++ b/drivers/clk/nxp/Makefile
-@@ -1 +1,2 @@
- obj-$(CONFIG_ARCH_LPC18XX)	+= clk-lpc18xx-cgu.o
-+obj-$(CONFIG_ARCH_LPC18XX)	+= clk-lpc18xx-ccu.o
-diff --git a/drivers/clk/nxp/clk-lpc18xx-ccu.c b/drivers/clk/nxp/clk-lpc18xx-ccu.c
-new file mode 100644
-index 000000000000..01130f31611c
---- /dev/null
-+++ b/drivers/clk/nxp/clk-lpc18xx-ccu.c
-@@ -0,0 +1,318 @@
-+/*
-+ * Clk driver for NXP LPC18xx/LPC43xx Clock Control Unit (CCU)
-+ *
-+ * Copyright (C) 2015 Joachim Eastwood <manabian@gmail.com>
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2. This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+#include <linux/string.h>
-+
-+#include <dt-bindings/clock/lpc18xx-cgu.h>
-+#include <dt-bindings/clock/lpc18xx-ccu.h>
-+
-+/* Bit defines for CCU branch configuration register */
-+#define LPC18XX_CCU_RUN		BIT(0)
-+#define LPC18XX_CCU_AUTO	BIT(1)
-+#define LPC18XX_CCU_DIV		BIT(5)
-+#define LPC18XX_CCU_DIVSTAT	BIT(27)
-+
-+/* CCU branch feature bits */
-+#define CCU_BRANCH_IS_BUS	BIT(0)
-+#define CCU_BRANCH_HAVE_DIV2	BIT(1)
-+
-+#define to_clk_gate(_hw) container_of(_hw, struct clk_gate, hw)
-+
-+struct lpc18xx_branch_clk_data {
-+	int *base_ids;
-+	int num_base_ids;
-+};
-+
-+struct lpc18xx_clk_branch {
-+	int base_id;
-+	const char *name;
-+	u16 offset;
-+	u16 flags;
-+	struct clk *clk;
-+	struct clk_gate gate;
-+};
-+
-+static struct lpc18xx_clk_branch clk_branches[] = {
-+	{BASE_APB3_CLK, "apb3_bus",		CLK_APB3_BUS,		CCU_BRANCH_IS_BUS},
-+	{BASE_APB3_CLK, "apb3_i2c1",		CLK_APB3_I2C1,		0},
-+	{BASE_APB3_CLK, "apb3_dac",		CLK_APB3_DAC,		0},
-+	{BASE_APB3_CLK, "apb3_adc0",		CLK_APB3_ADC0,		0},
-+	{BASE_APB3_CLK, "apb3_adc1",		CLK_APB3_ADC1,		0},
-+	{BASE_APB3_CLK, "apb3_can0",		CLK_APB3_CAN0,		0},
-+
-+	{BASE_APB1_CLK, "apb1_bus",		CLK_APB1_BUS,		CCU_BRANCH_IS_BUS},
-+	{BASE_APB1_CLK, "apb1_motorcon_pwm",	CLK_APB1_MOTOCON_PWM,	0},
-+	{BASE_APB1_CLK, "apb1_i2c0",		CLK_APB1_I2C0,		0},
-+	{BASE_APB1_CLK, "apb1_i2s",		CLK_APB1_I2S,		0},
-+	{BASE_APB1_CLK, "apb1_can1",		CLK_APB1_CAN1,		0},
-+
-+	{BASE_SPIFI_CLK, "spifi",		CLK_SPIFI,		0},
-+
-+	{BASE_CPU_CLK, "cpu_bus",		CLK_CPU_BUS,		CCU_BRANCH_IS_BUS},
-+	{BASE_CPU_CLK, "cpu_spifi",		CLK_CPU_SPIFI,		0},
-+	{BASE_CPU_CLK, "cpu_gpio",		CLK_CPU_GPIO,		0},
-+	{BASE_CPU_CLK, "cpu_lcd",		CLK_CPU_LCD,		0},
-+	{BASE_CPU_CLK, "cpu_ethernet",		CLK_CPU_ETHERNET,	0},
-+	{BASE_CPU_CLK, "cpu_usb0",		CLK_CPU_USB0,		0},
-+	{BASE_CPU_CLK, "cpu_emc",		CLK_CPU_EMC,		0},
-+	{BASE_CPU_CLK, "cpu_sdio",		CLK_CPU_SDIO,		0},
-+	{BASE_CPU_CLK, "cpu_dma",		CLK_CPU_DMA,		0},
-+	{BASE_CPU_CLK, "cpu_core",		CLK_CPU_CORE,		0},
-+	{BASE_CPU_CLK, "cpu_sct",		CLK_CPU_SCT,		0},
-+	{BASE_CPU_CLK, "cpu_usb1",		CLK_CPU_USB1,		0},
-+	{BASE_CPU_CLK, "cpu_emcdiv",		CLK_CPU_EMCDIV,		CCU_BRANCH_HAVE_DIV2},
-+	{BASE_CPU_CLK, "cpu_flasha",		CLK_CPU_FLASHA,		CCU_BRANCH_HAVE_DIV2},
-+	{BASE_CPU_CLK, "cpu_flashb",		CLK_CPU_FLASHB,		CCU_BRANCH_HAVE_DIV2},
-+	{BASE_CPU_CLK, "cpu_m0app",		CLK_CPU_M0APP,		CCU_BRANCH_HAVE_DIV2},
-+	{BASE_CPU_CLK, "cpu_adchs",		CLK_CPU_ADCHS,		CCU_BRANCH_HAVE_DIV2},
-+	{BASE_CPU_CLK, "cpu_eeprom",		CLK_CPU_EEPROM,		CCU_BRANCH_HAVE_DIV2},
-+	{BASE_CPU_CLK, "cpu_wwdt",		CLK_CPU_WWDT,		0},
-+	{BASE_CPU_CLK, "cpu_uart0",		CLK_CPU_UART0,		0},
-+	{BASE_CPU_CLK, "cpu_uart1",		CLK_CPU_UART1,		0},
-+	{BASE_CPU_CLK, "cpu_ssp0",		CLK_CPU_SSP0,		0},
-+	{BASE_CPU_CLK, "cpu_timer0",		CLK_CPU_TIMER0,		0},
-+	{BASE_CPU_CLK, "cpu_timer1",		CLK_CPU_TIMER1,		0},
-+	{BASE_CPU_CLK, "cpu_scu",		CLK_CPU_SCU,		0},
-+	{BASE_CPU_CLK, "cpu_creg",		CLK_CPU_CREG,		0},
-+	{BASE_CPU_CLK, "cpu_ritimer",		CLK_CPU_RITIMER,	0},
-+	{BASE_CPU_CLK, "cpu_uart2",		CLK_CPU_UART2,		0},
-+	{BASE_CPU_CLK, "cpu_uart3",		CLK_CPU_UART3,		0},
-+	{BASE_CPU_CLK, "cpu_timer2",		CLK_CPU_TIMER2,		0},
-+	{BASE_CPU_CLK, "cpu_timer3",		CLK_CPU_TIMER3,		0},
-+	{BASE_CPU_CLK, "cpu_ssp1",		CLK_CPU_SSP1,		0},
-+	{BASE_CPU_CLK, "cpu_qei",		CLK_CPU_QEI,		0},
-+
-+	{BASE_PERIPH_CLK, "periph_bus",		CLK_PERIPH_BUS,		CCU_BRANCH_IS_BUS},
-+	{BASE_PERIPH_CLK, "periph_core",	CLK_PERIPH_CORE,	0},
-+	{BASE_PERIPH_CLK, "periph_sgpio",	CLK_PERIPH_SGPIO,	0},
-+
-+	{BASE_USB0_CLK,  "usb0",		CLK_USB0,		0},
-+	{BASE_USB1_CLK,  "usb1",		CLK_USB1,		0},
-+	{BASE_SPI_CLK,   "spi",			CLK_SPI,		0},
-+	{BASE_ADCHS_CLK, "adchs",		CLK_ADCHS,		0},
-+
-+	{BASE_AUDIO_CLK, "audio",		CLK_AUDIO,		0},
-+	{BASE_UART3_CLK, "apb2_uart3",		CLK_APB2_UART3,		0},
-+	{BASE_UART2_CLK, "apb2_uart2",		CLK_APB2_UART2,		0},
-+	{BASE_UART1_CLK, "apb0_uart1",		CLK_APB0_UART1,		0},
-+	{BASE_UART0_CLK, "apb0_uart0",		CLK_APB0_UART0,		0},
-+	{BASE_SSP1_CLK,  "apb2_ssp1",		CLK_APB2_SSP1,		0},
-+	{BASE_SSP0_CLK,  "apb0_ssp0",		CLK_APB0_SSP0,		0},
-+	{BASE_SDIO_CLK,  "sdio",		CLK_SDIO,		0},
-+};
-+
-+static int of_clk_get_parent_arg(struct device_node *np, int index)
-+{
-+	struct of_phandle_args clkspec;
-+	int rc;
-+
-+	if (index < 0)
-+		return -EINVAL;
-+
-+	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
-+					&clkspec);
-+	if (rc)
-+		return -EINVAL;
-+
-+	return clkspec.args_count ? clkspec.args[0] : -EINVAL;
-+}
-+
-+static struct clk *lpc18xx_ccu_branch_clk_get(struct of_phandle_args *clkspec,
-+					      void *data)
-+{
-+	struct lpc18xx_branch_clk_data *clk_data = data;
-+	unsigned int offset = clkspec->args[0];
-+	int i, j;
-+
-+	for (i = 0; i < ARRAY_SIZE(clk_branches); i++) {
-+		if (clk_branches[i].offset != offset)
-+			continue;
-+
-+		for (j = 0; j < clk_data->num_base_ids; j++) {
-+			if (clk_data->base_ids[j] == clk_branches[i].base_id)
-+				return clk_branches[i].clk;
-+		}
-+	}
-+
-+	pr_err("%s: invalid clock offset %d\n", __func__, offset);
-+
-+	return ERR_PTR(-EINVAL);
-+}
-+
-+static int lpc18xx_ccu_gate_endisable(struct clk_hw *hw, bool enable)
-+{
-+	struct clk_gate *gate = to_clk_gate(hw);
-+	u32 val;
-+
-+	/*
-+	 * Divider field is write only, so divider stat field must
-+	 * be read so divider field can be set accordingly.
-+	 */
-+	val = clk_readl(gate->reg);
-+	if (val & LPC18XX_CCU_DIVSTAT)
-+		val |= LPC18XX_CCU_DIV;
-+
-+	if (enable) {
-+		val |= LPC18XX_CCU_RUN;
-+	} else {
-+		/*
-+		 * To safely disable a branch clock a squence of two separate
-+		 * writes must be used. First write should set the AUTO bit
-+		 * and the next write should clear the RUN bit.
-+		 */
-+		val |= LPC18XX_CCU_AUTO;
-+		clk_writel(val, gate->reg);
-+
-+		val &= ~LPC18XX_CCU_RUN;
-+	}
-+
-+	clk_writel(val, gate->reg);
-+
-+	return 0;
-+}
-+
-+static int lpc18xx_ccu_gate_enable(struct clk_hw *hw)
-+{
-+	return lpc18xx_ccu_gate_endisable(hw, true);
-+}
-+
-+static void lpc18xx_ccu_gate_disable(struct clk_hw *hw)
-+{
-+	lpc18xx_ccu_gate_endisable(hw, false);
-+}
-+
-+static int lpc18xx_ccu_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_gate *gate = to_clk_gate(hw);
-+
-+	return clk_readl(gate->reg) & LPC18XX_CCU_RUN;
-+}
-+
-+static const struct clk_ops lpc18xx_ccu_gate_ops = {
-+	.enable		= lpc18xx_ccu_gate_enable,
-+	.disable	= lpc18xx_ccu_gate_disable,
-+	.is_enabled	= lpc18xx_ccu_gate_is_enabled,
-+};
-+
-+static void lpc18xx_ccu_register_branch_gate_div(struct lpc18xx_clk_branch *branch,
-+						 void __iomem *base,
-+						 const char *parent)
-+{
-+	const struct clk_ops *div_ops = NULL;
-+	struct clk_divider *div = NULL;
-+	struct clk_hw *div_hw = NULL;
-+
-+	if (branch->flags & CCU_BRANCH_HAVE_DIV2) {
-+		div = kzalloc(sizeof(*div), GFP_KERNEL);
-+		if (!div)
-+			return;
-+
-+		div->reg = branch->offset + base;
-+		div->flags = CLK_DIVIDER_READ_ONLY;
-+		div->shift = 27;
-+		div->width = 1;
-+
-+		div_hw = &div->hw;
-+		div_ops = &clk_divider_ops;
-+	}
-+
-+	branch->gate.reg = branch->offset + base;
-+	branch->gate.bit_idx = 0;
-+
-+	branch->clk = clk_register_composite(NULL, branch->name, &parent, 1,
-+					     NULL, NULL,
-+					     div_hw, div_ops,
-+					     &branch->gate.hw, &lpc18xx_ccu_gate_ops, 0);
-+	if (IS_ERR(branch->clk)) {
-+		kfree(div);
-+		pr_warn("%s: failed to register %s\n", __func__, branch->name);
-+		return;
-+	}
-+
-+	/* Grab essential branch clocks for CPU and SDRAM */
-+	switch (branch->offset) {
-+	case CLK_CPU_EMC:
-+	case CLK_CPU_CORE:
-+	case CLK_CPU_CREG:
-+	case CLK_CPU_EMCDIV:
-+		clk_prepare_enable(branch->clk);
-+	}
-+}
-+
-+static void lpc18xx_ccu_register_branch_clks(void __iomem *base, int base_clk_id,
-+					     const char *parent)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(clk_branches); i++) {
-+		if (clk_branches[i].base_id != base_clk_id)
-+			continue;
-+
-+		lpc18xx_ccu_register_branch_gate_div(&clk_branches[i], base,
-+						     parent);
-+
-+		if (clk_branches[i].flags & CCU_BRANCH_IS_BUS)
-+			parent = clk_branches[i].name;
-+	}
-+}
-+
-+static void __init lpc18xx_ccu_init(struct device_node *np)
-+{
-+	struct lpc18xx_branch_clk_data *clk_data;
-+	int num_base_ids, *base_ids;
-+	void __iomem *base;
-+	const char *parent;
-+	int base_clk_id;
-+	int i;
-+
-+	base = of_iomap(np, 0);
-+	if (!base) {
-+		pr_warn("%s: failed to map address range\n", __func__);
-+		return;
-+	}
-+
-+	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return;
-+
-+	num_base_ids = of_clk_get_parent_count(np);
-+
-+	base_ids = kcalloc(num_base_ids, sizeof(int), GFP_KERNEL);
-+	if (!base_ids) {
-+		kfree(clk_data);
-+		return;
-+	}
-+
-+	clk_data->base_ids = base_ids;
-+	clk_data->num_base_ids = num_base_ids;
-+
-+	for (i = 0; i < num_base_ids; i++) {
-+		parent = of_clk_get_parent_name(np, i);
-+
-+		base_clk_id = of_clk_get_parent_arg(np, i);
-+		if (base_clk_id < 0 && base_clk_id >= BASE_CLK_MAX) {
-+			pr_warn("%s: invalid base clk at idx %d\n", __func__, i);
-+			base_ids[i] = -EINVAL;
-+			continue;
-+		}
-+
-+		clk_data->base_ids[i] = base_clk_id;
-+		lpc18xx_ccu_register_branch_clks(base, base_clk_id, parent);
-+	}
-+
-+	of_clk_add_provider(np, lpc18xx_ccu_branch_clk_get, clk_data);
-+}
-+CLK_OF_DECLARE(lpc18xx_ccu, "nxp,lpc1850-ccu", lpc18xx_ccu_init);
-diff --git a/include/dt-bindings/clock/lpc18xx-ccu.h b/include/dt-bindings/clock/lpc18xx-ccu.h
-new file mode 100644
-index 000000000000..bbfe00b6ab7d
---- /dev/null
-+++ b/include/dt-bindings/clock/lpc18xx-ccu.h
-@@ -0,0 +1,74 @@
-+/*
-+ * Copyright (c) 2015 Joachim Eastwood <manabian@gmail.com>
-+ *
-+ * This code is released using a dual license strategy: BSD/GPL
-+ * You can choose the licence that better fits your requirements.
-+ *
-+ * Released under the terms of 3-clause BSD License
-+ * Released under the terms of GNU General Public License Version 2.0
-+ *
-+ */
-+
-+/* Clock Control Unit 1 (CCU1) clock offsets */
-+#define CLK_APB3_BUS		0x100
-+#define CLK_APB3_I2C1		0x108
-+#define CLK_APB3_DAC		0x110
-+#define CLK_APB3_ADC0		0x118
-+#define CLK_APB3_ADC1		0x120
-+#define CLK_APB3_CAN0		0x128
-+#define CLK_APB1_BUS		0x200
-+#define CLK_APB1_MOTOCON_PWM	0x208
-+#define CLK_APB1_I2C0		0x210
-+#define CLK_APB1_I2S		0x218
-+#define CLK_APB1_CAN1		0x220
-+#define CLK_SPIFI		0x300
-+#define CLK_CPU_BUS		0x400
-+#define CLK_CPU_SPIFI		0x408
-+#define CLK_CPU_GPIO		0x410
-+#define CLK_CPU_LCD		0x418
-+#define CLK_CPU_ETHERNET	0x420
-+#define CLK_CPU_USB0		0x428
-+#define CLK_CPU_EMC		0x430
-+#define CLK_CPU_SDIO		0x438
-+#define CLK_CPU_DMA		0x440
-+#define CLK_CPU_CORE		0x448
-+#define CLK_CPU_SCT		0x468
-+#define CLK_CPU_USB1		0x470
-+#define CLK_CPU_EMCDIV		0x478
-+#define CLK_CPU_FLASHA		0x480
-+#define CLK_CPU_FLASHB		0x488
-+#define CLK_CPU_M0APP		0x490
-+#define CLK_CPU_ADCHS		0x498
-+#define CLK_CPU_EEPROM		0x4a0
-+#define CLK_CPU_WWDT		0x500
-+#define CLK_CPU_UART0		0x508
-+#define CLK_CPU_UART1		0x510
-+#define CLK_CPU_SSP0		0x518
-+#define CLK_CPU_TIMER0		0x520
-+#define CLK_CPU_TIMER1		0x528
-+#define CLK_CPU_SCU		0x530
-+#define CLK_CPU_CREG		0x538
-+#define CLK_CPU_RITIMER		0x600
-+#define CLK_CPU_UART2		0x608
-+#define CLK_CPU_UART3		0x610
-+#define CLK_CPU_TIMER2		0x618
-+#define CLK_CPU_TIMER3		0x620
-+#define CLK_CPU_SSP1		0x628
-+#define CLK_CPU_QEI		0x630
-+#define CLK_PERIPH_BUS		0x700
-+#define CLK_PERIPH_CORE		0x710
-+#define CLK_PERIPH_SGPIO	0x718
-+#define CLK_USB0		0x800
-+#define CLK_USB1		0x900
-+#define CLK_SPI			0xA00
-+#define CLK_ADCHS		0xB00
-+
-+/* Clock Control Unit 2 (CCU2) clock offsets */
-+#define CLK_AUDIO		0x100
-+#define CLK_APB2_UART3		0x200
-+#define CLK_APB2_UART2		0x300
-+#define CLK_APB0_UART1		0x400
-+#define CLK_APB0_UART0		0x500
-+#define CLK_APB2_SSP1		0x600
-+#define CLK_APB0_SSP0		0x700
-+#define CLK_SDIO		0x800
+Thanks,
+    Paul
+
+Paul Burton (37):
+  devicetree/bindings: add Ingenic Semiconductor vendor prefix
+  devicetree/bindings: add Qi Hardware vendor prefix
+  MIPS: JZ4740: introduce CONFIG_MACH_INGENIC
+  MIPS: ingenic: add newer vendor IDs
+  MIPS: JZ4740: require & include DT
+  MIPS: irq_cpu: declare irqchip table entry
+  MIPS: JZ4740: probe CPU interrupt controller via DT
+  MIPS: JZ4740: use generic plat_irq_dispatch
+  MIPS: JZ4740: move arch_init_irq out of arch/mips/jz4740/irq.c
+  devicetree: document Ingenic SoC interrupt controller binding
+  MIPS: JZ4740: probe interrupt controller via DT
+  MIPS: JZ4740: parse SoC interrupt controller parent IRQ from DT
+  MIPS: JZ4740: register an irq_domain for the interrupt controller
+  MIPS: JZ4740: drop intc debugfs code
+  MIPS: JZ4740: remove jz_intc_base global
+  MIPS: JZ4740: support >32 interrupts
+  MIPS: JZ4740: define IRQ numbers based on number of intc IRQs
+  MIPS: JZ4740: read intc base address from DT
+  MIPS: JZ4740: avoid JZ4740-specific naming
+  MIPS: JZ4740: support newer SoC interrupt controllers
+  irqchip: move Ingenic SoC intc driver to drivers/irqchip
+  MIPS: JZ4740: call jz4740_clock_init earlier
+  MIPS: JZ4740: replace use of jz4740_clock_bdata
+  devicetree: add Ingenic CGU binding documentation
+  clk: ingenic: add driver for Ingenic SoC CGU clocks
+  MIPS,clk: migrate JZ4740 to common clock framework
+  MIPS,clk: move jz4740_clock_set_wait_mode to jz4740-cgu
+  MIPS,clk: move jz4740 UDC auto suspend functions to jz4740-cgu
+  MIPS,clk: move jz4740 clock suspend,resume functions to jz4740-cgu
+  clk: ingenic: add JZ4780 CGU support
+  MIPS: JZ4740: remove clock.h
+  MIPS: JZ4740: only detect RAM size if not specified in DT
+  devicetree: document Ingenic SoC UART binding
+  serial: 8250_ingenic: support for Ingenic SoC UARTs
+  MIPS: JZ4740: use Ingenic SoC UART driver
+  MIPS: ingenic: initial JZ4780 support
+  MIPS: ingenic: initial MIPS Creator CI20 support
+
+ .../devicetree/bindings/clock/ingenic,cgu.txt      |  53 ++
+ .../bindings/interrupt-controller/ingenic,intc.txt |  25 +
+ .../devicetree/bindings/serial/ingenic,uart.txt    |  22 +
+ .../devicetree/bindings/vendor-prefixes.txt        |   2 +
+ arch/mips/Kconfig                                  |  11 +-
+ arch/mips/boot/dts/Makefile                        |   1 +
+ arch/mips/boot/dts/ingenic/Makefile                |  10 +
+ arch/mips/boot/dts/ingenic/ci20.dts                |  21 +
+ arch/mips/boot/dts/ingenic/jz4740.dtsi             |  68 ++
+ arch/mips/boot/dts/ingenic/jz4780.dtsi             | 101 +++
+ arch/mips/boot/dts/ingenic/qi_lb60.dts             |  15 +
+ arch/mips/configs/ci20_defconfig                   | 169 ++++
+ arch/mips/configs/qi_lb60_defconfig                |   3 +-
+ arch/mips/include/asm/cpu-type.h                   |   2 +-
+ arch/mips/include/asm/cpu.h                        |   6 +-
+ arch/mips/include/asm/mach-jz4740/clock.h          |   3 +
+ .../asm/mach-jz4740/cpu-feature-overrides.h        |   3 -
+ arch/mips/include/asm/mach-jz4740/irq.h            |  14 +-
+ arch/mips/include/asm/mach-jz4740/platform.h       |   2 -
+ arch/mips/jz4740/Kconfig                           |  17 +-
+ arch/mips/jz4740/Makefile                          |   8 +-
+ arch/mips/jz4740/Platform                          |   8 +-
+ arch/mips/jz4740/board-qi_lb60.c                   |   7 -
+ arch/mips/jz4740/clock-debugfs.c                   | 108 ---
+ arch/mips/jz4740/clock.c                           | 924 ---------------------
+ arch/mips/jz4740/clock.h                           |  76 --
+ arch/mips/jz4740/gpio.c                            |   7 +-
+ arch/mips/jz4740/irq.c                             | 162 ----
+ arch/mips/jz4740/platform.c                        |  38 +-
+ arch/mips/jz4740/pm.c                              |   2 -
+ arch/mips/jz4740/prom.c                            |  13 -
+ arch/mips/jz4740/reset.c                           |  13 +-
+ arch/mips/jz4740/serial.c                          |  33 -
+ arch/mips/jz4740/serial.h                          |  23 -
+ arch/mips/jz4740/setup.c                           |  36 +-
+ arch/mips/jz4740/time.c                            |  19 +-
+ arch/mips/kernel/cpu-probe.c                       |   4 +-
+ arch/mips/kernel/irq_cpu.c                         |   3 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/ingenic/Makefile                       |   3 +
+ drivers/clk/ingenic/cgu.c                          | 712 ++++++++++++++++
+ drivers/clk/ingenic/cgu.h                          | 223 +++++
+ drivers/clk/ingenic/jz4740-cgu.c                   | 303 +++++++
+ drivers/clk/ingenic/jz4780-cgu.c                   | 736 ++++++++++++++++
+ drivers/irqchip/Kconfig                            |   5 +
+ drivers/irqchip/Makefile                           |   1 +
+ drivers/irqchip/irq-ingenic.c                      | 171 ++++
+ drivers/tty/serial/8250/8250_ingenic.c             | 261 ++++++
+ drivers/tty/serial/8250/Kconfig                    |   9 +
+ drivers/tty/serial/8250/Makefile                   |   3 +
+ include/dt-bindings/clock/jz4740-cgu.h             |  37 +
+ include/dt-bindings/clock/jz4780-cgu.h             |  88 ++
+ .../irq.h => include/linux/irqchip/ingenic.h       |   8 +-
+ 53 files changed, 3169 insertions(+), 1424 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/ingenic,cgu.txt
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ingenic,intc.txt
+ create mode 100644 Documentation/devicetree/bindings/serial/ingenic,uart.txt
+ create mode 100644 arch/mips/boot/dts/ingenic/Makefile
+ create mode 100644 arch/mips/boot/dts/ingenic/ci20.dts
+ create mode 100644 arch/mips/boot/dts/ingenic/jz4740.dtsi
+ create mode 100644 arch/mips/boot/dts/ingenic/jz4780.dtsi
+ create mode 100644 arch/mips/boot/dts/ingenic/qi_lb60.dts
+ create mode 100644 arch/mips/configs/ci20_defconfig
+ delete mode 100644 arch/mips/jz4740/clock-debugfs.c
+ delete mode 100644 arch/mips/jz4740/clock.c
+ delete mode 100644 arch/mips/jz4740/clock.h
+ delete mode 100644 arch/mips/jz4740/irq.c
+ delete mode 100644 arch/mips/jz4740/serial.c
+ delete mode 100644 arch/mips/jz4740/serial.h
+ create mode 100644 drivers/clk/ingenic/Makefile
+ create mode 100644 drivers/clk/ingenic/cgu.c
+ create mode 100644 drivers/clk/ingenic/cgu.h
+ create mode 100644 drivers/clk/ingenic/jz4740-cgu.c
+ create mode 100644 drivers/clk/ingenic/jz4780-cgu.c
+ create mode 100644 drivers/irqchip/irq-ingenic.c
+ create mode 100644 drivers/tty/serial/8250/8250_ingenic.c
+ create mode 100644 include/dt-bindings/clock/jz4740-cgu.h
+ create mode 100644 include/dt-bindings/clock/jz4780-cgu.h
+ rename arch/mips/jz4740/irq.h => include/linux/irqchip/ingenic.h (74%)
+
 -- 
-1.8.0
+2.3.5
