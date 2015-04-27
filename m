@@ -1,59 +1,167 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>,
- Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- Barry Song <baohua@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Alexandre Courbot <gnurou@gmail.com>, linux-mips@linux-mips.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 1/8] clk: rockchip: Staticize file-scope declarations
-Date: Tue, 28 Apr 2015 13:46:16 +0900
-Message-id: <1430196383-9190-2-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
-References: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Mon, 27 Apr 2015 17:30:31 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Rhyland Klein <rklein@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>, Stephen Warren
+	<swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang
+	<bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 16/19] clk: tegra: pll: Add Set_default logic
+Message-ID: <20150427143031.GH3097@tbergstrom-lnx.Nvidia.com>
+References: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
+ <1429894079-25052-17-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1429894079-25052-17-git-send-email-rklein@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add missing static to local (file-scope only) symbols.
+On Fri, Apr 24, 2015 at 12:47:56PM -0400, Rhyland Klein wrote:
+> From: Bill Huang <bilhuang@nvidia.com>
+> 
+> Add logic which (if specified for a pll) can verify that a PLL is set
+> to the proper default value and if not can set it. This can be
+> specified per PLL as each will have different default values.
+> 
+> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
+>  drivers/clk/tegra/clk.h     |   15 ++++++++++++++
+>  2 files changed, 50 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+> index 9acd858e0c5b..68b42be060c7 100644
+> --- a/drivers/clk/tegra/clk-pll.c
+> +++ b/drivers/clk/tegra/clk-pll.c
+> @@ -660,15 +660,28 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+>  			unsigned long rate)
+>  {
+>  	struct tegra_clk_pll *pll = to_clk_pll(hw);
+> +	struct tegra_clk_pll_freq_table old_cfg;
+>  	int state, ret = 0;
+>  
+>  	state = clk_pll_is_enabled(hw);
+>  
+> +	_get_pll_mnp(pll, &old_cfg);
+> +
+> +	if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
+> +			(cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
+> +		ret = pll->params->dyn_ramp(pll, cfg);
+> +		if (!ret)
+> +			return 0;
+> +	}
+> +
+>  	if (state) {
+>  		pll_clk_stop_ss(pll);
+>  		_clk_pll_disable(hw);
+>  	}
+>  
+> +	if (!pll->params->defaults_set && pll->params->set_defaults)
+> +		pll->params->set_defaults(pll);
+> +
+>  	_update_pll_mnp(pll, cfg);
+>  
+>  	if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
+> @@ -1528,6 +1541,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
+>  	if (!pll->params->calc_rate)
+>  		pll->params->calc_rate = _calc_rate;
+>  
+> +	if (pll->params->set_defaults)
+> +		pll->params->set_defaults(pll);
+> +
+>  	/* Data in .init is copied by clk_register(), so stack variable OK */
+>  	pll->hw.init = &init;
+>  
+> @@ -1646,7 +1662,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+>  	struct tegra_clk_pll *pll;
+>  	struct clk *clk, *parent;
+>  	unsigned long parent_rate;
+> -	int err;
+>  	u32 val, val_iddq;
+>  
+>  	parent = __clk_lookup(parent_name);
+> @@ -1667,18 +1682,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+>  		pll_params->vco_min = pll_params->adjust_vco(pll_params,
+>  							     parent_rate);
+>  
+> -	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+> -	if (err)
+> -		return ERR_PTR(err);
+> +	/*
+> +	 * If the pll has a set_defaults callback, it will take care of
+> +	 * configuring dynamic ramping and setting IDDQ in that path.
+> +	 */
+> +	if (!pll_params->set_defaults) {
+> +		int err;
+>  
+> -	val = readl_relaxed(clk_base + pll_params->base_reg);
+> -	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+> +		err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+> +		if (err)
+> +			return ERR_PTR(err);
+>  
+> -	if (val & PLL_BASE_ENABLE)
+> -		WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
+> -	else {
+> -		val_iddq |= BIT(pll_params->iddq_bit_idx);
+> -		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
+> +		val = readl_relaxed(clk_base + pll_params->base_reg);
+> +		val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+> +
+> +		if (val & PLL_BASE_ENABLE)
+> +			WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
+> +		else {
+> +			val_iddq |= BIT(pll_params->iddq_bit_idx);
+> +			writel_relaxed(val_iddq,
+> +				       clk_base + pll_params->iddq_reg);
+> +		}
+>  	}
+>  
+>  	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 850521d42be6..6454c1732dbd 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -239,6 +239,7 @@ struct tegra_clk_pll_params {
+>  	int		stepb_shift;
+>  	int		lock_delay;
+>  	int		max_p;
+> +	bool		defaults_set;
+>  	struct pdiv_map *pdiv_tohw;
+>  	struct div_nmp	*div_nmp;
+>  	struct tegra_clk_pll_freq_table	*freq_table;
+> @@ -254,6 +255,7 @@ struct tegra_clk_pll_params {
+>  				unsigned long parent_rate);
+>  	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
+>  			struct tegra_clk_pll_freq_table *cfg);
+> +	void	(*set_defaults)(struct tegra_clk_pll *pll);
+>  };
+>  
+>  #define TEGRA_PLL_USE_LOCK BIT(0)
+> @@ -588,6 +590,19 @@ struct tegra_periph_init_data {
+>  			_clk_num, _gate_flags, _clk_id,\
+>  			NULL, 0, NULL)
+>  
+> +#define PLL_MISC_CHK_DEFAULT(base, params, misc_num, default_val, mask)        \
+> +do {									       \
+> +	u32 boot_val = readl_relaxed(base + (params)->ext_misc_reg[misc_num]); \
+> +	boot_val &= (mask);						       \
+> +	default_val &= (mask);						       \
+> +	if (boot_val != (default_val)) {				       \
+> +		pr_warn("boot misc" #misc_num " 0x%x : expected 0x%x\n",       \
+> +			boot_val, (default_val));			       \
+> +		pr_warn(" (comparison mask = 0x%x)\n", mask);		       \
+> +			(params)->defaults_set = false;			       \
+> +	}								       \
+> +} while (0)
+> +
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/rockchip/clk-rk3188.c | 2 +-
- drivers/clk/rockchip/clk-rk3288.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index 556ce041d371..e4f9d472f1ff 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -26,7 +26,7 @@ enum rk3188_plls {
- 	apll, cpll, dpll, gpll,
- };
- 
--struct rockchip_pll_rate_table rk3188_pll_rates[] = {
-+static struct rockchip_pll_rate_table rk3188_pll_rates[] = {
- 	RK3066_PLL_RATE(2208000000, 1, 92, 1),
- 	RK3066_PLL_RATE(2184000000, 1, 91, 1),
- 	RK3066_PLL_RATE(2160000000, 1, 90, 1),
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index d17eb4528a28..4f817ed9e6ee 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -27,7 +27,7 @@ enum rk3288_plls {
- 	apll, dpll, cpll, gpll, npll,
- };
- 
--struct rockchip_pll_rate_table rk3288_pll_rates[] = {
-+static struct rockchip_pll_rate_table rk3288_pll_rates[] = {
- 	RK3066_PLL_RATE(2208000000, 1, 92, 1),
- 	RK3066_PLL_RATE(2184000000, 1, 91, 1),
- 	RK3066_PLL_RATE(2160000000, 1, 90, 1),
--- 
-1.9.1
+Why is this a macro? I would suggest making it an inline function in clk-tegra210.c.
+>  /**
+>   * struct clk_super_mux - super clock
+>   *
+> -- 
+> 1.7.9.5
+> 
