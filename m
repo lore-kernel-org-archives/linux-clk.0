@@ -1,76 +1,71 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Paul Walmsley <pwalmsley@nvidia.com>,
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	arnd@arndb.de,
 	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 00/19] Tegra210 Clock Support
-Date: Fri, 24 Apr 2015 12:47:40 -0400
-Message-ID: <1429894079-25052-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+	linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org,
+	ariel.dalessandro@gmail.com,
+	ezequiel@vanguardiasur.com.ar,
+	Joachim Eastwood <manabian@gmail.com>
+Subject: [PATCH v2 0/4] Clk drivers for NXP LPC18xx family
+Date: Mon, 27 Apr 2015 23:38:09 +0200
+Message-Id: <1430170693-28303-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series updates the tegra common clock driver and adds
-support for the Tegra210 clocks. The clocks in Tegra210 changed
-significantly in some ways from earlier generations, so to support
-them, we need to extend our base framework a bit and add some new
-features.
+This patch set adds support for the two main clock peripherals in the
+LPC18xx/43xx MCU family.
 
-Some patches here also address issues found while adding features
-and other cleanup type work.
+The Clock Generation Unit (CGU) is the base source of all clocks. It has
+five external inputs and contains PLLs, dividers and muxes. The outputs
+from the CGU are then routed to a Clock Control Unit (CCU) and a few
+peripherals directly. There are two CCUs in the MCU. The CCU is a
+collection of gates and a few dividers that sits between the CGU and
+most of the peripherals.
 
-Bill Huang (7):
-  clk: tegra: pll-params: change misc_reg count from 3 -> 6
-  clk: tegra: pll: Add logic for SS
-  clk: tegra: pll: Add code to handle if resets are supported by PLL
-  clk: tegra: pll: Adjust vco_min if SDM present
-  clk: tegra: pll: Add dyn_ramp callback
-  clk: tegra: pll: Add Set_default logic
-  clk: tegra: Add Super Gen5 Logic
+Which clocks that are available depends on the specific device and it's
+peripherals. It's possible in DT to setup the routing between the CGU
+and the CCUs.
 
-Rhyland Klein (12):
-  clk: tegra: Modify tegra_audio_clk_init to accept more plls
-  clk: tegra: periph: add new periph clks and muxes for Tegra210
-  clk: tegra: pll: add tegra_pll_wait_for_lock to clk header
-  clk: tegra: pll: simplify clk_enable_path
-  clk: tegra: pll: update warning msg
-  clk: tegra: pll: Don't unconditionally set LOCK flags
-  clk: tegra: pll: Add logic for handling SDM data
-  clk: tegra: pll: Add logic for out-of-table rates for T210
-  clk: tegra: pll: Add specialized logic for T210
-  clk: tegra: pll: Add support for PLLMB for T210
-  clk: tegra: pll: Fix _pll_ramp_calc_pll logic
-  clk: tegra210: add support for Tegra210 clocks
+Changes since v1:
+ - reorganize cgu clk structs
+ - macros to create cgu clk structs
+ - move drivers to nxp subdir
+ - rebase on v4.1-rc1
 
- .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
- drivers/clk/tegra/Makefile                         |    2 +
- drivers/clk/tegra/clk-id.h                         |   61 +-
- drivers/clk/tegra/clk-pll.c                        |  671 ++++-
- drivers/clk/tegra/clk-tegra-audio.c                |   25 +-
- drivers/clk/tegra/clk-tegra-periph.c               |  257 +-
- drivers/clk/tegra/clk-tegra-super-gen5.c           |  150 ++
- drivers/clk/tegra/clk-tegra114.c                   |   30 +-
- drivers/clk/tegra/clk-tegra124.c                   |   31 +-
- drivers/clk/tegra/clk-tegra20.c                    |   18 +-
- drivers/clk/tegra/clk-tegra210.c                   | 2704 ++++++++++++++++++++
- drivers/clk/tegra/clk-tegra30.c                    |   31 +-
- drivers/clk/tegra/clk.h                            |  103 +-
- include/dt-bindings/clock/tegra210-car.h           |  401 +++
- 14 files changed, 4397 insertions(+), 143 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
- create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
- create mode 100644 drivers/clk/tegra/clk-tegra210.c
- create mode 100644 include/dt-bindings/clock/tegra210-car.h
+Since there were no comments on v1. I hope that these drivers can
+make it to Linux 4.1.
+
+There are no dependencies in this patch set. The DTS changes will
+be sent separately to arm-soc once this patch set goes upstream.
+
+See the base support patch set for LPC18xx here:
+http://marc.info/?l=linux-arm-kernel&m=143016894704253&w=2
+
+Joachim Eastwood (4):
+  clk: add lpc18xx cgu clk driver
+  doc: dt: add documentation for lpc1850-cgu clk driver
+  clk: add lpc18xx ccu clk driver
+  doc: dt: add documentation for lpc1850-ccu clk driver
+
+ .../devicetree/bindings/clock/lpc1850-ccu.txt      | 146 +++++
+ .../devicetree/bindings/clock/lpc1850-cgu.txt      | 138 +++++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/nxp/Makefile                           |   2 +
+ drivers/clk/nxp/clk-lpc18xx-ccu.c                  | 318 +++++++++++
+ drivers/clk/nxp/clk-lpc18xx-cgu.c                  | 628 +++++++++++++++++++++
+ include/dt-bindings/clock/lpc18xx-ccu.h            |  74 +++
+ include/dt-bindings/clock/lpc18xx-cgu.h            |  41 ++
+ 8 files changed, 1348 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-ccu.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
+ create mode 100644 drivers/clk/nxp/Makefile
+ create mode 100644 drivers/clk/nxp/clk-lpc18xx-ccu.c
+ create mode 100644 drivers/clk/nxp/clk-lpc18xx-cgu.c
+ create mode 100644 include/dt-bindings/clock/lpc18xx-ccu.h
+ create mode 100644 include/dt-bindings/clock/lpc18xx-cgu.h
 
 -- 
-1.7.9.5
+1.8.0
