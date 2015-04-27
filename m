@@ -1,191 +1,108 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Thu, 30 Apr 2015 10:22:12 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@linaro.org>,
-	kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [RFC] clk: introduce critical clocks
-Message-ID: <20150430091753.GA32558@x1>
-References: <20150430060806.GY6325@pengutronix.de>
+Return-Path: <James.Hogan@imgtec.com>
+Date: Tue, 28 Apr 2015 00:00:22 +0100
+From: James Hogan <james.hogan@imgtec.com>
+To: Paul Burton <paul.burton@imgtec.com>
+CC: <linux-mips@linux-mips.org>, Lars-Peter Clausen <lars@metafoo.de>, "Mike
+ Turquette" <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v4 25/37] clk: ingenic: add driver for Ingenic SoC CGU
+ clocks
+Message-ID: <20150427230022.GB22974@jhogan-linux.le.imgtec.org>
+References: <1429881457-16016-1-git-send-email-paul.burton@imgtec.com>
+ <1429881457-16016-26-git-send-email-paul.burton@imgtec.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20150430060806.GY6325@pengutronix.de>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="hHWLQfXTYDoKhP50"
+In-Reply-To: <1429881457-16016-26-git-send-email-paul.burton@imgtec.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 30 Apr 2015, Sascha Hauer wrote:
+--hHWLQfXTYDoKhP50
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-> Some clocks are so critical to the system that they must never be turned
-> off unless explicitly requested. Normally unused clocks get disabled in
-> the clk_disable_unused initcall. Currently there are two ways for
-> keeping clocks enabled even if they are unused, both with their own
-> drawbacks:
-> 
-> - The CLK_IGNORE_UNUSED flag. Clocks with this flags are not disabled
->   during clk_disable_unused. The problem with this is that these clocks
->   are skipped during the clk_disable_unused initcall, but can get
->   disabled due to normal clk_enable/disable at any time, not necessarily
->   even on operations on the critical clocks themselves but on operations
->   on their ancestors, siblings or children.
-> 
-> - call clk_prepare_enable right after registration in the clock
->   driver. This works properly, but due to the increased enable counter
->   the clock will never get disabled, even not when a proper user
->   comes along who knows when the clock can safely be disabled.
-> 
-> This patch solves this by introducing two new API calls:
-> 
-> clk_prepare_enable_critical() will call clk_prepare_enable() on a clock
-> and additionally set a 'critical' flag on the clock. This call is
-> intended for clock providers which provide a critical clock.
-> 
-> clk_disable_unprepare_critical() is intended for consumers of a critical
-> clock.  Consumers should first call clk_prepare_enable() on a clock to
-> get their own prepare/enable reference and call
-> clk_disable_unprepare_critical() afterwards.  This will clear the
-> 'critical' flag from the clock and decrease the prepare/enable counter.
-> The ownership of the clock is now transferred to the consumer. Calling
-> clk_disable_unprepare_critical() on a clock which doesn't have the
-> 'critical' flag set is just a no-op, so consumers can safely call this
-> on their clocks.
-> 
-> To make this more versatile a clk flag could be introduced which could
-> be set during registration so that clk providers would not have to make
-> this API call on each critical clock. I haven't implemented this yet
-> because it turned out not to be trivial. clk_prepare_enable can only
-> be called when the clock is not orphaned which may not be the case
-> during registration time. I can implement this if this way of handling
-> critical clocks is considered suitable for mainline.
+Hi Paul,
 
-I like the premise of this set and I think it'll work well with my
-patchset.  So are you two okay with me fixing up my patchset to
-encompass it, or did you have other plans?
-
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> ---
->  drivers/clk/clk.c            | 46 ++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/clk-provider.h |  2 ++
->  include/linux/clk.h          | 10 ++++++++++
->  3 files changed, 58 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 459ce9d..d57d4fd 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -64,6 +64,7 @@ struct clk_core {
->  	unsigned long		flags;
->  	unsigned int		enable_count;
->  	unsigned int		prepare_count;
-> +	bool			enable_critical;
->  	unsigned long		accuracy;
->  	int			phase;
->  	struct hlist_head	children;
-> @@ -940,7 +941,13 @@ void clk_unprepare(struct clk *clk)
->  		return;
->  
->  	clk_prepare_lock();
-> +
-> +	if (clk->core->enable_critical)
-> +		goto out;
-> +
->  	clk_core_unprepare(clk->core);
-> +
-> +out:
->  	clk_prepare_unlock();
->  }
->  EXPORT_SYMBOL_GPL(clk_unprepare);
-> @@ -995,7 +1002,9 @@ int clk_prepare(struct clk *clk)
->  		return 0;
->  
->  	clk_prepare_lock();
-> +
->  	ret = clk_core_prepare(clk->core);
-> +
->  	clk_prepare_unlock();
->  
->  	return ret;
-> @@ -2250,6 +2259,43 @@ bool clk_is_match(const struct clk *p, const struct clk *q)
->  }
->  EXPORT_SYMBOL_GPL(clk_is_match);
->  
-> +int clk_prepare_enable_critical(struct clk *clk)
+On Fri, Apr 24, 2015 at 02:17:25PM +0100, Paul Burton wrote:
+> +static int ingenic_clk_set_parent(struct clk_hw *hw, u8 idx)
 > +{
-> +	if (!clk)
+> +	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
+> +	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+> +	const struct ingenic_cgu_clk_info *clk_info;
+> +	unsigned long flags;
+> +	u8 curr_idx, hw_idx, num_poss;
+> +	u32 reg, mask;
+> +
+> +	clk_info = &cgu->clock_info[ingenic_clk->idx];
+> +
+> +	if (clk_info->type & CGU_CLK_MUX) {
+> +		/*
+> +		 * Convert the parent index to the hardware index by adding
+> +		 * 1 for any -1 in the parents array preceding the given
+> +		 * index. That is, we want the index of idx'th entry in
+> +		 * clk_info->parents which does not equal -1.
+> +		 */
+> +		hw_idx = curr_idx = 0;
+> +		num_poss = 1 << clk_info->mux.bits;
+> +		for (; hw_idx < num_poss; hw_idx++) {
+> +			if (clk_info->parents[hw_idx] == -1)
+> +				continue;
+> +			if (curr_idx == idx)
+> +				break;
+> +			curr_idx++;
+> +		}
+> +
+> +		/* idx should always be a valid parent */
+> +		BUG_ON(curr_idx != idx);
+
+I think this needs updating.
+
+If idx is the number of valid parents, this won't catch it, e.g. idx =
+2, parents = { x, y, -1, -1 }, it'll increment curr_idx twice to 2, and
+reach the end of the loop without finding the 3rd valid clock, but
+curr_idx == idx == 2 ...
+
+> +
+> +		mask = GENMASK(clk_info->mux.bits - 1, 0);
+> +		mask <<= clk_info->mux.shift;
+> +
+> +		spin_lock_irqsave(&cgu->lock, flags);
+> +
+> +		/* write the register */
+> +		reg = readl(cgu->base + clk_info->mux.reg);
+> +		reg &= ~mask;
+> +		reg |= hw_idx << clk_info->mux.shift;
+> +		writel(reg, cgu->base + clk_info->mux.reg);
+> +
+> +		spin_unlock_irqrestore(&cgu->lock, flags);
 > +		return 0;
-> +
-> +	clk_prepare_lock();
-> +	if (clk->core->enable_critical) {
-> +		clk_prepare_unlock();
-> +		return -EBUSY;
 > +	}
 > +
-> +	clk->core->enable_critical = true;
-> +
-> +	clk_prepare_unlock();
-> +
-> +	return clk_prepare_enable(clk);
-> +
+> +	return idx ? -EINVAL : 0;
 > +}
-> +
-> +void clk_disable_unprepare_critical(struct clk *clk)
-> +{
-> +	if (!clk)
-> +		return;
-> +
-> +	clk_prepare_lock();
-> +	if (!clk->core->enable_critical) {
-> +		clk_prepare_unlock();
-> +		return;
-> +	}
-> +
-> +	clk->core->enable_critical = false;
-> +
-> +	clk_prepare_unlock();
-> +
-> +	clk_disable_unprepare(clk);
-> +}
-> +
->  /**
->   * __clk_init - initialize the data structures in a struct clk
->   * @dev:	device initializing this clk, placeholder for now
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index df69531..8727c12 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -694,5 +694,7 @@ struct dentry *clk_debugfs_add_file(struct clk_hw *hw, char *name, umode_t mode,
->  				void *data, const struct file_operations *fops);
->  #endif
->  
-> +int clk_prepare_enable_critical(struct clk *clk);
-> +
->  #endif /* CONFIG_COMMON_CLK */
->  #endif /* CLK_PROVIDER_H */
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 68c16a6..b259e36 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -138,6 +138,16 @@ int clk_get_phase(struct clk *clk);
->   */
->  bool clk_is_match(const struct clk *p, const struct clk *q);
->  
-> +/**
-> + * clk_disable_unprepare_critical - remove critical flag from clock
-> + * @clk: clock source
-> + *
-> + * This removes the critical flag from a clock and disables it. The
-> + * consumer should have enabled the clock by itself now if it wants
-> + * to keep the clock enabled.
-> + */
-> +void clk_disable_unprepare_critical(struct clk *clk);
-> +
->  #else
->  
->  static inline long clk_get_accuracy(struct clk *clk)
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Cheers
+James
+
+--hHWLQfXTYDoKhP50
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJVPr+GAAoJEGwLaZPeOHZ6d+YQAIgI9O1TVk4wMmfAVdV3SIkh
+7//bZhJGeDGJdHP3fVW+mUJ16V0oabiCfqUMp/SFqrQ5sRYwBzr3eHWFnFrDvt7o
+thnt1FYMri95jcSninnl7YlXM5R9djF1wp2UgZE50rXlhSjkbqQVtv4ODDrR5F2O
+oJWpgRmi7Bw+zynA4Iji9alAiwZjJRQYqpN6wtpugXofVhR2y5GHlCQqNuB6Rm+7
+NbuFtN6SE/hXi8DD2p75Hy7EDODXD08pCNrvp9Pg2YAiNvoi8dtafCPqVWG8MniU
+nUUWAYeRpgt6w1B6EXQz+13W5PPucNFUwvRgVqRcQ3kQzj3eB4JtJjQ0mfwmrX7i
+i57L/y0oCIN2fvBaC6gbQLiUahUHia4D3t2i/brPs/p4MhiSiLn7DDNMg7GWnSCe
+i6OzCxlr+fT3/rIKrAoKYa6IFeoJgAN9b5fNuMu12ko5/LSBWhqn8ojE/5Mpv9DQ
+j/Waea+7jUMXOVRJndlGWKSRf6Qm4HeRhpK3sfd5Sy+on+w9a+ybM69x8l1knmnS
+LZhJACyv5uJIwEceTvVkmnOLqXUhRjax86lt7Lvwx111JqkNQToqIEHRSp8mSTxN
+tDIS/1vX1zPhuGwZBXVp8/P0BVUIL7r1fijfJYwKWf3dJP4QEil0HPR8y1iDMa9O
+jAh2RO1JjDUy8NCfaOEx
+=42m1
+-----END PGP SIGNATURE-----
+
+--hHWLQfXTYDoKhP50--
