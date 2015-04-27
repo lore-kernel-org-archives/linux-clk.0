@@ -1,154 +1,36 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@linaro.org, sboyd@codeaurora.org
-Cc: dianders@chromium.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Alex Elder <elder@linaro.org>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Max Filippov <jcmvbkbc@gmail.com>, kernel@pengutronix.de,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Chao Xie <chao.xie@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Georgi Djakov <georgi.djakov@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Barry Song <baohua@kernel.org>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Viresh Kumar <viresh.linux@gmail.com>,
-	Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
-	emilio@elopez.com.ar, Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Tero Kristo <t-kristo@ti.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH v3 1/2] clk: track the orphan status of clocks and their children
-Date: Wed, 22 Apr 2015 22:53:05 +0200
-Message-Id: <1429735986-18592-2-git-send-email-heiko@sntech.de>
-In-Reply-To: <1429735986-18592-1-git-send-email-heiko@sntech.de>
-References: <1429735986-18592-1-git-send-email-heiko@sntech.de>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: emev2: Use generic names for device nodes
+Date: Mon, 27 Apr 2015 14:51:33 +0200
+Message-Id: <1430139093-14769-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-While children of orphan clocks are not carried in the orphan-list itself,
-they're nevertheless orphans in their own right as they also don't have an
-input-rate available. To ease tracking if a clock is an orphan or has an
-orphan in its parent path introduce an orphan field into struct clk and
-update it and the fields in child-clocks when a clock gets added or removed
-from the orphan-list.
+uart -> serial
 
-Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Alex Elder <elder@linaro.org>
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: kernel@pengutronix.de
-Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Chao Xie <chao.xie@marvell.com>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Andrew Bresticker <abrestic@chromium.org>
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Barry Song <baohua@kernel.org>
-Cc: Dinh Nguyen <dinguyen@opensource.altera.com>
-Cc: Viresh Kumar <viresh.linux@gmail.com>
-Cc: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-Cc: emilio@elopez.com.ar
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Tero Kristo <t-kristo@ti.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/clk.c | 33 ++++++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/clock/emev2-clock.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b2361d4..341904f 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -62,6 +62,7 @@ struct clk_core {
- 	struct clk_core		*new_parent;
- 	struct clk_core		*new_child;
- 	unsigned long		flags;
-+	bool			orphan;
- 	unsigned int		enable_count;
- 	unsigned int		prepare_count;
- 	unsigned long		accuracy;
-@@ -1401,18 +1402,40 @@ static int clk_fetch_parent_index(struct clk_core *clk,
- 	return -EINVAL;
- }
+diff --git a/Documentation/devicetree/bindings/clock/emev2-clock.txt b/Documentation/devicetree/bindings/clock/emev2-clock.txt
+index 60bbb1a8c69a3852..268ca615459e7549 100644
+--- a/Documentation/devicetree/bindings/clock/emev2-clock.txt
++++ b/Documentation/devicetree/bindings/clock/emev2-clock.txt
+@@ -52,7 +52,7 @@ usia_u0_sclk: usia_u0_sclk {
  
-+/*
-+ * Update the orphan status of @clk and all its children.
-+ */
-+static void clk_core_update_orphan_status(struct clk_core *clk, bool is_orphan)
-+{
-+	struct clk_core *child;
-+
-+	clk->orphan = is_orphan;
-+
-+	hlist_for_each_entry(child, &clk->children, child_node)
-+		clk_core_update_orphan_status(child, is_orphan);
-+}
-+
- static void clk_reparent(struct clk_core *clk, struct clk_core *new_parent)
- {
-+	bool was_orphan = clk->orphan;
-+
- 	hlist_del(&clk->child_node);
+ Example of consumer:
  
- 	if (new_parent) {
-+		bool becomes_orphan = new_parent->orphan;
-+
- 		/* avoid duplicate POST_RATE_CHANGE notifications */
- 		if (new_parent->new_child == clk)
- 			new_parent->new_child = NULL;
- 
- 		hlist_add_head(&clk->child_node, &new_parent->children);
-+
-+		if (was_orphan != becomes_orphan)
-+			clk_core_update_orphan_status(clk, becomes_orphan);
- 	} else {
- 		hlist_add_head(&clk->child_node, &clk_orphan_list);
-+		if (!was_orphan)
-+			clk_core_update_orphan_status(clk, true);
- 	}
- 
- 	clk->parent = new_parent;
-@@ -2302,13 +2325,17 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
- 	 * clocks and re-parent any that are children of the clock currently
- 	 * being clk_init'd.
- 	 */
--	if (clk->parent)
-+	if (clk->parent) {
- 		hlist_add_head(&clk->child_node,
- 				&clk->parent->children);
--	else if (clk->flags & CLK_IS_ROOT)
-+		clk->orphan = clk->parent->orphan;
-+	} else if (clk->flags & CLK_IS_ROOT) {
- 		hlist_add_head(&clk->child_node, &clk_root_list);
--	else
-+		clk->orphan = false;
-+	} else {
- 		hlist_add_head(&clk->child_node, &clk_orphan_list);
-+		clk->orphan = true;
-+	}
- 
- 	/*
- 	 * Set clk's accuracy.  The preferred method is to use
+-uart@e1020000 {
++serial@e1020000 {
+ 	compatible = "renesas,em-uart";
+ 	reg = <0xe1020000 0x38>;
+ 	interrupts = <0 8 0>;
 -- 
-2.1.4
-
+1.9.1
