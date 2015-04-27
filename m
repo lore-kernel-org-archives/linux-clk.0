@@ -1,50 +1,49 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>,
- Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- Barry Song <baohua@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Alexandre Courbot <gnurou@gmail.com>, linux-mips@linux-mips.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 7/8] clk: ls1x: Fix duplicate const for parent names
-Date: Tue, 28 Apr 2015 13:46:22 +0900
-Message-id: <1430196383-9190-8-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
-References: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Mon, 27 Apr 2015 15:12:40 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: at91: Constify irq_domain_ops
+Message-ID: <20150427151240.14cb4a0d@bbrezillon>
+In-Reply-To: <1430139158-3919-1-git-send-email-k.kozlowski.k@gmail.com>
+References: <1430139158-3919-1-git-send-email-k.kozlowski.k@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace duplicated const keyword with proper array of const pointers to
-const strings.
+On Mon, 27 Apr 2015 21:52:38 +0900
+Krzysztof Kozlowski <k.kozlowski.k@gmail.com> wrote:
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/clk-ls1x.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> The irq_domain_ops are not modified by the driver and the irqdomain core
+> code accepts pointer to a const data.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-diff --git a/drivers/clk/clk-ls1x.c b/drivers/clk/clk-ls1x.c
-index ca80103ac188..d4c61985f448 100644
---- a/drivers/clk/clk-ls1x.c
-+++ b/drivers/clk/clk-ls1x.c
-@@ -80,9 +80,9 @@ static struct clk *__init clk_register_pll(struct device *dev,
- 	return clk;
- }
- 
--static const char const *cpu_parents[] = { "cpu_clk_div", "osc_33m_clk", };
--static const char const *ahb_parents[] = { "ahb_clk_div", "osc_33m_clk", };
--static const char const *dc_parents[] = { "dc_clk_div", "osc_33m_clk", };
-+static const char * const cpu_parents[] = { "cpu_clk_div", "osc_33m_clk", };
-+static const char * const ahb_parents[] = { "ahb_clk_div", "osc_33m_clk", };
-+static const char * const dc_parents[] = { "dc_clk_div", "osc_33m_clk", };
- 
- void __init ls1x_clk_init(void)
- {
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+
+> ---
+>  drivers/clk/at91/pmc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+> index 3f27d21fb729..39be2be82b0a 100644
+> --- a/drivers/clk/at91/pmc.c
+> +++ b/drivers/clk/at91/pmc.c
+> @@ -153,7 +153,7 @@ static int pmc_irq_domain_xlate(struct irq_domain *d,
+>  	return 0;
+>  }
+>  
+> -static struct irq_domain_ops pmc_irq_ops = {
+> +static const struct irq_domain_ops pmc_irq_ops = {
+>  	.map	= pmc_irq_map,
+>  	.xlate	= pmc_irq_domain_xlate,
+>  };
+
+
+
 -- 
-1.9.1
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
