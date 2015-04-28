@@ -1,91 +1,91 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Thu, 9 Apr 2015 12:00:37 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
-	Barry Song <baohua@kernel.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 4/8] clk: tegra: Fix duplicate const for parent names
-Message-ID: <20150409100036.GK12103@ulmo>
-References: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
- <1428499339-29569-5-git-send-email-k.kozlowski@samsung.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wRokNccIwvMzawGl"
-In-Reply-To: <1428499339-29569-5-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>,
+ Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+ Barry Song <baohua@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Alexandre Courbot <gnurou@gmail.com>, linux-mips@linux-mips.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2 6/8] clk: sirf: Constify parent names in clock init data
+Date: Tue, 28 Apr 2015 13:46:21 +0900
+Message-id: <1430196383-9190-7-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
+References: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+The array of parent names can be made as array of const pointers to
+const strings.
 
---wRokNccIwvMzawGl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/sirf/clk-common.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-On Wed, Apr 08, 2015 at 03:22:15PM +0200, Krzysztof Kozlowski wrote:
-> Replace duplicated const keyword for 'emc_parent_clk_names' with proper
-> array of const pointers to const strings.
->=20
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  drivers/clk/tegra/clk-emc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-This would probably better go in via the Tegra tree since the patch that
-contains this has only made it to linux-next.
-
-Stephen, Mike, any objections to me taking this?
-
-Thierry
-
-> diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-> index 615da43a508d..637798c3cc59 100644
-> --- a/drivers/clk/tegra/clk-emc.c
-> +++ b/drivers/clk/tegra/clk-emc.c
-> @@ -45,7 +45,7 @@
->  #define CLK_SOURCE_EMC_EMC_2X_CLK_SRC(x) (((x) & CLK_SOURCE_EMC_EMC_2X_C=
-LK_SRC_MASK) << \
->  					  CLK_SOURCE_EMC_EMC_2X_CLK_SRC_SHIFT)
-> =20
-> -static const char const *emc_parent_clk_names[] =3D {
-> +static const char * const emc_parent_clk_names[] =3D {
->  	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud",
->  	"pll_c2", "pll_c3", "pll_c_ud"
->  };
-> --=20
-> 1.9.1
->=20
-
---wRokNccIwvMzawGl
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVJk3EAAoJEN0jrNd/PrOhoJIP/RiAAnEq+9OQJRsWFdpaXD5C
-l6oF0JWSRtz/0GR1GY9j9XIc3ltRL8ne7pAUxLJlTREApPvY1SIef3yKUnpu2V/G
-FD3GnEZjLEcNADA6A2iLUBWHEY4SBCyxFRkUOnS3k6tQWRI4GcBLt9OYdBzDLNnF
-NnGTjDmgwa5eHSHA4EDHgWTPoww7txwr1PHsbS5krcDzK0OPDMPDpohUICVBV6hu
-86DheNOFaNQWwsLrHrw/1ZbsGzU5VFshkI0hzHnPVSaKE9Un4Pn2MQmaTsJroeff
-7ytCTMVZFSQqyXNnpTur9ytSjE6RAa5StWxCHcff/caxa4hbPhgKJoyz7DStVw3g
-JZT7PS/HZ82hdVzOvb46MfLUoPYFpFkKGtEBMpKro1kKrGo9SKWE52nC2WisApiu
-bIdBHKHKSr7HGtZY43XSbu8kSoMoqJb1xVUdK7Wj2CPmi311hSZ9VnMOYkgAMnsz
-hAIDmUSBg9J0o2CTwPYy9dViR6D7HErdIcZcT4bKil20KIQD/OMDHcCrSp2ymZlu
-O03+im2s82R6616WySOhqjWpqJeZa3xBHTUctyBLcTe3ROaWzWCugPJXntg/vk1+
-JUuAEzXzkpOMUhXA94pjyMl1H3OqL0QOOcK7z3FeyLNTg5kZ+0BnJ0wFpyD1YPdq
-n1Z1olBcxmirYFgXGAnJ
-=qJFi
------END PGP SIGNATURE-----
-
---wRokNccIwvMzawGl--
+diff --git a/drivers/clk/sirf/clk-common.c b/drivers/clk/sirf/clk-common.c
+index 37af51c5f213..e9cf5730effe 100644
+--- a/drivers/clk/sirf/clk-common.c
++++ b/drivers/clk/sirf/clk-common.c
+@@ -188,7 +188,7 @@ static struct clk_ops std_pll_ops = {
+ 	.set_rate = pll_clk_set_rate,
+ };
+ 
+-static const char *pll_clk_parents[] = {
++static const char * const pll_clk_parents[] = {
+ 	"osc",
+ };
+ 
+@@ -284,7 +284,7 @@ static struct clk_hw usb_pll_clk_hw = {
+  * clock domains - cpu, mem, sys/io, dsp, gfx
+  */
+ 
+-static const char *dmn_clk_parents[] = {
++static const char * const dmn_clk_parents[] = {
+ 	"rtc",
+ 	"osc",
+ 	"pll1",
+@@ -673,7 +673,7 @@ static void std_clk_disable(struct clk_hw *hw)
+ 	clkc_writel(val, reg);
+ }
+ 
+-static const char *std_clk_io_parents[] = {
++static const char * const std_clk_io_parents[] = {
+ 	"io",
+ };
+ 
+@@ -949,7 +949,7 @@ static struct clk_std clk_pulse = {
+ 	},
+ };
+ 
+-static const char *std_clk_dsp_parents[] = {
++static const char * const std_clk_dsp_parents[] = {
+ 	"dsp",
+ };
+ 
+@@ -981,7 +981,7 @@ static struct clk_std clk_mf = {
+ 	},
+ };
+ 
+-static const char *std_clk_sys_parents[] = {
++static const char * const std_clk_sys_parents[] = {
+ 	"sys",
+ };
+ 
+@@ -999,7 +999,7 @@ static struct clk_std clk_security = {
+ 	},
+ };
+ 
+-static const char *std_clk_usb_parents[] = {
++static const char * const std_clk_usb_parents[] = {
+ 	"usb_pll",
+ };
+ 
+-- 
+1.9.1
