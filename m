@@ -1,110 +1,61 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@linaro.org, sboyd@codeaurora.org
-Cc: dianders@chromium.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Alex Elder <elder@linaro.org>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Max Filippov <jcmvbkbc@gmail.com>, kernel@pengutronix.de,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Chao Xie <chao.xie@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Georgi Djakov <georgi.djakov@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Barry Song <baohua@kernel.org>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Viresh Kumar <viresh.linux@gmail.com>,
-	Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
-	emilio@elopez.com.ar, Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Tero Kristo <t-kristo@ti.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH v3 2/2] clk: prevent orphan clocks from being used
-Date: Wed, 22 Apr 2015 22:53:06 +0200
-Message-Id: <1429735986-18592-3-git-send-email-heiko@sntech.de>
-In-Reply-To: <1429735986-18592-1-git-send-email-heiko@sntech.de>
-References: <1429735986-18592-1-git-send-email-heiko@sntech.de>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>,
+ Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+ Barry Song <baohua@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Alexandre Courbot <gnurou@gmail.com>, linux-mips@linux-mips.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2 8/8] MIPS: Alchemy: Remove unneeded cast removing const
+Date: Tue, 28 Apr 2015 13:46:23 +0900
+Message-id: <1430196383-9190-9-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
+References: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Orphan clocks or children of orphan clocks don't have rate information at
-all and can produce strange results if they're allowed to be used and the
-parent becomes available later on.
+Parent names in clock init data is now array of const pointers to const
+strings so the cast is not needed.
 
-So using the newly introduced orphan status bit defer
-__of_clk_get_from_provider calls for orphan clocks.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Alex Elder <elder@linaro.org>
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: kernel@pengutronix.de
-Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Chao Xie <chao.xie@marvell.com>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Andrew Bresticker <abrestic@chromium.org>
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Barry Song <baohua@kernel.org>
-Cc: Dinh Nguyen <dinguyen@opensource.altera.com>
-Cc: Viresh Kumar <viresh.linux@gmail.com>
-Cc: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-Cc: emilio@elopez.com.ar
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Tero Kristo <t-kristo@ti.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/clk/clk.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/mips/alchemy/common/clock.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 341904f..27d2d4b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2226,6 +2226,14 @@ bool clk_is_match(const struct clk *p, const struct clk *q)
- }
- EXPORT_SYMBOL_GPL(clk_is_match);
+diff --git a/arch/mips/alchemy/common/clock.c b/arch/mips/alchemy/common/clock.c
+index 6a98d2cb402c..6e46abe0dac6 100644
+--- a/arch/mips/alchemy/common/clock.c
++++ b/arch/mips/alchemy/common/clock.c
+@@ -752,12 +752,12 @@ static int __init alchemy_clk_init_fgens(int ctype)
+ 	switch (ctype) {
+ 	case ALCHEMY_CPU_AU1000...ALCHEMY_CPU_AU1200:
+ 		id.ops = &alchemy_clkops_fgenv1;
+-		id.parent_names = (const char **)alchemy_clk_fgv1_parents;
++		id.parent_names = alchemy_clk_fgv1_parents;
+ 		id.num_parents = 2;
+ 		break;
+ 	case ALCHEMY_CPU_AU1300:
+ 		id.ops = &alchemy_clkops_fgenv2;
+-		id.parent_names = (const char **)alchemy_clk_fgv2_parents;
++		id.parent_names = alchemy_clk_fgv2_parents;
+ 		id.num_parents = 3;
+ 		break;
+ 	default:
+@@ -961,7 +961,7 @@ static int __init alchemy_clk_setup_imux(int ctype)
+ 	struct clk *c;
  
-+static bool clk_is_orphan(const struct clk *clk)
-+{
-+	if (!clk)
-+		return false;
-+
-+	return clk->core->orphan;
-+}
-+
- /**
-  * __clk_init - initialize the data structures in a struct clk
-  * @dev:	device initializing this clk, placeholder for now
-@@ -2968,6 +2976,11 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- 		if (provider->node == clkspec->np)
- 			clk = provider->get(clkspec, provider->data);
- 		if (!IS_ERR(clk)) {
-+			if (clk_is_orphan(clk)) {
-+				clk = ERR_PTR(-EPROBE_DEFER);
-+				break;
-+			}
-+
- 			clk = __clk_create_clk(__clk_get_hw(clk), dev_id,
- 					       con_id);
+ 	id.ops = &alchemy_clkops_csrc;
+-	id.parent_names = (const char **)alchemy_clk_csrc_parents;
++	id.parent_names = alchemy_clk_csrc_parents;
+ 	id.num_parents = 7;
+ 	id.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE;
  
 -- 
-2.1.4
-
+1.9.1
