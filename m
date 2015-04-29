@@ -9,11 +9,10 @@ CC: Mike Turquette <mturquette@linaro.org>,
 	linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>,
-	Bill Huang <bilhuang@nvidia.com>
-Subject: [PATCH v2 14/19] clk: tegra: pll: Adjust vco_min if SDM present
-Date: Wed, 29 Apr 2015 13:21:44 -0400
-Message-ID: <1430328109-537-15-git-send-email-rklein@nvidia.com>
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v2 05/19] clk: tegra: pll: update warning msg
+Date: Wed, 29 Apr 2015 13:21:35 -0400
+Message-ID: <1430328109-537-6-git-send-email-rklein@nvidia.com>
 In-Reply-To: <1430328109-537-1-git-send-email-rklein@nvidia.com>
 References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
@@ -21,122 +20,27 @@ Content-Type: text/plain
 Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bill Huang <bilhuang@nvidia.com>
+Swap out the generic WARN_ON with a WARN which gives more
+information about what is happening.
 
-This code makes use of the SDM fractional divider if present to
-contrain the allowable programming range of the PLL divider register
-bitfields to take advantage of higher frequency granularity that can
-be induced by the SDM divider.
-
-Based on original work by Aleksandr Frid <afrid@nvidia.com>
-
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/tegra/clk-pll.c |   29 ++++++++++++++++++++++++++++-
- drivers/clk/tegra/clk.h     |    2 ++
- 2 files changed, 30 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-pll.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index edc388f02a66..00f0e621533a 100644
+index 1e1018dd466f..0282d9f4f2d7 100644
 --- a/drivers/clk/tegra/clk-pll.c
 +++ b/drivers/clk/tegra/clk-pll.c
-@@ -1635,7 +1635,6 @@ static const struct clk_ops tegra_clk_plle_tegra114_ops = {
- 	.recalc_rate = clk_pll_recalc_rate,
- };
+@@ -692,7 +692,8 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
  
--
- struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 			  void __iomem *clk_base, void __iomem *pmc,
- 			  unsigned long flags,
-@@ -1662,6 +1661,10 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+ 	pdiv = _hw_to_p_div(hw, cfg.p);
+ 	if (pdiv < 0) {
+-		WARN_ON(1);
++		WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
++			__clk_get_name(hw->clk), cfg.p);
+ 		pdiv = 1;
+ 	}
  
- 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
- 
-+	if (pll_params->adjust_vco)
-+		pll_params->vco_min = pll_params->adjust_vco(pll_params,
-+							     parent_rate);
-+
- 	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
- 	if (err)
- 		return ERR_PTR(err);
-@@ -1700,6 +1703,10 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
- 
- 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
- 
-+	if (pll_params->adjust_vco)
-+		pll_params->vco_min = pll_params->adjust_vco(pll_params,
-+							     parent_rate);
-+
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
-@@ -1756,6 +1763,10 @@ struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
- 
- 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
- 
-+	if (pll_params->adjust_vco)
-+		pll_params->vco_min = pll_params->adjust_vco(pll_params,
-+							     parent_rate);
-+
- 	pll_params->flags |= TEGRA_PLL_BYPASS;
- 	pll_params->flags |= TEGRA_PLLM;
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-@@ -2186,6 +2197,10 @@ struct clk *tegra_clk_register_pllc_tegra210(const char *name,
- 
- 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
- 
-+	if (pll_params->adjust_vco)
-+		pll_params->vco_min = pll_params->adjust_vco(pll_params,
-+							     parent_rate);
-+
- 	pll_params->flags |= TEGRA_PLL_BYPASS;
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
- 	if (IS_ERR(pll))
-@@ -2224,6 +2239,10 @@ struct clk *tegra_clk_register_pllxc_tegra210(const char *name,
- 
- 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
- 
-+	if (pll_params->adjust_vco)
-+		pll_params->vco_min = pll_params->adjust_vco(pll_params,
-+							     parent_rate);
-+
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
-@@ -2271,6 +2290,10 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
- 
- 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
- 
-+	if (pll_params->adjust_vco)
-+		pll_params->vco_min = pll_params->adjust_vco(pll_params,
-+							     parent_rate);
-+
- 	/* initialize PLL to minimum rate */
- 
- 	cfg.m = _pll_fixed_mdiv(pll_params, parent_rate);
-@@ -2335,6 +2358,10 @@ struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
- 
- 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
- 
-+	if (pll_params->adjust_vco)
-+		pll_params->vco_min = pll_params->adjust_vco(pll_params,
-+							     parent_rate);
-+
- 	pll_params->flags |= TEGRA_PLL_BYPASS;
- 	pll_params->flags |= TEGRA_PLLMB;
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 9e37defb063f..27075a586e79 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -248,6 +248,8 @@ struct tegra_clk_pll_params {
- 	int	(*calc_rate)(struct clk_hw *hw,
- 			struct tegra_clk_pll_freq_table *cfg,
- 			unsigned long rate, unsigned long parent_rate);
-+	unsigned long	(*adjust_vco)(struct tegra_clk_pll_params *pll_params,
-+				unsigned long parent_rate);
- };
- 
- #define TEGRA_PLL_USE_LOCK BIT(0)
 -- 
 1.7.9.5
