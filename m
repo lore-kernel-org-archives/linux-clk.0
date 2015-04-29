@@ -1,69 +1,167 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 9 Apr 2015 08:28:26 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Barry Song <baohua@kernel.org>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
 	Stephen Warren <swarren@wwwdotorg.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Ralf Baechle <ralf@linux-mips.org>, linux-kernel@vger.kernel.org,
-	Max Filippov <jcmvbkbc@gmail.com>, Kukjin Kim <kgene@kernel.org>,
-	linux-samsung-soc@vger.kernel.org,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	linux-tegra@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 4/8] clk: tegra: Fix duplicate const for parent names
-Message-ID: <20150409152826.GB18835@codeaurora.org>
-References: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
- <1428499339-29569-5-git-send-email-k.kozlowski@samsung.com>
- <20150409100036.GK12103@ulmo>
- <CAJKOXPd4KsZ-pLDUtyWwyJviZyFWQKVLTVpW_6_Yye2o=3xy0g@mail.gmail.com>
- <20150409101947.GM12103@ulmo>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v2 04/19] clk: tegra: pll: simplify clk_enable_path
+Date: Wed, 29 Apr 2015 13:21:34 -0400
+Message-ID: <1430328109-537-5-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430328109-537-1-git-send-email-rklein@nvidia.com>
+References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20150409101947.GM12103@ulmo>
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/09, Thierry Reding wrote:
-> On Thu, Apr 09, 2015 at 12:07:59PM +0200, Krzysztof Kozlowski wrote:
-> > 2015-04-09 12:00 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> > > On Wed, Apr 08, 2015 at 03:22:15PM +0200, Krzysztof Kozlowski wrote:
-> > >> Replace duplicated const keyword for 'emc_parent_clk_names' with proper
-> > >> array of const pointers to const strings.
-> > >>
-> > >> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > >> ---
-> > >>  drivers/clk/tegra/clk-emc.c | 2 +-
-> > >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > This would probably better go in via the Tegra tree since the patch that
-> > > contains this has only made it to linux-next.
-> > >
-> > > Stephen, Mike, any objections to me taking this?
-> > 
-> > Applying this without the change for const-ness of parent_names (patch
-> > by Sascha Hauer sent before mine [1]) would introduce a warning -
-> > assign of const to non-const. Any idea to solve it? Immutable branch?
-> 
-> Right, I had missed that. Immutable branch would work, though perhaps
-> it'd be easier to just defer this until after v4.1-rc1. The warning
-> shouldn't happen if we leave out this single patch and apply it later
-> on, right?
-> 
-> Alternatively the whole series could be deferred until after v4.1-rc1.
-> 
+Instead of having multiple similar wrapper functions for
+_clk_pll_[enable|disable], we can simplify it to single
+wrappers and use checks to avoid the logic we don't want to use.
 
-Yeah I don't really care to make an immutable branch for this
-cleanup series. If everyone is ok with waiting until after -rc1
-we can apply the Tegra patch then (or you can and we'll get it
-through a pull later). We should be able to apply the parts that
-go through clk tree though.
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+v2:
+  - Moved the iddq settings into _clk_pll_enable/disable. This is because
+    some places in this file call directly into these internal functions,
+    but still need the iddq/reset logic to happen.
 
+ drivers/clk/tegra/clk-pll.c |   76 +++++++++++++------------------------------
+ 1 file changed, 22 insertions(+), 54 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index b9a739ce4b98..1e1018dd466f 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -295,6 +295,13 @@ static void _clk_pll_enable(struct clk_hw *hw)
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+ 	u32 val;
+ 
++	if (pll->params->iddq_reg) {
++		val = pll_readl(pll->params->iddq_reg, pll);
++		val &= ~BIT(pll->params->iddq_bit_idx);
++		pll_writel(val, pll->params->iddq_reg, pll);
++		udelay(2);
++	}
++
+ 	clk_pll_enable_lock(pll);
+ 
+ 	val = pll_readl_base(pll);
+@@ -326,6 +333,13 @@ static void _clk_pll_disable(struct clk_hw *hw)
+ 		val &= ~PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE;
+ 		writel_relaxed(val, pll->pmc + PMC_PLLP_WB0_OVERRIDE);
+ 	}
++
++	if (pll->params->iddq_reg) {
++		val = pll_readl(pll->params->iddq_reg, pll);
++		val |= BIT(pll->params->iddq_bit_idx);
++		pll_writel(val, pll->params->iddq_reg, pll);
++		udelay(2);
++	}
+ }
+ 
+ static int clk_pll_enable(struct clk_hw *hw)
+@@ -876,52 +890,6 @@ static int _setup_dynamic_ramp(struct tegra_clk_pll_params *pll_params,
+ 	return 0;
+ }
+ 
+-static int clk_pll_iddq_enable(struct clk_hw *hw)
+-{
+-	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long flags = 0;
+-
+-	u32 val;
+-	int ret;
+-
+-	if (pll->lock)
+-		spin_lock_irqsave(pll->lock, flags);
+-
+-	val = pll_readl(pll->params->iddq_reg, pll);
+-	val &= ~BIT(pll->params->iddq_bit_idx);
+-	pll_writel(val, pll->params->iddq_reg, pll);
+-	udelay(2);
+-
+-	_clk_pll_enable(hw);
+-
+-	ret = clk_pll_wait_for_lock(pll);
+-
+-	if (pll->lock)
+-		spin_unlock_irqrestore(pll->lock, flags);
+-
+-	return 0;
+-}
+-
+-static void clk_pll_iddq_disable(struct clk_hw *hw)
+-{
+-	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long flags = 0;
+-	u32 val;
+-
+-	if (pll->lock)
+-		spin_lock_irqsave(pll->lock, flags);
+-
+-	_clk_pll_disable(hw);
+-
+-	val = pll_readl(pll->params->iddq_reg, pll);
+-	val |= BIT(pll->params->iddq_bit_idx);
+-	pll_writel(val, pll->params->iddq_reg, pll);
+-	udelay(2);
+-
+-	if (pll->lock)
+-		spin_unlock_irqrestore(pll->lock, flags);
+-}
+-
+ static int _calc_dynamic_ramp_rate(struct clk_hw *hw,
+ 				struct tegra_clk_pll_freq_table *cfg,
+ 				unsigned long rate, unsigned long parent_rate)
+@@ -1518,8 +1486,8 @@ struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
+ 	defined(CONFIG_ARCH_TEGRA_132_SOC)
+ static const struct clk_ops tegra_clk_pllxc_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
+ 	.round_rate = clk_pll_ramp_round_rate,
+ 	.set_rate = clk_pllxc_set_rate,
+@@ -1527,8 +1495,8 @@ static const struct clk_ops tegra_clk_pllxc_ops = {
+ 
+ static const struct clk_ops tegra_clk_pllm_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
+ 	.round_rate = clk_pll_ramp_round_rate,
+ 	.set_rate = clk_pllm_set_rate,
+@@ -1545,8 +1513,8 @@ static const struct clk_ops tegra_clk_pllc_ops = {
+ 
+ static const struct clk_ops tegra_clk_pllre_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pllre_recalc_rate,
+ 	.round_rate = clk_pllre_round_rate,
+ 	.set_rate = clk_pllre_set_rate,
+@@ -1815,8 +1783,8 @@ struct clk *tegra_clk_register_plle_tegra114(const char *name,
+ #if defined(CONFIG_ARCH_TEGRA_124_SOC) || defined(CONFIG_ARCH_TEGRA_132_SOC)
+ static const struct clk_ops tegra_clk_pllss_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
+ 	.round_rate = clk_pll_ramp_round_rate,
+ 	.set_rate = clk_pllxc_set_rate,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
