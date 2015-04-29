@@ -1,141 +1,196 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH] clk: qcom: Fix parent_map translations
-Date: Fri,  3 Apr 2015 17:00:03 +0300
-Message-Id: <1428069603-2641-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <abrestic@google.com>
+MIME-Version: 1.0
+In-Reply-To: <1430328109-537-13-git-send-email-rklein@nvidia.com>
+References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
+	<1430328109-537-13-git-send-email-rklein@nvidia.com>
+Date: Wed, 29 Apr 2015 11:27:46 -0700
+Message-ID: <CAL1qeaEiKdFdhEfbWygFZcEioiGotd7=UDby9T7c_6djaDFxQA@mail.gmail.com>
+Subject: Re: [PATCH v2 12/19] clk: tegra: pll: Add specialized logic for T210
+From: Andrew Bresticker <abrestic@google.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-When we introduced the parent_map tables, we missed to update some
-of the functions where mapping is translated. Fix this.
+Hi Rhyland,
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/clk-rcg.c  |   13 ++++++++++---
- drivers/clk/qcom/clk-rcg2.c |   20 +++++++++++++++-----
- 2 files changed, 25 insertions(+), 8 deletions(-)
+On Wed, Apr 29, 2015 at 10:21 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> On Tegra210 SoC's, the logic to enable several of the plls is different
+> from previous generations. Therefore, add registeration functions specific
+> to Tegra210 which will handle them appropriately.
+>
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 
-diff --git a/drivers/clk/qcom/clk-rcg.c b/drivers/clk/qcom/clk-rcg.c
-index 8f2f48071a7a..e30821a3ba68 100644
---- a/drivers/clk/qcom/clk-rcg.c
-+++ b/drivers/clk/qcom/clk-rcg.c
-@@ -319,7 +319,7 @@ static int clk_dyn_rcg_set_parent(struct clk_hw *hw, u8 index)
- 	if (banked_p)
- 		f.pre_div = ns_to_pre_div(&rcg->p[bank], ns) + 1;
- 
--	f.src = index;
-+	f.src = qcom_find_src_index(hw, rcg->s[bank].parent_map, index);
- 	return configure_bank(rcg, &f);
- }
- 
-@@ -411,13 +411,19 @@ static long _freq_tbl_determine_rate(struct clk_hw *hw,
- {
- 	unsigned long clk_flags;
- 	struct clk *p;
-+	struct clk_rcg *rcg = to_clk_rcg(hw);
-+	int index;
- 
- 	f = qcom_find_freq(f, rate);
- 	if (!f)
- 		return -EINVAL;
- 
-+	index = qcom_find_src_index(hw, rcg->s.parent_map, f->src);
-+	if (index < 0)
-+		return index;
-+
- 	clk_flags = __clk_get_flags(hw->clk);
--	p = clk_get_parent_by_index(hw->clk, f->src);
-+	p = clk_get_parent_by_index(hw->clk, index);
- 	if (clk_flags & CLK_SET_RATE_PARENT) {
- 		rate = rate * f->pre_div;
- 		if (f->n) {
-@@ -462,8 +468,9 @@ static long clk_rcg_bypass_determine_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_rcg *rcg = to_clk_rcg(hw);
- 	const struct freq_tbl *f = rcg->freq_tbl;
- 	struct clk *p;
-+	int index = qcom_find_src_index(hw, rcg->s.parent_map, f->src);
- 
--	p = clk_get_parent_by_index(hw->clk, f->src);
-+	p = clk_get_parent_by_index(hw->clk, index);
- 	*p_hw = __clk_get_hw(p);
- 	*p_rate = __clk_round_rate(p, rate);
- 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 416becce4170..b95d17fbb8d7 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -182,13 +182,19 @@ static long _freq_tbl_determine_rate(struct clk_hw *hw,
- {
- 	unsigned long clk_flags;
- 	struct clk *p;
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	int index;
- 
- 	f = qcom_find_freq(f, rate);
- 	if (!f)
- 		return -EINVAL;
- 
-+	index = qcom_find_src_index(hw, rcg->parent_map, f->src);
-+	if (index < 0)
-+		return index;
-+
- 	clk_flags = __clk_get_flags(hw->clk);
--	p = clk_get_parent_by_index(hw->clk, f->src);
-+	p = clk_get_parent_by_index(hw->clk, index);
- 	if (clk_flags & CLK_SET_RATE_PARENT) {
- 		if (f->pre_div) {
- 			rate /= 2;
-@@ -381,9 +387,10 @@ static long clk_edp_pixel_determine_rate(struct clk_hw *hw, unsigned long rate,
- 	s64 request;
- 	u32 mask = BIT(rcg->hid_width) - 1;
- 	u32 hid_div;
-+	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
- 
- 	/* Force the correct parent */
--	*p = __clk_get_hw(clk_get_parent_by_index(hw->clk, f->src));
-+	*p = __clk_get_hw(clk_get_parent_by_index(hw->clk, index));
- 
- 	if (src_rate == 810000000)
- 		frac = frac_table_810m;
-@@ -427,6 +434,7 @@ static long clk_byte_determine_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
- 	const struct freq_tbl *f = rcg->freq_tbl;
-+	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
- 	unsigned long parent_rate, div;
- 	u32 mask = BIT(rcg->hid_width) - 1;
- 	struct clk *p;
-@@ -434,7 +442,7 @@ static long clk_byte_determine_rate(struct clk_hw *hw, unsigned long rate,
- 	if (rate == 0)
- 		return -EINVAL;
- 
--	p = clk_get_parent_by_index(hw->clk, f->src);
-+	p = clk_get_parent_by_index(hw->clk, index);
- 	*p_hw = __clk_get_hw(p);
- 	*p_rate = parent_rate = __clk_round_rate(p, rate);
- 
-@@ -496,7 +504,8 @@ static long clk_pixel_determine_rate(struct clk_hw *hw, unsigned long rate,
- 	int delta = 100000;
- 	const struct freq_tbl *f = rcg->freq_tbl;
- 	const struct frac_entry *frac = frac_table_pixel;
--	struct clk *parent = clk_get_parent_by_index(hw->clk, f->src);
-+	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
-+	struct clk *parent = clk_get_parent_by_index(hw->clk, index);
- 
- 	*p = __clk_get_hw(parent);
- 
-@@ -525,7 +534,8 @@ static int clk_pixel_set_rate(struct clk_hw *hw, unsigned long rate,
- 	int delta = 100000;
- 	u32 mask = BIT(rcg->hid_width) - 1;
- 	u32 hid_div;
--	struct clk *parent = clk_get_parent_by_index(hw->clk, f.src);
-+	int index = qcom_find_src_index(hw, rcg->parent_map, f.src);
-+	struct clk *parent = clk_get_parent_by_index(hw->clk, index);
- 
- 	for (; frac->num; frac++) {
- 		request = (rate * frac->den) / frac->num;
+> +#if defined(CONFIG_ARCH_TEGRA_210_SOC)
+> +static int clk_plle_tegra210_enable(struct clk_hw *hw)
+> +{
+> +       struct tegra_clk_pll *pll = to_clk_pll(hw);
+> +       struct tegra_clk_pll_freq_table sel;
+> +       u32 val;
+> +       int ret;
+> +       unsigned long flags = 0;
+> +       unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
+> +
+> +       if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+> +               return -EINVAL;
+> +
+> +       if (pll->lock)
+> +               spin_lock_irqsave(pll->lock, flags);
+> +
+> +       val = pll_readl_base(pll);
+> +       val &= ~BIT(29); /* Disable lock override */
+
+The LOCK_OVERRIDE bit has also moved on Tegra210 - it's now bit 30.
+
+> +       pll_writel_base(val, pll);
+> +
+> +       val = pll_readl(pll->params->aux_reg, pll);
+> +       val |= PLLE_AUX_ENABLE_SWCTL;
+> +       val &= ~PLLE_AUX_SEQ_ENABLE;
+> +       pll_writel(val, pll->params->aux_reg, pll);
+
+I'm not sure this bit is necessary - it's not in the TRM and it's not
+present in downstream kernels.
+
+> +       udelay(1);
+> +
+> +       val = pll_readl_misc(pll);
+> +       val |= PLLE_MISC_LOCK_ENABLE;
+> +       val |= PLLE_MISC_IDDQ_SW_CTRL;
+> +       val &= ~PLLE_MISC_IDDQ_SW_VALUE;
+> +       val |= PLLE_MISC_PLLE_PTS;
+> +       val |= PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK;
+> +       pll_writel_misc(val, pll);
+> +       udelay(5);
+> +
+> +       val = pll_readl(PLLE_SS_CTRL, pll);
+> +       val |= PLLE_SS_DISABLE;
+> +       pll_writel(val, PLLE_SS_CTRL, pll);
+> +
+> +       val = pll_readl_base(pll);
+> +       val &= ~(divp_mask_shifted(pll) | divn_mask_shifted(pll) |
+> +                divm_mask_shifted(pll));
+> +       val &= ~(PLLE_BASE_DIVCML_MASK << PLLE_BASE_DIVCML_SHIFT);
+> +       val |= sel.m << divm_shift(pll);
+> +       val |= sel.n << divn_shift(pll);
+> +       val |= sel.cpcon << PLLE_BASE_DIVCML_SHIFT;
+> +       pll_writel_base(val, pll);
+> +       udelay(1);
+> +
+> +       val = pll_readl_base(pll);
+> +       val |= PLLE_BASE_ENABLE;
+> +       pll_writel_base(val, pll);
+> +
+> +       ret = clk_pll_wait_for_lock(pll);
+> +
+> +       if (ret < 0)
+> +               goto out;
+> +
+> +       val = pll_readl(PLLE_SS_CTRL, pll);
+> +       val &= ~(PLLE_SS_CNTL_CENTER | PLLE_SS_CNTL_INVERT);
+> +       val &= ~PLLE_SS_COEFFICIENTS_MASK;
+> +       val |= PLLE_SS_COEFFICIENTS_VAL;
+> +       pll_writel(val, PLLE_SS_CTRL, pll);
+> +       val &= ~(PLLE_SS_CNTL_SSC_BYP | PLLE_SS_CNTL_BYPASS_SS);
+> +       pll_writel(val, PLLE_SS_CTRL, pll);
+> +       udelay(1);
+> +       val &= ~PLLE_SS_CNTL_INTERP_RESET;
+> +       pll_writel(val, PLLE_SS_CTRL, pll);
+> +       udelay(1);
+> +
+> +       /* Enable hw control of xusb brick pll */
+> +       val = pll_readl_misc(pll);
+> +       val &= ~PLLE_MISC_IDDQ_SW_CTRL;
+> +       pll_writel_misc(val, pll);
+> +
+> +       val = pll_readl(pll->params->aux_reg, pll);
+> +       val |= (PLLE_AUX_USE_LOCKDET | PLLE_AUX_SEQ_START_STATE);
+
+PLLE_AUX_SS_SEQ_INCLUDE (bit 31) should be set here instead of
+PLLE_AUX_SEQ_START_STATE.
+
+> +       val &= ~(PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL);
+> +       pll_writel(val, pll->params->aux_reg, pll);
+> +       udelay(1);
+> +       val |= PLLE_AUX_SEQ_ENABLE;
+> +       pll_writel(val, pll->params->aux_reg, pll);
+> +
+> +       val = pll_readl(XUSBIO_PLL_CFG0, pll);
+> +       val |= (XUSBIO_PLL_CFG0_PADPLL_USE_LOCKDET |
+> +               XUSBIO_PLL_CFG0_SEQ_START_STATE);
+> +       val &= ~(XUSBIO_PLL_CFG0_CLK_ENABLE_SWCTL |
+> +                XUSBIO_PLL_CFG0_PADPLL_RESET_SWCTL);
+> +       pll_writel(val, XUSBIO_PLL_CFG0, pll);
+> +       udelay(1);
+> +       val |= XUSBIO_PLL_CFG0_SEQ_ENABLE;
+> +       pll_writel(val, XUSBIO_PLL_CFG0, pll);
+> +
+> +       /* Enable hw control of SATA pll */
+> +       val = pll_readl(SATA_PLL_CFG0, pll);
+> +       val &= ~SATA_PLL_CFG0_PADPLL_RESET_SWCTL;
+> +       val |= SATA_PLL_CFG0_PADPLL_USE_LOCKDET;
+> +       val |= SATA_PLL_CFG0_SEQ_START_STATE;
+> +       pll_writel(val, SATA_PLL_CFG0, pll);
+> +
+> +       udelay(1);
+> +
+> +       val = pll_readl(SATA_PLL_CFG0, pll);
+> +       val |= SATA_PLL_CFG0_SEQ_ENABLE;
+> +       pll_writel(val, SATA_PLL_CFG0, pll);
+
+The XUSBIO and SATA PLL bits can be removed for Tegra210.  They must
+now be done separately, as part of the UPHY enable sequence.
+
+> +
+> +out:
+> +       if (pll->lock)
+> +               spin_unlock_irqrestore(pll->lock, flags);
+> +
+> +       return ret;
+> +}
+
+> +struct clk *tegra_clk_register_plle_tegra210(const char *name,
+> +                               const char *parent_name,
+> +                               void __iomem *clk_base, unsigned long flags,
+> +                               struct tegra_clk_pll_params *pll_params,
+> +                               spinlock_t *lock)
+> +{
+> +       struct tegra_clk_pll *pll;
+> +       struct clk *clk;
+> +       u32 val, val_aux;
+> +
+> +       pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
+> +       if (IS_ERR(pll))
+> +               return ERR_CAST(pll);
+> +
+> +       /* ensure parent is set to pll_re_vco */
+
+I think this is a typo - we're ensuring that the parent is set to pll_ref here.
+
+> +       val = pll_readl_base(pll);
+> +       val_aux = pll_readl(pll_params->aux_reg, pll);
+> +
+> +       if (val & PLLE_BASE_ENABLE) {
+> +               if ((val_aux & PLLE_AUX_PLLRE_SEL) ||
+> +                       (val_aux & PLLE_AUX_PLLP_SEL))
+> +                       WARN(1, "pll_e enabled with unsupported parent %s\n",
+> +                         (val_aux & PLLE_AUX_PLLP_SEL) ? "pllp_out0" :
+> +                                       "pll_re_vco");
+> +       } else {
+> +               val_aux &= ~(PLLE_AUX_PLLRE_SEL | PLLE_AUX_PLLP_SEL);
+> +               pll_writel(val_aux, pll_params->aux_reg, pll);
+> +       }
+> +
+> +       clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
+> +                                     &tegra_clk_plle_tegra210_ops);
+> +       if (IS_ERR(clk))
+> +               kfree(pll);
+> +
+> +       return clk;
+> +}
+
+-Andrew
