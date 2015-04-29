@@ -1,204 +1,101 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: arnd@arndb.de,
-	devicetree@vger.kernel.org,
-	ariel.dalessandro@gmail.com,
-	ezequiel@vanguardiasur.com.ar,
-	Joachim Eastwood <manabian@gmail.com>
-Subject: [PATCH 6/6] ARM: dts: lpc18xx: add clock nodes for cgu and ccu
-Date: Thu,  2 Apr 2015 22:31:48 +0200
-Message-Id: <1428006708-13690-7-git-send-email-manabian@gmail.com>
-In-Reply-To: <1428006708-13690-1-git-send-email-manabian@gmail.com>
-References: <1428006708-13690-1-git-send-email-manabian@gmail.com>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <554105AC.8060800@samsung.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ "linux-samsung-soc" <linux-samsung-soc@vger.kernel.org>
+References: <554105AC.8060800@samsung.com>
+Message-ID: <20150429231820.16410.26690@quantum>
+Subject: Re: [GIT PULL] clk/samsung fixes for 4.1
+Date: Wed, 29 Apr 2015 16:18:20 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Joachim Eastwood <manabian@gmail.com>
----
- arch/arm/boot/dts/lpc18xx.dtsi | 96 ++++++++++++++++++++++++++++++++++++------
- 1 file changed, 82 insertions(+), 14 deletions(-)
+Quoting Sylwester Nawrocki (2015-04-29 09:24:12)
+> =
 
-diff --git a/arch/arm/boot/dts/lpc18xx.dtsi b/arch/arm/boot/dts/lpc18xx.dtsi
-index 161e98b442e0..8e9f51c88fad 100644
---- a/arch/arm/boot/dts/lpc18xx.dtsi
-+++ b/arch/arm/boot/dts/lpc18xx.dtsi
-@@ -13,6 +13,9 @@
- 
- #include "armv7-m.dtsi"
- 
-+#include "dt-bindings/clock/lpc18xx-cgu.h"
-+#include "dt-bindings/clock/lpc18xx-ccu.h"
-+
- / {
- 	aliases {
- 		serial0 = &uart0;
-@@ -29,6 +32,7 @@
- 			compatible = "arm,cortex-m3";
- 			device_type = "cpu";
- 			reg = <0x0>;
-+			clocks = <&ccu1 CLK_CPU_CORE>;
- 		};
- 	};
- 
-@@ -39,23 +43,84 @@
- 			clock-frequency = <12000000>;
- 		};
- 
--		/* Temporary hardcode PLL1 until clk drivers are merged */
--		pll1: pll1 {
--			compatible = "fixed-factor-clock";
--			clocks = <&xtal>;
-+		xtal32: xtal32 {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <32768>;
-+		};
-+
-+		enet_rx_clk: enet_rx_clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <0>;
-+			clock-output-names = "enet_rx_clk";
-+		};
-+
-+		enet_tx_clk: enet_tx_clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <0>;
-+			clock-output-names = "enet_tx_clk";
-+		};
-+
-+		gp_clkin: gp_clkin {
-+			compatible = "fixed-clock";
- 			#clock-cells = <0>;
--			clock-div = <1>;
--			clock-mult = <12>;
-+			clock-frequency = <0>;
-+			clock-output-names = "gp_clkin";
- 		};
- 	};
- 
- 	soc {
-+		cgu: cgu@40050000 {
-+			compatible = "nxp,lpc1850-cgu";
-+			reg = <0x40050000 0x1000>;
-+			#clock-cells = <1>;
-+			clocks = <&xtal>, <&xtal32>, <&enet_rx_clk>, <&enet_tx_clk>, <&gp_clkin>;
-+			clock-indices =  <0>,  <1>,  <2>,  <3>,  <4>,  <5>,  <6>,  <7>,
-+					 <8>,  <9>, <10>, <11>, <12>, <13>, <14>, <15>,
-+					<16>, <17>, <18>, <19>, <20>, <25>, <26>, <27>;
-+			clock-output-names = "base_safe_clk",    "base_usb0_clk",
-+					     "base_periph_clk",  "base_usb1_clk",
-+					     "base_cpu_clk",     "base_spifi_clk",
-+					     "base_spi_clk",     "base_phy_rx_clk",
-+					     "base_phy_tx_clk",  "base_apb1_clk",
-+					     "base_apb3_clk",    "base_lcd_clk",
-+					     "base_adchs_clk",   "base_sdio_clk",
-+					     "base_ssp0_clk",    "base_ssp1_clk",
-+					     "base_uart0_clk",   "base_uart1_clk",
-+					     "base_uart2_clk",   "base_uart3_clk",
-+					     "base_out_clk",     "base_audio_clk",
-+					     "base_cgu_out0_clk","base_cgu_out1_clk";
-+		};
-+
-+		ccu1: ccu@40051000 {
-+			compatible = "nxp,lpc1850-ccu";
-+			reg = <0x40051000 0x1000>;
-+			#clock-cells = <1>;
-+			clocks = <&cgu BASE_APB3_CLK>,   <&cgu BASE_APB1_CLK>,
-+				 <&cgu BASE_SPIFI_CLK>,  <&cgu BASE_CPU_CLK>,
-+				 <&cgu BASE_PERIPH_CLK>, <&cgu BASE_USB0_CLK>,
-+				 <&cgu BASE_USB1_CLK>,   <&cgu BASE_SPI_CLK>;
-+		};
-+
-+		ccu2: ccu@40052000 {
-+			compatible = "nxp,lpc1850-ccu";
-+			reg = <0x40052000 0x1000>;
-+			#clock-cells = <1>;
-+			clocks = <&cgu BASE_AUDIO_CLK>, <&cgu BASE_UART3_CLK>,
-+				 <&cgu BASE_UART2_CLK>, <&cgu BASE_UART1_CLK>,
-+				 <&cgu BASE_UART0_CLK>, <&cgu BASE_SSP1_CLK>,
-+				 <&cgu BASE_SSP0_CLK>,  <&cgu BASE_SDIO_CLK>;
-+		};
-+
- 		uart0: serial@40081000 {
- 			compatible = "ns16550a";
- 			reg = <0x40081000 0x1000>;
- 			reg-shift = <2>;
- 			interrupts = <24>;
--			clocks = <&pll1>;
-+			clocks = <&ccu2 CLK_APB0_UART0>, <&ccu1 CLK_CPU_UART0>;
-+			clock-names = "uart", "reg";
- 			status = "disabled";
- 		};
- 
-@@ -64,7 +129,8 @@
- 			reg = <0x40082000 0x1000>;
- 			reg-shift = <2>;
- 			interrupts = <25>;
--			clocks = <&pll1>;
-+			clocks = <&ccu2 CLK_APB0_UART1>, <&ccu1 CLK_CPU_UART1>;
-+			clock-names = "uart", "reg";
- 			status = "disabled";
- 		};
- 
-@@ -72,14 +138,14 @@
- 			compatible = "nxp,lpc3250-timer";
- 			reg = <0x40084000 0x1000>;
- 			interrupts = <12>;
--			clocks = <&pll1>;
-+			clocks = <&ccu1 CLK_CPU_TIMER0>;
- 		};
- 
- 		timer1: timer@40085000 {
- 			compatible = "nxp,lpc3250-timer";
- 			reg = <0x40085000 0x1000>;
- 			interrupts = <13>;
--			clocks = <&pll1>;
-+			clocks = <&ccu1 CLK_CPU_TIMER1>;
- 		};
- 
- 		uart2: serial@400c1000 {
-@@ -87,7 +153,8 @@
- 			reg = <0x400c1000 0x1000>;
- 			reg-shift = <2>;
- 			interrupts = <26>;
--			clocks = <&pll1>;
-+			clocks = <&ccu2 CLK_APB2_UART2>, <&ccu1 CLK_CPU_UART2>;
-+			clock-names = "uart", "reg";
- 			status = "disabled";
- 		};
- 
-@@ -96,7 +163,8 @@
- 			reg = <0x400c2000 0x1000>;
- 			reg-shift = <2>;
- 			interrupts = <27>;
--			clocks = <&pll1>;
-+			clocks = <&ccu2 CLK_APB2_UART3>, <&ccu1 CLK_CPU_UART3>;
-+			clock-names = "uart", "reg";
- 			status = "disabled";
- 		};
- 
-@@ -104,14 +172,14 @@
- 			compatible = "nxp,lpc3250-timer";
- 			reg = <0x400c3000 0x1000>;
- 			interrupts = <14>;
--			clocks = <&pll1>;
-+			clocks = <&ccu1 CLK_CPU_TIMER2>;
- 		};
- 
- 		timer3: timer@400c4000 {
- 			compatible = "nxp,lpc3250-timer";
- 			reg = <0x400c4000 0x1000>;
- 			interrupts = <15>;
--			clocks = <&pll1>;
-+			clocks = <&ccu1 CLK_CPU_TIMER3>;
- 		};
- 	};
- };
--- 
-1.8.0
+> The following changes since commit b787f68c36d49bb1d9236f403813641efa74a0=
+31:
+> =
+
+>   Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
+> =
+
+> are available in the git repository at:
+> =
+
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-fixes-4.1
+> =
+
+> for you to fetch changes up to 6f14d70a32756551a3645efd9508f2bae44e7127:
+> =
+
+>   clk: exynos5420: Restore GATE_BUS_TOP on suspend (2015-04-29 17:44:59 +=
+0200)
+> =
+
+> ----------------------------------------------------------------
+> clk/samsung fixes for 4.1
+> =
+
+> Fixes of clk definitions in recently added clock controller driver for
+> exynos5433 SoC and enhancements for DVFS, proper system sleep and secure
+> monitor calls support in this SoC. The exynos5420 patch fixes a serious
+> system sleep regression introduced in 3.19.
+> =
+
+> ----------------------------------------------------------------
+> Chanwoo Choi (4):
+>       clk: Use CONFIG_ARCH_EXYNOS instead of CONFIG_ARCH_EXYNOS5433
+>       clk: exynos5433: Fix wrong parent clock of sclk_apollo clock
+>       clk: exynos5433: Fix wrong PMS value of exynos5433_pll_rates
+
+Above 3 look OK.
+
+>       clk: exynos5433: Add CLK_SET_RATE_PARENT to support DVFS for big.LI=
+TTLE core
+
+Above patch doesn't look like a fix for an introduced regression.
+
+> =
+
+> Hyungwon Hwang (1):
+>       clk: exynos5433: Add DIV_CPIF to the list of stored registers on su=
+spend
+
+Above patch doesn't look like a fix for an introduced regression.
+
+> =
+
+> Javier Martinez Canillas (1):
+>       clk: exynos5420: Restore GATE_BUS_TOP on suspend
+> =
+
+> Jonghwa Lee (3):
+>       clk: exynos5433: Fix wrong offset of PCLK_MSCL_SECURE_SMMU_JPEG
+>       clk: exynos5433: Fix CLK_PCLK_MONOTONIC_CNT clk register assignment
+
+Above 3 look OK.
+
+>       clk: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks for SMC
+
+Above patch doesn't look like a fix for an introduced regression.
+
+> =
+
+> Joonyoung Shim (1):
+>       clk: exynos5433: Add clock flag to support the DVFS of GPU
+
+Above patch doesn't look like a fix for an introduced regression.
+
+Regards,
+Mike
+
+> =
+
+>  drivers/clk/samsung/Makefile         |    2 +-
+>  drivers/clk/samsung/clk-exynos5420.c |    1 +
+>  drivers/clk/samsung/clk-exynos5433.c |   93 +++++++++++++++++-----------=
+------
+>  3 files changed, 48 insertions(+), 48 deletions(-)
