@@ -1,99 +1,57 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 30 Apr 2015 15:05:48 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@freescale.com>, linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mturquette@linaro.org,
-	shawn.guo@linaro.org, b29396@freescale.com,
-	linux-arm-kernel@lists.infradead.org,
-	Ranjani.Vaidyanathan@freescale.com, b20596@freescale.com,
-	r64343@freescale.com, b20788@freescale.com
-Subject: Re: [PATCH RFC v1 3/5] clk: remove unneeded __clk_enable and
- __clk_disable
-Message-ID: <20150430220548.GA31047@codeaurora.org>
-References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
- <1429107999-24413-4-git-send-email-aisheng.dong@freescale.com>
- <55427DDE.4090907@codeaurora.org>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>,
+	Bill Huang <bilhuang@nvidia.com>
+Subject: [PATCH v2 06/19] clk: tegra: pll-params: change misc_reg count from 3 -> 6
+Date: Wed, 29 Apr 2015 13:21:36 -0400
+Message-ID: <1430328109-537-7-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430328109-537-1-git-send-email-rklein@nvidia.com>
+References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <55427DDE.4090907@codeaurora.org>
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/30, Stephen Boyd wrote:
-> On 04/15/15 07:26, Dong Aisheng wrote:
-> > The only thing __clk_enable/__clk_disable does is NULL pointer checking
-> > of clk except calling clk_core_{enable|disable} which is already handled
-> > by clk_core_{enable|disable}.
-> > So remove this unneeded function.
-> >
-> > Cc: Mike Turquette <mturquette@linaro.org>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
-> > ---
-> 
-> No. You can call clk_enable() and clk_disable() with NULL and it should
-> be a no-op. With this change it would cause a NULL pointer exception.
-> 
+From: Bill Huang <bilhuang@nvidia.com>
 
-Here's the proper patch. I'll leave you as author.
+New SoC's may have more then 3 MISC registers, so bump up the
+array size and use a #define to be more informative about the value.
 
----8<---
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0227ac3d5b1a..e45255226ffa 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1023,14 +1023,6 @@ static void clk_core_disable(struct clk_core *core)
- 	clk_core_disable(core->parent);
- }
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+---
+ drivers/clk/tegra/clk.h |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 4ea8b5b089cd..03babba1c3b4 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -156,6 +156,8 @@ struct div_nmp {
+ 	u8		override_divp_shift;
+ };
  
--static void __clk_disable(struct clk *clk)
--{
--	if (!clk)
--		return;
--
--	clk_core_disable(clk->core);
--}
--
- /**
-  * clk_disable - gate a clock
-  * @clk: the clk being gated
-@@ -1051,7 +1043,7 @@ void clk_disable(struct clk *clk)
- 		return;
- 
- 	flags = clk_enable_lock();
--	__clk_disable(clk);
-+	clk_core_disable(clk->core);
- 	clk_enable_unlock(flags);
- }
- EXPORT_SYMBOL_GPL(clk_disable);
-@@ -1089,14 +1081,6 @@ static int clk_core_enable(struct clk_core *core)
- 	return 0;
- }
- 
--static int __clk_enable(struct clk *clk)
--{
--	if (!clk)
--		return 0;
--
--	return clk_core_enable(clk->core);
--}
--
- /**
-  * clk_enable - ungate a clock
-  * @clk: the clk being ungated
-@@ -1115,8 +1099,11 @@ int clk_enable(struct clk *clk)
- 	unsigned long flags;
- 	int ret;
- 
-+	if (!clk)
-+		return 0;
++#define MAX_PLL_MISC_REG_COUNT	6
 +
- 	flags = clk_enable_lock();
--	ret = __clk_enable(clk);
-+	ret = clk_core_enable(clk->core);
- 	clk_enable_unlock(flags);
- 
- 	return ret;
-
+ /**
+  * struct clk_pll_params - PLL parameters
+  *
+@@ -213,7 +215,7 @@ struct tegra_clk_pll_params {
+ 	u32		iddq_bit_idx;
+ 	u32		aux_reg;
+ 	u32		dyn_ramp_reg;
+-	u32		ext_misc_reg[3];
++	u32		ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
+ 	u32		pmc_divnm_reg;
+ 	u32		pmc_divp_reg;
+ 	u32		flags;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
