@@ -1,108 +1,58 @@
-Return-Path: <James.Hogan@imgtec.com>
-Date: Tue, 28 Apr 2015 00:00:22 +0100
-From: James Hogan <james.hogan@imgtec.com>
-To: Paul Burton <paul.burton@imgtec.com>
-CC: <linux-mips@linux-mips.org>, Lars-Peter Clausen <lars@metafoo.de>, "Mike
- Turquette" <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v4 25/37] clk: ingenic: add driver for Ingenic SoC CGU
- clocks
-Message-ID: <20150427230022.GB22974@jhogan-linux.le.imgtec.org>
-References: <1429881457-16016-1-git-send-email-paul.burton@imgtec.com>
- <1429881457-16016-26-git-send-email-paul.burton@imgtec.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hHWLQfXTYDoKhP50"
-In-Reply-To: <1429881457-16016-26-git-send-email-paul.burton@imgtec.com>
+Return-Path: <s.nawrocki@samsung.com>
+Message-id: <554105AC.8060800@samsung.com>
+Date: Wed, 29 Apr 2015 18:24:12 +0200
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+MIME-version: 1.0
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Subject: [GIT PULL] clk/samsung fixes for 4.1
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
---hHWLQfXTYDoKhP50
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 
-Hi Paul,
+The following changes since commit b787f68c36d49bb1d9236f403813641efa74a031:
 
-On Fri, Apr 24, 2015 at 02:17:25PM +0100, Paul Burton wrote:
-> +static int ingenic_clk_set_parent(struct clk_hw *hw, u8 idx)
-> +{
-> +	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
-> +	struct ingenic_cgu *cgu = ingenic_clk->cgu;
-> +	const struct ingenic_cgu_clk_info *clk_info;
-> +	unsigned long flags;
-> +	u8 curr_idx, hw_idx, num_poss;
-> +	u32 reg, mask;
-> +
-> +	clk_info = &cgu->clock_info[ingenic_clk->idx];
-> +
-> +	if (clk_info->type & CGU_CLK_MUX) {
-> +		/*
-> +		 * Convert the parent index to the hardware index by adding
-> +		 * 1 for any -1 in the parents array preceding the given
-> +		 * index. That is, we want the index of idx'th entry in
-> +		 * clk_info->parents which does not equal -1.
-> +		 */
-> +		hw_idx = curr_idx = 0;
-> +		num_poss = 1 << clk_info->mux.bits;
-> +		for (; hw_idx < num_poss; hw_idx++) {
-> +			if (clk_info->parents[hw_idx] == -1)
-> +				continue;
-> +			if (curr_idx == idx)
-> +				break;
-> +			curr_idx++;
-> +		}
-> +
-> +		/* idx should always be a valid parent */
-> +		BUG_ON(curr_idx != idx);
+  Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
 
-I think this needs updating.
+are available in the git repository at:
 
-If idx is the number of valid parents, this won't catch it, e.g. idx =
-2, parents = { x, y, -1, -1 }, it'll increment curr_idx twice to 2, and
-reach the end of the loop without finding the 3rd valid clock, but
-curr_idx == idx == 2 ...
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-fixes-4.1
 
-> +
-> +		mask = GENMASK(clk_info->mux.bits - 1, 0);
-> +		mask <<= clk_info->mux.shift;
-> +
-> +		spin_lock_irqsave(&cgu->lock, flags);
-> +
-> +		/* write the register */
-> +		reg = readl(cgu->base + clk_info->mux.reg);
-> +		reg &= ~mask;
-> +		reg |= hw_idx << clk_info->mux.shift;
-> +		writel(reg, cgu->base + clk_info->mux.reg);
-> +
-> +		spin_unlock_irqrestore(&cgu->lock, flags);
-> +		return 0;
-> +	}
-> +
-> +	return idx ? -EINVAL : 0;
-> +}
+for you to fetch changes up to 6f14d70a32756551a3645efd9508f2bae44e7127:
 
-Cheers
-James
+  clk: exynos5420: Restore GATE_BUS_TOP on suspend (2015-04-29 17:44:59 +0200)
 
---hHWLQfXTYDoKhP50
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+----------------------------------------------------------------
+clk/samsung fixes for 4.1
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Fixes of clk definitions in recently added clock controller driver for
+exynos5433 SoC and enhancements for DVFS, proper system sleep and secure
+monitor calls support in this SoC. The exynos5420 patch fixes a serious
+system sleep regression introduced in 3.19.
 
-iQIcBAEBAgAGBQJVPr+GAAoJEGwLaZPeOHZ6d+YQAIgI9O1TVk4wMmfAVdV3SIkh
-7//bZhJGeDGJdHP3fVW+mUJ16V0oabiCfqUMp/SFqrQ5sRYwBzr3eHWFnFrDvt7o
-thnt1FYMri95jcSninnl7YlXM5R9djF1wp2UgZE50rXlhSjkbqQVtv4ODDrR5F2O
-oJWpgRmi7Bw+zynA4Iji9alAiwZjJRQYqpN6wtpugXofVhR2y5GHlCQqNuB6Rm+7
-NbuFtN6SE/hXi8DD2p75Hy7EDODXD08pCNrvp9Pg2YAiNvoi8dtafCPqVWG8MniU
-nUUWAYeRpgt6w1B6EXQz+13W5PPucNFUwvRgVqRcQ3kQzj3eB4JtJjQ0mfwmrX7i
-i57L/y0oCIN2fvBaC6gbQLiUahUHia4D3t2i/brPs/p4MhiSiLn7DDNMg7GWnSCe
-i6OzCxlr+fT3/rIKrAoKYa6IFeoJgAN9b5fNuMu12ko5/LSBWhqn8ojE/5Mpv9DQ
-j/Waea+7jUMXOVRJndlGWKSRf6Qm4HeRhpK3sfd5Sy+on+w9a+ybM69x8l1knmnS
-LZhJACyv5uJIwEceTvVkmnOLqXUhRjax86lt7Lvwx111JqkNQToqIEHRSp8mSTxN
-tDIS/1vX1zPhuGwZBXVp8/P0BVUIL7r1fijfJYwKWf3dJP4QEil0HPR8y1iDMa9O
-jAh2RO1JjDUy8NCfaOEx
-=42m1
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+Chanwoo Choi (4):
+      clk: Use CONFIG_ARCH_EXYNOS instead of CONFIG_ARCH_EXYNOS5433
+      clk: exynos5433: Fix wrong parent clock of sclk_apollo clock
+      clk: exynos5433: Fix wrong PMS value of exynos5433_pll_rates
+      clk: exynos5433: Add CLK_SET_RATE_PARENT to support DVFS for big.LITTLE core
 
---hHWLQfXTYDoKhP50--
+Hyungwon Hwang (1):
+      clk: exynos5433: Add DIV_CPIF to the list of stored registers on suspend
+
+Javier Martinez Canillas (1):
+      clk: exynos5420: Restore GATE_BUS_TOP on suspend
+
+Jonghwa Lee (3):
+      clk: exynos5433: Fix wrong offset of PCLK_MSCL_SECURE_SMMU_JPEG
+      clk: exynos5433: Fix CLK_PCLK_MONOTONIC_CNT clk register assignment
+      clk: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks for SMC
+
+Joonyoung Shim (1):
+      clk: exynos5433: Add clock flag to support the DVFS of GPU
+
+ drivers/clk/samsung/Makefile         |    2 +-
+ drivers/clk/samsung/clk-exynos5420.c |    1 +
+ drivers/clk/samsung/clk-exynos5433.c |   93 +++++++++++++++++-----------------
+ 3 files changed, 48 insertions(+), 48 deletions(-)
