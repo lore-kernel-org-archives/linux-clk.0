@@ -1,45 +1,56 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>,
+	Bill Huang <bilhuang@nvidia.com>
+Subject: [PATCH v2 15/19] clk: tegra: pll: Add dyn_ramp callback
+Date: Wed, 29 Apr 2015 13:21:45 -0400
+Message-ID: <1430328109-537-16-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430328109-537-1-git-send-email-rklein@nvidia.com>
+References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <1428159570-19467-2-git-send-email-Julia.Lawall@lip6.fr>
-References: <1428159570-19467-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1428159570-19467-2-git-send-email-Julia.Lawall@lip6.fr>
-Date: Thu, 9 Apr 2015 09:30:49 +0200
-Message-ID: <CACRpkdYU+hN6gEtVzwahGz+B07dqrDzQkTZz2xikGH0dMdYX1Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: versatile: test returned value
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Mike Turquette <mturquette@linaro.org>, kernel-janitors@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Apr 4, 2015 at 4:59 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+From: Bill Huang <bilhuang@nvidia.com>
 
-> Put NULL test on the result of the previous call instead on one of its
-> arguments.  A simplified version of the semantic match that finds this
-> problem is as follows (http://coccinelle.lip6.fr/):
->
-> // <smpl>
-> r@
-> expression *e1;
-> expression *e2;
-> identifier f;
-> statement S1,S2;
-> @@
->
-> e1 = f(...,e2,...);
-> (
-> if (e1 == NULL || ...) S1 else S2
-> |
-> *if (e2 == NULL || ...) S1 else S2
-> )
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Add a callback to the pll_params for custom dynamic ramping
+functions which can be specified per PLL.
 
-Yep that's a bug:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+---
+ drivers/clk/tegra/clk.h |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 27075a586e79..850521d42be6 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -160,6 +160,8 @@ struct div_nmp {
+ 
+ #define MAX_PLL_MISC_REG_COUNT	6
+ 
++struct tegra_clk_pll;
++
+ /**
+  * struct clk_pll_params - PLL parameters
+  *
+@@ -250,6 +252,8 @@ struct tegra_clk_pll_params {
+ 			unsigned long rate, unsigned long parent_rate);
+ 	unsigned long	(*adjust_vco)(struct tegra_clk_pll_params *pll_params,
+ 				unsigned long parent_rate);
++	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
++			struct tegra_clk_pll_freq_table *cfg);
+ };
+ 
+ #define TEGRA_PLL_USE_LOCK BIT(0)
+-- 
+1.7.9.5
+
