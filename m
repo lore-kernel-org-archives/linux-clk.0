@@ -1,59 +1,80 @@
-Return-Path: <javier.martinez@collabora.co.uk>
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Olof Johansson <olof@lixom.net>,
-	Doug Anderson <dianders@chromium.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Tyler Baker <tyler.baker@linaro.org>,
-	Abhilash Kesavan <kesavan.abhilash@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 1/1] clk: exynos5420: Restore GATE_BUS_TOP on suspend
-Date: Wed,  8 Apr 2015 07:34:12 +0200
-Message-Id: <1428471252-15872-1-git-send-email-javier.martinez@collabora.co.uk>
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v2 00/19] Tegra210 Clock Support
+Date: Wed, 29 Apr 2015 13:21:30 -0400
+Message-ID: <1430328109-537-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit ae43b3289186 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power
-Management support v12") added pm support for the pl330 dma driver but
-it makes the clock for the Exynos5420 MDMA0 DMA controller to be gated
-during suspend and this in turn makes its parent clock aclk266_g2d to
-be gated. But the clock needs to be ungated prior suspend to allow the
-system to be suspend and resumed correctly.
+This patch series updates the tegra common clock driver and adds
+support for the Tegra210 clocks. The clocks in Tegra210 changed
+significantly in some ways from earlier generations, so to support
+them, we need to extend our base framework a bit and add some new
+features.
 
-Add GATE_BUS_TOP register to the list of registers to be restored when
-the system enters into a suspend state so aclk266_g2d will be ungated.
+Some patches here also address issues found while adding features
+and other cleanup type work.
 
-Thanks to Abhilash Kesavan for figuring out that this was the issue.
+v2:
+  - Fixed some problems around plle, pllx dynamic ramping,
+    iddq/reset, and some incorrect register address. See
+    individual patches for more details differences.
 
-Fixes: ae43b32 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12")
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Tested-by: Kevin Hilman <khilman@linaro.org>
-Tested-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 1 +
- 1 file changed, 1 insertion(+)
+Bill Huang (7):
+  clk: tegra: pll-params: change misc_reg count from 3 -> 6
+  clk: tegra: pll: Add logic for SS
+  clk: tegra: pll: Add code to handle if resets are supported by PLL
+  clk: tegra: pll: Adjust vco_min if SDM present
+  clk: tegra: pll: Add dyn_ramp callback
+  clk: tegra: pll: Add Set_default logic
+  clk: tegra: Add Super Gen5 Logic
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 07d666cc6a29..bea4a173eef5 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -271,6 +271,7 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
- 	{ .offset = SRC_MASK_PERIC0,		.value = 0x11111110, },
- 	{ .offset = SRC_MASK_PERIC1,		.value = 0x11111100, },
- 	{ .offset = SRC_MASK_ISP,		.value = 0x11111000, },
-+	{ .offset = GATE_BUS_TOP,		.value = 0xffffffff, },
- 	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
- 	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
- };
+Rhyland Klein (12):
+  clk: tegra: Modify tegra_audio_clk_init to accept more plls
+  clk: tegra: periph: add new periph clks and muxes for Tegra210
+  clk: tegra: pll: add tegra_pll_wait_for_lock to clk header
+  clk: tegra: pll: simplify clk_enable_path
+  clk: tegra: pll: update warning msg
+  clk: tegra: pll: Don't unconditionally set LOCK flags
+  clk: tegra: pll: Add logic for handling SDM data
+  clk: tegra: pll: Add logic for out-of-table rates for T210
+  clk: tegra: pll: Add specialized logic for T210
+  clk: tegra: pll: Add support for PLLMB for T210
+  clk: tegra: pll: Fix _pll_ramp_calc_pll logic and
+    _calc_dynamic_ramp_rate
+  clk: tegra210: add support for Tegra210 clocks
+
+ .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
+ drivers/clk/tegra/Makefile                         |    2 +
+ drivers/clk/tegra/clk-id.h                         |   61 +-
+ drivers/clk/tegra/clk-pll.c                        |  685 ++++-
+ drivers/clk/tegra/clk-tegra-audio.c                |   25 +-
+ drivers/clk/tegra/clk-tegra-periph.c               |  257 +-
+ drivers/clk/tegra/clk-tegra-super-gen5.c           |  150 ++
+ drivers/clk/tegra/clk-tegra114.c                   |   30 +-
+ drivers/clk/tegra/clk-tegra124.c                   |   31 +-
+ drivers/clk/tegra/clk-tegra20.c                    |   18 +-
+ drivers/clk/tegra/clk-tegra210.c                   | 2729 ++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra30.c                    |   31 +-
+ drivers/clk/tegra/clk.h                            |   90 +-
+ include/dt-bindings/clock/tegra210-car.h           |  401 +++
+ 14 files changed, 4423 insertions(+), 143 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
+ create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
+ create mode 100644 drivers/clk/tegra/clk-tegra210.c
+ create mode 100644 include/dt-bindings/clock/tegra210-car.h
+
 -- 
-2.1.4
+1.7.9.5
