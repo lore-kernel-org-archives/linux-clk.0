@@ -1,85 +1,141 @@
-Return-Path: <ce3a@gmx.de>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v2 10/19] clk: tegra: pll: Add logic for out-of-table rates for T210
+Date: Wed, 29 Apr 2015 13:21:40 -0400
+Message-ID: <1430328109-537-11-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430328109-537-1-git-send-email-rklein@nvidia.com>
+References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Message-ID: <trinity-d1320d47-a158-4f77-8ddc-8dbeb74c6f8b-1428501608111@3capp-gmx-bs05>
-From: "S. S." <ce3a@gmx.de>
-To: "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
- mturquette@linaro.org, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Aw: Re: [PATCH v2] clk: si5351: fix .round_rate for multisynth 6-7
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 8 Apr 2015 16:00:08 +0200
-In-Reply-To: <552523BC.7010500@gmail.com>
-References: <1428433918-6339-1-git-send-email-ce3a@gmx.de>,
- <552523BC.7010500@gmail.com>
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
->> @@ -645,7 +646,7 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
->> struct si5351_hw_data *hwdata =
->> container_of(hw, struct si5351_hw_data, hw);
->> unsigned long long lltmp;
->> - unsigned long a, b, c;
->> + unsigned long a, b = 0, c = 1;
->
-> Actually, moving b,c initialization up here is neither related
-> to the patch itself nor is it mentioned in the commit log.
->
-> Please do not mix different patches.
+For Tegra210, the logic to calculate out-of-table rates is different
+from previous generations. Add callbacks that can be overridden to
+allow for different ways of calculating rates. Default to
+_cal_rate when not specified.
 
-I agree. I just thought we could avoid repeating the b,c initialization
-in the code, but You are right, that would be a different patch, if any 
-at all.
+Based on original work by Aleksandr Frid <afrid@nvidia.com>
 
->> *parent_rate = a * rate;
->
->> + if (rfrac)
->> + rational_best_approximation(rfrac, denom,
->> + SI5351_MULTISYNTH_B_MAX,
->> + SI5351_MULTISYNTH_C_MAX,
->> + &b, &c);
->> + }
->
-> I am still not convinced that this is the right way to calculate the
-> _best_ integer divider for ms6,7.
->
-> The code above is written to (a) find the _largest_ integer "a" that
-> will match
->
-> a * rate <= parent_rate
->
-> and then (b) determines the fractional part of the divider.
->
-> As you correctly stated, ms6,7 do not support (b) but if we use (a) for
-> those msynths, we will determine an "a" so that "a * rate" is always
-> smaller than parent_rate.
-> 
-> What we actually want is the smallest error between generated and
-> requested rate, so we have to find the closest integer with
-> 
-> a = DIV_ROUND_CLOSEST(parent_rate, rate)
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c |   24 ++++++++++++++++++++++--
+ drivers/clk/tegra/clk.h     |   10 ++++++++++
+ 2 files changed, 32 insertions(+), 2 deletions(-)
 
-Agreed, that's probably better.
-
-> IMHO, the special divider calculation for ms6,7 is best dealt with
-> in an extra else-if branch after the check for CLK_SET_RATE_PARENT
-> flag.
-
-Agreed.
-
-> hwdata->params.p3 = 0;
-> hwdata->params.p2 = 0;
-
-Agreed.
-
-> Out of curiosity, do you actually have a device that uses ms6,7 and can
-> you measure the generated frequency - or did you just read the code as
-> a bedtime story? ;)
-
-:) I do have a device and have to use ms6,7, those are connected to pllb.
-I have tested some integer pll dividers in a range from 30 to 130.
-Measured frequencies and the frequencies shown in <debugfs>/clk/clk_summery
-are the same.
-
-I am going to send a patch v3.
-Thanks for your feedback.
-
-Sergej
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 2a559408cee1..0b9cbe12a3eb 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -687,7 +687,7 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	}
+ 
+ 	if (_get_table_rate(hw, &cfg, rate, parent_rate) &&
+-	    _calc_rate(hw, &cfg, rate, parent_rate)) {
++	    pll->params->calc_rate(hw, &cfg, rate, parent_rate)) {
+ 		pr_err("%s: Failed to set %s rate %lu\n", __func__,
+ 		       __clk_get_name(hw->clk), rate);
+ 		WARN_ON(1);
+@@ -722,7 +722,7 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		return __clk_get_rate(hw->clk);
+ 
+ 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
+-	    _calc_rate(hw, &cfg, rate, *prate))
++	    pll->params->calc_rate(hw, &cfg, rate, *prate))
+ 		return -EINVAL;
+ 
+ 	return cfg.output_rate;
+@@ -912,12 +912,28 @@ const struct clk_ops tegra_clk_plle_ops = {
+ static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
+ 			   unsigned long parent_rate)
+ {
++	u16 mdiv = parent_rate / pll_params->cf_min;
++
++	if (pll_params->flags & TEGRA_MDIV_NEW)
++		return (!pll_params->mdiv_default ? mdiv :
++			min(mdiv, pll_params->mdiv_default));
++
++	if (pll_params->mdiv_default)
++		return pll_params->mdiv_default;
++
+ 	if (parent_rate > pll_params->cf_max)
+ 		return 2;
+ 	else
+ 		return 1;
+ }
+ 
++u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate)
++{
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
++
++	return (u16)_pll_fixed_mdiv(pll->params, input_rate);
++}
++
+ static unsigned long _clip_vco_min(unsigned long vco_min,
+ 				   unsigned long parent_rate)
+ {
+@@ -1492,6 +1508,10 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
+ 	init.parent_names = (parent_name ? &parent_name : NULL);
+ 	init.num_parents = (parent_name ? 1 : 0);
+ 
++	/* Default to _calc_rate if unspecified */
++	if (!pll->params->calc_rate)
++		pll->params->calc_rate = _calc_rate;
++
+ 	/* Data in .init is copied by clk_register(), so stack variable OK */
+ 	pll->hw.init = &init;
+ 
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index f3c1f07d5332..b009c803f277 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -199,6 +199,8 @@ struct div_nmp {
+  *     base register.
+  * TEGRA_PLL_BYPASS - PLL has bypass bit
+  * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
++ * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
++ *     it may be more accurate (especially if SDM present)
+  */
+ struct tegra_clk_pll_params {
+ 	unsigned long	input_min;
+@@ -235,7 +237,13 @@ struct tegra_clk_pll_params {
+ 	struct div_nmp	*div_nmp;
+ 	struct tegra_clk_pll_freq_table	*freq_table;
+ 	unsigned long	fixed_rate;
++	bool		vco_out;
++	u16		mdiv_default;
++	u32	(*round_p_to_pdiv)(u32 p, u32 *pdiv);
+ 	void	(*set_gain)(struct tegra_clk_pll_freq_table *cfg);
++	int	(*calc_rate)(struct clk_hw *hw,
++			struct tegra_clk_pll_freq_table *cfg,
++			unsigned long rate, unsigned long parent_rate);
+ };
+ 
+ #define TEGRA_PLL_USE_LOCK BIT(0)
+@@ -249,6 +257,7 @@ struct tegra_clk_pll_params {
+ #define TEGRA_PLL_LOCK_MISC BIT(8)
+ #define TEGRA_PLL_BYPASS BIT(9)
+ #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
++#define TEGRA_MDIV_NEW BIT(11)
+ 
+ /**
+  * struct tegra_clk_pll - Tegra PLL clock
+@@ -671,5 +680,6 @@ void tegra114_clock_deassert_dfll_dvco_reset(void);
+ typedef void (*tegra_clk_apply_init_table_func)(void);
+ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+ int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
++u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+ 
+ #endif /* TEGRA_CLK_H */
+-- 
+1.7.9.5
