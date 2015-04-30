@@ -1,86 +1,37 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Dong Aisheng <aisheng.dong@freescale.com>,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 2/6] clk: Squash __clk_{enable,disable}() into callers
-Date: Thu, 30 Apr 2015 17:14:17 -0700
-Message-Id: <1430439261-10291-3-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1430439261-10291-1-git-send-email-sboyd@codeaurora.org>
-References: <1430439261-10291-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Message-ID: <55429497.6030409@gmail.com>
+Date: Thu, 30 Apr 2015 22:46:15 +0200
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Fabio Estevam <festevam@gmail.com>
+CC: Michael Welling <mwelling@ieee.org>,
+ Jean-Francois Moine <moinejf@free.fr>,
+ Mike Turquette <mturquette@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ Russell King <rmk+linux@arm.linux.org.uk>,
+ linux-clk@vger.kernel.org,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 3/4] clk: si5351: Do not pass struct clk in platform_data
+References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com> <1430415954-29517-4-git-send-email-sebastian.hesselbarth@gmail.com> <CAOMZO5BYnE2epGrWbnNnaqEt1r6+xoPYWKtjc8w-Ze22aitgXA@mail.gmail.com> <20150430183043.GA21890@deathray> <554277F3.7060500@gmail.com> <CAOMZO5BJWfpir3ngjVjf+A5um6uh=D7WKQFUg3x5fnk8Az6WiQ@mail.gmail.com>
+In-Reply-To: <CAOMZO5BJWfpir3ngjVjf+A5um6uh=D7WKQFUg3x5fnk8Az6WiQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dong Aisheng <aisheng.dong@freescale.com>
+On 30.04.2015 21:16, Fabio Estevam wrote:
+> On Thu, Apr 30, 2015 at 3:44 PM, Sebastian Hesselbarth
+> <sebastian.hesselbarth@gmail.com> wrote:
+>> Michael is right, the check is for bailing out if none of the parent
+>> clocks is available.
+>
+> +       if (IS_ERR(drvdata->pxtal) && IS_ERR(drvdata->pclkin)) {
+> +               dev_err(&client->dev, "missing at least one parent clock\n");
+> +               return -EINVAL;
+> +       }
+>
+> Then shouldn't the error message be: "missing both parent clocks\n" ?
 
-These functions are only used in one place. Let's squash them
-into their respective callers to save some lines.
+Yeah, probably. I'll reword the error message and also check the
+variant as only 5351C can have a "clkin" parent clock.
 
-Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
-[sboyd@codeaurora.org: Redo commit text, add NULL check in
-clk_enable()]
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk.c | 23 +++++------------------
- 1 file changed, 5 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0b3c914db1ca..88439af5d032 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1023,14 +1023,6 @@ static void clk_core_disable(struct clk_core *core)
- 	clk_core_disable(core->parent);
- }
- 
--static void __clk_disable(struct clk *clk)
--{
--	if (!clk)
--		return;
--
--	clk_core_disable(clk->core);
--}
--
- /**
-  * clk_disable - gate a clock
-  * @clk: the clk being gated
-@@ -1051,7 +1043,7 @@ void clk_disable(struct clk *clk)
- 		return;
- 
- 	flags = clk_enable_lock();
--	__clk_disable(clk);
-+	clk_core_disable(clk->core);
- 	clk_enable_unlock(flags);
- }
- EXPORT_SYMBOL_GPL(clk_disable);
-@@ -1089,14 +1081,6 @@ static int clk_core_enable(struct clk_core *core)
- 	return 0;
- }
- 
--static int __clk_enable(struct clk *clk)
--{
--	if (!clk)
--		return 0;
--
--	return clk_core_enable(clk->core);
--}
--
- /**
-  * clk_enable - ungate a clock
-  * @clk: the clk being ungated
-@@ -1115,8 +1099,11 @@ int clk_enable(struct clk *clk)
- 	unsigned long flags;
- 	int ret;
- 
-+	if (!clk)
-+		return 0;
-+
- 	flags = clk_enable_lock();
--	ret = __clk_enable(clk);
-+	ret = clk_core_enable(clk->core);
- 	clk_enable_unlock(flags);
- 
- 	return ret;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Sebastian
