@@ -1,37 +1,76 @@
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Message-ID: <55429497.6030409@gmail.com>
-Date: Thu, 30 Apr 2015 22:46:15 +0200
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-To: Fabio Estevam <festevam@gmail.com>
-CC: Michael Welling <mwelling@ieee.org>,
- Jean-Francois Moine <moinejf@free.fr>,
- Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- Russell King <rmk+linux@arm.linux.org.uk>,
- linux-clk@vger.kernel.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 3/4] clk: si5351: Do not pass struct clk in platform_data
-References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com> <1430415954-29517-4-git-send-email-sebastian.hesselbarth@gmail.com> <CAOMZO5BYnE2epGrWbnNnaqEt1r6+xoPYWKtjc8w-Ze22aitgXA@mail.gmail.com> <20150430183043.GA21890@deathray> <554277F3.7060500@gmail.com> <CAOMZO5BJWfpir3ngjVjf+A5um6uh=D7WKQFUg3x5fnk8Az6WiQ@mail.gmail.com>
-In-Reply-To: <CAOMZO5BJWfpir3ngjVjf+A5um6uh=D7WKQFUg3x5fnk8Az6WiQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] ARM: sun9i: Add support for PRCM on Allwinner A80 SoC
+Date: Fri,  1 May 2015 00:10:01 +0800
+Message-Id: <1430410206-4410-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30.04.2015 21:16, Fabio Estevam wrote:
-> On Thu, Apr 30, 2015 at 3:44 PM, Sebastian Hesselbarth
-> <sebastian.hesselbarth@gmail.com> wrote:
->> Michael is right, the check is for bailing out if none of the parent
->> clocks is available.
->
-> +       if (IS_ERR(drvdata->pxtal) && IS_ERR(drvdata->pclkin)) {
-> +               dev_err(&client->dev, "missing at least one parent clock\n");
-> +               return -EINVAL;
-> +       }
->
-> Then shouldn't the error message be: "missing both parent clocks\n" ?
+Hi everyone,
 
-Yeah, probably. I'll reword the error message and also check the
-variant as only 5351C can have a "clkin" parent clock.
+This is v2 of the Allwinner A80 PRCM support series. Thanks to
+Allwinner updating their documents, we can now support the essential
+parts of the PRCM.
 
-Sebastian
+This series adds support for the Power Reset and Clock Management
+module on Allwinner's A80 SoC. The PRCM manages clocks and resets
+for the "special" block of peripherals, or the R/RTC block in
+earlier SoCs, as well as power domain and resets for various parts
+of the SoC, such as the 2 processor clusters, the GPU and others.
+
+The special peripherals include a standby processor core, a timer
+block, a watchdog, pin controller, 1 wire interface, PS/2 interface,
+a UART, the RSB controller, a DMA controller, a consumer IR receiver
+block, 2 I2C controllers, and 2 I2S controllers. We do not have
+documents for all the peripherals. Support will be added where
+possible.
+
+The first 2 patches add drivers for new clocks.
+
+The 3rd patch adds a compatible string and associated list of sub-
+devices to the prcm mfd driver.
+
+The 4th patch adds the PRCM device nodes to the A80 dtsi.
+
+The last patch adds some comments regarding the 2 system oscillators.
+
+Changes since v1:
+
+    - Added missing clock gates based on updated documents
+
+    - Added new cpus clock driver based on updated documents
+
+    - Added pll3 clock placeholder
+
+    - Added comments about 24M & 32k oscillators
+
+Regards
+ChenYu
+
+
+Chen-Yu Tsai (5):
+  clk: sunxi: sun6i-apb0: Add support for sun9i A80 apbs gates
+  clk: sunxi: support the cpus (cpu special) clock on the Allwinner A80
+  mfd: sun6i-prcm: Add support for PRCM found on Allwinner A80 SoC
+  ARM: dts: sun9i: Add A80 PRCM clocks and reset control nodes
+  ARM: dts: sun9i: Add TODO comments for the main and low power clocks
+
+ Documentation/devicetree/bindings/clock/sunxi.txt  |   2 +
+ .../devicetree/bindings/mfd/sun6i-prcm.txt         |   3 +-
+ arch/arm/boot/dts/sun9i-a80.dtsi                   |  79 ++++++-
+ drivers/clk/sunxi/Makefile                         |   2 +-
+ drivers/clk/sunxi/clk-sun6i-apb0-gates.c           |   5 +
+ drivers/clk/sunxi/clk-sun9i-cpus.c                 | 243 +++++++++++++++++++++
+ drivers/mfd/sun6i-prcm.c                           |  58 +++++
+ 7 files changed, 389 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/sunxi/clk-sun9i-cpus.c
+
+-- 
+2.1.4
