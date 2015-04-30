@@ -1,208 +1,185 @@
-Return-Path: <mwelling79@gmail.com>
-Return-Path: <mwelling79@gmail.com>
-Sender: Michael Welling <mwelling79@gmail.com>
-Date: Thu, 30 Apr 2015 14:33:17 -0500
-From: Michael Welling <mwelling@ieee.org>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Russell King <rmk+linux@arm.linux.org.uk>,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] clk: si5351: Some fixes
-Message-ID: <20150430193317.GC22000@deathray>
-References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
+Return-Path: <sha@pengutronix.de>
+Date: Thu, 30 Apr 2015 08:08:06 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@linaro.org>, kernel@pengutronix.de,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Lee Jones <lee.jones@linaro.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [RFC] clk: introduce critical clocks
+Message-ID: <20150430060806.GY6325@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 30, 2015 at 07:45:50PM +0200, Sebastian Hesselbarth wrote:
-> For Si5351 clock driver, Michael Welling and Jean-Francois Moine reported
-> issues with recent v4.x kernels due to broken/missing/wrong parent clock
-> claming. This patch set now deals with the issues reported.
-> 
-> Patch 1 amends the binding documentation mention clock-names property
-> for the "xtal" and "clkin" parent clock inputs of Si5351 variants.
-> 
-> Patch 2 adds the clock-names property for the SolidRun CuBox using Si5351
-> with a fixed oscillator connected to "xtal" input.
-> 
-> Patch 3 reworks the way we claim parent clocks by using devm_clk_get()
-> for both DT and platform_data based registration. Also, properly check
-> for errors returned by devm_clk_get() and prepare/enable the parent clocks.
-> 
-> Patch 4 introduces a function to reset PLLs on rate change. This should
-> improve generated clock output stability. I currently have no scope at hand
-> to actually test that properly, so there may be more issues remaining.
-> 
-> @Michael, Jean-Francois: Please test and report if there are still
-> issues remaining.
->
+Some clocks are so critical to the system that they must never be turned
+off unless explicitly requested. Normally unused clocks get disabled in
+the clk_disable_unused initcall. Currently there are two ways for
+keeping clocks enabled even if they are unused, both with their own
+drawbacks:
 
-Okay, the results are in and they are mixed. Firstly the clocks register
-unlike before. This is a positive step that was certianly expected.
+- The CLK_IGNORE_UNUSED flag. Clocks with this flags are not disabled
+  during clk_disable_unused. The problem with this is that these clocks
+  are skipped during the clk_disable_unused initcall, but can get
+  disabled due to normal clk_enable/disable at any time, not necessarily
+  even on operations on the critical clocks themselves but on operations
+  on their ancestors, siblings or children.
 
-Second the reported and measured clock frequencies do not match the
-device tree entries.
+- call clk_prepare_enable right after registration in the clock
+  driver. This works properly, but due to the increased enable counter
+  the clock will never get disabled, even not when a proper user
+  comes along who knows when the clock can safely be disabled.
 
-Measured frequencies:
-clk0 12.5Mhz
-clk1 5.357Mhz
-clk2 0 Hz
+This patch solves this by introducing two new API calls:
 
-Reported frequencies:
-root@som3517-som200:~# head -n 15 /sys/kernel/debug/clk/clk_summary 
-   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
-----------------------------------------------------------------------------------------
- ref27                                    1            1    27000000          0 0  
-    xtal                                  0            0    27000000          0 0  
-       pllb                               0            0   599999994          0 0  
-          ms2                             0            0    12288000          0 0  
-             clk2                         0            0    12288000          0 0  
-          ms0                             0            0    12499999          0 0  
-             clk0                         0            0    12499999          0 0  
-       plla                               0            0   599999994          0 0  
-          ms1                             0            0     5357142          0 0  
-             clk1                         0            0     5357142          0 0  
- tclkin_ck                                0            0    12000000          0 0  
- virt_26000000_ck                         1            1    26000000          0 0  
-    sys_clkin_ck                         11           23    26000000          0 0 
+clk_prepare_enable_critical() will call clk_prepare_enable() on a clock
+and additionally set a 'critical' flag on the clock. This call is
+intended for clock providers which provide a critical clock.
 
-Device tree entry:
-        si5351: clock-generator {
-                #address-cells = <1>;
-                #size-cells = <0>;
-                #clock-cells = <1>;
-                compatible = "silabs,si5351a-msop";
-                reg = <0x60>;
-                status = "okay";
+clk_disable_unprepare_critical() is intended for consumers of a critical
+clock.  Consumers should first call clk_prepare_enable() on a clock to
+get their own prepare/enable reference and call
+clk_disable_unprepare_critical() afterwards.  This will clear the
+'critical' flag from the clock and decrease the prepare/enable counter.
+The ownership of the clock is now transferred to the consumer. Calling
+clk_disable_unprepare_critical() on a clock which doesn't have the
+'critical' flag set is just a no-op, so consumers can safely call this
+on their clocks.
 
-                /* connect xtal input to 27MHz reference */
-                clocks = <&ref27>;
-                clock-names = "xtal";
-
-                /* connect xtal input as source of pll0 and pll1 */
-                silabs,pll-source = <0 0>, <1 0>;
-
-                clkout0: clkout0 {
-                        reg = <0>;
-                        silabs,drive-strength = <8>;
-                        silabs,multisynth-source = <1>;
-                        silabs,clock-source = <0>;
-                        silabs,pll-master;
-                        clock-frequency = <18432000>;
-                 };
-
-                clkout1: clkout1 {
-                        reg = <1>;
-                        silabs,drive-strength = <8>;
-                        silabs,multisynth-source = <0>;
-                        silabs,clock-source = <0>;
-                        silabs,pll-master;
-                        clock-frequency = <8000000>;
-                };
-
-                clkout2: clkout2 {
-                        reg = <2>;
-                        silabs,drive-strength = <8>;
-                        silabs,multisynth-source = <1>;
-                        silabs,clock-source = <0>;
-                        clock-frequency = <12288000>;
-                };
-        };
-
-Lastly if #define DEBUG is added the behavior is different.
-
-Debugging output:
-[    2.970753] si5351 0-0060: si5351_clkout_round_rate - clk0: rdiv = 1, parent_rate = 18432000, rate = 18432000
-[    2.981207] si5351 0-0060: si5351_msynth_round_rate - ms0: a = 48, b = 0, c = 1, divby4 = 0, parent_rate = 884736000, rate = 18432000
-[    2.993777] si5351 0-0060: si5351_pll_round_rate - pllb: a = 32, b = 96, c = 125, parent_rate = 27000000, rate = 884736000
-[    3.005362] si5351 0-0060: si5351_msynth_recalc_rate - ms0: p1 = 5632, p2 = 0, p3 = 1, m = 6144, parent_rate = 884736000, rate = 18432000
-[    3.026281] si5351 0-0060: si5351_pll_set_rate - pllb: p1 = 3682, p2 = 38, p3 = 125, parent_rate = 27000000, rate = 884736000
-[    3.038151] si5351 0-0060: si5351_pll_recalc_rate - pllb: p1 = 3682, p2 = 38, p3 = 125, parent_rate = 27000000, rate = 884736000
-[    3.053933] si5351 0-0060: si5351_msynth_set_rate - ms2: p1 = 0, p2 = 0, p3 = 0, divby4 = 1, parent_rate = 884736000, rate = 884736000
-[    3.068067] si5351 0-0060: si5351_msynth_set_rate - ms0: p1 = 5632, p2 = 0, p3 = 1, divby4 = 0, parent_rate = 884736000, rate = 18432000
-[    3.080913] si5351 0-0060: si5351_msynth_recalc_rate - ms0: p1 = 5632, p2 = 0, p3 = 1, m = 6144, parent_rate = 884736000, rate = 18432000
-[    3.093843] si5351 0-0060: si5351_clkout_set_rate - clk0: rdiv = 1, parent_rate = 18432000, rate = 18432000
-[    3.104184] si5351 0-0060: si5351_clkout_round_rate - clk1: rdiv = 1, parent_rate = 8000000, rate = 8000000
-[    3.114408] si5351 0-0060: si5351_msynth_round_rate - ms1: a = 112, b = 0, c = 1, divby4 = 0, parent_rate = 896000000, rate = 8000000
-[    3.126973] si5351 0-0060: si5351_pll_round_rate - plla: a = 33, b = 37037, c = 200000, parent_rate = 27000000, rate = 895999995
-[    3.139085] si5351 0-0060: si5351_msynth_recalc_rate - ms1: p1 = 13824, p2 = 0, p3 = 1, m = 14336, parent_rate = 895999995, rate = 7999999
-[    3.155510] si5351 0-0060: si5351_pll_set_rate - plla: p1 = 3735, p2 = 140736, p3 = 200000, parent_rate = 27000000, rate = 895999995
-[    3.167993] si5351 0-0060: si5351_pll_recalc_rate - plla: p1 = 3735, p2 = 140736, p3 = 200000, parent_rate = 27000000, rate = 895999995
-[    3.182186] si5351 0-0060: si5351_msynth_set_rate - ms1: p1 = 13824, p2 = 0, p3 = 1, divby4 = 0, parent_rate = 895999995, rate = 8000000
-[    3.195028] si5351 0-0060: si5351_msynth_recalc_rate - ms1: p1 = 13824, p2 = 0, p3 = 1, m = 14336, parent_rate = 895999995, rate = 7999999
-[    3.208046] si5351 0-0060: si5351_clkout_set_rate - clk1: rdiv = 1, parent_rate = 7999999, rate = 8000000
-[    3.218150] si5351 0-0060: si5351_clkout_round_rate - clk2: rdiv = 1, parent_rate = 12288000, rate = 12288000
-[    3.228544] si5351 0-0060: si5351_msynth_round_rate - ms2: a = 72, b = 0, c = 1, divby4 = 0, parent_rate = 884736000, rate = 12288000
-[    3.242565] si5351 0-0060: si5351_msynth_set_rate - ms2: p1 = 8704, p2 = 0, p3 = 1, divby4 = 0, parent_rate = 884736000, rate = 12288000
-[    3.255416] si5351 0-0060: si5351_msynth_recalc_rate - ms2: p1 = 8704, p2 = 0, p3 = 1, m = 9216, parent_rate = 884736000, rate = 12288000
-[    3.268345] si5351 0-0060: si5351_clkout_set_rate - clk2: rdiv = 1, parent_rate = 12288000, rate = 12288000
+To make this more versatile a clk flag could be introduced which could
+be set during registration so that clk providers would not have to make
+this API call on each critical clock. I haven't implemented this yet
+because it turned out not to be trivial. clk_prepare_enable can only
+be called when the clock is not orphaned which may not be the case
+during registration time. I can implement this if this way of handling
+critical clocks is considered suitable for mainline.
 
 
-Measured frequencies:
-clk0 18.432Mhz
-clk1 8Mhz
-clk2 0Hz
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+ drivers/clk/clk.c            | 46 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |  2 ++
+ include/linux/clk.h          | 10 ++++++++++
+ 3 files changed, 58 insertions(+)
 
-Reported frequencies:
-root@som3517-som200:~# head -n 15 /sys/kernel/debug/clk/clk_summary
-   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
-----------------------------------------------------------------------------------------
- ref27                                    1            1    27000000          0 0  
-    xtal                                  0            0    27000000          0 0  
-       pllb                               0            0   884736000          0 0  
-          ms2                             0            0    12288000          0 0  
-             clk2                         0            0    12288000          0 0  
-          ms0                             0            0    18432000          0 0  
-             clk0                         0            0    18432000          0 0  
-       plla                               0            0   895999995          0 0  
-          ms1                             0            0     7999999          0 0  
-             clk1                         0            0     7999999          0 0  
- tclkin_ck                                0            0    12000000          0 0  
- virt_26000000_ck                         1            1    26000000          0 0  
-    sys_clkin_ck                         11           23    26000000          0 0
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 459ce9d..d57d4fd 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -64,6 +64,7 @@ struct clk_core {
+ 	unsigned long		flags;
+ 	unsigned int		enable_count;
+ 	unsigned int		prepare_count;
++	bool			enable_critical;
+ 	unsigned long		accuracy;
+ 	int			phase;
+ 	struct hlist_head	children;
+@@ -940,7 +941,13 @@ void clk_unprepare(struct clk *clk)
+ 		return;
+ 
+ 	clk_prepare_lock();
++
++	if (clk->core->enable_critical)
++		goto out;
++
+ 	clk_core_unprepare(clk->core);
++
++out:
+ 	clk_prepare_unlock();
+ }
+ EXPORT_SYMBOL_GPL(clk_unprepare);
+@@ -995,7 +1002,9 @@ int clk_prepare(struct clk *clk)
+ 		return 0;
+ 
+ 	clk_prepare_lock();
++
+ 	ret = clk_core_prepare(clk->core);
++
+ 	clk_prepare_unlock();
+ 
+ 	return ret;
+@@ -2250,6 +2259,43 @@ bool clk_is_match(const struct clk *p, const struct clk *q)
+ }
+ EXPORT_SYMBOL_GPL(clk_is_match);
+ 
++int clk_prepare_enable_critical(struct clk *clk)
++{
++	if (!clk)
++		return 0;
++
++	clk_prepare_lock();
++	if (clk->core->enable_critical) {
++		clk_prepare_unlock();
++		return -EBUSY;
++	}
++
++	clk->core->enable_critical = true;
++
++	clk_prepare_unlock();
++
++	return clk_prepare_enable(clk);
++
++}
++
++void clk_disable_unprepare_critical(struct clk *clk)
++{
++	if (!clk)
++		return;
++
++	clk_prepare_lock();
++	if (!clk->core->enable_critical) {
++		clk_prepare_unlock();
++		return;
++	}
++
++	clk->core->enable_critical = false;
++
++	clk_prepare_unlock();
++
++	clk_disable_unprepare(clk);
++}
++
+ /**
+  * __clk_init - initialize the data structures in a struct clk
+  * @dev:	device initializing this clk, placeholder for now
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index df69531..8727c12 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -694,5 +694,7 @@ struct dentry *clk_debugfs_add_file(struct clk_hw *hw, char *name, umode_t mode,
+ 				void *data, const struct file_operations *fops);
+ #endif
+ 
++int clk_prepare_enable_critical(struct clk *clk);
++
+ #endif /* CONFIG_COMMON_CLK */
+ #endif /* CLK_PROVIDER_H */
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 68c16a6..b259e36 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -138,6 +138,16 @@ int clk_get_phase(struct clk *clk);
+  */
+ bool clk_is_match(const struct clk *p, const struct clk *q);
+ 
++/**
++ * clk_disable_unprepare_critical - remove critical flag from clock
++ * @clk: clock source
++ *
++ * This removes the critical flag from a clock and disables it. The
++ * consumer should have enabled the clock by itself now if it wants
++ * to keep the clock enabled.
++ */
++void clk_disable_unprepare_critical(struct clk *clk);
++
+ #else
+ 
+ static inline long clk_get_accuracy(struct clk *clk)
+-- 
+2.1.4
 
-It should be noted that if I program the device's register map in the
-bootloader the device keeps the correct frequency outputs.
-
-So the patch series appears to fix the registration issue but there is still
-more work to be done.
-
-Still not sure how to explain the difference when DEBUG is defined.
-I will dig into the datasheet and see what I can find.
-
-> Sebastian
-> 
-> Sebastian Hesselbarth (4):
->   clk: si5351: Mention clock-names in the binding documentation
->   ARM: dove: Add clock-names to CuBox Si5351 clk generator
->   clk: si5351: Do not pass struct clk in platform_data
->   clk: si5351: Reset PLL after rate change
-> 
->  .../devicetree/bindings/clock/silabs,si5351.txt    |  4 +-
->  arch/arm/boot/dts/dove-cubox.dts                   |  1 +
->  drivers/clk/clk-si5351.c                           | 87 +++++++++++++++++-----
->  include/linux/platform_data/si5351.h               |  4 -
->  4 files changed, 73 insertions(+), 23 deletions(-)
-> 
-> ---
-> Cc: Mike Turquette <mturquette@linaro.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Jean-Francois Moine <moinejf@free.fr>
-> Cc: Michael Welling <mwelling@ieee.org>
-> Cc: Russell King <rmk+linux@arm.linux.org.uk>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Gregory Clement <gregory.clement@free-electrons.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> -- 
-> 2.1.0
-> 
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
