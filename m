@@ -1,66 +1,184 @@
-Return-Path: <Aisheng.Dong@freescale.com>
-Date: Wed, 22 Apr 2015 14:12:43 +0800
-From: Dong Aisheng <b29396@freescale.com>
-To: Dong Aisheng <aisheng.dong@freescale.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<sboyd@codeaurora.org>, <mturquette@linaro.org>, <shawn.guo@linaro.org>,
-	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
-	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
-Subject: Re: [PATCH RFC v1 0/5] clk: support clocks which requires parent
- clock on during operation
-Message-ID: <20150422061240.GA25437@shlinux1.ap.freescale.net>
-References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
+Return-Path: <rklein@nvidia.com>
+Message-ID: <55424ACA.9010406@nvidia.com>
+Date: Thu, 30 Apr 2015 11:31:22 -0400
+From: Rhyland Klein <rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
-Return-Path: b29396@freescale.com
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>, Stephen Warren
+	<swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Bill Huang <bilhuang@nvidia.com>
+Subject: Re: [PATCH v2 16/19] clk: tegra: pll: Add Set_default logic
+References: <1430328109-537-1-git-send-email-rklein@nvidia.com> <1430328109-537-17-git-send-email-rklein@nvidia.com> <20150430101225.GU3097@tbergstrom-lnx.Nvidia.com>
+In-Reply-To: <20150430101225.GU3097@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 15, 2015 at 10:26:34PM +0800, Dong Aisheng wrote:
-> This patch series adds support in clock framework for clocks which operations
-> requires its parent clock is on.
+On 4/30/2015 6:12 AM, Peter De Schrijver wrote:
+> On Wed, Apr 29, 2015 at 01:21:46PM -0400, Rhyland Klein wrote:
+>> From: Bill Huang <bilhuang@nvidia.com>
+>>
+>> Add logic which (if specified for a pll) can verify that a PLL is set
+>> to the proper default value and if not can set it. This can be
+>> specified per PLL as each will have different default values.
+>>
 > 
-> Such clock type is initially met on Freescale i.MX7D platform that all clocks
-> operations, including enable/disable, rate change and re-parent, requires its
-> parent clock on. No sure if any other SoC has the similar clock type.
-> 
-> Current clock core can not support such type of clock well.
-> 
-> This patch introduce a new flag CLK_SET_PARENT_ON to handle this special case
-> in clock core that enable its parent clock firstly for each operation and disable
-> it later after operation complete.
-> 
-> The most special case is for set_parent() operation which requires both parent,
-> old one and new one, to be enabled at the same time during the operation.
-> 
-> Patch 1~3 are minor cleanup & fixes.
-> Patch 4 add CLK_SET_PARENT_ON flags in clock core to support such type clocks
-> Patch 5 show the need of introducing clk_core_enable_lock and
-> 	clk_core_disable_lock to easily use and reduce duplicated code.
-> 	It can be merged into patch 4 if required.
-> 
-> The patch series is based on for-next branch of Michael's git:
-> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-> 
-> Dong Aisheng (5):
->   clk: change clk_core name of __clk_set_parent_after
->   clk: add missing lock when call clk_core_enable in clk_set_parent
->   clk: remove unneeded __clk_enable and __clk_disable
->   clk: core: add CLK_SET_PARENT_ON flags to support clocks require
->     parent on
->   clk: introduce clk_core_enable_lock and clk_core_disable_lock
->     functions
-> 
+> Why can't we just set the default values at init time?
 
-Gentle Ping.
+Sorry, I did some investigation into this and wrote up a nice response
+... and forgot to hit send ...
 
-Regards
-Dong Aisheng
+The reason this can't be run only once at init time is the following. In
+reality, we want to have the defined default values written as early as
+possible. Idealy, the bootloader could write these, so the kernel need
+only check, see they are right, and not touch them. However, since we
+can't rely on the bootloader to do so, the kernel needs the support to
+be able to write these default values. At init time, some pll's will be
+enabled (from bootloader) and because they are enabled (and the rest of
+the clk framework isn't done being setup yet) we can't disable them to
+write the full register values. Therefore, the set_defaults logic uses a
+2-pass system.
 
->  drivers/clk/clk.c            | 112 ++++++++++++++++++++++++++++++++++---------
->  include/linux/clk-provider.h |   5 ++
->  2 files changed, 94 insertions(+), 23 deletions(-)
+first pass: Try to set defaults at init/registration time. If pll is
+disabled, this works fine. If it is enabled, then we update a subset of
+the register as a "best effort" setting of the defaults.
+
+second pass: Should only run the first time we go through set_rate for a
+pll. If the first pass already wrote default value, then it skips this
+step. Otherwise it will go in, once the pll is disabled in the set_rate
+path, and write the full register default.
+
+This is required because some registers need to be reset to the default
+values we have to ensure locking works correctly. Does that make sense?
+
+-rhyland
+
 > 
-> -- 
-> 1.9.1
-> 
+>> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+>> ---
+>> v2:
+>>   - Remove MACRO for PLL_MISC_CHECK_DEFAULT as suggested, and instead
+>>     the tegra210 driver will include an inline version of this function.
+>>
+>>  drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
+>>  drivers/clk/tegra/clk.h     |    2 ++
+>>  2 files changed, 37 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+>> index 00f0e621533a..28a2376cd8a7 100644
+>> --- a/drivers/clk/tegra/clk-pll.c
+>> +++ b/drivers/clk/tegra/clk-pll.c
+>> @@ -658,15 +658,28 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+>>  			unsigned long rate)
+>>  {
+>>  	struct tegra_clk_pll *pll = to_clk_pll(hw);
+>> +	struct tegra_clk_pll_freq_table old_cfg;
+>>  	int state, ret = 0;
+>>  
+>>  	state = clk_pll_is_enabled(hw);
+>>  
+>> +	_get_pll_mnp(pll, &old_cfg);
+>> +
+>> +	if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
+>> +			(cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
+>> +		ret = pll->params->dyn_ramp(pll, cfg);
+>> +		if (!ret)
+>> +			return 0;
+>> +	}
+>> +
+>>  	if (state) {
+>>  		pll_clk_stop_ss(pll);
+>>  		_clk_pll_disable(hw);
+>>  	}
+>>  
+>> +	if (!pll->params->defaults_set && pll->params->set_defaults)
+>> +		pll->params->set_defaults(pll);
+>> +
+>>  	_update_pll_mnp(pll, cfg);
+>>  
+>>  	if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
+>> @@ -1526,6 +1539,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
+>>  	if (!pll->params->calc_rate)
+>>  		pll->params->calc_rate = _calc_rate;
+>>  
+>> +	if (pll->params->set_defaults)
+>> +		pll->params->set_defaults(pll);
+>> +
+>>  	/* Data in .init is copied by clk_register(), so stack variable OK */
+>>  	pll->hw.init = &init;
+>>  
+>> @@ -1644,7 +1660,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+>>  	struct tegra_clk_pll *pll;
+>>  	struct clk *clk, *parent;
+>>  	unsigned long parent_rate;
+>> -	int err;
+>>  	u32 val, val_iddq;
+>>  
+>>  	parent = __clk_lookup(parent_name);
+>> @@ -1665,18 +1680,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+>>  		pll_params->vco_min = pll_params->adjust_vco(pll_params,
+>>  							     parent_rate);
+>>  
+>> -	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+>> -	if (err)
+>> -		return ERR_PTR(err);
+>> +	/*
+>> +	 * If the pll has a set_defaults callback, it will take care of
+>> +	 * configuring dynamic ramping and setting IDDQ in that path.
+>> +	 */
+>> +	if (!pll_params->set_defaults) {
+>> +		int err;
+>>  
+>> -	val = readl_relaxed(clk_base + pll_params->base_reg);
+>> -	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+>> +		err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+>> +		if (err)
+>> +			return ERR_PTR(err);
+>>  
+>> -	if (val & PLL_BASE_ENABLE)
+>> -		WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
+>> -	else {
+>> -		val_iddq |= BIT(pll_params->iddq_bit_idx);
+>> -		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
+>> +		val = readl_relaxed(clk_base + pll_params->base_reg);
+>> +		val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+>> +
+>> +		if (val & PLL_BASE_ENABLE)
+>> +			WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
+>> +		else {
+>> +			val_iddq |= BIT(pll_params->iddq_bit_idx);
+>> +			writel_relaxed(val_iddq,
+>> +				       clk_base + pll_params->iddq_reg);
+>> +		}
+>>  	}
+>>  
+>>  	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+>> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+>> index 850521d42be6..84c417576c18 100644
+>> --- a/drivers/clk/tegra/clk.h
+>> +++ b/drivers/clk/tegra/clk.h
+>> @@ -239,6 +239,7 @@ struct tegra_clk_pll_params {
+>>  	int		stepb_shift;
+>>  	int		lock_delay;
+>>  	int		max_p;
+>> +	bool		defaults_set;
+>>  	struct pdiv_map *pdiv_tohw;
+>>  	struct div_nmp	*div_nmp;
+>>  	struct tegra_clk_pll_freq_table	*freq_table;
+>> @@ -254,6 +255,7 @@ struct tegra_clk_pll_params {
+>>  				unsigned long parent_rate);
+>>  	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
+>>  			struct tegra_clk_pll_freq_table *cfg);
+>> +	void	(*set_defaults)(struct tegra_clk_pll *pll);
+>>  };
+>>  
+>>  #define TEGRA_PLL_USE_LOCK BIT(0)
+>> -- 
+>> 1.7.9.5
+>>
+
+
+-- 
+nvpublic
