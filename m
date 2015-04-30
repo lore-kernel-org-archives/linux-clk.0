@@ -1,146 +1,120 @@
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Message-ID: <552523BC.7010500@gmail.com>
-Date: Wed, 08 Apr 2015 14:49:00 +0200
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-To: Sergej Sawazki <ce3a@gmx.de>, mturquette@linaro.org,
- sboyd@codeaurora.org
-CC: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: si5351: fix .round_rate for multisynth 6-7
-References: <1428433918-6339-1-git-send-email-ce3a@gmx.de>
-In-Reply-To: <1428433918-6339-1-git-send-email-ce3a@gmx.de>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/5] ARM: dts: sun9i: Add A80 PRCM clocks and reset control nodes
+Date: Fri,  1 May 2015 00:10:05 +0800
+Message-Id: <1430410206-4410-5-git-send-email-wens@csie.org>
+In-Reply-To: <1430410206-4410-1-git-send-email-wens@csie.org>
+References: <1430410206-4410-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07.04.2015 21:11, Sergej Sawazki wrote:
-> The divider calculation for multisynth 6 and 7 differs from the
-> calculation for multisynth 0-5.
->
-> For MS6 and MS7, set MSx_P1 directly, MSx_P1=divide value
-> [AN619, p. 6].
->
-> Referenced document:
-> [AN619] Manually Generating an Si5351 Register Map, Rev. 0.4
->
-> Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
-> ---
->   drivers/clk/clk-si5351.c | 37 ++++++++++++++++++++-----------------
->   1 file changed, 20 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-> index 44ea107..1029bf7 100644
-> --- a/drivers/clk/clk-si5351.c
-> +++ b/drivers/clk/clk-si5351.c
-> @@ -552,7 +552,8 @@ static const struct clk_ops si5351_pll_ops = {
->    * MSx_P2[19:0] = 128 * b - c * floor(128 * b/c) = (128*b) mod c
->    * MSx_P3[19:0] = c
->    *
-> - * MS[6,7] are integer (P1) divide only, P2 = 0, P3 = 0
-> + * MS[6,7] are integer (P1) divide only, P1 = divide value,
-> + * P2 and P3 are not applicable
->    *
->    * for 150MHz < fOUT <= 160MHz:
->    *
-> @@ -645,7 +646,7 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
->   	struct si5351_hw_data *hwdata =
->   		container_of(hw, struct si5351_hw_data, hw);
->   	unsigned long long lltmp;
-> -	unsigned long a, b, c;
-> +	unsigned long a, b = 0, c = 1;
+This adds the PRCM clocks and reset controls to the A80 dtsi.
 
-Actually, moving b,c initialization up here is neither related
-to the patch itself nor is it mentioned in the commit log.
+The list of apbs clock gates is incomplete. Tests show that bits 0~20
+are mutable. We will need documents from Allwinner to complete the
+support.
 
-Please do not mix different patches.
+Also update clock and reset phandles for r_uart.
 
->   	int divby4;
->
->   	/* multisync6-7 can only handle freqencies < 150MHz */
-> @@ -675,9 +676,6 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
->   		} else
->   			a = 4;
->
-> -		b = 0;
-> -		c = 1;
-> -
->   		*parent_rate = a * rate;
->   	} else {
->   		unsigned long rfrac, denom;
-> @@ -698,18 +696,19 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
->   			a = SI5351_MULTISYNTH_A_MAX;
->
->   		/* find best approximation for b/c = fVCO mod fOUT */
-> -		denom = 1000 * 1000;
-> -		lltmp = (*parent_rate) % rate;
-> -		lltmp *= denom;
-> -		do_div(lltmp, rate);
-> -		rfrac = (unsigned long)lltmp;
-> -
-> -		b = 0;
-> -		c = 1;
-> -		if (rfrac)
-> -			rational_best_approximation(rfrac, denom,
-> -			    SI5351_MULTISYNTH_B_MAX, SI5351_MULTISYNTH_C_MAX,
-> -			    &b, &c);
-> +		if (hwdata->num <= 5) {
-> +			denom = 1000 * 1000;
-> +			lltmp = (*parent_rate) % rate;
-> +			lltmp *= denom;
-> +			do_div(lltmp, rate);
-> +			rfrac = (unsigned long)lltmp;
-> +
-> +			if (rfrac)
-> +				rational_best_approximation(rfrac, denom,
-> +					SI5351_MULTISYNTH_B_MAX,
-> +					SI5351_MULTISYNTH_C_MAX,
-> +					&b, &c);
-> +		}
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun9i-a80.dtsi | 64 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 63 insertions(+), 1 deletion(-)
 
-I am still not convinced that this is the right way to calculate the
-_best_ integer divider for ms6,7.
-
-The code above is written to (a) find the _largest_ integer "a" that
-will match
-
-a * rate <= parent_rate
-
-and then (b) determines the fractional part of the divider.
-
-As you correctly stated, ms6,7 do not support (b) but if we use (a) for
-those msynths, we will determine an "a" so that "a * rate" is always
-smaller than parent_rate.
-
-What we actually want is the smallest error between generated and
-requested rate, so we have to find the closest integer with
-
-a = DIV_ROUND_CLOSEST(parent_rate, rate)
-
-IMHO, the special divider calculation for ms6,7 is best dealt with
-in an extra else-if branch after the check for CLK_SET_RATE_PARENT
-flag.
-
->   	}
->
->   	/* recalculate rate by fOUT = fIN / (a + b/c) */
-> @@ -723,6 +722,10 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
->   		hwdata->params.p3 = 1;
->   		hwdata->params.p2 = 0;
->   		hwdata->params.p1 = 0;
-> +	} else if (hwdata->num >= 6) {
-> +		hwdata->params.p3 = c;
-> +		hwdata->params.p2 = b;
-
-hwdata->params.p3 = 0;
-hwdata->params.p2 = 0;
-
-> +		hwdata->params.p1 = a;
->   	} else {
->   		hwdata->params.p3  = c;
->   		hwdata->params.p2  = (128 * b) % c;
->
-
-Out of curiosity, do you actually have a device that uses ms6,7 and can
-you measure the generated frequency - or did you just read the code as
-a bedtime story? ;)
-
-Sebastian
+diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
+index d3dece2eea72..f0869ff8006f 100644
+--- a/arch/arm/boot/dts/sun9i-a80.dtsi
++++ b/arch/arm/boot/dts/sun9i-a80.dtsi
+@@ -169,6 +169,14 @@
+ 					     "usb_phy2", "usb_hsic_12M";
+ 		};
+ 
++		pll3: clk@06000008 {
++			/* placeholder until implemented */
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-rate = <0>;
++			clock-output-names = "pll3";
++		};
++
+ 		pll4: clk@0600000c {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun9i-a80-pll4-clk";
+@@ -751,13 +759,67 @@
+ 			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		prcm@08001400 {
++			compatible = "allwinner,sun9i-a80-prcm";
++			reg = <0x08001400 0x200>;
++
++			cpus_clk: cpus_clk {
++				compatible = "allwinner,sun9i-a80-cpus-clk";
++				#clock-cells = <0>;
++				clocks = <&osc32k>, <&osc24M>, <&pll4>, <&pll3>;
++				clock-output-names = "cpus";
++			};
++
++			ahbs: ahbs_clk {
++				compatible = "fixed-factor-clock";
++				#clock-cells = <0>;
++				clock-div = <1>;
++				clock-mult = <1>;
++				clocks = <&cpus_clk>;
++				clock-output-names = "ahbs";
++			};
++
++			apbs: apbs_clk {
++				compatible = "allwinner,sun8i-a23-apb0-clk";
++				#clock-cells = <0>;
++				clocks = <&ahbs>;
++				clock-output-names = "apbs";
++			};
++
++			apbs_gates: apbs_gates_clk {
++				compatible = "allwinner,sun9i-a80-apbs-gates-clk";
++				#clock-cells = <1>;
++				clocks = <&apbs>;
++				clock-output-names = "apbs_pio", "apbs_ir",
++						"apbs_timer", "apbs_rsb",
++						"apbs_uart", "apbs_1wire",
++						"apbs_i2c0", "apbs_i2c1",
++						"apbs_ps2_0", "apbs_ps2_1",
++						"apbs_dma", "apbs_i2s0",
++						"apbs_i2s1", "apbs_twd";
++			};
++
++			r_ir_clk: r_ir_clk {
++				#clock-cells = <0>;
++				compatible = "allwinner,sun4i-a10-mod0-clk";
++				clocks = <&osc32k>, <&osc24M>;
++				clock-output-names = "r_ir";
++			};
++
++			apbs_rst: apbs_rst {
++				compatible = "allwinner,sun6i-a31-clock-reset";
++				#reset-cells = <1>;
++			};
++		};
++
+ 		r_uart: serial@08002800 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x08002800 0x400>;
+ 			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&osc24M>;
++			clocks = <&apbs_gates 4>;
++			resets = <&apbs_rst 4>;
+ 			status = "disabled";
+ 		};
+ 	};
+-- 
+2.1.4
