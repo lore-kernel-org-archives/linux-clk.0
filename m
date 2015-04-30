@@ -1,34 +1,34 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH 1/2] clk: qcom: Fix MSM8916 venus divider value
-Date: Wed, 29 Apr 2015 14:52:46 +0300
-Message-Id: <1430308367-19567-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <55427DDE.4090907@codeaurora.org>
+Date: Thu, 30 Apr 2015 12:09:18 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+MIME-Version: 1.0
+To: Dong Aisheng <aisheng.dong@freescale.com>, linux-clk@vger.kernel.org
+CC: linux-kernel@vger.kernel.org, mturquette@linaro.org,
+ shawn.guo@linaro.org, b29396@freescale.com,
+ linux-arm-kernel@lists.infradead.org,
+ Ranjani.Vaidyanathan@freescale.com, b20596@freescale.com,
+ r64343@freescale.com, b20788@freescale.com
+Subject: Re: [PATCH RFC v1 3/5] clk: remove unneeded __clk_enable and __clk_disable
+References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com> <1429107999-24413-4-git-send-email-aisheng.dong@freescale.com>
+In-Reply-To: <1429107999-24413-4-git-send-email-aisheng.dong@freescale.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-One of the video codec clock frequencies has incorrect divider value. Fix it.
+On 04/15/15 07:26, Dong Aisheng wrote:
+> The only thing __clk_enable/__clk_disable does is NULL pointer checking
+> of clk except calling clk_core_{enable|disable} which is already handled
+> by clk_core_{enable|disable}.
+> So remove this unneeded function.
+>
+> Cc: Mike Turquette <mturquette@linaro.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
+> ---
 
-Fixes: 3966fab8b6ab "clk: qcom: Add MSM8916 Global Clock Controller support"
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/gcc-msm8916.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+No. You can call clk_enable() and clk_disable() with NULL and it should
+be a no-op. With this change it would cause a NULL pointer exception.
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index d3458474eb3a..b15d52b56c6a 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -1115,7 +1115,7 @@ static struct clk_rcg2 usb_hs_system_clk_src = {
- static const struct freq_tbl ftbl_gcc_venus0_vcodec0_clk[] = {
- 	F(100000000, P_GPLL0, 8, 0, 0),
- 	F(160000000, P_GPLL0, 5, 0, 0),
--	F(228570000, P_GPLL0, 5, 0, 0),
-+	F(228570000, P_GPLL0, 3.5, 0, 0),
- 	{ }
- };
- 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
