@@ -1,83 +1,52 @@
-Return-Path: <Aisheng.Dong@freescale.com>
-From: Dong Aisheng <aisheng.dong@freescale.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@linaro.org>, <shawn.guo@linaro.org>, <b29396@freescale.com>,
-	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
-	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
-Subject: [PATCH RFC v1 3/5] clk: remove unneeded __clk_enable and __clk_disable
-Date: Wed, 15 Apr 2015 22:26:37 +0800
-Message-ID: <1429107999-24413-4-git-send-email-aisheng.dong@freescale.com>
-In-Reply-To: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
-References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
-Return-Path: aisheng.dong@freescale.com
+Return-Path: <mwelling79@gmail.com>
+Return-Path: <mwelling79@gmail.com>
+Sender: Michael Welling <mwelling79@gmail.com>
+Date: Thu, 30 Apr 2015 13:30:43 -0500
+From: Michael Welling <mwelling@ieee.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Russell King <rmk+linux@arm.linux.org.uk>,
+	linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 3/4] clk: si5351: Do not pass struct clk in platform_data
+Message-ID: <20150430183043.GA21890@deathray>
+References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
+ <1430415954-29517-4-git-send-email-sebastian.hesselbarth@gmail.com>
+ <CAOMZO5BYnE2epGrWbnNnaqEt1r6+xoPYWKtjc8w-Ze22aitgXA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAOMZO5BYnE2epGrWbnNnaqEt1r6+xoPYWKtjc8w-Ze22aitgXA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The only thing __clk_enable/__clk_disable does is NULL pointer checking
-of clk except calling clk_core_{enable|disable} which is already handled
-by clk_core_{enable|disable}.
-So remove this unneeded function.
+On Thu, Apr 30, 2015 at 03:20:38PM -0300, Fabio Estevam wrote:
+> On Thu, Apr 30, 2015 at 2:45 PM, Sebastian Hesselbarth
+> <sebastian.hesselbarth@gmail.com> wrote:
+> 
+> >          * property silabs,pll-source : <num src>, [<..>]
+> >          * allow to selectively set pll source
+> > @@ -1328,8 +1321,17 @@ static int si5351_i2c_probe(struct i2c_client *client,
+> >         i2c_set_clientdata(client, drvdata);
+> >         drvdata->client = client;
+> >         drvdata->variant = variant;
+> > -       drvdata->pxtal = pdata->clk_xtal;
+> > -       drvdata->pclkin = pdata->clk_clkin;
+> > +       drvdata->pxtal = devm_clk_get(&client->dev, "xtal");
+> > +       drvdata->pclkin = devm_clk_get(&client->dev, "clkin");
+> > +
+> > +       if (PTR_ERR(drvdata->pxtal) == -EPROBE_DEFER ||
+> > +           PTR_ERR(drvdata->pclkin) == -EPROBE_DEFER)
+> > +               return -EPROBE_DEFER;
+> > +
+> > +       if (IS_ERR(drvdata->pxtal) && IS_ERR(drvdata->pclkin)) {
+> 
+> Don't you want || instead?
 
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
----
- drivers/clk/clk.c | 20 ++------------------
- 1 file changed, 2 insertions(+), 18 deletions(-)
+I doubt it. He is checking if both are not available.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 492644f..7af553d 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1023,14 +1023,6 @@ static void clk_core_disable(struct clk_core *clk)
- 	clk_core_disable(clk->parent);
- }
- 
--static void __clk_disable(struct clk *clk)
--{
--	if (!clk)
--		return;
--
--	clk_core_disable(clk->core);
--}
--
- /**
-  * clk_disable - gate a clock
-  * @clk: the clk being gated
-@@ -1051,7 +1043,7 @@ void clk_disable(struct clk *clk)
- 		return;
- 
- 	flags = clk_enable_lock();
--	__clk_disable(clk);
-+	clk_core_disable(clk->core);
- 	clk_enable_unlock(flags);
- }
- EXPORT_SYMBOL_GPL(clk_disable);
-@@ -1089,14 +1081,6 @@ static int clk_core_enable(struct clk_core *clk)
- 	return 0;
- }
- 
--static int __clk_enable(struct clk *clk)
--{
--	if (!clk)
--		return 0;
--
--	return clk_core_enable(clk->core);
--}
--
- /**
-  * clk_enable - ungate a clock
-  * @clk: the clk being ungated
-@@ -1116,7 +1100,7 @@ int clk_enable(struct clk *clk)
- 	int ret;
- 
- 	flags = clk_enable_lock();
--	ret = __clk_enable(clk);
-+	ret = clk_core_enable(clk->core);
- 	clk_enable_unlock(flags);
- 
- 	return ret;
--- 
-1.9.1
+The driver could work with only one of them.
+
+If you use || then you assume to need both.
