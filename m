@@ -1,87 +1,40 @@
 Return-Path: <sebastian.hesselbarth@gmail.com>
 Return-Path: <sebastian.hesselbarth@gmail.com>
+Message-ID: <55427B42.9060902@gmail.com>
+Date: Thu, 30 Apr 2015 20:58:10 +0200
 From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Michael Welling <mwelling@ieee.org>,
-	Russell King <rmk+linux@arm.linux.org.uk>,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] clk: si5351: Reset PLL after rate change
-Date: Thu, 30 Apr 2015 19:45:54 +0200
-Message-Id: <1430415954-29517-5-git-send-email-sebastian.hesselbarth@gmail.com>
-In-Reply-To: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
-References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
+To: Michael Welling <mwelling@ieee.org>
+CC: Mike Turquette <mturquette@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Jean-Francois Moine <moinejf@free.fr>,
+ Russell King <rmk+linux@arm.linux.org.uk>,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] clk: si5351: Reset PLL after rate change
+References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com> <1430415954-29517-5-git-send-email-sebastian.hesselbarth@gmail.com> <20150430184932.GB22000@deathray>
+In-Reply-To: <20150430184932.GB22000@deathray>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-When changing PLL rate significantly, PLLs have to be reset. Add a function
-to perform and check for successful PLL reset.
+On 30.04.2015 20:49, Michael Welling wrote:
+> On Thu, Apr 30, 2015 at 07:45:54PM +0200, Sebastian Hesselbarth wrote:
+>> When changing PLL rate significantly, PLLs have to be reset. Add a function
+>> to perform and check for successful PLL reset.
+>>
+>> Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+>> ---
+[...]
+>> @@ -519,6 +545,9 @@ static int si5351_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>>   		SI5351_CLK_INTEGER_MODE,
+>>   		(hwdata->params.p2 == 0) ? SI5351_CLK_INTEGER_MODE : 0);
+>>
+>> +	/* reset pll after rate change */
+>> +	si5351_pll_reset(hwdata);
+>> +
+>
+> What is the point of having a return code if it is not being used?
 
-Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
----
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jean-Francois Moine <moinejf@free.fr>
-Cc: Michael Welling <mwelling@ieee.org>
-Cc: Russell King <rmk+linux@arm.linux.org.uk>
-Cc: devicetree@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/clk-si5351.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+Good point, I'll pass that on to the return value of .set_rate()
+callback for v2.
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index beeb57bbb04c..9b97c134e3c1 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -366,6 +366,32 @@ static const struct clk_ops si5351_vxco_ops = {
-  *         = (MSNx_P1*MSNx_P3 + MSNx_P2 + 512*MSNx_P3)/(128*MSNx_P3)
-  *
-  */
-+static int si5351_pll_reset(struct si5351_hw_data *hwdata)
-+{
-+	unsigned long timeout;
-+	u8 mask = (hwdata->num == 0) ?
-+		SI5351_STATUS_LOL_A : SI5351_STATUS_LOL_B;
-+
-+	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
-+			 (hwdata->num == 0) ? SI5351_PLL_RESET_A :
-+			 SI5351_PLL_RESET_B);
-+	timeout = jiffies + msecs_to_jiffies(100);
-+	do {
-+		if ((si5351_reg_read(hwdata->drvdata, SI5351_DEVICE_STATUS) &
-+		     mask) == 0)
-+			break;
-+		if (time_after(jiffies, timeout)) {
-+			dev_err(&hwdata->drvdata->client->dev,
-+				"timeout waiting for pll %d reset\n",
-+				hwdata->num);
-+			return -EBUSY;
-+		};
-+		udelay(250);
-+	} while (true);
-+
-+	return 0;
-+}
-+
- static int _si5351_pll_reparent(struct si5351_driver_data *drvdata,
- 				int num, enum si5351_pll_src parent)
- {
-@@ -519,6 +545,9 @@ static int si5351_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 		SI5351_CLK_INTEGER_MODE,
- 		(hwdata->params.p2 == 0) ? SI5351_CLK_INTEGER_MODE : 0);
- 
-+	/* reset pll after rate change */
-+	si5351_pll_reset(hwdata);
-+
- 	dev_dbg(&hwdata->drvdata->client->dev,
- 		"%s - %s: p1 = %lu, p2 = %lu, p3 = %lu, parent_rate = %lu, rate = %lu\n",
- 		__func__, __clk_get_name(hwdata->hw.clk),
--- 
-2.1.0
+Sebastian
