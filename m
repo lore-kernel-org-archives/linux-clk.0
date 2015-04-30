@@ -1,116 +1,93 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>,
- Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- Barry Song <baohua@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-tegra@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 3/8] clk: Constify pointers to parent names in init data
-Date: Wed, 08 Apr 2015 15:22:14 +0200
-Message-id: <1428499339-29569-4-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
-References: <1428499339-29569-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <mwelling79@gmail.com>
+Return-Path: <mwelling79@gmail.com>
+Sender: Michael Welling <mwelling79@gmail.com>
+Date: Thu, 30 Apr 2015 13:49:32 -0500
+From: Michael Welling <mwelling@ieee.org>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Russell King <rmk+linux@arm.linux.org.uk>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] clk: si5351: Reset PLL after rate change
+Message-ID: <20150430184932.GB22000@deathray>
+References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
+ <1430415954-29517-5-git-send-email-sebastian.hesselbarth@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1430415954-29517-5-git-send-email-sebastian.hesselbarth@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The 'parent_names' member of 'clk_init_data' is not modified so it can
-be made as an array of const pointers to constant strings.
+On Thu, Apr 30, 2015 at 07:45:54PM +0200, Sebastian Hesselbarth wrote:
+> When changing PLL rate significantly, PLLs have to be reset. Add a function
+> to perform and check for successful PLL reset.
+> 
+> Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> ---
+> Cc: Mike Turquette <mturquette@linaro.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Jean-Francois Moine <moinejf@free.fr>
+> Cc: Michael Welling <mwelling@ieee.org>
+> Cc: Russell King <rmk+linux@arm.linux.org.uk>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/clk/clk-si5351.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+> index beeb57bbb04c..9b97c134e3c1 100644
+> --- a/drivers/clk/clk-si5351.c
+> +++ b/drivers/clk/clk-si5351.c
+> @@ -366,6 +366,32 @@ static const struct clk_ops si5351_vxco_ops = {
+>   *         = (MSNx_P1*MSNx_P3 + MSNx_P2 + 512*MSNx_P3)/(128*MSNx_P3)
+>   *
+>   */
+> +static int si5351_pll_reset(struct si5351_hw_data *hwdata)
+> +{
+> +	unsigned long timeout;
+> +	u8 mask = (hwdata->num == 0) ?
+> +		SI5351_STATUS_LOL_A : SI5351_STATUS_LOL_B;
+> +
+> +	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
+> +			 (hwdata->num == 0) ? SI5351_PLL_RESET_A :
+> +			 SI5351_PLL_RESET_B);
+> +	timeout = jiffies + msecs_to_jiffies(100);
+> +	do {
+> +		if ((si5351_reg_read(hwdata->drvdata, SI5351_DEVICE_STATUS) &
+> +		     mask) == 0)
+> +			break;
+> +		if (time_after(jiffies, timeout)) {
+> +			dev_err(&hwdata->drvdata->client->dev,
+> +				"timeout waiting for pll %d reset\n",
+> +				hwdata->num);
+> +			return -EBUSY;
+> +		};
+> +		udelay(250);
+> +	} while (true);
+> +
+> +	return 0;
+> +}
+> +
+>  static int _si5351_pll_reparent(struct si5351_driver_data *drvdata,
+>  				int num, enum si5351_pll_src parent)
+>  {
+> @@ -519,6 +545,9 @@ static int si5351_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  		SI5351_CLK_INTEGER_MODE,
+>  		(hwdata->params.p2 == 0) ? SI5351_CLK_INTEGER_MODE : 0);
+>  
+> +	/* reset pll after rate change */
+> +	si5351_pll_reset(hwdata);
+> +
 
-Some drivers (e.g. arch/mips/alchemy/common/clock.c) already pass such
-data.
+What is the point of having a return code if it is not being used?
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/clk-composite.c  |  2 +-
- drivers/clk/clk-mux.c        |  8 ++++----
- include/linux/clk-provider.h | 12 ++++++------
- 3 files changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-index 956b7e54fa1c..077f4c7148f1 100644
---- a/drivers/clk/clk-composite.c
-+++ b/drivers/clk/clk-composite.c
-@@ -188,7 +188,7 @@ static void clk_composite_disable(struct clk_hw *hw)
- }
- 
- struct clk *clk_register_composite(struct device *dev, const char *name,
--			const char **parent_names, int num_parents,
-+			const char * const *parent_names, int num_parents,
- 			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
- 			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
- 			struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 69a094c3783d..962e2a056381 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -114,8 +114,8 @@ const struct clk_ops clk_mux_ro_ops = {
- EXPORT_SYMBOL_GPL(clk_mux_ro_ops);
- 
- struct clk *clk_register_mux_table(struct device *dev, const char *name,
--		const char **parent_names, u8 num_parents, unsigned long flags,
--		void __iomem *reg, u8 shift, u32 mask,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 shift, u32 mask,
- 		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
- {
- 	struct clk_mux *mux;
-@@ -166,8 +166,8 @@ struct clk *clk_register_mux_table(struct device *dev, const char *name,
- EXPORT_SYMBOL_GPL(clk_register_mux_table);
- 
- struct clk *clk_register_mux(struct device *dev, const char *name,
--		const char **parent_names, u8 num_parents, unsigned long flags,
--		void __iomem *reg, u8 shift, u8 width,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 shift, u8 width,
- 		u8 clk_mux_flags, spinlock_t *lock)
- {
- 	u32 mask = BIT(width) - 1;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 28abf1badb40..0bf0308963da 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -209,7 +209,7 @@ struct clk_ops {
- struct clk_init_data {
- 	const char		*name;
- 	const struct clk_ops	*ops;
--	const char		**parent_names;
-+	const char * const	*parent_names;
- 	u8			num_parents;
- 	unsigned long		flags;
- };
-@@ -426,13 +426,13 @@ extern const struct clk_ops clk_mux_ops;
- extern const struct clk_ops clk_mux_ro_ops;
- 
- struct clk *clk_register_mux(struct device *dev, const char *name,
--		const char **parent_names, u8 num_parents, unsigned long flags,
--		void __iomem *reg, u8 shift, u8 width,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 shift, u8 width,
- 		u8 clk_mux_flags, spinlock_t *lock);
- 
- struct clk *clk_register_mux_table(struct device *dev, const char *name,
--		const char **parent_names, u8 num_parents, unsigned long flags,
--		void __iomem *reg, u8 shift, u32 mask,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 shift, u32 mask,
- 		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
- 
- void clk_unregister_mux(struct clk *clk);
-@@ -518,7 +518,7 @@ struct clk_composite {
- };
- 
- struct clk *clk_register_composite(struct device *dev, const char *name,
--		const char **parent_names, int num_parents,
-+		const char * const *parent_names, int num_parents,
- 		struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
- 		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
- 		struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
--- 
-1.9.1
+>  	dev_dbg(&hwdata->drvdata->client->dev,
+>  		"%s - %s: p1 = %lu, p2 = %lu, p3 = %lu, parent_rate = %lu, rate = %lu\n",
+>  		__func__, __clk_get_name(hwdata->hw.clk),
+> -- 
+> 2.1.0
+> 
