@@ -1,53 +1,87 @@
-Return-Path: <javier.martinez@collabora.co.uk>
-Message-ID: <5524F229.1060802@collabora.co.uk>
-Date: Wed, 08 Apr 2015 11:17:29 +0200
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-MIME-Version: 1.0
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Mike Turquette <mturquette@linaro.org>
-CC: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- Olof Johansson <olof@lixom.net>,
- Doug Anderson <dianders@chromium.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>,
- Abhilash Kesavan <kesavan.abhilash@gmail.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] clk: exynos5420: Restore GATE_BUS_TOP on suspend
-References: <1428471252-15872-1-git-send-email-javier.martinez@collabora.co.uk> <5524EFA8.6000800@samsung.com>
-In-Reply-To: <5524EFA8.6000800@samsung.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Michael Welling <mwelling@ieee.org>,
+	Russell King <rmk+linux@arm.linux.org.uk>,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 4/4] clk: si5351: Reset PLL after rate change
+Date: Thu, 30 Apr 2015 19:45:54 +0200
+Message-Id: <1430415954-29517-5-git-send-email-sebastian.hesselbarth@gmail.com>
+In-Reply-To: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
+References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Sylwester,
+When changing PLL rate significantly, PLLs have to be reset. Add a function
+to perform and check for successful PLL reset.
 
-On 04/08/2015 11:06 AM, Sylwester Nawrocki wrote:
->> 
->> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
->> index 07d666cc6a29..bea4a173eef5 100644
->> --- a/drivers/clk/samsung/clk-exynos5420.c
->> +++ b/drivers/clk/samsung/clk-exynos5420.c
->> @@ -271,6 +271,7 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
->>  	{ .offset = SRC_MASK_PERIC0,		.value = 0x11111110, },
->>  	{ .offset = SRC_MASK_PERIC1,		.value = 0x11111100, },
->>  	{ .offset = SRC_MASK_ISP,		.value = 0x11111000, },
->> +	{ .offset = GATE_BUS_TOP,		.value = 0xffffffff, },
->>  	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
->>  	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
->>  };
-> 
-> I'm going to tag this patch for inclusion in the stable tree and send
-> it to Mike or Stephen with other clk/samsung fixes after v4.1-rc1 is
-> released.
-> 
-> Mike/Stephen, if you're willing to take this patch earlier here is my:
-> 
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> 
+Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+---
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jean-Francois Moine <moinejf@free.fr>
+Cc: Michael Welling <mwelling@ieee.org>
+Cc: Russell King <rmk+linux@arm.linux.org.uk>
+Cc: devicetree@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/clk-si5351.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-Great, thanks a lot for your help!
-
-Best regards,
-Javier
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index beeb57bbb04c..9b97c134e3c1 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -366,6 +366,32 @@ static const struct clk_ops si5351_vxco_ops = {
+  *         = (MSNx_P1*MSNx_P3 + MSNx_P2 + 512*MSNx_P3)/(128*MSNx_P3)
+  *
+  */
++static int si5351_pll_reset(struct si5351_hw_data *hwdata)
++{
++	unsigned long timeout;
++	u8 mask = (hwdata->num == 0) ?
++		SI5351_STATUS_LOL_A : SI5351_STATUS_LOL_B;
++
++	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
++			 (hwdata->num == 0) ? SI5351_PLL_RESET_A :
++			 SI5351_PLL_RESET_B);
++	timeout = jiffies + msecs_to_jiffies(100);
++	do {
++		if ((si5351_reg_read(hwdata->drvdata, SI5351_DEVICE_STATUS) &
++		     mask) == 0)
++			break;
++		if (time_after(jiffies, timeout)) {
++			dev_err(&hwdata->drvdata->client->dev,
++				"timeout waiting for pll %d reset\n",
++				hwdata->num);
++			return -EBUSY;
++		};
++		udelay(250);
++	} while (true);
++
++	return 0;
++}
++
+ static int _si5351_pll_reparent(struct si5351_driver_data *drvdata,
+ 				int num, enum si5351_pll_src parent)
+ {
+@@ -519,6 +545,9 @@ static int si5351_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		SI5351_CLK_INTEGER_MODE,
+ 		(hwdata->params.p2 == 0) ? SI5351_CLK_INTEGER_MODE : 0);
+ 
++	/* reset pll after rate change */
++	si5351_pll_reset(hwdata);
++
+ 	dev_dbg(&hwdata->drvdata->client->dev,
+ 		"%s - %s: p1 = %lu, p2 = %lu, p3 = %lu, parent_rate = %lu, rate = %lu\n",
+ 		__func__, __clk_get_name(hwdata->hw.clk),
+-- 
+2.1.0
