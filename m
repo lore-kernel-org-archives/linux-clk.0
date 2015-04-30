@@ -1,40 +1,41 @@
-Return-Path: <stefan.wahren@i2se.com>
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH] clk: Fix JSON output in debugfs
-Date: Thu, 23 Apr 2015 20:29:02 +0000
-Message-Id: <1429820942-32332-1-git-send-email-stefan.wahren@i2se.com>
+Return-Path: <festevam@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <554277F3.7060500@gmail.com>
+References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
+	<1430415954-29517-4-git-send-email-sebastian.hesselbarth@gmail.com>
+	<CAOMZO5BYnE2epGrWbnNnaqEt1r6+xoPYWKtjc8w-Ze22aitgXA@mail.gmail.com>
+	<20150430183043.GA21890@deathray>
+	<554277F3.7060500@gmail.com>
+Date: Thu, 30 Apr 2015 16:16:40 -0300
+Message-ID: <CAOMZO5BJWfpir3ngjVjf+A5um6uh=D7WKQFUg3x5fnk8Az6WiQ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] clk: si5351: Do not pass struct clk in platform_data
+From: Fabio Estevam <festevam@gmail.com>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Michael Welling <mwelling@ieee.org>, Jean-Francois Moine <moinejf@free.fr>,
+	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, Russell King <rmk+linux@arm.linux.org.uk>,
+	linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Key/value pairs in a JSON object must be separated by a comma.
-After adding the properties "accuracy" and "phase" the JSON output
-of /sys/kernel/debug/clk/clk_dump is invalid.
+Hi Sebastian,
 
-So add the missing commas to fix it.
+On Thu, Apr 30, 2015 at 3:44 PM, Sebastian Hesselbarth
+<sebastian.hesselbarth@gmail.com> wrote:
 
-Fixes: 5279fc4 ("clk: add clk accuracy retrieval support")
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
----
- drivers/clk/clk.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Fabio,
+>
+> Michael is right, the check is for bailing out if none of the parent
+> clocks is available.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 459ce9d..30be5fb 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -233,8 +233,8 @@ static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
- 	seq_printf(s, "\"%s\": { ", c->name);
- 	seq_printf(s, "\"enable_count\": %d,", c->enable_count);
- 	seq_printf(s, "\"prepare_count\": %d,", c->prepare_count);
--	seq_printf(s, "\"rate\": %lu", clk_core_get_rate(c));
--	seq_printf(s, "\"accuracy\": %lu", clk_core_get_accuracy(c));
-+	seq_printf(s, "\"rate\": %lu,", clk_core_get_rate(c));
-+	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
- 	seq_printf(s, "\"phase\": %d", clk_core_get_phase(c));
- }
- 
--- 
-1.7.9.5
++       if (IS_ERR(drvdata->pxtal) && IS_ERR(drvdata->pclkin)) {
++               dev_err(&client->dev, "missing at least one parent clock\n");
++               return -EINVAL;
++       }
+
+Then shouldn't the error message be: "missing both parent clocks\n" ?
+
+Regards,
+
+Fabio Estevam
