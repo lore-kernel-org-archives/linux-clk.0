@@ -1,54 +1,54 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 30 Apr 2015 16:20:02 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@linaro.org, dianders@chromium.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Alex Elder <elder@linaro.org>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Max Filippov <jcmvbkbc@gmail.com>, kernel@pengutronix.de,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Chao Xie <chao.xie@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Georgi Djakov <georgi.djakov@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Barry Song <baohua@kernel.org>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Viresh Kumar <viresh.linux@gmail.com>,
-	Gabriel FERNANDEZ <gabriel.fernandez@st.com>, emilio@elopez.com.ar,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH v3 1/2] clk: track the orphan status of clocks and their
- children
-Message-ID: <20150430232002.GA32407@codeaurora.org>
-References: <1429735986-18592-1-git-send-email-heiko@sntech.de>
- <1429735986-18592-2-git-send-email-heiko@sntech.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1429735986-18592-2-git-send-email-heiko@sntech.de>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Message-ID: <554277F3.7060500@gmail.com>
+Date: Thu, 30 Apr 2015 20:44:03 +0200
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Michael Welling <mwelling@ieee.org>,
+ Fabio Estevam <festevam@gmail.com>
+CC: Jean-Francois Moine <moinejf@free.fr>,
+ Mike Turquette <mturquette@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ Russell King <rmk+linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 3/4] clk: si5351: Do not pass struct clk in platform_data
+References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com> <1430415954-29517-4-git-send-email-sebastian.hesselbarth@gmail.com> <CAOMZO5BYnE2epGrWbnNnaqEt1r6+xoPYWKtjc8w-Ze22aitgXA@mail.gmail.com> <20150430183043.GA21890@deathray>
+In-Reply-To: <20150430183043.GA21890@deathray>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/22, Heiko Stuebner wrote:
-> @@ -1401,18 +1402,40 @@ static int clk_fetch_parent_index(struct clk_core *clk,
->  	return -EINVAL;
->  }
->  
-> +/*
-> + * Update the orphan status of @clk and all its children.
-> + */
-> +static void clk_core_update_orphan_status(struct clk_core *clk, bool is_orphan)
+On 30.04.2015 20:30, Michael Welling wrote:
+> On Thu, Apr 30, 2015 at 03:20:38PM -0300, Fabio Estevam wrote:
+>> On Thu, Apr 30, 2015 at 2:45 PM, Sebastian Hesselbarth
+>> <sebastian.hesselbarth@gmail.com> wrote:
+>>> @@ -1328,8 +1321,17 @@ static int si5351_i2c_probe(struct i2c_client *client,
+>>>          i2c_set_clientdata(client, drvdata);
+>>>          drvdata->client = client;
+>>>          drvdata->variant = variant;
+>>> -       drvdata->pxtal = pdata->clk_xtal;
+>>> -       drvdata->pclkin = pdata->clk_clkin;
+>>> +       drvdata->pxtal = devm_clk_get(&client->dev, "xtal");
+>>> +       drvdata->pclkin = devm_clk_get(&client->dev, "clkin");
+>>> +
+>>> +       if (PTR_ERR(drvdata->pxtal) == -EPROBE_DEFER ||
+>>> +           PTR_ERR(drvdata->pclkin) == -EPROBE_DEFER)
+>>> +               return -EPROBE_DEFER;
+>>> +
+>>> +       if (IS_ERR(drvdata->pxtal) && IS_ERR(drvdata->pclkin)) {
+>>
+>> Don't you want || instead?
+>
+> I doubt it. He is checking if both are not available.
+>
+> The driver could work with only one of them.
+>
+> If you use || then you assume to need both.
 
-Missed s/clk/core/ here. I did it, no need to resend.
+Fabio,
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Michael is right, the check is for bailing out if none of the parent
+clocks is available.
+
+But thanks for looking at it and I appreciate the review.
+
+Sebastian
