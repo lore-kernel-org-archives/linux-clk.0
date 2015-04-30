@@ -1,61 +1,157 @@
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Message-ID: <5542AAE0.5020204@gmail.com>
-Date: Fri, 01 May 2015 00:21:20 +0200
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-To: Michael Welling <mwelling@ieee.org>
-CC: Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Jean-Francois Moine <moinejf@free.fr>,
- Russell King <rmk+linux@arm.linux.org.uk>,
- Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@free-electrons.com>,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] clk: si5351: Some fixes
-References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com> <20150430193317.GC22000@deathray> <55429417.4070103@gmail.com> <20150430212059.GA14026@deathray>
-In-Reply-To: <20150430212059.GA14026@deathray>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Thu, 30 Apr 2015 13:11:42 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Rhyland Klein <rklein@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>, Stephen Warren
+	<swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 13/19] clk: tegra: pll: Add support for PLLMB for T210
+Message-ID: <20150430101142.GT3097@tbergstrom-lnx.Nvidia.com>
+References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
+ <1430328109-537-14-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1430328109-537-14-git-send-email-rklein@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30.04.2015 23:20, Michael Welling wrote:
-> On Thu, Apr 30, 2015 at 10:44:07PM +0200, Sebastian Hesselbarth wrote:
-[...]
->> What I noticed about your clk2 that you always measure as 0 Hz is
->> that none of your clocks is prepared/enabled.
->>
->> Currently, the si5351 driver only ensures the output is enabled
->> when si5351_clkout_prepare() is called.
->>
->> As long as you do not have a clk consumer that properly prepare/enables
->> the clock output, it may remain disabled.
->>
->> We should probably have additional DT properties and corresponding
->> pdata to force clkoutN always on.
->
-> Does the silabs,disable-state of 3 (SI5351_DISABLE_NEVER) take care
-> of this?
+On Wed, Apr 29, 2015 at 01:21:43PM -0400, Rhyland Klein wrote:
+> Tegra210 SoC's have 2 PLLS for memory usage. Add plumbing to register
+> and handle PLLMB.
+> 
 
-That would be the HW version of never disabling the clock output.
-I never really tried the property, does it work as expected?
+Seems my comments to v1 never made it to the list :/ trying again:
 
-> Otherwise is there a simple registration that will do this?
+I think this would be better rephrased as:
 
-The SW version of such a property would involve CLK_IGNORE_UNUSED
-and enabling all requested clock outputs on probe().
+'Tegra210 SoC's have 2 PLLs for memory usage. Add plumbing to register and
+handle PLLMB.'
 
-If above HW property already works, I think it should be enough.
+The whole point of PLLMB is exactly that it allows switching between 2 PLLMs
+without having to use an intermediate backup PLL, because the PLL has to have
+locked before we can switch to it.
 
-[...]
->>> It should be noted that if I program the device's register map in the
->>> bootloader the device keeps the correct frequency outputs.
->>
->> "keeps"? You mean "generates", don't you?
->>
->
-> Yes the clocks are generated and do not get effected by the driver.
-
-IIRC, clk API does check if requested rate and current rate match
-already. If they do, it does not request the same rate again.
-
-Sebastian
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+> v2:
+>   - Fixed commit description as suggested.
+> 
+>  drivers/clk/tegra/clk-pll.c |   46 +++++++++++++++++++++++++++++++++++++++----
+>  drivers/clk/tegra/clk.h     |    9 +++++++++
+>  2 files changed, 51 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+> index c938bdc9415f..edc388f02a66 100644
+> --- a/drivers/clk/tegra/clk-pll.c
+> +++ b/drivers/clk/tegra/clk-pll.c
+> @@ -547,7 +547,7 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
+>  	struct tegra_clk_pll_params *params = pll->params;
+>  	struct div_nmp *div_nmp = params->div_nmp;
+>  
+> -	if ((params->flags & TEGRA_PLLM) &&
+> +	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
+>  		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
+>  			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
+>  		val = pll_override_readl(params->pmc_divp_reg, pll);
+> @@ -584,7 +584,7 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
+>  	struct tegra_clk_pll_params *params = pll->params;
+>  	struct div_nmp *div_nmp = params->div_nmp;
+>  
+> -	if ((params->flags & TEGRA_PLLM) &&
+> +	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
+>  		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
+>  			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
+>  		val = pll_override_readl(params->pmc_divp_reg, pll);
+> @@ -730,8 +730,8 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+>  	if (pll->params->flags & TEGRA_PLL_FIXED)
+>  		return pll->params->fixed_rate;
+>  
+> -	/* PLLM is used for memory; we do not change rate */
+> -	if (pll->params->flags & TEGRA_PLLM)
+> +	/* PLLM/MB are used for memory; we do not change rate */
+> +	if (pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB))
+>  		return __clk_get_rate(hw->clk);
+>  
+>  	if (_get_table_rate(hw, &cfg, rate, *prate) &&
+> @@ -2310,4 +2310,42 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
+>  
+>  	return clk;
+>  }
+> +
+> +struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
+> +			  void __iomem *clk_base, void __iomem *pmc,
+> +			  unsigned long flags,
+> +			  struct tegra_clk_pll_params *pll_params,
+> +			  spinlock_t *lock)
+> +{
+> +	struct tegra_clk_pll *pll;
+> +	struct clk *clk, *parent;
+> +	unsigned long parent_rate;
+> +
+> +	if (!pll_params->pdiv_tohw)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	parent = __clk_lookup(parent_name);
+> +	if (!parent) {
+> +		WARN(1, "parent clk %s of %s must be registered first\n",
+> +			name, parent_name);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	parent_rate = __clk_get_rate(parent);
+> +
+> +	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+> +
+> +	pll_params->flags |= TEGRA_PLL_BYPASS;
+> +	pll_params->flags |= TEGRA_PLLMB;
+> +	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+> +	if (IS_ERR(pll))
+> +		return ERR_CAST(pll);
+> +
+> +	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
+> +				      &tegra_clk_pllm_ops);
+> +	if (IS_ERR(clk))
+> +		kfree(pll);
+> +
+> +	return clk;
+> +}
+>  #endif
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 26e31580dc9e..9e37defb063f 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -201,6 +201,8 @@ struct div_nmp {
+>   * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
+>   * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
+>   *     it may be more accurate (especially if SDM present)
+> + * TEGRA_PLLMB - PLLMB has should be treated similar to PLLM. This
+> + *     flag indicated that it is PLLMB.
+>   */
+>  struct tegra_clk_pll_params {
+>  	unsigned long	input_min;
+> @@ -260,6 +262,7 @@ struct tegra_clk_pll_params {
+>  #define TEGRA_PLL_BYPASS BIT(9)
+>  #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
+>  #define TEGRA_MDIV_NEW BIT(11)
+> +#define TEGRA_PLLMB BIT(12)
+>  
+>  /**
+>   * struct tegra_clk_pll - Tegra PLL clock
+> @@ -366,6 +369,12 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+>  			   struct tegra_clk_pll_params *pll_params,
+>  			   spinlock_t *lock);
+>  
+> +struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
+> +			   void __iomem *clk_base, void __iomem *pmc,
+> +			   unsigned long flags,
+> +			   struct tegra_clk_pll_params *pll_params,
+> +			   spinlock_t *lock);
+> +
+>  /**
+>   * struct tegra_clk_pll_out - PLL divider down clock
+>   *
+> -- 
+> 1.7.9.5
+> 
