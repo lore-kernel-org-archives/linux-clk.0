@@ -1,51 +1,34 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 9 Apr 2015 08:23:38 -0700
+Message-ID: <55427D83.3060900@codeaurora.org>
+Date: Thu, 30 Apr 2015 12:07:47 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>,
-	Mike Turquette <mturquette@linaro.org>,
-	kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] clk: versatile: test returned value
-Message-ID: <20150409152338.GA18835@codeaurora.org>
-References: <1428159570-19467-1-git-send-email-Julia.Lawall@lip6.fr>
- <1428159570-19467-2-git-send-email-Julia.Lawall@lip6.fr>
- <CACRpkdYU+hN6gEtVzwahGz+B07dqrDzQkTZz2xikGH0dMdYX1Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CACRpkdYU+hN6gEtVzwahGz+B07dqrDzQkTZz2xikGH0dMdYX1Q@mail.gmail.com>
+To: Dong Aisheng <aisheng.dong@freescale.com>, linux-clk@vger.kernel.org
+CC: linux-kernel@vger.kernel.org, mturquette@linaro.org,
+ shawn.guo@linaro.org, b29396@freescale.com,
+ linux-arm-kernel@lists.infradead.org,
+ Ranjani.Vaidyanathan@freescale.com, b20596@freescale.com,
+ r64343@freescale.com, b20788@freescale.com
+Subject: Re: [PATCH RFC v1 2/5] clk: add missing lock when call clk_core_enable
+ in clk_set_parent
+References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com> <1429107999-24413-3-git-send-email-aisheng.dong@freescale.com>
+In-Reply-To: <1429107999-24413-3-git-send-email-aisheng.dong@freescale.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/09, Linus Walleij wrote:
-> On Sat, Apr 4, 2015 at 4:59 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> 
-> > Put NULL test on the result of the previous call instead on one of its
-> > arguments.  A simplified version of the semantic match that finds this
-> > problem is as follows (http://coccinelle.lip6.fr/):
-> >
-> > // <smpl>
-> > r@
-> > expression *e1;
-> > expression *e2;
-> > identifier f;
-> > statement S1,S2;
-> > @@
-> >
-> > e1 = f(...,e2,...);
-> > (
-> > if (e1 == NULL || ...) S1 else S2
-> > |
-> > *if (e2 == NULL || ...) S1 else S2
-> > )
-> > // </smpl>
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Yep that's a bug:
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
+On 04/15/15 07:26, Dong Aisheng wrote:
+> clk_core_enable is executed without &enable_clock in clk_set_parent function.
+> Adding it to avoid potential race condition issue.
+>
+> Fixes: 035a61c314eb ("clk: Make clk API return per-user struct clk instances")
+> Cc: Mike Turquette <mturquette@linaro.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
+> ---
 
-Thanks. Applied to clk-next.
+Can you please describe the race condition? From what I can tell there
+is not a race condition here and we've gone around on this part of the
+code before to fix any race conditions.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
