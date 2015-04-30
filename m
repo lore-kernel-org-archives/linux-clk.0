@@ -1,34 +1,59 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <55427DDE.4090907@codeaurora.org>
-Date: Thu, 30 Apr 2015 12:09:18 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-MIME-Version: 1.0
-To: Dong Aisheng <aisheng.dong@freescale.com>, linux-clk@vger.kernel.org
-CC: linux-kernel@vger.kernel.org, mturquette@linaro.org,
- shawn.guo@linaro.org, b29396@freescale.com,
- linux-arm-kernel@lists.infradead.org,
- Ranjani.Vaidyanathan@freescale.com, b20596@freescale.com,
- r64343@freescale.com, b20788@freescale.com
-Subject: Re: [PATCH RFC v1 3/5] clk: remove unneeded __clk_enable and __clk_disable
-References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com> <1429107999-24413-4-git-send-email-aisheng.dong@freescale.com>
-In-Reply-To: <1429107999-24413-4-git-send-email-aisheng.dong@freescale.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/5] clk: sunxi: sun6i-apb0: Add support for sun9i A80 apbs gates
+Date: Fri,  1 May 2015 00:10:02 +0800
+Message-Id: <1430410206-4410-2-git-send-email-wens@csie.org>
+In-Reply-To: <1430410206-4410-1-git-send-email-wens@csie.org>
+References: <1430410206-4410-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/15/15 07:26, Dong Aisheng wrote:
-> The only thing __clk_enable/__clk_disable does is NULL pointer checking
-> of clk except calling clk_core_{enable|disable} which is already handled
-> by clk_core_{enable|disable}.
-> So remove this unneeded function.
->
-> Cc: Mike Turquette <mturquette@linaro.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
-> ---
+This patch adds support for the PRCM apbs clock gates found on the
+Allwinner A80 SoC.
 
-No. You can call clk_enable() and clk_disable() with NULL and it should
-be a no-op. With this change it would cause a NULL pointer exception.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
+ drivers/clk/sunxi/clk-sun6i-apb0-gates.c          | 5 +++++
+ 2 files changed, 6 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index 4fa11af3d378..2015b2beb957 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -55,6 +55,7 @@ Required properties:
+ 	"allwinner,sun9i-a80-apb1-gates-clk" - for the APB1 gates on A80
+ 	"allwinner,sun6i-a31-apb2-gates-clk" - for the APB2 gates on A31
+ 	"allwinner,sun8i-a23-apb2-gates-clk" - for the APB2 gates on A23
++	"allwinner,sun9i-a80-apbs-gates-clk" - for the APBS gates on A80
+ 	"allwinner,sun5i-a13-mbus-clk" - for the MBUS clock on A13
+ 	"allwinner,sun4i-a10-mmc-clk" - for the MMC clock
+ 	"allwinner,sun9i-a80-mmc-clk" - for mmc module clocks on A80
+diff --git a/drivers/clk/sunxi/clk-sun6i-apb0-gates.c b/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
+index 64f3e46d383c..ef5560c10447 100644
+--- a/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
++++ b/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
+@@ -29,9 +29,14 @@ static const struct gates_data sun8i_a23_apb0_gates __initconst = {
+ 	.mask = {0x5D},
+ };
+ 
++static const struct gates_data sun9i_a80_apbs_gates __initconst = {
++	.mask = {0x1730FF},
++};
++
+ static const struct of_device_id sun6i_a31_apb0_gates_clk_dt_ids[] = {
+ 	{ .compatible = "allwinner,sun6i-a31-apb0-gates-clk", .data = &sun6i_a31_apb0_gates },
+ 	{ .compatible = "allwinner,sun8i-a23-apb0-gates-clk", .data = &sun8i_a23_apb0_gates },
++	{ .compatible = "allwinner,sun9i-a80-apbs-gates-clk", .data = &sun9i_a80_apbs_gates },
+ 	{ /* sentinel */ }
+ };
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
