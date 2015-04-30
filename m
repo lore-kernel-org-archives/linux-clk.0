@@ -1,184 +1,115 @@
-Return-Path: <rklein@nvidia.com>
-Message-ID: <55424ACA.9010406@nvidia.com>
-Date: Thu, 30 Apr 2015 11:31:22 -0400
-From: Rhyland Klein <rklein@nvidia.com>
+Return-Path: <manuel.lauss@gmail.com>
 MIME-Version: 1.0
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>, Stephen Warren
-	<swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Bill Huang <bilhuang@nvidia.com>
-Subject: Re: [PATCH v2 16/19] clk: tegra: pll: Add Set_default logic
-References: <1430328109-537-1-git-send-email-rklein@nvidia.com> <1430328109-537-17-git-send-email-rklein@nvidia.com> <20150430101225.GU3097@tbergstrom-lnx.Nvidia.com>
-In-Reply-To: <20150430101225.GU3097@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+From: Manuel Lauss <manuel.lauss@gmail.com>
+Date: Thu, 30 Apr 2015 12:35:03 +0200
+Message-ID: <CAOLZvyHLwNZ+V8rvBHxDt_cMG5=1T_Tb7594kLt2hgFT3gN4Qw@mail.gmail.com>
+Subject: linux-4.1-rc*: clk alias broken?
+To: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On 4/30/2015 6:12 AM, Peter De Schrijver wrote:
-> On Wed, Apr 29, 2015 at 01:21:46PM -0400, Rhyland Klein wrote:
->> From: Bill Huang <bilhuang@nvidia.com>
->>
->> Add logic which (if specified for a pll) can verify that a PLL is set
->> to the proper default value and if not can set it. This can be
->> specified per PLL as each will have different default values.
->>
-> 
-> Why can't we just set the default values at init time?
+Hello,
 
-Sorry, I did some investigation into this and wrote up a nice response
-... and forgot to hit send ...
+On MIPS, with latest linus-git (and back to 4.0-rc3 at least), I get
+this oops on bootup:
 
-The reason this can't be run only once at init time is the following. In
-reality, we want to have the defined default values written as early as
-possible. Idealy, the bootloader could write these, so the kernel need
-only check, see they are right, and not touch them. However, since we
-can't rely on the bootloader to do so, the kernel needs the support to
-be able to write these default values. At init time, some pll's will be
-enabled (from bootloader) and because they are enabled (and the rest of
-the clk framework isn't done being setup yet) we can't disable them to
-write the full register values. Therefore, the set_defaults logic uses a
-2-pass system.
-
-first pass: Try to set defaults at init/registration time. If pll is
-disabled, this works fine. If it is enabled, then we update a subset of
-the register as a "best effort" setting of the defaults.
-
-second pass: Should only run the first time we go through set_rate for a
-pll. If the first pass already wrote default value, then it skips this
-step. Otherwise it will go in, once the pll is disabled in the set_rate
-path, and write the full register default.
-
-This is required because some registers need to be reset to the default
-values we have to ensure locking works correctly. Does that make sense?
-
--rhyland
-
-> 
->> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
->> ---
->> v2:
->>   - Remove MACRO for PLL_MISC_CHECK_DEFAULT as suggested, and instead
->>     the tegra210 driver will include an inline version of this function.
->>
->>  drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
->>  drivers/clk/tegra/clk.h     |    2 ++
->>  2 files changed, 37 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
->> index 00f0e621533a..28a2376cd8a7 100644
->> --- a/drivers/clk/tegra/clk-pll.c
->> +++ b/drivers/clk/tegra/clk-pll.c
->> @@ -658,15 +658,28 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
->>  			unsigned long rate)
->>  {
->>  	struct tegra_clk_pll *pll = to_clk_pll(hw);
->> +	struct tegra_clk_pll_freq_table old_cfg;
->>  	int state, ret = 0;
->>  
->>  	state = clk_pll_is_enabled(hw);
->>  
->> +	_get_pll_mnp(pll, &old_cfg);
->> +
->> +	if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
->> +			(cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
->> +		ret = pll->params->dyn_ramp(pll, cfg);
->> +		if (!ret)
->> +			return 0;
->> +	}
->> +
->>  	if (state) {
->>  		pll_clk_stop_ss(pll);
->>  		_clk_pll_disable(hw);
->>  	}
->>  
->> +	if (!pll->params->defaults_set && pll->params->set_defaults)
->> +		pll->params->set_defaults(pll);
->> +
->>  	_update_pll_mnp(pll, cfg);
->>  
->>  	if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
->> @@ -1526,6 +1539,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
->>  	if (!pll->params->calc_rate)
->>  		pll->params->calc_rate = _calc_rate;
->>  
->> +	if (pll->params->set_defaults)
->> +		pll->params->set_defaults(pll);
->> +
->>  	/* Data in .init is copied by clk_register(), so stack variable OK */
->>  	pll->hw.init = &init;
->>  
->> @@ -1644,7 +1660,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
->>  	struct tegra_clk_pll *pll;
->>  	struct clk *clk, *parent;
->>  	unsigned long parent_rate;
->> -	int err;
->>  	u32 val, val_iddq;
->>  
->>  	parent = __clk_lookup(parent_name);
->> @@ -1665,18 +1680,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
->>  		pll_params->vco_min = pll_params->adjust_vco(pll_params,
->>  							     parent_rate);
->>  
->> -	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
->> -	if (err)
->> -		return ERR_PTR(err);
->> +	/*
->> +	 * If the pll has a set_defaults callback, it will take care of
->> +	 * configuring dynamic ramping and setting IDDQ in that path.
->> +	 */
->> +	if (!pll_params->set_defaults) {
->> +		int err;
->>  
->> -	val = readl_relaxed(clk_base + pll_params->base_reg);
->> -	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
->> +		err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
->> +		if (err)
->> +			return ERR_PTR(err);
->>  
->> -	if (val & PLL_BASE_ENABLE)
->> -		WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
->> -	else {
->> -		val_iddq |= BIT(pll_params->iddq_bit_idx);
->> -		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
->> +		val = readl_relaxed(clk_base + pll_params->base_reg);
->> +		val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
->> +
->> +		if (val & PLL_BASE_ENABLE)
->> +			WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
->> +		else {
->> +			val_iddq |= BIT(pll_params->iddq_bit_idx);
->> +			writel_relaxed(val_iddq,
->> +				       clk_base + pll_params->iddq_reg);
->> +		}
->>  	}
->>  
->>  	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
->> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
->> index 850521d42be6..84c417576c18 100644
->> --- a/drivers/clk/tegra/clk.h
->> +++ b/drivers/clk/tegra/clk.h
->> @@ -239,6 +239,7 @@ struct tegra_clk_pll_params {
->>  	int		stepb_shift;
->>  	int		lock_delay;
->>  	int		max_p;
->> +	bool		defaults_set;
->>  	struct pdiv_map *pdiv_tohw;
->>  	struct div_nmp	*div_nmp;
->>  	struct tegra_clk_pll_freq_table	*freq_table;
->> @@ -254,6 +255,7 @@ struct tegra_clk_pll_params {
->>  				unsigned long parent_rate);
->>  	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
->>  			struct tegra_clk_pll_freq_table *cfg);
->> +	void	(*set_defaults)(struct tegra_clk_pll *pll);
->>  };
->>  
->>  #define TEGRA_PLL_USE_LOCK BIT(0)
->> -- 
->> 1.7.9.5
->>
+Unhandled kernel unaligned access[#1]:
+CPU: 0 PID: 1 Comm: swapper Not tainted 4.1.0-rc1-db1xxx-00058-ga068c92-dirty #1
+task: 8fc29728 ti: 8fc2a000 task.ti: 8fc2a000
+$ 0   : 00000000 10003c00 8fd0d380 00000006
+$ 4   : 8fd0d400 00000000 00000000 80920640
+$ 8   : 00000000 803da0f0 8fc67f80 53425553
+$12   : 80850000 ffffffe0 00000000 00000006
+$16   : 8fd0d380 616d2f65 80920634 00000000
+$20   : 809e42f8 80a08744 00000008 80a20000
+$24   : 00000018 00000000
+$28   : 8fc2a000 8fc2bda8 80a12850 8057c7dc
+Hi    : 00000003
+Lo    : 75c28f6a
+epc   : 8057c7e4 __clk_create_clk+0x50/0xe4
+    Not tainted
+ra    : 8057c7dc __clk_create_clk+0x48/0xe4
+Status: 10003c03        KERNEL EXL IE
+Cause : 00808010
+BadVA : 616d2f65
+PrId  : 800c8000 (Au1300)
+Modules linked in:
+Process swapper (pid: 1, threadinfo=8fc2a000, task=8fc29728, tls=00000000)
+Stack : 809ac174 00000000 00000000 809a0b50 809e42f8 00000000 809e0000 80920634
+          809a0b50 80579958 10003c01 8fd0d600 809e8f18 00000000
+8fd0d600 809e8f18
+          00000000 809e8618 80a12850 803dbc70 80920c20 ffffffff
+00000000 8fd0d800
+          00000006 809e8f18 00000000 809a0b50 809e42f8 803dbcb4
+8fd0d600 809e8f28
+          8fd0d880 809f8630 8fd0d600 809e8f18 8fd0d600 8010057c
+00000000 80239aec
+          ...
+Call Trace:
+[<8057c7e4>] __clk_create_clk+0x50/0xe4
+[<80579958>] clk_get_sys+0x124/0x194
+[<809e8618>] db1300_dev_setup+0xd4/0x1f4
+[<8010057c>] do_one_initcall+0xe8/0x23c
+[<809e4d00>] kernel_init_freeable+0x19c/0x258
+[<807f935c>] kernel_init+0x10/0x100
+[<80109f48>] ret_from_kernel_thread+0x14/0x1c
 
 
--- 
-nvpublic
+Code: 00c09021  1040001a  00408021 <8e220000> ae130004  ae020000
+2402ffff  ae020010  0c15e836
+---[ end trace ebbb3030d8da4bcd ]---
+Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+
+---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+
+epc points to:
+
+(gdb) list *0x8057c7e4
+0x8057c7e4 is in __clk_create_clk
+(/home/mano/dev/db1200/kernel/linux/drivers/clk/clk.c:2453).
+2448
+2449            clk = kzalloc(sizeof(*clk), GFP_KERNEL);
+2450            if (!clk)
+2451                    return ERR_PTR(-ENOMEM);
+2452
+2453            clk->core = hw->core;
+2454            clk->dev_id = dev_id;
+2455            clk->con_id = con_id;
+2456            clk->max_rate = ULONG_MAX;
+2457
+
+i.e. "hw" is completely bogus (reg $17).
+
+The code leading to this oops does:
+
+(gdb) list *0x809e8618
+0x809e8618 is in db1300_dev_setup
+(/home/mano/dev/db1200/kernel/linux/arch/mips/alchemy/devboards/db1300.c:810).
+805             wmb();
+806             __raw_writel(PSC_SEL_CLK_SERCLK,
+807                 (void __iomem *)KSEG1ADDR(AU1300_PSC2_PHYS_ADDR) +
+PSC_SEL_OFFSET);
+808             wmb();
+809             /* I2C driver wants 50MHz, get as close as possible */
+810             c = clk_get(NULL, "psc3_intclk");
+811             if (!IS_ERR(c)) {
+812                     clk_set_rate(c, 50000000);
+813                     clk_prepare_enable(c);
+814                     clk_put(c);
+
+"psc3_intclk" is an alias for a clock named "EXTCLK1" which is set up in
+arch/mips/alchemy/common/clock.c, line 1106 as
+clk_add_alias("psc3_intclk", NULL, "EXTCLK1", NULL);
+
+If I change the "psc3_intclk" to "EXTCLK1" the oops goes away, but another
+pops up due to the clk_get() in drivers/net/ethernet/smsc911x.c, line 442.
+
+I haven't looked at the arch/mips/alchemy/common/clock.c code since I wrote it
+about 1 year ago.  There haven't been any major changes to this code since 3.19
+(except for a few function prototype changes) where it last worked.
+
+Any hints?
+
+Thanks!
+     Manuel
