@@ -1,145 +1,79 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v2 13/19] clk: tegra: pll: Add support for PLLMB for T210
-Date: Wed, 29 Apr 2015 13:21:43 -0400
-Message-ID: <1430328109-537-14-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430328109-537-1-git-send-email-rklein@nvidia.com>
-References: <1430328109-537-1-git-send-email-rklein@nvidia.com>
+Return-Path: <Aisheng.Dong@freescale.com>
+Date: Thu, 30 Apr 2015 10:37:36 +0800
+From: Dong Aisheng <b29396@freescale.com>
+To: Dong Aisheng <aisheng.dong@freescale.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<sboyd@codeaurora.org>, <mturquette@linaro.org>, <shawn.guo@linaro.org>,
+	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
+	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
+Subject: Re: [PATCH RFC v1 0/5] clk: support clocks which requires parent
+ clock on during operation
+Message-ID: <20150430023734.GA12685@shlinux1.ap.freescale.net>
+References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
+ <20150422061240.GA25437@shlinux1.ap.freescale.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20150422061240.GA25437@shlinux1.ap.freescale.net>
+Return-Path: b29396@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Tegra210 SoC's have 2 PLLS for memory usage. Add plumbing to register
-and handle PLLMB.
+Hi Guys,
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
-v2:
-  - Fixed commit description as suggested.
+On Wed, Apr 22, 2015 at 02:12:43PM +0800, Dong Aisheng wrote:
+> On Wed, Apr 15, 2015 at 10:26:34PM +0800, Dong Aisheng wrote:
+> > This patch series adds support in clock framework for clocks which operations
+> > requires its parent clock is on.
+> > 
+> > Such clock type is initially met on Freescale i.MX7D platform that all clocks
+> > operations, including enable/disable, rate change and re-parent, requires its
+> > parent clock on. No sure if any other SoC has the similar clock type.
+> > 
+> > Current clock core can not support such type of clock well.
+> > 
+> > This patch introduce a new flag CLK_SET_PARENT_ON to handle this special case
+> > in clock core that enable its parent clock firstly for each operation and disable
+> > it later after operation complete.
+> > 
+> > The most special case is for set_parent() operation which requires both parent,
+> > old one and new one, to be enabled at the same time during the operation.
+> > 
+> > Patch 1~3 are minor cleanup & fixes.
+> > Patch 4 add CLK_SET_PARENT_ON flags in clock core to support such type clocks
+> > Patch 5 show the need of introducing clk_core_enable_lock and
+> > 	clk_core_disable_lock to easily use and reduce duplicated code.
+> > 	It can be merged into patch 4 if required.
+> > 
+> > The patch series is based on for-next branch of Michael's git:
+> > git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+> > 
+> > Dong Aisheng (5):
+> >   clk: change clk_core name of __clk_set_parent_after
+> >   clk: add missing lock when call clk_core_enable in clk_set_parent
+> >   clk: remove unneeded __clk_enable and __clk_disable
+> >   clk: core: add CLK_SET_PARENT_ON flags to support clocks require
+> >     parent on
+> >   clk: introduce clk_core_enable_lock and clk_core_disable_lock
+> >     functions
+> > 
+> 
+> Gentle Ping.
+> 
 
- drivers/clk/tegra/clk-pll.c |   46 +++++++++++++++++++++++++++++++++++++++----
- drivers/clk/tegra/clk.h     |    9 +++++++++
- 2 files changed, 51 insertions(+), 4 deletions(-)
+Ping again..
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index c938bdc9415f..edc388f02a66 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -547,7 +547,7 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
- 	struct tegra_clk_pll_params *params = pll->params;
- 	struct div_nmp *div_nmp = params->div_nmp;
- 
--	if ((params->flags & TEGRA_PLLM) &&
-+	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
- 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
- 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
- 		val = pll_override_readl(params->pmc_divp_reg, pll);
-@@ -584,7 +584,7 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
- 	struct tegra_clk_pll_params *params = pll->params;
- 	struct div_nmp *div_nmp = params->div_nmp;
- 
--	if ((params->flags & TEGRA_PLLM) &&
-+	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
- 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
- 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
- 		val = pll_override_readl(params->pmc_divp_reg, pll);
-@@ -730,8 +730,8 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (pll->params->flags & TEGRA_PLL_FIXED)
- 		return pll->params->fixed_rate;
- 
--	/* PLLM is used for memory; we do not change rate */
--	if (pll->params->flags & TEGRA_PLLM)
-+	/* PLLM/MB are used for memory; we do not change rate */
-+	if (pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB))
- 		return __clk_get_rate(hw->clk);
- 
- 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
-@@ -2310,4 +2310,42 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
- 
- 	return clk;
- }
-+
-+struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
-+			  void __iomem *clk_base, void __iomem *pmc,
-+			  unsigned long flags,
-+			  struct tegra_clk_pll_params *pll_params,
-+			  spinlock_t *lock)
-+{
-+	struct tegra_clk_pll *pll;
-+	struct clk *clk, *parent;
-+	unsigned long parent_rate;
-+
-+	if (!pll_params->pdiv_tohw)
-+		return ERR_PTR(-EINVAL);
-+
-+	parent = __clk_lookup(parent_name);
-+	if (!parent) {
-+		WARN(1, "parent clk %s of %s must be registered first\n",
-+			name, parent_name);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	parent_rate = __clk_get_rate(parent);
-+
-+	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
-+
-+	pll_params->flags |= TEGRA_PLL_BYPASS;
-+	pll_params->flags |= TEGRA_PLLMB;
-+	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-+	if (IS_ERR(pll))
-+		return ERR_CAST(pll);
-+
-+	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
-+				      &tegra_clk_pllm_ops);
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
-+}
- #endif
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 26e31580dc9e..9e37defb063f 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -201,6 +201,8 @@ struct div_nmp {
-  * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
-  * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
-  *     it may be more accurate (especially if SDM present)
-+ * TEGRA_PLLMB - PLLMB has should be treated similar to PLLM. This
-+ *     flag indicated that it is PLLMB.
-  */
- struct tegra_clk_pll_params {
- 	unsigned long	input_min;
-@@ -260,6 +262,7 @@ struct tegra_clk_pll_params {
- #define TEGRA_PLL_BYPASS BIT(9)
- #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
- #define TEGRA_MDIV_NEW BIT(11)
-+#define TEGRA_PLLMB BIT(12)
- 
- /**
-  * struct tegra_clk_pll - Tegra PLL clock
-@@ -366,6 +369,12 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
- 			   struct tegra_clk_pll_params *pll_params,
- 			   spinlock_t *lock);
- 
-+struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
-+			   void __iomem *clk_base, void __iomem *pmc,
-+			   unsigned long flags,
-+			   struct tegra_clk_pll_params *pll_params,
-+			   spinlock_t *lock);
-+
- /**
-  * struct tegra_clk_pll_out - PLL divider down clock
-  *
--- 
-1.7.9.5
+Any comments about this patch series?
 
+
+Regards
+Dong Aisheng
+
+> Regards
+> Dong Aisheng
+> 
+> >  drivers/clk/clk.c            | 112 ++++++++++++++++++++++++++++++++++---------
+> >  include/linux/clk-provider.h |   5 ++
+> >  2 files changed, 94 insertions(+), 23 deletions(-)
+> > 
+> > -- 
+> > 1.9.1
+> > 
