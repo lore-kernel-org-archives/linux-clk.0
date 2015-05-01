@@ -1,26 +1,57 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 13 May 2015 00:36:20 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: mturquette@linaro.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk: qcom: Add MSM8916 gpu clocks
-Message-ID: <20150513073620.GC15988@codeaurora.org>
-References: <1431428438-8171-1-git-send-email-georgi.djakov@linaro.org>
- <1431428438-8171-2-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>,
+	Bill Huang <bilhuang@nvidia.com>
+Subject: [PATCH v3 06/20] clk: tegra: pll-params: change misc_reg count from 3 -> 6
+Date: Fri, 1 May 2015 14:53:53 -0400
+Message-ID: <1430506447-29074-7-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
+References: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1431428438-8171-2-git-send-email-georgi.djakov@linaro.org>
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/12, Georgi Djakov wrote:
-> Add support for the msm8916 bimc clocks that are needed for GPU.
-> 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
+From: Bill Huang <bilhuang@nvidia.com>
 
-Applied to clk-next
+New SoC's may have more then 3 MISC registers, so bump up the
+array size and use a #define to be more informative about the value.
 
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+---
+ drivers/clk/tegra/clk.h |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 4ea8b5b089cd..03babba1c3b4 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -156,6 +156,8 @@ struct div_nmp {
+ 	u8		override_divp_shift;
+ };
+ 
++#define MAX_PLL_MISC_REG_COUNT	6
++
+ /**
+  * struct clk_pll_params - PLL parameters
+  *
+@@ -213,7 +215,7 @@ struct tegra_clk_pll_params {
+ 	u32		iddq_bit_idx;
+ 	u32		aux_reg;
+ 	u32		dyn_ramp_reg;
+-	u32		ext_misc_reg[3];
++	u32		ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
+ 	u32		pmc_divnm_reg;
+ 	u32		pmc_divp_reg;
+ 	u32		flags;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
