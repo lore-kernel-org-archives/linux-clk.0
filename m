@@ -1,31 +1,43 @@
-Return-Path: <bleung@google.com>
-MIME-Version: 1.0
-Sender: bleung@google.com
-In-Reply-To: <1431946983-29554-1-git-send-email-bilhuang@nvidia.com>
-References: <1431946983-29554-1-git-send-email-bilhuang@nvidia.com>
-Date: Mon, 18 May 2015 09:53:14 -0700
-Message-ID: <CANLzEkto_rDBvyM0ra4ymaT-L9q1DxBqKgzxy2GEYKEE9KDuuQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] clk: tegra: read correct iddq register in PLL_SS registration
-From: Benson Leung <bleung@chromium.org>
-To: Bill Huang <bilhuang@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Paul Walmsley <pwalmsley@nvidia.com>, Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+To: Kukjin Kim <kgene@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH 2/2] clk: s3c2410: Constify platform_device_id
+Date: Sat,  2 May 2015 01:02:48 +0900
+Message-Id: <1430496168-32408-2-git-send-email-k.kozlowski.k@gmail.com>
+In-Reply-To: <1430496168-32408-1-git-send-email-k.kozlowski.k@gmail.com>
+References: <1430496168-32408-1-git-send-email-k.kozlowski.k@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 18, 2015 at 4:03 AM, Bill Huang <bilhuang@nvidia.com> wrote:
-> This fixes bug in tegra_clk_register_pllss() which mistakenly assume the
-> iddq register is the PLL base address.
->
-> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+The platform_device_id is not modified by the driver and core uses it as
+const.
 
-Thanks for the quick fix.
-Reviewed-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+---
+ drivers/clk/samsung/clk-s3c2410-dclk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+index db6fddb211d4..e56df5064889 100644
+--- a/drivers/clk/samsung/clk-s3c2410-dclk.c
++++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+@@ -404,7 +404,7 @@ static struct s3c24xx_dclk_drv_data dclk_variants[] = {
+ 	},
+ };
+ 
+-static struct platform_device_id s3c24xx_dclk_driver_ids[] = {
++static const struct platform_device_id s3c24xx_dclk_driver_ids[] = {
+ 	{
+ 		.name		= "s3c2410-dclk",
+ 		.driver_data	= (kernel_ulong_t)&dclk_variants[S3C2410],
 -- 
-Benson Leung
-Software Engineer, Chrom* OS
-bleung@chromium.org
+2.1.4
