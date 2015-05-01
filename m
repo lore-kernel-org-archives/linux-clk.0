@@ -1,86 +1,78 @@
-Return-Path: <elder@linaro.org>
-Return-Path: <elder@linaro.org>
-Message-ID: <554A15D7.7080507@linaro.org>
-Date: Wed, 06 May 2015 08:23:35 -0500
-From: Alex Elder <elder@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <55440EDA.4030905@codeaurora.org>
+Date: Fri, 01 May 2015 16:40:10 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Mike Turquette <mturquette@linaro.org>
-CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Tim Kryger <tim.kryger@linaro.org>
-Subject: Re: [PATCH 05/19] clk: bcm/kona: Remove ccu_list
-References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org> <1430897996-11597-6-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1430897996-11597-6-git-send-email-sboyd@codeaurora.org>
+To: =?windows-1252?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+CC: mturquette@linaro.org, dianders@chromium.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Alex Elder <elder@linaro.org>,
+ Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Max Filippov <jcmvbkbc@gmail.com>,
+ kernel@pengutronix.de, Zhangfei Gao <zhangfei.gao@linaro.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>,
+ Chao Xie <chao.xie@marvell.com>, Jason Cooper <jason@lakedaemon.net>,
+ Stefan Wahren <stefan.wahren@i2se.com>,
+ Andrew Bresticker <abrestic@chromium.org>,
+ Robert Jarzmik <robert.jarzmik@free.fr>,
+ Georgi Djakov <georgi.djakov@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Barry Song <baohua@kernel.org>,
+ Dinh Nguyen <dinguyen@opensource.altera.com>,
+ Viresh Kumar <viresh.linux@gmail.com>,
+ Gabriel FERNANDEZ <gabriel.fernandez@st.com>, emilio@elopez.com.ar,
+ Peter De Sc hrijver <pdeschrijver@nvidia.com>,
+ Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Pawel Moll <pawel.moll@arm.com>,
+ Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
+References: <1429735986-18592-1-git-send-email-heiko@sntech.de> <1981330.kGUrTurMy5@diego> <5543E79F.2080400@codeaurora.org> <22709390.NTAlubMgNB@diego>
+In-Reply-To: <22709390.NTAlubMgNB@diego>
 Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/06/2015 02:39 AM, Stephen Boyd wrote:
-> This list doesn't look to be used. Let's remove it and any
-> associated code that would be manipulating this list. This also
-> silences this error:
-> 
-> drivers/clk/bcm/clk-kona-setup.c:24:1: warning: symbol 'ccu_list' was not declared. Should it be static?
+On 05/01/15 15:07, Heiko Stübner wrote:
+> Am Freitag, 1. Mai 2015, 13:52:47 schrieb Stephen Boyd:
+>
+>>> Instead I guess we could hook it less deep into clk_get_sys, like in the
+>>> following patch?
+>> It looks like it will work at least, but still I'd prefer to keep the
+>> orphan check contained to clk.c. How about this compile tested only patch?
+> I gave this a spin on my rk3288-firefly board. It still boots, the clock tree 
+> looks the same and it also still defers nicely in the scenario I needed it 
+> for. The implementation also looks nice - and of course much more compact than 
+> my check in two places :-) . I don't know if you want to put this as follow-up 
+> on top or fold it into the original orphan-check, so in any case
+>
+> Tested-by: Heiko Stuebner <heiko@sntech.de>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-It should have been static.  And I thought it would be used
-but it's not, so I agree, it's not serving any real purpose.
+Thanks. I'm leaning towards tossing your patch 2/2 and replacing it with
+my patch and a note that it's based on an earlier patch from you.
 
-Reviewed-by: Alex Elder <elder@linaro.org>
+>
+>
+>> This also brings up an existing problem with clk_unregister() where
+>> orphaned clocks are sitting out there useable by drivers when their
+>> parent is unregistered. That code could use some work to atomically
+>> switch all the orphaned clocks over to use the nodrv_ops.
+> Not sure I understand this correctly yet, but when these children get 
+> orphaned, switched to the clk_nodrv_ops, they won't get their original ops 
+> back if the parent reappears.
+>
+> So I guess we would need to store the original ops in secondary property of 
+> struct clk_core and I guess simply bind the ops-switch to the orphan state 
+> update?
 
-> Cc: Alex Elder <elder@linaro.org>
-> Cc: Tim Kryger <tim.kryger@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/bcm/clk-kona-setup.c | 4 ----
->  drivers/clk/bcm/clk-kona.h       | 2 --
->  2 files changed, 6 deletions(-)
-> 
-> diff --git a/drivers/clk/bcm/clk-kona-setup.c b/drivers/clk/bcm/clk-kona-setup.c
-> index e5aededdd322..deaa7f962b84 100644
-> --- a/drivers/clk/bcm/clk-kona-setup.c
-> +++ b/drivers/clk/bcm/clk-kona-setup.c
-> @@ -21,8 +21,6 @@
->  #define selector_clear_exists(sel)	((sel)->width = 0)
->  #define trigger_clear_exists(trig)	FLAG_CLEAR(trig, TRIG, EXISTS)
->  
-> -LIST_HEAD(ccu_list);	/* The list of set up CCUs */
-> -
->  /* Validity checking */
->  
->  static bool ccu_data_offsets_valid(struct ccu_data *ccu)
-> @@ -773,7 +771,6 @@ static void kona_ccu_teardown(struct ccu_data *ccu)
->  
->  	of_clk_del_provider(ccu->node);	/* safe if never added */
->  	ccu_clks_teardown(ccu);
-> -	list_del(&ccu->links);
->  	of_node_put(ccu->node);
->  	ccu->node = NULL;
->  	iounmap(ccu->base);
-> @@ -847,7 +844,6 @@ void __init kona_dt_ccu_setup(struct ccu_data *ccu,
->  		goto out_err;
->  	}
->  	ccu->node = of_node_get(node);
-> -	list_add_tail(&ccu->links, &ccu_list);
->  
->  	/*
->  	 * Set up each defined kona clock and save the result in
-> diff --git a/drivers/clk/bcm/clk-kona.h b/drivers/clk/bcm/clk-kona.h
-> index 6849a64baf6d..906576ec97b6 100644
-> --- a/drivers/clk/bcm/clk-kona.h
-> +++ b/drivers/clk/bcm/clk-kona.h
-> @@ -480,7 +480,6 @@ struct ccu_data {
->  	spinlock_t lock;	/* serialization lock */
->  	bool write_enabled;	/* write access is currently enabled */
->  	struct ccu_policy policy;
-> -	struct list_head links;	/* for ccu_list */
->  	struct device_node *node;
->  	struct clk_onecell_data clk_data;
->  	const char *name;
-> @@ -492,7 +491,6 @@ struct ccu_data {
->  #define KONA_CCU_COMMON(_prefix, _name, _ccuname)			    \
->  	.name		= #_name "_ccu",				    \
->  	.lock		= __SPIN_LOCK_UNLOCKED(_name ## _ccu_data.lock),    \
-> -	.links		= LIST_HEAD_INIT(_name ## _ccu_data.links),	    \
->  	.clk_data	= {						    \
->  		.clk_num = _prefix ## _ ## _ccuname ## _CCU_CLOCK_COUNT,    \
->  	}
-> 
+Yep. We'll need to store away the original ops in case we need to put
+them back. Don't feel obligated to fix this either. It would certainly
+be nice if someone tried to fix this case at some point, but it's not
+like things are any worse off right now.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
