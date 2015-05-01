@@ -1,191 +1,175 @@
-Return-Path: <linux-omap-owner@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-To: <mturquette@linaro.org>, <tony@atomide.com>,
-	<linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<sboyd@codeaurora.org>, <paul@pwsan.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 18/27] clk: ti: omap2430: move clock support code under clock driver
-Date: Mon, 11 May 2015 11:54:44 +0300
-Message-ID: <1431334493-24455-19-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
-References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <5543E79F.2080400@codeaurora.org>
+Date: Fri, 01 May 2015 13:52:47 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-omap-owner@vger.kernel.org
+To: =?windows-1252?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+CC: mturquette@linaro.org, dianders@chromium.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Alex Elder <elder@linaro.org>,
+ Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Max Filippov <jcmvbkbc@gmail.com>,
+ kernel@pengutronix.de, Zhangfei Gao <zhangfei.gao@linaro.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>,
+ Chao Xie <chao.xie@marvell.com>, Jason Cooper <jason@lakedaemon.net>,
+ Stefan Wahren <stefan.wahren@i2se.com>,
+ Andrew Bresticker <abrestic@chromium.org>,
+ Robert Jarzmik <robert.jarzmik@free.fr>,
+ Georgi Djakov <georgi.djakov@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Barry Song <baohua@kernel.org>,
+ Dinh Nguyen <dinguyen@opensource.altera.com>,
+ Viresh Kumar <viresh.linux@gmail.com>,
+ Gabriel FERNANDEZ <gabriel.fernandez@st.com>, emilio@elopez.com.ar,
+ Peter De Sc hrijver <pdeschrijver@nvidia.com>,
+ Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Pawel Moll <pawel.moll@arm.com>,
+ Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
+References: <1429735986-18592-1-git-send-email-heiko@sntech.de> <20150501001901.GC32407@codeaurora.org> <1981330.kGUrTurMy5@diego>
+In-Reply-To: <1981330.kGUrTurMy5@diego>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-With the legacy clock support gone, this is no longer needed under
-platform code-base. Thus, move this under the TI clock driver, and
-remove the exported API from the public header.
+On 05/01/15 12:59, Heiko Stübner wrote:
+> Am Donnerstag, 30. April 2015, 17:19:01 schrieb Stephen Boyd:
+>> On 04/22, Heiko Stuebner wrote:
+>>> Using orphan clocks can introduce strange behaviour as they don't have
+>>> rate information at all and also of course don't track
+>>>
+>>> This v2/v3 takes into account suggestions from Stephen Boyd to not try to
+>>> walk the clock tree at runtime but instead keep track of orphan states
+>>> on clock tree changes and making it mandatory for everybody from the
+>>> start as orphaned clocks should not be used at all.
+>>>
+>>>
+>>> This fixes an issue on most rk3288 platforms, where some soc-clocks
+>>> are supplied by a 32khz clock from an external i2c-chip which often
+>>> is only probed later in the boot process and maybe even after the
+>>> drivers using these soc-clocks like the tsadc temperature sensor.
+>>> In this case the driver using the clock should of course defer probing
+>>> until the clock is actually usable.
+>>>
+>>>
+>>> As this changes the behaviour for orphan clocks, it would of course
+>>> benefit from more testing than on my Rockchip boards. To keep the
+>>> recipent-list reasonable and not spam to much I selected one (the topmost)
+>>> from the get_maintainer output of each drivers/clk entry.
+>>> Hopefully some will provide Tested-by-tags :-)
+>> <grumble> I don't see any Tested-by: tags yet </grumble>. I've
+>> put these two patches on a separate branch "defer-orphans" and
+>> pushed it to clk-next so we can give it some more exposure.
+>>
+>> Unfortunately this doesn't solve the orphan problem for non-OF
+>> providers. What if we did the orphan check in __clk_create_clk()
+>> instead and returned an error pointer for orphans? I suspect that
+>> will solve all cases, right?
+> hmm, clk_register also uses __clk_create_clk, which in turn would prevent
+> registering orphan-clocks at all, I'd think.
+> As on my platform I'm dependant on orphan clocks (the soc-level clock gets
+> registerted as part of the big clock controller way before the i2c-based
+> supplying clock), I'd rather not touch this :-) .
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/Makefile    |    1 -
- arch/arm/mach-omap2/clock2430.c |   57 ---------------------------------------
- drivers/clk/ti/clkt_iclk.c      |   35 ++++++++++++++++++++++++
- drivers/clk/ti/clock.h          |    1 +
- include/linux/clk/ti.h          |    1 -
- 5 files changed, 36 insertions(+), 59 deletions(-)
- delete mode 100644 arch/arm/mach-omap2/clock2430.c
+Have no fear! We should just change clk_register() to call a
+__clk_create_clk() type function that doesn't check for orphan status.
 
-diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
-index 07052656..695d58f 100644
---- a/arch/arm/mach-omap2/Makefile
-+++ b/arch/arm/mach-omap2/Makefile
-@@ -185,7 +185,6 @@ obj-$(CONFIG_ARCH_OMAP2)		+= $(clock-common)
- obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpllcore.o
- obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_virt_prcm_set.o
- obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpll.o
--obj-$(CONFIG_SOC_OMAP2430)		+= clock2430.o
- obj-$(CONFIG_ARCH_OMAP3)		+= $(clock-common)
- obj-$(CONFIG_ARCH_OMAP3)		+= clock34xx.o clkt34xx_dpll3m2.o
- obj-$(CONFIG_ARCH_OMAP3)		+= clock3517.o
-diff --git a/arch/arm/mach-omap2/clock2430.c b/arch/arm/mach-omap2/clock2430.c
-deleted file mode 100644
-index cef0c8d..0000000
---- a/arch/arm/mach-omap2/clock2430.c
-+++ /dev/null
-@@ -1,57 +0,0 @@
--/*
-- * clock2430.c - OMAP2430-specific clock integration code
-- *
-- * Copyright (C) 2005-2008 Texas Instruments, Inc.
-- * Copyright (C) 2004-2010 Nokia Corporation
-- *
-- * Contacts:
-- * Richard Woodruff <r-woodruff2@ti.com>
-- * Paul Walmsley
-- *
-- * Based on earlier work by Tuukka Tikkanen, Tony Lindgren,
-- * Gordon McNutt and RidgeRun, Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--#undef DEBUG
--
--#include <linux/kernel.h>
--#include <linux/clk.h>
--#include <linux/io.h>
--
--#include "soc.h"
--#include "iomap.h"
--#include "clock.h"
--#include "clock2xxx.h"
--#include "cm2xxx.h"
--#include "cm-regbits-24xx.h"
--
--/**
-- * omap2430_clk_i2chs_find_idlest - return CM_IDLEST info for 2430 I2CHS
-- * @clk: struct clk * being enabled
-- * @idlest_reg: void __iomem ** to store CM_IDLEST reg address into
-- * @idlest_bit: pointer to a u8 to store the CM_IDLEST bit shift into
-- * @idlest_val: pointer to a u8 to store the CM_IDLEST indicator
-- *
-- * OMAP2430 I2CHS CM_IDLEST bits are in CM_IDLEST1_CORE, but the
-- * CM_*CLKEN bits are in CM_{I,F}CLKEN2_CORE.  This custom function
-- * passes back the correct CM_IDLEST register address for I2CHS
-- * modules.  No return value.
-- */
--static void omap2430_clk_i2chs_find_idlest(struct clk_hw_omap *clk,
--					   void __iomem **idlest_reg,
--					   u8 *idlest_bit,
--					   u8 *idlest_val)
+>
+> Instead I guess we could hook it less deep into clk_get_sys, like in the
+> following patch?
+
+It looks like it will work at least, but still I'd prefer to keep the
+orphan check contained to clk.c. How about this compile tested only patch?
+
+This also brings up an existing problem with clk_unregister() where
+orphaned clocks are sitting out there useable by drivers when their
+parent is unregistered. That code could use some work to atomically
+switch all the orphaned clocks over to use the nodrv_ops.
+
+----8<-----
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 30d45c657a07..1d23daa42dd2 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2221,14 +2221,6 @@ static inline void clk_debug_unregister(struct clk_core *core)
+ }
+ #endif
+ 
+-static bool clk_is_orphan(const struct clk *clk)
 -{
--	*idlest_reg = OMAP2430_CM_REGADDR(CORE_MOD, CM_IDLEST);
--	*idlest_bit = clk->enable_bit;
--	*idlest_val = OMAP24XX_CM_IDLEST_VAL;
+-	if (!clk)
+-		return false;
+-
+-	return clk->core->orphan;
 -}
 -
--/* 2430 I2CHS has non-standard IDLEST register */
--const struct clk_hw_omap_ops clkhwops_omap2430_i2chs_wait = {
--	.find_idlest	= omap2430_clk_i2chs_find_idlest,
--	.find_companion	= omap2_clk_dflt_find_companion,
--};
-diff --git a/drivers/clk/ti/clkt_iclk.c b/drivers/clk/ti/clkt_iclk.c
-index a03919d..38c3690 100644
---- a/drivers/clk/ti/clkt_iclk.c
-+++ b/drivers/clk/ti/clkt_iclk.c
-@@ -18,8 +18,12 @@
- #include "clock.h"
- 
- /* Register offsets */
-+#define OMAP24XX_CM_FCLKEN2		0x04
- #define CM_AUTOIDLE			0x30
- #define CM_ICLKEN			0x10
-+#define CM_IDLEST			0x20
-+
-+#define OMAP24XX_CM_IDLEST_VAL		0
- 
- /* Private functions */
- 
-@@ -51,6 +55,31 @@ void omap2_clkt_iclk_deny_idle(struct clk_hw_omap *clk)
- 	ti_clk_ll_ops->clk_writel(v, r);
+ /**
+  * __clk_init - initialize the data structures in a struct clk
+  * @dev:	device initializing this clk, placeholder for now
+@@ -2420,15 +2412,11 @@ out:
+ 	return ret;
  }
  
-+/**
-+ * omap2430_clk_i2chs_find_idlest - return CM_IDLEST info for 2430 I2CHS
-+ * @clk: struct clk * being enabled
-+ * @idlest_reg: void __iomem ** to store CM_IDLEST reg address into
-+ * @idlest_bit: pointer to a u8 to store the CM_IDLEST bit shift into
-+ * @idlest_val: pointer to a u8 to store the CM_IDLEST indicator
-+ *
-+ * OMAP2430 I2CHS CM_IDLEST bits are in CM_IDLEST1_CORE, but the
-+ * CM_*CLKEN bits are in CM_{I,F}CLKEN2_CORE.  This custom function
-+ * passes back the correct CM_IDLEST register address for I2CHS
-+ * modules.  No return value.
-+ */
-+static void omap2430_clk_i2chs_find_idlest(struct clk_hw_omap *clk,
-+					   void __iomem **idlest_reg,
-+					   u8 *idlest_bit,
-+					   u8 *idlest_val)
+-struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+-			     const char *con_id)
++static struct clk *clk_hw_create_clk(struct clk_hw *hw, const char *dev_id,
++				     const char *con_id)
+ {
+ 	struct clk *clk;
+ 
+-	/* This is to allow this function to be chained to others */
+-	if (!hw || IS_ERR(hw))
+-		return (struct clk *) hw;
+-
+ 	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
+ 	if (!clk)
+ 		return ERR_PTR(-ENOMEM);
+@@ -2445,6 +2433,19 @@ struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+ 	return clk;
+ }
+ 
++struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
++			     const char *con_id)
 +{
-+	u32 r;
++	/* This is to allow this function to be chained to others */
++	if (!hw || IS_ERR(hw))
++		return (struct clk *) hw;
 +
-+	r = ((__force u32)clk->enable_reg ^ (OMAP24XX_CM_FCLKEN2 ^ CM_IDLEST));
-+	*idlest_reg = (__force void __iomem *)r;
-+	*idlest_bit = clk->enable_bit;
-+	*idlest_val = OMAP24XX_CM_IDLEST_VAL;
++	if (hw->core->orphan)
++		return ERR_PTR(-EPROBE_DEFER);
++
++	return clk_hw_create_clk(hw, dev_id, con_id);
 +}
 +
- /* Public data */
+ void __clk_free_clk(struct clk *clk)
+ {
+ 	clk_prepare_lock();
+@@ -2511,7 +2512,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
  
- const struct clk_hw_omap_ops clkhwops_iclk = {
-@@ -64,3 +93,9 @@ const struct clk_hw_omap_ops clkhwops_iclk_wait = {
- 	.find_idlest	= omap2_clk_dflt_find_idlest,
- 	.find_companion	= omap2_clk_dflt_find_companion,
- };
-+
-+/* 2430 I2CHS has non-standard IDLEST register */
-+const struct clk_hw_omap_ops clkhwops_omap2430_i2chs_wait = {
-+	.find_idlest	= omap2430_clk_i2chs_find_idlest,
-+	.find_companion	= omap2_clk_dflt_find_companion,
-+};
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index f215383..3652c26 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -178,6 +178,7 @@ extern const struct clk_hw_omap_ops clkhwops_omap4_dpllmx;
- extern const struct clk_hw_omap_ops clkhwops_wait;
- extern const struct clk_hw_omap_ops clkhwops_iclk;
- extern const struct clk_hw_omap_ops clkhwops_iclk_wait;
-+extern const struct clk_hw_omap_ops clkhwops_omap2430_i2chs_wait;
+ 	INIT_HLIST_HEAD(&core->clks);
  
- int omap2_dflt_clk_enable(struct clk_hw *hw);
- void omap2_dflt_clk_disable(struct clk_hw *hw);
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 891fe0f..a7728f7 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -333,7 +333,6 @@ void ti_clk_setup_features(struct ti_clk_features *features);
- struct ti_clk_features *ti_clk_get_features(void);
+-	hw->clk = __clk_create_clk(hw, NULL, NULL);
++	hw->clk = clk_hw_create_clk(hw, NULL, NULL);
+ 	if (IS_ERR(hw->clk)) {
+ 		ret = PTR_ERR(hw->clk);
+ 		goto fail_parent_names_copy;
+@@ -2958,10 +2959,6 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+ 		if (provider->node == clkspec->np)
+ 			clk = provider->get(clkspec, provider->data);
+ 		if (!IS_ERR(clk)) {
+-			if (clk_is_orphan(clk)) {
+-				clk = ERR_PTR(-EPROBE_DEFER);
+-				break;
+-			}
  
- extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
--extern const struct clk_hw_omap_ops clkhwops_omap2430_i2chs_wait;
- extern const struct clk_hw_omap_ops clkhwops_omap3430es2_dss_usbhost_wait;
- extern const struct clk_hw_omap_ops clkhwops_am35xx_ipss_module_wait;
- extern const struct clk_hw_omap_ops clkhwops_am35xx_ipss_wait;
--- 
-1.7.9.5
+ 			clk = __clk_create_clk(__clk_get_hw(clk), dev_id,
+ 					       con_id);
 
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
