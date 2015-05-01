@@ -1,177 +1,156 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH v2] clk: qcom: Fix parent_map translations
-Date: Tue,  7 Apr 2015 17:14:51 +0300
-Message-Id: <1428416091-31844-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mturquette@linaro.org, dianders@chromium.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Alex Elder <elder@linaro.org>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Max Filippov <jcmvbkbc@gmail.com>, kernel@pengutronix.de,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Chao Xie <chao.xie@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Georgi Djakov <georgi.djakov@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Barry Song <baohua@kernel.org>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Viresh Kumar <viresh.linux@gmail.com>,
+	Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
+	emilio@elopez.com.ar, Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
+Date: Fri, 01 May 2015 21:59:55 +0200
+Message-ID: <1981330.kGUrTurMy5@diego>
+In-Reply-To: <20150501001901.GC32407@codeaurora.org>
+References: <1429735986-18592-1-git-send-email-heiko@sntech.de> <20150501001901.GC32407@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-When we introduced the parent_map tables, we missed to update some
-of the functions where mapping is translated. Fix this.
+Am Donnerstag, 30. April 2015, 17:19:01 schrieb Stephen Boyd:
+> On 04/22, Heiko Stuebner wrote:
+> > Using orphan clocks can introduce strange behaviour as they don't have
+> > rate information at all and also of course don't track
+> > 
+> > This v2/v3 takes into account suggestions from Stephen Boyd to not try to
+> > walk the clock tree at runtime but instead keep track of orphan states
+> > on clock tree changes and making it mandatory for everybody from the
+> > start as orphaned clocks should not be used at all.
+> > 
+> > 
+> > This fixes an issue on most rk3288 platforms, where some soc-clocks
+> > are supplied by a 32khz clock from an external i2c-chip which often
+> > is only probed later in the boot process and maybe even after the
+> > drivers using these soc-clocks like the tsadc temperature sensor.
+> > In this case the driver using the clock should of course defer probing
+> > until the clock is actually usable.
+> > 
+> > 
+> > As this changes the behaviour for orphan clocks, it would of course
+> > benefit from more testing than on my Rockchip boards. To keep the
+> > recipent-list reasonable and not spam to much I selected one (the topmost)
+> > from the get_maintainer output of each drivers/clk entry.
+> > Hopefully some will provide Tested-by-tags :-)
+> 
+> <grumble> I don't see any Tested-by: tags yet </grumble>. I've
+> put these two patches on a separate branch "defer-orphans" and
+> pushed it to clk-next so we can give it some more exposure.
+> 
+> Unfortunately this doesn't solve the orphan problem for non-OF
+> providers. What if we did the orphan check in __clk_create_clk()
+> instead and returned an error pointer for orphans? I suspect that
+> will solve all cases, right?
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+hmm, clk_register also uses __clk_create_clk, which in turn would prevent
+registering orphan-clocks at all, I'd think.
+As on my platform I'm dependant on orphan clocks (the soc-level clock gets
+registerted as part of the big clock controller way before the i2c-based
+supplying clock), I'd rather not touch this :-) .
+
+Instead I guess we could hook it less deep into clk_get_sys, like in the
+following patch?
+
+
+------------ 8< ------------------------- >8 -----------------
+From: Heiko Stuebner <heiko@sntech.de>
+Date: Fri, 1 May 2015 21:50:46 +0200
+Subject: [PATCH] clk: prevent orphan access on non-devicetree platforms too
+
+The orphan-check in __of_clk_get_from_provider only prevents orphan-access
+on devicetree platforms. To bring non-dt platforms to the same level of
+functionality let clk_get_sys (called from clk_get for non-dt platforms)
+also check for orphans and return -EPROBE_DEFER in that case.
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
+ drivers/clk/clk.c    | 2 +-
+ drivers/clk/clk.h    | 5 +++++
+ drivers/clk/clkdev.c | 5 +++++
+ 3 files changed, 11 insertions(+), 1 deletion(-)
 
-Changes since v1:
- * Pass parent map to _freq_tbl_determine_rate()
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 36d1a01..167d0bf 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2220,7 +2220,7 @@ static inline void clk_debug_unregister(struct clk_core *core)
+ }
+ #endif
+ 
+-static bool clk_is_orphan(const struct clk *clk)
++bool clk_is_orphan(const struct clk *clk)
+ {
+ 	if (!clk)
+ 		return false;
+diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
+index 00b35a1..b8a6061 100644
+--- a/drivers/clk/clk.h
++++ b/drivers/clk/clk.h
+@@ -20,6 +20,7 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+ struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+ 			     const char *con_id);
+ void __clk_free_clk(struct clk *clk);
++bool clk_is_orphan(const struct clk *clk);
+ #else
+ /* All these casts to avoid ifdefs in clkdev... */
+ static inline struct clk *
+@@ -32,5 +33,9 @@ static struct clk_hw *__clk_get_hw(struct clk *clk)
+ {
+ 	return (struct clk_hw *)clk;
+ }
++static inline bool clk_is_orphan(const struct clk *clk)
++{
++	return false;
++}
+ 
+ #endif
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 1fcb6ef..ad96775 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -177,6 +177,11 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
+ 	if (!cl)
+ 		goto out;
+ 
++	if (clk_is_orphan(cl->clk)) {
++		clk = ERR_PTR(-EPROBE_DEFER);
++		goto out;
++	}
++
+ 	clk = __clk_create_clk(__clk_get_hw(cl->clk), dev_id, con_id);
+ 	if (IS_ERR(clk))
+ 		goto out;
+-- 
+2.1.4
 
- drivers/clk/qcom/clk-rcg.c  |   26 ++++++++++++++++++++------
- drivers/clk/qcom/clk-rcg2.c |   20 +++++++++++++++-----
- 2 files changed, 35 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-rcg.c b/drivers/clk/qcom/clk-rcg.c
-index 8f2f48071a7a..7b3d62674203 100644
---- a/drivers/clk/qcom/clk-rcg.c
-+++ b/drivers/clk/qcom/clk-rcg.c
-@@ -319,7 +319,7 @@ static int clk_dyn_rcg_set_parent(struct clk_hw *hw, u8 index)
- 	if (banked_p)
- 		f.pre_div = ns_to_pre_div(&rcg->p[bank], ns) + 1;
- 
--	f.src = index;
-+	f.src = qcom_find_src_index(hw, rcg->s[bank].parent_map, index);
- 	return configure_bank(rcg, &f);
- }
- 
-@@ -407,17 +407,23 @@ clk_dyn_rcg_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- static long _freq_tbl_determine_rate(struct clk_hw *hw,
- 		const struct freq_tbl *f, unsigned long rate,
- 		unsigned long min_rate, unsigned long max_rate,
--		unsigned long *p_rate, struct clk_hw **p_hw)
-+		unsigned long *p_rate, struct clk_hw **p_hw,
-+		const struct parent_map *parent_map)
- {
- 	unsigned long clk_flags;
- 	struct clk *p;
-+	int index;
- 
- 	f = qcom_find_freq(f, rate);
- 	if (!f)
- 		return -EINVAL;
- 
-+	index = qcom_find_src_index(hw, parent_map, f->src);
-+	if (index < 0)
-+		return index;
-+
- 	clk_flags = __clk_get_flags(hw->clk);
--	p = clk_get_parent_by_index(hw->clk, f->src);
-+	p = clk_get_parent_by_index(hw->clk, index);
- 	if (clk_flags & CLK_SET_RATE_PARENT) {
- 		rate = rate * f->pre_div;
- 		if (f->n) {
-@@ -442,7 +448,7 @@ static long clk_rcg_determine_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_rcg *rcg = to_clk_rcg(hw);
- 
- 	return _freq_tbl_determine_rate(hw, rcg->freq_tbl, rate, min_rate,
--			max_rate, p_rate, p);
-+			max_rate, p_rate, p, rcg->s.parent_map);
- }
- 
- static long clk_dyn_rcg_determine_rate(struct clk_hw *hw, unsigned long rate,
-@@ -450,9 +456,16 @@ static long clk_dyn_rcg_determine_rate(struct clk_hw *hw, unsigned long rate,
- 		unsigned long *p_rate, struct clk_hw **p)
- {
- 	struct clk_dyn_rcg *rcg = to_clk_dyn_rcg(hw);
-+	u32 reg;
-+	int bank;
-+	struct src_sel *s;
-+
-+	regmap_read(rcg->clkr.regmap, rcg->bank_reg, &reg);
-+	bank = reg_to_bank(rcg, reg);
-+	s = &rcg->s[bank];
- 
- 	return _freq_tbl_determine_rate(hw, rcg->freq_tbl, rate, min_rate,
--			max_rate, p_rate, p);
-+			max_rate, p_rate, p, s->parent_map);
- }
- 
- static long clk_rcg_bypass_determine_rate(struct clk_hw *hw, unsigned long rate,
-@@ -462,8 +475,9 @@ static long clk_rcg_bypass_determine_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_rcg *rcg = to_clk_rcg(hw);
- 	const struct freq_tbl *f = rcg->freq_tbl;
- 	struct clk *p;
-+	int index = qcom_find_src_index(hw, rcg->s.parent_map, f->src);
- 
--	p = clk_get_parent_by_index(hw->clk, f->src);
-+	p = clk_get_parent_by_index(hw->clk, index);
- 	*p_hw = __clk_get_hw(p);
- 	*p_rate = __clk_round_rate(p, rate);
- 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 416becce4170..b95d17fbb8d7 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -182,13 +182,19 @@ static long _freq_tbl_determine_rate(struct clk_hw *hw,
- {
- 	unsigned long clk_flags;
- 	struct clk *p;
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	int index;
- 
- 	f = qcom_find_freq(f, rate);
- 	if (!f)
- 		return -EINVAL;
- 
-+	index = qcom_find_src_index(hw, rcg->parent_map, f->src);
-+	if (index < 0)
-+		return index;
-+
- 	clk_flags = __clk_get_flags(hw->clk);
--	p = clk_get_parent_by_index(hw->clk, f->src);
-+	p = clk_get_parent_by_index(hw->clk, index);
- 	if (clk_flags & CLK_SET_RATE_PARENT) {
- 		if (f->pre_div) {
- 			rate /= 2;
-@@ -381,9 +387,10 @@ static long clk_edp_pixel_determine_rate(struct clk_hw *hw, unsigned long rate,
- 	s64 request;
- 	u32 mask = BIT(rcg->hid_width) - 1;
- 	u32 hid_div;
-+	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
- 
- 	/* Force the correct parent */
--	*p = __clk_get_hw(clk_get_parent_by_index(hw->clk, f->src));
-+	*p = __clk_get_hw(clk_get_parent_by_index(hw->clk, index));
- 
- 	if (src_rate == 810000000)
- 		frac = frac_table_810m;
-@@ -427,6 +434,7 @@ static long clk_byte_determine_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
- 	const struct freq_tbl *f = rcg->freq_tbl;
-+	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
- 	unsigned long parent_rate, div;
- 	u32 mask = BIT(rcg->hid_width) - 1;
- 	struct clk *p;
-@@ -434,7 +442,7 @@ static long clk_byte_determine_rate(struct clk_hw *hw, unsigned long rate,
- 	if (rate == 0)
- 		return -EINVAL;
- 
--	p = clk_get_parent_by_index(hw->clk, f->src);
-+	p = clk_get_parent_by_index(hw->clk, index);
- 	*p_hw = __clk_get_hw(p);
- 	*p_rate = parent_rate = __clk_round_rate(p, rate);
- 
-@@ -496,7 +504,8 @@ static long clk_pixel_determine_rate(struct clk_hw *hw, unsigned long rate,
- 	int delta = 100000;
- 	const struct freq_tbl *f = rcg->freq_tbl;
- 	const struct frac_entry *frac = frac_table_pixel;
--	struct clk *parent = clk_get_parent_by_index(hw->clk, f->src);
-+	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
-+	struct clk *parent = clk_get_parent_by_index(hw->clk, index);
- 
- 	*p = __clk_get_hw(parent);
- 
-@@ -525,7 +534,8 @@ static int clk_pixel_set_rate(struct clk_hw *hw, unsigned long rate,
- 	int delta = 100000;
- 	u32 mask = BIT(rcg->hid_width) - 1;
- 	u32 hid_div;
--	struct clk *parent = clk_get_parent_by_index(hw->clk, f.src);
-+	int index = qcom_find_src_index(hw, rcg->parent_map, f.src);
-+	struct clk *parent = clk_get_parent_by_index(hw->clk, index);
- 
- 	for (; frac->num; frac++) {
- 		request = (rate * frac->den) / frac->num;
