@@ -1,118 +1,47 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	matthias.bgg@gmail.com
-Cc: henryc.chen@mediatek.com,
-	s.hauer@pengutronix.de,
-	jamesjj.liao@mediatek.com,
-	p.zabel@pengutronix.de,
-	manabian@gmail.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+To: Kukjin Kim <kgene@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 2/3] clk: mediatek: Add support for clk-mux using regmap
-Date: Fri, 29 May 2015 18:01:27 +0200
-Message-Id: <1432915288-14034-3-git-send-email-matthias.bgg@gmail.com>
-In-Reply-To: <1432915288-14034-1-git-send-email-matthias.bgg@gmail.com>
-References: <1432915288-14034-1-git-send-email-matthias.bgg@gmail.com>
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH 1/2] clk: s3c2410: Staticize local symbols
+Date: Sat,  2 May 2015 01:02:47 +0900
+Message-Id: <1430496168-32408-1-git-send-email-k.kozlowski.k@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patches adds support for the mediatek clocks to be able to register
-and use a clk-mux wich relies on regmap.
+Staticize symbols not exported and not used outside of file.
 
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 ---
- drivers/clk/mediatek/clk-mtk.c | 37 +++++++++++++++++++++++++++++++++++++
- drivers/clk/mediatek/clk-mtk.h | 26 ++++++++++++++++++++++++++
- 2 files changed, 63 insertions(+)
+ drivers/clk/samsung/clk-s3c2410-dclk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 18444ae..cf953a8 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -111,6 +111,43 @@ int mtk_clk_register_gates(struct device_node *node, const struct mtk_gate *clks
- 	return 0;
+diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+index f4f29ed6bd25..db6fddb211d4 100644
+--- a/drivers/clk/samsung/clk-s3c2410-dclk.c
++++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+@@ -81,13 +81,13 @@ static int s3c24xx_clkout_set_parent(struct clk_hw *hw, u8 index)
+ 	return ret;
  }
  
-+int mtk_clk_regm_register_mux(struct device_node *node,
-+		const struct mtk_regm_mux *clks, int num,
-+		struct clk_onecell_data *clk_data)
-+{
-+	int i;
-+	struct clk *clk;
-+	struct regmap *regmap;
-+
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	regmap = syscon_node_to_regmap(node);
-+	if (IS_ERR(regmap)) {
-+		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
-+				PTR_ERR(regmap));
-+		return PTR_ERR(regmap);
-+	}
-+
-+	for (i = 0; i < num; i++) {
-+		const struct mtk_regm_mux *mux = &clks[i];
-+
-+		clk = clk_regm_register_mux(NULL, mux->name, mux->parent_names,
-+					mux->num_parents, 0, regmap,
-+					mux->mux_offset, mux->mux_shift,
-+					mux->mux_width, mux->flags, NULL);
-+		if (IS_ERR(clk)) {
-+			pr_err("Failed to register clk mux %s: %ld\n",
-+					mux->name, PTR_ERR(clk));
-+			continue;
-+		}
-+
-+		clk_data->clks[mux->id] = clk;
-+	}
-+
-+	return 0;
-+}
-+
- struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
- 		void __iomem *base, spinlock_t *lock)
- {
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index 61035b9..3f41725 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -156,6 +156,32 @@ void __init mtk_clk_register_plls(struct device_node *node,
- 		const struct mtk_pll_data *plls, int num_plls,
- 		struct clk_onecell_data *clk_data);
+-const struct clk_ops s3c24xx_clkout_ops = {
++static const struct clk_ops s3c24xx_clkout_ops = {
+ 	.get_parent = s3c24xx_clkout_get_parent,
+ 	.set_parent = s3c24xx_clkout_set_parent,
+ 	.determine_rate = __clk_mux_determine_rate,
+ };
  
-+struct mtk_regm_mux {
-+	int id;
-+	const char *name;
-+	const char * const *parent_names;
-+	u8 num_parents;
-+	unsigned flags;
-+	uint32_t mux_offset;
-+	uint32_t mux_shift;
-+	uint32_t mux_width;
-+};
-+
-+int __init mtk_clk_regm_register_mux(struct device_node *node,
-+		const struct mtk_regm_mux *clks, int num,
-+		struct clk_onecell_data *clk_data);
-+
-+#define MUX_REGMAP(_id, _name, _parents, _offset, _shift, _width) {	\
-+		.id = _id,						\
-+		.name = _name,						\
-+		.parent_names = _parents,				\
-+		.num_parents = ARRAY_SIZE(_parents),			\
-+		.flags = CLK_SET_RATE_PARENT,				\
-+		.mux_offset = _offset,					\
-+		.mux_shift = _shift,					\
-+		.mux_width = _width,					\
-+	}
-+
- #ifdef CONFIG_RESET_CONTROLLER
- void mtk_register_reset_controller(struct device_node *np,
- 			unsigned int num_regs, int regofs);
+-struct clk *s3c24xx_register_clkout(struct device *dev, const char *name,
++static struct clk *s3c24xx_register_clkout(struct device *dev, const char *name,
+ 		const char **parent_names, u8 num_parents,
+ 		u8 shift, u32 mask)
+ {
 -- 
-1.9.1
+2.1.4
