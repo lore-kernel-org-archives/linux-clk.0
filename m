@@ -1,189 +1,98 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <tony@atomide.com>,
-        <paul@pwsan.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv3 18/27] clk: ti: omap2430: move clock support code under clock driver
-Date: Mon, 25 May 2015 18:00:23 +0300
-Message-ID: <1432566032-10860-19-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
-References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Message-ID: <5543369F.2070207@gmail.com>
+Date: Fri, 01 May 2015 10:17:35 +0200
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Michael Welling <mwelling@ieee.org>
+CC: Mike Turquette <mturquette@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Jean-Francois Moine <moinejf@free.fr>,
+ Russell King <rmk+linux@arm.linux.org.uk>,
+ Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+ Gregory Clement <gregory.clement@free-electrons.com>,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] clk: si5351: Some fixes
+References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com> <20150430193317.GC22000@deathray> <55429417.4070103@gmail.com> <20150430212059.GA14026@deathray> <5542AAE0.5020204@gmail.com> <20150430223603.GA18006@deathray>
+In-Reply-To: <20150430223603.GA18006@deathray>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-With the legacy clock support gone, this is no longer needed under
-platform code-base. Thus, move this under the TI clock driver, and
-remove the exported API from the public header.
+On 01.05.2015 00:36, Michael Welling wrote:
+> On Fri, May 01, 2015 at 12:21:20AM +0200, Sebastian Hesselbarth wrote:
+>> On 30.04.2015 23:20, Michael Welling wrote:
+>>> On Thu, Apr 30, 2015 at 10:44:07PM +0200, Sebastian Hesselbarth wrote:
+>> [...]
+>>>> What I noticed about your clk2 that you always measure as 0 Hz is
+>>>> that none of your clocks is prepared/enabled.
+>>>>
+>>>> Currently, the si5351 driver only ensures the output is enabled
+>>>> when si5351_clkout_prepare() is called.
+>>>>
+>>>> As long as you do not have a clk consumer that properly prepare/enables
+>>>> the clock output, it may remain disabled.
+>>>>
+>>>> We should probably have additional DT properties and corresponding
+>>>> pdata to force clkoutN always on.
+>>>
+>>> Does the silabs,disable-state of 3 (SI5351_DISABLE_NEVER) take care
+>>> of this?
+>>
+>> That would be the HW version of never disabling the clock output.
+>> I never really tried the property, does it work as expected?
+>
+> This did not appear to effect the behavior.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/Makefile    |    1 -
- arch/arm/mach-omap2/clock2430.c |   57 ---------------------------------------
- drivers/clk/ti/clkt_iclk.c      |   35 ++++++++++++++++++++++++
- drivers/clk/ti/clock.h          |    1 +
- include/linux/clk/ti.h          |    1 -
- 5 files changed, 36 insertions(+), 59 deletions(-)
- delete mode 100644 arch/arm/mach-omap2/clock2430.c
+I think it is also a good idea to expose register values to debugfs,
+so we can easily check what is really written into internal registers.
 
-diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
-index 07052656..695d58f 100644
---- a/arch/arm/mach-omap2/Makefile
-+++ b/arch/arm/mach-omap2/Makefile
-@@ -185,7 +185,6 @@ obj-$(CONFIG_ARCH_OMAP2)		+= $(clock-common)
- obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpllcore.o
- obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_virt_prcm_set.o
- obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpll.o
--obj-$(CONFIG_SOC_OMAP2430)		+= clock2430.o
- obj-$(CONFIG_ARCH_OMAP3)		+= $(clock-common)
- obj-$(CONFIG_ARCH_OMAP3)		+= clock34xx.o clkt34xx_dpll3m2.o
- obj-$(CONFIG_ARCH_OMAP3)		+= clock3517.o
-diff --git a/arch/arm/mach-omap2/clock2430.c b/arch/arm/mach-omap2/clock2430.c
-deleted file mode 100644
-index cef0c8d..0000000
---- a/arch/arm/mach-omap2/clock2430.c
-+++ /dev/null
-@@ -1,57 +0,0 @@
--/*
-- * clock2430.c - OMAP2430-specific clock integration code
-- *
-- * Copyright (C) 2005-2008 Texas Instruments, Inc.
-- * Copyright (C) 2004-2010 Nokia Corporation
-- *
-- * Contacts:
-- * Richard Woodruff <r-woodruff2@ti.com>
-- * Paul Walmsley
-- *
-- * Based on earlier work by Tuukka Tikkanen, Tony Lindgren,
-- * Gordon McNutt and RidgeRun, Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--#undef DEBUG
--
--#include <linux/kernel.h>
--#include <linux/clk.h>
--#include <linux/io.h>
--
--#include "soc.h"
--#include "iomap.h"
--#include "clock.h"
--#include "clock2xxx.h"
--#include "cm2xxx.h"
--#include "cm-regbits-24xx.h"
--
--/**
-- * omap2430_clk_i2chs_find_idlest - return CM_IDLEST info for 2430 I2CHS
-- * @clk: struct clk * being enabled
-- * @idlest_reg: void __iomem ** to store CM_IDLEST reg address into
-- * @idlest_bit: pointer to a u8 to store the CM_IDLEST bit shift into
-- * @idlest_val: pointer to a u8 to store the CM_IDLEST indicator
-- *
-- * OMAP2430 I2CHS CM_IDLEST bits are in CM_IDLEST1_CORE, but the
-- * CM_*CLKEN bits are in CM_{I,F}CLKEN2_CORE.  This custom function
-- * passes back the correct CM_IDLEST register address for I2CHS
-- * modules.  No return value.
-- */
--static void omap2430_clk_i2chs_find_idlest(struct clk_hw_omap *clk,
--					   void __iomem **idlest_reg,
--					   u8 *idlest_bit,
--					   u8 *idlest_val)
--{
--	*idlest_reg = OMAP2430_CM_REGADDR(CORE_MOD, CM_IDLEST);
--	*idlest_bit = clk->enable_bit;
--	*idlest_val = OMAP24XX_CM_IDLEST_VAL;
--}
--
--/* 2430 I2CHS has non-standard IDLEST register */
--const struct clk_hw_omap_ops clkhwops_omap2430_i2chs_wait = {
--	.find_idlest	= omap2430_clk_i2chs_find_idlest,
--	.find_companion	= omap2_clk_dflt_find_companion,
--};
-diff --git a/drivers/clk/ti/clkt_iclk.c b/drivers/clk/ti/clkt_iclk.c
-index a03919d..38c3690 100644
---- a/drivers/clk/ti/clkt_iclk.c
-+++ b/drivers/clk/ti/clkt_iclk.c
-@@ -18,8 +18,12 @@
- #include "clock.h"
- 
- /* Register offsets */
-+#define OMAP24XX_CM_FCLKEN2		0x04
- #define CM_AUTOIDLE			0x30
- #define CM_ICLKEN			0x10
-+#define CM_IDLEST			0x20
-+
-+#define OMAP24XX_CM_IDLEST_VAL		0
- 
- /* Private functions */
- 
-@@ -51,6 +55,31 @@ void omap2_clkt_iclk_deny_idle(struct clk_hw_omap *clk)
- 	ti_clk_ll_ops->clk_writel(v, r);
- }
- 
-+/**
-+ * omap2430_clk_i2chs_find_idlest - return CM_IDLEST info for 2430 I2CHS
-+ * @clk: struct clk * being enabled
-+ * @idlest_reg: void __iomem ** to store CM_IDLEST reg address into
-+ * @idlest_bit: pointer to a u8 to store the CM_IDLEST bit shift into
-+ * @idlest_val: pointer to a u8 to store the CM_IDLEST indicator
-+ *
-+ * OMAP2430 I2CHS CM_IDLEST bits are in CM_IDLEST1_CORE, but the
-+ * CM_*CLKEN bits are in CM_{I,F}CLKEN2_CORE.  This custom function
-+ * passes back the correct CM_IDLEST register address for I2CHS
-+ * modules.  No return value.
-+ */
-+static void omap2430_clk_i2chs_find_idlest(struct clk_hw_omap *clk,
-+					   void __iomem **idlest_reg,
-+					   u8 *idlest_bit,
-+					   u8 *idlest_val)
-+{
-+	u32 r;
-+
-+	r = ((__force u32)clk->enable_reg ^ (OMAP24XX_CM_FCLKEN2 ^ CM_IDLEST));
-+	*idlest_reg = (__force void __iomem *)r;
-+	*idlest_bit = clk->enable_bit;
-+	*idlest_val = OMAP24XX_CM_IDLEST_VAL;
-+}
-+
- /* Public data */
- 
- const struct clk_hw_omap_ops clkhwops_iclk = {
-@@ -64,3 +93,9 @@ const struct clk_hw_omap_ops clkhwops_iclk_wait = {
- 	.find_idlest	= omap2_clk_dflt_find_idlest,
- 	.find_companion	= omap2_clk_dflt_find_companion,
- };
-+
-+/* 2430 I2CHS has non-standard IDLEST register */
-+const struct clk_hw_omap_ops clkhwops_omap2430_i2chs_wait = {
-+	.find_idlest	= omap2430_clk_i2chs_find_idlest,
-+	.find_companion	= omap2_clk_dflt_find_companion,
-+};
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index f215383..3652c26 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -178,6 +178,7 @@ extern const struct clk_hw_omap_ops clkhwops_omap4_dpllmx;
- extern const struct clk_hw_omap_ops clkhwops_wait;
- extern const struct clk_hw_omap_ops clkhwops_iclk;
- extern const struct clk_hw_omap_ops clkhwops_iclk_wait;
-+extern const struct clk_hw_omap_ops clkhwops_omap2430_i2chs_wait;
- 
- int omap2_dflt_clk_enable(struct clk_hw *hw);
- void omap2_dflt_clk_disable(struct clk_hw *hw);
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 891fe0f..a7728f7 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -333,7 +333,6 @@ void ti_clk_setup_features(struct ti_clk_features *features);
- struct ti_clk_features *ti_clk_get_features(void);
- 
- extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
--extern const struct clk_hw_omap_ops clkhwops_omap2430_i2chs_wait;
- extern const struct clk_hw_omap_ops clkhwops_omap3430es2_dss_usbhost_wait;
- extern const struct clk_hw_omap_ops clkhwops_am35xx_ipss_module_wait;
- extern const struct clk_hw_omap_ops clkhwops_am35xx_ipss_wait;
--- 
-1.7.9.5
+>>
+>>> Otherwise is there a simple registration that will do this?
+>>
+>> The SW version of such a property would involve CLK_IGNORE_UNUSED
+>> and enabling all requested clock outputs on probe().
+>>
+>> If above HW property already works, I think it should be enough.
+>>
+>> [...]
+>>>>> It should be noted that if I program the device's register map in the
+>>>>> bootloader the device keeps the correct frequency outputs.
+>>>>
+>>>> "keeps"? You mean "generates", don't you?
+>>>>
+>>>
+>>> Yes the clocks are generated and do not get effected by the driver.
+>>
+>> IIRC, clk API does check if requested rate and current rate match
+>> already. If they do, it does not request the same rate again.
+>
+> So I found that the audio codec that I am driving with clk2 could
+> register the clock and allowed the clock to be enabled and disabled
+> by playing audio.
+>
+> This is when I noticed some strange behavior. The first time I attempt
+> to play audio the clock does not turn on blocking the audio from playing.
+> After I interrupt and the clock is disabled for the first time, the
+> successive clock enables work as expected.
+
+Does "does not turn on" mean you cannot measure any clock on the
+output or is it just a guess because audio does not play?
+
+It could be that we just need to add some delay when we enable a clock
+output. Datasheet just says 10us max from OEB pin pulled low to valid
+clock output - not exactly what we are looking for but it could be a
+good start.
+
+> Something tells me that a fault off some kind is occurring on initial
+> configuration.
+
+What I noticed when adding the pll reset and checking DEVICE_STATUS is
+that SYS_INIT is still set. According to the datasheet, the meaning of
+the bit is that si5351 is still copying NVM content to its internal
+registers and therefore, we shouldn't try to access them.
+
+What really irritates me about it is that it is seconds after power-up
+and copying the contents shouldn't really take _that_ long. However,
+the datasheet does not mention anything about how long it may take.
+
+Sebastian
