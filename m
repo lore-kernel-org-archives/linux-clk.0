@@ -1,40 +1,61 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 13 May 2015 00:35:03 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-kernel@vger.kernel.org, Mike Turquette <mturquette@linaro.org>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/6] clk: asm9260: Fix of_io_request_and_map error check
-Message-ID: <20150513073503.GA15988@codeaurora.org>
-References: <1430579006-32702-1-git-send-email-maxime.ripard@free-electrons.com>
- <1430579006-32702-2-git-send-email-maxime.ripard@free-electrons.com>
- <20150511194336.GH10961@lukather>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v3 03/20] clk: tegra: pll: add tegra_pll_wait_for_lock to clk header
+Date: Fri, 1 May 2015 14:53:50 -0400
+Message-ID: <1430506447-29074-4-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
+References: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20150511194336.GH10961@lukather>
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/11, Maxime Ripard wrote:
-> Mike, Stephen,
-> 
-> On Sat, May 02, 2015 at 05:03:21PM +0200, Maxime Ripard wrote:
-> > of_io_request_and map returns an error pointer, but the current code assumes
-> > that on error the returned pointer will be NULL.
-> > 
-> > Obviously, that makes the check completely useless. Change the test to actually
-> > check for the proper error code.
-> > 
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > Cc: Mike Turquette <mturquette@linaro.org>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: linux-clk@vger.kernel.org
-> 
-> There doesn't seem to be a sub-maintainer for that driver, I guess it
-> should go through your tree?
-> 
+Create a wrapper interface to make use of the existing
+clk_pll_wait_for_lock. This will be useful for implementations
+of callbacks in Tegra SoC specific clock drivers.
 
-Yep. Applied to clk-next.
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c |    5 +++++
+ drivers/clk/tegra/clk.h     |    1 +
+ 2 files changed, 6 insertions(+)
 
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 05c6d08a6695..b9a739ce4b98 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -269,6 +269,11 @@ static int clk_pll_wait_for_lock(struct tegra_clk_pll *pll)
+ 	return -1;
+ }
+ 
++int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll)
++{
++	return clk_pll_wait_for_lock(pll);
++}
++
+ static int clk_pll_is_enabled(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 2abb6e1b7d93..4ea8b5b089cd 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -659,5 +659,6 @@ void tegra114_clock_deassert_dfll_dvco_reset(void);
+ 
+ typedef void (*tegra_clk_apply_init_table_func)(void);
+ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
++int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
+ 
+ #endif /* TEGRA_CLK_H */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
