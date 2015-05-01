@@ -1,92 +1,203 @@
-Return-Path: <grygorii.strashko@linaro.org>
-Return-Path: <grygorii.strashko@linaro.org>
-From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Message-ID: <5567316A.9030003@linaro.org>
-Date: Thu, 28 May 2015 18:16:58 +0300
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mturquette@linaro.org, dianders@chromium.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Alex Elder <elder@linaro.org>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Max Filippov <jcmvbkbc@gmail.com>, kernel@pengutronix.de,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Chao Xie <chao.xie@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Georgi Djakov <georgi.djakov@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Barry Song <baohua@kernel.org>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Viresh Kumar <viresh.linux@gmail.com>,
+	Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
+	emilio@elopez.com.ar,
+	Peter De Sc hrijver <pdeschrijver@nvidia.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
+Date: Sat, 02 May 2015 00:07:41 +0200
+Message-ID: <22709390.NTAlubMgNB@diego>
+In-Reply-To: <5543E79F.2080400@codeaurora.org>
+References: <1429735986-18592-1-git-send-email-heiko@sntech.de> <1981330.kGUrTurMy5@diego> <5543E79F.2080400@codeaurora.org>
 MIME-Version: 1.0
-To: Jim Quinlan <jim2101024@gmail.com>,
- Michael Turquette <mturquette@linaro.org>
-CC: linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH] clk: export function clk_disable_unused()
-References: <1431728556-620-1-git-send-email-jim2101024@gmail.com>	<20150523193321.9817.1715@quantum> <CANCKTBsZr-Ew97TX60u416Lhw4tEBfMkDUGn1yw13ThMrz3z9Q@mail.gmail.com>
-In-Reply-To: <CANCKTBsZr-Ew97TX60u416Lhw4tEBfMkDUGn1yw13ThMrz3z9Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/28/2015 05:21 PM, Jim Quinlan wrote:
-
-> We are currently doing [1].  We'd like to change this so that we are
-> the same as upstream barring a small syscore driver that will call
-> clk_disable_unused() on S2/S3 resume.  My patch reflects the
-> suggestion found in [2], which says, "... It could still be generic by
-> exporting the clk_disable_unused() function to drivers...".
+Am Freitag, 1. Mai 2015, 13:52:47 schrieb Stephen Boyd:
+> On 05/01/15 12:59, Heiko Stübner wrote:
+> > Am Donnerstag, 30. April 2015, 17:19:01 schrieb Stephen Boyd:
+> >> On 04/22, Heiko Stuebner wrote:
+> >>> Using orphan clocks can introduce strange behaviour as they don't have
+> >>> rate information at all and also of course don't track
+> >>> 
+> >>> This v2/v3 takes into account suggestions from Stephen Boyd to not try
+> >>> to
+> >>> walk the clock tree at runtime but instead keep track of orphan states
+> >>> on clock tree changes and making it mandatory for everybody from the
+> >>> start as orphaned clocks should not be used at all.
+> >>> 
+> >>> 
+> >>> This fixes an issue on most rk3288 platforms, where some soc-clocks
+> >>> are supplied by a 32khz clock from an external i2c-chip which often
+> >>> is only probed later in the boot process and maybe even after the
+> >>> drivers using these soc-clocks like the tsadc temperature sensor.
+> >>> In this case the driver using the clock should of course defer probing
+> >>> until the clock is actually usable.
+> >>> 
+> >>> 
+> >>> As this changes the behaviour for orphan clocks, it would of course
+> >>> benefit from more testing than on my Rockchip boards. To keep the
+> >>> recipent-list reasonable and not spam to much I selected one (the
+> >>> topmost)
+> >>> from the get_maintainer output of each drivers/clk entry.
+> >>> Hopefully some will provide Tested-by-tags :-)
+> >> 
+> >> <grumble> I don't see any Tested-by: tags yet </grumble>. I've
+> >> put these two patches on a separate branch "defer-orphans" and
+> >> pushed it to clk-next so we can give it some more exposure.
+> >> 
+> >> Unfortunately this doesn't solve the orphan problem for non-OF
+> >> providers. What if we did the orphan check in __clk_create_clk()
+> >> instead and returned an error pointer for orphans? I suspect that
+> >> will solve all cases, right?
+> > 
+> > hmm, clk_register also uses __clk_create_clk, which in turn would prevent
+> > registering orphan-clocks at all, I'd think.
+> > As on my platform I'm dependant on orphan clocks (the soc-level clock gets
+> > registerted as part of the big clock controller way before the i2c-based
+> > supplying clock), I'd rather not touch this :-) .
 > 
-> We do not have the general problems you are alluding to.  With few
-> exceptions, we do not yet use power domains or runtime PM, although of
-> course this may change.  Our drivers  use either syscore calls or
-> SIMPLE_DEV_PM_OPS() to turn off/on clocks as needed during S2/S3
-> suspend/resume.  The problem we have is when the software stack omits
-> a driver or we have a new HW block which has no driver.  On boot,
-> clk_disable_unused() turns off the clocks that these missing drivers
-> would normally use*.  But on resumption of S2/S3, these clocks get
-> turned on by HW, and all I am asking is that clk_disable_unused() be
-> exported so a driver may invoke it to do the same thing it does during
-> boot.
+> Have no fear! We should just change clk_register() to call a
+> __clk_create_clk() type function that doesn't check for orphan status.
 
-This issue is much more simpler then saving/restoring of clocks state, so
-may be it can be solved first.
-
-Taking to the account comments from [2] I think that could be
-done inside clk core using PM notifiers, 
-and sysfs/module parameter can be used to enable/disable this feature, like:
- PM_POST_SUSPEND:
- PM_POST_HIBERNATION:
- PM_RESTORE_PREPARE:
-	if (clk_disable_unused_on_suspend)
-		clk_disable_unused();
+ok :-D
 
 
-Mike, What do you think?
+> > Instead I guess we could hook it less deep into clk_get_sys, like in the
+> > following patch?
+> 
+> It looks like it will work at least, but still I'd prefer to keep the
+> orphan check contained to clk.c. How about this compile tested only patch?
+
+I gave this a spin on my rk3288-firefly board. It still boots, the clock tree 
+looks the same and it also still defers nicely in the scenario I needed it 
+for. The implementation also looks nice - and of course much more compact than 
+my check in two places :-) . I don't know if you want to put this as follow-up 
+on top or fold it into the original orphan-check, so in any case
+
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+
+> This also brings up an existing problem with clk_unregister() where
+> orphaned clocks are sitting out there useable by drivers when their
+> parent is unregistered. That code could use some work to atomically
+> switch all the orphaned clocks over to use the nodrv_ops.
+
+Not sure I understand this correctly yet, but when these children get 
+orphaned, switched to the clk_nodrv_ops, they won't get their original ops 
+back if the parent reappears.
+
+So I guess we would need to store the original ops in secondary property of 
+struct clk_core and I guess simply bind the ops-switch to the orphan state 
+update?
+
 
 > 
-> * Why the HW turns these clocks on in the first place is a question I
-> cannot answer.
-> [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/311568.html
-> [2] http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/311575.html
+> ----8<-----
 > 
-> On Sat, May 23, 2015 at 3:33 PM, Michael Turquette
-> <mturquette@linaro.org> wrote:
->> Quoting Jim Quinlan (2015-05-15 15:22:36)
->>> For Broadcom STB chips, clocks may come up after resume in an "on"
->>> state, so calling clk_disable_unused() again will turn off unused
->>> clocks.  This commit exports clk_disable_unused() so it may be
->>> called in such cases.
->>
->> Jim,
->>
->> Thanks for the patch.
->>
->> I think a more general solution to the problem might be needed. E.g. how
->> do we solve for the opposite case where after a low-power suspend/resume
->> we turn on clocks that were enabled by drivers before suspending, but
->> are disabled out of reset/post-transition?
->>
->> Additionally, it would be helpful to see your driver changes and how
->> exactly you plan to use this newly exported function.
->>
->> I've Cc'd Grygorii Strashko from TI. I faintly recall that he had an
->> out-of-tree solution to add some .suspend/.resume callbacks to struct
->> clk_ops. I didn't like that solution at the time either, but maybe we
->> can figure out a more natural way to handle these cases.
->>
->> (Grygorii: sorry in advance if this is a case of mistaken identity. I
->> could not find the code in question from my email archive)
->>
->> Regards,
->> Mike
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 30d45c657a07..1d23daa42dd2 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2221,14 +2221,6 @@ static inline void clk_debug_unregister(struct
+> clk_core *core) }
+>  #endif
+> 
+> -static bool clk_is_orphan(const struct clk *clk)
+> -{
+> -	if (!clk)
+> -		return false;
+> -
+> -	return clk->core->orphan;
+> -}
+> -
+>  /**
+>   * __clk_init - initialize the data structures in a struct clk
+>   * @dev:	device initializing this clk, placeholder for now
+> @@ -2420,15 +2412,11 @@ out:
+>  	return ret;
+>  }
+> 
+> -struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+> -			     const char *con_id)
+> +static struct clk *clk_hw_create_clk(struct clk_hw *hw, const char *dev_id,
+> +				     const char *con_id)
+>  {
+>  	struct clk *clk;
+> 
+> -	/* This is to allow this function to be chained to others */
+> -	if (!hw || IS_ERR(hw))
+> -		return (struct clk *) hw;
+> -
+>  	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
+>  	if (!clk)
+>  		return ERR_PTR(-ENOMEM);
+> @@ -2445,6 +2433,19 @@ struct clk *__clk_create_clk(struct clk_hw *hw, const
+> char *dev_id, return clk;
+>  }
+> 
+> +struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+> +			     const char *con_id)
+> +{
+> +	/* This is to allow this function to be chained to others */
+> +	if (!hw || IS_ERR(hw))
+> +		return (struct clk *) hw;
+> +
+> +	if (hw->core->orphan)
+> +		return ERR_PTR(-EPROBE_DEFER);
+> +
+> +	return clk_hw_create_clk(hw, dev_id, con_id);
+> +}
+> +
+>  void __clk_free_clk(struct clk *clk)
+>  {
+>  	clk_prepare_lock();
+> @@ -2511,7 +2512,7 @@ struct clk *clk_register(struct device *dev, struct
+> clk_hw *hw)
+> 
+>  	INIT_HLIST_HEAD(&core->clks);
+> 
+> -	hw->clk = __clk_create_clk(hw, NULL, NULL);
+> +	hw->clk = clk_hw_create_clk(hw, NULL, NULL);
+>  	if (IS_ERR(hw->clk)) {
+>  		ret = PTR_ERR(hw->clk);
+>  		goto fail_parent_names_copy;
+> @@ -2958,10 +2959,6 @@ struct clk *__of_clk_get_from_provider(struct
+> of_phandle_args *clkspec, if (provider->node == clkspec->np)
+>  			clk = provider->get(clkspec, provider->data);
+>  		if (!IS_ERR(clk)) {
+> -			if (clk_is_orphan(clk)) {
+> -				clk = ERR_PTR(-EPROBE_DEFER);
+> -				break;
+> -			}
+> 
+>  			clk = __clk_create_clk(__clk_get_hw(clk), dev_id,
+>  					       con_id);
 
-
-
--- 
-regards,
--grygorii
