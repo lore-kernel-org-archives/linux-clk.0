@@ -1,93 +1,223 @@
-Return-Path: <linux.amoon@gmail.com>
-Return-Path: <linux.amoon@gmail.com>
-From: Anand Moon <linux.amoon@gmail.com>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Mike Turquette <mturquette@linaro.org>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCHv3] clk samsung exynos5420 add CLK_RECALC_NEW_RATES flag to mout_apll and mout_kpll clock.
-Date: Fri,  8 May 2015 20:37:27 +0930
-Message-Id: <1431083247-3310-1-git-send-email-linux.amoon@gmail.com>
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>,
+	Bill Huang <bilhuang@nvidia.com>
+Subject: [PATCH v3 18/20] clk: tegra: Add Super Gen5 Logic
+Date: Fri, 1 May 2015 14:54:05 -0400
+Message-ID: <1430506447-29074-19-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
+References: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Addition of CLK_RECALC_NEW_RATES flag to support Exynos5420 cpu clk so that
-correct divider values are re-calculated after both pre/post
-clock notifiers had run for mout_apll clock and mout_kpll clock.
+From: Bill Huang <bilhuang@nvidia.com>
 
-Observation their is considerable improvement in cpufreq stats
-after applying this patch.
+Super clock divider control and clock source mux of Tegra210 has changed
+a little against prior SoCs, this patch adds Gen5 logic to address those
+differences.
 
-Governer : "performance"
-$ cpupower -c 1 frequency-info
-
-Below is table format of the output.
-cpufreq stats:  Frequency| Before | After  |
-CPU 1
-		200 MHz  | 22.07% | 46.57% |
-	       	300 MHz  | 1.08%  | 8.18%  |
-	       	400 MHz  | 0.17%  | 1.93%  |
-	       	500 MHz  | 0.24%  | 3.51%  |
-	       	600 MHz  | 0.37%  | 2.13%  |
-	       	700 MHz  | 0.20%  | 0.88%  |
-	       	800 MHz  | 0.09%  | 1.69%  |
-		900 MHz  | 0.05%  | 1.02%  |
-		1000 MHz | 0.02%  | 2.55%  |
-		1.10 GHz | 0.12%  | 1.17%  |
-		1.20 GHz | 0.05%  | 0.88%  |
-		1.30 GHz | 0.07%  | 0.38%  |
-		1.40 GHz | 0.04%  | 0.38%  |
-		1.50 GHz | 0.02%  | 0.00%  |
-		1.60 GHz | 0.00%  | 0.15%  |
-		1.70 GHz | 0.00%  | 0.44%  |
-		1.80 GHz | 75.43% | 28.26% |
-
-Governer : "performance"
-$ cpupower -c 0 frequency-info
-
-Below is table format of the output.
-cpufreq stats:	Frequency| Before | After  |
-CPU0 		200 MHz  | 33.95% | 60.31% |
-		300 MHz  | 4.64%  | 2.13%  |
-		400 MHz  | 1.50%  | 0.79%  |
-		500 MHz  | 1.46%  | 0.49%  |
-		600 MHz  | 0.05%  | 0.27%  |
-		700 MHz  | 0.68%  | 0.21%  |
-		800 MHz  | 0.08%  | 0.19%  |
-		900 MHz  | 0.09%  | 0.12%  |
-		1000 MHz | 0.20%  | 0.10%  |
-		1.10 GHz | 0.21%  | 0.11%, |
-		1.20 GHz | 0.51%  | 0.28%, |
-		1.30 GHz | 56.64% | 35.01% |
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2:
+  - Fixed sclk divider address (0x370 -> 0x2c)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 462aaee..6c7458c 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -618,10 +618,10 @@ static struct samsung_mux_clock exynos5x_mux_clks[] __initdata = {
- 	MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
+ drivers/clk/tegra/Makefile               |    1 +
+ drivers/clk/tegra/clk-tegra-super-gen5.c |  150 ++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk.h                  |    3 +
+ 3 files changed, 154 insertions(+)
+ create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
+
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index dbc9360e551c..0ba495b852e6 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -11,6 +11,7 @@ obj-y					+= clk-tegra-periph.o
+ obj-y					+= clk-tegra-pmc.o
+ obj-y					+= clk-tegra-fixed.o
+ obj-y					+= clk-tegra-super-gen4.o
++obj-y					+= clk-tegra-super-gen5.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
+ obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
+diff --git a/drivers/clk/tegra/clk-tegra-super-gen5.c b/drivers/clk/tegra/clk-tegra-super-gen5.c
+new file mode 100644
+index 000000000000..14c3c3ad2079
+--- /dev/null
++++ b/drivers/clk/tegra/clk-tegra-super-gen5.c
+@@ -0,0 +1,150 @@
++/*
++ * Copyright (c) 2015, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/io.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/delay.h>
++#include <linux/export.h>
++#include <linux/clk/tegra.h>
++
++#include "clk.h"
++#include "clk-id.h"
++
++#define PLLX_BASE 0xe0
++#define PLLX_MISC 0xe4
++#define PLLX_MISC2 0x514
++#define PLLX_MISC3 0x518
++
++#define CCLKG_BURST_POLICY 0x368
++#define CCLKLP_BURST_POLICY 0x370
++#define SCLK_DIVIDER 0x2c
++#define SCLK_BURST_POLICY 0x028
++#define SYSTEM_CLK_RATE 0x030
++
++static DEFINE_SPINLOCK(sysrate_lock);
++
++static const char *sclk_parents[] = { "clk_m", "pll_c_out1", "pll_c4_out3",
++			       "pll_p", "pll_p_out2", "pll_c4_out1",
++			       "clk_32k", "pll_c4_out2" };
++
++static const char *cclk_g_parents[] = { "clk_m", "unused", "clk_32k", "unused",
++					"pll_p", "pll_p_out4", "unused",
++					"unused", "pll_x", "unused", "unused",
++					"unused", "unused", "unused", "unused",
++					"dfllCPU_out" };
++
++static const char *cclk_lp_parents[] = { "clk_m", "unused", "clk_32k", "unused",
++					"pll_p", "pll_p_out4", "unused",
++					"unused", "pll_x", "unused", "unused",
++					"unused", "unused", "unused", "unused",
++					"dfllCPU_out" };
++
++static void __init tegra_sclk_init(void __iomem *clk_base,
++				struct tegra_clk *tegra_clks)
++{
++	struct clk *clk;
++	struct clk **dt_clk;
++
++	/* SCLK_MUX */
++	dt_clk = tegra_lookup_dt_id(tegra_clk_sclk_mux, tegra_clks);
++	if (dt_clk) {
++		clk = tegra_clk_register_super_mux("sclk_mux", sclk_parents,
++						ARRAY_SIZE(sclk_parents),
++						CLK_SET_RATE_PARENT,
++						clk_base + SCLK_BURST_POLICY,
++						0, 4, 0, 0, NULL);
++		*dt_clk = clk;
++	}
++	/* SCLK */
++	dt_clk = tegra_lookup_dt_id(tegra_clk_sclk, tegra_clks);
++	if (dt_clk) {
++		clk = clk_register_divider(NULL, "sclk", "sclk_mux", 0,
++						clk_base + SCLK_DIVIDER, 0, 8,
++						0, &sysrate_lock);
++		*dt_clk = clk;
++	}
++
++	/* HCLK */
++	dt_clk = tegra_lookup_dt_id(tegra_clk_hclk, tegra_clks);
++	if (dt_clk) {
++		clk = clk_register_divider(NULL, "hclk_div", "sclk", 0,
++				   clk_base + SYSTEM_CLK_RATE, 4, 2, 0,
++				   &sysrate_lock);
++		clk = clk_register_gate(NULL, "hclk", "hclk_div",
++				CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++				clk_base + SYSTEM_CLK_RATE,
++				7, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
++		*dt_clk = clk;
++	}
++
++	/* PCLK */
++	dt_clk = tegra_lookup_dt_id(tegra_clk_pclk, tegra_clks);
++	if (!dt_clk)
++		return;
++
++	clk = clk_register_divider(NULL, "pclk_div", "hclk", 0,
++				   clk_base + SYSTEM_CLK_RATE, 0, 2, 0,
++				   &sysrate_lock);
++	clk = clk_register_gate(NULL, "pclk", "pclk_div", CLK_SET_RATE_PARENT |
++				CLK_IGNORE_UNUSED, clk_base + SYSTEM_CLK_RATE,
++				3, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
++	*dt_clk = clk;
++}
++
++void __init tegra_super_clk_gen5_init(void __iomem *clk_base,
++				void __iomem *pmc_base,
++				struct tegra_clk *tegra_clks,
++				struct tegra_clk_pll_params *params)
++{
++	struct clk *clk;
++	struct clk **dt_clk;
++
++	/* CCLKG */
++	dt_clk = tegra_lookup_dt_id(tegra_clk_cclk_g, tegra_clks);
++	if (dt_clk) {
++		clk = tegra_clk_register_super_mux("cclk_g", cclk_g_parents,
++					ARRAY_SIZE(cclk_g_parents),
++					CLK_SET_RATE_PARENT,
++					clk_base + CCLKG_BURST_POLICY,
++					0, 4, 8, 0, NULL);
++		*dt_clk = clk;
++	}
++
++	/* CCLKLP */
++	dt_clk = tegra_lookup_dt_id(tegra_clk_cclk_lp, tegra_clks);
++	if (dt_clk) {
++		clk = tegra_clk_register_super_mux("cclk_lp", cclk_lp_parents,
++					ARRAY_SIZE(cclk_lp_parents),
++					CLK_SET_RATE_PARENT,
++					clk_base + CCLKLP_BURST_POLICY,
++					0, 4, 8, 0, NULL);
++		*dt_clk = clk;
++	}
++
++	tegra_sclk_init(clk_base, tegra_clks);
++
++	/* PLLX */
++	dt_clk = tegra_lookup_dt_id(tegra_clk_pll_x, tegra_clks);
++	if (!dt_clk)
++		return;
++
++	clk = tegra_clk_register_pllxc("pll_x", "pll_ref", clk_base,
++			pmc_base, CLK_IGNORE_UNUSED, params, NULL);
++	*dt_clk = clk;
++}
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 84c417576c18..8556837d96f8 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -701,6 +701,9 @@ int tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ void tegra_super_clk_gen4_init(void __iomem *clk_base,
+ 			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
+ 			struct tegra_clk_pll_params *pll_params);
++void tegra_super_clk_gen5_init(void __iomem *clk_base,
++			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
++			struct tegra_clk_pll_params *pll_params);
  
- 	MUX_F(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
--	      CLK_SET_RATE_PARENT, 0),
-+	      CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
- 	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
- 	MUX_F(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1,
--	      CLK_SET_RATE_PARENT, 0),
-+	      CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
- 	MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
- 
- 	MUX(0, "mout_aclk200", mout_group1_p, SRC_TOP0, 8, 2),
+ #ifdef CONFIG_TEGRA_CLK_EMC
+ struct clk *tegra_emc_init(struct device_node *np, void __iomem *clk_regs,
 -- 
-1.9.1
+1.7.9.5
+
