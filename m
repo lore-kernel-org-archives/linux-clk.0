@@ -1,65 +1,46 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v3 05/20] clk: tegra: pll: update warning msg
+Date: Fri, 1 May 2015 14:53:52 -0400
+Message-ID: <1430506447-29074-6-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
+References: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-To: Bintian Wang <bintian.wang@huawei.com>, sboyd@codeaurora.org,
- zhangfei.gao@linaro.org, xuwei5@hisilicon.com, xuejiancheng@huawei.com,
- tomeu.vizoso@collabora.com, sledge.yanwei@huawei.com,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
- will.deacon@arm.com, robh+dt@kernel.org, khilman@linaro.org,
- mark.rutland@arm.com, catalin.marinas@arm.com, haojian.zhuang@linaro.org,
- linux-arm-kernel@lists.infradead.org, olof@lixom.net, yanhaifeng@gmail.com,
- linux@arm.linux.org.uk, guodong.xu@linaro.org,
- jorge.ramirez-ortiz@linaro.org, tyler.baker@linaro.org, khilman@kernel.org
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <1432440671-25235-3-git-send-email-bintian.wang@huawei.com>
-Cc: xuyiping@hisilicon.com, wangbinghui@hisilicon.com, zhenwei.wang@hisilicon.com,
- victor.lixin@hisilicon.com, puck.chen@hisilicon.com, dan.zhao@hisilicon.com,
- huxinwei@huawei.com, bintian.wang@huawei.com, z.liuxinliang@huawei.com,
- heyunlei@huawei.com, kong.kongxinwei@hisilicon.com, wangbintian@gmail.com,
- w.f@huawei.com, liguozhu@hisilicon.com
-References: <1432440671-25235-1-git-send-email-bintian.wang@huawei.com>
- <1432440671-25235-3-git-send-email-bintian.wang@huawei.com>
-Message-ID: <20150528052608.22384.96747@quantum>
-Subject: Re: [PATCH v8 6/7] clk: hi6220: Clock driver support for Hisilicon hi6220 SoC
-Date: Wed, 27 May 2015 22:26:08 -0700
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Bintian Wang (2015-05-23 21:11:11)
-> Add clock drivers for hi6220 SoC, this driver controls the SoC
-> registers to supply different clocks to different IPs in the SoC.
-> =
+Swap out the generic WARN_ON with a WARN which gives more
+information about what is happening.
 
-> We add one divider clock for hi6220 because the divider in hi6220
-> also has a mask bit but it doesnot obey the rule defined by flag
-> "CLK_DIVIDER_HIWORD_MASK", we can not get index of the mask bit by
-> left shift fixed bits (e.g. 16 bits), so we add this divider clock
-> to handle it.
-> =
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> Signed-off-by: Bintian Wang <bintian.wang@huawei.com>
-> Acked-by: Haojian Zhuang <haojian.zhuang@linaro.org>
-> Reviewed-by: Zhangfei Gao <zhangfei.gao@linaro.org>
-> Tested-by: Will Deacon <will.deacon@arm.com>
-> Tested-by: Tyler Baker <tyler.baker@linaro.org>
-
-Hi Bintian,
-
-Thanks for making the changes requested by Stephen. I've taken his patch
-to add assigned-clock-rate/parent support for AMBA interconnects and
-applied it to 4.1-rc1, and then I've applied your v8 patches #4-6 on top
-of that. You can find it at:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next-hi6220
-
-I have merged this into clk-next so it can get some cycles in
-linux-next.
-
-Stephen,
-
-Can you send your patch out to Russell properly? It needs his ack (or
-for him to take it outright) in order to unblock the hi6220 clock driver
-from being merged.
-
-Regards,
-Mike
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 1e1018dd466f..0282d9f4f2d7 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -692,7 +692,8 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 
+ 	pdiv = _hw_to_p_div(hw, cfg.p);
+ 	if (pdiv < 0) {
+-		WARN_ON(1);
++		WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
++			__clk_get_name(hw->clk), cfg.p);
+ 		pdiv = 1;
+ 	}
+ 
+-- 
+1.7.9.5
