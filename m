@@ -1,768 +1,215 @@
-Return-Path: <mathieu@codeaurora.org>
-From: Mathieu Olivari <mathieu@codeaurora.org>
-To: robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	peppe.cavallaro@st.com,
-	mathieu@codeaurora.org,
-	agross@codeaurora.org,
-	joshc@codeaurora.org,
-	architt@codeaurora.org,
-	georgi.djakov@linaro.org,
-	wsa@the-dreams.de,
-	rnayak@codeaurora.org,
-	davem@davemloft.net,
-	vbridger@opensource.altera.com
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
 	linux-clk@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH V2 1/5] clk: qcom: Add support for NSS/GMAC clocks and resets
-Date: Wed, 27 May 2015 11:02:46 -0700
-Message-Id: <1432749770-26133-2-git-send-email-mathieu@codeaurora.org>
-In-Reply-To: <1432749770-26133-1-git-send-email-mathieu@codeaurora.org>
-References: <1432749770-26133-1-git-send-email-mathieu@codeaurora.org>
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v3 08/20] clk: tegra: pll: Add logic for handling SDM data
+Date: Fri, 1 May 2015 14:53:55 -0400
+Message-ID: <1430506447-29074-9-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
+References: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+This adds logic for taking SDM_DIN (Sigma Delta Modulator) setting into
+the equation to calculate the effective N value for PLL which supports
+fractional divider.
 
-Add the NSS/GMAC clocks and the TCM clock and NSS resets.
+The effective N = NDIV + 1/2 + SDM_DIN/2^13, where NDIV is the integer
+feedback divider.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/qcom/gcc-ipq806x.c               | 594 ++++++++++++++++++++++++++-
- include/dt-bindings/clock/qcom,gcc-ipq806x.h |   2 +
- include/dt-bindings/reset/qcom,gcc-ipq806x.h |  43 ++
- 3 files changed, 638 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-pll.c |   52 ++++++++++++++++++++++++++++++++++++++++++-
+ drivers/clk/tegra/clk.h     |    9 +++++++-
+ 2 files changed, 59 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-index a50936a..5639699 100644
---- a/drivers/clk/qcom/gcc-ipq806x.c
-+++ b/drivers/clk/qcom/gcc-ipq806x.c
-@@ -140,12 +140,47 @@ static struct clk_regmap pll14_vote = {
- 	},
- };
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 13d86c5b234d..c64b75185d6b 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -187,17 +187,23 @@
+ #define pll_readl_base(p) pll_readl(p->params->base_reg, p)
+ #define pll_readl_misc(p) pll_readl(p->params->misc_reg, p)
+ #define pll_override_readl(offset, p) readl_relaxed(p->pmc + offset)
++#define pll_readl_sdm_din(p) pll_readl(p->params->sdm_din_reg, p)
++#define pll_readl_sdm_ctrl(p) pll_readl(p->params->sdm_ctrl_reg, p)
  
-+#define NSS_PLL_RATE(f, _l, _m, _n, i) \
-+	{  \
-+		.freq = f,  \
-+		.l = _l, \
-+		.m = _m, \
-+		.n = _n, \
-+		.ibits = i, \
-+	}
-+
-+static struct pll_freq_tbl pll18_freq_tbl[] = {
-+	NSS_PLL_RATE(550000000, 44, 0, 1, 0x01495625),
-+	NSS_PLL_RATE(733000000, 58, 16, 25, 0x014b5625),
-+};
-+
-+static struct clk_pll pll18 = {
-+	.l_reg = 0x31a4,
-+	.m_reg = 0x31a8,
-+	.n_reg = 0x31ac,
-+	.config_reg = 0x31b4,
-+	.mode_reg = 0x31a0,
-+	.status_reg = 0x31b8,
-+	.status_bit = 16,
-+	.post_div_shift = 16,
-+	.post_div_width = 1,
-+	.freq_tbl = pll18_freq_tbl,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "pll18",
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.ops = &clk_pll_ops,
-+	},
-+};
-+
- enum {
- 	P_PXO,
- 	P_PLL8,
- 	P_PLL3,
- 	P_PLL0,
- 	P_CXO,
-+	P_PLL14,
-+	P_PLL18,
- };
+ #define pll_writel(val, offset, p) writel_relaxed(val, p->clk_base + offset)
+ #define pll_writel_base(val, p) pll_writel(val, p->params->base_reg, p)
+ #define pll_writel_misc(val, p) pll_writel(val, p->params->misc_reg, p)
+ #define pll_override_writel(val, offset, p) writel(val, p->pmc + offset)
++#define pll_writel_sdm_din(val, p) pll_writel(val, p->params->sdm_din_reg, p)
++#define pll_writel_sdm_ctrl(val, p) pll_writel(val, p->params->sdm_ctrl_reg, p)
  
- static const struct parent_map gcc_pxo_pll8_map[] = {
-@@ -197,6 +232,22 @@ static const char *gcc_pxo_pll8_pll0_map[] = {
- 	"pll0_vote",
- };
+ #define mask(w) ((1 << (w)) - 1)
+ #define divm_mask(p) mask(p->params->div_nmp->divm_width)
+ #define divn_mask(p) mask(p->params->div_nmp->divn_width)
+ #define divp_mask(p) (p->params->flags & TEGRA_PLLU ? PLLU_POST_DIVP_MASK :\
+ 		      mask(p->params->div_nmp->divp_width))
++#define sdm_din_mask(p) p->params->sdm_din_mask
++#define sdm_en_mask(p) p->params->sdm_ctrl_en_mask
  
-+static const struct parent_map gcc_pxo_pll8_pll14_pll18_pll0_map[] = {
-+	{ P_PXO, 0 },
-+	{ P_PLL8, 4 },
-+	{ P_PLL0, 2 },
-+	{ P_PLL14, 5 },
-+	{ P_PLL18, 1 }
-+};
-+
-+static const char *gcc_pxo_pll8_pll14_pll18_pll0[] = {
-+	"pxo",
-+	"pll8_vote",
-+	"pll0_vote",
-+	"pll14",
-+	"pll18",
-+};
-+
- static struct freq_tbl clk_tbl_gsbi_uart[] = {
- 	{  1843200, P_PLL8, 2,  6, 625 },
- 	{  3686400, P_PLL8, 2, 12, 625 },
-@@ -2202,6 +2253,472 @@ static struct clk_branch ebi2_aon_clk = {
- 	},
- };
+ #define divm_shift(p) (p)->params->div_nmp->divm_shift
+ #define divn_shift(p) (p)->params->div_nmp->divn_shift
+@@ -211,6 +217,9 @@
+ #define divn_max(p) (divn_mask(p))
+ #define divp_max(p) (1 << (divp_mask(p)))
  
-+static const struct freq_tbl clk_tbl_gmac[] = {
-+	{ 133000000, P_PLL0, 1,  50, 301 },
-+	{ 266000000, P_PLL0, 1, 127, 382 },
-+	{ }
-+};
++#define sdin_din_to_data(din)	((u16)((din) ? : 0xFFFFU))
++#define sdin_data_to_din(dat)	(((dat) == 0xFFFFU) ? 0 : (s16)dat)
 +
-+static struct clk_dyn_rcg gmac_core1_src = {
-+	.ns_reg[0] = 0x3cac,
-+	.ns_reg[1] = 0x3cb0,
-+	.md_reg[0] = 0x3ca4,
-+	.md_reg[1] = 0x3ca8,
-+	.bank_reg = 0x3ca0,
-+	.mn[0] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.mn[1] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_gmac,
-+	.clkr = {
-+		.enable_reg = 0x3ca0,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core1_src",
-+			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
-+			.num_parents = 5,
-+			.ops = &clk_dyn_rcg_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gmac_core1_clk = {
-+	.halt_reg = 0x3c20,
-+	.halt_bit = 4,
-+	.hwcg_reg = 0x3cb4,
-+	.hwcg_bit = 6,
-+	.clkr = {
-+		.enable_reg = 0x3cb4,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core1_clk",
-+			.parent_names = (const char *[]){
-+				"gmac_core1_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_dyn_rcg gmac_core2_src = {
-+	.ns_reg[0] = 0x3ccc,
-+	.ns_reg[1] = 0x3cd0,
-+	.md_reg[0] = 0x3cc4,
-+	.md_reg[1] = 0x3cc8,
-+	.bank_reg = 0x3ca0,
-+	.mn[0] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.mn[1] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_gmac,
-+	.clkr = {
-+		.enable_reg = 0x3cc0,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core2_src",
-+			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
-+			.num_parents = 5,
-+			.ops = &clk_dyn_rcg_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gmac_core2_clk = {
-+	.halt_reg = 0x3c20,
-+	.halt_bit = 5,
-+	.hwcg_reg = 0x3cd4,
-+	.hwcg_bit = 6,
-+	.clkr = {
-+		.enable_reg = 0x3cd4,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core2_clk",
-+			.parent_names = (const char *[]){
-+				"gmac_core2_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_dyn_rcg gmac_core3_src = {
-+	.ns_reg[0] = 0x3cec,
-+	.ns_reg[1] = 0x3cf0,
-+	.md_reg[0] = 0x3ce4,
-+	.md_reg[1] = 0x3ce8,
-+	.bank_reg = 0x3ce0,
-+	.mn[0] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.mn[1] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_gmac,
-+	.clkr = {
-+		.enable_reg = 0x3ce0,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core3_src",
-+			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
-+			.num_parents = 5,
-+			.ops = &clk_dyn_rcg_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gmac_core3_clk = {
-+	.halt_reg = 0x3c20,
-+	.halt_bit = 6,
-+	.hwcg_reg = 0x3cf4,
-+	.hwcg_bit = 6,
-+	.clkr = {
-+		.enable_reg = 0x3cf4,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core3_clk",
-+			.parent_names = (const char *[]){
-+				"gmac_core3_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_dyn_rcg gmac_core4_src = {
-+	.ns_reg[0] = 0x3d0c,
-+	.ns_reg[1] = 0x3d10,
-+	.md_reg[0] = 0x3d04,
-+	.md_reg[1] = 0x3d08,
-+	.bank_reg = 0x3d00,
-+	.mn[0] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.mn[1] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_gmac,
-+	.clkr = {
-+		.enable_reg = 0x3d00,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core4_src",
-+			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
-+			.num_parents = 5,
-+			.ops = &clk_dyn_rcg_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gmac_core4_clk = {
-+	.halt_reg = 0x3c20,
-+	.halt_bit = 7,
-+	.hwcg_reg = 0x3d14,
-+	.hwcg_bit = 6,
-+	.clkr = {
-+		.enable_reg = 0x3d14,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core4_clk",
-+			.parent_names = (const char *[]){
-+				"gmac_core4_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static const struct freq_tbl clk_tbl_nss_tcm[] = {
-+	{ 266000000, P_PLL0, 3, 0, 0 },
-+	{ 400000000, P_PLL0, 2, 0, 0 },
-+	{ }
-+};
-+
-+static struct clk_dyn_rcg nss_tcm_src = {
-+	.ns_reg[0] = 0x3dc4,
-+	.ns_reg[1] = 0x3dc8,
-+	.bank_reg = 0x3dc0,
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 4,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 4,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_nss_tcm,
-+	.clkr = {
-+		.enable_reg = 0x3dc0,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "nss_tcm_src",
-+			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
-+			.num_parents = 5,
-+			.ops = &clk_dyn_rcg_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch nss_tcm_clk = {
-+	.halt_reg = 0x3c20,
-+	.halt_bit = 14,
-+	.clkr = {
-+		.enable_reg = 0x3dd0,
-+		.enable_mask = BIT(6) | BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "nss_tcm_clk",
-+			.parent_names = (const char *[]){
-+				"nss_tcm_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static const struct freq_tbl clk_tbl_nss[] = {
-+	{ 110000000, P_PLL18, 1, 1, 5 },
-+	{ 275000000, P_PLL18, 2, 0, 0 },
-+	{ 550000000, P_PLL18, 1, 0, 0 },
-+	{ 733000000, P_PLL18, 1, 0, 0 },
-+	{ }
-+};
-+
-+static struct clk_dyn_rcg ubi32_core1_src_clk = {
-+	.ns_reg[0] = 0x3d2c,
-+	.ns_reg[1] = 0x3d30,
-+	.md_reg[0] = 0x3d24,
-+	.md_reg[1] = 0x3d28,
-+	.bank_reg = 0x3d20,
-+	.mn[0] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.mn[1] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_nss,
-+	.clkr = {
-+		.enable_reg = 0x3d20,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ubi32_core1_src_clk",
-+			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
-+			.num_parents = 5,
-+			.ops = &clk_dyn_rcg_ops,
-+			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+		},
-+	},
-+};
-+
-+static struct clk_dyn_rcg ubi32_core2_src_clk = {
-+	.ns_reg[0] = 0x3d4c,
-+	.ns_reg[1] = 0x3d50,
-+	.md_reg[0] = 0x3d44,
-+	.md_reg[1] = 0x3d48,
-+	.bank_reg = 0x3d40,
-+	.mn[0] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.mn[1] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_nss,
-+	.clkr = {
-+		.enable_reg = 0x3d40,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ubi32_core2_src_clk",
-+			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
-+			.num_parents = 5,
-+			.ops = &clk_dyn_rcg_ops,
-+			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+		},
-+	},
-+};
-+
- static struct clk_regmap *gcc_ipq806x_clks[] = {
- 	[PLL0] = &pll0.clkr,
- 	[PLL0_VOTE] = &pll0_vote,
-@@ -2211,6 +2728,7 @@ static struct clk_regmap *gcc_ipq806x_clks[] = {
- 	[PLL8_VOTE] = &pll8_vote,
- 	[PLL14] = &pll14.clkr,
- 	[PLL14_VOTE] = &pll14_vote,
-+	[PLL18] = &pll18.clkr,
- 	[GSBI1_UART_SRC] = &gsbi1_uart_src.clkr,
- 	[GSBI1_UART_CLK] = &gsbi1_uart_clk.clkr,
- 	[GSBI2_UART_SRC] = &gsbi2_uart_src.clkr,
-@@ -2307,6 +2825,18 @@ static struct clk_regmap *gcc_ipq806x_clks[] = {
- 	[USB_FS1_SYSTEM_CLK] = &usb_fs1_sys_clk.clkr,
- 	[EBI2_CLK] = &ebi2_clk.clkr,
- 	[EBI2_AON_CLK] = &ebi2_aon_clk.clkr,
-+	[GMAC_CORE1_CLK_SRC] = &gmac_core1_src.clkr,
-+	[GMAC_CORE1_CLK] = &gmac_core1_clk.clkr,
-+	[GMAC_CORE2_CLK_SRC] = &gmac_core2_src.clkr,
-+	[GMAC_CORE2_CLK] = &gmac_core2_clk.clkr,
-+	[GMAC_CORE3_CLK_SRC] = &gmac_core3_src.clkr,
-+	[GMAC_CORE3_CLK] = &gmac_core3_clk.clkr,
-+	[GMAC_CORE4_CLK_SRC] = &gmac_core4_src.clkr,
-+	[GMAC_CORE4_CLK] = &gmac_core4_clk.clkr,
-+	[UBI32_CORE1_CLK_SRC] = &ubi32_core1_src_clk.clkr,
-+	[UBI32_CORE2_CLK_SRC] = &ubi32_core2_src_clk.clkr,
-+	[NSSTCM_CLK_SRC] = &nss_tcm_src.clkr,
-+	[NSSTCM_CLK] = &nss_tcm_clk.clkr,
- };
+ static struct div_nmp default_nmp = {
+ 	.divn_shift = PLL_BASE_DIVN_SHIFT,
+ 	.divn_width = PLL_BASE_DIVN_WIDTH,
+@@ -429,6 +438,7 @@ static int _get_table_rate(struct clk_hw *hw,
+ 	cfg->n = sel->n;
+ 	cfg->p = sel->p;
+ 	cfg->cpcon = sel->cpcon;
++	cfg->sdm_data = sel->sdm_data;
  
- static const struct qcom_reset_map gcc_ipq806x_resets[] = {
-@@ -2425,6 +2955,48 @@ static const struct qcom_reset_map gcc_ipq806x_resets[] = {
- 	[USB30_1_PHY_RESET] = { 0x3b58, 0 },
- 	[NSSFB0_RESET] = { 0x3b60, 6 },
- 	[NSSFB1_RESET] = { 0x3b60, 7 },
-+	[UBI32_CORE1_CLKRST_CLAMP_RESET] = { 0x3d3c, 3},
-+	[UBI32_CORE1_CLAMP_RESET] = { 0x3d3c, 2 },
-+	[UBI32_CORE1_AHB_RESET] = { 0x3d3c, 1 },
-+	[UBI32_CORE1_AXI_RESET] = { 0x3d3c, 0 },
-+	[UBI32_CORE2_CLKRST_CLAMP_RESET] = { 0x3d5c, 3 },
-+	[UBI32_CORE2_CLAMP_RESET] = { 0x3d5c, 2 },
-+	[UBI32_CORE2_AHB_RESET] = { 0x3d5c, 1 },
-+	[UBI32_CORE2_AXI_RESET] = { 0x3d5c, 0 },
-+	[GMAC_CORE1_RESET] = { 0x3cbc, 0 },
-+	[GMAC_CORE2_RESET] = { 0x3cdc, 0 },
-+	[GMAC_CORE3_RESET] = { 0x3cfc, 0 },
-+	[GMAC_CORE4_RESET] = { 0x3d1c, 0 },
-+	[GMAC_AHB_RESET] = { 0x3e24, 0 },
-+	[NSS_CH0_RST_RX_CLK_N_RESET] = { 0x3b60, 0 },
-+	[NSS_CH0_RST_TX_CLK_N_RESET] = { 0x3b60, 1 },
-+	[NSS_CH0_RST_RX_125M_N_RESET] = { 0x3b60, 2 },
-+	[NSS_CH0_HW_RST_RX_125M_N_RESET] = { 0x3b60, 3 },
-+	[NSS_CH0_RST_TX_125M_N_RESET] = { 0x3b60, 4 },
-+	[NSS_CH1_RST_RX_CLK_N_RESET] = { 0x3b60, 5 },
-+	[NSS_CH1_RST_TX_CLK_N_RESET] = { 0x3b60, 6 },
-+	[NSS_CH1_RST_RX_125M_N_RESET] = { 0x3b60, 7 },
-+	[NSS_CH1_HW_RST_RX_125M_N_RESET] = { 0x3b60, 8 },
-+	[NSS_CH1_RST_TX_125M_N_RESET] = { 0x3b60, 9 },
-+	[NSS_CH2_RST_RX_CLK_N_RESET] = { 0x3b60, 10 },
-+	[NSS_CH2_RST_TX_CLK_N_RESET] = { 0x3b60, 11 },
-+	[NSS_CH2_RST_RX_125M_N_RESET] = { 0x3b60, 12 },
-+	[NSS_CH2_HW_RST_RX_125M_N_RESET] = { 0x3b60, 13 },
-+	[NSS_CH2_RST_TX_125M_N_RESET] = { 0x3b60, 14 },
-+	[NSS_CH3_RST_RX_CLK_N_RESET] = { 0x3b60, 15 },
-+	[NSS_CH3_RST_TX_CLK_N_RESET] = { 0x3b60, 16 },
-+	[NSS_CH3_RST_RX_125M_N_RESET] = { 0x3b60, 17 },
-+	[NSS_CH3_HW_RST_RX_125M_N_RESET] = { 0x3b60, 18 },
-+	[NSS_CH3_RST_TX_125M_N_RESET] = { 0x3b60, 19 },
-+	[NSS_RST_RX_250M_125M_N_RESET] = { 0x3b60, 20 },
-+	[NSS_RST_TX_250M_125M_N_RESET] = { 0x3b60, 21 },
-+	[NSS_QSGMII_TXPI_RST_N_RESET] = { 0x3b60, 22 },
-+	[NSS_QSGMII_CDR_RST_N_RESET] = { 0x3b60, 23 },
-+	[NSS_SGMII2_CDR_RST_N_RESET] = { 0x3b60, 24 },
-+	[NSS_SGMII3_CDR_RST_N_RESET] = { 0x3b60, 25 },
-+	[NSS_CAL_PRBS_RST_N_RESET] = { 0x3b60, 26 },
-+	[NSS_LCKDT_RST_N_RESET] = { 0x3b60, 27 },
-+	[NSS_SRDS_N_RESET] = { 0x3b60, 28 },
- };
- 
- static const struct regmap_config gcc_ipq806x_regmap_config = {
-@@ -2453,6 +3025,8 @@ static int gcc_ipq806x_probe(struct platform_device *pdev)
- {
- 	struct clk *clk;
- 	struct device *dev = &pdev->dev;
-+	struct regmap *regmap;
-+	int ret;
- 
- 	/* Temporary until RPM clocks supported */
- 	clk = clk_register_fixed_rate(dev, "cxo", NULL, CLK_IS_ROOT, 25000000);
-@@ -2463,7 +3037,25 @@ static int gcc_ipq806x_probe(struct platform_device *pdev)
- 	if (IS_ERR(clk))
- 		return PTR_ERR(clk);
- 
--	return qcom_cc_probe(pdev, &gcc_ipq806x_desc);
-+	ret = qcom_cc_probe(pdev, &gcc_ipq806x_desc);
-+	if (ret)
-+		return ret;
-+
-+	regmap = dev_get_regmap(dev, NULL);
-+	if (!regmap)
-+		return -ENODEV;
-+
-+	/* Setup PLL18 static bits */
-+	regmap_update_bits(regmap, 0x31a4, 0xffffffc0, 0x40000400);
-+	regmap_write(regmap, 0x31b0, 0x3080);
-+
-+	/* Set GMAC footswitch sleep/wakeup values */
-+	regmap_write(regmap, 0x3cb8, 8);
-+	regmap_write(regmap, 0x3cd8, 8);
-+	regmap_write(regmap, 0x3cf8, 8);
-+	regmap_write(regmap, 0x3d18, 8);
-+
-+	return 0;
+ 	return 0;
+ }
+@@ -495,6 +505,28 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 	return 0;
  }
  
- static int gcc_ipq806x_remove(struct platform_device *pdev)
-diff --git a/include/dt-bindings/clock/qcom,gcc-ipq806x.h b/include/dt-bindings/clock/qcom,gcc-ipq806x.h
-index ebd63fd..dc4254b 100644
---- a/include/dt-bindings/clock/qcom,gcc-ipq806x.h
-+++ b/include/dt-bindings/clock/qcom,gcc-ipq806x.h
-@@ -289,5 +289,7 @@
- #define UBI32_CORE1_CLK				279
- #define UBI32_CORE2_CLK				280
- #define EBI2_AON_CLK				281
-+#define NSSTCM_CLK_SRC				282
-+#define NSSTCM_CLK				283
- 
- #endif
-diff --git a/include/dt-bindings/reset/qcom,gcc-ipq806x.h b/include/dt-bindings/reset/qcom,gcc-ipq806x.h
-index 0ad5ef9..de9c814 100644
---- a/include/dt-bindings/reset/qcom,gcc-ipq806x.h
-+++ b/include/dt-bindings/reset/qcom,gcc-ipq806x.h
-@@ -129,4 +129,47 @@
- #define USB30_1_PHY_RESET				112
- #define NSSFB0_RESET					113
- #define NSSFB1_RESET					114
-+#define UBI32_CORE1_CLKRST_CLAMP_RESET			115
-+#define UBI32_CORE1_CLAMP_RESET				116
-+#define UBI32_CORE1_AHB_RESET				117
-+#define UBI32_CORE1_AXI_RESET				118
-+#define UBI32_CORE2_CLKRST_CLAMP_RESET			119
-+#define UBI32_CORE2_CLAMP_RESET				120
-+#define UBI32_CORE2_AHB_RESET				121
-+#define UBI32_CORE2_AXI_RESET				122
-+#define GMAC_CORE1_RESET				123
-+#define GMAC_CORE2_RESET				124
-+#define GMAC_CORE3_RESET				125
-+#define GMAC_CORE4_RESET				126
-+#define GMAC_AHB_RESET					127
-+#define NSS_CH0_RST_RX_CLK_N_RESET			128
-+#define NSS_CH0_RST_TX_CLK_N_RESET			129
-+#define NSS_CH0_RST_RX_125M_N_RESET			130
-+#define NSS_CH0_HW_RST_RX_125M_N_RESET			131
-+#define NSS_CH0_RST_TX_125M_N_RESET			132
-+#define NSS_CH1_RST_RX_CLK_N_RESET			133
-+#define NSS_CH1_RST_TX_CLK_N_RESET			134
-+#define NSS_CH1_RST_RX_125M_N_RESET			135
-+#define NSS_CH1_HW_RST_RX_125M_N_RESET			136
-+#define NSS_CH1_RST_TX_125M_N_RESET			137
-+#define NSS_CH2_RST_RX_CLK_N_RESET			138
-+#define NSS_CH2_RST_TX_CLK_N_RESET			139
-+#define NSS_CH2_RST_RX_125M_N_RESET			140
-+#define NSS_CH2_HW_RST_RX_125M_N_RESET			141
-+#define NSS_CH2_RST_TX_125M_N_RESET			142
-+#define NSS_CH3_RST_RX_CLK_N_RESET			143
-+#define NSS_CH3_RST_TX_CLK_N_RESET			144
-+#define NSS_CH3_RST_RX_125M_N_RESET			145
-+#define NSS_CH3_HW_RST_RX_125M_N_RESET			146
-+#define NSS_CH3_RST_TX_125M_N_RESET			147
-+#define NSS_RST_RX_250M_125M_N_RESET			148
-+#define NSS_RST_TX_250M_125M_N_RESET			149
-+#define NSS_QSGMII_TXPI_RST_N_RESET			150
-+#define NSS_QSGMII_CDR_RST_N_RESET			151
-+#define NSS_SGMII2_CDR_RST_N_RESET			152
-+#define NSS_SGMII3_CDR_RST_N_RESET			153
-+#define NSS_CAL_PRBS_RST_N_RESET			154
-+#define NSS_LCKDT_RST_N_RESET				155
-+#define NSS_SRDS_N_RESET				156
++static void clk_pll_set_sdm_data(struct clk_hw *hw,
++				 struct tegra_clk_pll_freq_table *cfg)
++{
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
++	u32 val;
 +
- #endif
++	if (!pll->params->sdm_din_reg)
++		return;
++
++	if (cfg->sdm_data) {
++		val = pll_readl_sdm_din(pll) & (~sdm_din_mask(pll));
++		val |= sdin_data_to_din(cfg->sdm_data) & sdm_din_mask(pll);
++		pll_writel_sdm_din(val, pll);
++	}
++
++	val = pll_readl_sdm_ctrl(pll);
++	if (!cfg->sdm_data != !(val & pll->params->sdm_ctrl_en_mask)) {
++		val ^= pll->params->sdm_ctrl_en_mask;
++		pll_writel_sdm_ctrl(val, pll);
++	}
++}
++
+ static void _update_pll_mnp(struct tegra_clk_pll *pll,
+ 			    struct tegra_clk_pll_freq_table *cfg)
+ {
+@@ -527,6 +559,8 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
+ 		       (cfg->p << divp_shift(pll));
+ 
+ 		pll_writel_base(val, pll);
++
++		clk_pll_set_sdm_data(&pll->hw, cfg);
+ 	}
+ }
+ 
+@@ -552,6 +586,14 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
+ 		cfg->m = (val >> div_nmp->divm_shift) & divm_mask(pll);
+ 		cfg->n = (val >> div_nmp->divn_shift) & divn_mask(pll);
+ 		cfg->p = (val >> div_nmp->divp_shift) & divp_mask(pll);
++
++		if (pll->params->sdm_din_reg) {
++			if (sdm_en_mask(pll) & pll_readl_sdm_ctrl(pll)) {
++				val = pll_readl_sdm_din(pll);
++				cfg->sdm_data = val & sdm_din_mask(pll);
++				cfg->sdm_data = sdin_din_to_data(cfg->sdm_data);
++			}
++		}
+ 	}
+ }
+ 
+@@ -633,7 +675,8 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	_get_pll_mnp(pll, &old_cfg);
+ 
+-	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p)
++	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p ||
++		old_cfg.sdm_data != cfg.sdm_data)
+ 		ret = _program_pll(hw, &cfg, rate);
+ 
+ 	if (pll->lock)
+@@ -697,6 +740,9 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 		pdiv = 1;
+ 	}
+ 
++	if (pll->params->set_gain)
++		pll->params->set_gain(&cfg);
++
+ 	cfg.m *= pdiv;
+ 
+ 	rate *= cfg.n;
+@@ -978,6 +1024,7 @@ static int clk_pllxc_set_rate(struct clk_hw *hw, unsigned long rate,
+ static long clk_pll_ramp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				unsigned long *prate)
+ {
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
+ 	struct tegra_clk_pll_freq_table cfg;
+ 	int ret, p_div;
+ 	u64 output_rate = *prate;
+@@ -990,6 +1037,9 @@ static long clk_pll_ramp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (p_div < 0)
+ 		return p_div;
+ 
++	if (pll->params->set_gain)
++		pll->params->set_gain(&cfg);
++
+ 	output_rate *= cfg.n;
+ 	do_div(output_rate, cfg.m * p_div);
+ 
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 03babba1c3b4..ef5754f64622 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -110,14 +110,16 @@ struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
+  * @m:			input divider
+  * @p:			post divider
+  * @cpcon:		charge pump current
++ * @sdm_data:		fraction divider setting (0 = disabled)
+  */
+ struct tegra_clk_pll_freq_table {
+ 	unsigned long	input_rate;
+ 	unsigned long	output_rate;
+-	u16		n;
++	u32		n;
+ 	u16		m;
+ 	u8		p;
+ 	u8		cpcon;
++	u16		sdm_data;
+ };
+ 
+ /**
+@@ -213,6 +215,10 @@ struct tegra_clk_pll_params {
+ 	u32		lock_enable_bit_idx;
+ 	u32		iddq_reg;
+ 	u32		iddq_bit_idx;
++	u32		sdm_din_reg;
++	u32		sdm_din_mask;
++	u32		sdm_ctrl_reg;
++	u32		sdm_ctrl_en_mask;
+ 	u32		aux_reg;
+ 	u32		dyn_ramp_reg;
+ 	u32		ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
+@@ -227,6 +233,7 @@ struct tegra_clk_pll_params {
+ 	struct div_nmp	*div_nmp;
+ 	struct tegra_clk_pll_freq_table	*freq_table;
+ 	unsigned long	fixed_rate;
++	void	(*set_gain)(struct tegra_clk_pll_freq_table *cfg);
+ };
+ 
+ #define TEGRA_PLL_USE_LOCK BIT(0)
 -- 
-2.1.4
+1.7.9.5
