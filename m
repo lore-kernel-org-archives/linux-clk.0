@@ -1,84 +1,153 @@
-Return-Path: <ce3a@gmx.de>
-From: Sergej Sawazki <ce3a@gmx.de>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	sebastian.hesselbarth@gmail.com,
-	mwelling@ieee.org,
-	moinejf@free.fr
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Sergej Sawazki <ce3a@gmx.de>
-Subject: [PATCH 1/2] clk: si5351: fix .round_rate for multisynth 6-7
-Date: Mon, 11 May 2015 10:44:50 +0200
-Message-Id: <1431333890-7271-1-git-send-email-ce3a@gmx.de>
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v3 13/20] clk: tegra: pll: Add support for PLLMB for T210
+Date: Fri, 1 May 2015 14:54:00 -0400
+Message-ID: <1430506447-29074-14-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
+References: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The divider calculation for multisynth 6 and 7 differs from the
-calculation for multisynth 0-5.
+Tegra210 SoC's have 2 PLLS for memory usage. Add plumbing to register
+and handle PLLMB.
 
-For MS6 and MS7, set MSx_P1 directly, MSx_P1=divide value
-[AN619, p. 6].
+PLLMB is used to allow switching between 2 PLLM's without having to use
+and intermediate backup PLL, as we need to lock the PLL before we can
+switch to it.
 
-Referenced document:
-[AN619] Manually Generating an Si5351 Register Map, Rev. 0.4
-
-Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/clk-si5351.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+v3:
+  - Flushed out comment more.
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 30335d3..48c5298 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -552,7 +552,8 @@ static const struct clk_ops si5351_pll_ops = {
-  * MSx_P2[19:0] = 128 * b - c * floor(128 * b/c) = (128*b) mod c
-  * MSx_P3[19:0] = c
-  *
-- * MS[6,7] are integer (P1) divide only, P2 = 0, P3 = 0
-+ * MS[6,7] are integer (P1) divide only, P1 = divide value,
-+ * P2 and P3 are not applicable
-  *
-  * for 150MHz < fOUT <= 160MHz:
-  *
-@@ -679,6 +680,16 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
- 		c = 1;
+v2:
+  - Fixed commit description as suggested.
+
+ drivers/clk/tegra/clk-pll.c |   46 +++++++++++++++++++++++++++++++++++++++----
+ drivers/clk/tegra/clk.h     |    9 +++++++++
+ 2 files changed, 51 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index c938bdc9415f..edc388f02a66 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -547,7 +547,7 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
+ 	struct tegra_clk_pll_params *params = pll->params;
+ 	struct div_nmp *div_nmp = params->div_nmp;
  
- 		*parent_rate = a * rate;
-+	} else if (hwdata->num >= 6) {
-+		/* determine the closest integer divider */
-+		a = DIV_ROUND_CLOSEST(*parent_rate, rate);
-+		if (a < SI5351_MULTISYNTH_A_MIN)
-+			a = SI5351_MULTISYNTH_A_MIN;
-+		if (a > SI5351_MULTISYNTH67_A_MAX)
-+			a = SI5351_MULTISYNTH67_A_MAX;
+-	if ((params->flags & TEGRA_PLLM) &&
++	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
+ 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
+ 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
+ 		val = pll_override_readl(params->pmc_divp_reg, pll);
+@@ -584,7 +584,7 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
+ 	struct tegra_clk_pll_params *params = pll->params;
+ 	struct div_nmp *div_nmp = params->div_nmp;
+ 
+-	if ((params->flags & TEGRA_PLLM) &&
++	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
+ 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
+ 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
+ 		val = pll_override_readl(params->pmc_divp_reg, pll);
+@@ -730,8 +730,8 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (pll->params->flags & TEGRA_PLL_FIXED)
+ 		return pll->params->fixed_rate;
+ 
+-	/* PLLM is used for memory; we do not change rate */
+-	if (pll->params->flags & TEGRA_PLLM)
++	/* PLLM/MB are used for memory; we do not change rate */
++	if (pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB))
+ 		return __clk_get_rate(hw->clk);
+ 
+ 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
+@@ -2310,4 +2310,42 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
+ 
+ 	return clk;
+ }
 +
-+		b = 0;
-+		c = 1;
- 	} else {
- 		unsigned long rfrac, denom;
++struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
++			  void __iomem *clk_base, void __iomem *pmc,
++			  unsigned long flags,
++			  struct tegra_clk_pll_params *pll_params,
++			  spinlock_t *lock)
++{
++	struct tegra_clk_pll *pll;
++	struct clk *clk, *parent;
++	unsigned long parent_rate;
++
++	if (!pll_params->pdiv_tohw)
++		return ERR_PTR(-EINVAL);
++
++	parent = __clk_lookup(parent_name);
++	if (!parent) {
++		WARN(1, "parent clk %s of %s must be registered first\n",
++			name, parent_name);
++		return ERR_PTR(-EINVAL);
++	}
++
++	parent_rate = __clk_get_rate(parent);
++
++	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
++
++	pll_params->flags |= TEGRA_PLL_BYPASS;
++	pll_params->flags |= TEGRA_PLLMB;
++	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
++	if (IS_ERR(pll))
++		return ERR_CAST(pll);
++
++	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
++				      &tegra_clk_pllm_ops);
++	if (IS_ERR(clk))
++		kfree(pll);
++
++	return clk;
++}
+ #endif
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 26e31580dc9e..9e37defb063f 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -201,6 +201,8 @@ struct div_nmp {
+  * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
+  * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
+  *     it may be more accurate (especially if SDM present)
++ * TEGRA_PLLMB - PLLMB has should be treated similar to PLLM. This
++ *     flag indicated that it is PLLMB.
+  */
+ struct tegra_clk_pll_params {
+ 	unsigned long	input_min;
+@@ -260,6 +262,7 @@ struct tegra_clk_pll_params {
+ #define TEGRA_PLL_BYPASS BIT(9)
+ #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
+ #define TEGRA_MDIV_NEW BIT(11)
++#define TEGRA_PLLMB BIT(12)
  
-@@ -692,9 +703,7 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
- 		a = *parent_rate / rate;
- 		if (a < SI5351_MULTISYNTH_A_MIN)
- 			a = SI5351_MULTISYNTH_A_MIN;
--		if (hwdata->num >= 6 && a > SI5351_MULTISYNTH67_A_MAX)
--			a = SI5351_MULTISYNTH67_A_MAX;
--		else if (a > SI5351_MULTISYNTH_A_MAX)
-+		if (a > SI5351_MULTISYNTH_A_MAX)
- 			a = SI5351_MULTISYNTH_A_MAX;
+ /**
+  * struct tegra_clk_pll - Tegra PLL clock
+@@ -366,6 +369,12 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+ 			   struct tegra_clk_pll_params *pll_params,
+ 			   spinlock_t *lock);
  
- 		/* find best approximation for b/c = fVCO mod fOUT */
-@@ -723,6 +732,10 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
- 		hwdata->params.p3 = 1;
- 		hwdata->params.p2 = 0;
- 		hwdata->params.p1 = 0;
-+	} else if (hwdata->num >= 6) {
-+		hwdata->params.p3 = 0;
-+		hwdata->params.p2 = 0;
-+		hwdata->params.p1 = a;
- 	} else {
- 		hwdata->params.p3  = c;
- 		hwdata->params.p2  = (128 * b) % c;
++struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
++			   void __iomem *clk_base, void __iomem *pmc,
++			   unsigned long flags,
++			   struct tegra_clk_pll_params *pll_params,
++			   spinlock_t *lock);
++
+ /**
+  * struct tegra_clk_pll_out - PLL divider down clock
+  *
 -- 
-1.9.1
+1.7.9.5
