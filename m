@@ -1,129 +1,167 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: basic-types: Remove useless allocation failure printks
-Date: Thu, 14 May 2015 17:10:12 -0700
-Message-Id: <1431648612-32262-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v3 04/20] clk: tegra: pll: simplify clk_enable_path
+Date: Fri, 1 May 2015 14:53:51 -0400
+Message-ID: <1430506447-29074-5-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
+References: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Printing an error on kmalloc() failures is unnecessary. Remove
-the print and use *ptr in sizeof() for future-proof code.
+Instead of having multiple similar wrapper functions for
+_clk_pll_[enable|disable], we can simplify it to single
+wrappers and use checks to avoid the logic we don't want to use.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/clk-composite.c          | 4 +---
- drivers/clk/clk-divider.c            | 6 ++----
- drivers/clk/clk-fixed-factor.c       | 4 +---
- drivers/clk/clk-fixed-rate.c         | 6 ++----
- drivers/clk/clk-fractional-divider.c | 4 +---
- drivers/clk/clk-gate.c               | 6 ++----
- 6 files changed, 9 insertions(+), 21 deletions(-)
+v2:
+  - Moved the iddq settings into _clk_pll_enable/disable. This is because
+    some places in this file call directly into these internal functions,
+    but still need the iddq/reset logic to happen.
 
-diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-index 077f4c7148f1..616f5aef3c26 100644
---- a/drivers/clk/clk-composite.c
-+++ b/drivers/clk/clk-composite.c
-@@ -200,10 +200,8 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
- 	struct clk_ops *clk_composite_ops;
+ drivers/clk/tegra/clk-pll.c |   76 +++++++++++++------------------------------
+ 1 file changed, 22 insertions(+), 54 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index b9a739ce4b98..1e1018dd466f 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -295,6 +295,13 @@ static void _clk_pll_enable(struct clk_hw *hw)
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+ 	u32 val;
  
- 	composite = kzalloc(sizeof(*composite), GFP_KERNEL);
--	if (!composite) {
--		pr_err("%s: could not allocate composite clk\n", __func__);
-+	if (!composite)
- 		return ERR_PTR(-ENOMEM);
--	}
++	if (pll->params->iddq_reg) {
++		val = pll_readl(pll->params->iddq_reg, pll);
++		val &= ~BIT(pll->params->iddq_bit_idx);
++		pll_writel(val, pll->params->iddq_reg, pll);
++		udelay(2);
++	}
++
+ 	clk_pll_enable_lock(pll);
  
- 	init.name = name;
- 	init.flags = flags | CLK_IS_BASIC;
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index 25006a8bb8e6..706b5783c360 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -430,11 +430,9 @@ static struct clk *_register_divider(struct device *dev, const char *name,
+ 	val = pll_readl_base(pll);
+@@ -326,6 +333,13 @@ static void _clk_pll_disable(struct clk_hw *hw)
+ 		val &= ~PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE;
+ 		writel_relaxed(val, pll->pmc + PMC_PLLP_WB0_OVERRIDE);
  	}
++
++	if (pll->params->iddq_reg) {
++		val = pll_readl(pll->params->iddq_reg, pll);
++		val |= BIT(pll->params->iddq_bit_idx);
++		pll_writel(val, pll->params->iddq_reg, pll);
++		udelay(2);
++	}
+ }
  
- 	/* allocate the divider */
--	div = kzalloc(sizeof(struct clk_divider), GFP_KERNEL);
--	if (!div) {
--		pr_err("%s: could not allocate divider clk\n", __func__);
-+	div = kzalloc(sizeof(*div), GFP_KERNEL);
-+	if (!div)
- 		return ERR_PTR(-ENOMEM);
--	}
+ static int clk_pll_enable(struct clk_hw *hw)
+@@ -876,52 +890,6 @@ static int _setup_dynamic_ramp(struct tegra_clk_pll_params *pll_params,
+ 	return 0;
+ }
  
- 	init.name = name;
- 	init.ops = &clk_divider_ops;
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index d9e3f671c2ea..e186db263d5e 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -74,10 +74,8 @@ struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
- 	struct clk *clk;
+-static int clk_pll_iddq_enable(struct clk_hw *hw)
+-{
+-	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long flags = 0;
+-
+-	u32 val;
+-	int ret;
+-
+-	if (pll->lock)
+-		spin_lock_irqsave(pll->lock, flags);
+-
+-	val = pll_readl(pll->params->iddq_reg, pll);
+-	val &= ~BIT(pll->params->iddq_bit_idx);
+-	pll_writel(val, pll->params->iddq_reg, pll);
+-	udelay(2);
+-
+-	_clk_pll_enable(hw);
+-
+-	ret = clk_pll_wait_for_lock(pll);
+-
+-	if (pll->lock)
+-		spin_unlock_irqrestore(pll->lock, flags);
+-
+-	return 0;
+-}
+-
+-static void clk_pll_iddq_disable(struct clk_hw *hw)
+-{
+-	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long flags = 0;
+-	u32 val;
+-
+-	if (pll->lock)
+-		spin_lock_irqsave(pll->lock, flags);
+-
+-	_clk_pll_disable(hw);
+-
+-	val = pll_readl(pll->params->iddq_reg, pll);
+-	val |= BIT(pll->params->iddq_bit_idx);
+-	pll_writel(val, pll->params->iddq_reg, pll);
+-	udelay(2);
+-
+-	if (pll->lock)
+-		spin_unlock_irqrestore(pll->lock, flags);
+-}
+-
+ static int _calc_dynamic_ramp_rate(struct clk_hw *hw,
+ 				struct tegra_clk_pll_freq_table *cfg,
+ 				unsigned long rate, unsigned long parent_rate)
+@@ -1518,8 +1486,8 @@ struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
+ 	defined(CONFIG_ARCH_TEGRA_132_SOC)
+ static const struct clk_ops tegra_clk_pllxc_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
+ 	.round_rate = clk_pll_ramp_round_rate,
+ 	.set_rate = clk_pllxc_set_rate,
+@@ -1527,8 +1495,8 @@ static const struct clk_ops tegra_clk_pllxc_ops = {
  
- 	fix = kmalloc(sizeof(*fix), GFP_KERNEL);
--	if (!fix) {
--		pr_err("%s: could not allocate fixed factor clk\n", __func__);
-+	if (!fix)
- 		return ERR_PTR(-ENOMEM);
--	}
+ static const struct clk_ops tegra_clk_pllm_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
+ 	.round_rate = clk_pll_ramp_round_rate,
+ 	.set_rate = clk_pllm_set_rate,
+@@ -1545,8 +1513,8 @@ static const struct clk_ops tegra_clk_pllc_ops = {
  
- 	/* struct clk_fixed_factor assignments */
- 	fix->mult = mult;
-diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-index 0fc56ab6e844..f85ec8d1711f 100644
---- a/drivers/clk/clk-fixed-rate.c
-+++ b/drivers/clk/clk-fixed-rate.c
-@@ -65,11 +65,9 @@ struct clk *clk_register_fixed_rate_with_accuracy(struct device *dev,
- 	struct clk_init_data init;
- 
- 	/* allocate fixed-rate clock */
--	fixed = kzalloc(sizeof(struct clk_fixed_rate), GFP_KERNEL);
--	if (!fixed) {
--		pr_err("%s: could not allocate fixed clk\n", __func__);
-+	fixed = kzalloc(sizeof(*fixed), GFP_KERNEL);
-+	if (!fixed)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	init.name = name;
- 	init.ops = &clk_fixed_rate_ops;
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index 6aa72d9d79ba..140eb5844dc4 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -109,10 +109,8 @@ struct clk *clk_register_fractional_divider(struct device *dev,
- 	struct clk *clk;
- 
- 	fd = kzalloc(sizeof(*fd), GFP_KERNEL);
--	if (!fd) {
--		dev_err(dev, "could not allocate fractional divider clk\n");
-+	if (!fd)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	init.name = name;
- 	init.ops = &clk_fractional_divider_ops;
-diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-index 3f0e4200cb5d..551dd0672794 100644
---- a/drivers/clk/clk-gate.c
-+++ b/drivers/clk/clk-gate.c
-@@ -135,11 +135,9 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
- 	}
- 
- 	/* allocate the gate */
--	gate = kzalloc(sizeof(struct clk_gate), GFP_KERNEL);
--	if (!gate) {
--		pr_err("%s: could not allocate gated clk\n", __func__);
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	init.name = name;
- 	init.ops = &clk_gate_ops;
+ static const struct clk_ops tegra_clk_pllre_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pllre_recalc_rate,
+ 	.round_rate = clk_pllre_round_rate,
+ 	.set_rate = clk_pllre_set_rate,
+@@ -1815,8 +1783,8 @@ struct clk *tegra_clk_register_plle_tegra114(const char *name,
+ #if defined(CONFIG_ARCH_TEGRA_124_SOC) || defined(CONFIG_ARCH_TEGRA_132_SOC)
+ static const struct clk_ops tegra_clk_pllss_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
+ 	.round_rate = clk_pll_ramp_round_rate,
+ 	.set_rate = clk_pllxc_set_rate,
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
