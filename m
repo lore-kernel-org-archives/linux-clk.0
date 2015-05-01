@@ -1,37 +1,82 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 19 May 2015 18:19:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: mturquette@linaro.org, tony@atomide.com, linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org, paul@pwsan.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 01/27] ARM: OMAP2+: clock: export driver API to
- setup/get clock features
-Message-ID: <20150520011901.GB31054@codeaurora.org>
-References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
- <1431334493-24455-2-git-send-email-t-kristo@ti.com>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>,
+	Bill Huang <bilhuang@nvidia.com>
+Subject: [PATCH v3 11/20] clk: tegra: pll: Add code to handle if resets are supported by PLL
+Date: Fri, 1 May 2015 14:53:58 -0400
+Message-ID: <1430506447-29074-12-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
+References: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1431334493-24455-2-git-send-email-t-kristo@ti.com>
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/11, Tero Kristo wrote:
-> +
-> +/**
-> + * ti_clk_get_features - get clock driver features flags
-> + *
-> + * Get TI clock driver features description. Returns a pointer
-> + * to the current feature setup.
-> + */
-> +struct ti_clk_features *ti_clk_get_features(void)
+From: Bill Huang <bilhuang@nvidia.com>
 
-Should this return a const pointer?
+If a PLL has a reset_reg specified, properly handle that in the
+enable/disable logic paths.
 
-> +{
-> +	return &ti_clk_features;
-> +}
->  #endif
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+---
+v2:
+  - Moved reset logic to _clk_pll_enable/disable as well
 
+ drivers/clk/tegra/clk-pll.c |   12 ++++++++++++
+ drivers/clk/tegra/clk.h     |    2 ++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 0b9cbe12a3eb..3c40a8136136 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -311,6 +311,12 @@ static void _clk_pll_enable(struct clk_hw *hw)
+ 		udelay(2);
+ 	}
+ 
++	if (pll->params->reset_reg) {
++		val = pll_readl(pll->params->reset_reg, pll);
++		val &= ~BIT(pll->params->reset_bit_idx);
++		pll_writel(val, pll->params->reset_reg, pll);
++	}
++
+ 	clk_pll_enable_lock(pll);
+ 
+ 	val = pll_readl_base(pll);
+@@ -343,6 +349,12 @@ static void _clk_pll_disable(struct clk_hw *hw)
+ 		writel_relaxed(val, pll->pmc + PMC_PLLP_WB0_OVERRIDE);
+ 	}
+ 
++	if (pll->params->reset_reg) {
++		val = pll_readl(pll->params->reset_reg, pll);
++		val |= BIT(pll->params->reset_bit_idx);
++		pll_writel(val, pll->params->reset_reg, pll);
++	}
++
+ 	if (pll->params->iddq_reg) {
+ 		val = pll_readl(pll->params->iddq_reg, pll);
+ 		val |= BIT(pll->params->iddq_bit_idx);
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index b009c803f277..142999f1cd24 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -217,6 +217,8 @@ struct tegra_clk_pll_params {
+ 	u32		lock_enable_bit_idx;
+ 	u32		iddq_reg;
+ 	u32		iddq_bit_idx;
++	u32		reset_reg;
++	u32		reset_bit_idx;
+ 	u32		sdm_din_reg;
+ 	u32		sdm_din_mask;
+ 	u32		sdm_ctrl_reg;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
