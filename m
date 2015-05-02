@@ -1,78 +1,36 @@
-Return-Path: <manabian@gmail.com>
+Return-Path: <moinejf@free.fr>
+Date: Sat, 2 May 2015 10:55:23 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Mike Turquette <mturquette@linaro.org>,
+ Jason Cooper <jason@lakedaemon.net>, devicetree@vger.kernel.org, Stephen
+ Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, Gregory Clement
+ <gregory.clement@free-electrons.com>, Michael Welling <mwelling@ieee.org>,
+ Russell King <rmk+linux@arm.linux.org.uk>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/4] clk: si5351: Some fixes
+Message-ID: <20150502105523.1e6dd07c@armhf>
+In-Reply-To: <554347AA.3070502@gmail.com>
+References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
+	<20150501111406.0aa23c7b@armhf>
+	<554347AA.3070502@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1432838508-5184-2-git-send-email-matthias.bgg@gmail.com>
-References: <1432838508-5184-1-git-send-email-matthias.bgg@gmail.com>
-	<1432838508-5184-2-git-send-email-matthias.bgg@gmail.com>
-Date: Fri, 29 May 2015 08:57:55 +0200
-Message-ID: <CAGhQ9VysJ4O2uOc4LxdN_bFY42fP=ugLp=Sh2rtFEaaavf3yOQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: mux: Add regmap support for simple mux
-From: Joachim  Eastwood <manabian@gmail.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	henryc.chen@mediatek.com, s.hauer@pengutronix.de, jamesjj.liao@mediatek.com,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Matthias,
+On Fri, 01 May 2015 11:30:18 +0200
+Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com> wrote:
 
-On 28 May 2015 at 20:41, Matthias Brugger <matthias.bgg@gmail.com> wrote:
-> Some devices like SoCs from Mediatek need to use the clock muxes
-> through a regmap interface.
-> This patch adds regmap support for simple the simple multiplexer
-> clock code.
+> > I applied the patches 2 and 3, and the audio and video in the Cubox
+> > work fine again. Thanks. =20
+>=20
+> Ok, good. You mentioned that on v3.19-rc1 it still "works" i.e. despite
+> the broken/missing clk_get/clk_prepare_enable?
+>=20
+> Can you check the stable (v3.19, v4.0) versions and see how far we
+> should backport the fix?
 
-Nice to see regmap support. This something I would also like to see
-added to the clk framework.
-And if the approach is agreed upon I would like to see support on
-gates and dividers also.
+v3.19 works, v4.0 does not.
 
-> +static void clk_mux_writel(struct clk_mux *mux, u32 val)
-> +{
-> +       if (mux->flags && CLK_MUX_USE_REGMAP)
-
-Assume you mean &.
-
-> +               regmap_write(mux->regmap, mux->offset, val);
-> +       else
-> +               clk_writel(val, mux->reg);
-> +}
-> +
-> +static u32 clk_mux_readl(struct clk_mux *mux)
-> +{
-> +       u32 val;
-> +
-> +       if (mux->flags && CLK_MUX_USE_REGMAP)
-
-And here.
-
-> +               regmap_read(mux->regmap, mux->offset, &val);
-> +       else
-> +               val = clk_readl(mux->reg);
-> +
-> +       return val;
-> +}
-> +
-[...]
-> @@ -409,7 +410,9 @@ void clk_unregister_divider(struct clk *clk);
->  struct clk_mux {
->         struct clk_hw   hw;
-
->         void __iomem    *reg;
-> +       struct regmap   *regmap;
-
-Since it not possible to have both iomem and regmap at the same time.
-Could this be put in a union or does that make registration more
-difficult?
-
->         u32             *table;
-> +       u32             offset;
->         u32             mask;
->         u8              shift;
->         u8              flags;
-
-
-regards,
-Joachim Eastwood
+--=20
+Ken ar c'henta=C3=B1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
