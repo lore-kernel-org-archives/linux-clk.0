@@ -1,49 +1,61 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
 To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Jonas Jensen <jonas.jensen@gmail.com>
-Subject: [PATCH 18/19] clk: moxart: Silence sparse warnings
-Date: Wed,  6 May 2015 00:39:55 -0700
-Message-Id: <1430897996-11597-19-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
-References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 0/8] clk: sunxi: Add support for the Audio PLL
+Date: Sat,  2 May 2015 13:24:31 +0200
+Message-Id: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-drivers/clk/clk-moxart.c:18:13: warning: symbol 'moxart_of_pll_clk_init' was not declared. Should it be static?
-drivers/clk/clk-moxart.c:56:13: warning: symbol 'moxart_of_apb_clk_init' was not declared. Should it be static?
+Hi,
 
-Cc: Jonas Jensen <jonas.jensen@gmail.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-moxart.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This serie adds support for the PLL2 aka the Audio PLL on the
+Allwinner A10 and the later SoCs.
 
-diff --git a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
-index 30a3b6999e10..5181b89c3cb2 100644
---- a/drivers/clk/clk-moxart.c
-+++ b/drivers/clk/clk-moxart.c
-@@ -15,7 +15,7 @@
- #include <linux/of_address.h>
- #include <linux/clkdev.h>
- 
--void __init moxart_of_pll_clk_init(struct device_node *node)
-+static void __init moxart_of_pll_clk_init(struct device_node *node)
- {
- 	static void __iomem *base;
- 	struct clk *clk, *ref_clk;
-@@ -53,7 +53,7 @@ void __init moxart_of_pll_clk_init(struct device_node *node)
- CLK_OF_DECLARE(moxart_pll_clock, "moxa,moxart-pll-clock",
- 	       moxart_of_pll_clk_init);
- 
--void __init moxart_of_apb_clk_init(struct device_node *node)
-+static void __init moxart_of_apb_clk_init(struct device_node *node)
- {
- 	static void __iomem *base;
- 	struct clk *clk, *pll_clk;
+This is the first stepping stone to get the audio support merged.
+
+Thanks!
+Maxime
+
+Emilio López (5):
+  clk: sunxi: codec clock support
+  clk: sunxi: mod1 clock support
+  ARM: sunxi: Add PLL2 support
+  ARM: sunxi: Add codec clock support
+  ARM: sun7i: Add mod1 clock nodes
+
+Maxime Ripard (3):
+  clk: sunxi: factors: Add m_start parameters
+  clk: sunxi: factors: Add a parameter for N and M zeros
+  clk: sunxi: Add a driver for the PLL2
+
+ arch/arm/boot/dts/sun4i-a10.dtsi           |  18 +++
+ arch/arm/boot/dts/sun5i.dtsi               |  18 +++
+ arch/arm/boot/dts/sun7i-a20.dtsi           |  73 ++++++++++++
+ drivers/clk/sunxi/Makefile                 |   3 +
+ drivers/clk/sunxi/clk-a10-codec.c          |  45 ++++++++
+ drivers/clk/sunxi/clk-a10-mod1.c           |  85 ++++++++++++++
+ drivers/clk/sunxi/clk-a10-pll2.c           | 176 +++++++++++++++++++++++++++++
+ drivers/clk/sunxi/clk-factors.c            |  17 ++-
+ drivers/clk/sunxi/clk-factors.h            |   5 +
+ drivers/clk/sunxi/clk-mod0.c               |   2 +
+ drivers/clk/sunxi/clk-sun8i-mbus.c         |   2 +
+ drivers/clk/sunxi/clk-sun9i-core.c         |   6 +
+ drivers/clk/sunxi/clk-sunxi.c              |  10 ++
+ include/dt-bindings/clock/sun4i-a10-pll2.h |  53 +++++++++
+ 14 files changed, 512 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/sunxi/clk-a10-codec.c
+ create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
+ create mode 100644 drivers/clk/sunxi/clk-a10-pll2.c
+ create mode 100644 include/dt-bindings/clock/sun4i-a10-pll2.h
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+2.3.6
