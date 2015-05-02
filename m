@@ -1,48 +1,95 @@
-Return-Path: <pebolle@tiscali.nl>
-Message-ID: <1432710218.27695.215.camel@x220>
-Subject: Re: [PATCH 4/5] stmmac: add ipq806x glue layer
-From: Paul Bolle <pebolle@tiscali.nl>
-To: Mathieu Olivari <mathieu@codeaurora.org>
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
- ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@linaro.org,
-  sboyd@codeaurora.org, peppe.cavallaro@st.com, agross@codeaurora.org,
- joshc@codeaurora.org, architt@codeaurora.org, georgi.djakov@linaro.org,
- wsa@the-dreams.de, rnayak@codeaurora.org, davem@davemloft.net,
- vbridger@opensource.altera.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- netdev@vger.kernel.org
-Date: Wed, 27 May 2015 09:03:38 +0200
-In-Reply-To: <1432668437-27763-5-git-send-email-mathieu@codeaurora.org>
-References: <1432668437-27763-1-git-send-email-mathieu@codeaurora.org>
-	 <1432668437-27763-5-git-send-email-mathieu@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 6/8] ARM: sunxi: Add PLL2 support
+Date: Sat,  2 May 2015 13:24:37 +0200
+Message-Id: <1430565879-28113-7-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Just a nit: a license mismatch.
+From: Emilio López <emilio@elopez.com.ar>
 
-On Tue, 2015-05-26 at 12:27 -0700, Mathieu Olivari wrote:
-> --- /dev/null
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+This commit adds the PLL2 definition to the sun4i, sun5i and sun7i device
+trees. PLL2 is used to clock audio devices.
 
-> + * Permission to use, copy, modify, and/or distribute this software for any
-> + * purpose with or without fee is hereby granted, provided that the above
-> + * copyright notice and this permission notice appear in all copies.
-> + *
-> + * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-> + * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-> + * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-> + * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-> + * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-> + * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-> + * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+Signed-off-by: Emilio López <emilio@elopez.com.ar>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun4i-a10.dtsi | 9 +++++++++
+ arch/arm/boot/dts/sun5i.dtsi     | 9 +++++++++
+ arch/arm/boot/dts/sun7i-a20.dtsi | 9 +++++++++
+ 3 files changed, 27 insertions(+)
 
-I have no idea which license this is.
-
-> +MODULE_LICENSE("GPL");
-
-But I do know that it's not GPL v2 or later (see
-include/linux/module.h).
-
-
-Paul Bolle
+diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
+index 1d7fd68bea1d..2ed3a0b43131 100644
+--- a/arch/arm/boot/dts/sun4i-a10.dtsi
++++ b/arch/arm/boot/dts/sun4i-a10.dtsi
+@@ -198,6 +198,15 @@
+ 			clock-output-names = "pll1";
+ 		};
+ 
++		pll2: clk@01c20008 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun4i-a10-b-pll2-clk";
++			reg = <0x01c20008 0x8>;
++			clocks = <&osc24M>;
++			clock-output-names = "pll2-1x", "pll2-2x",
++					     "pll2-4x", "pll2-8x";
++		};
++
+ 		pll4: clk@01c20018 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-pll1-clk";
+diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+index 8c04f240f2e9..b291c165966f 100644
+--- a/arch/arm/boot/dts/sun5i.dtsi
++++ b/arch/arm/boot/dts/sun5i.dtsi
+@@ -107,6 +107,15 @@
+ 			clock-output-names = "pll1";
+ 		};
+ 
++		pll2: clk@01c20008 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun4i-a10-b-pll2-clk";
++			reg = <0x01c20008 0x8>;
++			clocks = <&osc24M>;
++			clock-output-names = "pll2-1x", "pll2-2x",
++					     "pll2-4x", "pll2-8x";
++		};
++
+ 		pll4: clk@01c20018 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-pll1-clk";
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index 4163ade867cb..7c850dc1b197 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -203,6 +203,15 @@
+ 			clock-output-names = "pll1";
+ 		};
+ 
++		pll2: clk@01c20008 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun4i-a10-b-pll2-clk";
++			reg = <0x01c20008 0x8>;
++			clocks = <&osc24M>;
++			clock-output-names = "pll2-1x", "pll2-2x",
++					     "pll2-4x", "pll2-8x";
++		};
++
+ 		pll4: clk@01c20018 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun7i-a20-pll4-clk";
+-- 
+2.3.6
