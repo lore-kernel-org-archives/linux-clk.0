@@ -1,80 +1,106 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Wed, 6 May 2015 16:15:25 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Jim Lin <jilin@nvidia.com>
-Cc: Rhyland Klein <rklein@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@linaro.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 02/20] clk: tegra: periph: add new periph clks and
- muxes for Tegra210
-Message-ID: <20150506141524.GE22098@ulmo.nvidia.com>
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
- <1430757460-9478-3-git-send-email-rklein@nvidia.com>
- <5549F900.2050600@nvidia.com>
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 8/8] ARM: sun7i: Add mod1 clock nodes
+Date: Sat,  2 May 2015 13:24:39 +0200
+Message-Id: <1430565879-28113-9-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Q8BnQc91gJZX4vDc"
-In-Reply-To: <5549F900.2050600@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Emilio López <emilio@elopez.com.ar>
 
---Q8BnQc91gJZX4vDc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This commit adds all the mod1 clocks available on A20 to its device
+tree. This list was created by looking at the A20 user manual.
 
-On Wed, May 06, 2015 at 07:20:32PM +0800, Jim Lin wrote:
-> On 05/05/2015 12:37 AM, Rhyland Klein wrote:
-[...]
-> >diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/cl=
-k-tegra-periph.c
-[...]
-> >@@ -333,6 +497,11 @@ static u32 mux_clkm_48M_pllp_480M_idx[] =3D {
-> >  	[0] =3D 0, [1] =3D 2, [2] =3D 4, [3] =3D 6,
-> >  };
-> >+static const char *mux_clkm_pllre_clk32_480M[] =3D {
-> >+	"clk_m", "pll_re_out", "clk_32k", "pll_u_480M"
-> >+};
-> >+#define mux_clkm_pllre_clk32_480M_idx NULL
-> Please help to replace above
->=20
-> #define mux_clkm_pllre_clk32_480M_idx NULL
->=20
-> with
->=20
-> static u32 mux_clkm_pllre_clk32_480M_idx[] =3D {
->=20
->        [0] =3D 0, [1] =3D 1, [2] =3D 2, [3] =3D 3,
-> };
+Not-signed-off-by: Emilio López <emilio@elopez.com.ar>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun7i-a20.dtsi | 55 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-Isn't that the default already if you specify NULL as index table?
-
-Thierry
-
---Q8BnQc91gJZX4vDc
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVSiH8AAoJEN0jrNd/PrOhC08P/1mdEkARvDb4hYmSnpObgZGi
-xSn83IONKAvM5GOEIXdN4N43xqtOxKEIuLlsnwCO75VdyM/0eehh2qLgXyGwEDQi
-A/vV+qKBdPwEto8uQsUUwHDFzKxFhlUXj+GQiowy9bfLdHwvGtqgdHgN92mN3gKt
-gqON4/8wPHb7VgEfSeyGO2haWcN/snspjtfCVAVNgZZ4klxmJmE6/cmuHj158E8y
-yNwjfATrQyVfyHOIguFFsp+YK1/1hM1ELsqrsNkXSHOshIR2EIaXfVMM9jTheuYo
-uSIslKebKHL0ZvsL91xhnWD+cexoVhsAT86UpKyBzYD5byL7Zfx1v+tpVL8MRGDH
-53ACrGu96u3vIx9t7/3ZRQDZJ7YiYFTW9xr9R6apmFTVtImQHXsTUJ+328ylTQBV
-8NPySm7yAhC71rcFX9pHFm/Mr85zKbrDrwzatG26utPZO+Y8l7OkNhZHwroIZYpZ
-ofLpzYjMO4RFXPLyjLTpYXCJMNdIfpSN0QDXqCtKuqorU8xHoXFCoyC57OE0O5mS
-lE6Ro8qyTV3qvRDwfcNKTpWsef0enWtZETW2bEnxjBT/R0Ud1ANNV+Tw3H/vfKX5
-WtnsOBszWPMtT9OUiZD9cbtzMSxOA6hszSPzwJppDI00t18PkGrPEgI4jShe95nR
-RD0JURq4nHxu9suKl52K
-=xh1O
------END PGP SIGNATURE-----
-
---Q8BnQc91gJZX4vDc--
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index 8a5418a0e795..8111458f364b 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -456,6 +456,39 @@
+ 			clock-output-names = "ir1";
+ 		};
+ 
++		iis0_clk: clk@01c200b8 {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-mod1-clk";
++			reg = <0x01c200b8 0x4>;
++			clocks = <&pll2 SUN4I_A10_PLL2_1X>,
++				 <&pll2 SUN4I_A10_PLL2_2X>,
++				 <&pll2 SUN4I_A10_PLL2_4X>,
++				 <&pll2 SUN4I_A10_PLL2_8X>;
++			clock-output-names = "iis0";
++		};
++
++		ac97_clk: clk@01c200bc {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-mod1-clk";
++			reg = <0x01c200bc 0x4>;
++			clocks = <&pll2 SUN4I_A10_PLL2_8X>,
++				 <&pll2 SUN4I_A10_PLL2_4X>,
++				 <&pll2 SUN4I_A10_PLL2_2X>,
++				 <&pll2 SUN4I_A10_PLL2_1X>;
++			clock-output-names = "ac97";
++		};
++
++		spdif_clk: clk@01c200c0 {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-mod1-clk";
++			reg = <0x01c200c0 0x4>;
++			clocks = <&pll2 SUN4I_A10_PLL2_8X>,
++				 <&pll2 SUN4I_A10_PLL2_4X>,
++				 <&pll2 SUN4I_A10_PLL2_2X>,
++				 <&pll2 SUN4I_A10_PLL2_1X>;
++			clock-output-names = "spdif";
++		};
++
+ 		usb_clk: clk@01c200cc {
+ 			#clock-cells = <1>;
+ 		        #reset-cells = <1>;
+@@ -473,6 +506,28 @@
+ 			clock-output-names = "spi3";
+ 		};
+ 
++		iis1_clk: clk@01c200d8 {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-mod1-clk";
++			reg = <0x01c200d8 0x4>;
++			clocks = <&pll2 SUN4I_A10_PLL2_1X>,
++				 <&pll2 SUN4I_A10_PLL2_2X>,
++				 <&pll2 SUN4I_A10_PLL2_4X>,
++				 <&pll2 SUN4I_A10_PLL2_8X>;
++			clock-output-names = "iis1";
++		};
++
++		iis2_clk: clk@01c200dc {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-mod1-clk";
++			reg = <0x01c200dc 0x4>;
++			clocks = <&pll2 SUN4I_A10_PLL2_1X>,
++				 <&pll2 SUN4I_A10_PLL2_2X>,
++				 <&pll2 SUN4I_A10_PLL2_4X>,
++				 <&pll2 SUN4I_A10_PLL2_8X>;
++			clock-output-names = "iis2";
++		};
++
+ 		codec_clk: clk@01c20140 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-codec-clk";
+-- 
+2.3.6
