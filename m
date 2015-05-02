@@ -1,32 +1,43 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 5 May 2015 22:55:10 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: linux-kernel@vger.kernel.org
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Mike Turquette <mturquette@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: s3c2410: Constify platform_device_id
-Message-ID: <20150506055510.GE10871@codeaurora.org>
-References: <1430496168-32408-1-git-send-email-k.kozlowski.k@gmail.com>
- <1430496168-32408-2-git-send-email-k.kozlowski.k@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1430496168-32408-2-git-send-email-k.kozlowski.k@gmail.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/6] clk: asm9260: Fix of_io_request_and_map error check
+Date: Sat,  2 May 2015 17:03:21 +0200
+Message-Id: <1430579006-32702-2-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1430579006-32702-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1430579006-32702-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/02, Krzysztof Kozlowski wrote:
-> The platform_device_id is not modified by the driver and core uses it as
-> const.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-> ---
+of_io_request_and map returns an error pointer, but the current code assumes
+that on error the returned pointer will be NULL.
 
-Applied to clk-next
+Obviously, that makes the check completely useless. Change the test to actually
+check for the proper error code.
 
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+---
+ drivers/clk/clk-asm9260.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-asm9260.c b/drivers/clk/clk-asm9260.c
+index 88f4ff6916fe..90897af8d9f7 100644
+--- a/drivers/clk/clk-asm9260.c
++++ b/drivers/clk/clk-asm9260.c
+@@ -274,7 +274,7 @@ static void __init asm9260_acc_init(struct device_node *np)
+ 	u32 accuracy = 0;
+ 
+ 	base = of_io_request_and_map(np, 0, np->name);
+-	if (!base)
++	if (IS_ERR(base))
+ 		panic("%s: unable to map resource", np->name);
+ 
+ 	/* register pll */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.3.6
