@@ -1,61 +1,139 @@
-Return-Path: <s.nawrocki@samsung.com>
-Message-id: <55488FE6.4040003@samsung.com>
-Date: Tue, 05 May 2015 11:39:50 +0200
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-MIME-version: 1.0
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL v2] clk/samsung fixes for 4.1
-References: <554105AC.8060800@samsung.com>
-In-reply-to: <554105AC.8060800@samsung.com>
-Content-type: text/plain; charset=utf-8
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 5/8] clk: sunxi: mod1 clock support
+Date: Sat,  2 May 2015 13:24:36 +0200
+Message-Id: <1430565879-28113-6-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Mike,
+From: Emilio López <emilio@elopez.com.ar>
 
-this is a corrected version of pull request I sent on 29/04/15.
+The module 1 type of clocks consist of a gate and a mux and are used on
+the audio blocks to mux and gate the PLL2 outputs for AC97, IIS or
+SPDIF. This commit adds support for them on the sunxi clock driver.
 
-The following changes since commit b787f68c36d49bb1d9236f403813641efa74a031:
+Signed-off-by: Emilio López <emilio@elopez.com.ar>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi/Makefile       |  1 +
+ drivers/clk/sunxi/clk-a10-mod1.c | 85 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 86 insertions(+)
+ create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
 
-  Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
-
-are available in the git repository at:
-
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-fixes-4.1-2
-
-for you to fetch changes up to 97372e5a99449b4fffa824a382ad6358066a9918:
-
-  clk: exynos5420: Restore GATE_BUS_TOP on suspend (2015-05-05 10:51:04 +0200)
-
-----------------------------------------------------------------
-clk/samsung fixes for 4.1
-
- - missing CONFIG_ARCH_EXYNOS5433 -> CONFIG_ARCH_EXYNOS substitution
-   to actually enable clk-exynos5433.c compilation,
- - fixes of exynos5433 clk tree definitions: register offsets, parent
-   clocks, PLL coefficients,
- - fix for exynos5420 system sleep regression introduced in 3.19.
-
-----------------------------------------------------------------
-Chanwoo Choi (3):
-      clk: Use CONFIG_ARCH_EXYNOS instead of CONFIG_ARCH_EXYNOS5433
-      clk: exynos5433: Fix wrong parent clock of sclk_apollo clock
-      clk: exynos5433: Fix wrong PMS value of exynos5433_pll_rates
-
-Javier Martinez Canillas (1):
-      clk: exynos5420: Restore GATE_BUS_TOP on suspend
-
-Jonghwa Lee (2):
-      clk: exynos5433: Fix wrong offset of PCLK_MSCL_SECURE_SMMU_JPEG
-      clk: exynos5433: Fix CLK_PCLK_MONOTONIC_CNT clk register assignment
-
- drivers/clk/samsung/Makefile         |    2 +-
- drivers/clk/samsung/clk-exynos5420.c |    1 +
- drivers/clk/samsung/clk-exynos5433.c |   12 ++++++------
- 3 files changed, 8 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index 6fa845e13067..960eeabc375f 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -5,6 +5,7 @@
+ obj-y += clk-sunxi.o clk-factors.o
+ obj-y += clk-a10-codec.o
+ obj-y += clk-a10-hosc.o
++obj-y += clk-a10-mod1.o
+ obj-y += clk-a10-pll2.o
+ obj-y += clk-a20-gmac.o
+ obj-y += clk-mod0.o
+diff --git a/drivers/clk/sunxi/clk-a10-mod1.c b/drivers/clk/sunxi/clk-a10-mod1.c
+new file mode 100644
+index 000000000000..6fc1b7a6de00
+--- /dev/null
++++ b/drivers/clk/sunxi/clk-a10-mod1.c
+@@ -0,0 +1,85 @@
++/*
++ * Copyright 2013 Emilio López
++ *
++ * Emilio López <emilio@elopez.com.ar>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++
++static DEFINE_SPINLOCK(mod1_lock);
++
++#define SUN4I_MOD1_ENABLE	31
++#define SUN4I_MOD1_MUX		16
++#define SUN4I_MOD1_MUX_WIDTH	2
++#define SUN4I_MOD1_MAX_PARENTS	4
++
++static void __init sun4i_mod1_clk_setup(struct device_node *node)
++{
++	struct clk *clk;
++	struct clk_mux *mux;
++	struct clk_gate *gate;
++	const char *parents[4];
++	const char *clk_name = node->name;
++	void __iomem *reg;
++	int i = 0;
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg))
++		return;
++
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		goto err_unmap;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		goto err_free_mux;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++	reg = of_iomap(node, 0);
++
++	while (i < SUN4I_MOD1_MAX_PARENTS &&
++	       (parents[i] = of_clk_get_parent_name(node, i)) != NULL)
++		i++;
++
++	gate->reg = reg;
++	gate->bit_idx = SUN4I_MOD1_ENABLE;
++	gate->lock = &mod1_lock;
++	mux->reg = reg;
++	mux->shift = SUN4I_MOD1_MUX;
++	mux->mask = BIT(SUN4I_MOD1_MUX_WIDTH) - 1;
++	mux->lock = &mod1_lock;
++
++	clk = clk_register_composite(NULL, clk_name, parents, i,
++				     &mux->hw, &clk_mux_ops,
++				     NULL, NULL,
++				     &gate->hw, &clk_gate_ops, 0);
++	if (IS_ERR(clk))
++		goto err_free_gate;
++
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++
++	return;
++
++err_free_gate:
++	kfree(gate);
++err_free_mux:
++	kfree(mux);
++err_unmap:
++	iounmap(reg);
++}
++CLK_OF_DECLARE(sun4i_mod1, "allwinner,sun4i-a10-mod1-clk",
++	       sun4i_mod1_clk_setup);
 -- 
-Thanks,
-Sylwester
+2.3.6
