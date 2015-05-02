@@ -1,320 +1,98 @@
-Return-Path: <Aisheng.Dong@freescale.com>
-Date: Mon, 4 May 2015 18:36:49 +0800
-From: Dong Aisheng <b29396@freescale.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Dong Aisheng <aisheng.dong@freescale.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <mturquette@linaro.org>,
-	<shawn.guo@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<Ranjani.Vaidyanathan@freescale.com>, <b20596@freescale.com>,
-	<r64343@freescale.com>, <b20788@freescale.com>
-Subject: Re: [PATCH RFC v1 4/5] clk: core: add CLK_SET_PARENT_ON flags to
- support clocks require parent on
-Message-ID: <20150504103647.GD4082@shlinux1.ap.freescale.net>
-References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
- <1429107999-24413-5-git-send-email-aisheng.dong@freescale.com>
- <20150501010938.GE32407@codeaurora.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 4/8] clk: sunxi: codec clock support
+Date: Sat,  2 May 2015 13:24:35 +0200
+Message-Id: <1430565879-28113-5-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20150501010938.GE32407@codeaurora.org>
-Return-Path: b29396@freescale.com
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 30, 2015 at 06:09:38PM -0700, Stephen Boyd wrote:
-> On 04/15, Dong Aisheng wrote:
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 7af553d..f2470e5 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -43,6 +43,11 @@ static int clk_core_get_phase(struct clk_core *clk);
-> >  static bool clk_core_is_prepared(struct clk_core *clk);
-> >  static bool clk_core_is_enabled(struct clk_core *clk);
-> >  static struct clk_core *clk_core_lookup(const char *name);
-> > +static struct clk *clk_core_get_parent(struct clk_core *clk);
-> > +static int clk_core_prepare(struct clk_core *clk);
-> > +static void clk_core_unprepare(struct clk_core *clk);
-> > +static int clk_core_enable(struct clk_core *clk);
-> > +static void clk_core_disable(struct clk_core *clk);
-> 
-> Let's avoid adding more here if we can.
-> 
+From: Emilio López <emilio@elopez.com.ar>
 
-Yes, also don't want to add these pre-declarations, but needed by the following
-changes...
+The codec clock on sun4i, sun5i and sun7i is a simple gate with PLL2 as
+parent. Add a driver for such a clock.
 
-> >  
-> >  /***    private data structures    ***/
-> >  
-> > @@ -508,6 +513,7 @@ static void clk_unprepare_unused_subtree(struct clk_core *clk)
-> >  static void clk_disable_unused_subtree(struct clk_core *clk)
-> >  {
-> >  	struct clk_core *child;
-> > +	struct clk *parent = clk_core_get_parent(clk);
-> >  	unsigned long flags;
-> >  
-> >  	lockdep_assert_held(&prepare_lock);
-> > @@ -515,6 +521,13 @@ static void clk_disable_unused_subtree(struct clk_core *clk)
-> >  	hlist_for_each_entry(child, &clk->children, child_node)
-> >  		clk_disable_unused_subtree(child);
-> >  
-> > +	if (clk->flags & CLK_SET_PARENT_ON && parent) {
-> > +		clk_core_prepare(parent->core);
-> > +		flags = clk_enable_lock();
-> > +		clk_core_enable(parent->core);
-> > +		clk_enable_unlock(flags);
-> > +	}
-> 
-> If there's a parent and this clock is on, why wouldn't the parent
-> also be on? It doesn't seem right to have a clock that's on
-> without it's parent on that we're trying to turn off. Put another
-> way, how is this fixing anything?
-> 
+Signed-off-by: Emilio López <emilio@elopez.com.ar>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi/Makefile        |  1 +
+ drivers/clk/sunxi/clk-a10-codec.c | 45 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
+ create mode 100644 drivers/clk/sunxi/clk-a10-codec.c
 
-Well, this is caused by a state mis-align between HW and SW in clock tree
-during booting.
-Usually in uboot, we may enable all clocks in HW by default.
-And during kernel booting time, the parent clock could be disabled in its driver
-probe due to calling clk_prepare_enable and clk_disable_unprepare.
-Because it's child clock is only enabled in HW while its SW usecount in
-clock tree is still 0, so clk_disable of parent clock will gate the parent clock
-in both HW and SW usecount ultimately.
-Then there will be a clock is on in HW while its parent is disabled.
-
-Later when clock core does clk_disable_unused, this clock disable
-will cause system hang due to the limitation of operation requiring its parent
-clock on.
-
-> > +
-> >  	flags = clk_enable_lock();
-> >  
-> >  	if (clk->enable_count)
-> > @@ -608,6 +627,14 @@ struct clk *__clk_get_parent(struct clk *clk)
-> >  }
-> >  EXPORT_SYMBOL_GPL(__clk_get_parent);
-> >  
-> > +static struct clk *clk_core_get_parent(struct clk_core *clk)
-> > +{
-> > +	if (!clk)
-> > +		return NULL;
-> > +
-> > +	return !clk->parent ? NULL : clk->parent->hw->clk;
-> > +}
-> 
-> s/clk/core/ in this function
-> 
-
-Got it as you told we will change all clk name to core for clk_core.
-
-> > +
-> >  static struct clk_core *clk_core_get_parent_by_index(struct clk_core *clk,
-> >  							 u8 index)
-> >  {
-> > @@ -1456,13 +1483,27 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *clk,
-> >  	 * hardware and software states.
-> >  	 *
-> >  	 * See also: Comment for clk_set_parent() below.
-> > +	 *
-> > +	 * 2. enable two parents clock for .set_parent() operation if finding
-> > +	 * flag CLK_SET_PARENT_ON
-> >  	 */
-> > -	if (clk->prepare_count) {
-> > +	if (clk->prepare_count || clk->flags & CLK_SET_PARENT_ON) {
-> >  		clk_core_prepare(parent);
-> >  		flags = clk_enable_lock();
-> >  		clk_core_enable(parent);
-> > -		clk_core_enable(clk);
-> >  		clk_enable_unlock(flags);
-> > +
-> > +		if (clk->prepare_count) {
-> > +			flags = clk_enable_lock();
-> > +			clk_core_enable(clk);
-> > +			clk_enable_unlock(flags);
-> > +		} else {
-> > +
-> > +			clk_core_prepare(old_parent);
-> > +			flags = clk_enable_lock();
-> > +			clk_core_enable(old_parent);
-> > +			clk_enable_unlock(flags);
-> > +		}
-> >  	}
-> >  
-> >  	/* update the clk tree topology */
-> > @@ -1483,12 +1524,22 @@ static void __clk_set_parent_after(struct clk_core *clk,
-> >  	 * Finish the migration of prepare state and undo the changes done
-> >  	 * for preventing a race with clk_enable().
-> >  	 */
-> > -	if (clk->prepare_count) {
-> > +	if (clk->prepare_count || clk->flags & CLK_SET_PARENT_ON) {
-> >  		flags = clk_enable_lock();
-> > -		clk_core_disable(clk);
-> >  		clk_core_disable(old_parent);
-> >  		clk_enable_unlock(flags);
-> >  		clk_core_unprepare(old_parent);
-> > +
-> > +		if (clk->prepare_count) {
-> > +			flags = clk_enable_lock();
-> > +			clk_core_disable(clk);
-> > +			clk_enable_unlock(flags);
-> > +		} else {
-> > +			flags = clk_enable_lock();
-> > +			clk_core_disable(parent);
-> > +			clk_enable_unlock(flags);
-> > +			clk_core_unprepare(parent);
-> > +		}
-> 
-> Is there a reason why the clk itself can't be on when we switch
-> parents? 
-
-The CLK_SET_PARENT_ON only indicates that it's parent clocks should
-be on, not itself clock.
-And we don't want to break CLK_SET_PARENT_GATE clocks.
-So if the clk is not prepared before, we only enable its old parent,
-not including itself.
-
-> It seems that if the clk was on during the parent
-> switch, then it should be possible to just add a flag check on
-> both these if conditions and be done. It may be possible to
-> change the behavior here and not enable the clk in hardware, just
-> up the count and turn on both the parents. I'm trying to recall
-> why we enable the clk itself across the switch.
-> 
-
-Seems it's needed by this fix:
-commit f8aa0b clk: Fix race condition between clk_set_parent and clk_enable()
-
-> >  	}
-> >  }
-> >  
-> > @@ -1514,12 +1565,23 @@ static int __clk_set_parent(struct clk_core *clk, struct clk_core *parent,
-> >  		clk_reparent(clk, old_parent);
-> >  		clk_enable_unlock(flags);
-> >  
-> > -		if (clk->prepare_count) {
-> > +		if (clk->prepare_count || clk->flags & CLK_SET_PARENT_ON) {
-> >  			flags = clk_enable_lock();
-> > -			clk_core_disable(clk);
-> >  			clk_core_disable(parent);
-> >  			clk_enable_unlock(flags);
-> >  			clk_core_unprepare(parent);
-> > +
-> > +			if (clk->prepare_count) {
-> > +				flags = clk_enable_lock();
-> > +				clk_core_disable(clk);
-> > +				clk_enable_unlock(flags);
-> > +			} else {
-> > +				flags = clk_enable_lock();
-> > +				clk_core_disable(old_parent);
-> > +				clk_enable_unlock(flags);
-> > +				clk_core_unprepare(old_parent);
-> > +			}
-> > +
-> 
-> Hmmm... if __clk_set_parent_after() actually used the second
-> argument then we could put this duplicate logic in there and call
-> it with a different order of arguments in the success vs. error
-> paths in this function. Unless I missed something.
-> 
-
-Good suggestion, will try in next version.
-
-> >  		}
-> >  		return ret;
-> >  	}
-> > @@ -1735,13 +1797,18 @@ static void clk_change_rate(struct clk_core *clk)
-> >  	unsigned long best_parent_rate = 0;
-> >  	bool skip_set_rate = false;
-> >  	struct clk_core *old_parent;
-> > +	struct clk_core *parent = NULL;
-> > +	unsigned long flags;
-> >  
-> >  	old_rate = clk->rate;
-> >  
-> > -	if (clk->new_parent)
-> > +	if (clk->new_parent) {
-> > +		parent = clk->new_parent;
-> >  		best_parent_rate = clk->new_parent->rate;
-> > -	else if (clk->parent)
-> > +	} else if (clk->parent) {
-> > +		parent = clk->parent;
-> >  		best_parent_rate = clk->parent->rate;
-> > +	}
-> >  
-> >  	if (clk->new_parent && clk->new_parent != clk->parent) {
-> >  		old_parent = __clk_set_parent_before(clk, clk->new_parent);
-> > @@ -1762,6 +1829,13 @@ static void clk_change_rate(struct clk_core *clk)
-> >  
-> >  	trace_clk_set_rate(clk, clk->new_rate);
-> >  
-> > +	if (clk->flags & CLK_SET_PARENT_ON && parent) {
-> > +		clk_core_prepare(parent);
-> > +		flags = clk_enable_lock();
-> > +		clk_core_enable(parent);
-> > +		clk_enable_unlock(flags);
-> > +	}
-> 
-> I can understand the case where clk_set_parent() can't switch the
-> mux because it needs the source and destination parents to be
-> clocking. I have that hardware design on my desk. But to change
-> the rate of a clock? The name of the flag, CLK_SET_PARENT_ON,
-> leads me to believe we don't really need to do this if we're
-> changing the rate, unless we're also switching the parents. Care
-> to explain why the hardware requires this?
-> 
-
-What i know is that it's designed for eliminate glitch internally.
-Will find more information for you.
-
-> If we actually do need to keep the parent clock on when the rate
-> is switching the name of the flag could be better and not have
-> "set parent" in the name.
-> 
-
-Actually it's meaning is the clock set(e.g. rate, gate/ungate)
-needs its parent clocks on, not set parent...
-But Yes, i fully agree the naming is a bit misleading.
-
-It just follows the exist CLK_SET_X convention..
-Seems not easy find a better name.
-What's your suggestion?
-
-How about CLK_OPS_PARENT_ON?
-
-> > +
-> >  	if (!skip_set_rate && clk->ops->set_rate)
-> >  		clk->ops->set_rate(clk->hw, clk->new_rate, best_parent_rate);
-> >  
-> > @@ -1769,6 +1843,13 @@ static void clk_change_rate(struct clk_core *clk)
-> >  
-> >  	clk->rate = clk_recalc(clk, best_parent_rate);
-> >  
-> > +	if (clk->flags & CLK_SET_PARENT_ON && parent) {
-> > +		flags = clk_enable_lock();
-> > +		clk_core_disable(parent);
-> > +		clk_enable_unlock(flags);
-> > +		clk_core_unprepare(parent);
-> > +	}
-> 
-> Why not just call clk_prepare_enable()?
-
-Caused by two reasons initially:
-1) no one uses clk_prepare_enable in clk core, so i guess it may be better
-not use it :-)
-2) clk_prepare_enable includes one more unneeded prepare lock acquire,
-lines exchange efficiency.
-
-> Or add a clk_core
-> specific function, clk_core_prepare_enable() that we can call
-> here. We could put the parent pointer check in there too so that
-> it's just
-> 
->  if (clk->flags & CLK_SET_PARENT_ON)
->  	clk_core_prepare_enable(parent);
-
-I'm ok if you like this. :)
-
-Regards
-Dong Aisheng
-
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index eb36c38d4120..6fa845e13067 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -3,6 +3,7 @@
+ #
+ 
+ obj-y += clk-sunxi.o clk-factors.o
++obj-y += clk-a10-codec.o
+ obj-y += clk-a10-hosc.o
+ obj-y += clk-a10-pll2.o
+ obj-y += clk-a20-gmac.o
+diff --git a/drivers/clk/sunxi/clk-a10-codec.c b/drivers/clk/sunxi/clk-a10-codec.c
+new file mode 100644
+index 000000000000..aaeccf8cde39
+--- /dev/null
++++ b/drivers/clk/sunxi/clk-a10-codec.c
+@@ -0,0 +1,45 @@
++/*
++ * Copyright 2013 Emilio López
++ *
++ * Emilio López <emilio@elopez.com.ar>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++
++#define SUN4I_CODEC_GATE	31
++
++static void __init sun4i_codec_clk_setup(struct device_node *node)
++{
++	struct clk *clk;
++	const char *clk_name = node->name, *parent_name;
++	void __iomem *reg;
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg))
++		return;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++	parent_name = of_clk_get_parent_name(node, 0);
++
++	clk = clk_register_gate(NULL, clk_name, parent_name,
++				CLK_SET_RATE_PARENT, reg,
++				SUN4I_CODEC_GATE, 0, NULL);
++
++	if (!IS_ERR(clk))
++		of_clk_add_provider(node, of_clk_src_simple_get, clk);
++}
++CLK_OF_DECLARE(sun4i_codec, "allwinner,sun4i-a10-codec-clk",
++	       sun4i_codec_clk_setup);
+-- 
+2.3.6
