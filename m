@@ -1,58 +1,32 @@
-Return-Path: <jcliang@chromium.org>
-Return-Path: <jcliang@chromium.org>
-From: Ricky Liang <jcliang@chromium.org>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Ricky Liang <jcliang@chromium.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Henry Chen <henryc.chen@mediatek.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC...),
-	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC...)
-Subject: [PATCH v3] clk: mediatek: Initialize clk_init_data
-Date: Mon, 18 May 2015 22:00:26 +0800
-Message-Id: <1431957632-2182-1-git-send-email-jcliang@chromium.org>
+Return-Path: <bleung@google.com>
+MIME-Version: 1.0
+Sender: bleung@google.com
+In-Reply-To: <1430757460-9478-6-git-send-email-rklein@nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+	<1430757460-9478-6-git-send-email-rklein@nvidia.com>
+Date: Mon, 4 May 2015 13:20:19 -0700
+Message-ID: <CANLzEktDVtx9sNaKS_gbwZyXwSi16A-qmn3h6nAgCJ_Awt58qg@mail.gmail.com>
+Subject: Re: [PATCH v4 05/20] clk: tegra: pll: update warning msg
+From: Benson Leung <bleung@chromium.org>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The variable init (struct clk_init_data) is allocated on the stack.
-We weren't initializing the .flags field, so it contains random junk,
-which can cause all kinds of interesting issues when the flags are
-parsed by clk_register.
+On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> Swap out the generic WARN_ON with a WARN which gives more
+> information about what is happening.
+>
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 
-Signed-off-by: Ricky Liang <jcliang@chromium.org>
----
- drivers/clk/mediatek/clk-gate.c | 2 +-
- drivers/clk/mediatek/clk-pll.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Benson Leung <bleung@chromium.org>
 
-diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
-index 9d77ee3..5702036 100644
---- a/drivers/clk/mediatek/clk-gate.c
-+++ b/drivers/clk/mediatek/clk-gate.c
-@@ -109,7 +109,7 @@ struct clk *mtk_clk_register_gate(
- {
- 	struct mtk_clk_gate *cg;
- 	struct clk *clk;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 
- 	cg = kzalloc(sizeof(*cg), GFP_KERNEL);
- 	if (!cg)
-diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-index 66154ca..44409e9 100644
---- a/drivers/clk/mediatek/clk-pll.c
-+++ b/drivers/clk/mediatek/clk-pll.c
-@@ -268,7 +268,7 @@ static struct clk *mtk_clk_register_pll(const struct mtk_pll_data *data,
- 		void __iomem *base)
- {
- 	struct mtk_clk_pll *pll;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	struct clk *clk;
- 	const char *parent_name = "clk26m";
- 
+
 -- 
-2.1.2
+Benson Leung
+Software Engineer, Chrom* OS
+bleung@chromium.org
