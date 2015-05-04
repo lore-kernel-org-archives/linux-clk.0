@@ -1,55 +1,74 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Tero Kristo <t-kristo@ti.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>
-Cc: linux-clk@vger.kernel.org,
-	kernel@stlinux.com,
-	linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/5] clk: st: Use of_clk_get_parent_count() instead of open coding
-Date: Fri, 29 May 2015 11:25:46 +0200
-Message-Id: <1432891549-23295-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
-References: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20150504130546.GC3274@lukather>
+References: <1430410206-4410-1-git-send-email-wens@csie.org>
+ <1430410206-4410-5-git-send-email-wens@csie.org> <20150504130546.GC3274@lukather>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 4 May 2015 23:25:18 +0800
+Message-ID: <CAGb2v676gpGKm+9vHLnfvhJ=tCyRAkE2G7Pi87oNsWmJJ5+ROg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] ARM: dts: sun9i: Add A80 PRCM clocks and reset
+ control nodes
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee.jones@linaro.org>,
+	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/st/clk-flexgen.c | 2 +-
- drivers/clk/st/clkgen-mux.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+On Mon, May 4, 2015 at 9:05 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Fri, May 01, 2015 at 12:10:05AM +0800, Chen-Yu Tsai wrote:
+>> This adds the PRCM clocks and reset controls to the A80 dtsi.
+>>
+>> The list of apbs clock gates is incomplete. Tests show that bits 0~20
+>> are mutable. We will need documents from Allwinner to complete the
+>> support.
+>>
+>> Also update clock and reset phandles for r_uart.
+>>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> ---
+>>  arch/arm/boot/dts/sun9i-a80.dtsi | 64 +++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 63 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
+>> index d3dece2eea72..f0869ff8006f 100644
+>> --- a/arch/arm/boot/dts/sun9i-a80.dtsi
+>> +++ b/arch/arm/boot/dts/sun9i-a80.dtsi
+>> @@ -169,6 +169,14 @@
+>>                                            "usb_phy2", "usb_hsic_12M";
+>>               };
+>>
+>> +             pll3: clk@06000008 {
+>> +                     /* placeholder until implemented */
+>> +                     #clock-cells = <0>;
+>> +                     compatible = "fixed-clock";
+>> +                     clock-rate = <0>;
+>> +                     clock-output-names = "pll3";
+>> +             };
+>> +
+>>               pll4: clk@0600000c {
+>>                       #clock-cells = <0>;
+>>                       compatible = "allwinner,sun9i-a80-pll4-clk";
+>> @@ -751,13 +759,67 @@
+>>                       interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+>>               };
+>>
+>> +             prcm@08001400 {
+>> +                     compatible = "allwinner,sun9i-a80-prcm";
+>> +                     reg = <0x08001400 0x200>;
+>> +
+>> +                     cpus_clk: cpus_clk {
+>
+> I wonder whether it would not be more readable to have this as
+> clk@<prcm_offset>, just like all the other clocks?
 
-diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
-index 409ed4b0b569ff60..657ca14ba709a64b 100644
---- a/drivers/clk/st/clk-flexgen.c
-+++ b/drivers/clk/st/clk-flexgen.c
-@@ -245,7 +245,7 @@ static const char ** __init flexgen_get_parents(struct device_node *np,
- 	const char **parents;
- 	int nparents, i;
- 
--	nparents = of_count_phandle_with_args(np, "clocks", "#clock-cells");
-+	nparents = of_clk_get_parent_count(np);
- 	if (WARN_ON(nparents <= 0))
- 		return NULL;
- 
-diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
-index 80aa77dbf660cf0c..4fbe6e099587c054 100644
---- a/drivers/clk/st/clkgen-mux.c
-+++ b/drivers/clk/st/clkgen-mux.c
-@@ -26,7 +26,7 @@ static const char ** __init clkgen_mux_get_parents(struct device_node *np,
- 	const char **parents;
- 	int nparents, i;
- 
--	nparents = of_count_phandle_with_args(np, "clocks", "#clock-cells");
-+	nparents = of_clk_get_parent_count(np);
- 	if (WARN_ON(nparents <= 0))
- 		return ERR_PTR(-EINVAL);
- 
--- 
-1.9.1
+I agree it is more readable, though it is purely aesthetics. What offset
+did you have in mind? Offset from PRCM base (0x08001400)? Or the complete
+address?
+
+Since I'm sending a new version anyway, I can make this change.
+
+ChenYu
