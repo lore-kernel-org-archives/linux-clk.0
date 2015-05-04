@@ -1,143 +1,228 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-From: Rob Herring <robherring2@gmail.com>
-Date: Wed, 27 May 2015 23:33:34 -0500
-Message-ID: <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com>
-Subject: Re: [PATCH 00/21] On-demand device registration
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	=?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Alexander Holler <holler@ahsoftware.de>,
-	Grant Likely <grant.likely@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	dmaengine@vger.kernel.org,
-	dri-devel <dri-devel@lists.freedesktop.org>,
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Michael Welling <mwelling@ieee.org>,
+	Russell King <rmk+linux@arm.linux.org.uk>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
 	linux-clk@vger.kernel.org,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/3] clk: si5351: Do not pass struct clk in platform_data
+Date: Mon,  4 May 2015 23:04:16 +0200
+Message-Id: <1430773456-15203-4-git-send-email-sebastian.hesselbarth@gmail.com>
+In-Reply-To: <1430773456-15203-1-git-send-email-sebastian.hesselbarth@gmail.com>
+References: <1430773456-15203-1-git-send-email-sebastian.hesselbarth@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 25, 2015 at 9:53 AM, Tomeu Vizoso
-<tomeu.vizoso@collabora.com> wrote:
-> Hello,
->
-> I have a problem with the panel on my Tegra Chromebook taking longer than
-> expected to be ready during boot (Stéphane Marchesin reported what is
-> basically the same issue in [0]), and have looked into ordered probing as a
-> better way of solving this than moving nodes around in the DT or playing with
-> initcall levels.
->
-> While reading the thread [1] that Alexander Holler started with his series to
-> make probing order deterministic, it occurred to me that it should be possible
-> to achieve the same by registering devices as they are referenced by other
-> devices.
+When registering clk-si5351 by platform_data, we should not pass struct clk
+for the reference clocks. Drop struct clk from platform_data and rework the
+driver to use devm_clk_get of named clock references.
 
-I like the concept and novel approach.
+While at it, check for at least one valid input clock and properly prepare/
+enable valid reference clocks.
 
-> This basically reuses the information that is already implicit in the probe()
-> implementations, saving us from refactoring existing drivers or adding
-> information to DTBs.
->
-> Something I'm not completely happy with is that I have had to move the call to
-> of_platform_populate after all platform drivers have been registered.
-> Otherwise I don't see how I could register drivers on demand as we don't have
-> yet each driver's compatible strings.
+Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Reported-by: Michael Welling <mwelling@ieee.org>
+Reported-by: Jean-Francois Moine <moinejf@free.fr>
+Reported-by: Russell King <rmk+linux@arm.linux.org.uk>
+Tested-by: Michael Welling <mwelling@ieee.org>
+Tested-by: Jean-Francois Moine <moinejf@free.fr>
+---
+Changelog:
+v1->v2:
+- Reword parent clock check error message and add a comment about
+  the required parent clocks per variant. (Suggested by Fabio Estevam)
 
-Yeah, this is the opposite of what we'd really like. Ideally, we would
-have a solution that works for modules too. However, we're no worse
-off. We pretty much build-in dependencies to avoid module ordering
-problems.
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jean-Francois Moine <moinejf@free.fr>
+Cc: Michael Welling <mwelling@ieee.org>
+Cc: Russell King <rmk+linux@arm.linux.org.uk>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Gregory Clement <gregory.clement@free-electrons.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/clk-si5351.c             | 63 +++++++++++++++++++++++++-----------
+ include/linux/platform_data/si5351.h |  4 ---
+ 2 files changed, 45 insertions(+), 22 deletions(-)
 
-Perhaps we need to make the probing on-demand rather than simply on
-device<->driver match occurring.
-
-> For machs that don't move of_platform_populate() to a later point, these
-> patches shouldn't cause any problems but it's not guaranteed that we'll avoid
-> all the deferred probes as some drivers may not be registered yet.
-
-Ideally, of_platform_populate is not explicitly called by each
-platform. So I think we need to make this work for the default case.
-
-> I have tested this on boards with Tegra, iMX.6 and Exynos SoCs, and these
-> patches were enough to eliminate all the deferred probes.
->
-> With this series I get the kernel to output to the panel in 0.5s, instead of 2.8s.
-
-That's certainly compelling.
-
-Rob
-
->
-> Regards,
->
-> Tomeu
->
-> [0] http://lists.freedesktop.org/archives/dri-devel/2014-August/066527.html
->
-> [1] https://lkml.org/lkml/2014/5/12/452
->
-> Tomeu Vizoso (21):
->   regulator: core: Reduce critical area in _regulator_get
->   ARM: tegra: Add gpio-ranges property
->   ARM: tegra: Register drivers before devices
->   ARM: EXYNOS: Register drivers before devices
->   ARM i.MX6q: Register drivers before devices
->   of/platform: Add of_platform_device_ensure()
->   of/platform: Ensure device registration on lookup
->   gpio: Probe GPIO drivers on demand
->   gpio: Probe pinctrl devices on demand
->   regulator: core: Probe regulators on demand
->   drm: Probe panels on demand
->   drm/tegra: Probe dpaux devices on demand
->   i2c: core: Probe i2c master devices on demand
->   pwm: Probe PWM chip devices on demand
->   backlight: Probe backlight devices on demand
->   usb: phy: Probe phy devices on demand
->   clk: Probe clk providers on demand
->   pinctrl: Probe pinctrl devices on demand
->   phy: core: Probe phy providers on demand
->   dma: of: Probe DMA controllers on demand
->   power-supply: Probe power supplies on demand
->
->  arch/arm/boot/dts/tegra124.dtsi     |  1 +
->  arch/arm/mach-exynos/exynos.c       |  4 +--
->  arch/arm/mach-imx/mach-imx6q.c      | 12 ++++-----
->  arch/arm/mach-tegra/tegra.c         | 21 ++++++---------
->  drivers/clk/clk.c                   |  3 +++
->  drivers/dma/of-dma.c                |  3 +++
->  drivers/gpio/gpiolib-of.c           |  5 ++++
->  drivers/gpu/drm/drm_panel.c         |  3 +++
->  drivers/gpu/drm/tegra/dpaux.c       |  3 +++
->  drivers/i2c/i2c-core.c              |  3 +++
->  drivers/of/platform.c               | 53 +++++++++++++++++++++++++++++++++++++
->  drivers/phy/phy-core.c              |  3 +++
->  drivers/pinctrl/devicetree.c        |  2 ++
->  drivers/power/power_supply_core.c   |  3 +++
->  drivers/pwm/core.c                  |  3 +++
->  drivers/regulator/core.c            | 45 +++++++++++++++----------------
->  drivers/usb/phy/phy.c               |  3 +++
->  drivers/video/backlight/backlight.c |  3 +++
->  include/linux/of_platform.h         |  2 ++
->  19 files changed, 130 insertions(+), 45 deletions(-)
->
-> --
-> 2.4.1
->
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index 44ea107cfc67..30335d3b99af 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -1128,13 +1128,6 @@ static int si5351_dt_parse(struct i2c_client *client,
+ 	if (!pdata)
+ 		return -ENOMEM;
+ 
+-	pdata->clk_xtal = of_clk_get(np, 0);
+-	if (!IS_ERR(pdata->clk_xtal))
+-		clk_put(pdata->clk_xtal);
+-	pdata->clk_clkin = of_clk_get(np, 1);
+-	if (!IS_ERR(pdata->clk_clkin))
+-		clk_put(pdata->clk_clkin);
+-
+ 	/*
+ 	 * property silabs,pll-source : <num src>, [<..>]
+ 	 * allow to selectively set pll source
+@@ -1328,8 +1321,22 @@ static int si5351_i2c_probe(struct i2c_client *client,
+ 	i2c_set_clientdata(client, drvdata);
+ 	drvdata->client = client;
+ 	drvdata->variant = variant;
+-	drvdata->pxtal = pdata->clk_xtal;
+-	drvdata->pclkin = pdata->clk_clkin;
++	drvdata->pxtal = devm_clk_get(&client->dev, "xtal");
++	drvdata->pclkin = devm_clk_get(&client->dev, "clkin");
++
++	if (PTR_ERR(drvdata->pxtal) == -EPROBE_DEFER ||
++	    PTR_ERR(drvdata->pclkin) == -EPROBE_DEFER)
++		return -EPROBE_DEFER;
++
++	/*
++	 * Check for valid parent clock: VARIANT_A and VARIANT_B need XTAL,
++	 *   VARIANT_C can have CLKIN instead.
++	 */
++	if (IS_ERR(drvdata->pxtal) &&
++	    (drvdata->variant != SI5351_VARIANT_C || IS_ERR(drvdata->pclkin))) {
++		dev_err(&client->dev, "missing parent clock\n");
++		return -EINVAL;
++	}
+ 
+ 	drvdata->regmap = devm_regmap_init_i2c(client, &si5351_regmap_config);
+ 	if (IS_ERR(drvdata->regmap)) {
+@@ -1393,6 +1400,11 @@ static int si5351_i2c_probe(struct i2c_client *client,
+ 		}
+ 	}
+ 
++	if (!IS_ERR(drvdata->pxtal))
++		clk_prepare_enable(drvdata->pxtal);
++	if (!IS_ERR(drvdata->pclkin))
++		clk_prepare_enable(drvdata->pclkin);
++
+ 	/* register xtal input clock gate */
+ 	memset(&init, 0, sizeof(init));
+ 	init.name = si5351_input_names[0];
+@@ -1407,7 +1419,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
+ 	clk = devm_clk_register(&client->dev, &drvdata->xtal);
+ 	if (IS_ERR(clk)) {
+ 		dev_err(&client->dev, "unable to register %s\n", init.name);
+-		return PTR_ERR(clk);
++		ret = PTR_ERR(clk);
++		goto err_clk;
+ 	}
+ 
+ 	/* register clkin input clock gate */
+@@ -1425,7 +1438,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
+ 		if (IS_ERR(clk)) {
+ 			dev_err(&client->dev, "unable to register %s\n",
+ 				init.name);
+-			return PTR_ERR(clk);
++			ret = PTR_ERR(clk);
++			goto err_clk;
+ 		}
+ 	}
+ 
+@@ -1447,7 +1461,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
+ 	clk = devm_clk_register(&client->dev, &drvdata->pll[0].hw);
+ 	if (IS_ERR(clk)) {
+ 		dev_err(&client->dev, "unable to register %s\n", init.name);
+-		return -EINVAL;
++		ret = PTR_ERR(clk);
++		goto err_clk;
+ 	}
+ 
+ 	/* register PLLB or VXCO (Si5351B) */
+@@ -1471,7 +1486,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
+ 	clk = devm_clk_register(&client->dev, &drvdata->pll[1].hw);
+ 	if (IS_ERR(clk)) {
+ 		dev_err(&client->dev, "unable to register %s\n", init.name);
+-		return -EINVAL;
++		ret = PTR_ERR(clk);
++		goto err_clk;
+ 	}
+ 
+ 	/* register clk multisync and clk out divider */
+@@ -1492,8 +1508,10 @@ static int si5351_i2c_probe(struct i2c_client *client,
+ 		num_clocks * sizeof(*drvdata->onecell.clks), GFP_KERNEL);
+ 
+ 	if (WARN_ON(!drvdata->msynth || !drvdata->clkout ||
+-		    !drvdata->onecell.clks))
+-		return -ENOMEM;
++		    !drvdata->onecell.clks)) {
++		ret = -ENOMEM;
++		goto err_clk;
++	}
+ 
+ 	for (n = 0; n < num_clocks; n++) {
+ 		drvdata->msynth[n].num = n;
+@@ -1511,7 +1529,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
+ 		if (IS_ERR(clk)) {
+ 			dev_err(&client->dev, "unable to register %s\n",
+ 				init.name);
+-			return -EINVAL;
++			ret = PTR_ERR(clk);
++			goto err_clk;
+ 		}
+ 	}
+ 
+@@ -1538,7 +1557,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
+ 		if (IS_ERR(clk)) {
+ 			dev_err(&client->dev, "unable to register %s\n",
+ 				init.name);
+-			return -EINVAL;
++			ret = PTR_ERR(clk);
++			goto err_clk;
+ 		}
+ 		drvdata->onecell.clks[n] = clk;
+ 
+@@ -1557,10 +1577,17 @@ static int si5351_i2c_probe(struct i2c_client *client,
+ 				  &drvdata->onecell);
+ 	if (ret) {
+ 		dev_err(&client->dev, "unable to add clk provider\n");
+-		return ret;
++		goto err_clk;
+ 	}
+ 
+ 	return 0;
++
++err_clk:
++	if (!IS_ERR(drvdata->pxtal))
++		clk_disable_unprepare(drvdata->pxtal);
++	if (!IS_ERR(drvdata->pclkin))
++		clk_disable_unprepare(drvdata->pclkin);
++	return ret;
+ }
+ 
+ static const struct i2c_device_id si5351_i2c_ids[] = {
+diff --git a/include/linux/platform_data/si5351.h b/include/linux/platform_data/si5351.h
+index a947ab8b441a..533d9807e543 100644
+--- a/include/linux/platform_data/si5351.h
++++ b/include/linux/platform_data/si5351.h
+@@ -5,8 +5,6 @@
+ #ifndef __LINUX_PLATFORM_DATA_SI5351_H__
+ #define __LINUX_PLATFORM_DATA_SI5351_H__
+ 
+-struct clk;
+-
+ /**
+  * enum si5351_pll_src - Si5351 pll clock source
+  * @SI5351_PLL_SRC_DEFAULT: default, do not change eeprom config
+@@ -107,8 +105,6 @@ struct si5351_clkout_config {
+  * @clkout: array of clkout configuration
+  */
+ struct si5351_platform_data {
+-	struct clk *clk_xtal;
+-	struct clk *clk_clkin;
+ 	enum si5351_pll_src pll_src[2];
+ 	struct si5351_clkout_config clkout[8];
+ };
+-- 
+2.1.0
