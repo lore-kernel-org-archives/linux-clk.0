@@ -1,50 +1,69 @@
-Return-Path: <shawn.guo@linaro.org>
-Return-Path: <shawn.guo@linaro.org>
-Date: Thu, 21 May 2015 09:18:25 +0800
-From: Shawn Guo <shawn.guo@linaro.org>
-To: =?iso-8859-1?Q?S=E9bastien?= Szymanski <sebastien.szymanski@armadeus.com>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] ARM: clk-imx6q: refine sata's parent
-Message-ID: <20150521011824.GI24844@dragon>
-References: <1432132237-31004-1-git-send-email-sebastien.szymanski@armadeus.com>
+Return-Path: <bleung@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1432132237-31004-1-git-send-email-sebastien.szymanski@armadeus.com>
+Sender: bleung@google.com
+In-Reply-To: <1430757460-9478-11-git-send-email-rklein@nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+	<1430757460-9478-11-git-send-email-rklein@nvidia.com>
+Date: Mon, 4 May 2015 16:34:03 -0700
+Message-ID: <CANLzEktX3tiBXvxKgToUr5S7xZ+YibpeG6tDvW1R=qkW6_T5WQ@mail.gmail.com>
+Subject: Re: [PATCH v4 10/20] clk: tegra: pll: Add logic for out-of-table
+ rates for T210
+From: Benson Leung <bleung@chromium.org>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 20, 2015 at 04:30:37PM +0200, Sébastien Szymanski wrote:
-> According to IMX6D/Q RM, table 18-3, sata clock's parent is ahb, not ipg.
-> 
-> This patch is based on branch:
-> git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git imx/soc
+On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> For Tegra210, the logic to calculate out-of-table rates is different
+> from previous generations. Add callbacks that can be overridden to
+> allow for different ways of calculating rates. Default to
+> _cal_rate when not specified.
 
-Dropped these two lines, and applied patch.
+You should mention that you're adding a new flag and new members that
+may override mdiv as well.
 
-Shawn
-
-> 
-> Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+>
+> Based on original work by Aleksandr Frid <afrid@nvidia.com>
+>
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 > ---
->  drivers/clk/imx/clk-imx6q.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-> index 128f887..d046f8e 100644
-> --- a/drivers/clk/imx/clk-imx6q.c
-> +++ b/drivers/clk/imx/clk-imx6q.c
-> @@ -450,7 +450,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
->  	clk[IMX6QDL_CLK_GPMI_IO]      = imx_clk_gate2("gpmi_io",       "enfc",              base + 0x78, 28);
->  	clk[IMX6QDL_CLK_GPMI_APB]     = imx_clk_gate2("gpmi_apb",      "usdhc3",            base + 0x78, 30);
->  	clk[IMX6QDL_CLK_ROM]          = imx_clk_gate2("rom",           "ahb",               base + 0x7c, 0);
-> -	clk[IMX6QDL_CLK_SATA]         = imx_clk_gate2("sata",          "ipg",               base + 0x7c, 4);
-> +	clk[IMX6QDL_CLK_SATA]         = imx_clk_gate2("sata",          "ahb",               base + 0x7c, 4);
->  	clk[IMX6QDL_CLK_SDMA]         = imx_clk_gate2("sdma",          "ahb",               base + 0x7c, 6);
->  	clk[IMX6QDL_CLK_SPBA]         = imx_clk_gate2("spba",          "ipg",               base + 0x7c, 12);
->  	clk[IMX6QDL_CLK_SPDIF]        = imx_clk_gate2("spdif",         "spdif_podf",        base + 0x7c, 14);
-> -- 
-> 2.0.5
-> 
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 3f92f1ad3961..b63ef31a2d7a 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -199,6 +199,8 @@ struct div_nmp {
+>   *     base register.
+>   * TEGRA_PLL_BYPASS - PLL has bypass bit
+>   * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
+> + * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
+> + *     it may be more accurate (especially if SDM present)
+>   */
+>  struct tegra_clk_pll_params {
+>         unsigned long   input_min;
+> @@ -235,7 +237,13 @@ struct tegra_clk_pll_params {
+>         struct div_nmp  *div_nmp;
+>         struct tegra_clk_pll_freq_table *freq_table;
+>         unsigned long   fixed_rate;
+> +       bool            vco_out;
+
+vco_out is unused and unrelated to this change?
+
+> +       u16             mdiv_default;
+> +       u32     (*round_p_to_pdiv)(u32 p, u32 *pdiv);
+>         void    (*set_gain)(struct tegra_clk_pll_freq_table *cfg);
+> +       int     (*calc_rate)(struct clk_hw *hw,
+> +                       struct tegra_clk_pll_freq_table *cfg,
+> +                       unsigned long rate, unsigned long parent_rate);
+
+Add kerneldoc for new members.
+
+
+-- 
+Benson Leung
+Software Engineer, Chrom* OS
+bleung@chromium.org
