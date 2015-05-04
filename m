@@ -1,38 +1,67 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michal Simek <michal.simek@xilinx.com>, kernel@pengutronix.de, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: make several parent names const
-Date: Thu, 28 May 2015 12:35:12 +0200
-Message-ID: <4095482.AGzSOmiiYQ@phil>
-In-Reply-To: <1432802751-6397-1-git-send-email-u.kleine-koenig@pengutronix.de>
-References: <1432802751-6397-1-git-send-email-u.kleine-koenig@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Michael Welling <mwelling@ieee.org>,
+	Russell King <rmk+linux@arm.linux.org.uk>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] clk: si5351: Mention clock-names in the binding documentation
+Date: Mon,  4 May 2015 23:04:14 +0200
+Message-Id: <1430773456-15203-2-git-send-email-sebastian.hesselbarth@gmail.com>
+In-Reply-To: <1430773456-15203-1-git-send-email-sebastian.hesselbarth@gmail.com>
+References: <1430773456-15203-1-git-send-email-sebastian.hesselbarth@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, 28. Mai 2015, 10:45:51 schrieb Uwe Kleine-K=F6nig:
-> Since commit 2893c379461a ("clk: make strings in parent name arrays
-> const") the name of parent clocks can be const. So add more const in
-> several clock drivers.
->=20
-> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+Since the introduction of clk-si5351 the way we should deal with DT provided
+clocks has changed from indexed to named clock phandles. Amend the binding
+documentation to reflect named clock phandles by clock-names property.
 
+Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+---
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jean-Francois Moine <moinejf@free.fr>
+Cc: Michael Welling <mwelling@ieee.org>
+Cc: Russell King <rmk+linux@arm.linux.org.uk>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Gregory Clement <gregory.clement@free-electrons.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ Documentation/devicetree/bindings/clock/silabs,si5351.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Acked-by: Heiko Stuebner <heiko@sntech.de>
-
-> ---
-> Hello,
->=20
-> commit 2893c379461a isn't in Linus Torvald's tree yet, so the commit
-> message needs adaption if clk-next is rewritten.
->=20
-> Should I split this patch per subdir?
-
-I don't have any Rockchip-related clock changes for 4.2, so for me it's=
- not=20
-important if you split it or keep it together.
-
-
-Thanks
-Heiko
+diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.txt b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
+index c40711e8e8f7..28b28309f535 100644
+--- a/Documentation/devicetree/bindings/clock/silabs,si5351.txt
++++ b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
+@@ -17,7 +17,8 @@ Required properties:
+ - #clock-cells: from common clock binding; shall be set to 1.
+ - clocks: from common clock binding; list of parent clock
+   handles, shall be xtal reference clock or xtal and clkin for
+-  si5351c only.
++  si5351c only. Corresponding clock input names are "xtal" and
++  "clkin" respectively.
+ - #address-cells: shall be set to 1.
+ - #size-cells: shall be set to 0.
+ 
+@@ -71,6 +72,7 @@ i2c-master-node {
+ 
+ 		/* connect xtal input to 25MHz reference */
+ 		clocks = <&ref25>;
++		clock-names = "xtal";
+ 
+ 		/* connect xtal input as source of pll0 and pll1 */
+ 		silabs,pll-source = <0 0>, <1 0>;
+-- 
+2.1.0
