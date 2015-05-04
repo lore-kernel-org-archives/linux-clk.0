@@ -1,178 +1,86 @@
-Return-Path: <ce3a@gmx.de>
-Message-ID: <5560D553.70809@gmx.de>
-Date: Sat, 23 May 2015 21:30:27 +0200
-From: Sergej Sawazki <ce3a@gmx.de>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v4 00/20] Tegra210 Clock Support
+Date: Mon, 4 May 2015 12:37:20 -0400
+Message-ID: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: mturquette@linaro.org, jsarha@ti.com, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH RFC v1] clk: add gpio controlled clock multiplexer
-References: <1431596413-20917-1-git-send-email-ce3a@gmx.de> <20150521193142.GD21195@codeaurora.org>
-In-Reply-To: <20150521193142.GD21195@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen, thanks for the review...
+This patch series updates the tegra common clock driver and adds
+support for the Tegra210 clocks. The clocks in Tegra210 changed
+significantly in some ways from earlier generations, so to support
+them, we need to extend our base framework a bit and add some new
+features.
 
-On 21.05.2015 at 21:31 Stephen Boyd wrote:
->> +static int clk_gpio_mux_set_parent(struct clk_hw *hw, u8 index)
->> +{
->> +	struct clk_gpio_mux *clk = to_clk_gpio_mux(hw);
->> +
->> +	if (index > 1)
->> +		return -EINVAL;
->
-> Doesn't seem possible if num_parents is correct. Please drop.
->
+Some patches here also address issues found while adding features
+and other cleanup type work.
 
-Right, thanks.
+v4:
+  - Fixed minor checkpatch errors and other typos
+  - Rebased ontop of linux-next 20150504
 
->> +	if (err) {
->> +		pr_err("%s: %s: Error requesting gpio %u\n",
->> +				__func__, name, desc_to_gpio(gpiod_sel));
->
-> What if the error is probe defer? We should be silent in such a
-> situation. I see this is mostly copy/paste from gpio-gate.c so
-> perhaps we should fix that one too.
->
+v3:
+  - Added a fix from Andrew Bresticker that was found while testing
+    this code.
 
-Agreed.
+Andrew Bresticker (1):
+  clk: tegra: pll: Fix issues with rates for VCO PLLs
 
->> +		return ERR_PTR(err);
->> +	}
->> +	clk_gpio_mux->gpiod_sel = gpiod_sel;
->> +
->> +	if (gpiod_ena != NULL) {
->
-> Style nitpick:
->
-> 	if (gpiod_ena) {
->
-> is preferred.
->
+Bill Huang (7):
+  clk: tegra: pll-params: change misc_reg count from 3 -> 6
+  clk: tegra: pll: Add logic for SS
+  clk: tegra: pll: Add code to handle if resets are supported by PLL
+  clk: tegra: pll: Adjust vco_min if SDM present
+  clk: tegra: pll: Add dyn_ramp callback
+  clk: tegra: pll: Add Set_default logic
+  clk: tegra: Add Super Gen5 Logic
 
-Agreed.
+Rhyland Klein (12):
+  clk: tegra: Modify tegra_audio_clk_init to accept more plls
+  clk: tegra: periph: add new periph clks and muxes for Tegra210
+  clk: tegra: pll: add tegra_pll_wait_for_lock to clk header
+  clk: tegra: pll: simplify clk_enable_path
+  clk: tegra: pll: update warning msg
+  clk: tegra: pll: Don't unconditionally set LOCK flags
+  clk: tegra: pll: Add logic for handling SDM data
+  clk: tegra: pll: Add logic for out-of-table rates for T210
+  clk: tegra: pll: Add specialized logic for T210
+  clk: tegra: pll: Add support for PLLMB for T210
+  clk: tegra: pll: Fix _pll_ramp_calc_pll logic and
+    _calc_dynamic_ramp_rate
+  clk: tegra210: add support for Tegra210 clocks
 
->> +			return ERR_PTR(err);
->> +		}
->> +		clk_gpio_mux->gpiod_ena = gpiod_ena;
->> +	}
->> +
->> +	init.name = name;
->> +	init.ops = &clk_gpio_mux_ops;
->> +	init.flags = clk_flags | CLK_IS_BASIC;
->> +	init.parent_names = parent_names;
->> +	init.num_parents = num_parents;
->
-> Should we make sure num_parents is 2?
->
+ .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
+ drivers/clk/tegra/Makefile                         |    2 +
+ drivers/clk/tegra/clk-id.h                         |   64 +-
+ drivers/clk/tegra/clk-pll.c                        |  697 ++++-
+ drivers/clk/tegra/clk-tegra-audio.c                |   25 +-
+ drivers/clk/tegra/clk-tegra-periph.c               |  257 +-
+ drivers/clk/tegra/clk-tegra-super-gen5.c           |  150 ++
+ drivers/clk/tegra/clk-tegra114.c                   |   30 +-
+ drivers/clk/tegra/clk-tegra124.c                   |   31 +-
+ drivers/clk/tegra/clk-tegra20.c                    |   18 +-
+ drivers/clk/tegra/clk-tegra210.c                   | 2761 ++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra30.c                    |   31 +-
+ drivers/clk/tegra/clk.h                            |   90 +-
+ include/dt-bindings/clock/tegra210-car.h           |  401 +++
+ 14 files changed, 4468 insertions(+), 145 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
+ create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
+ create mode 100644 drivers/clk/tegra/clk-tegra210.c
+ create mode 100644 include/dt-bindings/clock/tegra210-car.h
 
-You are probably right.
-
->> +
->> +	clk_gpio_mux->hw.init = &init;
->> +
->> +	clk = clk_register(dev, &clk_gpio_mux->hw);
->
-> But no if (dev) devm_*() trick here?
->
-
-Oh, right.
-
->> +
->> +	if (!IS_ERR(clk))
->> +		return clk;
->> +
->> +	if (!dev) {
->> +		kfree(clk_gpio_mux);
->> +		gpiod_put(gpiod_ena);
->
-> Isn't gpiod_ena optional? And so calling gpiod_put() here might
-> cause a warning?
->
-
-Oops, right.
-
-> Actually I wonder why we wouldn't just make this a gpio-mux
-> without enable/disable support? If we want to do enable/disable,
-> we can parent the gpio gate to this mux. Alternatively, we could
-> combine the gpio-gate file and this new mux file into one file
-> and support both compatible strings. There's quite a bit of
-> duplicated code so this may be a better approach.
->
-
-I agree, I am going to remove the enable/disable support.
-
->> +static struct clk *of_clk_gpio_mux_delayed_register_get(
->> +		struct of_phandle_args *clkspec,
->> +		void *_data)
->> +{
->> +	struct clk_gpio_mux_delayed_register_data *data = _data;
->> +	struct clk *clk = ERR_PTR(-EINVAL);
->> +	const char *clk_name = data->node->name;
->> +	int i, num_parents;
->> +	const char **parent_names;
->> +	struct gpio_desc *gpiod_sel, *gpiod_ena;
->> +	int gpio;
->> +	u32 flags = 0;
->
-> This is only used on place and never assigned otherwise, why not
-> just use 0 in place of flags?
->
-
-Well, you are probably right, I thought it is better to define it here,
-than to use a magic number in clk_register_gpio_mux().
-
->> +
->> +	num_parents = of_clk_get_parent_count(data->node);
->> +	if (num_parents < 2) {
->
-> Should that be num_parents != 2?
->
-
-Oops, right.
-
->> +		pr_err("mux-clock %s must have 2 parents\n", data->node->name);
->> +		return clk;
->> +	}
->> +
->> +	parent_names = kzalloc((sizeof(char *) * num_parents), GFP_KERNEL);
->
-> kcalloc() please.
->
-
-OK.
-
->> +err_gpio:
->> +	mutex_unlock(&data->lock);
->> +	if (gpio == -EPROBE_DEFER)
->> +		pr_warn("%s: %s: GPIOs not yet available, retry later\n",
->> +				__func__, clk_name);
->
-> pr_debug
->
-
-OK.
-
->> +	else
->> +		pr_err("%s: %s: Can't get GPIOs\n",
->> +				__func__, clk_name);
->> +	return ERR_PTR(gpio);
->> +}
->> +
->> +/**
->> + * of_gpio_mux_clk_setup() - Setup function for gpio controlled clock mux
->> + */
->> +void __init of_gpio_mux_clk_setup(struct device_node *node)
->> +{
->> +	struct clk_gpio_mux_delayed_register_data *data;
->> +
->> +	data = kzalloc(sizeof(struct clk_gpio_mux_delayed_register_data),
->
-> please use kzalloc(sizeof(*data), GFP_KERNEL); style
->
-
-OK.
-
-Best regards,
-Sergej
+-- 
+1.7.9.5
