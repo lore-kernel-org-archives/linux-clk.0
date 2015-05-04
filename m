@@ -1,221 +1,215 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mike Turquette <mturquette@linaro.org>,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 00/14] ARM: shmobile: Add CPG Clock Domains
-Date: Thu, 28 May 2015 20:53:25 +0200
-Message-Id: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v4 08/20] clk: tegra: pll: Add logic for handling SDM data
+Date: Mon, 4 May 2015 12:37:28 -0400
+Message-ID: <1430757460-9478-9-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi all,
+This adds logic for taking SDM_DIN (Sigma Delta Modulator) setting into
+the equation to calculate the effective N value for PLL which supports
+fractional divider.
 
-This patch series adds Clock Domain support to the Clock Pulse Generator
-(CPG) Module Stop (MSTP) Clocks driver using the generic PM Domain, to
-be used on shmobile SoCs without device power domains (R-Car Gen1 and
-Gen2, RZ).  This allows to power-manage the module clocks of SoC devices
-that are part of the CPG Clock Domain using Runtime PM, or for system
-suspend/resume, similar to SoCs with device power domains (SH-Mobile and
-R-Mobile).
+The effective N = NDIV + 1/2 + SDM_DIN/2^13, where NDIV is the integer
+feedback divider.
 
-SoC devices that are part of the CPG Clock Domain and can be
-power-managed through an MSTP clock are tagged in DT with a proper
-"power-domains" property. This applies to most on-SoC devices, which
-have a one-to-one mapping from SoC device to DT device node.
-Notable exceptions are "display" and "sound" device nodes, which
-represent multiple SoC devices, each having their own MSTP clocks. Hence
-drivers for such devices still have to manage their (multiple module)
-clocks themselves.
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c |   52 ++++++++++++++++++++++++++++++++++++++++++-
+ drivers/clk/tegra/clk.h     |    9 +++++++-
+ 2 files changed, 59 insertions(+), 2 deletions(-)
 
-The (MSTP) clock to use for power-management is found by scanning for
-clocks that are compatible with "renesas,cpg-mstp-clocks".
-Before, the "first" clock tied to each device (con_id NULL) was used,
-being a bit ad-hoc. It was suggested to use the "fck" clock instead,
-but this may conflict with DT bindings for devices we don't control
-(e.g. GIC-400 plans to mandate "clk" for the clk-name of its single
-clock). Looking for real MSTP clocks avoids this problem.
-
-Logically, the CPG Clock Domain operates on the SoC CPG/MSTP block.
-As there's no single device node in DT representing this block (there
-are separate device nodes for the CPG and for the individual MSTP
-clocks), I bound the logic to the CPG device node.
-Perhaps this is something we should change for future SoCs?
-
-Finally, the legacy default PM domain hack in drivers/sh/pm_runtime.c
-is no longer needed when running an ARM multi-platform kernel on an
-shmobile SoC with genpd support. Please note that this hack is still
-needed for legacy (SH/ARM) platforms, and for the CONFIG_PM=n case.
-Perhaps we should unconditionally enable PM when building shmobile
-multi-platform kernels?
-
-Compared to the legacy default PM domain hack, the CPG Clock Domain has
-several advantages:
-  - It only affects on-SoC devices, not all platform devices,
-  - It only affects the on-SoC devices we want, as specified in DT,
-  - Allmost all module clocks of all on-SoC devices (barring devices
-    needed for wake-up) are now gated during s2ram, saving more power.
-
-By adding a small quirk to the CPG Clock Domain code, its functions to
-attach/detach devices to a PM Domain can be reused by the pm-rmobile
-driver, reducing code duplication.
-
-Here's a list of all devices in the CPG Clock Domain on r8a7791:
-
-root@koelsch:~# cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
-    domain                      status         slaves
-           /device                                      runtime status
-----------------------------------------------------------------------
-cpg_clocks                      on               
-    /devices/platform/e61c0000.interrupt-controller     active
-    /devices/platform/e60b0000.i2c                      suspended
-    /devices/platform/ffca0000.timer                    suspended
-    /devices/platform/e6590100.usb-phy                  unsupported
-    /devices/platform/e6050000.gpio                     active
-    /devices/platform/e6051000.gpio                     active
-    /devices/platform/e6052000.gpio                     active
-    /devices/platform/e6053000.gpio                     active
-    /devices/platform/e6054000.gpio                     active
-    /devices/platform/e6055000.gpio                     active
-    /devices/platform/e6055400.gpio                     active
-    /devices/platform/e6055800.gpio                     active
-    /devices/platform/ee090000.pci                      active
-    /devices/platform/ee0d0000.pci                      active
-    /devices/platform/fe000000.pcie                     unsupported
-    /devices/platform/e6700000.dma-controller           active
-    /devices/platform/e6720000.dma-controller           active
-    /devices/platform/ec700000.dma-controller           active
-    /devices/platform/ec720000.dma-controller           suspended
-    /devices/platform/e65a0000.dma-controller           suspended
-    /devices/platform/e65b0000.dma-controller           suspended
-    /devices/platform/e6e60000.serial                   active
-    /devices/platform/e6e68000.serial                   active
-    /devices/platform/ee300000.sata                     unsupported
-    /devices/platform/e6b10000.spi                      suspended
-    /devices/platform/e6e20000.spi                      suspended
-    /devices/platform/ee700000.ethernet                 active
-    /devices/platform/e6530000.i2c                      suspended
-    /devices/platform/e6ef1000.video                    suspended
-    /devices/platform/e61f0000.thermal                  active
-    /devices/platform/ee100000.sd                       active
-    /devices/platform/ee140000.sd                       active
-    /devices/platform/ee160000.sd                       active
-root@koelsch:~# 
-
-Patch overview:
-  - Patch 1 adds the core CPG Clock Domain code to the CPG MSTP driver,
-  - Patches 2-5 adds CPG Clock Domain driver support for all Renesas
-    SoCs that have MSTP clocks, but no device power domains, and
-    updates the DT binding documentation accordingly,
-  - Patches 6-11 add CPG Clock Domains to the dtsi files,
-  - Patch 12 disables the legacy default PM domain hack on all ARM
-    multi-platform builds with genpd support, now it's no longer needed
-    nor wanted,
-  - Patch 13 adds a quirk for r8a73a4 and sh73a0, where the Bus State
-    Controller is not power-managed by an MSTP clock, but by a plain
-    CPG clock,
-  - Patch 14 makes the R-Mobile PM Domain driver use the CPG Clock
-    Domain attach/detach helpers, as they're more future-proof, and to
-    reduce code duplication.
-
-Changes compared to v1
-("[PATCH/RFC 0/5] ARM: shmobile: rcar-gen2: Add CPG Clock Domain",
-https://www.marc.info/?l=linux-pm&m=142670805530085&w=3):
-  - Add Acked-by and Reviewed-by.
-  - Move core CPG Clock Domain code from the R-Car Gen2 driver to the
-    CPG MSTP Clocks driver, as it's generic, and can be used on other
-    Renesas SoCs that have a CPG/MSTP block,
-  - Scan for an MSTP clock instead of using the first clock tied to the
-    device (con_id NULL),
-  - Add support for R-Car Gen1 and RZ, in addition to R-Car Gen2,
-    allowing to drop the legacy default PM domain hack completely in
-    multi-platform builds,
-  - Reuse the CPG Clock Domain attach/detach helpers for pm-rmobile.
-More detailed change logs are available in the individual patches.
-
-Dependencies:
-  - This series is against next-20150528,
-  - As usual when involving clocks and/or PM Domains, there are stringent
-    dependencies between the (subsets of) patches:
-      - Patches 2-5 depend on patch 1,
-      - Patches 6-11 depend on patches 2-5,
-      - Patch 12 depends on patches 6-11,
-      - Patch 13 depends on patch 1 only,
-      - Patch 14 depends on patch 13.
-
-All of this was tested on:
-  - r8a73a4/ape6evm (multiplatform),
-  - r8a7740/armadillo (both legacy and multiplatform),
-  - r8a7791/koelsch (multiplatform, with and without CONFIG_PM),
-  - sh73a0/kzm9g (both legacy and multiplatform).
-
-Testing on other shmobile platforms (esp. R-Car Gen1 and RZ) would be
-appreciated.
-
-Thanks!
-
-Geert Uytterhoeven (14):
-    clk: shmobile: Add CPG Clock Domain support
-  * clk: shmobile: r8a7778: Add CPG Clock Domain support
-  * clk: shmobile: r8a7779: Add CPG Clock Domain support
-    clk: shmobile: rcar-gen2: Add CPG Clock Domain support
-  * clk: shmobile: rz: Add CPG Clock Domain support
-  * ARM: shmobile: r7s72100 dtsi: Add CPG Clock Domain
-  * ARM: shmobile: r8a7778 dtsi: Add CPG Clock Domain
-  * ARM: shmobile: r8a7779 dtsi: Add CPG Clock Domain
-    ARM: shmobile: r8a7790 dtsi: Add CPG Clock Domain
-    ARM: shmobile: r8a7791 dtsi: Add CPG Clock Domain
-    ARM: shmobile: r8a7794 dtsi: Add CPG Clock Domain
-    drivers: sh: Stop using pm_runtime.c for multi-platform shmobile with
-      genpd
-  * clk: shmobile: mstp: Consider "zb_clk" suitable for power management
-  * ARM: shmobile: R-Mobile: Use CPG Clock Domain attach/detach helpers
-
-  (* = NEW)
-
- .../bindings/clock/renesas,r8a7778-cpg-clocks.txt  | 29 ++++++-
- .../bindings/clock/renesas,r8a7779-cpg-clocks.txt  | 30 +++++++-
- .../clock/renesas,rcar-gen2-cpg-clocks.txt         | 26 ++++++-
- .../bindings/clock/renesas,rz-cpg-clocks.txt       | 29 ++++++-
- arch/arm/boot/dts/r7s72100.dtsi                    | 19 +++++
- arch/arm/boot/dts/r8a7778.dtsi                     | 22 ++++++
- arch/arm/boot/dts/r8a7779.dtsi                     | 23 ++++++
- arch/arm/boot/dts/r8a7790.dtsi                     | 78 +++++++++++++++++--
- arch/arm/boot/dts/r8a7791.dtsi                     | 81 +++++++++++++++++--
- arch/arm/boot/dts/r8a7794.dtsi                     | 28 +++++++
- arch/arm/mach-shmobile/Kconfig                     |  2 +
- arch/arm/mach-shmobile/pm-rmobile.c                |  6 ++
- drivers/clk/shmobile/clk-mstp.c                    | 90 ++++++++++++++++++++++
- drivers/clk/shmobile/clk-r8a7778.c                 |  2 +
- drivers/clk/shmobile/clk-r8a7779.c                 |  2 +
- drivers/clk/shmobile/clk-rcar-gen2.c               |  4 +
- drivers/clk/shmobile/clk-rz.c                      |  3 +
- drivers/sh/Makefile                                |  4 +
- drivers/sh/pm_runtime.c                            | 18 -----
- include/linux/clk/shmobile.h                       | 12 +++
- 20 files changed, 468 insertions(+), 40 deletions(-)
-
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 13d86c5b234d..c64b75185d6b 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -187,17 +187,23 @@
+ #define pll_readl_base(p) pll_readl(p->params->base_reg, p)
+ #define pll_readl_misc(p) pll_readl(p->params->misc_reg, p)
+ #define pll_override_readl(offset, p) readl_relaxed(p->pmc + offset)
++#define pll_readl_sdm_din(p) pll_readl(p->params->sdm_din_reg, p)
++#define pll_readl_sdm_ctrl(p) pll_readl(p->params->sdm_ctrl_reg, p)
+ 
+ #define pll_writel(val, offset, p) writel_relaxed(val, p->clk_base + offset)
+ #define pll_writel_base(val, p) pll_writel(val, p->params->base_reg, p)
+ #define pll_writel_misc(val, p) pll_writel(val, p->params->misc_reg, p)
+ #define pll_override_writel(val, offset, p) writel(val, p->pmc + offset)
++#define pll_writel_sdm_din(val, p) pll_writel(val, p->params->sdm_din_reg, p)
++#define pll_writel_sdm_ctrl(val, p) pll_writel(val, p->params->sdm_ctrl_reg, p)
+ 
+ #define mask(w) ((1 << (w)) - 1)
+ #define divm_mask(p) mask(p->params->div_nmp->divm_width)
+ #define divn_mask(p) mask(p->params->div_nmp->divn_width)
+ #define divp_mask(p) (p->params->flags & TEGRA_PLLU ? PLLU_POST_DIVP_MASK :\
+ 		      mask(p->params->div_nmp->divp_width))
++#define sdm_din_mask(p) p->params->sdm_din_mask
++#define sdm_en_mask(p) p->params->sdm_ctrl_en_mask
+ 
+ #define divm_shift(p) (p)->params->div_nmp->divm_shift
+ #define divn_shift(p) (p)->params->div_nmp->divn_shift
+@@ -211,6 +217,9 @@
+ #define divn_max(p) (divn_mask(p))
+ #define divp_max(p) (1 << (divp_mask(p)))
+ 
++#define sdin_din_to_data(din)	((u16)((din) ? : 0xFFFFU))
++#define sdin_data_to_din(dat)	(((dat) == 0xFFFFU) ? 0 : (s16)dat)
++
+ static struct div_nmp default_nmp = {
+ 	.divn_shift = PLL_BASE_DIVN_SHIFT,
+ 	.divn_width = PLL_BASE_DIVN_WIDTH,
+@@ -429,6 +438,7 @@ static int _get_table_rate(struct clk_hw *hw,
+ 	cfg->n = sel->n;
+ 	cfg->p = sel->p;
+ 	cfg->cpcon = sel->cpcon;
++	cfg->sdm_data = sel->sdm_data;
+ 
+ 	return 0;
+ }
+@@ -495,6 +505,28 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 	return 0;
+ }
+ 
++static void clk_pll_set_sdm_data(struct clk_hw *hw,
++				 struct tegra_clk_pll_freq_table *cfg)
++{
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
++	u32 val;
++
++	if (!pll->params->sdm_din_reg)
++		return;
++
++	if (cfg->sdm_data) {
++		val = pll_readl_sdm_din(pll) & (~sdm_din_mask(pll));
++		val |= sdin_data_to_din(cfg->sdm_data) & sdm_din_mask(pll);
++		pll_writel_sdm_din(val, pll);
++	}
++
++	val = pll_readl_sdm_ctrl(pll);
++	if (!cfg->sdm_data != !(val & pll->params->sdm_ctrl_en_mask)) {
++		val ^= pll->params->sdm_ctrl_en_mask;
++		pll_writel_sdm_ctrl(val, pll);
++	}
++}
++
+ static void _update_pll_mnp(struct tegra_clk_pll *pll,
+ 			    struct tegra_clk_pll_freq_table *cfg)
+ {
+@@ -527,6 +559,8 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
+ 		       (cfg->p << divp_shift(pll));
+ 
+ 		pll_writel_base(val, pll);
++
++		clk_pll_set_sdm_data(&pll->hw, cfg);
+ 	}
+ }
+ 
+@@ -552,6 +586,14 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
+ 		cfg->m = (val >> div_nmp->divm_shift) & divm_mask(pll);
+ 		cfg->n = (val >> div_nmp->divn_shift) & divn_mask(pll);
+ 		cfg->p = (val >> div_nmp->divp_shift) & divp_mask(pll);
++
++		if (pll->params->sdm_din_reg) {
++			if (sdm_en_mask(pll) & pll_readl_sdm_ctrl(pll)) {
++				val = pll_readl_sdm_din(pll);
++				cfg->sdm_data = val & sdm_din_mask(pll);
++				cfg->sdm_data = sdin_din_to_data(cfg->sdm_data);
++			}
++		}
+ 	}
+ }
+ 
+@@ -633,7 +675,8 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	_get_pll_mnp(pll, &old_cfg);
+ 
+-	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p)
++	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p ||
++		old_cfg.sdm_data != cfg.sdm_data)
+ 		ret = _program_pll(hw, &cfg, rate);
+ 
+ 	if (pll->lock)
+@@ -697,6 +740,9 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 		pdiv = 1;
+ 	}
+ 
++	if (pll->params->set_gain)
++		pll->params->set_gain(&cfg);
++
+ 	cfg.m *= pdiv;
+ 
+ 	rate *= cfg.n;
+@@ -978,6 +1024,7 @@ static int clk_pllxc_set_rate(struct clk_hw *hw, unsigned long rate,
+ static long clk_pll_ramp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				unsigned long *prate)
+ {
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
+ 	struct tegra_clk_pll_freq_table cfg;
+ 	int ret, p_div;
+ 	u64 output_rate = *prate;
+@@ -990,6 +1037,9 @@ static long clk_pll_ramp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (p_div < 0)
+ 		return p_div;
+ 
++	if (pll->params->set_gain)
++		pll->params->set_gain(&cfg);
++
+ 	output_rate *= cfg.n;
+ 	do_div(output_rate, cfg.m * p_div);
+ 
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 8e7361886cf9..eb8103ec335e 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -110,14 +110,16 @@ struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
+  * @m:			input divider
+  * @p:			post divider
+  * @cpcon:		charge pump current
++ * @sdm_data:		fraction divider setting (0 = disabled)
+  */
+ struct tegra_clk_pll_freq_table {
+ 	unsigned long	input_rate;
+ 	unsigned long	output_rate;
+-	u16		n;
++	u32		n;
+ 	u16		m;
+ 	u8		p;
+ 	u8		cpcon;
++	u16		sdm_data;
+ };
+ 
+ /**
+@@ -213,6 +215,10 @@ struct tegra_clk_pll_params {
+ 	u32		lock_enable_bit_idx;
+ 	u32		iddq_reg;
+ 	u32		iddq_bit_idx;
++	u32		sdm_din_reg;
++	u32		sdm_din_mask;
++	u32		sdm_ctrl_reg;
++	u32		sdm_ctrl_en_mask;
+ 	u32		aux_reg;
+ 	u32		dyn_ramp_reg;
+ 	u32		ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
+@@ -227,6 +233,7 @@ struct tegra_clk_pll_params {
+ 	struct div_nmp	*div_nmp;
+ 	struct tegra_clk_pll_freq_table	*freq_table;
+ 	unsigned long	fixed_rate;
++	void	(*set_gain)(struct tegra_clk_pll_freq_table *cfg);
+ };
+ 
+ #define TEGRA_PLL_USE_LOCK BIT(0)
 -- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+1.7.9.5
