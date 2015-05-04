@@ -1,246 +1,153 @@
-Return-Path: <daniel.thompson@linaro.org>
-Return-Path: <daniel.thompson@linaro.org>
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Kamil Lulko <rev13@wp.pl>,
-	Andreas Farber <afaerber@suse.de>,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	patches@linaro.org,
-	linaro-kernel@lists.linaro.org
-Subject: [RFC PATCH 3/3] ARM: dts: stm32f429: Adopt STM32F4 clock driver
-Date: Fri, 22 May 2015 21:41:13 +0100
-Message-Id: <1432327273-6810-4-git-send-email-daniel.thompson@linaro.org>
-In-Reply-To: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
-References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v4 13/20] clk: tegra: pll: Add support for PLLMB for T210
+Date: Mon, 4 May 2015 12:37:33 -0400
+Message-ID: <1430757460-9478-14-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-New bindings and driver have been created for STM32F42xxx series parts.
-This patch integrates these changes.
+Tegra210 SoC's have 2 PLLS for memory usage. Add plumbing to register
+and handle PLLMB.
 
-Note: Earlier device tree blobs (those without st,stm32f42xxx
-      compatibles for the rcc) could still be used to boot basic
-      systems. Such systems rely on the bootloader to configure the
-      clocks for vital periperhals.
+PLLMB is used to allow switching between 2 PLLM's without having to use
+and intermediate backup PLL, as we need to lock the PLL before we can
+switch to it.
 
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- arch/arm/boot/dts/stm32f429.dtsi | 83 +++++++++++++---------------------------
- 1 file changed, 26 insertions(+), 57 deletions(-)
+v3:
+  - Flushed out comment more.
 
-diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
-index aa3b3e3..6da8d7f 100644
---- a/arch/arm/boot/dts/stm32f429.dtsi
-+++ b/arch/arm/boot/dts/stm32f429.dtsi
-@@ -50,48 +50,10 @@
+v2:
+  - Fixed commit description as suggested.
+
+ drivers/clk/tegra/clk-pll.c |   46 +++++++++++++++++++++++++++++++++++++++----
+ drivers/clk/tegra/clk.h     |    9 +++++++++
+ 2 files changed, 51 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 9224c9c7c497..b16263e978d7 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -547,7 +547,7 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
+ 	struct tegra_clk_pll_params *params = pll->params;
+ 	struct div_nmp *div_nmp = params->div_nmp;
  
- / {
- 	clocks {
--		clk_sysclk: clk-sysclk {
-+		clk_hse: clk-hse {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
--			clock-frequency = <168000000>;
--		};
--
--		clk_hclk: clk-hclk {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <168000000>;
--		};
--
--		clk_pclk1: clk-pclk1 {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <42000000>;
--		};
--
--		clk_pclk2: clk-pclk2 {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <84000000>;
--		};
--
--		clk_pmtr1: clk-pmtr1 {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <84000000>;
--		};
--
--		clk_pmtr2: clk-pmtr2 {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <168000000>;
--		};
--
--		clk_systick: clk-systick {
--			compatible = "fixed-factor-clock";
--			clocks = <&clk_hclk>;
--			#clock-cells = <0>;
--			clock-div = <8>;
--			clock-mult = <1>;
-+			clock-frequency = <8000000>;
- 		};
- 	};
+-	if ((params->flags & TEGRA_PLLM) &&
++	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
+ 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
+ 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
+ 		val = pll_override_readl(params->pmc_divp_reg, pll);
+@@ -584,7 +584,7 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
+ 	struct tegra_clk_pll_params *params = pll->params;
+ 	struct div_nmp *div_nmp = params->div_nmp;
  
-@@ -101,7 +63,7 @@
- 			reg = <0x40000000 0x400>;
- 			interrupts = <28>;
- 			resets = <&rcc STM32F4_APB1_RESET(TIM2)>;
--			clocks = <&clk_pmtr1>;
-+			clocks = <&rcc 0 128>;
- 			status = "disabled";
- 		};
+-	if ((params->flags & TEGRA_PLLM) &&
++	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
+ 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
+ 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
+ 		val = pll_override_readl(params->pmc_divp_reg, pll);
+@@ -730,8 +730,8 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (pll->params->flags & TEGRA_PLL_FIXED)
+ 		return pll->params->fixed_rate;
  
-@@ -110,7 +72,7 @@
- 			reg = <0x40000400 0x400>;
- 			interrupts = <29>;
- 			resets = <&rcc STM32F4_APB1_RESET(TIM3)>;
--			clocks = <&clk_pmtr1>;
-+			clocks = <&rcc 0 129>;
- 			status = "disabled";
- 		};
+-	/* PLLM is used for memory; we do not change rate */
+-	if (pll->params->flags & TEGRA_PLLM)
++	/* PLLM/MB are used for memory; we do not change rate */
++	if (pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB))
+ 		return __clk_get_rate(hw->clk);
  
-@@ -119,7 +81,7 @@
- 			reg = <0x40000800 0x400>;
- 			interrupts = <30>;
- 			resets = <&rcc STM32F4_APB1_RESET(TIM4)>;
--			clocks = <&clk_pmtr1>;
-+			clocks = <&rcc 0 130>;
- 			status = "disabled";
- 		};
+ 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
+@@ -2310,4 +2310,42 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
  
-@@ -128,7 +90,7 @@
- 			reg = <0x40000c00 0x400>;
- 			interrupts = <50>;
- 			resets = <&rcc STM32F4_APB1_RESET(TIM5)>;
--			clocks = <&clk_pmtr1>;
-+			clocks = <&rcc 0 131>;
- 			status = "disabled";
- 		};
+ 	return clk;
+ }
++
++struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
++			  void __iomem *clk_base, void __iomem *pmc,
++			  unsigned long flags,
++			  struct tegra_clk_pll_params *pll_params,
++			  spinlock_t *lock)
++{
++	struct tegra_clk_pll *pll;
++	struct clk *clk, *parent;
++	unsigned long parent_rate;
++
++	if (!pll_params->pdiv_tohw)
++		return ERR_PTR(-EINVAL);
++
++	parent = __clk_lookup(parent_name);
++	if (!parent) {
++		WARN(1, "parent clk %s of %s must be registered first\n",
++			name, parent_name);
++		return ERR_PTR(-EINVAL);
++	}
++
++	parent_rate = __clk_get_rate(parent);
++
++	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
++
++	pll_params->flags |= TEGRA_PLL_BYPASS;
++	pll_params->flags |= TEGRA_PLLMB;
++	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
++	if (IS_ERR(pll))
++		return ERR_CAST(pll);
++
++	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
++				      &tegra_clk_pllm_ops);
++	if (IS_ERR(clk))
++		kfree(pll);
++
++	return clk;
++}
+ #endif
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 86f4b84de5df..4644f43ca100 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -201,6 +201,8 @@ struct div_nmp {
+  * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
+  * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
+  *     it may be more accurate (especially if SDM present)
++ * TEGRA_PLLMB - PLLMB has should be treated similar to PLLM. This
++ *     flag indicated that it is PLLMB.
+  */
+ struct tegra_clk_pll_params {
+ 	unsigned long	input_min;
+@@ -260,6 +262,7 @@ struct tegra_clk_pll_params {
+ #define TEGRA_PLL_BYPASS BIT(9)
+ #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
+ #define TEGRA_MDIV_NEW BIT(11)
++#define TEGRA_PLLMB BIT(12)
  
-@@ -137,7 +99,7 @@
- 			reg = <0x40001000 0x400>;
- 			interrupts = <54>;
- 			resets = <&rcc STM32F4_APB1_RESET(TIM6)>;
--			clocks = <&clk_pmtr1>;
-+			clocks = <&rcc 0 132>;
- 			status = "disabled";
- 		};
+ /**
+  * struct tegra_clk_pll - Tegra PLL clock
+@@ -366,6 +369,12 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+ 			   struct tegra_clk_pll_params *pll_params,
+ 			   spinlock_t *lock);
  
-@@ -146,7 +108,7 @@
- 			reg = <0x40001400 0x400>;
- 			interrupts = <55>;
- 			resets = <&rcc STM32F4_APB1_RESET(TIM7)>;
--			clocks = <&clk_pmtr1>;
-+			clocks = <&rcc 0 133>;
- 			status = "disabled";
- 		};
- 
-@@ -154,7 +116,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40004400 0x400>;
- 			interrupts = <38>;
--			clocks = <&clk_pclk1>;
-+			clocks = <&rcc 0 145>;
- 			status = "disabled";
- 		};
- 
-@@ -162,7 +124,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40004800 0x400>;
- 			interrupts = <39>;
--			clocks = <&clk_pclk1>;
-+			clocks = <&rcc 0 146>;
- 			status = "disabled";
- 		};
- 
-@@ -170,7 +132,7 @@
- 			compatible = "st,stm32-uart";
- 			reg = <0x40004c00 0x400>;
- 			interrupts = <52>;
--			clocks = <&clk_pclk1>;
-+			clocks = <&rcc 0 147>;
- 			status = "disabled";
- 		};
- 
-@@ -178,7 +140,7 @@
- 			compatible = "st,stm32-uart";
- 			reg = <0x40005000 0x400>;
- 			interrupts = <53>;
--			clocks = <&clk_pclk1>;
-+			clocks = <&rcc 0 148>;
- 			status = "disabled";
- 		};
- 
-@@ -186,7 +148,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40007800 0x400>;
- 			interrupts = <82>;
--			clocks = <&clk_pclk1>;
-+			clocks = <&rcc 0 158>;
- 			status = "disabled";
- 		};
- 
-@@ -194,7 +156,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40007c00 0x400>;
- 			interrupts = <83>;
--			clocks = <&clk_pclk1>;
-+			clocks = <&rcc 0 159>;
- 			status = "disabled";
- 		};
- 
-@@ -202,7 +164,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40011000 0x400>;
- 			interrupts = <37>;
--			clocks = <&clk_pclk2>;
-+			clocks = <&rcc 0 164>;
- 			status = "disabled";
- 		};
- 
-@@ -210,19 +172,26 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40011400 0x400>;
- 			interrupts = <71>;
--			clocks = <&clk_pclk2>;
-+			clocks = <&rcc 0 165>;
- 			status = "disabled";
- 		};
- 
- 		rcc: rcc@40023810 {
- 			#reset-cells = <1>;
--			compatible = "st,stm32-rcc";
-+			compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
- 			reg = <0x40023800 0x400>;
--		};
-+			clocks = <&clk_hse>;
-+			#clock-cells = <2>;
-+		};
-+#if 0
-+	of_property_read_string_index(dev, "reg-names", "gates");
-+	index = of_property_read_string_index(dev, "reg-names", "gates");
-+	of_iomap(np, index);
-+#endif
- 	};
- };
- 
- &systick {
--	clocks = <&clk_systick>;
-+	clocks = <&rcc 1 0>;
- 	status = "okay";
- };
++struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
++			   void __iomem *clk_base, void __iomem *pmc,
++			   unsigned long flags,
++			   struct tegra_clk_pll_params *pll_params,
++			   spinlock_t *lock);
++
+ /**
+  * struct tegra_clk_pll_out - PLL divider down clock
+  *
 -- 
-2.1.0
+1.7.9.5
