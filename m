@@ -1,94 +1,34 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <tony@atomide.com>,
-        <paul@pwsan.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: =?UTF-8?q?=5BPATCHv3=2015/27=5D=20ARM=3A=20OMAP3=3A=20clock=3A=20remove=20clock3xxx=2Ec=20file?=
-Date: Mon, 25 May 2015 18:00:20 +0300
-Message-ID: <1432566032-10860-16-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
-References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+Return-Path: <abrestic@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Sender: abrestic@google.com
+In-Reply-To: <1430757460-9478-3-git-send-email-rklein@nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+	<1430757460-9478-3-git-send-email-rklein@nvidia.com>
+Date: Mon, 4 May 2015 14:19:04 -0700
+Message-ID: <CAL1qeaH9N0nmdhRDc0ARtBh04rooPBgfttp79shLLeJg_LWzMQ@mail.gmail.com>
+Subject: Re: [PATCH v4 02/20] clk: tegra: periph: add new periph clks and
+ muxes for Tegra210
+From: Andrew Bresticker <abrestic@chromium.org>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This now only has a couple of variables within it, which are used outside
-the file itself. Move these variables to where they are actually used,
-and remove the file completely as it is now empty.
+Hi Rhyland,
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/Makefile           |    2 +-
- arch/arm/mach-omap2/clkt34xx_dpll3m2.c |    2 ++
- arch/arm/mach-omap2/clock3xxx.c        |   33 --------------------------------
- 3 files changed, 3 insertions(+), 34 deletions(-)
- delete mode 100644 arch/arm/mach-omap2/clock3xxx.c
+On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> Tegra210 has significant differences in muxes for peripheral clocks.
+> One of the most important changes is that pll_m isn't to be used
+> as a source for peripherals. Therefore, we need to define the new
+> muxes and new clocks to use those muxes for Tegra210 support.
+>
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 
-diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
-index f9d4ccf..07052656 100644
---- a/arch/arm/mach-omap2/Makefile
-+++ b/arch/arm/mach-omap2/Makefile
-@@ -186,7 +186,7 @@ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpllcore.o
- obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_virt_prcm_set.o
- obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpll.o
- obj-$(CONFIG_SOC_OMAP2430)		+= clock2430.o
--obj-$(CONFIG_ARCH_OMAP3)		+= $(clock-common) clock3xxx.o
-+obj-$(CONFIG_ARCH_OMAP3)		+= $(clock-common)
- obj-$(CONFIG_ARCH_OMAP3)		+= clock34xx.o clkt34xx_dpll3m2.o
- obj-$(CONFIG_ARCH_OMAP3)		+= clock3517.o
- obj-$(CONFIG_ARCH_OMAP4)		+= $(clock-common)
-diff --git a/arch/arm/mach-omap2/clkt34xx_dpll3m2.c b/arch/arm/mach-omap2/clkt34xx_dpll3m2.c
-index 825e3da..6cd2961 100644
---- a/arch/arm/mach-omap2/clkt34xx_dpll3m2.c
-+++ b/arch/arm/mach-omap2/clkt34xx_dpll3m2.c
-@@ -29,6 +29,8 @@
- 
- #define CYCLES_PER_MHZ			1000000
- 
-+struct clk *sdrc_ick_p, *arm_fck_p;
-+
- /*
-  * CORE DPLL (DPLL3) M2 divider rate programming functions
-  *
-diff --git a/arch/arm/mach-omap2/clock3xxx.c b/arch/arm/mach-omap2/clock3xxx.c
-deleted file mode 100644
-index 0b0e3a87..0000000
---- a/arch/arm/mach-omap2/clock3xxx.c
-+++ /dev/null
-@@ -1,33 +0,0 @@
--/*
-- * OMAP3-specific clock framework functions
-- *
-- * Copyright (C) 2007-2008 Texas Instruments, Inc.
-- * Copyright (C) 2007-2010 Nokia Corporation
-- *
-- * Paul Walmsley
-- * Jouni Högander
-- *
-- * Parts of this code are based on code written by
-- * Richard Woodruff, Tony Lindgren, Tuukka Tikkanen, Karthik Dasu
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--#undef DEBUG
--
--#include <linux/kernel.h>
--#include <linux/errno.h>
--#include <linux/clk.h>
--#include <linux/io.h>
--
--#include "soc.h"
--#include "clock.h"
--#include "clock3xxx.h"
--#include "prm2xxx_3xxx.h"
--#include "prm-regbits-34xx.h"
--#include "cm2xxx_3xxx.h"
--#include "cm-regbits-34xx.h"
--
--/* needed by omap3_core_dpll_m2_set_rate() */
--struct clk *sdrc_ick_p, *arm_fck_p;
--- 
-1.7.9.5
+A couple more clocks worth adding here are HSIC_TRK (clock 209),
+USB2_TRK (clock 210), and their divider in CLK_SOURCE_USB2_HSIC_TRK.
+
+-Andrew
