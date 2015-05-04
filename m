@@ -1,67 +1,32 @@
-Return-Path: <mopsfelder@gmail.com>
-Return-Path: <mopsfelder@gmail.com>
-From: Murilo Opsfelder Araujo <mopsfelder@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Murilo Opsfelder Araujo <mopsfelder@gmail.com>
-Subject: [PATCH 2/2] drivers: clk: clk.c: Make clk_is_orphan() dependent of CONFIG_OF
-Date: Wed,  6 May 2015 21:51:01 -0300
-Message-Id: <1430959861-14925-3-git-send-email-mopsfelder@gmail.com>
-In-Reply-To: <1430959861-14925-1-git-send-email-mopsfelder@gmail.com>
-References: <1430959861-14925-1-git-send-email-mopsfelder@gmail.com>
+Return-Path: <bleung@google.com>
 MIME-Version: 1.0
+Sender: bleung@google.com
+In-Reply-To: <1430757460-9478-5-git-send-email-rklein@nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+	<1430757460-9478-5-git-send-email-rklein@nvidia.com>
+Date: Mon, 4 May 2015 13:11:18 -0700
+Message-ID: <CANLzEkuR4KPMPc=25D8mKyjdLaSvSa3xyX_ad=j3q_rVu+A-Hw@mail.gmail.com>
+Subject: Re: [PATCH v4 04/20] clk: tegra: pll: simplify clk_enable_path
+From: Benson Leung <bleung@chromium.org>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The function clk_is_orphan() is called only by
-__of_clk_get_from_provider(), which depends on CONFIG_OF, so it does
-make sense the move.
+On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> Instead of having multiple similar wrapper functions for
+> _clk_pll_[enable|disable], we can simplify it to single
+> wrappers and use checks to avoid the logic we don't want to use.
+>
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 
-This change also gets rid of the following build message when CONFIG_OF
-is not set:
+Reviewed-by: Benson Leung <bleung@chromium.org>
 
-drivers/clk/clk.c:2231:13: warning: ‘clk_is_orphan’ defined but not used [-Wunused-function]
-
-Signed-off-by: Murilo Opsfelder Araujo <mopsfelder@gmail.com>
----
- drivers/clk/clk.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index a961eb6..d748aa2 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2228,14 +2228,6 @@ static inline void clk_debug_unregister(struct clk_core *core)
- }
- #endif /* CONFIG_DEBUG_FS */
- 
--static bool clk_is_orphan(const struct clk *clk)
--{
--	if (!clk)
--		return false;
--
--	return clk->core->orphan;
--}
--
- /**
-  * __clk_init - initialize the data structures in a struct clk
-  * @dev:	device initializing this clk, placeholder for now
-@@ -2950,6 +2942,14 @@ void of_clk_del_provider(struct device_node *np)
- }
- EXPORT_SYMBOL_GPL(of_clk_del_provider);
- 
-+static bool clk_is_orphan(const struct clk *clk)
-+{
-+	if (!clk)
-+		return false;
-+
-+	return clk->core->orphan;
-+}
-+
- struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- 				       const char *dev_id, const char *con_id)
- {
 -- 
-2.1.4
+Benson Leung
+Software Engineer, Chrom* OS
+bleung@chromium.org
