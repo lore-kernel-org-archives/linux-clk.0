@@ -1,39 +1,77 @@
-Return-Path: <dinguyen@opensource.altera.com>
-Message-ID: <5565C4F4.7090805@opensource.altera.com>
-Date: Wed, 27 May 2015 08:21:56 -0500
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
-MIME-Version: 1.0
-To: Dan Carpenter <dan.carpenter@oracle.com>
-CC: Mike Turquette <mturquette@linaro.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>
-Subject: Re: [patch] clk: socfpga: remove a stray tab
-References: <20150527082627.GD19423@mwanda>
-In-Reply-To: <20150527082627.GD19423@mwanda>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: dinguyen@opensource.altera.com
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Michael Welling <mwelling@ieee.org>,
+	Russell King <rmk+linux@arm.linux.org.uk>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] clk: si5351: Fixes for v4.1-rc1
+Date: Mon,  4 May 2015 23:04:13 +0200
+Message-Id: <1430773456-15203-1-git-send-email-sebastian.hesselbarth@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Mike, Stephen,
 
+this is v2 of dealing with recently reported clk-si5351 issues. Compared
+to v1 [1], I decided to first split-off the pure fixes and postpone the
+improvements to a later patch set. Patches 1 and 3 should go though clk
+fixes while patch 2 should be taken by mvebu maintainers.
 
-On 5/27/15 3:26 AM, Dan Carpenter wrote:
-> This line was indented too far.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
-> index be3e998..83c6780 100644
-> --- a/drivers/clk/socfpga/clk-gate-a10.c
-> +++ b/drivers/clk/socfpga/clk-gate-a10.c
-> @@ -39,7 +39,7 @@ static unsigned long socfpga_gate_clk_recalc_rate(struct clk_hw *hwclk,
->  	else if (socfpgaclk->div_reg) {
->  		val = readl(socfpgaclk->div_reg) >> socfpgaclk->shift;
->  		val &= div_mask(socfpgaclk->width);
-> -			div = (1 << val);
-> +		div = (1 << val);
->  	}
->  
->  	return parent_rate / div;
-> 
+This fixes are intended for v4.1-rc1 and deal with issues where DT claimed
+parent clocks are not properly detected starting with v4.0. Looking at the
+code of clk-si5351, I just realized that the way the driver deals with
+parent clocks is utter nonsense. Russell King also mentioned that passing
+struct clk though platform_data shouldn't be done at all.
 
-Acked-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+Therefore, this 3 patches rework parent clock handling of clk-si5351 to
+make use of (a) named parent clocks, (b) devm_clk_get() for both DT- and
+platform_data passed parent clocks, and (c) properly clk_prepare_enable()
+valid parent clocks.
+
+However, I do have a stripped down backport of the fix for stable v4.0
+that just fixes the real issue, i.e. DT based probing and missing
+clk_prepare_enable(). If you agree with this fixes for v4.1-rc1 we should
+consider the backport for v4.0 stable.
+
+Overall changes compared to v1:
+- Postpone improvement patch ("clk: si5351: Reset PLL after rate change")
+  for later patch set.
+- Reword parent clock check error message. (Suggested by Fabio Estevam)
+
+Sebastian
+
+[1] https://lkml.org/lkml/2015/4/30/688
+
+Sebastian Hesselbarth (3):
+  clk: si5351: Mention clock-names in the binding documentation
+  ARM: dove: Add clock-names to CuBox Si5351 clk generator
+  clk: si5351: Do not pass struct clk in platform_data
+
+ .../devicetree/bindings/clock/silabs,si5351.txt    |  4 +-
+ arch/arm/boot/dts/dove-cubox.dts                   |  1 +
+ drivers/clk/clk-si5351.c                           | 63 +++++++++++++++-------
+ include/linux/platform_data/si5351.h               |  4 --
+ 4 files changed, 49 insertions(+), 23 deletions(-)
+
+---
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jean-Francois Moine <moinejf@free.fr>
+Cc: Michael Welling <mwelling@ieee.org>
+Cc: Russell King <rmk+linux@arm.linux.org.uk>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Gregory Clement <gregory.clement@free-electrons.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+-- 
+2.1.0
