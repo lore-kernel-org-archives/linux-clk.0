@@ -1,81 +1,167 @@
 Return-Path: <rklein@nvidia.com>
-Message-ID: <55492043.2010202@nvidia.com>
-Date: Tue, 5 May 2015 15:55:47 -0400
 From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v4 04/20] clk: tegra: pll: simplify clk_enable_path
+Date: Mon, 4 May 2015 12:37:24 -0400
+Message-ID: <1430757460-9478-5-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-To: Benson Leung <bleung@chromium.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
-	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre
- Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 10/20] clk: tegra: pll: Add logic for out-of-table
- rates for T210
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>	<1430757460-9478-11-git-send-email-rklein@nvidia.com> <CANLzEktX3tiBXvxKgToUr5S7xZ+YibpeG6tDvW1R=qkW6_T5WQ@mail.gmail.com>
-In-Reply-To: <CANLzEktX3tiBXvxKgToUr5S7xZ+YibpeG6tDvW1R=qkW6_T5WQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 5/4/2015 7:34 PM, Benson Leung wrote:
-> On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
->> For Tegra210, the logic to calculate out-of-table rates is different
->> from previous generations. Add callbacks that can be overridden to
->> allow for different ways of calculating rates. Default to
->> _cal_rate when not specified.
-> 
-> You should mention that you're adding a new flag and new members that
-> may override mdiv as well.
+Instead of having multiple similar wrapper functions for
+_clk_pll_[enable|disable], we can simplify it to single
+wrappers and use checks to avoid the logic we don't want to use.
 
-Yes, will add that.
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+v2:
+  - Moved the iddq settings into _clk_pll_enable/disable. This is because
+    some places in this file call directly into these internal functions,
+    but still need the iddq/reset logic to happen.
 
-> 
->>
->> Based on original work by Aleksandr Frid <afrid@nvidia.com>
->>
->> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
->> ---
->> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
->> index 3f92f1ad3961..b63ef31a2d7a 100644
->> --- a/drivers/clk/tegra/clk.h
->> +++ b/drivers/clk/tegra/clk.h
->> @@ -199,6 +199,8 @@ struct div_nmp {
->>   *     base register.
->>   * TEGRA_PLL_BYPASS - PLL has bypass bit
->>   * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
->> + * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
->> + *     it may be more accurate (especially if SDM present)
->>   */
->>  struct tegra_clk_pll_params {
->>         unsigned long   input_min;
->> @@ -235,7 +237,13 @@ struct tegra_clk_pll_params {
->>         struct div_nmp  *div_nmp;
->>         struct tegra_clk_pll_freq_table *freq_table;
->>         unsigned long   fixed_rate;
->> +       bool            vco_out;
-> 
-> vco_out is unused and unrelated to this change?
+ drivers/clk/tegra/clk-pll.c |   76 +++++++++++++------------------------------
+ 1 file changed, 22 insertions(+), 54 deletions(-)
 
-vco_out is used to mark which PLL's have a vco_out, and is going to be
-used in the new out-of-table rate calculation in tegra210, so I will
-move adding this member until that patch.
-
-
-> 
->> +       u16             mdiv_default;
->> +       u32     (*round_p_to_pdiv)(u32 p, u32 *pdiv);
->>         void    (*set_gain)(struct tegra_clk_pll_freq_table *cfg);
->> +       int     (*calc_rate)(struct clk_hw *hw,
->> +                       struct tegra_clk_pll_freq_table *cfg,
->> +                       unsigned long rate, unsigned long parent_rate);
-> 
-> Add kerneldoc for new members.
-
-Will do, thanks!
-
--rhyland
-
-
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index b9a739ce4b98..1e1018dd466f 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -295,6 +295,13 @@ static void _clk_pll_enable(struct clk_hw *hw)
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+ 	u32 val;
+ 
++	if (pll->params->iddq_reg) {
++		val = pll_readl(pll->params->iddq_reg, pll);
++		val &= ~BIT(pll->params->iddq_bit_idx);
++		pll_writel(val, pll->params->iddq_reg, pll);
++		udelay(2);
++	}
++
+ 	clk_pll_enable_lock(pll);
+ 
+ 	val = pll_readl_base(pll);
+@@ -326,6 +333,13 @@ static void _clk_pll_disable(struct clk_hw *hw)
+ 		val &= ~PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE;
+ 		writel_relaxed(val, pll->pmc + PMC_PLLP_WB0_OVERRIDE);
+ 	}
++
++	if (pll->params->iddq_reg) {
++		val = pll_readl(pll->params->iddq_reg, pll);
++		val |= BIT(pll->params->iddq_bit_idx);
++		pll_writel(val, pll->params->iddq_reg, pll);
++		udelay(2);
++	}
+ }
+ 
+ static int clk_pll_enable(struct clk_hw *hw)
+@@ -876,52 +890,6 @@ static int _setup_dynamic_ramp(struct tegra_clk_pll_params *pll_params,
+ 	return 0;
+ }
+ 
+-static int clk_pll_iddq_enable(struct clk_hw *hw)
+-{
+-	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long flags = 0;
+-
+-	u32 val;
+-	int ret;
+-
+-	if (pll->lock)
+-		spin_lock_irqsave(pll->lock, flags);
+-
+-	val = pll_readl(pll->params->iddq_reg, pll);
+-	val &= ~BIT(pll->params->iddq_bit_idx);
+-	pll_writel(val, pll->params->iddq_reg, pll);
+-	udelay(2);
+-
+-	_clk_pll_enable(hw);
+-
+-	ret = clk_pll_wait_for_lock(pll);
+-
+-	if (pll->lock)
+-		spin_unlock_irqrestore(pll->lock, flags);
+-
+-	return 0;
+-}
+-
+-static void clk_pll_iddq_disable(struct clk_hw *hw)
+-{
+-	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long flags = 0;
+-	u32 val;
+-
+-	if (pll->lock)
+-		spin_lock_irqsave(pll->lock, flags);
+-
+-	_clk_pll_disable(hw);
+-
+-	val = pll_readl(pll->params->iddq_reg, pll);
+-	val |= BIT(pll->params->iddq_bit_idx);
+-	pll_writel(val, pll->params->iddq_reg, pll);
+-	udelay(2);
+-
+-	if (pll->lock)
+-		spin_unlock_irqrestore(pll->lock, flags);
+-}
+-
+ static int _calc_dynamic_ramp_rate(struct clk_hw *hw,
+ 				struct tegra_clk_pll_freq_table *cfg,
+ 				unsigned long rate, unsigned long parent_rate)
+@@ -1518,8 +1486,8 @@ struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
+ 	defined(CONFIG_ARCH_TEGRA_132_SOC)
+ static const struct clk_ops tegra_clk_pllxc_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
+ 	.round_rate = clk_pll_ramp_round_rate,
+ 	.set_rate = clk_pllxc_set_rate,
+@@ -1527,8 +1495,8 @@ static const struct clk_ops tegra_clk_pllxc_ops = {
+ 
+ static const struct clk_ops tegra_clk_pllm_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
+ 	.round_rate = clk_pll_ramp_round_rate,
+ 	.set_rate = clk_pllm_set_rate,
+@@ -1545,8 +1513,8 @@ static const struct clk_ops tegra_clk_pllc_ops = {
+ 
+ static const struct clk_ops tegra_clk_pllre_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pllre_recalc_rate,
+ 	.round_rate = clk_pllre_round_rate,
+ 	.set_rate = clk_pllre_set_rate,
+@@ -1815,8 +1783,8 @@ struct clk *tegra_clk_register_plle_tegra114(const char *name,
+ #if defined(CONFIG_ARCH_TEGRA_124_SOC) || defined(CONFIG_ARCH_TEGRA_132_SOC)
+ static const struct clk_ops tegra_clk_pllss_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_iddq_enable,
+-	.disable = clk_pll_iddq_disable,
++	.enable = clk_pll_enable,
++	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
+ 	.round_rate = clk_pll_ramp_round_rate,
+ 	.set_rate = clk_pllxc_set_rate,
 -- 
-nvpublic
+1.7.9.5
