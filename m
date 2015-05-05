@@ -1,176 +1,111 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3 1/5] Documentation: add DT binding for ARM System Control and Power Interface(SCPI) protocol
-Date: Wed, 27 May 2015 10:53:14 +0100
-Message-Id: <1432720398-5701-2-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com>
-References: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <rklein@nvidia.com>
+Message-ID: <5548E7E9.3040802@nvidia.com>
+Date: Tue, 5 May 2015 11:55:21 -0400
+From: Rhyland Klein <rklein@nvidia.com>
+MIME-Version: 1.0
+To: Thierry Reding <thierry.reding@gmail.com>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
+	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 00/20] Tegra210 Clock Support
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com> <20150505131419.GA11535@ulmo.nvidia.com>
+In-Reply-To: <20150505131419.GA11535@ulmo.nvidia.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds devicetree binding for System Control and Power
-Interface (SCPI) Message Protocol used between the Application Cores(AP)
-and the System Control Processor(SCP). The MHU peripheral provides a
-mechanism for inter-processor communication between SCP's M3 processor
-and AP.
+On 5/5/2015 9:14 AM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Mon, May 04, 2015 at 12:37:20PM -0400, Rhyland Klein wrote:
+>> This patch series updates the tegra common clock driver and adds
+>> support for the Tegra210 clocks. The clocks in Tegra210 changed
+>> significantly in some ways from earlier generations, so to support
+>> them, we need to extend our base framework a bit and add some new
+>> features.
+>>
+>> Some patches here also address issues found while adding features
+>> and other cleanup type work.
+>>
+>> v4:
+>>   - Fixed minor checkpatch errors and other typos
+>>   - Rebased ontop of linux-next 20150504
+> 
+> Are you sure about this? It still doesn't apply cleanly to next-20150504
+> for me.
 
-SCP offers control and management of the core/cluster power states,
-various power domain DVFS including the core/cluster, certain system
-clocks configuration, thermal sensors and many others.
+It is based off c9256b89d92154cffd36697b412d0a0176a8e2d2 "Add linux-next
+specific files for 20150504"
 
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-CC: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Liviu Dudau <Liviu.Dudau@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
-Cc: devicetree@vger.kernel.org
----
- Documentation/devicetree/bindings/arm/arm,scpi.txt | 121 +++++++++++++++++++++
- 1 file changed, 121 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/arm,scpi.txt
+What types of problems are you running into?
 
-diff --git a/Documentation/devicetree/bindings/arm/arm,scpi.txt b/Documentation/devicetree/bindings/arm/arm,scpi.txt
-new file mode 100644
-index 000000000000..5db235f69e54
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/arm,scpi.txt
-@@ -0,0 +1,121 @@
-+System Control and Power Interface (SCPI) Message Protocol
-+----------------------------------------------------------
-+
-+Required properties:
-+
-+- compatible : should be "arm,scpi"
-+- mboxes: List of phandle and mailbox channel specifiers
-+- shmem : List of phandle pointing to the shared memory(SHM) area between the
-+	  processors using these mailboxes for IPC, one for each mailbox
-+
-+See Documentation/devicetree/bindings/mailbox/mailbox.txt
-+for more details about the generic mailbox controller and
-+client driver bindings.
-+
-+Clock bindings for the clocks based on SCPI Message Protocol
-+------------------------------------------------------------
-+
-+This binding uses the common clock binding[1].
-+
-+Required properties:
-+- compatible : shall be one of the following:
-+	"arm,scpi-clocks" - for the container node with all the clocks
-+		based on the SCPI protocol
-+	"arm,scpi-dvfs" - all the clocks that are variable and index based.
-+		These clocks don't provide the full range between the limits
-+		but only discrete points within the range. The firmware
-+		provides the mapping for each such operating frequency and the
-+		index associated with it. The firmware also manages the
-+		voltage scaling appropriately with the clock scaling.
-+	"arm,scpi-clk" - all the clocks that are variable and provide full
-+		range within the specified range. The firmware provides the
-+		supported range for each clock.
-+
-+Required properties for all clocks(all from common clock binding):
-+- #clock-cells : should be set to 1 as each of the SCPI clocks have multiple
-+	outputs. The clock specifier will be the index to an entry in the list
-+	of output clocks.
-+- clock-output-names : shall be the corresponding names of the outputs.
-+- clock-indices: The identifyng number for the clocks(clock_id) in the node as
-+	expected by the firmware. It can be non linear and hence provide the
-+	mapping	of identifiers into the clock-output-names array.
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Example:
-+
-+sram: sram@50000000 {
-+	compatible = "arm,juno-sram-ns", "mmio-sram";
-+	reg = <0x0 0x50000000 0x0 0x10000>;
-+
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	ranges = <0 0x0 0x50000000 0x10000>;
-+
-+	cpu_scp_lpri: scp-shmem@0 {
-+		compatible = "arm,juno-scp-shmem";
-+		reg = <0x0 0x200>;
-+	};
-+
-+	cpu_scp_hpri: scp-shmem@200 {
-+		compatible = "arm,juno-scp-shmem";
-+		reg = <0x200 0x200>;
-+	};
-+};
-+
-+mailbox: mailbox0@40000000 {
-+	....
-+	#mbox-cells = <1>;
-+};
-+
-+scpi_protocol: scpi@2e000000 {
-+	compatible = "arm,scpi";
-+	mboxes = <&mailbox 0 &mailbox 1>;
-+	shmem = <&cpu_scp_lpri &cpu_scp_hpri>;
-+
-+	clocks {
-+		compatible = "arm,scpi-clocks";
-+
-+		scpi_dvfs: scpi_clocks@0 {
-+			compatible = "arm,scpi-dvfs";
-+			#clock-cells = <1>;
-+			clock-indices = <0>, <1>, <2>;
-+			clock-output-names = "vbig", "vlittle", "vgpu";
-+		};
-+		scpi_clk: scpi_clocks@3 {
-+			compatible = "arm,scpi-clk";
-+			#clock-cells = <1>;
-+			clock-indices = <3>, <4>;
-+			clock-output-names = "pxlclk0", "pxlclk1";
-+		};
-+	};
-+};
-+
-+cpu@0 {
-+	...
-+	reg = <0 0>;
-+	clocks = <&scpi_dvfs 0>;
-+	clock-names = "big";
-+};
-+
-+hdlcd@7ff60000 {
-+	...
-+	reg = <0 0x7ff60000 0 0x1000>;
-+	clocks = <&scpi_clk 1>;
-+	clock-names = "pxlclk";
-+};
-+
-+In the above example, the #clock-cells is set to 1 as required.
-+scpi_dvfs has 3 output clocks namely: vbig, vlittle and vgpu with 0, 1
-+and 2 as clock-indices. scpi_clk has 2 output clocks namely: pxlclk0 and
-+pxlclk1 with 3 and 4 as clock-indices.
-+
-+The first consumer in the example is cpu@0 and it has vbig as input clock.
-+The index '0' in the clock specifier here points to the first entry in the
-+output clocks of scpi_dvfs for which clock_id asrequired by the firmware
-+is 0.
-+
-+Similarly the second example is hdlcd@7ff60000 and it has pxlclk0 as input
-+clock. The index '1' in the clock specifier here points to the second entry
-+in the output clocks of scpi_clocks for which clock_id as required by the
-+firmware is 4.
+-rhyland
+
+> 
+> Thierry
+> 
+>>
+>> v3:
+>>   - Added a fix from Andrew Bresticker that was found while testing
+>>     this code.
+>>
+>> Andrew Bresticker (1):
+>>   clk: tegra: pll: Fix issues with rates for VCO PLLs
+>>
+>> Bill Huang (7):
+>>   clk: tegra: pll-params: change misc_reg count from 3 -> 6
+>>   clk: tegra: pll: Add logic for SS
+>>   clk: tegra: pll: Add code to handle if resets are supported by PLL
+>>   clk: tegra: pll: Adjust vco_min if SDM present
+>>   clk: tegra: pll: Add dyn_ramp callback
+>>   clk: tegra: pll: Add Set_default logic
+>>   clk: tegra: Add Super Gen5 Logic
+>>
+>> Rhyland Klein (12):
+>>   clk: tegra: Modify tegra_audio_clk_init to accept more plls
+>>   clk: tegra: periph: add new periph clks and muxes for Tegra210
+>>   clk: tegra: pll: add tegra_pll_wait_for_lock to clk header
+>>   clk: tegra: pll: simplify clk_enable_path
+>>   clk: tegra: pll: update warning msg
+>>   clk: tegra: pll: Don't unconditionally set LOCK flags
+>>   clk: tegra: pll: Add logic for handling SDM data
+>>   clk: tegra: pll: Add logic for out-of-table rates for T210
+>>   clk: tegra: pll: Add specialized logic for T210
+>>   clk: tegra: pll: Add support for PLLMB for T210
+>>   clk: tegra: pll: Fix _pll_ramp_calc_pll logic and
+>>     _calc_dynamic_ramp_rate
+>>   clk: tegra210: add support for Tegra210 clocks
+>>
+>>  .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
+>>  drivers/clk/tegra/Makefile                         |    2 +
+>>  drivers/clk/tegra/clk-id.h                         |   64 +-
+>>  drivers/clk/tegra/clk-pll.c                        |  697 ++++-
+>>  drivers/clk/tegra/clk-tegra-audio.c                |   25 +-
+>>  drivers/clk/tegra/clk-tegra-periph.c               |  257 +-
+>>  drivers/clk/tegra/clk-tegra-super-gen5.c           |  150 ++
+>>  drivers/clk/tegra/clk-tegra114.c                   |   30 +-
+>>  drivers/clk/tegra/clk-tegra124.c                   |   31 +-
+>>  drivers/clk/tegra/clk-tegra20.c                    |   18 +-
+>>  drivers/clk/tegra/clk-tegra210.c                   | 2761 ++++++++++++++++++++
+>>  drivers/clk/tegra/clk-tegra30.c                    |   31 +-
+>>  drivers/clk/tegra/clk.h                            |   90 +-
+>>  include/dt-bindings/clock/tegra210-car.h           |  401 +++
+>>  14 files changed, 4468 insertions(+), 145 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
+>>  create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
+>>  create mode 100644 drivers/clk/tegra/clk-tegra210.c
+>>  create mode 100644 include/dt-bindings/clock/tegra210-car.h
+>>
+>> -- 
+>> 1.7.9.5
+>>
+> 
+> * Unknown Key
+> * 0x7F3EB3A1
+> 
+
+
 -- 
-1.9.1
-
+nvpublic
