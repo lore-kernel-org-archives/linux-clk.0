@@ -1,133 +1,116 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>, <paul@pwsan.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 16/27] ARM: OMAP2+: clock: remove clkdm_control static boolean from code
-Date: Mon, 11 May 2015 11:54:42 +0300
-Message-ID: <1431334493-24455-17-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
-References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 5 May 2015 10:03:09 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Lee Jones <lee.jones@linaro.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/5] ARM: dts: sun9i: Add A80 PRCM clocks and reset
+ control nodes
+Message-ID: <20150505080309.GE3274@lukather>
+References: <1430410206-4410-1-git-send-email-wens@csie.org>
+ <1430410206-4410-5-git-send-email-wens@csie.org>
+ <20150504130546.GC3274@lukather>
+ <CAGb2v676gpGKm+9vHLnfvhJ=tCyRAkE2G7Pi87oNsWmJJ5+ROg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="wchHw8dVAp53YPj8"
+In-Reply-To: <CAGb2v676gpGKm+9vHLnfvhJ=tCyRAkE2G7Pi87oNsWmJJ5+ROg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-clkdm_control is used to determine, whether clocks should trigger a
-clockdomain transition when they are enabled/disabled. Keep this
-functionality intact, but replace this with a clk_features flag
-which can be initialized during boot if needed.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/clock.c |   34 ++++++++++------------------------
- arch/arm/mach-omap2/clock.h |    2 --
- include/linux/clk/ti.h      |    1 +
- 3 files changed, 11 insertions(+), 26 deletions(-)
+--wchHw8dVAp53YPj8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
-index 7a5713d..6c17adf 100644
---- a/arch/arm/mach-omap2/clock.c
-+++ b/arch/arm/mach-omap2/clock.c
-@@ -61,14 +61,6 @@ u16 cpu_mask;
- #define OMAP3PLUS_DPLL_FINT_MIN		32000
- #define OMAP3PLUS_DPLL_FINT_MAX		52000000
- 
--/*
-- * clkdm_control: if true, then when a clock is enabled in the
-- * hardware, its clockdomain will first be enabled; and when a clock
-- * is disabled in the hardware, its clockdomain will be disabled
-- * afterwards.
-- */
--static bool clkdm_control = true;
--
- struct clk_iomap {
- 	struct regmap *regmap;
- 	void __iomem *mem;
-@@ -288,19 +280,6 @@ void omap2_init_clk_clkdm(struct clk_hw *hw)
- }
- 
- /**
-- * omap2_clk_disable_clkdm_control - disable clkdm control on clk enable/disable
-- *
-- * Prevent the OMAP clock code from calling into the clockdomain code
-- * when a hardware clock in that clockdomain is enabled or disabled.
-- * Intended to be called at init time from omap*_clk_init().  No
-- * return value.
-- */
--void __init omap2_clk_disable_clkdm_control(void)
--{
--	clkdm_control = false;
--}
--
--/**
-  * omap2_clk_dflt_find_companion - find companion clock to @clk
-  * @clk: struct clk * to find the companion clock of
-  * @other_reg: void __iomem ** to return the companion clock CM_*CLKEN va in
-@@ -384,6 +363,12 @@ int omap2_dflt_clk_enable(struct clk_hw *hw)
- 	struct clk_hw_omap *clk;
- 	u32 v;
- 	int ret = 0;
-+	bool clkdm_control;
-+
-+	if (ti_clk_get_features()->flags & TI_CLK_DISABLE_CLKDM_CONTROL)
-+		clkdm_control = false;
-+	else
-+		clkdm_control = true;
- 
- 	clk = to_clk_hw_omap(hw);
- 
-@@ -457,7 +442,8 @@ void omap2_dflt_clk_disable(struct clk_hw *hw)
- 	omap2_clk_writel(v, clk, clk->enable_reg);
- 	/* No OCP barrier needed here since it is a disable operation */
- 
--	if (clkdm_control && clk->clkdm)
-+	if (!(ti_clk_get_features()->flags & TI_CLK_DISABLE_CLKDM_CONTROL) &&
-+	    clk->clkdm)
- 		clkdm_clk_disable(clk->clkdm, hw->clk);
- }
- 
-@@ -490,7 +476,7 @@ int omap2_clkops_enable_clkdm(struct clk_hw *hw)
- 		pr_err("%s: %s: should use dflt_clk_enable ?!\n", __func__,
- 		       __clk_get_name(hw->clk));
- 
--	if (!clkdm_control) {
-+	if (ti_clk_get_features()->flags & TI_CLK_DISABLE_CLKDM_CONTROL) {
- 		pr_err("%s: %s: clkfw-based clockdomain control disabled ?!\n",
- 		       __func__, __clk_get_name(hw->clk));
- 		return 0;
-@@ -528,7 +514,7 @@ void omap2_clkops_disable_clkdm(struct clk_hw *hw)
- 		pr_err("%s: %s: should use dflt_clk_disable ?!\n", __func__,
- 		       __clk_get_name(hw->clk));
- 
--	if (!clkdm_control) {
-+	if (ti_clk_get_features()->flags & TI_CLK_DISABLE_CLKDM_CONTROL) {
- 		pr_err("%s: %s: clkfw-based clockdomain control disabled ?!\n",
- 		       __func__, __clk_get_name(hw->clk));
- 		return;
-diff --git a/arch/arm/mach-omap2/clock.h b/arch/arm/mach-omap2/clock.h
-index d60691d..9480654 100644
---- a/arch/arm/mach-omap2/clock.h
-+++ b/arch/arm/mach-omap2/clock.h
-@@ -180,8 +180,6 @@ struct clksel {
- #define OMAP4XXX_EN_DPLL_FRBYPASS		0x6
- #define OMAP4XXX_EN_DPLL_LOCKED			0x7
- 
--void __init omap2_clk_disable_clkdm_control(void);
--
- void omap2_clk_print_new_rates(const char *hfclkin_ck_name,
- 			       const char *core_ck_name,
- 			       const char *mpu_ck_name);
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 0f9d15f..3dadb74 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -330,6 +330,7 @@ struct ti_clk_features {
- 
- #define TI_CLK_DPLL_HAS_FREQSEL			BIT(0)
- #define TI_CLK_DPLL4_DENY_REPROGRAM		BIT(1)
-+#define TI_CLK_DISABLE_CLKDM_CONTROL		BIT(2)
- 
- void ti_clk_setup_features(struct ti_clk_features *features);
- struct ti_clk_features *ti_clk_get_features(void);
--- 
-1.7.9.5
+On Mon, May 04, 2015 at 11:25:18PM +0800, Chen-Yu Tsai wrote:
+> On Mon, May 4, 2015 at 9:05 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > On Fri, May 01, 2015 at 12:10:05AM +0800, Chen-Yu Tsai wrote:
+> >> This adds the PRCM clocks and reset controls to the A80 dtsi.
+> >>
+> >> The list of apbs clock gates is incomplete. Tests show that bits 0~20
+> >> are mutable. We will need documents from Allwinner to complete the
+> >> support.
+> >>
+> >> Also update clock and reset phandles for r_uart.
+> >>
+> >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> >> ---
+> >>  arch/arm/boot/dts/sun9i-a80.dtsi | 64 +++++++++++++++++++++++++++++++=
+++++++++-
+> >>  1 file changed, 63 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9=
+i-a80.dtsi
+> >> index d3dece2eea72..f0869ff8006f 100644
+> >> --- a/arch/arm/boot/dts/sun9i-a80.dtsi
+> >> +++ b/arch/arm/boot/dts/sun9i-a80.dtsi
+> >> @@ -169,6 +169,14 @@
+> >>                                            "usb_phy2", "usb_hsic_12M";
+> >>               };
+> >>
+> >> +             pll3: clk@06000008 {
+> >> +                     /* placeholder until implemented */
+> >> +                     #clock-cells =3D <0>;
+> >> +                     compatible =3D "fixed-clock";
+> >> +                     clock-rate =3D <0>;
+> >> +                     clock-output-names =3D "pll3";
+> >> +             };
+> >> +
+> >>               pll4: clk@0600000c {
+> >>                       #clock-cells =3D <0>;
+> >>                       compatible =3D "allwinner,sun9i-a80-pll4-clk";
+> >> @@ -751,13 +759,67 @@
+> >>                       interrupts =3D <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+> >>               };
+> >>
+> >> +             prcm@08001400 {
+> >> +                     compatible =3D "allwinner,sun9i-a80-prcm";
+> >> +                     reg =3D <0x08001400 0x200>;
+> >> +
+> >> +                     cpus_clk: cpus_clk {
+> >
+> > I wonder whether it would not be more readable to have this as
+> > clk@<prcm_offset>, just like all the other clocks?
+>=20
+> I agree it is more readable, though it is purely aesthetics. What offset
+> did you have in mind? Offset from PRCM base (0x08001400)? Or the complete
+> address?
+
+I'd say the offset within the PRCM.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--wchHw8dVAp53YPj8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVSHk9AAoJEBx+YmzsjxAg0OwP/2KAEqM9YRulzdPSW8VOJH06
+wOvIvEv4CDBwbyP1GcL7P31zzmWzGS9xfQxJiQFVahNEiEsBZKAS77SGugwJMCRM
+Tf2+BKDlpjGGeQGr64KfO2I7b5YACZkEVZoM+qy632z11scWUUMDs3ZAXIeZJtuu
+oWFDR2KWmACCfrgtQr2zHpiGK56trkohUlHHj+tPTX//bV28WvgYh7sJ5WidhQtx
+Es8+N1pCpsudC+kLzX8OMvLB+IFGJAunkNfaqmvVrLyveA9XtBIx4dnNO4xlBQjB
+7hMjN7fJ+yG+72yGQCpPRonYL83w+366TYVsDIu0+nMFbpoC0JqvOpzaWbiBs0Se
+hOLCm83ORG4eE432hyyshOFchPIZFzkBSNTUBYc1giXuQG0IQjs8Hi7Xyz0+jKFm
+K/Gb6eQzB8eSEZAV2UYqIcjaBA+3eekX5rmn+1VBmszc0f/JSalsS4CsaxfyeqJL
+EzLxw7CpOXOZzvr2dlX9mh33i28dt+6ccprkx1EtM/Khu6VXsjvAZiO0toKGbED/
+RHupbRros5qR4+nPo7iZnzEPXeCxD/5bsnPET4sYs0XHjC8BLVEh8wr10kWIM2Wr
+sLJy9mbAyUkLjXvJRP1LqPIYPilFjASU5CZsQ+Rt9YO7yMAIs5CSD0xxqSJxpXl2
+lFg7WDlenCSQr+VSKglO
+=wxPf
+-----END PGP SIGNATURE-----
+
+--wchHw8dVAp53YPj8--
