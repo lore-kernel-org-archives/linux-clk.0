@@ -1,151 +1,65 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <rklein@nvidia.com>
+Message-ID: <554916F8.2060908@nvidia.com>
+Date: Tue, 5 May 2015 15:16:08 -0400
+From: Rhyland Klein <rklein@nvidia.com>
 MIME-Version: 1.0
-To: Joachim Eastwood <manabian@gmail.com>,   sboyd@codeaurora.org
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <20150528034424.22384.83956@quantum>
-Cc: "Joachim Eastwood" <manabian@gmail.com>, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- ezequiel@vanguardiasur.com.ar
-References: <1431988559-23338-1-git-send-email-manabian@gmail.com>
- <1431988559-23338-5-git-send-email-manabian@gmail.com>
- <20150528034424.22384.83956@quantum>
-Message-ID: <20150528035143.22384.88862@quantum>
-Subject: Re: [PATCH v3 4/6] clk: add lpc18xx ccu clk driver
-Date: Wed, 27 May 2015 20:51:43 -0700
+To: Benson Leung <bleung@chromium.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
+	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre
+ Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 08/20] clk: tegra: pll: Add logic for handling SDM
+ data
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>	<1430757460-9478-9-git-send-email-rklein@nvidia.com> <CANLzEksFVpYOtcG5QHHfQa6bGXJ6nMYrsP4yG=5wszxCHrWqug@mail.gmail.com>
+In-Reply-To: <CANLzEksFVpYOtcG5QHHfQa6bGXJ6nMYrsP4yG=5wszxCHrWqug@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Michael Turquette (2015-05-27 20:44:24)
-> Hi Joachim,
-> =
+On 5/4/2015 7:01 PM, Benson Leung wrote:
+> On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+>> @@ -495,6 +505,28 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+>>         return 0;
+>>  }
+>>
+>> +static void clk_pll_set_sdm_data(struct clk_hw *hw,
+>> +                                struct tegra_clk_pll_freq_table *cfg)
+>> +{
+>> +       struct tegra_clk_pll *pll = to_clk_pll(hw);
+>> +       u32 val;
+>> +
+>> +       if (!pll->params->sdm_din_reg)
+>> +               return;
+>> +
+>> +       if (cfg->sdm_data) {
+>> +               val = pll_readl_sdm_din(pll) & (~sdm_din_mask(pll));
+>> +               val |= sdin_data_to_din(cfg->sdm_data) & sdm_din_mask(pll);
+>> +               pll_writel_sdm_din(val, pll);
+>> +       }
+>> +
+>> +       val = pll_readl_sdm_ctrl(pll);
+>> +       if (!cfg->sdm_data != !(val & pll->params->sdm_ctrl_en_mask)) {
+> 
+> You can use sdm_en_mask(pll) here.
+> 
+> I'm not super clear about what you're trying to accomplish here with
+> !cfg->sdm_data != !(val & mask).
+> Are you just checking if the masked value is different from sdm_data,
+> but accounting for the integer widths being different (u16 vs u32)?
 
-> Quoting Joachim Eastwood (2015-05-18 15:35:57)
-> <snip>
-> > +static void lpc18xx_ccu_register_branch_clks(void __iomem *reg_base,
-> > +                                            int base_clk_id,
-> > +                                            const char *parent)
-> > +{
-> > +       int i;
-> > +
-> > +       for (i =3D 0; i < ARRAY_SIZE(clk_branches); i++) {
-> > +               if (clk_branches[i].base_id !=3D base_clk_id)
-> > +                       continue;
-> > +
-> > +               lpc18xx_ccu_register_branch_gate_div(&clk_branches[i], =
-reg_base,
-> > +                                                    parent);
-> > +
-> > +               if (clk_branches[i].flags & CCU_BRANCH_IS_BUS)
-> > +                       parent =3D clk_branches[i].name;
-> > +       }
-> > +}
-> > +
-> > +static void __init lpc18xx_ccu_init(struct device_node *np)
-> > +{
-> > +       struct lpc18xx_branch_clk_data *clk_data;
-> > +       int num_base_ids, *base_ids;
-> > +       void __iomem *reg_base;
-> > +       const char *parent;
-> > +       int base_clk_id;
-> > +       int i;
-> > +
-> > +       reg_base =3D of_iomap(np, 0);
-> > +       if (!reg_base) {
-> > +               pr_warn("%s: failed to map address range\n", __func__);
-> > +               return;
-> > +       }
-> > +
-> > +       clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
-> > +       if (!clk_data)
-> > +               return;
-> > +
-> > +       num_base_ids =3D of_clk_get_parent_count(np);
-> > +
-> > +       base_ids =3D kcalloc(num_base_ids, sizeof(int), GFP_KERNEL);
-> > +       if (!base_ids) {
-> > +               kfree(clk_data);
-> > +               return;
-> > +       }
-> > +
-> > +       clk_data->base_ids =3D base_ids;
-> > +       clk_data->num_base_ids =3D num_base_ids;
-> > +
-> > +       for (i =3D 0; i < num_base_ids; i++) {
-> > +               struct clk *clk =3D of_clk_get(np, i);
-> > +               if (IS_ERR(clk)) {
-> > +                       pr_warn("%s: failed to get clock at idx %d\n",
-> > +                               __func__, i);
-> > +                       continue;
-> > +               }
-> > +
-> > +               parent =3D __clk_get_name(clk);
-> > +               base_clk_id =3D of_clk_get_index(np, i);
-> > +
-> > +               clk_data->base_ids[i] =3D base_clk_id;
-> > +               lpc18xx_ccu_register_branch_clks(reg_base, base_clk_id,
-> > +                                                parent);
-> =
+So I got clarification from the downstream author to be sure, and this
+is the answer to what this is checking:
 
-> Thanks for sending V3. This driver is getting close!
-> =
+(<Configuration has non zero  SDM_DATA>  AND <sdm control is disabled>)
+OR
+(<Configuration has zero  SDM_DATA>  AND <sdm control is enabled>)
 
-> So the main thing I don't understand is why you do not encode the CGU
-> clock parent string names into this CCU driver. If I understand your
-> approach correctly, you do the following in lpc18xx_ccu_init:
+So the check is correct, just a complicated way of expressing it.
 
-Ugh, I just saw that you mentioned this approach in your cover letter.
-No need for you to answer all of my questions then.
+-rhyland
 
-Please make the change to encode the parent string names directly. V4
-should be good to go after that.
 
-Thanks,
-Mike
-
-> =
-
-> 1) count the number of parent clocks (ostensibly CGU clocks)
-> 2) iterate through all of those CGU clocks, extracting a base_id value
-> (loop #1)
-> 3) using this base_id as a key you walk through an array in the CCU
-> driver trying to find a matching base_id value
-> (loop #2)
-> 4) after finding the corresponding CCU clocks you get the parent clock
-> with of_clk_get
-> 5) using of_clk_get you fetch its name with __clk_get_name
-> 6) you pass this parent name into a fairly typical looking registration
-> function
-> =
-
-> Assuming I got all of that right, I hope we can simplify it
-> considerably.
-> =
-
-> You already have an array of CCU clock information in this driver,
-> clk_branches[]. Why not encode the parent string name here? This would
-> involve adding a "parent_name" member to struct lpc18xx_clk_branch.
-> =
-
-> Doing the above, your O(n^2)-ish registration function becomes O(n):
-> =
-
-> 1) iterate through the array of the CCU clocks (clk_branchs[])
-> 2) register them
-> 3) profit
-> =
-
-> I'm starting to think any reference to base_id is sign that things are
-> wrong in your driver. I am unconvinced that you need to "share" this
-> base_id across CGU and CCU drivers in the way you do. If I'm wrong
-> please help me to understand.
-> =
-
-> As a wild thought, if you do not want to encode parent string names into
-> this driver, have you tried to use the clock-names property in the CCU
-> blob? You do not need clock-output-names in the CGU blob either. But
-> this is just an idea. It is far for straightforward for you t encode the
-> parent names in your clk_branches[] array.
-> =
-
-> Thanks,
-> Mike
+-- 
+nvpublic
