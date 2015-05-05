@@ -1,29 +1,53 @@
 Return-Path: <bleung@google.com>
 MIME-Version: 1.0
 Sender: bleung@google.com
-In-Reply-To: <1430757460-9478-6-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430757460-9478-12-git-send-email-rklein@nvidia.com>
 References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
-	<1430757460-9478-6-git-send-email-rklein@nvidia.com>
-Date: Mon, 4 May 2015 13:20:19 -0700
-Message-ID: <CANLzEktDVtx9sNaKS_gbwZyXwSi16A-qmn3h6nAgCJ_Awt58qg@mail.gmail.com>
-Subject: Re: [PATCH v4 05/20] clk: tegra: pll: update warning msg
+	<1430757460-9478-12-git-send-email-rklein@nvidia.com>
+Date: Tue, 5 May 2015 10:15:47 -0700
+Message-ID: <CANLzEkuzW3pZzu_B+LUd7rx81yA9=YwdPtttAUXqDLHFLokHBg@mail.gmail.com>
+Subject: Re: [PATCH v4 11/20] clk: tegra: pll: Add code to handle if resets
+ are supported by PLL
 From: Benson Leung <bleung@chromium.org>
 To: Rhyland Klein <rklein@nvidia.com>
 Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
 	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
 	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bill Huang <bilhuang@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
 On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
-> Swap out the generic WARN_ON with a WARN which gives more
-> information about what is happening.
+> From: Bill Huang <bilhuang@nvidia.com>
 >
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> If a PLL has a reset_reg specified, properly handle that in the
+> enable/disable logic paths.
+>
+> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+
+Minor nit to add kerneldoc for params. Otherwise, LGTM.
 
 Reviewed-by: Benson Leung <bleung@chromium.org>
+
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index b63ef31a2d7a..0146c91df635 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -217,6 +217,8 @@ struct tegra_clk_pll_params {
+>         u32             lock_enable_bit_idx;
+>         u32             iddq_reg;
+>         u32             iddq_bit_idx;
+> +       u32             reset_reg;
+> +       u32             reset_bit_idx;
+
+Kerneldoc for these two.
+
+>         u32             sdm_din_reg;
+>         u32             sdm_din_mask;
+>         u32             sdm_ctrl_reg;
+
+
 
 
 -- 
