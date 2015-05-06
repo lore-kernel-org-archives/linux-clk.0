@@ -1,211 +1,99 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v2 5/5] cpufreq: arm_big_little: add SCPI interface driver
-Date: Fri, 15 May 2015 00:03:12 +0200
-Message-ID: <4255582.h4bFD3eA9g@vostro.rjw.lan>
-In-Reply-To: <1431618155-3132-6-git-send-email-sudeep.holla@arm.com>
-References: <1431618155-3132-1-git-send-email-sudeep.holla@arm.com> <1431618155-3132-6-git-send-email-sudeep.holla@arm.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Wed, 6 May 2015 16:18:17 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Benson Leung <bleung@chromium.org>
+Cc: Rhyland Klein <rklein@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Bill Huang <bilhuang@nvidia.com>
+Subject: Re: [PATCH v4 06/20] clk: tegra: pll-params: change misc_reg count
+ from 3 -> 6
+Message-ID: <20150506141816.GF22098@ulmo.nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+ <1430757460-9478-7-git-send-email-rklein@nvidia.com>
+ <CANLzEksajPjf1VH8Zn-1oXhgL8f-b7GuCBprExTP-w18WbCC4A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-pm-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="TU+u6i6jrDPzmlWF"
+In-Reply-To: <CANLzEksajPjf1VH8Zn-1oXhgL8f-b7GuCBprExTP-w18WbCC4A@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday, May 14, 2015 04:42:35 PM Sudeep Holla wrote:
-> On some ARM based systems, a separate Cortex-M based System Control
-> Processor(SCP) provides the overall power, clock, reset and system
-> control including CPU DVFS. SCPI Message Protocol is used to
-> communicate with the SCPI.
-> 
-> This patch adds a interface driver for adding OPPs and registering
-> the arm_big_little cpufreq driver for such systems.
-> 
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: linux-pm@vger.kernel.org
-> ---
->  drivers/cpufreq/Kconfig.arm    |   9 +++
->  drivers/cpufreq/Makefile       |   1 +
->  drivers/cpufreq/scpi-cpufreq.c | 124 +++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 134 insertions(+)
->  create mode 100644 drivers/cpufreq/scpi-cpufreq.c
-> 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 611cb09239eb..6419b17b89dd 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -24,6 +24,15 @@ config ARM_VEXPRESS_SPC_CPUFREQ
->            This add the CPUfreq driver support for Versatile Express
->  	  big.LITTLE platforms using SPC for power management.
->  
-> +config ARM_SCPI_CPUFREQ
-> +        tristate "SCPI based CPUfreq driver"
-> +	depends on ARM_BIG_LITTLE_CPUFREQ && ARM_SCPI_PROTOCOL
-> +        help
-> +	  This adds the CPUfreq driver support for ARM big.LITTLE platforms
-> +	  using SCPI protocol for CPU power management.
-> +
-> +	  This driver uses SCPI Message Protocol driver to interact with the
-> +	  firmware providing the CPU DVFS functionality.
->  
->  config ARM_EXYNOS_CPUFREQ
->  	tristate "SAMSUNG EXYNOS CPUfreq Driver"
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index cdce92ae2e8b..02fc9f849d4b 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -79,6 +79,7 @@ obj-$(CONFIG_ARM_SA1110_CPUFREQ)	+= sa1110-cpufreq.o
->  obj-$(CONFIG_ARM_SPEAR_CPUFREQ)		+= spear-cpufreq.o
->  obj-$(CONFIG_ARM_TEGRA_CPUFREQ)		+= tegra-cpufreq.o
->  obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
-> +obj-$(CONFIG_ARM_SCPI_CPUFREQ)		+= scpi-cpufreq.o
->  
->  ##################################################################################
->  # PowerPC platform drivers
-> diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
-> new file mode 100644
-> index 000000000000..443570801229
-> --- /dev/null
-> +++ b/drivers/cpufreq/scpi-cpufreq.c
-> @@ -0,0 +1,124 @@
-> +/*
-> + * SCPI CPUFreq Interface driver
 
-It would be good to expand the TLA here IMO.
+--TU+u6i6jrDPzmlWF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The rest I'm leaving to Viresh. :-)
+On Mon, May 04, 2015 at 01:35:09PM -0700, Benson Leung wrote:
+> On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> > From: Bill Huang <bilhuang@nvidia.com>
+> >
+> > New SoC's may have more then 3 MISC registers, so bump up the
+> > array size and use a #define to be more informative about the value.
+> >
+> > Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+> > ---
+> >  drivers/clk/tegra/clk.h |    4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> > index 5759b8bfb80e..8e7361886cf9 100644
+> > --- a/drivers/clk/tegra/clk.h
+> > +++ b/drivers/clk/tegra/clk.h
+> > @@ -156,6 +156,8 @@ struct div_nmp {
+> >         u8              override_divp_shift;
+> >  };
+> >
+> > +#define MAX_PLL_MISC_REG_COUNT 6
+> > +
+> >  /**
+> >   * struct clk_pll_params - PLL parameters
+> >   *
+> > @@ -213,7 +215,7 @@ struct tegra_clk_pll_params {
+> >         u32             iddq_bit_idx;
+> >         u32             aux_reg;
+> >         u32             dyn_ramp_reg;
+> > -       u32             ext_misc_reg[3];
+> > +       u32             ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
+> >         u32             pmc_divnm_reg;
+> >         u32             pmc_divp_reg;
+> >         u32             flags;
+>=20
+>=20
+> Missing kernel doc above for ext_misc_reg and some other surrounding memb=
+ers.
 
-> + *
-> + * It provides necessary ops to arm_big_little cpufreq driver.
-> + *
-> + * Copyright (C) 2015 ARM Ltd.
-> + * Sudeep Holla <sudeep.holla@arm.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> + * kind, whether express or implied; without even the implied warranty
-> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +
-> +#include <linux/cpufreq.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_opp.h>
-> +#include <linux/scpi_protocol.h>
-> +#include <linux/types.h>
-> +
-> +#include "arm_big_little.h"
-> +
-> +static struct scpi_ops *scpi_ops;
-> +
-> +static struct scpi_dvfs_info *scpi_get_dvfs_info(struct device *cpu_dev)
-> +{
-> +	u8 domain = topology_physical_package_id(cpu_dev->id);
-> +
-> +	if (domain < 0)
-> +		return ERR_PTR(-EINVAL);
-> +	return scpi_ops->dvfs_get_info(domain);
-> +}
-> +
-> +static int scpi_opp_table_ops(struct device *cpu_dev, bool remove)
-> +{
-> +	int idx, ret = 0;
-> +	struct scpi_opp *opp;
-> +	struct scpi_dvfs_info *info = scpi_get_dvfs_info(cpu_dev);
-> +
-> +	if (IS_ERR(info))
-> +		return PTR_ERR(info);
-> +
-> +	if (!info->opps)
-> +		return -EIO;
-> +
-> +	for (opp = info->opps, idx = 0; idx < info->count; idx++, opp++) {
-> +		if (remove)
-> +			dev_pm_opp_remove(cpu_dev, opp->freq);
-> +		else
-> +			ret = dev_pm_opp_add(cpu_dev, opp->freq,
-> +					     opp->m_volt * 1000);
-> +		if (ret) {
-> +			dev_warn(cpu_dev, "failed to add opp %uHz %umV\n",
-> +				 opp->freq, opp->m_volt);
-> +			while (idx-- > 0)
-> +				dev_pm_opp_remove(cpu_dev, (--opp)->freq);
-> +			return ret;
-> +		}
-> +	}
-> +	return ret;
-> +}
-> +
-> +static int scpi_get_transition_latency(struct device *cpu_dev)
-> +{
-> +	struct scpi_dvfs_info *info = scpi_get_dvfs_info(cpu_dev);
-> +
-> +	if (IS_ERR(info))
-> +		return PTR_ERR(info);
-> +	return info->latency;
-> +}
-> +
-> +static int scpi_init_opp_table(struct device *cpu_dev)
-> +{
-> +	return scpi_opp_table_ops(cpu_dev, false);
-> +}
-> +
-> +static void scpi_free_opp_table(struct device *cpu_dev)
-> +{
-> +	scpi_opp_table_ops(cpu_dev, true);
-> +}
-> +
-> +static struct cpufreq_arm_bL_ops scpi_cpufreq_ops = {
-> +	.name	= "scpi",
-> +	.get_transition_latency = scpi_get_transition_latency,
-> +	.init_opp_table = scpi_init_opp_table,
-> +	.free_opp_table = scpi_free_opp_table,
-> +};
-> +
-> +static int scpi_cpufreq_probe(struct platform_device *pdev)
-> +{
-> +	scpi_ops = get_scpi_ops();
-> +	if (!scpi_ops)
-> +		return -EIO;
-> +
-> +	return bL_cpufreq_register(&scpi_cpufreq_ops);
-> +}
-> +
-> +static int scpi_cpufreq_remove(struct platform_device *pdev)
-> +{
-> +	bL_cpufreq_unregister(&scpi_cpufreq_ops);
-> +	scpi_ops = NULL;
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver scpi_cpufreq_platdrv = {
-> +	.driver = {
-> +		.name	= "scpi-cpufreq",
-> +		.owner	= THIS_MODULE,
-> +	},
-> +	.probe		= scpi_cpufreq_probe,
-> +	.remove		= scpi_cpufreq_remove,
-> +};
-> +module_platform_driver(scpi_cpufreq_platdrv);
-> +
-> +MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
-> +MODULE_DESCRIPTION("ARM SCPI CPUFreq interface driver");
-> +MODULE_LICENSE("GPL v2");
-> 
+I added the missing kerneldoc in that patch I sent out earlier. The
+problem is preexisting for this field, so doing it in a separate patch
+is fine in my opinion.
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Thierry
+
+--TU+u6i6jrDPzmlWF
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVSiKoAAoJEN0jrNd/PrOhYzsP/jad71JRthSpHD9ZNPEf8I7e
+a0webVBLzJZ0ASUDWjTNobIwDSEtnj+hae6Kmh/xuZZHy3RRiWEBf7DhqEgM3ECs
+5p7ryEuBEsSO8L0+pTYp5EBaveSxJCHv90GxayWwJkfCZCyt8XvbqpDQ2iLuhs6C
+e61BWFuVWPSGUmFd0CWjXvf6ZdT3KMvRt/SwE+faq+3oOkW9hFoE6iua2Ui0QH8Q
++vhyhWyEh3fUi2qPY+rbkRyf5mRG8/OzSfvagcyXdbhWGjOb3UEPWEd4J533oXsg
+Uuqr+r+TL8Z31CA3Ya9HvaWbQexjallJjUF9Ah+kxwB3snQA8h0PUCVNRIErxVAR
+/9Wmd+OcLLnzl9yUO90fqQ9IcuU6KSMjQTo7gVSOj13xhGFHlg41MQvwXoC61iUu
+7l+pNv5vEHEexfo2ssY/ZDA8+Zj9Tb4vJIAKKAhdq2xxKM0FEfoGFAtxWOsXuHuj
+dVbIQBQibs5FL0Q0qw5AWTCrMhjBpNDzZxoOqG0QqCKzrmkGYqZyLDM6gvYoK6sh
+SopAA0tgbfu61SMHq6SUUwRN2MGm+fP5JFCuUAWyHC4+OC7vx7AcPtDbPZxI7tdS
+X6BH5hNTIVTV+g2a58drxheEv1IMqkrRQOx5kppDgopKAGRixv4oHak8z3+58S4N
+vt9quRFfkOC6xBpejgiY
+=LhiZ
+-----END PGP SIGNATURE-----
+
+--TU+u6i6jrDPzmlWF--
