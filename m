@@ -1,194 +1,123 @@
-Return-Path: <Aisheng.Dong@freescale.com>
-From: Dong Aisheng <aisheng.dong@freescale.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@linaro.org>, <shawn.guo@linaro.org>, <b29396@freescale.com>,
-	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
-	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
-Subject: [PATCH v2 2/5] clk: introduce clk_core_enable_lock and clk_core_disable_lock functions
-Date: Thu, 14 May 2015 21:29:00 +0800
-Message-ID: <1431610143-21853-3-git-send-email-aisheng.dong@freescale.com>
-In-Reply-To: <1431610143-21853-1-git-send-email-aisheng.dong@freescale.com>
-References: <1431610143-21853-1-git-send-email-aisheng.dong@freescale.com>
-Return-Path: aisheng.dong@freescale.com
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH 17/19] clk: xgene: Silence sparse warnings
+Date: Wed,  6 May 2015 00:39:54 -0700
+Message-Id: <1430897996-11597-18-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This can be useful when clock core wants to enable/disable clocks.
-Then we don't have to convert the struct clk_core to struct clk to call
-clk_enable/clk_disable which is a bit un-align with exist using.
+drivers/clk/clk-xgene.c:77:43: warning: incorrect type in argument 1 (different address spaces)
+drivers/clk/clk-xgene.c:77:43:    expected void *csr
+drivers/clk/clk-xgene.c:77:43:    got void [noderef] <asn:2>*
+...
+drivers/clk/clk-xgene.c: In function ‘xgene_clk_enable’:
+drivers/clk/clk-xgene.c:237:3: warning: format ‘%LX’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘phys_addr_t’ [-Wformat]
+drivers/clk/clk-xgene.c:248:3: warning: format ‘%LX’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘phys_addr_t’ [-Wformat]
 
-And after introduce clk_core_{enable|disable}_lock, we can refine
-clk_eanble and clk_disable a bit.
-
-As well as clk_core_{enable|disable}_lock, we also added
-clk_core_{prepare|unprepare}_lock and clk_core_prepare_enable/
-clk_core_unprepare_disable for clock core to easily use.
-
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/clk.c | 85 +++++++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 63 insertions(+), 22 deletions(-)
+ drivers/clk/clk-xgene.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0e813ea..2f44c8c 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -565,6 +565,13 @@ static void clk_core_unprepare(struct clk_core *core)
- 	clk_core_unprepare(core->parent);
- }
+diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
+index dd8a62d8f11f..f26b3ac36b27 100644
+--- a/drivers/clk/clk-xgene.c
++++ b/drivers/clk/clk-xgene.c
+@@ -42,12 +42,12 @@
  
-+static void clk_core_unprepare_lock(struct clk_core *core)
-+{
-+	clk_prepare_lock();
-+	clk_core_unprepare(core);
-+	clk_prepare_unlock();
-+}
-+
- /**
-  * clk_unprepare - undo preparation of a clock source
-  * @clk: the clk being unprepared
-@@ -581,9 +588,7 @@ void clk_unprepare(struct clk *clk)
- 	if (IS_ERR_OR_NULL(clk))
- 		return;
+ static DEFINE_SPINLOCK(clk_lock);
  
--	clk_prepare_lock();
--	clk_core_unprepare(clk->core);
--	clk_prepare_unlock();
-+	clk_core_unprepare_lock(clk->core);
- }
- EXPORT_SYMBOL_GPL(clk_unprepare);
- 
-@@ -619,6 +624,17 @@ static int clk_core_prepare(struct clk_core *core)
- 	return 0;
- }
- 
-+static int clk_core_prepare_lock(struct clk_core *core)
-+{
-+	int ret;
-+
-+	clk_prepare_lock();
-+	ret = clk_core_prepare(core);
-+	clk_prepare_unlock();
-+
-+	return ret;
-+}
-+
- /**
-  * clk_prepare - prepare a clock source
-  * @clk: the clk being prepared
-@@ -633,16 +649,10 @@ static int clk_core_prepare(struct clk_core *core)
-  */
- int clk_prepare(struct clk *clk)
+-static inline u32 xgene_clk_read(void *csr)
++static inline u32 xgene_clk_read(void __iomem *csr)
  {
--	int ret;
--
- 	if (!clk)
- 		return 0;
- 
--	clk_prepare_lock();
--	ret = clk_core_prepare(clk->core);
--	clk_prepare_unlock();
--
--	return ret;
-+	return clk_core_prepare_lock(clk->core);
- }
- EXPORT_SYMBOL_GPL(clk_prepare);
- 
-@@ -669,6 +679,15 @@ static void clk_core_disable(struct clk_core *core)
- 	clk_core_disable(core->parent);
+ 	return readl_relaxed(csr);
  }
  
-+static void clk_core_disable_lock(struct clk_core *core)
-+{
-+	unsigned long flags;
-+
-+	flags = clk_enable_lock();
-+	clk_core_disable(core);
-+	clk_enable_unlock(flags);
-+}
-+
- /**
-  * clk_disable - gate a clock
-  * @clk: the clk being gated
-@@ -683,14 +702,10 @@ static void clk_core_disable(struct clk_core *core)
-  */
- void clk_disable(struct clk *clk)
+-static inline void xgene_clk_write(u32 data, void *csr)
++static inline void xgene_clk_write(u32 data, void __iomem *csr)
  {
--	unsigned long flags;
--
- 	if (IS_ERR_OR_NULL(clk))
- 		return;
- 
--	flags = clk_enable_lock();
--	clk_core_disable(clk->core);
--	clk_enable_unlock(flags);
-+	clk_core_disable_lock(clk->core);
+ 	return writel_relaxed(data, csr);
  }
- EXPORT_SYMBOL_GPL(clk_disable);
- 
-@@ -729,6 +744,18 @@ static int clk_core_enable(struct clk_core *core)
- 	return 0;
+@@ -119,7 +119,7 @@ static unsigned long xgene_clk_pll_recalc_rate(struct clk_hw *hw,
+ 	return fvco / nout;
  }
  
-+static int clk_core_enable_lock(struct clk_core *core)
-+{
-+	unsigned long flags;
-+	int ret;
-+
-+	flags = clk_enable_lock();
-+	ret = clk_core_enable(core);
-+	clk_enable_unlock(flags);
-+
-+	return ret;
-+}
-+
- /**
-  * clk_enable - ungate a clock
-  * @clk: the clk being ungated
-@@ -744,19 +771,33 @@ static int clk_core_enable(struct clk_core *core)
-  */
- int clk_enable(struct clk *clk)
+-const struct clk_ops xgene_clk_pll_ops = {
++static const struct clk_ops xgene_clk_pll_ops = {
+ 	.is_enabled = xgene_clk_pll_is_enabled,
+ 	.recalc_rate = xgene_clk_pll_recalc_rate,
+ };
+@@ -167,7 +167,7 @@ static void xgene_pllclk_init(struct device_node *np, enum xgene_pll_type pll_ty
  {
--	unsigned long flags;
--	int ret;
--
- 	if (!clk)
- 		return 0;
+         const char *clk_name = np->full_name;
+         struct clk *clk;
+-        void *reg;
++        void __iomem *reg;
  
--	flags = clk_enable_lock();
--	ret = clk_core_enable(clk->core);
--	clk_enable_unlock(flags);
-+	return clk_core_enable_lock(clk->core);
-+}
-+EXPORT_SYMBOL_GPL(clk_enable);
-+
-+static int clk_core_prepare_enable(struct clk_core *core)
-+{
-+	int ret;
-+
-+	ret = clk_core_prepare_lock(core);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_core_enable_lock(core);
-+	if (ret)
-+		clk_core_unprepare_lock(core);
+         reg = of_iomap(np, 0);
+         if (reg == NULL) {
+@@ -222,20 +222,22 @@ static int xgene_clk_enable(struct clk_hw *hw)
+ 	struct xgene_clk *pclk = to_xgene_clk(hw);
+ 	unsigned long flags = 0;
+ 	u32 data;
++	phys_addr_t reg;
  
- 	return ret;
+ 	if (pclk->lock)
+ 		spin_lock_irqsave(pclk->lock, flags);
+ 
+ 	if (pclk->param.csr_reg != NULL) {
+ 		pr_debug("%s clock enabled\n", pclk->name);
++		reg = __pa(pclk->param.csr_reg);
+ 		/* First enable the clock */
+ 		data = xgene_clk_read(pclk->param.csr_reg +
+ 					pclk->param.reg_clk_offset);
+ 		data |= pclk->param.reg_clk_mask;
+ 		xgene_clk_write(data, pclk->param.csr_reg +
+ 					pclk->param.reg_clk_offset);
+-		pr_debug("%s clock PADDR base 0x%016LX clk offset 0x%08X mask 0x%08X value 0x%08X\n",
+-			pclk->name, __pa(pclk->param.csr_reg),
++		pr_debug("%s clock PADDR base %pa clk offset 0x%08X mask 0x%08X value 0x%08X\n",
++			pclk->name, &reg,
+ 			pclk->param.reg_clk_offset, pclk->param.reg_clk_mask,
+ 			data);
+ 
+@@ -245,8 +247,8 @@ static int xgene_clk_enable(struct clk_hw *hw)
+ 		data &= ~pclk->param.reg_csr_mask;
+ 		xgene_clk_write(data, pclk->param.csr_reg +
+ 					pclk->param.reg_csr_offset);
+-		pr_debug("%s CSR RESET PADDR base 0x%016LX csr offset 0x%08X mask 0x%08X value 0x%08X\n",
+-			pclk->name, __pa(pclk->param.csr_reg),
++		pr_debug("%s CSR RESET PADDR base %pa csr offset 0x%08X mask 0x%08X value 0x%08X\n",
++			pclk->name, &reg,
+ 			pclk->param.reg_csr_offset, pclk->param.reg_csr_mask,
+ 			data);
+ 	}
+@@ -386,7 +388,7 @@ static long xgene_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	return parent_rate / divider;
  }
--EXPORT_SYMBOL_GPL(clk_enable);
-+
-+static void clk_core_disable_unprepare(struct clk_core *core)
-+{
-+	clk_core_disable_lock(core);
-+	clk_core_unprepare_lock(core);
-+}
  
- static unsigned long clk_core_round_rate_nolock(struct clk_core *core,
- 						unsigned long rate,
+-const struct clk_ops xgene_clk_ops = {
++static const struct clk_ops xgene_clk_ops = {
+ 	.enable = xgene_clk_enable,
+ 	.disable = xgene_clk_disable,
+ 	.is_enabled = xgene_clk_is_enabled,
+@@ -456,7 +458,7 @@ static void __init xgene_devclk_init(struct device_node *np)
+ 	parameters.csr_reg = NULL;
+ 	parameters.divider_reg = NULL;
+ 	for (i = 0; i < 2; i++) {
+-		void *map_res;
++		void __iomem *map_res;
+ 		rc = of_address_to_resource(np, i, &res);
+ 		if (rc != 0) {
+ 			if (i == 0) {
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
