@@ -1,42 +1,40 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
 To: Mike Turquette <mturquette@linaro.org>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] clk: shmobile: mstp: Document mandatory compatible fallback
-Date: Fri, 29 May 2015 11:36:29 +0200
-Message-Id: <1432892191-24039-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1432892191-24039-1-git-send-email-geert+renesas@glider.be>
-References: <1432892191-24039-1-git-send-email-geert+renesas@glider.be>
+	Alex Elder <elder@linaro.org>,
+	Tim Kryger <tim.kryger@linaro.org>
+Subject: [PATCH 04/19] clk: bcm/kona: Silence sparse warnings
+Date: Wed,  6 May 2015 00:39:41 -0700
+Message-Id: <1430897996-11597-5-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The generic MSTP gate clocks compatible value is mandatory, as the
-driver uses only this value for matching.  Document that this is a
-fallback that must be present.
+drivers/clk/bcm/clk-kona.c:1243:16: warning: odd constant _Bool cast (ffffffffffffffea becomes 1)
 
-Also fix a typo (missing plural "s") in the compatible value.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Alex Elder <elder@linaro.org>
+Cc: Tim Kryger <tim.kryger@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt | 2 +-
+ drivers/clk/bcm/clk-kona.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-index 0a80fa70ca265c0f..237ff1c8dd632fc3 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-@@ -18,7 +18,7 @@ Required Properties:
-     - "renesas,r8a7791-mstp-clocks" for R8A7791 (R-Car M2) MSTP gate clocks
-     - "renesas,r8a7794-mstp-clocks" for R8A7794 (R-Car E2) MSTP gate clocks
-     - "renesas,sh73a0-mstp-clocks" for SH73A0 (SH-MobileAG5) MSTP gate clocks
--    - "renesas,cpg-mstp-clock" for generic MSTP gate clocks
-+    and "renesas,cpg-mstp-clocks" as a fallback.
-   - reg: Base address and length of the I/O mapped registers used by the MSTP
-     clocks. The first register is the clock control register and is mandatory.
-     The second register is the clock status register and is optional when not
+diff --git a/drivers/clk/bcm/clk-kona.c b/drivers/clk/bcm/clk-kona.c
+index a0ef4f75d457..79a98506c433 100644
+--- a/drivers/clk/bcm/clk-kona.c
++++ b/drivers/clk/bcm/clk-kona.c
+@@ -1240,7 +1240,7 @@ static bool __kona_clk_init(struct kona_clk *bcm_clk)
+ 	default:
+ 		BUG();
+ 	}
+-	return -EINVAL;
++	return false;
+ }
+ 
+ /* Set a CCU and all its clocks into their desired initial state */
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
