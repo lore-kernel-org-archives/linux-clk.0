@@ -1,53 +1,72 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Tero Kristo <t-kristo@ti.com>, Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-omap@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFT PATCH 4/8] clk: ti: clk-33xx: Prevent possible ERR_PTR dereference
-Date: Wed, 13 May 2015 15:54:43 +0900
-Message-id: <1431500087-2275-5-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
-References: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Benson Leung <bleung@chromium.org>,
+	Rhyland Klein <rklein@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: tegra: Update struct tegra_clk_pll_params kerneldoc
+Date: Wed,  6 May 2015 15:43:35 +0200
+Message-Id: <1430919815-22380-1-git-send-email-thierry.reding@gmail.com>
+In-Reply-To: <CANLzEktaOSEFjszR6sRe4heQkp6H_eGi5aKEg8zeLCzaQMMVjQ@mail.gmail.com>
+References: <CANLzEktaOSEFjszR6sRe4heQkp6H_eGi5aKEg8zeLCzaQMMVjQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The return value of clk_get_sys() was immediately used in
-clk_set_parent(). The first one may return ERR_PTR and the latter only
-checks if supplied argument is non-NULL.
+From: Thierry Reding <treding@nvidia.com>
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Benson Leung pointed out that the kerneldoc for this structure has
+become stale. Update the field descriptions to match the structure
+content.
+
+Reported-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/clk/ti/clk-33xx.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/clk/tegra/clk.h | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
-index 028b33783d38..c08db8944fb8 100644
---- a/drivers/clk/ti/clk-33xx.c
-+++ b/drivers/clk/ti/clk-33xx.c
-@@ -141,10 +141,12 @@ int __init am33xx_dt_clk_init(void)
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index f3782dedbdfb..c47e633616be 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -157,7 +157,7 @@ struct div_nmp {
+ };
  
- 	clk1 = clk_get_sys(NULL, "sys_clkin_ck");
- 	clk2 = clk_get_sys(NULL, "timer3_fck");
--	clk_set_parent(clk2, clk1);
-+	if (!IS_ERR(clk1) && !IS_ERR(clk2))
-+		clk_set_parent(clk2, clk1);
- 
- 	clk2 = clk_get_sys(NULL, "timer6_fck");
--	clk_set_parent(clk2, clk1);
-+	if (!IS_ERR(clk1) && !IS_ERR(clk2))
-+		clk_set_parent(clk2, clk1);
- 	/*
- 	 * The On-Chip 32K RC Osc clock is not an accurate clock-source as per
- 	 * the design/spec, so as a result, for example, timer which supposed
-@@ -154,7 +156,8 @@ int __init am33xx_dt_clk_init(void)
- 	 */
- 	clk1 = clk_get_sys(NULL, "wdt1_fck");
- 	clk2 = clk_get_sys(NULL, "clkdiv32k_ick");
--	clk_set_parent(clk1, clk2);
-+	if (!IS_ERR(clk1) && !IS_ERR(clk2))
-+		clk_set_parent(clk1, clk2);
- 
- 	return 0;
- }
+ /**
+- * struct clk_pll_params - PLL parameters
++ * struct tegra_clk_pll_params - PLL parameters
+  *
+  * @input_min:			Minimum input frequency
+  * @input_max:			Maximum input frequency
+@@ -168,12 +168,22 @@ struct div_nmp {
+  * @base_reg:			PLL base reg offset
+  * @misc_reg:			PLL misc reg offset
+  * @lock_reg:			PLL lock reg offset
+- * @lock_bit_idx:		Bit index for PLL lock status
++ * @lock_mask:			Bitmask for PLL lock status
+  * @lock_enable_bit_idx:	Bit index to enable PLL lock
++ * @iddq_reg:			PLL IDDQ register offset
++ * @iddq_bit_idx:		Bit index to enable PLL IDDQ
++ * @aux_reg:			AUX register offset
++ * @dyn_ramp_reg:		Dynamic ramp control register offset
++ * @ext_misc_reg:		Miscellaneous control register offsets
++ * @pmc_divnm_reg:		n, m divider PMC override register offset (PLLM)
++ * @pmc_divp_reg:		p divider PMC override register offset (PLLM)
++ * @flags:			PLL flags
++ * @stepa_shift:		Dynamic ramp step A field shift
++ * @stepb_shift:		Dynamic ramp step B field shift
+  * @lock_delay:			Delay in us if PLL lock is not used
++ * @div_nmp:			offsets and widths on n, m and p fields
+  * @freq_table:			array of frequencies supported by PLL
+  * @fixed_rate:			PLL rate if it is fixed
+- * @flags:			PLL flags
+  *
+  * Flags:
+  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
 -- 
-1.9.1
+2.3.5
