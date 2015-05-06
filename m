@@ -1,115 +1,123 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 0/5] Clk drivers for NXP LPC18xx family
-Date: Thu, 28 May 2015 22:31:42 +0200
-Message-Id: <1432845107-12458-1-git-send-email-manabian@gmail.com>
+Return-Path: <rklein@nvidia.com>
+Message-ID: <554A3EE6.9010805@nvidia.com>
+Date: Wed, 6 May 2015 12:18:46 -0400
+From: Rhyland Klein <rklein@nvidia.com>
+MIME-Version: 1.0
+To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver
+	<pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>, Stephen Warren
+	<swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre
+ Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 19/20] clk: tegra210: add support for Tegra210 clocks
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com> <1430757460-9478-20-git-send-email-rklein@nvidia.com> <20150506145113.GH22098@ulmo.nvidia.com>
+In-Reply-To: <20150506145113.GH22098@ulmo.nvidia.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set adds support for the two main clock peripherals in the
-LPC18xx/43xx MCU family.
+On 5/6/2015 10:51 AM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Mon, May 04, 2015 at 12:37:39PM -0400, Rhyland Klein wrote:
+> [...]
+>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> [...]
+>> +static struct div_nmp plld_nmp = {
+>> +	.divm_shift = 0,
+>> +	.divm_width = 8,
+>> +	.divn_shift = 11,
+>> +	.divn_width = 8,
+>> +	.divp_shift = 20,
+>> +	.divp_width = 3,
+>> +};
+> 
+> I think we need to add the SDM shift and width fields here:
+> 
+> 	.sdm_shift = 0,
+> 	.sdm_width = 16,
+> 
+> Otherwise pll_d can't take advantage of the fractional divider.
+> 
+> [...]
+>> +static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
+> [...]
+>> +	[tegra_clk_clk72Mhz] = { .dt_id = TEGRA210_CLK_CLK72MHZ, .present = true },
+> 
+> I think you want to use the _8 variant here that you specifically
+> introduced for Tegra210 in an earlier patch.
+> 
+>> +static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+>> +					    void __iomem *pmc_base)
+>> +{
+>> +	struct clk *clk;
+>> +
+>> +	/* xusb_ss_div2 */
+>> +	clk = clk_register_fixed_factor(NULL, "xusb_ss_div2", "xusb_ss_src", 0,
+>> +					1, 2);
+>> +	clks[TEGRA210_CLK_XUSB_SS_DIV2] = clk;
+>> +
+>> +	/* plld_dsi */
+>> +	clk = clk_register_gate(NULL, "pll_d_dsi", "pll_d_out0", 0,
+>> +				clk_base + PLLD_MISC0, 21, 0, &pll_d_lock);
+>> +	clks[TEGRA210_CLK_PLLD_DSI] = clk;
+>> +
+>> +	/* dsia */
+>> +	clk = tegra_clk_register_periph_gate("dsia", "pll_d_dsi", 0, clk_base,
+>> +					     0, 48, periph_clk_enb_refcnt);
+>> +	clks[TEGRA210_CLK_DSIA] = clk;
+>> +
+>> +	/* dsib */
+>> +	clk = tegra_clk_register_periph_gate("dsib", "pll_d_dsi", 0, clk_base,
+>> +					     0, 82, periph_clk_enb_refcnt);
+>> +	clks[TEGRA210_CLK_DSIB] = clk;
+> 
+> Can we rename pll_d_dsi to pll_d_dsi_out for consistency with earlier
+> SoC generations, please? Also, don't forget the /* plld_dsi */ comment.
 
-The Clock Generation Unit (CGU) is the base source of all clocks. It has
-five external inputs and contains PLLs, dividers and muxes. The outputs
-from the CGU are then routed to a Clock Control Unit (CCU) and a few
-peripherals directly. There are two CCUs in the MCU. The CCU is a
-collection of gates and a few dividers that sits between the CGU and
-most of the peripherals. These clock drivers are needed by the timer at
-early boot so both are using CLK_OF_DECLARE.
+sure
 
-Which clocks that are available depends on the specific device and it's
-peripherals. It's possible in DT to setup the routing between the CGU
-and the CCUs.
+> 
+> In retrospect I'm not sure we've got this clock right. The (public)
+> documentation is a little sparse, but I think this bit actually enables
+> the fast and slow clocks to the MIPI pad macros. If you look at the
+> register documentation for Tegra30 and Tegra114 they use a similarly
+> named register with a more verbose description. I've also seen a couple
+> of clock diagrams that indicate where these actually are.
+> 
+> Now what I wonder is if it makes any sense to represent this as a parent
+> clock for DSI, because it really isn't. But if it isn't then we need to
+> find another way of enabling this. Presumably turning this off saves
+> power if pll_d is used for non-DSI/CSI purposes, so we'd want to disable
+> it when we can. We could export this as a separate clock and add it to
+> the DSI driver.
+> 
+> Rhyland, can you file an internal bug to track this, so that we get the
+> documentation updated. Peter, can you help find out what the real story
+> is with this clock?
+> 
 
+I'll file the bug and look into it some more.
 
-The biggest change in v4 is the way parent names for CCU clocks are
-stored and how clock branches are selected for registration in the
-CCU driver.
+-rhyland
 
-* Parent clock names are now stored together with branch name in the
-clk_branches[] table.
+>> diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+> [...]
+>> +#define TEGRA210_CLK_PLLD_DSI 307
+> 
+> This would be TEGRA210_CLK_PLL_D_DSI_OUT after the rename suggested
+> above.
+> 
+> I have a couple of other clocks that need to be added, but I think we
+> can do that in separate patches, especially since some require changes
+> to the drivers for previous SoCs.
+> 
+> Thierry
+> 
+> * Unknown Key
+> * 0x7F3EB3A1
+> 
 
-* Selection of which branch clock to register on the two CCU instances
-is determined by the 'clock-names' property. If a clock name matches
-with the parent name in the clk_branches[] table that branch clock is
-registered on the CCU.
-
-Alternativly the clk_branches[] table could be split between the CCUs,
-but there would still be a need to identify the CCU instance. For
-example by using different compatability stings in DT or adding an id
-property to DT.
-
-I belive the best solution is to let the driver decide which branch
-clocks to register based on the clock routing information already
-provided in DT. As mentioned above this is now done by using the
-'clock-names' property and matching strings in the clk_branches[]
-table.
-
-Clock tree can be found here: http://slexy.org/raw/s2I3bIFJxg
-
-
-Changes since v3:
- - put CCU parent clock names directly in clk_branches[] table
- - use 'clock-names' property to find figure out which branch
-   clocks to register in CCU driver as oppose to clk id
- - remove CCU clock list from doc and refer to lpc18xx-ccu.h
- - remove patch with of_clk_get_index
-
-Changes since v2:
- - use 'clock-controller' as node name in doc
- - add patch with of_clk_get_index function
- - drop 'clock-indices' and 'clock-output-names' from cgu node
- - move base clock names into cgu driver
- - use of_clk_get/__clk_get_name in ccu to get parent name for
-   composite clocks.
- - other misc fixes to ccu driver and cgu doc
-
-Changes since v1:
- - reorganize cgu clk structs
- - macros to create cgu clk structs
- - move drivers to nxp subdir
- - rebase on v4.1-rc1
-
-
-The last patch (dts changes) are only included in this patch set for
-illustration purposes. DTS changes will be sent separately to the ARM
-SoC team later.
-
-Base support for LPC18xx is now in arm-soc next. Pinctrl, gpio, reset
-and ethernet drivers are also upstream.
-
-
-Joachim Eastwood (5):
-  clk: add lpc18xx cgu clk driver
-  doc: dt: add documentation for lpc1850-cgu clk driver
-  clk: add lpc18xx ccu clk driver
-  doc: dt: add documentation for lpc1850-ccu clk driver
-  ARM: dts: lpc18xx: add clock nodes for cgu and ccu
-
- .../devicetree/bindings/clock/lpc1850-ccu.txt      |  77 +++
- .../devicetree/bindings/clock/lpc1850-cgu.txt      | 131 +++++
- arch/arm/boot/dts/lpc18xx.dtsi                     |  85 ++-
- arch/arm/boot/dts/lpc4350-hitex-eval.dts           |   4 -
- drivers/clk/Makefile                               |   1 +
- drivers/clk/nxp/Makefile                           |   2 +
- drivers/clk/nxp/clk-lpc18xx-ccu.c                  | 293 ++++++++++
- drivers/clk/nxp/clk-lpc18xx-cgu.c                  | 635 +++++++++++++++++++++
- include/dt-bindings/clock/lpc18xx-ccu.h            |  74 +++
- include/dt-bindings/clock/lpc18xx-cgu.h            |  41 ++
- 10 files changed, 1325 insertions(+), 18 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-ccu.txt
- create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
- create mode 100644 drivers/clk/nxp/Makefile
- create mode 100644 drivers/clk/nxp/clk-lpc18xx-ccu.c
- create mode 100644 drivers/clk/nxp/clk-lpc18xx-cgu.c
- create mode 100644 include/dt-bindings/clock/lpc18xx-ccu.h
- create mode 100644 include/dt-bindings/clock/lpc18xx-cgu.h
 
 -- 
-1.8.0
+nvpublic
