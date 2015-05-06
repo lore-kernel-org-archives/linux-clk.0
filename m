@@ -1,385 +1,331 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Mon, 4 May 2015 14:51:46 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Lee Jones <lee.jones@linaro.org>,
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Wed, 6 May 2015 15:59:40 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Benson Leung <bleung@chromium.org>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
 	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] clk: sunxi: support the cpus (cpu special) clock
- on the Allwinner A80
-Message-ID: <20150504125146.GA3274@lukather>
-References: <1430410206-4410-1-git-send-email-wens@csie.org>
- <1430410206-4410-3-git-send-email-wens@csie.org>
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 02/20] clk: tegra: periph: add new periph clks and
+ muxes for Tegra210
+Message-ID: <20150506135934.GC22098@ulmo.nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+ <1430757460-9478-3-git-send-email-rklein@nvidia.com>
+ <CANLzEkuxPMX2+rq4EkCs6iV4=qRK69u=Ezgy4Zn_KsSh1+oEfA@mail.gmail.com>
+ <554924A7.4030900@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
-In-Reply-To: <1430410206-4410-3-git-send-email-wens@csie.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Bu8it7iiRSEf40bY"
+In-Reply-To: <554924A7.4030900@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---UugvWAfsgieZRqgk
+--Bu8it7iiRSEf40bY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Fri, May 01, 2015 at 12:10:03AM +0800, Chen-Yu Tsai wrote:
-> The "cpus" clock is the clock for the embedded processor in the A80.
-> It is also part of the PRCM clock tree.
+On Tue, May 05, 2015 at 04:14:31PM -0400, Rhyland Klein wrote:
+> On 5/4/2015 3:45 PM, Benson Leung wrote:
+> > On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> >> Tegra210 has significant differences in muxes for peripheral clocks.
+> >> One of the most important changes is that pll_m isn't to be used
+> >> as a source for peripherals. Therefore, we need to define the new
+> >> muxes and new clocks to use those muxes for Tegra210 support.
+> >>
+> >> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> >> ---
+> >>  drivers/clk/tegra/clk-id.h           |   57 +++++++-
+> >>  drivers/clk/tegra/clk-tegra-periph.c |  257 +++++++++++++++++++++++++=
+++++++++-
+> >>  2 files changed, 312 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+> >> index 60738cc954cb..ac6eaba5cc6e 100644
+> >> --- a/drivers/clk/tegra/clk-id.h
+> >> +++ b/drivers/clk/tegra/clk-id.h
+> >> @@ -13,6 +13,7 @@ enum clk_id {
+> >>         tegra_clk_amx1,
+> >>         tegra_clk_apbdma,
+> >>         tegra_clk_apbif,
+> >> +       tegra_clk_ape,
+> >>         tegra_clk_audio0,
+> >>         tegra_clk_audio0_2x,
+> >>         tegra_clk_audio0_mux,
+> >> @@ -38,6 +39,7 @@ enum clk_id {
+> >>         tegra_clk_cile,
+> >>         tegra_clk_clk_32k,
+> >>         tegra_clk_clk72Mhz,
+> >> +       tegra_clk_clk72Mhz_8,
+> >>         tegra_clk_clk_m,
+> >>         tegra_clk_clk_m_div2,
+> >>         tegra_clk_clk_m_div4,
+> >> @@ -51,17 +53,21 @@ enum clk_id {
+> >>         tegra_clk_cml1,
+> >>         tegra_clk_csi,
+> >>         tegra_clk_csite,
+> >> +       tegra_clk_csite_8,
+> >>         tegra_clk_csus,
+> >>         tegra_clk_cve,
+> >>         tegra_clk_dam0,
+> >>         tegra_clk_dam1,
+> >>         tegra_clk_dam2,
+> >>         tegra_clk_d_audio,
+> >> +       tegra_clk_dbgapb,
+> >>         tegra_clk_dds,
+> >>         tegra_clk_dfll_ref,
+> >>         tegra_clk_dfll_soc,
+> >>         tegra_clk_disp1,
+> >> +       tegra_clk_disp1_8,
+> >>         tegra_clk_disp2,
+> >> +       tegra_clk_disp2_8,
+> >>         tegra_clk_dp2,
+> >>         tegra_clk_dpaux,
+> >>         tegra_clk_dsialp,
+> >> @@ -71,6 +77,7 @@ enum clk_id {
+> >>         tegra_clk_dtv,
+> >>         tegra_clk_emc,
+> >>         tegra_clk_entropy,
+> >> +       tegra_clk_entropy_8,
+> >>         tegra_clk_epp,
+> >>         tegra_clk_epp_8,
+> >>         tegra_clk_extern1,
+> >> @@ -85,12 +92,15 @@ enum clk_id {
+> >>         tegra_clk_gr3d_8,
+> >>         tegra_clk_hclk,
+> >>         tegra_clk_hda,
+> >> +       tegra_clk_hda_8,
+> >>         tegra_clk_hda2codec_2x,
+> >> +       tegra_clk_hda2codec_2x_8,
+> >>         tegra_clk_hda2hdmi,
+> >>         tegra_clk_hdmi,
+> >>         tegra_clk_hdmi_audio,
+> >>         tegra_clk_host1x,
+> >>         tegra_clk_host1x_8,
+> >> +       tegra_clk_host1x_9,
+> >>         tegra_clk_i2c1,
+> >>         tegra_clk_i2c2,
+> >>         tegra_clk_i2c3,
+> >> @@ -110,11 +120,14 @@ enum clk_id {
+> >>         tegra_clk_i2s4_sync,
+> >>         tegra_clk_isp,
+> >>         tegra_clk_isp_8,
+> >> +       tegra_clk_isp_9,
+> >>         tegra_clk_ispb,
+> >>         tegra_clk_kbc,
+> >>         tegra_clk_kfuse,
+> >>         tegra_clk_la,
+> >> +       tegra_clk_maud,
+> >>         tegra_clk_mipi,
+> >> +       tegra_clk_mipibif,
+> >>         tegra_clk_mipi_cal,
+> >>         tegra_clk_mpe,
+> >>         tegra_clk_mselect,
+> >> @@ -124,11 +137,16 @@ enum clk_id {
+> >>         tegra_clk_ndspeed,
+> >>         tegra_clk_ndspeed_8,
+> >>         tegra_clk_nor,
+> >> +       tegra_clk_nvdec,
+> >> +       tegra_clk_nvenc,
+> >> +       tegra_clk_nvjpg,
+> >>         tegra_clk_owr,
+> >> +       tegra_clk_owr_8,
+> >>         tegra_clk_pcie,
+> >>         tegra_clk_pclk,
+> >>         tegra_clk_pll_a,
+> >>         tegra_clk_pll_a_out0,
+> >> +       tegra_clk_pll_a1,
+> >>         tegra_clk_pll_c,
+> >>         tegra_clk_pll_c2,
+> >>         tegra_clk_pll_c3,
+> >> @@ -140,8 +158,10 @@ enum clk_id {
+> >>         tegra_clk_pll_d_out0,
+> >>         tegra_clk_pll_dp,
+> >>         tegra_clk_pll_e_out0,
+> >> +       tegra_clk_pll_g_ref,
+> >>         tegra_clk_pll_m,
+> >>         tegra_clk_pll_m_out1,
+> >> +       tegra_clk_pll_mb,
+> >>         tegra_clk_pll_p,
+> >>         tegra_clk_pll_p_out1,
+> >>         tegra_clk_pll_p_out2,
+> >> @@ -160,52 +180,77 @@ enum clk_id {
+> >>         tegra_clk_pll_x,
+> >>         tegra_clk_pll_x_out0,
+> >>         tegra_clk_pwm,
+> >> +       tegra_clk_qspi,
+> >>         tegra_clk_rtc,
+> >>         tegra_clk_sata,
+> >> +       tegra_clk_sata_8,
+> >>         tegra_clk_sata_cold,
+> >>         tegra_clk_sata_oob,
+> >> +       tegra_clk_sata_oob_8,
+> >>         tegra_clk_sbc1,
+> >>         tegra_clk_sbc1_8,
+> >> +       tegra_clk_sbc1_9,
+> >>         tegra_clk_sbc2,
+> >>         tegra_clk_sbc2_8,
+> >> +       tegra_clk_sbc2_9,
+> >>         tegra_clk_sbc3,
+> >>         tegra_clk_sbc3_8,
+> >> +       tegra_clk_sbc3_9,
+> >>         tegra_clk_sbc4,
+> >>         tegra_clk_sbc4_8,
+> >> +       tegra_clk_sbc4_9,
+> >>         tegra_clk_sbc5,
+> >>         tegra_clk_sbc5_8,
+> >>         tegra_clk_sbc6,
+> >>         tegra_clk_sbc6_8,
+> >>         tegra_clk_sclk,
+> >> +       tegra_clk_sdmmc_legacy,
+> >>         tegra_clk_sdmmc1,
+> >>         tegra_clk_sdmmc1_8,
+> >> +       tegra_clk_sdmmc1_9,
+> >>         tegra_clk_sdmmc2,
+> >>         tegra_clk_sdmmc2_8,
+> >> +       tegra_clk_sdmmc2_9,
+> >>         tegra_clk_sdmmc3,
+> >>         tegra_clk_sdmmc3_8,
+> >> +       tegra_clk_sdmmc3_9,
+> >>         tegra_clk_sdmmc4,
+> >>         tegra_clk_sdmmc4_8,
+> >> +       tegra_clk_sdmmc4_9,
+> >>         tegra_clk_se,
+> >>         tegra_clk_soc_therm,
+> >> +       tegra_clk_soc_therm_8,
+> >>         tegra_clk_sor0,
+> >>         tegra_clk_sor0_lvds,
+> >> +       tegra_clk_sor1,
+> >> +       tegra_clk_sor1_brick,
+> >> +       tegra_clk_sor1_src,
+> >>         tegra_clk_spdif,
+> >>         tegra_clk_spdif_2x,
+> >>         tegra_clk_spdif_in,
+> >> +       tegra_clk_spdif_in_8,
+> >>         tegra_clk_spdif_in_sync,
+> >>         tegra_clk_spdif_mux,
+> >>         tegra_clk_spdif_out,
+> >>         tegra_clk_timer,
+> >>         tegra_clk_trace,
+> >>         tegra_clk_tsec,
+> >> +       tegra_clk_tsec_8,
+> >> +       tegra_clk_tsecb,
+> >>         tegra_clk_tsensor,
+> >>         tegra_clk_tvdac,
+> >>         tegra_clk_tvo,
+> >>         tegra_clk_uarta,
+> >> +       tegra_clk_uarta_8,
+> >>         tegra_clk_uartb,
+> >> +       tegra_clk_uartb_8,
+> >>         tegra_clk_uartc,
+> >> +       tegra_clk_uartc_8,
+> >>         tegra_clk_uartd,
+> >> +       tegra_clk_uartd_8,
+> >>         tegra_clk_uarte,
+> >> +       tegra_clk_uarte_8,
+> >> +       tegra_clk_uartape,
+> >>         tegra_clk_usb2,
+> >>         tegra_clk_usb3,
+> >>         tegra_clk_usbd,
+> >> @@ -216,22 +261,32 @@ enum clk_id {
+> >>         tegra_clk_vi,
+> >>         tegra_clk_vi_8,
+> >>         tegra_clk_vi_9,
+> >> +       tegra_clk_vi_10,
+> >> +       tegra_clk_vi_i2c,
+> >>         tegra_clk_vic03,
+> >> +       tegra_clk_vic03_8,
+> >>         tegra_clk_vim2_clk,
+> >>         tegra_clk_vimclk_sync,
+> >>         tegra_clk_vi_sensor,
+> >> -       tegra_clk_vi_sensor2,
+> >>         tegra_clk_vi_sensor_8,
+> >> +       tegra_clk_vi_sensor_9,
+> >> +       tegra_clk_vi_sensor2,
+> >> +       tegra_clk_vi_sensor2_8,
+> >>         tegra_clk_xusb_dev,
+> >>         tegra_clk_xusb_dev_src,
+> >> +       tegra_clk_xusb_dev_src_8,
+> >>         tegra_clk_xusb_falcon_src,
+> >> +       tegra_clk_xusb_falcon_src_8,
+> >>         tegra_clk_xusb_fs_src,
+> >>         tegra_clk_xusb_host,
+> >>         tegra_clk_xusb_host_src,
+> >> +       tegra_clk_xusb_host_src_8,
+> >>         tegra_clk_xusb_hs_src,
+> >>         tegra_clk_xusb_ss,
+> >>         tegra_clk_xusb_ss_src,
+> >> +       tegra_clk_xusb_ss_src_8,
+> >>         tegra_clk_xusb_ss_div2,
+> >> +       tegra_clk_sclk_mux,
+> >>         tegra_clk_max,
+> >>  };
+> >>
+> >> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/=
+clk-tegra-periph.c
+> >> index 46af9244ba74..bde7286bb16b 100644
+> >> --- a/drivers/clk/tegra/clk-tegra-periph.c
+> >> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+> >> @@ -125,6 +125,19 @@
+> >>  #define CLK_SOURCE_HDMI_AUDIO 0x668
+> >>  #define CLK_SOURCE_VIC03 0x678
+> >>  #define CLK_SOURCE_CLK72MHZ 0x66c
+> >> +#define CLK_SOURCE_DBGAPB 0x718
+> >> +#define CLK_SOURCE_NVENC 0x6a0
+> >> +#define CLK_SOURCE_NVDEC 0x698
+> >> +#define CLK_SOURCE_NVJPG 0x69c
+> >> +#define CLK_SOURCE_APE 0x6c0
+> >> +#define CLK_SOURCE_SOR1 0x410
+> >> +#define CLK_SOURCE_SDMMC_LEGACY 0x694
+> >> +#define CLK_SOURCE_QSPI 0x6c4
+> >> +#define CLK_SOURCE_VI_I2C 0x6c8
+> >> +#define CLK_SOURCE_MIPIBIF 0x660
+> >> +#define CLK_SOURCE_UARTAPE 0x710
+> >> +#define CLK_SOURCE_TSECB 0x6d8
+> >> +#define CLK_SOURCE_MAUD 0x6d4
+> >=20
+> > It would be nice if this list was organized better. For example
+> > CLK_SOURCE_SOR1, could be next to existing define of SOR0, and the
+> > same for TSECB, the UARTAPE, and SDMMC_LEGACY.
+> >=20
+> > It's unfortunate that the list of clock sources is not sorted by name,
+> > by offset value, nor by the way these show up in the TRM.
+> >=20
 >=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |   1 +
->  drivers/clk/sunxi/Makefile                        |   2 +-
->  drivers/clk/sunxi/clk-sun9i-cpus.c                | 243 ++++++++++++++++=
-++++++
->  3 files changed, 245 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/sunxi/clk-sun9i-cpus.c
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Document=
-ation/devicetree/bindings/clock/sunxi.txt
-> index 2015b2beb957..c52735b0b924 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> @@ -27,6 +27,7 @@ Required properties:
->  	"allwinner,sun5i-a10s-ahb-gates-clk" - for the AHB gates on A10s
->  	"allwinner,sun7i-a20-ahb-gates-clk" - for the AHB gates on A20
->  	"allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
-> +	"allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
->  	"allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
->  	"allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
->  	"allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
-> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-> index 058f273d6154..f0f33131b048 100644
-> --- a/drivers/clk/sunxi/Makefile
-> +++ b/drivers/clk/sunxi/Makefile
-> @@ -13,4 +13,4 @@ obj-y +=3D clk-usb.o
-> =20
->  obj-$(CONFIG_MFD_SUN6I_PRCM) +=3D \
->  	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
-> -	clk-sun8i-apb0.o
-> +	clk-sun8i-apb0.o clk-sun9i-cpus.o
+> I'll make a cleanup patchset after this set lands to handle some things
+> like sorting fields like the above, filling in missing kerneldocs for
+> existing fields, etc...
 
-I'm really not sure about that option selection.
+I sent a patch to fix up the stale kerneldoc that Benson pointed out
+before I read this, so hopefully you're going to see this before you
+start working on that part.
 
-If you only select the A31, you will get drivers that won't be
-relevant at all here.
+Thierry
 
-How about something like
-
-ifeq ($(CONFIG_MFD_SUN6I_PRCM), y)
-obj-$(CONFIG_MACH_SUN6I) =3D ....
-obj-$(CONFIG_MACH_SUN8I) =3D ....
-obj-$(CONFIG_MACH_SUN9I) =3D ....
-endif
-
-?
-
-> diff --git a/drivers/clk/sunxi/clk-sun9i-cpus.c b/drivers/clk/sunxi/clk-s=
-un9i-cpus.c
-> new file mode 100644
-> index 000000000000..1ec61ccf8cbf
-> --- /dev/null
-> +++ b/drivers/clk/sunxi/clk-sun9i-cpus.c
-> @@ -0,0 +1,243 @@
-> +/*
-> + * Copyright (C) 2015 Chen-Yu Tsai
-> + *
-> + * Chen-Yu Tsai <wens@csie.org>
-> + *
-> + * Allwinner A80 CPUS clock driver
-> + *
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +
-> +static DEFINE_SPINLOCK(sun9i_a80_cpus_lock);
-> +
-> +/**
-> + * sun9i_a80_cpus_clk_setup() - Setup function for a80 cpus composite clk
-> + */
-> +
-> +#define SUN9I_CPUS_MAX_PARENTS		4
-> +#define SUN9I_CPUS_MUX_PARENT_PLL4	3
-> +#define SUN9I_CPUS_MUX_SHIFT		16
-> +/* un-shifted mask is what mux_clk expects */
-> +#define SUN9I_CPUS_MUX_MASK		0x3
-> +#define SUN9I_CPUS_MUX_GET_PARENT(reg)	((reg >> SUN9I_CPUS_MUX_SHIFT) & \
-> +					 SUN9I_CPUS_MUX_MASK)
-> +
-> +#define SUN9I_CPUS_DIV_SHIFT		4
-> +#define SUN9I_CPUS_DIV_MASK		(0x3 << SUN9I_CPUS_DIV_SHIFT)
-> +#define SUN9I_CPUS_DIV_GET(reg)		((reg & SUN9I_CPUS_DIV_MASK) >> \
-> +						SUN9I_CPUS_DIV_SHIFT)
-> +#define SUN9I_CPUS_DIV_SET(reg, div)	((reg & ~SUN9I_CPUS_DIV_MASK) | \
-> +						(div << SUN9I_CPUS_DIV_SHIFT))
-> +#define SUN9I_CPUS_PLL4_DIV_SHIFT	8
-> +#define SUN9I_CPUS_PLL4_DIV_MASK	(0x1f << SUN9I_CPUS_PLL4_DIV_SHIFT)
-
-You have some masks that are shifted, some that are not.
-
-I don't really have a preference, but being consistent would be great.
-
-(and you can use GENMASK to generate your masks).
-
-> +#define SUN9I_CPUS_PLL4_DIV_GET(reg)	((reg & SUN9I_CPUS_PLL4_DIV_MASK) >=
-> \
-> +						SUN9I_CPUS_PLL4_DIV_SHIFT)
-> +#define SUN9I_CPUS_PLL4_DIV_SET(reg, div) ((reg & ~SUN9I_CPUS_PLL4_DIV_M=
-ASK) | \
-> +						(div << SUN9I_CPUS_PLL4_DIV_SHIFT))
-> +
-> +struct sun9i_a80_cpus_clk {
-> +	struct clk_hw hw;
-> +	void __iomem *reg;
-> +};
-> +
-> +#define to_sun9i_a80_cpus_clk(_hw) container_of(_hw, struct sun9i_a80_cp=
-us_clk, hw)
-> +
-> +static unsigned long sun9i_a80_cpus_clk_recalc_rate(struct clk_hw *hw,
-> +						unsigned long parent_rate)
-
-These lines above generate checkpatch warnings, please fix them.
-
-> +	struct sun9i_a80_cpus_clk *cpus =3D to_sun9i_a80_cpus_clk(hw);
-> +	unsigned long rate;
-> +	u32 reg;
-> +
-> +	/* Fetch the register value */
-> +	reg =3D readl(cpus->reg);
-> +
-> +	/* apply pre-divider first if parent is pll4 */
-> +	if (SUN9I_CPUS_MUX_GET_PARENT(reg) =3D=3D SUN9I_CPUS_MUX_PARENT_PLL4)
-> +		parent_rate /=3D SUN9I_CPUS_PLL4_DIV_GET(reg) + 1;
-> +
-> +	/* clk divider */
-> +	rate =3D parent_rate / (SUN9I_CPUS_DIV_GET(reg) + 1);
-> +
-> +	return rate;
-> +}
-> +
-> +static long sun9i_a80_cpus_clk_round(unsigned long rate, u8 *divp, u8 *p=
-re_divp,
-> +				 u8 parent, unsigned long parent_rate)
-> +{
-> +	u8 div, pre_div =3D 1;
-> +
-> +	/*
-> +	 * clock can only divide, so we will never be able to achieve
-> +	 * frequencies higher than the parent frequency
-> +	 */
-> +	if (parent_rate && rate > parent_rate)
-> +		rate =3D parent_rate;
-> +
-> +	div =3D DIV_ROUND_UP(parent_rate, rate);
-> +
-> +	/* calculate pre-divider if parent is pll4 */
-> +	if (parent =3D=3D SUN9I_CPUS_MUX_PARENT_PLL4 && div > 4) {
-> +		/* pre-divider is 1 ~ 32 */
-> +		if (div < 32) {
-> +			pre_div =3D div;
-> +			div =3D 1;
-> +		} else if (div < 64) {
-> +			pre_div =3D DIV_ROUND_UP(div, 2);
-> +			div =3D 2;
-> +		} else if (div < 96) {
-> +			pre_div =3D DIV_ROUND_UP(div, 3);
-> +			div =3D 3;
-> +		} else {
-> +			pre_div =3D DIV_ROUND_UP(div, 4);
-> +			div =3D 4;
-> +		}
-> +	}
-> +
-> +	/* we were asked to pass back divider values */
-> +	if (divp) {
-> +		*divp =3D div - 1;
-> +		*pre_divp =3D pre_div - 1;
-> +	}
-> +
-> +	return parent_rate / pre_div / div;
-> +}
-> +
-> +static long sun9i_a80_cpus_clk_determine_rate(struct clk_hw *hw,
-> +					      unsigned long rate,
-> +					      unsigned long min_rate,
-> +					      unsigned long max_rate,
-> +					      unsigned long *best_parent_rate,
-> +					      struct clk_hw **best_parent_clk)
-> +{
-> +	struct clk *clk =3D hw->clk, *parent, *best_parent =3D NULL;
-> +	int i, num_parents;
-> +	unsigned long parent_rate, best =3D 0, child_rate, best_child_rate =3D =
-0;
-> +
-> +	/* find the parent that can help provide the fastest rate <=3D rate */
-> +	num_parents =3D __clk_get_num_parents(clk);
-> +	for (i =3D 0; i < num_parents; i++) {
-> +		parent =3D clk_get_parent_by_index(clk, i);
-> +		if (!parent)
-> +			continue;
-> +		if (__clk_get_flags(clk) & CLK_SET_RATE_PARENT)
-> +			parent_rate =3D __clk_round_rate(parent, rate);
-> +		else
-> +			parent_rate =3D __clk_get_rate(parent);
-> +
-> +		child_rate =3D sun9i_a80_cpus_clk_round(rate, NULL, NULL, i,
-> +						  parent_rate);
-> +
-> +		if (child_rate <=3D rate && child_rate > best_child_rate) {
-> +			best_parent =3D parent;
-> +			best =3D parent_rate;
-> +			best_child_rate =3D child_rate;
-> +		}
-> +	}
-> +
-> +	if (best_parent)
-> +		*best_parent_clk =3D __clk_get_hw(best_parent);
-> +	*best_parent_rate =3D best;
-> +
-> +	return best_child_rate;
-> +}
-> +
-> +static int sun9i_a80_cpus_clk_set_rate(struct clk_hw *hw, unsigned long =
-rate,
-> +				   unsigned long parent_rate)
-> +{
-> +	struct sun9i_a80_cpus_clk *cpus =3D to_sun9i_a80_cpus_clk(hw);
-> +	unsigned long flags;
-> +	u8 div, pre_div, parent;
-> +	u32 reg;
-> +
-> +	spin_lock_irqsave(&sun9i_a80_cpus_lock, flags);
-> +
-> +	reg =3D readl(cpus->reg);
-> +
-> +	/* need to know which parent is used to apply pre-divider */
-> +	parent =3D SUN9I_CPUS_MUX_GET_PARENT(reg);
-> +	sun9i_a80_cpus_clk_round(rate, &div, &pre_div, parent, parent_rate);
-> +
-> +	reg =3D SUN9I_CPUS_DIV_SET(reg, div);
-> +	reg =3D SUN9I_CPUS_PLL4_DIV_SET(reg, pre_div);
-> +	writel(reg, cpus->reg);
-> +
-> +	spin_unlock_irqrestore(&sun9i_a80_cpus_lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct clk_ops sun9i_a80_cpus_clk_ops =3D {
-> +	.determine_rate	=3D sun9i_a80_cpus_clk_determine_rate,
-> +	.recalc_rate	=3D sun9i_a80_cpus_clk_recalc_rate,
-> +	.set_rate	=3D sun9i_a80_cpus_clk_set_rate,
-> +};
-
-It all looks like you could use the factors clock for this.
-
-The only thing that you seem to be using a custom clock for is the pre
-divider on one of the parent, but that's something that could be
-reused for other clocks (like the A10 pll6, or the A20 MBUS).
-
-> +
-> +static int sun9i_a80_cpus_clk_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np =3D pdev->dev.of_node;
-> +	const char *clk_name =3D np->name;
-> +	const char *parents[SUN9I_CPUS_MAX_PARENTS];
-> +	struct resource *r;
-> +	struct sun9i_a80_cpus_clk *cpus;
-> +	struct clk_mux *mux;
-> +	struct clk *clk;
-> +	int i =3D 0;
-> +
-> +	cpus =3D devm_kzalloc(&pdev->dev, sizeof(*cpus), GFP_KERNEL);
-> +	if (!cpus)
-> +		return -ENOMEM;
-> +
-> +	r =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	cpus->reg =3D devm_ioremap_resource(&pdev->dev, r);
-> +	if (IS_ERR(cpus->reg))
-> +		return PTR_ERR(cpus->reg);
-> +
-> +	/* we have a mux, we will have >1 parents */
-> +	while (i < SUN9I_CPUS_MAX_PARENTS &&
-> +	       (parents[i] =3D of_clk_get_parent_name(np, i)) !=3D NULL)
-> +		i++;
-> +
-> +	of_property_read_string(np, "clock-output-names", &clk_name);
-> +
-> +	mux =3D devm_kzalloc(&pdev->dev, sizeof(*mux), GFP_KERNEL);
-> +	if (!mux)
-> +		return -ENOMEM;
-> +
-> +	/* set up clock properties */
-> +	mux->reg =3D cpus->reg;
-> +	mux->shift =3D SUN9I_CPUS_MUX_SHIFT;
-> +	mux->mask =3D SUN9I_CPUS_MUX_MASK;
-> +	mux->lock =3D &sun9i_a80_cpus_lock;
-> +
-> +	clk =3D clk_register_composite(NULL, clk_name, parents, i,
-> +				     &mux->hw, &clk_mux_ops,
-> +				     &cpus->hw, &sun9i_a80_cpus_clk_ops,
-> +				     NULL, NULL, 0);
-> +	if (IS_ERR(clk))
-> +		return PTR_ERR(clk);
-> +
-> +	return of_clk_add_provider(np, of_clk_src_simple_get, clk);
-> +}
-> +
-> +static const struct of_device_id sun9i_a80_cpus_clk_dt_ids[] =3D {
-> +	{ .compatible =3D "allwinner,sun9i-a80-cpus-clk" },
-> +	{ /* sentinel */ }
-> +};
-> +
-> +static struct platform_driver sun9i_a80_cpus_clk_driver =3D {
-> +	.driver =3D {
-> +		.name =3D "sun9i-a80-cpus-clk",
-> +		.of_match_table =3D sun9i_a80_cpus_clk_dt_ids,
-> +	},
-> +	.probe =3D sun9i_a80_cpus_clk_probe,
-> +};
-> +module_platform_driver(sun9i_a80_cpus_clk_driver);
-> +
-> +MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
-> +MODULE_DESCRIPTION("Allwinner A80 CPUS Clock Driver");
-> +MODULE_LICENSE("GPL v2");
-> --=20
-> 2.1.4
->=20
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---UugvWAfsgieZRqgk
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Bu8it7iiRSEf40bY
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJVR2tiAAoJEBx+YmzsjxAgLQQP/R52hWEcFBB/MHs82If8aSdc
-Y6cZfceM/UddbUdnGA0x3VMkT6IZxJTPhu6flWaV9bOyc9FUtMp3ls7THpsYV6wz
-NWf3HL9D6iLuUd0WI6oTl34sHo5jzynmC77lsgyGkdkNOmezZQBnf5glT9iiD/KP
-zox9d/uBr8TEV9ppqHkbFOYYoIp7+6fCLdDGq0bnmU9IC5vIyE6pIS9B4ynviRlY
-yELznQ6HWlGmeBE+NFL+zxfOaadQ3odURDVsqMDWCprhEsKC652nQTqk8hYrPgBJ
-JfN8/loGftALRLZk/he/JdRcMY3bxlXh+Q0mVeJk1tcfUNfa29oIhjlnf6runoug
-funvKIjliTfol6Iprc2EwjWux7gIqMmAmpEFJNgP0c515EH1SNLemkZpVoZCMKzV
-e750W0B8/EC8sRwdxnNtStBcY3TJaFPZV20hnmdH+rGqjm9ogrm3NEoKPrgEySqC
-NtUVsSCdP0xT7dtvn+ibxo1uMsKtFsrK6HJ6Fw67Zt0kuJyP9zrcererQxQeS+Dn
-asFWDzk50KGxayF9FEa6O9CsLqdiqGzHqFvF9sFggn/PODv2oSANlM9TLPHDfs0g
-RbTdlNLjDZHifalSOhs8wescimkR6iZSoLaybfZToW0YQjgegWSG3SJWd8ubxp2f
-OTaQm5Op3WXJxD5zDTWL
-=HUN4
+iQIcBAABCAAGBQJVSh5FAAoJEN0jrNd/PrOhWycQALnlfUwz17yRivHRFOFoH42W
+iLnHN6xY/vVks886dTbZlyz65oOcSDjRt8943mYef64Zhr0ozleV1a5yTeJHGQ2d
+mT/MGcZNzrR4dAYf4htCJdq401lq8f2hbapnZbRzBfjsOEzhwkC5XyGBr23/+h8/
+naXSp1PINC+DWEb0Mwb3GTdXFJQIeZr8zSxk6S85QmmQKB6o12MCaTCbrzbzMuJw
+KyH/rAzP9FBjYNQxorwxKS0m9QdOqY8RKTf9lrOoCSNntk5gEeH9oifXgeAqB/PA
+SV3VoUNLDU4ev+7o1/Nkah8nD7rIRkjfG5P9Wi7ZV4EcOwM5pV7vy6YNiWfPGKYT
+PRt7EO7DvEvFQAXR1FjOfc13GZPMb0mc397G2QCf4cxxC3Jfz6Xhj3Y2p2LR2RBf
+Pd3RQPhWYxk4vApa07sDrtorRPAFQ2pjc/budn5snMt6q1uc1Xf7aFEgBazC3NYa
+yhWLhPwruWtuOy8FQTEsk/kSnbve9nzEeCmQ23i9aq4AvaCimfuAVNWEke73A/kN
+U9FWtfWA41SYvM82+kZsZ1iVyZMNV8BzpU0cZWH0jv7yqjelu3ehIwh7yc6kt1Ne
+XzdzIo6vwZ6sIFXxwXbXbAfvEWmtnxq6AS0g0kuYz1fZWYgaw/VLhbfg/xSeb59o
+4IxMuKUN8+6A6+7okNWd
+=xAid
 -----END PGP SIGNATURE-----
 
---UugvWAfsgieZRqgk--
+--Bu8it7iiRSEf40bY--
