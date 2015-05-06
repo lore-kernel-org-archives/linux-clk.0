@@ -1,51 +1,49 @@
-Return-Path: <Aisheng.Dong@freescale.com>
-From: Dong Aisheng <aisheng.dong@freescale.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@linaro.org>, <shawn.guo@linaro.org>, <b29396@freescale.com>,
-	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
-	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
-Subject: [PATCH v2 1/5] clk: remove duplicated code with __clk_set_parent_after
-Date: Thu, 14 May 2015 21:28:59 +0800
-Message-ID: <1431610143-21853-2-git-send-email-aisheng.dong@freescale.com>
-In-Reply-To: <1431610143-21853-1-git-send-email-aisheng.dong@freescale.com>
-References: <1431610143-21853-1-git-send-email-aisheng.dong@freescale.com>
-Return-Path: aisheng.dong@freescale.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Jonas Jensen <jonas.jensen@gmail.com>
+Subject: [PATCH 18/19] clk: moxart: Silence sparse warnings
+Date: Wed,  6 May 2015 00:39:55 -0700
+Message-Id: <1430897996-11597-19-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-__clk_set_parent_after() actually used the second argument then we
-could put this duplicate logic in there and call it with a different
-order of arguments in the success vs. error paths in this function.
+drivers/clk/clk-moxart.c:18:13: warning: symbol 'moxart_of_pll_clk_init' was not declared. Should it be static?
+drivers/clk/clk-moxart.c:56:13: warning: symbol 'moxart_of_apb_clk_init' was not declared. Should it be static?
 
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
+Cc: Jonas Jensen <jonas.jensen@gmail.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/clk.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/clk/clk-moxart.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 659f2b0..0e813ea 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1159,14 +1159,8 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
- 		flags = clk_enable_lock();
- 		clk_reparent(core, old_parent);
- 		clk_enable_unlock(flags);
-+		__clk_set_parent_after(core, old_parent, parent);
+diff --git a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
+index 30a3b6999e10..5181b89c3cb2 100644
+--- a/drivers/clk/clk-moxart.c
++++ b/drivers/clk/clk-moxart.c
+@@ -15,7 +15,7 @@
+ #include <linux/of_address.h>
+ #include <linux/clkdev.h>
  
--		if (core->prepare_count) {
--			flags = clk_enable_lock();
--			clk_core_disable(core);
--			clk_core_disable(parent);
--			clk_enable_unlock(flags);
--			clk_core_unprepare(parent);
--		}
- 		return ret;
- 	}
+-void __init moxart_of_pll_clk_init(struct device_node *node)
++static void __init moxart_of_pll_clk_init(struct device_node *node)
+ {
+ 	static void __iomem *base;
+ 	struct clk *clk, *ref_clk;
+@@ -53,7 +53,7 @@ void __init moxart_of_pll_clk_init(struct device_node *node)
+ CLK_OF_DECLARE(moxart_pll_clock, "moxa,moxart-pll-clock",
+ 	       moxart_of_pll_clk_init);
  
+-void __init moxart_of_apb_clk_init(struct device_node *node)
++static void __init moxart_of_apb_clk_init(struct device_node *node)
+ {
+ 	static void __iomem *base;
+ 	struct clk *clk, *pll_clk;
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
