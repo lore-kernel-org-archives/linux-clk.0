@@ -1,177 +1,73 @@
-Return-Path: <linux-omap-owner@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-	<sboyd@codeaurora.org>, <mturquette@linaro.org>,
-	<tony@atomide.com>, <paul@pwsan.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv3 25/27] clk: ti: remove exported ll_ops struct, instead add an API for registration
-Date: Mon, 25 May 2015 18:00:30 +0300
-Message-ID: <1432566032-10860-26-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
-References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+Return-Path: <gregory.clement@free-electrons.com>
+Message-ID: <554A13AE.6000904@free-electrons.com>
+Date: Wed, 06 May 2015 15:14:22 +0200
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-omap-owner@vger.kernel.org
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Jean-Francois Moine <moinejf@free.fr>,
+ Michael Welling <mwelling@ieee.org>,
+ Russell King <rmk+linux@arm.linux.org.uk>,
+ Jason Cooper <jason@lakedaemon.net>,
+ Andrew Lunn <andrew@lunn.ch>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] ARM: dove: Add clock-names to CuBox Si5351 clk
+ generator
+References: <1430773456-15203-1-git-send-email-sebastian.hesselbarth@gmail.com> <1430773456-15203-3-git-send-email-sebastian.hesselbarth@gmail.com>
+In-Reply-To: <1430773456-15203-3-git-send-email-sebastian.hesselbarth@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-We should avoid exporting data from drivers, instead use an API for
-registering the clock low level operations.
+Hi Sebastian,
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/clock.c  |   17 +++++++++++++----
- arch/arm/mach-omap2/clock.h  |    1 +
- arch/arm/mach-omap2/io.c     |    2 ++
- drivers/clk/ti/clk.c         |   21 +++++++++++++++++++++
- drivers/clk/ti/clock.h       |    2 ++
- drivers/clk/ti/clockdomain.c |    2 ++
- include/linux/clk/ti.h       |    3 +--
- 7 files changed, 42 insertions(+), 6 deletions(-)
+On 04/05/2015 23:04, Sebastian Hesselbarth wrote:
+> Si5351 clock generator on CuBox uses XTAL as clock reference, name the
+> clock phandle accordingly.
 
-diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
-index 99875db..40a88c2 100644
---- a/arch/arm/mach-omap2/clock.c
-+++ b/arch/arm/mach-omap2/clock.c
-@@ -113,6 +113,19 @@ static struct ti_clk_ll_ops omap_clk_ll_ops = {
- };
- 
- /**
-+ * omap2_clk_setup_ll_ops - setup clock driver low-level ops
-+ *
-+ * Sets up clock driver low-level platform ops. These are needed
-+ * for register accesses and various other misc platform operations.
-+ * Returns 0 on success, -EBUSY if low level ops have been registered
-+ * already.
-+ */
-+int __init omap2_clk_setup_ll_ops(void)
-+{
-+	return ti_clk_setup_ll_ops(&omap_clk_ll_ops);
-+}
-+
-+/**
-  * omap2_clk_provider_init - initialize a clock provider
-  * @match_table: DT device table to match for devices to init
-  * @np: device node pointer for the this clock provider
-@@ -130,8 +143,6 @@ int __init omap2_clk_provider_init(struct device_node *np, int index,
- {
- 	struct clk_iomap *io;
- 
--	ti_clk_ll_ops = &omap_clk_ll_ops;
--
- 	io = kzalloc(sizeof(*io), GFP_KERNEL);
- 
- 	io->regmap = syscon;
-@@ -155,8 +166,6 @@ void __init omap2_clk_legacy_provider_init(int index, void __iomem *mem)
- {
- 	struct clk_iomap *io;
- 
--	ti_clk_ll_ops = &omap_clk_ll_ops;
--
- 	io = memblock_virt_alloc(sizeof(*io), 0);
- 
- 	io->mem = mem;
-diff --git a/arch/arm/mach-omap2/clock.h b/arch/arm/mach-omap2/clock.h
-index 1986ab2..a7051d6 100644
---- a/arch/arm/mach-omap2/clock.h
-+++ b/arch/arm/mach-omap2/clock.h
-@@ -83,6 +83,7 @@ struct regmap;
- int __init omap2_clk_provider_init(struct device_node *np, int index,
- 				   struct regmap *syscon, void __iomem *mem);
- void __init omap2_clk_legacy_provider_init(int index, void __iomem *mem);
-+int __init omap2_clk_setup_ll_ops(void);
- 
- void __init ti_clk_init_features(void);
- #endif
-diff --git a/arch/arm/mach-omap2/io.c b/arch/arm/mach-omap2/io.c
-index 7467856..a253aaf 100644
---- a/arch/arm/mach-omap2/io.c
-+++ b/arch/arm/mach-omap2/io.c
-@@ -722,6 +722,8 @@ int __init omap_clk_init(void)
- 
- 	ti_clk_init_features();
- 
-+	omap2_clk_setup_ll_ops();
-+
- 	if (of_have_populated_dt()) {
- 		ret = omap_control_init();
- 		if (ret)
-diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index f1dcd20..dc6b759 100644
---- a/drivers/clk/ti/clk.c
-+++ b/drivers/clk/ti/clk.c
-@@ -33,6 +33,27 @@ static struct device_node *clocks_node_ptr[CLK_MAX_MEMMAPS];
- struct ti_clk_features ti_clk_features;
- 
- /**
-+ * ti_clk_setup_ll_ops - setup low level clock operations
-+ * @ops: low level clock ops descriptor
-+ *
-+ * Sets up low level clock operations for TI clock driver. This is used
-+ * to provide various callbacks for the clock driver towards platform
-+ * specific code. Returns 0 on success, -EBUSY if ll_ops have been
-+ * registered already.
-+ */
-+int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
-+{
-+	if (ti_clk_ll_ops) {
-+		pr_err("Attempt to register ll_ops multiple times.\n");
-+		return -EBUSY;
-+	}
-+
-+	ti_clk_ll_ops = ops;
-+
-+	return 0;
-+}
-+
-+/**
-  * ti_dt_clocks_register - register DT alias clocks during boot
-  * @oclks: list of clocks to register
-  *
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index 3c43125..d4d232fd 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -280,4 +280,6 @@ long omap4_dpll_regm4xen_determine_rate(struct clk_hw *hw,
- 					unsigned long *best_parent_rate,
- 					struct clk_hw **best_parent_clk);
- 
-+extern struct ti_clk_ll_ops *ti_clk_ll_ops;
-+
- #endif
-diff --git a/drivers/clk/ti/clockdomain.c b/drivers/clk/ti/clockdomain.c
-index 61ef87b..80a7b69 100644
---- a/drivers/clk/ti/clockdomain.c
-+++ b/drivers/clk/ti/clockdomain.c
-@@ -21,6 +21,8 @@
- #include <linux/of_address.h>
- #include <linux/clk/ti.h>
- 
-+#include "clock.h"
-+
- #undef pr_fmt
- #define pr_fmt(fmt) "%s: " fmt, __func__
- 
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 53fe38f..267cca0 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -235,8 +235,6 @@ struct ti_clk_ll_ops {
- 				       u8 *idlest_reg_id);
- };
- 
--extern struct ti_clk_ll_ops *ti_clk_ll_ops;
--
- #define to_clk_hw_omap(_hw) container_of(_hw, struct clk_hw_omap, hw)
- 
- void omap2_init_clk_clkdm(struct clk_hw *clk);
-@@ -255,6 +253,7 @@ unsigned long omap2_get_dpll_rate(struct clk_hw_omap *clk);
- void ti_dt_clk_init_provider(struct device_node *np, int index);
- void ti_dt_clk_init_retry_clks(void);
- void ti_dt_clockdomains_setup(void);
-+int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops);
- 
- int omap3430_dt_clk_init(void);
- int omap3630_dt_clk_init(void);
+as soon as the binding will be accepted (in patch 1), I will apply it
+on mvebu/fixes.
+
+Thanks,
+
+Gregory
+
+
+> 
+> Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> ---
+> Cc: Mike Turquette <mturquette@linaro.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Jean-Francois Moine <moinejf@free.fr>
+> Cc: Michael Welling <mwelling@ieee.org>
+> Cc: Russell King <rmk+linux@arm.linux.org.uk>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Gregory Clement <gregory.clement@free-electrons.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  arch/arm/boot/dts/dove-cubox.dts | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/boot/dts/dove-cubox.dts b/arch/arm/boot/dts/dove-cubox.dts
+> index aae7efc09b0b..e6fa251e17b9 100644
+> --- a/arch/arm/boot/dts/dove-cubox.dts
+> +++ b/arch/arm/boot/dts/dove-cubox.dts
+> @@ -87,6 +87,7 @@
+>  
+>  		/* connect xtal input to 25MHz reference */
+>  		clocks = <&ref25>;
+> +		clock-names = "xtal";
+>  
+>  		/* connect xtal input as source of pll0 and pll1 */
+>  		silabs,pll-source = <0 0>, <1 0>;
+> 
+
+
 -- 
-1.7.9.5
-
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
