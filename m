@@ -1,72 +1,48 @@
-Return-Path: <mathieu@codeaurora.org>
-From: Mathieu Olivari <mathieu@codeaurora.org>
-To: robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	peppe.cavallaro@st.com,
-	mathieu@codeaurora.org,
-	agross@codeaurora.org,
-	joshc@codeaurora.org,
-	architt@codeaurora.org,
-	georgi.djakov@linaro.org,
-	wsa@the-dreams.de,
-	rnayak@codeaurora.org,
-	davem@davemloft.net,
-	vbridger@opensource.altera.com
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH 0/5] Add support for QCA IPQ806x Ethernet GMAC controller
-Date: Tue, 26 May 2015 12:27:12 -0700
-Message-Id: <1432668437-27763-1-git-send-email-mathieu@codeaurora.org>
+	Jyri Sarha <jsarha@ti.com>
+Subject: [PATCH 01/19] clk: gpio-gate: Don't export __init functions
+Date: Wed,  6 May 2015 00:39:38 -0700
+Message-Id: <1430897996-11597-2-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set adds support for the integrated Ethernet GMAC controller
-on QCA IPQ806x SoC. This controller is based on a Gigabit Synopsys
-DesignWare IP, already supported in the stmmac driver located in
-drivers/net/ethernet/stmicro/stmmac.
+This function is marked as __init, so exposing it to modules
+doesn't make any sense and it isn't used by modules anyway.
 
-This change is done as a follow-up to the following thread:
-*http://www.spinics.net/lists/netdev/msg311265.html
-While previous attempt was creating a new driver to drive this controller,
-this new post leverages the existing stmmac driver by implementing the
-SoC specific glue to it.
+drivers/clk/clk-gpio-gate.c:192:13: warning: symbol 'of_gpio_gate_clk_setup' was not declared. Should it be static?
 
-Aside from the pure stmmac glue layer, we have a couple of related
-patches:
-*IPQ806x NSS clock addition is cherry-picked and refreshed from the
- following thread: https://lkml.org/lkml/2014/8/6/390
-*phy-handle and fixed-link support are also added in this change set so the
- driver can be fully functional on platforms using device-trees as well as
- ethernet switches.
+Cc: Jyri Sarha <jsarha@ti.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-gpio-gate.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Mathieu Olivari (4):
-  stmmac: add phy-handle support to the platform layer
-  stmmac: add fixed-link device-tree support
-  stmmac: add ipq806x glue layer
-  net: stmmac: ipq806x: document device tree bindings
-
-Stephen Boyd (1):
-  clk: qcom: Add support for NSS/GMAC clocks and resets
-
- .../devicetree/bindings/net/ipq806x-dwmac.txt      |  35 ++
- drivers/clk/qcom/gcc-ipq806x.c                     | 594 ++++++++++++++++++++-
- drivers/net/ethernet/stmicro/stmmac/Kconfig        |  14 +
- drivers/net/ethernet/stmicro/stmmac/Makefile       |   1 +
- .../net/ethernet/stmicro/stmmac/dwmac-ipq806x.c    | 365 +++++++++++++
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |  30 +-
- .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |  18 +-
- include/dt-bindings/clock/qcom,gcc-ipq806x.h       |   2 +
- include/dt-bindings/reset/qcom,gcc-ipq806x.h       |  43 ++
- include/linux/stmmac.h                             |   1 +
- 10 files changed, 1089 insertions(+), 14 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/net/ipq806x-dwmac.txt
- create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
-
+diff --git a/drivers/clk/clk-gpio-gate.c b/drivers/clk/clk-gpio-gate.c
+index a71cabedda93..f564e624fb93 100644
+--- a/drivers/clk/clk-gpio-gate.c
++++ b/drivers/clk/clk-gpio-gate.c
+@@ -189,7 +189,7 @@ static struct clk *of_clk_gpio_gate_delayed_register_get(
+ /**
+  * of_gpio_gate_clk_setup() - Setup function for gpio controlled clock
+  */
+-void __init of_gpio_gate_clk_setup(struct device_node *node)
++static void __init of_gpio_gate_clk_setup(struct device_node *node)
+ {
+ 	struct clk_gpio_gate_delayed_register_data *data;
+ 
+@@ -203,6 +203,5 @@ void __init of_gpio_gate_clk_setup(struct device_node *node)
+ 
+ 	of_clk_add_provider(node, of_clk_gpio_gate_delayed_register_get, data);
+ }
+-EXPORT_SYMBOL_GPL(of_gpio_gate_clk_setup);
+ CLK_OF_DECLARE(gpio_gate_clk, "gpio-gate-clock", of_gpio_gate_clk_setup);
+ #endif
 -- 
-2.1.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
