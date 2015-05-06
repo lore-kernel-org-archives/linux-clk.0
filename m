@@ -1,63 +1,86 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Tero Kristo <t-kristo@ti.com>, Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-omap@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFT PATCH 3/8] clk: ti: clk-3xxx: Prevent possible ERR_PTR dereference
-Date: Wed, 13 May 2015 15:54:42 +0900
-Message-id: <1431500087-2275-4-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
-References: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <elder@linaro.org>
+Return-Path: <elder@linaro.org>
+Message-ID: <554A15D7.7080507@linaro.org>
+Date: Wed, 06 May 2015 08:23:35 -0500
+From: Alex Elder <elder@linaro.org>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@linaro.org>
+CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Tim Kryger <tim.kryger@linaro.org>
+Subject: Re: [PATCH 05/19] clk: bcm/kona: Remove ccu_list
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org> <1430897996-11597-6-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1430897996-11597-6-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Provide a wrapper to prevent possible ERR_PTR dereference by
-clk_get_rate().
+On 05/06/2015 02:39 AM, Stephen Boyd wrote:
+> This list doesn't look to be used. Let's remove it and any
+> associated code that would be manipulating this list. This also
+> silences this error:
+> 
+> drivers/clk/bcm/clk-kona-setup.c:24:1: warning: symbol 'ccu_list' was not declared. Should it be static?
 
-The return value of clk_get_sys() was immediately used in
-clk_get_rate(). The first one may return ERR_PTR and the latter only
-checks if supplied argument is non-NULL.
+It should have been static.  And I thought it would be used
+but it's not, so I agree, it's not serving any real purpose.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/ti/clk-3xxx.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+Reviewed-by: Alex Elder <elder@linaro.org>
 
-diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
-index 757636d166cf..1db3afff34fb 100644
---- a/drivers/clk/ti/clk-3xxx.c
-+++ b/drivers/clk/ti/clk-3xxx.c
-@@ -324,6 +324,16 @@ enum {
- 	OMAP3_SOC_OMAP3630,
- };
- 
-+static unsigned long __init omap3xxx_clk_get_rate(const char *clk_name)
-+{
-+	struct clk *clk = clk_get_sys(NULL, clk_name);
-+
-+	if (IS_ERR(clk))
-+		return 0;
-+
-+	return clk_get_rate(clk);
-+}
-+
- static int __init omap3xxx_dt_clk_init(int soc_type)
- {
- 	if (soc_type == OMAP3_SOC_AM35XX || soc_type == OMAP3_SOC_OMAP3630 ||
-@@ -359,10 +369,10 @@ static int __init omap3xxx_dt_clk_init(int soc_type)
- 				     ARRAY_SIZE(enable_init_clks));
- 
- 	pr_info("Clocking rate (Crystal/Core/MPU): %ld.%01ld/%ld/%ld MHz\n",
--		(clk_get_rate(clk_get_sys(NULL, "osc_sys_ck")) / 1000000),
--		(clk_get_rate(clk_get_sys(NULL, "osc_sys_ck")) / 100000) % 10,
--		(clk_get_rate(clk_get_sys(NULL, "core_ck")) / 1000000),
--		(clk_get_rate(clk_get_sys(NULL, "arm_fck")) / 1000000));
-+		(omap3xxx_clk_get_rate("osc_sys_ck") / 1000000),
-+		(omap3xxx_clk_get_rate("osc_sys_ck") / 100000) % 10,
-+		(omap3xxx_clk_get_rate("core_ck") / 1000000),
-+		(omap3xxx_clk_get_rate("arm_fck") / 1000000));
- 
- 	if (soc_type != OMAP3_SOC_OMAP3430_ES1)
- 		omap3_clk_lock_dpll5();
--- 
-1.9.1
+> Cc: Alex Elder <elder@linaro.org>
+> Cc: Tim Kryger <tim.kryger@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/bcm/clk-kona-setup.c | 4 ----
+>  drivers/clk/bcm/clk-kona.h       | 2 --
+>  2 files changed, 6 deletions(-)
+> 
+> diff --git a/drivers/clk/bcm/clk-kona-setup.c b/drivers/clk/bcm/clk-kona-setup.c
+> index e5aededdd322..deaa7f962b84 100644
+> --- a/drivers/clk/bcm/clk-kona-setup.c
+> +++ b/drivers/clk/bcm/clk-kona-setup.c
+> @@ -21,8 +21,6 @@
+>  #define selector_clear_exists(sel)	((sel)->width = 0)
+>  #define trigger_clear_exists(trig)	FLAG_CLEAR(trig, TRIG, EXISTS)
+>  
+> -LIST_HEAD(ccu_list);	/* The list of set up CCUs */
+> -
+>  /* Validity checking */
+>  
+>  static bool ccu_data_offsets_valid(struct ccu_data *ccu)
+> @@ -773,7 +771,6 @@ static void kona_ccu_teardown(struct ccu_data *ccu)
+>  
+>  	of_clk_del_provider(ccu->node);	/* safe if never added */
+>  	ccu_clks_teardown(ccu);
+> -	list_del(&ccu->links);
+>  	of_node_put(ccu->node);
+>  	ccu->node = NULL;
+>  	iounmap(ccu->base);
+> @@ -847,7 +844,6 @@ void __init kona_dt_ccu_setup(struct ccu_data *ccu,
+>  		goto out_err;
+>  	}
+>  	ccu->node = of_node_get(node);
+> -	list_add_tail(&ccu->links, &ccu_list);
+>  
+>  	/*
+>  	 * Set up each defined kona clock and save the result in
+> diff --git a/drivers/clk/bcm/clk-kona.h b/drivers/clk/bcm/clk-kona.h
+> index 6849a64baf6d..906576ec97b6 100644
+> --- a/drivers/clk/bcm/clk-kona.h
+> +++ b/drivers/clk/bcm/clk-kona.h
+> @@ -480,7 +480,6 @@ struct ccu_data {
+>  	spinlock_t lock;	/* serialization lock */
+>  	bool write_enabled;	/* write access is currently enabled */
+>  	struct ccu_policy policy;
+> -	struct list_head links;	/* for ccu_list */
+>  	struct device_node *node;
+>  	struct clk_onecell_data clk_data;
+>  	const char *name;
+> @@ -492,7 +491,6 @@ struct ccu_data {
+>  #define KONA_CCU_COMMON(_prefix, _name, _ccuname)			    \
+>  	.name		= #_name "_ccu",				    \
+>  	.lock		= __SPIN_LOCK_UNLOCKED(_name ## _ccu_data.lock),    \
+> -	.links		= LIST_HEAD_INIT(_name ## _ccu_data.links),	    \
+>  	.clk_data	= {						    \
+>  		.clk_num = _prefix ## _ ## _ccuname ## _CCU_CLOCK_COUNT,    \
+>  	}
+> 
