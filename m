@@ -1,163 +1,158 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 2/5] doc: dt: add documentation for lpc1850-cgu clk driver
-Date: Thu, 28 May 2015 22:31:44 +0200
-Message-Id: <1432845107-12458-3-git-send-email-manabian@gmail.com>
-In-Reply-To: <1432845107-12458-1-git-send-email-manabian@gmail.com>
-References: <1432845107-12458-1-git-send-email-manabian@gmail.com>
+	Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 08/19] clk: samsung: Silence sparse warnings
+Date: Wed,  6 May 2015 00:39:45 -0700
+Message-Id: <1430897996-11597-9-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add DT binding documentation for lpc1850-cgu driver.
+drivers/clk/samsung/clk-exynos5260.c:138:40: warning: Using plain integer as NULL pointer
+drivers/clk/samsung/clk-exynos5260.c:328:40: warning: Using plain integer as NULL pointer
+drivers/clk/samsung/clk-exynos5260.c:392:40: warning: Using plain integer as NULL pointer
+drivers/clk/samsung/clk-exynos5260.c:494:40: warning: Using plain integer as NULL pointer
+drivers/clk/samsung/clk-exynos5260.c:583:40: warning: Using plain integer as NULL pointer
+drivers/clk/samsung/clk-exynos5260.c:644:40: warning: Using plain integer as NULL pointer
+drivers/clk/samsung/clk-exynos5260.c:779:40: warning: Using plain integer as NULL pointer
+drivers/clk/samsung/clk-exynos5260.c:898:40: warning: Using plain integer as NULL pointer
+drivers/clk/samsung/clk-exynos5260.c:962:40: warning: Using plain integer as NULL pointer
+drivers/clk/samsung/clk-exynos5260.c:1018:40: warning: Using plain integer as NULL pointer
+drivers/clk/samsung/clk-exynos5260.c:1165:40: warning: Using plain integer as NULL pointer
+drivers/clk/samsung/clk-exynos5260.c:1373:40: warning: Using plain integer as NULL pointer
+drivers/clk/samsung/clk-exynos5260.c:1829:40: warning: Using plain integer as NULL pointer
 
-Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- .../devicetree/bindings/clock/lpc1850-cgu.txt      | 131 +++++++++++++++++++++
- 1 file changed, 131 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
+ drivers/clk/samsung/clk-exynos5260.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/lpc1850-cgu.txt b/Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
-new file mode 100644
-index 000000000000..2cc32a9a945a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
-@@ -0,0 +1,131 @@
-+* NXP LPC1850 Clock Generation Unit (CGU)
-+
-+The CGU generates multiple independent clocks for the core and the
-+peripheral blocks of the LPC18xx. Each independent clock is called
-+a base clock and itself is one of the inputs to the two Clock
-+Control Units (CCUs) which control the branch clocks to the
-+individual peripherals.
-+
-+The CGU selects the inputs to the clock generators from multiple
-+clock sources, controls the clock generation, and routes the outputs
-+of the clock generators through the clock source bus to the output
-+stages. Each output stage provides an independent clock source and
-+corresponds to one of the base clocks for the LPC18xx.
-+
-+ - Above text taken from NXP LPC1850 User Manual.
-+
-+
-+This binding uses the common clock binding:
-+    Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Required properties:
-+- compatible:
-+	Should be "nxp,lpc1850-cgu"
-+- reg:
-+	Shall define the base and range of the address space
-+	containing clock control registers
-+- #clock-cells:
-+	Shall have value <1>.  The permitted clock-specifier values
-+	are the base clock numbers defined below.
-+- clocks:
-+	Shall contain a list of phandles for the external input
-+	sources to the CGU. The list shall be in the following
-+	order: xtal, 32khz, enet_rx_clk, enet_tx_clk, gp_clkin.
-+- clock-indices:
-+	Shall be an ordered list of numbers defining the base clock
-+	number provided by the CGU.
-+- clock-output-names:
-+	Shall be an ordered list of strings defining the names of
-+	the clocks provided by the CGU.
-+
-+Which base clocks that are available on the CGU depends on the
-+specific LPC part. Base clocks are numbered from 0 to 27.
-+
-+Number:		Name:			Description:
-+ 0		BASE_SAFE_CLK		Base safe clock (always on) for WWDT
-+ 1		BASE_USB0_CLK		Base clock for USB0
-+ 2		BASE_PERIPH_CLK		Base clock for Cortex-M0SUB subsystem,
-+					SPI, and SGPIO
-+ 3		BASE_USB1_CLK		Base clock for USB1
-+ 4		BASE_CPU_CLK		System base clock for ARM Cortex-M core
-+					and APB peripheral blocks #0 and #2
-+ 5		BASE_SPIFI_CLK		Base clock for SPIFI
-+ 6		BASE_SPI_CLK		Base clock for SPI
-+ 7		BASE_PHY_RX_CLK		Base clock for Ethernet PHY Receive clock
-+ 8		BASE_PHY_TX_CLK		Base clock for Ethernet PHY Transmit clock
-+ 9		BASE_APB1_CLK		Base clock for APB peripheral block # 1
-+10		BASE_APB3_CLK		Base clock for APB peripheral block # 3
-+11		BASE_LCD_CLK		Base clock for LCD
-+12		BASE_ADCHS_CLK		Base clock for ADCHS
-+13		BASE_SDIO_CLK		Base clock for SD/MMC
-+14		BASE_SSP0_CLK		Base clock for SSP0
-+15		BASE_SSP1_CLK		Base clock for SSP1
-+16		BASE_UART0_CLK		Base clock for UART0
-+17		BASE_UART1_CLK		Base clock for UART1
-+18		BASE_UART2_CLK		Base clock for UART2
-+19		BASE_UART3_CLK		Base clock for UART3
-+20		BASE_OUT_CLK		Base clock for CLKOUT pin
-+24-21		-			Reserved
-+25		BASE_AUDIO_CLK		Base clock for audio system (I2S)
-+26 		BASE_CGU_OUT0_CLK	Base clock for CGU_OUT0 clock output
-+27 		BASE_CGU_OUT1_CLK	Base clock for CGU_OUT1 clock output
-+
-+BASE_PERIPH_CLK and BASE_SPI_CLK is only available on LPC43xx.
-+BASE_ADCHS_CLK is only available on LPC4370.
-+
-+
-+Example board file:
-+
-+/ {
-+	clocks {
-+		xtal: xtal {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <12000000>;
-+		};
-+
-+		xtal32: xtal32 {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <32768>;
-+		};
-+
-+		enet_rx_clk: enet_rx_clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <0>;
-+			clock-output-names = "enet_rx_clk";
-+		};
-+
-+		enet_tx_clk: enet_tx_clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <0>;
-+			clock-output-names = "enet_tx_clk";
-+		};
-+
-+		gp_clkin: gp_clkin {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <0>;
-+			clock-output-names = "gp_clkin";
-+		};
-+	};
-+
-+	soc {
-+		cgu: clock-controller@40050000 {
-+			compatible = "nxp,lpc1850-cgu";
-+			reg = <0x40050000 0x1000>;
-+			#clock-cells = <1>;
-+			clocks = <&xtal>, <&creg_clk 1>, <&enet_rx_clk>, <&enet_tx_clk>, <&gp_clkin>;
-+		};
-+
-+		/* A CGU and CCU clock consumer */
-+		lcdc: lcdc@40008000 {
-+			...
-+			clocks = <&cgu BASE_LCD_CLK>, <&ccu1 CLK_CPU_LCD>;
-+			clock-names = "clcdclk", "apb_pclk";
-+			...
-+		};
-+	};
-+};
+diff --git a/drivers/clk/samsung/clk-exynos5260.c b/drivers/clk/samsung/clk-exynos5260.c
+index df1d83c45554..06f96eb7cf93 100644
+--- a/drivers/clk/samsung/clk-exynos5260.c
++++ b/drivers/clk/samsung/clk-exynos5260.c
+@@ -135,7 +135,7 @@ static struct samsung_gate_clock aud_gate_clks[] __initdata = {
+ 
+ static void __init exynos5260_clk_aud_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = {0};
++	struct samsung_cmu_info cmu = { NULL };
+ 
+ 	cmu.mux_clks = aud_mux_clks;
+ 	cmu.nr_mux_clks = ARRAY_SIZE(aud_mux_clks);
+@@ -325,7 +325,7 @@ static struct samsung_gate_clock disp_gate_clks[] __initdata = {
+ 
+ static void __init exynos5260_clk_disp_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = {0};
++	struct samsung_cmu_info cmu = { NULL };
+ 
+ 	cmu.mux_clks = disp_mux_clks;
+ 	cmu.nr_mux_clks = ARRAY_SIZE(disp_mux_clks);
+@@ -389,7 +389,7 @@ static struct samsung_pll_clock egl_pll_clks[] __initdata = {
+ 
+ static void __init exynos5260_clk_egl_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = {0};
++	struct samsung_cmu_info cmu = { NULL };
+ 
+ 	cmu.pll_clks = egl_pll_clks;
+ 	cmu.nr_pll_clks =  ARRAY_SIZE(egl_pll_clks);
+@@ -491,7 +491,7 @@ static struct samsung_gate_clock fsys_gate_clks[] __initdata = {
+ 
+ static void __init exynos5260_clk_fsys_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = {0};
++	struct samsung_cmu_info cmu = { NULL };
+ 
+ 	cmu.mux_clks = fsys_mux_clks;
+ 	cmu.nr_mux_clks = ARRAY_SIZE(fsys_mux_clks);
+@@ -580,7 +580,7 @@ static struct samsung_gate_clock g2d_gate_clks[] __initdata = {
+ 
+ static void __init exynos5260_clk_g2d_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = {0};
++	struct samsung_cmu_info cmu = { NULL };
+ 
+ 	cmu.mux_clks = g2d_mux_clks;
+ 	cmu.nr_mux_clks = ARRAY_SIZE(g2d_mux_clks);
+@@ -641,7 +641,7 @@ static struct samsung_pll_clock g3d_pll_clks[] __initdata = {
+ 
+ static void __init exynos5260_clk_g3d_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = {0};
++	struct samsung_cmu_info cmu = { NULL };
+ 
+ 	cmu.pll_clks = g3d_pll_clks;
+ 	cmu.nr_pll_clks =  ARRAY_SIZE(g3d_pll_clks);
+@@ -776,7 +776,7 @@ static struct samsung_gate_clock gscl_gate_clks[] __initdata = {
+ 
+ static void __init exynos5260_clk_gscl_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = {0};
++	struct samsung_cmu_info cmu = { NULL };
+ 
+ 	cmu.mux_clks = gscl_mux_clks;
+ 	cmu.nr_mux_clks = ARRAY_SIZE(gscl_mux_clks);
+@@ -895,7 +895,7 @@ static struct samsung_gate_clock isp_gate_clks[] __initdata = {
+ 
+ static void __init exynos5260_clk_isp_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = {0};
++	struct samsung_cmu_info cmu = { NULL };
+ 
+ 	cmu.mux_clks = isp_mux_clks;
+ 	cmu.nr_mux_clks = ARRAY_SIZE(isp_mux_clks);
+@@ -959,7 +959,7 @@ static struct samsung_pll_clock kfc_pll_clks[] __initdata = {
+ 
+ static void __init exynos5260_clk_kfc_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = {0};
++	struct samsung_cmu_info cmu = { NULL };
+ 
+ 	cmu.pll_clks = kfc_pll_clks;
+ 	cmu.nr_pll_clks =  ARRAY_SIZE(kfc_pll_clks);
+@@ -1015,7 +1015,7 @@ static struct samsung_gate_clock mfc_gate_clks[] __initdata = {
+ 
+ static void __init exynos5260_clk_mfc_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = {0};
++	struct samsung_cmu_info cmu = { NULL };
+ 
+ 	cmu.mux_clks = mfc_mux_clks;
+ 	cmu.nr_mux_clks = ARRAY_SIZE(mfc_mux_clks);
+@@ -1162,7 +1162,7 @@ static struct samsung_pll_clock mif_pll_clks[] __initdata = {
+ 
+ static void __init exynos5260_clk_mif_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = {0};
++	struct samsung_cmu_info cmu = { NULL };
+ 
+ 	cmu.pll_clks = mif_pll_clks;
+ 	cmu.nr_pll_clks =  ARRAY_SIZE(mif_pll_clks);
+@@ -1370,7 +1370,7 @@ static struct samsung_gate_clock peri_gate_clks[] __initdata = {
+ 
+ static void __init exynos5260_clk_peri_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = {0};
++	struct samsung_cmu_info cmu = { NULL };
+ 
+ 	cmu.mux_clks = peri_mux_clks;
+ 	cmu.nr_mux_clks = ARRAY_SIZE(peri_mux_clks);
+@@ -1826,7 +1826,7 @@ static struct samsung_pll_clock top_pll_clks[] __initdata = {
+ 
+ static void __init exynos5260_clk_top_init(struct device_node *np)
+ {
+-	struct samsung_cmu_info cmu = {0};
++	struct samsung_cmu_info cmu = { NULL };
+ 
+ 	cmu.pll_clks = top_pll_clks;
+ 	cmu.nr_pll_clks =  ARRAY_SIZE(top_pll_clks);
 -- 
-1.8.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
