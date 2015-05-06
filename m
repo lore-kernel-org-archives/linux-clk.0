@@ -1,35 +1,74 @@
 Return-Path: <bleung@google.com>
 MIME-Version: 1.0
 Sender: bleung@google.com
-In-Reply-To: <1431451444-23155-15-git-send-email-rklein@nvidia.com>
-References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
-	<1431451444-23155-15-git-send-email-rklein@nvidia.com>
-Date: Wed, 13 May 2015 15:04:04 -0700
-Message-ID: <CANLzEkuC7yDKEHPKC1oOF9ty=pBJ7Ry0_y7mmoymJX7dOpYJfQ@mail.gmail.com>
-Subject: Re: [PATCH v5 13/21] clk: tegra: pll: Add support for PLLMB for T210
+In-Reply-To: <1430919815-22380-1-git-send-email-thierry.reding@gmail.com>
+References: <CANLzEktaOSEFjszR6sRe4heQkp6H_eGi5aKEg8zeLCzaQMMVjQ@mail.gmail.com>
+	<1430919815-22380-1-git-send-email-thierry.reding@gmail.com>
+Date: Wed, 6 May 2015 10:49:16 -0700
+Message-ID: <CANLzEku9EyDh3dXMqK=ZLNb1F5tMvnnmgDRyJYQ16_6vLCDiKA@mail.gmail.com>
+Subject: Re: [PATCH] clk: tegra: Update struct tegra_clk_pll_params kerneldoc
 From: Benson Leung <bleung@chromium.org>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rhyland Klein <rklein@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein@nvidia.com> wrote:
-> Tegra210 SoC's have 2 PLLS for memory usage. Add plumbing to register
-> and handle PLLMB.
+On Wed, May 6, 2015 at 6:43 AM, Thierry Reding <thierry.reding@gmail.com> wrote:
+> From: Thierry Reding <treding@nvidia.com>
 >
-> PLLMB is used to allow switching between 2 PLLM's without having to use
-> and intermediate backup PLL, as we need to lock the PLL before we can
-> switch to it.
+> Benson Leung pointed out that the kerneldoc for this structure has
+> become stale. Update the field descriptions to match the structure
+> content.
 >
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> Reported-by: Benson Leung <bleung@chromium.org>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk.h | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index f3782dedbdfb..c47e633616be 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -157,7 +157,7 @@ struct div_nmp {
+>  };
+>
+>  /**
+> - * struct clk_pll_params - PLL parameters
+> + * struct tegra_clk_pll_params - PLL parameters
+>   *
+>   * @input_min:                 Minimum input frequency
+>   * @input_max:                 Maximum input frequency
+> @@ -168,12 +168,22 @@ struct div_nmp {
+>   * @base_reg:                  PLL base reg offset
+>   * @misc_reg:                  PLL misc reg offset
+>   * @lock_reg:                  PLL lock reg offset
+> - * @lock_bit_idx:              Bit index for PLL lock status
+> + * @lock_mask:                 Bitmask for PLL lock status
+>   * @lock_enable_bit_idx:       Bit index to enable PLL lock
+> + * @iddq_reg:                  PLL IDDQ register offset
+> + * @iddq_bit_idx:              Bit index to enable PLL IDDQ
+> + * @aux_reg:                   AUX register offset
+> + * @dyn_ramp_reg:              Dynamic ramp control register offset
+> + * @ext_misc_reg:              Miscellaneous control register offsets
+> + * @pmc_divnm_reg:             n, m divider PMC override register offset (PLLM)
+> + * @pmc_divp_reg:              p divider PMC override register offset (PLLM)
+> + * @flags:                     PLL flags
+> + * @stepa_shift:               Dynamic ramp step A field shift
+> + * @stepb_shift:               Dynamic ramp step B field shift
+>   * @lock_delay:                        Delay in us if PLL lock is not used
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
 
+Missed a couple -
+
+@max_p:
+@pdiv_tohw:
+
+Thanks!
 
 -- 
 Benson Leung
