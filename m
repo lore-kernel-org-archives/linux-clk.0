@@ -1,22 +1,29 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 13 May 2015 00:36:01 -0700
+Date: Wed, 6 May 2015 00:08:32 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: mturquette@linaro.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk: qcom: Add MSM8916 iommu clocks
-Message-ID: <20150513073601.GB15988@codeaurora.org>
-References: <1431428438-8171-1-git-send-email-georgi.djakov@linaro.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Mike Turquette <mturquette@linaro.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-sh@vger.kernel.org
+Subject: Re: [PATCH] clk: emev2: Use generic names for device nodes
+Message-ID: <20150506070832.GC27050@codeaurora.org>
+References: <1430139093-14769-1-git-send-email-geert+renesas@glider.be>
+ <20150428020701.GA26051@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1431428438-8171-1-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <20150428020701.GA26051@verge.net.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/12, Georgi Djakov wrote:
-> Add support for the msm8916 TCU clocks that are needed for IOMMU.
+On 04/28, Simon Horman wrote:
+> On Mon, Apr 27, 2015 at 02:51:33PM +0200, Geert Uytterhoeven wrote:
+> > uart -> serial
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
+> Acked-by: Simon Horman <horms+renesas@verge.net.au>
+> 
 
 Applied to clk-next
 
