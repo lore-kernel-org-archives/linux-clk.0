@@ -1,33 +1,29 @@
-Return-Path: <jilin@nvidia.com>
-From: Jim Lin <jilin@nvidia.com>
-To: Rhyland Klein <rklein@nvidia.com>, Peter De Schrijver
-	<pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>, Stephen Warren
-	<swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 12/20] clk: tegra: pll: Add specialized logic for T210
-Date: Sat, 2 May 2015 03:12:27 +0000
-Message-ID: <3e078ce64eff4ac992900523b1b67f19@HKMAIL103.nvidia.com>
-References: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
- <1430506447-29074-13-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430506447-29074-13-git-send-email-rklein@nvidia.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 5 May 2015 22:54:56 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: s3c2410: Staticize local symbols
+Message-ID: <20150506055456.GD10871@codeaurora.org>
+References: <1430496168-32408-1-git-send-email-k.kozlowski.k@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1430496168-32408-1-git-send-email-k.kozlowski.k@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 05/02, Krzysztof Kozlowski wrote:
+> Staticize symbols not exported and not used outside of file.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-> +static void clk_plle_tegra210_is_enabled(struct struct clk_hw *hw) {
-Returned type is "int" instead of "void".
-Also one "struct" only for "clk_hw *hw"?
+Applied to clk-next
 
-> +	struct tegra_clk_pll *pll =3D to_clk_pll(hw);
-> +	u32 val;
-> +
-> +	val =3D pll_readl_base(pll);
-> +
-> +	return val & PLLE_BASE_ENABLE ? 1 : 0; }
-> +
---nvpublic
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
