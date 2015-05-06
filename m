@@ -1,84 +1,118 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <20150515080546.GT4004@lukather>
-References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
- <1430565879-28113-2-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v669fsz_pA+B0r8efp0BMxY-D86qfLuGQCqK1POuu9PmxQ@mail.gmail.com>
- <20150515074314.GQ4004@lukather> <CAGb2v66jRX09k48ciR-bwMZRAioRpHKZ3D2+wVYWannjtF+G3w@mail.gmail.com>
- <20150515080546.GT4004@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 15 May 2015 17:11:16 +0800
-Message-ID: <CAGb2v67jruYamgHpM1NRm_fvm+SnDgQy4BEvZBxPEFByQsRsrg@mail.gmail.com>
-Subject: Re: [PATCH 1/8] clk: sunxi: factors: Add m_start parameters
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Peter Ujfalusi <peter.ujfalusi@ti.com>,
+	Tero Kristo <t-kristo@ti.com>
+Subject: [PATCH 13/19] clk: ti: Silence sparse warnings
+Date: Wed,  6 May 2015 00:39:50 -0700
+Message-Id: <1430897996-11597-14-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 15, 2015 at 4:05 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Fri, May 15, 2015 at 03:48:38PM +0800, Chen-Yu Tsai wrote:
->> On Fri, May 15, 2015 at 3:43 PM, Maxime Ripard
->> <maxime.ripard@free-electrons.com> wrote:
->> > On Thu, May 14, 2015 at 05:12:07PM +0800, Chen-Yu Tsai wrote:
->> >> On Sat, May 2, 2015 at 7:24 PM, Maxime Ripard
->> >> <maxime.ripard@free-electrons.com> wrote:
->> >> > Some clocks start incrementing the m factor at 0. Add a parameter to handle
->> >> > it just like we did for the N factor.
->> >> >
->> >> > Since the behaviour until now was to assume that the m factor was starting
->> >> > at 1, we also need to fix the other users.
->> >> >
->> >> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->> >> > ---
->> >> >  drivers/clk/sunxi/clk-factors.c    | 11 ++++++++++-
->> >> >  drivers/clk/sunxi/clk-factors.h    |  2 ++
->> >> >  drivers/clk/sunxi/clk-mod0.c       |  2 ++
->> >> >  drivers/clk/sunxi/clk-sun8i-mbus.c |  2 ++
->> >> >  drivers/clk/sunxi/clk-sun9i-core.c |  6 ++++++
->> >> >  drivers/clk/sunxi/clk-sunxi.c      | 10 ++++++++++
->> >> >  6 files changed, 32 insertions(+), 1 deletion(-)
->> >> >
->> >> > diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
->> >> > index 8c20190a3e9f..100a711c3e3d 100644
->> >> > --- a/drivers/clk/sunxi/clk-factors.c
->> >> > +++ b/drivers/clk/sunxi/clk-factors.c
->> >> > @@ -56,15 +56,24 @@ static unsigned long clk_factors_recalc_rate(struct clk_hw *hw,
->> >> >         /* Get each individual factor if applicable */
->> >> >         if (config->nwidth != SUNXI_FACTORS_NOT_APPLICABLE)
->> >> >                 n = FACTOR_GET(config->nshift, config->nwidth, reg);
->> >> > +
->> >> >         if (config->kwidth != SUNXI_FACTORS_NOT_APPLICABLE)
->> >> >                 k = FACTOR_GET(config->kshift, config->kwidth, reg);
->> >> > +
->> >> >         if (config->mwidth != SUNXI_FACTORS_NOT_APPLICABLE)
->> >> >                 m = FACTOR_GET(config->mshift, config->mwidth, reg);
->> >> > +       else
->> >> > +               /* Make sure we don't get a division by zero */
->> >> > +               m = 1;
->> >>
->> >> What happens when mwidth is valid, m_start = 0, and m = 0?
->> >
->> > That's a very good question. A division by zero in the kernel, I'd
->> > say.
->> >
->> > But I don't think we can end up in such a case today, and it's
->> > somewhat expected that it will happen, and no clock have looked at can
->> > actually end up in such a case.
->>
->> It's possible if the bootloader left the clock in an invalid state.
->> How about just returning 0, indicating an invalid rate, early?
->
-> The value set in the register might be zero, but that will always
-> really mean 1, either through m_start or m_zero. That would be a bug
-> in the driver itself.
+drivers/clk/ti/clk.c:125:31: warning: incorrect type in return expression (different address spaces)
+drivers/clk/ti/clk.c:125:31:    expected void [noderef] <asn:2>*
+drivers/clk/ti/clk.c:125:31:    got void *
+drivers/clk/ti/clk.c:132:31: warning: incorrect type in return expression (different address spaces)
+drivers/clk/ti/clk.c:132:31:    expected void [noderef] <asn:2>*
+drivers/clk/ti/clk.c:132:31:    got void *
+drivers/clk/ti/dpll.c:180:14: warning: symbol '_get_reg' was not declared. Should it be static?
+drivers/clk/ti/fapll.c:624:32: warning: Using plain integer as NULL pointer
+drivers/clk/ti/fapll.c:625:31: warning: Using plain integer as NULL pointer
+drivers/clk/ti/fapll.c:630:40: warning: Using plain integer as NULL pointer
+drivers/clk/ti/clk-dra7-atl.c:158:22: warning: symbol 'atl_clk_ops' was not declared. Should it be static?
+drivers/clk/ti/clk-dra7-atl.c:170:39: warning: Using plain integer as NULL pointer
 
-Maybe you should switch the order of these 2 patches to make it clear?
-Or maybe squash them? As it currently is, m_start = 0 and m = 0 with
-this patch only is a bug.
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/ti/clk-dra7-atl.c | 4 ++--
+ drivers/clk/ti/clk.c          | 4 ++--
+ drivers/clk/ti/dpll.c         | 2 +-
+ drivers/clk/ti/fapll.c        | 6 +++---
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-ChenYu
+diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
+index d86bc46b93bd..1fe7429a7536 100644
+--- a/drivers/clk/ti/clk-dra7-atl.c
++++ b/drivers/clk/ti/clk-dra7-atl.c
+@@ -155,7 +155,7 @@ static int atl_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
+-const struct clk_ops atl_clk_ops = {
++static const struct clk_ops atl_clk_ops = {
+ 	.enable		= atl_clk_enable,
+ 	.disable	= atl_clk_disable,
+ 	.is_enabled	= atl_clk_is_enabled,
+@@ -167,7 +167,7 @@ const struct clk_ops atl_clk_ops = {
+ static void __init of_dra7_atl_clock_setup(struct device_node *node)
+ {
+ 	struct dra7_atl_desc *clk_hw = NULL;
+-	struct clk_init_data init = { 0 };
++	struct clk_init_data init = { NULL };
+ 	const char **parent_names = NULL;
+ 	struct clk *clk;
+ 
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 0ebe5c51062b..64bb5e8a3b8c 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -122,14 +122,14 @@ void __iomem *ti_clk_get_reg_addr(struct device_node *node, int index)
+ 
+ 	if (i == CLK_MAX_MEMMAPS) {
+ 		pr_err("clk-provider not found for %s!\n", node->name);
+-		return ERR_PTR(-ENOENT);
++		return IOMEM_ERR_PTR(-ENOENT);
+ 	}
+ 
+ 	reg->index = i;
+ 
+ 	if (of_property_read_u32_index(node, "reg", index, &val)) {
+ 		pr_err("%s must have reg[%d]!\n", node->name, index);
+-		return ERR_PTR(-EINVAL);
++		return IOMEM_ERR_PTR(-EINVAL);
+ 	}
+ 
+ 	reg->offset = val;
+diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+index 11478a501c30..2aacf7a3bcae 100644
+--- a/drivers/clk/ti/dpll.c
++++ b/drivers/clk/ti/dpll.c
+@@ -177,7 +177,7 @@ cleanup:
+ }
+ 
+ #if defined(CONFIG_ARCH_OMAP3) && defined(CONFIG_ATAGS)
+-void __iomem *_get_reg(u8 module, u16 offset)
++static void __iomem *_get_reg(u8 module, u16 offset)
+ {
+ 	u32 reg;
+ 	struct clk_omap_reg *reg_setup;
+diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
+index ffcd8e09e85b..730aa62454a2 100644
+--- a/drivers/clk/ti/fapll.c
++++ b/drivers/clk/ti/fapll.c
+@@ -621,13 +621,13 @@ static void __init ti_fapll_setup(struct device_node *node)
+ 
+ 		/* Check for hardwired audio_pll_clk1 */
+ 		if (is_audio_pll_clk1(freq)) {
+-			freq = 0;
+-			div = 0;
++			freq = NULL;
++			div = NULL;
+ 		} else {
+ 			/* Does the synthesizer have a FREQ register? */
+ 			v = readl_relaxed(freq);
+ 			if (!v)
+-				freq = 0;
++				freq = NULL;
+ 		}
+ 		synth_clk = ti_fapll_synth_setup(fd, freq, div, output_instance,
+ 						 output_name, node->name,
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
