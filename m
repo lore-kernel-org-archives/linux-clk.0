@@ -1,95 +1,126 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Wed, 6 May 2015 15:57:20 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Benson Leung <bleung@chromium.org>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 08/20] clk: tegra: pll: Add logic for handling SDM data
+Message-ID: <20150506135719.GB22098@ulmo.nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+ <1430757460-9478-9-git-send-email-rklein@nvidia.com>
+ <CANLzEksFVpYOtcG5QHHfQa6bGXJ6nMYrsP4yG=5wszxCHrWqug@mail.gmail.com>
+ <554916F8.2060908@nvidia.com>
 MIME-Version: 1.0
-To: Thierry Reding <thierry.reding@gmail.com>,
- "Benson Leung" <bleung@chromium.org>, "Rhyland Klein" <rklein@nvidia.com>,
- "Peter De Schrijver" <pdeschrijver@nvidia.com>
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <1431012219-28469-1-git-send-email-thierry.reding@gmail.com>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>,
- "Stephen Warren" <swarren@wwwdotorg.org>,
- "Alexandre Courbot" <gnurou@gmail.com>, linux-clk@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1430919815-22380-1-git-send-email-thierry.reding@gmail.com>
- <1431012219-28469-1-git-send-email-thierry.reding@gmail.com>
-Message-ID: <20150520033956.9817.55602@quantum>
-Subject: Re: [PATCH v2] clk: tegra: Update struct tegra_clk_pll_params kerneldoc
-Date: Tue, 19 May 2015 20:39:56 -0700
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="JP+T4n/bALQSJXh8"
+In-Reply-To: <554916F8.2060908@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Thierry Reding (2015-05-07 08:23:39)
-> From: Thierry Reding <treding@nvidia.com>
-> =
 
-> Benson Leung pointed out that the kerneldoc for this structure has
-> become stale. Update the field descriptions to match the structure
-> content.
-> =
+--JP+T4n/bALQSJXh8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Reported-by: Benson Leung <bleung@chromium.org>
-> Acked-by: Rhyland Klein <rklein@nvidia.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-
-Looks good to me.
-
-Regards,
-Mike
-
-> ---
-> Changes in v2:
-> - document max_p and pdiv_tohw fields
-> =
-
->  drivers/clk/tegra/clk.h | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
-> =
-
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index f3782dedbdfb..b76b786e15f6 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -157,7 +157,7 @@ struct div_nmp {
->  };
->  =
-
->  /**
-> - * struct clk_pll_params - PLL parameters
-> + * struct tegra_clk_pll_params - PLL parameters
->   *
->   * @input_min:                 Minimum input frequency
->   * @input_max:                 Maximum input frequency
-> @@ -168,12 +168,24 @@ struct div_nmp {
->   * @base_reg:                  PLL base reg offset
->   * @misc_reg:                  PLL misc reg offset
->   * @lock_reg:                  PLL lock reg offset
-> - * @lock_bit_idx:              Bit index for PLL lock status
-> + * @lock_mask:                 Bitmask for PLL lock status
->   * @lock_enable_bit_idx:       Bit index to enable PLL lock
-> + * @iddq_reg:                  PLL IDDQ register offset
-> + * @iddq_bit_idx:              Bit index to enable PLL IDDQ
-> + * @aux_reg:                   AUX register offset
-> + * @dyn_ramp_reg:              Dynamic ramp control register offset
-> + * @ext_misc_reg:              Miscellaneous control register offsets
-> + * @pmc_divnm_reg:             n, m divider PMC override register offset=
- (PLLM)
-> + * @pmc_divp_reg:              p divider PMC override register offset (P=
-LLM)
-> + * @flags:                     PLL flags
-> + * @stepa_shift:               Dynamic ramp step A field shift
-> + * @stepb_shift:               Dynamic ramp step B field shift
->   * @lock_delay:                        Delay in us if PLL lock is not us=
-ed
-> + * @max_p:                     maximum value for the p divider
-> + * @pdiv_tohw:                 mapping of p divider to register values
-> + * @div_nmp:                   offsets and widths on n, m and p fields
->   * @freq_table:                        array of frequencies supported by=
- PLL
->   * @fixed_rate:                        PLL rate if it is fixed
-> - * @flags:                     PLL flags
->   *
->   * Flags:
->   * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
-> -- =
-
-> 2.3.5
+On Tue, May 05, 2015 at 03:16:08PM -0400, Rhyland Klein wrote:
+> On 5/4/2015 7:01 PM, Benson Leung wrote:
+> > On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> >> @@ -495,6 +505,28 @@ static int _calc_rate(struct clk_hw *hw, struct t=
+egra_clk_pll_freq_table *cfg,
+> >>         return 0;
+> >>  }
+> >>
+> >> +static void clk_pll_set_sdm_data(struct clk_hw *hw,
+> >> +                                struct tegra_clk_pll_freq_table *cfg)
+> >> +{
+> >> +       struct tegra_clk_pll *pll =3D to_clk_pll(hw);
+> >> +       u32 val;
+> >> +
+> >> +       if (!pll->params->sdm_din_reg)
+> >> +               return;
+> >> +
+> >> +       if (cfg->sdm_data) {
+> >> +               val =3D pll_readl_sdm_din(pll) & (~sdm_din_mask(pll));
+> >> +               val |=3D sdin_data_to_din(cfg->sdm_data) & sdm_din_mas=
+k(pll);
+> >> +               pll_writel_sdm_din(val, pll);
+> >> +       }
+> >> +
+> >> +       val =3D pll_readl_sdm_ctrl(pll);
+> >> +       if (!cfg->sdm_data !=3D !(val & pll->params->sdm_ctrl_en_mask)=
+) {
+> >=20
+> > You can use sdm_en_mask(pll) here.
+> >=20
+> > I'm not super clear about what you're trying to accomplish here with
+> > !cfg->sdm_data !=3D !(val & mask).
+> > Are you just checking if the masked value is different from sdm_data,
+> > but accounting for the integer widths being different (u16 vs u32)?
 >=20
+> So I got clarification from the downstream author to be sure, and this
+> is the answer to what this is checking:
+>=20
+> (<Configuration has non zero  SDM_DATA>  AND <sdm control is disabled>)
+> OR
+> (<Configuration has zero  SDM_DATA>  AND <sdm control is enabled>)
+>=20
+> So the check is correct, just a complicated way of expressing it.
+
+Can it be rewritten to be less complicated? I hate it when I have to
+look at code for several seconds and still not understand what it's
+doing. Why not something that is closer to the pseudo code you gave:
+
+	bool enabled =3D (val & pll->params->sdm_ctrl_en_mask) !=3D 0;
+
+	if ((enabled && cfg->sdm_data =3D=3D 0) || (!enabled && cfg->sdm_data !=3D=
+ 0))
+
+? Also I think this could use some could comments explaining what's
+going on. Perhaps this could be simplified even further:
+
+	if (cfg->sdm_data =3D=3D 0 && enabled)
+		val &=3D ~pll->params->sdm_ctrl_en_mask;
+
+	if (cfg->sdm_data !=3D 0 && !enabled)
+		val |=3D pll->params->sdm_ctrl_en_mask;
+
+	pll_writel_sdm_ctrl(val, pll);
+
+Now that I have a /much/ easier time reading and understanding. That may
+not even require comments because it's pretty plain what's going on. But
+there may be some advantage in adding comments about SDM in general. The
+comment could be something like what you have in the commit message, so
+that people don't have to go find the commit that added the code to find
+out what this is doing.
+
+Thierry
+
+--JP+T4n/bALQSJXh8
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVSh28AAoJEN0jrNd/PrOh2f4QAJ6mpQGh4iYyA9i5vFX8Vll9
+GSDREKoiZj4NM5HHPLa7hKqnmnD5Pd3djqfvzuM343qEYrerwletEUOwLLzimYUO
++zfdnhgOjEU57CE9TWZaVYVN2m7od6dalJ2nGQ0NhvmshF8p+bZeSmlIrUCrwMcY
+N9lj3gzWioe6d2lZ2tloQAmJHHEnH7k2npPCgNJdjytY6AcCopAXRDXB9X+00ziz
+Sgs+XjiuTLR5SjHeKXZSVgwHXO8Ow8fxGhV0BL8uijRJP5sVFzvu90fqEVBarZMJ
+vDdN0/E5QyJJNNdr4jqIxzbYwWbJ4iSX7t1VTud/mw7deccrhP7D5W0sxVS7LMkU
+NSqNRyOc4wn+RjDvZP6xJMv2xyaPGlYQ0IZOmXd70YonTP/ZOGjS1DBHRz9wHj3O
+uQU/ZKbz6D388tOl3VEGWLExJwnHJz304V0wHgZHtvAhaODfiPMXS9gIjkW2mpz6
+M5CoaJsnss8s7xYpmySmAx0OWVbNAIUfh+T8f2qK7NLOIMtCJ822NQEvMxkD/5fq
+w5DFvuBZzPiTCTcpQaTYMzgdyy3eE6CFBh7g876zrV6nU1z/uc0KMlVTEISvIoEE
+UFce6wAIwI4+7jce5C758o4Xb2eB/AGDRvLkBPnqGAqWnXKVL+MpwaY62TzVn0Jb
+iptTFm7yAgi8U09QlWUR
+=2WTy
+-----END PGP SIGNATURE-----
+
+--JP+T4n/bALQSJXh8--
