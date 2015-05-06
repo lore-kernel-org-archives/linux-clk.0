@@ -1,95 +1,54 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
 To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 6/8] ARM: sunxi: Add PLL2 support
-Date: Sat,  2 May 2015 13:24:37 +0200
-Message-Id: <1430565879-28113-7-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Chao Xie <chao.xie@marvell.com>
+Subject: [PATCH 16/19] clk: mmp: Silence sparse warnings
+Date: Wed,  6 May 2015 00:39:53 -0700
+Message-Id: <1430897996-11597-17-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Emilio López <emilio@elopez.com.ar>
+drivers/clk/mmp/clk-apbc.c:118:16: warning: symbol 'clk_apbc_ops' was not declared. Should it be static?
+drivers/clk/mmp/clk-apmu.c:64:16: warning: symbol 'clk_apmu_ops' was not declared. Should it be static?
 
-This commit adds the PLL2 definition to the sun4i, sun5i and sun7i device
-trees. PLL2 is used to clock audio devices.
-
-Signed-off-by: Emilio López <emilio@elopez.com.ar>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chao Xie <chao.xie@marvell.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- arch/arm/boot/dts/sun4i-a10.dtsi | 9 +++++++++
- arch/arm/boot/dts/sun5i.dtsi     | 9 +++++++++
- arch/arm/boot/dts/sun7i-a20.dtsi | 9 +++++++++
- 3 files changed, 27 insertions(+)
+ drivers/clk/mmp/clk-apbc.c | 2 +-
+ drivers/clk/mmp/clk-apmu.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
-index 1d7fd68bea1d..2ed3a0b43131 100644
---- a/arch/arm/boot/dts/sun4i-a10.dtsi
-+++ b/arch/arm/boot/dts/sun4i-a10.dtsi
-@@ -198,6 +198,15 @@
- 			clock-output-names = "pll1";
- 		};
+diff --git a/drivers/clk/mmp/clk-apbc.c b/drivers/clk/mmp/clk-apbc.c
+index d14120eaa71f..09d41c717c52 100644
+--- a/drivers/clk/mmp/clk-apbc.c
++++ b/drivers/clk/mmp/clk-apbc.c
+@@ -115,7 +115,7 @@ static void clk_apbc_unprepare(struct clk_hw *hw)
+ 		spin_unlock_irqrestore(apbc->lock, flags);
+ }
  
-+		pll2: clk@01c20008 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-b-pll2-clk";
-+			reg = <0x01c20008 0x8>;
-+			clocks = <&osc24M>;
-+			clock-output-names = "pll2-1x", "pll2-2x",
-+					     "pll2-4x", "pll2-8x";
-+		};
-+
- 		pll4: clk@01c20018 {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-pll1-clk";
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index 8c04f240f2e9..b291c165966f 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -107,6 +107,15 @@
- 			clock-output-names = "pll1";
- 		};
+-struct clk_ops clk_apbc_ops = {
++static struct clk_ops clk_apbc_ops = {
+ 	.prepare = clk_apbc_prepare,
+ 	.unprepare = clk_apbc_unprepare,
+ };
+diff --git a/drivers/clk/mmp/clk-apmu.c b/drivers/clk/mmp/clk-apmu.c
+index abe182b2377f..cdcf2d7f321e 100644
+--- a/drivers/clk/mmp/clk-apmu.c
++++ b/drivers/clk/mmp/clk-apmu.c
+@@ -61,7 +61,7 @@ static void clk_apmu_disable(struct clk_hw *hw)
+ 		spin_unlock_irqrestore(apmu->lock, flags);
+ }
  
-+		pll2: clk@01c20008 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-b-pll2-clk";
-+			reg = <0x01c20008 0x8>;
-+			clocks = <&osc24M>;
-+			clock-output-names = "pll2-1x", "pll2-2x",
-+					     "pll2-4x", "pll2-8x";
-+		};
-+
- 		pll4: clk@01c20018 {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-pll1-clk";
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index 4163ade867cb..7c850dc1b197 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -203,6 +203,15 @@
- 			clock-output-names = "pll1";
- 		};
- 
-+		pll2: clk@01c20008 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-b-pll2-clk";
-+			reg = <0x01c20008 0x8>;
-+			clocks = <&osc24M>;
-+			clock-output-names = "pll2-1x", "pll2-2x",
-+					     "pll2-4x", "pll2-8x";
-+		};
-+
- 		pll4: clk@01c20018 {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun7i-a20-pll4-clk";
+-struct clk_ops clk_apmu_ops = {
++static struct clk_ops clk_apmu_ops = {
+ 	.enable = clk_apmu_enable,
+ 	.disable = clk_apmu_disable,
+ };
 -- 
-2.3.6
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
