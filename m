@@ -1,61 +1,39 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
 To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 0/8] clk: sunxi: Add support for the Audio PLL
-Date: Sat,  2 May 2015 13:24:31 +0200
-Message-Id: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Dinh Nguyen <dinguyen@altera.com>
+Subject: [PATCH 15/19] clk: socfpga: Silence sparse warning
+Date: Wed,  6 May 2015 00:39:52 -0700
+Message-Id: <1430897996-11597-16-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+drivers/clk/socfpga/clk-periph.c:79:39: warning: Using plain integer as NULL pointer
 
-This serie adds support for the PLL2 aka the Audio PLL on the
-Allwinner A10 and the later SoCs.
+Cc: Dinh Nguyen <dinguyen@altera.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/socfpga/clk-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is the first stepping stone to get the audio support merged.
-
-Thanks!
-Maxime
-
-Emilio López (5):
-  clk: sunxi: codec clock support
-  clk: sunxi: mod1 clock support
-  ARM: sunxi: Add PLL2 support
-  ARM: sunxi: Add codec clock support
-  ARM: sun7i: Add mod1 clock nodes
-
-Maxime Ripard (3):
-  clk: sunxi: factors: Add m_start parameters
-  clk: sunxi: factors: Add a parameter for N and M zeros
-  clk: sunxi: Add a driver for the PLL2
-
- arch/arm/boot/dts/sun4i-a10.dtsi           |  18 +++
- arch/arm/boot/dts/sun5i.dtsi               |  18 +++
- arch/arm/boot/dts/sun7i-a20.dtsi           |  73 ++++++++++++
- drivers/clk/sunxi/Makefile                 |   3 +
- drivers/clk/sunxi/clk-a10-codec.c          |  45 ++++++++
- drivers/clk/sunxi/clk-a10-mod1.c           |  85 ++++++++++++++
- drivers/clk/sunxi/clk-a10-pll2.c           | 176 +++++++++++++++++++++++++++++
- drivers/clk/sunxi/clk-factors.c            |  17 ++-
- drivers/clk/sunxi/clk-factors.h            |   5 +
- drivers/clk/sunxi/clk-mod0.c               |   2 +
- drivers/clk/sunxi/clk-sun8i-mbus.c         |   2 +
- drivers/clk/sunxi/clk-sun9i-core.c         |   6 +
- drivers/clk/sunxi/clk-sunxi.c              |  10 ++
- include/dt-bindings/clock/sun4i-a10-pll2.h |  53 +++++++++
- 14 files changed, 512 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/sunxi/clk-a10-codec.c
- create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
- create mode 100644 drivers/clk/sunxi/clk-a10-pll2.c
- create mode 100644 include/dt-bindings/clock/sun4i-a10-pll2.h
-
+diff --git a/drivers/clk/socfpga/clk-periph.c b/drivers/clk/socfpga/clk-periph.c
+index 46531c34ec9b..83aeaa219d14 100644
+--- a/drivers/clk/socfpga/clk-periph.c
++++ b/drivers/clk/socfpga/clk-periph.c
+@@ -76,7 +76,7 @@ static __init void __socfpga_periph_init(struct device_node *node,
+ 		periph_clk->shift = div_reg[1];
+ 		periph_clk->width = div_reg[2];
+ 	} else {
+-		periph_clk->div_reg = 0;
++		periph_clk->div_reg = NULL;
+ 	}
+ 
+ 	rc = of_property_read_u32(node, "fixed-divider", &fixed_div);
 -- 
-2.3.6
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
