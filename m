@@ -1,122 +1,54 @@
-Return-Path: <jim2101024@gmail.com>
-From: Jim Quinlan <jim2101024@gmail.com>
-To: <mturquette@linaro.org>, <linux-clk@vger.kernel.org>
-CC: <bcm-kernel-feedback-list@broadcom.com>, Jim Quinlan
-	<jim2101024@gmail.com>
-Subject: [PATCH] clk: allow a clk divider with max divisor when zero
-Date: Fri, 15 May 2015 15:45:47 -0400
-Message-ID: <1431719147-10153-1-git-send-email-jim2101024@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jim2101024@gmail.com
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Pawel Moll <pawel.moll@arm.com>
+Subject: [PATCH 14/19] clk: versatile: Silence sparse warnings
+Date: Wed,  6 May 2015 00:39:51 -0700
+Message-Id: <1430897996-11597-15-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit allows certain Broadcom STB clock dividers to be used with
-clk-divider.c.  It allows for a clock whose field value is the equal
-to the divisor, execpt when the field value is zero, in which case the
-divisor is 2^width.  For example, consider a divisor clock with a two
-bit field:
+drivers/clk/versatile/clk-sp810.c:159:29: error: incompatible types for operation (<=)
+drivers/clk/versatile/clk-sp810.c:159:29:    left side has type char const *<noident>
+drivers/clk/versatile/clk-sp810.c:159:29:    right side has type int
+drivers/clk/versatile/clk-sp810.c:159:53: error: incompatible types for operation (<=)
+drivers/clk/versatile/clk-sp810.c:159:53:    left side has type char const *<noident>
+drivers/clk/versatile/clk-sp810.c:159:53:    right side has type int
+rivers/clk/versatile/clk-sp810.c:138:13: warning: symbol 'clk_sp810_of_setup' was not declared. Should it be static?
 
-value		divisor
-0		4
-1		1
-2		2
-3		3
-
-Signed-off-by: Jim Quinlan <jim2101024@gmail.com>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/clk-divider.c    | 16 +++++++++++-----
- include/linux/clk-provider.h |  4 ++++
- 2 files changed, 15 insertions(+), 5 deletions(-)
+ drivers/clk/versatile/clk-sp810.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index 25006a8..fce0d8b 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -78,12 +78,14 @@ static unsigned int _get_table_div(const struct clk_div_table *table,
+diff --git a/drivers/clk/versatile/clk-sp810.c b/drivers/clk/versatile/clk-sp810.c
+index c6e86a9a2aa3..a96dd8e53fdb 100644
+--- a/drivers/clk/versatile/clk-sp810.c
++++ b/drivers/clk/versatile/clk-sp810.c
+@@ -135,7 +135,7 @@ static struct clk *clk_sp810_timerclken_of_get(struct of_phandle_args *clkspec,
+ 	return sp810->timerclken[clkspec->args[0]].clk;
  }
  
- static unsigned int _get_div(const struct clk_div_table *table,
--			     unsigned int val, unsigned long flags)
-+			     unsigned int val, unsigned long flags, u8 width)
+-void __init clk_sp810_of_setup(struct device_node *node)
++static void __init clk_sp810_of_setup(struct device_node *node)
  {
- 	if (flags & CLK_DIVIDER_ONE_BASED)
- 		return val;
- 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
- 		return 1 << val;
-+	if (flags & CLK_DIVIDER_MAX_AT_ZERO)
-+		return val ? val : div_mask(width) + 1;
- 	if (table)
- 		return _get_table_div(table, val);
- 	return val + 1;
-@@ -101,12 +103,14 @@ static unsigned int _get_table_val(const struct clk_div_table *table,
- }
+ 	struct clk_sp810 *sp810 = kzalloc(sizeof(*sp810), GFP_KERNEL);
+ 	const char *parent_names[2];
+@@ -156,7 +156,7 @@ void __init clk_sp810_of_setup(struct device_node *node)
+ 			"timclk");
+ 	parent_names[1] = of_clk_get_parent_name(node, sp810->timclk_index);
  
- static unsigned int _get_val(const struct clk_div_table *table,
--			     unsigned int div, unsigned long flags)
-+			     unsigned int div, unsigned long flags, u8 width)
- {
- 	if (flags & CLK_DIVIDER_ONE_BASED)
- 		return div;
- 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
- 		return __ffs(div);
-+	if (flags & CLK_DIVIDER_MAX_AT_ZERO)
-+		return (div == div_mask(width) + 1) ? 0 : div;
- 	if (table)
- 		return  _get_table_val(table, div);
- 	return div - 1;
-@@ -117,9 +121,10 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
- 				  const struct clk_div_table *table,
- 				  unsigned long flags)
- {
-+	struct clk_divider *divider = to_clk_divider(hw);
- 	unsigned int div;
- 
--	div = _get_div(table, val, flags);
-+	div = _get_div(table, val, flags, divider->width);
- 	if (!div) {
- 		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
- 			"%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
-@@ -351,7 +356,8 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
- 		bestdiv = readl(divider->reg) >> divider->shift;
- 		bestdiv &= div_mask(divider->width);
--		bestdiv = _get_div(divider->table, bestdiv, divider->flags);
-+		bestdiv = _get_div(divider->table, bestdiv, divider->flags,
-+			divider->width);
- 		return DIV_ROUND_UP(*prate, bestdiv);
+-	if (parent_names[0] <= 0 || parent_names[1] <= 0) {
++	if (!parent_names[0] || !parent_names[1]) {
+ 		pr_warn("Failed to obtain parent clocks for SP810!\n");
+ 		return;
  	}
- 
-@@ -370,7 +376,7 @@ int divider_get_val(unsigned long rate, unsigned long parent_rate,
- 	if (!_is_valid_div(table, div, flags))
- 		return -EINVAL;
- 
--	value = _get_val(table, div, flags);
-+	value = _get_val(table, div, flags, width);
- 
- 	return min_t(unsigned int, value, div_mask(width));
- }
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index df69531..a30c24c 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -342,6 +342,9 @@ struct clk_div_table {
-  *	to the closest integer instead of the up one.
-  * CLK_DIVIDER_READ_ONLY - The divider settings are preconfigured and should
-  *	not be changed by the clock framework.
-+ * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE_BASED
-+ *	except when the value read from the register is zero, the divisor is
-+ *	2^width of the field.
-  */
- struct clk_divider {
- 	struct clk_hw	hw;
-@@ -359,6 +362,7 @@ struct clk_divider {
- #define CLK_DIVIDER_HIWORD_MASK		BIT(3)
- #define CLK_DIVIDER_ROUND_CLOSEST	BIT(4)
- #define CLK_DIVIDER_READ_ONLY		BIT(5)
-+#define CLK_DIVIDER_MAX_AT_ZERO		BIT(6)
- 
- extern const struct clk_ops clk_divider_ops;
- 
 -- 
-1.9.0.138.g2de3478
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
