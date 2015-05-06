@@ -1,201 +1,81 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
-	devicetree@vger.kernel.org,
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	ezequiel@vanguardiasur.com.ar
-Subject: [PATCH v3 6/6] ARM: dts: lpc18xx: add clock nodes for cgu and ccu
-Date: Tue, 19 May 2015 00:35:59 +0200
-Message-Id: <1431988559-23338-7-git-send-email-manabian@gmail.com>
-In-Reply-To: <1431988559-23338-1-git-send-email-manabian@gmail.com>
-References: <1431988559-23338-1-git-send-email-manabian@gmail.com>
+	Alex Elder <elder@linaro.org>,
+	Tim Kryger <tim.kryger@linaro.org>
+Subject: [PATCH 05/19] clk: bcm/kona: Remove ccu_list
+Date: Wed,  6 May 2015 00:39:42 -0700
+Message-Id: <1430897996-11597-6-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Joachim Eastwood <manabian@gmail.com>
----
- arch/arm/boot/dts/lpc18xx.dtsi           | 77 ++++++++++++++++++++++++++------
- arch/arm/boot/dts/lpc4350-hitex-eval.dts |  4 --
- 2 files changed, 63 insertions(+), 18 deletions(-)
+This list doesn't look to be used. Let's remove it and any
+associated code that would be manipulating this list. This also
+silences this error:
 
-diff --git a/arch/arm/boot/dts/lpc18xx.dtsi b/arch/arm/boot/dts/lpc18xx.dtsi
-index 204da5b52ef9..5664654e0ba9 100644
---- a/arch/arm/boot/dts/lpc18xx.dtsi
-+++ b/arch/arm/boot/dts/lpc18xx.dtsi
-@@ -13,6 +13,9 @@
+drivers/clk/bcm/clk-kona-setup.c:24:1: warning: symbol 'ccu_list' was not declared. Should it be static?
+
+Cc: Alex Elder <elder@linaro.org>
+Cc: Tim Kryger <tim.kryger@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/bcm/clk-kona-setup.c | 4 ----
+ drivers/clk/bcm/clk-kona.h       | 2 --
+ 2 files changed, 6 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-kona-setup.c b/drivers/clk/bcm/clk-kona-setup.c
+index e5aededdd322..deaa7f962b84 100644
+--- a/drivers/clk/bcm/clk-kona-setup.c
++++ b/drivers/clk/bcm/clk-kona-setup.c
+@@ -21,8 +21,6 @@
+ #define selector_clear_exists(sel)	((sel)->width = 0)
+ #define trigger_clear_exists(trig)	FLAG_CLEAR(trig, TRIG, EXISTS)
  
- #include "armv7-m.dtsi"
- 
-+#include "dt-bindings/clock/lpc18xx-cgu.h"
-+#include "dt-bindings/clock/lpc18xx-ccu.h"
-+
- / {
- 	cpus {
- 		#address-cells = <1>;
-@@ -22,6 +25,7 @@
- 			compatible = "arm,cortex-m3";
- 			device_type = "cpu";
- 			reg = <0x0>;
-+			clocks = <&ccu1 CLK_CPU_CORE>;
- 		};
- 	};
- 
-@@ -32,23 +36,68 @@
- 			clock-frequency = <12000000>;
- 		};
- 
--		/* Temporary hardcode PLL1 until clk drivers are merged */
--		pll1: pll1 {
--			compatible = "fixed-factor-clock";
--			clocks = <&xtal>;
-+		xtal32: xtal32 {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <32768>;
-+		};
-+
-+		enet_rx_clk: enet_rx_clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <0>;
-+			clock-output-names = "enet_rx_clk";
-+		};
-+
-+		enet_tx_clk: enet_tx_clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <0>;
-+			clock-output-names = "enet_tx_clk";
-+		};
-+
-+		gp_clkin: gp_clkin {
-+			compatible = "fixed-clock";
- 			#clock-cells = <0>;
--			clock-div = <1>;
--			clock-mult = <12>;
-+			clock-frequency = <0>;
-+			clock-output-names = "gp_clkin";
- 		};
- 	};
- 
- 	soc {
-+		cgu: clock-controller@40050000 {
-+			compatible = "nxp,lpc1850-cgu";
-+			reg = <0x40050000 0x1000>;
-+			#clock-cells = <1>;
-+			clocks = <&xtal>, <&xtal32>, <&enet_rx_clk>, <&enet_tx_clk>, <&gp_clkin>;
-+		};
-+
-+		ccu1: clock-controller@40051000 {
-+			compatible = "nxp,lpc1850-ccu";
-+			reg = <0x40051000 0x1000>;
-+			#clock-cells = <1>;
-+			clocks = <&cgu BASE_APB3_CLK>,   <&cgu BASE_APB1_CLK>,
-+				 <&cgu BASE_SPIFI_CLK>,  <&cgu BASE_CPU_CLK>,
-+				 <&cgu BASE_PERIPH_CLK>, <&cgu BASE_USB0_CLK>,
-+				 <&cgu BASE_USB1_CLK>,   <&cgu BASE_SPI_CLK>;
-+		};
-+
-+		ccu2: clock-controller@40052000 {
-+			compatible = "nxp,lpc1850-ccu";
-+			reg = <0x40052000 0x1000>;
-+			#clock-cells = <1>;
-+			clocks = <&cgu BASE_AUDIO_CLK>, <&cgu BASE_UART3_CLK>,
-+				 <&cgu BASE_UART2_CLK>, <&cgu BASE_UART1_CLK>,
-+				 <&cgu BASE_UART0_CLK>, <&cgu BASE_SSP1_CLK>,
-+				 <&cgu BASE_SSP0_CLK>,  <&cgu BASE_SDIO_CLK>;
-+		};
-+
- 		uart0: serial@40081000 {
- 			compatible = "ns16550a";
- 			reg = <0x40081000 0x1000>;
- 			reg-shift = <2>;
- 			interrupts = <24>;
--			clocks = <&pll1>;
-+			clocks = <&ccu2 CLK_APB0_UART0>, <&ccu1 CLK_CPU_UART0>;
- 			status = "disabled";
- 		};
- 
-@@ -57,7 +106,7 @@
- 			reg = <0x40082000 0x1000>;
- 			reg-shift = <2>;
- 			interrupts = <25>;
--			clocks = <&pll1>;
-+			clocks = <&ccu2 CLK_APB0_UART1>, <&ccu1 CLK_CPU_UART1>;
- 			status = "disabled";
- 		};
- 
-@@ -65,7 +114,7 @@
- 			compatible = "nxp,lpc3220-timer";
- 			reg = <0x40084000 0x1000>;
- 			interrupts = <12>;
--			clocks = <&pll1>;
-+			clocks = <&ccu1 CLK_CPU_TIMER0>;
- 			clock-names = "timerclk";
- 		};
- 
-@@ -73,7 +122,7 @@
- 			compatible = "nxp,lpc3220-timer";
- 			reg = <0x40085000 0x1000>;
- 			interrupts = <13>;
--			clocks = <&pll1>;
-+			clocks = <&ccu1 CLK_CPU_TIMER1>;
- 			clock-names = "timerclk";
- 		};
- 
-@@ -82,7 +131,7 @@
- 			reg = <0x400c1000 0x1000>;
- 			reg-shift = <2>;
- 			interrupts = <26>;
--			clocks = <&pll1>;
-+			clocks = <&ccu2 CLK_APB2_UART2>, <&ccu1 CLK_CPU_UART2>;
- 			status = "disabled";
- 		};
- 
-@@ -91,7 +140,7 @@
- 			reg = <0x400c2000 0x1000>;
- 			reg-shift = <2>;
- 			interrupts = <27>;
--			clocks = <&pll1>;
-+			clocks = <&ccu2 CLK_APB2_UART3>, <&ccu1 CLK_CPU_UART3>;
- 			status = "disabled";
- 		};
- 
-@@ -99,7 +148,7 @@
- 			compatible = "nxp,lpc3220-timer";
- 			reg = <0x400c3000 0x1000>;
- 			interrupts = <14>;
--			clocks = <&pll1>;
-+			clocks = <&ccu1 CLK_CPU_TIMER2>;
- 			clock-names = "timerclk";
- 		};
- 
-@@ -107,7 +156,7 @@
- 			compatible = "nxp,lpc3220-timer";
- 			reg = <0x400c4000 0x1000>;
- 			interrupts = <15>;
--			clocks = <&pll1>;
-+			clocks = <&ccu1 CLK_CPU_TIMER3>;
- 			clock-names = "timerclk";
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/lpc4350-hitex-eval.dts b/arch/arm/boot/dts/lpc4350-hitex-eval.dts
-index d04072f40817..4ebdb54cc9ce 100644
---- a/arch/arm/boot/dts/lpc4350-hitex-eval.dts
-+++ b/arch/arm/boot/dts/lpc4350-hitex-eval.dts
-@@ -36,10 +36,6 @@
- 	};
- };
- 
--&pll1 {
--	clock-mult = <15>;
--};
+-LIST_HEAD(ccu_list);	/* The list of set up CCUs */
 -
- &uart0 {
- 	status = "okay";
- };
+ /* Validity checking */
+ 
+ static bool ccu_data_offsets_valid(struct ccu_data *ccu)
+@@ -773,7 +771,6 @@ static void kona_ccu_teardown(struct ccu_data *ccu)
+ 
+ 	of_clk_del_provider(ccu->node);	/* safe if never added */
+ 	ccu_clks_teardown(ccu);
+-	list_del(&ccu->links);
+ 	of_node_put(ccu->node);
+ 	ccu->node = NULL;
+ 	iounmap(ccu->base);
+@@ -847,7 +844,6 @@ void __init kona_dt_ccu_setup(struct ccu_data *ccu,
+ 		goto out_err;
+ 	}
+ 	ccu->node = of_node_get(node);
+-	list_add_tail(&ccu->links, &ccu_list);
+ 
+ 	/*
+ 	 * Set up each defined kona clock and save the result in
+diff --git a/drivers/clk/bcm/clk-kona.h b/drivers/clk/bcm/clk-kona.h
+index 6849a64baf6d..906576ec97b6 100644
+--- a/drivers/clk/bcm/clk-kona.h
++++ b/drivers/clk/bcm/clk-kona.h
+@@ -480,7 +480,6 @@ struct ccu_data {
+ 	spinlock_t lock;	/* serialization lock */
+ 	bool write_enabled;	/* write access is currently enabled */
+ 	struct ccu_policy policy;
+-	struct list_head links;	/* for ccu_list */
+ 	struct device_node *node;
+ 	struct clk_onecell_data clk_data;
+ 	const char *name;
+@@ -492,7 +491,6 @@ struct ccu_data {
+ #define KONA_CCU_COMMON(_prefix, _name, _ccuname)			    \
+ 	.name		= #_name "_ccu",				    \
+ 	.lock		= __SPIN_LOCK_UNLOCKED(_name ## _ccu_data.lock),    \
+-	.links		= LIST_HEAD_INIT(_name ## _ccu_data.links),	    \
+ 	.clk_data	= {						    \
+ 		.clk_num = _prefix ## _ ## _ccuname ## _CCU_CLOCK_COUNT,    \
+ 	}
 -- 
-1.8.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
