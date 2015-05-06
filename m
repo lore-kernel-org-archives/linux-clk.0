@@ -1,39 +1,48 @@
-Return-Path: <bleung@google.com>
+Return-Path: <javier.martinez@collabora.co.uk>
+Message-ID: <5549DD88.1010803@collabora.co.uk>
+Date: Wed, 06 May 2015 11:23:20 +0200
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 MIME-Version: 1.0
-Sender: bleung@google.com
-In-Reply-To: <1431012219-28469-1-git-send-email-thierry.reding@gmail.com>
-References: <1430919815-22380-1-git-send-email-thierry.reding@gmail.com>
-	<1431012219-28469-1-git-send-email-thierry.reding@gmail.com>
-Date: Thu, 7 May 2015 08:41:50 -0700
-Message-ID: <CANLzEks3DCzcstz5y1BhemFtm9YLaoLZQ_0ec1RKWi4nqG+j1Q@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: tegra: Update struct tegra_clk_pll_params kerneldoc
-From: Benson Leung <bleung@chromium.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rhyland Klein <rklein@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@linaro.org>
+CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 03/19] clk: max-gen: Silence sparse warnings
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org> <1430897996-11597-4-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1430897996-11597-4-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 7, 2015 at 8:23 AM, Thierry Reding <thierry.reding@gmail.com> wrote:
-> From: Thierry Reding <treding@nvidia.com>
->
-> Benson Leung pointed out that the kerneldoc for this structure has
-> become stale. Update the field descriptions to match the structure
-> content.
->
-> Reported-by: Benson Leung <bleung@chromium.org>
-> Acked-by: Rhyland Klein <rklein@nvidia.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+Hello Stephen,
 
+On 05/06/2015 09:39 AM, Stephen Boyd wrote:
+> drivers/clk/clk-max-gen.c:82:16: warning: symbol 'max_gen_clk_ops' was not declared. Should it be static?
+> drivers/clk/clk-max-gen.c:109:5: warning: symbol 'max_gen_clk_probe' was not declared. Should it be static?
+> drivers/clk/clk-max-gen.c:183:5: warning: symbol 'max_gen_clk_remove' was not declared. Should it be static?
+> 
+> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/clk-max-gen.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-max-gen.c b/drivers/clk/clk-max-gen.c
+> index 6505049d50f1..35af9cb6da4f 100644
+> --- a/drivers/clk/clk-max-gen.c
+> +++ b/drivers/clk/clk-max-gen.c
+> @@ -31,6 +31,8 @@
+>  #include <linux/of.h>
+>  #include <linux/export.h>
+>  
+> +#include "clk-max-gen.h"
+> +
+>  struct max_gen_clk {
+>  	struct regmap *regmap;
+>  	u32 mask;
+> 
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
+Looks good to me.
 
-Thanks!
+Acked-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
--- 
-Benson Leung
-Software Engineer, Chrom* OS
-bleung@chromium.org
+Best regards,
+Javier
