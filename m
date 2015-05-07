@@ -1,36 +1,35 @@
-Return-Path: <k.kozlowski@samsung.com>
-Message-id: <554C3617.10906@samsung.com>
-Date: Fri, 08 May 2015 13:05:43 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk samsung exynos5420 add CLK_RECALC_NEW_RATES flag to
- mout_apll and mout_kpll clock.
-References: <1431020935-5025-1-git-send-email-linux.amoon@gmail.com>
- <CAJKOXPcCc8j=i5FPdF62bGKar74+4U=C9BPN9ar2j52Y8dSMwA@mail.gmail.com>
- <CANAwSgT8aa5svHgLbkNkSPXWT_hLez8e4cBws2ajEB9p56WHFA@mail.gmail.com>
-In-reply-to: 
- <CANAwSgT8aa5svHgLbkNkSPXWT_hLez8e4cBws2ajEB9p56WHFA@mail.gmail.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 6 May 2015 22:17:24 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Mike Turquette <mturquette@linaro.org>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Takashi Yoshii <takasi-y@ops.dti.ne.jp>,
+	Magnus Damm <damm@opensource.se>
+Subject: Re: [PATCH 09/19] clk: emev2: Silence sparse warnings
+Message-ID: <20150507051724.GA32399@codeaurora.org>
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+ <1430897996-11597-10-git-send-email-sboyd@codeaurora.org>
+ <20150507043607.GI28846@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20150507043607.GI28846@verge.net.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08.05.2015 13:01, Anand Moon wrote:
-> Hi Krysztof,
+On 05/07, Simon Horman wrote:
+> On Wed, May 06, 2015 at 12:39:46AM -0700, Stephen Boyd wrote:
+> > drivers/clk/shmobile/clk-emev2.c:37:14: warning: symbol 'smu_base' was not declared. Should it be static?
+> > 
+> > Cc: Takashi Yoshii <takasi-y@ops.dti.ne.jp>
+> > Cc: Magnus Damm <damm@opensource.se>
+> > Cc: Simon Horman <horms+renesas@verge.net.au>
+> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 > 
-> Actually the patch is based on https://lkml.org/lkml/2015/4/3/389
-> I don't know how to measure the energy consumption when compared to
-> cpufreq-exynos.
+> Acked-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Stephen, I'm assuming that you or Mike will merge this.
 
-It does not have to be energy consumption. It may be something else
-visible, like wrong values for clock rates. I don't know, it is your
-patch so you should know *what is fixed* (or changed).
+Yep we'll take this series through clk-next. Thanks.
 
-Best regards,
-Krzysztof
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
