@@ -1,152 +1,87 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Paul Walmsley <pwalmsley@nvidia.com>,
-	Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 16/21] clk: tegra: pll: Add Set_default logic
-Date: Tue, 12 May 2015 13:23:59 -0400
-Message-ID: <1431451444-23155-18-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
-References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <55488FE6.4040003@samsung.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ "linux-samsung-soc" <linux-samsung-soc@vger.kernel.org>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
+References: <554105AC.8060800@samsung.com> <55488FE6.4040003@samsung.com>
+Message-ID: <20150507234908.16410.3087@quantum>
+Subject: Re: [GIT PULL v2] clk/samsung fixes for 4.1
+Date: Thu, 07 May 2015 16:49:08 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bill Huang <bilhuang@nvidia.com>
+Quoting Sylwester Nawrocki (2015-05-05 02:39:50)
+> Mike,
+> =
 
-Add logic which (if specified for a pll) can verify that a PLL is set
-to the proper default value and if not can set it. This can be
-specified per PLL as each will have different default values.
+> this is a corrected version of pull request I sent on 29/04/15.
+> =
 
-Based on original work by Aleksandr Frid <afrid@nvidia.com>
+> The following changes since commit b787f68c36d49bb1d9236f403813641efa74a0=
+31:
+> =
 
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
----
-v2:
-  - Remove MACRO for PLL_MISC_CHECK_DEFAULT as suggested, and instead
-    the tegra210 driver will include an inline version of this function.
+>   Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
+> =
 
- drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
- drivers/clk/tegra/clk.h     |    2 ++
- 2 files changed, 37 insertions(+), 11 deletions(-)
+> are available in the git repository at:
+> =
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 626466665dde..36aa2a95fac0 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -652,13 +652,26 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 			unsigned long rate)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	struct tegra_clk_pll_freq_table old_cfg;
- 	int state, ret = 0;
- 
- 	state = clk_pll_is_enabled(hw);
- 
-+	_get_pll_mnp(pll, &old_cfg);
-+
-+	if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
-+			(cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
-+		ret = pll->params->dyn_ramp(pll, cfg);
-+		if (!ret)
-+			return 0;
-+	}
-+
- 	if (state)
- 		_clk_pll_disable(hw);
- 
-+	if (!pll->params->defaults_set && pll->params->set_defaults)
-+		pll->params->set_defaults(pll);
-+
- 	_update_pll_mnp(pll, cfg);
- 
- 	if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
-@@ -1517,6 +1530,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
- 	if (!pll->params->calc_rate)
- 		pll->params->calc_rate = _calc_rate;
- 
-+	if (pll->params->set_defaults)
-+		pll->params->set_defaults(pll);
-+
- 	/* Data in .init is copied by clk_register(), so stack variable OK */
- 	pll->hw.init = &init;
- 
-@@ -1636,7 +1652,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 	struct tegra_clk_pll *pll;
- 	struct clk *clk, *parent;
- 	unsigned long parent_rate;
--	int err;
- 	u32 val, val_iddq;
- 
- 	parent = __clk_lookup(parent_name);
-@@ -1657,18 +1672,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 		pll_params->vco_min = pll_params->adjust_vco(pll_params,
- 							     parent_rate);
- 
--	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
--	if (err)
--		return ERR_PTR(err);
-+	/*
-+	 * If the pll has a set_defaults callback, it will take care of
-+	 * configuring dynamic ramping and setting IDDQ in that path.
-+	 */
-+	if (!pll_params->set_defaults) {
-+		int err;
- 
--	val = readl_relaxed(clk_base + pll_params->base_reg);
--	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
-+		err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
-+		if (err)
-+			return ERR_PTR(err);
- 
--	if (val & PLL_BASE_ENABLE)
--		WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
--	else {
--		val_iddq |= BIT(pll_params->iddq_bit_idx);
--		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
-+		val = readl_relaxed(clk_base + pll_params->base_reg);
-+		val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
-+
-+		if (val & PLL_BASE_ENABLE)
-+			WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
-+		else {
-+			val_iddq |= BIT(pll_params->iddq_bit_idx);
-+			writel_relaxed(val_iddq,
-+				       clk_base + pll_params->iddq_reg);
-+		}
- 	}
- 
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index a61d388364b3..38b4c95cfb2f 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -261,6 +261,7 @@ struct tegra_clk_pll_params {
- 	int		stepb_shift;
- 	int		lock_delay;
- 	int		max_p;
-+	bool		defaults_set;
- 	struct pdiv_map *pdiv_tohw;
- 	struct div_nmp	*div_nmp;
- 	struct tegra_clk_pll_freq_table	*freq_table;
-@@ -275,6 +276,7 @@ struct tegra_clk_pll_params {
- 				unsigned long parent_rate);
- 	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
- 			struct tegra_clk_pll_freq_table *cfg);
-+	void	(*set_defaults)(struct tegra_clk_pll *pll);
- };
- 
- #define TEGRA_PLL_USE_LOCK BIT(0)
--- 
-1.7.9.5
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-fixes-4.1-2
+
+Pulled into clk-fixes.
+
+Thanks for for the resend!
+
+Regards,
+Mike
+
+> =
+
+> for you to fetch changes up to 97372e5a99449b4fffa824a382ad6358066a9918:
+> =
+
+>   clk: exynos5420: Restore GATE_BUS_TOP on suspend (2015-05-05 10:51:04 +=
+0200)
+> =
+
+> ----------------------------------------------------------------
+> clk/samsung fixes for 4.1
+> =
+
+>  - missing CONFIG_ARCH_EXYNOS5433 -> CONFIG_ARCH_EXYNOS substitution
+>    to actually enable clk-exynos5433.c compilation,
+>  - fixes of exynos5433 clk tree definitions: register offsets, parent
+>    clocks, PLL coefficients,
+>  - fix for exynos5420 system sleep regression introduced in 3.19.
+> =
+
+> ----------------------------------------------------------------
+> Chanwoo Choi (3):
+>       clk: Use CONFIG_ARCH_EXYNOS instead of CONFIG_ARCH_EXYNOS5433
+>       clk: exynos5433: Fix wrong parent clock of sclk_apollo clock
+>       clk: exynos5433: Fix wrong PMS value of exynos5433_pll_rates
+> =
+
+> Javier Martinez Canillas (1):
+>       clk: exynos5420: Restore GATE_BUS_TOP on suspend
+> =
+
+> Jonghwa Lee (2):
+>       clk: exynos5433: Fix wrong offset of PCLK_MSCL_SECURE_SMMU_JPEG
+>       clk: exynos5433: Fix CLK_PCLK_MONOTONIC_CNT clk register assignment
+> =
+
+>  drivers/clk/samsung/Makefile         |    2 +-
+>  drivers/clk/samsung/clk-exynos5420.c |    1 +
+>  drivers/clk/samsung/clk-exynos5433.c |   12 ++++++------
+>  3 files changed, 8 insertions(+), 7 deletions(-)
+> =
+
+> -- =
+
+> Thanks,
+> Sylwester
