@@ -1,94 +1,70 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 20 May 2015 16:16:44 -0700
+Date: Wed, 6 May 2015 17:01:54 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Paul Burton <paul.burton@imgtec.com>
-Cc: linux-mips@linux-mips.org, Lars-Peter Clausen <lars@metafoo.de>,
-	Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 25/37] clk: ingenic: add driver for Ingenic SoC CGU
- clocks
-Message-ID: <20150520231644.GZ31753@codeaurora.org>
-References: <1429881457-16016-1-git-send-email-paul.burton@imgtec.com>
- <1429881457-16016-26-git-send-email-paul.burton@imgtec.com>
+To: Dong Aisheng <b29396@freescale.com>
+Cc: Dong Aisheng <aisheng.dong@freescale.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mturquette@linaro.org,
+	shawn.guo@linaro.org, linux-arm-kernel@lists.infradead.org,
+	Ranjani.Vaidyanathan@freescale.com, b20596@freescale.com,
+	r64343@freescale.com, b20788@freescale.com
+Subject: Re: [PATCH RFC v1 2/5] clk: add missing lock when call
+ clk_core_enable in clk_set_parent
+Message-ID: <20150507000154.GD21794@codeaurora.org>
+References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
+ <1429107999-24413-3-git-send-email-aisheng.dong@freescale.com>
+ <55427D83.3060900@codeaurora.org>
+ <20150504083549.GC4082@shlinux1.ap.freescale.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1429881457-16016-26-git-send-email-paul.burton@imgtec.com>
+In-Reply-To: <20150504083549.GC4082@shlinux1.ap.freescale.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/24, Paul Burton wrote:
-> +
-> +static unsigned long
-> +ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> +{
-> +	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
-> +	struct ingenic_cgu *cgu = ingenic_clk->cgu;
-> +	const struct ingenic_cgu_clk_info *clk_info;
-> +	const struct ingenic_cgu_pll_info *pll_info;
-> +	unsigned m, n, od_enc, od;
-> +	bool bypass, enable;
-> +	unsigned long flags;
-> +	u32 ctl;
-> +
-> +	clk_info = &cgu->clock_info[ingenic_clk->idx];
-> +	BUG_ON(clk_info->type != CGU_CLK_PLL);
-> +	pll_info = &clk_info->pll;
-> +
-> +	spin_lock_irqsave(&cgu->lock, flags);
-> +	ctl = readl(cgu->base + pll_info->reg);
-> +	spin_unlock_irqrestore(&cgu->lock, flags);
-> +
-> +	m = ((ctl >> pll_info->m_shift) & GENMASK(pll_info->m_bits - 1, 0));
-> +	m += pll_info->m_offset;
-> +	n = ((ctl >> pll_info->n_shift) & GENMASK(pll_info->n_bits - 1, 0));
+On 05/04, Dong Aisheng wrote:
+> On Thu, Apr 30, 2015 at 12:07:47PM -0700, Stephen Boyd wrote:
+> > On 04/15/15 07:26, Dong Aisheng wrote:
+> > > clk_core_enable is executed without &enable_clock in clk_set_parent function.
+> > > Adding it to avoid potential race condition issue.
+> > >
+> > > Fixes: 035a61c314eb ("clk: Make clk API return per-user struct clk instances")
+> > > Cc: Mike Turquette <mturquette@linaro.org>
+> > > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > > Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
+> > > ---
+> > 
+> > Can you please describe the race condition? From what I can tell there
+> > is not a race condition here and we've gone around on this part of the
+> > code before to fix any race conditions.
+> > 
+> 
+> Do you mean we do not need to acquire enable lock when execute clk_core_enable
+> in set_parent function? Can you help explain a bit more why?
+> 
+> The clk doc looks to me says the enable lock should be held across calls to
+> the .enable, .disable and .is_enabled operations.
+> 
+> And before the commit
+> 035a61c314eb ("clk: Make clk API return per-user struct clk instances"),
+> all the clk_enable/disable in set_parent() is executed with lock.
+> 
+> A rough thinking of race condition is assuming Thread A calls
+> clk_set_parent(x, y) while Thread B calls clk_enable(x), clock x is disabled
+> but prepared initially, due to clk_core_enable in set_parent() is not
+> executed with enable clock, the clk_core_enable may be reentrant during
+> the locking time executed by B.
+> Won't this be a race condition?
+> 
 
-Nitpick: Some unnecessary () here.
+Ah I see now. The commit text could say something like this:
 
-> +	n += pll_info->n_offset;
-> +	od_enc = ctl >> pll_info->od_shift;
-> +	od_enc &= GENMASK(pll_info->od_bits - 1, 0);
-> +	bypass = !!(ctl & BIT(pll_info->bypass_bit));
-> +	enable = !!(ctl & BIT(pll_info->enable_bit));
-> +
-> +	if (bypass)
-> +		return parent_rate;
-> +
-> +	if (!enable)
-> +		return 0;
-> +
-> +	for (od = 0; od < pll_info->od_max; od++) {
-> +		if (pll_info->od_encoding[od] == od_enc)
-> +			break;
-> +	}
-> +	BUG_ON(od == pll_info->od_max);
-> +	od++;
-> +
-> +	return div_u64((u64)parent_rate * m, n * od);
-> +
-[...]
-> +
-> +/*
-> + * Setup functions.
-> + */
-> +
-> +static int register_clock(struct ingenic_cgu *cgu, unsigned idx)
+Before commit 035a61c314eb ("clk: Make clk API return per-user
+struct clk instances") we acquired the enable_lock in
+__clk_set_parent_{before,after}() by means of calling
+clk_enable(). After commit 035a61c314eb we use clk_core_enable()
+in place of the clk_enable(), and clk_core_enable() doesn't
+acquire the enable_lock. This opens up a race condition between
+clk_set_parent() and clk_enable().
 
-Please namespace this. It's too generic. igenic_register_clk()?
-
-> +{
-> +	const struct ingenic_cgu_clk_info *clk_info = &cgu->clock_info[idx];
-> +	struct clk_init_data clk_init;
-> +	struct ingenic_clk *ingenic_clk = NULL;
-[...]
-> +
-> +
-> +/**
-> + * ingenic_cgu_register_clocks() - Registers the clocks
-> + * @cgu: pointer to cgu data
-> + *
-> + * Register the clocks described by the CGU with the common clock framework.
-> + *
-> + * Return: 1 on success or -errno if unsuccesful.
-
-It looks like it returns 0 instead of 1 on success? 
+I've replaced the commit text and applied it to clk-fixes.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
