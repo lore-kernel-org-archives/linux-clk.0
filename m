@@ -1,65 +1,40 @@
-Return-Path: <rklein@nvidia.com>
-Message-ID: <554916F8.2060908@nvidia.com>
-Date: Tue, 5 May 2015 15:16:08 -0400
-From: Rhyland Klein <rklein@nvidia.com>
+Return-Path: <mopsfelder@gmail.com>
 MIME-Version: 1.0
-To: Benson Leung <bleung@chromium.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
-	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre
- Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 08/20] clk: tegra: pll: Add logic for handling SDM
- data
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>	<1430757460-9478-9-git-send-email-rklein@nvidia.com> <CANLzEksFVpYOtcG5QHHfQa6bGXJ6nMYrsP4yG=5wszxCHrWqug@mail.gmail.com>
-In-Reply-To: <CANLzEksFVpYOtcG5QHHfQa6bGXJ6nMYrsP4yG=5wszxCHrWqug@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: rklein@nvidia.com
+In-Reply-To: <554AB7E8.1040009@codeaurora.org>
+References: <1430959861-14925-1-git-send-email-mopsfelder@gmail.com>
+ <1430959861-14925-3-git-send-email-mopsfelder@gmail.com> <554AB7E8.1040009@codeaurora.org>
+From: =?UTF-8?Q?Murilo_Opsfelder_Ara=C3=BAjo?= <mopsfelder@gmail.com>
+Date: Wed, 6 May 2015 21:59:34 -0300
+Message-ID: <CA+LKeY7mrQrh6VYSLMX3p-nwryHb3WO9dgz=xD4Y_YKT4T5r7w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drivers: clk: clk.c: Make clk_is_orphan() dependent
+ of CONFIG_OF
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Mike Turquette <mturquette@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 5/4/2015 7:01 PM, Benson Leung wrote:
-> On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
->> @@ -495,6 +505,28 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
->>         return 0;
->>  }
+On Wed, May 6, 2015 at 9:55 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 05/06/15 17:51, Murilo Opsfelder Araujo wrote:
+>> The function clk_is_orphan() is called only by
+>> __of_clk_get_from_provider(), which depends on CONFIG_OF, so it does
+>> make sense the move.
 >>
->> +static void clk_pll_set_sdm_data(struct clk_hw *hw,
->> +                                struct tegra_clk_pll_freq_table *cfg)
->> +{
->> +       struct tegra_clk_pll *pll = to_clk_pll(hw);
->> +       u32 val;
->> +
->> +       if (!pll->params->sdm_din_reg)
->> +               return;
->> +
->> +       if (cfg->sdm_data) {
->> +               val = pll_readl_sdm_din(pll) & (~sdm_din_mask(pll));
->> +               val |= sdin_data_to_din(cfg->sdm_data) & sdm_din_mask(pll);
->> +               pll_writel_sdm_din(val, pll);
->> +       }
->> +
->> +       val = pll_readl_sdm_ctrl(pll);
->> +       if (!cfg->sdm_data != !(val & pll->params->sdm_ctrl_en_mask)) {
-> 
-> You can use sdm_en_mask(pll) here.
-> 
-> I'm not super clear about what you're trying to accomplish here with
-> !cfg->sdm_data != !(val & mask).
-> Are you just checking if the masked value is different from sdm_data,
-> but accounting for the integer widths being different (u16 vs u32)?
+>> This change also gets rid of the following build message when CONFIG_OF
+>> is not set:
+>>
+>> drivers/clk/clk.c:2231:13: warning: =E2=80=98clk_is_orphan=E2=80=99 defi=
+ned but not used [-Wunused-function]
+>>
+>> Signed-off-by: Murilo Opsfelder Araujo <mopsfelder@gmail.com>
+>
+> The patch that introduces this problem is gone now.
+>
 
-So I got clarification from the downstream author to be sure, and this
-is the answer to what this is checking:
+Nice to know it is gone.  I'm using next-20150506 which still contains
+that.  Probably the fix will land a next -next release.
 
-(<Configuration has non zero  SDM_DATA>  AND <sdm control is disabled>)
-OR
-(<Configuration has zero  SDM_DATA>  AND <sdm control is enabled>)
+Thanks, Stephen.
 
-So the check is correct, just a complicated way of expressing it.
-
--rhyland
-
-
--- 
-nvpublic
+--=20
+Murilo
