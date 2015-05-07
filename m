@@ -1,96 +1,67 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>,
- "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <554A13AE.6000904@free-electrons.com>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>,
- "Jean-Francois Moine" <moinejf@free.fr>,
- "Michael Welling" <mwelling@ieee.org>,
- "Russell King" <rmk+linux@arm.linux.org.uk>,
- "Jason Cooper" <jason@lakedaemon.net>, "Andrew Lunn" <andrew@lunn.ch>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <1430773456-15203-1-git-send-email-sebastian.hesselbarth@gmail.com>
- <1430773456-15203-3-git-send-email-sebastian.hesselbarth@gmail.com>
- <554A13AE.6000904@free-electrons.com>
-Message-ID: <20150508190050.16410.52142@quantum>
-Subject: Re: [PATCH v2 2/3] ARM: dove: Add clock-names to CuBox Si5351 clk generator
-Date: Fri, 08 May 2015 12:00:50 -0700
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: Add some more lockdep assertions
+Date: Wed,  6 May 2015 18:26:38 -0700
+Message-Id: <1430961998-28805-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Gregory CLEMENT (2015-05-06 06:14:22)
-> Hi Sebastian,
-> =
+We don't check to make sure the enable_lock is held across
+enable/disable and we don't check if the prepare_lock is held
+across prepare/unprepare. Add some asserts to catch any future
+locking problems.
 
-> On 04/05/2015 23:04, Sebastian Hesselbarth wrote:
-> > Si5351 clock generator on CuBox uses XTAL as clock reference, name the
-> > clock phandle accordingly.
-> =
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
 
-> as soon as the binding will be accepted (in patch 1), I will apply it
-> on mvebu/fixes.
+Based on clk-next
 
-It is on the clk git mirror now. Should be picked up in -next soon.
+ drivers/clk/clk.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Regards,
-Mike
-
-> =
-
-> Thanks,
-> =
-
-> Gregory
-> =
-
-> =
-
-> > =
-
-> > Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> > ---
-> > Cc: Mike Turquette <mturquette@linaro.org>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: Jean-Francois Moine <moinejf@free.fr>
-> > Cc: Michael Welling <mwelling@ieee.org>
-> > Cc: Russell King <rmk+linux@arm.linux.org.uk>
-> > Cc: Jason Cooper <jason@lakedaemon.net>
-> > Cc: Andrew Lunn <andrew@lunn.ch>
-> > Cc: Gregory Clement <gregory.clement@free-electrons.com>
-> > Cc: linux-clk@vger.kernel.org
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-kernel@vger.kernel.org
-> > ---
-> >  arch/arm/boot/dts/dove-cubox.dts | 1 +
-> >  1 file changed, 1 insertion(+)
-> > =
-
-> > diff --git a/arch/arm/boot/dts/dove-cubox.dts b/arch/arm/boot/dts/dove-=
-cubox.dts
-> > index aae7efc09b0b..e6fa251e17b9 100644
-> > --- a/arch/arm/boot/dts/dove-cubox.dts
-> > +++ b/arch/arm/boot/dts/dove-cubox.dts
-> > @@ -87,6 +87,7 @@
-> >  =
-
-> >               /* connect xtal input to 25MHz reference */
-> >               clocks =3D <&ref25>;
-> > +             clock-names =3D "xtal";
-> >  =
-
-> >               /* connect xtal input as source of pll0 and pll1 */
-> >               silabs,pll-source =3D <0 0>, <1 0>;
-> > =
-
-> =
-
-> =
-
-> -- =
-
-> Gregory Clement, Free Electrons
-> Kernel, drivers, real-time and embedded Linux
-> development, consulting, training and support.
-> http://free-electrons.com
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8cea0ec7179b..bbc04eae3b92 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -544,6 +544,8 @@ EXPORT_SYMBOL_GPL(__clk_mux_determine_rate_closest);
+ 
+ static void clk_core_unprepare(struct clk_core *core)
+ {
++	lockdep_assert_held(&prepare_lock);
++
+ 	if (!core)
+ 		return;
+ 
+@@ -590,6 +592,8 @@ static int clk_core_prepare(struct clk_core *core)
+ {
+ 	int ret = 0;
+ 
++	lockdep_assert_held(&prepare_lock);
++
+ 	if (!core)
+ 		return 0;
+ 
+@@ -645,6 +649,8 @@ EXPORT_SYMBOL_GPL(clk_prepare);
+ 
+ static void clk_core_disable(struct clk_core *core)
+ {
++	lockdep_assert_held(&enable_lock);
++
+ 	if (!core)
+ 		return;
+ 
+@@ -693,6 +699,8 @@ static int clk_core_enable(struct clk_core *core)
+ {
+ 	int ret = 0;
+ 
++	lockdep_assert_held(&enable_lock);
++
+ 	if (!core)
+ 		return 0;
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
