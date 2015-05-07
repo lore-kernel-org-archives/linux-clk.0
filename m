@@ -1,69 +1,84 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Mon, 4 May 2015 14:53:31 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Lee Jones <lee.jones@linaro.org>,
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Thu, 7 May 2015 17:16:51 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
 	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] mfd: sun6i-prcm: Add support for PRCM found on
- Allwinner A80 SoC
-Message-ID: <20150504125331.GB3274@lukather>
-References: <1430410206-4410-1-git-send-email-wens@csie.org>
- <1430410206-4410-4-git-send-email-wens@csie.org>
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 19/20] clk: tegra210: add support for Tegra210 clocks
+Message-ID: <20150507151649.GC25866@ulmo.nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+ <1430757460-9478-20-git-send-email-rklein@nvidia.com>
+ <20150506145113.GH22098@ulmo.nvidia.com>
+ <554A4D82.80307@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pvezYHf7grwyp3Bc"
-In-Reply-To: <1430410206-4410-4-git-send-email-wens@csie.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jy6Sn24JjFx/iggw"
+In-Reply-To: <554A4D82.80307@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---pvezYHf7grwyp3Bc
+--jy6Sn24JjFx/iggw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 01, 2015 at 12:10:04AM +0800, Chen-Yu Tsai wrote:
-> This patch adds support for the PRCM on the A80 SoC. There is little
-> to no document for this at the moment. Only register offsets are
-> available. However with some testing, the clock and reset controls
-> seem to be the similar to the ones on the A31.
->=20
-> One thing that needs verifying is whether the apbs divider is the same
-> as the A31 or the A23. The lowest divider is different between those
-> 2 implementations.
+On Wed, May 06, 2015 at 01:21:06PM -0400, Rhyland Klein wrote:
+> On 5/6/2015 10:51 AM, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
+> >=20
+> > On Mon, May 04, 2015 at 12:37:39PM -0400, Rhyland Klein wrote:
+> > [...]
+> >> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-=
+tegra210.c
+> > [...]
+> >> +static struct div_nmp plld_nmp =3D {
+> >> +	.divm_shift =3D 0,
+> >> +	.divm_width =3D 8,
+> >> +	.divn_shift =3D 11,
+> >> +	.divn_width =3D 8,
+> >> +	.divp_shift =3D 20,
+> >> +	.divp_width =3D 3,
+> >> +};
+> >=20
+> > I think we need to add the SDM shift and width fields here:
+> >=20
+> > 	.sdm_shift =3D 0,
+> > 	.sdm_width =3D 16,
+> >=20
+> > Otherwise pll_d can't take advantage of the fractional divider.
+> >=20
+> Actually, sdm_shift/width aren't used. I originally added them to handle
+> SDM data, but eventually I switched to using a reg/mask combo. So this
+> isn't needed.
 
-Is this commit log still true now that we have access to documentation
-the PRCM?
+Right, I hadn't noticed that this had changed from your earlier drafts.
 
-Thanks,
-Maxime
+Thierry
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---pvezYHf7grwyp3Bc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--jy6Sn24JjFx/iggw
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJVR2vLAAoJEBx+YmzsjxAgH0sP/20yeLLVAOoHDJcx9GGx+jtr
-v91lA/bR8NKmFdJ6BNpoEhD3Y0ygMt11YHqgdvVEP9Fn8PyoIgsDfJ4BMuHyJZ+O
-wsCh0RY7HQeBM34txeGahg/FpAHnbNPisaENZi0LvpsdCp1C91J7UAC4RZ3wkBIs
-30R6QAAX0sqBnsCwU34Fcz9GK2a2toyCYshHV3aW7IuTg8bZd8bAJS6uYWRDA8Zd
-w9e7d/5oyT/LEHfqZfgkgFHqPZJNAJwB29vzUxy96tGorkCQTPWCda39mWQwiME9
-Ph1X/UGpYSknwCpyclXtlunSL8FmrwQ8fITgurfLBAZNiWsIcQCO3Pxl4FSlyVbx
-yqVW05oTkIWne3z7TPlu/pF6idV2ulOA0hUp51UlcQ4Be6NhLcIKuFj9Y2N93nEv
-qgxzEF6D2e6EHxOFSNFx5XMUa2mO+D9MFVswpLNvSGO68xGNphVJFTJjzk0uvqFL
-ARlaoHTXX6rrqGSdYas8oPvFU8/cSrQoemGeYZiQRfSAxai0Equ6Zh02rcW/WbeC
-1cPy8ky0NTonlLgOzAn6V09pxlOWtShlq+Yq51eb4fpiGq1cLjts0aurf/Gzntqo
-6QUmt0jsfQC8Po9J8t8ws/12G8/3WpPMd00e4GvkZtS+xBBbn+7IWvmUKKWKXPM4
-dgRHTHYV4iaqNvnWdQ/v
-=G7jT
+iQIcBAABCAAGBQJVS4HhAAoJEN0jrNd/PrOhdA0P/iSgaOu8DgOGSm701AafETM1
+u0RN45BeqIU8HGcF6t7KFh2rU3hW/SaIbL0Ug7VJQz4z9+6eZxufLPt2WUSKkt4u
+d+3SkBCbtqB2EqmYT7PtRnvvITu/VQjm+xN35TgQ1/d3jGZ46euEYuVK6uftNs86
+VfspzsNWuDsoM6QPKMsUhL04btR49kAzTEIMZfWqDuMJG8S8XDzNBGKqKMuYMzK8
+Tjd6QeamQ6zrxEJ3/BEyGtlRe+ePLQU04ttfJHkMrBpdzO4v/uosEc5JV+7pf7yw
+4zlHXWvQiMagrTfFrfcke0O2TYgPDzzuXMvz3/DDRx9PT2nvGA96cAvsyFAQICwg
+Rl0G8X+DA/NODESBeLb9FbW3MxyfPXqZoucvAqGZfucl9tbImSdH5zQHTQXofVU2
+N+00FyKh5us8sQrOgBk4+/gXXJ3WOJYg7Yxn3kSfdIWX2OxBL48337OBoh3ZM7Ut
+/Fa426dU1lEILemQwgAKpLH1Exw6EdQbPxBYdit7mIDzF4aS8fdHXcuII2acEiSZ
+ObllCghriWwLo3xhY3EJ2+6h4GnJSXZ9ZEjRKVBhPcuF7AOF2XymNgtF9WkkE8eo
+VWX/aRMuYw4YJZ2F2NJRrVEzTtucfk2OjzQKDxa44Zz6eNUokrA9UfMXGB5JPEXF
+auPFH6/Mm+Wrhy6uqy0E
+=Bobx
 -----END PGP SIGNATURE-----
 
---pvezYHf7grwyp3Bc--
+--jy6Sn24JjFx/iggw--
