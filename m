@@ -1,68 +1,96 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Wed, 6 May 2015 13:33:55 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
-	Barry Song <baohua@kernel.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-mips@linux-mips.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 0/8] clk: Minor cleanups
-Message-ID: <20150506113354.GA9421@ulmo>
-References: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <554BD33D.7050907@codeaurora.org>
+Date: Thu, 07 May 2015 14:03:57 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="h31gzZEtNLTqOjlF"
-In-Reply-To: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
+To: Kevin Hilman <khilman@kernel.org>
+CC: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>,
+ Mike Turquette <mturquette@linaro.org>,
+ Doug Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
+ lkml <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Alex Elder <elder@linaro.org>,
+ Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Max Filippov <jcmvbkbc@gmail.com>, Sascha Hauer <kernel@pengutronix.de>,
+ Zhangfei Gao <zhangfei.gao@linaro.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Chao Xie <chao.xie@marvell.com>,
+ Jason Cooper <jason@lakedaemon.net>,
+ Stefan Wahren <stefan.wahren@i2se.com>,
+ Andrew Bresticker <abrestic@chromium.org>,
+ Robert Jarzmik <robert.jarzmik@free.fr>,
+ Georgi Djakov <georgi.djakov@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Barry Song <baohua@kernel.org>,
+ Dinh Nguyen <dinguyen@opensource.altera.com>,
+ Viresh Kumar <viresh.linux@gmail.com>,
+ Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
+ =?UTF-8?B?RW1pbGlvIEzDs3Bleg==?= <emilio@elopez.com.ar>,
+ Peter De Sc hrijver <pdeschrijver@nvidia.com>,
+ Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Pawel Moll <pawel.moll@arm.com>,
+ Michal Simek <michal.simek@xilinx.com>, Olof Johansson <olof@lixom.net>,
+ Tyler Baker <tyler.baker@linaro.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
+References: <1429735986-18592-1-git-send-email-heiko@sntech.de>	<1981330.kGUrTurMy5@diego>	<5543E79F.2080400@codeaurora.org>	<22709390.NTAlubMgNB@diego>	<55440EDA.4030905@codeaurora.org> <CAMAWPa_n+59+v+x3fKkmdtW1wMJF7kqtTjLLowmv1xwGWprYJw@mail.gmail.com>
+In-Reply-To: <CAMAWPa_n+59+v+x3fKkmdtW1wMJF7kqtTjLLowmv1xwGWprYJw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On 05/07/15 08:17, Kevin Hilman wrote:
+> On Fri, May 1, 2015 at 4:40 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> On 05/01/15 15:07, Heiko Stübner wrote:
+>>> Am Freitag, 1. Mai 2015, 13:52:47 schrieb Stephen Boyd:
+>>>
+>>>>> Instead I guess we could hook it less deep into clk_get_sys, like in the
+>>>>> following patch?
+>>>> It looks like it will work at least, but still I'd prefer to keep the
+>>>> orphan check contained to clk.c. How about this compile tested only patch?
+>>> I gave this a spin on my rk3288-firefly board. It still boots, the clock tree
+>>> looks the same and it also still defers nicely in the scenario I needed it
+>>> for. The implementation also looks nice - and of course much more compact than
+>>> my check in two places :-) . I don't know if you want to put this as follow-up
+>>> on top or fold it into the original orphan-check, so in any case
+>>>
+>>> Tested-by: Heiko Stuebner <heiko@sntech.de>
+>>> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+>> Thanks. I'm leaning towards tossing your patch 2/2 and replacing it with
+>> my patch and a note that it's based on an earlier patch from you.
+> It appears this has landed in linux-next in the form of 882667c1fcf1
+> clk: prevent orphan clocks from being used.  A bunch of boot failures
+> for sunxi in today's linux-next[1] were bisected down to that patch.
+>
+> I confirmed that reverting that commit on top of next/master gets
+> sunxi booting again.
+>
+>
 
---h31gzZEtNLTqOjlF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for the report. I've removed the two clk orphan patches from
+clk-next. Would it be possible to try with next-20150507 and
+clk_ignore_unused on the command line? Also we can try to see if
+critical clocks aren't being forced on by applying this patch and
+looking for clk_get() failures
 
-On Tue, Apr 28, 2015 at 01:46:15PM +0900, Krzysztof Kozlowski wrote:
-[...]
->   clk: tegra: Fix inconsistent indenting
->   clk: tegra: Fix duplicate const for parent names
+------8<------
 
-I've squashed these into the patches that add the EMC driver.
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 7e1e2bd189b6..d88585b680bb 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -1347,6 +1347,9 @@ static void __init sunxi_init_clocks(const char *clocks[], int nclocks)
+ 
+ 		if (!IS_ERR(clk))
+ 			clk_prepare_enable(clk);
++		else
++			pr_err("Failed to enable critical clock %s\n",
++					clocks[i]);
+ 	}
+ }
+ 
 
-Thanks,
-Thierry
-
---h31gzZEtNLTqOjlF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVSfwfAAoJEN0jrNd/PrOhVSwQAJ/rA3S2D6xMynluMc5UstEk
-UZ72ZR6v0z5S9VzLenuIhtSsuk7oVJbTmDgMvf8XAbbOWtbGHJQn6ZmR3Me6GG+x
-zzIGolMjNHrBRK9MOdni1ryv3/F81BE7QZrGHvnMpeXRbDerQJz3C+PUlcZ1nsu6
-6hGfCl6+QCVT82nX3oj3qEdQScMMbiG37VTTluW63wQY3qaSZARouMLou1/MY+ln
-4GUa09KVJdiAlASQ6llRQVAPVas1WGX2OCmhNeqhk8ERQVJj1orjxl4rOyTVux14
-PvHHdfJrTA1w8WxzrLKjvUCm1aJgc5sNTQqZV9TcA0ktdjMtjkFaWAFS70J9oWrG
-/bk+CbeJtEDWhTOIvclVlbwQ0kyZtFexSZgc1uICHB3PABb2LdZ3HDHrZs3KskCD
-7FrUSakBBB5c9USKnaBDmBxuRW5ORDHQfPlrAB46Ye6SBB2GvgsW/S9JxVDRioqX
-BB83VnMMxSxPyGCqgmvAkAV06wHMy3RwVs+OMi8FqhQwb7f+QTo/ERxwTBbtk/WC
-SRJaopAR/sz6igINaL1Nx21Z/kju4xMjCZraLcII4p3CJvT6YtT9Q78xWJGGribj
-U6bHROgmnJxNnb9PTq/nYL4j4GeOfr6+sbp/If0v4WkS7BBtQAxXHXLgVbmPR1Un
-IO7lmnPDceWy7YJedk4F
-=LSUk
------END PGP SIGNATURE-----
-
---h31gzZEtNLTqOjlF--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
