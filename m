@@ -1,39 +1,29 @@
-Return-Path: <mcoquelin.stm32@gmail.com>
+Return-Path: <mopsfelder@gmail.com>
+Return-Path: <mopsfelder@gmail.com>
+From: Murilo Opsfelder Araujo <mopsfelder@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	Murilo Opsfelder Araujo <mopsfelder@gmail.com>
+Subject: [PATCH 0/2] Small adjustments in drivers/clk/clk.c
+Date: Wed,  6 May 2015 21:50:59 -0300
+Message-Id: <1430959861-14925-1-git-send-email-mopsfelder@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
-References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
-Date: Tue, 26 May 2015 18:41:09 +0200
-Message-ID: <CALszF6BTu_8SCE9hEiLYuvQg8J9eG5xktaVV7_LvnG3r20+wtw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/3] clk: stm32: Add clock driver for STM32F4[23]xxx devices
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kamil Lulko <rev13@wp.pl>,
-	Andreas Farber <afaerber@suse.de>, linux-clk@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, patches@linaro.org,
-	linaro-kernel@lists.linaro.org
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Daniel,
+The first patch just improves code readability by addig comments after
+#endif statements; the second one gets rid of a warning message during
+kernel build.
 
-2015-05-22 22:41 GMT+02:00 Daniel Thompson <daniel.thompson@linaro.org>:
->  2. Allocating ~80 clock components appears to fragment memory enough
->     to prevent busybox (.text is ~300K, non-XIP) from running getty.
->     I have to use "init=/bin/sh" to avoid OOM problems.
->
+Murilo Opsfelder Araujo (2):
+  drivers: clk: clk.c: Add comments indicating the matching #ifdef
+    blocks
+  drivers: clk: clk.c: Make clk_is_orphan() dependent of CONFIG_OF
 
-Yes, I reproduced the same issue while testing your work.
+ drivers/clk/clk.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-Could you try with:
-CONFIG_NOMMU_INITIAL_TRIM_EXCESS=0
-
-It solves (hides) the problem on my side.
-You can eventually setting it once booted to 1 via procfs.
-
-Kind regards,
-Maxime
+--
+2.1.4
