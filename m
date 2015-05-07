@@ -1,102 +1,129 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Tero Kristo <t-kristo@ti.com>, Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-omap@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFT PATCH 8/8] clk: ti: clk-7xx: Prevent possible ERR_PTR dereference
-Date: Wed, 13 May 2015 15:54:47 +0900
-Message-id: <1431500087-2275-9-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
-References: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <t-kristo@ti.com>
+Message-ID: <554B1F5F.1020403@ti.com>
+Date: Thu, 7 May 2015 11:16:31 +0300
+From: Tero Kristo <t-kristo@ti.com>
+MIME-Version: 1.0
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Mike Turquette <mturquette@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 13/19] clk: ti: Silence sparse warnings
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org> <1430897996-11597-14-git-send-email-sboyd@codeaurora.org> <5549CD8B.4070601@ti.com>
+In-Reply-To: <5549CD8B.4070601@ti.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The return value of clk_get_sys() was immediately used in
-clk_set_parent() and clk_set_rate(). The first one may return ERR_PTR
-and the latter only checks if supplied argument is non-NULL.
+On 05/06/2015 11:15 AM, Peter Ujfalusi wrote:
+> On 05/06/2015 10:39 AM, Stephen Boyd wrote:
+>> drivers/clk/ti/clk.c:125:31: warning: incorrect type in return expression (different address spaces)
+>> drivers/clk/ti/clk.c:125:31:    expected void [noderef] <asn:2>*
+>> drivers/clk/ti/clk.c:125:31:    got void *
+>> drivers/clk/ti/clk.c:132:31: warning: incorrect type in return expression (different address spaces)
+>> drivers/clk/ti/clk.c:132:31:    expected void [noderef] <asn:2>*
+>> drivers/clk/ti/clk.c:132:31:    got void *
+>> drivers/clk/ti/dpll.c:180:14: warning: symbol '_get_reg' was not declared. Should it be static?
+>> drivers/clk/ti/fapll.c:624:32: warning: Using plain integer as NULL pointer
+>> drivers/clk/ti/fapll.c:625:31: warning: Using plain integer as NULL pointer
+>> drivers/clk/ti/fapll.c:630:40: warning: Using plain integer as NULL pointer
+>> drivers/clk/ti/clk-dra7-atl.c:158:22: warning: symbol 'atl_clk_ops' was not declared. Should it be static?
+>> drivers/clk/ti/clk-dra7-atl.c:170:39: warning: Using plain integer as NULL pointer
+>>
+>> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+>> Cc: Tero Kristo <t-kristo@ti.com>
+>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+>
+> Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/ti/clk-7xx.c | 50 ++++++++++++++++++++++++++++--------------------
- 1 file changed, 29 insertions(+), 21 deletions(-)
+Yes looks good to me also.
 
-diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-index 5d2217ae4478..ce1a77092788 100644
---- a/drivers/clk/ti/clk-7xx.c
-+++ b/drivers/clk/ti/clk-7xx.c
-@@ -308,44 +308,52 @@ static struct ti_dt_clk dra7xx_clks[] = {
- 	{ .node_name = NULL },
- };
- 
--int __init dra7xx_dt_clk_init(void)
-+static void __init dra7xx_dt_clk_abe_dpll_init(void)
- {
- 	int rc;
- 	struct clk *abe_dpll_mux, *sys_clkin2, *dpll_ck;
- 
--	ti_dt_clocks_register(dra7xx_clks);
--
--	omap2_clk_disable_autoidle_all();
--
- 	abe_dpll_mux = clk_get_sys(NULL, "abe_dpll_sys_clk_mux");
- 	sys_clkin2 = clk_get_sys(NULL, "sys_clkin2");
- 	dpll_ck = clk_get_sys(NULL, "dpll_abe_ck");
- 
-+	if (IS_ERR(abe_dpll_mux) || IS_ERR(sys_clkin2) || IS_ERR(dpll_ck)) {
-+		pr_err("%s: failed to configure ABE DPLL!\n", __func__);
-+		return;
-+	}
-+
- 	rc = clk_set_parent(abe_dpll_mux, sys_clkin2);
- 	if (!rc)
- 		rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ);
- 	if (rc)
- 		pr_err("%s: failed to configure ABE DPLL!\n", __func__);
-+}
- 
--	dpll_ck = clk_get_sys(NULL, "dpll_abe_m2x2_ck");
--	rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ * 2);
--	if (rc)
--		pr_err("%s: failed to configure ABE DPLL m2x2!\n", __func__);
--
--	dpll_ck = clk_get_sys(NULL, "dpll_gmac_ck");
--	rc = clk_set_rate(dpll_ck, DRA7_DPLL_GMAC_DEFFREQ);
--	if (rc)
--		pr_err("%s: failed to configure GMAC DPLL!\n", __func__);
-+static int __init dra7xx_dt_clk_dpll_init(const char *clk_name,
-+				    unsigned long rate)
-+{
-+	int rc = -EINVAL;
-+	struct clk *clk;
- 
--	dpll_ck = clk_get_sys(NULL, "dpll_usb_ck");
--	rc = clk_set_rate(dpll_ck, DRA7_DPLL_USB_DEFFREQ);
--	if (rc)
--		pr_err("%s: failed to configure USB DPLL!\n", __func__);
-+	clk = clk_get_sys(NULL, clk_name);
-+	if (!IS_ERR(clk))
-+		rc = clk_set_rate(clk, rate);
- 
--	dpll_ck = clk_get_sys(NULL, "dpll_usb_m2_ck");
--	rc = clk_set_rate(dpll_ck, DRA7_DPLL_USB_DEFFREQ/2);
- 	if (rc)
--		pr_err("%s: failed to set USB_DPLL M2 OUT\n", __func__);
-+		pr_err("%s: failed to configure %s!\n", __func__, clk_name);
- 
- 	return rc;
- }
-+
-+int __init dra7xx_dt_clk_init(void)
-+{
-+	ti_dt_clocks_register(dra7xx_clks);
-+
-+	omap2_clk_disable_autoidle_all();
-+
-+	dra7xx_dt_clk_abe_dpll_init();
-+	dra7xx_dt_clk_dpll_init("dpll_abe_m2x2_ck", DRA7_DPLL_ABE_DEFFREQ * 2);
-+	dra7xx_dt_clk_dpll_init("dpll_gmac_ck", DRA7_DPLL_GMAC_DEFFREQ);
-+	dra7xx_dt_clk_dpll_init("dpll_usb_ck", DRA7_DPLL_USB_DEFFREQ);
-+	return dra7xx_dt_clk_dpll_init("dpll_usb_m2_ck", DRA7_DPLL_USB_DEFFREQ/2);
-+}
--- 
-1.9.1
+Acked-by: Tero Kristo <t-kristo@ti.com>
+
+>
+>> ---
+>>   drivers/clk/ti/clk-dra7-atl.c | 4 ++--
+>>   drivers/clk/ti/clk.c          | 4 ++--
+>>   drivers/clk/ti/dpll.c         | 2 +-
+>>   drivers/clk/ti/fapll.c        | 6 +++---
+>>   4 files changed, 8 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
+>> index d86bc46b93bd..1fe7429a7536 100644
+>> --- a/drivers/clk/ti/clk-dra7-atl.c
+>> +++ b/drivers/clk/ti/clk-dra7-atl.c
+>> @@ -155,7 +155,7 @@ static int atl_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+>>   	return 0;
+>>   }
+>>
+>> -const struct clk_ops atl_clk_ops = {
+>> +static const struct clk_ops atl_clk_ops = {
+>>   	.enable		= atl_clk_enable,
+>>   	.disable	= atl_clk_disable,
+>>   	.is_enabled	= atl_clk_is_enabled,
+>> @@ -167,7 +167,7 @@ const struct clk_ops atl_clk_ops = {
+>>   static void __init of_dra7_atl_clock_setup(struct device_node *node)
+>>   {
+>>   	struct dra7_atl_desc *clk_hw = NULL;
+>> -	struct clk_init_data init = { 0 };
+>> +	struct clk_init_data init = { NULL };
+>>   	const char **parent_names = NULL;
+>>   	struct clk *clk;
+>>
+>> diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+>> index 0ebe5c51062b..64bb5e8a3b8c 100644
+>> --- a/drivers/clk/ti/clk.c
+>> +++ b/drivers/clk/ti/clk.c
+>> @@ -122,14 +122,14 @@ void __iomem *ti_clk_get_reg_addr(struct device_node *node, int index)
+>>
+>>   	if (i == CLK_MAX_MEMMAPS) {
+>>   		pr_err("clk-provider not found for %s!\n", node->name);
+>> -		return ERR_PTR(-ENOENT);
+>> +		return IOMEM_ERR_PTR(-ENOENT);
+>>   	}
+>>
+>>   	reg->index = i;
+>>
+>>   	if (of_property_read_u32_index(node, "reg", index, &val)) {
+>>   		pr_err("%s must have reg[%d]!\n", node->name, index);
+>> -		return ERR_PTR(-EINVAL);
+>> +		return IOMEM_ERR_PTR(-EINVAL);
+>>   	}
+>>
+>>   	reg->offset = val;
+>> diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+>> index 11478a501c30..2aacf7a3bcae 100644
+>> --- a/drivers/clk/ti/dpll.c
+>> +++ b/drivers/clk/ti/dpll.c
+>> @@ -177,7 +177,7 @@ cleanup:
+>>   }
+>>
+>>   #if defined(CONFIG_ARCH_OMAP3) && defined(CONFIG_ATAGS)
+>> -void __iomem *_get_reg(u8 module, u16 offset)
+>> +static void __iomem *_get_reg(u8 module, u16 offset)
+>>   {
+>>   	u32 reg;
+>>   	struct clk_omap_reg *reg_setup;
+>> diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
+>> index ffcd8e09e85b..730aa62454a2 100644
+>> --- a/drivers/clk/ti/fapll.c
+>> +++ b/drivers/clk/ti/fapll.c
+>> @@ -621,13 +621,13 @@ static void __init ti_fapll_setup(struct device_node *node)
+>>
+>>   		/* Check for hardwired audio_pll_clk1 */
+>>   		if (is_audio_pll_clk1(freq)) {
+>> -			freq = 0;
+>> -			div = 0;
+>> +			freq = NULL;
+>> +			div = NULL;
+>>   		} else {
+>>   			/* Does the synthesizer have a FREQ register? */
+>>   			v = readl_relaxed(freq);
+>>   			if (!v)
+>> -				freq = 0;
+>> +				freq = NULL;
+>>   		}
+>>   		synth_clk = ti_fapll_synth_setup(fd, freq, div, output_instance,
+>>   						 output_name, node->name,
+>>
+>
+>
