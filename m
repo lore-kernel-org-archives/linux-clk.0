@@ -1,56 +1,49 @@
-Return-Path: <rklein@nvidia.com>
-Message-ID: <554924FF.5040608@nvidia.com>
-Date: Tue, 5 May 2015 16:15:59 -0400
-From: Rhyland Klein <rklein@nvidia.com>
+Return-Path: <horms@verge.net.au>
+Date: Thu, 7 May 2015 13:36:07 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@linaro.org>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Takashi Yoshii <takasi-y@ops.dti.ne.jp>,
+	Magnus Damm <damm@opensource.se>
+Subject: Re: [PATCH 09/19] clk: emev2: Silence sparse warnings
+Message-ID: <20150507043607.GI28846@verge.net.au>
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+ <1430897996-11597-10-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-To: Benson Leung <bleung@chromium.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
-	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre
- Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Bill Huang <bilhuang@nvidia.com>
-Subject: Re: [PATCH v4 09/20] clk: tegra: pll: Add logic for SS
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>	<1430757460-9478-10-git-send-email-rklein@nvidia.com> <CANLzEkvqniogx9AUzK-Vx0TYg-=qQB_JwPEU+DbHDcNRx3c4xA@mail.gmail.com>
-In-Reply-To: <CANLzEkvqniogx9AUzK-Vx0TYg-=qQB_JwPEU+DbHDcNRx3c4xA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1430897996-11597-10-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 5/4/2015 7:11 PM, Benson Leung wrote:
-> On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
->> From: Bill Huang <bilhuang@nvidia.com>
->>
->> Add some logic for Spread Spectrum control. It is used in conjuncture
->> with SDM fractional dividers. SSC has to be disabled when we configure
->> the divider settings.
->>
->> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
->> ---
->>  drivers/clk/tegra/clk-pll.c |   25 ++++++++++++++++++++++++-
->>  drivers/clk/tegra/clk.h     |    2 ++
->>  2 files changed, 26 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
->> index c64b75185d6b..2a559408cee1 100644
->> --- a/drivers/clk/tegra/clk-pll.c
->> +++ b/drivers/clk/tegra/clk-pll.c
->> @@ -621,6 +621,26 @@ static void _update_pll_cpcon(struct tegra_clk_pll *pll,
->>         pll_writel_misc(val, pll);
->>  }
->>
->> +static void pll_clk_start_ss(struct tegra_clk_pll *pll)
->> +{
->> +       if (pll->params->defaults_set && pll->params->ssc_ctrl_en_mask) {
+On Wed, May 06, 2015 at 12:39:46AM -0700, Stephen Boyd wrote:
+> drivers/clk/shmobile/clk-emev2.c:37:14: warning: symbol 'smu_base' was not declared. Should it be static?
 > 
-> defaults_set looks like it's introduced later (patch 16/20). Can you
-> remove references to that, or reorder the patches if that makes more
-> sense?
+> Cc: Takashi Yoshii <takasi-y@ops.dti.ne.jp>
+> Cc: Magnus Damm <damm@opensource.se>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+
+Stephen, I'm assuming that you or Mike will merge this.
+
+> ---
+>  drivers/clk/shmobile/clk-emev2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-
-I'll reorder this after set_defaults is added.
-
--rhyland
-
--- 
-nvpublic
+> diff --git a/drivers/clk/shmobile/clk-emev2.c b/drivers/clk/shmobile/clk-emev2.c
+> index 6c7c929c7765..5b60beb7d0eb 100644
+> --- a/drivers/clk/shmobile/clk-emev2.c
+> +++ b/drivers/clk/shmobile/clk-emev2.c
+> @@ -34,7 +34,7 @@
+>  static DEFINE_SPINLOCK(lock);
+>  
+>  /* not pretty, but hey */
+> -void __iomem *smu_base;
+> +static void __iomem *smu_base;
+>  
+>  static void __init emev2_smu_write(unsigned long value, int offs)
+>  {
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
