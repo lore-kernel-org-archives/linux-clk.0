@@ -1,74 +1,41 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <5568423A.4080200@linaro.org>
-References: <1432839849-1432-1-git-send-email-geert+renesas@glider.be>
-	<5568423A.4080200@linaro.org>
-Date: Fri, 29 May 2015 12:53:04 +0200
-Message-ID: <CAMuHMdU9iboF9oWWAQSO67JLdQ67mFo6edv_O4uA74Pn_PUijA@mail.gmail.com>
-Subject: Re: [PATCH] PM / clock_ops: Print acquired clock name instead of con_id
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Linux PM list <linux-pm@vger.kernel.org>,
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <mopsfelder@gmail.com>
+Return-Path: <mopsfelder@gmail.com>
+From: Murilo Opsfelder Araujo <mopsfelder@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	Murilo Opsfelder Araujo <mopsfelder@gmail.com>
+Subject: [PATCH 1/2] drivers: clk: clk.c: Add comments indicating the matching #ifdef blocks
+Date: Wed,  6 May 2015 21:51:00 -0300
+Message-Id: <1430959861-14925-2-git-send-email-mopsfelder@gmail.com>
+In-Reply-To: <1430959861-14925-1-git-send-email-mopsfelder@gmail.com>
+References: <1430959861-14925-1-git-send-email-mopsfelder@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Grygorii,
+Signed-off-by: Murilo Opsfelder Araujo <mopsfelder@gmail.com>
+---
+ drivers/clk/clk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Fri, May 29, 2015 at 12:40 PM, Grygorii.Strashko@linaro.org
-<grygorii.strashko@linaro.org> wrote:
-> On 05/28/2015 10:04 PM, Geert Uytterhoeven wrote:
->> Currently the con_id of the acquired clock is printed for debugging
->> purposes.  But in several cases, the con_id is NULL, which doesn't
->> provide much debugging information when printed.  These cases are:
->>    - When explicitly passing a NULL con_id (which means the first clock
->>      tied to the device, if available),
->>    - When not using pm_clk_add(), but pm_clk_add_clk() (which takes a
->>      "struct clk *" directly).
->>
->> Hence print the actual clock name instead of the con_id.
->>
->> As the clock name is not available with legacy clock frameworks, and a
->> (non-NULL) con_id is more useful than a hex address, keep printing the
->> con_id if the Common Clock Framework is not enabled.
->
-> overall:
-> Reviewed-by: Grygorii Strashko <grygorii.strashko@linaro.org>
->
-> But, It seems case !CONFIG_COMMON_CLK is handled by vsprintf, may we can assume
-
-Yes it is, it will print the hex pointer value.
-
-> that printk will handle invalid input parameters values correctly:
->
-> like
->  dev_dbg(dev, "Clock %pC con_id:%s managed by runtime PM.\n", ce->clk, ce->con_id);
-
-Thanks, I didn't think about printing both, as I was too focused on printing
-a single perfect value ;-)
-
-BTW, what I wanted to do was something like
-
-        dev_dbg(dev, "Clock %s managed by runtime PM.\n",
-                ce->con_id ? ce->con_id : __clk_get_name(ce->clk));
-
-but __clk_get_name() doesn't exist if !CONFIG_COMMON_CLK.
-
-Having the con_id too, is useful if it's non-NULL, so I'll follow your
-suggestion.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 087a092..a961eb6 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2226,7 +2226,7 @@ static inline void clk_debug_reparent(struct clk_core *core,
+ static inline void clk_debug_unregister(struct clk_core *core)
+ {
+ }
+-#endif
++#endif /* CONFIG_DEBUG_FS */
+ 
+ static bool clk_is_orphan(const struct clk *clk)
+ {
+@@ -3144,4 +3144,4 @@ void __init of_clk_init(const struct of_device_id *matches)
+ 			force = true;
+ 	}
+ }
+-#endif
++#endif /* CONFIG_OF */
+-- 
+2.1.4
