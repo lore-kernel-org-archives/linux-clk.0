@@ -1,74 +1,158 @@
-Return-Path: <wens@csie.org>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Thu, 7 May 2015 17:15:46 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 01/20] clk: tegra: Modify tegra_audio_clk_init to
+ accept more plls
+Message-ID: <20150507151545.GB25866@ulmo.nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+ <1430757460-9478-2-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20150504130546.GC3274@lukather>
-References: <1430410206-4410-1-git-send-email-wens@csie.org>
- <1430410206-4410-5-git-send-email-wens@csie.org> <20150504130546.GC3274@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 4 May 2015 23:25:18 +0800
-Message-ID: <CAGb2v676gpGKm+9vHLnfvhJ=tCyRAkE2G7Pi87oNsWmJJ5+ROg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] ARM: dts: sun9i: Add A80 PRCM clocks and reset
- control nodes
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee.jones@linaro.org>,
-	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="LyciRD1jyfeSSjG0"
+In-Reply-To: <1430757460-9478-2-git-send-email-rklein@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 4, 2015 at 9:05 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Fri, May 01, 2015 at 12:10:05AM +0800, Chen-Yu Tsai wrote:
->> This adds the PRCM clocks and reset controls to the A80 dtsi.
->>
->> The list of apbs clock gates is incomplete. Tests show that bits 0~20
->> are mutable. We will need documents from Allwinner to complete the
->> support.
->>
->> Also update clock and reset phandles for r_uart.
->>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> ---
->>  arch/arm/boot/dts/sun9i-a80.dtsi | 64 +++++++++++++++++++++++++++++++++++++++-
->>  1 file changed, 63 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
->> index d3dece2eea72..f0869ff8006f 100644
->> --- a/arch/arm/boot/dts/sun9i-a80.dtsi
->> +++ b/arch/arm/boot/dts/sun9i-a80.dtsi
->> @@ -169,6 +169,14 @@
->>                                            "usb_phy2", "usb_hsic_12M";
->>               };
->>
->> +             pll3: clk@06000008 {
->> +                     /* placeholder until implemented */
->> +                     #clock-cells = <0>;
->> +                     compatible = "fixed-clock";
->> +                     clock-rate = <0>;
->> +                     clock-output-names = "pll3";
->> +             };
->> +
->>               pll4: clk@0600000c {
->>                       #clock-cells = <0>;
->>                       compatible = "allwinner,sun9i-a80-pll4-clk";
->> @@ -751,13 +759,67 @@
->>                       interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
->>               };
->>
->> +             prcm@08001400 {
->> +                     compatible = "allwinner,sun9i-a80-prcm";
->> +                     reg = <0x08001400 0x200>;
->> +
->> +                     cpus_clk: cpus_clk {
->
-> I wonder whether it would not be more readable to have this as
-> clk@<prcm_offset>, just like all the other clocks?
 
-I agree it is more readable, though it is purely aesthetics. What offset
-did you have in mind? Offset from PRCM base (0x08001400)? Or the complete
-address?
+--LyciRD1jyfeSSjG0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Since I'm sending a new version anyway, I can make this change.
+On Mon, May 04, 2015 at 12:37:21PM -0400, Rhyland Klein wrote:
+[...]
+> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-teg=
+ra114.c
+> index 8237d16b4075..0d67efb3dd6a 100644
+> --- a/drivers/clk/tegra/clk-tegra114.c
+> +++ b/drivers/clk/tegra/clk-tegra114.c
+> @@ -935,6 +935,10 @@ static u32 mux_pllm_pllc2_c_c3_pllp_plla_idx[] =3D {
+>  	[0] =3D 0, [1] =3D 1, [2] =3D 2, [3] =3D 3, [4] =3D 4, [5] =3D 6,
+>  };
+> =20
+> +static struct tegra_audio_clk_info tegra114_audio_plls[] =3D {
+> +	{ "pll_a", &pll_a_params, tegra_clk_pll_a, "pll_p_out1" },
+> +};
+> +
+>  static struct clk **clks;
+> =20
+>  static unsigned long osc_freq;
+> @@ -1483,7 +1487,8 @@ static void __init tegra114_clock_init(struct devic=
+e_node *np)
+>  	tegra114_fixed_clk_init(clk_base);
+>  	tegra114_pll_init(clk_base, pmc_base);
+>  	tegra114_periph_clk_init(clk_base, pmc_base);
+> -	tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks, &pll_a_params);
+> +	tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks,
+> +			     &tegra114_audio_plls, 1);
 
-ChenYu
+This throws a build warning, it should be tegra114_audio_plls (without
+the ampersand). Also I think you should use ARRAY_SIZE() instead of
+hard-coding the number of entries here.
+
+>  	tegra_pmc_clk_init(pmc_base, tegra114_clks);
+>  	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks,
+>  					&pll_x_params);
+> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-teg=
+ra124.c
+> index 11f857cd5f6a..169e236f3627 100644
+> --- a/drivers/clk/tegra/clk-tegra124.c
+> +++ b/drivers/clk/tegra/clk-tegra124.c
+> @@ -1413,6 +1413,10 @@ static struct tegra_clk_init_table tegra132_init_t=
+able[] __initdata =3D {
+>  	{TEGRA124_CLK_CLK_MAX, TEGRA124_CLK_CLK_MAX, 0, 0},
+>  };
+> =20
+> +static struct tegra_audio_clk_info tegra124_audio_plls[] =3D {
+> +	{ "pll_a", &pll_a_params, tegra_clk_pll_a, "pll_p_out1" },
+> +};
+> +
+>  /**
+>   * tegra124_clock_apply_init_table - initialize clocks on Tegra124 SoCs
+>   *
+> @@ -1489,7 +1493,8 @@ static void __init tegra124_132_clock_init_pre(stru=
+ct device_node *np)
+>  	tegra_fixed_clk_init(tegra124_clks);
+>  	tegra124_pll_init(clk_base, pmc_base);
+>  	tegra124_periph_clk_init(clk_base, pmc_base);
+> -	tegra_audio_clk_init(clk_base, pmc_base, tegra124_clks, &pll_a_params);
+> +	tegra_audio_clk_init(clk_base, pmc_base, tegra124_clks,
+> +			     tegra124_audio_plls, 1);
+
+ARRAY_SIZE() here as well. The ampersand isn't there in this case...
+
+>  	tegra_pmc_clk_init(pmc_base, tegra124_clks);
+> =20
+>  	/* For Tegra124 & Tegra132, PLLD is the only source for DSIA & DSIB */
+> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegr=
+a30.c
+> index 4b26509fc218..3198c7b7946c 100644
+> --- a/drivers/clk/tegra/clk-tegra30.c
+> +++ b/drivers/clk/tegra/clk-tegra30.c
+> @@ -1406,6 +1406,10 @@ static const struct of_device_id pmc_match[] __ini=
+tconst =3D {
+>  	{},
+>  };
+> =20
+> +static struct tegra_audio_clk_info tegra30_audio_plls[] =3D {
+> +	{ "pll_a", &pll_a_params, tegra_clk_pll_a, "pll_p_out1" },
+> +};
+> +
+>  static void __init tegra30_clock_init(struct device_node *np)
+>  {
+>  	struct device_node *node;
+> @@ -1443,7 +1447,8 @@ static void __init tegra30_clock_init(struct device=
+_node *np)
+>  	tegra30_pll_init();
+>  	tegra30_super_clk_init();
+>  	tegra30_periph_clk_init();
+> -	tegra_audio_clk_init(clk_base, pmc_base, tegra30_clks, &pll_a_params);
+> +	tegra_audio_clk_init(clk_base, pmc_base, tegra30_clks,
+> +			     &tegra30_audio_plls, 1);
+
+Same comments as for Tegra114.
+
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+[...]
+> @@ -607,7 +622,8 @@ void tegra_register_devclks(struct tegra_devclk *dev_=
+clks, int num);
+> =20
+>  void tegra_audio_clk_init(void __iomem *clk_base,
+>  			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
+> -			struct tegra_clk_pll_params *pll_params);
+> +			struct tegra_audio_clk_info *audio_info,
+> +			int num_plls);
+
+Oh, and make num_plls unsigned int, please.
+
+Thierry
+
+--LyciRD1jyfeSSjG0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVS4GhAAoJEN0jrNd/PrOhvjAP/iNyVKP8zwZPByc/eaZAQVLl
+Qjx/yOexI6rwQ2elfDhaWvLPcrleuUHhgfAZWjxLJai8ife2PXJcdCWeOf8A74MZ
+tI7SY9kgeFwygs5FukGAiwXvKkItkb3QdPPWw/zPpBxSy0lcFFgnengo7tjsMGTX
+U392JYE19cHKUmBz4OJ2CmR7nHnD18MriAmvuOL2N8q5vUJsd1H1gsF4eVTm8liX
+Udbr2A1BwWJFXiTAi0C9WLspH8ribtocVr2jSu5FKYjEJb1OTuK9nqoe6Hb7I4xr
+d8YVhaO9RzvGS3hwfu4+AzC239Agp07Ff2ddXf/Mwl1xNL962+tn2+9mGz7sdumt
+kLUZYbMFr8ntccY6/r6cAImHaDaUpdxQnZqBUVdnVVg41hduMNafym+PI6N7ThPK
+gVvClsIJ/AAcr7/o0dPt1VGw5EE8uEYMtoMmHupgdQT2fATwLoAe+MorgYlfirhx
+ScrzQwJ9ZPrch/3h8JJpl3MQTlWqR8m/pdxlE07xJEEd92mBzIsIe5MPXsMIGegB
+5n95WhTHqDaDcc9rp154cVBZCDyb8IbypyYMR5WdhBq2XHn/kt0zjnYDlnVCAY6U
+feTFrNRmwFtutrAUk/TiqDY3PX0J3TxTWxg8MnazvotJnBOa5NG+RJWvjgwbDyFt
+ZCiQUcE35bPfBePTOu8v
+=9Us1
+-----END PGP SIGNATURE-----
+
+--LyciRD1jyfeSSjG0--
