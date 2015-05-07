@@ -1,98 +1,205 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 4/8] clk: sunxi: codec clock support
-Date: Sat,  2 May 2015 13:24:35 +0200
-Message-Id: <1430565879-28113-5-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <jilin@nvidia.com>
+Message-ID: <554B40D7.3040207@nvidia.com>
+Date: Thu, 7 May 2015 18:39:19 +0800
+From: Jim Lin <jilin@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+To: Rhyland Klein <rklein@nvidia.com>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
+	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, "Alexandre
+ Courbot" <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 19/20] clk: tegra210: add support for Tegra210 clocks
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com> <1430757460-9478-20-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1430757460-9478-20-git-send-email-rklein@nvidia.com>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Return-Path: jilin@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Emilio López <emilio@elopez.com.ar>
+On 05/05/2015 12:37 AM, Rhyland Klein wrote:
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> new file mode 100644
+> index 000000000000..07382a473e22
+> --- /dev/null
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -0,0 +1,2761 @@
+> +/*
+> + * Copyright (c) 2012-2014 NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <linux/io.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/delay.h>
+> +#include <linux/export.h>
+> +#include <linux/clk/tegra.h>
+> +#include <dt-bindings/clock/tegra210-car.h>
+> +
+> +#include "clk.h"
+> +#include "clk-id.h"
+> +
+> +/*
+> + * TEGRA210_CAR_BANK_COUNT: the number of peripheral clock register
+> + * banks present in the Tegra210 CAR IP block.  The banks are
+> + * identified by single letters, e.g.: L, H, U, V, W, X, Y.  See
+> + * periph_regs[] in drivers/clk/tegra/clk.c
+> + */
+> +#define TEGRA210_CAR_BANK_COUNT			7
+> +
+> +#define CLK_SOURCE_CSITE 0x1d4
+> +#define CLK_SOURCE_EMC 0x19c
+> +
+> +#define PLLC_BASE 0x80
+> +#define PLLC_OUT 0x84
+> +#define PLLC_MISC0 0x88
+> +#define PLLC_MISC1 0x8c
+> +#define PLLC_MISC2 0x5d0
+> +#define PLLC_MISC3 0x5d4
+> +
+> +#define PLLC2_BASE 0x4e8
+> +#define PLLC2_MISC0 0x4ec
+> +#define PLLC2_MISC1 0x4f0
+> +#define PLLC2_MISC2 0x4f4
+> +#define PLLC2_MISC3 0x4f8
+> +
+> +#define PLLC3_BASE 0x4fc
+> +#define PLLC3_MISC0 0x500
+> +#define PLLC3_MISC1 0x504
+> +#define PLLC3_MISC2 0x508
+> +#define PLLC3_MISC3 0x50c
+> +
+> +#define PLLM_BASE 0x90
+> +#define PLLM_MISC0 0x9c
+> +#define PLLM_MISC1 0x98
+> +#define PLLP_BASE 0xa0
+> +#define PLLP_MISC0 0xac
+> +#define PLLP_MISC1 0x680
+> +#define PLLA_BASE 0xb0
+> +#define PLLA_MISC0 0xbc
+> +#define PLLA_MISC1 0xb8
+> +#define PLLA_MISC2 0x5d8
+> +#define PLLD_BASE 0xd0
+> +#define PLLD_MISC0 0xdc
+> +#define PLLD_MISC1 0xd8
+> +#define PLLU_BASE 0xc0
+> +#define PLLU_OUTA 0xc4
+> +#define PLLU_MISC0 0xcc
+> +#define PLLU_MISC1 0xc8
+> +#define PLLX_BASE 0xe0
+> +#define PLLX_MISC0 0xe4
+> +#define PLLX_MISC1 0x510
+> +#define PLLX_MISC2 0x514
+> +#define PLLX_MISC3 0x518
+> +#define PLLX_MISC4 0x5f0
+> +#define PLLX_MISC5 0x5f4
+> +#define PLLE_BASE 0xe8
+> +#define PLLE_MISC0 0xec
+> +#define PLLD2_BASE 0x4b8
+> +#define PLLD2_MISC0 0x4bc
+> +#define PLLD2_MISC1 0x570
+> +#define PLLD2_MISC2 0x574
+> +#define PLLD2_MISC3 0x578
+> +#define PLLE_AUX 0x48c
+> +#define PLLRE_BASE 0x4c4
+> +#define PLLRE_MISC0 0x4c8
+> +#define PLLDP_BASE 0x590
+> +#define PLLDP_MISC 0x594
+> +
+> +#define PLLC4_BASE 0x5a4
+> +#define PLLC4_MISC0 0x5a8
+> +#define PLLC4_OUT 0x5e4
+> +#define PLLMB_BASE 0x5e8
+> +#define PLLMB_MISC0 0x5ec
+> +#define PLLA1_BASE 0x6a4
+> +#define PLLA1_MISC0 0x6a8
+> +#define PLLA1_MISC1 0x6ac
+> +#define PLLA1_MISC2 0x6b0
+> +#define PLLA1_MISC3 0x6b4
+> +
+> +#define PLLU_IDDQ_BIT 31
+> +#define PLLCX_IDDQ_BIT 27
+> +#define PLLRE_IDDQ_BIT 24
+> +#define PLLA_IDDQ_BIT 25
+> +#define PLLD_IDDQ_BIT 20
+> +#define PLLSS_IDDQ_BIT 18
+> +#define PLLM_IDDQ_BIT 5
+> +#define PLLMB_IDDQ_BIT 17
+> +#define PLLXP_IDDQ_BIT 3
+> +
+> +#define PLLCX_RESET_BIT 30
+> +
+> +#define PLL_BASE_LOCK BIT(27)
+> +#define PLLCX_BASE_LOCK BIT(26)
+> +#define PLLE_MISC_LOCK BIT(11)
+> +#define PLLRE_MISC_LOCK BIT(27)
+> +
+> +#define PLL_MISC_LOCK_ENABLE 18
+> +#define PLLC_MISC_LOCK_ENABLE 24
+> +#define PLLDU_MISC_LOCK_ENABLE 22
+> +#define PLLU_MISC_LOCK_ENABLE 29
+> +#define PLLE_MISC_LOCK_ENABLE 9
+> +#define PLLRE_MISC_LOCK_ENABLE 30
+> +#define PLLSS_MISC_LOCK_ENABLE 30
+> +#define PLLP_MISC_LOCK_ENABLE 18
+> +#define PLLM_MISC_LOCK_ENABLE 4
+> +#define PLLMB_MISC_LOCK_ENABLE 16
+> +#define PLLA_MISC_LOCK_ENABLE 28
+> +#define PLLU_MISC_LOCK_ENABLE 29
+> +#define PLLD_MISC_LOCK_ENABLE 18
+> +
+> +#define PLLA_SDM_DIN_MASK 0xffff
+> +#define PLLA_SDM_EN_MASK BIT(26)
+> +
+> +#define PLLD_SDM_EN_MASK BIT(16)
+> +
+> +#define PLLD2_SDM_EN_MASK BIT(31)
+> +#define PLLD2_SSC_EN_MASK BIT(30)
+> +
+> +#define PLLDP_SS_CFG	0x598
+> +#define PLLDP_SDM_EN_MASK BIT(31)
+> +#define PLLDP_SSC_EN_MASK BIT(30)
+> +#define PLLDP_SS_CTRL1	0x59c
+> +#define PLLDP_SS_CTRL2	0x5a0
+> +
+> +#define PMC_PLLM_WB0_OVERRIDE 0x1dc
+> +#define PMC_PLLM_WB0_OVERRIDE_2 0x2b0
+> +
+> +#define UTMIP_PLL_CFG2 0x488
+> +#define UTMIP_PLL_CFG2_STABLE_COUNT(x) (((x) & 0xffff) << 6)
+This line should be corrected as
 
-The codec clock on sun4i, sun5i and sun7i is a simple gate with PLL2 as
-parent. Add a driver for such a clock.
++#define UTMIP_PLL_CFG2_STABLE_COUNT(x) (((x) & 0xfff) << 6)
 
-Signed-off-by: Emilio López <emilio@elopez.com.ar>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi/Makefile        |  1 +
- drivers/clk/sunxi/clk-a10-codec.c | 45 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
- create mode 100644 drivers/clk/sunxi/clk-a10-codec.c
+STABLE_COUNT has 12 bits.
 
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index eb36c38d4120..6fa845e13067 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -3,6 +3,7 @@
- #
- 
- obj-y += clk-sunxi.o clk-factors.o
-+obj-y += clk-a10-codec.o
- obj-y += clk-a10-hosc.o
- obj-y += clk-a10-pll2.o
- obj-y += clk-a20-gmac.o
-diff --git a/drivers/clk/sunxi/clk-a10-codec.c b/drivers/clk/sunxi/clk-a10-codec.c
-new file mode 100644
-index 000000000000..aaeccf8cde39
---- /dev/null
-+++ b/drivers/clk/sunxi/clk-a10-codec.c
-@@ -0,0 +1,45 @@
-+/*
-+ * Copyright 2013 Emilio López
-+ *
-+ * Emilio López <emilio@elopez.com.ar>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+
-+#define SUN4I_CODEC_GATE	31
-+
-+static void __init sun4i_codec_clk_setup(struct device_node *node)
-+{
-+	struct clk *clk;
-+	const char *clk_name = node->name, *parent_name;
-+	void __iomem *reg;
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg))
-+		return;
-+
-+	of_property_read_string(node, "clock-output-names", &clk_name);
-+	parent_name = of_clk_get_parent_name(node, 0);
-+
-+	clk = clk_register_gate(NULL, clk_name, parent_name,
-+				CLK_SET_RATE_PARENT, reg,
-+				SUN4I_CODEC_GATE, 0, NULL);
-+
-+	if (!IS_ERR(clk))
-+		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+}
-+CLK_OF_DECLARE(sun4i_codec, "allwinner,sun4i-a10-codec-clk",
-+	       sun4i_codec_clk_setup);
--- 
-2.3.6
+> +#define UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(x) (((x) & 0x3f) << 18)
+> +#define UTMIP_PLL_CFG2_FORCE_PD_SAMP_A_POWERDOWN BIT(0)
+> +#define UTMIP_PLL_CFG2_FORCE_PD_SAMP_B_POWERDOWN BIT(2)
+> +#define UTMIP_PLL_CFG2_FORCE_PD_SAMP_C_POWERDOWN BIT(4)
+> +
+> +#define UTMIP_PLL_CFG1 0x484
+> +#define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
+This line should be corrected as
+
++#define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
+
+ENABLE_DLY_COUNT starts from bit 27.
+
+
+
+--nvpublic
