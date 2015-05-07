@@ -1,61 +1,86 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Thu, 7 May 2015 08:40:16 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	rtc-linux@googlegroups.com, devicetree@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	Sangbeom Kim <sbkim73@samsung.com>,
+	Mike Turquette <mturquette@linaro.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v4 03/20] clk: tegra: pll: add tegra_pll_wait_for_lock to clk header
-Date: Mon, 4 May 2015 12:37:23 -0400
-Message-ID: <1430757460-9478-4-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: Extend Samsung MFD drivers entry and add
+ myself
+Message-ID: <20150507074016.GD12484@x1>
+References: <1430889576-7779-1-git-send-email-k.kozlowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1430889576-7779-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Create a wrapper interface to make use of the existing
-clk_pll_wait_for_lock. This will be useful for implementations
-of callbacks in Tegra SoC specific clock drivers.
+On Wed, 06 May 2015, Krzysztof Kozlowski wrote:
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c |    5 +++++
- drivers/clk/tegra/clk.h     |    1 +
- 2 files changed, 6 insertions(+)
+> Extend the entry for Samsung MFD drivers for PMIC devices (Power
+> Management Integrated Circuit) with bindings documentation, clock
+> (clk-s2mps11.c) and RTC drivers (rtc-s5m.c).
+> 
+> These PMIC devices are used on many Exynos-based boards like Arndale
+> Octa (S2MPS11), Gear 2 (S2MPS14).
+> 
+> Add myself as a supporter for reviewing them.
+> I am not the author of these drivers. However I have recently
+> contributed to most of them and I have access to datasheets and hardware.
+> 
+> Cc: Sangbeom Kim <sbkim73@samsung.com>
+> CC: Mike Turquette <mturquette@linaro.org>
+> CC: Stephen Boyd <sboyd@codeaurora.org>
+> CC: Alessandro Zummo <a.zummo@towertech.it>
+> CC: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> CC: Lee Jones <lee.jones@linaro.org>
+> CC: Liam Girdwood <lgirdwood@gmail.com>
+> CC: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  MAINTAINERS | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 05c6d08a6695..b9a739ce4b98 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -269,6 +269,11 @@ static int clk_pll_wait_for_lock(struct tegra_clk_pll *pll)
- 	return -1;
- }
- 
-+int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll)
-+{
-+	return clk_pll_wait_for_lock(pll);
-+}
-+
- static int clk_pll_is_enabled(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index dfea6f367977..5759b8bfb80e 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -647,5 +647,6 @@ void tegra114_clock_deassert_dfll_dvco_reset(void);
- 
- typedef void (*tegra_clk_apply_init_table_func)(void);
- extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
-+int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
- 
- #endif /* TEGRA_CLK_H */
+I can't see anyone having an issue with this.
+
+Applied, thanks.
+
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e278814388f7..fc01dc9f96af 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8533,14 +8533,20 @@ L:	linux-fbdev@vger.kernel.org
+>  S:	Maintained
+>  F:	drivers/video/fbdev/s3c-fb.c
+>  
+> -SAMSUNG MULTIFUNCTION DEVICE DRIVERS
+> +SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS
+>  M:	Sangbeom Kim <sbkim73@samsung.com>
+> +M:	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>  L:	linux-kernel@vger.kernel.org
+> +L:	linux-samsung-soc@vger.kernel.org
+>  S:	Supported
+>  F:	drivers/mfd/sec*.c
+>  F:	drivers/regulator/s2m*.c
+>  F:	drivers/regulator/s5m*.c
+> +F:	drivers/clk/clk-s2mps11.c
+> +F:	drivers/rtc/rtc-s5m.c
+>  F:	include/linux/mfd/samsung/
+> +F:	Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
+> +F:	Documentation/devicetree/bindings/mfd/s2mp*.txt
+>  
+>  SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
+>  M:	Kyungmin Park <kyungmin.park@samsung.com>
+
 -- 
-1.7.9.5
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
