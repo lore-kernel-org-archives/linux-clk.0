@@ -1,51 +1,25 @@
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Message-ID: <554A9596.10008@gmail.com>
-Date: Thu, 07 May 2015 00:28:38 +0200
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Mike Turquette <mturquette@linaro.org>
-CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [PATCH 06/19] clk: berlin: Silence sparse warning
-References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org> <1430897996-11597-7-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1430897996-11597-7-git-send-email-sboyd@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <shawn.guo@linaro.org>
+Return-Path: <shawn.guo@linaro.org>
+Date: Thu, 7 May 2015 21:00:58 +0800
+From: Shawn Guo <shawn.guo@linaro.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	mturquette@linaro.org, Fabio Estevam <fabio.estevam@freescale.com>
+Subject: Re: [PATCH v2] clk: imx: clk-cpu: Include "clk.h" header file
+Message-ID: <20150507130056.GI3162@dragon>
+References: <1430343282-13739-1-git-send-email-festevam@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1430343282-13739-1-git-send-email-festevam@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06.05.2015 09:39, Stephen Boyd wrote:
-> drivers/clk/berlin/berlin2-pll.c:94:12: warning: symbol 'berlin2_pll_register' was not declared. Should it be static?
->
-> Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+On Wed, Apr 29, 2015 at 06:34:42PM -0300, Fabio Estevam wrote:
+> From: Fabio Estevam <fabio.estevam@freescale.com>
+> 
+> Include the "clk.h" header file to fix the following sparse warning:
+> 
+> drivers/clk/imx/clk-cpu.c:77:12: warning: symbol 'imx_clk_cpu' was not declared. Should it be static?
+> 
+> Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
 
-Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-
-Thanks!
-
-> ---
->   drivers/clk/berlin/berlin2-pll.c | 9 +--------
->   1 file changed, 1 insertion(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/berlin/berlin2-pll.c b/drivers/clk/berlin/berlin2-pll.c
-> index bdc506b03824..f4b8d324b083 100644
-> --- a/drivers/clk/berlin/berlin2-pll.c
-> +++ b/drivers/clk/berlin/berlin2-pll.c
-> @@ -25,14 +25,7 @@
->   #include <asm/div64.h>
->
->   #include "berlin2-div.h"
-> -
-> -struct berlin2_pll_map {
-> -	const u8 vcodiv[16];
-> -	u8 mult;
-> -	u8 fbdiv_shift;
-> -	u8 rfdiv_shift;
-> -	u8 divsel_shift;
-> -};
-> +#include "berlin2-pll.h"
->
->   struct berlin2_pll {
->   	struct clk_hw hw;
->
+Applied, thanks.
