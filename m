@@ -1,97 +1,65 @@
-Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Thu, 7 May 2015 17:18:12 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 19/20] clk: tegra210: add support for Tegra210 clocks
+Message-ID: <20150507151811.GD25866@ulmo.nvidia.com>
+References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+ <1430757460-9478-20-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20150529064055.GA6325@pengutronix.de>
-References: <1432838508-5184-1-git-send-email-matthias.bgg@gmail.com>
-	<1432838508-5184-2-git-send-email-matthias.bgg@gmail.com>
-	<20150529064055.GA6325@pengutronix.de>
-Date: Fri, 29 May 2015 17:24:58 +0200
-Message-ID: <CABuKBeL3U2kdVCVHDKJp+K91K3CUF=XEuDUhfwjqWVEhFNFVcA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: mux: Add regmap support for simple mux
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	HenryC Chen <henryc.chen@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="iVCmgExH7+hIHJ1A"
+In-Reply-To: <1430757460-9478-20-git-send-email-rklein@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2015-05-29 8:40 GMT+02:00 Sascha Hauer <s.hauer@pengutronix.de>:
-> On Thu, May 28, 2015 at 08:41:46PM +0200, Matthias Brugger wrote:
->> Some devices like SoCs from Mediatek need to use the clock muxes
->> through a regmap interface.
->> This patch adds regmap support for simple the simple multiplexer
->> clock code.
->>
->> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
->> ---
->>  drivers/clk/clk-mux.c        | 103 ++++++++++++++++++++++++++++++++++++++-----
->>  include/linux/clk-provider.h |  40 +++++++++++++++++
->>  2 files changed, 132 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
->> index 1fa2a8d..c7c692a 100644
->> --- a/drivers/clk/clk-mux.c
->> +++ b/drivers/clk/clk-mux.c
->> @@ -29,6 +29,26 @@
->>
->>  #define to_clk_mux(_hw) container_of(_hw, struct clk_mux, hw)
->>
->> +static void clk_mux_writel(struct clk_mux *mux, u32 val)
->> +{
->> +     if (mux->flags && CLK_MUX_USE_REGMAP)
->> +             regmap_write(mux->regmap, mux->offset, val);
->> +     else
->> +             clk_writel(val, mux->reg);
->> +}
->> +
->> +static u32 clk_mux_readl(struct clk_mux *mux)
->> +{
->> +     u32 val;
->> +
->> +     if (mux->flags && CLK_MUX_USE_REGMAP)
->> +             regmap_read(mux->regmap, mux->offset, &val);
->> +     else
->> +             val = clk_readl(mux->reg);
->> +
->> +     return val;
->> +}
->> +
->>  static u8 clk_mux_get_parent(struct clk_hw *hw)
->>  {
->>       struct clk_mux *mux = to_clk_mux(hw);
->> @@ -42,7 +62,10 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
->>        * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
->>        * val = 0x4 really means "bit 2, index starts at bit 0"
->>        */
->> -     val = clk_readl(mux->reg) >> mux->shift;
->> +
->> +     val = clk_mux_readl(mux);
->> +
->> +     val >>= mux->shift;
->>       val &= mux->mask;
->>
->>       if (mux->table) {
->> @@ -89,11 +112,11 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
->>       if (mux->flags & CLK_MUX_HIWORD_MASK) {
->>               val = mux->mask << (mux->shift + 16);
->>       } else {
->> -             val = clk_readl(mux->reg);
->> +             val = clk_mux_readl(mux);
->>               val &= ~(mux->mask << mux->shift);
->>       }
->>       val |= index << mux->shift;
->> -     clk_writel(val, mux->reg);
->> +     clk_mux_writel(mux, val);
->
-> With regmap the register lock is inside the regmap, you must hold it
-> during read/modify/write operations which means you have to use
-> regmap_update_bits rather than regmap_read followed by regmap_write.
 
-Fixed in next version.
-Thanks for reviewing.
+--iVCmgExH7+hIHJ1A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-motzblog.wordpress.com
+On Mon, May 04, 2015 at 12:37:39PM -0400, Rhyland Klein wrote:
+[...]
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+[...]
+> +static void __init tegra210_clock_init(struct device_node *np)
+> +{
+[...]
+> +	tegra_fixed_clk_init(tegra210_clks);
+> +	tegra210_pll_init(clk_base, pmc_base);
+> +	tegra210_periph_clk_init(clk_base, pmc_base);
+> +	tegra_audio_clk_init(clk_base, pmc_base, tegra210_clks,
+> +			     tegra210_audio_plls, 2);
+
+Should use ARRAY_SIZE() here as well.
+
+Thierry
+
+--iVCmgExH7+hIHJ1A
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVS4IzAAoJEN0jrNd/PrOh2y4P+gMnm/dUAC4z8n3egGWdENxH
+hbDWkNsvdg/rOVY+nWdoyfWGzb399o4ev2ZSSTVtW7Ec8t8doupCqBrmZ/r7OoIE
+/03DN+bRWgc8LtVlw0I4LSadx4bw877tJjYTYqevxrqJQXCQxZvRGs4Us7Y7mxel
+PgR6fR0611qQjjyMpShWHFHL7cTkTUa7ROXHGcaazQdlAChHvERFDVPfAOAEp8r4
+9tFJOwvZCxFn5ulCgMvM8IN+RKtWlqxffFw1lgg/ZLYAmiI+huLXYyyZZcME6JGz
+6afhlI6/136NVBTVAOwru/QLLS0k0VysNUIiLoUf/vgR5kmWvhg/6tbV8DEN4RSA
+B+jxYTXmHG+xMnrN4kmsML4qGdrGe7m/7EPHU7e0maROwJb8Lrlvub8f4qBDadZe
+bGQKIZmY0SixY3SN8HHDxhhGXjMlr2SNHmAleew02/A3yJjRjjhV6tLv54JcuESt
+TOoSBjyYS6bqjNjdInoiUZEmMUV4OJC17K6iUqOgs23e6QHOTVJiPUm897BeukTG
+T7V9miB5WGzclNtH7t6a55o4//g/VuKoInPr2pNafp68TqnYqSL6fWNz430DEFFK
+CCHV9EosNm5y4nadZ5/AelZVm3I4gRkdDA9qa8ED716X5plQd+eXiCyuXVtMEMAZ
+nE7H8jQpedG7UkDc8d74
+=4USg
+-----END PGP SIGNATURE-----
+
+--iVCmgExH7+hIHJ1A--
