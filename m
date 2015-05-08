@@ -1,90 +1,100 @@
-Return-Path: <mathieu@codeaurora.org>
-From: "Mathieu Olivari" <mathieu@codeaurora.org>
-To: "'Paul Bolle'" <pebolle@tiscali.nl>
-Cc: <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>,
-	<mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>,
-	<galak@codeaurora.org>,
-	<mturquette@linaro.org>,
-	<sboyd@codeaurora.org>,
-	<peppe.cavallaro@st.com>,
-	<agross@codeaurora.org>,
-	<joshc@codeaurora.org>,
-	<architt@codeaurora.org>,
-	<georgi.djakov@linaro.org>,
-	<wsa@the-dreams.de>,
-	<rnayak@codeaurora.org>,
-	<davem@davemloft.net>,
-	<vbridger@opensource.altera.com>,
-	<devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>,
-	<netdev@vger.kernel.org>
-References: <1432668437-27763-1-git-send-email-mathieu@codeaurora.org>	 <1432668437-27763-5-git-send-email-mathieu@codeaurora.org> <1432710218.27695.215.camel@x220>
-In-Reply-To: <1432710218.27695.215.camel@x220>
-Subject: RE: [PATCH 4/5] stmmac: add ipq806x glue layer
-Date: Wed, 27 May 2015 09:10:16 -0700
-Message-ID: <004d01d09897$a06f8090$e14e81b0$@codeaurora.org>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <1430773456-15203-1-git-send-email-sebastian.hesselbarth@gmail.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Jean-Francois Moine" <moinejf@free.fr>,
+ "Michael Welling" <mwelling@ieee.org>,
+ "Russell King" <rmk+linux@arm.linux.org.uk>,
+ "Jason Cooper" <jason@lakedaemon.net>, "Andrew Lunn" <andrew@lunn.ch>,
+ "Gregory Clement" <gregory.clement@free-electrons.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <1430773456-15203-1-git-send-email-sebastian.hesselbarth@gmail.com>
+Message-ID: <20150508190010.16410.26923@quantum>
+Subject: Re: [PATCH v2 0/3] clk: si5351: Fixes for v4.1-rc1
+Date: Fri, 08 May 2015 12:00:10 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-My bad. This is ISC license. MODULE_LICENSE should actually be "Dual =
-BSD/GPL".
-Same license is used in other places in the kernel like =
-drivers/net/wireless/ath/ath10k/pci.c.
-I'll post a v2.
-Thanks,
-Mathieu
+Quoting Sebastian Hesselbarth (2015-05-04 14:04:13)
+> Mike, Stephen,
+> =
 
------Original Message-----
-From: Paul Bolle [mailto:pebolle@tiscali.nl]=20
-Sent: Wednesday, May 27, 2015 12:04 AM
-To: Mathieu Olivari
-Cc: robh+dt@kernel.org; pawel.moll@arm.com; mark.rutland@arm.com; =
-ijc+devicetree@hellion.org.uk; galak@codeaurora.org; =
-mturquette@linaro.org; sboyd@codeaurora.org; peppe.cavallaro@st.com; =
-agross@codeaurora.org; joshc@codeaurora.org; architt@codeaurora.org; =
-georgi.djakov@linaro.org; wsa@the-dreams.de; rnayak@codeaurora.org; =
-davem@davemloft.net; vbridger@opensource.altera.com; =
-devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; =
-linux-clk@vger.kernel.org; netdev@vger.kernel.org
-Subject: Re: [PATCH 4/5] stmmac: add ipq806x glue layer
+> this is v2 of dealing with recently reported clk-si5351 issues. Compared
+> to v1 [1], I decided to first split-off the pure fixes and postpone the
+> improvements to a later patch set. Patches 1 and 3 should go though clk
+> fixes while patch 2 should be taken by mvebu maintainers.
+> =
 
-Just a nit: a license mismatch.
+> This fixes are intended for v4.1-rc1 and deal with issues where DT claimed
+> parent clocks are not properly detected starting with v4.0. Looking at the
+> code of clk-si5351, I just realized that the way the driver deals with
+> parent clocks is utter nonsense. Russell King also mentioned that passing
+> struct clk though platform_data shouldn't be done at all.
+> =
 
-On Tue, 2015-05-26 at 12:27 -0700, Mathieu Olivari wrote:
-> --- /dev/null
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+> Therefore, this 3 patches rework parent clock handling of clk-si5351 to
+> make use of (a) named parent clocks, (b) devm_clk_get() for both DT- and
+> platform_data passed parent clocks, and (c) properly clk_prepare_enable()
+> valid parent clocks.
+> =
 
-> + * Permission to use, copy, modify, and/or distribute this software=20
-> + for any
-> + * purpose with or without fee is hereby granted, provided that the=20
-> + above
-> + * copyright notice and this permission notice appear in all copies.
-> + *
-> + * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL=20
-> + WARRANTIES
-> + * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-> + * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE=20
-> + LIABLE FOR
-> + * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY=20
-> + DAMAGES
-> + * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN =
+> However, I do have a stripped down backport of the fix for stable v4.0
+> that just fixes the real issue, i.e. DT based probing and missing
+> clk_prepare_enable(). If you agree with this fixes for v4.1-rc1 we should
+> consider the backport for v4.0 stable.
 
-> + AN
-> + * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING=20
-> + OUT OF
-> + * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+I've pushed patches #1 and #3 to clk-fixes, now merged into clk-next.
+I'll give it a couple of cycles in linux-next and then submit it for
+4.1-rc4.
 
-I have no idea which license this is.
+Regards,
+Mike
 
-> +MODULE_LICENSE("GPL");
+> =
 
-But I do know that it's not GPL v2 or later (see =
-include/linux/module.h).
+> Overall changes compared to v1:
+> - Postpone improvement patch ("clk: si5351: Reset PLL after rate change")
+>   for later patch set.
+> - Reword parent clock check error message. (Suggested by Fabio Estevam)
+> =
 
+> Sebastian
+> =
 
-Paul Bolle
+> [1] https://lkml.org/lkml/2015/4/30/688
+> =
+
+> Sebastian Hesselbarth (3):
+>   clk: si5351: Mention clock-names in the binding documentation
+>   ARM: dove: Add clock-names to CuBox Si5351 clk generator
+>   clk: si5351: Do not pass struct clk in platform_data
+> =
+
+>  .../devicetree/bindings/clock/silabs,si5351.txt    |  4 +-
+>  arch/arm/boot/dts/dove-cubox.dts                   |  1 +
+>  drivers/clk/clk-si5351.c                           | 63 +++++++++++++++-=
+------
+>  include/linux/platform_data/si5351.h               |  4 --
+>  4 files changed, 49 insertions(+), 23 deletions(-)
+> =
+
+> ---
+> Cc: Mike Turquette <mturquette@linaro.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Jean-Francois Moine <moinejf@free.fr>
+> Cc: Michael Welling <mwelling@ieee.org>
+> Cc: Russell King <rmk+linux@arm.linux.org.uk>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Gregory Clement <gregory.clement@free-electrons.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> -- =
+
+> 2.1.0
+>=20
