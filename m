@@ -1,46 +1,46 @@
-Return-Path: <mcoquelin.stm32@gmail.com>
-Return-Path: <mcoquelin.stm32@gmail.com>
-Message-ID: <55698527.1050504@gmail.com>
-Date: Sat, 30 May 2015 11:38:47 +0200
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
 MIME-Version: 1.0
-To: Daniel Thompson <daniel.thompson@linaro.org>,
- Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>
-CC: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Kumar Gala <galak@codeaurora.org>,
- Russell King <linux@arm.linux.org.uk>, Kamil Lulko <rev13@wp.pl>,
- Andreas Farber <afaerber@suse.de>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- patches@linaro.org, linaro-kernel@lists.linaro.org
-Subject: Re: [PATCH v2 4/4] ARM: dts: stm32f429: Adopt STM32F4 clock driver
-References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org> <1432972448-10332-1-git-send-email-daniel.thompson@linaro.org> <1432972448-10332-5-git-send-email-daniel.thompson@linaro.org>
-In-Reply-To: <1432972448-10332-5-git-send-email-daniel.thompson@linaro.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: k.kozlowski.k@gmail.com
+In-Reply-To: <1431020935-5025-1-git-send-email-linux.amoon@gmail.com>
+References: <1431020935-5025-1-git-send-email-linux.amoon@gmail.com>
+Date: Fri, 8 May 2015 09:14:34 +0900
+Message-ID: <CAJKOXPcCc8j=i5FPdF62bGKar74+4U=C9BPN9ar2j52Y8dSMwA@mail.gmail.com>
+Subject: Re: [PATCH] clk samsung exynos5420 add CLK_RECALC_NEW_RATES flag to
+ mout_apll and mout_kpll clock.
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+2015-05-08 2:48 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+> Addition of CLK_RECALC_NEW_RATES flag to support Exynos5 cpu clk so that
+> correct divider values are re-calculated after both pre/post
+> clock notifiers had run for for mout_apll clock and mout_kpll clock.
+s/for for/for/
 
+Could you precise in commit message the observational effects
+*without* this patch? In other words: what is fixed? The divider will
+have incorrect values?
 
-On 05/30/2015 09:54 AM, Daniel Thompson wrote:
-> New bindings and driver have been created for STM32F42xxx series parts.
-> This patch integrates these changes.
 >
-> Note: Earlier device tree blobs (those without st,stm32f42xxx
->        compatibles for the rcc) could still be used to boot basic
->        systems. Such systems rely on the bootloader to configure the
->        clock gates for vital periperhals.
+> Depend on https://lkml.org/lkml/2015/4/3/388
 >
-> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-> ---
->   arch/arm/boot/dts/stm32f429-disco.dts |  4 ++
->   arch/arm/boot/dts/stm32f429.dtsi      | 79 +++++++++++------------------------
->   2 files changed, 28 insertions(+), 55 deletions(-)
->
->
-Reviewed-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> Tested on OdroidXU3 Board.
 
-Thanks!
-Maxime
+Thanks for providing this information. However
+1. Patch dependency should not be part of commit message, It simply
+won't provide any meaningful information when they are merged.
+2. Similarly testing platform also is not always put in commit message.
+
+So just put them after separator (triple-dash).
+
+After fixing the commit message:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
