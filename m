@@ -1,40 +1,59 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Alex Elder <elder@linaro.org>,
-	Tim Kryger <tim.kryger@linaro.org>
-Subject: [PATCH 04/19] clk: bcm/kona: Silence sparse warnings
-Date: Wed,  6 May 2015 00:39:41 -0700
-Message-Id: <1430897996-11597-5-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
-References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux.amoon@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAJKOXPcCc8j=i5FPdF62bGKar74+4U=C9BPN9ar2j52Y8dSMwA@mail.gmail.com>
+References: <1431020935-5025-1-git-send-email-linux.amoon@gmail.com> <CAJKOXPcCc8j=i5FPdF62bGKar74+4U=C9BPN9ar2j52Y8dSMwA@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Fri, 8 May 2015 09:31:43 +0530
+Message-ID: <CANAwSgT8aa5svHgLbkNkSPXWT_hLez8e4cBws2ajEB9p56WHFA@mail.gmail.com>
+Subject: Re: [PATCH] clk samsung exynos5420 add CLK_RECALC_NEW_RATES flag to
+ mout_apll and mout_kpll clock.
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-drivers/clk/bcm/clk-kona.c:1243:16: warning: odd constant _Bool cast (ffffffffffffffea becomes 1)
+Hi Krysztof,
 
-Cc: Alex Elder <elder@linaro.org>
-Cc: Tim Kryger <tim.kryger@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/bcm/clk-kona.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Actually the patch is based on https://lkml.org/lkml/2015/4/3/389
+I don't know how to measure the energy consumption when compared to
+cpufreq-exynos.
 
-diff --git a/drivers/clk/bcm/clk-kona.c b/drivers/clk/bcm/clk-kona.c
-index a0ef4f75d457..79a98506c433 100644
---- a/drivers/clk/bcm/clk-kona.c
-+++ b/drivers/clk/bcm/clk-kona.c
-@@ -1240,7 +1240,7 @@ static bool __kona_clk_init(struct kona_clk *bcm_clk)
- 	default:
- 		BUG();
- 	}
--	return -EINVAL;
-+	return false;
- }
- 
- /* Set a CCU and all its clocks into their desired initial state */
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I will update the commit log and resend it with you review.
+
+-Anand Moon
+
+
+
+
+On 8 May 2015 at 05:44, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+> 2015-05-08 2:48 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+>> Addition of CLK_RECALC_NEW_RATES flag to support Exynos5 cpu clk so that
+>> correct divider values are re-calculated after both pre/post
+>> clock notifiers had run for for mout_apll clock and mout_kpll clock.
+> s/for for/for/
+>
+> Could you precise in commit message the observational effects
+> *without* this patch? In other words: what is fixed? The divider will
+> have incorrect values?
+>
+>>
+>> Depend on https://lkml.org/lkml/2015/4/3/388
+>>
+>> Tested on OdroidXU3 Board.
+>
+> Thanks for providing this information. However
+> 1. Patch dependency should not be part of commit message, It simply
+> won't provide any meaningful information when they are merged.
+> 2. Similarly testing platform also is not always put in commit message.
+>
+> So just put them after separator (triple-dash).
+>
+> After fixing the commit message:
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
+> Best regards,
+> Krzysztof
