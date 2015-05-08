@@ -1,122 +1,93 @@
-Return-Path: <mwelling79@gmail.com>
-Return-Path: <mwelling79@gmail.com>
-Sender: Michael Welling <mwelling79@gmail.com>
-Date: Thu, 7 May 2015 19:52:20 -0500
-From: Michael Welling <mwelling@ieee.org>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>,
+Return-Path: <linux.amoon@gmail.com>
+Return-Path: <linux.amoon@gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Mike Turquette <mturquette@linaro.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Russell King <rmk+linux@arm.linux.org.uk>,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] clk: si5351: Some fixes
-Message-ID: <20150508005220.GA3404@deathray>
-References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com>
- <20150430193317.GC22000@deathray>
- <55429417.4070103@gmail.com>
- <20150430212059.GA14026@deathray>
- <5542AAE0.5020204@gmail.com>
- <20150430223603.GA18006@deathray>
- <5543369F.2070207@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5543369F.2070207@gmail.com>
+	Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCHv3] clk samsung exynos5420 add CLK_RECALC_NEW_RATES flag to mout_apll and mout_kpll clock.
+Date: Fri,  8 May 2015 20:37:27 +0930
+Message-Id: <1431083247-3310-1-git-send-email-linux.amoon@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 01, 2015 at 10:17:35AM +0200, Sebastian Hesselbarth wrote:
-> On 01.05.2015 00:36, Michael Welling wrote:
-> >On Fri, May 01, 2015 at 12:21:20AM +0200, Sebastian Hesselbarth wrote:
-> >>On 30.04.2015 23:20, Michael Welling wrote:
-> >>>On Thu, Apr 30, 2015 at 10:44:07PM +0200, Sebastian Hesselbarth wrote:
-> >>[...]
-> >>>>What I noticed about your clk2 that you always measure as 0 Hz is
-> >>>>that none of your clocks is prepared/enabled.
-> >>>>
-> >>>>Currently, the si5351 driver only ensures the output is enabled
-> >>>>when si5351_clkout_prepare() is called.
-> >>>>
-> >>>>As long as you do not have a clk consumer that properly prepare/enables
-> >>>>the clock output, it may remain disabled.
-> >>>>
-> >>>>We should probably have additional DT properties and corresponding
-> >>>>pdata to force clkoutN always on.
-> >>>
-> >>>Does the silabs,disable-state of 3 (SI5351_DISABLE_NEVER) take care
-> >>>of this?
-> >>
-> >>That would be the HW version of never disabling the clock output.
-> >>I never really tried the property, does it work as expected?
-> >
-> >This did not appear to effect the behavior.
-> 
-> I think it is also a good idea to expose register values to debugfs,
-> so we can easily check what is really written into internal registers.
-> 
-> >>
-> >>>Otherwise is there a simple registration that will do this?
-> >>
-> >>The SW version of such a property would involve CLK_IGNORE_UNUSED
-> >>and enabling all requested clock outputs on probe().
-> >>
-> >>If above HW property already works, I think it should be enough.
-> >>
-> >>[...]
-> >>>>>It should be noted that if I program the device's register map in the
-> >>>>>bootloader the device keeps the correct frequency outputs.
-> >>>>
-> >>>>"keeps"? You mean "generates", don't you?
-> >>>>
-> >>>
-> >>>Yes the clocks are generated and do not get effected by the driver.
-> >>
-> >>IIRC, clk API does check if requested rate and current rate match
-> >>already. If they do, it does not request the same rate again.
-> >
-> >So I found that the audio codec that I am driving with clk2 could
-> >register the clock and allowed the clock to be enabled and disabled
-> >by playing audio.
-> >
-> >This is when I noticed some strange behavior. The first time I attempt
-> >to play audio the clock does not turn on blocking the audio from playing.
-> >After I interrupt and the clock is disabled for the first time, the
-> >successive clock enables work as expected.
-> 
-> Does "does not turn on" mean you cannot measure any clock on the
-> output or is it just a guess because audio does not play?
+Addition of CLK_RECALC_NEW_RATES flag to support Exynos5420 cpu clk so that
+correct divider values are re-calculated after both pre/post
+clock notifiers had run for mout_apll clock and mout_kpll clock.
 
-The clock is stuck at around 2 volts until the first clk_disable.
-When the clock is disabled it drops to GND. Future clk_enables make the
-clock come at the reported frequency.
+Observation their is considerable improvement in cpufreq stats
+after applying this patch.
 
-As for the clock being initialized incorrectly, I selectively added
-mdelay(100) at each dev_dbg with debugging disabled until the 
-initialization came up correct.
+Governer : "performance"
+$ cpupower -c 1 frequency-info
 
-I found that adding a delay at the end of si5351_msynth_round_rate
-appears to be magically fixing the incorrect frequency settings.
-Not sure if this sheds any light on the issue but I figured I would 
-share this information.
+Below is table format of the output.
+cpufreq stats:  Frequency| Before | After  |
+CPU 1
+		200 MHz  | 22.07% | 46.57% |
+	       	300 MHz  | 1.08%  | 8.18%  |
+	       	400 MHz  | 0.17%  | 1.93%  |
+	       	500 MHz  | 0.24%  | 3.51%  |
+	       	600 MHz  | 0.37%  | 2.13%  |
+	       	700 MHz  | 0.20%  | 0.88%  |
+	       	800 MHz  | 0.09%  | 1.69%  |
+		900 MHz  | 0.05%  | 1.02%  |
+		1000 MHz | 0.02%  | 2.55%  |
+		1.10 GHz | 0.12%  | 1.17%  |
+		1.20 GHz | 0.05%  | 0.88%  |
+		1.30 GHz | 0.07%  | 0.38%  |
+		1.40 GHz | 0.04%  | 0.38%  |
+		1.50 GHz | 0.02%  | 0.00%  |
+		1.60 GHz | 0.00%  | 0.15%  |
+		1.70 GHz | 0.00%  | 0.44%  |
+		1.80 GHz | 75.43% | 28.26% |
 
-> 
-> It could be that we just need to add some delay when we enable a clock
-> output. Datasheet just says 10us max from OEB pin pulled low to valid
-> clock output - not exactly what we are looking for but it could be a
-> good start.
-> 
-> >Something tells me that a fault off some kind is occurring on initial
-> >configuration.
-> 
-> What I noticed when adding the pll reset and checking DEVICE_STATUS is
-> that SYS_INIT is still set. According to the datasheet, the meaning of
-> the bit is that si5351 is still copying NVM content to its internal
-> registers and therefore, we shouldn't try to access them.
-> 
-> What really irritates me about it is that it is seconds after power-up
-> and copying the contents shouldn't really take _that_ long. However,
-> the datasheet does not mention anything about how long it may take.
-> 
-> Sebastian
-> 
+Governer : "performance"
+$ cpupower -c 0 frequency-info
+
+Below is table format of the output.
+cpufreq stats:	Frequency| Before | After  |
+CPU0 		200 MHz  | 33.95% | 60.31% |
+		300 MHz  | 4.64%  | 2.13%  |
+		400 MHz  | 1.50%  | 0.79%  |
+		500 MHz  | 1.46%  | 0.49%  |
+		600 MHz  | 0.05%  | 0.27%  |
+		700 MHz  | 0.68%  | 0.21%  |
+		800 MHz  | 0.08%  | 0.19%  |
+		900 MHz  | 0.09%  | 0.12%  |
+		1000 MHz | 0.20%  | 0.10%  |
+		1.10 GHz | 0.21%  | 0.11%, |
+		1.20 GHz | 0.51%  | 0.28%, |
+		1.30 GHz | 56.64% | 35.01% |
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 462aaee..6c7458c 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -618,10 +618,10 @@ static struct samsung_mux_clock exynos5x_mux_clks[] __initdata = {
+ 	MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
+ 
+ 	MUX_F(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+-	      CLK_SET_RATE_PARENT, 0),
++	      CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
+ 	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+ 	MUX_F(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1,
+-	      CLK_SET_RATE_PARENT, 0),
++	      CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
+ 	MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
+ 
+ 	MUX(0, "mout_aclk200", mout_group1_p, SRC_TOP0, 8, 2),
+-- 
+1.9.1
