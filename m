@@ -1,119 +1,99 @@
-Return-Path: <m-karicheri2@ti.com>
-From: Murali Karicheri <m-karicheri2@ti.com>
-To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <ssantosh@kernel.org>, <mturquette@linaro.org>, <sboyd@codeaurora.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux@arm.linux.org.uk>,
-        <linux-arm-kernel@lists.infradead.org>
-CC: Murali Karicheri <m-karicheri2@ti.com>
-Subject: [PATCH 1/2] clk: keystone: add support for post divider register for main pll
-Date: Fri, 29 May 2015 12:04:12 -0400
-Message-ID: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
+Return-Path: <khilman@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <554BD33D.7050907@codeaurora.org>
+References: <1429735986-18592-1-git-send-email-heiko@sntech.de>
+	<1981330.kGUrTurMy5@diego>
+	<5543E79F.2080400@codeaurora.org>
+	<22709390.NTAlubMgNB@diego>
+	<55440EDA.4030905@codeaurora.org>
+	<CAMAWPa_n+59+v+x3fKkmdtW1wMJF7kqtTjLLowmv1xwGWprYJw@mail.gmail.com>
+	<554BD33D.7050907@codeaurora.org>
+Date: Thu, 7 May 2015 17:27:22 -0700
+Message-ID: <CAMAWPa-ZtEzdzcO3c2D3k3JAvi+8zVzb0s1xSqUA-LQDz-EB4w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
+From: Kevin Hilman <khilman@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Kevin Hilman <khilman@kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Mike Turquette <mturquette@linaro.org>, Doug Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
+	lkml <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>, Alex Elder <elder@linaro.org>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Max Filippov <jcmvbkbc@gmail.com>,
+	Sascha Hauer <kernel@pengutronix.de>, Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>, Chao Xie <chao.xie@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>, Stefan Wahren <stefan.wahren@i2se.com>,
+	Andrew Bresticker <abrestic@chromium.org>, Robert Jarzmik <robert.jarzmik@free.fr>,
+	Georgi Djakov <georgi.djakov@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Barry Song <baohua@kernel.org>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>, Viresh Kumar <viresh.linux@gmail.com>,
+	Gabriel FERNANDEZ <gabriel.fernandez@st.com>, =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Peter De Sc hrijver <pdeschrijver@nvidia.com>, Tero Kristo <t-kristo@ti.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Pawel Moll <pawel.moll@arm.com>,
+	Michal Simek <michal.simek@xilinx.com>, Olof Johansson <olof@lixom.net>,
+	Tyler Baker <tyler.baker@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Main PLL controller has post divider bits in a separate register in
-pll controller. Use the value from this register instead of fixed
-divider when available.
+On Thu, May 7, 2015 at 2:03 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 05/07/15 08:17, Kevin Hilman wrote:
+>> On Fri, May 1, 2015 at 4:40 PM, Stephen Boyd <sboyd@codeaurora.org> wrot=
+e:
+>>> On 05/01/15 15:07, Heiko St=C3=BCbner wrote:
+>>>> Am Freitag, 1. Mai 2015, 13:52:47 schrieb Stephen Boyd:
+>>>>
+>>>>>> Instead I guess we could hook it less deep into clk_get_sys, like in=
+ the
+>>>>>> following patch?
+>>>>> It looks like it will work at least, but still I'd prefer to keep the
+>>>>> orphan check contained to clk.c. How about this compile tested only p=
+atch?
+>>>> I gave this a spin on my rk3288-firefly board. It still boots, the clo=
+ck tree
+>>>> looks the same and it also still defers nicely in the scenario I neede=
+d it
+>>>> for. The implementation also looks nice - and of course much more comp=
+act than
+>>>> my check in two places :-) . I don't know if you want to put this as f=
+ollow-up
+>>>> on top or fold it into the original orphan-check, so in any case
+>>>>
+>>>> Tested-by: Heiko Stuebner <heiko@sntech.de>
+>>>> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+>>> Thanks. I'm leaning towards tossing your patch 2/2 and replacing it wit=
+h
+>>> my patch and a note that it's based on an earlier patch from you.
+>> It appears this has landed in linux-next in the form of 882667c1fcf1
+>> clk: prevent orphan clocks from being used.  A bunch of boot failures
+>> for sunxi in today's linux-next[1] were bisected down to that patch.
+>>
+>> I confirmed that reverting that commit on top of next/master gets
+>> sunxi booting again.
+>>
+>>
+>
+> Thanks for the report. I've removed the two clk orphan patches from
+> clk-next. Would it be possible to try with next-20150507 and
+> clk_ignore_unused on the command line?
 
-Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
----
- .../devicetree/bindings/clock/keystone-pll.txt       |  8 ++++----
- drivers/clk/keystone/pll.c                           | 20 ++++++++++++++++++--
- 2 files changed, 22 insertions(+), 6 deletions(-)
+That doesn't help.  I tried on cubieboard2 and bananapi.
 
-diff --git a/Documentation/devicetree/bindings/clock/keystone-pll.txt b/Documentation/devicetree/bindings/clock/keystone-pll.txt
-index 225990f..47570d2 100644
---- a/Documentation/devicetree/bindings/clock/keystone-pll.txt
-+++ b/Documentation/devicetree/bindings/clock/keystone-pll.txt
-@@ -15,8 +15,8 @@ Required properties:
- - compatible : shall be "ti,keystone,main-pll-clock" or "ti,keystone,pll-clock"
- - clocks : parent clock phandle
- - reg - pll control0 and pll multipler registers
--- reg-names : control and multiplier. The multiplier is applicable only for
--		main pll clock
-+- reg-names : control, multiplier and post-divider. The multiplier and
-+		post-divider registers are applicable only for main pll clock
- - fixed-postdiv : fixed post divider value. If absent, use clkod register bits
- 		for postdiv
- 
-@@ -25,8 +25,8 @@ Example:
- 		#clock-cells = <0>;
- 		compatible = "ti,keystone,main-pll-clock";
- 		clocks = <&refclksys>;
--		reg = <0x02620350 4>, <0x02310110 4>;
--		reg-names = "control", "multiplier";
-+		reg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
-+		reg-names = "control", "multiplier", "post-divider";
- 		fixed-postdiv = <2>;
- 	};
- 
-diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
-index 0dd8a4b..4a375ea 100644
---- a/drivers/clk/keystone/pll.c
-+++ b/drivers/clk/keystone/pll.c
-@@ -37,7 +37,8 @@
-  *	Main PLL or any other PLLs in the device such as ARM PLL, DDR PLL
-  *	or PA PLL available on keystone2. These PLLs are controlled by
-  *	this register. Main PLL is controlled by a PLL controller.
-- * @pllm: PLL register map address
-+ * @pllm: PLL register map address for multiplier bits
-+ * @pllod: PLL register map address for post divider bits
-  * @pll_ctl0: PLL controller map address
-  * @pllm_lower_mask: multiplier lower mask
-  * @pllm_upper_mask: multiplier upper mask
-@@ -53,6 +54,7 @@ struct clk_pll_data {
- 	u32 phy_pllm;
- 	u32 phy_pll_ctl0;
- 	void __iomem *pllm;
-+	void __iomem *pllod;
- 	void __iomem *pll_ctl0;
- 	u32 pllm_lower_mask;
- 	u32 pllm_upper_mask;
-@@ -102,7 +104,11 @@ static unsigned long clk_pllclk_recalc(struct clk_hw *hw,
- 		/* read post divider from od bits*/
- 		postdiv = ((val & pll_data->clkod_mask) >>
- 				 pll_data->clkod_shift) + 1;
--	else
-+	else if (pll_data->pllod) {
-+		postdiv = readl(pll_data->pllod);
-+		postdiv = ((postdiv & pll_data->clkod_mask) >>
-+				pll_data->clkod_shift) + 1;
-+	} else
- 		postdiv = pll_data->postdiv;
- 
- 	rate /= (prediv + 1);
-@@ -172,12 +178,21 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
- 		/* assume the PLL has output divider register bits */
- 		pll_data->clkod_mask = CLKOD_MASK;
- 		pll_data->clkod_shift = CLKOD_SHIFT;
-+
-+		/*
-+		 * Check if there is an post-divider register. If not
-+		 * assume od bits are part of control register.
-+		 */
-+		i = of_property_match_string(node, "reg-names",
-+					     "post-divider");
-+		pll_data->pllod = of_iomap(node, i);
- 	}
- 
- 	i = of_property_match_string(node, "reg-names", "control");
- 	pll_data->pll_ctl0 = of_iomap(node, i);
- 	if (!pll_data->pll_ctl0) {
- 		pr_err("%s: ioremap failed\n", __func__);
-+		iounmap(pll_data->pllod);
- 		goto out;
- 	}
- 
-@@ -193,6 +208,7 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
- 		pll_data->pllm = of_iomap(node, i);
- 		if (!pll_data->pllm) {
- 			iounmap(pll_data->pll_ctl0);
-+			iounmap(pll_data->pllod);
- 			goto out;
- 		}
- 	}
--- 
-1.9.1
+> Also we can try to see if
+> critical clocks aren't being forced on by applying this patch and
+> looking for clk_get() failures
+
+>From cubieboard2, there's a few that look rather important:
+
+[    0.000000] Additional per-CPU info printed with stalls.
+[    0.000000] Build-time adjustment of leaf fanout to 32.
+[    0.000000] RCU restricting CPUs from NR_CPUS=3D16 to nr_cpu_ids=3D2.
+[    0.000000] RCU: Adjusting geometry for rcu_fanout_leaf=3D32, nr_cpu_ids=
+=3D2
+[    0.000000] NR_IRQS:16 nr_irqs:16 16
+[    0.000000] clk: couldn't get parent clock 0 for /clocks/ahb@01c20054
+[    0.000000] Failed to enable critical clock cpu
+[    0.000000] Failed to enable critical clock pll5_ddr
+[    0.000000] Failed to enable critical clock ahb_sdram
+[    0.000000] Architected cp15 timer(s) running at 24.00MHz (virt).
+
+Kevin
