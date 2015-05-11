@@ -1,171 +1,329 @@
-Return-Path: <rklein@nvidia.com>
-Message-ID: <555CC277.1040402@nvidia.com>
-Date: Wed, 20 May 2015 13:20:55 -0400
-From: Rhyland Klein <rklein@nvidia.com>
+Return-Path: <linux-omap-owner@vger.kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+To: <mturquette@linaro.org>, <tony@atomide.com>,
+	<linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<sboyd@codeaurora.org>, <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 22/27] clk: ti: am3517: move remaining am3517 clock support code to clock driver
+Date: Mon, 11 May 2015 11:54:48 +0300
+Message-ID: <1431334493-24455-23-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-To: Benson Leung <bleung@chromium.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
-	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre
- Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Paul Walmsley
-	<pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 16/21] clk: tegra: pll: Add Set_default logic
-References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>	<1431451444-23155-18-git-send-email-rklein@nvidia.com> <CANLzEkv2rO63083RxEFWU0a_qm+7QOx0mCD8ya8hDmp5QMmkgQ@mail.gmail.com>
-In-Reply-To: <CANLzEkv2rO63083RxEFWU0a_qm+7QOx0mCD8ya8hDmp5QMmkgQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain
+Sender: linux-omap-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 5/13/2015 8:04 PM, Benson Leung wrote:
-> On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein@nvidia.com> wrote:
->> From: Bill Huang <bilhuang@nvidia.com>
->>
->> Add logic which (if specified for a pll) can verify that a PLL is set
->> to the proper default value and if not can set it. This can be
->> specified per PLL as each will have different default values.
->>
->> Based on original work by Aleksandr Frid <afrid@nvidia.com>
->>
->> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
->> ---
->> v2:
->>   - Remove MACRO for PLL_MISC_CHECK_DEFAULT as suggested, and instead
->>     the tegra210 driver will include an inline version of this function.
->>
->>  drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
->>  drivers/clk/tegra/clk.h     |    2 ++
->>  2 files changed, 37 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
->> index 626466665dde..36aa2a95fac0 100644
->> --- a/drivers/clk/tegra/clk-pll.c
->> +++ b/drivers/clk/tegra/clk-pll.c
->> @@ -652,13 +652,26 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
->>                         unsigned long rate)
->>  {
->>         struct tegra_clk_pll *pll = to_clk_pll(hw);
->> +       struct tegra_clk_pll_freq_table old_cfg;
->>         int state, ret = 0;
->>
->>         state = clk_pll_is_enabled(hw);
->>
->> +       _get_pll_mnp(pll, &old_cfg);
->> +
->> +       if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
->> +                       (cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
->> +               ret = pll->params->dyn_ramp(pll, cfg);
->> +               if (!ret)
->> +                       return 0;
->> +       }
->> +
-> 
-> This block above depends on defaults_set, but seems to be some
-> additional dyn_ramp logic that is different from what the commit
-> message describes of this patch, namely, setting defaults if
-> defaults_set is not true.
-> 
-> Could you perhaps reverse the order of this patch [16/21] and the
-> preceding one [15/21] clk: tegra: pll: Add dyn_ramp callback, and move
-> this chunk of code into the dyn_ramp patch?
+With legacy clock support gone, this is no longer needed under platform,
+so move it under the clock driver itself. Make some exports be driver
+internal definitions at the same time.
 
-Will do.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/Makefile    |    1 -
+ arch/arm/mach-omap2/clock3517.c |  118 ---------------------------------------
+ arch/arm/mach-omap2/clock3517.h |   14 -----
+ drivers/clk/ti/clk-3xxx.c       |   94 +++++++++++++++++++++++++++++++
+ drivers/clk/ti/clock.h          |    2 +
+ include/linux/clk/ti.h          |    2 -
+ 6 files changed, 96 insertions(+), 135 deletions(-)
+ delete mode 100644 arch/arm/mach-omap2/clock3517.c
+ delete mode 100644 arch/arm/mach-omap2/clock3517.h
 
-> 
->>         if (state)
->>                 _clk_pll_disable(hw);
->>
->> +       if (!pll->params->defaults_set && pll->params->set_defaults)
->> +               pll->params->set_defaults(pll);
->> +
->>         _update_pll_mnp(pll, cfg);
->>
->>         if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
->> @@ -1517,6 +1530,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
->>         if (!pll->params->calc_rate)
->>                 pll->params->calc_rate = _calc_rate;
->>
->> +       if (pll->params->set_defaults)
->> +               pll->params->set_defaults(pll);
->> +
->>         /* Data in .init is copied by clk_register(), so stack variable OK */
->>         pll->hw.init = &init;
->>
->> @@ -1636,7 +1652,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
->>         struct tegra_clk_pll *pll;
->>         struct clk *clk, *parent;
->>         unsigned long parent_rate;
->> -       int err;
->>         u32 val, val_iddq;
->>
->>         parent = __clk_lookup(parent_name);
->> @@ -1657,18 +1672,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
->>                 pll_params->vco_min = pll_params->adjust_vco(pll_params,
->>                                                              parent_rate);
->>
->> -       err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
->> -       if (err)
->> -               return ERR_PTR(err);
->> +       /*
->> +        * If the pll has a set_defaults callback, it will take care of
->> +        * configuring dynamic ramping and setting IDDQ in that path.
->> +        */
->> +       if (!pll_params->set_defaults) {
->> +               int err;
->>
->> -       val = readl_relaxed(clk_base + pll_params->base_reg);
->> -       val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
->> +               err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
->> +               if (err)
->> +                       return ERR_PTR(err);
->>
->> -       if (val & PLL_BASE_ENABLE)
->> -               WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
->> -       else {
->> -               val_iddq |= BIT(pll_params->iddq_bit_idx);
->> -               writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
->> +               val = readl_relaxed(clk_base + pll_params->base_reg);
->> +               val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
->> +
->> +               if (val & PLL_BASE_ENABLE)
->> +                       WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
->> +               else {
->> +                       val_iddq |= BIT(pll_params->iddq_bit_idx);
->> +                       writel_relaxed(val_iddq,
->> +                                      clk_base + pll_params->iddq_reg);
->> +               }
->>         }
->>
->>         pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
->> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
->> index a61d388364b3..38b4c95cfb2f 100644
->> --- a/drivers/clk/tegra/clk.h
->> +++ b/drivers/clk/tegra/clk.h
->> @@ -261,6 +261,7 @@ struct tegra_clk_pll_params {
->>         int             stepb_shift;
->>         int             lock_delay;
->>         int             max_p;
->> +       bool            defaults_set;
->>         struct pdiv_map *pdiv_tohw;
->>         struct div_nmp  *div_nmp;
->>         struct tegra_clk_pll_freq_table *freq_table;
->> @@ -275,6 +276,7 @@ struct tegra_clk_pll_params {
->>                                 unsigned long parent_rate);
->>         int     (*dyn_ramp)(struct tegra_clk_pll *pll,
->>                         struct tegra_clk_pll_freq_table *cfg);
->> +       void    (*set_defaults)(struct tegra_clk_pll *pll);
-> 
-> Kerneldoc for the two members, please. This is especially useful since
-> the two members have such similar names, but they mean different
-> things.
-> 
-
-Yah I thought I got all the new members, but apparently I got distracted
-part way through the series and missed some. I'll double check for v6
-that ALL members are kerneldoc'd.
-
--rhyland
-
+diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
+index 22d2e48..d424920 100644
+--- a/arch/arm/mach-omap2/Makefile
++++ b/arch/arm/mach-omap2/Makefile
+@@ -187,7 +187,6 @@ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_virt_prcm_set.o
+ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpll.o
+ obj-$(CONFIG_ARCH_OMAP3)		+= $(clock-common)
+ obj-$(CONFIG_ARCH_OMAP3)		+= clkt34xx_dpll3m2.o
+-obj-$(CONFIG_ARCH_OMAP3)		+= clock3517.o
+ obj-$(CONFIG_ARCH_OMAP4)		+= $(clock-common)
+ obj-$(CONFIG_SOC_AM33XX)		+= $(clock-common)
+ obj-$(CONFIG_SOC_OMAP5)			+= $(clock-common)
+diff --git a/arch/arm/mach-omap2/clock3517.c b/arch/arm/mach-omap2/clock3517.c
+deleted file mode 100644
+index 4d79ae2..0000000
+--- a/arch/arm/mach-omap2/clock3517.c
++++ /dev/null
+@@ -1,118 +0,0 @@
+-/*
+- * OMAP3517/3505-specific clock framework functions
+- *
+- * Copyright (C) 2010 Texas Instruments, Inc.
+- * Copyright (C) 2011 Nokia Corporation
+- *
+- * Ranjith Lohithakshan
+- * Paul Walmsley
+- *
+- * Parts of this code are based on code written by
+- * Richard Woodruff, Tony Lindgren, Tuukka Tikkanen, Karthik Dasu,
+- * Russell King
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-#undef DEBUG
+-
+-#include <linux/kernel.h>
+-#include <linux/clk.h>
+-#include <linux/io.h>
+-
+-#include "clock.h"
+-#include "clock3517.h"
+-#include "cm3xxx.h"
+-#include "cm-regbits-34xx.h"
+-
+-/*
+- * In AM35xx IPSS, the {ICK,FCK} enable bits for modules are exported
+- * in the same register at a bit offset of 0x8. The EN_ACK for ICK is
+- * at an offset of 4 from ICK enable bit.
+- */
+-#define AM35XX_IPSS_ICK_MASK			0xF
+-#define AM35XX_IPSS_ICK_EN_ACK_OFFSET 		0x4
+-#define AM35XX_IPSS_ICK_FCK_OFFSET		0x8
+-#define AM35XX_IPSS_CLK_IDLEST_VAL		0
+-
+-/**
+- * am35xx_clk_find_idlest - return clock ACK info for AM35XX IPSS
+- * @clk: struct clk * being enabled
+- * @idlest_reg: void __iomem ** to store CM_IDLEST reg address into
+- * @idlest_bit: pointer to a u8 to store the CM_IDLEST bit shift into
+- * @idlest_val: pointer to a u8 to store the CM_IDLEST indicator
+- *
+- * The interface clocks on AM35xx IPSS reflects the clock idle status
+- * in the enable register itsel at a bit offset of 4 from the enable
+- * bit. A value of 1 indicates that clock is enabled.
+- */
+-static void am35xx_clk_find_idlest(struct clk_hw_omap *clk,
+-					    void __iomem **idlest_reg,
+-					    u8 *idlest_bit,
+-					    u8 *idlest_val)
+-{
+-	*idlest_reg = (__force void __iomem *)(clk->enable_reg);
+-	*idlest_bit = clk->enable_bit + AM35XX_IPSS_ICK_EN_ACK_OFFSET;
+-	*idlest_val = AM35XX_IPSS_CLK_IDLEST_VAL;
+-}
+-
+-/**
+- * am35xx_clk_find_companion - find companion clock to @clk
+- * @clk: struct clk * to find the companion clock of
+- * @other_reg: void __iomem ** to return the companion clock CM_*CLKEN va in
+- * @other_bit: u8 ** to return the companion clock bit shift in
+- *
+- * Some clocks don't have companion clocks.  For example, modules with
+- * only an interface clock (such as HECC) don't have a companion
+- * clock.  Right now, this code relies on the hardware exporting a bit
+- * in the correct companion register that indicates that the
+- * nonexistent 'companion clock' is active.  Future patches will
+- * associate this type of code with per-module data structures to
+- * avoid this issue, and remove the casts.  No return value.
+- */
+-static void am35xx_clk_find_companion(struct clk_hw_omap *clk,
+-				      void __iomem **other_reg,
+-				      u8 *other_bit)
+-{
+-	*other_reg = (__force void __iomem *)(clk->enable_reg);
+-	if (clk->enable_bit & AM35XX_IPSS_ICK_MASK)
+-		*other_bit = clk->enable_bit + AM35XX_IPSS_ICK_FCK_OFFSET;
+-	else
+-		*other_bit = clk->enable_bit - AM35XX_IPSS_ICK_FCK_OFFSET;
+-}
+-const struct clk_hw_omap_ops clkhwops_am35xx_ipss_module_wait = {
+-	.find_idlest	= am35xx_clk_find_idlest,
+-	.find_companion	= am35xx_clk_find_companion,
+-};
+-
+-/**
+- * am35xx_clk_ipss_find_idlest - return CM_IDLEST info for IPSS
+- * @clk: struct clk * being enabled
+- * @idlest_reg: void __iomem ** to store CM_IDLEST reg address into
+- * @idlest_bit: pointer to a u8 to store the CM_IDLEST bit shift into
+- * @idlest_val: pointer to a u8 to store the CM_IDLEST indicator
+- *
+- * The IPSS target CM_IDLEST bit is at a different shift from the
+- * CM_{I,F}CLKEN bit.  Pass back the correct info via @idlest_reg
+- * and @idlest_bit.  No return value.
+- */
+-static void am35xx_clk_ipss_find_idlest(struct clk_hw_omap *clk,
+-					    void __iomem **idlest_reg,
+-					    u8 *idlest_bit,
+-					    u8 *idlest_val)
+-{
+-	u32 r;
+-
+-	r = (((__force u32)clk->enable_reg & ~0xf0) | 0x20);
+-	*idlest_reg = (__force void __iomem *)r;
+-	*idlest_bit = AM35XX_ST_IPSS_SHIFT;
+-	*idlest_val = OMAP34XX_CM_IDLEST_VAL;
+-}
+-
+-const struct clk_hw_omap_ops clkhwops_am35xx_ipss_wait = {
+-	.allow_idle	= omap2_clkt_iclk_allow_idle,
+-	.deny_idle	= omap2_clkt_iclk_deny_idle,
+-	.find_idlest	= am35xx_clk_ipss_find_idlest,
+-	.find_companion	= omap2_clk_dflt_find_companion,
+-};
+diff --git a/arch/arm/mach-omap2/clock3517.h b/arch/arm/mach-omap2/clock3517.h
+deleted file mode 100644
+index ca5e5a6..0000000
+--- a/arch/arm/mach-omap2/clock3517.h
++++ /dev/null
+@@ -1,14 +0,0 @@
+-/*
+- * OMAP3517/3505 clock function prototypes and macros
+- *
+- * Copyright (C) 2010 Texas Instruments, Inc.
+- * Copyright (C) 2010 Nokia Corporation
+- */
+-
+-#ifndef __ARCH_ARM_MACH_OMAP2_CLOCK3517_H
+-#define __ARCH_ARM_MACH_OMAP2_CLOCK3517_H
+-
+-extern const struct clkops clkops_am35xx_ipss_module_wait;
+-extern const struct clkops clkops_am35xx_ipss_wait;
+-
+-#endif
+diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
+index 58879f0..6e33332 100644
+--- a/drivers/clk/ti/clk-3xxx.c
++++ b/drivers/clk/ti/clk-3xxx.c
+@@ -34,6 +34,18 @@
+ 
+ #define OMAP34XX_CM_IDLEST_VAL				1
+ 
++/*
++ * In AM35xx IPSS, the {ICK,FCK} enable bits for modules are exported
++ * in the same register at a bit offset of 0x8. The EN_ACK for ICK is
++ * at an offset of 4 from ICK enable bit.
++ */
++#define AM35XX_IPSS_ICK_MASK			0xF
++#define AM35XX_IPSS_ICK_EN_ACK_OFFSET		0x4
++#define AM35XX_IPSS_ICK_FCK_OFFSET		0x8
++#define AM35XX_IPSS_CLK_IDLEST_VAL		0
++
++#define AM35XX_ST_IPSS_SHIFT			5
++
+ /**
+  * omap3430es2_clk_ssi_find_idlest - return CM_IDLEST info for SSI
+  * @clk: struct clk * being enabled
+@@ -146,6 +158,88 @@ const struct clk_hw_omap_ops clkhwops_omap3430es2_hsotgusb_wait = {
+ 	.find_companion	= omap2_clk_dflt_find_companion,
+ };
+ 
++/**
++ * am35xx_clk_find_idlest - return clock ACK info for AM35XX IPSS
++ * @clk: struct clk * being enabled
++ * @idlest_reg: void __iomem ** to store CM_IDLEST reg address into
++ * @idlest_bit: pointer to a u8 to store the CM_IDLEST bit shift into
++ * @idlest_val: pointer to a u8 to store the CM_IDLEST indicator
++ *
++ * The interface clocks on AM35xx IPSS reflects the clock idle status
++ * in the enable register itsel at a bit offset of 4 from the enable
++ * bit. A value of 1 indicates that clock is enabled.
++ */
++static void am35xx_clk_find_idlest(struct clk_hw_omap *clk,
++				   void __iomem **idlest_reg,
++				   u8 *idlest_bit,
++				   u8 *idlest_val)
++{
++	*idlest_reg = (__force void __iomem *)(clk->enable_reg);
++	*idlest_bit = clk->enable_bit + AM35XX_IPSS_ICK_EN_ACK_OFFSET;
++	*idlest_val = AM35XX_IPSS_CLK_IDLEST_VAL;
++}
++
++/**
++ * am35xx_clk_find_companion - find companion clock to @clk
++ * @clk: struct clk * to find the companion clock of
++ * @other_reg: void __iomem ** to return the companion clock CM_*CLKEN va in
++ * @other_bit: u8 ** to return the companion clock bit shift in
++ *
++ * Some clocks don't have companion clocks.  For example, modules with
++ * only an interface clock (such as HECC) don't have a companion
++ * clock.  Right now, this code relies on the hardware exporting a bit
++ * in the correct companion register that indicates that the
++ * nonexistent 'companion clock' is active.  Future patches will
++ * associate this type of code with per-module data structures to
++ * avoid this issue, and remove the casts.  No return value.
++ */
++static void am35xx_clk_find_companion(struct clk_hw_omap *clk,
++				      void __iomem **other_reg,
++				      u8 *other_bit)
++{
++	*other_reg = (__force void __iomem *)(clk->enable_reg);
++	if (clk->enable_bit & AM35XX_IPSS_ICK_MASK)
++		*other_bit = clk->enable_bit + AM35XX_IPSS_ICK_FCK_OFFSET;
++	else
++	*other_bit = clk->enable_bit - AM35XX_IPSS_ICK_FCK_OFFSET;
++}
++
++const struct clk_hw_omap_ops clkhwops_am35xx_ipss_module_wait = {
++	.find_idlest	= am35xx_clk_find_idlest,
++	.find_companion	= am35xx_clk_find_companion,
++};
++
++/**
++ * am35xx_clk_ipss_find_idlest - return CM_IDLEST info for IPSS
++ * @clk: struct clk * being enabled
++ * @idlest_reg: void __iomem ** to store CM_IDLEST reg address into
++ * @idlest_bit: pointer to a u8 to store the CM_IDLEST bit shift into
++ * @idlest_val: pointer to a u8 to store the CM_IDLEST indicator
++ *
++ * The IPSS target CM_IDLEST bit is at a different shift from the
++ * CM_{I,F}CLKEN bit.  Pass back the correct info via @idlest_reg
++ * and @idlest_bit.  No return value.
++ */
++static void am35xx_clk_ipss_find_idlest(struct clk_hw_omap *clk,
++					void __iomem **idlest_reg,
++					u8 *idlest_bit,
++					u8 *idlest_val)
++{
++	u32 r;
++
++	r = (((__force u32)clk->enable_reg & ~0xf0) | 0x20);
++	*idlest_reg = (__force void __iomem *)r;
++	*idlest_bit = AM35XX_ST_IPSS_SHIFT;
++	*idlest_val = OMAP34XX_CM_IDLEST_VAL;
++}
++
++const struct clk_hw_omap_ops clkhwops_am35xx_ipss_wait = {
++	.allow_idle	= omap2_clkt_iclk_allow_idle,
++	.deny_idle	= omap2_clkt_iclk_deny_idle,
++	.find_idlest	= am35xx_clk_ipss_find_idlest,
++	.find_companion	= omap2_clk_dflt_find_companion,
++};
++
+ static struct ti_dt_clk omap3xxx_clks[] = {
+ 	DT_CLK(NULL, "apb_pclk", "dummy_apb_pclk"),
+ 	DT_CLK(NULL, "omap_32k_fck", "omap_32k_fck"),
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index c6fbd15..0ca5a36 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -183,6 +183,8 @@ extern const struct clk_hw_omap_ops clkhwops_omap3430es2_dss_usbhost_wait;
+ extern const struct clk_hw_omap_ops clkhwops_omap3430es2_iclk_hsotgusb_wait;
+ extern const struct clk_hw_omap_ops clkhwops_omap3430es2_iclk_dss_usbhost_wait;
+ extern const struct clk_hw_omap_ops clkhwops_omap3430es2_iclk_ssi_wait;
++extern const struct clk_hw_omap_ops clkhwops_am35xx_ipss_module_wait;
++extern const struct clk_hw_omap_ops clkhwops_am35xx_ipss_wait;
+ 
+ int omap2_clkops_enable_clkdm(struct clk_hw *hw);
+ void omap2_clkops_disable_clkdm(struct clk_hw *hw);
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 813b809..fc8e9ad 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -331,8 +331,6 @@ void ti_clk_setup_features(struct ti_clk_features *features);
+ struct ti_clk_features *ti_clk_get_features(void);
+ 
+ extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
+-extern const struct clk_hw_omap_ops clkhwops_am35xx_ipss_module_wait;
+-extern const struct clk_hw_omap_ops clkhwops_am35xx_ipss_wait;
+ 
+ #ifdef CONFIG_ATAGS
+ int omap3430_clk_legacy_init(void);
 -- 
-nvpublic
+1.7.9.5
+
