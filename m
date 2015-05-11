@@ -1,71 +1,74 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 6 May 2015 17:01:54 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <b29396@freescale.com>
-Cc: Dong Aisheng <aisheng.dong@freescale.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mturquette@linaro.org,
-	shawn.guo@linaro.org, linux-arm-kernel@lists.infradead.org,
-	Ranjani.Vaidyanathan@freescale.com, b20596@freescale.com,
-	r64343@freescale.com, b20788@freescale.com
-Subject: Re: [PATCH RFC v1 2/5] clk: add missing lock when call
- clk_core_enable in clk_set_parent
-Message-ID: <20150507000154.GD21794@codeaurora.org>
-References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
- <1429107999-24413-3-git-send-email-aisheng.dong@freescale.com>
- <55427D83.3060900@codeaurora.org>
- <20150504083549.GC4082@shlinux1.ap.freescale.net>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>, <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 12/27] ARM: OMAP2+: clock: add support for clkdm ops to the low level clk ops
+Date: Mon, 11 May 2015 11:54:38 +0300
+Message-ID: <1431334493-24455-13-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20150504083549.GC4082@shlinux1.ap.freescale.net>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/04, Dong Aisheng wrote:
-> On Thu, Apr 30, 2015 at 12:07:47PM -0700, Stephen Boyd wrote:
-> > On 04/15/15 07:26, Dong Aisheng wrote:
-> > > clk_core_enable is executed without &enable_clock in clk_set_parent function.
-> > > Adding it to avoid potential race condition issue.
-> > >
-> > > Fixes: 035a61c314eb ("clk: Make clk API return per-user struct clk instances")
-> > > Cc: Mike Turquette <mturquette@linaro.org>
-> > > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > > Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
-> > > ---
-> > 
-> > Can you please describe the race condition? From what I can tell there
-> > is not a race condition here and we've gone around on this part of the
-> > code before to fix any race conditions.
-> > 
-> 
-> Do you mean we do not need to acquire enable lock when execute clk_core_enable
-> in set_parent function? Can you help explain a bit more why?
-> 
-> The clk doc looks to me says the enable lock should be held across calls to
-> the .enable, .disable and .is_enabled operations.
-> 
-> And before the commit
-> 035a61c314eb ("clk: Make clk API return per-user struct clk instances"),
-> all the clk_enable/disable in set_parent() is executed with lock.
-> 
-> A rough thinking of race condition is assuming Thread A calls
-> clk_set_parent(x, y) while Thread B calls clk_enable(x), clock x is disabled
-> but prepared initially, due to clk_core_enable in set_parent() is not
-> executed with enable clock, the clk_core_enable may be reentrant during
-> the locking time executed by B.
-> Won't this be a race condition?
-> 
+Clock driver requires access to certain clockdomain handling ops once
+the code is being moved over under clock driver. Example of this is
+clk_enable / clk_disable under omap3 DPLL code. The required clkdm
+APIs are now exported through the ti_clk_ll_ops struct.
 
-Ah I see now. The commit text could say something like this:
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/clock.c |    2 ++
+ include/linux/clk/ti.h      |   16 +++++++++++-----
+ 2 files changed, 13 insertions(+), 5 deletions(-)
 
-Before commit 035a61c314eb ("clk: Make clk API return per-user
-struct clk instances") we acquired the enable_lock in
-__clk_set_parent_{before,after}() by means of calling
-clk_enable(). After commit 035a61c314eb we use clk_core_enable()
-in place of the clk_enable(), and clk_core_enable() doesn't
-acquire the enable_lock. This opens up a race condition between
-clk_set_parent() and clk_enable().
-
-I've replaced the commit text and applied it to clk-fixes.
-
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index 94a4949..d6afc12 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -120,6 +120,8 @@ u32 omap2_clk_readl(struct clk_hw_omap *clk, void __iomem *reg)
+ static struct ti_clk_ll_ops omap_clk_ll_ops = {
+ 	.clk_readl = clk_memmap_readl,
+ 	.clk_writel = clk_memmap_writel,
++	.clkdm_clk_enable = clkdm_clk_enable,
++	.clkdm_clk_disable = clkdm_clk_disable,
+ };
+ 
+ /**
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 43184c2..43b406c 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -238,18 +238,24 @@ struct clk_omap_reg {
+ };
+ 
+ /**
+- * struct ti_clk_ll_ops - low-level register access ops for a clock
++ * struct ti_clk_ll_ops - low-level ops for clocks
+  * @clk_readl: pointer to register read function
+  * @clk_writel: pointer to register write function
++ * @clkdm_clk_enable: pointer to clockdomain enable function
++ * @clkdm_clk_disable: pointer to clockdomain disable function
+  *
+- * Low-level register access ops are generally used by the basic clock types
+- * (clk-gate, clk-mux, clk-divider etc.) to provide support for various
+- * low-level hardware interfaces (direct MMIO, regmap etc.), but can also be
+- * used by other hardware-specific clock drivers if needed.
++ * Low-level ops are generally used by the basic clock types (clk-gate,
++ * clk-mux, clk-divider etc.) to provide support for various low-level
++ * hadrware interfaces (direct MMIO, regmap etc.), and is initialized
++ * by board code. Low-level ops also contain some other platform specific
++ * operations not provided directly by clock drivers.
+  */
+ struct ti_clk_ll_ops {
+ 	u32	(*clk_readl)(void __iomem *reg);
+ 	void	(*clk_writel)(u32 val, void __iomem *reg);
++	int	(*clkdm_clk_enable)(struct clockdomain *clkdm, struct clk *clk);
++	int	(*clkdm_clk_disable)(struct clockdomain *clkdm,
++				     struct clk *clk);
+ };
+ 
+ extern struct ti_clk_ll_ops *ti_clk_ll_ops;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
