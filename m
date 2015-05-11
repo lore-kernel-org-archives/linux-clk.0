@@ -1,30 +1,63 @@
-Return-Path: <dan.carpenter@oracle.com>
-Date: Wed, 27 May 2015 11:26:27 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Dinh Nguyen <dinguyen@opensource.altera.com>
-Cc: Mike Turquette <mturquette@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [patch] clk: socfpga: remove a stray tab
-Message-ID: <20150527082627.GD19423@mwanda>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>, <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 21/27] ARM: OMAP4: clock: remove clock44xx.h header
+Date: Mon, 11 May 2015 11:54:47 +0300
+Message-ID: <1431334493-24455-22-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This line was indented too far.
+This is not needed for anything anymore, so remove it completely.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/clock44xx.h |   20 --------------------
+ arch/arm/mach-omap2/io.c        |    1 -
+ 2 files changed, 21 deletions(-)
+ delete mode 100644 arch/arm/mach-omap2/clock44xx.h
 
-diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
-index be3e998..83c6780 100644
---- a/drivers/clk/socfpga/clk-gate-a10.c
-+++ b/drivers/clk/socfpga/clk-gate-a10.c
-@@ -39,7 +39,7 @@ static unsigned long socfpga_gate_clk_recalc_rate(struct clk_hw *hwclk,
- 	else if (socfpgaclk->div_reg) {
- 		val = readl(socfpgaclk->div_reg) >> socfpgaclk->shift;
- 		val &= div_mask(socfpgaclk->width);
--			div = (1 << val);
-+		div = (1 << val);
- 	}
- 
- 	return parent_rate / div;
+diff --git a/arch/arm/mach-omap2/clock44xx.h b/arch/arm/mach-omap2/clock44xx.h
+deleted file mode 100644
+index 287a46f..0000000
+--- a/arch/arm/mach-omap2/clock44xx.h
++++ /dev/null
+@@ -1,20 +0,0 @@
+-/*
+- * OMAP4 clock function prototypes and macros
+- *
+- * Copyright (C) 2009 Texas Instruments, Inc.
+- * Copyright (C) 2010 Nokia Corporation
+- */
+-
+-#ifndef __ARCH_ARM_MACH_OMAP2_CLOCK44XX_H
+-#define __ARCH_ARM_MACH_OMAP2_CLOCK44XX_H
+-
+-/*
+- * OMAP4430_REGM4XEN_MULT: If the CM_CLKMODE_DPLL_ABE.DPLL_REGM4XEN bit is
+- *    set, then the DPLL's lock frequency is multiplied by 4 (OMAP4430 TRM
+- *    vV Section 3.6.3.3.1 "DPLLs Output Clocks Parameters")
+- */
+-#define OMAP4430_REGM4XEN_MULT	4
+-
+-int omap4xxx_clk_init(void);
+-
+-#endif
+diff --git a/arch/arm/mach-omap2/io.c b/arch/arm/mach-omap2/io.c
+index 820dde8..7467856 100644
+--- a/arch/arm/mach-omap2/io.c
++++ b/arch/arm/mach-omap2/io.c
+@@ -37,7 +37,6 @@
+ #include "clock.h"
+ #include "clock2xxx.h"
+ #include "clock3xxx.h"
+-#include "clock44xx.h"
+ #include "omap-pm.h"
+ #include "sdrc.h"
+ #include "control.h"
+-- 
+1.7.9.5
