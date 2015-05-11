@@ -1,99 +1,135 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	ezequiel@vanguardiasur.com.ar
-Subject: [PATCH v3 0/6] Clk drivers for NXP LPC18xx family
-Date: Tue, 19 May 2015 00:35:53 +0200
-Message-Id: <1431988559-23338-1-git-send-email-manabian@gmail.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>, <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 08/27] ARM: OMAP36xx: remove clock36xx.c/.h files
+Date: Mon, 11 May 2015 11:54:34 +0300
+Message-ID: <1431334493-24455-9-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set adds support for the two main clock peripherals in the
-LPC18xx/43xx MCU family.
+These files contain legacy clock implementations which are no longer used
+for anything, thus remove them completely.
 
-The Clock Generation Unit (CGU) is the base source of all clocks. It has
-five external inputs and contains PLLs, dividers and muxes. The outputs
-from the CGU are then routed to a Clock Control Unit (CCU) and a few
-peripherals directly. There are two CCUs in the MCU. The CCU is a
-collection of gates and a few dividers that sits between the CGU and
-most of the peripherals. These clock drivers are needed by the timer at
-early boot so both are using CLK_OF_DECLARE.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/Makefile    |    2 +-
+ arch/arm/mach-omap2/clock36xx.c |   69 ---------------------------------------
+ arch/arm/mach-omap2/clock36xx.h |   13 --------
+ 3 files changed, 1 insertion(+), 83 deletions(-)
+ delete mode 100644 arch/arm/mach-omap2/clock36xx.c
+ delete mode 100644 arch/arm/mach-omap2/clock36xx.h
 
-Which clocks that are available depends on the specific device and it's
-peripherals. It's possible in DT to setup the routing between the CGU
-and the CCUs.
-
-
-The biggest change in v3 is the way parent names for CCU clocks are
-retrieved. Previous version used names from the 'clock-output-names'
-node on CGU and of_clk_get_parent_name(). In this version the clock
-names has been moved into the CGU driver and are retrieved from the
-CCU driver by of_clk_get() and __clk_get_name().
-
-The of_clk_get_index function is used to map CCU branches to to the
-base clocks by using the CGU ID retrieved with of_clk_get_index. An
-alternative approach would be to put the base clock names directly
-in the CCU driver where the CGU ID is today. See clk_branches table
-in clk-lpc18xx-ccu.c. If this is the prefered way of doing this
-please let me know and I'll quickly put out a new version.
-
-Changes since v2:
- - use 'clock-controller' as node name in doc
- - add patch with of_clk_get_index function
- - drop 'clock-indices' and 'clock-output-names' from cgu node
- - move base clock names into cgu driver
- - use of_clk_get/__clk_get_name in ccu to get parent name for
-   composite clocks.
- - other misc fixes to ccu driver and cgu doc
-
-Changes since v1:
- - reorganize cgu clk structs
- - macros to create cgu clk structs
- - move drivers to nxp subdir
- - rebase on v4.1-rc1
-
-
-The last patch (dts changes) are only included in this patch set for
-illustration purposes. DTS changes will be sent separately to the ARM
-SoC team later.
-
-Base support for LPC18xx is now in arm-soc next. Pinctrl, gpio
-and reset drivers are also upstream.
-
-
-Joachim Eastwood (6):
-  clk: add lpc18xx cgu clk driver
-  doc: dt: add documentation for lpc1850-cgu clk driver
-  clk: add function to retrieve clk id from dt
-  clk: add lpc18xx ccu clk driver
-  doc: dt: add documentation for lpc1850-ccu clk driver
-  ARM: dts: lpc18xx: add clock nodes for cgu and ccu
-
- .../devicetree/bindings/clock/lpc1850-ccu.txt      | 146 +++++
- .../devicetree/bindings/clock/lpc1850-cgu.txt      | 131 +++++
- arch/arm/boot/dts/lpc18xx.dtsi                     |  77 ++-
- arch/arm/boot/dts/lpc4350-hitex-eval.dts           |   4 -
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk.c                                  |  18 +
- drivers/clk/nxp/Makefile                           |   2 +
- drivers/clk/nxp/clk-lpc18xx-ccu.c                  | 305 ++++++++++
- drivers/clk/nxp/clk-lpc18xx-cgu.c                  | 635 +++++++++++++++++++++
- include/dt-bindings/clock/lpc18xx-ccu.h            |  74 +++
- include/dt-bindings/clock/lpc18xx-cgu.h            |  41 ++
- include/linux/clk-provider.h                       |   1 +
- 12 files changed, 1417 insertions(+), 18 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-ccu.txt
- create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
- create mode 100644 drivers/clk/nxp/Makefile
- create mode 100644 drivers/clk/nxp/clk-lpc18xx-ccu.c
- create mode 100644 drivers/clk/nxp/clk-lpc18xx-cgu.c
- create mode 100644 include/dt-bindings/clock/lpc18xx-ccu.h
- create mode 100644 include/dt-bindings/clock/lpc18xx-cgu.h
-
+diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
+index 98d5030..f33d011 100644
+--- a/arch/arm/mach-omap2/Makefile
++++ b/arch/arm/mach-omap2/Makefile
+@@ -188,7 +188,7 @@ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpll.o
+ obj-$(CONFIG_SOC_OMAP2430)		+= clock2430.o
+ obj-$(CONFIG_ARCH_OMAP3)		+= $(clock-common) clock3xxx.o
+ obj-$(CONFIG_ARCH_OMAP3)		+= clock34xx.o clkt34xx_dpll3m2.o
+-obj-$(CONFIG_ARCH_OMAP3)		+= clock3517.o clock36xx.o
++obj-$(CONFIG_ARCH_OMAP3)		+= clock3517.o
+ obj-$(CONFIG_ARCH_OMAP3)		+= dpll3xxx.o
+ obj-$(CONFIG_ARCH_OMAP4)		+= $(clock-common)
+ obj-$(CONFIG_ARCH_OMAP4)		+= dpll3xxx.o
+diff --git a/arch/arm/mach-omap2/clock36xx.c b/arch/arm/mach-omap2/clock36xx.c
+deleted file mode 100644
+index 91ccb96..0000000
+--- a/arch/arm/mach-omap2/clock36xx.c
++++ /dev/null
+@@ -1,69 +0,0 @@
+-/*
+- * OMAP36xx-specific clkops
+- *
+- * Copyright (C) 2010 Texas Instruments, Inc.
+- * Copyright (C) 2010 Nokia Corporation
+- *
+- * Mike Turquette
+- * Vijaykumar GN
+- * Paul Walmsley
+- *
+- * Parts of this code are based on code written by
+- * Richard Woodruff, Tony Lindgren, Tuukka Tikkanen, Karthik Dasu,
+- * Russell King
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-#undef DEBUG
+-
+-#include <linux/kernel.h>
+-#include <linux/clk.h>
+-#include <linux/clk-provider.h>
+-#include <linux/io.h>
+-
+-#include "clock.h"
+-#include "clock36xx.h"
+-#define to_clk_divider(_hw) container_of(_hw, struct clk_divider, hw)
+-
+-/**
+- * omap36xx_pwrdn_clk_enable_with_hsdiv_restore - enable clocks suffering
+- *         from HSDivider PWRDN problem Implements Errata ID: i556.
+- * @clk: DPLL output struct clk
+- *
+- * 3630 only: dpll3_m3_ck, dpll4_m2_ck, dpll4_m3_ck, dpll4_m4_ck,
+- * dpll4_m5_ck & dpll4_m6_ck dividers gets loaded with reset
+- * valueafter their respective PWRDN bits are set.  Any dummy write
+- * (Any other value different from the Read value) to the
+- * corresponding CM_CLKSEL register will refresh the dividers.
+- */
+-int omap36xx_pwrdn_clk_enable_with_hsdiv_restore(struct clk_hw *clk)
+-{
+-	struct clk_divider *parent;
+-	struct clk_hw *parent_hw;
+-	u32 dummy_v, orig_v;
+-	struct clk_hw_omap *omap_clk = to_clk_hw_omap(clk);
+-	int ret;
+-
+-	/* Clear PWRDN bit of HSDIVIDER */
+-	ret = omap2_dflt_clk_enable(clk);
+-
+-	parent_hw = __clk_get_hw(__clk_get_parent(clk->clk));
+-	parent = to_clk_divider(parent_hw);
+-
+-	/* Restore the dividers */
+-	if (!ret) {
+-		orig_v = omap2_clk_readl(omap_clk, parent->reg);
+-		dummy_v = orig_v;
+-
+-		/* Write any other value different from the Read value */
+-		dummy_v ^= (1 << parent->shift);
+-		omap2_clk_writel(dummy_v, omap_clk, parent->reg);
+-
+-		/* Write the original divider */
+-		omap2_clk_writel(orig_v, omap_clk, parent->reg);
+-	}
+-
+-	return ret;
+-}
+diff --git a/arch/arm/mach-omap2/clock36xx.h b/arch/arm/mach-omap2/clock36xx.h
+deleted file mode 100644
+index 945bb7f..0000000
+--- a/arch/arm/mach-omap2/clock36xx.h
++++ /dev/null
+@@ -1,13 +0,0 @@
+-/*
+- * OMAP36xx clock function prototypes and macros
+- *
+- * Copyright (C) 2010 Texas Instruments, Inc.
+- * Copyright (C) 2010 Nokia Corporation
+- */
+-
+-#ifndef __ARCH_ARM_MACH_OMAP2_CLOCK36XX_H
+-#define __ARCH_ARM_MACH_OMAP2_CLOCK36XX_H
+-
+-extern int omap36xx_pwrdn_clk_enable_with_hsdiv_restore(struct clk_hw *hw);
+-
+-#endif
 -- 
-1.8.0
+1.7.9.5
