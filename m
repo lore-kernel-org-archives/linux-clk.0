@@ -1,299 +1,406 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 3/8] clk: sunxi: Add a driver for the PLL2
-Date: Sat,  2 May 2015 13:24:34 +0200
-Message-Id: <1430565879-28113-4-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>, <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 09/27] clk: ti: autoidle: move generic autoidle handling code to clock driver
+Date: Mon, 11 May 2015 11:54:35 +0300
+Message-ID: <1431334493-24455-10-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The PLL2 on the A10 and later SoCs is the clock used for all the audio
-related operations.
+This is no longer needed in platform directory, as the legacy clock data
+is gone, so move it under TI clock driver. Some static functions are
+renamed also.
 
-This clock has a somewhat complex output tree, with three outputs (2X, 4X
-and 8X) with a fixed divider from the base clock, and an output (1X) with a
-post divider.
-
-However, we can simplify things since the 1X divider can be fixed, and we
-end up by having a base clock not exposed to any device (or at least
-directly, since the 4X output doesn't have any divider), and 4 fixed
-divider clocks that will be exposed.
-
-This clock seems to have been introduced, at least in this form, in the
-revision B of the A10, but we don't have any information on the clock used
-on the revision A.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/sunxi/Makefile                 |   1 +
- drivers/clk/sunxi/clk-a10-pll2.c           | 176 +++++++++++++++++++++++++++++
- include/dt-bindings/clock/sun4i-a10-pll2.h |  53 +++++++++
- 3 files changed, 230 insertions(+)
- create mode 100644 drivers/clk/sunxi/clk-a10-pll2.c
- create mode 100644 include/dt-bindings/clock/sun4i-a10-pll2.h
+ arch/arm/mach-omap2/clock.c   |  104 -----------------------------------
+ arch/arm/mach-omap2/clock.h   |    3 --
+ drivers/clk/ti/autoidle.c     |  119 ++++++++++++++++++++++++++++++++++++++---
+ drivers/clk/ti/clock.h        |    3 ++
+ drivers/clk/ti/fixed-factor.c |    2 +
+ include/linux/clk/ti.h        |   13 ++---
+ 6 files changed, 119 insertions(+), 125 deletions(-)
 
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index 058f273d6154..eb36c38d4120 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -4,6 +4,7 @@
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index cbc65b3..42ce860 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -69,8 +69,6 @@ u16 cpu_mask;
+  */
+ static bool clkdm_control = true;
  
- obj-y += clk-sunxi.o clk-factors.o
- obj-y += clk-a10-hosc.o
-+obj-y += clk-a10-pll2.o
- obj-y += clk-a20-gmac.o
- obj-y += clk-mod0.o
- obj-y += clk-sun8i-mbus.o
-diff --git a/drivers/clk/sunxi/clk-a10-pll2.c b/drivers/clk/sunxi/clk-a10-pll2.c
-new file mode 100644
-index 000000000000..4d0369626dba
---- /dev/null
-+++ b/drivers/clk/sunxi/clk-a10-pll2.c
-@@ -0,0 +1,176 @@
-+/*
-+ * Copyright 2013 Emilio López
-+ * Emilio López <emilio@elopez.com.ar>
+-static LIST_HEAD(clk_hw_omap_clocks);
+-
+ struct clk_iomap {
+ 	struct regmap *regmap;
+ 	void __iomem *mem;
+@@ -579,108 +577,6 @@ static int __init omap_clk_setup(char *str)
+ __setup("mpurate=", omap_clk_setup);
+ 
+ /**
+- * omap2_init_clk_hw_omap_clocks - initialize an OMAP clock
+- * @clk: struct clk * to initialize
+- *
+- * Add an OMAP clock @clk to the internal list of OMAP clocks.  Used
+- * temporarily for autoidle handling, until this support can be
+- * integrated into the common clock framework code in some way.  No
+- * return value.
+- */
+-void omap2_init_clk_hw_omap_clocks(struct clk *clk)
+-{
+-	struct clk_hw_omap *c;
+-
+-	if (__clk_get_flags(clk) & CLK_IS_BASIC)
+-		return;
+-
+-	c = to_clk_hw_omap(__clk_get_hw(clk));
+-	list_add(&c->node, &clk_hw_omap_clocks);
+-}
+-
+-/**
+- * omap2_clk_enable_autoidle_all - enable autoidle on all OMAP clocks that
+- * support it
+- *
+- * Enable clock autoidle on all OMAP clocks that have allow_idle
+- * function pointers associated with them.  This function is intended
+- * to be temporary until support for this is added to the common clock
+- * code.  Returns 0.
+- */
+-int omap2_clk_enable_autoidle_all(void)
+-{
+-	struct clk_hw_omap *c;
+-
+-	list_for_each_entry(c, &clk_hw_omap_clocks, node)
+-		if (c->ops && c->ops->allow_idle)
+-			c->ops->allow_idle(c);
+-
+-	of_ti_clk_allow_autoidle_all();
+-
+-	return 0;
+-}
+-
+-/**
+- * omap2_clk_disable_autoidle_all - disable autoidle on all OMAP clocks that
+- * support it
+- *
+- * Disable clock autoidle on all OMAP clocks that have allow_idle
+- * function pointers associated with them.  This function is intended
+- * to be temporary until support for this is added to the common clock
+- * code.  Returns 0.
+- */
+-int omap2_clk_disable_autoidle_all(void)
+-{
+-	struct clk_hw_omap *c;
+-
+-	list_for_each_entry(c, &clk_hw_omap_clocks, node)
+-		if (c->ops && c->ops->deny_idle)
+-			c->ops->deny_idle(c);
+-
+-	of_ti_clk_deny_autoidle_all();
+-
+-	return 0;
+-}
+-
+-/**
+- * omap2_clk_deny_idle - disable autoidle on an OMAP clock
+- * @clk: struct clk * to disable autoidle for
+- *
+- * Disable autoidle on an OMAP clock.
+- */
+-int omap2_clk_deny_idle(struct clk *clk)
+-{
+-	struct clk_hw_omap *c;
+-
+-	if (__clk_get_flags(clk) & CLK_IS_BASIC)
+-		return -EINVAL;
+-
+-	c = to_clk_hw_omap(__clk_get_hw(clk));
+-	if (c->ops && c->ops->deny_idle)
+-		c->ops->deny_idle(c);
+-	return 0;
+-}
+-
+-/**
+- * omap2_clk_allow_idle - enable autoidle on an OMAP clock
+- * @clk: struct clk * to enable autoidle for
+- *
+- * Enable autoidle on an OMAP clock.
+- */
+-int omap2_clk_allow_idle(struct clk *clk)
+-{
+-	struct clk_hw_omap *c;
+-
+-	if (__clk_get_flags(clk) & CLK_IS_BASIC)
+-		return -EINVAL;
+-
+-	c = to_clk_hw_omap(__clk_get_hw(clk));
+-	if (c->ops && c->ops->allow_idle)
+-		c->ops->allow_idle(c);
+-	return 0;
+-}
+-
+-/**
+  * omap2_clk_enable_init_clocks - prepare & enable a list of clocks
+  * @clk_names: ptr to an array of strings of clock names to enable
+  * @num_clocks: number of clock names in @clk_names
+diff --git a/arch/arm/mach-omap2/clock.h b/arch/arm/mach-omap2/clock.h
+index b71d430..950a17a 100644
+--- a/arch/arm/mach-omap2/clock.h
++++ b/arch/arm/mach-omap2/clock.h
+@@ -186,9 +186,6 @@ void omap3_dpll_deny_idle(struct clk_hw_omap *clk);
+ 
+ void __init omap2_clk_disable_clkdm_control(void);
+ 
+-int omap2_clk_enable_autoidle_all(void);
+-int omap2_clk_allow_idle(struct clk *clk);
+-int omap2_clk_deny_idle(struct clk *clk);
+ int omap2_clk_switch_mpurate_at_boot(const char *mpurate_ck_name);
+ void omap2_clk_print_new_rates(const char *hfclkin_ck_name,
+ 			       const char *core_ck_name,
+diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
+index e75c64c..3dbcc36 100644
+--- a/drivers/clk/ti/autoidle.c
++++ b/drivers/clk/ti/autoidle.c
+@@ -33,8 +33,47 @@ struct clk_ti_autoidle {
+ #define AUTOIDLE_LOW		0x1
+ 
+ static LIST_HEAD(autoidle_clks);
++static LIST_HEAD(clk_hw_omap_clocks);
+ 
+-static void ti_allow_autoidle(struct clk_ti_autoidle *clk)
++/**
++ * omap2_clk_deny_idle - disable autoidle on an OMAP clock
++ * @clk: struct clk * to disable autoidle for
 + *
-+ * Copyright 2015 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
++ * Disable autoidle on an OMAP clock.
 + */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+
-+#include <dt-bindings/clock/sun4i-a10-pll2.h>
-+
-+#include "clk-factors.h"
-+
-+#define SUN4I_PLL2_ENABLE		31
-+#define SUN4I_PLL2_POST_DIV		26
-+#define SUN4I_PLL2_POST_DIV_MASK	0xF
-+#define SUN4I_PLL2_N			8
-+#define SUN4I_PLL2_N_MASK		0x7F
-+#define SUN4I_PLL2_PRE_DIV		0
-+#define SUN4I_PLL2_PRE_DIV_MASK		0x1F
-+
-+#define SUN4I_PLL2_POST_DIV_VALUE	21
-+#define SUN4I_PLL2_PRE_DIV_VALUE	4
-+
-+#define SUN4I_PLL2_OUTPUTS		4
-+
-+static void sun4i_a10_get_pll2_base_factors(u32 *freq, u32 parent_rate,
-+					    u8 *n, u8 *k, u8 *m, u8 *p)
++int omap2_clk_deny_idle(struct clk *clk)
 +{
-+	/*
-+	 * Normalize the frequency to a multiple of (24 MHz / Fixed
-+	 * PRE-DIV)
-+	 */
-+	*freq = round_down(*freq, parent_rate / SUN4I_PLL2_PRE_DIV_VALUE);
++	struct clk_hw_omap *c;
 +
-+	/* We were called to round the frequency, we can return */
-+	if (!n)
-+		return;
++	if (__clk_get_flags(clk) & CLK_IS_BASIC)
++		return -EINVAL;
 +
-+	*n = *freq * SUN4I_PLL2_PRE_DIV_VALUE / parent_rate;
-+
-+	/*
-+	 * Even though the pre-divider can be changed, we don't really
-+	 * care and we can just fix it to 4.
-+	 */
-+	*m = SUN4I_PLL2_PRE_DIV_VALUE;
++	c = to_clk_hw_omap(__clk_get_hw(clk));
++	if (c->ops && c->ops->deny_idle)
++		c->ops->deny_idle(c);
++	return 0;
 +}
 +
-+static struct clk_factors_config sun4i_a10_pll2_base_config = {
-+	.mshift = SUN4I_PLL2_PRE_DIV,
-+	.mwidth = 5,
-+	.nshift = SUN4I_PLL2_N,
-+	.nwidth = 7,
-+
-+	.m_zero = 1,
-+	.n_zero = 1,
-+};
-+
-+static const struct factors_data sun4i_a10_pll2_base_data __initconst = {
-+	.enable = SUN4I_PLL2_ENABLE,
-+	.table = &sun4i_a10_pll2_base_config,
-+	.getter = sun4i_a10_get_pll2_base_factors,
-+	.name = "pll2-base",
-+};
-+
-+static DEFINE_SPINLOCK(sun4i_a10_pll2_lock);
-+
-+static void __init sun4i_pll2_setup(struct device_node *node)
++/**
++ * omap2_clk_allow_idle - enable autoidle on an OMAP clock
++ * @clk: struct clk * to enable autoidle for
++ *
++ * Enable autoidle on an OMAP clock.
++ */
++int omap2_clk_allow_idle(struct clk *clk)
 +{
-+	const char *clk_name = node->name, *parent;
-+	struct clk_onecell_data *clk_data;
-+	struct clk **clks, *base_clk;
-+	void __iomem *reg;
-+	u32 val;
++	struct clk_hw_omap *c;
 +
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg))
++	if (__clk_get_flags(clk) & CLK_IS_BASIC)
++		return -EINVAL;
++
++	c = to_clk_hw_omap(__clk_get_hw(clk));
++	if (c->ops && c->ops->allow_idle)
++		c->ops->allow_idle(c);
++	return 0;
++}
++
++static void _allow_autoidle(struct clk_ti_autoidle *clk)
+ {
+ 	u32 val;
+ 
+@@ -48,7 +87,7 @@ static void ti_allow_autoidle(struct clk_ti_autoidle *clk)
+ 	ti_clk_ll_ops->clk_writel(val, clk->reg);
+ }
+ 
+-static void ti_deny_autoidle(struct clk_ti_autoidle *clk)
++static void _deny_autoidle(struct clk_ti_autoidle *clk)
+ {
+ 	u32 val;
+ 
+@@ -63,31 +102,31 @@ static void ti_deny_autoidle(struct clk_ti_autoidle *clk)
+ }
+ 
+ /**
+- * of_ti_clk_allow_autoidle_all - enable autoidle for all clocks
++ * _clk_generic_allow_autoidle_all - enable autoidle for all clocks
+  *
+  * Enables hardware autoidle for all registered DT clocks, which have
+  * the feature.
+  */
+-void of_ti_clk_allow_autoidle_all(void)
++static void _clk_generic_allow_autoidle_all(void)
+ {
+ 	struct clk_ti_autoidle *c;
+ 
+ 	list_for_each_entry(c, &autoidle_clks, node)
+-		ti_allow_autoidle(c);
++		_allow_autoidle(c);
+ }
+ 
+ /**
+- * of_ti_clk_deny_autoidle_all - disable autoidle for all clocks
++ * _clk_generic_deny_autoidle_all - disable autoidle for all clocks
+  *
+  * Disables hardware autoidle for all registered DT clocks, which have
+  * the feature.
+  */
+-void of_ti_clk_deny_autoidle_all(void)
++static void _clk_generic_deny_autoidle_all(void)
+ {
+ 	struct clk_ti_autoidle *c;
+ 
+ 	list_for_each_entry(c, &autoidle_clks, node)
+-		ti_deny_autoidle(c);
++		_deny_autoidle(c);
+ }
+ 
+ /**
+@@ -131,3 +170,67 @@ int __init of_ti_clk_autoidle_setup(struct device_node *node)
+ 
+ 	return 0;
+ }
++
++/**
++ * omap2_init_clk_hw_omap_clocks - initialize an OMAP clock
++ * @clk: struct clk * to initialize
++ *
++ * Add an OMAP clock @clk to the internal list of OMAP clocks.  Used
++ * temporarily for autoidle handling, until this support can be
++ * integrated into the common clock framework code in some way.  No
++ * return value.
++ */
++void omap2_init_clk_hw_omap_clocks(struct clk *clk)
++{
++	struct clk_hw_omap *c;
++
++	if (__clk_get_flags(clk) & CLK_IS_BASIC)
 +		return;
 +
-+	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		goto err_unmap;
-+
-+	clks = kcalloc(SUN4I_PLL2_OUTPUTS, sizeof(struct clk *), GFP_KERNEL);
-+	if (!clks)
-+		goto err_free_data;
-+
-+	base_clk = sunxi_factors_register(node, &sun4i_a10_pll2_base_data,
-+					  &sun4i_a10_pll2_lock, reg);
-+	if (!base_clk) {
-+		pr_err("Couldn't register the base factor clock\n");
-+		goto err_free_array;
-+	}
-+
-+	parent = __clk_get_name(base_clk);
-+
-+	/*
-+	 * PLL2-1x
-+	 *
-+	 * This is supposed to have a post divider, but we won't need
-+	 * to use it, we just need to initialise it to 4, and use a
-+	 * fixed divider.
-+	 */
-+	val = readl(reg);
-+	val &= ~(SUN4I_PLL2_POST_DIV_MASK << SUN4I_PLL2_POST_DIV);
-+	val |= SUN4I_PLL2_POST_DIV_VALUE << SUN4I_PLL2_POST_DIV;
-+	writel(val, reg);
-+
-+	of_property_read_string_index(node, "clock-output-names",
-+				      SUN4I_A10_PLL2_1X, &clk_name);
-+	clks[SUN4I_A10_PLL2_1X] = clk_register_fixed_factor(NULL, clk_name,
-+							    parent,
-+							    CLK_SET_RATE_PARENT,
-+							    1, 4);
-+	WARN_ON(IS_ERR(clks[SUN4I_A10_PLL2_1X]));
-+
-+	/*
-+	 * PLL2-2x
-+	 *
-+	 * This clock doesn't use the post divider, and really is just
-+	 * a fixed divider from the PLL2 base clock.
-+	 */
-+	of_property_read_string_index(node, "clock-output-names",
-+				      SUN4I_A10_PLL2_2X, &clk_name);
-+	clks[SUN4I_A10_PLL2_2X] = clk_register_fixed_factor(NULL, clk_name,
-+							    parent,
-+							    CLK_SET_RATE_PARENT,
-+							    1, 2);
-+	WARN_ON(IS_ERR(clks[SUN4I_A10_PLL2_2X]));
-+
-+	/* PLL2-4x */
-+	of_property_read_string_index(node, "clock-output-names",
-+				      SUN4I_A10_PLL2_4X, &clk_name);
-+	clks[SUN4I_A10_PLL2_4X] = clk_register_fixed_factor(NULL, clk_name,
-+							    parent,
-+							    CLK_SET_RATE_PARENT,
-+							    1, 1);
-+	WARN_ON(IS_ERR(clks[SUN4I_A10_PLL2_4X]));
-+
-+	/* PLL2-8x */
-+	of_property_read_string_index(node, "clock-output-names",
-+				      SUN4I_A10_PLL2_8X, &clk_name);
-+	clks[SUN4I_A10_PLL2_8X] = clk_register_fixed_factor(NULL, clk_name,
-+							    parent,
-+							    CLK_SET_RATE_PARENT,
-+							    2, 1);
-+	WARN_ON(IS_ERR(clks[SUN4I_A10_PLL2_8X]));
-+
-+	clk_data->clks = clks;
-+	clk_data->clk_num = SUN4I_PLL2_OUTPUTS;
-+	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+
-+	return;
-+
-+err_free_array:
-+	kfree(clks);
-+err_free_data:
-+	kfree(clk_data);
-+err_unmap:
-+	iounmap(reg);
++	c = to_clk_hw_omap(__clk_get_hw(clk));
++	list_add(&c->node, &clk_hw_omap_clocks);
 +}
-+CLK_OF_DECLARE(sun4i_pll2, "allwinner,sun4i-a10-b-pll2-clk", sun4i_pll2_setup);
-diff --git a/include/dt-bindings/clock/sun4i-a10-pll2.h b/include/dt-bindings/clock/sun4i-a10-pll2.h
-new file mode 100644
-index 000000000000..071c8112d531
---- /dev/null
-+++ b/include/dt-bindings/clock/sun4i-a10-pll2.h
-@@ -0,0 +1,53 @@
-+/*
-+ * Copyright 2015 Maxime Ripard
++
++/**
++ * omap2_clk_enable_autoidle_all - enable autoidle on all OMAP clocks that
++ * support it
 + *
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
++ * Enable clock autoidle on all OMAP clocks that have allow_idle
++ * function pointers associated with them.  This function is intended
++ * to be temporary until support for this is added to the common clock
++ * code.  Returns 0.
 + */
++int omap2_clk_enable_autoidle_all(void)
++{
++	struct clk_hw_omap *c;
 +
-+#ifndef __DT_BINDINGS_CLOCK_SUN4I_A10_PLL2_H_
-+#define __DT_BINDINGS_CLOCK_SUN4I_A10_PLL2_H_
++	list_for_each_entry(c, &clk_hw_omap_clocks, node)
++		if (c->ops && c->ops->allow_idle)
++			c->ops->allow_idle(c);
 +
-+#define SUN4I_A10_PLL2_1X	0
-+#define SUN4I_A10_PLL2_2X	1
-+#define SUN4I_A10_PLL2_4X	2
-+#define SUN4I_A10_PLL2_8X	3
++	_clk_generic_allow_autoidle_all();
 +
-+#endif /* __DT_BINDINGS_CLOCK_SUN4I_A10_PLL2_H_ */
++	return 0;
++}
++
++/**
++ * omap2_clk_disable_autoidle_all - disable autoidle on all OMAP clocks that
++ * support it
++ *
++ * Disable clock autoidle on all OMAP clocks that have allow_idle
++ * function pointers associated with them.  This function is intended
++ * to be temporary until support for this is added to the common clock
++ * code.  Returns 0.
++ */
++int omap2_clk_disable_autoidle_all(void)
++{
++	struct clk_hw_omap *c;
++
++	list_for_each_entry(c, &clk_hw_omap_clocks, node)
++		if (c->ops && c->ops->deny_idle)
++			c->ops->deny_idle(c);
++
++	_clk_generic_deny_autoidle_all();
++
++	return 0;
++}
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index a7256a9..9b51021 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -169,6 +169,9 @@ void ti_clk_patch_legacy_clks(struct ti_clk **patch);
+ struct clk *ti_clk_register_clk(struct ti_clk *setup);
+ int ti_clk_register_legacy_clks(struct ti_clk_alias *clks);
+ 
++void omap2_init_clk_hw_omap_clocks(struct clk *clk);
++int of_ti_clk_autoidle_setup(struct device_node *node);
++
+ extern const struct clk_hw_omap_ops clkhwops_omap4_dpllmx;
+ extern const struct clk_hw_omap_ops clkhwops_iclk;
+ extern const struct clk_hw_omap_ops clkhwops_iclk_wait;
+diff --git a/drivers/clk/ti/fixed-factor.c b/drivers/clk/ti/fixed-factor.c
+index c2c8a28..3cd4067 100644
+--- a/drivers/clk/ti/fixed-factor.c
++++ b/drivers/clk/ti/fixed-factor.c
+@@ -22,6 +22,8 @@
+ #include <linux/of_address.h>
+ #include <linux/clk/ti.h>
+ 
++#include "clock.h"
++
+ #undef pr_fmt
+ #define pr_fmt(fmt) "%s: " fmt, __func__
+ 
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 63f2945..2e4b4fb 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -259,7 +259,6 @@ extern const struct clk_ops ti_clk_mux_ops;
+ 
+ #define to_clk_hw_omap(_hw) container_of(_hw, struct clk_hw_omap, hw)
+ 
+-void omap2_init_clk_hw_omap_clocks(struct clk *clk);
+ int omap3_noncore_dpll_enable(struct clk_hw *hw);
+ void omap3_noncore_dpll_disable(struct clk_hw *hw);
+ int omap3_noncore_dpll_set_parent(struct clk_hw *hw, u8 index);
+@@ -288,6 +287,9 @@ long omap3_clkoutx2_round_rate(struct clk_hw *hw, unsigned long rate,
+ int omap2_clkops_enable_clkdm(struct clk_hw *hw);
+ void omap2_clkops_disable_clkdm(struct clk_hw *hw);
+ int omap2_clk_disable_autoidle_all(void);
++int omap2_clk_enable_autoidle_all(void);
++int omap2_clk_allow_idle(struct clk *clk);
++int omap2_clk_deny_idle(struct clk *clk);
+ void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks);
+ int omap3_dpll4_set_rate(struct clk_hw *clk, unsigned long rate,
+ 			 unsigned long parent_rate);
+@@ -320,7 +322,6 @@ void ti_dt_clk_init_retry_clks(void);
+ void ti_dt_clockdomains_setup(void);
+ int ti_clk_retry_init(struct device_node *node, struct clk_hw *hw,
+ 		      ti_of_clk_init_cb_t func);
+-int of_ti_clk_autoidle_setup(struct device_node *node);
+ int ti_clk_add_component(struct device_node *node, struct clk_hw *hw, int type);
+ 
+ int omap3430_dt_clk_init(void);
+@@ -351,14 +352,6 @@ struct ti_clk_features {
+ void ti_clk_setup_features(struct ti_clk_features *features);
+ struct ti_clk_features *ti_clk_get_features(void);
+ 
+-#ifdef CONFIG_OF
+-void of_ti_clk_allow_autoidle_all(void);
+-void of_ti_clk_deny_autoidle_all(void);
+-#else
+-static inline void of_ti_clk_allow_autoidle_all(void) { }
+-static inline void of_ti_clk_deny_autoidle_all(void) { }
+-#endif
+-
+ extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
+ extern const struct clk_hw_omap_ops clkhwops_omap2430_i2chs_wait;
+ extern const struct clk_hw_omap_ops clkhwops_omap3_dpll;
 -- 
-2.3.6
+1.7.9.5
