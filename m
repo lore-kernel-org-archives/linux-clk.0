@@ -1,184 +1,191 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 1/8] clk: sunxi: factors: Add m_start parameters
-Date: Sat,  2 May 2015 13:24:32 +0200
-Message-Id: <1430565879-28113-2-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <linux-omap-owner@vger.kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+To: <mturquette@linaro.org>, <tony@atomide.com>,
+	<linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<sboyd@codeaurora.org>, <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 18/27] clk: ti: omap2430: move clock support code under clock driver
+Date: Mon, 11 May 2015 11:54:44 +0300
+Message-ID: <1431334493-24455-19-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-omap-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks start incrementing the m factor at 0. Add a parameter to handle
-it just like we did for the N factor.
+With the legacy clock support gone, this is no longer needed under
+platform code-base. Thus, move this under the TI clock driver, and
+remove the exported API from the public header.
 
-Since the behaviour until now was to assume that the m factor was starting
-at 1, we also need to fix the other users.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/sunxi/clk-factors.c    | 11 ++++++++++-
- drivers/clk/sunxi/clk-factors.h    |  2 ++
- drivers/clk/sunxi/clk-mod0.c       |  2 ++
- drivers/clk/sunxi/clk-sun8i-mbus.c |  2 ++
- drivers/clk/sunxi/clk-sun9i-core.c |  6 ++++++
- drivers/clk/sunxi/clk-sunxi.c      | 10 ++++++++++
- 6 files changed, 32 insertions(+), 1 deletion(-)
+ arch/arm/mach-omap2/Makefile    |    1 -
+ arch/arm/mach-omap2/clock2430.c |   57 ---------------------------------------
+ drivers/clk/ti/clkt_iclk.c      |   35 ++++++++++++++++++++++++
+ drivers/clk/ti/clock.h          |    1 +
+ include/linux/clk/ti.h          |    1 -
+ 5 files changed, 36 insertions(+), 59 deletions(-)
+ delete mode 100644 arch/arm/mach-omap2/clock2430.c
 
-diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
-index 8c20190a3e9f..100a711c3e3d 100644
---- a/drivers/clk/sunxi/clk-factors.c
-+++ b/drivers/clk/sunxi/clk-factors.c
-@@ -56,15 +56,24 @@ static unsigned long clk_factors_recalc_rate(struct clk_hw *hw,
- 	/* Get each individual factor if applicable */
- 	if (config->nwidth != SUNXI_FACTORS_NOT_APPLICABLE)
- 		n = FACTOR_GET(config->nshift, config->nwidth, reg);
-+
- 	if (config->kwidth != SUNXI_FACTORS_NOT_APPLICABLE)
- 		k = FACTOR_GET(config->kshift, config->kwidth, reg);
-+
- 	if (config->mwidth != SUNXI_FACTORS_NOT_APPLICABLE)
- 		m = FACTOR_GET(config->mshift, config->mwidth, reg);
-+	else
-+		/* Make sure we don't get a division by zero */
-+		m = 1;
-+
- 	if (config->pwidth != SUNXI_FACTORS_NOT_APPLICABLE)
- 		p = FACTOR_GET(config->pshift, config->pwidth, reg);
+diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
+index 07052656..695d58f 100644
+--- a/arch/arm/mach-omap2/Makefile
++++ b/arch/arm/mach-omap2/Makefile
+@@ -185,7 +185,6 @@ obj-$(CONFIG_ARCH_OMAP2)		+= $(clock-common)
+ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpllcore.o
+ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_virt_prcm_set.o
+ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpll.o
+-obj-$(CONFIG_SOC_OMAP2430)		+= clock2430.o
+ obj-$(CONFIG_ARCH_OMAP3)		+= $(clock-common)
+ obj-$(CONFIG_ARCH_OMAP3)		+= clock34xx.o clkt34xx_dpll3m2.o
+ obj-$(CONFIG_ARCH_OMAP3)		+= clock3517.o
+diff --git a/arch/arm/mach-omap2/clock2430.c b/arch/arm/mach-omap2/clock2430.c
+deleted file mode 100644
+index cef0c8d..0000000
+--- a/arch/arm/mach-omap2/clock2430.c
++++ /dev/null
+@@ -1,57 +0,0 @@
+-/*
+- * clock2430.c - OMAP2430-specific clock integration code
+- *
+- * Copyright (C) 2005-2008 Texas Instruments, Inc.
+- * Copyright (C) 2004-2010 Nokia Corporation
+- *
+- * Contacts:
+- * Richard Woodruff <r-woodruff2@ti.com>
+- * Paul Walmsley
+- *
+- * Based on earlier work by Tuukka Tikkanen, Tony Lindgren,
+- * Gordon McNutt and RidgeRun, Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-#undef DEBUG
+-
+-#include <linux/kernel.h>
+-#include <linux/clk.h>
+-#include <linux/io.h>
+-
+-#include "soc.h"
+-#include "iomap.h"
+-#include "clock.h"
+-#include "clock2xxx.h"
+-#include "cm2xxx.h"
+-#include "cm-regbits-24xx.h"
+-
+-/**
+- * omap2430_clk_i2chs_find_idlest - return CM_IDLEST info for 2430 I2CHS
+- * @clk: struct clk * being enabled
+- * @idlest_reg: void __iomem ** to store CM_IDLEST reg address into
+- * @idlest_bit: pointer to a u8 to store the CM_IDLEST bit shift into
+- * @idlest_val: pointer to a u8 to store the CM_IDLEST indicator
+- *
+- * OMAP2430 I2CHS CM_IDLEST bits are in CM_IDLEST1_CORE, but the
+- * CM_*CLKEN bits are in CM_{I,F}CLKEN2_CORE.  This custom function
+- * passes back the correct CM_IDLEST register address for I2CHS
+- * modules.  No return value.
+- */
+-static void omap2430_clk_i2chs_find_idlest(struct clk_hw_omap *clk,
+-					   void __iomem **idlest_reg,
+-					   u8 *idlest_bit,
+-					   u8 *idlest_val)
+-{
+-	*idlest_reg = OMAP2430_CM_REGADDR(CORE_MOD, CM_IDLEST);
+-	*idlest_bit = clk->enable_bit;
+-	*idlest_val = OMAP24XX_CM_IDLEST_VAL;
+-}
+-
+-/* 2430 I2CHS has non-standard IDLEST register */
+-const struct clk_hw_omap_ops clkhwops_omap2430_i2chs_wait = {
+-	.find_idlest	= omap2430_clk_i2chs_find_idlest,
+-	.find_companion	= omap2_clk_dflt_find_companion,
+-};
+diff --git a/drivers/clk/ti/clkt_iclk.c b/drivers/clk/ti/clkt_iclk.c
+index a03919d..38c3690 100644
+--- a/drivers/clk/ti/clkt_iclk.c
++++ b/drivers/clk/ti/clkt_iclk.c
+@@ -18,8 +18,12 @@
+ #include "clock.h"
  
- 	/* Calculate the rate */
--	rate = (parent_rate * (n + config->n_start) * (k + 1) >> p) / (m + 1);
-+	rate = parent_rate * (n + config->n_start);
-+	rate *= k + 1;
-+	rate >>= p;
-+	rate /= m + config->m_start;
+ /* Register offsets */
++#define OMAP24XX_CM_FCLKEN2		0x04
+ #define CM_AUTOIDLE			0x30
+ #define CM_ICLKEN			0x10
++#define CM_IDLEST			0x20
++
++#define OMAP24XX_CM_IDLEST_VAL		0
  
- 	return rate;
+ /* Private functions */
+ 
+@@ -51,6 +55,31 @@ void omap2_clkt_iclk_deny_idle(struct clk_hw_omap *clk)
+ 	ti_clk_ll_ops->clk_writel(v, r);
  }
-diff --git a/drivers/clk/sunxi/clk-factors.h b/drivers/clk/sunxi/clk-factors.h
-index 171085ab5513..735d756d2923 100644
---- a/drivers/clk/sunxi/clk-factors.h
-+++ b/drivers/clk/sunxi/clk-factors.h
-@@ -16,6 +16,8 @@ struct clk_factors_config {
- 	u8 mwidth;
- 	u8 pshift;
- 	u8 pwidth;
-+
-+	u8 m_start;
- 	u8 n_start;
- };
  
-diff --git a/drivers/clk/sunxi/clk-mod0.c b/drivers/clk/sunxi/clk-mod0.c
-index ec8f5a1fca09..eefa9be4078b 100644
---- a/drivers/clk/sunxi/clk-mod0.c
-+++ b/drivers/clk/sunxi/clk-mod0.c
-@@ -66,6 +66,8 @@ static struct clk_factors_config sun4i_a10_mod0_config = {
- 	.mwidth = 4,
- 	.pshift = 16,
- 	.pwidth = 2,
++/**
++ * omap2430_clk_i2chs_find_idlest - return CM_IDLEST info for 2430 I2CHS
++ * @clk: struct clk * being enabled
++ * @idlest_reg: void __iomem ** to store CM_IDLEST reg address into
++ * @idlest_bit: pointer to a u8 to store the CM_IDLEST bit shift into
++ * @idlest_val: pointer to a u8 to store the CM_IDLEST indicator
++ *
++ * OMAP2430 I2CHS CM_IDLEST bits are in CM_IDLEST1_CORE, but the
++ * CM_*CLKEN bits are in CM_{I,F}CLKEN2_CORE.  This custom function
++ * passes back the correct CM_IDLEST register address for I2CHS
++ * modules.  No return value.
++ */
++static void omap2430_clk_i2chs_find_idlest(struct clk_hw_omap *clk,
++					   void __iomem **idlest_reg,
++					   u8 *idlest_bit,
++					   u8 *idlest_val)
++{
++	u32 r;
 +
-+	.m_start = 1,
- };
- 
- static const struct factors_data sun4i_a10_mod0_data = {
-diff --git a/drivers/clk/sunxi/clk-sun8i-mbus.c b/drivers/clk/sunxi/clk-sun8i-mbus.c
-index 14cd026064bf..66fbf14a0f8a 100644
---- a/drivers/clk/sunxi/clk-sun8i-mbus.c
-+++ b/drivers/clk/sunxi/clk-sun8i-mbus.c
-@@ -55,6 +55,8 @@ static void sun8i_a23_get_mbus_factors(u32 *freq, u32 parent_rate,
- static struct clk_factors_config sun8i_a23_mbus_config = {
- 	.mshift = 0,
- 	.mwidth = 3,
++	r = ((__force u32)clk->enable_reg ^ (OMAP24XX_CM_FCLKEN2 ^ CM_IDLEST));
++	*idlest_reg = (__force void __iomem *)r;
++	*idlest_bit = clk->enable_bit;
++	*idlest_val = OMAP24XX_CM_IDLEST_VAL;
++}
 +
-+	.m_start = 1,
- };
+ /* Public data */
  
- static const struct factors_data sun8i_a23_mbus_data __initconst = {
-diff --git a/drivers/clk/sunxi/clk-sun9i-core.c b/drivers/clk/sunxi/clk-sun9i-core.c
-index d8da77d72861..97e87ca4a8fc 100644
---- a/drivers/clk/sunxi/clk-sun9i-core.c
-+++ b/drivers/clk/sunxi/clk-sun9i-core.c
-@@ -78,6 +78,8 @@ static struct clk_factors_config sun9i_a80_pll4_config = {
- 	.nwidth = 8,
- 	.pshift = 16,
- 	.pwidth = 1,
+ const struct clk_hw_omap_ops clkhwops_iclk = {
+@@ -64,3 +93,9 @@ const struct clk_hw_omap_ops clkhwops_iclk_wait = {
+ 	.find_idlest	= omap2_clk_dflt_find_idlest,
+ 	.find_companion	= omap2_clk_dflt_find_companion,
+ };
 +
-+	.m_start = 1,
- };
++/* 2430 I2CHS has non-standard IDLEST register */
++const struct clk_hw_omap_ops clkhwops_omap2430_i2chs_wait = {
++	.find_idlest	= omap2430_clk_i2chs_find_idlest,
++	.find_companion	= omap2_clk_dflt_find_companion,
++};
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index f215383..3652c26 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -178,6 +178,7 @@ extern const struct clk_hw_omap_ops clkhwops_omap4_dpllmx;
+ extern const struct clk_hw_omap_ops clkhwops_wait;
+ extern const struct clk_hw_omap_ops clkhwops_iclk;
+ extern const struct clk_hw_omap_ops clkhwops_iclk_wait;
++extern const struct clk_hw_omap_ops clkhwops_omap2430_i2chs_wait;
  
- static const struct factors_data sun9i_a80_pll4_data __initconst = {
-@@ -137,6 +139,8 @@ static void sun9i_a80_get_gt_factors(u32 *freq, u32 parent_rate,
- static struct clk_factors_config sun9i_a80_gt_config = {
- 	.mshift = 0,
- 	.mwidth = 2,
-+
-+	.m_start = 1,
- };
+ int omap2_dflt_clk_enable(struct clk_hw *hw);
+ void omap2_dflt_clk_disable(struct clk_hw *hw);
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 891fe0f..a7728f7 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -333,7 +333,6 @@ void ti_clk_setup_features(struct ti_clk_features *features);
+ struct ti_clk_features *ti_clk_get_features(void);
  
- static const struct factors_data sun9i_a80_gt_data __initconst = {
-@@ -294,6 +298,8 @@ static struct clk_factors_config sun9i_a80_apb1_config = {
- 	.mwidth = 5,
- 	.pshift = 16,
- 	.pwidth = 2,
-+
-+	.m_start = 1,
- };
- 
- static const struct factors_data sun9i_a80_apb1_data __initconst = {
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 7e1e2bd189b6..6df869050986 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -616,6 +616,8 @@ static struct clk_factors_config sun4i_pll1_config = {
- 	.mwidth = 2,
- 	.pshift = 16,
- 	.pwidth = 2,
-+
-+	.m_start = 1,
- };
- 
- static struct clk_factors_config sun6i_a31_pll1_config = {
-@@ -625,6 +627,8 @@ static struct clk_factors_config sun6i_a31_pll1_config = {
- 	.kwidth = 2,
- 	.mshift = 0,
- 	.mwidth = 2,
-+
-+	.m_start = 1,
- 	.n_start = 1,
- };
- 
-@@ -637,6 +641,8 @@ static struct clk_factors_config sun8i_a23_pll1_config = {
- 	.mwidth = 2,
- 	.pshift = 16,
- 	.pwidth = 2,
-+
-+	.m_start = 1,
- 	.n_start = 1,
- };
- 
-@@ -665,6 +671,8 @@ static struct clk_factors_config sun4i_apb1_config = {
- 	.mwidth = 5,
- 	.pshift = 16,
- 	.pwidth = 2,
-+
-+	.m_start = 1,
- };
- 
- /* user manual says "n" but it's really "p" */
-@@ -673,6 +681,8 @@ static struct clk_factors_config sun7i_a20_out_config = {
- 	.mwidth = 5,
- 	.pshift = 20,
- 	.pwidth = 2,
-+
-+	.m_start = 1,
- };
- 
- static const struct factors_data sun4i_pll1_data __initconst = {
+ extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
+-extern const struct clk_hw_omap_ops clkhwops_omap2430_i2chs_wait;
+ extern const struct clk_hw_omap_ops clkhwops_omap3430es2_dss_usbhost_wait;
+ extern const struct clk_hw_omap_ops clkhwops_am35xx_ipss_module_wait;
+ extern const struct clk_hw_omap_ops clkhwops_am35xx_ipss_wait;
 -- 
-2.3.6
+1.7.9.5
+
