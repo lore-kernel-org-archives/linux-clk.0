@@ -1,224 +1,66 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 07/14] ARM: shmobile: r8a7778 dtsi: Add CPG Clock Domain
-Date: Thu, 28 May 2015 20:53:32 +0200
-Message-Id: <1432839219-475-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
-References: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>, <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 13/27] ARM: OMAP2+: clock: add support for specific CM ops to ti_clk_ll_ops
+Date: Mon, 11 May 2015 11:54:39 +0300
+Message-ID: <1431334493-24455-14-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add an appropriate "#power-domain-cells" property to the cpg_clocks
-device node, to create the CPG Clock Domain.
+Clock driver requires access to some CM API functions once the code
+is being moved under the clock driver from the platform directory.
+Gate type clock requires access to cm_wait_module_ready and
+cm_split_idlest_reg functions, which are both used for waiting until
+the module being clocked has been successfully activated. These CM
+APIs are now exported through the ti_clk_ll_ops struct.
 
-Add "power-domains" properties to all device nodes for devices that are
-part of the CPG Clock Domain and can be power-managed through an MSTP
-clock.  This applies to most on-SoC devices, which have a one-to-one
-mapping from SoC device to DT device node. A notable exception is the
-"sound" node, which represents multiple SoC devices, each having their
-own MSTP clocks.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
-v2:
-  - New.
----
- arch/arm/boot/dts/r8a7778.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/arm/mach-omap2/clock.c |    2 ++
+ include/linux/clk/ti.h      |    6 ++++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index 7ce9f5fd586504f2..4b1fa9f42ad5457b 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -53,6 +53,7 @@
- 		reg = <0xfde00000 0x400>;
- 		interrupts = <0 105 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7778_CLK_ETHER>;
-+		power-domains = <&cpg_clocks>;
- 		phy-mode = "rmii";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -152,6 +153,7 @@
- 		reg = <0xffc70000 0x1000>;
- 		interrupts = <0 67 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_I2C0>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index d6afc12..7a5713d 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -122,6 +122,8 @@ static struct ti_clk_ll_ops omap_clk_ll_ops = {
+ 	.clk_writel = clk_memmap_writel,
+ 	.clkdm_clk_enable = clkdm_clk_enable,
+ 	.clkdm_clk_disable = clkdm_clk_disable,
++	.cm_wait_module_ready = omap_cm_wait_module_ready,
++	.cm_split_idlest_reg = cm_split_idlest_reg,
+ };
  
-@@ -162,6 +164,7 @@
- 		reg = <0xffc71000 0x1000>;
- 		interrupts = <0 78 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_I2C1>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+ /**
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 43b406c..3ca818e 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -243,6 +243,8 @@ struct clk_omap_reg {
+  * @clk_writel: pointer to register write function
+  * @clkdm_clk_enable: pointer to clockdomain enable function
+  * @clkdm_clk_disable: pointer to clockdomain disable function
++ * @cm_wait_module_ready: pointer to CM module wait ready function
++ * @cm_split_idlest_reg: pointer to CM module function to split idlest reg
+  *
+  * Low-level ops are generally used by the basic clock types (clk-gate,
+  * clk-mux, clk-divider etc.) to provide support for various low-level
+@@ -256,6 +258,10 @@ struct ti_clk_ll_ops {
+ 	int	(*clkdm_clk_enable)(struct clockdomain *clkdm, struct clk *clk);
+ 	int	(*clkdm_clk_disable)(struct clockdomain *clkdm,
+ 				     struct clk *clk);
++	int	(*cm_wait_module_ready)(u8 part, s16 prcm_mod, u16 idlest_reg,
++					u8 idlest_shift);
++	int	(*cm_split_idlest_reg)(void __iomem *idlest_reg, s16 *prcm_inst,
++				       u8 *idlest_reg_id);
+ };
  
-@@ -172,6 +175,7 @@
- 		reg = <0xffc72000 0x1000>;
- 		interrupts = <0 76 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_I2C2>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -182,6 +186,7 @@
- 		reg = <0xffc73000 0x1000>;
- 		interrupts = <0 77 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_I2C3>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -193,6 +198,7 @@
- 			     <0 34 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_TMU0>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		#renesas,channels = <3>;
- 
-@@ -207,6 +213,7 @@
- 			     <0 38 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_TMU1>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		#renesas,channels = <3>;
- 
-@@ -221,6 +228,7 @@
- 			     <0 42 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_TMU2>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		#renesas,channels = <3>;
- 
-@@ -288,6 +296,7 @@
- 		interrupts = <0 70 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF0>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -297,6 +306,7 @@
- 		interrupts = <0 71 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF1>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -306,6 +316,7 @@
- 		interrupts = <0 72 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF2>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -315,6 +326,7 @@
- 		interrupts = <0 73 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF3>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -324,6 +336,7 @@
- 		interrupts = <0 74 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF4>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -333,6 +346,7 @@
- 		interrupts = <0 75 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF5>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -341,6 +355,7 @@
- 		reg = <0xffe4e000 0x100>;
- 		interrupts = <0 61 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_MMC>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -349,6 +364,7 @@
- 		reg = <0xffe4c000 0x100>;
- 		interrupts = <0 87 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_SDHI0>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -357,6 +373,7 @@
- 		reg = <0xffe4d000 0x100>;
- 		interrupts = <0 88 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_SDHI1>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -365,6 +382,7 @@
- 		reg = <0xffe4f000 0x100>;
- 		interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_SDHI2>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -373,6 +391,7 @@
- 		reg = <0xfffc7000 0x18>;
- 		interrupts = <0 63 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_HSPI>;
-+		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		status = "disabled";
-@@ -383,6 +402,7 @@
- 		reg = <0xfffc8000 0x18>;
- 		interrupts = <0 84 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_HSPI>;
-+		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		status = "disabled";
-@@ -393,6 +413,7 @@
- 		reg = <0xfffc6000 0x18>;
- 		interrupts = <0 85 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_HSPI>;
-+		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		status = "disabled";
-@@ -419,6 +440,7 @@
- 			clocks = <&extal_clk>;
- 			clock-output-names = "plla", "pllb", "b",
- 					     "out", "p", "s", "s1";
-+			#power-domain-cells = <0>;
- 		};
- 
- 		/* Audio clocks; frequencies are set by boards if applicable. */
+ extern struct ti_clk_ll_ops *ti_clk_ll_ops;
 -- 
-1.9.1
+1.7.9.5
