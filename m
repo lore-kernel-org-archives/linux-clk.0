@@ -1,104 +1,84 @@
-Return-Path: <khilman@deeprootsystems.com>
-Return-Path: <khilman@deeprootsystems.com>
-From: Kevin Hilman <khilman@kernel.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,  Heiko =?utf-8?Q?St=C3=BCbner?=
- <heiko@sntech.de>,  Mike Turquette <mturquette@linaro.org>,  Doug Anderson
- <dianders@chromium.org>,  linux-clk@vger.kernel.org,  lkml
- <linux-kernel@vger.kernel.org>,  "linux-arm-kernel\@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,  Boris Brezillon
- <boris.brezillon@free-electrons.com>,  Alex Elder <elder@linaro.org>,
-  Alexandre Belloni <alexandre.belloni@free-electrons.com>,  Stephen Warren
- <swarren@wwwdotorg.org>,  Max Filippov <jcmvbkbc@gmail.com>,  Sascha Hauer
- <kernel@pengutronix.de>,  Zhangfei Gao <zhangfei.gao@linaro.org>,  Santosh
- Shilimkar <ssantosh@kernel.org>,  Chao Xie <chao.xie@marvell.com>,  Jason
- Cooper <jason@lakedaemon.net>,  Stefan Wahren <stefan.wahren@i2se.com>,
-  Andrew Bresticker <abrestic@chromium.org>,  Robert Jarzmik
- <robert.jarzmik@free.fr>,  Georgi Djakov <georgi.djakov@linaro.org>,
-  Sylwester Nawrocki <s.nawrocki@samsung.com>,  Geert Uytterhoeven
- <geert+renesas@glider.be>,  Barry Song <baohua@kernel.org>,  Dinh Nguyen
- <dinguyen@opensource.altera.com>,  Viresh Kumar <viresh.linux@gmail.com>,
-  Gabriel FERNANDEZ <gabriel.fernandez@st.com>,  Emilio =?utf-8?Q?L=C3=B3p?=
- =?utf-8?Q?ez?= <emilio@elopez.com.ar>,  Peter De Sc hrijver
- <pdeschrijver@nvidia.com>,  Tero Kristo <t-kristo@ti.com>,  Ulf Hansson
- <ulf.hansson@linaro.org>,  Pawel Moll <pawel.moll@arm.com>,  Michal Simek
- <michal.simek@xilinx.com>,  Olof Johansson <olof@lixom.net>,  Tyler Baker
- <tyler.baker@linaro.org>
-Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
-References: <1429735986-18592-1-git-send-email-heiko@sntech.de>
-	<1981330.kGUrTurMy5@diego> <5543E79F.2080400@codeaurora.org>
-	<22709390.NTAlubMgNB@diego> <55440EDA.4030905@codeaurora.org>
-	<CAMAWPa_n+59+v+x3fKkmdtW1wMJF7kqtTjLLowmv1xwGWprYJw@mail.gmail.com>
-	<554BD33D.7050907@codeaurora.org> <20150508100247.GQ11057@lukather>
-	<55528046.4030107@codeaurora.org> <20150513130304.GA4004@lukather>
-Date: Wed, 13 May 2015 07:33:54 -0700
-In-Reply-To: <20150513130304.GA4004@lukather> (Maxime Ripard's message of
-	"Wed, 13 May 2015 15:03:04 +0200")
-Message-ID: <7hiobw8s31.fsf@deeprootsystems.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: <ce3a@gmx.de>
+From: Sergej Sawazki <ce3a@gmx.de>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	sebastian.hesselbarth@gmail.com,
+	mwelling@ieee.org,
+	moinejf@free.fr
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sergej Sawazki <ce3a@gmx.de>
+Subject: [PATCH 1/2] clk: si5351: fix .round_rate for multisynth 6-7
+Date: Mon, 11 May 2015 10:44:50 +0200
+Message-Id: <1431333890-7271-1-git-send-email-ce3a@gmx.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Maxime Ripard <maxime.ripard@free-electrons.com> writes:
+The divider calculation for multisynth 6 and 7 differs from the
+calculation for multisynth 0-5.
 
-> On Tue, May 12, 2015 at 03:35:50PM -0700, Stephen Boyd wrote:
->> On 05/08/15 03:02, Maxime Ripard wrote:
->> > On Thu, May 07, 2015 at 02:03:57PM -0700, Stephen Boyd wrote:
->> >> On 05/07/15 08:17, Kevin Hilman wrote:
->> >>> On Fri, May 1, 2015 at 4:40 PM, Stephen Boyd <sboyd@codeaurora.org> =
-wrote:
->> >>>> On 05/01/15 15:07, Heiko St=C3=BCbner wrote:
->> >>>>> Am Freitag, 1. Mai 2015, 13:52:47 schrieb Stephen Boyd:
->> >>>>>
->> >>>>>>> Instead I guess we could hook it less deep into clk_get_sys, lik=
-e in the
->> >>>>>>> following patch?
->> >>>>>> It looks like it will work at least, but still I'd prefer to keep=
- the
->> >>>>>> orphan check contained to clk.c. How about this compile tested on=
-ly patch?
->> >>>>> I gave this a spin on my rk3288-firefly board. It still boots, the=
- clock tree
->> >>>>> looks the same and it also still defers nicely in the scenario I n=
-eeded it
->> >>>>> for. The implementation also looks nice - and of course much more =
-compact than
->> >>>>> my check in two places :-) . I don't know if you want to put this =
-as follow-up
->> >>>>> on top or fold it into the original orphan-check, so in any case
->> >>>>>
->> >>>>> Tested-by: Heiko Stuebner <heiko@sntech.de>
->> >>>>> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
->> >>>> Thanks. I'm leaning towards tossing your patch 2/2 and replacing it=
- with
->> >>>> my patch and a note that it's based on an earlier patch from you.
->> >>> It appears this has landed in linux-next in the form of 882667c1fcf1
->> >>> clk: prevent orphan clocks from being used.  A bunch of boot failures
->> >>> for sunxi in today's linux-next[1] were bisected down to that patch.
->> >>>
->> >>> I confirmed that reverting that commit on top of next/master gets
->> >>> sunxi booting again.
->> >>>
->> >>>
->> >> Thanks for the report. I've removed the two clk orphan patches from
->> >> clk-next. Would it be possible to try with next-20150507 and
->> >> clk_ignore_unused on the command line?
->> > This makes it work, but it's not really an option.
->> >
->>=20
->> Hmm.. I thought it didn't fix it for Kevin. Confused.
->
-> I'm too, but it does fix things here.
+For MS6 and MS7, set MSx_P1 directly, MSx_P1=divide value
+[AN619, p. 6].
 
-To be more precise on what I tested.  I used next-20150507 and tested on
-4 different sunxi platforms.  First test was "normal" commandline,
-second was with clk_ignore_unused appended:
+Referenced document:
+[AN619] Manually Generating an Si5351 Register Map, Rev. 0.4
 
-  - cubie: fail, fail
-  - cubie2: fail, fail
-  - bananpi: fail, pass
-  - cubietruck: fail, pass
+Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
+---
+ drivers/clk/clk-si5351.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
-So it seems to have some effect, but by itself, doesn't fix the issue.
-
-Kevin
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index 30335d3..48c5298 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -552,7 +552,8 @@ static const struct clk_ops si5351_pll_ops = {
+  * MSx_P2[19:0] = 128 * b - c * floor(128 * b/c) = (128*b) mod c
+  * MSx_P3[19:0] = c
+  *
+- * MS[6,7] are integer (P1) divide only, P2 = 0, P3 = 0
++ * MS[6,7] are integer (P1) divide only, P1 = divide value,
++ * P2 and P3 are not applicable
+  *
+  * for 150MHz < fOUT <= 160MHz:
+  *
+@@ -679,6 +680,16 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		c = 1;
+ 
+ 		*parent_rate = a * rate;
++	} else if (hwdata->num >= 6) {
++		/* determine the closest integer divider */
++		a = DIV_ROUND_CLOSEST(*parent_rate, rate);
++		if (a < SI5351_MULTISYNTH_A_MIN)
++			a = SI5351_MULTISYNTH_A_MIN;
++		if (a > SI5351_MULTISYNTH67_A_MAX)
++			a = SI5351_MULTISYNTH67_A_MAX;
++
++		b = 0;
++		c = 1;
+ 	} else {
+ 		unsigned long rfrac, denom;
+ 
+@@ -692,9 +703,7 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		a = *parent_rate / rate;
+ 		if (a < SI5351_MULTISYNTH_A_MIN)
+ 			a = SI5351_MULTISYNTH_A_MIN;
+-		if (hwdata->num >= 6 && a > SI5351_MULTISYNTH67_A_MAX)
+-			a = SI5351_MULTISYNTH67_A_MAX;
+-		else if (a > SI5351_MULTISYNTH_A_MAX)
++		if (a > SI5351_MULTISYNTH_A_MAX)
+ 			a = SI5351_MULTISYNTH_A_MAX;
+ 
+ 		/* find best approximation for b/c = fVCO mod fOUT */
+@@ -723,6 +732,10 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		hwdata->params.p3 = 1;
+ 		hwdata->params.p2 = 0;
+ 		hwdata->params.p1 = 0;
++	} else if (hwdata->num >= 6) {
++		hwdata->params.p3 = 0;
++		hwdata->params.p2 = 0;
++		hwdata->params.p1 = a;
+ 	} else {
+ 		hwdata->params.p3  = c;
+ 		hwdata->params.p2  = (128 * b) % c;
+-- 
+1.9.1
