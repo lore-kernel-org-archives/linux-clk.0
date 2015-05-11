@@ -1,133 +1,93 @@
-Return-Path: <wangbintian@gmail.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>, <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: =?UTF-8?q?=5BPATCHv2=2015/27=5D=20ARM=3A=20OMAP3=3A=20clock=3A=20remove=20clock3xxx=2Ec=20file?=
+Date: Mon, 11 May 2015 11:54:41 +0300
+Message-ID: <1431334493-24455-16-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <555F80BE.8070204@codeaurora.org>
-References: <1432117752-7074-1-git-send-email-bintian.wang@huawei.com>
-	<1432117752-7074-2-git-send-email-bintian.wang@huawei.com>
-	<555D09F3.7020506@codeaurora.org>
-	<555D57BB.8080702@huawei.com>
-	<555E1D55.1050907@codeaurora.org>
-	<555EBCA4.9030303@huawei.com>
-	<CAAS=xmgHJVThR2hVeMYZjKgJdodEG_hrs09BBA01gOXMSc8Rdg@mail.gmail.com>
-	<555F76D9.10308@codeaurora.org>
-	<20150522184131.GD1885@codeaurora.org>
-	<CAAS=xmi98pvXR_qXREnpMfG+Tuh1d8ZdTmhJSvoMNJ0=iOoPpA@mail.gmail.com>
-	<555F80BE.8070204@codeaurora.org>
-Date: Sat, 23 May 2015 08:45:31 +0800
-Message-ID: <CAAS=xmgZ4GoKXY+yzqA0Sbf=D8gNi6kazXrbZH-4pY6wBDpzLA@mail.gmail.com>
-Subject: Re: [PATCH v7 6/7] clk: hi6220: Clock driver support for Hisilicon
- hi6220 SoC
-From: Brent Wang <wangbintian@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Bintian <bintian.wang@huawei.com>, Mike Turquette <mturquette@linaro.org>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>, Xu Wei <xuwei5@hisilicon.com>,
-	"xuejiancheng@huawei.com" <xuejiancheng@huawei.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	"sledge.yanwei@huawei.com" <sledge.yanwei@huawei.com>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Will Deacon <will.deacon@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	Kevin Hilman <khilman@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Haojian Zhuang <haojian.zhuang@linaro.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>,
-	Haifeng Yan <yanhaifeng@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>, Tyler Baker <tyler.baker@linaro.org>,
-	Kevin Hilman <khilman@kernel.org>, "xuyiping@hisilicon.com" <xuyiping@hisilicon.com>,
-	"wangbinghui@hisilicon.com" <wangbinghui@hisilicon.com>,
-	"zhenwei.wang@hisilicon.com" <zhenwei.wang@hisilicon.com>,
-	"victor.lixin@hisilicon.com" <victor.lixin@hisilicon.com>,
-	"puck.chen@hisilicon.com" <puck.chen@hisilicon.com>, "dan.zhao@hisilicon.com" <dan.zhao@hisilicon.com>,
-	"huxinwei@huawei.com" <huxinwei@huawei.com>, "z.liuxinliang@huawei.com" <z.liuxinliang@huawei.com>,
-	"heyunlei@huawei.com" <heyunlei@huawei.com>, XinWei Kong <kong.kongxinwei@hisilicon.com>,
-	"w.f@huawei.com" <w.f@huawei.com>, "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+This now only has a couple of variables within it, which are used outside
+the file itself. Move these variables to where they are actually used,
+and remove the file completely as it is now empty.
 
-2015-05-23 3:17 GMT+08:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 05/22/15 11:57, Brent Wang wrote:
->> Hello Stephen,
->>
->> 2015-05-23 2:41 GMT+08:00 Stephen Boyd <sboyd@codeaurora.org>:
->>> On 05/22, Stephen Boyd wrote:
->>>> On 05/22/15 11:30, Brent Wang wrote:
->>>>> Hello Stephen,
->>>>>
->>>>> 2015-05-22 13:20 GMT+08:00 Bintian <bintian.wang@huawei.com>:
->>>>>>> Is pl011 the uart device? Does it have a node in DT somewhere? If it
->>>>>>> does, then we could put the assigned-parents properties in that node so
->>>>>>> that when the pl011 probes the uart1 clock has its parent set to
->>>>>>> clk_150m. See the "Assigned clock parents and rates" section of
->>>>>>> Documentation/devicetree/bindings/clock/clock-bindings.txt.
->>>>>>>
->>>>>> I will verify this.
->>>>> Currently the "assigned-clock*" doesn't work for pl011 UART device
->>>>> node, maybe we will
->>>>> do some fix for its driver later or other modules.
->>>> Why doesn't it work?
->>>>
->>> Does this patch help?
->> Yes, it works!
->>
->> I also tested adding  "of_clk_set_defaults" to "pl011_probe()", and
->> "assigned-clock*"
->> also works.
->>
->> So you will submit another patch to fix this problem and I can revove
->> the "clk_set_parent"
->> from my patch, right ?
->>
->>
->
-> How about you take it as part of your series? Or if you're planning on
-> splitting out the clk patch to go through clk-tree I can apply it before
-> applying the clock driver patch.
-It's better you take it and I split my patch :)
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/Makefile           |    2 +-
+ arch/arm/mach-omap2/clkt34xx_dpll3m2.c |    2 ++
+ arch/arm/mach-omap2/clock3xxx.c        |   33 --------------------------------
+ 3 files changed, 3 insertions(+), 34 deletions(-)
+ delete mode 100644 arch/arm/mach-omap2/clock3xxx.c
 
->
->
-> ----8<-----
->
-> From: Stephen Boyd <sboyd@codeaurora.org>
-> Subject: [PATCH] amba: Support clk parents and rates assigned in DT
->
-> Add the call to of_clk_set_defaults() into the amba probe path so
-> that devices on the amba bus can use the assigned rates and
-> parents feature of the common clock framework.
->
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/amba/bus.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-> index f0099360039e..350ed93d4281 100644
-> --- a/drivers/amba/bus.c
-> +++ b/drivers/amba/bus.c
-> @@ -19,6 +19,7 @@
->  #include <linux/amba/bus.h>
->  #include <linux/sizes.h>
->  #include <linux/limits.h>
-> +#include <linux/clk/clk-conf.h>
->
->  #include <asm/irq.h>
->
-> @@ -237,6 +238,10 @@ static int amba_probe(struct device *dev)
->         int ret;
->
->         do {
-> +               ret = of_clk_set_defaults(dev->of_node, false);
-> +               if (ret < 0)
-> +                       break;
-> +
->                 ret = dev_pm_domain_attach(dev, true);
->                 if (ret == -EPROBE_DEFER)
->                         break;
->
-Tested-by: Bintian Wang <bintian.wang@huawei.com>
-
-Thanks,
-
-Bintian
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
+index f9d4ccf..07052656 100644
+--- a/arch/arm/mach-omap2/Makefile
++++ b/arch/arm/mach-omap2/Makefile
+@@ -186,7 +186,7 @@ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpllcore.o
+ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_virt_prcm_set.o
+ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpll.o
+ obj-$(CONFIG_SOC_OMAP2430)		+= clock2430.o
+-obj-$(CONFIG_ARCH_OMAP3)		+= $(clock-common) clock3xxx.o
++obj-$(CONFIG_ARCH_OMAP3)		+= $(clock-common)
+ obj-$(CONFIG_ARCH_OMAP3)		+= clock34xx.o clkt34xx_dpll3m2.o
+ obj-$(CONFIG_ARCH_OMAP3)		+= clock3517.o
+ obj-$(CONFIG_ARCH_OMAP4)		+= $(clock-common)
+diff --git a/arch/arm/mach-omap2/clkt34xx_dpll3m2.c b/arch/arm/mach-omap2/clkt34xx_dpll3m2.c
+index 825e3da..6cd2961 100644
+--- a/arch/arm/mach-omap2/clkt34xx_dpll3m2.c
++++ b/arch/arm/mach-omap2/clkt34xx_dpll3m2.c
+@@ -29,6 +29,8 @@
+ 
+ #define CYCLES_PER_MHZ			1000000
+ 
++struct clk *sdrc_ick_p, *arm_fck_p;
++
+ /*
+  * CORE DPLL (DPLL3) M2 divider rate programming functions
+  *
+diff --git a/arch/arm/mach-omap2/clock3xxx.c b/arch/arm/mach-omap2/clock3xxx.c
+deleted file mode 100644
+index 0b0e3a87..0000000
+--- a/arch/arm/mach-omap2/clock3xxx.c
++++ /dev/null
+@@ -1,33 +0,0 @@
+-/*
+- * OMAP3-specific clock framework functions
+- *
+- * Copyright (C) 2007-2008 Texas Instruments, Inc.
+- * Copyright (C) 2007-2010 Nokia Corporation
+- *
+- * Paul Walmsley
+- * Jouni Högander
+- *
+- * Parts of this code are based on code written by
+- * Richard Woodruff, Tony Lindgren, Tuukka Tikkanen, Karthik Dasu
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-#undef DEBUG
+-
+-#include <linux/kernel.h>
+-#include <linux/errno.h>
+-#include <linux/clk.h>
+-#include <linux/io.h>
+-
+-#include "soc.h"
+-#include "clock.h"
+-#include "clock3xxx.h"
+-#include "prm2xxx_3xxx.h"
+-#include "prm-regbits-34xx.h"
+-#include "cm2xxx_3xxx.h"
+-#include "cm-regbits-34xx.h"
+-
+-/* needed by omap3_core_dpll_m2_set_rate() */
+-struct clk *sdrc_ick_p, *arm_fck_p;
+-- 
+1.7.9.5
