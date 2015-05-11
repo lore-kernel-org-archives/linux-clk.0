@@ -1,138 +1,195 @@
-Return-Path: <rklein@nvidia.com>
-Message-ID: <554B899D.5020902@nvidia.com>
-Date: Thu, 7 May 2015 11:49:49 -0400
-From: Rhyland Klein <rklein@nvidia.com>
+Return-Path: <paul@pwsan.com>
+Date: Mon, 11 May 2015 20:21:36 +0000 (UTC)
+From: Paul Walmsley <paul@pwsan.com>
+To: Tero Kristo <t-kristo@ti.com>
+cc: mturquette@linaro.org, tony@atomide.com, linux-omap@vger.kernel.org,
+  linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 00/27] ARM: OMAP2+: clock code migration to
+ drivers/clk/ti
+In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+Message-ID: <alpine.DEB.2.02.1505111747460.19833@utopia.booyaka.com>
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-To: Thierry Reding <thierry.reding@gmail.com>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
-	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 01/20] clk: tegra: Modify tegra_audio_clk_init to accept
- more plls
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com> <1430757460-9478-2-git-send-email-rklein@nvidia.com> <20150507151545.GB25866@ulmo.nvidia.com>
-In-Reply-To: <20150507151545.GB25866@ulmo.nvidia.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On 5/7/2015 11:15 AM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Mon, May 04, 2015 at 12:37:21PM -0400, Rhyland Klein wrote:
-> [...]
->> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
->> index 8237d16b4075..0d67efb3dd6a 100644
->> --- a/drivers/clk/tegra/clk-tegra114.c
->> +++ b/drivers/clk/tegra/clk-tegra114.c
->> @@ -935,6 +935,10 @@ static u32 mux_pllm_pllc2_c_c3_pllp_plla_idx[] = {
->>  	[0] = 0, [1] = 1, [2] = 2, [3] = 3, [4] = 4, [5] = 6,
->>  };
->>  
->> +static struct tegra_audio_clk_info tegra114_audio_plls[] = {
->> +	{ "pll_a", &pll_a_params, tegra_clk_pll_a, "pll_p_out1" },
->> +};
->> +
->>  static struct clk **clks;
->>  
->>  static unsigned long osc_freq;
->> @@ -1483,7 +1487,8 @@ static void __init tegra114_clock_init(struct device_node *np)
->>  	tegra114_fixed_clk_init(clk_base);
->>  	tegra114_pll_init(clk_base, pmc_base);
->>  	tegra114_periph_clk_init(clk_base, pmc_base);
->> -	tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks, &pll_a_params);
->> +	tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks,
->> +			     &tegra114_audio_plls, 1);
-> 
-> This throws a build warning, it should be tegra114_audio_plls (without
-> the ampersand). Also I think you should use ARRAY_SIZE() instead of
-> hard-coding the number of entries here.
+Hi
 
-I swear I had changed those without the ampersand ... But yah ARRAY_SIZE
-makes much more sense. Will change throughout...
+On Mon, 11 May 2015, Tero Kristo wrote:
 
+> This set moves most of the OMAP2+ clock driver code under drivers/clk.
+> There are still a couple of files under mach-omap2 folder after this
+> set which have either unmet dependencies still (towards PRCM driver)
+> or is currently slightly broken (some of the DVFS code for OMAP2/OMAP3.)
+> Earlier version of this set has been posted back in March (see
+> http://www.spinics.net/lists/linux-omap/msg116418.html), mostly
+> the code is the same except patches 25+ which are new.
 > 
->>  	tegra_pmc_clk_init(pmc_base, tegra114_clks);
->>  	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks,
->>  					&pll_x_params);
->> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
->> index 11f857cd5f6a..169e236f3627 100644
->> --- a/drivers/clk/tegra/clk-tegra124.c
->> +++ b/drivers/clk/tegra/clk-tegra124.c
->> @@ -1413,6 +1413,10 @@ static struct tegra_clk_init_table tegra132_init_table[] __initdata = {
->>  	{TEGRA124_CLK_CLK_MAX, TEGRA124_CLK_CLK_MAX, 0, 0},
->>  };
->>  
->> +static struct tegra_audio_clk_info tegra124_audio_plls[] = {
->> +	{ "pll_a", &pll_a_params, tegra_clk_pll_a, "pll_p_out1" },
->> +};
->> +
->>  /**
->>   * tegra124_clock_apply_init_table - initialize clocks on Tegra124 SoCs
->>   *
->> @@ -1489,7 +1493,8 @@ static void __init tegra124_132_clock_init_pre(struct device_node *np)
->>  	tegra_fixed_clk_init(tegra124_clks);
->>  	tegra124_pll_init(clk_base, pmc_base);
->>  	tegra124_periph_clk_init(clk_base, pmc_base);
->> -	tegra_audio_clk_init(clk_base, pmc_base, tegra124_clks, &pll_a_params);
->> +	tegra_audio_clk_init(clk_base, pmc_base, tegra124_clks,
->> +			     tegra124_audio_plls, 1);
+> Overall diffstat for this set:
+>  42 files changed, 2644 insertions(+), 3707 deletions(-)
 > 
-> ARRAY_SIZE() here as well. The ampersand isn't there in this case...
+> Testing done:
+> am335x-evm      : boot
+> am335x-evmsk    : boot
+> am3517-evm      : boot
+> am37x-evm       : boot
+> am43x-epos-evm  : boot
+> am437x-gp-evm   : boot
+> omap3-beagle-xm : boot
+> omap3-beagle    : boot, suspend-resume (ret/off), cpuidle (ret/off)
+> am335x-boneblack: boot
+> am335x-bone     : boot
+> craneboard      : boot
+> dra7xx-evm      : boot
+> omap3430-ldp    : boot
+> omap3-n900      : boot
+> omap5-uevm      : boot
+> omap4-panda-es  : boot, suspend-resume (ret), cpuidle (ret)
+> omap4-panda     : boot
+> omap2430-sdp    : boot
+> omap3430-sdp    : boot 
+> omap4-sdp-es23plus: boot
 > 
->>  	tegra_pmc_clk_init(pmc_base, tegra124_clks);
->>  
->>  	/* For Tegra124 & Tegra132, PLLD is the only source for DSIA & DSIB */
->> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
->> index 4b26509fc218..3198c7b7946c 100644
->> --- a/drivers/clk/tegra/clk-tegra30.c
->> +++ b/drivers/clk/tegra/clk-tegra30.c
->> @@ -1406,6 +1406,10 @@ static const struct of_device_id pmc_match[] __initconst = {
->>  	{},
->>  };
->>  
->> +static struct tegra_audio_clk_info tegra30_audio_plls[] = {
->> +	{ "pll_a", &pll_a_params, tegra_clk_pll_a, "pll_p_out1" },
->> +};
->> +
->>  static void __init tegra30_clock_init(struct device_node *np)
->>  {
->>  	struct device_node *node;
->> @@ -1443,7 +1447,8 @@ static void __init tegra30_clock_init(struct device_node *np)
->>  	tegra30_pll_init();
->>  	tegra30_super_clk_init();
->>  	tegra30_periph_clk_init();
->> -	tegra_audio_clk_init(clk_base, pmc_base, tegra30_clks, &pll_a_params);
->> +	tegra_audio_clk_init(clk_base, pmc_base, tegra30_clks,
->> +			     &tegra30_audio_plls, 1);
-> 
-> Same comments as for Tegra114.
-> 
->> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> [...]
->> @@ -607,7 +622,8 @@ void tegra_register_devclks(struct tegra_devclk *dev_clks, int num);
->>  
->>  void tegra_audio_clk_init(void __iomem *clk_base,
->>  			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
->> -			struct tegra_clk_pll_params *pll_params);
->> +			struct tegra_audio_clk_info *audio_info,
->> +			int num_plls);
-> 
-> Oh, and make num_plls unsigned int, please.
+> Branch info:
+> - tree: https://github.com/t-kristo/linux-pm.git
+> - branch: for-4.2/ti-clk-move
 
-Will do!
+I can't replicate your test results.  Several Kconfigs fail to build here, 
+and many boards don't even boot.
 
-Thanks,
-Rhyland
+Could you please post a copy of your boot logs?
 
-> 
-> Thierry
-> 
-> * Unknown Key
-> * 0x7F3EB3A1
-> 
+- Paul
+
+http://www.pwsan.com/omap/testlogs/test-tkristo-clk-move-v4.2/20150511115145/
+
+OMAP development test results for test-tkristo-clk-move-v4.2 20150511115145
 
 
--- 
-nvpublic
+Test summary
+------------
+
+Build: uImage:
+    Pass ( 3/ 3): omap1_defconfig, omap1_defconfig_1510innovator_only,
+		  omap1_defconfig_5912osk_only
+
+Build: uImage+dtb:
+    FAIL ( 2/13): omap2plus_defconfig_am33xx_only/am335x-bone,
+		  omap2plus_defconfig_n800_only_a/omap2420-n800
+    Pass (11/13): omap2plus_defconfig/omap4-panda,
+		  omap2plus_defconfig/omap4-panda-es,
+		  omap2plus_defconfig/omap4-var-som,
+		  omap2plus_defconfig/omap3-evm-37xx,
+		  omap2plus_defconfig/omap2430-sdp,
+		  omap2plus_defconfig/am3517-evm,
+		  omap2plus_defconfig/omap3-beagle,
+		  omap2plus_defconfig/omap3-beagle-xm,
+		  omap2plus_defconfig/omap3-sbc-t3517,
+		  omap2plus_defconfig/omap5-uevm,
+		  omap2plus_defconfig/omap5-sbc-t54
+
+Build: zImage:
+    FAIL ( 9/17): omap2plus_defconfig_am33xx_only,
+		  omap2plus_defconfig_n800_only_a,
+		  omap2plus_defconfig_n800_multi_omap2xxx,
+		  omap2plus_defconfig_omap2_4_only,
+		  omap2plus_defconfig_omap5_only,
+		  omap2plus_defconfig_dra7xx_only,
+		  omap2plus_defconfig_am43xx_only,
+		  rmk_omap4430_sdp_oldconfig,
+		  rmk_omap4430_sdp_allnoconfig
+    Pass ( 8/17): omap2plus_defconfig,
+		  omap2plus_defconfig_2430sdp_only,
+		  omap2plus_defconfig_cpupm, omap2plus_defconfig_no_pm,
+		  omap2plus_defconfig_omap3_4_only,
+		  rmk_omap3430_ldp_oldconfig,
+		  rmk_omap3430_ldp_allnoconfig, multi_v7_defconfig
+
+Build warnings from toolchain: uImage:
+    FAIL ( 3/ 3): omap1_defconfig, omap1_defconfig_1510innovator_only,
+		  omap1_defconfig_5912osk_only
+
+Build warnings from toolchain: uImage+dtb:
+    FAIL ( 2/13): omap2plus_defconfig_am33xx_only/am335x-bone,
+		  omap2plus_defconfig_n800_only_a/omap2420-n800
+
+Build warnings from toolchain: zImage:
+    FAIL (14/17): omap2plus_defconfig, omap2plus_defconfig_am33xx_only,
+		  omap2plus_defconfig_n800_only_a,
+		  omap2plus_defconfig_n800_multi_omap2xxx,
+		  omap2plus_defconfig_2430sdp_only,
+		  omap2plus_defconfig_cpupm, omap2plus_defconfig_no_pm,
+		  omap2plus_defconfig_omap2_4_only,
+		  omap2plus_defconfig_omap3_4_only,
+		  omap2plus_defconfig_omap5_only,
+		  omap2plus_defconfig_dra7xx_only,
+		  omap2plus_defconfig_am43xx_only,
+		  rmk_omap3430_ldp_oldconfig,
+		  rmk_omap4430_sdp_oldconfig
+
+Boot to userspace:
+    FAIL ( 6/17): 4460varsomom, 2430sdp, 3530es3beagle, 3530es31beagle,
+		  cmt3517, 5430es2sbct54
+    skip ( 5/17): 5912osk, 3517evm, am335xbonelt, am335xbone, 2420n800
+    Pass ( 6/17): 4430es2panda, 4460pandaes, 37xxevm, 3730beaglexm,
+		  3730es12beaglexm, 5430es2uevm
+
+Kernel warnings during boot to userspace:
+    FAIL ( 1/17): 4430es2panda
+
+PM: chip retention via suspend:
+    skip ( 1/12): am335xbonelt
+    FAIL ( 7/12): 4430es2panda, 4460varsomom, 3530es3beagle,
+		  3530es31beagle, 2430sdp, 5430es2uevm, 5430es2sbct54
+    Pass ( 4/12): 4460pandaes, 37xxevm, 3730beaglexm, 3730es12beaglexm
+
+PM: chip retention via dynamic idle:
+    skip ( 1/12): am335xbonelt
+    FAIL ( 7/12): 4430es2panda, 4460varsomom, 3530es3beagle,
+		  3530es31beagle, 2430sdp, 5430es2uevm, 5430es2sbct54
+    Pass ( 4/12): 4460pandaes, 37xxevm, 3730beaglexm, 3730es12beaglexm
+
+PM: chip off (except CORE, due to errata) via suspend:
+    Pass ( 1/ 1): 3730beaglexm
+
+PM: chip off (except CORE, due to errata) via dynamic idle:
+    Pass ( 1/ 1): 3730beaglexm
+
+PM: chip off via suspend:
+    FAIL ( 2/ 4): 3530es3beagle, 3530es31beagle
+    Pass ( 2/ 4): 37xxevm, 3730es12beaglexm
+
+PM: chip off via dynamic idle:
+    FAIL ( 2/ 4): 3530es3beagle, 3530es31beagle
+    Pass ( 2/ 4): 37xxevm, 3730es12beaglexm
+
+Kernel warnings during PM test:
+    FAIL ( 1/17): 4430es2panda
+
+Obsolete Kconfig symbols:
+    FAIL ( 1/20): multi_v7_defconfig
+
+
+vmlinux object size
+(delta in bytes from test_v4.1-rc2 (5ebe6afaf0057ac3eaeb98defd5456894b446d22)):
+   text     data      bss    total  kernel
+      0        0        0        0  omap1_defconfig
+      0        0        0        0  omap1_defconfig_1510innovator_only
+      0        0        0        0  omap1_defconfig_5912osk_only
+  -1484       -8        0    -1492  multi_v7_defconfig
+  -2108      +56        0    -2052  omap2plus_defconfig
+      0        0        0        0  omap2plus_defconfig_2430sdp_only
+  -6140      +56      -64    -6148  omap2plus_defconfig_cpupm
+  -6204       -8        0    -6212  omap2plus_defconfig_no_pm
+  -1908       -8        0    -1916  omap2plus_defconfig_omap3_4_only
+  -2804       -4     +780    -2028  rmk_omap3430_ldp_allnoconfig
+  -1812       -8      +64    -1756  rmk_omap3430_ldp_oldconfig
+
+Boot-time memory difference
+(delta in bytes from test_v4.1-rc2 (5ebe6afaf0057ac3eaeb98defd5456894b446d22))
+  avail  rsrvd   high  freed  board          kconfig
+ -117644k -13428k      .  -168k  2420n800       omap2plus_defconfig_n800_only_a
+    -4k     4k      .      .  5430es2sbct54  omap2plus_defconfig
+ -79556k -51516k      .  -364k  am335xbone     omap2plus_defconfig_am33xx_only
+ -224000k -37120k      .  -440k  am335xbonelt   omap2plus_defconfig
