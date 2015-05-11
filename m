@@ -1,37 +1,51 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Paul Burton <paul.burton@imgtec.com>,  linux-mips@linux-mips.org
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <1429881457-16016-29-git-send-email-paul.burton@imgtec.com>
-Cc: "Paul Burton" <paul.burton@imgtec.com>,
- "Lars-Peter Clausen" <lars@metafoo.de>, "Ralf Baechle" <ralf@linux-mips.org>,
- "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-References: <1429881457-16016-1-git-send-email-paul.burton@imgtec.com>
- <1429881457-16016-29-git-send-email-paul.burton@imgtec.com>
-Message-ID: <20150513030652.20636.98939@quantum>
-Subject: Re: [PATCH v4 28/37] MIPS,
- clk: move jz4740 UDC auto suspend functions to jz4740-cgu
-Date: Tue, 12 May 2015 20:06:52 -0700
+Return-Path: <ce3a@gmx.de>
+From: Sergej Sawazki <ce3a@gmx.de>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	sebastian.hesselbarth@gmail.com,
+	mwelling@ieee.org,
+	moinejf@free.fr
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sergej Sawazki <ce3a@gmx.de>
+Subject: [PATCH 2/2] clk: si5351: fix .recalc_rate for multisynth 6-7
+Date: Mon, 11 May 2015 10:44:59 +0200
+Message-Id: <1431333899-7313-1-git-send-email-ce3a@gmx.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Paul,
+MS6 and MS7 do not have the MSx_P3 field. Do the 'params.p3 == 0'
+check for MS0-M5 only. See [AN619, p. 6] for details.
 
-Quoting Paul Burton (2015-04-24 06:17:28)
-> -void jz4740_clock_udc_disable_auto_suspend(void)
-> -{
-> -       jz_clk_reg_clear_bits(JZ_REG_CLOCK_GATE, JZ_CLOCK_GATE_UDC);
-> -}
-> -EXPORT_SYMBOL_GPL(jz4740_clock_udc_disable_auto_suspend);
-> -
-> -void jz4740_clock_udc_enable_auto_suspend(void)
-> -{
-> -       jz_clk_reg_set_bits(JZ_REG_CLOCK_GATE, JZ_CLOCK_GATE_UDC);
-> -}
-> -EXPORT_SYMBOL_GPL(jz4740_clock_udc_enable_auto_suspend);
+Referenced document:
+[AN619] Manually Generating an Si5351 Register Map, Rev. 0.4
 
-I couldn't find a caller for these functions. Where and how are they
-used?
+Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
+---
+ drivers/clk/clk-si5351.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Thanks,
-Mike
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index 48c5298..e39e1e6 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -607,9 +607,6 @@ static unsigned long si5351_msynth_recalc_rate(struct clk_hw *hw,
+ 	if (!hwdata->params.valid)
+ 		si5351_read_parameters(hwdata->drvdata, reg, &hwdata->params);
+ 
+-	if (hwdata->params.p3 == 0)
+-		return parent_rate;
+-
+ 	/*
+ 	 * multisync0-5: fOUT = (128 * P3 * fIN) / (P1*P3 + P2 + 512*P3)
+ 	 * multisync6-7: fOUT = fIN / P1
+@@ -617,6 +614,8 @@ static unsigned long si5351_msynth_recalc_rate(struct clk_hw *hw,
+ 	rate = parent_rate;
+ 	if (hwdata->num > 5) {
+ 		m = hwdata->params.p1;
++	} else if (hwdata->params.p3 == 0) {
++		return parent_rate;
+ 	} else if ((si5351_reg_read(hwdata->drvdata, reg + 2) &
+ 		    SI5351_OUTPUT_CLK_DIVBY4) == SI5351_OUTPUT_CLK_DIVBY4) {
+ 		m = 4;
+-- 
+1.9.1
