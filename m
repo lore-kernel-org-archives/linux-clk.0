@@ -1,108 +1,102 @@
-Return-Path: <grygorii.strashko@linaro.org>
-Return-Path: <grygorii.strashko@linaro.org>
-From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Message-ID: <55646503.2060502@linaro.org>
-Date: Tue, 26 May 2015 15:20:19 +0300
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <55528046.4030107@codeaurora.org>
+Date: Tue, 12 May 2015 15:35:50 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@linaro.org>,
- Jim Quinlan <jim2101024@gmail.com>,
- linux-clk@vger.kernel.org
-CC: bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH] clk: export function clk_disable_unused()
-References: <1431728556-620-1-git-send-email-jim2101024@gmail.com> <20150523193321.9817.1715@quantum>
-In-Reply-To: <20150523193321.9817.1715@quantum>
-Content-Type: text/plain; charset=utf-8
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+CC: Kevin Hilman <khilman@kernel.org>, =?windows-1252?Q?Heiko_St=FCbner?=
+ <heiko@sntech.de>, Mike Turquette <mturquette@linaro.org>,
+ Doug Anderson <dianders@chromium.org>,
+ linux-clk@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Alex Elder <elder@linaro.org>,
+ Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Max Filippov <jcmvbkbc@gmail.com>, Sascha Hauer <kernel@pengutronix.de>,
+ Zhangfei Gao <zhangfei.gao@linaro.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Chao Xie <chao.xie@marvell.com>,
+ Jason Cooper <jason@lakedaemon.net>,
+ Stefan Wahren <stefan.wahren@i2se.com>,
+ Andrew Bresticker <abrestic@chromium.org>,
+ Robert Jarzmik <robert.jarzmik@free.fr>,
+ Georgi Djakov <georgi.djakov@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Barry Song <baohua@kernel.org>,
+ Dinh Nguyen <dinguyen@opensource.altera.com>,
+ Viresh Kumar <viresh.linux@gmail.com>,
+ Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
+ =?windows-1252?Q?Emilio_L=F3pez?= <emilio@elopez.com.ar>,
+ Peter De Sc hrijver <pdeschrijver@nvidia.com>,
+ Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Pawel Moll <pawel.moll@arm.com>,
+ Michal Simek <michal.simek@xilinx.com>, Olof Johansson <olof@lixom.net>,
+ Tyler Baker <tyler.baker@linaro.org>
+Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
+References: <1429735986-18592-1-git-send-email-heiko@sntech.de> <1981330.kGUrTurMy5@diego> <5543E79F.2080400@codeaurora.org> <22709390.NTAlubMgNB@diego> <55440EDA.4030905@codeaurora.org> <CAMAWPa_n+59+v+x3fKkmdtW1wMJF7kqtTjLLowmv1xwGWprYJw@mail.gmail.com> <554BD33D.7050907@codeaurora.org> <20150508100247.GQ11057@lukather>
+In-Reply-To: <20150508100247.GQ11057@lukather>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
-On 05/23/2015 10:33 PM, Michael Turquette wrote:
-> Quoting Jim Quinlan (2015-05-15 15:22:36)
->> For Broadcom STB chips, clocks may come up after resume in an "on"
->> state, so calling clk_disable_unused() again will turn off unused
->> clocks.  This commit exports clk_disable_unused() so it may be
->> called in such cases.
-> 
-> Jim,
-> 
-> Thanks for the patch.
-> 
-> I think a more general solution to the problem might be needed. E.g. how
-> do we solve for the opposite case where after a low-power suspend/resume
-> we turn on clocks that were enabled by drivers before suspending, but
-> are disabled out of reset/post-transition?
-> 
-> Additionally, it would be helpful to see your driver changes and how
-> exactly you plan to use this newly exported function.
-> 
-> I've Cc'd Grygorii Strashko from TI. I faintly recall that he had an
-> out-of-tree solution to add some .suspend/.resume callbacks to struct
-> clk_ops. I didn't like that solution at the time either, but maybe we
-> can figure out a more natural way to handle these cases.
-> 
-> (Grygorii: sorry in advance if this is a case of mistaken identity. I
-> could not find the code in question from my email archive)
+On 05/08/15 03:02, Maxime Ripard wrote:
+> On Thu, May 07, 2015 at 02:03:57PM -0700, Stephen Boyd wrote:
+>> On 05/07/15 08:17, Kevin Hilman wrote:
+>>> On Fri, May 1, 2015 at 4:40 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>>>> On 05/01/15 15:07, Heiko Stübner wrote:
+>>>>> Am Freitag, 1. Mai 2015, 13:52:47 schrieb Stephen Boyd:
+>>>>>
+>>>>>>> Instead I guess we could hook it less deep into clk_get_sys, like in the
+>>>>>>> following patch?
+>>>>>> It looks like it will work at least, but still I'd prefer to keep the
+>>>>>> orphan check contained to clk.c. How about this compile tested only patch?
+>>>>> I gave this a spin on my rk3288-firefly board. It still boots, the clock tree
+>>>>> looks the same and it also still defers nicely in the scenario I needed it
+>>>>> for. The implementation also looks nice - and of course much more compact than
+>>>>> my check in two places :-) . I don't know if you want to put this as follow-up
+>>>>> on top or fold it into the original orphan-check, so in any case
+>>>>>
+>>>>> Tested-by: Heiko Stuebner <heiko@sntech.de>
+>>>>> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+>>>> Thanks. I'm leaning towards tossing your patch 2/2 and replacing it with
+>>>> my patch and a note that it's based on an earlier patch from you.
+>>> It appears this has landed in linux-next in the form of 882667c1fcf1
+>>> clk: prevent orphan clocks from being used.  A bunch of boot failures
+>>> for sunxi in today's linux-next[1] were bisected down to that patch.
+>>>
+>>> I confirmed that reverting that commit on top of next/master gets
+>>> sunxi booting again.
+>>>
+>>>
+>> Thanks for the report. I've removed the two clk orphan patches from
+>> clk-next. Would it be possible to try with next-20150507 and
+>> clk_ignore_unused on the command line?
+> This makes it work, but it's not really an option.
+>
 
-I've copied links here FYI:
+Hmm.. I thought it didn't fix it for Kevin. Confused.
 
-[1] http://git.ti.com/ti-linux-kernel/ti-linux-kernel/commit/31bdb0f10c7129a157e238fde12390dae8e08d92
-[2-fix] http://git.ti.com/ti-linux-kernel/ti-linux-kernel/commit/bdb1402837ae5232748ce79fc1f286b4c2b0b2ac
+>> Also we can try to see if critical clocks aren't being forced on by
+>> applying this patch and looking for clk_get() failures
+> And that shows that the CPU and DDR clocks are not protected, which
+> obviously is pretty mad.
+>
+> I've mass converted all our probing code to use OF_CLK_DECLARE, and
+> make things work again.
+>
+> http://code.bulix.org/5goa5j-88345?raw
+>
+> Is this an acceptable solution?
+>
+> We were already moving to this, I'm not really fond of doing this like
+> that, but I guess this whole debacle makes it necessary.
+>
 
-It looks like this is a little bit different problem from one side
- - some clocks can be enabled unconditionally by HW or FW on restore/resume.
-And, seems, possible way to solve it is to use PM notifiers in
-clk driver/core (I hate PM notifiers;), but I don't see another generic way,
-because CLKs are not devices):
- PM_POST_SUSPEND:
-	if (!hw->clk->enable_count)
-		hw->clk->ops->disable(hw);
- - or - 
-	clk_disable_unused();
-        ^^ then this patch is reasonable :)
-
->From another side, It might be solved for gate clocks case with mentioned above
-.restore_context() callback... theoretically.
-
-Also there are few comments from our internal discussion, FYI:
-
-=== Mike == :
-"As per our discussion, your objection was that if we will
-- introduce per-clocks  .save_context/restore_context callbacks
-- perform clks restore during system suspend resume/hibernation restore
-  using depth-first-pre-order tree traversal algorithm
-
-then at some point we might get situation when DPLL's rate has been
-changed already, but some Divider clock still configured using default
-values. This may lead to the fact that unsafe frequency will be
-generated  for the corresponding subtree during some period of time
-(potentially short) until context of this Divider clock will be
-restored.
-
-proposition was:
-- save/restore clock's HW context all at once (PM domains +
-clockdomains + clocks registers)"
-
-== Tero Kristo == :
-"The problem with per/clock save/restore context is also that it will potentially
- read/write same registers multiple times, where it would be sufficient to combine these
- to a single access. Consider for example omap3, where we have a single FCLKEN / ICLKEN register,
- which contains enable bits for 20+ clocks. This can be optimized to a single access instead of 20+.
-
- Personally I think the save-restore should be done on lower level, for example by the PRCM drivers
- that are providing the register space for the clocks. This way we can more easily handle all the corner
- cases also, or do a simple save-restore for a range of registers. It might be necessary to do callbacks
- to clock code in some cases, like DPLLs which are rather complex to control.
-
- I think this sounds pretty similar to what Mike was proposing looking at the comment below."
-
-=== Mike == :
-"Correct. My main concern talking to Grygorii at HKG15 was that putting
-tree traversal logic into the clock core for doing context
-save/restore was fixing a problem in the place and in the wrong way.
-The driver that maps onto the range of registers that lose context
-should manage this stuff. If that is not working today then it should
-be fixed, but the solution is not to put this stuff into the clock
-framework core."
+I wonder why we can't switch out the clk_ops on the affected platforms +
+clocks to be read-only (at least for the enable/disable part)? That
+would fix it just the same right? I wasn't around for the original
+discussion regarding this always-on stuff so perhaps I've missed something.
 
 -- 
-regards,
--grygorii
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
