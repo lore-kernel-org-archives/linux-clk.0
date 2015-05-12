@@ -1,128 +1,115 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 17/21] clk: tegra: pll: Add logic for SS
+Date: Tue, 12 May 2015 13:24:00 -0400
+Message-ID: <1431451444-23155-19-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-To: Joachim Eastwood <manabian@gmail.com>,  sboyd@codeaurora.org
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <1431988559-23338-5-git-send-email-manabian@gmail.com>
-Cc: "Joachim Eastwood" <manabian@gmail.com>, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- ezequiel@vanguardiasur.com.ar
-References: <1431988559-23338-1-git-send-email-manabian@gmail.com>
- <1431988559-23338-5-git-send-email-manabian@gmail.com>
-Message-ID: <20150528034424.22384.83956@quantum>
-Subject: Re: [PATCH v3 4/6] clk: add lpc18xx ccu clk driver
-Date: Wed, 27 May 2015 20:44:24 -0700
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Joachim,
+From: Bill Huang <bilhuang@nvidia.com>
 
-Quoting Joachim Eastwood (2015-05-18 15:35:57)
-<snip>
-> +static void lpc18xx_ccu_register_branch_clks(void __iomem *reg_base,
-> +                                            int base_clk_id,
-> +                                            const char *parent)
-> +{
-> +       int i;
-> +
-> +       for (i =3D 0; i < ARRAY_SIZE(clk_branches); i++) {
-> +               if (clk_branches[i].base_id !=3D base_clk_id)
-> +                       continue;
-> +
-> +               lpc18xx_ccu_register_branch_gate_div(&clk_branches[i], re=
-g_base,
-> +                                                    parent);
-> +
-> +               if (clk_branches[i].flags & CCU_BRANCH_IS_BUS)
-> +                       parent =3D clk_branches[i].name;
-> +       }
-> +}
-> +
-> +static void __init lpc18xx_ccu_init(struct device_node *np)
-> +{
-> +       struct lpc18xx_branch_clk_data *clk_data;
-> +       int num_base_ids, *base_ids;
-> +       void __iomem *reg_base;
-> +       const char *parent;
-> +       int base_clk_id;
-> +       int i;
-> +
-> +       reg_base =3D of_iomap(np, 0);
-> +       if (!reg_base) {
-> +               pr_warn("%s: failed to map address range\n", __func__);
-> +               return;
-> +       }
-> +
-> +       clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
-> +       if (!clk_data)
-> +               return;
-> +
-> +       num_base_ids =3D of_clk_get_parent_count(np);
-> +
-> +       base_ids =3D kcalloc(num_base_ids, sizeof(int), GFP_KERNEL);
-> +       if (!base_ids) {
-> +               kfree(clk_data);
-> +               return;
-> +       }
-> +
-> +       clk_data->base_ids =3D base_ids;
-> +       clk_data->num_base_ids =3D num_base_ids;
-> +
-> +       for (i =3D 0; i < num_base_ids; i++) {
-> +               struct clk *clk =3D of_clk_get(np, i);
-> +               if (IS_ERR(clk)) {
-> +                       pr_warn("%s: failed to get clock at idx %d\n",
-> +                               __func__, i);
-> +                       continue;
-> +               }
-> +
-> +               parent =3D __clk_get_name(clk);
-> +               base_clk_id =3D of_clk_get_index(np, i);
-> +
-> +               clk_data->base_ids[i] =3D base_clk_id;
-> +               lpc18xx_ccu_register_branch_clks(reg_base, base_clk_id,
-> +                                                parent);
+Add some logic for Spread Spectrum control. It is used in conjuncture
+with SDM fractional dividers. SSC has to be disabled when we configure
+the divider settings.
 
-Thanks for sending V3. This driver is getting close!
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+---
+v5:
+  - Reorderd Patch so set_defaults logic is present already
 
-So the main thing I don't understand is why you do not encode the CGU
-clock parent string names into this CCU driver. If I understand your
-approach correctly, you do the following in lpc18xx_ccu_init:
+ drivers/clk/tegra/clk-pll.c |   25 ++++++++++++++++++++++++-
+ drivers/clk/tegra/clk.h     |    4 ++++
+ 2 files changed, 28 insertions(+), 1 deletion(-)
 
-1) count the number of parent clocks (ostensibly CGU clocks)
-2) iterate through all of those CGU clocks, extracting a base_id value
-(loop #1)
-3) using this base_id as a key you walk through an array in the CCU
-driver trying to find a matching base_id value
-(loop #2)
-4) after finding the corresponding CCU clocks you get the parent clock
-with of_clk_get
-5) using of_clk_get you fetch its name with __clk_get_name
-6) you pass this parent name into a fairly typical looking registration
-function
-
-Assuming I got all of that right, I hope we can simplify it
-considerably.
-
-You already have an array of CCU clock information in this driver,
-clk_branches[]. Why not encode the parent string name here? This would
-involve adding a "parent_name" member to struct lpc18xx_clk_branch.
-
-Doing the above, your O(n^2)-ish registration function becomes O(n):
-
-1) iterate through the array of the CCU clocks (clk_branchs[])
-2) register them
-3) profit
-
-I'm starting to think any reference to base_id is sign that things are
-wrong in your driver. I am unconvinced that you need to "share" this
-base_id across CGU and CCU drivers in the way you do. If I'm wrong
-please help me to understand.
-
-As a wild thought, if you do not want to encode parent string names into
-this driver, have you tried to use the clock-names property in the CCU
-blob? You do not need clock-output-names in the CGU blob either. But
-this is just an idea. It is far for straightforward for you t encode the
-parent names in your clk_branches[] array.
-
-Thanks,
-Mike
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 36aa2a95fac0..727fedff824d 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -648,6 +648,26 @@ static void _update_pll_cpcon(struct tegra_clk_pll *pll,
+ 	pll_writel_misc(val, pll);
+ }
+ 
++static void pll_clk_start_ss(struct tegra_clk_pll *pll)
++{
++	if (pll->params->defaults_set && pll->params->ssc_ctrl_en_mask) {
++		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
++
++		val |= pll->params->ssc_ctrl_en_mask;
++		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
++	}
++}
++
++static void pll_clk_stop_ss(struct tegra_clk_pll *pll)
++{
++	if (pll->params->defaults_set && pll->params->ssc_ctrl_en_mask) {
++		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
++
++		val &= ~pll->params->ssc_ctrl_en_mask;
++		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
++	}
++}
++
+ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 			unsigned long rate)
+ {
+@@ -666,8 +686,10 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 			return 0;
+ 	}
+ 
+-	if (state)
++	if (state) {
++		pll_clk_stop_ss(pll);
+ 		_clk_pll_disable(hw);
++	}
+ 
+ 	if (!pll->params->defaults_set && pll->params->set_defaults)
+ 		pll->params->set_defaults(pll);
+@@ -680,6 +702,7 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 	if (state) {
+ 		_clk_pll_enable(hw);
+ 		ret = clk_pll_wait_for_lock(pll);
++		pll_clk_start_ss(pll);
+ 	}
+ 
+ 	return ret;
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 38b4c95cfb2f..32ce32a056ca 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -184,6 +184,8 @@ struct tegra_clk_pll;
+  * @sdm_din_mask:		Mask of SDM divider bits
+  * @sdm_ctrl_reg:		Register offset where SDM enable is
+  * @sdm_ctrl_en_mask:		Mask of SDM enable bit
++ * @ssc_ctrl_reg:		Register offset where SSC settings are
++ * @ssc_ctrl_en_mask:		Mask of SSC enable bit
+  * @aux_reg:			AUX register offset
+  * @dyn_ramp_reg:		Dynamic ramp control register offset
+  * @ext_misc_reg:		Miscellaneous control register offsets
+@@ -251,6 +253,8 @@ struct tegra_clk_pll_params {
+ 	u32		sdm_din_mask;
+ 	u32		sdm_ctrl_reg;
+ 	u32		sdm_ctrl_en_mask;
++	u32		ssc_ctrl_reg;
++	u32		ssc_ctrl_en_mask;
+ 	u32		aux_reg;
+ 	u32		dyn_ramp_reg;
+ 	u32		ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
+-- 
+1.7.9.5
