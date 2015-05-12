@@ -1,52 +1,59 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>, <paul@pwsan.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 00/27] ARM: OMAP2+: clock code migration to drivers/clk/ti
-Date: Mon, 11 May 2015 11:54:26 +0300
-Message-ID: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 15/21] clk: tegra: pll: Add dyn_ramp callback
+Date: Tue, 12 May 2015 13:23:58 -0400
+Message-ID: <1431451444-23155-17-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+From: Bill Huang <bilhuang@nvidia.com>
 
-This set moves most of the OMAP2+ clock driver code under drivers/clk.
-There are still a couple of files under mach-omap2 folder after this
-set which have either unmet dependencies still (towards PRCM driver)
-or is currently slightly broken (some of the DVFS code for OMAP2/OMAP3.)
-Earlier version of this set has been posted back in March (see
-http://www.spinics.net/lists/linux-omap/msg116418.html), mostly
-the code is the same except patches 25+ which are new.
+Add a callback to the pll_params for custom dynamic ramping
+functions which can be specified per PLL.
 
-Overall diffstat for this set:
- 42 files changed, 2644 insertions(+), 3707 deletions(-)
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+---
+ drivers/clk/tegra/clk.h |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-Testing done:
-am335x-evm      : boot
-am335x-evmsk    : boot
-am3517-evm      : boot
-am37x-evm       : boot
-am43x-epos-evm  : boot
-am437x-gp-evm   : boot
-omap3-beagle-xm : boot
-omap3-beagle    : boot, suspend-resume (ret/off), cpuidle (ret/off)
-am335x-boneblack: boot
-am335x-bone     : boot
-craneboard      : boot
-dra7xx-evm      : boot
-omap3430-ldp    : boot
-omap3-n900      : boot
-omap5-uevm      : boot
-omap4-panda-es  : boot, suspend-resume (ret), cpuidle (ret)
-omap4-panda     : boot
-omap2430-sdp    : boot
-omap3430-sdp    : boot 
-omap4-sdp-es23plus: boot
-
-Branch info:
-- tree: https://github.com/t-kristo/linux-pm.git
-- branch: for-4.2/ti-clk-move
-
--Tero
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 330729a822cf..a61d388364b3 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -160,6 +160,8 @@ struct div_nmp {
+ 
+ #define MAX_PLL_MISC_REG_COUNT	6
+ 
++struct tegra_clk_pll;
++
+ /**
+  * struct tegra_clk_pll_params - PLL parameters
+  *
+@@ -271,6 +273,8 @@ struct tegra_clk_pll_params {
+ 			unsigned long rate, unsigned long parent_rate);
+ 	unsigned long	(*adjust_vco)(struct tegra_clk_pll_params *pll_params,
+ 				unsigned long parent_rate);
++	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
++			struct tegra_clk_pll_freq_table *cfg);
+ };
+ 
+ #define TEGRA_PLL_USE_LOCK BIT(0)
+-- 
+1.7.9.5
