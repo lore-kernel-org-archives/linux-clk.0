@@ -1,30 +1,26 @@
-Return-Path: <jcmvbkbc@gmail.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20150521181435.GA21195@codeaurora.org>
-References: <1432218373.27793.0.camel@ingics.com>
-	<20150521181435.GA21195@codeaurora.org>
-Date: Thu, 21 May 2015 21:35:50 +0300
-Message-ID: <CAMo8Bf+C1J6nBh-K4VXn=tzvOGhW1s=CgZNfMV+GSi--Fjh2nA@mail.gmail.com>
-Subject: Re: [PATCH] clk: cdce706: Add missing of_clk_del_provider call in cdce706_remove
-From: Max Filippov <jcmvbkbc@gmail.com>
+In-Reply-To: <1430897996-11597-20-git-send-email-sboyd@codeaurora.org>
+References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
+	<1430897996-11597-20-git-send-email-sboyd@codeaurora.org>
+Date: Tue, 12 May 2015 12:38:47 +0200
+Message-ID: <CACRpkdZB7vEG3VG0qZM6BOsxbXS+ZQDvpqx+bDTYa+whbpJGSw@mail.gmail.com>
+Subject: Re: [PATCH 19/19] clk: u300: Silence sparse warnings
+From: Linus Walleij <linus.walleij@linaro.org>
 To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Axel Lin <axel.lin@ingics.com>, Mike Turquette <mturquette@linaro.org>,
-	linux-clk@vger.kernel.org
+Cc: Mike Turquette <mturquette@linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 21, 2015 at 9:14 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 05/21, Axel Lin wrote:
->> Remove a previously registered clock provider when unload the module.
->>
->> Signed-off-by: Axel Lin <axel.lin@ingics.com>
->> ---
+On Wed, May 6, 2015 at 9:39 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+
+> drivers/clk/clk-u300.c:1175:13: warning: symbol 'u300_clk_init' was not declared. Should it be static?
 >
-> What about all the clocks that are registered? Don't those need
-> to be unregistered as well?
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-They're registered with devm_clk_register, should be managed automatically.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
--- 
-Thanks.
--- Max
+Yours,
+Linus Walleij
