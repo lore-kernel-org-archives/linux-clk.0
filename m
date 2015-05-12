@@ -1,41 +1,51 @@
-Return-Path: <mopsfelder@gmail.com>
-Return-Path: <mopsfelder@gmail.com>
-From: Murilo Opsfelder Araujo <mopsfelder@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Murilo Opsfelder Araujo <mopsfelder@gmail.com>
-Subject: [PATCH 1/2] drivers: clk: clk.c: Add comments indicating the matching #ifdef blocks
-Date: Wed,  6 May 2015 21:51:00 -0300
-Message-Id: <1430959861-14925-2-git-send-email-mopsfelder@gmail.com>
-In-Reply-To: <1430959861-14925-1-git-send-email-mopsfelder@gmail.com>
-References: <1430959861-14925-1-git-send-email-mopsfelder@gmail.com>
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v5 06/21] clk: tegra: pll: update warning msg
+Date: Tue, 12 May 2015 13:23:49 -0400
+Message-ID: <1431451444-23155-8-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Murilo Opsfelder Araujo <mopsfelder@gmail.com>
----
- drivers/clk/clk.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Swap out the generic WARN_ON with a WARN which gives more
+information about what is happening.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 087a092..a961eb6 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2226,7 +2226,7 @@ static inline void clk_debug_reparent(struct clk_core *core,
- static inline void clk_debug_unregister(struct clk_core *core)
- {
- }
--#endif
-+#endif /* CONFIG_DEBUG_FS */
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 1e1018dd466f..0282d9f4f2d7 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -692,7 +692,8 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
  
- static bool clk_is_orphan(const struct clk *clk)
- {
-@@ -3144,4 +3144,4 @@ void __init of_clk_init(const struct of_device_id *matches)
- 			force = true;
+ 	pdiv = _hw_to_p_div(hw, cfg.p);
+ 	if (pdiv < 0) {
+-		WARN_ON(1);
++		WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
++			__clk_get_name(hw->clk), cfg.p);
+ 		pdiv = 1;
  	}
- }
--#endif
-+#endif /* CONFIG_OF */
+ 
 -- 
-2.1.4
+1.7.9.5
