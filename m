@@ -1,101 +1,35 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>,
-	Bill Huang <bilhuang@nvidia.com>
-Subject: [PATCH v3 09/20] clk: tegra: pll: Add logic for SS
-Date: Fri, 1 May 2015 14:53:56 -0400
-Message-ID: <1430506447-29074-10-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
-References: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
+Return-Path: <bleung@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Sender: bleung@google.com
+In-Reply-To: <1431451444-23155-6-git-send-email-rklein@nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+	<1431451444-23155-6-git-send-email-rklein@nvidia.com>
+Date: Tue, 12 May 2015 14:52:07 -0700
+Message-ID: <CANLzEkvec7WKSEseBf=S43vMaxUjVqaOuuxGOS7qYz4KPsAXyg@mail.gmail.com>
+Subject: Re: [PATCH v5 04/21] clk: tegra: pll: add tegra_pll_wait_for_lock to
+ clk header
+From: Benson Leung <bleung@chromium.org>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bill Huang <bilhuang@nvidia.com>
+On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> Create a wrapper interface to make use of the existing
+> clk_pll_wait_for_lock. This will be useful for implementations
+> of callbacks in Tegra SoC specific clock drivers.
+>
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 
-Add some logic for Spread Spectrum control. It is used in conjuncture
-with SDM fractional dividers. SSC has to be disabled when we configure
-the divider settings.
+Reviewed-by: Benson Leung <bleung@chromium.org>
 
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c |   25 ++++++++++++++++++++++++-
- drivers/clk/tegra/clk.h     |    2 ++
- 2 files changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index c64b75185d6b..2a559408cee1 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -621,6 +621,26 @@ static void _update_pll_cpcon(struct tegra_clk_pll *pll,
- 	pll_writel_misc(val, pll);
- }
- 
-+static void pll_clk_start_ss(struct tegra_clk_pll *pll)
-+{
-+	if (pll->params->defaults_set && pll->params->ssc_ctrl_en_mask) {
-+		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
-+
-+		val |= pll->params->ssc_ctrl_en_mask;
-+		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
-+	}
-+}
-+
-+static void pll_clk_stop_ss(struct tegra_clk_pll *pll)
-+{
-+	if (pll->params->defaults_set && pll->params->ssc_ctrl_en_mask) {
-+		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
-+
-+		val &= ~pll->params->ssc_ctrl_en_mask;
-+		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
-+	}
-+}
-+
- static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 			unsigned long rate)
- {
-@@ -629,8 +649,10 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 
- 	state = clk_pll_is_enabled(hw);
- 
--	if (state)
-+	if (state) {
-+		pll_clk_stop_ss(pll);
- 		_clk_pll_disable(hw);
-+	}
- 
- 	_update_pll_mnp(pll, cfg);
- 
-@@ -640,6 +662,7 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 	if (state) {
- 		_clk_pll_enable(hw);
- 		ret = clk_pll_wait_for_lock(pll);
-+		pll_clk_start_ss(pll);
- 	}
- 
- 	return ret;
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index ef5754f64622..f3c1f07d5332 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -219,6 +219,8 @@ struct tegra_clk_pll_params {
- 	u32		sdm_din_mask;
- 	u32		sdm_ctrl_reg;
- 	u32		sdm_ctrl_en_mask;
-+	u32		ssc_ctrl_reg;
-+	u32		ssc_ctrl_en_mask;
- 	u32		aux_reg;
- 	u32		dyn_ramp_reg;
- 	u32		ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
 -- 
-1.7.9.5
+Benson Leung
+Software Engineer, Chrom* OS
+bleung@chromium.org
