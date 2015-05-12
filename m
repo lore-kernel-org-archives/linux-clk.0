@@ -1,344 +1,221 @@
-Return-Path: <wens@csie.org>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20150505082544.GF3274@lukather>
-References: <1430410206-4410-1-git-send-email-wens@csie.org>
- <1430410206-4410-3-git-send-email-wens@csie.org> <20150504125146.GA3274@lukather>
- <CAGb2v64brwadGPdpdQ9ebOPwZQse2W6m8t8wV6JX=y4Hpw0puQ@mail.gmail.com> <20150505082544.GF3274@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 5 May 2015 18:01:16 +0800
-Message-ID: <CAGb2v67mZvcfwiYc9vABuFQ2SaiENWZzOGYz6zc0JLU-MK3fNA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] clk: sunxi: support the cpus (cpu special) clock
- on the Allwinner A80
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee.jones@linaro.org>,
-	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: Joachim Eastwood <manabian@gmail.com>, sboyd@codeaurora.org, arnd@arndb.de,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <1430170693-28303-3-git-send-email-manabian@gmail.com>
+Cc: devicetree@vger.kernel.org, ariel.dalessandro@gmail.com,
+ ezequiel@vanguardiasur.com.ar, "Joachim Eastwood" <manabian@gmail.com>
+References: <1430170693-28303-1-git-send-email-manabian@gmail.com>
+ <1430170693-28303-3-git-send-email-manabian@gmail.com>
+Message-ID: <20150512221202.16410.2827@quantum>
+Subject: Re: [PATCH v2 2/4] doc: dt: add documentation for lpc1850-cgu clk driver
+Date: Tue, 12 May 2015 15:12:02 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 5, 2015 at 4:25 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Mon, May 04, 2015 at 11:22:33PM +0800, Chen-Yu Tsai wrote:
->> Hi,
->>
->> On Mon, May 4, 2015 at 8:51 PM, Maxime Ripard
->> <maxime.ripard@free-electrons.com> wrote:
->> > Hi,
->> >
->> > On Fri, May 01, 2015 at 12:10:03AM +0800, Chen-Yu Tsai wrote:
->> >> The "cpus" clock is the clock for the embedded processor in the A80.
->> >> It is also part of the PRCM clock tree.
->> >>
->> >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> >> ---
->> >>  Documentation/devicetree/bindings/clock/sunxi.txt |   1 +
->> >>  drivers/clk/sunxi/Makefile                        |   2 +-
->> >>  drivers/clk/sunxi/clk-sun9i-cpus.c                | 243 ++++++++++++++++++++++
->> >>  3 files changed, 245 insertions(+), 1 deletion(-)
->> >>  create mode 100644 drivers/clk/sunxi/clk-sun9i-cpus.c
->> >>
->> >> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
->> >> index 2015b2beb957..c52735b0b924 100644
->> >> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
->> >> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
->> >> @@ -27,6 +27,7 @@ Required properties:
->> >>       "allwinner,sun5i-a10s-ahb-gates-clk" - for the AHB gates on A10s
->> >>       "allwinner,sun7i-a20-ahb-gates-clk" - for the AHB gates on A20
->> >>       "allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
->> >> +     "allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
->> >>       "allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
->> >>       "allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
->> >>       "allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
->> >> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
->> >> index 058f273d6154..f0f33131b048 100644
->> >> --- a/drivers/clk/sunxi/Makefile
->> >> +++ b/drivers/clk/sunxi/Makefile
->> >> @@ -13,4 +13,4 @@ obj-y += clk-usb.o
->> >>
->> >>  obj-$(CONFIG_MFD_SUN6I_PRCM) += \
->> >>       clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
->> >> -     clk-sun8i-apb0.o
->> >> +     clk-sun8i-apb0.o clk-sun9i-cpus.o
->> >
->> > I'm really not sure about that option selection.
->> >
->> > If you only select the A31, you will get drivers that won't be
->> > relevant at all here.
->> >
->> > How about something like
->> >
->> > ifeq ($(CONFIG_MFD_SUN6I_PRCM), y)
->> > obj-$(CONFIG_MACH_SUN6I) = ....
->> > obj-$(CONFIG_MACH_SUN8I) = ....
->> > obj-$(CONFIG_MACH_SUN9I) = ....
->> > endif
->> >
->> > ?
->>
->> I suppose that works, though sun9i shares apb0 (apbs) clock with
->> sun8i.
->
-> I'd expect that if you set the files to build multiple time,
-> everything would just work, so that we could have apbs built both in
-> the list for sun8i and sun9i.
+Quoting Joachim Eastwood (2015-04-27 14:38:11)
+> Add DT binding documentation for lpc1850-cgu driver.
+> =
 
-It should, but would it be included twice? I suppose the linker
-is smart enough to spot this?
+> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+> ---
+>  .../devicetree/bindings/clock/lpc1850-cgu.txt      | 138 +++++++++++++++=
+++++++
+>  1 file changed, 138 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-cgu.t=
+xt
+> =
 
->> >> diff --git a/drivers/clk/sunxi/clk-sun9i-cpus.c b/drivers/clk/sunxi/clk-sun9i-cpus.c
->> >> new file mode 100644
->> >> index 000000000000..1ec61ccf8cbf
->> >> --- /dev/null
->> >> +++ b/drivers/clk/sunxi/clk-sun9i-cpus.c
->> >> @@ -0,0 +1,243 @@
->> >> +/*
->> >> + * Copyright (C) 2015 Chen-Yu Tsai
->> >> + *
->> >> + * Chen-Yu Tsai <wens@csie.org>
->> >> + *
->> >> + * Allwinner A80 CPUS clock driver
->> >> + *
->> >> + */
->> >> +
->> >> +#include <linux/clk-provider.h>
->> >> +#include <linux/module.h>
->> >> +#include <linux/of.h>
->> >> +#include <linux/platform_device.h>
->> >> +
->> >> +static DEFINE_SPINLOCK(sun9i_a80_cpus_lock);
->> >> +
->> >> +/**
->> >> + * sun9i_a80_cpus_clk_setup() - Setup function for a80 cpus composite clk
->> >> + */
->> >> +
->> >> +#define SUN9I_CPUS_MAX_PARENTS               4
->> >> +#define SUN9I_CPUS_MUX_PARENT_PLL4   3
->> >> +#define SUN9I_CPUS_MUX_SHIFT         16
->> >> +/* un-shifted mask is what mux_clk expects */
->> >> +#define SUN9I_CPUS_MUX_MASK          0x3
->> >> +#define SUN9I_CPUS_MUX_GET_PARENT(reg)       ((reg >> SUN9I_CPUS_MUX_SHIFT) & \
->> >> +                                      SUN9I_CPUS_MUX_MASK)
->> >> +
->> >> +#define SUN9I_CPUS_DIV_SHIFT         4
->> >> +#define SUN9I_CPUS_DIV_MASK          (0x3 << SUN9I_CPUS_DIV_SHIFT)
->> >> +#define SUN9I_CPUS_DIV_GET(reg)              ((reg & SUN9I_CPUS_DIV_MASK) >> \
->> >> +                                             SUN9I_CPUS_DIV_SHIFT)
->> >> +#define SUN9I_CPUS_DIV_SET(reg, div) ((reg & ~SUN9I_CPUS_DIV_MASK) | \
->> >> +                                             (div << SUN9I_CPUS_DIV_SHIFT))
->> >> +#define SUN9I_CPUS_PLL4_DIV_SHIFT    8
->> >> +#define SUN9I_CPUS_PLL4_DIV_MASK     (0x1f << SUN9I_CPUS_PLL4_DIV_SHIFT)
->> >
->> > You have some masks that are shifted, some that are not.
->> >
->> > I don't really have a preference, but being consistent would be great.
->> >
->> > (and you can use GENMASK to generate your masks).
->>
->> Yeah. I think we've been through this once with the sun6i-ahb1 clock.
->> Though, see below.
->
-> Maybe we did :)
->
->> >> +     struct sun9i_a80_cpus_clk *cpus = to_sun9i_a80_cpus_clk(hw);
->> >> +     unsigned long rate;
->> >> +     u32 reg;
->> >> +
->> >> +     /* Fetch the register value */
->> >> +     reg = readl(cpus->reg);
->> >> +
->> >> +     /* apply pre-divider first if parent is pll4 */
->> >> +     if (SUN9I_CPUS_MUX_GET_PARENT(reg) == SUN9I_CPUS_MUX_PARENT_PLL4)
->> >> +             parent_rate /= SUN9I_CPUS_PLL4_DIV_GET(reg) + 1;
->> >> +
->> >> +     /* clk divider */
->> >> +     rate = parent_rate / (SUN9I_CPUS_DIV_GET(reg) + 1);
->> >> +
->> >> +     return rate;
->> >> +}
->> >> +
->> >> +static long sun9i_a80_cpus_clk_round(unsigned long rate, u8 *divp, u8 *pre_divp,
->> >> +                              u8 parent, unsigned long parent_rate)
->> >> +{
->> >> +     u8 div, pre_div = 1;
->> >> +
->> >> +     /*
->> >> +      * clock can only divide, so we will never be able to achieve
->> >> +      * frequencies higher than the parent frequency
->> >> +      */
->> >> +     if (parent_rate && rate > parent_rate)
->> >> +             rate = parent_rate;
->> >> +
->> >> +     div = DIV_ROUND_UP(parent_rate, rate);
->> >> +
->> >> +     /* calculate pre-divider if parent is pll4 */
->> >> +     if (parent == SUN9I_CPUS_MUX_PARENT_PLL4 && div > 4) {
->> >> +             /* pre-divider is 1 ~ 32 */
->> >> +             if (div < 32) {
->> >> +                     pre_div = div;
->> >> +                     div = 1;
->> >> +             } else if (div < 64) {
->> >> +                     pre_div = DIV_ROUND_UP(div, 2);
->> >> +                     div = 2;
->> >> +             } else if (div < 96) {
->> >> +                     pre_div = DIV_ROUND_UP(div, 3);
->> >> +                     div = 3;
->> >> +             } else {
->> >> +                     pre_div = DIV_ROUND_UP(div, 4);
->> >> +                     div = 4;
->> >> +             }
->> >> +     }
->> >> +
->> >> +     /* we were asked to pass back divider values */
->> >> +     if (divp) {
->> >> +             *divp = div - 1;
->> >> +             *pre_divp = pre_div - 1;
->> >> +     }
->> >> +
->> >> +     return parent_rate / pre_div / div;
->> >> +}
->> >> +
->> >> +static long sun9i_a80_cpus_clk_determine_rate(struct clk_hw *hw,
->> >> +                                           unsigned long rate,
->> >> +                                           unsigned long min_rate,
->> >> +                                           unsigned long max_rate,
->> >> +                                           unsigned long *best_parent_rate,
->> >> +                                           struct clk_hw **best_parent_clk)
->> >> +{
->> >> +     struct clk *clk = hw->clk, *parent, *best_parent = NULL;
->> >> +     int i, num_parents;
->> >> +     unsigned long parent_rate, best = 0, child_rate, best_child_rate = 0;
->> >> +
->> >> +     /* find the parent that can help provide the fastest rate <= rate */
->> >> +     num_parents = __clk_get_num_parents(clk);
->> >> +     for (i = 0; i < num_parents; i++) {
->> >> +             parent = clk_get_parent_by_index(clk, i);
->> >> +             if (!parent)
->> >> +                     continue;
->> >> +             if (__clk_get_flags(clk) & CLK_SET_RATE_PARENT)
->> >> +                     parent_rate = __clk_round_rate(parent, rate);
->> >> +             else
->> >> +                     parent_rate = __clk_get_rate(parent);
->> >> +
->> >> +             child_rate = sun9i_a80_cpus_clk_round(rate, NULL, NULL, i,
->> >> +                                               parent_rate);
->> >> +
->> >> +             if (child_rate <= rate && child_rate > best_child_rate) {
->> >> +                     best_parent = parent;
->> >> +                     best = parent_rate;
->> >> +                     best_child_rate = child_rate;
->> >> +             }
->> >> +     }
->> >> +
->> >> +     if (best_parent)
->> >> +             *best_parent_clk = __clk_get_hw(best_parent);
->> >> +     *best_parent_rate = best;
->> >> +
->> >> +     return best_child_rate;
->> >> +}
->> >> +
->> >> +static int sun9i_a80_cpus_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->> >> +                                unsigned long parent_rate)
->> >> +{
->> >> +     struct sun9i_a80_cpus_clk *cpus = to_sun9i_a80_cpus_clk(hw);
->> >> +     unsigned long flags;
->> >> +     u8 div, pre_div, parent;
->> >> +     u32 reg;
->> >> +
->> >> +     spin_lock_irqsave(&sun9i_a80_cpus_lock, flags);
->> >> +
->> >> +     reg = readl(cpus->reg);
->> >> +
->> >> +     /* need to know which parent is used to apply pre-divider */
->> >> +     parent = SUN9I_CPUS_MUX_GET_PARENT(reg);
->> >> +     sun9i_a80_cpus_clk_round(rate, &div, &pre_div, parent, parent_rate);
->> >> +
->> >> +     reg = SUN9I_CPUS_DIV_SET(reg, div);
->> >> +     reg = SUN9I_CPUS_PLL4_DIV_SET(reg, pre_div);
->> >> +     writel(reg, cpus->reg);
->> >> +
->> >> +     spin_unlock_irqrestore(&sun9i_a80_cpus_lock, flags);
->> >> +
->> >> +     return 0;
->> >> +}
->> >> +
->> >> +static const struct clk_ops sun9i_a80_cpus_clk_ops = {
->> >> +     .determine_rate = sun9i_a80_cpus_clk_determine_rate,
->> >> +     .recalc_rate    = sun9i_a80_cpus_clk_recalc_rate,
->> >> +     .set_rate       = sun9i_a80_cpus_clk_set_rate,
->> >> +};
->> >
->> > It all looks like you could use the factors clock for this.
->> >
->> > The only thing that you seem to be using a custom clock for is the pre
->> > divider on one of the parent, but that's something that could be
->> > reused for other clocks (like the A10 pll6, or the A20 MBUS).
->>
->> We can add a custom recalc_rate() callback for factors clock,
->> and also pass the parent index to the get_factors() callback.
->> That would get rid of a lot of boilerplate.
->>
->> What do you think?
->
-> I was more thinking about adding an additional callback that would
-> take the parent index as an argument, and would return for that parent
-> the multiplier or divider to apply.
->
-> That would be quite easy to support, and would support both fixed
-> divider like the one found on the A20 MBUS, or the A20 AHB clock, and
-> dynamic factors like this one, while have most code in the core.
+> diff --git a/Documentation/devicetree/bindings/clock/lpc1850-cgu.txt b/Do=
+cumentation/devicetree/bindings/clock/lpc1850-cgu.txt
+> new file mode 100644
+> index 000000000000..0b278ca6aee7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
+> @@ -0,0 +1,138 @@
+> +* NXP LPC1850 Clock Generation Unit (CGU)
+> +
+> +The CGU generates multiple independent clocks for the core and the
+> +peripheral blocks of the LPC18xx. Each independent clock is called
+> +a base clock and itself is one of the inputs to the two Clock
+> +Control Units (CCUs) which control the branch clocks to the
+> +individual peripherals.
+> +
+> +The CGU selects the inputs to the clock generators from multiple
+> +clock sources, controls the clock generation, and routes the outputs
+> +of the clock generators through the clock source bus to the output
+> +stages. Each output stage provides an independent clock source and
+> +corresponds to one of the base clocks for the LPC18xx.
+> +
+> + - Above text taken from NXP LPC1850 User Manual.
+> +
+> +
+> +This binding uses the common clock binding:
+> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +Required properties:
+> +- compatible:
+> +       Should be "nxp,lpc1850-cgu"
+> +- reg:
+> +       Shall define the base and range of the address space
+> +       containing clock control registers
+> +- #clock-cells:
+> +       Shall have value <1>.  The permitted clock-specifier values
+> +       are the base clock numbers defined below.
+> +- clocks:
+> +       Shall contain a list of phandles for the external input
+> +       sources to the CGU. The list shall be in the following
+> +       order: xtal, 32khz, enet_rx_clk, enet_tx_clk, gp_clkin.
+> +- clock-indices:
+> +       Shall be an ordered list of numbers defining the base clock
+> +       number provided by the CGU.
+> +- clock-output-names:
+> +       Shall be an ordered list of strings defining the names of
+> +       the clocks provided by the CGU.
+> +
+> +Which base clocks that are available on the CGU depends on the
+> +specific LPC part. Base cloks are numbered from 0 to 27.
 
-That means we would have to determine the pre-divider value first,
-in the case of dynamic ones, and they calculate the common factors.
-For most of the cases we just end up using the highest pre-divider
-to drop that parent rate closer to the others.
+s/cloks/clocks/
 
-There's still the problem on how to set it though. If it were one
-of the factors then we'd extend .recalc_rate to cope with that factor
-not being a "common" factor. Or maybe just add an extra one. :)
+> +
+> +Number:                Name:                   Description:
+> + 0             BASE_SAFE_CLK           Base safe clock (always on) for W=
+WDT
+> + 1             BASE_USB0_CLK           Base clock for USB0
+> + 2             BASE_PERIPH_CLK         Base clock for Cortex-M0SUB subsy=
+stem,
+> +                                       SPI, and SGPIO
+> + 3             BASE_USB1_CLK           Base clock for USB1
+> + 4             BASE_CPU_CLK            System base clock for ARM Cortex-=
+M core
+> +                                       and APB peripheral blocks #0 and =
+#2
+> + 5             BASE_SPIFI_CLK          Base clock for SPIFI
+> + 6             BASE_SPI_CLK            Base clock for SPI
+> + 7             BASE_PHY_RX_CLK         Base clock for Ethernet PHY Recei=
+ve clock
+> + 8             BASE_PHY_TX_CLK         Base clock for Ethernet PHY Trans=
+mit clock
+> + 9             BASE_APB1_CLK           Base clock for APB peripheral blo=
+ck # 1
+> +10             BASE_APB3_CLK           Base clock for APB peripheral blo=
+ck # 3
+> +11             BASE_LCD_CLK            Base clock for LCD
+> +12             BASE_ADCHS_CLK          Base clock for ADCHS
+> +13             BASE_SDIO_CLK           Base clock for SD/MMC
+> +14             BASE_SSP0_CLK           Base clock for SSP0
+> +15             BASE_SSP1_CLK           Base clock for SSP1
+> +16             BASE_UART0_CLK          Base clock for UART0
+> +17             BASE_UART1_CLK          Base clock for UART1
+> +18             BASE_UART2_CLK          Base clock for UART2
+> +19             BASE_UART3_CLK          Base clock for UART3
+> +20             BASE_OUT_CLK            Base clock for CLKOUT pin
+> +24-21          -                       Reserved
+> +25             BASE_AUDIO_CLK          Base clock for audio system (I2S)
+> +26             BASE_CGU_OUT0_CLK       Base clock for CGU_OUT0 clock out=
+put
+> +27             BASE_CGU_OUT1_CLK       Base clock for CGU_OUT1 clock out=
+put
+> +
+> +BASE_PERIPH_CLK and BASE_SPI_CLK is only available on LPC43xx.
+> +BASE_ADCHS_CLK is only available on LPC4370.
+> +
+> +
+> +Example board file:
+> +
+> +/ {
+> +       clocks {
+> +               xtal: xtal {
+> +                       compatible =3D "fixed-clock";
+> +                       #clock-cells =3D <0>;
+> +                       clock-frequency =3D <12000000>;
+> +               };
+> +
+> +               xtal32: xtal32 {
+> +                       compatible =3D "fixed-clock";
+> +                       #clock-cells =3D <0>;
+> +                       clock-frequency =3D <32768>;
+> +               };
+> +
+> +               enet_rx_clk: enet_rx_clk {
+> +                       compatible =3D "fixed-clock";
+> +                       #clock-cells =3D <0>;
+> +                       clock-frequency =3D <0>;
+> +                       clock-output-names =3D "enet_rx_clk";
+> +               };
+> +
+> +               enet_tx_clk: enet_tx_clk {
+> +                       compatible =3D "fixed-clock";
+> +                       #clock-cells =3D <0>;
+> +                       clock-frequency =3D <0>;
+> +                       clock-output-names =3D "enet_tx_clk";
+> +               };
+> +
+> +               gp_clkin: gp_clkin {
+> +                       compatible =3D "fixed-clock";
+> +                       #clock-cells =3D <0>;
+> +                       clock-frequency =3D <0>;
+> +                       clock-output-names =3D "gp_clkin";
+> +               };
+> +       };
+> +
+> +       soc {
+> +               cgu: cgu@40050000 {
+> +                       compatible =3D "nxp,lpc1850-cgu";
+> +                       reg =3D <0x40050000 0x1000>;
+> +                       #clock-cells =3D <1>;
+> +                       clocks =3D <&xtal>, <&creg_clk 1>, <&enet_rx_clk>=
+, <&enet_tx_clk>, <&gp_clkin>;
+> +                       clock-indices =3D  <0>,  <1>,  <2>,  <3>,  <4>,  =
+<5>,  <6>,  <7>,
+> +                                        <8>,  <9>, <10>, <11>, <12>, <13=
+>, <14>, <15>,
+> +                                       <16>, <17>, <18>, <19>, <20>, <25=
+>, <26>, <27>;
+> +                       clock-output-names =3D "base_safe_clk",    "base_=
+usb0_clk",
+> +                                            "base_periph_clk",  "base_us=
+b1_clk",
+> +                                            "base_cpu_clk",     "base_sp=
+ifi_clk",
+> +                                            "base_spi_clk",     "base_ph=
+y_rx_clk",
+> +                                            "base_phy_tx_clk",  "base_ap=
+b1_clk",
+> +                                            "base_apb3_clk",    "base_lc=
+d_clk",
+> +                                            "base_adchs_clk",   "base_sd=
+io_clk",
+> +                                            "base_ssp0_clk",    "base_ss=
+p1_clk",
+> +                                            "base_uart0_clk",   "base_ua=
+rt1_clk",
+> +                                            "base_uart2_clk",   "base_ua=
+rt3_clk",
+> +                                            "base_out_clk",     "base_au=
+dio_clk",
+> +                                            "base_cgu_out0_clk","base_cg=
+u_out1_clk";
 
->> It kind of extends factors clk beyond what it was designed for. If
->> you agree, I'd also want to (ab)use it for other A80 clocks which
->> have multiple dividers but don't fit the current factors clock
->> formula.
->
-> I think we're far beyond the point where factors clock are actually to
-> handle clocks with factors ;)
->
-> We've stretched that notion to handle multiple cases, up to the point
-> where it's basically an additional layer on top of the clock framework
-> itself.
->
-> I'd be quite okay to extend it, but so far the assumption has always
-> been that the formula was based on
->
-> parent * n >> p / (k * m)
+Why do you need to use clock-indices?
 
-I believe it's: (parent * (n * (k+1)) >> p) / (m+1)
+Why do you need to use clock-output-names? If all of your clock
+consumers have nodes in DT then you can skip this and name them on the
+consuming side. See a further explanation here:
+http://lkml.kernel.org/r/<20150416192014.19585.9663@quantum>
 
-The one I came across was: parent * n / (p+1) / (m+1)
-where "p" is not a power of two divider.
+Also note that providing a clock consumer node in the examples section
+of the binding is helpful when reviewing.
 
-> If that formula was to change, I'm pretty sure that this would require
-> a lot of changes, both in the factors code itself, plus to all the
-> users.
+Regards,
+Mike
 
-Actually the only place that makes this assumption is the .recalc_rate
-callback. The other callbacks are just standard adapter stuff, putting
-together the factors into a register. Hence my suggestion for a
-.recalc_rate callback inside of factors clock. This would allow the
-implementation to do whatever it saw fit to do with the 4 factors.
+> +               };
+> +       };
+> +};
+> -- =
 
-ChenYu
-
-> I'm not against it, but if it's just for a few clocks, I don't think
-> it's worth it. Maybe we can just have a similar layer for that other
-> formula.
->
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+> 1.8.0
+>=20
