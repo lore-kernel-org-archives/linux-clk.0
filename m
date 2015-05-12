@@ -1,105 +1,225 @@
-Return-Path: <rklein@nvidia.com>
-Message-ID: <554A3E61.5040105@nvidia.com>
-Date: Wed, 6 May 2015 12:16:33 -0400
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>, Benson Leung <bleung@chromium.org>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 19/21] clk: tegra: Add Super Gen5 Logic
+Date: Tue, 12 May 2015 13:24:02 -0400
+Message-ID: <1431451444-23155-21-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-To: Thierry Reding <thierry.reding@gmail.com>
-CC: Benson Leung <bleung@chromium.org>, Peter De Schrijver
-	<pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen
- Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 08/20] clk: tegra: pll: Add logic for handling SDM
- data
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com> <1430757460-9478-9-git-send-email-rklein@nvidia.com> <CANLzEksFVpYOtcG5QHHfQa6bGXJ6nMYrsP4yG=5wszxCHrWqug@mail.gmail.com> <554916F8.2060908@nvidia.com> <20150506135719.GB22098@ulmo.nvidia.com>
-In-Reply-To: <20150506135719.GB22098@ulmo.nvidia.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 5/6/2015 9:57 AM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Tue, May 05, 2015 at 03:16:08PM -0400, Rhyland Klein wrote:
->> On 5/4/2015 7:01 PM, Benson Leung wrote:
->>> On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
->>>> @@ -495,6 +505,28 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
->>>>         return 0;
->>>>  }
->>>>
->>>> +static void clk_pll_set_sdm_data(struct clk_hw *hw,
->>>> +                                struct tegra_clk_pll_freq_table *cfg)
->>>> +{
->>>> +       struct tegra_clk_pll *pll = to_clk_pll(hw);
->>>> +       u32 val;
->>>> +
->>>> +       if (!pll->params->sdm_din_reg)
->>>> +               return;
->>>> +
->>>> +       if (cfg->sdm_data) {
->>>> +               val = pll_readl_sdm_din(pll) & (~sdm_din_mask(pll));
->>>> +               val |= sdin_data_to_din(cfg->sdm_data) & sdm_din_mask(pll);
->>>> +               pll_writel_sdm_din(val, pll);
->>>> +       }
->>>> +
->>>> +       val = pll_readl_sdm_ctrl(pll);
->>>> +       if (!cfg->sdm_data != !(val & pll->params->sdm_ctrl_en_mask)) {
->>>
->>> You can use sdm_en_mask(pll) here.
->>>
->>> I'm not super clear about what you're trying to accomplish here with
->>> !cfg->sdm_data != !(val & mask).
->>> Are you just checking if the masked value is different from sdm_data,
->>> but accounting for the integer widths being different (u16 vs u32)?
->>
->> So I got clarification from the downstream author to be sure, and this
->> is the answer to what this is checking:
->>
->> (<Configuration has non zero  SDM_DATA>  AND <sdm control is disabled>)
->> OR
->> (<Configuration has zero  SDM_DATA>  AND <sdm control is enabled>)
->>
->> So the check is correct, just a complicated way of expressing it.
-> 
-> Can it be rewritten to be less complicated? I hate it when I have to
-> look at code for several seconds and still not understand what it's
-> doing. Why not something that is closer to the pseudo code you gave:
-> 
-> 	bool enabled = (val & pll->params->sdm_ctrl_en_mask) != 0;
-> 
-> 	if ((enabled && cfg->sdm_data == 0) || (!enabled && cfg->sdm_data != 0))
-> 
-> ? Also I think this could use some could comments explaining what's
-> going on. Perhaps this could be simplified even further:
-> 
-> 	if (cfg->sdm_data == 0 && enabled)
-> 		val &= ~pll->params->sdm_ctrl_en_mask;
-> 
-> 	if (cfg->sdm_data != 0 && !enabled)
-> 		val |= pll->params->sdm_ctrl_en_mask;
-> 
-> 	pll_writel_sdm_ctrl(val, pll);
-> 
-> Now that I have a /much/ easier time reading and understanding. That may
-> not even require comments because it's pretty plain what's going on. But
-> there may be some advantage in adding comments about SDM in general. The
-> comment could be something like what you have in the commit message, so
-> that people don't have to go find the commit that added the code to find
-> out what this is doing.
-> 
-> Thierry
+From: Bill Huang <bilhuang@nvidia.com>
 
-I agree that the original statement was confusing. I'll replace it with
-a simpler version, and comments never hurt :)
+Super clock divider control and clock source mux of Tegra210 has changed
+a little against prior SoCs, this patch adds Gen5 logic to address those
+differences.
 
--rhyland
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+---
+v2:
+  - Fixed sclk divider address (0x370 -> 0x2c)
 
-> 
-> * Unknown Key
-> * 0x7F3EB3A1
-> 
+ drivers/clk/tegra/Makefile               |    1 +
+ drivers/clk/tegra/clk-tegra-super-gen5.c |  150 ++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk.h                  |    3 +
+ 3 files changed, 154 insertions(+)
+ create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
 
-
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index edb8358fa6ce..ff0c3e205db6 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -11,6 +11,7 @@ obj-y					+= clk-tegra-periph.o
+ obj-y					+= clk-tegra-pmc.o
+ obj-y					+= clk-tegra-fixed.o
+ obj-y					+= clk-tegra-super-gen4.o
++obj-y					+= clk-tegra-super-gen5.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
+ obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
+diff --git a/drivers/clk/tegra/clk-tegra-super-gen5.c b/drivers/clk/tegra/clk-tegra-super-gen5.c
+new file mode 100644
+index 000000000000..14c3c3ad2079
+--- /dev/null
++++ b/drivers/clk/tegra/clk-tegra-super-gen5.c
+@@ -0,0 +1,150 @@
++/*
++ * Copyright (c) 2015, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/io.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/delay.h>
++#include <linux/export.h>
++#include <linux/clk/tegra.h>
++
++#include "clk.h"
++#include "clk-id.h"
++
++#define PLLX_BASE 0xe0
++#define PLLX_MISC 0xe4
++#define PLLX_MISC2 0x514
++#define PLLX_MISC3 0x518
++
++#define CCLKG_BURST_POLICY 0x368
++#define CCLKLP_BURST_POLICY 0x370
++#define SCLK_DIVIDER 0x2c
++#define SCLK_BURST_POLICY 0x028
++#define SYSTEM_CLK_RATE 0x030
++
++static DEFINE_SPINLOCK(sysrate_lock);
++
++static const char *sclk_parents[] = { "clk_m", "pll_c_out1", "pll_c4_out3",
++			       "pll_p", "pll_p_out2", "pll_c4_out1",
++			       "clk_32k", "pll_c4_out2" };
++
++static const char *cclk_g_parents[] = { "clk_m", "unused", "clk_32k", "unused",
++					"pll_p", "pll_p_out4", "unused",
++					"unused", "pll_x", "unused", "unused",
++					"unused", "unused", "unused", "unused",
++					"dfllCPU_out" };
++
++static const char *cclk_lp_parents[] = { "clk_m", "unused", "clk_32k", "unused",
++					"pll_p", "pll_p_out4", "unused",
++					"unused", "pll_x", "unused", "unused",
++					"unused", "unused", "unused", "unused",
++					"dfllCPU_out" };
++
++static void __init tegra_sclk_init(void __iomem *clk_base,
++				struct tegra_clk *tegra_clks)
++{
++	struct clk *clk;
++	struct clk **dt_clk;
++
++	/* SCLK_MUX */
++	dt_clk = tegra_lookup_dt_id(tegra_clk_sclk_mux, tegra_clks);
++	if (dt_clk) {
++		clk = tegra_clk_register_super_mux("sclk_mux", sclk_parents,
++						ARRAY_SIZE(sclk_parents),
++						CLK_SET_RATE_PARENT,
++						clk_base + SCLK_BURST_POLICY,
++						0, 4, 0, 0, NULL);
++		*dt_clk = clk;
++	}
++	/* SCLK */
++	dt_clk = tegra_lookup_dt_id(tegra_clk_sclk, tegra_clks);
++	if (dt_clk) {
++		clk = clk_register_divider(NULL, "sclk", "sclk_mux", 0,
++						clk_base + SCLK_DIVIDER, 0, 8,
++						0, &sysrate_lock);
++		*dt_clk = clk;
++	}
++
++	/* HCLK */
++	dt_clk = tegra_lookup_dt_id(tegra_clk_hclk, tegra_clks);
++	if (dt_clk) {
++		clk = clk_register_divider(NULL, "hclk_div", "sclk", 0,
++				   clk_base + SYSTEM_CLK_RATE, 4, 2, 0,
++				   &sysrate_lock);
++		clk = clk_register_gate(NULL, "hclk", "hclk_div",
++				CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++				clk_base + SYSTEM_CLK_RATE,
++				7, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
++		*dt_clk = clk;
++	}
++
++	/* PCLK */
++	dt_clk = tegra_lookup_dt_id(tegra_clk_pclk, tegra_clks);
++	if (!dt_clk)
++		return;
++
++	clk = clk_register_divider(NULL, "pclk_div", "hclk", 0,
++				   clk_base + SYSTEM_CLK_RATE, 0, 2, 0,
++				   &sysrate_lock);
++	clk = clk_register_gate(NULL, "pclk", "pclk_div", CLK_SET_RATE_PARENT |
++				CLK_IGNORE_UNUSED, clk_base + SYSTEM_CLK_RATE,
++				3, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
++	*dt_clk = clk;
++}
++
++void __init tegra_super_clk_gen5_init(void __iomem *clk_base,
++				void __iomem *pmc_base,
++				struct tegra_clk *tegra_clks,
++				struct tegra_clk_pll_params *params)
++{
++	struct clk *clk;
++	struct clk **dt_clk;
++
++	/* CCLKG */
++	dt_clk = tegra_lookup_dt_id(tegra_clk_cclk_g, tegra_clks);
++	if (dt_clk) {
++		clk = tegra_clk_register_super_mux("cclk_g", cclk_g_parents,
++					ARRAY_SIZE(cclk_g_parents),
++					CLK_SET_RATE_PARENT,
++					clk_base + CCLKG_BURST_POLICY,
++					0, 4, 8, 0, NULL);
++		*dt_clk = clk;
++	}
++
++	/* CCLKLP */
++	dt_clk = tegra_lookup_dt_id(tegra_clk_cclk_lp, tegra_clks);
++	if (dt_clk) {
++		clk = tegra_clk_register_super_mux("cclk_lp", cclk_lp_parents,
++					ARRAY_SIZE(cclk_lp_parents),
++					CLK_SET_RATE_PARENT,
++					clk_base + CCLKLP_BURST_POLICY,
++					0, 4, 8, 0, NULL);
++		*dt_clk = clk;
++	}
++
++	tegra_sclk_init(clk_base, tegra_clks);
++
++	/* PLLX */
++	dt_clk = tegra_lookup_dt_id(tegra_clk_pll_x, tegra_clks);
++	if (!dt_clk)
++		return;
++
++	clk = tegra_clk_register_pllxc("pll_x", "pll_ref", clk_base,
++			pmc_base, CLK_IGNORE_UNUSED, params, NULL);
++	*dt_clk = clk;
++}
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 32ce32a056ca..ec5939c03e2c 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -726,6 +726,9 @@ int tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ void tegra_super_clk_gen4_init(void __iomem *clk_base,
+ 			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
+ 			struct tegra_clk_pll_params *pll_params);
++void tegra_super_clk_gen5_init(void __iomem *clk_base,
++			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
++			struct tegra_clk_pll_params *pll_params);
+ 
+ void tegra114_clock_tune_cpu_trimmers_high(void);
+ void tegra114_clock_tune_cpu_trimmers_low(void);
 -- 
-nvpublic
+1.7.9.5
+
