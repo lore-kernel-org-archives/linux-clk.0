@@ -1,47 +1,99 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] clk: shmobile: Document mandatory compatible fallbacks
-Date: Fri, 29 May 2015 11:36:28 +0200
-Message-Id: <1432892191-24039-1-git-send-email-geert+renesas@glider.be>
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v5 11/21] clk: tegra: pll: Add code to handle if resets are supported by PLL
+Date: Tue, 12 May 2015 13:23:54 -0400
+Message-ID: <1431451444-23155-13-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+From: Bill Huang <bilhuang@nvidia.com>
 
-Several DT binding docs for shmobile clock drivers declare that the
-compatible value should be one out of a list of SoC-specific values and
-a generic value.
-However, the driver only binds against the generic value.
-Hence document that the generic value is a mandatory fallback.
+If a PLL has a reset_reg specified, properly handle that in the
+enable/disable logic paths.
 
-Thanks for applying!
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+v5:
+  - Added kerneldoc for new members
 
-Geert Uytterhoeven (3):
-  clk: shmobile: mstp: Document mandatory compatible fallback
-  clk: shmobile: rcar-gen2: Document mandatory compatible fallback
-  clk: shmobile: rz: Document mandatory compatible fallback
+v2:
+  - Moved reset logic to _clk_pll_enable/disable as well
 
- Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt     | 2 +-
- .../devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt          | 2 +-
- Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt       | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/tegra/clk-pll.c |   12 ++++++++++++
+ drivers/clk/tegra/clk.h     |    4 ++++
+ 2 files changed, 16 insertions(+)
 
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 95ad0669291f..54ebab2b85e5 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -311,6 +311,12 @@ static void _clk_pll_enable(struct clk_hw *hw)
+ 		udelay(2);
+ 	}
+ 
++	if (pll->params->reset_reg) {
++		val = pll_readl(pll->params->reset_reg, pll);
++		val &= ~BIT(pll->params->reset_bit_idx);
++		pll_writel(val, pll->params->reset_reg, pll);
++	}
++
+ 	clk_pll_enable_lock(pll);
+ 
+ 	val = pll_readl_base(pll);
+@@ -343,6 +349,12 @@ static void _clk_pll_disable(struct clk_hw *hw)
+ 		writel_relaxed(val, pll->pmc + PMC_PLLP_WB0_OVERRIDE);
+ 	}
+ 
++	if (pll->params->reset_reg) {
++		val = pll_readl(pll->params->reset_reg, pll);
++		val |= BIT(pll->params->reset_bit_idx);
++		pll_writel(val, pll->params->reset_reg, pll);
++	}
++
+ 	if (pll->params->iddq_reg) {
+ 		val = pll_readl(pll->params->iddq_reg, pll);
+ 		val |= BIT(pll->params->iddq_bit_idx);
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 35ce2a382792..12c3e7edba4c 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -176,6 +176,8 @@ struct div_nmp {
+  * @lock_enable_bit_idx:	Bit index to enable PLL lock
+  * @iddq_reg:			PLL IDDQ register offset
+  * @iddq_bit_idx:		Bit index to enable PLL IDDQ
++ * @reset_reg:			Register offset of where RESET bit is
++ * @reset_bit_idx:		Shift of reset bit in reset_reg
+  * @sdm_din_reg:		Register offset where SDM settings are
+  * @sdm_din_mask:		Mask of SDM divider bits
+  * @sdm_ctrl_reg:		Register offset where SDM enable is
+@@ -239,6 +241,8 @@ struct tegra_clk_pll_params {
+ 	u32		lock_enable_bit_idx;
+ 	u32		iddq_reg;
+ 	u32		iddq_bit_idx;
++	u32		reset_reg;
++	u32		reset_bit_idx;
+ 	u32		sdm_din_reg;
+ 	u32		sdm_din_mask;
+ 	u32		sdm_ctrl_reg;
 -- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+1.7.9.5
