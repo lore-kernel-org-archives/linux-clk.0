@@ -1,106 +1,157 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@linaro.org>,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 7/7] ARM: sun7i: Add mod1 clock nodes
-Date: Thu, 21 May 2015 22:54:06 +0200
-Message-Id: <1432241646-9511-8-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v5 13/21] clk: tegra: pll: Add support for PLLMB for T210
+Date: Tue, 12 May 2015 13:23:56 -0400
+Message-ID: <1431451444-23155-15-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Emilio López <emilio@elopez.com.ar>
+Tegra210 SoC's have 2 PLLS for memory usage. Add plumbing to register
+and handle PLLMB.
 
-This commit adds all the mod1 clocks available on A20 to its device
-tree. This list was created by looking at the A20 user manual.
+PLLMB is used to allow switching between 2 PLLM's without having to use
+and intermediate backup PLL, as we need to lock the PLL before we can
+switch to it.
 
-Not-signed-off-by: Emilio López <emilio@elopez.com.ar>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- arch/arm/boot/dts/sun7i-a20.dtsi | 55 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+v3:
+  - Flushed out comment more.
 
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index b5ecfa5fa0eb..9b85e9a9ca61 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -452,6 +452,39 @@
- 			clock-output-names = "ir1";
- 		};
+v2:
+  - Fixed commit description as suggested.
+
+ drivers/clk/tegra/clk-pll.c |   46 +++++++++++++++++++++++++++++++++++++++----
+ drivers/clk/tegra/clk.h     |    9 +++++++++
+ 2 files changed, 51 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 2b1f672e3bdb..1dfa1433375d 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -561,7 +561,7 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
+ 	struct tegra_clk_pll_params *params = pll->params;
+ 	struct div_nmp *div_nmp = params->div_nmp;
  
-+		iis0_clk: clk@01c200b8 {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-mod1-clk";
-+			reg = <0x01c200b8 0x4>;
-+			clocks = <&pll2 SUN4I_A10_PLL2_1X>,
-+				 <&pll2 SUN4I_A10_PLL2_2X>,
-+				 <&pll2 SUN4I_A10_PLL2_4X>,
-+				 <&pll2 SUN4I_A10_PLL2_8X>;
-+			clock-output-names = "iis0";
-+		};
-+
-+		ac97_clk: clk@01c200bc {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-mod1-clk";
-+			reg = <0x01c200bc 0x4>;
-+			clocks = <&pll2 SUN4I_A10_PLL2_8X>,
-+				 <&pll2 SUN4I_A10_PLL2_4X>,
-+				 <&pll2 SUN4I_A10_PLL2_2X>,
-+				 <&pll2 SUN4I_A10_PLL2_1X>;
-+			clock-output-names = "ac97";
-+		};
-+
-+		spdif_clk: clk@01c200c0 {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-mod1-clk";
-+			reg = <0x01c200c0 0x4>;
-+			clocks = <&pll2 SUN4I_A10_PLL2_8X>,
-+				 <&pll2 SUN4I_A10_PLL2_4X>,
-+				 <&pll2 SUN4I_A10_PLL2_2X>,
-+				 <&pll2 SUN4I_A10_PLL2_1X>;
-+			clock-output-names = "spdif";
-+		};
-+
- 		usb_clk: clk@01c200cc {
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
-@@ -470,6 +503,28 @@
- 			clock-output-names = "spi3";
- 		};
+-	if ((params->flags & TEGRA_PLLM) &&
++	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
+ 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
+ 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
+ 		val = pll_override_readl(params->pmc_divp_reg, pll);
+@@ -598,7 +598,7 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
+ 	struct tegra_clk_pll_params *params = pll->params;
+ 	struct div_nmp *div_nmp = params->div_nmp;
  
-+		iis1_clk: clk@01c200d8 {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-mod1-clk";
-+			reg = <0x01c200d8 0x4>;
-+			clocks = <&pll2 SUN4I_A10_PLL2_1X>,
-+				 <&pll2 SUN4I_A10_PLL2_2X>,
-+				 <&pll2 SUN4I_A10_PLL2_4X>,
-+				 <&pll2 SUN4I_A10_PLL2_8X>;
-+			clock-output-names = "iis1";
-+		};
+-	if ((params->flags & TEGRA_PLLM) &&
++	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
+ 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
+ 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
+ 		val = pll_override_readl(params->pmc_divp_reg, pll);
+@@ -721,8 +721,8 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (pll->params->flags & TEGRA_PLL_FIXED)
+ 		return pll->params->fixed_rate;
+ 
+-	/* PLLM is used for memory; we do not change rate */
+-	if (pll->params->flags & TEGRA_PLLM)
++	/* PLLM/MB are used for memory; we do not change rate */
++	if (pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB))
+ 		return __clk_get_rate(hw->clk);
+ 
+ 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
+@@ -2300,4 +2300,42 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
+ 
+ 	return clk;
+ }
 +
-+		iis2_clk: clk@01c200dc {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-mod1-clk";
-+			reg = <0x01c200dc 0x4>;
-+			clocks = <&pll2 SUN4I_A10_PLL2_1X>,
-+				 <&pll2 SUN4I_A10_PLL2_2X>,
-+				 <&pll2 SUN4I_A10_PLL2_4X>,
-+				 <&pll2 SUN4I_A10_PLL2_8X>;
-+			clock-output-names = "iis2";
-+		};
++struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
++			  void __iomem *clk_base, void __iomem *pmc,
++			  unsigned long flags,
++			  struct tegra_clk_pll_params *pll_params,
++			  spinlock_t *lock)
++{
++	struct tegra_clk_pll *pll;
++	struct clk *clk, *parent;
++	unsigned long parent_rate;
 +
- 		codec_clk: clk@01c20140 {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-codec-clk";
++	if (!pll_params->pdiv_tohw)
++		return ERR_PTR(-EINVAL);
++
++	parent = __clk_lookup(parent_name);
++	if (!parent) {
++		WARN(1, "parent clk %s of %s must be registered first\n",
++			name, parent_name);
++		return ERR_PTR(-EINVAL);
++	}
++
++	parent_rate = __clk_get_rate(parent);
++
++	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
++
++	pll_params->flags |= TEGRA_PLL_BYPASS;
++	pll_params->flags |= TEGRA_PLLMB;
++	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
++	if (IS_ERR(pll))
++		return ERR_CAST(pll);
++
++	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
++				      &tegra_clk_pllm_ops);
++	if (IS_ERR(clk))
++		kfree(pll);
++
++	return clk;
++}
+ #endif
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 74190ab4f579..7ee764e583f9 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -225,6 +225,8 @@ struct div_nmp {
+  * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
+  * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
+  *     it may be more accurate (especially if SDM present)
++ * TEGRA_PLLMB - PLLMB has should be treated similar to PLLM. This
++ *     flag indicated that it is PLLMB.
+  */
+ struct tegra_clk_pll_params {
+ 	unsigned long	input_min;
+@@ -281,6 +283,7 @@ struct tegra_clk_pll_params {
+ #define TEGRA_PLL_BYPASS BIT(9)
+ #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
+ #define TEGRA_MDIV_NEW BIT(11)
++#define TEGRA_PLLMB BIT(12)
+ 
+ /**
+  * struct tegra_clk_pll - Tegra PLL clock
+@@ -387,6 +390,12 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+ 			   struct tegra_clk_pll_params *pll_params,
+ 			   spinlock_t *lock);
+ 
++struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
++			   void __iomem *clk_base, void __iomem *pmc,
++			   unsigned long flags,
++			   struct tegra_clk_pll_params *pll_params,
++			   spinlock_t *lock);
++
+ /**
+  * struct tegra_clk_pll_out - PLL divider down clock
+  *
 -- 
-2.4.1
+1.7.9.5
