@@ -1,164 +1,119 @@
-Return-Path: <bleung@google.com>
-MIME-Version: 1.0
-Sender: bleung@google.com
-In-Reply-To: <1431451444-23155-18-git-send-email-rklein@nvidia.com>
-References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
-	<1431451444-23155-18-git-send-email-rklein@nvidia.com>
-Date: Wed, 13 May 2015 17:04:25 -0700
-Message-ID: <CANLzEkv2rO63083RxEFWU0a_qm+7QOx0mCD8ya8hDmp5QMmkgQ@mail.gmail.com>
-Subject: Re: [PATCH v5 16/21] clk: tegra: pll: Add Set_default logic
-From: Benson Leung <bleung@chromium.org>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: [PATCH 2/3] clk: qcom: Add MSM8916 gpu clocks
+Date: Tue, 12 May 2015 14:00:37 +0300
+Message-Id: <1431428438-8171-2-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1431428438-8171-1-git-send-email-georgi.djakov@linaro.org>
+References: <1431428438-8171-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein@nvidia.com> wrote:
-> From: Bill Huang <bilhuang@nvidia.com>
->
-> Add logic which (if specified for a pll) can verify that a PLL is set
-> to the proper default value and if not can set it. This can be
-> specified per PLL as each will have different default values.
->
-> Based on original work by Aleksandr Frid <afrid@nvidia.com>
->
-> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
-> ---
-> v2:
->   - Remove MACRO for PLL_MISC_CHECK_DEFAULT as suggested, and instead
->     the tegra210 driver will include an inline version of this function.
->
->  drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
->  drivers/clk/tegra/clk.h     |    2 ++
->  2 files changed, 37 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index 626466665dde..36aa2a95fac0 100644
-> --- a/drivers/clk/tegra/clk-pll.c
-> +++ b/drivers/clk/tegra/clk-pll.c
-> @@ -652,13 +652,26 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
->                         unsigned long rate)
->  {
->         struct tegra_clk_pll *pll = to_clk_pll(hw);
-> +       struct tegra_clk_pll_freq_table old_cfg;
->         int state, ret = 0;
->
->         state = clk_pll_is_enabled(hw);
->
-> +       _get_pll_mnp(pll, &old_cfg);
-> +
-> +       if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
-> +                       (cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
-> +               ret = pll->params->dyn_ramp(pll, cfg);
-> +               if (!ret)
-> +                       return 0;
-> +       }
-> +
+Add support for the msm8916 bimc clocks that are needed for GPU.
 
-This block above depends on defaults_set, but seems to be some
-additional dyn_ramp logic that is different from what the commit
-message describes of this patch, namely, setting defaults if
-defaults_set is not true.
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/clk/qcom/gcc-msm8916.c               |   58 ++++++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8916.h |    3 ++
+ 2 files changed, 61 insertions(+)
 
-Could you perhaps reverse the order of this patch [16/21] and the
-preceding one [15/21] clk: tegra: pll: Add dyn_ramp callback, and move
-this chunk of code into the dyn_ramp patch?
-
->         if (state)
->                 _clk_pll_disable(hw);
->
-> +       if (!pll->params->defaults_set && pll->params->set_defaults)
-> +               pll->params->set_defaults(pll);
-> +
->         _update_pll_mnp(pll, cfg);
->
->         if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
-> @@ -1517,6 +1530,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
->         if (!pll->params->calc_rate)
->                 pll->params->calc_rate = _calc_rate;
->
-> +       if (pll->params->set_defaults)
-> +               pll->params->set_defaults(pll);
-> +
->         /* Data in .init is copied by clk_register(), so stack variable OK */
->         pll->hw.init = &init;
->
-> @@ -1636,7 +1652,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
->         struct tegra_clk_pll *pll;
->         struct clk *clk, *parent;
->         unsigned long parent_rate;
-> -       int err;
->         u32 val, val_iddq;
->
->         parent = __clk_lookup(parent_name);
-> @@ -1657,18 +1672,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
->                 pll_params->vco_min = pll_params->adjust_vco(pll_params,
->                                                              parent_rate);
->
-> -       err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
-> -       if (err)
-> -               return ERR_PTR(err);
-> +       /*
-> +        * If the pll has a set_defaults callback, it will take care of
-> +        * configuring dynamic ramping and setting IDDQ in that path.
-> +        */
-> +       if (!pll_params->set_defaults) {
-> +               int err;
->
-> -       val = readl_relaxed(clk_base + pll_params->base_reg);
-> -       val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
-> +               err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
-> +               if (err)
-> +                       return ERR_PTR(err);
->
-> -       if (val & PLL_BASE_ENABLE)
-> -               WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
-> -       else {
-> -               val_iddq |= BIT(pll_params->iddq_bit_idx);
-> -               writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
-> +               val = readl_relaxed(clk_base + pll_params->base_reg);
-> +               val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
-> +
-> +               if (val & PLL_BASE_ENABLE)
-> +                       WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
-> +               else {
-> +                       val_iddq |= BIT(pll_params->iddq_bit_idx);
-> +                       writel_relaxed(val_iddq,
-> +                                      clk_base + pll_params->iddq_reg);
-> +               }
->         }
->
->         pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index a61d388364b3..38b4c95cfb2f 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -261,6 +261,7 @@ struct tegra_clk_pll_params {
->         int             stepb_shift;
->         int             lock_delay;
->         int             max_p;
-> +       bool            defaults_set;
->         struct pdiv_map *pdiv_tohw;
->         struct div_nmp  *div_nmp;
->         struct tegra_clk_pll_freq_table *freq_table;
-> @@ -275,6 +276,7 @@ struct tegra_clk_pll_params {
->                                 unsigned long parent_rate);
->         int     (*dyn_ramp)(struct tegra_clk_pll *pll,
->                         struct tegra_clk_pll_freq_table *cfg);
-> +       void    (*set_defaults)(struct tegra_clk_pll *pll);
-
-Kerneldoc for the two members, please. This is especially useful since
-the two members have such similar names, but they mean different
-things.
-
-
-
--- 
-Benson Leung
-Software Engineer, Chrom* OS
-bleung@chromium.org
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index 7ad4c3751f43..0e2db91a1dfa 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -1094,6 +1094,27 @@ static struct clk_rcg2 apss_tcu_clk_src = {
+ 	},
+ };
+ 
++static const struct freq_tbl ftbl_gcc_bimc_gpu_clk[] = {
++	F(100000000, P_GPLL0, 8, 0, 0),
++	F(200000000, P_GPLL0, 4, 0, 0),
++	F(266500000, P_BIMC, 4, 0, 0),
++	F(533000000, P_BIMC, 2, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 bimc_gpu_clk_src = {
++	.cmd_rcgr = 0x31028,
++	.hid_width = 5,
++	.parent_map = gcc_xo_gpll0_bimc_map,
++	.freq_tbl = ftbl_gcc_bimc_gpu_clk,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "bimc_gpu_clk_src",
++		.parent_names = gcc_xo_gpll0_bimc,
++		.num_parents = 3,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
+ static const struct freq_tbl ftbl_gcc_usb_hs_system_clk[] = {
+ 	F(80000000, P_GPLL0, 10, 0, 0),
+ 	{ }
+@@ -2449,6 +2470,40 @@ static struct clk_branch gcc_gtcu_ahb_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_bimc_gfx_clk = {
++	.halt_reg = 0x31024,
++	.clkr = {
++		.enable_reg = 0x31024,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_bimc_gfx_clk",
++			.parent_names = (const char *[]){
++				"bimc_gpu_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_bimc_gpu_clk = {
++	.halt_reg = 0x31040,
++	.clkr = {
++		.enable_reg = 0x31040,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_bimc_gpu_clk",
++			.parent_names = (const char *[]){
++				"bimc_gpu_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_jpeg_tbu_clk = {
+ 	.halt_reg = 0x12034,
+ 	.clkr = {
+@@ -2779,6 +2834,9 @@ static struct clk_regmap *gcc_msm8916_clocks[] = {
+ 	[GCC_BIMC_CLK] = &gcc_bimc_clk.clkr,
+ 	[GCC_APSS_TCU_CLK] = &gcc_apss_tcu_clk.clkr,
+ 	[GCC_GFX_TCU_CLK] = &gcc_gfx_tcu_clk.clkr,
++	[BIMC_GPU_CLK_SRC] = &bimc_gpu_clk_src.clkr,
++	[GCC_BIMC_GFX_CLK] = &gcc_bimc_gfx_clk.clkr,
++	[GCC_BIMC_GPU_CLK] = &gcc_bimc_gpu_clk.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_msm8916_resets[] = {
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8916.h b/include/dt-bindings/clock/qcom,gcc-msm8916.h
+index 0af3b49431df..1bac3dcc4f84 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8916.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8916.h
+@@ -156,5 +156,8 @@
+ #define GCC_BIMC_CLK				139
+ #define GCC_APSS_TCU_CLK			140
+ #define GCC_GFX_TCU_CLK				141
++#define BIMC_GPU_CLK_SRC			142
++#define GCC_BIMC_GFX_CLK			143
++#define GCC_BIMC_GPU_CLK			144
+ 
+ #endif
