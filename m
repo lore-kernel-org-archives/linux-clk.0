@@ -1,147 +1,203 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 8 May 2015 12:02:47 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Kevin Hilman <khilman@kernel.org>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Mike Turquette <mturquette@linaro.org>,
-	Doug Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
-	lkml <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Alex Elder <elder@linaro.org>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
 	Stephen Warren <swarren@wwwdotorg.org>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Chao Xie <chao.xie@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Georgi Djakov <georgi.djakov@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Barry Song <baohua@kernel.org>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Viresh Kumar <viresh.linux@gmail.com>,
-	Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Peter De Sc hrijver <pdeschrijver@nvidia.com>,
-	Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Michal Simek <michal.simek@xilinx.com>,
-	Olof Johansson <olof@lixom.net>,
-	Tyler Baker <tyler.baker@linaro.org>
-Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
-Message-ID: <20150508100247.GQ11057@lukather>
-References: <1429735986-18592-1-git-send-email-heiko@sntech.de>
- <1981330.kGUrTurMy5@diego>
- <5543E79F.2080400@codeaurora.org>
- <22709390.NTAlubMgNB@diego>
- <55440EDA.4030905@codeaurora.org>
- <CAMAWPa_n+59+v+x3fKkmdtW1wMJF7kqtTjLLowmv1xwGWprYJw@mail.gmail.com>
- <554BD33D.7050907@codeaurora.org>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v5 02/21] clk: tegra: Modify tegra_audio_clk_init to accept more plls
+Date: Tue, 12 May 2015 13:23:45 -0400
+Message-ID: <1431451444-23155-4-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zywvytGCXzdVpkje"
-In-Reply-To: <554BD33D.7050907@codeaurora.org>
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
+tegra_audio_clk_init was written expecting a single PLL to be
+passed in directly. Change this to accept an array which will
+allow for supporting multiple plls and specifying specific data
+about them, like their parent, which may change over time.
 
---zywvytGCXzdVpkje
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+v5:
+  - changed num_plls to unsigned int from int
+  - Changed calls to tegra_audio_clk_init to using ARRAY_SIZE
+  - Fixed incorrect type passed for T114 and T30
 
-On Thu, May 07, 2015 at 02:03:57PM -0700, Stephen Boyd wrote:
-> On 05/07/15 08:17, Kevin Hilman wrote:
-> > On Fri, May 1, 2015 at 4:40 PM, Stephen Boyd <sboyd@codeaurora.org> wro=
-te:
-> >> On 05/01/15 15:07, Heiko St=FCbner wrote:
-> >>> Am Freitag, 1. Mai 2015, 13:52:47 schrieb Stephen Boyd:
-> >>>
-> >>>>> Instead I guess we could hook it less deep into clk_get_sys, like i=
-n the
-> >>>>> following patch?
-> >>>> It looks like it will work at least, but still I'd prefer to keep the
-> >>>> orphan check contained to clk.c. How about this compile tested only =
-patch?
-> >>> I gave this a spin on my rk3288-firefly board. It still boots, the cl=
-ock tree
-> >>> looks the same and it also still defers nicely in the scenario I need=
-ed it
-> >>> for. The implementation also looks nice - and of course much more com=
-pact than
-> >>> my check in two places :-) . I don't know if you want to put this as =
-follow-up
-> >>> on top or fold it into the original orphan-check, so in any case
-> >>>
-> >>> Tested-by: Heiko Stuebner <heiko@sntech.de>
-> >>> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> >> Thanks. I'm leaning towards tossing your patch 2/2 and replacing it wi=
-th
-> >> my patch and a note that it's based on an earlier patch from you.
-> > It appears this has landed in linux-next in the form of 882667c1fcf1
-> > clk: prevent orphan clocks from being used.  A bunch of boot failures
-> > for sunxi in today's linux-next[1] were bisected down to that patch.
-> >
-> > I confirmed that reverting that commit on top of next/master gets
-> > sunxi booting again.
-> >
-> >
->=20
-> Thanks for the report. I've removed the two clk orphan patches from
-> clk-next. Would it be possible to try with next-20150507 and
-> clk_ignore_unused on the command line?
+ drivers/clk/tegra/clk-tegra-audio.c |   25 ++++++++++++++++++-------
+ drivers/clk/tegra/clk-tegra114.c    |    8 +++++++-
+ drivers/clk/tegra/clk-tegra124.c    |    8 +++++++-
+ drivers/clk/tegra/clk-tegra30.c     |    8 +++++++-
+ drivers/clk/tegra/clk.h             |   18 +++++++++++++++++-
+ 5 files changed, 56 insertions(+), 11 deletions(-)
 
-This makes it work, but it's not really an option.
-
-> Also we can try to see if critical clocks aren't being forced on by
-> applying this patch and looking for clk_get() failures
-
-And that shows that the CPU and DDR clocks are not protected, which
-obviously is pretty mad.
-
-I've mass converted all our probing code to use OF_CLK_DECLARE, and
-make things work again.
-
-http://code.bulix.org/5goa5j-88345?raw
-
-Is this an acceptable solution?
-
-We were already moving to this, I'm not really fond of doing this like
-that, but I guess this whole debacle makes it necessary.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---zywvytGCXzdVpkje
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVTInHAAoJEBx+YmzsjxAgpQsP/1doPKcrn0NR2bYrnAHjwjqR
-dNJw5L31k4WFwgATYI/FZ7dnMPHL2F5N8st2qmIYLu7WZLf9ZWc+sOtnAzxmhfuW
-citr0kNoYC+heIFW1n7OSvETWOopDtEqmfInVpLQFzRMIB7KmxCfq69dxiScjIl8
-XokwV28xZTq12ypoLqLhMvHg/3iI+3Lqay0z+6csMubqRVglZynqJgRzrRv633Q+
-mrH4bE/DTS7Db9oavNg5trhi34vO0yR6JUH3eXvWgC3CJMmLzRaDciqh5dfpV6+Q
-WlFYKhsK5yy1j8WX4PskxfruGIzjib3QNsl/wmhpSDoe+rd6MzcE5pHw20L4ci7Y
-cMOrYPM4bUIyRuC/1atePl3tA8Mt0YJqZCSKCLisP17XQUEoAI4anaDbMZ46OVqk
-qRxhASME76iLn0tYwulHsqnoMMhYF06wcr6teZYnbn+Gz8Z00+xiwVSWGOh90O0L
-TTrXjXBhh993F/AkxZcvleEcyM1I/X4JykFKzVxYgw6KH7QDv3CLFPqriXtwsl+w
-3wKvzELjnDBtf9dPuGaZzIVnsWSbMkrabTNzoNPQGWqSiKlvLBEf3r8bKsfF5P69
-Almd/ZTS4gJ9Rk4kRT5o4JW0byjhkMhJ4c2yCSYgAKrTatp8Tq5QIAYSr836buyY
-NXLUvETjco0e6pnmVWF5
-=pJtw
------END PGP SIGNATURE-----
-
---zywvytGCXzdVpkje--
+diff --git a/drivers/clk/tegra/clk-tegra-audio.c b/drivers/clk/tegra/clk-tegra-audio.c
+index 5c38aab2c5b8..b39874e89502 100644
+--- a/drivers/clk/tegra/clk-tegra-audio.c
++++ b/drivers/clk/tegra/clk-tegra-audio.c
+@@ -126,18 +126,29 @@ static struct tegra_audio2x_clk_initdata audio2x_clks[] = {
+ 
+ void __init tegra_audio_clk_init(void __iomem *clk_base,
+ 			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
+-			struct tegra_clk_pll_params *pll_a_params)
++			struct tegra_audio_clk_info *audio_info,
++			unsigned int num_plls)
+ {
+ 	struct clk *clk;
+ 	struct clk **dt_clk;
+ 	int i;
+ 
+-	/* PLLA */
+-	dt_clk = tegra_lookup_dt_id(tegra_clk_pll_a, tegra_clks);
+-	if (dt_clk) {
+-		clk = tegra_clk_register_pll("pll_a", "pll_p_out1", clk_base,
+-				pmc_base, 0, pll_a_params, NULL);
+-		*dt_clk = clk;
++	if (!audio_info || num_plls < 1) {
++		pr_err("No audio data passed to tegra_audio_clk_init\n");
++		WARN_ON(1);
++		return;
++	}
++
++	for (i = 0; i < num_plls; i++) {
++		struct tegra_audio_clk_info *info = &audio_info[i];
++
++		dt_clk = tegra_lookup_dt_id(info->clk_id, tegra_clks);
++		if (dt_clk) {
++			clk = tegra_clk_register_pll(info->name, info->parent,
++					clk_base, pmc_base, 0, info->pll_params,
++					NULL);
++			*dt_clk = clk;
++		}
+ 	}
+ 
+ 	/* PLLA_OUT0 */
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 8237d16b4075..d8586bd6afce 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -935,6 +935,10 @@ static u32 mux_pllm_pllc2_c_c3_pllp_plla_idx[] = {
+ 	[0] = 0, [1] = 1, [2] = 2, [3] = 3, [4] = 4, [5] = 6,
+ };
+ 
++static struct tegra_audio_clk_info tegra114_audio_plls[] = {
++	{ "pll_a", &pll_a_params, tegra_clk_pll_a, "pll_p_out1" },
++};
++
+ static struct clk **clks;
+ 
+ static unsigned long osc_freq;
+@@ -1483,7 +1487,9 @@ static void __init tegra114_clock_init(struct device_node *np)
+ 	tegra114_fixed_clk_init(clk_base);
+ 	tegra114_pll_init(clk_base, pmc_base);
+ 	tegra114_periph_clk_init(clk_base, pmc_base);
+-	tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks, &pll_a_params);
++	tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks,
++			     tegra114_audio_plls,
++			     ARRAY_SIZE(tegra114_audio_plls));
+ 	tegra_pmc_clk_init(pmc_base, tegra114_clks);
+ 	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks,
+ 					&pll_x_params);
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 11f857cd5f6a..5010e43d7785 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -1413,6 +1413,10 @@ static struct tegra_clk_init_table tegra132_init_table[] __initdata = {
+ 	{TEGRA124_CLK_CLK_MAX, TEGRA124_CLK_CLK_MAX, 0, 0},
+ };
+ 
++static struct tegra_audio_clk_info tegra124_audio_plls[] = {
++	{ "pll_a", &pll_a_params, tegra_clk_pll_a, "pll_p_out1" },
++};
++
+ /**
+  * tegra124_clock_apply_init_table - initialize clocks on Tegra124 SoCs
+  *
+@@ -1489,7 +1493,9 @@ static void __init tegra124_132_clock_init_pre(struct device_node *np)
+ 	tegra_fixed_clk_init(tegra124_clks);
+ 	tegra124_pll_init(clk_base, pmc_base);
+ 	tegra124_periph_clk_init(clk_base, pmc_base);
+-	tegra_audio_clk_init(clk_base, pmc_base, tegra124_clks, &pll_a_params);
++	tegra_audio_clk_init(clk_base, pmc_base, tegra124_clks,
++			     tegra124_audio_plls,
++			     ARRAY_SIZE(tegra124_audio_plls));
+ 	tegra_pmc_clk_init(pmc_base, tegra124_clks);
+ 
+ 	/* For Tegra124 & Tegra132, PLLD is the only source for DSIA & DSIB */
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 4b26509fc218..105514989f9c 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1406,6 +1406,10 @@ static const struct of_device_id pmc_match[] __initconst = {
+ 	{},
+ };
+ 
++static struct tegra_audio_clk_info tegra30_audio_plls[] = {
++	{ "pll_a", &pll_a_params, tegra_clk_pll_a, "pll_p_out1" },
++};
++
+ static void __init tegra30_clock_init(struct device_node *np)
+ {
+ 	struct device_node *node;
+@@ -1443,7 +1447,9 @@ static void __init tegra30_clock_init(struct device_node *np)
+ 	tegra30_pll_init();
+ 	tegra30_super_clk_init();
+ 	tegra30_periph_clk_init();
+-	tegra_audio_clk_init(clk_base, pmc_base, tegra30_clks, &pll_a_params);
++	tegra_audio_clk_init(clk_base, pmc_base, tegra30_clks,
++			     tegra30_audio_plls,
++			     ARRAY_SIZE(tegra30_audio_plls));
+ 	tegra_pmc_clk_init(pmc_base, tegra30_clks);
+ 
+ 	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA30_CLK_CLK_MAX);
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index a4e6c8180968..4a37a0d38624 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -270,6 +270,21 @@ struct tegra_clk_pll {
+ 
+ #define to_clk_pll(_hw) container_of(_hw, struct tegra_clk_pll, hw)
+ 
++/**
++ * struct tegra_audio_clk_info - Tegra Audio Clk Information
++ *
++ * @name:	name for the audio pll
++ * @pll_params:	pll_params for audio pll
++ * @clk_id:	clk_ids for the audio pll
++ * @parent:	name of the parent of the audio pll
++ */
++struct tegra_audio_clk_info {
++	char *name;
++	struct tegra_clk_pll_params *pll_params;
++	int clk_id;
++	char *parent;
++};
++
+ extern const struct clk_ops tegra_clk_pll_ops;
+ extern const struct clk_ops tegra_clk_plle_ops;
+ struct clk *tegra_clk_register_pll(const char *name, const char *parent_name,
+@@ -619,7 +634,8 @@ void tegra_register_devclks(struct tegra_devclk *dev_clks, int num);
+ 
+ void tegra_audio_clk_init(void __iomem *clk_base,
+ 			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
+-			struct tegra_clk_pll_params *pll_params);
++			struct tegra_audio_clk_info *audio_info,
++			unsigned int num_plls);
+ 
+ void tegra_periph_clk_init(void __iomem *clk_base, void __iomem *pmc_base,
+ 			struct tegra_clk *tegra_clks,
+-- 
+1.7.9.5
