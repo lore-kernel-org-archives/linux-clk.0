@@ -1,100 +1,34 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+Message-ID: <55537F93.2000101@linaro.org>
+Date: Wed, 13 May 2015 19:45:07 +0300
+From: Georgi Djakov <georgi.djakov@linaro.org>
 MIME-Version: 1.0
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <1430773456-15203-1-git-send-email-sebastian.hesselbarth@gmail.com>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>,
- "Jean-Francois Moine" <moinejf@free.fr>,
- "Michael Welling" <mwelling@ieee.org>,
- "Russell King" <rmk+linux@arm.linux.org.uk>,
- "Jason Cooper" <jason@lakedaemon.net>, "Andrew Lunn" <andrew@lunn.ch>,
- "Gregory Clement" <gregory.clement@free-electrons.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <1430773456-15203-1-git-send-email-sebastian.hesselbarth@gmail.com>
-Message-ID: <20150508190010.16410.26923@quantum>
-Subject: Re: [PATCH v2 0/3] clk: si5351: Fixes for v4.1-rc1
-Date: Fri, 08 May 2015 12:00:10 -0700
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: mturquette@linaro.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk: qcom: Add MSM8916 iommu clocks
+References: <1431428438-8171-1-git-send-email-georgi.djakov@linaro.org> <20150513073601.GB15988@codeaurora.org>
+In-Reply-To: <20150513073601.GB15988@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Sebastian Hesselbarth (2015-05-04 14:04:13)
-> Mike, Stephen,
-> =
+On 05/13/2015 10:36 AM, Stephen Boyd wrote:
+> On 05/12, Georgi Djakov wrote:
+>> Add support for the msm8916 TCU clocks that are needed for IOMMU.
+>>
+>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>> ---
+> 
+> Applied to clk-next
+> 
 
-> this is v2 of dealing with recently reported clk-si5351 issues. Compared
-> to v1 [1], I decided to first split-off the pure fixes and postpone the
-> improvements to a later patch set. Patches 1 and 3 should go though clk
-> fixes while patch 2 should be taken by mvebu maintainers.
-> =
+Hi Stephen,
+Just got a report that this patch has some issues - gcc_bimc_clk
+may get disabled by the CCF, which turns out to be not good.
+So I am going to remove it from the chain leaving only the
+bimc_ddr_clk_src as the parent of apss_tcu and gfx_tcu clocks.
+Will re-send this series soon. Apologies for the extra work.
 
-> This fixes are intended for v4.1-rc1 and deal with issues where DT claimed
-> parent clocks are not properly detected starting with v4.0. Looking at the
-> code of clk-si5351, I just realized that the way the driver deals with
-> parent clocks is utter nonsense. Russell King also mentioned that passing
-> struct clk though platform_data shouldn't be done at all.
-> =
-
-> Therefore, this 3 patches rework parent clock handling of clk-si5351 to
-> make use of (a) named parent clocks, (b) devm_clk_get() for both DT- and
-> platform_data passed parent clocks, and (c) properly clk_prepare_enable()
-> valid parent clocks.
-> =
-
-> However, I do have a stripped down backport of the fix for stable v4.0
-> that just fixes the real issue, i.e. DT based probing and missing
-> clk_prepare_enable(). If you agree with this fixes for v4.1-rc1 we should
-> consider the backport for v4.0 stable.
-
-I've pushed patches #1 and #3 to clk-fixes, now merged into clk-next.
-I'll give it a couple of cycles in linux-next and then submit it for
-4.1-rc4.
-
-Regards,
-Mike
-
-> =
-
-> Overall changes compared to v1:
-> - Postpone improvement patch ("clk: si5351: Reset PLL after rate change")
->   for later patch set.
-> - Reword parent clock check error message. (Suggested by Fabio Estevam)
-> =
-
-> Sebastian
-> =
-
-> [1] https://lkml.org/lkml/2015/4/30/688
-> =
-
-> Sebastian Hesselbarth (3):
->   clk: si5351: Mention clock-names in the binding documentation
->   ARM: dove: Add clock-names to CuBox Si5351 clk generator
->   clk: si5351: Do not pass struct clk in platform_data
-> =
-
->  .../devicetree/bindings/clock/silabs,si5351.txt    |  4 +-
->  arch/arm/boot/dts/dove-cubox.dts                   |  1 +
->  drivers/clk/clk-si5351.c                           | 63 +++++++++++++++-=
-------
->  include/linux/platform_data/si5351.h               |  4 --
->  4 files changed, 49 insertions(+), 23 deletions(-)
-> =
-
-> ---
-> Cc: Mike Turquette <mturquette@linaro.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Jean-Francois Moine <moinejf@free.fr>
-> Cc: Michael Welling <mwelling@ieee.org>
-> Cc: Russell King <rmk+linux@arm.linux.org.uk>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Gregory Clement <gregory.clement@free-electrons.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> -- =
-
-> 2.1.0
->=20
+Thanks,
+Georgi
