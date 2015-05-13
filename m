@@ -1,47 +1,74 @@
-Return-Path: <sudeep.holla@arm.com>
-Message-ID: <55647454.50401@arm.com>
-Date: Tue, 26 May 2015 14:25:40 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
+Return-Path: <bleung@google.com>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Liviu Dudau <Liviu.Dudau@arm.com>,
- Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
- "Jon Medhurst (Tixy)" <tixy@linaro.org>,
- Mike Turquette <mturquette@linaro.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 3/4] clk: scpi: add support for cpufreq virtual device
-References: <1430134846-24320-1-git-send-email-sudeep.holla@arm.com> <1430134846-24320-4-git-send-email-sudeep.holla@arm.com> <20150520234558.GB31753@codeaurora.org>
-In-Reply-To: <20150520234558.GB31753@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: bleung@google.com
+In-Reply-To: <1431451444-23155-17-git-send-email-rklein@nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+	<1431451444-23155-17-git-send-email-rklein@nvidia.com>
+Date: Wed, 13 May 2015 15:20:31 -0700
+Message-ID: <CANLzEks_bEnpyKuVHJEn8XZbdMDaqj9bQ+SjpgrM-uQo0W28Ug@mail.gmail.com>
+Subject: Re: [PATCH v5 15/21] clk: tegra: pll: Add dyn_ramp callback
+From: Benson Leung <bleung@chromium.org>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 21/05/15 00:45, Stephen Boyd wrote:
-> On 04/27, Sudeep Holla wrote:
->> The clocks for the CPUs are provided by SCP and are managed by this
->> clock driver. So the cpufreq device needs to be added only after the
->> clock get registered and removed when this driver is unloaded.
->>
->> This patch manages the cpufreq virtual device based on the clock
->> availability.
->>
->> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> From: Bill Huang <bilhuang@nvidia.com>
 >
-> The cpufreq device can't handle probe defer? I suppose we do it
-> this way because we need to create a platform device somewhere
-> and this is the best place to do so?
+> Add a callback to the pll_params for custom dynamic ramping
+> functions which can be specified per PLL.
 >
+> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
 
-Correct, unless the communication with the SCP firmware is established
-and the CPU clocks are registered, it makes no sense to register CPUFreq
-virtual device. This seems to be best place IMO.
+Modulo kerneldoc addition,
+Reviewed-by: Benson Leung <bleung@chromium.org>
 
-And yes, thanks to the absence of platform code on ARM64, where such
-code was traditionally stashed away and got away with such scenarios.
-Let me if you disagree with this or have any other suggestions.
+> ---
+>  drivers/clk/tegra/clk.h |    4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 330729a822cf..a61d388364b3 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -160,6 +160,8 @@ struct div_nmp {
+>
+>  #define MAX_PLL_MISC_REG_COUNT 6
+>
+> +struct tegra_clk_pll;
+> +
+>  /**
+>   * struct tegra_clk_pll_params - PLL parameters
+>   *
+> @@ -271,6 +273,8 @@ struct tegra_clk_pll_params {
+>                         unsigned long rate, unsigned long parent_rate);
+>         unsigned long   (*adjust_vco)(struct tegra_clk_pll_params *pll_params,
+>                                 unsigned long parent_rate);
+> +       int     (*dyn_ramp)(struct tegra_clk_pll *pll,
+> +                       struct tegra_clk_pll_freq_table *cfg);
 
-Regards,
-Sudeep
+Please add kerneldoc for dyn_ramp member above.
+
+>  };
+>
+>  #define TEGRA_PLL_USE_LOCK BIT(0)
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Benson Leung
+Software Engineer, Chrom* OS
+bleung@chromium.org
