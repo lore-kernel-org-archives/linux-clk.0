@@ -1,138 +1,74 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 4/7] clk: sunxi: mod1 clock support
-Date: Thu, 21 May 2015 22:54:03 +0200
-Message-Id: <1432241646-9511-5-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <paul@pwsan.com>
+Date: Wed, 13 May 2015 14:55:03 +0000 (UTC)
+From: Paul Walmsley <paul@pwsan.com>
+To: Tero Kristo <t-kristo@ti.com>
+cc: mturquette@linaro.org, tony@atomide.com, linux-omap@vger.kernel.org,
+  linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 00/27] ARM: OMAP2+: clock code migration to
+ drivers/clk/ti
+In-Reply-To: <5552F32C.7060606@ti.com>
+Message-ID: <alpine.DEB.2.02.1505131438430.7921@utopia.booyaka.com>
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com> <alpine.DEB.2.02.1505111747460.19833@utopia.booyaka.com> <5551D178.3000904@ti.com> <alpine.DEB.2.02.1505122019220.21747@utopia.booyaka.com> <5552F32C.7060606@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Emilio López <emilio@elopez.com.ar>
+On Wed, 13 May 2015, Tero Kristo wrote:
 
-The module 1 type of clocks consist of a gate and a mux and are used on
-the audio blocks to mux and gate the PLL2 outputs for AC97, IIS or
-SPDIF. This commit adds support for them on the sunxi clock driver.
+> I clipped the boot-loader traces as they contain lots of noise from the
+> test-automation system.
+> 
+> Looking at the farm traces, I see this on the omap3 boards:
+> 
+> beagleboard-vanilla.txt:ver=U-Boot 2014.04-00071-g8543283 (Apr 22 2014 -
+> 15:49:50)
+> 
+> beagle-xm.txt:U-Boot 2014.10-00004-g9ade0ab-dirty (Dec 16 2014 - 13:40:24)
+> 
+> craneboard.txt:U-Boot 2009.11-00005-ge83d2db (Dec 07 2010 - 11:55:34)
+> 
+> ldp.txt:U-Boot 2014.04-00071-g8543283-dirty (Apr 25 2014 - 14:59:48)
+> 
+> n900.txt:U-Boot 2014.04-00073-g4fa5b9e (Apr 22 2014 - 14:37:10)
+> 
+> sdp3430.txt:U-Boot 2009.11-rc1-00485-g7d1e865 (Nov 09 2009 - 11:21:55)
+> 
+> Maybe some DTB issues? When did you update your DTB files?
 
-Signed-off-by: Emilio López <emilio@elopez.com.ar>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi/Makefile       |  1 +
- drivers/clk/sunxi/clk-a10-mod1.c | 84 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 85 insertions(+)
- create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
+For all of the uImage+DTB boots, the DTB files in use follow the kernel 
+version:
 
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index 6fa845e13067..960eeabc375f 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -5,6 +5,7 @@
- obj-y += clk-sunxi.o clk-factors.o
- obj-y += clk-a10-codec.o
- obj-y += clk-a10-hosc.o
-+obj-y += clk-a10-mod1.o
- obj-y += clk-a10-pll2.o
- obj-y += clk-a20-gmac.o
- obj-y += clk-mod0.o
-diff --git a/drivers/clk/sunxi/clk-a10-mod1.c b/drivers/clk/sunxi/clk-a10-mod1.c
-new file mode 100644
-index 000000000000..490f72432a1e
---- /dev/null
-+++ b/drivers/clk/sunxi/clk-a10-mod1.c
-@@ -0,0 +1,84 @@
-+/*
-+ * Copyright 2013 Emilio López
-+ *
-+ * Emilio López <emilio@elopez.com.ar>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+
-+static DEFINE_SPINLOCK(mod1_lock);
-+
-+#define SUN4I_MOD1_ENABLE	31
-+#define SUN4I_MOD1_MUX		16
-+#define SUN4I_MOD1_MUX_WIDTH	2
-+#define SUN4I_MOD1_MAX_PARENTS	4
-+
-+static void __init sun4i_mod1_clk_setup(struct device_node *node)
-+{
-+	struct clk *clk;
-+	struct clk_mux *mux;
-+	struct clk_gate *gate;
-+	const char *parents[4];
-+	const char *clk_name = node->name;
-+	void __iomem *reg;
-+	int i = 0;
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg))
-+		return;
-+
-+	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		goto err_unmap;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		goto err_free_mux;
-+
-+	of_property_read_string(node, "clock-output-names", &clk_name);
-+
-+	while (i < SUN4I_MOD1_MAX_PARENTS &&
-+	       (parents[i] = of_clk_get_parent_name(node, i)) != NULL)
-+		i++;
-+
-+	gate->reg = reg;
-+	gate->bit_idx = SUN4I_MOD1_ENABLE;
-+	gate->lock = &mod1_lock;
-+	mux->reg = reg;
-+	mux->shift = SUN4I_MOD1_MUX;
-+	mux->mask = BIT(SUN4I_MOD1_MUX_WIDTH) - 1;
-+	mux->lock = &mod1_lock;
-+
-+	clk = clk_register_composite(NULL, clk_name, parents, i,
-+				     &mux->hw, &clk_mux_ops,
-+				     NULL, NULL,
-+				     &gate->hw, &clk_gate_ops, 0);
-+	if (IS_ERR(clk))
-+		goto err_free_gate;
-+
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+
-+	return;
-+
-+err_free_gate:
-+	kfree(gate);
-+err_free_mux:
-+	kfree(mux);
-+err_unmap:
-+	iounmap(reg);
-+}
-+CLK_OF_DECLARE(sun4i_mod1, "allwinner,sun4i-a10-mod1-clk",
-+	       sun4i_mod1_clk_setup);
--- 
-2.4.1
+http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/dtbs/
+
+which are then subsequently combined to produce:
+
+http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/dtcat/
+
+So, using the OMAP35xx Beagle as an example, you can prove to yourself 
+that the current DTB is in use by observing that U-boot is loading a 
+combined uImage+DTB file of 3495180 bytes from here:
+
+http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/boot/3530es3beagle/3530es3beagle_log.txt
+
+and comparing that with the size of this file (3495180 bytes):
+
+http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/dtcat/omap2plus_defconfig/uImage-dtb.omap3-beagle
+
+and observing that this file size is the sum of the DTB file size (63180 
+bytes):
+
+http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/dtbs/omap3-beagle.dtb
+
+and the zImage file size (3431936 bytes):
+
+http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/build_z/omap2plus_defconfig/zImage
+
+and the 64 byte uImage header.
+
+
+The only board that I suspect may be using an old DTB is the 4460 
+VAR-SOM-OM.
+
+
+- Paul
