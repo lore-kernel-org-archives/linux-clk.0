@@ -1,33 +1,54 @@
-Return-Path: <bleung@google.com>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: bleung@google.com
-In-Reply-To: <1430757460-9478-2-git-send-email-rklein@nvidia.com>
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
-	<1430757460-9478-2-git-send-email-rklein@nvidia.com>
-Date: Mon, 4 May 2015 11:05:51 -0700
-Message-ID: <CANLzEkt+jiwCR_W_nszPW-Q+bRqHj5BWGQDjqsxfKtLm6Y=Zyw@mail.gmail.com>
-Subject: Re: [PATCH v4 01/20] clk: tegra: Modify tegra_audio_clk_init to
- accept more plls
-From: Benson Leung <bleung@chromium.org>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: Paul Burton <paul.burton@imgtec.com>,  linux-mips@linux-mips.org
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <1429881457-16016-27-git-send-email-paul.burton@imgtec.com>
+Cc: "Paul Burton" <paul.burton@imgtec.com>,
+ "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
+ "Kumar Gala" <galak@codeaurora.org>, "Lars-Peter Clausen" <lars@metafoo.de>,
+ "Mark Rutland" <mark.rutland@arm.com>, "Pawel Moll" <pawel.moll@arm.com>,
+ "Ralf Baechle" <ralf@linux-mips.org>, "Rob Herring" <robh+dt@kernel.org>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <1429881457-16016-1-git-send-email-paul.burton@imgtec.com>
+ <1429881457-16016-27-git-send-email-paul.burton@imgtec.com>
+Message-ID: <20150513025204.20636.10155@quantum>
+Subject: Re: [PATCH v4 26/37] MIPS,clk: migrate JZ4740 to common clock framework
+Date: Tue, 12 May 2015 19:52:04 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
-> tegra_audio_clk_init was written expecting a single PLL to be
-> passed in directly. Change this to accept an array which will
-> allow for supporting multiple plls and specifying specific data
-> about them, like their parent, which may change over time.
->
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-Reviewed-by: Benson Leung <bleung@chromium.org>
+Hi Paul,
 
--- 
-Benson Leung
-Software Engineer, Chrom* OS
-bleung@chromium.org
+Quoting Paul Burton (2015-04-24 06:17:26)
+> +static void __init jz4740_cgu_init(struct device_node *np)
+> +{
+> +       int retval;
+> +
+> +       cgu =3D ingenic_cgu_new(jz4740_cgu_clocks,
+> +                             ARRAY_SIZE(jz4740_cgu_clocks), np);
+> +       if (!cgu) {
+> +               pr_err("%s: failed to initialise CGU\n", __func__);
+> +               return;
+> +       }
+> +
+> +       retval =3D ingenic_cgu_register_clocks(cgu);
+> +       if (retval)
+> +               pr_err("%s: failed to register CGU Clocks\n", __func__);
+> +}
+> +CLK_OF_DECLARE(jz4740_cgu, "ingenic,jz4740-cgu", jz4740_cgu_init);
+> -- =
+
+> 2.3.5
+> =
+
+
+Patch looks good to me, but I have one question. Is it possible for you
+to have a proper platform_device for the cgu instead of relying on
+CLK_OF_DECLARE?
+
+For an example of a clock driver that does this, check out the bottom of
+drivers/clk/qcom/gcc-msm8660.c.
+
+Regards,
+Mike
