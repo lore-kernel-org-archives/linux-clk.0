@@ -1,47 +1,38 @@
-Return-Path: <jcliang@google.com>
-MIME-Version: 1.0
-Sender: jcliang@google.com
-In-Reply-To: <20150518055421.GL6325@pengutronix.de>
-References: <1431920513-1491-1-git-send-email-jcliang@chromium.org>
-	<20150518055421.GL6325@pengutronix.de>
-Date: Mon, 18 May 2015 21:57:11 +0800
-Message-ID: <CAAJzSMdFJZwx5E7d9jC2VFeujfsoTNy4SieUQjiWYLUrKajKgA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: mediatek: Initialize clk_init_data
-From: Ricky Liang <jcliang@chromium.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, James Liao <jamesjj.liao@mediatek.com>,
-	Henry Chen <henryc.chen@mediatek.com>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC..." <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Tero Kristo <t-kristo@ti.com>, Mike Turquette <mturquette@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-omap@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RFT PATCH 5/8] clk: ti: clk-43xx: Prevent possible ERR_PTR dereference
+Date: Wed, 13 May 2015 15:54:44 +0900
+Message-id: <1431500087-2275-6-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
+References: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sascha,
+The return value of clk_get_sys() was immediately used in
+clk_set_parent(). The first one may return ERR_PTR and the latter only
+checks if supplied argument is non-NULL.
 
-Sure. I can fix clk-gate.c as well. New patch on the way...
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/ti/clk-43xx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
--Ricky
-
-On Mon, May 18, 2015 at 1:54 PM, Sascha Hauer <s.hauer@pengutronix.de> wrote:
-> Hi Ricky,
->
-> On Mon, May 18, 2015 at 11:41:49AM +0800, Ricky Liang wrote:
->> The variable init (struct clk_init_data) is allocated on the stack.
->> We weren't initializing the .flags field, so it contains random junk,
->> which can cause all kinds of interesting issues when the flags are
->> parsed by clk_register.
->
-> It seems we have the same problem in clk-gate.c aswell. We do initialize
-> do .flags field there, so this is no urgent problem, but we might get a
-> real problem when additional fields are added to struct clk_init_data.
-> Care to fix that aswell along with this patch?
->
-> Sascha
->
-> --
-> Pengutronix e.K.                           |                             |
-> Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
+index 3795fce8a830..c6e1fc704052 100644
+--- a/drivers/clk/ti/clk-43xx.c
++++ b/drivers/clk/ti/clk-43xx.c
+@@ -134,7 +134,8 @@ int __init am43xx_dt_clk_init(void)
+ 	 */
+ 	clk1 = clk_get_sys(NULL, "cpsw_cpts_rft_clk");
+ 	clk2 = clk_get_sys(NULL, "dpll_core_m5_ck");
+-	clk_set_parent(clk1, clk2);
++	if (!IS_ERR(clk1) && !IS_ERR(clk2))
++		clk_set_parent(clk1, clk2);
+ 
+ 	return 0;
+ }
+-- 
+1.9.1
