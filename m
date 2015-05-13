@@ -1,76 +1,262 @@
-Return-Path: <khilman@deeprootsystems.com>
-Return-Path: <khilman@deeprootsystems.com>
-From: Kevin Hilman <khilman@kernel.org>
-To: Bintian <bintian.wang@huawei.com>
-Cc: Michael Turquette <mturquette@linaro.org>,  <sboyd@codeaurora.org>,  <zhangfei.gao@linaro.org>,  <xuwei5@hisilicon.com>,  <xuejiancheng@huawei.com>,  <tomeu.vizoso@collabora.com>,  <sledge.yanwei@huawei.com>,  <linux-clk@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,  <arnd@arndb.de>,  <will.deacon@arm.com>,  <robh+dt@kernel.org>,  <mark.rutland@arm.com>,  <catalin.marinas@arm.com>,  <haojian.zhuang@linaro.org>,  <linux-arm-kernel@lists.infradead.org>,  <olof@lixom.net>,  <yanhaifeng@gmail.com>,  <linux@arm.linux.org.uk>,  <guodong.xu@linaro.org>,  <jorge.ramirez-ortiz@linaro.org>,  <tyler.baker@linaro.org>,  <xuyiping@hisilicon.com>,  <wangbinghui@hisilicon.com>,  <zhenwei.wang@hisilicon.com>,  <victor.lixin@hisilicon.com>,  <puck.chen@hisilicon.com>,  <dan.zhao@hisilicon.com>,  <huxinwei@huawei.com>,  <z.liuxinliang@huawei.com>,  <heyunlei@huawei.com>,  <kong.kongxinwei@hisilicon.com>,  <wangbintian@gmail.com>,  <w.f@huawei.com>,  <liguozhu@hisilicon.com>
-Subject: Re: [PATCH v8 6/7] clk: hi6220: Clock driver support for Hisilicon hi6220 SoC
-References: <1432440671-25235-1-git-send-email-bintian.wang@huawei.com>
-	<1432440671-25235-3-git-send-email-bintian.wang@huawei.com>
-	<20150528052608.22384.96747@quantum> <5566CF13.8060806@huawei.com>
-Date: Thu, 28 May 2015 10:32:05 -0700
-In-Reply-To: <5566CF13.8060806@huawei.com> (Bintian's message of "Thu, 28 May
-	2015 16:17:23 +0800")
-Message-ID: <7h4mmwip62.fsf@deeprootsystems.com>
+Return-Path: <t-kristo@ti.com>
+Message-ID: <5552F32C.7060606@ti.com>
+Date: Wed, 13 May 2015 09:46:04 +0300
+From: Tero Kristo <t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Paul Walmsley <paul@pwsan.com>
+CC: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCHv2 00/27] ARM: OMAP2+: clock code migration to drivers/clk/ti
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com> <alpine.DEB.2.02.1505111747460.19833@utopia.booyaka.com> <5551D178.3000904@ti.com> <alpine.DEB.2.02.1505122019220.21747@utopia.booyaka.com>
+In-Reply-To: <alpine.DEB.2.02.1505122019220.21747@utopia.booyaka.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Bintian <bintian.wang@huawei.com> writes:
-
-> Hello Mike,
+On 05/12/2015 11:58 PM, Paul Walmsley wrote:
+> On Tue, 12 May 2015, Tero Kristo wrote:
 >
-> On 2015/5/28 13:26, Michael Turquette wrote:
->> Quoting Bintian Wang (2015-05-23 21:11:11)
->>> Add clock drivers for hi6220 SoC, this driver controls the SoC
->>> registers to supply different clocks to different IPs in the SoC.
+>> On 05/11/2015 11:21 PM, Paul Walmsley wrote:
+>>> On Mon, 11 May 2015, Tero Kristo wrote:
 >>>
->>> We add one divider clock for hi6220 because the divider in hi6220
->>> also has a mask bit but it doesnot obey the rule defined by flag
->>> "CLK_DIVIDER_HIWORD_MASK", we can not get index of the mask bit by
->>> left shift fixed bits (e.g. 16 bits), so we add this divider clock
->>> to handle it.
+>>>> This set moves most of the OMAP2+ clock driver code under drivers/clk.
+>>>> There are still a couple of files under mach-omap2 folder after this
+>>>> set which have either unmet dependencies still (towards PRCM driver)
+>>>> or is currently slightly broken (some of the DVFS code for OMAP2/OMAP3.)
+>>>> Earlier version of this set has been posted back in March (see
+>>>> http://www.spinics.net/lists/linux-omap/msg116418.html), mostly
+>>>> the code is the same except patches 25+ which are new.
+>
+> ...
+>
+>>>>
+>>>> Branch info:
+>>>> - tree: https://github.com/t-kristo/linux-pm.git
+>>>> - branch: for-4.2/ti-clk-move
 >>>
->>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
->>> Signed-off-by: Bintian Wang <bintian.wang@huawei.com>
->>> Acked-by: Haojian Zhuang <haojian.zhuang@linaro.org>
->>> Reviewed-by: Zhangfei Gao <zhangfei.gao@linaro.org>
->>> Tested-by: Will Deacon <will.deacon@arm.com>
->>> Tested-by: Tyler Baker <tyler.baker@linaro.org>
+>>> I can't replicate your test results.  Several Kconfigs fail to build here,
+>>> and many boards don't even boot.
+>>>
+>>> Could you please post a copy of your boot logs?
+>>>
+>>> - Paul
+>>>
+>>> http://www.pwsan.com/omap/testlogs/test-tkristo-clk-move-v4.2/20150511115145/
+>>>
+>>> OMAP development test results for test-tkristo-clk-move-v4.2 20150511115145
 >>
->> Hi Bintian,
->>
->> Thanks for making the changes requested by Stephen. I've taken his patch
->> to add assigned-clock-rate/parent support for AMBA interconnects and
->> applied it to 4.1-rc1, and then I've applied your v8 patches #4-6 on top
->> of that. You can find it at:
->>
->> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next-hi6220
-> Thank you very much!
+>> Oh hmm, I seem to have introduced a Makefile issue which breaks a couple of
+>> special builds. I just force pushed updated branch.
 >
-> I think you also need to pick patch "[PATCH v5 3/6] clk: hi6220:
-> Document devicetree bindings for hi6220 clock",  which described the
-> dt binding of clk, and it is also acked by Stephen(v4 is the same to
-> v5).
+> This one is better... the build problems are now fixed.
 >
->> I have merged this into clk-next so it can get some cycles in
->> linux-next.
+>> Here are the boot logs for it, I tried also single-soc builds with
+>> am3/am4/omap2/omap3/omap4/omap5/dra7:
 >>
->> Stephen,
+>>    : Board           : Boot url
+>>   1: am335x-evm      : PASS http://paste.ubuntu.com/11093628/
+>>   2: am335x-evmsk    : PASS http://paste.ubuntu.com/11093629/
+>>   3: am3517-evm      : PASS http://paste.ubuntu.com/11093630/
+>>   4: am37x-evm       : PASS http://paste.ubuntu.com/11093632/
+>>   5: am43x-epos-evm  : PASS http://paste.ubuntu.com/11093633/
+>>   6: am437x-gp-evm   : PASS http://paste.ubuntu.com/11093634/
+>>   7: am57xx-evm      : FAIL http://paste.ubuntu.com/11093635/
+>>   8: omap3-beagle-xm : PASS http://paste.ubuntu.com/11093636/
+>>   9: omap3-beagle    : PASS http://paste.ubuntu.com/11093637/
+>> 10: am335x-boneblack: PASS http://paste.ubuntu.com/11093638/
+>> 11: am335x-bone     : PASS http://paste.ubuntu.com/11093639/
+>> 12: craneboard      : PASS http://paste.ubuntu.com/11093640/
+>> 13: dra7xx-evm      : PASS http://paste.ubuntu.com/11093641/
+>> 14: omap3430-ldp    : PASS http://paste.ubuntu.com/11093642/
+>> 15: omap3-n900      : PASS http://paste.ubuntu.com/11093643/
+>> 16: omap5-uevm      : PASS http://paste.ubuntu.com/11093645/
+>> 17: omap4-panda-es  : PASS http://paste.ubuntu.com/11093646/
+>> 18: omap4-panda     : PASS http://paste.ubuntu.com/11093647/
+>> 19: omap2430-sdp    : PASS http://paste.ubuntu.com/11093648/
+>> 20: omap3430-sdp    : PASS http://paste.ubuntu.com/11093649/
+>> 21: omap4-sdp-es23plus: PASS http://paste.ubuntu.com/11093650/
+>> TOTAL = 21 boards, Booted Boards = 20, No Boot boards = 1
 >>
->> Can you send your patch out to Russell properly? It needs his ack (or
->> for him to take it outright) in order to unblock the hi6220 clock driver
->> from being merged.
-> It doesn't block hi6220 clock driver now, because the UART1 is not
-> enabled in hi6220 dts now.
+>> AM57xx-evm boot fails as it is missing some patches from Nishanth (I think the
+>> UART mux has changed.)
+>
+> But this one has the same problems as v4.1-rc1 and beyond: it still
+> doesn't boot here on any OMAP34xx/OMAP35xx platform, nor the CM-T3517,
+> OMAP4460 VAR-SOM-OM, or OMAP5430ES2 SBC-T54:
+>
+> http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/README.txt
+>
+> Thanks for posting your test logs above.  They don't include bootloader
+> info, but my guess is that v4.1-rc* has some hidden bootloader
+> dependencies where things aren't being initialized properly from the
+> kernel.
+>
+> So those should be tracked down and fixed before we stack more patches on
+> top.
 
-Now that the clk changes are queued up, can you (re)post the remaining
-hikey patches with a changelog stating the dependency on the clk-next
-branch.  I believe what's left is just the DT and Kconfig/defconfig
-changes, correct?
+I clipped the boot-loader traces as they contain lots of noise from the 
+test-automation system.
 
-With some acks from the DT maintainers, these should be ready to be
-merged through arm-soc.
+Looking at the farm traces, I see this on the omap3 boards:
 
-Thanks,
+beagleboard-vanilla.txt:ver=U-Boot 2014.04-00071-g8543283 (Apr 22 2014 - 
+15:49:50)
 
-Kevin
+beagle-xm.txt:U-Boot 2014.10-00004-g9ade0ab-dirty (Dec 16 2014 - 13:40:24)
+
+craneboard.txt:U-Boot 2009.11-00005-ge83d2db (Dec 07 2010 - 11:55:34)
+
+ldp.txt:U-Boot 2014.04-00071-g8543283-dirty (Apr 25 2014 - 14:59:48)
+
+n900.txt:U-Boot 2014.04-00073-g4fa5b9e (Apr 22 2014 - 14:37:10)
+
+sdp3430.txt:U-Boot 2009.11-rc1-00485-g7d1e865 (Nov 09 2009 - 11:21:55)
+
+Maybe some DTB issues? When did you update your DTB files?
+
+-Tero
+
+>
+>
+> - Paul
+>
+>
+> http://www.pwsan.com/omap/testlogs/test-tkristo-clk-move-v4.2/20150512121218/
+>
+>
+> OMAP development test results for test-tkristo-clk-move-v4.2 20150512121218
+>
+>
+> Test summary
+> ------------
+>
+> Build: uImage:
+>      Pass ( 3/ 3): omap1_defconfig, omap1_defconfig_1510innovator_only,
+> 		  omap1_defconfig_5912osk_only
+>
+> Build: uImage+dtb:
+>      Pass (13/13): omap2plus_defconfig_am33xx_only/am335x-bone,
+> 		  omap2plus_defconfig/omap4-panda,
+> 		  omap2plus_defconfig/omap4-panda-es,
+> 		  omap2plus_defconfig/omap4-var-som,
+> 		  omap2plus_defconfig/omap3-evm-37xx,
+> 		  omap2plus_defconfig_n800_only_a/omap2420-n800,
+> 		  omap2plus_defconfig/omap2430-sdp,
+> 		  omap2plus_defconfig/am3517-evm,
+> 		  omap2plus_defconfig/omap3-beagle,
+> 		  omap2plus_defconfig/omap3-beagle-xm,
+> 		  omap2plus_defconfig/omap3-sbc-t3517,
+> 		  omap2plus_defconfig/omap5-uevm,
+> 		  omap2plus_defconfig/omap5-sbc-t54
+>
+> Build: zImage:
+>      Pass (17/17): omap2plus_defconfig, omap2plus_defconfig_am33xx_only,
+> 		  omap2plus_defconfig_n800_only_a,
+> 		  omap2plus_defconfig_n800_multi_omap2xxx,
+> 		  omap2plus_defconfig_2430sdp_only,
+> 		  omap2plus_defconfig_cpupm, omap2plus_defconfig_no_pm,
+> 		  omap2plus_defconfig_omap2_4_only,
+> 		  omap2plus_defconfig_omap3_4_only,
+> 		  omap2plus_defconfig_omap5_only,
+> 		  omap2plus_defconfig_dra7xx_only,
+> 		  omap2plus_defconfig_am43xx_only,
+> 		  rmk_omap3430_ldp_oldconfig,
+> 		  rmk_omap3430_ldp_allnoconfig,
+> 		  rmk_omap4430_sdp_oldconfig,
+> 		  rmk_omap4430_sdp_allnoconfig, multi_v7_defconfig
+>
+> Build warnings from toolchain: uImage:
+>      FAIL ( 3/ 3): omap1_defconfig, omap1_defconfig_1510innovator_only,
+> 		  omap1_defconfig_5912osk_only
+>
+> Build warnings from toolchain: uImage+dtb:
+>      (none)
+>
+> Build warnings from toolchain: zImage:
+>      FAIL (14/17): omap2plus_defconfig, omap2plus_defconfig_am33xx_only,
+> 		  omap2plus_defconfig_n800_only_a,
+> 		  omap2plus_defconfig_n800_multi_omap2xxx,
+> 		  omap2plus_defconfig_2430sdp_only,
+> 		  omap2plus_defconfig_cpupm, omap2plus_defconfig_no_pm,
+> 		  omap2plus_defconfig_omap2_4_only,
+> 		  omap2plus_defconfig_omap3_4_only,
+> 		  omap2plus_defconfig_omap5_only,
+> 		  omap2plus_defconfig_dra7xx_only,
+> 		  omap2plus_defconfig_am43xx_only,
+> 		  rmk_omap3430_ldp_oldconfig,
+> 		  rmk_omap4430_sdp_oldconfig
+>
+> Boot to userspace:
+>      FAIL ( 6/17): 4460varsomom, 2430sdp, 3530es3beagle, 3530es31beagle,
+> 		  cmt3517, 5430es2sbct54
+>      skip ( 2/17): 5912osk, 3517evm
+>      Pass ( 9/17): am335xbonelt, am335xbone, 4430es2panda, 4460pandaes,
+> 		  37xxevm, 3730beaglexm, 3730es12beaglexm, 5430es2uevm,
+> 		  2420n800
+>
+> Kernel warnings during boot to userspace:
+>      FAIL ( 1/17): 4430es2panda
+>
+> PM: chip retention via suspend:
+>      FAIL ( 9/12): am335xbonelt, 4430es2panda, 4460varsomom,
+> 		  3530es3beagle, 3530es31beagle, 3730es12beaglexm,
+> 		  2430sdp, 5430es2uevm, 5430es2sbct54
+>      Pass ( 3/12): 4460pandaes, 37xxevm, 3730beaglexm
+>
+> PM: chip retention via dynamic idle:
+>      FAIL ( 9/12): am335xbonelt, 4430es2panda, 4460varsomom,
+> 		  3530es3beagle, 3530es31beagle, 3730es12beaglexm,
+> 		  2430sdp, 5430es2uevm, 5430es2sbct54
+>      Pass ( 3/12): 4460pandaes, 37xxevm, 3730beaglexm
+>
+> PM: chip off (except CORE, due to errata) via suspend:
+>      Pass ( 1/ 1): 3730beaglexm
+>
+> PM: chip off (except CORE, due to errata) via dynamic idle:
+>      Pass ( 1/ 1): 3730beaglexm
+>
+> PM: chip off via suspend:
+>      FAIL ( 3/ 4): 3530es3beagle, 3530es31beagle, 3730es12beaglexm
+>      Pass ( 1/ 4): 37xxevm
+>
+> PM: chip off via dynamic idle:
+>      FAIL ( 3/ 4): 3530es3beagle, 3530es31beagle, 3730es12beaglexm
+>      Pass ( 1/ 4): 37xxevm
+>
+> Kernel warnings during PM test:
+>      FAIL ( 1/17): 4430es2panda
+>
+> Obsolete Kconfig symbols:
+>      FAIL ( 1/20): multi_v7_defconfig
+>
+>
+> vmlinux object size
+> (delta in bytes from test_v4.1-rc2 (5ebe6afaf0057ac3eaeb98defd5456894b446d22)):
+>     text     data      bss    total  kernel
+>        0        0        0        0  omap1_defconfig
+>        0        0        0        0  omap1_defconfig_1510innovator_only
+>        0        0        0        0  omap1_defconfig_5912osk_only
+>    -1492       -8        0    -1500  multi_v7_defconfig
+>    -2116      +56        0    -2060  omap2plus_defconfig
+>        0        0        0        0  omap2plus_defconfig_2430sdp_only
+>    -1476        0      +64    -1412  omap2plus_defconfig_am33xx_only
+>    -5572        0      +64    -5508  omap2plus_defconfig_am43xx_only
+>    -6148      +56      -64    -6156  omap2plus_defconfig_cpupm
+>    -5500        0      +64    -5436  omap2plus_defconfig_dra7xx_only
+>    -1668        0      +12    -1656  omap2plus_defconfig_n800_multi_omap2xxx
+>    -1636       -8      -20    -1664  omap2plus_defconfig_n800_only_a
+>    -6212       -8        0    -6220  omap2plus_defconfig_no_pm
+>    -5828        0      -64    -5892  omap2plus_defconfig_omap2_4_only
+>    -1916       -8        0    -1924  omap2plus_defconfig_omap3_4_only
+>    -1412        0        0    -1412  omap2plus_defconfig_omap5_only
+>    -2804       -4     +780    -2028  rmk_omap3430_ldp_allnoconfig
+>    -1812       -8      +64    -1756  rmk_omap3430_ldp_oldconfig
+>    -2332        0     +956    -1376  rmk_omap4430_sdp_allnoconfig
+>    -1336      +64        0    -1272  rmk_omap4430_sdp_oldconfig
+>
+> Boot-time memory difference
+> (delta in bytes from test_v4.1-rc2 (5ebe6afaf0057ac3eaeb98defd5456894b446d22))
+>    avail  rsrvd   high  freed  board          kconfig
+>      -4k     4k      .      .  5430es2sbct54  omap2plus_defconfig
+>        .      .      .     4k  am335xbone     omap2plus_defconfig_am33xx_only
+>
