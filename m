@@ -1,82 +1,52 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>,
-	Andrew Bresticker <abrestic@chromium.org>
-Subject: [PATCH v3 20/20] clk: tegra: pll: Fix issues with rates for VCO PLLs
-Date: Fri, 1 May 2015 14:54:07 -0400
-Message-ID: <1430506447-29074-21-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
-References: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
+Return-Path: <bleung@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: bleung@google.com
+In-Reply-To: <1431451444-23155-12-git-send-email-rklein@nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+	<1431451444-23155-12-git-send-email-rklein@nvidia.com>
+Date: Tue, 12 May 2015 17:01:38 -0700
+Message-ID: <CANLzEksWoyJ9o6EcaktfqU8X-z7Pdg_weYaovjyb_SsGRGRC9g@mail.gmail.com>
+Subject: Re: [PATCH v5 10/21] clk: tegra: pll: Add logic for out-of-table
+ rates for T210
+From: Benson Leung <bleung@chromium.org>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andrew Bresticker <abrestic@chromium.org>
+On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> For Tegra210, the logic to calculate out-of-table rates is different
+> from previous generations. Add callbacks that can be overridden to
+> allow for different ways of calculating rates. Default to
+> _cal_rate when not specified.
+>
+> This patch also includes a new flag which is used to set which method
+> of fixed_mdiv calculation is used. The new method for calculating the
+> fixed divider value for M can be more accurate especially when
+> fractional dividers are in play. This allows for older chipsets to use
+> the existing logic and new generations to use a newer version which
+> may work better for them.
+>
+> Based on original work by Aleksandr Frid <afrid@nvidia.com>
+>
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 
-Without this change clk_get_rate would return the final output
-rather than the VCO output as it would factor in the pdiv when
-it shouldn't. This will cause problems for all dividers in the
-subtree of the VCO PLL.
+Reviewed-by: Benson Leung <bleung@chromium.org>
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
-v3:
-  - Added fix for this bug which was found during testing
+> ---
+> v5:
+>   - Updated description to include mentioning the NEW_MDIV flag
+>   - Added kerneldoc info for new members
 
- drivers/clk/tegra/clk-pll.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 44bdbbac361d..8953573b5bcd 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -723,6 +723,8 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 		spin_lock_irqsave(pll->lock, flags);
- 
- 	_get_pll_mnp(pll, &old_cfg);
-+	if (pll->params->vco_out)
-+		cfg.p = old_cfg.p;
- 
- 	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p ||
- 		old_cfg.sdm_data != cfg.sdm_data)
-@@ -782,11 +784,15 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
- 
- 	_get_pll_mnp(pll, &cfg);
- 
--	pdiv = _hw_to_p_div(hw, cfg.p);
--	if (pdiv < 0) {
--		WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
--			__clk_get_name(hw->clk), cfg.p);
-+	if (pll->params->vco_out) {
- 		pdiv = 1;
-+	} else {
-+		pdiv = _hw_to_p_div(hw, cfg.p);
-+		if (pdiv < 0) {
-+			WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
-+				__clk_get_name(hw->clk), cfg.p);
-+			pdiv = 1;
-+		}
- 	}
- 
- 	if (pll->params->set_gain)
-@@ -1073,6 +1079,8 @@ static int clk_pllxc_set_rate(struct clk_hw *hw, unsigned long rate,
- 		spin_lock_irqsave(pll->lock, flags);
- 
- 	_get_pll_mnp(pll, &old_cfg);
-+	if (pll->params->vco_out)
-+		cfg.p = old_cfg.p;
- 
- 	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p)
- 		ret = _program_pll(hw, &cfg, rate);
+
+
 -- 
-1.7.9.5
-
+Benson Leung
+Software Engineer, Chrom* OS
+bleung@chromium.org
