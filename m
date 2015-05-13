@@ -1,153 +1,102 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v4 13/20] clk: tegra: pll: Add support for PLLMB for T210
-Date: Mon, 4 May 2015 12:37:33 -0400
-Message-ID: <1430757460-9478-14-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Tero Kristo <t-kristo@ti.com>, Mike Turquette <mturquette@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-omap@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RFT PATCH 8/8] clk: ti: clk-7xx: Prevent possible ERR_PTR dereference
+Date: Wed, 13 May 2015 15:54:47 +0900
+Message-id: <1431500087-2275-9-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
+References: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Tegra210 SoC's have 2 PLLS for memory usage. Add plumbing to register
-and handle PLLMB.
+The return value of clk_get_sys() was immediately used in
+clk_set_parent() and clk_set_rate(). The first one may return ERR_PTR
+and the latter only checks if supplied argument is non-NULL.
 
-PLLMB is used to allow switching between 2 PLLM's without having to use
-and intermediate backup PLL, as we need to lock the PLL before we can
-switch to it.
-
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
-v3:
-  - Flushed out comment more.
+ drivers/clk/ti/clk-7xx.c | 50 ++++++++++++++++++++++++++++--------------------
+ 1 file changed, 29 insertions(+), 21 deletions(-)
 
-v2:
-  - Fixed commit description as suggested.
-
- drivers/clk/tegra/clk-pll.c |   46 +++++++++++++++++++++++++++++++++++++++----
- drivers/clk/tegra/clk.h     |    9 +++++++++
- 2 files changed, 51 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 9224c9c7c497..b16263e978d7 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -547,7 +547,7 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
- 	struct tegra_clk_pll_params *params = pll->params;
- 	struct div_nmp *div_nmp = params->div_nmp;
+diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+index 5d2217ae4478..ce1a77092788 100644
+--- a/drivers/clk/ti/clk-7xx.c
++++ b/drivers/clk/ti/clk-7xx.c
+@@ -308,44 +308,52 @@ static struct ti_dt_clk dra7xx_clks[] = {
+ 	{ .node_name = NULL },
+ };
  
--	if ((params->flags & TEGRA_PLLM) &&
-+	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
- 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
- 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
- 		val = pll_override_readl(params->pmc_divp_reg, pll);
-@@ -584,7 +584,7 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
- 	struct tegra_clk_pll_params *params = pll->params;
- 	struct div_nmp *div_nmp = params->div_nmp;
+-int __init dra7xx_dt_clk_init(void)
++static void __init dra7xx_dt_clk_abe_dpll_init(void)
+ {
+ 	int rc;
+ 	struct clk *abe_dpll_mux, *sys_clkin2, *dpll_ck;
  
--	if ((params->flags & TEGRA_PLLM) &&
-+	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
- 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
- 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
- 		val = pll_override_readl(params->pmc_divp_reg, pll);
-@@ -730,8 +730,8 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (pll->params->flags & TEGRA_PLL_FIXED)
- 		return pll->params->fixed_rate;
+-	ti_dt_clocks_register(dra7xx_clks);
+-
+-	omap2_clk_disable_autoidle_all();
+-
+ 	abe_dpll_mux = clk_get_sys(NULL, "abe_dpll_sys_clk_mux");
+ 	sys_clkin2 = clk_get_sys(NULL, "sys_clkin2");
+ 	dpll_ck = clk_get_sys(NULL, "dpll_abe_ck");
  
--	/* PLLM is used for memory; we do not change rate */
--	if (pll->params->flags & TEGRA_PLLM)
-+	/* PLLM/MB are used for memory; we do not change rate */
-+	if (pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB))
- 		return __clk_get_rate(hw->clk);
- 
- 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
-@@ -2310,4 +2310,42 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
- 
- 	return clk;
- }
-+
-+struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
-+			  void __iomem *clk_base, void __iomem *pmc,
-+			  unsigned long flags,
-+			  struct tegra_clk_pll_params *pll_params,
-+			  spinlock_t *lock)
-+{
-+	struct tegra_clk_pll *pll;
-+	struct clk *clk, *parent;
-+	unsigned long parent_rate;
-+
-+	if (!pll_params->pdiv_tohw)
-+		return ERR_PTR(-EINVAL);
-+
-+	parent = __clk_lookup(parent_name);
-+	if (!parent) {
-+		WARN(1, "parent clk %s of %s must be registered first\n",
-+			name, parent_name);
-+		return ERR_PTR(-EINVAL);
++	if (IS_ERR(abe_dpll_mux) || IS_ERR(sys_clkin2) || IS_ERR(dpll_ck)) {
++		pr_err("%s: failed to configure ABE DPLL!\n", __func__);
++		return;
 +	}
 +
-+	parent_rate = __clk_get_rate(parent);
-+
-+	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
-+
-+	pll_params->flags |= TEGRA_PLL_BYPASS;
-+	pll_params->flags |= TEGRA_PLLMB;
-+	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-+	if (IS_ERR(pll))
-+		return ERR_CAST(pll);
-+
-+	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
-+				      &tegra_clk_pllm_ops);
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
+ 	rc = clk_set_parent(abe_dpll_mux, sys_clkin2);
+ 	if (!rc)
+ 		rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ);
+ 	if (rc)
+ 		pr_err("%s: failed to configure ABE DPLL!\n", __func__);
 +}
- #endif
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 86f4b84de5df..4644f43ca100 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -201,6 +201,8 @@ struct div_nmp {
-  * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
-  * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
-  *     it may be more accurate (especially if SDM present)
-+ * TEGRA_PLLMB - PLLMB has should be treated similar to PLLM. This
-+ *     flag indicated that it is PLLMB.
-  */
- struct tegra_clk_pll_params {
- 	unsigned long	input_min;
-@@ -260,6 +262,7 @@ struct tegra_clk_pll_params {
- #define TEGRA_PLL_BYPASS BIT(9)
- #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
- #define TEGRA_MDIV_NEW BIT(11)
-+#define TEGRA_PLLMB BIT(12)
  
- /**
-  * struct tegra_clk_pll - Tegra PLL clock
-@@ -366,6 +369,12 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
- 			   struct tegra_clk_pll_params *pll_params,
- 			   spinlock_t *lock);
+-	dpll_ck = clk_get_sys(NULL, "dpll_abe_m2x2_ck");
+-	rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ * 2);
+-	if (rc)
+-		pr_err("%s: failed to configure ABE DPLL m2x2!\n", __func__);
+-
+-	dpll_ck = clk_get_sys(NULL, "dpll_gmac_ck");
+-	rc = clk_set_rate(dpll_ck, DRA7_DPLL_GMAC_DEFFREQ);
+-	if (rc)
+-		pr_err("%s: failed to configure GMAC DPLL!\n", __func__);
++static int __init dra7xx_dt_clk_dpll_init(const char *clk_name,
++				    unsigned long rate)
++{
++	int rc = -EINVAL;
++	struct clk *clk;
  
-+struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
-+			   void __iomem *clk_base, void __iomem *pmc,
-+			   unsigned long flags,
-+			   struct tegra_clk_pll_params *pll_params,
-+			   spinlock_t *lock);
+-	dpll_ck = clk_get_sys(NULL, "dpll_usb_ck");
+-	rc = clk_set_rate(dpll_ck, DRA7_DPLL_USB_DEFFREQ);
+-	if (rc)
+-		pr_err("%s: failed to configure USB DPLL!\n", __func__);
++	clk = clk_get_sys(NULL, clk_name);
++	if (!IS_ERR(clk))
++		rc = clk_set_rate(clk, rate);
+ 
+-	dpll_ck = clk_get_sys(NULL, "dpll_usb_m2_ck");
+-	rc = clk_set_rate(dpll_ck, DRA7_DPLL_USB_DEFFREQ/2);
+ 	if (rc)
+-		pr_err("%s: failed to set USB_DPLL M2 OUT\n", __func__);
++		pr_err("%s: failed to configure %s!\n", __func__, clk_name);
+ 
+ 	return rc;
+ }
 +
- /**
-  * struct tegra_clk_pll_out - PLL divider down clock
-  *
++int __init dra7xx_dt_clk_init(void)
++{
++	ti_dt_clocks_register(dra7xx_clks);
++
++	omap2_clk_disable_autoidle_all();
++
++	dra7xx_dt_clk_abe_dpll_init();
++	dra7xx_dt_clk_dpll_init("dpll_abe_m2x2_ck", DRA7_DPLL_ABE_DEFFREQ * 2);
++	dra7xx_dt_clk_dpll_init("dpll_gmac_ck", DRA7_DPLL_GMAC_DEFFREQ);
++	dra7xx_dt_clk_dpll_init("dpll_usb_ck", DRA7_DPLL_USB_DEFFREQ);
++	return dra7xx_dt_clk_dpll_init("dpll_usb_m2_ck", DRA7_DPLL_USB_DEFFREQ/2);
++}
 -- 
-1.7.9.5
+1.9.1
