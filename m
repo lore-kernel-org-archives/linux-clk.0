@@ -1,153 +1,63 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v3 13/20] clk: tegra: pll: Add support for PLLMB for T210
-Date: Fri, 1 May 2015 14:54:00 -0400
-Message-ID: <1430506447-29074-14-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
-References: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
+Return-Path: <sha@pengutronix.de>
+Date: Wed, 13 May 2015 08:47:45 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de
+Subject: Re: Automatic clock disabling on clk_put()
+Message-ID: <20150513064745.GY6325@pengutronix.de>
+References: <20150511060129.GG6325@pengutronix.de>
+ <55528B84.5050700@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <55528B84.5050700@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Tegra210 SoC's have 2 PLLS for memory usage. Add plumbing to register
-and handle PLLMB.
+On Tue, May 12, 2015 at 04:23:48PM -0700, Stephen Boyd wrote:
+> On 05/10/15 23:01, Sascha Hauer wrote:
+> > Hi,
+> >
+> > Since we now have per-user clks we could automatically disable clks on
+> > clk_put() to make the drivers errors paths easier. AFAIR that was one
+> > of the motivations to switch to per user clks. Is this just not yet
+> > implemented or are there problems implementing this?
+> >
+> >
+> 
+> I don't recall that as being a motivation for per-user clks. The
+> documentation explicitly states:
+> 
+>  * Note: drivers must ensure that all clk_enable calls made on this
+>  * clock source are balanced by clk_disable calls prior to calling
+>  * this function.
+> 
+> so it seems that such a behavior would be an API change.
 
-PLLMB is used to allow switching between 2 PLLM's without having to use
-and intermediate backup PLL, as we need to lock the PLL before we can
-switch to it.
+Hm, yes it would be an API change, but we are only loosening this
+restriction. The only impact I see is that previously buggy drivers
+get fixed. Hurray :)
+Wait, I forgot about the currently 22 clk support implementations in
+arch/* :(
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
-v3:
-  - Flushed out comment more.
+> Is it really
+> that hard to call clk_disable_unprepare() on a clock at the end of an
+> error path?
 
-v2:
-  - Fixed commit description as suggested.
+There are more and more cases in which the clk disabling is the only
+reason why an error path even exists. No it's not that hard, it would
+just be convenient to not have to care about it.
 
- drivers/clk/tegra/clk-pll.c |   46 +++++++++++++++++++++++++++++++++++++++----
- drivers/clk/tegra/clk.h     |    9 +++++++++
- 2 files changed, 51 insertions(+), 4 deletions(-)
+> Maybe you could add a devm_clk_get_prepare_enable() that
+> does what you want and then call clk_disable_unprepare on the exit path?
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index c938bdc9415f..edc388f02a66 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -547,7 +547,7 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
- 	struct tegra_clk_pll_params *params = pll->params;
- 	struct div_nmp *div_nmp = params->div_nmp;
- 
--	if ((params->flags & TEGRA_PLLM) &&
-+	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
- 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
- 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
- 		val = pll_override_readl(params->pmc_divp_reg, pll);
-@@ -584,7 +584,7 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
- 	struct tegra_clk_pll_params *params = pll->params;
- 	struct div_nmp *div_nmp = params->div_nmp;
- 
--	if ((params->flags & TEGRA_PLLM) &&
-+	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
- 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
- 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
- 		val = pll_override_readl(params->pmc_divp_reg, pll);
-@@ -730,8 +730,8 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (pll->params->flags & TEGRA_PLL_FIXED)
- 		return pll->params->fixed_rate;
- 
--	/* PLLM is used for memory; we do not change rate */
--	if (pll->params->flags & TEGRA_PLLM)
-+	/* PLLM/MB are used for memory; we do not change rate */
-+	if (pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB))
- 		return __clk_get_rate(hw->clk);
- 
- 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
-@@ -2310,4 +2310,42 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
- 
- 	return clk;
- }
-+
-+struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
-+			  void __iomem *clk_base, void __iomem *pmc,
-+			  unsigned long flags,
-+			  struct tegra_clk_pll_params *pll_params,
-+			  spinlock_t *lock)
-+{
-+	struct tegra_clk_pll *pll;
-+	struct clk *clk, *parent;
-+	unsigned long parent_rate;
-+
-+	if (!pll_params->pdiv_tohw)
-+		return ERR_PTR(-EINVAL);
-+
-+	parent = __clk_lookup(parent_name);
-+	if (!parent) {
-+		WARN(1, "parent clk %s of %s must be registered first\n",
-+			name, parent_name);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	parent_rate = __clk_get_rate(parent);
-+
-+	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
-+
-+	pll_params->flags |= TEGRA_PLL_BYPASS;
-+	pll_params->flags |= TEGRA_PLLMB;
-+	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-+	if (IS_ERR(pll))
-+		return ERR_CAST(pll);
-+
-+	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
-+				      &tegra_clk_pllm_ops);
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
-+}
- #endif
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 26e31580dc9e..9e37defb063f 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -201,6 +201,8 @@ struct div_nmp {
-  * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
-  * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
-  *     it may be more accurate (especially if SDM present)
-+ * TEGRA_PLLMB - PLLMB has should be treated similar to PLLM. This
-+ *     flag indicated that it is PLLMB.
-  */
- struct tegra_clk_pll_params {
- 	unsigned long	input_min;
-@@ -260,6 +262,7 @@ struct tegra_clk_pll_params {
- #define TEGRA_PLL_BYPASS BIT(9)
- #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
- #define TEGRA_MDIV_NEW BIT(11)
-+#define TEGRA_PLLMB BIT(12)
- 
- /**
-  * struct tegra_clk_pll - Tegra PLL clock
-@@ -366,6 +369,12 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
- 			   struct tegra_clk_pll_params *pll_params,
- 			   spinlock_t *lock);
- 
-+struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
-+			   void __iomem *clk_base, void __iomem *pmc,
-+			   unsigned long flags,
-+			   struct tegra_clk_pll_params *pll_params,
-+			   spinlock_t *lock);
-+
- /**
-  * struct tegra_clk_pll_out - PLL divider down clock
-  *
+I never thought about that, that would work aswell. Maybe I'll have a
+look into this.
+
+Sascha
+
 -- 
-1.7.9.5
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
