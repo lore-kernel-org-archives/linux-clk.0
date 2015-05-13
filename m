@@ -1,46 +1,52 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v4 05/20] clk: tegra: pll: update warning msg
-Date: Mon, 4 May 2015 12:37:25 -0400
-Message-ID: <1430757460-9478-6-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+To: Stephen Boyd <sboyd@codeaurora.org>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <1430439261-10291-1-git-send-email-sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ "Tomeu Vizoso" <tomeu.vizoso@collabora.com>,
+ "Dong Aisheng" <aisheng.dong@freescale.com>
+References: <1430439261-10291-1-git-send-email-sboyd@codeaurora.org>
+Message-ID: <20150513031232.20636.94314@quantum>
+Subject: Re: [PATCH 0/6] clk.c cleanups
+Date: Tue, 12 May 2015 20:12:32 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Swap out the generic WARN_ON with a WARN which gives more
-information about what is happening.
+Quoting Stephen Boyd (2015-04-30 17:14:15)
+> Here are some cleanups spurned by some patches from Dong Aisheng.
+> No functionality is changed, just reordering of code, etc.
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Looks good to me.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 1e1018dd466f..0282d9f4f2d7 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -692,7 +692,8 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
- 
- 	pdiv = _hw_to_p_div(hw, cfg.p);
- 	if (pdiv < 0) {
--		WARN_ON(1);
-+		WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
-+			__clk_get_name(hw->clk), cfg.p);
- 		pdiv = 1;
- 	}
- 
--- 
-1.7.9.5
+Regards,
+Mike
+
+> =
+
+> Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> Cc: Dong Aisheng <aisheng.dong@freescale.com>
+> =
+
+> Dong Aisheng (1):
+>   clk: Squash __clk_{enable,disable}() into callers
+> =
+
+> Stephen Boyd (5):
+>   clk: s/clk/core/ for struct clk_core
+>   clk: Drop unnecessary OOM prints
+>   clk: Remove impossible if condition in clk_core_get_phase()
+>   clk: Remove forward declared function prototypes
+>   clk: Update some comments to reflect reality
+> =
+
+>  drivers/clk/clk.c | 1572 +++++++++++++++++++++++++----------------------=
+------
+>  1 file changed, 755 insertions(+), 817 deletions(-)
+> =
+
+> -- =
+
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>=20
