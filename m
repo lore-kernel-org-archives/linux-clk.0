@@ -1,91 +1,162 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 6 May 2015 23:39:53 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Shawn Guo <shawn.guo@linaro.org>,
-	ascha Hauer <kernel@pengutronix.de>,
-	David Brown <davidb@codeaurora.org>,
-	Daniel Walker <dwalker@fifo99.com>,
-	Bryan Huntsman <bryanh@codeaurora.org>,
-	Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Max Filippov <jcmvbkbc@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>,
-	Viresh Kumar <viresh.linux@gmail.com>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 13 May 2015 22:14:26 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Mike Turquette <mturquette@linaro.org>,
+	Doug Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
+	lkml <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Alex Elder <elder@linaro.org>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
 	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Chao Xie <chao.xie@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Georgi Djakov <georgi.djakov@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Barry Song <baohua@kernel.org>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Viresh Kumar <viresh.linux@gmail.com>,
+	Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Peter De Sc hrijver <pdeschrijver@nvidia.com>,
+	Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+	Pawel Moll <pawel.moll@arm.com>,
 	Michal Simek <michal.simek@xilinx.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-mips@linux-mips.org,
-	patches@opensource.wolfsonmicro.com,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, spear-devel@list.st.com,
-	linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, rtc-linux@googlegroups.com
-Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
-Message-ID: <20150507063953.GC32399@codeaurora.org>
-References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com>
- <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
+	Olof Johansson <olof@lixom.net>,
+	Tyler Baker <tyler.baker@linaro.org>
+Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
+Message-ID: <20150513201426.GH4004@lukather>
+References: <1981330.kGUrTurMy5@diego>
+ <5543E79F.2080400@codeaurora.org>
+ <22709390.NTAlubMgNB@diego>
+ <55440EDA.4030905@codeaurora.org>
+ <CAMAWPa_n+59+v+x3fKkmdtW1wMJF7kqtTjLLowmv1xwGWprYJw@mail.gmail.com>
+ <554BD33D.7050907@codeaurora.org>
+ <20150508100247.GQ11057@lukather>
+ <55528046.4030107@codeaurora.org>
+ <20150513130304.GA4004@lukather>
+ <7hiobw8s31.fsf@deeprootsystems.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tcC6YSqBgqqkz7Sb"
+In-Reply-To: <7hiobw8s31.fsf@deeprootsystems.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/30, Boris Brezillon wrote:
-> Clock rates are stored in an unsigned long field, but ->round_rate()
-> (which returns a rounded rate from a requested one) returns a long
-> value (errors are reported using negative error codes), which can lead
-> to long overflow if the clock rate exceed 2Ghz.
-> 
-> Change ->round_rate() prototype to return 0 or an error code, and pass the
-> requested rate as a pointer so that it can be adjusted depending on
-> hardware capabilities.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
-> Tested-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-This patch is fairly invasive, and it probably doesn't even
-matter for most of these clock providers to be able to round a
-rate above 2GHz. I've been trying to remove the .round_rate op
-from the framework by encouraging new features via the
-.determine_rate op. Sadly, we still have to do a flag day and
-change all the .determine_rate ops when we want to add things.
+--tcC6YSqBgqqkz7Sb
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-What if we changed determine_rate ops to take a struct
-clk_determine_info (or some better named structure) instead of
-the current list of arguments that it currently takes? Then when
-we want to make these sorts of framework wide changes we can just
-throw a new member into that structure and be done.
+On Wed, May 13, 2015 at 07:33:54AM -0700, Kevin Hilman wrote:
+> Maxime Ripard <maxime.ripard@free-electrons.com> writes:
+>=20
+> > On Tue, May 12, 2015 at 03:35:50PM -0700, Stephen Boyd wrote:
+> >> On 05/08/15 03:02, Maxime Ripard wrote:
+> >> > On Thu, May 07, 2015 at 02:03:57PM -0700, Stephen Boyd wrote:
+> >> >> On 05/07/15 08:17, Kevin Hilman wrote:
+> >> >>> On Fri, May 1, 2015 at 4:40 PM, Stephen Boyd <sboyd@codeaurora.org=
+> wrote:
+> >> >>>> On 05/01/15 15:07, Heiko St=FCbner wrote:
+> >> >>>>> Am Freitag, 1. Mai 2015, 13:52:47 schrieb Stephen Boyd:
+> >> >>>>>
+> >> >>>>>>> Instead I guess we could hook it less deep into clk_get_sys, l=
+ike in the
+> >> >>>>>>> following patch?
+> >> >>>>>> It looks like it will work at least, but still I'd prefer to ke=
+ep the
+> >> >>>>>> orphan check contained to clk.c. How about this compile tested =
+only patch?
+> >> >>>>> I gave this a spin on my rk3288-firefly board. It still boots, t=
+he clock tree
+> >> >>>>> looks the same and it also still defers nicely in the scenario I=
+ needed it
+> >> >>>>> for. The implementation also looks nice - and of course much mor=
+e compact than
+> >> >>>>> my check in two places :-) . I don't know if you want to put thi=
+s as follow-up
+> >> >>>>> on top or fold it into the original orphan-check, so in any case
+> >> >>>>>
+> >> >>>>> Tested-by: Heiko Stuebner <heiko@sntech.de>
+> >> >>>>> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> >> >>>> Thanks. I'm leaning towards tossing your patch 2/2 and replacing =
+it with
+> >> >>>> my patch and a note that it's based on an earlier patch from you.
+> >> >>> It appears this has landed in linux-next in the form of 882667c1fc=
+f1
+> >> >>> clk: prevent orphan clocks from being used.  A bunch of boot failu=
+res
+> >> >>> for sunxi in today's linux-next[1] were bisected down to that patc=
+h.
+> >> >>>
+> >> >>> I confirmed that reverting that commit on top of next/master gets
+> >> >>> sunxi booting again.
+> >> >>>
+> >> >>>
+> >> >> Thanks for the report. I've removed the two clk orphan patches from
+> >> >> clk-next. Would it be possible to try with next-20150507 and
+> >> >> clk_ignore_unused on the command line?
+> >> > This makes it work, but it's not really an option.
+> >> >
+> >>=20
+> >> Hmm.. I thought it didn't fix it for Kevin. Confused.
+> >
+> > I'm too, but it does fix things here.
+>=20
+> To be more precise on what I tested.  I used next-20150507 and tested on
+> 4 different sunxi platforms.  First test was "normal" commandline,
+> second was with clk_ignore_unused appended:
+>=20
+>   - cubie: fail, fail
+>   - cubie2: fail, fail
+>   - bananpi: fail, pass
+>   - cubietruck: fail, pass
+>=20
+> So it seems to have some effect, but by itself, doesn't fix the issue.
 
-It doesn't solve the unsigned long to int return value problem
-though. We can solve that by gradually introducing a new op and
-handling another case in the rounding path. If we can come up
-with some good name for that new op like .decide_rate or
-something then it makes things nicer in the long run. I like the
-name .determine_rate though :/
+It's very odd, I actually tried with a cubie2 here...
 
-The benefit of all this is that we don't have to worry about
-finding the random clk providers that get added into other
-subsystems and fixing them up. If drivers actually care about
-this problem then they'll be fixed to use the proper op. FYI,
-last time we updated the function signature of .determine_rate we
-broke a couple drivers along the way.
+I'm booting on an initramfs and not MMC though, but I can't see how
+that can be related to our issue...
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--tcC6YSqBgqqkz7Sb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVU7ChAAoJEBx+YmzsjxAg+LMP+gOw15H51FiYzSbySBYbmVbj
+6GuBSneG629qCXG1AvkBVbewMJXDmgxs9YybAazxVzsLWzX4dizVvby9iCE66Q48
+opRlJAaTXGkZ9lElU2Ix1zmBxqxhr5a2OdbozabCBAbMN2xp1qqPNx1eXU8vwHj6
+83X/HHFcaZBby7w0VUbug7ON52gyEA4P90Gf7vdOmpUy43eRwB7ciptKOsRGd9oO
+TKF62fNGwwOqG4CnzLLAwn/JYe5gp57lokkK/ymek8/dDod3GHa8GzvSn9EqLDfY
+drRuHgIq/pIgC8uLIcLpm/If9r8TeQXfuvNzP9+a1RzXmCW4uzybIIvjYM+SFE5o
+JQbAM2M6Grn64uqi60kHREL9P5miLF5HGfjr5FTf60SS0b5Q08MTUbDbw9Kg7+rY
+6lmqien9w3KgjjlpI60TPCXUfQSvgHnUb+UFsf/NQGWeNQc/ypyo+1/mjEvYm51r
+WV375ekz7b830tYSDnkRLpORamyOdUQBNd9509rUYD1XlTnMKWLwELn8+xHI8zEd
+qg4ONt2z6Wud15913ireASHLDc+4wwrGBsMYTiOVQjov3HvcxwrLXP4ZJpfLH/vW
+PsBSVgynnXozyRn57ashsgW8a+PTWxc13kpGnwC/3alzo9PYh9s8c9AWWGdHY6jf
+8iq2nJjy8heph1ZQIblN
+=hDiT
+-----END PGP SIGNATURE-----
+
+--tcC6YSqBgqqkz7Sb--
