@@ -1,76 +1,63 @@
-Return-Path: <bleung@google.com>
-MIME-Version: 1.0
-Sender: bleung@google.com
-In-Reply-To: <1430919815-22380-1-git-send-email-thierry.reding@gmail.com>
-References: <CANLzEktaOSEFjszR6sRe4heQkp6H_eGi5aKEg8zeLCzaQMMVjQ@mail.gmail.com>
-	<1430919815-22380-1-git-send-email-thierry.reding@gmail.com>
-Date: Wed, 6 May 2015 10:49:16 -0700
-Message-ID: <CANLzEku9EyDh3dXMqK=ZLNb1F5tMvnnmgDRyJYQ16_6vLCDiKA@mail.gmail.com>
-Subject: Re: [PATCH] clk: tegra: Update struct tegra_clk_pll_params kerneldoc
-From: Benson Leung <bleung@chromium.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rhyland Klein <rklein@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Tero Kristo <t-kristo@ti.com>, Mike Turquette <mturquette@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-omap@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RFT PATCH 2/8] clk: ti: clk-2xxx: Prevent possible ERR_PTR dereference
+Date: Wed, 13 May 2015 15:54:41 +0900
+Message-id: <1431500087-2275-3-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
+References: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 6, 2015 at 6:43 AM, Thierry Reding <thierry.reding@gmail.com> wrote:
-> From: Thierry Reding <treding@nvidia.com>
->
-> Benson Leung pointed out that the kerneldoc for this structure has
-> become stale. Update the field descriptions to match the structure
-> content.
->
-> Reported-by: Benson Leung <bleung@chromium.org>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/clk/tegra/clk.h | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index f3782dedbdfb..c47e633616be 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -157,7 +157,7 @@ struct div_nmp {
->  };
->
->  /**
-> - * struct clk_pll_params - PLL parameters
-> + * struct tegra_clk_pll_params - PLL parameters
->   *
->   * @input_min:                 Minimum input frequency
->   * @input_max:                 Maximum input frequency
-> @@ -168,12 +168,22 @@ struct div_nmp {
->   * @base_reg:                  PLL base reg offset
->   * @misc_reg:                  PLL misc reg offset
->   * @lock_reg:                  PLL lock reg offset
-> - * @lock_bit_idx:              Bit index for PLL lock status
-> + * @lock_mask:                 Bitmask for PLL lock status
->   * @lock_enable_bit_idx:       Bit index to enable PLL lock
-> + * @iddq_reg:                  PLL IDDQ register offset
-> + * @iddq_bit_idx:              Bit index to enable PLL IDDQ
-> + * @aux_reg:                   AUX register offset
-> + * @dyn_ramp_reg:              Dynamic ramp control register offset
-> + * @ext_misc_reg:              Miscellaneous control register offsets
-> + * @pmc_divnm_reg:             n, m divider PMC override register offset (PLLM)
-> + * @pmc_divp_reg:              p divider PMC override register offset (PLLM)
-> + * @flags:                     PLL flags
-> + * @stepa_shift:               Dynamic ramp step A field shift
-> + * @stepb_shift:               Dynamic ramp step B field shift
->   * @lock_delay:                        Delay in us if PLL lock is not used
+Provide a wrapper to prevent possible ERR_PTR dereference by
+clk_get_rate().
 
+The return value of clk_get_sys() was immediately used in
+clk_get_rate(). The first one may return ERR_PTR and the latter only
+checks if supplied argument is non-NULL.
 
-Missed a couple -
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/ti/clk-2xxx.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-@max_p:
-@pdiv_tohw:
-
-Thanks!
-
+diff --git a/drivers/clk/ti/clk-2xxx.c b/drivers/clk/ti/clk-2xxx.c
+index c808ab3d2bb2..d6996c3db843 100644
+--- a/drivers/clk/ti/clk-2xxx.c
++++ b/drivers/clk/ti/clk-2xxx.c
+@@ -220,6 +220,16 @@ enum {
+ 	OMAP2_SOC_OMAP2430,
+ };
+ 
++static unsigned long __init omap2xxx_clk_get_rate(const char *clk_name)
++{
++	struct clk *clk = clk_get_sys(NULL, clk_name);
++
++	if (IS_ERR(clk))
++		return 0;
++
++	return clk_get_rate(clk);
++}
++
+ static int __init omap2xxx_dt_clk_init(int soc_type)
+ {
+ 	ti_dt_clocks_register(omap2xxx_clks);
+@@ -237,10 +247,10 @@ static int __init omap2xxx_dt_clk_init(int soc_type)
+ 				     ARRAY_SIZE(enable_init_clks));
+ 
+ 	pr_info("Clocking rate (Crystal/DPLL/MPU): %ld.%01ld/%ld/%ld MHz\n",
+-		(clk_get_rate(clk_get_sys(NULL, "sys_ck")) / 1000000),
+-		(clk_get_rate(clk_get_sys(NULL, "sys_ck")) / 100000) % 10,
+-		(clk_get_rate(clk_get_sys(NULL, "dpll_ck")) / 1000000),
+-		(clk_get_rate(clk_get_sys(NULL, "mpu_ck")) / 1000000));
++		(omap2xxx_clk_get_rate("sys_ck") / 1000000),
++		(omap2xxx_clk_get_rate("sys_ck") / 100000) % 10,
++		(omap2xxx_clk_get_rate("dpll_ck") / 1000000),
++		(omap2xxx_clk_get_rate("mpu_ck") / 1000000));
+ 
+ 	return 0;
+ }
 -- 
-Benson Leung
-Software Engineer, Chrom* OS
-bleung@chromium.org
+1.9.1
