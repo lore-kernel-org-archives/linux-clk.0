@@ -1,141 +1,211 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v4 10/20] clk: tegra: pll: Add logic for out-of-table rates for T210
-Date: Mon, 4 May 2015 12:37:30 -0400
-Message-ID: <1430757460-9478-11-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2 5/5] cpufreq: arm_big_little: add SCPI interface driver
+Date: Fri, 15 May 2015 00:03:12 +0200
+Message-ID: <4255582.h4bFD3eA9g@vostro.rjw.lan>
+In-Reply-To: <1431618155-3132-6-git-send-email-sudeep.holla@arm.com>
+References: <1431618155-3132-1-git-send-email-sudeep.holla@arm.com> <1431618155-3132-6-git-send-email-sudeep.holla@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-For Tegra210, the logic to calculate out-of-table rates is different
-from previous generations. Add callbacks that can be overridden to
-allow for different ways of calculating rates. Default to
-_cal_rate when not specified.
+On Thursday, May 14, 2015 04:42:35 PM Sudeep Holla wrote:
+> On some ARM based systems, a separate Cortex-M based System Control
+> Processor(SCP) provides the overall power, clock, reset and system
+> control including CPU DVFS. SCPI Message Protocol is used to
+> communicate with the SCPI.
+> 
+> This patch adds a interface driver for adding OPPs and registering
+> the arm_big_little cpufreq driver for such systems.
+> 
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: linux-pm@vger.kernel.org
+> ---
+>  drivers/cpufreq/Kconfig.arm    |   9 +++
+>  drivers/cpufreq/Makefile       |   1 +
+>  drivers/cpufreq/scpi-cpufreq.c | 124 +++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 134 insertions(+)
+>  create mode 100644 drivers/cpufreq/scpi-cpufreq.c
+> 
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 611cb09239eb..6419b17b89dd 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -24,6 +24,15 @@ config ARM_VEXPRESS_SPC_CPUFREQ
+>            This add the CPUfreq driver support for Versatile Express
+>  	  big.LITTLE platforms using SPC for power management.
+>  
+> +config ARM_SCPI_CPUFREQ
+> +        tristate "SCPI based CPUfreq driver"
+> +	depends on ARM_BIG_LITTLE_CPUFREQ && ARM_SCPI_PROTOCOL
+> +        help
+> +	  This adds the CPUfreq driver support for ARM big.LITTLE platforms
+> +	  using SCPI protocol for CPU power management.
+> +
+> +	  This driver uses SCPI Message Protocol driver to interact with the
+> +	  firmware providing the CPU DVFS functionality.
+>  
+>  config ARM_EXYNOS_CPUFREQ
+>  	tristate "SAMSUNG EXYNOS CPUfreq Driver"
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index cdce92ae2e8b..02fc9f849d4b 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -79,6 +79,7 @@ obj-$(CONFIG_ARM_SA1110_CPUFREQ)	+= sa1110-cpufreq.o
+>  obj-$(CONFIG_ARM_SPEAR_CPUFREQ)		+= spear-cpufreq.o
+>  obj-$(CONFIG_ARM_TEGRA_CPUFREQ)		+= tegra-cpufreq.o
+>  obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
+> +obj-$(CONFIG_ARM_SCPI_CPUFREQ)		+= scpi-cpufreq.o
+>  
+>  ##################################################################################
+>  # PowerPC platform drivers
+> diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
+> new file mode 100644
+> index 000000000000..443570801229
+> --- /dev/null
+> +++ b/drivers/cpufreq/scpi-cpufreq.c
+> @@ -0,0 +1,124 @@
+> +/*
+> + * SCPI CPUFreq Interface driver
 
-Based on original work by Aleksandr Frid <afrid@nvidia.com>
+It would be good to expand the TLA here IMO.
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c |   24 ++++++++++++++++++++++--
- drivers/clk/tegra/clk.h     |   10 ++++++++++
- 2 files changed, 32 insertions(+), 2 deletions(-)
+The rest I'm leaving to Viresh. :-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 2a559408cee1..0b9cbe12a3eb 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -687,7 +687,7 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	}
- 
- 	if (_get_table_rate(hw, &cfg, rate, parent_rate) &&
--	    _calc_rate(hw, &cfg, rate, parent_rate)) {
-+	    pll->params->calc_rate(hw, &cfg, rate, parent_rate)) {
- 		pr_err("%s: Failed to set %s rate %lu\n", __func__,
- 		       __clk_get_name(hw->clk), rate);
- 		WARN_ON(1);
-@@ -722,7 +722,7 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 		return __clk_get_rate(hw->clk);
- 
- 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
--	    _calc_rate(hw, &cfg, rate, *prate))
-+	    pll->params->calc_rate(hw, &cfg, rate, *prate))
- 		return -EINVAL;
- 
- 	return cfg.output_rate;
-@@ -912,12 +912,28 @@ const struct clk_ops tegra_clk_plle_ops = {
- static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
- 			   unsigned long parent_rate)
- {
-+	u16 mdiv = parent_rate / pll_params->cf_min;
-+
-+	if (pll_params->flags & TEGRA_MDIV_NEW)
-+		return (!pll_params->mdiv_default ? mdiv :
-+			min(mdiv, pll_params->mdiv_default));
-+
-+	if (pll_params->mdiv_default)
-+		return pll_params->mdiv_default;
-+
- 	if (parent_rate > pll_params->cf_max)
- 		return 2;
- 	else
- 		return 1;
- }
- 
-+u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+
-+	return (u16)_pll_fixed_mdiv(pll->params, input_rate);
-+}
-+
- static unsigned long _clip_vco_min(unsigned long vco_min,
- 				   unsigned long parent_rate)
- {
-@@ -1492,6 +1508,10 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
- 	init.parent_names = (parent_name ? &parent_name : NULL);
- 	init.num_parents = (parent_name ? 1 : 0);
- 
-+	/* Default to _calc_rate if unspecified */
-+	if (!pll->params->calc_rate)
-+		pll->params->calc_rate = _calc_rate;
-+
- 	/* Data in .init is copied by clk_register(), so stack variable OK */
- 	pll->hw.init = &init;
- 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 3f92f1ad3961..b63ef31a2d7a 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -199,6 +199,8 @@ struct div_nmp {
-  *     base register.
-  * TEGRA_PLL_BYPASS - PLL has bypass bit
-  * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
-+ * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
-+ *     it may be more accurate (especially if SDM present)
-  */
- struct tegra_clk_pll_params {
- 	unsigned long	input_min;
-@@ -235,7 +237,13 @@ struct tegra_clk_pll_params {
- 	struct div_nmp	*div_nmp;
- 	struct tegra_clk_pll_freq_table	*freq_table;
- 	unsigned long	fixed_rate;
-+	bool		vco_out;
-+	u16		mdiv_default;
-+	u32	(*round_p_to_pdiv)(u32 p, u32 *pdiv);
- 	void	(*set_gain)(struct tegra_clk_pll_freq_table *cfg);
-+	int	(*calc_rate)(struct clk_hw *hw,
-+			struct tegra_clk_pll_freq_table *cfg,
-+			unsigned long rate, unsigned long parent_rate);
- };
- 
- #define TEGRA_PLL_USE_LOCK BIT(0)
-@@ -249,6 +257,7 @@ struct tegra_clk_pll_params {
- #define TEGRA_PLL_LOCK_MISC BIT(8)
- #define TEGRA_PLL_BYPASS BIT(9)
- #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
-+#define TEGRA_MDIV_NEW BIT(11)
- 
- /**
-  * struct tegra_clk_pll - Tegra PLL clock
-@@ -659,5 +668,6 @@ void tegra114_clock_deassert_dfll_dvco_reset(void);
- typedef void (*tegra_clk_apply_init_table_func)(void);
- extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
- int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
-+u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
- 
- #endif /* TEGRA_CLK_H */
+> + *
+> + * It provides necessary ops to arm_big_little cpufreq driver.
+> + *
+> + * Copyright (C) 2015 ARM Ltd.
+> + * Sudeep Holla <sudeep.holla@arm.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+> + * kind, whether express or implied; without even the implied warranty
+> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +
+> +#include <linux/cpufreq.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_opp.h>
+> +#include <linux/scpi_protocol.h>
+> +#include <linux/types.h>
+> +
+> +#include "arm_big_little.h"
+> +
+> +static struct scpi_ops *scpi_ops;
+> +
+> +static struct scpi_dvfs_info *scpi_get_dvfs_info(struct device *cpu_dev)
+> +{
+> +	u8 domain = topology_physical_package_id(cpu_dev->id);
+> +
+> +	if (domain < 0)
+> +		return ERR_PTR(-EINVAL);
+> +	return scpi_ops->dvfs_get_info(domain);
+> +}
+> +
+> +static int scpi_opp_table_ops(struct device *cpu_dev, bool remove)
+> +{
+> +	int idx, ret = 0;
+> +	struct scpi_opp *opp;
+> +	struct scpi_dvfs_info *info = scpi_get_dvfs_info(cpu_dev);
+> +
+> +	if (IS_ERR(info))
+> +		return PTR_ERR(info);
+> +
+> +	if (!info->opps)
+> +		return -EIO;
+> +
+> +	for (opp = info->opps, idx = 0; idx < info->count; idx++, opp++) {
+> +		if (remove)
+> +			dev_pm_opp_remove(cpu_dev, opp->freq);
+> +		else
+> +			ret = dev_pm_opp_add(cpu_dev, opp->freq,
+> +					     opp->m_volt * 1000);
+> +		if (ret) {
+> +			dev_warn(cpu_dev, "failed to add opp %uHz %umV\n",
+> +				 opp->freq, opp->m_volt);
+> +			while (idx-- > 0)
+> +				dev_pm_opp_remove(cpu_dev, (--opp)->freq);
+> +			return ret;
+> +		}
+> +	}
+> +	return ret;
+> +}
+> +
+> +static int scpi_get_transition_latency(struct device *cpu_dev)
+> +{
+> +	struct scpi_dvfs_info *info = scpi_get_dvfs_info(cpu_dev);
+> +
+> +	if (IS_ERR(info))
+> +		return PTR_ERR(info);
+> +	return info->latency;
+> +}
+> +
+> +static int scpi_init_opp_table(struct device *cpu_dev)
+> +{
+> +	return scpi_opp_table_ops(cpu_dev, false);
+> +}
+> +
+> +static void scpi_free_opp_table(struct device *cpu_dev)
+> +{
+> +	scpi_opp_table_ops(cpu_dev, true);
+> +}
+> +
+> +static struct cpufreq_arm_bL_ops scpi_cpufreq_ops = {
+> +	.name	= "scpi",
+> +	.get_transition_latency = scpi_get_transition_latency,
+> +	.init_opp_table = scpi_init_opp_table,
+> +	.free_opp_table = scpi_free_opp_table,
+> +};
+> +
+> +static int scpi_cpufreq_probe(struct platform_device *pdev)
+> +{
+> +	scpi_ops = get_scpi_ops();
+> +	if (!scpi_ops)
+> +		return -EIO;
+> +
+> +	return bL_cpufreq_register(&scpi_cpufreq_ops);
+> +}
+> +
+> +static int scpi_cpufreq_remove(struct platform_device *pdev)
+> +{
+> +	bL_cpufreq_unregister(&scpi_cpufreq_ops);
+> +	scpi_ops = NULL;
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver scpi_cpufreq_platdrv = {
+> +	.driver = {
+> +		.name	= "scpi-cpufreq",
+> +		.owner	= THIS_MODULE,
+> +	},
+> +	.probe		= scpi_cpufreq_probe,
+> +	.remove		= scpi_cpufreq_remove,
+> +};
+> +module_platform_driver(scpi_cpufreq_platdrv);
+> +
+> +MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
+> +MODULE_DESCRIPTION("ARM SCPI CPUFreq interface driver");
+> +MODULE_LICENSE("GPL v2");
+> 
+
 -- 
-1.7.9.5
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
