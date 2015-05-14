@@ -1,41 +1,44 @@
-Return-Path: <sha@pengutronix.de>
-Date: Mon, 18 May 2015 07:54:21 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Ricky Liang <jcliang@chromium.org>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Henry Chen <henryc.chen@mediatek.com>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC..." <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH v2] clk: mediatek: Initialize clk_init_data
-Message-ID: <20150518055421.GL6325@pengutronix.de>
-References: <1431920513-1491-1-git-send-email-jcliang@chromium.org>
+Return-Path: <bleung@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1431920513-1491-1-git-send-email-jcliang@chromium.org>
+Sender: bleung@google.com
+In-Reply-To: <1431451444-23155-22-git-send-email-rklein@nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+	<1431451444-23155-22-git-send-email-rklein@nvidia.com>
+Date: Thu, 14 May 2015 13:23:02 -0700
+Message-ID: <CANLzEkumVdds8AkDRNGdp_b20Eq1vmf1gzuqJuYnLsRYgVHCFw@mail.gmail.com>
+Subject: Re: [PATCH v5 20/21] clk: tegra210: add support for Tegra210 clocks
+From: Benson Leung <bleung@chromium.org>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ricky,
+On Tue, May 12, 2015 at 10:24 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> +static int _p_div_to_hw(struct clk_hw *hw, u8 p_div)
+> +{
+> +       struct tegra_clk_pll *pll = to_clk_pll(hw);
+> +       struct pdiv_map *p_tohw = pll->params->pdiv_tohw;
+> +
+> +       if (p_tohw) {
+> +               while (p_tohw->pdiv) {
+> +                       if (p_div <= p_tohw->pdiv)
+> +                               return p_tohw->hw_val;
+> +                       p_tohw++;
+> +               }
+> +               return -EINVAL;
+> +       }
+> +       return -EINVAL;
+> +}
 
-On Mon, May 18, 2015 at 11:41:49AM +0800, Ricky Liang wrote:
-> The variable init (struct clk_init_data) is allocated on the stack.
-> We weren't initializing the .flags field, so it contains random junk,
-> which can cause all kinds of interesting issues when the flags are
-> parsed by clk_register.
-
-It seems we have the same problem in clk-gate.c aswell. We do initialize
-do .flags field there, so this is no urgent problem, but we might get a
-real problem when additional fields are added to struct clk_init_data.
-Care to fix that aswell along with this patch?
-
-Sascha
+This is the same function as the one that lives in clk-pll.c. Can you
+make these common?
 
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Benson Leung
+Software Engineer, Chrom* OS
+bleung@chromium.org
