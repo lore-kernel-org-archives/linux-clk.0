@@ -1,102 +1,76 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <55528046.4030107@codeaurora.org>
-Date: Tue, 12 May 2015 15:35:50 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-CC: Kevin Hilman <khilman@kernel.org>, =?windows-1252?Q?Heiko_St=FCbner?=
- <heiko@sntech.de>, Mike Turquette <mturquette@linaro.org>,
- Doug Anderson <dianders@chromium.org>,
- linux-clk@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- Boris Brezillon <boris.brezillon@free-electrons.com>,
- Alex Elder <elder@linaro.org>,
- Alexandre Belloni <alexandre.belloni@free-electrons.com>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Max Filippov <jcmvbkbc@gmail.com>, Sascha Hauer <kernel@pengutronix.de>,
- Zhangfei Gao <zhangfei.gao@linaro.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, Chao Xie <chao.xie@marvell.com>,
- Jason Cooper <jason@lakedaemon.net>,
- Stefan Wahren <stefan.wahren@i2se.com>,
- Andrew Bresticker <abrestic@chromium.org>,
- Robert Jarzmik <robert.jarzmik@free.fr>,
- Georgi Djakov <georgi.djakov@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Barry Song <baohua@kernel.org>,
- Dinh Nguyen <dinguyen@opensource.altera.com>,
- Viresh Kumar <viresh.linux@gmail.com>,
- Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
- =?windows-1252?Q?Emilio_L=F3pez?= <emilio@elopez.com.ar>,
- Peter De Sc hrijver <pdeschrijver@nvidia.com>,
- Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- Pawel Moll <pawel.moll@arm.com>,
- Michal Simek <michal.simek@xilinx.com>, Olof Johansson <olof@lixom.net>,
- Tyler Baker <tyler.baker@linaro.org>
-Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
-References: <1429735986-18592-1-git-send-email-heiko@sntech.de> <1981330.kGUrTurMy5@diego> <5543E79F.2080400@codeaurora.org> <22709390.NTAlubMgNB@diego> <55440EDA.4030905@codeaurora.org> <CAMAWPa_n+59+v+x3fKkmdtW1wMJF7kqtTjLLowmv1xwGWprYJw@mail.gmail.com> <554BD33D.7050907@codeaurora.org> <20150508100247.GQ11057@lukather>
-In-Reply-To: <20150508100247.GQ11057@lukather>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <sudeep.holla@arm.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH v2 4/5] clk: scpi: add support for cpufreq virtual device
+Date: Thu, 14 May 2015 16:42:34 +0100
+Message-Id: <1431618155-3132-5-git-send-email-sudeep.holla@arm.com>
+In-Reply-To: <1431618155-3132-1-git-send-email-sudeep.holla@arm.com>
+References: <1431618155-3132-1-git-send-email-sudeep.holla@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/08/15 03:02, Maxime Ripard wrote:
-> On Thu, May 07, 2015 at 02:03:57PM -0700, Stephen Boyd wrote:
->> On 05/07/15 08:17, Kevin Hilman wrote:
->>> On Fri, May 1, 2015 at 4:40 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->>>> On 05/01/15 15:07, Heiko Stübner wrote:
->>>>> Am Freitag, 1. Mai 2015, 13:52:47 schrieb Stephen Boyd:
->>>>>
->>>>>>> Instead I guess we could hook it less deep into clk_get_sys, like in the
->>>>>>> following patch?
->>>>>> It looks like it will work at least, but still I'd prefer to keep the
->>>>>> orphan check contained to clk.c. How about this compile tested only patch?
->>>>> I gave this a spin on my rk3288-firefly board. It still boots, the clock tree
->>>>> looks the same and it also still defers nicely in the scenario I needed it
->>>>> for. The implementation also looks nice - and of course much more compact than
->>>>> my check in two places :-) . I don't know if you want to put this as follow-up
->>>>> on top or fold it into the original orphan-check, so in any case
->>>>>
->>>>> Tested-by: Heiko Stuebner <heiko@sntech.de>
->>>>> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
->>>> Thanks. I'm leaning towards tossing your patch 2/2 and replacing it with
->>>> my patch and a note that it's based on an earlier patch from you.
->>> It appears this has landed in linux-next in the form of 882667c1fcf1
->>> clk: prevent orphan clocks from being used.  A bunch of boot failures
->>> for sunxi in today's linux-next[1] were bisected down to that patch.
->>>
->>> I confirmed that reverting that commit on top of next/master gets
->>> sunxi booting again.
->>>
->>>
->> Thanks for the report. I've removed the two clk orphan patches from
->> clk-next. Would it be possible to try with next-20150507 and
->> clk_ignore_unused on the command line?
-> This makes it work, but it's not really an option.
->
+The clocks for the CPUs are provided by SCP and are managed by this
+clock driver. So the cpufreq device needs to be added only after the
+clock get registered and removed when this driver is unloaded.
 
-Hmm.. I thought it didn't fix it for Kevin. Confused.
+This patch manages the cpufreq virtual device based on the clock
+availability.
 
->> Also we can try to see if critical clocks aren't being forced on by
->> applying this patch and looking for clk_get() failures
-> And that shows that the CPU and DDR clocks are not protected, which
-> obviously is pretty mad.
->
-> I've mass converted all our probing code to use OF_CLK_DECLARE, and
-> make things work again.
->
-> http://code.bulix.org/5goa5j-88345?raw
->
-> Is this an acceptable solution?
->
-> We were already moving to this, I'm not really fond of doing this like
-> that, but I guess this whole debacle makes it necessary.
->
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
+Cc: linux-clk@vger.kernel.org
+---
+ drivers/clk/clk-scpi.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-I wonder why we can't switch out the clk_ops on the affected platforms +
-clocks to be read-only (at least for the enable/disable part)? That
-would fix it just the same right? I wasn't around for the original
-discussion regarding this always-on stuff so perhaps I've missed something.
-
+diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
+index 208f68d14214..092b4231b1de 100644
+--- a/drivers/clk/clk-scpi.c
++++ b/drivers/clk/clk-scpi.c
+@@ -37,6 +37,7 @@ struct scpi_clk {
+ #define to_scpi_clk(clk) container_of(clk, struct scpi_clk, hw)
+ 
+ static struct scpi_ops *scpi_ops;
++static struct platform_device *cpufreq_dev;
+ 
+ static unsigned long scpi_clk_recalc_rate(struct clk_hw *hw,
+ 					  unsigned long parent_rate)
+@@ -247,6 +248,11 @@ static int scpi_clocks_remove(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *child, *np = dev->of_node;
+ 
++	if (cpufreq_dev) {
++		platform_device_unregister(cpufreq_dev);
++		cpufreq_dev = NULL;
++	}
++
+ 	for_each_available_child_of_node(np, child)
+ 		of_clk_del_provider(np);
+ 	scpi_ops = NULL;
+@@ -270,6 +276,12 @@ static int scpi_clocks_probe(struct platform_device *pdev)
+ 			return ret;
+ 		}
+ 	}
++	/* Add the virtual cpufreq device */
++	cpufreq_dev = platform_device_register_simple("scpi-cpufreq",
++						      -1, NULL, 0);
++	if (!cpufreq_dev)
++		pr_warn("unable to register cpufreq device");
++
+ 	return 0;
+ }
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
