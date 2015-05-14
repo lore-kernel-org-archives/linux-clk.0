@@ -1,151 +1,376 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>,
-	Bill Huang <bilhuang@nvidia.com>
-Subject: [PATCH v3 16/20] clk: tegra: pll: Add Set_default logic
-Date: Fri, 1 May 2015 14:54:03 -0400
-Message-ID: <1430506447-29074-17-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
-References: <1430506447-29074-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sudeep.holla@arm.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH v2 3/5] clk: add support for clocks provided by SCP(System Control Processor)
+Date: Thu, 14 May 2015 16:42:33 +0100
+Message-Id: <1431618155-3132-4-git-send-email-sudeep.holla@arm.com>
+In-Reply-To: <1431618155-3132-1-git-send-email-sudeep.holla@arm.com>
+References: <1431618155-3132-1-git-send-email-sudeep.holla@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bill Huang <bilhuang@nvidia.com>
+On some ARM based systems, a separate Cortex-M based System Control
+Processor(SCP) provides the overall power, clock, reset and system
+control. System Control and Power Interface(SCPI) Message Protocol
+is defined for the communication between the Application Cores(AP)
+and the SCP.
 
-Add logic which (if specified for a pll) can verify that a PLL is set
-to the proper default value and if not can set it. This can be
-specified per PLL as each will have different default values.
+This patch adds support for the clocks provided by SCP using SCPI
+protocol.
 
-Based on original work by Aleksandr Frid <afrid@nvidia.com>
-
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
+Cc: linux-clk@vger.kernel.org
 ---
-v2:
-  - Remove MACRO for PLL_MISC_CHECK_DEFAULT as suggested, and instead
-    the tegra210 driver will include an inline version of this function.
+ drivers/clk/Kconfig    |  10 ++
+ drivers/clk/Makefile   |   1 +
+ drivers/clk/clk-scpi.c | 293 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 304 insertions(+)
+ create mode 100644 drivers/clk/clk-scpi.c
 
- drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
- drivers/clk/tegra/clk.h     |    2 ++
- 2 files changed, 37 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 00f0e621533a..28a2376cd8a7 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -658,15 +658,28 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 			unsigned long rate)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	struct tegra_clk_pll_freq_table old_cfg;
- 	int state, ret = 0;
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 9897f353bf1a..67e5c6469731 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -59,6 +59,16 @@ config COMMON_CLK_RK808
+ 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
+ 	  by control register.
  
- 	state = clk_pll_is_enabled(hw);
- 
-+	_get_pll_mnp(pll, &old_cfg);
++config COMMON_CLK_SCPI
++        tristate "Clock driver controlled via SCPI interface"
++        depends on ARM_SCPI_PROTOCOL
++        ---help---
++          This driver provides support for clocks that are controlled
++          by firmware that implements the SCPI interface.
 +
-+	if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
-+			(cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
-+		ret = pll->params->dyn_ramp(pll, cfg);
-+		if (!ret)
-+			return 0;
++	  This driver uses SCPI Message Protocol to interact with the
++	  firmware providing all the clock controls.
++
+ config COMMON_CLK_SI5351
+ 	tristate "Clock driver for SiLabs 5351A/B/C"
+ 	depends on I2C
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 3d00c25382c5..442ab6ebd5b1 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -36,6 +36,7 @@ obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
+ obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
+ obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
+ obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
++obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
+ obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
+ obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
+ obj-$(CONFIG_CLK_TWL6040)		+= clk-twl6040.o
+diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
+new file mode 100644
+index 000000000000..208f68d14214
+--- /dev/null
++++ b/drivers/clk/clk-scpi.c
+@@ -0,0 +1,293 @@
++/*
++ * System Control and Power Interface (SCPI) Protocol based clock driver
++ *
++ * Copyright (C) 2015 ARM Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/clkdev.h>
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/of.h>
++#include <linux/module.h>
++#include <linux/of_platform.h>
++#include <linux/scpi_protocol.h>
++
++struct scpi_clk {
++	u32 id;
++	const char *name;
++	struct clk_hw hw;
++	struct scpi_dvfs_info *info;
++	unsigned long rate_min;
++	unsigned long rate_max;
++};
++
++#define to_scpi_clk(clk) container_of(clk, struct scpi_clk, hw)
++
++static struct scpi_ops *scpi_ops;
++
++static unsigned long scpi_clk_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct scpi_clk *clk = to_scpi_clk(hw);
++
++	return scpi_ops->clk_get_val(clk->id);
++}
++
++static long scpi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *parent_rate)
++{
++	struct scpi_clk *clk = to_scpi_clk(hw);
++
++	if (WARN_ON(clk->rate_min && rate < clk->rate_min))
++		rate = clk->rate_min;
++	if (WARN_ON(clk->rate_max && rate > clk->rate_max))
++		rate = clk->rate_max;
++
++	return rate;
++}
++
++static int scpi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
++			     unsigned long parent_rate)
++{
++	struct scpi_clk *clk = to_scpi_clk(hw);
++
++	return scpi_ops->clk_set_val(clk->id, rate);
++}
++
++static struct clk_ops scpi_clk_ops = {
++	.recalc_rate = scpi_clk_recalc_rate,
++	.round_rate = scpi_clk_round_rate,
++	.set_rate = scpi_clk_set_rate,
++};
++
++/* find closest match to given frequency in OPP table */
++static int __scpi_dvfs_round_rate(struct scpi_clk *clk, unsigned long rate)
++{
++	int idx;
++	u32 fmin = 0, fmax = ~0, ftmp;
++	struct scpi_opp *opp = clk->info->opps;
++
++	for (idx = 0; idx < clk->info->count; idx++, opp++) {
++		ftmp = opp->freq;
++		if (ftmp >= (u32)rate) {
++			if (ftmp <= fmax)
++				fmax = ftmp;
++			break;
++		} else if (ftmp >= fmin) {
++			fmin = ftmp;
++		}
++	}
++	return fmax != ~0 ? fmax : fmin;
++}
++
++static unsigned long scpi_dvfs_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct scpi_clk *clk = to_scpi_clk(hw);
++	int idx = scpi_ops->dvfs_get_idx(clk->id);
++	struct scpi_opp *opp;
++
++	if (idx < 0)
++		return 0;
++
++	opp = clk->info->opps + idx;
++	return opp->freq;
++}
++
++static long scpi_dvfs_round_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long *parent_rate)
++{
++	struct scpi_clk *clk = to_scpi_clk(hw);
++
++	return __scpi_dvfs_round_rate(clk, rate);
++}
++
++static int __scpi_find_dvfs_index(struct scpi_clk *clk, unsigned long rate)
++{
++	int idx, max_opp = clk->info->count;
++	struct scpi_opp *opp = clk->info->opps;
++
++	for (idx = 0; idx < max_opp; idx++, opp++)
++		if (opp->freq == rate)
++			return idx;
++	return -EINVAL;
++}
++
++static int scpi_dvfs_set_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long parent_rate)
++{
++	struct scpi_clk *clk = to_scpi_clk(hw);
++	int ret = __scpi_find_dvfs_index(clk, rate);
++
++	if (ret < 0)
++		return ret;
++	return scpi_ops->dvfs_set_idx(clk->id, (u8)ret);
++}
++
++static struct clk_ops scpi_dvfs_ops = {
++	.recalc_rate = scpi_dvfs_recalc_rate,
++	.round_rate = scpi_dvfs_round_rate,
++	.set_rate = scpi_dvfs_set_rate,
++};
++
++static const struct of_device_id scpi_clk_match[] = {
++	{ .compatible = "arm,scpi-dvfs", .data = &scpi_dvfs_ops, },
++	{ .compatible = "arm,scpi-clk", .data = &scpi_clk_ops, },
++	{}
++};
++
++static struct clk *
++scpi_clk_ops_init(struct device *dev, struct device_node *np,
++		  struct scpi_clk *sclk)
++{
++	struct clk_init_data init;
++
++	init.name = sclk->name;
++	init.flags = CLK_IS_ROOT;
++	init.num_parents = 0;
++	init.ops = of_match_node(scpi_clk_match, np)->data;
++	sclk->hw.init = &init;
++
++	if (init.ops == &scpi_dvfs_ops) {
++		struct scpi_dvfs_info *info = scpi_ops->dvfs_get_info(sclk->id);
++
++		if (IS_ERR(info))
++			return NULL;
++		sclk->info = info;
++	} else if (init.ops == &scpi_clk_ops) {
++		int ret = scpi_ops->clk_get_range(sclk->id, &sclk->rate_min,
++						  &sclk->rate_max);
++		if (ret || !sclk->rate_max)
++			return NULL;
++	} else {
++		return NULL;
 +	}
 +
- 	if (state) {
- 		pll_clk_stop_ss(pll);
- 		_clk_pll_disable(hw);
- 	}
- 
-+	if (!pll->params->defaults_set && pll->params->set_defaults)
-+		pll->params->set_defaults(pll);
++	return devm_clk_register(dev, &sclk->hw);
++}
 +
- 	_update_pll_mnp(pll, cfg);
- 
- 	if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
-@@ -1526,6 +1539,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
- 	if (!pll->params->calc_rate)
- 		pll->params->calc_rate = _calc_rate;
- 
-+	if (pll->params->set_defaults)
-+		pll->params->set_defaults(pll);
++static int scpi_clk_add(struct device *dev, struct device_node *np)
++{
++	struct clk **clks;
++	int idx, count;
++	struct clk_onecell_data *clk_data;
 +
- 	/* Data in .init is copied by clk_register(), so stack variable OK */
- 	pll->hw.init = &init;
- 
-@@ -1644,7 +1660,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 	struct tegra_clk_pll *pll;
- 	struct clk *clk, *parent;
- 	unsigned long parent_rate;
--	int err;
- 	u32 val, val_iddq;
- 
- 	parent = __clk_lookup(parent_name);
-@@ -1665,18 +1680,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 		pll_params->vco_min = pll_params->adjust_vco(pll_params,
- 							     parent_rate);
- 
--	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
--	if (err)
--		return ERR_PTR(err);
-+	/*
-+	 * If the pll has a set_defaults callback, it will take care of
-+	 * configuring dynamic ramping and setting IDDQ in that path.
-+	 */
-+	if (!pll_params->set_defaults) {
-+		int err;
- 
--	val = readl_relaxed(clk_base + pll_params->base_reg);
--	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
-+		err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
-+		if (err)
-+			return ERR_PTR(err);
- 
--	if (val & PLL_BASE_ENABLE)
--		WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
--	else {
--		val_iddq |= BIT(pll_params->iddq_bit_idx);
--		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
-+		val = readl_relaxed(clk_base + pll_params->base_reg);
-+		val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
++	count = of_property_count_strings(np, "clock-output-names");
++	if (count < 0) {
++		dev_err(dev, "%s: invalid clock output count\n", np->name);
++		return -EINVAL;
++	}
 +
-+		if (val & PLL_BASE_ENABLE)
-+			WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
-+		else {
-+			val_iddq |= BIT(pll_params->iddq_bit_idx);
-+			writel_relaxed(val_iddq,
-+				       clk_base + pll_params->iddq_reg);
++	clk_data = devm_kmalloc(dev, sizeof(*clk_data), GFP_KERNEL);
++	if (!clk_data) {
++		dev_err(dev, "failed to allocate clock provider data\n");
++		return -ENOMEM;
++	}
++
++	clks = devm_kmalloc(dev, count * sizeof(*clks), GFP_KERNEL);
++	if (!clks) {
++		dev_err(dev, "failed to allocate clock providers\n");
++		return -ENOMEM;
++	}
++
++	for (idx = 0; idx < count; idx++) {
++		struct scpi_clk *sclk;
++		u32 val;
++
++		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
++		if (!sclk) {
++			dev_err(dev, "failed to allocate scpi clocks\n");
++			return -ENOMEM;
 +		}
- 	}
- 
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 850521d42be6..84c417576c18 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -239,6 +239,7 @@ struct tegra_clk_pll_params {
- 	int		stepb_shift;
- 	int		lock_delay;
- 	int		max_p;
-+	bool		defaults_set;
- 	struct pdiv_map *pdiv_tohw;
- 	struct div_nmp	*div_nmp;
- 	struct tegra_clk_pll_freq_table	*freq_table;
-@@ -254,6 +255,7 @@ struct tegra_clk_pll_params {
- 				unsigned long parent_rate);
- 	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
- 			struct tegra_clk_pll_freq_table *cfg);
-+	void	(*set_defaults)(struct tegra_clk_pll *pll);
- };
- 
- #define TEGRA_PLL_USE_LOCK BIT(0)
++
++		if (of_property_read_string_index(np, "clock-output-names",
++						  idx, &sclk->name)) {
++			dev_err(dev, "invalid clock name @ %s\n", np->name);
++			return -EINVAL;
++		}
++
++		if (of_property_read_u32_index(np, "clock-indices",
++					       idx, &val)) {
++			dev_err(dev, "invalid clock index @ %s\n", np->name);
++			return -EINVAL;
++		}
++
++		sclk->id = val;
++
++		clks[idx] = scpi_clk_ops_init(dev, np, sclk);
++		if (IS_ERR_OR_NULL(clks[idx]))
++			dev_err(dev, "failed to register clock '%s'\n",
++				sclk->name);
++		else
++			dev_dbg(dev, "Registered clock '%s'\n", sclk->name);
++	}
++
++	clk_data->clks = clks;
++	clk_data->clk_num = idx;
++	of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
++
++	return 0;
++}
++
++static int scpi_clocks_remove(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *child, *np = dev->of_node;
++
++	for_each_available_child_of_node(np, child)
++		of_clk_del_provider(np);
++	scpi_ops = NULL;
++	return 0;
++}
++
++static int scpi_clocks_probe(struct platform_device *pdev)
++{
++	int ret;
++	struct device *dev = &pdev->dev;
++	struct device_node *child, *np = dev->of_node;
++
++	scpi_ops = get_scpi_ops();
++	if (!scpi_ops)
++		return -ENXIO;
++
++	for_each_available_child_of_node(np, child) {
++		ret = scpi_clk_add(dev, child);
++		if (ret) {
++			scpi_clocks_remove(pdev);
++			return ret;
++		}
++	}
++	return 0;
++}
++
++static const struct of_device_id scpi_clocks_ids[] = {
++	{ .compatible = "arm,scpi-clocks", },
++	{}
++};
++
++static struct platform_driver scpi_clocks_driver = {
++	.driver	= {
++		.name = "scpi_clocks",
++		.of_match_table = scpi_clocks_ids,
++	},
++	.probe = scpi_clocks_probe,
++	.remove = scpi_clocks_remove,
++};
++module_platform_driver(scpi_clocks_driver);
++
++MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
++MODULE_DESCRIPTION("ARM SCPI clock driver");
++MODULE_LICENSE("GPL v2");
 -- 
-1.7.9.5
-
+1.9.1
