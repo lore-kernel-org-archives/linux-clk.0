@@ -1,118 +1,164 @@
-Return-Path: <Paul.Burton@imgtec.com>
-From: Paul Burton <paul.burton@imgtec.com>
-To: <linux-mips@linux-mips.org>
-CC: Paul Burton <paul.burton@imgtec.com>, Lars-Peter Clausen
-	<lars@metafoo.de>, Mike Turquette <mturquette@linaro.org>, Ralf Baechle
-	<ralf@linux-mips.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 28/37] MIPS, clk: move jz4740 UDC auto suspend functions to jz4740-cgu
-Date: Sun, 24 May 2015 16:11:38 +0100
-Message-ID: <1432480307-23789-29-git-send-email-paul.burton@imgtec.com>
-In-Reply-To: <1432480307-23789-1-git-send-email-paul.burton@imgtec.com>
-References: <1432480307-23789-1-git-send-email-paul.burton@imgtec.com>
+Return-Path: <bleung@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Sender: bleung@google.com
+In-Reply-To: <1431451444-23155-18-git-send-email-rklein@nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+	<1431451444-23155-18-git-send-email-rklein@nvidia.com>
+Date: Wed, 13 May 2015 17:04:25 -0700
+Message-ID: <CANLzEkv2rO63083RxEFWU0a_qm+7QOx0mCD8ya8hDmp5QMmkgQ@mail.gmail.com>
+Subject: Re: [PATCH v5 16/21] clk: tegra: pll: Add Set_default logic
+From: Benson Leung <bleung@chromium.org>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The jz4740-cgu driver already has access to the CGU, so it makes sense
-to move the few remaining accesses to the CGU from arch/mips/jz4740
-there too. Move the jz4740_clock_udc_{dis,en}able_auto_suspend functions
-there for such consistency.
+On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> From: Bill Huang <bilhuang@nvidia.com>
+>
+> Add logic which (if specified for a pll) can verify that a PLL is set
+> to the proper default value and if not can set it. This can be
+> specified per PLL as each will have different default values.
+>
+> Based on original work by Aleksandr Frid <afrid@nvidia.com>
+>
+> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+> ---
+> v2:
+>   - Remove MACRO for PLL_MISC_CHECK_DEFAULT as suggested, and instead
+>     the tegra210 driver will include an inline version of this function.
+>
+>  drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
+>  drivers/clk/tegra/clk.h     |    2 ++
+>  2 files changed, 37 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+> index 626466665dde..36aa2a95fac0 100644
+> --- a/drivers/clk/tegra/clk-pll.c
+> +++ b/drivers/clk/tegra/clk-pll.c
+> @@ -652,13 +652,26 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+>                         unsigned long rate)
+>  {
+>         struct tegra_clk_pll *pll = to_clk_pll(hw);
+> +       struct tegra_clk_pll_freq_table old_cfg;
+>         int state, ret = 0;
+>
+>         state = clk_pll_is_enabled(hw);
+>
+> +       _get_pll_mnp(pll, &old_cfg);
+> +
+> +       if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
+> +                       (cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
+> +               ret = pll->params->dyn_ramp(pll, cfg);
+> +               if (!ret)
+> +                       return 0;
+> +       }
+> +
 
-Signed-off-by: Paul Burton <paul.burton@imgtec.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-mips@linux-mips.org
----
+This block above depends on defaults_set, but seems to be some
+additional dyn_ramp logic that is different from what the commit
+message describes of this patch, namely, setting defaults if
+defaults_set is not true.
 
-Changes in v5: None
-Changes in v4: None
-Changes in v3:
-- Rebase.
+Could you perhaps reverse the order of this patch [16/21] and the
+preceding one [15/21] clk: tegra: pll: Add dyn_ramp callback, and move
+this chunk of code into the dyn_ramp patch?
 
-Changes in v2: None
+>         if (state)
+>                 _clk_pll_disable(hw);
+>
+> +       if (!pll->params->defaults_set && pll->params->set_defaults)
+> +               pll->params->set_defaults(pll);
+> +
+>         _update_pll_mnp(pll, cfg);
+>
+>         if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
+> @@ -1517,6 +1530,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
+>         if (!pll->params->calc_rate)
+>                 pll->params->calc_rate = _calc_rate;
+>
+> +       if (pll->params->set_defaults)
+> +               pll->params->set_defaults(pll);
+> +
+>         /* Data in .init is copied by clk_register(), so stack variable OK */
+>         pll->hw.init = &init;
+>
+> @@ -1636,7 +1652,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+>         struct tegra_clk_pll *pll;
+>         struct clk *clk, *parent;
+>         unsigned long parent_rate;
+> -       int err;
+>         u32 val, val_iddq;
+>
+>         parent = __clk_lookup(parent_name);
+> @@ -1657,18 +1672,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+>                 pll_params->vco_min = pll_params->adjust_vco(pll_params,
+>                                                              parent_rate);
+>
+> -       err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+> -       if (err)
+> -               return ERR_PTR(err);
+> +       /*
+> +        * If the pll has a set_defaults callback, it will take care of
+> +        * configuring dynamic ramping and setting IDDQ in that path.
+> +        */
+> +       if (!pll_params->set_defaults) {
+> +               int err;
+>
+> -       val = readl_relaxed(clk_base + pll_params->base_reg);
+> -       val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+> +               err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+> +               if (err)
+> +                       return ERR_PTR(err);
+>
+> -       if (val & PLL_BASE_ENABLE)
+> -               WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
+> -       else {
+> -               val_iddq |= BIT(pll_params->iddq_bit_idx);
+> -               writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
+> +               val = readl_relaxed(clk_base + pll_params->base_reg);
+> +               val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+> +
+> +               if (val & PLL_BASE_ENABLE)
+> +                       WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
+> +               else {
+> +                       val_iddq |= BIT(pll_params->iddq_bit_idx);
+> +                       writel_relaxed(val_iddq,
+> +                                      clk_base + pll_params->iddq_reg);
+> +               }
+>         }
+>
+>         pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index a61d388364b3..38b4c95cfb2f 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -261,6 +261,7 @@ struct tegra_clk_pll_params {
+>         int             stepb_shift;
+>         int             lock_delay;
+>         int             max_p;
+> +       bool            defaults_set;
+>         struct pdiv_map *pdiv_tohw;
+>         struct div_nmp  *div_nmp;
+>         struct tegra_clk_pll_freq_table *freq_table;
+> @@ -275,6 +276,7 @@ struct tegra_clk_pll_params {
+>                                 unsigned long parent_rate);
+>         int     (*dyn_ramp)(struct tegra_clk_pll *pll,
+>                         struct tegra_clk_pll_freq_table *cfg);
+> +       void    (*set_defaults)(struct tegra_clk_pll *pll);
 
- arch/mips/jz4740/clock.c         | 13 -------------
- drivers/clk/ingenic/jz4740-cgu.c | 22 ++++++++++++++++++++++
- 2 files changed, 22 insertions(+), 13 deletions(-)
+Kerneldoc for the two members, please. This is especially useful since
+the two members have such similar names, but they mean different
+things.
 
-diff --git a/arch/mips/jz4740/clock.c b/arch/mips/jz4740/clock.c
-index 90b44d7..2a10829 100644
---- a/arch/mips/jz4740/clock.c
-+++ b/arch/mips/jz4740/clock.c
-@@ -33,7 +33,6 @@
- 
- #define JZ_CLOCK_GATE_UART0	BIT(0)
- #define JZ_CLOCK_GATE_TCU	BIT(1)
--#define JZ_CLOCK_GATE_UDC	BIT(11)
- #define JZ_CLOCK_GATE_DMAC	BIT(12)
- 
- #define JZ_CLOCK_PLL_STABLE		BIT(10)
-@@ -64,18 +63,6 @@ static void jz_clk_reg_clear_bits(int reg, uint32_t mask)
- 	writel(val, jz_clock_base + reg);
- }
- 
--void jz4740_clock_udc_disable_auto_suspend(void)
--{
--	jz_clk_reg_clear_bits(JZ_REG_CLOCK_GATE, JZ_CLOCK_GATE_UDC);
--}
--EXPORT_SYMBOL_GPL(jz4740_clock_udc_disable_auto_suspend);
--
--void jz4740_clock_udc_enable_auto_suspend(void)
--{
--	jz_clk_reg_set_bits(JZ_REG_CLOCK_GATE, JZ_CLOCK_GATE_UDC);
--}
--EXPORT_SYMBOL_GPL(jz4740_clock_udc_enable_auto_suspend);
--
- void jz4740_clock_suspend(void)
- {
- 	jz_clk_reg_set_bits(JZ_REG_CLOCK_GATE,
-diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
-index 0209ed6..0e692ed 100644
---- a/drivers/clk/ingenic/jz4740-cgu.c
-+++ b/drivers/clk/ingenic/jz4740-cgu.c
-@@ -26,6 +26,7 @@
- #define CGU_REG_CPCCR		0x00
- #define CGU_REG_LCR		0x04
- #define CGU_REG_CPPCR		0x10
-+#define CGU_REG_CLKGR		0x20
- #define CGU_REG_SCR		0x24
- #define CGU_REG_I2SCDR		0x60
- #define CGU_REG_LPCDR		0x64
-@@ -47,6 +48,9 @@
- /* bits within the LCR register */
- #define LCR_SLEEP		(1 << 0)
- 
-+/* bits within the CLKGR register */
-+#define CLKGR_UDC		(1 << 11)
-+
- static struct ingenic_cgu *cgu;
- 
- static const s8 pll_od_encoding[4] = {
-@@ -242,3 +246,21 @@ void jz4740_clock_set_wait_mode(enum jz4740_wait_mode mode)
- 
- 	writel(lcr, cgu->base + CGU_REG_LCR);
- }
-+
-+void jz4740_clock_udc_disable_auto_suspend(void)
-+{
-+	uint32_t clkgr = readl(cgu->base + CGU_REG_CLKGR);
-+
-+	clkgr &= ~CLKGR_UDC;
-+	writel(clkgr, cgu->base + CGU_REG_CLKGR);
-+}
-+EXPORT_SYMBOL_GPL(jz4740_clock_udc_disable_auto_suspend);
-+
-+void jz4740_clock_udc_enable_auto_suspend(void)
-+{
-+	uint32_t clkgr = readl(cgu->base + CGU_REG_CLKGR);
-+
-+	clkgr |= CLKGR_UDC;
-+	writel(clkgr, cgu->base + CGU_REG_CLKGR);
-+}
-+EXPORT_SYMBOL_GPL(jz4740_clock_udc_enable_auto_suspend);
+
+
 -- 
-2.4.1
+Benson Leung
+Software Engineer, Chrom* OS
+bleung@chromium.org
