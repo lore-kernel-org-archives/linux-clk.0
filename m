@@ -1,61 +1,79 @@
-Return-Path: <t-kristo@ti.com>
-Message-ID: <5564B04E.3000300@ti.com>
-Date: Tue, 26 May 2015 20:41:34 +0300
-From: Tero Kristo <t-kristo@ti.com>
+Return-Path: <dan.carpenter@oracle.com>
+Date: Thu, 14 May 2015 13:05:00 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Mike Turquette <mturquette@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        uclinux-h8-devel@lists.sourceforge.jp, linux-clk@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [patch -next] clk: h8300: fix error handling in
+ h8s2678_pll_clk_setup()
+Message-ID: <20150514100500.GA19426@mwanda>
 MIME-Version: 1.0
-To: Tony Lindgren <tony@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <paul@pwsan.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
-References: <1432566032-10860-1-git-send-email-t-kristo@ti.com> <20150526160557.GD16525@atomide.com> <20150526163216.GF16525@atomide.com>
-In-Reply-To: <20150526163216.GF16525@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/26/2015 07:32 PM, Tony Lindgren wrote:
-> * Tony Lindgren <tony@atomide.com> [150526 09:08]:
->> * Tero Kristo <t-kristo@ti.com> [150525 08:01]:
->>> Hi,
->>>
->>> As requested, posting v3 with somewhat changed diff parameters and
->>> diffstat attached. Just some minor Makefile changes compared to v2,
->>> these were discussed under that set.
->>>
->>> Set has been pushed to:
->>> - tree: https://github.com/t-kristo/linux-pm.git
->>> - branch: for-4.2/ti-clk-move
->>
->> Looks like this causes a build error for at least omap2 only .config:
->>
->> drivers/clk/ti/dpll3xxx.o:(.rodata+0x1c): multiple definition of `clkhwops_omap3_dpll'
->> drivers/clk/ti/dpll.o:(.rodata+0x0): first defined here
->>
->> You may want to create a file selecting ARCH_OMAP2PLUS=y, then point
->> KCONFIG_ALLCONFIG to that file for make randconfig. Then just build
->> randconfigs :) Usually the issues like this are exposed within few
->> randconfig builds, some take longer if the options have dependencies.
->
-> Found more similar issues for omap3 only and omap4 only configs:
->
-> drivers/built-in.o: In function `omap2_clkops_enable_clkdm':
-> omap-gpmc.c:(.text+0x202e0): undefined reference to `ti_clk_get_features'
-> drivers/built-in.o: In function `omap2_clkops_disable_clkdm':
-> omap-gpmc.c:(.text+0x20374): undefined reference to `ti_clk_get_features'
-> drivers/built-in.o: In function `_omap2_dpll_is_in_bypass':
-> omap-gpmc.c:(.text+0x21678): undefined reference to `ti_clk_get_features'
-> drivers/built-in.o: In function `omap2_dpll_round_rate':
-> omap-gpmc.c:(.text+0x218ac): undefined reference to `ti_clk_get_features'
-> omap-gpmc.c:(.text+0x218ec): undefined reference to `ti_clk_get_features'
->
-> drivers/built-in.o: In function `omap3xxx_dt_clk_init':
-> omap-gpmc.c:(.init.text+0x4d60): undefined reference to `omap2_clk_enable_init_clocks'
-> arch/arm/mach-omap2/built-in.o: In function `ti_clk_init_features':
->
-> arch/arm/mach-omap2/built-in.o: In function `ti_clk_init_features':
-> dss-common.c:(.init.text+0x4368): undefined reference to `ti_clk_setup_features'
+The error handling was a bit messy and buggy.  It freed "pll_clock" then
+dereferenced it, and then freed it again.  I've re-written it in normal
+kernel style.
 
-Argh, that same issue crept back with a merge issue again. I fixed this 
-already once.
+Fixes: 42ff8e8008c8 ('h8300: clock driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--Tero
+diff --git a/drivers/clk/h8300/clk-h8s2678.c b/drivers/clk/h8300/clk-h8s2678.c
+index 4de7ee5..4701b093 100644
+--- a/drivers/clk/h8300/clk-h8s2678.c
++++ b/drivers/clk/h8300/clk-h8s2678.c
+@@ -107,13 +107,13 @@ static void __init h8s2678_pll_clk_setup(struct device_node *node)
+ 	pll_clock->sckcr = of_iomap(node, 0);
+ 	if (pll_clock->sckcr == NULL) {
+ 		pr_err("%s: failed to map divide register", clk_name);
+-		goto error;
++		goto free_clock;
+ 	}
+ 
+ 	pll_clock->pllcr = of_iomap(node, 1);
+ 	if (pll_clock->pllcr == NULL) {
+ 		pr_err("%s: failed to map multiply register", clk_name);
+-		goto error;
++		goto unmap_sckcr;
+ 	}
+ 
+ 	parent_name = of_clk_get_parent_name(node, 0);
+@@ -125,22 +125,21 @@ static void __init h8s2678_pll_clk_setup(struct device_node *node)
+ 	pll_clock->hw.init = &init;
+ 
+ 	clk = clk_register(NULL, &pll_clock->hw);
+-	if (IS_ERR(clk))
+-		kfree(pll_clock);
+-	if (!IS_ERR(clk)) {
+-		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+-		return;
+-	}
+-	pr_err("%s: failed to register %s div clock (%ld)\n",
+-	       __func__, clk_name, PTR_ERR(clk));
+-error:
+-	if (pll_clock) {
+-		if (pll_clock->sckcr)
+-			iounmap(pll_clock->sckcr);
+-		if (pll_clock->pllcr)
+-			iounmap(pll_clock->pllcr);
+-		kfree(pll_clock);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to register %s div clock (%ld)\n",
++		       __func__, clk_name, PTR_ERR(clk));
++		goto unmap_pllcr;
+ 	}
++
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	return;
++
++unmap_pllcr:
++	iounmap(pll_clock->pllcr);
++unmap_sckcr:
++	iounmap(pll_clock->sckcr);
++free_clock:
++	kfree(pll_clock);
+ }
+ 
+ CLK_OF_DECLARE(h8s2678_div_clk, "renesas,h8s2678-pll-clock",
