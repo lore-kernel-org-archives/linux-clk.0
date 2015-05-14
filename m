@@ -1,52 +1,57 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Tero Kristo <t-kristo@ti.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>
-Cc: linux-clk@vger.kernel.org,
-	kernel@stlinux.com,
-	linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/5] [RFC] ARM: timer-sp: Use of_clk_get_parent_count() instead of open coding
-Date: Fri, 29 May 2015 11:25:49 +0200
-Message-Id: <1432891549-23295-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
-References: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <Aisheng.Dong@freescale.com>
+From: Dong Aisheng <aisheng.dong@freescale.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@linaro.org>, <shawn.guo@linaro.org>, <b29396@freescale.com>,
+	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
+	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
+Subject: [PATCH v2 0/5] clk: support clocks which requires parent clock on during operation
+Date: Thu, 14 May 2015 21:28:58 +0800
+Message-ID: <1431610143-21853-1-git-send-email-aisheng.dong@freescale.com>
+Return-Path: aisheng.dong@freescale.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This is an RFC, as it depends on "[RFC] clk: Provide dummy
-of_clk_get_parent_count() for !OF/!CCF".
----
- arch/arm/common/timer-sp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This patch series adds support in clock framework for clocks which operations
+requires its parent clock is on.
 
-diff --git a/arch/arm/common/timer-sp.c b/arch/arm/common/timer-sp.c
-index 19211324772f387c..be87a5d480ffb655 100644
---- a/arch/arm/common/timer-sp.c
-+++ b/arch/arm/common/timer-sp.c
-@@ -21,6 +21,7 @@
- #include <linux/clk.h>
- #include <linux/clocksource.h>
- #include <linux/clockchips.h>
-+#include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
-@@ -234,7 +235,7 @@ static void __init sp804_of_init(struct device_node *np)
- 		clk1 = NULL;
- 
- 	/* Get the 2nd clock if the timer has 3 timer clocks */
--	if (of_count_phandle_with_args(np, "clocks", "#clock-cells") == 3) {
-+	if (of_clk_get_parent_count(np) == 3) {
- 		clk2 = of_clk_get(np, 1);
- 		if (IS_ERR(clk2)) {
- 			pr_err("sp804: %s clock not found: %d\n", np->name,
+Such clock type is initially met on Freescale i.MX7D platform that all clocks
+operations, including enable/disable, rate change and re-parent, requires its
+parent clock on. No sure if any other SoC has the similar clock type.
+
+Current clock core can not support such type of clock well.
+
+This patch introduce a new flag CLK_SET_PARENT_ON to handle this special case
+in clock core that enable its parent clock firstly for each operation and disable
+it later after operation complete.
+
+The most special case is for set_parent() operation which requires both parent,
+old one and new one, to be enabled at the same time during the operation.
+
+The patch series is based on for-next branch of Michael's git:
+git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+
+Change Log v1->v2:
+ Mainly addressed Stephen Boyd's comments
+ * remove dupliciated code with __clk_set_parent_after
+ * introduce more clk_core_x APIs for core easily use
+ * move clk_disable_unused code position
+ * use clk_core_x API to make code more clean and easily read
+
+Dong Aisheng (5):
+  clk: remove duplicated code with __clk_set_parent_after
+  clk: introduce clk_core_enable_lock and clk_core_disable_lock
+    functions
+  clk: move clk_disable_unused after clk_core_disable_unprepare function
+  clk: core: add CLK_OPS_PARENT_ON flags to support clocks require
+    parent on
+  clk: core: add CLK_OPS_PARENT_ON flags to support clocks require
+    parent on
+
+ drivers/clk/clk.c            | 338 +++++++++++++++++++++++++------------------
+ include/linux/clk-provider.h |   5 +
+ 2 files changed, 200 insertions(+), 143 deletions(-)
+
 -- 
 1.9.1
