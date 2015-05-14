@@ -1,14 +1,12 @@
 Return-Path: <bleung@google.com>
 MIME-Version: 1.0
 Sender: bleung@google.com
-In-Reply-To: <555CC357.5090105@nvidia.com>
+In-Reply-To: <1431451444-23155-19-git-send-email-rklein@nvidia.com>
 References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
-	<1431451444-23155-14-git-send-email-rklein@nvidia.com>
-	<CANLzEkuqCB+wF65MrtWwnsgTDhw0T9Vae9C5sBALGDbPvwrr_w@mail.gmail.com>
-	<555CC357.5090105@nvidia.com>
-Date: Wed, 20 May 2015 10:26:16 -0700
-Message-ID: <CANLzEksw9dDJFJRo-bTaafCr+PRAnEMYoP2ojbiKEz-Uzsw2ag@mail.gmail.com>
-Subject: Re: [PATCH v5 12/21] clk: tegra: pll: Add specialized logic for T210
+	<1431451444-23155-19-git-send-email-rklein@nvidia.com>
+Date: Wed, 13 May 2015 17:25:15 -0700
+Message-ID: <CANLzEks10KmCAx4tK0oSejJ6Z+oBRS2+pcsktvStQrogCarTJQ@mail.gmail.com>
+Subject: Re: [PATCH v5 17/21] clk: tegra: pll: Add logic for SS
 From: Benson Leung <bleung@chromium.org>
 To: Rhyland Klein <rklein@nvidia.com>
 Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
@@ -20,16 +18,34 @@ Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@lin
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 20, 2015 at 10:24 AM, Rhyland Klein <rklein@nvidia.com> wrote:
-> No, this was intentional. tegra_clk_register_pllss isn't used on
-> Tegra210, it adds its own version "register_clk_register_pllss_tegra210"
-> which it uses and it doesn't need the tegra_clk_pllss_ops either. So it
-> should be fine without this.
+On Tue, May 12, 2015 at 10:24 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> +static void pll_clk_start_ss(struct tegra_clk_pll *pll)
+> +{
+> +       if (pll->params->defaults_set && pll->params->ssc_ctrl_en_mask) {
+
+Is there any reason you're checking for the existence of
+ssc_ctrl_en_mask rather than ssc_ctrl_reg?
+
+> +               u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
+> +
+> +               val |= pll->params->ssc_ctrl_en_mask;
+> +               pll_writel(val, pll->params->ssc_ctrl_reg, pll);
+> +       }
+> +}
+> +
+> +static void pll_clk_stop_ss(struct tegra_clk_pll *pll)
+> +{
+> +       if (pll->params->defaults_set && pll->params->ssc_ctrl_en_mask) {
+> +               u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
+> +
+> +               val &= ~pll->params->ssc_ctrl_en_mask;
+> +               pll_writel(val, pll->params->ssc_ctrl_reg, pll);
+> +       }
+> +}
+> +
 
 
-Sounds good.
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
 
 -- 
 Benson Leung
