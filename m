@@ -1,57 +1,45 @@
-Return-Path: <manabian@gmail.com>
+Return-Path: <bilhuang@nvidia.com>
+From: Bill Huang <bilhuang@nvidia.com>
+To: pdeschrijver@nvidia.com
+CC: mturquette@linaro.org,
+	swarren@wwwdotorg.org,
+	thierry.reding@gmail.com,
+	pwalmsley@nvidia.com,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bill Huang <bilhuang@nvidia.com>
+Subject: [PATCH 1/1] clk: tegra: fix WARN_ON in PLL_RE registration
+Date: Fri, 15 May 2015 20:07:33 +0800
+Message-ID: <1431691653-17615-1-git-send-email-bilhuang@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20150512223126.GA14873@codeaurora.org>
-References: <1430170693-28303-1-git-send-email-manabian@gmail.com>
-	<20150512223126.GA14873@codeaurora.org>
-Date: Wed, 13 May 2015 08:56:56 +0200
-Message-ID: <CAGhQ9VxoDvLzZPFkCJSDeFBZHOu=dFUFMMVekPhnGOuWbKETKA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] Clk drivers for NXP LPC18xx family
-From: Joachim  Eastwood <manabian@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
-	"Ariel D'Alessandro" <ariel.dalessandro@gmail.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: bilhuang@nvidia.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 13 May 2015 at 00:31, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 04/27, Joachim Eastwood wrote:
->> This patch set adds support for the two main clock peripherals in the
->> LPC18xx/43xx MCU family.
->>
->> The Clock Generation Unit (CGU) is the base source of all clocks. It has
->> five external inputs and contains PLLs, dividers and muxes. The outputs
->> from the CGU are then routed to a Clock Control Unit (CCU) and a few
->> peripherals directly. There are two CCUs in the MCU. The CCU is a
->> collection of gates and a few dividers that sits between the CGU and
->> most of the peripherals.
->>
->> Which clocks that are available depends on the specific device and it's
->> peripherals. It's possible in DT to setup the routing between the CGU
->> and the CCUs.
->
-> Is there any reason why this uses CLK_OF_DECLARE over the
-> platform device model? Typically we have CLK_OF_DECLARE for cases
-> where a provider needs to be up and running early during boot for
-> hardware that can't probe defer (i.e. timers, irq controllers).
+This fixes two things.
 
-One of the CCUs provided clock for two of the timers that are used as
-clock sources.
-Specifically this timer:
-http://marc.info/?l=linux-arm-kernel&m=143138193704763&w=2
+- Read the correct IDDQ register
+- Check the correct IDDQ bit position
 
-Since the CGU provides the clock to the CCU which then again provides
-the clock to the timer both must use CLK_OF_DECLARE for clk enable/get
-rate to work in the timer driver.
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> Otherwise we should be able to use the standard linux device
-> model to probe clk providers. It looks like the clocksource is
-> using something from CCU, but perhaps CGU isn't "special" and
-> could be using device model.
-
-It's is the CCU that uses the clocks from the CGU. So I think both
-drivers needs to use CLK_OF_DECLARE.
-
-regards,
-Joachim Eastwood
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 05c6d08..734340e 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -1630,7 +1630,8 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
+ 
+ 	val = pll_readl_base(pll);
+ 	if (val & PLL_BASE_ENABLE)
+-		WARN_ON(val & pll_params->iddq_bit_idx);
++		WARN_ON(readl_relaxed(clk_base + pll_params->iddq_reg) &
++				BIT(pll_params->iddq_bit_idx));
+ 	else {
+ 		int m;
+ 
+-- 
+1.9.1
