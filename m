@@ -1,72 +1,45 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <554AB7E8.1040009@codeaurora.org>
-Date: Wed, 06 May 2015 17:55:04 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-MIME-Version: 1.0
-To: Murilo Opsfelder Araujo <mopsfelder@gmail.com>,
- linux-kernel@vger.kernel.org
-CC: linux-clk@vger.kernel.org, Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH 2/2] drivers: clk: clk.c: Make clk_is_orphan() dependent
- of CONFIG_OF
-References: <1430959861-14925-1-git-send-email-mopsfelder@gmail.com> <1430959861-14925-3-git-send-email-mopsfelder@gmail.com>
-In-Reply-To: <1430959861-14925-3-git-send-email-mopsfelder@gmail.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Message-ID: <5555BB7F.2090602@gmail.com>
+Date: Fri, 15 May 2015 11:25:19 +0200
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Michael Turquette <mturquette@linaro.org>,
+ Sergej Sawazki <ce3a@gmx.de>,
+ sboyd@codeaurora.org, mwelling@ieee.org, moinejf@free.fr
+CC: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] clk: si5351: Multisynth 6-7 fixes
+References: <1431333859-7224-1-git-send-email-ce3a@gmx.de> <20150512233834.16410.23856@quantum>
+In-Reply-To: <20150512233834.16410.23856@quantum>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/06/15 17:51, Murilo Opsfelder Araujo wrote:
-> The function clk_is_orphan() is called only by
-> __of_clk_get_from_provider(), which depends on CONFIG_OF, so it does
-> make sense the move.
+On 13.05.2015 01:38, Michael Turquette wrote:
+> Quoting Sergej Sawazki (2015-05-11 01:44:19)
+>> The second synthesis stage in the Si5351 clock generator consists of six
+>> *fractional* multisynth dividers (MS0 .. MS5) and two *even-integer*
+>> dividers (MS6 and MS7). The current si5351 driver implementation does
+>> not handle MS6 and MS7 correctly, this leads to wrong rates on output 6
+>> and 7. This patch series fixes that.
+>>
+>> Patch 1 fixes the divider calculation for multisynth 6 and 7.
+>>
+>> Patch 2 fixes the divider re-calculation for multisynth 6 and 7.
+>>
+>> Info: Base on branch 'clk-fixes'.
+>>
+>> Sergej Sawazki (2):
+>>    clk: si5351: fix .round_rate for multisynth 6-7
+>>    clk: si5351: fix .recalc_rate for multisynth 6-7
 >
-> This change also gets rid of the following build message when CONFIG_OF
-> is not set:
->
-> drivers/clk/clk.c:2231:13: warning: ‘clk_is_orphan’ defined but not used [-Wunused-function]
->
-> Signed-off-by: Murilo Opsfelder Araujo <mopsfelder@gmail.com>
+> Applied both patches to clk-next.
 
-The patch that introduces this problem is gone now.
+Sergei,
 
-> ---
->  drivers/clk/clk.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index a961eb6..d748aa2 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2228,14 +2228,6 @@ static inline void clk_debug_unregister(struct clk_core *core)
->  }
->  #endif /* CONFIG_DEBUG_FS */
->  
-> -static bool clk_is_orphan(const struct clk *clk)
-> -{
-> -	if (!clk)
-> -		return false;
-> -
-> -	return clk->core->orphan;
-> -}
-> -
->  /**
->   * __clk_init - initialize the data structures in a struct clk
->   * @dev:	device initializing this clk, placeholder for now
-> @@ -2950,6 +2942,14 @@ void of_clk_del_provider(struct device_node *np)
->  }
->  EXPORT_SYMBOL_GPL(of_clk_del_provider);
->  
-> +static bool clk_is_orphan(const struct clk *clk)
-> +{
-> +	if (!clk)
-> +		return false;
-> +
-> +	return clk->core->orphan;
-> +}
-> +
->  struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
->  				       const char *dev_id, const char *con_id)
->  {
+next time please _always_ keep the version numbering on your patches,
+IIRC it should be v3 and it should include the changelog history.
 
+Also, I sent a Reviewed-by for at least the .round_rate callback
+patch. It would be nice if you'd include that into resends of your
+patch to help Mike keeping track of those.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Sebastian
