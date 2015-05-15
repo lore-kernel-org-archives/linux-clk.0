@@ -1,53 +1,117 @@
-Return-Path: <bilhuang@nvidia.com>
-From: Bill Huang <bilhuang@nvidia.com>
-To: Benson Leung <bleung@chromium.org>, Rhyland Klein <rklein@nvidia.com>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
-	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, "Alexandre
- Courbot" <gnurou@gmail.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin
-	<jilin@nvidia.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5 19/21] clk: tegra: Add Super Gen5 Logic
-Date: Mon, 25 May 2015 08:19:52 +0000
-Message-ID: <40939402ea454e83998b0186b6e291af@HKMAIL103.nvidia.com>
-References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
-	<1431451444-23155-21-git-send-email-rklein@nvidia.com>
- <CANLzEkvUAhXCCvtdHEfmJGONkzNu_dBHj1UUm6Et93kXV1Mz0g@mail.gmail.com>
-In-Reply-To: <CANLzEkvUAhXCCvtdHEfmJGONkzNu_dBHj1UUm6Et93kXV1Mz0g@mail.gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 15 May 2015 09:46:06 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 4/8] clk: sunxi: codec clock support
+Message-ID: <20150515074606.GS4004@lukather>
+References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1430565879-28113-5-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v672-fdVi1iC=OTmYtY+rkzd95-KuVHZKAKA0peNvqBf2Q@mail.gmail.com>
 MIME-Version: 1.0
-Return-Path: bilhuang@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="daC8KDjlMyCcZyAo"
+In-Reply-To: <CAGb2v672-fdVi1iC=OTmYtY+rkzd95-KuVHZKAKA0peNvqBf2Q@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGJsZXVuZ0Bnb29nbGUuY29t
-IFttYWlsdG86YmxldW5nQGdvb2dsZS5jb21dIE9uIEJlaGFsZiBPZiBCZW5zb24NCj4gTGV1bmcN
-Cj4gU2VudDogRnJpZGF5LCBNYXkgMTUsIDIwMTUgMzozNyBBTQ0KPiBUbzogUmh5bGFuZCBLbGVp
-bg0KPiBDYzogUGV0ZXIgRGUgU2NocmlqdmVyOyBNaWtlIFR1cnF1ZXR0ZTsgU3RlcGhlbiBXYXJy
-ZW47IFN0ZXBoZW4gQm95ZDsgVGhpZXJyeQ0KPiBSZWRpbmc7IEFsZXhhbmRyZSBDb3VyYm90OyBC
-aWxsIEh1YW5nOyBQYXVsIFdhbG1zbGV5OyBKaW0gTGluOyBsaW51eC0NCj4gY2xrQHZnZXIua2Vy
-bmVsLm9yZzsgbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5r
-ZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjUgMTkvMjFdIGNsazogdGVncmE6IEFk
-ZCBTdXBlciBHZW41IExvZ2ljDQo+IA0KPiBPbiBUdWUsIE1heSAxMiwgMjAxNSBhdCAxMDoyNCBB
-TSwgUmh5bGFuZCBLbGVpbiA8cmtsZWluQG52aWRpYS5jb20+IHdyb3RlOg0KPiA+IEZyb206IEJp
-bGwgSHVhbmcgPGJpbGh1YW5nQG52aWRpYS5jb20+DQo+ID4NCj4gPiBTdXBlciBjbG9jayBkaXZp
-ZGVyIGNvbnRyb2wgYW5kIGNsb2NrIHNvdXJjZSBtdXggb2YgVGVncmEyMTAgaGFzDQo+ID4gY2hh
-bmdlZCBhIGxpdHRsZSBhZ2FpbnN0IHByaW9yIFNvQ3MsIHRoaXMgcGF0Y2ggYWRkcyBHZW41IGxv
-Z2ljIHRvDQo+ID4gYWRkcmVzcyB0aG9zZSBkaWZmZXJlbmNlcy4NCj4gPg0KPiA+IFNpZ25lZC1v
-ZmYtYnk6IEJpbGwgSHVhbmcgPGJpbGh1YW5nQG52aWRpYS5jb20+DQo+ID4gLS0tDQo+ID4gdjI6
-DQo+ID4gICAtIEZpeGVkIHNjbGsgZGl2aWRlciBhZGRyZXNzICgweDM3MCAtPiAweDJjKQ0KPiA+
-DQo+ID4gIGRyaXZlcnMvY2xrL3RlZ3JhL01ha2VmaWxlICAgICAgICAgICAgICAgfCAgICAxICsN
-Cj4gPiAgZHJpdmVycy9jbGsvdGVncmEvY2xrLXRlZ3JhLXN1cGVyLWdlbjUuYyB8ICAxNTANCj4g
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gIGRyaXZlcnMvY2xrL3RlZ3JhL2Ns
-ay5oICAgICAgICAgICAgICAgICAgfCAgICAzICsNCj4gPiAgMyBmaWxlcyBjaGFuZ2VkLCAxNTQg
-aW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvdGVncmEv
-Y2xrLXRlZ3JhLXN1cGVyLWdlbjUuYw0KPiANCj4gSSd2ZSBkaWZmZWQgY2xrLXRlZ3JhLXN1cGVy
-LWdlbjUuYyBhbmQgdGhlIGV4aXN0aW5nIGNsay10ZWdyYS1zdXBlci1nZW40LmMsIGFuZA0KPiB0
-aGVyZSdzIGEgbG90IG9mIGNvZGUgZHVwbGljYXRpb24gaGVyZS4NCj4gVGhleSdyZSB0aGUgc2Ft
-ZSBwYWlyIG9mIGZ1bmN0aW9ucywgd2l0aCBzZXZlcmFsIHNtYWxsIGNoYW5nZXMuIFNpbmNlIHRo
-ZSBpZGVhDQo+IGJlaGluZCBwdWxsaW5nIG91dCB0aGUgc3VwZXIgY2xvY2sgaW5pdGlhbGl6YXRp
-b24gaW50byBhIGNvbW1vbiBmaWxlIHdhcyB0byByZXVzZQ0KPiB0aGUgc2FtZSBpbml0LCBjb3Vs
-ZCB3ZSBleHRlbmQgdGhlIHN1cGVyLWdlbjQgZmlsZSAocmVuYW1lIGlmIHlvdSBoYXZlIHRvKSB0
-bw0KPiBzdXBwb3J0IGJvdGggZ2VucyBpbnN0ZWFkPw0KPiANClRoYW5rcywgd2UnbGwgaW50ZWdy
-YXRlIGdlbjUgaW50byBnZW40IGZpbGUgaW4gdjYuDQo+IC0tDQo+IEJlbnNvbiBMZXVuZw0KPiBT
-b2Z0d2FyZSBFbmdpbmVlciwgQ2hyb20qIE9TDQo+IGJsZXVuZ0BjaHJvbWl1bS5vcmcNCg==
+
+--daC8KDjlMyCcZyAo
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, May 14, 2015 at 07:03:07PM +0800, Chen-Yu Tsai wrote:
+> On Sat, May 2, 2015 at 7:24 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > From: Emilio L=F3pez <emilio@elopez.com.ar>
+> >
+> > The codec clock on sun4i, sun5i and sun7i is a simple gate with PLL2 as
+> > parent. Add a driver for such a clock.
+> >
+> > Signed-off-by: Emilio L=F3pez <emilio@elopez.com.ar>
+> > Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  drivers/clk/sunxi/Makefile        |  1 +
+> >  drivers/clk/sunxi/clk-a10-codec.c | 45 +++++++++++++++++++++++++++++++=
+++++++++
+> >  2 files changed, 46 insertions(+)
+> >  create mode 100644 drivers/clk/sunxi/clk-a10-codec.c
+> >
+> > diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+> > index eb36c38d4120..6fa845e13067 100644
+> > --- a/drivers/clk/sunxi/Makefile
+> > +++ b/drivers/clk/sunxi/Makefile
+> > @@ -3,6 +3,7 @@
+> >  #
+> >
+> >  obj-y +=3D clk-sunxi.o clk-factors.o
+> > +obj-y +=3D clk-a10-codec.o
+> >  obj-y +=3D clk-a10-hosc.o
+> >  obj-y +=3D clk-a10-pll2.o
+> >  obj-y +=3D clk-a20-gmac.o
+> > diff --git a/drivers/clk/sunxi/clk-a10-codec.c b/drivers/clk/sunxi/clk-=
+a10-codec.c
+> > new file mode 100644
+> > index 000000000000..aaeccf8cde39
+> > --- /dev/null
+> > +++ b/drivers/clk/sunxi/clk-a10-codec.c
+> > @@ -0,0 +1,45 @@
+> > +/*
+> > + * Copyright 2013 Emilio L=F3pez
+> > + *
+> > + * Emilio L=F3pez <emilio@elopez.com.ar>
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License as published by
+> > + * the Free Software Foundation; either version 2 of the License, or
+> > + * (at your option) any later version.
+> > + *
+> > + * This program is distributed in the hope that it will be useful,
+> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + * GNU General Public License for more details.
+> > + */
+> > +
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/clkdev.h>
+>=20
+> This one is not needed.
+
+Right, thanks!
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--daC8KDjlMyCcZyAo
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVVaQ+AAoJEBx+YmzsjxAgi8EP/jr+sOd/geDaPDIegUl+qwEI
+CQmBH36JYrPBy0jLRHf9lKVlleVuyLUAWWcfIYQ2VuZ+eAPkGchsc/P6QVwSpyb5
+mgka3jz1mb90w/FeHzlwZigFEWPcjhtc/A7LXtpS+c/VjsBevVHwT4hiHLPltQo8
+zIK8kEuMJ7I8uOpVOyD88T12jIei3VnE3QvaV0g9nqn9mYfftOxnJqfXJkiULW3q
+wDmcmjvaLHPC2sxwp/RXNEEkCd1Zldu2tWPA2BeNdYy5SLFds4OEqvFrMl3+WQYZ
+e4BSpekoZgxw7S6TfgRZ9gMsJNl5vlAW/Ou5qBfMLIxY4DIqebqUKAaBzvsONND+
+wYTtsHQUD+UFwLEamx7P16OVkmvzgGiBLoHBIIPWEEqOFIIjBx12QhjGyOZ7I46e
+OnQ0AaRvQGjomww2DI7Vip2M+z8oNrp6+Yg2N1zAjeVlLoItMgkgCBKABEcC7PPx
+x2C3zEvbpRvYcPcR7ZgUjSaw+8dbgqzbqyDE85VkrKpFP02U5vsxUHWf8uI10DG3
+0csGOoAsgUW6IRwV+Sz3KoLQPimrHln9Aa9mrdwqRFUTbPprmbAV54Op2g0438Jt
+DAkmNvO23rH72oG87Ct1sd4TXWPy23GWsj8bKvyEWlMjyiuFr/qUlZRqQhLemauB
+9/v7u28YDpH9w/ImA5Mu
+=S9O+
+-----END PGP SIGNATURE-----
+
+--daC8KDjlMyCcZyAo--
