@@ -1,45 +1,84 @@
-Return-Path: <t-kristo@ti.com>
-Message-ID: <555CC7CA.2090104@ti.com>
-Date: Wed, 20 May 2015 20:43:38 +0300
-From: Tero Kristo <t-kristo@ti.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <paul@pwsan.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCHv2 02/27] clk: ti: move generic OMAP DPLL implementation
- under drivers/clk
-References: <1431334493-24455-1-git-send-email-t-kristo@ti.com> <1431334493-24455-3-git-send-email-t-kristo@ti.com> <20150520012053.GC31054@codeaurora.org>
-In-Reply-To: <20150520012053.GC31054@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <20150515080546.GT4004@lukather>
+References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1430565879-28113-2-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v669fsz_pA+B0r8efp0BMxY-D86qfLuGQCqK1POuu9PmxQ@mail.gmail.com>
+ <20150515074314.GQ4004@lukather> <CAGb2v66jRX09k48ciR-bwMZRAioRpHKZ3D2+wVYWannjtF+G3w@mail.gmail.com>
+ <20150515080546.GT4004@lukather>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 15 May 2015 17:11:16 +0800
+Message-ID: <CAGb2v67jruYamgHpM1NRm_fvm+SnDgQy4BEvZBxPEFByQsRsrg@mail.gmail.com>
+Subject: Re: [PATCH 1/8] clk: sunxi: factors: Add m_start parameters
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/20/2015 04:20 AM, Stephen Boyd wrote:
-> On 05/11, Tero Kristo wrote:
->> With the legacy clock data now gone, we can start moving OMAP clock
->> type implementations under clock driver. Start this with moving the
->> generic OMAP DPLL clock type under TI clock driver.
+On Fri, May 15, 2015 at 4:05 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Fri, May 15, 2015 at 03:48:38PM +0800, Chen-Yu Tsai wrote:
+>> On Fri, May 15, 2015 at 3:43 PM, Maxime Ripard
+>> <maxime.ripard@free-electrons.com> wrote:
+>> > On Thu, May 14, 2015 at 05:12:07PM +0800, Chen-Yu Tsai wrote:
+>> >> On Sat, May 2, 2015 at 7:24 PM, Maxime Ripard
+>> >> <maxime.ripard@free-electrons.com> wrote:
+>> >> > Some clocks start incrementing the m factor at 0. Add a parameter to handle
+>> >> > it just like we did for the N factor.
+>> >> >
+>> >> > Since the behaviour until now was to assume that the m factor was starting
+>> >> > at 1, we also need to fix the other users.
+>> >> >
+>> >> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>> >> > ---
+>> >> >  drivers/clk/sunxi/clk-factors.c    | 11 ++++++++++-
+>> >> >  drivers/clk/sunxi/clk-factors.h    |  2 ++
+>> >> >  drivers/clk/sunxi/clk-mod0.c       |  2 ++
+>> >> >  drivers/clk/sunxi/clk-sun8i-mbus.c |  2 ++
+>> >> >  drivers/clk/sunxi/clk-sun9i-core.c |  6 ++++++
+>> >> >  drivers/clk/sunxi/clk-sunxi.c      | 10 ++++++++++
+>> >> >  6 files changed, 32 insertions(+), 1 deletion(-)
+>> >> >
+>> >> > diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
+>> >> > index 8c20190a3e9f..100a711c3e3d 100644
+>> >> > --- a/drivers/clk/sunxi/clk-factors.c
+>> >> > +++ b/drivers/clk/sunxi/clk-factors.c
+>> >> > @@ -56,15 +56,24 @@ static unsigned long clk_factors_recalc_rate(struct clk_hw *hw,
+>> >> >         /* Get each individual factor if applicable */
+>> >> >         if (config->nwidth != SUNXI_FACTORS_NOT_APPLICABLE)
+>> >> >                 n = FACTOR_GET(config->nshift, config->nwidth, reg);
+>> >> > +
+>> >> >         if (config->kwidth != SUNXI_FACTORS_NOT_APPLICABLE)
+>> >> >                 k = FACTOR_GET(config->kshift, config->kwidth, reg);
+>> >> > +
+>> >> >         if (config->mwidth != SUNXI_FACTORS_NOT_APPLICABLE)
+>> >> >                 m = FACTOR_GET(config->mshift, config->mwidth, reg);
+>> >> > +       else
+>> >> > +               /* Make sure we don't get a division by zero */
+>> >> > +               m = 1;
+>> >>
+>> >> What happens when mwidth is valid, m_start = 0, and m = 0?
+>> >
+>> > That's a very good question. A division by zero in the kernel, I'd
+>> > say.
+>> >
+>> > But I don't think we can end up in such a case today, and it's
+>> > somewhat expected that it will happen, and no clock have looked at can
+>> > actually end up in such a case.
 >>
->> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->> ---
+>> It's possible if the bootloader left the clock in an invalid state.
+>> How about just returning 0, indicating an invalid rate, early?
 >
-> How much of the code is the same from the original copy? Can you
-> generate these patches with -M -C so that we can see?
+> The value set in the register might be zero, but that will always
+> really mean 1, either through m_start or m_zero. That would be a bug
+> in the driver itself.
 
-Looks like for the move patches the range is from 85%...95% exact copy. 
-Shall I repost the patches in this format? Good hint for the -M -C btw, 
-I wonder why those are not default options for git-format-patch.
+Maybe you should switch the order of these 2 patches to make it clear?
+Or maybe squash them? As it currently is, m_start = 0 and m = 0 with
+this patch only is a bug.
 
--Tero
-
->
->>   arch/arm/mach-omap2/Makefile    |    2 +-
->>   arch/arm/mach-omap2/clkt_dpll.c |  370 ---------------------------------------
->>   drivers/clk/ti/Makefile         |    3 +-
->>   drivers/clk/ti/clkt_dpll.c      |  369 ++++++++++++++++++++++++++++++++++++++
->>   drivers/clk/ti/clock.h          |    2 +
->>   include/linux/clk/ti.h          |    1 -
->>   6 files changed, 374 insertions(+), 373 deletions(-)
->>   delete mode 100644 arch/arm/mach-omap2/clkt_dpll.c
->>   create mode 100644 drivers/clk/ti/clkt_dpll.c
->
+ChenYu
