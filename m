@@ -1,203 +1,215 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>, <paul@pwsan.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 11/27] ARM: OMAP2+: clock: remove support for legacy mpurate command line param
-Date: Mon, 11 May 2015 11:54:37 +0300
-Message-ID: <1431334493-24455-12-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
-References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20150515074520.GR4004@lukather>
+References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1430565879-28113-4-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v64jVksA5rapnAPn9yefEeXnfFw5FwdnXPP0G9FvzWnVBg@mail.gmail.com> <20150515074520.GR4004@lukather>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 15 May 2015 17:15:32 +0800
+Message-ID: <CAGb2v64gbY1n4kVBc55hm=jwC3N-eKjWXCgEJr-+J6tYsD7sQA@mail.gmail.com>
+Subject: Re: [PATCH 3/8] clk: sunxi: Add a driver for the PLL2
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The legacy support is wrong and dangerous, as it doesn't take any
-OPPs into account and does not scale voltages. Switching mpurate should
-be handled through cpufreq.
+On Fri, May 15, 2015 at 3:45 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Thu, May 14, 2015 at 05:43:51PM +0800, Chen-Yu Tsai wrote:
+>> Hi,
+>>
+>> On Sat, May 2, 2015 at 7:24 PM, Maxime Ripard
+>> <maxime.ripard@free-electrons.com> wrote:
+>> > The PLL2 on the A10 and later SoCs is the clock used for all the audio
+>> > related operations.
+>> >
+>> > This clock has a somewhat complex output tree, with three outputs (2X,=
+ 4X
+>> > and 8X) with a fixed divider from the base clock, and an output (1X) w=
+ith a
+>> > post divider.
+>> >
+>> > However, we can simplify things since the 1X divider can be fixed, and=
+ we
+>> > end up by having a base clock not exposed to any device (or at least
+>> > directly, since the 4X output doesn't have any divider), and 4 fixed
+>> > divider clocks that will be exposed.
+>> >
+>> > This clock seems to have been introduced, at least in this form, in th=
+e
+>> > revision B of the A10, but we don't have any information on the clock =
+used
+>> > on the revision A.
+>> >
+>> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>> > ---
+>> >  drivers/clk/sunxi/Makefile                 |   1 +
+>> >  drivers/clk/sunxi/clk-a10-pll2.c           | 176 ++++++++++++++++++++=
++++++++++
+>> >  include/dt-bindings/clock/sun4i-a10-pll2.h |  53 +++++++++
+>> >  3 files changed, 230 insertions(+)
+>> >  create mode 100644 drivers/clk/sunxi/clk-a10-pll2.c
+>> >  create mode 100644 include/dt-bindings/clock/sun4i-a10-pll2.h
+>> >
+>> > diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+>> > index 058f273d6154..eb36c38d4120 100644
+>> > --- a/drivers/clk/sunxi/Makefile
+>> > +++ b/drivers/clk/sunxi/Makefile
+>> > @@ -4,6 +4,7 @@
+>> >
+>> >  obj-y +=3D clk-sunxi.o clk-factors.o
+>> >  obj-y +=3D clk-a10-hosc.o
+>> > +obj-y +=3D clk-a10-pll2.o
+>> >  obj-y +=3D clk-a20-gmac.o
+>> >  obj-y +=3D clk-mod0.o
+>> >  obj-y +=3D clk-sun8i-mbus.o
+>> > diff --git a/drivers/clk/sunxi/clk-a10-pll2.c b/drivers/clk/sunxi/clk-=
+a10-pll2.c
+>> > new file mode 100644
+>> > index 000000000000..4d0369626dba
+>> > --- /dev/null
+>> > +++ b/drivers/clk/sunxi/clk-a10-pll2.c
+>> > @@ -0,0 +1,176 @@
+>> > +/*
+>> > + * Copyright 2013 Emilio L=C3=B3pez
+>> > + * Emilio L=C3=B3pez <emilio@elopez.com.ar>
+>> > + *
+>> > + * Copyright 2015 Maxime Ripard
+>> > + * Maxime Ripard <maxime.ripard@free-electrons.com>
+>> > + *
+>> > + * This program is free software; you can redistribute it and/or modi=
+fy
+>> > + * it under the terms of the GNU General Public License as published =
+by
+>> > + * the Free Software Foundation; either version 2 of the License, or
+>> > + * (at your option) any later version.
+>> > + *
+>> > + * This program is distributed in the hope that it will be useful,
+>> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> > + * GNU General Public License for more details.
+>> > + */
+>> > +
+>> > +#include <linux/clk-provider.h>
+>> > +#include <linux/of.h>
+>> > +#include <linux/of_address.h>
+>> > +#include <linux/slab.h>
+>> > +
+>> > +#include <dt-bindings/clock/sun4i-a10-pll2.h>
+>> > +
+>> > +#include "clk-factors.h"
+>> > +
+>> > +#define SUN4I_PLL2_ENABLE              31
+>> > +#define SUN4I_PLL2_POST_DIV            26
+>> > +#define SUN4I_PLL2_POST_DIV_MASK       0xF
+>> > +#define SUN4I_PLL2_N                   8
+>> > +#define SUN4I_PLL2_N_MASK              0x7F
+>> > +#define SUN4I_PLL2_PRE_DIV             0
+>> > +#define SUN4I_PLL2_PRE_DIV_MASK                0x1F
+>> > +
+>> > +#define SUN4I_PLL2_POST_DIV_VALUE      21
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/Makefile    |    2 +-
- arch/arm/mach-omap2/clock.c     |   41 ----------------------------
- arch/arm/mach-omap2/clock.h     |    1 -
- arch/arm/mach-omap2/clock2xxx.c |   57 ---------------------------------------
- arch/arm/mach-omap2/clock3xxx.c |   25 -----------------
- 5 files changed, 1 insertion(+), 125 deletions(-)
- delete mode 100644 arch/arm/mach-omap2/clock2xxx.c
+Another thing:
 
-diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
-index f33d011..bf5d71d 100644
---- a/arch/arm/mach-omap2/Makefile
-+++ b/arch/arm/mach-omap2/Makefile
-@@ -181,7 +181,7 @@ obj-$(CONFIG_SOC_DRA7XX)		+= $(clockdomain-common)
- obj-$(CONFIG_SOC_DRA7XX)		+= clockdomains7xx_data.o
- 
- # Clock framework
--obj-$(CONFIG_ARCH_OMAP2)		+= $(clock-common) clock2xxx.o
-+obj-$(CONFIG_ARCH_OMAP2)		+= $(clock-common)
- obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpllcore.o
- obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_virt_prcm_set.o
- obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpll.o
-diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
-index 234cedf..94a4949 100644
---- a/arch/arm/mach-omap2/clock.c
-+++ b/arch/arm/mach-omap2/clock.c
-@@ -582,47 +582,6 @@ const struct clk_hw_omap_ops clkhwops_wait = {
- };
- 
- /**
-- * omap2_clk_switch_mpurate_at_boot - switch ARM MPU rate by boot-time argument
-- * @mpurate_ck_name: clk name of the clock to change rate
-- *
-- * Change the ARM MPU clock rate to the rate specified on the command
-- * line, if one was specified.  @mpurate_ck_name should be
-- * "virt_prcm_set" on OMAP2xxx and "dpll1_ck" on OMAP34xx/OMAP36xx.
-- * XXX Does not handle voltage scaling - on OMAP2xxx this is currently
-- * handled by the virt_prcm_set clock, but this should be handled by
-- * the OPP layer.  XXX This is intended to be handled by the OPP layer
-- * code in the near future and should be removed from the clock code.
-- * Returns -EINVAL if 'mpurate' is zero or if clk_set_rate() rejects
-- * the rate, -ENOENT if the struct clk referred to by @mpurate_ck_name
-- * cannot be found, or 0 upon success.
-- */
--int __init omap2_clk_switch_mpurate_at_boot(const char *mpurate_ck_name)
--{
--	struct clk *mpurate_ck;
--	int r;
--
--	if (!mpurate)
--		return -EINVAL;
--
--	mpurate_ck = clk_get(NULL, mpurate_ck_name);
--	if (WARN(IS_ERR(mpurate_ck), "Failed to get %s.\n", mpurate_ck_name))
--		return -ENOENT;
--
--	r = clk_set_rate(mpurate_ck, mpurate);
--	if (r < 0) {
--		WARN(1, "clock: %s: unable to set MPU rate to %d: %d\n",
--		     mpurate_ck_name, mpurate, r);
--		clk_put(mpurate_ck);
--		return -EINVAL;
--	}
--
--	calibrate_delay();
--	clk_put(mpurate_ck);
--
--	return 0;
--}
--
--/**
-  * omap2_clk_print_new_rates - print summary of current clock tree rates
-  * @hfclkin_ck_name: clk name for the off-chip HF oscillator
-  * @core_ck_name: clk name for the on-chip CORE_CLK
-diff --git a/arch/arm/mach-omap2/clock.h b/arch/arm/mach-omap2/clock.h
-index 950a17a..e2781b4 100644
---- a/arch/arm/mach-omap2/clock.h
-+++ b/arch/arm/mach-omap2/clock.h
-@@ -186,7 +186,6 @@ void omap3_dpll_deny_idle(struct clk_hw_omap *clk);
- 
- void __init omap2_clk_disable_clkdm_control(void);
- 
--int omap2_clk_switch_mpurate_at_boot(const char *mpurate_ck_name);
- void omap2_clk_print_new_rates(const char *hfclkin_ck_name,
- 			       const char *core_ck_name,
- 			       const char *mpu_ck_name);
-diff --git a/arch/arm/mach-omap2/clock2xxx.c b/arch/arm/mach-omap2/clock2xxx.c
-deleted file mode 100644
-index b870f6a..0000000
---- a/arch/arm/mach-omap2/clock2xxx.c
-+++ /dev/null
-@@ -1,57 +0,0 @@
--/*
-- * clock2xxx.c - OMAP2xxx-specific clock integration code
-- *
-- * Copyright (C) 2005-2008 Texas Instruments, Inc.
-- * Copyright (C) 2004-2010 Nokia Corporation
-- *
-- * Contacts:
-- * Richard Woodruff <r-woodruff2@ti.com>
-- * Paul Walmsley
-- *
-- * Based on earlier work by Tuukka Tikkanen, Tony Lindgren,
-- * Gordon McNutt and RidgeRun, Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--#undef DEBUG
--
--#include <linux/kernel.h>
--#include <linux/errno.h>
--#include <linux/clk.h>
--#include <linux/io.h>
--
--#include "soc.h"
--#include "clock.h"
--#include "clock2xxx.h"
--#include "cm.h"
--#include "cm-regbits-24xx.h"
--
--struct clk_hw *dclk_hw;
--/*
-- * Omap24xx specific clock functions
-- */
--
--/*
-- * Switch the MPU rate if specified on cmdline.  We cannot do this
-- * early until cmdline is parsed.  XXX This should be removed from the
-- * clock code and handled by the OPP layer code in the near future.
-- */
--static int __init omap2xxx_clk_arch_init(void)
--{
--	int ret;
--
--	if (!cpu_is_omap24xx())
--		return 0;
--
--	ret = omap2_clk_switch_mpurate_at_boot("virt_prcm_set");
--	if (!ret)
--		omap2_clk_print_new_rates("sys_ck", "dpll_ck", "mpu_ck");
--
--	return ret;
--}
--
--omap_arch_initcall(omap2xxx_clk_arch_init);
--
--
-diff --git a/arch/arm/mach-omap2/clock3xxx.c b/arch/arm/mach-omap2/clock3xxx.c
-index 8bede6a..4bd6122 100644
---- a/arch/arm/mach-omap2/clock3xxx.c
-+++ b/arch/arm/mach-omap2/clock3xxx.c
-@@ -108,28 +108,3 @@ void __init omap3_clk_lock_dpll5(void)
- 	clk_disable_unprepare(dpll5_clk);
- 	return;
- }
--
--/* Common clock code */
--
--/*
-- * Switch the MPU rate if specified on cmdline.  We cannot do this
-- * early until cmdline is parsed.  XXX This should be removed from the
-- * clock code and handled by the OPP layer code in the near future.
-- */
--static int __init omap3xxx_clk_arch_init(void)
--{
--	int ret;
--
--	if (!cpu_is_omap34xx())
--		return 0;
--
--	ret = omap2_clk_switch_mpurate_at_boot("dpll1_ck");
--	if (!ret)
--		omap2_clk_print_new_rates("osc_sys_ck", "core_ck", "arm_fck");
--
--	return ret;
--}
--
--omap_arch_initcall(omap3xxx_clk_arch_init);
--
--
--- 
-1.7.9.5
+This says 21, which obviously exceeds the mask defined above,
+but the comment in the section below (in the original code)
+says 4. I assume the comment was right, based on the user
+manual?
+
+Maybe it should be swapped with SUN4I_PLL2_PRE_DIV_VALUE?
+I get PRE_DIV =3D 21 for generating a clock close to 22.5792 MHz.
+
+Seems AC97 might need another frequency, but the manual isn't
+clear, and we can handle it when we add AC97 anyway.
+
+>> > +#define SUN4I_PLL2_PRE_DIV_VALUE       4
+>> > +
+>> > +#define SUN4I_PLL2_OUTPUTS             4
+>> > +
+>> > +static void sun4i_a10_get_pll2_base_factors(u32 *freq, u32 parent_rat=
+e,
+>> > +                                           u8 *n, u8 *k, u8 *m, u8 *p=
+)
+>> > +{
+>> > +       /*
+>> > +        * Normalize the frequency to a multiple of (24 MHz / Fixed
+>> > +        * PRE-DIV)
+>> > +        */
+>> > +       *freq =3D round_down(*freq, parent_rate / SUN4I_PLL2_PRE_DIV_V=
+ALUE);
+>> > +
+>> > +       /* We were called to round the frequency, we can return */
+>> > +       if (!n)
+>> > +               return;
+>> > +
+>> > +       *n =3D *freq * SUN4I_PLL2_PRE_DIV_VALUE / parent_rate;
+>> > +
+>> > +       /*
+>> > +        * Even though the pre-divider can be changed, we don't really
+>> > +        * care and we can just fix it to 4.
+>> > +        */
+>> > +       *m =3D SUN4I_PLL2_PRE_DIV_VALUE;
+>> > +}
+>> > +
+>> > +static struct clk_factors_config sun4i_a10_pll2_base_config =3D {
+>> > +       .mshift =3D SUN4I_PLL2_PRE_DIV,
+>> > +       .mwidth =3D 5,
+>> > +       .nshift =3D SUN4I_PLL2_N,
+>> > +       .nwidth =3D 7,
+>> > +
+>> > +       .m_zero =3D 1,
+>> > +       .n_zero =3D 1,
+>> > +};
+>> > +
+>> > +static const struct factors_data sun4i_a10_pll2_base_data __initconst=
+ =3D {
+>> > +       .enable =3D SUN4I_PLL2_ENABLE,
+>> > +       .table =3D &sun4i_a10_pll2_base_config,
+>> > +       .getter =3D sun4i_a10_get_pll2_base_factors,
+>> > +       .name =3D "pll2-base",
+>> > +};
+>> > +
+>> > +static DEFINE_SPINLOCK(sun4i_a10_pll2_lock);
+>> > +
+>> > +static void __init sun4i_pll2_setup(struct device_node *node)
+>> > +{
+>> > +       const char *clk_name =3D node->name, *parent;
+>> > +       struct clk_onecell_data *clk_data;
+>> > +       struct clk **clks, *base_clk;
+>> > +       void __iomem *reg;
+>> > +       u32 val;
+>> > +
+>> > +       reg =3D of_io_request_and_map(node, 0, of_node_full_name(node)=
+);
+>> > +       if (IS_ERR(reg))
+>> > +               return;
+>> > +
+>> > +       clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
+>> > +       if (!clk_data)
+>> > +               goto err_unmap;
+>> > +
+>> > +       clks =3D kcalloc(SUN4I_PLL2_OUTPUTS, sizeof(struct clk *), GFP=
+_KERNEL);
+>> > +       if (!clks)
+>> > +               goto err_free_data;
+>> > +
+>> > +       base_clk =3D sunxi_factors_register(node, &sun4i_a10_pll2_base=
+_data,
+>> > +                                         &sun4i_a10_pll2_lock, reg);
+>>
+>> Why aren't you using divs_clk for this? It seems right for the job.
+>
+> As far as I know, divs_clk can only handle a single divider, and not
+> two subsequent dividers like this one uses.
+
+I thought we were setting the post divider to 4 so the outputs match
+the names? Maybe we could get it in as is (with the above comment
+addressed), and refactor it later. I'm still stuck on factors_clk
+stuff....
+
+
+ChenYu
