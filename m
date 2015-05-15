@@ -1,461 +1,164 @@
-Return-Path: <mathieu@codeaurora.org>
-From: Mathieu Olivari <mathieu@codeaurora.org>
-To: robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	peppe.cavallaro@st.com,
-	mathieu@codeaurora.org,
-	agross@codeaurora.org,
-	joshc@codeaurora.org,
-	architt@codeaurora.org,
-	georgi.djakov@linaro.org,
-	wsa@the-dreams.de,
-	rnayak@codeaurora.org,
-	davem@davemloft.net,
-	vbridger@opensource.altera.com
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH 4/5] stmmac: add ipq806x glue layer
-Date: Tue, 26 May 2015 12:27:16 -0700
-Message-Id: <1432668437-27763-5-git-send-email-mathieu@codeaurora.org>
-In-Reply-To: <1432668437-27763-1-git-send-email-mathieu@codeaurora.org>
-References: <1432668437-27763-1-git-send-email-mathieu@codeaurora.org>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Fri, 15 May 2015 17:40:48 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Mikko Perttunen
+ <mikko.perttunen@kapsi.fi>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Mike Turquette
+ <mturquette@linaro.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Shawn Guo
+ <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown
+ <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman
+ <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley
+ <paul@pwsan.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla
+ <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ralf
+ Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Heiko
+ Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>, Viresh
+ Kumar <viresh.linux@gmail.com>, Emilio =?UTF-8?B?TMOzcGV6?=
+ <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+ <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry
+ Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+ Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Michal
+ Simek <michal.simek@xilinx.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-mips@linux-mips.org, patches@opensource.wolfsonmicro.com,
+ linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ spear-devel@list.st.com, linux-tegra@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ rtc-linux@googlegroups.com
+Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
+Message-ID: <20150515174048.4a31af49@bbrezillon>
+In-Reply-To: <20150507093702.0b58753d@bbrezillon>
+References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
+	<20150507063953.GC32399@codeaurora.org>
+	<20150507093702.0b58753d@bbrezillon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-The ethernet controller available in IPQ806x is a Synopsys DesignWare
-Gigabit MAC IP core, already supported by the stmmac driver.
+Hi Stephen,
 
-This glue layer implements some platform specific settings required to
-get the controller working on an IPQ806x based platform.
+Adding Mikko in the loop (after all, he was the one complaining about
+this signed long limitation in the first place, and I forgot to add
+him in the Cc list :-/).
 
-Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
----
- drivers/net/ethernet/stmicro/stmmac/Kconfig        |  14 +
- drivers/net/ethernet/stmicro/stmmac/Makefile       |   1 +
- .../net/ethernet/stmicro/stmmac/dwmac-ipq806x.c    | 365 +++++++++++++++++++++
- 3 files changed, 380 insertions(+)
- create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+Mikko, are you okay with the approach proposed by Stephen (adding a
+new method) ?
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-index 731e045..cec147d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-+++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-@@ -16,6 +16,7 @@ if STMMAC_ETH
- config STMMAC_PLATFORM
- 	tristate "STMMAC Platform bus support"
- 	depends on STMMAC_ETH
-+	select MFD_SYSCON
- 	default y
- 	---help---
- 	  This selects the platform specific bus support for the stmmac driver.
-@@ -36,6 +37,19 @@ config DWMAC_GENERIC
- 	  platform specific code to function or is using platform
- 	  data for setup.
- 
-+config DWMAC_IPQ806X
-+	tristate "QCA IPQ806x DWMAC support"
-+	default ARCH_QCOM
-+	depends on OF
-+	select MFD_SYSCON
-+	help
-+	  Support for QCA IPQ806X DWMAC Ethernet.
-+
-+	  This selects the IPQ806x SoC glue layer support for the stmmac
-+	  device driver. This driver does not use any of the hardware
-+	  acceleration features available on this SoC. Network devices
-+	  will behave like standard non-accelerated ethernet interfaces.
-+
- config DWMAC_LPC18XX
- 	tristate "NXP LPC18xx/43xx DWMAC support"
- 	default ARCH_LPC18XX
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
-index 92e714a..b390161 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Makefile
-+++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
-@@ -6,6 +6,7 @@ stmmac-objs:= stmmac_main.o stmmac_ethtool.o stmmac_mdio.o ring_mode.o	\
- 
- # Ordering matters. Generic driver must be last.
- obj-$(CONFIG_STMMAC_PLATFORM)	+= stmmac-platform.o
-+obj-$(CONFIG_DWMAC_IPQ806X)	+= dwmac-ipq806x.o
- obj-$(CONFIG_DWMAC_LPC18XX)	+= dwmac-lpc18xx.o
- obj-$(CONFIG_DWMAC_MESON)	+= dwmac-meson.o
- obj-$(CONFIG_DWMAC_ROCKCHIP)	+= dwmac-rk.o
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
-new file mode 100644
-index 0000000..577b716
---- /dev/null
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
-@@ -0,0 +1,365 @@
-+/*
-+ * Qualcomm Atheros IPQ806x GMAC glue layer
-+ *
-+ * Copyright (C) 2015 The Linux Foundation
-+ *
-+ * Permission to use, copy, modify, and/or distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/platform_device.h>
-+#include <linux/phy.h>
-+#include <linux/regmap.h>
-+#include <linux/clk.h>
-+#include <linux/reset.h>
-+#include <linux/of_net.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/stmmac.h>
-+#include <linux/of_mdio.h>
-+#include <linux/module.h>
-+
-+#include "stmmac_platform.h"
-+
-+#define NSS_COMMON_CLK_GATE			0x8
-+#define NSS_COMMON_CLK_GATE_PTP_EN(x)		BIT(0x10 + x)
-+#define NSS_COMMON_CLK_GATE_RGMII_RX_EN(x)	BIT(0x9 + (x * 2))
-+#define NSS_COMMON_CLK_GATE_RGMII_TX_EN(x)	BIT(0x8 + (x * 2))
-+#define NSS_COMMON_CLK_GATE_GMII_RX_EN(x)	BIT(0x4 + x)
-+#define NSS_COMMON_CLK_GATE_GMII_TX_EN(x)	BIT(0x0 + x)
-+
-+#define NSS_COMMON_CLK_DIV0			0xC
-+#define NSS_COMMON_CLK_DIV_OFFSET(x)		(x * 8)
-+#define NSS_COMMON_CLK_DIV_MASK			0x7f
-+
-+#define NSS_COMMON_CLK_SRC_CTRL			0x14
-+#define NSS_COMMON_CLK_SRC_CTRL_OFFSET(x)	(1 << x)
-+/* Mode is coded on 1 bit but is different depending on the MAC ID:
-+ * MAC0: QSGMII=0 RGMII=1
-+ * MAC1: QSGMII=0 SGMII=0 RGMII=1
-+ * MAC2 & MAC3: QSGMII=0 SGMII=1
-+ */
-+#define NSS_COMMON_CLK_SRC_CTRL_RGMII(x)	1
-+#define NSS_COMMON_CLK_SRC_CTRL_SGMII(x)	((x >= 2) ? 1 : 0)
-+
-+#define NSS_COMMON_MACSEC_CTL			0x28
-+#define NSS_COMMON_MACSEC_CTL_EXT_BYPASS_EN(x)	(1 << x)
-+
-+#define NSS_COMMON_GMAC_CTL(x)			(0x30 + (x * 4))
-+#define NSS_COMMON_GMAC_CTL_CSYS_REQ		BIT(19)
-+#define NSS_COMMON_GMAC_CTL_PHY_IFACE_SEL	BIT(16)
-+#define NSS_COMMON_GMAC_CTL_IFG_LIMIT_OFFSET	8
-+#define NSS_COMMON_GMAC_CTL_IFG_OFFSET		0
-+#define NSS_COMMON_GMAC_CTL_IFG_MASK		0x3f
-+
-+#define NSS_COMMON_CLK_DIV_RGMII_1000		1
-+#define NSS_COMMON_CLK_DIV_RGMII_100		9
-+#define NSS_COMMON_CLK_DIV_RGMII_10		99
-+#define NSS_COMMON_CLK_DIV_SGMII_1000		0
-+#define NSS_COMMON_CLK_DIV_SGMII_100		4
-+#define NSS_COMMON_CLK_DIV_SGMII_10		49
-+
-+#define QSGMII_PCS_MODE_CTL			0x68
-+#define QSGMII_PCS_MODE_CTL_AUTONEG_EN(x)	BIT((x * 8) + 7)
-+
-+#define QSGMII_PCS_CAL_LCKDT_CTL		0x120
-+#define QSGMII_PCS_CAL_LCKDT_CTL_RST		BIT(19)
-+
-+/* Only GMAC1/2/3 support SGMII and their CTL register are not contiguous */
-+#define QSGMII_PHY_SGMII_CTL(x)			((x == 1) ? 0x134 : \
-+						 (0x13c + (4 * (x - 2))))
-+#define QSGMII_PHY_CDR_EN			BIT(0)
-+#define QSGMII_PHY_RX_FRONT_EN			BIT(1)
-+#define QSGMII_PHY_RX_SIGNAL_DETECT_EN		BIT(2)
-+#define QSGMII_PHY_TX_DRIVER_EN			BIT(3)
-+#define QSGMII_PHY_QSGMII_EN			BIT(7)
-+#define QSGMII_PHY_PHASE_LOOP_GAIN_OFFSET	12
-+#define QSGMII_PHY_PHASE_LOOP_GAIN_MASK		0x7
-+#define QSGMII_PHY_RX_DC_BIAS_OFFSET		18
-+#define QSGMII_PHY_RX_DC_BIAS_MASK		0x3
-+#define QSGMII_PHY_RX_INPUT_EQU_OFFSET		20
-+#define QSGMII_PHY_RX_INPUT_EQU_MASK		0x3
-+#define QSGMII_PHY_CDR_PI_SLEW_OFFSET		22
-+#define QSGMII_PHY_CDR_PI_SLEW_MASK		0x3
-+#define QSGMII_PHY_TX_DRV_AMP_OFFSET		28
-+#define QSGMII_PHY_TX_DRV_AMP_MASK		0xf
-+
-+struct ipq806x_gmac {
-+	struct platform_device *pdev;
-+	struct regmap *nss_common;
-+	struct regmap *qsgmii_csr;
-+	uint32_t id;
-+	struct clk *core_clk;
-+	phy_interface_t phy_mode;
-+};
-+
-+static int get_clk_div_sgmii(struct ipq806x_gmac *gmac, unsigned int speed)
-+{
-+	struct device *dev = &gmac->pdev->dev;
-+	int div;
-+
-+	switch (speed) {
-+	case SPEED_1000:
-+		div = NSS_COMMON_CLK_DIV_SGMII_1000;
-+		break;
-+
-+	case SPEED_100:
-+		div = NSS_COMMON_CLK_DIV_SGMII_100;
-+		break;
-+
-+	case SPEED_10:
-+		div = NSS_COMMON_CLK_DIV_SGMII_10;
-+		break;
-+
-+	default:
-+		dev_err(dev, "Speed %dMbps not supported in SGMII\n", speed);
-+		return -EINVAL;
-+	}
-+
-+	return div;
-+}
-+
-+static int get_clk_div_rgmii(struct ipq806x_gmac *gmac, unsigned int speed)
-+{
-+	struct device *dev = &gmac->pdev->dev;
-+	int div;
-+
-+	switch (speed) {
-+	case SPEED_1000:
-+		div = NSS_COMMON_CLK_DIV_RGMII_1000;
-+		break;
-+
-+	case SPEED_100:
-+		div = NSS_COMMON_CLK_DIV_RGMII_100;
-+		break;
-+
-+	case SPEED_10:
-+		div = NSS_COMMON_CLK_DIV_RGMII_10;
-+		break;
-+
-+	default:
-+		dev_err(dev, "Speed %dMbps not supported in RGMII\n", speed);
-+		return -EINVAL;
-+	}
-+
-+	return div;
-+}
-+
-+static int ipq806x_gmac_set_speed(struct ipq806x_gmac *gmac, unsigned int speed)
-+{
-+	uint32_t clk_bits, val;
-+	int div;
-+
-+	switch (gmac->phy_mode) {
-+	case PHY_INTERFACE_MODE_RGMII:
-+		div = get_clk_div_rgmii(gmac, speed);
-+		clk_bits = NSS_COMMON_CLK_GATE_RGMII_RX_EN(gmac->id) |
-+			   NSS_COMMON_CLK_GATE_RGMII_TX_EN(gmac->id);
-+		break;
-+
-+	case PHY_INTERFACE_MODE_SGMII:
-+		div = get_clk_div_sgmii(gmac, speed);
-+		clk_bits = NSS_COMMON_CLK_GATE_GMII_RX_EN(gmac->id) |
-+			   NSS_COMMON_CLK_GATE_GMII_TX_EN(gmac->id);
-+		break;
-+
-+	default:
-+		dev_err(&gmac->pdev->dev, "Unsupported PHY mode: \"%s\"\n",
-+			phy_modes(gmac->phy_mode));
-+		return -EINVAL;
-+	}
-+
-+	/* Disable the clocks */
-+	regmap_read(gmac->nss_common, NSS_COMMON_CLK_GATE, &val);
-+	val &= ~clk_bits;
-+	regmap_write(gmac->nss_common, NSS_COMMON_CLK_GATE, val);
-+
-+	/* Set the divider */
-+	regmap_read(gmac->nss_common, NSS_COMMON_CLK_DIV0, &val);
-+	val &= ~(NSS_COMMON_CLK_DIV_MASK
-+		 << NSS_COMMON_CLK_DIV_OFFSET(gmac->id));
-+	val |= div << NSS_COMMON_CLK_DIV_OFFSET(gmac->id);
-+	regmap_write(gmac->nss_common, NSS_COMMON_CLK_DIV0, val);
-+
-+	/* Enable the clock back */
-+	regmap_read(gmac->nss_common, NSS_COMMON_CLK_GATE, &val);
-+	val |= clk_bits;
-+	regmap_write(gmac->nss_common, NSS_COMMON_CLK_GATE, val);
-+
-+	return 0;
-+}
-+
-+static void *ipq806x_gmac_of_parse(struct ipq806x_gmac *gmac)
-+{
-+	struct device *dev = &gmac->pdev->dev;
-+
-+	gmac->phy_mode = of_get_phy_mode(dev->of_node);
-+	if (gmac->phy_mode < 0) {
-+		dev_err(dev, "missing phy mode property\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	if (of_property_read_u32(dev->of_node, "qcom,id", &gmac->id) < 0) {
-+		dev_err(dev, "missing qcom id property\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	/* The GMACs are called 1 to 4 in the documentation, but to simplify the
-+	 * code and keep it consistent with the Linux convention, we'll number
-+	 * them from 0 to 3 here.
-+	 */
-+	if (gmac->id < 0 || gmac->id > 3) {
-+		dev_err(dev, "invalid gmac id\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	gmac->core_clk = devm_clk_get(dev, "stmmaceth");
-+	if (IS_ERR(gmac->core_clk)) {
-+		dev_err(dev, "missing stmmaceth clk property\n");
-+		return gmac->core_clk;
-+	}
-+	clk_set_rate(gmac->core_clk, 266000000);
-+
-+	/* Setup the register map for the nss common registers */
-+	gmac->nss_common = syscon_regmap_lookup_by_phandle(dev->of_node,
-+							   "qcom,nss-common");
-+	if (IS_ERR(gmac->nss_common)) {
-+		dev_err(dev, "missing nss-common node\n");
-+		return gmac->nss_common;
-+	}
-+
-+	/* Setup the register map for the qsgmii csr registers */
-+	gmac->qsgmii_csr = syscon_regmap_lookup_by_phandle(dev->of_node,
-+							   "qcom,qsgmii-csr");
-+	if (IS_ERR(gmac->qsgmii_csr)) {
-+		dev_err(dev, "missing qsgmii-csr node\n");
-+		return gmac->qsgmii_csr;
-+	}
-+
-+	return NULL;
-+}
-+
-+static void *ipq806x_gmac_setup(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct ipq806x_gmac *gmac;
-+	int val;
-+	void *err;
-+
-+	gmac = devm_kzalloc(dev, sizeof(*gmac), GFP_KERNEL);
-+	if (!gmac)
-+		return ERR_PTR(-ENOMEM);
-+
-+	gmac->pdev = pdev;
-+
-+	err = ipq806x_gmac_of_parse(gmac);
-+	if (err) {
-+		dev_err(dev, "device tree parsing error\n");
-+		return err;
-+	}
-+
-+	regmap_write(gmac->qsgmii_csr, QSGMII_PCS_CAL_LCKDT_CTL,
-+		     QSGMII_PCS_CAL_LCKDT_CTL_RST);
-+
-+	/* Inter frame gap is set to 12 */
-+	val = 12 << NSS_COMMON_GMAC_CTL_IFG_OFFSET |
-+	      12 << NSS_COMMON_GMAC_CTL_IFG_LIMIT_OFFSET;
-+	/* We also initiate an AXI low power exit request */
-+	val |= NSS_COMMON_GMAC_CTL_CSYS_REQ;
-+	switch (gmac->phy_mode) {
-+	case PHY_INTERFACE_MODE_RGMII:
-+		val |= NSS_COMMON_GMAC_CTL_PHY_IFACE_SEL;
-+		break;
-+	case PHY_INTERFACE_MODE_SGMII:
-+		val &= ~NSS_COMMON_GMAC_CTL_PHY_IFACE_SEL;
-+		break;
-+	default:
-+		dev_err(&pdev->dev, "Unsupported PHY mode: \"%s\"\n",
-+			phy_modes(gmac->phy_mode));
-+		return NULL;
-+	}
-+	regmap_write(gmac->nss_common, NSS_COMMON_GMAC_CTL(gmac->id), val);
-+
-+	/* Configure the clock src according to the mode */
-+	regmap_read(gmac->nss_common, NSS_COMMON_CLK_SRC_CTRL, &val);
-+	val &= ~NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id);
-+	switch (gmac->phy_mode) {
-+	case PHY_INTERFACE_MODE_RGMII:
-+		val |= NSS_COMMON_CLK_SRC_CTRL_RGMII(gmac->id) <<
-+			NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id);
-+		break;
-+	case PHY_INTERFACE_MODE_SGMII:
-+		val |= NSS_COMMON_CLK_SRC_CTRL_SGMII(gmac->id) <<
-+			NSS_COMMON_CLK_SRC_CTRL_OFFSET(gmac->id);
-+		break;
-+	default:
-+		dev_err(&pdev->dev, "Unsupported PHY mode: \"%s\"\n",
-+			phy_modes(gmac->phy_mode));
-+		return NULL;
-+	}
-+	regmap_write(gmac->nss_common, NSS_COMMON_CLK_SRC_CTRL, val);
-+
-+	/* Enable PTP clock */
-+	regmap_read(gmac->nss_common, NSS_COMMON_CLK_GATE, &val);
-+	val |= NSS_COMMON_CLK_GATE_PTP_EN(gmac->id);
-+	regmap_write(gmac->nss_common, NSS_COMMON_CLK_GATE, val);
-+
-+	if (gmac->phy_mode == PHY_INTERFACE_MODE_SGMII) {
-+		regmap_write(gmac->qsgmii_csr, QSGMII_PHY_SGMII_CTL(gmac->id),
-+			     QSGMII_PHY_CDR_EN |
-+			     QSGMII_PHY_RX_FRONT_EN |
-+			     QSGMII_PHY_RX_SIGNAL_DETECT_EN |
-+			     QSGMII_PHY_TX_DRIVER_EN |
-+			     QSGMII_PHY_QSGMII_EN |
-+			     0x4 << QSGMII_PHY_PHASE_LOOP_GAIN_OFFSET |
-+			     0x3 << QSGMII_PHY_RX_DC_BIAS_OFFSET |
-+			     0x1 << QSGMII_PHY_RX_INPUT_EQU_OFFSET |
-+			     0x2 << QSGMII_PHY_CDR_PI_SLEW_OFFSET |
-+			     0xC << QSGMII_PHY_TX_DRV_AMP_OFFSET);
-+	}
-+
-+	return gmac;
-+}
-+
-+static void ipq806x_gmac_fix_mac_speed(void *priv, unsigned int speed)
-+{
-+	struct ipq806x_gmac *gmac = priv;
-+
-+	ipq806x_gmac_set_speed(gmac, speed);
-+}
-+
-+static const struct stmmac_of_data ipq806x_gmac_data = {
-+	.has_gmac	= 1,
-+	.setup		= ipq806x_gmac_setup,
-+	.fix_mac_speed	= ipq806x_gmac_fix_mac_speed,
-+};
-+
-+static const struct of_device_id ipq806x_gmac_dwmac_match[] = {
-+	{ .compatible = "qcom,ipq806x-gmac", .data = &ipq806x_gmac_data },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, ipq806x_gmac_dwmac_match);
-+
-+static struct platform_driver ipq806x_gmac_dwmac_driver = {
-+	.probe = stmmac_pltfr_probe,
-+	.remove = stmmac_pltfr_remove,
-+	.driver = {
-+		.name		= "ipq806x-gmac-dwmac",
-+		.pm		= &stmmac_pltfr_pm_ops,
-+		.of_match_table	= ipq806x_gmac_dwmac_match,
-+	},
-+};
-+module_platform_driver(ipq806x_gmac_dwmac_driver);
-+
-+MODULE_AUTHOR("Mathieu Olivari <mathieu@codeaurora.org>");
-+MODULE_DESCRIPTION("Qualcomm Atheros IPQ806x DWMAC specific glue layer");
-+MODULE_LICENSE("GPL");
+On Thu, 7 May 2015 09:37:02 +0200
+Boris Brezillon <boris.brezillon@free-electrons.com> wrote:
+
+> Hi Stephen,
+> 
+> On Wed, 6 May 2015 23:39:53 -0700
+> Stephen Boyd <sboyd@codeaurora.org> wrote:
+> 
+> > On 04/30, Boris Brezillon wrote:
+> > > Clock rates are stored in an unsigned long field, but ->round_rate()
+> > > (which returns a rounded rate from a requested one) returns a long
+> > > value (errors are reported using negative error codes), which can lead
+> > > to long overflow if the clock rate exceed 2Ghz.
+> > > 
+> > > Change ->round_rate() prototype to return 0 or an error code, and pass the
+> > > requested rate as a pointer so that it can be adjusted depending on
+> > > hardware capabilities.
+> > > 
+> > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > > Tested-by: Heiko Stuebner <heiko@sntech.de>
+> > > Tested-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+> > > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> > 
+> > This patch is fairly invasive, and it probably doesn't even
+> > matter for most of these clock providers to be able to round a
+> > rate above 2GHz.
+> 
+> Fair enough.
+> 
+> > I've been trying to remove the .round_rate op
+> > from the framework by encouraging new features via the
+> > .determine_rate op.
+> 
+> Oh, I wasn't aware of that (BTW, that's a good thing).
+> Maybe this should be clearly stated (both in the struct clk_ops
+> kerneldoc header and in Documentation/clk.txt).
+> 
+> > Sadly, we still have to do a flag day and
+> > change all the .determine_rate ops when we want to add things.
+> 
+> Yes, but the number of clk drivers implementing ->determine_rate() is
+> still quite limited compared to those implementing ->round_rate().
+> 
+> > 
+> > What if we changed determine_rate ops to take a struct
+> > clk_determine_info (or some better named structure) instead of
+> > the current list of arguments that it currently takes? Then when
+> > we want to make these sorts of framework wide changes we can just
+> > throw a new member into that structure and be done.
+> 
+> I really like this idea, especially since I was wondering if we could
+> pass other 'clk rate requirements' like the rounding policy (down,
+> closest, up), or the maximum clk inaccuracy.
+> 
+> > 
+> > It doesn't solve the unsigned long to int return value problem
+> > though. We can solve that by gradually introducing a new op and
+> > handling another case in the rounding path. If we can come up
+> > with some good name for that new op like .decide_rate or
+> > something then it makes things nicer in the long run. I like the
+> > name .determine_rate though :/
+
+Okay, if you want a new method, how about this one:
+
+struct clk_adjust_rate_req {
+	/* fields filled by the caller */
+	unsigned long rate; /* rate is updated by the clk driver */
+	unsigned long min;
+	unsigned long max;
+
+	/* fields filled by the clk driver */
+	struct clk_hw *best_parent;
+	unsigned long best_parent_rate;
+
+	/*
+	 * new fields I'd like to add at some point:
+	 * unsigned long max_inaccuracy;
+	 * something about the power consumption constraints :-)
+	 */
+};
+
+int (*adjust_rate)(struct clk_hw *hw, struct clk_adjust_rate_req *req);
+
+> 
+> Why not changing the ->determine_rate() prototype. As said above, the
+> number of clk drivers implementing this function is still quite
+> limited, and I guess we can have an ack for all of them.
+> 
+> > 
+> > The benefit of all this is that we don't have to worry about
+> > finding the random clk providers that get added into other
+> > subsystems and fixing them up. If drivers actually care about
+> > this problem then they'll be fixed to use the proper op. FYI,
+> > last time we updated the function signature of .determine_rate we
+> > broke a couple drivers along the way.
+> > 
+> 
+> Hm, IMHO, adding a new op is not a good thing. I agree that it eases
+> the transition, but ITOH you'll have to live with old/deprecated ops in
+> your clk_ops structure with people introducing new drivers still using
+> the old ops (see the number of clk drivers implementing ->round_rate()
+> instead of ->determine_rate()).
+> 
+> Best Regards,
+> 
+> Boris
+> 
+
+
+
 -- 
-2.1.4
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
