@@ -1,60 +1,109 @@
-Return-Path: <tony@atomide.com>
-Date: Wed, 27 May 2015 16:15:36 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: balbi@ti.com, linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@linaro.org, paul@pwsan.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
-Message-ID: <20150527231536.GD30984@atomide.com>
-References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
- <20150526160557.GD16525@atomide.com>
- <20150526163216.GF16525@atomide.com>
- <20150526163931.GO26599@saruman.tx.rr.com>
- <55660D5B.8020607@ti.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 15 May 2015 09:43:14 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 1/8] clk: sunxi: factors: Add m_start parameters
+Message-ID: <20150515074314.GQ4004@lukather>
+References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1430565879-28113-2-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v669fsz_pA+B0r8efp0BMxY-D86qfLuGQCqK1POuu9PmxQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <55660D5B.8020607@ti.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="WZLuFERxa6Y0cbOt"
+In-Reply-To: <CAGb2v669fsz_pA+B0r8efp0BMxY-D86qfLuGQCqK1POuu9PmxQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [150527 11:32]:
-> On 05/26/2015 07:39 PM, Felipe Balbi wrote:
-> >On Tue, May 26, 2015 at 09:32:16AM -0700, Tony Lindgren wrote:
-> >>* Tony Lindgren <tony@atomide.com> [150526 09:08]:
-> >>>* Tero Kristo <t-kristo@ti.com> [150525 08:01]:
-> >>>>Hi,
-> >>>>
-> >>>>As requested, posting v3 with somewhat changed diff parameters and
-> >>>>diffstat attached. Just some minor Makefile changes compared to v2,
-> >>>>these were discussed under that set.
-> >>>>
-> >>>>Set has been pushed to:
-> >>>>- tree: https://github.com/t-kristo/linux-pm.git
-> >>>>- branch: for-4.2/ti-clk-move
-> >>>
-> >>>Looks like this causes a build error for at least omap2 only .config:
-> >>>
-> >>>drivers/clk/ti/dpll3xxx.o:(.rodata+0x1c): multiple definition of `clkhwops_omap3_dpll'
-> >>>drivers/clk/ti/dpll.o:(.rodata+0x0): first defined here
-> >>>
-> >>>You may want to create a file selecting ARCH_OMAP2PLUS=y, then point
-> >>>KCONFIG_ALLCONFIG to that file for make randconfig. Then just build
-> >>>randconfigs :) Usually the issues like this are exposed within few
-> >>>randconfig builds, some take longer if the options have dependencies.
-> >
-> >alternatively, just clone the repository at [1] and use the example
-> >script provided in README.md.
-> >
-> >[1] https://github.com/felipebalbi/omap-seeds
-> >
-> 
-> Ok, I pushed an updated branch named: for-4.2/ti-clk-move-v4
-> 
-> This definitely compiles with OMAP2 / OMAP3 / OMAP4 / OMAP5 / DRA7 / AM33xx
-> / AM43xx only setups (tried it out.)
 
-Thanks yeah seems to work for me now.
+--WZLuFERxa6Y0cbOt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
+On Thu, May 14, 2015 at 05:12:07PM +0800, Chen-Yu Tsai wrote:
+> On Sat, May 2, 2015 at 7:24 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > Some clocks start incrementing the m factor at 0. Add a parameter to ha=
+ndle
+> > it just like we did for the N factor.
+> >
+> > Since the behaviour until now was to assume that the m factor was start=
+ing
+> > at 1, we also need to fix the other users.
+> >
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  drivers/clk/sunxi/clk-factors.c    | 11 ++++++++++-
+> >  drivers/clk/sunxi/clk-factors.h    |  2 ++
+> >  drivers/clk/sunxi/clk-mod0.c       |  2 ++
+> >  drivers/clk/sunxi/clk-sun8i-mbus.c |  2 ++
+> >  drivers/clk/sunxi/clk-sun9i-core.c |  6 ++++++
+> >  drivers/clk/sunxi/clk-sunxi.c      | 10 ++++++++++
+> >  6 files changed, 32 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-fa=
+ctors.c
+> > index 8c20190a3e9f..100a711c3e3d 100644
+> > --- a/drivers/clk/sunxi/clk-factors.c
+> > +++ b/drivers/clk/sunxi/clk-factors.c
+> > @@ -56,15 +56,24 @@ static unsigned long clk_factors_recalc_rate(struct=
+ clk_hw *hw,
+> >         /* Get each individual factor if applicable */
+> >         if (config->nwidth !=3D SUNXI_FACTORS_NOT_APPLICABLE)
+> >                 n =3D FACTOR_GET(config->nshift, config->nwidth, reg);
+> > +
+> >         if (config->kwidth !=3D SUNXI_FACTORS_NOT_APPLICABLE)
+> >                 k =3D FACTOR_GET(config->kshift, config->kwidth, reg);
+> > +
+> >         if (config->mwidth !=3D SUNXI_FACTORS_NOT_APPLICABLE)
+> >                 m =3D FACTOR_GET(config->mshift, config->mwidth, reg);
+> > +       else
+> > +               /* Make sure we don't get a division by zero */
+> > +               m =3D 1;
+>=20
+> What happens when mwidth is valid, m_start =3D 0, and m =3D 0?
 
-Tony
+That's a very good question. A division by zero in the kernel, I'd
+say.
+
+But I don't think we can end up in such a case today, and it's
+somewhat expected that it will happen, and no clock have looked at can
+actually end up in such a case.
+
+> Other than that, this one looks good.
+
+Thanks!
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--WZLuFERxa6Y0cbOt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVVaOSAAoJEBx+YmzsjxAg8gkP/0xlyPIm6ha2yc3iahAhLuoQ
+SvFW+QTKaIJ6s8SgyXAh30nQPR6D5Fep5m2m570Erc4aegmbk3RMJQI6jSVHg12Z
+xFptMG5+oZrJDQPguzy6SHeo7zaooOOW4897jT/6aI6Re1yPHgYWPML3uob2GOry
+CxoCEwPDq78hM+jSa2TyNHtNx1kyCme9pPtMPidHUcLGlv592XsIeeE2OaIPiODQ
+uekP2/oJUl6K82gr7flFn68Uy8+NEgxd/B5skw8ppm6Z40/7dEBo/KUuMoZt5nkt
+EvLSvwnebauL79MLx3ZJIlsM2ZYYwpuT5ZHt1fYflsUaqGb9KT7G2hzjexgHwNPB
+Esn6MJ0zamgsSYnkupR4SFkrVnczbs0XywEEIvwfXCa7ONDEsn6unortzebJo4lc
+bVbFFE0oTwgcTVmGOcpQfd3QNZ2YsU0+1bSl6E1lJ2Y51QjR+Agr5yw8xy7bx4al
+ZUns9BJPwWrc2s0vyONG93nlD84uvDwu3nCN7y/+afSy7DkBqOkgoddU30Ei5ZIe
+Urc7eEyIE3JrBhZTbM5vJcYRynfCvuDd4TOjG0EXpMOP1/Ron8SzjMIh48640tE8
+TcuJ2TmzELkgS9AGSRtmtPcoWeOu6J58CGI6eLmWRunolCPI8J4CE+NYga6TyQaO
+pgeQ2A1guPKuCrQLy6R/
+=VYwb
+-----END PGP SIGNATURE-----
+
+--WZLuFERxa6Y0cbOt--
