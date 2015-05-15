@@ -1,48 +1,36 @@
-Return-Path: <javier.martinez@collabora.co.uk>
-Message-ID: <5549DD88.1010803@collabora.co.uk>
-Date: Wed, 06 May 2015 11:23:20 +0200
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Mike Turquette <mturquette@linaro.org>
-CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 03/19] clk: max-gen: Silence sparse warnings
-References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org> <1430897996-11597-4-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1430897996-11597-4-git-send-email-sboyd@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <jy0922.shim@samsung.com>
+Message-id: <55555176.3060703@samsung.com>
+Date: Fri, 15 May 2015 10:52:54 +0900
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+MIME-version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ mturquette@linaro.org, haojian.zhuang@gmail.com, james.hogan@imgtec.com
+Subject: Re: [PATCH 1/2] clk: divider: don't set_rate with
+ CLK_DIVIDER_READ_ONLY flag
+References: <1428392806-14538-1-git-send-email-jy0922.shim@samsung.com>
+ <20150512235910.GC14873@codeaurora.org>
+In-reply-to: <20150512235910.GC14873@codeaurora.org>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+Hi Stephen,
 
-On 05/06/2015 09:39 AM, Stephen Boyd wrote:
-> drivers/clk/clk-max-gen.c:82:16: warning: symbol 'max_gen_clk_ops' was not declared. Should it be static?
-> drivers/clk/clk-max-gen.c:109:5: warning: symbol 'max_gen_clk_probe' was not declared. Should it be static?
-> drivers/clk/clk-max-gen.c:183:5: warning: symbol 'max_gen_clk_remove' was not declared. Should it be static?
+On 05/13/2015 08:59 AM, Stephen Boyd wrote:
+> On 04/07, Joonyoung Shim wrote:
+>> Even if use CLK_DIVIDER_READ_ONLY flag, divider setting can be changed
+>> by set_rate callback. Don't change divider setting from set_rate
+>> callback of divider with CLK_DIVIDER_READ_ONLY flag.
+>>
+>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+>> ---
 > 
-> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/clk-max-gen.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/clk/clk-max-gen.c b/drivers/clk/clk-max-gen.c
-> index 6505049d50f1..35af9cb6da4f 100644
-> --- a/drivers/clk/clk-max-gen.c
-> +++ b/drivers/clk/clk-max-gen.c
-> @@ -31,6 +31,8 @@
->  #include <linux/of.h>
->  #include <linux/export.h>
->  
-> +#include "clk-max-gen.h"
-> +
->  struct max_gen_clk {
->  	struct regmap *regmap;
->  	u32 mask;
+> Is the rate actually changing? Or is it just a problem that we
+> may be writing the register to the same value it already is?
 > 
 
-Looks good to me.
+If rate and parant_rate are different, it can write the register to
+different value. Even if the value is same but i think it's unnecessary
+to re-write the register.
 
-Acked-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-
-Best regards,
-Javier
+Thanks.
