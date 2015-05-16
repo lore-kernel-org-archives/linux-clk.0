@@ -1,29 +1,40 @@
-Return-Path: <mopsfelder@gmail.com>
-Return-Path: <mopsfelder@gmail.com>
-From: Murilo Opsfelder Araujo <mopsfelder@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Murilo Opsfelder Araujo <mopsfelder@gmail.com>
-Subject: [PATCH 0/2] Small adjustments in drivers/clk/clk.c
-Date: Wed,  6 May 2015 21:50:59 -0300
-Message-Id: <1430959861-14925-1-git-send-email-mopsfelder@gmail.com>
+Return-Path: <ce3a@gmx.de>
+Message-ID: <5557184B.5080106@gmx.de>
+Date: Sat, 16 May 2015 12:13:31 +0200
+From: Sergej Sawazki <ce3a@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Michael Turquette <mturquette@linaro.org>
+CC: sboyd@codeaurora.org, mwelling@ieee.org, moinejf@free.fr,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] clk: si5351: Multisynth 6-7 fixes
+References: <1431333859-7224-1-git-send-email-ce3a@gmx.de> <20150512233834.16410.23856@quantum> <5555BB7F.2090602@gmail.com>
+In-Reply-To: <5555BB7F.2090602@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The first patch just improves code readability by addig comments after
-#endif statements; the second one gets rid of a warning message during
-kernel build.
+On 15.05.2015 at 11:25 Sebastian Hesselbarth wrote:
+>>>
+>>> Sergej Sawazki (2):
+>>>    clk: si5351: fix .round_rate for multisynth 6-7
+>>>    clk: si5351: fix .recalc_rate for multisynth 6-7
+>>
+>> Applied both patches to clk-next.
+>
+> Sergei,
+>
+> next time please _always_ keep the version numbering on your patches,
+> IIRC it should be v3 and it should include the changelog history.
+>
+> Also, I sent a Reviewed-by for at least the .round_rate callback
+> patch. It would be nice if you'd include that into resends of your
+> patch to help Mike keeping track of those.
+>
+> Sebastian
+>
 
-Murilo Opsfelder Araujo (2):
-  drivers: clk: clk.c: Add comments indicating the matching #ifdef
-    blocks
-  drivers: clk: clk.c: Make clk_is_orphan() dependent of CONFIG_OF
+Sebastian, Mike,
 
- drivers/clk/clk.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+sorry for the confusion. Next time I will be more careful.
 
---
-2.1.4
+Sergej
