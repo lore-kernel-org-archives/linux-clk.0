@@ -1,221 +1,31 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <bleung@google.com>
 MIME-Version: 1.0
-To: Joachim Eastwood <manabian@gmail.com>, sboyd@codeaurora.org, arnd@arndb.de,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <1430170693-28303-3-git-send-email-manabian@gmail.com>
-Cc: devicetree@vger.kernel.org, ariel.dalessandro@gmail.com,
- ezequiel@vanguardiasur.com.ar, "Joachim Eastwood" <manabian@gmail.com>
-References: <1430170693-28303-1-git-send-email-manabian@gmail.com>
- <1430170693-28303-3-git-send-email-manabian@gmail.com>
-Message-ID: <20150512221202.16410.2827@quantum>
-Subject: Re: [PATCH v2 2/4] doc: dt: add documentation for lpc1850-cgu clk driver
-Date: Tue, 12 May 2015 15:12:02 -0700
+Sender: bleung@google.com
+In-Reply-To: <1431946983-29554-1-git-send-email-bilhuang@nvidia.com>
+References: <1431946983-29554-1-git-send-email-bilhuang@nvidia.com>
+Date: Mon, 18 May 2015 09:53:14 -0700
+Message-ID: <CANLzEkto_rDBvyM0ra4ymaT-L9q1DxBqKgzxy2GEYKEE9KDuuQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] clk: tegra: read correct iddq register in PLL_SS registration
+From: Benson Leung <bleung@chromium.org>
+To: Bill Huang <bilhuang@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Paul Walmsley <pwalmsley@nvidia.com>, Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Joachim Eastwood (2015-04-27 14:38:11)
-> Add DT binding documentation for lpc1850-cgu driver.
-> =
+On Mon, May 18, 2015 at 4:03 AM, Bill Huang <bilhuang@nvidia.com> wrote:
+> This fixes bug in tegra_clk_register_pllss() which mistakenly assume the
+> iddq register is the PLL base address.
+>
+> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
 
-> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
-> ---
->  .../devicetree/bindings/clock/lpc1850-cgu.txt      | 138 +++++++++++++++=
-++++++
->  1 file changed, 138 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-cgu.t=
-xt
-> =
+Thanks for the quick fix.
+Reviewed-by: Benson Leung <bleung@chromium.org>
 
-> diff --git a/Documentation/devicetree/bindings/clock/lpc1850-cgu.txt b/Do=
-cumentation/devicetree/bindings/clock/lpc1850-cgu.txt
-> new file mode 100644
-> index 000000000000..0b278ca6aee7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
-> @@ -0,0 +1,138 @@
-> +* NXP LPC1850 Clock Generation Unit (CGU)
-> +
-> +The CGU generates multiple independent clocks for the core and the
-> +peripheral blocks of the LPC18xx. Each independent clock is called
-> +a base clock and itself is one of the inputs to the two Clock
-> +Control Units (CCUs) which control the branch clocks to the
-> +individual peripherals.
-> +
-> +The CGU selects the inputs to the clock generators from multiple
-> +clock sources, controls the clock generation, and routes the outputs
-> +of the clock generators through the clock source bus to the output
-> +stages. Each output stage provides an independent clock source and
-> +corresponds to one of the base clocks for the LPC18xx.
-> +
-> + - Above text taken from NXP LPC1850 User Manual.
-> +
-> +
-> +This binding uses the common clock binding:
-> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +Required properties:
-> +- compatible:
-> +       Should be "nxp,lpc1850-cgu"
-> +- reg:
-> +       Shall define the base and range of the address space
-> +       containing clock control registers
-> +- #clock-cells:
-> +       Shall have value <1>.  The permitted clock-specifier values
-> +       are the base clock numbers defined below.
-> +- clocks:
-> +       Shall contain a list of phandles for the external input
-> +       sources to the CGU. The list shall be in the following
-> +       order: xtal, 32khz, enet_rx_clk, enet_tx_clk, gp_clkin.
-> +- clock-indices:
-> +       Shall be an ordered list of numbers defining the base clock
-> +       number provided by the CGU.
-> +- clock-output-names:
-> +       Shall be an ordered list of strings defining the names of
-> +       the clocks provided by the CGU.
-> +
-> +Which base clocks that are available on the CGU depends on the
-> +specific LPC part. Base cloks are numbered from 0 to 27.
-
-s/cloks/clocks/
-
-> +
-> +Number:                Name:                   Description:
-> + 0             BASE_SAFE_CLK           Base safe clock (always on) for W=
-WDT
-> + 1             BASE_USB0_CLK           Base clock for USB0
-> + 2             BASE_PERIPH_CLK         Base clock for Cortex-M0SUB subsy=
-stem,
-> +                                       SPI, and SGPIO
-> + 3             BASE_USB1_CLK           Base clock for USB1
-> + 4             BASE_CPU_CLK            System base clock for ARM Cortex-=
-M core
-> +                                       and APB peripheral blocks #0 and =
-#2
-> + 5             BASE_SPIFI_CLK          Base clock for SPIFI
-> + 6             BASE_SPI_CLK            Base clock for SPI
-> + 7             BASE_PHY_RX_CLK         Base clock for Ethernet PHY Recei=
-ve clock
-> + 8             BASE_PHY_TX_CLK         Base clock for Ethernet PHY Trans=
-mit clock
-> + 9             BASE_APB1_CLK           Base clock for APB peripheral blo=
-ck # 1
-> +10             BASE_APB3_CLK           Base clock for APB peripheral blo=
-ck # 3
-> +11             BASE_LCD_CLK            Base clock for LCD
-> +12             BASE_ADCHS_CLK          Base clock for ADCHS
-> +13             BASE_SDIO_CLK           Base clock for SD/MMC
-> +14             BASE_SSP0_CLK           Base clock for SSP0
-> +15             BASE_SSP1_CLK           Base clock for SSP1
-> +16             BASE_UART0_CLK          Base clock for UART0
-> +17             BASE_UART1_CLK          Base clock for UART1
-> +18             BASE_UART2_CLK          Base clock for UART2
-> +19             BASE_UART3_CLK          Base clock for UART3
-> +20             BASE_OUT_CLK            Base clock for CLKOUT pin
-> +24-21          -                       Reserved
-> +25             BASE_AUDIO_CLK          Base clock for audio system (I2S)
-> +26             BASE_CGU_OUT0_CLK       Base clock for CGU_OUT0 clock out=
-put
-> +27             BASE_CGU_OUT1_CLK       Base clock for CGU_OUT1 clock out=
-put
-> +
-> +BASE_PERIPH_CLK and BASE_SPI_CLK is only available on LPC43xx.
-> +BASE_ADCHS_CLK is only available on LPC4370.
-> +
-> +
-> +Example board file:
-> +
-> +/ {
-> +       clocks {
-> +               xtal: xtal {
-> +                       compatible =3D "fixed-clock";
-> +                       #clock-cells =3D <0>;
-> +                       clock-frequency =3D <12000000>;
-> +               };
-> +
-> +               xtal32: xtal32 {
-> +                       compatible =3D "fixed-clock";
-> +                       #clock-cells =3D <0>;
-> +                       clock-frequency =3D <32768>;
-> +               };
-> +
-> +               enet_rx_clk: enet_rx_clk {
-> +                       compatible =3D "fixed-clock";
-> +                       #clock-cells =3D <0>;
-> +                       clock-frequency =3D <0>;
-> +                       clock-output-names =3D "enet_rx_clk";
-> +               };
-> +
-> +               enet_tx_clk: enet_tx_clk {
-> +                       compatible =3D "fixed-clock";
-> +                       #clock-cells =3D <0>;
-> +                       clock-frequency =3D <0>;
-> +                       clock-output-names =3D "enet_tx_clk";
-> +               };
-> +
-> +               gp_clkin: gp_clkin {
-> +                       compatible =3D "fixed-clock";
-> +                       #clock-cells =3D <0>;
-> +                       clock-frequency =3D <0>;
-> +                       clock-output-names =3D "gp_clkin";
-> +               };
-> +       };
-> +
-> +       soc {
-> +               cgu: cgu@40050000 {
-> +                       compatible =3D "nxp,lpc1850-cgu";
-> +                       reg =3D <0x40050000 0x1000>;
-> +                       #clock-cells =3D <1>;
-> +                       clocks =3D <&xtal>, <&creg_clk 1>, <&enet_rx_clk>=
-, <&enet_tx_clk>, <&gp_clkin>;
-> +                       clock-indices =3D  <0>,  <1>,  <2>,  <3>,  <4>,  =
-<5>,  <6>,  <7>,
-> +                                        <8>,  <9>, <10>, <11>, <12>, <13=
->, <14>, <15>,
-> +                                       <16>, <17>, <18>, <19>, <20>, <25=
->, <26>, <27>;
-> +                       clock-output-names =3D "base_safe_clk",    "base_=
-usb0_clk",
-> +                                            "base_periph_clk",  "base_us=
-b1_clk",
-> +                                            "base_cpu_clk",     "base_sp=
-ifi_clk",
-> +                                            "base_spi_clk",     "base_ph=
-y_rx_clk",
-> +                                            "base_phy_tx_clk",  "base_ap=
-b1_clk",
-> +                                            "base_apb3_clk",    "base_lc=
-d_clk",
-> +                                            "base_adchs_clk",   "base_sd=
-io_clk",
-> +                                            "base_ssp0_clk",    "base_ss=
-p1_clk",
-> +                                            "base_uart0_clk",   "base_ua=
-rt1_clk",
-> +                                            "base_uart2_clk",   "base_ua=
-rt3_clk",
-> +                                            "base_out_clk",     "base_au=
-dio_clk",
-> +                                            "base_cgu_out0_clk","base_cg=
-u_out1_clk";
-
-Why do you need to use clock-indices?
-
-Why do you need to use clock-output-names? If all of your clock
-consumers have nodes in DT then you can skip this and name them on the
-consuming side. See a further explanation here:
-http://lkml.kernel.org/r/<20150416192014.19585.9663@quantum>
-
-Also note that providing a clock consumer node in the examples section
-of the binding is helpful when reviewing.
-
-Regards,
-Mike
-
-> +               };
-> +       };
-> +};
-> -- =
-
-> 1.8.0
->=20
+-- 
+Benson Leung
+Software Engineer, Chrom* OS
+bleung@chromium.org
