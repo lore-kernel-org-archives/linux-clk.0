@@ -1,67 +1,41 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: Add some more lockdep assertions
-Date: Wed,  6 May 2015 18:26:38 -0700
-Message-Id: <1430961998-28805-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <sha@pengutronix.de>
+Date: Mon, 18 May 2015 07:54:21 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Ricky Liang <jcliang@chromium.org>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	James Liao <jamesjj.liao@mediatek.com>,
+	Henry Chen <henryc.chen@mediatek.com>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"moderated list:ARM/Mediatek SoC..." <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH v2] clk: mediatek: Initialize clk_init_data
+Message-ID: <20150518055421.GL6325@pengutronix.de>
+References: <1431920513-1491-1-git-send-email-jcliang@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1431920513-1491-1-git-send-email-jcliang@chromium.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-We don't check to make sure the enable_lock is held across
-enable/disable and we don't check if the prepare_lock is held
-across prepare/unprepare. Add some asserts to catch any future
-locking problems.
+Hi Ricky,
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
+On Mon, May 18, 2015 at 11:41:49AM +0800, Ricky Liang wrote:
+> The variable init (struct clk_init_data) is allocated on the stack.
+> We weren't initializing the .flags field, so it contains random junk,
+> which can cause all kinds of interesting issues when the flags are
+> parsed by clk_register.
 
-Based on clk-next
+It seems we have the same problem in clk-gate.c aswell. We do initialize
+do .flags field there, so this is no urgent problem, but we might get a
+real problem when additional fields are added to struct clk_init_data.
+Care to fix that aswell along with this patch?
 
- drivers/clk/clk.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Sascha
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 8cea0ec7179b..bbc04eae3b92 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -544,6 +544,8 @@ EXPORT_SYMBOL_GPL(__clk_mux_determine_rate_closest);
- 
- static void clk_core_unprepare(struct clk_core *core)
- {
-+	lockdep_assert_held(&prepare_lock);
-+
- 	if (!core)
- 		return;
- 
-@@ -590,6 +592,8 @@ static int clk_core_prepare(struct clk_core *core)
- {
- 	int ret = 0;
- 
-+	lockdep_assert_held(&prepare_lock);
-+
- 	if (!core)
- 		return 0;
- 
-@@ -645,6 +649,8 @@ EXPORT_SYMBOL_GPL(clk_prepare);
- 
- static void clk_core_disable(struct clk_core *core)
- {
-+	lockdep_assert_held(&enable_lock);
-+
- 	if (!core)
- 		return;
- 
-@@ -693,6 +699,8 @@ static int clk_core_enable(struct clk_core *core)
- {
- 	int ret = 0;
- 
-+	lockdep_assert_held(&enable_lock);
-+
- 	if (!core)
- 		return 0;
- 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
