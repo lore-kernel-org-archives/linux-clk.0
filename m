@@ -1,29 +1,47 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <jcliang@google.com>
 MIME-Version: 1.0
-In-Reply-To: <1432132237-31004-1-git-send-email-sebastien.szymanski@armadeus.com>
-References: <1432132237-31004-1-git-send-email-sebastien.szymanski@armadeus.com>
-Date: Wed, 20 May 2015 12:20:50 -0300
-Message-ID: <CAOMZO5ByAL=-EXUiEoKnWVWbcpLPKDxQShPf_FPDhmHmiG3bmQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ARM: clk-imx6q: refine sata's parent
-From: Fabio Estevam <festevam@gmail.com>
-To: =?UTF-8?Q?S=C3=A9bastien_Szymanski?= <sebastien.szymanski@armadeus.com>
-Cc: Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	linux-kernel <linux-kernel@vger.kernel.org>
+Sender: jcliang@google.com
+In-Reply-To: <20150518055421.GL6325@pengutronix.de>
+References: <1431920513-1491-1-git-send-email-jcliang@chromium.org>
+	<20150518055421.GL6325@pengutronix.de>
+Date: Mon, 18 May 2015 21:57:11 +0800
+Message-ID: <CAAJzSMdFJZwx5E7d9jC2VFeujfsoTNy4SieUQjiWYLUrKajKgA@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: mediatek: Initialize clk_init_data
+From: Ricky Liang <jcliang@chromium.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, James Liao <jamesjj.liao@mediatek.com>,
+	Henry Chen <henryc.chen@mediatek.com>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+	"moderated list:ARM/Mediatek SoC..." <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 20, 2015 at 11:30 AM, S=C3=A9bastien Szymanski
-<sebastien.szymanski@armadeus.com> wrote:
-> According to IMX6D/Q RM, table 18-3, sata clock's parent is ahb, not ipg.
+Hi Sascha,
 
-Good catch!
+Sure. I can fix clk-gate.c as well. New patch on the way...
 
+-Ricky
+
+On Mon, May 18, 2015 at 1:54 PM, Sascha Hauer <s.hauer@pengutronix.de> wrote:
+> Hi Ricky,
 >
-> This patch is based on branch:
-> git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git imx/soc
-
-Please put this below the --- line.
-
-Reviewed-by: Fabio Estevam <fabio.estevam@freescale.com>
+> On Mon, May 18, 2015 at 11:41:49AM +0800, Ricky Liang wrote:
+>> The variable init (struct clk_init_data) is allocated on the stack.
+>> We weren't initializing the .flags field, so it contains random junk,
+>> which can cause all kinds of interesting issues when the flags are
+>> parsed by clk_register.
+>
+> It seems we have the same problem in clk-gate.c aswell. We do initialize
+> do .flags field there, so this is no urgent problem, but we might get a
+> real problem when additional fields are added to struct clk_init_data.
+> Care to fix that aswell along with this patch?
+>
+> Sascha
+>
+> --
+> Pengutronix e.K.                           |                             |
+> Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
