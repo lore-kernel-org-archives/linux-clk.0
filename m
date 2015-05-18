@@ -1,95 +1,99 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
+	devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 5/7] ARM: sunxi: Add PLL2 support
-Date: Thu, 21 May 2015 22:54:04 +0200
-Message-Id: <1432241646-9511-6-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	ezequiel@vanguardiasur.com.ar
+Subject: [PATCH v3 0/6] Clk drivers for NXP LPC18xx family
+Date: Tue, 19 May 2015 00:35:53 +0200
+Message-Id: <1431988559-23338-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Emilio López <emilio@elopez.com.ar>
+This patch set adds support for the two main clock peripherals in the
+LPC18xx/43xx MCU family.
 
-This commit adds the PLL2 definition to the sun4i, sun5i and sun7i device
-trees. PLL2 is used to clock audio devices.
+The Clock Generation Unit (CGU) is the base source of all clocks. It has
+five external inputs and contains PLLs, dividers and muxes. The outputs
+from the CGU are then routed to a Clock Control Unit (CCU) and a few
+peripherals directly. There are two CCUs in the MCU. The CCU is a
+collection of gates and a few dividers that sits between the CGU and
+most of the peripherals. These clock drivers are needed by the timer at
+early boot so both are using CLK_OF_DECLARE.
 
-Signed-off-by: Emilio López <emilio@elopez.com.ar>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun4i-a10.dtsi | 9 +++++++++
- arch/arm/boot/dts/sun5i.dtsi     | 9 +++++++++
- arch/arm/boot/dts/sun7i-a20.dtsi | 9 +++++++++
- 3 files changed, 27 insertions(+)
+Which clocks that are available depends on the specific device and it's
+peripherals. It's possible in DT to setup the routing between the CGU
+and the CCUs.
 
-diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
-index 73b6143e3e91..235e5204742f 100644
---- a/arch/arm/boot/dts/sun4i-a10.dtsi
-+++ b/arch/arm/boot/dts/sun4i-a10.dtsi
-@@ -195,6 +195,15 @@
- 			clock-output-names = "pll1";
- 		};
- 
-+		pll2: clk@01c20008 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-b-pll2-clk";
-+			reg = <0x01c20008 0x8>;
-+			clocks = <&osc24M>;
-+			clock-output-names = "pll2-1x", "pll2-2x",
-+					     "pll2-4x", "pll2-8x";
-+		};
-+
- 		pll4: clk@01c20018 {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-pll1-clk";
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index 5f662435a935..2f553a92a6dc 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -102,6 +102,15 @@
- 			clock-output-names = "pll1";
- 		};
- 
-+		pll2: clk@01c20008 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-b-pll2-clk";
-+			reg = <0x01c20008 0x8>;
-+			clocks = <&osc24M>;
-+			clock-output-names = "pll2-1x", "pll2-2x",
-+					     "pll2-4x", "pll2-8x";
-+		};
-+
- 		pll4: clk@01c20018 {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-pll1-clk";
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index e04cdf9d53f9..0141cc9876a7 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -199,6 +199,15 @@
- 			clock-output-names = "pll1";
- 		};
- 
-+		pll2: clk@01c20008 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-b-pll2-clk";
-+			reg = <0x01c20008 0x8>;
-+			clocks = <&osc24M>;
-+			clock-output-names = "pll2-1x", "pll2-2x",
-+					     "pll2-4x", "pll2-8x";
-+		};
-+
- 		pll4: clk@01c20018 {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun7i-a20-pll4-clk";
+
+The biggest change in v3 is the way parent names for CCU clocks are
+retrieved. Previous version used names from the 'clock-output-names'
+node on CGU and of_clk_get_parent_name(). In this version the clock
+names has been moved into the CGU driver and are retrieved from the
+CCU driver by of_clk_get() and __clk_get_name().
+
+The of_clk_get_index function is used to map CCU branches to to the
+base clocks by using the CGU ID retrieved with of_clk_get_index. An
+alternative approach would be to put the base clock names directly
+in the CCU driver where the CGU ID is today. See clk_branches table
+in clk-lpc18xx-ccu.c. If this is the prefered way of doing this
+please let me know and I'll quickly put out a new version.
+
+Changes since v2:
+ - use 'clock-controller' as node name in doc
+ - add patch with of_clk_get_index function
+ - drop 'clock-indices' and 'clock-output-names' from cgu node
+ - move base clock names into cgu driver
+ - use of_clk_get/__clk_get_name in ccu to get parent name for
+   composite clocks.
+ - other misc fixes to ccu driver and cgu doc
+
+Changes since v1:
+ - reorganize cgu clk structs
+ - macros to create cgu clk structs
+ - move drivers to nxp subdir
+ - rebase on v4.1-rc1
+
+
+The last patch (dts changes) are only included in this patch set for
+illustration purposes. DTS changes will be sent separately to the ARM
+SoC team later.
+
+Base support for LPC18xx is now in arm-soc next. Pinctrl, gpio
+and reset drivers are also upstream.
+
+
+Joachim Eastwood (6):
+  clk: add lpc18xx cgu clk driver
+  doc: dt: add documentation for lpc1850-cgu clk driver
+  clk: add function to retrieve clk id from dt
+  clk: add lpc18xx ccu clk driver
+  doc: dt: add documentation for lpc1850-ccu clk driver
+  ARM: dts: lpc18xx: add clock nodes for cgu and ccu
+
+ .../devicetree/bindings/clock/lpc1850-ccu.txt      | 146 +++++
+ .../devicetree/bindings/clock/lpc1850-cgu.txt      | 131 +++++
+ arch/arm/boot/dts/lpc18xx.dtsi                     |  77 ++-
+ arch/arm/boot/dts/lpc4350-hitex-eval.dts           |   4 -
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk.c                                  |  18 +
+ drivers/clk/nxp/Makefile                           |   2 +
+ drivers/clk/nxp/clk-lpc18xx-ccu.c                  | 305 ++++++++++
+ drivers/clk/nxp/clk-lpc18xx-cgu.c                  | 635 +++++++++++++++++++++
+ include/dt-bindings/clock/lpc18xx-ccu.h            |  74 +++
+ include/dt-bindings/clock/lpc18xx-cgu.h            |  41 ++
+ include/linux/clk-provider.h                       |   1 +
+ 12 files changed, 1417 insertions(+), 18 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-ccu.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
+ create mode 100644 drivers/clk/nxp/Makefile
+ create mode 100644 drivers/clk/nxp/clk-lpc18xx-ccu.c
+ create mode 100644 drivers/clk/nxp/clk-lpc18xx-cgu.c
+ create mode 100644 include/dt-bindings/clock/lpc18xx-ccu.h
+ create mode 100644 include/dt-bindings/clock/lpc18xx-cgu.h
+
 -- 
-2.4.1
+1.8.0
