@@ -1,83 +1,64 @@
-Return-Path: <bintian.wang@huawei.com>
-Message-ID: <5566CF13.8060806@huawei.com>
-Date: Thu, 28 May 2015 16:17:23 +0800
-From: Bintian <bintian.wang@huawei.com>
+Return-Path: <bilhuang@nvidia.com>
+From: Bill Huang <bilhuang@nvidia.com>
+To: pdeschrijver@nvidia.com
+CC: mturquette@linaro.org,
+	swarren@wwwdotorg.org,
+	thierry.reding@gmail.com,
+	pwalmsley@nvidia.com,
+	rklein@nvidia.com,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bill Huang <bilhuang@nvidia.com>
+Subject: [PATCH 1/1] clk: tegra: read correct iddq register in PLL_SS registration
+Date: Mon, 18 May 2015 19:03:03 +0800
+Message-ID: <1431946983-29554-1-git-send-email-bilhuang@nvidia.com>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@linaro.org>, <sboyd@codeaurora.org>,
-        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
-        <xuejiancheng@huawei.com>, <tomeu.vizoso@collabora.com>,
-        <sledge.yanwei@huawei.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <arnd@arndb.de>, <will.deacon@arm.com>,
-        <robh+dt@kernel.org>, <khilman@linaro.org>, <mark.rutland@arm.com>,
-        <catalin.marinas@arm.com>, <haojian.zhuang@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <olof@lixom.net>,
-        <yanhaifeng@gmail.com>, <linux@arm.linux.org.uk>,
-        <guodong.xu@linaro.org>, <jorge.ramirez-ortiz@linaro.org>,
-        <tyler.baker@linaro.org>, <khilman@kernel.org>
-CC: <xuyiping@hisilicon.com>, <wangbinghui@hisilicon.com>,
-        <zhenwei.wang@hisilicon.com>, <victor.lixin@hisilicon.com>,
-        <puck.chen@hisilicon.com>, <dan.zhao@hisilicon.com>,
-        <huxinwei@huawei.com>, <z.liuxinliang@huawei.com>,
-        <heyunlei@huawei.com>, <kong.kongxinwei@hisilicon.com>,
-        <wangbintian@gmail.com>, <w.f@huawei.com>, <liguozhu@hisilicon.com>
-Subject: Re: [PATCH v8 6/7] clk: hi6220: Clock driver support for Hisilicon
- hi6220 SoC
-References: <1432440671-25235-1-git-send-email-bintian.wang@huawei.com> <1432440671-25235-3-git-send-email-bintian.wang@huawei.com> <20150528052608.22384.96747@quantum>
-In-Reply-To: <20150528052608.22384.96747@quantum>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Return-Path: bilhuang@nvidia.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Mike,
+This fixes bug in tegra_clk_register_pllss() which mistakenly assume the
+iddq register is the PLL base address.
 
-On 2015/5/28 13:26, Michael Turquette wrote:
-> Quoting Bintian Wang (2015-05-23 21:11:11)
->> Add clock drivers for hi6220 SoC, this driver controls the SoC
->> registers to supply different clocks to different IPs in the SoC.
->>
->> We add one divider clock for hi6220 because the divider in hi6220
->> also has a mask bit but it doesnot obey the rule defined by flag
->> "CLK_DIVIDER_HIWORD_MASK", we can not get index of the mask bit by
->> left shift fixed bits (e.g. 16 bits), so we add this divider clock
->> to handle it.
->>
->> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
->> Signed-off-by: Bintian Wang <bintian.wang@huawei.com>
->> Acked-by: Haojian Zhuang <haojian.zhuang@linaro.org>
->> Reviewed-by: Zhangfei Gao <zhangfei.gao@linaro.org>
->> Tested-by: Will Deacon <will.deacon@arm.com>
->> Tested-by: Tyler Baker <tyler.baker@linaro.org>
->
-> Hi Bintian,
->
-> Thanks for making the changes requested by Stephen. I've taken his patch
-> to add assigned-clock-rate/parent support for AMBA interconnects and
-> applied it to 4.1-rc1, and then I've applied your v8 patches #4-6 on top
-> of that. You can find it at:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next-hi6220
-Thank you very much!
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-I think you also need to pick patch "[PATCH v5 3/6] clk: hi6220: 
-Document devicetree bindings for hi6220 clock",  which described the dt 
-binding of clk, and it is also acked by Stephen(v4 is the same to v5).
-
-> I have merged this into clk-next so it can get some cycles in
-> linux-next.
->
-> Stephen,
->
-> Can you send your patch out to Russell properly? It needs his ack (or
-> for him to take it outright) in order to unblock the hi6220 clock driver
-> from being merged.
-It doesn't block hi6220 clock driver now, because the UART1 is not
-enabled in hi6220 dts now.
-
-Thanks!
-
-Bintian
->
-> Regards,
-> Mike
->
-> .
->
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 05c6d08..f225325 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -1826,7 +1826,7 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+ 	struct clk *clk, *parent;
+ 	struct tegra_clk_pll_freq_table cfg;
+ 	unsigned long parent_rate;
+-	u32 val;
++	u32 val, val_iddq;
+ 	int i;
+ 
+ 	if (!pll_params->div_nmp)
+@@ -1874,14 +1874,17 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+ 	pll_writel(PLLSS_CTRL1_DEFAULT, pll_params->ext_misc_reg[2], pll);
+ 
+ 	val = pll_readl_base(pll);
++	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+ 	if (val & PLL_BASE_ENABLE) {
+-		if (val & BIT(pll_params->iddq_bit_idx)) {
++		if (val_iddq & BIT(pll_params->iddq_bit_idx)) {
+ 			WARN(1, "%s is on but IDDQ set\n", name);
+ 			kfree(pll);
+ 			return ERR_PTR(-EINVAL);
+ 		}
+-	} else
+-		val |= BIT(pll_params->iddq_bit_idx);
++	} else {
++		val_iddq |= BIT(pll_params->iddq_bit_idx);
++		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
++	}
+ 
+ 	val &= ~PLLSS_LOCK_OVERRIDE;
+ 	pll_writel_base(val, pll);
+-- 
+1.9.1
