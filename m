@@ -1,142 +1,80 @@
-Return-Path: <bleung@google.com>
+Return-Path: <t-kristo@ti.com>
+Message-ID: <555B8DC0.5080905@ti.com>
+Date: Tue, 19 May 2015 22:23:44 +0300
+From: Tero Kristo <t-kristo@ti.com>
 MIME-Version: 1.0
-Sender: bleung@google.com
-In-Reply-To: <1431451444-23155-16-git-send-email-rklein@nvidia.com>
-References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
-	<1431451444-23155-16-git-send-email-rklein@nvidia.com>
-Date: Wed, 13 May 2015 15:11:59 -0700
-Message-ID: <CANLzEkuv5317FmT9SAsE89P9SqU=aeggo2UzcBbu8zjz_o3WDw@mail.gmail.com>
-Subject: Re: [PATCH v5 14/21] clk: tegra: pll: Adjust vco_min if SDM present
-From: Benson Leung <bleung@chromium.org>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: Paul Walmsley <paul@pwsan.com>
+CC: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCHv2 00/27] ARM: OMAP2+: clock code migration to drivers/clk/ti
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com> <alpine.DEB.2.02.1505111747460.19833@utopia.booyaka.com> <5551D178.3000904@ti.com> <alpine.DEB.2.02.1505122019220.21747@utopia.booyaka.com> <5552F32C.7060606@ti.com> <alpine.DEB.2.02.1505131438430.7921@utopia.booyaka.com>
+In-Reply-To: <alpine.DEB.2.02.1505131438430.7921@utopia.booyaka.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein@nvidia.com> wrote:
-> From: Bill Huang <bilhuang@nvidia.com>
+On 05/13/2015 05:55 PM, Paul Walmsley wrote:
+> On Wed, 13 May 2015, Tero Kristo wrote:
 >
-> This code makes use of the SDM fractional divider if present to
-> contrain the allowable programming range of the PLL divider register
+>> I clipped the boot-loader traces as they contain lots of noise from the
+>> test-automation system.
+>>
+>> Looking at the farm traces, I see this on the omap3 boards:
+>>
+>> beagleboard-vanilla.txt:ver=U-Boot 2014.04-00071-g8543283 (Apr 22 2014 -
+>> 15:49:50)
+>>
+>> beagle-xm.txt:U-Boot 2014.10-00004-g9ade0ab-dirty (Dec 16 2014 - 13:40:24)
+>>
+>> craneboard.txt:U-Boot 2009.11-00005-ge83d2db (Dec 07 2010 - 11:55:34)
+>>
+>> ldp.txt:U-Boot 2014.04-00071-g8543283-dirty (Apr 25 2014 - 14:59:48)
+>>
+>> n900.txt:U-Boot 2014.04-00073-g4fa5b9e (Apr 22 2014 - 14:37:10)
+>>
+>> sdp3430.txt:U-Boot 2009.11-rc1-00485-g7d1e865 (Nov 09 2009 - 11:21:55)
+>>
+>> Maybe some DTB issues? When did you update your DTB files?
+>
+> For all of the uImage+DTB boots, the DTB files in use follow the kernel
+> version:
+>
+> http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/dtbs/
+>
+> which are then subsequently combined to produce:
+>
+> http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/dtcat/
+>
+> So, using the OMAP35xx Beagle as an example, you can prove to yourself
+> that the current DTB is in use by observing that U-boot is loading a
+> combined uImage+DTB file of 3495180 bytes from here:
+>
+> http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/boot/3530es3beagle/3530es3beagle_log.txt
+>
+> and comparing that with the size of this file (3495180 bytes):
+>
+> http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/dtcat/omap2plus_defconfig/uImage-dtb.omap3-beagle
+>
+> and observing that this file size is the sum of the DTB file size (63180
+> bytes):
+>
+> http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/dtbs/omap3-beagle.dtb
+>
+> and the zImage file size (3431936 bytes):
+>
+> http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/build_z/omap2plus_defconfig/zImage
+>
+> and the 64 byte uImage header.
+>
+>
+> The only board that I suspect may be using an old DTB is the 4460
+> VAR-SOM-OM.
+>
+>
+> - Paul
+>
 
-s/contrain/constrain
+Any news on this? As noted previously, I am not able to reproduce the 
+issue you are seeing currently, can you give DEBUG_LL a shot?
 
-> bitfields to take advantage of higher frequency granularity that can
-> be induced by the SDM divider.
->
-> Based on original work by Aleksandr Frid <afrid@nvidia.com>
->
-> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
-> ---
-> v5:
->   - Removed whitespace change
->
->  drivers/clk/tegra/clk-pll.c |   28 ++++++++++++++++++++++++++++
->  drivers/clk/tegra/clk.h     |    2 ++
->  2 files changed, 30 insertions(+)
->
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index 1dfa1433375d..626466665dde 100644
-> --- a/drivers/clk/tegra/clk-pll.c
-> +++ b/drivers/clk/tegra/clk-pll.c
-> @@ -1653,6 +1653,10 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
->
->         pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
->
-> +       if (pll_params->adjust_vco)
-> +               pll_params->vco_min = pll_params->adjust_vco(pll_params,
-> +                                                            parent_rate);
-> +
->         err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
->         if (err)
->                 return ERR_PTR(err);
-> @@ -1691,6 +1695,10 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
->
->         pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
->
-> +       if (pll_params->adjust_vco)
-> +               pll_params->vco_min = pll_params->adjust_vco(pll_params,
-> +                                                            parent_rate);
-> +
->         pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
->         if (IS_ERR(pll))
->                 return ERR_CAST(pll);
-> @@ -1747,6 +1755,10 @@ struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
->
->         pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
->
-> +       if (pll_params->adjust_vco)
-> +               pll_params->vco_min = pll_params->adjust_vco(pll_params,
-> +                                                            parent_rate);
-> +
->         pll_params->flags |= TEGRA_PLL_BYPASS;
->         pll_params->flags |= TEGRA_PLLM;
->         pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-> @@ -2177,6 +2189,10 @@ struct clk *tegra_clk_register_pllc_tegra210(const char *name,
->
->         pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
->
-> +       if (pll_params->adjust_vco)
-> +               pll_params->vco_min = pll_params->adjust_vco(pll_params,
-> +                                                            parent_rate);
-> +
->         pll_params->flags |= TEGRA_PLL_BYPASS;
->         pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
->         if (IS_ERR(pll))
-> @@ -2214,6 +2230,10 @@ struct clk *tegra_clk_register_pllxc_tegra210(const char *name,
->
->         pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
->
-> +       if (pll_params->adjust_vco)
-> +               pll_params->vco_min = pll_params->adjust_vco(pll_params,
-> +                                                            parent_rate);
-> +
->         pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
->         if (IS_ERR(pll))
->                 return ERR_CAST(pll);
-> @@ -2261,6 +2281,10 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
->
->         pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
->
-> +       if (pll_params->adjust_vco)
-> +               pll_params->vco_min = pll_params->adjust_vco(pll_params,
-> +                                                            parent_rate);
-> +
->         /* initialize PLL to minimum rate */
->
->         cfg.m = _pll_fixed_mdiv(pll_params, parent_rate);
-> @@ -2325,6 +2349,10 @@ struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
->
->         pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
->
-> +       if (pll_params->adjust_vco)
-> +               pll_params->vco_min = pll_params->adjust_vco(pll_params,
-> +                                                            parent_rate);
-> +
->         pll_params->flags |= TEGRA_PLL_BYPASS;
->         pll_params->flags |= TEGRA_PLLMB;
->         pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index 7ee764e583f9..330729a822cf 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -269,6 +269,8 @@ struct tegra_clk_pll_params {
->         int     (*calc_rate)(struct clk_hw *hw,
->                         struct tegra_clk_pll_freq_table *cfg,
->                         unsigned long rate, unsigned long parent_rate);
-> +       unsigned long   (*adjust_vco)(struct tegra_clk_pll_params *pll_params,
-> +                               unsigned long parent_rate);
-
-Please add kerneldoc for this new member above.
-
-
-
--- 
-Benson Leung
-Software Engineer, Chrom* OS
-bleung@chromium.org
+-Tero
