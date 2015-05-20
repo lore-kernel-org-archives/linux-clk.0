@@ -1,77 +1,34 @@
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Return-Path: <sebastian.hesselbarth@gmail.com>
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>,
+Return-Path: <shailendra.capricorn@gmail.com>
+Return-Path: <shailendra.capricorn@gmail.com>
+From: Shailendra Verma <shailendra.capricorn@gmail.com>
+To: Mike Turquette <mturquette@linaro.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Michael Welling <mwelling@ieee.org>,
-	Russell King <rmk+linux@arm.linux.org.uk>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/3] clk: si5351: Fixes for v4.1-rc1
-Date: Mon,  4 May 2015 23:04:13 +0200
-Message-Id: <1430773456-15203-1-git-send-email-sebastian.hesselbarth@gmail.com>
+	linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Shailendra Verma <shailendra.capricorn@gmail.com>
+Subject: [PATCH] clk:clk - Fix typo in comment.
+Date: Thu, 21 May 2015 00:06:48 +0530
+Message-Id: <1432147008-3702-1-git-send-email-shailendra.capricorn@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Mike, Stephen,
 
-this is v2 of dealing with recently reported clk-si5351 issues. Compared
-to v1 [1], I decided to first split-off the pure fixes and postpone the
-improvements to a later patch set. Patches 1 and 3 should go though clk
-fixes while patch 2 should be taken by mvebu maintainers.
-
-This fixes are intended for v4.1-rc1 and deal with issues where DT claimed
-parent clocks are not properly detected starting with v4.0. Looking at the
-code of clk-si5351, I just realized that the way the driver deals with
-parent clocks is utter nonsense. Russell King also mentioned that passing
-struct clk though platform_data shouldn't be done at all.
-
-Therefore, this 3 patches rework parent clock handling of clk-si5351 to
-make use of (a) named parent clocks, (b) devm_clk_get() for both DT- and
-platform_data passed parent clocks, and (c) properly clk_prepare_enable()
-valid parent clocks.
-
-However, I do have a stripped down backport of the fix for stable v4.0
-that just fixes the real issue, i.e. DT based probing and missing
-clk_prepare_enable(). If you agree with this fixes for v4.1-rc1 we should
-consider the backport for v4.0 stable.
-
-Overall changes compared to v1:
-- Postpone improvement patch ("clk: si5351: Reset PLL after rate change")
-  for later patch set.
-- Reword parent clock check error message. (Suggested by Fabio Estevam)
-
-Sebastian
-
-[1] https://lkml.org/lkml/2015/4/30/688
-
-Sebastian Hesselbarth (3):
-  clk: si5351: Mention clock-names in the binding documentation
-  ARM: dove: Add clock-names to CuBox Si5351 clk generator
-  clk: si5351: Do not pass struct clk in platform_data
-
- .../devicetree/bindings/clock/silabs,si5351.txt    |  4 +-
- arch/arm/boot/dts/dove-cubox.dts                   |  1 +
- drivers/clk/clk-si5351.c                           | 63 +++++++++++++++-------
- include/linux/platform_data/si5351.h               |  4 --
- 4 files changed, 49 insertions(+), 23 deletions(-)
-
+Signed-off-by: Shailendra Verma <shailendra.capricorn@gmail.com>
 ---
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jean-Francois Moine <moinejf@free.fr>
-Cc: Michael Welling <mwelling@ieee.org>
-Cc: Russell King <rmk+linux@arm.linux.org.uk>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Gregory Clement <gregory.clement@free-electrons.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
+ drivers/clk/clk.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 459ce9d..2b2859f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2478,7 +2478,7 @@ void __clk_free_clk(struct clk *clk)
+  *
+  * clk_register is the primary interface for populating the clock tree with new
+  * clock nodes.  It returns a pointer to the newly allocated struct clk which
+- * cannot be dereferenced by driver code but may be used in conjuction with the
++ * cannot be dereferenced by driver code but may be used in conjunction with the
+  * rest of the clock API.  In the event of an error clk_register will return an
+  * error code; drivers must test for an error code after calling clk_register.
+  */
 -- 
-2.1.0
+1.7.9.5
