@@ -1,66 +1,95 @@
-Return-Path: <t-kristo@ti.com>
-Message-ID: <5552F81C.2010301@ti.com>
-Date: Wed, 13 May 2015 10:07:08 +0300
-From: Tero Kristo <t-kristo@ti.com>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-        Mike Turquette
-	<mturquette@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFT PATCH 0/8] clk: ti: Fix possible ERR_PTR dereferences from
- clk_get_sys
-References: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
-In-Reply-To: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+To: Thierry Reding <thierry.reding@gmail.com>,
+ "Benson Leung" <bleung@chromium.org>, "Rhyland Klein" <rklein@nvidia.com>,
+ "Peter De Schrijver" <pdeschrijver@nvidia.com>
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <1431012219-28469-1-git-send-email-thierry.reding@gmail.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Stephen Warren" <swarren@wwwdotorg.org>,
+ "Alexandre Courbot" <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1430919815-22380-1-git-send-email-thierry.reding@gmail.com>
+ <1431012219-28469-1-git-send-email-thierry.reding@gmail.com>
+Message-ID: <20150520033956.9817.55602@quantum>
+Subject: Re: [PATCH v2] clk: tegra: Update struct tegra_clk_pll_params kerneldoc
+Date: Tue, 19 May 2015 20:39:56 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/13/2015 09:54 AM, Krzysztof Kozlowski wrote:
-> Hi,
->
->
-> clk_get_sys() may return ERR_PTR but the drivers immediately
-> dereferenced the return value. This could lead to oops.
->
-> I tried only to fix possible ERR_PTR dereference and to not change
-> the logic. This is why some of the patches look quite complex.
-> For example in clk-7xx driver proceeds to next clocks if first one fails.
->
-> WARNING:
-> The patchset was only compile tested (plus static checkers), as
-> I do not have the hardware. I am kindly asking for tests.
->
->
-> Best regards,
-> Krzysztof
+Quoting Thierry Reding (2015-05-07 08:23:39)
+> From: Thierry Reding <treding@nvidia.com>
+> =
 
-Hi Krzysztof,
+> Benson Leung pointed out that the kerneldoc for this structure has
+> become stale. Update the field descriptions to match the structure
+> content.
+> =
 
-These should be rather fixed by using assigned-clock-parents / 
-assigned-clock-rates DT properties and removing the offending legacy 
-code from clk-* files. Patch #1 is good to go as is.
+> Reported-by: Benson Leung <bleung@chromium.org>
+> Acked-by: Rhyland Klein <rklein@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
--Tero
+Looks good to me.
 
->
->
-> Krzysztof Kozlowski (8):
->    clk: ti: dra7-atl-clock: Fix possible ERR_PTR dereference
->    clk: ti: clk-2xxx: Prevent possible ERR_PTR dereference
->    clk: ti: clk-3xxx: Prevent possible ERR_PTR dereference
->    clk: ti: clk-33xx: Prevent possible ERR_PTR dereference
->    clk: ti: clk-43xx: Prevent possible ERR_PTR dereference
->    clk: ti: clk-43xx: Prevent possible ERR_PTR dereference
->    clk: ti: clk-54xx: Prevent possible ERR_PTR dereference
->    clk: ti: clk-7xx: Prevent possible ERR_PTR dereference
->
->   drivers/clk/ti/clk-2xxx.c     | 18 ++++++++++++----
->   drivers/clk/ti/clk-33xx.c     |  9 +++++---
->   drivers/clk/ti/clk-3xxx.c     | 18 ++++++++++++----
->   drivers/clk/ti/clk-43xx.c     |  3 ++-
->   drivers/clk/ti/clk-44xx.c     | 16 ++++++++++----
->   drivers/clk/ti/clk-54xx.c     | 47 +++++++++++++++++++++++++++-------------
->   drivers/clk/ti/clk-7xx.c      | 50 +++++++++++++++++++++++++------------------
->   drivers/clk/ti/clk-dra7-atl.c |  5 +++++
->   8 files changed, 114 insertions(+), 52 deletions(-)
->
+Regards,
+Mike
+
+> ---
+> Changes in v2:
+> - document max_p and pdiv_tohw fields
+> =
+
+>  drivers/clk/tegra/clk.h | 18 +++++++++++++++---
+>  1 file changed, 15 insertions(+), 3 deletions(-)
+> =
+
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index f3782dedbdfb..b76b786e15f6 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -157,7 +157,7 @@ struct div_nmp {
+>  };
+>  =
+
+>  /**
+> - * struct clk_pll_params - PLL parameters
+> + * struct tegra_clk_pll_params - PLL parameters
+>   *
+>   * @input_min:                 Minimum input frequency
+>   * @input_max:                 Maximum input frequency
+> @@ -168,12 +168,24 @@ struct div_nmp {
+>   * @base_reg:                  PLL base reg offset
+>   * @misc_reg:                  PLL misc reg offset
+>   * @lock_reg:                  PLL lock reg offset
+> - * @lock_bit_idx:              Bit index for PLL lock status
+> + * @lock_mask:                 Bitmask for PLL lock status
+>   * @lock_enable_bit_idx:       Bit index to enable PLL lock
+> + * @iddq_reg:                  PLL IDDQ register offset
+> + * @iddq_bit_idx:              Bit index to enable PLL IDDQ
+> + * @aux_reg:                   AUX register offset
+> + * @dyn_ramp_reg:              Dynamic ramp control register offset
+> + * @ext_misc_reg:              Miscellaneous control register offsets
+> + * @pmc_divnm_reg:             n, m divider PMC override register offset=
+ (PLLM)
+> + * @pmc_divp_reg:              p divider PMC override register offset (P=
+LLM)
+> + * @flags:                     PLL flags
+> + * @stepa_shift:               Dynamic ramp step A field shift
+> + * @stepb_shift:               Dynamic ramp step B field shift
+>   * @lock_delay:                        Delay in us if PLL lock is not us=
+ed
+> + * @max_p:                     maximum value for the p divider
+> + * @pdiv_tohw:                 mapping of p divider to register values
+> + * @div_nmp:                   offsets and widths on n, m and p fields
+>   * @freq_table:                        array of frequencies supported by=
+ PLL
+>   * @fixed_rate:                        PLL rate if it is fixed
+> - * @flags:                     PLL flags
+>   *
+>   * Flags:
+>   * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+> -- =
+
+> 2.3.5
+>=20
