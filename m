@@ -1,100 +1,112 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Tero Kristo <t-kristo@ti.com>, Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-omap@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFT PATCH 7/8] clk: ti: clk-54xx: Prevent possible ERR_PTR dereference
-Date: Wed, 13 May 2015 15:54:46 +0900
-Message-id: <1431500087-2275-8-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
-References: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <555D09F3.7020506@codeaurora.org>
+Date: Wed, 20 May 2015 15:25:55 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+MIME-Version: 1.0
+To: Bintian Wang <bintian.wang@huawei.com>, mturquette@linaro.org,
+ zhangfei.gao@linaro.org, xuwei5@hisilicon.com, xuejiancheng@huawei.com,
+ tomeu.vizoso@collabora.com, sledge.yanwei@huawei.com,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
+ will.deacon@arm.com, robh+dt@kernel.org, khilman@linaro.org,
+ mark.rutland@arm.com, catalin.marinas@arm.com,
+ haojian.zhuang@linaro.org, linux-arm-kernel@lists.infradead.org,
+ olof@lixom.net, yanhaifeng@gmail.com, linux@arm.linux.org.uk,
+ guodong.xu@linaro.org, jorge.ramirez-ortiz@linaro.org,
+ tyler.baker@linaro.org, khilman@kernel.org
+CC: xuyiping@hisilicon.com, wangbinghui@hisilicon.com,
+ zhenwei.wang@hisilicon.com, victor.lixin@hisilicon.com,
+ puck.chen@hisilicon.com, dan.zhao@hisilicon.com, huxinwei@huawei.com,
+ z.liuxinliang@huawei.com, heyunlei@huawei.com,
+ kong.kongxinwei@hisilicon.com, wangbintian@gmail.com, w.f@huawei.com,
+ liguozhu@hisilicon.com
+Subject: Re: [PATCH v7 6/7] clk: hi6220: Clock driver support for Hisilicon
+ hi6220 SoC
+References: <1432117752-7074-1-git-send-email-bintian.wang@huawei.com> <1432117752-7074-2-git-send-email-bintian.wang@huawei.com>
+In-Reply-To: <1432117752-7074-2-git-send-email-bintian.wang@huawei.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The return value of clk_get_sys() was immediately used in
-clk_set_parent() and clk_set_rate(). The first one may return ERR_PTR
-and the latter only checks if supplied argument is non-NULL.
+On 05/20/15 03:29, Bintian Wang wrote:
+> Add clock drivers for hi6220 SoC, this driver controls the SoC
+> registers to supply different clocks to different IPs in the SoC.
+>
+> We add one divider clock for hi6220 because the divider in hi6220
+> also has a mask bit but it doesnot obey the rule defined by flag
+> "CLK_DIVIDER_HIWORD_MASK", we can not get index of the mask bit by
+> left shift fixed bits (e.g. 16 bits), so we add this divider clock
+> to handle it.
+>
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> Signed-off-by: Bintian Wang <bintian.wang@huawei.com>
+> Acked-by: Haojian Zhuang <haojian.zhuang@linaro.org>
+> Reviewed-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+> Tested-by: Will Deacon <will.deacon@arm.com>
+> Tested-by: Tyler Baker <tyler.baker@linaro.org>
+> ---
+>  drivers/clk/Kconfig                       |    2 +
+>  drivers/clk/Makefile                      |    4 +-
+>  drivers/clk/hisilicon/Kconfig             |    6 +
+>  drivers/clk/hisilicon/Makefile            |    3 +-
+>  drivers/clk/hisilicon/clk-hi6220.c        |  291 +++++++++++++++++++++++++++++
+>  drivers/clk/hisilicon/clk.c               |   29 +++
+>  drivers/clk/hisilicon/clk.h               |   17 ++
+>  drivers/clk/hisilicon/clkdivider-hi6220.c |  156 ++++++++++++++++
+>  include/dt-bindings/clock/hi6220-clock.h  |  173 +++++++++++++++++
+>  9 files changed, 677 insertions(+), 4 deletions(-)
+>  create mode 100644 drivers/clk/hisilicon/Kconfig
+>  create mode 100644 drivers/clk/hisilicon/clk-hi6220.c
+>  create mode 100644 drivers/clk/hisilicon/clkdivider-hi6220.c
+>  create mode 100644 include/dt-bindings/clock/hi6220-clock.h
+>
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 9897f35..18bb930 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -150,6 +150,8 @@ config COMMON_CLK_CDCE706
+>  	---help---
+>  	  This driver supports TI CDCE706 programmable 3-PLL clock synthesizer.
+>  
+> +source "drivers/clk/hisilicon/Kconfig"
+> +
+>  source "drivers/clk/qcom/Kconfig"
+>  
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/ti/clk-54xx.c | 47 ++++++++++++++++++++++++++++++++---------------
- 1 file changed, 32 insertions(+), 15 deletions(-)
+There's going to be a merge conflict here if this doesn't go through the
+clk tree.
 
-diff --git a/drivers/clk/ti/clk-54xx.c b/drivers/clk/ti/clk-54xx.c
-index 96c69a335975..1e7ed6334ab4 100644
---- a/drivers/clk/ti/clk-54xx.c
-+++ b/drivers/clk/ti/clk-54xx.c
-@@ -222,39 +222,56 @@ static struct ti_dt_clk omap54xx_clks[] = {
- 	{ .node_name = NULL },
- };
- 
--int __init omap5xxx_dt_clk_init(void)
-+static void __init omap5xxx_dt_clk_abe_dpll_init(void)
- {
- 	int rc;
--	struct clk *abe_dpll_ref, *abe_dpll, *sys_32k_ck, *usb_dpll;
--
--	ti_dt_clocks_register(omap54xx_clks);
--
--	omap2_clk_disable_autoidle_all();
-+	struct clk *abe_dpll_ref, *abe_dpll, *sys_32k_ck;
- 
- 	abe_dpll_ref = clk_get_sys(NULL, "abe_dpll_clk_mux");
- 	sys_32k_ck = clk_get_sys(NULL, "sys_32k_ck");
-+	if (IS_ERR(abe_dpll_ref) || IS_ERR(sys_32k_ck)) {
-+		pr_err("%s: failed to configure ABE DPLL!\n", __func__);
-+		return;
-+	}
-+
- 	rc = clk_set_parent(abe_dpll_ref, sys_32k_ck);
-+
- 	abe_dpll = clk_get_sys(NULL, "dpll_abe_ck");
--	if (!rc)
-+	if (!rc && !IS_ERR(abe_dpll))
- 		rc = clk_set_rate(abe_dpll, OMAP5_DPLL_ABE_DEFFREQ);
- 	if (rc)
- 		pr_err("%s: failed to configure ABE DPLL!\n", __func__);
- 
- 	abe_dpll = clk_get_sys(NULL, "dpll_abe_m2x2_ck");
--	if (!rc)
-+	if (!rc && !IS_ERR(abe_dpll))
- 		rc = clk_set_rate(abe_dpll, OMAP5_DPLL_ABE_DEFFREQ * 2);
- 	if (rc)
- 		pr_err("%s: failed to configure ABE m2x2 DPLL!\n", __func__);
-+}
- 
--	usb_dpll = clk_get_sys(NULL, "dpll_usb_ck");
--	rc = clk_set_rate(usb_dpll, OMAP5_DPLL_USB_DEFFREQ);
--	if (rc)
--		pr_err("%s: failed to configure USB DPLL!\n", __func__);
-+static void __init omap5xxx_dt_clk_usb_dpll_init(const char *clk_name,
-+					  unsigned long rate)
-+{
-+	int rc = -EINVAL;
-+	struct clk *clk;
-+
-+	clk = clk_get_sys(NULL, clk_name);
-+	if (!IS_ERR(clk))
-+		rc = clk_set_rate(clk, rate);
- 
--	usb_dpll = clk_get_sys(NULL, "dpll_usb_m2_ck");
--	rc = clk_set_rate(usb_dpll, OMAP5_DPLL_USB_DEFFREQ/2);
- 	if (rc)
--		pr_err("%s: failed to set USB_DPLL M2 OUT\n", __func__);
-+		pr_err("%s: failed to configure %s!\n", __func__, clk_name);
-+}
-+
-+int __init omap5xxx_dt_clk_init(void)
-+{
-+	ti_dt_clocks_register(omap54xx_clks);
-+
-+	omap2_clk_disable_autoidle_all();
-+
-+	omap5xxx_dt_clk_abe_dpll_init();
-+	omap5xxx_dt_clk_usb_dpll_init("dpll_usb_ck", OMAP5_DPLL_USB_DEFFREQ);
-+	omap5xxx_dt_clk_usb_dpll_init("dpll_usb_m2_ck", OMAP5_DPLL_USB_DEFFREQ/2);
- 
- 	return 0;
- }
+>
+> +
+> +static void __init hi6220_clk_sys_init(struct device_node *np)
+> +{
+> +	struct hisi_clock_data *clk_data;
+> +
+> +	clk_data = hisi_clk_init(np, HI6220_SYS_NR_CLKS);
+> +	if (!clk_data)
+> +		return;
+> +
+> +	hisi_clk_register_gate_sep(hi6220_separated_gate_clks_sys,
+> +			ARRAY_SIZE(hi6220_separated_gate_clks_sys), clk_data);
+> +
+> +	hisi_clk_register_mux(hi6220_mux_clks_sys,
+> +			ARRAY_SIZE(hi6220_mux_clks_sys), clk_data);
+> +
+> +	hi6220_clk_register_divider(hi6220_div_clks_sys,
+> +			ARRAY_SIZE(hi6220_div_clks_sys), clk_data);
+> +
+> +	if (!clk_data_ao)
+> +		return;
+> +
+> +	/* enable high speed clock on UART1 mux */
+> +	clk_set_parent(clk_data->clk_data.clks[HI6220_UART1_SRC],
+> +			clk_data_ao->clk_data.clks[HI6220_150M]);
+
+Sorry I missed this one earlier. Can we do this clk_set_parent() through
+assigned-parents instead? I expected an #include <linux/clk.h> for the
+usage of clk_set_parent() here so I didn't look hard to see if consumer
+APIs were being used.
+
+Otherwise the patch looks fine.
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
