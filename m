@@ -1,49 +1,29 @@
-Return-Path: <bleung@google.com>
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-Sender: bleung@google.com
-In-Reply-To: <1431451444-23155-21-git-send-email-rklein@nvidia.com>
-References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
-	<1431451444-23155-21-git-send-email-rklein@nvidia.com>
-Date: Thu, 14 May 2015 12:37:24 -0700
-Message-ID: <CANLzEkvUAhXCCvtdHEfmJGONkzNu_dBHj1UUm6Et93kXV1Mz0g@mail.gmail.com>
-Subject: Re: [PATCH v5 19/21] clk: tegra: Add Super Gen5 Logic
-From: Benson Leung <bleung@chromium.org>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <1432132237-31004-1-git-send-email-sebastien.szymanski@armadeus.com>
+References: <1432132237-31004-1-git-send-email-sebastien.szymanski@armadeus.com>
+Date: Wed, 20 May 2015 12:20:50 -0300
+Message-ID: <CAOMZO5ByAL=-EXUiEoKnWVWbcpLPKDxQShPf_FPDhmHmiG3bmQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] ARM: clk-imx6q: refine sata's parent
+From: Fabio Estevam <festevam@gmail.com>
+To: =?UTF-8?Q?S=C3=A9bastien_Szymanski?= <sebastien.szymanski@armadeus.com>
+Cc: Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 12, 2015 at 10:24 AM, Rhyland Klein <rklein@nvidia.com> wrote:
-> From: Bill Huang <bilhuang@nvidia.com>
->
-> Super clock divider control and clock source mux of Tegra210 has changed
-> a little against prior SoCs, this patch adds Gen5 logic to address those
-> differences.
->
-> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
-> ---
-> v2:
->   - Fixed sclk divider address (0x370 -> 0x2c)
->
->  drivers/clk/tegra/Makefile               |    1 +
->  drivers/clk/tegra/clk-tegra-super-gen5.c |  150 ++++++++++++++++++++++++++++++
->  drivers/clk/tegra/clk.h                  |    3 +
->  3 files changed, 154 insertions(+)
->  create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
+On Wed, May 20, 2015 at 11:30 AM, S=C3=A9bastien Szymanski
+<sebastien.szymanski@armadeus.com> wrote:
+> According to IMX6D/Q RM, table 18-3, sata clock's parent is ahb, not ipg.
 
-I've diffed clk-tegra-super-gen5.c and the existing
-clk-tegra-super-gen4.c, and there's a lot of code duplication here.
-They're the same pair of functions, with several small changes. Since
-the idea behind pulling out the super clock initialization into a
-common file was to reuse the same init, could we extend the super-gen4
-file (rename if you have to) to support both gens instead?
+Good catch!
 
--- 
-Benson Leung
-Software Engineer, Chrom* OS
-bleung@chromium.org
+>
+> This patch is based on branch:
+> git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git imx/soc
+
+Please put this below the --- line.
+
+Reviewed-by: Fabio Estevam <fabio.estevam@freescale.com>
