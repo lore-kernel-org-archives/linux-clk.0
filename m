@@ -1,151 +1,46 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bill Huang <bilhuang@nvidia.com>
-Subject: [PATCH v4 16/20] clk: tegra: pll: Add Set_default logic
-Date: Mon, 4 May 2015 12:37:36 -0400
-Message-ID: <1430757460-9478-17-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
+Return-Path: <tony@atomide.com>
+Date: Wed, 20 May 2015 10:46:49 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, mturquette@linaro.org,
+	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	paul@pwsan.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 02/27] clk: ti: move generic OMAP DPLL implementation
+ under drivers/clk
+Message-ID: <20150520174648.GC10274@atomide.com>
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+ <1431334493-24455-3-git-send-email-t-kristo@ti.com>
+ <20150520012053.GC31054@codeaurora.org>
+ <555CC7CA.2090104@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <555CC7CA.2090104@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bill Huang <bilhuang@nvidia.com>
+* Tero Kristo <t-kristo@ti.com> [150520 10:45]:
+> On 05/20/2015 04:20 AM, Stephen Boyd wrote:
+> >On 05/11, Tero Kristo wrote:
+> >>With the legacy clock data now gone, we can start moving OMAP clock
+> >>type implementations under clock driver. Start this with moving the
+> >>generic OMAP DPLL clock type under TI clock driver.
+> >>
+> >>Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> >>---
+> >
+> >How much of the code is the same from the original copy? Can you
+> >generate these patches with -M -C so that we can see?
+> 
+> Looks like for the move patches the range is from 85%...95% exact copy.
+> Shall I repost the patches in this format? Good hint for the -M -C btw, I
+> wonder why those are not default options for git-format-patch.
 
-Add logic which (if specified for a pll) can verify that a PLL is set
-to the proper default value and if not can set it. This can be
-specified per PLL as each will have different default values.
+While tweaking your scripts.. Can you also check why the cover
+letter for your patches is missing the whole series diffstat?
 
-Based on original work by Aleksandr Frid <afrid@nvidia.com>
+The diffstat is automatically created with:
 
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
----
-v2:
-  - Remove MACRO for PLL_MISC_CHECK_DEFAULT as suggested, and instead
-    the tegra210 driver will include an inline version of this function.
+$ git format-patch --cover-letter -o /tmp/outgoing v4.1-rc1..
 
- drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
- drivers/clk/tegra/clk.h     |    2 ++
- 2 files changed, 37 insertions(+), 11 deletions(-)
+Regards,
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 94416018e35c..778f2de0045e 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -658,15 +658,28 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 			unsigned long rate)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	struct tegra_clk_pll_freq_table old_cfg;
- 	int state, ret = 0;
- 
- 	state = clk_pll_is_enabled(hw);
- 
-+	_get_pll_mnp(pll, &old_cfg);
-+
-+	if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
-+			(cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
-+		ret = pll->params->dyn_ramp(pll, cfg);
-+		if (!ret)
-+			return 0;
-+	}
-+
- 	if (state) {
- 		pll_clk_stop_ss(pll);
- 		_clk_pll_disable(hw);
- 	}
- 
-+	if (!pll->params->defaults_set && pll->params->set_defaults)
-+		pll->params->set_defaults(pll);
-+
- 	_update_pll_mnp(pll, cfg);
- 
- 	if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
-@@ -1526,6 +1539,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
- 	if (!pll->params->calc_rate)
- 		pll->params->calc_rate = _calc_rate;
- 
-+	if (pll->params->set_defaults)
-+		pll->params->set_defaults(pll);
-+
- 	/* Data in .init is copied by clk_register(), so stack variable OK */
- 	pll->hw.init = &init;
- 
-@@ -1644,7 +1660,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 	struct tegra_clk_pll *pll;
- 	struct clk *clk, *parent;
- 	unsigned long parent_rate;
--	int err;
- 	u32 val, val_iddq;
- 
- 	parent = __clk_lookup(parent_name);
-@@ -1665,18 +1680,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 		pll_params->vco_min = pll_params->adjust_vco(pll_params,
- 							     parent_rate);
- 
--	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
--	if (err)
--		return ERR_PTR(err);
-+	/*
-+	 * If the pll has a set_defaults callback, it will take care of
-+	 * configuring dynamic ramping and setting IDDQ in that path.
-+	 */
-+	if (!pll_params->set_defaults) {
-+		int err;
- 
--	val = readl_relaxed(clk_base + pll_params->base_reg);
--	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
-+		err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
-+		if (err)
-+			return ERR_PTR(err);
- 
--	if (val & PLL_BASE_ENABLE)
--		WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
--	else {
--		val_iddq |= BIT(pll_params->iddq_bit_idx);
--		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
-+		val = readl_relaxed(clk_base + pll_params->base_reg);
-+		val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
-+
-+		if (val & PLL_BASE_ENABLE)
-+			WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
-+		else {
-+			val_iddq |= BIT(pll_params->iddq_bit_idx);
-+			writel_relaxed(val_iddq,
-+				       clk_base + pll_params->iddq_reg);
-+		}
- 	}
- 
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 74cf6242a57a..c111a89bb5ea 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -239,6 +239,7 @@ struct tegra_clk_pll_params {
- 	int		stepb_shift;
- 	int		lock_delay;
- 	int		max_p;
-+	bool		defaults_set;
- 	struct pdiv_map *pdiv_tohw;
- 	struct div_nmp	*div_nmp;
- 	struct tegra_clk_pll_freq_table	*freq_table;
-@@ -254,6 +255,7 @@ struct tegra_clk_pll_params {
- 				unsigned long parent_rate);
- 	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
- 			struct tegra_clk_pll_freq_table *cfg);
-+	void	(*set_defaults)(struct tegra_clk_pll *pll);
- };
- 
- #define TEGRA_PLL_USE_LOCK BIT(0)
--- 
-1.7.9.5
+Tony
