@@ -1,48 +1,47 @@
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Message-ID: <554347AA.3070502@gmail.com>
-Date: Fri, 01 May 2015 11:30:18 +0200
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-CC: Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Welling <mwelling@ieee.org>,
- Russell King <rmk+linux@arm.linux.org.uk>,
- Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@free-electrons.com>,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] clk: si5351: Some fixes
-References: <1430415954-29517-1-git-send-email-sebastian.hesselbarth@gmail.com> <20150501111406.0aa23c7b@armhf>
-In-Reply-To: <20150501111406.0aa23c7b@armhf>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <paul@pwsan.com>
+Date: Wed, 20 May 2015 22:40:15 +0000 (UTC)
+From: Paul Walmsley <paul@pwsan.com>
+To: Tero Kristo <t-kristo@ti.com>
+cc: mturquette@linaro.org, tony@atomide.com, linux-omap@vger.kernel.org,
+  linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 00/27] ARM: OMAP2+: clock code migration to
+ drivers/clk/ti
+In-Reply-To: <555B8DC0.5080905@ti.com>
+Message-ID: <alpine.DEB.2.02.1505202234330.7960@utopia.booyaka.com>
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com> <alpine.DEB.2.02.1505111747460.19833@utopia.booyaka.com> <5551D178.3000904@ti.com> <alpine.DEB.2.02.1505122019220.21747@utopia.booyaka.com> <5552F32C.7060606@ti.com>
+ <alpine.DEB.2.02.1505131438430.7921@utopia.booyaka.com> <555B8DC0.5080905@ti.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01.05.2015 11:14, Jean-Francois Moine wrote:
-> On Thu, 30 Apr 2015 19:45:50 +0200
-> Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com> wrote:
->> For Si5351 clock driver, Michael Welling and Jean-Francois Moine reported
->> issues with recent v4.x kernels due to broken/missing/wrong parent clock
->> claming. This patch set now deals with the issues reported.
->>
->> Patch 1 amends the binding documentation mention clock-names property
->> for the "xtal" and "clkin" parent clock inputs of Si5351 variants.
->>
->> Patch 2 adds the clock-names property for the SolidRun CuBox using Si5351
->> with a fixed oscillator connected to "xtal" input.
->>
->> Patch 3 reworks the way we claim parent clocks by using devm_clk_get()
->> for both DT and platform_data based registration. Also, properly check
->> for errors returned by devm_clk_get() and prepare/enable the parent clocks.
-[...]
->
-> I applied the patches 2 and 3, and the audio and video in the Cubox
-> work fine again. Thanks.
+On Tue, 19 May 2015, Tero Kristo wrote:
 
-Ok, good. You mentioned that on v3.19-rc1 it still "works" i.e. despite
-the broken/missing clk_get/clk_prepare_enable?
+> Any news on this? As noted previously, I am not able to reproduce the issue
+> you are seeing currently, can you give DEBUG_LL a shot?
 
-Can you check the stable (v3.19, v4.0) versions and see how far we
-should backport the fix?
+Yeah I just bisected it, it was caused by this:
 
-Sebastian
+commit cc4a5fe972ad7834e8662b49b3a5fdb597e9e15e
+Author: Felipe Balbi <balbi@ti.com>
+Date:   Fri Jan 30 11:18:56 2015 -0600
+
+    arm: config: omap2plus_defconfig: switch over to LZMA compression
+    
+    LZMA compression makes about 33% smaller zImage
+    with just a slight extra decompression time.
+    
+    Before this patch, zImage built with o2+_dc
+    is 4.5MiB and after it's about 3.3MiB.
+    
+    Suggested-by: David Cohen <david.a.cohen@linux.intel.com>
+    Signed-off-by: Felipe Balbi <balbi@ti.com>
+    Signed-off-by: Tony Lindgren <tony@atomide.com>
+
+
+and the timeouts on the testbed being set to fail if a kernel takes longer 
+than five seconds to start.  Seems that the part about a "slight extra 
+decompression time" probably only applies to relatively recent chips.
+
+
+- Paul
