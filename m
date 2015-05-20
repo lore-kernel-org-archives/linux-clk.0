@@ -1,32 +1,82 @@
-Return-Path: <bleung@google.com>
-MIME-Version: 1.0
-Sender: bleung@google.com
-In-Reply-To: <1430757460-9478-5-git-send-email-rklein@nvidia.com>
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
-	<1430757460-9478-5-git-send-email-rklein@nvidia.com>
-Date: Mon, 4 May 2015 13:11:18 -0700
-Message-ID: <CANLzEkuR4KPMPc=25D8mKyjdLaSvSa3xyX_ad=j3q_rVu+A-Hw@mail.gmail.com>
-Subject: Re: [PATCH v4 04/20] clk: tegra: pll: simplify clk_enable_path
-From: Benson Leung <bleung@chromium.org>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1432120636.3231.24.camel@linaro.org>
+Subject: Re: [PATCH v2 2/5] firmware: add support for ARM System Control and
+ Power Interface(SCPI) protocol
+From: "Jon Medhurst (Tixy)" <tixy@linaro.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>
+Date: Wed, 20 May 2015 12:17:16 +0100
+In-Reply-To: <1431618155-3132-3-git-send-email-sudeep.holla@arm.com>
+References: <1431618155-3132-1-git-send-email-sudeep.holla@arm.com>
+	 <1431618155-3132-3-git-send-email-sudeep.holla@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 4, 2015 at 9:37 AM, Rhyland Klein <rklein@nvidia.com> wrote:
-> Instead of having multiple similar wrapper functions for
-> _clk_pll_[enable|disable], we can simplify it to single
-> wrappers and use checks to avoid the logic we don't want to use.
->
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+On Thu, 2015-05-14 at 16:42 +0100, Sudeep Holla wrote:
+> This patch adds support for System Control and Power Interface (SCPI)
+> Message Protocol used between the Application Cores(AP) and the System
+> Control Processor(SCP). The MHU peripheral provides a mechanism for
+> inter-processor communication between SCP's M3 processor and AP.
+> 
+> SCP offers control and management of the core/cluster power states,
+> various power domain DVFS including the core/cluster, certain system
+> clocks configuration, thermal sensors and many others.
+> 
+> This protocol driver provides interface for all the client drivers using
+> SCPI to make use of the features offered by the SCP.
+> 
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> CC: Jassi Brar <jassisinghbrar@gmail.com>
+> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
+> ---
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
+Sorry for the delay in looking at this. I have one nitpick below but
+anyway, here's a
+
+Reviewed-by: Jon Medhurst (Tixy) <tixy@linaro.org>
+
+[...]
+> +++ b/drivers/firmware/arm_scpi.c
+[...]
+> +static void scpi_process_cmd(struct scpi_chan *ch, u32 cmd)
+> +{
+> +	unsigned long flags;
+> +	struct scpi_xfer *t, *match = NULL;
+> +
+> +	spin_lock_irqsave(&ch->rx_lock, flags);
+> +	if (list_empty(&ch->rx_pending)) {
+> +		spin_unlock_irqrestore(&ch->rx_lock, flags);
+> +		return;
+> +	}
+> +
+> +	list_for_each_entry(t, &ch->rx_pending, node)
+> +		if (CMD_XTRACT_UNIQ(t->cmd) == CMD_XTRACT_UNIQ(cmd)) {
+> +			list_del(&t->node);
+> +			match = t;
+> +			break;
+> +		}
+> +	/* check if wait_for_completion is in progress or timed-out */
+> +	if (match && !completion_done(&match->done)) {
+> +		struct scpi_shared_mem *mem = ch->rx_payload;
+> +		int len = min(match->rx_len, CMD_SIZE(cmd));
+> +
+> +		match->status = le32_to_cpu(mem->status);
+> +		memcpy_fromio(match->rx_buf, mem->payload, len);
+> +		if (match->rx_len > len)
+
+rx_len is unsigned and len is signed and so I had to go refresh my
+memory from the C standard before I could convince myself that this if
+statement was OK. Might be clearer if len was unsigned, especially as
+it's the 'min' of two unsigned values.
 
 -- 
-Benson Leung
-Software Engineer, Chrom* OS
-bleung@chromium.org
+Tixy
+
