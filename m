@@ -1,27 +1,173 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <555B9C93.7030002@codeaurora.org>
-Date: Tue, 19 May 2015 13:26:59 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <bintian.wang@huawei.com>
+Message-ID: <555C2CE5.4010706@huawei.com>
+Date: Wed, 20 May 2015 14:42:45 +0800
+From: Bintian <bintian.wang@huawei.com>
 MIME-Version: 1.0
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
- Mike Turquette <mturquette@linaro.org>
-CC: linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: fix output format of debugfs/clk_dump
-References: <1432050130-12612-1-git-send-email-vladimir_zapolskiy@mentor.com>
-In-Reply-To: <1432050130-12612-1-git-send-email-vladimir_zapolskiy@mentor.com>
-Content-Type: text/plain; charset=windows-1252
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: <mturquette@linaro.org>, <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
+        <xuejiancheng@huawei.com>, <tomeu.vizoso@collabora.com>,
+        <sledge.yanwei@huawei.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <arnd@arndb.de>, <will.deacon@arm.com>,
+        <robh+dt@kernel.org>, <khilman@linaro.org>, <mark.rutland@arm.com>,
+        <catalin.marinas@arm.com>, <haojian.zhuang@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <olof@lixom.net>,
+        <yanhaifeng@gmail.com>, <linux@arm.linux.org.uk>,
+        <guodong.xu@linaro.org>, <jorge.ramirez-ortiz@linaro.org>,
+        <tyler.baker@linaro.org>, <khilman@kernel.org>,
+        <xuyiping@hisilicon.com>, <wangbinghui@hisilicon.com>,
+        <zhenwei.wang@hisilicon.com>, <victor.lixin@hisilicon.com>,
+        <puck.chen@hisilicon.com>, <dan.zhao@hisilicon.com>,
+        <huxinwei@huawei.com>, <z.liuxinliang@huawei.com>,
+        <heyunlei@huawei.com>, <kong.kongxinwei@hisilicon.com>,
+        <w.f@huawei.com>, <liguozhu@hisilicon.com>, <wangbintian@gmail.com>
+Subject: Re: [PATCH v6 5/6] clk: hi6220: Clock driver support for Hisilicon
+ hi6220 SoC
+References: <1431762000-8311-1-git-send-email-bintian.wang@huawei.com> <20150520013941.GD31054@codeaurora.org>
+In-Reply-To: <20150520013941.GD31054@codeaurora.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/19/15 08:42, Vladimir Zapolskiy wrote:
-> The output format of $(cat /sys/kernel/debug/clk/clk_dump) was
-> compliant to JSON and Python dictionary type some time ago, but at the
-> moment a couple of commas are missing, fix it.
+Hello Stephen,
+
+I will fix in version 7 based on all comments.
+
+Thanks,
+
+Bintian
+
+On 2015/5/20 9:39, Stephen Boyd wrote:
+> On 05/16, Bintian Wang wrote:
+>> @@ -94,18 +106,23 @@ struct clk *hisi_register_clkgate_sep(struct device *, const char *,
+>>   				const char *, unsigned long,
+>>   				void __iomem *, u8,
+>>   				u8, spinlock_t *);
+>> +struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
+>> +	const char *parent_name, unsigned long flags, void __iomem *reg,
+>> +	u8 shift, u8 width, u32 mask_bit, spinlock_t *lock);
+>>
+>> -struct hisi_clock_data __init *hisi_clk_init(struct device_node *, int);
+>> -void __init hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *,
+>> +struct hisi_clock_data *hisi_clk_init(struct device_node *, int);
+>> +void hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *,
+>>   					int, struct hisi_clock_data *);
+>> -void __init hisi_clk_register_fixed_factor(struct hisi_fixed_factor_clock *,
+>> +void hisi_clk_register_fixed_factor(struct hisi_fixed_factor_clock *,
+>>   					int, struct hisi_clock_data *);
+>> -void __init hisi_clk_register_mux(struct hisi_mux_clock *, int,
+>> +void hisi_clk_register_mux(struct hisi_mux_clock *, int,
+>>   				struct hisi_clock_data *);
+>> -void __init hisi_clk_register_divider(struct hisi_divider_clock *,
+>> +void hisi_clk_register_divider(struct hisi_divider_clock *,
+>>   				int, struct hisi_clock_data *);
+>> -void __init hisi_clk_register_gate(struct hisi_gate_clock *,
+>> +void hisi_clk_register_gate(struct hisi_gate_clock *,
+>> +					int, struct hisi_clock_data *);
+>> +void hisi_clk_register_gate_sep(struct hisi_gate_clock *,
+>>   					int, struct hisi_clock_data *);
+>> -void __init hisi_clk_register_gate_sep(struct hisi_gate_clock *,
+>> +void hi6220_clk_register_divider(struct hi6220_divider_clock *,
+>>   					int, struct hisi_clock_data *);
 >
-> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-
-Isn't this already fixed in clk-next with 7cb81136d2ef (clk: Fix JSON
-output in debugfs, 2015-04-29)?
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> Please don't do the mass __init removal in this patch. Do it in a
+> separate patch.
+>
+>>   #endif	/* __HISI_CLK_H */
+>> diff --git a/drivers/clk/hisilicon/clkdivider-hi6220.c b/drivers/clk/hisilicon/clkdivider-hi6220.c
+>> new file mode 100644
+>> index 0000000..bc85ef6
+>> --- /dev/null
+>> +++ b/drivers/clk/hisilicon/clkdivider-hi6220.c
+>> @@ -0,0 +1,157 @@
+>> +/*
+>> + * Hisilicon hi6220 SoC divider clock driver
+>> + *
+>> + * Copyright (c) 2015 Hisilicon Limited.
+>> + *
+>> + * Author: Bintian Wang <bintian.wang@huawei.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + *
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/io.h>
+>> +#include <linux/err.h>
+>
+> #include <linux/spinlock.h> ?
+>
+>> +
+>> +#define div_mask(width)	((1 << (width)) - 1)
+>> +
+> [..]
+>> +
+>> +struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
+>> +	const char *parent_name, unsigned long flags, void __iomem *reg,
+>> +	u8 shift, u8 width, u32 mask_bit, spinlock_t *lock)
+>> +{
+>> +	struct hi6220_clk_divider *div;
+>> +	struct clk *clk;
+>> +	struct clk_init_data init;
+>> +	struct clk_div_table *table;
+>> +	u32 max_div, min_div;
+>> +	int i;
+>> +
+>> +	/* allocate the divider */
+>> +	div = kzalloc(sizeof(struct hi6220_clk_divider), GFP_KERNEL);
+>
+> nitpick: Use sizeof(*div) please.
+>
+>> +	if (!div)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	/* Init the divider table */
+>> +	max_div = div_mask(width) + 1;
+>> +	min_div = 1;
+>> +
+>> +	table = kzalloc(sizeof(struct clk_div_table) * (max_div + 1),
+>
+> And kcalloc() here please
+>
+>> +			GFP_KERNEL);
+>> +	if (!table) {
+>> +		kfree(div);
+>> +		return ERR_PTR(-ENOMEM);
+>> +	}
+>> +
+>> +	for (i = 0; i < max_div; i++) {
+>> +		table[i].div = min_div + i;
+>> +		table[i].val = table[i].div - 1;
+>> +	}
+>> +
+>> +	init.name = name;
+>> +	init.ops = &hi6220_clkdiv_ops;
+>> +	init.flags = flags;
+>> +	init.parent_names = parent_name ? &parent_name : NULL;
+>> +	init.num_parents = parent_name ? 1 : 0;
+>> +
+>> +	/* struct hi6220_clk_divider assignments */
+>> +	div->reg = reg;
+>> +	div->shift = shift;
+>> +	div->width = width;
+>> +	div->mask = mask_bit ? BIT(mask_bit) : 0;
+>> +	div->lock = lock;
+>> +	div->hw.init = &init;
+>> +	div->table = table;
+>> +
+>> +	/* register the clock */
+>> +	clk = clk_register(dev, &div->hw);
+>> +
+>
+> Drop the newline here.
+>
+>> +	if (IS_ERR(clk)) {
+>> +		kfree(table);
+>> +		kfree(div);
+>> +	}
+>> +
+>> +	return clk;
+>> +}
+>
