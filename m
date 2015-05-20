@@ -1,45 +1,65 @@
-Return-Path: <bilhuang@nvidia.com>
-From: Bill Huang <bilhuang@nvidia.com>
-To: pdeschrijver@nvidia.com
-CC: mturquette@linaro.org,
-	swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	pwalmsley@nvidia.com,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bill Huang <bilhuang@nvidia.com>
-Subject: [PATCH 1/1] clk: tegra: fix WARN_ON in PLL_RE registration
-Date: Fri, 15 May 2015 20:07:33 +0800
-Message-ID: <1431691653-17615-1-git-send-email-bilhuang@nvidia.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 20 May 2015 16:07:51 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Paul Burton <paul.burton@imgtec.com>
+Cc: linux-mips@linux-mips.org, Lars-Peter Clausen <lars@metafoo.de>,
+	Mike Turquette <mturquette@linaro.org>,
+	Ralf Baechle <ralf@linux-mips.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 30/37] clk: ingenic: add JZ4780 CGU support
+Message-ID: <20150520230751.GY31753@codeaurora.org>
+References: <1429881457-16016-1-git-send-email-paul.burton@imgtec.com>
+ <1429881457-16016-31-git-send-email-paul.burton@imgtec.com>
 MIME-Version: 1.0
-Return-Path: bilhuang@nvidia.com
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1429881457-16016-31-git-send-email-paul.burton@imgtec.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This fixes two things.
+On 04/24, Paul Burton wrote:
+> diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
+> new file mode 100644
+> index 0000000..950616a
+> --- /dev/null
+> +++ b/drivers/clk/ingenic/jz4780-cgu.c
+> @@ -0,0 +1,736 @@
+> +
+> +struct clk_ops jz4780_otg_phy_ops = {
 
-- Read the correct IDDQ register
-- Check the correct IDDQ bit position
+static?
 
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> +	.get_parent = jz4780_otg_phy_get_parent,
+> +	.set_parent = jz4780_otg_phy_set_parent,
+> +
+> +	.recalc_rate = jz4780_otg_phy_recalc_rate,
+> +	.round_rate = jz4780_otg_phy_round_rate,
+> +	.set_rate = jz4780_otg_phy_set_rate,
+> +};
+[...]
+> +
+> +static void __init jz4780_cgu_init(struct device_node *np)
+> +{
+> +	int retval;
+> +
+> +	cgu = ingenic_cgu_new(jz4780_cgu_clocks,
+> +			      ARRAY_SIZE(jz4780_cgu_clocks), np);
+> +	if (!cgu) {
+> +		pr_err("%s: failed to initialise CGU\n", __func__);
+> +		return;
+> +	}
+> +
+> +	retval = ingenic_cgu_register_clocks(cgu);
+> +	if (retval) {
+> +		pr_err("%s: failed to register CGU Clocks\n", __func__);
+> +		return;
+> +	}
+> +
+> +	clk_set_parent(cgu->clocks.clks[JZ4780_CLK_UHC],
+> +		       cgu->clocks.clks[JZ4780_CLK_MPLL]);
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 05c6d08..734340e 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -1630,7 +1630,8 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
- 
- 	val = pll_readl_base(pll);
- 	if (val & PLL_BASE_ENABLE)
--		WARN_ON(val & pll_params->iddq_bit_idx);
-+		WARN_ON(readl_relaxed(clk_base + pll_params->iddq_reg) &
-+				BIT(pll_params->iddq_bit_idx));
- 	else {
- 		int m;
- 
+Can you do this via assigned- parents?
+
+> +}
+> +CLK_OF_DECLARE(jz4780_cgu, "ingenic,jz4780-cgu", jz4780_cgu_init);
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
