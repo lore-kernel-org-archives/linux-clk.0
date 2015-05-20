@@ -1,92 +1,37 @@
-Return-Path: <gregory.clement@free-electrons.com>
-Message-ID: <55646B50.9060709@free-electrons.com>
-Date: Tue, 26 May 2015 14:47:12 +0200
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Return-Path: <rklein@nvidia.com>
+Message-ID: <555CC20E.8030907@nvidia.com>
+Date: Wed, 20 May 2015 13:19:10 -0400
+From: Rhyland Klein <rklein@nvidia.com>
 MIME-Version: 1.0
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
- linux-clk@vger.kernel.org
-CC: Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
- Jason Cooper <jason@lakedaemon.net>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Andrew Lunn <andrew@lunn.ch>,
- Tawfik Bayouk <tawfik@marvell.com>, Lior Amsalem <alior@marvell.com>,
- Nadav Haklai <nadavh@marvell.com>,
- Eran Ben-Avi <benavi@marvell.com>, linux-arm-kernel@lists.infradead.org,
- Arnaud Ebalard <arno@natisbad.org>
-Subject: Re: [PATCH v2] clk: mvebu: add missing CESA gate clk
-References: <1432644177-16152-1-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1432644177-16152-1-git-send-email-boris.brezillon@free-electrons.com>
-Content-Type: text/plain; charset=windows-1252
+To: Benson Leung <bleung@chromium.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
+	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre
+ Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Paul Walmsley
+	<pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 17/21] clk: tegra: pll: Add logic for SS
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>	<1431451444-23155-19-git-send-email-rklein@nvidia.com> <CANLzEks10KmCAx4tK0oSejJ6Z+oBRS2+pcsktvStQrogCarTJQ@mail.gmail.com>
+In-Reply-To: <CANLzEks10KmCAx4tK0oSejJ6Z+oBRS2+pcsktvStQrogCarTJQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Boris,
-
-On 26/05/2015 14:42, Boris Brezillon wrote:
-> Even if not documented in the datasheet, the Armada 370 SoC can actually
-> gate the CESA (crypto engine) clock.
-> Add an entry in the gating_desc table to be able to reference the CESA
-> gateclk in the crypto node.
+On 5/13/2015 8:25 PM, Benson Leung wrote:
+> On Tue, May 12, 2015 at 10:24 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+>> +static void pll_clk_start_ss(struct tegra_clk_pll *pll)
+>> +{
+>> +       if (pll->params->defaults_set && pll->params->ssc_ctrl_en_mask) {
 > 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Is there any reason you're checking for the existence of
+> ssc_ctrl_en_mask rather than ssc_ctrl_reg?
 
+Not particularly, just a way of seeing if ssc is supported by this pll,
+I will change it to check the register to be more consistent with other
+checks in the code.
 
-Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-
-
-Thanks,
-
-Gregory
-
-> ---
-> Hi,
-> 
-> Sorry for the noise, but since the changes in this patch are quite
-> straightforward, I'm directly sending a v2 addressing Gregory's comments
-> (instead of waiting for more reviews).
-> 
-> Best Regards,
-> 
-> Boris
-> 
-> Changes since v1:
->  - update the DT bindings doc
->  - change the clock name to be consistent with other SoCs
-> 
->  Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt | 1 +
->  drivers/clk/mvebu/armada-370.c                                | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
-> index 31c7c0c..660e649 100644
-> --- a/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
-> @@ -19,6 +19,7 @@ ID	Clock	Peripheral
->  9	pex1	PCIe Cntrl 1
->  15	sata0	SATA Host 0
->  17	sdio	SDHCI Host
-> +23	crypto	CESA (crypto engine)
->  25	tdm	Time Division Mplx
->  28	ddr	DDR Cntrl
->  30	sata1	SATA Host 0
-> diff --git a/drivers/clk/mvebu/armada-370.c b/drivers/clk/mvebu/armada-370.c
-> index 756f0f3..c19fd77 100644
-> --- a/drivers/clk/mvebu/armada-370.c
-> +++ b/drivers/clk/mvebu/armada-370.c
-> @@ -163,6 +163,7 @@ static const struct clk_gating_soc_desc a370_gating_desc[] __initconst = {
->  	{ "pex1", "pex1_en", 9, 0 },
->  	{ "sata0", NULL, 15, 0 },
->  	{ "sdio", NULL, 17, 0 },
-> +	{ "crypto", NULL, 23, 0 },
->  	{ "tdm", NULL, 25, 0 },
->  	{ "ddr", NULL, 28, CLK_IGNORE_UNUSED },
->  	{ "sata1", NULL, 30, 0 },
-> 
-
+-rhyland
 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+nvpublic
