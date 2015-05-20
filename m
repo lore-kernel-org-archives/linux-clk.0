@@ -1,275 +1,71 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 11/14] ARM: shmobile: r8a7794 dtsi: Add CPG Clock Domain
-Date: Thu, 28 May 2015 20:53:36 +0200
-Message-Id: <1432839219-475-12-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
-References: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+From: Michael Turquette <mturquette@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, sboyd@codeaurora.org
+To: torvalds@linux-foundation.org
+Message-ID: <20150520032454.9817.49687@quantum>
+Subject: [GIT PULL] clk: fixes for 4.1
+Date: Tue, 19 May 2015 20:24:54 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Add an appropriate "#power-domain-cells" property to the cpg_clocks
-device node, to create the CPG Clock Domain.
+The following changes since commit b787f68c36d49bb1d9236f403813641efa74a031:
 
-Add "power-domains" properties to all device nodes for devices that are
-part of the CPG Clock Domain and can be power-managed through an MSTP
-clock.  This applies to most on-SoC devices, which have a one-to-one
-mapping from SoC device to DT device node.
+  Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-v2:
-  - Add Reviewed-by,
-  - Add "power-domains" properties to recently introduced USB-DMAC
-    device nodes,
-  - Drop adding "power-domains" properties to the GIC device node, as
-    adding the INTC_SYS clock is postponed.
----
- arch/arm/boot/dts/r8a7794.dtsi | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+are available in the git repository at:
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index b738194233113402..4ed2882451ca0893 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -57,6 +57,7 @@
- 			     <0 143 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7794_CLK_CMT0>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		renesas,channels-mask = <0x60>;
- 
-@@ -76,6 +77,7 @@
- 			     <0 127 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_CMT1>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		renesas,channels-mask = <0xff>;
- 
-@@ -106,6 +108,7 @@
- 			     <0 16 IRQ_TYPE_LEVEL_HIGH>,
- 			     <0 17 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp4_clks R8A7794_CLK_IRQC>;
-+		power-domains = <&cpg_clocks>;
- 	};
- 
- 	dmac0: dma-controller@e6700000 {
-@@ -134,6 +137,7 @@
- 				"ch12", "ch13", "ch14";
- 		clocks = <&mstp2_clks R8A7794_CLK_SYS_DMAC0>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
- 	};
-@@ -164,6 +168,7 @@
- 				"ch12", "ch13", "ch14";
- 		clocks = <&mstp2_clks R8A7794_CLK_SYS_DMAC1>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
- 	};
-@@ -176,6 +181,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -187,6 +193,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -198,6 +205,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -209,6 +217,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -220,6 +229,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x1f>, <&dmac0 0x20>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -231,6 +241,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x23>, <&dmac0 0x24>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -242,6 +253,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -253,6 +265,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -264,6 +277,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -275,6 +289,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -286,6 +301,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -297,6 +313,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -308,6 +325,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x2f>, <&dmac0 0x30>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -319,6 +337,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -330,6 +349,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -341,6 +361,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -352,6 +373,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -363,6 +385,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -371,6 +394,7 @@
- 		reg = <0 0xee700000 0 0x400>;
- 		interrupts = <0 162 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7794_CLK_ETHER>;
-+		power-domains = <&cpg_clocks>;
- 		phy-mode = "rmii";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -382,6 +406,7 @@
- 		reg = <0 0xee100000 0 0x200>;
- 		interrupts = <0 165 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI0>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -390,6 +415,7 @@
- 		reg = <0 0xee140000 0 0x100>;
- 		interrupts = <0 167 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI1>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -398,6 +424,7 @@
- 		reg = <0 0xee160000 0 0x100>;
- 		interrupts = <0 168 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI2>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -424,6 +451,7 @@
- 			#clock-cells = <1>;
- 			clock-output-names = "main", "pll0", "pll1", "pll3",
- 					     "lb", "qspi", "sdh", "sd0", "z";
-+			#power-domain-cells = <0>;
- 		};
- 		/* Variable factor clocks */
- 		sd2_clk: sd2_clk@e6150078 {
--- 
-1.9.1
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixe=
+s-for-linus
+
+for you to fetch changes up to 0cd3be6e9a46f84ef7a42e1a5645d32ad547b12e:
+
+  clk: si5351: Do not pass struct clk in platform_data (2015-05-08 11:22:30=
+ -0700)
+
+----------------------------------------------------------------
+The first set of clk fixes for 4.1 are all driver bugs, with the
+exception of a single locking fix in the core code. All driver fixes are
+for code that was merged recently. The Samsung stuff is mostly fixes
+around suspend/resume, the Qualcomm fixes are for invalid hardware
+configuration data and the Silicon Labs patches are fixes following
+their move away from platform_data to Device Tree.
+
+----------------------------------------------------------------
+Chanwoo Choi (3):
+      clk: Use CONFIG_ARCH_EXYNOS instead of CONFIG_ARCH_EXYNOS5433
+      clk: exynos5433: Fix wrong parent clock of sclk_apollo clock
+      clk: exynos5433: Fix wrong PMS value of exynos5433_pll_rates
+
+Dong Aisheng (1):
+      clk: add missing lock when call clk_core_enable in clk_set_parent
+
+Georgi Djakov (2):
+      clk: qcom: Fix MSM8916 venus divider value
+      clk: qcom: Fix MSM8916 gfx3d_clk_src configuration
+
+Javier Martinez Canillas (1):
+      clk: exynos5420: Restore GATE_BUS_TOP on suspend
+
+Jonghwa Lee (2):
+      clk: exynos5433: Fix wrong offset of PCLK_MSCL_SECURE_SMMU_JPEG
+      clk: exynos5433: Fix CLK_PCLK_MONOTONIC_CNT clk register assignment
+
+Michael Turquette (1):
+      Merge tag 'clk-samsung-fixes-4.1-2' of git://linuxtv.org/snawrocki/sa=
+msung into clk-fixes
+
+Sebastian Hesselbarth (2):
+      clk: si5351: Mention clock-names in the binding documentation
+      clk: si5351: Do not pass struct clk in platform_data
+
+ .../devicetree/bindings/clock/silabs,si5351.txt    |  4 +-
+ drivers/clk/clk-si5351.c                           | 63 +++++++++++++++---=
+----
+ drivers/clk/clk.c                                  |  8 +++
+ drivers/clk/qcom/gcc-msm8916.c                     |  4 +-
+ drivers/clk/samsung/Makefile                       |  2 +-
+ drivers/clk/samsung/clk-exynos5420.c               |  1 +
+ drivers/clk/samsung/clk-exynos5433.c               | 12 ++---
+ include/linux/platform_data/si5351.h               |  4 --
+ 8 files changed, 66 insertions(+), 32 deletions(-)
