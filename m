@@ -1,354 +1,171 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 5 May 2015 14:02:04 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Lee Jones <lee.jones@linaro.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/5] clk: sunxi: support the cpus (cpu special) clock
- on the Allwinner A80
-Message-ID: <20150505120204.GK3274@lukather>
-References: <1430410206-4410-1-git-send-email-wens@csie.org>
- <1430410206-4410-3-git-send-email-wens@csie.org>
- <20150504125146.GA3274@lukather>
- <CAGb2v64brwadGPdpdQ9ebOPwZQse2W6m8t8wV6JX=y4Hpw0puQ@mail.gmail.com>
- <20150505082544.GF3274@lukather>
- <CAGb2v67mZvcfwiYc9vABuFQ2SaiENWZzOGYz6zc0JLU-MK3fNA@mail.gmail.com>
+Return-Path: <rklein@nvidia.com>
+Message-ID: <555CC277.1040402@nvidia.com>
+Date: Wed, 20 May 2015 13:20:55 -0400
+From: Rhyland Klein <rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qDymnuGqqhW10CwH"
-In-Reply-To: <CAGb2v67mZvcfwiYc9vABuFQ2SaiENWZzOGYz6zc0JLU-MK3fNA@mail.gmail.com>
+To: Benson Leung <bleung@chromium.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
+	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre
+ Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Paul Walmsley
+	<pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 16/21] clk: tegra: pll: Add Set_default logic
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>	<1431451444-23155-18-git-send-email-rklein@nvidia.com> <CANLzEkv2rO63083RxEFWU0a_qm+7QOx0mCD8ya8hDmp5QMmkgQ@mail.gmail.com>
+In-Reply-To: <CANLzEkv2rO63083RxEFWU0a_qm+7QOx0mCD8ya8hDmp5QMmkgQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
+On 5/13/2015 8:04 PM, Benson Leung wrote:
+> On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+>> From: Bill Huang <bilhuang@nvidia.com>
+>>
+>> Add logic which (if specified for a pll) can verify that a PLL is set
+>> to the proper default value and if not can set it. This can be
+>> specified per PLL as each will have different default values.
+>>
+>> Based on original work by Aleksandr Frid <afrid@nvidia.com>
+>>
+>> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+>> ---
+>> v2:
+>>   - Remove MACRO for PLL_MISC_CHECK_DEFAULT as suggested, and instead
+>>     the tegra210 driver will include an inline version of this function.
+>>
+>>  drivers/clk/tegra/clk-pll.c |   46 ++++++++++++++++++++++++++++++++-----------
+>>  drivers/clk/tegra/clk.h     |    2 ++
+>>  2 files changed, 37 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+>> index 626466665dde..36aa2a95fac0 100644
+>> --- a/drivers/clk/tegra/clk-pll.c
+>> +++ b/drivers/clk/tegra/clk-pll.c
+>> @@ -652,13 +652,26 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+>>                         unsigned long rate)
+>>  {
+>>         struct tegra_clk_pll *pll = to_clk_pll(hw);
+>> +       struct tegra_clk_pll_freq_table old_cfg;
+>>         int state, ret = 0;
+>>
+>>         state = clk_pll_is_enabled(hw);
+>>
+>> +       _get_pll_mnp(pll, &old_cfg);
+>> +
+>> +       if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
+>> +                       (cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
+>> +               ret = pll->params->dyn_ramp(pll, cfg);
+>> +               if (!ret)
+>> +                       return 0;
+>> +       }
+>> +
+> 
+> This block above depends on defaults_set, but seems to be some
+> additional dyn_ramp logic that is different from what the commit
+> message describes of this patch, namely, setting defaults if
+> defaults_set is not true.
+> 
+> Could you perhaps reverse the order of this patch [16/21] and the
+> preceding one [15/21] clk: tegra: pll: Add dyn_ramp callback, and move
+> this chunk of code into the dyn_ramp patch?
 
---qDymnuGqqhW10CwH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Will do.
 
-On Tue, May 05, 2015 at 06:01:16PM +0800, Chen-Yu Tsai wrote:
-> On Tue, May 5, 2015 at 4:25 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > On Mon, May 04, 2015 at 11:22:33PM +0800, Chen-Yu Tsai wrote:
-> >> Hi,
-> >>
-> >> On Mon, May 4, 2015 at 8:51 PM, Maxime Ripard
-> >> <maxime.ripard@free-electrons.com> wrote:
-> >> > Hi,
-> >> >
-> >> > On Fri, May 01, 2015 at 12:10:03AM +0800, Chen-Yu Tsai wrote:
-> >> >> The "cpus" clock is the clock for the embedded processor in the A80.
-> >> >> It is also part of the PRCM clock tree.
-> >> >>
-> >> >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> >> >> ---
-> >> >>  Documentation/devicetree/bindings/clock/sunxi.txt |   1 +
-> >> >>  drivers/clk/sunxi/Makefile                        |   2 +-
-> >> >>  drivers/clk/sunxi/clk-sun9i-cpus.c                | 243 ++++++++++=
-++++++++++++
-> >> >>  3 files changed, 245 insertions(+), 1 deletion(-)
-> >> >>  create mode 100644 drivers/clk/sunxi/clk-sun9i-cpus.c
-> >> >>
-> >> >> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Do=
-cumentation/devicetree/bindings/clock/sunxi.txt
-> >> >> index 2015b2beb957..c52735b0b924 100644
-> >> >> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> >> >> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> >> >> @@ -27,6 +27,7 @@ Required properties:
-> >> >>       "allwinner,sun5i-a10s-ahb-gates-clk" - for the AHB gates on A=
-10s
-> >> >>       "allwinner,sun7i-a20-ahb-gates-clk" - for the AHB gates on A20
-> >> >>       "allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
-> >> >> +     "allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
-> >> >>       "allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
-> >> >>       "allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on =
-A31
-> >> >>       "allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on =
-A23
-> >> >> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-> >> >> index 058f273d6154..f0f33131b048 100644
-> >> >> --- a/drivers/clk/sunxi/Makefile
-> >> >> +++ b/drivers/clk/sunxi/Makefile
-> >> >> @@ -13,4 +13,4 @@ obj-y +=3D clk-usb.o
-> >> >>
-> >> >>  obj-$(CONFIG_MFD_SUN6I_PRCM) +=3D \
-> >> >>       clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
-> >> >> -     clk-sun8i-apb0.o
-> >> >> +     clk-sun8i-apb0.o clk-sun9i-cpus.o
-> >> >
-> >> > I'm really not sure about that option selection.
-> >> >
-> >> > If you only select the A31, you will get drivers that won't be
-> >> > relevant at all here.
-> >> >
-> >> > How about something like
-> >> >
-> >> > ifeq ($(CONFIG_MFD_SUN6I_PRCM), y)
-> >> > obj-$(CONFIG_MACH_SUN6I) =3D ....
-> >> > obj-$(CONFIG_MACH_SUN8I) =3D ....
-> >> > obj-$(CONFIG_MACH_SUN9I) =3D ....
-> >> > endif
-> >> >
-> >> > ?
-> >>
-> >> I suppose that works, though sun9i shares apb0 (apbs) clock with
-> >> sun8i.
-> >
-> > I'd expect that if you set the files to build multiple time,
-> > everything would just work, so that we could have apbs built both in
-> > the list for sun8i and sun9i.
->=20
-> It should, but would it be included twice? I suppose the linker
-> is smart enough to spot this?
+> 
+>>         if (state)
+>>                 _clk_pll_disable(hw);
+>>
+>> +       if (!pll->params->defaults_set && pll->params->set_defaults)
+>> +               pll->params->set_defaults(pll);
+>> +
+>>         _update_pll_mnp(pll, cfg);
+>>
+>>         if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
+>> @@ -1517,6 +1530,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
+>>         if (!pll->params->calc_rate)
+>>                 pll->params->calc_rate = _calc_rate;
+>>
+>> +       if (pll->params->set_defaults)
+>> +               pll->params->set_defaults(pll);
+>> +
+>>         /* Data in .init is copied by clk_register(), so stack variable OK */
+>>         pll->hw.init = &init;
+>>
+>> @@ -1636,7 +1652,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+>>         struct tegra_clk_pll *pll;
+>>         struct clk *clk, *parent;
+>>         unsigned long parent_rate;
+>> -       int err;
+>>         u32 val, val_iddq;
+>>
+>>         parent = __clk_lookup(parent_name);
+>> @@ -1657,18 +1672,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+>>                 pll_params->vco_min = pll_params->adjust_vco(pll_params,
+>>                                                              parent_rate);
+>>
+>> -       err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+>> -       if (err)
+>> -               return ERR_PTR(err);
+>> +       /*
+>> +        * If the pll has a set_defaults callback, it will take care of
+>> +        * configuring dynamic ramping and setting IDDQ in that path.
+>> +        */
+>> +       if (!pll_params->set_defaults) {
+>> +               int err;
+>>
+>> -       val = readl_relaxed(clk_base + pll_params->base_reg);
+>> -       val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+>> +               err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+>> +               if (err)
+>> +                       return ERR_PTR(err);
+>>
+>> -       if (val & PLL_BASE_ENABLE)
+>> -               WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
+>> -       else {
+>> -               val_iddq |= BIT(pll_params->iddq_bit_idx);
+>> -               writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
+>> +               val = readl_relaxed(clk_base + pll_params->base_reg);
+>> +               val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+>> +
+>> +               if (val & PLL_BASE_ENABLE)
+>> +                       WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
+>> +               else {
+>> +                       val_iddq |= BIT(pll_params->iddq_bit_idx);
+>> +                       writel_relaxed(val_iddq,
+>> +                                      clk_base + pll_params->iddq_reg);
+>> +               }
+>>         }
+>>
+>>         pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+>> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+>> index a61d388364b3..38b4c95cfb2f 100644
+>> --- a/drivers/clk/tegra/clk.h
+>> +++ b/drivers/clk/tegra/clk.h
+>> @@ -261,6 +261,7 @@ struct tegra_clk_pll_params {
+>>         int             stepb_shift;
+>>         int             lock_delay;
+>>         int             max_p;
+>> +       bool            defaults_set;
+>>         struct pdiv_map *pdiv_tohw;
+>>         struct div_nmp  *div_nmp;
+>>         struct tegra_clk_pll_freq_table *freq_table;
+>> @@ -275,6 +276,7 @@ struct tegra_clk_pll_params {
+>>                                 unsigned long parent_rate);
+>>         int     (*dyn_ramp)(struct tegra_clk_pll *pll,
+>>                         struct tegra_clk_pll_freq_table *cfg);
+>> +       void    (*set_defaults)(struct tegra_clk_pll *pll);
+> 
+> Kerneldoc for the two members, please. This is especially useful since
+> the two members have such similar names, but they mean different
+> things.
+> 
 
-It looks like it is:
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/driver=
-s/ata/Makefile
+Yah I thought I got all the new members, but apparently I got distracted
+part way through the series and missed some. I'll double check for v6
+that ALL members are kerneldoc'd.
 
-Maybe not the linker itself, but the build system seems to handle that
-just fine.
+-rhyland
 
-> >> >> +     struct sun9i_a80_cpus_clk *cpus =3D to_sun9i_a80_cpus_clk(hw);
-> >> >> +     unsigned long rate;
-> >> >> +     u32 reg;
-> >> >> +
-> >> >> +     /* Fetch the register value */
-> >> >> +     reg =3D readl(cpus->reg);
-> >> >> +
-> >> >> +     /* apply pre-divider first if parent is pll4 */
-> >> >> +     if (SUN9I_CPUS_MUX_GET_PARENT(reg) =3D=3D SUN9I_CPUS_MUX_PARE=
-NT_PLL4)
-> >> >> +             parent_rate /=3D SUN9I_CPUS_PLL4_DIV_GET(reg) + 1;
-> >> >> +
-> >> >> +     /* clk divider */
-> >> >> +     rate =3D parent_rate / (SUN9I_CPUS_DIV_GET(reg) + 1);
-> >> >> +
-> >> >> +     return rate;
-> >> >> +}
-> >> >> +
-> >> >> +static long sun9i_a80_cpus_clk_round(unsigned long rate, u8 *divp,=
- u8 *pre_divp,
-> >> >> +                              u8 parent, unsigned long parent_rate)
-> >> >> +{
-> >> >> +     u8 div, pre_div =3D 1;
-> >> >> +
-> >> >> +     /*
-> >> >> +      * clock can only divide, so we will never be able to achieve
-> >> >> +      * frequencies higher than the parent frequency
-> >> >> +      */
-> >> >> +     if (parent_rate && rate > parent_rate)
-> >> >> +             rate =3D parent_rate;
-> >> >> +
-> >> >> +     div =3D DIV_ROUND_UP(parent_rate, rate);
-> >> >> +
-> >> >> +     /* calculate pre-divider if parent is pll4 */
-> >> >> +     if (parent =3D=3D SUN9I_CPUS_MUX_PARENT_PLL4 && div > 4) {
-> >> >> +             /* pre-divider is 1 ~ 32 */
-> >> >> +             if (div < 32) {
-> >> >> +                     pre_div =3D div;
-> >> >> +                     div =3D 1;
-> >> >> +             } else if (div < 64) {
-> >> >> +                     pre_div =3D DIV_ROUND_UP(div, 2);
-> >> >> +                     div =3D 2;
-> >> >> +             } else if (div < 96) {
-> >> >> +                     pre_div =3D DIV_ROUND_UP(div, 3);
-> >> >> +                     div =3D 3;
-> >> >> +             } else {
-> >> >> +                     pre_div =3D DIV_ROUND_UP(div, 4);
-> >> >> +                     div =3D 4;
-> >> >> +             }
-> >> >> +     }
-> >> >> +
-> >> >> +     /* we were asked to pass back divider values */
-> >> >> +     if (divp) {
-> >> >> +             *divp =3D div - 1;
-> >> >> +             *pre_divp =3D pre_div - 1;
-> >> >> +     }
-> >> >> +
-> >> >> +     return parent_rate / pre_div / div;
-> >> >> +}
-> >> >> +
-> >> >> +static long sun9i_a80_cpus_clk_determine_rate(struct clk_hw *hw,
-> >> >> +                                           unsigned long rate,
-> >> >> +                                           unsigned long min_rate,
-> >> >> +                                           unsigned long max_rate,
-> >> >> +                                           unsigned long *best_par=
-ent_rate,
-> >> >> +                                           struct clk_hw **best_pa=
-rent_clk)
-> >> >> +{
-> >> >> +     struct clk *clk =3D hw->clk, *parent, *best_parent =3D NULL;
-> >> >> +     int i, num_parents;
-> >> >> +     unsigned long parent_rate, best =3D 0, child_rate, best_child=
-_rate =3D 0;
-> >> >> +
-> >> >> +     /* find the parent that can help provide the fastest rate <=
-=3D rate */
-> >> >> +     num_parents =3D __clk_get_num_parents(clk);
-> >> >> +     for (i =3D 0; i < num_parents; i++) {
-> >> >> +             parent =3D clk_get_parent_by_index(clk, i);
-> >> >> +             if (!parent)
-> >> >> +                     continue;
-> >> >> +             if (__clk_get_flags(clk) & CLK_SET_RATE_PARENT)
-> >> >> +                     parent_rate =3D __clk_round_rate(parent, rate=
-);
-> >> >> +             else
-> >> >> +                     parent_rate =3D __clk_get_rate(parent);
-> >> >> +
-> >> >> +             child_rate =3D sun9i_a80_cpus_clk_round(rate, NULL, N=
-ULL, i,
-> >> >> +                                               parent_rate);
-> >> >> +
-> >> >> +             if (child_rate <=3D rate && child_rate > best_child_r=
-ate) {
-> >> >> +                     best_parent =3D parent;
-> >> >> +                     best =3D parent_rate;
-> >> >> +                     best_child_rate =3D child_rate;
-> >> >> +             }
-> >> >> +     }
-> >> >> +
-> >> >> +     if (best_parent)
-> >> >> +             *best_parent_clk =3D __clk_get_hw(best_parent);
-> >> >> +     *best_parent_rate =3D best;
-> >> >> +
-> >> >> +     return best_child_rate;
-> >> >> +}
-> >> >> +
-> >> >> +static int sun9i_a80_cpus_clk_set_rate(struct clk_hw *hw, unsigned=
- long rate,
-> >> >> +                                unsigned long parent_rate)
-> >> >> +{
-> >> >> +     struct sun9i_a80_cpus_clk *cpus =3D to_sun9i_a80_cpus_clk(hw);
-> >> >> +     unsigned long flags;
-> >> >> +     u8 div, pre_div, parent;
-> >> >> +     u32 reg;
-> >> >> +
-> >> >> +     spin_lock_irqsave(&sun9i_a80_cpus_lock, flags);
-> >> >> +
-> >> >> +     reg =3D readl(cpus->reg);
-> >> >> +
-> >> >> +     /* need to know which parent is used to apply pre-divider */
-> >> >> +     parent =3D SUN9I_CPUS_MUX_GET_PARENT(reg);
-> >> >> +     sun9i_a80_cpus_clk_round(rate, &div, &pre_div, parent, parent=
-_rate);
-> >> >> +
-> >> >> +     reg =3D SUN9I_CPUS_DIV_SET(reg, div);
-> >> >> +     reg =3D SUN9I_CPUS_PLL4_DIV_SET(reg, pre_div);
-> >> >> +     writel(reg, cpus->reg);
-> >> >> +
-> >> >> +     spin_unlock_irqrestore(&sun9i_a80_cpus_lock, flags);
-> >> >> +
-> >> >> +     return 0;
-> >> >> +}
-> >> >> +
-> >> >> +static const struct clk_ops sun9i_a80_cpus_clk_ops =3D {
-> >> >> +     .determine_rate =3D sun9i_a80_cpus_clk_determine_rate,
-> >> >> +     .recalc_rate    =3D sun9i_a80_cpus_clk_recalc_rate,
-> >> >> +     .set_rate       =3D sun9i_a80_cpus_clk_set_rate,
-> >> >> +};
-> >> >
-> >> > It all looks like you could use the factors clock for this.
-> >> >
-> >> > The only thing that you seem to be using a custom clock for is the p=
-re
-> >> > divider on one of the parent, but that's something that could be
-> >> > reused for other clocks (like the A10 pll6, or the A20 MBUS).
-> >>
-> >> We can add a custom recalc_rate() callback for factors clock,
-> >> and also pass the parent index to the get_factors() callback.
-> >> That would get rid of a lot of boilerplate.
-> >>
-> >> What do you think?
-> >
-> > I was more thinking about adding an additional callback that would
-> > take the parent index as an argument, and would return for that parent
-> > the multiplier or divider to apply.
-> >
-> > That would be quite easy to support, and would support both fixed
-> > divider like the one found on the A20 MBUS, or the A20 AHB clock, and
-> > dynamic factors like this one, while have most code in the core.
->=20
-> That means we would have to determine the pre-divider value first,
-> in the case of dynamic ones, and they calculate the common factors.
->
-> For most of the cases we just end up using the highest pre-divider
-> to drop that parent rate closer to the others.
->=20
-> There's still the problem on how to set it though. If it were one
-> of the factors then we'd extend .recalc_rate to cope with that factor
-> not being a "common" factor. Or maybe just add an extra one. :)
-
-Yeah, maybe it would be the easiest solution.
-
-> >> It kind of extends factors clk beyond what it was designed for. If
-> >> you agree, I'd also want to (ab)use it for other A80 clocks which
-> >> have multiple dividers but don't fit the current factors clock
-> >> formula.
-> >
-> > I think we're far beyond the point where factors clock are actually to
-> > handle clocks with factors ;)
-> >
-> > We've stretched that notion to handle multiple cases, up to the point
-> > where it's basically an additional layer on top of the clock framework
-> > itself.
-> >
-> > I'd be quite okay to extend it, but so far the assumption has always
-> > been that the formula was based on
-> >
-> > parent * n >> p / (k * m)
->=20
-> I believe it's: (parent * (n * (k+1)) >> p) / (m+1)
->=20
-> The one I came across was: parent * n / (p+1) / (m+1)
-> where "p" is not a power of two divider.
-
-Hmmm, ok.
-
-Then maybe we can just have a flag to say wether p is a power of two
-or not, just like the clock framework itself.
-
-> > If that formula was to change, I'm pretty sure that this would require
-> > a lot of changes, both in the factors code itself, plus to all the
-> > users.
->=20
-> Actually the only place that makes this assumption is the .recalc_rate
-> callback. The other callbacks are just standard adapter stuff, putting
-> together the factors into a register. Hence my suggestion for a
-> .recalc_rate callback inside of factors clock. This would allow the
-> implementation to do whatever it saw fit to do with the 4 factors.
-
-Ok, feel free to post some patches doing this, and we will see then :)
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---qDymnuGqqhW10CwH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVSLE8AAoJEBx+YmzsjxAgqxIP/A21Icd5R05vDe1K4nh/qh7s
-ETwHufqphKIH+OtbiGRENRa/dJBVoI5FrnF0rBc+GKJmcT+r97gMjDBU03J4jKCr
-6lM8x3xmvHBG1Tfzo5oH6cN8rsSgJjrknE5dLty8gYOE/VRM3vqmVkyQZNTBv2Lg
-ElLg0yVvzaadcT4izxmW4KWUwy81bIvQ1xF/Wtn0XEy0L32C4w2wjm/BtjgOL9Ts
-G8/nbJH1XwkXCVq1Zs7TnRGmABwQKVjKBtt91eN8bMW0IxCWnt6ynG2rUGDwc1LO
-1DFyKO9Ii/lvgow/FNmHTNsGdQcMsTFEXHoI3nwanRR/yQevAJtEY3SAwGpL40V0
-RDVgNr31AYBY/7I8Rs9G2U3JamAEUHqHV9yt1uhZjcVP/qSstTXMhHMF+1ikFTEm
-zEYhS64mhRdmxj6UVX2qa2KHkkpyBNT0zbcxDwdr+OWErSPBrkzI+OrDCWc7KXXd
-z5zdBWg08DIn7KQxE8gS5qn0lsFH4/gALcFKYSbtVZOJX2VREGRezRINFQbxfw/s
-knwB5oZj6CHeCqmH3t4lzTXB5RRrOsXxYRRAo5UFQ8gN4UliuIQBoFk5f8UqX5ni
-RUvsXWwWJR40MDK6PX12Smv9HkIF/ylA5U4ixIJWt736TMsFMwIBApvzllaEuDv/
-bgNNOBa4eChehY0xBBxV
-=v89h
------END PGP SIGNATURE-----
-
---qDymnuGqqhW10CwH--
+-- 
+nvpublic
