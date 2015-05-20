@@ -1,74 +1,83 @@
-Return-Path: <paul@pwsan.com>
-Date: Wed, 13 May 2015 14:55:03 +0000 (UTC)
-From: Paul Walmsley <paul@pwsan.com>
-To: Tero Kristo <t-kristo@ti.com>
-cc: mturquette@linaro.org, tony@atomide.com, linux-omap@vger.kernel.org,
-  linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 00/27] ARM: OMAP2+: clock code migration to
- drivers/clk/ti
-In-Reply-To: <5552F32C.7060606@ti.com>
-Message-ID: <alpine.DEB.2.02.1505131438430.7921@utopia.booyaka.com>
-References: <1431334493-24455-1-git-send-email-t-kristo@ti.com> <alpine.DEB.2.02.1505111747460.19833@utopia.booyaka.com> <5551D178.3000904@ti.com> <alpine.DEB.2.02.1505122019220.21747@utopia.booyaka.com> <5552F32C.7060606@ti.com>
+Return-Path: <jilin@nvidia.com>
+Message-ID: <555C582A.7050508@nvidia.com>
+Date: Wed, 20 May 2015 17:47:22 +0800
+From: Jim Lin <jilin@nvidia.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+To: Rhyland Klein <rklein@nvidia.com>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
+	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, "Alexandre
+ Courbot" <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Paul Walmsley
+	<pwalmsley@nvidia.com>, Benson Leung <bleung@chromium.org>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 20/21] clk: tegra210: add support for Tegra210 clocks
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com> <1431451444-23155-22-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1431451444-23155-22-git-send-email-rklein@nvidia.com>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Return-Path: jilin@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 13 May 2015, Tero Kristo wrote:
+On 05/13/2015 01:24 AM, Rhyland Klein wrote:
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> new file mode 100644
+> index 000000000000..7f25e60e4d48
+> --- /dev/null
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+>
+> +
+> +static struct tegra_clk_init_table common_init_table[] __initdata = {
+> +	{TEGRA210_CLK_UARTA, TEGRA210_CLK_PLL_P, 408000000, 0},
+> +	{TEGRA210_CLK_UARTB, TEGRA210_CLK_PLL_P, 408000000, 0},
+> +	{TEGRA210_CLK_UARTC, TEGRA210_CLK_PLL_P, 408000000, 0},
+> +	{TEGRA210_CLK_UARTD, TEGRA210_CLK_PLL_P, 408000000, 0},
+> +	{TEGRA210_CLK_PLL_A, TEGRA210_CLK_CLK_MAX, 564480000, 1},
+> +	{TEGRA210_CLK_PLL_A_OUT0, TEGRA210_CLK_CLK_MAX, 11289600, 1},
+> +	{TEGRA210_CLK_EXTERN1, TEGRA210_CLK_PLL_A_OUT0, 0, 1},
+> +	{TEGRA210_CLK_CLK_OUT_1_MUX, TEGRA210_CLK_EXTERN1, 0, 1},
+> +	{TEGRA210_CLK_CLK_OUT_1, TEGRA210_CLK_CLK_MAX, 0, 1},
+> +	{TEGRA210_CLK_I2S0, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0},
+> +	{TEGRA210_CLK_I2S1, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0},
+> +	{TEGRA210_CLK_I2S2, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0},
+> +	{TEGRA210_CLK_I2S3, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0},
+> +	{TEGRA210_CLK_I2S4, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0},
+> +	{TEGRA210_CLK_HOST1X, TEGRA210_CLK_PLL_P, 136000000, 1},
+> +	{TEGRA210_CLK_SCLK_MUX, TEGRA210_CLK_PLL_P, 0, 1},
+> +	{TEGRA210_CLK_SCLK, TEGRA210_CLK_CLK_MAX, 102000000, 1},
+> +	{TEGRA210_CLK_DFLL_SOC, TEGRA210_CLK_PLL_P, 51000000, 1},
+> +	{TEGRA210_CLK_DFLL_REF, TEGRA210_CLK_PLL_P, 51000000, 1},
+> +	{TEGRA210_CLK_SBC4, TEGRA210_CLK_PLL_P, 12000000, 1},
+> +	{TEGRA210_CLK_PLL_RE_VCO, TEGRA210_CLK_CLK_MAX, 624000000, 0},
+> +	{TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 0},
+> +	{TEGRA210_CLK_PLL_U_OUT2, TEGRA210_CLK_CLK_MAX, 60000000, 0},
+Could you help to modify this as the following?
+Clocks have to be enabled only once.
 
-> I clipped the boot-loader traces as they contain lots of noise from the
-> test-automation system.
-> 
-> Looking at the farm traces, I see this on the omap3 boards:
-> 
-> beagleboard-vanilla.txt:ver=U-Boot 2014.04-00071-g8543283 (Apr 22 2014 -
-> 15:49:50)
-> 
-> beagle-xm.txt:U-Boot 2014.10-00004-g9ade0ab-dirty (Dec 16 2014 - 13:40:24)
-> 
-> craneboard.txt:U-Boot 2009.11-00005-ge83d2db (Dec 07 2010 - 11:55:34)
-> 
-> ldp.txt:U-Boot 2014.04-00071-g8543283-dirty (Apr 25 2014 - 14:59:48)
-> 
-> n900.txt:U-Boot 2014.04-00073-g4fa5b9e (Apr 22 2014 - 14:37:10)
-> 
-> sdp3430.txt:U-Boot 2009.11-rc1-00485-g7d1e865 (Nov 09 2009 - 11:21:55)
-> 
-> Maybe some DTB issues? When did you update your DTB files?
-
-For all of the uImage+DTB boots, the DTB files in use follow the kernel 
-version:
-
-http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/dtbs/
-
-which are then subsequently combined to produce:
-
-http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/dtcat/
-
-So, using the OMAP35xx Beagle as an example, you can prove to yourself 
-that the current DTB is in use by observing that U-boot is loading a 
-combined uImage+DTB file of 3495180 bytes from here:
-
-http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/boot/3530es3beagle/3530es3beagle_log.txt
-
-and comparing that with the size of this file (3495180 bytes):
-
-http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/dtcat/omap2plus_defconfig/uImage-dtb.omap3-beagle
-
-and observing that this file size is the sum of the DTB file size (63180 
-bytes):
-
-http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/dtbs/omap3-beagle.dtb
-
-and the zImage file size (3431936 bytes):
-
-http://www.pwsan.com/omap/testlogs/test_v4.1-rc1/20150426200156/build_z/omap2plus_defconfig/zImage
-
-and the 64 byte uImage header.
++	{TEGRA210_CLK_PLL_RE_VCO, TEGRA210_CLK_CLK_MAX, 624000000, 1},
++	{TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 1},
++	{TEGRA210_CLK_PLL_U_OUT2, TEGRA210_CLK_CLK_MAX, 60000000, 1},
 
 
-The only board that I suspect may be using an old DTB is the 4460 
-VAR-SOM-OM.
-
-
-- Paul
+> +	{TEGRA210_CLK_XUSB_SS_SRC, TEGRA210_CLK_PLL_U_480M, 120000000, 0},
+> +	{TEGRA210_CLK_XUSB_FS_SRC, TEGRA210_CLK_PLL_U_48M, 48000000, 0},
+> +	{TEGRA210_CLK_XUSB_HS_SRC, TEGRA210_CLK_PLL_U_60M, 60000000, 0},
+> +	{TEGRA210_CLK_XUSB_FALCON_SRC, TEGRA210_CLK_PLL_RE_OUT, 224000000, 0},
+> +	{TEGRA210_CLK_XUSB_HOST_SRC, TEGRA210_CLK_PLL_RE_OUT, 112000000, 0},
+> +	{TEGRA210_CLK_SATA, TEGRA210_CLK_PLL_P, 104000000, 0},
+> +	{TEGRA210_CLK_SATA_OOB, TEGRA210_CLK_PLL_P, 204000000, 0},
+> +	{TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1},
+> +	{TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1},
+> +	{TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1},
+> +	{TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0},
+> +	{TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0},
+> +	{TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0},
+> +	{TEGRA210_CLK_I2C3, TEGRA210_CLK_PLL_P, 0, 0},
+> +	{TEGRA210_CLK_I2C4, TEGRA210_CLK_PLL_P, 0, 0},
+> +	{TEGRA210_CLK_I2C5, TEGRA210_CLK_PLL_P, 0, 0},
+> +	{TEGRA210_CLK_I2C6, TEGRA210_CLK_PLL_P, 0, 0},
+> +	{TEGRA210_CLK_PLL_DP, TEGRA210_CLK_CLK_MAX, 270000000, 0},
+> +	/* This MUST be the last entry. */
+> +	{TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0},
+> +};
+> +
+--nvpublic
