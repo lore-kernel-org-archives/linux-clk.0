@@ -1,41 +1,37 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Tero Kristo <t-kristo@ti.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>
-Cc: linux-clk@vger.kernel.org,
-	kernel@stlinux.com,
-	linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/5] clk: ti: Use of_clk_get_parent_count() instead of open coding
-Date: Fri, 29 May 2015 11:25:47 +0200
-Message-Id: <1432891549-23295-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
-References: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <bleung@google.com>
+MIME-Version: 1.0
+Sender: bleung@google.com
+In-Reply-To: <555CC357.5090105@nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+	<1431451444-23155-14-git-send-email-rklein@nvidia.com>
+	<CANLzEkuqCB+wF65MrtWwnsgTDhw0T9Vae9C5sBALGDbPvwrr_w@mail.gmail.com>
+	<555CC357.5090105@nvidia.com>
+Date: Wed, 20 May 2015 10:26:16 -0700
+Message-ID: <CANLzEksw9dDJFJRo-bTaafCr+PRAnEMYoP2ojbiKEz-Uzsw2ag@mail.gmail.com>
+Subject: Re: [PATCH v5 12/21] clk: tegra: pll: Add specialized logic for T210
+From: Benson Leung <bleung@chromium.org>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/ti/clockdomain.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, May 20, 2015 at 10:24 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> No, this was intentional. tegra_clk_register_pllss isn't used on
+> Tegra210, it adds its own version "register_clk_register_pllss_tegra210"
+> which it uses and it doesn't need the tegra_clk_pllss_ops either. So it
+> should be fine without this.
 
-diff --git a/drivers/clk/ti/clockdomain.c b/drivers/clk/ti/clockdomain.c
-index 35fe1085480cf33d..b82ef07f34034105 100644
---- a/drivers/clk/ti/clockdomain.c
-+++ b/drivers/clk/ti/clockdomain.c
-@@ -32,7 +32,7 @@ static void __init of_ti_clockdomain_setup(struct device_node *node)
- 	int i;
- 	int num_clks;
- 
--	num_clks = of_count_phandle_with_args(node, "clocks", "#clock-cells");
-+	num_clks = of_clk_get_parent_count(node);
- 
- 	for (i = 0; i < num_clks; i++) {
- 		clk = of_clk_get(node, i);
+
+Sounds good.
+
+Reviewed-by: Benson Leung <bleung@chromium.org>
+
 -- 
-1.9.1
+Benson Leung
+Software Engineer, Chrom* OS
+bleung@chromium.org
