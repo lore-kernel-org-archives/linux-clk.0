@@ -1,59 +1,285 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 6 May 2015 00:45:18 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] clk: bindings: Fix assigned-clock-rates property name
-Message-ID: <20150506074518.GA11126@codeaurora.org>
-References: <1430893716-1825-1-git-send-email-k.kozlowski@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1430893716-1825-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 1/7] clk: Add a basic factor clock
+Date: Thu, 21 May 2015 22:54:00 +0200
+Message-Id: <1432241646-9511-2-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/06, Krzysztof Kozlowski wrote:
-> In documentation the "assigned-clock-parents" name was used when
-> describing the "assigned-clock-rates" property.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
+Some clocks are using a factor component, however, unlike their mux, gate
+or divider counterpart, these factors don't have a basic clock
+implementation.
 
-Looks right. The whole sentence could use some work though.
+This leads to code duplication across platforms that want to use that kind
+of clocks, and the impossibility to use the composite clocks with such a
+clock without defining your own rate operations.
 
->  Documentation/devicetree/bindings/clock/clock-bindings.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> index 06fc6d541c89..bf5b0414dc17 100644
-> --- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> @@ -138,7 +138,7 @@ Some platforms may require initial configuration of default parent clocks
->  and clock frequencies. Such a configuration can be specified in a device tree
->  node through assigned-clocks, assigned-clock-parents and assigned-clock-rates
->  properties. The assigned-clock-parents property should contain a list of parent
-> -clocks in form of phandle and clock specifier pairs, the assigned-clock-parents
-> +clocks in form of phandle and clock specifier pairs, the assigned-clock-rates
->  property the list of assigned clock frequency values - corresponding to clocks
+Create such a driver in order to remove these issues, and hopefully factor
+the implementations, reducing code size across platforms and consolidating
+the various implementations.
 
-This half-sentence:
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/Makefile         |   1 +
+ drivers/clk/clk-factor.c     | 176 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |  41 ++++++++++
+ 3 files changed, 218 insertions(+)
+ create mode 100644 drivers/clk/clk-factor.c
 
-	The assigned-clock-ratse property the list of assigned
-	clock frequency values
-
-doesn't read correctly. Maybe the whole thing should be rewritten
-as:
-
-	The assigned-clock-parents property should contain a list
-	of parent clocks in the form of a phandle and clock
-	specifier pair and the assigned-clock-rates property
-	should contain a list of frequencies in Hz. Both these
-	properties should correspond to the clocks listed in the
-	assigned-clocks property.
-
->  listed in the assigned-clocks property.
->  
-
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 3d00c25382c5..d38b71d15ffa 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -3,6 +3,7 @@ obj-$(CONFIG_HAVE_CLK)		+= clk-devres.o
+ obj-$(CONFIG_CLKDEV_LOOKUP)	+= clkdev.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-divider.o
++obj-$(CONFIG_COMMON_CLK)	+= clk-factor.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-factor.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-rate.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-gate.o
+diff --git a/drivers/clk/clk-factor.c b/drivers/clk/clk-factor.c
+new file mode 100644
+index 000000000000..17f83852cdb6
+--- /dev/null
++++ b/drivers/clk/clk-factor.c
+@@ -0,0 +1,176 @@
++/*
++ * Copyright (C) 2015 Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#include <linux/module.h>
++#include <linux/clk-provider.h>
++#include <linux/slab.h>
++#include <linux/err.h>
++#include <linux/of.h>
++
++#define to_clk_factor(_hw) container_of(_hw, struct clk_factor, hw)
++
++static unsigned long __get_mult(struct clk_factor *factor,
++				unsigned long rate,
++				unsigned long parent_rate)
++{
++	if (factor->flags & CLK_FACTOR_ROUND_CLOSEST)
++		return DIV_ROUND_CLOSEST(rate, parent_rate);
++
++	return rate / parent_rate;
++}
++
++static unsigned long clk_factor_recalc_rate(struct clk_hw *hw,
++					    unsigned long parent_rate)
++{
++	struct clk_factor *factor = to_clk_factor(hw);
++	unsigned long val;
++	
++	val = clk_readl(factor->reg) >> factor->shift;
++	val &= GENMASK(factor->width, 0);
++
++	if (!val && factor->flags & CLK_FACTOR_ZERO_BYPASS)
++		val = 1;
++	
++	return parent_rate * val;
++}
++
++static bool __is_best_rate(unsigned long rate, unsigned long new,
++			   unsigned long best, unsigned long flags)
++{
++	if (flags & CLK_FACTOR_ROUND_CLOSEST)
++		return abs(rate - new) < abs(rate - best);
++
++	return new >= rate && new < best;
++}
++
++static unsigned long clk_factor_bestmult(struct clk_hw *hw, unsigned long rate,
++					 unsigned long *best_parent_rate,
++					 u8 width, unsigned long flags)
++{
++	unsigned long orig_parent_rate = *best_parent_rate;
++	unsigned long parent_rate, current_rate, best_rate = ~0;
++	unsigned int i, bestmult = 0;
++
++	if (!(__clk_get_flags(hw->clk) & CLK_SET_RATE_PARENT))
++		return rate / *best_parent_rate;
++
++	for (i = 1; i < ((1 << width) - 1); i++) {
++		if (rate * i == orig_parent_rate) {
++			/*
++			 * This is the best case for us if we have a
++			 * perfect match without changing the parent
++			 * rate.
++			 */
++			*best_parent_rate = orig_parent_rate;
++			return i;
++		}
++
++		parent_rate = __clk_round_rate(__clk_get_parent(hw->clk),
++					       rate / i);
++		current_rate = parent_rate * i;
++
++		if (__is_best_rate(rate, current_rate, best_rate, flags)) {
++			bestmult = i;
++			best_rate = current_rate;
++			*best_parent_rate = parent_rate;
++		}
++	}
++
++	return bestmult;
++}
++
++static long clk_factor_round_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long *parent_rate)
++{
++	struct clk_factor *factor = to_clk_factor(hw);
++	unsigned long mult = clk_factor_bestmult(hw, rate, parent_rate,
++						 factor->width, factor->flags);
++
++	return *parent_rate * mult;
++}
++
++static int clk_factor_set_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long parent_rate)
++{
++	struct clk_factor *factor = to_clk_factor(hw);
++	unsigned long mult = __get_mult(factor, rate, parent_rate);
++	unsigned long uninitialized_var(flags);
++	struct clk *clk = hw->clk;
++	unsigned long val;
++
++	if (factor->lock)
++		spin_lock_irqsave(factor->lock, flags);
++
++	val = clk_readl(factor->reg);
++	val &= ~GENMASK(factor->width + factor->shift, factor->shift);
++	val |= mult << factor->shift;
++	clk_writel(val, factor->reg);
++
++	if (factor->lock)
++		spin_unlock_irqrestore(factor->lock, flags);
++
++	return 0;
++}
++
++const struct clk_ops clk_factor_ops = {
++	.recalc_rate	= clk_factor_recalc_rate,
++	.round_rate	= clk_factor_round_rate,
++	.set_rate	= clk_factor_set_rate,
++};
++EXPORT_SYMBOL_GPL(clk_factor_ops);
++
++struct clk *clk_register_factor(struct device *dev, const char *name,
++				const char *parent_name, unsigned long flags,
++				void __iomem *reg, u8 shift, u8 width,
++				u8 clk_factor_flags, spinlock_t *lock)
++{
++	struct clk_init_data init;
++	struct clk_factor *factor;
++	struct clk *clk;
++
++	factor = kmalloc(sizeof(*factor), GFP_KERNEL);
++	if (!factor) {
++		pr_err("%s: could not allocate fixed factor clk\n", __func__);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	init.name = name;
++	init.ops = &clk_factor_ops;
++	init.flags = flags | CLK_IS_BASIC;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	factor->reg = reg;
++	factor->shift = shift;
++	factor->width = width;
++	factor->flags = clk_factor_flags;
++	factor->lock = lock;
++	factor->hw.init = &init;
++	
++	clk = clk_register(dev, &factor->hw);
++	if (IS_ERR(clk))
++		kfree(factor);
++
++	return clk;
++}
++EXPORT_SYMBOL_GPL(clk_register_factor);
++
++void clk_unregister_factor(struct clk *clk)
++{
++	struct clk_factor *factor;
++	struct clk_hw *hw;
++
++	hw = __clk_get_hw(clk);
++	if (!hw)
++		return;
++
++	factor = to_clk_factor(hw);
++
++	clk_unregister(clk);
++	kfree(factor);
++}
++EXPORT_SYMBOL_GPL(clk_unregister_factor);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index df695313f975..543918c378f5 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -493,6 +493,47 @@ struct clk *clk_register_fractional_divider(struct device *dev,
+ 		void __iomem *reg, u8 mshift, u8 mwidth, u8 nshift, u8 nwidth,
+ 		u8 clk_divider_flags, spinlock_t *lock);
+ 
++/**
++ * struct clk_factor - adjustable factor clock
++ *
++ * @hw:		handle between common and hardware-specific interfaces
++ * @reg:	register containing the factor
++ * @shift:	shift to the factor bit field
++ * @width:	width of the factor bit field
++ * @lock:	register lock
++ *
++ * Clock with an adjustable factor affecting its output frequency.
++ * Implements .recalc_rate, .set_rate and .round_rate
++ *
++ * Flags:
++ * CLK_FACTOR_ZERO_BYPASS - By default, the factor is the value read
++ *	from the register, with 0 being a valid value effectively
++ *	zeroing the output clock rate. If CLK_FACTOR_ZERO_BYPASS is
++ *	set, then a null factor will be considered as a bypass,
++ *	leaving the parent rate unmodified.
++ * CLK_FACTOR_ROUND_CLOSEST - Makes the best calculated divider to be
++ *	rounded to the closest integer instead of the down one.
++ */
++struct clk_factor {
++	struct clk_hw	hw;
++	void __iomem	*reg;
++	u8		shift;
++	u8		width;
++	u8		flags;
++	spinlock_t	*lock;
++};
++
++#define CLK_FACTOR_ZERO_BYPASS		BIT(0)
++#define CLK_FACTOR_ROUND_CLOSEST	BIT(1)
++
++extern const struct clk_ops clk_factor_ops;
++
++struct clk *clk_register_factor(struct device *dev, const char *name,
++				const char *parent_name, unsigned long flags,
++				void __iomem *reg, u8 shift, u8 width,
++				u8 clk_factor_flags, spinlock_t *lock);
++void clk_unregister_factor(struct clk *clk);
++
+ /***
+  * struct clk_composite - aggregate clock of mux, divider and gate clocks
+  *
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.4.1
