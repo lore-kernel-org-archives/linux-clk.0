@@ -1,57 +1,78 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Wed, 13 May 2015 08:45:50 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
-	Mike Turquette <mturquette@linaro.org>, kernel@pengutronix.de,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Automatic clock disabling on clk_put()
-Message-ID: <20150513064550.GE28888@pengutronix.de>
-References: <20150511060129.GG6325@pengutronix.de>
- <55528B84.5050700@codeaurora.org>
+Return-Path: <tony@atomide.com>
+Date: Thu, 21 May 2015 11:38:32 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Nishanth Menon <nm@ti.com>
+Cc: Tero Kristo <t-kristo@ti.com>, Paul Walmsley <paul@pwsan.com>,
+	mturquette@linaro.org, linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 00/27] ARM: OMAP2+: clock code migration to
+ drivers/clk/ti
+Message-ID: <20150521183832.GU10274@atomide.com>
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+ <alpine.DEB.2.02.1505111747460.19833@utopia.booyaka.com>
+ <5551D178.3000904@ti.com>
+ <alpine.DEB.2.02.1505122019220.21747@utopia.booyaka.com>
+ <5552F32C.7060606@ti.com>
+ <alpine.DEB.2.02.1505131438430.7921@utopia.booyaka.com>
+ <555B8DC0.5080905@ti.com>
+ <alpine.DEB.2.02.1505202234330.7960@utopia.booyaka.com>
+ <555D7D52.8010501@ti.com>
+ <555D82CB.5060300@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <55528B84.5050700@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <555D82CB.5060300@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
-
-On Tue, May 12, 2015 at 04:23:48PM -0700, Stephen Boyd wrote:
-> On 05/10/15 23:01, Sascha Hauer wrote:
-> > Hi,
-> >
-> > Since we now have per-user clks we could automatically disable clks on
-> > clk_put() to make the drivers errors paths easier. AFAIR that was one
-> > of the motivations to switch to per user clks. Is this just not yet
-> > implemented or are there problems implementing this?
+* Nishanth Menon <nm@ti.com> [150521 00:03]:
+> On 05/21/2015 01:38 AM, Tero Kristo wrote:
+> > On 05/21/2015 01:40 AM, Paul Walmsley wrote:
+> >> On Tue, 19 May 2015, Tero Kristo wrote:
+> >>
+> >>> Any news on this? As noted previously, I am not able to reproduce the
+> >>> issue
+> >>> you are seeing currently, can you give DEBUG_LL a shot?
+> >>
+> >> Yeah I just bisected it, it was caused by this:
+> >>
+> >> commit cc4a5fe972ad7834e8662b49b3a5fdb597e9e15e
+> >> Author: Felipe Balbi <balbi@ti.com>
+> >> Date:   Fri Jan 30 11:18:56 2015 -0600
+> >>
+> >>      arm: config: omap2plus_defconfig: switch over to LZMA compression
+> >>
+> >>      LZMA compression makes about 33% smaller zImage
+> >>      with just a slight extra decompression time.
+> >>
+> >>      Before this patch, zImage built with o2+_dc
+> >>      is 4.5MiB and after it's about 3.3MiB.
+> >>
+> >>      Suggested-by: David Cohen <david.a.cohen@linux.intel.com>
+> >>      Signed-off-by: Felipe Balbi <balbi@ti.com>
+> >>      Signed-off-by: Tony Lindgren <tony@atomide.com>
+> >>
+> >>
+> >> and the timeouts on the testbed being set to fail if a kernel takes
+> >> longer
+> >> than five seconds to start.  Seems that the part about a "slight extra
+> >> decompression time" probably only applies to relatively recent chips.
+> >>
+> >>
+> >> - Paul
+> >>
+> > 
+> > Oh, so this explains why I was thinking it took very long time to boot
+> > the recent kernels also. The boot lag is clearly noticeable without any
+> > measurement. I wonder if we should probably revert this patch.
 > 
-> I don't recall that as being a motivation for per-user clks. The
-> documentation explicitly states:
-> 
->  * Note: drivers must ensure that all clk_enable calls made on this
->  * clock source are balanced by clk_disable calls prior to calling
->  * this function.
-> 
-> so it seems that such a behavior would be an API change. Is it really
-well, it's a compatible API change. So if you continue to use it as you
-were obliged to do before, everything is fine. IMHO the introduction of
-per-user clocks are a much bigger issue.
+> we already have issues with zImage size bloating up and running headlong
+> into dtb - esp on platforms like N900. Felipe spend quiet some time
+> getting things into a manageable size here -> loosing 33% sounds like
+> bad idea to me :(
 
-I'm not sure that auto disabling is a good idea[1], but at least giving a
-warning should be possible.
+If it affects people using the slower 34xx systems we should probably
+revert it though. Or make the uncompress somehow faster :)
 
-> that hard to call clk_disable_unprepare() on a clock at the end of an
-> error path? Maybe you could add a devm_clk_get_prepare_enable() that
-> does what you want and then call clk_disable_unprepare on the exit path?
-You mean clk_disable_unprepare is called in the same function that calls
-clk_put I assume such that you don't have to do anything in the exit
-path.
+Regards,
 
-Best regards
-Uwe
-
-[1] mainly because I didn't think about it
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Tony
