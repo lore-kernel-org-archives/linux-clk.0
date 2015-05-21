@@ -1,126 +1,50 @@
-Return-Path: <peter.ujfalusi@ti.com>
-Message-ID: <5549CD8B.4070601@ti.com>
-Date: Wed, 6 May 2015 11:15:07 +0300
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Return-Path: <shawn.guo@linaro.org>
+Return-Path: <shawn.guo@linaro.org>
+Date: Thu, 21 May 2015 09:18:25 +0800
+From: Shawn Guo <shawn.guo@linaro.org>
+To: =?iso-8859-1?Q?S=E9bastien?= Szymanski <sebastien.szymanski@armadeus.com>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] ARM: clk-imx6q: refine sata's parent
+Message-ID: <20150521011824.GI24844@dragon>
+References: <1432132237-31004-1-git-send-email-sebastien.szymanski@armadeus.com>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Mike Turquette
-	<mturquette@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Tero Kristo
-	<t-kristo@ti.com>
-Subject: Re: [PATCH 13/19] clk: ti: Silence sparse warnings
-References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org> <1430897996-11597-14-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1430897996-11597-14-git-send-email-sboyd@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1432132237-31004-1-git-send-email-sebastien.szymanski@armadeus.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/06/2015 10:39 AM, Stephen Boyd wrote:
-> drivers/clk/ti/clk.c:125:31: warning: incorrect type in return expression (different address spaces)
-> drivers/clk/ti/clk.c:125:31:    expected void [noderef] <asn:2>*
-> drivers/clk/ti/clk.c:125:31:    got void *
-> drivers/clk/ti/clk.c:132:31: warning: incorrect type in return expression (different address spaces)
-> drivers/clk/ti/clk.c:132:31:    expected void [noderef] <asn:2>*
-> drivers/clk/ti/clk.c:132:31:    got void *
-> drivers/clk/ti/dpll.c:180:14: warning: symbol '_get_reg' was not declared. Should it be static?
-> drivers/clk/ti/fapll.c:624:32: warning: Using plain integer as NULL pointer
-> drivers/clk/ti/fapll.c:625:31: warning: Using plain integer as NULL pointer
-> drivers/clk/ti/fapll.c:630:40: warning: Using plain integer as NULL pointer
-> drivers/clk/ti/clk-dra7-atl.c:158:22: warning: symbol 'atl_clk_ops' was not declared. Should it be static?
-> drivers/clk/ti/clk-dra7-atl.c:170:39: warning: Using plain integer as NULL pointer
+On Wed, May 20, 2015 at 04:30:37PM +0200, Sébastien Szymanski wrote:
+> According to IMX6D/Q RM, table 18-3, sata clock's parent is ahb, not ipg.
 > 
-> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> This patch is based on branch:
+> git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git imx/soc
 
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Dropped these two lines, and applied patch.
 
+Shawn
+
+> 
+> Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
 > ---
->  drivers/clk/ti/clk-dra7-atl.c | 4 ++--
->  drivers/clk/ti/clk.c          | 4 ++--
->  drivers/clk/ti/dpll.c         | 2 +-
->  drivers/clk/ti/fapll.c        | 6 +++---
->  4 files changed, 8 insertions(+), 8 deletions(-)
+>  drivers/clk/imx/clk-imx6q.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
-> index d86bc46b93bd..1fe7429a7536 100644
-> --- a/drivers/clk/ti/clk-dra7-atl.c
-> +++ b/drivers/clk/ti/clk-dra7-atl.c
-> @@ -155,7 +155,7 @@ static int atl_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->  	return 0;
->  }
->  
-> -const struct clk_ops atl_clk_ops = {
-> +static const struct clk_ops atl_clk_ops = {
->  	.enable		= atl_clk_enable,
->  	.disable	= atl_clk_disable,
->  	.is_enabled	= atl_clk_is_enabled,
-> @@ -167,7 +167,7 @@ const struct clk_ops atl_clk_ops = {
->  static void __init of_dra7_atl_clock_setup(struct device_node *node)
->  {
->  	struct dra7_atl_desc *clk_hw = NULL;
-> -	struct clk_init_data init = { 0 };
-> +	struct clk_init_data init = { NULL };
->  	const char **parent_names = NULL;
->  	struct clk *clk;
->  
-> diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-> index 0ebe5c51062b..64bb5e8a3b8c 100644
-> --- a/drivers/clk/ti/clk.c
-> +++ b/drivers/clk/ti/clk.c
-> @@ -122,14 +122,14 @@ void __iomem *ti_clk_get_reg_addr(struct device_node *node, int index)
->  
->  	if (i == CLK_MAX_MEMMAPS) {
->  		pr_err("clk-provider not found for %s!\n", node->name);
-> -		return ERR_PTR(-ENOENT);
-> +		return IOMEM_ERR_PTR(-ENOENT);
->  	}
->  
->  	reg->index = i;
->  
->  	if (of_property_read_u32_index(node, "reg", index, &val)) {
->  		pr_err("%s must have reg[%d]!\n", node->name, index);
-> -		return ERR_PTR(-EINVAL);
-> +		return IOMEM_ERR_PTR(-EINVAL);
->  	}
->  
->  	reg->offset = val;
-> diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-> index 11478a501c30..2aacf7a3bcae 100644
-> --- a/drivers/clk/ti/dpll.c
-> +++ b/drivers/clk/ti/dpll.c
-> @@ -177,7 +177,7 @@ cleanup:
->  }
->  
->  #if defined(CONFIG_ARCH_OMAP3) && defined(CONFIG_ATAGS)
-> -void __iomem *_get_reg(u8 module, u16 offset)
-> +static void __iomem *_get_reg(u8 module, u16 offset)
->  {
->  	u32 reg;
->  	struct clk_omap_reg *reg_setup;
-> diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
-> index ffcd8e09e85b..730aa62454a2 100644
-> --- a/drivers/clk/ti/fapll.c
-> +++ b/drivers/clk/ti/fapll.c
-> @@ -621,13 +621,13 @@ static void __init ti_fapll_setup(struct device_node *node)
->  
->  		/* Check for hardwired audio_pll_clk1 */
->  		if (is_audio_pll_clk1(freq)) {
-> -			freq = 0;
-> -			div = 0;
-> +			freq = NULL;
-> +			div = NULL;
->  		} else {
->  			/* Does the synthesizer have a FREQ register? */
->  			v = readl_relaxed(freq);
->  			if (!v)
-> -				freq = 0;
-> +				freq = NULL;
->  		}
->  		synth_clk = ti_fapll_synth_setup(fd, freq, div, output_instance,
->  						 output_name, node->name,
+> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+> index 128f887..d046f8e 100644
+> --- a/drivers/clk/imx/clk-imx6q.c
+> +++ b/drivers/clk/imx/clk-imx6q.c
+> @@ -450,7 +450,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+>  	clk[IMX6QDL_CLK_GPMI_IO]      = imx_clk_gate2("gpmi_io",       "enfc",              base + 0x78, 28);
+>  	clk[IMX6QDL_CLK_GPMI_APB]     = imx_clk_gate2("gpmi_apb",      "usdhc3",            base + 0x78, 30);
+>  	clk[IMX6QDL_CLK_ROM]          = imx_clk_gate2("rom",           "ahb",               base + 0x7c, 0);
+> -	clk[IMX6QDL_CLK_SATA]         = imx_clk_gate2("sata",          "ipg",               base + 0x7c, 4);
+> +	clk[IMX6QDL_CLK_SATA]         = imx_clk_gate2("sata",          "ahb",               base + 0x7c, 4);
+>  	clk[IMX6QDL_CLK_SDMA]         = imx_clk_gate2("sdma",          "ahb",               base + 0x7c, 6);
+>  	clk[IMX6QDL_CLK_SPBA]         = imx_clk_gate2("spba",          "ipg",               base + 0x7c, 12);
+>  	clk[IMX6QDL_CLK_SPDIF]        = imx_clk_gate2("spdif",         "spdif_podf",        base + 0x7c, 14);
+> -- 
+> 2.0.5
 > 
-
-
--- 
-Péter
