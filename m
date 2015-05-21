@@ -1,40 +1,130 @@
-Return-Path: <mopsfelder@gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 6/7] ARM: sunxi: Add codec clock support
+Date: Thu, 21 May 2015 22:54:05 +0200
+Message-Id: <1432241646-9511-7-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <554AB7E8.1040009@codeaurora.org>
-References: <1430959861-14925-1-git-send-email-mopsfelder@gmail.com>
- <1430959861-14925-3-git-send-email-mopsfelder@gmail.com> <554AB7E8.1040009@codeaurora.org>
-From: =?UTF-8?Q?Murilo_Opsfelder_Ara=C3=BAjo?= <mopsfelder@gmail.com>
-Date: Wed, 6 May 2015 21:59:34 -0300
-Message-ID: <CA+LKeY7mrQrh6VYSLMX3p-nwryHb3WO9dgz=xD4Y_YKT4T5r7w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] drivers: clk: clk.c: Make clk_is_orphan() dependent
- of CONFIG_OF
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Mike Turquette <mturquette@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 6, 2015 at 9:55 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 05/06/15 17:51, Murilo Opsfelder Araujo wrote:
->> The function clk_is_orphan() is called only by
->> __of_clk_get_from_provider(), which depends on CONFIG_OF, so it does
->> make sense the move.
->>
->> This change also gets rid of the following build message when CONFIG_OF
->> is not set:
->>
->> drivers/clk/clk.c:2231:13: warning: =E2=80=98clk_is_orphan=E2=80=99 defi=
-ned but not used [-Wunused-function]
->>
->> Signed-off-by: Murilo Opsfelder Araujo <mopsfelder@gmail.com>
->
-> The patch that introduces this problem is gone now.
->
+From: Emilio López <emilio@elopez.com.ar>
 
-Nice to know it is gone.  I'm using next-20150506 which still contains
-that.  Probably the fix will land a next -next release.
+This commit adds the codec clock definition to the sun4i, sun5i and
+sun7i device trees. The codec clock is used in the analog codec block.
 
-Thanks, Stephen.
+Signed-off-by: Emilio López <emilio@elopez.com.ar>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun4i-a10.dtsi  | 9 +++++++++
+ arch/arm/boot/dts/sun5i.dtsi      | 9 +++++++++
+ arch/arm/boot/dts/sun7i-a20.dtsi  | 9 +++++++++
+ drivers/clk/sunxi/clk-a10-codec.c | 1 -
+ 4 files changed, 27 insertions(+), 1 deletion(-)
 
---=20
-Murilo
+diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
+index 235e5204742f..dfa8cd2d3ba8 100644
+--- a/arch/arm/boot/dts/sun4i-a10.dtsi
++++ b/arch/arm/boot/dts/sun4i-a10.dtsi
+@@ -45,6 +45,7 @@
+ 
+ #include <dt-bindings/thermal/thermal.h>
+ 
++#include <dt-bindings/clock/sun4i-a10-pll2.h>
+ #include <dt-bindings/dma/sun4i-a10.h>
+ #include <dt-bindings/pinctrl/sun4i-a10.h>
+ 
+@@ -455,6 +456,14 @@
+ 			clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
+ 			clock-output-names = "spi3";
+ 		};
++
++		codec_clk: clk@01c20140 {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-codec-clk";
++			reg = <0x01c20140 0x4>;
++			clocks = <&pll2 SUN4I_A10_PLL2_1X>;
++			clock-output-names = "codec";
++		};
+ 	};
+ 
+ 	/*
+diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+index 2f553a92a6dc..ab5184d2094d 100644
+--- a/arch/arm/boot/dts/sun5i.dtsi
++++ b/arch/arm/boot/dts/sun5i.dtsi
+@@ -44,6 +44,7 @@
+ 
+ #include "skeleton.dtsi"
+ 
++#include <dt-bindings/clock/sun4i-a10-pll2.h>
+ #include <dt-bindings/dma/sun4i-a10.h>
+ #include <dt-bindings/pinctrl/sun4i-a10.h>
+ 
+@@ -293,6 +294,14 @@
+ 			clock-output-names = "usb_ohci0", "usb_phy";
+ 		};
+ 
++		codec_clk: clk@01c20140 {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-codec-clk";
++			reg = <0x01c20140 0x4>;
++			clocks = <&pll2 SUN4I_A10_PLL2_1X>;
++			clock-output-names = "codec";
++		};
++
+ 		mbus_clk: clk@01c2015c {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun5i-a13-mbus-clk";
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index 0141cc9876a7..b5ecfa5fa0eb 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -47,6 +47,7 @@
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/thermal/thermal.h>
+ 
++#include <dt-bindings/clock/sun4i-a10-pll2.h>
+ #include <dt-bindings/dma/sun4i-a10.h>
+ #include <dt-bindings/pinctrl/sun4i-a10.h>
+ 
+@@ -469,6 +470,14 @@
+ 			clock-output-names = "spi3";
+ 		};
+ 
++		codec_clk: clk@01c20140 {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-codec-clk";
++			reg = <0x01c20140 0x4>;
++			clocks = <&pll2 SUN4I_A10_PLL2_1X>;
++			clock-output-names = "codec";
++		};
++
+ 		mbus_clk: clk@01c2015c {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun5i-a13-mbus-clk";
+diff --git a/drivers/clk/sunxi/clk-a10-codec.c b/drivers/clk/sunxi/clk-a10-codec.c
+index aaeccf8cde39..ac321d6a0df5 100644
+--- a/drivers/clk/sunxi/clk-a10-codec.c
++++ b/drivers/clk/sunxi/clk-a10-codec.c
+@@ -15,7 +15,6 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ 
+-- 
+2.4.1
