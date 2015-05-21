@@ -1,60 +1,24 @@
-Return-Path: <manabian@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 21 May 2015 11:54:46 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shailendra Verma <shailendra.capricorn@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk:clk-conf - Fix typo in comment.
+Message-ID: <20150521185446.GC21195@codeaurora.org>
+References: <1432231376-3542-1-git-send-email-shailendra.capricorn@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20150512223241.16410.79958@quantum>
-References: <1430170693-28303-1-git-send-email-manabian@gmail.com>
-	<1430170693-28303-4-git-send-email-manabian@gmail.com>
-	<20150512223241.16410.79958@quantum>
-Date: Wed, 13 May 2015 10:09:18 +0200
-Message-ID: <CAGhQ9VzvvBCWu2+8zrAvpFRTWr3o9uhOeuucHB39s91fOPk8Mw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] clk: add lpc18xx ccu clk driver
-From: Joachim  Eastwood <manabian@gmail.com>
-To: Michael Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
-	"Ariel D'Alessandro" <ariel.dalessandro@gmail.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1432231376-3542-1-git-send-email-shailendra.capricorn@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 13 May 2015 at 00:32, Michael Turquette <mturquette@linaro.org> wrote:
-> Quoting Joachim Eastwood (2015-04-27 14:38:12)
->> +static int of_clk_get_parent_arg(struct device_node *np, int index)
->> +{
->> +       struct of_phandle_args clkspec;
->> +       int rc;
->> +
->> +       if (index < 0)
->> +               return -EINVAL;
->> +
->> +       rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
->> +                                       &clkspec);
->> +       if (rc)
->> +               return -EINVAL;
->> +
->> +       return clkspec.args_count ? clkspec.args[0] : -EINVAL;
->> +}
->
-> Hi Joachim,
->
-> I'm not sure why you need this. I guess it is related to my question in
-> patch #2 about using clock-indices?
+On 05/21, Shailendra Verma wrote:
+> 
+> Signed-off-by: Shailendra Verma <shailendra.capricorn@gmail.com>
+> ---
 
-Yes. I basically need the clock id without grabbing the clock using a
-clk_get function. See below.
+Applied to clk-next
 
->Can you explain why this function is required?
-
-Since the CCU doesn't act like a normal clock consumer using clk_get
-type functions I use this function to retrieve the CGU clock id. This
-drivers is used on two CCUs blocks and I need to match the id with one
-in the clk_branches array so that the driver itself can be generic.
-
-> Anyways if returning the clock index is something that is really needed
-> then why not rename it to "of_clk_get_index" and put it in
-> drivers/clk/clk.c?
-
-Okey, I'll do that in the next version if we agree that the function
-is still needed.
-
-regards,
-Joachim Eastwood
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
