@@ -1,64 +1,63 @@
-Return-Path: <bilhuang@nvidia.com>
-Message-ID: <5559C7BD.7040105@nvidia.com>
-Date: Mon, 18 May 2015 19:06:37 +0800
-From: bilhuang <bilhuang@nvidia.com>
+Return-Path: <nm@ti.com>
+Message-ID: <555D82CB.5060300@ti.com>
+Date: Thu, 21 May 2015 02:01:31 -0500
+From: Nishanth Menon <nm@ti.com>
 MIME-Version: 1.0
-To: Benson Leung <bleung@chromium.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
-	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, "Thierry
- Reding" <thierry.reding@gmail.com>, Paul Walmsley <pwalmsley@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] clk: tegra: fix WARN_ON in PLL_RE registration
-References: <1431691653-17615-1-git-send-email-bilhuang@nvidia.com> <CANLzEktZXkggY_6UbBBsU_9SB2eqsGRoBV138cDgBqo95BaWyw@mail.gmail.com>
-In-Reply-To: <CANLzEktZXkggY_6UbBBsU_9SB2eqsGRoBV138cDgBqo95BaWyw@mail.gmail.com>
-Return-Path: bilhuang@nvidia.com
-Content-Type: text/plain; charset="utf-8"; format=flowed
+To: Tero Kristo <t-kristo@ti.com>, Paul Walmsley <paul@pwsan.com>
+CC: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCHv2 00/27] ARM: OMAP2+: clock code migration to drivers/clk/ti
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com> <alpine.DEB.2.02.1505111747460.19833@utopia.booyaka.com> <5551D178.3000904@ti.com> <alpine.DEB.2.02.1505122019220.21747@utopia.booyaka.com> <5552F32C.7060606@ti.com> <alpine.DEB.2.02.1505131438430.7921@utopia.booyaka.com> <555B8DC0.5080905@ti.com> <alpine.DEB.2.02.1505202234330.7960@utopia.booyaka.com> <555D7D52.8010501@ti.com>
+In-Reply-To: <555D7D52.8010501@ti.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/16/2015 01:12 AM, Benson Leung wrote:
-> On Fri, May 15, 2015 at 5:07 AM, Bill Huang <bilhuang@nvidia.com> wrote:
->> This fixes two things.
+On 05/21/2015 01:38 AM, Tero Kristo wrote:
+> On 05/21/2015 01:40 AM, Paul Walmsley wrote:
+>> On Tue, 19 May 2015, Tero Kristo wrote:
 >>
->> - Read the correct IDDQ register
->> - Check the correct IDDQ bit position
+>>> Any news on this? As noted previously, I am not able to reproduce the
+>>> issue
+>>> you are seeing currently, can you give DEBUG_LL a shot?
 >>
->> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
->
-> Reviewed-by: Benson Leung <bleung@chromium.org>
->
-> By the way, does it also make sense to do the same thing for
-> tegra_clk_register_pllss, which also reads the base register instead
-> of the specific iddq_reg from params?
->
-Yes thanks for catching this, I've sent another fix in 
-https://patchwork.ozlabs.org/patch/473329/
+>> Yeah I just bisected it, it was caused by this:
+>>
+>> commit cc4a5fe972ad7834e8662b49b3a5fdb597e9e15e
+>> Author: Felipe Balbi <balbi@ti.com>
+>> Date:   Fri Jan 30 11:18:56 2015 -0600
+>>
+>>      arm: config: omap2plus_defconfig: switch over to LZMA compression
+>>
+>>      LZMA compression makes about 33% smaller zImage
+>>      with just a slight extra decompression time.
+>>
+>>      Before this patch, zImage built with o2+_dc
+>>      is 4.5MiB and after it's about 3.3MiB.
+>>
+>>      Suggested-by: David Cohen <david.a.cohen@linux.intel.com>
+>>      Signed-off-by: Felipe Balbi <balbi@ti.com>
+>>      Signed-off-by: Tony Lindgren <tony@atomide.com>
+>>
+>>
+>> and the timeouts on the testbed being set to fail if a kernel takes
+>> longer
+>> than five seconds to start.  Seems that the part about a "slight extra
+>> decompression time" probably only applies to relatively recent chips.
+>>
+>>
+>> - Paul
+>>
+> 
+> Oh, so this explains why I was thinking it took very long time to boot
+> the recent kernels also. The boot lag is clearly noticeable without any
+> measurement. I wonder if we should probably revert this patch.
 
->> ---
->>   drivers/clk/tegra/clk-pll.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
->> index 05c6d08..734340e 100644
->> --- a/drivers/clk/tegra/clk-pll.c
->> +++ b/drivers/clk/tegra/clk-pll.c
->> @@ -1630,7 +1630,8 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
->>
->>          val = pll_readl_base(pll);
->>          if (val & PLL_BASE_ENABLE)
->> -               WARN_ON(val & pll_params->iddq_bit_idx);
->> +               WARN_ON(readl_relaxed(clk_base + pll_params->iddq_reg) &
->> +                               BIT(pll_params->iddq_bit_idx));
->>          else {
->>                  int m;
->>
->> --
->> 1.9.1
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
->
+we already have issues with zImage size bloating up and running headlong
+into dtb - esp on platforms like N900. Felipe spend quiet some time
+getting things into a manageable size here -> loosing 33% sounds like
+bad idea to me :(
+
+-- 
+Regards,
+Nishanth Menon
