@@ -1,62 +1,53 @@
-Return-Path: <sudeep.holla@arm.com>
-Message-ID: <556471AF.5090002@arm.com>
-Date: Tue, 26 May 2015 14:14:23 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
+Return-Path: <t-kristo@ti.com>
+Message-ID: <555D7D52.8010501@ti.com>
+Date: Thu, 21 May 2015 09:38:10 +0300
+From: Tero Kristo <t-kristo@ti.com>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Liviu Dudau <Liviu.Dudau@arm.com>,
- Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
- "Jon Medhurst (Tixy)" <tixy@linaro.org>,
- Mike Turquette <mturquette@linaro.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 2/4] clk: add support for clocks provided by SCP(System
- Control Processor)
-References: <1430134846-24320-1-git-send-email-sudeep.holla@arm.com> <1430134846-24320-3-git-send-email-sudeep.holla@arm.com> <20150520234311.GA31753@codeaurora.org>
-In-Reply-To: <20150520234311.GA31753@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+To: Paul Walmsley <paul@pwsan.com>
+CC: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCHv2 00/27] ARM: OMAP2+: clock code migration to drivers/clk/ti
+References: <1431334493-24455-1-git-send-email-t-kristo@ti.com> <alpine.DEB.2.02.1505111747460.19833@utopia.booyaka.com> <5551D178.3000904@ti.com> <alpine.DEB.2.02.1505122019220.21747@utopia.booyaka.com> <5552F32C.7060606@ti.com> <alpine.DEB.2.02.1505131438430.7921@utopia.booyaka.com> <555B8DC0.5080905@ti.com> <alpine.DEB.2.02.1505202234330.7960@utopia.booyaka.com>
+In-Reply-To: <alpine.DEB.2.02.1505202234330.7960@utopia.booyaka.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-
-On 21/05/15 00:43, Stephen Boyd wrote:
-> On 04/27, Sudeep Holla wrote:
->> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->> index 9897f353bf1a..906bf7dd72a2 100644
->> --- a/drivers/clk/Kconfig
->> +++ b/drivers/clk/Kconfig
->> @@ -59,6 +59,16 @@ config COMMON_CLK_RK808
->>   	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
->>   	  by control register.
->>
->> +config COMMON_CLK_SCPI
->> +        tristate "Clock driver controlled via SCPI interface"
->> +        depends on ARM_SCPI_PROTOCOL
+On 05/21/2015 01:40 AM, Paul Walmsley wrote:
+> On Tue, 19 May 2015, Tero Kristo wrote:
 >
-> || COMPILE_TEST ?
+>> Any news on this? As noted previously, I am not able to reproduce the issue
+>> you are seeing currently, can you give DEBUG_LL a shot?
 >
-
-[...]
-
+> Yeah I just bisected it, it was caused by this:
 >
->> +		return -ENOMEM;
->> +	}
->> +
->> +	for (idx = 0; idx < count; idx++) {
->> +		struct scpi_clk *sclk;
-> [...]
->> +static int scpi_clk_remove(struct platform_device *pdev)
->> +{
->> +	of_clk_del_provider(pdev->dev.of_node);
->> +	platform_set_drvdata(pdev, NULL);
+> commit cc4a5fe972ad7834e8662b49b3a5fdb597e9e15e
+> Author: Felipe Balbi <balbi@ti.com>
+> Date:   Fri Jan 30 11:18:56 2015 -0600
 >
-> We don't need to set platform_drvdata to NULL here.
+>      arm: config: omap2plus_defconfig: switch over to LZMA compression
+>
+>      LZMA compression makes about 33% smaller zImage
+>      with just a slight extra decompression time.
+>
+>      Before this patch, zImage built with o2+_dc
+>      is 4.5MiB and after it's about 3.3MiB.
+>
+>      Suggested-by: David Cohen <david.a.cohen@linux.intel.com>
+>      Signed-off-by: Felipe Balbi <balbi@ti.com>
+>      Signed-off-by: Tony Lindgren <tony@atomide.com>
+>
+>
+> and the timeouts on the testbed being set to fail if a kernel takes longer
+> than five seconds to start.  Seems that the part about a "slight extra
+> decompression time" probably only applies to relatively recent chips.
+>
+>
+> - Paul
 >
 
-Thanks for the review. I have posted v2 of this series and some of the
-comments are not applicable(already done or code removed). I have
-fixed all the remaining comments locally for v3.
+Oh, so this explains why I was thinking it took very long time to boot 
+the recent kernels also. The boot lag is clearly noticeable without any 
+measurement. I wonder if we should probably revert this patch.
 
-Regards,
-Sudeep
+-Tero
