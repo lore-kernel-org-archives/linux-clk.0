@@ -1,128 +1,60 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <paul@pwsan.com>
+Date: Thu, 21 May 2015 03:06:15 +0000 (UTC)
+From: Paul Walmsley <paul@pwsan.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+cc: Tero Kristo <t-kristo@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+  Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org, Nishanth Menon <nm@ti.com>,
+  Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCHv3 10/10] CLK: TI: always enable DESHDCP clock
+In-Reply-To: <555CE1BF.4050506@codeaurora.org>
+Message-ID: <alpine.DEB.2.02.1505210254330.7960@utopia.booyaka.com>
+References: <1430906938-26128-1-git-send-email-tomi.valkeinen@ti.com> <1430906938-26128-11-git-send-email-tomi.valkeinen@ti.com> <555C744C.6070901@ti.com> <555C74E8.5010105@ti.com> <555CE1BF.4050506@codeaurora.org>
 MIME-Version: 1.0
-To: Joonyoung Shim <jy0922.shim@samsung.com>,  linux-clk@vger.kernel.org
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <1428392806-14538-2-git-send-email-jy0922.shim@samsung.com>
-Cc: linux-kernel@vger.kernel.org, sboyd@codeaurora.org, haojian.zhuang@gmail.com,
- james.hogan@imgtec.com, jy0922.shim@samsung.com
-References: <1428392806-14538-1-git-send-email-jy0922.shim@samsung.com>
- <1428392806-14538-2-git-send-email-jy0922.shim@samsung.com>
-Message-ID: <20150512232549.16410.5974@quantum>
-Subject: Re: [PATCH 2/2] clk: divider: fix to set parent rate from
- CLK_DIVIDER_READ_ONLY flag
-Date: Tue, 12 May 2015 16:25:49 -0700
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Joonyoung Shim (2015-04-07 00:46:46)
-> The round_rate callback function will returns alway same parent clk rate
-> of divider with CLK_DIVIDER_READ_ONLY flag. If be used
-> CLK_SET_RATE_PARENT flag with CLK_DIVIDER_READ_ONLY flag, then never
-> change parent clk rate anymore.
-> =
+On Wed, 20 May 2015, Stephen Boyd wrote:
 
-> From this case, this patch allows to change parent clk rate.
-> =
+> On 05/20/15 04:50, Tero Kristo wrote:
+> >
+> >>>
+> >>> @@ -348,5 +348,10 @@ int __init dra7xx_dt_clk_init(void)
+> >>>       if (rc)
+> >>>           pr_err("%s: failed to set USB_DPLL M2 OUT\n", __func__);
+> >>>
+> >>> +    hdcp_ck = clk_get_sys(NULL, "dss_deshdcp_clk");
+> >>> +    rc = clk_prepare_enable(hdcp_ck);
+> >>> +    if (rc)
+> >>> +        pr_err("%s: failed to set dss_deshdcp_clk\n", __func__);
+> >>> +
+> >>>       return rc;
+> >>>   }
+> >>>
+> >>
+> >> You should rather use the assigned-clock properties in DT to accomplish
+> >> this, the manual clock tweaks under the drivers/clk/ti/clk-* files
+> >> should be converted to DT setup also.
+> >
+> > Now that I sent this, I realize we only have support to set_parent /
+> > set_rate through the assigned-clock props, no enable. Any plans to
+> > extend this support Mike/Stephen?
+> >
+> >
+> 
+> Enable falls under the "critical clocks" discussion that is ongoing. I
+> assume that this is some sort of critical clock that can't be turned off?
 
-> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> ---
->  drivers/clk/clk-divider.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> =
+It only needs to be enabled for this particular display IP subsystem to 
+function:
 
-> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> index ce34d29a..37e285e 100644
-> --- a/drivers/clk/clk-divider.c
-> +++ b/drivers/clk/clk-divider.c
-> @@ -352,6 +352,11 @@ static long clk_divider_round_rate(struct clk_hw *hw=
-, unsigned long rate,
->                 bestdiv =3D readl(divider->reg) >> divider->shift;
->                 bestdiv &=3D div_mask(divider->width);
->                 bestdiv =3D _get_div(divider->table, bestdiv, divider->fl=
-ags);
-> +
-> +               if ((__clk_get_flags(hw->clk) & CLK_SET_RATE_PARENT))
-> +                       *prate =3D __clk_round_rate(__clk_get_parent(hw->=
-clk),
-> +                                                 rate);
-> +
->                 return DIV_ROUND_UP(*prate, bestdiv);
->         }
->  =
+http://marc.info/?l=linux-omap&m=142071550111482&w=2
 
-> -- =
-
-> 1.9.1
-> =
-
-
-Hello Joonyoung Shim,
-
-Thanks for reporting the bug and providing a fix!
-
-I've come up with an alternative solution to this. This patch should
-replace both of your patches. Can you test this and see if it fixes the
-problem for you?
-
-Thanks,
-Mike
+I believe Tomi is taking this approach (enabling it unconditionally) to 
+avoid adding support for a secondary IP block "main clock" to the hwmod 
+code.  Apparently, the chips that contain this clock gating bit are not 
+intended to be used for power-critical use cases, so there's not much 
+motivation to switch it on and off with the display controller.
 
 
-
-From=20655dddad2700a30aaa397cd804422e0d9195efad Mon Sep 17 00:00:00 2001
-From: Michael Turquette <mturquette@linaro.org>
-Date: Tue, 12 May 2015 16:13:46 -0700
-Subject: [PATCH] clk: divider: support read-only dividers
-
-An arbitrary clock rate divider may be set out of reset, or perhaps by
-the bootloader or something other than Linux. In these cases we may want
-to know the frequency of the clock signal, but we do not want to allow
-Linux to change it.
-
-The CLK_DIVIDER_READ_ONLY flag was intended to express this, but the
-functionality was missing in the code. Add read-only clk_ops for divider
-clocks to handle this case.
-
-For hardware with fixed dividers it is still best to use the
-fixed-factor clock type.
-
-Reported-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Signed-off-by: Michael Turquette <mturquette@linaro.org>
----
- drivers/clk/clk-divider.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index 25006a8..5d2de26 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -412,6 +412,11 @@ const struct clk_ops clk_divider_ops =3D {
- };
- EXPORT_SYMBOL_GPL(clk_divider_ops);
- =
-
-+const struct clk_ops clk_divider_ro_ops =3D {
-+	.recalc_rate =3D clk_divider_recalc_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_divider_ro_ops);
-+
- static struct clk *_register_divider(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 shift, u8 width,
-@@ -437,7 +442,10 @@ static struct clk *_register_divider(struct device *de=
-v, const char *name,
- 	}
- =
-
- 	init.name =3D name;
--	init.ops =3D &clk_divider_ops;
-+	if (clk_divider_flags & CLK_DIVIDER_READ_ONLY)
-+		init.ops =3D &clk_divider_ro_ops;
-+	else
-+		init.ops =3D &clk_divider_ops;
- 	init.flags =3D flags | CLK_IS_BASIC;
- 	init.parent_names =3D (parent_name ? &parent_name: NULL);
- 	init.num_parents =3D (parent_name ? 1 : 0);
--- =
-
-1.9.1
+- Paul
