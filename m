@@ -1,136 +1,95 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <tony@atomide.com>,
-        <paul@pwsan.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv3 08/27] ARM: OMAP36xx: remove clock36xx.c/.h files
-Date: Mon, 25 May 2015 18:00:13 +0300
-Message-ID: <1432566032-10860-9-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
-References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 5/7] ARM: sunxi: Add PLL2 support
+Date: Thu, 21 May 2015 22:54:04 +0200
+Message-Id: <1432241646-9511-6-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-These files contain legacy clock implementations which are no longer used
-for anything, thus remove them completely.
+From: Emilio López <emilio@elopez.com.ar>
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+This commit adds the PLL2 definition to the sun4i, sun5i and sun7i device
+trees. PLL2 is used to clock audio devices.
+
+Signed-off-by: Emilio López <emilio@elopez.com.ar>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- arch/arm/mach-omap2/Makefile    |    2 +-
- arch/arm/mach-omap2/clock36xx.c |   69 ---------------------------------------
- arch/arm/mach-omap2/clock36xx.h |   13 --------
- 3 files changed, 1 insertion(+), 83 deletions(-)
- delete mode 100644 arch/arm/mach-omap2/clock36xx.c
- delete mode 100644 arch/arm/mach-omap2/clock36xx.h
+ arch/arm/boot/dts/sun4i-a10.dtsi | 9 +++++++++
+ arch/arm/boot/dts/sun5i.dtsi     | 9 +++++++++
+ arch/arm/boot/dts/sun7i-a20.dtsi | 9 +++++++++
+ 3 files changed, 27 insertions(+)
 
-diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
-index 98d5030..f33d011 100644
---- a/arch/arm/mach-omap2/Makefile
-+++ b/arch/arm/mach-omap2/Makefile
-@@ -188,7 +188,7 @@ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpll.o
- obj-$(CONFIG_SOC_OMAP2430)		+= clock2430.o
- obj-$(CONFIG_ARCH_OMAP3)		+= $(clock-common) clock3xxx.o
- obj-$(CONFIG_ARCH_OMAP3)		+= clock34xx.o clkt34xx_dpll3m2.o
--obj-$(CONFIG_ARCH_OMAP3)		+= clock3517.o clock36xx.o
-+obj-$(CONFIG_ARCH_OMAP3)		+= clock3517.o
- obj-$(CONFIG_ARCH_OMAP3)		+= dpll3xxx.o
- obj-$(CONFIG_ARCH_OMAP4)		+= $(clock-common)
- obj-$(CONFIG_ARCH_OMAP4)		+= dpll3xxx.o
-diff --git a/arch/arm/mach-omap2/clock36xx.c b/arch/arm/mach-omap2/clock36xx.c
-deleted file mode 100644
-index 91ccb96..0000000
---- a/arch/arm/mach-omap2/clock36xx.c
-+++ /dev/null
-@@ -1,69 +0,0 @@
--/*
-- * OMAP36xx-specific clkops
-- *
-- * Copyright (C) 2010 Texas Instruments, Inc.
-- * Copyright (C) 2010 Nokia Corporation
-- *
-- * Mike Turquette
-- * Vijaykumar GN
-- * Paul Walmsley
-- *
-- * Parts of this code are based on code written by
-- * Richard Woodruff, Tony Lindgren, Tuukka Tikkanen, Karthik Dasu,
-- * Russell King
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--#undef DEBUG
--
--#include <linux/kernel.h>
--#include <linux/clk.h>
--#include <linux/clk-provider.h>
--#include <linux/io.h>
--
--#include "clock.h"
--#include "clock36xx.h"
--#define to_clk_divider(_hw) container_of(_hw, struct clk_divider, hw)
--
--/**
-- * omap36xx_pwrdn_clk_enable_with_hsdiv_restore - enable clocks suffering
-- *         from HSDivider PWRDN problem Implements Errata ID: i556.
-- * @clk: DPLL output struct clk
-- *
-- * 3630 only: dpll3_m3_ck, dpll4_m2_ck, dpll4_m3_ck, dpll4_m4_ck,
-- * dpll4_m5_ck & dpll4_m6_ck dividers gets loaded with reset
-- * valueafter their respective PWRDN bits are set.  Any dummy write
-- * (Any other value different from the Read value) to the
-- * corresponding CM_CLKSEL register will refresh the dividers.
-- */
--int omap36xx_pwrdn_clk_enable_with_hsdiv_restore(struct clk_hw *clk)
--{
--	struct clk_divider *parent;
--	struct clk_hw *parent_hw;
--	u32 dummy_v, orig_v;
--	struct clk_hw_omap *omap_clk = to_clk_hw_omap(clk);
--	int ret;
--
--	/* Clear PWRDN bit of HSDIVIDER */
--	ret = omap2_dflt_clk_enable(clk);
--
--	parent_hw = __clk_get_hw(__clk_get_parent(clk->clk));
--	parent = to_clk_divider(parent_hw);
--
--	/* Restore the dividers */
--	if (!ret) {
--		orig_v = omap2_clk_readl(omap_clk, parent->reg);
--		dummy_v = orig_v;
--
--		/* Write any other value different from the Read value */
--		dummy_v ^= (1 << parent->shift);
--		omap2_clk_writel(dummy_v, omap_clk, parent->reg);
--
--		/* Write the original divider */
--		omap2_clk_writel(orig_v, omap_clk, parent->reg);
--	}
--
--	return ret;
--}
-diff --git a/arch/arm/mach-omap2/clock36xx.h b/arch/arm/mach-omap2/clock36xx.h
-deleted file mode 100644
-index 945bb7f..0000000
---- a/arch/arm/mach-omap2/clock36xx.h
-+++ /dev/null
-@@ -1,13 +0,0 @@
--/*
-- * OMAP36xx clock function prototypes and macros
-- *
-- * Copyright (C) 2010 Texas Instruments, Inc.
-- * Copyright (C) 2010 Nokia Corporation
-- */
--
--#ifndef __ARCH_ARM_MACH_OMAP2_CLOCK36XX_H
--#define __ARCH_ARM_MACH_OMAP2_CLOCK36XX_H
--
--extern int omap36xx_pwrdn_clk_enable_with_hsdiv_restore(struct clk_hw *hw);
--
--#endif
+diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
+index 73b6143e3e91..235e5204742f 100644
+--- a/arch/arm/boot/dts/sun4i-a10.dtsi
++++ b/arch/arm/boot/dts/sun4i-a10.dtsi
+@@ -195,6 +195,15 @@
+ 			clock-output-names = "pll1";
+ 		};
+ 
++		pll2: clk@01c20008 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun4i-a10-b-pll2-clk";
++			reg = <0x01c20008 0x8>;
++			clocks = <&osc24M>;
++			clock-output-names = "pll2-1x", "pll2-2x",
++					     "pll2-4x", "pll2-8x";
++		};
++
+ 		pll4: clk@01c20018 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-pll1-clk";
+diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+index 5f662435a935..2f553a92a6dc 100644
+--- a/arch/arm/boot/dts/sun5i.dtsi
++++ b/arch/arm/boot/dts/sun5i.dtsi
+@@ -102,6 +102,15 @@
+ 			clock-output-names = "pll1";
+ 		};
+ 
++		pll2: clk@01c20008 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun4i-a10-b-pll2-clk";
++			reg = <0x01c20008 0x8>;
++			clocks = <&osc24M>;
++			clock-output-names = "pll2-1x", "pll2-2x",
++					     "pll2-4x", "pll2-8x";
++		};
++
+ 		pll4: clk@01c20018 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-pll1-clk";
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index e04cdf9d53f9..0141cc9876a7 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -199,6 +199,15 @@
+ 			clock-output-names = "pll1";
+ 		};
+ 
++		pll2: clk@01c20008 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun4i-a10-b-pll2-clk";
++			reg = <0x01c20008 0x8>;
++			clocks = <&osc24M>;
++			clock-output-names = "pll2-1x", "pll2-2x",
++					     "pll2-4x", "pll2-8x";
++		};
++
+ 		pll4: clk@01c20018 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun7i-a20-pll4-clk";
 -- 
-1.7.9.5
+2.4.1
