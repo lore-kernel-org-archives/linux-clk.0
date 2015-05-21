@@ -1,111 +1,138 @@
-Return-Path: <daniel.thompson@linaro.org>
-Return-Path: <daniel.thompson@linaro.org>
-From: Daniel Thompson <daniel.thompson@linaro.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
 To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Kamil Lulko <rev13@wp.pl>,
-	Andreas Farber <afaerber@suse.de>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	patches@linaro.org,
-	linaro-kernel@lists.linaro.org
-Subject: [PATCH v2 2/4] dt-bindings: Document the STM32F4 clock bindings
-Date: Sat, 30 May 2015 08:54:06 +0100
-Message-Id: <1432972448-10332-3-git-send-email-daniel.thompson@linaro.org>
-In-Reply-To: <1432972448-10332-1-git-send-email-daniel.thompson@linaro.org>
-References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
- <1432972448-10332-1-git-send-email-daniel.thompson@linaro.org>
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 4/7] clk: sunxi: mod1 clock support
+Date: Thu, 21 May 2015 22:54:03 +0200
+Message-Id: <1432241646-9511-5-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds documentation of device tree bindings for the clock related
-portions of the STM32 RCC block.
+From: Emilio López <emilio@elopez.com.ar>
 
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+The module 1 type of clocks consist of a gate and a mux and are used on
+the audio blocks to mux and gate the PLL2 outputs for AC97, IIS or
+SPDIF. This commit adds support for them on the sunxi clock driver.
+
+Signed-off-by: Emilio López <emilio@elopez.com.ar>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- .../devicetree/bindings/clock/st,stm32-rcc.txt     | 65 ++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+ drivers/clk/sunxi/Makefile       |  1 +
+ drivers/clk/sunxi/clk-a10-mod1.c | 84 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 85 insertions(+)
+ create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
 
-diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index 6fa845e13067..960eeabc375f 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -5,6 +5,7 @@
+ obj-y += clk-sunxi.o clk-factors.o
+ obj-y += clk-a10-codec.o
+ obj-y += clk-a10-hosc.o
++obj-y += clk-a10-mod1.o
+ obj-y += clk-a10-pll2.o
+ obj-y += clk-a20-gmac.o
+ obj-y += clk-mod0.o
+diff --git a/drivers/clk/sunxi/clk-a10-mod1.c b/drivers/clk/sunxi/clk-a10-mod1.c
 new file mode 100644
-index 0000000..9715d09
+index 000000000000..490f72432a1e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-@@ -0,0 +1,65 @@
-+STMicroelectronics STM32 Reset and Clock Controller
-+===================================================
++++ b/drivers/clk/sunxi/clk-a10-mod1.c
+@@ -0,0 +1,84 @@
++/*
++ * Copyright 2013 Emilio López
++ *
++ * Emilio López <emilio@elopez.com.ar>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+The RCC IP is both a reset and a clock controller. This documentation only
-+describes the clock part.
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
 +
-+Please also refer to clock-bindings.txt in this directory for common clock
-+controller binding usage.
++static DEFINE_SPINLOCK(mod1_lock);
 +
-+Required properties:
-+- compatible: Should be "st,stm32f42xx-rcc"
-+- reg: should be register base and length as documented in the
-+  datasheet
-+- #clock-cells: 2, device nodes should specify the clock in their "clocks"
-+  property, containing a phandle to the clock device node, an index selecting
-+  between gated clocks and other clocks and an index specifying the clock to
-+  use.
++#define SUN4I_MOD1_ENABLE	31
++#define SUN4I_MOD1_MUX		16
++#define SUN4I_MOD1_MUX_WIDTH	2
++#define SUN4I_MOD1_MAX_PARENTS	4
 +
-+Example:
++static void __init sun4i_mod1_clk_setup(struct device_node *node)
++{
++	struct clk *clk;
++	struct clk_mux *mux;
++	struct clk_gate *gate;
++	const char *parents[4];
++	const char *clk_name = node->name;
++	void __iomem *reg;
++	int i = 0;
 +
-+	rcc: rcc@40023800 {
-+		#clock-cells = <2>
-+		compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
-+		reg = <0x40023800 0x400>;
-+	};
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg))
++		return;
 +
-+Specifying gated clocks
-+=======================
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		goto err_unmap;
 +
-+The primary index must be set to 0.
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		goto err_free_mux;
 +
-+The secondary index is the bit number within the RCC register bank, starting
-+from the first RCC clock enable register (RCC_AHB1ENR, address offset 0x30).
++	of_property_read_string(node, "clock-output-names", &clk_name);
 +
-+It is calculated as: index = register_offset / 4 * 32 + bit_offset.
-+Where bit_offset is the bit offset within the register (LSB is 0, MSB is 31).
++	while (i < SUN4I_MOD1_MAX_PARENTS &&
++	       (parents[i] = of_clk_get_parent_name(node, i)) != NULL)
++		i++;
 +
-+Example:
++	gate->reg = reg;
++	gate->bit_idx = SUN4I_MOD1_ENABLE;
++	gate->lock = &mod1_lock;
++	mux->reg = reg;
++	mux->shift = SUN4I_MOD1_MUX;
++	mux->mask = BIT(SUN4I_MOD1_MUX_WIDTH) - 1;
++	mux->lock = &mod1_lock;
 +
-+	/* Gated clock, AHB1 bit 0 (GPIOA) */
-+	... {
-+		clocks = <&rcc 0 0>
-+	};
++	clk = clk_register_composite(NULL, clk_name, parents, i,
++				     &mux->hw, &clk_mux_ops,
++				     NULL, NULL,
++				     &gate->hw, &clk_gate_ops, 0);
++	if (IS_ERR(clk))
++		goto err_free_gate;
 +
-+	/* Gated clock, AHB2 bit 4 (GPIOA) */
-+	... {
-+		clocks = <&rcc 0 36>
-+	};
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
 +
-+Specifying other clocks
-+=======================
++	return;
 +
-+The primary index must be set to 1.
-+
-+The secondary index is bound with the following magic numbers:
-+
-+	0	SYSTICK
-+	1	FCLK
-+
-+Example:
-+
-+	/* Misc clock, FCLK */
-+	... {
-+		clocks = <&rcc 1 1>
-+	};
++err_free_gate:
++	kfree(gate);
++err_free_mux:
++	kfree(mux);
++err_unmap:
++	iounmap(reg);
++}
++CLK_OF_DECLARE(sun4i_mod1, "allwinner,sun4i-a10-mod1-clk",
++	       sun4i_mod1_clk_setup);
 -- 
-2.1.0
+2.4.1
