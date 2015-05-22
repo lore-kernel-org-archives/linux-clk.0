@@ -1,78 +1,110 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <55440EDA.4030905@codeaurora.org>
-Date: Fri, 01 May 2015 16:40:10 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-MIME-Version: 1.0
-To: =?windows-1252?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-CC: mturquette@linaro.org, dianders@chromium.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Boris Brezillon <boris.brezillon@free-electrons.com>,
- Alex Elder <elder@linaro.org>,
- Alexandre Belloni <alexandre.belloni@free-electrons.com>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Max Filippov <jcmvbkbc@gmail.com>,
- kernel@pengutronix.de, Zhangfei Gao <zhangfei.gao@linaro.org>,
- Santosh Shilimkar <ssantosh@kernel.org>,
- Chao Xie <chao.xie@marvell.com>, Jason Cooper <jason@lakedaemon.net>,
- Stefan Wahren <stefan.wahren@i2se.com>,
- Andrew Bresticker <abrestic@chromium.org>,
- Robert Jarzmik <robert.jarzmik@free.fr>,
- Georgi Djakov <georgi.djakov@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Barry Song <baohua@kernel.org>,
- Dinh Nguyen <dinguyen@opensource.altera.com>,
- Viresh Kumar <viresh.linux@gmail.com>,
- Gabriel FERNANDEZ <gabriel.fernandez@st.com>, emilio@elopez.com.ar,
- Peter De Sc hrijver <pdeschrijver@nvidia.com>,
- Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- Pawel Moll <pawel.moll@arm.com>,
- Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
-References: <1429735986-18592-1-git-send-email-heiko@sntech.de> <1981330.kGUrTurMy5@diego> <5543E79F.2080400@codeaurora.org> <22709390.NTAlubMgNB@diego>
-In-Reply-To: <22709390.NTAlubMgNB@diego>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <daniel.thompson@linaro.org>
+Return-Path: <daniel.thompson@linaro.org>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Kamil Lulko <rev13@wp.pl>,
+	Andreas Farber <afaerber@suse.de>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	patches@linaro.org,
+	linaro-kernel@lists.linaro.org
+Subject: [RFC PATCH 1/3] dt-bindings: Document the STM32F4 clock bindings
+Date: Fri, 22 May 2015 21:41:11 +0100
+Message-Id: <1432327273-6810-2-git-send-email-daniel.thompson@linaro.org>
+In-Reply-To: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
+References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/01/15 15:07, Heiko Stübner wrote:
-> Am Freitag, 1. Mai 2015, 13:52:47 schrieb Stephen Boyd:
->
->>> Instead I guess we could hook it less deep into clk_get_sys, like in the
->>> following patch?
->> It looks like it will work at least, but still I'd prefer to keep the
->> orphan check contained to clk.c. How about this compile tested only patch?
-> I gave this a spin on my rk3288-firefly board. It still boots, the clock tree 
-> looks the same and it also still defers nicely in the scenario I needed it 
-> for. The implementation also looks nice - and of course much more compact than 
-> my check in two places :-) . I don't know if you want to put this as follow-up 
-> on top or fold it into the original orphan-check, so in any case
->
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+This adds documentation of device tree bindings for the clock related
+portions of the STM32 RCC block.
 
-Thanks. I'm leaning towards tossing your patch 2/2 and replacing it with
-my patch and a note that it's based on an earlier patch from you.
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+---
+ .../devicetree/bindings/clock/st,stm32-rcc.txt     | 65 ++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
 
->
->
->> This also brings up an existing problem with clk_unregister() where
->> orphaned clocks are sitting out there useable by drivers when their
->> parent is unregistered. That code could use some work to atomically
->> switch all the orphaned clocks over to use the nodrv_ops.
-> Not sure I understand this correctly yet, but when these children get 
-> orphaned, switched to the clk_nodrv_ops, they won't get their original ops 
-> back if the parent reappears.
->
-> So I guess we would need to store the original ops in secondary property of 
-> struct clk_core and I guess simply bind the ops-switch to the orphan state 
-> update?
-
-Yep. We'll need to store away the original ops in case we need to put
-them back. Don't feel obligated to fix this either. It would certainly
-be nice if someone tried to fix this case at some point, but it's not
-like things are any worse off right now.
-
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+new file mode 100644
+index 0000000..9715d09
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+@@ -0,0 +1,65 @@
++STMicroelectronics STM32 Reset and Clock Controller
++===================================================
++
++The RCC IP is both a reset and a clock controller. This documentation only
++describes the clock part.
++
++Please also refer to clock-bindings.txt in this directory for common clock
++controller binding usage.
++
++Required properties:
++- compatible: Should be "st,stm32f42xx-rcc"
++- reg: should be register base and length as documented in the
++  datasheet
++- #clock-cells: 2, device nodes should specify the clock in their "clocks"
++  property, containing a phandle to the clock device node, an index selecting
++  between gated clocks and other clocks and an index specifying the clock to
++  use.
++
++Example:
++
++	rcc: rcc@40023800 {
++		#clock-cells = <2>
++		compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
++		reg = <0x40023800 0x400>;
++	};
++
++Specifying gated clocks
++=======================
++
++The primary index must be set to 0.
++
++The secondary index is the bit number within the RCC register bank, starting
++from the first RCC clock enable register (RCC_AHB1ENR, address offset 0x30).
++
++It is calculated as: index = register_offset / 4 * 32 + bit_offset.
++Where bit_offset is the bit offset within the register (LSB is 0, MSB is 31).
++
++Example:
++
++	/* Gated clock, AHB1 bit 0 (GPIOA) */
++	... {
++		clocks = <&rcc 0 0>
++	};
++
++	/* Gated clock, AHB2 bit 4 (GPIOA) */
++	... {
++		clocks = <&rcc 0 36>
++	};
++
++Specifying other clocks
++=======================
++
++The primary index must be set to 1.
++
++The secondary index is bound with the following magic numbers:
++
++	0	SYSTICK
++	1	FCLK
++
++Example:
++
++	/* Misc clock, FCLK */
++	... {
++		clocks = <&rcc 1 1>
++	};
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.0
