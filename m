@@ -1,125 +1,246 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <555F80BE.8070204@codeaurora.org>
-Date: Fri, 22 May 2015 12:17:18 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-MIME-Version: 1.0
-To: Brent Wang <wangbintian@gmail.com>
-CC: Bintian <bintian.wang@huawei.com>,
- Mike Turquette <mturquette@linaro.org>,
- Zhangfei Gao <zhangfei.gao@linaro.org>, Xu Wei <xuwei5@hisilicon.com>,
- "xuejiancheng@huawei.com" <xuejiancheng@huawei.com>,
- Tomeu Vizoso <tomeu.vizoso@collabora.com>,
- "sledge.yanwei@huawei.com" <sledge.yanwei@huawei.com>,
- linux-clk@vger.kernel.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, Will Deacon <will.deacon@arm.com>,
- Rob Herring <robh+dt@kernel.org>,
- Kevin Hilman <khilman@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Haojian Zhuang <haojian.zhuang@linaro.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- Olof Johansson <olof@lixom.net>, Haifeng Yan <yanhaifeng@gmail.com>,
- Russell King - ARM Linux <linux@arm.linux.org.uk>,
- Guodong Xu <guodong.xu@linaro.org>,
- Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
- Tyler Baker <tyler.baker@linaro.org>, Kevin Hilman <khilman@kernel.org>,
- "xuyiping@hisilicon.com" <xuyiping@hisilicon.com>,
- "wangbinghui@hisilicon.com" <wangbinghui@hisilicon.com>,
- "zhenwei.wang@hisilicon.com" <zhenwei.wang@hisilicon.com>,
- "victor.lixin@hisilicon.com" <victor.lixin@hisilicon.com>,
- "puck.chen@hisilicon.com" <puck.chen@hisilicon.com>,
- "dan.zhao@hisilicon.com" <dan.zhao@hisilicon.com>,
- "huxinwei@huawei.com" <huxinwei@huawei.com>,
- "z.liuxinliang@huawei.com" <z.liuxinliang@huawei.com>,
- "heyunlei@huawei.com" <heyunlei@huawei.com>,
- XinWei Kong <kong.kongxinwei@hisilicon.com>,
- "w.f@huawei.com" <w.f@huawei.com>,
- "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>
-Subject: Re: [PATCH v7 6/7] clk: hi6220: Clock driver support for Hisilicon
- hi6220 SoC
-References: <1432117752-7074-1-git-send-email-bintian.wang@huawei.com>	<1432117752-7074-2-git-send-email-bintian.wang@huawei.com>	<555D09F3.7020506@codeaurora.org>	<555D57BB.8080702@huawei.com>	<555E1D55.1050907@codeaurora.org>	<555EBCA4.9030303@huawei.com>	<CAAS=xmgHJVThR2hVeMYZjKgJdodEG_hrs09BBA01gOXMSc8Rdg@mail.gmail.com>	<555F76D9.10308@codeaurora.org>	<20150522184131.GD1885@codeaurora.org> <CAAS=xmi98pvXR_qXREnpMfG+Tuh1d8ZdTmhJSvoMNJ0=iOoPpA@mail.gmail.com>
-In-Reply-To: <CAAS=xmi98pvXR_qXREnpMfG+Tuh1d8ZdTmhJSvoMNJ0=iOoPpA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <daniel.thompson@linaro.org>
+Return-Path: <daniel.thompson@linaro.org>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Kamil Lulko <rev13@wp.pl>,
+	Andreas Farber <afaerber@suse.de>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	patches@linaro.org,
+	linaro-kernel@lists.linaro.org
+Subject: [RFC PATCH 3/3] ARM: dts: stm32f429: Adopt STM32F4 clock driver
+Date: Fri, 22 May 2015 21:41:13 +0100
+Message-Id: <1432327273-6810-4-git-send-email-daniel.thompson@linaro.org>
+In-Reply-To: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
+References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/22/15 11:57, Brent Wang wrote:
-> Hello Stephen,
->
-> 2015-05-23 2:41 GMT+08:00 Stephen Boyd <sboyd@codeaurora.org>:
->> On 05/22, Stephen Boyd wrote:
->>> On 05/22/15 11:30, Brent Wang wrote:
->>>> Hello Stephen,
->>>>
->>>> 2015-05-22 13:20 GMT+08:00 Bintian <bintian.wang@huawei.com>:
->>>>>> Is pl011 the uart device? Does it have a node in DT somewhere? If it
->>>>>> does, then we could put the assigned-parents properties in that node so
->>>>>> that when the pl011 probes the uart1 clock has its parent set to
->>>>>> clk_150m. See the "Assigned clock parents and rates" section of
->>>>>> Documentation/devicetree/bindings/clock/clock-bindings.txt.
->>>>>>
->>>>> I will verify this.
->>>> Currently the "assigned-clock*" doesn't work for pl011 UART device
->>>> node, maybe we will
->>>> do some fix for its driver later or other modules.
->>> Why doesn't it work?
->>>
->> Does this patch help?
-> Yes, it works!
->
-> I also tested adding  "of_clk_set_defaults" to "pl011_probe()", and
-> "assigned-clock*"
-> also works.
->
-> So you will submit another patch to fix this problem and I can revove
-> the "clk_set_parent"
-> from my patch, right ?
->
->
+New bindings and driver have been created for STM32F42xxx series parts.
+This patch integrates these changes.
 
-How about you take it as part of your series? Or if you're planning on
-splitting out the clk patch to go through clk-tree I can apply it before
-applying the clock driver patch.
+Note: Earlier device tree blobs (those without st,stm32f42xxx
+      compatibles for the rcc) could still be used to boot basic
+      systems. Such systems rely on the bootloader to configure the
+      clocks for vital periperhals.
 
-
-----8<-----
-
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH] amba: Support clk parents and rates assigned in DT
-
-Add the call to of_clk_set_defaults() into the amba probe path so
-that devices on the amba bus can use the assigned rates and
-parents feature of the common clock framework.
-
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
 ---
- drivers/amba/bus.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/stm32f429.dtsi | 83 +++++++++++++---------------------------
+ 1 file changed, 26 insertions(+), 57 deletions(-)
 
-diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-index f0099360039e..350ed93d4281 100644
---- a/drivers/amba/bus.c
-+++ b/drivers/amba/bus.c
-@@ -19,6 +19,7 @@
- #include <linux/amba/bus.h>
- #include <linux/sizes.h>
- #include <linux/limits.h>
-+#include <linux/clk/clk-conf.h>
+diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
+index aa3b3e3..6da8d7f 100644
+--- a/arch/arm/boot/dts/stm32f429.dtsi
++++ b/arch/arm/boot/dts/stm32f429.dtsi
+@@ -50,48 +50,10 @@
  
- #include <asm/irq.h>
+ / {
+ 	clocks {
+-		clk_sysclk: clk-sysclk {
++		clk_hse: clk-hse {
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
+-			clock-frequency = <168000000>;
+-		};
+-
+-		clk_hclk: clk-hclk {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <168000000>;
+-		};
+-
+-		clk_pclk1: clk-pclk1 {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <42000000>;
+-		};
+-
+-		clk_pclk2: clk-pclk2 {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <84000000>;
+-		};
+-
+-		clk_pmtr1: clk-pmtr1 {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <84000000>;
+-		};
+-
+-		clk_pmtr2: clk-pmtr2 {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <168000000>;
+-		};
+-
+-		clk_systick: clk-systick {
+-			compatible = "fixed-factor-clock";
+-			clocks = <&clk_hclk>;
+-			#clock-cells = <0>;
+-			clock-div = <8>;
+-			clock-mult = <1>;
++			clock-frequency = <8000000>;
+ 		};
+ 	};
  
-@@ -237,6 +238,10 @@ static int amba_probe(struct device *dev)
- 	int ret;
+@@ -101,7 +63,7 @@
+ 			reg = <0x40000000 0x400>;
+ 			interrupts = <28>;
+ 			resets = <&rcc STM32F4_APB1_RESET(TIM2)>;
+-			clocks = <&clk_pmtr1>;
++			clocks = <&rcc 0 128>;
+ 			status = "disabled";
+ 		};
  
- 	do {
-+		ret = of_clk_set_defaults(dev->of_node, false);
-+		if (ret < 0)
-+			break;
-+
- 		ret = dev_pm_domain_attach(dev, true);
- 		if (ret == -EPROBE_DEFER)
- 			break;
-
-
+@@ -110,7 +72,7 @@
+ 			reg = <0x40000400 0x400>;
+ 			interrupts = <29>;
+ 			resets = <&rcc STM32F4_APB1_RESET(TIM3)>;
+-			clocks = <&clk_pmtr1>;
++			clocks = <&rcc 0 129>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -119,7 +81,7 @@
+ 			reg = <0x40000800 0x400>;
+ 			interrupts = <30>;
+ 			resets = <&rcc STM32F4_APB1_RESET(TIM4)>;
+-			clocks = <&clk_pmtr1>;
++			clocks = <&rcc 0 130>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -128,7 +90,7 @@
+ 			reg = <0x40000c00 0x400>;
+ 			interrupts = <50>;
+ 			resets = <&rcc STM32F4_APB1_RESET(TIM5)>;
+-			clocks = <&clk_pmtr1>;
++			clocks = <&rcc 0 131>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -137,7 +99,7 @@
+ 			reg = <0x40001000 0x400>;
+ 			interrupts = <54>;
+ 			resets = <&rcc STM32F4_APB1_RESET(TIM6)>;
+-			clocks = <&clk_pmtr1>;
++			clocks = <&rcc 0 132>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -146,7 +108,7 @@
+ 			reg = <0x40001400 0x400>;
+ 			interrupts = <55>;
+ 			resets = <&rcc STM32F4_APB1_RESET(TIM7)>;
+-			clocks = <&clk_pmtr1>;
++			clocks = <&rcc 0 133>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -154,7 +116,7 @@
+ 			compatible = "st,stm32-usart", "st,stm32-uart";
+ 			reg = <0x40004400 0x400>;
+ 			interrupts = <38>;
+-			clocks = <&clk_pclk1>;
++			clocks = <&rcc 0 145>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -162,7 +124,7 @@
+ 			compatible = "st,stm32-usart", "st,stm32-uart";
+ 			reg = <0x40004800 0x400>;
+ 			interrupts = <39>;
+-			clocks = <&clk_pclk1>;
++			clocks = <&rcc 0 146>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -170,7 +132,7 @@
+ 			compatible = "st,stm32-uart";
+ 			reg = <0x40004c00 0x400>;
+ 			interrupts = <52>;
+-			clocks = <&clk_pclk1>;
++			clocks = <&rcc 0 147>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -178,7 +140,7 @@
+ 			compatible = "st,stm32-uart";
+ 			reg = <0x40005000 0x400>;
+ 			interrupts = <53>;
+-			clocks = <&clk_pclk1>;
++			clocks = <&rcc 0 148>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -186,7 +148,7 @@
+ 			compatible = "st,stm32-usart", "st,stm32-uart";
+ 			reg = <0x40007800 0x400>;
+ 			interrupts = <82>;
+-			clocks = <&clk_pclk1>;
++			clocks = <&rcc 0 158>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -194,7 +156,7 @@
+ 			compatible = "st,stm32-usart", "st,stm32-uart";
+ 			reg = <0x40007c00 0x400>;
+ 			interrupts = <83>;
+-			clocks = <&clk_pclk1>;
++			clocks = <&rcc 0 159>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -202,7 +164,7 @@
+ 			compatible = "st,stm32-usart", "st,stm32-uart";
+ 			reg = <0x40011000 0x400>;
+ 			interrupts = <37>;
+-			clocks = <&clk_pclk2>;
++			clocks = <&rcc 0 164>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -210,19 +172,26 @@
+ 			compatible = "st,stm32-usart", "st,stm32-uart";
+ 			reg = <0x40011400 0x400>;
+ 			interrupts = <71>;
+-			clocks = <&clk_pclk2>;
++			clocks = <&rcc 0 165>;
+ 			status = "disabled";
+ 		};
+ 
+ 		rcc: rcc@40023810 {
+ 			#reset-cells = <1>;
+-			compatible = "st,stm32-rcc";
++			compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
+ 			reg = <0x40023800 0x400>;
+-		};
++			clocks = <&clk_hse>;
++			#clock-cells = <2>;
++		};
++#if 0
++	of_property_read_string_index(dev, "reg-names", "gates");
++	index = of_property_read_string_index(dev, "reg-names", "gates");
++	of_iomap(np, index);
++#endif
+ 	};
+ };
+ 
+ &systick {
+-	clocks = <&clk_systick>;
++	clocks = <&rcc 1 0>;
+ 	status = "okay";
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.0
