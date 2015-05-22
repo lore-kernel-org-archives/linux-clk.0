@@ -1,202 +1,125 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: [PATCH v2 5/5] cpufreq: arm_big_little: add SCPI interface driver
-Date: Thu, 14 May 2015 16:42:35 +0100
-Message-Id: <1431618155-3132-6-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1431618155-3132-1-git-send-email-sudeep.holla@arm.com>
-References: <1431618155-3132-1-git-send-email-sudeep.holla@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <555F80BE.8070204@codeaurora.org>
+Date: Fri, 22 May 2015 12:17:18 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+MIME-Version: 1.0
+To: Brent Wang <wangbintian@gmail.com>
+CC: Bintian <bintian.wang@huawei.com>,
+ Mike Turquette <mturquette@linaro.org>,
+ Zhangfei Gao <zhangfei.gao@linaro.org>, Xu Wei <xuwei5@hisilicon.com>,
+ "xuejiancheng@huawei.com" <xuejiancheng@huawei.com>,
+ Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+ "sledge.yanwei@huawei.com" <sledge.yanwei@huawei.com>,
+ linux-clk@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Will Deacon <will.deacon@arm.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ Kevin Hilman <khilman@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Haojian Zhuang <haojian.zhuang@linaro.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ Olof Johansson <olof@lixom.net>, Haifeng Yan <yanhaifeng@gmail.com>,
+ Russell King - ARM Linux <linux@arm.linux.org.uk>,
+ Guodong Xu <guodong.xu@linaro.org>,
+ Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
+ Tyler Baker <tyler.baker@linaro.org>, Kevin Hilman <khilman@kernel.org>,
+ "xuyiping@hisilicon.com" <xuyiping@hisilicon.com>,
+ "wangbinghui@hisilicon.com" <wangbinghui@hisilicon.com>,
+ "zhenwei.wang@hisilicon.com" <zhenwei.wang@hisilicon.com>,
+ "victor.lixin@hisilicon.com" <victor.lixin@hisilicon.com>,
+ "puck.chen@hisilicon.com" <puck.chen@hisilicon.com>,
+ "dan.zhao@hisilicon.com" <dan.zhao@hisilicon.com>,
+ "huxinwei@huawei.com" <huxinwei@huawei.com>,
+ "z.liuxinliang@huawei.com" <z.liuxinliang@huawei.com>,
+ "heyunlei@huawei.com" <heyunlei@huawei.com>,
+ XinWei Kong <kong.kongxinwei@hisilicon.com>,
+ "w.f@huawei.com" <w.f@huawei.com>,
+ "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>
+Subject: Re: [PATCH v7 6/7] clk: hi6220: Clock driver support for Hisilicon
+ hi6220 SoC
+References: <1432117752-7074-1-git-send-email-bintian.wang@huawei.com>	<1432117752-7074-2-git-send-email-bintian.wang@huawei.com>	<555D09F3.7020506@codeaurora.org>	<555D57BB.8080702@huawei.com>	<555E1D55.1050907@codeaurora.org>	<555EBCA4.9030303@huawei.com>	<CAAS=xmgHJVThR2hVeMYZjKgJdodEG_hrs09BBA01gOXMSc8Rdg@mail.gmail.com>	<555F76D9.10308@codeaurora.org>	<20150522184131.GD1885@codeaurora.org> <CAAS=xmi98pvXR_qXREnpMfG+Tuh1d8ZdTmhJSvoMNJ0=iOoPpA@mail.gmail.com>
+In-Reply-To: <CAAS=xmi98pvXR_qXREnpMfG+Tuh1d8ZdTmhJSvoMNJ0=iOoPpA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On some ARM based systems, a separate Cortex-M based System Control
-Processor(SCP) provides the overall power, clock, reset and system
-control including CPU DVFS. SCPI Message Protocol is used to
-communicate with the SCPI.
+On 05/22/15 11:57, Brent Wang wrote:
+> Hello Stephen,
+>
+> 2015-05-23 2:41 GMT+08:00 Stephen Boyd <sboyd@codeaurora.org>:
+>> On 05/22, Stephen Boyd wrote:
+>>> On 05/22/15 11:30, Brent Wang wrote:
+>>>> Hello Stephen,
+>>>>
+>>>> 2015-05-22 13:20 GMT+08:00 Bintian <bintian.wang@huawei.com>:
+>>>>>> Is pl011 the uart device? Does it have a node in DT somewhere? If it
+>>>>>> does, then we could put the assigned-parents properties in that node so
+>>>>>> that when the pl011 probes the uart1 clock has its parent set to
+>>>>>> clk_150m. See the "Assigned clock parents and rates" section of
+>>>>>> Documentation/devicetree/bindings/clock/clock-bindings.txt.
+>>>>>>
+>>>>> I will verify this.
+>>>> Currently the "assigned-clock*" doesn't work for pl011 UART device
+>>>> node, maybe we will
+>>>> do some fix for its driver later or other modules.
+>>> Why doesn't it work?
+>>>
+>> Does this patch help?
+> Yes, it works!
+>
+> I also tested adding  "of_clk_set_defaults" to "pl011_probe()", and
+> "assigned-clock*"
+> also works.
+>
+> So you will submit another patch to fix this problem and I can revove
+> the "clk_set_parent"
+> from my patch, right ?
+>
+>
 
-This patch adds a interface driver for adding OPPs and registering
-the arm_big_little cpufreq driver for such systems.
+How about you take it as part of your series? Or if you're planning on
+splitting out the clk patch to go through clk-tree I can apply it before
+applying the clock driver patch.
 
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-pm@vger.kernel.org
+
+----8<-----
+
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH] amba: Support clk parents and rates assigned in DT
+
+Add the call to of_clk_set_defaults() into the amba probe path so
+that devices on the amba bus can use the assigned rates and
+parents feature of the common clock framework.
+
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/cpufreq/Kconfig.arm    |   9 +++
- drivers/cpufreq/Makefile       |   1 +
- drivers/cpufreq/scpi-cpufreq.c | 124 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 134 insertions(+)
- create mode 100644 drivers/cpufreq/scpi-cpufreq.c
+ drivers/amba/bus.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 611cb09239eb..6419b17b89dd 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -24,6 +24,15 @@ config ARM_VEXPRESS_SPC_CPUFREQ
-           This add the CPUfreq driver support for Versatile Express
- 	  big.LITTLE platforms using SPC for power management.
+diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
+index f0099360039e..350ed93d4281 100644
+--- a/drivers/amba/bus.c
++++ b/drivers/amba/bus.c
+@@ -19,6 +19,7 @@
+ #include <linux/amba/bus.h>
+ #include <linux/sizes.h>
+ #include <linux/limits.h>
++#include <linux/clk/clk-conf.h>
  
-+config ARM_SCPI_CPUFREQ
-+        tristate "SCPI based CPUfreq driver"
-+	depends on ARM_BIG_LITTLE_CPUFREQ && ARM_SCPI_PROTOCOL
-+        help
-+	  This adds the CPUfreq driver support for ARM big.LITTLE platforms
-+	  using SCPI protocol for CPU power management.
-+
-+	  This driver uses SCPI Message Protocol driver to interact with the
-+	  firmware providing the CPU DVFS functionality.
+ #include <asm/irq.h>
  
- config ARM_EXYNOS_CPUFREQ
- 	tristate "SAMSUNG EXYNOS CPUfreq Driver"
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index cdce92ae2e8b..02fc9f849d4b 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -79,6 +79,7 @@ obj-$(CONFIG_ARM_SA1110_CPUFREQ)	+= sa1110-cpufreq.o
- obj-$(CONFIG_ARM_SPEAR_CPUFREQ)		+= spear-cpufreq.o
- obj-$(CONFIG_ARM_TEGRA_CPUFREQ)		+= tegra-cpufreq.o
- obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
-+obj-$(CONFIG_ARM_SCPI_CPUFREQ)		+= scpi-cpufreq.o
+@@ -237,6 +238,10 @@ static int amba_probe(struct device *dev)
+ 	int ret;
  
- ##################################################################################
- # PowerPC platform drivers
-diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
-new file mode 100644
-index 000000000000..443570801229
---- /dev/null
-+++ b/drivers/cpufreq/scpi-cpufreq.c
-@@ -0,0 +1,124 @@
-+/*
-+ * SCPI CPUFreq Interface driver
-+ *
-+ * It provides necessary ops to arm_big_little cpufreq driver.
-+ *
-+ * Copyright (C) 2015 ARM Ltd.
-+ * Sudeep Holla <sudeep.holla@arm.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether express or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+ * GNU General Public License for more details.
-+ */
+ 	do {
++		ret = of_clk_set_defaults(dev->of_node, false);
++		if (ret < 0)
++			break;
 +
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/cpufreq.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/scpi_protocol.h>
-+#include <linux/types.h>
-+
-+#include "arm_big_little.h"
-+
-+static struct scpi_ops *scpi_ops;
-+
-+static struct scpi_dvfs_info *scpi_get_dvfs_info(struct device *cpu_dev)
-+{
-+	u8 domain = topology_physical_package_id(cpu_dev->id);
-+
-+	if (domain < 0)
-+		return ERR_PTR(-EINVAL);
-+	return scpi_ops->dvfs_get_info(domain);
-+}
-+
-+static int scpi_opp_table_ops(struct device *cpu_dev, bool remove)
-+{
-+	int idx, ret = 0;
-+	struct scpi_opp *opp;
-+	struct scpi_dvfs_info *info = scpi_get_dvfs_info(cpu_dev);
-+
-+	if (IS_ERR(info))
-+		return PTR_ERR(info);
-+
-+	if (!info->opps)
-+		return -EIO;
-+
-+	for (opp = info->opps, idx = 0; idx < info->count; idx++, opp++) {
-+		if (remove)
-+			dev_pm_opp_remove(cpu_dev, opp->freq);
-+		else
-+			ret = dev_pm_opp_add(cpu_dev, opp->freq,
-+					     opp->m_volt * 1000);
-+		if (ret) {
-+			dev_warn(cpu_dev, "failed to add opp %uHz %umV\n",
-+				 opp->freq, opp->m_volt);
-+			while (idx-- > 0)
-+				dev_pm_opp_remove(cpu_dev, (--opp)->freq);
-+			return ret;
-+		}
-+	}
-+	return ret;
-+}
-+
-+static int scpi_get_transition_latency(struct device *cpu_dev)
-+{
-+	struct scpi_dvfs_info *info = scpi_get_dvfs_info(cpu_dev);
-+
-+	if (IS_ERR(info))
-+		return PTR_ERR(info);
-+	return info->latency;
-+}
-+
-+static int scpi_init_opp_table(struct device *cpu_dev)
-+{
-+	return scpi_opp_table_ops(cpu_dev, false);
-+}
-+
-+static void scpi_free_opp_table(struct device *cpu_dev)
-+{
-+	scpi_opp_table_ops(cpu_dev, true);
-+}
-+
-+static struct cpufreq_arm_bL_ops scpi_cpufreq_ops = {
-+	.name	= "scpi",
-+	.get_transition_latency = scpi_get_transition_latency,
-+	.init_opp_table = scpi_init_opp_table,
-+	.free_opp_table = scpi_free_opp_table,
-+};
-+
-+static int scpi_cpufreq_probe(struct platform_device *pdev)
-+{
-+	scpi_ops = get_scpi_ops();
-+	if (!scpi_ops)
-+		return -EIO;
-+
-+	return bL_cpufreq_register(&scpi_cpufreq_ops);
-+}
-+
-+static int scpi_cpufreq_remove(struct platform_device *pdev)
-+{
-+	bL_cpufreq_unregister(&scpi_cpufreq_ops);
-+	scpi_ops = NULL;
-+	return 0;
-+}
-+
-+static struct platform_driver scpi_cpufreq_platdrv = {
-+	.driver = {
-+		.name	= "scpi-cpufreq",
-+		.owner	= THIS_MODULE,
-+	},
-+	.probe		= scpi_cpufreq_probe,
-+	.remove		= scpi_cpufreq_remove,
-+};
-+module_platform_driver(scpi_cpufreq_platdrv);
-+
-+MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
-+MODULE_DESCRIPTION("ARM SCPI CPUFreq interface driver");
-+MODULE_LICENSE("GPL v2");
+ 		ret = dev_pm_domain_attach(dev, true);
+ 		if (ret == -EPROBE_DEFER)
+ 			break;
+
+
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
