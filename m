@@ -1,68 +1,56 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 5 May 2015 17:44:23 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: linux-kernel@vger.kernel.org
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/6] clk: sunxi: Fix of_io_request_and_map error check
-Message-ID: <20150505154423.GO3274@lukather>
-References: <1430579006-32702-1-git-send-email-maxime.ripard@free-electrons.com>
- <1430579006-32702-3-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lCFQJunhLz1tFGpX"
-In-Reply-To: <1430579006-32702-3-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <daniel.thompson@linaro.org>
+Return-Path: <daniel.thompson@linaro.org>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Kamil Lulko <rev13@wp.pl>,
+	Andreas Farber <afaerber@suse.de>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	patches@linaro.org,
+	linaro-kernel@lists.linaro.org
+Subject: [RFC PATCH 0/3] clk: stm32: Add clock driver for STM32F4[23]xxx devices
+Date: Fri, 22 May 2015 21:41:10 +0100
+Message-Id: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+This patchset implements a clock driver for STM32F42xxx and STM32F43xxx
+series devices.
 
---lCFQJunhLz1tFGpX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There are a few small caveats at the present:
 
-On Sat, May 02, 2015 at 05:03:22PM +0200, Maxime Ripard wrote:
-> of_io_request_and map returns an error pointer, but the current code assu=
-mes
-> that on error the returned pointer will be NULL.
->=20
-> Obviously, that makes the check completely useless. Change the test to ac=
-tually
-> check for the proper error code.
->=20
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: Mike Turquette <mturquette@linaro.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org
+ 1. Relies on "Add support to STMicroeletronics STM32 family", v8 by
+    Maxime Coquelin:
+    http://thread.gmane.org/gmane.linux.kernel.cross-arch/27569
 
-Applied on my tree.
+ 2. Allocating ~80 clock components appears to fragment memory enough
+    to prevent busybox (.text is ~300K, non-XIP) from running getty.
+    I have to use "init=/bin/sh" to avoid OOM problems.
 
-Maxime
+ 3. Support for I2S and SAI is not included in this patchset.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Daniel Thompson (3):
+  dt-bindings: Document the STM32F4 clock bindings
+  clk: stm32: Add clock driver for STM32F4[23]xxx devices
+  ARM: dts: stm32f429: Adopt STM32F4 clock driver
 
---lCFQJunhLz1tFGpX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+ .../devicetree/bindings/clock/st,stm32-rcc.txt     |  65 ++++
+ arch/arm/boot/dts/stm32f429.dtsi                   |  83 ++---
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-stm32f4.c                          | 365 +++++++++++++++++++++
+ 4 files changed, 457 insertions(+), 57 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+ create mode 100644 drivers/clk/clk-stm32f4.c
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVSOVXAAoJEBx+YmzsjxAgC+0P/3zEvW0Ye2xuF0hZRwtOeA2J
-ATmZZwxg3yjqjM179Ccfbwg2D3wfOCXjKCbYzZthQCbhAIAkQ4npOWYY1vGKojSS
-hARf534YRecl6PMjjbKPr+SsbypdJK1jUU3di5Vq3V/plfpghUUQgikN510pkzIO
-AM31XRarbGrXCBOQMGG815SYoTxFh/0xtoNoh3szxJVRM0d0l4h13JB32XKW+zmM
-QptwSp/OYsFQ7Ad/61V0LrGkU8j27IqiiNXs+B7Bk0NLETOGJ6doNwDItyRbqNH6
-YLUQRFr9weE9dmdc2VpUiLutUMvsIk0o0Aj0E8c+gJ/BXNedq9xDnDKFHMev+rJD
-V5lEXtGIYVbENw3eSuIvZD+WbB+G5zLXgWyOr7fz2wq4VsbZblLbLL0ZdW8wi+/r
-E9lOriqwU/GFBoHjOdXu/Uc8ECCTkyqaAZUrjUBGXmmDriZiwy1/FQ0BcLY7j+CN
-6P+lm0KelJNAbkowCmvO4y5yPjFCmHLH6GHn+1ZNJBGBVx3iOMG4jrZOfm4Q/VRO
-M0wjS1UtN9v+vRgpNQz5XKPAYWq0+XDB/KK+NIYgu9XDEzEuT+dQSZSpdpvvquYd
-jUX+JPPTLTLhJTkfUZ3vED0s3FRWuWCaTSWToUPzSOZ3esjtwkt5eC6QnQup36l1
-1Boar2D8YBOiw/JpZMYU
-=WawV
------END PGP SIGNATURE-----
-
---lCFQJunhLz1tFGpX--
+--
+2.1.0
