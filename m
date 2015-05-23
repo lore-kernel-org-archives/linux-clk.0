@@ -1,134 +1,160 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <tony@atomide.com>,
-        <paul@pwsan.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv3 16/27] ARM: OMAP2+: clock: remove clkdm_control static boolean from code
-Date: Mon, 25 May 2015 18:00:21 +0300
-Message-ID: <1432566032-10860-17-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
-References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Jim Quinlan <jim2101024@gmail.com>,  linux-clk@vger.kernel.org
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <1431719147-10153-1-git-send-email-jim2101024@gmail.com>
+Cc: bcm-kernel-feedback-list@broadcom.com, "Jim Quinlan" <jim2101024@gmail.com>
+References: <1431719147-10153-1-git-send-email-jim2101024@gmail.com>
+Message-ID: <20150523191750.9817.78709@quantum>
+Subject: Re: [PATCH] clk: allow a clk divider with max divisor when zero
+Date: Sat, 23 May 2015 12:17:50 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-clkdm_control is used to determine, whether clocks should trigger a
-clockdomain transition when they are enabled/disabled. Keep this
-functionality intact, but replace this with a clk_features flag
-which can be initialized during boot if needed.
+Quoting Jim Quinlan (2015-05-15 12:45:47)
+> This commit allows certain Broadcom STB clock dividers to be used with
+> clk-divider.c.  It allows for a clock whose field value is the equal
+> to the divisor, execpt when the field value is zero, in which case the
+> divisor is 2^width.  For example, consider a divisor clock with a two
+> bit field:
+> =
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/clock.c |   34 ++++++++++------------------------
- arch/arm/mach-omap2/clock.h |    2 --
- include/linux/clk/ti.h      |    1 +
- 3 files changed, 11 insertions(+), 26 deletions(-)
+> value           divisor
+> 0               4
+> 1               1
+> 2               2
+> 3               3
 
-diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
-index 7a5713d..6c17adf 100644
---- a/arch/arm/mach-omap2/clock.c
-+++ b/arch/arm/mach-omap2/clock.c
-@@ -61,14 +61,6 @@ u16 cpu_mask;
- #define OMAP3PLUS_DPLL_FINT_MIN		32000
- #define OMAP3PLUS_DPLL_FINT_MAX		52000000
- 
--/*
-- * clkdm_control: if true, then when a clock is enabled in the
-- * hardware, its clockdomain will first be enabled; and when a clock
-- * is disabled in the hardware, its clockdomain will be disabled
-- * afterwards.
-- */
--static bool clkdm_control = true;
--
- struct clk_iomap {
- 	struct regmap *regmap;
- 	void __iomem *mem;
-@@ -288,19 +280,6 @@ void omap2_init_clk_clkdm(struct clk_hw *hw)
- }
- 
- /**
-- * omap2_clk_disable_clkdm_control - disable clkdm control on clk enable/disable
-- *
-- * Prevent the OMAP clock code from calling into the clockdomain code
-- * when a hardware clock in that clockdomain is enabled or disabled.
-- * Intended to be called at init time from omap*_clk_init().  No
-- * return value.
-- */
--void __init omap2_clk_disable_clkdm_control(void)
--{
--	clkdm_control = false;
--}
--
--/**
-  * omap2_clk_dflt_find_companion - find companion clock to @clk
-  * @clk: struct clk * to find the companion clock of
-  * @other_reg: void __iomem ** to return the companion clock CM_*CLKEN va in
-@@ -384,6 +363,12 @@ int omap2_dflt_clk_enable(struct clk_hw *hw)
- 	struct clk_hw_omap *clk;
- 	u32 v;
- 	int ret = 0;
-+	bool clkdm_control;
-+
-+	if (ti_clk_get_features()->flags & TI_CLK_DISABLE_CLKDM_CONTROL)
-+		clkdm_control = false;
-+	else
-+		clkdm_control = true;
- 
- 	clk = to_clk_hw_omap(hw);
- 
-@@ -457,7 +442,8 @@ void omap2_dflt_clk_disable(struct clk_hw *hw)
- 	omap2_clk_writel(v, clk, clk->enable_reg);
- 	/* No OCP barrier needed here since it is a disable operation */
- 
--	if (clkdm_control && clk->clkdm)
-+	if (!(ti_clk_get_features()->flags & TI_CLK_DISABLE_CLKDM_CONTROL) &&
-+	    clk->clkdm)
- 		clkdm_clk_disable(clk->clkdm, hw->clk);
- }
- 
-@@ -490,7 +476,7 @@ int omap2_clkops_enable_clkdm(struct clk_hw *hw)
- 		pr_err("%s: %s: should use dflt_clk_enable ?!\n", __func__,
- 		       __clk_get_name(hw->clk));
- 
--	if (!clkdm_control) {
-+	if (ti_clk_get_features()->flags & TI_CLK_DISABLE_CLKDM_CONTROL) {
- 		pr_err("%s: %s: clkfw-based clockdomain control disabled ?!\n",
- 		       __func__, __clk_get_name(hw->clk));
- 		return 0;
-@@ -528,7 +514,7 @@ void omap2_clkops_disable_clkdm(struct clk_hw *hw)
- 		pr_err("%s: %s: should use dflt_clk_disable ?!\n", __func__,
- 		       __clk_get_name(hw->clk));
- 
--	if (!clkdm_control) {
-+	if (ti_clk_get_features()->flags & TI_CLK_DISABLE_CLKDM_CONTROL) {
- 		pr_err("%s: %s: clkfw-based clockdomain control disabled ?!\n",
- 		       __func__, __clk_get_name(hw->clk));
- 		return;
-diff --git a/arch/arm/mach-omap2/clock.h b/arch/arm/mach-omap2/clock.h
-index d60691d..9480654 100644
---- a/arch/arm/mach-omap2/clock.h
-+++ b/arch/arm/mach-omap2/clock.h
-@@ -180,8 +180,6 @@ struct clksel {
- #define OMAP4XXX_EN_DPLL_FRBYPASS		0x6
- #define OMAP4XXX_EN_DPLL_LOCKED			0x7
- 
--void __init omap2_clk_disable_clkdm_control(void);
--
- void omap2_clk_print_new_rates(const char *hfclkin_ck_name,
- 			       const char *core_ck_name,
- 			       const char *mpu_ck_name);
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 0f9d15f..3dadb74 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -330,6 +330,7 @@ struct ti_clk_features {
- 
- #define TI_CLK_DPLL_HAS_FREQSEL			BIT(0)
- #define TI_CLK_DPLL4_DENY_REPROGRAM		BIT(1)
-+#define TI_CLK_DISABLE_CLKDM_CONTROL		BIT(2)
- 
- void ti_clk_setup_features(struct ti_clk_features *features);
- struct ti_clk_features *ti_clk_get_features(void);
--- 
-1.7.9.5
+Hi Jim,
+
+Instead of introducing this flag, could you use the divider table? New
+stuff is generally added to clk-divider.c when it is common and used by
+multiple platforms. If this is not the case then using a table-based
+approach is a nice solution.
+
+Regards,
+Mike
+
+> =
+
+> Signed-off-by: Jim Quinlan <jim2101024@gmail.com>
+> ---
+>  drivers/clk/clk-divider.c    | 16 +++++++++++-----
+>  include/linux/clk-provider.h |  4 ++++
+>  2 files changed, 15 insertions(+), 5 deletions(-)
+> =
+
+> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> index 25006a8..fce0d8b 100644
+> --- a/drivers/clk/clk-divider.c
+> +++ b/drivers/clk/clk-divider.c
+> @@ -78,12 +78,14 @@ static unsigned int _get_table_div(const struct clk_d=
+iv_table *table,
+>  }
+>  =
+
+>  static unsigned int _get_div(const struct clk_div_table *table,
+> -                            unsigned int val, unsigned long flags)
+> +                            unsigned int val, unsigned long flags, u8 wi=
+dth)
+>  {
+>         if (flags & CLK_DIVIDER_ONE_BASED)
+>                 return val;
+>         if (flags & CLK_DIVIDER_POWER_OF_TWO)
+>                 return 1 << val;
+> +       if (flags & CLK_DIVIDER_MAX_AT_ZERO)
+> +               return val ? val : div_mask(width) + 1;
+>         if (table)
+>                 return _get_table_div(table, val);
+>         return val + 1;
+> @@ -101,12 +103,14 @@ static unsigned int _get_table_val(const struct clk=
+_div_table *table,
+>  }
+>  =
+
+>  static unsigned int _get_val(const struct clk_div_table *table,
+> -                            unsigned int div, unsigned long flags)
+> +                            unsigned int div, unsigned long flags, u8 wi=
+dth)
+>  {
+>         if (flags & CLK_DIVIDER_ONE_BASED)
+>                 return div;
+>         if (flags & CLK_DIVIDER_POWER_OF_TWO)
+>                 return __ffs(div);
+> +       if (flags & CLK_DIVIDER_MAX_AT_ZERO)
+> +               return (div =3D=3D div_mask(width) + 1) ? 0 : div;
+>         if (table)
+>                 return  _get_table_val(table, div);
+>         return div - 1;
+> @@ -117,9 +121,10 @@ unsigned long divider_recalc_rate(struct clk_hw *hw,=
+ unsigned long parent_rate,
+>                                   const struct clk_div_table *table,
+>                                   unsigned long flags)
+>  {
+> +       struct clk_divider *divider =3D to_clk_divider(hw);
+>         unsigned int div;
+>  =
+
+> -       div =3D _get_div(table, val, flags);
+> +       div =3D _get_div(table, val, flags, divider->width);
+>         if (!div) {
+>                 WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
+>                         "%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not =
+set\n",
+> @@ -351,7 +356,8 @@ static long clk_divider_round_rate(struct clk_hw *hw,=
+ unsigned long rate,
+>         if (divider->flags & CLK_DIVIDER_READ_ONLY) {
+>                 bestdiv =3D readl(divider->reg) >> divider->shift;
+>                 bestdiv &=3D div_mask(divider->width);
+> -               bestdiv =3D _get_div(divider->table, bestdiv, divider->fl=
+ags);
+> +               bestdiv =3D _get_div(divider->table, bestdiv, divider->fl=
+ags,
+> +                       divider->width);
+>                 return DIV_ROUND_UP(*prate, bestdiv);
+>         }
+>  =
+
+> @@ -370,7 +376,7 @@ int divider_get_val(unsigned long rate, unsigned long=
+ parent_rate,
+>         if (!_is_valid_div(table, div, flags))
+>                 return -EINVAL;
+>  =
+
+> -       value =3D _get_val(table, div, flags);
+> +       value =3D _get_val(table, div, flags, width);
+>  =
+
+>         return min_t(unsigned int, value, div_mask(width));
+>  }
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index df69531..a30c24c 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -342,6 +342,9 @@ struct clk_div_table {
+>   *     to the closest integer instead of the up one.
+>   * CLK_DIVIDER_READ_ONLY - The divider settings are preconfigured and sh=
+ould
+>   *     not be changed by the clock framework.
+> + * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE=
+_BASED
+> + *     except when the value read from the register is zero, the divisor=
+ is
+> + *     2^width of the field.
+>   */
+>  struct clk_divider {
+>         struct clk_hw   hw;
+> @@ -359,6 +362,7 @@ struct clk_divider {
+>  #define CLK_DIVIDER_HIWORD_MASK                BIT(3)
+>  #define CLK_DIVIDER_ROUND_CLOSEST      BIT(4)
+>  #define CLK_DIVIDER_READ_ONLY          BIT(5)
+> +#define CLK_DIVIDER_MAX_AT_ZERO                BIT(6)
+>  =
+
+>  extern const struct clk_ops clk_divider_ops;
+>  =
+
+> -- =
+
+> 1.9.0.138.g2de3478
+>=20
