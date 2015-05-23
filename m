@@ -1,53 +1,77 @@
-Return-Path: <bleung@google.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Sat, 23 May 2015 09:49:30 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 1/7] clk: Add a basic factor clock
+Message-ID: <20150523074930.GI8557@lukather>
+References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1432241646-9511-2-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v64rqRC24wPWz5xYZv=w2QAtsCb-pd76Qynkb5NBCptXhQ@mail.gmail.com>
 MIME-Version: 1.0
-Sender: bleung@google.com
-In-Reply-To: <1431451444-23155-19-git-send-email-rklein@nvidia.com>
-References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
-	<1431451444-23155-19-git-send-email-rklein@nvidia.com>
-Date: Wed, 13 May 2015 17:25:15 -0700
-Message-ID: <CANLzEks10KmCAx4tK0oSejJ6Z+oBRS2+pcsktvStQrogCarTJQ@mail.gmail.com>
-Subject: Re: [PATCH v5 17/21] clk: tegra: pll: Add logic for SS
-From: Benson Leung <bleung@chromium.org>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="UlsYxwg8UDQn+EKZ"
+In-Reply-To: <CAGb2v64rqRC24wPWz5xYZv=w2QAtsCb-pd76Qynkb5NBCptXhQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 12, 2015 at 10:24 AM, Rhyland Klein <rklein@nvidia.com> wrote:
-> +static void pll_clk_start_ss(struct tegra_clk_pll *pll)
-> +{
-> +       if (pll->params->defaults_set && pll->params->ssc_ctrl_en_mask) {
 
-Is there any reason you're checking for the existence of
-ssc_ctrl_en_mask rather than ssc_ctrl_reg?
+--UlsYxwg8UDQn+EKZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +               u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
-> +
-> +               val |= pll->params->ssc_ctrl_en_mask;
-> +               pll_writel(val, pll->params->ssc_ctrl_reg, pll);
-> +       }
-> +}
-> +
-> +static void pll_clk_stop_ss(struct tegra_clk_pll *pll)
-> +{
-> +       if (pll->params->defaults_set && pll->params->ssc_ctrl_en_mask) {
-> +               u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
-> +
-> +               val &= ~pll->params->ssc_ctrl_en_mask;
-> +               pll_writel(val, pll->params->ssc_ctrl_reg, pll);
-> +       }
-> +}
-> +
+On Fri, May 22, 2015 at 12:35:35PM +0800, Chen-Yu Tsai wrote:
+> Hi,
+>=20
+> On Fri, May 22, 2015 at 4:54 AM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > Some clocks are using a factor component, however, unlike their mux, ga=
+te
+> > or divider counterpart, these factors don't have a basic clock
+> > implementation.
+>=20
+> I think "multiplier" would be a better name here, considering it is the
+> counterpart of "divider". "factor" implies you can multiply and/or divide
+> the clock rate.
 
+You're probably right, I didn't though of it that way :)
 
+> Unless of course you plan to add that? :)
 
+Hmmm, no, not really.
 
--- 
-Benson Leung
-Software Engineer, Chrom* OS
-bleung@chromium.org
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--UlsYxwg8UDQn+EKZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVYDEKAAoJEBx+YmzsjxAg3pUQAKPzK0aQrnQrXDBlBpC2K83G
+FXeUdSwnrWHTCwosMKJZw+LFfn6tnGkMjgxZEyGifiZUvmzOugJ15spbkQT/p1pF
+Tg/bTVsNGF/cGyM+B2dxvUalcV15SBATtKNc/Hx7CrYnprgTw3ystxMP8afEJz8m
+GV9aAX/lJ5FvfX/zZSuprczmJ4zUDrKe5s9Q8tvR2jAuG2d7K2zy84T/VOditssv
+kXDa92282o/hRChWfTszoQniJNQm9uE4FToPZS7x3EzO89ETMkxygoxURoBoDFAT
+BA7Wh1wBSQwxDsg2lAu+4FTVHXySVZWjM0dK8iuLzv5ZCMZMkEKgvO0kTzkfS9nF
+LBskbPXVW2vRQ7snHTkbGZ1BZ9ESLF//TSBlxYsh4T6DChMFvTlPzPWtPfsZIii8
+8OS950ZOd/Mukm4V37uqwmQgybB40DAtpDzDP433Fr0J0ke8ttdhzs5lh4ikYWch
+gaHqI/MA5AHN/k3TODFL4uqdOEAJgATndvHxeHl/y6fJKAcjgIGcatmMxIn7iM9R
+xCZuzg15qh2v0EZiLsi6RqNm1g47tG8yKw+TP9/6BeNt+SSEs+H972kefyDerVMA
+mxsgXIsU0D6MHK1YdU6/JOKN/th4Nwe4mMa3CKljYS9EyuFNaV2zoF1V+MZmwniw
+cpgRZLWUK6pg6o+7nptd
+=hmZa
+-----END PGP SIGNATURE-----
+
+--UlsYxwg8UDQn+EKZ--
