@@ -1,66 +1,29 @@
-Return-Path: <daniel.thompson@linaro.org>
-Return-Path: <daniel.thompson@linaro.org>
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Kamil Lulko <rev13@wp.pl>,
-	Andreas Farber <afaerber@suse.de>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	patches@linaro.org,
-	linaro-kernel@lists.linaro.org
-Subject: [PATCH v2 0/4] clk: stm32: Add clock driver for STM32F4[23]xxx devices
-Date: Sat, 30 May 2015 08:54:04 +0100
-Message-Id: <1432972448-10332-1-git-send-email-daniel.thompson@linaro.org>
-In-Reply-To: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
-References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
+Return-Path: <ce3a@gmx.de>
+Message-ID: <5560D711.8070700@gmx.de>
+Date: Sat, 23 May 2015 21:37:53 +0200
+From: Sergej Sawazki <ce3a@gmx.de>
+MIME-Version: 1.0
+To: Jyri Sarha <jsarha@ti.com>
+CC: mturquette@linaro.org, sboyd@codeaurora.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH RFC v1] clk: add gpio controlled clock multiplexer
+References: <1431596413-20917-1-git-send-email-ce3a@gmx.de> <555EF34C.1090507@ti.com>
+In-Reply-To: <555EF34C.1090507@ti.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset implements a clock driver for STM32F42xxx and STM32F43xxx
-series devices. It supports decoding the state configured by the
-bootloader (PLL, clock select, bus dividers) and all the gates clocks.
-It does not currently support the I2S and SAI PLLs.
+Jyri, thanks for the review...
 
-Relies on "Add support to STMicroeletronics STM32 family" v9 by Maxime
-Coquelin: http://thread.gmane.org/gmane.linux.kernel/1961049 .
+On 22.05.2015 at 11:13 Jyri Sarha wrote:
+> On 05/14/15 12:40, Sergej Sawazki wrote:
+>> +Optional properties:
+>> +- enable-gpios : GPIO reference for enabling and disabling the clock.
+>
+> I guess in theory you should not need the enable functionality here. You
+> could just stack gpio-mux-clock on top of gpio-gate-clock.
+>
 
-For completeness I've also included a small config patch I needed to
-get my board to boot once I had rebased. I suspect Maxime may have the
-same patch tucked away somewhere :-).
+I agree, I will remove the enable functionality.
 
-v2:
- * Move the HSE crystal frequency to stm32f429-disco.dts (was
-   prevsiously in stm32f429.dtsi)
- * Fixed compiler warning that I overlooked the first time round.
- * Removed dead code in the .dtsi file.
- * Rebased on linux-next+v9 from Maxime.
-
-
-Daniel Thompson (4):
-  ARM: stm32: Enable clock source
-  dt-bindings: Document the STM32F4 clock bindings
-  clk: stm32: Add clock driver for STM32F4[23]xxx devices
-  ARM: dts: stm32f429: Adopt STM32F4 clock driver
-
- .../devicetree/bindings/clock/st,stm32-rcc.txt     |  65 ++++
- arch/arm/Kconfig                                   |   1 +
- arch/arm/boot/dts/stm32f429-disco.dts              |   4 +
- arch/arm/boot/dts/stm32f429.dtsi                   |  79 ++---
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-stm32f4.c                          | 364 +++++++++++++++++++++
- 6 files changed, 459 insertions(+), 55 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
- create mode 100644 drivers/clk/clk-stm32f4.c
-
---
-2.1.0
+Best regards,
+Sergej
