@@ -1,109 +1,131 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 4/5] doc: dt: add documentation for lpc1850-ccu clk driver
-Date: Thu, 28 May 2015 22:31:46 +0200
-Message-Id: <1432845107-12458-5-git-send-email-manabian@gmail.com>
-In-Reply-To: <1432845107-12458-1-git-send-email-manabian@gmail.com>
-References: <1432845107-12458-1-git-send-email-manabian@gmail.com>
+Return-Path: <Paul.Burton@imgtec.com>
+From: Paul Burton <paul.burton@imgtec.com>
+To: <linux-mips@linux-mips.org>
+CC: Paul Burton <paul.burton@imgtec.com>, Lars-Peter Clausen
+	<lars@metafoo.de>, Mike Turquette <mturquette@linaro.org>, Ralf Baechle
+	<ralf@linux-mips.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v5 27/37] MIPS,clk: move jz4740_clock_set_wait_mode to jz4740-cgu
+Date: Sun, 24 May 2015 16:11:37 +0100
+Message-ID: <1432480307-23789-28-git-send-email-paul.burton@imgtec.com>
+In-Reply-To: <1432480307-23789-1-git-send-email-paul.burton@imgtec.com>
+References: <1432480307-23789-1-git-send-email-paul.burton@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add DT binding documentation for lpc1850-ccu clk driver.
+The jz4740-cgu driver already has access to the CGU, so it makes sense
+to move the few remaining accesses to the CGU from arch/mips/jz4740
+there too. Move jz4740_clock_set_wait_mode for such consistency.
 
-Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-mips@linux-mips.org
 ---
- .../devicetree/bindings/clock/lpc1850-ccu.txt      | 77 ++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-ccu.txt
 
-diff --git a/Documentation/devicetree/bindings/clock/lpc1850-ccu.txt b/Documentation/devicetree/bindings/clock/lpc1850-ccu.txt
-new file mode 100644
-index 000000000000..fa97c12014ac
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/lpc1850-ccu.txt
-@@ -0,0 +1,77 @@
-+* NXP LPC1850 Clock Control Unit (CCU)
+Changes in v5: None
+Changes in v4: None
+Changes in v3:
+- Rebase.
+
+Changes in v2: None
+
+ arch/mips/jz4740/clock.c         | 16 ----------------
+ drivers/clk/ingenic/jz4740-cgu.c | 22 ++++++++++++++++++++++
+ 2 files changed, 22 insertions(+), 16 deletions(-)
+
+diff --git a/arch/mips/jz4740/clock.c b/arch/mips/jz4740/clock.c
+index dedee7c..90b44d7 100644
+--- a/arch/mips/jz4740/clock.c
++++ b/arch/mips/jz4740/clock.c
+@@ -28,7 +28,6 @@
+ 
+ #include "clock.h"
+ 
+-#define JZ_REG_CLOCK_LOW_POWER	0x04
+ #define JZ_REG_CLOCK_PLL	0x10
+ #define JZ_REG_CLOCK_GATE	0x20
+ 
+@@ -40,9 +39,6 @@
+ #define JZ_CLOCK_PLL_STABLE		BIT(10)
+ #define JZ_CLOCK_PLL_ENABLED		BIT(8)
+ 
+-#define JZ_CLOCK_LOW_POWER_MODE_DOZE BIT(2)
+-#define JZ_CLOCK_LOW_POWER_MODE_SLEEP BIT(0)
+-
+ static void __iomem *jz_clock_base;
+ 
+ static uint32_t jz_clk_reg_read(int reg)
+@@ -68,18 +64,6 @@ static void jz_clk_reg_clear_bits(int reg, uint32_t mask)
+ 	writel(val, jz_clock_base + reg);
+ }
+ 
+-void jz4740_clock_set_wait_mode(enum jz4740_wait_mode mode)
+-{
+-	switch (mode) {
+-	case JZ4740_WAIT_MODE_IDLE:
+-		jz_clk_reg_clear_bits(JZ_REG_CLOCK_LOW_POWER, JZ_CLOCK_LOW_POWER_MODE_SLEEP);
+-		break;
+-	case JZ4740_WAIT_MODE_SLEEP:
+-		jz_clk_reg_set_bits(JZ_REG_CLOCK_LOW_POWER, JZ_CLOCK_LOW_POWER_MODE_SLEEP);
+-		break;
+-	}
+-}
+-
+ void jz4740_clock_udc_disable_auto_suspend(void)
+ {
+ 	jz_clk_reg_clear_bits(JZ_REG_CLOCK_GATE, JZ_CLOCK_GATE_UDC);
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index d5bb7a3..0209ed6 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -19,10 +19,12 @@
+ #include <linux/delay.h>
+ #include <linux/of.h>
+ #include <dt-bindings/clock/jz4740-cgu.h>
++#include <asm/mach-jz4740/clock.h>
+ #include "cgu.h"
+ 
+ /* CGU register offsets */
+ #define CGU_REG_CPCCR		0x00
++#define CGU_REG_LCR		0x04
+ #define CGU_REG_CPPCR		0x10
+ #define CGU_REG_SCR		0x24
+ #define CGU_REG_I2SCDR		0x60
+@@ -42,6 +44,9 @@
+ #define PLLCTL_BYPASS		(1 << 9)
+ #define PLLCTL_ENABLE		(1 << 8)
+ 
++/* bits within the LCR register */
++#define LCR_SLEEP		(1 << 0)
 +
-+Each CGU base clock has several clock branches which can be turned on
-+or off independently by the Clock Control Units CCU1 or CCU2. The
-+branch clocks are distributed between CCU1 and CCU2.
+ static struct ingenic_cgu *cgu;
+ 
+ static const s8 pll_od_encoding[4] = {
+@@ -220,3 +225,20 @@ static void __init jz4740_cgu_init(struct device_node *np)
+ 		pr_err("%s: failed to register CGU Clocks\n", __func__);
+ }
+ CLK_OF_DECLARE(jz4740_cgu, "ingenic,jz4740-cgu", jz4740_cgu_init);
 +
-+ - Above text taken from NXP LPC1850 User Manual.
++void jz4740_clock_set_wait_mode(enum jz4740_wait_mode mode)
++{
++	uint32_t lcr = readl(cgu->base + CGU_REG_LCR);
 +
-+This binding uses the common clock binding:
-+    Documentation/devicetree/bindings/clock/clock-bindings.txt
++	switch (mode) {
++	case JZ4740_WAIT_MODE_IDLE:
++		lcr &= ~LCR_SLEEP;
++		break;
 +
-+Required properties:
-+- compatible:
-+	Should be "nxp,lpc1850-ccu"
-+- reg:
-+	Shall define the base and range of the address space
-+	containing clock control registers
-+- #clock-cells:
-+	Shall have value <1>.  The permitted clock-specifier values
-+	are the branch clock names defined in table below.
-+- clocks:
-+	Shall contain a list of phandles for the base clocks routed
-+	from the CGU to the specific CCU. See mapping of base clocks
-+	and CCU in table below.
-+- clock-names:
-+	Shall contain a list of names for the base clock routed
-+	from the CGU to the specific CCU. Valid CCU clock names:
-+	"base_usb0_clk",  "base_periph_clk", "base_usb1_clk",
-+	"base_cpu_clk",   "base_spifi_clk",  "base_spi_clk",
-+	"base_apb1_clk",  "base_apb3_clk",   "base_adchs_clk",
-+	"base_sdio_clk",  "base_ssp0_clk",   "base_ssp1_clk",
-+	"base_uart0_clk", "base_uart1_clk",  "base_uart2_clk",
-+	"base_uart3_clk", "base_audio_clk"
++	case JZ4740_WAIT_MODE_SLEEP:
++		lcr |= LCR_SLEEP;
++		break;
++	}
 +
-+Which branch clocks that are available on the CCU depends on the
-+specific LPC part. Check the user manual for your specific part.
-+
-+A list of CCU clocks can be found in dt-bindings/clock/lpc18xx-ccu.h.
-+
-+Example board file:
-+
-+soc {
-+	ccu1: clock-controller@40051000 {
-+		compatible = "nxp,lpc1850-ccu";
-+		reg = <0x40051000 0x1000>;
-+		#clock-cells = <1>;
-+		clocks = <&cgu BASE_APB3_CLK>,   <&cgu BASE_APB1_CLK>,
-+			 <&cgu BASE_SPIFI_CLK>,  <&cgu BASE_CPU_CLK>,
-+			 <&cgu BASE_PERIPH_CLK>, <&cgu BASE_USB0_CLK>,
-+			 <&cgu BASE_USB1_CLK>,   <&cgu BASE_SPI_CLK>;
-+		clock-names = "base_apb3_clk",   "base_apb1_clk",
-+			      "base_spifi_clk",  "base_cpu_clk",
-+			      "base_periph_clk", "base_usb0_clk",
-+			      "base_usb1_clk",   "base_spi_clk";
-+	};
-+
-+	ccu2: clock-controller@40052000 {
-+		compatible = "nxp,lpc1850-ccu";
-+		reg = <0x40052000 0x1000>;
-+		#clock-cells = <1>;
-+		clocks = <&cgu BASE_AUDIO_CLK>, <&cgu BASE_UART3_CLK>,
-+			 <&cgu BASE_UART2_CLK>, <&cgu BASE_UART1_CLK>,
-+			 <&cgu BASE_UART0_CLK>, <&cgu BASE_SSP1_CLK>,
-+			 <&cgu BASE_SSP0_CLK>,  <&cgu BASE_SDIO_CLK>;
-+		clock-names = "base_audio_clk", "base_uart3_clk",
-+			      "base_uart2_clk", "base_uart1_clk",
-+			      "base_uart0_clk", "base_ssp1_clk",
-+			      "base_ssp0_clk",  "base_sdio_clk";
-+	};
-+
-+	/* A user of CCU brach clocks */
-+	uart1: serial@40082000 {
-+		...
-+		clocks = <&ccu2 CLK_APB0_UART1>, <&ccu1 CLK_CPU_UART1>;
-+		...
-+	};
-+};
++	writel(lcr, cgu->base + CGU_REG_LCR);
++}
 -- 
-1.8.0
+2.4.1
