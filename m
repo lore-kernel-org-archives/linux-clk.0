@@ -1,212 +1,71 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-ID: <5565DA35.8030902@arm.com>
-Date: Wed, 27 May 2015 15:52:37 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
+Return-Path: <bintian.wang@huawei.com>
+From: Bintian Wang <bintian.wang@huawei.com>
+To: <mturquette@linaro.org>, <sboyd@codeaurora.org>, <zhangfei.gao@linaro.org>,
+        <xuwei5@hisilicon.com>, <xuejiancheng@huawei.com>,
+        <tomeu.vizoso@collabora.com>, <sledge.yanwei@huawei.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <arnd@arndb.de>, <will.deacon@arm.com>, <robh+dt@kernel.org>,
+        <khilman@linaro.org>, <mark.rutland@arm.com>,
+        <catalin.marinas@arm.com>, <haojian.zhuang@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <olof@lixom.net>,
+        <yanhaifeng@gmail.com>, <linux@arm.linux.org.uk>,
+        <guodong.xu@linaro.org>, <jorge.ramirez-ortiz@linaro.org>,
+        <tyler.baker@linaro.org>, <khilman@kernel.org>
+CC: <xuyiping@hisilicon.com>, <wangbinghui@hisilicon.com>,
+        <zhenwei.wang@hisilicon.com>, <victor.lixin@hisilicon.com>,
+        <puck.chen@hisilicon.com>, <dan.zhao@hisilicon.com>,
+        <huxinwei@huawei.com>, <bintian.wang@huawei.com>,
+        <z.liuxinliang@huawei.com>, <heyunlei@huawei.com>,
+        <kong.kongxinwei@hisilicon.com>, <wangbintian@gmail.com>,
+        <w.f@huawei.com>, <liguozhu@hisilicon.com>
+Subject: [PATCH v8 4/7] clk: hisilicon: Remove __init for marking function prototypes
+Date: Sun, 24 May 2015 12:11:09 +0800
+Message-ID: <1432440671-25235-1-git-send-email-bintian.wang@huawei.com>
 MIME-Version: 1.0
-To: Mark Rutland <mark.rutland@arm.com>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v3 1/5] Documentation: add DT binding for ARM System Control
- and Power Interface(SCPI) protocol
-References: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com> <1432720398-5701-2-git-send-email-sudeep.holla@arm.com> <20150527133700.GK8439@leverpostej>
-In-Reply-To: <20150527133700.GK8439@leverpostej>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-pm-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mark,
+__init markings on function prototypes are useless, so remove
+them.
 
-Thanks for the review.
+Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Bintian Wang <bintian.wang@huawei.com>
+---
+ drivers/clk/hisilicon/clk.h | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-On 27/05/15 14:37, Mark Rutland wrote:
-> On Wed, May 27, 2015 at 10:53:14AM +0100, Sudeep Holla wrote:
->> This patch adds devicetree binding for System Control and Power
->> Interface (SCPI) Message Protocol used between the Application Cores(AP)
->> and the System Control Processor(SCP). The MHU peripheral provides a
->> mechanism for inter-processor communication between SCP's M3 processor
->> and AP.
->>
->> SCP offers control and management of the core/cluster power states,
->> various power domain DVFS including the core/cluster, certain system
->> clocks configuration, thermal sensors and many others.
->>
->> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> CC: Jassi Brar <jassisinghbrar@gmail.com>
->> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
->> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
->> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
->> Cc: devicetree@vger.kernel.org
->> ---
->>   Documentation/devicetree/bindings/arm/arm,scpi.txt | 121 +++++++++++++++++++++
->>   1 file changed, 121 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/arm/arm,scpi.txt
->>
->> diff --git a/Documentation/devicetree/bindings/arm/arm,scpi.txt b/Documentation/devicetree/bindings/arm/arm,scpi.txt
->> new file mode 100644
->> index 000000000000..5db235f69e54
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/arm/arm,scpi.txt
->> @@ -0,0 +1,121 @@
->> +System Control and Power Interface (SCPI) Message Protocol
->> +----------------------------------------------------------
->
-> Could we refer to the documentation for SCPI similarly to what we do
-> in the PSCI binding (i.e. give the document number and title so people
-> can search for it)?
->
-
-Yes that's the plan but was waiting for a stable URL(currently it's not
-in ARM Infocenter and simple google search for document/title doesn't
-seem to work). For now I will include the URL too and may be remove or
-fix it in future.
-
->> +
->> +Required properties:
->> +
->> +- compatible : should be "arm,scpi"
->> +- mboxes: List of phandle and mailbox channel specifiers
->
-> How many, in which order, and what are they used for?
->
-
-Ok will update.
-
->> +- shmem : List of phandle pointing to the shared memory(SHM) area between the
->> +	  processors using these mailboxes for IPC, one for each mailbox
->
-> When you say "shared memory", what exactly are we referring to? It looks
-> like we refer to SRAM areas?
->
-
-It can be any memory reserved for the purpose of this communication via
-MHU between the Application Processors and the remote System Control
-Processor. On most platforms with MHU it happens to be SRAM like in Juno
-and Fijitsu MB86S7X
-
->> +
->> +See Documentation/devicetree/bindings/mailbox/mailbox.txt
->> +for more details about the generic mailbox controller and
->> +client driver bindings.
->> +
->> +Clock bindings for the clocks based on SCPI Message Protocol
->> +------------------------------------------------------------
->> +
->> +This binding uses the common clock binding[1].
->> +
->> +Required properties:
->> +- compatible : shall be one of the following:
->
-> Nit: s/be/include/
->
->> +	"arm,scpi-clocks" - for the container node with all the clocks
->> +		based on the SCPI protocol
->
-> Please separate this from the description of its sub-nodes (e.g. have a
-> sub-nodes heading under "arm,scpi-clocks").
->
-
-OK, I will update.
-
-> Is there any reason to have this container if we're only going to place
-> the two clock controllers described below within it? Can't we just place
-> them directly under the SCPI node?
->
-
-SCP also supports power domains, sensors and other misc features. I
-wanted to avoid parsing through all the nodes in the clock driver once
-they are added. Is that not recommended ?
-
->> +	"arm,scpi-dvfs" - all the clocks that are variable and index based.
->> +		These clocks don't provide the full range between the limits
->> +		but only discrete points within the range. The firmware
->> +		provides the mapping for each such operating frequency and the
->> +		index associated with it. The firmware also manages the
->> +		voltage scaling appropriately with the clock scaling.
->
-> Could this be "arm,scpi-dvfs-clocks"?
->
->> +	"arm,scpi-clk" - all the clocks that are variable and provide full
->> +		range within the specified range. The firmware provides the
->> +		supported range for each clock.
->
-> Likewise "arm,scpi-variable-clocks"?
->
-> Using "arm,scpi-clk" makes it sound like there's a single clock output.
->
->> +
->> +Required properties for all clocks(all from common clock binding):
->> +- #clock-cells : should be set to 1 as each of the SCPI clocks have multiple
->> +	outputs. The clock specifier will be the index to an entry in the list
->> +	of output clocks.
->> +- clock-output-names : shall be the corresponding names of the outputs.
->> +- clock-indices: The identifyng number for the clocks(clock_id) in the node as
->> +	expected by the firmware. It can be non linear and hence provide the
->> +	mapping	of identifiers into the clock-output-names array.
->> +
->> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->> +
->> +Example:
->> +
->> +sram: sram@50000000 {
->> +	compatible = "arm,juno-sram-ns", "mmio-sram";
->
-> Nit: undocumented compatible string.
->
->> +	reg = <0x0 0x50000000 0x0 0x10000>;
->> +
->> +	#address-cells = <1>;
->> +	#size-cells = <1>;
->> +	ranges = <0 0x0 0x50000000 0x10000>;
->> +
->> +	cpu_scp_lpri: scp-shmem@0 {
->> +		compatible = "arm,juno-scp-shmem";
->
-> Nit: undocumented compatible string.
->
-
-Will fix all the above compatible strings and add missing document.
-
-[...]
-
->> +cpu@0 {
->> +	...
->> +	reg = <0 0>;
->> +	clocks = <&scpi_dvfs 0>;
->> +	clock-names = "big";
->
-> This isn't documented anywhere, and I can't see any code in this series
-> using it. The Juno dts doesn't seem to have CPU clocks, and nothing in
-> this series adds them -- have I missed a series?
->
-
-No, you didn't miss anything, I didn't post the DTS changes to avoid
-churn when the binding is still under discussion, will post in the next
-version.
-
-> Also, I'm not keen on using software-defined names (e.g. "big") for CPU
-> clocks, as it doesn't stictly relate to the hardware. That said, the set
-> of clocks, their names, and how they related to CPUs is
-> implementation-specific, which is somewhat painful. I'm not sure how
-> we cater for that with generic software.
->
-
-Sorry for the confusion, it should be "vbig" in the above example. These
-names are derived from the SCPI document and yes it may vary with platforms.
-
-Regards,
-Sudeep
+diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
+index 31083ff..6b6f994 100644
+--- a/drivers/clk/hisilicon/clk.h
++++ b/drivers/clk/hisilicon/clk.h
+@@ -95,17 +95,17 @@ struct clk *hisi_register_clkgate_sep(struct device *, const char *,
+ 				void __iomem *, u8,
+ 				u8, spinlock_t *);
+ 
+-struct hisi_clock_data __init *hisi_clk_init(struct device_node *, int);
+-void __init hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *,
+-					int, struct hisi_clock_data *);
+-void __init hisi_clk_register_fixed_factor(struct hisi_fixed_factor_clock *,
+-					int, struct hisi_clock_data *);
+-void __init hisi_clk_register_mux(struct hisi_mux_clock *, int,
++struct hisi_clock_data *hisi_clk_init(struct device_node *, int);
++void hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *,
++				int, struct hisi_clock_data *);
++void hisi_clk_register_fixed_factor(struct hisi_fixed_factor_clock *,
++				int, struct hisi_clock_data *);
++void hisi_clk_register_mux(struct hisi_mux_clock *, int,
+ 				struct hisi_clock_data *);
+-void __init hisi_clk_register_divider(struct hisi_divider_clock *,
++void hisi_clk_register_divider(struct hisi_divider_clock *,
++				int, struct hisi_clock_data *);
++void hisi_clk_register_gate(struct hisi_gate_clock *,
++				int, struct hisi_clock_data *);
++void hisi_clk_register_gate_sep(struct hisi_gate_clock *,
+ 				int, struct hisi_clock_data *);
+-void __init hisi_clk_register_gate(struct hisi_gate_clock *,
+-					int, struct hisi_clock_data *);
+-void __init hisi_clk_register_gate_sep(struct hisi_gate_clock *,
+-					int, struct hisi_clock_data *);
+ #endif	/* __HISI_CLK_H */
+-- 
+1.9.1
