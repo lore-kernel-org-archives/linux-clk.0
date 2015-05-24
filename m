@@ -1,42 +1,95 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>, <paul@pwsan.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 05/27] ARM: OMAP3: dpll3-m2: get rid of obsolete clksel access
-Date: Mon, 11 May 2015 11:54:31 +0300
-Message-ID: <1431334493-24455-6-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
-References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
+Return-Path: <Paul.Burton@imgtec.com>
+Date: Sun, 24 May 2015 16:01:04 +0100
+From: Paul Burton <paul.burton@imgtec.com>
+To: Michael Turquette <mturquette@linaro.org>
+CC: <linux-mips@linux-mips.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Lars-Peter Clausen <lars@metafoo.de>,
+	"Mark Rutland" <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Ralf
+ Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, <devicetree@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v4 26/37] MIPS,clk: migrate JZ4740 to common clock
+ framework
+Message-ID: <20150524150104.GP13811@NP-P-BURTON>
+References: <1429881457-16016-1-git-send-email-paul.burton@imgtec.com>
+ <1429881457-16016-27-git-send-email-paul.burton@imgtec.com>
+ <20150513025204.20636.10155@quantum>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Dzs2zDY0zgkG72+7"
+In-Reply-To: <20150513025204.20636.10155@quantum>
 List-ID: <linux-clk.vger.kernel.org>
 
-Core DVFS support code is currently referencing clksel functionality, which
-is wrong. The m2 divisor has been implemented as a divider clock for a long
-time already, so replace the validrate check call with proper functionality.
-Core DVFS is currently not supported in the kernel so verifying this patch
-can be rather tricky, this should probably be fixed at some point.
+--Dzs2zDY0zgkG72+7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/clkt34xx_dpll3m2.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On Tue, May 12, 2015 at 07:52:04PM -0700, Michael Turquette wrote:
+> Hi Paul,
+>=20
+> Quoting Paul Burton (2015-04-24 06:17:26)
+> > +static void __init jz4740_cgu_init(struct device_node *np)
+> > +{
+> > +       int retval;
+> > +
+> > +       cgu =3D ingenic_cgu_new(jz4740_cgu_clocks,
+> > +                             ARRAY_SIZE(jz4740_cgu_clocks), np);
+> > +       if (!cgu) {
+> > +               pr_err("%s: failed to initialise CGU\n", __func__);
+> > +               return;
+> > +       }
+> > +
+> > +       retval =3D ingenic_cgu_register_clocks(cgu);
+> > +       if (retval)
+> > +               pr_err("%s: failed to register CGU Clocks\n", __func__);
+> > +}
+> > +CLK_OF_DECLARE(jz4740_cgu, "ingenic,jz4740-cgu", jz4740_cgu_init);
+> > --=20
+> > 2.3.5
+> >=20
+>=20
+> Patch looks good to me, but I have one question. Is it possible for you
+> to have a proper platform_device for the cgu instead of relying on
+> CLK_OF_DECLARE?
+>=20
+> For an example of a clock driver that does this, check out the bottom of
+> drivers/clk/qcom/gcc-msm8660.c.
+>=20
+> Regards,
+> Mike
 
-diff --git a/arch/arm/mach-omap2/clkt34xx_dpll3m2.c b/arch/arm/mach-omap2/clkt34xx_dpll3m2.c
-index eb69acf..825e3da 100644
---- a/arch/arm/mach-omap2/clkt34xx_dpll3m2.c
-+++ b/arch/arm/mach-omap2/clkt34xx_dpll3m2.c
-@@ -60,7 +60,9 @@ int omap3_core_dpll_m2_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (!clk || !rate)
- 		return -EINVAL;
- 
--	validrate = omap2_clksel_round_rate_div(clk, rate, &new_div);
-+	new_div = DIV_ROUND_UP(parent_rate, rate);
-+	validrate = parent_rate / new_div;
-+
- 	if (validrate != rate)
- 		return -EINVAL;
- 
--- 
-1.7.9.5
+Hi Mike,
+
+Thanks for your review. I gave that a try but unfortunately it didn't
+work out because the code in plat_time_init (arch/mips/jz4740/time.c)
+needs to obtain the rate of the ext clock at a point before any
+initcalls have been run, and therefore before the platform device has
+been registered.
+
+Thanks,
+    Paul
+
+--Dzs2zDY0zgkG72+7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVYeerAAoJENzvn0paErs5t10P/0s4aPrB2JGQryExBDaqHNRI
+pPpuIBfNBL8/V9Uk4FCMMi77dymvZuAxnBigych187DazTCxLvyejzXwooWz8zxo
+/IbObdbdpeNw5s8yoUPUlC3d1Yhhw2un9zhk9n1mdj+b3ZPfjvyIuwWIzorewpC5
+oHGffD15WBjQZvE6H16pc9YHinO+YkwRJJAd+qdSuzxVvZ9FPJW5JvNJ6JrwSEL7
+HCEbTYyN3j2BuOHGnO0l1ZcDzgCFC3mbh8z+De11h9XFc/9gst/W3Qn+9HnYy6a5
+jk3+baDPUa0TjAi7IftqG1nLLAQ+17JbhfWiTXjmEMkT5Pd3z68h6FHZJaH/WsK+
+0TPFPp5grq4zawHc4DgVjUr3RLnzFtxiI7CrEEpf3IfC5CzfWSB4nuAAxxy/N05n
+/O1+xBxYaspEDDn9xdFLdTJN1aHLfnW9whdzIwworoU1bzdVEo3Tiwh4us3fozCx
+dtaOoTrGtWbN5sf2/YGKbsqKbf2CDoHMPEriAS2NHBErWUZPsLN9J48RhoUqvnZ+
+X1xsAFD3OdaaCNnKlAEHcy/Bzu4D9917nCxy7l42LkasG6/HP7yLNdafkQ1kjJoN
+U5EDTZNuuZ3El31XWUu7m+fQ+/qStAIZ5eAOY6bzPK7zmu3R3On8Dzp1Mde54xL2
+dun5LozGE89ug1KsWobr
+=Kgev
+-----END PGP SIGNATURE-----
+
+--Dzs2zDY0zgkG72+7--
