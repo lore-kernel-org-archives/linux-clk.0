@@ -1,109 +1,75 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 15 May 2015 09:43:14 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 1/8] clk: sunxi: factors: Add m_start parameters
-Message-ID: <20150515074314.GQ4004@lukather>
-References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
- <1430565879-28113-2-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v669fsz_pA+B0r8efp0BMxY-D86qfLuGQCqK1POuu9PmxQ@mail.gmail.com>
+Return-Path: <Paul.Burton@imgtec.com>
+Date: Sun, 24 May 2015 16:02:48 +0100
+From: Paul Burton <paul.burton@imgtec.com>
+To: Michael Turquette <mturquette@linaro.org>, Lars-Peter Clausen
+	<lars@metafoo.de>
+CC: <linux-mips@linux-mips.org>, Lars-Peter Clausen <lars@metafoo.de>, "Ralf
+ Baechle" <ralf@linux-mips.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v4 28/37] MIPS, clk: move jz4740 UDC auto suspend
+ functions to jz4740-cgu
+Message-ID: <20150524150248.GQ13811@NP-P-BURTON>
+References: <1429881457-16016-1-git-send-email-paul.burton@imgtec.com>
+ <1429881457-16016-29-git-send-email-paul.burton@imgtec.com>
+ <20150513030652.20636.98939@quantum>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WZLuFERxa6Y0cbOt"
-In-Reply-To: <CAGb2v669fsz_pA+B0r8efp0BMxY-D86qfLuGQCqK1POuu9PmxQ@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="GLp9dJVi+aaipsRk"
+In-Reply-To: <20150513030652.20636.98939@quantum>
 List-ID: <linux-clk.vger.kernel.org>
 
-
---WZLuFERxa6Y0cbOt
-Content-Type: text/plain; charset=us-ascii
+--GLp9dJVi+aaipsRk
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 14, 2015 at 05:12:07PM +0800, Chen-Yu Tsai wrote:
-> On Sat, May 2, 2015 at 7:24 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > Some clocks start incrementing the m factor at 0. Add a parameter to ha=
-ndle
-> > it just like we did for the N factor.
-> >
-> > Since the behaviour until now was to assume that the m factor was start=
-ing
-> > at 1, we also need to fix the other users.
-> >
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  drivers/clk/sunxi/clk-factors.c    | 11 ++++++++++-
-> >  drivers/clk/sunxi/clk-factors.h    |  2 ++
-> >  drivers/clk/sunxi/clk-mod0.c       |  2 ++
-> >  drivers/clk/sunxi/clk-sun8i-mbus.c |  2 ++
-> >  drivers/clk/sunxi/clk-sun9i-core.c |  6 ++++++
-> >  drivers/clk/sunxi/clk-sunxi.c      | 10 ++++++++++
-> >  6 files changed, 32 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-fa=
-ctors.c
-> > index 8c20190a3e9f..100a711c3e3d 100644
-> > --- a/drivers/clk/sunxi/clk-factors.c
-> > +++ b/drivers/clk/sunxi/clk-factors.c
-> > @@ -56,15 +56,24 @@ static unsigned long clk_factors_recalc_rate(struct=
- clk_hw *hw,
-> >         /* Get each individual factor if applicable */
-> >         if (config->nwidth !=3D SUNXI_FACTORS_NOT_APPLICABLE)
-> >                 n =3D FACTOR_GET(config->nshift, config->nwidth, reg);
-> > +
-> >         if (config->kwidth !=3D SUNXI_FACTORS_NOT_APPLICABLE)
-> >                 k =3D FACTOR_GET(config->kshift, config->kwidth, reg);
-> > +
-> >         if (config->mwidth !=3D SUNXI_FACTORS_NOT_APPLICABLE)
-> >                 m =3D FACTOR_GET(config->mshift, config->mwidth, reg);
-> > +       else
-> > +               /* Make sure we don't get a division by zero */
-> > +               m =3D 1;
+On Tue, May 12, 2015 at 08:06:52PM -0700, Michael Turquette wrote:
+> Hi Paul,
 >=20
-> What happens when mwidth is valid, m_start =3D 0, and m =3D 0?
+> Quoting Paul Burton (2015-04-24 06:17:28)
+> > -void jz4740_clock_udc_disable_auto_suspend(void)
+> > -{
+> > -       jz_clk_reg_clear_bits(JZ_REG_CLOCK_GATE, JZ_CLOCK_GATE_UDC);
+> > -}
+> > -EXPORT_SYMBOL_GPL(jz4740_clock_udc_disable_auto_suspend);
+> > -
+> > -void jz4740_clock_udc_enable_auto_suspend(void)
+> > -{
+> > -       jz_clk_reg_set_bits(JZ_REG_CLOCK_GATE, JZ_CLOCK_GATE_UDC);
+> > -}
+> > -EXPORT_SYMBOL_GPL(jz4740_clock_udc_enable_auto_suspend);
+>=20
+> I couldn't find a caller for these functions. Where and how are they
+> used?
+>=20
+> Thanks,
+> Mike
 
-That's a very good question. A division by zero in the kernel, I'd
-say.
+Good question. Lars?
 
-But I don't think we can end up in such a case today, and it's
-somewhat expected that it will happen, and no clock have looked at can
-actually end up in such a case.
+Thanks,
+    Paul
 
-> Other than that, this one looks good.
-
-Thanks!
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---WZLuFERxa6Y0cbOt
+--GLp9dJVi+aaipsRk
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJVVaOSAAoJEBx+YmzsjxAg8gkP/0xlyPIm6ha2yc3iahAhLuoQ
-SvFW+QTKaIJ6s8SgyXAh30nQPR6D5Fep5m2m570Erc4aegmbk3RMJQI6jSVHg12Z
-xFptMG5+oZrJDQPguzy6SHeo7zaooOOW4897jT/6aI6Re1yPHgYWPML3uob2GOry
-CxoCEwPDq78hM+jSa2TyNHtNx1kyCme9pPtMPidHUcLGlv592XsIeeE2OaIPiODQ
-uekP2/oJUl6K82gr7flFn68Uy8+NEgxd/B5skw8ppm6Z40/7dEBo/KUuMoZt5nkt
-EvLSvwnebauL79MLx3ZJIlsM2ZYYwpuT5ZHt1fYflsUaqGb9KT7G2hzjexgHwNPB
-Esn6MJ0zamgsSYnkupR4SFkrVnczbs0XywEEIvwfXCa7ONDEsn6unortzebJo4lc
-bVbFFE0oTwgcTVmGOcpQfd3QNZ2YsU0+1bSl6E1lJ2Y51QjR+Agr5yw8xy7bx4al
-ZUns9BJPwWrc2s0vyONG93nlD84uvDwu3nCN7y/+afSy7DkBqOkgoddU30Ei5ZIe
-Urc7eEyIE3JrBhZTbM5vJcYRynfCvuDd4TOjG0EXpMOP1/Ron8SzjMIh48640tE8
-TcuJ2TmzELkgS9AGSRtmtPcoWeOu6J58CGI6eLmWRunolCPI8J4CE+NYga6TyQaO
-pgeQ2A1guPKuCrQLy6R/
-=VYwb
+iQIcBAEBCAAGBQJVYegYAAoJENzvn0paErs5D3wP/AhhX9azBUwBrfK8XxL5bDkN
+IBTaa04qBr8wXtgQsswtViqDUP8jB2DPT+9UrH1h6HbrDHWpjc4f4ED6J4DS8Iad
+5oYyJivTC6G8Te8tj6n7Bgnq56aTMtGEZqy5NL0WbCUirbFof+1+chqEDLLCNWL3
+HwLVzqeC212KmPN14q+3Cif1cSSwUCr5eU01MJ7H2RCTq8BVH7wofcoTe7auebui
+ai5UlvWmh7pmrtjsVZKtZkhWtcerGgEMRt4HGI4Jyea56jxJK23AOW2n8yuHL/71
+tervek0i2YwM9VrjHDzEeSvJMyWRnkdHbt0N4fZ8oy1knhnqdyqJCkanwhCICmLK
+qxJwvByeNc7wSEIyOpfBadXk2c0dXQrWNr2uISEumJBLpQ9sPPv2mIipZ3R1Iyga
+I/ufzKf/0BXaCzCPW6MH784XKpzDgYlX7HuMAbZR39C8vjSHR7cskV3x4EGWIxA4
+eSosmrNIhXlj0l/PymNGPGU0AgXvKyPRNiownJ7onPAuEXeUFP+/ciCtOrrDC+H1
+o7dK5LLnv+j/Pi59tYofa3RlHmugGvTOvAjDl1+yAPqsIr1+rXRVFM0Zs0ucs16e
+yC6uQx8iHoEJri1SUsx5okn4lH5CpV7feynhpJ1y74+fYa4ORRSF1IQuu472rj+q
+vD6jl/8GAiuMAqdmeH58
+=Rv2T
 -----END PGP SIGNATURE-----
 
---WZLuFERxa6Y0cbOt--
+--GLp9dJVi+aaipsRk--
