@@ -1,267 +1,357 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Joachim  Eastwood <manabian@gmail.com>, 
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <CAGhQ9VyRjugLxscdL_wELbjMiDD3CFYJmsJAC_34wQeBmuxWjQ@mail.gmail.com>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Arnd Bergmann" <arnd@arndb.de>,
- linux-clk@vger.kernel.org, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
- "Ariel D'Alessandro" <ariel.dalessandro@gmail.com>,
- "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>
-References: <1430170693-28303-1-git-send-email-manabian@gmail.com>
- <1430170693-28303-3-git-send-email-manabian@gmail.com>
- <20150512221202.16410.2827@quantum>
- <CAGhQ9VyRjugLxscdL_wELbjMiDD3CFYJmsJAC_34wQeBmuxWjQ@mail.gmail.com>
-Message-ID: <20150521211727.9817.5989@quantum>
-Subject: Re: [PATCH v2 2/4] doc: dt: add documentation for lpc1850-cgu clk driver
-Date: Thu, 21 May 2015 14:17:27 -0700
+Return-Path: <ce3a@gmx.de>
+From: Sergej Sawazki <ce3a@gmx.de>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	jsarha@ti.com
+Cc: linux-clk@vger.kernel.org,
+	Sergej Sawazki <ce3a@gmx.de>
+Subject: [PATCH v2] clk: add gpio controlled clock multiplexer
+Date: Sun, 24 May 2015 11:01:22 +0200
+Message-Id: <1432458082-18299-1-git-send-email-ce3a@gmx.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Joachim Eastwood (2015-05-13 00:57:18)
-> On 13 May 2015 at 00:12, Michael Turquette <mturquette@linaro.org> wrote:
-> > Quoting Joachim Eastwood (2015-04-27 14:38:11)
-> >> Add DT binding documentation for lpc1850-cgu driver.
-> >>
-> >> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
-> >> ---
-> >>  .../devicetree/bindings/clock/lpc1850-cgu.txt      | 138 ++++++++++++=
-+++++++++
-> >>  1 file changed, 138 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-cg=
-u.txt
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/lpc1850-cgu.txt b=
-/Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
-> >> new file mode 100644
-> >> index 000000000000..0b278ca6aee7
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
-> >> @@ -0,0 +1,138 @@
-> >> +* NXP LPC1850 Clock Generation Unit (CGU)
-> >> +
-> >> +The CGU generates multiple independent clocks for the core and the
-> >> +peripheral blocks of the LPC18xx. Each independent clock is called
-> >> +a base clock and itself is one of the inputs to the two Clock
-> >> +Control Units (CCUs) which control the branch clocks to the
-> >> +individual peripherals.
-> >> +
-> >> +The CGU selects the inputs to the clock generators from multiple
-> >> +clock sources, controls the clock generation, and routes the outputs
-> >> +of the clock generators through the clock source bus to the output
-> >> +stages. Each output stage provides an independent clock source and
-> >> +corresponds to one of the base clocks for the LPC18xx.
-> >> +
-> >> + - Above text taken from NXP LPC1850 User Manual.
-> >> +
-> >> +
-> >> +This binding uses the common clock binding:
-> >> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
-> >> +
-> >> +Required properties:
-> >> +- compatible:
-> >> +       Should be "nxp,lpc1850-cgu"
-> >> +- reg:
-> >> +       Shall define the base and range of the address space
-> >> +       containing clock control registers
-> >> +- #clock-cells:
-> >> +       Shall have value <1>.  The permitted clock-specifier values
-> >> +       are the base clock numbers defined below.
-> >> +- clocks:
-> >> +       Shall contain a list of phandles for the external input
-> >> +       sources to the CGU. The list shall be in the following
-> >> +       order: xtal, 32khz, enet_rx_clk, enet_tx_clk, gp_clkin.
-> >> +- clock-indices:
-> >> +       Shall be an ordered list of numbers defining the base clock
-> >> +       number provided by the CGU.
-> >> +- clock-output-names:
-> >> +       Shall be an ordered list of strings defining the names of
-> >> +       the clocks provided by the CGU.
-> >> +
-> >> +Which base clocks that are available on the CGU depends on the
-> >> +specific LPC part. Base cloks are numbered from 0 to 27.
-> >
-> > s/cloks/clocks/
-> >
-> >> +
-> >> +Number:                Name:                   Description:
-> >> + 0             BASE_SAFE_CLK           Base safe clock (always on) fo=
-r WWDT
-> >> + 1             BASE_USB0_CLK           Base clock for USB0
-> >> + 2             BASE_PERIPH_CLK         Base clock for Cortex-M0SUB su=
-bsystem,
-> >> +                                       SPI, and SGPIO
-> >> + 3             BASE_USB1_CLK           Base clock for USB1
-> >> + 4             BASE_CPU_CLK            System base clock for ARM Cort=
-ex-M core
-> >> +                                       and APB peripheral blocks #0 a=
-nd #2
-> >> + 5             BASE_SPIFI_CLK          Base clock for SPIFI
-> >> + 6             BASE_SPI_CLK            Base clock for SPI
-> >> + 7             BASE_PHY_RX_CLK         Base clock for Ethernet PHY Re=
-ceive clock
-> >> + 8             BASE_PHY_TX_CLK         Base clock for Ethernet PHY Tr=
-ansmit clock
-> >> + 9             BASE_APB1_CLK           Base clock for APB peripheral =
-block # 1
-> >> +10             BASE_APB3_CLK           Base clock for APB peripheral =
-block # 3
-> >> +11             BASE_LCD_CLK            Base clock for LCD
-> >> +12             BASE_ADCHS_CLK          Base clock for ADCHS
-> >> +13             BASE_SDIO_CLK           Base clock for SD/MMC
-> >> +14             BASE_SSP0_CLK           Base clock for SSP0
-> >> +15             BASE_SSP1_CLK           Base clock for SSP1
-> >> +16             BASE_UART0_CLK          Base clock for UART0
-> >> +17             BASE_UART1_CLK          Base clock for UART1
-> >> +18             BASE_UART2_CLK          Base clock for UART2
-> >> +19             BASE_UART3_CLK          Base clock for UART3
-> >> +20             BASE_OUT_CLK            Base clock for CLKOUT pin
-> >> +24-21          -                       Reserved
-> >> +25             BASE_AUDIO_CLK          Base clock for audio system (I=
-2S)
-> >> +26             BASE_CGU_OUT0_CLK       Base clock for CGU_OUT0 clock =
-output
-> >> +27             BASE_CGU_OUT1_CLK       Base clock for CGU_OUT1 clock =
-output
-> >> +
-> >> +BASE_PERIPH_CLK and BASE_SPI_CLK is only available on LPC43xx.
-> >> +BASE_ADCHS_CLK is only available on LPC4370.
-> >> +
-> >> +
-> >> +Example board file:
-> >> +
-> >> +/ {
-> >> +       clocks {
-> >> +               xtal: xtal {
-> >> +                       compatible =3D "fixed-clock";
-> >> +                       #clock-cells =3D <0>;
-> >> +                       clock-frequency =3D <12000000>;
-> >> +               };
-> >> +
-> >> +               xtal32: xtal32 {
-> >> +                       compatible =3D "fixed-clock";
-> >> +                       #clock-cells =3D <0>;
-> >> +                       clock-frequency =3D <32768>;
-> >> +               };
-> >> +
-> >> +               enet_rx_clk: enet_rx_clk {
-> >> +                       compatible =3D "fixed-clock";
-> >> +                       #clock-cells =3D <0>;
-> >> +                       clock-frequency =3D <0>;
-> >> +                       clock-output-names =3D "enet_rx_clk";
-> >> +               };
-> >> +
-> >> +               enet_tx_clk: enet_tx_clk {
-> >> +                       compatible =3D "fixed-clock";
-> >> +                       #clock-cells =3D <0>;
-> >> +                       clock-frequency =3D <0>;
-> >> +                       clock-output-names =3D "enet_tx_clk";
-> >> +               };
-> >> +
-> >> +               gp_clkin: gp_clkin {
-> >> +                       compatible =3D "fixed-clock";
-> >> +                       #clock-cells =3D <0>;
-> >> +                       clock-frequency =3D <0>;
-> >> +                       clock-output-names =3D "gp_clkin";
-> >> +               };
-> >> +       };
-> >> +
-> >> +       soc {
-> >> +               cgu: cgu@40050000 {
-> >> +                       compatible =3D "nxp,lpc1850-cgu";
-> >> +                       reg =3D <0x40050000 0x1000>;
-> >> +                       #clock-cells =3D <1>;
-> >> +                       clocks =3D <&xtal>, <&creg_clk 1>, <&enet_rx_c=
-lk>, <&enet_tx_clk>, <&gp_clkin>;
-> >> +                       clock-indices =3D  <0>,  <1>,  <2>,  <3>,  <4>=
-,  <5>,  <6>,  <7>,
-> >> +                                        <8>,  <9>, <10>, <11>, <12>, =
-<13>, <14>, <15>,
-> >> +                                       <16>, <17>, <18>, <19>, <20>, =
-<25>, <26>, <27>;
-> >> +                       clock-output-names =3D "base_safe_clk",    "ba=
-se_usb0_clk",
-> >> +                                            "base_periph_clk",  "base=
-_usb1_clk",
-> >> +                                            "base_cpu_clk",     "base=
-_spifi_clk",
-> >> +                                            "base_spi_clk",     "base=
-_phy_rx_clk",
-> >> +                                            "base_phy_tx_clk",  "base=
-_apb1_clk",
-> >> +                                            "base_apb3_clk",    "base=
-_lcd_clk",
-> >> +                                            "base_adchs_clk",   "base=
-_sdio_clk",
-> >> +                                            "base_ssp0_clk",    "base=
-_ssp1_clk",
-> >> +                                            "base_uart0_clk",   "base=
-_uart1_clk",
-> >> +                                            "base_uart2_clk",   "base=
-_uart3_clk",
-> >> +                                            "base_out_clk",     "base=
-_audio_clk",
-> >> +                                            "base_cgu_out0_clk","base=
-_cgu_out1_clk";
-> >
-> > Why do you need to use clock-indices?
-> =
+Add a common clock driver for basic gpio controlled clock multiplexers.
+This driver can be used for devices like 5V41068A or 831721I from IDT
+or for discrete multiplexer circuits. The 'select' pin selects one of
+two parent clocks.
 
-> Since the CGU can have up to 27 clock lines, but in this device not
-> all are used. So I use clock-indices so I don't need to have empty
-> entries in the clock-output-names array. I thought this was the
-> intended usage(?)
-> =
+Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
+---
 
-> > Why do you need to use clock-output-names? If all of your clock
-> > consumers have nodes in DT then you can skip this and name them on the
-> > consuming side. See a further explanation here:
-> > http://lkml.kernel.org/r/<20150416192014.19585.9663@quantum>
-> =
+Stephen, Jyri,
+thanks for your comments.
 
-> Most of the clocks from the CGU goes to a CCU, but the CCU isn't the
-> real consumer. It's more like a clock router with a bunch of gates.
-> =
+Changes since v1:
+ * Suggested by Stephen Boyd and Jyri Sarha:
+   - Remove the optional enable/disable support. If enable/disable is
+     required, the gpio-mux-clock can be used in combination with the
+     gpio-gate-clock.
 
-> If you take a close look at the CCU driver you will notice that it
-> doesn't do clk_get on any of the clocks. My reason for doing this is
-> to not increase the usage counter on the CGU clock so that if there
-> are no consumer after a CCU the entire clock line up to the CGU can be
-> disabled. So this is the reason that the CCU driver uses a "special"
-> way to grab the clock output names from the CGU.
+ * Suggested by Stephen Boyd:
+   - Remove the (index > 1)-check from clk_gpio_mux_set_parent().
+   - Stay silent if gpio_request_one() fails with -EPROBE_DEFER.
+   - Make sure num_parents is 2 in clk_register_gpio_mux().
+   - Use devm_clk_register() if a device is provided.
+   - Remove the flags variable from of_clk_gpio_mux_delayed_register_get().
+   - Fix num_parents check in of_clk_gpio_mux_delayed_register_get().
+   - Use kcalloc() for parent_names array allocation.
+   - Use pr_debug() instead of pr_warn() for the EPROBE_DEFER message.
+   - Use kzalloc(sizeof(*data)... ) instead of kzalloc(sizeof(struct 
+     clk_gpio_mux_delayed_register_data)... ) in of_gpio_mux_clk_setup().
 
-A call to clk_get will not enable/ungate the clock signal. It seems that
-there might be some confusion around that. It is always OK to get the
-clk. This will not increase the enable_count or prepare_count values.
+Many thanks for your time and effort,
+Sergej
 
-If the CCU is a separate IP block then it might make sense for it to
-call clk_get on the CGU clocks. On the other hand it might make more
-sense for the CCU clocks to simply use the CGU clocks as parent clock
-signal inputs.
+ .../devicetree/bindings/clock/gpio-mux-clock.txt   |  19 ++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-gpio-mux.c                         | 227 +++++++++++++++++++++
+ include/linux/clk-provider.h                       |  22 ++
+ 4 files changed, 269 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/gpio-mux-clock.txt
+ create mode 100644 drivers/clk/clk-gpio-mux.c
 
-None of the points above have anything to do with my original comment.
-The use of the clock-output-names property is unnecessary if all of the
-consumer devices have DT nodes of their own. Please look at the thread I
-linked to and let me know what you think about getting rid of the
-clock-output-names property.
-
-> =
-
-> Hope this makes sense.
-> =
-
-> > Also note that providing a clock consumer node in the examples section
-> > of the binding is helpful when reviewing.
-> =
-
-> I'll add a consumer example in the next version.
-
-Great.
-
-Thanks,
-Mike
-
-> =
-
-> regards,
-> Joachim Eastwood
+diff --git a/Documentation/devicetree/bindings/clock/gpio-mux-clock.txt b/Documentation/devicetree/bindings/clock/gpio-mux-clock.txt
+new file mode 100644
+index 0000000..2be1e03
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/gpio-mux-clock.txt
+@@ -0,0 +1,19 @@
++Binding for simple gpio clock multiplexer.
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible : shall be "gpio-mux-clock".
++- clocks: list of two references to parent clocks.
++- #clock-cells : from common clock binding; shall be set to 0.
++- select-gpios : GPIO reference for selecting the parent clock.
++
++Example:
++	clock {
++		compatible = "gpio-mux-clock";
++		clocks = <&parentclk1>, <&parentclk2>;
++		#clock-cells = <0>;
++		select-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
++	};
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index d5fba5b..1732905 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -10,6 +10,7 @@ obj-$(CONFIG_COMMON_CLK)	+= clk-mux.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-composite.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-fractional-divider.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-gpio-gate.o
++obj-$(CONFIG_COMMON_CLK)	+= clk-gpio-mux.o
+ ifeq ($(CONFIG_OF), y)
+ obj-$(CONFIG_COMMON_CLK)	+= clk-conf.o
+ endif
+diff --git a/drivers/clk/clk-gpio-mux.c b/drivers/clk/clk-gpio-mux.c
+new file mode 100644
+index 0000000..8a91d42
+--- /dev/null
++++ b/drivers/clk/clk-gpio-mux.c
+@@ -0,0 +1,227 @@
++/*
++ * Author: Sergej Sawazki <ce3a@gmx.de>
++ * Based on clk-gpio-gate.c by Jyri Sarha and ti/mux.c by Tero Kristo
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Gpio controlled clock multiplexer implementation
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
++#include <linux/of_gpio.h>
++#include <linux/err.h>
++#include <linux/device.h>
++
++/**
++ * DOC: basic clock multiplexer which can be controlled with a gpio output
++ * Traits of this clock:
++ * prepare - clk_prepare only ensures that parents are prepared
++ * rate - rate is only affected by parent switching.  No clk_set_rate support
++ * parent - parent is adjustable through clk_set_parent
++ */
++
++#define to_clk_gpio_mux(_hw) container_of(_hw, struct clk_gpio_mux, hw)
++
++static u8 clk_gpio_mux_get_parent(struct clk_hw *hw)
++{
++	struct clk_gpio_mux *clk = to_clk_gpio_mux(hw);
++
++	return gpiod_get_value(clk->gpiod);
++}
++
++static int clk_gpio_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_gpio_mux *clk = to_clk_gpio_mux(hw);
++
++	gpiod_set_value(clk->gpiod, index);
++	pr_debug("%s: %s: index = %d\n",
++			__clk_get_name(hw->clk), __func__, index);
++
++	return 0;
++}
++
++const struct clk_ops clk_gpio_mux_ops = {
++	.get_parent = clk_gpio_mux_get_parent,
++	.set_parent = clk_gpio_mux_set_parent,
++	.determine_rate = __clk_mux_determine_rate,
++};
++EXPORT_SYMBOL_GPL(clk_gpio_mux_ops);
++
++/**
++ * clk_register_gpio_mux - register a gpio clock mux with the clock framework
++ * @dev: device that is registering this clock
++ * @name: name of this clock
++ * @parent_names: names of this clock's parents
++ * @num_parents: number of parents listed in @parent_names
++ * @gpiod: gpio descriptor to select the parent of this clock multiplexer
++ * @clk_flags: optional flags for basic clock
++ */
++struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
++		const char **parent_names, u8 num_parents,
++		struct gpio_desc *gpiod, unsigned long clk_flags)
++{
++	struct clk_gpio_mux *clk_gpio_mux;
++	struct clk *clk;
++	struct clk_init_data init = { NULL };
++	unsigned long gpio_flags;
++	int err;
++
++	if (dev)
++		clk_gpio_mux = devm_kzalloc(dev, sizeof(struct clk_gpio_mux),
++				GFP_KERNEL);
++	else
++		clk_gpio_mux = kzalloc(sizeof(struct clk_gpio_mux), GFP_KERNEL);
++
++	if (!clk_gpio_mux)
++		return ERR_PTR(-ENOMEM);
++
++	if (gpiod_is_active_low(gpiod))
++		gpio_flags = GPIOF_OUT_INIT_HIGH;
++	else
++		gpio_flags = GPIOF_OUT_INIT_LOW;
++
++	if (dev)
++		err = devm_gpio_request_one(dev, desc_to_gpio(gpiod),
++				gpio_flags, name);
++	else
++		err = gpio_request_one(desc_to_gpio(gpiod),
++				gpio_flags, name);
++
++	if (err) {
++		if (err != -EPROBE_DEFER)
++			pr_err("%s: %s: Error requesting gpio %u\n",
++					name, __func__, desc_to_gpio(gpiod));
++		return ERR_PTR(err);
++	}
++	clk_gpio_mux->gpiod = gpiod;
++
++	if (num_parents != 2)
++		return ERR_PTR(-EINVAL);
++
++	init.name = name;
++	init.ops = &clk_gpio_mux_ops;
++	init.flags = clk_flags | CLK_IS_BASIC;
++	init.parent_names = parent_names;
++	init.num_parents = num_parents;
++
++	clk_gpio_mux->hw.init = &init;
++
++	if (dev)
++		clk = devm_clk_register(dev, &clk_gpio_mux->hw);
++	else
++		clk = clk_register(NULL, &clk_gpio_mux->hw);
++
++	if (!IS_ERR(clk)) {
++		pr_debug("%s: %s: Successful registration\n", name, __func__);
++		return clk;
++	}
++
++	if (!dev) {
++		kfree(clk_gpio_mux);
++		gpiod_put(gpiod);
++	}
++
++	return clk;
++}
++EXPORT_SYMBOL_GPL(clk_register_gpio_mux);
++
++#ifdef CONFIG_OF
++/**
++ * The clk_register_gpio_mux has to be delayed, because the EPROBE_DEFER
++ * can not be handled properly at of_clk_init() call time.
++ */
++
++struct clk_gpio_mux_delayed_register_data {
++	struct device_node *node;
++	struct mutex lock;
++	struct clk *clk;
++};
++
++static struct clk *of_clk_gpio_mux_delayed_register_get(
++		struct of_phandle_args *clkspec,
++		void *_data)
++{
++	struct clk_gpio_mux_delayed_register_data *data = _data;
++	struct clk *clk;
++	const char *clk_name = data->node->name;
++	int i, num_parents;
++	const char **parent_names;
++	struct gpio_desc *gpiod;
++	int gpio;
++
++	mutex_lock(&data->lock);
++
++	if (data->clk) {
++		mutex_unlock(&data->lock);
++		return data->clk;
++	}
++
++	gpio = of_get_named_gpio_flags(data->node, "select-gpios", 0, NULL);
++	if (!gpio_is_valid(gpio))
++		goto err_gpio;
++	gpiod = gpio_to_desc(gpio);
++
++	num_parents = of_clk_get_parent_count(data->node);
++	if (num_parents != 2) {
++		pr_err("mux-clock %s must have 2 parents\n", data->node->name);
++		return ERR_PTR(-EINVAL);
++	}
++
++	parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
++	if (!parent_names) {
++		kfree(parent_names);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	for (i = 0; i < num_parents; i++)
++		parent_names[i] = of_clk_get_parent_name(data->node, i);
++
++	clk = clk_register_gpio_mux(NULL, clk_name, parent_names, num_parents,
++			gpiod, 0);
++	if (IS_ERR(clk)) {
++		mutex_unlock(&data->lock);
++		return clk;
++	}
++
++	data->clk = clk;
++	mutex_unlock(&data->lock);
++
++	return clk;
++
++err_gpio:
++	mutex_unlock(&data->lock);
++	if (gpio == -EPROBE_DEFER)
++		pr_debug("%s: %s: GPIOs not yet available, retry later\n",
++				clk_name, __func__);
++	else
++		pr_err("%s: %s: Can't get GPIOs\n",
++				clk_name, __func__);
++
++	return ERR_PTR(gpio);
++}
++
++/**
++ * of_gpio_mux_clk_setup() - Setup function for gpio controlled clock mux
++ */
++void __init of_gpio_mux_clk_setup(struct device_node *node)
++{
++	struct clk_gpio_mux_delayed_register_data *data;
++
++	data = kzalloc(sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return;
++
++	data->node = node;
++	mutex_init(&data->lock);
++
++	of_clk_add_provider(node, of_clk_gpio_mux_delayed_register_get, data);
++}
++EXPORT_SYMBOL_GPL(of_gpio_mux_clk_setup);
++CLK_OF_DECLARE(gpio_mux_clk, "gpio-mux-clock", of_gpio_mux_clk_setup);
++#endif
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 2839c63..119b8a9 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -521,6 +521,28 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
+ void of_gpio_clk_gate_setup(struct device_node *node);
+ 
+ /**
++ * struct clk_gpio_mux - gpio controlled clock multiplexer
++ *
++ * @hw:		handle between common and hardware-specific interfaces
++ * @gpiod:	gpio descriptor to select the parent of this clock multiplexer
++ *
++ * Clock with a gpio control for selecting the parent clock.
++ * Implements .get_parent, .set_parent and .determine_rate
++ */
++
++struct clk_gpio_mux {
++	struct clk_hw	hw;
++	struct gpio_desc *gpiod;
++};
++
++extern const struct clk_ops clk_gpio_mux_ops;
++struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
++		const char **parent_names, u8 num_parents,
++		struct gpio_desc *gpiod, unsigned long clk_flags);
++
++void of_gpio_mux_clk_setup(struct device_node *node);
++
++/**
+  * clk_register - allocate a new clock, register it and return an opaque cookie
+  * @dev: device that is registering this clock
+  * @hw: link to hardware-specific clock data
+-- 
+1.9.1
