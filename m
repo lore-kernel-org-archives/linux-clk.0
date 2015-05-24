@@ -1,82 +1,233 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <1432120636.3231.24.camel@linaro.org>
-Subject: Re: [PATCH v2 2/5] firmware: add support for ARM System Control and
- Power Interface(SCPI) protocol
-From: "Jon Medhurst (Tixy)" <tixy@linaro.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>
-Date: Wed, 20 May 2015 12:17:16 +0100
-In-Reply-To: <1431618155-3132-3-git-send-email-sudeep.holla@arm.com>
-References: <1431618155-3132-1-git-send-email-sudeep.holla@arm.com>
-	 <1431618155-3132-3-git-send-email-sudeep.holla@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <Paul.Burton@imgtec.com>
+From: Paul Burton <paul.burton@imgtec.com>
+To: <linux-mips@linux-mips.org>
+CC: Paul Burton <paul.burton@imgtec.com>, Lars-Peter Clausen
+	<lars@metafoo.de>, Mike Turquette <mturquette@linaro.org>, Ralf Baechle
+	<ralf@linux-mips.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>, Deng-Cheng Zhu <dengcheng.zhu@imgtec.com>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v5 29/37] MIPS, clk: move jz4740 clock suspend, resume functions to jz4740-cgu
+Date: Sun, 24 May 2015 16:11:39 +0100
+Message-ID: <1432480307-23789-30-git-send-email-paul.burton@imgtec.com>
+In-Reply-To: <1432480307-23789-1-git-send-email-paul.burton@imgtec.com>
+References: <1432480307-23789-1-git-send-email-paul.burton@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2015-05-14 at 16:42 +0100, Sudeep Holla wrote:
-> This patch adds support for System Control and Power Interface (SCPI)
-> Message Protocol used between the Application Cores(AP) and the System
-> Control Processor(SCP). The MHU peripheral provides a mechanism for
-> inter-processor communication between SCP's M3 processor and AP.
-> 
-> SCP offers control and management of the core/cluster power states,
-> various power domain DVFS including the core/cluster, certain system
-> clocks configuration, thermal sensors and many others.
-> 
-> This protocol driver provides interface for all the client drivers using
-> SCPI to make use of the features offered by the SCP.
-> 
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> CC: Jassi Brar <jassisinghbrar@gmail.com>
-> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
-> ---
+The jz4740-cgu driver already has access to the CGU, so it makes sense
+to move the few remaining accesses to the CGU from arch/mips/jz4740
+there too. Move the jz4740_clock_{suspend,resume} functions there for
+such consistency. The arch/mips/jz4740/clock.c file now contains nothing
+more of use & so is removed.
 
-Sorry for the delay in looking at this. I have one nitpick below but
-anyway, here's a
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-mips@linux-mips.org
+---
 
-Reviewed-by: Jon Medhurst (Tixy) <tixy@linaro.org>
+Changes in v5: None
+Changes in v4: None
+Changes in v3:
+- Rebase.
 
-[...]
-> +++ b/drivers/firmware/arm_scpi.c
-[...]
-> +static void scpi_process_cmd(struct scpi_chan *ch, u32 cmd)
-> +{
-> +	unsigned long flags;
-> +	struct scpi_xfer *t, *match = NULL;
-> +
-> +	spin_lock_irqsave(&ch->rx_lock, flags);
-> +	if (list_empty(&ch->rx_pending)) {
-> +		spin_unlock_irqrestore(&ch->rx_lock, flags);
-> +		return;
-> +	}
-> +
-> +	list_for_each_entry(t, &ch->rx_pending, node)
-> +		if (CMD_XTRACT_UNIQ(t->cmd) == CMD_XTRACT_UNIQ(cmd)) {
-> +			list_del(&t->node);
-> +			match = t;
-> +			break;
-> +		}
-> +	/* check if wait_for_completion is in progress or timed-out */
-> +	if (match && !completion_done(&match->done)) {
-> +		struct scpi_shared_mem *mem = ch->rx_payload;
-> +		int len = min(match->rx_len, CMD_SIZE(cmd));
-> +
-> +		match->status = le32_to_cpu(mem->status);
-> +		memcpy_fromio(match->rx_buf, mem->payload, len);
-> +		if (match->rx_len > len)
+Changes in v2: None
 
-rx_len is unsigned and len is signed and so I had to go refresh my
-memory from the C standard before I could convince myself that this if
-statement was OK. Might be clearer if len was unsigned, especially as
-it's the 'min' of two unsigned values.
+ arch/mips/include/asm/mach-jz4740/clock.h |  2 -
+ arch/mips/jz4740/Makefile                 |  2 +-
+ arch/mips/jz4740/clock.c                  | 95 -------------------------------
+ arch/mips/jz4740/time.c                   |  1 -
+ drivers/clk/ingenic/jz4740-cgu.c          | 37 ++++++++++++
+ 5 files changed, 38 insertions(+), 99 deletions(-)
+ delete mode 100644 arch/mips/jz4740/clock.c
 
+diff --git a/arch/mips/include/asm/mach-jz4740/clock.h b/arch/mips/include/asm/mach-jz4740/clock.h
+index 01d8468..16659cd 100644
+--- a/arch/mips/include/asm/mach-jz4740/clock.h
++++ b/arch/mips/include/asm/mach-jz4740/clock.h
+@@ -20,8 +20,6 @@ enum jz4740_wait_mode {
+ 	JZ4740_WAIT_MODE_SLEEP,
+ };
+ 
+-int jz4740_clock_init(void);
+-
+ void jz4740_clock_set_wait_mode(enum jz4740_wait_mode mode);
+ 
+ void jz4740_clock_udc_enable_auto_suspend(void);
+diff --git a/arch/mips/jz4740/Makefile b/arch/mips/jz4740/Makefile
+index fdb12efc..7636432 100644
+--- a/arch/mips/jz4740/Makefile
++++ b/arch/mips/jz4740/Makefile
+@@ -5,7 +5,7 @@
+ # Object file lists.
+ 
+ obj-y += prom.o time.o reset.o setup.o \
+-	gpio.o clock.o platform.o timer.o serial.o
++	gpio.o platform.o timer.o serial.o
+ 
+ # board specific support
+ 
+diff --git a/arch/mips/jz4740/clock.c b/arch/mips/jz4740/clock.c
+deleted file mode 100644
+index 2a10829..0000000
+--- a/arch/mips/jz4740/clock.c
++++ /dev/null
+@@ -1,95 +0,0 @@
+-/*
+- *  Copyright (C) 2010, Lars-Peter Clausen <lars@metafoo.de>
+- *  JZ4740 SoC clock support
+- *
+- *  This program is free software; you can redistribute it and/or modify it
+- *  under  the terms of the GNU General	 Public License as published by the
+- *  Free Software Foundation;  either version 2 of the License, or (at your
+- *  option) any later version.
+- *
+- *  You should have received a copy of the GNU General Public License along
+- *  with this program; if not, write to the Free Software Foundation, Inc.,
+- *  675 Mass Ave, Cambridge, MA 02139, USA.
+- *
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/errno.h>
+-#include <linux/clk.h>
+-#include <linux/clk-provider.h>
+-#include <linux/spinlock.h>
+-#include <linux/io.h>
+-#include <linux/module.h>
+-#include <linux/list.h>
+-#include <linux/err.h>
+-
+-#include <asm/mach-jz4740/clock.h>
+-#include <asm/mach-jz4740/base.h>
+-
+-#include "clock.h"
+-
+-#define JZ_REG_CLOCK_PLL	0x10
+-#define JZ_REG_CLOCK_GATE	0x20
+-
+-#define JZ_CLOCK_GATE_UART0	BIT(0)
+-#define JZ_CLOCK_GATE_TCU	BIT(1)
+-#define JZ_CLOCK_GATE_DMAC	BIT(12)
+-
+-#define JZ_CLOCK_PLL_STABLE		BIT(10)
+-#define JZ_CLOCK_PLL_ENABLED		BIT(8)
+-
+-static void __iomem *jz_clock_base;
+-
+-static uint32_t jz_clk_reg_read(int reg)
+-{
+-	return readl(jz_clock_base + reg);
+-}
+-
+-static void jz_clk_reg_set_bits(int reg, uint32_t mask)
+-{
+-	uint32_t val;
+-
+-	val = readl(jz_clock_base + reg);
+-	val |= mask;
+-	writel(val, jz_clock_base + reg);
+-}
+-
+-static void jz_clk_reg_clear_bits(int reg, uint32_t mask)
+-{
+-	uint32_t val;
+-
+-	val = readl(jz_clock_base + reg);
+-	val &= ~mask;
+-	writel(val, jz_clock_base + reg);
+-}
+-
+-void jz4740_clock_suspend(void)
+-{
+-	jz_clk_reg_set_bits(JZ_REG_CLOCK_GATE,
+-		JZ_CLOCK_GATE_TCU | JZ_CLOCK_GATE_DMAC | JZ_CLOCK_GATE_UART0);
+-
+-	jz_clk_reg_clear_bits(JZ_REG_CLOCK_PLL, JZ_CLOCK_PLL_ENABLED);
+-}
+-
+-void jz4740_clock_resume(void)
+-{
+-	uint32_t pll;
+-
+-	jz_clk_reg_set_bits(JZ_REG_CLOCK_PLL, JZ_CLOCK_PLL_ENABLED);
+-
+-	do {
+-		pll = jz_clk_reg_read(JZ_REG_CLOCK_PLL);
+-	} while (!(pll & JZ_CLOCK_PLL_STABLE));
+-
+-	jz_clk_reg_clear_bits(JZ_REG_CLOCK_GATE,
+-		JZ_CLOCK_GATE_TCU | JZ_CLOCK_GATE_DMAC | JZ_CLOCK_GATE_UART0);
+-}
+-
+-int jz4740_clock_init(void)
+-{
+-	jz_clock_base = ioremap(JZ4740_CPM_BASE_ADDR, 0x100);
+-	if (!jz_clock_base)
+-		return -EBUSY;
+-
+-	return 0;
+-}
+diff --git a/arch/mips/jz4740/time.c b/arch/mips/jz4740/time.c
+index be9b0a3..9172553 100644
+--- a/arch/mips/jz4740/time.c
++++ b/arch/mips/jz4740/time.c
+@@ -120,7 +120,6 @@ void __init plat_time_init(void)
+ 	struct clk *ext_clk;
+ 
+ 	of_clk_init(NULL);
+-	jz4740_clock_init();
+ 	jz4740_timer_init();
+ 
+ 	ext_clk = clk_get(NULL, "ext");
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index 0e692ed..305a26c2 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -264,3 +264,40 @@ void jz4740_clock_udc_enable_auto_suspend(void)
+ 	writel(clkgr, cgu->base + CGU_REG_CLKGR);
+ }
+ EXPORT_SYMBOL_GPL(jz4740_clock_udc_enable_auto_suspend);
++
++#define JZ_CLOCK_GATE_UART0	BIT(0)
++#define JZ_CLOCK_GATE_TCU	BIT(1)
++#define JZ_CLOCK_GATE_DMAC	BIT(12)
++
++void jz4740_clock_suspend(void)
++{
++	uint32_t clkgr, cppcr;
++
++	clkgr = readl(cgu->base + CGU_REG_CLKGR);
++	clkgr |= JZ_CLOCK_GATE_TCU | JZ_CLOCK_GATE_DMAC | JZ_CLOCK_GATE_UART0;
++	writel(clkgr, cgu->base + CGU_REG_CLKGR);
++
++	cppcr = readl(cgu->base + CGU_REG_CPPCR);
++	cppcr &= ~BIT(jz4740_cgu_clocks[JZ4740_CLK_PLL].pll.enable_bit);
++	writel(cppcr, cgu->base + CGU_REG_CPPCR);
++}
++
++void jz4740_clock_resume(void)
++{
++	uint32_t clkgr, cppcr, stable;
++
++	cppcr = readl(cgu->base + CGU_REG_CPPCR);
++	cppcr |= BIT(jz4740_cgu_clocks[JZ4740_CLK_PLL].pll.enable_bit);
++	writel(cppcr, cgu->base + CGU_REG_CPPCR);
++
++	stable = BIT(jz4740_cgu_clocks[JZ4740_CLK_PLL].pll.stable_bit);
++	do {
++		cppcr = readl(cgu->base + CGU_REG_CPPCR);
++	} while (!(cppcr & stable));
++
++	clkgr = readl(cgu->base + CGU_REG_CLKGR);
++	clkgr &= ~JZ_CLOCK_GATE_TCU;
++	clkgr &= ~JZ_CLOCK_GATE_DMAC;
++	clkgr &= ~JZ_CLOCK_GATE_UART0;
++	writel(clkgr, cgu->base + CGU_REG_CLKGR);
++}
 -- 
-Tixy
-
+2.4.1
