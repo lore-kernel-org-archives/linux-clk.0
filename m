@@ -1,48 +1,118 @@
-Return-Path: <rklein@nvidia.com>
-Message-ID: <555CC1A2.9070605@nvidia.com>
-Date: Wed, 20 May 2015 13:17:22 -0400
-From: Rhyland Klein <rklein@nvidia.com>
+Return-Path: <Paul.Burton@imgtec.com>
+From: Paul Burton <paul.burton@imgtec.com>
+To: <linux-mips@linux-mips.org>
+CC: Paul Burton <paul.burton@imgtec.com>, Lars-Peter Clausen
+	<lars@metafoo.de>, Mike Turquette <mturquette@linaro.org>, Ralf Baechle
+	<ralf@linux-mips.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v5 28/37] MIPS, clk: move jz4740 UDC auto suspend functions to jz4740-cgu
+Date: Sun, 24 May 2015 16:11:38 +0100
+Message-ID: <1432480307-23789-29-git-send-email-paul.burton@imgtec.com>
+In-Reply-To: <1432480307-23789-1-git-send-email-paul.burton@imgtec.com>
+References: <1432480307-23789-1-git-send-email-paul.burton@imgtec.com>
 MIME-Version: 1.0
-To: Benson Leung <bleung@chromium.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
-	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre
- Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Paul Walmsley
-	<pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 20/21] clk: tegra210: add support for Tegra210 clocks
-References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>	<1431451444-23155-22-git-send-email-rklein@nvidia.com> <CANLzEkumVdds8AkDRNGdp_b20Eq1vmf1gzuqJuYnLsRYgVHCFw@mail.gmail.com>
-In-Reply-To: <CANLzEkumVdds8AkDRNGdp_b20Eq1vmf1gzuqJuYnLsRYgVHCFw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 5/14/2015 4:23 PM, Benson Leung wrote:
-> On Tue, May 12, 2015 at 10:24 AM, Rhyland Klein <rklein@nvidia.com> wrote:
->> +static int _p_div_to_hw(struct clk_hw *hw, u8 p_div)
->> +{
->> +       struct tegra_clk_pll *pll = to_clk_pll(hw);
->> +       struct pdiv_map *p_tohw = pll->params->pdiv_tohw;
->> +
->> +       if (p_tohw) {
->> +               while (p_tohw->pdiv) {
->> +                       if (p_div <= p_tohw->pdiv)
->> +                               return p_tohw->hw_val;
->> +                       p_tohw++;
->> +               }
->> +               return -EINVAL;
->> +       }
->> +       return -EINVAL;
->> +}
-> 
-> This is the same function as the one that lives in clk-pll.c. Can you
-> make these common?
-> 
-Sure, I'll add that for v6.
+The jz4740-cgu driver already has access to the CGU, so it makes sense
+to move the few remaining accesses to the CGU from arch/mips/jz4740
+there too. Move the jz4740_clock_udc_{dis,en}able_auto_suspend functions
+there for such consistency.
 
--rhyland
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-mips@linux-mips.org
+---
 
+Changes in v5: None
+Changes in v4: None
+Changes in v3:
+- Rebase.
 
+Changes in v2: None
+
+ arch/mips/jz4740/clock.c         | 13 -------------
+ drivers/clk/ingenic/jz4740-cgu.c | 22 ++++++++++++++++++++++
+ 2 files changed, 22 insertions(+), 13 deletions(-)
+
+diff --git a/arch/mips/jz4740/clock.c b/arch/mips/jz4740/clock.c
+index 90b44d7..2a10829 100644
+--- a/arch/mips/jz4740/clock.c
++++ b/arch/mips/jz4740/clock.c
+@@ -33,7 +33,6 @@
+ 
+ #define JZ_CLOCK_GATE_UART0	BIT(0)
+ #define JZ_CLOCK_GATE_TCU	BIT(1)
+-#define JZ_CLOCK_GATE_UDC	BIT(11)
+ #define JZ_CLOCK_GATE_DMAC	BIT(12)
+ 
+ #define JZ_CLOCK_PLL_STABLE		BIT(10)
+@@ -64,18 +63,6 @@ static void jz_clk_reg_clear_bits(int reg, uint32_t mask)
+ 	writel(val, jz_clock_base + reg);
+ }
+ 
+-void jz4740_clock_udc_disable_auto_suspend(void)
+-{
+-	jz_clk_reg_clear_bits(JZ_REG_CLOCK_GATE, JZ_CLOCK_GATE_UDC);
+-}
+-EXPORT_SYMBOL_GPL(jz4740_clock_udc_disable_auto_suspend);
+-
+-void jz4740_clock_udc_enable_auto_suspend(void)
+-{
+-	jz_clk_reg_set_bits(JZ_REG_CLOCK_GATE, JZ_CLOCK_GATE_UDC);
+-}
+-EXPORT_SYMBOL_GPL(jz4740_clock_udc_enable_auto_suspend);
+-
+ void jz4740_clock_suspend(void)
+ {
+ 	jz_clk_reg_set_bits(JZ_REG_CLOCK_GATE,
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index 0209ed6..0e692ed 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -26,6 +26,7 @@
+ #define CGU_REG_CPCCR		0x00
+ #define CGU_REG_LCR		0x04
+ #define CGU_REG_CPPCR		0x10
++#define CGU_REG_CLKGR		0x20
+ #define CGU_REG_SCR		0x24
+ #define CGU_REG_I2SCDR		0x60
+ #define CGU_REG_LPCDR		0x64
+@@ -47,6 +48,9 @@
+ /* bits within the LCR register */
+ #define LCR_SLEEP		(1 << 0)
+ 
++/* bits within the CLKGR register */
++#define CLKGR_UDC		(1 << 11)
++
+ static struct ingenic_cgu *cgu;
+ 
+ static const s8 pll_od_encoding[4] = {
+@@ -242,3 +246,21 @@ void jz4740_clock_set_wait_mode(enum jz4740_wait_mode mode)
+ 
+ 	writel(lcr, cgu->base + CGU_REG_LCR);
+ }
++
++void jz4740_clock_udc_disable_auto_suspend(void)
++{
++	uint32_t clkgr = readl(cgu->base + CGU_REG_CLKGR);
++
++	clkgr &= ~CLKGR_UDC;
++	writel(clkgr, cgu->base + CGU_REG_CLKGR);
++}
++EXPORT_SYMBOL_GPL(jz4740_clock_udc_disable_auto_suspend);
++
++void jz4740_clock_udc_enable_auto_suspend(void)
++{
++	uint32_t clkgr = readl(cgu->base + CGU_REG_CLKGR);
++
++	clkgr |= CLKGR_UDC;
++	writel(clkgr, cgu->base + CGU_REG_CLKGR);
++}
++EXPORT_SYMBOL_GPL(jz4740_clock_udc_enable_auto_suspend);
 -- 
-nvpublic
+2.4.1
