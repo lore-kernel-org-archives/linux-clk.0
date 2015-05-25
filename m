@@ -1,376 +1,204 @@
-Return-Path: <sudeep.holla@arm.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH v2 3/5] clk: add support for clocks provided by SCP(System Control Processor)
-Date: Thu, 14 May 2015 16:42:33 +0100
-Message-Id: <1431618155-3132-4-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1431618155-3132-1-git-send-email-sudeep.holla@arm.com>
-References: <1431618155-3132-1-git-send-email-sudeep.holla@arm.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <tony@atomide.com>,
+        <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv3 11/27] ARM: OMAP2+: clock: remove support for legacy mpurate command line param
+Date: Mon, 25 May 2015 18:00:16 +0300
+Message-ID: <1432566032-10860-12-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On some ARM based systems, a separate Cortex-M based System Control
-Processor(SCP) provides the overall power, clock, reset and system
-control. System Control and Power Interface(SCPI) Message Protocol
-is defined for the communication between the Application Cores(AP)
-and the SCP.
+The legacy support is wrong and dangerous, as it doesn't take any
+OPPs into account and does not scale voltages. Switching mpurate should
+be handled through cpufreq.
 
-This patch adds support for the clocks provided by SCP using SCPI
-protocol.
-
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Liviu Dudau <Liviu.Dudau@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
-Cc: linux-clk@vger.kernel.org
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/Kconfig    |  10 ++
- drivers/clk/Makefile   |   1 +
- drivers/clk/clk-scpi.c | 293 +++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 304 insertions(+)
- create mode 100644 drivers/clk/clk-scpi.c
+ arch/arm/mach-omap2/Makefile    |    2 +-
+ arch/arm/mach-omap2/clock.c     |   41 ----------------------------
+ arch/arm/mach-omap2/clock.h     |    1 -
+ arch/arm/mach-omap2/clock2xxx.c |   57 ---------------------------------------
+ arch/arm/mach-omap2/clock3xxx.c |   25 -----------------
+ 5 files changed, 1 insertion(+), 125 deletions(-)
+ delete mode 100644 arch/arm/mach-omap2/clock2xxx.c
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 9897f353bf1a..67e5c6469731 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -59,6 +59,16 @@ config COMMON_CLK_RK808
- 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
- 	  by control register.
+diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
+index f33d011..bf5d71d 100644
+--- a/arch/arm/mach-omap2/Makefile
++++ b/arch/arm/mach-omap2/Makefile
+@@ -181,7 +181,7 @@ obj-$(CONFIG_SOC_DRA7XX)		+= $(clockdomain-common)
+ obj-$(CONFIG_SOC_DRA7XX)		+= clockdomains7xx_data.o
  
-+config COMMON_CLK_SCPI
-+        tristate "Clock driver controlled via SCPI interface"
-+        depends on ARM_SCPI_PROTOCOL
-+        ---help---
-+          This driver provides support for clocks that are controlled
-+          by firmware that implements the SCPI interface.
-+
-+	  This driver uses SCPI Message Protocol to interact with the
-+	  firmware providing all the clock controls.
-+
- config COMMON_CLK_SI5351
- 	tristate "Clock driver for SiLabs 5351A/B/C"
- 	depends on I2C
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 3d00c25382c5..442ab6ebd5b1 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
- obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
- obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
- obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
-+obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
- obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
- obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
- obj-$(CONFIG_CLK_TWL6040)		+= clk-twl6040.o
-diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
-new file mode 100644
-index 000000000000..208f68d14214
---- /dev/null
-+++ b/drivers/clk/clk-scpi.c
-@@ -0,0 +1,293 @@
-+/*
-+ * System Control and Power Interface (SCPI) Protocol based clock driver
-+ *
-+ * Copyright (C) 2015 ARM Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program. If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/clkdev.h>
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/of.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/scpi_protocol.h>
-+
-+struct scpi_clk {
-+	u32 id;
-+	const char *name;
-+	struct clk_hw hw;
-+	struct scpi_dvfs_info *info;
-+	unsigned long rate_min;
-+	unsigned long rate_max;
-+};
-+
-+#define to_scpi_clk(clk) container_of(clk, struct scpi_clk, hw)
-+
-+static struct scpi_ops *scpi_ops;
-+
-+static unsigned long scpi_clk_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+
-+	return scpi_ops->clk_get_val(clk->id);
-+}
-+
-+static long scpi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+
-+	if (WARN_ON(clk->rate_min && rate < clk->rate_min))
-+		rate = clk->rate_min;
-+	if (WARN_ON(clk->rate_max && rate > clk->rate_max))
-+		rate = clk->rate_max;
-+
-+	return rate;
-+}
-+
-+static int scpi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+
-+	return scpi_ops->clk_set_val(clk->id, rate);
-+}
-+
-+static struct clk_ops scpi_clk_ops = {
-+	.recalc_rate = scpi_clk_recalc_rate,
-+	.round_rate = scpi_clk_round_rate,
-+	.set_rate = scpi_clk_set_rate,
-+};
-+
-+/* find closest match to given frequency in OPP table */
-+static int __scpi_dvfs_round_rate(struct scpi_clk *clk, unsigned long rate)
-+{
-+	int idx;
-+	u32 fmin = 0, fmax = ~0, ftmp;
-+	struct scpi_opp *opp = clk->info->opps;
-+
-+	for (idx = 0; idx < clk->info->count; idx++, opp++) {
-+		ftmp = opp->freq;
-+		if (ftmp >= (u32)rate) {
-+			if (ftmp <= fmax)
-+				fmax = ftmp;
-+			break;
-+		} else if (ftmp >= fmin) {
-+			fmin = ftmp;
-+		}
-+	}
-+	return fmax != ~0 ? fmax : fmin;
-+}
-+
-+static unsigned long scpi_dvfs_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+	int idx = scpi_ops->dvfs_get_idx(clk->id);
-+	struct scpi_opp *opp;
-+
-+	if (idx < 0)
-+		return 0;
-+
-+	opp = clk->info->opps + idx;
-+	return opp->freq;
-+}
-+
-+static long scpi_dvfs_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *parent_rate)
-+{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+
-+	return __scpi_dvfs_round_rate(clk, rate);
-+}
-+
-+static int __scpi_find_dvfs_index(struct scpi_clk *clk, unsigned long rate)
-+{
-+	int idx, max_opp = clk->info->count;
-+	struct scpi_opp *opp = clk->info->opps;
-+
-+	for (idx = 0; idx < max_opp; idx++, opp++)
-+		if (opp->freq == rate)
-+			return idx;
-+	return -EINVAL;
-+}
-+
-+static int scpi_dvfs_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+	int ret = __scpi_find_dvfs_index(clk, rate);
-+
-+	if (ret < 0)
-+		return ret;
-+	return scpi_ops->dvfs_set_idx(clk->id, (u8)ret);
-+}
-+
-+static struct clk_ops scpi_dvfs_ops = {
-+	.recalc_rate = scpi_dvfs_recalc_rate,
-+	.round_rate = scpi_dvfs_round_rate,
-+	.set_rate = scpi_dvfs_set_rate,
-+};
-+
-+static const struct of_device_id scpi_clk_match[] = {
-+	{ .compatible = "arm,scpi-dvfs", .data = &scpi_dvfs_ops, },
-+	{ .compatible = "arm,scpi-clk", .data = &scpi_clk_ops, },
-+	{}
-+};
-+
-+static struct clk *
-+scpi_clk_ops_init(struct device *dev, struct device_node *np,
-+		  struct scpi_clk *sclk)
-+{
-+	struct clk_init_data init;
-+
-+	init.name = sclk->name;
-+	init.flags = CLK_IS_ROOT;
-+	init.num_parents = 0;
-+	init.ops = of_match_node(scpi_clk_match, np)->data;
-+	sclk->hw.init = &init;
-+
-+	if (init.ops == &scpi_dvfs_ops) {
-+		struct scpi_dvfs_info *info = scpi_ops->dvfs_get_info(sclk->id);
-+
-+		if (IS_ERR(info))
-+			return NULL;
-+		sclk->info = info;
-+	} else if (init.ops == &scpi_clk_ops) {
-+		int ret = scpi_ops->clk_get_range(sclk->id, &sclk->rate_min,
-+						  &sclk->rate_max);
-+		if (ret || !sclk->rate_max)
-+			return NULL;
-+	} else {
-+		return NULL;
-+	}
-+
-+	return devm_clk_register(dev, &sclk->hw);
-+}
-+
-+static int scpi_clk_add(struct device *dev, struct device_node *np)
-+{
-+	struct clk **clks;
-+	int idx, count;
-+	struct clk_onecell_data *clk_data;
-+
-+	count = of_property_count_strings(np, "clock-output-names");
-+	if (count < 0) {
-+		dev_err(dev, "%s: invalid clock output count\n", np->name);
-+		return -EINVAL;
-+	}
-+
-+	clk_data = devm_kmalloc(dev, sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data) {
-+		dev_err(dev, "failed to allocate clock provider data\n");
-+		return -ENOMEM;
-+	}
-+
-+	clks = devm_kmalloc(dev, count * sizeof(*clks), GFP_KERNEL);
-+	if (!clks) {
-+		dev_err(dev, "failed to allocate clock providers\n");
-+		return -ENOMEM;
-+	}
-+
-+	for (idx = 0; idx < count; idx++) {
-+		struct scpi_clk *sclk;
-+		u32 val;
-+
-+		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
-+		if (!sclk) {
-+			dev_err(dev, "failed to allocate scpi clocks\n");
-+			return -ENOMEM;
-+		}
-+
-+		if (of_property_read_string_index(np, "clock-output-names",
-+						  idx, &sclk->name)) {
-+			dev_err(dev, "invalid clock name @ %s\n", np->name);
-+			return -EINVAL;
-+		}
-+
-+		if (of_property_read_u32_index(np, "clock-indices",
-+					       idx, &val)) {
-+			dev_err(dev, "invalid clock index @ %s\n", np->name);
-+			return -EINVAL;
-+		}
-+
-+		sclk->id = val;
-+
-+		clks[idx] = scpi_clk_ops_init(dev, np, sclk);
-+		if (IS_ERR_OR_NULL(clks[idx]))
-+			dev_err(dev, "failed to register clock '%s'\n",
-+				sclk->name);
-+		else
-+			dev_dbg(dev, "Registered clock '%s'\n", sclk->name);
-+	}
-+
-+	clk_data->clks = clks;
-+	clk_data->clk_num = idx;
-+	of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
-+
-+	return 0;
-+}
-+
-+static int scpi_clocks_remove(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *child, *np = dev->of_node;
-+
-+	for_each_available_child_of_node(np, child)
-+		of_clk_del_provider(np);
-+	scpi_ops = NULL;
-+	return 0;
-+}
-+
-+static int scpi_clocks_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *child, *np = dev->of_node;
-+
-+	scpi_ops = get_scpi_ops();
-+	if (!scpi_ops)
-+		return -ENXIO;
-+
-+	for_each_available_child_of_node(np, child) {
-+		ret = scpi_clk_add(dev, child);
-+		if (ret) {
-+			scpi_clocks_remove(pdev);
-+			return ret;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static const struct of_device_id scpi_clocks_ids[] = {
-+	{ .compatible = "arm,scpi-clocks", },
-+	{}
-+};
-+
-+static struct platform_driver scpi_clocks_driver = {
-+	.driver	= {
-+		.name = "scpi_clocks",
-+		.of_match_table = scpi_clocks_ids,
-+	},
-+	.probe = scpi_clocks_probe,
-+	.remove = scpi_clocks_remove,
-+};
-+module_platform_driver(scpi_clocks_driver);
-+
-+MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
-+MODULE_DESCRIPTION("ARM SCPI clock driver");
-+MODULE_LICENSE("GPL v2");
+ # Clock framework
+-obj-$(CONFIG_ARCH_OMAP2)		+= $(clock-common) clock2xxx.o
++obj-$(CONFIG_ARCH_OMAP2)		+= $(clock-common)
+ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpllcore.o
+ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_virt_prcm_set.o
+ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpll.o
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index 234cedf..94a4949 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -582,47 +582,6 @@ const struct clk_hw_omap_ops clkhwops_wait = {
+ };
+ 
+ /**
+- * omap2_clk_switch_mpurate_at_boot - switch ARM MPU rate by boot-time argument
+- * @mpurate_ck_name: clk name of the clock to change rate
+- *
+- * Change the ARM MPU clock rate to the rate specified on the command
+- * line, if one was specified.  @mpurate_ck_name should be
+- * "virt_prcm_set" on OMAP2xxx and "dpll1_ck" on OMAP34xx/OMAP36xx.
+- * XXX Does not handle voltage scaling - on OMAP2xxx this is currently
+- * handled by the virt_prcm_set clock, but this should be handled by
+- * the OPP layer.  XXX This is intended to be handled by the OPP layer
+- * code in the near future and should be removed from the clock code.
+- * Returns -EINVAL if 'mpurate' is zero or if clk_set_rate() rejects
+- * the rate, -ENOENT if the struct clk referred to by @mpurate_ck_name
+- * cannot be found, or 0 upon success.
+- */
+-int __init omap2_clk_switch_mpurate_at_boot(const char *mpurate_ck_name)
+-{
+-	struct clk *mpurate_ck;
+-	int r;
+-
+-	if (!mpurate)
+-		return -EINVAL;
+-
+-	mpurate_ck = clk_get(NULL, mpurate_ck_name);
+-	if (WARN(IS_ERR(mpurate_ck), "Failed to get %s.\n", mpurate_ck_name))
+-		return -ENOENT;
+-
+-	r = clk_set_rate(mpurate_ck, mpurate);
+-	if (r < 0) {
+-		WARN(1, "clock: %s: unable to set MPU rate to %d: %d\n",
+-		     mpurate_ck_name, mpurate, r);
+-		clk_put(mpurate_ck);
+-		return -EINVAL;
+-	}
+-
+-	calibrate_delay();
+-	clk_put(mpurate_ck);
+-
+-	return 0;
+-}
+-
+-/**
+  * omap2_clk_print_new_rates - print summary of current clock tree rates
+  * @hfclkin_ck_name: clk name for the off-chip HF oscillator
+  * @core_ck_name: clk name for the on-chip CORE_CLK
+diff --git a/arch/arm/mach-omap2/clock.h b/arch/arm/mach-omap2/clock.h
+index 950a17a..e2781b4 100644
+--- a/arch/arm/mach-omap2/clock.h
++++ b/arch/arm/mach-omap2/clock.h
+@@ -186,7 +186,6 @@ void omap3_dpll_deny_idle(struct clk_hw_omap *clk);
+ 
+ void __init omap2_clk_disable_clkdm_control(void);
+ 
+-int omap2_clk_switch_mpurate_at_boot(const char *mpurate_ck_name);
+ void omap2_clk_print_new_rates(const char *hfclkin_ck_name,
+ 			       const char *core_ck_name,
+ 			       const char *mpu_ck_name);
+diff --git a/arch/arm/mach-omap2/clock2xxx.c b/arch/arm/mach-omap2/clock2xxx.c
+deleted file mode 100644
+index b870f6a..0000000
+--- a/arch/arm/mach-omap2/clock2xxx.c
++++ /dev/null
+@@ -1,57 +0,0 @@
+-/*
+- * clock2xxx.c - OMAP2xxx-specific clock integration code
+- *
+- * Copyright (C) 2005-2008 Texas Instruments, Inc.
+- * Copyright (C) 2004-2010 Nokia Corporation
+- *
+- * Contacts:
+- * Richard Woodruff <r-woodruff2@ti.com>
+- * Paul Walmsley
+- *
+- * Based on earlier work by Tuukka Tikkanen, Tony Lindgren,
+- * Gordon McNutt and RidgeRun, Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-#undef DEBUG
+-
+-#include <linux/kernel.h>
+-#include <linux/errno.h>
+-#include <linux/clk.h>
+-#include <linux/io.h>
+-
+-#include "soc.h"
+-#include "clock.h"
+-#include "clock2xxx.h"
+-#include "cm.h"
+-#include "cm-regbits-24xx.h"
+-
+-struct clk_hw *dclk_hw;
+-/*
+- * Omap24xx specific clock functions
+- */
+-
+-/*
+- * Switch the MPU rate if specified on cmdline.  We cannot do this
+- * early until cmdline is parsed.  XXX This should be removed from the
+- * clock code and handled by the OPP layer code in the near future.
+- */
+-static int __init omap2xxx_clk_arch_init(void)
+-{
+-	int ret;
+-
+-	if (!cpu_is_omap24xx())
+-		return 0;
+-
+-	ret = omap2_clk_switch_mpurate_at_boot("virt_prcm_set");
+-	if (!ret)
+-		omap2_clk_print_new_rates("sys_ck", "dpll_ck", "mpu_ck");
+-
+-	return ret;
+-}
+-
+-omap_arch_initcall(omap2xxx_clk_arch_init);
+-
+-
+diff --git a/arch/arm/mach-omap2/clock3xxx.c b/arch/arm/mach-omap2/clock3xxx.c
+index 8bede6a..4bd6122 100644
+--- a/arch/arm/mach-omap2/clock3xxx.c
++++ b/arch/arm/mach-omap2/clock3xxx.c
+@@ -108,28 +108,3 @@ void __init omap3_clk_lock_dpll5(void)
+ 	clk_disable_unprepare(dpll5_clk);
+ 	return;
+ }
+-
+-/* Common clock code */
+-
+-/*
+- * Switch the MPU rate if specified on cmdline.  We cannot do this
+- * early until cmdline is parsed.  XXX This should be removed from the
+- * clock code and handled by the OPP layer code in the near future.
+- */
+-static int __init omap3xxx_clk_arch_init(void)
+-{
+-	int ret;
+-
+-	if (!cpu_is_omap34xx())
+-		return 0;
+-
+-	ret = omap2_clk_switch_mpurate_at_boot("dpll1_ck");
+-	if (!ret)
+-		omap2_clk_print_new_rates("osc_sys_ck", "core_ck", "arm_fck");
+-
+-	return ret;
+-}
+-
+-omap_arch_initcall(omap3xxx_clk_arch_init);
+-
+-
 -- 
-1.9.1
+1.7.9.5
