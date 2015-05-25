@@ -1,84 +1,177 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Thu, 7 May 2015 17:16:51 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 19/20] clk: tegra210: add support for Tegra210 clocks
-Message-ID: <20150507151649.GC25866@ulmo.nvidia.com>
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
- <1430757460-9478-20-git-send-email-rklein@nvidia.com>
- <20150506145113.GH22098@ulmo.nvidia.com>
- <554A4D82.80307@nvidia.com>
+Return-Path: <linux-omap-owner@vger.kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+	<sboyd@codeaurora.org>, <mturquette@linaro.org>,
+	<tony@atomide.com>, <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv3 25/27] clk: ti: remove exported ll_ops struct, instead add an API for registration
+Date: Mon, 25 May 2015 18:00:30 +0300
+Message-ID: <1432566032-10860-26-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jy6Sn24JjFx/iggw"
-In-Reply-To: <554A4D82.80307@nvidia.com>
+Content-Type: text/plain
+Sender: linux-omap-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+We should avoid exporting data from drivers, instead use an API for
+registering the clock low level operations.
 
---jy6Sn24JjFx/iggw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/clock.c  |   17 +++++++++++++----
+ arch/arm/mach-omap2/clock.h  |    1 +
+ arch/arm/mach-omap2/io.c     |    2 ++
+ drivers/clk/ti/clk.c         |   21 +++++++++++++++++++++
+ drivers/clk/ti/clock.h       |    2 ++
+ drivers/clk/ti/clockdomain.c |    2 ++
+ include/linux/clk/ti.h       |    3 +--
+ 7 files changed, 42 insertions(+), 6 deletions(-)
 
-On Wed, May 06, 2015 at 01:21:06PM -0400, Rhyland Klein wrote:
-> On 5/6/2015 10:51 AM, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Mon, May 04, 2015 at 12:37:39PM -0400, Rhyland Klein wrote:
-> > [...]
-> >> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-=
-tegra210.c
-> > [...]
-> >> +static struct div_nmp plld_nmp =3D {
-> >> +	.divm_shift =3D 0,
-> >> +	.divm_width =3D 8,
-> >> +	.divn_shift =3D 11,
-> >> +	.divn_width =3D 8,
-> >> +	.divp_shift =3D 20,
-> >> +	.divp_width =3D 3,
-> >> +};
-> >=20
-> > I think we need to add the SDM shift and width fields here:
-> >=20
-> > 	.sdm_shift =3D 0,
-> > 	.sdm_width =3D 16,
-> >=20
-> > Otherwise pll_d can't take advantage of the fractional divider.
-> >=20
-> Actually, sdm_shift/width aren't used. I originally added them to handle
-> SDM data, but eventually I switched to using a reg/mask combo. So this
-> isn't needed.
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index 99875db..40a88c2 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -113,6 +113,19 @@ static struct ti_clk_ll_ops omap_clk_ll_ops = {
+ };
+ 
+ /**
++ * omap2_clk_setup_ll_ops - setup clock driver low-level ops
++ *
++ * Sets up clock driver low-level platform ops. These are needed
++ * for register accesses and various other misc platform operations.
++ * Returns 0 on success, -EBUSY if low level ops have been registered
++ * already.
++ */
++int __init omap2_clk_setup_ll_ops(void)
++{
++	return ti_clk_setup_ll_ops(&omap_clk_ll_ops);
++}
++
++/**
+  * omap2_clk_provider_init - initialize a clock provider
+  * @match_table: DT device table to match for devices to init
+  * @np: device node pointer for the this clock provider
+@@ -130,8 +143,6 @@ int __init omap2_clk_provider_init(struct device_node *np, int index,
+ {
+ 	struct clk_iomap *io;
+ 
+-	ti_clk_ll_ops = &omap_clk_ll_ops;
+-
+ 	io = kzalloc(sizeof(*io), GFP_KERNEL);
+ 
+ 	io->regmap = syscon;
+@@ -155,8 +166,6 @@ void __init omap2_clk_legacy_provider_init(int index, void __iomem *mem)
+ {
+ 	struct clk_iomap *io;
+ 
+-	ti_clk_ll_ops = &omap_clk_ll_ops;
+-
+ 	io = memblock_virt_alloc(sizeof(*io), 0);
+ 
+ 	io->mem = mem;
+diff --git a/arch/arm/mach-omap2/clock.h b/arch/arm/mach-omap2/clock.h
+index 1986ab2..a7051d6 100644
+--- a/arch/arm/mach-omap2/clock.h
++++ b/arch/arm/mach-omap2/clock.h
+@@ -83,6 +83,7 @@ struct regmap;
+ int __init omap2_clk_provider_init(struct device_node *np, int index,
+ 				   struct regmap *syscon, void __iomem *mem);
+ void __init omap2_clk_legacy_provider_init(int index, void __iomem *mem);
++int __init omap2_clk_setup_ll_ops(void);
+ 
+ void __init ti_clk_init_features(void);
+ #endif
+diff --git a/arch/arm/mach-omap2/io.c b/arch/arm/mach-omap2/io.c
+index 7467856..a253aaf 100644
+--- a/arch/arm/mach-omap2/io.c
++++ b/arch/arm/mach-omap2/io.c
+@@ -722,6 +722,8 @@ int __init omap_clk_init(void)
+ 
+ 	ti_clk_init_features();
+ 
++	omap2_clk_setup_ll_ops();
++
+ 	if (of_have_populated_dt()) {
+ 		ret = omap_control_init();
+ 		if (ret)
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index f1dcd20..dc6b759 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -33,6 +33,27 @@ static struct device_node *clocks_node_ptr[CLK_MAX_MEMMAPS];
+ struct ti_clk_features ti_clk_features;
+ 
+ /**
++ * ti_clk_setup_ll_ops - setup low level clock operations
++ * @ops: low level clock ops descriptor
++ *
++ * Sets up low level clock operations for TI clock driver. This is used
++ * to provide various callbacks for the clock driver towards platform
++ * specific code. Returns 0 on success, -EBUSY if ll_ops have been
++ * registered already.
++ */
++int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
++{
++	if (ti_clk_ll_ops) {
++		pr_err("Attempt to register ll_ops multiple times.\n");
++		return -EBUSY;
++	}
++
++	ti_clk_ll_ops = ops;
++
++	return 0;
++}
++
++/**
+  * ti_dt_clocks_register - register DT alias clocks during boot
+  * @oclks: list of clocks to register
+  *
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 3c43125..d4d232fd 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -280,4 +280,6 @@ long omap4_dpll_regm4xen_determine_rate(struct clk_hw *hw,
+ 					unsigned long *best_parent_rate,
+ 					struct clk_hw **best_parent_clk);
+ 
++extern struct ti_clk_ll_ops *ti_clk_ll_ops;
++
+ #endif
+diff --git a/drivers/clk/ti/clockdomain.c b/drivers/clk/ti/clockdomain.c
+index 61ef87b..80a7b69 100644
+--- a/drivers/clk/ti/clockdomain.c
++++ b/drivers/clk/ti/clockdomain.c
+@@ -21,6 +21,8 @@
+ #include <linux/of_address.h>
+ #include <linux/clk/ti.h>
+ 
++#include "clock.h"
++
+ #undef pr_fmt
+ #define pr_fmt(fmt) "%s: " fmt, __func__
+ 
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 53fe38f..267cca0 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -235,8 +235,6 @@ struct ti_clk_ll_ops {
+ 				       u8 *idlest_reg_id);
+ };
+ 
+-extern struct ti_clk_ll_ops *ti_clk_ll_ops;
+-
+ #define to_clk_hw_omap(_hw) container_of(_hw, struct clk_hw_omap, hw)
+ 
+ void omap2_init_clk_clkdm(struct clk_hw *clk);
+@@ -255,6 +253,7 @@ unsigned long omap2_get_dpll_rate(struct clk_hw_omap *clk);
+ void ti_dt_clk_init_provider(struct device_node *np, int index);
+ void ti_dt_clk_init_retry_clks(void);
+ void ti_dt_clockdomains_setup(void);
++int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops);
+ 
+ int omap3430_dt_clk_init(void);
+ int omap3630_dt_clk_init(void);
+-- 
+1.7.9.5
 
-Right, I hadn't noticed that this had changed from your earlier drafts.
-
-Thierry
-
---jy6Sn24JjFx/iggw
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVS4HhAAoJEN0jrNd/PrOhdA0P/iSgaOu8DgOGSm701AafETM1
-u0RN45BeqIU8HGcF6t7KFh2rU3hW/SaIbL0Ug7VJQz4z9+6eZxufLPt2WUSKkt4u
-d+3SkBCbtqB2EqmYT7PtRnvvITu/VQjm+xN35TgQ1/d3jGZ46euEYuVK6uftNs86
-VfspzsNWuDsoM6QPKMsUhL04btR49kAzTEIMZfWqDuMJG8S8XDzNBGKqKMuYMzK8
-Tjd6QeamQ6zrxEJ3/BEyGtlRe+ePLQU04ttfJHkMrBpdzO4v/uosEc5JV+7pf7yw
-4zlHXWvQiMagrTfFrfcke0O2TYgPDzzuXMvz3/DDRx9PT2nvGA96cAvsyFAQICwg
-Rl0G8X+DA/NODESBeLb9FbW3MxyfPXqZoucvAqGZfucl9tbImSdH5zQHTQXofVU2
-N+00FyKh5us8sQrOgBk4+/gXXJ3WOJYg7Yxn3kSfdIWX2OxBL48337OBoh3ZM7Ut
-/Fa426dU1lEILemQwgAKpLH1Exw6EdQbPxBYdit7mIDzF4aS8fdHXcuII2acEiSZ
-ObllCghriWwLo3xhY3EJ2+6h4GnJSXZ9ZEjRKVBhPcuF7AOF2XymNgtF9WkkE8eo
-VWX/aRMuYw4YJZ2F2NJRrVEzTtucfk2OjzQKDxa44Zz6eNUokrA9UfMXGB5JPEXF
-auPFH6/Mm+Wrhy6uqy0E
-=Bobx
------END PGP SIGNATURE-----
-
---jy6Sn24JjFx/iggw--
