@@ -1,88 +1,75 @@
-Return-Path: <rklein@nvidia.com>
-Message-ID: <5550C5B2.5030700@nvidia.com>
-Date: Mon, 11 May 2015 11:07:30 -0400
-From: Rhyland Klein <rklein@nvidia.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <tony@atomide.com>,
+        <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv3 12/27] ARM: OMAP2+: clock: add support for clkdm ops to the low level clk ops
+Date: Mon, 25 May 2015 18:00:17 +0300
+Message-ID: <1432566032-10860-13-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>, Stephen Warren
-	<swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Bill Huang <bilhuang@nvidia.com>
-Subject: Re: [PATCH v2 16/19] clk: tegra: pll: Add Set_default logic
-References: <1430328109-537-1-git-send-email-rklein@nvidia.com> <1430328109-537-17-git-send-email-rklein@nvidia.com> <20150430101225.GU3097@tbergstrom-lnx.Nvidia.com> <55424ACA.9010406@nvidia.com> <20150511115036.GG22637@tbergstrom-lnx.Nvidia.com>
-In-Reply-To: <20150511115036.GG22637@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 5/11/2015 7:50 AM, Peter De Schrijver wrote:
-> On Thu, Apr 30, 2015 at 11:31:22AM -0400, Rhyland Klein wrote:
->> On 4/30/2015 6:12 AM, Peter De Schrijver wrote:
->>> On Wed, Apr 29, 2015 at 01:21:46PM -0400, Rhyland Klein wrote:
->>>> From: Bill Huang <bilhuang@nvidia.com>
->>>>
->>>> Add logic which (if specified for a pll) can verify that a PLL is set
->>>> to the proper default value and if not can set it. This can be
->>>> specified per PLL as each will have different default values.
->>>>
->>>
->>> Why can't we just set the default values at init time?
->>
->> Sorry, I did some investigation into this and wrote up a nice response
->> ... and forgot to hit send ...
->>
->> The reason this can't be run only once at init time is the following. In
->> reality, we want to have the defined default values written as early as
->> possible. Idealy, the bootloader could write these, so the kernel need
->> only check, see they are right, and not touch them. However, since we
->> can't rely on the bootloader to do so, the kernel needs the support to
->> be able to write these default values. At init time, some pll's will be
->> enabled (from bootloader) and because they are enabled (and the rest of
->> the clk framework isn't done being setup yet) we can't disable them to
->> write the full register values. Therefore, the set_defaults logic uses a
->> 2-pass system.
->>
->> first pass: Try to set defaults at init/registration time. If pll is
->> disabled, this works fine. If it is enabled, then we update a subset of
->> the register as a "best effort" setting of the defaults.
->>
->> second pass: Should only run the first time we go through set_rate for a
->> pll. If the first pass already wrote default value, then it skips this
->> step. Otherwise it will go in, once the pll is disabled in the set_rate
->> path, and write the full register default.
->>
->> This is required because some registers need to be reset to the default
->> values we have to ensure locking works correctly. Does that make sense?
-> 
-> Ok. I see... Should we print a warning (pr_warn()) the bootloader isn't
-> initializing the hw correctly if the second pass needs to write the default
-> values?
+Clock driver requires access to certain clockdomain handling ops once
+the code is being moved over under clock driver. Example of this is
+clk_enable / clk_disable under omap3 DPLL code. The required clkdm
+APIs are now exported through the ti_clk_ll_ops struct.
 
-All the set default routines use the inline function
-"_pll_misc_chk_default" (used to be a MACRO). Inside, it compares
-register values vs expected defaults and warns:
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/clock.c |    2 ++
+ include/linux/clk/ti.h      |   16 +++++++++++-----
+ 2 files changed, 13 insertions(+), 5 deletions(-)
 
-        if (boot_val != default_val) {
-                pr_warn("boot misc%d 0x%x: expected 0x%x\n",
-                        misc_num, boot_val, default_val);
-                pr_warn(" (comparison mask = 0x%x)\n", mask);
-                params->defaults_set = false;
-        }
-
-so this is already done. I suppose the only other place we could add a
-warning is if the first past set-defaults can't be fully run since the
-clock is on, that might make things a little clearer, so I guess I'll go
-ahead and add that.
-
--rhyland
-
-> 
-> Thanks,
-> 
-> Peter.
-> 
-
-
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index 94a4949..d6afc12 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -120,6 +120,8 @@ u32 omap2_clk_readl(struct clk_hw_omap *clk, void __iomem *reg)
+ static struct ti_clk_ll_ops omap_clk_ll_ops = {
+ 	.clk_readl = clk_memmap_readl,
+ 	.clk_writel = clk_memmap_writel,
++	.clkdm_clk_enable = clkdm_clk_enable,
++	.clkdm_clk_disable = clkdm_clk_disable,
+ };
+ 
+ /**
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 43184c2..43b406c 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -238,18 +238,24 @@ struct clk_omap_reg {
+ };
+ 
+ /**
+- * struct ti_clk_ll_ops - low-level register access ops for a clock
++ * struct ti_clk_ll_ops - low-level ops for clocks
+  * @clk_readl: pointer to register read function
+  * @clk_writel: pointer to register write function
++ * @clkdm_clk_enable: pointer to clockdomain enable function
++ * @clkdm_clk_disable: pointer to clockdomain disable function
+  *
+- * Low-level register access ops are generally used by the basic clock types
+- * (clk-gate, clk-mux, clk-divider etc.) to provide support for various
+- * low-level hardware interfaces (direct MMIO, regmap etc.), but can also be
+- * used by other hardware-specific clock drivers if needed.
++ * Low-level ops are generally used by the basic clock types (clk-gate,
++ * clk-mux, clk-divider etc.) to provide support for various low-level
++ * hadrware interfaces (direct MMIO, regmap etc.), and is initialized
++ * by board code. Low-level ops also contain some other platform specific
++ * operations not provided directly by clock drivers.
+  */
+ struct ti_clk_ll_ops {
+ 	u32	(*clk_readl)(void __iomem *reg);
+ 	void	(*clk_writel)(u32 val, void __iomem *reg);
++	int	(*clkdm_clk_enable)(struct clockdomain *clkdm, struct clk *clk);
++	int	(*clkdm_clk_disable)(struct clockdomain *clkdm,
++				     struct clk *clk);
+ };
+ 
+ extern struct ti_clk_ll_ops *ti_clk_ll_ops;
 -- 
-nvpublic
+1.7.9.5
