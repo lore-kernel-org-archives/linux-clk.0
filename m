@@ -1,220 +1,124 @@
-Return-Path: <bintian.wang@huawei.com>
-From: Bintian Wang <bintian.wang@huawei.com>
-To: <mturquette@linaro.org>, <sboyd@codeaurora.org>, <zhangfei.gao@linaro.org>,
-        <xuwei5@hisilicon.com>, <xuejiancheng@huawei.com>,
-        <tomeu.vizoso@collabora.com>, <sledge.yanwei@huawei.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arnd@arndb.de>, <will.deacon@arm.com>, <robh+dt@kernel.org>,
-        <khilman@linaro.org>, <mark.rutland@arm.com>,
-        <catalin.marinas@arm.com>, <haojian.zhuang@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <olof@lixom.net>,
-        <yanhaifeng@gmail.com>, <linux@arm.linux.org.uk>,
-        <guodong.xu@linaro.org>, <jorge.ramirez-ortiz@linaro.org>,
-        <tyler.baker@linaro.org>, <khilman@kernel.org>
-CC: <xuyiping@hisilicon.com>, <wangbinghui@hisilicon.com>,
-        <zhenwei.wang@hisilicon.com>, <victor.lixin@hisilicon.com>,
-        <puck.chen@hisilicon.com>, <dan.zhao@hisilicon.com>,
-        <huxinwei@huawei.com>, <bintian.wang@huawei.com>,
-        <z.liuxinliang@huawei.com>, <heyunlei@huawei.com>,
-        <kong.kongxinwei@hisilicon.com>, <wangbintian@gmail.com>,
-        <w.f@huawei.com>, <liguozhu@hisilicon.com>
-Subject: [PATCH v8 5/7] dt-bindings: Add header file of hi6220 clock driver
-Date: Sun, 24 May 2015 12:11:10 +0800
-Message-ID: <1432440671-25235-2-git-send-email-bintian.wang@huawei.com>
-In-Reply-To: <1432440671-25235-1-git-send-email-bintian.wang@huawei.com>
-References: <1432440671-25235-1-git-send-email-bintian.wang@huawei.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <tony@atomide.com>,
+        <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
+Date: Mon, 25 May 2015 18:00:05 +0300
+Message-ID: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the header file "hi6220-clock.h" used by both
-hi6220 clock driver and hi6220 device tree file.
+Hi,
 
-Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Bintian Wang <bintian.wang@huawei.com>
----
- include/dt-bindings/clock/hi6220-clock.h | 173 +++++++++++++++++++++++++++++++
- 1 file changed, 173 insertions(+)
- create mode 100644 include/dt-bindings/clock/hi6220-clock.h
+As requested, posting v3 with somewhat changed diff parameters and
+diffstat attached. Just some minor Makefile changes compared to v2,
+these were discussed under that set.
 
-diff --git a/include/dt-bindings/clock/hi6220-clock.h b/include/dt-bindings/clock/hi6220-clock.h
-new file mode 100644
-index 0000000..70ee383
---- /dev/null
-+++ b/include/dt-bindings/clock/hi6220-clock.h
-@@ -0,0 +1,173 @@
-+/*
-+ * Copyright (c) 2015 Hisilicon Limited.
-+ *
-+ * Author: Bintian Wang <bintian.wang@huawei.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_HI6220_H
-+#define __DT_BINDINGS_CLOCK_HI6220_H
-+
-+/* clk in Hi6220 AO (always on) controller */
-+#define HI6220_NONE_CLOCK	0
-+
-+/* fixed rate clocks */
-+#define HI6220_REF32K		1
-+#define HI6220_CLK_TCXO		2
-+#define HI6220_MMC1_PAD		3
-+#define HI6220_MMC2_PAD		4
-+#define HI6220_MMC0_PAD		5
-+#define HI6220_PLL_BBP		6
-+#define HI6220_PLL_GPU		7
-+#define HI6220_PLL1_DDR		8
-+#define HI6220_PLL_SYS		9
-+#define HI6220_PLL_SYS_MEDIA	10
-+#define HI6220_DDR_SRC		11
-+#define HI6220_PLL_MEDIA	12
-+#define HI6220_PLL_DDR		13
-+
-+/* fixed factor clocks */
-+#define HI6220_300M		14
-+#define HI6220_150M		15
-+#define HI6220_PICOPHY_SRC	16
-+#define HI6220_MMC0_SRC_SEL	17
-+#define HI6220_MMC1_SRC_SEL	18
-+#define HI6220_MMC2_SRC_SEL	19
-+#define HI6220_VPU_CODEC	20
-+#define HI6220_MMC0_SMP		21
-+#define HI6220_MMC1_SMP		22
-+#define HI6220_MMC2_SMP		23
-+
-+/* gate clocks */
-+#define HI6220_WDT0_PCLK	24
-+#define HI6220_WDT1_PCLK	25
-+#define HI6220_WDT2_PCLK	26
-+#define HI6220_TIMER0_PCLK	27
-+#define HI6220_TIMER1_PCLK	28
-+#define HI6220_TIMER2_PCLK	29
-+#define HI6220_TIMER3_PCLK	30
-+#define HI6220_TIMER4_PCLK	31
-+#define HI6220_TIMER5_PCLK	32
-+#define HI6220_TIMER6_PCLK	33
-+#define HI6220_TIMER7_PCLK	34
-+#define HI6220_TIMER8_PCLK	35
-+#define HI6220_UART0_PCLK	36
-+
-+#define HI6220_AO_NR_CLKS	37
-+
-+/* clk in Hi6220 systrl */
-+/* gate clock */
-+#define HI6220_MMC0_CLK		1
-+#define HI6220_MMC0_CIUCLK	2
-+#define HI6220_MMC1_CLK		3
-+#define HI6220_MMC1_CIUCLK	4
-+#define HI6220_MMC2_CLK		5
-+#define HI6220_MMC2_CIUCLK	6
-+#define HI6220_USBOTG_HCLK	7
-+#define HI6220_CLK_PICOPHY	8
-+#define HI6220_HIFI		9
-+#define HI6220_DACODEC_PCLK	10
-+#define HI6220_EDMAC_ACLK	11
-+#define HI6220_CS_ATB		12
-+#define HI6220_I2C0_CLK		13
-+#define HI6220_I2C1_CLK		14
-+#define HI6220_I2C2_CLK		15
-+#define HI6220_I2C3_CLK		16
-+#define HI6220_UART1_PCLK	17
-+#define HI6220_UART2_PCLK	18
-+#define HI6220_UART3_PCLK	19
-+#define HI6220_UART4_PCLK	20
-+#define HI6220_SPI_CLK		21
-+#define HI6220_TSENSOR_CLK	22
-+#define HI6220_MMU_CLK		23
-+#define HI6220_HIFI_SEL		24
-+#define HI6220_MMC0_SYSPLL	25
-+#define HI6220_MMC1_SYSPLL	26
-+#define HI6220_MMC2_SYSPLL	27
-+#define HI6220_MMC0_SEL		28
-+#define HI6220_MMC1_SEL		29
-+#define HI6220_BBPPLL_SEL	30
-+#define HI6220_MEDIA_PLL_SRC	31
-+#define HI6220_MMC2_SEL		32
-+#define HI6220_CS_ATB_SYSPLL	33
-+
-+/* mux clocks */
-+#define HI6220_MMC0_SRC		34
-+#define HI6220_MMC0_SMP_IN	35
-+#define HI6220_MMC1_SRC		36
-+#define HI6220_MMC1_SMP_IN	37
-+#define HI6220_MMC2_SRC		38
-+#define HI6220_MMC2_SMP_IN	39
-+#define HI6220_HIFI_SRC		40
-+#define HI6220_UART1_SRC	41
-+#define HI6220_UART2_SRC	42
-+#define HI6220_UART3_SRC	43
-+#define HI6220_UART4_SRC	44
-+#define HI6220_MMC0_MUX0	45
-+#define HI6220_MMC1_MUX0	46
-+#define HI6220_MMC2_MUX0	47
-+#define HI6220_MMC0_MUX1	48
-+#define HI6220_MMC1_MUX1	49
-+#define HI6220_MMC2_MUX1	50
-+
-+/* divider clocks */
-+#define HI6220_CLK_BUS		51
-+#define HI6220_MMC0_DIV		52
-+#define HI6220_MMC1_DIV		53
-+#define HI6220_MMC2_DIV		54
-+#define HI6220_HIFI_DIV		55
-+#define HI6220_BBPPLL0_DIV	56
-+#define HI6220_CS_DAPB		57
-+#define HI6220_CS_ATB_DIV	58
-+
-+#define HI6220_SYS_NR_CLKS	59
-+
-+/* clk in Hi6220 media controller */
-+/* gate clocks */
-+#define HI6220_DSI_PCLK		1
-+#define HI6220_G3D_PCLK		2
-+#define HI6220_ACLK_CODEC_VPU	3
-+#define HI6220_ISP_SCLK		4
-+#define HI6220_ADE_CORE		5
-+#define HI6220_MED_MMU		6
-+#define HI6220_CFG_CSI4PHY	7
-+#define HI6220_CFG_CSI2PHY	8
-+#define HI6220_ISP_SCLK_GATE	9
-+#define HI6220_ISP_SCLK_GATE1	10
-+#define HI6220_ADE_CORE_GATE	11
-+#define HI6220_CODEC_VPU_GATE	12
-+#define HI6220_MED_SYSPLL	13
-+
-+/* mux clocks */
-+#define HI6220_1440_1200	14
-+#define HI6220_1000_1200	15
-+#define HI6220_1000_1440	16
-+
-+/* divider clocks */
-+#define HI6220_CODEC_JPEG	17
-+#define HI6220_ISP_SCLK_SRC	18
-+#define HI6220_ISP_SCLK1	19
-+#define HI6220_ADE_CORE_SRC	20
-+#define HI6220_ADE_PIX_SRC	21
-+#define HI6220_G3D_CLK		22
-+#define HI6220_CODEC_VPU_SRC	23
-+
-+#define HI6220_MEDIA_NR_CLKS	24
-+
-+/* clk in Hi6220 power controller */
-+/* gate clocks */
-+#define HI6220_PLL_GPU_GATE	1
-+#define HI6220_PLL1_DDR_GATE	2
-+#define HI6220_PLL_DDR_GATE	3
-+#define HI6220_PLL_MEDIA_GATE	4
-+#define HI6220_PLL0_BBP_GATE	5
-+
-+/* divider clocks */
-+#define HI6220_DDRC_SRC		6
-+#define HI6220_DDRC_AXI1	7
-+
-+#define HI6220_POWER_NR_CLKS	8
-+#endif
+Set has been pushed to:
+- tree: https://github.com/t-kristo/linux-pm.git
+- branch: for-4.2/ti-clk-move
+
+Previous testing results still valid for this branch.
+
+-Tero
+
+Tero Kristo (27):
+  ARM: OMAP2+: clock: export driver API to setup/get clock features
+  clk: ti: move generic OMAP DPLL implementation under drivers/clk
+  clk: ti: move OMAP4+ DPLL implementation under drivers/clk
+  clk: ti: move interface clock implementation under drivers/clk
+  ARM: OMAP3: dpll3-m2: get rid of obsolete clksel access
+  ARM: OMAP2+: clk: remove obsolete clksel support code
+  ARM: OMAP2+: clock: remove clock_common_data.c file
+  ARM: OMAP36xx: remove clock36xx.c/.h files
+  clk: ti: autoidle: move generic autoidle handling code to clock
+    driver
+  clk: ti: move omap2_clk_enable_init_clocks under clock driver
+  ARM: OMAP2+: clock: remove support for legacy mpurate command line
+    param
+  ARM: OMAP2+: clock: add support for clkdm ops to the low level clk
+    ops
+  ARM: OMAP2+: clock: add support for specific CM ops to ti_clk_ll_ops
+  clk: ti: dpll: move omap3 DPLL functionality to clock driver
+  ARM: OMAP3: clock: remove clock3xxx.c file
+  ARM: OMAP2+: clock: remove clkdm_control static boolean from code
+  clk: ti: dflt: move support for default gate clock to clock driver
+  clk: ti: omap2430: move clock support code under clock driver
+  clk: ti: clkdm: move clkdm gate clock support code to clock driver
+  clk: ti: omap34xx: move omap34xx clock type support code to clock
+    driver
+  ARM: OMAP4: clock: remove clock44xx.h header
+  clk: ti: am3517: move remaining am3517 clock support code to clock
+    driver
+  clk: ti: move some public definitions to private header
+  ARM: OMAP2+: clock: remove dead definitions from the clock header
+    file
+  clk: ti: remove exported ll_ops struct, instead add an API for
+    registration
+  ARM: OMAP2+: clock: remove legacy omap2_clk_readl/writel APIs
+  clk: ti: move low-level access and init code under clock driver
+
+ arch/arm/mach-omap2/Makefile                       |   22 +-
+ arch/arm/mach-omap2/clkt34xx_dpll3m2.c             |    7 +-
+ arch/arm/mach-omap2/clkt_clksel.c                  |  466 --------------
+ arch/arm/mach-omap2/clkt_iclk.c                    |   68 --
+ arch/arm/mach-omap2/clock.c                        |  675 +-------------------
+ arch/arm/mach-omap2/clock.h                        |  205 +-----
+ arch/arm/mach-omap2/clock2430.c                    |   57 --
+ arch/arm/mach-omap2/clock2xxx.c                    |   57 --
+ arch/arm/mach-omap2/clock34xx.c                    |  138 ----
+ arch/arm/mach-omap2/clock34xx.h                    |   18 -
+ arch/arm/mach-omap2/clock3517.c                    |  118 ----
+ arch/arm/mach-omap2/clock3517.h                    |   14 -
+ arch/arm/mach-omap2/clock36xx.c                    |   69 --
+ arch/arm/mach-omap2/clock36xx.h                    |   13 -
+ arch/arm/mach-omap2/clock3xxx.c                    |  135 ----
+ arch/arm/mach-omap2/clock44xx.h                    |   20 -
+ arch/arm/mach-omap2/clock_common_data.c            |  115 ----
+ arch/arm/mach-omap2/io.c                           |    3 +-
+ drivers/clk/ti/Makefile                            |   10 +-
+ drivers/clk/ti/apll.c                              |    2 +
+ drivers/clk/ti/autoidle.c                          |  121 +++-
+ drivers/clk/ti/clk-2xxx.c                          |    2 +
+ drivers/clk/ti/clk-33xx.c                          |    2 +
+ drivers/clk/ti/clk-3xxx.c                          |  244 +++++++
+ drivers/clk/ti/clk-43xx.c                          |    2 +
+ drivers/clk/ti/clk-44xx.c                          |    2 +
+ drivers/clk/ti/clk-54xx.c                          |    2 +
+ drivers/clk/ti/clk-7xx.c                           |    3 +-
+ drivers/clk/ti/clk-816x.c                          |    2 +
+ drivers/clk/ti/clk.c                               |  145 ++++-
+ drivers/clk/ti/clkt_dflt.c                         |  316 +++++++++
+ .../arm/mach-omap2 => drivers/clk/ti}/clkt_dpll.c  |   27 +-
+ drivers/clk/ti/clkt_iclk.c                         |  101 +++
+ drivers/clk/ti/clock.h                             |  113 ++++
+ drivers/clk/ti/clockdomain.c                       |   78 +++
+ {arch/arm/mach-omap2 => drivers/clk/ti}/dpll3xxx.c |  157 ++---
+ {arch/arm/mach-omap2 => drivers/clk/ti}/dpll44xx.c |   23 +-
+ drivers/clk/ti/fixed-factor.c                      |    2 +
+ include/linux/clk/ti.h                             |  157 ++---
+ 39 files changed, 1324 insertions(+), 2387 deletions(-)
+ delete mode 100644 arch/arm/mach-omap2/clkt_clksel.c
+ delete mode 100644 arch/arm/mach-omap2/clkt_iclk.c
+ delete mode 100644 arch/arm/mach-omap2/clock2430.c
+ delete mode 100644 arch/arm/mach-omap2/clock2xxx.c
+ delete mode 100644 arch/arm/mach-omap2/clock34xx.c
+ delete mode 100644 arch/arm/mach-omap2/clock34xx.h
+ delete mode 100644 arch/arm/mach-omap2/clock3517.c
+ delete mode 100644 arch/arm/mach-omap2/clock3517.h
+ delete mode 100644 arch/arm/mach-omap2/clock36xx.c
+ delete mode 100644 arch/arm/mach-omap2/clock36xx.h
+ delete mode 100644 arch/arm/mach-omap2/clock3xxx.c
+ delete mode 100644 arch/arm/mach-omap2/clock44xx.h
+ delete mode 100644 arch/arm/mach-omap2/clock_common_data.c
+ create mode 100644 drivers/clk/ti/clkt_dflt.c
+ rename {arch/arm/mach-omap2 => drivers/clk/ti}/clkt_dpll.c (94%)
+ create mode 100644 drivers/clk/ti/clkt_iclk.c
+ rename {arch/arm/mach-omap2 => drivers/clk/ti}/dpll3xxx.c (84%)
+ rename {arch/arm/mach-omap2 => drivers/clk/ti}/dpll44xx.c (91%)
+
 -- 
-1.9.1
+1.7.9.5
