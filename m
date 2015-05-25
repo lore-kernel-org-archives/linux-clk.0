@@ -1,368 +1,312 @@
-Return-Path: <wens@csie.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <tony@atomide.com>,
+        <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv3 01/27] ARM: OMAP2+: clock: export driver API to setup/get clock features
+Date: Mon, 25 May 2015 18:00:06 +0300
+Message-ID: <1432566032-10860-2-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20150504125146.GA3274@lukather>
-References: <1430410206-4410-1-git-send-email-wens@csie.org>
- <1430410206-4410-3-git-send-email-wens@csie.org> <20150504125146.GA3274@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 4 May 2015 23:22:33 +0800
-Message-ID: <CAGb2v64brwadGPdpdQ9ebOPwZQse2W6m8t8wV6JX=y4Hpw0puQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] clk: sunxi: support the cpus (cpu special) clock
- on the Allwinner A80
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee.jones@linaro.org>,
-	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+As most of the clock driver support code is going to be moved under
+drivers/clk/ti, an API for setting / getting the SoC specific clock
+features is needed. This patch provides this API and changes the
+existing code to use it.
 
-On Mon, May 4, 2015 at 8:51 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi,
->
-> On Fri, May 01, 2015 at 12:10:03AM +0800, Chen-Yu Tsai wrote:
->> The "cpus" clock is the clock for the embedded processor in the A80.
->> It is also part of the PRCM clock tree.
->>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> ---
->>  Documentation/devicetree/bindings/clock/sunxi.txt |   1 +
->>  drivers/clk/sunxi/Makefile                        |   2 +-
->>  drivers/clk/sunxi/clk-sun9i-cpus.c                | 243 ++++++++++++++++++++++
->>  3 files changed, 245 insertions(+), 1 deletion(-)
->>  create mode 100644 drivers/clk/sunxi/clk-sun9i-cpus.c
->>
->> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
->> index 2015b2beb957..c52735b0b924 100644
->> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
->> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
->> @@ -27,6 +27,7 @@ Required properties:
->>       "allwinner,sun5i-a10s-ahb-gates-clk" - for the AHB gates on A10s
->>       "allwinner,sun7i-a20-ahb-gates-clk" - for the AHB gates on A20
->>       "allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
->> +     "allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
->>       "allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
->>       "allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
->>       "allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
->> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
->> index 058f273d6154..f0f33131b048 100644
->> --- a/drivers/clk/sunxi/Makefile
->> +++ b/drivers/clk/sunxi/Makefile
->> @@ -13,4 +13,4 @@ obj-y += clk-usb.o
->>
->>  obj-$(CONFIG_MFD_SUN6I_PRCM) += \
->>       clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
->> -     clk-sun8i-apb0.o
->> +     clk-sun8i-apb0.o clk-sun9i-cpus.o
->
-> I'm really not sure about that option selection.
->
-> If you only select the A31, you will get drivers that won't be
-> relevant at all here.
->
-> How about something like
->
-> ifeq ($(CONFIG_MFD_SUN6I_PRCM), y)
-> obj-$(CONFIG_MACH_SUN6I) = ....
-> obj-$(CONFIG_MACH_SUN8I) = ....
-> obj-$(CONFIG_MACH_SUN9I) = ....
-> endif
->
-> ?
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/clkt_dpll.c |   14 +++++++-------
+ arch/arm/mach-omap2/clock.c     |   36 +++++++++++++++++-------------------
+ arch/arm/mach-omap2/clock.h     |   18 ------------------
+ arch/arm/mach-omap2/clock3xxx.c |    4 ++--
+ arch/arm/mach-omap2/dpll3xxx.c  |    4 ++--
+ drivers/clk/ti/clk.c            |   25 +++++++++++++++++++++++++
+ include/linux/clk/ti.h          |   16 ++++++++++++++++
+ 7 files changed, 69 insertions(+), 48 deletions(-)
 
-I suppose that works, though sun9i shares apb0 (apbs) clock with sun8i.
-
->> diff --git a/drivers/clk/sunxi/clk-sun9i-cpus.c b/drivers/clk/sunxi/clk-sun9i-cpus.c
->> new file mode 100644
->> index 000000000000..1ec61ccf8cbf
->> --- /dev/null
->> +++ b/drivers/clk/sunxi/clk-sun9i-cpus.c
->> @@ -0,0 +1,243 @@
->> +/*
->> + * Copyright (C) 2015 Chen-Yu Tsai
->> + *
->> + * Chen-Yu Tsai <wens@csie.org>
->> + *
->> + * Allwinner A80 CPUS clock driver
->> + *
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/platform_device.h>
->> +
->> +static DEFINE_SPINLOCK(sun9i_a80_cpus_lock);
->> +
->> +/**
->> + * sun9i_a80_cpus_clk_setup() - Setup function for a80 cpus composite clk
->> + */
->> +
->> +#define SUN9I_CPUS_MAX_PARENTS               4
->> +#define SUN9I_CPUS_MUX_PARENT_PLL4   3
->> +#define SUN9I_CPUS_MUX_SHIFT         16
->> +/* un-shifted mask is what mux_clk expects */
->> +#define SUN9I_CPUS_MUX_MASK          0x3
->> +#define SUN9I_CPUS_MUX_GET_PARENT(reg)       ((reg >> SUN9I_CPUS_MUX_SHIFT) & \
->> +                                      SUN9I_CPUS_MUX_MASK)
->> +
->> +#define SUN9I_CPUS_DIV_SHIFT         4
->> +#define SUN9I_CPUS_DIV_MASK          (0x3 << SUN9I_CPUS_DIV_SHIFT)
->> +#define SUN9I_CPUS_DIV_GET(reg)              ((reg & SUN9I_CPUS_DIV_MASK) >> \
->> +                                             SUN9I_CPUS_DIV_SHIFT)
->> +#define SUN9I_CPUS_DIV_SET(reg, div) ((reg & ~SUN9I_CPUS_DIV_MASK) | \
->> +                                             (div << SUN9I_CPUS_DIV_SHIFT))
->> +#define SUN9I_CPUS_PLL4_DIV_SHIFT    8
->> +#define SUN9I_CPUS_PLL4_DIV_MASK     (0x1f << SUN9I_CPUS_PLL4_DIV_SHIFT)
->
-> You have some masks that are shifted, some that are not.
->
-> I don't really have a preference, but being consistent would be great.
->
-> (and you can use GENMASK to generate your masks).
-
-Yeah. I think we've been through this once with the sun6i-ahb1 clock.
-Though, see below.
-
->> +#define SUN9I_CPUS_PLL4_DIV_GET(reg) ((reg & SUN9I_CPUS_PLL4_DIV_MASK) >> \
->> +                                             SUN9I_CPUS_PLL4_DIV_SHIFT)
->> +#define SUN9I_CPUS_PLL4_DIV_SET(reg, div) ((reg & ~SUN9I_CPUS_PLL4_DIV_MASK) | \
->> +                                             (div << SUN9I_CPUS_PLL4_DIV_SHIFT))
->> +
->> +struct sun9i_a80_cpus_clk {
->> +     struct clk_hw hw;
->> +     void __iomem *reg;
->> +};
->> +
->> +#define to_sun9i_a80_cpus_clk(_hw) container_of(_hw, struct sun9i_a80_cpus_clk, hw)
->> +
->> +static unsigned long sun9i_a80_cpus_clk_recalc_rate(struct clk_hw *hw,
->> +                                             unsigned long parent_rate)
->
-> These lines above generate checkpatch warnings, please fix them.
-
-OK.
-
->> +     struct sun9i_a80_cpus_clk *cpus = to_sun9i_a80_cpus_clk(hw);
->> +     unsigned long rate;
->> +     u32 reg;
->> +
->> +     /* Fetch the register value */
->> +     reg = readl(cpus->reg);
->> +
->> +     /* apply pre-divider first if parent is pll4 */
->> +     if (SUN9I_CPUS_MUX_GET_PARENT(reg) == SUN9I_CPUS_MUX_PARENT_PLL4)
->> +             parent_rate /= SUN9I_CPUS_PLL4_DIV_GET(reg) + 1;
->> +
->> +     /* clk divider */
->> +     rate = parent_rate / (SUN9I_CPUS_DIV_GET(reg) + 1);
->> +
->> +     return rate;
->> +}
->> +
->> +static long sun9i_a80_cpus_clk_round(unsigned long rate, u8 *divp, u8 *pre_divp,
->> +                              u8 parent, unsigned long parent_rate)
->> +{
->> +     u8 div, pre_div = 1;
->> +
->> +     /*
->> +      * clock can only divide, so we will never be able to achieve
->> +      * frequencies higher than the parent frequency
->> +      */
->> +     if (parent_rate && rate > parent_rate)
->> +             rate = parent_rate;
->> +
->> +     div = DIV_ROUND_UP(parent_rate, rate);
->> +
->> +     /* calculate pre-divider if parent is pll4 */
->> +     if (parent == SUN9I_CPUS_MUX_PARENT_PLL4 && div > 4) {
->> +             /* pre-divider is 1 ~ 32 */
->> +             if (div < 32) {
->> +                     pre_div = div;
->> +                     div = 1;
->> +             } else if (div < 64) {
->> +                     pre_div = DIV_ROUND_UP(div, 2);
->> +                     div = 2;
->> +             } else if (div < 96) {
->> +                     pre_div = DIV_ROUND_UP(div, 3);
->> +                     div = 3;
->> +             } else {
->> +                     pre_div = DIV_ROUND_UP(div, 4);
->> +                     div = 4;
->> +             }
->> +     }
->> +
->> +     /* we were asked to pass back divider values */
->> +     if (divp) {
->> +             *divp = div - 1;
->> +             *pre_divp = pre_div - 1;
->> +     }
->> +
->> +     return parent_rate / pre_div / div;
->> +}
->> +
->> +static long sun9i_a80_cpus_clk_determine_rate(struct clk_hw *hw,
->> +                                           unsigned long rate,
->> +                                           unsigned long min_rate,
->> +                                           unsigned long max_rate,
->> +                                           unsigned long *best_parent_rate,
->> +                                           struct clk_hw **best_parent_clk)
->> +{
->> +     struct clk *clk = hw->clk, *parent, *best_parent = NULL;
->> +     int i, num_parents;
->> +     unsigned long parent_rate, best = 0, child_rate, best_child_rate = 0;
->> +
->> +     /* find the parent that can help provide the fastest rate <= rate */
->> +     num_parents = __clk_get_num_parents(clk);
->> +     for (i = 0; i < num_parents; i++) {
->> +             parent = clk_get_parent_by_index(clk, i);
->> +             if (!parent)
->> +                     continue;
->> +             if (__clk_get_flags(clk) & CLK_SET_RATE_PARENT)
->> +                     parent_rate = __clk_round_rate(parent, rate);
->> +             else
->> +                     parent_rate = __clk_get_rate(parent);
->> +
->> +             child_rate = sun9i_a80_cpus_clk_round(rate, NULL, NULL, i,
->> +                                               parent_rate);
->> +
->> +             if (child_rate <= rate && child_rate > best_child_rate) {
->> +                     best_parent = parent;
->> +                     best = parent_rate;
->> +                     best_child_rate = child_rate;
->> +             }
->> +     }
->> +
->> +     if (best_parent)
->> +             *best_parent_clk = __clk_get_hw(best_parent);
->> +     *best_parent_rate = best;
->> +
->> +     return best_child_rate;
->> +}
->> +
->> +static int sun9i_a80_cpus_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->> +                                unsigned long parent_rate)
->> +{
->> +     struct sun9i_a80_cpus_clk *cpus = to_sun9i_a80_cpus_clk(hw);
->> +     unsigned long flags;
->> +     u8 div, pre_div, parent;
->> +     u32 reg;
->> +
->> +     spin_lock_irqsave(&sun9i_a80_cpus_lock, flags);
->> +
->> +     reg = readl(cpus->reg);
->> +
->> +     /* need to know which parent is used to apply pre-divider */
->> +     parent = SUN9I_CPUS_MUX_GET_PARENT(reg);
->> +     sun9i_a80_cpus_clk_round(rate, &div, &pre_div, parent, parent_rate);
->> +
->> +     reg = SUN9I_CPUS_DIV_SET(reg, div);
->> +     reg = SUN9I_CPUS_PLL4_DIV_SET(reg, pre_div);
->> +     writel(reg, cpus->reg);
->> +
->> +     spin_unlock_irqrestore(&sun9i_a80_cpus_lock, flags);
->> +
->> +     return 0;
->> +}
->> +
->> +static const struct clk_ops sun9i_a80_cpus_clk_ops = {
->> +     .determine_rate = sun9i_a80_cpus_clk_determine_rate,
->> +     .recalc_rate    = sun9i_a80_cpus_clk_recalc_rate,
->> +     .set_rate       = sun9i_a80_cpus_clk_set_rate,
->> +};
->
-> It all looks like you could use the factors clock for this.
->
-> The only thing that you seem to be using a custom clock for is the pre
-> divider on one of the parent, but that's something that could be
-> reused for other clocks (like the A10 pll6, or the A20 MBUS).
-
-We can add a custom recalc_rate() callback for factors clock,
-and also pass the parent index to the get_factors() callback.
-That would get rid of a lot of boilerplate.
-
-What do you think? It kind of extends factors clk beyond what it was
-designed for. If you agree, I'd also want to (ab)use it for other
-A80 clocks which have multiple dividers but don't fit the current
-factors clock formula.
-
-ChenYu
-
->> +
->> +static int sun9i_a80_cpus_clk_probe(struct platform_device *pdev)
->> +{
->> +     struct device_node *np = pdev->dev.of_node;
->> +     const char *clk_name = np->name;
->> +     const char *parents[SUN9I_CPUS_MAX_PARENTS];
->> +     struct resource *r;
->> +     struct sun9i_a80_cpus_clk *cpus;
->> +     struct clk_mux *mux;
->> +     struct clk *clk;
->> +     int i = 0;
->> +
->> +     cpus = devm_kzalloc(&pdev->dev, sizeof(*cpus), GFP_KERNEL);
->> +     if (!cpus)
->> +             return -ENOMEM;
->> +
->> +     r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +     cpus->reg = devm_ioremap_resource(&pdev->dev, r);
->> +     if (IS_ERR(cpus->reg))
->> +             return PTR_ERR(cpus->reg);
->> +
->> +     /* we have a mux, we will have >1 parents */
->> +     while (i < SUN9I_CPUS_MAX_PARENTS &&
->> +            (parents[i] = of_clk_get_parent_name(np, i)) != NULL)
->> +             i++;
->> +
->> +     of_property_read_string(np, "clock-output-names", &clk_name);
->> +
->> +     mux = devm_kzalloc(&pdev->dev, sizeof(*mux), GFP_KERNEL);
->> +     if (!mux)
->> +             return -ENOMEM;
->> +
->> +     /* set up clock properties */
->> +     mux->reg = cpus->reg;
->> +     mux->shift = SUN9I_CPUS_MUX_SHIFT;
->> +     mux->mask = SUN9I_CPUS_MUX_MASK;
->> +     mux->lock = &sun9i_a80_cpus_lock;
->> +
->> +     clk = clk_register_composite(NULL, clk_name, parents, i,
->> +                                  &mux->hw, &clk_mux_ops,
->> +                                  &cpus->hw, &sun9i_a80_cpus_clk_ops,
->> +                                  NULL, NULL, 0);
->> +     if (IS_ERR(clk))
->> +             return PTR_ERR(clk);
->> +
->> +     return of_clk_add_provider(np, of_clk_src_simple_get, clk);
->> +}
->> +
->> +static const struct of_device_id sun9i_a80_cpus_clk_dt_ids[] = {
->> +     { .compatible = "allwinner,sun9i-a80-cpus-clk" },
->> +     { /* sentinel */ }
->> +};
->> +
->> +static struct platform_driver sun9i_a80_cpus_clk_driver = {
->> +     .driver = {
->> +             .name = "sun9i-a80-cpus-clk",
->> +             .of_match_table = sun9i_a80_cpus_clk_dt_ids,
->> +     },
->> +     .probe = sun9i_a80_cpus_clk_probe,
->> +};
->> +module_platform_driver(sun9i_a80_cpus_clk_driver);
->> +
->> +MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
->> +MODULE_DESCRIPTION("Allwinner A80 CPUS Clock Driver");
->> +MODULE_LICENSE("GPL v2");
->> --
->> 2.1.4
->>
->
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+diff --git a/arch/arm/mach-omap2/clkt_dpll.c b/arch/arm/mach-omap2/clkt_dpll.c
+index f251a14..82f0600 100644
+--- a/arch/arm/mach-omap2/clkt_dpll.c
++++ b/arch/arm/mach-omap2/clkt_dpll.c
+@@ -80,8 +80,8 @@ static int _dpll_test_fint(struct clk_hw_omap *clk, unsigned int n)
+ 		fint_min = OMAP3PLUS_DPLL_FINT_JTYPE_MIN;
+ 		fint_max = OMAP3PLUS_DPLL_FINT_JTYPE_MAX;
+ 	} else {
+-		fint_min = ti_clk_features.fint_min;
+-		fint_max = ti_clk_features.fint_max;
++		fint_min = ti_clk_get_features()->fint_min;
++		fint_max = ti_clk_get_features()->fint_max;
+ 	}
+ 
+ 	if (!fint_min || !fint_max) {
+@@ -89,18 +89,18 @@ static int _dpll_test_fint(struct clk_hw_omap *clk, unsigned int n)
+ 		return DPLL_FINT_INVALID;
+ 	}
+ 
+-	if (fint < ti_clk_features.fint_min) {
++	if (fint < ti_clk_get_features()->fint_min) {
+ 		pr_debug("rejecting n=%d due to Fint failure, lowering max_divider\n",
+ 			 n);
+ 		dd->max_divider = n;
+ 		ret = DPLL_FINT_UNDERFLOW;
+-	} else if (fint > ti_clk_features.fint_max) {
++	} else if (fint > ti_clk_get_features()->fint_max) {
+ 		pr_debug("rejecting n=%d due to Fint failure, boosting min_divider\n",
+ 			 n);
+ 		dd->min_divider = n;
+ 		ret = DPLL_FINT_INVALID;
+-	} else if (fint > ti_clk_features.fint_band1_max &&
+-		   fint < ti_clk_features.fint_band2_min) {
++	} else if (fint > ti_clk_get_features()->fint_band1_max &&
++		   fint < ti_clk_get_features()->fint_band2_min) {
+ 		pr_debug("rejecting n=%d due to Fint failure\n", n);
+ 		ret = DPLL_FINT_INVALID;
+ 	}
+@@ -183,7 +183,7 @@ static int _omap2_dpll_is_in_bypass(u32 v)
+ {
+ 	u8 mask, val;
+ 
+-	mask = ti_clk_features.dpll_bypass_vals;
++	mask = ti_clk_get_features()->dpll_bypass_vals;
+ 
+ 	/*
+ 	 * Each set bit in the mask corresponds to a bypass value equal
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index a699d71..cbc65b3 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -48,11 +48,6 @@
+ 
+ u16 cpu_mask;
+ 
+-/*
+- * Clock features setup. Used instead of CPU type checks.
+- */
+-struct ti_clk_features ti_clk_features;
+-
+ /* DPLL valid Fint frequency band limits - from 34xx TRM Section 4.7.6.2 */
+ #define OMAP3430_DPLL_FINT_BAND1_MIN	750000
+ #define OMAP3430_DPLL_FINT_BAND1_MAX	2100000
+@@ -367,7 +362,7 @@ void omap2_clk_dflt_find_idlest(struct clk_hw_omap *clk,
+ 	 * 34xx reverses this, just to keep us on our toes
+ 	 * AM35xx uses both, depending on the module.
+ 	 */
+-	*idlest_val = ti_clk_features.cm_idlest_val;
++	*idlest_val = ti_clk_get_features()->cm_idlest_val;
+ }
+ 
+ /**
+@@ -801,29 +796,30 @@ void __init omap2_clk_print_new_rates(const char *hfclkin_ck_name,
+  */
+ void __init ti_clk_init_features(void)
+ {
++	struct ti_clk_features features = { 0 };
+ 	/* Fint setup for DPLLs */
+ 	if (cpu_is_omap3430()) {
+-		ti_clk_features.fint_min = OMAP3430_DPLL_FINT_BAND1_MIN;
+-		ti_clk_features.fint_max = OMAP3430_DPLL_FINT_BAND2_MAX;
+-		ti_clk_features.fint_band1_max = OMAP3430_DPLL_FINT_BAND1_MAX;
+-		ti_clk_features.fint_band2_min = OMAP3430_DPLL_FINT_BAND2_MIN;
++		features.fint_min = OMAP3430_DPLL_FINT_BAND1_MIN;
++		features.fint_max = OMAP3430_DPLL_FINT_BAND2_MAX;
++		features.fint_band1_max = OMAP3430_DPLL_FINT_BAND1_MAX;
++		features.fint_band2_min = OMAP3430_DPLL_FINT_BAND2_MIN;
+ 	} else {
+-		ti_clk_features.fint_min = OMAP3PLUS_DPLL_FINT_MIN;
+-		ti_clk_features.fint_max = OMAP3PLUS_DPLL_FINT_MAX;
++		features.fint_min = OMAP3PLUS_DPLL_FINT_MIN;
++		features.fint_max = OMAP3PLUS_DPLL_FINT_MAX;
+ 	}
+ 
+ 	/* Bypass value setup for DPLLs */
+ 	if (cpu_is_omap24xx()) {
+-		ti_clk_features.dpll_bypass_vals |=
++		features.dpll_bypass_vals |=
+ 			(1 << OMAP2XXX_EN_DPLL_LPBYPASS) |
+ 			(1 << OMAP2XXX_EN_DPLL_FRBYPASS);
+ 	} else if (cpu_is_omap34xx()) {
+-		ti_clk_features.dpll_bypass_vals |=
++		features.dpll_bypass_vals |=
+ 			(1 << OMAP3XXX_EN_DPLL_LPBYPASS) |
+ 			(1 << OMAP3XXX_EN_DPLL_FRBYPASS);
+ 	} else if (soc_is_am33xx() || cpu_is_omap44xx() || soc_is_am43xx() ||
+ 		   soc_is_omap54xx() || soc_is_dra7xx()) {
+-		ti_clk_features.dpll_bypass_vals |=
++		features.dpll_bypass_vals |=
+ 			(1 << OMAP4XXX_EN_DPLL_LPBYPASS) |
+ 			(1 << OMAP4XXX_EN_DPLL_FRBYPASS) |
+ 			(1 << OMAP4XXX_EN_DPLL_MNBYPASS);
+@@ -831,7 +827,7 @@ void __init ti_clk_init_features(void)
+ 
+ 	/* Jitter correction only available on OMAP343X */
+ 	if (cpu_is_omap343x())
+-		ti_clk_features.flags |= TI_CLK_DPLL_HAS_FREQSEL;
++		features.flags |= TI_CLK_DPLL_HAS_FREQSEL;
+ 
+ 	/* Idlest value for interface clocks.
+ 	 * 24xx uses 0 to indicate not ready, and 1 to indicate ready.
+@@ -839,11 +835,13 @@ void __init ti_clk_init_features(void)
+ 	 * AM35xx uses both, depending on the module.
+ 	 */
+ 	if (cpu_is_omap24xx())
+-		ti_clk_features.cm_idlest_val = OMAP24XX_CM_IDLEST_VAL;
++		features.cm_idlest_val = OMAP24XX_CM_IDLEST_VAL;
+ 	else if (cpu_is_omap34xx())
+-		ti_clk_features.cm_idlest_val = OMAP34XX_CM_IDLEST_VAL;
++		features.cm_idlest_val = OMAP34XX_CM_IDLEST_VAL;
+ 
+ 	/* On OMAP3430 ES1.0, DPLL4 can't be re-programmed */
+ 	if (omap_rev() == OMAP3430_REV_ES1_0)
+-		ti_clk_features.flags |= TI_CLK_DPLL4_DENY_REPROGRAM;
++		features.flags |= TI_CLK_DPLL4_DENY_REPROGRAM;
++
++	ti_clk_setup_features(&features);
+ }
+diff --git a/arch/arm/mach-omap2/clock.h b/arch/arm/mach-omap2/clock.h
+index 652ed0a..ac21856 100644
+--- a/arch/arm/mach-omap2/clock.h
++++ b/arch/arm/mach-omap2/clock.h
+@@ -225,24 +225,6 @@ void omap2_clk_writel(u32 val, struct clk_hw_omap *clk, void __iomem *reg);
+ 
+ extern u16 cpu_mask;
+ 
+-/*
+- * Clock features setup. Used instead of CPU type checks.
+- */
+-struct ti_clk_features {
+-	u32 flags;
+-	long fint_min;
+-	long fint_max;
+-	long fint_band1_max;
+-	long fint_band2_min;
+-	u8 dpll_bypass_vals;
+-	u8 cm_idlest_val;
+-};
+-
+-#define TI_CLK_DPLL_HAS_FREQSEL		(1 << 0)
+-#define TI_CLK_DPLL4_DENY_REPROGRAM	(1 << 1)
+-
+-extern struct ti_clk_features ti_clk_features;
+-
+ extern const struct clkops clkops_omap2_dflt_wait;
+ extern const struct clkops clkops_omap2_dflt;
+ 
+diff --git a/arch/arm/mach-omap2/clock3xxx.c b/arch/arm/mach-omap2/clock3xxx.c
+index a9e86db..8bede6a 100644
+--- a/arch/arm/mach-omap2/clock3xxx.c
++++ b/arch/arm/mach-omap2/clock3xxx.c
+@@ -58,7 +58,7 @@ int omap3_dpll4_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	 * on 3430ES1 prevents us from changing DPLL multipliers or dividers
+ 	 * on DPLL4.
+ 	 */
+-	if (ti_clk_features.flags & TI_CLK_DPLL4_DENY_REPROGRAM) {
++	if (ti_clk_get_features()->flags & TI_CLK_DPLL4_DENY_REPROGRAM) {
+ 		pr_err("clock: DPLL4 cannot change rate due to silicon 'Limitation 2.5' on 3430ES1.\n");
+ 		return -EINVAL;
+ 	}
+@@ -81,7 +81,7 @@ int omap3_dpll4_set_rate(struct clk_hw *hw, unsigned long rate,
+ int omap3_dpll4_set_rate_and_parent(struct clk_hw *hw, unsigned long rate,
+ 				    unsigned long parent_rate, u8 index)
+ {
+-	if (ti_clk_features.flags & TI_CLK_DPLL4_DENY_REPROGRAM) {
++	if (ti_clk_get_features()->flags & TI_CLK_DPLL4_DENY_REPROGRAM) {
+ 		pr_err("clock: DPLL4 cannot change rate due to silicon 'Limitation 2.5' on 3430ES1.\n");
+ 		return -EINVAL;
+ 	}
+diff --git a/arch/arm/mach-omap2/dpll3xxx.c b/arch/arm/mach-omap2/dpll3xxx.c
+index 44e57ec..9a80f59 100644
+--- a/arch/arm/mach-omap2/dpll3xxx.c
++++ b/arch/arm/mach-omap2/dpll3xxx.c
+@@ -307,7 +307,7 @@ static int omap3_noncore_dpll_program(struct clk_hw_omap *clk, u16 freqsel)
+ 	 * Set jitter correction. Jitter correction applicable for OMAP343X
+ 	 * only since freqsel field is no longer present on other devices.
+ 	 */
+-	if (ti_clk_features.flags & TI_CLK_DPLL_HAS_FREQSEL) {
++	if (ti_clk_get_features()->flags & TI_CLK_DPLL_HAS_FREQSEL) {
+ 		v = omap2_clk_readl(clk, dd->control_reg);
+ 		v &= ~dd->freqsel_mask;
+ 		v |= freqsel << __ffs(dd->freqsel_mask);
+@@ -559,7 +559,7 @@ int omap3_noncore_dpll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		return -EINVAL;
+ 
+ 	/* Freqsel is available only on OMAP343X devices */
+-	if (ti_clk_features.flags & TI_CLK_DPLL_HAS_FREQSEL) {
++	if (ti_clk_get_features()->flags & TI_CLK_DPLL_HAS_FREQSEL) {
+ 		freqsel = _omap3_dpll_compute_freqsel(clk, dd->last_rounded_n);
+ 		WARN_ON(!freqsel);
+ 	}
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 0ebe5c5..567f8b9 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -30,6 +30,8 @@
+ struct ti_clk_ll_ops *ti_clk_ll_ops;
+ static struct device_node *clocks_node_ptr[CLK_MAX_MEMMAPS];
+ 
++struct ti_clk_features ti_clk_features;
++
+ /**
+  * ti_dt_clocks_register - register DT alias clocks during boot
+  * @oclks: list of clocks to register
+@@ -310,4 +312,27 @@ int __init ti_clk_register_legacy_clks(struct ti_clk_alias *clks)
+ 
+ 	return 0;
+ }
++
++/**
++ * ti_clk_setup_features - setup clock features flags
++ * @features: features definition to use
++ *
++ * Initializes the clock driver features flags based on platform
++ * provided data. No return value.
++ */
++void __init ti_clk_setup_features(struct ti_clk_features *features)
++{
++	memcpy(&ti_clk_features, features, sizeof(*features));
++}
++
++/**
++ * ti_clk_get_features - get clock driver features flags
++ *
++ * Get TI clock driver features description. Returns a pointer
++ * to the current feature setup.
++ */
++struct ti_clk_features *ti_clk_get_features(void)
++{
++	return &ti_clk_features;
++}
+ #endif
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 79b76e1..b066835 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -338,6 +338,22 @@ int am43xx_dt_clk_init(void);
+ int omap2420_dt_clk_init(void);
+ int omap2430_dt_clk_init(void);
+ 
++struct ti_clk_features {
++	u32 flags;
++	long fint_min;
++	long fint_max;
++	long fint_band1_max;
++	long fint_band2_min;
++	u8 dpll_bypass_vals;
++	u8 cm_idlest_val;
++};
++
++#define TI_CLK_DPLL_HAS_FREQSEL			BIT(0)
++#define TI_CLK_DPLL4_DENY_REPROGRAM		BIT(1)
++
++void ti_clk_setup_features(struct ti_clk_features *features);
++struct ti_clk_features *ti_clk_get_features(void);
++
+ #ifdef CONFIG_OF
+ void of_ti_clk_allow_autoidle_all(void);
+ void of_ti_clk_deny_autoidle_all(void);
+-- 
+1.7.9.5
