@@ -1,148 +1,238 @@
-Return-Path: <wens@csie.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <tony@atomide.com>,
+        <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv3 03/27] clk: ti: move OMAP4+ DPLL implementation under drivers/clk
+Date: Mon, 25 May 2015 18:00:08 +0300
+Message-ID: <1432566032-10860-4-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1430565879-28113-6-git-send-email-maxime.ripard@free-electrons.com>
-References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
- <1430565879-28113-6-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 14 May 2015 21:43:19 +0800
-Message-ID: <CAGb2v65RTFcKAYOsgJo0A8jPKRfuSvHyiX-7KG_qvjMy0uBbZQ@mail.gmail.com>
-Subject: Re: [PATCH 5/8] clk: sunxi: mod1 clock support
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, May 2, 2015 at 7:24 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> From: Emilio L=C3=B3pez <emilio@elopez.com.ar>
->
-> The module 1 type of clocks consist of a gate and a mux and are used on
-> the audio blocks to mux and gate the PLL2 outputs for AC97, IIS or
-> SPDIF. This commit adds support for them on the sunxi clock driver.
->
-> Signed-off-by: Emilio L=C3=B3pez <emilio@elopez.com.ar>
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/clk/sunxi/Makefile       |  1 +
->  drivers/clk/sunxi/clk-a10-mod1.c | 85 ++++++++++++++++++++++++++++++++++=
-++++++
->  2 files changed, 86 insertions(+)
->  create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
->
-> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-> index 6fa845e13067..960eeabc375f 100644
-> --- a/drivers/clk/sunxi/Makefile
-> +++ b/drivers/clk/sunxi/Makefile
-> @@ -5,6 +5,7 @@
->  obj-y +=3D clk-sunxi.o clk-factors.o
->  obj-y +=3D clk-a10-codec.o
->  obj-y +=3D clk-a10-hosc.o
-> +obj-y +=3D clk-a10-mod1.o
->  obj-y +=3D clk-a10-pll2.o
->  obj-y +=3D clk-a20-gmac.o
->  obj-y +=3D clk-mod0.o
-> diff --git a/drivers/clk/sunxi/clk-a10-mod1.c b/drivers/clk/sunxi/clk-a10=
--mod1.c
-> new file mode 100644
-> index 000000000000..6fc1b7a6de00
-> --- /dev/null
-> +++ b/drivers/clk/sunxi/clk-a10-mod1.c
-> @@ -0,0 +1,85 @@
-> +/*
-> + * Copyright 2013 Emilio L=C3=B3pez
-> + *
-> + * Emilio L=C3=B3pez <emilio@elopez.com.ar>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/clkdev.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +
-> +static DEFINE_SPINLOCK(mod1_lock);
-> +
-> +#define SUN4I_MOD1_ENABLE      31
-> +#define SUN4I_MOD1_MUX         16
-> +#define SUN4I_MOD1_MUX_WIDTH   2
-> +#define SUN4I_MOD1_MAX_PARENTS 4
-> +
-> +static void __init sun4i_mod1_clk_setup(struct device_node *node)
-> +{
-> +       struct clk *clk;
-> +       struct clk_mux *mux;
-> +       struct clk_gate *gate;
-> +       const char *parents[4];
-> +       const char *clk_name =3D node->name;
-> +       void __iomem *reg;
-> +       int i =3D 0;
-> +
-> +       reg =3D of_io_request_and_map(node, 0, of_node_full_name(node));
-> +       if (IS_ERR(reg))
-> +               return;
-> +
-> +       mux =3D kzalloc(sizeof(*mux), GFP_KERNEL);
-> +       if (!mux)
-> +               goto err_unmap;
-> +
-> +       gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
-> +       if (!gate)
-> +               goto err_free_mux;
-> +
-> +       of_property_read_string(node, "clock-output-names", &clk_name);
-> +       reg =3D of_iomap(node, 0);
+With the legacy clock support gone, the OMAP4 specific DPLL implementations
+can be moved under the clock driver. Change some of the function prototypes
+to be static at the same time, and remove some exports from the global TI
+clock driver header.
 
-Is this left over from some change?
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/Makefile                       |    6 ++---
+ arch/arm/mach-omap2/clock.h                        |    4 ----
+ drivers/clk/ti/Makefile                            |    6 ++---
+ drivers/clk/ti/clock.h                             |   14 ++++++++++++
+ {arch/arm/mach-omap2 => drivers/clk/ti}/dpll44xx.c |   23 ++++++++++----------
+ include/linux/clk/ti.h                             |   13 +----------
+ 6 files changed, 33 insertions(+), 33 deletions(-)
+ rename {arch/arm/mach-omap2 => drivers/clk/ti}/dpll44xx.c (91%)
 
-ChenYu
-
-> +
-> +       while (i < SUN4I_MOD1_MAX_PARENTS &&
-> +              (parents[i] =3D of_clk_get_parent_name(node, i)) !=3D NULL=
-)
-> +               i++;
-> +
-> +       gate->reg =3D reg;
-> +       gate->bit_idx =3D SUN4I_MOD1_ENABLE;
-> +       gate->lock =3D &mod1_lock;
-> +       mux->reg =3D reg;
-> +       mux->shift =3D SUN4I_MOD1_MUX;
-> +       mux->mask =3D BIT(SUN4I_MOD1_MUX_WIDTH) - 1;
-> +       mux->lock =3D &mod1_lock;
-> +
-> +       clk =3D clk_register_composite(NULL, clk_name, parents, i,
-> +                                    &mux->hw, &clk_mux_ops,
-> +                                    NULL, NULL,
-> +                                    &gate->hw, &clk_gate_ops, 0);
-> +       if (IS_ERR(clk))
-> +               goto err_free_gate;
-> +
-> +       of_clk_add_provider(node, of_clk_src_simple_get, clk);
-> +
-> +       return;
-> +
-> +err_free_gate:
-> +       kfree(gate);
-> +err_free_mux:
-> +       kfree(mux);
-> +err_unmap:
-> +       iounmap(reg);
-> +}
-> +CLK_OF_DECLARE(sun4i_mod1, "allwinner,sun4i-a10-mod1-clk",
-> +              sun4i_mod1_clk_setup);
-> --
-> 2.3.6
->
+diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
+index fcb5d47..5bcd282 100644
+--- a/arch/arm/mach-omap2/Makefile
++++ b/arch/arm/mach-omap2/Makefile
+@@ -193,12 +193,12 @@ obj-$(CONFIG_ARCH_OMAP3)		+= clock3517.o clock36xx.o
+ obj-$(CONFIG_ARCH_OMAP3)		+= dpll3xxx.o
+ obj-$(CONFIG_ARCH_OMAP3)		+= clkt_iclk.o
+ obj-$(CONFIG_ARCH_OMAP4)		+= $(clock-common)
+-obj-$(CONFIG_ARCH_OMAP4)		+= dpll3xxx.o dpll44xx.o
++obj-$(CONFIG_ARCH_OMAP4)		+= dpll3xxx.o
+ obj-$(CONFIG_SOC_AM33XX)		+= $(clock-common) dpll3xxx.o
+ obj-$(CONFIG_SOC_OMAP5)			+= $(clock-common)
+-obj-$(CONFIG_SOC_OMAP5)			+= dpll3xxx.o dpll44xx.o
++obj-$(CONFIG_SOC_OMAP5)			+= dpll3xxx.o
+ obj-$(CONFIG_SOC_DRA7XX)		+= $(clock-common)
+-obj-$(CONFIG_SOC_DRA7XX)		+= dpll3xxx.o dpll44xx.o
++obj-$(CONFIG_SOC_DRA7XX)		+= dpll3xxx.o
+ obj-$(CONFIG_SOC_AM43XX)		+= $(clock-common) dpll3xxx.o
+ 
+ # OMAP2 clock rate set data (old "OPP" data)
+diff --git a/arch/arm/mach-omap2/clock.h b/arch/arm/mach-omap2/clock.h
+index ac21856..d7ed244 100644
+--- a/arch/arm/mach-omap2/clock.h
++++ b/arch/arm/mach-omap2/clock.h
+@@ -183,8 +183,6 @@ struct clksel {
+ u32 omap3_dpll_autoidle_read(struct clk_hw_omap *clk);
+ void omap3_dpll_allow_idle(struct clk_hw_omap *clk);
+ void omap3_dpll_deny_idle(struct clk_hw_omap *clk);
+-void omap4_dpllmx_allow_gatectrl(struct clk_hw_omap *clk);
+-void omap4_dpllmx_deny_gatectrl(struct clk_hw_omap *clk);
+ 
+ void __init omap2_clk_disable_clkdm_control(void);
+ 
+@@ -204,8 +202,6 @@ int omap2_clksel_set_parent(struct clk_hw *hw, u8 field_val);
+ extern void omap2_clkt_iclk_allow_idle(struct clk_hw_omap *clk);
+ extern void omap2_clkt_iclk_deny_idle(struct clk_hw_omap *clk);
+ 
+-unsigned long omap2_get_dpll_rate(struct clk_hw_omap *clk);
+-
+ void omap2_clk_dflt_find_companion(struct clk_hw_omap *clk,
+ 				   void __iomem **other_reg,
+ 				   u8 *other_bit);
+diff --git a/drivers/clk/ti/Makefile b/drivers/clk/ti/Makefile
+index 62dae2a..c3ec301 100644
+--- a/drivers/clk/ti/Makefile
++++ b/drivers/clk/ti/Makefile
+@@ -7,10 +7,10 @@ obj-$(CONFIG_SOC_TI81XX)		+= $(clk-common) fapll.o clk-816x.o
+ obj-$(CONFIG_ARCH_OMAP2)		+= $(clk-common) interface.o clk-2xxx.o
+ obj-$(CONFIG_ARCH_OMAP3)		+= $(clk-common) interface.o \
+ 					   clk-3xxx.o
+-obj-$(CONFIG_ARCH_OMAP4)		+= $(clk-common) clk-44xx.o
+-obj-$(CONFIG_SOC_OMAP5)			+= $(clk-common) clk-54xx.o
++obj-$(CONFIG_ARCH_OMAP4)		+= $(clk-common) clk-44xx.o dpll44xx.o
++obj-$(CONFIG_SOC_OMAP5)			+= $(clk-common) clk-54xx.o dpll44xx.o
+ obj-$(CONFIG_SOC_DRA7XX)		+= $(clk-common) clk-7xx.o \
+-					   clk-dra7-atl.o
++					   clk-dra7-atl.o dpll44xx.o
+ obj-$(CONFIG_SOC_AM43XX)		+= $(clk-common) clk-43xx.o
+ 
+ ifdef CONFIG_ATAGS
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 05ed10a..c75d4b4 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -169,6 +169,20 @@ void ti_clk_patch_legacy_clks(struct ti_clk **patch);
+ struct clk *ti_clk_register_clk(struct ti_clk *setup);
+ int ti_clk_register_legacy_clks(struct ti_clk_alias *clks);
+ 
++extern const struct clk_hw_omap_ops clkhwops_omap4_dpllmx;
++
+ u8 omap2_init_dpll_parent(struct clk_hw *hw);
+ 
++unsigned long omap4_dpll_regm4xen_recalc(struct clk_hw *hw,
++					 unsigned long parent_rate);
++long omap4_dpll_regm4xen_round_rate(struct clk_hw *hw,
++				    unsigned long target_rate,
++				    unsigned long *parent_rate);
++long omap4_dpll_regm4xen_determine_rate(struct clk_hw *hw,
++					unsigned long rate,
++					unsigned long min_rate,
++					unsigned long max_rate,
++					unsigned long *best_parent_rate,
++					struct clk_hw **best_parent_clk);
++
+ #endif
+diff --git a/arch/arm/mach-omap2/dpll44xx.c b/drivers/clk/ti/dpll44xx.c
+similarity index 91%
+rename from arch/arm/mach-omap2/dpll44xx.c
+rename to drivers/clk/ti/dpll44xx.c
+index f231be0..ef1a5b4 100644
+--- a/arch/arm/mach-omap2/dpll44xx.c
++++ b/drivers/clk/ti/dpll44xx.c
+@@ -14,6 +14,7 @@
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ #include <linux/bitops.h>
++#include <linux/clk/ti.h>
+ 
+ #include "clock.h"
+ 
+@@ -29,14 +30,14 @@
+ /*
+  * Bitfield declarations
+  */
+-#define OMAP4430_DPLL_CLKOUT_GATE_CTRL_MASK		(1 << 8)
+-#define OMAP4430_DPLL_CLKOUTX2_GATE_CTRL_MASK		(1 << 10)
+-#define OMAP4430_DPLL_REGM4XEN_MASK			(1 << 11)
++#define OMAP4430_DPLL_CLKOUT_GATE_CTRL_MASK		BIT(8)
++#define OMAP4430_DPLL_CLKOUTX2_GATE_CTRL_MASK		BIT(10)
++#define OMAP4430_DPLL_REGM4XEN_MASK			BIT(11)
+ 
+ /* Static rate multiplier for OMAP4 REGM4XEN clocks */
+ #define OMAP4430_REGM4XEN_MULT				4
+ 
+-void omap4_dpllmx_allow_gatectrl(struct clk_hw_omap *clk)
++static void omap4_dpllmx_allow_gatectrl(struct clk_hw_omap *clk)
+ {
+ 	u32 v;
+ 	u32 mask;
+@@ -48,13 +49,13 @@ void omap4_dpllmx_allow_gatectrl(struct clk_hw_omap *clk)
+ 			OMAP4430_DPLL_CLKOUTX2_GATE_CTRL_MASK :
+ 			OMAP4430_DPLL_CLKOUT_GATE_CTRL_MASK;
+ 
+-	v = omap2_clk_readl(clk, clk->clksel_reg);
++	v = ti_clk_ll_ops->clk_readl(clk->clksel_reg);
+ 	/* Clear the bit to allow gatectrl */
+ 	v &= ~mask;
+-	omap2_clk_writel(v, clk, clk->clksel_reg);
++	ti_clk_ll_ops->clk_writel(v, clk->clksel_reg);
+ }
+ 
+-void omap4_dpllmx_deny_gatectrl(struct clk_hw_omap *clk)
++static void omap4_dpllmx_deny_gatectrl(struct clk_hw_omap *clk)
+ {
+ 	u32 v;
+ 	u32 mask;
+@@ -66,10 +67,10 @@ void omap4_dpllmx_deny_gatectrl(struct clk_hw_omap *clk)
+ 			OMAP4430_DPLL_CLKOUTX2_GATE_CTRL_MASK :
+ 			OMAP4430_DPLL_CLKOUT_GATE_CTRL_MASK;
+ 
+-	v = omap2_clk_readl(clk, clk->clksel_reg);
++	v = ti_clk_ll_ops->clk_readl(clk->clksel_reg);
+ 	/* Set the bit to deny gatectrl */
+ 	v |= mask;
+-	omap2_clk_writel(v, clk, clk->clksel_reg);
++	ti_clk_ll_ops->clk_writel(v, clk->clksel_reg);
+ }
+ 
+ const struct clk_hw_omap_ops clkhwops_omap4_dpllmx = {
+@@ -112,7 +113,7 @@ static void omap4_dpll_lpmode_recalc(struct dpll_data *dd)
+  * upon success, or 0 upon error.
+  */
+ unsigned long omap4_dpll_regm4xen_recalc(struct clk_hw *hw,
+-			unsigned long parent_rate)
++					 unsigned long parent_rate)
+ {
+ 	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
+ 	u32 v;
+@@ -127,7 +128,7 @@ unsigned long omap4_dpll_regm4xen_recalc(struct clk_hw *hw,
+ 	rate = omap2_get_dpll_rate(clk);
+ 
+ 	/* regm4xen adds a multiplier of 4 to DPLL calculations */
+-	v = omap2_clk_readl(clk, dd->control_reg);
++	v = ti_clk_ll_ops->clk_readl(dd->control_reg);
+ 	if (v & OMAP4430_DPLL_REGM4XEN_MASK)
+ 		rate *= OMAP4430_REGM4XEN_MULT;
+ 
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index f2436b2..89deddf 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -275,17 +275,6 @@ long omap3_noncore_dpll_determine_rate(struct clk_hw *hw,
+ 				       unsigned long max_rate,
+ 				       unsigned long *best_parent_rate,
+ 				       struct clk_hw **best_parent_clk);
+-unsigned long omap4_dpll_regm4xen_recalc(struct clk_hw *hw,
+-					 unsigned long parent_rate);
+-long omap4_dpll_regm4xen_round_rate(struct clk_hw *hw,
+-				    unsigned long target_rate,
+-				    unsigned long *parent_rate);
+-long omap4_dpll_regm4xen_determine_rate(struct clk_hw *hw,
+-					unsigned long rate,
+-					unsigned long min_rate,
+-					unsigned long max_rate,
+-					unsigned long *best_parent_rate,
+-					struct clk_hw **best_parent_clk);
+ unsigned long omap3_dpll_recalc(struct clk_hw *hw, unsigned long parent_rate);
+ long omap2_dpll_round_rate(struct clk_hw *hw, unsigned long target_rate,
+ 			   unsigned long *parent_rate);
+@@ -314,6 +303,7 @@ int omap2_reprogram_dpllcore(struct clk_hw *clk, unsigned long rate,
+ 			     unsigned long parent_rate);
+ void omap2xxx_clkt_dpllcore_init(struct clk_hw *hw);
+ void omap2xxx_clkt_vps_init(void);
++unsigned long omap2_get_dpll_rate(struct clk_hw_omap *clk);
+ 
+ void __iomem *ti_clk_get_reg_addr(struct device_node *node, int index);
+ void ti_dt_clocks_register(struct ti_dt_clk *oclks);
+@@ -364,7 +354,6 @@ static inline void of_ti_clk_deny_autoidle_all(void) { }
+ extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
+ extern const struct clk_hw_omap_ops clkhwops_omap2430_i2chs_wait;
+ extern const struct clk_hw_omap_ops clkhwops_omap3_dpll;
+-extern const struct clk_hw_omap_ops clkhwops_omap4_dpllmx;
+ extern const struct clk_hw_omap_ops clkhwops_wait;
+ extern const struct clk_hw_omap_ops clkhwops_omap3430es2_dss_usbhost_wait;
+ extern const struct clk_hw_omap_ops clkhwops_am35xx_ipss_module_wait;
+-- 
+1.7.9.5
