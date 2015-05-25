@@ -1,89 +1,407 @@
-Return-Path: <mathieu@codeaurora.org>
-From: Mathieu Olivari <mathieu@codeaurora.org>
-To: robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	peppe.cavallaro@st.com,
-	mathieu@codeaurora.org,
-	agross@codeaurora.org,
-	joshc@codeaurora.org,
-	architt@codeaurora.org,
-	georgi.djakov@linaro.org,
-	wsa@the-dreams.de,
-	rnayak@codeaurora.org,
-	davem@davemloft.net,
-	vbridger@opensource.altera.com
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH 3/5] stmmac: add fixed-link device-tree support
-Date: Tue, 26 May 2015 12:27:15 -0700
-Message-Id: <1432668437-27763-4-git-send-email-mathieu@codeaurora.org>
-In-Reply-To: <1432668437-27763-1-git-send-email-mathieu@codeaurora.org>
-References: <1432668437-27763-1-git-send-email-mathieu@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <tony@atomide.com>,
+        <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv3 09/27] clk: ti: autoidle: move generic autoidle handling code to clock driver
+Date: Mon, 25 May 2015 18:00:14 +0300
+Message-ID: <1432566032-10860-10-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-In case DT is used, this change adds the ability to the stmmac driver to
-detect a fixed-link PHY, instanciate it, and use it during
-phy_connect().
+This is no longer needed in platform directory, as the legacy clock data
+is gone, so move it under TI clock driver. Some static functions are
+renamed also.
 
-Fixed link PHYs DT usage is described in:
-Documentation/devicetree/bindings/net/fixed-link.txt
-
-Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c     |  2 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 12 +++++++++++-
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ arch/arm/mach-omap2/clock.c   |  104 -----------------------------------
+ arch/arm/mach-omap2/clock.h   |    3 --
+ drivers/clk/ti/autoidle.c     |  119 ++++++++++++++++++++++++++++++++++++++---
+ drivers/clk/ti/clock.h        |    3 ++
+ drivers/clk/ti/fixed-factor.c |    2 +
+ include/linux/clk/ti.h        |   13 ++---
+ 6 files changed, 119 insertions(+), 125 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 31c6416..c46178c 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -856,7 +856,7 @@ static int stmmac_init_phy(struct net_device *dev)
- 	 * device as well.
- 	 * Note: phydev->phy_id is the result of reading the UID PHY registers.
- 	 */
--	if (phydev->phy_id == 0) {
-+	if (!priv->plat->phy_node && phydev->phy_id == 0) {
- 		phy_disconnect(phydev);
- 		return -ENODEV;
- 	}
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 8d23155..f3918c7 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -148,6 +148,14 @@ static int stmmac_probe_config_dt(struct platform_device *pdev,
- 	/* If we find a phy-handle property, use it as the PHY */
- 	plat->phy_node = of_parse_phandle(np, "phy-handle", 0);
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index cbc65b3..42ce860 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -69,8 +69,6 @@ u16 cpu_mask;
+  */
+ static bool clkdm_control = true;
  
-+	/* If phy-handle is not specified, check if we have a fixed-phy */
-+	if (!plat->phy_node && of_phy_is_fixed_link(np)) {
-+		if ((of_phy_register_fixed_link(np) < 0))
-+			return -ENODEV;
+-static LIST_HEAD(clk_hw_omap_clocks);
+-
+ struct clk_iomap {
+ 	struct regmap *regmap;
+ 	void __iomem *mem;
+@@ -579,108 +577,6 @@ static int __init omap_clk_setup(char *str)
+ __setup("mpurate=", omap_clk_setup);
+ 
+ /**
+- * omap2_init_clk_hw_omap_clocks - initialize an OMAP clock
+- * @clk: struct clk * to initialize
+- *
+- * Add an OMAP clock @clk to the internal list of OMAP clocks.  Used
+- * temporarily for autoidle handling, until this support can be
+- * integrated into the common clock framework code in some way.  No
+- * return value.
+- */
+-void omap2_init_clk_hw_omap_clocks(struct clk *clk)
+-{
+-	struct clk_hw_omap *c;
+-
+-	if (__clk_get_flags(clk) & CLK_IS_BASIC)
+-		return;
+-
+-	c = to_clk_hw_omap(__clk_get_hw(clk));
+-	list_add(&c->node, &clk_hw_omap_clocks);
+-}
+-
+-/**
+- * omap2_clk_enable_autoidle_all - enable autoidle on all OMAP clocks that
+- * support it
+- *
+- * Enable clock autoidle on all OMAP clocks that have allow_idle
+- * function pointers associated with them.  This function is intended
+- * to be temporary until support for this is added to the common clock
+- * code.  Returns 0.
+- */
+-int omap2_clk_enable_autoidle_all(void)
+-{
+-	struct clk_hw_omap *c;
+-
+-	list_for_each_entry(c, &clk_hw_omap_clocks, node)
+-		if (c->ops && c->ops->allow_idle)
+-			c->ops->allow_idle(c);
+-
+-	of_ti_clk_allow_autoidle_all();
+-
+-	return 0;
+-}
+-
+-/**
+- * omap2_clk_disable_autoidle_all - disable autoidle on all OMAP clocks that
+- * support it
+- *
+- * Disable clock autoidle on all OMAP clocks that have allow_idle
+- * function pointers associated with them.  This function is intended
+- * to be temporary until support for this is added to the common clock
+- * code.  Returns 0.
+- */
+-int omap2_clk_disable_autoidle_all(void)
+-{
+-	struct clk_hw_omap *c;
+-
+-	list_for_each_entry(c, &clk_hw_omap_clocks, node)
+-		if (c->ops && c->ops->deny_idle)
+-			c->ops->deny_idle(c);
+-
+-	of_ti_clk_deny_autoidle_all();
+-
+-	return 0;
+-}
+-
+-/**
+- * omap2_clk_deny_idle - disable autoidle on an OMAP clock
+- * @clk: struct clk * to disable autoidle for
+- *
+- * Disable autoidle on an OMAP clock.
+- */
+-int omap2_clk_deny_idle(struct clk *clk)
+-{
+-	struct clk_hw_omap *c;
+-
+-	if (__clk_get_flags(clk) & CLK_IS_BASIC)
+-		return -EINVAL;
+-
+-	c = to_clk_hw_omap(__clk_get_hw(clk));
+-	if (c->ops && c->ops->deny_idle)
+-		c->ops->deny_idle(c);
+-	return 0;
+-}
+-
+-/**
+- * omap2_clk_allow_idle - enable autoidle on an OMAP clock
+- * @clk: struct clk * to enable autoidle for
+- *
+- * Enable autoidle on an OMAP clock.
+- */
+-int omap2_clk_allow_idle(struct clk *clk)
+-{
+-	struct clk_hw_omap *c;
+-
+-	if (__clk_get_flags(clk) & CLK_IS_BASIC)
+-		return -EINVAL;
+-
+-	c = to_clk_hw_omap(__clk_get_hw(clk));
+-	if (c->ops && c->ops->allow_idle)
+-		c->ops->allow_idle(c);
+-	return 0;
+-}
+-
+-/**
+  * omap2_clk_enable_init_clocks - prepare & enable a list of clocks
+  * @clk_names: ptr to an array of strings of clock names to enable
+  * @num_clocks: number of clock names in @clk_names
+diff --git a/arch/arm/mach-omap2/clock.h b/arch/arm/mach-omap2/clock.h
+index b71d430..950a17a 100644
+--- a/arch/arm/mach-omap2/clock.h
++++ b/arch/arm/mach-omap2/clock.h
+@@ -186,9 +186,6 @@ void omap3_dpll_deny_idle(struct clk_hw_omap *clk);
+ 
+ void __init omap2_clk_disable_clkdm_control(void);
+ 
+-int omap2_clk_enable_autoidle_all(void);
+-int omap2_clk_allow_idle(struct clk *clk);
+-int omap2_clk_deny_idle(struct clk *clk);
+ int omap2_clk_switch_mpurate_at_boot(const char *mpurate_ck_name);
+ void omap2_clk_print_new_rates(const char *hfclkin_ck_name,
+ 			       const char *core_ck_name,
+diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
+index e75c64c..3dbcc36 100644
+--- a/drivers/clk/ti/autoidle.c
++++ b/drivers/clk/ti/autoidle.c
+@@ -33,8 +33,47 @@ struct clk_ti_autoidle {
+ #define AUTOIDLE_LOW		0x1
+ 
+ static LIST_HEAD(autoidle_clks);
++static LIST_HEAD(clk_hw_omap_clocks);
+ 
+-static void ti_allow_autoidle(struct clk_ti_autoidle *clk)
++/**
++ * omap2_clk_deny_idle - disable autoidle on an OMAP clock
++ * @clk: struct clk * to disable autoidle for
++ *
++ * Disable autoidle on an OMAP clock.
++ */
++int omap2_clk_deny_idle(struct clk *clk)
++{
++	struct clk_hw_omap *c;
 +
-+		plat->phy_node = of_node_get(np);
-+	}
++	if (__clk_get_flags(clk) & CLK_IS_BASIC)
++		return -EINVAL;
 +
- 	/* "snps,phy-addr" is not a standard property. Mark it as deprecated
- 	 * and warn of its use. Remove this when phy node support is added.
- 	 */
-@@ -212,8 +220,10 @@ static int stmmac_probe_config_dt(struct platform_device *pdev,
- 	if (of_find_property(np, "snps,pbl", NULL)) {
- 		dma_cfg = devm_kzalloc(&pdev->dev, sizeof(*dma_cfg),
- 				       GFP_KERNEL);
--		if (!dma_cfg)
-+		if (!dma_cfg) {
-+			of_node_put(np);
- 			return -ENOMEM;
-+		}
- 		plat->dma_cfg = dma_cfg;
- 		of_property_read_u32(np, "snps,pbl", &dma_cfg->pbl);
- 		dma_cfg->fixed_burst =
++	c = to_clk_hw_omap(__clk_get_hw(clk));
++	if (c->ops && c->ops->deny_idle)
++		c->ops->deny_idle(c);
++	return 0;
++}
++
++/**
++ * omap2_clk_allow_idle - enable autoidle on an OMAP clock
++ * @clk: struct clk * to enable autoidle for
++ *
++ * Enable autoidle on an OMAP clock.
++ */
++int omap2_clk_allow_idle(struct clk *clk)
++{
++	struct clk_hw_omap *c;
++
++	if (__clk_get_flags(clk) & CLK_IS_BASIC)
++		return -EINVAL;
++
++	c = to_clk_hw_omap(__clk_get_hw(clk));
++	if (c->ops && c->ops->allow_idle)
++		c->ops->allow_idle(c);
++	return 0;
++}
++
++static void _allow_autoidle(struct clk_ti_autoidle *clk)
+ {
+ 	u32 val;
+ 
+@@ -48,7 +87,7 @@ static void ti_allow_autoidle(struct clk_ti_autoidle *clk)
+ 	ti_clk_ll_ops->clk_writel(val, clk->reg);
+ }
+ 
+-static void ti_deny_autoidle(struct clk_ti_autoidle *clk)
++static void _deny_autoidle(struct clk_ti_autoidle *clk)
+ {
+ 	u32 val;
+ 
+@@ -63,31 +102,31 @@ static void ti_deny_autoidle(struct clk_ti_autoidle *clk)
+ }
+ 
+ /**
+- * of_ti_clk_allow_autoidle_all - enable autoidle for all clocks
++ * _clk_generic_allow_autoidle_all - enable autoidle for all clocks
+  *
+  * Enables hardware autoidle for all registered DT clocks, which have
+  * the feature.
+  */
+-void of_ti_clk_allow_autoidle_all(void)
++static void _clk_generic_allow_autoidle_all(void)
+ {
+ 	struct clk_ti_autoidle *c;
+ 
+ 	list_for_each_entry(c, &autoidle_clks, node)
+-		ti_allow_autoidle(c);
++		_allow_autoidle(c);
+ }
+ 
+ /**
+- * of_ti_clk_deny_autoidle_all - disable autoidle for all clocks
++ * _clk_generic_deny_autoidle_all - disable autoidle for all clocks
+  *
+  * Disables hardware autoidle for all registered DT clocks, which have
+  * the feature.
+  */
+-void of_ti_clk_deny_autoidle_all(void)
++static void _clk_generic_deny_autoidle_all(void)
+ {
+ 	struct clk_ti_autoidle *c;
+ 
+ 	list_for_each_entry(c, &autoidle_clks, node)
+-		ti_deny_autoidle(c);
++		_deny_autoidle(c);
+ }
+ 
+ /**
+@@ -131,3 +170,67 @@ int __init of_ti_clk_autoidle_setup(struct device_node *node)
+ 
+ 	return 0;
+ }
++
++/**
++ * omap2_init_clk_hw_omap_clocks - initialize an OMAP clock
++ * @clk: struct clk * to initialize
++ *
++ * Add an OMAP clock @clk to the internal list of OMAP clocks.  Used
++ * temporarily for autoidle handling, until this support can be
++ * integrated into the common clock framework code in some way.  No
++ * return value.
++ */
++void omap2_init_clk_hw_omap_clocks(struct clk *clk)
++{
++	struct clk_hw_omap *c;
++
++	if (__clk_get_flags(clk) & CLK_IS_BASIC)
++		return;
++
++	c = to_clk_hw_omap(__clk_get_hw(clk));
++	list_add(&c->node, &clk_hw_omap_clocks);
++}
++
++/**
++ * omap2_clk_enable_autoidle_all - enable autoidle on all OMAP clocks that
++ * support it
++ *
++ * Enable clock autoidle on all OMAP clocks that have allow_idle
++ * function pointers associated with them.  This function is intended
++ * to be temporary until support for this is added to the common clock
++ * code.  Returns 0.
++ */
++int omap2_clk_enable_autoidle_all(void)
++{
++	struct clk_hw_omap *c;
++
++	list_for_each_entry(c, &clk_hw_omap_clocks, node)
++		if (c->ops && c->ops->allow_idle)
++			c->ops->allow_idle(c);
++
++	_clk_generic_allow_autoidle_all();
++
++	return 0;
++}
++
++/**
++ * omap2_clk_disable_autoidle_all - disable autoidle on all OMAP clocks that
++ * support it
++ *
++ * Disable clock autoidle on all OMAP clocks that have allow_idle
++ * function pointers associated with them.  This function is intended
++ * to be temporary until support for this is added to the common clock
++ * code.  Returns 0.
++ */
++int omap2_clk_disable_autoidle_all(void)
++{
++	struct clk_hw_omap *c;
++
++	list_for_each_entry(c, &clk_hw_omap_clocks, node)
++		if (c->ops && c->ops->deny_idle)
++			c->ops->deny_idle(c);
++
++	_clk_generic_deny_autoidle_all();
++
++	return 0;
++}
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index a7256a9..9b51021 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -169,6 +169,9 @@ void ti_clk_patch_legacy_clks(struct ti_clk **patch);
+ struct clk *ti_clk_register_clk(struct ti_clk *setup);
+ int ti_clk_register_legacy_clks(struct ti_clk_alias *clks);
+ 
++void omap2_init_clk_hw_omap_clocks(struct clk *clk);
++int of_ti_clk_autoidle_setup(struct device_node *node);
++
+ extern const struct clk_hw_omap_ops clkhwops_omap4_dpllmx;
+ extern const struct clk_hw_omap_ops clkhwops_iclk;
+ extern const struct clk_hw_omap_ops clkhwops_iclk_wait;
+diff --git a/drivers/clk/ti/fixed-factor.c b/drivers/clk/ti/fixed-factor.c
+index c2c8a28..3cd4067 100644
+--- a/drivers/clk/ti/fixed-factor.c
++++ b/drivers/clk/ti/fixed-factor.c
+@@ -22,6 +22,8 @@
+ #include <linux/of_address.h>
+ #include <linux/clk/ti.h>
+ 
++#include "clock.h"
++
+ #undef pr_fmt
+ #define pr_fmt(fmt) "%s: " fmt, __func__
+ 
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 63f2945..2e4b4fb 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -259,7 +259,6 @@ extern const struct clk_ops ti_clk_mux_ops;
+ 
+ #define to_clk_hw_omap(_hw) container_of(_hw, struct clk_hw_omap, hw)
+ 
+-void omap2_init_clk_hw_omap_clocks(struct clk *clk);
+ int omap3_noncore_dpll_enable(struct clk_hw *hw);
+ void omap3_noncore_dpll_disable(struct clk_hw *hw);
+ int omap3_noncore_dpll_set_parent(struct clk_hw *hw, u8 index);
+@@ -288,6 +287,9 @@ long omap3_clkoutx2_round_rate(struct clk_hw *hw, unsigned long rate,
+ int omap2_clkops_enable_clkdm(struct clk_hw *hw);
+ void omap2_clkops_disable_clkdm(struct clk_hw *hw);
+ int omap2_clk_disable_autoidle_all(void);
++int omap2_clk_enable_autoidle_all(void);
++int omap2_clk_allow_idle(struct clk *clk);
++int omap2_clk_deny_idle(struct clk *clk);
+ void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks);
+ int omap3_dpll4_set_rate(struct clk_hw *clk, unsigned long rate,
+ 			 unsigned long parent_rate);
+@@ -320,7 +322,6 @@ void ti_dt_clk_init_retry_clks(void);
+ void ti_dt_clockdomains_setup(void);
+ int ti_clk_retry_init(struct device_node *node, struct clk_hw *hw,
+ 		      ti_of_clk_init_cb_t func);
+-int of_ti_clk_autoidle_setup(struct device_node *node);
+ int ti_clk_add_component(struct device_node *node, struct clk_hw *hw, int type);
+ 
+ int omap3430_dt_clk_init(void);
+@@ -351,14 +352,6 @@ struct ti_clk_features {
+ void ti_clk_setup_features(struct ti_clk_features *features);
+ struct ti_clk_features *ti_clk_get_features(void);
+ 
+-#ifdef CONFIG_OF
+-void of_ti_clk_allow_autoidle_all(void);
+-void of_ti_clk_deny_autoidle_all(void);
+-#else
+-static inline void of_ti_clk_allow_autoidle_all(void) { }
+-static inline void of_ti_clk_deny_autoidle_all(void) { }
+-#endif
+-
+ extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
+ extern const struct clk_hw_omap_ops clkhwops_omap2430_i2chs_wait;
+ extern const struct clk_hw_omap_ops clkhwops_omap3_dpll;
 -- 
-2.1.4
+1.7.9.5
