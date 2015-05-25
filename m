@@ -1,74 +1,175 @@
-Return-Path: <bleung@google.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <tony@atomide.com>,
+        <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv3 10/27] clk: ti: move omap2_clk_enable_init_clocks under clock driver
+Date: Mon, 25 May 2015 18:00:15 +0300
+Message-ID: <1432566032-10860-11-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Sender: bleung@google.com
-In-Reply-To: <1431451444-23155-17-git-send-email-rklein@nvidia.com>
-References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
-	<1431451444-23155-17-git-send-email-rklein@nvidia.com>
-Date: Wed, 13 May 2015 15:20:31 -0700
-Message-ID: <CANLzEks_bEnpyKuVHJEn8XZbdMDaqj9bQ+SjpgrM-uQo0W28Ug@mail.gmail.com>
-Subject: Re: [PATCH v5 15/21] clk: tegra: pll: Add dyn_ramp callback
-From: Benson Leung <bleung@chromium.org>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein@nvidia.com> wrote:
-> From: Bill Huang <bilhuang@nvidia.com>
->
-> Add a callback to the pll_params for custom dynamic ramping
-> functions which can be specified per PLL.
->
-> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+This is no longer used outside clock driver, so move it under the driver
+and remove the export for it from the global header file.
 
-Modulo kerneldoc addition,
-Reviewed-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/clock.c |   24 ------------------------
+ drivers/clk/ti/clk-2xxx.c   |    2 ++
+ drivers/clk/ti/clk-33xx.c   |    2 ++
+ drivers/clk/ti/clk-3xxx.c   |    1 +
+ drivers/clk/ti/clk-816x.c   |    2 ++
+ drivers/clk/ti/clk.c        |   24 ++++++++++++++++++++++++
+ drivers/clk/ti/clock.h      |    1 +
+ include/linux/clk/ti.h      |    1 -
+ 8 files changed, 32 insertions(+), 25 deletions(-)
 
-> ---
->  drivers/clk/tegra/clk.h |    4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index 330729a822cf..a61d388364b3 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -160,6 +160,8 @@ struct div_nmp {
->
->  #define MAX_PLL_MISC_REG_COUNT 6
->
-> +struct tegra_clk_pll;
-> +
->  /**
->   * struct tegra_clk_pll_params - PLL parameters
->   *
-> @@ -271,6 +273,8 @@ struct tegra_clk_pll_params {
->                         unsigned long rate, unsigned long parent_rate);
->         unsigned long   (*adjust_vco)(struct tegra_clk_pll_params *pll_params,
->                                 unsigned long parent_rate);
-> +       int     (*dyn_ramp)(struct tegra_clk_pll *pll,
-> +                       struct tegra_clk_pll_freq_table *cfg);
-
-Please add kerneldoc for dyn_ramp member above.
-
->  };
->
->  #define TEGRA_PLL_USE_LOCK BIT(0)
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index 42ce860..234cedf 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -576,30 +576,6 @@ static int __init omap_clk_setup(char *str)
+ }
+ __setup("mpurate=", omap_clk_setup);
+ 
+-/**
+- * omap2_clk_enable_init_clocks - prepare & enable a list of clocks
+- * @clk_names: ptr to an array of strings of clock names to enable
+- * @num_clocks: number of clock names in @clk_names
+- *
+- * Prepare and enable a list of clocks, named by @clk_names.  No
+- * return value. XXX Deprecated; only needed until these clocks are
+- * properly claimed and enabled by the drivers or core code that uses
+- * them.  XXX What code disables & calls clk_put on these clocks?
+- */
+-void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks)
+-{
+-	struct clk *init_clk;
+-	int i;
+-
+-	for (i = 0; i < num_clocks; i++) {
+-		init_clk = clk_get(NULL, clk_names[i]);
+-		if (WARN(IS_ERR(init_clk), "could not find init clock %s\n",
+-				clk_names[i]))
+-			continue;
+-		clk_prepare_enable(init_clk);
+-	}
+-}
+-
+ const struct clk_hw_omap_ops clkhwops_wait = {
+ 	.find_idlest	= omap2_clk_dflt_find_idlest,
+ 	.find_companion	= omap2_clk_dflt_find_companion,
+diff --git a/drivers/clk/ti/clk-2xxx.c b/drivers/clk/ti/clk-2xxx.c
+index c808ab3..bd8790b 100644
+--- a/drivers/clk/ti/clk-2xxx.c
++++ b/drivers/clk/ti/clk-2xxx.c
+@@ -19,6 +19,8 @@
+ #include <linux/clk-provider.h>
+ #include <linux/clk/ti.h>
+ 
++#include "clock.h"
++
+ static struct ti_dt_clk omap2xxx_clks[] = {
+ 	DT_CLK(NULL, "func_32k_ck", "func_32k_ck"),
+ 	DT_CLK(NULL, "secure_32k_ck", "secure_32k_ck"),
+diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+index 028b337..733f9d3 100644
+--- a/drivers/clk/ti/clk-33xx.c
++++ b/drivers/clk/ti/clk-33xx.c
+@@ -19,6 +19,8 @@
+ #include <linux/clk-provider.h>
+ #include <linux/clk/ti.h>
+ 
++#include "clock.h"
++
+ static struct ti_dt_clk am33xx_clks[] = {
+ 	DT_CLK(NULL, "clk_32768_ck", "clk_32768_ck"),
+ 	DT_CLK(NULL, "clk_rc32k_ck", "clk_rc32k_ck"),
+diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
+index 757636d..bb3b883 100644
+--- a/drivers/clk/ti/clk-3xxx.c
++++ b/drivers/clk/ti/clk-3xxx.c
+@@ -19,6 +19,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/clk/ti.h>
+ 
++#include "clock.h"
+ 
+ static struct ti_dt_clk omap3xxx_clks[] = {
+ 	DT_CLK(NULL, "apb_pclk", "dummy_apb_pclk"),
+diff --git a/drivers/clk/ti/clk-816x.c b/drivers/clk/ti/clk-816x.c
+index 9451e65..c69352b 100644
+--- a/drivers/clk/ti/clk-816x.c
++++ b/drivers/clk/ti/clk-816x.c
+@@ -14,6 +14,8 @@
+ #include <linux/clk-provider.h>
+ #include <linux/clk/ti.h>
+ 
++#include "clock.h"
++
+ static struct ti_dt_clk dm816x_clks[] = {
+ 	DT_CLK(NULL, "sys_clkin", "sys_clkin_ck"),
+ 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 567f8b9..f1dcd20 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -335,4 +335,28 @@ struct ti_clk_features *ti_clk_get_features(void)
+ {
+ 	return &ti_clk_features;
+ }
++
++/**
++ * omap2_clk_enable_init_clocks - prepare & enable a list of clocks
++ * @clk_names: ptr to an array of strings of clock names to enable
++ * @num_clocks: number of clock names in @clk_names
++ *
++ * Prepare and enable a list of clocks, named by @clk_names.  No
++ * return value. XXX Deprecated; only needed until these clocks are
++ * properly claimed and enabled by the drivers or core code that uses
++ * them.  XXX What code disables & calls clk_put on these clocks?
++ */
++void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks)
++{
++	struct clk *init_clk;
++	int i;
++
++	for (i = 0; i < num_clocks; i++) {
++		init_clk = clk_get(NULL, clk_names[i]);
++		if (WARN(IS_ERR(init_clk), "could not find init clock %s\n",
++			 clk_names[i]))
++			continue;
++		clk_prepare_enable(init_clk);
++	}
++}
+ #endif
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 9b51021..4b26af8 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -171,6 +171,7 @@ int ti_clk_register_legacy_clks(struct ti_clk_alias *clks);
+ 
+ void omap2_init_clk_hw_omap_clocks(struct clk *clk);
+ int of_ti_clk_autoidle_setup(struct device_node *node);
++void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks);
+ 
+ extern const struct clk_hw_omap_ops clkhwops_omap4_dpllmx;
+ extern const struct clk_hw_omap_ops clkhwops_iclk;
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 2e4b4fb..43184c2 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -290,7 +290,6 @@ int omap2_clk_disable_autoidle_all(void);
+ int omap2_clk_enable_autoidle_all(void);
+ int omap2_clk_allow_idle(struct clk *clk);
+ int omap2_clk_deny_idle(struct clk *clk);
+-void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks);
+ int omap3_dpll4_set_rate(struct clk_hw *clk, unsigned long rate,
+ 			 unsigned long parent_rate);
+ int omap3_dpll4_set_rate_and_parent(struct clk_hw *hw, unsigned long rate,
 -- 
-Benson Leung
-Software Engineer, Chrom* OS
-bleung@chromium.org
+1.7.9.5
