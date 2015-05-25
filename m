@@ -1,326 +1,94 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 21 May 2015 12:31:42 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sergej Sawazki <ce3a@gmx.de>
-Cc: mturquette@linaro.org, jsarha@ti.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH RFC v1] clk: add gpio controlled clock multiplexer
-Message-ID: <20150521193142.GD21195@codeaurora.org>
-References: <1431596413-20917-1-git-send-email-ce3a@gmx.de>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <tony@atomide.com>,
+        <paul@pwsan.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: =?UTF-8?q?=5BPATCHv3=2015/27=5D=20ARM=3A=20OMAP3=3A=20clock=3A=20remove=20clock3xxx=2Ec=20file?=
+Date: Mon, 25 May 2015 18:00:20 +0300
+Message-ID: <1432566032-10860-16-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1431596413-20917-1-git-send-email-ce3a@gmx.de>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/14, Sergej Sawazki wrote:
-> diff --git a/drivers/clk/clk-gpio-mux.c b/drivers/clk/clk-gpio-mux.c
-> new file mode 100644
-> index 0000000..9e41e92
-> --- /dev/null
-> +++ b/drivers/clk/clk-gpio-mux.c
-[..]
-> +static int clk_gpio_mux_enable(struct clk_hw *hw)
-> +{
-> +	struct clk_gpio_mux *clk = to_clk_gpio_mux(hw);
-> +
-> +	if (!clk->gpiod_ena) {
-> +		pr_err("%s: %s: DT property 'enable-gpios' not defined\n",
-> +				__func__, __clk_get_name(hw->clk));
-> +		return -ENOENT;
-> +	}
+This now only has a couple of variables within it, which are used outside
+the file itself. Move these variables to where they are actually used,
+and remove the file completely as it is now empty.
 
-It would be better to have separate clk_ops for the case where
-there isn't a gpiod_ena gpio. Also, this driver isn't DT
-specific, so the error message is misleading.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/Makefile           |    2 +-
+ arch/arm/mach-omap2/clkt34xx_dpll3m2.c |    2 ++
+ arch/arm/mach-omap2/clock3xxx.c        |   33 --------------------------------
+ 3 files changed, 3 insertions(+), 34 deletions(-)
+ delete mode 100644 arch/arm/mach-omap2/clock3xxx.c
 
-> +
-> +	gpiod_set_value(clk->gpiod_ena, 1);
-> +
-> +	return 0;
-> +}
-> +
-> +static int clk_gpio_mux_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct clk_gpio_mux *clk = to_clk_gpio_mux(hw);
-> +
-> +	if (!clk->gpiod_ena) {
-> +		pr_err("%s: %s: DT property 'enable-gpios' not defined\n",
-> +				__func__, __clk_get_name(hw->clk));
-> +		return -EINVAL;
-> +	}
-> +
-> +	return gpiod_get_value(clk->gpiod_ena);
-> +}
-> +
-> +static u8 clk_gpio_mux_get_parent(struct clk_hw *hw)
-> +{
-> +	struct clk_gpio_mux *clk = to_clk_gpio_mux(hw);
-> +
-> +	return gpiod_get_value(clk->gpiod_sel);
-> +}
-> +
-> +static int clk_gpio_mux_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +	struct clk_gpio_mux *clk = to_clk_gpio_mux(hw);
-> +
-> +	if (index > 1)
-> +		return -EINVAL;
-
-Doesn't seem possible if num_parents is correct. Please drop.
-
-> +
-> +	gpiod_set_value(clk->gpiod_sel, index);
-> +
-> +	return 0;
-> +}
-> +
-[...]
-> +/**
-> + * clk_register_gpio_mux - register a gpio clock mux with the clock framework
-> + * @dev: device that is registering this clock
-> + * @name: name of this clock
-> + * @parent_names: names of this clock's parents
-> + * @num_parents: number of parents listed in @parent_names
-> + * @gpiod_sel: gpio descriptor to select the parent of this clock multiplexer
-> + * @gpiod_ena: gpio descriptor to enable the output of this clock multiplexer
-> + * @clk_flags: optional flags for basic clock
-> + */
-> +struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
-> +		const char **parent_names, u8 num_parents,
-> +		struct gpio_desc *gpiod_sel, struct gpio_desc *gpiod_ena,
-> +		unsigned long clk_flags)
-> +{
-> +	struct clk_gpio_mux *clk_gpio_mux = NULL;
-> +	struct clk *clk = ERR_PTR(-EINVAL);
-> +	struct clk_init_data init = { NULL };
-> +	unsigned long gpio_sel_flags, gpio_ena_flags;
-> +	int err;
-> +
-> +	if (dev)
-> +		clk_gpio_mux = devm_kzalloc(dev, sizeof(struct clk_gpio_mux),
-> +				GFP_KERNEL);
-> +	else
-> +		clk_gpio_mux = kzalloc(sizeof(struct clk_gpio_mux), GFP_KERNEL);
-> +
-> +	if (!clk_gpio_mux)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	if (gpiod_is_active_low(gpiod_sel))
-> +		gpio_sel_flags = GPIOF_OUT_INIT_HIGH;
-> +	else
-> +		gpio_sel_flags = GPIOF_OUT_INIT_LOW;
-> +
-> +	if (dev)
-> +		err = devm_gpio_request_one(dev, desc_to_gpio(gpiod_sel),
-> +				gpio_sel_flags, name);
-> +	else
-> +		err = gpio_request_one(desc_to_gpio(gpiod_sel),
-> +				gpio_sel_flags, name);
-> +
-> +	if (err) {
-> +		pr_err("%s: %s: Error requesting gpio %u\n",
-> +				__func__, name, desc_to_gpio(gpiod_sel));
-
-What if the error is probe defer? We should be silent in such a
-situation. I see this is mostly copy/paste from gpio-gate.c so
-perhaps we should fix that one too.
-
-> +		return ERR_PTR(err);
-> +	}
-> +	clk_gpio_mux->gpiod_sel = gpiod_sel;
-> +
-> +	if (gpiod_ena != NULL) {
-
-Style nitpick:
-
-	if (gpiod_ena) {
-
-is preferred.
-
-> +		if (gpiod_is_active_low(gpiod_ena))
-> +			gpio_ena_flags = GPIOF_OUT_INIT_HIGH;
-> +		else
-> +			gpio_ena_flags = GPIOF_OUT_INIT_LOW;
-> +
-> +		if (dev)
-> +			err = devm_gpio_request_one(dev,
-> +					desc_to_gpio(gpiod_ena),
-> +					gpio_ena_flags, name);
-> +		else
-> +			err = gpio_request_one(desc_to_gpio(gpiod_ena),
-> +					gpio_ena_flags, name);
-> +
-> +		if (err) {
-> +			pr_err("%s: %s: Error requesting gpio %u\n",
-> +					__func__, name,
-> +					desc_to_gpio(gpiod_ena));
-> +			return ERR_PTR(err);
-> +		}
-> +		clk_gpio_mux->gpiod_ena = gpiod_ena;
-> +	}
-> +
-> +	init.name = name;
-> +	init.ops = &clk_gpio_mux_ops;
-> +	init.flags = clk_flags | CLK_IS_BASIC;
-> +	init.parent_names = parent_names;
-> +	init.num_parents = num_parents;
-
-Should we make sure num_parents is 2?
-
-> +
-> +	clk_gpio_mux->hw.init = &init;
-> +
-> +	clk = clk_register(dev, &clk_gpio_mux->hw);
-
-But no if (dev) devm_*() trick here?
-
-> +
-> +	if (!IS_ERR(clk))
-> +		return clk;
-> +
-> +	if (!dev) {
-> +		kfree(clk_gpio_mux);
-> +		gpiod_put(gpiod_ena);
-
-Isn't gpiod_ena optional? And so calling gpiod_put() here might
-cause a warning?
-
-Actually I wonder why we wouldn't just make this a gpio-mux
-without enable/disable support? If we want to do enable/disable,
-we can parent the gpio gate to this mux. Alternatively, we could
-combine the gpio-gate file and this new mux file into one file
-and support both compatible strings. There's quite a bit of
-duplicated code so this may be a better approach.
-
-> +		gpiod_put(gpiod_sel);
-> +	}
-> +
-> +	return clk;
-> +}
-> +EXPORT_SYMBOL_GPL(clk_register_gpio_mux);
-> +
-> +#ifdef CONFIG_OF
-> +/**
-> + * The clk_register_gpio_mux has to be delayed, because the EPROBE_DEFER
-> + * can not be handled properly at of_clk_init() call time.
-> + */
-> +
-> +struct clk_gpio_mux_delayed_register_data {
-> +	struct device_node *node;
-> +	struct mutex lock;
-> +	struct clk *clk;
-> +};
-> +
-> +static struct clk *of_clk_gpio_mux_delayed_register_get(
-> +		struct of_phandle_args *clkspec,
-> +		void *_data)
-> +{
-> +	struct clk_gpio_mux_delayed_register_data *data = _data;
-> +	struct clk *clk = ERR_PTR(-EINVAL);
-> +	const char *clk_name = data->node->name;
-> +	int i, num_parents;
-> +	const char **parent_names;
-> +	struct gpio_desc *gpiod_sel, *gpiod_ena;
-> +	int gpio;
-> +	u32 flags = 0;
-
-This is only used on place and never assigned otherwise, why not
-just use 0 in place of flags?
-
-> +
-> +	mutex_lock(&data->lock);
-> +
-> +	if (data->clk) {
-> +		mutex_unlock(&data->lock);
-> +		return data->clk;
-> +	}
-> +
-> +	gpio = of_get_named_gpio_flags(data->node, "select-gpios", 0, NULL);
-> +	if (!gpio_is_valid(gpio))
-> +		goto err_gpio;
-> +	gpiod_sel = gpio_to_desc(gpio);
-> +
-> +	gpio = of_get_named_gpio_flags(data->node, "enable-gpios", 0, NULL);
-> +	if (!gpio_is_valid(gpio)) {
-> +		if (gpio != -ENOENT)
-> +			goto err_gpio;
-> +		else
-> +			gpiod_ena = NULL;
-> +	} else {
-> +		gpiod_ena = gpio_to_desc(gpio);
-> +	}
-> +
-> +	num_parents = of_clk_get_parent_count(data->node);
-> +	if (num_parents < 2) {
-
-Should that be num_parents != 2?
-
-> +		pr_err("mux-clock %s must have 2 parents\n", data->node->name);
-> +		return clk;
-> +	}
-> +
-> +	parent_names = kzalloc((sizeof(char *) * num_parents), GFP_KERNEL);
-
-kcalloc() please.
-
-> +	if (!parent_names) {
-> +		kfree(parent_names);
-> +		return clk;
-> +	}
-> +
-> +	for (i = 0; i < num_parents; i++)
-> +		parent_names[i] = of_clk_get_parent_name(data->node, i);
-> +
-> +	clk = clk_register_gpio_mux(NULL, clk_name, parent_names, num_parents,
-> +			gpiod_sel, gpiod_ena, flags);
-> +	if (IS_ERR(clk)) {
-> +		mutex_unlock(&data->lock);
-> +		return clk;
-> +	}
-> +
-> +	data->clk = clk;
-> +	mutex_unlock(&data->lock);
-> +
-> +	return clk;
-> +
-> +err_gpio:
-> +	mutex_unlock(&data->lock);
-> +	if (gpio == -EPROBE_DEFER)
-> +		pr_warn("%s: %s: GPIOs not yet available, retry later\n",
-> +				__func__, clk_name);
-
-pr_debug
-
-> +	else
-> +		pr_err("%s: %s: Can't get GPIOs\n",
-> +				__func__, clk_name);
-> +	return ERR_PTR(gpio);
-> +}
-> +
-> +/**
-> + * of_gpio_mux_clk_setup() - Setup function for gpio controlled clock mux
-> + */
-> +void __init of_gpio_mux_clk_setup(struct device_node *node)
-> +{
-> +	struct clk_gpio_mux_delayed_register_data *data;
-> +
-> +	data = kzalloc(sizeof(struct clk_gpio_mux_delayed_register_data),
-
-please use kzalloc(sizeof(*data), GFP_KERNEL); style
-
-> +			GFP_KERNEL);
-> +	if (!data)
-> +		return;
-> +
-> +	data->node = node;
-> +	mutex_init(&data->lock);
-> +
-> +	of_clk_add_provider(node, of_clk_gpio_mux_delayed_register_get, data);
-> +}
-> +EXPORT_SYMBOL_GPL(of_gpio_mux_clk_setup);
-> +CLK_OF_DECLARE(gpio_mux_clk, "gpio-mux-clock", of_gpio_mux_clk_setup);
-> +#endif
-
+diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
+index f9d4ccf..07052656 100644
+--- a/arch/arm/mach-omap2/Makefile
++++ b/arch/arm/mach-omap2/Makefile
+@@ -186,7 +186,7 @@ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpllcore.o
+ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_virt_prcm_set.o
+ obj-$(CONFIG_ARCH_OMAP2)		+= clkt2xxx_dpll.o
+ obj-$(CONFIG_SOC_OMAP2430)		+= clock2430.o
+-obj-$(CONFIG_ARCH_OMAP3)		+= $(clock-common) clock3xxx.o
++obj-$(CONFIG_ARCH_OMAP3)		+= $(clock-common)
+ obj-$(CONFIG_ARCH_OMAP3)		+= clock34xx.o clkt34xx_dpll3m2.o
+ obj-$(CONFIG_ARCH_OMAP3)		+= clock3517.o
+ obj-$(CONFIG_ARCH_OMAP4)		+= $(clock-common)
+diff --git a/arch/arm/mach-omap2/clkt34xx_dpll3m2.c b/arch/arm/mach-omap2/clkt34xx_dpll3m2.c
+index 825e3da..6cd2961 100644
+--- a/arch/arm/mach-omap2/clkt34xx_dpll3m2.c
++++ b/arch/arm/mach-omap2/clkt34xx_dpll3m2.c
+@@ -29,6 +29,8 @@
+ 
+ #define CYCLES_PER_MHZ			1000000
+ 
++struct clk *sdrc_ick_p, *arm_fck_p;
++
+ /*
+  * CORE DPLL (DPLL3) M2 divider rate programming functions
+  *
+diff --git a/arch/arm/mach-omap2/clock3xxx.c b/arch/arm/mach-omap2/clock3xxx.c
+deleted file mode 100644
+index 0b0e3a87..0000000
+--- a/arch/arm/mach-omap2/clock3xxx.c
++++ /dev/null
+@@ -1,33 +0,0 @@
+-/*
+- * OMAP3-specific clock framework functions
+- *
+- * Copyright (C) 2007-2008 Texas Instruments, Inc.
+- * Copyright (C) 2007-2010 Nokia Corporation
+- *
+- * Paul Walmsley
+- * Jouni Högander
+- *
+- * Parts of this code are based on code written by
+- * Richard Woodruff, Tony Lindgren, Tuukka Tikkanen, Karthik Dasu
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-#undef DEBUG
+-
+-#include <linux/kernel.h>
+-#include <linux/errno.h>
+-#include <linux/clk.h>
+-#include <linux/io.h>
+-
+-#include "soc.h"
+-#include "clock.h"
+-#include "clock3xxx.h"
+-#include "prm2xxx_3xxx.h"
+-#include "prm-regbits-34xx.h"
+-#include "cm2xxx_3xxx.h"
+-#include "cm-regbits-34xx.h"
+-
+-/* needed by omap3_core_dpll_m2_set_rate() */
+-struct clk *sdrc_ick_p, *arm_fck_p;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
