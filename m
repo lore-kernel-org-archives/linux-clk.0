@@ -1,187 +1,152 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 19 May 2015 22:53:43 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 3/8] clk: sunxi: Add a driver for the PLL2
-Message-ID: <20150519205343.GZ4004@lukather>
-References: <1430565879-28113-1-git-send-email-maxime.ripard@free-electrons.com>
- <1430565879-28113-4-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v64jVksA5rapnAPn9yefEeXnfFw5FwdnXPP0G9FvzWnVBg@mail.gmail.com>
- <20150515074520.GR4004@lukather>
- <CAGb2v64gbY1n4kVBc55hm=jwC3N-eKjWXCgEJr-+J6tYsD7sQA@mail.gmail.com>
- <20150515144439.GZ4004@lukather>
- <CAGb2v67DguLiPKrg_LEo-Fwmfoh8nvv4iPV_4X30RBD-NFHcvg@mail.gmail.com>
+Return-Path: <jim2101024@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="eDs+MzjklnCQZgvp"
-In-Reply-To: <CAGb2v67DguLiPKrg_LEo-Fwmfoh8nvv4iPV_4X30RBD-NFHcvg@mail.gmail.com>
+In-Reply-To: <20150523191750.9817.78709@quantum>
+References: <1431719147-10153-1-git-send-email-jim2101024@gmail.com>
+	<20150523191750.9817.78709@quantum>
+Date: Tue, 26 May 2015 10:43:35 -0400
+Message-ID: <CANCKTBsKYikUquheryHA=618sgQ5gd0-h3qTosxyA-XZjjodOQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: allow a clk divider with max divisor when zero
+From: Jim Quinlan <jim2101024@gmail.com>
+To: Michael Turquette <mturquette@linaro.org>
+Cc: linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Mike,
 
---eDs+MzjklnCQZgvp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I don't think using a table approach is acceptable.  First, a number
+of our dividers have an eight bit value field.  Second, we do not
+necessarily know a priori which of the 256 settings will be chosen:
+we could make a table with the N most popular choices, and then
+someone -- possibly in app-land -- may decide they want a different
+frequency for necessity, power savings, reliability, whatever.  They
+want to make this change immediately and cannot wait for us to produce
+and QA another device tree with the new table.
 
-On Tue, May 19, 2015 at 03:58:09PM +0800, Chen-Yu Tsai wrote:
-> >> >> > +#define SUN4I_PLL2_PRE_DIV_VALUE       4
-> >> >> > +
-> >> >> > +#define SUN4I_PLL2_OUTPUTS             4
-> >> >> > +
-> >> >> > +static void sun4i_a10_get_pll2_base_factors(u32 *freq, u32 paren=
-t_rate,
-> >> >> > +                                           u8 *n, u8 *k, u8 *m, =
-u8 *p)
-> >> >> > +{
-> >> >> > +       /*
-> >> >> > +        * Normalize the frequency to a multiple of (24 MHz / Fix=
-ed
-> >> >> > +        * PRE-DIV)
-> >> >> > +        */
-> >> >> > +       *freq =3D round_down(*freq, parent_rate / SUN4I_PLL2_PRE_=
-DIV_VALUE);
-> >> >> > +
-> >> >> > +       /* We were called to round the frequency, we can return */
-> >> >> > +       if (!n)
-> >> >> > +               return;
-> >> >> > +
-> >> >> > +       *n =3D *freq * SUN4I_PLL2_PRE_DIV_VALUE / parent_rate;
-> >> >> > +
-> >> >> > +       /*
-> >> >> > +        * Even though the pre-divider can be changed, we don't r=
-eally
-> >> >> > +        * care and we can just fix it to 4.
-> >> >> > +        */
-> >> >> > +       *m =3D SUN4I_PLL2_PRE_DIV_VALUE;
-> >> >> > +}
-> >> >> > +
-> >> >> > +static struct clk_factors_config sun4i_a10_pll2_base_config =3D {
-> >> >> > +       .mshift =3D SUN4I_PLL2_PRE_DIV,
-> >> >> > +       .mwidth =3D 5,
-> >> >> > +       .nshift =3D SUN4I_PLL2_N,
-> >> >> > +       .nwidth =3D 7,
-> >> >> > +
-> >> >> > +       .m_zero =3D 1,
-> >> >> > +       .n_zero =3D 1,
-> >> >> > +};
-> >> >> > +
-> >> >> > +static const struct factors_data sun4i_a10_pll2_base_data __init=
-const =3D {
-> >> >> > +       .enable =3D SUN4I_PLL2_ENABLE,
-> >> >> > +       .table =3D &sun4i_a10_pll2_base_config,
-> >> >> > +       .getter =3D sun4i_a10_get_pll2_base_factors,
-> >> >> > +       .name =3D "pll2-base",
-> >> >> > +};
-> >> >> > +
-> >> >> > +static DEFINE_SPINLOCK(sun4i_a10_pll2_lock);
-> >> >> > +
-> >> >> > +static void __init sun4i_pll2_setup(struct device_node *node)
-> >> >> > +{
-> >> >> > +       const char *clk_name =3D node->name, *parent;
-> >> >> > +       struct clk_onecell_data *clk_data;
-> >> >> > +       struct clk **clks, *base_clk;
-> >> >> > +       void __iomem *reg;
-> >> >> > +       u32 val;
-> >> >> > +
-> >> >> > +       reg =3D of_io_request_and_map(node, 0, of_node_full_name(=
-node));
-> >> >> > +       if (IS_ERR(reg))
-> >> >> > +               return;
-> >> >> > +
-> >> >> > +       clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
-> >> >> > +       if (!clk_data)
-> >> >> > +               goto err_unmap;
-> >> >> > +
-> >> >> > +       clks =3D kcalloc(SUN4I_PLL2_OUTPUTS, sizeof(struct clk *)=
-, GFP_KERNEL);
-> >> >> > +       if (!clks)
-> >> >> > +               goto err_free_data;
-> >> >> > +
-> >> >> > +       base_clk =3D sunxi_factors_register(node, &sun4i_a10_pll2=
-_base_data,
-> >> >> > +                                         &sun4i_a10_pll2_lock, r=
-eg);
-> >> >>
-> >> >> Why aren't you using divs_clk for this? It seems right for the job.
-> >> >
-> >> > As far as I know, divs_clk can only handle a single divider, and not
-> >> > two subsequent dividers like this one uses.
-> >>
-> >> I thought we were setting the post divider to 4 so the outputs match
-> >> the names? Maybe we could get it in as is (with the above comment
-> >> addressed), and refactor it later. I'm still stuck on factors_clk
-> >> stuff....
-> >
-> > We are, but the pre-div is considered as the M factor, and the N
-> > factor as N, so we can't really consider it as a single divider.
->=20
-> Isn't pre-div used by all the clocks?
->=20
-> The manual lists:
->=20
-> 1X =3D 48*N / pre-div / post-div / 2
-> 2X =3D 48*N / pre-div / 4
-> 4X =3D 48*N / pre-div / 2
-> 8X =3D 48*N / pre-div
->=20
-> So couldn't you have a base factor clock as 24*N / pre-div,
-> and the outputs as follows?
->=20
-> 1X =3D base / post-div
-> 2X =3D base / 2
-> 4X =3D base
-> 8X =3D base * 2
+Regards,
+Jim
 
-Good thing that it's what was done in this patch then :)
-
-> > Thinking a bit more about this, what we could do though, is splitting
-> > the pll2-base clock in half, one that would expose a single divider
-> > using clk-divider for the pre-divider, then a factor clock for the N
-> > factor, and then multiple dividers for the post-divider and other
-> > outputs.
-> >
-> > I wonder if that could not even be made that way for all the factors
-> > clock. That would reduce the needed logic in the drivers a lot.
->=20
-> Taking apart what should be an integrated clock into separate parts
-> kind of makes the clock tree ugly. :(
-
-But it would remove the amount of code that we maintain, extend and
-debug by our own in favor of common, well-tested and factored code.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---eDs+MzjklnCQZgvp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVW6LXAAoJEBx+YmzsjxAguP8P/jBeNnNZsE8ATbQoow5TAfmH
-H7lXAwwQtPJ71MuYOcLYrszeYFZC9gd4s79+4SDf5NLAZWjY0o/Or53MVF5HBMsh
-CtwlLsHYU5YDRhqdh3akNNApfDS0yhAXcXnEMvgaTep18PQKbEMvNgc0bDqVssk7
-UFR25EnepLJ+4ZOuX/vWWy6KudvJBhRh6PfRwJNcDzQFgVU9x6BaO+4ntq+DOiKf
-d3/7S3E2fpewrBbnV7HZbfZf4tMGV9T1s2ja/uDdrtXmCvB0ourRSqVyUT4ZAepW
-ieJ6HIqvdcxgC2dYdMWfOKtVIyyDcAdrYztbFxPT3DStyxMGS0NpCNfE1R8X2UFU
-+ZH0WrB4JKXwwkSY0zg/+m23g7xmQEM7R/ogKziv5Ubf9rYjTnbW5kvbOliMpmW1
-U0m5mPX4eaWabfPsWazHOjdYUZjAAKCt2sndQcpzoWTyOUAXz541CgezzZHmWDCa
-FaaH2+BdR87F48d/VLGWv/XUnBojr33GxiA2YN3j4jOogyfnk8U0//b91+CUyg5H
-cN8JdPIJcE7JnRZyqiDK1ErtZeZ/H8wyOCAtueV2JIxye4B3NfP1IRvSMdCqPfRO
-9g/lIAcVEBI8lPpyxiB7yWNf82Xau+mvQUXp+boPATf8p8O7UGlkjE2BiFJff3/W
-KqwZrUUlC9G5vvTem+WK
-=/gc5
------END PGP SIGNATURE-----
-
---eDs+MzjklnCQZgvp--
+On Sat, May 23, 2015 at 3:17 PM, Michael Turquette
+<mturquette@linaro.org> wrote:
+> Quoting Jim Quinlan (2015-05-15 12:45:47)
+>> This commit allows certain Broadcom STB clock dividers to be used with
+>> clk-divider.c.  It allows for a clock whose field value is the equal
+>> to the divisor, execpt when the field value is zero, in which case the
+>> divisor is 2^width.  For example, consider a divisor clock with a two
+>> bit field:
+>>
+>> value           divisor
+>> 0               4
+>> 1               1
+>> 2               2
+>> 3               3
+>
+> Hi Jim,
+>
+> Instead of introducing this flag, could you use the divider table? New
+> stuff is generally added to clk-divider.c when it is common and used by
+> multiple platforms. If this is not the case then using a table-based
+> approach is a nice solution.
+>
+> Regards,
+> Mike
+>
+>>
+>> Signed-off-by: Jim Quinlan <jim2101024@gmail.com>
+>> ---
+>>  drivers/clk/clk-divider.c    | 16 +++++++++++-----
+>>  include/linux/clk-provider.h |  4 ++++
+>>  2 files changed, 15 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+>> index 25006a8..fce0d8b 100644
+>> --- a/drivers/clk/clk-divider.c
+>> +++ b/drivers/clk/clk-divider.c
+>> @@ -78,12 +78,14 @@ static unsigned int _get_table_div(const struct clk_div_table *table,
+>>  }
+>>
+>>  static unsigned int _get_div(const struct clk_div_table *table,
+>> -                            unsigned int val, unsigned long flags)
+>> +                            unsigned int val, unsigned long flags, u8 width)
+>>  {
+>>         if (flags & CLK_DIVIDER_ONE_BASED)
+>>                 return val;
+>>         if (flags & CLK_DIVIDER_POWER_OF_TWO)
+>>                 return 1 << val;
+>> +       if (flags & CLK_DIVIDER_MAX_AT_ZERO)
+>> +               return val ? val : div_mask(width) + 1;
+>>         if (table)
+>>                 return _get_table_div(table, val);
+>>         return val + 1;
+>> @@ -101,12 +103,14 @@ static unsigned int _get_table_val(const struct clk_div_table *table,
+>>  }
+>>
+>>  static unsigned int _get_val(const struct clk_div_table *table,
+>> -                            unsigned int div, unsigned long flags)
+>> +                            unsigned int div, unsigned long flags, u8 width)
+>>  {
+>>         if (flags & CLK_DIVIDER_ONE_BASED)
+>>                 return div;
+>>         if (flags & CLK_DIVIDER_POWER_OF_TWO)
+>>                 return __ffs(div);
+>> +       if (flags & CLK_DIVIDER_MAX_AT_ZERO)
+>> +               return (div == div_mask(width) + 1) ? 0 : div;
+>>         if (table)
+>>                 return  _get_table_val(table, div);
+>>         return div - 1;
+>> @@ -117,9 +121,10 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+>>                                   const struct clk_div_table *table,
+>>                                   unsigned long flags)
+>>  {
+>> +       struct clk_divider *divider = to_clk_divider(hw);
+>>         unsigned int div;
+>>
+>> -       div = _get_div(table, val, flags);
+>> +       div = _get_div(table, val, flags, divider->width);
+>>         if (!div) {
+>>                 WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
+>>                         "%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
+>> @@ -351,7 +356,8 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+>>         if (divider->flags & CLK_DIVIDER_READ_ONLY) {
+>>                 bestdiv = readl(divider->reg) >> divider->shift;
+>>                 bestdiv &= div_mask(divider->width);
+>> -               bestdiv = _get_div(divider->table, bestdiv, divider->flags);
+>> +               bestdiv = _get_div(divider->table, bestdiv, divider->flags,
+>> +                       divider->width);
+>>                 return DIV_ROUND_UP(*prate, bestdiv);
+>>         }
+>>
+>> @@ -370,7 +376,7 @@ int divider_get_val(unsigned long rate, unsigned long parent_rate,
+>>         if (!_is_valid_div(table, div, flags))
+>>                 return -EINVAL;
+>>
+>> -       value = _get_val(table, div, flags);
+>> +       value = _get_val(table, div, flags, width);
+>>
+>>         return min_t(unsigned int, value, div_mask(width));
+>>  }
+>> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+>> index df69531..a30c24c 100644
+>> --- a/include/linux/clk-provider.h
+>> +++ b/include/linux/clk-provider.h
+>> @@ -342,6 +342,9 @@ struct clk_div_table {
+>>   *     to the closest integer instead of the up one.
+>>   * CLK_DIVIDER_READ_ONLY - The divider settings are preconfigured and should
+>>   *     not be changed by the clock framework.
+>> + * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE_BASED
+>> + *     except when the value read from the register is zero, the divisor is
+>> + *     2^width of the field.
+>>   */
+>>  struct clk_divider {
+>>         struct clk_hw   hw;
+>> @@ -359,6 +362,7 @@ struct clk_divider {
+>>  #define CLK_DIVIDER_HIWORD_MASK                BIT(3)
+>>  #define CLK_DIVIDER_ROUND_CLOSEST      BIT(4)
+>>  #define CLK_DIVIDER_READ_ONLY          BIT(5)
+>> +#define CLK_DIVIDER_MAX_AT_ZERO                BIT(6)
+>>
+>>  extern const struct clk_ops clk_divider_ops;
+>>
+>> --
+>> 1.9.0.138.g2de3478
+>>
