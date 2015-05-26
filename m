@@ -1,38 +1,72 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Tero Kristo <t-kristo@ti.com>, Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-omap@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFT PATCH 5/8] clk: ti: clk-43xx: Prevent possible ERR_PTR dereference
-Date: Wed, 13 May 2015 15:54:44 +0900
-Message-id: <1431500087-2275-6-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
-References: <1431500087-2275-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <mathieu@codeaurora.org>
+From: Mathieu Olivari <mathieu@codeaurora.org>
+To: robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	peppe.cavallaro@st.com,
+	mathieu@codeaurora.org,
+	agross@codeaurora.org,
+	joshc@codeaurora.org,
+	architt@codeaurora.org,
+	georgi.djakov@linaro.org,
+	wsa@the-dreams.de,
+	rnayak@codeaurora.org,
+	davem@davemloft.net,
+	vbridger@opensource.altera.com
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH 0/5] Add support for QCA IPQ806x Ethernet GMAC controller
+Date: Tue, 26 May 2015 12:27:12 -0700
+Message-Id: <1432668437-27763-1-git-send-email-mathieu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The return value of clk_get_sys() was immediately used in
-clk_set_parent(). The first one may return ERR_PTR and the latter only
-checks if supplied argument is non-NULL.
+This patch set adds support for the integrated Ethernet GMAC controller
+on QCA IPQ806x SoC. This controller is based on a Gigabit Synopsys
+DesignWare IP, already supported in the stmmac driver located in
+drivers/net/ethernet/stmicro/stmmac.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/ti/clk-43xx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This change is done as a follow-up to the following thread:
+*http://www.spinics.net/lists/netdev/msg311265.html
+While previous attempt was creating a new driver to drive this controller,
+this new post leverages the existing stmmac driver by implementing the
+SoC specific glue to it.
 
-diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
-index 3795fce8a830..c6e1fc704052 100644
---- a/drivers/clk/ti/clk-43xx.c
-+++ b/drivers/clk/ti/clk-43xx.c
-@@ -134,7 +134,8 @@ int __init am43xx_dt_clk_init(void)
- 	 */
- 	clk1 = clk_get_sys(NULL, "cpsw_cpts_rft_clk");
- 	clk2 = clk_get_sys(NULL, "dpll_core_m5_ck");
--	clk_set_parent(clk1, clk2);
-+	if (!IS_ERR(clk1) && !IS_ERR(clk2))
-+		clk_set_parent(clk1, clk2);
- 
- 	return 0;
- }
+Aside from the pure stmmac glue layer, we have a couple of related
+patches:
+*IPQ806x NSS clock addition is cherry-picked and refreshed from the
+ following thread: https://lkml.org/lkml/2014/8/6/390
+*phy-handle and fixed-link support are also added in this change set so the
+ driver can be fully functional on platforms using device-trees as well as
+ ethernet switches.
+
+Mathieu Olivari (4):
+  stmmac: add phy-handle support to the platform layer
+  stmmac: add fixed-link device-tree support
+  stmmac: add ipq806x glue layer
+  net: stmmac: ipq806x: document device tree bindings
+
+Stephen Boyd (1):
+  clk: qcom: Add support for NSS/GMAC clocks and resets
+
+ .../devicetree/bindings/net/ipq806x-dwmac.txt      |  35 ++
+ drivers/clk/qcom/gcc-ipq806x.c                     | 594 ++++++++++++++++++++-
+ drivers/net/ethernet/stmicro/stmmac/Kconfig        |  14 +
+ drivers/net/ethernet/stmicro/stmmac/Makefile       |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac-ipq806x.c    | 365 +++++++++++++
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |  30 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |  18 +-
+ include/dt-bindings/clock/qcom,gcc-ipq806x.h       |   2 +
+ include/dt-bindings/reset/qcom,gcc-ipq806x.h       |  43 ++
+ include/linux/stmmac.h                             |   1 +
+ 10 files changed, 1089 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/ipq806x-dwmac.txt
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+
 -- 
-1.9.1
+2.1.4
