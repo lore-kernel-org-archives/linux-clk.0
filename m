@@ -1,102 +1,39 @@
-Return-Path: <rklein@nvidia.com>
-Message-ID: <554792BC.6000701@nvidia.com>
-Date: Mon, 4 May 2015 11:39:40 -0400
-From: Rhyland Klein <rklein@nvidia.com>
+Return-Path: <mcoquelin.stm32@gmail.com>
 MIME-Version: 1.0
-To: Thierry Reding <thierry.reding@gmail.com>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
-	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 00/20] Tegra210 Clock Support
-References: <1430506447-29074-1-git-send-email-rklein@nvidia.com> <20150504141313.GA17642@ulmo.nvidia.com>
-In-Reply-To: <20150504141313.GA17642@ulmo.nvidia.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+In-Reply-To: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
+References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
+Date: Tue, 26 May 2015 18:41:09 +0200
+Message-ID: <CALszF6BTu_8SCE9hEiLYuvQg8J9eG5xktaVV7_LvnG3r20+wtw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3] clk: stm32: Add clock driver for STM32F4[23]xxx devices
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kamil Lulko <rev13@wp.pl>,
+	Andreas Farber <afaerber@suse.de>, linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, patches@linaro.org,
+	linaro-kernel@lists.linaro.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 5/4/2015 10:13 AM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Fri, May 01, 2015 at 02:53:47PM -0400, Rhyland Klein wrote:
->> This patch series updates the tegra common clock driver and adds
->> support for the Tegra210 clocks. The clocks in Tegra210 changed
->> significantly in some ways from earlier generations, so to support
->> them, we need to extend our base framework a bit and add some new
->> features.
->>
->> Some patches here also address issues found while adding features
->> and other cleanup type work.
->>
->> v3:
->>   - Fixed pll_u hierarchy which was incorrect
->>   - Added a fix from Andrew Bresticker that was found while testing
->>     this code.
->>
->> Andrew Bresticker (1):
->>   clk: tegra: pll: Fix issues with rates for VCO PLLs
->>
->> Bill Huang (7):
->>   clk: tegra: pll-params: change misc_reg count from 3 -> 6
->>   clk: tegra: pll: Add logic for SS
->>   clk: tegra: pll: Add code to handle if resets are supported by PLL
->>   clk: tegra: pll: Adjust vco_min if SDM present
->>   clk: tegra: pll: Add dyn_ramp callback
->>   clk: tegra: pll: Add Set_default logic
->>   clk: tegra: Add Super Gen5 Logic
->>
->> Rhyland Klein (12):
->>   clk: tegra: Modify tegra_audio_clk_init to accept more plls
->>   clk: tegra: periph: add new periph clks and muxes for Tegra210
->>   clk: tegra: pll: add tegra_pll_wait_for_lock to clk header
->>   clk: tegra: pll: simplify clk_enable_path
->>   clk: tegra: pll: update warning msg
->>   clk: tegra: pll: Don't unconditionally set LOCK flags
->>   clk: tegra: pll: Add logic for handling SDM data
->>   clk: tegra: pll: Add logic for out-of-table rates for T210
->>   clk: tegra: pll: Add specialized logic for T210
->>   clk: tegra: pll: Add support for PLLMB for T210
->>   clk: tegra: pll: Fix _pll_ramp_calc_pll logic and
->>     _calc_dynamic_ramp_rate
->>   clk: tegra210: add support for Tegra210 clocks
->>
->>  .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
->>  drivers/clk/tegra/Makefile                         |    2 +
->>  drivers/clk/tegra/clk-id.h                         |   64 +-
->>  drivers/clk/tegra/clk-pll.c                        |  697 ++++-
->>  drivers/clk/tegra/clk-tegra-audio.c                |   25 +-
->>  drivers/clk/tegra/clk-tegra-periph.c               |  257 +-
->>  drivers/clk/tegra/clk-tegra-super-gen5.c           |  150 ++
->>  drivers/clk/tegra/clk-tegra114.c                   |   30 +-
->>  drivers/clk/tegra/clk-tegra124.c                   |   31 +-
->>  drivers/clk/tegra/clk-tegra20.c                    |   18 +-
->>  drivers/clk/tegra/clk-tegra210.c                   | 2761 ++++++++++++++++++++
->>  drivers/clk/tegra/clk-tegra30.c                    |   31 +-
->>  drivers/clk/tegra/clk.h                            |   90 +-
->>  include/dt-bindings/clock/tegra210-car.h           |  401 +++
->>  14 files changed, 4468 insertions(+), 145 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
->>  create mode 100644 drivers/clk/tegra/clk-tegra-super-gen5.c
->>  create mode 100644 drivers/clk/tegra/clk-tegra210.c
->>  create mode 100644 include/dt-bindings/clock/tegra210-car.h
-> 
-> Rhyland,
-> 
-> what is this based on? It doesn't apply on top of any recent linux-next,
-> nor v4.1-rc1 or v4.0.
-> 
-> Can you regenerate the series on top of v4.1-rc1, please?
-> 
-> Thierry
-> 
-> * Unknown Key
-> * 0x7F3EB3A1
-> 
-Will do, a need to handle a few issues that happened during rebase and
-cleanup too.
+Hi Daniel,
 
--rhyland
+2015-05-22 22:41 GMT+02:00 Daniel Thompson <daniel.thompson@linaro.org>:
+>  2. Allocating ~80 clock components appears to fragment memory enough
+>     to prevent busybox (.text is ~300K, non-XIP) from running getty.
+>     I have to use "init=/bin/sh" to avoid OOM problems.
+>
 
--- 
-nvpublic
+Yes, I reproduced the same issue while testing your work.
+
+Could you try with:
+CONFIG_NOMMU_INITIAL_TRIM_EXCESS=0
+
+It solves (hides) the problem on my side.
+You can eventually setting it once booted to 1 via procfs.
+
+Kind regards,
+Maxime
