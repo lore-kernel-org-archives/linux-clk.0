@@ -1,130 +1,47 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 6/7] ARM: sunxi: Add codec clock support
-Date: Thu, 21 May 2015 22:54:05 +0200
-Message-Id: <1432241646-9511-7-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <sudeep.holla@arm.com>
+Message-ID: <55647454.50401@arm.com>
+Date: Tue, 26 May 2015 14:25:40 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Sudeep Holla <sudeep.holla@arm.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Liviu Dudau <Liviu.Dudau@arm.com>,
+ Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+ "Jon Medhurst (Tixy)" <tixy@linaro.org>,
+ Mike Turquette <mturquette@linaro.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 3/4] clk: scpi: add support for cpufreq virtual device
+References: <1430134846-24320-1-git-send-email-sudeep.holla@arm.com> <1430134846-24320-4-git-send-email-sudeep.holla@arm.com> <20150520234558.GB31753@codeaurora.org>
+In-Reply-To: <20150520234558.GB31753@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Emilio López <emilio@elopez.com.ar>
 
-This commit adds the codec clock definition to the sun4i, sun5i and
-sun7i device trees. The codec clock is used in the analog codec block.
 
-Signed-off-by: Emilio López <emilio@elopez.com.ar>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun4i-a10.dtsi  | 9 +++++++++
- arch/arm/boot/dts/sun5i.dtsi      | 9 +++++++++
- arch/arm/boot/dts/sun7i-a20.dtsi  | 9 +++++++++
- drivers/clk/sunxi/clk-a10-codec.c | 1 -
- 4 files changed, 27 insertions(+), 1 deletion(-)
+On 21/05/15 00:45, Stephen Boyd wrote:
+> On 04/27, Sudeep Holla wrote:
+>> The clocks for the CPUs are provided by SCP and are managed by this
+>> clock driver. So the cpufreq device needs to be added only after the
+>> clock get registered and removed when this driver is unloaded.
+>>
+>> This patch manages the cpufreq virtual device based on the clock
+>> availability.
+>>
+>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+>
+> The cpufreq device can't handle probe defer? I suppose we do it
+> this way because we need to create a platform device somewhere
+> and this is the best place to do so?
+>
 
-diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
-index 235e5204742f..dfa8cd2d3ba8 100644
---- a/arch/arm/boot/dts/sun4i-a10.dtsi
-+++ b/arch/arm/boot/dts/sun4i-a10.dtsi
-@@ -45,6 +45,7 @@
- 
- #include <dt-bindings/thermal/thermal.h>
- 
-+#include <dt-bindings/clock/sun4i-a10-pll2.h>
- #include <dt-bindings/dma/sun4i-a10.h>
- #include <dt-bindings/pinctrl/sun4i-a10.h>
- 
-@@ -455,6 +456,14 @@
- 			clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
- 			clock-output-names = "spi3";
- 		};
-+
-+		codec_clk: clk@01c20140 {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-codec-clk";
-+			reg = <0x01c20140 0x4>;
-+			clocks = <&pll2 SUN4I_A10_PLL2_1X>;
-+			clock-output-names = "codec";
-+		};
- 	};
- 
- 	/*
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index 2f553a92a6dc..ab5184d2094d 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -44,6 +44,7 @@
- 
- #include "skeleton.dtsi"
- 
-+#include <dt-bindings/clock/sun4i-a10-pll2.h>
- #include <dt-bindings/dma/sun4i-a10.h>
- #include <dt-bindings/pinctrl/sun4i-a10.h>
- 
-@@ -293,6 +294,14 @@
- 			clock-output-names = "usb_ohci0", "usb_phy";
- 		};
- 
-+		codec_clk: clk@01c20140 {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-codec-clk";
-+			reg = <0x01c20140 0x4>;
-+			clocks = <&pll2 SUN4I_A10_PLL2_1X>;
-+			clock-output-names = "codec";
-+		};
-+
- 		mbus_clk: clk@01c2015c {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun5i-a13-mbus-clk";
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index 0141cc9876a7..b5ecfa5fa0eb 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -47,6 +47,7 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/thermal/thermal.h>
- 
-+#include <dt-bindings/clock/sun4i-a10-pll2.h>
- #include <dt-bindings/dma/sun4i-a10.h>
- #include <dt-bindings/pinctrl/sun4i-a10.h>
- 
-@@ -469,6 +470,14 @@
- 			clock-output-names = "spi3";
- 		};
- 
-+		codec_clk: clk@01c20140 {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-codec-clk";
-+			reg = <0x01c20140 0x4>;
-+			clocks = <&pll2 SUN4I_A10_PLL2_1X>;
-+			clock-output-names = "codec";
-+		};
-+
- 		mbus_clk: clk@01c2015c {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun5i-a13-mbus-clk";
-diff --git a/drivers/clk/sunxi/clk-a10-codec.c b/drivers/clk/sunxi/clk-a10-codec.c
-index aaeccf8cde39..ac321d6a0df5 100644
---- a/drivers/clk/sunxi/clk-a10-codec.c
-+++ b/drivers/clk/sunxi/clk-a10-codec.c
-@@ -15,7 +15,6 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/clkdev.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- 
--- 
-2.4.1
+Correct, unless the communication with the SCP firmware is established
+and the CPU clocks are registered, it makes no sense to register CPUFreq
+virtual device. This seems to be best place IMO.
+
+And yes, thanks to the absence of platform code on ARM64, where such
+code was traditionally stashed away and got away with such scenarios.
+Let me if you disagree with this or have any other suggestions.
+
+Regards,
+Sudeep
