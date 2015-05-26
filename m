@@ -1,38 +1,64 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 19/19] clk: u300: Silence sparse warnings
-Date: Wed,  6 May 2015 00:39:56 -0700
-Message-Id: <1430897996-11597-20-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
-References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <gregory.clement@free-electrons.com>
+Message-ID: <556468BE.8080605@free-electrons.com>
+Date: Tue, 26 May 2015 14:36:14 +0200
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+MIME-Version: 1.0
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+ linux-clk@vger.kernel.org
+CC: Mike Turquette <mturquette@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+ Jason Cooper <jason@lakedaemon.net>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Andrew Lunn <andrew@lunn.ch>,
+ Tawfik Bayouk <tawfik@marvell.com>, Lior Amsalem <alior@marvell.com>,
+ Nadav Haklai <nadavh@marvell.com>,
+ Eran Ben-Avi <benavi@marvell.com>, linux-arm-kernel@lists.infradead.org,
+ Arnaud Ebalard <arno@natisbad.org>
+Subject: Re: [PATCH] clk: mvebu: add missing CESA gate clk
+References: <1432643199-15507-1-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1432643199-15507-1-git-send-email-boris.brezillon@free-electrons.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-drivers/clk/clk-u300.c:1175:13: warning: symbol 'u300_clk_init' was not declared. Should it be static?
+Hi Boris,
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-u300.c | 1 +
- 1 file changed, 1 insertion(+)
+On 26/05/2015 14:26, Boris Brezillon wrote:
+> Even if not documented in the datasheet, the Armada 370 SoC can actually
+> gate the CESA (crypto engine) clock.
+> Add an entry in the gating_desc table to be able to reference the CESA
+> gateclk in the crypto node.
 
-diff --git a/drivers/clk/clk-u300.c b/drivers/clk/clk-u300.c
-index 406bfc1375b2..18bf5e576b93 100644
---- a/drivers/clk/clk-u300.c
-+++ b/drivers/clk/clk-u300.c
-@@ -12,6 +12,7 @@
- #include <linux/clk-provider.h>
- #include <linux/spinlock.h>
- #include <linux/of.h>
-+#include <linux/platform_data/clk-u300.h>
- 
- /* APP side SYSCON registers */
- /* CLK Control Register 16bit (R/W) */
+Thanks for your patch,
+
+but could you also update the documentation ?
+
+Gregory
+
+
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> ---
+>  drivers/clk/mvebu/armada-370.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/mvebu/armada-370.c b/drivers/clk/mvebu/armada-370.c
+> index 756f0f3..989c704 100644
+> --- a/drivers/clk/mvebu/armada-370.c
+> +++ b/drivers/clk/mvebu/armada-370.c
+> @@ -163,6 +163,7 @@ static const struct clk_gating_soc_desc a370_gating_desc[] __initconst = {
+>  	{ "pex1", "pex1_en", 9, 0 },
+>  	{ "sata0", NULL, 15, 0 },
+>  	{ "sdio", NULL, 17, 0 },
+> +	{ "cesa", NULL, 23, 0 },
+>  	{ "tdm", NULL, 25, 0 },
+>  	{ "ddr", NULL, 28, CLK_IGNORE_UNUSED },
+>  	{ "sata1", NULL, 30, 0 },
+> 
+
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
