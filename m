@@ -1,95 +1,73 @@
-Return-Path: <Paul.Burton@imgtec.com>
-Date: Sun, 24 May 2015 16:01:04 +0100
-From: Paul Burton <paul.burton@imgtec.com>
-To: Michael Turquette <mturquette@linaro.org>
-CC: <linux-mips@linux-mips.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Lars-Peter Clausen <lars@metafoo.de>,
-	"Mark Rutland" <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Ralf
- Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, <devicetree@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v4 26/37] MIPS,clk: migrate JZ4740 to common clock
- framework
-Message-ID: <20150524150104.GP13811@NP-P-BURTON>
-References: <1429881457-16016-1-git-send-email-paul.burton@imgtec.com>
- <1429881457-16016-27-git-send-email-paul.burton@imgtec.com>
- <20150513025204.20636.10155@quantum>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Dzs2zDY0zgkG72+7"
-In-Reply-To: <20150513025204.20636.10155@quantum>
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Tawfik Bayouk <tawfik@marvell.com>,
+	Lior Amsalem <alior@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Eran Ben-Avi <benavi@marvell.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Arnaud Ebalard <arno@natisbad.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v2] clk: mvebu: add missing CESA gate clk
+Date: Tue, 26 May 2015 14:42:57 +0200
+Message-Id: <1432644177-16152-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---Dzs2zDY0zgkG72+7
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Even if not documented in the datasheet, the Armada 370 SoC can actually
+gate the CESA (crypto engine) clock.
+Add an entry in the gating_desc table to be able to reference the CESA
+gateclk in the crypto node.
 
-On Tue, May 12, 2015 at 07:52:04PM -0700, Michael Turquette wrote:
-> Hi Paul,
->=20
-> Quoting Paul Burton (2015-04-24 06:17:26)
-> > +static void __init jz4740_cgu_init(struct device_node *np)
-> > +{
-> > +       int retval;
-> > +
-> > +       cgu =3D ingenic_cgu_new(jz4740_cgu_clocks,
-> > +                             ARRAY_SIZE(jz4740_cgu_clocks), np);
-> > +       if (!cgu) {
-> > +               pr_err("%s: failed to initialise CGU\n", __func__);
-> > +               return;
-> > +       }
-> > +
-> > +       retval =3D ingenic_cgu_register_clocks(cgu);
-> > +       if (retval)
-> > +               pr_err("%s: failed to register CGU Clocks\n", __func__);
-> > +}
-> > +CLK_OF_DECLARE(jz4740_cgu, "ingenic,jz4740-cgu", jz4740_cgu_init);
-> > --=20
-> > 2.3.5
-> >=20
->=20
-> Patch looks good to me, but I have one question. Is it possible for you
-> to have a proper platform_device for the cgu instead of relying on
-> CLK_OF_DECLARE?
->=20
-> For an example of a clock driver that does this, check out the bottom of
-> drivers/clk/qcom/gcc-msm8660.c.
->=20
-> Regards,
-> Mike
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+Hi,
 
-Hi Mike,
+Sorry for the noise, but since the changes in this patch are quite
+straightforward, I'm directly sending a v2 addressing Gregory's comments
+(instead of waiting for more reviews).
 
-Thanks for your review. I gave that a try but unfortunately it didn't
-work out because the code in plat_time_init (arch/mips/jz4740/time.c)
-needs to obtain the rate of the ext clock at a point before any
-initcalls have been run, and therefore before the platform device has
-been registered.
+Best Regards,
 
-Thanks,
-    Paul
+Boris
 
---Dzs2zDY0zgkG72+7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Changes since v1:
+ - update the DT bindings doc
+ - change the clock name to be consistent with other SoCs
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+ Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt | 1 +
+ drivers/clk/mvebu/armada-370.c                                | 1 +
+ 2 files changed, 2 insertions(+)
 
-iQIcBAEBCAAGBQJVYeerAAoJENzvn0paErs5t10P/0s4aPrB2JGQryExBDaqHNRI
-pPpuIBfNBL8/V9Uk4FCMMi77dymvZuAxnBigych187DazTCxLvyejzXwooWz8zxo
-/IbObdbdpeNw5s8yoUPUlC3d1Yhhw2un9zhk9n1mdj+b3ZPfjvyIuwWIzorewpC5
-oHGffD15WBjQZvE6H16pc9YHinO+YkwRJJAd+qdSuzxVvZ9FPJW5JvNJ6JrwSEL7
-HCEbTYyN3j2BuOHGnO0l1ZcDzgCFC3mbh8z+De11h9XFc/9gst/W3Qn+9HnYy6a5
-jk3+baDPUa0TjAi7IftqG1nLLAQ+17JbhfWiTXjmEMkT5Pd3z68h6FHZJaH/WsK+
-0TPFPp5grq4zawHc4DgVjUr3RLnzFtxiI7CrEEpf3IfC5CzfWSB4nuAAxxy/N05n
-/O1+xBxYaspEDDn9xdFLdTJN1aHLfnW9whdzIwworoU1bzdVEo3Tiwh4us3fozCx
-dtaOoTrGtWbN5sf2/YGKbsqKbf2CDoHMPEriAS2NHBErWUZPsLN9J48RhoUqvnZ+
-X1xsAFD3OdaaCNnKlAEHcy/Bzu4D9917nCxy7l42LkasG6/HP7yLNdafkQ1kjJoN
-U5EDTZNuuZ3El31XWUu7m+fQ+/qStAIZ5eAOY6bzPK7zmu3R3On8Dzp1Mde54xL2
-dun5LozGE89ug1KsWobr
-=Kgev
------END PGP SIGNATURE-----
-
---Dzs2zDY0zgkG72+7--
+diff --git a/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
+index 31c7c0c..660e649 100644
+--- a/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
++++ b/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
+@@ -19,6 +19,7 @@ ID	Clock	Peripheral
+ 9	pex1	PCIe Cntrl 1
+ 15	sata0	SATA Host 0
+ 17	sdio	SDHCI Host
++23	crypto	CESA (crypto engine)
+ 25	tdm	Time Division Mplx
+ 28	ddr	DDR Cntrl
+ 30	sata1	SATA Host 0
+diff --git a/drivers/clk/mvebu/armada-370.c b/drivers/clk/mvebu/armada-370.c
+index 756f0f3..c19fd77 100644
+--- a/drivers/clk/mvebu/armada-370.c
++++ b/drivers/clk/mvebu/armada-370.c
+@@ -163,6 +163,7 @@ static const struct clk_gating_soc_desc a370_gating_desc[] __initconst = {
+ 	{ "pex1", "pex1_en", 9, 0 },
+ 	{ "sata0", NULL, 15, 0 },
+ 	{ "sdio", NULL, 17, 0 },
++	{ "crypto", NULL, 23, 0 },
+ 	{ "tdm", NULL, 25, 0 },
+ 	{ "ddr", NULL, 28, CLK_IGNORE_UNUSED },
+ 	{ "sata1", NULL, 30, 0 },
+-- 
+1.9.1
