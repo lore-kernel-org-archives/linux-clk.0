@@ -1,54 +1,137 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Paul Burton <paul.burton@imgtec.com>,  linux-mips@linux-mips.org
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <1429881457-16016-27-git-send-email-paul.burton@imgtec.com>
-Cc: "Paul Burton" <paul.burton@imgtec.com>,
- "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
- "Kumar Gala" <galak@codeaurora.org>, "Lars-Peter Clausen" <lars@metafoo.de>,
- "Mark Rutland" <mark.rutland@arm.com>, "Pawel Moll" <pawel.moll@arm.com>,
- "Ralf Baechle" <ralf@linux-mips.org>, "Rob Herring" <robh+dt@kernel.org>,
- "Stephen Boyd" <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <1429881457-16016-1-git-send-email-paul.burton@imgtec.com>
- <1429881457-16016-27-git-send-email-paul.burton@imgtec.com>
-Message-ID: <20150513025204.20636.10155@quantum>
-Subject: Re: [PATCH v4 26/37] MIPS,clk: migrate JZ4740 to common clock framework
-Date: Tue, 12 May 2015 19:52:04 -0700
+Return-Path: <mathieu@codeaurora.org>
+From: Mathieu Olivari <mathieu@codeaurora.org>
+To: robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	peppe.cavallaro@st.com,
+	mathieu@codeaurora.org,
+	agross@codeaurora.org,
+	joshc@codeaurora.org,
+	architt@codeaurora.org,
+	georgi.djakov@linaro.org,
+	wsa@the-dreams.de,
+	rnayak@codeaurora.org,
+	davem@davemloft.net,
+	vbridger@opensource.altera.com
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH 2/5] stmmac: add phy-handle support to the platform layer
+Date: Tue, 26 May 2015 12:27:14 -0700
+Message-Id: <1432668437-27763-3-git-send-email-mathieu@codeaurora.org>
+In-Reply-To: <1432668437-27763-1-git-send-email-mathieu@codeaurora.org>
+References: <1432668437-27763-1-git-send-email-mathieu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Paul,
+On stmmac driver, PHY specification in device-tree was done using the
+non-standard property "snps,phy-addr". Specifying a PHY on a different
+MDIO bus that the one within the stmmac controller doesn't seem to be
+possible when device-tree is used.
 
-Quoting Paul Burton (2015-04-24 06:17:26)
-> +static void __init jz4740_cgu_init(struct device_node *np)
-> +{
-> +       int retval;
-> +
-> +       cgu =3D ingenic_cgu_new(jz4740_cgu_clocks,
-> +                             ARRAY_SIZE(jz4740_cgu_clocks), np);
-> +       if (!cgu) {
-> +               pr_err("%s: failed to initialise CGU\n", __func__);
-> +               return;
-> +       }
-> +
-> +       retval =3D ingenic_cgu_register_clocks(cgu);
-> +       if (retval)
-> +               pr_err("%s: failed to register CGU Clocks\n", __func__);
-> +}
-> +CLK_OF_DECLARE(jz4740_cgu, "ingenic,jz4740-cgu", jz4740_cgu_init);
-> -- =
+This change adds support for the phy-handle property, as specified in
+Documentation/devicetree/bindings/net/ethernet.txt.
 
-> 2.3.5
-> =
+Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 28 ++++++++++++++--------
+ .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |  6 ++++-
+ include/linux/stmmac.h                             |  1 +
+ 3 files changed, 24 insertions(+), 11 deletions(-)
 
-
-Patch looks good to me, but I have one question. Is it possible for you
-to have a proper platform_device for the cgu instead of relying on
-CLK_OF_DECLARE?
-
-For an example of a clock driver that does this, check out the bottom of
-drivers/clk/qcom/gcc-msm8660.c.
-
-Regards,
-Mike
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index e4f2739..31c6416 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -52,6 +52,7 @@
+ #include "stmmac_ptp.h"
+ #include "stmmac.h"
+ #include <linux/reset.h>
++#include <linux/of_mdio.h>
+ 
+ #define STMMAC_ALIGN(x)	L1_CACHE_ALIGN(x)
+ 
+@@ -816,18 +817,25 @@ static int stmmac_init_phy(struct net_device *dev)
+ 	priv->speed = 0;
+ 	priv->oldduplex = -1;
+ 
+-	if (priv->plat->phy_bus_name)
+-		snprintf(bus_id, MII_BUS_ID_SIZE, "%s-%x",
+-			 priv->plat->phy_bus_name, priv->plat->bus_id);
+-	else
+-		snprintf(bus_id, MII_BUS_ID_SIZE, "stmmac-%x",
+-			 priv->plat->bus_id);
++	if (priv->plat->phy_node) {
++		phydev = of_phy_connect(dev, priv->plat->phy_node,
++					&stmmac_adjust_link, 0, interface);
++	} else {
++		if (priv->plat->phy_bus_name)
++			snprintf(bus_id, MII_BUS_ID_SIZE, "%s-%x",
++				 priv->plat->phy_bus_name, priv->plat->bus_id);
++		else
++			snprintf(bus_id, MII_BUS_ID_SIZE, "stmmac-%x",
++				 priv->plat->bus_id);
+ 
+-	snprintf(phy_id_fmt, MII_BUS_ID_SIZE + 3, PHY_ID_FMT, bus_id,
+-		 priv->plat->phy_addr);
+-	pr_debug("stmmac_init_phy:  trying to attach to %s\n", phy_id_fmt);
++		snprintf(phy_id_fmt, MII_BUS_ID_SIZE + 3, PHY_ID_FMT, bus_id,
++			 priv->plat->phy_addr);
++		pr_debug("stmmac_init_phy:  trying to attach to %s\n",
++			 phy_id_fmt);
+ 
+-	phydev = phy_connect(dev, phy_id_fmt, &stmmac_adjust_link, interface);
++		phydev = phy_connect(dev, phy_id_fmt, &stmmac_adjust_link,
++				     interface);
++	}
+ 
+ 	if (IS_ERR(phydev)) {
+ 		pr_err("%s: Could not attach to PHY\n", dev->name);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index 1664c01..8d23155 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -28,6 +28,7 @@
+ #include <linux/of.h>
+ #include <linux/of_net.h>
+ #include <linux/of_device.h>
++#include <linux/of_mdio.h>
+ 
+ #include "stmmac.h"
+ #include "stmmac_platform.h"
+@@ -144,13 +145,16 @@ static int stmmac_probe_config_dt(struct platform_device *pdev,
+ 	/* Default to phy auto-detection */
+ 	plat->phy_addr = -1;
+ 
++	/* If we find a phy-handle property, use it as the PHY */
++	plat->phy_node = of_parse_phandle(np, "phy-handle", 0);
++
+ 	/* "snps,phy-addr" is not a standard property. Mark it as deprecated
+ 	 * and warn of its use. Remove this when phy node support is added.
+ 	 */
+ 	if (of_property_read_u32(np, "snps,phy-addr", &plat->phy_addr) == 0)
+ 		dev_warn(&pdev->dev, "snps,phy-addr property is deprecated\n");
+ 
+-	if (plat->phy_bus_name)
++	if (plat->phy_node || plat->phy_bus_name)
+ 		plat->mdio_bus_data = NULL;
+ 	else
+ 		plat->mdio_bus_data =
+diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
+index 7f484a2..c735f5c 100644
+--- a/include/linux/stmmac.h
++++ b/include/linux/stmmac.h
+@@ -99,6 +99,7 @@ struct plat_stmmacenet_data {
+ 	int phy_addr;
+ 	int interface;
+ 	struct stmmac_mdio_bus_data *mdio_bus_data;
++	struct device_node *phy_node;
+ 	struct stmmac_dma_cfg *dma_cfg;
+ 	int clk_csr;
+ 	int has_gmac;
+-- 
+2.1.4
