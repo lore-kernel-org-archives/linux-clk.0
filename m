@@ -1,48 +1,80 @@
-Return-Path: <sha@pengutronix.de>
-Date: Fri, 29 May 2015 08:35:38 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: mturquette@linaro.org, sboyd@codeaurora.org, henryc.chen@mediatek.com,
-	jamesjj.liao@mediatek.com, p.zabel@pengutronix.de,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 0/3] clk: Add regmap support for clk mulitplexer
-Message-ID: <20150529063538.GZ6325@pengutronix.de>
-References: <1432838508-5184-1-git-send-email-matthias.bgg@gmail.com>
+Return-Path: <balbi@ti.com>
+Date: Tue, 26 May 2015 11:39:31 -0500
+From: Felipe Balbi <balbi@ti.com>
+To: Tony Lindgren <tony@atomide.com>
+CC: Tero Kristo <t-kristo@ti.com>, <linux-clk@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@linaro.org>, <paul@pwsan.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
+Message-ID: <20150526163931.GO26599@saruman.tx.rr.com>
+Reply-To: <balbi@ti.com>
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+ <20150526160557.GD16525@atomide.com>
+ <20150526163216.GF16525@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1432838508-5184-1-git-send-email-matthias.bgg@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yLaBmHMi4cq+C/u4"
+In-Reply-To: <20150526163216.GF16525@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 28, 2015 at 08:41:45PM +0200, Matthias Brugger wrote:
-> This patch set adds regmap support for the simple clock multiplexer.
-> Regmap use, apart from a pointer to the regmap struct needs an
-> offset value to know where in the regmap it has to read/write.
-> We add both fields to struct clk_mux.
-> 
-> The driver will distinguish between a clock which is based on regmap or not
-> through a flag specified for the mux.
-> The approach does not break the existing clock framework API but adds two
-> new functions for registering regmap clocks. Unregistering the clocks is
-> independent of the use of regmap or not, so that no new function was
-> implemented.
-> 
-> As an example user of the regmap clock multiplexer, it was implemented on
-> the mt8135. When accepted it will also be applied to the other Mediatek SoCs.
-> Other possible user are Qualcomm SoCs which up to now implement their own
-> regmap based clock multiplexer.
+--yLaBmHMi4cq+C/u4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm all in for providing regmap support for the basic clk providers.
->From digging through the archives I found out that the last try failed,
-so I hesitated to implement this for Mediatek. I hope it's time to
-revisit this. Using regmap would make the basic clock providers much
-more versatilely usable.
+On Tue, May 26, 2015 at 09:32:16AM -0700, Tony Lindgren wrote:
+> * Tony Lindgren <tony@atomide.com> [150526 09:08]:
+> > * Tero Kristo <t-kristo@ti.com> [150525 08:01]:
+> > > Hi,
+> > >=20
+> > > As requested, posting v3 with somewhat changed diff parameters and
+> > > diffstat attached. Just some minor Makefile changes compared to v2,
+> > > these were discussed under that set.
+> > >=20
+> > > Set has been pushed to:
+> > > - tree: https://github.com/t-kristo/linux-pm.git
+> > > - branch: for-4.2/ti-clk-move
+> >=20
+> > Looks like this causes a build error for at least omap2 only .config:
+> >=20
+> > drivers/clk/ti/dpll3xxx.o:(.rodata+0x1c): multiple definition of `clkhw=
+ops_omap3_dpll'
+> > drivers/clk/ti/dpll.o:(.rodata+0x0): first defined here
+> >=20
+> > You may want to create a file selecting ARCH_OMAP2PLUS=3Dy, then point
+> > KCONFIG_ALLCONFIG to that file for make randconfig. Then just build
+> > randconfigs :) Usually the issues like this are exposed within few
+> > randconfig builds, some take longer if the options have dependencies.
 
-Sascha
+alternatively, just clone the repository at [1] and use the example
+script provided in README.md.
 
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+[1] https://github.com/felipebalbi/omap-seeds
+
+--=20
+balbi
+
+--yLaBmHMi4cq+C/u4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVZKHDAAoJEIaOsuA1yqRE3jwP/RA41JPeoZIwNPIXgzjBwRfO
+eOehGx3VrNSfr9Stkq5pMIX76N4ZXd0yOc7tbSyaIof4qkUDPv1oxhv+qLAJdPuh
+XSVC5Pr/CsbKJT+FZTNhbhuHPm0wTQR/6eD+hfTPjibcHCKv4pZal2K061kTWnvX
+go7vAauhUjVOGZ1b81i/8VLvN2RsebFxlGb/ZVISuyydzGUJ/HYlnK2Se3C5Dm6U
+pfzjca6kEsaTqUcF6Nren2XF3BveUBsVlwZsQwGUTLOR04BQIAWORcfbWJlFQ5IP
+9T3hHTbIl7gCFXWdTQcT5AomMSrH/sQQScNDawMruicgWWAuom0agLaFr7bzv7gE
+qIthg+H996m2VoDUL0wQDI161bnr5LpetasrbnxWIEeKzTust4KEM2wekNK6N0a1
+H7f827eyxFNy6Sle1wsZ1ib9Ks5vRs+GbpfbnrE2ZcPmhBk+FHOBCaQ5NkoVSn5c
+QCZj6GN/DwiLgXA2xMtUEGD0LuNpymZbRhlre3jaCE7xV/MsPwqpmA6gaQEdIdAW
+TkY0yL6eeh/sIRz8DgoLe40FvThqwheAZ6tqXlmfe6Hewir+gCH6wjJumtKMombk
+vPtdABID46rGu4A26sUbYj7LrC8zJeRSHD0nI11r6n6AumsX6xHHUXLKSqfzYUFv
+aDHM7KWmPWpEFh02R7sX
+=IUHl
+-----END PGP SIGNATURE-----
+
+--yLaBmHMi4cq+C/u4--
