@@ -1,62 +1,46 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Tero Kristo <t-kristo@ti.com>,
-	Mike Turquette <mturquette@linaro.org>,
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Mike Turquette <mturquette@linaro.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>
-Cc: linux-clk@vger.kernel.org,
-	kernel@stlinux.com,
-	linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Tawfik Bayouk <tawfik@marvell.com>,
+	Lior Amsalem <alior@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Eran Ben-Avi <benavi@marvell.com>,
 	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/5] [RFC] clk: Provide dummy of_clk_get_parent_count() for !OF/!CCF
-Date: Fri, 29 May 2015 11:25:48 +0200
-Message-Id: <1432891549-23295-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
-References: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
+	Arnaud Ebalard <arno@natisbad.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH] clk: mvebu: add missing CESA gate clk
+Date: Tue, 26 May 2015 14:26:39 +0200
+Message-Id: <1432643199-15507-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Provide dummy implementations of of_clk_get_parent_count() for the
-cases where CONFIG_OF or CONFIG_COMMON_CLK are not set.
+Even if not documented in the datasheet, the Armada 370 SoC can actually
+gate the CESA (crypto engine) clock.
+Add an entry in the gating_desc table to be able to reference the CESA
+gateclk in the crypto node.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
-This is an RFC, as
-  1. Dummies are needed in two places,
-  2. We don't have any dummies yet for the !CCF case.
----
- include/linux/clk-provider.h | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/clk/mvebu/armada-370.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 5378c2aba4d2eaec..d56bb0c6dd982c32 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -651,6 +651,10 @@ static inline struct clk *of_clk_src_onecell_get(
- {
- 	return ERR_PTR(-ENOENT);
- }
-+static inline int of_clk_get_parent_count(struct device_node *np)
-+{
-+	return -ENOENT;
-+}
- static inline const char *of_clk_get_parent_name(struct device_node *np,
- 						 int index)
- {
-@@ -696,5 +700,10 @@ struct dentry *clk_debugfs_add_file(struct clk_hw *hw, char *name, umode_t mode,
- 				void *data, const struct file_operations *fops);
- #endif
- 
--#endif /* CONFIG_COMMON_CLK */
-+#else /* !CONFIG_COMMON_CLK */
-+static inline int of_clk_get_parent_count(struct device_node *np)
-+{
-+	return -ENOENT;
-+}
-+#endif /* !CONFIG_COMMON_CLK */
- #endif /* CLK_PROVIDER_H */
+diff --git a/drivers/clk/mvebu/armada-370.c b/drivers/clk/mvebu/armada-370.c
+index 756f0f3..989c704 100644
+--- a/drivers/clk/mvebu/armada-370.c
++++ b/drivers/clk/mvebu/armada-370.c
+@@ -163,6 +163,7 @@ static const struct clk_gating_soc_desc a370_gating_desc[] __initconst = {
+ 	{ "pex1", "pex1_en", 9, 0 },
+ 	{ "sata0", NULL, 15, 0 },
+ 	{ "sdio", NULL, 17, 0 },
++	{ "cesa", NULL, 23, 0 },
+ 	{ "tdm", NULL, 25, 0 },
+ 	{ "ddr", NULL, 28, CLK_IGNORE_UNUSED },
+ 	{ "sata1", NULL, 30, 0 },
 -- 
 1.9.1
