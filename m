@@ -1,74 +1,60 @@
-Return-Path: <Aisheng.Dong@freescale.com>
-Date: Mon, 4 May 2015 16:15:24 +0800
-From: Dong Aisheng <b29396@freescale.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Dong Aisheng <aisheng.dong@freescale.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <mturquette@linaro.org>,
-	<shawn.guo@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<Ranjani.Vaidyanathan@freescale.com>, <b20596@freescale.com>,
-	<r64343@freescale.com>, <b20788@freescale.com>
-Subject: Re: [PATCH RFC v1 1/5] clk: change clk_core name of
- __clk_set_parent_after
-Message-ID: <20150504081518.GA4082@shlinux1.ap.freescale.net>
-References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
- <1429107999-24413-2-git-send-email-aisheng.dong@freescale.com>
- <55427D25.3040904@codeaurora.org>
+Return-Path: <tony@atomide.com>
+Date: Tue, 26 May 2015 09:32:16 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@linaro.org, paul@pwsan.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
+Message-ID: <20150526163216.GF16525@atomide.com>
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+ <20150526160557.GD16525@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <55427D25.3040904@codeaurora.org>
-Return-Path: b29396@freescale.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20150526160557.GD16525@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 30, 2015 at 12:06:13PM -0700, Stephen Boyd wrote:
-> On 04/15/15 07:26, Dong Aisheng wrote:
-> > To align with __clk_set_parent_before and some others functions,
-> > change the host clk name to 'clk' instead of 'core'.
-> >
-> > Cc: Mike Turquette <mturquette@linaro.org>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
-> > ---
+* Tony Lindgren <tony@atomide.com> [150526 09:08]:
+> * Tero Kristo <t-kristo@ti.com> [150525 08:01]:
+> > Hi,
+> > 
+> > As requested, posting v3 with somewhat changed diff parameters and
+> > diffstat attached. Just some minor Makefile changes compared to v2,
+> > these were discussed under that set.
+> > 
+> > Set has been pushed to:
+> > - tree: https://github.com/t-kristo/linux-pm.git
+> > - branch: for-4.2/ti-clk-move
 > 
-> No thanks. We should go and rename all clk_core pointers in this file
-> from clk to core now that we're done splitting the two. I'll go do that now.
+> Looks like this causes a build error for at least omap2 only .config:
 > 
+> drivers/clk/ti/dpll3xxx.o:(.rodata+0x1c): multiple definition of `clkhwops_omap3_dpll'
+> drivers/clk/ti/dpll.o:(.rodata+0x0): first defined here
+> 
+> You may want to create a file selecting ARCH_OMAP2PLUS=y, then point
+> KCONFIG_ALLCONFIG to that file for make randconfig. Then just build
+> randconfigs :) Usually the issues like this are exposed within few
+> randconfig builds, some take longer if the options have dependencies.
 
-Understand.
-Thanks for this information.
+Found more similar issues for omap3 only and omap4 only configs:
 
-Regards
-Dong Aisheng
+drivers/built-in.o: In function `omap2_clkops_enable_clkdm':
+omap-gpmc.c:(.text+0x202e0): undefined reference to `ti_clk_get_features'
+drivers/built-in.o: In function `omap2_clkops_disable_clkdm':
+omap-gpmc.c:(.text+0x20374): undefined reference to `ti_clk_get_features'
+drivers/built-in.o: In function `_omap2_dpll_is_in_bypass':
+omap-gpmc.c:(.text+0x21678): undefined reference to `ti_clk_get_features'
+drivers/built-in.o: In function `omap2_dpll_round_rate':
+omap-gpmc.c:(.text+0x218ac): undefined reference to `ti_clk_get_features'
+omap-gpmc.c:(.text+0x218ec): undefined reference to `ti_clk_get_features'
 
-> >  drivers/clk/clk.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 459ce9d..cc56ba2 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -1487,7 +1487,7 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *clk,
-> >  	return old_parent;
-> >  }
-> >  
-> > -static void __clk_set_parent_after(struct clk_core *core,
-> > +static void __clk_set_parent_after(struct clk_core *clk,
-> >  				   struct clk_core *parent,
-> >  				   struct clk_core *old_parent)
-> >  {
-> > @@ -1495,8 +1495,8 @@ static void __clk_set_parent_after(struct clk_core *core,
-> >  	 * Finish the migration of prepare state and undo the changes done
-> >  	 * for preventing a race with clk_enable().
-> >  	 */
-> > -	if (core->prepare_count) {
-> > -		clk_core_disable(core);
-> > +	if (clk->prepare_count) {
-> > +		clk_core_disable(clk);
-> >  		clk_core_disable(old_parent);
-> >  		clk_core_unprepare(old_parent);
-> >  	}
-> 
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+drivers/built-in.o: In function `omap3xxx_dt_clk_init':
+omap-gpmc.c:(.init.text+0x4d60): undefined reference to `omap2_clk_enable_init_clocks'
+arch/arm/mach-omap2/built-in.o: In function `ti_clk_init_features':
+
+arch/arm/mach-omap2/built-in.o: In function `ti_clk_init_features':
+dss-common.c:(.init.text+0x4368): undefined reference to `ti_clk_setup_features'
+
+Regards,
+
+Tony
