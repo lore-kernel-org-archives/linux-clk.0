@@ -1,43 +1,40 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-To: Kukjin Kim <kgene@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH 2/2] clk: s3c2410: Constify platform_device_id
-Date: Sat,  2 May 2015 01:02:48 +0900
-Message-Id: <1430496168-32408-2-git-send-email-k.kozlowski.k@gmail.com>
-In-Reply-To: <1430496168-32408-1-git-send-email-k.kozlowski.k@gmail.com>
-References: <1430496168-32408-1-git-send-email-k.kozlowski.k@gmail.com>
+Return-Path: <linux-omap-owner@vger.kernel.org>
+Date: Tue, 26 May 2015 09:05:58 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@linaro.org, paul@pwsan.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
+Message-ID: <20150526160557.GD16525@atomide.com>
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+Sender: linux-omap-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The platform_device_id is not modified by the driver and core uses it as
-const.
+* Tero Kristo <t-kristo@ti.com> [150525 08:01]:
+> Hi,
+> 
+> As requested, posting v3 with somewhat changed diff parameters and
+> diffstat attached. Just some minor Makefile changes compared to v2,
+> these were discussed under that set.
+> 
+> Set has been pushed to:
+> - tree: https://github.com/t-kristo/linux-pm.git
+> - branch: for-4.2/ti-clk-move
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
----
- drivers/clk/samsung/clk-s3c2410-dclk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks like this causes a build error for at least omap2 only .config:
 
-diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-index db6fddb211d4..e56df5064889 100644
---- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-+++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-@@ -404,7 +404,7 @@ static struct s3c24xx_dclk_drv_data dclk_variants[] = {
- 	},
- };
- 
--static struct platform_device_id s3c24xx_dclk_driver_ids[] = {
-+static const struct platform_device_id s3c24xx_dclk_driver_ids[] = {
- 	{
- 		.name		= "s3c2410-dclk",
- 		.driver_data	= (kernel_ulong_t)&dclk_variants[S3C2410],
--- 
-2.1.4
+drivers/clk/ti/dpll3xxx.o:(.rodata+0x1c): multiple definition of `clkhwops_omap3_dpll'
+drivers/clk/ti/dpll.o:(.rodata+0x0): first defined here
+
+You may want to create a file selecting ARCH_OMAP2PLUS=y, then point
+KCONFIG_ALLCONFIG to that file for make randconfig. Then just build
+randconfigs :) Usually the issues like this are exposed within few
+randconfig builds, some take longer if the options have dependencies.
+
+Regards,
+
+Tony
