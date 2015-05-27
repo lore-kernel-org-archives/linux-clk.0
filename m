@@ -1,173 +1,204 @@
-Return-Path: <bintian.wang@huawei.com>
-Message-ID: <555C2CE5.4010706@huawei.com>
-Date: Wed, 20 May 2015 14:42:45 +0800
-From: Bintian <bintian.wang@huawei.com>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: <mturquette@linaro.org>, <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
-        <xuejiancheng@huawei.com>, <tomeu.vizoso@collabora.com>,
-        <sledge.yanwei@huawei.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <arnd@arndb.de>, <will.deacon@arm.com>,
-        <robh+dt@kernel.org>, <khilman@linaro.org>, <mark.rutland@arm.com>,
-        <catalin.marinas@arm.com>, <haojian.zhuang@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <olof@lixom.net>,
-        <yanhaifeng@gmail.com>, <linux@arm.linux.org.uk>,
-        <guodong.xu@linaro.org>, <jorge.ramirez-ortiz@linaro.org>,
-        <tyler.baker@linaro.org>, <khilman@kernel.org>,
-        <xuyiping@hisilicon.com>, <wangbinghui@hisilicon.com>,
-        <zhenwei.wang@hisilicon.com>, <victor.lixin@hisilicon.com>,
-        <puck.chen@hisilicon.com>, <dan.zhao@hisilicon.com>,
-        <huxinwei@huawei.com>, <z.liuxinliang@huawei.com>,
-        <heyunlei@huawei.com>, <kong.kongxinwei@hisilicon.com>,
-        <w.f@huawei.com>, <liguozhu@hisilicon.com>, <wangbintian@gmail.com>
-Subject: Re: [PATCH v6 5/6] clk: hi6220: Clock driver support for Hisilicon
- hi6220 SoC
-References: <1431762000-8311-1-git-send-email-bintian.wang@huawei.com> <20150520013941.GD31054@codeaurora.org>
-In-Reply-To: <20150520013941.GD31054@codeaurora.org>
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: [PATCH v3 5/5] cpufreq: arm_big_little: add SCPI interface driver
+Date: Wed, 27 May 2015 10:53:18 +0100
+Message-Id: <1432720398-5701-6-git-send-email-sudeep.holla@arm.com>
+In-Reply-To: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com>
+References: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+On some ARM based systems, a separate Cortex-M based System Control
+Processor(SCP) provides the overall power, clock, reset and system
+control including CPU DVFS. SCPI Message Protocol is used to
+communicate with the SCPI.
 
-I will fix in version 7 based on all comments.
+This patch adds a interface driver for adding OPPs and registering
+the arm_big_little cpufreq driver for such systems.
 
-Thanks,
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-pm@vger.kernel.org
+---
+ drivers/cpufreq/Kconfig.arm    |   9 +++
+ drivers/cpufreq/Makefile       |   1 +
+ drivers/cpufreq/scpi-cpufreq.c | 124 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 134 insertions(+)
+ create mode 100644 drivers/cpufreq/scpi-cpufreq.c
 
-Bintian
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 611cb09239eb..6419b17b89dd 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -24,6 +24,15 @@ config ARM_VEXPRESS_SPC_CPUFREQ
+           This add the CPUfreq driver support for Versatile Express
+ 	  big.LITTLE platforms using SPC for power management.
+ 
++config ARM_SCPI_CPUFREQ
++        tristate "SCPI based CPUfreq driver"
++	depends on ARM_BIG_LITTLE_CPUFREQ && ARM_SCPI_PROTOCOL
++        help
++	  This adds the CPUfreq driver support for ARM big.LITTLE platforms
++	  using SCPI protocol for CPU power management.
++
++	  This driver uses SCPI Message Protocol driver to interact with the
++	  firmware providing the CPU DVFS functionality.
+ 
+ config ARM_EXYNOS_CPUFREQ
+ 	tristate "SAMSUNG EXYNOS CPUfreq Driver"
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index cdce92ae2e8b..02fc9f849d4b 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -79,6 +79,7 @@ obj-$(CONFIG_ARM_SA1110_CPUFREQ)	+= sa1110-cpufreq.o
+ obj-$(CONFIG_ARM_SPEAR_CPUFREQ)		+= spear-cpufreq.o
+ obj-$(CONFIG_ARM_TEGRA_CPUFREQ)		+= tegra-cpufreq.o
+ obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
++obj-$(CONFIG_ARM_SCPI_CPUFREQ)		+= scpi-cpufreq.o
+ 
+ ##################################################################################
+ # PowerPC platform drivers
+diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
+new file mode 100644
+index 000000000000..2c3b16fd3a01
+--- /dev/null
++++ b/drivers/cpufreq/scpi-cpufreq.c
+@@ -0,0 +1,124 @@
++/*
++ * System Control and Power Interface (SCPI) based CPUFreq Interface driver
++ *
++ * It provides necessary ops to arm_big_little cpufreq driver.
++ *
++ * Copyright (C) 2015 ARM Ltd.
++ * Sudeep Holla <sudeep.holla@arm.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/cpufreq.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++#include <linux/scpi_protocol.h>
++#include <linux/types.h>
++
++#include "arm_big_little.h"
++
++static struct scpi_ops *scpi_ops;
++
++static struct scpi_dvfs_info *scpi_get_dvfs_info(struct device *cpu_dev)
++{
++	u8 domain = topology_physical_package_id(cpu_dev->id);
++
++	if (domain < 0)
++		return ERR_PTR(-EINVAL);
++	return scpi_ops->dvfs_get_info(domain);
++}
++
++static int scpi_opp_table_ops(struct device *cpu_dev, bool remove)
++{
++	int idx, ret = 0;
++	struct scpi_opp *opp;
++	struct scpi_dvfs_info *info = scpi_get_dvfs_info(cpu_dev);
++
++	if (IS_ERR(info))
++		return PTR_ERR(info);
++
++	if (!info->opps)
++		return -EIO;
++
++	for (opp = info->opps, idx = 0; idx < info->count; idx++, opp++) {
++		if (remove)
++			dev_pm_opp_remove(cpu_dev, opp->freq);
++		else
++			ret = dev_pm_opp_add(cpu_dev, opp->freq,
++					     opp->m_volt * 1000);
++		if (ret) {
++			dev_warn(cpu_dev, "failed to add opp %uHz %umV\n",
++				 opp->freq, opp->m_volt);
++			while (idx-- > 0)
++				dev_pm_opp_remove(cpu_dev, (--opp)->freq);
++			return ret;
++		}
++	}
++	return ret;
++}
++
++static int scpi_get_transition_latency(struct device *cpu_dev)
++{
++	struct scpi_dvfs_info *info = scpi_get_dvfs_info(cpu_dev);
++
++	if (IS_ERR(info))
++		return PTR_ERR(info);
++	return info->latency;
++}
++
++static int scpi_init_opp_table(struct device *cpu_dev)
++{
++	return scpi_opp_table_ops(cpu_dev, false);
++}
++
++static void scpi_free_opp_table(struct device *cpu_dev)
++{
++	scpi_opp_table_ops(cpu_dev, true);
++}
++
++static struct cpufreq_arm_bL_ops scpi_cpufreq_ops = {
++	.name	= "scpi",
++	.get_transition_latency = scpi_get_transition_latency,
++	.init_opp_table = scpi_init_opp_table,
++	.free_opp_table = scpi_free_opp_table,
++};
++
++static int scpi_cpufreq_probe(struct platform_device *pdev)
++{
++	scpi_ops = get_scpi_ops();
++	if (!scpi_ops)
++		return -EIO;
++
++	return bL_cpufreq_register(&scpi_cpufreq_ops);
++}
++
++static int scpi_cpufreq_remove(struct platform_device *pdev)
++{
++	bL_cpufreq_unregister(&scpi_cpufreq_ops);
++	scpi_ops = NULL;
++	return 0;
++}
++
++static struct platform_driver scpi_cpufreq_platdrv = {
++	.driver = {
++		.name	= "scpi-cpufreq",
++		.owner	= THIS_MODULE,
++	},
++	.probe		= scpi_cpufreq_probe,
++	.remove		= scpi_cpufreq_remove,
++};
++module_platform_driver(scpi_cpufreq_platdrv);
++
++MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
++MODULE_DESCRIPTION("ARM SCPI CPUFreq interface driver");
++MODULE_LICENSE("GPL v2");
+-- 
+1.9.1
 
-On 2015/5/20 9:39, Stephen Boyd wrote:
-> On 05/16, Bintian Wang wrote:
->> @@ -94,18 +106,23 @@ struct clk *hisi_register_clkgate_sep(struct device *, const char *,
->>   				const char *, unsigned long,
->>   				void __iomem *, u8,
->>   				u8, spinlock_t *);
->> +struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
->> +	const char *parent_name, unsigned long flags, void __iomem *reg,
->> +	u8 shift, u8 width, u32 mask_bit, spinlock_t *lock);
->>
->> -struct hisi_clock_data __init *hisi_clk_init(struct device_node *, int);
->> -void __init hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *,
->> +struct hisi_clock_data *hisi_clk_init(struct device_node *, int);
->> +void hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *,
->>   					int, struct hisi_clock_data *);
->> -void __init hisi_clk_register_fixed_factor(struct hisi_fixed_factor_clock *,
->> +void hisi_clk_register_fixed_factor(struct hisi_fixed_factor_clock *,
->>   					int, struct hisi_clock_data *);
->> -void __init hisi_clk_register_mux(struct hisi_mux_clock *, int,
->> +void hisi_clk_register_mux(struct hisi_mux_clock *, int,
->>   				struct hisi_clock_data *);
->> -void __init hisi_clk_register_divider(struct hisi_divider_clock *,
->> +void hisi_clk_register_divider(struct hisi_divider_clock *,
->>   				int, struct hisi_clock_data *);
->> -void __init hisi_clk_register_gate(struct hisi_gate_clock *,
->> +void hisi_clk_register_gate(struct hisi_gate_clock *,
->> +					int, struct hisi_clock_data *);
->> +void hisi_clk_register_gate_sep(struct hisi_gate_clock *,
->>   					int, struct hisi_clock_data *);
->> -void __init hisi_clk_register_gate_sep(struct hisi_gate_clock *,
->> +void hi6220_clk_register_divider(struct hi6220_divider_clock *,
->>   					int, struct hisi_clock_data *);
->
-> Please don't do the mass __init removal in this patch. Do it in a
-> separate patch.
->
->>   #endif	/* __HISI_CLK_H */
->> diff --git a/drivers/clk/hisilicon/clkdivider-hi6220.c b/drivers/clk/hisilicon/clkdivider-hi6220.c
->> new file mode 100644
->> index 0000000..bc85ef6
->> --- /dev/null
->> +++ b/drivers/clk/hisilicon/clkdivider-hi6220.c
->> @@ -0,0 +1,157 @@
->> +/*
->> + * Hisilicon hi6220 SoC divider clock driver
->> + *
->> + * Copyright (c) 2015 Hisilicon Limited.
->> + *
->> + * Author: Bintian Wang <bintian.wang@huawei.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + *
->> + */
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/slab.h>
->> +#include <linux/io.h>
->> +#include <linux/err.h>
->
-> #include <linux/spinlock.h> ?
->
->> +
->> +#define div_mask(width)	((1 << (width)) - 1)
->> +
-> [..]
->> +
->> +struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
->> +	const char *parent_name, unsigned long flags, void __iomem *reg,
->> +	u8 shift, u8 width, u32 mask_bit, spinlock_t *lock)
->> +{
->> +	struct hi6220_clk_divider *div;
->> +	struct clk *clk;
->> +	struct clk_init_data init;
->> +	struct clk_div_table *table;
->> +	u32 max_div, min_div;
->> +	int i;
->> +
->> +	/* allocate the divider */
->> +	div = kzalloc(sizeof(struct hi6220_clk_divider), GFP_KERNEL);
->
-> nitpick: Use sizeof(*div) please.
->
->> +	if (!div)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	/* Init the divider table */
->> +	max_div = div_mask(width) + 1;
->> +	min_div = 1;
->> +
->> +	table = kzalloc(sizeof(struct clk_div_table) * (max_div + 1),
->
-> And kcalloc() here please
->
->> +			GFP_KERNEL);
->> +	if (!table) {
->> +		kfree(div);
->> +		return ERR_PTR(-ENOMEM);
->> +	}
->> +
->> +	for (i = 0; i < max_div; i++) {
->> +		table[i].div = min_div + i;
->> +		table[i].val = table[i].div - 1;
->> +	}
->> +
->> +	init.name = name;
->> +	init.ops = &hi6220_clkdiv_ops;
->> +	init.flags = flags;
->> +	init.parent_names = parent_name ? &parent_name : NULL;
->> +	init.num_parents = parent_name ? 1 : 0;
->> +
->> +	/* struct hi6220_clk_divider assignments */
->> +	div->reg = reg;
->> +	div->shift = shift;
->> +	div->width = width;
->> +	div->mask = mask_bit ? BIT(mask_bit) : 0;
->> +	div->lock = lock;
->> +	div->hw.init = &init;
->> +	div->table = table;
->> +
->> +	/* register the clock */
->> +	clk = clk_register(dev, &div->hw);
->> +
->
-> Drop the newline here.
->
->> +	if (IS_ERR(clk)) {
->> +		kfree(table);
->> +		kfree(div);
->> +	}
->> +
->> +	return clk;
->> +}
->
