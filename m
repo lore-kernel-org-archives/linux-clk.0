@@ -1,76 +1,89 @@
-Return-Path: <sudeep.holla@arm.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
+Return-Path: <mathieu@codeaurora.org>
+From: Mathieu Olivari <mathieu@codeaurora.org>
+To: robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	peppe.cavallaro@st.com,
+	mathieu@codeaurora.org,
+	agross@codeaurora.org,
+	joshc@codeaurora.org,
+	architt@codeaurora.org,
+	georgi.djakov@linaro.org,
+	wsa@the-dreams.de,
+	rnayak@codeaurora.org,
+	davem@davemloft.net,
+	vbridger@opensource.altera.com
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH v2 4/5] clk: scpi: add support for cpufreq virtual device
-Date: Thu, 14 May 2015 16:42:34 +0100
-Message-Id: <1431618155-3132-5-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1431618155-3132-1-git-send-email-sudeep.holla@arm.com>
-References: <1431618155-3132-1-git-send-email-sudeep.holla@arm.com>
+	netdev@vger.kernel.org
+Subject: [PATCH V2 3/5] stmmac: add fixed-link device-tree support
+Date: Wed, 27 May 2015 11:02:48 -0700
+Message-Id: <1432749770-26133-4-git-send-email-mathieu@codeaurora.org>
+In-Reply-To: <1432749770-26133-1-git-send-email-mathieu@codeaurora.org>
+References: <1432749770-26133-1-git-send-email-mathieu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The clocks for the CPUs are provided by SCP and are managed by this
-clock driver. So the cpufreq device needs to be added only after the
-clock get registered and removed when this driver is unloaded.
+In case DT is used, this change adds the ability to the stmmac driver to
+detect a fixed-link PHY, instanciate it, and use it during
+phy_connect().
 
-This patch manages the cpufreq virtual device based on the clock
-availability.
+Fixed link PHYs DT usage is described in:
+Documentation/devicetree/bindings/net/fixed-link.txt
 
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Liviu Dudau <Liviu.Dudau@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
-Cc: linux-clk@vger.kernel.org
+Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
 ---
- drivers/clk/clk-scpi.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c     |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 12 +++++++++++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
-index 208f68d14214..092b4231b1de 100644
---- a/drivers/clk/clk-scpi.c
-+++ b/drivers/clk/clk-scpi.c
-@@ -37,6 +37,7 @@ struct scpi_clk {
- #define to_scpi_clk(clk) container_of(clk, struct scpi_clk, hw)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 31c6416..c46178c 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -856,7 +856,7 @@ static int stmmac_init_phy(struct net_device *dev)
+ 	 * device as well.
+ 	 * Note: phydev->phy_id is the result of reading the UID PHY registers.
+ 	 */
+-	if (phydev->phy_id == 0) {
++	if (!priv->plat->phy_node && phydev->phy_id == 0) {
+ 		phy_disconnect(phydev);
+ 		return -ENODEV;
+ 	}
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index 8d23155..f3918c7 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -148,6 +148,14 @@ static int stmmac_probe_config_dt(struct platform_device *pdev,
+ 	/* If we find a phy-handle property, use it as the PHY */
+ 	plat->phy_node = of_parse_phandle(np, "phy-handle", 0);
  
- static struct scpi_ops *scpi_ops;
-+static struct platform_device *cpufreq_dev;
- 
- static unsigned long scpi_clk_recalc_rate(struct clk_hw *hw,
- 					  unsigned long parent_rate)
-@@ -247,6 +248,11 @@ static int scpi_clocks_remove(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct device_node *child, *np = dev->of_node;
- 
-+	if (cpufreq_dev) {
-+		platform_device_unregister(cpufreq_dev);
-+		cpufreq_dev = NULL;
++	/* If phy-handle is not specified, check if we have a fixed-phy */
++	if (!plat->phy_node && of_phy_is_fixed_link(np)) {
++		if ((of_phy_register_fixed_link(np) < 0))
++			return -ENODEV;
++
++		plat->phy_node = of_node_get(np);
 +	}
 +
- 	for_each_available_child_of_node(np, child)
- 		of_clk_del_provider(np);
- 	scpi_ops = NULL;
-@@ -270,6 +276,12 @@ static int scpi_clocks_probe(struct platform_device *pdev)
- 			return ret;
- 		}
- 	}
-+	/* Add the virtual cpufreq device */
-+	cpufreq_dev = platform_device_register_simple("scpi-cpufreq",
-+						      -1, NULL, 0);
-+	if (!cpufreq_dev)
-+		pr_warn("unable to register cpufreq device");
-+
- 	return 0;
- }
- 
+ 	/* "snps,phy-addr" is not a standard property. Mark it as deprecated
+ 	 * and warn of its use. Remove this when phy node support is added.
+ 	 */
+@@ -212,8 +220,10 @@ static int stmmac_probe_config_dt(struct platform_device *pdev,
+ 	if (of_find_property(np, "snps,pbl", NULL)) {
+ 		dma_cfg = devm_kzalloc(&pdev->dev, sizeof(*dma_cfg),
+ 				       GFP_KERNEL);
+-		if (!dma_cfg)
++		if (!dma_cfg) {
++			of_node_put(np);
+ 			return -ENOMEM;
++		}
+ 		plat->dma_cfg = dma_cfg;
+ 		of_property_read_u32(np, "snps,pbl", &dma_cfg->pbl);
+ 		dma_cfg->fixed_burst =
 -- 
-1.9.1
+2.1.4
