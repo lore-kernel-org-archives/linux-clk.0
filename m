@@ -1,103 +1,212 @@
-Return-Path: <mcoquelin.stm32@gmail.com>
-Return-Path: <mcoquelin.stm32@gmail.com>
-Message-ID: <55698104.2070205@gmail.com>
-Date: Sat, 30 May 2015 11:21:08 +0200
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Message-ID: <5565DA35.8030902@arm.com>
+Date: Wed, 27 May 2015 15:52:37 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
 MIME-Version: 1.0
-To: Daniel Thompson <daniel.thompson@linaro.org>,
- Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>
-CC: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Kumar Gala <galak@codeaurora.org>,
- Russell King <linux@arm.linux.org.uk>, Kamil Lulko <rev13@wp.pl>,
- Andreas Farber <afaerber@suse.de>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- patches@linaro.org, linaro-kernel@lists.linaro.org
-Subject: Re: [PATCH v2 2/4] dt-bindings: Document the STM32F4 clock bindings
-References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org> <1432972448-10332-1-git-send-email-daniel.thompson@linaro.org> <1432972448-10332-3-git-send-email-daniel.thompson@linaro.org>
-In-Reply-To: <1432972448-10332-3-git-send-email-daniel.thompson@linaro.org>
+To: Mark Rutland <mark.rutland@arm.com>
+CC: Sudeep Holla <sudeep.holla@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 1/5] Documentation: add DT binding for ARM System Control
+ and Power Interface(SCPI) protocol
+References: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com> <1432720398-5701-2-git-send-email-sudeep.holla@arm.com> <20150527133700.GK8439@leverpostej>
+In-Reply-To: <20150527133700.GK8439@leverpostej>
 Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-HI Daniel,
+Hi Mark,
 
-On 05/30/2015 09:54 AM, Daniel Thompson wrote:
-> This adds documentation of device tree bindings for the clock related
-> portions of the STM32 RCC block.
+Thanks for the review.
+
+On 27/05/15 14:37, Mark Rutland wrote:
+> On Wed, May 27, 2015 at 10:53:14AM +0100, Sudeep Holla wrote:
+>> This patch adds devicetree binding for System Control and Power
+>> Interface (SCPI) Message Protocol used between the Application Cores(AP)
+>> and the System Control Processor(SCP). The MHU peripheral provides a
+>> mechanism for inter-processor communication between SCP's M3 processor
+>> and AP.
+>>
+>> SCP offers control and management of the core/cluster power states,
+>> various power domain DVFS including the core/cluster, certain system
+>> clocks configuration, thermal sensors and many others.
+>>
+>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> CC: Jassi Brar <jassisinghbrar@gmail.com>
+>> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+>> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+>> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
+>> Cc: devicetree@vger.kernel.org
+>> ---
+>>   Documentation/devicetree/bindings/arm/arm,scpi.txt | 121 +++++++++++++++++++++
+>>   1 file changed, 121 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/arm/arm,scpi.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/arm,scpi.txt b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+>> new file mode 100644
+>> index 000000000000..5db235f69e54
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+>> @@ -0,0 +1,121 @@
+>> +System Control and Power Interface (SCPI) Message Protocol
+>> +----------------------------------------------------------
 >
-> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-> ---
->   .../devicetree/bindings/clock/st,stm32-rcc.txt     | 65 ++++++++++++++++++++++
->   1 file changed, 65 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+> Could we refer to the documentation for SCPI similarly to what we do
+> in the PSCI binding (i.e. give the document number and title so people
+> can search for it)?
 >
-> diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-> new file mode 100644
-> index 0000000..9715d09
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-> @@ -0,0 +1,65 @@
-> +STMicroelectronics STM32 Reset and Clock Controller
-> +===================================================
-> +
-> +The RCC IP is both a reset and a clock controller. This documentation only
-> +describes the clock part.
-> +
-> +Please also refer to clock-bindings.txt in this directory for common clock
-> +controller binding usage.
-> +
-> +Required properties:
-> +- compatible: Should be "st,stm32f42xx-rcc"
-> +- reg: should be register base and length as documented in the
-> +  datasheet
-> +- #clock-cells: 2, device nodes should specify the clock in their "clocks"
-> +  property, containing a phandle to the clock device node, an index selecting
-> +  between gated clocks and other clocks and an index specifying the clock to
-> +  use.
-> +
-> +Example:
-> +
-> +	rcc: rcc@40023800 {
-> +		#clock-cells = <2>
-> +		compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
-> +		reg = <0x40023800 0x400>;
-> +	};
-> +
-> +Specifying gated clocks
-> +=======================
-> +
-> +The primary index must be set to 0.
-> +
-> +The secondary index is the bit number within the RCC register bank, starting
-> +from the first RCC clock enable register (RCC_AHB1ENR, address offset 0x30).
-> +
-> +It is calculated as: index = register_offset / 4 * 32 + bit_offset.
-> +Where bit_offset is the bit offset within the register (LSB is 0, MSB is 31).
-> +
-> +Example:
-> +
-> +	/* Gated clock, AHB1 bit 0 (GPIOA) */
-> +	... {
-> +		clocks = <&rcc 0 0>
-> +	};
-> +
-> +	/* Gated clock, AHB2 bit 4 (GPIOA) */
-s/GPIOA/CRYP/
-> +	... {
-> +		clocks = <&rcc 0 36>
-> +	};
-> +
-> +Specifying other clocks
-> +=======================
-> +
-> +The primary index must be set to 1.
-> +
-> +The secondary index is bound with the following magic numbers:
-> +
-> +	0	SYSTICK
-> +	1	FCLK
-How do you plan to handle the SAI & I2S clocks?
-By adding index 3?
+
+Yes that's the plan but was waiting for a stable URL(currently it's not
+in ARM Infocenter and simple google search for document/title doesn't
+seem to work). For now I will include the URL too and may be remove or
+fix it in future.
+
+>> +
+>> +Required properties:
+>> +
+>> +- compatible : should be "arm,scpi"
+>> +- mboxes: List of phandle and mailbox channel specifiers
+>
+> How many, in which order, and what are they used for?
+>
+
+Ok will update.
+
+>> +- shmem : List of phandle pointing to the shared memory(SHM) area between the
+>> +	  processors using these mailboxes for IPC, one for each mailbox
+>
+> When you say "shared memory", what exactly are we referring to? It looks
+> like we refer to SRAM areas?
+>
+
+It can be any memory reserved for the purpose of this communication via
+MHU between the Application Processors and the remote System Control
+Processor. On most platforms with MHU it happens to be SRAM like in Juno
+and Fijitsu MB86S7X
+
+>> +
+>> +See Documentation/devicetree/bindings/mailbox/mailbox.txt
+>> +for more details about the generic mailbox controller and
+>> +client driver bindings.
+>> +
+>> +Clock bindings for the clocks based on SCPI Message Protocol
+>> +------------------------------------------------------------
+>> +
+>> +This binding uses the common clock binding[1].
+>> +
+>> +Required properties:
+>> +- compatible : shall be one of the following:
+>
+> Nit: s/be/include/
+>
+>> +	"arm,scpi-clocks" - for the container node with all the clocks
+>> +		based on the SCPI protocol
+>
+> Please separate this from the description of its sub-nodes (e.g. have a
+> sub-nodes heading under "arm,scpi-clocks").
+>
+
+OK, I will update.
+
+> Is there any reason to have this container if we're only going to place
+> the two clock controllers described below within it? Can't we just place
+> them directly under the SCPI node?
+>
+
+SCP also supports power domains, sensors and other misc features. I
+wanted to avoid parsing through all the nodes in the clock driver once
+they are added. Is that not recommended ?
+
+>> +	"arm,scpi-dvfs" - all the clocks that are variable and index based.
+>> +		These clocks don't provide the full range between the limits
+>> +		but only discrete points within the range. The firmware
+>> +		provides the mapping for each such operating frequency and the
+>> +		index associated with it. The firmware also manages the
+>> +		voltage scaling appropriately with the clock scaling.
+>
+> Could this be "arm,scpi-dvfs-clocks"?
+>
+>> +	"arm,scpi-clk" - all the clocks that are variable and provide full
+>> +		range within the specified range. The firmware provides the
+>> +		supported range for each clock.
+>
+> Likewise "arm,scpi-variable-clocks"?
+>
+> Using "arm,scpi-clk" makes it sound like there's a single clock output.
+>
+>> +
+>> +Required properties for all clocks(all from common clock binding):
+>> +- #clock-cells : should be set to 1 as each of the SCPI clocks have multiple
+>> +	outputs. The clock specifier will be the index to an entry in the list
+>> +	of output clocks.
+>> +- clock-output-names : shall be the corresponding names of the outputs.
+>> +- clock-indices: The identifyng number for the clocks(clock_id) in the node as
+>> +	expected by the firmware. It can be non linear and hence provide the
+>> +	mapping	of identifiers into the clock-output-names array.
+>> +
+>> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> +
+>> +Example:
+>> +
+>> +sram: sram@50000000 {
+>> +	compatible = "arm,juno-sram-ns", "mmio-sram";
+>
+> Nit: undocumented compatible string.
+>
+>> +	reg = <0x0 0x50000000 0x0 0x10000>;
+>> +
+>> +	#address-cells = <1>;
+>> +	#size-cells = <1>;
+>> +	ranges = <0 0x0 0x50000000 0x10000>;
+>> +
+>> +	cpu_scp_lpri: scp-shmem@0 {
+>> +		compatible = "arm,juno-scp-shmem";
+>
+> Nit: undocumented compatible string.
+>
+
+Will fix all the above compatible strings and add missing document.
+
+[...]
+
+>> +cpu@0 {
+>> +	...
+>> +	reg = <0 0>;
+>> +	clocks = <&scpi_dvfs 0>;
+>> +	clock-names = "big";
+>
+> This isn't documented anywhere, and I can't see any code in this series
+> using it. The Juno dts doesn't seem to have CPU clocks, and nothing in
+> this series adds them -- have I missed a series?
+>
+
+No, you didn't miss anything, I didn't post the DTS changes to avoid
+churn when the binding is still under discussion, will post in the next
+version.
+
+> Also, I'm not keen on using software-defined names (e.g. "big") for CPU
+> clocks, as it doesn't stictly relate to the hardware. That said, the set
+> of clocks, their names, and how they related to CPUs is
+> implementation-specific, which is somewhat painful. I'm not sure how
+> we cater for that with generic software.
+>
+
+Sorry for the confusion, it should be "vbig" in the above example. These
+names are derived from the SCPI document and yes it may vary with platforms.
+
+Regards,
+Sudeep
