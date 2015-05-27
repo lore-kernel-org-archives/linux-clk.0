@@ -1,116 +1,207 @@
-Return-Path: <jim2101024@gmail.com>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Date: Wed, 27 May 2015 14:37:00 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Sudeep Holla <Sudeep.Holla@arm.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 1/5] Documentation: add DT binding for ARM System
+ Control and Power Interface(SCPI) protocol
+Message-ID: <20150527133700.GK8439@leverpostej>
+References: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com>
+ <1432720398-5701-2-git-send-email-sudeep.holla@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20150523193321.9817.1715@quantum>
-References: <1431728556-620-1-git-send-email-jim2101024@gmail.com>
-	<20150523193321.9817.1715@quantum>
-Date: Thu, 28 May 2015 10:21:14 -0400
-Message-ID: <CANCKTBsZr-Ew97TX60u416Lhw4tEBfMkDUGn1yw13ThMrz3z9Q@mail.gmail.com>
-Subject: Re: [PATCH] clk: export function clk_disable_unused()
-From: Jim Quinlan <jim2101024@gmail.com>
-To: Michael Turquette <mturquette@linaro.org>
-Cc: linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	Grygorii Strashko <grygorii.strashko@ti.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1432720398-5701-2-git-send-email-sudeep.holla@arm.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+On Wed, May 27, 2015 at 10:53:14AM +0100, Sudeep Holla wrote:
+> This patch adds devicetree binding for System Control and Power
+> Interface (SCPI) Message Protocol used between the Application Cores(AP)
+> and the System Control Processor(SCP). The MHU peripheral provides a
+> mechanism for inter-processor communication between SCP's M3 processor
+> and AP.
+> 
+> SCP offers control and management of the core/cluster power states,
+> various power domain DVFS including the core/cluster, certain system
+> clocks configuration, thermal sensors and many others.
+> 
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> CC: Jassi Brar <jassisinghbrar@gmail.com>
+> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
+> Cc: devicetree@vger.kernel.org
+> ---
+>  Documentation/devicetree/bindings/arm/arm,scpi.txt | 121 +++++++++++++++++++++
+>  1 file changed, 121 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/arm,scpi.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/arm,scpi.txt b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+> new file mode 100644
+> index 000000000000..5db235f69e54
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+> @@ -0,0 +1,121 @@
+> +System Control and Power Interface (SCPI) Message Protocol
+> +----------------------------------------------------------
 
-We are currently doing [1].  We'd like to change this so that we are
-the same as upstream barring a small syscore driver that will call
-clk_disable_unused() on S2/S3 resume.  My patch reflects the
-suggestion found in [2], which says, "... It could still be generic by
-exporting the clk_disable_unused() function to drivers...".
+Could we refer to the documentation for SCPI similarly to what we do
+in the PSCI binding (i.e. give the document number and title so people
+can search for it)?
 
-We do not have the general problems you are alluding to.  With few
-exceptions, we do not yet use power domains or runtime PM, although of
-course this may change.  Our drivers  use either syscore calls or
-SIMPLE_DEV_PM_OPS() to turn off/on clocks as needed during S2/S3
-suspend/resume.  The problem we have is when the software stack omits
-a driver or we have a new HW block which has no driver.  On boot,
-clk_disable_unused() turns off the clocks that these missing drivers
-would normally use*.  But on resumption of S2/S3, these clocks get
-turned on by HW, and all I am asking is that clk_disable_unused() be
-exported so a driver may invoke it to do the same thing it does during
-boot.
+> +
+> +Required properties:
+> +
+> +- compatible : should be "arm,scpi"
+> +- mboxes: List of phandle and mailbox channel specifiers
 
-Regards,
-Jim
+How many, in which order, and what are they used for?
 
-* Why the HW turns these clocks on in the first place is a question I
-cannot answer.
-[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/311568.html
-[2] http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/311575.html
+> +- shmem : List of phandle pointing to the shared memory(SHM) area between the
+> +	  processors using these mailboxes for IPC, one for each mailbox
 
-On Sat, May 23, 2015 at 3:33 PM, Michael Turquette
-<mturquette@linaro.org> wrote:
-> Quoting Jim Quinlan (2015-05-15 15:22:36)
->> For Broadcom STB chips, clocks may come up after resume in an "on"
->> state, so calling clk_disable_unused() again will turn off unused
->> clocks.  This commit exports clk_disable_unused() so it may be
->> called in such cases.
->
-> Jim,
->
-> Thanks for the patch.
->
-> I think a more general solution to the problem might be needed. E.g. how
-> do we solve for the opposite case where after a low-power suspend/resume
-> we turn on clocks that were enabled by drivers before suspending, but
-> are disabled out of reset/post-transition?
->
-> Additionally, it would be helpful to see your driver changes and how
-> exactly you plan to use this newly exported function.
->
-> I've Cc'd Grygorii Strashko from TI. I faintly recall that he had an
-> out-of-tree solution to add some .suspend/.resume callbacks to struct
-> clk_ops. I didn't like that solution at the time either, but maybe we
-> can figure out a more natural way to handle these cases.
->
-> (Grygorii: sorry in advance if this is a case of mistaken identity. I
-> could not find the code in question from my email archive)
->
-> Regards,
-> Mike
->
->>
->> Signed-off-by: Jim Quinlan <jim2101024@gmail.com>
->> ---
->>  drivers/clk/clk.c   | 2 +-
->>  include/linux/clk.h | 8 ++++++++
->>  2 files changed, 9 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index 459ce9d..4469f8b 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -549,7 +549,7 @@ static int __init clk_ignore_unused_setup(char *__unused)
->>  }
->>  __setup("clk_ignore_unused", clk_ignore_unused_setup);
->>
->> -static int clk_disable_unused(void)
->> +int clk_disable_unused(void)
->>  {
->>         struct clk_core *clk;
->>
->> diff --git a/include/linux/clk.h b/include/linux/clk.h
->> index 68c16a6..c03822c 100644
->> --- a/include/linux/clk.h
->> +++ b/include/linux/clk.h
->> @@ -265,6 +265,14 @@ int clk_enable(struct clk *clk);
->>  void clk_disable(struct clk *clk);
->>
->>  /**
->> + * clk_disable_unused - turns off unused clocks.
->> + *
->> + * This is already called as a late initcall, but may be
->> + * called again in special cases such as resuming from S3.
->> + */
->> +int clk_disable_unused(void);
->> +
->> +/**
->>   * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
->>   *               This is only valid once the clock source has been enabled.
->>   * @clk: clock source
->> --
->> 1.9.0.138.g2de3478
->>
+When you say "shared memory", what exactly are we referring to? It looks
+like we refer to SRAM areas?
+
+> +
+> +See Documentation/devicetree/bindings/mailbox/mailbox.txt
+> +for more details about the generic mailbox controller and
+> +client driver bindings.
+> +
+> +Clock bindings for the clocks based on SCPI Message Protocol
+> +------------------------------------------------------------
+> +
+> +This binding uses the common clock binding[1].
+> +
+> +Required properties:
+> +- compatible : shall be one of the following:
+
+Nit: s/be/include/
+
+> +	"arm,scpi-clocks" - for the container node with all the clocks
+> +		based on the SCPI protocol
+
+Please separate this from the description of its sub-nodes (e.g. have a
+sub-nodes heading under "arm,scpi-clocks").
+
+Is there any reason to have this container if we're only going to place
+the two clock controllers described below within it? Can't we just place
+them directly under the SCPI node?
+
+> +	"arm,scpi-dvfs" - all the clocks that are variable and index based.
+> +		These clocks don't provide the full range between the limits
+> +		but only discrete points within the range. The firmware
+> +		provides the mapping for each such operating frequency and the
+> +		index associated with it. The firmware also manages the
+> +		voltage scaling appropriately with the clock scaling.
+
+Could this be "arm,scpi-dvfs-clocks"?
+
+> +	"arm,scpi-clk" - all the clocks that are variable and provide full
+> +		range within the specified range. The firmware provides the
+> +		supported range for each clock.
+
+Likewise "arm,scpi-variable-clocks"?
+
+Using "arm,scpi-clk" makes it sound like there's a single clock output.
+
+> +
+> +Required properties for all clocks(all from common clock binding):
+> +- #clock-cells : should be set to 1 as each of the SCPI clocks have multiple
+> +	outputs. The clock specifier will be the index to an entry in the list
+> +	of output clocks.
+> +- clock-output-names : shall be the corresponding names of the outputs.
+> +- clock-indices: The identifyng number for the clocks(clock_id) in the node as
+> +	expected by the firmware. It can be non linear and hence provide the
+> +	mapping	of identifiers into the clock-output-names array.
+> +
+> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +Example:
+> +
+> +sram: sram@50000000 {
+> +	compatible = "arm,juno-sram-ns", "mmio-sram";
+
+Nit: undocumented compatible string.
+
+> +	reg = <0x0 0x50000000 0x0 0x10000>;
+> +
+> +	#address-cells = <1>;
+> +	#size-cells = <1>;
+> +	ranges = <0 0x0 0x50000000 0x10000>;
+> +
+> +	cpu_scp_lpri: scp-shmem@0 {
+> +		compatible = "arm,juno-scp-shmem";
+
+Nit: undocumented compatible string.
+
+> +		reg = <0x0 0x200>;
+> +	};
+> +
+> +	cpu_scp_hpri: scp-shmem@200 {
+> +		compatible = "arm,juno-scp-shmem";
+> +		reg = <0x200 0x200>;
+> +	};
+> +};
+> +
+> +mailbox: mailbox0@40000000 {
+> +	....
+> +	#mbox-cells = <1>;
+> +};
+> +
+> +scpi_protocol: scpi@2e000000 {
+> +	compatible = "arm,scpi";
+> +	mboxes = <&mailbox 0 &mailbox 1>;
+> +	shmem = <&cpu_scp_lpri &cpu_scp_hpri>;
+> +
+> +	clocks {
+> +		compatible = "arm,scpi-clocks";
+> +
+> +		scpi_dvfs: scpi_clocks@0 {
+> +			compatible = "arm,scpi-dvfs";
+> +			#clock-cells = <1>;
+> +			clock-indices = <0>, <1>, <2>;
+> +			clock-output-names = "vbig", "vlittle", "vgpu";
+> +		};
+> +		scpi_clk: scpi_clocks@3 {
+> +			compatible = "arm,scpi-clk";
+> +			#clock-cells = <1>;
+> +			clock-indices = <3>, <4>;
+> +			clock-output-names = "pxlclk0", "pxlclk1";
+> +		};
+> +	};
+> +};
+> +
+> +cpu@0 {
+> +	...
+> +	reg = <0 0>;
+> +	clocks = <&scpi_dvfs 0>;
+> +	clock-names = "big";
+
+This isn't documented anywhere, and I can't see any code in this series
+using it. The Juno dts doesn't seem to have CPU clocks, and nothing in
+this series adds them -- have I missed a series?
+
+Also, I'm not keen on using software-defined names (e.g. "big") for CPU
+clocks, as it doesn't stictly relate to the hardware. That said, the set
+of clocks, their names, and how they related to CPUs is
+implementation-specific, which is somewhat painful. I'm not sure how
+we cater for that with generic software.
+
+Thanks,
+Mark.
