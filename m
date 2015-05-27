@@ -1,65 +1,176 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Thu, 7 May 2015 17:18:12 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 19/20] clk: tegra210: add support for Tegra210 clocks
-Message-ID: <20150507151811.GD25866@ulmo.nvidia.com>
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
- <1430757460-9478-20-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iVCmgExH7+hIHJ1A"
-In-Reply-To: <1430757460-9478-20-git-send-email-rklein@nvidia.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	devicetree@vger.kernel.org
+Subject: [PATCH v3 1/5] Documentation: add DT binding for ARM System Control and Power Interface(SCPI) protocol
+Date: Wed, 27 May 2015 10:53:14 +0100
+Message-Id: <1432720398-5701-2-git-send-email-sudeep.holla@arm.com>
+In-Reply-To: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com>
+References: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch adds devicetree binding for System Control and Power
+Interface (SCPI) Message Protocol used between the Application Cores(AP)
+and the System Control Processor(SCP). The MHU peripheral provides a
+mechanism for inter-processor communication between SCP's M3 processor
+and AP.
 
---iVCmgExH7+hIHJ1A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+SCP offers control and management of the core/cluster power states,
+various power domain DVFS including the core/cluster, certain system
+clocks configuration, thermal sensors and many others.
 
-On Mon, May 04, 2015 at 12:37:39PM -0400, Rhyland Klein wrote:
-[...]
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-[...]
-> +static void __init tegra210_clock_init(struct device_node *np)
-> +{
-[...]
-> +	tegra_fixed_clk_init(tegra210_clks);
-> +	tegra210_pll_init(clk_base, pmc_base);
-> +	tegra210_periph_clk_init(clk_base, pmc_base);
-> +	tegra_audio_clk_init(clk_base, pmc_base, tegra210_clks,
-> +			     tegra210_audio_plls, 2);
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+CC: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
+Cc: devicetree@vger.kernel.org
+---
+ Documentation/devicetree/bindings/arm/arm,scpi.txt | 121 +++++++++++++++++++++
+ 1 file changed, 121 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/arm,scpi.txt
 
-Should use ARRAY_SIZE() here as well.
+diff --git a/Documentation/devicetree/bindings/arm/arm,scpi.txt b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+new file mode 100644
+index 000000000000..5db235f69e54
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+@@ -0,0 +1,121 @@
++System Control and Power Interface (SCPI) Message Protocol
++----------------------------------------------------------
++
++Required properties:
++
++- compatible : should be "arm,scpi"
++- mboxes: List of phandle and mailbox channel specifiers
++- shmem : List of phandle pointing to the shared memory(SHM) area between the
++	  processors using these mailboxes for IPC, one for each mailbox
++
++See Documentation/devicetree/bindings/mailbox/mailbox.txt
++for more details about the generic mailbox controller and
++client driver bindings.
++
++Clock bindings for the clocks based on SCPI Message Protocol
++------------------------------------------------------------
++
++This binding uses the common clock binding[1].
++
++Required properties:
++- compatible : shall be one of the following:
++	"arm,scpi-clocks" - for the container node with all the clocks
++		based on the SCPI protocol
++	"arm,scpi-dvfs" - all the clocks that are variable and index based.
++		These clocks don't provide the full range between the limits
++		but only discrete points within the range. The firmware
++		provides the mapping for each such operating frequency and the
++		index associated with it. The firmware also manages the
++		voltage scaling appropriately with the clock scaling.
++	"arm,scpi-clk" - all the clocks that are variable and provide full
++		range within the specified range. The firmware provides the
++		supported range for each clock.
++
++Required properties for all clocks(all from common clock binding):
++- #clock-cells : should be set to 1 as each of the SCPI clocks have multiple
++	outputs. The clock specifier will be the index to an entry in the list
++	of output clocks.
++- clock-output-names : shall be the corresponding names of the outputs.
++- clock-indices: The identifyng number for the clocks(clock_id) in the node as
++	expected by the firmware. It can be non linear and hence provide the
++	mapping	of identifiers into the clock-output-names array.
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Example:
++
++sram: sram@50000000 {
++	compatible = "arm,juno-sram-ns", "mmio-sram";
++	reg = <0x0 0x50000000 0x0 0x10000>;
++
++	#address-cells = <1>;
++	#size-cells = <1>;
++	ranges = <0 0x0 0x50000000 0x10000>;
++
++	cpu_scp_lpri: scp-shmem@0 {
++		compatible = "arm,juno-scp-shmem";
++		reg = <0x0 0x200>;
++	};
++
++	cpu_scp_hpri: scp-shmem@200 {
++		compatible = "arm,juno-scp-shmem";
++		reg = <0x200 0x200>;
++	};
++};
++
++mailbox: mailbox0@40000000 {
++	....
++	#mbox-cells = <1>;
++};
++
++scpi_protocol: scpi@2e000000 {
++	compatible = "arm,scpi";
++	mboxes = <&mailbox 0 &mailbox 1>;
++	shmem = <&cpu_scp_lpri &cpu_scp_hpri>;
++
++	clocks {
++		compatible = "arm,scpi-clocks";
++
++		scpi_dvfs: scpi_clocks@0 {
++			compatible = "arm,scpi-dvfs";
++			#clock-cells = <1>;
++			clock-indices = <0>, <1>, <2>;
++			clock-output-names = "vbig", "vlittle", "vgpu";
++		};
++		scpi_clk: scpi_clocks@3 {
++			compatible = "arm,scpi-clk";
++			#clock-cells = <1>;
++			clock-indices = <3>, <4>;
++			clock-output-names = "pxlclk0", "pxlclk1";
++		};
++	};
++};
++
++cpu@0 {
++	...
++	reg = <0 0>;
++	clocks = <&scpi_dvfs 0>;
++	clock-names = "big";
++};
++
++hdlcd@7ff60000 {
++	...
++	reg = <0 0x7ff60000 0 0x1000>;
++	clocks = <&scpi_clk 1>;
++	clock-names = "pxlclk";
++};
++
++In the above example, the #clock-cells is set to 1 as required.
++scpi_dvfs has 3 output clocks namely: vbig, vlittle and vgpu with 0, 1
++and 2 as clock-indices. scpi_clk has 2 output clocks namely: pxlclk0 and
++pxlclk1 with 3 and 4 as clock-indices.
++
++The first consumer in the example is cpu@0 and it has vbig as input clock.
++The index '0' in the clock specifier here points to the first entry in the
++output clocks of scpi_dvfs for which clock_id asrequired by the firmware
++is 0.
++
++Similarly the second example is hdlcd@7ff60000 and it has pxlclk0 as input
++clock. The index '1' in the clock specifier here points to the second entry
++in the output clocks of scpi_clocks for which clock_id as required by the
++firmware is 4.
+-- 
+1.9.1
 
-Thierry
-
---iVCmgExH7+hIHJ1A
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVS4IzAAoJEN0jrNd/PrOh2y4P+gMnm/dUAC4z8n3egGWdENxH
-hbDWkNsvdg/rOVY+nWdoyfWGzb399o4ev2ZSSTVtW7Ec8t8doupCqBrmZ/r7OoIE
-/03DN+bRWgc8LtVlw0I4LSadx4bw877tJjYTYqevxrqJQXCQxZvRGs4Us7Y7mxel
-PgR6fR0611qQjjyMpShWHFHL7cTkTUa7ROXHGcaazQdlAChHvERFDVPfAOAEp8r4
-9tFJOwvZCxFn5ulCgMvM8IN+RKtWlqxffFw1lgg/ZLYAmiI+huLXYyyZZcME6JGz
-6afhlI6/136NVBTVAOwru/QLLS0k0VysNUIiLoUf/vgR5kmWvhg/6tbV8DEN4RSA
-B+jxYTXmHG+xMnrN4kmsML4qGdrGe7m/7EPHU7e0maROwJb8Lrlvub8f4qBDadZe
-bGQKIZmY0SixY3SN8HHDxhhGXjMlr2SNHmAleew02/A3yJjRjjhV6tLv54JcuESt
-TOoSBjyYS6bqjNjdInoiUZEmMUV4OJC17K6iUqOgs23e6QHOTVJiPUm897BeukTG
-T7V9miB5WGzclNtH7t6a55o4//g/VuKoInPr2pNafp68TqnYqSL6fWNz430DEFFK
-CCHV9EosNm5y4nadZ5/AelZVm3I4gRkdDA9qa8ED716X5plQd+eXiCyuXVtMEMAZ
-nE7H8jQpedG7UkDc8d74
-=4USg
------END PGP SIGNATURE-----
-
---iVCmgExH7+hIHJ1A--
