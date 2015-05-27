@@ -1,175 +1,105 @@
 Return-Path: <t-kristo@ti.com>
+Message-ID: <55660D5B.8020607@ti.com>
+Date: Wed, 27 May 2015 21:30:51 +0300
 From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <tony@atomide.com>,
-        <paul@pwsan.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv3 10/27] clk: ti: move omap2_clk_enable_init_clocks under clock driver
-Date: Mon, 25 May 2015 18:00:15 +0300
-Message-ID: <1432566032-10860-11-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
-References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+To: <balbi@ti.com>, Tony Lindgren <tony@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <paul@pwsan.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com> <20150526160557.GD16525@atomide.com> <20150526163216.GF16525@atomide.com> <20150526163931.GO26599@saruman.tx.rr.com>
+In-Reply-To: <20150526163931.GO26599@saruman.tx.rr.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This is no longer used outside clock driver, so move it under the driver
-and remove the export for it from the global header file.
+On 05/26/2015 07:39 PM, Felipe Balbi wrote:
+> On Tue, May 26, 2015 at 09:32:16AM -0700, Tony Lindgren wrote:
+>> * Tony Lindgren <tony@atomide.com> [150526 09:08]:
+>>> * Tero Kristo <t-kristo@ti.com> [150525 08:01]:
+>>>> Hi,
+>>>>
+>>>> As requested, posting v3 with somewhat changed diff parameters and
+>>>> diffstat attached. Just some minor Makefile changes compared to v2,
+>>>> these were discussed under that set.
+>>>>
+>>>> Set has been pushed to:
+>>>> - tree: https://github.com/t-kristo/linux-pm.git
+>>>> - branch: for-4.2/ti-clk-move
+>>>
+>>> Looks like this causes a build error for at least omap2 only .config:
+>>>
+>>> drivers/clk/ti/dpll3xxx.o:(.rodata+0x1c): multiple definition of `clkhwops_omap3_dpll'
+>>> drivers/clk/ti/dpll.o:(.rodata+0x0): first defined here
+>>>
+>>> You may want to create a file selecting ARCH_OMAP2PLUS=y, then point
+>>> KCONFIG_ALLCONFIG to that file for make randconfig. Then just build
+>>> randconfigs :) Usually the issues like this are exposed within few
+>>> randconfig builds, some take longer if the options have dependencies.
+>
+> alternatively, just clone the repository at [1] and use the example
+> script provided in README.md.
+>
+> [1] https://github.com/felipebalbi/omap-seeds
+>
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/clock.c |   24 ------------------------
- drivers/clk/ti/clk-2xxx.c   |    2 ++
- drivers/clk/ti/clk-33xx.c   |    2 ++
- drivers/clk/ti/clk-3xxx.c   |    1 +
- drivers/clk/ti/clk-816x.c   |    2 ++
- drivers/clk/ti/clk.c        |   24 ++++++++++++++++++++++++
- drivers/clk/ti/clock.h      |    1 +
- include/linux/clk/ti.h      |    1 -
- 8 files changed, 32 insertions(+), 25 deletions(-)
+Ok, I pushed an updated branch named: for-4.2/ti-clk-move-v4
 
-diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
-index 42ce860..234cedf 100644
---- a/arch/arm/mach-omap2/clock.c
-+++ b/arch/arm/mach-omap2/clock.c
-@@ -576,30 +576,6 @@ static int __init omap_clk_setup(char *str)
- }
- __setup("mpurate=", omap_clk_setup);
- 
--/**
-- * omap2_clk_enable_init_clocks - prepare & enable a list of clocks
-- * @clk_names: ptr to an array of strings of clock names to enable
-- * @num_clocks: number of clock names in @clk_names
-- *
-- * Prepare and enable a list of clocks, named by @clk_names.  No
-- * return value. XXX Deprecated; only needed until these clocks are
-- * properly claimed and enabled by the drivers or core code that uses
-- * them.  XXX What code disables & calls clk_put on these clocks?
-- */
--void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks)
--{
--	struct clk *init_clk;
--	int i;
--
--	for (i = 0; i < num_clocks; i++) {
--		init_clk = clk_get(NULL, clk_names[i]);
--		if (WARN(IS_ERR(init_clk), "could not find init clock %s\n",
--				clk_names[i]))
--			continue;
--		clk_prepare_enable(init_clk);
--	}
--}
--
- const struct clk_hw_omap_ops clkhwops_wait = {
- 	.find_idlest	= omap2_clk_dflt_find_idlest,
- 	.find_companion	= omap2_clk_dflt_find_companion,
-diff --git a/drivers/clk/ti/clk-2xxx.c b/drivers/clk/ti/clk-2xxx.c
-index c808ab3..bd8790b 100644
---- a/drivers/clk/ti/clk-2xxx.c
-+++ b/drivers/clk/ti/clk-2xxx.c
-@@ -19,6 +19,8 @@
- #include <linux/clk-provider.h>
- #include <linux/clk/ti.h>
- 
-+#include "clock.h"
-+
- static struct ti_dt_clk omap2xxx_clks[] = {
- 	DT_CLK(NULL, "func_32k_ck", "func_32k_ck"),
- 	DT_CLK(NULL, "secure_32k_ck", "secure_32k_ck"),
-diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
-index 028b337..733f9d3 100644
---- a/drivers/clk/ti/clk-33xx.c
-+++ b/drivers/clk/ti/clk-33xx.c
-@@ -19,6 +19,8 @@
- #include <linux/clk-provider.h>
- #include <linux/clk/ti.h>
- 
-+#include "clock.h"
-+
- static struct ti_dt_clk am33xx_clks[] = {
- 	DT_CLK(NULL, "clk_32768_ck", "clk_32768_ck"),
- 	DT_CLK(NULL, "clk_rc32k_ck", "clk_rc32k_ck"),
-diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
-index 757636d..bb3b883 100644
---- a/drivers/clk/ti/clk-3xxx.c
-+++ b/drivers/clk/ti/clk-3xxx.c
-@@ -19,6 +19,7 @@
- #include <linux/clk-provider.h>
- #include <linux/clk/ti.h>
- 
-+#include "clock.h"
- 
- static struct ti_dt_clk omap3xxx_clks[] = {
- 	DT_CLK(NULL, "apb_pclk", "dummy_apb_pclk"),
-diff --git a/drivers/clk/ti/clk-816x.c b/drivers/clk/ti/clk-816x.c
-index 9451e65..c69352b 100644
---- a/drivers/clk/ti/clk-816x.c
-+++ b/drivers/clk/ti/clk-816x.c
-@@ -14,6 +14,8 @@
- #include <linux/clk-provider.h>
- #include <linux/clk/ti.h>
- 
-+#include "clock.h"
-+
- static struct ti_dt_clk dm816x_clks[] = {
- 	DT_CLK(NULL, "sys_clkin", "sys_clkin_ck"),
- 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
+This definitely compiles with OMAP2 / OMAP3 / OMAP4 / OMAP5 / DRA7 / 
+AM33xx / AM43xx only setups (tried it out.)
+
+The extra diff compared to v3 inlined here, the changes have been 
+squashed to the branch itself:
+====================
+
+diff --git a/drivers/clk/ti/Makefile b/drivers/clk/ti/Makefile
+index fc6fe8c..9b93e69 100644
+--- a/drivers/clk/ti/Makefile
++++ b/drivers/clk/ti/Makefile
+@@ -1,18 +1,19 @@
+  obj-y					+= clk.o autoidle.o clockdomain.o
+  clk-common				= dpll.o composite.o divider.o gate.o \
+  					  fixed-factor.o mux.o apll.o \
+-					  clkt_dpll.o clkt_iclk.o dpll3xxx.o \
+-					  clkt_dflt.o
+-obj-$(CONFIG_SOC_AM33XX)		+= $(clk-common) clk-33xx.o
++					  clkt_dpll.o clkt_iclk.o clkt_dflt.o
++obj-$(CONFIG_SOC_AM33XX)		+= $(clk-common) clk-33xx.o dpll3xxx.o
+  obj-$(CONFIG_SOC_TI81XX)		+= $(clk-common) fapll.o clk-816x.o
+  obj-$(CONFIG_ARCH_OMAP2)		+= $(clk-common) interface.o clk-2xxx.o
+  obj-$(CONFIG_ARCH_OMAP3)		+= $(clk-common) interface.o \
+-					   clk-3xxx.o
+-obj-$(CONFIG_ARCH_OMAP4)		+= $(clk-common) clk-44xx.o dpll44xx.o
+-obj-$(CONFIG_SOC_OMAP5)			+= $(clk-common) clk-54xx.o dpll44xx.o
++					   clk-3xxx.o dpll3xxx.o
++obj-$(CONFIG_ARCH_OMAP4)		+= $(clk-common) clk-44xx.o \
++					   dpll3xxx.o dpll44xx.o
++obj-$(CONFIG_SOC_OMAP5)			+= $(clk-common) clk-54xx.o \
++					   dpll3xxx.o dpll44xx.o
+  obj-$(CONFIG_SOC_DRA7XX)		+= $(clk-common) clk-7xx.o \
+-					   clk-dra7-atl.o dpll44xx.o
+-obj-$(CONFIG_SOC_AM43XX)		+= $(clk-common) clk-43xx.o
++					   clk-dra7-atl.o dpll3xxx.o dpll44xx.o
++obj-$(CONFIG_SOC_AM43XX)		+= $(clk-common) dpll3xxx.o clk-43xx.o
+
+  ifdef CONFIG_ATAGS
+  obj-$(CONFIG_ARCH_OMAP3)                += clk-3xxx-legacy.o
 diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index 567f8b9..f1dcd20 100644
+index 786ab59..e8d7d13 100644
 --- a/drivers/clk/ti/clk.c
 +++ b/drivers/clk/ti/clk.c
-@@ -335,4 +335,28 @@ struct ti_clk_features *ti_clk_get_features(void)
- {
- 	return &ti_clk_features;
- }
-+
-+/**
-+ * omap2_clk_enable_init_clocks - prepare & enable a list of clocks
-+ * @clk_names: ptr to an array of strings of clock names to enable
-+ * @num_clocks: number of clock names in @clk_names
-+ *
-+ * Prepare and enable a list of clocks, named by @clk_names.  No
-+ * return value. XXX Deprecated; only needed until these clocks are
-+ * properly claimed and enabled by the drivers or core code that uses
-+ * them.  XXX What code disables & calls clk_put on these clocks?
-+ */
-+void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks)
-+{
-+	struct clk *init_clk;
-+	int i;
-+
-+	for (i = 0; i < num_clocks; i++) {
-+		init_clk = clk_get(NULL, clk_names[i]);
-+		if (WARN(IS_ERR(init_clk), "could not find init clock %s\n",
-+			 clk_names[i]))
-+			continue;
-+		clk_prepare_enable(init_clk);
-+	}
-+}
- #endif
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index 9b51021..4b26af8 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -171,6 +171,7 @@ int ti_clk_register_legacy_clks(struct ti_clk_alias *clks);
- 
- void omap2_init_clk_hw_omap_clocks(struct clk *clk);
- int of_ti_clk_autoidle_setup(struct device_node *node);
-+void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks);
- 
- extern const struct clk_hw_omap_ops clkhwops_omap4_dpllmx;
- extern const struct clk_hw_omap_ops clkhwops_iclk;
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 2e4b4fb..43184c2 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -290,7 +290,6 @@ int omap2_clk_disable_autoidle_all(void);
- int omap2_clk_enable_autoidle_all(void);
- int omap2_clk_allow_idle(struct clk *clk);
- int omap2_clk_deny_idle(struct clk *clk);
--void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks);
- int omap3_dpll4_set_rate(struct clk_hw *clk, unsigned long rate,
- 			 unsigned long parent_rate);
- int omap3_dpll4_set_rate_and_parent(struct clk_hw *hw, unsigned long rate,
--- 
-1.7.9.5
+@@ -402,6 +402,7 @@ int __init ti_clk_register_legacy_clks(struct 
+ti_clk_alias *clks)
+
+  	return 0;
+  }
++#endif
+
+  /**
+   * ti_clk_setup_features - setup clock features flags
+@@ -449,4 +450,3 @@ void omap2_clk_enable_init_clocks(const char 
+**clk_names, u8 num_clocks)
+  		clk_prepare_enable(init_clk);
+  	}
+  }
+-#endif
