@@ -1,40 +1,60 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] clk: shmobile: rz: Document mandatory compatible fallback
-Date: Fri, 29 May 2015 11:36:31 +0200
-Message-Id: <1432892191-24039-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1432892191-24039-1-git-send-email-geert+renesas@glider.be>
-References: <1432892191-24039-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <tony@atomide.com>
+Date: Wed, 27 May 2015 16:15:36 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: balbi@ti.com, linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@linaro.org, paul@pwsan.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
+Message-ID: <20150527231536.GD30984@atomide.com>
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+ <20150526160557.GD16525@atomide.com>
+ <20150526163216.GF16525@atomide.com>
+ <20150526163931.GO26599@saruman.tx.rr.com>
+ <55660D5B.8020607@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <55660D5B.8020607@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The generic RZ CPG compatible value is mandatory, as the driver uses
-only this value for matching.  Document that this is a fallback that
-must be present.
+* Tero Kristo <t-kristo@ti.com> [150527 11:32]:
+> On 05/26/2015 07:39 PM, Felipe Balbi wrote:
+> >On Tue, May 26, 2015 at 09:32:16AM -0700, Tony Lindgren wrote:
+> >>* Tony Lindgren <tony@atomide.com> [150526 09:08]:
+> >>>* Tero Kristo <t-kristo@ti.com> [150525 08:01]:
+> >>>>Hi,
+> >>>>
+> >>>>As requested, posting v3 with somewhat changed diff parameters and
+> >>>>diffstat attached. Just some minor Makefile changes compared to v2,
+> >>>>these were discussed under that set.
+> >>>>
+> >>>>Set has been pushed to:
+> >>>>- tree: https://github.com/t-kristo/linux-pm.git
+> >>>>- branch: for-4.2/ti-clk-move
+> >>>
+> >>>Looks like this causes a build error for at least omap2 only .config:
+> >>>
+> >>>drivers/clk/ti/dpll3xxx.o:(.rodata+0x1c): multiple definition of `clkhwops_omap3_dpll'
+> >>>drivers/clk/ti/dpll.o:(.rodata+0x0): first defined here
+> >>>
+> >>>You may want to create a file selecting ARCH_OMAP2PLUS=y, then point
+> >>>KCONFIG_ALLCONFIG to that file for make randconfig. Then just build
+> >>>randconfigs :) Usually the issues like this are exposed within few
+> >>>randconfig builds, some take longer if the options have dependencies.
+> >
+> >alternatively, just clone the repository at [1] and use the example
+> >script provided in README.md.
+> >
+> >[1] https://github.com/felipebalbi/omap-seeds
+> >
+> 
+> Ok, I pushed an updated branch named: for-4.2/ti-clk-move-v4
+> 
+> This definitely compiles with OMAP2 / OMAP3 / OMAP4 / OMAP5 / DRA7 / AM33xx
+> / AM43xx only setups (tried it out.)
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks yeah seems to work for me now.
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
-index c5666288e409ebd2..2a2c509f5f9d8553 100644
---- a/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
-@@ -9,7 +9,7 @@ Required Properties:
- 
-   - compatible: Must be one of
-     - "renesas,r7s72100-cpg-clocks" for the r7s72100 CPG
--    - "renesas,rz-cpg-clocks" for the generic RZ CPG
-+    and "renesas,rz-cpg-clocks" as a fallback.
-   - reg: Base address and length of the memory resource used by the CPG
-   - clocks: References to possible parent clocks. Order must match clock modes
-     in the datasheet. For the r7s72100, this is extal, usb_x1.
--- 
-1.9.1
+Regards,
+
+Tony
