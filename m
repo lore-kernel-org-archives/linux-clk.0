@@ -1,74 +1,76 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>, <paul@pwsan.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 12/27] ARM: OMAP2+: clock: add support for clkdm ops to the low level clk ops
-Date: Mon, 11 May 2015 11:54:38 +0300
-Message-ID: <1431334493-24455-13-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
-References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <mathieu@codeaurora.org>
+From: Mathieu Olivari <mathieu@codeaurora.org>
+To: robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	peppe.cavallaro@st.com,
+	mathieu@codeaurora.org,
+	agross@codeaurora.org,
+	joshc@codeaurora.org,
+	architt@codeaurora.org,
+	georgi.djakov@linaro.org,
+	wsa@the-dreams.de,
+	rnayak@codeaurora.org,
+	davem@davemloft.net,
+	vbridger@opensource.altera.com
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH V2 0/5] Add support for QCA IPQ806x Ethernet GMAC controller
+Date: Wed, 27 May 2015 11:02:45 -0700
+Message-Id: <1432749770-26133-1-git-send-email-mathieu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock driver requires access to certain clockdomain handling ops once
-the code is being moved over under clock driver. Example of this is
-clk_enable / clk_disable under omap3 DPLL code. The required clkdm
-APIs are now exported through the ti_clk_ll_ops struct.
+This patch set adds support for the integrated Ethernet GMAC controller
+on QCA IPQ806x SoC. This controller is based on a Gigabit Synopsys
+DesignWare IP, already supported in the stmmac driver located in
+drivers/net/ethernet/stmicro/stmmac.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/clock.c |    2 ++
- include/linux/clk/ti.h      |   16 +++++++++++-----
- 2 files changed, 13 insertions(+), 5 deletions(-)
+This change is done as a follow-up to the following thread:
+*http://www.spinics.net/lists/netdev/msg311265.html
+While previous attempt was creating a new driver to drive this controller,
+this new post leverages the existing stmmac driver by implementing the
+SoC specific glue to it.
 
-diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
-index 94a4949..d6afc12 100644
---- a/arch/arm/mach-omap2/clock.c
-+++ b/arch/arm/mach-omap2/clock.c
-@@ -120,6 +120,8 @@ u32 omap2_clk_readl(struct clk_hw_omap *clk, void __iomem *reg)
- static struct ti_clk_ll_ops omap_clk_ll_ops = {
- 	.clk_readl = clk_memmap_readl,
- 	.clk_writel = clk_memmap_writel,
-+	.clkdm_clk_enable = clkdm_clk_enable,
-+	.clkdm_clk_disable = clkdm_clk_disable,
- };
- 
- /**
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 43184c2..43b406c 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -238,18 +238,24 @@ struct clk_omap_reg {
- };
- 
- /**
-- * struct ti_clk_ll_ops - low-level register access ops for a clock
-+ * struct ti_clk_ll_ops - low-level ops for clocks
-  * @clk_readl: pointer to register read function
-  * @clk_writel: pointer to register write function
-+ * @clkdm_clk_enable: pointer to clockdomain enable function
-+ * @clkdm_clk_disable: pointer to clockdomain disable function
-  *
-- * Low-level register access ops are generally used by the basic clock types
-- * (clk-gate, clk-mux, clk-divider etc.) to provide support for various
-- * low-level hardware interfaces (direct MMIO, regmap etc.), but can also be
-- * used by other hardware-specific clock drivers if needed.
-+ * Low-level ops are generally used by the basic clock types (clk-gate,
-+ * clk-mux, clk-divider etc.) to provide support for various low-level
-+ * hadrware interfaces (direct MMIO, regmap etc.), and is initialized
-+ * by board code. Low-level ops also contain some other platform specific
-+ * operations not provided directly by clock drivers.
-  */
- struct ti_clk_ll_ops {
- 	u32	(*clk_readl)(void __iomem *reg);
- 	void	(*clk_writel)(u32 val, void __iomem *reg);
-+	int	(*clkdm_clk_enable)(struct clockdomain *clkdm, struct clk *clk);
-+	int	(*clkdm_clk_disable)(struct clockdomain *clkdm,
-+				     struct clk *clk);
- };
- 
- extern struct ti_clk_ll_ops *ti_clk_ll_ops;
+Aside from the pure stmmac glue layer, we have a couple of related
+patches:
+*IPQ806x NSS clock addition is cherry-picked and refreshed from the
+ following thread: https://lkml.org/lkml/2014/8/6/390
+*phy-handle and fixed-link support are also added in this change set so the
+ driver can be fully functional on platforms using device-trees as well as
+ ethernet switches.
+
+V2:
+ *Fix MODULE_LICENSE to "Dual BSD/GPL" as the dwmac-ipq806x.c is using
+  ISC license.
+
+Mathieu Olivari (4):
+  stmmac: add phy-handle support to the platform layer
+  stmmac: add fixed-link device-tree support
+  stmmac: add ipq806x glue layer
+  net: stmmac: ipq806x: document device tree bindings
+
+Stephen Boyd (1):
+  clk: qcom: Add support for NSS/GMAC clocks and resets
+
+ .../devicetree/bindings/net/ipq806x-dwmac.txt      |  35 ++
+ drivers/clk/qcom/gcc-ipq806x.c                     | 594 ++++++++++++++++++++-
+ drivers/net/ethernet/stmicro/stmmac/Kconfig        |  14 +
+ drivers/net/ethernet/stmicro/stmmac/Makefile       |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac-ipq806x.c    | 365 +++++++++++++
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |  30 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |  18 +-
+ include/dt-bindings/clock/qcom,gcc-ipq806x.h       |   2 +
+ include/dt-bindings/reset/qcom,gcc-ipq806x.h       |  43 ++
+ include/linux/stmmac.h                             |   1 +
+ 10 files changed, 1089 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/ipq806x-dwmac.txt
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+
 -- 
-1.7.9.5
+2.1.4
