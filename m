@@ -1,82 +1,137 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
+Return-Path: <mathieu@codeaurora.org>
+From: Mathieu Olivari <mathieu@codeaurora.org>
+To: robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	peppe.cavallaro@st.com,
+	mathieu@codeaurora.org,
+	agross@codeaurora.org,
+	joshc@codeaurora.org,
+	architt@codeaurora.org,
+	georgi.djakov@linaro.org,
+	wsa@the-dreams.de,
+	rnayak@codeaurora.org,
+	davem@davemloft.net,
+	vbridger@opensource.altera.com
+Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 14/14] ARM: shmobile: R-Mobile: Use CPG Clock Domain attach/detach helpers
-Date: Thu, 28 May 2015 20:53:39 +0200
-Message-Id: <1432839219-475-15-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
-References: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
+	linux-clk@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH V2 2/5] stmmac: add phy-handle support to the platform layer
+Date: Wed, 27 May 2015 11:02:47 -0700
+Message-Id: <1432749770-26133-3-git-send-email-mathieu@codeaurora.org>
+In-Reply-To: <1432749770-26133-1-git-send-email-mathieu@codeaurora.org>
+References: <1432749770-26133-1-git-send-email-mathieu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The R-Mobile PM Domain driver manages both power domains and a clock
-domain.
+On stmmac driver, PHY specification in device-tree was done using the
+non-standard property "snps,phy-addr". Specifying a PHY on a different
+MDIO bus that the one within the stmmac controller doesn't seem to be
+possible when device-tree is used.
 
-The clock domain part is very similar to the CPG Clock Domain, which is
-used on shmobile SoCs without device power domains, except for the way
-how clocks suitable for power management are selected:
-  - The former uses the first clock tied to the device through the NULL
-    con_id, which is a relic from the legacy pm_clk_notifier-based
-    method in drivers/sh/pm_runtime.c,
-  - The latter looks for suitable clocks in DT, which is more
-    future-proof.
+This change adds support for the phy-handle property, as specified in
+Documentation/devicetree/bindings/net/ethernet.txt.
 
-Hence switch to using the CPG Clock Domain helpers for DT-based
-multi-platform builds.
-
-The old method, using a NULL con_id, is still used for legacy builds.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
 ---
-v2:
-  - New.
----
- arch/arm/mach-shmobile/pm-rmobile.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 28 ++++++++++++++--------
+ .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |  6 ++++-
+ include/linux/stmmac.h                             |  1 +
+ 3 files changed, 24 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
-index 747d557b7016ec6d..cac564c5348cd851 100644
---- a/arch/arm/mach-shmobile/pm-rmobile.c
-+++ b/arch/arm/mach-shmobile/pm-rmobile.c
-@@ -12,6 +12,7 @@
-  * License.  See the file "COPYING" in the main directory of this archive
-  * for more details.
-  */
-+#include <linux/clk/shmobile.h>
- #include <linux/console.h>
- #include <linux/delay.h>
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index e4f2739..31c6416 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -52,6 +52,7 @@
+ #include "stmmac_ptp.h"
+ #include "stmmac.h"
+ #include <linux/reset.h>
++#include <linux/of_mdio.h>
+ 
+ #define STMMAC_ALIGN(x)	L1_CACHE_ALIGN(x)
+ 
+@@ -816,18 +817,25 @@ static int stmmac_init_phy(struct net_device *dev)
+ 	priv->speed = 0;
+ 	priv->oldduplex = -1;
+ 
+-	if (priv->plat->phy_bus_name)
+-		snprintf(bus_id, MII_BUS_ID_SIZE, "%s-%x",
+-			 priv->plat->phy_bus_name, priv->plat->bus_id);
+-	else
+-		snprintf(bus_id, MII_BUS_ID_SIZE, "stmmac-%x",
+-			 priv->plat->bus_id);
++	if (priv->plat->phy_node) {
++		phydev = of_phy_connect(dev, priv->plat->phy_node,
++					&stmmac_adjust_link, 0, interface);
++	} else {
++		if (priv->plat->phy_bus_name)
++			snprintf(bus_id, MII_BUS_ID_SIZE, "%s-%x",
++				 priv->plat->phy_bus_name, priv->plat->bus_id);
++		else
++			snprintf(bus_id, MII_BUS_ID_SIZE, "stmmac-%x",
++				 priv->plat->bus_id);
+ 
+-	snprintf(phy_id_fmt, MII_BUS_ID_SIZE + 3, PHY_ID_FMT, bus_id,
+-		 priv->plat->phy_addr);
+-	pr_debug("stmmac_init_phy:  trying to attach to %s\n", phy_id_fmt);
++		snprintf(phy_id_fmt, MII_BUS_ID_SIZE + 3, PHY_ID_FMT, bus_id,
++			 priv->plat->phy_addr);
++		pr_debug("stmmac_init_phy:  trying to attach to %s\n",
++			 phy_id_fmt);
+ 
+-	phydev = phy_connect(dev, phy_id_fmt, &stmmac_adjust_link, interface);
++		phydev = phy_connect(dev, phy_id_fmt, &stmmac_adjust_link,
++				     interface);
++	}
+ 
+ 	if (IS_ERR(phydev)) {
+ 		pr_err("%s: Could not attach to PHY\n", dev->name);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index 1664c01..8d23155 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -28,6 +28,7 @@
  #include <linux/of.h>
-@@ -118,6 +119,7 @@ static bool rmobile_pd_active_wakeup(struct device *dev)
- 	return true;
- }
+ #include <linux/of_net.h>
+ #include <linux/of_device.h>
++#include <linux/of_mdio.h>
  
-+#ifdef CONFIG_ARCH_SHMOBILE_LEGACY
- static int rmobile_pd_attach_dev(struct generic_pm_domain *domain,
- 				 struct device *dev)
- {
-@@ -147,6 +149,10 @@ static void rmobile_pd_detach_dev(struct generic_pm_domain *domain,
- {
- 	pm_clk_destroy(dev);
- }
-+#else /* CONFIG_ARCH_SHMOBILE_LEGACY */
-+#define rmobile_pd_attach_dev	cpg_mstp_attach_dev
-+#define rmobile_pd_detach_dev	cpg_mstp_detach_dev
-+#endif /* CONFIG_ARCH_SHMOBILE_LEGACY */
+ #include "stmmac.h"
+ #include "stmmac_platform.h"
+@@ -144,13 +145,16 @@ static int stmmac_probe_config_dt(struct platform_device *pdev,
+ 	/* Default to phy auto-detection */
+ 	plat->phy_addr = -1;
  
- static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
- {
++	/* If we find a phy-handle property, use it as the PHY */
++	plat->phy_node = of_parse_phandle(np, "phy-handle", 0);
++
+ 	/* "snps,phy-addr" is not a standard property. Mark it as deprecated
+ 	 * and warn of its use. Remove this when phy node support is added.
+ 	 */
+ 	if (of_property_read_u32(np, "snps,phy-addr", &plat->phy_addr) == 0)
+ 		dev_warn(&pdev->dev, "snps,phy-addr property is deprecated\n");
+ 
+-	if (plat->phy_bus_name)
++	if (plat->phy_node || plat->phy_bus_name)
+ 		plat->mdio_bus_data = NULL;
+ 	else
+ 		plat->mdio_bus_data =
+diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
+index 7f484a2..c735f5c 100644
+--- a/include/linux/stmmac.h
++++ b/include/linux/stmmac.h
+@@ -99,6 +99,7 @@ struct plat_stmmacenet_data {
+ 	int phy_addr;
+ 	int interface;
+ 	struct stmmac_mdio_bus_data *mdio_bus_data;
++	struct device_node *phy_node;
+ 	struct stmmac_dma_cfg *dma_cfg;
+ 	int clk_csr;
+ 	int has_gmac;
 -- 
-1.9.1
+2.1.4
