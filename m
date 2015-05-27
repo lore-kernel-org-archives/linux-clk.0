@@ -1,87 +1,39 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <dinguyen@opensource.altera.com>
+Message-ID: <5565C4F4.7090805@opensource.altera.com>
+Date: Wed, 27 May 2015 08:21:56 -0500
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 MIME-Version: 1.0
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <55488FE6.4040003@samsung.com>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- "linux-samsung-soc" <linux-samsung-soc@vger.kernel.org>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-References: <554105AC.8060800@samsung.com> <55488FE6.4040003@samsung.com>
-Message-ID: <20150507234908.16410.3087@quantum>
-Subject: Re: [GIT PULL v2] clk/samsung fixes for 4.1
-Date: Thu, 07 May 2015 16:49:08 -0700
+To: Dan Carpenter <dan.carpenter@oracle.com>
+CC: Mike Turquette <mturquette@linaro.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
+	<kernel-janitors@vger.kernel.org>
+Subject: Re: [patch] clk: socfpga: remove a stray tab
+References: <20150527082627.GD19423@mwanda>
+In-Reply-To: <20150527082627.GD19423@mwanda>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Sylwester Nawrocki (2015-05-05 02:39:50)
-> Mike,
-> =
 
-> this is a corrected version of pull request I sent on 29/04/15.
-> =
 
-> The following changes since commit b787f68c36d49bb1d9236f403813641efa74a0=
-31:
-> =
+On 5/27/15 3:26 AM, Dan Carpenter wrote:
+> This line was indented too far.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
+> index be3e998..83c6780 100644
+> --- a/drivers/clk/socfpga/clk-gate-a10.c
+> +++ b/drivers/clk/socfpga/clk-gate-a10.c
+> @@ -39,7 +39,7 @@ static unsigned long socfpga_gate_clk_recalc_rate(struct clk_hw *hwclk,
+>  	else if (socfpgaclk->div_reg) {
+>  		val = readl(socfpgaclk->div_reg) >> socfpgaclk->shift;
+>  		val &= div_mask(socfpgaclk->width);
+> -			div = (1 << val);
+> +		div = (1 << val);
+>  	}
+>  
+>  	return parent_rate / div;
+> 
 
->   Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
-> =
-
-> are available in the git repository at:
-> =
-
->   git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-fixes-4.1-2
-
-Pulled into clk-fixes.
-
-Thanks for for the resend!
-
-Regards,
-Mike
-
-> =
-
-> for you to fetch changes up to 97372e5a99449b4fffa824a382ad6358066a9918:
-> =
-
->   clk: exynos5420: Restore GATE_BUS_TOP on suspend (2015-05-05 10:51:04 +=
-0200)
-> =
-
-> ----------------------------------------------------------------
-> clk/samsung fixes for 4.1
-> =
-
->  - missing CONFIG_ARCH_EXYNOS5433 -> CONFIG_ARCH_EXYNOS substitution
->    to actually enable clk-exynos5433.c compilation,
->  - fixes of exynos5433 clk tree definitions: register offsets, parent
->    clocks, PLL coefficients,
->  - fix for exynos5420 system sleep regression introduced in 3.19.
-> =
-
-> ----------------------------------------------------------------
-> Chanwoo Choi (3):
->       clk: Use CONFIG_ARCH_EXYNOS instead of CONFIG_ARCH_EXYNOS5433
->       clk: exynos5433: Fix wrong parent clock of sclk_apollo clock
->       clk: exynos5433: Fix wrong PMS value of exynos5433_pll_rates
-> =
-
-> Javier Martinez Canillas (1):
->       clk: exynos5420: Restore GATE_BUS_TOP on suspend
-> =
-
-> Jonghwa Lee (2):
->       clk: exynos5433: Fix wrong offset of PCLK_MSCL_SECURE_SMMU_JPEG
->       clk: exynos5433: Fix CLK_PCLK_MONOTONIC_CNT clk register assignment
-> =
-
->  drivers/clk/samsung/Makefile         |    2 +-
->  drivers/clk/samsung/clk-exynos5420.c |    1 +
->  drivers/clk/samsung/clk-exynos5433.c |   12 ++++++------
->  3 files changed, 8 insertions(+), 7 deletions(-)
-> =
-
-> -- =
-
-> Thanks,
-> Sylwester
+Acked-by: Dinh Nguyen <dinguyen@opensource.altera.com>
