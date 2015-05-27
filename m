@@ -1,61 +1,79 @@
-Return-Path: <Aisheng.Dong@freescale.com>
-Date: Mon, 4 May 2015 16:35:51 +0800
-From: Dong Aisheng <b29396@freescale.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Dong Aisheng <aisheng.dong@freescale.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <mturquette@linaro.org>,
-	<shawn.guo@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<Ranjani.Vaidyanathan@freescale.com>, <b20596@freescale.com>,
-	<r64343@freescale.com>, <b20788@freescale.com>
-Subject: Re: [PATCH RFC v1 2/5] clk: add missing lock when call
- clk_core_enable in clk_set_parent
-Message-ID: <20150504083549.GC4082@shlinux1.ap.freescale.net>
-References: <1429107999-24413-1-git-send-email-aisheng.dong@freescale.com>
- <1429107999-24413-3-git-send-email-aisheng.dong@freescale.com>
- <55427D83.3060900@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <55427D83.3060900@codeaurora.org>
-Return-Path: b29396@freescale.com
+Return-Path: <sudeep.holla@arm.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH v3 4/5] clk: scpi: add support for cpufreq virtual device
+Date: Wed, 27 May 2015 10:53:17 +0100
+Message-Id: <1432720398-5701-5-git-send-email-sudeep.holla@arm.com>
+In-Reply-To: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com>
+References: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 30, 2015 at 12:07:47PM -0700, Stephen Boyd wrote:
-> On 04/15/15 07:26, Dong Aisheng wrote:
-> > clk_core_enable is executed without &enable_clock in clk_set_parent function.
-> > Adding it to avoid potential race condition issue.
-> >
-> > Fixes: 035a61c314eb ("clk: Make clk API return per-user struct clk instances")
-> > Cc: Mike Turquette <mturquette@linaro.org>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
-> > ---
-> 
-> Can you please describe the race condition? From what I can tell there
-> is not a race condition here and we've gone around on this part of the
-> code before to fix any race conditions.
-> 
+The clocks for the CPUs are provided by SCP and are managed by this
+clock driver. So the cpufreq device needs to be added only after the
+clock get registered and removed when this driver is unloaded.
 
-Do you mean we do not need to acquire enable lock when execute clk_core_enable
-in set_parent function? Can you help explain a bit more why?
+This patch manages the cpufreq virtual device based on the clock
+availability.
 
-The clk doc looks to me says the enable lock should be held across calls to
-the .enable, .disable and .is_enabled operations.
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
+Cc: linux-clk@vger.kernel.org
+---
+ drivers/clk/clk-scpi.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-And before the commit
-035a61c314eb ("clk: Make clk API return per-user struct clk instances"),
-all the clk_enable/disable in set_parent() is executed with lock.
-
-A rough thinking of race condition is assuming Thread A calls
-clk_set_parent(x, y) while Thread B calls clk_enable(x), clock x is disabled
-but prepared initially, due to clk_core_enable in set_parent() is not
-executed with enable clock, the clk_core_enable may be reentrant during
-the locking time executed by B.
-Won't this be a race condition?
-
-Regards
-Dong Aisheng
-
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
+index 55bfa708a5b4..04068072f8d1 100644
+--- a/drivers/clk/clk-scpi.c
++++ b/drivers/clk/clk-scpi.c
+@@ -36,6 +36,7 @@ struct scpi_clk {
+ #define to_scpi_clk(clk) container_of(clk, struct scpi_clk, hw)
+ 
+ static struct scpi_ops *scpi_ops;
++static struct platform_device *cpufreq_dev;
+ 
+ static unsigned long scpi_clk_recalc_rate(struct clk_hw *hw,
+ 					  unsigned long parent_rate)
+@@ -241,6 +242,11 @@ static int scpi_clocks_remove(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *child, *np = dev->of_node;
+ 
++	if (cpufreq_dev) {
++		platform_device_unregister(cpufreq_dev);
++		cpufreq_dev = NULL;
++	}
++
+ 	for_each_available_child_of_node(np, child)
+ 		of_clk_del_provider(np);
+ 	scpi_ops = NULL;
+@@ -264,6 +270,12 @@ static int scpi_clocks_probe(struct platform_device *pdev)
+ 			return ret;
+ 		}
+ 	}
++	/* Add the virtual cpufreq device */
++	cpufreq_dev = platform_device_register_simple("scpi-cpufreq",
++						      -1, NULL, 0);
++	if (!cpufreq_dev)
++		pr_warn("unable to register cpufreq device");
++
+ 	return 0;
+ }
+ 
+-- 
+1.9.1
