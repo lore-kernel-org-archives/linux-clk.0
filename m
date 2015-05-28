@@ -1,47 +1,68 @@
-Return-Path: <paul@pwsan.com>
-Date: Wed, 20 May 2015 22:40:15 +0000 (UTC)
-From: Paul Walmsley <paul@pwsan.com>
-To: Tero Kristo <t-kristo@ti.com>
-cc: mturquette@linaro.org, tony@atomide.com, linux-omap@vger.kernel.org,
-  linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 00/27] ARM: OMAP2+: clock code migration to
- drivers/clk/ti
-In-Reply-To: <555B8DC0.5080905@ti.com>
-Message-ID: <alpine.DEB.2.02.1505202234330.7960@utopia.booyaka.com>
-References: <1431334493-24455-1-git-send-email-t-kristo@ti.com> <alpine.DEB.2.02.1505111747460.19833@utopia.booyaka.com> <5551D178.3000904@ti.com> <alpine.DEB.2.02.1505122019220.21747@utopia.booyaka.com> <5552F32C.7060606@ti.com>
- <alpine.DEB.2.02.1505131438430.7921@utopia.booyaka.com> <555B8DC0.5080905@ti.com>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+To: Dong Aisheng <aisheng.dong@freescale.com>,  linux-clk@vger.kernel.org
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <1431610143-21853-2-git-send-email-aisheng.dong@freescale.com>
+Cc: linux-kernel@vger.kernel.org, sboyd@codeaurora.org, shawn.guo@linaro.org,
+ b29396@freescale.com, linux-arm-kernel@lists.infradead.org,
+ Ranjani.Vaidyanathan@freescale.com, b20596@freescale.com,
+ r64343@freescale.com, b20788@freescale.com
+References: <1431610143-21853-1-git-send-email-aisheng.dong@freescale.com>
+ <1431610143-21853-2-git-send-email-aisheng.dong@freescale.com>
+Message-ID: <20150528040919.22384.79189@quantum>
+Subject: Re: [PATCH v2 1/5] clk: remove duplicated code with __clk_set_parent_after
+Date: Wed, 27 May 2015 21:09:19 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 19 May 2015, Tero Kristo wrote:
+Quoting Dong Aisheng (2015-05-14 06:28:59)
+> __clk_set_parent_after() actually used the second argument then we
+> could put this duplicate logic in there and call it with a different
+> order of arguments in the success vs. error paths in this function.
+> =
 
-> Any news on this? As noted previously, I am not able to reproduce the issue
-> you are seeing currently, can you give DEBUG_LL a shot?
+> Cc: Mike Turquette <mturquette@linaro.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
 
-Yeah I just bisected it, it was caused by this:
+Patch looks good to me.
 
-commit cc4a5fe972ad7834e8662b49b3a5fdb597e9e15e
-Author: Felipe Balbi <balbi@ti.com>
-Date:   Fri Jan 30 11:18:56 2015 -0600
+Also just noticed that the second argument to __clk_set_parent_after is
+never used :-(
 
-    arm: config: omap2plus_defconfig: switch over to LZMA compression
-    
-    LZMA compression makes about 33% smaller zImage
-    with just a slight extra decompression time.
-    
-    Before this patch, zImage built with o2+_dc
-    is 4.5MiB and after it's about 3.3MiB.
-    
-    Suggested-by: David Cohen <david.a.cohen@linux.intel.com>
-    Signed-off-by: Felipe Balbi <balbi@ti.com>
-    Signed-off-by: Tony Lindgren <tony@atomide.com>
+Regards,
+Mike
 
+> ---
+>  drivers/clk/clk.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
+> =
 
-and the timeouts on the testbed being set to fail if a kernel takes longer 
-than five seconds to start.  Seems that the part about a "slight extra 
-decompression time" probably only applies to relatively recent chips.
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 659f2b0..0e813ea 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1159,14 +1159,8 @@ static int __clk_set_parent(struct clk_core *core,=
+ struct clk_core *parent,
+>                 flags =3D clk_enable_lock();
+>                 clk_reparent(core, old_parent);
+>                 clk_enable_unlock(flags);
+> +               __clk_set_parent_after(core, old_parent, parent);
+>  =
 
+> -               if (core->prepare_count) {
+> -                       flags =3D clk_enable_lock();
+> -                       clk_core_disable(core);
+> -                       clk_core_disable(parent);
+> -                       clk_enable_unlock(flags);
+> -                       clk_core_unprepare(parent);
+> -               }
+>                 return ret;
+>         }
+>  =
 
-- Paul
+> -- =
+
+> 1.9.1
+>=20
