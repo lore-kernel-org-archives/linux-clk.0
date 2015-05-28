@@ -1,89 +1,117 @@
-Return-Path: <mathieu@codeaurora.org>
-From: Mathieu Olivari <mathieu@codeaurora.org>
-To: robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	mturquette@linaro.org,
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: mturquette@linaro.org,
 	sboyd@codeaurora.org,
-	peppe.cavallaro@st.com,
-	mathieu@codeaurora.org,
-	agross@codeaurora.org,
-	joshc@codeaurora.org,
-	architt@codeaurora.org,
-	georgi.djakov@linaro.org,
-	wsa@the-dreams.de,
-	rnayak@codeaurora.org,
-	davem@davemloft.net,
-	vbridger@opensource.altera.com
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	matthias.bgg@gmail.com
+Cc: henryc.chen@mediatek.com,
+	s.hauer@pengutronix.de,
+	jamesjj.liao@mediatek.com,
+	p.zabel@pengutronix.de,
 	linux-clk@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH V2 3/5] stmmac: add fixed-link device-tree support
-Date: Wed, 27 May 2015 11:02:48 -0700
-Message-Id: <1432749770-26133-4-git-send-email-mathieu@codeaurora.org>
-In-Reply-To: <1432749770-26133-1-git-send-email-mathieu@codeaurora.org>
-References: <1432749770-26133-1-git-send-email-mathieu@codeaurora.org>
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH 2/3] clk: mediatek: Add support for clk-mux using regmap
+Date: Thu, 28 May 2015 20:41:47 +0200
+Message-Id: <1432838508-5184-3-git-send-email-matthias.bgg@gmail.com>
+In-Reply-To: <1432838508-5184-1-git-send-email-matthias.bgg@gmail.com>
+References: <1432838508-5184-1-git-send-email-matthias.bgg@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-In case DT is used, this change adds the ability to the stmmac driver to
-detect a fixed-link PHY, instanciate it, and use it during
-phy_connect().
+This patches adds support for the mediatek clocks to be able to register
+and use a clk-mux wich relies on regmap.
 
-Fixed link PHYs DT usage is described in:
-Documentation/devicetree/bindings/net/fixed-link.txt
-
-Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c     |  2 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 12 +++++++++++-
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ drivers/clk/mediatek/clk-mtk.c | 37 +++++++++++++++++++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.h | 26 ++++++++++++++++++++++++++
+ 2 files changed, 63 insertions(+)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 31c6416..c46178c 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -856,7 +856,7 @@ static int stmmac_init_phy(struct net_device *dev)
- 	 * device as well.
- 	 * Note: phydev->phy_id is the result of reading the UID PHY registers.
- 	 */
--	if (phydev->phy_id == 0) {
-+	if (!priv->plat->phy_node && phydev->phy_id == 0) {
- 		phy_disconnect(phydev);
- 		return -ENODEV;
- 	}
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 8d23155..f3918c7 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -148,6 +148,14 @@ static int stmmac_probe_config_dt(struct platform_device *pdev,
- 	/* If we find a phy-handle property, use it as the PHY */
- 	plat->phy_node = of_parse_phandle(np, "phy-handle", 0);
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 18444ae..cf953a8 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -111,6 +111,43 @@ int mtk_clk_register_gates(struct device_node *node, const struct mtk_gate *clks
+ 	return 0;
+ }
  
-+	/* If phy-handle is not specified, check if we have a fixed-phy */
-+	if (!plat->phy_node && of_phy_is_fixed_link(np)) {
-+		if ((of_phy_register_fixed_link(np) < 0))
-+			return -ENODEV;
++int mtk_clk_regm_register_mux(struct device_node *node,
++		const struct mtk_regm_mux *clks, int num,
++		struct clk_onecell_data *clk_data)
++{
++	int i;
++	struct clk *clk;
++	struct regmap *regmap;
 +
-+		plat->phy_node = of_node_get(np);
++	if (!clk_data)
++		return -ENOMEM;
++
++	regmap = syscon_node_to_regmap(node);
++	if (IS_ERR(regmap)) {
++		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
++				PTR_ERR(regmap));
++		return PTR_ERR(regmap);
 +	}
 +
- 	/* "snps,phy-addr" is not a standard property. Mark it as deprecated
- 	 * and warn of its use. Remove this when phy node support is added.
- 	 */
-@@ -212,8 +220,10 @@ static int stmmac_probe_config_dt(struct platform_device *pdev,
- 	if (of_find_property(np, "snps,pbl", NULL)) {
- 		dma_cfg = devm_kzalloc(&pdev->dev, sizeof(*dma_cfg),
- 				       GFP_KERNEL);
--		if (!dma_cfg)
-+		if (!dma_cfg) {
-+			of_node_put(np);
- 			return -ENOMEM;
++	for (i = 0; i < num; i++) {
++		const struct mtk_regm_mux *mux = &clks[i];
++
++		clk = clk_regm_register_mux(NULL, mux->name, mux->parent_names,
++					mux->num_parents, 0, regmap,
++					mux->mux_offset, mux->mux_shift,
++					mux->mux_width, mux->flags, NULL);
++		if (IS_ERR(clk)) {
++			pr_err("Failed to register clk mux %s: %ld\n",
++					mux->name, PTR_ERR(clk));
++			continue;
 +		}
- 		plat->dma_cfg = dma_cfg;
- 		of_property_read_u32(np, "snps,pbl", &dma_cfg->pbl);
- 		dma_cfg->fixed_burst =
++
++		clk_data->clks[mux->id] = clk;
++	}
++
++	return 0;
++}
++
+ struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
+ 		void __iomem *base, spinlock_t *lock)
+ {
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index 61035b9..3f41725 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -156,6 +156,32 @@ void __init mtk_clk_register_plls(struct device_node *node,
+ 		const struct mtk_pll_data *plls, int num_plls,
+ 		struct clk_onecell_data *clk_data);
+ 
++struct mtk_regm_mux {
++	int id;
++	const char *name;
++	const char * const *parent_names;
++	u8 num_parents;
++	unsigned flags;
++	uint32_t mux_offset;
++	uint32_t mux_shift;
++	uint32_t mux_width;
++};
++
++int __init mtk_clk_regm_register_mux(struct device_node *node,
++		const struct mtk_regm_mux *clks, int num,
++		struct clk_onecell_data *clk_data);
++
++#define MUX_REGMAP(_id, _name, _parents, _offset, _shift, _width) {	\
++		.id = _id,						\
++		.name = _name,						\
++		.parent_names = _parents,				\
++		.num_parents = ARRAY_SIZE(_parents),			\
++		.flags = CLK_SET_RATE_PARENT,				\
++		.mux_offset = _offset,					\
++		.mux_shift = _shift,					\
++		.mux_width = _width,					\
++	}
++
+ #ifdef CONFIG_RESET_CONTROLLER
+ void mtk_register_reset_controller(struct device_node *np,
+ 			unsigned int num_regs, int regofs);
 -- 
-2.1.4
+1.9.1
