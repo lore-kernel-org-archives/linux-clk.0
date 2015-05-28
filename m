@@ -1,64 +1,65 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Wed, 6 May 2015 15:40:02 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: Fix comments for structure definitions
-Message-ID: <20150506134001.GA22098@ulmo.nvidia.com>
-References: <1428943097-2768-1-git-send-email-rklein@nvidia.com>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0OAP2g/MAC+5xKAE"
-In-Reply-To: <1428943097-2768-1-git-send-email-rklein@nvidia.com>
+To: Bintian Wang <bintian.wang@huawei.com>, sboyd@codeaurora.org,
+ zhangfei.gao@linaro.org, xuwei5@hisilicon.com, xuejiancheng@huawei.com,
+ tomeu.vizoso@collabora.com, sledge.yanwei@huawei.com,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
+ will.deacon@arm.com, robh+dt@kernel.org, khilman@linaro.org,
+ mark.rutland@arm.com, catalin.marinas@arm.com, haojian.zhuang@linaro.org,
+ linux-arm-kernel@lists.infradead.org, olof@lixom.net, yanhaifeng@gmail.com,
+ linux@arm.linux.org.uk, guodong.xu@linaro.org,
+ jorge.ramirez-ortiz@linaro.org, tyler.baker@linaro.org, khilman@kernel.org
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <1432440671-25235-3-git-send-email-bintian.wang@huawei.com>
+Cc: xuyiping@hisilicon.com, wangbinghui@hisilicon.com, zhenwei.wang@hisilicon.com,
+ victor.lixin@hisilicon.com, puck.chen@hisilicon.com, dan.zhao@hisilicon.com,
+ huxinwei@huawei.com, bintian.wang@huawei.com, z.liuxinliang@huawei.com,
+ heyunlei@huawei.com, kong.kongxinwei@hisilicon.com, wangbintian@gmail.com,
+ w.f@huawei.com, liguozhu@hisilicon.com
+References: <1432440671-25235-1-git-send-email-bintian.wang@huawei.com>
+ <1432440671-25235-3-git-send-email-bintian.wang@huawei.com>
+Message-ID: <20150528052608.22384.96747@quantum>
+Subject: Re: [PATCH v8 6/7] clk: hi6220: Clock driver support for Hisilicon hi6220 SoC
+Date: Wed, 27 May 2015 22:26:08 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Bintian Wang (2015-05-23 21:11:11)
+> Add clock drivers for hi6220 SoC, this driver controls the SoC
+> registers to supply different clocks to different IPs in the SoC.
+> =
 
---0OAP2g/MAC+5xKAE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> We add one divider clock for hi6220 because the divider in hi6220
+> also has a mask bit but it doesnot obey the rule defined by flag
+> "CLK_DIVIDER_HIWORD_MASK", we can not get index of the mask bit by
+> left shift fixed bits (e.g. 16 bits), so we add this divider clock
+> to handle it.
+> =
 
-On Mon, Apr 13, 2015 at 12:38:17PM -0400, Rhyland Klein wrote:
-> Some fields moved from the tegra_clk_pll struct to
-> the tegra_pll_params struct. Update the struct comments
-> to reflect where the fields really are.
->=20
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
->  drivers/clk/tegra/clk.h |   74 +++++++++++++++++++++++------------------=
-------
->  1 file changed, 37 insertions(+), 37 deletions(-)
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> Signed-off-by: Bintian Wang <bintian.wang@huawei.com>
+> Acked-by: Haojian Zhuang <haojian.zhuang@linaro.org>
+> Reviewed-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+> Tested-by: Will Deacon <will.deacon@arm.com>
+> Tested-by: Tyler Baker <tyler.baker@linaro.org>
 
-Applied to the for-4.2/clk branch.
+Hi Bintian,
 
-Thanks,
-Thierry
+Thanks for making the changes requested by Stephen. I've taken his patch
+to add assigned-clock-rate/parent support for AMBA interconnects and
+applied it to 4.1-rc1, and then I've applied your v8 patches #4-6 on top
+of that. You can find it at:
 
---0OAP2g/MAC+5xKAE
-Content-Type: application/pgp-signature
+git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next-hi6220
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+I have merged this into clk-next so it can get some cycles in
+linux-next.
 
-iQIcBAABCAAGBQJVShmxAAoJEN0jrNd/PrOhHRIQALDpS3y93UDqK/O9PTurUqT7
-i/iDh1R/ea0tmG50isnIwBRbeYav3NHEv2DliKEwUd2agQ3px/td4ua13RbznNhM
-1/zZ/J161fhGrI65FV38+VPe47QKZh8yVGlCwr74XapUBJ14CzKuuFZaHnVImZla
-dobZoWQAjoYQ0AWSx3c8v5o7hytFjOSpTmqd3ymYdLmdWEKtrREtfaGrUx2C0p3W
-YK4AO5vUZUs+QntVMUJgjaGzSaFd9bRhB3h60AcSc0iBntMqO0ptkqf8iD2Hmcyc
-OidXUJMqQPFZP3tODdTfhp8XnJJHfz7iUE41Rfr1vtZuo0i1i1+8vX9/MhV7iVwm
-HhTtdeVUEhKvoohNqINfynDm885ZIX3IuKv1puWCc3HKBA7+1Ht3sB4beWah1mRf
-SKHSXpykT3eixfsE9wAlRDX6Kzr//Vlf74VDZJoowUozwTEmGJvIJF5Z1OPIVhDL
-A9ds/ZD0rQUs4Bf0PDJ5/h8DAGzVN/7EKz1/Cqz8oq42LozWnaqXBzMKztAAQw6v
-eLPOnQRm4qCMAIoI+tXumqDsvc6V8Q+R/kKILyTOirDb+hp9QC4PdrXG9xLa8/x7
-SVMh20VoZDpcfJEjvAwVcbr8TH8m1JnvAXxJg5keLCBn+NZdyiUxUj/fXITLf199
-LNpwGFRv/slE2Sb5lh72
-=OH/4
------END PGP SIGNATURE-----
+Stephen,
 
---0OAP2g/MAC+5xKAE--
+Can you send your patch out to Russell properly? It needs his ack (or
+for him to take it outright) in order to unblock the hi6220 clock driver
+from being merged.
+
+Regards,
+Mike
