@@ -1,51 +1,31 @@
-Return-Path: <ce3a@gmx.de>
-From: Sergej Sawazki <ce3a@gmx.de>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	sebastian.hesselbarth@gmail.com,
-	mwelling@ieee.org,
-	moinejf@free.fr
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sergej Sawazki <ce3a@gmx.de>
-Subject: [PATCH 2/2] clk: si5351: fix .recalc_rate for multisynth 6-7
-Date: Mon, 11 May 2015 10:44:59 +0200
-Message-Id: <1431333899-7313-1-git-send-email-ce3a@gmx.de>
+Return-Path: <khilman@deeprootsystems.com>
+Return-Path: <khilman@deeprootsystems.com>
+From: Kevin Hilman <khilman@kernel.org>
+To: Bintian Wang <bintian.wang@huawei.com>
+Cc: <mturquette@linaro.org>,  <sboyd@codeaurora.org>,  <zhangfei.gao@linaro.org>,  <xuwei5@hisilicon.com>,  <xuejiancheng@huawei.com>,  <tomeu.vizoso@collabora.com>,  <sledge.yanwei@huawei.com>,  <linux-clk@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,  <arnd@arndb.de>,  <will.deacon@arm.com>,  <robh+dt@kernel.org>,  <mark.rutland@arm.com>,  <catalin.marinas@arm.com>,  <haojian.zhuang@linaro.org>,  <linux-arm-kernel@lists.infradead.org>,  <olof@lixom.net>,  <yanhaifeng@gmail.com>,  <linux@arm.linux.org.uk>,  <guodong.xu@linaro.org>,  <jorge.ramirez-ortiz@linaro.org>,  <tyler.baker@linaro.org>,  <xuyiping@hisilicon.com>,  <wangbinghui@hisilicon.com>,  <zhenwei.wang@hisilicon.com>,  <victor.lixin@hisilicon.com>,  <puck.chen@hisilicon.com>,  <dan.zhao@hisilicon.com>,  <huxinwei@huawei.com>,  <z.liuxinliang@huawei.com>,  <heyunlei@huawei.com>,  <kong.kongxinwei@hisilicon.com>,  <wangbintian@gmail.com>,  <w.f@huawei.com>,  <liguozhu@hisilicon.com>
+Subject: Re: [PATCH v8 4/7] clk: hisilicon: Remove __init for marking function prototypes
+References: <1432440671-25235-1-git-send-email-bintian.wang@huawei.com>
+Date: Thu, 28 May 2015 09:50:33 -0700
+In-Reply-To: <1432440671-25235-1-git-send-email-bintian.wang@huawei.com>
+	(Bintian Wang's message of "Sun, 24 May 2015 12:11:09 +0800")
+Message-ID: <7hr3q0k5nq.fsf@deeprootsystems.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-MS6 and MS7 do not have the MSx_P3 field. Do the 'params.p3 == 0'
-check for MS0-M5 only. See [AN619, p. 6] for details.
+Bintian Wang <bintian.wang@huawei.com> writes:
 
-Referenced document:
-[AN619] Manually Generating an Si5351 Register Map, Rev. 0.4
+> __init markings on function prototypes are useless, so remove
+> them.
+>
+> Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Bintian Wang <bintian.wang@huawei.com>
 
-Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
----
- drivers/clk/clk-si5351.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Can you repost the whole series please?  
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 48c5298..e39e1e6 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -607,9 +607,6 @@ static unsigned long si5351_msynth_recalc_rate(struct clk_hw *hw,
- 	if (!hwdata->params.valid)
- 		si5351_read_parameters(hwdata->drvdata, reg, &hwdata->params);
- 
--	if (hwdata->params.p3 == 0)
--		return parent_rate;
--
- 	/*
- 	 * multisync0-5: fOUT = (128 * P3 * fIN) / (P1*P3 + P2 + 512*P3)
- 	 * multisync6-7: fOUT = fIN / P1
-@@ -617,6 +614,8 @@ static unsigned long si5351_msynth_recalc_rate(struct clk_hw *hw,
- 	rate = parent_rate;
- 	if (hwdata->num > 5) {
- 		m = hwdata->params.p1;
-+	} else if (hwdata->params.p3 == 0) {
-+		return parent_rate;
- 	} else if ((si5351_reg_read(hwdata->drvdata, reg + 2) &
- 		    SI5351_OUTPUT_CLK_DIVBY4) == SI5351_OUTPUT_CLK_DIVBY4) {
- 		m = 4;
--- 
-1.9.1
+The number of patches has increased and it's not terribly obvious how to
+combine your v7 or v8 patches with the v8 patches for proper testing.
+
+Thanks,
+
+Kevin
