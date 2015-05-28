@@ -1,108 +1,101 @@
-Return-Path: <wangbintian@gmail.com>
+Return-Path: <manabian@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20150522184131.GD1885@codeaurora.org>
-References: <1432117752-7074-1-git-send-email-bintian.wang@huawei.com>
-	<1432117752-7074-2-git-send-email-bintian.wang@huawei.com>
-	<555D09F3.7020506@codeaurora.org>
-	<555D57BB.8080702@huawei.com>
-	<555E1D55.1050907@codeaurora.org>
-	<555EBCA4.9030303@huawei.com>
-	<CAAS=xmgHJVThR2hVeMYZjKgJdodEG_hrs09BBA01gOXMSc8Rdg@mail.gmail.com>
-	<555F76D9.10308@codeaurora.org>
-	<20150522184131.GD1885@codeaurora.org>
-Date: Sat, 23 May 2015 02:57:04 +0800
-Message-ID: <CAAS=xmi98pvXR_qXREnpMfG+Tuh1d8ZdTmhJSvoMNJ0=iOoPpA@mail.gmail.com>
-Subject: Re: [PATCH v7 6/7] clk: hi6220: Clock driver support for Hisilicon
- hi6220 SoC
-From: Brent Wang <wangbintian@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Bintian <bintian.wang@huawei.com>, Mike Turquette <mturquette@linaro.org>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>, Xu Wei <xuwei5@hisilicon.com>,
-	"xuejiancheng@huawei.com" <xuejiancheng@huawei.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	"sledge.yanwei@huawei.com" <sledge.yanwei@huawei.com>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Will Deacon <will.deacon@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	Kevin Hilman <khilman@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Haojian Zhuang <haojian.zhuang@linaro.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>,
-	Haifeng Yan <yanhaifeng@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>, Tyler Baker <tyler.baker@linaro.org>,
-	Kevin Hilman <khilman@kernel.org>, "xuyiping@hisilicon.com" <xuyiping@hisilicon.com>,
-	"wangbinghui@hisilicon.com" <wangbinghui@hisilicon.com>,
-	"zhenwei.wang@hisilicon.com" <zhenwei.wang@hisilicon.com>,
-	"victor.lixin@hisilicon.com" <victor.lixin@hisilicon.com>,
-	"puck.chen@hisilicon.com" <puck.chen@hisilicon.com>, "dan.zhao@hisilicon.com" <dan.zhao@hisilicon.com>,
-	"huxinwei@huawei.com" <huxinwei@huawei.com>, "z.liuxinliang@huawei.com" <z.liuxinliang@huawei.com>,
-	"heyunlei@huawei.com" <heyunlei@huawei.com>, XinWei Kong <kong.kongxinwei@hisilicon.com>,
-	"w.f@huawei.com" <w.f@huawei.com>, "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>
+In-Reply-To: <20150528034424.22384.83956@quantum>
+References: <1431988559-23338-1-git-send-email-manabian@gmail.com>
+	<1431988559-23338-5-git-send-email-manabian@gmail.com>
+	<20150528034424.22384.83956@quantum>
+Date: Thu, 28 May 2015 19:13:32 +0200
+Message-ID: <CAGhQ9VyQV0gZQx4V+AMM6T-38x6UiL+atVro9LyTbrHqEYntfw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] clk: add lpc18xx ccu clk driver
+From: Joachim  Eastwood <manabian@gmail.com>
+To: Michael Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+Hi Michael,
 
-2015-05-23 2:41 GMT+08:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 05/22, Stephen Boyd wrote:
->> On 05/22/15 11:30, Brent Wang wrote:
->> > Hello Stephen,
->> >
->> > 2015-05-22 13:20 GMT+08:00 Bintian <bintian.wang@huawei.com>:
->> >>
->> >>>
->> >>> Is pl011 the uart device? Does it have a node in DT somewhere? If it
->> >>> does, then we could put the assigned-parents properties in that node so
->> >>> that when the pl011 probes the uart1 clock has its parent set to
->> >>> clk_150m. See the "Assigned clock parents and rates" section of
->> >>> Documentation/devicetree/bindings/clock/clock-bindings.txt.
->> >>>
->> >> I will verify this.
->> > Currently the "assigned-clock*" doesn't work for pl011 UART device
->> > node, maybe we will
->> > do some fix for its driver later or other modules.
->>
->> Why doesn't it work?
->>
->
-> Does this patch help?
-Yes, it works!
+On 28 May 2015 at 05:44, Michael Turquette <mturquette@linaro.org> wrote:
+> Thanks for sending V3. This driver is getting close!
 
-I also tested adding  "of_clk_set_defaults" to "pl011_probe()", and
-"assigned-clock*"
-also works.
+Thanks for your patience.
 
-So you will submit another patch to fix this problem and I can revove
-the "clk_set_parent"
-from my patch, right ?
+> So the main thing I don't understand is why you do not encode the CGU
+> clock parent string names into this CCU driver. If I understand your
+> approach correctly, you do the following in lpc18xx_ccu_init:
+>
+> 1) count the number of parent clocks (ostensibly CGU clocks)
+> 2) iterate through all of those CGU clocks, extracting a base_id value
+> (loop #1)
+> 3) using this base_id as a key you walk through an array in the CCU
+> driver trying to find a matching base_id value
+> (loop #2)
+> 4) after finding the corresponding CCU clocks you get the parent clock
+> with of_clk_get
+> 5) using of_clk_get you fetch its name with __clk_get_name
+> 6) you pass this parent name into a fairly typical looking registration
+> function
+>
+> Assuming I got all of that right, I hope we can simplify it
+> considerably.
+>
+> You already have an array of CCU clock information in this driver,
+> clk_branches[]. Why not encode the parent string name here? This would
+> involve adding a "parent_name" member to struct lpc18xx_clk_branch.
+>
+> Doing the above, your O(n^2)-ish registration function becomes O(n):
+>
+> 1) iterate through the array of the CCU clocks (clk_branchs[])
+> 2) register them
+> 3) profit
 
-Thanks,
+Since there are two instances of the CCU IP block and the clk_branchs[]
+table contain branch clocks from both of them the driver needs to know
+on which CCU instance the clocks belong.
 
-Bintian
->
-> ---8<----
-> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-> index f0099360039e..350ed93d4281 100644
-> --- a/drivers/amba/bus.c
-> +++ b/drivers/amba/bus.c
-> @@ -19,6 +19,7 @@
->  #include <linux/amba/bus.h>
->  #include <linux/sizes.h>
->  #include <linux/limits.h>
-> +#include <linux/clk/clk-conf.h>
->
->  #include <asm/irq.h>
->
-> @@ -237,6 +238,10 @@ static int amba_probe(struct device *dev)
->         int ret;
->
->         do {
-> +               ret = of_clk_set_defaults(dev->of_node, false);
-> +               if (ret < 0)
-> +                       break;
-> +
->                 ret = dev_pm_domain_attach(dev, true);
->                 if (ret == -EPROBE_DEFER)
->                         break;
->
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+So just registering all clocks in clk_branchs[] we would end up with
+all the clocks on both CCU nodes and some clock ids would conflict.
+
+An alternative approach could be to split the clk_branchs[]. Each one
+with branch clocks for the respective CCU. But the driver would still
+need to know which of the tables to register. This could be done either
+by using two DT compac strings; like "nxp,lpc1850-ccu1" and "...-ccu2"
+or by having a 'id' propery in DT. I don't find these two approaches
+very appealing.
+
+So the reason for some of the complexity in the driver is to keep it
+generic and work on multiple CCU instances by looking at the connected
+clocks.
+
+I hope this make it more understandable. Sorry for failing to describe the
+hardware properly.
+
+Either way I'll send out a v4 with parent clocks in the clk_branchs[]
+and which use a clock-names property to match the clocks between the
+CCU. Let me know what you think when you get a chance to look at it.
+
+> I'm starting to think any reference to base_id is sign that things are
+> wrong in your driver. I am unconvinced that you need to "share" this
+> base_id across CGU and CCU drivers in the way you do. If I'm wrong
+> please help me to understand.
+
+I don't mind putting the parent clock names in the clk_branches[] but
+the driver still needs to distinguish between the CCUs in the system
+and register the correct clocks on them.
+
+If you have a another good way of doing so I am all ears.
+
+
+I have put up the full DT in the link if you would like to take a look.
+http://slexy.org/raw/s21h9lCxQa
+
+You may also find the data sheet at the link below. There is a figure
+of the CGU and both CCUs at page 161, Figure 34.
+http://www.nxp.com/documents/user_manual/UM10503.pdf
+
+
+regards,
+Joachim Eastwood
