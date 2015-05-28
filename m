@@ -1,163 +1,115 @@
-Return-Path: <jilin@nvidia.com>
-Message-ID: <5549F900.2050600@nvidia.com>
-Date: Wed, 6 May 2015 19:20:32 +0800
-From: Jim Lin <jilin@nvidia.com>
-MIME-Version: 1.0
-To: Rhyland Klein <rklein@nvidia.com>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
-	<mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, "Alexandre
- Courbot" <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 02/20] clk: tegra: periph: add new periph clks and
- muxes for Tegra210
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com> <1430757460-9478-3-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430757460-9478-3-git-send-email-rklein@nvidia.com>
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Return-Path: jilin@nvidia.com
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 03/14] clk: shmobile: r8a7779: Add CPG Clock Domain support
+Date: Thu, 28 May 2015 20:53:28 +0200
+Message-Id: <1432839219-475-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
+References: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/05/2015 12:37 AM, Rhyland Klein wrote:
-> Tegra210 has significant differences in muxes for peripheral clocks.
-> One of the most important changes is that pll_m isn't to be used
-> as a source for peripherals. Therefore, we need to define the new
-> muxes and new clocks to use those muxes for Tegra210 support.
->
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
->   drivers/clk/tegra/clk-id.h           |   57 +++++++-
->   drivers/clk/tegra/clk-tegra-periph.c |  257 +++++++++++++++++++++++++++++++++-
->   2 files changed, 312 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-> index 60738cc954cb..ac6eaba5cc6e 100644
->
->   
-> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-> index 46af9244ba74..bde7286bb16b 100644
-> --- a/drivers/clk/tegra/clk-tegra-periph.c
-> +++ b/drivers/clk/tegra/clk-tegra-periph.c
->
-> @@ -303,12 +386,93 @@ static const char *mux_pllm_pllc_pllp_plla[] = {
->   #define mux_pllm_pllc_pllp_plla_idx mux_pllp_pllc_pllm_clkm_idx
->   
->   static const char *mux_pllp_pllc_clkm[] = {
-> -	"pll_p", "pll_c", "pll_m"
-> +	"pll_p", "pll_c", "clk_m"
->   };
->   static u32 mux_pllp_pllc_clkm_idx[] = {
->   	[0] = 0, [1] = 1, [2] = 3,
->   };
->   
-> +static const char *mux_pllp_pllc_clkm_1[] = {
-> +	"pll_p", "pll_c", "clk_m"
-> +};
-> +static u32 mux_pllp_pllc_clkm_1_idx[] = {
-> +	[0] = 0, [1] = 2, [2] = 5,
-> +};
-> +
-> +static const char *mux_pllp_pllc_plla_clkm[] = {
-> +	"pll_p", "pll_c", "pll_a_out0", "clk_m"
-> +};
-> +static u32 mux_pllp_pllc_plla_clkm_idx[] = {
-> +	[0] = 0, [1] = 2, [2] = 4, [3] = 6,
-> +};
-> +
-> +static const char *mux_pllp_pllc_pllc4_out0_pllc4_out1_clkm_pllc4_out2[] = {
-> +	"pll_p", "pll_c", "pll_c4_out0", "pll_c4_out1", "clk_m", "pll_c4_out2"
-> +};
-> +static u32 mux_pllp_pllc_pllc4_out0_pllc4_out1_clkm_pllc4_out2_idx[] = {
-> +	[0] = 0, [1] = 2, [2] = 3, [3] = 5, [4] = 6, [5] = 7,
-> +};
-> +
-> +static const char *
-> +mux_pllp_pllc_pllc_out1_pllc4_out2_pllc4_out1_clkm_pllc4_out0[] = {
-> +	"pll_p", "pll_c_out1", "pll_c", "pll_c4_out2", "pll_c4_out1",
-> +	"clk_m", "pll_c4_out0"
-> +};
-> +static u32
-> +mux_pllp_pllc_pllc_out1_pllc4_out2_pllc4_out1_clkm_pllc4_out0_idx[] = {
-> +	[0] = 0, [1] = 1, [2] = 2, [3] = 4, [4] = 5, [5] = 6, [6] = 7,
-> +};
-> +
-> +static const char *mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0[] = {
-> +	"pll_p", "pll_c4_out2", "pll_c4_out1", "clk_m", "pll_c4_out0"
-> +};
-> +static u32 mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0_idx[] = {
-> +	[0] = 0, [1] = 3, [2] = 4, [3] = 6, [4] = 7,
-> +};
-> +
-> +static const char *mux_pllp_clkm_pllc4_out2_out1_out0_lj[] = {
-> +	"pll_p",
-> +	"pll_c4_out2", "pll_c4_out0",	/* LJ input */
-> +	"pll_c4_out2", "pll_c4_out1",
-> +	"pll_c4_out1",			/* LJ input */
-> +	"clk_m", "pll_c4_out0"
-> +};
-> +#define mux_pllp_clkm_pllc4_out2_out1_out0_lj_idx NULL
-> +
-> +static const char *mux_pllp_pllc2_c_c3_clkm[] = {
-> +	"pll_p", "pll_c2", "pll_c", "pll_c3", "clk_m"
-> +};
-> +static u32 mux_pllp_pllc2_c_c3_clkm_idx[] = {
-> +	[0] = 0, [1] = 1, [2] = 2, [3] = 3, [4] = 6,
-> +};
-> +
-> +static const char *mux_pllp_clkm_clk32_plle[] = {
-> +	"pll_p", "clk_m", "clk_32k", "pll_e"
-> +};
-> +static u32 mux_pllp_clkm_clk32_plle_idx[] = {
-> +	[0] = 0, [1] = 2, [2] = 4, [3] = 6,
-> +};
-> +
-> +static const char *mux_pllp_pllp_out3_clkm_clk32k_plla[] = {
-> +	"pll_p", "pll_p_out3", "clk_m", "clk_32k", "pll_a_out0"
-> +};
-> +#define mux_pllp_pllp_out3_clkm_clk32k_plla_idx NULL
-> +
-> +static const char *mux_pllp_out3_clkm_pllp_pllc4[] = {
-> +	"pll_p_out3", "clk_m", "pll_p", "pll_c4_out0", "pll_c4_out1",
-> +	"pll_c4_out2"
-> +};
-> +static u32 mux_pllp_out3_clkm_pllp_pllc4_idx[] = {
-> +	[0] = 0, [1] = 3, [2] = 4, [3] = 5, [4] = 6, [5] = 7,
-> +};
-> +
-> +static const char *mux_clkm_pllp_pllre[] = {
-> +	"clk_m", "pll_p_out_xusb", "pll_re_out"
-> +};
-> +static u32 mux_clkm_pllp_pllre_idx[] = {
-> +	[0] = 0, [1] = 1, [2] = 5,
-> +};
-> +
->   static const char *mux_pllp_pllc_clkm_clk32[] = {
->   	"pll_p", "pll_c", "clk_m", "clk_32k"
->   };
-> @@ -333,6 +497,11 @@ static u32 mux_clkm_48M_pllp_480M_idx[] = {
->   	[0] = 0, [1] = 2, [2] = 4, [3] = 6,
->   };
->   
-> +static const char *mux_clkm_pllre_clk32_480M[] = {
-> +	"clk_m", "pll_re_out", "clk_32k", "pll_u_480M"
-> +};
-> +#define mux_clkm_pllre_clk32_480M_idx NULL
-Please help to replace above
+Add Clock Domain support to the R-Car H1 Clock Pulse Generator (CPG)
+driver using the generic PM Domain.  This allows to power-manage the
+module clocks of SoC devices that are part of the CPG Clock Domain using
+Runtime PM, or for system suspend/resume.
 
-#define mux_clkm_pllre_clk32_480M_idx NULL
+SoC devices that are part of the CPG Clock Domain and can be
+power-managed through an MSTP clock should be tagged in DT with a proper
+"power-domains" property.
 
-with
+Also update the reg property in the DT binding doc example to match the
+actual dtsi, which uses #address-cells and #size-cells == 1, not 2.
 
-static u32 mux_clkm_pllre_clk32_480M_idx[] = {
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - New.
+---
+ .../bindings/clock/renesas,r8a7779-cpg-clocks.txt  | 30 +++++++++++++++++++---
+ drivers/clk/shmobile/clk-r8a7779.c                 |  2 ++
+ 2 files changed, 28 insertions(+), 4 deletions(-)
 
-        [0] = 0, [1] = 1, [2] = 2, [3] = 3,
-};
-
-
-Thanks.
-
-> +
->   static const char *mux_clkm_pllre_clk32_480M_pllc_ref[] = {
->   	"clk_m", "pll_re_out", "clk_32k", "pll_u_480M", "pll_c", "pll_ref"
->   };
->
---nvpublic
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
+index ed3c8cb12f4eb699..ded99abb4b6435ee 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
+@@ -1,7 +1,9 @@
+ * Renesas R8A7779 Clock Pulse Generator (CPG)
+ 
+ The CPG generates core clocks for the R8A7779. It includes one PLL and
+-several fixed ratio dividers
++several fixed ratio dividers.
++The CPG also provides a Clock Domain for SoC devices, in combination with the
++CPG Module Stop (MSTP) Clocks.
+ 
+ Required Properties:
+ 
+@@ -12,16 +14,36 @@ Required Properties:
+   - #clock-cells: Must be 1
+   - clock-output-names: The names of the clocks. Supported clocks are "plla",
+     "z", "zs", "s", "s1", "p", "b", "out".
++  - #power-domain-cells: Must be 0
+ 
++SoC devices that are part of the CPG Clock Domain and can be power-managed
++through an MSTP clock should refer to the CPG device node in their
++"power-domains" property, as documented by the generic PM domain bindings in
++Documentation/devicetree/bindings/power/power_domain.txt.
+ 
+-Example
+--------
++
++Examples
++--------
++
++  - CPG device node:
+ 
+ 	cpg_clocks: cpg_clocks@ffc80000 {
+ 		compatible = "renesas,r8a7779-cpg-clocks";
+-		reg = <0 0xffc80000 0 0x30>;
++		reg = <0xffc80000 0x30>;
+ 		clocks = <&extal_clk>;
+ 		#clock-cells = <1>;
+ 		clock-output-names = "plla", "z", "zs", "s", "s1", "p",
+ 		                     "b", "out";
++		#power-domain-cells = <0>;
++	};
++
++
++  - CPG Clock Domain member device node:
++
++	sata: sata@fc600000 {
++		compatible = "renesas,sata-r8a7779", "renesas,rcar-sata";
++		reg = <0xfc600000 0x2000>;
++		interrupts = <0 100 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
++		power-domains = <&cpg_clocks>;
+ 	};
+diff --git a/drivers/clk/shmobile/clk-r8a7779.c b/drivers/clk/shmobile/clk-r8a7779.c
+index 652ecacb6daf7922..e42a63a2ad251de2 100644
+--- a/drivers/clk/shmobile/clk-r8a7779.c
++++ b/drivers/clk/shmobile/clk-r8a7779.c
+@@ -168,6 +168,8 @@ static void __init r8a7779_cpg_clocks_init(struct device_node *np)
+ 	}
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
++
++	cpg_mstp_add_clk_domain(np);
+ }
+ CLK_OF_DECLARE(r8a7779_cpg_clks, "renesas,r8a7779-cpg-clocks",
+ 	       r8a7779_cpg_clocks_init);
+-- 
+1.9.1
