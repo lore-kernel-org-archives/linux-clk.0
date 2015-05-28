@@ -1,481 +1,221 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mike Turquette <mturquette@linaro.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v4 07/20] clk: tegra: pll: Don't unconditionally set LOCK flags
-Date: Mon, 4 May 2015 12:37:27 -0400
-Message-ID: <1430757460-9478-8-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 00/14] ARM: shmobile: Add CPG Clock Domains
+Date: Thu, 28 May 2015 20:53:25 +0200
+Message-Id: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-SoC specific drivers should define the appropriate flags for each
-PLL rather than relying on the registration functions to automatically
-set flags on their behalf. This will properly allow for changes between
-SoC generations where flags might be different and allow sharing the
-same logic functions.
+	Hi all,
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c      |   11 ++---------
- drivers/clk/tegra/clk-tegra114.c |   23 +++++++++++++----------
- drivers/clk/tegra/clk-tegra124.c |   24 +++++++++++++++---------
- drivers/clk/tegra/clk-tegra20.c  |   18 ++++++++++--------
- drivers/clk/tegra/clk-tegra30.c  |   24 +++++++++++++++---------
- 5 files changed, 55 insertions(+), 45 deletions(-)
+This patch series adds Clock Domain support to the Clock Pulse Generator
+(CPG) Module Stop (MSTP) Clocks driver using the generic PM Domain, to
+be used on shmobile SoCs without device power domains (R-Car Gen1 and
+Gen2, RZ).  This allows to power-manage the module clocks of SoC devices
+that are part of the CPG Clock Domain using Runtime PM, or for system
+suspend/resume, similar to SoCs with device power domains (SH-Mobile and
+R-Mobile).
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 0282d9f4f2d7..13d86c5b234d 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -1434,7 +1434,7 @@ struct clk *tegra_clk_register_pll(const char *name, const char *parent_name,
- 	struct clk *clk;
- 
- 	pll_params->flags |= TEGRA_PLL_BYPASS;
--	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
-+
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
-@@ -1464,8 +1464,7 @@ struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
- 	struct tegra_clk_pll *pll;
- 	struct clk *clk;
- 
--	pll_params->flags |= TEGRA_PLL_LOCK_MISC | TEGRA_PLL_BYPASS;
--	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
-+	pll_params->flags |= TEGRA_PLL_BYPASS;
- 
- 	if (!pll_params->div_nmp)
- 		pll_params->div_nmp = &pll_e_nmp;
-@@ -1569,7 +1568,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
- 	}
- 
--	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
-@@ -1592,8 +1590,6 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
- 	struct tegra_clk_pll *pll;
- 	struct clk *clk;
- 
--	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_LOCK_MISC;
--
- 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
- 
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-@@ -1653,7 +1649,6 @@ struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
- 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
- 
- 	pll_params->flags |= TEGRA_PLL_BYPASS;
--	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
- 	pll_params->flags |= TEGRA_PLLM;
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
- 	if (IS_ERR(pll))
-@@ -1751,7 +1746,6 @@ struct clk *tegra_clk_register_plle_tegra114(const char *name,
- 	struct clk *clk;
- 	u32 val, val_aux;
- 
--	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
- 	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
-@@ -1813,7 +1807,6 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	pll_params->flags = TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_USE_LOCK;
- 	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index 0d67efb3dd6a..5830c921c847 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -234,7 +234,7 @@ static struct tegra_clk_pll_params pll_c_params = {
- 	.pdiv_tohw = pllxc_p,
- 	.div_nmp = &pllxc_nmp,
- 	.freq_table = pll_c_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct div_nmp pllcx_nmp = {
-@@ -353,7 +353,7 @@ static struct tegra_clk_pll_params pll_m_params = {
- 	.pmc_divnm_reg = PMC_PLLM_WB0_OVERRIDE,
- 	.pmc_divp_reg = PMC_PLLM_WB0_OVERRIDE_2,
- 	.freq_table = pll_m_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct div_nmp pllp_nmp = {
-@@ -388,7 +388,8 @@ static struct tegra_clk_pll_params pll_p_params = {
- 	.lock_delay = 300,
- 	.div_nmp = &pllp_nmp,
- 	.freq_table = pll_p_freq_table,
--	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- 	.fixed_rate = 408000000,
- };
- 
-@@ -418,7 +419,8 @@ static struct tegra_clk_pll_params pll_a_params = {
- 	.lock_delay = 300,
- 	.div_nmp = &pllp_nmp,
- 	.freq_table = pll_a_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table pll_d_freq_table[] = {
-@@ -457,7 +459,7 @@ static struct tegra_clk_pll_params pll_d_params = {
- 	.div_nmp = &pllp_nmp,
- 	.freq_table = pll_d_freq_table,
- 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_d2_params = {
-@@ -475,7 +477,7 @@ static struct tegra_clk_pll_params pll_d2_params = {
- 	.div_nmp = &pllp_nmp,
- 	.freq_table = pll_d_freq_table,
- 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct pdiv_map pllu_p[] = {
-@@ -518,7 +520,7 @@ static struct tegra_clk_pll_params pll_u_params = {
- 	.div_nmp = &pllu_nmp,
- 	.freq_table = pll_u_freq_table,
- 	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table pll_x_freq_table[] = {
-@@ -553,7 +555,7 @@ static struct tegra_clk_pll_params pll_x_params = {
- 	.pdiv_tohw = pllxc_p,
- 	.div_nmp = &pllxc_nmp,
- 	.freq_table = pll_x_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table pll_e_freq_table[] = {
-@@ -588,7 +590,7 @@ static struct tegra_clk_pll_params pll_e_params = {
- 	.lock_delay = 300,
- 	.div_nmp = &plle_nmp,
- 	.freq_table = pll_e_freq_table,
--	.flags = TEGRA_PLL_FIXED,
-+	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_LOCK_ENABLE,
- 	.fixed_rate = 100000000,
- };
- 
-@@ -616,7 +618,8 @@ static struct tegra_clk_pll_params pll_re_vco_params = {
- 	.iddq_reg = PLLRE_MISC,
- 	.iddq_bit_idx = PLLRE_IDDQ_BIT,
- 	.div_nmp = &pllre_nmp,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE |
-+		 TEGRA_PLL_LOCK_MISC,
- };
- 
- /* possible OSC frequencies in Hz */
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 169e236f3627..44b3cc4a0aa0 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -216,7 +216,7 @@ static struct tegra_clk_pll_params pll_x_params = {
- 	.pdiv_tohw = pllxc_p,
- 	.div_nmp = &pllxc_nmp,
- 	.freq_table = pll_x_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table pll_c_freq_table[] = {
-@@ -250,7 +250,7 @@ static struct tegra_clk_pll_params pll_c_params = {
- 	.pdiv_tohw = pllxc_p,
- 	.div_nmp = &pllxc_nmp,
- 	.freq_table = pll_c_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct div_nmp pllcx_nmp = {
-@@ -384,6 +384,7 @@ static struct tegra_clk_pll_params pll_c4_params = {
- 	.ext_misc_reg[1] = 0x5b0,
- 	.ext_misc_reg[2] = 0x5b4,
- 	.freq_table = pll_c4_freq_table,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct pdiv_map pllm_p[] = {
-@@ -431,7 +432,7 @@ static struct tegra_clk_pll_params pll_m_params = {
- 	.pmc_divnm_reg = PMC_PLLM_WB0_OVERRIDE,
- 	.pmc_divp_reg = PMC_PLLM_WB0_OVERRIDE_2,
- 	.freq_table = pll_m_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table pll_e_freq_table[] = {
-@@ -467,7 +468,7 @@ static struct tegra_clk_pll_params pll_e_params = {
- 	.lock_delay = 300,
- 	.div_nmp = &plle_nmp,
- 	.freq_table = pll_e_freq_table,
--	.flags = TEGRA_PLL_FIXED,
-+	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_LOCK_ENABLE,
- 	.fixed_rate = 100000000,
- };
- 
-@@ -505,7 +506,8 @@ static struct tegra_clk_pll_params pll_re_vco_params = {
- 	.iddq_reg = PLLRE_MISC,
- 	.iddq_bit_idx = PLLRE_IDDQ_BIT,
- 	.div_nmp = &pllre_nmp,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE |
-+		 TEGRA_PLL_LOCK_MISC,
- };
- 
- static struct div_nmp pllp_nmp = {
-@@ -541,7 +543,8 @@ static struct tegra_clk_pll_params pll_p_params = {
- 	.div_nmp = &pllp_nmp,
- 	.freq_table = pll_p_freq_table,
- 	.fixed_rate = 408000000,
--	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table pll_a_freq_table[] = {
-@@ -569,7 +572,8 @@ static struct tegra_clk_pll_params pll_a_params = {
- 	.lock_delay = 300,
- 	.div_nmp = &pllp_nmp,
- 	.freq_table = pll_a_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct div_nmp plld_nmp = {
-@@ -617,7 +621,7 @@ static struct tegra_clk_pll_params pll_d_params = {
- 	.div_nmp = &plld_nmp,
- 	.freq_table = pll_d_freq_table,
- 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table tegra124_pll_d2_freq_table[] = {
-@@ -650,6 +654,7 @@ static struct tegra_clk_pll_params tegra124_pll_d2_params = {
- 	.ext_misc_reg[2] = 0x578,
- 	.max_p = 15,
- 	.freq_table = tegra124_pll_d2_freq_table,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table pll_dp_freq_table[] = {
-@@ -682,6 +687,7 @@ static struct tegra_clk_pll_params pll_dp_params = {
- 	.ext_misc_reg[2] = 0x5a0,
- 	.max_p = 5,
- 	.freq_table = pll_dp_freq_table,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct pdiv_map pllu_p[] = {
-@@ -724,7 +730,7 @@ static struct tegra_clk_pll_params pll_u_params = {
- 	.div_nmp = &pllu_nmp,
- 	.freq_table = pll_u_freq_table,
- 	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- struct utmi_clk_param {
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 41272dcc9e22..98ed1a9b8f65 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -303,7 +303,7 @@ static struct tegra_clk_pll_params pll_c_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_c_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_m_params = {
-@@ -319,7 +319,7 @@ static struct tegra_clk_pll_params pll_m_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_m_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_p_params = {
-@@ -335,7 +335,8 @@ static struct tegra_clk_pll_params pll_p_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_p_freq_table,
--	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_CPCON,
-+	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_CPCON |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- 	.fixed_rate =  216000000,
- };
- 
-@@ -352,7 +353,7 @@ static struct tegra_clk_pll_params pll_a_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_a_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_d_params = {
-@@ -368,7 +369,7 @@ static struct tegra_clk_pll_params pll_d_params = {
- 	.lock_enable_bit_idx = PLLDU_MISC_LOCK_ENABLE,
- 	.lock_delay = 1000,
- 	.freq_table = pll_d_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct pdiv_map pllu_p[] = {
-@@ -391,7 +392,7 @@ static struct tegra_clk_pll_params pll_u_params = {
- 	.lock_delay = 1000,
- 	.pdiv_tohw = pllu_p,
- 	.freq_table = pll_u_freq_table,
--	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON,
-+	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_x_params = {
-@@ -407,7 +408,7 @@ static struct tegra_clk_pll_params pll_x_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_x_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_e_params = {
-@@ -423,7 +424,8 @@ static struct tegra_clk_pll_params pll_e_params = {
- 	.lock_enable_bit_idx = PLLE_MISC_LOCK_ENABLE,
- 	.lock_delay = 0,
- 	.freq_table = pll_e_freq_table,
--	.flags = TEGRA_PLL_FIXED,
-+	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_LOCK_MISC |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- 	.fixed_rate = 100000000,
- };
- 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 3198c7b7946c..0d84e7ee10cd 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -423,7 +423,8 @@ static struct tegra_clk_pll_params pll_c_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_c_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct div_nmp pllm_nmp = {
-@@ -455,7 +456,8 @@ static struct tegra_clk_pll_params pll_m_params = {
- 	.pmc_divp_reg = PMC_PLLM_WB0_OVERRIDE,
- 	.freq_table = pll_m_freq_table,
- 	.flags = TEGRA_PLLM | TEGRA_PLL_HAS_CPCON |
--		 TEGRA_PLL_SET_DCCON | TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_SET_DCCON | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_p_params = {
-@@ -471,7 +473,8 @@ static struct tegra_clk_pll_params pll_p_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_p_freq_table,
--	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- 	.fixed_rate = 408000000,
- };
- 
-@@ -488,7 +491,8 @@ static struct tegra_clk_pll_params pll_a_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_a_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_d_params = {
-@@ -505,7 +509,7 @@ static struct tegra_clk_pll_params pll_d_params = {
- 	.lock_delay = 1000,
- 	.freq_table = pll_d_freq_table,
- 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- 
- };
- 
-@@ -523,7 +527,7 @@ static struct tegra_clk_pll_params pll_d2_params = {
- 	.lock_delay = 1000,
- 	.freq_table = pll_d_freq_table,
- 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_u_params = {
-@@ -540,7 +544,8 @@ static struct tegra_clk_pll_params pll_u_params = {
- 	.lock_delay = 1000,
- 	.pdiv_tohw = pllu_p,
- 	.freq_table = pll_u_freq_table,
--	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON,
-+	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_x_params = {
-@@ -557,7 +562,7 @@ static struct tegra_clk_pll_params pll_x_params = {
- 	.lock_delay = 300,
- 	.freq_table = pll_x_freq_table,
- 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_DCCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_e_params = {
-@@ -573,7 +578,8 @@ static struct tegra_clk_pll_params pll_e_params = {
- 	.lock_enable_bit_idx = PLLE_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_e_freq_table,
--	.flags = TEGRA_PLLE_CONFIGURE | TEGRA_PLL_FIXED,
-+	.flags = TEGRA_PLLE_CONFIGURE | TEGRA_PLL_FIXED |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_LOCK_MISC,
- 	.fixed_rate = 100000000,
- };
- 
+SoC devices that are part of the CPG Clock Domain and can be
+power-managed through an MSTP clock are tagged in DT with a proper
+"power-domains" property. This applies to most on-SoC devices, which
+have a one-to-one mapping from SoC device to DT device node.
+Notable exceptions are "display" and "sound" device nodes, which
+represent multiple SoC devices, each having their own MSTP clocks. Hence
+drivers for such devices still have to manage their (multiple module)
+clocks themselves.
+
+The (MSTP) clock to use for power-management is found by scanning for
+clocks that are compatible with "renesas,cpg-mstp-clocks".
+Before, the "first" clock tied to each device (con_id NULL) was used,
+being a bit ad-hoc. It was suggested to use the "fck" clock instead,
+but this may conflict with DT bindings for devices we don't control
+(e.g. GIC-400 plans to mandate "clk" for the clk-name of its single
+clock). Looking for real MSTP clocks avoids this problem.
+
+Logically, the CPG Clock Domain operates on the SoC CPG/MSTP block.
+As there's no single device node in DT representing this block (there
+are separate device nodes for the CPG and for the individual MSTP
+clocks), I bound the logic to the CPG device node.
+Perhaps this is something we should change for future SoCs?
+
+Finally, the legacy default PM domain hack in drivers/sh/pm_runtime.c
+is no longer needed when running an ARM multi-platform kernel on an
+shmobile SoC with genpd support. Please note that this hack is still
+needed for legacy (SH/ARM) platforms, and for the CONFIG_PM=n case.
+Perhaps we should unconditionally enable PM when building shmobile
+multi-platform kernels?
+
+Compared to the legacy default PM domain hack, the CPG Clock Domain has
+several advantages:
+  - It only affects on-SoC devices, not all platform devices,
+  - It only affects the on-SoC devices we want, as specified in DT,
+  - Allmost all module clocks of all on-SoC devices (barring devices
+    needed for wake-up) are now gated during s2ram, saving more power.
+
+By adding a small quirk to the CPG Clock Domain code, its functions to
+attach/detach devices to a PM Domain can be reused by the pm-rmobile
+driver, reducing code duplication.
+
+Here's a list of all devices in the CPG Clock Domain on r8a7791:
+
+root@koelsch:~# cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+    domain                      status         slaves
+           /device                                      runtime status
+----------------------------------------------------------------------
+cpg_clocks                      on               
+    /devices/platform/e61c0000.interrupt-controller     active
+    /devices/platform/e60b0000.i2c                      suspended
+    /devices/platform/ffca0000.timer                    suspended
+    /devices/platform/e6590100.usb-phy                  unsupported
+    /devices/platform/e6050000.gpio                     active
+    /devices/platform/e6051000.gpio                     active
+    /devices/platform/e6052000.gpio                     active
+    /devices/platform/e6053000.gpio                     active
+    /devices/platform/e6054000.gpio                     active
+    /devices/platform/e6055000.gpio                     active
+    /devices/platform/e6055400.gpio                     active
+    /devices/platform/e6055800.gpio                     active
+    /devices/platform/ee090000.pci                      active
+    /devices/platform/ee0d0000.pci                      active
+    /devices/platform/fe000000.pcie                     unsupported
+    /devices/platform/e6700000.dma-controller           active
+    /devices/platform/e6720000.dma-controller           active
+    /devices/platform/ec700000.dma-controller           active
+    /devices/platform/ec720000.dma-controller           suspended
+    /devices/platform/e65a0000.dma-controller           suspended
+    /devices/platform/e65b0000.dma-controller           suspended
+    /devices/platform/e6e60000.serial                   active
+    /devices/platform/e6e68000.serial                   active
+    /devices/platform/ee300000.sata                     unsupported
+    /devices/platform/e6b10000.spi                      suspended
+    /devices/platform/e6e20000.spi                      suspended
+    /devices/platform/ee700000.ethernet                 active
+    /devices/platform/e6530000.i2c                      suspended
+    /devices/platform/e6ef1000.video                    suspended
+    /devices/platform/e61f0000.thermal                  active
+    /devices/platform/ee100000.sd                       active
+    /devices/platform/ee140000.sd                       active
+    /devices/platform/ee160000.sd                       active
+root@koelsch:~# 
+
+Patch overview:
+  - Patch 1 adds the core CPG Clock Domain code to the CPG MSTP driver,
+  - Patches 2-5 adds CPG Clock Domain driver support for all Renesas
+    SoCs that have MSTP clocks, but no device power domains, and
+    updates the DT binding documentation accordingly,
+  - Patches 6-11 add CPG Clock Domains to the dtsi files,
+  - Patch 12 disables the legacy default PM domain hack on all ARM
+    multi-platform builds with genpd support, now it's no longer needed
+    nor wanted,
+  - Patch 13 adds a quirk for r8a73a4 and sh73a0, where the Bus State
+    Controller is not power-managed by an MSTP clock, but by a plain
+    CPG clock,
+  - Patch 14 makes the R-Mobile PM Domain driver use the CPG Clock
+    Domain attach/detach helpers, as they're more future-proof, and to
+    reduce code duplication.
+
+Changes compared to v1
+("[PATCH/RFC 0/5] ARM: shmobile: rcar-gen2: Add CPG Clock Domain",
+https://www.marc.info/?l=linux-pm&m=142670805530085&w=3):
+  - Add Acked-by and Reviewed-by.
+  - Move core CPG Clock Domain code from the R-Car Gen2 driver to the
+    CPG MSTP Clocks driver, as it's generic, and can be used on other
+    Renesas SoCs that have a CPG/MSTP block,
+  - Scan for an MSTP clock instead of using the first clock tied to the
+    device (con_id NULL),
+  - Add support for R-Car Gen1 and RZ, in addition to R-Car Gen2,
+    allowing to drop the legacy default PM domain hack completely in
+    multi-platform builds,
+  - Reuse the CPG Clock Domain attach/detach helpers for pm-rmobile.
+More detailed change logs are available in the individual patches.
+
+Dependencies:
+  - This series is against next-20150528,
+  - As usual when involving clocks and/or PM Domains, there are stringent
+    dependencies between the (subsets of) patches:
+      - Patches 2-5 depend on patch 1,
+      - Patches 6-11 depend on patches 2-5,
+      - Patch 12 depends on patches 6-11,
+      - Patch 13 depends on patch 1 only,
+      - Patch 14 depends on patch 13.
+
+All of this was tested on:
+  - r8a73a4/ape6evm (multiplatform),
+  - r8a7740/armadillo (both legacy and multiplatform),
+  - r8a7791/koelsch (multiplatform, with and without CONFIG_PM),
+  - sh73a0/kzm9g (both legacy and multiplatform).
+
+Testing on other shmobile platforms (esp. R-Car Gen1 and RZ) would be
+appreciated.
+
+Thanks!
+
+Geert Uytterhoeven (14):
+    clk: shmobile: Add CPG Clock Domain support
+  * clk: shmobile: r8a7778: Add CPG Clock Domain support
+  * clk: shmobile: r8a7779: Add CPG Clock Domain support
+    clk: shmobile: rcar-gen2: Add CPG Clock Domain support
+  * clk: shmobile: rz: Add CPG Clock Domain support
+  * ARM: shmobile: r7s72100 dtsi: Add CPG Clock Domain
+  * ARM: shmobile: r8a7778 dtsi: Add CPG Clock Domain
+  * ARM: shmobile: r8a7779 dtsi: Add CPG Clock Domain
+    ARM: shmobile: r8a7790 dtsi: Add CPG Clock Domain
+    ARM: shmobile: r8a7791 dtsi: Add CPG Clock Domain
+    ARM: shmobile: r8a7794 dtsi: Add CPG Clock Domain
+    drivers: sh: Stop using pm_runtime.c for multi-platform shmobile with
+      genpd
+  * clk: shmobile: mstp: Consider "zb_clk" suitable for power management
+  * ARM: shmobile: R-Mobile: Use CPG Clock Domain attach/detach helpers
+
+  (* = NEW)
+
+ .../bindings/clock/renesas,r8a7778-cpg-clocks.txt  | 29 ++++++-
+ .../bindings/clock/renesas,r8a7779-cpg-clocks.txt  | 30 +++++++-
+ .../clock/renesas,rcar-gen2-cpg-clocks.txt         | 26 ++++++-
+ .../bindings/clock/renesas,rz-cpg-clocks.txt       | 29 ++++++-
+ arch/arm/boot/dts/r7s72100.dtsi                    | 19 +++++
+ arch/arm/boot/dts/r8a7778.dtsi                     | 22 ++++++
+ arch/arm/boot/dts/r8a7779.dtsi                     | 23 ++++++
+ arch/arm/boot/dts/r8a7790.dtsi                     | 78 +++++++++++++++++--
+ arch/arm/boot/dts/r8a7791.dtsi                     | 81 +++++++++++++++++--
+ arch/arm/boot/dts/r8a7794.dtsi                     | 28 +++++++
+ arch/arm/mach-shmobile/Kconfig                     |  2 +
+ arch/arm/mach-shmobile/pm-rmobile.c                |  6 ++
+ drivers/clk/shmobile/clk-mstp.c                    | 90 ++++++++++++++++++++++
+ drivers/clk/shmobile/clk-r8a7778.c                 |  2 +
+ drivers/clk/shmobile/clk-r8a7779.c                 |  2 +
+ drivers/clk/shmobile/clk-rcar-gen2.c               |  4 +
+ drivers/clk/shmobile/clk-rz.c                      |  3 +
+ drivers/sh/Makefile                                |  4 +
+ drivers/sh/pm_runtime.c                            | 18 -----
+ include/linux/clk/shmobile.h                       | 12 +++
+ 20 files changed, 468 insertions(+), 40 deletions(-)
+
 -- 
-1.7.9.5
+1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
