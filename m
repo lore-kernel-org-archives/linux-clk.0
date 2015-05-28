@@ -1,194 +1,82 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>, <paul@pwsan.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 07/27] ARM: OMAP2+: clock: remove clock_common_data.c file
-Date: Mon, 11 May 2015 11:54:33 +0300
-Message-ID: <1431334493-24455-8-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
-References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 14/14] ARM: shmobile: R-Mobile: Use CPG Clock Domain attach/detach helpers
+Date: Thu, 28 May 2015 20:53:39 +0200
+Message-Id: <1432839219-475-15-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
+References: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-This only contains clksel tables that were used with the legacy clock data.
-Now that legacy clock data is completely gone, this file can be removed
-also.
+The R-Mobile PM Domain driver manages both power domains and a clock
+domain.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+The clock domain part is very similar to the CPG Clock Domain, which is
+used on shmobile SoCs without device power domains, except for the way
+how clocks suitable for power management are selected:
+  - The former uses the first clock tied to the device through the NULL
+    con_id, which is a relic from the legacy pm_clk_notifier-based
+    method in drivers/sh/pm_runtime.c,
+  - The latter looks for suitable clocks in DT, which is more
+    future-proof.
+
+Hence switch to using the CPG Clock Domain helpers for DT-based
+multi-platform builds.
+
+The old method, using a NULL con_id, is still used for legacy builds.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-omap2/Makefile            |    2 +-
- arch/arm/mach-omap2/clock.h             |   14 ----
- arch/arm/mach-omap2/clock_common_data.c |  115 -------------------------------
- 3 files changed, 1 insertion(+), 130 deletions(-)
- delete mode 100644 arch/arm/mach-omap2/clock_common_data.c
+v2:
+  - New.
+---
+ arch/arm/mach-shmobile/pm-rmobile.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
-index d03bc21..98d5030 100644
---- a/arch/arm/mach-omap2/Makefile
-+++ b/arch/arm/mach-omap2/Makefile
-@@ -12,7 +12,7 @@ obj-y := id.o io.o control.o mux.o devices.o fb.o serial.o timer.o pm.o \
+diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
+index 747d557b7016ec6d..cac564c5348cd851 100644
+--- a/arch/arm/mach-shmobile/pm-rmobile.c
++++ b/arch/arm/mach-shmobile/pm-rmobile.c
+@@ -12,6 +12,7 @@
+  * License.  See the file "COPYING" in the main directory of this archive
+  * for more details.
+  */
++#include <linux/clk/shmobile.h>
+ #include <linux/console.h>
+ #include <linux/delay.h>
+ #include <linux/of.h>
+@@ -118,6 +119,7 @@ static bool rmobile_pd_active_wakeup(struct device *dev)
+ 	return true;
+ }
  
- hwmod-common				= omap_hwmod.o omap_hwmod_reset.o \
- 					  omap_hwmod_common_data.o
--clock-common				= clock.o clock_common_data.o
-+clock-common				= clock.o
- secure-common				= omap-smc.o omap-secure.o
++#ifdef CONFIG_ARCH_SHMOBILE_LEGACY
+ static int rmobile_pd_attach_dev(struct generic_pm_domain *domain,
+ 				 struct device *dev)
+ {
+@@ -147,6 +149,10 @@ static void rmobile_pd_detach_dev(struct generic_pm_domain *domain,
+ {
+ 	pm_clk_destroy(dev);
+ }
++#else /* CONFIG_ARCH_SHMOBILE_LEGACY */
++#define rmobile_pd_attach_dev	cpg_mstp_attach_dev
++#define rmobile_pd_detach_dev	cpg_mstp_detach_dev
++#endif /* CONFIG_ARCH_SHMOBILE_LEGACY */
  
- obj-$(CONFIG_ARCH_OMAP2) += $(omap-2-3-common) $(hwmod-common)
-diff --git a/arch/arm/mach-omap2/clock.h b/arch/arm/mach-omap2/clock.h
-index 9efff4b..b71d430 100644
---- a/arch/arm/mach-omap2/clock.h
-+++ b/arch/arm/mach-omap2/clock.h
-@@ -204,11 +204,6 @@ extern const struct clkops clkops_omap2_dflt;
- 
- extern struct clk_functions omap2_clk_functions;
- 
--extern const struct clksel_rate gpt_32k_rates[];
--extern const struct clksel_rate gpt_sys_rates[];
--extern const struct clksel_rate gfx_l3_rates[];
--extern const struct clksel_rate dsp_ick_rates[];
--
- extern const struct clk_hw_omap_ops clkhwops_wait;
- extern const struct clk_hw_omap_ops clkhwops_omap3430es2_ssi_wait;
- extern const struct clk_hw_omap_ops clkhwops_omap3430es2_dss_usbhost_wait;
-@@ -217,15 +212,6 @@ extern const struct clk_hw_omap_ops clkhwops_am35xx_ipss_module_wait;
- extern const struct clk_hw_omap_ops clkhwops_apll54;
- extern const struct clk_hw_omap_ops clkhwops_apll96;
- 
--/* clksel_rate blocks shared between OMAP44xx and AM33xx */
--extern const struct clksel_rate div_1_0_rates[];
--extern const struct clksel_rate div3_1to4_rates[];
--extern const struct clksel_rate div_1_1_rates[];
--extern const struct clksel_rate div_1_2_rates[];
--extern const struct clksel_rate div_1_3_rates[];
--extern const struct clksel_rate div_1_4_rates[];
--extern const struct clksel_rate div31_1to31_rates[];
--
- extern int omap2_clkops_enable_clkdm(struct clk_hw *hw);
- extern void omap2_clkops_disable_clkdm(struct clk_hw *hw);
- 
-diff --git a/arch/arm/mach-omap2/clock_common_data.c b/arch/arm/mach-omap2/clock_common_data.c
-deleted file mode 100644
-index 61b60df..0000000
---- a/arch/arm/mach-omap2/clock_common_data.c
-+++ /dev/null
-@@ -1,115 +0,0 @@
--/*
-- *  linux/arch/arm/mach-omap2/clock_common_data.c
-- *
-- *  Copyright (C) 2005-2009 Texas Instruments, Inc.
-- *  Copyright (C) 2004-2009 Nokia Corporation
-- *
-- *  Contacts:
-- *  Richard Woodruff <r-woodruff2@ti.com>
-- *  Paul Walmsley
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This file contains clock data that is common to both the OMAP2xxx and
-- * OMAP3xxx clock definition files.
-- */
--
--#include "clock.h"
--
--/* clksel_rate data common to 24xx/343x */
--const struct clksel_rate gpt_32k_rates[] = {
--	 { .div = 1, .val = 0, .flags = RATE_IN_24XX | RATE_IN_3XXX },
--	 { .div = 0 }
--};
--
--const struct clksel_rate gpt_sys_rates[] = {
--	 { .div = 1, .val = 1, .flags = RATE_IN_24XX | RATE_IN_3XXX },
--	 { .div = 0 }
--};
--
--const struct clksel_rate gfx_l3_rates[] = {
--	{ .div = 1, .val = 1, .flags = RATE_IN_24XX | RATE_IN_3XXX },
--	{ .div = 2, .val = 2, .flags = RATE_IN_24XX | RATE_IN_3XXX },
--	{ .div = 3, .val = 3, .flags = RATE_IN_243X | RATE_IN_3XXX },
--	{ .div = 4, .val = 4, .flags = RATE_IN_243X | RATE_IN_3XXX },
--	{ .div = 0 }
--};
--
--const struct clksel_rate dsp_ick_rates[] = {
--	{ .div = 1, .val = 1, .flags = RATE_IN_24XX },
--	{ .div = 2, .val = 2, .flags = RATE_IN_24XX },
--	{ .div = 3, .val = 3, .flags = RATE_IN_243X },
--	{ .div = 0 },
--};
--
--
--/* clksel_rate blocks shared between OMAP44xx and AM33xx */
--
--const struct clksel_rate div_1_0_rates[] = {
--	{ .div = 1, .val = 0, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 0 },
--};
--
--const struct clksel_rate div3_1to4_rates[] = {
--	{ .div = 1, .val = 0, .flags = RATE_IN_4430 },
--	{ .div = 2, .val = 1, .flags = RATE_IN_4430 },
--	{ .div = 4, .val = 2, .flags = RATE_IN_4430 },
--	{ .div = 0 },
--};
--
--const struct clksel_rate div_1_1_rates[] = {
--	{ .div = 1, .val = 1, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 0 },
--};
--
--const struct clksel_rate div_1_2_rates[] = {
--	{ .div = 1, .val = 2, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 0 },
--};
--
--const struct clksel_rate div_1_3_rates[] = {
--	{ .div = 1, .val = 3, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 0 },
--};
--
--const struct clksel_rate div_1_4_rates[] = {
--	{ .div = 1, .val = 4, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 0 },
--};
--
--const struct clksel_rate div31_1to31_rates[] = {
--	{ .div = 1, .val = 1, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 2, .val = 2, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 3, .val = 3, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 4, .val = 4, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 5, .val = 5, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 6, .val = 6, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 7, .val = 7, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 8, .val = 8, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 9, .val = 9, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 10, .val = 10, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 11, .val = 11, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 12, .val = 12, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 13, .val = 13, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 14, .val = 14, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 15, .val = 15, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 16, .val = 16, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 17, .val = 17, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 18, .val = 18, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 19, .val = 19, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 20, .val = 20, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 21, .val = 21, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 22, .val = 22, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 23, .val = 23, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 24, .val = 24, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 25, .val = 25, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 26, .val = 26, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 27, .val = 27, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 28, .val = 28, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 29, .val = 29, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 30, .val = 30, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 31, .val = 31, .flags = RATE_IN_4430 | RATE_IN_AM33XX },
--	{ .div = 0 },
--};
+ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
+ {
 -- 
-1.7.9.5
+1.9.1
