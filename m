@@ -1,96 +1,83 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <554BD33D.7050907@codeaurora.org>
-Date: Thu, 07 May 2015 14:03:57 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <bintian.wang@huawei.com>
+Message-ID: <5566CF13.8060806@huawei.com>
+Date: Thu, 28 May 2015 16:17:23 +0800
+From: Bintian <bintian.wang@huawei.com>
 MIME-Version: 1.0
-To: Kevin Hilman <khilman@kernel.org>
-CC: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>,
- Mike Turquette <mturquette@linaro.org>,
- Doug Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
- lkml <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- Boris Brezillon <boris.brezillon@free-electrons.com>,
- Alex Elder <elder@linaro.org>,
- Alexandre Belloni <alexandre.belloni@free-electrons.com>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Max Filippov <jcmvbkbc@gmail.com>, Sascha Hauer <kernel@pengutronix.de>,
- Zhangfei Gao <zhangfei.gao@linaro.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, Chao Xie <chao.xie@marvell.com>,
- Jason Cooper <jason@lakedaemon.net>,
- Stefan Wahren <stefan.wahren@i2se.com>,
- Andrew Bresticker <abrestic@chromium.org>,
- Robert Jarzmik <robert.jarzmik@free.fr>,
- Georgi Djakov <georgi.djakov@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Barry Song <baohua@kernel.org>,
- Dinh Nguyen <dinguyen@opensource.altera.com>,
- Viresh Kumar <viresh.linux@gmail.com>,
- Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
- =?UTF-8?B?RW1pbGlvIEzDs3Bleg==?= <emilio@elopez.com.ar>,
- Peter De Sc hrijver <pdeschrijver@nvidia.com>,
- Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- Pawel Moll <pawel.moll@arm.com>,
- Michal Simek <michal.simek@xilinx.com>, Olof Johansson <olof@lixom.net>,
- Tyler Baker <tyler.baker@linaro.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
-References: <1429735986-18592-1-git-send-email-heiko@sntech.de>	<1981330.kGUrTurMy5@diego>	<5543E79F.2080400@codeaurora.org>	<22709390.NTAlubMgNB@diego>	<55440EDA.4030905@codeaurora.org> <CAMAWPa_n+59+v+x3fKkmdtW1wMJF7kqtTjLLowmv1xwGWprYJw@mail.gmail.com>
-In-Reply-To: <CAMAWPa_n+59+v+x3fKkmdtW1wMJF7kqtTjLLowmv1xwGWprYJw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+To: Michael Turquette <mturquette@linaro.org>, <sboyd@codeaurora.org>,
+        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
+        <xuejiancheng@huawei.com>, <tomeu.vizoso@collabora.com>,
+        <sledge.yanwei@huawei.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <arnd@arndb.de>, <will.deacon@arm.com>,
+        <robh+dt@kernel.org>, <khilman@linaro.org>, <mark.rutland@arm.com>,
+        <catalin.marinas@arm.com>, <haojian.zhuang@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <olof@lixom.net>,
+        <yanhaifeng@gmail.com>, <linux@arm.linux.org.uk>,
+        <guodong.xu@linaro.org>, <jorge.ramirez-ortiz@linaro.org>,
+        <tyler.baker@linaro.org>, <khilman@kernel.org>
+CC: <xuyiping@hisilicon.com>, <wangbinghui@hisilicon.com>,
+        <zhenwei.wang@hisilicon.com>, <victor.lixin@hisilicon.com>,
+        <puck.chen@hisilicon.com>, <dan.zhao@hisilicon.com>,
+        <huxinwei@huawei.com>, <z.liuxinliang@huawei.com>,
+        <heyunlei@huawei.com>, <kong.kongxinwei@hisilicon.com>,
+        <wangbintian@gmail.com>, <w.f@huawei.com>, <liguozhu@hisilicon.com>
+Subject: Re: [PATCH v8 6/7] clk: hi6220: Clock driver support for Hisilicon
+ hi6220 SoC
+References: <1432440671-25235-1-git-send-email-bintian.wang@huawei.com> <1432440671-25235-3-git-send-email-bintian.wang@huawei.com> <20150528052608.22384.96747@quantum>
+In-Reply-To: <20150528052608.22384.96747@quantum>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/07/15 08:17, Kevin Hilman wrote:
-> On Fri, May 1, 2015 at 4:40 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> On 05/01/15 15:07, Heiko Stübner wrote:
->>> Am Freitag, 1. Mai 2015, 13:52:47 schrieb Stephen Boyd:
->>>
->>>>> Instead I guess we could hook it less deep into clk_get_sys, like in the
->>>>> following patch?
->>>> It looks like it will work at least, but still I'd prefer to keep the
->>>> orphan check contained to clk.c. How about this compile tested only patch?
->>> I gave this a spin on my rk3288-firefly board. It still boots, the clock tree
->>> looks the same and it also still defers nicely in the scenario I needed it
->>> for. The implementation also looks nice - and of course much more compact than
->>> my check in two places :-) . I don't know if you want to put this as follow-up
->>> on top or fold it into the original orphan-check, so in any case
->>>
->>> Tested-by: Heiko Stuebner <heiko@sntech.de>
->>> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
->> Thanks. I'm leaning towards tossing your patch 2/2 and replacing it with
->> my patch and a note that it's based on an earlier patch from you.
-> It appears this has landed in linux-next in the form of 882667c1fcf1
-> clk: prevent orphan clocks from being used.  A bunch of boot failures
-> for sunxi in today's linux-next[1] were bisected down to that patch.
+Hello Mike,
+
+On 2015/5/28 13:26, Michael Turquette wrote:
+> Quoting Bintian Wang (2015-05-23 21:11:11)
+>> Add clock drivers for hi6220 SoC, this driver controls the SoC
+>> registers to supply different clocks to different IPs in the SoC.
+>>
+>> We add one divider clock for hi6220 because the divider in hi6220
+>> also has a mask bit but it doesnot obey the rule defined by flag
+>> "CLK_DIVIDER_HIWORD_MASK", we can not get index of the mask bit by
+>> left shift fixed bits (e.g. 16 bits), so we add this divider clock
+>> to handle it.
+>>
+>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+>> Signed-off-by: Bintian Wang <bintian.wang@huawei.com>
+>> Acked-by: Haojian Zhuang <haojian.zhuang@linaro.org>
+>> Reviewed-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+>> Tested-by: Will Deacon <will.deacon@arm.com>
+>> Tested-by: Tyler Baker <tyler.baker@linaro.org>
 >
-> I confirmed that reverting that commit on top of next/master gets
-> sunxi booting again.
+> Hi Bintian,
 >
+> Thanks for making the changes requested by Stephen. I've taken his patch
+> to add assigned-clock-rate/parent support for AMBA interconnects and
+> applied it to 4.1-rc1, and then I've applied your v8 patches #4-6 on top
+> of that. You can find it at:
 >
+> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next-hi6220
+Thank you very much!
 
-Thanks for the report. I've removed the two clk orphan patches from
-clk-next. Would it be possible to try with next-20150507 and
-clk_ignore_unused on the command line? Also we can try to see if
-critical clocks aren't being forced on by applying this patch and
-looking for clk_get() failures
+I think you also need to pick patch "[PATCH v5 3/6] clk: hi6220: 
+Document devicetree bindings for hi6220 clock",  which described the dt 
+binding of clk, and it is also acked by Stephen(v4 is the same to v5).
 
-------8<------
+> I have merged this into clk-next so it can get some cycles in
+> linux-next.
+>
+> Stephen,
+>
+> Can you send your patch out to Russell properly? It needs his ack (or
+> for him to take it outright) in order to unblock the hi6220 clock driver
+> from being merged.
+It doesn't block hi6220 clock driver now, because the UART1 is not
+enabled in hi6220 dts now.
 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 7e1e2bd189b6..d88585b680bb 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -1347,6 +1347,9 @@ static void __init sunxi_init_clocks(const char *clocks[], int nclocks)
- 
- 		if (!IS_ERR(clk))
- 			clk_prepare_enable(clk);
-+		else
-+			pr_err("Failed to enable critical clock %s\n",
-+					clocks[i]);
- 	}
- }
- 
+Thanks!
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Bintian
+>
+> Regards,
+> Mike
+>
+> .
+>
