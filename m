@@ -1,131 +1,124 @@
-Return-Path: <Paul.Burton@imgtec.com>
-From: Paul Burton <paul.burton@imgtec.com>
-To: <linux-mips@linux-mips.org>
-CC: Paul Burton <paul.burton@imgtec.com>, Lars-Peter Clausen
-	<lars@metafoo.de>, Mike Turquette <mturquette@linaro.org>, Ralf Baechle
-	<ralf@linux-mips.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 27/37] MIPS,clk: move jz4740_clock_set_wait_mode to jz4740-cgu
-Date: Sun, 24 May 2015 16:11:37 +0100
-Message-ID: <1432480307-23789-28-git-send-email-paul.burton@imgtec.com>
-In-Reply-To: <1432480307-23789-1-git-send-email-paul.burton@imgtec.com>
-References: <1432480307-23789-1-git-send-email-paul.burton@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 02/14] clk: shmobile: r8a7778: Add CPG Clock Domain support
+Date: Thu, 28 May 2015 20:53:27 +0200
+Message-Id: <1432839219-475-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
+References: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-The jz4740-cgu driver already has access to the CGU, so it makes sense
-to move the few remaining accesses to the CGU from arch/mips/jz4740
-there too. Move jz4740_clock_set_wait_mode for such consistency.
+Add Clock Domain support to the R-Car M1A Clock Pulse Generator (CPG)
+driver using the generic PM Domain.  This allows to power-manage the
+module clocks of SoC devices that are part of the CPG Clock Domain using
+Runtime PM, or for system suspend/resume.
 
-Signed-off-by: Paul Burton <paul.burton@imgtec.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-mips@linux-mips.org
+SoC devices that are part of the CPG Clock Domain and can be
+power-managed through an MSTP clock should be tagged in DT with a proper
+"power-domains" property.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+v2:
+  - New.
+---
+ .../bindings/clock/renesas,r8a7778-cpg-clocks.txt  | 29 +++++++++++++++++++---
+ arch/arm/mach-shmobile/Kconfig                     |  1 +
+ drivers/clk/shmobile/clk-r8a7778.c                 |  2 ++
+ 3 files changed, 29 insertions(+), 3 deletions(-)
 
-Changes in v5: None
-Changes in v4: None
-Changes in v3:
-- Rebase.
-
-Changes in v2: None
-
- arch/mips/jz4740/clock.c         | 16 ----------------
- drivers/clk/ingenic/jz4740-cgu.c | 22 ++++++++++++++++++++++
- 2 files changed, 22 insertions(+), 16 deletions(-)
-
-diff --git a/arch/mips/jz4740/clock.c b/arch/mips/jz4740/clock.c
-index dedee7c..90b44d7 100644
---- a/arch/mips/jz4740/clock.c
-+++ b/arch/mips/jz4740/clock.c
-@@ -28,7 +28,6 @@
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
+index 2f3747fdcf1c5305..47dbda03e1fc2daa 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
+@@ -1,7 +1,9 @@
+ * Renesas R8A7778 Clock Pulse Generator (CPG)
  
- #include "clock.h"
+ The CPG generates core clocks for the R8A7778. It includes two PLLs and
+-several fixed ratio dividers
++several fixed ratio dividers.
++The CPG also provides a Clock Domain for SoC devices, in combination with the
++CPG Module Stop (MSTP) Clocks.
  
--#define JZ_REG_CLOCK_LOW_POWER	0x04
- #define JZ_REG_CLOCK_PLL	0x10
- #define JZ_REG_CLOCK_GATE	0x20
+ Required Properties:
  
-@@ -40,9 +39,6 @@
- #define JZ_CLOCK_PLL_STABLE		BIT(10)
- #define JZ_CLOCK_PLL_ENABLED		BIT(8)
+@@ -10,10 +12,18 @@ Required Properties:
+   - #clock-cells: Must be 1
+   - clock-output-names: The names of the clocks. Supported clocks are
+     "plla", "pllb", "b", "out", "p", "s", and "s1".
++  - #power-domain-cells: Must be 0
  
--#define JZ_CLOCK_LOW_POWER_MODE_DOZE BIT(2)
--#define JZ_CLOCK_LOW_POWER_MODE_SLEEP BIT(0)
--
- static void __iomem *jz_clock_base;
++SoC devices that are part of the CPG Clock Domain and can be power-managed
++through an MSTP clock should refer to the CPG device node in their
++"power-domains" property, as documented by the generic PM domain bindings in
++Documentation/devicetree/bindings/power/power_domain.txt.
  
- static uint32_t jz_clk_reg_read(int reg)
-@@ -68,18 +64,6 @@ static void jz_clk_reg_clear_bits(int reg, uint32_t mask)
- 	writel(val, jz_clock_base + reg);
+-Example
+--------
++
++Examples
++--------
++
++  - CPG device node:
+ 
+ 	cpg_clocks: cpg_clocks@ffc80000 {
+ 		compatible = "renesas,r8a7778-cpg-clocks";
+@@ -22,4 +32,17 @@ Example
+ 		clocks = <&extal_clk>;
+ 		clock-output-names = "plla", "pllb", "b",
+ 				     "out", "p", "s", "s1";
++		#power-domain-cells = <0>;
++	};
++
++
++  - CPG Clock Domain member device node:
++
++	sdhi0: sd@ffe4c000 {
++		compatible = "renesas,sdhi-r8a7778";
++		reg = <0xffe4c000 0x100>;
++		interrupts = <0 87 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp3_clks R8A7778_CLK_SDHI0>;
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
+ 	};
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index 45006479d4617bf3..e14fa5e87475a0d1 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -4,6 +4,7 @@ config ARCH_SHMOBILE
+ 
+ config PM_RCAR
+ 	bool
++	select PM_GENERIC_DOMAINS if PM
+ 
+ config PM_RMOBILE
+ 	bool
+diff --git a/drivers/clk/shmobile/clk-r8a7778.c b/drivers/clk/shmobile/clk-r8a7778.c
+index cb33b57274bf9f55..fa45684e220c78ae 100644
+--- a/drivers/clk/shmobile/clk-r8a7778.c
++++ b/drivers/clk/shmobile/clk-r8a7778.c
+@@ -124,6 +124,8 @@ static void __init r8a7778_cpg_clocks_init(struct device_node *np)
+ 	}
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
++
++	cpg_mstp_add_clk_domain(np);
  }
  
--void jz4740_clock_set_wait_mode(enum jz4740_wait_mode mode)
--{
--	switch (mode) {
--	case JZ4740_WAIT_MODE_IDLE:
--		jz_clk_reg_clear_bits(JZ_REG_CLOCK_LOW_POWER, JZ_CLOCK_LOW_POWER_MODE_SLEEP);
--		break;
--	case JZ4740_WAIT_MODE_SLEEP:
--		jz_clk_reg_set_bits(JZ_REG_CLOCK_LOW_POWER, JZ_CLOCK_LOW_POWER_MODE_SLEEP);
--		break;
--	}
--}
--
- void jz4740_clock_udc_disable_auto_suspend(void)
- {
- 	jz_clk_reg_clear_bits(JZ_REG_CLOCK_GATE, JZ_CLOCK_GATE_UDC);
-diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
-index d5bb7a3..0209ed6 100644
---- a/drivers/clk/ingenic/jz4740-cgu.c
-+++ b/drivers/clk/ingenic/jz4740-cgu.c
-@@ -19,10 +19,12 @@
- #include <linux/delay.h>
- #include <linux/of.h>
- #include <dt-bindings/clock/jz4740-cgu.h>
-+#include <asm/mach-jz4740/clock.h>
- #include "cgu.h"
- 
- /* CGU register offsets */
- #define CGU_REG_CPCCR		0x00
-+#define CGU_REG_LCR		0x04
- #define CGU_REG_CPPCR		0x10
- #define CGU_REG_SCR		0x24
- #define CGU_REG_I2SCDR		0x60
-@@ -42,6 +44,9 @@
- #define PLLCTL_BYPASS		(1 << 9)
- #define PLLCTL_ENABLE		(1 << 8)
- 
-+/* bits within the LCR register */
-+#define LCR_SLEEP		(1 << 0)
-+
- static struct ingenic_cgu *cgu;
- 
- static const s8 pll_od_encoding[4] = {
-@@ -220,3 +225,20 @@ static void __init jz4740_cgu_init(struct device_node *np)
- 		pr_err("%s: failed to register CGU Clocks\n", __func__);
- }
- CLK_OF_DECLARE(jz4740_cgu, "ingenic,jz4740-cgu", jz4740_cgu_init);
-+
-+void jz4740_clock_set_wait_mode(enum jz4740_wait_mode mode)
-+{
-+	uint32_t lcr = readl(cgu->base + CGU_REG_LCR);
-+
-+	switch (mode) {
-+	case JZ4740_WAIT_MODE_IDLE:
-+		lcr &= ~LCR_SLEEP;
-+		break;
-+
-+	case JZ4740_WAIT_MODE_SLEEP:
-+		lcr |= LCR_SLEEP;
-+		break;
-+	}
-+
-+	writel(lcr, cgu->base + CGU_REG_LCR);
-+}
+ CLK_OF_DECLARE(r8a7778_cpg_clks, "renesas,r8a7778-cpg-clocks",
 -- 
-2.4.1
+1.9.1
