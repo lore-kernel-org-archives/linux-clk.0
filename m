@@ -1,117 +1,92 @@
-Return-Path: <mcoquelin.stm32@gmail.com>
-Return-Path: <mcoquelin.stm32@gmail.com>
-Message-ID: <55697FCE.9040003@gmail.com>
-Date: Sat, 30 May 2015 11:15:58 +0200
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Return-Path: <grygorii.strashko@linaro.org>
+Return-Path: <grygorii.strashko@linaro.org>
+From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
+Message-ID: <5567316A.9030003@linaro.org>
+Date: Thu, 28 May 2015 18:16:58 +0300
 MIME-Version: 1.0
-To: Daniel Thompson <daniel.thompson@linaro.org>,
- Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>
-CC: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Kumar Gala <galak@codeaurora.org>,
- Russell King <linux@arm.linux.org.uk>, Kamil Lulko <rev13@wp.pl>,
- Andreas Farber <afaerber@suse.de>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- patches@linaro.org, linaro-kernel@lists.linaro.org
-Subject: Re: [PATCH v2 3/4] clk: stm32: Add clock driver for STM32F4[23]xxx
- devices
-References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org> <1432972448-10332-1-git-send-email-daniel.thompson@linaro.org> <1432972448-10332-4-git-send-email-daniel.thompson@linaro.org>
-In-Reply-To: <1432972448-10332-4-git-send-email-daniel.thompson@linaro.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+To: Jim Quinlan <jim2101024@gmail.com>,
+ Michael Turquette <mturquette@linaro.org>
+CC: linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH] clk: export function clk_disable_unused()
+References: <1431728556-620-1-git-send-email-jim2101024@gmail.com>	<20150523193321.9817.1715@quantum> <CANCKTBsZr-Ew97TX60u416Lhw4tEBfMkDUGn1yw13ThMrz3z9Q@mail.gmail.com>
+In-Reply-To: <CANCKTBsZr-Ew97TX60u416Lhw4tEBfMkDUGn1yw13ThMrz3z9Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Daniel,
+On 05/28/2015 05:21 PM, Jim Quinlan wrote:
 
-     Nice driver, please find my comments below.
+> We are currently doing [1].  We'd like to change this so that we are
+> the same as upstream barring a small syscore driver that will call
+> clk_disable_unused() on S2/S3 resume.  My patch reflects the
+> suggestion found in [2], which says, "... It could still be generic by
+> exporting the clk_disable_unused() function to drivers...".
+> 
+> We do not have the general problems you are alluding to.  With few
+> exceptions, we do not yet use power domains or runtime PM, although of
+> course this may change.  Our drivers  use either syscore calls or
+> SIMPLE_DEV_PM_OPS() to turn off/on clocks as needed during S2/S3
+> suspend/resume.  The problem we have is when the software stack omits
+> a driver or we have a new HW block which has no driver.  On boot,
+> clk_disable_unused() turns off the clocks that these missing drivers
+> would normally use*.  But on resumption of S2/S3, these clocks get
+> turned on by HW, and all I am asking is that clk_disable_unused() be
+> exported so a driver may invoke it to do the same thing it does during
+> boot.
 
-     Once fixed, you can add:
-Reviewed-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+This issue is much more simpler then saving/restoring of clocks state, so
+may be it can be solved first.
+
+Taking to the account comments from [2] I think that could be
+done inside clk core using PM notifiers, 
+and sysfs/module parameter can be used to enable/disable this feature, like:
+ PM_POST_SUSPEND:
+ PM_POST_HIBERNATION:
+ PM_RESTORE_PREPARE:
+	if (clk_disable_unused_on_suspend)
+		clk_disable_unused();
 
 
-On 05/30/2015 09:54 AM, Daniel Thompson wrote:
-> The driver supports decoding and statically modelling PLL state (i.e.
-> we inherit state from bootloader) and provides support for all
-> peripherals that support simple one-bit gated clocks. The covers all
-> peripherals whose clocks come from the AHB, APB1 or APB2 buses.
->
-> It has been tested (for non-regression only) on an STM32F429I-Discovery
-> boards. The clock counts for TIM2, USART1 and SYSTICK are all set correctly
-> and time and the wall clock looks OK when checked with a stopwatch.
->
-> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-> ---
->   drivers/clk/Makefile      |   1 +
->   drivers/clk/clk-stm32f4.c | 364 ++++++++++++++++++++++++++++++++++++++++++++++
->   2 files changed, 365 insertions(+)
->   create mode 100644 drivers/clk/clk-stm32f4.c
-...
-> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-> new file mode 100644
-> index 0000000..68f9962
-> --- /dev/null
-> +++ b/drivers/clk/clk-stm32f4.c
-> @@ -0,0 +1,364 @@
-...
-> +/*
-> + * Converts the primary and secondary indices (as they appear in DT) to an
-> + * offset into our struct clock array.
-> + */
-> +static unsigned int stm32f4_rcc_lookup_clk_idx(u8 primary, u8 secondary)
-> +{
-> +	u64 table[ARRAY_SIZE(stm32f42xx_gate_map)];
-> +
-> +	if (primary == 1) {
-> +		BUG_ON(secondary > FCLK);
-Maybe the function could return a signed int, an propagate errors 
-instead of using BUG_ON?
-> +		return secondary;
-> +	}
-> +
-> +	memcpy(table, stm32f42xx_gate_map, sizeof(table));
-> +
-> +	/* only bits set in table can be used as indices */
-> +	BUG_ON(secondary > 8 * sizeof(table) ||
-> +	       0 == (table[BIT_ULL_WORD(secondary)] & BIT_ULL_MASK(secondary)));
-Ditto.
-> +
-> +	/* mask out bits above our current index */
-> +	table[BIT_ULL_WORD(secondary)] &=
-> +	    GENMASK_ULL(secondary % BITS_PER_LONG_LONG, 0);
-> +
-> +	return FCLK + hweight64(table[0]) +
-> +	       (BIT_ULL_WORD(secondary) >= 1 ? hweight64(table[1]) : 0) +
-> +	       (BIT_ULL_WORD(secondary) >= 2 ? hweight64(table[2]) : 0);
-> +}
-> +
-> +struct clk *stm32f4_rcc_lookup_clk(struct of_phandle_args *clkspec, void *data)
-> +{
-> +	return clks[stm32f4_rcc_lookup_clk_idx(clkspec->args[0],
-> +					       clkspec->args[1])];
-If stm32f4_rcc_lookup_clk_idx() returns an error, you could propagate it 
-using ERR_PTR().
-> +}
-> +
-> +static const char __initdata *sys_parents[] =   { "hsi", NULL, "pll" };
-> +
-> +static struct clk_div_table ahb_div_table[] = {
-Should be const.
-> +	{ 0x0,   1 }, { 0x1,   1 }, { 0x2,   1 }, { 0x3,   1 },
-> +	{ 0x4,   1 }, { 0x5,   1 }, { 0x6,   1 }, { 0x7,   1 },
-> +	{ 0x8,   2 }, { 0x9,   4 }, { 0xa,   8 }, { 0xb,  16 },
-> +	{ 0xc,  64 }, { 0xd, 128 }, { 0xe, 256 }, { 0xf, 512 },
-> +	{ 0 },
-> +};
-> +
-> +static struct clk_div_table apb_div_table[] = {
-Ditto.
-> +	{ 0,  1 }, { 0,  1 }, { 0,  1 }, { 0,  1 },
-> +	{ 4,  2 }, { 5,  4 }, { 6,  8 }, { 7, 16 },
-> +	{ 0 },
-> +};
->
+Mike, What do you think?
 
-Thanks!
-Maxime
+> 
+> * Why the HW turns these clocks on in the first place is a question I
+> cannot answer.
+> [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/311568.html
+> [2] http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/311575.html
+> 
+> On Sat, May 23, 2015 at 3:33 PM, Michael Turquette
+> <mturquette@linaro.org> wrote:
+>> Quoting Jim Quinlan (2015-05-15 15:22:36)
+>>> For Broadcom STB chips, clocks may come up after resume in an "on"
+>>> state, so calling clk_disable_unused() again will turn off unused
+>>> clocks.  This commit exports clk_disable_unused() so it may be
+>>> called in such cases.
+>>
+>> Jim,
+>>
+>> Thanks for the patch.
+>>
+>> I think a more general solution to the problem might be needed. E.g. how
+>> do we solve for the opposite case where after a low-power suspend/resume
+>> we turn on clocks that were enabled by drivers before suspending, but
+>> are disabled out of reset/post-transition?
+>>
+>> Additionally, it would be helpful to see your driver changes and how
+>> exactly you plan to use this newly exported function.
+>>
+>> I've Cc'd Grygorii Strashko from TI. I faintly recall that he had an
+>> out-of-tree solution to add some .suspend/.resume callbacks to struct
+>> clk_ops. I didn't like that solution at the time either, but maybe we
+>> can figure out a more natural way to handle these cases.
+>>
+>> (Grygorii: sorry in advance if this is a case of mistaken identity. I
+>> could not find the code in question from my email archive)
+>>
+>> Regards,
+>> Mike
+
+
+
+-- 
+regards,
+-grygorii
