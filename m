@@ -1,169 +1,109 @@
-Return-Path: <Paul.Burton@imgtec.com>
-From: Paul Burton <paul.burton@imgtec.com>
-To: <linux-mips@linux-mips.org>
-CC: Paul Burton <paul.burton@imgtec.com>, Mike Turquette
-	<mturquette@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Jiri Slaby
-	<jslaby@suse.cz>, Joshua Kinard <kumba@gentoo.org>, Thierry Reding
-	<treding@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Kumar Gala <galak@codeaurora.org>, Jason Cooper
-	<jason@lakedaemon.net>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "Rob
- Herring" <robh+dt@kernel.org>, Antony Pavlov <antonynpavlov@gmail.com>,
-	"Felix Fietkau" <nbd@openwrt.org>, Apelete Seketeli <apelete@seketeli.net>,
-	<linux-clk@vger.kernel.org>, "Steven J. Hill" <Steven.Hill@imgtec.com>,
-	Andrew Bresticker <abrestic@chromium.org>, Huacai Chen <chenhc@lemote.com>,
-	"Maciej W. Rozycki" <macro@linux-mips.org>, Thomas Gleixner
-	<tglx@linutronix.de>, Leonid Yegoshin <Leonid.Yegoshin@imgtec.com>, "Pawel
- Moll" <pawel.moll@arm.com>, Markos Chandras <markos.chandras@imgtec.com>,
-	Lars-Peter Clausen <lars@metafoo.de>, Ralf Baechle <ralf@linux-mips.org>,
-	Alexandre Courbot <gnurou@gmail.com>, Matthias Brugger
-	<matthias.bgg@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<devicetree@vger.kernel.org>, Qais Yousef <qais.yousef@imgtec.com>,
-	<linux-serial@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	"Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>, Brian Norris
-	<computersforpeace@gmail.com>, Andreas Herrmann
-	<andreas.herrmann@caviumnetworks.com>, Sebastian Andrzej Siewior
-	<bigeasy@linutronix.de>, Hayato Suzuki <hytszk@gmail.com>, Alan Cox
-	<alan@linux.intel.com>, Fabian Frederick <fabf@skynet.be>, Deng-Cheng Zhu
-	<dengcheng.zhu@imgtec.com>, Peter Hurley <peter@hurleysoftware.com>,
-	<linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Arnaud Ebalard <arno@natisbad.org>, Dmitry Torokhov
-	<dmitry.torokhov@gmail.com>, Tony Lindgren <tony@atomide.com>, "Ricardo
- Ribalda Delgado" <ricardo.ribalda@gmail.com>, Mark Rutland
-	<mark.rutland@arm.com>, John Crispin <blogic@openwrt.org>
-Subject: [PATCH v5 00/37] JZ4780 & CI20 support
-Date: Sun, 24 May 2015 16:11:10 +0100
-Message-ID: <1432480307-23789-1-git-send-email-paul.burton@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 4/5] doc: dt: add documentation for lpc1850-ccu clk driver
+Date: Thu, 28 May 2015 22:31:46 +0200
+Message-Id: <1432845107-12458-5-git-send-email-manabian@gmail.com>
+In-Reply-To: <1432845107-12458-1-git-send-email-manabian@gmail.com>
+References: <1432845107-12458-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series introduces initial support for the Ingenic JZ4780 SoC and
-the Imagination Technologies MIPS Creator CI20 board which is built
-around it. In the process the existing JZ4740 & qi_lb60 code gains
-initial support for using DeviceTree such that much of the existing
-platform code under arch/mips/jz4740 can be shared.
+Add DT binding documentation for lpc1850-ccu clk driver.
 
-The series applies atop v4.1-rc4. Review appreciated, and hopefully
-this can make it in for v4.2.
+Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+---
+ .../devicetree/bindings/clock/lpc1850-ccu.txt      | 77 ++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-ccu.txt
 
-Paul Burton (37):
-  devicetree/bindings: add Ingenic Semiconductor vendor prefix
-  devicetree/bindings: add Qi Hardware vendor prefix
-  MIPS: JZ4740: introduce CONFIG_MACH_INGENIC
-  MIPS: ingenic: add newer vendor IDs
-  MIPS: JZ4740: require & include DT
-  MIPS: irq_cpu: declare irqchip table entry
-  MIPS: JZ4740: probe CPU interrupt controller via DT
-  MIPS: JZ4740: use generic plat_irq_dispatch
-  MIPS: JZ4740: move arch_init_irq out of arch/mips/jz4740/irq.c
-  devicetree: document Ingenic SoC interrupt controller binding
-  MIPS: JZ4740: probe interrupt controller via DT
-  MIPS: JZ4740: parse SoC interrupt controller parent IRQ from DT
-  MIPS: JZ4740: register an irq_domain for the interrupt controller
-  MIPS: JZ4740: drop intc debugfs code
-  MIPS: JZ4740: remove jz_intc_base global
-  MIPS: JZ4740: support >32 interrupts
-  MIPS: JZ4740: define IRQ numbers based on number of intc IRQs
-  MIPS: JZ4740: read intc base address from DT
-  MIPS: JZ4740: avoid JZ4740-specific naming
-  MIPS: JZ4740: support newer SoC interrupt controllers
-  irqchip: move Ingenic SoC intc driver to drivers/irqchip
-  MIPS: JZ4740: call jz4740_clock_init earlier
-  MIPS: JZ4740: replace use of jz4740_clock_bdata
-  devicetree: add Ingenic CGU binding documentation
-  clk: ingenic: add driver for Ingenic SoC CGU clocks
-  MIPS,clk: migrate JZ4740 to common clock framework
-  MIPS,clk: move jz4740_clock_set_wait_mode to jz4740-cgu
-  MIPS, clk: move jz4740 UDC auto suspend functions to jz4740-cgu
-  MIPS, clk: move jz4740 clock suspend, resume functions to jz4740-cgu
-  clk: ingenic: add JZ4780 CGU support
-  MIPS: JZ4740: remove clock.h
-  MIPS: JZ4740: only detect RAM size if not specified in DT
-  devicetree: document Ingenic SoC UART binding
-  serial: 8250_ingenic: support for Ingenic SoC UARTs
-  MIPS: JZ4740: use Ingenic SoC UART driver
-  MIPS: ingenic: initial JZ4780 support
-  MIPS: ingenic: initial MIPS Creator CI20 support
-
- .../devicetree/bindings/clock/ingenic,cgu.txt      |  53 ++
- .../bindings/interrupt-controller/ingenic,intc.txt |  28 +
- .../devicetree/bindings/serial/ingenic,uart.txt    |  22 +
- .../devicetree/bindings/vendor-prefixes.txt        |   2 +
- arch/mips/Kconfig                                  |  11 +-
- arch/mips/boot/dts/Makefile                        |   1 +
- arch/mips/boot/dts/ingenic/Makefile                |  10 +
- arch/mips/boot/dts/ingenic/ci20.dts                |  44 +
- arch/mips/boot/dts/ingenic/jz4740.dtsi             |  68 ++
- arch/mips/boot/dts/ingenic/jz4780.dtsi             | 111 +++
- arch/mips/boot/dts/ingenic/qi_lb60.dts             |  15 +
- arch/mips/configs/ci20_defconfig                   | 162 ++++
- arch/mips/configs/qi_lb60_defconfig                |   3 +-
- arch/mips/include/asm/cpu-type.h                   |   2 +-
- arch/mips/include/asm/cpu.h                        |   6 +-
- arch/mips/include/asm/mach-jz4740/clock.h          |   3 +
- .../asm/mach-jz4740/cpu-feature-overrides.h        |   3 -
- arch/mips/include/asm/mach-jz4740/irq.h            |  14 +-
- arch/mips/include/asm/mach-jz4740/platform.h       |   2 -
- arch/mips/jz4740/Kconfig                           |  17 +-
- arch/mips/jz4740/Makefile                          |   8 +-
- arch/mips/jz4740/Platform                          |   8 +-
- arch/mips/jz4740/board-qi_lb60.c                   |   7 -
- arch/mips/jz4740/clock-debugfs.c                   | 108 ---
- arch/mips/jz4740/clock.c                           | 924 ---------------------
- arch/mips/jz4740/clock.h                           |  76 --
- arch/mips/jz4740/gpio.c                            |   7 +-
- arch/mips/jz4740/irq.c                             | 162 ----
- arch/mips/jz4740/platform.c                        |  38 +-
- arch/mips/jz4740/pm.c                              |   2 -
- arch/mips/jz4740/prom.c                            |  13 -
- arch/mips/jz4740/reset.c                           |  13 +-
- arch/mips/jz4740/serial.c                          |  33 -
- arch/mips/jz4740/serial.h                          |  23 -
- arch/mips/jz4740/setup.c                           |  36 +-
- arch/mips/jz4740/time.c                            |  19 +-
- arch/mips/kernel/cpu-probe.c                       |   4 +-
- arch/mips/kernel/irq_cpu.c                         |   3 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/ingenic/Makefile                       |   3 +
- drivers/clk/ingenic/cgu.c                          | 711 ++++++++++++++++
- drivers/clk/ingenic/cgu.h                          | 223 +++++
- drivers/clk/ingenic/jz4740-cgu.c                   | 303 +++++++
- drivers/clk/ingenic/jz4780-cgu.c                   | 733 ++++++++++++++++
- drivers/irqchip/Kconfig                            |   5 +
- drivers/irqchip/Makefile                           |   1 +
- drivers/irqchip/irq-ingenic.c                      | 177 ++++
- drivers/tty/serial/8250/8250_ingenic.c             | 266 ++++++
- drivers/tty/serial/8250/Kconfig                    |   9 +
- drivers/tty/serial/8250/Makefile                   |   3 +
- include/dt-bindings/clock/jz4740-cgu.h             |  37 +
- include/dt-bindings/clock/jz4780-cgu.h             |  88 ++
- .../irq.h => include/linux/irqchip/ingenic.h       |   8 +-
- 53 files changed, 3205 insertions(+), 1424 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/ingenic,cgu.txt
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ingenic,intc.txt
- create mode 100644 Documentation/devicetree/bindings/serial/ingenic,uart.txt
- create mode 100644 arch/mips/boot/dts/ingenic/Makefile
- create mode 100644 arch/mips/boot/dts/ingenic/ci20.dts
- create mode 100644 arch/mips/boot/dts/ingenic/jz4740.dtsi
- create mode 100644 arch/mips/boot/dts/ingenic/jz4780.dtsi
- create mode 100644 arch/mips/boot/dts/ingenic/qi_lb60.dts
- create mode 100644 arch/mips/configs/ci20_defconfig
- delete mode 100644 arch/mips/jz4740/clock-debugfs.c
- delete mode 100644 arch/mips/jz4740/clock.c
- delete mode 100644 arch/mips/jz4740/clock.h
- delete mode 100644 arch/mips/jz4740/irq.c
- delete mode 100644 arch/mips/jz4740/serial.c
- delete mode 100644 arch/mips/jz4740/serial.h
- create mode 100644 drivers/clk/ingenic/Makefile
- create mode 100644 drivers/clk/ingenic/cgu.c
- create mode 100644 drivers/clk/ingenic/cgu.h
- create mode 100644 drivers/clk/ingenic/jz4740-cgu.c
- create mode 100644 drivers/clk/ingenic/jz4780-cgu.c
- create mode 100644 drivers/irqchip/irq-ingenic.c
- create mode 100644 drivers/tty/serial/8250/8250_ingenic.c
- create mode 100644 include/dt-bindings/clock/jz4740-cgu.h
- create mode 100644 include/dt-bindings/clock/jz4780-cgu.h
- rename arch/mips/jz4740/irq.h => include/linux/irqchip/ingenic.h (74%)
-
+diff --git a/Documentation/devicetree/bindings/clock/lpc1850-ccu.txt b/Documentation/devicetree/bindings/clock/lpc1850-ccu.txt
+new file mode 100644
+index 000000000000..fa97c12014ac
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/lpc1850-ccu.txt
+@@ -0,0 +1,77 @@
++* NXP LPC1850 Clock Control Unit (CCU)
++
++Each CGU base clock has several clock branches which can be turned on
++or off independently by the Clock Control Units CCU1 or CCU2. The
++branch clocks are distributed between CCU1 and CCU2.
++
++ - Above text taken from NXP LPC1850 User Manual.
++
++This binding uses the common clock binding:
++    Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible:
++	Should be "nxp,lpc1850-ccu"
++- reg:
++	Shall define the base and range of the address space
++	containing clock control registers
++- #clock-cells:
++	Shall have value <1>.  The permitted clock-specifier values
++	are the branch clock names defined in table below.
++- clocks:
++	Shall contain a list of phandles for the base clocks routed
++	from the CGU to the specific CCU. See mapping of base clocks
++	and CCU in table below.
++- clock-names:
++	Shall contain a list of names for the base clock routed
++	from the CGU to the specific CCU. Valid CCU clock names:
++	"base_usb0_clk",  "base_periph_clk", "base_usb1_clk",
++	"base_cpu_clk",   "base_spifi_clk",  "base_spi_clk",
++	"base_apb1_clk",  "base_apb3_clk",   "base_adchs_clk",
++	"base_sdio_clk",  "base_ssp0_clk",   "base_ssp1_clk",
++	"base_uart0_clk", "base_uart1_clk",  "base_uart2_clk",
++	"base_uart3_clk", "base_audio_clk"
++
++Which branch clocks that are available on the CCU depends on the
++specific LPC part. Check the user manual for your specific part.
++
++A list of CCU clocks can be found in dt-bindings/clock/lpc18xx-ccu.h.
++
++Example board file:
++
++soc {
++	ccu1: clock-controller@40051000 {
++		compatible = "nxp,lpc1850-ccu";
++		reg = <0x40051000 0x1000>;
++		#clock-cells = <1>;
++		clocks = <&cgu BASE_APB3_CLK>,   <&cgu BASE_APB1_CLK>,
++			 <&cgu BASE_SPIFI_CLK>,  <&cgu BASE_CPU_CLK>,
++			 <&cgu BASE_PERIPH_CLK>, <&cgu BASE_USB0_CLK>,
++			 <&cgu BASE_USB1_CLK>,   <&cgu BASE_SPI_CLK>;
++		clock-names = "base_apb3_clk",   "base_apb1_clk",
++			      "base_spifi_clk",  "base_cpu_clk",
++			      "base_periph_clk", "base_usb0_clk",
++			      "base_usb1_clk",   "base_spi_clk";
++	};
++
++	ccu2: clock-controller@40052000 {
++		compatible = "nxp,lpc1850-ccu";
++		reg = <0x40052000 0x1000>;
++		#clock-cells = <1>;
++		clocks = <&cgu BASE_AUDIO_CLK>, <&cgu BASE_UART3_CLK>,
++			 <&cgu BASE_UART2_CLK>, <&cgu BASE_UART1_CLK>,
++			 <&cgu BASE_UART0_CLK>, <&cgu BASE_SSP1_CLK>,
++			 <&cgu BASE_SSP0_CLK>,  <&cgu BASE_SDIO_CLK>;
++		clock-names = "base_audio_clk", "base_uart3_clk",
++			      "base_uart2_clk", "base_uart1_clk",
++			      "base_uart0_clk", "base_ssp1_clk",
++			      "base_ssp0_clk",  "base_sdio_clk";
++	};
++
++	/* A user of CCU brach clocks */
++	uart1: serial@40082000 {
++		...
++		clocks = <&ccu2 CLK_APB0_UART1>, <&ccu1 CLK_CPU_UART1>;
++		...
++	};
++};
 -- 
-2.4.1
+1.8.0
