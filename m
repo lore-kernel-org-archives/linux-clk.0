@@ -1,34 +1,76 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Date: Fri, 15 May 2015 11:09:36 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>
-Subject: Re: [PATCH v2 5/5] cpufreq: arm_big_little: add SCPI interface driver
-Message-ID: <20150515053936.GI6348@linux>
-References: <1431618155-3132-1-git-send-email-sudeep.holla@arm.com>
- <1431618155-3132-6-git-send-email-sudeep.holla@arm.com>
- <4255582.h4bFD3eA9g@vostro.rjw.lan>
+Return-Path: <Aisheng.Dong@freescale.com>
+Date: Thu, 28 May 2015 16:25:01 +0800
+From: Dong Aisheng <b29396@freescale.com>
+To: Michael Turquette <mturquette@linaro.org>
+CC: Dong Aisheng <aisheng.dong@freescale.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<shawn.guo@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+	<Ranjani.Vaidyanathan@freescale.com>, <b20596@freescale.com>,
+	<r64343@freescale.com>, <b20788@freescale.com>
+Subject: Re: [PATCH v2 1/5] clk: remove duplicated code with
+ __clk_set_parent_after
+Message-ID: <20150528082459.GA4489@shlinux1.ap.freescale.net>
+References: <1431610143-21853-1-git-send-email-aisheng.dong@freescale.com>
+ <1431610143-21853-2-git-send-email-aisheng.dong@freescale.com>
+ <20150528040919.22384.79189@quantum>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <4255582.h4bFD3eA9g@vostro.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20150528040919.22384.79189@quantum>
+Return-Path: b29396@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 15-05-15, 00:03, Rafael J. Wysocki wrote:
-> > + * SCPI CPUFreq Interface driver
+On Wed, May 27, 2015 at 09:09:19PM -0700, Michael Turquette wrote:
+> Quoting Dong Aisheng (2015-05-14 06:28:59)
+> > __clk_set_parent_after() actually used the second argument then we
+> > could put this duplicate logic in there and call it with a different
+> > order of arguments in the success vs. error paths in this function.
+> > 
+> > Cc: Mike Turquette <mturquette@linaro.org>
+> > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+> > Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
 > 
-> It would be good to expand the TLA here IMO.
+> Patch looks good to me.
 > 
-> The rest I'm leaving to Viresh. :-)
 
-The rest looks fine :)
+Thanks for the review.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Also just noticed that the second argument to __clk_set_parent_after is
+> never used :-(
+> 
 
--- 
-viresh
+Yes, before this patch series, it's never used. :)
+
+Regards
+Dong Aisheng
+
+> Regards,
+> Mike
+> 
+> > ---
+> >  drivers/clk/clk.c | 8 +-------
+> >  1 file changed, 1 insertion(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 659f2b0..0e813ea 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -1159,14 +1159,8 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
+> >                 flags = clk_enable_lock();
+> >                 clk_reparent(core, old_parent);
+> >                 clk_enable_unlock(flags);
+> > +               __clk_set_parent_after(core, old_parent, parent);
+> >  
+> > -               if (core->prepare_count) {
+> > -                       flags = clk_enable_lock();
+> > -                       clk_core_disable(core);
+> > -                       clk_core_disable(parent);
+> > -                       clk_enable_unlock(flags);
+> > -                       clk_core_unprepare(parent);
+> > -               }
+> >                 return ret;
+> >         }
+> >  
+> > -- 
+> > 1.9.1
+> > 
