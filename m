@@ -1,228 +1,115 @@
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Return-Path: <sebastian.hesselbarth@gmail.com>
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Michael Welling <mwelling@ieee.org>,
-	Russell King <rmk+linux@arm.linux.org.uk>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] clk: si5351: Do not pass struct clk in platform_data
-Date: Mon,  4 May 2015 23:04:16 +0200
-Message-Id: <1430773456-15203-4-git-send-email-sebastian.hesselbarth@gmail.com>
-In-Reply-To: <1430773456-15203-1-git-send-email-sebastian.hesselbarth@gmail.com>
-References: <1430773456-15203-1-git-send-email-sebastian.hesselbarth@gmail.com>
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 0/5] Clk drivers for NXP LPC18xx family
+Date: Thu, 28 May 2015 22:31:42 +0200
+Message-Id: <1432845107-12458-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-When registering clk-si5351 by platform_data, we should not pass struct clk
-for the reference clocks. Drop struct clk from platform_data and rework the
-driver to use devm_clk_get of named clock references.
+This patch set adds support for the two main clock peripherals in the
+LPC18xx/43xx MCU family.
 
-While at it, check for at least one valid input clock and properly prepare/
-enable valid reference clocks.
+The Clock Generation Unit (CGU) is the base source of all clocks. It has
+five external inputs and contains PLLs, dividers and muxes. The outputs
+from the CGU are then routed to a Clock Control Unit (CCU) and a few
+peripherals directly. There are two CCUs in the MCU. The CCU is a
+collection of gates and a few dividers that sits between the CGU and
+most of the peripherals. These clock drivers are needed by the timer at
+early boot so both are using CLK_OF_DECLARE.
 
-Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Reported-by: Michael Welling <mwelling@ieee.org>
-Reported-by: Jean-Francois Moine <moinejf@free.fr>
-Reported-by: Russell King <rmk+linux@arm.linux.org.uk>
-Tested-by: Michael Welling <mwelling@ieee.org>
-Tested-by: Jean-Francois Moine <moinejf@free.fr>
----
-Changelog:
-v1->v2:
-- Reword parent clock check error message and add a comment about
-  the required parent clocks per variant. (Suggested by Fabio Estevam)
+Which clocks that are available depends on the specific device and it's
+peripherals. It's possible in DT to setup the routing between the CGU
+and the CCUs.
 
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jean-Francois Moine <moinejf@free.fr>
-Cc: Michael Welling <mwelling@ieee.org>
-Cc: Russell King <rmk+linux@arm.linux.org.uk>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Gregory Clement <gregory.clement@free-electrons.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/clk-si5351.c             | 63 +++++++++++++++++++++++++-----------
- include/linux/platform_data/si5351.h |  4 ---
- 2 files changed, 45 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 44ea107cfc67..30335d3b99af 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -1128,13 +1128,6 @@ static int si5351_dt_parse(struct i2c_client *client,
- 	if (!pdata)
- 		return -ENOMEM;
- 
--	pdata->clk_xtal = of_clk_get(np, 0);
--	if (!IS_ERR(pdata->clk_xtal))
--		clk_put(pdata->clk_xtal);
--	pdata->clk_clkin = of_clk_get(np, 1);
--	if (!IS_ERR(pdata->clk_clkin))
--		clk_put(pdata->clk_clkin);
--
- 	/*
- 	 * property silabs,pll-source : <num src>, [<..>]
- 	 * allow to selectively set pll source
-@@ -1328,8 +1321,22 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 	i2c_set_clientdata(client, drvdata);
- 	drvdata->client = client;
- 	drvdata->variant = variant;
--	drvdata->pxtal = pdata->clk_xtal;
--	drvdata->pclkin = pdata->clk_clkin;
-+	drvdata->pxtal = devm_clk_get(&client->dev, "xtal");
-+	drvdata->pclkin = devm_clk_get(&client->dev, "clkin");
-+
-+	if (PTR_ERR(drvdata->pxtal) == -EPROBE_DEFER ||
-+	    PTR_ERR(drvdata->pclkin) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
-+	/*
-+	 * Check for valid parent clock: VARIANT_A and VARIANT_B need XTAL,
-+	 *   VARIANT_C can have CLKIN instead.
-+	 */
-+	if (IS_ERR(drvdata->pxtal) &&
-+	    (drvdata->variant != SI5351_VARIANT_C || IS_ERR(drvdata->pclkin))) {
-+		dev_err(&client->dev, "missing parent clock\n");
-+		return -EINVAL;
-+	}
- 
- 	drvdata->regmap = devm_regmap_init_i2c(client, &si5351_regmap_config);
- 	if (IS_ERR(drvdata->regmap)) {
-@@ -1393,6 +1400,11 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 		}
- 	}
- 
-+	if (!IS_ERR(drvdata->pxtal))
-+		clk_prepare_enable(drvdata->pxtal);
-+	if (!IS_ERR(drvdata->pclkin))
-+		clk_prepare_enable(drvdata->pclkin);
-+
- 	/* register xtal input clock gate */
- 	memset(&init, 0, sizeof(init));
- 	init.name = si5351_input_names[0];
-@@ -1407,7 +1419,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 	clk = devm_clk_register(&client->dev, &drvdata->xtal);
- 	if (IS_ERR(clk)) {
- 		dev_err(&client->dev, "unable to register %s\n", init.name);
--		return PTR_ERR(clk);
-+		ret = PTR_ERR(clk);
-+		goto err_clk;
- 	}
- 
- 	/* register clkin input clock gate */
-@@ -1425,7 +1438,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 		if (IS_ERR(clk)) {
- 			dev_err(&client->dev, "unable to register %s\n",
- 				init.name);
--			return PTR_ERR(clk);
-+			ret = PTR_ERR(clk);
-+			goto err_clk;
- 		}
- 	}
- 
-@@ -1447,7 +1461,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 	clk = devm_clk_register(&client->dev, &drvdata->pll[0].hw);
- 	if (IS_ERR(clk)) {
- 		dev_err(&client->dev, "unable to register %s\n", init.name);
--		return -EINVAL;
-+		ret = PTR_ERR(clk);
-+		goto err_clk;
- 	}
- 
- 	/* register PLLB or VXCO (Si5351B) */
-@@ -1471,7 +1486,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 	clk = devm_clk_register(&client->dev, &drvdata->pll[1].hw);
- 	if (IS_ERR(clk)) {
- 		dev_err(&client->dev, "unable to register %s\n", init.name);
--		return -EINVAL;
-+		ret = PTR_ERR(clk);
-+		goto err_clk;
- 	}
- 
- 	/* register clk multisync and clk out divider */
-@@ -1492,8 +1508,10 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 		num_clocks * sizeof(*drvdata->onecell.clks), GFP_KERNEL);
- 
- 	if (WARN_ON(!drvdata->msynth || !drvdata->clkout ||
--		    !drvdata->onecell.clks))
--		return -ENOMEM;
-+		    !drvdata->onecell.clks)) {
-+		ret = -ENOMEM;
-+		goto err_clk;
-+	}
- 
- 	for (n = 0; n < num_clocks; n++) {
- 		drvdata->msynth[n].num = n;
-@@ -1511,7 +1529,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 		if (IS_ERR(clk)) {
- 			dev_err(&client->dev, "unable to register %s\n",
- 				init.name);
--			return -EINVAL;
-+			ret = PTR_ERR(clk);
-+			goto err_clk;
- 		}
- 	}
- 
-@@ -1538,7 +1557,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 		if (IS_ERR(clk)) {
- 			dev_err(&client->dev, "unable to register %s\n",
- 				init.name);
--			return -EINVAL;
-+			ret = PTR_ERR(clk);
-+			goto err_clk;
- 		}
- 		drvdata->onecell.clks[n] = clk;
- 
-@@ -1557,10 +1577,17 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 				  &drvdata->onecell);
- 	if (ret) {
- 		dev_err(&client->dev, "unable to add clk provider\n");
--		return ret;
-+		goto err_clk;
- 	}
- 
- 	return 0;
-+
-+err_clk:
-+	if (!IS_ERR(drvdata->pxtal))
-+		clk_disable_unprepare(drvdata->pxtal);
-+	if (!IS_ERR(drvdata->pclkin))
-+		clk_disable_unprepare(drvdata->pclkin);
-+	return ret;
- }
- 
- static const struct i2c_device_id si5351_i2c_ids[] = {
-diff --git a/include/linux/platform_data/si5351.h b/include/linux/platform_data/si5351.h
-index a947ab8b441a..533d9807e543 100644
---- a/include/linux/platform_data/si5351.h
-+++ b/include/linux/platform_data/si5351.h
-@@ -5,8 +5,6 @@
- #ifndef __LINUX_PLATFORM_DATA_SI5351_H__
- #define __LINUX_PLATFORM_DATA_SI5351_H__
- 
--struct clk;
--
- /**
-  * enum si5351_pll_src - Si5351 pll clock source
-  * @SI5351_PLL_SRC_DEFAULT: default, do not change eeprom config
-@@ -107,8 +105,6 @@ struct si5351_clkout_config {
-  * @clkout: array of clkout configuration
-  */
- struct si5351_platform_data {
--	struct clk *clk_xtal;
--	struct clk *clk_clkin;
- 	enum si5351_pll_src pll_src[2];
- 	struct si5351_clkout_config clkout[8];
- };
+The biggest change in v4 is the way parent names for CCU clocks are
+stored and how clock branches are selected for registration in the
+CCU driver.
+
+* Parent clock names are now stored together with branch name in the
+clk_branches[] table.
+
+* Selection of which branch clock to register on the two CCU instances
+is determined by the 'clock-names' property. If a clock name matches
+with the parent name in the clk_branches[] table that branch clock is
+registered on the CCU.
+
+Alternativly the clk_branches[] table could be split between the CCUs,
+but there would still be a need to identify the CCU instance. For
+example by using different compatability stings in DT or adding an id
+property to DT.
+
+I belive the best solution is to let the driver decide which branch
+clocks to register based on the clock routing information already
+provided in DT. As mentioned above this is now done by using the
+'clock-names' property and matching strings in the clk_branches[]
+table.
+
+Clock tree can be found here: http://slexy.org/raw/s2I3bIFJxg
+
+
+Changes since v3:
+ - put CCU parent clock names directly in clk_branches[] table
+ - use 'clock-names' property to find figure out which branch
+   clocks to register in CCU driver as oppose to clk id
+ - remove CCU clock list from doc and refer to lpc18xx-ccu.h
+ - remove patch with of_clk_get_index
+
+Changes since v2:
+ - use 'clock-controller' as node name in doc
+ - add patch with of_clk_get_index function
+ - drop 'clock-indices' and 'clock-output-names' from cgu node
+ - move base clock names into cgu driver
+ - use of_clk_get/__clk_get_name in ccu to get parent name for
+   composite clocks.
+ - other misc fixes to ccu driver and cgu doc
+
+Changes since v1:
+ - reorganize cgu clk structs
+ - macros to create cgu clk structs
+ - move drivers to nxp subdir
+ - rebase on v4.1-rc1
+
+
+The last patch (dts changes) are only included in this patch set for
+illustration purposes. DTS changes will be sent separately to the ARM
+SoC team later.
+
+Base support for LPC18xx is now in arm-soc next. Pinctrl, gpio, reset
+and ethernet drivers are also upstream.
+
+
+Joachim Eastwood (5):
+  clk: add lpc18xx cgu clk driver
+  doc: dt: add documentation for lpc1850-cgu clk driver
+  clk: add lpc18xx ccu clk driver
+  doc: dt: add documentation for lpc1850-ccu clk driver
+  ARM: dts: lpc18xx: add clock nodes for cgu and ccu
+
+ .../devicetree/bindings/clock/lpc1850-ccu.txt      |  77 +++
+ .../devicetree/bindings/clock/lpc1850-cgu.txt      | 131 +++++
+ arch/arm/boot/dts/lpc18xx.dtsi                     |  85 ++-
+ arch/arm/boot/dts/lpc4350-hitex-eval.dts           |   4 -
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/nxp/Makefile                           |   2 +
+ drivers/clk/nxp/clk-lpc18xx-ccu.c                  | 293 ++++++++++
+ drivers/clk/nxp/clk-lpc18xx-cgu.c                  | 635 +++++++++++++++++++++
+ include/dt-bindings/clock/lpc18xx-ccu.h            |  74 +++
+ include/dt-bindings/clock/lpc18xx-cgu.h            |  41 ++
+ 10 files changed, 1325 insertions(+), 18 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-ccu.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-cgu.txt
+ create mode 100644 drivers/clk/nxp/Makefile
+ create mode 100644 drivers/clk/nxp/clk-lpc18xx-ccu.c
+ create mode 100644 drivers/clk/nxp/clk-lpc18xx-cgu.c
+ create mode 100644 include/dt-bindings/clock/lpc18xx-ccu.h
+ create mode 100644 include/dt-bindings/clock/lpc18xx-cgu.h
+
 -- 
-2.1.0
+1.8.0
