@@ -1,129 +1,78 @@
-Return-Path: <bintian.wang@huawei.com>
-Message-ID: <555D57BB.8080702@huawei.com>
-Date: Thu, 21 May 2015 11:57:47 +0800
-From: Bintian <bintian.wang@huawei.com>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>, <mturquette@linaro.org>,
-        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
-        <xuejiancheng@huawei.com>, <tomeu.vizoso@collabora.com>,
-        <sledge.yanwei@huawei.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <arnd@arndb.de>, <will.deacon@arm.com>,
-        <robh+dt@kernel.org>, <khilman@linaro.org>, <mark.rutland@arm.com>,
-        <catalin.marinas@arm.com>, <haojian.zhuang@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <olof@lixom.net>,
-        <yanhaifeng@gmail.com>, <linux@arm.linux.org.uk>,
-        <guodong.xu@linaro.org>, <jorge.ramirez-ortiz@linaro.org>,
-        <tyler.baker@linaro.org>, <khilman@kernel.org>
-CC: <xuyiping@hisilicon.com>, <wangbinghui@hisilicon.com>,
-        <zhenwei.wang@hisilicon.com>, <victor.lixin@hisilicon.com>,
-        <puck.chen@hisilicon.com>, <dan.zhao@hisilicon.com>,
-        <huxinwei@huawei.com>, <z.liuxinliang@huawei.com>,
-        <heyunlei@huawei.com>, <kong.kongxinwei@hisilicon.com>,
-        <wangbintian@gmail.com>, <w.f@huawei.com>, <liguozhu@hisilicon.com>
-Subject: Re: [PATCH v7 6/7] clk: hi6220: Clock driver support for Hisilicon
- hi6220 SoC
-References: <1432117752-7074-1-git-send-email-bintian.wang@huawei.com> <1432117752-7074-2-git-send-email-bintian.wang@huawei.com> <555D09F3.7020506@codeaurora.org>
-In-Reply-To: <555D09F3.7020506@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	matthias.bgg@gmail.com
+Cc: henryc.chen@mediatek.com,
+	s.hauer@pengutronix.de,
+	jamesjj.liao@mediatek.com,
+	p.zabel@pengutronix.de,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH 3/3] clk: mediatek: Use regmap clk-mux for mt8135
+Date: Thu, 28 May 2015 20:41:48 +0200
+Message-Id: <1432838508-5184-4-git-send-email-matthias.bgg@gmail.com>
+In-Reply-To: <1432838508-5184-1-git-send-email-matthias.bgg@gmail.com>
+References: <1432838508-5184-1-git-send-email-matthias.bgg@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen, Arnd,
+The pericfg controller is used by various device drivers, so that it
+is implemented via a regmap. In the actual clk implementation for
+mt8135, some clk-mux use the traditional register approach which
+acceses the register via iomem.
+This patch changes the use from iomem to the needed regmap.
 
-On 2015/5/21 6:25, Stephen Boyd wrote:
-> On 05/20/15 03:29, Bintian Wang wrote:
->> Add clock drivers for hi6220 SoC, this driver controls the SoC
->> registers to supply different clocks to different IPs in the SoC.
->>
->> We add one divider clock for hi6220 because the divider in hi6220
->> also has a mask bit but it doesnot obey the rule defined by flag
->> "CLK_DIVIDER_HIWORD_MASK", we can not get index of the mask bit by
->> left shift fixed bits (e.g. 16 bits), so we add this divider clock
->> to handle it.
->>
->> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
->> Signed-off-by: Bintian Wang <bintian.wang@huawei.com>
->> Acked-by: Haojian Zhuang <haojian.zhuang@linaro.org>
->> Reviewed-by: Zhangfei Gao <zhangfei.gao@linaro.org>
->> Tested-by: Will Deacon <will.deacon@arm.com>
->> Tested-by: Tyler Baker <tyler.baker@linaro.org>
->> ---
->>   drivers/clk/Kconfig                       |    2 +
->>   drivers/clk/Makefile                      |    4 +-
->>   drivers/clk/hisilicon/Kconfig             |    6 +
->>   drivers/clk/hisilicon/Makefile            |    3 +-
->>   drivers/clk/hisilicon/clk-hi6220.c        |  291 +++++++++++++++++++++++++++++
->>   drivers/clk/hisilicon/clk.c               |   29 +++
->>   drivers/clk/hisilicon/clk.h               |   17 ++
->>   drivers/clk/hisilicon/clkdivider-hi6220.c |  156 ++++++++++++++++
->>   include/dt-bindings/clock/hi6220-clock.h  |  173 +++++++++++++++++
->>   9 files changed, 677 insertions(+), 4 deletions(-)
->>   create mode 100644 drivers/clk/hisilicon/Kconfig
->>   create mode 100644 drivers/clk/hisilicon/clk-hi6220.c
->>   create mode 100644 drivers/clk/hisilicon/clkdivider-hi6220.c
->>   create mode 100644 include/dt-bindings/clock/hi6220-clock.h
->>
->> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->> index 9897f35..18bb930 100644
->> --- a/drivers/clk/Kconfig
->> +++ b/drivers/clk/Kconfig
->> @@ -150,6 +150,8 @@ config COMMON_CLK_CDCE706
->>   	---help---
->>   	  This driver supports TI CDCE706 programmable 3-PLL clock synthesizer.
->>
->> +source "drivers/clk/hisilicon/Kconfig"
->> +
->>   source "drivers/clk/qcom/Kconfig"
->>
->
-> There's going to be a merge conflict here if this doesn't go through the
-> clk tree.
-Hello Arnd, how about the clk driver of hi6220 goes through the clk
-tree and those dts and arch patches go through arm-soc?
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+---
+ drivers/clk/mediatek/clk-mt8135.c | 21 +++++++--------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
 
-If there is no problem, I will split the clock header file to a
-single patch for your convenience.
->
->>
->> +
->> +static void __init hi6220_clk_sys_init(struct device_node *np)
->> +{
->> +	struct hisi_clock_data *clk_data;
->> +
->> +	clk_data = hisi_clk_init(np, HI6220_SYS_NR_CLKS);
->> +	if (!clk_data)
->> +		return;
->> +
->> +	hisi_clk_register_gate_sep(hi6220_separated_gate_clks_sys,
->> +			ARRAY_SIZE(hi6220_separated_gate_clks_sys), clk_data);
->> +
->> +	hisi_clk_register_mux(hi6220_mux_clks_sys,
->> +			ARRAY_SIZE(hi6220_mux_clks_sys), clk_data);
->> +
->> +	hi6220_clk_register_divider(hi6220_div_clks_sys,
->> +			ARRAY_SIZE(hi6220_div_clks_sys), clk_data);
->> +
->> +	if (!clk_data_ao)
->> +		return;
->> +
->> +	/* enable high speed clock on UART1 mux */
->> +	clk_set_parent(clk_data->clk_data.clks[HI6220_UART1_SRC],
->> +			clk_data_ao->clk_data.clks[HI6220_150M]);
->
-> Sorry I missed this one earlier. Can we do this clk_set_parent() through
-> assigned-parents instead?
-Uart1 has two clock parents in hi6220, and use "clk_tcxo" by default,
-we use uart1 to connect BT in HiKey, and switch to "clk_150m" for high 
-speed mode of BT, but pl011 has no code to set clock rate or set clock
-parents operation, so it's a easy way to do that here.
-
-I expected an #include <linux/clk.h> for the
-> usage of clk_set_parent() here so I didn't look hard to see if consumer
-> APIs were being used.
-OK, I will add in next version 8.
-
-Thanks,
-
-Bintian
->
-> Otherwise the patch looks fine.
->
+diff --git a/drivers/clk/mediatek/clk-mt8135.c b/drivers/clk/mediatek/clk-mt8135.c
+index a63435b..bfb56c6 100644
+--- a/drivers/clk/mediatek/clk-mt8135.c
++++ b/drivers/clk/mediatek/clk-mt8135.c
+@@ -513,11 +513,11 @@ static const char * const uart_ck_sel_parents[] __initconst = {
+ 	"uart_sel",
+ };
+ 
+-static const struct mtk_composite peri_clks[] __initconst = {
+-	MUX(CLK_PERI_UART0_SEL, "uart0_ck_sel", uart_ck_sel_parents, 0x40c, 0, 1),
+-	MUX(CLK_PERI_UART1_SEL, "uart1_ck_sel", uart_ck_sel_parents, 0x40c, 1, 1),
+-	MUX(CLK_PERI_UART2_SEL, "uart2_ck_sel", uart_ck_sel_parents, 0x40c, 2, 1),
+-	MUX(CLK_PERI_UART3_SEL, "uart3_ck_sel", uart_ck_sel_parents, 0x40c, 3, 1),
++static const struct mtk_regm_mux peri_clks[] __initconst = {
++	MUX_REGMAP(CLK_PERI_UART0_SEL, "uart0_ck_sel", uart_ck_sel_parents, 0x40c, 0, 1),
++	MUX_REGMAP(CLK_PERI_UART1_SEL, "uart1_ck_sel", uart_ck_sel_parents, 0x40c, 1, 1),
++	MUX_REGMAP(CLK_PERI_UART2_SEL, "uart2_ck_sel", uart_ck_sel_parents, 0x40c, 2, 1),
++	MUX_REGMAP(CLK_PERI_UART3_SEL, "uart3_ck_sel", uart_ck_sel_parents, 0x40c, 3, 1),
+ };
+ 
+ static void __init mtk_topckgen_init(struct device_node *node)
+@@ -573,20 +573,13 @@ static void __init mtk_pericfg_init(struct device_node *node)
+ {
+ 	struct clk_onecell_data *clk_data;
+ 	int r;
+-	void __iomem *base;
+-
+-	base = of_iomap(node, 0);
+-	if (!base) {
+-		pr_err("%s(): ioremap failed\n", __func__);
+-		return;
+-	}
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_PERI_NR_CLK);
+ 
+ 	mtk_clk_register_gates(node, peri_gates, ARRAY_SIZE(peri_gates),
+ 						clk_data);
+-	mtk_clk_register_composites(peri_clks, ARRAY_SIZE(peri_clks), base,
+-			&mt8135_clk_lock, clk_data);
++	mtk_clk_regm_register_mux(node, peri_clks, ARRAY_SIZE(peri_clks),
++			clk_data);
+ 
+ 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+ 	if (r)
+-- 
+1.9.1
