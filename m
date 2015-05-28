@@ -1,768 +1,915 @@
-Return-Path: <mathieu@codeaurora.org>
-From: Mathieu Olivari <mathieu@codeaurora.org>
-To: robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	peppe.cavallaro@st.com,
-	mathieu@codeaurora.org,
-	agross@codeaurora.org,
-	joshc@codeaurora.org,
-	architt@codeaurora.org,
-	georgi.djakov@linaro.org,
-	wsa@the-dreams.de,
-	rnayak@codeaurora.org,
-	davem@davemloft.net,
-	vbridger@opensource.altera.com
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <ukl@pengutronix.de>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michal Simek <michal.simek@xilinx.com>,
+	kernel@pengutronix.de,
 	linux-clk@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH 1/5] clk: qcom: Add support for NSS/GMAC clocks and resets
-Date: Tue, 26 May 2015 12:27:13 -0700
-Message-Id: <1432668437-27763-2-git-send-email-mathieu@codeaurora.org>
-In-Reply-To: <1432668437-27763-1-git-send-email-mathieu@codeaurora.org>
-References: <1432668437-27763-1-git-send-email-mathieu@codeaurora.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] clk: make several parent names const
+Date: Thu, 28 May 2015 10:45:51 +0200
+Message-Id: <1432802751-6397-1-git-send-email-u.kleine-koenig@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Since commit 2893c379461a ("clk: make strings in parent name arrays
+const") the name of parent clocks can be const. So add more const in
+several clock drivers.
 
-Add the NSS/GMAC clocks and the TCM clock and NSS resets.
-
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/clk/qcom/gcc-ipq806x.c               | 594 ++++++++++++++++++++++++++-
- include/dt-bindings/clock/qcom,gcc-ipq806x.h |   2 +
- include/dt-bindings/reset/qcom,gcc-ipq806x.h |  43 ++
- 3 files changed, 638 insertions(+), 1 deletion(-)
+Hello,
 
-diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-index a50936a..5639699 100644
---- a/drivers/clk/qcom/gcc-ipq806x.c
-+++ b/drivers/clk/qcom/gcc-ipq806x.c
-@@ -140,12 +140,47 @@ static struct clk_regmap pll14_vote = {
- 	},
+commit 2893c379461a isn't in Linus Torvald's tree yet, so the commit
+message needs adaption if clk-next is rewritten.
+
+Should I split this patch per subdir?
+
+Best regards
+Uwe
+
+ drivers/clk/hisilicon/clk-hi3620.c   | 70 ++++++++++++++--------------
+ drivers/clk/hisilicon/clk-hix5hd2.c  |  6 +--
+ drivers/clk/hisilicon/clk.h          |  2 +-
+ drivers/clk/mxs/clk-imx23.c          | 12 ++---
+ drivers/clk/mxs/clk-imx28.c          | 18 ++++----
+ drivers/clk/mxs/clk.h                |  2 +-
+ drivers/clk/pxa/clk-pxa.h            |  2 +-
+ drivers/clk/rockchip/clk-cpu.c       |  2 +-
+ drivers/clk/rockchip/clk-mmc-phase.c |  2 +-
+ drivers/clk/rockchip/clk-pll.c       |  8 ++--
+ drivers/clk/rockchip/clk.c           |  8 ++--
+ drivers/clk/rockchip/clk.h           | 20 ++++----
+ drivers/clk/samsung/clk-pll.c        |  4 +-
+ drivers/clk/samsung/clk-s5pv210.c    | 88 ++++++++++++++++++------------------
+ drivers/clk/samsung/clk.c            | 13 +++---
+ drivers/clk/samsung/clk.h            | 18 ++++----
+ drivers/clk/zynq/clkc.c              | 25 ++++++----
+ 17 files changed, 154 insertions(+), 146 deletions(-)
+
+diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
+index 472dd2cb10b3..715d34a5ef9b 100644
+--- a/drivers/clk/hisilicon/clk-hi3620.c
++++ b/drivers/clk/hisilicon/clk-hi3620.c
+@@ -38,44 +38,44 @@
+ #include "clk.h"
+ 
+ /* clock parent list */
+-static const char *timer0_mux_p[] __initdata = { "osc32k", "timerclk01", };
+-static const char *timer1_mux_p[] __initdata = { "osc32k", "timerclk01", };
+-static const char *timer2_mux_p[] __initdata = { "osc32k", "timerclk23", };
+-static const char *timer3_mux_p[] __initdata = { "osc32k", "timerclk23", };
+-static const char *timer4_mux_p[] __initdata = { "osc32k", "timerclk45", };
+-static const char *timer5_mux_p[] __initdata = { "osc32k", "timerclk45", };
+-static const char *timer6_mux_p[] __initdata = { "osc32k", "timerclk67", };
+-static const char *timer7_mux_p[] __initdata = { "osc32k", "timerclk67", };
+-static const char *timer8_mux_p[] __initdata = { "osc32k", "timerclk89", };
+-static const char *timer9_mux_p[] __initdata = { "osc32k", "timerclk89", };
+-static const char *uart0_mux_p[] __initdata = { "osc26m", "pclk", };
+-static const char *uart1_mux_p[] __initdata = { "osc26m", "pclk", };
+-static const char *uart2_mux_p[] __initdata = { "osc26m", "pclk", };
+-static const char *uart3_mux_p[] __initdata = { "osc26m", "pclk", };
+-static const char *uart4_mux_p[] __initdata = { "osc26m", "pclk", };
+-static const char *spi0_mux_p[] __initdata = { "osc26m", "rclk_cfgaxi", };
+-static const char *spi1_mux_p[] __initdata = { "osc26m", "rclk_cfgaxi", };
+-static const char *spi2_mux_p[] __initdata = { "osc26m", "rclk_cfgaxi", };
++static const char *const timer0_mux_p[] __initconst = { "osc32k", "timerclk01", };
++static const char *const timer1_mux_p[] __initconst = { "osc32k", "timerclk01", };
++static const char *const timer2_mux_p[] __initconst = { "osc32k", "timerclk23", };
++static const char *const timer3_mux_p[] __initconst = { "osc32k", "timerclk23", };
++static const char *const timer4_mux_p[] __initconst = { "osc32k", "timerclk45", };
++static const char *const timer5_mux_p[] __initconst = { "osc32k", "timerclk45", };
++static const char *const timer6_mux_p[] __initconst = { "osc32k", "timerclk67", };
++static const char *const timer7_mux_p[] __initconst = { "osc32k", "timerclk67", };
++static const char *const timer8_mux_p[] __initconst = { "osc32k", "timerclk89", };
++static const char *const timer9_mux_p[] __initconst = { "osc32k", "timerclk89", };
++static const char *const uart0_mux_p[] __initconst = { "osc26m", "pclk", };
++static const char *const uart1_mux_p[] __initconst = { "osc26m", "pclk", };
++static const char *const uart2_mux_p[] __initconst = { "osc26m", "pclk", };
++static const char *const uart3_mux_p[] __initconst = { "osc26m", "pclk", };
++static const char *const uart4_mux_p[] __initconst = { "osc26m", "pclk", };
++static const char *const spi0_mux_p[] __initconst = { "osc26m", "rclk_cfgaxi", };
++static const char *const spi1_mux_p[] __initconst = { "osc26m", "rclk_cfgaxi", };
++static const char *const spi2_mux_p[] __initconst = { "osc26m", "rclk_cfgaxi", };
+ /* share axi parent */
+-static const char *saxi_mux_p[] __initdata = { "armpll3", "armpll2", };
+-static const char *pwm0_mux_p[] __initdata = { "osc32k", "osc26m", };
+-static const char *pwm1_mux_p[] __initdata = { "osc32k", "osc26m", };
+-static const char *sd_mux_p[] __initdata = { "armpll2", "armpll3", };
+-static const char *mmc1_mux_p[] __initdata = { "armpll2", "armpll3", };
+-static const char *mmc1_mux2_p[] __initdata = { "osc26m", "mmc1_div", };
+-static const char *g2d_mux_p[] __initdata = { "armpll2", "armpll3", };
+-static const char *venc_mux_p[] __initdata = { "armpll2", "armpll3", };
+-static const char *vdec_mux_p[] __initdata = { "armpll2", "armpll3", };
+-static const char *vpp_mux_p[] __initdata = { "armpll2", "armpll3", };
+-static const char *edc0_mux_p[] __initdata = { "armpll2", "armpll3", };
+-static const char *ldi0_mux_p[] __initdata = { "armpll2", "armpll4",
++static const char *const saxi_mux_p[] __initconst = { "armpll3", "armpll2", };
++static const char *const pwm0_mux_p[] __initconst = { "osc32k", "osc26m", };
++static const char *const pwm1_mux_p[] __initconst = { "osc32k", "osc26m", };
++static const char *const sd_mux_p[] __initconst = { "armpll2", "armpll3", };
++static const char *const mmc1_mux_p[] __initconst = { "armpll2", "armpll3", };
++static const char *const mmc1_mux2_p[] __initconst = { "osc26m", "mmc1_div", };
++static const char *const g2d_mux_p[] __initconst = { "armpll2", "armpll3", };
++static const char *const venc_mux_p[] __initconst = { "armpll2", "armpll3", };
++static const char *const vdec_mux_p[] __initconst = { "armpll2", "armpll3", };
++static const char *const vpp_mux_p[] __initconst = { "armpll2", "armpll3", };
++static const char *const edc0_mux_p[] __initconst = { "armpll2", "armpll3", };
++static const char *const ldi0_mux_p[] __initconst = { "armpll2", "armpll4",
+ 					     "armpll3", "armpll5", };
+-static const char *edc1_mux_p[] __initdata = { "armpll2", "armpll3", };
+-static const char *ldi1_mux_p[] __initdata = { "armpll2", "armpll4",
++static const char *const edc1_mux_p[] __initconst = { "armpll2", "armpll3", };
++static const char *const ldi1_mux_p[] __initconst = { "armpll2", "armpll4",
+ 					     "armpll3", "armpll5", };
+-static const char *rclk_hsic_p[] __initdata = { "armpll3", "armpll2", };
+-static const char *mmc2_mux_p[] __initdata = { "armpll2", "armpll3", };
+-static const char *mmc3_mux_p[] __initdata = { "armpll2", "armpll3", };
++static const char *const rclk_hsic_p[] __initconst = { "armpll3", "armpll2", };
++static const char *const mmc2_mux_p[] __initconst = { "armpll2", "armpll3", };
++static const char *const mmc3_mux_p[] __initconst = { "armpll2", "armpll3", };
+ 
+ 
+ /* fixed rate clocks */
+diff --git a/drivers/clk/hisilicon/clk-hix5hd2.c b/drivers/clk/hisilicon/clk-hix5hd2.c
+index f1d239435826..d8915a02c661 100644
+--- a/drivers/clk/hisilicon/clk-hix5hd2.c
++++ b/drivers/clk/hisilicon/clk-hix5hd2.c
+@@ -46,15 +46,15 @@ static struct hisi_fixed_rate_clock hix5hd2_fixed_rate_clks[] __initdata = {
+ 	{ HIX5HD2_FIXED_83M, "83m", NULL, CLK_IS_ROOT, 83333333, },
  };
  
-+#define NSS_PLL_RATE(f, _l, _m, _n, i) \
-+	{  \
-+		.freq = f,  \
-+		.l = _l, \
-+		.m = _m, \
-+		.n = _n, \
-+		.ibits = i, \
-+	}
-+
-+static struct pll_freq_tbl pll18_freq_tbl[] = {
-+	NSS_PLL_RATE(550000000, 44, 0, 1, 0x01495625),
-+	NSS_PLL_RATE(733000000, 58, 16, 25, 0x014b5625),
-+};
-+
-+static struct clk_pll pll18 = {
-+	.l_reg = 0x31a4,
-+	.m_reg = 0x31a8,
-+	.n_reg = 0x31ac,
-+	.config_reg = 0x31b4,
-+	.mode_reg = 0x31a0,
-+	.status_reg = 0x31b8,
-+	.status_bit = 16,
-+	.post_div_shift = 16,
-+	.post_div_width = 1,
-+	.freq_tbl = pll18_freq_tbl,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "pll18",
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.ops = &clk_pll_ops,
-+	},
-+};
-+
- enum {
- 	P_PXO,
- 	P_PLL8,
- 	P_PLL3,
- 	P_PLL0,
- 	P_CXO,
-+	P_PLL14,
-+	P_PLL18,
- };
+-static const char *sfc_mux_p[] __initdata = {
++static const char *const sfc_mux_p[] __initconst = {
+ 		"24m", "150m", "200m", "100m", "75m", };
+ static u32 sfc_mux_table[] = {0, 4, 5, 6, 7};
  
- static const struct parent_map gcc_pxo_pll8_map[] = {
-@@ -197,6 +232,22 @@ static const char *gcc_pxo_pll8_pll0_map[] = {
- 	"pll0_vote",
- };
+-static const char *sdio_mux_p[] __initdata = {
++static const char *const sdio_mux_p[] __initconst = {
+ 		"75m", "100m", "50m", "15m", };
+ static u32 sdio_mux_table[] = {0, 1, 2, 3};
  
-+static const struct parent_map gcc_pxo_pll8_pll14_pll18_pll0_map[] = {
-+	{ P_PXO, 0 },
-+	{ P_PLL8, 4 },
-+	{ P_PLL0, 2 },
-+	{ P_PLL14, 5 },
-+	{ P_PLL18, 1 }
-+};
-+
-+static const char *gcc_pxo_pll8_pll14_pll18_pll0[] = {
-+	"pxo",
-+	"pll8_vote",
-+	"pll0_vote",
-+	"pll14",
-+	"pll18",
-+};
-+
- static struct freq_tbl clk_tbl_gsbi_uart[] = {
- 	{  1843200, P_PLL8, 2,  6, 625 },
- 	{  3686400, P_PLL8, 2, 12, 625 },
-@@ -2202,6 +2253,472 @@ static struct clk_branch ebi2_aon_clk = {
- 	},
- };
+-static const char *fephy_mux_p[] __initdata = { "25m", "125m"};
++static const char *const fephy_mux_p[] __initconst = { "25m", "125m"};
+ static u32 fephy_mux_table[] = {0, 1};
  
-+static const struct freq_tbl clk_tbl_gmac[] = {
-+	{ 133000000, P_PLL0, 1,  50, 301 },
-+	{ 266000000, P_PLL0, 1, 127, 382 },
-+	{ }
-+};
-+
-+static struct clk_dyn_rcg gmac_core1_src = {
-+	.ns_reg[0] = 0x3cac,
-+	.ns_reg[1] = 0x3cb0,
-+	.md_reg[0] = 0x3ca4,
-+	.md_reg[1] = 0x3ca8,
-+	.bank_reg = 0x3ca0,
-+	.mn[0] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.mn[1] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_gmac,
-+	.clkr = {
-+		.enable_reg = 0x3ca0,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core1_src",
-+			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
-+			.num_parents = 5,
-+			.ops = &clk_dyn_rcg_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gmac_core1_clk = {
-+	.halt_reg = 0x3c20,
-+	.halt_bit = 4,
-+	.hwcg_reg = 0x3cb4,
-+	.hwcg_bit = 6,
-+	.clkr = {
-+		.enable_reg = 0x3cb4,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core1_clk",
-+			.parent_names = (const char *[]){
-+				"gmac_core1_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_dyn_rcg gmac_core2_src = {
-+	.ns_reg[0] = 0x3ccc,
-+	.ns_reg[1] = 0x3cd0,
-+	.md_reg[0] = 0x3cc4,
-+	.md_reg[1] = 0x3cc8,
-+	.bank_reg = 0x3ca0,
-+	.mn[0] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.mn[1] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_gmac,
-+	.clkr = {
-+		.enable_reg = 0x3cc0,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core2_src",
-+			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
-+			.num_parents = 5,
-+			.ops = &clk_dyn_rcg_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gmac_core2_clk = {
-+	.halt_reg = 0x3c20,
-+	.halt_bit = 5,
-+	.hwcg_reg = 0x3cd4,
-+	.hwcg_bit = 6,
-+	.clkr = {
-+		.enable_reg = 0x3cd4,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core2_clk",
-+			.parent_names = (const char *[]){
-+				"gmac_core2_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_dyn_rcg gmac_core3_src = {
-+	.ns_reg[0] = 0x3cec,
-+	.ns_reg[1] = 0x3cf0,
-+	.md_reg[0] = 0x3ce4,
-+	.md_reg[1] = 0x3ce8,
-+	.bank_reg = 0x3ce0,
-+	.mn[0] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.mn[1] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_gmac,
-+	.clkr = {
-+		.enable_reg = 0x3ce0,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core3_src",
-+			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
-+			.num_parents = 5,
-+			.ops = &clk_dyn_rcg_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gmac_core3_clk = {
-+	.halt_reg = 0x3c20,
-+	.halt_bit = 6,
-+	.hwcg_reg = 0x3cf4,
-+	.hwcg_bit = 6,
-+	.clkr = {
-+		.enable_reg = 0x3cf4,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core3_clk",
-+			.parent_names = (const char *[]){
-+				"gmac_core3_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_dyn_rcg gmac_core4_src = {
-+	.ns_reg[0] = 0x3d0c,
-+	.ns_reg[1] = 0x3d10,
-+	.md_reg[0] = 0x3d04,
-+	.md_reg[1] = 0x3d08,
-+	.bank_reg = 0x3d00,
-+	.mn[0] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.mn[1] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_gmac,
-+	.clkr = {
-+		.enable_reg = 0x3d00,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core4_src",
-+			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
-+			.num_parents = 5,
-+			.ops = &clk_dyn_rcg_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gmac_core4_clk = {
-+	.halt_reg = 0x3c20,
-+	.halt_bit = 7,
-+	.hwcg_reg = 0x3d14,
-+	.hwcg_bit = 6,
-+	.clkr = {
-+		.enable_reg = 0x3d14,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gmac_core4_clk",
-+			.parent_names = (const char *[]){
-+				"gmac_core4_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static const struct freq_tbl clk_tbl_nss_tcm[] = {
-+	{ 266000000, P_PLL0, 3, 0, 0 },
-+	{ 400000000, P_PLL0, 2, 0, 0 },
-+	{ }
-+};
-+
-+static struct clk_dyn_rcg nss_tcm_src = {
-+	.ns_reg[0] = 0x3dc4,
-+	.ns_reg[1] = 0x3dc8,
-+	.bank_reg = 0x3dc0,
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 4,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 4,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_nss_tcm,
-+	.clkr = {
-+		.enable_reg = 0x3dc0,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "nss_tcm_src",
-+			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
-+			.num_parents = 5,
-+			.ops = &clk_dyn_rcg_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch nss_tcm_clk = {
-+	.halt_reg = 0x3c20,
-+	.halt_bit = 14,
-+	.clkr = {
-+		.enable_reg = 0x3dd0,
-+		.enable_mask = BIT(6) | BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "nss_tcm_clk",
-+			.parent_names = (const char *[]){
-+				"nss_tcm_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static const struct freq_tbl clk_tbl_nss[] = {
-+	{ 110000000, P_PLL18, 1, 1, 5 },
-+	{ 275000000, P_PLL18, 2, 0, 0 },
-+	{ 550000000, P_PLL18, 1, 0, 0 },
-+	{ 733000000, P_PLL18, 1, 0, 0 },
-+	{ }
-+};
-+
-+static struct clk_dyn_rcg ubi32_core1_src_clk = {
-+	.ns_reg[0] = 0x3d2c,
-+	.ns_reg[1] = 0x3d30,
-+	.md_reg[0] = 0x3d24,
-+	.md_reg[1] = 0x3d28,
-+	.bank_reg = 0x3d20,
-+	.mn[0] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.mn[1] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_nss,
-+	.clkr = {
-+		.enable_reg = 0x3d20,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ubi32_core1_src_clk",
-+			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
-+			.num_parents = 5,
-+			.ops = &clk_dyn_rcg_ops,
-+			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+		},
-+	},
-+};
-+
-+static struct clk_dyn_rcg ubi32_core2_src_clk = {
-+	.ns_reg[0] = 0x3d4c,
-+	.ns_reg[1] = 0x3d50,
-+	.md_reg[0] = 0x3d44,
-+	.md_reg[1] = 0x3d48,
-+	.bank_reg = 0x3d40,
-+	.mn[0] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.mn[1] = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 8,
-+	},
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll14_pll18_pll0_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_nss,
-+	.clkr = {
-+		.enable_reg = 0x3d40,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ubi32_core2_src_clk",
-+			.parent_names = gcc_pxo_pll8_pll14_pll18_pll0,
-+			.num_parents = 5,
-+			.ops = &clk_dyn_rcg_ops,
-+			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+		},
-+	},
-+};
-+
- static struct clk_regmap *gcc_ipq806x_clks[] = {
- 	[PLL0] = &pll0.clkr,
- 	[PLL0_VOTE] = &pll0_vote,
-@@ -2211,6 +2728,7 @@ static struct clk_regmap *gcc_ipq806x_clks[] = {
- 	[PLL8_VOTE] = &pll8_vote,
- 	[PLL14] = &pll14.clkr,
- 	[PLL14_VOTE] = &pll14_vote,
-+	[PLL18] = &pll18.clkr,
- 	[GSBI1_UART_SRC] = &gsbi1_uart_src.clkr,
- 	[GSBI1_UART_CLK] = &gsbi1_uart_clk.clkr,
- 	[GSBI2_UART_SRC] = &gsbi2_uart_src.clkr,
-@@ -2307,6 +2825,18 @@ static struct clk_regmap *gcc_ipq806x_clks[] = {
- 	[USB_FS1_SYSTEM_CLK] = &usb_fs1_sys_clk.clkr,
- 	[EBI2_CLK] = &ebi2_clk.clkr,
- 	[EBI2_AON_CLK] = &ebi2_aon_clk.clkr,
-+	[GMAC_CORE1_CLK_SRC] = &gmac_core1_src.clkr,
-+	[GMAC_CORE1_CLK] = &gmac_core1_clk.clkr,
-+	[GMAC_CORE2_CLK_SRC] = &gmac_core2_src.clkr,
-+	[GMAC_CORE2_CLK] = &gmac_core2_clk.clkr,
-+	[GMAC_CORE3_CLK_SRC] = &gmac_core3_src.clkr,
-+	[GMAC_CORE3_CLK] = &gmac_core3_clk.clkr,
-+	[GMAC_CORE4_CLK_SRC] = &gmac_core4_src.clkr,
-+	[GMAC_CORE4_CLK] = &gmac_core4_clk.clkr,
-+	[UBI32_CORE1_CLK_SRC] = &ubi32_core1_src_clk.clkr,
-+	[UBI32_CORE2_CLK_SRC] = &ubi32_core2_src_clk.clkr,
-+	[NSSTCM_CLK_SRC] = &nss_tcm_src.clkr,
-+	[NSSTCM_CLK] = &nss_tcm_clk.clkr,
- };
  
- static const struct qcom_reset_map gcc_ipq806x_resets[] = {
-@@ -2425,6 +2955,48 @@ static const struct qcom_reset_map gcc_ipq806x_resets[] = {
- 	[USB30_1_PHY_RESET] = { 0x3b58, 0 },
- 	[NSSFB0_RESET] = { 0x3b60, 6 },
- 	[NSSFB1_RESET] = { 0x3b60, 7 },
-+	[UBI32_CORE1_CLKRST_CLAMP_RESET] = { 0x3d3c, 3},
-+	[UBI32_CORE1_CLAMP_RESET] = { 0x3d3c, 2 },
-+	[UBI32_CORE1_AHB_RESET] = { 0x3d3c, 1 },
-+	[UBI32_CORE1_AXI_RESET] = { 0x3d3c, 0 },
-+	[UBI32_CORE2_CLKRST_CLAMP_RESET] = { 0x3d5c, 3 },
-+	[UBI32_CORE2_CLAMP_RESET] = { 0x3d5c, 2 },
-+	[UBI32_CORE2_AHB_RESET] = { 0x3d5c, 1 },
-+	[UBI32_CORE2_AXI_RESET] = { 0x3d5c, 0 },
-+	[GMAC_CORE1_RESET] = { 0x3cbc, 0 },
-+	[GMAC_CORE2_RESET] = { 0x3cdc, 0 },
-+	[GMAC_CORE3_RESET] = { 0x3cfc, 0 },
-+	[GMAC_CORE4_RESET] = { 0x3d1c, 0 },
-+	[GMAC_AHB_RESET] = { 0x3e24, 0 },
-+	[NSS_CH0_RST_RX_CLK_N_RESET] = { 0x3b60, 0 },
-+	[NSS_CH0_RST_TX_CLK_N_RESET] = { 0x3b60, 1 },
-+	[NSS_CH0_RST_RX_125M_N_RESET] = { 0x3b60, 2 },
-+	[NSS_CH0_HW_RST_RX_125M_N_RESET] = { 0x3b60, 3 },
-+	[NSS_CH0_RST_TX_125M_N_RESET] = { 0x3b60, 4 },
-+	[NSS_CH1_RST_RX_CLK_N_RESET] = { 0x3b60, 5 },
-+	[NSS_CH1_RST_TX_CLK_N_RESET] = { 0x3b60, 6 },
-+	[NSS_CH1_RST_RX_125M_N_RESET] = { 0x3b60, 7 },
-+	[NSS_CH1_HW_RST_RX_125M_N_RESET] = { 0x3b60, 8 },
-+	[NSS_CH1_RST_TX_125M_N_RESET] = { 0x3b60, 9 },
-+	[NSS_CH2_RST_RX_CLK_N_RESET] = { 0x3b60, 10 },
-+	[NSS_CH2_RST_TX_CLK_N_RESET] = { 0x3b60, 11 },
-+	[NSS_CH2_RST_RX_125M_N_RESET] = { 0x3b60, 12 },
-+	[NSS_CH2_HW_RST_RX_125M_N_RESET] = { 0x3b60, 13 },
-+	[NSS_CH2_RST_TX_125M_N_RESET] = { 0x3b60, 14 },
-+	[NSS_CH3_RST_RX_CLK_N_RESET] = { 0x3b60, 15 },
-+	[NSS_CH3_RST_TX_CLK_N_RESET] = { 0x3b60, 16 },
-+	[NSS_CH3_RST_RX_125M_N_RESET] = { 0x3b60, 17 },
-+	[NSS_CH3_HW_RST_RX_125M_N_RESET] = { 0x3b60, 18 },
-+	[NSS_CH3_RST_TX_125M_N_RESET] = { 0x3b60, 19 },
-+	[NSS_RST_RX_250M_125M_N_RESET] = { 0x3b60, 20 },
-+	[NSS_RST_TX_250M_125M_N_RESET] = { 0x3b60, 21 },
-+	[NSS_QSGMII_TXPI_RST_N_RESET] = { 0x3b60, 22 },
-+	[NSS_QSGMII_CDR_RST_N_RESET] = { 0x3b60, 23 },
-+	[NSS_SGMII2_CDR_RST_N_RESET] = { 0x3b60, 24 },
-+	[NSS_SGMII3_CDR_RST_N_RESET] = { 0x3b60, 25 },
-+	[NSS_CAL_PRBS_RST_N_RESET] = { 0x3b60, 26 },
-+	[NSS_LCKDT_RST_N_RESET] = { 0x3b60, 27 },
-+	[NSS_SRDS_N_RESET] = { 0x3b60, 28 },
- };
- 
- static const struct regmap_config gcc_ipq806x_regmap_config = {
-@@ -2453,6 +3025,8 @@ static int gcc_ipq806x_probe(struct platform_device *pdev)
- {
- 	struct clk *clk;
- 	struct device *dev = &pdev->dev;
-+	struct regmap *regmap;
-+	int ret;
- 
- 	/* Temporary until RPM clocks supported */
- 	clk = clk_register_fixed_rate(dev, "cxo", NULL, CLK_IS_ROOT, 25000000);
-@@ -2463,7 +3037,25 @@ static int gcc_ipq806x_probe(struct platform_device *pdev)
- 	if (IS_ERR(clk))
- 		return PTR_ERR(clk);
- 
--	return qcom_cc_probe(pdev, &gcc_ipq806x_desc);
-+	ret = qcom_cc_probe(pdev, &gcc_ipq806x_desc);
-+	if (ret)
-+		return ret;
-+
-+	regmap = dev_get_regmap(dev, NULL);
-+	if (!regmap)
-+		return -ENODEV;
-+
-+	/* Setup PLL18 static bits */
-+	regmap_update_bits(regmap, 0x31a4, 0xffffffc0, 0x40000400);
-+	regmap_write(regmap, 0x31b0, 0x3080);
-+
-+	/* Set GMAC footswitch sleep/wakeup values */
-+	regmap_write(regmap, 0x3cb8, 8);
-+	regmap_write(regmap, 0x3cd8, 8);
-+	regmap_write(regmap, 0x3cf8, 8);
-+	regmap_write(regmap, 0x3d18, 8);
-+
-+	return 0;
+diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
+index 31083ffc0650..7da3261a90a6 100644
+--- a/drivers/clk/hisilicon/clk.h
++++ b/drivers/clk/hisilicon/clk.h
+@@ -55,7 +55,7 @@ struct hisi_fixed_factor_clock {
+ struct hisi_mux_clock {
+ 	unsigned int		id;
+ 	const char		*name;
+-	const char		**parent_names;
++	const char		*const *parent_names;
+ 	u8			num_parents;
+ 	unsigned long		flags;
+ 	unsigned long		offset;
+diff --git a/drivers/clk/mxs/clk-imx23.c b/drivers/clk/mxs/clk-imx23.c
+index 22d136aa699f..32216f9b7f03 100644
+--- a/drivers/clk/mxs/clk-imx23.c
++++ b/drivers/clk/mxs/clk-imx23.c
+@@ -77,12 +77,12 @@ static void __init clk_misc_init(void)
+ 	writel_relaxed(30 << BP_FRAC_IOFRAC, FRAC + SET);
  }
  
- static int gcc_ipq806x_remove(struct platform_device *pdev)
-diff --git a/include/dt-bindings/clock/qcom,gcc-ipq806x.h b/include/dt-bindings/clock/qcom,gcc-ipq806x.h
-index ebd63fd..dc4254b 100644
---- a/include/dt-bindings/clock/qcom,gcc-ipq806x.h
-+++ b/include/dt-bindings/clock/qcom,gcc-ipq806x.h
-@@ -289,5 +289,7 @@
- #define UBI32_CORE1_CLK				279
- #define UBI32_CORE2_CLK				280
- #define EBI2_AON_CLK				281
-+#define NSSTCM_CLK_SRC				282
-+#define NSSTCM_CLK				283
+-static const char *sel_pll[]  __initdata = { "pll", "ref_xtal", };
+-static const char *sel_cpu[]  __initdata = { "ref_cpu", "ref_xtal", };
+-static const char *sel_pix[]  __initdata = { "ref_pix", "ref_xtal", };
+-static const char *sel_io[]   __initdata = { "ref_io", "ref_xtal", };
+-static const char *cpu_sels[] __initdata = { "cpu_pll", "cpu_xtal", };
+-static const char *emi_sels[] __initdata = { "emi_pll", "emi_xtal", };
++static const char *const sel_pll[]  __initconst = { "pll", "ref_xtal", };
++static const char *const sel_cpu[]  __initconst = { "ref_cpu", "ref_xtal", };
++static const char *const sel_pix[]  __initconst = { "ref_pix", "ref_xtal", };
++static const char *const sel_io[]   __initconst = { "ref_io", "ref_xtal", };
++static const char *const cpu_sels[] __initconst = { "cpu_pll", "cpu_xtal", };
++static const char *const emi_sels[] __initconst = { "emi_pll", "emi_xtal", };
  
+ enum imx23_clk {
+ 	ref_xtal, pll, ref_cpu, ref_emi, ref_pix, ref_io, saif_sel,
+diff --git a/drivers/clk/mxs/clk-imx28.c b/drivers/clk/mxs/clk-imx28.c
+index b1be3746ce95..a68670868baa 100644
+--- a/drivers/clk/mxs/clk-imx28.c
++++ b/drivers/clk/mxs/clk-imx28.c
+@@ -125,15 +125,15 @@ static void __init clk_misc_init(void)
+ 	writel_relaxed(val, FRAC0);
+ }
+ 
+-static const char *sel_cpu[]  __initdata = { "ref_cpu", "ref_xtal", };
+-static const char *sel_io0[]  __initdata = { "ref_io0", "ref_xtal", };
+-static const char *sel_io1[]  __initdata = { "ref_io1", "ref_xtal", };
+-static const char *sel_pix[]  __initdata = { "ref_pix", "ref_xtal", };
+-static const char *sel_gpmi[] __initdata = { "ref_gpmi", "ref_xtal", };
+-static const char *sel_pll0[] __initdata = { "pll0", "ref_xtal", };
+-static const char *cpu_sels[] __initdata = { "cpu_pll", "cpu_xtal", };
+-static const char *emi_sels[] __initdata = { "emi_pll", "emi_xtal", };
+-static const char *ptp_sels[] __initdata = { "ref_xtal", "pll0", };
++static const char *const sel_cpu[]  __initconst = { "ref_cpu", "ref_xtal", };
++static const char *const sel_io0[]  __initconst = { "ref_io0", "ref_xtal", };
++static const char *const sel_io1[]  __initconst = { "ref_io1", "ref_xtal", };
++static const char *const sel_pix[]  __initconst = { "ref_pix", "ref_xtal", };
++static const char *const sel_gpmi[] __initconst = { "ref_gpmi", "ref_xtal", };
++static const char *const sel_pll0[] __initconst = { "pll0", "ref_xtal", };
++static const char *const cpu_sels[] __initconst = { "cpu_pll", "cpu_xtal", };
++static const char *const emi_sels[] __initconst = { "emi_pll", "emi_xtal", };
++static const char *const ptp_sels[] __initconst = { "ref_xtal", "pll0", };
+ 
+ enum imx28_clk {
+ 	ref_xtal, pll0, pll1, pll2, ref_cpu, ref_emi, ref_io0, ref_io1,
+diff --git a/drivers/clk/mxs/clk.h b/drivers/clk/mxs/clk.h
+index ef10ad9b5daa..f07d821dd75d 100644
+--- a/drivers/clk/mxs/clk.h
++++ b/drivers/clk/mxs/clk.h
+@@ -49,7 +49,7 @@ static inline struct clk *mxs_clk_gate(const char *name,
+ }
+ 
+ static inline struct clk *mxs_clk_mux(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parent_names, int num_parents)
++		u8 shift, u8 width, const char *const *parent_names, int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parent_names, num_parents,
+ 				CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
+diff --git a/drivers/clk/pxa/clk-pxa.h b/drivers/clk/pxa/clk-pxa.h
+index b04c5b9c0ea8..7bf532dca709 100644
+--- a/drivers/clk/pxa/clk-pxa.h
++++ b/drivers/clk/pxa/clk-pxa.h
+@@ -14,7 +14,7 @@
+ #define _CLK_PXA_
+ 
+ #define PARENTS(name) \
+-	static const char *name ## _parents[] __initdata
++	static const char *const name ## _parents[] __initconst
+ #define MUX_RO_RATE_RO_OPS(name, clk_name)			\
+ 	static struct clk_hw name ## _mux_hw;			\
+ 	static struct clk_hw name ## _rate_hw;			\
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index 8539c4fd34cc..fb7721bd37e6 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -231,7 +231,7 @@ static int rockchip_cpuclk_notifier_cb(struct notifier_block *nb,
+ }
+ 
+ struct clk *rockchip_clk_register_cpuclk(const char *name,
+-			const char **parent_names, u8 num_parents,
++			const char *const *parent_names, u8 num_parents,
+ 			const struct rockchip_cpuclk_reg_data *reg_data,
+ 			const struct rockchip_cpuclk_rate_table *rates,
+ 			int nrates, void __iomem *reg_base, spinlock_t *lock)
+diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+index c842e3b60f21..e9f8df324e7c 100644
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -120,7 +120,7 @@ static const struct clk_ops rockchip_mmc_clk_ops = {
+ };
+ 
+ struct clk *rockchip_clk_register_mmc(const char *name,
+-				const char **parent_names, u8 num_parents,
++				const char *const *parent_names, u8 num_parents,
+ 				void __iomem *reg, int shift)
+ {
+ 	struct clk_init_data init;
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index f8d3baf275b2..76027261f7ed 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -329,10 +329,10 @@ static const struct clk_ops rockchip_rk3066_pll_clk_ops = {
+  */
+ 
+ struct clk *rockchip_clk_register_pll(enum rockchip_pll_type pll_type,
+-		const char *name, const char **parent_names, u8 num_parents,
+-		void __iomem *base, int con_offset, int grf_lock_offset,
+-		int lock_shift, int mode_offset, int mode_shift,
+-		struct rockchip_pll_rate_table *rate_table,
++		const char *name, const char *const *parent_names,
++		u8 num_parents, void __iomem *base, int con_offset,
++		int grf_lock_offset, int lock_shift, int mode_offset,
++		int mode_shift, struct rockchip_pll_rate_table *rate_table,
+ 		u8 clk_pll_flags, spinlock_t *lock)
+ {
+ 	const char *pll_parents[3];
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index edb5d489ae61..052b94db0ff9 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -39,7 +39,7 @@
+  * sometimes without one of those components.
+  */
+ static struct clk *rockchip_clk_register_branch(const char *name,
+-		const char **parent_names, u8 num_parents, void __iomem *base,
++		const char *const *parent_names, u8 num_parents, void __iomem *base,
+ 		int muxdiv_offset, u8 mux_shift, u8 mux_width, u8 mux_flags,
+ 		u8 div_shift, u8 div_width, u8 div_flags,
+ 		struct clk_div_table *div_table, int gate_offset,
+@@ -103,8 +103,8 @@ static struct clk *rockchip_clk_register_branch(const char *name,
+ }
+ 
+ static struct clk *rockchip_clk_register_frac_branch(const char *name,
+-		const char **parent_names, u8 num_parents, void __iomem *base,
+-		int muxdiv_offset, u8 div_flags,
++		const char *const *parent_names, u8 num_parents,
++		void __iomem *base, int muxdiv_offset, u8 div_flags,
+ 		int gate_offset, u8 gate_shift, u8 gate_flags,
+ 		unsigned long flags, spinlock_t *lock)
+ {
+@@ -297,7 +297,7 @@ void __init rockchip_clk_register_branches(
+ }
+ 
+ void __init rockchip_clk_register_armclk(unsigned int lookup_id,
+-			const char *name, const char **parent_names,
++			const char *name, const char *const *parent_names,
+ 			u8 num_parents,
+ 			const struct rockchip_cpuclk_reg_data *reg_data,
+ 			const struct rockchip_cpuclk_rate_table *rates,
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index e63cafe893e1..6b092673048a 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -108,7 +108,7 @@ struct rockchip_pll_rate_table {
+ struct rockchip_pll_clock {
+ 	unsigned int		id;
+ 	const char		*name;
+-	const char		**parent_names;
++	const char		*const *parent_names;
+ 	u8			num_parents;
+ 	unsigned long		flags;
+ 	int			con_offset;
+@@ -140,10 +140,10 @@ struct rockchip_pll_clock {
+ 	}
+ 
+ struct clk *rockchip_clk_register_pll(enum rockchip_pll_type pll_type,
+-		const char *name, const char **parent_names, u8 num_parents,
+-		void __iomem *base, int con_offset, int grf_lock_offset,
+-		int lock_shift, int reg_mode, int mode_shift,
+-		struct rockchip_pll_rate_table *rate_table,
++		const char *name, const char *const *parent_names,
++		u8 num_parents, void __iomem *base, int con_offset,
++		int grf_lock_offset, int lock_shift, int reg_mode,
++		int mode_shift, struct rockchip_pll_rate_table *rate_table,
+ 		u8 clk_pll_flags, spinlock_t *lock);
+ 
+ struct rockchip_cpuclk_clksel {
+@@ -173,16 +173,16 @@ struct rockchip_cpuclk_reg_data {
+ };
+ 
+ struct clk *rockchip_clk_register_cpuclk(const char *name,
+-			const char **parent_names, u8 num_parents,
++			const char *const *parent_names, u8 num_parents,
+ 			const struct rockchip_cpuclk_reg_data *reg_data,
+ 			const struct rockchip_cpuclk_rate_table *rates,
+ 			int nrates, void __iomem *reg_base, spinlock_t *lock);
+ 
+ struct clk *rockchip_clk_register_mmc(const char *name,
+-				const char **parent_names, u8 num_parents,
++				const char *const *parent_names, u8 num_parents,
+ 				void __iomem *reg, int shift);
+ 
+-#define PNAME(x) static const char *x[] __initdata
++#define PNAME(x) static const char *const x[] __initconst
+ 
+ enum rockchip_clk_branch_type {
+ 	branch_composite,
+@@ -197,7 +197,7 @@ struct rockchip_clk_branch {
+ 	unsigned int			id;
+ 	enum rockchip_clk_branch_type	branch_type;
+ 	const char			*name;
+-	const char			**parent_names;
++	const char			*const *parent_names;
+ 	u8				num_parents;
+ 	unsigned long			flags;
+ 	int				muxdiv_offset;
+@@ -403,7 +403,7 @@ void rockchip_clk_register_branches(struct rockchip_clk_branch *clk_list,
+ void rockchip_clk_register_plls(struct rockchip_pll_clock *pll_list,
+ 				unsigned int nr_pll, int grf_lock_offset);
+ void rockchip_clk_register_armclk(unsigned int lookup_id, const char *name,
+-			const char **parent_names, u8 num_parents,
++			const char *const *parent_names, u8 num_parents,
+ 			const struct rockchip_cpuclk_reg_data *reg_data,
+ 			const struct rockchip_cpuclk_rate_table *rates,
+ 			int nrates);
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 9d70e5c03804..bebc61b5fce1 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -1156,7 +1156,7 @@ static const struct clk_ops samsung_pll2650xx_clk_min_ops = {
+ };
+ 
+ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+-				struct samsung_pll_clock *pll_clk,
++				const struct samsung_pll_clock *pll_clk,
+ 				void __iomem *base)
+ {
+ 	struct samsung_clk_pll *pll;
+@@ -1303,7 +1303,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ }
+ 
+ void __init samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+-			struct samsung_pll_clock *pll_list,
++			const struct samsung_pll_clock *pll_list,
+ 			unsigned int nr_pll, void __iomem *base)
+ {
+ 	int cnt;
+diff --git a/drivers/clk/samsung/clk-s5pv210.c b/drivers/clk/samsung/clk-s5pv210.c
+index e668e479a697..cf7e8fa7b624 100644
+--- a/drivers/clk/samsung/clk-s5pv210.c
++++ b/drivers/clk/samsung/clk-s5pv210.c
+@@ -169,44 +169,44 @@ static inline void s5pv210_clk_sleep_init(void) { }
  #endif
-diff --git a/include/dt-bindings/reset/qcom,gcc-ipq806x.h b/include/dt-bindings/reset/qcom,gcc-ipq806x.h
-index 0ad5ef9..de9c814 100644
---- a/include/dt-bindings/reset/qcom,gcc-ipq806x.h
-+++ b/include/dt-bindings/reset/qcom,gcc-ipq806x.h
-@@ -129,4 +129,47 @@
- #define USB30_1_PHY_RESET				112
- #define NSSFB0_RESET					113
- #define NSSFB1_RESET					114
-+#define UBI32_CORE1_CLKRST_CLAMP_RESET			115
-+#define UBI32_CORE1_CLAMP_RESET				116
-+#define UBI32_CORE1_AHB_RESET				117
-+#define UBI32_CORE1_AXI_RESET				118
-+#define UBI32_CORE2_CLKRST_CLAMP_RESET			119
-+#define UBI32_CORE2_CLAMP_RESET				120
-+#define UBI32_CORE2_AHB_RESET				121
-+#define UBI32_CORE2_AXI_RESET				122
-+#define GMAC_CORE1_RESET				123
-+#define GMAC_CORE2_RESET				124
-+#define GMAC_CORE3_RESET				125
-+#define GMAC_CORE4_RESET				126
-+#define GMAC_AHB_RESET					127
-+#define NSS_CH0_RST_RX_CLK_N_RESET			128
-+#define NSS_CH0_RST_TX_CLK_N_RESET			129
-+#define NSS_CH0_RST_RX_125M_N_RESET			130
-+#define NSS_CH0_HW_RST_RX_125M_N_RESET			131
-+#define NSS_CH0_RST_TX_125M_N_RESET			132
-+#define NSS_CH1_RST_RX_CLK_N_RESET			133
-+#define NSS_CH1_RST_TX_CLK_N_RESET			134
-+#define NSS_CH1_RST_RX_125M_N_RESET			135
-+#define NSS_CH1_HW_RST_RX_125M_N_RESET			136
-+#define NSS_CH1_RST_TX_125M_N_RESET			137
-+#define NSS_CH2_RST_RX_CLK_N_RESET			138
-+#define NSS_CH2_RST_TX_CLK_N_RESET			139
-+#define NSS_CH2_RST_RX_125M_N_RESET			140
-+#define NSS_CH2_HW_RST_RX_125M_N_RESET			141
-+#define NSS_CH2_RST_TX_125M_N_RESET			142
-+#define NSS_CH3_RST_RX_CLK_N_RESET			143
-+#define NSS_CH3_RST_TX_CLK_N_RESET			144
-+#define NSS_CH3_RST_RX_125M_N_RESET			145
-+#define NSS_CH3_HW_RST_RX_125M_N_RESET			146
-+#define NSS_CH3_RST_TX_125M_N_RESET			147
-+#define NSS_RST_RX_250M_125M_N_RESET			148
-+#define NSS_RST_TX_250M_125M_N_RESET			149
-+#define NSS_QSGMII_TXPI_RST_N_RESET			150
-+#define NSS_QSGMII_CDR_RST_N_RESET			151
-+#define NSS_SGMII2_CDR_RST_N_RESET			152
-+#define NSS_SGMII3_CDR_RST_N_RESET			153
-+#define NSS_CAL_PRBS_RST_N_RESET			154
-+#define NSS_LCKDT_RST_N_RESET				155
-+#define NSS_SRDS_N_RESET				156
-+
- #endif
+ 
+ /* Mux parent lists. */
+-static const char *fin_pll_p[] __initdata = {
++static const char *const fin_pll_p[] __initconst = {
+ 	"xxti",
+ 	"xusbxti"
+ };
+ 
+-static const char *mout_apll_p[] __initdata = {
++static const char *const mout_apll_p[] __initconst = {
+ 	"fin_pll",
+ 	"fout_apll"
+ };
+ 
+-static const char *mout_mpll_p[] __initdata = {
++static const char *const mout_mpll_p[] __initconst = {
+ 	"fin_pll",
+ 	"fout_mpll"
+ };
+ 
+-static const char *mout_epll_p[] __initdata = {
++static const char *const mout_epll_p[] __initconst = {
+ 	"fin_pll",
+ 	"fout_epll"
+ };
+ 
+-static const char *mout_vpllsrc_p[] __initdata = {
++static const char *const mout_vpllsrc_p[] __initconst = {
+ 	"fin_pll",
+ 	"sclk_hdmi27m"
+ };
+ 
+-static const char *mout_vpll_p[] __initdata = {
++static const char *const mout_vpll_p[] __initconst = {
+ 	"mout_vpllsrc",
+ 	"fout_vpll"
+ };
+ 
+-static const char *mout_group1_p[] __initdata = {
++static const char *const mout_group1_p[] __initconst = {
+ 	"dout_a2m",
+ 	"mout_mpll",
+ 	"mout_epll",
+ 	"mout_vpll"
+ };
+ 
+-static const char *mout_group2_p[] __initdata = {
++static const char *const mout_group2_p[] __initconst = {
+ 	"xxti",
+ 	"xusbxti",
+ 	"sclk_hdmi27m",
+@@ -218,7 +218,7 @@ static const char *mout_group2_p[] __initdata = {
+ 	"mout_vpll",
+ };
+ 
+-static const char *mout_audio0_p[] __initdata = {
++static const char *const mout_audio0_p[] __initconst = {
+ 	"xxti",
+ 	"pcmcdclk0",
+ 	"sclk_hdmi27m",
+@@ -230,7 +230,7 @@ static const char *mout_audio0_p[] __initdata = {
+ 	"mout_vpll",
+ };
+ 
+-static const char *mout_audio1_p[] __initdata = {
++static const char *const mout_audio1_p[] __initconst = {
+ 	"i2scdclk1",
+ 	"pcmcdclk1",
+ 	"sclk_hdmi27m",
+@@ -242,7 +242,7 @@ static const char *mout_audio1_p[] __initdata = {
+ 	"mout_vpll",
+ };
+ 
+-static const char *mout_audio2_p[] __initdata = {
++static const char *const mout_audio2_p[] __initconst = {
+ 	"i2scdclk2",
+ 	"pcmcdclk2",
+ 	"sclk_hdmi27m",
+@@ -254,63 +254,63 @@ static const char *mout_audio2_p[] __initdata = {
+ 	"mout_vpll",
+ };
+ 
+-static const char *mout_spdif_p[] __initdata = {
++static const char *const mout_spdif_p[] __initconst = {
+ 	"dout_audio0",
+ 	"dout_audio1",
+ 	"dout_audio3",
+ };
+ 
+-static const char *mout_group3_p[] __initdata = {
++static const char *const mout_group3_p[] __initconst = {
+ 	"mout_apll",
+ 	"mout_mpll"
+ };
+ 
+-static const char *mout_group4_p[] __initdata = {
++static const char *const mout_group4_p[] __initconst = {
+ 	"mout_mpll",
+ 	"dout_a2m"
+ };
+ 
+-static const char *mout_flash_p[] __initdata = {
++static const char *const mout_flash_p[] __initconst = {
+ 	"dout_hclkd",
+ 	"dout_hclkp"
+ };
+ 
+-static const char *mout_dac_p[] __initdata = {
++static const char *const mout_dac_p[] __initconst = {
+ 	"mout_vpll",
+ 	"sclk_hdmiphy"
+ };
+ 
+-static const char *mout_hdmi_p[] __initdata = {
++static const char *const mout_hdmi_p[] __initconst = {
+ 	"sclk_hdmiphy",
+ 	"dout_tblk"
+ };
+ 
+-static const char *mout_mixer_p[] __initdata = {
++static const char *const mout_mixer_p[] __initconst = {
+ 	"mout_dac",
+ 	"mout_hdmi"
+ };
+ 
+-static const char *mout_vpll_6442_p[] __initdata = {
++static const char *const mout_vpll_6442_p[] __initconst = {
+ 	"fin_pll",
+ 	"fout_vpll"
+ };
+ 
+-static const char *mout_mixer_6442_p[] __initdata = {
++static const char *const mout_mixer_6442_p[] __initconst = {
+ 	"mout_vpll",
+ 	"dout_mixer"
+ };
+ 
+-static const char *mout_d0sync_6442_p[] __initdata = {
++static const char *const mout_d0sync_6442_p[] __initconst = {
+ 	"mout_dsys",
+ 	"div_apll"
+ };
+ 
+-static const char *mout_d1sync_6442_p[] __initdata = {
++static const char *const mout_d1sync_6442_p[] __initconst = {
+ 	"mout_psys",
+ 	"div_apll"
+ };
+ 
+-static const char *mout_group2_6442_p[] __initdata = {
++static const char *const mout_group2_6442_p[] __initconst = {
+ 	"fin_pll",
+ 	"none",
+ 	"none",
+@@ -322,7 +322,7 @@ static const char *mout_group2_6442_p[] __initdata = {
+ 	"mout_vpll",
+ };
+ 
+-static const char *mout_audio0_6442_p[] __initdata = {
++static const char *const mout_audio0_6442_p[] __initconst = {
+ 	"fin_pll",
+ 	"pcmcdclk0",
+ 	"none",
+@@ -334,7 +334,7 @@ static const char *mout_audio0_6442_p[] __initdata = {
+ 	"mout_vpll",
+ };
+ 
+-static const char *mout_audio1_6442_p[] __initdata = {
++static const char *const mout_audio1_6442_p[] __initconst = {
+ 	"i2scdclk1",
+ 	"pcmcdclk1",
+ 	"none",
+@@ -347,7 +347,7 @@ static const char *mout_audio1_6442_p[] __initdata = {
+ 	"fin_pll",
+ };
+ 
+-static const char *mout_clksel_p[] __initdata = {
++static const char *const mout_clksel_p[] __initconst = {
+ 	"fout_apll_clkout",
+ 	"fout_mpll_clkout",
+ 	"fout_epll",
+@@ -370,7 +370,7 @@ static const char *mout_clksel_p[] __initdata = {
+ 	"div_dclk"
+ };
+ 
+-static const char *mout_clksel_6442_p[] __initdata = {
++static const char *const mout_clksel_6442_p[] __initconst = {
+ 	"fout_apll_clkout",
+ 	"fout_mpll_clkout",
+ 	"fout_epll",
+@@ -393,7 +393,7 @@ static const char *mout_clksel_6442_p[] __initdata = {
+ 	"div_dclk"
+ };
+ 
+-static const char *mout_clkout_p[] __initdata = {
++static const char *const mout_clkout_p[] __initconst = {
+ 	"dout_clkout",
+ 	"none",
+ 	"xxti",
+@@ -401,20 +401,20 @@ static const char *mout_clkout_p[] __initdata = {
+ };
+ 
+ /* Common fixed factor clocks. */
+-static struct samsung_fixed_factor_clock ffactor_clks[] __initdata = {
++static const struct samsung_fixed_factor_clock ffactor_clks[] __initconst = {
+ 	FFACTOR(FOUT_APLL_CLKOUT, "fout_apll_clkout", "fout_apll", 1, 4, 0),
+ 	FFACTOR(FOUT_MPLL_CLKOUT, "fout_mpll_clkout", "fout_mpll", 1, 2, 0),
+ 	FFACTOR(DOUT_APLL_CLKOUT, "dout_apll_clkout", "dout_apll", 1, 4, 0),
+ };
+ 
+ /* PLL input mux (fin_pll), which needs to be registered before PLLs. */
+-static struct samsung_mux_clock early_mux_clks[] __initdata = {
++static const struct samsung_mux_clock early_mux_clks[] __initconst = {
+ 	MUX_F(FIN_PLL, "fin_pll", fin_pll_p, OM_STAT, 0, 1,
+ 					CLK_MUX_READ_ONLY, 0),
+ };
+ 
+ /* Common clock muxes. */
+-static struct samsung_mux_clock mux_clks[] __initdata = {
++static const struct samsung_mux_clock mux_clks[] __initconst = {
+ 	MUX(MOUT_FLASH, "mout_flash", mout_flash_p, CLK_SRC0, 28, 1),
+ 	MUX(MOUT_PSYS, "mout_psys", mout_group4_p, CLK_SRC0, 24, 1),
+ 	MUX(MOUT_DSYS, "mout_dsys", mout_group4_p, CLK_SRC0, 20, 1),
+@@ -427,7 +427,7 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
+ };
+ 
+ /* S5PV210-specific clock muxes. */
+-static struct samsung_mux_clock s5pv210_mux_clks[] __initdata = {
++static const struct samsung_mux_clock s5pv210_mux_clks[] __initconst = {
+ 	MUX(MOUT_VPLL, "mout_vpll", mout_vpll_p, CLK_SRC0, 12, 1),
+ 
+ 	MUX(MOUT_VPLLSRC, "mout_vpllsrc", mout_vpllsrc_p, CLK_SRC1, 28, 1),
+@@ -472,7 +472,7 @@ static struct samsung_mux_clock s5pv210_mux_clks[] __initdata = {
+ };
+ 
+ /* S5P6442-specific clock muxes. */
+-static struct samsung_mux_clock s5p6442_mux_clks[] __initdata = {
++static const struct samsung_mux_clock s5p6442_mux_clks[] __initconst = {
+ 	MUX(MOUT_VPLL, "mout_vpll", mout_vpll_6442_p, CLK_SRC0, 12, 1),
+ 
+ 	MUX(MOUT_FIMD, "mout_fimd", mout_group2_6442_p, CLK_SRC1, 20, 4),
+@@ -504,7 +504,7 @@ static struct samsung_mux_clock s5p6442_mux_clks[] __initdata = {
+ };
+ 
+ /* S5PV210-specific fixed rate clocks generated inside the SoC. */
+-static struct samsung_fixed_rate_clock s5pv210_frate_clks[] __initdata = {
++static const struct samsung_fixed_rate_clock s5pv210_frate_clks[] __initconst = {
+ 	FRATE(SCLK_HDMI27M, "sclk_hdmi27m", NULL, CLK_IS_ROOT, 27000000),
+ 	FRATE(SCLK_HDMIPHY, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 27000000),
+ 	FRATE(SCLK_USBPHY0, "sclk_usbphy0", NULL, CLK_IS_ROOT, 48000000),
+@@ -512,12 +512,12 @@ static struct samsung_fixed_rate_clock s5pv210_frate_clks[] __initdata = {
+ };
+ 
+ /* S5P6442-specific fixed rate clocks generated inside the SoC. */
+-static struct samsung_fixed_rate_clock s5p6442_frate_clks[] __initdata = {
++static const struct samsung_fixed_rate_clock s5p6442_frate_clks[] __initconst = {
+ 	FRATE(SCLK_USBPHY0, "sclk_usbphy0", NULL, CLK_IS_ROOT, 30000000),
+ };
+ 
+ /* Common clock dividers. */
+-static struct samsung_div_clock div_clks[] __initdata = {
++static const struct samsung_div_clock div_clks[] __initconst = {
+ 	DIV(DOUT_PCLKP, "dout_pclkp", "dout_hclkp", CLK_DIV0, 28, 3),
+ 	DIV(DOUT_PCLKD, "dout_pclkd", "dout_hclkd", CLK_DIV0, 20, 3),
+ 	DIV(DOUT_A2M, "dout_a2m", "mout_apll", CLK_DIV0, 4, 3),
+@@ -549,7 +549,7 @@ static struct samsung_div_clock div_clks[] __initdata = {
+ };
+ 
+ /* S5PV210-specific clock dividers. */
+-static struct samsung_div_clock s5pv210_div_clks[] __initdata = {
++static const struct samsung_div_clock s5pv210_div_clks[] __initconst = {
+ 	DIV(DOUT_HCLKP, "dout_hclkp", "mout_psys", CLK_DIV0, 24, 4),
+ 	DIV(DOUT_HCLKD, "dout_hclkd", "mout_dsys", CLK_DIV0, 16, 4),
+ 	DIV(DOUT_PCLKM, "dout_pclkm", "dout_hclkm", CLK_DIV0, 12, 3),
+@@ -578,7 +578,7 @@ static struct samsung_div_clock s5pv210_div_clks[] __initdata = {
+ };
+ 
+ /* S5P6442-specific clock dividers. */
+-static struct samsung_div_clock s5p6442_div_clks[] __initdata = {
++static const struct samsung_div_clock s5p6442_div_clks[] __initconst = {
+ 	DIV(DOUT_HCLKP, "dout_hclkp", "mout_d1sync", CLK_DIV0, 24, 4),
+ 	DIV(DOUT_HCLKD, "dout_hclkd", "mout_d0sync", CLK_DIV0, 16, 4),
+ 
+@@ -586,7 +586,7 @@ static struct samsung_div_clock s5p6442_div_clks[] __initdata = {
+ };
+ 
+ /* Common clock gates. */
+-static struct samsung_gate_clock gate_clks[] __initdata = {
++static const struct samsung_gate_clock gate_clks[] __initconst = {
+ 	GATE(CLK_ROTATOR, "rotator", "dout_hclkd", CLK_GATE_IP0, 29, 0, 0),
+ 	GATE(CLK_FIMC2, "fimc2", "dout_hclkd", CLK_GATE_IP0, 26, 0, 0),
+ 	GATE(CLK_FIMC1, "fimc1", "dout_hclkd", CLK_GATE_IP0, 25, 0, 0),
+@@ -666,7 +666,7 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+ };
+ 
+ /* S5PV210-specific clock gates. */
+-static struct samsung_gate_clock s5pv210_gate_clks[] __initdata = {
++static const struct samsung_gate_clock s5pv210_gate_clks[] __initconst = {
+ 	GATE(CLK_CSIS, "clk_csis", "dout_hclkd", CLK_GATE_IP0, 31, 0, 0),
+ 	GATE(CLK_MFC, "mfc", "dout_hclkm", CLK_GATE_IP0, 16, 0, 0),
+ 	GATE(CLK_G2D, "g2d", "dout_hclkd", CLK_GATE_IP0, 12, 0, 0),
+@@ -728,7 +728,7 @@ static struct samsung_gate_clock s5pv210_gate_clks[] __initdata = {
+ };
+ 
+ /* S5P6442-specific clock gates. */
+-static struct samsung_gate_clock s5p6442_gate_clks[] __initdata = {
++static const struct samsung_gate_clock s5p6442_gate_clks[] __initconst = {
+ 	GATE(CLK_JPEG, "jpeg", "dout_hclkd", CLK_GATE_IP0, 28, 0, 0),
+ 	GATE(CLK_MFC, "mfc", "dout_hclkd", CLK_GATE_IP0, 16, 0, 0),
+ 	GATE(CLK_G2D, "g2d", "dout_hclkd", CLK_GATE_IP0, 12, 0, 0),
+@@ -748,14 +748,14 @@ static struct samsung_gate_clock s5p6442_gate_clks[] __initdata = {
+  * Clock aliases for legacy clkdev look-up.
+  * NOTE: Needed only to support legacy board files.
+  */
+-static struct samsung_clock_alias s5pv210_aliases[] = {
++static const struct samsung_clock_alias s5pv210_aliases[] __initconst = {
+ 	ALIAS(DOUT_APLL, NULL, "armclk"),
+ 	ALIAS(DOUT_HCLKM, NULL, "hclk_msys"),
+ 	ALIAS(MOUT_DMC0, NULL, "sclk_dmc0"),
+ };
+ 
+ /* S5PV210-specific PLLs. */
+-static struct samsung_pll_clock s5pv210_pll_clks[] __initdata = {
++static const struct samsung_pll_clock s5pv210_pll_clks[] __initconst = {
+ 	[apll] = PLL(pll_4508, FOUT_APLL, "fout_apll", "fin_pll",
+ 						APLL_LOCK, APLL_CON0, NULL),
+ 	[mpll] = PLL(pll_4502, FOUT_MPLL, "fout_mpll", "fin_pll",
+@@ -767,7 +767,7 @@ static struct samsung_pll_clock s5pv210_pll_clks[] __initdata = {
+ };
+ 
+ /* S5P6442-specific PLLs. */
+-static struct samsung_pll_clock s5p6442_pll_clks[] __initdata = {
++static const struct samsung_pll_clock s5p6442_pll_clks[] __initconst = {
+ 	[apll] = PLL(pll_4502, FOUT_APLL, "fout_apll", "fin_pll",
+ 						APLL_LOCK, APLL_CON0, NULL),
+ 	[mpll] = PLL(pll_4502, FOUT_MPLL, "fout_mpll", "fin_pll",
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index 9e1f88c04fd4..04735921cedf 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -98,7 +98,7 @@ void samsung_clk_add_lookup(struct samsung_clk_provider *ctx, struct clk *clk,
+ 
+ /* register a list of aliases */
+ void __init samsung_clk_register_alias(struct samsung_clk_provider *ctx,
+-				struct samsung_clock_alias *list,
++				const struct samsung_clock_alias *list,
+ 				unsigned int nr_clk)
+ {
+ 	struct clk *clk;
+@@ -132,7 +132,8 @@ void __init samsung_clk_register_alias(struct samsung_clk_provider *ctx,
+ 
+ /* register a list of fixed clocks */
+ void __init samsung_clk_register_fixed_rate(struct samsung_clk_provider *ctx,
+-		struct samsung_fixed_rate_clock *list, unsigned int nr_clk)
++		const struct samsung_fixed_rate_clock *list,
++		unsigned int nr_clk)
+ {
+ 	struct clk *clk;
+ 	unsigned int idx, ret;
+@@ -161,7 +162,7 @@ void __init samsung_clk_register_fixed_rate(struct samsung_clk_provider *ctx,
+ 
+ /* register a list of fixed factor clocks */
+ void __init samsung_clk_register_fixed_factor(struct samsung_clk_provider *ctx,
+-		struct samsung_fixed_factor_clock *list, unsigned int nr_clk)
++		const struct samsung_fixed_factor_clock *list, unsigned int nr_clk)
+ {
+ 	struct clk *clk;
+ 	unsigned int idx;
+@@ -181,7 +182,7 @@ void __init samsung_clk_register_fixed_factor(struct samsung_clk_provider *ctx,
+ 
+ /* register a list of mux clocks */
+ void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
+-				struct samsung_mux_clock *list,
++				const struct samsung_mux_clock *list,
+ 				unsigned int nr_clk)
+ {
+ 	struct clk *clk;
+@@ -213,7 +214,7 @@ void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
+ 
+ /* register a list of div clocks */
+ void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
+-				struct samsung_div_clock *list,
++				const struct samsung_div_clock *list,
+ 				unsigned int nr_clk)
+ {
+ 	struct clk *clk;
+@@ -252,7 +253,7 @@ void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
+ 
+ /* register a list of gate clocks */
+ void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
+-				struct samsung_gate_clock *list,
++				const struct samsung_gate_clock *list,
+ 				unsigned int nr_clk)
+ {
+ 	struct clk *clk;
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index e4c75383cea7..b775fc29caa5 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -121,7 +121,7 @@ struct samsung_mux_clock {
+ 	unsigned int		id;
+ 	const char		*dev_name;
+ 	const char		*name;
+-	const char		**parent_names;
++	const char		*const *parent_names;
+ 	u8			num_parents;
+ 	unsigned long		flags;
+ 	unsigned long		offset;
+@@ -368,28 +368,28 @@ extern void __init samsung_clk_of_register_fixed_ext(
+ extern void samsung_clk_add_lookup(struct samsung_clk_provider *ctx,
+ 			struct clk *clk, unsigned int id);
+ 
+-extern void samsung_clk_register_alias(struct samsung_clk_provider *ctx,
+-			struct samsung_clock_alias *list,
++extern void __init samsung_clk_register_alias(struct samsung_clk_provider *ctx,
++			const struct samsung_clock_alias *list,
+ 			unsigned int nr_clk);
+ extern void __init samsung_clk_register_fixed_rate(
+ 			struct samsung_clk_provider *ctx,
+-			struct samsung_fixed_rate_clock *clk_list,
++			const struct samsung_fixed_rate_clock *clk_list,
+ 			unsigned int nr_clk);
+ extern void __init samsung_clk_register_fixed_factor(
+ 			struct samsung_clk_provider *ctx,
+-			struct samsung_fixed_factor_clock *list,
++			const struct samsung_fixed_factor_clock *list,
+ 			unsigned int nr_clk);
+ extern void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
+-			struct samsung_mux_clock *clk_list,
++			const struct samsung_mux_clock *clk_list,
+ 			unsigned int nr_clk);
+ extern void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
+-			struct samsung_div_clock *clk_list,
++			const struct samsung_div_clock *clk_list,
+ 			unsigned int nr_clk);
+ extern void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
+-			struct samsung_gate_clock *clk_list,
++			const struct samsung_gate_clock *clk_list,
+ 			unsigned int nr_clk);
+ extern void __init samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+-			struct samsung_pll_clock *pll_list,
++			const struct samsung_pll_clock *pll_list,
+ 			unsigned int nr_clk, void __iomem *base);
+ 
+ extern struct samsung_clk_provider __init *samsung_cmu_register_one(
+diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
+index 40cb113be6af..de614384bb44 100644
+--- a/drivers/clk/zynq/clkc.c
++++ b/drivers/clk/zynq/clkc.c
+@@ -85,22 +85,29 @@ static DEFINE_SPINLOCK(canmioclk_lock);
+ static DEFINE_SPINLOCK(dbgclk_lock);
+ static DEFINE_SPINLOCK(aperclk_lock);
+ 
+-static const char *armpll_parents[] __initdata = {"armpll_int", "ps_clk"};
+-static const char *ddrpll_parents[] __initdata = {"ddrpll_int", "ps_clk"};
+-static const char *iopll_parents[] __initdata = {"iopll_int", "ps_clk"};
++static const char *const armpll_parents[] __initconst = {"armpll_int",
++	"ps_clk"};
++static const char *const ddrpll_parents[] __initconst = {"ddrpll_int",
++	"ps_clk"};
++static const char *const iopll_parents[] __initconst = {"iopll_int",
++	"ps_clk"};
+ static const char *gem0_mux_parents[] __initdata = {"gem0_div1", "dummy_name"};
+ static const char *gem1_mux_parents[] __initdata = {"gem1_div1", "dummy_name"};
+-static const char *can0_mio_mux2_parents[] __initdata = {"can0_gate",
++static const char *const can0_mio_mux2_parents[] __initconst = {"can0_gate",
+ 	"can0_mio_mux"};
+-static const char *can1_mio_mux2_parents[] __initdata = {"can1_gate",
++static const char *const can1_mio_mux2_parents[] __initconst = {"can1_gate",
+ 	"can1_mio_mux"};
+ static const char *dbg_emio_mux_parents[] __initdata = {"dbg_div",
+ 	"dummy_name"};
+ 
+-static const char *dbgtrc_emio_input_names[] __initdata = {"trace_emio_clk"};
+-static const char *gem0_emio_input_names[] __initdata = {"gem0_emio_clk"};
+-static const char *gem1_emio_input_names[] __initdata = {"gem1_emio_clk"};
+-static const char *swdt_ext_clk_input_names[] __initdata = {"swdt_ext_clk"};
++static const char *const dbgtrc_emio_input_names[] __initconst = {
++	"trace_emio_clk"};
++static const char *const gem0_emio_input_names[] __initconst = {
++	"gem0_emio_clk"};
++static const char *const gem1_emio_input_names[] __initconst = {
++	"gem1_emio_clk"};
++static const char *const swdt_ext_clk_input_names[] __initconst = {
++	"swdt_ext_clk"};
+ 
+ static void __init zynq_clk_register_fclk(enum zynq_clk fclk,
+ 		const char *clk_name, void __iomem *fclk_ctrl_reg,
 -- 
 2.1.4
