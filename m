@@ -1,34 +1,38 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-Message-ID: <55537F93.2000101@linaro.org>
-Date: Wed, 13 May 2015 19:45:07 +0300
-From: Georgi Djakov <georgi.djakov@linaro.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michal Simek <michal.simek@xilinx.com>, kernel@pengutronix.de, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: make several parent names const
+Date: Thu, 28 May 2015 12:35:12 +0200
+Message-ID: <4095482.AGzSOmiiYQ@phil>
+In-Reply-To: <1432802751-6397-1-git-send-email-u.kleine-koenig@pengutronix.de>
+References: <1432802751-6397-1-git-send-email-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: mturquette@linaro.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk: qcom: Add MSM8916 iommu clocks
-References: <1431428438-8171-1-git-send-email-georgi.djakov@linaro.org> <20150513073601.GB15988@codeaurora.org>
-In-Reply-To: <20150513073601.GB15988@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/13/2015 10:36 AM, Stephen Boyd wrote:
-> On 05/12, Georgi Djakov wrote:
->> Add support for the msm8916 TCU clocks that are needed for IOMMU.
->>
->> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
->> ---
-> 
-> Applied to clk-next
-> 
+Am Donnerstag, 28. Mai 2015, 10:45:51 schrieb Uwe Kleine-K=F6nig:
+> Since commit 2893c379461a ("clk: make strings in parent name arrays
+> const") the name of parent clocks can be const. So add more const in
+> several clock drivers.
+>=20
+> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
 
-Hi Stephen,
-Just got a report that this patch has some issues - gcc_bimc_clk
-may get disabled by the CCF, which turns out to be not good.
-So I am going to remove it from the chain leaving only the
-bimc_ddr_clk_src as the parent of apss_tcu and gfx_tcu clocks.
-Will re-send this series soon. Apologies for the extra work.
 
-Thanks,
-Georgi
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+
+> ---
+> Hello,
+>=20
+> commit 2893c379461a isn't in Linus Torvald's tree yet, so the commit
+> message needs adaption if clk-next is rewritten.
+>=20
+> Should I split this patch per subdir?
+
+I don't have any Rockchip-related clock changes for 4.2, so for me it's=
+ not=20
+important if you split it or keep it together.
+
+
+Thanks
+Heiko
