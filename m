@@ -1,63 +1,52 @@
-Return-Path: <nm@ti.com>
-Message-ID: <555D82CB.5060300@ti.com>
-Date: Thu, 21 May 2015 02:01:31 -0500
-From: Nishanth Menon <nm@ti.com>
-MIME-Version: 1.0
-To: Tero Kristo <t-kristo@ti.com>, Paul Walmsley <paul@pwsan.com>
-CC: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCHv2 00/27] ARM: OMAP2+: clock code migration to drivers/clk/ti
-References: <1431334493-24455-1-git-send-email-t-kristo@ti.com> <alpine.DEB.2.02.1505111747460.19833@utopia.booyaka.com> <5551D178.3000904@ti.com> <alpine.DEB.2.02.1505122019220.21747@utopia.booyaka.com> <5552F32C.7060606@ti.com> <alpine.DEB.2.02.1505131438430.7921@utopia.booyaka.com> <555B8DC0.5080905@ti.com> <alpine.DEB.2.02.1505202234330.7960@utopia.booyaka.com> <555D7D52.8010501@ti.com>
-In-Reply-To: <555D7D52.8010501@ti.com>
-Content-Type: text/plain; charset="windows-1252"
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@arm.linux.org.uk>
+Cc: linux-clk@vger.kernel.org,
+	kernel@stlinux.com,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 5/5] [RFC] ARM: timer-sp: Use of_clk_get_parent_count() instead of open coding
+Date: Fri, 29 May 2015 11:25:49 +0200
+Message-Id: <1432891549-23295-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
+References: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/21/2015 01:38 AM, Tero Kristo wrote:
-> On 05/21/2015 01:40 AM, Paul Walmsley wrote:
->> On Tue, 19 May 2015, Tero Kristo wrote:
->>
->>> Any news on this? As noted previously, I am not able to reproduce the
->>> issue
->>> you are seeing currently, can you give DEBUG_LL a shot?
->>
->> Yeah I just bisected it, it was caused by this:
->>
->> commit cc4a5fe972ad7834e8662b49b3a5fdb597e9e15e
->> Author: Felipe Balbi <balbi@ti.com>
->> Date:   Fri Jan 30 11:18:56 2015 -0600
->>
->>      arm: config: omap2plus_defconfig: switch over to LZMA compression
->>
->>      LZMA compression makes about 33% smaller zImage
->>      with just a slight extra decompression time.
->>
->>      Before this patch, zImage built with o2+_dc
->>      is 4.5MiB and after it's about 3.3MiB.
->>
->>      Suggested-by: David Cohen <david.a.cohen@linux.intel.com>
->>      Signed-off-by: Felipe Balbi <balbi@ti.com>
->>      Signed-off-by: Tony Lindgren <tony@atomide.com>
->>
->>
->> and the timeouts on the testbed being set to fail if a kernel takes
->> longer
->> than five seconds to start.  Seems that the part about a "slight extra
->> decompression time" probably only applies to relatively recent chips.
->>
->>
->> - Paul
->>
-> 
-> Oh, so this explains why I was thinking it took very long time to boot
-> the recent kernels also. The boot lag is clearly noticeable without any
-> measurement. I wonder if we should probably revert this patch.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This is an RFC, as it depends on "[RFC] clk: Provide dummy
+of_clk_get_parent_count() for !OF/!CCF".
+---
+ arch/arm/common/timer-sp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-we already have issues with zImage size bloating up and running headlong
-into dtb - esp on platforms like N900. Felipe spend quiet some time
-getting things into a manageable size here -> loosing 33% sounds like
-bad idea to me :(
-
+diff --git a/arch/arm/common/timer-sp.c b/arch/arm/common/timer-sp.c
+index 19211324772f387c..be87a5d480ffb655 100644
+--- a/arch/arm/common/timer-sp.c
++++ b/arch/arm/common/timer-sp.c
+@@ -21,6 +21,7 @@
+ #include <linux/clk.h>
+ #include <linux/clocksource.h>
+ #include <linux/clockchips.h>
++#include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+@@ -234,7 +235,7 @@ static void __init sp804_of_init(struct device_node *np)
+ 		clk1 = NULL;
+ 
+ 	/* Get the 2nd clock if the timer has 3 timer clocks */
+-	if (of_count_phandle_with_args(np, "clocks", "#clock-cells") == 3) {
++	if (of_clk_get_parent_count(np) == 3) {
+ 		clk2 = of_clk_get(np, 1);
+ 		if (IS_ERR(clk2)) {
+ 			pr_err("sp804: %s clock not found: %d\n", np->name,
 -- 
-Regards,
-Nishanth Menon
+1.9.1
