@@ -1,76 +1,96 @@
-Return-Path: <mathieu@codeaurora.org>
-From: Mathieu Olivari <mathieu@codeaurora.org>
-To: robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	peppe.cavallaro@st.com,
-	mathieu@codeaurora.org,
-	agross@codeaurora.org,
-	joshc@codeaurora.org,
-	architt@codeaurora.org,
-	georgi.djakov@linaro.org,
-	wsa@the-dreams.de,
-	rnayak@codeaurora.org,
-	davem@davemloft.net,
-	vbridger@opensource.altera.com
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH V2 0/5] Add support for QCA IPQ806x Ethernet GMAC controller
-Date: Wed, 27 May 2015 11:02:45 -0700
-Message-Id: <1432749770-26133-1-git-send-email-mathieu@codeaurora.org>
+Return-Path: <sha@pengutronix.de>
+Date: Fri, 29 May 2015 08:40:55 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: mturquette@linaro.org, sboyd@codeaurora.org, henryc.chen@mediatek.com,
+	jamesjj.liao@mediatek.com, p.zabel@pengutronix.de,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 1/3] clk: mux: Add regmap support for simple mux
+Message-ID: <20150529064055.GA6325@pengutronix.de>
+References: <1432838508-5184-1-git-send-email-matthias.bgg@gmail.com>
+ <1432838508-5184-2-git-send-email-matthias.bgg@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1432838508-5184-2-git-send-email-matthias.bgg@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set adds support for the integrated Ethernet GMAC controller
-on QCA IPQ806x SoC. This controller is based on a Gigabit Synopsys
-DesignWare IP, already supported in the stmmac driver located in
-drivers/net/ethernet/stmicro/stmmac.
+On Thu, May 28, 2015 at 08:41:46PM +0200, Matthias Brugger wrote:
+> Some devices like SoCs from Mediatek need to use the clock muxes
+> through a regmap interface.
+> This patch adds regmap support for simple the simple multiplexer
+> clock code.
+> 
+> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+> ---
+>  drivers/clk/clk-mux.c        | 103 ++++++++++++++++++++++++++++++++++++++-----
+>  include/linux/clk-provider.h |  40 +++++++++++++++++
+>  2 files changed, 132 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+> index 1fa2a8d..c7c692a 100644
+> --- a/drivers/clk/clk-mux.c
+> +++ b/drivers/clk/clk-mux.c
+> @@ -29,6 +29,26 @@
+>  
+>  #define to_clk_mux(_hw) container_of(_hw, struct clk_mux, hw)
+>  
+> +static void clk_mux_writel(struct clk_mux *mux, u32 val)
+> +{
+> +	if (mux->flags && CLK_MUX_USE_REGMAP)
+> +		regmap_write(mux->regmap, mux->offset, val);
+> +	else
+> +		clk_writel(val, mux->reg);
+> +}
+> +
+> +static u32 clk_mux_readl(struct clk_mux *mux)
+> +{
+> +	u32 val;
+> +
+> +	if (mux->flags && CLK_MUX_USE_REGMAP)
+> +		regmap_read(mux->regmap, mux->offset, &val);
+> +	else
+> +		val = clk_readl(mux->reg);
+> +
+> +	return val;
+> +}
+> +
+>  static u8 clk_mux_get_parent(struct clk_hw *hw)
+>  {
+>  	struct clk_mux *mux = to_clk_mux(hw);
+> @@ -42,7 +62,10 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
+>  	 * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
+>  	 * val = 0x4 really means "bit 2, index starts at bit 0"
+>  	 */
+> -	val = clk_readl(mux->reg) >> mux->shift;
+> +
+> +	val = clk_mux_readl(mux);
+> +
+> +	val >>= mux->shift;
+>  	val &= mux->mask;
+>  
+>  	if (mux->table) {
+> @@ -89,11 +112,11 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+>  	if (mux->flags & CLK_MUX_HIWORD_MASK) {
+>  		val = mux->mask << (mux->shift + 16);
+>  	} else {
+> -		val = clk_readl(mux->reg);
+> +		val = clk_mux_readl(mux);
+>  		val &= ~(mux->mask << mux->shift);
+>  	}
+>  	val |= index << mux->shift;
+> -	clk_writel(val, mux->reg);
+> +	clk_mux_writel(mux, val);
 
-This change is done as a follow-up to the following thread:
-*http://www.spinics.net/lists/netdev/msg311265.html
-While previous attempt was creating a new driver to drive this controller,
-this new post leverages the existing stmmac driver by implementing the
-SoC specific glue to it.
+With regmap the register lock is inside the regmap, you must hold it
+during read/modify/write operations which means you have to use
+regmap_update_bits rather than regmap_read followed by regmap_write.
 
-Aside from the pure stmmac glue layer, we have a couple of related
-patches:
-*IPQ806x NSS clock addition is cherry-picked and refreshed from the
- following thread: https://lkml.org/lkml/2014/8/6/390
-*phy-handle and fixed-link support are also added in this change set so the
- driver can be fully functional on platforms using device-trees as well as
- ethernet switches.
-
-V2:
- *Fix MODULE_LICENSE to "Dual BSD/GPL" as the dwmac-ipq806x.c is using
-  ISC license.
-
-Mathieu Olivari (4):
-  stmmac: add phy-handle support to the platform layer
-  stmmac: add fixed-link device-tree support
-  stmmac: add ipq806x glue layer
-  net: stmmac: ipq806x: document device tree bindings
-
-Stephen Boyd (1):
-  clk: qcom: Add support for NSS/GMAC clocks and resets
-
- .../devicetree/bindings/net/ipq806x-dwmac.txt      |  35 ++
- drivers/clk/qcom/gcc-ipq806x.c                     | 594 ++++++++++++++++++++-
- drivers/net/ethernet/stmicro/stmmac/Kconfig        |  14 +
- drivers/net/ethernet/stmicro/stmmac/Makefile       |   1 +
- .../net/ethernet/stmicro/stmmac/dwmac-ipq806x.c    | 365 +++++++++++++
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |  30 +-
- .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |  18 +-
- include/dt-bindings/clock/qcom,gcc-ipq806x.h       |   2 +
- include/dt-bindings/reset/qcom,gcc-ipq806x.h       |  43 ++
- include/linux/stmmac.h                             |   1 +
- 10 files changed, 1089 insertions(+), 14 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/net/ipq806x-dwmac.txt
- create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+Sascha
 
 -- 
-2.1.4
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
