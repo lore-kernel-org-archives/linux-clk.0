@@ -1,81 +1,59 @@
-Return-Path: <m-karicheri2@ti.com>
-From: Murali Karicheri <m-karicheri2@ti.com>
-To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <ssantosh@kernel.org>, <mturquette@linaro.org>, <sboyd@codeaurora.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux@arm.linux.org.uk>,
-        <linux-arm-kernel@lists.infradead.org>
-CC: Murali Karicheri <m-karicheri2@ti.com>
-Subject: [PATCH 2/2] ARM: dts: keystone: fix dt bindings to use post div register for mainpll
-Date: Fri, 29 May 2015 12:04:13 -0400
-Message-ID: <1432915453-409-2-git-send-email-m-karicheri2@ti.com>
-In-Reply-To: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
-References: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	matthias.bgg@gmail.com
+Cc: henryc.chen@mediatek.com,
+	s.hauer@pengutronix.de,
+	jamesjj.liao@mediatek.com,
+	p.zabel@pengutronix.de,
+	manabian@gmail.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 0/3] clk: Add regmap support for clk mulitplexer
+Date: Fri, 29 May 2015 18:01:25 +0200
+Message-Id: <1432915288-14034-1-git-send-email-matthias.bgg@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-All of the keystone devices have a separate register to hold post
-divider value for main pll clock. Currently the fixed-postdiv
-value used for k2hk/l/e SoCs works by sheer luck as u-boot happens to
-use a value of 2 for this. Now that we have fixed this in the pll
-clock driver change the dt bindings for the same.
+This patch set adds regmap support for the simple clock multiplexer.
+Regmap use, apart from a pointer to the regmap struct needs an
+offset value to know where in the regmap it has to read/write.
+We add both fields to struct clk_mux.
 
-Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
----
- arch/arm/boot/dts/k2e-clocks.dtsi  | 5 ++---
- arch/arm/boot/dts/k2hk-clocks.dtsi | 5 ++---
- arch/arm/boot/dts/k2l-clocks.dtsi  | 5 ++---
- 3 files changed, 6 insertions(+), 9 deletions(-)
+The driver will distinguish between a clock which is based on regmap or not
+through a flag specified for the mux.
+The approach does not break the existing clock framework API but adds two
+new functions for registering regmap clocks. Unregistering the clocks is
+independent of the use of regmap or not, so that no new function was
+implemented.
 
-diff --git a/arch/arm/boot/dts/k2e-clocks.dtsi b/arch/arm/boot/dts/k2e-clocks.dtsi
-index 4773d6a..d56d68f 100644
---- a/arch/arm/boot/dts/k2e-clocks.dtsi
-+++ b/arch/arm/boot/dts/k2e-clocks.dtsi
-@@ -13,9 +13,8 @@ clocks {
- 		#clock-cells = <0>;
- 		compatible = "ti,keystone,main-pll-clock";
- 		clocks = <&refclksys>;
--		reg = <0x02620350 4>, <0x02310110 4>;
--		reg-names = "control", "multiplier";
--		fixed-postdiv = <2>;
-+		reg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
-+		reg-names = "control", "multiplier", "post-divider";
- 	};
- 
- 	papllclk: papllclk@2620358 {
-diff --git a/arch/arm/boot/dts/k2hk-clocks.dtsi b/arch/arm/boot/dts/k2hk-clocks.dtsi
-index d5adee3..af9b719 100644
---- a/arch/arm/boot/dts/k2hk-clocks.dtsi
-+++ b/arch/arm/boot/dts/k2hk-clocks.dtsi
-@@ -22,9 +22,8 @@ clocks {
- 		#clock-cells = <0>;
- 		compatible = "ti,keystone,main-pll-clock";
- 		clocks = <&refclksys>;
--		reg = <0x02620350 4>, <0x02310110 4>;
--		reg-names = "control", "multiplier";
--		fixed-postdiv = <2>;
-+		reg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
-+		reg-names = "control", "multiplier", "post-divider";
- 	};
- 
- 	papllclk: papllclk@2620358 {
-diff --git a/arch/arm/boot/dts/k2l-clocks.dtsi b/arch/arm/boot/dts/k2l-clocks.dtsi
-index eb1e3e2..ef8464b 100644
---- a/arch/arm/boot/dts/k2l-clocks.dtsi
-+++ b/arch/arm/boot/dts/k2l-clocks.dtsi
-@@ -22,9 +22,8 @@ clocks {
- 		#clock-cells = <0>;
- 		compatible = "ti,keystone,main-pll-clock";
- 		clocks = <&refclksys>;
--		reg = <0x02620350 4>, <0x02310110 4>;
--		reg-names = "control", "multiplier";
--		fixed-postdiv = <2>;
-+		reg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
-+		reg-names = "control", "multiplier", "post-divider";
- 	};
- 
- 	papllclk: papllclk@2620358 {
+As an example user of the regmap clock multiplexer, it was implemented on
+the mt8135. When accepted it will also be applied to the other Mediatek SoCs.
+Other possible user are Qualcomm SoCs which up to now implement their own
+regmap based clock multiplexer.
+
+Any comments welcome.
+
+Changes for v2:
+- use regmap_update_bits instead of read-write
+- fix flag check
+- add union in struct clk_mux
+- fix typo in commit message
+
+Matthias Brugger (3):
+  clk: mux: Add regmap support for simple mux
+  clk: mediatek: Add support for clk-mux using regmap
+  clk: mediatek: Use regmap clk-mux for mt8135
+
+ drivers/clk/clk-mux.c             | 134 +++++++++++++++++++++++++++++++++-----
+ drivers/clk/mediatek/clk-mt8135.c |  21 ++----
+ drivers/clk/mediatek/clk-mtk.c    |  37 +++++++++++
+ drivers/clk/mediatek/clk-mtk.h    |  26 ++++++++
+ include/linux/clk-provider.h      |  44 ++++++++++++-
+ 5 files changed, 232 insertions(+), 30 deletions(-)
+
 -- 
 1.9.1
