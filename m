@@ -1,158 +1,119 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Thu, 7 May 2015 17:15:46 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 01/20] clk: tegra: Modify tegra_audio_clk_init to
- accept more plls
-Message-ID: <20150507151545.GB25866@ulmo.nvidia.com>
-References: <1430757460-9478-1-git-send-email-rklein@nvidia.com>
- <1430757460-9478-2-git-send-email-rklein@nvidia.com>
+Return-Path: <m-karicheri2@ti.com>
+From: Murali Karicheri <m-karicheri2@ti.com>
+To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <ssantosh@kernel.org>, <mturquette@linaro.org>, <sboyd@codeaurora.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux@arm.linux.org.uk>,
+        <linux-arm-kernel@lists.infradead.org>
+CC: Murali Karicheri <m-karicheri2@ti.com>
+Subject: [PATCH 1/2] clk: keystone: add support for post divider register for main pll
+Date: Fri, 29 May 2015 12:04:12 -0400
+Message-ID: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="LyciRD1jyfeSSjG0"
-In-Reply-To: <1430757460-9478-2-git-send-email-rklein@nvidia.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Main PLL controller has post divider bits in a separate register in
+pll controller. Use the value from this register instead of fixed
+divider when available.
 
---LyciRD1jyfeSSjG0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ .../devicetree/bindings/clock/keystone-pll.txt       |  8 ++++----
+ drivers/clk/keystone/pll.c                           | 20 ++++++++++++++++++--
+ 2 files changed, 22 insertions(+), 6 deletions(-)
 
-On Mon, May 04, 2015 at 12:37:21PM -0400, Rhyland Klein wrote:
-[...]
-> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-teg=
-ra114.c
-> index 8237d16b4075..0d67efb3dd6a 100644
-> --- a/drivers/clk/tegra/clk-tegra114.c
-> +++ b/drivers/clk/tegra/clk-tegra114.c
-> @@ -935,6 +935,10 @@ static u32 mux_pllm_pllc2_c_c3_pllp_plla_idx[] =3D {
->  	[0] =3D 0, [1] =3D 1, [2] =3D 2, [3] =3D 3, [4] =3D 4, [5] =3D 6,
->  };
-> =20
-> +static struct tegra_audio_clk_info tegra114_audio_plls[] =3D {
-> +	{ "pll_a", &pll_a_params, tegra_clk_pll_a, "pll_p_out1" },
-> +};
-> +
->  static struct clk **clks;
-> =20
->  static unsigned long osc_freq;
-> @@ -1483,7 +1487,8 @@ static void __init tegra114_clock_init(struct devic=
-e_node *np)
->  	tegra114_fixed_clk_init(clk_base);
->  	tegra114_pll_init(clk_base, pmc_base);
->  	tegra114_periph_clk_init(clk_base, pmc_base);
-> -	tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks, &pll_a_params);
-> +	tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks,
-> +			     &tegra114_audio_plls, 1);
-
-This throws a build warning, it should be tegra114_audio_plls (without
-the ampersand). Also I think you should use ARRAY_SIZE() instead of
-hard-coding the number of entries here.
-
->  	tegra_pmc_clk_init(pmc_base, tegra114_clks);
->  	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks,
->  					&pll_x_params);
-> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-teg=
-ra124.c
-> index 11f857cd5f6a..169e236f3627 100644
-> --- a/drivers/clk/tegra/clk-tegra124.c
-> +++ b/drivers/clk/tegra/clk-tegra124.c
-> @@ -1413,6 +1413,10 @@ static struct tegra_clk_init_table tegra132_init_t=
-able[] __initdata =3D {
->  	{TEGRA124_CLK_CLK_MAX, TEGRA124_CLK_CLK_MAX, 0, 0},
->  };
-> =20
-> +static struct tegra_audio_clk_info tegra124_audio_plls[] =3D {
-> +	{ "pll_a", &pll_a_params, tegra_clk_pll_a, "pll_p_out1" },
-> +};
-> +
->  /**
->   * tegra124_clock_apply_init_table - initialize clocks on Tegra124 SoCs
->   *
-> @@ -1489,7 +1493,8 @@ static void __init tegra124_132_clock_init_pre(stru=
-ct device_node *np)
->  	tegra_fixed_clk_init(tegra124_clks);
->  	tegra124_pll_init(clk_base, pmc_base);
->  	tegra124_periph_clk_init(clk_base, pmc_base);
-> -	tegra_audio_clk_init(clk_base, pmc_base, tegra124_clks, &pll_a_params);
-> +	tegra_audio_clk_init(clk_base, pmc_base, tegra124_clks,
-> +			     tegra124_audio_plls, 1);
-
-ARRAY_SIZE() here as well. The ampersand isn't there in this case...
-
->  	tegra_pmc_clk_init(pmc_base, tegra124_clks);
-> =20
->  	/* For Tegra124 & Tegra132, PLLD is the only source for DSIA & DSIB */
-> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegr=
-a30.c
-> index 4b26509fc218..3198c7b7946c 100644
-> --- a/drivers/clk/tegra/clk-tegra30.c
-> +++ b/drivers/clk/tegra/clk-tegra30.c
-> @@ -1406,6 +1406,10 @@ static const struct of_device_id pmc_match[] __ini=
-tconst =3D {
->  	{},
->  };
-> =20
-> +static struct tegra_audio_clk_info tegra30_audio_plls[] =3D {
-> +	{ "pll_a", &pll_a_params, tegra_clk_pll_a, "pll_p_out1" },
-> +};
-> +
->  static void __init tegra30_clock_init(struct device_node *np)
->  {
->  	struct device_node *node;
-> @@ -1443,7 +1447,8 @@ static void __init tegra30_clock_init(struct device=
-_node *np)
->  	tegra30_pll_init();
->  	tegra30_super_clk_init();
->  	tegra30_periph_clk_init();
-> -	tegra_audio_clk_init(clk_base, pmc_base, tegra30_clks, &pll_a_params);
-> +	tegra_audio_clk_init(clk_base, pmc_base, tegra30_clks,
-> +			     &tegra30_audio_plls, 1);
-
-Same comments as for Tegra114.
-
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-[...]
-> @@ -607,7 +622,8 @@ void tegra_register_devclks(struct tegra_devclk *dev_=
-clks, int num);
-> =20
->  void tegra_audio_clk_init(void __iomem *clk_base,
->  			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
-> -			struct tegra_clk_pll_params *pll_params);
-> +			struct tegra_audio_clk_info *audio_info,
-> +			int num_plls);
-
-Oh, and make num_plls unsigned int, please.
-
-Thierry
-
---LyciRD1jyfeSSjG0
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVS4GhAAoJEN0jrNd/PrOhvjAP/iNyVKP8zwZPByc/eaZAQVLl
-Qjx/yOexI6rwQ2elfDhaWvLPcrleuUHhgfAZWjxLJai8ife2PXJcdCWeOf8A74MZ
-tI7SY9kgeFwygs5FukGAiwXvKkItkb3QdPPWw/zPpBxSy0lcFFgnengo7tjsMGTX
-U392JYE19cHKUmBz4OJ2CmR7nHnD18MriAmvuOL2N8q5vUJsd1H1gsF4eVTm8liX
-Udbr2A1BwWJFXiTAi0C9WLspH8ribtocVr2jSu5FKYjEJb1OTuK9nqoe6Hb7I4xr
-d8YVhaO9RzvGS3hwfu4+AzC239Agp07Ff2ddXf/Mwl1xNL962+tn2+9mGz7sdumt
-kLUZYbMFr8ntccY6/r6cAImHaDaUpdxQnZqBUVdnVVg41hduMNafym+PI6N7ThPK
-gVvClsIJ/AAcr7/o0dPt1VGw5EE8uEYMtoMmHupgdQT2fATwLoAe+MorgYlfirhx
-ScrzQwJ9ZPrch/3h8JJpl3MQTlWqR8m/pdxlE07xJEEd92mBzIsIe5MPXsMIGegB
-5n95WhTHqDaDcc9rp154cVBZCDyb8IbypyYMR5WdhBq2XHn/kt0zjnYDlnVCAY6U
-feTFrNRmwFtutrAUk/TiqDY3PX0J3TxTWxg8MnazvotJnBOa5NG+RJWvjgwbDyFt
-ZCiQUcE35bPfBePTOu8v
-=9Us1
------END PGP SIGNATURE-----
-
---LyciRD1jyfeSSjG0--
+diff --git a/Documentation/devicetree/bindings/clock/keystone-pll.txt b/Documentation/devicetree/bindings/clock/keystone-pll.txt
+index 225990f..47570d2 100644
+--- a/Documentation/devicetree/bindings/clock/keystone-pll.txt
++++ b/Documentation/devicetree/bindings/clock/keystone-pll.txt
+@@ -15,8 +15,8 @@ Required properties:
+ - compatible : shall be "ti,keystone,main-pll-clock" or "ti,keystone,pll-clock"
+ - clocks : parent clock phandle
+ - reg - pll control0 and pll multipler registers
+-- reg-names : control and multiplier. The multiplier is applicable only for
+-		main pll clock
++- reg-names : control, multiplier and post-divider. The multiplier and
++		post-divider registers are applicable only for main pll clock
+ - fixed-postdiv : fixed post divider value. If absent, use clkod register bits
+ 		for postdiv
+ 
+@@ -25,8 +25,8 @@ Example:
+ 		#clock-cells = <0>;
+ 		compatible = "ti,keystone,main-pll-clock";
+ 		clocks = <&refclksys>;
+-		reg = <0x02620350 4>, <0x02310110 4>;
+-		reg-names = "control", "multiplier";
++		reg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
++		reg-names = "control", "multiplier", "post-divider";
+ 		fixed-postdiv = <2>;
+ 	};
+ 
+diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
+index 0dd8a4b..4a375ea 100644
+--- a/drivers/clk/keystone/pll.c
++++ b/drivers/clk/keystone/pll.c
+@@ -37,7 +37,8 @@
+  *	Main PLL or any other PLLs in the device such as ARM PLL, DDR PLL
+  *	or PA PLL available on keystone2. These PLLs are controlled by
+  *	this register. Main PLL is controlled by a PLL controller.
+- * @pllm: PLL register map address
++ * @pllm: PLL register map address for multiplier bits
++ * @pllod: PLL register map address for post divider bits
+  * @pll_ctl0: PLL controller map address
+  * @pllm_lower_mask: multiplier lower mask
+  * @pllm_upper_mask: multiplier upper mask
+@@ -53,6 +54,7 @@ struct clk_pll_data {
+ 	u32 phy_pllm;
+ 	u32 phy_pll_ctl0;
+ 	void __iomem *pllm;
++	void __iomem *pllod;
+ 	void __iomem *pll_ctl0;
+ 	u32 pllm_lower_mask;
+ 	u32 pllm_upper_mask;
+@@ -102,7 +104,11 @@ static unsigned long clk_pllclk_recalc(struct clk_hw *hw,
+ 		/* read post divider from od bits*/
+ 		postdiv = ((val & pll_data->clkod_mask) >>
+ 				 pll_data->clkod_shift) + 1;
+-	else
++	else if (pll_data->pllod) {
++		postdiv = readl(pll_data->pllod);
++		postdiv = ((postdiv & pll_data->clkod_mask) >>
++				pll_data->clkod_shift) + 1;
++	} else
+ 		postdiv = pll_data->postdiv;
+ 
+ 	rate /= (prediv + 1);
+@@ -172,12 +178,21 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
+ 		/* assume the PLL has output divider register bits */
+ 		pll_data->clkod_mask = CLKOD_MASK;
+ 		pll_data->clkod_shift = CLKOD_SHIFT;
++
++		/*
++		 * Check if there is an post-divider register. If not
++		 * assume od bits are part of control register.
++		 */
++		i = of_property_match_string(node, "reg-names",
++					     "post-divider");
++		pll_data->pllod = of_iomap(node, i);
+ 	}
+ 
+ 	i = of_property_match_string(node, "reg-names", "control");
+ 	pll_data->pll_ctl0 = of_iomap(node, i);
+ 	if (!pll_data->pll_ctl0) {
+ 		pr_err("%s: ioremap failed\n", __func__);
++		iounmap(pll_data->pllod);
+ 		goto out;
+ 	}
+ 
+@@ -193,6 +208,7 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
+ 		pll_data->pllm = of_iomap(node, i);
+ 		if (!pll_data->pllm) {
+ 			iounmap(pll_data->pll_ctl0);
++			iounmap(pll_data->pllod);
+ 			goto out;
+ 		}
+ 	}
+-- 
+1.9.1
