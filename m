@@ -1,197 +1,97 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 06/14] ARM: shmobile: r7s72100 dtsi: Add CPG Clock Domain
-Date: Thu, 28 May 2015 20:53:31 +0200
-Message-Id: <1432839219-475-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
-References: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <matthias.bgg@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20150529064055.GA6325@pengutronix.de>
+References: <1432838508-5184-1-git-send-email-matthias.bgg@gmail.com>
+	<1432838508-5184-2-git-send-email-matthias.bgg@gmail.com>
+	<20150529064055.GA6325@pengutronix.de>
+Date: Fri, 29 May 2015 17:24:58 +0200
+Message-ID: <CABuKBeL3U2kdVCVHDKJp+K91K3CUF=XEuDUhfwjqWVEhFNFVcA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: mux: Add regmap support for simple mux
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	HenryC Chen <henryc.chen@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add an appropriate "#power-domain-cells" property to the cpg_clocks
-device node, to create the CPG Clock Domain.
+2015-05-29 8:40 GMT+02:00 Sascha Hauer <s.hauer@pengutronix.de>:
+> On Thu, May 28, 2015 at 08:41:46PM +0200, Matthias Brugger wrote:
+>> Some devices like SoCs from Mediatek need to use the clock muxes
+>> through a regmap interface.
+>> This patch adds regmap support for simple the simple multiplexer
+>> clock code.
+>>
+>> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+>> ---
+>>  drivers/clk/clk-mux.c        | 103 ++++++++++++++++++++++++++++++++++++++-----
+>>  include/linux/clk-provider.h |  40 +++++++++++++++++
+>>  2 files changed, 132 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+>> index 1fa2a8d..c7c692a 100644
+>> --- a/drivers/clk/clk-mux.c
+>> +++ b/drivers/clk/clk-mux.c
+>> @@ -29,6 +29,26 @@
+>>
+>>  #define to_clk_mux(_hw) container_of(_hw, struct clk_mux, hw)
+>>
+>> +static void clk_mux_writel(struct clk_mux *mux, u32 val)
+>> +{
+>> +     if (mux->flags && CLK_MUX_USE_REGMAP)
+>> +             regmap_write(mux->regmap, mux->offset, val);
+>> +     else
+>> +             clk_writel(val, mux->reg);
+>> +}
+>> +
+>> +static u32 clk_mux_readl(struct clk_mux *mux)
+>> +{
+>> +     u32 val;
+>> +
+>> +     if (mux->flags && CLK_MUX_USE_REGMAP)
+>> +             regmap_read(mux->regmap, mux->offset, &val);
+>> +     else
+>> +             val = clk_readl(mux->reg);
+>> +
+>> +     return val;
+>> +}
+>> +
+>>  static u8 clk_mux_get_parent(struct clk_hw *hw)
+>>  {
+>>       struct clk_mux *mux = to_clk_mux(hw);
+>> @@ -42,7 +62,10 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
+>>        * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
+>>        * val = 0x4 really means "bit 2, index starts at bit 0"
+>>        */
+>> -     val = clk_readl(mux->reg) >> mux->shift;
+>> +
+>> +     val = clk_mux_readl(mux);
+>> +
+>> +     val >>= mux->shift;
+>>       val &= mux->mask;
+>>
+>>       if (mux->table) {
+>> @@ -89,11 +112,11 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+>>       if (mux->flags & CLK_MUX_HIWORD_MASK) {
+>>               val = mux->mask << (mux->shift + 16);
+>>       } else {
+>> -             val = clk_readl(mux->reg);
+>> +             val = clk_mux_readl(mux);
+>>               val &= ~(mux->mask << mux->shift);
+>>       }
+>>       val |= index << mux->shift;
+>> -     clk_writel(val, mux->reg);
+>> +     clk_mux_writel(mux, val);
+>
+> With regmap the register lock is inside the regmap, you must hold it
+> during read/modify/write operations which means you have to use
+> regmap_update_bits rather than regmap_read followed by regmap_write.
 
-Add "power-domains" properties to all device nodes for devices that are
-part of the CPG Clock Domain and can be power-managed through an MSTP
-clock.  This applies to most on-SoC devices, which have a one-to-one
-mapping from SoC device to DT device node.
+Fixed in next version.
+Thanks for reviewing.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- arch/arm/boot/dts/r7s72100.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 277e73c110e5d40c..060c32cbd66923ed 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -86,6 +86,7 @@
- 			reg = <0xfcfe0000 0x18>;
- 			clocks = <&extal_clk>, <&usb_x1_clk>;
- 			clock-output-names = "pll", "i", "g";
-+			#power-domain-cells = <0>;
- 		};
- 
- 		/* MSTP clocks */
-@@ -157,6 +158,7 @@
- 			     <0 189 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp4_clks R7S72100_CLK_SCIF0>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -169,6 +171,7 @@
- 			     <0 193 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp4_clks R7S72100_CLK_SCIF1>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -181,6 +184,7 @@
- 			     <0 197 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp4_clks R7S72100_CLK_SCIF2>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -193,6 +197,7 @@
- 			     <0 201 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp4_clks R7S72100_CLK_SCIF3>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -205,6 +210,7 @@
- 			     <0 205 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp4_clks R7S72100_CLK_SCIF4>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -217,6 +223,7 @@
- 			     <0 209 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp4_clks R7S72100_CLK_SCIF5>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -229,6 +236,7 @@
- 			     <0 213 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp4_clks R7S72100_CLK_SCIF6>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -241,6 +249,7 @@
- 			     <0 217 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp4_clks R7S72100_CLK_SCIF7>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -252,6 +261,7 @@
- 			     <0 240 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "error", "rx", "tx";
- 		clocks = <&mstp10_clks R7S72100_CLK_SPI0>;
-+		power-domains = <&cpg_clocks>;
- 		num-cs = <1>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -266,6 +276,7 @@
- 			     <0 243 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "error", "rx", "tx";
- 		clocks = <&mstp10_clks R7S72100_CLK_SPI1>;
-+		power-domains = <&cpg_clocks>;
- 		num-cs = <1>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -280,6 +291,7 @@
- 			     <0 246 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "error", "rx", "tx";
- 		clocks = <&mstp10_clks R7S72100_CLK_SPI2>;
-+		power-domains = <&cpg_clocks>;
- 		num-cs = <1>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -294,6 +306,7 @@
- 			     <0 249 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "error", "rx", "tx";
- 		clocks = <&mstp10_clks R7S72100_CLK_SPI3>;
-+		power-domains = <&cpg_clocks>;
- 		num-cs = <1>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -308,6 +321,7 @@
- 			     <0 252 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "error", "rx", "tx";
- 		clocks = <&mstp10_clks R7S72100_CLK_SPI4>;
-+		power-domains = <&cpg_clocks>;
- 		num-cs = <1>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -338,6 +352,7 @@
- 			     <0 164 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R7S72100_CLK_I2C0>;
- 		clock-frequency = <100000>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -356,6 +371,7 @@
- 			     <0 172 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R7S72100_CLK_I2C1>;
- 		clock-frequency = <100000>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -374,6 +390,7 @@
- 			     <0 180 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R7S72100_CLK_I2C2>;
- 		clock-frequency = <100000>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -392,6 +409,7 @@
- 			     <0 188 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R7S72100_CLK_I2C3>;
- 		clock-frequency = <100000>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -402,6 +420,7 @@
- 		interrupt-names = "tgi0a";
- 		clocks = <&mstp3_clks R7S72100_CLK_MTU2>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- };
 -- 
-1.9.1
-
+motzblog.wordpress.com
