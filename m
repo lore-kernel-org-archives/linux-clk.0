@@ -1,48 +1,57 @@
-Return-Path: <pawel.moll@arm.com>
-Message-ID: <1430908303.3314.11.camel@arm.com>
-Subject: Re: [PATCH 14/19] clk: versatile: Silence sparse warnings
-From: Pawel Moll <pawel.moll@arm.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@linaro.org>, "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	 <linux-clk@vger.kernel.org>
-Date: Wed, 06 May 2015 11:31:43 +0100
-In-Reply-To: <1430897996-11597-15-git-send-email-sboyd@codeaurora.org>
-References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org>
-	 <1430897996-11597-15-git-send-email-sboyd@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Grygorii Strashko <Grygorii.Strashko@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] PM / clock_ops: Print acquired clock name in addition to con_id
+Date: Fri, 29 May 2015 18:35:31 +0200
+Message-Id: <1432917331-3285-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2015-05-06 at 08:39 +0100, Stephen Boyd wrote:
-> drivers/clk/versatile/clk-sp810.c:159:29: error: incompatible types for operation (<=)
-> drivers/clk/versatile/clk-sp810.c:159:29:    left side has type char const *<noident>
-> drivers/clk/versatile/clk-sp810.c:159:29:    right side has type int
-> drivers/clk/versatile/clk-sp810.c:159:53: error: incompatible types for operation (<=)
-> drivers/clk/versatile/clk-sp810.c:159:53:    left side has type char const *<noident>
-> drivers/clk/versatile/clk-sp810.c:159:53:    right side has type int
-> rivers/clk/versatile/clk-sp810.c:138:13: warning: symbol 'clk_sp810_of_setup' was not declared. Should it be static?
-> 
-> Cc: Pawel Moll <pawel.moll@arm.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Currently the con_id of the acquired clock is printed for debugging
+purposes.  But in several cases, the con_id is NULL, which doesn't
+provide much debugging information when printed.  These cases are:
+  - When explicitly passing a NULL con_id (which means the first clock
+    tied to the device, if available),
+  - When not using pm_clk_add(), but pm_clk_add_clk() (which takes a
+    "struct clk *" directly).
 
-Acked-by: Pawel Moll <pawel.moll@arm.com>
+Hence print the actual clock name in addition to (and not instead of;
+thanks Grygorii Strashko!) the con_id.
 
-> @@ -156,7 +156,7 @@ void __init clk_sp810_of_setup(struct device_node *node)
->  			"timclk");
->  	parent_names[1] = of_clk_get_parent_name(node, sp810->timclk_index);
->  
-> -	if (parent_names[0] <= 0 || parent_names[1] <= 0) {
-> +	if (!parent_names[0] || !parent_names[1]) {
->  		pr_warn("Failed to obtain parent clocks for SP810!\n");
->  		return;
->  	}
+Note that the clock name is not available with legacy clock frameworks,
+and the hex pointer address will be printed instead.
 
-I stared at it (and at git blame output) and was thinking what was I
-smoking typing the code... Fortunately mail history suggest that I had
-"!parent..." in my original patch, and it was modified by Mike ;-) No
-harm done :-)
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This is v2 of "PM / clock_ops: Print acquired clock name instead of
+con_id".
 
-Thanks for fixing this!
+v2:
+  - Print both clock and con_id, as suggested by Grygorii Strashko
+    <grygorii.strashko@linaro.org>.
+---
+ drivers/base/power/clock_ops.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Pawel
+diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
+index 442ce010559bf531..acef9f9f759a2530 100644
+--- a/drivers/base/power/clock_ops.c
++++ b/drivers/base/power/clock_ops.c
+@@ -68,7 +68,8 @@ static void pm_clk_acquire(struct device *dev, struct pm_clock_entry *ce)
+ 	} else {
+ 		clk_prepare(ce->clk);
+ 		ce->status = PCE_STATUS_ACQUIRED;
+-		dev_dbg(dev, "Clock %s managed by runtime PM.\n", ce->con_id);
++		dev_dbg(dev, "Clock %pC con_id %s managed by runtime PM.\n",
++			ce->clk, ce->con_id);
+ 	}
+ }
+ 
+-- 
+1.9.1
+
