@@ -1,172 +1,104 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Paul Walmsley <pwalmsley@nvidia.com>,
-	Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v5 05/21] clk: tegra: pll: simplify clk_enable_path
-Date: Tue, 12 May 2015 13:23:48 -0400
-Message-ID: <1431451444-23155-7-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
-References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+Return-Path: <bintian.wang@huawei.com>
+Message-ID: <5567B9BE.9000502@huawei.com>
+Date: Fri, 29 May 2015 08:58:38 +0800
+From: Bintian <bintian.wang@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+To: Kevin Hilman <khilman@kernel.org>
+CC: Michael Turquette <mturquette@linaro.org>, <sboyd@codeaurora.org>,
+        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
+        <xuejiancheng@huawei.com>, <tomeu.vizoso@collabora.com>,
+        <sledge.yanwei@huawei.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <arnd@arndb.de>, <will.deacon@arm.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <catalin.marinas@arm.com>, <haojian.zhuang@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <olof@lixom.net>,
+        <yanhaifeng@gmail.com>, <linux@arm.linux.org.uk>,
+        <guodong.xu@linaro.org>, <jorge.ramirez-ortiz@linaro.org>,
+        <tyler.baker@linaro.org>, <xuyiping@hisilicon.com>,
+        <wangbinghui@hisilicon.com>, <zhenwei.wang@hisilicon.com>,
+        <victor.lixin@hisilicon.com>, <puck.chen@hisilicon.com>,
+        <dan.zhao@hisilicon.com>, <huxinwei@huawei.com>,
+        <z.liuxinliang@huawei.com>, <heyunlei@huawei.com>,
+        <kong.kongxinwei@hisilicon.com>, <wangbintian@gmail.com>,
+        <w.f@huawei.com>, <liguozhu@hisilicon.com>
+Subject: Re: [PATCH v8 6/7] clk: hi6220: Clock driver support for Hisilicon
+ hi6220 SoC
+References: <1432440671-25235-1-git-send-email-bintian.wang@huawei.com>	<1432440671-25235-3-git-send-email-bintian.wang@huawei.com>	<20150528052608.22384.96747@quantum> <5566CF13.8060806@huawei.com> <7h4mmwip62.fsf@deeprootsystems.com>
+In-Reply-To: <7h4mmwip62.fsf@deeprootsystems.com>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Instead of having multiple similar wrapper functions for
-_clk_pll_[enable|disable], we can simplify it to single
-wrappers and use checks to avoid the logic we don't want to use.
+Hello Kevin,
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
-v2:
-  - Moved the iddq settings into _clk_pll_enable/disable. This is because
-    some places in this file call directly into these internal functions,
-    but still need the iddq/reset logic to happen.
+On 2015/5/29 1:32, Kevin Hilman wrote:
+> Bintian <bintian.wang@huawei.com> writes:
+>
+>> Hello Mike,
+>>
+>> On 2015/5/28 13:26, Michael Turquette wrote:
+>>> Quoting Bintian Wang (2015-05-23 21:11:11)
+>>>> Add clock drivers for hi6220 SoC, this driver controls the SoC
+>>>> registers to supply different clocks to different IPs in the SoC.
+>>>>
+>>>> We add one divider clock for hi6220 because the divider in hi6220
+>>>> also has a mask bit but it doesnot obey the rule defined by flag
+>>>> "CLK_DIVIDER_HIWORD_MASK", we can not get index of the mask bit by
+>>>> left shift fixed bits (e.g. 16 bits), so we add this divider clock
+>>>> to handle it.
+>>>>
+>>>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+>>>> Signed-off-by: Bintian Wang <bintian.wang@huawei.com>
+>>>> Acked-by: Haojian Zhuang <haojian.zhuang@linaro.org>
+>>>> Reviewed-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+>>>> Tested-by: Will Deacon <will.deacon@arm.com>
+>>>> Tested-by: Tyler Baker <tyler.baker@linaro.org>
+>>>
+>>> Hi Bintian,
+>>>
+>>> Thanks for making the changes requested by Stephen. I've taken his patch
+>>> to add assigned-clock-rate/parent support for AMBA interconnects and
+>>> applied it to 4.1-rc1, and then I've applied your v8 patches #4-6 on top
+>>> of that. You can find it at:
+>>>
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next-hi6220
+>> Thank you very much!
+>>
+>> I think you also need to pick patch "[PATCH v5 3/6] clk: hi6220:
+>> Document devicetree bindings for hi6220 clock",  which described the
+>> dt binding of clk, and it is also acked by Stephen(v4 is the same to
+>> v5).
+>>
+>>> I have merged this into clk-next so it can get some cycles in
+>>> linux-next.
+>>>
+>>> Stephen,
+>>>
+>>> Can you send your patch out to Russell properly? It needs his ack (or
+>>> for him to take it outright) in order to unblock the hi6220 clock driver
+>>> from being merged.
+>> It doesn't block hi6220 clock driver now, because the UART1 is not
+>> enabled in hi6220 dts now.
+>
+> Now that the clk changes are queued up, can you (re)post the remaining
+> hikey patches with a changelog stating the dependency on the clk-next
+> branch.  I believe what's left is just the DT and Kconfig/defconfig
+> changes, correct?
+Yes, you are right.
 
- drivers/clk/tegra/clk-pll.c |   76 +++++++++++++------------------------------
- 1 file changed, 22 insertions(+), 54 deletions(-)
+I will post the remaining hikey patches soon.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index b9a739ce4b98..1e1018dd466f 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -295,6 +295,13 @@ static void _clk_pll_enable(struct clk_hw *hw)
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	u32 val;
- 
-+	if (pll->params->iddq_reg) {
-+		val = pll_readl(pll->params->iddq_reg, pll);
-+		val &= ~BIT(pll->params->iddq_bit_idx);
-+		pll_writel(val, pll->params->iddq_reg, pll);
-+		udelay(2);
-+	}
-+
- 	clk_pll_enable_lock(pll);
- 
- 	val = pll_readl_base(pll);
-@@ -326,6 +333,13 @@ static void _clk_pll_disable(struct clk_hw *hw)
- 		val &= ~PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE;
- 		writel_relaxed(val, pll->pmc + PMC_PLLP_WB0_OVERRIDE);
- 	}
-+
-+	if (pll->params->iddq_reg) {
-+		val = pll_readl(pll->params->iddq_reg, pll);
-+		val |= BIT(pll->params->iddq_bit_idx);
-+		pll_writel(val, pll->params->iddq_reg, pll);
-+		udelay(2);
-+	}
- }
- 
- static int clk_pll_enable(struct clk_hw *hw)
-@@ -876,52 +890,6 @@ static int _setup_dynamic_ramp(struct tegra_clk_pll_params *pll_params,
- 	return 0;
- }
- 
--static int clk_pll_iddq_enable(struct clk_hw *hw)
--{
--	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	unsigned long flags = 0;
--
--	u32 val;
--	int ret;
--
--	if (pll->lock)
--		spin_lock_irqsave(pll->lock, flags);
--
--	val = pll_readl(pll->params->iddq_reg, pll);
--	val &= ~BIT(pll->params->iddq_bit_idx);
--	pll_writel(val, pll->params->iddq_reg, pll);
--	udelay(2);
--
--	_clk_pll_enable(hw);
--
--	ret = clk_pll_wait_for_lock(pll);
--
--	if (pll->lock)
--		spin_unlock_irqrestore(pll->lock, flags);
--
--	return 0;
--}
--
--static void clk_pll_iddq_disable(struct clk_hw *hw)
--{
--	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	unsigned long flags = 0;
--	u32 val;
--
--	if (pll->lock)
--		spin_lock_irqsave(pll->lock, flags);
--
--	_clk_pll_disable(hw);
--
--	val = pll_readl(pll->params->iddq_reg, pll);
--	val |= BIT(pll->params->iddq_bit_idx);
--	pll_writel(val, pll->params->iddq_reg, pll);
--	udelay(2);
--
--	if (pll->lock)
--		spin_unlock_irqrestore(pll->lock, flags);
--}
--
- static int _calc_dynamic_ramp_rate(struct clk_hw *hw,
- 				struct tegra_clk_pll_freq_table *cfg,
- 				unsigned long rate, unsigned long parent_rate)
-@@ -1518,8 +1486,8 @@ struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
- 	defined(CONFIG_ARCH_TEGRA_132_SOC)
- static const struct clk_ops tegra_clk_pllxc_ops = {
- 	.is_enabled = clk_pll_is_enabled,
--	.enable = clk_pll_iddq_enable,
--	.disable = clk_pll_iddq_disable,
-+	.enable = clk_pll_enable,
-+	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.round_rate = clk_pll_ramp_round_rate,
- 	.set_rate = clk_pllxc_set_rate,
-@@ -1527,8 +1495,8 @@ static const struct clk_ops tegra_clk_pllxc_ops = {
- 
- static const struct clk_ops tegra_clk_pllm_ops = {
- 	.is_enabled = clk_pll_is_enabled,
--	.enable = clk_pll_iddq_enable,
--	.disable = clk_pll_iddq_disable,
-+	.enable = clk_pll_enable,
-+	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.round_rate = clk_pll_ramp_round_rate,
- 	.set_rate = clk_pllm_set_rate,
-@@ -1545,8 +1513,8 @@ static const struct clk_ops tegra_clk_pllc_ops = {
- 
- static const struct clk_ops tegra_clk_pllre_ops = {
- 	.is_enabled = clk_pll_is_enabled,
--	.enable = clk_pll_iddq_enable,
--	.disable = clk_pll_iddq_disable,
-+	.enable = clk_pll_enable,
-+	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pllre_recalc_rate,
- 	.round_rate = clk_pllre_round_rate,
- 	.set_rate = clk_pllre_set_rate,
-@@ -1815,8 +1783,8 @@ struct clk *tegra_clk_register_plle_tegra114(const char *name,
- #if defined(CONFIG_ARCH_TEGRA_124_SOC) || defined(CONFIG_ARCH_TEGRA_132_SOC)
- static const struct clk_ops tegra_clk_pllss_ops = {
- 	.is_enabled = clk_pll_is_enabled,
--	.enable = clk_pll_iddq_enable,
--	.disable = clk_pll_iddq_disable,
-+	.enable = clk_pll_enable,
-+	.disable = clk_pll_disable,
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.round_rate = clk_pll_ramp_round_rate,
- 	.set_rate = clk_pllxc_set_rate,
--- 
-1.7.9.5
+Thank you Kevin,
+
+BR,
+
+Bintian
+>
+> With some acks from the DT maintainers, these should be ready to be
+> merged through arm-soc.
+>
+> Thanks,
+>
+> Kevin
+>
+> .
+>
