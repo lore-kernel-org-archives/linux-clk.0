@@ -1,67 +1,74 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-pm-owner@vger.kernel.org>
 MIME-Version: 1.0
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
- linux-arm-kernel@lists.infradead.org
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <1432565608-26036-18-git-send-email-tomeu.vizoso@collabora.com>
-Cc: =?utf-8?q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>,
- "Thierry Reding" <thierry.reding@gmail.com>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Alexander Holler" <holler@ahsoftware.de>,
- "Grant Likely" <grant.likely@linaro.org>, "Rob Herring" <robh+dt@kernel.org>,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Tomeu Vizoso" <tomeu.vizoso@collabora.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
- <1432565608-26036-18-git-send-email-tomeu.vizoso@collabora.com>
-Message-ID: <20150528061643.22384.27268@quantum>
-Subject: Re: [PATCH 17/21] clk: Probe clk providers on demand
-Date: Wed, 27 May 2015 23:16:43 -0700
+In-Reply-To: <5568423A.4080200@linaro.org>
+References: <1432839849-1432-1-git-send-email-geert+renesas@glider.be>
+	<5568423A.4080200@linaro.org>
+Date: Fri, 29 May 2015 12:53:04 +0200
+Message-ID: <CAMuHMdU9iboF9oWWAQSO67JLdQ67mFo6edv_O4uA74Pn_PUijA@mail.gmail.com>
+Subject: Re: [PATCH] PM / clock_ops: Print acquired clock name instead of con_id
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linux PM list <linux-pm@vger.kernel.org>,
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Tomeu Vizoso (2015-05-25 07:53:21)
-> When looking up a clk through its DT node, ensure that the corresponding
-> device has been registered.
-> =
+Hi Grygorii,
 
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+On Fri, May 29, 2015 at 12:40 PM, Grygorii.Strashko@linaro.org
+<grygorii.strashko@linaro.org> wrote:
+> On 05/28/2015 10:04 PM, Geert Uytterhoeven wrote:
+>> Currently the con_id of the acquired clock is printed for debugging
+>> purposes.  But in several cases, the con_id is NULL, which doesn't
+>> provide much debugging information when printed.  These cases are:
+>>    - When explicitly passing a NULL con_id (which means the first clock
+>>      tied to the device, if available),
+>>    - When not using pm_clk_add(), but pm_clk_add_clk() (which takes a
+>>      "struct clk *" directly).
+>>
+>> Hence print the actual clock name instead of the con_id.
+>>
+>> As the clock name is not available with legacy clock frameworks, and a
+>> (non-NULL) con_id is more useful than a hex address, keep printing the
+>> con_id if the Common Clock Framework is not enabled.
+>
+> overall:
+> Reviewed-by: Grygorii Strashko <grygorii.strashko@linaro.org>
+>
+> But, It seems case !CONFIG_COMMON_CLK is handled by vsprintf, may we can assume
 
-Ack.
+Yes it is, it will print the hex pointer value.
 
-Regards,
-Mike
+> that printk will handle invalid input parameters values correctly:
+>
+> like
+>  dev_dbg(dev, "Clock %pC con_id:%s managed by runtime PM.\n", ce->clk, ce->con_id);
 
-> ---
->  drivers/clk/clk.c | 3 +++
->  1 file changed, 3 insertions(+)
-> =
+Thanks, I didn't think about printing both, as I was too focused on printing
+a single perfect value ;-)
 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 5b0f418..f9e8a8d 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -18,6 +18,7 @@
->  #include <linux/list.h>
->  #include <linux/slab.h>
->  #include <linux/of.h>
-> +#include <linux/of_platform.h>
->  #include <linux/device.h>
->  #include <linux/init.h>
->  #include <linux/sched.h>
-> @@ -2985,6 +2986,8 @@ struct clk *__of_clk_get_from_provider(struct of_ph=
-andle_args *clkspec,
->         if (!clkspec)
->                 return ERR_PTR(-EINVAL);
->  =
+BTW, what I wanted to do was something like
 
-> +       of_platform_device_ensure(clkspec->np);
-> +
->         /* Check if we have such a provider in our array */
->         mutex_lock(&of_clk_mutex);
->         list_for_each_entry(provider, &of_clk_providers, link) {
-> -- =
+        dev_dbg(dev, "Clock %s managed by runtime PM.\n",
+                ce->con_id ? ce->con_id : __clk_get_name(ce->clk));
 
-> 2.4.1
->=20
+but __clk_get_name() doesn't exist if !CONFIG_COMMON_CLK.
+
+Having the con_id too, is useful if it's non-NULL, so I'll follow your
+suggestion.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
