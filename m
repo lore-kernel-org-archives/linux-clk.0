@@ -1,73 +1,81 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <555E1D55.1050907@codeaurora.org>
-Date: Thu, 21 May 2015 11:00:53 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <m-karicheri2@ti.com>
+From: Murali Karicheri <m-karicheri2@ti.com>
+To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <ssantosh@kernel.org>, <mturquette@linaro.org>, <sboyd@codeaurora.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux@arm.linux.org.uk>,
+        <linux-arm-kernel@lists.infradead.org>
+CC: Murali Karicheri <m-karicheri2@ti.com>
+Subject: [PATCH 2/2] ARM: dts: keystone: fix dt bindings to use post div register for mainpll
+Date: Fri, 29 May 2015 12:04:13 -0400
+Message-ID: <1432915453-409-2-git-send-email-m-karicheri2@ti.com>
+In-Reply-To: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
+References: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
 MIME-Version: 1.0
-To: Bintian <bintian.wang@huawei.com>, mturquette@linaro.org,
- zhangfei.gao@linaro.org, xuwei5@hisilicon.com, xuejiancheng@huawei.com,
- tomeu.vizoso@collabora.com, sledge.yanwei@huawei.com,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
- will.deacon@arm.com, robh+dt@kernel.org, khilman@linaro.org,
- mark.rutland@arm.com, catalin.marinas@arm.com,
- haojian.zhuang@linaro.org, linux-arm-kernel@lists.infradead.org,
- olof@lixom.net, yanhaifeng@gmail.com, linux@arm.linux.org.uk,
- guodong.xu@linaro.org, jorge.ramirez-ortiz@linaro.org,
- tyler.baker@linaro.org, khilman@kernel.org
-CC: xuyiping@hisilicon.com, wangbinghui@hisilicon.com,
- zhenwei.wang@hisilicon.com, victor.lixin@hisilicon.com,
- puck.chen@hisilicon.com, dan.zhao@hisilicon.com, huxinwei@huawei.com,
- z.liuxinliang@huawei.com, heyunlei@huawei.com,
- kong.kongxinwei@hisilicon.com, wangbintian@gmail.com, w.f@huawei.com,
- liguozhu@hisilicon.com
-Subject: Re: [PATCH v7 6/7] clk: hi6220: Clock driver support for Hisilicon
- hi6220 SoC
-References: <1432117752-7074-1-git-send-email-bintian.wang@huawei.com> <1432117752-7074-2-git-send-email-bintian.wang@huawei.com> <555D09F3.7020506@codeaurora.org> <555D57BB.8080702@huawei.com>
-In-Reply-To: <555D57BB.8080702@huawei.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/20/15 20:57, Bintian wrote:
->
->>
->>>
->>> +
->>> +static void __init hi6220_clk_sys_init(struct device_node *np)
->>> +{
->>> +    struct hisi_clock_data *clk_data;
->>> +
->>> +    clk_data = hisi_clk_init(np, HI6220_SYS_NR_CLKS);
->>> +    if (!clk_data)
->>> +        return;
->>> +
->>> +    hisi_clk_register_gate_sep(hi6220_separated_gate_clks_sys,
->>> +            ARRAY_SIZE(hi6220_separated_gate_clks_sys), clk_data);
->>> +
->>> +    hisi_clk_register_mux(hi6220_mux_clks_sys,
->>> +            ARRAY_SIZE(hi6220_mux_clks_sys), clk_data);
->>> +
->>> +    hi6220_clk_register_divider(hi6220_div_clks_sys,
->>> +            ARRAY_SIZE(hi6220_div_clks_sys), clk_data);
->>> +
->>> +    if (!clk_data_ao)
->>> +        return;
->>> +
->>> +    /* enable high speed clock on UART1 mux */
->>> +    clk_set_parent(clk_data->clk_data.clks[HI6220_UART1_SRC],
->>> +            clk_data_ao->clk_data.clks[HI6220_150M]);
->>
->> Sorry I missed this one earlier. Can we do this clk_set_parent() through
->> assigned-parents instead?
-> Uart1 has two clock parents in hi6220, and use "clk_tcxo" by default,
-> we use uart1 to connect BT in HiKey, and switch to "clk_150m" for high
-> speed mode of BT, but pl011 has no code to set clock rate or set clock
-> parents operation, so it's a easy way to do that here.
+All of the keystone devices have a separate register to hold post
+divider value for main pll clock. Currently the fixed-postdiv
+value used for k2hk/l/e SoCs works by sheer luck as u-boot happens to
+use a value of 2 for this. Now that we have fixed this in the pll
+clock driver change the dt bindings for the same.
 
-Is pl011 the uart device? Does it have a node in DT somewhere? If it
-does, then we could put the assigned-parents properties in that node so
-that when the pl011 probes the uart1 clock has its parent set to
-clk_150m. See the "Assigned clock parents and rates" section of
-Documentation/devicetree/bindings/clock/clock-bindings.txt.
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ arch/arm/boot/dts/k2e-clocks.dtsi  | 5 ++---
+ arch/arm/boot/dts/k2hk-clocks.dtsi | 5 ++---
+ arch/arm/boot/dts/k2l-clocks.dtsi  | 5 ++---
+ 3 files changed, 6 insertions(+), 9 deletions(-)
 
+diff --git a/arch/arm/boot/dts/k2e-clocks.dtsi b/arch/arm/boot/dts/k2e-clocks.dtsi
+index 4773d6a..d56d68f 100644
+--- a/arch/arm/boot/dts/k2e-clocks.dtsi
++++ b/arch/arm/boot/dts/k2e-clocks.dtsi
+@@ -13,9 +13,8 @@ clocks {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,keystone,main-pll-clock";
+ 		clocks = <&refclksys>;
+-		reg = <0x02620350 4>, <0x02310110 4>;
+-		reg-names = "control", "multiplier";
+-		fixed-postdiv = <2>;
++		reg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
++		reg-names = "control", "multiplier", "post-divider";
+ 	};
+ 
+ 	papllclk: papllclk@2620358 {
+diff --git a/arch/arm/boot/dts/k2hk-clocks.dtsi b/arch/arm/boot/dts/k2hk-clocks.dtsi
+index d5adee3..af9b719 100644
+--- a/arch/arm/boot/dts/k2hk-clocks.dtsi
++++ b/arch/arm/boot/dts/k2hk-clocks.dtsi
+@@ -22,9 +22,8 @@ clocks {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,keystone,main-pll-clock";
+ 		clocks = <&refclksys>;
+-		reg = <0x02620350 4>, <0x02310110 4>;
+-		reg-names = "control", "multiplier";
+-		fixed-postdiv = <2>;
++		reg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
++		reg-names = "control", "multiplier", "post-divider";
+ 	};
+ 
+ 	papllclk: papllclk@2620358 {
+diff --git a/arch/arm/boot/dts/k2l-clocks.dtsi b/arch/arm/boot/dts/k2l-clocks.dtsi
+index eb1e3e2..ef8464b 100644
+--- a/arch/arm/boot/dts/k2l-clocks.dtsi
++++ b/arch/arm/boot/dts/k2l-clocks.dtsi
+@@ -22,9 +22,8 @@ clocks {
+ 		#clock-cells = <0>;
+ 		compatible = "ti,keystone,main-pll-clock";
+ 		clocks = <&refclksys>;
+-		reg = <0x02620350 4>, <0x02310110 4>;
+-		reg-names = "control", "multiplier";
+-		fixed-postdiv = <2>;
++		reg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
++		reg-names = "control", "multiplier", "post-divider";
+ 	};
+ 
+ 	papllclk: papllclk@2620358 {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
