@@ -1,104 +1,62 @@
-Return-Path: <bintian.wang@huawei.com>
-Message-ID: <5567B9BE.9000502@huawei.com>
-Date: Fri, 29 May 2015 08:58:38 +0800
-From: Bintian <bintian.wang@huawei.com>
-MIME-Version: 1.0
-To: Kevin Hilman <khilman@kernel.org>
-CC: Michael Turquette <mturquette@linaro.org>, <sboyd@codeaurora.org>,
-        <zhangfei.gao@linaro.org>, <xuwei5@hisilicon.com>,
-        <xuejiancheng@huawei.com>, <tomeu.vizoso@collabora.com>,
-        <sledge.yanwei@huawei.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <arnd@arndb.de>, <will.deacon@arm.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <catalin.marinas@arm.com>, <haojian.zhuang@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <olof@lixom.net>,
-        <yanhaifeng@gmail.com>, <linux@arm.linux.org.uk>,
-        <guodong.xu@linaro.org>, <jorge.ramirez-ortiz@linaro.org>,
-        <tyler.baker@linaro.org>, <xuyiping@hisilicon.com>,
-        <wangbinghui@hisilicon.com>, <zhenwei.wang@hisilicon.com>,
-        <victor.lixin@hisilicon.com>, <puck.chen@hisilicon.com>,
-        <dan.zhao@hisilicon.com>, <huxinwei@huawei.com>,
-        <z.liuxinliang@huawei.com>, <heyunlei@huawei.com>,
-        <kong.kongxinwei@hisilicon.com>, <wangbintian@gmail.com>,
-        <w.f@huawei.com>, <liguozhu@hisilicon.com>
-Subject: Re: [PATCH v8 6/7] clk: hi6220: Clock driver support for Hisilicon
- hi6220 SoC
-References: <1432440671-25235-1-git-send-email-bintian.wang@huawei.com>	<1432440671-25235-3-git-send-email-bintian.wang@huawei.com>	<20150528052608.22384.96747@quantum> <5566CF13.8060806@huawei.com> <7h4mmwip62.fsf@deeprootsystems.com>
-In-Reply-To: <7h4mmwip62.fsf@deeprootsystems.com>
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@arm.linux.org.uk>
+Cc: linux-clk@vger.kernel.org,
+	kernel@stlinux.com,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/5] [RFC] clk: Provide dummy of_clk_get_parent_count() for !OF/!CCF
+Date: Fri, 29 May 2015 11:25:48 +0200
+Message-Id: <1432891549-23295-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
+References: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Kevin,
+Provide dummy implementations of of_clk_get_parent_count() for the
+cases where CONFIG_OF or CONFIG_COMMON_CLK are not set.
 
-On 2015/5/29 1:32, Kevin Hilman wrote:
-> Bintian <bintian.wang@huawei.com> writes:
->
->> Hello Mike,
->>
->> On 2015/5/28 13:26, Michael Turquette wrote:
->>> Quoting Bintian Wang (2015-05-23 21:11:11)
->>>> Add clock drivers for hi6220 SoC, this driver controls the SoC
->>>> registers to supply different clocks to different IPs in the SoC.
->>>>
->>>> We add one divider clock for hi6220 because the divider in hi6220
->>>> also has a mask bit but it doesnot obey the rule defined by flag
->>>> "CLK_DIVIDER_HIWORD_MASK", we can not get index of the mask bit by
->>>> left shift fixed bits (e.g. 16 bits), so we add this divider clock
->>>> to handle it.
->>>>
->>>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
->>>> Signed-off-by: Bintian Wang <bintian.wang@huawei.com>
->>>> Acked-by: Haojian Zhuang <haojian.zhuang@linaro.org>
->>>> Reviewed-by: Zhangfei Gao <zhangfei.gao@linaro.org>
->>>> Tested-by: Will Deacon <will.deacon@arm.com>
->>>> Tested-by: Tyler Baker <tyler.baker@linaro.org>
->>>
->>> Hi Bintian,
->>>
->>> Thanks for making the changes requested by Stephen. I've taken his patch
->>> to add assigned-clock-rate/parent support for AMBA interconnects and
->>> applied it to 4.1-rc1, and then I've applied your v8 patches #4-6 on top
->>> of that. You can find it at:
->>>
->>> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next-hi6220
->> Thank you very much!
->>
->> I think you also need to pick patch "[PATCH v5 3/6] clk: hi6220:
->> Document devicetree bindings for hi6220 clock",  which described the
->> dt binding of clk, and it is also acked by Stephen(v4 is the same to
->> v5).
->>
->>> I have merged this into clk-next so it can get some cycles in
->>> linux-next.
->>>
->>> Stephen,
->>>
->>> Can you send your patch out to Russell properly? It needs his ack (or
->>> for him to take it outright) in order to unblock the hi6220 clock driver
->>> from being merged.
->> It doesn't block hi6220 clock driver now, because the UART1 is not
->> enabled in hi6220 dts now.
->
-> Now that the clk changes are queued up, can you (re)post the remaining
-> hikey patches with a changelog stating the dependency on the clk-next
-> branch.  I believe what's left is just the DT and Kconfig/defconfig
-> changes, correct?
-Yes, you are right.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This is an RFC, as
+  1. Dummies are needed in two places,
+  2. We don't have any dummies yet for the !CCF case.
+---
+ include/linux/clk-provider.h | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-I will post the remaining hikey patches soon.
-
-Thank you Kevin,
-
-BR,
-
-Bintian
->
-> With some acks from the DT maintainers, these should be ready to be
-> merged through arm-soc.
->
-> Thanks,
->
-> Kevin
->
-> .
->
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 5378c2aba4d2eaec..d56bb0c6dd982c32 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -651,6 +651,10 @@ static inline struct clk *of_clk_src_onecell_get(
+ {
+ 	return ERR_PTR(-ENOENT);
+ }
++static inline int of_clk_get_parent_count(struct device_node *np)
++{
++	return -ENOENT;
++}
+ static inline const char *of_clk_get_parent_name(struct device_node *np,
+ 						 int index)
+ {
+@@ -696,5 +700,10 @@ struct dentry *clk_debugfs_add_file(struct clk_hw *hw, char *name, umode_t mode,
+ 				void *data, const struct file_operations *fops);
+ #endif
+ 
+-#endif /* CONFIG_COMMON_CLK */
++#else /* !CONFIG_COMMON_CLK */
++static inline int of_clk_get_parent_count(struct device_node *np)
++{
++	return -ENOENT;
++}
++#endif /* !CONFIG_COMMON_CLK */
+ #endif /* CLK_PROVIDER_H */
+-- 
+1.9.1
