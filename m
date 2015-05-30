@@ -1,63 +1,66 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <mturquette@linaro.org>, <tony@atomide.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>, <paul@pwsan.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 21/27] ARM: OMAP4: clock: remove clock44xx.h header
-Date: Mon, 11 May 2015 11:54:47 +0300
-Message-ID: <1431334493-24455-22-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
-References: <1431334493-24455-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <daniel.thompson@linaro.org>
+Return-Path: <daniel.thompson@linaro.org>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Kamil Lulko <rev13@wp.pl>,
+	Andreas Farber <afaerber@suse.de>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	patches@linaro.org,
+	linaro-kernel@lists.linaro.org
+Subject: [PATCH v2 0/4] clk: stm32: Add clock driver for STM32F4[23]xxx devices
+Date: Sat, 30 May 2015 08:54:04 +0100
+Message-Id: <1432972448-10332-1-git-send-email-daniel.thompson@linaro.org>
+In-Reply-To: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
+References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is not needed for anything anymore, so remove it completely.
+This patchset implements a clock driver for STM32F42xxx and STM32F43xxx
+series devices. It supports decoding the state configured by the
+bootloader (PLL, clock select, bus dividers) and all the gates clocks.
+It does not currently support the I2S and SAI PLLs.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/clock44xx.h |   20 --------------------
- arch/arm/mach-omap2/io.c        |    1 -
- 2 files changed, 21 deletions(-)
- delete mode 100644 arch/arm/mach-omap2/clock44xx.h
+Relies on "Add support to STMicroeletronics STM32 family" v9 by Maxime
+Coquelin: http://thread.gmane.org/gmane.linux.kernel/1961049 .
 
-diff --git a/arch/arm/mach-omap2/clock44xx.h b/arch/arm/mach-omap2/clock44xx.h
-deleted file mode 100644
-index 287a46f..0000000
---- a/arch/arm/mach-omap2/clock44xx.h
-+++ /dev/null
-@@ -1,20 +0,0 @@
--/*
-- * OMAP4 clock function prototypes and macros
-- *
-- * Copyright (C) 2009 Texas Instruments, Inc.
-- * Copyright (C) 2010 Nokia Corporation
-- */
--
--#ifndef __ARCH_ARM_MACH_OMAP2_CLOCK44XX_H
--#define __ARCH_ARM_MACH_OMAP2_CLOCK44XX_H
--
--/*
-- * OMAP4430_REGM4XEN_MULT: If the CM_CLKMODE_DPLL_ABE.DPLL_REGM4XEN bit is
-- *    set, then the DPLL's lock frequency is multiplied by 4 (OMAP4430 TRM
-- *    vV Section 3.6.3.3.1 "DPLLs Output Clocks Parameters")
-- */
--#define OMAP4430_REGM4XEN_MULT	4
--
--int omap4xxx_clk_init(void);
--
--#endif
-diff --git a/arch/arm/mach-omap2/io.c b/arch/arm/mach-omap2/io.c
-index 820dde8..7467856 100644
---- a/arch/arm/mach-omap2/io.c
-+++ b/arch/arm/mach-omap2/io.c
-@@ -37,7 +37,6 @@
- #include "clock.h"
- #include "clock2xxx.h"
- #include "clock3xxx.h"
--#include "clock44xx.h"
- #include "omap-pm.h"
- #include "sdrc.h"
- #include "control.h"
--- 
-1.7.9.5
+For completeness I've also included a small config patch I needed to
+get my board to boot once I had rebased. I suspect Maxime may have the
+same patch tucked away somewhere :-).
+
+v2:
+ * Move the HSE crystal frequency to stm32f429-disco.dts (was
+   prevsiously in stm32f429.dtsi)
+ * Fixed compiler warning that I overlooked the first time round.
+ * Removed dead code in the .dtsi file.
+ * Rebased on linux-next+v9 from Maxime.
+
+
+Daniel Thompson (4):
+  ARM: stm32: Enable clock source
+  dt-bindings: Document the STM32F4 clock bindings
+  clk: stm32: Add clock driver for STM32F4[23]xxx devices
+  ARM: dts: stm32f429: Adopt STM32F4 clock driver
+
+ .../devicetree/bindings/clock/st,stm32-rcc.txt     |  65 ++++
+ arch/arm/Kconfig                                   |   1 +
+ arch/arm/boot/dts/stm32f429-disco.dts              |   4 +
+ arch/arm/boot/dts/stm32f429.dtsi                   |  79 ++---
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-stm32f4.c                          | 364 +++++++++++++++++++++
+ 6 files changed, 459 insertions(+), 55 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+ create mode 100644 drivers/clk/clk-stm32f4.c
+
+--
+2.1.0
