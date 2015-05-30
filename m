@@ -1,35 +1,37 @@
-Return-Path: <bleung@google.com>
+Return-Path: <mcoquelin.stm32@gmail.com>
+Return-Path: <mcoquelin.stm32@gmail.com>
+Message-ID: <55697772.4050903@gmail.com>
+Date: Sat, 30 May 2015 10:40:18 +0200
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
 MIME-Version: 1.0
-Sender: bleung@google.com
-In-Reply-To: <1431451444-23155-6-git-send-email-rklein@nvidia.com>
-References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
-	<1431451444-23155-6-git-send-email-rklein@nvidia.com>
-Date: Tue, 12 May 2015 14:52:07 -0700
-Message-ID: <CANLzEkvec7WKSEseBf=S43vMaxUjVqaOuuxGOS7qYz4KPsAXyg@mail.gmail.com>
-Subject: Re: [PATCH v5 04/21] clk: tegra: pll: add tegra_pll_wait_for_lock to
- clk header
-From: Benson Leung <bleung@chromium.org>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: Daniel Thompson <daniel.thompson@linaro.org>,
+ Mike Turquette <mturquette@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>
+CC: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Kumar Gala <galak@codeaurora.org>,
+ Russell King <linux@arm.linux.org.uk>, Kamil Lulko <rev13@wp.pl>,
+ Andreas Farber <afaerber@suse.de>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ patches@linaro.org, linaro-kernel@lists.linaro.org
+Subject: Re: [PATCH v2 0/4] clk: stm32: Add clock driver for STM32F4[23]xxx
+ devices
+References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org> <1432972448-10332-1-git-send-email-daniel.thompson@linaro.org>
+In-Reply-To: <1432972448-10332-1-git-send-email-daniel.thompson@linaro.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 12, 2015 at 10:23 AM, Rhyland Klein <rklein@nvidia.com> wrote:
-> Create a wrapper interface to make use of the existing
-> clk_pll_wait_for_lock. This will be useful for implementations
-> of callbacks in Tegra SoC specific clock drivers.
->
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-
-Reviewed-by: Benson Leung <bleung@chromium.org>
 
 
--- 
-Benson Leung
-Software Engineer, Chrom* OS
-bleung@chromium.org
+On 05/30/2015 09:54 AM, Daniel Thompson wrote:
+> For completeness I've also included a small config patch I needed to
+> get my board to boot once I had rebased. I suspect Maxime may have the
+> same patch tucked away somewhere:-).
+
+You are right, I already sent the same patch to Arnd.
+But it looks it is not applied to arm-soc tree yet.
+
+Regards,
+Maxime
