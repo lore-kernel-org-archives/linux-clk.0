@@ -1,129 +1,46 @@
-Return-Path: <t-kristo@ti.com>
-Message-ID: <554B1F5F.1020403@ti.com>
-Date: Thu, 7 May 2015 11:16:31 +0300
-From: Tero Kristo <t-kristo@ti.com>
+Return-Path: <mcoquelin.stm32@gmail.com>
+Return-Path: <mcoquelin.stm32@gmail.com>
+Message-ID: <55698527.1050504@gmail.com>
+Date: Sat, 30 May 2015 11:38:47 +0200
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
 MIME-Version: 1.0
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Mike Turquette <mturquette@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 13/19] clk: ti: Silence sparse warnings
-References: <1430897996-11597-1-git-send-email-sboyd@codeaurora.org> <1430897996-11597-14-git-send-email-sboyd@codeaurora.org> <5549CD8B.4070601@ti.com>
-In-Reply-To: <5549CD8B.4070601@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+To: Daniel Thompson <daniel.thompson@linaro.org>,
+ Mike Turquette <mturquette@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>
+CC: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Kumar Gala <galak@codeaurora.org>,
+ Russell King <linux@arm.linux.org.uk>, Kamil Lulko <rev13@wp.pl>,
+ Andreas Farber <afaerber@suse.de>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ patches@linaro.org, linaro-kernel@lists.linaro.org
+Subject: Re: [PATCH v2 4/4] ARM: dts: stm32f429: Adopt STM32F4 clock driver
+References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org> <1432972448-10332-1-git-send-email-daniel.thompson@linaro.org> <1432972448-10332-5-git-send-email-daniel.thompson@linaro.org>
+In-Reply-To: <1432972448-10332-5-git-send-email-daniel.thompson@linaro.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/06/2015 11:15 AM, Peter Ujfalusi wrote:
-> On 05/06/2015 10:39 AM, Stephen Boyd wrote:
->> drivers/clk/ti/clk.c:125:31: warning: incorrect type in return expression (different address spaces)
->> drivers/clk/ti/clk.c:125:31:    expected void [noderef] <asn:2>*
->> drivers/clk/ti/clk.c:125:31:    got void *
->> drivers/clk/ti/clk.c:132:31: warning: incorrect type in return expression (different address spaces)
->> drivers/clk/ti/clk.c:132:31:    expected void [noderef] <asn:2>*
->> drivers/clk/ti/clk.c:132:31:    got void *
->> drivers/clk/ti/dpll.c:180:14: warning: symbol '_get_reg' was not declared. Should it be static?
->> drivers/clk/ti/fapll.c:624:32: warning: Using plain integer as NULL pointer
->> drivers/clk/ti/fapll.c:625:31: warning: Using plain integer as NULL pointer
->> drivers/clk/ti/fapll.c:630:40: warning: Using plain integer as NULL pointer
->> drivers/clk/ti/clk-dra7-atl.c:158:22: warning: symbol 'atl_clk_ops' was not declared. Should it be static?
->> drivers/clk/ti/clk-dra7-atl.c:170:39: warning: Using plain integer as NULL pointer
->>
->> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
->> Cc: Tero Kristo <t-kristo@ti.com>
->> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
->
-> Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-Yes looks good to me also.
 
-Acked-by: Tero Kristo <t-kristo@ti.com>
+On 05/30/2015 09:54 AM, Daniel Thompson wrote:
+> New bindings and driver have been created for STM32F42xxx series parts.
+> This patch integrates these changes.
+>
+> Note: Earlier device tree blobs (those without st,stm32f42xxx
+>        compatibles for the rcc) could still be used to boot basic
+>        systems. Such systems rely on the bootloader to configure the
+>        clock gates for vital periperhals.
+>
+> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+> ---
+>   arch/arm/boot/dts/stm32f429-disco.dts |  4 ++
+>   arch/arm/boot/dts/stm32f429.dtsi      | 79 +++++++++++------------------------
+>   2 files changed, 28 insertions(+), 55 deletions(-)
+>
+>
+Reviewed-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
 
->
->> ---
->>   drivers/clk/ti/clk-dra7-atl.c | 4 ++--
->>   drivers/clk/ti/clk.c          | 4 ++--
->>   drivers/clk/ti/dpll.c         | 2 +-
->>   drivers/clk/ti/fapll.c        | 6 +++---
->>   4 files changed, 8 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
->> index d86bc46b93bd..1fe7429a7536 100644
->> --- a/drivers/clk/ti/clk-dra7-atl.c
->> +++ b/drivers/clk/ti/clk-dra7-atl.c
->> @@ -155,7 +155,7 @@ static int atl_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->>   	return 0;
->>   }
->>
->> -const struct clk_ops atl_clk_ops = {
->> +static const struct clk_ops atl_clk_ops = {
->>   	.enable		= atl_clk_enable,
->>   	.disable	= atl_clk_disable,
->>   	.is_enabled	= atl_clk_is_enabled,
->> @@ -167,7 +167,7 @@ const struct clk_ops atl_clk_ops = {
->>   static void __init of_dra7_atl_clock_setup(struct device_node *node)
->>   {
->>   	struct dra7_atl_desc *clk_hw = NULL;
->> -	struct clk_init_data init = { 0 };
->> +	struct clk_init_data init = { NULL };
->>   	const char **parent_names = NULL;
->>   	struct clk *clk;
->>
->> diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
->> index 0ebe5c51062b..64bb5e8a3b8c 100644
->> --- a/drivers/clk/ti/clk.c
->> +++ b/drivers/clk/ti/clk.c
->> @@ -122,14 +122,14 @@ void __iomem *ti_clk_get_reg_addr(struct device_node *node, int index)
->>
->>   	if (i == CLK_MAX_MEMMAPS) {
->>   		pr_err("clk-provider not found for %s!\n", node->name);
->> -		return ERR_PTR(-ENOENT);
->> +		return IOMEM_ERR_PTR(-ENOENT);
->>   	}
->>
->>   	reg->index = i;
->>
->>   	if (of_property_read_u32_index(node, "reg", index, &val)) {
->>   		pr_err("%s must have reg[%d]!\n", node->name, index);
->> -		return ERR_PTR(-EINVAL);
->> +		return IOMEM_ERR_PTR(-EINVAL);
->>   	}
->>
->>   	reg->offset = val;
->> diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
->> index 11478a501c30..2aacf7a3bcae 100644
->> --- a/drivers/clk/ti/dpll.c
->> +++ b/drivers/clk/ti/dpll.c
->> @@ -177,7 +177,7 @@ cleanup:
->>   }
->>
->>   #if defined(CONFIG_ARCH_OMAP3) && defined(CONFIG_ATAGS)
->> -void __iomem *_get_reg(u8 module, u16 offset)
->> +static void __iomem *_get_reg(u8 module, u16 offset)
->>   {
->>   	u32 reg;
->>   	struct clk_omap_reg *reg_setup;
->> diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
->> index ffcd8e09e85b..730aa62454a2 100644
->> --- a/drivers/clk/ti/fapll.c
->> +++ b/drivers/clk/ti/fapll.c
->> @@ -621,13 +621,13 @@ static void __init ti_fapll_setup(struct device_node *node)
->>
->>   		/* Check for hardwired audio_pll_clk1 */
->>   		if (is_audio_pll_clk1(freq)) {
->> -			freq = 0;
->> -			div = 0;
->> +			freq = NULL;
->> +			div = NULL;
->>   		} else {
->>   			/* Does the synthesizer have a FREQ register? */
->>   			v = readl_relaxed(freq);
->>   			if (!v)
->> -				freq = 0;
->> +				freq = NULL;
->>   		}
->>   		synth_clk = ti_fapll_synth_setup(fd, freq, div, output_instance,
->>   						 output_name, node->name,
->>
->
->
+Thanks!
+Maxime
