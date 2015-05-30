@@ -1,156 +1,129 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: mturquette@linaro.org, dianders@chromium.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Alex Elder <elder@linaro.org>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Max Filippov <jcmvbkbc@gmail.com>, kernel@pengutronix.de,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Chao Xie <chao.xie@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Georgi Djakov <georgi.djakov@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Barry Song <baohua@kernel.org>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Viresh Kumar <viresh.linux@gmail.com>,
-	Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
-	emilio@elopez.com.ar, Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Tero Kristo <t-kristo@ti.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
-Date: Fri, 01 May 2015 21:59:55 +0200
-Message-ID: <1981330.kGUrTurMy5@diego>
-In-Reply-To: <20150501001901.GC32407@codeaurora.org>
-References: <1429735986-18592-1-git-send-email-heiko@sntech.de> <20150501001901.GC32407@codeaurora.org>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Sat, 30 May 2015 09:43:16 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard
+ <patrice.chotard@st.com>, Tero Kristo <t-kristo@ti.com>, Mike Turquette
+ <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Russell King
+ <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org, kernel@stlinux.com,
+ linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/5] clk: at91: Use of_clk_get_parent_count() instead of
+ open coding
+Message-ID: <20150530094316.0c65e6c4@bbrezillon>
+In-Reply-To: <1432891549-23295-2-git-send-email-geert+renesas@glider.be>
+References: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
+	<1432891549-23295-2-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, 30. April 2015, 17:19:01 schrieb Stephen Boyd:
-> On 04/22, Heiko Stuebner wrote:
-> > Using orphan clocks can introduce strange behaviour as they don't have
-> > rate information at all and also of course don't track
-> > 
-> > This v2/v3 takes into account suggestions from Stephen Boyd to not try to
-> > walk the clock tree at runtime but instead keep track of orphan states
-> > on clock tree changes and making it mandatory for everybody from the
-> > start as orphaned clocks should not be used at all.
-> > 
-> > 
-> > This fixes an issue on most rk3288 platforms, where some soc-clocks
-> > are supplied by a 32khz clock from an external i2c-chip which often
-> > is only probed later in the boot process and maybe even after the
-> > drivers using these soc-clocks like the tsadc temperature sensor.
-> > In this case the driver using the clock should of course defer probing
-> > until the clock is actually usable.
-> > 
-> > 
-> > As this changes the behaviour for orphan clocks, it would of course
-> > benefit from more testing than on my Rockchip boards. To keep the
-> > recipent-list reasonable and not spam to much I selected one (the topmost)
-> > from the get_maintainer output of each drivers/clk entry.
-> > Hopefully some will provide Tested-by-tags :-)
+On Fri, 29 May 2015 11:25:45 +0200
+Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+
+> ---
+>  drivers/clk/at91/clk-main.c         | 2 +-
+>  drivers/clk/at91/clk-master.c       | 2 +-
+>  drivers/clk/at91/clk-programmable.c | 2 +-
+>  drivers/clk/at91/clk-slow.c         | 4 ++--
+>  drivers/clk/at91/clk-smd.c          | 2 +-
+>  drivers/clk/at91/clk-usb.c          | 2 +-
+>  6 files changed, 7 insertions(+), 7 deletions(-)
 > 
-> <grumble> I don't see any Tested-by: tags yet </grumble>. I've
-> put these two patches on a separate branch "defer-orphans" and
-> pushed it to clk-next so we can give it some more exposure.
-> 
-> Unfortunately this doesn't solve the orphan problem for non-OF
-> providers. What if we did the orphan check in __clk_create_clk()
-> instead and returned an error pointer for orphans? I suspect that
-> will solve all cases, right?
+> diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
+> index 59fa3cc96c9eb341..c2400456a0447118 100644
+> --- a/drivers/clk/at91/clk-main.c
+> +++ b/drivers/clk/at91/clk-main.c
+> @@ -614,7 +614,7 @@ void __init of_at91sam9x5_clk_main_setup(struct device_node *np,
+>  	const char *name = np->name;
+>  	int i;
+>  
+> -	num_parents = of_count_phandle_with_args(np, "clocks", "#clock-cells");
+> +	num_parents = of_clk_get_parent_count(np);
+>  	if (num_parents <= 0 || num_parents > 2)
+>  		return;
+>  
+> diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
+> index c1af80bcdf2082c8..f98eafe9b12dc92d 100644
+> --- a/drivers/clk/at91/clk-master.c
+> +++ b/drivers/clk/at91/clk-master.c
+> @@ -224,7 +224,7 @@ of_at91_clk_master_setup(struct device_node *np, struct at91_pmc *pmc,
+>  	const char *name = np->name;
+>  	struct clk_master_characteristics *characteristics;
+>  
+> -	num_parents = of_count_phandle_with_args(np, "clocks", "#clock-cells");
+> +	num_parents = of_clk_get_parent_count(np);
+>  	if (num_parents <= 0 || num_parents > MASTER_SOURCE_MAX)
+>  		return;
+>  
+> diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
+> index 86c8a073dcc32a20..8c86c0f7847a55a0 100644
+> --- a/drivers/clk/at91/clk-programmable.c
+> +++ b/drivers/clk/at91/clk-programmable.c
+> @@ -237,7 +237,7 @@ of_at91_clk_prog_setup(struct device_node *np, struct at91_pmc *pmc,
+>  	const char *name;
+>  	struct device_node *progclknp;
+>  
+> -	num_parents = of_count_phandle_with_args(np, "clocks", "#clock-cells");
+> +	num_parents = of_clk_get_parent_count(np);
+>  	if (num_parents <= 0 || num_parents > PROG_SOURCE_MAX)
+>  		return;
+>  
+> diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
+> index 2f13bd5246b5563e..98a84a865fe1cf1b 100644
+> --- a/drivers/clk/at91/clk-slow.c
+> +++ b/drivers/clk/at91/clk-slow.c
+> @@ -373,7 +373,7 @@ void __init of_at91sam9x5_clk_slow_setup(struct device_node *np,
+>  	const char *name = np->name;
+>  	int i;
+>  
+> -	num_parents = of_count_phandle_with_args(np, "clocks", "#clock-cells");
+> +	num_parents = of_clk_get_parent_count(np);
+>  	if (num_parents <= 0 || num_parents > 2)
+>  		return;
+>  
+> @@ -451,7 +451,7 @@ void __init of_at91sam9260_clk_slow_setup(struct device_node *np,
+>  	const char *name = np->name;
+>  	int i;
+>  
+> -	num_parents = of_count_phandle_with_args(np, "clocks", "#clock-cells");
+> +	num_parents = of_clk_get_parent_count(np);
+>  	if (num_parents != 2)
+>  		return;
+>  
+> diff --git a/drivers/clk/at91/clk-smd.c b/drivers/clk/at91/clk-smd.c
+> index 144d47ecfe63c6eb..3817ea865ca258ec 100644
+> --- a/drivers/clk/at91/clk-smd.c
+> +++ b/drivers/clk/at91/clk-smd.c
+> @@ -150,7 +150,7 @@ void __init of_at91sam9x5_clk_smd_setup(struct device_node *np,
+>  	const char *parent_names[SMD_SOURCE_MAX];
+>  	const char *name = np->name;
+>  
+> -	num_parents = of_count_phandle_with_args(np, "clocks", "#clock-cells");
+> +	num_parents = of_clk_get_parent_count(np);
+>  	if (num_parents <= 0 || num_parents > SMD_SOURCE_MAX)
+>  		return;
+>  
+> diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
+> index 0b7c3e8840bae0eb..b0cbd2b1ff595702 100644
+> --- a/drivers/clk/at91/clk-usb.c
+> +++ b/drivers/clk/at91/clk-usb.c
+> @@ -378,7 +378,7 @@ void __init of_at91sam9x5_clk_usb_setup(struct device_node *np,
+>  	const char *parent_names[USB_SOURCE_MAX];
+>  	const char *name = np->name;
+>  
+> -	num_parents = of_count_phandle_with_args(np, "clocks", "#clock-cells");
+> +	num_parents = of_clk_get_parent_count(np);
+>  	if (num_parents <= 0 || num_parents > USB_SOURCE_MAX)
+>  		return;
+>  
 
-hmm, clk_register also uses __clk_create_clk, which in turn would prevent
-registering orphan-clocks at all, I'd think.
-As on my platform I'm dependant on orphan clocks (the soc-level clock gets
-registerted as part of the big clock controller way before the i2c-based
-supplying clock), I'd rather not touch this :-) .
-
-Instead I guess we could hook it less deep into clk_get_sys, like in the
-following patch?
 
 
------------- 8< ------------------------- >8 -----------------
-From: Heiko Stuebner <heiko@sntech.de>
-Date: Fri, 1 May 2015 21:50:46 +0200
-Subject: [PATCH] clk: prevent orphan access on non-devicetree platforms too
-
-The orphan-check in __of_clk_get_from_provider only prevents orphan-access
-on devicetree platforms. To bring non-dt platforms to the same level of
-functionality let clk_get_sys (called from clk_get for non-dt platforms)
-also check for orphans and return -EPROBE_DEFER in that case.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/clk.c    | 2 +-
- drivers/clk/clk.h    | 5 +++++
- drivers/clk/clkdev.c | 5 +++++
- 3 files changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 36d1a01..167d0bf 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2220,7 +2220,7 @@ static inline void clk_debug_unregister(struct clk_core *core)
- }
- #endif
- 
--static bool clk_is_orphan(const struct clk *clk)
-+bool clk_is_orphan(const struct clk *clk)
- {
- 	if (!clk)
- 		return false;
-diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
-index 00b35a1..b8a6061 100644
---- a/drivers/clk/clk.h
-+++ b/drivers/clk/clk.h
-@@ -20,6 +20,7 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
- 			     const char *con_id);
- void __clk_free_clk(struct clk *clk);
-+bool clk_is_orphan(const struct clk *clk);
- #else
- /* All these casts to avoid ifdefs in clkdev... */
- static inline struct clk *
-@@ -32,5 +33,9 @@ static struct clk_hw *__clk_get_hw(struct clk *clk)
- {
- 	return (struct clk_hw *)clk;
- }
-+static inline bool clk_is_orphan(const struct clk *clk)
-+{
-+	return false;
-+}
- 
- #endif
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 1fcb6ef..ad96775 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -177,6 +177,11 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- 	if (!cl)
- 		goto out;
- 
-+	if (clk_is_orphan(cl->clk)) {
-+		clk = ERR_PTR(-EPROBE_DEFER);
-+		goto out;
-+	}
-+
- 	clk = __clk_create_clk(__clk_get_hw(cl->clk), dev_id, con_id);
- 	if (IS_ERR(clk))
- 		goto out;
 -- 
-2.1.4
-
-
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
