@@ -1,67 +1,78 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <dinguyen@opensource.altera.com>
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
+Subject: [RFC/PATCHv1 1/2] clk: of: helper for filling parent clock array and return num of parents
+Date: Mon, 1 Jun 2015 16:46:25 -0500
+Message-ID: <1433195186-14867-2-git-send-email-dinguyen@opensource.altera.com>
+In-Reply-To: <1433195186-14867-1-git-send-email-dinguyen@opensource.altera.com>
+References: <1433195186-14867-1-git-send-email-dinguyen@opensource.altera.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1432839219-475-13-git-send-email-geert+renesas@glider.be>
-References: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
-	<1432839219-475-13-git-send-email-geert+renesas@glider.be>
-Date: Mon, 15 Jun 2015 21:44:47 +0200
-Message-ID: <CAMuHMdWfqXZKUShiSqi0RmGpfkqgsL-5We__Vnou1aj5OHYPmA@mail.gmail.com>
-Subject: Re: [PATCH v2 12/14] drivers: sh: Stop using pm_runtime.c for
- multi-platform shmobile with genpd
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-clk@vger.kernel.org,
-	Linux PM list <linux-pm@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 28, 2015 at 8:53 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> Now most multi-platform ARM shmobile platforms (SH-Mobile, R-Mobile,
-> R-Car, RZ) use the CPG Clock Domain to take care of PM runtime
-> management of the module clocks, we no longer need the legacy default PM
-> domain hack, which also prevented registering the real PM domain.
->
-> EMMA Mobile EV2 doesn't have MSTP clocks and doesn't use the CPG Clock
-> Domain. But all its device drivers manage clocks explicitly, without
-> relying on Runtime PM, so it doesn't need the legacy default PM hack
-> neither.
->
-> Hence do not compile it when running an ARM multi-platform kernel with
-> genpd support.
->
-> The default PM domain is still needed:
->   - for legacy SuperH,
->   - for legacy (non-DT) ARM/shmobile platforms
->       - without genpd support (r8a7778, r8a7779),
->       - with genpd support, for devices in the "C5" always-on power
->         area (r8a7740, sh73a0),
->   - for the CONFIG_PM=n case.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
-> v2:
->   - Add Reviewed-by,
->   - Just stop compiling pm_runtime.c instead of using a runtime check,
->     as no multi-platform ARM platforms need this anymore.
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-The runtime check must stay for the ARM multiplatform CONFIG_PM=n case,
-to prevent the code from running on non-shmobile machines. Will fix.
+Sprinkled all through the platform clock drivers are code like this to
+fill the clock parent array:
 
-Gr{oetje,eeting}s,
+for (i = 0; i < num_parents; ++i)
+	parent_names[i] = of_clk_get_parent_name(np, i);
 
-                        Geert
+The of_clk_parent_fill() will do the same as the code above, and while
+at it, return the number of parents as well since the logic of the
+function is to the walk the clock node to look for the parent.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+---
+ drivers/clk/clk.c            | 20 ++++++++++++++++++++
+ include/linux/clk-provider.h |  1 +
+ 2 files changed, 21 insertions(+)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 459ce9d..b75616f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3060,6 +3060,26 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
+ }
+ EXPORT_SYMBOL_GPL(of_clk_get_parent_name);
+ 
++/*
++ * of_clk_parent_fill(): Helper clock function that will fill the parent
++ * clock's array and return the number of parents it found.
++ * @np: Device node pointer associated with clock provider
++ * @parents: pointer to char array that hold the parent's name
++ * @size: size of the parents array
++ *
++ * Returns number of parents for the clock node.
++ */
++int of_clk_parent_fill(struct device_node *np, const char **parents, int size)
++{
++	int i = 0;
++
++	while (i < size && (parents[i] = of_clk_get_parent_name(np, i)) != NULL)
++		i++;
++
++	return i;
++}
++EXPORT_SYMBOL(of_clk_parent_fill);
++
+ struct clock_provider {
+ 	of_clk_init_cb_t clk_init_cb;
+ 	struct device_node *np;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index df69531..36e56c4 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -624,6 +624,7 @@ struct clk *of_clk_src_simple_get(struct of_phandle_args *clkspec,
+ 				  void *data);
+ struct clk *of_clk_src_onecell_get(struct of_phandle_args *clkspec, void *data);
+ int of_clk_get_parent_count(struct device_node *np);
++int of_clk_parent_fill(struct device_node *np, const char **parents, int size);
+ const char *of_clk_get_parent_name(struct device_node *np, int index);
+ 
+ void of_clk_init(const struct of_device_id *matches);
+-- 
+2.2.1
