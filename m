@@ -1,79 +1,56 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <5570B783.1050808@ahsoftware.de>
-Date: Thu, 04 Jun 2015 22:39:31 +0200
-From: Alexander Holler <holler@ahsoftware.de>
+Return-Path: <vigneshr@ti.com>
+From: Vignesh R <vigneshr@ti.com>
+To: Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
+        Thierry
+ Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Pawel
+ Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Benoit
+ Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell
+ King <linux@arm.linux.org.uk>,
+        Mike Turquette <mturquette@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        Vignesh
+ R <vigneshr@ti.com>
+Subject: [PATCH 1/5] ARM: OMAP2+: DRA7: clockdomain: change l4per2_7xx_clkdm to SW_WKUP
+Date: Mon, 1 Jun 2015 17:23:30 +0530
+Message-ID: <1433159614-437-2-git-send-email-vigneshr@ti.com>
+In-Reply-To: <1433159614-437-1-git-send-email-vigneshr@ti.com>
+References: <1433159614-437-1-git-send-email-vigneshr@ti.com>
 MIME-Version: 1.0
-To: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>
-CC: Rob Herring <robherring2@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	=?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?=
-	<stephane.marchesin@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	dmaengine@vger.kernel.org,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-clk@vger.kernel.org,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>
-Subject: Re: [PATCH 00/21] On-demand device registration
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com> <556F5C24.1030101@linaro.org>
-In-Reply-To: <556F5C24.1030101@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Am 03.06.2015 um 21:57 schrieb Grygorii.Strashko@linaro.org:
+Legacy IPs like PWMSS, present under l4per2_7xx_clkdm, cannot support
+smart-idle when its clock domain is in HW_AUTO on DRA7 SoCs. Hence,
+program clock domain to SW_WKUP.
 
-...
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+---
+ arch/arm/mach-omap2/clockdomains7xx_data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> So few comments from above:
-> - registering devices later during the System boot may improve boot time.
->   But resolving of all deferred probes may NOT improve boot time ;) 
->   Have you seen smth like this?
-
-If someone is out for boot time reduction, I think one of the best ways
-would by making driver initialization parallel. Keep in mind that all
-linked in drivers currently are initialized in series.
-
-As it seems to have been forgotten or overread, I've mentioned in my
-series of patches last year that, with a few changes, it's possible to
-let the algorithm I've used (dfs) to spit out all drivers which can be
-initialized in parallel.
-
-But as I'm not paid for the work I've done and just did it out of
-curiosity, interest or how ever you want name it, I haven't spend any
-more time into that topic, especially as I'm missing the necessary
-connections to get patches into the kernel. ;)
-
-But, as said, it's easy (at least if aren't getting panic when it comes
-to a bit of algorithm theory) to get a list drivers you can start in
-parallel if you have such a complete list of dependencies as DT already
-offers. Just look at the pictures generate by dtc (using my patches),
-you will see, they already show which drivers can be initialized in
-parallel.
-
-So it would be easy to use e.g. all cores already very early at boot to
-initialize drivers, not just after init got started. Besides that the
-würgaround of defered init (which, btw. leads devs to supress error
-messages, which is especially bad if you are searching a problem) isn't
-needed anymore if you have a list of dependecies (however you get it,
-I've used DT because the dependencies already are all there).
-
-Regards,
-
-Alexander Holler
+diff --git a/arch/arm/mach-omap2/clockdomains7xx_data.c b/arch/arm/mach-omap2/clockdomains7xx_data.c
+index 57d5df0c1fbd..7581e036bda6 100644
+--- a/arch/arm/mach-omap2/clockdomains7xx_data.c
++++ b/arch/arm/mach-omap2/clockdomains7xx_data.c
+@@ -331,7 +331,7 @@ static struct clockdomain l4per2_7xx_clkdm = {
+ 	.dep_bit	  = DRA7XX_L4PER2_STATDEP_SHIFT,
+ 	.wkdep_srcs	  = l4per2_wkup_sleep_deps,
+ 	.sleepdep_srcs	  = l4per2_wkup_sleep_deps,
+-	.flags		  = CLKDM_CAN_HWSUP_SWSUP,
++	.flags		  = CLKDM_CAN_SWSUP,
+ };
+ 
+ static struct clockdomain mpu0_7xx_clkdm = {
+-- 
+2.4.1
