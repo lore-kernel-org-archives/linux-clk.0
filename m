@@ -21,36 +21,73 @@ CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         Vignesh
  R <vigneshr@ti.com>
-Subject: [PATCH v2 1/5] ARM: OMAP2+: DRA7: clockdomain: change l4per2_7xx_clkdm to SW_WKUP
-Date: Wed, 3 Jun 2015 17:21:20 +0530
-Message-ID: <1433332284-10766-2-git-send-email-vigneshr@ti.com>
-In-Reply-To: <1433332284-10766-1-git-send-email-vigneshr@ti.com>
-References: <1433332284-10766-1-git-send-email-vigneshr@ti.com>
+Subject: [PATCH 3/5] ARM: dts: DRA7: Add TBCLK for PWMSS
+Date: Mon, 1 Jun 2015 17:23:32 +0530
+Message-ID: <1433159614-437-4-git-send-email-vigneshr@ti.com>
+In-Reply-To: <1433159614-437-1-git-send-email-vigneshr@ti.com>
+References: <1433159614-437-1-git-send-email-vigneshr@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Legacy IPs like PWMSS, present under l4per2_7xx_clkdm, cannot support
-smart-idle when its clock domain is in HW_AUTO on DRA7 SoCs. Hence,
-program clock domain to SW_WKUP.
+tbclk is used by ehrpwm to generate PWM waveform on DRA7 SoC. Add Linux
+clock to control ehrpwm tbclk.
 
 Signed-off-by: Vignesh R <vigneshr@ti.com>
 ---
- arch/arm/mach-omap2/clockdomains7xx_data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/dra7.dtsi          |  5 +++++
+ arch/arm/boot/dts/dra7xx-clocks.dtsi | 26 ++++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+)
 
-diff --git a/arch/arm/mach-omap2/clockdomains7xx_data.c b/arch/arm/mach-omap2/clockdomains7xx_data.c
-index 57d5df0c1fbd..7581e036bda6 100644
---- a/arch/arm/mach-omap2/clockdomains7xx_data.c
-+++ b/arch/arm/mach-omap2/clockdomains7xx_data.c
-@@ -331,7 +331,7 @@ static struct clockdomain l4per2_7xx_clkdm = {
- 	.dep_bit	  = DRA7XX_L4PER2_STATDEP_SHIFT,
- 	.wkdep_srcs	  = l4per2_wkup_sleep_deps,
- 	.sleepdep_srcs	  = l4per2_wkup_sleep_deps,
--	.flags		  = CLKDM_CAN_HWSUP_SWSUP,
-+	.flags		  = CLKDM_CAN_SWSUP,
- };
+diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
+index f03a091cd076..387c76ca41f9 100644
+--- a/arch/arm/boot/dts/dra7.dtsi
++++ b/arch/arm/boot/dts/dra7.dtsi
+@@ -131,6 +131,11 @@
+ 							regulator-max-microvolt = <3000000>;
+ 						};
+ 					};
++
++					scm_conf_clocks: clocks {
++						#address-cells = <1>;
++						#size-cells = <0>;
++					};
+ 				};
  
- static struct clockdomain mpu0_7xx_clkdm = {
+ 				dra7_pmx_core: pinmux@1400 {
+diff --git a/arch/arm/boot/dts/dra7xx-clocks.dtsi b/arch/arm/boot/dts/dra7xx-clocks.dtsi
+index 3b933f74d000..92452d61cf58 100644
+--- a/arch/arm/boot/dts/dra7xx-clocks.dtsi
++++ b/arch/arm/boot/dts/dra7xx-clocks.dtsi
+@@ -2136,3 +2136,29 @@
+ 		clocks = <&dpll_usb_ck>;
+ 	};
+ };
++
++&scm_conf_clocks {
++       ehrpwm0_tbclk: ehrpwm0_tbclk {
++		#clock-cells = <0>;
++		compatible = "ti,gate-clock";
++		clocks = <&l4_root_clk_div>;
++		ti,bit-shift = <20>;
++		reg = <0x0558>;
++	};
++
++	ehrpwm1_tbclk: ehrpwm1_tbclk {
++		#clock-cells = <0>;
++		compatible = "ti,gate-clock";
++		clocks = <&l4_root_clk_div>;
++		ti,bit-shift = <21>;
++		reg = <0x0558>;
++	};
++
++	ehrpwm2_tbclk: ehrpwm2_tbclk {
++		#clock-cells = <0>;
++		compatible = "ti,gate-clock";
++		clocks = <&l4_root_clk_div>;
++		ti,bit-shift = <22>;
++		reg = <0x0558>;
++	};
++};
 -- 
 2.4.1
