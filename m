@@ -1,50 +1,38 @@
-Return-Path: <daniel.thompson@linaro.org>
-Return-Path: <daniel.thompson@linaro.org>
-Message-ID: <558917ED.8080404@linaro.org>
-Date: Tue, 23 Jun 2015 09:25:17 +0100
-From: Daniel Thompson <daniel.thompson@linaro.org>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Mike Turquette <mturquette@linaro.org>,
- Rob Herring <robh+dt@kernel.org>,
- Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Kamil Lulko <rev13@wp.pl>, Andreas Farber <afaerber@suse.de>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- patches@linaro.org, linaro-kernel@lists.linaro.org
-Subject: Re: [PATCH v3 2/3] clk: stm32: Add clock driver for STM32F4[23]xxx
- devices
-References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org> <1433966978-24422-1-git-send-email-daniel.thompson@linaro.org> <1433966978-24422-3-git-send-email-daniel.thompson@linaro.org> <20150622232114.GK22132@codeaurora.org>
-In-Reply-To: <20150622232114.GK22132@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: shmobile: div6: Document mandatory compatible fallback
+Date: Mon,  1 Jun 2015 12:21:53 +0200
+Message-Id: <1433154113-19013-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 23/06/15 00:21, Stephen Boyd wrote:
-> On 06/10, Daniel Thompson wrote:
->> The driver supports decoding and statically modelling PLL state (i.e.
->> we inherit state from bootloader) and provides support for all
->> peripherals that support simple one-bit gated clocks. The covers all
->> peripherals whose clocks come from the AHB, APB1 or APB2 buses.
->>
->> It has been tested on an STM32F429I-Discovery board. The clock counts
->> for TIM2, USART1 and SYSTICK are all set correctly and the wall clock
->> looks OK when checked with a stopwatch. I have also tested a prototype
->> driver for the RNG hardware. The RNG clock is correctly enabled by the
->> framework (also did inverse test and proved that by changing DT to
->> configure the wrong clock bit then we observe the RNG driver to fail).
->>
->> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
->> Reviewed-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
->
-> I also squashed in some sparse fixes. Please check.
+The generic CPG DIV6 clock compatible value is mandatory, as the driver
+uses only this value for matching.  Document that this is a fallback
+that must be present.
 
-That was extremely generous! Thanks.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The changes all eyeball OK but I'll double check things tonight just in 
-case.
-
-
-Daniel.
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
+index 3e40c41b05658e5b..5ddb68418655d569 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
+@@ -14,7 +14,7 @@ Required Properties:
+     - "renesas,r8a7793-div6-clock" for R8A7793 (R-Car M2-N) DIV6 clocks
+     - "renesas,r8a7794-div6-clock" for R8A7794 (R-Car E2) DIV6 clocks
+     - "renesas,sh73a0-div6-clock" for SH73A0 (SH-Mobile AG5) DIV6 clocks
+-    - "renesas,cpg-div6-clock" for generic DIV6 clocks
++    and "renesas,cpg-div6-clock" as a fallback.
+   - reg: Base address and length of the memory resource used by the DIV6 clock
+   - clocks: Reference to the parent clock(s); either one, four, or eight
+     clocks must be specified.  For clocks with multiple parents, invalid
+-- 
+1.9.1
