@@ -1,61 +1,62 @@
-Return-Path: <Vladimir_Zapolskiy@mentor.com>
-Message-ID: <558C2AAF.1010707@mentor.com>
-Date: Thu, 25 Jun 2015 19:22:07 +0300
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Return-Path: <vigneshr@ti.com>
+From: Vignesh R <vigneshr@ti.com>
+To: Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
+        Thierry
+ Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Pawel
+ Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Benoit
+ Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell
+ King <linux@arm.linux.org.uk>,
+        Mike Turquette <mturquette@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        Vignesh
+ R <vigneshr@ti.com>
+Subject: [PATCH 0/5] Add support for PWMSS on DRA7
+Date: Mon, 1 Jun 2015 17:23:29 +0530
+Message-ID: <1433159614-437-1-git-send-email-vigneshr@ti.com>
 MIME-Version: 1.0
-To: Fabio Estevam <fabio.estevam@freescale.com>, <shawnguo@kernel.org>
-CC: <kernel@pengutronix.de>, <eric.nelson@boundarydevices.com>,
-	<linux@arm.linux.org.uk>, <linux-arm-kernel@lists.infradead.org>,
-	<Ying.liu@freescale.com>, <mturquette@baylibre.com>,
-	<linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] clk: imx: clk-imx6q: Provide initial IPU clock
- settings for mx6dl
-References: <1435241830-20187-1-git-send-email-fabio.estevam@freescale.com> <1435241830-20187-2-git-send-email-fabio.estevam@freescale.com>
-In-Reply-To: <1435241830-20187-2-git-send-email-fabio.estevam@freescale.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Fabio,
 
-On 25.06.2015 17:17, Fabio Estevam wrote:
-> Currently it is not possible to use HDMI and LVDS at the same time on a 
-> imx6dl-sabresd board.
-> 
-> Fix this usecase by setting IMX6QDL_CLK_PLL3_PFD1_540M to 540MHz and
-> also by setting it as the parent of IMX6QDL_CLK_IPU1_SEL.
-> 
-> Based on the configuration done in the FSL kernel.
-> 
-> Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
-> ---
-> Changes since v1:
-> - None. Newly introduced.
-> 
->  drivers/clk/imx/clk-imx6q.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-> index d046f8e..d735d8f 100644
-> --- a/drivers/clk/imx/clk-imx6q.c
-> +++ b/drivers/clk/imx/clk-imx6q.c
-> @@ -494,6 +494,11 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
->  		clk_set_parent(clk[IMX6QDL_CLK_LDB_DI1_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
->  	}
->  
-> +	if (clk_on_imx6dl()) {
-> +		clk_set_rate(clk[IMX6QDL_CLK_PLL3_PFD1_540M], 540000000);
 
-I believe here IMX6QDL_CLK_PLL3_PFD1_540M rate can be set independently
-of SoC flavour.
+Hi,
 
-> +		clk_set_parent(clk[IMX6QDL_CLK_IPU1_SEL], clk[IMX6QDL_CLK_PLL3_PFD1_540M]);
-> +	}
-> +
->  	clk_set_parent(clk[IMX6QDL_CLK_IPU1_DI0_PRE_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
->  	clk_set_parent(clk[IMX6QDL_CLK_IPU1_DI1_PRE_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
->  	clk_set_parent(clk[IMX6QDL_CLK_IPU2_DI0_PRE_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
-> 
+This patch series adds support for PWMSS on DRA7. The IP is same as that
+present in AM33XX and AM43XX.
+The first patch changes clock domain in which PWMSS is present
+(l4per2_7xx_clkdm) to SW_WKUP. This is because legacy IPs like PWM
+does'nt support HW_AUTO prorperly. Hence, switch clock domain to
+SW_WKUP. This is based on the input from the hardware team.
+The rest of the patches add hwmod and dt entries and enable PWMSS on
+DRA7 based SoCs.
 
---
-With best wishes,
-Vladimir
+
+Vignesh R (5):
+  ARM: OMAP2+: DRA7: clockdomain: change l4per2_7xx_clkdm to SW_WKUP
+  ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
+  ARM: dts: DRA7: Add TBCLK for PWMSS
+  clk: ti: DRA7: Add tbclk data for ehrpwm
+  ARM: dts: DRA7: Add dt nodes for PWMSS
+
+ .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       |   8 +
+ .../devicetree/bindings/pwm/pwm-tipwmss.txt        |  17 +-
+ arch/arm/boot/dts/dra7.dtsi                        |  69 ++++++
+ arch/arm/boot/dts/dra7xx-clocks.dtsi               |  26 +++
+ arch/arm/mach-omap2/clockdomains7xx_data.c         |   2 +-
+ arch/arm/mach-omap2/omap_hwmod_7xx_data.c          | 239 +++++++++++++++++++++
+ drivers/clk/ti/clk-7xx.c                           |   3 +
+ 7 files changed, 362 insertions(+), 2 deletions(-)
+
+-- 
+2.4.1
