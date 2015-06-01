@@ -1,52 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:45883 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753000AbbFRORj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 18 Jun 2015 10:17:39 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@linaro.org, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 2/9] clk: rockchip: fix faulty vip parent name on rk3288
-Date: Thu, 18 Jun 2015 16:18:29 +0200
-Message-Id: <1434637116-17124-3-git-send-email-heiko@sntech.de>
-In-Reply-To: <1434637116-17124-1-git-send-email-heiko@sntech.de>
-References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <vigneshr@ti.com>
+From: Vignesh R <vigneshr@ti.com>
+To: Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
+        Thierry
+ Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Pawel
+ Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Benoit
+ Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell
+ King <linux@arm.linux.org.uk>,
+        Mike Turquette <mturquette@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        Vignesh
+ R <vigneshr@ti.com>
+Subject: [PATCH 4/5] clk: ti: DRA7: Add tbclk data for ehrpwm
+Date: Mon, 1 Jun 2015 17:23:33 +0530
+Message-ID: <1433159614-437-5-git-send-email-vigneshr@ti.com>
+In-Reply-To: <1433159614-437-1-git-send-email-vigneshr@ti.com>
+References: <1433159614-437-1-git-send-email-vigneshr@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The video input processor (vip) was called camera interface (cif) on
-older socs which seems to have resulted in a copy'n'paste error when
-creating the rk3288 camera clocks.
+tbclk is needed by ehrpwm to generate pwm waveforms. Hence, register
+the required clock information.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
 ---
- drivers/clk/rockchip/clk-rk3288.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/ti/clk-7xx.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 0211162..df9dc96 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -189,7 +189,7 @@ PNAME(mux_uart1_p)	= { "uart1_src", "uart1_frac", "xin24m" };
- PNAME(mux_uart2_p)	= { "uart2_src", "uart2_frac", "xin24m" };
- PNAME(mux_uart3_p)	= { "uart3_src", "uart3_frac", "xin24m" };
- PNAME(mux_uart4_p)	= { "uart4_src", "uart4_frac", "xin24m" };
--PNAME(mux_cif_out_p)	= { "cif_src", "xin24m" };
-+PNAME(mux_vip_out_p)	= { "vip_src", "xin24m" };
- PNAME(mux_mac_p)	= { "mac_pll_src", "ext_gmac" };
- PNAME(mux_hsadcout_p)	= { "hsadc_src", "ext_hsadc" };
- PNAME(mux_edp_24m_p)	= { "ext_edp_24m", "xin24m" };
-@@ -434,7 +434,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	COMPOSITE_NODIV(0, "vip_src", mux_pll_src_cpll_gpll_p, 0,
- 			RK3288_CLKSEL_CON(26), 8, 1, MFLAGS,
- 			RK3288_CLKGATE_CON(3), 7, GFLAGS),
--	COMPOSITE_NOGATE(0, "sclk_vip_out", mux_cif_out_p, 0,
-+	COMPOSITE_NOGATE(0, "sclk_vip_out", mux_vip_out_p, 0,
- 			RK3288_CLKSEL_CON(26), 15, 1, MFLAGS, 9, 5, DFLAGS),
- 
- 	DIV(0, "pclk_pd_alive", "gpll", 0,
+diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+index 5d2217ae4478..366be43d15fe 100644
+--- a/drivers/clk/ti/clk-7xx.c
++++ b/drivers/clk/ti/clk-7xx.c
+@@ -304,6 +304,9 @@ static struct ti_dt_clk dra7xx_clks[] = {
+ 	DT_CLK("4882a000.timer", "timer_sys_ck", "timer_sys_clk_div"),
+ 	DT_CLK("4882c000.timer", "timer_sys_ck", "timer_sys_clk_div"),
+ 	DT_CLK("4882e000.timer", "timer_sys_ck", "timer_sys_clk_div"),
++	DT_CLK("4843e200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
++	DT_CLK("48440200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
++	DT_CLK("48442200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
+ 	DT_CLK(NULL, "sys_clkin", "sys_clkin1"),
+ 	{ .node_name = NULL },
+ };
 -- 
-2.1.4
-
+2.4.1
