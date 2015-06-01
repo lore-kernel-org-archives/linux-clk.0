@@ -1,166 +1,48 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 10/25] clk: tegra: pll: Add logic for out-of-table rates for T210
-Date: Thu, 18 Jun 2015 17:28:25 -0400
-Message-ID: <1434662920-21469-11-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+Return-Path: <dinguyen@opensource.altera.com>
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
+Subject: [RFC/PATCHv1 0/2] clk: of: add helper function to fill parent clock array
+Date: Mon, 1 Jun 2015 16:46:24 -0500
+Message-ID: <1433195186-14867-1-git-send-email-dinguyen@opensource.altera.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-For Tegra210, the logic to calculate out-of-table rates is different
-from previous generations. Add callbacks that can be overridden to
-allow for different ways of calculating rates. Default to
-_cal_rate when not specified.
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-This patch also includes a new flag which is used to set which method
-of fixed_mdiv calculation is used. The new method for calculating the
-fixed divider value for M can be more accurate especially when
-fractional dividers are in play. This allows for older chipsets to use
-the existing logic and new generations to use a newer version which
-may work better for them.
+Hi,
 
-Based on original work by Aleksandr Frid <afrid@nvidia.com>
+As suggested by Stephen Boyd, this patch adds a helper function that will fill
+the parent clock array.
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
-v5:
-  - Updated description to include mentioning the NEW_MDIV flag
-  - Added kerneldoc info for new members
+Since this kind of code is sprinkled all over the platform clock drivers:
 
- drivers/clk/tegra/clk-pll.c |   24 ++++++++++++++++++++++--
- drivers/clk/tegra/clk.h     |   13 +++++++++++++
- 2 files changed, 35 insertions(+), 2 deletions(-)
+for (i = 0; i < num_parents; ++i)
+	parent_names[i] = of_clk_get_parent_name(np, i);
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 8b27cb6fe992..95ad0669291f 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -678,7 +678,7 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	}
- 
- 	if (_get_table_rate(hw, &cfg, rate, parent_rate) &&
--	    _calc_rate(hw, &cfg, rate, parent_rate)) {
-+	    pll->params->calc_rate(hw, &cfg, rate, parent_rate)) {
- 		pr_err("%s: Failed to set %s rate %lu\n", __func__,
- 		       __clk_get_name(hw->clk), rate);
- 		WARN_ON(1);
-@@ -713,7 +713,7 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 		return __clk_get_rate(hw->clk);
- 
- 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
--	    _calc_rate(hw, &cfg, rate, *prate))
-+	    pll->params->calc_rate(hw, &cfg, rate, *prate))
- 		return -EINVAL;
- 
- 	return cfg.output_rate;
-@@ -903,12 +903,28 @@ const struct clk_ops tegra_clk_plle_ops = {
- static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
- 			   unsigned long parent_rate)
- {
-+	u16 mdiv = parent_rate / pll_params->cf_min;
-+
-+	if (pll_params->flags & TEGRA_MDIV_NEW)
-+		return (!pll_params->mdiv_default ? mdiv :
-+			min(mdiv, pll_params->mdiv_default));
-+
-+	if (pll_params->mdiv_default)
-+		return pll_params->mdiv_default;
-+
- 	if (parent_rate > pll_params->cf_max)
- 		return 2;
- 	else
- 		return 1;
- }
- 
-+u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+
-+	return (u16)_pll_fixed_mdiv(pll->params, input_rate);
-+}
-+
- static unsigned long _clip_vco_min(unsigned long vco_min,
- 				   unsigned long parent_rate)
- {
-@@ -1483,6 +1499,10 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
- 	init.parent_names = (parent_name ? &parent_name : NULL);
- 	init.num_parents = (parent_name ? 1 : 0);
- 
-+	/* Default to _calc_rate if unspecified */
-+	if (!pll->params->calc_rate)
-+		pll->params->calc_rate = _calc_rate;
-+
- 	/* Data in .init is copied by clk_register(), so stack variable OK */
- 	pll->hw.init = &init;
- 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index b5c9f38c5dc6..dfbce9300547 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -194,8 +194,12 @@ struct div_nmp {
-  * @div_nmp:			offsets and widths on n, m and p fields
-  * @freq_table:			array of frequencies supported by PLL
-  * @fixed_rate:			PLL rate if it is fixed
-+ * @mdiv_default:		Default value for fixed mdiv for this PLL
-+ * @round_p_to_pdiv:		Callback used to round p to the closed pdiv
-  * @set_gain:			Callback to adjust N div for SDM enabled
-  *				PLL's based on fractional divider value.
-+ * @calc_rate:			Callback used to change how out of table
-+ *				rates (dividers and multipler) are calculated.
-  *
-  * Flags:
-  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
-@@ -217,6 +221,8 @@ struct div_nmp {
-  *     base register.
-  * TEGRA_PLL_BYPASS - PLL has bypass bit
-  * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
-+ * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
-+ *     it may be more accurate (especially if SDM present)
-  */
- struct tegra_clk_pll_params {
- 	unsigned long	input_min;
-@@ -251,7 +257,12 @@ struct tegra_clk_pll_params {
- 	struct div_nmp	*div_nmp;
- 	struct tegra_clk_pll_freq_table	*freq_table;
- 	unsigned long	fixed_rate;
-+	u16		mdiv_default;
-+	u32	(*round_p_to_pdiv)(u32 p, u32 *pdiv);
- 	void	(*set_gain)(struct tegra_clk_pll_freq_table *cfg);
-+	int	(*calc_rate)(struct clk_hw *hw,
-+			struct tegra_clk_pll_freq_table *cfg,
-+			unsigned long rate, unsigned long parent_rate);
- };
- 
- #define TEGRA_PLL_USE_LOCK BIT(0)
-@@ -265,6 +276,7 @@ struct tegra_clk_pll_params {
- #define TEGRA_PLL_LOCK_MISC BIT(8)
- #define TEGRA_PLL_BYPASS BIT(9)
- #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
-+#define TEGRA_MDIV_NEW BIT(11)
- 
- /**
-  * struct tegra_clk_pll - Tegra PLL clock
-@@ -690,5 +702,6 @@ void tegra114_clock_deassert_dfll_dvco_reset(void);
- typedef void (*tegra_clk_apply_init_table_func)(void);
- extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
- int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
-+u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
- 
- #endif /* TEGRA_CLK_H */
+The above code can be replace by of_clk_parent_fill(). And since the logic
+of the of_clk_parent_fill is to walk the clock node to find the parent, it is
+easy to just return the number of parents as well.
+
+The second patch makes use of the new helper function in the SoCFPGA platform.
+If this patch is accepted, I can go through and replace the other platforms
+after that.
+
+Thanks,
+
+Dinh Nguyen (2):
+  clk: of: helper for filling parent clock array and return num of
+    parents
+  clk: socfpga: make use of of_clk_parent_fill helper function
+
+ drivers/clk/clk.c              | 20 ++++++++++++++++++++
+ drivers/clk/socfpga/clk-gate.c |  6 +-----
+ drivers/clk/socfpga/clk-pll.c  |  7 +------
+ include/linux/clk-provider.h   |  1 +
+ 4 files changed, 23 insertions(+), 11 deletions(-)
+
 -- 
-1.7.9.5
-
+2.2.1
