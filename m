@@ -1,80 +1,79 @@
-Return-Path: <paul@pwsan.com>
-Date: Thu, 4 Jun 2015 23:02:25 +0000 (UTC)
-From: Paul Walmsley <paul@pwsan.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-cc: Mike Turquette <mturquette@linaro.org>,
-  Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-  linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-  Shawn Guo <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>,
-  David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>,
-  Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>,
-  Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
-  Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-  Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>,
-  Heiko Stuebner <heiko@sntech.de>,
-  Sylwester Nawrocki <s.nawrocki@samsung.com>,
-  Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>,
-  Viresh Kumar <viresh.linux@gmail.com>,
-  =?ISO-8859-15?Q?Emilio_L=F3pez?= <emilio@elopez.com.ar>,
-  Maxime Ripard <maxime.ripard@free-electrons.com>,
-  Peter De Schrijver <pdeschrijver@nvidia.com>,
-  Prashant Gaikwad <pgaikwad@nvidia.com>,
-  Stephen Warren <swarren@wwwdotorg.org>,
-  Thierry Reding <thierry.reding@gmail.com>,
-  Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>,
-  Ulf Hansson <ulf.hansson@linaro.org>,
-  Michal Simek <michal.simek@xilinx.com>,
-  Philipp Zabel <p.zabel@pengutronix.de>, linux-doc@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-  linux-omap@vger.kernel.org, linux-mips@linux-mips.org,
-  patches@opensource.wolfsonmicro.com, linux-rockchip@lists.infradead.org,
-  linux-samsung-soc@vger.kernel.org, spear-devel@list.st.com,
-  linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
-  linux-media@vger.kernel.org, rtc-linux@googlegroups.com
-Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
-In-Reply-To: <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
-Message-ID: <alpine.DEB.2.02.1506042258530.12316@utopia.booyaka.com>
-References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com> <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=UTF-8
+In-Reply-To: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+Date: Tue, 2 Jun 2015 10:48:50 +0200
+Message-ID: <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
+Subject: Re: [PATCH 00/21] On-demand device registration
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Grant Likely <grant.likely@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	=?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Alexander Holler <holler@ahsoftware.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	dmaengine@vger.kernel.org,
+	"open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+	linux-clk@vger.kernel.org,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi folks
+On Mon, May 25, 2015 at 4:53 PM, Tomeu Vizoso
+<tomeu.vizoso@collabora.com> wrote:
 
-just a brief comment on this one:
+> have looked into ordered probing as a
+> better way of solving this than moving nodes around in the DT or playing with
+> initcall levels.
+>
+> While reading the thread [1] that Alexander Holler started with his series to
+> make probing order deterministic, it occurred to me that it should be possible
+> to achieve the same by registering devices as they are referenced by other
+> devices.
 
-On Thu, 30 Apr 2015, Boris Brezillon wrote:
+This is pretty cool, but a too local solution to a global problem.
 
-> Clock rates are stored in an unsigned long field, but ->round_rate()
-> (which returns a rounded rate from a requested one) returns a long
-> value (errors are reported using negative error codes), which can lead
-> to long overflow if the clock rate exceed 2Ghz.
-> 
-> Change ->round_rate() prototype to return 0 or an error code, and pass the
-> requested rate as a pointer so that it can be adjusted depending on
-> hardware capabilities.
+Deferred probe and initcall reordering, silly as they may seem,
+does not require you to use device tree.
 
-...
+The real solution, which I think I pointed out already when we
+added deferred probe, is to put dependency graphs in the drivers
+and have the kernel device driver core percolate dependecies by
+walking the graph on probing driver, removing driver (usually the
+inverse use case), [runtime] suspend and [runtime] resumeing
+a driver. Possibly the dependencies will even be different
+depending on use case.
 
-> diff --git a/Documentation/clk.txt b/Documentation/clk.txt
-> index 0e4f90a..fca8b7a 100644
-> --- a/Documentation/clk.txt
-> +++ b/Documentation/clk.txt
-> @@ -68,8 +68,8 @@ the operations defined in clk.h:
->  		int		(*is_enabled)(struct clk_hw *hw);
->  		unsigned long	(*recalc_rate)(struct clk_hw *hw,
->  						unsigned long parent_rate);
-> -		long		(*round_rate)(struct clk_hw *hw,
-> -						unsigned long rate,
-> +		int		(*round_rate)(struct clk_hw *hw,
-> +						unsigned long *rate,
->  						unsigned long *parent_rate);
->  		long		(*determine_rate)(struct clk_hw *hw,
->  						unsigned long rate,
-
-I'd suggest that we should probably go straight to 64-bit rates.  There 
-are already plenty of clock sources that can generate rates higher than 
-4GiHz.
+This is what systemd is doing in userspace for starting services:
+ask for your dependencies and wait for them if they are not
+there. So drivers ask for resources and wait for them. It also
+needs to be abstract, so for example we need to be able to
+hang on regulator_get() until the driver is up and providing that
+regulator, and as long as everything is in slowpath it should
+be OK. (And vice versa mutatis mutandis for clk, gpio, pin
+control, interrupts (!) and DMA channels for example.)
 
 
-- Paul
+So if this should be solved it should be solved in an abstract way
+in the device driver core available for all, then have calls calling
+out to DT, ACPI, possibly even PCI or USB (as these
+enumerate devices themselves) to obtain a certain
+dependency.
+
+Yours,
+Linus Walleij
