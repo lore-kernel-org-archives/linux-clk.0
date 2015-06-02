@@ -1,165 +1,56 @@
-Return-Path: <daniel.thompson@linaro.org>
-Return-Path: <daniel.thompson@linaro.org>
-Message-ID: <55716D9B.4040209@linaro.org>
-Date: Fri, 05 Jun 2015 10:36:27 +0100
-From: Daniel Thompson <daniel.thompson@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 2 Jun 2015 19:15:36 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+	nicolas.ferre@atmel.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/2] clk: at91: add Flexcom clock
+Message-ID: <20150602171536.GG1715@piout.net>
+References: <cover.1433264017.git.cyrille.pitchen@atmel.com>
+ <62cb26952d0688c6f37ad84d253d5302818a20ae.1433264017.git.cyrille.pitchen@atmel.com>
+ <20150602190435.4698a4db@bbrezillon>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Mike Turquette <mturquette@linaro.org>,
- Rob Herring <robh+dt@kernel.org>,
- Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Kamil Lulko <rev13@wp.pl>, Andreas Farber <afaerber@suse.de>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- patches@linaro.org, linaro-kernel@lists.linaro.org
-Subject: Re: [RFC PATCH 2/3] clk: stm32: Add clock driver for STM32F4[23]xxx
- devices
-References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org> <1432327273-6810-3-git-send-email-daniel.thompson@linaro.org> <20150604220725.GT676@codeaurora.org>
-In-Reply-To: <20150604220725.GT676@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20150602190435.4698a4db@bbrezillon>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/06/15 23:07, Stephen Boyd wrote:
-> On 05/22, Daniel Thompson wrote:
->> +
->> +#include <linux/clk.h>
->
-> Are you using this include?
->
->> +#include <linux/clkdev.h>
->
-> Are you using this include?
+On 02/06/2015 at 19:04:35 +0200, Boris Brezillon wrote :
+> Hi Cyrille,
+> 
+> On Tue, 2 Jun 2015 18:57:19 +0200
+> Cyrille Pitchen <cyrille.pitchen@atmel.com> wrote:
+> 
+> > This driver supports the new Atmel Flexcom. The Flexcom is a wrapper which
+> > integrates one SPI controller, one I2C controller and one USART. Only one
+> > function can be enabled at a time. This driver selects the function once for
+> > all, when the Flexcom is probed, according to the value of the new
+> > "atmel,flexcom-mode" device tree property.
+> > 
+> > This driver has chosen to present the Flexcom to the system as a clock so the
+> > implementation is seamless for the existing Atmel SPI, I2C and USART drivers.
+> 
+> Could detail a bit more why you chose to represent this flexcom IP as
+> a clock device ?
+> 
+> I don't like to use this 'DT should represent real hardware' argument,
+> but to me, it looks like you're trying to use a false hardware
+> representation to avoid changing the peripheral drivers code, which is
+> wrong since the DT is supposed to represent the hardware blocks.
+> 
+> How about representing the flexcom as an MFD instead ?
+> 
 
-Not very much?
-
-Turns out I was relying on these to get kzalloc() defined but there are 
-better headers for me to use for that!
-
->
->> +#include <linux/err.h>
->> +#include <linux/io.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/spinlock.h>
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +
->> +#include <linux/debugfs.h>
->
-> Are you using this include?
-
-No (this is already gone in v2).
-
-
->> +static long clk_apb_mul_round_rate(struct clk_hw *hw, unsigned long rate,
->> +				   unsigned long *prate)
->> +{
->> +	struct clk_apb_mul *am = to_clk_apb_mul(hw);
->> +	unsigned long mult = 1;
->> +
->> +	if (readl(base + STM32F4_RCC_CFGR) & BIT(am->bit_idx))
->> +		mult *= 2;
->
-> Isn't this the same as mult = 2? I guess we could rely on the
-> compiler to figure out this one.
-
-I'll fix this.
+It should probably be represented as an MFD. The MFD driver will parse
+the chosen configuration and the probe the correct driver. You can have
+a look at the recent ST LPC driver from Lee.
 
 
->> +
->> +	if (__clk_get_flags(hw->clk) & CLK_SET_RATE_PARENT) {
->> +		unsigned long best_parent = rate / mult;
->> +
->> +		*prate =
->> +		    __clk_round_rate(__clk_get_parent(hw->clk), best_parent);
->> +	}
->> +
->> +	return *prate * mult;
->> +}
->> +
->> +static int clk_apb_mul_set_rate(struct clk_hw *hw, unsigned long rate,
->> +				 unsigned long parent_rate)
->> +{
->
-> Why don't we need to do anything here?
-
-This clock cannot change its own rate. It is very nearly a fixed factor 
-clock but with the additional quirk that the "fixed" factor changes 
-depending upon the rate of the parent clock.
-
-This is the same implementation as clk-fixed-factor. I concluded that it 
-returns success because round rate should always result in the set rate 
-for this clock being a nop.
-
-
->> +	return 0;
->> +}
->> +
->> +static struct clk_ops clk_apb_mul_factor_ops = {
->
-> const?
-
-Makes sense...
-
-You want a patch for clk-fixed-factor too?
-
-
->> +struct clk *clk_register_apb_mul(struct device *dev, const char *name,
->> +				 const char *parent_name, unsigned long flags,
->> +				 u8 bit_idx)
->> +{
->> +	struct clk_apb_mul *am;
->> +	struct clk_init_data init;
->> +	struct clk *clk;
->> +
->> +	am = kzalloc(sizeof(*am), GFP_KERNEL);
->> +	if (!am)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	am->bit_idx = bit_idx;
->> +	am->hw.init = &init;
->> +
->> +	init.name = name;
->> +	init.ops = &clk_apb_mul_factor_ops;
->> +	init.flags = flags | CLK_IS_BASIC;
->
-> Is it basic?
-
-Tough question.
-
-The absence of this flag appears grants arch code permission to use 
-secret backdoors to do "weird stuff" but making special assumptions 
-about the type of the clock. This clock keeps its implementation private 
-so noone outside the compilation unit can usefully cast it.
-
-However, it also looks like only omap2 is the only platform that makes 
-these special assumptions so when this code is run on STM32 there is 
-nothing to actually consume the CLK_IS_BASIC flag at runtime.
-
-In other words the flag is useless but, I think, also correctly applied.
-
-I'd be happy to remove it if anyone disagrees with the guesswork above.
-
-Alternatively, I could write a patch to *invert* CLK_IS_BASIC and rename 
-it CLK_CASTABLE on the grounds that only the people doing "weird stuff" 
-should have to care about this flag at all. Any interest in that?
-
-
->> +	init.parent_names = &parent_name;
->> +	init.num_parents = 1;
->> +
->> +	clk = clk_register(dev, &am->hw);
->> +
->> +	if (IS_ERR(clk))
->> +		kfree(am);
->> +
->> +	return clk;
->> +}
->> +
->> +static const char __initdata *sys_parents[] =   { "hsi", NULL, "pll" };
->
-> __initdata goes after the []
-
-Thanks. I'll fix this.
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
