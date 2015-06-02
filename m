@@ -1,66 +1,113 @@
-Return-Path: <carlo@endlessm.com>
+Return-Path: <mike.looijmans@topicproducts.com>
+Message-ID: <556D6CB4.30900@topic.nl>
+Date: Tue, 2 Jun 2015 10:43:32 +0200
+From: Mike Looijmans <mike.looijmans@topic.nl>
 MIME-Version: 1.0
-In-Reply-To: <20150611152046.GG12192@mwanda>
-References: <20150611152046.GG12192@mwanda>
-Date: Thu, 11 Jun 2015 17:26:07 +0200
-Message-ID: <CAL9uMOF=i1QZ22yh344j-p-SXBZU96MjrjVWVA30gDZopN=x7g@mail.gmail.com>
-Subject: Re: [patch] clk: meson: add some error handling in meson_clk_register_cpu()
-From: Carlo Caione <carlo@endlessm.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+To: Paul Bolle <pebolle@tiscali.nl>
+CC: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@linaro.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3] Add TI CDCE925 I2C controlled clock synthesizer driver
+References: <1433153623-29205-1-git-send-email-mike.looijmans@topic.nl> <1433231444.2361.75.camel@x220>
+In-Reply-To: <1433231444.2361.75.camel@x220>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 11, 2015 at 5:20 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> This error handling hopefully isn't needed but it make the static
-> checkers happy.
+=EF=BB=BFOn 02-06-15 09:50, Paul Bolle wrote:
+> On Mon, 2015-06-01 at 12:13 +0200, Mike Looijmans wrote:
+>> --- /dev/null
+>> +++ b/drivers/clk/clk-cdce925.c
 >
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> +static int cdce925_regmap_i2c_write(
+>> +	void *context, const void *data, size_t count)
 >
-> diff --git a/drivers/clk/meson/clk-cpu.c b/drivers/clk/meson/clk-cpu.c
-> index 148e99f..71ad493 100644
-> --- a/drivers/clk/meson/clk-cpu.c
-> +++ b/drivers/clk/meson/clk-cpu.c
-> @@ -213,22 +213,30 @@ struct clk *meson_clk_register_cpu(const struct clk_conf *clk_conf,
->         if (!pclk) {
->                 pr_err("%s: could not lookup parent clock %s\n",
->                                 __func__, clk_conf->clks_parent[0]);
-> -               return ERR_PTR(-EINVAL);
-> +               ret = -EINVAL;
-> +               goto free_clk;
->         }
+>> +	dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
+>> +			reg_data[0], reg_data[1]);
 >
->         ret = clk_notifier_register(pclk, &clk_cpu->clk_nb);
->         if (ret) {
->                 pr_err("%s: failed to register clock notifier for %s\n",
->                                 __func__, clk_conf->clk_name);
-> -               return ERR_PTR(-EINVAL);
-> +               goto free_clk;
->         }
+> For some silly reason (ie, I mistakenly thought I spotted an issue) I
+> did a quick build of this file. That triggered some noise on x86_64.
+
+Indeed, I hadn't verified building on a 64-bit platform, and the format str=
+ing=20
+is incorrect.
+
+Thanks for spotting it and suggesting a fix, I'll integrate it in a v4 patc=
+h.
+
+Out of curiousity, I did try a compile on the x86 host, but couldn't select=
+=20
+the driver because it depends on CONFIG_OF, so I just compiled if for the A=
+RM=20
+target to verify that it still compiles in kernel 4.1. How did you manage t=
+o=20
+compile the driver on the x86?
+
+
+> Excerpt:
 >
->         clk = clk_register(NULL, &clk_cpu->hw);
->         if (IS_ERR(clk)) {
-> -               clk_notifier_unregister(pclk, &clk_cpu->clk_nb);
-> -               kfree(clk_cpu);
-> +               ret = PTR_ERR(clk);
-> +               goto unregister_clk_nb;
->         }
+> drivers/clk/clk-cdce925.c: In function =E2=80=98cdce925_regmap_i2c_write=
+=E2=80=99:
+> include/linux/dynamic_debug.h:64:16: warning: format =E2=80=98%u=E2=80=99=
+ expects argument of type =E2=80=98unsigned int=E2=80=99, but argument 5 ha=
+s type =E2=80=98size_t=E2=80=99 [-Wformat=3D]
+>    static struct _ddebug  __aligned(8)   \
+>                  ^
+> [...]
+> drivers/clk/clk-cdce925.c:505:2: note: in expansion of macro =E2=80=98dev=
+_dbg=E2=80=99
+>    dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
+>    ^
 >
->         return clk;
-> +
-> +unregister_clk_nb:
-> +       clk_notifier_unregister(pclk, &clk_cpu->clk_nb);
-> +free_clk:
-> +       kfree(clk_cpu);
-> +
-> +       return ERR_PTR(ret);
->  }
+> A quick look at Documentation/printk-formats.txt suggested this (very
+> lightly tested) fix:
+> @@ -502,7 +502,7 @@ static int cdce925_regmap_i2c_write(
+>          reg_data[0] =3D CDCE925_I2C_COMMAND_BYTE_TRANSFER | ((u8 *)data)=
+[0];
+>          reg_data[1] =3D ((u8 *)data)[1];
+>
+> -       dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
+> +       dev_dbg(&i2c->dev, "%s(%zu) %#x %#x\n", __func__, count,
+>                          reg_data[0], reg_data[1]);
+>
+>          ret =3D i2c_master_send(i2c, reg_data, count);
+>
+>> +static int cdce925_regmap_i2c_read(void *context,
+>> +	   const void *reg, size_t reg_size, void *val, size_t val_size)
+>
+>> +		dev_dbg(&i2c->dev, "%s(%u, %u) %#x %#x\n", __func__,
+>> +				reg_size, val_size, reg_data[0], *((u8 *)val));
+>
+> Likewise:
+> @@ -547,7 +547,7 @@ static int cdce925_regmap_i2c_read(void *context,
+>
+>          ret =3D i2c_transfer(i2c->adapter, xfer, 2);
+>          if (likely(ret =3D=3D 2)) {
+> -               dev_dbg(&i2c->dev, "%s(%u, %u) %#x %#x\n", __func__,
+> +               dev_dbg(&i2c->dev, "%s(%zu, %zu) %#x %#x\n", __func__,
+>                                  reg_size, val_size, reg_data[0], *((u8 *=
+)val));
+>                  return 0;
+>          } else if (ret < 0)
+>
+> Thanks,
+>
+>
+> Paul Bolle
 >
 
-Thanks Dan,
 
-Acked-by: Carlo Caione <carlo@endlessm.com>
 
--- 
-Carlo Caione  |  +39.340.80.30.096  |  Endless
+Kind regards,
+
+Mike Looijmans
+System Expert
+
+TOPIC Embedded Products
+Eindhovenseweg 32-C, NL-5683 KH Best
+Postbus 440, NL-5680 AK Best
+Telefoon: +31 (0) 499 33 69 79
+Telefax: +31 (0) 499 33 69 70
+E-mail: mike.looijmans@topicproducts.com
+Website: www.topicproducts.com
+
+Please consider the environment before printing this e-mail
