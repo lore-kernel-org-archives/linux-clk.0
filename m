@@ -1,62 +1,96 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
+Return-Path: <mike.looijmans@topicproducts.com>
+Message-ID: <556D6BC7.8000308@topic.nl>
+Date: Tue, 2 Jun 2015 10:39:35 +0200
+From: Mike Looijmans <mike.looijmans@topic.nl>
 MIME-Version: 1.0
-In-Reply-To: <1433760002-24120-3-git-send-email-sudeep.holla@arm.com>
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
-	<1433760002-24120-3-git-send-email-sudeep.holla@arm.com>
-Date: Thu, 11 Jun 2015 17:24:19 +0530
-Message-ID: <CAJe_ZheUknLZuMg-02V-AqyjxX8Nx4oK3O2HapqfCLkkXjngAg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/8] firmware: add support for ARM System Control and
- Power Interface(SCPI) protocol
-From: Jassi Brar <jaswinder.singh@linaro.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Olof Johansson <olof@lixom.net>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-pm-owner@vger.kernel.org
+To: Paul Bolle <pebolle@tiscali.nl>
+CC: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@linaro.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3] Add TI CDCE925 I2C controlled clock synthesizer driver
+References: <1433153623-29205-1-git-send-email-mike.looijmans@topic.nl> <1433231444.2361.75.camel@x220>
+In-Reply-To: <1433231444.2361.75.camel@x220>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 8 June 2015 at 16:09, Sudeep Holla <sudeep.holla@arm.com> wrote:
-...
-> +
-> +static void scpi_process_cmd(struct scpi_chan *ch, u32 cmd)
-> +{
-> +       unsigned long flags;
-> +       struct scpi_xfer *t, *match = NULL;
-> +
-> +       spin_lock_irqsave(&ch->rx_lock, flags);
-> +       if (list_empty(&ch->rx_pending)) {
-> +               spin_unlock_irqrestore(&ch->rx_lock, flags);
-> +               return;
-> +       }
-> +
-> +       list_for_each_entry(t, &ch->rx_pending, node)
-> +               if (CMD_XTRACT_UNIQ(t->cmd) == CMD_XTRACT_UNIQ(cmd)) {
-> +                       list_del(&t->node);
-> +                       match = t;
-> +                       break;
-> +               }
-> +       /* check if wait_for_completion is in progress or timed-out */
-> +       if (match && !completion_done(&match->done)) {
-> +               struct scpi_shared_mem *mem = ch->rx_payload;
-> +               unsigned int len = min(match->rx_len, CMD_SIZE(cmd));
-> +
-> +               match->status = le32_to_cpu(mem->status);
-> +               memcpy_fromio(match->rx_buf, mem->payload, len);
-> +               if (match->rx_len > len)
-> +                       memset(match->rx_buf + len, 0, match->rx_len - len);
-> +               complete(&match->done);
-> +       }
-> +       spin_unlock_irqrestore(&ch->rx_lock, flags);
-> +}
-There doesn't seem to be support for commands sent by remote?
-Something like when remote is the thermal master and it needs to send
-sensor readings crossing thresholds.
+=EF=BB=BFOn 02-06-15 09:50, Paul Bolle wrote:
+> On Mon, 2015-06-01 at 12:13 +0200, Mike Looijmans wrote:
+>> --- /dev/null
+>> +++ b/drivers/clk/clk-cdce925.c
+>
+>> +static int cdce925_regmap_i2c_write(
+>> +	void *context, const void *data, size_t count)
+>
+>> +	dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
+>> +			reg_data[0], reg_data[1]);
+>
+> For some silly reason (ie, I mistakenly thought I spotted an issue) I
+> did a quick build of this file. That triggered some noise on x86_64.
+> Excerpt:
+>
+> drivers/clk/clk-cdce925.c: In function =E2=80=98cdce925_regmap_i2c_write=
+=E2=80=99:
+> include/linux/dynamic_debug.h:64:16: warning: format =E2=80=98%u=E2=80=99=
+ expects argument of type =E2=80=98unsigned int=E2=80=99, but argument 5 ha=
+s type =E2=80=98size_t=E2=80=99 [-Wformat=3D]
+>    static struct _ddebug  __aligned(8)   \
+>                  ^
+> [...]
+> drivers/clk/clk-cdce925.c:505:2: note: in expansion of macro =E2=80=98dev=
+_dbg=E2=80=99
+>    dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
+>    ^
+>
+> A quick look at Documentation/printk-formats.txt suggested this (very
+> lightly tested) fix:
+> @@ -502,7 +502,7 @@ static int cdce925_regmap_i2c_write(
+>          reg_data[0] =3D CDCE925_I2C_COMMAND_BYTE_TRANSFER | ((u8 *)data)=
+[0];
+>          reg_data[1] =3D ((u8 *)data)[1];
+>
+> -       dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
+> +       dev_dbg(&i2c->dev, "%s(%zu) %#x %#x\n", __func__, count,
+>                          reg_data[0], reg_data[1]);
+>
+>          ret =3D i2c_master_send(i2c, reg_data, count);
+>
+>> +static int cdce925_regmap_i2c_read(void *context,
+>> +	   const void *reg, size_t reg_size, void *val, size_t val_size)
+>
+>> +		dev_dbg(&i2c->dev, "%s(%u, %u) %#x %#x\n", __func__,
+>> +				reg_size, val_size, reg_data[0], *((u8 *)val));
+>
+> Likewise:
+> @@ -547,7 +547,7 @@ static int cdce925_regmap_i2c_read(void *context,
+>
+>          ret =3D i2c_transfer(i2c->adapter, xfer, 2);
+>          if (likely(ret =3D=3D 2)) {
+> -               dev_dbg(&i2c->dev, "%s(%u, %u) %#x %#x\n", __func__,
+> +               dev_dbg(&i2c->dev, "%s(%zu, %zu) %#x %#x\n", __func__,
+>                                  reg_size, val_size, reg_data[0], *((u8 *=
+)val));
+>                  return 0;
+>          } else if (ret < 0)
+>
+> Thanks,
+>
+>
+> Paul Bolle
+>
+
+
+
+Kind regards,
+
+Mike Looijmans
+System Expert
+
+TOPIC Embedded Products
+Eindhovenseweg 32-C, NL-5683 KH Best
+Postbus 440, NL-5680 AK Best
+Telefoon: +31 (0) 499 33 69 79
+Telefax: +31 (0) 499 33 69 70
+E-mail: mike.looijmans@topicproducts.com
+Website: www.topicproducts.com
+
+Please consider the environment before printing this e-mail
