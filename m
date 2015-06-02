@@ -1,39 +1,55 @@
-Return-Path: <davidcdueck@googlemail.com>
-Return-Path: <davidcdueck@googlemail.com>
-From: David Dueck <davidcdueck@googlemail.com>
-To: boris.brezillon@free-electrons.com
-Cc: mturquette@linaro.org,
-	nicolas.ferre@atmel.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/6] clk: at91: clk-h32mxclk: fix memory leak
-Date: Fri, 26 Jun 2015 14:33:27 +0200
-Message-Id: <1435322012-5667-1-git-send-email-davidcdueck@googlemail.com>
+Return-Path: <vigneshr@ti.com>
+Message-ID: <556D925A.9070708@ti.com>
+Date: Tue, 2 Jun 2015 16:54:10 +0530
+From: Vignesh R <vigneshr@ti.com>
+MIME-Version: 1.0
+To: Tero Kristo <t-kristo@ti.com>, Paul Walmsley <paul@pwsan.com>,
+        Thierry
+ Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Pawel
+ Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Benoit
+ Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell
+ King <linux@arm.linux.org.uk>,
+        Mike Turquette <mturquette@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 2/5] ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
+References: <1433159614-437-1-git-send-email-vigneshr@ti.com> <1433159614-437-3-git-send-email-vigneshr@ti.com> <556D6781.2090405@ti.com>
+In-Reply-To: <556D6781.2090405@ti.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-Do not leak memory if clk_register fails.
+Hi Tero,
 
-Signed-off-by: David Dueck <davidcdueck@googlemail.com>
----
- drivers/clk/at91/clk-h32mx.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On Tuesday 02 June 2015 01:51 PM, Tero Kristo wrote:
+> On 06/01/2015 02:53 PM, Vignesh R wrote:
+>> Add hwmod entries for the PWMSS on DRA7.
+> 
+> Can you provide some documentation references for this data?
+> 
+> I was looking at the TRM and at least the main_clk selection is somewhat
+> unclear to me.
 
-diff --git a/drivers/clk/at91/clk-h32mx.c b/drivers/clk/at91/clk-h32mx.c
-index 152dcb3..61566bc 100644
---- a/drivers/clk/at91/clk-h32mx.c
-+++ b/drivers/clk/at91/clk-h32mx.c
-@@ -116,8 +116,10 @@ void __init of_sama5d4_clk_h32mx_setup(struct device_node *np,
- 	h32mxclk->pmc = pmc;
- 
- 	clk = clk_register(NULL, &h32mxclk->hw);
--	if (!clk)
-+	if (!clk) {
-+		kfree(h32mxclk);
- 		return;
-+	}
- 
- 	of_clk_add_provider(np, of_clk_src_simple_get, clk);
- }
--- 
-2.4.4
+As per AM57x TRM SPRUHZ6, October 2014, Section 29.1.3 Table 29-4.
+source signal as L4PER2_L3_GICLK but it is actually equal to
+L4PER2_L3_GICLK/2. l4_root_clock_div is fixed-factored clock equal to
+L4PER2_L3_GICLK/2 (l3_iclk_div/2 in Linux clock dt). The TRM does'nt
+show factor of by 2. I will forward you an internal documentation that
+talks about this.
+
+I also measured the frequencies of PWM waveforms using oscilloscope and
+it matches above observation.
+
+I will update the patch description in v2.
+
+Regards
+Vignesh
