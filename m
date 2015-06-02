@@ -1,146 +1,311 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <t-kristo@ti.com>
+Message-ID: <556D6781.2090405@ti.com>
+Date: Tue, 2 Jun 2015 11:21:21 +0300
+From: Tero Kristo <t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-Date: Wed, 3 Jun 2015 17:12:39 -0400
-Message-ID: <CAF6AEGuOP-3sxDQcNOjVmfP4ue6LmY7KFrj9W75aHKuvZpTFMw@mail.gmail.com>
-Subject: Re: [PATCH 00/21] On-demand device registration
-From: Rob Clark <robdclark@gmail.com>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-	linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	linux-i2c@vger.kernel.org, Alexander Holler <holler@ahsoftware.de>,
-	linux-clk@vger.kernel.org,
-	"moderated list:ARM/S5P EXYNOS AR..."
-	<linux-samsung-soc@vger.kernel.org>,
-	Grant Likely <grant.likely@linaro.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	=?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	dmaengine@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+To: Vignesh R <vigneshr@ti.com>, Paul Walmsley <paul@pwsan.com>,
+        Thierry
+ Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Pawel
+ Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Benoit
+ Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell
+ King <linux@arm.linux.org.uk>,
+        Mike Turquette <mturquette@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 2/5] ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
+References: <1433159614-437-1-git-send-email-vigneshr@ti.com> <1433159614-437-3-git-send-email-vigneshr@ti.com>
+In-Reply-To: <1433159614-437-3-git-send-email-vigneshr@ti.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 25, 2015 at 10:53 AM, Tomeu Vizoso
-<tomeu.vizoso@collabora.com> wrote:
-> Hello,
->
-> I have a problem with the panel on my Tegra Chromebook taking longer than
-> expected to be ready during boot (Stéphane Marchesin reported what is
-> basically the same issue in [0]), and have looked into ordered probing as a
-> better way of solving this than moving nodes around in the DT or playing with
-> initcall levels.
->
-> While reading the thread [1] that Alexander Holler started with his series to
-> make probing order deterministic, it occurred to me that it should be possible
-> to achieve the same by registering devices as they are referenced by other
-> devices.
->
-> This basically reuses the information that is already implicit in the probe()
-> implementations, saving us from refactoring existing drivers or adding
-> information to DTBs.
->
-> Something I'm not completely happy with is that I have had to move the call to
-> of_platform_populate after all platform drivers have been registered.
-> Otherwise I don't see how I could register drivers on demand as we don't have
-> yet each driver's compatible strings.
->
-> For machs that don't move of_platform_populate() to a later point, these
-> patches shouldn't cause any problems but it's not guaranteed that we'll avoid
-> all the deferred probes as some drivers may not be registered yet.
->
-> I have tested this on boards with Tegra, iMX.6 and Exynos SoCs, and these
-> patches were enough to eliminate all the deferred probes.
->
-> With this series I get the kernel to output to the panel in 0.5s, instead of 2.8s.
+On 06/01/2015 02:53 PM, Vignesh R wrote:
+> Add hwmod entries for the PWMSS on DRA7.
 
-So, complete drive-by comment (and I won't claim to be a DT expert,
-etc, etc, so take this with a few grains of salt), but why not push
-the problem to the DT compiler (or a pre-process step that could be
-run on existing DT blobs), which generates an optional DT node that is
-the recommended probe order?  That seems like it avoids adding
-complexity into the early boot code (which seems like a good thing)..
+Can you provide some documentation references for this data?
 
-As a bonus, a bootarg (or something like that) which runs through the
-recommended probe order in reverse (to continue our current state of
-ensuring that EPROBE_DEFER error paths are well tested)
+I was looking at the TRM and at least the main_clk selection is somewhat 
+unclear to me.
 
-At any rate, for a device like a drm driver that has multiple
-sub-components, and depends on various other clk/gpio/regulator/etc
-drivers, the current EPROBE_DEFER situation is pretty comical, so any
-solution that improves on things is very much welcome :-)
+-Tero
 
-BR,
--R
-
-> Regards,
 >
-> Tomeu
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> ---
+>   arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 239 ++++++++++++++++++++++++++++++
+>   1 file changed, 239 insertions(+)
 >
-> [0] http://lists.freedesktop.org/archives/dri-devel/2014-August/066527.html
+> diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+> index 0e64c2fac0b5..86a7ac9a3138 100644
+> --- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+> +++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+> @@ -362,6 +362,149 @@ static struct omap_hwmod dra7xx_dcan2_hwmod = {
+>   	},
+>   };
 >
-> [1] https://lkml.org/lkml/2014/5/12/452
+> +/* pwmss  */
+> +static struct omap_hwmod_class_sysconfig dra7xx_epwmss_sysc = {
+> +	.rev_offs	= 0x0,
+> +	.sysc_offs	= 0x4,
+> +	.sysc_flags	= SYSC_HAS_SIDLEMODE | SYSC_HAS_RESET_STATUS,
+> +	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART),
+> +	.sysc_fields	= &omap_hwmod_sysc_type2,
+> +};
+> +
+> +struct omap_hwmod_class dra7xx_epwmss_hwmod_class = {
+> +	.name		= "epwmss",
+> +	.sysc		= &dra7xx_epwmss_sysc,
+> +};
+> +
+> +static struct omap_hwmod_class dra7xx_ecap_hwmod_class = {
+> +	.name		= "ecap",
+> +};
+> +
+> +static struct omap_hwmod_class dra7xx_eqep_hwmod_class = {
+> +	.name		= "eqep",
+> +};
+> +
+> +struct omap_hwmod_class dra7xx_ehrpwm_hwmod_class = {
+> +	.name		= "ehrpwm",
+> +};
+> +
+> +/* epwmss0 */
+> +struct omap_hwmod dra7xx_epwmss0_hwmod = {
+> +	.name		= "epwmss0",
+> +	.class		= &dra7xx_epwmss_hwmod_class,
+> +	.clkdm_name	= "l4per2_clkdm",
+> +	.main_clk	= "l4_root_clk_div",
+> +	.prcm		= {
+> +		.omap4	= {
+> +			.modulemode	= MODULEMODE_SWCTRL,
+> +			.clkctrl_offs	= DRA7XX_CM_L4PER2_PWMSS1_CLKCTRL_OFFSET,
+> +			.context_offs	= DRA7XX_RM_L4PER2_PWMSS1_CONTEXT_OFFSET,
+> +		},
+> +	},
+> +};
+> +
+> +/* ecap0 */
+> +struct omap_hwmod dra7xx_ecap0_hwmod = {
+> +	.name		= "ecap0",
+> +	.class		= &dra7xx_ecap_hwmod_class,
+> +	.clkdm_name	= "l4per2_clkdm",
+> +	.main_clk	= "l4_root_clk_div",
+> +};
+> +
+> +/* eqep0 */
+> +struct omap_hwmod dra7xx_eqep0_hwmod = {
+> +	.name		= "eqep0",
+> +	.class		= &dra7xx_eqep_hwmod_class,
+> +	.clkdm_name	= "l4per2_clkdm",
+> +	.main_clk	= "l4_root_clk_div",
+> +};
+> +
+> +/* ehrpwm0 */
+> +struct omap_hwmod dra7xx_ehrpwm0_hwmod = {
+> +	.name		= "ehrpwm0",
+> +	.class		= &dra7xx_ehrpwm_hwmod_class,
+> +	.clkdm_name	= "l4per2_clkdm",
+> +	.main_clk	= "l4_root_clk_div",
+> +};
+> +
+> +/* epwmss1 */
+> +struct omap_hwmod dra7xx_epwmss1_hwmod = {
+> +	.name		= "epwmss1",
+> +	.class		= &dra7xx_epwmss_hwmod_class,
+> +	.clkdm_name	= "l4per2_clkdm",
+> +	.main_clk	= "l4_root_clk_div",
+> +	.prcm		= {
+> +		.omap4	= {
+> +			.modulemode	= MODULEMODE_SWCTRL,
+> +			.clkctrl_offs	= DRA7XX_CM_L4PER2_PWMSS2_CLKCTRL_OFFSET,
+> +			.context_offs	= DRA7XX_RM_L4PER2_PWMSS2_CONTEXT_OFFSET,
+> +		},
+> +	},
+> +};
+> +
+> +/* ecap1 */
+> +struct omap_hwmod dra7xx_ecap1_hwmod = {
+> +	.name		= "ecap1",
+> +	.class		= &dra7xx_ecap_hwmod_class,
+> +	.clkdm_name	= "l4per2_clkdm",
+> +	.main_clk	= "l4_root_clk_div",
+> +};
+> +
+> +/* eqep1 */
+> +struct omap_hwmod dra7xx_eqep1_hwmod = {
+> +	.name		= "eqep1",
+> +	.class		= &dra7xx_eqep_hwmod_class,
+> +	.clkdm_name	= "l4per2_clkdm",
+> +	.main_clk	= "l4_root_clk_div",
+> +};
+> +
+> +/* ehrpwm1 */
+> +struct omap_hwmod dra7xx_ehrpwm1_hwmod = {
+> +	.name		= "ehrpwm1",
+> +	.class		= &dra7xx_ehrpwm_hwmod_class,
+> +	.clkdm_name	= "l4per2_clkdm",
+> +	.main_clk	= "l4_root_clk_div",
+> +};
+> +
+> +/* epwmss2 */
+> +struct omap_hwmod dra7xx_epwmss2_hwmod = {
+> +	.name		= "epwmss2",
+> +	.class		= &dra7xx_epwmss_hwmod_class,
+> +	.clkdm_name	= "l4per2_clkdm",
+> +	.main_clk	= "l4_root_clk_div",
+> +	.prcm		= {
+> +		.omap4	= {
+> +			.modulemode	= MODULEMODE_SWCTRL,
+> +			.clkctrl_offs	= DRA7XX_CM_L4PER2_PWMSS3_CLKCTRL_OFFSET,
+> +			.context_offs	= DRA7XX_RM_L4PER2_PWMSS3_CONTEXT_OFFSET,
+> +		},
+> +	},
+> +};
+> +
+> +/* ecap2 */
+> +struct omap_hwmod dra7xx_ecap2_hwmod = {
+> +	.name		= "ecap2",
+> +	.class		= &dra7xx_ecap_hwmod_class,
+> +	.clkdm_name	= "l4per2_clkdm",
+> +	.main_clk	= "l4_root_clk_div",
+> +};
+> +
+> +/* eqep2 */
+> +struct omap_hwmod dra7xx_eqep2_hwmod = {
+> +	.name		= "eqep2",
+> +	.class		= &dra7xx_eqep_hwmod_class,
+> +	.clkdm_name	= "l4per2_clkdm",
+> +	.main_clk	= "l4_root_clk_div",
+> +};
+> +
+> +/* ehrpwm2 */
+> +struct omap_hwmod dra7xx_ehrpwm2_hwmod = {
+> +	.name		= "ehrpwm2",
+> +	.class		= &dra7xx_ehrpwm_hwmod_class,
+> +	.clkdm_name	= "l4per2_clkdm",
+> +	.main_clk	= "l4_root_clk_div",
+> +};
+> +
+>   /*
+>    * 'dma' class
+>    *
+> @@ -2601,6 +2744,90 @@ static struct omap_hwmod_ocp_if dra7xx_l4_per1__gpio6 = {
+>   	.user		= OCP_USER_MPU | OCP_USER_SDMA,
+>   };
 >
-> Tomeu Vizoso (21):
->   regulator: core: Reduce critical area in _regulator_get
->   ARM: tegra: Add gpio-ranges property
->   ARM: tegra: Register drivers before devices
->   ARM: EXYNOS: Register drivers before devices
->   ARM i.MX6q: Register drivers before devices
->   of/platform: Add of_platform_device_ensure()
->   of/platform: Ensure device registration on lookup
->   gpio: Probe GPIO drivers on demand
->   gpio: Probe pinctrl devices on demand
->   regulator: core: Probe regulators on demand
->   drm: Probe panels on demand
->   drm/tegra: Probe dpaux devices on demand
->   i2c: core: Probe i2c master devices on demand
->   pwm: Probe PWM chip devices on demand
->   backlight: Probe backlight devices on demand
->   usb: phy: Probe phy devices on demand
->   clk: Probe clk providers on demand
->   pinctrl: Probe pinctrl devices on demand
->   phy: core: Probe phy providers on demand
->   dma: of: Probe DMA controllers on demand
->   power-supply: Probe power supplies on demand
+> +struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss0 = {
+> +	.master		= &dra7xx_l4_per2_hwmod,
+> +	.slave		= &dra7xx_epwmss0_hwmod,
+> +	.clk		= "l4_root_clk_div",
+> +	.user		= OCP_USER_MPU,
+> +};
+> +
+> +struct omap_hwmod_ocp_if dra7xx_epwmss0__ecap0 = {
+> +	.master		= &dra7xx_epwmss0_hwmod,
+> +	.slave		= &dra7xx_ecap0_hwmod,
+> +	.clk		= "l4_root_clk_div",
+> +	.user		= OCP_USER_MPU,
+> +};
+> +
+> +struct omap_hwmod_ocp_if dra7xx_epwmss0__eqep0 = {
+> +	.master		= &dra7xx_epwmss0_hwmod,
+> +	.slave		= &dra7xx_eqep0_hwmod,
+> +	.clk		= "l4_root_clk_div",
+> +	.user		= OCP_USER_MPU,
+> +};
+> +
+> +struct omap_hwmod_ocp_if dra7xx_epwmss0__ehrpwm0 = {
+> +	.master		= &dra7xx_epwmss0_hwmod,
+> +	.slave		= &dra7xx_ehrpwm0_hwmod,
+> +	.clk		= "l4_root_clk_div",
+> +	.user		= OCP_USER_MPU,
+> +};
+> +
+> +struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss1 = {
+> +	.master		= &dra7xx_l4_per2_hwmod,
+> +	.slave		= &dra7xx_epwmss1_hwmod,
+> +	.clk		= "l4_root_clk_div",
+> +	.user		= OCP_USER_MPU,
+> +};
+> +
+> +struct omap_hwmod_ocp_if dra7xx_epwmss1__ecap1 = {
+> +	.master		= &dra7xx_epwmss1_hwmod,
+> +	.slave		= &dra7xx_ecap1_hwmod,
+> +	.clk		= "l4_root_clk_div",
+> +	.user		= OCP_USER_MPU,
+> +};
+> +
+> +struct omap_hwmod_ocp_if dra7xx_epwmss1__eqep1 = {
+> +	.master		= &dra7xx_epwmss1_hwmod,
+> +	.slave		= &dra7xx_eqep1_hwmod,
+> +	.clk		= "l4_root_clk_div",
+> +	.user		= OCP_USER_MPU,
+> +};
+> +
+> +struct omap_hwmod_ocp_if dra7xx_epwmss1__ehrpwm1 = {
+> +	.master		= &dra7xx_epwmss1_hwmod,
+> +	.slave		= &dra7xx_ehrpwm1_hwmod,
+> +	.clk		= "l4_root_clk_div",
+> +	.user		= OCP_USER_MPU,
+> +};
+> +
+> +struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss2 = {
+> +	.master		= &dra7xx_l4_per2_hwmod,
+> +	.slave		= &dra7xx_epwmss2_hwmod,
+> +	.clk		= "l4_root_clk_div",
+> +	.user		= OCP_USER_MPU,
+> +};
+> +
+> +struct omap_hwmod_ocp_if dra7xx_epwmss2__ecap2 = {
+> +	.master		= &dra7xx_epwmss2_hwmod,
+> +	.slave		= &dra7xx_ecap2_hwmod,
+> +	.clk		= "l4_root_clk_div",
+> +	.user		= OCP_USER_MPU,
+> +};
+> +
+> +struct omap_hwmod_ocp_if dra7xx_epwmss2__eqep2 = {
+> +	.master		= &dra7xx_epwmss2_hwmod,
+> +	.slave		= &dra7xx_eqep2_hwmod,
+> +	.clk		= "l4_root_clk_div",
+> +	.user		= OCP_USER_MPU,
+> +};
+> +
+> +struct omap_hwmod_ocp_if dra7xx_epwmss2__ehrpwm2 = {
+> +	.master		= &dra7xx_epwmss2_hwmod,
+> +	.slave		= &dra7xx_ehrpwm2_hwmod,
+> +	.clk		= "l4_root_clk_div",
+> +	.user		= OCP_USER_MPU,
+> +};
+> +
+>   /* l4_per1 -> gpio7 */
+>   static struct omap_hwmod_ocp_if dra7xx_l4_per1__gpio7 = {
+>   	.master		= &dra7xx_l4_per1_hwmod,
+> @@ -3394,6 +3621,18 @@ static struct omap_hwmod_ocp_if *dra7xx_hwmod_ocp_ifs[] __initdata = {
+>   	&dra7xx_l3_main_1__vcp2,
+>   	&dra7xx_l4_per2__vcp2,
+>   	&dra7xx_l4_wkup__wd_timer2,
+> +	&dra7xx_l4_per2__epwmss0,
+> +	&dra7xx_epwmss0__ecap0,
+> +	&dra7xx_epwmss0__eqep0,
+> +	&dra7xx_epwmss0__ehrpwm0,
+> +	&dra7xx_l4_per2__epwmss1,
+> +	&dra7xx_epwmss1__ecap1,
+> +	&dra7xx_epwmss1__eqep1,
+> +	&dra7xx_epwmss1__ehrpwm1,
+> +	&dra7xx_l4_per2__epwmss2,
+> +	&dra7xx_epwmss2__ecap2,
+> +	&dra7xx_epwmss2__eqep2,
+> +	&dra7xx_epwmss2__ehrpwm2,
+>   	NULL,
+>   };
 >
->  arch/arm/boot/dts/tegra124.dtsi     |  1 +
->  arch/arm/mach-exynos/exynos.c       |  4 +--
->  arch/arm/mach-imx/mach-imx6q.c      | 12 ++++-----
->  arch/arm/mach-tegra/tegra.c         | 21 ++++++---------
->  drivers/clk/clk.c                   |  3 +++
->  drivers/dma/of-dma.c                |  3 +++
->  drivers/gpio/gpiolib-of.c           |  5 ++++
->  drivers/gpu/drm/drm_panel.c         |  3 +++
->  drivers/gpu/drm/tegra/dpaux.c       |  3 +++
->  drivers/i2c/i2c-core.c              |  3 +++
->  drivers/of/platform.c               | 53 +++++++++++++++++++++++++++++++++++++
->  drivers/phy/phy-core.c              |  3 +++
->  drivers/pinctrl/devicetree.c        |  2 ++
->  drivers/power/power_supply_core.c   |  3 +++
->  drivers/pwm/core.c                  |  3 +++
->  drivers/regulator/core.c            | 45 +++++++++++++++----------------
->  drivers/usb/phy/phy.c               |  3 +++
->  drivers/video/backlight/backlight.c |  3 +++
->  include/linux/of_platform.h         |  2 ++
->  19 files changed, 130 insertions(+), 45 deletions(-)
 >
-> --
-> 2.4.1
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
