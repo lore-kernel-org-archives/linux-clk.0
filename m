@@ -1,98 +1,238 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <556DE0B9.7070405@atmel.com>
+Date: Tue, 2 Jun 2015 18:58:33 +0200
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Date: Tue, 2 Jun 2015 12:14:06 +0200
-Message-ID: <CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
-Subject: Re: [PATCH 00/21] On-demand device registration
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Grant Likely <grant.likely@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-	"open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-	dmaengine@vger.kernel.org, Alexander Holler <holler@ahsoftware.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: <nicolas.ferre@atmel.com>, <boris.brezillon@free-electrons.com>,
+	<alexandre.belloni@free-electrons.com>, <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/2] clk: at91: add Flexcom clock
+References: <cover.1433263218.git.cyrille.pitchen@atmel.com> <99519eef99d2324019f0b44a4296c518eac47f95.1433263218.git.cyrille.pitchen@atmel.com>
+In-Reply-To: <99519eef99d2324019f0b44a4296c518eac47f95.1433263218.git.cyrille.pitchen@atmel.com>
+Content-Type: text/plain; charset="windows-1252"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2 June 2015 at 10:48, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, May 25, 2015 at 4:53 PM, Tomeu Vizoso
-> <tomeu.vizoso@collabora.com> wrote:
->
->> have looked into ordered probing as a
->> better way of solving this than moving nodes around in the DT or playing with
->> initcall levels.
->>
->> While reading the thread [1] that Alexander Holler started with his series to
->> make probing order deterministic, it occurred to me that it should be possible
->> to achieve the same by registering devices as they are referenced by other
->> devices.
->
-> This is pretty cool, but a too local solution to a global problem.
->
-> Deferred probe and initcall reordering, silly as they may seem,
-> does not require you to use device tree.
->
-> The real solution, which I think I pointed out already when we
-> added deferred probe, is to put dependency graphs in the drivers
+Le 02/06/2015 18:49, Cyrille Pitchen a écrit :
+> Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+> 
+> This driver supports the new Atmel Flexcom. The Flexcom is a wrapper which
+> integrates one SPI controller, one I2C controller and one USART. Only one
+> function can be enabled at a time. This driver selects the function once for
+> all, when the Flexcom is probed, according to the value of the new
+> "atmel,flexcom-mode" device tree property.
+> 
+> This driver has chosen to present the Flexcom to the system as a clock so the
+> implementation is seamless for the existing Atmel SPI, I2C and USART drivers.
+> 
+> Also the Flexcom embeds FIFOs: the latest patches of the SPI, I2C and USART
+> drivers take advantage of this new feature.
+> 
+> Conflicts:
+> 	drivers/clk/at91/Makefile
+issue with the commit message: sending a new series
 
-By this you mean something like what Thierry suggested here?
+Cyrille
 
-http://article.gmane.org/gmane.linux.kernel/1774623
+> ---
+>  arch/arm/mach-at91/Kconfig     |   3 +
+>  drivers/clk/at91/Makefile      |   1 +
+>  drivers/clk/at91/clk-flexcom.c | 160 +++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 164 insertions(+)
+>  create mode 100644 drivers/clk/at91/clk-flexcom.c
+> 
+> diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
+> index fd95f34..8ce9b73 100644
+> --- a/arch/arm/mach-at91/Kconfig
+> +++ b/arch/arm/mach-at91/Kconfig
+> @@ -90,6 +90,9 @@ config HAVE_AT91_SMD
+>  config HAVE_AT91_H32MX
+>  	bool
+>  
+> +config HAVE_AT91_FLEXCOM
+> +	bool
+> +
+>  config SOC_SAM_V4_V5
+>  	bool
+>  
+> diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
+> index 89a48a7..74711b8 100644
+> --- a/drivers/clk/at91/Makefile
+> +++ b/drivers/clk/at91/Makefile
+> @@ -10,3 +10,4 @@ obj-$(CONFIG_HAVE_AT91_UTMI)		+= clk-utmi.o
+>  obj-$(CONFIG_HAVE_AT91_USB_CLK)		+= clk-usb.o
+>  obj-$(CONFIG_HAVE_AT91_SMD)		+= clk-smd.o
+>  obj-$(CONFIG_HAVE_AT91_H32MX)		+= clk-h32mx.o
+> +obj-$(CONFIG_HAVE_AT91_FLEXCOM)		+= clk-flexcom.o
+> diff --git a/drivers/clk/at91/clk-flexcom.c b/drivers/clk/at91/clk-flexcom.c
+> new file mode 100644
+> index 0000000..ce39093
+> --- /dev/null
+> +++ b/drivers/clk/at91/clk-flexcom.c
+> @@ -0,0 +1,160 @@
+> +/*
+> + * Driver for Atmel AT91 Flexcom
+> + *
+> + * Copyright (C) 2014 Atmel Corporation
+> + *
+> + * Author: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+> + *
+> + * Based on drivers/clk/clk-axi-clkgen.c
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + */
+> +
+> +#include <linux/platform_device.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/module.h>
+> +
+> +
+> +#define FX_MR		0x0
+> +#define FX_RHR		0x10
+> +#define FX_THR		0x20
+> +#define FX_VERSION	0xfc
+> +
+> +#define FX_MR_NO_COM	0
+> +#define FX_MR_USART	1
+> +#define FX_MR_SPI	2
+> +#define FX_MR_TWI	3
+> +
+> +struct clk_flexcom {
+> +	struct clk_hw	hw;
+> +	struct device	*dev;
+> +	u8 __iomem	*base;
+> +	u32		mr;
+> +	bool		show_once;
+> +};
+> +
+> +#define to_clk_flexcom(_hw)	container_of(_hw, struct clk_flexcom, hw)
+> +
+> +
+> +static int at91_flexcom_enable(struct clk_hw *hw)
+> +{
+> +	struct clk_flexcom *dev = to_clk_flexcom(hw);
+> +	u32 version;
+> +
+> +	if (!dev->show_once) {
+> +		dev->show_once = true;
+> +		version = __raw_readl(dev->base + FX_VERSION);
+> +		dev_info(dev->dev, "version: %#x\n", version);
+> +	}
+> +
+> +	__raw_writel(dev->mr, dev->base + FX_MR);
+> +	return 0;
+> +}
+> +
+> +static void at91_flexcom_disable(struct clk_hw *hw)
+> +{
+> +	struct clk_flexcom *dev = to_clk_flexcom(hw);
+> +
+> +	__raw_writel(FX_MR_NO_COM, dev->base + FX_MR);
+> +}
+> +
+> +static const struct clk_ops at91_flexcom_ops = {
+> +	.enable = at91_flexcom_enable,
+> +	.disable = at91_flexcom_disable,
+> +};
+> +
+> +static int at91_flexcom_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *np = pdev->dev.of_node;
+> +	struct clk_flexcom *dev;
+> +	struct resource *mem;
+> +	const char *parent_name, *clk_name, *mode;
+> +	struct clk *clk;
+> +	struct clk_init_data init;
+> +	u32 mr = FX_MR_NO_COM;
+> +	int err;
+> +
+> +	if (!np)
+> +		return -ENODEV;
+> +
+> +	err = of_property_read_string(np, "atmel,flexcom-mode", &mode);
+> +	if (err)
+> +		return err;
+> +
+> +	if (!strcmp(mode, "usart"))
+> +		mr = FX_MR_USART;
+> +	else if (!strcmp(mode, "spi"))
+> +		mr = FX_MR_SPI;
+> +	else if (!strcmp(mode, "twi") || !strcmp(mode, "i2c"))
+> +		mr = FX_MR_TWI;
+> +	else
+> +		return -EINVAL;
+> +
+> +	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
+> +	if (!dev)
+> +		return -ENOMEM;
+> +
+> +	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	dev->base = devm_ioremap_resource(&pdev->dev, mem);
+> +	if (IS_ERR(dev->base))
+> +		return PTR_ERR(dev->base);
+> +
+> +	parent_name = of_clk_get_parent_name(np, 0);
+> +	if (!parent_name)
+> +		return -EINVAL;
+> +
+> +	clk_name = np->name;
+> +	of_property_read_string(np, "clock-output-names", &clk_name);
+> +
+> +	init.name = clk_name;
+> +	init.ops = &at91_flexcom_ops;
+> +	init.flags = 0;
+> +	init.parent_names = &parent_name;
+> +	init.num_parents = 1;
+> +
+> +	dev->hw.init = &init;
+> +	dev->dev = &pdev->dev;
+> +	dev->mr = mr;
+> +	platform_set_drvdata(pdev, dev);
+> +
+> +	clk = devm_clk_register(&pdev->dev, &dev->hw);
+> +	if (IS_ERR(clk))
+> +		return PTR_ERR(clk);
+> +
+> +	return of_clk_add_provider(np, of_clk_src_simple_get, clk);
+> +}
+> +
+> +static int at91_flexcom_remove(struct platform_device *pdev)
+> +{
+> +	of_clk_del_provider(pdev->dev.of_node);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id at91_flexcom_dt_ids[] = {
+> +	{ .compatible = "atmel,sama5d2-flexcom" },
+> +	{ /* sentinel */ }
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, at91_flexcom_dt_ids);
+> +
+> +static struct platform_driver at91_flexcom_driver = {
+> +	.driver		= {
+> +		.name	= "at91_flexcom",
+> +		.of_match_table = of_match_ptr(at91_flexcom_dt_ids),
+> +	},
+> +	.probe		= at91_flexcom_probe,
+> +	.remove		= at91_flexcom_remove,
+> +};
+> +module_platform_driver(at91_flexcom_driver);
+> +
+> +MODULE_ALIAS("platform:at91_flexcom");
+> +MODULE_DESCRIPTION("Atmel AT91 Flexcom driver");
+> +MODULE_AUTHOR("Cyrille Pitchen <cyrille.pitchen@atmel.com>");
+> +MODULE_LICENSE("GPL v2");
+> +
+> 
 
-> and have the kernel device driver core percolate dependecies by
-> walking the graph on probing driver, removing driver (usually the
-> inverse use case), [runtime] suspend and [runtime] resumeing
-> a driver. Possibly the dependencies will even be different
-> depending on use case.
->
-> This is what systemd is doing in userspace for starting services:
-> ask for your dependencies and wait for them if they are not
-> there. So drivers ask for resources and wait for them. It also
-> needs to be abstract, so for example we need to be able to
-> hang on regulator_get() until the driver is up and providing that
-> regulator, and as long as everything is in slowpath it should
-> be OK. (And vice versa mutatis mutandis for clk, gpio, pin
-> control, interrupts (!) and DMA channels for example.)
-
-I understood above that you propose probing devices in order, but now
-you mention that resource getters would block until the dependency is
-fulfilled which confuses me because if we are probing in order then
-all dependencies would be fulfilled before the device in question gets
-probed.
-
-> So if this should be solved it should be solved in an abstract way
-> in the device driver core available for all, then have calls calling
-> out to DT, ACPI, possibly even PCI or USB (as these
-> enumerate devices themselves) to obtain a certain
-> dependency.
-
-Yeah, I was planning looking into this now that I got it working with
-async probing.
-
-Thanks,
-
-Tomeu
-
-> Yours,
-> Linus Walleij
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
