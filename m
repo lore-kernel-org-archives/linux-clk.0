@@ -1,86 +1,71 @@
-Return-Path: <jonathanh@nvidia.com>
-Message-ID: <557161D1.3040107@nvidia.com>
-Date: Fri, 5 Jun 2015 09:46:09 +0100
-From: Jon Hunter <jonathanh@nvidia.com>
-MIME-Version: 1.0
-To: Paul Walmsley <paul@pwsan.com>, Boris Brezillon
-	<boris.brezillon@free-electrons.com>
-CC: Mike Turquette <mturquette@linaro.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo
-	<shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown
-	<davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman
-	<bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Liviu Dudau
-	<liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi
-	<lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Max Filippov
-	<jcmvbkbc@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Barry Song
-	<baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>,
-	=?UTF-8?B?RW1pbGlvIEzDs3Bleg==?= <emilio@elopez.com.ar>, Maxime Ripard
-	<maxime.ripard@free-electrons.com>, Peter De Schrijver
-	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen
- Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>, Ulf
- Hansson <ulf.hansson@linaro.org>, Michal Simek <michal.simek@xilinx.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, <linux-doc@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-omap@vger.kernel.org>, <linux-mips@linux-mips.org>,
-	<patches@opensource.wolfsonmicro.com>, <linux-rockchip@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <spear-devel@list.st.com>,
-	<linux-tegra@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-media@vger.kernel.org>, <rtc-linux@googlegroups.com>
-Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
-References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com> <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com> <alpine.DEB.2.02.1506042258530.12316@utopia.booyaka.com>
-In-Reply-To: <alpine.DEB.2.02.1506042258530.12316@utopia.booyaka.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <pebolle@tiscali.nl>
+Message-ID: <1433231444.2361.75.camel@x220>
+Subject: Re: [PATCH v3] Add TI CDCE925 I2C controlled clock synthesizer
+ driver
+From: Paul Bolle <pebolle@tiscali.nl>
+To: Mike Looijmans <mike.looijmans@topic.nl>
+Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@linaro.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Date: Tue, 02 Jun 2015 09:50:44 +0200
+In-Reply-To: <1433153623-29205-1-git-send-email-mike.looijmans@topic.nl>
+References: <1433153623-29205-1-git-send-email-mike.looijmans@topic.nl>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
+On Mon, 2015-06-01 at 12:13 +0200, Mike Looijmans wrote:
+> --- /dev/null
+> +++ b/drivers/clk/clk-cdce925.c
 
-On 05/06/15 00:02, Paul Walmsley wrote:
-> Hi folks
-> 
-> just a brief comment on this one:
-> 
-> On Thu, 30 Apr 2015, Boris Brezillon wrote:
-> 
->> Clock rates are stored in an unsigned long field, but ->round_rate()
->> (which returns a rounded rate from a requested one) returns a long
->> value (errors are reported using negative error codes), which can lead
->> to long overflow if the clock rate exceed 2Ghz.
->>
->> Change ->round_rate() prototype to return 0 or an error code, and pass the
->> requested rate as a pointer so that it can be adjusted depending on
->> hardware capabilities.
-> 
-> ...
-> 
->> diff --git a/Documentation/clk.txt b/Documentation/clk.txt
->> index 0e4f90a..fca8b7a 100644
->> --- a/Documentation/clk.txt
->> +++ b/Documentation/clk.txt
->> @@ -68,8 +68,8 @@ the operations defined in clk.h:
->>  		int		(*is_enabled)(struct clk_hw *hw);
->>  		unsigned long	(*recalc_rate)(struct clk_hw *hw,
->>  						unsigned long parent_rate);
->> -		long		(*round_rate)(struct clk_hw *hw,
->> -						unsigned long rate,
->> +		int		(*round_rate)(struct clk_hw *hw,
->> +						unsigned long *rate,
->>  						unsigned long *parent_rate);
->>  		long		(*determine_rate)(struct clk_hw *hw,
->>  						unsigned long rate,
-> 
-> I'd suggest that we should probably go straight to 64-bit rates.  There 
-> are already plenty of clock sources that can generate rates higher than 
-> 4GiHz.
+> +static int cdce925_regmap_i2c_write(
+> +	void *context, const void *data, size_t count)
 
-An alternative would be to introduce to a frequency "base" the default
-could be Hz (for backwards compatibility), but for CPUs we probably only
-care about MHz (or may be kHz) and so 32-bits would still suffice. Even
-if CPUs cared about Hz they could still use Hz, but in that case they
-probably don't care about GHz. Obviously, we don't want to break DT
-compatibility but may be the frequency base could be defined in DT and
-if it is missing then Hz is assumed. Just a thought ...
+> +	dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
+> +			reg_data[0], reg_data[1]);
 
-Jon
+For some silly reason (ie, I mistakenly thought I spotted an issue) I
+did a quick build of this file. That triggered some noise on x86_64.
+Excerpt:
+
+drivers/clk/clk-cdce925.c: In function ‘cdce925_regmap_i2c_write’:
+include/linux/dynamic_debug.h:64:16: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 5 has type ‘size_t’ [-Wformat=]
+  static struct _ddebug  __aligned(8)   \
+                ^
+[...]
+drivers/clk/clk-cdce925.c:505:2: note: in expansion of macro ‘dev_dbg’
+  dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
+  ^
+
+A quick look at Documentation/printk-formats.txt suggested this (very
+lightly tested) fix:
+@@ -502,7 +502,7 @@ static int cdce925_regmap_i2c_write(
+        reg_data[0] = CDCE925_I2C_COMMAND_BYTE_TRANSFER | ((u8 *)data)[0];
+        reg_data[1] = ((u8 *)data)[1];
+ 
+-       dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
++       dev_dbg(&i2c->dev, "%s(%zu) %#x %#x\n", __func__, count,
+                        reg_data[0], reg_data[1]);
+ 
+        ret = i2c_master_send(i2c, reg_data, count);
+
+> +static int cdce925_regmap_i2c_read(void *context,
+> +	   const void *reg, size_t reg_size, void *val, size_t val_size)
+
+> +		dev_dbg(&i2c->dev, "%s(%u, %u) %#x %#x\n", __func__,
+> +				reg_size, val_size, reg_data[0], *((u8 *)val));
+
+Likewise:
+@@ -547,7 +547,7 @@ static int cdce925_regmap_i2c_read(void *context,
+ 
+        ret = i2c_transfer(i2c->adapter, xfer, 2);
+        if (likely(ret == 2)) {
+-               dev_dbg(&i2c->dev, "%s(%u, %u) %#x %#x\n", __func__,
++               dev_dbg(&i2c->dev, "%s(%zu, %zu) %#x %#x\n", __func__,
+                                reg_size, val_size, reg_data[0], *((u8 *)val));
+                return 0;
+        } else if (ret < 0)
+
+Thanks,
+
+
+Paul Bolle
