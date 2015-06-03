@@ -1,85 +1,56 @@
-Return-Path: <gabriel.fernandez@st.com>
-Message-ID: <55793ABB.5050302@st.com>
-Date: Thu, 11 Jun 2015 09:37:31 +0200
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Return-Path: <vigneshr@ti.com>
+From: Vignesh R <vigneshr@ti.com>
+To: Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
+        Thierry
+ Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Pawel
+ Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Benoit
+ Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell
+ King <linux@arm.linux.org.uk>,
+        Mike Turquette <mturquette@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        Vignesh
+ R <vigneshr@ti.com>
+Subject: [PATCH v2 4/5] clk: ti: DRA7: Add tbclk data for ehrpwm
+Date: Wed, 3 Jun 2015 17:21:23 +0530
+Message-ID: <1433332284-10766-5-git-send-email-vigneshr@ti.com>
+In-Reply-To: <1433332284-10766-1-git-send-email-vigneshr@ti.com>
+References: <1433332284-10766-1-git-send-email-vigneshr@ti.com>
 MIME-Version: 1.0
-To: <dinguyen@opensource.altera.com>, <sboyd@codeaurora.org>,
-        <mturquette@linaro.org>
-CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Peter Griffin <peter.griffin@linaro.org>
-Subject: Re: [PATCH 4/6] clk: st: make use of of_clk_parent_fill helper function
-References: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com> <1433972965-24974-5-git-send-email-dinguyen@opensource.altera.com>
-In-Reply-To: <1433972965-24974-5-git-send-email-dinguyen@opensource.altera.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi
+tbclk is needed by ehrpwm to generate pwm waveforms. Hence, register
+the required clock information.
 
-Tested-by Gabriel Fernandez <gabriel.fernandez@st.com>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+---
+ drivers/clk/ti/clk-7xx.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Best Regards.
-
-On 06/10/2015 11:49 PM, dinguyen@opensource.altera.com wrote:
-> From: Dinh Nguyen <dinguyen@opensource.altera.com>
->
-> Use of_clk_parent_fill to fill in the parent clock names' array.
->
-> Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-> Cc: Peter Griffin <peter.griffin@linaro.org>
-> Cc: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-> ---
->   drivers/clk/st/clk-flexgen.c | 6 ++----
->   drivers/clk/st/clkgen-mux.c  | 7 ++-----
->   2 files changed, 4 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
-> index 657ca14..ed0696c 100644
-> --- a/drivers/clk/st/clk-flexgen.c
-> +++ b/drivers/clk/st/clk-flexgen.c
-> @@ -243,7 +243,7 @@ static const char ** __init flexgen_get_parents(struct device_node *np,
->   						       int *num_parents)
->   {
->   	const char **parents;
-> -	int nparents, i;
-> +	int nparents;
->   
->   	nparents = of_clk_get_parent_count(np);
->   	if (WARN_ON(nparents <= 0))
-> @@ -253,10 +253,8 @@ static const char ** __init flexgen_get_parents(struct device_node *np,
->   	if (!parents)
->   		return NULL;
->   
-> -	for (i = 0; i < nparents; i++)
-> -		parents[i] = of_clk_get_parent_name(np, i);
-> +	*num_parents = of_clk_parent_fill(np, parents, nparents);
->   
-> -	*num_parents = nparents;
->   	return parents;
->   }
->   
-> diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
-> index 4fbe6e0..b83654a 100644
-> --- a/drivers/clk/st/clkgen-mux.c
-> +++ b/drivers/clk/st/clkgen-mux.c
-> @@ -24,7 +24,7 @@ static const char ** __init clkgen_mux_get_parents(struct device_node *np,
->   						       int *num_parents)
->   {
->   	const char **parents;
-> -	int nparents, i;
-> +	int nparents;
->   
->   	nparents = of_clk_get_parent_count(np);
->   	if (WARN_ON(nparents <= 0))
-> @@ -34,10 +34,7 @@ static const char ** __init clkgen_mux_get_parents(struct device_node *np,
->   	if (!parents)
->   		return ERR_PTR(-ENOMEM);
->   
-> -	for (i = 0; i < nparents; i++)
-> -		parents[i] = of_clk_get_parent_name(np, i);
-> -
-> -	*num_parents = nparents;
-> +	*num_parents = of_clk_parent_fill(np, parents, nparents);
->   	return parents;
->   }
->   
+diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+index 5d2217ae4478..366be43d15fe 100644
+--- a/drivers/clk/ti/clk-7xx.c
++++ b/drivers/clk/ti/clk-7xx.c
+@@ -304,6 +304,9 @@ static struct ti_dt_clk dra7xx_clks[] = {
+ 	DT_CLK("4882a000.timer", "timer_sys_ck", "timer_sys_clk_div"),
+ 	DT_CLK("4882c000.timer", "timer_sys_ck", "timer_sys_clk_div"),
+ 	DT_CLK("4882e000.timer", "timer_sys_ck", "timer_sys_clk_div"),
++	DT_CLK("4843e200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
++	DT_CLK("48440200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
++	DT_CLK("48442200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
+ 	DT_CLK(NULL, "sys_clkin", "sys_clkin1"),
+ 	{ .node_name = NULL },
+ };
+-- 
+2.4.1
