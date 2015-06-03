@@ -1,81 +1,56 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 4 Jun 2015 14:24:47 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: dinguyen@opensource.altera.com
-Cc: mturquette@linaro.org, dinh.linux@gmail.com, geert@linux-m68k.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC/PATCHv2 1/2] clk: of: helper for filling parent clock array
- and return num of parents
-Message-ID: <20150604212447.GP676@codeaurora.org>
-References: <1433445153-25320-1-git-send-email-dinguyen@opensource.altera.com>
- <1433445153-25320-2-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <vigneshr@ti.com>
+From: Vignesh R <vigneshr@ti.com>
+To: Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
+        Thierry
+ Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Pawel
+ Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Benoit
+ Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell
+ King <linux@arm.linux.org.uk>,
+        Mike Turquette <mturquette@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        Vignesh
+ R <vigneshr@ti.com>
+Subject: [PATCH v2 1/5] ARM: OMAP2+: DRA7: clockdomain: change l4per2_7xx_clkdm to SW_WKUP
+Date: Wed, 3 Jun 2015 17:21:20 +0530
+Message-ID: <1433332284-10766-2-git-send-email-vigneshr@ti.com>
+In-Reply-To: <1433332284-10766-1-git-send-email-vigneshr@ti.com>
+References: <1433332284-10766-1-git-send-email-vigneshr@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1433445153-25320-2-git-send-email-dinguyen@opensource.altera.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/04, dinguyen@opensource.altera.com wrote:
-> From: Dinh Nguyen <dinguyen@opensource.altera.com>
-> 
-> Sprinkled all through the platform clock drivers are code like this to
-> fill the clock parent array:
-> 
-> for (i = 0; i < num_parents; ++i)
-> 	parent_names[i] = of_clk_get_parent_name(np, i);
-> 
-> The of_clk_parent_fill() will do the same as the code above, and while
-> at it, return the number of parents as well since the logic of the
-> function is to the walk the clock node to look for the parent.
-> 
-> Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-> ---
-> v2: use unsigned int for size
-> ---
->  drivers/clk/clk.c            | 20 ++++++++++++++++++++
->  include/linux/clk-provider.h |  1 +
->  2 files changed, 21 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 459ce9d..778bebd 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3060,6 +3060,26 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
->  }
->  EXPORT_SYMBOL_GPL(of_clk_get_parent_name);
->  
-> +/*
+Legacy IPs like PWMSS, present under l4per2_7xx_clkdm, cannot support
+smart-idle when its clock domain is in HW_AUTO on DRA7 SoCs. Hence,
+program clock domain to SW_WKUP.
 
-Need a double ** here for kernel doc.
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+---
+ arch/arm/mach-omap2/clockdomains7xx_data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> + * of_clk_parent_fill(): Helper clock function that will fill the parent
-> + * clock's array and return the number of parents it found.
-
-Please try to shorten this sentence.
-
-	Fill @parents with names of @np's parents and return number of parents
-
-> + * @np: Device node pointer associated with clock provider
-> + * @parents: pointer to char array that hold the parent's name
-
-s/parent's name/parents' names/ ?
-
-> + * @size: size of the parents array
-> + *
-> + * Returns number of parents for the clock node.
-> + */
-> +int of_clk_parent_fill(struct device_node *np, const char **parents, unsigned int size)
-> +{
-> +	unsigned int i = 0;
-> +
-> +	while (i < size && (parents[i] = of_clk_get_parent_name(np, i)) != NULL)
-> +		i++;
-> +
-> +	return i;
-> +}
-> +EXPORT_SYMBOL(of_clk_parent_fill);
-
-Can this be GPL?
-
+diff --git a/arch/arm/mach-omap2/clockdomains7xx_data.c b/arch/arm/mach-omap2/clockdomains7xx_data.c
+index 57d5df0c1fbd..7581e036bda6 100644
+--- a/arch/arm/mach-omap2/clockdomains7xx_data.c
++++ b/arch/arm/mach-omap2/clockdomains7xx_data.c
+@@ -331,7 +331,7 @@ static struct clockdomain l4per2_7xx_clkdm = {
+ 	.dep_bit	  = DRA7XX_L4PER2_STATDEP_SHIFT,
+ 	.wkdep_srcs	  = l4per2_wkup_sleep_deps,
+ 	.sleepdep_srcs	  = l4per2_wkup_sleep_deps,
+-	.flags		  = CLKDM_CAN_HWSUP_SWSUP,
++	.flags		  = CLKDM_CAN_SWSUP,
+ };
+ 
+ static struct clockdomain mpu0_7xx_clkdm = {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.4.1
