@@ -1,31 +1,66 @@
-Return-Path: <santosh.shilimkar@oracle.com>
-Subject: Re: [PATCH 1/2] clk: keystone: add support for post divider register
- for main pll
-To: Michael Turquette <mturquette@linaro.org>,
-        Murali Karicheri <m-karicheri2@ti.com>, robh+dt@kernel.org,
-        pawel.moll@arm.com, mark.rutland@arm.com,
-        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-        ssantosh@kernel.org, sboyd@codeaurora.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
-References: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
- <20150618223728.9112.75331@quantum>
-From: santosh shilimkar <santosh.shilimkar@oracle.com>
-Message-ID: <55834C64.6020703@oracle.com>
-Date: Thu, 18 Jun 2015 15:55:32 -0700
+Return-Path: <t-kristo@ti.com>
+Message-ID: <556EF42A.9000207@ti.com>
+Date: Wed, 3 Jun 2015 15:33:46 +0300
+From: Tero Kristo <t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20150618223728.9112.75331@quantum>
-Content-Type: text/plain; charset=utf-8; format=flowed
+To: Tony Lindgren <tony@atomide.com>
+CC: <balbi@ti.com>, <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <paul@pwsan.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com> <20150526160557.GD16525@atomide.com> <20150526163216.GF16525@atomide.com> <20150526163931.GO26599@saruman.tx.rr.com> <55660D5B.8020607@ti.com> <20150527231536.GD30984@atomide.com>
+In-Reply-To: <20150527231536.GD30984@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 6/18/2015 3:37 PM, Michael Turquette wrote:
-> Quoting Murali Karicheri (2015-05-29 09:04:12)
->> Main PLL controller has post divider bits in a separate register in
->> pll controller. Use the value from this register instead of fixed
->> divider when available.
+On 05/28/2015 02:15 AM, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [150527 11:32]:
+>> On 05/26/2015 07:39 PM, Felipe Balbi wrote:
+>>> On Tue, May 26, 2015 at 09:32:16AM -0700, Tony Lindgren wrote:
+>>>> * Tony Lindgren <tony@atomide.com> [150526 09:08]:
+>>>>> * Tero Kristo <t-kristo@ti.com> [150525 08:01]:
+>>>>>> Hi,
+>>>>>>
+>>>>>> As requested, posting v3 with somewhat changed diff parameters and
+>>>>>> diffstat attached. Just some minor Makefile changes compared to v2,
+>>>>>> these were discussed under that set.
+>>>>>>
+>>>>>> Set has been pushed to:
+>>>>>> - tree: https://github.com/t-kristo/linux-pm.git
+>>>>>> - branch: for-4.2/ti-clk-move
+>>>>>
+>>>>> Looks like this causes a build error for at least omap2 only .config:
+>>>>>
+>>>>> drivers/clk/ti/dpll3xxx.o:(.rodata+0x1c): multiple definition of `clkhwops_omap3_dpll'
+>>>>> drivers/clk/ti/dpll.o:(.rodata+0x0): first defined here
+>>>>>
+>>>>> You may want to create a file selecting ARCH_OMAP2PLUS=y, then point
+>>>>> KCONFIG_ALLCONFIG to that file for make randconfig. Then just build
+>>>>> randconfigs :) Usually the issues like this are exposed within few
+>>>>> randconfig builds, some take longer if the options have dependencies.
+>>>
+>>> alternatively, just clone the repository at [1] and use the example
+>>> script provided in README.md.
+>>>
+>>> [1] https://github.com/felipebalbi/omap-seeds
+>>>
 >>
->> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+>> Ok, I pushed an updated branch named: for-4.2/ti-clk-move-v4
+>>
+>> This definitely compiles with OMAP2 / OMAP3 / OMAP4 / OMAP5 / DRA7 / AM33xx
+>> / AM43xx only setups (tried it out.)
 >
-> Applied to clk-next.
+> Thanks yeah seems to work for me now.
 >
-Thanks Mike !!
+> Regards,
+>
+> Tony
+>
+
+Question to Mike / Stephen, any chance of getting this in during the 4.2 
+merge anymore seeing we are already at 4.1-rc6?
+
+I can send a pull request if yes. Otherwise I just wait until we are 
+past the next merge.
+
+-Tero
