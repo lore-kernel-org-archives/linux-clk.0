@@ -1,77 +1,92 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 19/25] clk: tegra: pll: Fix _pll_ramp_calc_pll logic and _calc_dynamic_ramp_rate
-Date: Thu, 18 Jun 2015 17:28:34 -0400
-Message-ID: <1434662920-21469-20-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+To: Tero Kristo <t-kristo@ti.com>, "Tony Lindgren" <tony@atomide.com>
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <556EF42A.9000207@ti.com>
+Cc: balbi@ti.com, linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+ sboyd@codeaurora.org, paul@pwsan.com, linux-arm-kernel@lists.infradead.org
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
+ <20150526160557.GD16525@atomide.com> <20150526163216.GF16525@atomide.com>
+ <20150526163931.GO26599@saruman.tx.rr.com> <55660D5B.8020607@ti.com>
+ <20150527231536.GD30984@atomide.com> <556EF42A.9000207@ti.com>
+Message-ID: <20150603231136.6017.65683@quantum>
+Subject: Re: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
+Date: Wed, 03 Jun 2015 16:11:36 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes the conversion from pdiv to hw, which is already taken
-care of by _get_table_rate before this code is run. This avoids
-incorrectly converting pdiv to hw twice and getting the wrong hw value.
+Quoting Tero Kristo (2015-06-03 05:33:46)
+> On 05/28/2015 02:15 AM, Tony Lindgren wrote:
+> > * Tero Kristo <t-kristo@ti.com> [150527 11:32]:
+> >> On 05/26/2015 07:39 PM, Felipe Balbi wrote:
+> >>> On Tue, May 26, 2015 at 09:32:16AM -0700, Tony Lindgren wrote:
+> >>>> * Tony Lindgren <tony@atomide.com> [150526 09:08]:
+> >>>>> * Tero Kristo <t-kristo@ti.com> [150525 08:01]:
+> >>>>>> Hi,
+> >>>>>>
+> >>>>>> As requested, posting v3 with somewhat changed diff parameters and
+> >>>>>> diffstat attached. Just some minor Makefile changes compared to v2,
+> >>>>>> these were discussed under that set.
+> >>>>>>
+> >>>>>> Set has been pushed to:
+> >>>>>> - tree: https://github.com/t-kristo/linux-pm.git
+> >>>>>> - branch: for-4.2/ti-clk-move
+> >>>>>
+> >>>>> Looks like this causes a build error for at least omap2 only .confi=
+g:
+> >>>>>
+> >>>>> drivers/clk/ti/dpll3xxx.o:(.rodata+0x1c): multiple definition of `c=
+lkhwops_omap3_dpll'
+> >>>>> drivers/clk/ti/dpll.o:(.rodata+0x0): first defined here
+> >>>>>
+> >>>>> You may want to create a file selecting ARCH_OMAP2PLUS=3Dy, then po=
+int
+> >>>>> KCONFIG_ALLCONFIG to that file for make randconfig. Then just build
+> >>>>> randconfigs :) Usually the issues like this are exposed within few
+> >>>>> randconfig builds, some take longer if the options have dependencie=
+s.
+> >>>
+> >>> alternatively, just clone the repository at [1] and use the example
+> >>> script provided in README.md.
+> >>>
+> >>> [1] https://github.com/felipebalbi/omap-seeds
+> >>>
+> >>
+> >> Ok, I pushed an updated branch named: for-4.2/ti-clk-move-v4
+> >>
+> >> This definitely compiles with OMAP2 / OMAP3 / OMAP4 / OMAP5 / DRA7 / A=
+M33xx
+> >> / AM43xx only setups (tried it out.)
+> >
+> > Thanks yeah seems to work for me now.
+> >
+> > Regards,
+> >
+> > Tony
+> >
+> =
 
-Also set the input_rate in the freq cfg in _calc_dynamic_ramp_rate while
-setting all the other fields.
+> Question to Mike / Stephen, any chance of getting this in during the 4.2 =
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
-v2:
-  - Added fix for _calc_dynamic_ramp_rate where input_rate wasn't ever
-    populated in the cfg, which could cause problems later if/when
-    accessed.
+> merge anymore seeing we are already at 4.1-rc6?
+> =
 
- drivers/clk/tegra/clk-pll.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+> I can send a pull request if yes. Otherwise I just wait until we are =
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index da356fcc7eeb..b27729d046f4 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -1034,6 +1034,7 @@ static int _calc_dynamic_ramp_rate(struct clk_hw *hw,
- 	cfg->m = _pll_fixed_mdiv(pll->params, parent_rate);
- 	cfg->output_rate = rate * p;
- 	cfg->n = cfg->output_rate * cfg->m / parent_rate;
-+	cfg->input_rate = parent_rate;
- 
- 	p_div = _p_div_to_hw(hw, p);
- 	if (p_div < 0)
-@@ -1052,7 +1053,7 @@ static int _pll_ramp_calc_pll(struct clk_hw *hw,
- 			      unsigned long rate, unsigned long parent_rate)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	int err = 0, p_div;
-+	int err = 0;
- 
- 	err = _get_table_rate(hw, cfg, rate, parent_rate);
- 	if (err < 0)
-@@ -1063,11 +1064,6 @@ static int _pll_ramp_calc_pll(struct clk_hw *hw,
- 			err = -EINVAL;
- 			goto out;
- 		}
--		p_div = _p_div_to_hw(hw, cfg->p);
--		if (p_div < 0)
--			return p_div;
--		else
--			cfg->p = p_div;
- 	}
- 
- 	if (cfg->p >  pll->params->max_p)
--- 
-1.7.9.5
+> past the next merge.
+
+Hi Tero,
+
+I'd like more time for any regressions this introduces to be fixed, so
+lets push back to next merge window. The always-wrong-but-never-by-much
+crystal ball[0] predicts June 14. This is less than two weeks away, so
+the wait should be short.
+
+[0] http://phb-crystal-ball.org/
+
+Thanks,
+Mike
+
+> =
+
+> -Tero
