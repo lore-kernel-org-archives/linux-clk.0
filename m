@@ -1,36 +1,93 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 5 Jun 2015 18:41:53 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: mturquette@linaro.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] clk: qcom: Add MSM8916 audio clocks
-Message-ID: <20150606014153.GI29237@codeaurora.org>
-References: <1433508036-28644-1-git-send-email-georgi.djakov@linaro.org>
- <1433508036-28644-6-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1433508036-28644-6-git-send-email-georgi.djakov@linaro.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <556F26C3.9080302@samsung.com>
+Cc: linux-clk@vger.kernel.org,
+ "linux-samsung-soc" <linux-samsung-soc@vger.kernel.org>
+References: <556F26C3.9080302@samsung.com>
+Message-ID: <20150603230559.6017.43918@quantum>
+Subject: Re: [GIT PULL] clk/samsung updates for 4.2
+Date: Wed, 03 Jun 2015 16:05:59 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/05, Georgi Djakov wrote:
-> @@ -190,6 +193,76 @@ static const char *gcc_xo_gpll0a_gpll1_gpll2[] = {
->  	"gpll2_vote",
->  };
->  
-> +static const struct parent_map gcc_xo_gpll0_gpll1_sleep_map[] = {
-> +	{ P_XO, 0 },
-> +	{ P_GPLL0, 1 },
-> +	{ P_GPLL1, 2 },
-> +	{ P_SLEEP_CLK, 6 }
-> +};
-> +
-> +static const char *gcc_xo_gpll0_gpll1_sleep[] = {
+Quoting Sylwester Nawrocki (2015-06-03 09:09:39)
+> =
 
-Please make these new ones const char * const now that we've
-fixed that problem in the clk framework
+> The following changes since commit 20db7092e478c33a2bf5254063c51f5db64439=
+59:
+> =
 
+>   Merge branch 'clk-next-hi6220' into clk-next (2015-05-27 22:06:42 -0700)
+> =
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> are available in the git repository at:
+> =
+
+> =
+
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-for-4.2
+
+Sylwester,
+
+Pulled towards 4.2. Thanks for the pull request.
+
+One small thing: clk-next isn't considered stable.  I had some stuff in
+there (Stephen's amba assigned-clock-rates patch) which I had to pull
+out (no ACK from maintainer) and it crept back in because this PR was
+based on top of it. No big deal because I caught it when it happened
+(this time).
+
+In the future I am always happy to take PRs based on -rc1 (or any -rc
+that is already present in clk-next). Of course if you have a dependency
+on stuff already merged in clk-next then just let me know.
+
+Regards,
+Mike
+
+> =
+
+> for you to fetch changes up to e5c6fc4f271a27d5b236b5f4929bf0f2dab80a7d:
+> =
+
+>   clk: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks for SMC (2015-06-=
+02
+> 14:52:12 +0200)
+> =
+
+> ----------------------------------------------------------------
+> Updates of the exynos5433 clock definitions for proper support of SMC,
+> DVFS of GPU and CPU big.LITTLE cores and a fix for system suspend adding
+> one of the clock controller's registers to save/restore list.
+> =
+
+> ----------------------------------------------------------------
+> Chanwoo Choi (1):
+>       clk: exynos5433: Add CLK_SET_RATE_PARENT to support DVFS for big.LI=
+TTLE core
+> =
+
+> Hyungwon Hwang (1):
+>       clk: exynos5433: Add DIV_CPIF to the list of stored registers on su=
+spend
+> =
+
+> Jonghwa Lee (1):
+>       clk: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks for SMC
+> =
+
+> Joonyoung Shim (1):
+>       clk: exynos5433: Add clock flag to support the DVFS of GPU
+> =
+
+>  drivers/clk/samsung/clk-exynos5433.c |   81 +++++++++++++++++-----------=
+------
+>  1 file changed, 40 insertions(+), 41 deletions(-)
+> =
+
+> -- =
+
+> Thanks,
+> Sylwester
