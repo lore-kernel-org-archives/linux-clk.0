@@ -1,110 +1,120 @@
-Return-Path: <newchief@king.net.pl>
-From: Paul Osmialowski <pawelo@king.net.pl>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        dmaengine@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Paul Bolle <pebolle@tiscali.nl>, Thomas Gleixner <tglx@linutronix.de>,
-        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-        Paul Osmialowski <pawelo@king.net.pl>,
-        Anson Huang <b20788@freescale.com>, Frank Li <Frank.Li@freescale.com>,
-        Jingchang Lu <jingchang.lu@freescale.com>,
-        Rob Herring <r.herring@freescale.com>, Yuri Tikhonov <yur@emcraft.com>,
-        Sergei Poselenov <sposelenov@emcraft.com>,
-        Alexander Potashev <aspotashev@emcraft.com>
-Subject: [PATCH v2 1/9] arm: allow copying of vector table to internal SRAM memory
-Date: Tue, 30 Jun 2015 14:27:22 +0200
-Message-Id: <1435667250-28299-2-git-send-email-pawelo@king.net.pl>
-In-Reply-To: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>,
+ "Boris Brezillon" <boris.brezillon@free-electrons.com>,
+ linux-clk@vger.kernel.org
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <55646B50.9060709@free-electrons.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>,
+ "Jason Cooper" <jason@lakedaemon.net>,
+ "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+ "Andrew Lunn" <andrew@lunn.ch>, "Tawfik Bayouk" <tawfik@marvell.com>,
+ "Lior Amsalem" <alior@marvell.com>, "Nadav Haklai" <nadavh@marvell.com>,
+ "Eran Ben-Avi" <benavi@marvell.com>, linux-arm-kernel@lists.infradead.org,
+ "Arnaud Ebalard" <arno@natisbad.org>
+References: <1432644177-16152-1-git-send-email-boris.brezillon@free-electrons.com>
+ <55646B50.9060709@free-electrons.com>
+Message-ID: <20150603221756.6017.93987@quantum>
+Subject: Re: [PATCH v2] clk: mvebu: add missing CESA gate clk
+Date: Wed, 03 Jun 2015 15:17:56 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Based on part of the commit published on Emcraft git repo:
+Quoting Gregory CLEMENT (2015-05-26 05:47:12)
+> Hi Boris,
+> =
 
-https://github.com/EmcraftSystems/linux-emcraft.git
+> On 26/05/2015 14:42, Boris Brezillon wrote:
+> > Even if not documented in the datasheet, the Armada 370 SoC can actually
+> > gate the CESA (crypto engine) clock.
+> > Add an entry in the gating_desc table to be able to reference the CESA
+> > gateclk in the crypto node.
+> > =
 
-2ce1841b590d014d8738215fb1ffe05f53c8d9f0 "some commit"
+> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> =
 
-by: Dmitry Cherkassov <d_cherkasov@emcraft.com>
+> =
 
-The ARM v7M allows setting the vector table either in
-the boot memory or in the internal SRAM memory, controlled
-by Bit 29 in the Vector Table Base register. This implies
-that the OS vector table needs to be copied to the internal RAM.
+> Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-New option CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR allows specification
-of the desired destination for the OS vector table.
+Applied.
 
-Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
----
- arch/arm/Kconfig-nommu      | 11 +++++++++++
- arch/arm/kernel/entry-v7m.S |  3 +++
- arch/arm/mm/proc-v7m.S      | 11 +++++++++++
- 3 files changed, 25 insertions(+)
+Regards,
+Mike
 
-diff --git a/arch/arm/Kconfig-nommu b/arch/arm/Kconfig-nommu
-index aed66d5..d081fcb 100644
---- a/arch/arm/Kconfig-nommu
-+++ b/arch/arm/Kconfig-nommu
-@@ -62,3 +62,14 @@ config ARM_MPU
- 
-          If your CPU has an MPU then you should choose 'y' here unless you
-          know that you do not want to use the MPU.
-+
-+config COPY_VECTOR_TABLE_TO_SRAM_ADDR
-+	hex 'If non-zero, copy Vector Table to this SRAM Address' if CPU_V7M
-+	default 0x00000000
-+	depends on CPU_V7M
-+	help
-+	  The ARM v7M allows setting the vector table either in
-+	  the boot memory or in the internal SRAM memory, controlled
-+	  by Bit 29 in the Vector Table Base register.
-+	  This implies that the OS vector table needs to be copied to
-+	  the internal RAM.
-diff --git a/arch/arm/kernel/entry-v7m.S b/arch/arm/kernel/entry-v7m.S
-index b6c8bb9..114096e 100644
---- a/arch/arm/kernel/entry-v7m.S
-+++ b/arch/arm/kernel/entry-v7m.S
-@@ -146,3 +146,6 @@ ENTRY(vector_table)
- 	.rept	CONFIG_CPU_V7M_NUM_IRQ
- 	.long	__irq_entry		@ External Interrupts
- 	.endr
-+#if CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR > 0x00000000
-+ENTRY(vector_table_end)
-+#endif
-diff --git a/arch/arm/mm/proc-v7m.S b/arch/arm/mm/proc-v7m.S
-index 67d9209..ded9504 100644
---- a/arch/arm/mm/proc-v7m.S
-+++ b/arch/arm/mm/proc-v7m.S
-@@ -83,7 +83,18 @@ ENDPROC(cpu_v7m_do_resume)
- __v7m_setup:
- 	@ Configure the vector table base address
- 	ldr	r0, =BASEADDR_V7M_SCB
-+#if CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR > 0x00000000
-+	ldr	r12, =CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR
-+	mov	r5, r12			@ Copy the kernel vector_table to
-+	ldr	r6, =vector_table	@ the in-SRAM vector table
-+	ldr	r4, =vector_table_end
-+1:	ldr	r3, [r6], #4
-+	str	r3, [r5], #4
-+	cmp	r6, r4
-+	bne	1b			@ End of the copy code
-+#else
- 	ldr	r12, =vector_table
-+#endif
- 	str	r12, [r0, V7M_SCB_VTOR]
- 
- 	@ enable UsageFault, BusFault and MemManage fault.
--- 
-2.3.6
+> =
+
+> =
+
+> Thanks,
+> =
+
+> Gregory
+> =
+
+> > ---
+> > Hi,
+> > =
+
+> > Sorry for the noise, but since the changes in this patch are quite
+> > straightforward, I'm directly sending a v2 addressing Gregory's comments
+> > (instead of waiting for more reviews).
+> > =
+
+> > Best Regards,
+> > =
+
+> > Boris
+> > =
+
+> > Changes since v1:
+> >  - update the DT bindings doc
+> >  - change the clock name to be consistent with other SoCs
+> > =
+
+> >  Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt | 1 +
+> >  drivers/clk/mvebu/armada-370.c                                | 1 +
+> >  2 files changed, 2 insertions(+)
+> > =
+
+> > diff --git a/Documentation/devicetree/bindings/clock/mvebu-gated-clock.=
+txt b/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
+> > index 31c7c0c..660e649 100644
+> > --- a/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
+> > +++ b/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
+> > @@ -19,6 +19,7 @@ ID  Clock   Peripheral
+> >  9    pex1    PCIe Cntrl 1
+> >  15   sata0   SATA Host 0
+> >  17   sdio    SDHCI Host
+> > +23   crypto  CESA (crypto engine)
+> >  25   tdm     Time Division Mplx
+> >  28   ddr     DDR Cntrl
+> >  30   sata1   SATA Host 0
+> > diff --git a/drivers/clk/mvebu/armada-370.c b/drivers/clk/mvebu/armada-=
+370.c
+> > index 756f0f3..c19fd77 100644
+> > --- a/drivers/clk/mvebu/armada-370.c
+> > +++ b/drivers/clk/mvebu/armada-370.c
+> > @@ -163,6 +163,7 @@ static const struct clk_gating_soc_desc a370_gating=
+_desc[] __initconst =3D {
+> >       { "pex1", "pex1_en", 9, 0 },
+> >       { "sata0", NULL, 15, 0 },
+> >       { "sdio", NULL, 17, 0 },
+> > +     { "crypto", NULL, 23, 0 },
+> >       { "tdm", NULL, 25, 0 },
+> >       { "ddr", NULL, 28, CLK_IGNORE_UNUSED },
+> >       { "sata1", NULL, 30, 0 },
+> > =
+
+> =
+
+> =
+
+> -- =
+
+> Gregory Clement, Free Electrons
+> Kernel, drivers, real-time and embedded Linux
+> development, consulting, training and support.
+> http://free-electrons.com
