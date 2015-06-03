@@ -1,72 +1,60 @@
-Return-Path: <sudeep.holla@arm.com>
-Message-ID: <5571D7F5.1030405@arm.com>
-Date: Fri, 05 Jun 2015 18:10:13 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
+Return-Path: <vigneshr@ti.com>
+From: Vignesh R <vigneshr@ti.com>
+To: Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
+        Thierry
+ Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Pawel
+ Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell
+	<ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Benoit
+ Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell
+ King <linux@arm.linux.org.uk>,
+        Mike Turquette <mturquette@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        Vignesh
+ R <vigneshr@ti.com>
+Subject: [PATCH v2 0/5] Add support for PWMSS on DRA7
+Date: Wed, 3 Jun 2015 17:21:19 +0530
+Message-ID: <1433332284-10766-1-git-send-email-vigneshr@ti.com>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Sudeep Holla <Sudeep.Holla@arm.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- Liviu Dudau <Liviu.Dudau@arm.com>,
- Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
- "Jon Medhurst (Tixy)" <tixy@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- Kevin Hilman <khilman@kernel.org>,
- Olof Johansson <olof@lixom.net>, Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v3 3/5] clk: add support for clocks provided by SCP(System
- Control Processor)
-References: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com> <1432720398-5701-4-git-send-email-sudeep.holla@arm.com> <20150604202009.GI676@codeaurora.org> <55716DA4.2090003@arm.com>
-In-Reply-To: <55716DA4.2090003@arm.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
 
+Hi,
 
-On 05/06/15 10:36, Sudeep Holla wrote:
->
->
-> On 04/06/15 21:20, Stephen Boyd wrote:
->> On 05/27, Sudeep Holla wrote:
+This patch series adds support for PWMSS on DRA7. The IP is same as that
+present in AM33XX and AM43XX.
+The first patch changes clock domain in which PWMSS is present
+(l4per2_7xx_clkdm) to SW_WKUP. This is because legacy IPs like PWM
+does'nt support HW_AUTO prorperly. Hence, switch clock domain to
+SW_WKUP. This is based on the input from the hardware team.
+The rest of the patches add hwmod and dt entries and enable PWMSS on
+DRA7 based SoCs.
 
-[...]
+Vignesh R (5):
+  ARM: OMAP2+: DRA7: clockdomain: change l4per2_7xx_clkdm to SW_WKUP
+  ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
+  ARM: dts: DRA7: Add TBCLK for PWMSS
+  clk: ti: DRA7: Add tbclk data for ehrpwm
+  ARM: dts: DRA7: Add dt nodes for PWMSS
 
->>> +
->>> +static unsigned long scpi_clk_recalc_rate(struct clk_hw *hw,
->>> +					  unsigned long parent_rate)
->>> +{
->>> +	struct scpi_clk *clk = to_scpi_clk(hw);
->>> +
->>> +	return scpi_ops->clk_get_val(clk->id);
->>> +}
->>> +
->>> +static long scpi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
->>> +				unsigned long *parent_rate)
->>> +{
->>> +	struct scpi_clk *clk = to_scpi_clk(hw);
->>> +
->>> +	if (WARN_ON(clk->rate_min && rate < clk->rate_min))
->>> +		rate = clk->rate_min;
->>> +	if (WARN_ON(clk->rate_max && rate > clk->rate_max))
->>> +		rate = clk->rate_max;
->>> +
->>> +	return rate;
->>> +}
->>
->> Hm.. this seems really generic. It might be better to support a
->> way to tell the framework to limit the min/max rate that's
->> accepted for a clk. That could be done later though.
->>
->
-> True, framework have some boundary checks in place. I will check if
-> I can use it with minimum changes to the core. If not, we can take this
-> up later as you suggested.
->
+ .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       |   8 +
+ .../devicetree/bindings/pwm/pwm-tipwmss.txt        |  17 +-
+ arch/arm/boot/dts/dra7.dtsi                        |  69 ++++++
+ arch/arm/boot/dts/dra7xx-clocks.dtsi               |  26 +++
+ arch/arm/mach-omap2/clockdomains7xx_data.c         |   2 +-
+ arch/arm/mach-omap2/omap_hwmod_7xx_data.c          | 239 +++++++++++++++++++
+ drivers/clk/ti/clk-7xx.c                           |   3 +
+ 7 files changed, 362 insertions(+), 2 deletions(-)
 
-I found that the framework already provides clk_set_rate_range for this
-purpose. Sorry for missing this earlier(seems like that's added quite
-recently in v4.0). I think I still need to retain round_rate as the core
-framework insists.
-
-Regards,
-Sudeep
+-- 
+2.4.1
