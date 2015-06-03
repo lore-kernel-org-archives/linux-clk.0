@@ -1,50 +1,61 @@
-Return-Path: <davidcdueck@googlemail.com>
-Return-Path: <davidcdueck@googlemail.com>
-From: David Dueck <davidcdueck@googlemail.com>
-To: boris.brezillon@free-electrons.com
-Cc: mturquette@linaro.org,
-	nicolas.ferre@atmel.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] clk: at91: clk-system: fix error path
-Date: Fri, 26 Jun 2015 14:33:31 +0200
-Message-Id: <1435322012-5667-5-git-send-email-davidcdueck@googlemail.com>
-In-Reply-To: <1435322012-5667-1-git-send-email-davidcdueck@googlemail.com>
-References: <1435322012-5667-1-git-send-email-davidcdueck@googlemail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 3 Jun 2015 16:44:27 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
+	kernel@stlinux.com, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 5/5] [RFC] ARM: timer-sp: Use of_clk_get_parent_count()
+ instead of open coding
+Message-ID: <20150603234426.GB490@codeaurora.org>
+References: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
+ <1432891549-23295-6-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1432891549-23295-6-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Do not leak memory if request_irq fails and free the irq if
-clk_register fails.
+On 05/29, Geert Uytterhoeven wrote:
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> This is an RFC, as it depends on "[RFC] clk: Provide dummy
+> of_clk_get_parent_count() for !OF/!CCF".
+> ---
+>  arch/arm/common/timer-sp.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/common/timer-sp.c b/arch/arm/common/timer-sp.c
+> index 19211324772f387c..be87a5d480ffb655 100644
+> --- a/arch/arm/common/timer-sp.c
+> +++ b/arch/arm/common/timer-sp.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/clk.h>
+>  #include <linux/clocksource.h>
+>  #include <linux/clockchips.h>
+> +#include <linux/clk-provider.h>
 
-Signed-off-by: David Dueck <davidcdueck@googlemail.com>
----
- drivers/clk/at91/clk-system.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+This looks weird. This is not a clock provider.
 
-diff --git a/drivers/clk/at91/clk-system.c b/drivers/clk/at91/clk-system.c
-index a76d03f..58008b3 100644
---- a/drivers/clk/at91/clk-system.c
-+++ b/drivers/clk/at91/clk-system.c
-@@ -130,13 +130,17 @@ at91_clk_register_system(struct at91_pmc *pmc, const char *name,
- 		irq_set_status_flags(sys->irq, IRQ_NOAUTOEN);
- 		ret = request_irq(sys->irq, clk_system_irq_handler,
- 				IRQF_TRIGGER_HIGH, name, sys);
--		if (ret)
-+		if (ret) {
-+			kfree(sys);
- 			return ERR_PTR(ret);
-+		}
- 	}
- 
- 	clk = clk_register(NULL, &sys->hw);
--	if (IS_ERR(clk))
-+	if (IS_ERR(clk)) {
-+		free_irq(sys->irq, sys);
- 		kfree(sys);
-+	}
- 
- 	return clk;
- }
+>  #include <linux/err.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/irq.h>
+> @@ -234,7 +235,7 @@ static void __init sp804_of_init(struct device_node *np)
+>  		clk1 = NULL;
+>  
+>  	/* Get the 2nd clock if the timer has 3 timer clocks */
+> -	if (of_count_phandle_with_args(np, "clocks", "#clock-cells") == 3) {
+> +	if (of_clk_get_parent_count(np) == 3) {
+
+So maybe it means if we want to expose of_clk_get_parent_count()
+we should move it to some other header file (of_clk.h?). And then
+maybe we should always compile said helpers if OF=y and
+HAVE_CLK=y.
+
 -- 
-2.4.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
