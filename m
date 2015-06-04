@@ -1,70 +1,112 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Fabio Estevam <fabio.estevam@freescale.com>
-To: <shawnguo@kernel.org>
-Subject: [PATCH v3 1/2] ARM: dts: imx6qdl-sabresd: Allow HDMI and LVDS to work
- simultaneously
-Date: Fri, 26 Jun 2015 14:10:53 -0300
-Message-ID: <1435338654-9098-1-git-send-email-fabio.estevam@freescale.com>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Thu, 4 Jun 2015 08:44:34 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org, Mikko
+ Perttunen <mikko.perttunen@kapsi.fi>, Tomeu Vizoso
+ <tomeu.vizoso@collabora.com>, Jonathan Corbet <corbet@lwn.net>, Tony
+ Lindgren <tony@atomide.com>, Ralf Baechle <ralf@linux-mips.org>, Emilio
+ L??pez <emilio@elopez.com.ar>, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Tero Kristo <t-kristo@ti.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+ linux-mips@linux-mips.org
+Subject: Re: [PATCH v3] clk: change clk_ops' ->determine_rate() prototype
+Message-ID: <20150604084434.48939141@bbrezillon>
+In-Reply-To: <20150603233728.GA490@codeaurora.org>
+References: <1432138345-19044-1-git-send-email-boris.brezillon@free-electrons.com>
+	<20150603233728.GA490@codeaurora.org>
 MIME-Version: 1.0
-Cc: Fabio Estevam <fabio.estevam@freescale.com>, linux@arm.linux.org.uk,
- mturquette@baylibre.com, eric.nelson@boundarydevices.com,
- vladimir_zapolskiy@mentor.com, kernel@pengutronix.de, Ying.liu@freescale.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently it is not possible to have HDMI and LVDS working simultaneously,
-because both ports try to use PLL5.
+Hi Stefen,
 
-Move the LVDS clock parent to PLL3_USB_OTG, so that HDMI and LVDS can be
-driven from independent sources.
+On Wed, 3 Jun 2015 16:37:28 -0700
+Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-With this change the LDB pixel clock goes to 68.57 MHz, which is still
-within the valid range for the HSD100PXN1 LVDS panel.
+> On 05/20, Boris Brezillon wrote:
+> > Clock rates are stored in an unsigned long field, but ->determine_rate()
+> > (which returns a rounded rate from a requested one) returns a long
+> > value (errors are reported using negative error codes), which can lead
+> > to long overflow if the clock rate exceed 2Ghz.
+> >=20
+> > Change ->determine_rate() prototype to return 0 or an error code, and p=
+ass
+> > a pointer to a clk_rate_request structure containing the expected target
+> > rate and the rate constraints imposed by clk users.
+> >=20
+> > The clk_rate_request structure might be extended in the future to conta=
+in
+> > other kind of constraints like the rounding policy, the maximum clock
+> > inaccuracy or other things that are not yet supported by the CCF
+> > (power consumption constraints ?).
+> >=20
+> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> >=20
+> > CC: Jonathan Corbet <corbet@lwn.net>
+> > CC: Tony Lindgren <tony@atomide.com>
+> > CC: Ralf Baechle <ralf@linux-mips.org>
+> > CC: "Emilio L=C3=B3pez" <emilio@elopez.com.ar>
+> > CC: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > CC: Tero Kristo <t-kristo@ti.com>
+> > CC: linux-doc@vger.kernel.org
+> > CC: linux-kernel@vger.kernel.org
+> > CC: linux-arm-kernel@lists.infradead.org
+> > CC: linux-omap@vger.kernel.org
+> > CC: linux-mips@linux-mips.org
+> > ---
+> >=20
+> > Hi Stephen,
+> >=20
+> > This patch is based on clk-next and contains the changes you suggested
+> > in your previous review.
+> >=20
+> > It was tested on sama5d4 and compile tested on several ARM platforms
+> > (those enabled in multi_v7_defconfig).
+> >=20
+>=20
+> Thanks. I think we should wait until the next -rc1 drops to apply the
+> patch for the next merge window. That will make it least likely to confli=
+ct
+> with other trees, and we can provide it on a stable branch should there
+> be clock providers going through other trees somewhere. Please
+> remind me if I forget.
 
-Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
----
-Changes since v2:
-- None
-Changes since v1:
-- Move the clock assignment inside &clks as suggested by Philipp
+No problem.
 
- arch/arm/boot/dts/imx6qdl-sabresd.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+>=20
+> > @@ -1186,15 +1191,21 @@ EXPORT_SYMBOL_GPL(__clk_determine_rate);
+> >   */
+> >  unsigned long __clk_round_rate(struct clk *clk, unsigned long rate)
+> >  {
+> > -	unsigned long min_rate;
+> > -	unsigned long max_rate;
+> > +
+> > +	struct clk_rate_request req;
+> > +	int ret;
+> > =20
+> >  	if (!clk)
+> >  		return 0;
+> > =20
+> > -	clk_core_get_boundaries(clk->core, &min_rate, &max_rate);
+> > +	clk_core_get_boundaries(clk->core, &req.min_rate, &req.max_rate);
+> > +	req.rate =3D rate;
+> > +
+> > +	ret =3D clk_core_round_rate_nolock(clk->core, &req);
+> > +	if (ret)
+> > +		return ret;
+>=20
+> This returns a negative int for unsigned long. Is that intentional?
 
-diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-index a626e6d..cca847e 100644
---- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-@@ -141,6 +141,13 @@
- 	status = "okay";
- };
- 
-+&clks {
-+	assigned-clocks = <&clks IMX6QDL_CLK_LDB_DI0_SEL>,
-+			  <&clks IMX6QDL_CLK_LDB_DI1_SEL>;
-+	assigned-clock-parents = <&clks IMX6QDL_CLK_PLL3_USB_OTG>,
-+				 <&clks IMX6QDL_CLK_PLL3_USB_OTG>;
-+};
-+
- &ecspi1 {
- 	fsl,spi-num-chipselects = <1>;
- 	cs-gpios = <&gpio4 9 0>;
--- 
-1.9.1
+Nope, should be replaced by 'return 0;'.
+
+Thanks,
+
+Boris
 
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--=20
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
