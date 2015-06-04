@@ -1,126 +1,67 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 4 Jun 2015 15:07:25 -0700
+Date: Thu, 4 Jun 2015 11:14:04 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Kamil Lulko <rev13@wp.pl>, Andreas Farber <afaerber@suse.de>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	patches@linaro.org, linaro-kernel@lists.linaro.org
-Subject: Re: [RFC PATCH 2/3] clk: stm32: Add clock driver for STM32F4[23]xxx
- devices
-Message-ID: <20150604220725.GT676@codeaurora.org>
-References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
- <1432327273-6810-3-git-send-email-daniel.thompson@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
+	kernel@stlinux.com,
+	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 5/5] [RFC] ARM: timer-sp: Use of_clk_get_parent_count()
+ instead of open coding
+Message-ID: <20150604181404.GF490@codeaurora.org>
+References: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
+ <1432891549-23295-6-git-send-email-geert+renesas@glider.be>
+ <20150603234426.GB490@codeaurora.org>
+ <CAMuHMdXRQbBJWLCiDgx=vRcj=MS5BAQ6gskfcMGZzW1gKa6J8g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1432327273-6810-3-git-send-email-daniel.thompson@linaro.org>
+In-Reply-To: <CAMuHMdXRQbBJWLCiDgx=vRcj=MS5BAQ6gskfcMGZzW1gKa6J8g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/22, Daniel Thompson wrote:
-> +
-> +#include <linux/clk.h>
+On 06/04, Geert Uytterhoeven wrote:
+> Hi Stephen,
+> 
+> On Thu, Jun 4, 2015 at 1:44 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 05/29, Geert Uytterhoeven wrote:
+> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>  #include <linux/err.h>
+> >>  #include <linux/interrupt.h>
+> >>  #include <linux/irq.h>
+> >> @@ -234,7 +235,7 @@ static void __init sp804_of_init(struct device_node *np)
+> >>               clk1 = NULL;
+> >>
+> >>       /* Get the 2nd clock if the timer has 3 timer clocks */
+> >> -     if (of_count_phandle_with_args(np, "clocks", "#clock-cells") == 3) {
+> >> +     if (of_clk_get_parent_count(np) == 3) {
+> >
+> > So maybe it means if we want to expose of_clk_get_parent_count()
+> > we should move it to some other header file (of_clk.h?). And then
+> > maybe we should always compile said helpers if OF=y and
+> > HAVE_CLK=y.
+> 
+> That makes sense.
+> 
+> Currently we have lots of of_clk_*() in <linux/clk-provider.h>, and a few
+> of_clk_get*() in <inux/clk.h>.
+> And the mysterious of_clk_set_defaults() in <linux/clk/clk-conf.h>.
+> 
+> All of_clk_get*() could be moved to a new <linux/of_clk.h>.
+> 
+> Alternatively, of_clk_get_parent_count() could just move to <linux/clk.h>?
 
-Are you using this include?
+Hmm... of_clk_*() functions that return a struct clk * or work
+with a struct clk * should stay within clk.h. But these ones in
+clk-provider.h should probably move to a new of_clk.h file:
 
-> +#include <linux/clkdev.h>
-
-Are you using this include?
-
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +
-> +#include <linux/debugfs.h>
-
-Are you using this include?
-
-> +
-> +static long clk_apb_mul_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				   unsigned long *prate)
-> +{
-> +	struct clk_apb_mul *am = to_clk_apb_mul(hw);
-> +	unsigned long mult = 1;
-> +
-> +	if (readl(base + STM32F4_RCC_CFGR) & BIT(am->bit_idx))
-> +		mult *= 2;
-
-Isn't this the same as mult = 2? I guess we could rely on the
-compiler to figure out this one.
-
-> +
-> +	if (__clk_get_flags(hw->clk) & CLK_SET_RATE_PARENT) {
-> +		unsigned long best_parent = rate / mult;
-> +
-> +		*prate =
-> +		    __clk_round_rate(__clk_get_parent(hw->clk), best_parent);
-> +	}
-> +
-> +	return *prate * mult;
-> +}
-> +
-> +static int clk_apb_mul_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				 unsigned long parent_rate)
-> +{
-
-Why don't we need to do anything here?
-
-> +	return 0;
-> +}
-> +
-> +static struct clk_ops clk_apb_mul_factor_ops = {
-
-const?
-
-> +	.round_rate = clk_apb_mul_round_rate,
-> +	.set_rate = clk_apb_mul_set_rate,
-> +	.recalc_rate = clk_apb_mul_recalc_rate,
-> +};
-> +
-> +struct clk *clk_register_apb_mul(struct device *dev, const char *name,
-> +				 const char *parent_name, unsigned long flags,
-> +				 u8 bit_idx)
-> +{
-> +	struct clk_apb_mul *am;
-> +	struct clk_init_data init;
-> +	struct clk *clk;
-> +
-> +	am = kzalloc(sizeof(*am), GFP_KERNEL);
-> +	if (!am)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	am->bit_idx = bit_idx;
-> +	am->hw.init = &init;
-> +
-> +	init.name = name;
-> +	init.ops = &clk_apb_mul_factor_ops;
-> +	init.flags = flags | CLK_IS_BASIC;
-
-Is it basic?
-
-> +	init.parent_names = &parent_name;
-> +	init.num_parents = 1;
-> +
-> +	clk = clk_register(dev, &am->hw);
-> +
-> +	if (IS_ERR(clk))
-> +		kfree(am);
-> +
-> +	return clk;
-> +}
-> +
-> +static const char __initdata *sys_parents[] =   { "hsi", NULL, "pll" };
-
-__initdata goes after the []
+	of_clk_get_parent_count
+	of_clk_get_parent_name
+	of_clk_init
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
