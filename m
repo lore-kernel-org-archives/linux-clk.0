@@ -1,81 +1,84 @@
-Return-Path: <dinguyen@opensource.altera.com>
-From: <dinguyen@opensource.altera.com>
-To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
-CC: <dinh.linux@gmail.com>, <geert@linux-m68k.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Dinh Nguyen
-	<dinguyen@opensource.altera.com>
-Subject: [RFC/PATCHv2 2/2] clk: socfpga: make use of of_clk_parent_fill helper function
-Date: Thu, 4 Jun 2015 14:12:33 -0500
-Message-ID: <1433445153-25320-3-git-send-email-dinguyen@opensource.altera.com>
-In-Reply-To: <1433445153-25320-1-git-send-email-dinguyen@opensource.altera.com>
-References: <1433445153-25320-1-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: dinguyen@opensource.altera.com
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20150603234426.GB490@codeaurora.org>
+References: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
+	<1432891549-23295-6-git-send-email-geert+renesas@glider.be>
+	<20150603234426.GB490@codeaurora.org>
+Date: Thu, 4 Jun 2015 09:26:43 +0200
+Message-ID: <CAMuHMdXRQbBJWLCiDgx=vRcj=MS5BAQ6gskfcMGZzW1gKa6J8g@mail.gmail.com>
+Subject: Re: [PATCH 5/5] [RFC] ARM: timer-sp: Use of_clk_get_parent_count()
+ instead of open coding
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>,
+	Tero Kristo <t-kristo@ti.com>, Mike Turquette <mturquette@linaro.org>,
+	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org, kernel@stlinux.com,
+	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
+Hi Stephen,
 
-Use of_clk_parent_fill to fill in the parent clock's array.
+On Thu, Jun 4, 2015 at 1:44 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 05/29, Geert Uytterhoeven wrote:
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> This is an RFC, as it depends on "[RFC] clk: Provide dummy
+>> of_clk_get_parent_count() for !OF/!CCF".
+>> ---
+>>  arch/arm/common/timer-sp.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/common/timer-sp.c b/arch/arm/common/timer-sp.c
+>> index 19211324772f387c..be87a5d480ffb655 100644
+>> --- a/arch/arm/common/timer-sp.c
+>> +++ b/arch/arm/common/timer-sp.c
+>> @@ -21,6 +21,7 @@
+>>  #include <linux/clk.h>
+>>  #include <linux/clocksource.h>
+>>  #include <linux/clockchips.h>
+>> +#include <linux/clk-provider.h>
+>
+> This looks weird. This is not a clock provider.
 
-Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
----
-v2: none
----
- drivers/clk/socfpga/clk-gate.c | 6 +-----
- drivers/clk/socfpga/clk-pll.c  | 7 +------
- 2 files changed, 2 insertions(+), 11 deletions(-)
+But that's where the declaration of of_clk_get_parent_count() lives...
 
-diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
-index dd3a78c..fb5a5d7 100644
---- a/drivers/clk/socfpga/clk-gate.c
-+++ b/drivers/clk/socfpga/clk-gate.c
-@@ -194,7 +194,6 @@ static void __init __socfpga_gate_init(struct device_node *node,
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
- 	struct clk_init_data init;
- 	int rc;
--	int i = 0;
- 
- 	socfpga_clk = kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
- 	if (WARN_ON(!socfpga_clk))
-@@ -238,12 +237,9 @@ static void __init __socfpga_gate_init(struct device_node *node,
- 	init.name = clk_name;
- 	init.ops = ops;
- 	init.flags = 0;
--	while (i < SOCFPGA_MAX_PARENTS && (parent_name[i] =
--			of_clk_get_parent_name(node, i)) != NULL)
--		i++;
- 
-+	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
- 	init.parent_names = parent_name;
--	init.num_parents = i;
- 	socfpga_clk->hw.hw.init = &init;
- 
- 	clk = clk_register(NULL, &socfpga_clk->hw.hw);
-diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
-index de6da95..8f26b52 100644
---- a/drivers/clk/socfpga/clk-pll.c
-+++ b/drivers/clk/socfpga/clk-pll.c
-@@ -92,7 +92,6 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
- 	struct clk_init_data init;
- 	struct device_node *clkmgr_np;
- 	int rc;
--	int i = 0;
- 
- 	of_property_read_u32(node, "reg", &reg);
- 
-@@ -111,11 +110,7 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
- 	init.ops = ops;
- 	init.flags = 0;
- 
--	while (i < SOCFPGA_MAX_PARENTS && (parent_name[i] =
--			of_clk_get_parent_name(node, i)) != NULL)
--		i++;
--
--	init.num_parents = i;
-+	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
- 	init.parent_names = parent_name;
- 	pll_clk->hw.hw.init = &init;
- 
--- 
-2.2.1
+>>  #include <linux/err.h>
+>>  #include <linux/interrupt.h>
+>>  #include <linux/irq.h>
+>> @@ -234,7 +235,7 @@ static void __init sp804_of_init(struct device_node *np)
+>>               clk1 = NULL;
+>>
+>>       /* Get the 2nd clock if the timer has 3 timer clocks */
+>> -     if (of_count_phandle_with_args(np, "clocks", "#clock-cells") == 3) {
+>> +     if (of_clk_get_parent_count(np) == 3) {
+>
+> So maybe it means if we want to expose of_clk_get_parent_count()
+> we should move it to some other header file (of_clk.h?). And then
+> maybe we should always compile said helpers if OF=y and
+> HAVE_CLK=y.
+
+That makes sense.
+
+Currently we have lots of of_clk_*() in <linux/clk-provider.h>, and a few
+of_clk_get*() in <inux/clk.h>.
+And the mysterious of_clk_set_defaults() in <linux/clk/clk-conf.h>.
+
+All of_clk_get*() could be moved to a new <linux/of_clk.h>.
+
+Alternatively, of_clk_get_parent_count() could just move to <linux/clk.h>?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
