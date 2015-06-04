@@ -1,87 +1,81 @@
-Return-Path: <pebolle@tiscali.nl>
-Message-ID: <1435141282.4528.71.camel@tiscali.nl>
-Subject: Re: [PATCH 7/9] arm: twr-k70f120m: IOMUX driver for Kinetis SoC
-From: Paul Bolle <pebolle@tiscali.nl>
-To: Paul Osmialowski <pawelo@king.net.pl>, Andrew Morton
- <akpm@linux-foundation.org>, Anson Huang <b20788@freescale.com>, Ard
- Biesheuvel <ard.biesheuvel@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>, Daniel Lezcano
- <daniel.lezcano@linaro.org>,  Frank Li <Frank.Li@freescale.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, Haojian
- Zhuang <haojian.zhuang@gmail.com>, Ian Campbell
- <ijc+devicetree@hellion.org.uk>, Jingchang Lu <jingchang.lu@freescale.com>,
- Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>, Kumar Gala
- <galak@codeaurora.org>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Linus Walleij
- <linus.walleij@linaro.org>,  Magnus Damm <damm+renesas@opensource.se>,
- Michael Turquette <mturquette@baylibre.com>, Nathan Lynch
- <nathan_lynch@mentor.com>, Nicolas Pitre <nico@linaro.org>, Maxime Coquelin
- stm32 <mcoquelin.stm32@gmail.com>, Olof Johansson <olof@lixom.net>, Rob
- Herring <r.herring@freescale.com>, Rob Herring <robh+dt@kernel.org>,
- Russell King <linux@arm.linux.org.uk>, Sergey Senozhatsky
- <sergey.senozhatsky@gmail.com>,  Shawn Guo <shawn.guo@linaro.org>, Simon
- Horman <horms+renesas@verge.net.au>, Stefan Agner <stefan@agner.ch>,
- Stephen Boyd <sboyd@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>,
- Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,  Catalin Marinas
- <catalin.marinas@arm.com>, Dave Martin <Dave.Martin@arm.com>, Mark Rutland
- <mark.rutland@arm.com>,  Pawel Moll <pawel.moll@arm.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
- dmaengine@vger.kernel.org
-Cc: Yuri Tikhonov <yur@emcraft.com>, Sergei Poselenov
- <sposelenov@emcraft.com>,  Dmitry Cherkassov <d_cherkasov@emcraft.com>,
- Alexander Potashev <aspotashev@emcraft.com>
-Date: Wed, 24 Jun 2015 12:21:22 +0200
-In-Reply-To: <1435094387-20146-8-git-send-email-pawelo@king.net.pl>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
-	 <1435094387-20146-8-git-send-email-pawelo@king.net.pl>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <dinguyen@opensource.altera.com>
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <geert@linux-m68k.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Dinh Nguyen
+	<dinguyen@opensource.altera.com>
+Subject: [RFC/PATCHv2 1/2] clk: of: helper for filling parent clock array and return num of parents
+Date: Thu, 4 Jun 2015 14:12:32 -0500
+Message-ID: <1433445153-25320-2-git-send-email-dinguyen@opensource.altera.com>
+In-Reply-To: <1433445153-25320-1-git-send-email-dinguyen@opensource.altera.com>
+References: <1433445153-25320-1-git-send-email-dinguyen@opensource.altera.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2015-06-23 at 23:19 +0200, Paul Osmialowski wrote:
-> --- a/drivers/pinctrl/freescale/Kconfig
-> +++ b/drivers/pinctrl/freescale/Kconfig
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
+
+Sprinkled all through the platform clock drivers are code like this to
+fill the clock parent array:
+
+for (i = 0; i < num_parents; ++i)
+	parent_names[i] = of_clk_get_parent_name(np, i);
+
+The of_clk_parent_fill() will do the same as the code above, and while
+at it, return the number of parents as well since the logic of the
+function is to the walk the clock node to look for the parent.
+
+Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+---
+v2: use unsigned int for size
+---
+ drivers/clk/clk.c            | 20 ++++++++++++++++++++
+ include/linux/clk-provider.h |  1 +
+ 2 files changed, 21 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 459ce9d..778bebd 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3060,6 +3060,26 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
+ }
+ EXPORT_SYMBOL_GPL(of_clk_get_parent_name);
  
-> +config PINCTRL_KINETIS
-> +	bool "Kinetis pinctrl driver"
-> +	depends on OF
-> +	depends on SOC_K70
-> +	select PINMUX
-> +	help
-> +	  Say Y here to enable the Kinetis pinctrl driver
-
-> --- a/drivers/pinctrl/freescale/Makefile
-> +++ b/drivers/pinctrl/freescale/Makefile
-
-> +obj-$(CONFIG_PINCTRL_KINETIS)	+= pinctrl-kinetis.o
-
-> --- /dev/null
-> +++ b/drivers/pinctrl/freescale/pinctrl-kinetis.c
-
-> +#include <linux/module.h>
-
-> +static struct pinctrl_desc kinetis_pinctrl_desc = {
-> +	[...]
-> +	.owner = THIS_MODULE,
-> +};
-
-> +static void __exit kinetis_pinctrl_exit(void)
-> +{
-> +	platform_driver_unregister(&kinetis_pinctrl_driver);
-> +}
-> +module_exit(kinetis_pinctrl_exit);
-> +
-> +MODULE_DESCRIPTION("Freescale Kinetis pinctrl driver");
-> +MODULE_LICENSE("GPL v2");
-
-pinctrl-kinetis.o can only be built-in, right? But the code uses a few
-module specific constructs. Did you mean to make PINCTRL_KINETIS
-tristate instead?
-
-Thanks,
-
-
-Paul Bolle
++/*
++ * of_clk_parent_fill(): Helper clock function that will fill the parent
++ * clock's array and return the number of parents it found.
++ * @np: Device node pointer associated with clock provider
++ * @parents: pointer to char array that hold the parent's name
++ * @size: size of the parents array
++ *
++ * Returns number of parents for the clock node.
++ */
++int of_clk_parent_fill(struct device_node *np, const char **parents, unsigned int size)
++{
++	unsigned int i = 0;
++
++	while (i < size && (parents[i] = of_clk_get_parent_name(np, i)) != NULL)
++		i++;
++
++	return i;
++}
++EXPORT_SYMBOL(of_clk_parent_fill);
++
+ struct clock_provider {
+ 	of_clk_init_cb_t clk_init_cb;
+ 	struct device_node *np;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index df69531..3ab66d3 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -624,6 +624,7 @@ struct clk *of_clk_src_simple_get(struct of_phandle_args *clkspec,
+ 				  void *data);
+ struct clk *of_clk_src_onecell_get(struct of_phandle_args *clkspec, void *data);
+ int of_clk_get_parent_count(struct device_node *np);
++int of_clk_parent_fill(struct device_node *np, const char **parents, unsigned int size);
+ const char *of_clk_get_parent_name(struct device_node *np, int index);
+ 
+ void of_clk_init(const struct of_device_id *matches);
+-- 
+2.2.1
