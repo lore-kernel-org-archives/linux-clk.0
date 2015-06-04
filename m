@@ -1,54 +1,143 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:35074 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752477AbbFWIWF (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 23 Jun 2015 04:22:05 -0400
-Received: by wiga1 with SMTP id a1so98673371wig.0
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2015 01:22:03 -0700 (PDT)
-Message-ID: <55891729.7070809@linaro.org>
-Date: Tue, 23 Jun 2015 09:22:01 +0100
-From: Daniel Thompson <daniel.thompson@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 4 Jun 2015 13:20:09 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>,
+	Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v3 3/5] clk: add support for clocks provided by
+ SCP(System Control Processor)
+Message-ID: <20150604202009.GI676@codeaurora.org>
+References: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com>
+ <1432720398-5701-4-git-send-email-sudeep.holla@arm.com>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Kamil Lulko <rev13@wp.pl>, Andreas Farber <afaerber@suse.de>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	patches@linaro.org, linaro-kernel@lists.linaro.org
-Subject: Re: [PATCH v3 0/3] clk: stm32: Add clock driver for STM32F4[23]xxx
- devices
-References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org> <1433966978-24422-1-git-send-email-daniel.thompson@linaro.org> <20150622224832.GI22132@codeaurora.org>
-In-Reply-To: <20150622224832.GI22132@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1432720398-5701-4-git-send-email-sudeep.holla@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 22/06/15 23:48, Stephen Boyd wrote:
-> On 06/10, Daniel Thompson wrote:
->> This patchset implements a clock driver for STM32F42xxx and STM32F43xxx
->> series devices. It supports decoding the state configured by the
->> bootloader (PLL, clock select, bus dividers) and all the gates clocks.
->> It does not currently support the I2S and SAI PLLs.
->>
->> Relies on "Add support to STMicroeletronics STM32 family" v9 by Maxime
->> Coquelin: http://thread.gmane.org/gmane.linux.kernel/1961049 .
->>
->
-> I applied 1 and 2. Looks like #3 should go through arm-soc at
-> some later time?
+On 05/27, Sudeep Holla wrote:
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/of.h>
+> +#include <linux/module.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/scpi_protocol.h>
+> +
+> +struct scpi_clk {
+> +	u32 id;
+> +	const char *name;
+> +	struct clk_hw hw;
+> +	struct scpi_dvfs_info *info;
+> +	unsigned long rate_min;
+> +	unsigned long rate_max;
+> +};
+> +
+> +#define to_scpi_clk(clk) container_of(clk, struct scpi_clk, hw)
+> +
+> +static struct scpi_ops *scpi_ops;
 
-Agreed (that is also the patch that must be correctly ordered w.r.t. 
-Maxime's patches).
+Why do we need this singleton? Can we put this pointer into scpi_clk?
 
+> +
+> +static unsigned long scpi_clk_recalc_rate(struct clk_hw *hw,
+> +					  unsigned long parent_rate)
+> +{
+> +	struct scpi_clk *clk = to_scpi_clk(hw);
+> +
+> +	return scpi_ops->clk_get_val(clk->id);
+> +}
+> +
+> +static long scpi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				unsigned long *parent_rate)
+> +{
+> +	struct scpi_clk *clk = to_scpi_clk(hw);
+> +
+> +	if (WARN_ON(clk->rate_min && rate < clk->rate_min))
+> +		rate = clk->rate_min;
+> +	if (WARN_ON(clk->rate_max && rate > clk->rate_max))
+> +		rate = clk->rate_max;
+> +
+> +	return rate;
+> +}
 
-Thanks.
+Hm.. this seems really generic. It might be better to support a
+way to tell the framework to limit the min/max rate that's
+accepted for a clk. That could be done later though.
 
-Daniel.
+> +
+> +static int scpi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			     unsigned long parent_rate)
+> +{
+> +	struct scpi_clk *clk = to_scpi_clk(hw);
+> +
+> +	return scpi_ops->clk_set_val(clk->id, rate);
+> +}
+> +
+[..]
+> +
+> +static int scpi_clk_add(struct device *dev, struct device_node *np)
+> +{
+> +	struct clk **clks;
+> +	int idx, count;
+> +	struct clk_onecell_data *clk_data;
+> +
+> +	count = of_property_count_strings(np, "clock-output-names");
+> +	if (count < 0) {
+> +		dev_err(dev, "%s: invalid clock output count\n", np->name);
+> +		return -EINVAL;
+> +	}
+> +
+> +	clk_data = devm_kmalloc(dev, sizeof(*clk_data), GFP_KERNEL);
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+> +	clks = devm_kcalloc(dev, count, sizeof(*clks), GFP_KERNEL);
+> +	if (!clks)
+> +		return -ENOMEM;
+> +
+> +	for (idx = 0; idx < count; idx++) {
+> +		struct scpi_clk *sclk;
+> +		u32 val;
+> +
+> +		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
+> +		if (!sclk)
+> +			return -ENOMEM;
+> +
+> +		if (of_property_read_string_index(np, "clock-output-names",
+> +						  idx, &sclk->name)) {
+> +			dev_err(dev, "invalid clock name @ %s\n", np->name);
+> +			return -EINVAL;
+> +		}
+> +
+> +		if (of_property_read_u32_index(np, "clock-indices",
+> +					       idx, &val)) {
+> +			dev_err(dev, "invalid clock index @ %s\n", np->name);
+> +			return -EINVAL;
+> +		}
+> +
+> +		sclk->id = val;
+> +
+> +		clks[idx] = scpi_clk_ops_init(dev, np, sclk);
+> +		if (IS_ERR_OR_NULL(clks[idx]))
+> +			dev_err(dev, "failed to register clock '%s'\n",
+> +				sclk->name);
+> +		else
+> +			dev_dbg(dev, "Registered clock '%s'\n", sclk->name);
+> +	}
+> +
+> +	clk_data->clks = clks;
+> +	clk_data->clk_num = idx;
+> +	of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
 
+And if of_clk_add_provider() fails?
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
