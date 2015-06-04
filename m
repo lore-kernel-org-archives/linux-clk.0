@@ -1,48 +1,127 @@
-Return-Path: <dinguyen@opensource.altera.com>
-From: <dinguyen@opensource.altera.com>
-To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
-CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
-Subject: [RFC/PATCHv1 0/2] clk: of: add helper function to fill parent clock array
-Date: Mon, 1 Jun 2015 16:46:24 -0500
-Message-ID: <1433195186-14867-1-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 4 Jun 2015 15:07:25 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Kamil Lulko <rev13@wp.pl>, Andreas Farber <afaerber@suse.de>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	patches@linaro.org, linaro-kernel@lists.linaro.org
+Subject: Re: [RFC PATCH 2/3] clk: stm32: Add clock driver for STM32F4[23]xxx
+ devices
+Message-ID: <20150604220725.GT676@codeaurora.org>
+References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
+ <1432327273-6810-3-git-send-email-daniel.thompson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: dinguyen@opensource.altera.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1432327273-6810-3-git-send-email-daniel.thompson@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
+On 05/22, Daniel Thompson wrote:
+> +
+> +#include <linux/clk.h>
 
-Hi,
+Are you using this include?
 
-As suggested by Stephen Boyd, this patch adds a helper function that will fill
-the parent clock array.
+> +#include <linux/clkdev.h>
 
-Since this kind of code is sprinkled all over the platform clock drivers:
+Are you using this include?
 
-for (i = 0; i < num_parents; ++i)
-	parent_names[i] = of_clk_get_parent_name(np, i);
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +
+> +#include <linux/debugfs.h>
 
-The above code can be replace by of_clk_parent_fill(). And since the logic
-of the of_clk_parent_fill is to walk the clock node to find the parent, it is
-easy to just return the number of parents as well.
+Are you using this include?
 
-The second patch makes use of the new helper function in the SoCFPGA platform.
-If this patch is accepted, I can go through and replace the other platforms
-after that.
+> +
+> +static long clk_apb_mul_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				   unsigned long *prate)
+> +{
+> +	struct clk_apb_mul *am = to_clk_apb_mul(hw);
+> +	unsigned long mult = 1;
+> +
+> +	if (readl(base + STM32F4_RCC_CFGR) & BIT(am->bit_idx))
+> +		mult *= 2;
 
-Thanks,
+Isn't this the same as mult = 2? I guess we could rely on the
+compiler to figure out this one.
 
-Dinh Nguyen (2):
-  clk: of: helper for filling parent clock array and return num of
-    parents
-  clk: socfpga: make use of of_clk_parent_fill helper function
+> +
+> +	if (__clk_get_flags(hw->clk) & CLK_SET_RATE_PARENT) {
+> +		unsigned long best_parent = rate / mult;
+> +
+> +		*prate =
+> +		    __clk_round_rate(__clk_get_parent(hw->clk), best_parent);
+> +	}
+> +
+> +	return *prate * mult;
+> +}
+> +
+> +static int clk_apb_mul_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				 unsigned long parent_rate)
+> +{
 
- drivers/clk/clk.c              | 20 ++++++++++++++++++++
- drivers/clk/socfpga/clk-gate.c |  6 +-----
- drivers/clk/socfpga/clk-pll.c  |  7 +------
- include/linux/clk-provider.h   |  1 +
- 4 files changed, 23 insertions(+), 11 deletions(-)
+Why don't we need to do anything here?
+
+> +	return 0;
+> +}
+> +
+> +static struct clk_ops clk_apb_mul_factor_ops = {
+
+const?
+
+> +	.round_rate = clk_apb_mul_round_rate,
+> +	.set_rate = clk_apb_mul_set_rate,
+> +	.recalc_rate = clk_apb_mul_recalc_rate,
+> +};
+> +
+> +struct clk *clk_register_apb_mul(struct device *dev, const char *name,
+> +				 const char *parent_name, unsigned long flags,
+> +				 u8 bit_idx)
+> +{
+> +	struct clk_apb_mul *am;
+> +	struct clk_init_data init;
+> +	struct clk *clk;
+> +
+> +	am = kzalloc(sizeof(*am), GFP_KERNEL);
+> +	if (!am)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	am->bit_idx = bit_idx;
+> +	am->hw.init = &init;
+> +
+> +	init.name = name;
+> +	init.ops = &clk_apb_mul_factor_ops;
+> +	init.flags = flags | CLK_IS_BASIC;
+
+Is it basic?
+
+> +	init.parent_names = &parent_name;
+> +	init.num_parents = 1;
+> +
+> +	clk = clk_register(dev, &am->hw);
+> +
+> +	if (IS_ERR(clk))
+> +		kfree(am);
+> +
+> +	return clk;
+> +}
+> +
+> +static const char __initdata *sys_parents[] =   { "hsi", NULL, "pll" };
+
+__initdata goes after the []
 
 -- 
-2.2.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
