@@ -1,267 +1,50 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <5589DCB9.2000908@codeaurora.org>
-Date: Tue, 23 Jun 2015 15:24:57 -0700
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 4 Jun 2015 15:44:07 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mturquette@linaro.org, haojian.zhuang@gmail.com,
+	james.hogan@imgtec.com
+Subject: Re: [PATCH 1/2] clk: divider: don't set_rate with
+ CLK_DIVIDER_READ_ONLY flag
+Message-ID: <20150604224407.GC8099@codeaurora.org>
+References: <1428392806-14538-1-git-send-email-jy0922.shim@samsung.com>
 MIME-Version: 1.0
-To: Paul Osmialowski <pawelo@king.net.pl>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Anson Huang <b20788@freescale.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Frank Li <Frank.Li@freescale.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Jingchang Lu <jingchang.lu@freescale.com>,
-	Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nathan Lynch <nathan_lynch@mentor.com>,
-	Nicolas Pitre <nico@linaro.org>,
-	Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
-	Olof Johansson <olof@lixom.net>,
-	Paul Bolle <pebolle@tiscali.nl>,
-	Rob Herring <r.herring@freescale.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-	Shawn Guo <shawn.guo@linaro.org>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Stefan Agner <stefan@agner.ch>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org, dmaengine@vger.kernel.org
-CC: Yuri Tikhonov <yur@emcraft.com>,
-	Sergei Poselenov <sposelenov@emcraft.com>,
-	Dmitry Cherkassov <d_cherkasov@emcraft.com>,
-	Alexander Potashev <aspotashev@emcraft.com>
-Subject: Re: [PATCH 6/9] arm: twr-k70f120m: clock source drivers for Kinetis
- SoC
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <1435094387-20146-7-git-send-email-pawelo@king.net.pl>
-In-Reply-To: <1435094387-20146-7-git-send-email-pawelo@king.net.pl>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1428392806-14538-1-git-send-email-jy0922.shim@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/23/2015 02:19 PM, Paul Osmialowski wrote:
->
-> diff --git a/drivers/clk/clk-kinetis.c b/drivers/clk/clk-kinetis.c
-> new file mode 100644
-> index 0000000..dea1054
-> --- /dev/null
-> +++ b/drivers/clk/clk-kinetis.c
-> @@ -0,0 +1,226 @@
-> +/*
-> + * clk-kinetis.c - Clock driver for Kinetis K70 MCG
-> + *
-> + * Based on legacy pre-OF code by Alexander Potashev <aspotashev@emcraft.com>
-> + *
-> + * Copyright (C) 2015 Paul Osmialowski <pawelo@king.net.pl>
-> + *
-> + * This program is free software; you can redistribute it and/or modify it under
-> + * the terms of the GNU General Public License version 2 as published by the
-> + * Free Software Foundation.
-> + */
-> +
-> +#include <linux/clk.h>
-
-Is this using the consumer API? Please remove this include.
-
-> +#include <linux/io.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/err.h>
-> +#include <mach/kinetis.h>
-> +#include <mach/power.h>
-
-It would be nice if we didn't need these mach includes so that this
-driver can be easily build tested.
-
-> +
-> +#include <dt-bindings/clock/kinetis-mcg.h>
-[..]
-> +}
-> +
-> +CLK_OF_DECLARE(kinetis_mcg, "fsl,kinetis-cmu", kinetis_mcg_init);
-
-A clocksource isn't the same as a clk provider. Please split this patch
-into two, one for the clk provider (drivers/clk) and one for the
-clocksource driver (drivers/clocksource).
-
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> index 0f1c77e..1d2ecde 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -106,6 +106,11 @@ config CLKSRC_EFM32
->  	  Support to use the timers of EFM32 SoCs as clock source and clock
->  	  event device.
+On 04/07, Joonyoung Shim wrote:
+> Even if use CLK_DIVIDER_READ_ONLY flag, divider setting can be changed
+> by set_rate callback. Don't change divider setting from set_rate
+> callback of divider with CLK_DIVIDER_READ_ONLY flag.
+> 
+> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> ---
+>  drivers/clk/clk-divider.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> index 25006a8..ce34d29a 100644
+> --- a/drivers/clk/clk-divider.c
+> +++ b/drivers/clk/clk-divider.c
+> @@ -384,6 +384,9 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	unsigned long flags = 0;
+>  	u32 val;
 >  
-> +config CLKSRC_KINETIS
-> +	bool "Clocksource for Kinetis SoCs"
-> +	depends on OF && ARM && ARCH_KINETIS
+> +	if (divider->flags & CLK_DIVIDER_READ_ONLY)
+> +		return 0;
+> +
+>  	value = divider_get_val(rate, parent_rate, divider->table,
+>  				divider->width, divider->flags);
+>  
 
-Doesn't ARCH_KINETIS imply ARM? Seems that we can drop the ARM
-dependency here.
-
-> +	select CLKSRC_OF
->
->
-> diff --git a/drivers/clocksource/timer-kinetis.c b/drivers/clocksource/timer-kinetis.c
-> new file mode 100644
-> index 0000000..634f365
-> --- /dev/null
-> +++ b/drivers/clocksource/timer-kinetis.c
-[..]
-> +
-> +/*
-> + * Clock event device set mode function
-> + */
-> +static void kinetis_clockevent_tmr_set_mode(
-> +	enum clock_event_mode mode, struct clock_event_device *clk)
-
-s/clk/evt/ ?
-
-> +{
-> +	struct kinetis_clock_event_ddata *pit =
-> +		container_of(clk, struct kinetis_clock_event_ddata, evtdev);
-> +
-> +	switch (mode) {
-> +	case CLOCK_EVT_MODE_PERIODIC:
-> +		kinetis_pit_enable(pit->base, 1);
-> +		break;
-> +	case CLOCK_EVT_MODE_ONESHOT:
-> +	case CLOCK_EVT_MODE_UNUSED:
-> +	case CLOCK_EVT_MODE_SHUTDOWN:
-> +	default:
-> +		kinetis_pit_enable(pit->base, 0);
-> +	}
-> +}
-> +
-> +/*
-> + * Configure the timer to generate an interrupt in the specified amount of ticks
-> + */
-> +static int kinetis_clockevent_tmr_set_next_event(
-> +	unsigned long delta, struct clock_event_device *c)
-> +{
-> +	struct kinetis_clock_event_ddata *pit =
-> +		container_of(c, struct kinetis_clock_event_ddata, evtdev);
-> +	unsigned long flags;
-> +
-> +	raw_local_irq_save(flags);
-
-What is this protecting against?
-
-> +	kinetis_pit_init(pit->base, delta);
-> +	kinetis_pit_enable(pit->base, 1);
-> +	raw_local_irq_restore(flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct kinetis_clock_event_ddata
-> +		kinetis_clockevent_tmrs[KINETIS_PIT_CHANNELS] = {
-> +	{
-> +		.evtdev = {
-> +			.name		= "fsl,kinetis-pit-timer0",
-> +			.rating		= 200,
-> +			.features	=
-> +			    CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
-> +			.set_mode	= kinetis_clockevent_tmr_set_mode,
-> +			.set_next_event	= kinetis_clockevent_tmr_set_next_event,
-> +		},
-> +	},
-> +	{
-> +		.evtdev = {
-> +			.name		= "fsl,kinetis-pit-timer1",
-> +		},
-> +	},
-> +	{
-> +		.evtdev = {
-> +			.name		= "fsl,kinetis-pit-timer2",
-> +		},
-> +	},
-> +	{
-> +		.evtdev = {
-> +			.name		= "fsl,kinetis-pit-timer3",
-> +		},
-> +	},
-> +};
-> +
-> +/*
-> + * Timer IRQ handler
-> + */
-> +static irqreturn_t kinetis_clockevent_tmr_irq_handler(int irq, void *dev_id)
-> +{
-> +	struct kinetis_clock_event_ddata *tmr = dev_id;
-> +
-> +	KINETIS_PIT_WR(tmr->base, tflg, KINETIS_PIT_TFLG_TIF_MSK);
-> +
-> +	tmr->evtdev.event_handler(&(tmr->evtdev));
-
-Unnecessary parentheses, please remove them.
-
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +/*
-> + * System timer IRQ action
-> + */
-> +static struct irqaction kinetis_clockevent_irqaction[KINETIS_PIT_CHANNELS] = {
-> +	{
-> +		.name = "Kinetis Kernel Time Tick (pit0)",
-> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-> +		.dev_id = &kinetis_clockevent_tmrs[0],
-> +		.handler = kinetis_clockevent_tmr_irq_handler,
-> +	}, {
-> +		.name = "Kinetis Kernel Time Tick (pit1)",
-> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-> +		.dev_id = &kinetis_clockevent_tmrs[1],
-> +		.handler = kinetis_clockevent_tmr_irq_handler,
-> +	}, {
-> +		.name = "Kinetis Kernel Time Tick (pit2)",
-> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-> +		.dev_id = &kinetis_clockevent_tmrs[2],
-> +		.handler = kinetis_clockevent_tmr_irq_handler,
-> +	}, {
-> +		.name = "Kinetis Kernel Time Tick (pit3)",
-> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-> +		.dev_id = &kinetis_clockevent_tmrs[3],
-> +		.handler = kinetis_clockevent_tmr_irq_handler,
-> +	},
-> +};
-
-Any reason we can't just use request_irq() instead of having a set of
-static irq actions?
-
-> +
-> +static void __init kinetis_clockevent_init(struct device_node *np)
-> +{
-[..]
-> irq;
-> +	}
-> +
-> +	chan = of_alias_get_id(np, "pit");
-> +	if ((chan < 0) || (chan >= KINETIS_PIT_CHANNELS)) {
-
-Unnecessary parentheses, please remove them.
+I wonder if it would make more sense to have different ops for
+read only dividers. We would need to have an empty clk_set_rate
+op in the case where the CCF tries to set the rate to what it
+already is and then the proper recalc_rate and round_rate ops for
+read only devices. At the least, this patch looks correct.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
-
