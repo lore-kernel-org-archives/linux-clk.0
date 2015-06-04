@@ -1,60 +1,35 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <556E08B5.7010208@cogentembedded.com>
-Date: Tue, 02 Jun 2015 22:49:09 +0300
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 4 Jun 2015 14:25:11 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: dinguyen@opensource.altera.com
+Cc: mturquette@linaro.org, dinh.linux@gmail.com, geert@linux-m68k.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC/PATCHv2 2/2] clk: socfpga: make use of of_clk_parent_fill
+ helper function
+Message-ID: <20150604212511.GQ676@codeaurora.org>
+References: <1433445153-25320-1-git-send-email-dinguyen@opensource.altera.com>
+ <1433445153-25320-3-git-send-email-dinguyen@opensource.altera.com>
 MIME-Version: 1.0
-To: Cyrille Pitchen <cyrille.pitchen@atmel.com>,
-	nicolas.ferre@atmel.com, boris.brezillon@free-electrons.com,
-	alexandre.belloni@free-electrons.com, linux-clk@vger.kernel.org
-CC: mark.rutland@arm.com, devicetree@vger.kernel.org,
-	pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
-	linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-	galak@codeaurora.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] clk: at91: add a new compatible string for Flexcom
- in the DT documentation
-References: <cover.1433263218.git.cyrille.pitchen@atmel.com> <359f6b85c3a8b51a0ea35bacdbdc0443b9fbedcc.1433263218.git.cyrille.pitchen@atmel.com>
-In-Reply-To: <359f6b85c3a8b51a0ea35bacdbdc0443b9fbedcc.1433263218.git.cyrille.pitchen@atmel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1433445153-25320-3-git-send-email-dinguyen@opensource.altera.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello.
-
-On 06/02/2015 07:49 PM, Cyrille Pitchen wrote:
-
-> This patches documents the new bindings for the Flexcom clock, which will
-> be introduced by Atmel sama5d2x chips.
-
-> Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+On 06/04, dinguyen@opensource.altera.com wrote:
+> From: Dinh Nguyen <dinguyen@opensource.altera.com>
+> 
+> Use of_clk_parent_fill to fill in the parent clock's array.
+> 
+> Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
 > ---
->   .../devicetree/bindings/clock/at91-clock.txt         | 20 ++++++++++++++++++++
->   1 file changed, 20 insertions(+)
+> v2: none
+> ---
+>  drivers/clk/socfpga/clk-gate.c | 6 +-----
+>  drivers/clk/socfpga/clk-pll.c  | 7 +------
+>  2 files changed, 2 insertions(+), 11 deletions(-)
+> 
 
-> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
-> index 7a4d492..df4f40b 100644
-> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
-[...]
-> @@ -461,3 +464,20 @@ For example:
->   		compatible = "atmel,sama5d4-clk-h32mx";
->   		clocks = <&mck>;
->   	};
-> +
-> +Required properties for flexcom clock:
-> +- #clock-cells : from common clock binding; shall be set to 0.
-> +- clocks : shall be the Flexcom peripheral clock from PMC.
-> +- reg : shall be the range for Flexcom dedicated I/O registers (without USART,
-> +  TWI or SPI registers).
-> +- atmel,flexcom-mode : shall be a string value among { "spi", "usart", "i2c",
-> +  "twi" }. "i2c" and "twi" are synonymous.
-> +
-> +For example:
-> +	flx0: flexcom@f8034000 {
+Nice consolidation!
 
-    The ePAPR standard says: "The name of a node should be somewhat generic, 
-reflecting the function of the device and not its precise programming model."
-
-[...]
-
-WBR, Sergei
-
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
