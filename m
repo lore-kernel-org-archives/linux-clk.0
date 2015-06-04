@@ -1,156 +1,88 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org
-Cc: lho@apm.com,
-	ksankaran@apm.com,
-	vkale@apm.com,
-	fkan@apm.co,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Matthias Brugger <matthias.bgg@gmail.com>
-Subject: [PATCH] clk: xgene: Delete duplicated name field
-Date: Wed, 17 Jun 2015 09:21:43 +0200
-Message-Id: <1434525703-3936-1-git-send-email-matthias.bgg@gmail.com>
+Return-Path: <t-kristo@ti.com>
+Message-ID: <556FE171.5010000@ti.com>
+Date: Thu, 4 Jun 2015 08:26:09 +0300
+From: Tero Kristo <t-kristo@ti.com>
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@linaro.org>,
+        Tony Lindgren
+	<tony@atomide.com>
+CC: <balbi@ti.com>, <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <paul@pwsan.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com> <20150526160557.GD16525@atomide.com> <20150526163216.GF16525@atomide.com> <20150526163931.GO26599@saruman.tx.rr.com> <55660D5B.8020607@ti.com> <20150527231536.GD30984@atomide.com> <556EF42A.9000207@ti.com> <20150603231136.6017.65683@quantum>
+In-Reply-To: <20150603231136.6017.65683@quantum>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-X-Gene clocks implement it's name in the clock private struct.
-This is a duplication of the name field. We can delete the field
-and rely on the common implementation to retrieve the name.
+On 06/04/2015 02:11 AM, Michael Turquette wrote:
+> Quoting Tero Kristo (2015-06-03 05:33:46)
+>> On 05/28/2015 02:15 AM, Tony Lindgren wrote:
+>>> * Tero Kristo <t-kristo@ti.com> [150527 11:32]:
+>>>> On 05/26/2015 07:39 PM, Felipe Balbi wrote:
+>>>>> On Tue, May 26, 2015 at 09:32:16AM -0700, Tony Lindgren wrote:
+>>>>>> * Tony Lindgren <tony@atomide.com> [150526 09:08]:
+>>>>>>> * Tero Kristo <t-kristo@ti.com> [150525 08:01]:
+>>>>>>>> Hi,
+>>>>>>>>
+>>>>>>>> As requested, posting v3 with somewhat changed diff parameters and
+>>>>>>>> diffstat attached. Just some minor Makefile changes compared to v2,
+>>>>>>>> these were discussed under that set.
+>>>>>>>>
+>>>>>>>> Set has been pushed to:
+>>>>>>>> - tree: https://github.com/t-kristo/linux-pm.git
+>>>>>>>> - branch: for-4.2/ti-clk-move
+>>>>>>>
+>>>>>>> Looks like this causes a build error for at least omap2 only .config:
+>>>>>>>
+>>>>>>> drivers/clk/ti/dpll3xxx.o:(.rodata+0x1c): multiple definition of `clkhwops_omap3_dpll'
+>>>>>>> drivers/clk/ti/dpll.o:(.rodata+0x0): first defined here
+>>>>>>>
+>>>>>>> You may want to create a file selecting ARCH_OMAP2PLUS=y, then point
+>>>>>>> KCONFIG_ALLCONFIG to that file for make randconfig. Then just build
+>>>>>>> randconfigs :) Usually the issues like this are exposed within few
+>>>>>>> randconfig builds, some take longer if the options have dependencies.
+>>>>>
+>>>>> alternatively, just clone the repository at [1] and use the example
+>>>>> script provided in README.md.
+>>>>>
+>>>>> [1] https://github.com/felipebalbi/omap-seeds
+>>>>>
+>>>>
+>>>> Ok, I pushed an updated branch named: for-4.2/ti-clk-move-v4
+>>>>
+>>>> This definitely compiles with OMAP2 / OMAP3 / OMAP4 / OMAP5 / DRA7 / AM33xx
+>>>> / AM43xx only setups (tried it out.)
+>>>
+>>> Thanks yeah seems to work for me now.
+>>>
+>>> Regards,
+>>>
+>>> Tony
+>>>
+>>
+>> Question to Mike / Stephen, any chance of getting this in during the 4.2
+>> merge anymore seeing we are already at 4.1-rc6?
+>>
+>> I can send a pull request if yes. Otherwise I just wait until we are
+>> past the next merge.
+>
+> Hi Tero,
+>
+> I'd like more time for any regressions this introduces to be fixed, so
+> lets push back to next merge window. The always-wrong-but-never-by-much
+> crystal ball[0] predicts June 14. This is less than two weeks away, so
+> the wait should be short.
 
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
----
- drivers/clk/clk-xgene.c | 28 +++++++++++++---------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
+Ok, I'll rebase this against rc1 and send a pull-request once we have it.
 
-diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
-index dd8a62d..4798896 100644
---- a/drivers/clk/clk-xgene.c
-+++ b/drivers/clk/clk-xgene.c
-@@ -60,7 +60,6 @@ enum xgene_pll_type {
- 
- struct xgene_clk_pll {
- 	struct clk_hw	hw;
--	const char	*name;
- 	void __iomem	*reg;
- 	spinlock_t	*lock;
- 	u32		pll_offset;
-@@ -75,7 +74,7 @@ static int xgene_clk_pll_is_enabled(struct clk_hw *hw)
- 	u32 data;
- 
- 	data = xgene_clk_read(pllclk->reg + pllclk->pll_offset);
--	pr_debug("%s pll %s\n", pllclk->name,
-+	pr_debug("%s pll %s\n", __clk_get_name(hw->clk),
- 		data & REGSPEC_RESET_F1_MASK ? "disabled" : "enabled");
- 
- 	return data & REGSPEC_RESET_F1_MASK ? 0 : 1;
-@@ -113,7 +112,7 @@ static unsigned long xgene_clk_pll_recalc_rate(struct clk_hw *hw,
- 		fref = parent_rate / nref;
- 		fvco = fref * nfb;
- 	}
--	pr_debug("%s pll recalc rate %ld parent %ld\n", pllclk->name,
-+	pr_debug("%s pll recalc rate %ld parent %ld\n", __clk_get_name(hw->clk),
- 		fvco / nout, parent_rate);
- 
- 	return fvco / nout;
-@@ -146,7 +145,6 @@ static struct clk *xgene_register_clk_pll(struct device *dev,
- 	init.parent_names = parent_name ? &parent_name : NULL;
- 	init.num_parents = parent_name ? 1 : 0;
- 
--	apmclk->name = name;
- 	apmclk->reg = reg;
- 	apmclk->lock = lock;
- 	apmclk->pll_offset = pll_offset;
-@@ -210,7 +208,6 @@ struct xgene_dev_parameters {
- 
- struct xgene_clk {
- 	struct clk_hw	hw;
--	const char	*name;
- 	spinlock_t	*lock;
- 	struct xgene_dev_parameters	param;
- };
-@@ -227,7 +224,7 @@ static int xgene_clk_enable(struct clk_hw *hw)
- 		spin_lock_irqsave(pclk->lock, flags);
- 
- 	if (pclk->param.csr_reg != NULL) {
--		pr_debug("%s clock enabled\n", pclk->name);
-+		pr_debug("%s clock enabled\n", __clk_get_name(hw->clk));
- 		/* First enable the clock */
- 		data = xgene_clk_read(pclk->param.csr_reg +
- 					pclk->param.reg_clk_offset);
-@@ -235,7 +232,7 @@ static int xgene_clk_enable(struct clk_hw *hw)
- 		xgene_clk_write(data, pclk->param.csr_reg +
- 					pclk->param.reg_clk_offset);
- 		pr_debug("%s clock PADDR base 0x%016LX clk offset 0x%08X mask 0x%08X value 0x%08X\n",
--			pclk->name, __pa(pclk->param.csr_reg),
-+			__clk_get_name(hw->clk), __pa(pclk->param.csr_reg),
- 			pclk->param.reg_clk_offset, pclk->param.reg_clk_mask,
- 			data);
- 
-@@ -246,7 +243,7 @@ static int xgene_clk_enable(struct clk_hw *hw)
- 		xgene_clk_write(data, pclk->param.csr_reg +
- 					pclk->param.reg_csr_offset);
- 		pr_debug("%s CSR RESET PADDR base 0x%016LX csr offset 0x%08X mask 0x%08X value 0x%08X\n",
--			pclk->name, __pa(pclk->param.csr_reg),
-+			__clk_get_name(hw->clk), __pa(pclk->param.csr_reg),
- 			pclk->param.reg_csr_offset, pclk->param.reg_csr_mask,
- 			data);
- 	}
-@@ -267,7 +264,7 @@ static void xgene_clk_disable(struct clk_hw *hw)
- 		spin_lock_irqsave(pclk->lock, flags);
- 
- 	if (pclk->param.csr_reg != NULL) {
--		pr_debug("%s clock disabled\n", pclk->name);
-+		pr_debug("%s clock disabled\n", __clk_get_name(hw->clk));
- 		/* First put the CSR in reset */
- 		data = xgene_clk_read(pclk->param.csr_reg +
- 					pclk->param.reg_csr_offset);
-@@ -293,10 +290,10 @@ static int xgene_clk_is_enabled(struct clk_hw *hw)
- 	u32 data = 0;
- 
- 	if (pclk->param.csr_reg != NULL) {
--		pr_debug("%s clock checking\n", pclk->name);
-+		pr_debug("%s clock checking\n", __clk_get_name(hw->clk));
- 		data = xgene_clk_read(pclk->param.csr_reg +
- 					pclk->param.reg_clk_offset);
--		pr_debug("%s clock is %s\n", pclk->name,
-+		pr_debug("%s clock is %s\n", __clk_get_name(hw->clk),
- 			data & pclk->param.reg_clk_mask ? "enabled" :
- 							"disabled");
- 	}
-@@ -319,11 +316,13 @@ static unsigned long xgene_clk_recalc_rate(struct clk_hw *hw,
- 		data &= (1 << pclk->param.reg_divider_width) - 1;
- 
- 		pr_debug("%s clock recalc rate %ld parent %ld\n",
--			pclk->name, parent_rate / data, parent_rate);
-+			__clk_get_name(hw->clk),
-+			parent_rate / data, parent_rate);
-+
- 		return parent_rate / data;
- 	} else {
- 		pr_debug("%s clock recalc rate %ld parent %ld\n",
--			pclk->name, parent_rate, parent_rate);
-+			__clk_get_name(hw->clk), parent_rate, parent_rate);
- 		return parent_rate;
- 	}
- }
-@@ -355,7 +354,7 @@ static int xgene_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 		data |= divider;
- 		xgene_clk_write(data, pclk->param.divider_reg +
- 					pclk->param.reg_divider_offset);
--		pr_debug("%s clock set rate %ld\n", pclk->name,
-+		pr_debug("%s clock set rate %ld\n", __clk_get_name(hw->clk),
- 			parent_rate / divider_save);
- 	} else {
- 		divider_save = 1;
-@@ -417,7 +416,6 @@ static struct clk *xgene_register_clk(struct device *dev,
- 	init.parent_names = parent_name ? &parent_name : NULL;
- 	init.num_parents = parent_name ? 1 : 0;
- 
--	apmclk->name = name;
- 	apmclk->lock = lock;
- 	apmclk->hw.init = &init;
- 	apmclk->param = *parameters;
--- 
-1.9.1
+-Tero
+
+>
+> [0] http://phb-crystal-ball.org/
+>
+> Thanks,
+> Mike
+>
+>>
+>> -Tero
