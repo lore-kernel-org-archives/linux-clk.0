@@ -1,104 +1,79 @@
-Return-Path: <manabian@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <5570B783.1050808@ahsoftware.de>
+Date: Thu, 04 Jun 2015 22:39:31 +0200
+From: Alexander Holler <holler@ahsoftware.de>
 MIME-Version: 1.0
-In-Reply-To: <1433864283-25490-2-git-send-email-matthias.bgg@gmail.com>
-References: <1433864283-25490-1-git-send-email-matthias.bgg@gmail.com>
-	<1433864283-25490-2-git-send-email-matthias.bgg@gmail.com>
-Date: Tue, 16 Jun 2015 12:23:28 +0200
-Message-ID: <CAGhQ9VwDQZ77OCOKKd4nFipqRhfa3GVWVMeWC3eiEoh2x9E_CA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] clk: Add regmap support
-From: Joachim  Eastwood <manabian@gmail.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, s.hauer@pengutronix.de,
-	jamesjj.liao@mediatek.com, henryc.chen@mediatek.com,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset=UTF-8
+To: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>
+CC: Rob Herring <robherring2@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	=?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?=
+	<stephane.marchesin@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	dmaengine@vger.kernel.org,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-clk@vger.kernel.org,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>
+Subject: Re: [PATCH 00/21] On-demand device registration
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com> <556F5C24.1030101@linaro.org>
+In-Reply-To: <556F5C24.1030101@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 9 June 2015 at 17:38, Matthias Brugger <matthias.bgg@gmail.com> wrote:
-> Some devices like SoCs from Mediatek need to use the clock
-> through a regmap interface.
-> This patch adds regmap support for the simple multiplexer clock,
-> the divider clock and the clock gate code.
->
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
-> ---
->  drivers/clk/Makefile         |   1 +
->  drivers/clk/clk-divider.c    |  71 ++++++++++++++++++++------
->  drivers/clk/clk-gate.c       |  60 +++++++++++++++++-----
->  drivers/clk/clk-io.c         |  62 +++++++++++++++++++++++
->  drivers/clk/clk-io.h         |  13 +++++
->  drivers/clk/clk-mux.c        |  94 +++++++++++++++++++++++++++++------
->  include/linux/clk-provider.h | 115 +++++++++++++++++++++++++++++++++++++++++--
->  7 files changed, 373 insertions(+), 43 deletions(-)
->  create mode 100644 drivers/clk/clk-io.c
->  create mode 100644 drivers/clk/clk-io.h
-[...]
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 2e5df06..22acfd5 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -14,6 +14,7 @@
->  #include <linux/clk.h>
->  #include <linux/io.h>
->  #include <linux/of.h>
-> +#include <linux/regmap.h>
->
->  #ifdef CONFIG_COMMON_CLK
->
-> @@ -31,6 +32,7 @@
->  #define CLK_GET_RATE_NOCACHE   BIT(6) /* do not use the cached clk rate */
->  #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
->  #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
-> +#define CLK_USE_REGMAP BIT(9) /* clock uses regmap to access its registers */
->
->  struct clk_hw;
->  struct clk_core;
-> @@ -271,6 +273,8 @@ void of_fixed_clk_setup(struct device_node *np);
->   *
->   * @hw:                handle between common and hardware-specific interfaces
->   * @reg:       register controlling gate
-> + * @regmap:    regmap used to control the gate
-> + * @offset:    offset inside the regmap
->   * @bit_idx:   single bit controlling gate
->   * @flags:     hardware-specific flags
->   * @lock:      register lock
-> @@ -288,7 +292,11 @@ void of_fixed_clk_setup(struct device_node *np);
->   */
->  struct clk_gate {
->         struct clk_hw hw;
-> -       void __iomem    *reg;
-> +       union {
-> +               void __iomem    *reg;
-> +               struct regmap   *regmap;
-> +       };
-> +       u32             offset;
+Am 03.06.2015 um 21:57 schrieb Grygorii.Strashko@linaro.org:
 
-Maybe using a named union here would be nice here. Something like:
-union clk_io {
-               void __iomem    *reg;
-               struct regmap   *regmap;
-};
+...
 
-And you could use this in the clk_gate, clk_mux, and clk_div
-structures as well as your clk_io_* functions.
-Having both void __iomem *reg and struct regmap *regmap as function
-parameters seems a bit awkward to me.
+> So few comments from above:
+> - registering devices later during the System boot may improve boot time.
+>   But resolving of all deferred probes may NOT improve boot time ;) 
+>   Have you seen smth like this?
 
-Or maybe even as a structure:
-struct clk_io {
-               union {
-                              void __iomem    *reg;
-                              struct regmap   *regmap;
-               };
-               u32 offset;
-}
+If someone is out for boot time reduction, I think one of the best ways
+would by making driver initialization parallel. Keep in mind that all
+linked in drivers currently are initialized in series.
 
-What do you think?
+As it seems to have been forgotten or overread, I've mentioned in my
+series of patches last year that, with a few changes, it's possible to
+let the algorithm I've used (dfs) to spit out all drivers which can be
+initialized in parallel.
 
+But as I'm not paid for the work I've done and just did it out of
+curiosity, interest or how ever you want name it, I haven't spend any
+more time into that topic, especially as I'm missing the necessary
+connections to get patches into the kernel. ;)
 
-I would also like to see this land so thanks for doing this work Matthias.
-Hope some clk maintainer will have the time to look at it soon also.
+But, as said, it's easy (at least if aren't getting panic when it comes
+to a bit of algorithm theory) to get a list drivers you can start in
+parallel if you have such a complete list of dependencies as DT already
+offers. Just look at the pictures generate by dtc (using my patches),
+you will see, they already show which drivers can be initialized in
+parallel.
 
-regards,
-Joachim Eastwood
+So it would be easy to use e.g. all cores already very early at boot to
+initialize drivers, not just after init got started. Besides that the
+würgaround of defered init (which, btw. leads devs to supress error
+messages, which is especially bad if you are searching a problem) isn't
+needed anymore if you have a list of dependecies (however you get it,
+I've used DT because the dependencies already are all there).
+
+Regards,
+
+Alexander Holler
