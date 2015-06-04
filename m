@@ -1,115 +1,31 @@
-Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 4 Jun 2015 13:52:55 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
+	kernel@stlinux.com, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/5] clk: at91: Use of_clk_get_parent_count() instead of
+ open coding
+Message-ID: <20150604205255.GJ676@codeaurora.org>
+References: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
+ <1432891549-23295-2-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <CAGhQ9VwDQZ77OCOKKd4nFipqRhfa3GVWVMeWC3eiEoh2x9E_CA@mail.gmail.com>
-References: <1433864283-25490-1-git-send-email-matthias.bgg@gmail.com>
-	<1433864283-25490-2-git-send-email-matthias.bgg@gmail.com>
-	<CAGhQ9VwDQZ77OCOKKd4nFipqRhfa3GVWVMeWC3eiEoh2x9E_CA@mail.gmail.com>
-Date: Tue, 16 Jun 2015 16:13:15 +0200
-Message-ID: <CABuKBe+7wk=-PsvzkTLpcc3HX_b3NGXabwR9ckOWvGLH_vjS9g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] clk: Add regmap support
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: Joachim Eastwood <manabian@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>, James Liao <jamesjj.liao@mediatek.com>,
-	HenryC Chen <henryc.chen@mediatek.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1432891549-23295-2-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-2015-06-16 12:23 GMT+02:00 Joachim  Eastwood <manabian@gmail.com>:
-> On 9 June 2015 at 17:38, Matthias Brugger <matthias.bgg@gmail.com> wrote:
->> Some devices like SoCs from Mediatek need to use the clock
->> through a regmap interface.
->> This patch adds regmap support for the simple multiplexer clock,
->> the divider clock and the clock gate code.
->>
->> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
->> ---
->>  drivers/clk/Makefile         |   1 +
->>  drivers/clk/clk-divider.c    |  71 ++++++++++++++++++++------
->>  drivers/clk/clk-gate.c       |  60 +++++++++++++++++-----
->>  drivers/clk/clk-io.c         |  62 +++++++++++++++++++++++
->>  drivers/clk/clk-io.h         |  13 +++++
->>  drivers/clk/clk-mux.c        |  94 +++++++++++++++++++++++++++++------
->>  include/linux/clk-provider.h | 115 +++++++++++++++++++++++++++++++++++++++++--
->>  7 files changed, 373 insertions(+), 43 deletions(-)
->>  create mode 100644 drivers/clk/clk-io.c
->>  create mode 100644 drivers/clk/clk-io.h
-> [...]
->> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
->> index 2e5df06..22acfd5 100644
->> --- a/include/linux/clk-provider.h
->> +++ b/include/linux/clk-provider.h
->> @@ -14,6 +14,7 @@
->>  #include <linux/clk.h>
->>  #include <linux/io.h>
->>  #include <linux/of.h>
->> +#include <linux/regmap.h>
->>
->>  #ifdef CONFIG_COMMON_CLK
->>
->> @@ -31,6 +32,7 @@
->>  #define CLK_GET_RATE_NOCACHE   BIT(6) /* do not use the cached clk rate */
->>  #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
->>  #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
->> +#define CLK_USE_REGMAP BIT(9) /* clock uses regmap to access its registers */
->>
->>  struct clk_hw;
->>  struct clk_core;
->> @@ -271,6 +273,8 @@ void of_fixed_clk_setup(struct device_node *np);
->>   *
->>   * @hw:                handle between common and hardware-specific interfaces
->>   * @reg:       register controlling gate
->> + * @regmap:    regmap used to control the gate
->> + * @offset:    offset inside the regmap
->>   * @bit_idx:   single bit controlling gate
->>   * @flags:     hardware-specific flags
->>   * @lock:      register lock
->> @@ -288,7 +292,11 @@ void of_fixed_clk_setup(struct device_node *np);
->>   */
->>  struct clk_gate {
->>         struct clk_hw hw;
->> -       void __iomem    *reg;
->> +       union {
->> +               void __iomem    *reg;
->> +               struct regmap   *regmap;
->> +       };
->> +       u32             offset;
->
-> Maybe using a named union here would be nice here. Something like:
-> union clk_io {
->                void __iomem    *reg;
->                struct regmap   *regmap;
-> };
->
-> And you could use this in the clk_gate, clk_mux, and clk_div
-> structures as well as your clk_io_* functions.
-> Having both void __iomem *reg and struct regmap *regmap as function
-> parameters seems a bit awkward to me.
->
-> Or maybe even as a structure:
-> struct clk_io {
->                union {
->                               void __iomem    *reg;
->                               struct regmap   *regmap;
->                };
->                u32 offset;
-> }
->
-> What do you think?
->
+On 05/29, Geert Uytterhoeven wrote:
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-The problem with this approach is, that I would have to change all
-clocks which use clk_mux, clk_gate or clk_divider.
-Up to now, i tried to find a solution which does not change the
-existing interface.
-So I would pretty much prefer to hear the opinion from the clk
-maintainers first before starting the crusade. :)
-
-Thanks,
-Matthias
+Applied to clk-next
 
 -- 
-motzblog.wordpress.com
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
