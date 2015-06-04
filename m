@@ -1,105 +1,80 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 7/9] dt-bindings: add documentation of rk3668 clock controller
-Date: Thu, 18 Jun 2015 16:18:34 +0200
-Message-Id: <1434637116-17124-8-git-send-email-heiko@sntech.de>
-In-Reply-To: <1434637116-17124-1-git-send-email-heiko@sntech.de>
-References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
+Return-Path: <paul@pwsan.com>
+Date: Thu, 4 Jun 2015 23:02:25 +0000 (UTC)
+From: Paul Walmsley <paul@pwsan.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+cc: Mike Turquette <mturquette@linaro.org>,
+  Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+  linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+  Shawn Guo <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>,
+  David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>,
+  Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>,
+  Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
+  Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+  Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>,
+  Heiko Stuebner <heiko@sntech.de>,
+  Sylwester Nawrocki <s.nawrocki@samsung.com>,
+  Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>,
+  Viresh Kumar <viresh.linux@gmail.com>,
+  =?ISO-8859-15?Q?Emilio_L=F3pez?= <emilio@elopez.com.ar>,
+  Maxime Ripard <maxime.ripard@free-electrons.com>,
+  Peter De Schrijver <pdeschrijver@nvidia.com>,
+  Prashant Gaikwad <pgaikwad@nvidia.com>,
+  Stephen Warren <swarren@wwwdotorg.org>,
+  Thierry Reding <thierry.reding@gmail.com>,
+  Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>,
+  Ulf Hansson <ulf.hansson@linaro.org>,
+  Michal Simek <michal.simek@xilinx.com>,
+  Philipp Zabel <p.zabel@pengutronix.de>, linux-doc@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+  linux-omap@vger.kernel.org, linux-mips@linux-mips.org,
+  patches@opensource.wolfsonmicro.com, linux-rockchip@lists.infradead.org,
+  linux-samsung-soc@vger.kernel.org, spear-devel@list.st.com,
+  linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+  linux-media@vger.kernel.org, rtc-linux@googlegroups.com
+Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
+In-Reply-To: <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
+Message-ID: <alpine.DEB.2.02.1506042258530.12316@utopia.booyaka.com>
+References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com> <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the devicetree binding for the cru on the rk3368 which quite similar
-structured as previous clock controllers.
+Hi folks
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: Kumar Gala <galak@codeaurora.org>
-Cc: devicetree@vger.kernel.org
----
- .../bindings/clock/rockchip,rk3368-cru.txt         | 61 ++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
+just a brief comment on this one:
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
-new file mode 100644
-index 0000000..7c8bbcf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
-@@ -0,0 +1,61 @@
-+* Rockchip RK3368 Clock and Reset Unit
-+
-+The RK3368 clock controller generates and supplies clock to various
-+controllers within the SoC and also implements a reset controller for SoC
-+peripherals.
-+
-+Required Properties:
-+
-+- compatible: should be "rockchip,rk3368-cru"
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+- #clock-cells: should be 1.
-+- #reset-cells: should be 1.
-+
-+Optional Properties:
-+
-+- rockchip,grf: phandle to the syscon managing the "general register files"
-+  If missing, pll rates are not changeable, due to the missing pll lock status.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume. All available clocks are defined as
-+preprocessor macros in the dt-bindings/clock/rk3368-cru.h headers and can be
-+used in device tree sources. Similar macros exist for the reset sources in
-+these files.
-+
-+External clocks:
-+
-+There are several clocks that are generated outside the SoC. It is expected
-+that they are defined using standard clock bindings with following
-+clock-output-names:
-+ - "xin24m" - crystal input - required,
-+ - "xin32k" - rtc clock - optional,
-+ - "ext_i2s" - external I2S clock - optional,
-+ - "ext_gmac" - external GMAC clock - optional
-+ - "ext_hsadc" - external HSADC clock - optional,
-+ - "ext_isp" - external ISP clock - optional,
-+ - "ext_jtag" - external JTAG clock - optional
-+ - "ext_vip" - external VIP clock - optional,
-+ - "usbotg_out" - output clock of the pll in the otg phy
-+
-+Example: Clock controller node:
-+
-+	cru: clock-controller@ff760000 {
-+		compatible = "rockchip,rk3368-cru";
-+		reg = <0x0 0xff760000 0x0 0x1000>;
-+		rockchip,grf = <&grf>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+Example: UART controller node that consumes the clock generated by the clock
-+  controller:
-+
-+	uart0: serial@10124000 {
-+		compatible = "snps,dw-apb-uart";
-+		reg = <0x10124000 0x400>;
-+		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-+		reg-shift = <2>;
-+		reg-io-width = <1>;
-+		clocks = <&cru SCLK_UART0>;
-+	};
--- 
-2.1.4
+On Thu, 30 Apr 2015, Boris Brezillon wrote:
+
+> Clock rates are stored in an unsigned long field, but ->round_rate()
+> (which returns a rounded rate from a requested one) returns a long
+> value (errors are reported using negative error codes), which can lead
+> to long overflow if the clock rate exceed 2Ghz.
+> 
+> Change ->round_rate() prototype to return 0 or an error code, and pass the
+> requested rate as a pointer so that it can be adjusted depending on
+> hardware capabilities.
+
+...
+
+> diff --git a/Documentation/clk.txt b/Documentation/clk.txt
+> index 0e4f90a..fca8b7a 100644
+> --- a/Documentation/clk.txt
+> +++ b/Documentation/clk.txt
+> @@ -68,8 +68,8 @@ the operations defined in clk.h:
+>  		int		(*is_enabled)(struct clk_hw *hw);
+>  		unsigned long	(*recalc_rate)(struct clk_hw *hw,
+>  						unsigned long parent_rate);
+> -		long		(*round_rate)(struct clk_hw *hw,
+> -						unsigned long rate,
+> +		int		(*round_rate)(struct clk_hw *hw,
+> +						unsigned long *rate,
+>  						unsigned long *parent_rate);
+>  		long		(*determine_rate)(struct clk_hw *hw,
+>  						unsigned long rate,
+
+I'd suggest that we should probably go straight to 64-bit rates.  There 
+are already plenty of clock sources that can generate rates higher than 
+4GiHz.
+
+
+- Paul
