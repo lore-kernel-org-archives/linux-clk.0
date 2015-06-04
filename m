@@ -1,93 +1,188 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:12908 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752755AbbF2V3Y (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2015 17:29:24 -0400
-From: Ray Jui <rjui@broadcom.com>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Dan Carpenter <dan.carpenter@oracle.com>
-CC: <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	Scott Branden <sbranden@broadcom.com>,
-	<linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>
-Subject: [PATCH 1/2] clk: iproc: fix memory leak from clock name
-Date: Mon, 29 Jun 2015 14:30:09 -0700
-Message-ID: <1435613410-18698-2-git-send-email-rjui@broadcom.com>
-In-Reply-To: <1435613410-18698-1-git-send-email-rjui@broadcom.com>
-References: <1435613410-18698-1-git-send-email-rjui@broadcom.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 4 Jun 2015 14:46:16 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sergej Sawazki <ce3a@gmx.de>
+Cc: mturquette@linaro.org, jsarha@ti.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2] clk: add gpio controlled clock multiplexer
+Message-ID: <20150604214616.GS676@codeaurora.org>
+References: <1432458082-18299-1-git-send-email-ce3a@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1432458082-18299-1-git-send-email-ce3a@gmx.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-of_property_read_string_index takes array of pointers and assign them to
-strings read from device tree property. No additional memory allocation
-is needed prior to calling of_property_read_string_index. In fact, since
-the array of pointers will be re-assigned to other strings, any memory
-that it points to prior to calling of_property_read_string_index will be
-leaked
+On 05/24, Sergej Sawazki wrote:
+> diff --git a/drivers/clk/clk-gpio-mux.c b/drivers/clk/clk-gpio-mux.c
+> new file mode 100644
+> index 0000000..8a91d42
+> --- /dev/null
+> +++ b/drivers/clk/clk-gpio-mux.c
+> @@ -0,0 +1,227 @@
+> +/*
+> + * Author: Sergej Sawazki <ce3a@gmx.de>
+> + * Based on clk-gpio-gate.c by Jyri Sarha and ti/mux.c by Tero Kristo
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * Gpio controlled clock multiplexer implementation
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Ray Jui <rjui@broadcom.com>
----
- drivers/clk/bcm/clk-iproc-asiu.c |    6 +-----
- drivers/clk/bcm/clk-iproc-pll.c  |    8 +-------
- 2 files changed, 2 insertions(+), 12 deletions(-)
+What's module.h used for? We need export.h for the
+EXPORT_SYMBOL_GPL usage though.
 
-diff --git a/drivers/clk/bcm/clk-iproc-asiu.c b/drivers/clk/bcm/clk-iproc-asiu.c
-index e19c09c..f630e1b 100644
---- a/drivers/clk/bcm/clk-iproc-asiu.c
-+++ b/drivers/clk/bcm/clk-iproc-asiu.c
-@@ -222,10 +222,6 @@ void __init iproc_asiu_setup(struct device_node *node,
- 		struct iproc_asiu_clk *asiu_clk;
- 		const char *clk_name;
- 
--		clk_name = kzalloc(IPROC_CLK_NAME_LEN, GFP_KERNEL);
--		if (WARN_ON(!clk_name))
--			goto err_clk_register;
--
- 		ret = of_property_read_string_index(node, "clock-output-names",
- 						    i, &clk_name);
- 		if (WARN_ON(ret))
-@@ -259,7 +255,7 @@ void __init iproc_asiu_setup(struct device_node *node,
- 
- err_clk_register:
- 	for (i = 0; i < num_clks; i++)
--		kfree(asiu->clks[i].name);
-+		clk_unregister(asiu->clk_data.clks[i]);
- 	iounmap(asiu->gate_base);
- 
- err_iomap_gate:
-diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
-index 46fb84b..a8d971b 100644
---- a/drivers/clk/bcm/clk-iproc-pll.c
-+++ b/drivers/clk/bcm/clk-iproc-pll.c
-@@ -655,10 +655,6 @@ void __init iproc_pll_clk_setup(struct device_node *node,
- 		memset(&init, 0, sizeof(init));
- 		parent_name = node->name;
- 
--		clk_name = kzalloc(IPROC_CLK_NAME_LEN, GFP_KERNEL);
--		if (WARN_ON(!clk_name))
--			goto err_clk_register;
--
- 		ret = of_property_read_string_index(node, "clock-output-names",
- 						    i, &clk_name);
- 		if (WARN_ON(ret))
-@@ -690,10 +686,8 @@ void __init iproc_pll_clk_setup(struct device_node *node,
- 	return;
- 
- err_clk_register:
--	for (i = 0; i < num_clks; i++) {
--		kfree(pll->clks[i].name);
-+	for (i = 0; i < num_clks; i++)
- 		clk_unregister(pll->clk_data.clks[i]);
--	}
- 
- err_pll_register:
- 	if (pll->asiu_base)
+> +#include <linux/slab.h>
+> +#include <linux/gpio.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/of_gpio.h>
+
+Do we need the of_gpio include? We can't get everything we need
+from gpio/consumer.h?
+
+> +#include <linux/err.h>
+> +#include <linux/device.h>
+> +
+[...]
+> +/**
+> + * clk_register_gpio_mux - register a gpio clock mux with the clock framework
+> + * @dev: device that is registering this clock
+> + * @name: name of this clock
+> + * @parent_names: names of this clock's parents
+> + * @num_parents: number of parents listed in @parent_names
+> + * @gpiod: gpio descriptor to select the parent of this clock multiplexer
+> + * @clk_flags: optional flags for basic clock
+> + */
+> +struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
+> +		const char **parent_names, u8 num_parents,
+> +		struct gpio_desc *gpiod, unsigned long clk_flags)
+> +{
+> +	struct clk_gpio_mux *clk_gpio_mux;
+> +	struct clk *clk;
+> +	struct clk_init_data init = { NULL };
+
+	struct clk_init_data init = { }
+
+is preferred style.
+
+> +	unsigned long gpio_flags;
+> +	int err;
+> +
+> +	if (dev)
+> +		clk_gpio_mux = devm_kzalloc(dev, sizeof(struct clk_gpio_mux),
+
+	sizeof(*clk_gpio_mux)
+
+is preferred style
+
+> +				GFP_KERNEL);
+> +	else
+> +		clk_gpio_mux = kzalloc(sizeof(struct clk_gpio_mux), GFP_KERNEL);
+> +
+
+ditto.
+
+> +	if (!clk_gpio_mux)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +}
+[...]
+> +
+> +struct clk_gpio_mux_delayed_register_data {
+> +	struct device_node *node;
+> +	struct mutex lock;
+> +	struct clk *clk;
+> +};
+> +
+> +static struct clk *of_clk_gpio_mux_delayed_register_get(
+> +		struct of_phandle_args *clkspec,
+> +		void *_data)
+> +{
+> +	struct clk_gpio_mux_delayed_register_data *data = _data;
+> +	struct clk *clk;
+> +	const char *clk_name = data->node->name;
+> +	int i, num_parents;
+> +	const char **parent_names;
+> +	struct gpio_desc *gpiod;
+> +	int gpio;
+> +
+> +	mutex_lock(&data->lock);
+> +
+> +	if (data->clk) {
+> +		mutex_unlock(&data->lock);
+> +		return data->clk;
+> +	}
+> +
+> +	gpio = of_get_named_gpio_flags(data->node, "select-gpios", 0, NULL);
+> +	if (!gpio_is_valid(gpio))
+> +		goto err_gpio;
+> +	gpiod = gpio_to_desc(gpio);
+> +
+> +	num_parents = of_clk_get_parent_count(data->node);
+> +	if (num_parents != 2) {
+> +		pr_err("mux-clock %s must have 2 parents\n", data->node->name);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
+> +	if (!parent_names) {
+> +		kfree(parent_names);
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+> +
+> +	for (i = 0; i < num_parents; i++)
+> +		parent_names[i] = of_clk_get_parent_name(data->node, i);
+> +
+> +	clk = clk_register_gpio_mux(NULL, clk_name, parent_names, num_parents,
+> +			gpiod, 0);
+> +	if (IS_ERR(clk)) {
+> +		mutex_unlock(&data->lock);
+> +		return clk;
+> +	}
+> +
+> +	data->clk = clk;
+> +	mutex_unlock(&data->lock);
+> +
+> +	return clk;
+> +
+> +err_gpio:
+> +	mutex_unlock(&data->lock);
+> +	if (gpio == -EPROBE_DEFER)
+> +		pr_debug("%s: %s: GPIOs not yet available, retry later\n",
+> +				clk_name, __func__);
+> +	else
+> +		pr_err("%s: %s: Can't get GPIOs\n",
+> +				clk_name, __func__);
+> +
+> +	return ERR_PTR(gpio);
+> +}
+> +
+> +/**
+> + * of_gpio_mux_clk_setup() - Setup function for gpio controlled clock mux
+> + */
+> +void __init of_gpio_mux_clk_setup(struct device_node *node)
+> +{
+> +	struct clk_gpio_mux_delayed_register_data *data;
+> +
+> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return;
+> +
+> +	data->node = node;
+> +	mutex_init(&data->lock);
+> +
+> +	of_clk_add_provider(node, of_clk_gpio_mux_delayed_register_get, data);
+> +}
+> +EXPORT_SYMBOL_GPL(of_gpio_mux_clk_setup);
+> +CLK_OF_DECLARE(gpio_mux_clk, "gpio-mux-clock", of_gpio_mux_clk_setup);
+
+Please find a way to share most of this code with the other gpio
+based clock provider. Putting the two types of gpio clocks into the
+same file would probably work.
+
 -- 
-1.7.9.5
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
