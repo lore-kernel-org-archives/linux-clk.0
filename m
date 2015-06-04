@@ -1,93 +1,46 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sun, 14 Jun 2015 21:30:52 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [GIT PULL] Allwinner late clock changes for 4.2
-Message-ID: <20150614193052.GA22385@lukather>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 4 Jun 2015 14:19:04 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>,
+	Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v3 4/5] clk: scpi: add support for cpufreq virtual device
+Message-ID: <20150604211904.GO676@codeaurora.org>
+References: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com>
+ <1432720398-5701-5-git-send-email-sudeep.holla@arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1432720398-5701-5-git-send-email-sudeep.holla@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 05/27, Sudeep Holla wrote:
+> The clocks for the CPUs are provided by SCP and are managed by this
+> clock driver. So the cpufreq device needs to be added only after the
+> clock get registered and removed when this driver is unloaded.
+> 
+> This patch manages the cpufreq virtual device based on the clock
+> availability.
+> 
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Mike Turquette <mturquette@linaro.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
+> Cc: linux-clk@vger.kernel.org
+> ---
 
---EeQfGwPcQSOJBaQU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Hi Mike, Stephen,
 
-I totally forgot to send you this pull request with these two patches
-before.
+I guess there's no better place for this right now.
 
-Given that they're pretty minor (one "simple" clock addition and one
-fix) and that they've been in linux-next for quite some time now, and
-have been tested by kernelci, I hope you'll consider it for inclusion.
-
-Sorry for that,
-Maxime
-
-The following changes since commit b787f68c36d49bb1d9236f403813641efa74a031:
-
-  Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/su=
-nxi-clocks-for-4.2
-
-for you to fetch changes up to ec80749dfd859b560e8864d665d38d7a63e6a7f2:
-
-  clk: sunxi: Add support for the usb-clk on sun8i a23 and a33 SoCs (2015-0=
-6-02 10:24:39 +0200)
-
-----------------------------------------------------------------
-Allwinner clocks additions for 4.2
-
-One error fix, and one patch to add support for the USB clock found on the
-Allwinner A23 and A33
-
-----------------------------------------------------------------
-Hans de Goede (1):
-      clk: sunxi: Add support for the usb-clk on sun8i a23 and a33 SoCs
-
-Maxime Ripard (1):
-      clk: sunxi: Fix of_io_request_and_map error check
-
- Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
- drivers/clk/sunxi/clk-sun9i-core.c                | 10 +++++-----
- drivers/clk/sunxi/clk-sunxi.c                     |  2 ++
- drivers/clk/sunxi/clk-usb.c                       | 11 +++++++++++
- 4 files changed, 19 insertions(+), 5 deletions(-)
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---EeQfGwPcQSOJBaQU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVfdZsAAoJEBx+YmzsjxAgPw8P/1yRcSVqNyVl9Yyyd9K05FOZ
-cWdKGIbre7bLH4LRrqPCChBuFH963NdnX5JW5qJZIzrgKIZIWfUdFNAvS34oJ2Ij
-3C6MMN58w56FtKtxT36fxRhQJ4IqXFEtrWVEK7vfslycwbhOscTL9e7mfJ9BKaKo
-W6htoWh+lp+fcdtxtMPhkPtTkjywAQ4A10AZvlsnqIM2+1JG9vy67Rpg1q//Ts4r
-e+yi8+teFiJ4sKI0JBY7v1XnQzTWg6GcEyhDX6lQ84Ji2ufKO8Ged5GXeSpjdx7J
-gJlEUVe2HmkJGKaLR1odILAxR+5NFAjXYCeIJ9m3wLiZwHtg9q7zm0aH6QKmgeKo
-NcPPRklKiZz9oT1OvYe4X7pARi72mgCvGAKGdo1mqICwTCzGNJYCS0wqo5ImOtub
-j3m9vj2nZLUkiRsiNCSydQikBTN5DkgWth5VdWTLTLP/YCQ6gjX7u7Y/efM6WhU3
-HbcHQRIvIfpDxK9CtqpyssvBOr3umNkGC7kjMl17iCinFstskakknuEtRxTw4DD2
-U7VSwXisB6pWAsbDuS5xDaZD/uYUC+cCEtx0IfIxq18bUlUZi2lYnegIsvkFuAKk
-E9CbDx5hnQXTSBWxnrCf6r89CphWPT5Dy8BqZOOdVKUZR+VcIOUvR4pcqW9s5yMx
-dZxkCXqMj0ygX6Fu1U28
-=RZ7Z
------END PGP SIGNATURE-----
-
---EeQfGwPcQSOJBaQU--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
