@@ -1,62 +1,73 @@
-Return-Path: <vigneshr@ti.com>
-From: Vignesh R <vigneshr@ti.com>
-To: Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
-        Thierry
- Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Pawel
- Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell
-	<ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Benoit
- Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell
- King <linux@arm.linux.org.uk>,
-        Mike Turquette <mturquette@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        Vignesh
- R <vigneshr@ti.com>
-Subject: [PATCH 0/5] Add support for PWMSS on DRA7
-Date: Mon, 1 Jun 2015 17:23:29 +0530
-Message-ID: <1433159614-437-1-git-send-email-vigneshr@ti.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 4 Jun 2015 18:21:25 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-kernel@vger.kernel.org,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] drivers/clk: convert sunxi/clk-mod0.c to use
+ builtin_platform_driver
+Message-ID: <20150604162125.GN23777@lukather>
+References: <1431287385-1526-1-git-send-email-paul.gortmaker@windriver.com>
+ <1433358578-9579-1-git-send-email-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7//HIyYuZny8+TsE"
+In-Reply-To: <1433358578-9579-1-git-send-email-paul.gortmaker@windriver.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--7//HIyYuZny8+TsE
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Jun 03, 2015 at 03:09:38PM -0400, Paul Gortmaker wrote:
+> This driver builds based on obj-y and hence will not ever be
+> modular.  Change it to use the non-modular registration so that it
+> won't suffer a compile fail once a header move places the modular
+> registration within the module.h file.
+>=20
+> Cc: "Emilio L=F3pez" <emilio@elopez.com.ar>
+> Cc: Mike Turquette <mturquette@linaro.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-This patch series adds support for PWMSS on DRA7. The IP is same as that
-present in AM33XX and AM43XX.
-The first patch changes clock domain in which PWMSS is present
-(l4per2_7xx_clkdm) to SW_WKUP. This is because legacy IPs like PWM
-does'nt support HW_AUTO prorperly. Hence, switch clock domain to
-SW_WKUP. This is based on the input from the hardware team.
-The rest of the patches add hwmod and dt entries and enable PWMSS on
-DRA7 based SoCs.
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
+Thanks!
+Maxime
 
-Vignesh R (5):
-  ARM: OMAP2+: DRA7: clockdomain: change l4per2_7xx_clkdm to SW_WKUP
-  ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
-  ARM: dts: DRA7: Add TBCLK for PWMSS
-  clk: ti: DRA7: Add tbclk data for ehrpwm
-  ARM: dts: DRA7: Add dt nodes for PWMSS
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
- .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       |   8 +
- .../devicetree/bindings/pwm/pwm-tipwmss.txt        |  17 +-
- arch/arm/boot/dts/dra7.dtsi                        |  69 ++++++
- arch/arm/boot/dts/dra7xx-clocks.dtsi               |  26 +++
- arch/arm/mach-omap2/clockdomains7xx_data.c         |   2 +-
- arch/arm/mach-omap2/omap_hwmod_7xx_data.c          | 239 +++++++++++++++++++++
- drivers/clk/ti/clk-7xx.c                           |   3 +
- 7 files changed, 362 insertions(+), 2 deletions(-)
+--7//HIyYuZny8+TsE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
--- 
-2.4.1
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVcHsFAAoJEBx+YmzsjxAg6lYP/i0yArCyRaQthW1e/BNKy8WM
+x4f3WKjdunSAka5BCKP3lea1qiSzjPcH5v3tmwUDFCHmLniJdjnN2m9bm3uq0mfQ
+321YoQ1UWfeGv76K0+nC//D0c2+w7GGFB74sewwKgOR8ie5mkiHDEVbLK2zaogDA
+VavS4rJfB+p4hGBCttf/sJu1+6s5cdWqlYMtCNH43kreDH9RcTPNxRsjAF6ny4/Q
+1vGnJUSEfVAglp4QZns4VdEB8L+UAODj9GIU21ILFjuKFoHHMIzjY5biicB8o+4X
+yBxHn1anRB2tQ7Uz3Er7hLAx4rqy7BGMmSsW//Hc9M1ilBFafVL8HQHThDqwkwv2
+TOx+dSN27mxG/gwtUT78v2ibuSl93Slx6vqcPKg5gGoXIKZo0nSLqJbwf8vWvLye
+KBuijF/kj8w5ZpKFR93wubQ2YYGeUH0HLHBk9Amoe1QQ7PDKKXAqvxmvXE0td6gp
+XftiUzODc1ErgmbgU4z4Usdp7roxWUFJv6JW0s/ZodCAQkxqd7hwkDxVPNvY6bSV
+kvFtk+0Y15DTJWU4Uw8kr76sw0rhDHwwIH1cwS62Y5JeHyDjc6Y/7cWD9ZlQSopi
+IhBSwC4ZEXjbTrs69dDPQNHZps1YjbQHalQvmY1dAccGWIBIMoXUWd8QzkyYF4aU
+PuXHQeO+UReaEH4Ewi0N
+=wYcW
+-----END PGP SIGNATURE-----
+
+--7//HIyYuZny8+TsE--
