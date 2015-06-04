@@ -1,38 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:59711 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753373AbbFVXE6 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jun 2015 19:04:58 -0400
-Date: Mon, 22 Jun 2015 16:04:56 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	uclinux-h8-devel@lists.sourceforge.jp,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: h8300: Fix signness bug
-Message-ID: <20150622230456.GJ22132@codeaurora.org>
-References: <1434785223.6159.3.camel@ingics.com>
+Return-Path: <dinguyen@opensource.altera.com>
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <geert@linux-m68k.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Dinh Nguyen
+	<dinguyen@opensource.altera.com>
+Subject: [RFC/PATCHv2 0/2]  clk: of: add helper function to fill parent clock array
+Date: Thu, 4 Jun 2015 14:12:31 -0500
+Message-ID: <1433445153-25320-1-git-send-email-dinguyen@opensource.altera.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1434785223.6159.3.camel@ingics.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/20, Axel Lin wrote:
-> of_clk_get_parent_count() may return negative error code, so num_parents
-> needs to be int rather than unsigned int.
-> 
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> ---
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-Hmph. I don't recall being Cced on this clk driver and it looks
-to be in linux-next via h8300 architecture tree. This patch
-should probably be squashed into the patch that introduced the
-problem.
+Hi,
+
+As suggested by Stephen Boyd, this patch adds a helper function that will fill
+the parent clock array.
+
+Since the following code is sprinkled all over the platform clock drivers:
+
+for (i = 0; i < num_parents; ++i)
+        parent_names[i] = of_clk_get_parent_name(np, i);
+
+The above code can be replace by of_clk_parent_fill(). And since the logic
+of the of_clk_parent_fill is to walk the clock node to find the parent, it is
+easy to just return the number of parents as well.
+
+The second patch makes use of the new helper function in the SoCFPGA platform.
+If this patch is accepted, I can go through and replace the other platforms
+after that.
+
+v2: use unsigned int for 'size'
+
+Thanks,
+
+Dinh Nguyen (2):
+  clk: of: helper for filling parent clock array and return num of
+    parents
+  clk: socfpga: make use of of_clk_parent_fill helper function
+
+ drivers/clk/clk.c              | 20 ++++++++++++++++++++
+ drivers/clk/socfpga/clk-gate.c |  6 +-----
+ drivers/clk/socfpga/clk-pll.c  |  7 +------
+ include/linux/clk-provider.h   |  1 +
+ 4 files changed, 23 insertions(+), 11 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
---
-To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+2.2.1
