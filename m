@@ -1,89 +1,75 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-ID: <5570BD32.9020705@ahsoftware.de>
-Date: Thu, 04 Jun 2015 23:03:46 +0200
-From: Alexander Holler <holler@ahsoftware.de>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 4 Jun 2015 15:27:52 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 0/7] clk: sunxi: Add support for the Audio PLL
+Message-ID: <20150604132752.GM23777@lukather>
+References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-To: Rob Clark <robdclark@gmail.com>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-	linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
-	"moderated list:ARM/S5P EXYNOS AR..."
-	<linux-samsung-soc@vger.kernel.org>,
-	Grant Likely <grant.likely@linaro.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	=?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?=
-	<stephane.marchesin@gmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	dmaengine@vger.kernel.org
-Subject: Re: [PATCH 00/21] On-demand device registration
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CAF6AEGuOP-3sxDQcNOjVmfP4ue6LmY7KFrj9W75aHKuvZpTFMw@mail.gmail.com>
-In-Reply-To: <CAF6AEGuOP-3sxDQcNOjVmfP4ue6LmY7KFrj9W75aHKuvZpTFMw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-pm-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qdlkwHn4NkwSqFTO"
+In-Reply-To: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am 03.06.2015 um 23:12 schrieb Rob Clark:
-> On Mon, May 25, 2015 at 10:53 AM, Tomeu Vizoso
-> <tomeu.vizoso@collabora.com> wrote:
->> Hello,
->>
->> I have a problem with the panel on my Tegra Chromebook taking longer than
->> expected to be ready during boot (Stéphane Marchesin reported what is
->> basically the same issue in [0]), and have looked into ordered probing as a
->> better way of solving this than moving nodes around in the DT or playing with
->> initcall levels.
->>
->> While reading the thread [1] that Alexander Holler started with his series to
->> make probing order deterministic, it occurred to me that it should be possible
->> to achieve the same by registering devices as they are referenced by other
->> devices.
->>
->> This basically reuses the information that is already implicit in the probe()
->> implementations, saving us from refactoring existing drivers or adding
->> information to DTBs.
->>
->> Something I'm not completely happy with is that I have had to move the call to
->> of_platform_populate after all platform drivers have been registered.
->> Otherwise I don't see how I could register drivers on demand as we don't have
->> yet each driver's compatible strings.
->>
->> For machs that don't move of_platform_populate() to a later point, these
->> patches shouldn't cause any problems but it's not guaranteed that we'll avoid
->> all the deferred probes as some drivers may not be registered yet.
->>
->> I have tested this on boards with Tegra, iMX.6 and Exynos SoCs, and these
->> patches were enough to eliminate all the deferred probes.
->>
->> With this series I get the kernel to output to the panel in 0.5s, instead of 2.8s.
-> 
-> So, complete drive-by comment (and I won't claim to be a DT expert,
-> etc, etc, so take this with a few grains of salt), but why not push
-> the problem to the DT compiler (or a pre-process step that could be
-> run on existing DT blobs), which generates an optional DT node that is
-> the recommended probe order?  That seems like it avoids adding
-> complexity into the early boot code (which seems like a good thing)..
 
-I've played with that approach too (as my patches for dtc do contain the
-same code I've put into the kernel, but decided that it doesn't make
-much sense. The sort algorithm is really small (some dozen lines), very
-fast (around 3-5ms on a omap) and might be later used to sort necessary
-module loading too. So there would be no advantage to put a sorted list
-into the DT. And having the sort algorithm in the kernel, would make it
-possible to use it for acpi or something else too, if they manage it to
-provide the necessary dependencies.
+--qdlkwHn4NkwSqFTO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
+Hi Mike, Stephen,
 
-Alexander Holler
+On Thu, May 21, 2015 at 10:53:59PM +0200, Maxime Ripard wrote:
+> Hi,
+>=20
+> This serie adds support for the PLL2 aka the Audio PLL on the
+> Allwinner A10 and the later SoCs.
+>=20
+> This is the first stepping stone to get the audio support merged.
+>=20
+> This serie is built on top of a generic clk-factor driver to handle
+> clock that multiply their parent clock rate (mostly PLL's), in order
+> to provide the driver for the PLL2 base clock, and then adds the
+> drivers for the clock that derive from the Audio PLL.
+>=20
+> Thanks!
+> Maxime
+>=20
 
+Any comments on that (especially the first patch)?
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--qdlkwHn4NkwSqFTO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVcFJYAAoJEBx+YmzsjxAghxQP/jZf+MTPLwm30pL8iNOsSYFv
+v/sq55+vuxByK/dPhbzu5yd34WenwC601BFqq8Lj+5UlBvqawqKczCkofVfW4Qc0
+9FbKNHelc2R5Ra0iXZj/kAMrW21YekptRphVEzOiL7NknpD30OEKwKdmGEZ0CvXt
+kXQGA9CtWLHX2CdvqUq9GBmzjktX5PI3A5+lPlR5STUB1+ZoQn70eYRxns/BXc4f
+BsPmmSw35iu95x9eai5EdMnt8/0BtAL2jFpic8JPKCl2Ia4JXCo0xlhqiZJAWEsR
+SKnFbcVtiYeWofustKUdS4e8xGa8c0NSI2rzQAF3tIsg12YGuNyuyFdFxvYO71M0
+DtphKjI6Jz58erdawtef9Ij2FYqmxCoylgU4wAiFyJyci5Qjj+2iG+PQ10Q3ypAg
+9ZQNVG0ZWkVj5BOOBktEvCc0PANZpHC8INywQBXbaCu6gk2/MrLtozMjy501Zx6D
+ZpEwEpmz2lyv4VsV4g0JNMCXWVhqdcc1zqhKpXuZnypz5sqV+nKsBTR3/IAzgjxB
+NNve7aPnnFcd/TpPs9QG2fs0aOsVMche1IdDm0ICSjjkw5xX+H+PCflZ0rzQ82Ym
+uqYYOGWN74fKamy7PuycVEPqJqPkTSBIdIGotvqVyxbL7ihEsxUdeLOCKKlyRRbR
+/Qz4mkCo/Bid0KyCcKvR
+=KW+k
+-----END PGP SIGNATURE-----
+
+--qdlkwHn4NkwSqFTO--
