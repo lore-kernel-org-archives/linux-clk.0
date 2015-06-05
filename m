@@ -1,67 +1,81 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:58673 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753904AbbFRKc1 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jun 2015 06:32:27 -0400
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Sasha Levin <sasha.levin@oracle.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Mike Turquette <mturquette@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	=?UTF-8?q?Ji=C5=99=C3=AD=20Prchal?= <jiri.prchal@aksignal.cz>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH] clk: at91: fix determine_rate prototype (again)
-Date: Thu, 18 Jun 2015 12:32:23 +0200
-Message-Id: <1434623543-10517-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <dinguyen@opensource.altera.com>
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
+Subject: [PATCHv3 2/2] clk: socfpga: make use of of_clk_parent_fill helper function
+Date: Fri, 5 Jun 2015 11:26:14 -0500
+Message-ID: <1433521574-31052-3-git-send-email-dinguyen@opensource.altera.com>
+In-Reply-To: <1433521574-31052-1-git-send-email-dinguyen@opensource.altera.com>
+References: <1433521574-31052-1-git-send-email-dinguyen@opensource.altera.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit ae74ea64ccdb8b99ee2618b58020263d5b1d9b22 ("clk: at91: usb:
-propagate rate modification to the parent clk") was a backport of a bug
-fix applied in 4.0, but in the meantime the ->determine_rate() prototype
-has changed, thus introduction a prototype mismatch bug in pre-4.0
-kernels. This prototype mismatch was supposed to be fixed by commit
-76723e7ed589998384a080e29204df4659c67cf2, which fix the bug on 3.19 kernels,
-but the ->determine_rate() has also changed between 3.18 and 3.19.
-Hopefully this patch will definitely fix the prototype mismatch for 3.18.
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Reported-by: Jiří Prchal <jiri.prchal@aksignal.cz>
-Tested-by: Jiří Prchal <jiri.prchal@aksignal.cz>
-Fixes: 76723e7ed589998384a080e29204df4659c67cf2 ("clk: at91: usb: fix
-determine_rate prototype")
-Cc: <stable@vger.kernel.org> # 3.18
+Use of_clk_parent_fill to fill in the parent clock's array.
+
+Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
 ---
- drivers/clk/at91/clk-usb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v3: none
+v2: none
+---
+ drivers/clk/socfpga/clk-gate.c | 6 +-----
+ drivers/clk/socfpga/clk-pll.c  | 7 +------
+ 2 files changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
-index 0283a57..d0d335d 100644
---- a/drivers/clk/at91/clk-usb.c
-+++ b/drivers/clk/at91/clk-usb.c
-@@ -59,7 +59,7 @@ static unsigned long at91sam9x5_clk_usb_recalc_rate(struct clk_hw *hw,
- static long at91sam9x5_clk_usb_determine_rate(struct clk_hw *hw,
- 					      unsigned long rate,
- 					      unsigned long *best_parent_rate,
--					      struct clk_hw **best_parent_hw)
-+					      struct clk **best_parent_clk)
- {
- 	struct clk *parent = NULL;
- 	long best_rate = -EINVAL;
-@@ -91,7 +91,7 @@ static long at91sam9x5_clk_usb_determine_rate(struct clk_hw *hw,
- 				best_rate = tmp_rate;
- 				best_diff = tmp_diff;
- 				*best_parent_rate = tmp_parent_rate;
--				*best_parent_hw = __clk_get_hw(parent);
-+				*best_parent_clk = parent;
- 			}
+diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
+index dd3a78c..fb5a5d7 100644
+--- a/drivers/clk/socfpga/clk-gate.c
++++ b/drivers/clk/socfpga/clk-gate.c
+@@ -194,7 +194,6 @@ static void __init __socfpga_gate_init(struct device_node *node,
+ 	const char *parent_name[SOCFPGA_MAX_PARENTS];
+ 	struct clk_init_data init;
+ 	int rc;
+-	int i = 0;
  
- 			if (!best_diff || tmp_rate < rate)
+ 	socfpga_clk = kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
+ 	if (WARN_ON(!socfpga_clk))
+@@ -238,12 +237,9 @@ static void __init __socfpga_gate_init(struct device_node *node,
+ 	init.name = clk_name;
+ 	init.ops = ops;
+ 	init.flags = 0;
+-	while (i < SOCFPGA_MAX_PARENTS && (parent_name[i] =
+-			of_clk_get_parent_name(node, i)) != NULL)
+-		i++;
+ 
++	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
+ 	init.parent_names = parent_name;
+-	init.num_parents = i;
+ 	socfpga_clk->hw.hw.init = &init;
+ 
+ 	clk = clk_register(NULL, &socfpga_clk->hw.hw);
+diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
+index de6da95..8f26b52 100644
+--- a/drivers/clk/socfpga/clk-pll.c
++++ b/drivers/clk/socfpga/clk-pll.c
+@@ -92,7 +92,6 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
+ 	struct clk_init_data init;
+ 	struct device_node *clkmgr_np;
+ 	int rc;
+-	int i = 0;
+ 
+ 	of_property_read_u32(node, "reg", &reg);
+ 
+@@ -111,11 +110,7 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
+ 	init.ops = ops;
+ 	init.flags = 0;
+ 
+-	while (i < SOCFPGA_MAX_PARENTS && (parent_name[i] =
+-			of_clk_get_parent_name(node, i)) != NULL)
+-		i++;
+-
+-	init.num_parents = i;
++	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
+ 	init.parent_names = parent_name;
+ 	pll_clk->hw.hw.init = &init;
+ 
 -- 
-1.9.1
-
+2.2.1
