@@ -1,75 +1,86 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 4 Jun 2015 15:27:52 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/7] clk: sunxi: Add support for the Audio PLL
-Message-ID: <20150604132752.GM23777@lukather>
-References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <jonathanh@nvidia.com>
+Message-ID: <557161D1.3040107@nvidia.com>
+Date: Fri, 5 Jun 2015 09:46:09 +0100
+From: Jon Hunter <jonathanh@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qdlkwHn4NkwSqFTO"
-In-Reply-To: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
+To: Paul Walmsley <paul@pwsan.com>, Boris Brezillon
+	<boris.brezillon@free-electrons.com>
+CC: Mike Turquette <mturquette@linaro.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo
+	<shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown
+	<davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman
+	<bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Liviu Dudau
+	<liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi
+	<lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Max Filippov
+	<jcmvbkbc@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Barry Song
+	<baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>,
+	=?UTF-8?B?RW1pbGlvIEzDs3Bleg==?= <emilio@elopez.com.ar>, Maxime Ripard
+	<maxime.ripard@free-electrons.com>, Peter De Schrijver
+	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen
+ Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>, Ulf
+ Hansson <ulf.hansson@linaro.org>, Michal Simek <michal.simek@xilinx.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, <linux-doc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-omap@vger.kernel.org>, <linux-mips@linux-mips.org>,
+	<patches@opensource.wolfsonmicro.com>, <linux-rockchip@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <spear-devel@list.st.com>,
+	<linux-tegra@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-media@vger.kernel.org>, <rtc-linux@googlegroups.com>
+Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
+References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com> <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com> <alpine.DEB.2.02.1506042258530.12316@utopia.booyaka.com>
+In-Reply-To: <alpine.DEB.2.02.1506042258530.12316@utopia.booyaka.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
 
---qdlkwHn4NkwSqFTO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 05/06/15 00:02, Paul Walmsley wrote:
+> Hi folks
+> 
+> just a brief comment on this one:
+> 
+> On Thu, 30 Apr 2015, Boris Brezillon wrote:
+> 
+>> Clock rates are stored in an unsigned long field, but ->round_rate()
+>> (which returns a rounded rate from a requested one) returns a long
+>> value (errors are reported using negative error codes), which can lead
+>> to long overflow if the clock rate exceed 2Ghz.
+>>
+>> Change ->round_rate() prototype to return 0 or an error code, and pass the
+>> requested rate as a pointer so that it can be adjusted depending on
+>> hardware capabilities.
+> 
+> ...
+> 
+>> diff --git a/Documentation/clk.txt b/Documentation/clk.txt
+>> index 0e4f90a..fca8b7a 100644
+>> --- a/Documentation/clk.txt
+>> +++ b/Documentation/clk.txt
+>> @@ -68,8 +68,8 @@ the operations defined in clk.h:
+>>  		int		(*is_enabled)(struct clk_hw *hw);
+>>  		unsigned long	(*recalc_rate)(struct clk_hw *hw,
+>>  						unsigned long parent_rate);
+>> -		long		(*round_rate)(struct clk_hw *hw,
+>> -						unsigned long rate,
+>> +		int		(*round_rate)(struct clk_hw *hw,
+>> +						unsigned long *rate,
+>>  						unsigned long *parent_rate);
+>>  		long		(*determine_rate)(struct clk_hw *hw,
+>>  						unsigned long rate,
+> 
+> I'd suggest that we should probably go straight to 64-bit rates.  There 
+> are already plenty of clock sources that can generate rates higher than 
+> 4GiHz.
 
-Hi Mike, Stephen,
+An alternative would be to introduce to a frequency "base" the default
+could be Hz (for backwards compatibility), but for CPUs we probably only
+care about MHz (or may be kHz) and so 32-bits would still suffice. Even
+if CPUs cared about Hz they could still use Hz, but in that case they
+probably don't care about GHz. Obviously, we don't want to break DT
+compatibility but may be the frequency base could be defined in DT and
+if it is missing then Hz is assumed. Just a thought ...
 
-On Thu, May 21, 2015 at 10:53:59PM +0200, Maxime Ripard wrote:
-> Hi,
->=20
-> This serie adds support for the PLL2 aka the Audio PLL on the
-> Allwinner A10 and the later SoCs.
->=20
-> This is the first stepping stone to get the audio support merged.
->=20
-> This serie is built on top of a generic clk-factor driver to handle
-> clock that multiply their parent clock rate (mostly PLL's), in order
-> to provide the driver for the PLL2 base clock, and then adds the
-> drivers for the clock that derive from the Audio PLL.
->=20
-> Thanks!
-> Maxime
->=20
-
-Any comments on that (especially the first patch)?
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---qdlkwHn4NkwSqFTO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVcFJYAAoJEBx+YmzsjxAghxQP/jZf+MTPLwm30pL8iNOsSYFv
-v/sq55+vuxByK/dPhbzu5yd34WenwC601BFqq8Lj+5UlBvqawqKczCkofVfW4Qc0
-9FbKNHelc2R5Ra0iXZj/kAMrW21YekptRphVEzOiL7NknpD30OEKwKdmGEZ0CvXt
-kXQGA9CtWLHX2CdvqUq9GBmzjktX5PI3A5+lPlR5STUB1+ZoQn70eYRxns/BXc4f
-BsPmmSw35iu95x9eai5EdMnt8/0BtAL2jFpic8JPKCl2Ia4JXCo0xlhqiZJAWEsR
-SKnFbcVtiYeWofustKUdS4e8xGa8c0NSI2rzQAF3tIsg12YGuNyuyFdFxvYO71M0
-DtphKjI6Jz58erdawtef9Ij2FYqmxCoylgU4wAiFyJyci5Qjj+2iG+PQ10Q3ypAg
-9ZQNVG0ZWkVj5BOOBktEvCc0PANZpHC8INywQBXbaCu6gk2/MrLtozMjy501Zx6D
-ZpEwEpmz2lyv4VsV4g0JNMCXWVhqdcc1zqhKpXuZnypz5sqV+nKsBTR3/IAzgjxB
-NNve7aPnnFcd/TpPs9QG2fs0aOsVMche1IdDm0ICSjjkw5xX+H+PCflZ0rzQ82Ym
-uqYYOGWN74fKamy7PuycVEPqJqPkTSBIdIGotvqVyxbL7ihEsxUdeLOCKKlyRRbR
-/Qz4mkCo/Bid0KyCcKvR
-=KW+k
------END PGP SIGNATURE-----
-
---qdlkwHn4NkwSqFTO--
+Jon
