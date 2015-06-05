@@ -1,79 +1,165 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Dan Carpenter <dan.carpenter@oracle.com>, Tomasz Figa <tomasz.figa@gmail.com>,
- Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
- Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- linux-clk@vger.kernel.org,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: samsung: fix cpu clock's flags checking
-Date: Tue, 30 Jun 2015 19:51:32 +0200
-Message-id: <4447533.YDhQZeS4fK@amdc1976>
-In-reply-to: <5592D5AB.2020802@collabora.co.uk>
-References: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
- <7416838.2ZUPGjSqFp@amdc1976> <5592D5AB.2020802@collabora.co.uk>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
+Return-Path: <daniel.thompson@linaro.org>
+Return-Path: <daniel.thompson@linaro.org>
+Message-ID: <55716D9B.4040209@linaro.org>
+Date: Fri, 05 Jun 2015 10:36:27 +0100
+From: Daniel Thompson <daniel.thompson@linaro.org>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Mike Turquette <mturquette@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Kamil Lulko <rev13@wp.pl>, Andreas Farber <afaerber@suse.de>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ patches@linaro.org, linaro-kernel@lists.linaro.org
+Subject: Re: [RFC PATCH 2/3] clk: stm32: Add clock driver for STM32F4[23]xxx
+ devices
+References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org> <1432327273-6810-3-git-send-email-daniel.thompson@linaro.org> <20150604220725.GT676@codeaurora.org>
+In-Reply-To: <20150604220725.GT676@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday, June 30, 2015 07:45:15 PM Javier Martinez Canillas wrote:
-> Hello Bartlomiej,
-> 
-> On 06/30/2015 07:17 PM, Bartlomiej Zolnierkiewicz wrote:
-> > 
-> > Hi,
-> > 
-> > On Tuesday, June 30, 2015 08:27:36 AM Javier Martinez Canillas wrote:
-> >> On Tue, Jun 30, 2015 at 2:06 AM, Krzysztof Kozlowski
-> >> <k.kozlowski@samsung.com> wrote:
-> >> > On 30.06.2015 02:29, Bartlomiej Zolnierkiewicz wrote:
-> >> >> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
-> >> >> incorrectly used as a bit numbers.  Fix it.
-> >> >>
-> >> >> Tested on Exynos4210 based Origen board and on Exynos5250 based
-> >> >> Arndale board.
-> >> >>
-> >> >> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> >> >> Cc: Michael Turquette <mturquette@baylibre.com>
-> >> >> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> >> >> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> >> >> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >> >> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> >> >> ---
-> >> >>  drivers/clk/samsung/clk-cpu.c | 10 +++++-----
-> >> >>  1 file changed, 5 insertions(+), 5 deletions(-)
-> >> >
-> >> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> >> >
-> >> 
-> >> Looks good to me as well.
-> >> 
-> >> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> > 
-> > Krzysztof has noted that I should use your @dowhile0.org e-mail address
-> > instead of @collabora.co.uk one, is this right?
-> >
-> 
-> I don't know what is the policy for tags but Krzysztof is correct that
-> this email address is going away this week so for future patches please
-> use my personal @dowhile0.org address instead.
+On 04/06/15 23:07, Stephen Boyd wrote:
+> On 05/22, Daniel Thompson wrote:
+>> +
+>> +#include <linux/clk.h>
+>
+> Are you using this include?
+>
+>> +#include <linux/clkdev.h>
+>
+> Are you using this include?
 
-OK, I'll update my patches & scripts then.
+Not very much?
 
-Thank you for review.
+Turns out I was relying on these to get kzalloc() defined but there are 
+better headers for me to use for that!
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+>
+>> +#include <linux/err.h>
+>> +#include <linux/io.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/spinlock.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +
+>> +#include <linux/debugfs.h>
+>
+> Are you using this include?
+
+No (this is already gone in v2).
+
+
+>> +static long clk_apb_mul_round_rate(struct clk_hw *hw, unsigned long rate,
+>> +				   unsigned long *prate)
+>> +{
+>> +	struct clk_apb_mul *am = to_clk_apb_mul(hw);
+>> +	unsigned long mult = 1;
+>> +
+>> +	if (readl(base + STM32F4_RCC_CFGR) & BIT(am->bit_idx))
+>> +		mult *= 2;
+>
+> Isn't this the same as mult = 2? I guess we could rely on the
+> compiler to figure out this one.
+
+I'll fix this.
+
+
+>> +
+>> +	if (__clk_get_flags(hw->clk) & CLK_SET_RATE_PARENT) {
+>> +		unsigned long best_parent = rate / mult;
+>> +
+>> +		*prate =
+>> +		    __clk_round_rate(__clk_get_parent(hw->clk), best_parent);
+>> +	}
+>> +
+>> +	return *prate * mult;
+>> +}
+>> +
+>> +static int clk_apb_mul_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +				 unsigned long parent_rate)
+>> +{
+>
+> Why don't we need to do anything here?
+
+This clock cannot change its own rate. It is very nearly a fixed factor 
+clock but with the additional quirk that the "fixed" factor changes 
+depending upon the rate of the parent clock.
+
+This is the same implementation as clk-fixed-factor. I concluded that it 
+returns success because round rate should always result in the set rate 
+for this clock being a nop.
+
+
+>> +	return 0;
+>> +}
+>> +
+>> +static struct clk_ops clk_apb_mul_factor_ops = {
+>
+> const?
+
+Makes sense...
+
+You want a patch for clk-fixed-factor too?
+
+
+>> +struct clk *clk_register_apb_mul(struct device *dev, const char *name,
+>> +				 const char *parent_name, unsigned long flags,
+>> +				 u8 bit_idx)
+>> +{
+>> +	struct clk_apb_mul *am;
+>> +	struct clk_init_data init;
+>> +	struct clk *clk;
+>> +
+>> +	am = kzalloc(sizeof(*am), GFP_KERNEL);
+>> +	if (!am)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	am->bit_idx = bit_idx;
+>> +	am->hw.init = &init;
+>> +
+>> +	init.name = name;
+>> +	init.ops = &clk_apb_mul_factor_ops;
+>> +	init.flags = flags | CLK_IS_BASIC;
+>
+> Is it basic?
+
+Tough question.
+
+The absence of this flag appears grants arch code permission to use 
+secret backdoors to do "weird stuff" but making special assumptions 
+about the type of the clock. This clock keeps its implementation private 
+so noone outside the compilation unit can usefully cast it.
+
+However, it also looks like only omap2 is the only platform that makes 
+these special assumptions so when this code is run on STM32 there is 
+nothing to actually consume the CLK_IS_BASIC flag at runtime.
+
+In other words the flag is useless but, I think, also correctly applied.
+
+I'd be happy to remove it if anyone disagrees with the guesswork above.
+
+Alternatively, I could write a patch to *invert* CLK_IS_BASIC and rename 
+it CLK_CASTABLE on the grounds that only the people doing "weird stuff" 
+should have to care about this flag at all. Any interest in that?
+
+
+>> +	init.parent_names = &parent_name;
+>> +	init.num_parents = 1;
+>> +
+>> +	clk = clk_register(dev, &am->hw);
+>> +
+>> +	if (IS_ERR(clk))
+>> +		kfree(am);
+>> +
+>> +	return clk;
+>> +}
+>> +
+>> +static const char __initdata *sys_parents[] =   { "hsi", NULL, "pll" };
+>
+> __initdata goes after the []
+
+Thanks. I'll fix this.
