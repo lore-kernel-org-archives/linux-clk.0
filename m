@@ -1,77 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:34370 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753610AbbFPPCi (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 16 Jun 2015 11:02:38 -0400
-Received: by pacgb13 with SMTP id gb13so14497565pac.1
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2015 08:02:37 -0700 (PDT)
-From: Kevin Hilman <khilman@kernel.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Tawfik Bayouk <tawfik@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Eran Ben-Avi <benavi@marvell.com>,
-	linux-arm-kernel@lists.infradead.org, <stable@vger.kernel.org>
-Subject: Re: [PATCH] clk: mvebu: flag the crypto clk as CLK_IGNORE_UNUSED
-References: <1434453721-24070-1-git-send-email-boris.brezillon@free-electrons.com>
-Date: Tue, 16 Jun 2015 08:02:34 -0700
-In-Reply-To: <1434453721-24070-1-git-send-email-boris.brezillon@free-electrons.com>
-	(Boris Brezillon's message of "Tue, 16 Jun 2015 13:22:01 +0200")
-Message-ID: <7h381r1yt1.fsf@deeprootsystems.com>
+Return-Path: <sudeep.holla@arm.com>
+Message-ID: <5571D7F5.1030405@arm.com>
+Date: Fri, 05 Jun 2015 18:10:13 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Sudeep Holla <Sudeep.Holla@arm.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ Liviu Dudau <Liviu.Dudau@arm.com>,
+ Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+ "Jon Medhurst (Tixy)" <tixy@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ Kevin Hilman <khilman@kernel.org>,
+ Olof Johansson <olof@lixom.net>, Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v3 3/5] clk: add support for clocks provided by SCP(System
+ Control Processor)
+References: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com> <1432720398-5701-4-git-send-email-sudeep.holla@arm.com> <20150604202009.GI676@codeaurora.org> <55716DA4.2090003@arm.com>
+In-Reply-To: <55716DA4.2090003@arm.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Boris Brezillon <boris.brezillon@free-electrons.com> writes:
 
-> Fixes: 29e623475c50267ee3aaa49ebb6cbe107bce8d2a ("clk: mvebu: add
-> missing CESA gate clk").
 
-Which was:
-
-Reported-by: Kevin Hilman <khilman@linaro.org>
-
-> The crypto SRAM, used by the armada 370 cpuidle code to workaround a bug
-> in the BootROM code, requires the crypto clk to be up and running.
-> Flag the the crypto clk as IGNORE_UNUSED until we add the proper
-> infrastructure to define the crypto SRAM in the DT and reference the crypto
-> clk in this SRAM node.
+On 05/06/15 10:36, Sudeep Holla wrote:
 >
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Cc: <stable@vger.kernel.org> #4.1
-
-> ---
->  drivers/clk/mvebu/armada-370.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/clk/mvebu/armada-370.c b/drivers/clk/mvebu/armada-370.c
-> index c19fd77..7c2a58c 100644
-> --- a/drivers/clk/mvebu/armada-370.c
-> +++ b/drivers/clk/mvebu/armada-370.c
-> @@ -163,7 +163,7 @@ static const struct clk_gating_soc_desc a370_gating_desc[] __initconst = {
->  	{ "pex1", "pex1_en", 9, 0 },
->  	{ "sata0", NULL, 15, 0 },
->  	{ "sdio", NULL, 17, 0 },
-> -	{ "crypto", NULL, 23, 0 },
-> +	{ "crypto", NULL, 23, CLK_IGNORE_UNUSED }
+> On 04/06/15 21:20, Stephen Boyd wrote:
+>> On 05/27, Sudeep Holla wrote:
 
-Doesn't compile.  Needs trailing ','
+[...]
 
->  	{ "tdm", NULL, 25, 0 },
->  	{ "ddr", NULL, 28, CLK_IGNORE_UNUSED },
->  	{ "sata1", NULL, 30, 0 },
+>>> +
+>>> +static unsigned long scpi_clk_recalc_rate(struct clk_hw *hw,
+>>> +					  unsigned long parent_rate)
+>>> +{
+>>> +	struct scpi_clk *clk = to_scpi_clk(hw);
+>>> +
+>>> +	return scpi_ops->clk_get_val(clk->id);
+>>> +}
+>>> +
+>>> +static long scpi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+>>> +				unsigned long *parent_rate)
+>>> +{
+>>> +	struct scpi_clk *clk = to_scpi_clk(hw);
+>>> +
+>>> +	if (WARN_ON(clk->rate_min && rate < clk->rate_min))
+>>> +		rate = clk->rate_min;
+>>> +	if (WARN_ON(clk->rate_max && rate > clk->rate_max))
+>>> +		rate = clk->rate_max;
+>>> +
+>>> +	return rate;
+>>> +}
+>>
+>> Hm.. this seems really generic. It might be better to support a
+>> way to tell the framework to limit the min/max rate that's
+>> accepted for a clk. That could be done later though.
+>>
+>
+> True, framework have some boundary checks in place. I will check if
+> I can use it with minimum changes to the core. If not, we can take this
+> up later as you suggested.
+>
 
-With that fixed, I tested this on top of next-20150615 where mirabox was
-previously broken and I confirm it's now working.
+I found that the framework already provides clk_set_rate_range for this
+purpose. Sorry for missing this earlier(seems like that's added quite
+recently in v4.0). I think I still need to retain round_rate as the core
+framework insists.
 
-Tested-by: Kevin Hilman <khilman@linaro.org>
-
-Kevin
+Regards,
+Sudeep
