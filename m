@@ -1,295 +1,98 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Paul Osmialowski <pawelo@king.net.pl>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-	dmaengine@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Nicolas Pitre <nicolas.pitre@linaro.org>,
-	Paul Bolle <pebolle@tiscali.nl>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-	Paul Osmialowski <pawelo@king.net.pl>,
-	Anson Huang <b20788@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Jingchang Lu <jingchang.lu@freescale.com>,
-	Rob Herring <r.herring@freescale.com>,
-	Yuri Tikhonov <yur@emcraft.com>,
-	Sergei Poselenov <sposelenov@emcraft.com>,
-	Alexander Potashev <aspotashev@emcraft.com>
-Subject: [PATCH v2 6/9] arm: twr-k70f120m: extend Freescale eDMA driver with the ability to support Kinetis SoC
-Date: Tue, 30 Jun 2015 14:27:27 +0200
-Message-Id: <1435667250-28299-7-git-send-email-pawelo@king.net.pl>
-In-Reply-To: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Fri, 5 Jun 2015 13:38:03 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Paul Walmsley <paul@pwsan.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Shawn Guo
+ <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown
+ <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman
+ <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Liviu Dudau
+ <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo
+ Pieralisi <lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>,
+ Max Filippov <jcmvbkbc@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa
+ <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>, Viresh Kumar
+ <viresh.linux@gmail.com>, Emilio =?UTF-8?B?TMOzcGV6?=
+ <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+ <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry
+ Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+ Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Michal
+ Simek <michal.simek@xilinx.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-mips@linux-mips.org, patches@opensource.wolfsonmicro.com,
+ linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ spear-devel@list.st.com, linux-tegra@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ rtc-linux@googlegroups.com
+Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
+Message-ID: <20150605133803.59990a66@bbrezillon>
+In-Reply-To: <alpine.DEB.2.02.1506042258530.12316@utopia.booyaka.com>
+References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
+ <alpine.DEB.2.02.1506042258530.12316@utopia.booyaka.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Surprisingly small amount of work was required in order to extend already
-existing eDMA driver with the support for Kinetis SoC architecture.
+Hi Paul,
 
-Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
----
- Documentation/devicetree/bindings/dma/fsl-edma.txt |  38 ++++++-
- drivers/dma/fsl-edma.c                             | 114 ++++++++++++++++-----
- 2 files changed, 125 insertions(+), 27 deletions(-)
+On Thu, 4 Jun 2015 23:02:25 +0000 (UTC)
+Paul Walmsley <paul@pwsan.com> wrote:
 
-diff --git a/Documentation/devicetree/bindings/dma/fsl-edma.txt b/Documentation/devicetree/bindings/dma/fsl-edma.txt
-index 191d7bd..88c3e20 100644
---- a/Documentation/devicetree/bindings/dma/fsl-edma.txt
-+++ b/Documentation/devicetree/bindings/dma/fsl-edma.txt
-@@ -9,6 +9,7 @@ group, DMAMUX0 or DMAMUX1, but not both.
- Required properties:
- - compatible :
- 	- "fsl,vf610-edma" for eDMA used similar to that on Vybrid vf610 SoC
-+	- "fsl,kinetis-edma" for eDMA used similar to that on Kinetis SoC
- - reg : Specifies base physical address(s) and size of the eDMA registers.
- 	The 1st region is eDMA control register's address and size.
- 	The 2nd and the 3rd regions are programmable channel multiplexing
-@@ -16,7 +17,8 @@ Required properties:
- - interrupts : A list of interrupt-specifiers, one for each entry in
- 	interrupt-names.
- - interrupt-names : Should contain:
--	"edma-tx" - the transmission interrupt
-+	"edma-tx" - the transmission interrupt (Vybrid)
-+	"edma-tx-n,m" - interrupt for channels n (0-15) and m (16-31) (Kinetis)
- 	"edma-err" - the error interrupt
- - #dma-cells : Must be <2>.
- 	The 1st cell specifies the DMAMUX(0 for DMAMUX0 and 1 for DMAMUX1).
-@@ -28,6 +30,7 @@ Required properties:
- - clock-names : A list of channel group clock names. Should contain:
- 	"dmamux0" - clock name of mux0 group
- 	"dmamux1" - clock name of mux1 group
-+	"edma"    - clock gate for whole controller (Kinetis only)
- - clocks : A list of phandle and clock-specifier pairs, one for each entry in
- 	clock-names.
- 
-@@ -54,6 +57,39 @@ edma0: dma-controller@40018000 {
- 		<&clks VF610_CLK_DMAMUX1>;
- };
- 
-+edma: dma-controller@40008000 {
-+	compatible = "fsl,kinetis-edma";
-+	reg = <0x40008000 0x2000>, /* DMAC */
-+		<0x40021000 0x1000>, /* DMAMUX0 */
-+		<0x40022000 0x1000>; /* DMAMUX1 */
-+	#dma-cells = <2>;
-+	dma-channels = <32>;
-+	interrupts =	 <0>,  <1>,  <2>,  <3>,
-+			 <4>,  <5>,  <6>,  <7>,
-+			 <8>,  <9>, <10>, <11>,
-+			<12>, <13>, <14>, <15>,
-+			<16>;
-+	interrupt-names = "edma-tx-0,16",
-+			  "edma-tx-1,17",
-+			  "edma-tx-2,18",
-+			  "edma-tx-3,19",
-+			  "edma-tx-4,20",
-+			  "edma-tx-5,21",
-+			  "edma-tx-6,22",
-+			  "edma-tx-7,23",
-+			  "edma-tx-8,24",
-+			  "edma-tx-9,25",
-+			  "edma-tx-10,26",
-+			  "edma-tx-11,27",
-+			  "edma-tx-12,28",
-+			  "edma-tx-13,29",
-+			  "edma-tx-14,30",
-+			  "edma-tx-15,31",
-+			  "edma-err";
-+	clocks = <&mcg_cclk_gate 6 1>,
-+		 <&mcg_pclk_gate 5 1>, <&mcg_pclk_gate 5 2>;
-+	clock-names = "edma", "dmamux0", "dmamux1";
-+};
- 
- * DMA clients
- DMA client drivers that uses the DMA function must use the format described
-diff --git a/drivers/dma/fsl-edma.c b/drivers/dma/fsl-edma.c
-index 915eec3..e41a3b9 100644
---- a/drivers/dma/fsl-edma.c
-+++ b/drivers/dma/fsl-edma.c
-@@ -164,13 +164,13 @@ struct fsl_edma_desc {
- struct fsl_edma_engine {
- 	struct dma_device	dma_dev;
- 	void __iomem		*membase;
-+	struct clk		*clk;
- 	void __iomem		*muxbase[DMAMUX_NR];
- 	struct clk		*muxclk[DMAMUX_NR];
- 	struct mutex		fsl_edma_mutex;
- 	u32			n_chans;
--	int			txirq;
--	int			errirq;
- 	bool			big_endian;
-+	bool			kinetis;
- 	struct fsl_edma_chan	chans[];
- };
- 
-@@ -788,42 +788,85 @@ static void fsl_edma_free_chan_resources(struct dma_chan *chan)
- }
- 
- static int
--fsl_edma_irq_init(struct platform_device *pdev, struct fsl_edma_engine *fsl_edma)
-+fsl_edma_irq_init(struct platform_device *pdev,
-+		  struct fsl_edma_engine *fsl_edma)
- {
-+	struct device_node *np = pdev->dev.of_node;
-+	int irq, errirq;
- 	int ret;
- 
--	fsl_edma->txirq = platform_get_irq_byname(pdev, "edma-tx");
--	if (fsl_edma->txirq < 0) {
--		dev_err(&pdev->dev, "Can't get edma-tx irq.\n");
--		return fsl_edma->txirq;
--	}
--
--	fsl_edma->errirq = platform_get_irq_byname(pdev, "edma-err");
--	if (fsl_edma->errirq < 0) {
-+	errirq = platform_get_irq_byname(pdev, "edma-err");
-+	if (errirq < 0) {
- 		dev_err(&pdev->dev, "Can't get edma-err irq.\n");
--		return fsl_edma->errirq;
-+		return irq;
- 	}
- 
--	if (fsl_edma->txirq == fsl_edma->errirq) {
--		ret = devm_request_irq(&pdev->dev, fsl_edma->txirq,
--				fsl_edma_irq_handler, 0, "eDMA", fsl_edma);
--		if (ret) {
--			dev_err(&pdev->dev, "Can't register eDMA IRQ.\n");
--			 return  ret;
-+	if (fsl_edma->kinetis) {
-+		int i;
-+		int irqs = of_irq_count(np);
-+
-+		if (irqs <= 1) {
-+			dev_err(&pdev->dev, "Wrong eDMA irq count %d\n", irqs);
-+			return -EINVAL;
- 		}
--	} else {
--		ret = devm_request_irq(&pdev->dev, fsl_edma->txirq,
-+
-+		for (i = 0; i < (irqs - 1); i++) {
-+			char irq_name[32];
-+
-+			sprintf(irq_name, "edma-tx-%d,%d", i, 16 + i);
-+			irq = platform_get_irq_byname(pdev, irq_name);
-+			if (irq < 0) {
-+				dev_err(&pdev->dev, "Can't get %s irq.\n",
-+							irq_name);
-+				return irq;
-+			}
-+
-+			ret = devm_request_irq(&pdev->dev, irq,
- 				fsl_edma_tx_handler, 0, "eDMA tx", fsl_edma);
--		if (ret) {
--			dev_err(&pdev->dev, "Can't register eDMA tx IRQ.\n");
--			return  ret;
-+			if (ret) {
-+				dev_err(&pdev->dev, "Can't register %s IRQ.\n",
-+							irq_name);
-+				return  ret;
-+			}
- 		}
- 
--		ret = devm_request_irq(&pdev->dev, fsl_edma->errirq,
--				fsl_edma_err_handler, 0, "eDMA err", fsl_edma);
-+		ret = devm_request_irq(&pdev->dev, errirq,
-+			fsl_edma_err_handler, 0, "eDMA err", fsl_edma);
- 		if (ret) {
- 			dev_err(&pdev->dev, "Can't register eDMA err IRQ.\n");
--			return  ret;
-+		return  ret;
-+		}
-+	} else {
-+		irq = platform_get_irq_byname(pdev, "edma-tx");
-+		if (irq < 0) {
-+			dev_err(&pdev->dev, "Can't get edma-tx irq.\n");
-+			return irq;
-+		}
-+
-+		if (irq == errirq) {
-+			ret = devm_request_irq(&pdev->dev, irq,
-+				fsl_edma_irq_handler, 0, "eDMA", fsl_edma);
-+			if (ret) {
-+				dev_err(&pdev->dev,
-+						"Can't register eDMA IRQ.\n");
-+				return  ret;
-+			}
-+		} else {
-+			ret = devm_request_irq(&pdev->dev, irq,
-+				fsl_edma_tx_handler, 0, "eDMA tx", fsl_edma);
-+			if (ret) {
-+				dev_err(&pdev->dev,
-+					    "Can't register eDMA tx IRQ.\n");
-+				return  ret;
-+			}
-+
-+			ret = devm_request_irq(&pdev->dev, errirq,
-+				fsl_edma_err_handler, 0, "eDMA err", fsl_edma);
-+			if (ret) {
-+				dev_err(&pdev->dev,
-+					    "Can't register eDMA err IRQ.\n");
-+				return  ret;
-+			}
- 		}
- 	}
- 
-@@ -851,6 +894,7 @@ static int fsl_edma_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	fsl_edma->n_chans = chans;
-+	fsl_edma->kinetis = of_device_is_compatible(np, "fsl,kinetis-edma");
- 	mutex_init(&fsl_edma->fsl_edma_mutex);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -858,6 +902,20 @@ static int fsl_edma_probe(struct platform_device *pdev)
- 	if (IS_ERR(fsl_edma->membase))
- 		return PTR_ERR(fsl_edma->membase);
- 
-+	if (fsl_edma->kinetis) {
-+		fsl_edma->clk = devm_clk_get(&pdev->dev, "edma");
-+		if (IS_ERR(fsl_edma->clk)) {
-+			dev_err(&pdev->dev, "Missing EDMA clock.\n");
-+			return PTR_ERR(fsl_edma->clk);
-+		}
-+
-+		ret = clk_prepare_enable(fsl_edma->clk);
-+		if (ret) {
-+			dev_err(&pdev->dev, "EDMA clk failed.\n");
-+			return ret;
-+		}
-+	}
-+
- 	for (i = 0; i < DMAMUX_NR; i++) {
- 		char clkname[32];
- 
-@@ -956,10 +1014,14 @@ static int fsl_edma_remove(struct platform_device *pdev)
- 	for (i = 0; i < DMAMUX_NR; i++)
- 		clk_disable_unprepare(fsl_edma->muxclk[i]);
- 
-+	if (fsl_edma->kinetis)
-+		clk_disable_unprepare(fsl_edma->clk);
-+
- 	return 0;
- }
- 
- static const struct of_device_id fsl_edma_dt_ids[] = {
-+	{ .compatible = "fsl,kinetis-edma", },
- 	{ .compatible = "fsl,vf610-edma", },
- 	{ /* sentinel */ }
- };
+> Hi folks
+> 
+> just a brief comment on this one:
+> 
+> On Thu, 30 Apr 2015, Boris Brezillon wrote:
+> 
+> > Clock rates are stored in an unsigned long field, but ->round_rate()
+> > (which returns a rounded rate from a requested one) returns a long
+> > value (errors are reported using negative error codes), which can lead
+> > to long overflow if the clock rate exceed 2Ghz.
+> > 
+> > Change ->round_rate() prototype to return 0 or an error code, and pass the
+> > requested rate as a pointer so that it can be adjusted depending on
+> > hardware capabilities.
+> 
+> ...
+> 
+> > diff --git a/Documentation/clk.txt b/Documentation/clk.txt
+> > index 0e4f90a..fca8b7a 100644
+> > --- a/Documentation/clk.txt
+> > +++ b/Documentation/clk.txt
+> > @@ -68,8 +68,8 @@ the operations defined in clk.h:
+> >  		int		(*is_enabled)(struct clk_hw *hw);
+> >  		unsigned long	(*recalc_rate)(struct clk_hw *hw,
+> >  						unsigned long parent_rate);
+> > -		long		(*round_rate)(struct clk_hw *hw,
+> > -						unsigned long rate,
+> > +		int		(*round_rate)(struct clk_hw *hw,
+> > +						unsigned long *rate,
+> >  						unsigned long *parent_rate);
+> >  		long		(*determine_rate)(struct clk_hw *hw,
+> >  						unsigned long rate,
+> 
+> I'd suggest that we should probably go straight to 64-bit rates.  There 
+> are already plenty of clock sources that can generate rates higher than 
+> 4GiHz.
+
+Yep, that was something I was considering too. If Stephen agrees I'll
+change that in the next version.
+BTW, you're referring to the second version of this patch, but things
+have changed a bit: Stephen recommended to only modify the
+->determine_rate() prototype and pass a structure instead of a list of
+arguments.
+Here is the last version of this series [1].
+
+Best Regards,
+
+Boris
+
+[1]http://patchwork.linux-mips.org/patch/10092/
+
 -- 
-2.3.6
-
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
