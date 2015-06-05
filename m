@@ -1,91 +1,57 @@
-Return-Path: <linux-omap-owner@vger.kernel.org>
-From: Keerthy <j-keerthy@TI.COM>
-To: <linux-omap@vger.kernel.org>, <tony@atomide.com>
-CC: <galak@codeaurora.org>, <t-kristo@TI.COM>, <pawel.moll@arm.com>,
-	<linux-kernel@vger.kernel.org>, <paul@pwsan.com>,
-	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>,
-	<j-keerthy@TI.COM>
-Subject: [PATCH 1/6] ARM: OMAP4: PRM: Remove hardcoding of PRM_IO_PMCTRL_OFFSET register
-Date: Mon, 22 Jun 2015 11:52:51 +0530
-Message-ID: <1434954176-9605-2-git-send-email-j-keerthy@ti.com>
-In-Reply-To: <1434954176-9605-1-git-send-email-j-keerthy@ti.com>
-References: <1434954176-9605-1-git-send-email-j-keerthy@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-omap-owner@vger.kernel.org
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: [PATCH v2 1/5] clk: qcom: Add support for read-only rcg2 ops
+Date: Fri,  5 Jun 2015 15:40:32 +0300
+Message-Id: <1433508036-28644-2-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1433508036-28644-1-git-send-email-georgi.djakov@linaro.org>
+References: <1433508036-28644-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-PRM_IO_PMCTRL_OFFSET need not be same for all SOCs hence
-remove hardcoding and use the value provided by the omap_prcm_irq_setup
-structure.
+Some root clock generators can be controlled by other processors. In this
+case modifying them is not recommended. By using the read-only operations,
+the child clocks will be able to get information about their parent - like
+rate etc.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
+Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
- arch/arm/mach-omap2/prcm-common.h |  1 +
- arch/arm/mach-omap2/prm44xx.c     | 11 ++++++-----
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ drivers/clk/qcom/clk-rcg.h  |    1 +
+ drivers/clk/qcom/clk-rcg2.c |    7 +++++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/arch/arm/mach-omap2/prcm-common.h b/arch/arm/mach-omap2/prcm-common.h
-index 6ae0b3a..2e60406 100644
---- a/arch/arm/mach-omap2/prcm-common.h
-+++ b/arch/arm/mach-omap2/prcm-common.h
-@@ -494,6 +494,7 @@ struct omap_prcm_irq {
- struct omap_prcm_irq_setup {
- 	u16 ack;
- 	u16 mask;
-+	u16 pm_ctrl;
- 	u8 nr_regs;
- 	u8 nr_irqs;
- 	const struct omap_prcm_irq *irqs;
-diff --git a/arch/arm/mach-omap2/prm44xx.c b/arch/arm/mach-omap2/prm44xx.c
-index 4541700..8149e5a 100644
---- a/arch/arm/mach-omap2/prm44xx.c
-+++ b/arch/arm/mach-omap2/prm44xx.c
-@@ -45,6 +45,7 @@ static const struct omap_prcm_irq omap4_prcm_irqs[] = {
- static struct omap_prcm_irq_setup omap4_prcm_irq_setup = {
- 	.ack			= OMAP4_PRM_IRQSTATUS_MPU_OFFSET,
- 	.mask			= OMAP4_PRM_IRQENABLE_MPU_OFFSET,
-+	.pm_ctrl		= OMAP4_PRM_IO_PMCTRL_OFFSET,
- 	.nr_regs		= 2,
- 	.irqs			= omap4_prcm_irqs,
- 	.nr_irqs		= ARRAY_SIZE(omap4_prcm_irqs),
-@@ -306,10 +307,10 @@ static void omap44xx_prm_reconfigure_io_chain(void)
- 	omap4_prm_rmw_inst_reg_bits(OMAP4430_WUCLK_CTRL_MASK,
- 				    OMAP4430_WUCLK_CTRL_MASK,
- 				    inst,
--				    OMAP4_PRM_IO_PMCTRL_OFFSET);
-+				    omap4_prcm_irq_setup.pm_ctrl);
- 	omap_test_timeout(
- 		(((omap4_prm_read_inst_reg(inst,
--					   OMAP4_PRM_IO_PMCTRL_OFFSET) &
-+					   omap4_prcm_irq_setup.pm_ctrl) &
- 		   OMAP4430_WUCLK_STATUS_MASK) >>
- 		  OMAP4430_WUCLK_STATUS_SHIFT) == 1),
- 		MAX_IOPAD_LATCH_TIME, i);
-@@ -319,10 +320,10 @@ static void omap44xx_prm_reconfigure_io_chain(void)
- 	/* Trigger WUCLKIN disable */
- 	omap4_prm_rmw_inst_reg_bits(OMAP4430_WUCLK_CTRL_MASK, 0x0,
- 				    inst,
--				    OMAP4_PRM_IO_PMCTRL_OFFSET);
-+				    omap4_prcm_irq_setup.pm_ctrl);
- 	omap_test_timeout(
- 		(((omap4_prm_read_inst_reg(inst,
--					   OMAP4_PRM_IO_PMCTRL_OFFSET) &
-+					   omap4_prcm_irq_setup.pm_ctrl) &
- 		   OMAP4430_WUCLK_STATUS_MASK) >>
- 		  OMAP4430_WUCLK_STATUS_SHIFT) == 0),
- 		MAX_IOPAD_LATCH_TIME, i);
-@@ -350,7 +351,7 @@ static void __init omap44xx_prm_enable_io_wakeup(void)
- 	omap4_prm_rmw_inst_reg_bits(OMAP4430_GLOBAL_WUEN_MASK,
- 				    OMAP4430_GLOBAL_WUEN_MASK,
- 				    inst,
--				    OMAP4_PRM_IO_PMCTRL_OFFSET);
-+				    omap4_prcm_irq_setup.pm_ctrl);
- }
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index 56028bb31d87..706a55b34b81 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -169,6 +169,7 @@ struct clk_rcg2 {
+ #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
  
- /**
--- 
-1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+ extern const struct clk_ops clk_rcg2_ops;
++extern const struct clk_ops clk_rcg2_ro_ops;
+ extern const struct clk_ops clk_edp_pixel_ops;
+ extern const struct clk_ops clk_byte_ops;
+ extern const struct clk_ops clk_pixel_ops;
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index b95d17fbb8d7..cb17fd4b193f 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -301,6 +301,13 @@ const struct clk_ops clk_rcg2_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_ops);
+ 
++const struct clk_ops clk_rcg2_ro_ops = {
++	.is_enabled = clk_rcg2_is_enabled,
++	.get_parent = clk_rcg2_get_parent,
++	.recalc_rate = clk_rcg2_recalc_rate,
++};
++EXPORT_SYMBOL_GPL(clk_rcg2_ro_ops);
++
+ struct frac_entry {
+ 	int num;
+ 	int den;
