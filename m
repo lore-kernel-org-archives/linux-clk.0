@@ -1,113 +1,51 @@
-Return-Path: <mike.looijmans@topicproducts.com>
-Message-ID: <556D6CB4.30900@topic.nl>
-Date: Tue, 2 Jun 2015 10:43:32 +0200
-From: Mike Looijmans <mike.looijmans@topic.nl>
+Return-Path: <dinguyen@opensource.altera.com>
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
+Subject: [PATCHv3 0/2] clk: of: add helper function to fill parent clock array
+Date: Fri, 5 Jun 2015 11:26:12 -0500
+Message-ID: <1433521574-31052-1-git-send-email-dinguyen@opensource.altera.com>
 MIME-Version: 1.0
-To: Paul Bolle <pebolle@tiscali.nl>
-CC: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@linaro.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: Re: [PATCH v3] Add TI CDCE925 I2C controlled clock synthesizer driver
-References: <1433153623-29205-1-git-send-email-mike.looijmans@topic.nl> <1433231444.2361.75.camel@x220>
-In-Reply-To: <1433231444.2361.75.camel@x220>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-=EF=BB=BFOn 02-06-15 09:50, Paul Bolle wrote:
-> On Mon, 2015-06-01 at 12:13 +0200, Mike Looijmans wrote:
->> --- /dev/null
->> +++ b/drivers/clk/clk-cdce925.c
->
->> +static int cdce925_regmap_i2c_write(
->> +	void *context, const void *data, size_t count)
->
->> +	dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
->> +			reg_data[0], reg_data[1]);
->
-> For some silly reason (ie, I mistakenly thought I spotted an issue) I
-> did a quick build of this file. That triggered some noise on x86_64.
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-Indeed, I hadn't verified building on a 64-bit platform, and the format str=
-ing=20
-is incorrect.
+Hi,
 
-Thanks for spotting it and suggesting a fix, I'll integrate it in a v4 patc=
-h.
+As suggested by Stephen Boyd, this patch adds a helper function that will fill
+the parent clock array.
 
-Out of curiousity, I did try a compile on the x86 host, but couldn't select=
-=20
-the driver because it depends on CONFIG_OF, so I just compiled if for the A=
-RM=20
-target to verify that it still compiles in kernel 4.1. How did you manage t=
-o=20
-compile the driver on the x86?
+Since the following code is sprinkled all over the platform clock drivers:
 
+for (i = 0; i < num_parents; ++i)
+        parent_names[i] = of_clk_get_parent_name(np, i);
 
-> Excerpt:
->
-> drivers/clk/clk-cdce925.c: In function =E2=80=98cdce925_regmap_i2c_write=
-=E2=80=99:
-> include/linux/dynamic_debug.h:64:16: warning: format =E2=80=98%u=E2=80=99=
- expects argument of type =E2=80=98unsigned int=E2=80=99, but argument 5 ha=
-s type =E2=80=98size_t=E2=80=99 [-Wformat=3D]
->    static struct _ddebug  __aligned(8)   \
->                  ^
-> [...]
-> drivers/clk/clk-cdce925.c:505:2: note: in expansion of macro =E2=80=98dev=
-_dbg=E2=80=99
->    dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
->    ^
->
-> A quick look at Documentation/printk-formats.txt suggested this (very
-> lightly tested) fix:
-> @@ -502,7 +502,7 @@ static int cdce925_regmap_i2c_write(
->          reg_data[0] =3D CDCE925_I2C_COMMAND_BYTE_TRANSFER | ((u8 *)data)=
-[0];
->          reg_data[1] =3D ((u8 *)data)[1];
->
-> -       dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
-> +       dev_dbg(&i2c->dev, "%s(%zu) %#x %#x\n", __func__, count,
->                          reg_data[0], reg_data[1]);
->
->          ret =3D i2c_master_send(i2c, reg_data, count);
->
->> +static int cdce925_regmap_i2c_read(void *context,
->> +	   const void *reg, size_t reg_size, void *val, size_t val_size)
->
->> +		dev_dbg(&i2c->dev, "%s(%u, %u) %#x %#x\n", __func__,
->> +				reg_size, val_size, reg_data[0], *((u8 *)val));
->
-> Likewise:
-> @@ -547,7 +547,7 @@ static int cdce925_regmap_i2c_read(void *context,
->
->          ret =3D i2c_transfer(i2c->adapter, xfer, 2);
->          if (likely(ret =3D=3D 2)) {
-> -               dev_dbg(&i2c->dev, "%s(%u, %u) %#x %#x\n", __func__,
-> +               dev_dbg(&i2c->dev, "%s(%zu, %zu) %#x %#x\n", __func__,
->                                  reg_size, val_size, reg_data[0], *((u8 *=
-)val));
->                  return 0;
->          } else if (ret < 0)
->
-> Thanks,
->
->
-> Paul Bolle
->
+The above code can be replace by of_clk_parent_fill(). And since the logic
+of the of_clk_parent_fill is to walk the clock node to find the parent, it is
+easy to just return the number of parents as well.
 
+The second patch makes use of the new helper function in the SoCFPGA platform.
+If this patch is accepted, I can go through and replace the other platforms
+after that.
 
+v3: shorten and clean up function comment, use EXPORT_SYMBOL_GPL
+v2: use unsigned int for size
 
-Kind regards,
+Thanks,
 
-Mike Looijmans
-System Expert
+Dinh Nguyen (2):
+  clk: of: helper for filling parent clock array and return num of
+    parents
+  clk: socfpga: make use of of_clk_parent_fill helper function
 
-TOPIC Embedded Products
-Eindhovenseweg 32-C, NL-5683 KH Best
-Postbus 440, NL-5680 AK Best
-Telefoon: +31 (0) 499 33 69 79
-Telefax: +31 (0) 499 33 69 70
-E-mail: mike.looijmans@topicproducts.com
-Website: www.topicproducts.com
+ drivers/clk/clk.c              | 20 ++++++++++++++++++++
+ drivers/clk/socfpga/clk-gate.c |  6 +-----
+ drivers/clk/socfpga/clk-pll.c  |  7 +------
+ include/linux/clk-provider.h   |  1 +
+ 4 files changed, 23 insertions(+), 11 deletions(-)
 
-Please consider the environment before printing this e-mail
+-- 
+2.2.1
