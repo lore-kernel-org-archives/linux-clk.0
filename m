@@ -1,62 +1,32 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 0/8] clk: rockchip: add support for the clock-tree of the rk3368
-Date: Sat, 13 Jun 2015 18:22:14 +0200
-Message-Id: <1434212542-17145-1-git-send-email-heiko@sntech.de>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 5 Jun 2015 18:14:40 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: mturquette@linaro.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] clk: qcom: Add support for read-only rcg2 ops
+Message-ID: <20150606011440.GG29237@codeaurora.org>
+References: <1433508036-28644-1-git-send-email-georgi.djakov@linaro.org>
+ <1433508036-28644-2-git-send-email-georgi.djakov@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1433508036-28644-2-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series adds support for the clock controller of rk3368
-ARM64 socs.
+On 06/05, Georgi Djakov wrote:
+> Some root clock generators can be controlled by other processors. In this
+> case modifying them is not recommended. By using the read-only operations,
+> the child clocks will be able to get information about their parent - like
+> rate etc.
+> 
+> Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 
-The first 2 patches are fixes for small issues I found while
-building the clocktree. Both do not harm the functionality
-of the older socs, as there is no camera interface driver in
-them anyway and the issue with the defines only surfaced on
-the rk3368.
-
-Patch 3 then adds a new definition for a branch-type.
-
-Some clocks (mainly the hsadc and camera interfaces) have a phase
-inverter connected to the clock that makes it possible to adjust
-the clock phase by 180 degrees. Patches 4 and 5 finally add
-support for these inverters and add the currently missing
-definitions to the already present clock drivers.
-
-Patches 6, 7 and 8 finally add the shared dt-binding header and
-the rk3368 clock tree itself. The cpu-clocks in there where
-tested sucessfully with the big_little_cpufreq driver.
-
-
-Heiko Stuebner (8):
-  clk: rockchip: protect register macros against multipart values
-  clk: rockchip: fix faulty vip parent name on rk3288
-  clk: rockchip: add COMPOSITE_NOGATE_DIVTBL variant
-  clk: rockchip: add support for phase inverters
-  clk: rockchip: define the inverters of rk3066/rk3188 and rk3288
-  dt-bindings: add documentation of rk3668 clock controller
-  clk: rockchip: add dt-binding header for rk3368
-  clk: rockchip: add rk3368 clock controller
-
- .../bindings/clock/rockchip,rk3368-cru.txt         |  61 ++
- drivers/clk/rockchip/Makefile                      |   2 +
- drivers/clk/rockchip/clk-inverter.c                | 126 +++
- drivers/clk/rockchip/clk-rk3188.c                  |   9 +-
- drivers/clk/rockchip/clk-rk3288.c                  |  11 +-
- drivers/clk/rockchip/clk-rk3368.c                  | 881 +++++++++++++++++++++
- drivers/clk/rockchip/clk.c                         |   7 +
- drivers/clk/rockchip/clk.h                         |  72 +-
- include/dt-bindings/clock/rk3368-cru.h             | 379 +++++++++
- 9 files changed, 1536 insertions(+), 12 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
- create mode 100644 drivers/clk/rockchip/clk-inverter.c
- create mode 100644 drivers/clk/rockchip/clk-rk3368.c
- create mode 100644 include/dt-bindings/clock/rk3368-cru.h
+Do we actually need this? I think I wrote the clk ops for the RCG
+to make it skip doing anything if there isn't a frequency table.
+So to make a read-only RCG all we need to do is remove the
+frequency table? Sorry if I led you down the wrong path.
 
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
