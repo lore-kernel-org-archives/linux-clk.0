@@ -1,51 +1,36 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 5 Jun 2015 18:41:53 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: mturquette@linaro.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] clk: qcom: Add MSM8916 audio clocks
+Message-ID: <20150606014153.GI29237@codeaurora.org>
+References: <1433508036-28644-1-git-send-email-georgi.djakov@linaro.org>
+ <1433508036-28644-6-git-send-email-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20150610024717.6017.50093@quantum>
-References: <1433244779-5447-1-git-send-email-geert+renesas@glider.be>
-	<20150610024717.6017.50093@quantum>
-Date: Wed, 10 Jun 2015 07:08:51 +0200
-Message-ID: <CAMuHMdUbuSEXRhU6d2he0xUY=Xg6n2Acgk99xC09m=7tJcSQiw@mail.gmail.com>
-Subject: Re: [git pull] clk/shmobile updates for v4.2
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Michael Turquette <mturquette@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, linux-clk@vger.kernel.org,
-	Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1433508036-28644-6-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+On 06/05, Georgi Djakov wrote:
+> @@ -190,6 +193,76 @@ static const char *gcc_xo_gpll0a_gpll1_gpll2[] = {
+>  	"gpll2_vote",
+>  };
+>  
+> +static const struct parent_map gcc_xo_gpll0_gpll1_sleep_map[] = {
+> +	{ P_XO, 0 },
+> +	{ P_GPLL0, 1 },
+> +	{ P_GPLL1, 2 },
+> +	{ P_SLEEP_CLK, 6 }
+> +};
+> +
+> +static const char *gcc_xo_gpll0_gpll1_sleep[] = {
 
-On Wed, Jun 10, 2015 at 4:47 AM, Michael Turquette
-<mturquette@linaro.org> wrote:
-> Quoting Geert Uytterhoeven (2015-06-02 04:32:59)
->> The following changes since commit c65b99f046843d2455aa231747b5a07a999a9f3d:
->>
->>   Linux 4.1-rc6 (2015-05-31 19:01:07 -0700)
->>
->> are available in the git repository at:
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git clk-shmobile-for-4.2
->
-> Pulled!
+Please make these new ones const char * const now that we've
+fixed that problem in the clk framework
 
-Thank you.
 
-> FYI, I prefer to take PRs based on -rc1 if possible. This PR forced me
-> to update clk-next which was previously based on -rc1 (I merged clk-next
-> into -rc7 and then pulled your tag).
-
-OK, will do next time. Sorry for the trouble.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
