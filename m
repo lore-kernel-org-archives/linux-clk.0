@@ -1,47 +1,107 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-la0-f47.google.com ([209.85.215.47]:33615 "EHLO
-	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751335AbbFSQB3 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 19 Jun 2015 12:01:29 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 5 Jun 2015 18:39:57 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: mturquette@linaro.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] clk: qcom: Add support for RCGs with shared
+ branches
+Message-ID: <20150606013957.GH29237@codeaurora.org>
+References: <1433508036-28644-1-git-send-email-georgi.djakov@linaro.org>
+ <1433508036-28644-4-git-send-email-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1434464615-9080-2-git-send-email-matthias.bgg@gmail.com>
-References: <1434464615-9080-1-git-send-email-matthias.bgg@gmail.com>
-	<1434464615-9080-2-git-send-email-matthias.bgg@gmail.com>
-Date: Fri, 19 Jun 2015 18:01:27 +0200
-Message-ID: <CAGhQ9Vx3qxvawiUYtEjr7z=o6mS3TirCzRd9-UZ0FP=equWEaQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] clk: Add regmap support
-From: Joachim Eastwood <manabian@gmail.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: mturquette@gmail.com, Stephen Boyd <sboyd@codeaurora.org>,
-	henryc.chen@mediatek.com, s.hauer@pengutronix.de,
-	jamesjj.liao@mediatek.com, Philipp Zabel <p.zabel@pengutronix.de>,
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1433508036-28644-4-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Matthias,
+On 06/05, Georgi Djakov wrote:
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index cb17fd4b193f..60563adad21d 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -47,6 +47,8 @@
+>  #define N_REG			0xc
+>  #define D_REG			0x10
+>  
+> +#define XO_FREQ			19200000
 
-On 16 June 2015 at 16:23, Matthias Brugger <matthias.bgg@gmail.com> wrote:
-> Some devices like SoCs from Mediatek need to use the clock
-> through a regmap interface.
-> This patch adds regmap support for the simple multiplexer clock,
-> the divider clock and the clock gate code.
->
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+Hm.. we don't know that XO is always going to be 19.2 MHz.
 
-I think it looks fine now and I have no further comments, so:
-Acked-by: Joachim Eastwood <manabian@gmail.com>
+> +
+>  static int clk_rcg2_is_enabled(struct clk_hw *hw)
+>  {
+>  	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> @@ -308,6 +310,68 @@ const struct clk_ops clk_rcg2_ro_ops = {
+>  };
+>  EXPORT_SYMBOL_GPL(clk_rcg2_ro_ops);
+>  
+> +static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				    unsigned long parent_rate)
+> +{
+> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> +	const char *name = __clk_get_name(hw->clk);
+> +	int ret, count;
+> +	unsigned int cmd = CMD_ROOT_EN;
+> +
+> +	/* force enable RCG */
+> +	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
+> +				 cmd, cmd);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* wait for RCG to turn ON */
+> +	for (count = 500; count > 0; count--) {
+> +		ret = clk_rcg2_is_enabled(hw);
+> +		if (ret)
+> +			break;
+> +		udelay(1);
+> +	}
+> +	if (!count)
+> +		pr_err("%s: RCG did not turn on\n", name);
+> +
+> +	/* set clock rate */
+> +	ret = __clk_rcg2_set_rate(hw, rate);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* clear force enable RCG */
+> +	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
+> +				 cmd, ~cmd);
 
-Hope this can go in for 4.3.
+The last argument could just be 0, save an instruction.
 
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
 
-regards,
-Joachim Eastwood
---
-To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+This function will become more complicated.
+
+> +}
+> +
+> +static int clk_rcg2_shared_enable(struct clk_hw *hw)
+> +{
+> +	unsigned long rate = __clk_get_rate(hw->clk);
+> +
+> +	return clk_rcg2_shared_set_rate(hw, rate, 0);
+
+And we shouldn't configure the clock to be at any rate besides XO
+speed while the clock is off because the other processors may not
+be requesting enough voltage to support the clock at whatever
+rate we've chosen. So we need to make set_rate() into a caching
+operation when the clock is disabled in software's view.
+
+> +}
+> +
+> +static void clk_rcg2_shared_disable(struct clk_hw *hw)
+> +{
+> +	/* switch to XO, which is always-on */
+> +	clk_rcg2_shared_set_rate(hw, XO_FREQ, 0);
+
+Maybe here we should just "know" that the XO frequency is either
+the lowest entry in the frequency table or that it's source 0 and
+make up some fake frequency struct to pass around.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
