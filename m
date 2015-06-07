@@ -1,52 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wi0-f179.google.com ([209.85.212.179]:36603 "EHLO
-	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751784AbbFZMeZ (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jun 2015 08:34:25 -0400
-From: David Dueck <davidcdueck@googlemail.com>
-To: boris.brezillon@free-electrons.com
-Cc: mturquette@linaro.org, nicolas.ferre@atmel.com,
-	sboyd@codeaurora.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/6] clk: at91: clk-master: fix error path
-Date: Fri, 26 Jun 2015 14:33:29 +0200
-Message-Id: <1435322012-5667-3-git-send-email-davidcdueck@googlemail.com>
-In-Reply-To: <1435322012-5667-1-git-send-email-davidcdueck@googlemail.com>
-References: <1435322012-5667-1-git-send-email-davidcdueck@googlemail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ce3a@gmx.de>
+Message-ID: <55749852.70909@gmx.de>
+Date: Sun, 07 Jun 2015 21:15:30 +0200
+From: Sergej Sawazki <ce3a@gmx.de>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: mturquette@linaro.org, jsarha@ti.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2] clk: add gpio controlled clock multiplexer
+References: <1432458082-18299-1-git-send-email-ce3a@gmx.de> <20150604214616.GS676@codeaurora.org>
+In-Reply-To: <20150604214616.GS676@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Do not leak memory if request_irq fails and free the irq if
-clk_register fails.
+On Thu, 4 Jun 2015 14:46:16 -0700, Stephen Boyd wrote:
+> On 05/24, Sergej Sawazki wrote:
+>> + * Gpio controlled clock multiplexer implementation
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/module.h>
+>
+> What's module.h used for? We need export.h for the
+> EXPORT_SYMBOL_GPL usage though.
+>
 
-Signed-off-by: David Dueck <davidcdueck@googlemail.com>
----
- drivers/clk/at91/clk-master.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+I will fix it in v3, thanks.
 
-diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
-index c1af80b..d7d6c59 100644
---- a/drivers/clk/at91/clk-master.c
-+++ b/drivers/clk/at91/clk-master.c
-@@ -165,12 +165,16 @@ at91_clk_register_master(struct at91_pmc *pmc, unsigned int irq,
- 	irq_set_status_flags(master->irq, IRQ_NOAUTOEN);
- 	ret = request_irq(master->irq, clk_master_irq_handler,
- 			  IRQF_TRIGGER_HIGH, "clk-master", master);
--	if (ret)
-+	if (ret) {
-+		kfree(master);
- 		return ERR_PTR(ret);
-+	}
- 
- 	clk = clk_register(NULL, &master->hw);
--	if (IS_ERR(clk))
-+	if (IS_ERR(clk)) {
-+		free_irq(master->irq, master);
- 		kfree(master);
-+	}
- 
- 	return clk;
- }
--- 
-2.4.4
+>> +#include <linux/slab.h>
+>> +#include <linux/gpio.h>
+>> +#include <linux/gpio/consumer.h>
+>> +#include <linux/of_gpio.h>
+>
+> Do we need the of_gpio include? We can't get everything we need
+> from gpio/consumer.h?
+>
 
+We need of_gpio.h because of of_gpio_flags, but we can delete
+gpio.h and gpio/consumer.h.
+
+>> +	struct clk_init_data init = { NULL };
+>
+> 	struct clk_init_data init = { }
+>
+> is preferred style.
+>
+
+OK.
+
+>> +	if (dev)
+>> +		clk_gpio_mux = devm_kzalloc(dev, sizeof(struct clk_gpio_mux),
+>
+> 	sizeof(*clk_gpio_mux)
+>
+> is preferred style
+>
+
+OK.
+
+>> +				GFP_KERNEL);
+>> +	else
+>> +		clk_gpio_mux = kzalloc(sizeof(struct clk_gpio_mux), GFP_KERNEL);
+>> +
+>
+> ditto.
+>
+
+OK.
+
+>
+> Please find a way to share most of this code with the other gpio
+> based clock provider. Putting the two types of gpio clocks into the
+> same file would probably work.
+>
+
+I will try and resend as v3. Thanks for you comments.
+
+Sergej
