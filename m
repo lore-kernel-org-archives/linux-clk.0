@@ -1,115 +1,100 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Message-ID: <55795B4A.6030008@collabora.com>
-Date: Thu, 11 Jun 2015 11:56:26 +0200
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-MIME-Version: 1.0
-To: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 00/21] On-demand device registration
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>	<CAAObsKD97nEARO5eZYA2g8+z_MrazBy-m8PV_kSyj19ya72mAw@mail.gmail.com>
- <CACRpkdYyvXVm=UBVH9Lwp8nQbuxQL07MLspNfQSHtc-yT2C_0g@mail.gmail.com>
-In-Reply-To: <CACRpkdYyvXVm=UBVH9Lwp8nQbuxQL07MLspNfQSHtc-yT2C_0g@mail.gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
- linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Rob Herring <robh+dt@kernel.org>,
- DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, dmaengine@vger.kernel.org,
- Alexander Holler <holler@ahsoftware.de>,
- Dan Williams <dan.j.williams@intel.com>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- linux-clk@vger.kernel.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- Grant Likely <grant.likely@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>
+Subject: [PATCH v4 0/8] ARM64: juno: add SCPI mailbox protocol, clock and CPUFreq support
+Date: Mon,  8 Jun 2015 11:39:54 +0100
+Message-Id: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/11/2015 10:15 AM, Linus Walleij wrote:
-> On Wed, Jun 10, 2015 at 12:19 PM, Tomeu Vizoso
-> <tomeu.vizoso@collabora.com> wrote:
->> On 10 June 2015 at 09:30, Linus Walleij <linus.walleij@linaro.org> wrote:
-> 
->>> regulator_get(...) -> not available, so:
->>> - identify target regulator provider - this will need instrumentation
->>> - probe it
->>>
->>> It then turns out the regulator driver is on the i2c bus, so we
->>> need to probe the i2c driver:
->>> - identify target i2c host for the regulator driver - this will need
->>>   instrumentation
->>> - probe the i2c host driver
->>>
->>> i2c host comes out, probes the regulator driver, regulator driver
->>> probes and then the regulator_get() call returns.
->>
->> Hmm, if I understand correctly what you say, this is exactly what this
->> particular series does:
->>
->> regulator_get -> of_platform_device_ensure -> probe() on the platform
->> device that encloses the requested device node (i2c host) -> i2c slave
->> gets probed and the regulator registered -> regulator_get returns the
->> requested resource
-> 
-> Yes. But only for device tree.
-> 
->> The downside I'm currently looking at is that an explicit dependency
->> graph would be useful to have for other purposes. For example to print
->> a neat warning when a dependency cannot be fulfilled. Or to refuse to
->> unbind a device which other devices depend on, or to automatically
->> unbind the devices that depend on it, or to print a warning if a
->> device is hotplugged off and other devices depend on it.
-> 
-> Unbind/remove() calls are the inverse usually yes.
-> 
-> But also the [runtime] power up/down sequences for the
-> devices tend to depend on a similar ordering or mostly
-> the same. (Mentioned this before I think.)
-> 
->>> This requires instrumentation on anything providing a resource
->>> to another driver like those I mentioned and a lot of overhead
->>> infrastructure, but I think it's the right approach. However I don't
->>> know if I would ever be able to pull that off myself, I know talk
->>> is cheap and I should show the code instead.
->>
->> Yeah, if you can give it a second look and say if it matches what you
->> wrote above, it would be very much appreciated.
-> 
-> Yes you are right. But what about ACPI, board files,
-> Simple Firmware and future hardware description languages...
+Hi,
 
-Ah ok, got it now. With fwnode and by moving a bit of code around that
-shouldn't be a problem.
+This patch series adds support for:
+  1. SCPI(System Control and Power Interface) mailbox protocol driver.
+     It uses ARM MHU mailbox controller driver on Juno but can work with
+     any mailbox controllers using standard mailbox APIs
+  2. Add support for clocks provided by SCP firmware through the SCPI
+     interface
+  3. Using the existing arm_big_little cpufreq driver and the newly
+     added SCPI clock driver, it also adds support for CPU DVFS on
+     ARM64 JUNO development platforms.
 
-I'm actually now implementing the alternative approach in which
-dependencies are discovered before the device is probed, then probed in
-turn until all are available. So functionally is very similar but I
-expect to find big differences in how the codebase is impacted.
+The SCPI protocol document is available @[1],[2]
+
+Changes v3->v4:
+	- Updated the SCPI binding based on MarkR's feedback
+	- Updated SCPI clock driver to incorporate Stephen Boyd's review
+	  comments + used clk_set_rate_range to limit the clock range
+	- Since no major changes are expected in SCPI DT, updated the
+	  Juno DTS to support SCPI and dependent device nodes. The DT
+	  patches are based on Liviu's recent Juno[3]
+
+Changes v2->v3:
+	- Minor fix in SCPI driver and added Tixy's reviewed-by tag
+	- Updated scpi clock driver to incorporate all the comments from
+	  Stephen
+	- Added Viresh's ack
+
+Changes v1->v2:
+	- Updated the token handling in scpi driver as per Tixy's
+	  suggestion along with other review comments
+	- Removed multiple drivers in scpi clock as Lorenzo suggested
+	- Added free_opp_table in scpi-cpufreq as Viresh suggested
+	- Separated the DT binding document
+	- Moved SCPI protocol driver to drivers/firmware
 
 Regards,
+Sudeep
 
-Tomeu
+[1] http://community.arm.com/servlet/JiveServlet/download/8401-45-18326/DUI0922B_scp_message_interface.pdf
+[2] https://wiki.linaro.org/ARM/Juno?action=AttachFile&do=get&target=DUI0922B_scp_message_interface.pdf
+[3] http://www.spinics.net/lists/arm-kernel/msg420945.html
+v1: https://lkml.org/lkml/2015/4/27/232
+v2: https://lkml.org/lkml/2015/5/14/470
+v3: https://lkml.org/lkml/2015/5/27/220
 
-> Yours,
-> Linus Walleij
-> 
+Sudeep Holla (8):
+  Documentation: add DT binding for ARM System Control and Power
+    Interface(SCPI) protocol
+  firmware: add support for ARM System Control and Power Interface(SCPI)
+    protocol
+  clk: add support for clocks provided by SCP(System Control Processor)
+  clk: scpi: add support for cpufreq virtual device
+  cpufreq: arm_big_little: add SCPI interface driver
+  arm64: dts: add SRAM, MHU mailbox and SCPI support on Juno
+  arm64: dts: add CPU topology on Juno
+  arm64: dts: add clock support for all the cpus
 
+ Documentation/devicetree/bindings/arm/arm,scpi.txt | 156 +++++
+ arch/arm64/boot/dts/arm/juno-base.dtsi             |  31 +
+ arch/arm64/boot/dts/arm/juno-clocks.dtsi           |  23 +
+ arch/arm64/boot/dts/arm/juno-r1.dts                |  32 +
+ arch/arm64/boot/dts/arm/juno.dts                   |  32 +
+ drivers/clk/Kconfig                                |  10 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-scpi.c                             | 299 +++++++++
+ drivers/cpufreq/Kconfig.arm                        |   9 +
+ drivers/cpufreq/Makefile                           |   1 +
+ drivers/cpufreq/scpi-cpufreq.c                     | 124 ++++
+ drivers/firmware/Kconfig                           |  19 +
+ drivers/firmware/Makefile                          |   1 +
+ drivers/firmware/arm_scpi.c                        | 709 +++++++++++++++++++++
+ include/linux/scpi_protocol.h                      |  62 ++
+ 15 files changed, 1509 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/arm,scpi.txt
+ create mode 100644 drivers/clk/clk-scpi.c
+ create mode 100644 drivers/cpufreq/scpi-cpufreq.c
+ create mode 100644 drivers/firmware/arm_scpi.c
+ create mode 100644 include/linux/scpi_protocol.h
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+1.9.1
+
