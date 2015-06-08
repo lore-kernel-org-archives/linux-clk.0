@@ -1,79 +1,77 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	matthias.bgg@gmail.com
-Cc: s.hauer@pengutronix.de,
-	jamesjj.liao@mediatek.com,
-	henryc.chen@mediatek.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	manabian@gmail.com
-Subject: [PATCH v3 0/3] clk: Add regmap support for basic clocks
-Date: Tue,  9 Jun 2015 17:38:00 +0200
-Message-Id: <1433864283-25490-1-git-send-email-matthias.bgg@gmail.com>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Message-ID: <5575A798.9070404@arm.com>
+Date: Mon, 08 Jun 2015 15:32:56 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+MIME-Version: 1.0
+To: "Jon Medhurst (Tixy)" <tixy@linaro.org>
+CC: Sudeep Holla <sudeep.holla@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v4 6/8] arm64: dts: add SRAM, MHU mailbox and SCPI support
+ on Juno
+References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>	 <1433760002-24120-7-git-send-email-sudeep.holla@arm.com> <1433771479.2882.44.camel@linaro.org>
+In-Reply-To: <1433771479.2882.44.camel@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set adds regmap support for the simple clock multiplexer,
-the divider clock and the clock gate.
-Regmap use, apart from a pointer to the regmap struct needs an
-offset value to know where in the regmap it has to read/write.
-We add both fields to the corresponding structs.
 
-The driver will distinguish between a clock which is based on regmap or not
-through a flag specified in the clock hardware struct.
-The approach does not break the existing clock framework API but adds
-new functions for registering regmap clocks. Unregistering the clocks is
-independent of the use of regmap or not, so that no new functions were
-implemented.
 
-As an example user of the regmap clock multiplexer, it was implemented on
-the mt8135. When accepted it will also be applied to the other Mediatek SoCs.
-Other possible user are Qualcomm SoCs which up to now implement their own
-regmap based clock multiplexer.
+On 08/06/15 14:51, Jon Medhurst (Tixy) wrote:
+> On Mon, 2015-06-08 at 11:40 +0100, Sudeep Holla wrote:
+> [...]
+>> +
+>> +	scpi {
+>> +		compatible = "arm,scpi";
+>> +		mboxes = <&mailbox 1>;
+>> +		shmem = <&cpu_scp_hpri>;
+>> +
+>> +		clocks {
+>> +			compatible = "arm,scpi-clocks";
+>> +
+>> +			scpi_dvfs: scpi_clocks@0 {
+>> +				compatible = "arm,scpi-dvfs-clocks";
+>> +				#clock-cells = <1>;
+>> +				clock-indices = <0>, <1>, <2>;
+>> +				clock-output-names = "vbig", "vlittle", "vgpu";
+>
+>  From where do the clock names derive? They look more like names for
+> voltage domains rather than clocks. My (admittedly very old) Juno docs,
+> have the clocks as ATLCLK, APLCLK and GPUCLK.
+>
 
-This patch set is based on linux next.
-To get the mt8135 eval board up and running, we need to enable the clock
-support [1] and use the two clocks for the uart port [2].
+I agree, I just copied it from SCPI spec which just deals with power
+domain names in the context of DVFS. I will update as per Juno doc.
 
-Any comments welcome.
+>> +			};
+>> +			scpi_clk: scpi_clocks@3 {
+>> +				compatible = "arm,scpi-variable-clocks";
+>> +				#clock-cells = <1>;
+>> +				clock-indices = <3>, <4>;
+>> +				clock-output-names = "pxlclk0", "pxlclk1";
+>
+> Can we also have clock index 5, name 'i2s_clk', for used by audio?
+> (I don't know what other clocks the SCP currently supports, but audio is
+> one being currently used by the out-of-tree code).
+>
 
-[1] https://patchwork.kernel.org/patch/6261141/
-[2] https://patchwork.kernel.org/patch/6261151/
+I will update.
 
-Changes for v3:
-- rebase against linux-next
-- provide regmap access to all three clock types in a unified way
+> Also, I believe that both display outputs share the same clock, and so
+> pxlclk0 and pxlclk1 can't be controlled independently. But I guess these
+> device-tree entries are for the interface to the SCP firmware, not the
+> hardware, and if that pretends the clocks are independent...
+>
 
-Changes for v2:
-- use regmap_update_bits instead of read-write
-- fix flag check
-- add union in struct clk_mux
-- fix typo in commit message
+Yes, this is bit tricky, I will let Liviu answer this.
 
----
-
-Matthias Brugger (3):
-  clk: Add regmap support
-  clk: mediatek: Add support for clk-mux using regmap
-  clk: mediatek: Use regmap clk-mux for mt8135
-
- drivers/clk/Makefile              |   1 +
- drivers/clk/clk-divider.c         |  71 ++++++++++++++++++-----
- drivers/clk/clk-gate.c            |  60 ++++++++++++++++----
- drivers/clk/clk-io.c              |  62 ++++++++++++++++++++
- drivers/clk/clk-io.h              |  13 +++++
- drivers/clk/clk-mux.c             |  94 ++++++++++++++++++++++++++-----
- drivers/clk/mediatek/clk-mt8135.c |  21 +++----
- drivers/clk/mediatek/clk-mtk.c    |  37 ++++++++++++
- drivers/clk/mediatek/clk-mtk.h    |  26 +++++++++
- include/linux/clk-provider.h      | 115 +++++++++++++++++++++++++++++++++++++-
- 10 files changed, 443 insertions(+), 57 deletions(-)
- create mode 100644 drivers/clk/clk-io.c
- create mode 100644 drivers/clk/clk-io.h
-
--- 
-1.9.1
+Regards,
+Sudeep
