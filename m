@@ -1,87 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:63072 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752133AbbFZPeC (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jun 2015 11:34:02 -0400
-Message-ID: <558D70E8.1010105@broadcom.com>
-Date: Fri, 26 Jun 2015 08:34:00 -0700
-From: Ray Jui <rjui@broadcom.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <557589D9.1050008@melag.de>
+Date: Mon, 8 Jun 2015 14:26:01 +0200
+From: "Enrico Weigelt, metux IT consult" <weigelt@melag.de>
 MIME-Version: 1.0
-To: Dan Carpenter <dan.carpenter@oracle.com>
-CC: <linux-clk@vger.kernel.org>
-Subject: Re: clk: iproc: add initial common clock support
-References: <20150626102359.GA32453@mwanda>
-In-Reply-To: <20150626102359.GA32453@mwanda>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+To: Alexander Holler <holler@ahsoftware.de>,
+	"Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>
+CC: Rob Herring <robherring2@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	=?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?=
+	<stephane.marchesin@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	<dmaengine@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	<linux-clk@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>
+Subject: Re: [PATCH 00/21] On-demand device registration
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com> <556F5C24.1030101@linaro.org> <5570B783.1050808@ahsoftware.de>
+In-Reply-To: <5570B783.1050808@ahsoftware.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dan,
+Am 04.06.2015 um 22:39 schrieb Alexander Holler:
 
-On 6/26/2015 3:23 AM, Dan Carpenter wrote:
-> Hello Ray Jui,
-> 
-> The patch 5fe225c105fd: "clk: iproc: add initial common clock
-> support" from May 5, 2015, leads to the following static checker
-> warning:
-> 
-> 	drivers/clk/bcm/clk-iproc-pll.c:369 iproc_pll_recalc_rate()
-> 	warn: should 'ndiv_int << ctrl->ndiv_int.shift' be a 64 bit type?
-> 
-> drivers/clk/bcm/clk-iproc-pll.c
->   341  static unsigned long iproc_pll_recalc_rate(struct clk_hw *hw,
->    342                                             unsigned long parent_rate)
->    343  {
->    344          struct iproc_clk *clk = to_iproc_clk(hw);
->    345          struct iproc_pll *pll = clk->pll;
->    346          const struct iproc_pll_ctrl *ctrl = pll->ctrl;
->    347          u32 val;
->    348          u64 ndiv;
->    349          unsigned int ndiv_int, ndiv_frac, pdiv;
->    350  
->    351          if (parent_rate == 0)
->    352                  return 0;
->    353  
->    354          /* PLL needs to be locked */
->    355          val = readl(pll->pll_base + ctrl->status.offset);
->    356          if ((val & (1 << ctrl->status.shift)) == 0) {
->    357                  clk->rate = 0;
->    358                  return 0;
->    359          }
->    360  
->    361          /*
->    362           * PLL output frequency =
->    363           *
->    364           * ((ndiv_int + ndiv_frac / 2^20) * (parent clock rate / pdiv)
->    365           */
->    366          val = readl(pll->pll_base + ctrl->ndiv_int.offset);
->    367          ndiv_int = (val >> ctrl->ndiv_int.shift) &
->    368                  bit_mask(ctrl->ndiv_int.width);
->    369          ndiv = ndiv_int << ctrl->ndiv_int.shift;
-> 
-> ndiv is declared u64 but only the lower 32 bits are used because of
-> shift wrapping.
-> 
->    370  
->    371          if (ctrl->flags & IPROC_CLK_PLL_HAS_NDIV_FRAC) {
->    372                  val = readl(pll->pll_base + ctrl->ndiv_frac.offset);
->    373                  ndiv_frac = (val >> ctrl->ndiv_frac.shift) &
->    374                          bit_mask(ctrl->ndiv_frac.width);
->    375  
->    376                  if (ndiv_frac != 0)
->    377                          ndiv = (ndiv_int << ctrl->ndiv_int.shift) | ndiv_frac;
->                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 
-> Here as well.
-> 
->    378          }
-> 
-> regards,
-> dan carpenter
-> 
+ > As it seems to have been forgotten or overread, I've mentioned in my
+> series of patches last year that, with a few changes, it's possible to
+> let the algorithm I've used (dfs) to spit out all drivers which can be
+> initialized in parallel.
 
-Got it. I'll fix both.
+Unfortunately, I've missed that ... could you please resend you patches?
+Boot time reduction is one of the topics on my 2do in several weeks.
 
-Thanks,
 
-Ray
+cu
+--
+Enrico Weigelt, metux IT consult
++49-151-27565287
+MELAG Medizintechnik oHG Sitz Berlin Registergericht AG Charlottenburg HRA 21333 B
+
+Wichtiger Hinweis: Diese Nachricht kann vertrauliche oder nur für einen begrenzten Personenkreis bestimmte Informationen enthalten. Sie ist ausschließlich für denjenigen bestimmt, an den sie gerichtet worden ist. Wenn Sie nicht der Adressat dieser E-Mail sind, dürfen Sie diese nicht kopieren, weiterleiten, weitergeben oder sie ganz oder teilweise in irgendeiner Weise nutzen. Sollten Sie diese E-Mail irrtümlich erhalten haben, so benachrichtigen Sie bitte den Absender, indem Sie auf diese Nachricht antworten. Bitte löschen Sie in diesem Fall diese Nachricht und alle Anhänge, ohne eine Kopie zu behalten.
+Important Notice: This message may contain confidential or privileged information. It is intended only for the person it was addressed to. If you are not the intended recipient of this email you may not copy, forward, disclose or otherwise use it or any part of it in any form whatsoever. If you received this email in error please notify the sender by replying and delete this message and any attachments without retaining a copy.
