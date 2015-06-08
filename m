@@ -1,30 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Keerthy <j-keerthy@ti.com>
-To: <linux-omap@vger.kernel.org>
-CC: <galak@codeaurora.org>, <tony@atomide.com>, <t-kristo@ti.com>,
-	<pawel.moll@arm.com>, <linux-kernel@vger.kernel.org>,
-	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>,
-	<j-keerthy@ti.com>
-Subject: [PATCH 0/2] CLK: TI: add dpll_clksel_mac_clk node
-Date: Thu, 18 Jun 2015 13:31:11 +0530
-Message-ID: <1434614473-8500-1-git-send-email-j-keerthy@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <1433771479.2882.44.camel@linaro.org>
+Subject: Re: [PATCH v4 6/8] arm64: dts: add SRAM, MHU mailbox and SCPI
+ support on Juno
+From: "Jon Medhurst (Tixy)" <tixy@linaro.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>
+Date: Mon, 08 Jun 2015 14:51:19 +0100
+In-Reply-To: <1433760002-24120-7-git-send-email-sudeep.holla@arm.com>
+References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
+	 <1433760002-24120-7-git-send-email-sudeep.holla@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The series adds the missing clock node needed for cpsw.
+On Mon, 2015-06-08 at 11:40 +0100, Sudeep Holla wrote:
+[...]
+> +
+> +	scpi {
+> +		compatible = "arm,scpi";
+> +		mboxes = <&mailbox 1>;
+> +		shmem = <&cpu_scp_hpri>;
+> +
+> +		clocks {
+> +			compatible = "arm,scpi-clocks";
+> +
+> +			scpi_dvfs: scpi_clocks@0 {
+> +				compatible = "arm,scpi-dvfs-clocks";
+> +				#clock-cells = <1>;
+> +				clock-indices = <0>, <1>, <2>;
+> +				clock-output-names = "vbig", "vlittle", "vgpu";
 
-Keerthy (2):
-  CLK: TI: add dpll_clksel_mac_clk node
-  ARM: dts: am4372: Set the default clock rate for dpll_clksel_mac_clk
-    clock
+>From where do the clock names derive? They look more like names for
+voltage domains rather than clocks. My (admittedly very old) Juno docs,
+have the clocks as ATLCLK, APLCLK and GPUCLK.
 
- arch/arm/boot/dts/am4372.dtsi        | 7 +++++--
- arch/arm/boot/dts/am43xx-clocks.dtsi | 9 +++++++++
- drivers/clk/ti/clk-43xx.c            | 1 +
- 3 files changed, 15 insertions(+), 2 deletions(-)
+> +			};
+> +			scpi_clk: scpi_clocks@3 {
+> +				compatible = "arm,scpi-variable-clocks";
+> +				#clock-cells = <1>;
+> +				clock-indices = <3>, <4>;
+> +				clock-output-names = "pxlclk0", "pxlclk1";
+
+Can we also have clock index 5, name 'i2s_clk', for used by audio?
+(I don't know what other clocks the SCP currently supports, but audio is
+one being currently used by the out-of-tree code).
+
+Also, I believe that both display outputs share the same clock, and so
+pxlclk0 and pxlclk1 can't be controlled independently. But I guess these
+device-tree entries are for the interface to the SCP firmware, not the
+hardware, and if that pretends the clocks are independent...
 
 -- 
-1.9.1
+Tixy
+
 
