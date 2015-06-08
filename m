@@ -1,66 +1,53 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Fabio Estevam <fabio.estevam@freescale.com>
-To: <shawnguo@kernel.org>
-Subject: [PATCH v3 2/2] clk: imx: clk-imx6q: Provide initial IPU clock
- settings for mx6dl
-Date: Fri, 26 Jun 2015 14:10:54 -0300
-Message-ID: <1435338654-9098-2-git-send-email-fabio.estevam@freescale.com>
-In-Reply-To: <1435338654-9098-1-git-send-email-fabio.estevam@freescale.com>
-References: <1435338654-9098-1-git-send-email-fabio.estevam@freescale.com>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Message-ID: <5575DB8D.50000@ahsoftware.de>
+Date: Mon, 08 Jun 2015 20:14:37 +0200
+From: Alexander Holler <holler@ahsoftware.de>
 MIME-Version: 1.0
-Cc: Fabio Estevam <fabio.estevam@freescale.com>, linux@arm.linux.org.uk,
- mturquette@baylibre.com, eric.nelson@boundarydevices.com,
- vladimir_zapolskiy@mentor.com, kernel@pengutronix.de, Ying.liu@freescale.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+To: "Enrico Weigelt, metux IT consult" <weigelt@melag.de>,
+	"Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>
+CC: Rob Herring <robherring2@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	=?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?=
+	<stephane.marchesin@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	dmaengine@vger.kernel.org,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-clk@vger.kernel.org,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>
+Subject: Re: [PATCH 00/21] On-demand device registration
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com> <556F5C24.1030101@linaro.org> <5570B783.1050808@ahsoftware.de> <557589D9.1050008@melag.de>
+In-Reply-To: <557589D9.1050008@melag.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently it is not possible to use HDMI and LVDS at the same time on a 
-imx6dl-sabresd board.
+Am 08.06.2015 um 14:26 schrieb Enrico Weigelt, metux IT consult:
+> Am 04.06.2015 um 22:39 schrieb Alexander Holler:
+>
+>  > As it seems to have been forgotten or overread, I've mentioned in my
+>> series of patches last year that, with a few changes, it's possible to
+>> let the algorithm I've used (dfs) to spit out all drivers which can be
+>> initialized in parallel.
+>
+> Unfortunately, I've missed that ... could you please resend you patches?
+> Boot time reduction is one of the topics on my 2do in several weeks.
 
-Fix this usecase by setting IMX6QDL_CLK_PLL3_PFD1_540M to 540MHz and
-also by setting it as the parent of IMX6QDL_CLK_IPU1_SEL.
+https://lkml.org/lkml/2014/5/12/452
 
-Based on the configuration done in the FSL kernel.
-
-Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
----
-Changes since v2:
-- Move clk_set_rate for PLL3_PFD1_540M outside the if block as suggested
-by Vladimir Zapolskiy.
-
- drivers/clk/imx/clk-imx6q.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index d046f8e..c507bca 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -494,6 +494,10 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 		clk_set_parent(clk[IMX6QDL_CLK_LDB_DI1_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
- 	}
- 
-+	clk_set_rate(clk[IMX6QDL_CLK_PLL3_PFD1_540M], 540000000);
-+	if (clk_on_imx6dl())
-+		clk_set_parent(clk[IMX6QDL_CLK_IPU1_SEL], clk[IMX6QDL_CLK_PLL3_PFD1_540M]);
-+
- 	clk_set_parent(clk[IMX6QDL_CLK_IPU1_DI0_PRE_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
- 	clk_set_parent(clk[IMX6QDL_CLK_IPU1_DI1_PRE_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
- 	clk_set_parent(clk[IMX6QDL_CLK_IPU2_DI0_PRE_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
--- 
-1.9.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
