@@ -1,51 +1,49 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 4 Jun 2015 15:42:38 -0700
+Date: Mon, 8 Jun 2015 14:42:45 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mturquette@linaro.org, haojian.zhuang@gmail.com,
-	james.hogan@imgtec.com
-Subject: Re: [PATCH 2/2] clk: divider: fix to set parent rate from
- CLK_DIVIDER_READ_ONLY flag
-Message-ID: <20150604224238.GB8099@codeaurora.org>
-References: <1428392806-14538-1-git-send-email-jy0922.shim@samsung.com>
- <1428392806-14538-2-git-send-email-jy0922.shim@samsung.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/14] ARM: shmobile: Add CPG Clock Domains
+Message-ID: <20150608214245.GA29640@codeaurora.org>
+References: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1428392806-14538-2-git-send-email-jy0922.shim@samsung.com>
+In-Reply-To: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/07, Joonyoung Shim wrote:
-> The round_rate callback function will returns alway same parent clk rate
-> of divider with CLK_DIVIDER_READ_ONLY flag. If be used
-> CLK_SET_RATE_PARENT flag with CLK_DIVIDER_READ_ONLY flag, then never
-> change parent clk rate anymore.
+On 05/28, Geert Uytterhoeven wrote:
+> 	Hi all,
 > 
-> From this case, this patch allows to change parent clk rate.
-> 
-> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> ---
->  drivers/clk/clk-divider.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> index ce34d29a..37e285e 100644
-> --- a/drivers/clk/clk-divider.c
-> +++ b/drivers/clk/clk-divider.c
-> @@ -352,6 +352,11 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
->  		bestdiv = readl(divider->reg) >> divider->shift;
->  		bestdiv &= div_mask(divider->width);
->  		bestdiv = _get_div(divider->table, bestdiv, divider->flags);
-> +
-> +		if ((__clk_get_flags(hw->clk) & CLK_SET_RATE_PARENT))
-> +			*prate = __clk_round_rate(__clk_get_parent(hw->clk),
-> +						  rate);
-> +
->  		return DIV_ROUND_UP(*prate, bestdiv);
+> This patch series adds Clock Domain support to the Clock Pulse Generator
+> (CPG) Module Stop (MSTP) Clocks driver using the generic PM Domain, to
+> be used on shmobile SoCs without device power domains (R-Car Gen1 and
+> Gen2, RZ).  This allows to power-manage the module clocks of SoC devices
+> that are part of the CPG Clock Domain using Runtime PM, or for system
+> suspend/resume, similar to SoCs with device power domains (SH-Mobile and
+> R-Mobile).
 
-Doesn't this assume that the divider is 1? Otherwise we should be
-multiplying the rate up by whatever the divider is that we have
-in the hardware.
+The clk part looks fine (although it's not really clk framework
+related). Did you want the clk patches to go through the clk tree
+though? It wasn't clear from this cover letter.
+
+If not, you can have my ack on these patches:
+
+>     clk: shmobile: Add CPG Clock Domain support
+>   * clk: shmobile: r8a7778: Add CPG Clock Domain support
+>   * clk: shmobile: r8a7779: Add CPG Clock Domain support
+>     clk: shmobile: rcar-gen2: Add CPG Clock Domain support
+>   * clk: shmobile: rz: Add CPG Clock Domain support
+
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
