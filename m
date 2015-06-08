@@ -1,78 +1,107 @@
-Return-Path: <dinguyen@opensource.altera.com>
-From: <dinguyen@opensource.altera.com>
-To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
-CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
-Subject: [RFC/PATCHv1 2/2] clk: socfpga: make use of of_clk_parent_fill helper function
-Date: Mon, 1 Jun 2015 16:46:26 -0500
-Message-ID: <1433195186-14867-3-git-send-email-dinguyen@opensource.altera.com>
-In-Reply-To: <1433195186-14867-1-git-send-email-dinguyen@opensource.altera.com>
-References: <1433195186-14867-1-git-send-email-dinguyen@opensource.altera.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: dinguyen@opensource.altera.com
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>
+Subject: [PATCH v4 7/8] arm64: dts: add CPU topology on Juno
+Date: Mon,  8 Jun 2015 11:40:01 +0100
+Message-Id: <1433760002-24120-8-git-send-email-sudeep.holla@arm.com>
+In-Reply-To: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
+References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
+This patch adds CPU topology on Juno. It will be useful for ther other
+IP blocks depending on this topology.
 
-Use of_clk_parent_fill to fill in the parent clock's array.
-
-Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/clk/socfpga/clk-gate.c | 6 +-----
- drivers/clk/socfpga/clk-pll.c  | 7 +------
- 2 files changed, 2 insertions(+), 11 deletions(-)
+ arch/arm64/boot/dts/arm/juno-r1.dts | 26 ++++++++++++++++++++++++++
+ arch/arm64/boot/dts/arm/juno.dts    | 26 ++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+)
 
-diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
-index dd3a78c..fb5a5d7 100644
---- a/drivers/clk/socfpga/clk-gate.c
-+++ b/drivers/clk/socfpga/clk-gate.c
-@@ -194,7 +194,6 @@ static void __init __socfpga_gate_init(struct device_node *node,
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
- 	struct clk_init_data init;
- 	int rc;
--	int i = 0;
+diff --git a/arch/arm64/boot/dts/arm/juno-r1.dts b/arch/arm64/boot/dts/arm/juno-r1.dts
+index c62751153a4f..69130840c6cd 100644
+--- a/arch/arm64/boot/dts/arm/juno-r1.dts
++++ b/arch/arm64/boot/dts/arm/juno-r1.dts
+@@ -34,6 +34,32 @@
+ 		#address-cells = <2>;
+ 		#size-cells = <0>;
  
- 	socfpga_clk = kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
- 	if (WARN_ON(!socfpga_clk))
-@@ -238,12 +237,9 @@ static void __init __socfpga_gate_init(struct device_node *node,
- 	init.name = clk_name;
- 	init.ops = ops;
- 	init.flags = 0;
--	while (i < SOCFPGA_MAX_PARENTS && (parent_name[i] =
--			of_clk_get_parent_name(node, i)) != NULL)
--		i++;
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&A57_0>;
++				};
++				core1 {
++					cpu = <&A57_1>;
++				};
++			};
++
++			cluster1 {
++				core0 {
++					cpu = <&A53_0>;
++				};
++				core1 {
++					cpu = <&A53_1>;
++				};
++				core2 {
++					cpu = <&A53_2>;
++				};
++				core3 {
++					cpu = <&A53_3>;
++				};
++			};
++		};
++
+ 		A57_0: cpu@0 {
+ 			compatible = "arm,cortex-a57","arm,armv8";
+ 			reg = <0x0 0x0>;
+diff --git a/arch/arm64/boot/dts/arm/juno.dts b/arch/arm64/boot/dts/arm/juno.dts
+index d7cbdd482a61..ce1128a54c8d 100644
+--- a/arch/arm64/boot/dts/arm/juno.dts
++++ b/arch/arm64/boot/dts/arm/juno.dts
+@@ -34,6 +34,32 @@
+ 		#address-cells = <2>;
+ 		#size-cells = <0>;
  
-+	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
- 	init.parent_names = parent_name;
--	init.num_parents = i;
- 	socfpga_clk->hw.hw.init = &init;
- 
- 	clk = clk_register(NULL, &socfpga_clk->hw.hw);
-diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
-index de6da95..8f26b52 100644
---- a/drivers/clk/socfpga/clk-pll.c
-+++ b/drivers/clk/socfpga/clk-pll.c
-@@ -92,7 +92,6 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
- 	struct clk_init_data init;
- 	struct device_node *clkmgr_np;
- 	int rc;
--	int i = 0;
- 
- 	of_property_read_u32(node, "reg", &reg);
- 
-@@ -111,11 +110,7 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
- 	init.ops = ops;
- 	init.flags = 0;
- 
--	while (i < SOCFPGA_MAX_PARENTS && (parent_name[i] =
--			of_clk_get_parent_name(node, i)) != NULL)
--		i++;
--
--	init.num_parents = i;
-+	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
- 	init.parent_names = parent_name;
- 	pll_clk->hw.hw.init = &init;
- 
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&A57_0>;
++				};
++				core1 {
++					cpu = <&A57_1>;
++				};
++			};
++
++			cluster1 {
++				core0 {
++					cpu = <&A53_0>;
++				};
++				core1 {
++					cpu = <&A53_1>;
++				};
++				core2 {
++					cpu = <&A53_2>;
++				};
++				core3 {
++					cpu = <&A53_3>;
++				};
++			};
++		};
++
+ 		A57_0: cpu@0 {
+ 			compatible = "arm,cortex-a57","arm,armv8";
+ 			reg = <0x0 0x0>;
 -- 
-2.2.1
+1.9.1
+
