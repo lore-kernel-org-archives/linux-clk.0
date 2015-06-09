@@ -1,120 +1,128 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <m-karicheri2@ti.com>
+Message-ID: <5577056E.5060009@ti.com>
+Date: Tue, 9 Jun 2015 11:25:34 -0400
+From: Murali Karicheri <m-karicheri2@ti.com>
 MIME-Version: 1.0
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>,
- "Boris Brezillon" <boris.brezillon@free-electrons.com>,
- linux-clk@vger.kernel.org
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <55646B50.9060709@free-electrons.com>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>,
- "Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>,
- "Jason Cooper" <jason@lakedaemon.net>,
- "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
- "Andrew Lunn" <andrew@lunn.ch>, "Tawfik Bayouk" <tawfik@marvell.com>,
- "Lior Amsalem" <alior@marvell.com>, "Nadav Haklai" <nadavh@marvell.com>,
- "Eran Ben-Avi" <benavi@marvell.com>, linux-arm-kernel@lists.infradead.org,
- "Arnaud Ebalard" <arno@natisbad.org>
-References: <1432644177-16152-1-git-send-email-boris.brezillon@free-electrons.com>
- <55646B50.9060709@free-electrons.com>
-Message-ID: <20150603221756.6017.93987@quantum>
-Subject: Re: [PATCH v2] clk: mvebu: add missing CESA gate clk
-Date: Wed, 03 Jun 2015 15:17:56 -0700
+To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <ssantosh@kernel.org>, <mturquette@linaro.org>, <sboyd@codeaurora.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux@arm.linux.org.uk>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] clk: keystone: add support for post divider register
+ for main pll
+References: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
+In-Reply-To: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Gregory CLEMENT (2015-05-26 05:47:12)
-> Hi Boris,
-> =
+On 05/29/2015 12:04 PM, Murali Karicheri wrote:
+> Main PLL controller has post divider bits in a separate register in
+> pll controller. Use the value from this register instead of fixed
+> divider when available.
+>
+> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+> ---
+>   .../devicetree/bindings/clock/keystone-pll.txt       |  8 ++++----
+>   drivers/clk/keystone/pll.c                           | 20 ++++++++++++++++++--
+>   2 files changed, 22 insertions(+), 6 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/keystone-pll.txt b/Documentation/devicetree/bindings/clock/keystone-pll.txt
+> index 225990f..47570d2 100644
+> --- a/Documentation/devicetree/bindings/clock/keystone-pll.txt
+> +++ b/Documentation/devicetree/bindings/clock/keystone-pll.txt
+> @@ -15,8 +15,8 @@ Required properties:
+>   - compatible : shall be "ti,keystone,main-pll-clock" or "ti,keystone,pll-clock"
+>   - clocks : parent clock phandle
+>   - reg - pll control0 and pll multipler registers
+> -- reg-names : control and multiplier. The multiplier is applicable only for
+> -		main pll clock
+> +- reg-names : control, multiplier and post-divider. The multiplier and
+> +		post-divider registers are applicable only for main pll clock
+>   - fixed-postdiv : fixed post divider value. If absent, use clkod register bits
+>   		for postdiv
+>
+> @@ -25,8 +25,8 @@ Example:
+>   		#clock-cells = <0>;
+>   		compatible = "ti,keystone,main-pll-clock";
+>   		clocks = <&refclksys>;
+> -		reg = <0x02620350 4>, <0x02310110 4>;
+> -		reg-names = "control", "multiplier";
+> +		reg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
+> +		reg-names = "control", "multiplier", "post-divider";
+>   		fixed-postdiv = <2>;
+>   	};
+>
+> diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
+> index 0dd8a4b..4a375ea 100644
+> --- a/drivers/clk/keystone/pll.c
+> +++ b/drivers/clk/keystone/pll.c
+> @@ -37,7 +37,8 @@
+>    *	Main PLL or any other PLLs in the device such as ARM PLL, DDR PLL
+>    *	or PA PLL available on keystone2. These PLLs are controlled by
+>    *	this register. Main PLL is controlled by a PLL controller.
+> - * @pllm: PLL register map address
+> + * @pllm: PLL register map address for multiplier bits
+> + * @pllod: PLL register map address for post divider bits
+>    * @pll_ctl0: PLL controller map address
+>    * @pllm_lower_mask: multiplier lower mask
+>    * @pllm_upper_mask: multiplier upper mask
+> @@ -53,6 +54,7 @@ struct clk_pll_data {
+>   	u32 phy_pllm;
+>   	u32 phy_pll_ctl0;
+>   	void __iomem *pllm;
+> +	void __iomem *pllod;
+>   	void __iomem *pll_ctl0;
+>   	u32 pllm_lower_mask;
+>   	u32 pllm_upper_mask;
+> @@ -102,7 +104,11 @@ static unsigned long clk_pllclk_recalc(struct clk_hw *hw,
+>   		/* read post divider from od bits*/
+>   		postdiv = ((val & pll_data->clkod_mask) >>
+>   				 pll_data->clkod_shift) + 1;
+> -	else
+> +	else if (pll_data->pllod) {
+> +		postdiv = readl(pll_data->pllod);
+> +		postdiv = ((postdiv & pll_data->clkod_mask) >>
+> +				pll_data->clkod_shift) + 1;
+> +	} else
+>   		postdiv = pll_data->postdiv;
+>
+>   	rate /= (prediv + 1);
+> @@ -172,12 +178,21 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
+>   		/* assume the PLL has output divider register bits */
+>   		pll_data->clkod_mask = CLKOD_MASK;
+>   		pll_data->clkod_shift = CLKOD_SHIFT;
+> +
+> +		/*
+> +		 * Check if there is an post-divider register. If not
+> +		 * assume od bits are part of control register.
+> +		 */
+> +		i = of_property_match_string(node, "reg-names",
+> +					     "post-divider");
+> +		pll_data->pllod = of_iomap(node, i);
+>   	}
+>
+>   	i = of_property_match_string(node, "reg-names", "control");
+>   	pll_data->pll_ctl0 = of_iomap(node, i);
+>   	if (!pll_data->pll_ctl0) {
+>   		pr_err("%s: ioremap failed\n", __func__);
+> +		iounmap(pll_data->pllod);
+>   		goto out;
+>   	}
+>
+> @@ -193,6 +208,7 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
+>   		pll_data->pllm = of_iomap(node, i);
+>   		if (!pll_data->pllm) {
+>   			iounmap(pll_data->pll_ctl0);
+> +			iounmap(pll_data->pllod);
+>   			goto out;
+>   		}
+>   	}
+>
+Dear Maintainers?
 
-> On 26/05/2015 14:42, Boris Brezillon wrote:
-> > Even if not documented in the datasheet, the Armada 370 SoC can actually
-> > gate the CESA (crypto engine) clock.
-> > Add an entry in the gating_desc table to be able to reference the CESA
-> > gateclk in the crypto node.
-> > =
+Any comments please? If not, can this be applied?
 
-> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> =
-
-> =
-
-> Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-
-Applied.
-
-Regards,
-Mike
-
-> =
-
-> =
-
-> Thanks,
-> =
-
-> Gregory
-> =
-
-> > ---
-> > Hi,
-> > =
-
-> > Sorry for the noise, but since the changes in this patch are quite
-> > straightforward, I'm directly sending a v2 addressing Gregory's comments
-> > (instead of waiting for more reviews).
-> > =
-
-> > Best Regards,
-> > =
-
-> > Boris
-> > =
-
-> > Changes since v1:
-> >  - update the DT bindings doc
-> >  - change the clock name to be consistent with other SoCs
-> > =
-
-> >  Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt | 1 +
-> >  drivers/clk/mvebu/armada-370.c                                | 1 +
-> >  2 files changed, 2 insertions(+)
-> > =
-
-> > diff --git a/Documentation/devicetree/bindings/clock/mvebu-gated-clock.=
-txt b/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
-> > index 31c7c0c..660e649 100644
-> > --- a/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
-> > +++ b/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
-> > @@ -19,6 +19,7 @@ ID  Clock   Peripheral
-> >  9    pex1    PCIe Cntrl 1
-> >  15   sata0   SATA Host 0
-> >  17   sdio    SDHCI Host
-> > +23   crypto  CESA (crypto engine)
-> >  25   tdm     Time Division Mplx
-> >  28   ddr     DDR Cntrl
-> >  30   sata1   SATA Host 0
-> > diff --git a/drivers/clk/mvebu/armada-370.c b/drivers/clk/mvebu/armada-=
-370.c
-> > index 756f0f3..c19fd77 100644
-> > --- a/drivers/clk/mvebu/armada-370.c
-> > +++ b/drivers/clk/mvebu/armada-370.c
-> > @@ -163,6 +163,7 @@ static const struct clk_gating_soc_desc a370_gating=
-_desc[] __initconst =3D {
-> >       { "pex1", "pex1_en", 9, 0 },
-> >       { "sata0", NULL, 15, 0 },
-> >       { "sdio", NULL, 17, 0 },
-> > +     { "crypto", NULL, 23, 0 },
-> >       { "tdm", NULL, 25, 0 },
-> >       { "ddr", NULL, 28, CLK_IGNORE_UNUSED },
-> >       { "sata1", NULL, 30, 0 },
-> > =
-
-> =
-
-> =
-
-> -- =
-
-> Gregory Clement, Free Electrons
-> Kernel, drivers, real-time and embedded Linux
-> development, consulting, training and support.
-> http://free-electrons.com
+-- 
+Murali Karicheri
+Linux Kernel, Keystone
