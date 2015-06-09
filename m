@@ -1,113 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: mturquette@gmail.com, sboyd@codeaurora.org, matthias.bgg@gmail.com
-Cc: henryc.chen@mediatek.com, s.hauer@pengutronix.de,
-	jamesjj.liao@mediatek.com, p.zabel@pengutronix.de,
-	manabian@gmail.com, heiko@sntech.de, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 2/3] clk: mediatek: Add support for clk-mux using regmap
-Date: Tue, 16 Jun 2015 16:23:34 +0200
-Message-Id: <1434464615-9080-3-git-send-email-matthias.bgg@gmail.com>
-In-Reply-To: <1434464615-9080-1-git-send-email-matthias.bgg@gmail.com>
-References: <1434464615-9080-1-git-send-email-matthias.bgg@gmail.com>
+Date: Tue, 9 Jun 2015 20:44:39 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Russell King <linux@arm.linux.org.uk>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	arm@kernel.org, Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 03/15] clk: kill off set_irq_flags usage
+Message-ID: <20150609204439.1461f02b@bbrezillon>
+In-Reply-To: <1433874401-27161-4-git-send-email-robh@kernel.org>
+References: <1433874401-27161-1-git-send-email-robh@kernel.org>
+	<1433874401-27161-4-git-send-email-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patches adds support for the mediatek clocks to be able to register
-and use a clk-mux wich relies on regmap.
+On Tue,  9 Jun 2015 13:26:29 -0500
+Rob Herring <robh@kernel.org> wrote:
 
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
----
- drivers/clk/mediatek/clk-mtk.c | 37 +++++++++++++++++++++++++++++++++++++
- drivers/clk/mediatek/clk-mtk.h | 26 ++++++++++++++++++++++++++
- 2 files changed, 63 insertions(+)
+> set_irq_flags is ARM specific with custom flags which have genirq
+> equivalents. Convert drivers to use the genirq interfaces directly, so we
+> can kill off set_irq_flags. The translation of flags is as follows:
+> 
+> IRQF_VALID -> !IRQ_NOREQUEST
+> IRQF_PROBE -> !IRQ_NOPROBE
+> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+> 
+> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
+> and setting IRQ_NOREQUEST already, so there is no need to do this in
+> .map() functions and we can simply remove the set_irq_flags calls. Some
+> users also set IRQ_NOPROBE and this has been maintained although it is not
+> clear that is really needed. There appears to be a great deal of blind
+> copy and paste of this code.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 18444ae..cf953a8 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -111,6 +111,43 @@ int mtk_clk_register_gates(struct device_node *node, const struct mtk_gate *clks
- 	return 0;
- }
- 
-+int mtk_clk_regm_register_mux(struct device_node *node,
-+		const struct mtk_regm_mux *clks, int num,
-+		struct clk_onecell_data *clk_data)
-+{
-+	int i;
-+	struct clk *clk;
-+	struct regmap *regmap;
-+
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	regmap = syscon_node_to_regmap(node);
-+	if (IS_ERR(regmap)) {
-+		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
-+				PTR_ERR(regmap));
-+		return PTR_ERR(regmap);
-+	}
-+
-+	for (i = 0; i < num; i++) {
-+		const struct mtk_regm_mux *mux = &clks[i];
-+
-+		clk = clk_regm_register_mux(NULL, mux->name, mux->parent_names,
-+					mux->num_parents, 0, regmap,
-+					mux->mux_offset, mux->mux_shift,
-+					mux->mux_width, mux->flags, NULL);
-+		if (IS_ERR(clk)) {
-+			pr_err("Failed to register clk mux %s: %ld\n",
-+					mux->name, PTR_ERR(clk));
-+			continue;
-+		}
-+
-+		clk_data->clks[mux->id] = clk;
-+	}
-+
-+	return 0;
-+}
-+
- struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
- 		void __iomem *base, spinlock_t *lock)
- {
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index 9dda9d8..6fe85ca 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -156,6 +156,32 @@ void __init mtk_clk_register_plls(struct device_node *node,
- 		const struct mtk_pll_data *plls, int num_plls,
- 		struct clk_onecell_data *clk_data);
- 
-+struct mtk_regm_mux {
-+	int id;
-+	const char *name;
-+	const char * const *parent_names;
-+	u8 num_parents;
-+	unsigned flags;
-+	uint32_t mux_offset;
-+	uint32_t mux_shift;
-+	uint32_t mux_width;
-+};
-+
-+int __init mtk_clk_regm_register_mux(struct device_node *node,
-+		const struct mtk_regm_mux *clks, int num,
-+		struct clk_onecell_data *clk_data);
-+
-+#define MUX_REGMAP(_id, _name, _parents, _offset, _shift, _width) {	\
-+		.id = _id,						\
-+		.name = _name,						\
-+		.parent_names = _parents,				\
-+		.num_parents = ARRAY_SIZE(_parents),			\
-+		.flags = CLK_SET_RATE_PARENT,				\
-+		.mux_offset = _offset,					\
-+		.mux_shift = _shift,					\
-+		.mux_width = _width,					\
-+	}
-+
- #ifdef CONFIG_RESET_CONTROLLER
- void mtk_register_reset_controller(struct device_node *np,
- 			unsigned int num_regs, int regofs);
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+
+> Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Cc: Mike Turquette <mturquette@linaro.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: linux-clk@vger.kernel.org
+> ---
+>  drivers/clk/at91/pmc.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+> index 3f27d21..828b196 100644
+> --- a/drivers/clk/at91/pmc.c
+> +++ b/drivers/clk/at91/pmc.c
+> @@ -125,7 +125,6 @@ static int pmc_irq_map(struct irq_domain *h, unsigned int virq,
+>  
+>  	irq_set_chip_and_handler(virq, &pmc_irq,
+>  				 handle_level_irq);
+> -	set_irq_flags(virq, IRQF_VALID);
+>  	irq_set_chip_data(virq, pmc);
+>  
+>  	return 0;
+
+
+
 -- 
-1.9.1
-
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
