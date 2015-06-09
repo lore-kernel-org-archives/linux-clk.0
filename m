@@ -1,48 +1,48 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 2/8] clk: rockchip: fix faulty vip parent name on rk3288
-Date: Sat, 13 Jun 2015 18:22:16 +0200
-Message-Id: <1434212542-17145-3-git-send-email-heiko@sntech.de>
-In-Reply-To: <1434212542-17145-1-git-send-email-heiko@sntech.de>
-References: <1434212542-17145-1-git-send-email-heiko@sntech.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 9 Jun 2015 11:52:12 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Russell King <linux@arm.linux.org.uk>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	arm@kernel.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 03/15] clk: kill off set_irq_flags usage
+Message-ID: <20150609185212.GB29640@codeaurora.org>
+References: <1433874401-27161-1-git-send-email-robh@kernel.org>
+ <1433874401-27161-4-git-send-email-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1433874401-27161-4-git-send-email-robh@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The video input processor (vip) was called camera interface (cif) on
-older socs which seems to have resulted in a copy'n'paste error when
-creating the rk3288 camera clocks.
+On 06/09, Rob Herring wrote:
+> set_irq_flags is ARM specific with custom flags which have genirq
+> equivalents. Convert drivers to use the genirq interfaces directly, so we
+> can kill off set_irq_flags. The translation of flags is as follows:
+> 
+> IRQF_VALID -> !IRQ_NOREQUEST
+> IRQF_PROBE -> !IRQ_NOPROBE
+> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+> 
+> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
+> and setting IRQ_NOREQUEST already, so there is no need to do this in
+> .map() functions and we can simply remove the set_irq_flags calls. Some
+> users also set IRQ_NOPROBE and this has been maintained although it is not
+> clear that is really needed. There appears to be a great deal of blind
+> copy and paste of this code.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Cc: Mike Turquette <mturquette@linaro.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: linux-clk@vger.kernel.org
+> ---
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/rockchip/clk-rk3288.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 4f817ed..6f0259f 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -189,7 +189,7 @@ PNAME(mux_uart1_p)	= { "uart1_src", "uart1_frac", "xin24m" };
- PNAME(mux_uart2_p)	= { "uart2_src", "uart2_frac", "xin24m" };
- PNAME(mux_uart3_p)	= { "uart3_src", "uart3_frac", "xin24m" };
- PNAME(mux_uart4_p)	= { "uart4_src", "uart4_frac", "xin24m" };
--PNAME(mux_cif_out_p)	= { "cif_src", "xin24m" };
-+PNAME(mux_vip_out_p)	= { "vip_src", "xin24m" };
- PNAME(mux_mac_p)	= { "mac_pll_src", "ext_gmac" };
- PNAME(mux_hsadcout_p)	= { "hsadc_src", "ext_hsadc" };
- PNAME(mux_edp_24m_p)	= { "ext_edp_24m", "xin24m" };
-@@ -434,7 +434,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	COMPOSITE_NODIV(0, "vip_src", mux_pll_src_cpll_gpll_p, 0,
- 			RK3288_CLKSEL_CON(26), 8, 1, MFLAGS,
- 			RK3288_CLKGATE_CON(3), 7, GFLAGS),
--	COMPOSITE_NOGATE(0, "sclk_vip_out", mux_cif_out_p, 0,
-+	COMPOSITE_NOGATE(0, "sclk_vip_out", mux_vip_out_p, 0,
- 			RK3288_CLKSEL_CON(26), 15, 1, MFLAGS, 9, 5, DFLAGS),
- 
- 	DIV(0, "pclk_pd_alive", "gpll", 0,
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
