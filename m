@@ -1,256 +1,105 @@
-Return-Path: <daniel.thompson@linaro.org>
-Return-Path: <daniel.thompson@linaro.org>
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Kamil Lulko <rev13@wp.pl>,
-	Andreas Farber <afaerber@suse.de>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	patches@linaro.org,
-	linaro-kernel@lists.linaro.org
-Subject: [PATCH v3 3/3] ARM: dts: stm32f429: Adopt STM32F4 clock driver
-Date: Wed, 10 Jun 2015 21:09:38 +0100
-Message-Id: <1433966978-24422-4-git-send-email-daniel.thompson@linaro.org>
-In-Reply-To: <1433966978-24422-1-git-send-email-daniel.thompson@linaro.org>
-References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
- <1433966978-24422-1-git-send-email-daniel.thompson@linaro.org>
+Return-Path: <lee@kernel.org>
+Date: Tue, 9 Jun 2015 11:03:26 +0100
+From: Lee Jones <lee@kernel.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v3 1/7] dt/bindings: Add binding for the Raspberry Pi
+ clock provider
+Message-ID: <20150609100326.GQ2982@x1>
+References: <1433807940-15328-1-git-send-email-eric@anholt.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1433807940-15328-1-git-send-email-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-New bindings and driver have been created for STM32F42xxx series parts.
-This patch integrates these changes.
+If I were the Clock Maintainer, I would have probably missed this
+patch.  You _must_ intimate which subsystem you are submitting to.
 
-Note: Earlier device tree blobs (those without st,stm32f42xxx
-      compatibles for the rcc) could still be used to boot basic
-      systems. Such systems rely on the bootloader to configure the
-      clock gates for vital periperhals.
+> The hardware clocks are not controllable by the ARM, so we have to
+> make requests to the firmware to do so from the VPU side.  This will
+> let us replace fixed clocks in our DT with actual clock control (and
+> correct frequency information).
+> 
+> v2: Include the dt-bindings header in this commit instead of the next
+>     one.  Make the clock indices match the firmware clock IDs.  Rename
+>     the binding's compat string.  Move the firmware phandle to be
+>     under a vendor-specific namespace.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> ---
+>  .../clock/raspberrypi,bcm2835-firmware-clocks.txt  | 25 ++++++++++++++++++++++
+>  include/dt-bindings/clk/raspberrypi.h              | 23 ++++++++++++++++++++
+>  2 files changed, 48 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt
+>  create mode 100644 include/dt-bindings/clk/raspberrypi.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt b/Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt
+> new file mode 100644
+> index 0000000..0972602
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt
+> @@ -0,0 +1,25 @@
+> +Raspberry Pi firmware clock provider.
+> +
+> +The Raspberry Pi architecture doesn't provide direct access to the
+> +CLOCKMAN peripheral from the ARM side, so Linux has to make requests
+> +to the VPU firmware to program them.
+> +
+> +This binding uses the common clock binding:
+> +Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +Required properties:
+> +- compatible:		Should be "raspberrypi,bcm2835-firmware-clocks"
+> +
+> +- #clock-cells:		Shall have value <1>.  The permitted clock-specifier
+> +			  values can be found in
+> +			  include/dt-bindings/clk/raspberrypi.h.
+> +
+> +- raspberrypi,firmware:	Phandle to the firmware driver node.
 
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-Reviewed-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
----
- arch/arm/boot/dts/stm32f429-disco.dts |  4 ++
- arch/arm/boot/dts/stm32f429.dtsi      | 79 +++++++++++------------------------
- 2 files changed, 28 insertions(+), 55 deletions(-)
+I think 'firmware' is a candidate for a generic phandle name.
 
-diff --git a/arch/arm/boot/dts/stm32f429-disco.dts b/arch/arm/boot/dts/stm32f429-disco.dts
-index 17cbb83..97028da 100644
---- a/arch/arm/boot/dts/stm32f429-disco.dts
-+++ b/arch/arm/boot/dts/stm32f429-disco.dts
-@@ -66,6 +66,10 @@
- 	};
- };
- 
-+&clk_hse {
-+	clock-frequency = <8000000>;
-+};
-+
- &usart1 {
- 	status = "okay";
- };
-diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
-index ef6d382..748b886 100644
---- a/arch/arm/boot/dts/stm32f429.dtsi
-+++ b/arch/arm/boot/dts/stm32f429.dtsi
-@@ -49,48 +49,10 @@
- 
- / {
- 	clocks {
--		clk_sysclk: clk-sysclk {
-+		clk_hse: clk-hse {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
--			clock-frequency = <168000000>;
--		};
--
--		clk_hclk: clk-hclk {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <168000000>;
--		};
--
--		clk_pclk1: clk-pclk1 {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <42000000>;
--		};
--
--		clk_pclk2: clk-pclk2 {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <84000000>;
--		};
--
--		clk_pmtr1: clk-pmtr1 {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <84000000>;
--		};
--
--		clk_pmtr2: clk-pmtr2 {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <168000000>;
--		};
--
--		clk_systick: clk-systick {
--			compatible = "fixed-factor-clock";
--			clocks = <&clk_hclk>;
--			#clock-cells = <0>;
--			clock-div = <8>;
--			clock-mult = <1>;
-+			clock-frequency = <0>;
- 		};
- 	};
- 
-@@ -99,7 +61,7 @@
- 			compatible = "st,stm32-timer";
- 			reg = <0x40000000 0x400>;
- 			interrupts = <28>;
--			clocks = <&clk_pmtr1>;
-+			clocks = <&rcc 0 128>;
- 			status = "disabled";
- 		};
- 
-@@ -107,7 +69,7 @@
- 			compatible = "st,stm32-timer";
- 			reg = <0x40000400 0x400>;
- 			interrupts = <29>;
--			clocks = <&clk_pmtr1>;
-+			clocks = <&rcc 0 129>;
- 			status = "disabled";
- 		};
- 
-@@ -115,7 +77,7 @@
- 			compatible = "st,stm32-timer";
- 			reg = <0x40000800 0x400>;
- 			interrupts = <30>;
--			clocks = <&clk_pmtr1>;
-+			clocks = <&rcc 0 130>;
- 			status = "disabled";
- 		};
- 
-@@ -123,7 +85,7 @@
- 			compatible = "st,stm32-timer";
- 			reg = <0x40000c00 0x400>;
- 			interrupts = <50>;
--			clocks = <&clk_pmtr1>;
-+			clocks = <&rcc 0 131>;
- 			status = "disabled";
- 		};
- 
-@@ -131,7 +93,7 @@
- 			compatible = "st,stm32-timer";
- 			reg = <0x40001000 0x400>;
- 			interrupts = <54>;
--			clocks = <&clk_pmtr1>;
-+			clocks = <&rcc 0 132>;
- 			status = "disabled";
- 		};
- 
-@@ -139,7 +101,7 @@
- 			compatible = "st,stm32-timer";
- 			reg = <0x40001400 0x400>;
- 			interrupts = <55>;
--			clocks = <&clk_pmtr1>;
-+			clocks = <&rcc 0 133>;
- 			status = "disabled";
- 		};
- 
-@@ -147,7 +109,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40004400 0x400>;
- 			interrupts = <38>;
--			clocks = <&clk_pclk1>;
-+			clocks = <&rcc 0 145>;
- 			status = "disabled";
- 		};
- 
-@@ -155,7 +117,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40004800 0x400>;
- 			interrupts = <39>;
--			clocks = <&clk_pclk1>;
-+			clocks = <&rcc 0 146>;
- 			status = "disabled";
- 		};
- 
-@@ -163,7 +125,7 @@
- 			compatible = "st,stm32-uart";
- 			reg = <0x40004c00 0x400>;
- 			interrupts = <52>;
--			clocks = <&clk_pclk1>;
-+			clocks = <&rcc 0 147>;
- 			status = "disabled";
- 		};
- 
-@@ -171,7 +133,7 @@
- 			compatible = "st,stm32-uart";
- 			reg = <0x40005000 0x400>;
- 			interrupts = <53>;
--			clocks = <&clk_pclk1>;
-+			clocks = <&rcc 0 148>;
- 			status = "disabled";
- 		};
- 
-@@ -179,7 +141,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40007800 0x400>;
- 			interrupts = <82>;
--			clocks = <&clk_pclk1>;
-+			clocks = <&rcc 0 158>;
- 			status = "disabled";
- 		};
- 
-@@ -187,7 +149,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40007c00 0x400>;
- 			interrupts = <83>;
--			clocks = <&clk_pclk1>;
-+			clocks = <&rcc 0 159>;
- 			status = "disabled";
- 		};
- 
-@@ -195,7 +157,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40011000 0x400>;
- 			interrupts = <37>;
--			clocks = <&clk_pclk2>;
-+			clocks = <&rcc 0 164>;
- 			status = "disabled";
- 		};
- 
-@@ -203,13 +165,20 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40011400 0x400>;
- 			interrupts = <71>;
--			clocks = <&clk_pclk2>;
-+			clocks = <&rcc 0 165>;
- 			status = "disabled";
- 		};
-+
-+		rcc: rcc@40023810 {
-+			#clock-cells = <2>;
-+			compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
-+			reg = <0x40023800 0x400>;
-+			clocks = <&clk_hse>;
-+		};
- 	};
- };
- 
- &systick {
--	clocks = <&clk_systick>;
-+	clocks = <&rcc 1 0>;
- 	status = "okay";
- };
--- 
-2.4.2
+Apart from that, binding looks pretty inert:
+
+Acked-by: Lee Jones <lee@kernel.org>
+
+> +Example:
+> +
+> +firmware_clocks: firmware-clocks {
+> +	compatible = "raspberrypi,bcm2835-firmware-clocks";
+> +	#clock-cells = <1>;
+> +	raspberrypi,firmware = <&firmware>;
+> +};
+> diff --git a/include/dt-bindings/clk/raspberrypi.h b/include/dt-bindings/clk/raspberrypi.h
+> new file mode 100644
+> index 0000000..ceec90f
+> --- /dev/null
+> +++ b/include/dt-bindings/clk/raspberrypi.h
+> @@ -0,0 +1,23 @@
+> +#/*
+> + *  Copyright © 2015 Broadcom
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_RASPBERRYPI_H
+> +#define _DT_BINDINGS_CLK_RASPBERRYPI_H
+> +
+> +#define RPI_CLOCK_EMMC	1
+> +#define RPI_CLOCK_UART0	2
+> +#define RPI_CLOCK_ARM	3
+> +#define RPI_CLOCK_CORE	4
+> +#define RPI_CLOCK_V3D	5
+> +#define RPI_CLOCK_H264	6
+> +#define RPI_CLOCK_ISP	7
+> +#define RPI_CLOCK_SDRAM	8
+> +#define RPI_CLOCK_PIXEL	9
+> +#define RPI_CLOCK_PWM	10
+> +
+> +#endif
