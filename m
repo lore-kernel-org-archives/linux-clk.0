@@ -1,168 +1,53 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Message-ID: <55770635.1040204@ti.com>
-Date: Tue, 9 Jun 2015 11:28:53 -0400
-From: Murali Karicheri <m-karicheri2@ti.com>
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v3 1/7] dt/bindings: Add binding for the Raspberry Pi clock provider
+In-Reply-To: <1433807940-15328-1-git-send-email-eric@anholt.net>
+References: <1433807940-15328-1-git-send-email-eric@anholt.net>
+Date: Mon, 08 Jun 2015 17:03:05 -0700
+Message-ID: <877frdague.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-To: <ssantosh@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-clk@vger.kernel.org>
-Subject: Fwd: [PATCH 1/2] clk: keystone: add support for post divider register
- for main pll
-References: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
-In-Reply-To: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-Santosh,
+--=-=-=
+Content-Type: text/plain
 
-Can you send a pull request to clock subsystem to be picked up for v4.2 
-and apply the dts part to keystone for the same merge window? or are we 
-too late for this?
+Eric Anholt <eric@anholt.net> writes:
 
-Murali
+> The hardware clocks are not controllable by the ARM, so we have to
+> make requests to the firmware to do so from the VPU side.  This will
+> let us replace fixed clocks in our DT with actual clock control (and
+> correct frequency information).
+>
+> v2: Include the dt-bindings header in this commit instead of the next
+>     one.  Make the clock indices match the firmware clock IDs.  Rename
+>     the binding's compat string.  Move the firmware phandle to be
+>     under a vendor-specific namespace.
 
--------- Forwarded Message --------
-Subject: [PATCH 1/2] clk: keystone: add support for post divider 
-register for main pll
-Date: Fri, 29 May 2015 12:04:12 -0400
-From: Murali Karicheri <m-karicheri2@ti.com>
-To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, 
-ijc+devicetree@hellion.org.uk, galak@codeaurora.org, 
-ssantosh@kernel.org, mturquette@linaro.org, sboyd@codeaurora.org, 
-devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-linux-clk@vger.kernel.org, linux@arm.linux.org.uk, 
-linux-arm-kernel@lists.infradead.org
-CC: Murali Karicheri <m-karicheri2@ti.com>
+Having failed to move the versioning bits below --- again, I'm adding
+scripting to hopefully catch myself if I'm about to do it again.
 
-Main PLL controller has post divider bits in a separate register in
-pll controller. Use the value from this register instead of fixed
-divider when available.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
----
-  .../devicetree/bindings/clock/keystone-pll.txt       |  8 ++++----
-  drivers/clk/keystone/pll.c                           | 20 
-++++++++++++++++++--
-  2 files changed, 22 insertions(+), 6 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-diff --git a/Documentation/devicetree/bindings/clock/keystone-pll.txt 
-b/Documentation/devicetree/bindings/clock/keystone-pll.txt
-index 225990f..47570d2 100644
---- a/Documentation/devicetree/bindings/clock/keystone-pll.txt
-+++ b/Documentation/devicetree/bindings/clock/keystone-pll.txt
-@@ -15,8 +15,8 @@ Required properties:
-  - compatible : shall be "ti,keystone,main-pll-clock" or 
-"ti,keystone,pll-clock"
-  - clocks : parent clock phandle
-  - reg - pll control0 and pll multipler registers
--- reg-names : control and multiplier. The multiplier is applicable only for
--		main pll clock
-+- reg-names : control, multiplier and post-divider. The multiplier and
-+		post-divider registers are applicable only for main pll clock
-  - fixed-postdiv : fixed post divider value. If absent, use clkod 
-register bits
-  		for postdiv
-
-@@ -25,8 +25,8 @@ Example:
-  		#clock-cells = <0>;
-  		compatible = "ti,keystone,main-pll-clock";
-  		clocks = <&refclksys>;
--		reg = <0x02620350 4>, <0x02310110 4>;
--		reg-names = "control", "multiplier";
-+		reg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
-+		reg-names = "control", "multiplier", "post-divider";
-  		fixed-postdiv = <2>;
-  	};
-
-diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
-index 0dd8a4b..4a375ea 100644
---- a/drivers/clk/keystone/pll.c
-+++ b/drivers/clk/keystone/pll.c
-@@ -37,7 +37,8 @@
-   *	Main PLL or any other PLLs in the device such as ARM PLL, DDR PLL
-   *	or PA PLL available on keystone2. These PLLs are controlled by
-   *	this register. Main PLL is controlled by a PLL controller.
-- * @pllm: PLL register map address
-+ * @pllm: PLL register map address for multiplier bits
-+ * @pllod: PLL register map address for post divider bits
-   * @pll_ctl0: PLL controller map address
-   * @pllm_lower_mask: multiplier lower mask
-   * @pllm_upper_mask: multiplier upper mask
-@@ -53,6 +54,7 @@ struct clk_pll_data {
-  	u32 phy_pllm;
-  	u32 phy_pll_ctl0;
-  	void __iomem *pllm;
-+	void __iomem *pllod;
-  	void __iomem *pll_ctl0;
-  	u32 pllm_lower_mask;
-  	u32 pllm_upper_mask;
-@@ -102,7 +104,11 @@ static unsigned long clk_pllclk_recalc(struct 
-clk_hw *hw,
-  		/* read post divider from od bits*/
-  		postdiv = ((val & pll_data->clkod_mask) >>
-  				 pll_data->clkod_shift) + 1;
--	else
-+	else if (pll_data->pllod) {
-+		postdiv = readl(pll_data->pllod);
-+		postdiv = ((postdiv & pll_data->clkod_mask) >>
-+				pll_data->clkod_shift) + 1;
-+	} else
-  		postdiv = pll_data->postdiv;
-
-  	rate /= (prediv + 1);
-@@ -172,12 +178,21 @@ static void __init _of_pll_clk_init(struct 
-device_node *node, bool pllctrl)
-  		/* assume the PLL has output divider register bits */
-  		pll_data->clkod_mask = CLKOD_MASK;
-  		pll_data->clkod_shift = CLKOD_SHIFT;
-+
-+		/*
-+		 * Check if there is an post-divider register. If not
-+		 * assume od bits are part of control register.
-+		 */
-+		i = of_property_match_string(node, "reg-names",
-+					     "post-divider");
-+		pll_data->pllod = of_iomap(node, i);
-  	}
-
-  	i = of_property_match_string(node, "reg-names", "control");
-  	pll_data->pll_ctl0 = of_iomap(node, i);
-  	if (!pll_data->pll_ctl0) {
-  		pr_err("%s: ioremap failed\n", __func__);
-+		iounmap(pll_data->pllod);
-  		goto out;
-  	}
-
-@@ -193,6 +208,7 @@ static void __init _of_pll_clk_init(struct 
-device_node *node, bool pllctrl)
-  		pll_data->pllm = of_iomap(node, i);
-  		if (!pll_data->pllm) {
-  			iounmap(pll_data->pll_ctl0);
-+			iounmap(pll_data->pllod);
-  			goto out;
-  		}
-  	}
--- 
-1.9.1
-
-
-
-
--- 
-Murali Karicheri
-Linux Kernel, Keystone
-
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+iQIcBAEBCgAGBQJVdi06AAoJELXWKTbR/J7oC5MP/3RZkzDIfw5aAV8LBpDvL25j
+5unHXlHhwR607gbIC6ATeodG3XncC0KkE+K1L5lf4FhkR2eur+L6KbdqUg999Voe
+WHNCBBbp7la/ZsK5hYkDoextVvt0CQBA5Zaj5XzT/G4SAqlIflnwE0bQCYHW1MyE
+zAfCsNRyObYo3ApwqHgAeiSBAoHvC0R04RWsQhwM2rwd8t69GuRjr0PnuzAmoHgs
+sUZ/fSO9h0U8tdPS39qhID6qu/9UYGXSI87Tm/+ttWgjcqFlf1TEsZsPO020IdJT
+9BL6RTwLwhHg18NRo+xj0EYC6gqOMCUUeeP5zcYQ0KiKUQ81dwsqBZZJ0K4gqPu7
+2Ca1zJNlidTa7HqHf5M/hM+nINrHfG5cV3ZvUJt8XoBi3gXx7WcHeBQdeNOSAW0f
+/JhxJ3UrA85kwhGajY4bGU14iUytV9g8RH/tnNXRttglpRfythNGbwQ+DYAPp4XH
+MPqMtVZ+s9+6IsG35p6wt3XZ2MzooN6v7HSj7zJZKK1PWTEiv3RS/T0hj0Nof9cD
+Gn6cQvZLUx5O9+eO0s4gqET9p6cyn7MfqcsmjL1egVSJggRlUBMprnjM6MsStiiF
+NbDOvWBSSS5FEccieXron4tMQbr4yiJAfqx3eCxH7H3Yl3Lec7o/FdU12VTXcRG/
+chfWui4ro/30rNy4sVlr
+=cl/e
+-----END PGP SIGNATURE-----
+--=-=-=--
