@@ -1,212 +1,168 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 24 Jun 2015 19:43:38 +0200 (CEST)
-From: Paul Osmialowski <pawelo@king.net.pl>
-To: Vinod Koul <vinod.koul@intel.com>
-cc: Paul Osmialowski <pawelo@king.net.pl>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Anson Huang <b20788@freescale.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Frank Li <Frank.Li@freescale.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Jingchang Lu <jingchang.lu@freescale.com>,
-	Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nathan Lynch <nathan_lynch@mentor.com>,
-	Nicolas Pitre <nico@linaro.org>,
-	Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
-	Olof Johansson <olof@lixom.net>,
-	Paul Bolle <pebolle@tiscali.nl>,
-	Rob Herring <r.herring@freescale.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-	Shawn Guo <shawn.guo@linaro.org>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Stefan Agner <stefan@agner.ch>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-	Yuri Tikhonov <yur@emcraft.com>,
-	Sergei Poselenov <sposelenov@emcraft.com>,
-	Dmitry Cherkassov <d_cherkasov@emcraft.com>,
-	Alexander Potashev <aspotashev@emcraft.com>
-Subject: Re: [PATCH 8/9] arm: twr-k70f120m: extend Freescale eDMA driver with
- ability to support Kinetis SoC
-In-Reply-To: <20150624161423.GO19530@localhost>
-Message-ID: <alpine.LNX.2.00.1506241941320.32459@localhost.localdomain>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <1435094387-20146-9-git-send-email-pawelo@king.net.pl> <20150624161423.GO19530@localhost>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Message-ID: <55770635.1040204@ti.com>
+Date: Tue, 9 Jun 2015 11:28:53 -0400
+From: Murali Karicheri <m-karicheri2@ti.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+To: <ssantosh@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-clk@vger.kernel.org>
+Subject: Fwd: [PATCH 1/2] clk: keystone: add support for post divider register
+ for main pll
+References: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
+In-Reply-To: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Santosh,
 
-Hi Vinod,
+Can you send a pull request to clock subsystem to be picked up for v4.2 
+and apply the dts part to keystone for the same merge window? or are we 
+too late for this?
 
-Tanks for your comments. Actually, fsl-lpuart driver is done the way you 
-propose to rework this one. I'll consider this during my work on the 
-second iteration.
+Murali
 
-On Wed, 24 Jun 2015, Vinod Koul wrote:
+-------- Forwarded Message --------
+Subject: [PATCH 1/2] clk: keystone: add support for post divider 
+register for main pll
+Date: Fri, 29 May 2015 12:04:12 -0400
+From: Murali Karicheri <m-karicheri2@ti.com>
+To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, 
+ijc+devicetree@hellion.org.uk, galak@codeaurora.org, 
+ssantosh@kernel.org, mturquette@linaro.org, sboyd@codeaurora.org, 
+devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+linux-clk@vger.kernel.org, linux@arm.linux.org.uk, 
+linux-arm-kernel@lists.infradead.org
+CC: Murali Karicheri <m-karicheri2@ti.com>
 
-> On Tue, Jun 23, 2015 at 11:19:46PM +0200, Paul Osmialowski wrote:
->> Surprisingly small amount of work was required in order to extend already
->> existing eDMA driver with the support for Kinetis SoC architecture.
->>
->> Note that <mach/memory.h> is needed (which is denoted by
->> CONFIG_NEED_MACH_MEMORY_H) as it provides macros required for proper
->> operation of DMA allocation functions.
->>
->> Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
->> ---
->>  Documentation/devicetree/bindings/dma/fsl-edma.txt | 38 +++++++++-
->>  arch/arm/Kconfig                                   |  4 ++
->>  arch/arm/boot/dts/kinetis.dtsi                     | 34 +++++++++
->>  arch/arm/mach-kinetis/include/mach/memory.h        | 61 ++++++++++++++++
->>  drivers/clk/clk-kinetis.c                          | 15 ++++
->>  drivers/dma/fsl-edma.c                             | 81 +++++++++++++++++++++-
->>  include/dt-bindings/clock/kinetis-mcg.h            |  5 +-
-> having so many change into one patch is not a great idea, please breka them
-> up. I am looking for single/multiple patches which only touch dmaengine
-> files
->
->
->> +#ifdef CONFIG_ARCH_KINETIS
->> +static const char * const txirq_names[] = {
->> +	"edma-tx-0,16",
->> +	"edma-tx-1,17",
->> +	"edma-tx-2,18",
->> +	"edma-tx-3,19",
->> +	"edma-tx-4,20",
->> +	"edma-tx-5,21",
->> +	"edma-tx-6,22",
->> +	"edma-tx-7,23",
->> +	"edma-tx-8,24",
->> +	"edma-tx-9,25",
->> +	"edma-tx-10,26",
->> +	"edma-tx-11,27",
->> +	"edma-tx-12,28",
->> +	"edma-tx-13,29",
->> +	"edma-tx-14,30",
->> +	"edma-tx-15,31",
->> +};
-> why do we need this array, these seem to come from DT, right?
->> +#endif
->> +
->>  struct fsl_edma_engine {
->>  	struct dma_device	dma_dev;
->>  	void __iomem		*membase;
->> +#ifdef CONFIG_ARCH_KINETIS
->> +	struct clk		*clk;
->> +#endif
->>  	void __iomem		*muxbase[DMAMUX_NR];
->>  	struct clk		*muxclk[DMAMUX_NR];
->>  	struct mutex		fsl_edma_mutex;
->>  	u32			n_chans;
->> +#ifdef CONFIG_ARCH_KINETIS
->> +	int			txirq[ARRAY_SIZE(txirq_names)];
->> +#else
->>  	int			txirq;
->> +#endif
->>  	int			errirq;
->>  	bool			big_endian;
->>  	struct fsl_edma_chan	chans[];
-> we can define these bits and only be used on kinetis machines?
->
->> @@ -709,6 +737,7 @@ static irqreturn_t fsl_edma_err_handler(int irq, void *dev_id)
->>  	return IRQ_HANDLED;
->>  }
->>
->> +#ifndef CONFIG_ARCH_KINETIS
->>  static irqreturn_t fsl_edma_irq_handler(int irq, void *dev_id)
->>  {
->>  	if (fsl_edma_tx_handler(irq, dev_id) == IRQ_HANDLED)
->> @@ -716,6 +745,7 @@ static irqreturn_t fsl_edma_irq_handler(int irq, void *dev_id)
->>
->>  	return fsl_edma_err_handler(irq, dev_id);
->>  }
->> +#endif
->>
->>  static void fsl_edma_issue_pending(struct dma_chan *chan)
->>  {
->> @@ -788,15 +818,29 @@ static void fsl_edma_free_chan_resources(struct dma_chan *chan)
->>  }
->>
->>  static int
->> -fsl_edma_irq_init(struct platform_device *pdev, struct fsl_edma_engine *fsl_edma)
->> +fsl_edma_irq_init(struct platform_device *pdev,
->> +		  struct fsl_edma_engine *fsl_edma)
->>  {
->>  	int ret;
->> +#ifdef CONFIG_ARCH_KINETIS
->> +	int i;
->>
->> +	for (i = 0; i < ARRAY_SIZE(txirq_names); i++) {
->> +		fsl_edma->txirq[i] = platform_get_irq_byname(pdev,
->> +					txirq_names[i]);
->> +		if (fsl_edma->txirq[i] < 0) {
->> +			dev_err(&pdev->dev, "Can't get %s irq.\n",
->> +						txirq_names[i]);
->> +			return fsl_edma->txirq[i];
->> +		}
->> +	}
->> +#else
->>  	fsl_edma->txirq = platform_get_irq_byname(pdev, "edma-tx");
->>  	if (fsl_edma->txirq < 0) {
->>  		dev_err(&pdev->dev, "Can't get edma-tx irq.\n");
->>  		return fsl_edma->txirq;
->>  	}
->> +#endif
-> can you have two routines and with one of them onvoked based on machine type
-> which should be configured based on DT data rather
->
->>
->>  	fsl_edma->errirq = platform_get_irq_byname(pdev, "edma-err");
->>  	if (fsl_edma->errirq < 0) {
->> @@ -804,6 +848,16 @@ fsl_edma_irq_init(struct platform_device *pdev, struct fsl_edma_engine *fsl_edma
->>  		return fsl_edma->errirq;
->>  	}
->>
->> +#ifdef CONFIG_ARCH_KINETIS
->> +	for (i = 0; i < ARRAY_SIZE(txirq_names); i++) {
->> +		ret = devm_request_irq(&pdev->dev, fsl_edma->txirq[i],
->> +			fsl_edma_tx_handler, 0, txirq_names[i], fsl_edma);
->> +		if (ret) {
->> +			dev_err(&pdev->dev, "Can't register eDMA tx IRQ.\n");
->> +			return  ret;
->> +		}
->> +	}
->> +#else
->>  	if (fsl_edma->txirq == fsl_edma->errirq) {
->>  		ret = devm_request_irq(&pdev->dev, fsl_edma->txirq,
->>  				fsl_edma_irq_handler, 0, "eDMA", fsl_edma);
->> @@ -818,6 +872,7 @@ fsl_edma_irq_init(struct platform_device *pdev, struct fsl_edma_engine *fsl_edma
->>  			dev_err(&pdev->dev, "Can't register eDMA tx IRQ.\n");
->>  			return  ret;
->>  		}
->> +#endif
-> only one of them will be populated so if-else should work too
->
-> please get rid of these ifdef stuff and make it based on DT data based flags
->
-> -- 
-> ~Vinod
->
+Main PLL controller has post divider bits in a separate register in
+pll controller. Use the value from this register instead of fixed
+divider when available.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+  .../devicetree/bindings/clock/keystone-pll.txt       |  8 ++++----
+  drivers/clk/keystone/pll.c                           | 20 
+++++++++++++++++++--
+  2 files changed, 22 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/keystone-pll.txt 
+b/Documentation/devicetree/bindings/clock/keystone-pll.txt
+index 225990f..47570d2 100644
+--- a/Documentation/devicetree/bindings/clock/keystone-pll.txt
++++ b/Documentation/devicetree/bindings/clock/keystone-pll.txt
+@@ -15,8 +15,8 @@ Required properties:
+  - compatible : shall be "ti,keystone,main-pll-clock" or 
+"ti,keystone,pll-clock"
+  - clocks : parent clock phandle
+  - reg - pll control0 and pll multipler registers
+-- reg-names : control and multiplier. The multiplier is applicable only for
+-		main pll clock
++- reg-names : control, multiplier and post-divider. The multiplier and
++		post-divider registers are applicable only for main pll clock
+  - fixed-postdiv : fixed post divider value. If absent, use clkod 
+register bits
+  		for postdiv
+
+@@ -25,8 +25,8 @@ Example:
+  		#clock-cells = <0>;
+  		compatible = "ti,keystone,main-pll-clock";
+  		clocks = <&refclksys>;
+-		reg = <0x02620350 4>, <0x02310110 4>;
+-		reg-names = "control", "multiplier";
++		reg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
++		reg-names = "control", "multiplier", "post-divider";
+  		fixed-postdiv = <2>;
+  	};
+
+diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
+index 0dd8a4b..4a375ea 100644
+--- a/drivers/clk/keystone/pll.c
++++ b/drivers/clk/keystone/pll.c
+@@ -37,7 +37,8 @@
+   *	Main PLL or any other PLLs in the device such as ARM PLL, DDR PLL
+   *	or PA PLL available on keystone2. These PLLs are controlled by
+   *	this register. Main PLL is controlled by a PLL controller.
+- * @pllm: PLL register map address
++ * @pllm: PLL register map address for multiplier bits
++ * @pllod: PLL register map address for post divider bits
+   * @pll_ctl0: PLL controller map address
+   * @pllm_lower_mask: multiplier lower mask
+   * @pllm_upper_mask: multiplier upper mask
+@@ -53,6 +54,7 @@ struct clk_pll_data {
+  	u32 phy_pllm;
+  	u32 phy_pll_ctl0;
+  	void __iomem *pllm;
++	void __iomem *pllod;
+  	void __iomem *pll_ctl0;
+  	u32 pllm_lower_mask;
+  	u32 pllm_upper_mask;
+@@ -102,7 +104,11 @@ static unsigned long clk_pllclk_recalc(struct 
+clk_hw *hw,
+  		/* read post divider from od bits*/
+  		postdiv = ((val & pll_data->clkod_mask) >>
+  				 pll_data->clkod_shift) + 1;
+-	else
++	else if (pll_data->pllod) {
++		postdiv = readl(pll_data->pllod);
++		postdiv = ((postdiv & pll_data->clkod_mask) >>
++				pll_data->clkod_shift) + 1;
++	} else
+  		postdiv = pll_data->postdiv;
+
+  	rate /= (prediv + 1);
+@@ -172,12 +178,21 @@ static void __init _of_pll_clk_init(struct 
+device_node *node, bool pllctrl)
+  		/* assume the PLL has output divider register bits */
+  		pll_data->clkod_mask = CLKOD_MASK;
+  		pll_data->clkod_shift = CLKOD_SHIFT;
++
++		/*
++		 * Check if there is an post-divider register. If not
++		 * assume od bits are part of control register.
++		 */
++		i = of_property_match_string(node, "reg-names",
++					     "post-divider");
++		pll_data->pllod = of_iomap(node, i);
+  	}
+
+  	i = of_property_match_string(node, "reg-names", "control");
+  	pll_data->pll_ctl0 = of_iomap(node, i);
+  	if (!pll_data->pll_ctl0) {
+  		pr_err("%s: ioremap failed\n", __func__);
++		iounmap(pll_data->pllod);
+  		goto out;
+  	}
+
+@@ -193,6 +208,7 @@ static void __init _of_pll_clk_init(struct 
+device_node *node, bool pllctrl)
+  		pll_data->pllm = of_iomap(node, i);
+  		if (!pll_data->pllm) {
+  			iounmap(pll_data->pll_ctl0);
++			iounmap(pll_data->pllod);
+  			goto out;
+  		}
+  	}
+-- 
+1.9.1
+
+
+
+
+-- 
+Murali Karicheri
+Linux Kernel, Keystone
+
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
