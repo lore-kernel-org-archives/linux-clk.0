@@ -1,91 +1,103 @@
-Return-Path: <nicolas.pitre@linaro.org>
-Return-Path: <nicolas.pitre@linaro.org>
-Date: Thu, 25 Jun 2015 12:42:56 -0400 (EDT)
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>
-cc: Paul Osmialowski <pawelo@king.net.pl>,
-    Andrew Morton <akpm@linux-foundation.org>,
-    Anson Huang <b20788@freescale.com>,
-    Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-    Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-    Daniel Lezcano <daniel.lezcano@linaro.org>,
-    Frank Li <Frank.Li@freescale.com>,
-    Geert Uytterhoeven <geert+renesas@glider.be>,
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-    Guenter Roeck <linux@roeck-us.net>,
-    Haojian Zhuang <haojian.zhuang@gmail.com>,
-    Ian Campbell <ijc+devicetree@hellion.org.uk>,
-    Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>,
-    Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>,
-    Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-    Linus Walleij <linus.walleij@linaro.org>,
-    Magnus Damm <damm+renesas@opensource.se>,
-    Michael Turquette <mturquette@baylibre.com>,
-    Nathan Lynch <nathan_lynch@mentor.com>,
-    Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
-    Olof Johansson <olof@lixom.net>, Paul Bolle <pebolle@tiscali.nl>,
-    Rob Herring <r.herring@freescale.com>, Rob Herring <robh+dt@kernel.org>,
-    Russell King <linux@arm.linux.org.uk>,
-    Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-    Shawn Guo <shawn.guo@linaro.org>,
-    Simon Horman <horms+renesas@verge.net.au>, Stefan Agner <stefan@agner.ch>,
-    Stephen Boyd <sboyd@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>,
-    Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-    Catalin Marinas <catalin.marinas@arm.com>,
-    Dave Martin <Dave.Martin@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-    Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
-    linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-    linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-    devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-    Yuri Tikhonov <yur@emcraft.com>, Sergei Poselenov <sposelenov@emcraft.com>,
-    Dmitry Cherkassov <d_cherkasov@emcraft.com>,
-    Alexander Potashev <aspotashev@emcraft.com>
-Subject: Re: [PATCH 3/9] arm: add call to CPU idle quirks handler
-In-Reply-To: <2235698.8UjxLOMCMb@wuerfel>
-Message-ID: <alpine.LFD.2.11.1506251237000.2617@knanqh.ubzr>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <1435094387-20146-4-git-send-email-pawelo@king.net.pl> <2235698.8UjxLOMCMb@wuerfel>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Wed, 10 Jun 2015 09:00:29 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Michael Turquette <mturquette@linaro.org>, Stephen Boyd
+ <sboyd@codeaurora.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, "Paul Walmsley" <paul@pwsan.com>,
+ linux-arm-kernel@lists.infradead.org, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
+Message-ID: <20150610090029.5fe8352e@bbrezillon>
+In-Reply-To: <20150610030254.6017.98627@quantum>
+References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
+	<alpine.DEB.2.02.1506042258530.12316@utopia.booyaka.com>
+	<557161D1.3040107@nvidia.com>
+	<20150610030254.6017.98627@quantum>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 23 Jun 2015, Arnd Bergmann wrote:
+Mike, Stephen,
 
-> On Tuesday 23 June 2015 23:19:41 Paul Osmialowski wrote:
-> > Some SoCs need additional actions to be performed after arch idle,
-> > e.g. Kinetis requires invalidation of the I/D bus cache.
+On Tue, 09 Jun 2015 20:02:54 -0700
+Michael Turquette <mturquette@linaro.org> wrote:
+
+> Quoting Jon Hunter (2015-06-05 01:46:09)
 > > 
-> > Such handler could be held in provided <mach/idle.h> header file.
-> > 
-> > Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
-> > ---
-> >  arch/arm/Kconfig          | 7 +++++++
-> >  arch/arm/kernel/process.c | 7 +++++++
-> >  2 files changed, 14 insertions(+)
-> > 
-> > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> > index 8e3a833..8ef8f8f 100644
-> > --- a/arch/arm/Kconfig
-> > +++ b/arch/arm/Kconfig
-> > @@ -98,6 +98,13 @@ config ARM_HAS_SG_CHAIN
-> >  config NEED_SG_DMA_LENGTH
-> >  	bool
-> >  
-> > +config NEED_MACH_IDLE_H
-> > +	bool
-> > +
-> > +config ARM_CPU_IDLE_QUIRKS
-> > +	bool
-> > +	select NEED_MACH_IDLE_H
-> > +
+> > On 05/06/15 00:02, Paul Walmsley wrote:
+> > > Hi folks
+> > > 
+> > > just a brief comment on this one:
+> > > 
+> > > On Thu, 30 Apr 2015, Boris Brezillon wrote:
+> > > 
+> > >> Clock rates are stored in an unsigned long field, but ->round_rate()
+> > >> (which returns a rounded rate from a requested one) returns a long
+> > >> value (errors are reported using negative error codes), which can lead
+> > >> to long overflow if the clock rate exceed 2Ghz.
+> > >>
+> > >> Change ->round_rate() prototype to return 0 or an error code, and pass the
+> > >> requested rate as a pointer so that it can be adjusted depending on
+> > >> hardware capabilities.
+> > > 
+> > > ...
+> > > 
+> > >> diff --git a/Documentation/clk.txt b/Documentation/clk.txt
+> > >> index 0e4f90a..fca8b7a 100644
+> > >> --- a/Documentation/clk.txt
+> > >> +++ b/Documentation/clk.txt
+> > >> @@ -68,8 +68,8 @@ the operations defined in clk.h:
+> > >>              int             (*is_enabled)(struct clk_hw *hw);
+> > >>              unsigned long   (*recalc_rate)(struct clk_hw *hw,
+> > >>                                              unsigned long parent_rate);
+> > >> -            long            (*round_rate)(struct clk_hw *hw,
+> > >> -                                            unsigned long rate,
+> > >> +            int             (*round_rate)(struct clk_hw *hw,
+> > >> +                                            unsigned long *rate,
+> > >>                                              unsigned long *parent_rate);
+> > >>              long            (*determine_rate)(struct clk_hw *hw,
+> > >>                                              unsigned long rate,
+> > > 
+> > > I'd suggest that we should probably go straight to 64-bit rates.  There 
+> > > are already plenty of clock sources that can generate rates higher than 
+> > > 4GiHz.
 > 
-> We're not adding header files like this, please come up
-> with another solution. How about a cpuidle driver, or
-> possibly just overriding arm_pm_idle()?
+> Paul,
+> 
+> I agree. Changing the underlying struct clk.rate to 64 bits is on my
+> radar.
+> 
+> > 
+> > An alternative would be to introduce to a frequency "base" the default
+> > could be Hz (for backwards compatibility), but for CPUs we probably only
+> > care about MHz (or may be kHz) and so 32-bits would still suffice. Even
+> > if CPUs cared about Hz they could still use Hz, but in that case they
+> > probably don't care about GHz. Obviously, we don't want to break DT
+> > compatibility but may be the frequency base could be defined in DT and
+> > if it is missing then Hz is assumed. Just a thought ...
+> 
+> I was thinking of doing it the other way. E.g. use 64-bit rates
+> throughout the clk framework and have a base unit of millihertz instead
+> of hertz. 64 bits gives us a LOT of room to grow, and the current base
+> of hertz completely ignores all applications with fractional hertz
+> requirements.
 
-If the WFI instruction always requires I and D flushing, then it might 
-be a better idea to provide a replacement for the corresponding 
-cpu_*_do_idle function.  Plenty of examples exist for other cpu_* 
-functions.
+Do you have examples of applications manipulating milliHz ?
 
+Anyway, moving from Hz to milliHz is a lot more invasive than moving
+from an unsigned long to an u64 field.
+How about first storing the frequency on an u64 value (this can be part
+of my patch adapting the ->determine_rate() prototype [1]), and then
+plan for a big rework accounting for this unit change ?
 
-Nicolas
+Best Regards,
+
+Boris
+
+[1]http://patchwork.linux-mips.org/patch/10092/
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
