@@ -1,77 +1,114 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1435094387-20146-3-git-send-email-pawelo@king.net.pl>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
-	<1435094387-20146-3-git-send-email-pawelo@king.net.pl>
-Date: Wed, 24 Jun 2015 09:10:16 +0200
-Message-ID: <CAMuHMdUhLwZZRQwTecjrJ22v1kTNc-3PUM+w64vHUs=-D06VpA@mail.gmail.com>
-Subject: Re: [PATCH 2/9] arm: do not place huge encoder tables on stack when
- it is too small
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Paul Osmialowski <pawelo@king.net.pl>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Anson Huang <b20788@freescale.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Frank Li <Frank.Li@freescale.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>,
-	Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <damm+renesas@opensource.se>,
-	Michael Turquette <mturquette@baylibre.com>, Nathan Lynch <nathan_lynch@mentor.com>,
-	Nicolas Pitre <nico@linaro.org>, Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
-	Olof Johansson <olof@lixom.net>, Paul Bolle <pebolle@tiscali.nl>,
-	Rob Herring <r.herring@freescale.com>, Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-	Shawn Guo <shawn.guo@linaro.org>, Simon Horman <horms+renesas@verge.net.au>,
-	Stefan Agner <stefan@agner.ch>, Stephen Boyd <sboyd@codeaurora.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-	Catalin Marinas <catalin.marinas@arm.com>, Dave Martin <Dave.Martin@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+In-Reply-To: <CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+ <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
+ <CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com> <CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Date: Wed, 10 Jun 2015 12:19:49 +0200
+Message-ID: <CAAObsKD97nEARO5eZYA2g8+z_MrazBy-m8PV_kSyj19ya72mAw@mail.gmail.com>
+Subject: Re: [PATCH 00/21] On-demand device registration
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	dmaengine@vger.kernel.org,
 	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, dmaengine@vger.kernel.org,
-	Yuri Tikhonov <yur@emcraft.com>, Sergei Poselenov <sposelenov@emcraft.com>,
-	Dmitry Cherkassov <d_cherkasov@emcraft.com>, Alexander Potashev <aspotashev@emcraft.com>
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+	linux-clk@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	"open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+	Grant Likely <grant.likely@linaro.org>,
+	Alexander Holler <holler@ahsoftware.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 23, 2015 at 11:19 PM, Paul Osmialowski <pawelo@king.net.pl> wrote:
-> Since stack on Cortex-M3 is too small, we need configuration option
-> to avoid using it for huge encoder tables of zlib.
+On 10 June 2015 at 09:30, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Jun 2, 2015 at 12:14 PM, Tomeu Vizoso
+> <tomeu.vizoso@collabora.com> wrote:
+>> On 2 June 2015 at 10:48, Linus Walleij <linus.walleij@linaro.org> wrote:
 >
-> Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
+>>> This is what systemd is doing in userspace for starting services:
+>>> ask for your dependencies and wait for them if they are not
+>>> there. So drivers ask for resources and wait for them. It also
+>>> needs to be abstract, so for example we need to be able to
+>>> hang on regulator_get() until the driver is up and providing that
+>>> regulator, and as long as everything is in slowpath it should
+>>> be OK. (And vice versa mutatis mutandis for clk, gpio, pin
+>>> control, interrupts (!) and DMA channels for example.)
+>>
+>> I understood above that you propose probing devices in order, but now
+>> you mention that resource getters would block until the dependency is
+>> fulfilled which confuses me because if we are probing in order then
+>> all dependencies would be fulfilled before the device in question gets
+>> probed.
+>
+> Sorry, the problem space is a bit convoluted so the answers
+> get a bit convoluted. Maybe I'm thinking aloud and altering the course
+> of my thoughts as I type...
+>
+> I guess there can be explicit dependencies for resources like this
+> patch does, but another way would be for all resource fetch functions
+> to be instrumented, so that you do not block until you try to take
+> a resource that is not yet there, e.g.:
+>
+> regulator_get(...) -> not available, so:
+> - identify target regulator provider - this will need instrumentation
+> - probe it
+>
+> It then turns out the regulator driver is on the i2c bus, so we
+> need to probe the i2c driver:
+> - identify target i2c host for the regulator driver - this will need
+>   instrumentation
+> - probe the i2c host driver
+>
+> i2c host comes out, probes the regulator driver, regulator driver
+> probes and then the regulator_get() call returns.
 
-> --- a/lib/zlib_inflate/inflate.c
-> +++ b/lib/zlib_inflate/inflate.c
-> @@ -75,9 +75,14 @@ int zlib_inflateInit2(z_streamp strm, int windowBits)
->     Return state with length and distance decoding tables and index sizes set to
->     fixed code decoding.  This returns fixed tables from inffixed.h.
->   */
-> +#ifdef CONFIG_ZLIB_INFLATE_STACK_SAVING
-> +#   include "inffixed.h"
-> +#endif
->  static void zlib_fixedtables(struct inflate_state *state)
->  {
-> +#ifndef CONFIG_ZLIB_INFLATE_STACK_SAVING
->  #   include "inffixed.h"
+Hmm, if I understand correctly what you say, this is exactly what this
+particular series does:
 
-All variables in inffixed.h are "static const", so they are not on the stack
-anyway, and this patch shouldn't make a difference.
+regulator_get -> of_platform_device_ensure -> probe() on the platform
+device that encloses the requested device node (i2c host) -> i2c slave
+gets probed and the regulator registered -> regulator_get returns the
+requested resource
 
-> +#endif
+The downside I'm currently looking at is that an explicit dependency
+graph would be useful to have for other purposes. For example to print
+a neat warning when a dependency cannot be fulfilled. Or to refuse to
+unbind a device which other devices depend on, or to automatically
+unbind the devices that depend on it, or to print a warning if a
+device is hotplugged off and other devices depend on it.
 
-Gr{oetje,eeting}s,
+> This requires instrumentation on anything providing a resource
+> to another driver like those I mentioned and a lot of overhead
+> infrastructure, but I think it's the right approach. However I don't
+> know if I would ever be able to pull that off myself, I know talk
+> is cheap and I should show the code instead.
 
-                        Geert
+Yeah, if you can give it a second look and say if it matches what you
+wrote above, it would be very much appreciated.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> Deepest respect for your efforts!
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks!
+
+Tomeu
+
+> Yours,
+> Linus Walleij
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
