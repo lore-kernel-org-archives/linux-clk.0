@@ -1,84 +1,49 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <dinguyen@opensource.altera.com>
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
+Subject: [PATCH 2/6] clk: qoriq: make use of of_clk_parent_fill helper function
+Date: Wed, 10 Jun 2015 16:49:21 -0500
+Message-ID: <1433972965-24974-3-git-send-email-dinguyen@opensource.altera.com>
+In-Reply-To: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
+References: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20150603234426.GB490@codeaurora.org>
-References: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
-	<1432891549-23295-6-git-send-email-geert+renesas@glider.be>
-	<20150603234426.GB490@codeaurora.org>
-Date: Thu, 4 Jun 2015 09:26:43 +0200
-Message-ID: <CAMuHMdXRQbBJWLCiDgx=vRcj=MS5BAQ6gskfcMGZzW1gKa6J8g@mail.gmail.com>
-Subject: Re: [PATCH 5/5] [RFC] ARM: timer-sp: Use of_clk_get_parent_count()
- instead of open coding
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>,
-	Tero Kristo <t-kristo@ti.com>, Mike Turquette <mturquette@linaro.org>,
-	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org, kernel@stlinux.com,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-On Thu, Jun 4, 2015 at 1:44 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 05/29, Geert Uytterhoeven wrote:
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> This is an RFC, as it depends on "[RFC] clk: Provide dummy
->> of_clk_get_parent_count() for !OF/!CCF".
->> ---
->>  arch/arm/common/timer-sp.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/common/timer-sp.c b/arch/arm/common/timer-sp.c
->> index 19211324772f387c..be87a5d480ffb655 100644
->> --- a/arch/arm/common/timer-sp.c
->> +++ b/arch/arm/common/timer-sp.c
->> @@ -21,6 +21,7 @@
->>  #include <linux/clk.h>
->>  #include <linux/clocksource.h>
->>  #include <linux/clockchips.h>
->> +#include <linux/clk-provider.h>
->
-> This looks weird. This is not a clock provider.
+Use of_clk_parent_fill to fill in the parent clock names' array.
 
-But that's where the declaration of of_clk_get_parent_count() lives...
+Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+---
+ drivers/clk/clk-qoriq.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
->>  #include <linux/err.h>
->>  #include <linux/interrupt.h>
->>  #include <linux/irq.h>
->> @@ -234,7 +235,7 @@ static void __init sp804_of_init(struct device_node *np)
->>               clk1 = NULL;
->>
->>       /* Get the 2nd clock if the timer has 3 timer clocks */
->> -     if (of_count_phandle_with_args(np, "clocks", "#clock-cells") == 3) {
->> +     if (of_clk_get_parent_count(np) == 3) {
->
-> So maybe it means if we want to expose of_clk_get_parent_count()
-> we should move it to some other header file (of_clk.h?). And then
-> maybe we should always compile said helpers if OF=y and
-> HAVE_CLK=y.
-
-That makes sense.
-
-Currently we have lots of of_clk_*() in <linux/clk-provider.h>, and a few
-of_clk_get*() in <inux/clk.h>.
-And the mysterious of_clk_set_defaults() in <linux/clk/clk-conf.h>.
-
-All of_clk_get*() could be moved to a new <linux/of_clk.h>.
-
-Alternatively, of_clk_get_parent_count() could just move to <linux/clk.h>?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index cda90a9..d3f4570 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -70,7 +70,7 @@ static void __init core_mux_init(struct device_node *np)
+ 	struct clk_init_data init;
+ 	struct cmux_clk *cmux_clk;
+ 	struct device_node *node;
+-	int rc, count, i;
++	int rc, count;
+ 	u32	offset;
+ 	const char *clk_name;
+ 	const char **parent_names;
+@@ -92,8 +92,7 @@ static void __init core_mux_init(struct device_node *np)
+ 	if (!parent_names)
+ 		return;
+ 
+-	for (i = 0; i < count; i++)
+-		parent_names[i] = of_clk_get_parent_name(np, i);
++	of_clk_parent_fill(np, parent_names, count);
+ 
+ 	cmux_clk = kzalloc(sizeof(*cmux_clk), GFP_KERNEL);
+ 	if (!cmux_clk)
+-- 
+2.2.1
