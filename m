@@ -1,39 +1,111 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 4 Jun 2015 15:50:33 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-kernel@vger.kernel.org,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Mike Turquette <mturquette@linaro.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] drivers/clk: convert sunxi/clk-mod0.c to use
- builtin_platform_driver
-Message-ID: <20150604225033.GD8099@codeaurora.org>
-References: <1431287385-1526-1-git-send-email-paul.gortmaker@windriver.com>
- <1433358578-9579-1-git-send-email-paul.gortmaker@windriver.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1433358578-9579-1-git-send-email-paul.gortmaker@windriver.com>
+Return-Path: <daniel.thompson@linaro.org>
+Return-Path: <daniel.thompson@linaro.org>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Kamil Lulko <rev13@wp.pl>,
+	Andreas Farber <afaerber@suse.de>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	patches@linaro.org,
+	linaro-kernel@lists.linaro.org
+Subject: [PATCH v3 1/3] dt-bindings: Document the STM32F4 clock bindings
+Date: Wed, 10 Jun 2015 21:09:36 +0100
+Message-Id: <1433966978-24422-2-git-send-email-daniel.thompson@linaro.org>
+In-Reply-To: <1433966978-24422-1-git-send-email-daniel.thompson@linaro.org>
+References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
+ <1433966978-24422-1-git-send-email-daniel.thompson@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/03, Paul Gortmaker wrote:
-> This driver builds based on obj-y and hence will not ever be
-> modular.  Change it to use the non-modular registration so that it
-> won't suffer a compile fail once a header move places the modular
-> registration within the module.h file.
-> 
-> Cc: "Emilio López" <emilio@elopez.com.ar>
-> Cc: Mike Turquette <mturquette@linaro.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> ---
+This adds documentation of device tree bindings for the clock related
+portions of the STM32 RCC block.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+---
+ .../devicetree/bindings/clock/st,stm32-rcc.txt     | 65 ++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
 
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+new file mode 100644
+index 0000000..fee3205
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+@@ -0,0 +1,65 @@
++STMicroelectronics STM32 Reset and Clock Controller
++===================================================
++
++The RCC IP is both a reset and a clock controller. This documentation only
++describes the clock part.
++
++Please also refer to clock-bindings.txt in this directory for common clock
++controller binding usage.
++
++Required properties:
++- compatible: Should be "st,stm32f42xx-rcc"
++- reg: should be register base and length as documented in the
++  datasheet
++- #clock-cells: 2, device nodes should specify the clock in their "clocks"
++  property, containing a phandle to the clock device node, an index selecting
++  between gated clocks and other clocks and an index specifying the clock to
++  use.
++
++Example:
++
++	rcc: rcc@40023800 {
++		#clock-cells = <2>
++		compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
++		reg = <0x40023800 0x400>;
++	};
++
++Specifying gated clocks
++=======================
++
++The primary index must be set to 0.
++
++The secondary index is the bit number within the RCC register bank, starting
++from the first RCC clock enable register (RCC_AHB1ENR, address offset 0x30).
++
++It is calculated as: index = register_offset / 4 * 32 + bit_offset.
++Where bit_offset is the bit offset within the register (LSB is 0, MSB is 31).
++
++Example:
++
++	/* Gated clock, AHB1 bit 0 (GPIOA) */
++	... {
++		clocks = <&rcc 0 0>
++	};
++
++	/* Gated clock, AHB2 bit 4 (CRYP) */
++	... {
++		clocks = <&rcc 0 36>
++	};
++
++Specifying other clocks
++=======================
++
++The primary index must be set to 1.
++
++The secondary index is bound with the following magic numbers:
++
++	0	SYSTICK
++	1	FCLK
++
++Example:
++
++	/* Misc clock, FCLK */
++	... {
++		clocks = <&rcc 1 1>
++	};
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.4.2
