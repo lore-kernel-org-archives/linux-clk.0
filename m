@@ -1,93 +1,160 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <556F26C3.9080302@samsung.com>
-Cc: linux-clk@vger.kernel.org,
- "linux-samsung-soc" <linux-samsung-soc@vger.kernel.org>
-References: <556F26C3.9080302@samsung.com>
-Message-ID: <20150603230559.6017.43918@quantum>
-Subject: Re: [GIT PULL] clk/samsung updates for 4.2
-Date: Wed, 03 Jun 2015 16:05:59 -0700
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Message-id: <55782C3D.5000606@samsung.com>
+Date: Wed, 10 Jun 2015 14:23:25 +0200
+From: Andrzej Hajda <a.hajda@samsung.com>
+MIME-version: 1.0
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+	linux-clk@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	"open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+	Grant Likely <grant.likely@linaro.org>,
+	Alexander Holler <holler@ahsoftware.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH 00/21] On-demand device registration
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+ <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
+ <CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
+ <CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
+ <CAAObsKD97nEARO5eZYA2g8+z_MrazBy-m8PV_kSyj19ya72mAw@mail.gmail.com>
+In-reply-to: <CAAObsKD97nEARO5eZYA2g8+z_MrazBy-m8PV_kSyj19ya72mAw@mail.gmail.com>
+Content-type: text/plain; charset=utf-8
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Sylwester Nawrocki (2015-06-03 09:09:39)
-> =
+On 06/10/2015 12:19 PM, Tomeu Vizoso wrote:
+> On 10 June 2015 at 09:30, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Tue, Jun 2, 2015 at 12:14 PM, Tomeu Vizoso
+>> <tomeu.vizoso@collabora.com> wrote:
+>>> On 2 June 2015 at 10:48, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>
+>>>> This is what systemd is doing in userspace for starting services:
+>>>> ask for your dependencies and wait for them if they are not
+>>>> there. So drivers ask for resources and wait for them. It also
+>>>> needs to be abstract, so for example we need to be able to
+>>>> hang on regulator_get() until the driver is up and providing that
+>>>> regulator, and as long as everything is in slowpath it should
+>>>> be OK. (And vice versa mutatis mutandis for clk, gpio, pin
+>>>> control, interrupts (!) and DMA channels for example.)
+>>>
+>>> I understood above that you propose probing devices in order, but now
+>>> you mention that resource getters would block until the dependency is
+>>> fulfilled which confuses me because if we are probing in order then
+>>> all dependencies would be fulfilled before the device in question gets
+>>> probed.
+>>
+>> Sorry, the problem space is a bit convoluted so the answers
+>> get a bit convoluted. Maybe I'm thinking aloud and altering the course
+>> of my thoughts as I type...
+>>
+>> I guess there can be explicit dependencies for resources like this
+>> patch does, but another way would be for all resource fetch functions
+>> to be instrumented, so that you do not block until you try to take
+>> a resource that is not yet there, e.g.:
+>>
+>> regulator_get(...) -> not available, so:
+>> - identify target regulator provider - this will need instrumentation
+>> - probe it
+>>
+>> It then turns out the regulator driver is on the i2c bus, so we
+>> need to probe the i2c driver:
+>> - identify target i2c host for the regulator driver - this will need
+>>   instrumentation
+>> - probe the i2c host driver
+>>
+>> i2c host comes out, probes the regulator driver, regulator driver
+>> probes and then the regulator_get() call returns.
+> 
+> Hmm, if I understand correctly what you say, this is exactly what this
+> particular series does:
+> 
+> regulator_get -> of_platform_device_ensure -> probe() on the platform
+> device that encloses the requested device node (i2c host) -> i2c slave
+> gets probed and the regulator registered -> regulator_get returns the
+> requested resource
 
-> The following changes since commit 20db7092e478c33a2bf5254063c51f5db64439=
-59:
-> =
+The downside of this solution is that it will not work without device
+tree or even without device dependencies not explicitly specified in
+device tree.
 
->   Merge branch 'clk-next-hi6220' into clk-next (2015-05-27 22:06:42 -0700)
-> =
+> 
+> The downside I'm currently looking at is that an explicit dependency
+> graph would be useful to have for other purposes. For example to print
+> a neat warning when a dependency cannot be fulfilled. Or to refuse to
+> unbind a device which other devices depend on,
 
-> are available in the git repository at:
-> =
+As I understand Greg you cannot prevent unbinding by design, see [1].
 
-> =
+[1]: http://thread.gmane.org/gmane.linux.kernel/1154308/focus=1154648
 
->   git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-for-4.2
+> or to automatically
+> unbind the devices that depend on it,
 
-Sylwester,
+What about devices that have weak dependency? They should not be unbound
+but they should be somehow noticed about unbinding.
 
-Pulled towards 4.2. Thanks for the pull request.
+In general many kernel frameworks are broken in handling hot-unbinding
+of drivers, consumers are not noticed about unbinding of their resource
+providers and usually they stay with broken handles or handles to dummy
+resources.
 
-One small thing: clk-next isn't considered stable.  I had some stuff in
-there (Stephen's amba assigned-clock-rates patch) which I had to pull
-out (no ACK from maintainer) and it crept back in because this PR was
-based on top of it. No big deal because I caught it when it happened
-(this time).
+I suspect the only proper solution for handling resources that can
+dynamically appear/disappear is to provide notification to their
+consumers about appearance change of the resource.
 
-In the future I am always happy to take PRs based on -rc1 (or any -rc
-that is already present in clk-next). Of course if you have a dependency
-on stuff already merged in clk-next then just let me know.
+I have proposed some times ago solution for above problems based on the
+statement above, cover letter explains it in more detail [2].
+In short it solves following issues:
+- consumer receives resource as soon as it becomes available,
+- consumer is notified just before resource removal,
+- it can properly handle provider unbind/re-bind,
+- it avoids late init due to deferred probing,
+- it allows to track optional resources.
 
-Regards,
-Mike
+[2]: http://thread.gmane.org/gmane.linux.kernel.gpio/5201
 
-> =
+Regards
+Andrzej
 
-> for you to fetch changes up to e5c6fc4f271a27d5b236b5f4929bf0f2dab80a7d:
-> =
+> or to print a warning if a
+> device is hotplugged off and other devices depend on it.
+> 
+>> This requires instrumentation on anything providing a resource
+>> to another driver like those I mentioned and a lot of overhead
+>> infrastructure, but I think it's the right approach. However I don't
+>> know if I would ever be able to pull that off myself, I know talk
+>> is cheap and I should show the code instead.
+> 
+> Yeah, if you can give it a second look and say if it matches what you
+> wrote above, it would be very much appreciated.
+> 
+>> Deepest respect for your efforts!
+> 
+> Thanks!
+> 
+> Tomeu
+> 
+>> Yours,
+>> Linus Walleij
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
->   clk: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks for SMC (2015-06-=
-02
-> 14:52:12 +0200)
-> =
-
-> ----------------------------------------------------------------
-> Updates of the exynos5433 clock definitions for proper support of SMC,
-> DVFS of GPU and CPU big.LITTLE cores and a fix for system suspend adding
-> one of the clock controller's registers to save/restore list.
-> =
-
-> ----------------------------------------------------------------
-> Chanwoo Choi (1):
->       clk: exynos5433: Add CLK_SET_RATE_PARENT to support DVFS for big.LI=
-TTLE core
-> =
-
-> Hyungwon Hwang (1):
->       clk: exynos5433: Add DIV_CPIF to the list of stored registers on su=
-spend
-> =
-
-> Jonghwa Lee (1):
->       clk: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks for SMC
-> =
-
-> Joonyoung Shim (1):
->       clk: exynos5433: Add clock flag to support the DVFS of GPU
-> =
-
->  drivers/clk/samsung/clk-exynos5433.c |   81 +++++++++++++++++-----------=
-------
->  1 file changed, 40 insertions(+), 41 deletions(-)
-> =
-
-> -- =
-
-> Thanks,
-> Sylwester
