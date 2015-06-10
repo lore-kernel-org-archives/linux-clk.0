@@ -1,93 +1,81 @@
-Return-Path: <vigneshr@ti.com>
-From: Vignesh R <vigneshr@ti.com>
-To: Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
-        Thierry
- Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Pawel
- Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell
-	<ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Benoit
- Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell
- King <linux@arm.linux.org.uk>,
-        Mike Turquette <mturquette@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        Vignesh
- R <vigneshr@ti.com>
-Subject: [PATCH 3/5] ARM: dts: DRA7: Add TBCLK for PWMSS
-Date: Mon, 1 Jun 2015 17:23:32 +0530
-Message-ID: <1433159614-437-4-git-send-email-vigneshr@ti.com>
-In-Reply-To: <1433159614-437-1-git-send-email-vigneshr@ti.com>
-References: <1433159614-437-1-git-send-email-vigneshr@ti.com>
+Return-Path: <dinguyen@opensource.altera.com>
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Peter Griffin <peter.griffin@linaro.org>, Gabriel FERNANDEZ
+	<gabriel.fernandez@st.com>
+Subject: [PATCH 4/6] clk: st: make use of of_clk_parent_fill helper function
+Date: Wed, 10 Jun 2015 16:49:23 -0500
+Message-ID: <1433972965-24974-5-git-send-email-dinguyen@opensource.altera.com>
+In-Reply-To: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
+References: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-tbclk is used by ehrpwm to generate PWM waveform on DRA7 SoC. Add Linux
-clock to control ehrpwm tbclk.
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
+Use of_clk_parent_fill to fill in the parent clock names' array.
+
+Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>
+Cc: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
 ---
- arch/arm/boot/dts/dra7.dtsi          |  5 +++++
- arch/arm/boot/dts/dra7xx-clocks.dtsi | 26 ++++++++++++++++++++++++++
- 2 files changed, 31 insertions(+)
+ drivers/clk/st/clk-flexgen.c | 6 ++----
+ drivers/clk/st/clkgen-mux.c  | 7 ++-----
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
-index f03a091cd076..387c76ca41f9 100644
---- a/arch/arm/boot/dts/dra7.dtsi
-+++ b/arch/arm/boot/dts/dra7.dtsi
-@@ -131,6 +131,11 @@
- 							regulator-max-microvolt = <3000000>;
- 						};
- 					};
-+
-+					scm_conf_clocks: clocks {
-+						#address-cells = <1>;
-+						#size-cells = <0>;
-+					};
- 				};
+diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
+index 657ca14..ed0696c 100644
+--- a/drivers/clk/st/clk-flexgen.c
++++ b/drivers/clk/st/clk-flexgen.c
+@@ -243,7 +243,7 @@ static const char ** __init flexgen_get_parents(struct device_node *np,
+ 						       int *num_parents)
+ {
+ 	const char **parents;
+-	int nparents, i;
++	int nparents;
  
- 				dra7_pmx_core: pinmux@1400 {
-diff --git a/arch/arm/boot/dts/dra7xx-clocks.dtsi b/arch/arm/boot/dts/dra7xx-clocks.dtsi
-index 3b933f74d000..92452d61cf58 100644
---- a/arch/arm/boot/dts/dra7xx-clocks.dtsi
-+++ b/arch/arm/boot/dts/dra7xx-clocks.dtsi
-@@ -2136,3 +2136,29 @@
- 		clocks = <&dpll_usb_ck>;
- 	};
- };
-+
-+&scm_conf_clocks {
-+       ehrpwm0_tbclk: ehrpwm0_tbclk {
-+		#clock-cells = <0>;
-+		compatible = "ti,gate-clock";
-+		clocks = <&l4_root_clk_div>;
-+		ti,bit-shift = <20>;
-+		reg = <0x0558>;
-+	};
-+
-+	ehrpwm1_tbclk: ehrpwm1_tbclk {
-+		#clock-cells = <0>;
-+		compatible = "ti,gate-clock";
-+		clocks = <&l4_root_clk_div>;
-+		ti,bit-shift = <21>;
-+		reg = <0x0558>;
-+	};
-+
-+	ehrpwm2_tbclk: ehrpwm2_tbclk {
-+		#clock-cells = <0>;
-+		compatible = "ti,gate-clock";
-+		clocks = <&l4_root_clk_div>;
-+		ti,bit-shift = <22>;
-+		reg = <0x0558>;
-+	};
-+};
+ 	nparents = of_clk_get_parent_count(np);
+ 	if (WARN_ON(nparents <= 0))
+@@ -253,10 +253,8 @@ static const char ** __init flexgen_get_parents(struct device_node *np,
+ 	if (!parents)
+ 		return NULL;
+ 
+-	for (i = 0; i < nparents; i++)
+-		parents[i] = of_clk_get_parent_name(np, i);
++	*num_parents = of_clk_parent_fill(np, parents, nparents);
+ 
+-	*num_parents = nparents;
+ 	return parents;
+ }
+ 
+diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
+index 4fbe6e0..b83654a 100644
+--- a/drivers/clk/st/clkgen-mux.c
++++ b/drivers/clk/st/clkgen-mux.c
+@@ -24,7 +24,7 @@ static const char ** __init clkgen_mux_get_parents(struct device_node *np,
+ 						       int *num_parents)
+ {
+ 	const char **parents;
+-	int nparents, i;
++	int nparents;
+ 
+ 	nparents = of_clk_get_parent_count(np);
+ 	if (WARN_ON(nparents <= 0))
+@@ -34,10 +34,7 @@ static const char ** __init clkgen_mux_get_parents(struct device_node *np,
+ 	if (!parents)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	for (i = 0; i < nparents; i++)
+-		parents[i] = of_clk_get_parent_name(np, i);
+-
+-	*num_parents = nparents;
++	*num_parents = of_clk_parent_fill(np, parents, nparents);
+ 	return parents;
+ }
+ 
 -- 
-2.4.1
+2.2.1
