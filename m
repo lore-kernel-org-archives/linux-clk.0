@@ -1,65 +1,28 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 10 Jun 2015 14:23:19 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Coquelin <maxime.coquelin@st.com>
+Cc: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel@stlinux.com
+Subject: Re: [PATCH] clk: Move debug_node field under DEBUG_FS flag in struct
+ clk_core
+Message-ID: <20150610212319.GD29640@codeaurora.org>
+References: <1433935707-3621-1-git-send-email-maxime.coquelin@st.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1433195186-14867-2-git-send-email-dinguyen@opensource.altera.com>
-References: <1433195186-14867-1-git-send-email-dinguyen@opensource.altera.com>
-	<1433195186-14867-2-git-send-email-dinguyen@opensource.altera.com>
-Date: Tue, 2 Jun 2015 09:16:59 +0200
-Message-ID: <CAMuHMdXeB2Qu83sKbjG_WuT1MaHcrFb-h3TT3wrMHGaG9OAa8w@mail.gmail.com>
-Subject: Re: [RFC/PATCHv1 1/2] clk: of: helper for filling parent clock array
- and return num of parents
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Dinh Nguyen <dinguyen@opensource.altera.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>,
-	Dinh Nguyen <dinh.linux@gmail.com>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1433935707-3621-1-git-send-email-maxime.coquelin@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 1, 2015 at 11:46 PM,  <dinguyen@opensource.altera.com> wrote:
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3060,6 +3060,26 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
->  }
->  EXPORT_SYMBOL_GPL(of_clk_get_parent_name);
->
-> +/*
-> + * of_clk_parent_fill(): Helper clock function that will fill the parent
-> + * clock's array and return the number of parents it found.
-> + * @np: Device node pointer associated with clock provider
-> + * @parents: pointer to char array that hold the parent's name
-> + * @size: size of the parents array
-> + *
-> + * Returns number of parents for the clock node.
-> + */
-> +int of_clk_parent_fill(struct device_node *np, const char **parents, int size)
+On 06/10, Maxime Coquelin wrote:
+> The debug_node field is only used when DEBUG_FS config is selected,
+> so declare it only if DEBUG_FS is selected.
+> 
+> Signed-off-by: Maxime Coquelin <maxime.coquelin@st.com>
+> ---
 
-I'd say "unsigned int size", but of_clk_get_parent_name(),
-of_parse_phandle_with_args(), and of_property_read_string_index() also take
-"int" :-(
+Applied to clk-next
 
-> +{
-> +       int i = 0;
-
-If "size" becomes "unsigned int", "i" should be "unsigned int", too.
-
-> +
-> +       while (i < size && (parents[i] = of_clk_get_parent_name(np, i)) != NULL)
-> +               i++;
-> +
-> +       return i;
-
-Return type "int" is OK, though...
-
-> +}
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
