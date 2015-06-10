@@ -1,50 +1,71 @@
-Return-Path: <manabian@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20150610021315.6017.58085@quantum>
-References: <1432845107-12458-1-git-send-email-manabian@gmail.com>
-	<1432845107-12458-4-git-send-email-manabian@gmail.com>
-	<20150610021315.6017.58085@quantum>
-Date: Wed, 10 Jun 2015 16:02:59 +0200
-Message-ID: <CAGhQ9VwONWTULGUbGuf_2HbLpfU4pp8S49xdtoCcKcm1p=n7hg@mail.gmail.com>
-Subject: Re: [PATCH v4 3/5] clk: add lpc18xx ccu clk driver
-From: Joachim  Eastwood <manabian@gmail.com>
-To: Michael Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+Return-Path: <daniel.thompson@linaro.org>
+Return-Path: <daniel.thompson@linaro.org>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Kamil Lulko <rev13@wp.pl>,
+	Andreas Farber <afaerber@suse.de>,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	patches@linaro.org,
+	linaro-kernel@lists.linaro.org
+Subject: [PATCH v3 0/3] clk: stm32: Add clock driver for STM32F4[23]xxx devices
+Date: Wed, 10 Jun 2015 21:09:35 +0100
+Message-Id: <1433966978-24422-1-git-send-email-daniel.thompson@linaro.org>
+In-Reply-To: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
+References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+This patchset implements a clock driver for STM32F42xxx and STM32F43xxx
+series devices. It supports decoding the state configured by the
+bootloader (PLL, clock select, bus dividers) and all the gates clocks.
+It does not currently support the I2S and SAI PLLs.
 
+Relies on "Add support to STMicroeletronics STM32 family" v9 by Maxime
+Coquelin: http://thread.gmane.org/gmane.linux.kernel/1961049 .
 
-> Hi Joachim,
->
-> If it were me, I would have broken this up into two tables, one for each
-> CCU. In general I would structure the code to reflect the fact that two
-> different IP blocks are being accessed. This isn't a deal breaker but I
-> thought I would mention it in case you want to make the change.
->
-> Otherwise this series looks good to me. Let me know if you plan a V5
-> submission.
+v3:
+ * Fix propagation of errors from clock idx lookup function (Maxime
+   Coquelin).
+ * Added const to a couple of static lookup tables (Maxime Coquelin).
+ * Fixed typo in the binding docs (Maxime Coquelin).
+ * Removed unnecessary header files and other small code simplifications
+   (Stephen Boyd).
+ * Remove CLK_IS_BASIC from the APB clock "multipliers" and improved
+   commenting for the implementation (Stephen Boyd)
+ * Fixed missing const and misplaced __initdata (Stephen Boyd)
+ * Apply relavent review comments to existing code (Stephen Boyd)
 
-If there is still time for 4.2 and you don't have any more comments on
-how the driver uses the DT bindings I would rather send a follow up
-patch that splits the ccu table for 4.3.
+v2:
+ * Move the HSE crystal frequency to stm32f429-disco.dts (was
+   prevsiously in stm32f429.dtsi)
+ * Fixed compiler warning that I overlooked the first time round.
+ * Removed dead code in the .dtsi file.
+ * Rebased on linux-next+v9 from Maxime.
 
+Daniel Thompson (3):
+  dt-bindings: Document the STM32F4 clock bindings
+  clk: stm32: Add clock driver for STM32F4[23]xxx devices
+  ARM: dts: stm32f429: Adopt STM32F4 clock driver
 
-> I can take patches #1-4 into the clk tree. Please add my Acked-by to
-> patch #5. I will create an immutable branch to share with the arm-soc
-> tree so that they can take #5 and have access to the dt-bindings
-> headers.
+ .../devicetree/bindings/clock/st,stm32-rcc.txt     |  65 ++++
+ arch/arm/boot/dts/stm32f429-disco.dts              |   4 +
+ arch/arm/boot/dts/stm32f429.dtsi                   |  79 ++---
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-stm32f4.c                          | 379 +++++++++++++++++++++
+ 5 files changed, 473 insertions(+), 55 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+ create mode 100644 drivers/clk/clk-stm32f4.c
 
-Sounds good. I'll talk to arm-soc team about it. But it isn't critical
-for me to get the DTS changes in for 4.2, but I would be very grateful
-for getting the drivers and headers in for 4.2 so that 4.3 is ready
-and doesn't have any header dependencies for all the driver DTS stuff.
-
-Thanks, Mike.
-
-
-regards,
-Joachim Eastwood
+--
+2.4.2
