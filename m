@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-From: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org
-To: torvalds@linux-foundation.org
-Message-ID: <20150619150137.9112.25990@quantum>
-Subject: [GIT PULL] clk: fixes for 4.1, part 2
-Date: Fri, 19 Jun 2015 08:01:37 -0700
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20150610024717.6017.50093@quantum>
+References: <1433244779-5447-1-git-send-email-geert+renesas@glider.be>
+	<20150610024717.6017.50093@quantum>
+Date: Wed, 10 Jun 2015 07:08:51 +0200
+Message-ID: <CAMuHMdUbuSEXRhU6d2he0xUY=Xg6n2Acgk99xC09m=7tJcSQiw@mail.gmail.com>
+Subject: Re: [git pull] clk/shmobile updates for v4.2
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Michael Turquette <mturquette@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, linux-clk@vger.kernel.org,
+	Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 0f57d86787d8b1076ea8f9cbdddda2a46d534a27:
+Hi Mike,
 
-  Linux 4.1-rc8 (2015-06-14 15:51:10 -1000)
+On Wed, Jun 10, 2015 at 4:47 AM, Michael Turquette
+<mturquette@linaro.org> wrote:
+> Quoting Geert Uytterhoeven (2015-06-02 04:32:59)
+>> The following changes since commit c65b99f046843d2455aa231747b5a07a999a9f3d:
+>>
+>>   Linux 4.1-rc6 (2015-05-31 19:01:07 -0700)
+>>
+>> are available in the git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git clk-shmobile-for-4.2
+>
+> Pulled!
 
-are available in the git repository at:
+Thank you.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+> FYI, I prefer to take PRs based on -rc1 if possible. This PR forced me
+> to update clk-next which was previously based on -rc1 (I merged clk-next
+> into -rc7 and then pulled your tag).
 
-for you to fetch changes up to 909aa10e6d6a9524f95dadb6b3ded1c38ec34e11:
+OK, will do next time. Sorry for the trouble.
 
-  Merge branch 'ccf/atmel-fixes-for-4.1' of https://github.com/bbrezillon/linux-at91 into clk-fixes (2015-06-19 07:37:14 -0700)
+Gr{oetje,eeting}s,
 
-----------------------------------------------------------------
+                        Geert
 
-Very late clk regression fixes for the ARM-based AT91 platform. These went
-unnoticed by me until recently, hence the late pull request.
-
-----------------------------------------------------------------
-Boris Brezillon (2):
-      clk: at91: pll: fix input range validity check
-      clk: at91: fix PERIPHERAL_MAX_SHIFT definition
-
-Michael Turquette (1):
-      Merge branch 'ccf/atmel-fixes-for-4.1' of https://github.com/bbrezillon/linux-at91 into clk-fixes
-
-Nicolas Ferre (2):
-      clk: at91: trivial: typo in peripheral clock description
-      clk: at91: fix h32mx prototype inclusion in pmc header
-
- Documentation/devicetree/bindings/clock/at91-clock.txt |  2 +-
- drivers/clk/at91/clk-peripheral.c                      |  8 ++++----
- drivers/clk/at91/clk-pll.c                             | 12 ++++++++++--
- drivers/clk/at91/pmc.h                                 |  2 +-
- 4 files changed, 16 insertions(+), 8 deletions(-)
 --
-To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-Please read the FAQ at  http://www.tux.org/lkml/
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
