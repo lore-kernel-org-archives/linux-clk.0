@@ -1,240 +1,131 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4/8] clk: rockchip: add support for phase inverters
-Date: Sat, 13 Jun 2015 18:22:18 +0200
-Message-Id: <1434212542-17145-5-git-send-email-heiko@sntech.de>
-In-Reply-To: <1434212542-17145-1-git-send-email-heiko@sntech.de>
-References: <1434212542-17145-1-git-send-email-heiko@sntech.de>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Jon Hunter <jonathanh@nvidia.com>, "Paul Walmsley" <paul@pwsan.com>,
+ "Boris Brezillon" <boris.brezillon@free-electrons.com>
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <557161D1.3040107@nvidia.com>
+Cc: Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Jonathan Corbet" <corbet@lwn.net>,
+ "Shawn Guo" <shawn.guo@linaro.org>, "ascha Hauer" <kernel@pengutronix.de>,
+ "David Brown" <davidb@codeaurora.org>, "Daniel Walker" <dwalker@fifo99.com>,
+ "Bryan Huntsman" <bryanh@codeaurora.org>, "Tony Lindgren" <tony@atomide.com>,
+ "Liviu Dudau" <liviu.dudau@arm.com>, "Sudeep Holla" <sudeep.holla@arm.com>,
+ "Lorenzo Pieralisi" <lorenzo.pieralisi@arm.com>,
+ "Ralf Baechle" <ralf@linux-mips.org>, "Max Filippov" <jcmvbkbc@gmail.com>,
+ "Heiko Stuebner" <heiko@sntech.de>,
+ "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+ "Tomasz Figa" <tomasz.figa@gmail.com>, "Barry Song" <baohua@kernel.org>,
+ "Viresh Kumar" <viresh.linux@gmail.com>,
+ =?utf-8?b?IiBFbWlsaW8gTMOzcGV6?= <emilio@elopez.com.ar>,
+ "Maxime Ripard" <maxime.ripard@free-electrons.com>,
+ "Peter De Schrijver" <pdeschrijver@nvidia.com>,
+ "Prashant Gaikwad" <pgaikwad@nvidia.com>,
+ "Stephen Warren" <swarren@wwwdotorg.org>,
+ "Thierry Reding" <thierry.reding@gmail.com>,
+ "Alexandre Courbot" <gnurou@gmail.com>, "Tero Kristo" <t-kristo@ti.com>,
+ "Ulf Hansson" <ulf.hansson@linaro.org>,
+ "Michal Simek" <michal.simek@xilinx.com>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>, linux-doc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ linux-omap@vger.kernel.org, linux-mips@linux-mips.org,
+ patches@opensource.wolfsonmicro.com, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, spear-devel@list.st.com,
+ linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-media@vger.kernel.org, rtc-linux@googlegroups.com
+References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
+ <alpine.DEB.2.02.1506042258530.12316@utopia.booyaka.com>
+ <557161D1.3040107@nvidia.com>
+Message-ID: <20150610030254.6017.98627@quantum>
+Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
+Date: Tue, 09 Jun 2015 20:02:54 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Most Rockchip socs have optional phase inverters connected to some
-clocks that move the clock-phase by 180 degrees.
-While not having any actual influence on the rate, the inverter
-provides its own simple recalc_rate callback as relying on the
-fallback in the framework is for "lazy developers" according
-to the documentation in the code.
+Quoting Jon Hunter (2015-06-05 01:46:09)
+> =
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/rockchip/Makefile       |   1 +
- drivers/clk/rockchip/clk-inverter.c | 126 ++++++++++++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.c          |   7 ++
- drivers/clk/rockchip/clk.h          |  20 ++++++
- 4 files changed, 154 insertions(+)
- create mode 100644 drivers/clk/rockchip/clk-inverter.c
+> On 05/06/15 00:02, Paul Walmsley wrote:
+> > Hi folks
+> > =
 
-diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
-index 2714097..fd71c7d 100644
---- a/drivers/clk/rockchip/Makefile
-+++ b/drivers/clk/rockchip/Makefile
-@@ -6,6 +6,7 @@ obj-y	+= clk-rockchip.o
- obj-y	+= clk.o
- obj-y	+= clk-pll.o
- obj-y	+= clk-cpu.o
-+obj-y	+= clk-inverter.o
- obj-y	+= clk-mmc-phase.o
- obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
- 
-diff --git a/drivers/clk/rockchip/clk-inverter.c b/drivers/clk/rockchip/clk-inverter.c
-new file mode 100644
-index 0000000..db852cd
---- /dev/null
-+++ b/drivers/clk/rockchip/clk-inverter.c
-@@ -0,0 +1,126 @@
-+/*
-+ * Copyright 2015 Heiko Stuebner <heiko@sntech.de>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/slab.h>
-+#include <linux/clk-provider.h>
-+#include "clk.h"
-+
-+struct rockchip_inv_clock {
-+	struct clk_hw	hw;
-+	void __iomem	*reg;
-+	int		shift;
-+	int		flags;
-+	spinlock_t	*lock;
-+};
-+
-+#define to_inv_clock(_hw) container_of(_hw, struct rockchip_inv_clock, hw)
-+
-+#define INVERTER_MASK 0x1
-+
-+static unsigned long rockchip_inv_recalc(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	return parent_rate;
-+}
-+
-+static int rockchip_inv_get_phase(struct clk_hw *hw)
-+{
-+	struct rockchip_inv_clock *inv_clock = to_inv_clock(hw);
-+	u32 val;
-+
-+	val = readl(inv_clock->reg) >> (inv_clock->shift) & INVERTER_MASK;
-+	return val ? 180 : 0;
-+}
-+
-+static int rockchip_inv_set_phase(struct clk_hw *hw, int degrees)
-+{
-+	struct rockchip_inv_clock *inv_clock = to_inv_clock(hw);
-+	u32 val;
-+
-+	switch (degrees) {
-+	case 0:
-+		val = 0;
-+		break;
-+	case 180:
-+		val = 1;
-+		break;
-+	default:
-+		pr_err("%s: unsupported phase %d for %s\n",
-+		       __func__, degrees, __clk_get_name(hw->clk));
-+		return -EINVAL;
-+	}
-+
-+	if (inv_clock->flags & ROCKCHIP_INVERTER_HIWORD_MASK) {
-+		writel(HIWORD_UPDATE(val, INVERTER_MASK, inv_clock->shift),
-+		       inv_clock->reg);
-+	} else {
-+		unsigned long flags;
-+		u32 reg;
-+
-+		spin_lock_irqsave(inv_clock->lock, flags);
-+
-+		reg = readl(inv_clock->reg);
-+		reg &= ~BIT(inv_clock->shift);
-+		reg |= val;
-+		writel(reg, inv_clock->reg);
-+
-+		spin_unlock_irqrestore(inv_clock->lock, flags);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops rockchip_inv_clk_ops = {
-+	.recalc_rate	= rockchip_inv_recalc,
-+	.get_phase	= rockchip_inv_get_phase,
-+	.set_phase	= rockchip_inv_set_phase,
-+};
-+
-+struct clk *rockchip_clk_register_inverter(const char *name,
-+				const char *const *parent_names, u8 num_parents,
-+				void __iomem *reg, int shift, int flags,
-+				spinlock_t *lock)
-+{
-+	struct clk_init_data init;
-+	struct rockchip_inv_clock *inv_clock;
-+	struct clk *clk;
-+
-+	inv_clock = kmalloc(sizeof(*inv_clock), GFP_KERNEL);
-+	if (!inv_clock)
-+		return NULL;
-+
-+	init.num_parents = num_parents;
-+	init.flags = CLK_SET_RATE_PARENT;
-+	init.parent_names = parent_names;
-+	init.ops = &rockchip_inv_clk_ops;
-+
-+	inv_clock->hw.init = &init;
-+	inv_clock->reg = reg;
-+	inv_clock->shift = shift;
-+	inv_clock->flags = flags;
-+	inv_clock->lock = lock;
-+
-+	if (name)
-+		init.name = name;
-+
-+	clk = clk_register(NULL, &inv_clock->hw);
-+	if (IS_ERR(clk))
-+		goto err_free;
-+
-+	return clk;
-+
-+err_free:
-+	kfree(inv_clock);
-+	return NULL;
-+}
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 052b94d..2493881 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -277,6 +277,13 @@ void __init rockchip_clk_register_branches(
- 				list->div_shift
- 			);
- 			break;
-+		case branch_inverter:
-+			clk = rockchip_clk_register_inverter(
-+				list->name, list->parent_names,
-+				list->num_parents,
-+				reg_base + list->muxdiv_offset,
-+				list->div_shift, list->div_flags, &clk_lock);
-+			break;
- 		}
- 
- 		/* none of the cases above matched */
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 501f02e..b72dad0 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -182,6 +182,13 @@ struct clk *rockchip_clk_register_mmc(const char *name,
- 				const char *const *parent_names, u8 num_parents,
- 				void __iomem *reg, int shift);
- 
-+#define ROCKCHIP_INVERTER_HIWORD_MASK	BIT(0)
-+
-+struct clk *rockchip_clk_register_inverter(const char *name,
-+				const char *const *parent_names, u8 num_parents,
-+				void __iomem *reg, int shift, int flags,
-+				spinlock_t *lock);
-+
- #define PNAME(x) static const char *const x[] __initconst
- 
- enum rockchip_clk_branch_type {
-@@ -191,6 +198,7 @@ enum rockchip_clk_branch_type {
- 	branch_fraction_divider,
- 	branch_gate,
- 	branch_mmc,
-+	branch_inverter,
- };
- 
- struct rockchip_clk_branch {
-@@ -414,6 +422,18 @@ struct rockchip_clk_branch {
- 		.div_shift	= shift,			\
- 	}
- 
-+#define INVERTER(_id, cname, pname, io, is, if)			\
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_inverter,		\
-+		.name		= cname,			\
-+		.parent_names	= (const char *[]){ pname },	\
-+		.num_parents	= 1,				\
-+		.muxdiv_offset	= io,				\
-+		.div_shift	= is,				\
-+		.div_flags	= if,				\
-+	}
-+
- void rockchip_clk_init(struct device_node *np, void __iomem *base,
- 		       unsigned long nr_clks);
- struct regmap *rockchip_clk_get_grf(void);
--- 
-2.1.4
+> > just a brief comment on this one:
+> > =
+
+> > On Thu, 30 Apr 2015, Boris Brezillon wrote:
+> > =
+
+> >> Clock rates are stored in an unsigned long field, but ->round_rate()
+> >> (which returns a rounded rate from a requested one) returns a long
+> >> value (errors are reported using negative error codes), which can lead
+> >> to long overflow if the clock rate exceed 2Ghz.
+> >>
+> >> Change ->round_rate() prototype to return 0 or an error code, and pass=
+ the
+> >> requested rate as a pointer so that it can be adjusted depending on
+> >> hardware capabilities.
+> > =
+
+> > ...
+> > =
+
+> >> diff --git a/Documentation/clk.txt b/Documentation/clk.txt
+> >> index 0e4f90a..fca8b7a 100644
+> >> --- a/Documentation/clk.txt
+> >> +++ b/Documentation/clk.txt
+> >> @@ -68,8 +68,8 @@ the operations defined in clk.h:
+> >>              int             (*is_enabled)(struct clk_hw *hw);
+> >>              unsigned long   (*recalc_rate)(struct clk_hw *hw,
+> >>                                              unsigned long parent_rate=
+);
+> >> -            long            (*round_rate)(struct clk_hw *hw,
+> >> -                                            unsigned long rate,
+> >> +            int             (*round_rate)(struct clk_hw *hw,
+> >> +                                            unsigned long *rate,
+> >>                                              unsigned long *parent_rat=
+e);
+> >>              long            (*determine_rate)(struct clk_hw *hw,
+> >>                                              unsigned long rate,
+> > =
+
+> > I'd suggest that we should probably go straight to 64-bit rates.  There =
+
+> > are already plenty of clock sources that can generate rates higher than =
+
+> > 4GiHz.
+
+Paul,
+
+I agree. Changing the underlying struct clk.rate to 64 bits is on my
+radar.
+
+> =
+
+> An alternative would be to introduce to a frequency "base" the default
+> could be Hz (for backwards compatibility), but for CPUs we probably only
+> care about MHz (or may be kHz) and so 32-bits would still suffice. Even
+> if CPUs cared about Hz they could still use Hz, but in that case they
+> probably don't care about GHz. Obviously, we don't want to break DT
+> compatibility but may be the frequency base could be defined in DT and
+> if it is missing then Hz is assumed. Just a thought ...
+
+I was thinking of doing it the other way. E.g. use 64-bit rates
+throughout the clk framework and have a base unit of millihertz instead
+of hertz. 64 bits gives us a LOT of room to grow, and the current base
+of hertz completely ignores all applications with fractional hertz
+requirements.
+
+Your point came up a while ago in the context of cpufreq and the clk
+framework agreeing on the type for a rate[0]. The consensus was to
+continue using KHz as the base type for that subsystem.
+
+[0] https://lkml.org/lkml/2014/5/26/582
+(There is more to the above conversation that the mail archives didn't
+seem to catch :-/ )
+
+Regards,
+Mike
+
+> =
+
+> Jon
