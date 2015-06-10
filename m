@@ -1,40 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.17.22]:51519 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752215AbbF1OZo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Sun, 28 Jun 2015 10:25:44 -0400
-From: Sergej Sawazki <ce3a@gmx.de>
-To: sboyd@codeaurora.org, mturquette@baylibre.com, jsarha@ti.com
-Cc: linux-clk@vger.kernel.org, Sergej Sawazki <ce3a@gmx.de>
-Subject: [PATCH v4 1/4] clk: gpio-gate: Include export.h instead of module.h
-Date: Sun, 28 Jun 2015 16:24:53 +0200
-Message-Id: <1435501496-25761-2-git-send-email-ce3a@gmx.de>
-In-Reply-To: <1435501496-25761-1-git-send-email-ce3a@gmx.de>
-References: <1435501496-25761-1-git-send-email-ce3a@gmx.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <dinguyen@opensource.altera.com>
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>
+Subject: [PATCH 3/6] clk: keystone: make use of of_clk_parent_fill helper function
+Date: Wed, 10 Jun 2015 16:49:22 -0500
+Message-ID: <1433972965-24974-4-git-send-email-dinguyen@opensource.altera.com>
+In-Reply-To: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
+References: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Include export.h for EXPORT_SYMBOL_GPL, no need to include module.h.
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-Cc: Jyri Sarha <jsarha@ti.com>
-Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
+Use of_clk_parent_fill to fill in the parent clock names' array.
+
+Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>
 ---
- drivers/clk/clk-gpio-gate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/keystone/pll.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-gpio-gate.c b/drivers/clk/clk-gpio-gate.c
-index f564e62..a377f88 100644
---- a/drivers/clk/clk-gpio-gate.c
-+++ b/drivers/clk/clk-gpio-gate.c
-@@ -10,7 +10,7 @@
-  */
+diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
+index 0dd8a4b..d885372 100644
+--- a/drivers/clk/keystone/pll.c
++++ b/drivers/clk/keystone/pll.c
+@@ -293,8 +293,7 @@ static void __init of_pll_mux_clk_init(struct device_node *node)
+ 		return;
+ 	}
  
- #include <linux/clk-provider.h>
--#include <linux/module.h>
-+#include <linux/export.h>
- #include <linux/slab.h>
- #include <linux/gpio.h>
- #include <linux/gpio/consumer.h>
+-	parents[0] = of_clk_get_parent_name(node, 0);
+-	parents[1] = of_clk_get_parent_name(node, 1);
++	of_clk_parent_fill(node, parents, 2);
+ 	if (!parents[0] || !parents[1]) {
+ 		pr_err("%s: missing parent clocks\n", __func__);
+ 		return;
 -- 
-1.9.1
-
+2.2.1
