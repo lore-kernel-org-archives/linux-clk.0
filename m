@@ -1,69 +1,134 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Message-ID: <556DA21A.5090902@linaro.org>
-Date: Tue, 02 Jun 2015 15:31:22 +0300
+Return-Path: <dinguyen@opensource.altera.com>
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Tero Kristo <t-kristo@ti.com>
+Subject: [PATCH 6/6] clk: ti: make use of of_clk_parent_fill helper function
+Date: Wed, 10 Jun 2015 16:49:25 -0500
+Message-ID: <1433972965-24974-7-git-send-email-dinguyen@opensource.altera.com>
+In-Reply-To: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
+References: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
 MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-CC: linux-pm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2] PM / clock_ops: Print acquired clock name in addition
- to con_id
-References: <1432917331-3285-1-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1432917331-3285-1-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-pm-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/29/2015 07:35 PM, Geert Uytterhoeven wrote:
-> Currently the con_id of the acquired clock is printed for debugging
-> purposes.  But in several cases, the con_id is NULL, which doesn't
-> provide much debugging information when printed.  These cases are:
->    - When explicitly passing a NULL con_id (which means the first clock
->      tied to the device, if available),
->    - When not using pm_clk_add(), but pm_clk_add_clk() (which takes a
->      "struct clk *" directly).
->
-> Hence print the actual clock name in addition to (and not instead of;
-> thanks Grygorii Strashko!) the con_id.
->
-> Note that the clock name is not available with legacy clock frameworks,
-> and the hex pointer address will be printed instead.
->
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-Looks good for me.
-Reviewed-by: Grygorii Strashko <grygorii.strashko@linaro.org>
+Use of_clk_parent_fill to fill in the parent clock names' array.
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This is v2 of "PM / clock_ops: Print acquired clock name instead of
-> con_id".
->
-> v2:
->    - Print both clock and con_id, as suggested by Grygorii Strashko
->      <grygorii.strashko@linaro.org>.
-> ---
->   drivers/base/power/clock_ops.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
-> index 442ce010559bf531..acef9f9f759a2530 100644
-> --- a/drivers/base/power/clock_ops.c
-> +++ b/drivers/base/power/clock_ops.c
-> @@ -68,7 +68,8 @@ static void pm_clk_acquire(struct device *dev, struct pm_clock_entry *ce)
->   	} else {
->   		clk_prepare(ce->clk);
->   		ce->status = PCE_STATUS_ACQUIRED;
-> -		dev_dbg(dev, "Clock %s managed by runtime PM.\n", ce->con_id);
-> +		dev_dbg(dev, "Clock %pC con_id %s managed by runtime PM.\n",
-> +			ce->clk, ce->con_id);
->   	}
->   }
->
->
+Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+Cc: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/apll.c      | 4 +---
+ drivers/clk/ti/composite.c | 4 +---
+ drivers/clk/ti/dpll.c      | 4 +---
+ drivers/clk/ti/fapll.c     | 3 +--
+ drivers/clk/ti/mux.c       | 4 +---
+ 5 files changed, 5 insertions(+), 14 deletions(-)
 
-
+diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
+index 49baf38..523880e 100644
+--- a/drivers/clk/ti/apll.c
++++ b/drivers/clk/ti/apll.c
+@@ -170,7 +170,6 @@ static void __init of_dra7_apll_setup(struct device_node *node)
+ 	struct clk_hw_omap *clk_hw = NULL;
+ 	struct clk_init_data *init = NULL;
+ 	const char **parent_names = NULL;
+-	int i;
+ 
+ 	ad = kzalloc(sizeof(*ad), GFP_KERNEL);
+ 	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
+@@ -195,8 +194,7 @@ static void __init of_dra7_apll_setup(struct device_node *node)
+ 	if (!parent_names)
+ 		goto cleanup;
+ 
+-	for (i = 0; i < init->num_parents; i++)
+-		parent_names[i] = of_clk_get_parent_name(node, i);
++	of_clk_parent_fill(node, parent_names, init->num_parents);
+ 
+ 	init->parent_names = parent_names;
+ 
+diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
+index 96f83ce..dbef218 100644
+--- a/drivers/clk/ti/composite.c
++++ b/drivers/clk/ti/composite.c
+@@ -276,7 +276,6 @@ int __init ti_clk_add_component(struct device_node *node, struct clk_hw *hw,
+ 	int num_parents;
+ 	const char **parent_names;
+ 	struct component_clk *clk;
+-	int i;
+ 
+ 	num_parents = of_clk_get_parent_count(node);
+ 
+@@ -289,8 +288,7 @@ int __init ti_clk_add_component(struct device_node *node, struct clk_hw *hw,
+ 	if (!parent_names)
+ 		return -ENOMEM;
+ 
+-	for (i = 0; i < num_parents; i++)
+-		parent_names[i] = of_clk_get_parent_name(node, i);
++	of_clk_parent_fill(node, parent_names, num_parents);
+ 
+ 	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
+ 	if (!clk) {
+diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+index 2aacf7a..49acdf2 100644
+--- a/drivers/clk/ti/dpll.c
++++ b/drivers/clk/ti/dpll.c
+@@ -341,7 +341,6 @@ static void __init of_ti_dpll_setup(struct device_node *node,
+ 	struct clk_init_data *init = NULL;
+ 	const char **parent_names = NULL;
+ 	struct dpll_data *dd = NULL;
+-	int i;
+ 	u8 dpll_mode = 0;
+ 
+ 	dd = kzalloc(sizeof(*dd), GFP_KERNEL);
+@@ -370,8 +369,7 @@ static void __init of_ti_dpll_setup(struct device_node *node,
+ 	if (!parent_names)
+ 		goto cleanup;
+ 
+-	for (i = 0; i < init->num_parents; i++)
+-		parent_names[i] = of_clk_get_parent_name(node, i);
++	of_clk_parent_fill(node, parent_names, init->num_parents);
+ 
+ 	init->parent_names = parent_names;
+ 
+diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
+index 730aa62..b1c741b 100644
+--- a/drivers/clk/ti/fapll.c
++++ b/drivers/clk/ti/fapll.c
+@@ -558,8 +558,7 @@ static void __init ti_fapll_setup(struct device_node *node)
+ 		goto free;
+ 	}
+ 
+-	parent_name[0] = of_clk_get_parent_name(node, 0);
+-	parent_name[1] = of_clk_get_parent_name(node, 1);
++	of_clk_parent_fill(node, parent_name, 2);
+ 	init->parent_names = parent_name;
+ 
+ 	fd->clk_ref = of_clk_get(node, 0);
+diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+index 5cdeed5..99fe27e 100644
+--- a/drivers/clk/ti/mux.c
++++ b/drivers/clk/ti/mux.c
+@@ -190,7 +190,6 @@ static void of_mux_clk_setup(struct device_node *node)
+ 	void __iomem *reg;
+ 	int num_parents;
+ 	const char **parent_names;
+-	int i;
+ 	u8 clk_mux_flags = 0;
+ 	u32 mask = 0;
+ 	u32 shift = 0;
+@@ -205,8 +204,7 @@ static void of_mux_clk_setup(struct device_node *node)
+ 	if (!parent_names)
+ 		goto cleanup;
+ 
+-	for (i = 0; i < num_parents; i++)
+-		parent_names[i] = of_clk_get_parent_name(node, i);
++	of_clk_parent_fill(node, parent_names, num_parents);
+ 
+ 	reg = ti_clk_get_reg_addr(node, 0);
+ 
 -- 
-regards,
--grygorii
+2.2.1
