@@ -1,81 +1,198 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 5 Jun 2015 18:12:25 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>,
-	Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v3 3/5] clk: add support for clocks provided by
- SCP(System Control Processor)
-Message-ID: <20150606011225.GF29237@codeaurora.org>
-References: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com>
- <1432720398-5701-4-git-send-email-sudeep.holla@arm.com>
- <20150604202009.GI676@codeaurora.org>
- <55716DA4.2090003@arm.com>
- <5571D7F5.1030405@arm.com>
+Return-Path: <dinguyen@opensource.altera.com>
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 1/6] clk: at91: make use of of_clk_parent_fill helper function
+Date: Wed, 10 Jun 2015 16:49:20 -0500
+Message-ID: <1433972965-24974-2-git-send-email-dinguyen@opensource.altera.com>
+In-Reply-To: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
+References: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5571D7F5.1030405@arm.com>
+Content-Type: text/plain
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/05, Sudeep Holla wrote:
-> 
-> 
-> On 05/06/15 10:36, Sudeep Holla wrote:
-> >
-> >
-> >On 04/06/15 21:20, Stephen Boyd wrote:
-> >>On 05/27, Sudeep Holla wrote:
-> 
-> [...]
-> 
-> >>>+
-> >>>+static unsigned long scpi_clk_recalc_rate(struct clk_hw *hw,
-> >>>+					  unsigned long parent_rate)
-> >>>+{
-> >>>+	struct scpi_clk *clk = to_scpi_clk(hw);
-> >>>+
-> >>>+	return scpi_ops->clk_get_val(clk->id);
-> >>>+}
-> >>>+
-> >>>+static long scpi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-> >>>+				unsigned long *parent_rate)
-> >>>+{
-> >>>+	struct scpi_clk *clk = to_scpi_clk(hw);
-> >>>+
-> >>>+	if (WARN_ON(clk->rate_min && rate < clk->rate_min))
-> >>>+		rate = clk->rate_min;
-> >>>+	if (WARN_ON(clk->rate_max && rate > clk->rate_max))
-> >>>+		rate = clk->rate_max;
-> >>>+
-> >>>+	return rate;
-> >>>+}
-> >>
-> >>Hm.. this seems really generic. It might be better to support a
-> >>way to tell the framework to limit the min/max rate that's
-> >>accepted for a clk. That could be done later though.
-> >>
-> >
-> >True, framework have some boundary checks in place. I will check if
-> >I can use it with minimum changes to the core. If not, we can take this
-> >up later as you suggested.
-> >
-> 
-> I found that the framework already provides clk_set_rate_range for this
-> purpose. Sorry for missing this earlier(seems like that's added quite
-> recently in v4.0). I think I still need to retain round_rate as the core
-> framework insists.
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-Sure, or use determine_rate if you want to limit the min/max from
-the clk provider itself.
+Use of_clk_parent_fill to fill in the parent clock names' array.
 
+Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/clk/at91/clk-main.c         |  7 +------
+ drivers/clk/at91/clk-master.c       |  7 +------
+ drivers/clk/at91/clk-programmable.c |  7 +------
+ drivers/clk/at91/clk-slow.c         | 14 ++------------
+ drivers/clk/at91/clk-smd.c          |  7 +------
+ drivers/clk/at91/clk-usb.c          |  7 +------
+ 6 files changed, 7 insertions(+), 42 deletions(-)
+
+diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
+index c240045..13f481b 100644
+--- a/drivers/clk/at91/clk-main.c
++++ b/drivers/clk/at91/clk-main.c
+@@ -612,17 +612,12 @@ void __init of_at91sam9x5_clk_main_setup(struct device_node *np,
+ 	int num_parents;
+ 	unsigned int irq;
+ 	const char *name = np->name;
+-	int i;
+ 
+ 	num_parents = of_clk_get_parent_count(np);
+ 	if (num_parents <= 0 || num_parents > 2)
+ 		return;
+ 
+-	for (i = 0; i < num_parents; ++i) {
+-		parent_names[i] = of_clk_get_parent_name(np, i);
+-		if (!parent_names[i])
+-			return;
+-	}
++	of_clk_parent_fill(np, parent_names, num_parents);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
+index f98eafe..38f646d 100644
+--- a/drivers/clk/at91/clk-master.c
++++ b/drivers/clk/at91/clk-master.c
+@@ -218,7 +218,6 @@ of_at91_clk_master_setup(struct device_node *np, struct at91_pmc *pmc,
+ {
+ 	struct clk *clk;
+ 	int num_parents;
+-	int i;
+ 	unsigned int irq;
+ 	const char *parent_names[MASTER_SOURCE_MAX];
+ 	const char *name = np->name;
+@@ -228,11 +227,7 @@ of_at91_clk_master_setup(struct device_node *np, struct at91_pmc *pmc,
+ 	if (num_parents <= 0 || num_parents > MASTER_SOURCE_MAX)
+ 		return;
+ 
+-	for (i = 0; i < num_parents; ++i) {
+-		parent_names[i] = of_clk_get_parent_name(np, i);
+-		if (!parent_names[i])
+-			return;
+-	}
++	of_clk_parent_fill(np, parent_names, num_parents);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
+index 8c86c0f..21492ac 100644
+--- a/drivers/clk/at91/clk-programmable.c
++++ b/drivers/clk/at91/clk-programmable.c
+@@ -230,7 +230,6 @@ of_at91_clk_prog_setup(struct device_node *np, struct at91_pmc *pmc,
+ {
+ 	int num;
+ 	u32 id;
+-	int i;
+ 	struct clk *clk;
+ 	int num_parents;
+ 	const char *parent_names[PROG_SOURCE_MAX];
+@@ -241,11 +240,7 @@ of_at91_clk_prog_setup(struct device_node *np, struct at91_pmc *pmc,
+ 	if (num_parents <= 0 || num_parents > PROG_SOURCE_MAX)
+ 		return;
+ 
+-	for (i = 0; i < num_parents; ++i) {
+-		parent_names[i] = of_clk_get_parent_name(np, i);
+-		if (!parent_names[i])
+-			return;
+-	}
++	of_clk_parent_fill(np, parent_names, num_parents);
+ 
+ 	num = of_get_child_count(np);
+ 	if (!num || num > (PROG_ID_MAX + 1))
+diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
+index 98a84a8..84c19d7 100644
+--- a/drivers/clk/at91/clk-slow.c
++++ b/drivers/clk/at91/clk-slow.c
+@@ -371,17 +371,12 @@ void __init of_at91sam9x5_clk_slow_setup(struct device_node *np,
+ 	const char *parent_names[2];
+ 	int num_parents;
+ 	const char *name = np->name;
+-	int i;
+ 
+ 	num_parents = of_clk_get_parent_count(np);
+ 	if (num_parents <= 0 || num_parents > 2)
+ 		return;
+ 
+-	for (i = 0; i < num_parents; ++i) {
+-		parent_names[i] = of_clk_get_parent_name(np, i);
+-		if (!parent_names[i])
+-			return;
+-	}
++	of_clk_parent_fill(np, parent_names, num_parents);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+@@ -449,17 +444,12 @@ void __init of_at91sam9260_clk_slow_setup(struct device_node *np,
+ 	const char *parent_names[2];
+ 	int num_parents;
+ 	const char *name = np->name;
+-	int i;
+ 
+ 	num_parents = of_clk_get_parent_count(np);
+ 	if (num_parents != 2)
+ 		return;
+ 
+-	for (i = 0; i < num_parents; ++i) {
+-		parent_names[i] = of_clk_get_parent_name(np, i);
+-		if (!parent_names[i])
+-			return;
+-	}
++	of_clk_parent_fill(np, parent_names, num_parents);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+diff --git a/drivers/clk/at91/clk-smd.c b/drivers/clk/at91/clk-smd.c
+index 3817ea8..a7f8501 100644
+--- a/drivers/clk/at91/clk-smd.c
++++ b/drivers/clk/at91/clk-smd.c
+@@ -145,7 +145,6 @@ void __init of_at91sam9x5_clk_smd_setup(struct device_node *np,
+ 					struct at91_pmc *pmc)
+ {
+ 	struct clk *clk;
+-	int i;
+ 	int num_parents;
+ 	const char *parent_names[SMD_SOURCE_MAX];
+ 	const char *name = np->name;
+@@ -154,11 +153,7 @@ void __init of_at91sam9x5_clk_smd_setup(struct device_node *np,
+ 	if (num_parents <= 0 || num_parents > SMD_SOURCE_MAX)
+ 		return;
+ 
+-	for (i = 0; i < num_parents; i++) {
+-		parent_names[i] = of_clk_get_parent_name(np, i);
+-		if (!parent_names[i])
+-			return;
+-	}
++	of_clk_parent_fill(np, parent_names, num_parents);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
+index b0cbd2b..b3cbf45 100644
+--- a/drivers/clk/at91/clk-usb.c
++++ b/drivers/clk/at91/clk-usb.c
+@@ -373,7 +373,6 @@ void __init of_at91sam9x5_clk_usb_setup(struct device_node *np,
+ 					struct at91_pmc *pmc)
+ {
+ 	struct clk *clk;
+-	int i;
+ 	int num_parents;
+ 	const char *parent_names[USB_SOURCE_MAX];
+ 	const char *name = np->name;
+@@ -382,11 +381,7 @@ void __init of_at91sam9x5_clk_usb_setup(struct device_node *np,
+ 	if (num_parents <= 0 || num_parents > USB_SOURCE_MAX)
+ 		return;
+ 
+-	for (i = 0; i < num_parents; i++) {
+-		parent_names[i] = of_clk_get_parent_name(np, i);
+-		if (!parent_names[i])
+-			return;
+-	}
++	of_clk_parent_fill(np, parent_names, num_parents);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.2.1
