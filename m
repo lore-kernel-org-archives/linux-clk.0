@@ -1,63 +1,50 @@
-Return-Path: <lho@apm.com>
+Return-Path: <manabian@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1434576529-4183-1-git-send-email-matthias.bgg@gmail.com>
-References: <1434576529-4183-1-git-send-email-matthias.bgg@gmail.com>
-Date: Wed, 17 Jun 2015 23:28:56 -0700
-Message-ID: <CAPw-ZTm=GZgUzWQcUAmfQwrDG8kouxj9uxT9L1+G+QCYQ8WjUw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: xgene: Delete duplicated name field
-From: Loc Ho <lho@apm.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: sboyd@codeaurora.org, Mike Turquette <mturquette@linaro.org>,
-	Kumar Sankaran <ksankaran@apm.com>, Feng Kan <fkan@apm.com>, linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: multipart/alternative; boundary=001a113468e610e2df0518c4ec41
+In-Reply-To: <20150610021315.6017.58085@quantum>
+References: <1432845107-12458-1-git-send-email-manabian@gmail.com>
+	<1432845107-12458-4-git-send-email-manabian@gmail.com>
+	<20150610021315.6017.58085@quantum>
+Date: Wed, 10 Jun 2015 16:02:59 +0200
+Message-ID: <CAGhQ9VwONWTULGUbGuf_2HbLpfU4pp8S49xdtoCcKcm1p=n7hg@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] clk: add lpc18xx ccu clk driver
+From: Joachim  Eastwood <manabian@gmail.com>
+To: Michael Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
---001a113468e610e2df0518c4ec41
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Hi Mike,
 
-Hi,
 
-On Wed, Jun 17, 2015 at 2:28 PM, Matthias Brugger <matthias.bgg@gmail.com>
-wrote:
-
-> X-Gene clocks implement it's name in the clock private struct.
-> This is a duplication of the name field. We can delete the field
-> and rely on the common implementation to retrieve the name.
+> Hi Joachim,
 >
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+> If it were me, I would have broken this up into two tables, one for each
+> CCU. In general I would structure the code to reflect the fact that two
+> different IP blocks are being accessed. This isn't a deal breaker but I
+> thought I would mention it in case you want to make the change.
 >
+> Otherwise this series looks good to me. Let me know if you plan a V5
+> submission.
 
-=E2=80=8BI had applied and tested against linux-next. Look good to me.
+If there is still time for 4.2 and you don't have any more comments on
+how the driver uses the DT bindings I would rather send a follow up
+patch that splits the ccu table for 4.3.
 
--Loc=E2=80=8B
 
---001a113468e610e2df0518c4ec41
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+> I can take patches #1-4 into the clk tree. Please add my Acked-by to
+> patch #5. I will create an immutable branch to share with the arm-soc
+> tree so that they can take #5 and have access to the dt-bindings
+> headers.
 
-<div dir=3D"ltr"><div class=3D"gmail_default" style=3D"font-family:arial,he=
-lvetica,sans-serif">Hi,</div><div class=3D"gmail_default" style=3D"font-fam=
-ily:arial,helvetica,sans-serif"><br></div><div class=3D"gmail_default" styl=
-e=3D"font-family:arial,helvetica,sans-serif"><span style=3D"font-family:ari=
-al,sans-serif">On Wed, Jun 17, 2015 at 2:28 PM, Matthias Brugger </span><sp=
-an dir=3D"ltr" style=3D"font-family:arial,sans-serif">&lt;<a href=3D"mailto=
-:matthias.bgg@gmail.com" target=3D"_blank">matthias.bgg@gmail.com</a>&gt;</=
-span><span style=3D"font-family:arial,sans-serif"> wrote:</span><br></div><=
-div class=3D"gmail_extra"><div class=3D"gmail_quote"><blockquote class=3D"g=
-mail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-l=
-eft:1ex">X-Gene clocks implement it&#39;s name in the clock private struct.=
-<br>
-This is a duplication of the name field. We can delete the field<br>
-and rely on the common implementation to retrieve the name.<br>
-<br>
-Signed-off-by: Matthias Brugger &lt;<a href=3D"mailto:matthias.bgg@gmail.co=
-m">matthias.bgg@gmail.com</a>&gt;<br></blockquote><div><br></div><div><div =
-class=3D"gmail_default" style=3D"font-family:arial,helvetica,sans-serif">=
-=E2=80=8BI had applied and tested against linux-next. Look good to me.=C2=
-=A0</div><div class=3D"gmail_default" style=3D"font-family:arial,helvetica,=
-sans-serif"><br></div><div class=3D"gmail_default" style=3D"font-family:ari=
-al,helvetica,sans-serif">-Loc=E2=80=8B</div><br></div></div></div></div>
+Sounds good. I'll talk to arm-soc team about it. But it isn't critical
+for me to get the DTS changes in for 4.2, but I would be very grateful
+for getting the drivers and headers in for 4.2 so that 4.3 is ready
+and doesn't have any header dependencies for all the driver DTS stuff.
 
---001a113468e610e2df0518c4ec41--
+Thanks, Mike.
+
+
+regards,
+Joachim Eastwood
