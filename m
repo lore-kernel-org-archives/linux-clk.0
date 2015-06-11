@@ -1,48 +1,87 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:35781 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750919AbbFVGYM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Mon, 22 Jun 2015 02:24:12 -0400
-From: Keerthy <j-keerthy@ti.com>
-To: <linux-omap@vger.kernel.org>, <tony@atomide.com>
-CC: <galak@codeaurora.org>, <t-kristo@ti.com>, <pawel.moll@arm.com>,
-	<linux-kernel@vger.kernel.org>, <paul@pwsan.com>,
-	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>,
-	<j-keerthy@ti.com>
-Subject: [PATCH 0/6] ARM: AM437x: Add IO wake up support 
-Date: Mon, 22 Jun 2015 11:52:50 +0530
-Message-ID: <1434954176-9605-1-git-send-email-j-keerthy@ti.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Message-ID: <557981B7.3000303@samsung.com>
+Date: Thu, 11 Jun 2015 21:40:23 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+ Mike Turquette <mturquette@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Linux Kernel <linux-kernel@vger.kernel.org>,
+ Kukjin Kim <kgene@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ linux-clk@vger.kernel.org,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/2] clk: exynos4: Add PCLK_ADC gate clock on Exynos4x12
+References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com> <55796660.1070702@samsung.com> <CABxcv=kNb2ERqLL2gG73nkU+kpPsYAWKSyu=bkjfxZBMKOwyPQ@mail.gmail.com>
+In-Reply-To: <CABxcv=kNb2ERqLL2gG73nkU+kpPsYAWKSyu=bkjfxZBMKOwyPQ@mail.gmail.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch series adds IO wake up support for AM437x series
-making use of the existing OMAP4 support. Adds the AM437x
-specifics.
+W dniu 11.06.2015 o 21:15, Javier Martinez Canillas pisze:
+> Hello Krzysztof,
+> 
+> On Thu, Jun 11, 2015 at 12:43 PM, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+>> W dniu 11.06.2015 o 17:26, Krzysztof Kozlowski pisze:
+>>> Add proper gate clock for the Analog to Digital Converter (ADC) on
+>>> Exynos4x12.
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>> ---
+>>>  drivers/clk/samsung/clk-exynos4.c   | 3 +++
+>>>  include/dt-bindings/clock/exynos4.h | 5 ++++-
+>>>  2 files changed, 7 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+>>> index 714d6ba782c8..5f32410a01f8 100644
+>>> --- a/drivers/clk/samsung/clk-exynos4.c
+>>> +++ b/drivers/clk/samsung/clk-exynos4.c
+>>> @@ -85,6 +85,7 @@
+>>>  #define DIV_PERIL4           0xc560
+>>>  #define DIV_PERIL5           0xc564
+>>>  #define E4X12_DIV_CAM1               0xc568
+>>> +#define E4X12_GATE_BUS_FSYS1 0xc744
+>>>  #define GATE_SCLK_CAM                0xc820
+>>>  #define GATE_IP_CAM          0xc920
+>>>  #define GATE_IP_TV           0xc924
+>>> @@ -1095,6 +1096,8 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+>>>               0),
+>>>       GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
+>>>               0),
+>>> +     GATE(CLK_PCLK_ADC, "pclk_adc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0,
+>>> +             0),
+>>
+>> Now I have even simpler idea. Don't add new clock id but just define
+>> here the CLK_TSADC as:
+>> GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0);
+>>
+>> With this change the second patch wouldn't be needed however this does
+>> not reflect the Exynos 4x12 datasheet.
+>>
+>> Any comments?
+>>
+> 
+> I think it's better to reflect the datasheet so I prefer your original
+> patch.
 
-The series is boot tested on OMAP4 panda, DAR7 evm and AM437x evms.
-I do not have OMAP3 boards so not able to test on OMAP3.
+Yeah, I also like sticking to datasheet but maybe it is not always worth
+to reproduce the datasheet in 100%. It is just thinking out loud.
 
-Keerthy (6):
-  ARM: OMAP4: PRM: Remove hardcoding of PRM_IO_PMCTRL_OFFSET register
-  ARM: AM43xx: Add the PRM IRQ register offsets
-  ARM: dts: AM4372: Add PRCM IRQ entry
-  ARM: OMAP: PRM: Remove hardcoding of IRQENABLE_MPU_2 and
-    IRQSTATUS_MPU_2 register offsets
-  ARM: OMAP4+: PRM: Add AM437x specific data
-  ARM: PRM: AM437x: Enable IO wakeup feature
+> Also, wouldn't changing the CLK_TSADC gate definition cause a
+> regression on an Exynos4210 board that is using the tsadc clock? or
+> maybe I misunderstood the explanation of your Patch 2/2?
 
- arch/arm/boot/dts/am4372.dtsi     |  1 +
- arch/arm/mach-omap2/prcm-common.h |  9 +++---
- arch/arm/mach-omap2/prcm43xx.h    |  5 +++
- arch/arm/mach-omap2/prm3xxx.c     | 20 ++++++------
- arch/arm/mach-omap2/prm44xx.c     | 65 +++++++++++++++++++++++----------------
- arch/arm/mach-omap2/prm_common.c  |  6 ++--
- 6 files changed, 63 insertions(+), 43 deletions(-)
+No, no. The Exynos4210 would be unchanged. It has the CLK_TSADC - both
+in hardware and in kernel driver. The Exynos4x12 SoCs don't have so we can:
+1. Add new CLK_PCLK_ADC (id and clock) reflecting datasheet.
+2. Add only CLK_TSADC clock  on Exynos4x12 which will be using the
+register of PCLK_ADC. The id would stay the same as on Exynos4210.
 
--- 
-1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+Best regards,
+Krzysztof
