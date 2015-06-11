@@ -1,61 +1,51 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 3 Jun 2015 16:44:27 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Tero Kristo <t-kristo@ti.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
-	kernel@stlinux.com, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 5/5] [RFC] ARM: timer-sp: Use of_clk_get_parent_count()
- instead of open coding
-Message-ID: <20150603234426.GB490@codeaurora.org>
-References: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
- <1432891549-23295-6-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1432891549-23295-6-git-send-email-geert+renesas@glider.be>
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 2/2] ARM: dts: Fix wrong clock for Exynos4x12 ADC
+Date: Thu, 11 Jun 2015 17:26:30 +0900
+Message-id: <1434011190-24563-2-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
+References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/29, Geert Uytterhoeven wrote:
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This is an RFC, as it depends on "[RFC] clk: Provide dummy
-> of_clk_get_parent_count() for !OF/!CCF".
-> ---
->  arch/arm/common/timer-sp.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/common/timer-sp.c b/arch/arm/common/timer-sp.c
-> index 19211324772f387c..be87a5d480ffb655 100644
-> --- a/arch/arm/common/timer-sp.c
-> +++ b/arch/arm/common/timer-sp.c
-> @@ -21,6 +21,7 @@
->  #include <linux/clk.h>
->  #include <linux/clocksource.h>
->  #include <linux/clockchips.h>
-> +#include <linux/clk-provider.h>
+The TSADC gate clock is present only in Exynos4210. It should not be
+added to exynos4x12.dtsi because the register controlling it is reserved
+on Exynos4x12.
 
-This looks weird. This is not a clock provider.
+Instead, the Analog to Digital Converter of Exynos4x12 uses PCLK_ADC
+gate clock from different register.
 
->  #include <linux/err.h>
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
-> @@ -234,7 +235,7 @@ static void __init sp804_of_init(struct device_node *np)
->  		clk1 = NULL;
->  
->  	/* Get the 2nd clock if the timer has 3 timer clocks */
-> -	if (of_count_phandle_with_args(np, "clocks", "#clock-cells") == 3) {
-> +	if (of_clk_get_parent_count(np) == 3) {
+By using proper clock this effectively enables usage of exynos-adc
+driver on Exynos4412 boards, enables accessing sensors connected to it
+on Trats2 board (ntc,ncp15wb473 AP and battery thermistors) and fixes
+following warnings during boot:
+[    2.248247] ERROR: could not get clock /adc@126C0000:adc(0)
+[    2.248262] exynos-adc 126c0000.adc: failed getting clock, err = -2
+[    2.248293] exynos-adc: probe of 126c0000.adc failed with error -2
 
-So maybe it means if we want to expose of_clk_get_parent_count()
-we should move it to some other header file (of_clk.h?). And then
-maybe we should always compile said helpers if OF=y and
-HAVE_CLK=y.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos4x12.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index b77dac61ffb5..d7738dd062b7 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -101,7 +101,7 @@
+ 		reg = <0x126C0000 0x100>;
+ 		interrupt-parent = <&combiner>;
+ 		interrupts = <10 3>;
+-		clocks = <&clock CLK_TSADC>;
++		clocks = <&clock CLK_PCLK_ADC>;
+ 		clock-names = "adc";
+ 		#io-channel-cells = <1>;
+ 		io-channel-ranges;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
