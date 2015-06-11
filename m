@@ -1,153 +1,85 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: shmobile: Remove unneeded #include <linux/clkdev.h>
-Date: Tue, 23 Jun 2015 15:09:27 +0200
-Message-Id: <1435064967-12299-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <gabriel.fernandez@st.com>
+Message-ID: <55793ABB.5050302@st.com>
+Date: Thu, 11 Jun 2015 09:37:31 +0200
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+MIME-Version: 1.0
+To: <dinguyen@opensource.altera.com>, <sboyd@codeaurora.org>,
+        <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Peter Griffin <peter.griffin@linaro.org>
+Subject: Re: [PATCH 4/6] clk: st: make use of of_clk_parent_fill helper function
+References: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com> <1433972965-24974-5-git-send-email-dinguyen@opensource.altera.com>
+In-Reply-To: <1433972965-24974-5-git-send-email-dinguyen@opensource.altera.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The CCF implementations for the various shmobile SoCs don't use clkdev
-functionality, hence drop the inclusion of <linux/clkdev.h>.
+Hi
 
-Add the missing #include <linux/slab.h>, which was included implicitly
-through <asm/clkdev.h> before.
+Tested-by Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/shmobile/clk-div6.c      | 2 +-
- drivers/clk/shmobile/clk-r8a73a4.c   | 2 +-
- drivers/clk/shmobile/clk-r8a7740.c   | 2 +-
- drivers/clk/shmobile/clk-r8a7778.c   | 2 +-
- drivers/clk/shmobile/clk-r8a7779.c   | 2 +-
- drivers/clk/shmobile/clk-rcar-gen2.c | 4 +---
- drivers/clk/shmobile/clk-sh73a0.c    | 2 +-
- 7 files changed, 7 insertions(+), 9 deletions(-)
+Best Regards.
 
-diff --git a/drivers/clk/shmobile/clk-div6.c b/drivers/clk/shmobile/clk-div6.c
-index 036a692c72195db9..6810bfb6ef5e09d1 100644
---- a/drivers/clk/shmobile/clk-div6.c
-+++ b/drivers/clk/shmobile/clk-div6.c
-@@ -11,12 +11,12 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/clkdev.h>
- #include <linux/init.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/slab.h>
- 
- #define CPG_DIV6_CKSTP		BIT(8)
- #define CPG_DIV6_DIV(d)		((d) & 0x3f)
-diff --git a/drivers/clk/shmobile/clk-r8a73a4.c b/drivers/clk/shmobile/clk-r8a73a4.c
-index 29b9a0b0012ad326..9326204bed9d6cb7 100644
---- a/drivers/clk/shmobile/clk-r8a73a4.c
-+++ b/drivers/clk/shmobile/clk-r8a73a4.c
-@@ -9,10 +9,10 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/clkdev.h>
- #include <linux/clk/shmobile.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-+#include <linux/slab.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/spinlock.h>
-diff --git a/drivers/clk/shmobile/clk-r8a7740.c b/drivers/clk/shmobile/clk-r8a7740.c
-index 1e2eaae21e01947b..1e6b1da580658f46 100644
---- a/drivers/clk/shmobile/clk-r8a7740.c
-+++ b/drivers/clk/shmobile/clk-r8a7740.c
-@@ -9,10 +9,10 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/clkdev.h>
- #include <linux/clk/shmobile.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-+#include <linux/slab.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/spinlock.h>
-diff --git a/drivers/clk/shmobile/clk-r8a7778.c b/drivers/clk/shmobile/clk-r8a7778.c
-index fa45684e220c78ae..87c1d2f2fb57a46c 100644
---- a/drivers/clk/shmobile/clk-r8a7778.c
-+++ b/drivers/clk/shmobile/clk-r8a7778.c
-@@ -9,9 +9,9 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/clkdev.h>
- #include <linux/clk/shmobile.h>
- #include <linux/of_address.h>
-+#include <linux/slab.h>
- 
- struct r8a7778_cpg {
- 	struct clk_onecell_data data;
-diff --git a/drivers/clk/shmobile/clk-r8a7779.c b/drivers/clk/shmobile/clk-r8a7779.c
-index e42a63a2ad251de2..92275c5f2c60303e 100644
---- a/drivers/clk/shmobile/clk-r8a7779.c
-+++ b/drivers/clk/shmobile/clk-r8a7779.c
-@@ -11,12 +11,12 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/clkdev.h>
- #include <linux/clk/shmobile.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/slab.h>
- #include <linux/spinlock.h>
- 
- #include <dt-bindings/clock/r8a7779-clock.h>
-diff --git a/drivers/clk/shmobile/clk-rcar-gen2.c b/drivers/clk/shmobile/clk-rcar-gen2.c
-index 9612e3145b7ea370..745496f7ee9c7402 100644
---- a/drivers/clk/shmobile/clk-rcar-gen2.c
-+++ b/drivers/clk/shmobile/clk-rcar-gen2.c
-@@ -11,15 +11,13 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/clkdev.h>
- #include <linux/clk/shmobile.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/math64.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/pm_clock.h>
--#include <linux/pm_domain.h>
-+#include <linux/slab.h>
- #include <linux/spinlock.h>
- 
- struct rcar_gen2_cpg {
-diff --git a/drivers/clk/shmobile/clk-sh73a0.c b/drivers/clk/shmobile/clk-sh73a0.c
-index cd529cfe412f1d18..8966f8bbfd726e62 100644
---- a/drivers/clk/shmobile/clk-sh73a0.c
-+++ b/drivers/clk/shmobile/clk-sh73a0.c
-@@ -9,12 +9,12 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/clkdev.h>
- #include <linux/clk/shmobile.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/slab.h>
- #include <linux/spinlock.h>
- 
- struct sh73a0_cpg {
--- 
-1.9.1
+On 06/10/2015 11:49 PM, dinguyen@opensource.altera.com wrote:
+> From: Dinh Nguyen <dinguyen@opensource.altera.com>
+>
+> Use of_clk_parent_fill to fill in the parent clock names' array.
+>
+> Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+> Cc: Peter Griffin <peter.griffin@linaro.org>
+> Cc: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+> ---
+>   drivers/clk/st/clk-flexgen.c | 6 ++----
+>   drivers/clk/st/clkgen-mux.c  | 7 ++-----
+>   2 files changed, 4 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
+> index 657ca14..ed0696c 100644
+> --- a/drivers/clk/st/clk-flexgen.c
+> +++ b/drivers/clk/st/clk-flexgen.c
+> @@ -243,7 +243,7 @@ static const char ** __init flexgen_get_parents(struct device_node *np,
+>   						       int *num_parents)
+>   {
+>   	const char **parents;
+> -	int nparents, i;
+> +	int nparents;
+>   
+>   	nparents = of_clk_get_parent_count(np);
+>   	if (WARN_ON(nparents <= 0))
+> @@ -253,10 +253,8 @@ static const char ** __init flexgen_get_parents(struct device_node *np,
+>   	if (!parents)
+>   		return NULL;
+>   
+> -	for (i = 0; i < nparents; i++)
+> -		parents[i] = of_clk_get_parent_name(np, i);
+> +	*num_parents = of_clk_parent_fill(np, parents, nparents);
+>   
+> -	*num_parents = nparents;
+>   	return parents;
+>   }
+>   
+> diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
+> index 4fbe6e0..b83654a 100644
+> --- a/drivers/clk/st/clkgen-mux.c
+> +++ b/drivers/clk/st/clkgen-mux.c
+> @@ -24,7 +24,7 @@ static const char ** __init clkgen_mux_get_parents(struct device_node *np,
+>   						       int *num_parents)
+>   {
+>   	const char **parents;
+> -	int nparents, i;
+> +	int nparents;
+>   
+>   	nparents = of_clk_get_parent_count(np);
+>   	if (WARN_ON(nparents <= 0))
+> @@ -34,10 +34,7 @@ static const char ** __init clkgen_mux_get_parents(struct device_node *np,
+>   	if (!parents)
+>   		return ERR_PTR(-ENOMEM);
+>   
+> -	for (i = 0; i < nparents; i++)
+> -		parents[i] = of_clk_get_parent_name(np, i);
+> -
+> -	*num_parents = nparents;
+> +	*num_parents = of_clk_parent_fill(np, parents, nparents);
+>   	return parents;
+>   }
+>   
