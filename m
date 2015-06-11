@@ -1,88 +1,90 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:48711 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751674AbbFRTre (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jun 2015 15:47:34 -0400
-Date: Thu, 18 Jun 2015 21:47:29 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Michael Turquette <mturquette@linaro.org>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	"Stephen Boyd" <sboyd@codeaurora.org>,
-	"Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>,
-	"Jason Cooper" <jason@lakedaemon.net>,
-	"Tawfik Bayouk" <tawfik@marvell.com>,
-	"Andrew Lunn" <andrew@lunn.ch>,
-	"Kevin Hilman" <khilman@kernel.org>, stable@vger.kernel.org,
-	"Eran Ben-Avi" <benavi@marvell.com>,
-	"Nadav Haklai" <nadavh@marvell.com>,
-	"Lior Amsalem" <alior@marvell.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	"Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH v2] clk: mvebu: flag the crypto clk as CLK_IGNORE_UNUSED
-Message-ID: <20150618214729.41acfb07@bbrezillon>
-In-Reply-To: <20150618183654.25948.26168@quantum>
-References: <1434470179-20835-1-git-send-email-boris.brezillon@free-electrons.com>
-	<55816094.2020208@free-electrons.com>
-	<20150618183654.25948.26168@quantum>
+Return-Path: <tomasz.figa@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <557981B7.3000303@samsung.com>
+References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
+	<55796660.1070702@samsung.com>
+	<CABxcv=kNb2ERqLL2gG73nkU+kpPsYAWKSyu=bkjfxZBMKOwyPQ@mail.gmail.com>
+	<557981B7.3000303@samsung.com>
+Date: Thu, 11 Jun 2015 22:54:59 +0900
+Message-ID: <CA+Ln22EqW7_6h_0JoZqzSjV3ToC8gf8joGHiC2uUo6fLJ8aBVQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: exynos4: Add PCLK_ADC gate clock on Exynos4x12
+From: Tomasz Figa <tomasz.figa@gmail.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Linux Kernel <linux-kernel@vger.kernel.org>,
+	Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+2015-06-11 21:40 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+> W dniu 11.06.2015 o 21:15, Javier Martinez Canillas pisze:
+>> Hello Krzysztof,
+>>
+>> On Thu, Jun 11, 2015 at 12:43 PM, Krzysztof Kozlowski
+>> <k.kozlowski@samsung.com> wrote:
+>>> W dniu 11.06.2015 o 17:26, Krzysztof Kozlowski pisze:
+>>>> Add proper gate clock for the Analog to Digital Converter (ADC) on
+>>>> Exynos4x12.
+>>>>
+>>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>> ---
+>>>>  drivers/clk/samsung/clk-exynos4.c   | 3 +++
+>>>>  include/dt-bindings/clock/exynos4.h | 5 ++++-
+>>>>  2 files changed, 7 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+>>>> index 714d6ba782c8..5f32410a01f8 100644
+>>>> --- a/drivers/clk/samsung/clk-exynos4.c
+>>>> +++ b/drivers/clk/samsung/clk-exynos4.c
+>>>> @@ -85,6 +85,7 @@
+>>>>  #define DIV_PERIL4           0xc560
+>>>>  #define DIV_PERIL5           0xc564
+>>>>  #define E4X12_DIV_CAM1               0xc568
+>>>> +#define E4X12_GATE_BUS_FSYS1 0xc744
+>>>>  #define GATE_SCLK_CAM                0xc820
+>>>>  #define GATE_IP_CAM          0xc920
+>>>>  #define GATE_IP_TV           0xc924
+>>>> @@ -1095,6 +1096,8 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+>>>>               0),
+>>>>       GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
+>>>>               0),
+>>>> +     GATE(CLK_PCLK_ADC, "pclk_adc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0,
+>>>> +             0),
+>>>
+>>> Now I have even simpler idea. Don't add new clock id but just define
+>>> here the CLK_TSADC as:
+>>> GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0);
+>>>
+>>> With this change the second patch wouldn't be needed however this does
+>>> not reflect the Exynos 4x12 datasheet.
+>>>
+>>> Any comments?
+>>>
+>>
+>> I think it's better to reflect the datasheet so I prefer your original
+>> patch.
+>
+> Yeah, I also like sticking to datasheet but maybe it is not always worth
+> to reproduce the datasheet in 100%. It is just thinking out loud.
+>
+>> Also, wouldn't changing the CLK_TSADC gate definition cause a
+>> regression on an Exynos4210 board that is using the tsadc clock? or
+>> maybe I misunderstood the explanation of your Patch 2/2?
+>
+> No, no. The Exynos4210 would be unchanged. It has the CLK_TSADC - both
+> in hardware and in kernel driver. The Exynos4x12 SoCs don't have so we can:
+> 1. Add new CLK_PCLK_ADC (id and clock) reflecting datasheet.
+> 2. Add only CLK_TSADC clock  on Exynos4x12 which will be using the
+> register of PCLK_ADC. The id would stay the same as on Exynos4210.
 
-On Thu, 18 Jun 2015 11:36:54 -0700
-Michael Turquette <mturquette@linaro.org> wrote:
+Or we can:
+3. Add new CLK_PCLK_ADC macro equal to current CLK_TSADC. Then drivers
+and dtsi would be able to use the name matching the datasheet, but the
+ID (and so DT ABI) would be preserved.
 
-> Quoting Gregory CLEMENT (2015-06-17 04:57:08)
-> > Hi Mike, Stephen,
-> > 
-> > On 16/06/2015 17:56, Boris Brezillon wrote:
-> > > The crypto SRAM, used by the armada 370 cpuidle code to workaround a bug
-> > > in the BootROM code, requires the crypto clk to be up and running.
-> > > Flag the crypto clk as IGNORE_UNUSED until we add the proper
-> > > infrastructure to define the crypto SRAM in the DT and reference the crypto
-> > > clk in this SRAM node.
-> > > 
-> > > Reported-by: Kevin Hilman <khilman@linaro.org>
-> > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > > Tested-by: Kevin Hilman <khilman@linaro.org>
-> > > Fixes: 29e623475c50267ee3aaa49ebb6cbe107bce8d2a ("clk: mvebu: add
-> > > missing CESA gate clk").
-> > > Cc: <stable@vger.kernel.org> #4.1
-> > 
-> > Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> > 
-> > Would it possible to apply this fix on 4.1-rc8 ?
-> 
-> Hi Gregory,
-> 
-> I'm a bit confused by this. This patch fixes "clk: mvebu: add missing
-> CESA gate clk", right? That patch lives in clk-next. It was not pushed
-> to Linus' tree yet via a -fixes branch.
-> 
-> Thus I can just apply this patch to clk-next and the problem should be
-> resolved in clk-next, no?
-
-Yes. I've tagged this patch as applicable on stable 4.1 in case it
-didn't make it in the next -rc (which should be the last one before
-4.1 is released).
-I don't know if it's a good practice, but I've had several fixes which
-missed the targeted release in the past, and tagging them as stable
-helps in getting the patches applied afterwards.
-
-> 
-> Furthermore, I do not have 29e623475c50267ee3aaa49ebb6cbe107bce8d2a
-> anywhere in my tree. I'm not sure where this sha1 hash came from.
-
-Oops, I mixed the commit hash in my local branch and the one in clk-next
-(4d52b2acefdfceae0e47ed08324a96f511dc80b1).
-
-Best Regards,
-
-Boris
-
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Best regards,
+Tomasz
