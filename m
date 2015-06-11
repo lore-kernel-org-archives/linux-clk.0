@@ -1,77 +1,31 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-ID: <5575A798.9070404@arm.com>
-Date: Mon, 08 Jun 2015 15:32:56 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-MIME-Version: 1.0
-To: "Jon Medhurst (Tixy)" <tixy@linaro.org>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v4 6/8] arm64: dts: add SRAM, MHU mailbox and SCPI support
- on Juno
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>	 <1433760002-24120-7-git-send-email-sudeep.holla@arm.com> <1433771479.2882.44.camel@linaro.org>
-In-Reply-To: <1433771479.2882.44.camel@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <s.nawrocki@samsung.com>
+Message-id: <557940F8.2070204@samsung.com>
+Date: Thu, 11 Jun 2015 10:04:08 +0200
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+MIME-version: 1.0
+To: Michael Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [GIT PULL] clk/samsung updates for 4.2
+References: <556F26C3.9080302@samsung.com> <20150603230559.6017.43918@quantum>
+In-reply-to: <20150603230559.6017.43918@quantum>
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On 04/06/15 01:05, Michael Turquette wrote:
+> One small thing: clk-next isn't considered stable.  I had some stuff in
+> there (Stephen's amba assigned-clock-rates patch) which I had to pull
+> out (no ACK from maintainer) and it crept back in because this PR was
+> based on top of it. No big deal because I caught it when it happened
+> (this time).
+> 
+> In the future I am always happy to take PRs based on -rc1 (or any -rc
+> that is already present in clk-next). Of course if you have a dependency
+> on stuff already merged in clk-next then just let me know.
 
+All right, sorry for the trouble. I'll keep that in mind and will use
+stable tags for future pull request.
 
-On 08/06/15 14:51, Jon Medhurst (Tixy) wrote:
-> On Mon, 2015-06-08 at 11:40 +0100, Sudeep Holla wrote:
-> [...]
->> +
->> +	scpi {
->> +		compatible = "arm,scpi";
->> +		mboxes = <&mailbox 1>;
->> +		shmem = <&cpu_scp_hpri>;
->> +
->> +		clocks {
->> +			compatible = "arm,scpi-clocks";
->> +
->> +			scpi_dvfs: scpi_clocks@0 {
->> +				compatible = "arm,scpi-dvfs-clocks";
->> +				#clock-cells = <1>;
->> +				clock-indices = <0>, <1>, <2>;
->> +				clock-output-names = "vbig", "vlittle", "vgpu";
->
->  From where do the clock names derive? They look more like names for
-> voltage domains rather than clocks. My (admittedly very old) Juno docs,
-> have the clocks as ATLCLK, APLCLK and GPUCLK.
->
-
-I agree, I just copied it from SCPI spec which just deals with power
-domain names in the context of DVFS. I will update as per Juno doc.
-
->> +			};
->> +			scpi_clk: scpi_clocks@3 {
->> +				compatible = "arm,scpi-variable-clocks";
->> +				#clock-cells = <1>;
->> +				clock-indices = <3>, <4>;
->> +				clock-output-names = "pxlclk0", "pxlclk1";
->
-> Can we also have clock index 5, name 'i2s_clk', for used by audio?
-> (I don't know what other clocks the SCP currently supports, but audio is
-> one being currently used by the out-of-tree code).
->
-
-I will update.
-
-> Also, I believe that both display outputs share the same clock, and so
-> pxlclk0 and pxlclk1 can't be controlled independently. But I guess these
-> device-tree entries are for the interface to the SCP firmware, not the
-> hardware, and if that pretends the clocks are independent...
->
-
-Yes, this is bit tricky, I will let Liviu answer this.
-
-Regards,
-Sudeep
+-- 
+Thanks,
+Sylwester
