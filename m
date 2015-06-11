@@ -1,53 +1,74 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 2 Jun 2015 19:04:35 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Cc: <nicolas.ferre@atmel.com>, <alexandre.belloni@free-electrons.com>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 2/2] clk: at91: add Flexcom clock
-Message-ID: <20150602190435.4698a4db@bbrezillon>
-In-Reply-To: <62cb26952d0688c6f37ad84d253d5302818a20ae.1433264017.git.cyrille.pitchen@atmel.com>
-References: <cover.1433264017.git.cyrille.pitchen@atmel.com>
-	<62cb26952d0688c6f37ad84d253d5302818a20ae.1433264017.git.cyrille.pitchen@atmel.com>
+Return-Path: <javier@dowhile0.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <55796660.1070702@samsung.com>
+References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
+	<55796660.1070702@samsung.com>
+Date: Thu, 11 Jun 2015 14:15:38 +0200
+Message-ID: <CABxcv=kNb2ERqLL2gG73nkU+kpPsYAWKSyu=bkjfxZBMKOwyPQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: exynos4: Add PCLK_ADC gate clock on Exynos4x12
+From: Javier Martinez Canillas <javier@dowhile0.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+	Linux Kernel <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Cyrille,
+Hello Krzysztof,
 
-On Tue, 2 Jun 2015 18:57:19 +0200
-Cyrille Pitchen <cyrille.pitchen@atmel.com> wrote:
+On Thu, Jun 11, 2015 at 12:43 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> W dniu 11.06.2015 o 17:26, Krzysztof Kozlowski pisze:
+>> Add proper gate clock for the Analog to Digital Converter (ADC) on
+>> Exynos4x12.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> ---
+>>  drivers/clk/samsung/clk-exynos4.c   | 3 +++
+>>  include/dt-bindings/clock/exynos4.h | 5 ++++-
+>>  2 files changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+>> index 714d6ba782c8..5f32410a01f8 100644
+>> --- a/drivers/clk/samsung/clk-exynos4.c
+>> +++ b/drivers/clk/samsung/clk-exynos4.c
+>> @@ -85,6 +85,7 @@
+>>  #define DIV_PERIL4           0xc560
+>>  #define DIV_PERIL5           0xc564
+>>  #define E4X12_DIV_CAM1               0xc568
+>> +#define E4X12_GATE_BUS_FSYS1 0xc744
+>>  #define GATE_SCLK_CAM                0xc820
+>>  #define GATE_IP_CAM          0xc920
+>>  #define GATE_IP_TV           0xc924
+>> @@ -1095,6 +1096,8 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+>>               0),
+>>       GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
+>>               0),
+>> +     GATE(CLK_PCLK_ADC, "pclk_adc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0,
+>> +             0),
+>
+> Now I have even simpler idea. Don't add new clock id but just define
+> here the CLK_TSADC as:
+> GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0);
+>
+> With this change the second patch wouldn't be needed however this does
+> not reflect the Exynos 4x12 datasheet.
+>
+> Any comments?
+>
 
-> This driver supports the new Atmel Flexcom. The Flexcom is a wrapper which
-> integrates one SPI controller, one I2C controller and one USART. Only one
-> function can be enabled at a time. This driver selects the function once for
-> all, when the Flexcom is probed, according to the value of the new
-> "atmel,flexcom-mode" device tree property.
-> 
-> This driver has chosen to present the Flexcom to the system as a clock so the
-> implementation is seamless for the existing Atmel SPI, I2C and USART drivers.
+I think it's better to reflect the datasheet so I prefer your original
+patch. Also, wouldn't changing the CLK_TSADC gate definition cause a
+regression on an Exynos4210 board that is using the tsadc clock? or
+maybe I misunderstood the explanation of your Patch 2/2?
 
-Could detail a bit more why you chose to represent this flexcom IP as
-a clock device ?
+> Best regards,
+> Krzysztof
+>
 
-I don't like to use this 'DT should represent real hardware' argument,
-but to me, it looks like you're trying to use a false hardware
-representation to avoid changing the peripheral drivers code, which is
-wrong since the DT is supposed to represent the hardware blocks.
-
-How about representing the flexcom as an MFD instead ?
-
-Best Regards,
-
-Boris
-
-
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Best regards,
+Javier
