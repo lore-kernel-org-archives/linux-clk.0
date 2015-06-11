@@ -1,305 +1,66 @@
-Return-Path: <vigneshr@ti.com>
-From: Vignesh R <vigneshr@ti.com>
-To: Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
-        Thierry
- Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Pawel
- Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell
-	<ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Benoit
- Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell
- King <linux@arm.linux.org.uk>,
-        Mike Turquette <mturquette@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        Vignesh
- R <vigneshr@ti.com>
-Subject: [PATCH 2/5] ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
-Date: Mon, 1 Jun 2015 17:23:31 +0530
-Message-ID: <1433159614-437-3-git-send-email-vigneshr@ti.com>
-In-Reply-To: <1433159614-437-1-git-send-email-vigneshr@ti.com>
-References: <1433159614-437-1-git-send-email-vigneshr@ti.com>
+Return-Path: <carlo@endlessm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20150611152046.GG12192@mwanda>
+References: <20150611152046.GG12192@mwanda>
+Date: Thu, 11 Jun 2015 17:26:07 +0200
+Message-ID: <CAL9uMOF=i1QZ22yh344j-p-SXBZU96MjrjVWVA30gDZopN=x7g@mail.gmail.com>
+Subject: Re: [patch] clk: meson: add some error handling in meson_clk_register_cpu()
+From: Carlo Caione <carlo@endlessm.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add hwmod entries for the PWMSS on DRA7.
+On Thu, Jun 11, 2015 at 5:20 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> This error handling hopefully isn't needed but it make the static
+> checkers happy.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/clk/meson/clk-cpu.c b/drivers/clk/meson/clk-cpu.c
+> index 148e99f..71ad493 100644
+> --- a/drivers/clk/meson/clk-cpu.c
+> +++ b/drivers/clk/meson/clk-cpu.c
+> @@ -213,22 +213,30 @@ struct clk *meson_clk_register_cpu(const struct clk_conf *clk_conf,
+>         if (!pclk) {
+>                 pr_err("%s: could not lookup parent clock %s\n",
+>                                 __func__, clk_conf->clks_parent[0]);
+> -               return ERR_PTR(-EINVAL);
+> +               ret = -EINVAL;
+> +               goto free_clk;
+>         }
+>
+>         ret = clk_notifier_register(pclk, &clk_cpu->clk_nb);
+>         if (ret) {
+>                 pr_err("%s: failed to register clock notifier for %s\n",
+>                                 __func__, clk_conf->clk_name);
+> -               return ERR_PTR(-EINVAL);
+> +               goto free_clk;
+>         }
+>
+>         clk = clk_register(NULL, &clk_cpu->hw);
+>         if (IS_ERR(clk)) {
+> -               clk_notifier_unregister(pclk, &clk_cpu->clk_nb);
+> -               kfree(clk_cpu);
+> +               ret = PTR_ERR(clk);
+> +               goto unregister_clk_nb;
+>         }
+>
+>         return clk;
+> +
+> +unregister_clk_nb:
+> +       clk_notifier_unregister(pclk, &clk_cpu->clk_nb);
+> +free_clk:
+> +       kfree(clk_cpu);
+> +
+> +       return ERR_PTR(ret);
+>  }
+>
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
----
- arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 239 ++++++++++++++++++++++++++++++
- 1 file changed, 239 insertions(+)
+Thanks Dan,
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-index 0e64c2fac0b5..86a7ac9a3138 100644
---- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-@@ -362,6 +362,149 @@ static struct omap_hwmod dra7xx_dcan2_hwmod = {
- 	},
- };
- 
-+/* pwmss  */
-+static struct omap_hwmod_class_sysconfig dra7xx_epwmss_sysc = {
-+	.rev_offs	= 0x0,
-+	.sysc_offs	= 0x4,
-+	.sysc_flags	= SYSC_HAS_SIDLEMODE | SYSC_HAS_RESET_STATUS,
-+	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART),
-+	.sysc_fields	= &omap_hwmod_sysc_type2,
-+};
-+
-+struct omap_hwmod_class dra7xx_epwmss_hwmod_class = {
-+	.name		= "epwmss",
-+	.sysc		= &dra7xx_epwmss_sysc,
-+};
-+
-+static struct omap_hwmod_class dra7xx_ecap_hwmod_class = {
-+	.name		= "ecap",
-+};
-+
-+static struct omap_hwmod_class dra7xx_eqep_hwmod_class = {
-+	.name		= "eqep",
-+};
-+
-+struct omap_hwmod_class dra7xx_ehrpwm_hwmod_class = {
-+	.name		= "ehrpwm",
-+};
-+
-+/* epwmss0 */
-+struct omap_hwmod dra7xx_epwmss0_hwmod = {
-+	.name		= "epwmss0",
-+	.class		= &dra7xx_epwmss_hwmod_class,
-+	.clkdm_name	= "l4per2_clkdm",
-+	.main_clk	= "l4_root_clk_div",
-+	.prcm		= {
-+		.omap4	= {
-+			.modulemode	= MODULEMODE_SWCTRL,
-+			.clkctrl_offs	= DRA7XX_CM_L4PER2_PWMSS1_CLKCTRL_OFFSET,
-+			.context_offs	= DRA7XX_RM_L4PER2_PWMSS1_CONTEXT_OFFSET,
-+		},
-+	},
-+};
-+
-+/* ecap0 */
-+struct omap_hwmod dra7xx_ecap0_hwmod = {
-+	.name		= "ecap0",
-+	.class		= &dra7xx_ecap_hwmod_class,
-+	.clkdm_name	= "l4per2_clkdm",
-+	.main_clk	= "l4_root_clk_div",
-+};
-+
-+/* eqep0 */
-+struct omap_hwmod dra7xx_eqep0_hwmod = {
-+	.name		= "eqep0",
-+	.class		= &dra7xx_eqep_hwmod_class,
-+	.clkdm_name	= "l4per2_clkdm",
-+	.main_clk	= "l4_root_clk_div",
-+};
-+
-+/* ehrpwm0 */
-+struct omap_hwmod dra7xx_ehrpwm0_hwmod = {
-+	.name		= "ehrpwm0",
-+	.class		= &dra7xx_ehrpwm_hwmod_class,
-+	.clkdm_name	= "l4per2_clkdm",
-+	.main_clk	= "l4_root_clk_div",
-+};
-+
-+/* epwmss1 */
-+struct omap_hwmod dra7xx_epwmss1_hwmod = {
-+	.name		= "epwmss1",
-+	.class		= &dra7xx_epwmss_hwmod_class,
-+	.clkdm_name	= "l4per2_clkdm",
-+	.main_clk	= "l4_root_clk_div",
-+	.prcm		= {
-+		.omap4	= {
-+			.modulemode	= MODULEMODE_SWCTRL,
-+			.clkctrl_offs	= DRA7XX_CM_L4PER2_PWMSS2_CLKCTRL_OFFSET,
-+			.context_offs	= DRA7XX_RM_L4PER2_PWMSS2_CONTEXT_OFFSET,
-+		},
-+	},
-+};
-+
-+/* ecap1 */
-+struct omap_hwmod dra7xx_ecap1_hwmod = {
-+	.name		= "ecap1",
-+	.class		= &dra7xx_ecap_hwmod_class,
-+	.clkdm_name	= "l4per2_clkdm",
-+	.main_clk	= "l4_root_clk_div",
-+};
-+
-+/* eqep1 */
-+struct omap_hwmod dra7xx_eqep1_hwmod = {
-+	.name		= "eqep1",
-+	.class		= &dra7xx_eqep_hwmod_class,
-+	.clkdm_name	= "l4per2_clkdm",
-+	.main_clk	= "l4_root_clk_div",
-+};
-+
-+/* ehrpwm1 */
-+struct omap_hwmod dra7xx_ehrpwm1_hwmod = {
-+	.name		= "ehrpwm1",
-+	.class		= &dra7xx_ehrpwm_hwmod_class,
-+	.clkdm_name	= "l4per2_clkdm",
-+	.main_clk	= "l4_root_clk_div",
-+};
-+
-+/* epwmss2 */
-+struct omap_hwmod dra7xx_epwmss2_hwmod = {
-+	.name		= "epwmss2",
-+	.class		= &dra7xx_epwmss_hwmod_class,
-+	.clkdm_name	= "l4per2_clkdm",
-+	.main_clk	= "l4_root_clk_div",
-+	.prcm		= {
-+		.omap4	= {
-+			.modulemode	= MODULEMODE_SWCTRL,
-+			.clkctrl_offs	= DRA7XX_CM_L4PER2_PWMSS3_CLKCTRL_OFFSET,
-+			.context_offs	= DRA7XX_RM_L4PER2_PWMSS3_CONTEXT_OFFSET,
-+		},
-+	},
-+};
-+
-+/* ecap2 */
-+struct omap_hwmod dra7xx_ecap2_hwmod = {
-+	.name		= "ecap2",
-+	.class		= &dra7xx_ecap_hwmod_class,
-+	.clkdm_name	= "l4per2_clkdm",
-+	.main_clk	= "l4_root_clk_div",
-+};
-+
-+/* eqep2 */
-+struct omap_hwmod dra7xx_eqep2_hwmod = {
-+	.name		= "eqep2",
-+	.class		= &dra7xx_eqep_hwmod_class,
-+	.clkdm_name	= "l4per2_clkdm",
-+	.main_clk	= "l4_root_clk_div",
-+};
-+
-+/* ehrpwm2 */
-+struct omap_hwmod dra7xx_ehrpwm2_hwmod = {
-+	.name		= "ehrpwm2",
-+	.class		= &dra7xx_ehrpwm_hwmod_class,
-+	.clkdm_name	= "l4per2_clkdm",
-+	.main_clk	= "l4_root_clk_div",
-+};
-+
- /*
-  * 'dma' class
-  *
-@@ -2601,6 +2744,90 @@ static struct omap_hwmod_ocp_if dra7xx_l4_per1__gpio6 = {
- 	.user		= OCP_USER_MPU | OCP_USER_SDMA,
- };
- 
-+struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss0 = {
-+	.master		= &dra7xx_l4_per2_hwmod,
-+	.slave		= &dra7xx_epwmss0_hwmod,
-+	.clk		= "l4_root_clk_div",
-+	.user		= OCP_USER_MPU,
-+};
-+
-+struct omap_hwmod_ocp_if dra7xx_epwmss0__ecap0 = {
-+	.master		= &dra7xx_epwmss0_hwmod,
-+	.slave		= &dra7xx_ecap0_hwmod,
-+	.clk		= "l4_root_clk_div",
-+	.user		= OCP_USER_MPU,
-+};
-+
-+struct omap_hwmod_ocp_if dra7xx_epwmss0__eqep0 = {
-+	.master		= &dra7xx_epwmss0_hwmod,
-+	.slave		= &dra7xx_eqep0_hwmod,
-+	.clk		= "l4_root_clk_div",
-+	.user		= OCP_USER_MPU,
-+};
-+
-+struct omap_hwmod_ocp_if dra7xx_epwmss0__ehrpwm0 = {
-+	.master		= &dra7xx_epwmss0_hwmod,
-+	.slave		= &dra7xx_ehrpwm0_hwmod,
-+	.clk		= "l4_root_clk_div",
-+	.user		= OCP_USER_MPU,
-+};
-+
-+struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss1 = {
-+	.master		= &dra7xx_l4_per2_hwmod,
-+	.slave		= &dra7xx_epwmss1_hwmod,
-+	.clk		= "l4_root_clk_div",
-+	.user		= OCP_USER_MPU,
-+};
-+
-+struct omap_hwmod_ocp_if dra7xx_epwmss1__ecap1 = {
-+	.master		= &dra7xx_epwmss1_hwmod,
-+	.slave		= &dra7xx_ecap1_hwmod,
-+	.clk		= "l4_root_clk_div",
-+	.user		= OCP_USER_MPU,
-+};
-+
-+struct omap_hwmod_ocp_if dra7xx_epwmss1__eqep1 = {
-+	.master		= &dra7xx_epwmss1_hwmod,
-+	.slave		= &dra7xx_eqep1_hwmod,
-+	.clk		= "l4_root_clk_div",
-+	.user		= OCP_USER_MPU,
-+};
-+
-+struct omap_hwmod_ocp_if dra7xx_epwmss1__ehrpwm1 = {
-+	.master		= &dra7xx_epwmss1_hwmod,
-+	.slave		= &dra7xx_ehrpwm1_hwmod,
-+	.clk		= "l4_root_clk_div",
-+	.user		= OCP_USER_MPU,
-+};
-+
-+struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss2 = {
-+	.master		= &dra7xx_l4_per2_hwmod,
-+	.slave		= &dra7xx_epwmss2_hwmod,
-+	.clk		= "l4_root_clk_div",
-+	.user		= OCP_USER_MPU,
-+};
-+
-+struct omap_hwmod_ocp_if dra7xx_epwmss2__ecap2 = {
-+	.master		= &dra7xx_epwmss2_hwmod,
-+	.slave		= &dra7xx_ecap2_hwmod,
-+	.clk		= "l4_root_clk_div",
-+	.user		= OCP_USER_MPU,
-+};
-+
-+struct omap_hwmod_ocp_if dra7xx_epwmss2__eqep2 = {
-+	.master		= &dra7xx_epwmss2_hwmod,
-+	.slave		= &dra7xx_eqep2_hwmod,
-+	.clk		= "l4_root_clk_div",
-+	.user		= OCP_USER_MPU,
-+};
-+
-+struct omap_hwmod_ocp_if dra7xx_epwmss2__ehrpwm2 = {
-+	.master		= &dra7xx_epwmss2_hwmod,
-+	.slave		= &dra7xx_ehrpwm2_hwmod,
-+	.clk		= "l4_root_clk_div",
-+	.user		= OCP_USER_MPU,
-+};
-+
- /* l4_per1 -> gpio7 */
- static struct omap_hwmod_ocp_if dra7xx_l4_per1__gpio7 = {
- 	.master		= &dra7xx_l4_per1_hwmod,
-@@ -3394,6 +3621,18 @@ static struct omap_hwmod_ocp_if *dra7xx_hwmod_ocp_ifs[] __initdata = {
- 	&dra7xx_l3_main_1__vcp2,
- 	&dra7xx_l4_per2__vcp2,
- 	&dra7xx_l4_wkup__wd_timer2,
-+	&dra7xx_l4_per2__epwmss0,
-+	&dra7xx_epwmss0__ecap0,
-+	&dra7xx_epwmss0__eqep0,
-+	&dra7xx_epwmss0__ehrpwm0,
-+	&dra7xx_l4_per2__epwmss1,
-+	&dra7xx_epwmss1__ecap1,
-+	&dra7xx_epwmss1__eqep1,
-+	&dra7xx_epwmss1__ehrpwm1,
-+	&dra7xx_l4_per2__epwmss2,
-+	&dra7xx_epwmss2__ecap2,
-+	&dra7xx_epwmss2__eqep2,
-+	&dra7xx_epwmss2__ehrpwm2,
- 	NULL,
- };
- 
+Acked-by: Carlo Caione <carlo@endlessm.com>
+
 -- 
-2.4.1
+Carlo Caione  |  +39.340.80.30.096  |  Endless
