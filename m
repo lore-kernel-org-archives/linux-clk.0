@@ -1,283 +1,73 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	agross@codeaurora.org
-Cc: mturquette@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH 4/5] clk: qcom: Add A53 clock driver
-Date: Fri, 12 Jun 2015 11:41:58 +0300
-Message-Id: <1434098519-26406-5-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1434098519-26406-1-git-send-email-georgi.djakov@linaro.org>
-References: <1434098519-26406-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Message-ID: <55798BE4.2000604@arm.com>
+Date: Thu, 11 Jun 2015 14:23:48 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+MIME-Version: 1.0
+To: Jassi Brar <jaswinder.singh@linaro.org>
+CC: Sudeep Holla <sudeep.holla@arm.com>,
+	lkml <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v4 2/8] firmware: add support for ARM System Control and
+ Power Interface(SCPI) protocol
+References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>	<1433760002-24120-3-git-send-email-sudeep.holla@arm.com> <CAJe_ZheUknLZuMg-02V-AqyjxX8Nx4oK3O2HapqfCLkkXjngAg@mail.gmail.com>
+In-Reply-To: <CAJe_ZheUknLZuMg-02V-AqyjxX8Nx4oK3O2HapqfCLkkXjngAg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a driver for the A53 subsystem PLL, so that we can provide higher
-frequency clocks for use by the system.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- Documentation/devicetree/bindings/clock/qcom,a53cc |   22 +++
- drivers/clk/qcom/Kconfig                           |    8 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/clk-a53.c                         |  195 ++++++++++++++++++++
- 4 files changed, 226 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc
- create mode 100644 drivers/clk/qcom/clk-a53.c
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,a53cc b/Documentation/devicetree/bindings/clock/qcom,a53cc
-new file mode 100644
-index 000000000000..209cae8afc1f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,a53cc
-@@ -0,0 +1,22 @@
-+A53 Clock Controller
-+
-+Required properties :
-+- compatible : shall contain:
-+			"qcom,a53cc"
-+- reg : shall contain base register location and length
-+	of the A53 PLL
-+- #clock-cells : shall contain 1
-+- qcom,apcs : phandle of apcs syscon node
-+
-+Example:
-+	apcs: syscon@b011000 {
-+		compatible = "syscon";
-+		reg = <0x0b011000 0x1000>;
-+	};
-+
-+	a53cc: clock-controller@0b016000 {
-+		compatible = "qcom,clock-a53-msm8916";
-+		reg = <0x0b016000 0x40>;
-+		#clock-cells = <1>;
-+		qcom,apcs = <&apcs>;
-+	};
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 59d16668bdf5..82a03260011e 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -97,3 +97,11 @@ config MSM_MMCC_8974
- 	  Support for the multimedia clock controller on msm8974 devices.
- 	  Say Y if you want to support multimedia devices such as display,
- 	  graphics, video encode/decode, camera, etc.
-+
-+config QCOM_A53
-+	tristate "A53 Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	help
-+	  Support for the A53 clock controller on Qualcomm devices.
-+	  Say Y if you want to support CPU frequency scaling on devices
-+	  such as MSM8916.
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 38b02a7f2da3..b462a3f7551a 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -22,3 +22,4 @@ obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
- obj-$(CONFIG_MSM_GCC_8974) += gcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
-+obj-$(CONFIG_QCOM_A53) += clk-a53.o
-diff --git a/drivers/clk/qcom/clk-a53.c b/drivers/clk/qcom/clk-a53.c
-new file mode 100644
-index 000000000000..2d4d3f8b2116
---- /dev/null
-+++ b/drivers/clk/qcom/clk-a53.c
-@@ -0,0 +1,195 @@
-+/*
-+ * Copyright (c) 2015, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/cpu.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-pll.h"
-+#include "clk-regmap.h"
-+#include "clk-regmap-mux-div.h"
-+
-+#define F_APCS_PLL(f, l, m, n) { (f), (l), (m), (n), 0 }
-+
-+static struct pll_freq_tbl apcs_pll_freq[] = {
-+	F_APCS_PLL( 998400000, 52, 0x0, 0x1),
-+	F_APCS_PLL(1094400000, 57, 0x0, 0x1),
-+	F_APCS_PLL(1152000000, 62, 0x0, 0x1),
-+	F_APCS_PLL(1209600000, 65, 0x0, 0x1),
-+	F_APCS_PLL(1401600000, 73, 0x0, 0x1),
-+};
-+
-+static struct clk_pll a53sspll = {
-+	.l_reg = 0x04,
-+	.m_reg = 0x08,
-+	.n_reg = 0x0c,
-+	.config_reg = 0x14,
-+	.mode_reg = 0x00,
-+	.status_reg = 0x1c,
-+	.status_bit = 16,
-+	.freq_tbl = apcs_pll_freq,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "a53sspll",
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.flags = CLK_GET_RATE_NOCACHE,
-+		.ops = &clk_pll_sr2_ops,
-+	},
-+};
-+
-+static const struct regmap_config a53sspll_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x40,
-+	.fast_io	= true,
-+};
-+
-+static struct clk *a53ss_add_pll(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct resource *res;
-+	void __iomem *base;
-+	struct regmap *regmap;
-+	struct clk_pll *pll;
-+
-+	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return base;
-+
-+	pll = &a53sspll;
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &a53sspll_regmap_config);
-+	if (IS_ERR(regmap))
-+		return ERR_CAST(regmap);
-+
-+	return devm_clk_register_regmap(dev, &pll->clkr);
-+}
-+
-+enum {
-+	P_GPLL0,
-+	P_A53SSPLL,
-+};
-+
-+static const struct parent_map gpll0_a53sspll_map[] = {
-+	{ P_GPLL0, 4 },
-+	{ P_A53SSPLL, 5 },
-+};
-+
-+static const char * const gpll0_a53sspll[] = {
-+	"gpll0_vote",
-+	"a53sspll",
-+};
-+
-+static struct clk_regmap_mux_div a53ssmux = {
-+	.reg_offset = 0x50,
-+	.hid_width = 5,
-+	.hid_shift = 0,
-+	.src_width = 3,
-+	.src_shift = 8,
-+	.safe_src = 4,
-+	.safe_freq = 400000000,
-+	.parent_map = gpll0_a53sspll_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "a53ssmux",
-+		.parent_names = gpll0_a53sspll,
-+		.num_parents = 2,
-+		.ops = &clk_regmap_mux_div_ops,
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+	},
-+};
-+
-+static struct clk *a53ss_add_mux(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct regmap *regmap;
-+	struct clk_regmap_mux_div *mux;
-+
-+	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return ERR_PTR(-ENOMEM);
-+
-+	mux = &a53ssmux;
-+
-+	regmap = syscon_regmap_lookup_by_phandle(np,  "qcom,apcs");
-+	if (IS_ERR(regmap))
-+		return ERR_CAST(regmap);
-+
-+	mux->clkr.regmap = regmap;
-+	return devm_clk_register(dev, &mux->clkr.hw);
-+}
-+
-+static const struct of_device_id qcom_a53_match_table[] = {
-+	{ .compatible = "qcom,clock-a53-msm8916" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, qcom_a53_match_table);
-+
-+static int qcom_a53_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct clk *clk_pll, *clk_mux;
-+	struct clk_onecell_data *data;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->clks = devm_kcalloc(dev, 2, sizeof(struct clk *), GFP_KERNEL);
-+	if (!data->clks)
-+		return -ENOMEM;
-+
-+	clk_pll = a53ss_add_pll(pdev);
-+	if (IS_ERR(clk_pll))
-+		return PTR_ERR(clk_pll);
-+
-+	clk_mux = a53ss_add_mux(pdev);
-+	if (IS_ERR(clk_mux))
-+		return PTR_ERR(clk_mux);
-+
-+	data->clks[0] = clk_pll;
-+	data->clks[1] = clk_mux;
-+	data->clk_num = 2;
-+
-+	clk_prepare_enable(clk_pll);
-+
-+	return of_clk_add_provider(dev->of_node, of_clk_src_onecell_get, data);
-+}
-+
-+static struct platform_driver qcom_a53_driver = {
-+	.probe = qcom_a53_probe,
-+	.driver = {
-+		.name = "qcom-a53",
-+		.of_match_table = qcom_a53_match_table,
-+	},
-+};
-+
-+static int __init qcom_a53_init(void)
-+{
-+	return platform_driver_register(&qcom_a53_driver);
-+}
-+arch_initcall(qcom_a53_init);
-+
-+MODULE_DESCRIPTION("Qualcomm A53 Clock Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:qcom-a53");
+On 11/06/15 12:54, Jassi Brar wrote:
+> On 8 June 2015 at 16:09, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> ...
+>> +
+>> +static void scpi_process_cmd(struct scpi_chan *ch, u32 cmd)
+>> +{
+>> +       unsigned long flags;
+>> +       struct scpi_xfer *t, *match = NULL;
+>> +
+>> +       spin_lock_irqsave(&ch->rx_lock, flags);
+>> +       if (list_empty(&ch->rx_pending)) {
+>> +               spin_unlock_irqrestore(&ch->rx_lock, flags);
+>> +               return;
+>> +       }
+>> +
+>> +       list_for_each_entry(t, &ch->rx_pending, node)
+>> +               if (CMD_XTRACT_UNIQ(t->cmd) == CMD_XTRACT_UNIQ(cmd)) {
+>> +                       list_del(&t->node);
+>> +                       match = t;
+>> +                       break;
+>> +               }
+>> +       /* check if wait_for_completion is in progress or timed-out */
+>> +       if (match && !completion_done(&match->done)) {
+>> +               struct scpi_shared_mem *mem = ch->rx_payload;
+>> +               unsigned int len = min(match->rx_len, CMD_SIZE(cmd));
+>> +
+>> +               match->status = le32_to_cpu(mem->status);
+>> +               memcpy_fromio(match->rx_buf, mem->payload, len);
+>> +               if (match->rx_len > len)
+>> +                       memset(match->rx_buf + len, 0, match->rx_len - len);
+>> +               complete(&match->done);
+>> +       }
+>> +       spin_unlock_irqrestore(&ch->rx_lock, flags);
+>> +}
+> There doesn't seem to be support for commands sent by remote?
+> Something like when remote is the thermal master and it needs to send
+> sensor readings crossing thresholds.
+>
+
+SCP firmware claims to support that but never tested on Juno platform.
+So I would like to add it when there's first user for that.
+
+Regards,
+Sudeep
