@@ -1,50 +1,62 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 06/25] clk: tegra: pll: update warning msg
-Date: Thu, 18 Jun 2015 17:28:21 -0400
-Message-ID: <1434662920-21469-7-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+Return-Path: <dinguyen@opensource.altera.com>
+Message-ID: <5579E7BD.8010908@opensource.altera.com>
+Date: Thu, 11 Jun 2015 14:55:41 -0500
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+CC: <sboyd@codeaurora.org>, <mturquette@linaro.org>, <dinh.linux@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	=?windows-1252?Q?Emilio_L=F3pez?= <emilio@elopez.com.ar>
+Subject: Re: [PATCH 5/6] clk: sunxi: make use of of_clk_parent_fill helper
+ function
+References: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
+ <1433972965-24974-6-git-send-email-dinguyen@opensource.altera.com>
+ <20150611090653.GH19653@lukather>
+In-Reply-To: <20150611090653.GH19653@lukather>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Swap out the generic WARN_ON with a WARN which gives more
-information about what is happening.
+On 06/11/2015 04:06 AM, Maxime Ripard wrote:
+> Hi Dinh,
+> 
+> On Wed, Jun 10, 2015 at 04:49:24PM -0500, dinguyen@opensource.altera.com wrote:
+>> From: Dinh Nguyen <dinguyen@opensource.altera.com>
+>>
+>> Use of_clk_parent_fill to fill in the parent clock names' array.
+>>
+>> Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+>> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+>> Cc: "Emilio López" <emilio@elopez.com.ar>
+>> ---
+>>  drivers/clk/sunxi/clk-a20-gmac.c    |  3 +--
+>>  drivers/clk/sunxi/clk-factors.c     |  4 +---
+>>  drivers/clk/sunxi/clk-sun6i-ar100.c |  3 +--
+>>  drivers/clk/sunxi/clk-sunxi.c       | 10 ++--------
+>>  4 files changed, 5 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/drivers/clk/sunxi/clk-a20-gmac.c b/drivers/clk/sunxi/clk-a20-gmac.c
+>> index 0dcf4f2..a432edd 100644
+>> --- a/drivers/clk/sunxi/clk-a20-gmac.c
+>> +++ b/drivers/clk/sunxi/clk-a20-gmac.c
+>> @@ -80,8 +80,7 @@ static void __init sun7i_a20_gmac_clk_setup(struct device_node *node)
+>>  		goto free_mux;
+>>  
+>>  	/* gmac clock requires exactly 2 parents */
+>> -	parents[0] = of_clk_get_parent_name(node, 0);
+>> -	parents[1] = of_clk_get_parent_name(node, 1);
+>> +	of_clk_parent_fill(node, parents, 2);
+>>  	if (!parents[0] || !parents[1])
+> 
+> Maybe this check can be changed to something like:
+> 
+> if (of_clk_parent_fill(node, parents, 2) != 2)
+>    goto free_gate;
+> 
+> Would that make sense?
+> 
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Yes, that would work. Will edit for v2.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 1e1018dd466f..0282d9f4f2d7 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -692,7 +692,8 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
- 
- 	pdiv = _hw_to_p_div(hw, cfg.p);
- 	if (pdiv < 0) {
--		WARN_ON(1);
-+		WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
-+			__clk_get_name(hw->clk), cfg.p);
- 		pdiv = 1;
- 	}
- 
--- 
-1.7.9.5
+Thanks,
+Dinh
