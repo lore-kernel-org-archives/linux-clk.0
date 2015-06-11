@@ -1,104 +1,115 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Message-ID: <55795B4A.6030008@collabora.com>
+Date: Thu, 11 Jun 2015 11:56:26 +0200
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <20150622200549.9112.2411@quantum>
-References: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
-	<1432839219-475-14-git-send-email-geert+renesas@glider.be>
-	<20150622200549.9112.2411@quantum>
-Date: Mon, 22 Jun 2015 22:17:03 +0200
-Message-ID: <CAMuHMdWYJNWZ+NW4se_H2Ks9nyza9BZJp3RUZ=PDwiqyO+Azdg@mail.gmail.com>
-Subject: Re: [PATCH v2 13/14] clk: shmobile: mstp: Consider "zb_clk" suitable
- for power management
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-clk@vger.kernel.org,
-	Linux PM list <linux-pm@vger.kernel.org>,
-	Linux-sh list <linux-sh@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-pm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 00/21] On-demand device registration
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>	<CAAObsKD97nEARO5eZYA2g8+z_MrazBy-m8PV_kSyj19ya72mAw@mail.gmail.com>
+ <CACRpkdYyvXVm=UBVH9Lwp8nQbuxQL07MLspNfQSHtc-yT2C_0g@mail.gmail.com>
+In-Reply-To: <CACRpkdYyvXVm=UBVH9Lwp8nQbuxQL07MLspNfQSHtc-yT2C_0g@mail.gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+ linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, dmaengine@vger.kernel.org,
+ Alexander Holler <holler@ahsoftware.de>,
+ Dan Williams <dan.j.williams@intel.com>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ linux-clk@vger.kernel.org,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ Grant Likely <grant.likely@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
-
-On Mon, Jun 22, 2015 at 10:05 PM, Michael Turquette
-<mturquette@linaro.org> wrote:
-
-Still sending email from Linaro, which will cause me to receive an autoreply?
-
-> Quoting Geert Uytterhoeven (2015-05-28 11:53:38)
->> Currently the CPG Clock Domain code looks for MSTP clocks to power
->> manage a device.
+On 06/11/2015 10:15 AM, Linus Walleij wrote:
+> On Wed, Jun 10, 2015 at 12:19 PM, Tomeu Vizoso
+> <tomeu.vizoso@collabora.com> wrote:
+>> On 10 June 2015 at 09:30, Linus Walleij <linus.walleij@linaro.org> wrote:
+> 
+>>> regulator_get(...) -> not available, so:
+>>> - identify target regulator provider - this will need instrumentation
+>>> - probe it
+>>>
+>>> It then turns out the regulator driver is on the i2c bus, so we
+>>> need to probe the i2c driver:
+>>> - identify target i2c host for the regulator driver - this will need
+>>>   instrumentation
+>>> - probe the i2c host driver
+>>>
+>>> i2c host comes out, probes the regulator driver, regulator driver
+>>> probes and then the regulator_get() call returns.
 >>
->> Unfortunately, on R-Mobile APE6 (r8a73a4) and SH-Mobile AG5 (sh73a0),
->> the Bus State Controller (BSC) is not power-managed by an MSTP clock,
->> but by a plain CPG clock (zb_clk).  Add a special case to handle this,
->> so the clock is properly managed, and devices connected to the BSC work
->> as expected.
+>> Hmm, if I understand correctly what you say, this is exactly what this
+>> particular series does:
 >>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> v2:
->>   - New.
->> ---
->>  drivers/clk/shmobile/clk-mstp.c | 4 ++++
->>  1 file changed, 4 insertions(+)
+>> regulator_get -> of_platform_device_ensure -> probe() on the platform
+>> device that encloses the requested device node (i2c host) -> i2c slave
+>> gets probed and the regulator registered -> regulator_get returns the
+>> requested resource
+> 
+> Yes. But only for device tree.
+> 
+>> The downside I'm currently looking at is that an explicit dependency
+>> graph would be useful to have for other purposes. For example to print
+>> a neat warning when a dependency cannot be fulfilled. Or to refuse to
+>> unbind a device which other devices depend on, or to automatically
+>> unbind the devices that depend on it, or to print a warning if a
+>> device is hotplugged off and other devices depend on it.
+> 
+> Unbind/remove() calls are the inverse usually yes.
+> 
+> But also the [runtime] power up/down sequences for the
+> devices tend to depend on a similar ordering or mostly
+> the same. (Mentioned this before I think.)
+> 
+>>> This requires instrumentation on anything providing a resource
+>>> to another driver like those I mentioned and a lot of overhead
+>>> infrastructure, but I think it's the right approach. However I don't
+>>> know if I would ever be able to pull that off myself, I know talk
+>>> is cheap and I should show the code instead.
 >>
->> diff --git a/drivers/clk/shmobile/clk-mstp.c b/drivers/clk/shmobile/clk-mstp.c
->> index 619f3eccefd4884f..19e2b11953383587 100644
->> --- a/drivers/clk/shmobile/clk-mstp.c
->> +++ b/drivers/clk/shmobile/clk-mstp.c
->> @@ -258,6 +258,10 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *domain, struct device *dev)
->>                                             "renesas,cpg-mstp-clocks"))
->>                         goto found;
->>
->> +               /* BSC on r8a73a4/sh73a0 uses zb_clk instead of an mstp clock*/
->> +               if (!strcmp(clkspec.np->name, "zb_clk"))
->> +                       goto found;
->
-> Hello Geert,
->
-> Is the driver the right place to handle this corner case? What do you
-> think about linking zb_clk up to the bsc devicetree node for
-> r8a73a4/sh73a0?
+>> Yeah, if you can give it a second look and say if it matches what you
+>> wrote above, it would be very much appreciated.
+> 
+> Yes you are right. But what about ACPI, board files,
+> Simple Firmware and future hardware description languages...
 
-It already is linked:
+Ah ok, got it now. With fwnode and by moving a bit of code around that
+shouldn't be a problem.
 
-        bsc: bus@fec10000 {
-                compatible = "renesas,bsc-r8a73a4", "renesas,bsc",
-                    "simple-pm-bus";
-                #address-cells = <1>;
-                #size-cells = <1>;
-               ranges = <0 0 0 0x20000000>;
-               reg = <0 0xfec10000 0 0x400>;
-                clocks = <&zb_clk>;
-               power-domains = <&pd_c4>;
-        };
+I'm actually now implementing the alternative approach in which
+dependencies are discovered before the device is probed, then probed in
+turn until all are available. So functionally is very similar but I
+expect to find big differences in how the codebase is impacted.
 
-        https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/r8a73a4.dtsi#n446
+Regards,
 
-But without this hack in clk-mstp, the clock domain controller doesn't know
-it can use this clock for power management like an ordinary mstp clock.
+Tomeu
 
-Gr{oetje,eeting}s,
+> Yours,
+> Linus Walleij
+> 
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
---
-To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
