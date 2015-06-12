@@ -1,64 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:58135 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751802AbbFZLH2 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jun 2015 07:07:28 -0400
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	thomas.ab@samsung.com, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: clk: samsung: add infrastructure to register cpu clocks
-Date: Fri, 26 Jun 2015 13:06:21 +0200
-Message-id: <6395587.Fl0EfuglFZ@amdc1976>
-In-reply-to: <20150626104732.GO30834@mwanda>
-References: <20150626095444.GA30810@mwanda> <2521313.Iak1gZLfIu@amdc1976>
- <20150626104732.GO30834@mwanda>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, stable@vger.kernel.org
+Subject: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
+Date: Fri, 12 Jun 2015 10:53:25 +0900
+Message-id: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday, June 26, 2015 01:47:32 PM Dan Carpenter wrote:
-> On Fri, Jun 26, 2015 at 12:20:35PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> > 
-> > Hi,
-> > 
-> > On Friday, June 26, 2015 07:03:25 PM Krzysztof Kozlowski wrote:
-> > > 2015-06-26 18:54 GMT+09:00 Dan Carpenter <dan.carpenter@oracle.com>:
-> > > > Hello Thomas Abraham,
-> > > >
-> > > > The patch ddeac8d968d4: "clk: samsung: add infrastructure to register
-> > > > cpu clocks" from Apr 3, 2015, leads to the following static checker
-> > > > warning:
-> > > >
-> > > >         drivers/clk/samsung/clk-cpu.c:164 exynos_cpuclk_pre_rate_change()
-> > > >         warn: test_bit() takes a bit number
-> > > >
-> > > > drivers/clk/samsung/clk-cpu.c
-> > > >    158          /*
-> > > >    159           * For the selected PLL clock frequency, get the pre-defined divider
-> > > >    160           * values. If the clock for sclk_hpm is not sourced from apll, then
-> > > >    161           * the values for DIV_COPY and DIV_HPM dividers need not be set.
-> > > >    162           */
-> > > >    163          div0 = cfg_data->div0;
-> > > >    164          if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
-> > > >                              ^^^^^^^^^^^^^^^^
-> > > > CLK_CPU_HAS_DIV1 is (1 << 0).  We sometimes used it correctly as a mask
-> > > > and sometimes incorrectly (like here) as a bit number.
-> > 
-> > Fortunately the current value of this flag is "1" so test_bit() still
-> > works correctly.  I'll fix it up later anyway.  Thanks for catching it.
-> 
-> I don't think it works, although I may have misread.  We set BIT(0) in
-> exynos4_clk_init() but we test BIT(1) here.
+The TSADC gate clock was used in Exynos4x12 DTSI for exynos-adc driver.
+However TSADC is present only on Exynos4210 so on Trats2 board (with
+Exynos4412 SoC) the exynos-adc driver could not be probed:
+   ERROR: could not get clock /adc@126C0000:adc(0)
+   exynos-adc 126c0000.adc: failed getting clock, err = -2
+   exynos-adc: probe of 126c0000.adc failed with error -2
 
-Ah, indeed.  It works because we are always also setting BIT(1) in
-exynos4_clk_init().
+Instead on Exynos4x12 SoCs the main clock used by Analog to Digital
+Converter is located in different register and it is named in datasheet
+as PCLK_ADC. Regardless of the name the purpose of this PCLK_ADC clock
+is the same as purpose of TSADC from Exynos4210.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+The patch adds gate clock for Exynos4x12 using the proper register so
+backward compatibility is preserved. This fixes the probe of exynos-adc
+driver on Exynos4x12 boards and allows accessing sensors connected to it
+on Trats2 board (ntc,ncp15wb473 AP and battery thermistors).
 
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: <stable@vger.kernel.org>
+Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
+Link: https://lkml.org/lkml/2015/6/11/85
+
+---
+
+Changes since v1:
+1. After discussion on LKML this solution was chosen because it smaller,
+   simpler, self-contained (one patch to fix issue) and maintains backward
+   compatibility. Thanks to Javier Martinez Canillas and Tomasz Figa for
+   valuable comments.
+2. Dropped patch 2/2 because now it is not needed. The clock id "TSADC"
+   will be used on all Exynos4 boards.
+3. Added CC-stable.
+---
+ drivers/clk/samsung/clk-exynos4.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 714d6ba782c8..f7890bf652e6 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -85,6 +85,7 @@
+ #define DIV_PERIL4		0xc560
+ #define DIV_PERIL5		0xc564
+ #define E4X12_DIV_CAM1		0xc568
++#define E4X12_GATE_BUS_FSYS1	0xc744
+ #define GATE_SCLK_CAM		0xc820
+ #define GATE_IP_CAM		0xc920
+ #define GATE_IP_TV		0xc924
+@@ -1095,6 +1096,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+ 		0),
+ 	GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
+ 		0),
++	GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0),
+ 	GATE(CLK_MIPI_HSI, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
+ 	GATE(CLK_CHIPID, "chipid", "aclk100", E4X12_GATE_IP_PERIR, 0, 0, 0),
+ 	GATE(CLK_SYSREG, "sysreg", "aclk100", E4X12_GATE_IP_PERIR, 1,
+-- 
+1.9.1
