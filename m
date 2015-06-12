@@ -1,41 +1,41 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v3 7/7] ARM: bcm2835: Tie SPI clock to the core clock rate.
-Date: Mon,  8 Jun 2015 16:59:00 -0700
-Message-Id: <1433807940-15328-7-git-send-email-eric@anholt.net>
-In-Reply-To: <1433807940-15328-1-git-send-email-eric@anholt.net>
-References: <1433807940-15328-1-git-send-email-eric@anholt.net>
+Return-Path: <mcoquelin.stm32@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1433966978-24422-2-git-send-email-daniel.thompson@linaro.org>
+References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
+	<1433966978-24422-1-git-send-email-daniel.thompson@linaro.org>
+	<1433966978-24422-2-git-send-email-daniel.thompson@linaro.org>
+Date: Fri, 12 Jun 2015 09:25:58 +0200
+Message-ID: <CALszF6BBVW5yYNT1tNXtiGBFgOHvGRGG+W6N0NVgX6fT22T3_w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: Document the STM32F4 clock bindings
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kamil Lulko <rev13@wp.pl>,
+	Andreas Farber <afaerber@suse.de>, linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, patches@linaro.org,
+	linaro-kernel@lists.linaro.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-We were previously using a fixed clock declared in the 2835 DT, but
-it's actually the core clock, and it might not be the same if you had
-adjusted it using the firmware's config.txt.
+Hi Daniel,
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- arch/arm/boot/dts/bcm2835-rpi.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+2015-06-10 22:09 GMT+02:00 Daniel Thompson <daniel.thompson@linaro.org>:
+> This adds documentation of device tree bindings for the clock related
+> portions of the STM32 RCC block.
+>
+> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/st,stm32-rcc.txt     | 65 ++++++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+>
 
-diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
-index 9549eb8..0a32123 100644
---- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
-+++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
-@@ -69,3 +69,7 @@
- 		 <&firmware_clocks RPI_CLOCK_CORE>;
- 	clock-names = "uartclk", "apb_pclk";
- };
-+
-+&spi {
-+	clocks = <&firmware_clocks RPI_CLOCK_CORE>;
-+};
--- 
-2.1.4
+You can add:
+Acked-by: Maxime Coquelin <maxime.coquelin@st.com>
+
+Thanks!
+Maxime
