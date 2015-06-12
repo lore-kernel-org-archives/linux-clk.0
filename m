@@ -1,56 +1,65 @@
-Return-Path: <vigneshr@ti.com>
-From: Vignesh R <vigneshr@ti.com>
-To: Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
-        Thierry
- Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Pawel
- Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell
-	<ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Benoit
- Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell
- King <linux@arm.linux.org.uk>,
-        Mike Turquette <mturquette@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        Vignesh
- R <vigneshr@ti.com>
-Subject: [PATCH 1/5] ARM: OMAP2+: DRA7: clockdomain: change l4per2_7xx_clkdm to SW_WKUP
-Date: Mon, 1 Jun 2015 17:23:30 +0530
-Message-ID: <1433159614-437-2-git-send-email-vigneshr@ti.com>
-In-Reply-To: <1433159614-437-1-git-send-email-vigneshr@ti.com>
-References: <1433159614-437-1-git-send-email-vigneshr@ti.com>
+Return-Path: <javier@dowhile0.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
+References: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
+Date: Fri, 12 Jun 2015 07:46:23 +0200
+Message-ID: <CABxcv=mQfcb3jsRzOcWXAbNRf-dumoHS8X-2TEeOdB2E_T5BMQ@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
+From: Javier Martinez Canillas <javier@dowhile0.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
+	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Kukjin Kim <kgene@kernel.org>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Legacy IPs like PWMSS, present under l4per2_7xx_clkdm, cannot support
-smart-idle when its clock domain is in HW_AUTO on DRA7 SoCs. Hence,
-program clock domain to SW_WKUP.
+Hello Krzysztof,
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
----
- arch/arm/mach-omap2/clockdomains7xx_data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, Jun 12, 2015 at 3:53 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> The TSADC gate clock was used in Exynos4x12 DTSI for exynos-adc driver.
+> However TSADC is present only on Exynos4210 so on Trats2 board (with
+> Exynos4412 SoC) the exynos-adc driver could not be probed:
+>    ERROR: could not get clock /adc@126C0000:adc(0)
+>    exynos-adc 126c0000.adc: failed getting clock, err = -2
+>    exynos-adc: probe of 126c0000.adc failed with error -2
+>
+> Instead on Exynos4x12 SoCs the main clock used by Analog to Digital
+> Converter is located in different register and it is named in datasheet
+> as PCLK_ADC. Regardless of the name the purpose of this PCLK_ADC clock
+> is the same as purpose of TSADC from Exynos4210.
+>
+> The patch adds gate clock for Exynos4x12 using the proper register so
+> backward compatibility is preserved. This fixes the probe of exynos-adc
+> driver on Exynos4x12 boards and allows accessing sensors connected to it
+> on Trats2 board (ntc,ncp15wb473 AP and battery thermistors).
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: <stable@vger.kernel.org>
+> Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
+> Link: https://lkml.org/lkml/2015/6/11/85
+>
+> ---
+>
+> Changes since v1:
+> 1. After discussion on LKML this solution was chosen because it smaller,
+>    simpler, self-contained (one patch to fix issue) and maintains backward
+>    compatibility. Thanks to Javier Martinez Canillas and Tomasz Figa for
+>    valuable comments.
+> 2. Dropped patch 2/2 because now it is not needed. The clock id "TSADC"
+>    will be used on all Exynos4 boards.
+> 3. Added CC-stable.
+> ---
+>  drivers/clk/samsung/clk-exynos4.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
 
-diff --git a/arch/arm/mach-omap2/clockdomains7xx_data.c b/arch/arm/mach-omap2/clockdomains7xx_data.c
-index 57d5df0c1fbd..7581e036bda6 100644
---- a/arch/arm/mach-omap2/clockdomains7xx_data.c
-+++ b/arch/arm/mach-omap2/clockdomains7xx_data.c
-@@ -331,7 +331,7 @@ static struct clockdomain l4per2_7xx_clkdm = {
- 	.dep_bit	  = DRA7XX_L4PER2_STATDEP_SHIFT,
- 	.wkdep_srcs	  = l4per2_wkup_sleep_deps,
- 	.sleepdep_srcs	  = l4per2_wkup_sleep_deps,
--	.flags		  = CLKDM_CAN_HWSUP_SWSUP,
-+	.flags		  = CLKDM_CAN_SWSUP,
- };
- 
- static struct clockdomain mpu0_7xx_clkdm = {
--- 
-2.4.1
+Patch looks good to me.
+
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+Best regards,
+Javier
