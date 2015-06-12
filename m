@@ -1,70 +1,42 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 1/8] clk: rockchip: protect register macros against multipart values
-Date: Sat, 13 Jun 2015 18:22:15 +0200
-Message-Id: <1434212542-17145-2-git-send-email-heiko@sntech.de>
-In-Reply-To: <1434212542-17145-1-git-send-email-heiko@sntech.de>
-References: <1434212542-17145-1-git-send-email-heiko@sntech.de>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	agross@codeaurora.org
+Cc: mturquette@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: [PATCH 0/5] Add support for A53 CPU clock
+Date: Fri, 12 Jun 2015 11:41:54 +0300
+Message-Id: <1434098519-26406-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The macros calculate the correct offset from the id in the parameter.
-If this parameter does not consist of a single number, the calculation
-will return wrong registers in the best case or create unaligned accesses
-in the worst case. So protect the calculations against such values.
+This patchset adds support for the A53 CPU clock to allow CPU
+frequency scaling. It is used on platforms like Qualcomm's msm8916.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/rockchip/clk.h | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Georgi Djakov (4):
+  clk: qcom: Add support for SR2 PLLs
+  clk: qcom: Add support for regmap mux-div clocks
+  clk: qcom: Add A53 clock driver
+  arm64: dts: qcom: msm8916: Add A53 DT node
 
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 6b09267..92edb5f 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -31,22 +31,22 @@
- 		((val) << (shift) | (mask) << ((shift) + 16))
- 
- /* register positions shared by RK2928, RK3066 and RK3188 */
--#define RK2928_PLL_CON(x)		(x * 0x4)
-+#define RK2928_PLL_CON(x)		((x) * 0x4)
- #define RK2928_MODE_CON		0x40
--#define RK2928_CLKSEL_CON(x)	(x * 0x4 + 0x44)
--#define RK2928_CLKGATE_CON(x)	(x * 0x4 + 0xd0)
-+#define RK2928_CLKSEL_CON(x)	((x) * 0x4 + 0x44)
-+#define RK2928_CLKGATE_CON(x)	((x) * 0x4 + 0xd0)
- #define RK2928_GLB_SRST_FST		0x100
- #define RK2928_GLB_SRST_SND		0x104
--#define RK2928_SOFTRST_CON(x)	(x * 0x4 + 0x110)
-+#define RK2928_SOFTRST_CON(x)	((x) * 0x4 + 0x110)
- #define RK2928_MISC_CON		0x134
- 
- #define RK3288_PLL_CON(x)		RK2928_PLL_CON(x)
- #define RK3288_MODE_CON			0x50
--#define RK3288_CLKSEL_CON(x)		(x * 0x4 + 0x60)
--#define RK3288_CLKGATE_CON(x)		(x * 0x4 + 0x160)
-+#define RK3288_CLKSEL_CON(x)		((x) * 0x4 + 0x60)
-+#define RK3288_CLKGATE_CON(x)		((x) * 0x4 + 0x160)
- #define RK3288_GLB_SRST_FST		0x1b0
- #define RK3288_GLB_SRST_SND		0x1b4
--#define RK3288_SOFTRST_CON(x)		(x * 0x4 + 0x1b8)
-+#define RK3288_SOFTRST_CON(x)		((x) * 0x4 + 0x1b8)
- #define RK3288_MISC_CON			0x1e8
- #define RK3288_SDMMC_CON0		0x200
- #define RK3288_SDMMC_CON1		0x204
-@@ -67,7 +67,7 @@ enum rockchip_pll_type {
- 	.nr = _nr,				\
- 	.nf = _nf,				\
- 	.no = _no,				\
--	.bwadj = (_nf >> 1),			\
-+	.bwadj = ((_nf) >> 1),			\
- }
- 
- #define RK3066_PLL_RATE_BWADJ(_rate, _nr, _nf, _no, _bw)	\
--- 
-2.1.4
+Stephen Boyd (1):
+  clk: Add safe switch hook
+
+ Documentation/devicetree/bindings/clock/qcom,a53cc |   22 ++
+ arch/arm64/boot/dts/qcom/msm8916.dtsi              |   12 +
+ drivers/clk/clk.c                                  |   76 ++++-
+ drivers/clk/qcom/Kconfig                           |    8 +
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/clk-a53.c                         |  195 +++++++++++++
+ drivers/clk/qcom/clk-pll.c                         |   75 +++++
+ drivers/clk/qcom/clk-pll.h                         |    1 +
+ drivers/clk/qcom/clk-regmap-mux-div.c              |  297 ++++++++++++++++++++
+ drivers/clk/qcom/clk-regmap-mux-div.h              |   63 +++++
+ include/linux/clk-provider.h                       |    2 +
+ 11 files changed, 745 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc
+ create mode 100644 drivers/clk/qcom/clk-a53.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.h
