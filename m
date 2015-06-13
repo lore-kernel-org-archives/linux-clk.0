@@ -1,56 +1,105 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 2 Jun 2015 19:15:36 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Cyrille Pitchen <cyrille.pitchen@atmel.com>,
-	nicolas.ferre@atmel.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/2] clk: at91: add Flexcom clock
-Message-ID: <20150602171536.GG1715@piout.net>
-References: <cover.1433264017.git.cyrille.pitchen@atmel.com>
- <62cb26952d0688c6f37ad84d253d5302818a20ae.1433264017.git.cyrille.pitchen@atmel.com>
- <20150602190435.4698a4db@bbrezillon>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20150602190435.4698a4db@bbrezillon>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 6/8] dt-bindings: add documentation of rk3668 clock controller
+Date: Sat, 13 Jun 2015 18:22:20 +0200
+Message-Id: <1434212542-17145-7-git-send-email-heiko@sntech.de>
+In-Reply-To: <1434212542-17145-1-git-send-email-heiko@sntech.de>
+References: <1434212542-17145-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/06/2015 at 19:04:35 +0200, Boris Brezillon wrote :
-> Hi Cyrille,
-> 
-> On Tue, 2 Jun 2015 18:57:19 +0200
-> Cyrille Pitchen <cyrille.pitchen@atmel.com> wrote:
-> 
-> > This driver supports the new Atmel Flexcom. The Flexcom is a wrapper which
-> > integrates one SPI controller, one I2C controller and one USART. Only one
-> > function can be enabled at a time. This driver selects the function once for
-> > all, when the Flexcom is probed, according to the value of the new
-> > "atmel,flexcom-mode" device tree property.
-> > 
-> > This driver has chosen to present the Flexcom to the system as a clock so the
-> > implementation is seamless for the existing Atmel SPI, I2C and USART drivers.
-> 
-> Could detail a bit more why you chose to represent this flexcom IP as
-> a clock device ?
-> 
-> I don't like to use this 'DT should represent real hardware' argument,
-> but to me, it looks like you're trying to use a false hardware
-> representation to avoid changing the peripheral drivers code, which is
-> wrong since the DT is supposed to represent the hardware blocks.
-> 
-> How about representing the flexcom as an MFD instead ?
-> 
+Add the devicetree binding for the cru on the rk3368 which quite similar
+structured as previous clock controllers.
 
-It should probably be represented as an MFD. The MFD driver will parse
-the chosen configuration and the probe the correct driver. You can have
-a look at the recent ST LPC driver from Lee.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: Kumar Gala <galak@codeaurora.org>
+Cc: devicetree@vger.kernel.org
+---
+ .../bindings/clock/rockchip,rk3368-cru.txt         | 61 ++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
 
-
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
+new file mode 100644
+index 0000000..0815df5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
+@@ -0,0 +1,61 @@
++* Rockchip RK3368 Clock and Reset Unit
++
++The RK3368 clock controller generates and supplies clock to various
++controllers within the SoC and also implements a reset controller for SoC
++peripherals.
++
++Required Properties:
++
++- compatible: should be "rockchip,rk3368-cru"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- #clock-cells: should be 1.
++- #reset-cells: should be 1.
++
++Optional Properties:
++
++- rockchip,grf: phandle to the syscon managing the "general register files"
++  If missing, pll rates are not changeable, due to the missing pll lock status.
++
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. All available clocks are defined as
++preprocessor macros in the dt-bindings/clock/rk3368-cru.h headers and can be
++used in device tree sources. Similar macros exist for the reset sources in
++these files.
++
++External clocks:
++
++There are several clocks that are generated outside the SoC. It is expected
++that they are defined using standard clock bindings with following
++clock-output-names:
++ - "xin24m" - crystal input - required,
++ - "xin32k" - rtc clock - optional,
++ - "ext_i2s" - external I2S clock - optional,
++ - "ext_gmac" - external GMAC clock - optional
++ - "ext_hsadc" - external HSADC clock - optional,
++ - "ext_isp" - external ISP clock - optional,
++ - "ext_jtag" - external JTAG clock - optional
++ - "ext_vip" - external VIP clock - optional,
++ - "usbotg_out" - output clock of the pll in the otg phy
++
++Example: Clock controller node:
++
++	cru: clock-controller@ff760000 {
++		compatible = "rockchip,rk3368-cru";
++		reg = <0x0 0xff760000 0x0 0x1000>;
++		rockchip,grf = <&grf>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++Example: UART controller node that consumes the clock generated by the clock
++  controller:
++
++	uart0: serial@10124000 {
++		compatible = "snps,dw-apb-uart";
++		reg = <0x10124000 0x400>;
++		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
++		reg-shift = <2>;
++		reg-io-width = <1>;
++		clocks = <&cru SCLK_UART0>;
++	};
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+2.1.4
