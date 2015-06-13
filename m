@@ -1,53 +1,70 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-ID: <5575DB8D.50000@ahsoftware.de>
-Date: Mon, 08 Jun 2015 20:14:37 +0200
-From: Alexander Holler <holler@ahsoftware.de>
-MIME-Version: 1.0
-To: "Enrico Weigelt, metux IT consult" <weigelt@melag.de>,
-	"Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>
-CC: Rob Herring <robherring2@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	=?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?=
-	<stephane.marchesin@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	dmaengine@vger.kernel.org,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-clk@vger.kernel.org,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>
-Subject: Re: [PATCH 00/21] On-demand device registration
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com> <556F5C24.1030101@linaro.org> <5570B783.1050808@ahsoftware.de> <557589D9.1050008@melag.de>
-In-Reply-To: <557589D9.1050008@melag.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 1/8] clk: rockchip: protect register macros against multipart values
+Date: Sat, 13 Jun 2015 18:22:15 +0200
+Message-Id: <1434212542-17145-2-git-send-email-heiko@sntech.de>
+In-Reply-To: <1434212542-17145-1-git-send-email-heiko@sntech.de>
+References: <1434212542-17145-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am 08.06.2015 um 14:26 schrieb Enrico Weigelt, metux IT consult:
-> Am 04.06.2015 um 22:39 schrieb Alexander Holler:
->
->  > As it seems to have been forgotten or overread, I've mentioned in my
->> series of patches last year that, with a few changes, it's possible to
->> let the algorithm I've used (dfs) to spit out all drivers which can be
->> initialized in parallel.
->
-> Unfortunately, I've missed that ... could you please resend you patches?
-> Boot time reduction is one of the topics on my 2do in several weeks.
+The macros calculate the correct offset from the id in the parameter.
+If this parameter does not consist of a single number, the calculation
+will return wrong registers in the best case or create unaligned accesses
+in the worst case. So protect the calculations against such values.
 
-https://lkml.org/lkml/2014/5/12/452
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 6b09267..92edb5f 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -31,22 +31,22 @@
+ 		((val) << (shift) | (mask) << ((shift) + 16))
+ 
+ /* register positions shared by RK2928, RK3066 and RK3188 */
+-#define RK2928_PLL_CON(x)		(x * 0x4)
++#define RK2928_PLL_CON(x)		((x) * 0x4)
+ #define RK2928_MODE_CON		0x40
+-#define RK2928_CLKSEL_CON(x)	(x * 0x4 + 0x44)
+-#define RK2928_CLKGATE_CON(x)	(x * 0x4 + 0xd0)
++#define RK2928_CLKSEL_CON(x)	((x) * 0x4 + 0x44)
++#define RK2928_CLKGATE_CON(x)	((x) * 0x4 + 0xd0)
+ #define RK2928_GLB_SRST_FST		0x100
+ #define RK2928_GLB_SRST_SND		0x104
+-#define RK2928_SOFTRST_CON(x)	(x * 0x4 + 0x110)
++#define RK2928_SOFTRST_CON(x)	((x) * 0x4 + 0x110)
+ #define RK2928_MISC_CON		0x134
+ 
+ #define RK3288_PLL_CON(x)		RK2928_PLL_CON(x)
+ #define RK3288_MODE_CON			0x50
+-#define RK3288_CLKSEL_CON(x)		(x * 0x4 + 0x60)
+-#define RK3288_CLKGATE_CON(x)		(x * 0x4 + 0x160)
++#define RK3288_CLKSEL_CON(x)		((x) * 0x4 + 0x60)
++#define RK3288_CLKGATE_CON(x)		((x) * 0x4 + 0x160)
+ #define RK3288_GLB_SRST_FST		0x1b0
+ #define RK3288_GLB_SRST_SND		0x1b4
+-#define RK3288_SOFTRST_CON(x)		(x * 0x4 + 0x1b8)
++#define RK3288_SOFTRST_CON(x)		((x) * 0x4 + 0x1b8)
+ #define RK3288_MISC_CON			0x1e8
+ #define RK3288_SDMMC_CON0		0x200
+ #define RK3288_SDMMC_CON1		0x204
+@@ -67,7 +67,7 @@ enum rockchip_pll_type {
+ 	.nr = _nr,				\
+ 	.nf = _nf,				\
+ 	.no = _no,				\
+-	.bwadj = (_nf >> 1),			\
++	.bwadj = ((_nf) >> 1),			\
+ }
+ 
+ #define RK3066_PLL_RATE_BWADJ(_rate, _nr, _nf, _no, _bw)	\
+-- 
+2.1.4
