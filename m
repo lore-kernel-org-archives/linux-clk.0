@@ -1,146 +1,93 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Paul Osmialowski <pawelo@king.net.pl>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Anson Huang <b20788@freescale.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Frank Li <Frank.Li@freescale.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Jingchang Lu <jingchang.lu@freescale.com>,
-	Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nathan Lynch <nathan_lynch@mentor.com>,
-	Nicolas Pitre <nico@linaro.org>,
-	Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
-	Olof Johansson <olof@lixom.net>,
-	Paul Bolle <pebolle@tiscali.nl>,
-	Rob Herring <r.herring@freescale.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-	Shawn Guo <shawn.guo@linaro.org>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Stefan Agner <stefan@agner.ch>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org, dmaengine@vger.kernel.org
-Cc: Paul Osmialowski <pawelo@king.net.pl>,
-	Yuri Tikhonov <yur@emcraft.com>,
-	Sergei Poselenov <sposelenov@emcraft.com>,
-	Dmitry Cherkassov <d_cherkasov@emcraft.com>,
-	Alexander Potashev <aspotashev@emcraft.com>
-Subject: [PATCH 1/9] arm: select different compiler flags for ARM CortexM3
-Date: Tue, 23 Jun 2015 23:19:39 +0200
-Message-Id: <1435094387-20146-2-git-send-email-pawelo@king.net.pl>
-In-Reply-To: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Sun, 14 Jun 2015 21:30:52 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [GIT PULL] Allwinner late clock changes for 4.2
+Message-ID: <20150614193052.GA22385@lukather>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
 List-ID: <linux-clk.vger.kernel.org>
 
-This one is inspired by two commits published on Emcraft git repo:
 
-https://github.com/EmcraftSystems/linux-emcraft.git
+--EeQfGwPcQSOJBaQU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-1) 6302b692f570ff9d5645a6e72c11f87b0c1aa409
- RT #62654. Fixed kernel crashes while running httpd by enabling
- "-mfix-cortex-m3-ldrd" compiler option, which prevents compiler from
- generating code like 'ldrd Ra, Rb, [Ra, #Imm]' - according to the 602117
- Cortex-M3 Errata it may result in incorrect base register when interrupted
- or faulted.
+Hi Mike, Stephen,
 
-by: Yuri Tikhonov <yur@emcraft.com>
+I totally forgot to send you this pull request with these two patches
+before.
 
-2) 359d3cda84c01c0f3fae1a519b97a31f318f57ab
- RT #62654. Removed "--march=..." leaving only "-mcpu=cortex-m3" to make
- sure only the correct instructions will be generated.
+Given that they're pretty minor (one "simple" clock addition and one
+fix) and that they've been in linux-next for quite some time now, and
+have been tested by kernelci, I hope you'll consider it for inclusion.
 
-by: Sergei Poselenov <sposelenov@emcraft.com>
+Sorry for that,
+Maxime
 
-I reworked these patches to make them less intrusive.
+The following changes since commit b787f68c36d49bb1d9236f403813641efa74a031:
 
-Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
----
- arch/arm/Kconfig    |  2 +-
- arch/arm/Makefile   |  1 +
- arch/arm/mm/Kconfig | 11 ++++++++++-
- 3 files changed, 12 insertions(+), 2 deletions(-)
+  Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index a750c14..8e3a833 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -32,7 +32,7 @@ config ARM
- 	select HANDLE_DOMAIN_IRQ
- 	select HARDIRQS_SW_RESEND
- 	select HAVE_ARCH_AUDITSYSCALL if (AEABI && !OABI_COMPAT)
--	select HAVE_ARCH_BITREVERSE if (CPU_32v7M || CPU_32v7) && !CPU_32v6
-+	select HAVE_ARCH_BITREVERSE if (CPU_32v7M || CPU_32v7M3 || CPU_32v7) && !CPU_32v6
- 	select HAVE_ARCH_JUMP_LABEL if !XIP_KERNEL && !CPU_ENDIAN_BE32
- 	select HAVE_ARCH_KGDB if !CPU_ENDIAN_BE32
- 	select HAVE_ARCH_SECCOMP_FILTER if (AEABI && !OABI_COMPAT)
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index 07ab3d2..a7e1007 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -58,6 +58,7 @@ endif
- # Note that GCC does not numerically define an architecture version
- # macro, but instead defines a whole series of macros which makes
- # testing for a specific architecture or later rather impossible.
-+arch-$(CONFIG_CPU_32v7M3)	=-D__LINUX_ARM_ARCH__=7 -mcpu=cortex-m3 -Wa,-mcpu=cortex-m3
- arch-$(CONFIG_CPU_32v7M)	=-D__LINUX_ARM_ARCH__=7 -march=armv7-m -Wa,-march=armv7-m
- arch-$(CONFIG_CPU_32v7)		=-D__LINUX_ARM_ARCH__=7 $(call cc-option,-march=armv7-a,-march=armv5t -Wa$(comma)-march=armv7-a)
- arch-$(CONFIG_CPU_32v6)		=-D__LINUX_ARM_ARCH__=6 $(call cc-option,-march=armv6,-march=armv5t -Wa$(comma)-march=armv6)
-diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
-index 7c6b976..d19cb4d 100644
---- a/arch/arm/mm/Kconfig
-+++ b/arch/arm/mm/Kconfig
-@@ -401,12 +401,18 @@ config CPU_V7
- # ARMv7M
- config CPU_V7M
- 	bool
--	select CPU_32v7M
-+	select CPU_32v7M if !CPU_CORTEXM3
-+	select CPU_32v7M3 if CPU_CORTEXM3
- 	select CPU_ABRT_NOMMU
- 	select CPU_CACHE_NOP
- 	select CPU_PABRT_LEGACY
- 	select CPU_THUMBONLY
- 
-+# ARM CortexM3
-+config CPU_CORTEXM3
-+	bool
-+	select CPU_V7M
-+
- config CPU_THUMBONLY
- 	bool
- 	# There are no CPUs available with MMU that don't implement an ARM ISA:
-@@ -457,6 +463,9 @@ config CPU_32v7
- config CPU_32v7M
- 	bool
- 
-+config CPU_32v7M3
-+	bool
-+
- # The abort model
- config CPU_ABRT_NOMMU
- 	bool
--- 
-2.3.6
+are available in the git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/su=
+nxi-clocks-for-4.2
+
+for you to fetch changes up to ec80749dfd859b560e8864d665d38d7a63e6a7f2:
+
+  clk: sunxi: Add support for the usb-clk on sun8i a23 and a33 SoCs (2015-0=
+6-02 10:24:39 +0200)
+
+----------------------------------------------------------------
+Allwinner clocks additions for 4.2
+
+One error fix, and one patch to add support for the USB clock found on the
+Allwinner A23 and A33
+
+----------------------------------------------------------------
+Hans de Goede (1):
+      clk: sunxi: Add support for the usb-clk on sun8i a23 and a33 SoCs
+
+Maxime Ripard (1):
+      clk: sunxi: Fix of_io_request_and_map error check
+
+ Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+ drivers/clk/sunxi/clk-sun9i-core.c                | 10 +++++-----
+ drivers/clk/sunxi/clk-sunxi.c                     |  2 ++
+ drivers/clk/sunxi/clk-usb.c                       | 11 +++++++++++
+ 4 files changed, 19 insertions(+), 5 deletions(-)
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--EeQfGwPcQSOJBaQU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVfdZsAAoJEBx+YmzsjxAgPw8P/1yRcSVqNyVl9Yyyd9K05FOZ
+cWdKGIbre7bLH4LRrqPCChBuFH963NdnX5JW5qJZIzrgKIZIWfUdFNAvS34oJ2Ij
+3C6MMN58w56FtKtxT36fxRhQJ4IqXFEtrWVEK7vfslycwbhOscTL9e7mfJ9BKaKo
+W6htoWh+lp+fcdtxtMPhkPtTkjywAQ4A10AZvlsnqIM2+1JG9vy67Rpg1q//Ts4r
+e+yi8+teFiJ4sKI0JBY7v1XnQzTWg6GcEyhDX6lQ84Ji2ufKO8Ged5GXeSpjdx7J
+gJlEUVe2HmkJGKaLR1odILAxR+5NFAjXYCeIJ9m3wLiZwHtg9q7zm0aH6QKmgeKo
+NcPPRklKiZz9oT1OvYe4X7pARi72mgCvGAKGdo1mqICwTCzGNJYCS0wqo5ImOtub
+j3m9vj2nZLUkiRsiNCSydQikBTN5DkgWth5VdWTLTLP/YCQ6gjX7u7Y/efM6WhU3
+HbcHQRIvIfpDxK9CtqpyssvBOr3umNkGC7kjMl17iCinFstskakknuEtRxTw4DD2
+U7VSwXisB6pWAsbDuS5xDaZD/uYUC+cCEtx0IfIxq18bUlUZi2lYnegIsvkFuAKk
+E9CbDx5hnQXTSBWxnrCf6r89CphWPT5Dy8BqZOOdVKUZR+VcIOUvR4pcqW9s5yMx
+dZxkCXqMj0ygX6Fu1U28
+=RZ7Z
+-----END PGP SIGNATURE-----
+
+--EeQfGwPcQSOJBaQU--
