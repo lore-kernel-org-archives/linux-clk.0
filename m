@@ -1,79 +1,130 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <m-karicheri2@ti.com>
+Message-ID: <557EFCCD.5000501@ti.com>
+Date: Mon, 15 Jun 2015 12:26:53 -0400
+From: Murali Karicheri <m-karicheri2@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-Date: Tue, 2 Jun 2015 10:48:50 +0200
-Message-ID: <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
-Subject: Re: [PATCH 00/21] On-demand device registration
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Grant Likely <grant.likely@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	=?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Alexander Holler <holler@ahsoftware.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	dmaengine@vger.kernel.org,
-	"open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-	linux-clk@vger.kernel.org,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <ssantosh@kernel.org>, <mturquette@linaro.org>, <sboyd@codeaurora.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux@arm.linux.org.uk>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] clk: keystone: add support for post divider register
+ for main pll
+References: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
+In-Reply-To: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 25, 2015 at 4:53 PM, Tomeu Vizoso
-<tomeu.vizoso@collabora.com> wrote:
-
-> have looked into ordered probing as a
-> better way of solving this than moving nodes around in the DT or playing with
-> initcall levels.
+On 05/29/2015 12:04 PM, Murali Karicheri wrote:
+> Main PLL controller has post divider bits in a separate register in
+> pll controller. Use the value from this register instead of fixed
+> divider when available.
 >
-> While reading the thread [1] that Alexander Holler started with his series to
-> make probing order deterministic, it occurred to me that it should be possible
-> to achieve the same by registering devices as they are referenced by other
-> devices.
+> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+> ---
+>   .../devicetree/bindings/clock/keystone-pll.txt       |  8 ++++----
+>   drivers/clk/keystone/pll.c                           | 20 ++++++++++++++++++--
+>   2 files changed, 22 insertions(+), 6 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/keystone-pll.txt b/Documentation/devicetree/bindings/clock/keystone-pll.txt
+> index 225990f..47570d2 100644
+> --- a/Documentation/devicetree/bindings/clock/keystone-pll.txt
+> +++ b/Documentation/devicetree/bindings/clock/keystone-pll.txt
+> @@ -15,8 +15,8 @@ Required properties:
+>   - compatible : shall be "ti,keystone,main-pll-clock" or "ti,keystone,pll-clock"
+>   - clocks : parent clock phandle
+>   - reg - pll control0 and pll multipler registers
+> -- reg-names : control and multiplier. The multiplier is applicable only for
+> -		main pll clock
+> +- reg-names : control, multiplier and post-divider. The multiplier and
+> +		post-divider registers are applicable only for main pll clock
+>   - fixed-postdiv : fixed post divider value. If absent, use clkod register bits
+>   		for postdiv
+>
+> @@ -25,8 +25,8 @@ Example:
+>   		#clock-cells = <0>;
+>   		compatible = "ti,keystone,main-pll-clock";
+>   		clocks = <&refclksys>;
+> -		reg = <0x02620350 4>, <0x02310110 4>;
+> -		reg-names = "control", "multiplier";
+> +		reg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
+> +		reg-names = "control", "multiplier", "post-divider";
+>   		fixed-postdiv = <2>;
+>   	};
+>
+> diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
+> index 0dd8a4b..4a375ea 100644
+> --- a/drivers/clk/keystone/pll.c
+> +++ b/drivers/clk/keystone/pll.c
+> @@ -37,7 +37,8 @@
+>    *	Main PLL or any other PLLs in the device such as ARM PLL, DDR PLL
+>    *	or PA PLL available on keystone2. These PLLs are controlled by
+>    *	this register. Main PLL is controlled by a PLL controller.
+> - * @pllm: PLL register map address
+> + * @pllm: PLL register map address for multiplier bits
+> + * @pllod: PLL register map address for post divider bits
+>    * @pll_ctl0: PLL controller map address
+>    * @pllm_lower_mask: multiplier lower mask
+>    * @pllm_upper_mask: multiplier upper mask
+> @@ -53,6 +54,7 @@ struct clk_pll_data {
+>   	u32 phy_pllm;
+>   	u32 phy_pll_ctl0;
+>   	void __iomem *pllm;
+> +	void __iomem *pllod;
+>   	void __iomem *pll_ctl0;
+>   	u32 pllm_lower_mask;
+>   	u32 pllm_upper_mask;
+> @@ -102,7 +104,11 @@ static unsigned long clk_pllclk_recalc(struct clk_hw *hw,
+>   		/* read post divider from od bits*/
+>   		postdiv = ((val & pll_data->clkod_mask) >>
+>   				 pll_data->clkod_shift) + 1;
+> -	else
+> +	else if (pll_data->pllod) {
+> +		postdiv = readl(pll_data->pllod);
+> +		postdiv = ((postdiv & pll_data->clkod_mask) >>
+> +				pll_data->clkod_shift) + 1;
+> +	} else
+>   		postdiv = pll_data->postdiv;
+>
+>   	rate /= (prediv + 1);
+> @@ -172,12 +178,21 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
+>   		/* assume the PLL has output divider register bits */
+>   		pll_data->clkod_mask = CLKOD_MASK;
+>   		pll_data->clkod_shift = CLKOD_SHIFT;
+> +
+> +		/*
+> +		 * Check if there is an post-divider register. If not
+> +		 * assume od bits are part of control register.
+> +		 */
+> +		i = of_property_match_string(node, "reg-names",
+> +					     "post-divider");
+> +		pll_data->pllod = of_iomap(node, i);
+>   	}
+>
+>   	i = of_property_match_string(node, "reg-names", "control");
+>   	pll_data->pll_ctl0 = of_iomap(node, i);
+>   	if (!pll_data->pll_ctl0) {
+>   		pr_err("%s: ioremap failed\n", __func__);
+> +		iounmap(pll_data->pllod);
+>   		goto out;
+>   	}
+>
+> @@ -193,6 +208,7 @@ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
+>   		pll_data->pllm = of_iomap(node, i);
+>   		if (!pll_data->pllm) {
+>   			iounmap(pll_data->pll_ctl0);
+> +			iounmap(pll_data->pllod);
+>   			goto out;
+>   		}
+>   	}
+>
+DT and CLK maintainers,
 
-This is pretty cool, but a too local solution to a global problem.
+A gentle reminder to review and provide your comments or acks.
 
-Deferred probe and initcall reordering, silly as they may seem,
-does not require you to use device tree.
+Thanks and regards,
 
-The real solution, which I think I pointed out already when we
-added deferred probe, is to put dependency graphs in the drivers
-and have the kernel device driver core percolate dependecies by
-walking the graph on probing driver, removing driver (usually the
-inverse use case), [runtime] suspend and [runtime] resumeing
-a driver. Possibly the dependencies will even be different
-depending on use case.
-
-This is what systemd is doing in userspace for starting services:
-ask for your dependencies and wait for them if they are not
-there. So drivers ask for resources and wait for them. It also
-needs to be abstract, so for example we need to be able to
-hang on regulator_get() until the driver is up and providing that
-regulator, and as long as everything is in slowpath it should
-be OK. (And vice versa mutatis mutandis for clk, gpio, pin
-control, interrupts (!) and DMA channels for example.)
-
-
-So if this should be solved it should be solved in an abstract way
-in the device driver core available for all, then have calls calling
-out to DT, ACPI, possibly even PCI or USB (as these
-enumerate devices themselves) to obtain a certain
-dependency.
-
-Yours,
-Linus Walleij
+-- 
+Murali Karicheri
+Linux Kernel, Keystone
