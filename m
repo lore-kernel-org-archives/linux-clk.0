@@ -1,80 +1,39 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: mturquette@gmail.com, sboyd@codeaurora.org, matthias.bgg@gmail.com
-Cc: henryc.chen@mediatek.com, s.hauer@pengutronix.de,
-	jamesjj.liao@mediatek.com, p.zabel@pengutronix.de,
-	manabian@gmail.com, heiko@sntech.de, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 0/3] clk: Add regmap support for clk mulitplexer
-Date: Tue, 16 Jun 2015 16:23:32 +0200
-Message-Id: <1434464615-9080-1-git-send-email-matthias.bgg@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+Message-ID: <557EF0EB.9040403@linaro.org>
+Date: Mon, 15 Jun 2015 18:36:11 +0300
+From: Georgi Djakov <georgi.djakov@linaro.org>
+MIME-Version: 1.0
+To: Paul Bolle <pebolle@tiscali.nl>
+CC: sboyd@codeaurora.org, agross@codeaurora.org, mturquette@linaro.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 4/5] clk: qcom: Add A53 clock driver
+References: <1434098519-26406-1-git-send-email-georgi.djakov@linaro.org>	 <1434098519-26406-5-git-send-email-georgi.djakov@linaro.org> <1434376712.2069.5.camel@x220>
+In-Reply-To: <1434376712.2069.5.camel@x220>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set adds regmap support for the simple clock multiplexer,
-the divider clock and the clock gate.
-Regmap use, apart from a pointer to the regmap struct, needs an
-offset value to know where in the regmap it has to read/write.
-We add both fields to the corresponding structs.
+On 06/15/2015 04:58 PM, Paul Bolle wrote:
+> On Fri, 2015-06-12 at 11:41 +0300, Georgi Djakov wrote:
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/clk-a53.c
+> 
+>> +static int __init qcom_a53_init(void)
+>> +{
+>> +	return platform_driver_register(&qcom_a53_driver);
+>> +}
+>> +arch_initcall(qcom_a53_init);
+> 
+> There's no function that's, well, called by module_exit() that undoes
+> the above. So one can build this as a module, load that module, but not
+> unload it. That's by design?
+> 
+> 
 
-The driver will distinguish between a clock which is based on regmap or not
-through a flag specified in the clock hardware struct.
-The approach does not break the existing clock framework API but adds
-new functions for registering regmap clocks. Unregistering the clocks is
-independent of the use of regmap or not, so that no new functions were
-implemented.
+In general, it is not expected to unload it as this is for the
+main CPU clock, but i will add a module_exit() call to make it
+correct. Thanks for the comment!
 
-As an example user of the regmap clock multiplexer, it was implemented on
-the mt8135. When accepted it will also be applied to the other Mediatek SoCs.
-Other possible user are Qualcomm SoCs which up to now implement their own
-regmap based clock multiplexer.
-
-This patch set is based on linux next.
-To get the mt8135 eval board up and running, we need to enable the clock
-support [1] and use the two clocks for the uart port [2].
-
-Any comments welcome.
-
-[1] https://patchwork.kernel.org/patch/6261141/
-[2] https://patchwork.kernel.org/patch/6261151/
-
-Changes for v4:
-- fix style issues
-- use __clk_get_flags
-- delete #ifdef CONFIG_REGMAP
-
-Changes for v3:
-- rebase against linux-next
-- provide regmap access to all three clock types in a unified way
-
-Changes for v2:
-- use regmap_update_bits instead of read-write
-- fix flag check
-- add union in struct clk_mux
-- fix typo in commit message
-
----
-
-Matthias Brugger (3):
-  clk: Add regmap support
-  clk: mediatek: Add support for clk-mux using regmap
-  clk: mediatek: Use regmap clk-mux for mt8135
-
- drivers/clk/Makefile              |  1 +
- drivers/clk/clk-divider.c         | 68 ++++++++++++++++++++++------
- drivers/clk/clk-gate.c            | 57 +++++++++++++++++++-----
- drivers/clk/clk-io.c              | 48 ++++++++++++++++++++
- drivers/clk/clk-io.h              | 22 +++++++++
- drivers/clk/clk-mux.c             | 94 ++++++++++++++++++++++++++++++++-------
- drivers/clk/mediatek/clk-mt8135.c | 21 +++------
- drivers/clk/mediatek/clk-mtk.c    | 37 +++++++++++++++
- drivers/clk/mediatek/clk-mtk.h    | 26 +++++++++++
- include/linux/clk-provider.h      | 54 ++++++++++++++++++++--
- 10 files changed, 370 insertions(+), 58 deletions(-)
- create mode 100644 drivers/clk/clk-io.c
- create mode 100644 drivers/clk/clk-io.h
-
--- 
-1.9.1
-
+BR,
+Georgi
