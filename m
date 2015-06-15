@@ -1,74 +1,174 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:45902 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752950AbbFRORl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 18 Jun 2015 10:17:41 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@linaro.org, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 3/9] clk: rockchip: protect register macros against multipart values
-Date: Thu, 18 Jun 2015 16:18:30 +0200
-Message-Id: <1434637116-17124-4-git-send-email-heiko@sntech.de>
-In-Reply-To: <1434637116-17124-1-git-send-email-heiko@sntech.de>
-References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
+References: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
+Date: Mon, 15 Jun 2015 18:15:04 +0200
+Message-ID: <CAMuHMdXntR6c4-uUNGVGx7D7941e8hvnmtVBvDu2+iUsNHQ=Qw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/14] ARM: shmobile: Add CPG Clock Domains
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Magnus Damm <magnus.damm@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-clk@vger.kernel.org,
+	Linux PM list <linux-pm@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The macros calculate the correct offset from the id in the parameter.
-If this parameter does not consist of a single number, the calculation
-will return wrong registers in the best case or create unaligned accesses
-in the worst case. So protect the calculations against such values.
+On Thu, May 28, 2015 at 8:53 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>         Hi all,
+>
+> This patch series adds Clock Domain support to the Clock Pulse Generator
+> (CPG) Module Stop (MSTP) Clocks driver using the generic PM Domain, to
+> be used on shmobile SoCs without device power domains (R-Car Gen1 and
+> Gen2, RZ).  This allows to power-manage the module clocks of SoC devices
+> that are part of the CPG Clock Domain using Runtime PM, or for system
+> suspend/resume, similar to SoCs with device power domains (SH-Mobile and
+> R-Mobile).
+>
+> SoC devices that are part of the CPG Clock Domain and can be
+> power-managed through an MSTP clock are tagged in DT with a proper
+> "power-domains" property. This applies to most on-SoC devices, which
+> have a one-to-one mapping from SoC device to DT device node.
+> Notable exceptions are "display" and "sound" device nodes, which
+> represent multiple SoC devices, each having their own MSTP clocks. Hence
+> drivers for such devices still have to manage their (multiple module)
+> clocks themselves.
+>
+> The (MSTP) clock to use for power-management is found by scanning for
+> clocks that are compatible with "renesas,cpg-mstp-clocks".
+> Before, the "first" clock tied to each device (con_id NULL) was used,
+> being a bit ad-hoc. It was suggested to use the "fck" clock instead,
+> but this may conflict with DT bindings for devices we don't control
+> (e.g. GIC-400 plans to mandate "clk" for the clk-name of its single
+> clock). Looking for real MSTP clocks avoids this problem.
+>
+> Logically, the CPG Clock Domain operates on the SoC CPG/MSTP block.
+> As there's no single device node in DT representing this block (there
+> are separate device nodes for the CPG and for the individual MSTP
+> clocks), I bound the logic to the CPG device node.
+> Perhaps this is something we should change for future SoCs?
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/rockchip/clk.h | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Inside Renesas, we've been discussing this face-to-face, but haven't
+reached a conclusion yet.
 
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 6b09267..92edb5f 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -31,22 +31,22 @@
- 		((val) << (shift) | (mask) << ((shift) + 16))
- 
- /* register positions shared by RK2928, RK3066 and RK3188 */
--#define RK2928_PLL_CON(x)		(x * 0x4)
-+#define RK2928_PLL_CON(x)		((x) * 0x4)
- #define RK2928_MODE_CON		0x40
--#define RK2928_CLKSEL_CON(x)	(x * 0x4 + 0x44)
--#define RK2928_CLKGATE_CON(x)	(x * 0x4 + 0xd0)
-+#define RK2928_CLKSEL_CON(x)	((x) * 0x4 + 0x44)
-+#define RK2928_CLKGATE_CON(x)	((x) * 0x4 + 0xd0)
- #define RK2928_GLB_SRST_FST		0x100
- #define RK2928_GLB_SRST_SND		0x104
--#define RK2928_SOFTRST_CON(x)	(x * 0x4 + 0x110)
-+#define RK2928_SOFTRST_CON(x)	((x) * 0x4 + 0x110)
- #define RK2928_MISC_CON		0x134
- 
- #define RK3288_PLL_CON(x)		RK2928_PLL_CON(x)
- #define RK3288_MODE_CON			0x50
--#define RK3288_CLKSEL_CON(x)		(x * 0x4 + 0x60)
--#define RK3288_CLKGATE_CON(x)		(x * 0x4 + 0x160)
-+#define RK3288_CLKSEL_CON(x)		((x) * 0x4 + 0x60)
-+#define RK3288_CLKGATE_CON(x)		((x) * 0x4 + 0x160)
- #define RK3288_GLB_SRST_FST		0x1b0
- #define RK3288_GLB_SRST_SND		0x1b4
--#define RK3288_SOFTRST_CON(x)		(x * 0x4 + 0x1b8)
-+#define RK3288_SOFTRST_CON(x)		((x) * 0x4 + 0x1b8)
- #define RK3288_MISC_CON			0x1e8
- #define RK3288_SDMMC_CON0		0x200
- #define RK3288_SDMMC_CON1		0x204
-@@ -67,7 +67,7 @@ enum rockchip_pll_type {
- 	.nr = _nr,				\
- 	.nf = _nf,				\
- 	.no = _no,				\
--	.bwadj = (_nf >> 1),			\
-+	.bwadj = ((_nf) >> 1),			\
- }
- 
- #define RK3066_PLL_RATE_BWADJ(_rate, _nr, _nf, _no, _bw)	\
--- 
-2.1.4
+In Linux terminology, "PM domain" is a higher-level abstraction than
+just (hardware) "power domain" (sometimes called "power area").
+A "PM domain" is any collection of devices that are power-managed
+similarly. As such it covers not only hardware power domains, but also
+clock domains, and even firmware controlled devices (e.g. as used by the
+Linux ACPI subsystem).
 
+I find it a bit unfortunate this was not reflected in the DT bindings
+for Generic PM domains, which use "power-domains" properties, making
+believe people this is about hardware power domains only.
+
+One other point of confusion is that there are multiple kernel
+subsystems that can (or seem to be able to) be used for the same
+purpose. Both regulators and power domains are used to "control power".
+The same is true for clocks vs. clock domains.
+My point of view is that the regulator and clock subsystems are more
+about the properties of regulators (voltage, current) resp. clocks
+(frequencies), while power/clock domains are about being active or
+inactive.
+
+On Renesas SoCs (SH/R-Mobile, R-Car, RZ), the MSTP (Module Standby and
+Software Reset) block is very intimately tied to the CPG (Clock Pulse
+Generator) block.
+
+The MSTP block provides two functions:
+  1. Module Standby: "Clock supply to specified modules is stopped by
+     setting the module stop control register bits."
+     However, the clock supply to a module is not stopped until all CPUs
+     in the SoC agree.  Indeed, there are separate MSTP registers for
+     application (Cortex-A) and real-time (SH and/or Cortex-R) cores.
+  2. Reset control. to perform a software reset of a specific module.
+
+Given the second function, perhaps the MSTP bits shouldn't have been
+moduled as clocks, but it made sense at the time of introduction, and
+IMHO it still does.
+
+However, due to the module standby function, all connected devices are
+grouped into a collection of devices that are power-managed similarly,
+by controlling the clock supply to the individual modules. So this
+warrants the use of a PM domain.
+
+Alternative solutions that have been proposed are:
+
+  1. | Explicit opt-in in drivers (from Laurent)
+     | As the driver knows best which clock it wants to manage, the
+     | driver could tell runtime PM if/when which clock to use.
+
+     My rebuttal here is twofold:
+       - Does the driver know best? It may know it may need to enable a
+         clock. But the clock may be optional: on some SoCs, the same IP
+         core may be present without the Module Standby feature (e.g.
+         the GPIO blocks on R-Car Gen1 are not documented to have MSTP
+         bits, while they do on R-Car Gen2). Why would the driver have
+         to care?
+
+         The hardware documentation clearly states the purpose of the
+         MSTP clocks: when a module is not in use, its module clock can
+         be stopped to reduce power consumption.  All of this should be
+         described in DT. We already have the clocks in DT. If a module
+         has an MSTP clock, it means the module can be put in standby
+         mode. This is the same for all modules, hence for all drivers.
+
+       - The idea is to reduce the amount of boilerplate code, not to
+         increase it. The more code we can move into platform code, the
+         less drivers have to care.
+
+         This is the real power behind the abstraction of runtime PM.
+         The driver only has to tell runtime PM when it wants to "use"
+         the hardware module, using pm_runtime_{get_sync,put}().
+         It doesn't have to know this involves enabling clocks and/or
+         power domains, or parent devices. All of this is taken care of
+         by a small piece of platform code, and the generic code.
+         As not all drivers are runtime PM-aware yet, calls to
+         pm_runtime_*() functions may have to be added, though. But
+         that's it.
+
+     Side note: Laurent has been mostly involved with multimedia devices.
+     And let display and sound be the two exceptions where there's no
+     one-to-one mapping from SoC devices to DT device nodes...
+     Hence the multimedia drivers would have to manage the (multiple)
+     module clocks anyway.
+
+     Perhaps the display and sound bindings can be reworked, to better
+     describe the hardware structure, and expose a one-to-one mapping
+     between MSTP clocks and hardware modules, too?
+
+  2. | Handling MSTP clocks automatically in a similar way that the current
+     | code handles the first clock, without requiring usage of a
+     | power-domain property in DT (from Magnus)
+     | As there are already "clocks = <...>" links from device nodes to MSTP
+     | clocks in DT, we can just scan for those, without requiring
+     | (superfluous) "power-domains = <...>" properties in DT.
+
+     Indeed, given the presence of a link to an MSTP clock in a device
+     node, we know the module can be put in standby mode.
+     But without the standard "power-domains" property, we would need
+     our own specialized code to scan all nodes for MSTP clocks (through
+     a platform_bus notifier again?), and add the corresponding devices
+     to the clock domain.  Hence the "power-domains" properties allow to
+     use the generic code, and thus share more code with other SoCs.
+     In addition, a "power-domains" property gives a strong clue to
+     people not familiar with Renesas SoCs and their MSTP clocks.
+
+Thanks for your comments/suggestions/supports/flames/...!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
