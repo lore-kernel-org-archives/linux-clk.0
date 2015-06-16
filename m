@@ -1,454 +1,70 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 13/25] clk: tegra: pll: Add specialized logic for T210
-Date: Thu, 18 Jun 2015 17:28:28 -0400
-Message-ID: <1434662920-21469-14-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+ Gregory CLEMENT <gregory.clement@free-electrons.com>,
+ Jason Cooper <jason@lakedaemon.net>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Andrew Lunn <andrew@lunn.ch>, Mike Turquette <mturquette@gmail.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: [PATCH v2] clk: mvebu: flag the crypto clk as CLK_IGNORE_UNUSED
+Date: Tue, 16 Jun 2015 17:56:19 +0200
+Message-Id: <1434470179-20835-1-git-send-email-boris.brezillon@free-electrons.com>
+Cc: Lior Amsalem <alior@marvell.com>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Tawfik Bayouk <tawfik@marvell.com>, Kevin Hilman <khilman@kernel.org>,
+ stable@vger.kernel.org, Eran Ben-Avi <benavi@marvell.com>,
+ Nadav Haklai <nadavh@marvell.com>, linux-arm-kernel@lists.infradead.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tegra210 SoC's, the logic to enable several of the plls is different
-from previous generations. Therefore, add registration functions specific
-to Tegra210 which will handle them appropriately.
+The crypto SRAM, used by the armada 370 cpuidle code to workaround a bug
+in the BootROM code, requires the crypto clk to be up and running.
+Flag the crypto clk as IGNORE_UNUSED until we add the proper
+infrastructure to define the crypto SRAM in the DT and reference the crypto
+clk in this SRAM node.
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Reported-by: Kevin Hilman <khilman@linaro.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Tested-by: Kevin Hilman <khilman@linaro.org>
+Fixes: 29e623475c50267ee3aaa49ebb6cbe107bce8d2a ("clk: mvebu: add
+missing CESA gate clk").
+Cc: <stable@vger.kernel.org> #4.1
 ---
-v6:
-  - Removed setting up hw control for SATA PLL/XUSB
+Changes since v1:
+- add the Reported-by tag
+- add the missing trailing ','
 
-v5:
-  - Removed unused variables.
+ drivers/clk/mvebu/armada-370.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v4:
-  - Fixed plle_tegra210_is_enabled callback typos
-
-v2:
-  - Fixed plle logic. PLLE on Tegra210 has had its enable bit moved, so
-    we can't use the default _clk_pll_enable/disable routines. Instead,
-    manually set/clear the correct bit for PLLE within its functions.
-
- drivers/clk/tegra/clk-pll.c |  324 ++++++++++++++++++++++++++++++++++++++++++-
- drivers/clk/tegra/clk.h     |   24 ++++
- 2 files changed, 346 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index ff67f6d77ca9..e63f16268c16 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -65,6 +65,7 @@
- #define PLLE_BASE_DIVN_WIDTH 8
- #define PLLE_BASE_DIVM_SHIFT 0
- #define PLLE_BASE_DIVM_WIDTH 8
-+#define PLLE_BASE_ENABLE BIT(31)
- 
- #define PLLE_MISC_SETUP_BASE_SHIFT 16
- #define PLLE_MISC_SETUP_BASE_MASK (0xffff << PLLE_MISC_SETUP_BASE_SHIFT)
-@@ -102,6 +103,7 @@
- #define PLLE_AUX_SEQ_ENABLE	BIT(24)
- #define PLLE_AUX_SEQ_START_STATE BIT(25)
- #define PLLE_AUX_PLLRE_SEL	BIT(28)
-+#define PLLE_AUX_SS_SEQ_INCLUDE	BIT(31)
- 
- #define XUSBIO_PLL_CFG0		0x51c
- #define XUSBIO_PLL_CFG0_PADPLL_RESET_SWCTL	BIT(0)
-@@ -911,7 +913,8 @@ const struct clk_ops tegra_clk_plle_ops = {
- 
- #if defined(CONFIG_ARCH_TEGRA_114_SOC) || \
- 	defined(CONFIG_ARCH_TEGRA_124_SOC) || \
--	defined(CONFIG_ARCH_TEGRA_132_SOC)
-+	defined(CONFIG_ARCH_TEGRA_132_SOC) || \
-+	defined(CONFIG_ARCH_TEGRA_210_SOC)
- 
- static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
- 			   unsigned long parent_rate)
-@@ -1546,7 +1549,8 @@ struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
- 
- #if defined(CONFIG_ARCH_TEGRA_114_SOC) || \
- 	defined(CONFIG_ARCH_TEGRA_124_SOC) || \
--	defined(CONFIG_ARCH_TEGRA_132_SOC)
-+	defined(CONFIG_ARCH_TEGRA_132_SOC) || \
-+	defined(CONFIG_ARCH_TEGRA_210_SOC)
- static const struct clk_ops tegra_clk_pllxc_ops = {
- 	.is_enabled = clk_pll_is_enabled,
- 	.enable = clk_pll_enable,
-@@ -1916,3 +1920,319 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
- 	return clk;
- }
- #endif
-+
-+#if defined(CONFIG_ARCH_TEGRA_210_SOC)
-+static int clk_plle_tegra210_enable(struct clk_hw *hw)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	struct tegra_clk_pll_freq_table sel;
-+	u32 val;
-+	int ret;
-+	unsigned long flags = 0;
-+	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
-+
-+	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
-+		return -EINVAL;
-+
-+	if (pll->lock)
-+		spin_lock_irqsave(pll->lock, flags);
-+
-+	val = pll_readl_base(pll);
-+	val &= ~BIT(30); /* Disable lock override */
-+	pll_writel_base(val, pll);
-+
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	val |= PLLE_AUX_ENABLE_SWCTL;
-+	val &= ~PLLE_AUX_SEQ_ENABLE;
-+	pll_writel(val, pll->params->aux_reg, pll);
-+	udelay(1);
-+
-+	val = pll_readl_misc(pll);
-+	val |= PLLE_MISC_LOCK_ENABLE;
-+	val |= PLLE_MISC_IDDQ_SW_CTRL;
-+	val &= ~PLLE_MISC_IDDQ_SW_VALUE;
-+	val |= PLLE_MISC_PLLE_PTS;
-+	val |= PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK;
-+	pll_writel_misc(val, pll);
-+	udelay(5);
-+
-+	val = pll_readl(PLLE_SS_CTRL, pll);
-+	val |= PLLE_SS_DISABLE;
-+	pll_writel(val, PLLE_SS_CTRL, pll);
-+
-+	val = pll_readl_base(pll);
-+	val &= ~(divp_mask_shifted(pll) | divn_mask_shifted(pll) |
-+		 divm_mask_shifted(pll));
-+	val &= ~(PLLE_BASE_DIVCML_MASK << PLLE_BASE_DIVCML_SHIFT);
-+	val |= sel.m << divm_shift(pll);
-+	val |= sel.n << divn_shift(pll);
-+	val |= sel.cpcon << PLLE_BASE_DIVCML_SHIFT;
-+	pll_writel_base(val, pll);
-+	udelay(1);
-+
-+	val = pll_readl_base(pll);
-+	val |= PLLE_BASE_ENABLE;
-+	pll_writel_base(val, pll);
-+
-+	ret = clk_pll_wait_for_lock(pll);
-+
-+	if (ret < 0)
-+		goto out;
-+
-+	val = pll_readl(PLLE_SS_CTRL, pll);
-+	val &= ~(PLLE_SS_CNTL_CENTER | PLLE_SS_CNTL_INVERT);
-+	val &= ~PLLE_SS_COEFFICIENTS_MASK;
-+	val |= PLLE_SS_COEFFICIENTS_VAL;
-+	pll_writel(val, PLLE_SS_CTRL, pll);
-+	val &= ~(PLLE_SS_CNTL_SSC_BYP | PLLE_SS_CNTL_BYPASS_SS);
-+	pll_writel(val, PLLE_SS_CTRL, pll);
-+	udelay(1);
-+	val &= ~PLLE_SS_CNTL_INTERP_RESET;
-+	pll_writel(val, PLLE_SS_CTRL, pll);
-+	udelay(1);
-+
-+	val = pll_readl_misc(pll);
-+	val &= ~PLLE_MISC_IDDQ_SW_CTRL;
-+	pll_writel_misc(val, pll);
-+
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	val |= (PLLE_AUX_USE_LOCKDET | PLLE_AUX_SS_SEQ_INCLUDE);
-+	val &= ~(PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL);
-+	pll_writel(val, pll->params->aux_reg, pll);
-+	udelay(1);
-+	val |= PLLE_AUX_SEQ_ENABLE;
-+	pll_writel(val, pll->params->aux_reg, pll);
-+
-+out:
-+	if (pll->lock)
-+		spin_unlock_irqrestore(pll->lock, flags);
-+
-+	return ret;
-+}
-+
-+static void clk_plle_tegra210_disable(struct clk_hw *hw)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	unsigned long flags = 0;
-+	u32 val;
-+
-+	if (pll->lock)
-+		spin_lock_irqsave(pll->lock, flags);
-+
-+	val = pll_readl_base(pll);
-+	val &= ~PLLE_BASE_ENABLE;
-+	pll_writel_base(val, pll);
-+
-+	val = pll_readl_misc(pll);
-+	val |= PLLE_MISC_IDDQ_SW_CTRL | PLLE_MISC_IDDQ_SW_VALUE;
-+	pll_writel_misc(val, pll);
-+	udelay(1);
-+
-+	if (pll->lock)
-+		spin_unlock_irqrestore(pll->lock, flags);
-+}
-+
-+static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	u32 val;
-+
-+	val = pll_readl_base(pll);
-+
-+	return val & PLLE_BASE_ENABLE ? 1 : 0;
-+}
-+
-+static const struct clk_ops tegra_clk_plle_tegra210_ops = {
-+	.is_enabled =  clk_plle_tegra210_is_enabled,
-+	.enable = clk_plle_tegra210_enable,
-+	.disable = clk_plle_tegra210_disable,
-+	.recalc_rate = clk_pll_recalc_rate,
-+};
-+
-+struct clk *tegra_clk_register_plle_tegra210(const char *name,
-+				const char *parent_name,
-+				void __iomem *clk_base, unsigned long flags,
-+				struct tegra_clk_pll_params *pll_params,
-+				spinlock_t *lock)
-+{
-+	struct tegra_clk_pll *pll;
-+	struct clk *clk;
-+	u32 val, val_aux;
-+
-+	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
-+	if (IS_ERR(pll))
-+		return ERR_CAST(pll);
-+
-+	/* ensure parent is set to pll_re_vco */
-+
-+	val = pll_readl_base(pll);
-+	val_aux = pll_readl(pll_params->aux_reg, pll);
-+
-+	if (val & PLLE_BASE_ENABLE) {
-+		if ((val_aux & PLLE_AUX_PLLRE_SEL) ||
-+			(val_aux & PLLE_AUX_PLLP_SEL))
-+			WARN(1, "pll_e enabled with unsupported parent %s\n",
-+			  (val_aux & PLLE_AUX_PLLP_SEL) ? "pllp_out0" :
-+					"pll_re_vco");
-+	} else {
-+		val_aux &= ~(PLLE_AUX_PLLRE_SEL | PLLE_AUX_PLLP_SEL);
-+		pll_writel(val_aux, pll_params->aux_reg, pll);
-+	}
-+
-+	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
-+				      &tegra_clk_plle_tegra210_ops);
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
-+}
-+
-+struct clk *tegra_clk_register_pllc_tegra210(const char *name,
-+			const char *parent_name, void __iomem *clk_base,
-+			void __iomem *pmc, unsigned long flags,
-+			struct tegra_clk_pll_params *pll_params,
-+			spinlock_t *lock)
-+{
-+	struct clk *parent, *clk;
-+	struct pdiv_map *p_tohw = pll_params->pdiv_tohw;
-+	struct tegra_clk_pll *pll;
-+	unsigned long parent_rate;
-+
-+	if (!p_tohw)
-+		return ERR_PTR(-EINVAL);
-+
-+	parent = __clk_lookup(parent_name);
-+	if (!parent) {
-+		WARN(1, "parent clk %s of %s must be registered first\n",
-+			name, parent_name);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	parent_rate = __clk_get_rate(parent);
-+
-+	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
-+
-+	pll_params->flags |= TEGRA_PLL_BYPASS;
-+	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-+	if (IS_ERR(pll))
-+		return ERR_CAST(pll);
-+
-+	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
-+				      &tegra_clk_pll_ops);
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
-+}
-+
-+struct clk *tegra_clk_register_pllxc_tegra210(const char *name,
-+			const char *parent_name, void __iomem *clk_base,
-+			void __iomem *pmc, unsigned long flags,
-+			struct tegra_clk_pll_params *pll_params,
-+			spinlock_t *lock)
-+{
-+	struct tegra_clk_pll *pll;
-+	struct clk *clk, *parent;
-+	unsigned long parent_rate;
-+
-+	parent = __clk_lookup(parent_name);
-+	if (!parent) {
-+		WARN(1, "parent clk %s of %s must be registered first\n",
-+			name, parent_name);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	if (!pll_params->pdiv_tohw)
-+		return ERR_PTR(-EINVAL);
-+
-+	parent_rate = __clk_get_rate(parent);
-+
-+	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
-+
-+	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-+	if (IS_ERR(pll))
-+		return ERR_CAST(pll);
-+
-+	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
-+				      &tegra_clk_pll_ops);
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
-+}
-+
-+struct clk *tegra_clk_register_pllss_tegra210(const char *name,
-+				const char *parent_name, void __iomem *clk_base,
-+				unsigned long flags,
-+				struct tegra_clk_pll_params *pll_params,
-+				spinlock_t *lock)
-+{
-+	struct tegra_clk_pll *pll;
-+	struct clk *clk, *parent;
-+	struct tegra_clk_pll_freq_table cfg;
-+	unsigned long parent_rate;
-+	u32 val;
-+	int i;
-+
-+	if (!pll_params->div_nmp)
-+		return ERR_PTR(-EINVAL);
-+
-+	parent = __clk_lookup(parent_name);
-+	if (!parent) {
-+		WARN(1, "parent clk %s of %s must be registered first\n",
-+			name, parent_name);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
-+	if (IS_ERR(pll))
-+		return ERR_CAST(pll);
-+
-+	val = pll_readl_base(pll);
-+	val &= ~PLLSS_REF_SRC_SEL_MASK;
-+	pll_writel_base(val, pll);
-+
-+	parent_rate = __clk_get_rate(parent);
-+
-+	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
-+
-+	/* initialize PLL to minimum rate */
-+
-+	cfg.m = _pll_fixed_mdiv(pll_params, parent_rate);
-+	cfg.n = cfg.m * pll_params->vco_min / parent_rate;
-+
-+	for (i = 0; pll_params->pdiv_tohw[i].pdiv; i++)
-+		;
-+	if (!i) {
-+		kfree(pll);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	cfg.p = pll_params->pdiv_tohw[i-1].hw_val;
-+
-+	_update_pll_mnp(pll, &cfg);
-+
-+	pll_writel_misc(PLLSS_MISC_DEFAULT, pll);
-+
-+	val = pll_readl_base(pll);
-+	if (val & PLL_BASE_ENABLE) {
-+		if (val & BIT(pll_params->iddq_bit_idx)) {
-+			WARN(1, "%s is on but IDDQ set\n", name);
-+			kfree(pll);
-+			return ERR_PTR(-EINVAL);
-+		}
-+	} else
-+		val |= BIT(pll_params->iddq_bit_idx);
-+
-+	val &= ~PLLSS_LOCK_OVERRIDE;
-+	pll_writel_base(val, pll);
-+
-+	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
-+					&tegra_clk_pll_ops);
-+
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
-+}
-+#endif
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index b5131e4e4c75..211c3463deba 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -334,6 +334,12 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 			    struct tegra_clk_pll_params *pll_params,
- 			    spinlock_t *lock);
- 
-+struct clk *tegra_clk_register_pllxc_tegra210(const char *name,
-+			const char *parent_name, void __iomem *clk_base,
-+			void __iomem *pmc, unsigned long flags,
-+			struct tegra_clk_pll_params *pll_params,
-+			spinlock_t *lock);
-+
- struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
- 			   void __iomem *clk_base, void __iomem *pmc,
- 			   unsigned long flags,
-@@ -358,6 +364,24 @@ struct clk *tegra_clk_register_plle_tegra114(const char *name,
- 				struct tegra_clk_pll_params *pll_params,
- 				spinlock_t *lock);
- 
-+struct clk *tegra_clk_register_plle_tegra210(const char *name,
-+				const char *parent_name,
-+				void __iomem *clk_base, unsigned long flags,
-+				struct tegra_clk_pll_params *pll_params,
-+				spinlock_t *lock);
-+
-+struct clk *tegra_clk_register_pllc_tegra210(const char *name,
-+				const char *parent_name, void __iomem *clk_base,
-+				void __iomem *pmc, unsigned long flags,
-+				struct tegra_clk_pll_params *pll_params,
-+				spinlock_t *lock);
-+
-+struct clk *tegra_clk_register_pllss_tegra210(const char *name,
-+				const char *parent_name, void __iomem *clk_base,
-+				unsigned long flags,
-+				struct tegra_clk_pll_params *pll_params,
-+				spinlock_t *lock);
-+
- struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
- 			   void __iomem *clk_base, unsigned long flags,
- 			   struct tegra_clk_pll_params *pll_params,
+diff --git a/drivers/clk/mvebu/armada-370.c b/drivers/clk/mvebu/armada-370.c
+index c19fd77..2c7c108 100644
+--- a/drivers/clk/mvebu/armada-370.c
++++ b/drivers/clk/mvebu/armada-370.c
+@@ -163,7 +163,7 @@ static const struct clk_gating_soc_desc a370_gating_desc[] __initconst = {
+ 	{ "pex1", "pex1_en", 9, 0 },
+ 	{ "sata0", NULL, 15, 0 },
+ 	{ "sdio", NULL, 17, 0 },
+-	{ "crypto", NULL, 23, 0 },
++	{ "crypto", NULL, 23, CLK_IGNORE_UNUSED },
+ 	{ "tdm", NULL, 25, 0 },
+ 	{ "ddr", NULL, 28, CLK_IGNORE_UNUSED },
+ 	{ "sata1", NULL, 30, 0 },
 -- 
-1.7.9.5
+1.9.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
