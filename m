@@ -1,86 +1,74 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
-	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
-Date: Wed, 10 Jun 2015 09:30:32 +0200
-Message-ID: <CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
-Subject: Re: [PATCH 00/21] On-demand device registration
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Grant Likely <grant.likely@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-	"open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-	dmaengine@vger.kernel.org, Alexander Holler <holler@ahsoftware.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: mturquette@gmail.com, sboyd@codeaurora.org, matthias.bgg@gmail.com
+Cc: henryc.chen@mediatek.com, s.hauer@pengutronix.de,
+	jamesjj.liao@mediatek.com, p.zabel@pengutronix.de,
+	manabian@gmail.com, heiko@sntech.de, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v4 3/3] clk: mediatek: Use regmap clk-mux for mt8135
+Date: Tue, 16 Jun 2015 16:23:35 +0200
+Message-Id: <1434464615-9080-4-git-send-email-matthias.bgg@gmail.com>
+In-Reply-To: <1434464615-9080-1-git-send-email-matthias.bgg@gmail.com>
+References: <1434464615-9080-1-git-send-email-matthias.bgg@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 2, 2015 at 12:14 PM, Tomeu Vizoso
-<tomeu.vizoso@collabora.com> wrote:
-> On 2 June 2015 at 10:48, Linus Walleij <linus.walleij@linaro.org> wrote:
+The pericfg controller is used by various device drivers, so that it
+is implemented via a regmap. In the actual clk implementation for
+mt8135, some clk-mux use the traditional register approach which
+acceses the register via iomem.
+This patch changes the use from iomem to the needed regmap.
 
->> This is what systemd is doing in userspace for starting services:
->> ask for your dependencies and wait for them if they are not
->> there. So drivers ask for resources and wait for them. It also
->> needs to be abstract, so for example we need to be able to
->> hang on regulator_get() until the driver is up and providing that
->> regulator, and as long as everything is in slowpath it should
->> be OK. (And vice versa mutatis mutandis for clk, gpio, pin
->> control, interrupts (!) and DMA channels for example.)
->
-> I understood above that you propose probing devices in order, but now
-> you mention that resource getters would block until the dependency is
-> fulfilled which confuses me because if we are probing in order then
-> all dependencies would be fulfilled before the device in question gets
-> probed.
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+---
+ drivers/clk/mediatek/clk-mt8135.c | 21 +++++++--------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
 
-Sorry, the problem space is a bit convoluted so the answers
-get a bit convoluted. Maybe I'm thinking aloud and altering the course
-of my thoughts as I type...
+diff --git a/drivers/clk/mediatek/clk-mt8135.c b/drivers/clk/mediatek/clk-mt8135.c
+index 08b4b84..c28a9d4 100644
+--- a/drivers/clk/mediatek/clk-mt8135.c
++++ b/drivers/clk/mediatek/clk-mt8135.c
+@@ -513,11 +513,11 @@ static const char * const uart_ck_sel_parents[] __initconst = {
+ 	"uart_sel",
+ };
+ 
+-static const struct mtk_composite peri_clks[] __initconst = {
+-	MUX(CLK_PERI_UART0_SEL, "uart0_ck_sel", uart_ck_sel_parents, 0x40c, 0, 1),
+-	MUX(CLK_PERI_UART1_SEL, "uart1_ck_sel", uart_ck_sel_parents, 0x40c, 1, 1),
+-	MUX(CLK_PERI_UART2_SEL, "uart2_ck_sel", uart_ck_sel_parents, 0x40c, 2, 1),
+-	MUX(CLK_PERI_UART3_SEL, "uart3_ck_sel", uart_ck_sel_parents, 0x40c, 3, 1),
++static const struct mtk_regm_mux peri_clks[] __initconst = {
++	MUX_REGMAP(CLK_PERI_UART0_SEL, "uart0_ck_sel", uart_ck_sel_parents, 0x40c, 0, 1),
++	MUX_REGMAP(CLK_PERI_UART1_SEL, "uart1_ck_sel", uart_ck_sel_parents, 0x40c, 1, 1),
++	MUX_REGMAP(CLK_PERI_UART2_SEL, "uart2_ck_sel", uart_ck_sel_parents, 0x40c, 2, 1),
++	MUX_REGMAP(CLK_PERI_UART3_SEL, "uart3_ck_sel", uart_ck_sel_parents, 0x40c, 3, 1),
+ };
+ 
+ static void __init mtk_topckgen_init(struct device_node *node)
+@@ -573,20 +573,13 @@ static void __init mtk_pericfg_init(struct device_node *node)
+ {
+ 	struct clk_onecell_data *clk_data;
+ 	int r;
+-	void __iomem *base;
+-
+-	base = of_iomap(node, 0);
+-	if (!base) {
+-		pr_err("%s(): ioremap failed\n", __func__);
+-		return;
+-	}
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_PERI_NR_CLK);
+ 
+ 	mtk_clk_register_gates(node, peri_gates, ARRAY_SIZE(peri_gates),
+ 						clk_data);
+-	mtk_clk_register_composites(peri_clks, ARRAY_SIZE(peri_clks), base,
+-			&mt8135_clk_lock, clk_data);
++	mtk_clk_regm_register_mux(node, peri_clks, ARRAY_SIZE(peri_clks),
++			clk_data);
+ 
+ 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+ 	if (r)
+-- 
+1.9.1
 
-I guess there can be explicit dependencies for resources like this
-patch does, but another way would be for all resource fetch functions
-to be instrumented, so that you do not block until you try to take
-a resource that is not yet there, e.g.:
-
-regulator_get(...) -> not available, so:
-- identify target regulator provider - this will need instrumentation
-- probe it
-
-It then turns out the regulator driver is on the i2c bus, so we
-need to probe the i2c driver:
-- identify target i2c host for the regulator driver - this will need
-  instrumentation
-- probe the i2c host driver
-
-i2c host comes out, probes the regulator driver, regulator driver
-probes and then the regulator_get() call returns.
-
-This requires instrumentation on anything providing a resource
-to another driver like those I mentioned and a lot of overhead
-infrastructure, but I think it's the right approach. However I don't
-know if I would ever be able to pull that off myself, I know talk
-is cheap and I should show the code instead.
-
-Deepest respect for your efforts!
-
-Yours,
-Linus Walleij
