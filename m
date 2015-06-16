@@ -1,102 +1,113 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH v2 2/5] clk: qcom: Add MSM8916 iommu clocks
-Date: Fri,  5 Jun 2015 15:40:33 +0300
-Message-Id: <1433508036-28644-3-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1433508036-28644-1-git-send-email-georgi.djakov@linaro.org>
-References: <1433508036-28644-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: mturquette@gmail.com, sboyd@codeaurora.org, matthias.bgg@gmail.com
+Cc: henryc.chen@mediatek.com, s.hauer@pengutronix.de,
+	jamesjj.liao@mediatek.com, p.zabel@pengutronix.de,
+	manabian@gmail.com, heiko@sntech.de, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v4 2/3] clk: mediatek: Add support for clk-mux using regmap
+Date: Tue, 16 Jun 2015 16:23:34 +0200
+Message-Id: <1434464615-9080-3-git-send-email-matthias.bgg@gmail.com>
+In-Reply-To: <1434464615-9080-1-git-send-email-matthias.bgg@gmail.com>
+References: <1434464615-9080-1-git-send-email-matthias.bgg@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the msm8916 TCU clocks that are needed for IOMMU.
+This patches adds support for the mediatek clocks to be able to register
+and use a clk-mux wich relies on regmap.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
 ---
- drivers/clk/qcom/gcc-msm8916.c               |   48 ++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8916.h |    3 ++
- 2 files changed, 51 insertions(+)
+ drivers/clk/mediatek/clk-mtk.c | 37 +++++++++++++++++++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.h | 26 ++++++++++++++++++++++++++
+ 2 files changed, 63 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index c66f7bc2ae87..d493e9f3a2eb 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -2358,6 +2358,51 @@ static struct clk_branch gcc_sdcc2_apps_clk = {
- 	},
- };
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 18444ae..cf953a8 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -111,6 +111,43 @@ int mtk_clk_register_gates(struct device_node *node, const struct mtk_gate *clks
+ 	return 0;
+ }
  
-+static struct clk_rcg2 bimc_ddr_clk_src = {
-+	.cmd_rcgr = 0x32004,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_bimc_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "bimc_ddr_clk_src",
-+		.parent_names = gcc_xo_gpll0_bimc,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ro_ops,
-+		.flags = CLK_GET_RATE_NOCACHE,
-+	},
++int mtk_clk_regm_register_mux(struct device_node *node,
++		const struct mtk_regm_mux *clks, int num,
++		struct clk_onecell_data *clk_data)
++{
++	int i;
++	struct clk *clk;
++	struct regmap *regmap;
++
++	if (!clk_data)
++		return -ENOMEM;
++
++	regmap = syscon_node_to_regmap(node);
++	if (IS_ERR(regmap)) {
++		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
++				PTR_ERR(regmap));
++		return PTR_ERR(regmap);
++	}
++
++	for (i = 0; i < num; i++) {
++		const struct mtk_regm_mux *mux = &clks[i];
++
++		clk = clk_regm_register_mux(NULL, mux->name, mux->parent_names,
++					mux->num_parents, 0, regmap,
++					mux->mux_offset, mux->mux_shift,
++					mux->mux_width, mux->flags, NULL);
++		if (IS_ERR(clk)) {
++			pr_err("Failed to register clk mux %s: %ld\n",
++					mux->name, PTR_ERR(clk));
++			continue;
++		}
++
++		clk_data->clks[mux->id] = clk;
++	}
++
++	return 0;
++}
++
+ struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
+ 		void __iomem *base, spinlock_t *lock)
+ {
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index 9dda9d8..6fe85ca 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -156,6 +156,32 @@ void __init mtk_clk_register_plls(struct device_node *node,
+ 		const struct mtk_pll_data *plls, int num_plls,
+ 		struct clk_onecell_data *clk_data);
+ 
++struct mtk_regm_mux {
++	int id;
++	const char *name;
++	const char * const *parent_names;
++	u8 num_parents;
++	unsigned flags;
++	uint32_t mux_offset;
++	uint32_t mux_shift;
++	uint32_t mux_width;
 +};
 +
-+static struct clk_branch gcc_apss_tcu_clk = {
-+	.halt_reg = 0x12018,
-+	.clkr = {
-+		.enable_reg = 0x4500c,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_apss_tcu_clk",
-+			.parent_names = (const char *[]){
-+				"bimc_ddr_clk_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
++int __init mtk_clk_regm_register_mux(struct device_node *node,
++		const struct mtk_regm_mux *clks, int num,
++		struct clk_onecell_data *clk_data);
 +
-+static struct clk_branch gcc_gfx_tcu_clk = {
-+	.halt_reg = 0x12020,
-+	.clkr = {
-+		.enable_reg = 0x4500c,
-+		.enable_mask = BIT(2),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_gfx_tcu_clk",
-+			.parent_names = (const char *[]){
-+				"bimc_ddr_clk_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
++#define MUX_REGMAP(_id, _name, _parents, _offset, _shift, _width) {	\
++		.id = _id,						\
++		.name = _name,						\
++		.parent_names = _parents,				\
++		.num_parents = ARRAY_SIZE(_parents),			\
++		.flags = CLK_SET_RATE_PARENT,				\
++		.mux_offset = _offset,					\
++		.mux_shift = _shift,					\
++		.mux_width = _width,					\
++	}
 +
- static struct clk_branch gcc_gtcu_ahb_clk = {
- 	.halt_reg = 0x12044,
- 	.clkr = {
-@@ -2701,6 +2746,9 @@ static struct clk_regmap *gcc_msm8916_clocks[] = {
- 	[GCC_VENUS0_AHB_CLK] = &gcc_venus0_ahb_clk.clkr,
- 	[GCC_VENUS0_AXI_CLK] = &gcc_venus0_axi_clk.clkr,
- 	[GCC_VENUS0_VCODEC0_CLK] = &gcc_venus0_vcodec0_clk.clkr,
-+	[BIMC_DDR_CLK_SRC] = &bimc_ddr_clk_src.clkr,
-+	[GCC_APSS_TCU_CLK] = &gcc_apss_tcu_clk.clkr,
-+	[GCC_GFX_TCU_CLK] = &gcc_gfx_tcu_clk.clkr,
- };
- 
- static const struct qcom_reset_map gcc_msm8916_resets[] = {
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8916.h b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-index e430f644dd6c..53b39293d759 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8916.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-@@ -152,5 +152,8 @@
- #define GCC_VENUS0_AHB_CLK			135
- #define GCC_VENUS0_AXI_CLK			136
- #define GCC_VENUS0_VCODEC0_CLK			137
-+#define BIMC_DDR_CLK_SRC			138
-+#define GCC_APSS_TCU_CLK			139
-+#define GCC_GFX_TCU_CLK				140
- 
- #endif
+ #ifdef CONFIG_RESET_CONTROLLER
+ void mtk_register_reset_controller(struct device_node *np,
+ 			unsigned int num_regs, int regofs);
+-- 
+1.9.1
+
