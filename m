@@ -1,42 +1,30 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 22 Jun 2015 15:47:54 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Kamil Lulko <rev13@wp.pl>, Andreas Farber <afaerber@suse.de>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	patches@linaro.org, linaro-kernel@lists.linaro.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: Document the STM32F4 clock bindings
-Message-ID: <20150622224754.GG22132@codeaurora.org>
-References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
- <1433966978-24422-1-git-send-email-daniel.thompson@linaro.org>
- <1433966978-24422-2-git-send-email-daniel.thompson@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1433966978-24422-2-git-send-email-daniel.thompson@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <pebolle@tiscali.nl>
+Message-ID: <1434438845.2069.46.camel@x220>
+Subject: Re: [PATCH 4/5] clk: qcom: Add A53 clock driver
+From: Paul Bolle <pebolle@tiscali.nl>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, mturquette@linaro.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Date: Tue, 16 Jun 2015 09:14:05 +0200
+In-Reply-To: <557EF0EB.9040403@linaro.org>
+References: <1434098519-26406-1-git-send-email-georgi.djakov@linaro.org>
+		 <1434098519-26406-5-git-send-email-georgi.djakov@linaro.org>
+	 <1434376712.2069.5.camel@x220> <557EF0EB.9040403@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/10, Daniel Thompson wrote:
-> This adds documentation of device tree bindings for the clock related
-> portions of the STM32 RCC block.
-> 
-> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-> ---
+On Mon, 2015-06-15 at 18:36 +0300, Georgi Djakov wrote:
+> In general, it is not expected to unload it as this is for the
+> main CPU clock, but i will add a module_exit() call to make it
+> correct.
 
-Applied to clk-next
+It's not incorrect to not have a module_exit() call. But not having it
+means you can't (easily and cleanly) unload this module. Which is
+uncommon enough for me to inquire whether that was by design.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
---
-To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-Please read the FAQ at  http://www.tux.org/lkml/
+Thanks,
+
+
+Paul Bolle
