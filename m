@@ -1,106 +1,104 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Paul Osmialowski <pawelo@king.net.pl>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Sergei Poselenov <sposelenov@emcraft.com>, Paul Bolle <pebolle@tiscali.nl>, Jingchang Lu <jingchang.lu@freescale.com>, Yuri Tikhonov <yur@emcraft.com>, Rob Herring <r.herring@freescale.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>, Alexander Potashev <aspotashev@emcraft.com>, Frank Li <Frank.Li@freescale.com>, Thomas Gleixner <tglx@linutronix.de>, Anson Huang <b20788@freescale.com>
-Subject: Re: [PATCH v2 4/9] arm: twr-k70f120m: timer driver for Kinetis SoC
-Date: Tue, 30 Jun 2015 22:43:52 +0200
-Message-ID: <2939807.q7WvOoYzDX@wuerfel>
-In-Reply-To: <1435667250-28299-5-git-send-email-pawelo@king.net.pl>
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <1435667250-28299-5-git-send-email-pawelo@king.net.pl>
+Return-Path: <manabian@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1433864283-25490-2-git-send-email-matthias.bgg@gmail.com>
+References: <1433864283-25490-1-git-send-email-matthias.bgg@gmail.com>
+	<1433864283-25490-2-git-send-email-matthias.bgg@gmail.com>
+Date: Tue, 16 Jun 2015 12:23:28 +0200
+Message-ID: <CAGhQ9VwDQZ77OCOKKd4nFipqRhfa3GVWVMeWC3eiEoh2x9E_CA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] clk: Add regmap support
+From: Joachim  Eastwood <manabian@gmail.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, s.hauer@pengutronix.de,
+	jamesjj.liao@mediatek.com, henryc.chen@mediatek.com,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday 30 June 2015 14:27:25 Paul Osmialowski wrote:
+On 9 June 2015 at 17:38, Matthias Brugger <matthias.bgg@gmail.com> wrote:
+> Some devices like SoCs from Mediatek need to use the clock
+> through a regmap interface.
+> This patch adds regmap support for the simple multiplexer clock,
+> the divider clock and the clock gate code.
+>
+> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+> ---
+>  drivers/clk/Makefile         |   1 +
+>  drivers/clk/clk-divider.c    |  71 ++++++++++++++++++++------
+>  drivers/clk/clk-gate.c       |  60 +++++++++++++++++-----
+>  drivers/clk/clk-io.c         |  62 +++++++++++++++++++++++
+>  drivers/clk/clk-io.h         |  13 +++++
+>  drivers/clk/clk-mux.c        |  94 +++++++++++++++++++++++++++++------
+>  include/linux/clk-provider.h | 115 +++++++++++++++++++++++++++++++++++++++++--
+>  7 files changed, 373 insertions(+), 43 deletions(-)
+>  create mode 100644 drivers/clk/clk-io.c
+>  create mode 100644 drivers/clk/clk-io.h
+[...]
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 2e5df06..22acfd5 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -14,6 +14,7 @@
+>  #include <linux/clk.h>
+>  #include <linux/io.h>
+>  #include <linux/of.h>
+> +#include <linux/regmap.h>
+>
+>  #ifdef CONFIG_COMMON_CLK
+>
+> @@ -31,6 +32,7 @@
+>  #define CLK_GET_RATE_NOCACHE   BIT(6) /* do not use the cached clk rate */
+>  #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
+>  #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
+> +#define CLK_USE_REGMAP BIT(9) /* clock uses regmap to access its registers */
+>
+>  struct clk_hw;
+>  struct clk_core;
+> @@ -271,6 +273,8 @@ void of_fixed_clk_setup(struct device_node *np);
+>   *
+>   * @hw:                handle between common and hardware-specific interfaces
+>   * @reg:       register controlling gate
+> + * @regmap:    regmap used to control the gate
+> + * @offset:    offset inside the regmap
+>   * @bit_idx:   single bit controlling gate
+>   * @flags:     hardware-specific flags
+>   * @lock:      register lock
+> @@ -288,7 +292,11 @@ void of_fixed_clk_setup(struct device_node *np);
+>   */
+>  struct clk_gate {
+>         struct clk_hw hw;
+> -       void __iomem    *reg;
+> +       union {
+> +               void __iomem    *reg;
+> +               struct regmap   *regmap;
+> +       };
+> +       u32             offset;
 
-> +Example:
-> +
-> +aliases {
-> +	pit0 = &pit0;
-> +	pit1 = &pit1;
-> +	pit2 = &pit2;
-> +	pit3 = &pit3;
-> +};
-> +
-> +pit@40037000 {
-> +	compatible = "fsl,kinetis-pit-timer";
-> +	reg = <0x40037000 0x100>;
-> +	clocks = <&mcg_pclk_gate 5 23>;
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +	ranges;
+Maybe using a named union here would be nice here. Something like:
+union clk_io {
+               void __iomem    *reg;
+               struct regmap   *regmap;
+};
 
-All the subnodes seem to fall inside of the device's own register
-area, so I think it would be nicer to use a specific 'ranges'
-property that only translates the registers in question.
+And you could use this in the clk_gate, clk_mux, and clk_div
+structures as well as your clk_io_* functions.
+Having both void __iomem *reg and struct regmap *regmap as function
+parameters seems a bit awkward to me.
 
->  / {
-> +	aliases {
-> +		pit0 = &pit0;
-> +		pit1 = &pit1;
-> +		pit2 = &pit2;
-> +		pit3 = &pit3;
-> +	};
-> +
->  	soc {
-> +		pit@40037000 {
-> +			compatible = "fsl,kinetis-pit-timer";
-> +			reg = <0x40037000 0x100>;
-> +			clocks = <&mcg_pclk_gate 5 23>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges;
-> +
-> +			pit0: timer@40037100 {
-> +				reg = <0x40037100 0x10>;
-> +				interrupts = <68>;
-> +				status = "disabled";
-> +			};
+Or maybe even as a structure:
+struct clk_io {
+               union {
+                              void __iomem    *reg;
+                              struct regmap   *regmap;
+               };
+               u32 offset;
+}
 
-I don't think it's necessary to have both an alias
-and a label here. What do you use the alias for?
-
-> +
-> +#define KINETIS_PITMCR_PTR(base, reg) \
-> +	(&(((struct kinetis_pit_mcr_regs *)(base))->reg))
-> +#define KINETIS_PITMCR_RD(be, base, reg) \
-> +		((be) ? ioread32be(KINETIS_PITMCR_PTR(base, reg)) \
-> +		      : ioread32(KINETIS_PITMCR_PTR(base, reg)))
-> +#define KINETIS_PITMCR_WR(be, base, reg, val) do { \
-> +		if (be) \
-> +			iowrite32be((val), KINETIS_PITMCR_PTR(base, reg)); \
-> +		else \
-> +			iowrite32((val), KINETIS_PITMCR_PTR(base, reg)); \
-> +	} while (0)
-
-These should really be written as inline functions. Can you
-explain why you need to deal with a big-endian version of this
-hardware? Can you configure the endianess of this register block
-and just set it to one of the two at boot time?
-
-> +#define KINETIS_PIT_PTR(base, reg) \
-> +	(&(((struct kinetis_pit_channel_regs *)(base))->reg))
-> +#define KINETIS_PIT_RD(be, base, reg) \
-> +		((be) ? ioread32be(KINETIS_PIT_PTR(base, reg)) \
-> +		      : ioread32(KINETIS_PIT_PTR(base, reg)))
-> +#define KINETIS_PIT_WR(be, base, reg, val) do { \
-> +		if (be) \
-> +			iowrite32be((val), KINETIS_PIT_PTR(base, reg)); \
-> +		else \
-> +			iowrite32((val), KINETIS_PIT_PTR(base, reg)); \
-> +	} while (0)
-> +#define KINETIS_PIT_SET(be, base, reg, mask) \
-> +		KINETIS_PIT_WR(be, base, reg, \
-> +			KINETIS_PIT_RD(be, base, reg) | (mask))
-> +#define KINETIS_PIT_RESET(be, base, reg, mask) \
-> +		KINETIS_PIT_WR(be, base, reg, \
-> +			KINETIS_PIT_RD(be, base, reg) & (~(mask)))
+What do you think?
 
 
-Functions again. Also, just pass a pointer to your own data structure
-into the function, instead of the 'be' and 'base' values.
+I would also like to see this land so thanks for doing this work Matthias.
+Hope some clk maintainer will have the time to look at it soon also.
 
-The 'set' and 'reset' functions look like they need a spinlock
-to avoid races.
-
-	Arnd
+regards,
+Joachim Eastwood
