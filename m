@@ -1,220 +1,69 @@
-Return-Path: <pawelo@king.net.pl>
-Date: Wed, 24 Jun 2015 06:42:58 +0200 (CEST)
-From: Paul Osmialowski <pawelo@king.net.pl>
-To: Arnd Bergmann <arnd@arndb.de>
-cc: Paul Osmialowski <pawelo@king.net.pl>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anson Huang <b20788@freescale.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Frank Li <Frank.Li@freescale.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>,
-        Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nathan Lynch <nathan_lynch@mentor.com>,
-        Nicolas Pitre <nico@linaro.org>,
-        Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
-        Olof Johansson <olof@lixom.net>, Paul Bolle <pebolle@tiscali.nl>,
-        Rob Herring <r.herring@freescale.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Stefan Agner <stefan@agner.ch>, Stephen Boyd <sboyd@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        Yuri Tikhonov <yur@emcraft.com>,
-        Sergei Poselenov <sposelenov@emcraft.com>,
-        Dmitry Cherkassov <d_cherkasov@emcraft.com>,
-        Alexander Potashev <aspotashev@emcraft.com>
-Subject: Re: [PATCH 5/9] arm: twr-k70f120m: basic support for Kinetis
- TWR-K70F120M
-In-Reply-To: <3935594.UmXqE2ND2k@wuerfel>
-Message-ID: <alpine.LNX.2.00.1506240627020.24366@localhost.localdomain>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <1435094387-20146-6-git-send-email-pawelo@king.net.pl> <3935594.UmXqE2ND2k@wuerfel>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 0/9] clk: rockchip: add support for the clock-tree of the rk3368
+Date: Thu, 18 Jun 2015 16:18:27 +0200
+Message-Id: <1434637116-17124-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Arnd,
+This series adds support for the clock controller of rk3368
+ARM64 socs.
 
-Thanks for all of your input. Your comments will all be considered during 
-my works on the second iteration of this patchset.
+The first 3 patches are fixes for small issues I found while
+building the clocktree. The first one fixes an issue if a rmii
+phy is used on the rk3288 and the later two do not harm the
+functionality of the older socs, as there is no camera interface
+driver in them anyway and the issue with the defines only surfaced
+on the rk3368.
 
-On Wed, 24 Jun 2015, Arnd Bergmann wrote:
+Patch 4 then adds a new definition for a branch-type.
 
-> On Tuesday 23 June 2015 23:19:43 Paul Osmialowski wrote:
->> @@ -1740,7 +1752,7 @@ source "mm/Kconfig"
->>  config FORCE_MAX_ZONEORDER
->>  	int "Maximum zone order" if ARCH_SHMOBILE_LEGACY
->>  	range 11 64 if ARCH_SHMOBILE_LEGACY
->> -	default "12" if SOC_AM33XX
->> +	default "12" if SOC_AM33XX || ARCH_KINETIS
->>  	default "9" if SA1111 || ARCH_EFM32
->>  	default "11"
->>  	help
->
-> Put it in the defconfig?
->
->> +#
->> +
->> +obj-$(CONFIG_MACH_KINETIS)	+= kinetis_platform.o
->
-> just use
->
-> obj-y	+= kinetis.o
->
->> diff --git a/arch/arm/mach-kinetis/include/mach/idle.h b/arch/arm/mach-kinetis/include/mach/idle.h
->> new file mode 100644
->> index 0000000..0aafefd
->> --- /dev/null
->> +++ b/arch/arm/mach-kinetis/include/mach/idle.h
->
-> No mach/*.h files please.
->
->> +/*
->> + * This Kinetis port assumes that the CPU works in little-endian mode.
->> + * Switching to big-endian will require different bit offsets in peripheral
->> + * devices' registers. Also, some bit groups may lay on byte edges, so issue
->> + * with big-endian cannot be fixed only by defining bit offsets differently
->> + * for the big-endian mode.
->> + */
->> +#ifndef __LITTLE_ENDIAN
->> +#error This Kinetis port assumes that the CPU works in little-endian mode
->> +#endif
->
-> Fix the drivers instead?
->
->> +/*
->> + * Peripheral memory map
->> + */
->> +#define KINETIS_AIPS0PERIPH_BASE	0x40000000
->> +#define KINETIS_AIPS1PERIPH_BASE	0x40080000
->
-> Move it into DT
->
->> +/*
->> + * System Integration Module (SIM) register map
->> + *
->> + * This map actually covers two hardware modules:
->> + *     1. SIM low-power logic, at 0x40047000
->> + *     2. System integration module (SIM), at 0x40048000
->> + */
->> +struct kinetis_sim_regs {
->> +	u32 sopt1;	/* System Options Register 1 */
->> +	u32 rsv0[1024];
->> +	u32 sopt2;	/* System Options Register 2 */
->> +	u32 rsv1;
->> +	u32 sopt4;	/* System Options Register 4 */
->> +	u32 sopt5;	/* System Options Register 5 */
->> +	u32 sopt6;	/* System Options Register 6 */
->> +	u32 sopt7;	/* System Options Register 7 */
->> +	u32 rsv2[2];
->> +	u32 sdid;	/* System Device Identification Register */
->> +	u32 scgc[KINETIS_SIM_CG_NUMREGS];	/* Clock Gating Regs 1...7 */
->> +	u32 clkdiv1;	/* System Clock Divider Register 1 */
->> +	u32 clkdiv2;	/* System Clock Divider Register 2 */
->> +	u32 fcfg1;	/* Flash Configuration Register 1 */
->> +	u32 fcfg2;	/* Flash Configuration Register 2 */
->> +	u32 uidh;	/* Unique Identification Register High */
->> +	u32 uidmh;	/* Unique Identification Register Mid-High */
->> +	u32 uidml;	/* Unique Identification Register Mid Low */
->> +	u32 uidl;	/* Unique Identification Register Low */
->> +	u32 clkdiv3;	/* System Clock Divider Register 3 */
->> +	u32 clkdiv4;	/* System Clock Divider Register 4 */
->> +	u32 mcr;	/* Misc Control Register */
->> +};
->
-> Move it into the driver that uses these.
->
->> +/*
->> + * SIM registers base
->> + */
->> +#define KINETIS_SIM_BASE		(KINETIS_AIPS0PERIPH_BASE + 0x00047000)
->> +#define KINETIS_SIM_PTR(reg) \
->> +	(&(((struct kinetis_sim_regs *)(KINETIS_SIM_BASE))->reg))
->> +#define KINETIS_SIM_RD(reg) readl_relaxed(KINETIS_SIM_PTR(reg))
->> +#define KINETIS_SIM_WR(reg, val) writel_relaxed((val), KINETIS_SIM_PTR(reg))
->> +#define KINETIS_SIM_SET(reg, mask) \
->> +	KINETIS_SIM_WR(reg, (KINETIS_SIM_RD(reg)) | (mask))
->> +#define KINETIS_SIM_RESET(reg, mask) \
->> +	KINETIS_SIM_WR(reg, (KINETIS_SIM_RD(reg)) & (~(mask)))
->> +#define KINETIS_SIM_ISSET(reg, mask) \
->> +	(KINETIS_SIM_RD(reg) & (mask))
->> +
->> +/*
->> + * SIM registers
->> + */
->> +/*
->> + * System Options Register 2
->> + */
->> +/* USB HS clock source select */
->> +#define KINETIS_SIM_SOPT2_USBHSRC_BITS	2
->> +#define KINETIS_SIM_SOPT2_USBHSRC_MSK	(3 << KINETIS_SIM_SOPT2_USBHSRC_BITS)
->> +#define KINETIS_SIM_SOPT2_USBHSRC_PLL0	(1 << KINETIS_SIM_SOPT2_USBHSRC_BITS)
->> +#define KINETIS_SIM_SOPT2_USBHSRC_PLL1	(2 << KINETIS_SIM_SOPT2_USBHSRC_BITS)
->> +
->> +/* USB FS clock source select */
->> +#define KINETIS_SIM_SOPT2_USBFSRC_BITS	22
->> +#define KINETIS_SIM_SOPT2_USBFSRC_MSK	(3 << KINETIS_SIM_SOPT2_USBFSRC_BITS)
->> +#define KINETIS_SIM_SOPT2_USBFSRC_PLL0	(1 << KINETIS_SIM_SOPT2_USBFSRC_BITS)
->> +#define KINETIS_SIM_SOPT2_USBFSRC_PLL1	(2 << KINETIS_SIM_SOPT2_USBFSRC_BITS)
->> +#define KINETIS_SIM_SOPT2_USBF_CLKSEL	(1 << 18)
->> +
->
-> remove all these here.
->
->> +/*
->> + * Map required regions.
->> + * This being the no-MMU Linux, I am not mapping anything
->> + * since all I/O registers are available at their physical addresses.
->> + */
->> +static void __init kinetis_map_io(void)
->> +{
->> +}
->
-> Not needed, remove.
->
->> +/*
->> + * Freescale Kinetis platform initialization
->> + */
->> +static void __init kinetis_init(void)
->> +{
->> +	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
->> +}
->
-> same here.
->
->> diff --git a/arch/arm/tools/mach-types b/arch/arm/tools/mach-types
->> index 2ed1b8a..1d05516 100644
->> --- a/arch/arm/tools/mach-types
->> +++ b/arch/arm/tools/mach-types
->> @@ -554,6 +554,7 @@ smdk4412		MACH_SMDK4412		SMDK4412		3765
->>  marzen			MACH_MARZEN		MARZEN			3790
->>  krome			MACH_KROME		KROME			3797
->>  armadillo800eva		MACH_ARMADILLO800EVA	ARMADILLO800EVA		3863
->> +kinetis			MACH_KINETIS		KINETIS			3896
->>  mx53_umobo		MACH_MX53_UMOBO		MX53_UMOBO		3927
->>  mt4			MACH_MT4		MT4			3981
->>  u8520			MACH_U8520		U8520			3990
->
-> Unused, please remove.
->
-> 	Arnd
->
+Some clocks (mainly the hsadc and camera interfaces) have a phase
+inverter connected to the clock that makes it possible to adjust
+the clock phase by 180 degrees. Patches 5 and 6 finally add
+support for these inverters and add the currently missing
+definitions to the already present clock drivers.
+
+Patches 7, 8 and 9 finally add the shared dt-binding header and
+the rk3368 clock tree itself. The cpu-clocks in there where
+tested sucessfully with the big_little_cpufreq driver.
+
+changes since v1:
+- add CLK_SET_RATE_PARENT to sclk_mac to provide sane rates
+  when using a rmii phy with soc-side clock generation.
+  Both as fix for the 3288 and in the newly added rk3368.
+
+
+Heiko Stuebner (9):
+  clk: rockchip: rk3288: add CLK_SET_RATE_PARENT to sclk_mac
+  clk: rockchip: fix faulty vip parent name on rk3288
+  clk: rockchip: protect register macros against multipart values
+  clk: rockchip: add COMPOSITE_NOGATE_DIVTBL variant
+  clk: rockchip: add support for phase inverters
+  clk: rockchip: define the inverters of rk3066/rk3188 and rk3288
+  dt-bindings: add documentation of rk3668 clock controller
+  clk: rockchip: add dt-binding header for rk3368
+  clk: rockchip: add rk3368 clock controller
+
+ .../bindings/clock/rockchip,rk3368-cru.txt         |  61 ++
+ drivers/clk/rockchip/Makefile                      |   2 +
+ drivers/clk/rockchip/clk-inverter.c                | 126 +++
+ drivers/clk/rockchip/clk-rk3188.c                  |   9 +-
+ drivers/clk/rockchip/clk-rk3288.c                  |  13 +-
+ drivers/clk/rockchip/clk-rk3368.c                  | 881 +++++++++++++++++++++
+ drivers/clk/rockchip/clk.c                         |   7 +
+ drivers/clk/rockchip/clk.h                         |  72 +-
+ include/dt-bindings/clock/rk3368-cru.h             | 379 +++++++++
+ 9 files changed, 1537 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
+ create mode 100644 drivers/clk/rockchip/clk-inverter.c
+ create mode 100644 drivers/clk/rockchip/clk-rk3368.c
+ create mode 100644 include/dt-bindings/clock/rk3368-cru.h
+
+-- 
+2.1.4
