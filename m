@@ -1,142 +1,96 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
- Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
- Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
- Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>,
- Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH v2 2/4] ARM: dts: Exynos5250: add CPU OPP and regulator supply
- property
-Date: Mon, 29 Jun 2015 19:26:10 +0200
-Message-id: <1435598772-21708-3-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1435598772-21708-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1435598772-21708-1-git-send-email-b.zolnierkie@samsung.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v6 11/25] clk: tegra: pll: Add code to handle if resets are supported by PLL
+Date: Thu, 18 Jun 2015 17:28:26 -0400
+Message-ID: <1434662920-21469-12-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thomas Abraham <thomas.ab@samsung.com>
+From: Bill Huang <bilhuang@nvidia.com>
 
-For Exynos5250 platforms, add CPU operating points and CPU
-regulator supply properties for migrating from Exynos specific
-cpufreq driver to using generic cpufreq driver.
+If a PLL has a reset_reg specified, properly handle that in the
+enable/disable logic paths.
 
-Changes by Bartlomiej:
-- split Exynos5250 support from the original patch
-- added CPU regulator supply property for Google Spring board
-
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Andreas Faerber <afaerber@suse.de>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- arch/arm/boot/dts/exynos5250-arndale.dts  |  4 ++++
- arch/arm/boot/dts/exynos5250-smdk5250.dts |  4 ++++
- arch/arm/boot/dts/exynos5250-snow.dts     |  4 ++++
- arch/arm/boot/dts/exynos5250-spring.dts   |  4 ++++
- arch/arm/boot/dts/exynos5250.dtsi         | 22 ++++++++++++++++++++++
- 5 files changed, 38 insertions(+)
+v5:
+  - Added kerneldoc for new members
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 7e728a1..c64cec3 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -560,3 +560,7 @@
- 	status = "okay";
- 	samsung,exynos-sataphy-i2c-phandle = <&sata_phy_i2c>;
- };
-+
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
-+};
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 4fe186d..4b9f9ce 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -414,6 +414,10 @@
- 	};
- };
+v2:
+  - Moved reset logic to _clk_pll_enable/disable as well
+
+ drivers/clk/tegra/clk-pll.c |   12 ++++++++++++
+ drivers/clk/tegra/clk.h     |    4 ++++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 95ad0669291f..54ebab2b85e5 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -311,6 +311,12 @@ static void _clk_pll_enable(struct clk_hw *hw)
+ 		udelay(2);
+ 	}
  
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
-+};
++	if (pll->params->reset_reg) {
++		val = pll_readl(pll->params->reset_reg, pll);
++		val &= ~BIT(pll->params->reset_bit_idx);
++		pll_writel(val, pll->params->reset_reg, pll);
++	}
 +
- &pinctrl_0 {
- 	max77686_irq: max77686-irq {
- 		samsung,pins = "gpx3-2";
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index b7f4122..b23deda 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -277,6 +277,10 @@
- 	vdd_pll-supply = <&ldo8_reg>;
- };
+ 	clk_pll_enable_lock(pll);
  
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
-+};
-+
- &i2c_0 {
- 	status = "okay";
- 	samsung,i2c-sda-delay = <100>;
-diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
-index d03f9b8..38b54d9 100644
---- a/arch/arm/boot/dts/exynos5250-spring.dts
-+++ b/arch/arm/boot/dts/exynos5250-spring.dts
-@@ -99,6 +99,10 @@
- 	vdd_pll-supply = <&ldo8_reg>;
- };
+ 	val = pll_readl_base(pll);
+@@ -343,6 +349,12 @@ static void _clk_pll_disable(struct clk_hw *hw)
+ 		writel_relaxed(val, pll->pmc + PMC_PLLP_WB0_OVERRIDE);
+ 	}
  
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
-+};
++	if (pll->params->reset_reg) {
++		val = pll_readl(pll->params->reset_reg, pll);
++		val |= BIT(pll->params->reset_bit_idx);
++		pll_writel(val, pll->params->reset_reg, pll);
++	}
 +
- &i2c_0 {
- 	status = "okay";
- 	samsung,i2c-sda-delay = <100>;
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index bf9bee6..0c7ef12 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -63,6 +63,28 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
- 			clock-frequency = <1700000000>;
-+			clocks = <&clock CLK_ARM_CLK>;
-+			clock-names = "cpu";
-+			clock-latency = <140000>;
-+
-+			operating-points = <
-+				1700000 1300000
-+				1600000 1250000
-+				1500000 1225000
-+				1400000 1200000
-+				1300000 1150000
-+				1200000 1125000
-+				1100000 1100000
-+				1000000 1075000
-+				 900000 1050000
-+				 800000 1025000
-+				 700000 1012500
-+				 600000 1000000
-+				 500000  975000
-+				 400000  950000
-+				 300000  937500
-+				 200000  925000
-+			>;
- 			cooling-min-level = <15>;
- 			cooling-max-level = <9>;
- 			#cooling-cells = <2>; /* min followed by max */
+ 	if (pll->params->iddq_reg) {
+ 		val = pll_readl(pll->params->iddq_reg, pll);
+ 		val |= BIT(pll->params->iddq_bit_idx);
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index dfbce9300547..b5131e4e4c75 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -176,6 +176,8 @@ struct div_nmp {
+  * @lock_enable_bit_idx:	Bit index to enable PLL lock
+  * @iddq_reg:			PLL IDDQ register offset
+  * @iddq_bit_idx:		Bit index to enable PLL IDDQ
++ * @reset_reg:			Register offset of where RESET bit is
++ * @reset_bit_idx:		Shift of reset bit in reset_reg
+  * @sdm_din_reg:		Register offset where SDM settings are
+  * @sdm_din_mask:		Mask of SDM divider bits
+  * @sdm_ctrl_reg:		Register offset where SDM enable is
+@@ -239,6 +241,8 @@ struct tegra_clk_pll_params {
+ 	u32		lock_enable_bit_idx;
+ 	u32		iddq_reg;
+ 	u32		iddq_bit_idx;
++	u32		reset_reg;
++	u32		reset_bit_idx;
+ 	u32		sdm_din_reg;
+ 	u32		sdm_din_mask;
+ 	u32		sdm_ctrl_reg;
 -- 
-1.9.1
+1.7.9.5
+
