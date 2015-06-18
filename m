@@ -1,69 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:20128 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751398AbbF3AWM (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2015 20:22:12 -0400
-Message-id: <5591E12E.7060007@samsung.com>
-Date: Tue, 30 Jun 2015 09:22:06 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] cpufreq: exynos: remove Exynos5250 specific cpufreq
- driver support
-References: <1435598772-21708-1-git-send-email-b.zolnierkie@samsung.com>
- <1435598772-21708-5-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1435598772-21708-5-git-send-email-b.zolnierkie@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Keerthy <j-keerthy@ti.com>
+To: <linux-omap@vger.kernel.org>
+CC: <galak@codeaurora.org>, <tony@atomide.com>, <t-kristo@ti.com>,
+	<pawel.moll@arm.com>, <linux-kernel@vger.kernel.org>,
+	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>,
+	<j-keerthy@ti.com>
+Subject: [PATCH 1/2] CLK: TI: AM437X: add dpll_clksel_mac_clk node
+Date: Thu, 18 Jun 2015 13:31:12 +0530
+Message-ID: <1434614473-8500-2-git-send-email-j-keerthy@ti.com>
+In-Reply-To: <1434614473-8500-1-git-send-email-j-keerthy@ti.com>
+References: <1434614473-8500-1-git-send-email-j-keerthy@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30.06.2015 02:26, Bartlomiej Zolnierkiewicz wrote:
-> Exynos5250 based platforms have switched over to use generic
-> cpufreq driver for cpufreq functionality. So the Exynos
-> specific cpufreq support for these platforms can be removed.
-> 
-> Based on the earlier work by Thomas Abraham.
-> 
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  drivers/cpufreq/Kconfig.arm          |  11 --
->  drivers/cpufreq/Makefile             |   1 -
->  drivers/cpufreq/exynos-cpufreq.c     |   3 -
->  drivers/cpufreq/exynos-cpufreq.h     |  17 ---
->  drivers/cpufreq/exynos5250-cpufreq.c | 210 -----------------------------------
->  5 files changed, 242 deletions(-)
->  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
+The patch adds the missing dpll_clksel_mac_clk clock node.
 
-Nice diff stat, I like it!
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
+ arch/arm/boot/dts/am43xx-clocks.dtsi | 9 +++++++++
+ drivers/clk/ti/clk-43xx.c            | 1 +
+ 2 files changed, 10 insertions(+)
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Few thoughts:
-1. Javier's email has changed, CC-ed the correct one. Can you update it
-in all patches (CC-tags)?
-
-2. It looks like the patchset should go through one tree so the
-Exynos5250 cpufreq support won't disappear, right?
-
-
-Best regards,
-Krzysztof
+diff --git a/arch/arm/boot/dts/am43xx-clocks.dtsi b/arch/arm/boot/dts/am43xx-clocks.dtsi
+index d0c0dfa..cc88728 100644
+--- a/arch/arm/boot/dts/am43xx-clocks.dtsi
++++ b/arch/arm/boot/dts/am43xx-clocks.dtsi
+@@ -486,6 +486,15 @@
+ 		reg = <0x4238>;
+ 	};
+ 
++	dpll_clksel_mac_clk: dpll_clksel_mac_clk {
++		#clock-cells = <0>;
++		compatible = "ti,divider-clock";
++		clocks = <&dpll_core_m5_ck>;
++		reg = <0x4234>;
++		ti,bit-shift = <2>;
++		ti,dividers = <2>, <5>;
++	};
++
+ 	clk_32k_mosc_ck: clk_32k_mosc_ck {
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
+index 3795fce..7549b87 100644
+--- a/drivers/clk/ti/clk-43xx.c
++++ b/drivers/clk/ti/clk-43xx.c
+@@ -71,6 +71,7 @@ static struct ti_dt_clk am43xx_clks[] = {
+ 	DT_CLK(NULL, "clk_24mhz", "clk_24mhz"),
+ 	DT_CLK(NULL, "cpsw_125mhz_gclk", "cpsw_125mhz_gclk"),
+ 	DT_CLK(NULL, "cpsw_cpts_rft_clk", "cpsw_cpts_rft_clk"),
++	DT_CLK(NULL, "dpll_clksel_mac_clk", "dpll_clksel_mac_clk"),
+ 	DT_CLK(NULL, "gpio0_dbclk_mux_ck", "gpio0_dbclk_mux_ck"),
+ 	DT_CLK(NULL, "gpio0_dbclk", "gpio0_dbclk"),
+ 	DT_CLK(NULL, "gpio1_dbclk", "gpio1_dbclk"),
+-- 
+1.9.1
 
