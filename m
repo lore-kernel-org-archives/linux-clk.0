@@ -1,33 +1,146 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1435314894.3761.88.camel@pengutronix.de>
-Subject: Re: [PATCH v2 1/2] ARM: dts: imx6qdl-sabresd: Allow HDMI and LVDS
- to work simultaneously
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Fabio Estevam <fabio.estevam@freescale.com>
-Cc: shawnguo@kernel.org, linux@arm.linux.org.uk, mturquette@baylibre.com,
- eric.nelson@boundarydevices.com, kernel@pengutronix.de,
- Ying.liu@freescale.com,  linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Date: Fri, 26 Jun 2015 12:34:54 +0200
-In-Reply-To: <1435241830-20187-1-git-send-email-fabio.estevam@freescale.com>
-References: <1435241830-20187-1-git-send-email-fabio.estevam@freescale.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v6 14/25] clk: tegra: pll: Add support for PLLMB for T210
+Date: Thu, 18 Jun 2015 17:28:29 -0400
+Message-ID: <1434662920-21469-15-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, den 25.06.2015, 11:17 -0300 schrieb Fabio Estevam:
-> Currently it is not possible to have HDMI and LVDS working simultaneously,
-> because both ports try to use PLL5.
-> 
-> Move the LVDS clock parent to PLL3_USB_OTG, so that HDMI and LVDS can be
-> driven from independent sources.
-> 
-> With this change the LDB pixel clock goes to 68.57 MHz, which is still
-> within the valid range for the HSD100PXN1 LVDS panel.
-> 
-> Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
+Tegra210 SoC's have 2 PLLS for memory usage. Add plumbing to register
+and handle PLLMB.
 
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+PLLMB is used to allow switching between 2 PLLM's without having to use
+and intermediate backup PLL, as we need to lock the PLL before we can
+switch to it.
 
-regards
-Philipp
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+v3:
+  - Flushed out comment more.
+
+v2:
+  - Fixed commit description as suggested.
+
+ drivers/clk/tegra/clk-pll.c |   42 ++++++++++++++++++++++++++++++++++++++++--
+ drivers/clk/tegra/clk.h     |    9 +++++++++
+ 2 files changed, 49 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index e63f16268c16..1f70c356bdd7 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -562,7 +562,7 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
+ 	struct tegra_clk_pll_params *params = pll->params;
+ 	struct div_nmp *div_nmp = params->div_nmp;
+ 
+-	if ((params->flags & TEGRA_PLLM) &&
++	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
+ 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
+ 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
+ 		val = pll_override_readl(params->pmc_divp_reg, pll);
+@@ -599,7 +599,7 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
+ 	struct tegra_clk_pll_params *params = pll->params;
+ 	struct div_nmp *div_nmp = params->div_nmp;
+ 
+-	if ((params->flags & TEGRA_PLLM) &&
++	if ((params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
+ 		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
+ 			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
+ 		val = pll_override_readl(params->pmc_divp_reg, pll);
+@@ -2235,4 +2235,42 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
+ 
+ 	return clk;
+ }
++
++struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
++			  void __iomem *clk_base, void __iomem *pmc,
++			  unsigned long flags,
++			  struct tegra_clk_pll_params *pll_params,
++			  spinlock_t *lock)
++{
++	struct tegra_clk_pll *pll;
++	struct clk *clk, *parent;
++	unsigned long parent_rate;
++
++	if (!pll_params->pdiv_tohw)
++		return ERR_PTR(-EINVAL);
++
++	parent = __clk_lookup(parent_name);
++	if (!parent) {
++		WARN(1, "parent clk %s of %s must be registered first\n",
++			parent_name, name);
++		return ERR_PTR(-EINVAL);
++	}
++
++	parent_rate = __clk_get_rate(parent);
++
++	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
++
++	pll_params->flags |= TEGRA_PLL_BYPASS;
++	pll_params->flags |= TEGRA_PLLMB;
++	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
++	if (IS_ERR(pll))
++		return ERR_CAST(pll);
++
++	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
++				      &tegra_clk_pll_ops);
++	if (IS_ERR(clk))
++		kfree(pll);
++
++	return clk;
++}
+ #endif
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 211c3463deba..6170fcef7c33 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -225,6 +225,8 @@ struct div_nmp {
+  * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
+  * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
+  *     it may be more accurate (especially if SDM present)
++ * TEGRA_PLLMB - PLLMB has should be treated similar to PLLM. This
++ *     flag indicated that it is PLLMB.
+  */
+ struct tegra_clk_pll_params {
+ 	unsigned long	input_min;
+@@ -281,6 +283,7 @@ struct tegra_clk_pll_params {
+ #define TEGRA_PLL_BYPASS BIT(9)
+ #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
+ #define TEGRA_MDIV_NEW BIT(11)
++#define TEGRA_PLLMB BIT(12)
+ 
+ /**
+  * struct tegra_clk_pll - Tegra PLL clock
+@@ -387,6 +390,12 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+ 			   struct tegra_clk_pll_params *pll_params,
+ 			   spinlock_t *lock);
+ 
++struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
++			   void __iomem *clk_base, void __iomem *pmc,
++			   unsigned long flags,
++			   struct tegra_clk_pll_params *pll_params,
++			   spinlock_t *lock);
++
+ /**
+  * struct tegra_clk_pll_out - PLL divider down clock
+  *
+-- 
+1.7.9.5
