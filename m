@@ -1,104 +1,82 @@
-Return-Path: <dinguyen@opensource.altera.com>
-From: <dinguyen@opensource.altera.com>
-To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
-CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>
-Subject: [PATCH 5/6] clk: sunxi: make use of of_clk_parent_fill helper function
-Date: Wed, 10 Jun 2015 16:49:24 -0500
-Message-ID: <1433972965-24974-6-git-send-email-dinguyen@opensource.altera.com>
-In-Reply-To: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
-References: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v6 01/25] clk: tegra: Update struct tegra_clk_pll_params kerneldoc
+Date: Thu, 18 Jun 2015 17:28:16 -0400
+Message-ID: <1434662920-21469-2-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-Path: dinguyen@opensource.altera.com
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
+From: Thierry Reding <treding@nvidia.com>
 
-Use of_clk_parent_fill to fill in the parent clock names' array.
+Benson Leung pointed out that the kerneldoc for this structure has
+become stale. Update the field descriptions to match the structure
+content.
 
-Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: "Emilio López" <emilio@elopez.com.ar>
+Reported-by: Benson Leung <bleung@chromium.org>
+Acked-by: Rhyland Klein <rklein@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/sunxi/clk-a20-gmac.c    |  3 +--
- drivers/clk/sunxi/clk-factors.c     |  4 +---
- drivers/clk/sunxi/clk-sun6i-ar100.c |  3 +--
- drivers/clk/sunxi/clk-sunxi.c       | 10 ++--------
- 4 files changed, 5 insertions(+), 15 deletions(-)
+ drivers/clk/tegra/clk.h |   18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sunxi/clk-a20-gmac.c b/drivers/clk/sunxi/clk-a20-gmac.c
-index 0dcf4f2..a432edd 100644
---- a/drivers/clk/sunxi/clk-a20-gmac.c
-+++ b/drivers/clk/sunxi/clk-a20-gmac.c
-@@ -80,8 +80,7 @@ static void __init sun7i_a20_gmac_clk_setup(struct device_node *node)
- 		goto free_mux;
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 29799e7f567a..bdc661cb81f0 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -157,7 +157,7 @@ struct div_nmp {
+ };
  
- 	/* gmac clock requires exactly 2 parents */
--	parents[0] = of_clk_get_parent_name(node, 0);
--	parents[1] = of_clk_get_parent_name(node, 1);
-+	of_clk_parent_fill(node, parents, 2);
- 	if (!parents[0] || !parents[1])
- 		goto free_gate;
- 
-diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
-index 8c20190..2589457 100644
---- a/drivers/clk/sunxi/clk-factors.c
-+++ b/drivers/clk/sunxi/clk-factors.c
-@@ -174,9 +174,7 @@ struct clk *sunxi_factors_register(struct device_node *node,
- 	int i = 0;
- 
- 	/* if we have a mux, we will have >1 parents */
--	while (i < FACTORS_MAX_PARENTS &&
--	       (parents[i] = of_clk_get_parent_name(node, i)) != NULL)
--		i++;
-+	i = of_clk_parent_fill(node, parents, FACTORS_MAX_PARENTS);
- 
- 	/*
- 	 * some factor clocks, such as pll5 and pll6, may have multiple
-diff --git a/drivers/clk/sunxi/clk-sun6i-ar100.c b/drivers/clk/sunxi/clk-sun6i-ar100.c
-index 63cf149..6f229ff 100644
---- a/drivers/clk/sunxi/clk-sun6i-ar100.c
-+++ b/drivers/clk/sunxi/clk-sun6i-ar100.c
-@@ -195,8 +195,7 @@ static int sun6i_a31_ar100_clk_probe(struct platform_device *pdev)
- 	if (nparents > SUN6I_AR100_MAX_PARENTS)
- 		nparents = SUN6I_AR100_MAX_PARENTS;
- 
--	for (i = 0; i < nparents; i++)
--		parents[i] = of_clk_get_parent_name(np, i);
-+	of_clk_parent_fill(np, parents, nparents);
- 
- 	of_property_read_string(np, "clock-output-names", &clk_name);
- 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 7e1e2bd..ebea294 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -200,10 +200,7 @@ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
- 	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
- 
- 	/* we have a mux, we will have >1 parents */
--	while (i < SUN6I_AHB1_MAX_PARENTS &&
--	       (parents[i] = of_clk_get_parent_name(node, i)) != NULL)
--		i++;
--
-+	of_clk_parent_fill(node, parents, SUN6I_AHB1_MAX_PARENTS);
- 	of_property_read_string(node, "clock-output-names", &clk_name);
- 
- 	ahb1 = kzalloc(sizeof(struct sun6i_ahb1_clk), GFP_KERNEL);
-@@ -788,10 +785,7 @@ static void __init sunxi_mux_clk_setup(struct device_node *node,
- 
- 	reg = of_iomap(node, 0);
- 
--	while (i < SUNXI_MAX_PARENTS &&
--	       (parents[i] = of_clk_get_parent_name(node, i)) != NULL)
--		i++;
--
-+	of_clk_parent_fill(node, parents, SUNXI_MAX_PARENTS);
- 	of_property_read_string(node, "clock-output-names", &clk_name);
- 
- 	clk = clk_register_mux(NULL, clk_name, parents, i,
+ /**
+- * struct clk_pll_params - PLL parameters
++ * struct tegra_clk_pll_params - PLL parameters
+  *
+  * @input_min:			Minimum input frequency
+  * @input_max:			Maximum input frequency
+@@ -168,12 +168,24 @@ struct div_nmp {
+  * @base_reg:			PLL base reg offset
+  * @misc_reg:			PLL misc reg offset
+  * @lock_reg:			PLL lock reg offset
+- * @lock_bit_idx:		Bit index for PLL lock status
++ * @lock_mask:			Bitmask for PLL lock status
+  * @lock_enable_bit_idx:	Bit index to enable PLL lock
++ * @iddq_reg:			PLL IDDQ register offset
++ * @iddq_bit_idx:		Bit index to enable PLL IDDQ
++ * @aux_reg:			AUX register offset
++ * @dyn_ramp_reg:		Dynamic ramp control register offset
++ * @ext_misc_reg:		Miscellaneous control register offsets
++ * @pmc_divnm_reg:		n, m divider PMC override register offset (PLLM)
++ * @pmc_divp_reg:		p divider PMC override register offset (PLLM)
++ * @flags:			PLL flags
++ * @stepa_shift:		Dynamic ramp step A field shift
++ * @stepb_shift:		Dynamic ramp step B field shift
+  * @lock_delay:			Delay in us if PLL lock is not used
++ * @max_p:			maximum value for the p divider
++ * @pdiv_tohw:			mapping of p divider to register values
++ * @div_nmp:			offsets and widths on n, m and p fields
+  * @freq_table:			array of frequencies supported by PLL
+  * @fixed_rate:			PLL rate if it is fixed
+- * @flags:			PLL flags
+  *
+  * Flags:
+  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
 -- 
-2.2.1
+1.7.9.5
+
