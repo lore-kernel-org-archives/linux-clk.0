@@ -1,171 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 1 Jul 2015 08:54:56 +0200 (CEST)
-From: Paul Osmialowski <pawelo@king.net.pl>
-To: Arnd Bergmann <arnd@arndb.de>
-cc: linux-arm-kernel@lists.infradead.org,
-	Paul Osmialowski <pawelo@king.net.pl>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-	Nicolas Pitre <nicolas.pitre@linaro.org>,
-	Sergei Poselenov <sposelenov@emcraft.com>,
-	Paul Bolle <pebolle@tiscali.nl>,
-	Jingchang Lu <jingchang.lu@freescale.com>,
-	Yuri Tikhonov <yur@emcraft.com>,
-	Rob Herring <r.herring@freescale.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-	Alexander Potashev <aspotashev@emcraft.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Anson Huang <b20788@freescale.com>
-Subject: Re: [PATCH v2 7/9] arm: twr-k70f120m: use Freescale eDMA driver with
- Kinetis SoC
-In-Reply-To: <1650263.FfdEQKm1Bu@wuerfel>
-Message-ID: <alpine.LNX.2.00.1507010849390.8255@localhost.localdomain>
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <1435667250-28299-8-git-send-email-pawelo@king.net.pl> <1650263.FfdEQKm1Bu@wuerfel>
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v6 24/25] clk: tegra: read correct iddq register in PLL_SS registration
+Date: Thu, 18 Jun 2015 17:28:39 -0400
+Message-ID: <1434662920-21469-25-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="98048-2106302197-1435733717=:8255"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Bill Huang <bilhuang@nvidia.com>
 
---98048-2106302197-1435733717=:8255
-Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+This fixes bug in tegra_clk_register_pllss() which mistakenly assume the
+iddq register is the PLL base address.
 
-Hi Arnd,
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-Thanks for pointing this - dma-ranges seem to work properly. This makes 
-the patch much simpler. To be included to the next iteration.
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 932a18ce821f..82f04a60649c 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -1921,7 +1921,7 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+ 	struct clk *clk, *parent;
+ 	struct tegra_clk_pll_freq_table cfg;
+ 	unsigned long parent_rate;
+-	u32 val;
++	u32 val, val_iddq;
+ 	int i;
+ 
+ 	if (!pll_params->div_nmp)
+@@ -1968,14 +1968,17 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
+ 	pll_writel(PLLSS_CTRL1_DEFAULT, pll_params->ext_misc_reg[2], pll);
+ 
+ 	val = pll_readl_base(pll);
++	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+ 	if (val & PLL_BASE_ENABLE) {
+-		if (val & BIT(pll_params->iddq_bit_idx)) {
++		if (val_iddq & BIT(pll_params->iddq_bit_idx)) {
+ 			WARN(1, "%s is on but IDDQ set\n", name);
+ 			kfree(pll);
+ 			return ERR_PTR(-EINVAL);
+ 		}
+-	} else
+-		val |= BIT(pll_params->iddq_bit_idx);
++	} else {
++		val_iddq |= BIT(pll_params->iddq_bit_idx);
++		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
++	}
+ 
+ 	val &= ~PLLSS_LOCK_OVERRIDE;
+ 	pll_writel_base(val, pll);
+-- 
+1.7.9.5
 
-I also removed DMA_OF from Kconfig and CONFIG_DMA_OF from my defconfig and 
-it was automatically added during preparation of .cofing for build.
-
-On Tue, 30 Jun 2015, Arnd Bergmann wrote:
-
-> On Tuesday 30 June 2015 14:27:28 Paul Osmialowski wrote:
->> Note that <mach/memory.h> is needed (which is denoted by
->> CONFIG_NEED_MACH_MEMORY_H) as it provides macros required for proper
->> operation of DMA allocation functions.
->
-> You can't do this, it breaks compilation when multiple platforms
-> are enabled.
->
->> Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
->> ---
->>  arch/arm/Kconfig                            |  4 ++
->>  arch/arm/boot/dts/kinetis.dtsi              | 34 ++++++++++++++++
->>  arch/arm/mach-kinetis/include/mach/memory.h | 61 +++++++++++++++++++++++++++++
->>  3 files changed, 99 insertions(+)
->>  create mode 100644 arch/arm/mach-kinetis/include/mach/memory.h
->>
->> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
->> index b21592b..8ccffee 100644
->> --- a/arch/arm/Kconfig
->> +++ b/arch/arm/Kconfig
->> @@ -971,6 +971,10 @@ config ARCH_KINETIS
->>  	select CLKSRC_KINETIS
->>  	select PINCTRL
->>  	select PINCTRL_KINETIS
->> +	select DMADEVICES
->> +	select FSL_EDMA
->> +	select DMA_OF
->> +	select NEED_MACH_MEMORY_H
->
-> I think DMA_OF is implied by dmaengine support in combination with CONFIG_OF
->
->> +
->> +#ifndef _MACH_KINETIS_MEMORY_H
->> +#define _MACH_KINETIS_MEMORY_H
->> +
->> +#ifndef __ASSEMBLY__
->> +
->> +/*
->> + * On Kinetis K70, consistent DMA memory resides in a special
->> + * DDRAM alias region (non-cacheable DDRAM at 0x80000000).
->> + *
->> + */
->> +#define KINETIS_PHYS_DMA_OFFSET UL(0x80000000)
->> +
->> +/*
->> + * Mask of the field used to distinguish DDRAM aliases
->> + */
->> +#define KINETIS_DRAM_ALIAS_MASK UL(0xf8000000)
->
-> This should be expressed using the 'dma-ranges' properties in the
-> bus nodes above any DMA master, the normal DMA mapping code will
-> then do the right thing.
->
-> 	Arnd
->
---98048-2106302197-1435733717=:8255
-Content-Type: TEXT/x-diff; name=0007-arm-twr-k70f120m-use-Freescale-eDMA-driver-with-Kine.patch
-Content-Transfer-Encoding: BASE64
-Content-ID: <alpine.LNX.2.00.1507010854560.8255@localhost.localdomain>
-Content-Description: 
-Content-Disposition: attachment; filename=0007-arm-twr-k70f120m-use-Freescale-eDMA-driver-with-Kine.patch
-
-RnJvbSBlMGI1NDkxNTFiM2VlOGQ0NDE5MzQ0YTJiNWVmNDYxYmFkMTliMmFm
-IE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQ0KRnJvbTogUGF1bCBPc21pYWxv
-d3NraSA8cGF3ZWxvQGtpbmcubmV0LnBsPg0KRGF0ZTogTW9uLCAyOSBKdW4g
-MjAxNSAyMzozNzoyMCArMDIwMA0KU3ViamVjdDogW1BBVENIIDcvOV0gYXJt
-OiB0d3ItazcwZjEyMG06IHVzZSBGcmVlc2NhbGUgZURNQSBkcml2ZXIgd2l0
-aCBLaW5ldGlzDQogU29DDQoNClNpZ25lZC1vZmYtYnk6IFBhdWwgT3NtaWFs
-b3dza2kgPHBhd2Vsb0BraW5nLm5ldC5wbD4NCi0tLQ0KIGFyY2gvYXJtL0tj
-b25maWcgICAgICAgICAgICAgICB8ICAyICsrDQogYXJjaC9hcm0vYm9vdC9k
-dHMva2luZXRpcy5kdHNpIHwgMzYgKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrDQogMiBmaWxlcyBjaGFuZ2VkLCAzOCBpbnNlcnRpb25z
-KCspDQoNCmRpZmYgLS1naXQgYS9hcmNoL2FybS9LY29uZmlnIGIvYXJjaC9h
-cm0vS2NvbmZpZw0KaW5kZXggYjIxNTkyYi4uODFhNjMyOCAxMDA2NDQNCi0t
-LSBhL2FyY2gvYXJtL0tjb25maWcNCisrKyBiL2FyY2gvYXJtL0tjb25maWcN
-CkBAIC05NzEsNiArOTcxLDggQEAgY29uZmlnIEFSQ0hfS0lORVRJUw0KIAlz
-ZWxlY3QgQ0xLU1JDX0tJTkVUSVMNCiAJc2VsZWN0IFBJTkNUUkwNCiAJc2Vs
-ZWN0IFBJTkNUUkxfS0lORVRJUw0KKwlzZWxlY3QgRE1BREVWSUNFUw0KKwlz
-ZWxlY3QgRlNMX0VETUENCiAJaGVscA0KIAkgIFRoaXMgZW5hYmxlcyBzdXBw
-b3J0IGZvciB0aGUgRnJlZXNjYWxlIEtpbmV0aXMgTUNVcw0KIA0KZGlmZiAt
-LWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2tpbmV0aXMuZHRzaSBiL2FyY2gv
-YXJtL2Jvb3QvZHRzL2tpbmV0aXMuZHRzaQ0KaW5kZXggNWZmMWQzYi4uNzVm
-YzZkNCAxMDA2NDQNCi0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2tpbmV0aXMu
-ZHRzaQ0KKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMva2luZXRpcy5kdHNpDQpA
-QCAtMTksNiArMTksNDIgQEANCiAJfTsNCiANCiAJc29jIHsNCisJCWRtYS1y
-YW5nZXMgPSA8MHg4MDAwMDAwMCAweDAwMDAwMDAwIDB4MDgwMDAwMDA+Ow0K
-Kw0KKwkJZWRtYTogZG1hLWNvbnRyb2xsZXJANDAwMDgwMDAgew0KKwkJCWNv
-bXBhdGlibGUgPSAiZnNsLGtpbmV0aXMtZWRtYSI7DQorCQkJcmVnID0gPDB4
-NDAwMDgwMDAgMHgyMDAwPiwgLyogRE1BQyAqLw0KKwkJCQk8MHg0MDAyMTAw
-MCAweDEwMDA+LCAvKiBETUFNVVgwICovDQorCQkJCTwweDQwMDIyMDAwIDB4
-MTAwMD47IC8qIERNQU1VWDEgKi8NCisJCQkjZG1hLWNlbGxzID0gPDI+Ow0K
-KwkJCWRtYS1jaGFubmVscyA9IDwzMj47DQorCQkJaW50ZXJydXB0cyA9CSA8
-MD4sICA8MT4sICA8Mj4sICA8Mz4sDQorCQkJCQkgPDQ+LCAgPDU+LCAgPDY+
-LCAgPDc+LA0KKwkJCQkJIDw4PiwgIDw5PiwgPDEwPiwgPDExPiwNCisJCQkJ
-CTwxMj4sIDwxMz4sIDwxND4sIDwxNT4sDQorCQkJCQk8MTY+Ow0KKwkJCWlu
-dGVycnVwdC1uYW1lcyA9ICJlZG1hLXR4LTAsMTYiLA0KKwkJCQkJICAiZWRt
-YS10eC0xLDE3IiwNCisJCQkJCSAgImVkbWEtdHgtMiwxOCIsDQorCQkJCQkg
-ICJlZG1hLXR4LTMsMTkiLA0KKwkJCQkJICAiZWRtYS10eC00LDIwIiwNCisJ
-CQkJCSAgImVkbWEtdHgtNSwyMSIsDQorCQkJCQkgICJlZG1hLXR4LTYsMjIi
-LA0KKwkJCQkJICAiZWRtYS10eC03LDIzIiwNCisJCQkJCSAgImVkbWEtdHgt
-OCwyNCIsDQorCQkJCQkgICJlZG1hLXR4LTksMjUiLA0KKwkJCQkJICAiZWRt
-YS10eC0xMCwyNiIsDQorCQkJCQkgICJlZG1hLXR4LTExLDI3IiwNCisJCQkJ
-CSAgImVkbWEtdHgtMTIsMjgiLA0KKwkJCQkJICAiZWRtYS10eC0xMywyOSIs
-DQorCQkJCQkgICJlZG1hLXR4LTE0LDMwIiwNCisJCQkJCSAgImVkbWEtdHgt
-MTUsMzEiLA0KKwkJCQkJICAiZWRtYS1lcnIiOw0KKwkJCWNsb2NrcyA9IDwm
-bWNnX2NjbGtfZ2F0ZSA2IDE+LA0KKwkJCQkgPCZtY2dfcGNsa19nYXRlIDUg
-MT4sIDwmbWNnX3BjbGtfZ2F0ZSA1IDI+Ow0KKwkJCWNsb2NrLW5hbWVzID0g
-ImVkbWEiLCAiZG1hbXV4MCIsICJkbWFtdXgxIjsNCisJCX07DQorDQogCQlw
-b3J0QTogcGlubXV4QDQwMDQ5MDAwIHsNCiAJCQljb21wYXRpYmxlID0gImZz
-bCxraW5ldGlzLXBhZGNvbmYiOw0KIAkJCXJlZyA9IDwweDQwMDQ5MDAwIDB4
-MTAwMD47DQotLSANCjIuMy42DQoNCg==
-
---98048-2106302197-1435733717=:8255--
