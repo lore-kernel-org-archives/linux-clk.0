@@ -1,38 +1,30 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <556F7FFE.4050102@codeaurora.org>
-Date: Wed, 03 Jun 2015 15:30:22 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Keerthy <j-keerthy@ti.com>
+To: <linux-omap@vger.kernel.org>
+CC: <galak@codeaurora.org>, <tony@atomide.com>, <t-kristo@ti.com>,
+	<pawel.moll@arm.com>, <linux-kernel@vger.kernel.org>,
+	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>,
+	<j-keerthy@ti.com>
+Subject: [PATCH 0/2] CLK: TI: add dpll_clksel_mac_clk node
+Date: Thu, 18 Jun 2015 13:31:11 +0530
+Message-ID: <1434614473-8500-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@linaro.org>
-CC: Mike Looijmans <mike.looijmans@topic.nl>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4] Add TI CDCE925 I2C controlled clock synthesizer driver
-References: <1433153623-29205-1-git-send-email-mike.looijmans@topic.nl> <1433309119-5186-1-git-send-email-mike.looijmans@topic.nl> <20150603222504.6017.28097@quantum>
-In-Reply-To: <20150603222504.6017.28097@quantum>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/03/2015 03:25 PM, Michael Turquette wrote:
-> Quoting Mike Looijmans (2015-06-02 22:25:19)
->> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->> index 9897f35..1c31704 100644
->> --- a/drivers/clk/Kconfig
->> +++ b/drivers/clk/Kconfig
->> @@ -78,6 +78,23 @@ config COMMON_CLK_SI570
->>            This driver supports Silicon Labs 570/571/598/599 programmable
->>            clock generators.
->>   
->> +config COMMON_CLK_CDCE925
->> +       tristate "Clock driver for TI CDCE925 devices"
->> +       depends on I2C
->> +       depends on OF
->> +       select REGMAP_I2C
->> +       help
->> +       ---help---
+The series adds the missing clock node needed for cpsw.
 
-Why two helps?
+Keerthy (2):
+  CLK: TI: add dpll_clksel_mac_clk node
+  ARM: dts: am4372: Set the default clock rate for dpll_clksel_mac_clk
+    clock
 
+ arch/arm/boot/dts/am4372.dtsi        | 7 +++++--
+ arch/arm/boot/dts/am43xx-clocks.dtsi | 9 +++++++++
+ drivers/clk/ti/clk-43xx.c            | 1 +
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
