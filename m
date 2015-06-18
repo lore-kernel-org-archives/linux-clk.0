@@ -1,57 +1,88 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH v2 1/5] clk: qcom: Add support for read-only rcg2 ops
-Date: Fri,  5 Jun 2015 15:40:32 +0300
-Message-Id: <1433508036-28644-2-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1433508036-28644-1-git-send-email-georgi.djakov@linaro.org>
-References: <1433508036-28644-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:48711 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751674AbbFRTre (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jun 2015 15:47:34 -0400
+Date: Thu, 18 Jun 2015 21:47:29 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Michael Turquette <mturquette@linaro.org>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	"Stephen Boyd" <sboyd@codeaurora.org>,
+	"Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>,
+	"Jason Cooper" <jason@lakedaemon.net>,
+	"Tawfik Bayouk" <tawfik@marvell.com>,
+	"Andrew Lunn" <andrew@lunn.ch>,
+	"Kevin Hilman" <khilman@kernel.org>, stable@vger.kernel.org,
+	"Eran Ben-Avi" <benavi@marvell.com>,
+	"Nadav Haklai" <nadavh@marvell.com>,
+	"Lior Amsalem" <alior@marvell.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	"Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v2] clk: mvebu: flag the crypto clk as CLK_IGNORE_UNUSED
+Message-ID: <20150618214729.41acfb07@bbrezillon>
+In-Reply-To: <20150618183654.25948.26168@quantum>
+References: <1434470179-20835-1-git-send-email-boris.brezillon@free-electrons.com>
+	<55816094.2020208@free-electrons.com>
+	<20150618183654.25948.26168@quantum>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some root clock generators can be controlled by other processors. In this
-case modifying them is not recommended. By using the read-only operations,
-the child clocks will be able to get information about their parent - like
-rate etc.
+Hi Mike,
 
-Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/clk-rcg.h  |    1 +
- drivers/clk/qcom/clk-rcg2.c |    7 +++++++
- 2 files changed, 8 insertions(+)
+On Thu, 18 Jun 2015 11:36:54 -0700
+Michael Turquette <mturquette@linaro.org> wrote:
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index 56028bb31d87..706a55b34b81 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -169,6 +169,7 @@ struct clk_rcg2 {
- #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
- 
- extern const struct clk_ops clk_rcg2_ops;
-+extern const struct clk_ops clk_rcg2_ro_ops;
- extern const struct clk_ops clk_edp_pixel_ops;
- extern const struct clk_ops clk_byte_ops;
- extern const struct clk_ops clk_pixel_ops;
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index b95d17fbb8d7..cb17fd4b193f 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -301,6 +301,13 @@ const struct clk_ops clk_rcg2_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_rcg2_ops);
- 
-+const struct clk_ops clk_rcg2_ro_ops = {
-+	.is_enabled = clk_rcg2_is_enabled,
-+	.get_parent = clk_rcg2_get_parent,
-+	.recalc_rate = clk_rcg2_recalc_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_rcg2_ro_ops);
-+
- struct frac_entry {
- 	int num;
- 	int den;
+> Quoting Gregory CLEMENT (2015-06-17 04:57:08)
+> > Hi Mike, Stephen,
+> > 
+> > On 16/06/2015 17:56, Boris Brezillon wrote:
+> > > The crypto SRAM, used by the armada 370 cpuidle code to workaround a bug
+> > > in the BootROM code, requires the crypto clk to be up and running.
+> > > Flag the crypto clk as IGNORE_UNUSED until we add the proper
+> > > infrastructure to define the crypto SRAM in the DT and reference the crypto
+> > > clk in this SRAM node.
+> > > 
+> > > Reported-by: Kevin Hilman <khilman@linaro.org>
+> > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > > Tested-by: Kevin Hilman <khilman@linaro.org>
+> > > Fixes: 29e623475c50267ee3aaa49ebb6cbe107bce8d2a ("clk: mvebu: add
+> > > missing CESA gate clk").
+> > > Cc: <stable@vger.kernel.org> #4.1
+> > 
+> > Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> > 
+> > Would it possible to apply this fix on 4.1-rc8 ?
+> 
+> Hi Gregory,
+> 
+> I'm a bit confused by this. This patch fixes "clk: mvebu: add missing
+> CESA gate clk", right? That patch lives in clk-next. It was not pushed
+> to Linus' tree yet via a -fixes branch.
+> 
+> Thus I can just apply this patch to clk-next and the problem should be
+> resolved in clk-next, no?
+
+Yes. I've tagged this patch as applicable on stable 4.1 in case it
+didn't make it in the next -rc (which should be the last one before
+4.1 is released).
+I don't know if it's a good practice, but I've had several fixes which
+missed the targeted release in the past, and tagging them as stable
+helps in getting the patches applied afterwards.
+
+> 
+> Furthermore, I do not have 29e623475c50267ee3aaa49ebb6cbe107bce8d2a
+> anywhere in my tree. I'm not sure where this sha1 hash came from.
+
+Oops, I mixed the commit hash in my local branch and the one in clk-next
+(4d52b2acefdfceae0e47ed08324a96f511dc80b1).
+
+Best Regards,
+
+Boris
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
