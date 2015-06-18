@@ -1,120 +1,115 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	agross@codeaurora.org
-Cc: mturquette@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH 1/5] clk: qcom: Add support for SR2 PLLs
-Date: Fri, 12 Jun 2015 11:41:55 +0300
-Message-Id: <1434098519-26406-2-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1434098519-26406-1-git-send-email-georgi.djakov@linaro.org>
-References: <1434098519-26406-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <gregory.clement@free-electrons.com>
+Message-ID: <558312B7.6010708@free-electrons.com>
+Date: Thu, 18 Jun 2015 20:49:27 +0200
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>
+CC: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Jason Cooper <jason@lakedaemon.net>, Tawfik Bayouk <tawfik@marvell.com>,
+ Andrew Lunn <andrew@lunn.ch>,
+ Kevin Hilman <khilman@kernel.org>, stable@vger.kernel.org,
+ Eran Ben-Avi <benavi@marvell.com>,
+ Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v2] clk: mvebu: flag the crypto clk as CLK_IGNORE_UNUSED
+References: <1434470179-20835-1-git-send-email-boris.brezillon@free-electrons.com> <55816094.2020208@free-electrons.com> <20150618183654.25948.26168@quantum>
+In-Reply-To: <20150618183654.25948.26168@quantum>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for SR2 type pll operations. SR2 is optimized for Time Interval
-Error (TIE) or absolute jitter.
+Hi Mike,
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/clk-pll.c |   75 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/clk-pll.h |    1 +
- 2 files changed, 76 insertions(+)
+On 18/06/2015 20:36, Michael Turquette wrote:
+> Quoting Gregory CLEMENT (2015-06-17 04:57:08)
+>> Hi Mike, Stephen,
+>>
+>> On 16/06/2015 17:56, Boris Brezillon wrote:
+>>> The crypto SRAM, used by the armada 370 cpuidle code to workaround a bug
+>>> in the BootROM code, requires the crypto clk to be up and running.
+>>> Flag the crypto clk as IGNORE_UNUSED until we add the proper
+>>> infrastructure to define the crypto SRAM in the DT and reference the crypto
+>>> clk in this SRAM node.
+>>>
+>>> Reported-by: Kevin Hilman <khilman@linaro.org>
+>>> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+>>> Tested-by: Kevin Hilman <khilman@linaro.org>
+>>> Fixes: 29e623475c50267ee3aaa49ebb6cbe107bce8d2a ("clk: mvebu: add
+>>> missing CESA gate clk").
+>>> Cc: <stable@vger.kernel.org> #4.1
+>>
+>> Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+>>
+>> Would it possible to apply this fix on 4.1-rc8 ?
+> 
+> Hi Gregory,
+> 
+> I'm a bit confused by this. This patch fixes "clk: mvebu: add missing
+> CESA gate clk", right? That patch lives in clk-next. It was not pushed
+> to Linus' tree yet via a -fixes branch.
+> 
+> Thus I can just apply this patch to clk-next and the problem should be
+> resolved in clk-next, no?
 
-diff --git a/drivers/clk/qcom/clk-pll.c b/drivers/clk/qcom/clk-pll.c
-index 245d5063a385..017eede87237 100644
---- a/drivers/clk/qcom/clk-pll.c
-+++ b/drivers/clk/qcom/clk-pll.c
-@@ -292,3 +292,78 @@ void clk_pll_configure_sr_hpm_lp(struct clk_pll *pll, struct regmap *regmap,
- 		clk_pll_set_fsm_mode(pll, regmap, 0);
- }
- EXPORT_SYMBOL_GPL(clk_pll_configure_sr_hpm_lp);
-+
-+static int clk_pll_sr2_enable(struct clk_hw *hw)
-+{
-+	struct clk_pll *pll = to_clk_pll(hw);
-+	int ret;
-+	u32 mode;
-+
-+	ret = regmap_read(pll->clkr.regmap, pll->mode_reg, &mode);
-+	if (ret)
-+		return ret;
-+
-+	/* Disable PLL bypass mode. */
-+	ret = regmap_update_bits(pll->clkr.regmap, pll->mode_reg, PLL_BYPASSNL,
-+				 PLL_BYPASSNL);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * H/W requires a 5us delay between disabling the bypass and
-+	 * de-asserting the reset. Delay 10us just to be safe.
-+	 */
-+	udelay(10);
-+
-+	/* De-assert active-low PLL reset. */
-+	ret = regmap_update_bits(pll->clkr.regmap, pll->mode_reg, PLL_RESET_N,
-+				 PLL_RESET_N);
-+	if (ret)
-+		return ret;
-+
-+	ret = wait_for_pll(pll);
-+	if (ret)
-+		return ret;
-+
-+	/* Enable PLL output. */
-+	return regmap_update_bits(pll->clkr.regmap, pll->mode_reg, PLL_OUTCTRL,
-+				 PLL_OUTCTRL);
-+}
-+
-+static int
-+clk_pll_sr2_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long prate)
-+{
-+	struct clk_pll *pll = to_clk_pll(hw);
-+	const struct pll_freq_tbl *f;
-+	bool enabled;
-+	u32 mode;
-+	u32 enable_mask = PLL_OUTCTRL | PLL_BYPASSNL | PLL_RESET_N;
-+
-+	f = find_freq(pll->freq_tbl, rate);
-+	if (!f)
-+		return -EINVAL;
-+
-+	regmap_read(pll->clkr.regmap, pll->mode_reg, &mode);
-+	enabled = (mode & enable_mask) == enable_mask;
-+
-+	if (enabled)
-+		clk_pll_disable(hw);
-+
-+	regmap_update_bits(pll->clkr.regmap, pll->l_reg, 0x3ff, f->l);
-+	regmap_update_bits(pll->clkr.regmap, pll->m_reg, 0x7ffff, f->m);
-+	regmap_update_bits(pll->clkr.regmap, pll->n_reg, 0x7ffff, f->n);
-+
-+	if (enabled)
-+		clk_pll_sr2_enable(hw);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops clk_pll_sr2_ops = {
-+	.enable = clk_pll_sr2_enable,
-+	.disable = clk_pll_disable,
-+	.set_rate = clk_pll_sr2_set_rate,
-+	.recalc_rate = clk_pll_recalc_rate,
-+	.determine_rate = clk_pll_determine_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_pll_sr2_ops);
-diff --git a/drivers/clk/qcom/clk-pll.h b/drivers/clk/qcom/clk-pll.h
-index c9c0cda306d0..ffd0c63bddbc 100644
---- a/drivers/clk/qcom/clk-pll.h
-+++ b/drivers/clk/qcom/clk-pll.h
-@@ -62,6 +62,7 @@ struct clk_pll {
- 
- extern const struct clk_ops clk_pll_ops;
- extern const struct clk_ops clk_pll_vote_ops;
-+extern const struct clk_ops clk_pll_sr2_ops;
- 
- #define to_clk_pll(_hw) container_of(to_clk_regmap(_hw), struct clk_pll, clkr)
- 
+You're right I was confused by the "<stable@vger.kernel.org> #4.1" tag,
+and I thought it was already part of 4.1. So indeed you just have to apply
+it in clk-next. You can remove the Fixes: and CC: line. And even better
+you can squashed it into 4d52b2acefdf "clk: mvebu: add missing CESA
+gate clk", if your clk-next branch is not immutable.
+
+
+> 
+> Furthermore, I do not have 29e623475c50267ee3aaa49ebb6cbe107bce8d2a
+> anywhere in my tree. I'm not sure where this sha1 hash came from.
+
+Me neither :)
+
+
+Thanks,
+
+Gregory
+
+>>
+>>> ---
+>>> Changes since v1:
+>>> - add the Reported-by tag
+>>> - add the missing trailing ','
+>>>
+>>>  drivers/clk/mvebu/armada-370.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clk/mvebu/armada-370.c b/drivers/clk/mvebu/armada-370.c
+>>> index c19fd77..2c7c108 100644
+>>> --- a/drivers/clk/mvebu/armada-370.c
+>>> +++ b/drivers/clk/mvebu/armada-370.c
+>>> @@ -163,7 +163,7 @@ static const struct clk_gating_soc_desc a370_gating_desc[] __initconst = {
+>>>       { "pex1", "pex1_en", 9, 0 },
+>>>       { "sata0", NULL, 15, 0 },
+>>>       { "sdio", NULL, 17, 0 },
+>>> -     { "crypto", NULL, 23, 0 },
+>>> +     { "crypto", NULL, 23, CLK_IGNORE_UNUSED },
+>>>       { "tdm", NULL, 25, 0 },
+>>>       { "ddr", NULL, 28, CLK_IGNORE_UNUSED },
+>>>       { "sata1", NULL, 30, 0 },
+>>>
+>>
+>>
+>> -- 
+>> Gregory Clement, Free Electrons
+>> Kernel, drivers, real-time and embedded Linux
+>> development, consulting, training and support.
+>> http://free-electrons.com
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
