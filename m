@@ -1,44 +1,152 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@linaro.org, linaro-kernel@lists.linaro.org
-Subject: [PATCH] clk: stm32: Fix out-by-one error path in the index lookup
-Date: Sun, 28 Jun 2015 10:55:32 +0100
-Message-Id: <1435485332-14951-1-git-send-email-daniel.thompson@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v6 15/25] clk: tegra: pll: Adjust vco_min if SDM present
+Date: Thu, 18 Jun 2015 17:28:30 -0400
+Message-ID: <1434662920-21469-16-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-If stm32f4_rcc_lookup() is called with primary == 0 and secondary == 192
-then it will read beyond the end of the table array due to an out-by-one
-error in the range check.
+From: Bill Huang <bilhuang@nvidia.com>
 
-In addition to the fixing the inequality we also modify the r.h.s. to
-make it even more explicit that we are comparing against the size of
-table in bits.
+This code makes use of the SDM fractional divider if present to
+constrain the allowable programming range of the PLL divider register
+bitfields to take advantage of higher frequency granularity that can
+be induced by the SDM divider.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+Based on original work by Aleksandr Frid <afrid@nvidia.com>
+
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/clk-stm32f4.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v6:
+  - Added kerneldoc
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index c825bbd..148c151 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -268,7 +268,7 @@ static int stm32f4_rcc_lookup_clk_idx(u8 primary, u8 secondary)
- 	memcpy(table, stm32f42xx_gate_map, sizeof(table));
+v5:
+  - Removed whitespace change
 
- 	/* only bits set in table can be used as indices */
--	if (WARN_ON(secondary > 8 * sizeof(table) ||
-+	if (WARN_ON(secondary >= BITS_PER_BYTE * sizeof(table) ||
- 		    0 == (table[BIT_ULL_WORD(secondary)] &
- 			  BIT_ULL_MASK(secondary))))
- 		return -EINVAL;
---
-2.4.3
+ drivers/clk/tegra/clk-pll.c |   28 ++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk.h     |    4 ++++
+ 2 files changed, 32 insertions(+)
 
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 1f70c356bdd7..3c348c96f9da 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -1612,6 +1612,10 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+ 
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+ 	if (err)
+ 		return ERR_PTR(err);
+@@ -1650,6 +1654,10 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
+ 
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+ 	if (IS_ERR(pll))
+ 		return ERR_CAST(pll);
+@@ -1706,6 +1714,10 @@ struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
+ 
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	pll_params->flags |= TEGRA_PLL_BYPASS;
+ 	pll_params->flags |= TEGRA_PLLM;
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+@@ -2112,6 +2124,10 @@ struct clk *tegra_clk_register_pllc_tegra210(const char *name,
+ 
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	pll_params->flags |= TEGRA_PLL_BYPASS;
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+ 	if (IS_ERR(pll))
+@@ -2149,6 +2165,10 @@ struct clk *tegra_clk_register_pllxc_tegra210(const char *name,
+ 
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+ 	if (IS_ERR(pll))
+ 		return ERR_CAST(pll);
+@@ -2196,6 +2216,10 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
+ 
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	/* initialize PLL to minimum rate */
+ 
+ 	cfg.m = _pll_fixed_mdiv(pll_params, parent_rate);
+@@ -2260,6 +2284,10 @@ struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
+ 
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	pll_params->flags |= TEGRA_PLL_BYPASS;
+ 	pll_params->flags |= TEGRA_PLLMB;
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 6170fcef7c33..72bf25525bd6 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -202,6 +202,8 @@ struct div_nmp {
+  *				PLL's based on fractional divider value.
+  * @calc_rate:			Callback used to change how out of table
+  *				rates (dividers and multipler) are calculated.
++ * @adjust_vco:			Callback to adjust the programming range of the
++ *				divider range (if SDM is present)
+  *
+  * Flags:
+  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+@@ -269,6 +271,8 @@ struct tegra_clk_pll_params {
+ 	int	(*calc_rate)(struct clk_hw *hw,
+ 			struct tegra_clk_pll_freq_table *cfg,
+ 			unsigned long rate, unsigned long parent_rate);
++	unsigned long	(*adjust_vco)(struct tegra_clk_pll_params *pll_params,
++				unsigned long parent_rate);
+ };
+ 
+ #define TEGRA_PLL_USE_LOCK BIT(0)
+-- 
+1.7.9.5
