@@ -1,42 +1,71 @@
-Return-Path: <dinguyen@opensource.altera.com>
-From: <dinguyen@opensource.altera.com>
-To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
-CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>
-Subject: [PATCH 3/6] clk: keystone: make use of of_clk_parent_fill helper function
-Date: Wed, 10 Jun 2015 16:49:22 -0500
-Message-ID: <1433972965-24974-4-git-send-email-dinguyen@opensource.altera.com>
-In-Reply-To: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
-References: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: dinguyen@opensource.altera.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:59340 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932378AbbFRLDm (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jun 2015 07:03:42 -0400
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Mike Turquette <mturquette@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Wu Songjun <Songjun.Wu@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH] clk: at91: fix PERIPHERAL_MAX_SHIFT definition
+Date: Thu, 18 Jun 2015 13:03:25 +0200
+Message-Id: <1434625405-11888-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
+Fix the PERIPHERAL_MAX_SHIFT definition (3 instead of 4) and adapt the
+round_rate and set_rate logic accordingly.
 
-Use of_clk_parent_fill to fill in the parent clock names' array.
-
-Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Reported-by: "Wu, Songjun" <Songjun.Wu@atmel.com>
 ---
- drivers/clk/keystone/pll.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/at91/clk-peripheral.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
-index 0dd8a4b..d885372 100644
---- a/drivers/clk/keystone/pll.c
-+++ b/drivers/clk/keystone/pll.c
-@@ -293,8 +293,7 @@ static void __init of_pll_mux_clk_init(struct device_node *node)
- 		return;
- 	}
+diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-peripheral.c
+index 597fed4..df2c1af 100644
+--- a/drivers/clk/at91/clk-peripheral.c
++++ b/drivers/clk/at91/clk-peripheral.c
+@@ -29,7 +29,7 @@
+ #define PERIPHERAL_RSHIFT_MASK	0x3
+ #define PERIPHERAL_RSHIFT(val)	(((val) >> 16) & PERIPHERAL_RSHIFT_MASK)
  
--	parents[0] = of_clk_get_parent_name(node, 0);
--	parents[1] = of_clk_get_parent_name(node, 1);
-+	of_clk_parent_fill(node, parents, 2);
- 	if (!parents[0] || !parents[1]) {
- 		pr_err("%s: missing parent clocks\n", __func__);
- 		return;
+-#define PERIPHERAL_MAX_SHIFT	4
++#define PERIPHERAL_MAX_SHIFT	3
+ 
+ struct clk_peripheral {
+ 	struct clk_hw hw;
+@@ -242,7 +242,7 @@ static long clk_sam9x5_peripheral_round_rate(struct clk_hw *hw,
+ 		return *parent_rate;
+ 
+ 	if (periph->range.max) {
+-		for (; shift < PERIPHERAL_MAX_SHIFT; shift++) {
++		for (; shift <= PERIPHERAL_MAX_SHIFT; shift++) {
+ 			cur_rate = *parent_rate >> shift;
+ 			if (cur_rate <= periph->range.max)
+ 				break;
+@@ -254,7 +254,7 @@ static long clk_sam9x5_peripheral_round_rate(struct clk_hw *hw,
+ 
+ 	best_diff = cur_rate - rate;
+ 	best_rate = cur_rate;
+-	for (; shift < PERIPHERAL_MAX_SHIFT; shift++) {
++	for (; shift <= PERIPHERAL_MAX_SHIFT; shift++) {
+ 		cur_rate = *parent_rate >> shift;
+ 		if (cur_rate < rate)
+ 			cur_diff = rate - cur_rate;
+@@ -289,7 +289,7 @@ static int clk_sam9x5_peripheral_set_rate(struct clk_hw *hw,
+ 	if (periph->range.max && rate > periph->range.max)
+ 		return -EINVAL;
+ 
+-	for (shift = 0; shift < PERIPHERAL_MAX_SHIFT; shift++) {
++	for (shift = 0; shift <= PERIPHERAL_MAX_SHIFT; shift++) {
+ 		if (parent_rate >> shift == rate) {
+ 			periph->auto_div = false;
+ 			periph->div = shift;
 -- 
-2.2.1
+1.9.1
+
