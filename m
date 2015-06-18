@@ -1,99 +1,51 @@
-Return-Path: <javier@dowhile0.org>
-MIME-Version: 1.0
-In-Reply-To: <557981B7.3000303@samsung.com>
-References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
-	<55796660.1070702@samsung.com>
-	<CABxcv=kNb2ERqLL2gG73nkU+kpPsYAWKSyu=bkjfxZBMKOwyPQ@mail.gmail.com>
-	<557981B7.3000303@samsung.com>
-Date: Thu, 11 Jun 2015 14:58:33 +0200
-Message-ID: <CABxcv=myq4VeMamstjVR2cpWCiD_FM91ncYYVKd4jRF=nB5zZQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: exynos4: Add PCLK_ADC gate clock on Exynos4x12
-From: Javier Martinez Canillas <javier@dowhile0.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>,
-	Linux Kernel <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:45884 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753381AbbFRORj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 18 Jun 2015 10:17:39 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@linaro.org, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>, stable@vger.kernel.org
+Subject: [PATCH v2 1/9] clk: rockchip: rk3288: add CLK_SET_RATE_PARENT to sclk_mac
+Date: Thu, 18 Jun 2015 16:18:28 +0200
+Message-Id: <1434637116-17124-2-git-send-email-heiko@sntech.de>
+In-Reply-To: <1434637116-17124-1-git-send-email-heiko@sntech.de>
+References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+The dwmac ethernet controller on the rk3288 supports phys connected
+via rgmii and rmii. With rgmii phys it is expected that the mac clock
+is provided externally while with rmii phys the clock can be external
+but also generated from the plls. In the later case it of course needs
+be at 50MHz, which gets set from the dwmac_rk driver.
+As most devices use a rgmii phy it never surfaced so far that the mac
+clk mux, doesn't go up one lever to the pll clock in the rmii case with
+internal clock generation, as it is missing the CLK_SET_RATE_PARENT flag,
+and thus will not set the correct frequency in most cases.
 
-On Thu, Jun 11, 2015 at 2:40 PM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> W dniu 11.06.2015 o 21:15, Javier Martinez Canillas pisze:
->> Hello Krzysztof,
->>
->> On Thu, Jun 11, 2015 at 12:43 PM, Krzysztof Kozlowski
->> <k.kozlowski@samsung.com> wrote:
->>> W dniu 11.06.2015 o 17:26, Krzysztof Kozlowski pisze:
->>>> Add proper gate clock for the Analog to Digital Converter (ADC) on
->>>> Exynos4x12.
->>>>
->>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> ---
->>>>  drivers/clk/samsung/clk-exynos4.c   | 3 +++
->>>>  include/dt-bindings/clock/exynos4.h | 5 ++++-
->>>>  2 files changed, 7 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
->>>> index 714d6ba782c8..5f32410a01f8 100644
->>>> --- a/drivers/clk/samsung/clk-exynos4.c
->>>> +++ b/drivers/clk/samsung/clk-exynos4.c
->>>> @@ -85,6 +85,7 @@
->>>>  #define DIV_PERIL4           0xc560
->>>>  #define DIV_PERIL5           0xc564
->>>>  #define E4X12_DIV_CAM1               0xc568
->>>> +#define E4X12_GATE_BUS_FSYS1 0xc744
->>>>  #define GATE_SCLK_CAM                0xc820
->>>>  #define GATE_IP_CAM          0xc920
->>>>  #define GATE_IP_TV           0xc924
->>>> @@ -1095,6 +1096,8 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
->>>>               0),
->>>>       GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
->>>>               0),
->>>> +     GATE(CLK_PCLK_ADC, "pclk_adc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0,
->>>> +             0),
->>>
->>> Now I have even simpler idea. Don't add new clock id but just define
->>> here the CLK_TSADC as:
->>> GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0);
->>>
->>> With this change the second patch wouldn't be needed however this does
->>> not reflect the Exynos 4x12 datasheet.
->>>
->>> Any comments?
->>>
->>
->> I think it's better to reflect the datasheet so I prefer your original
->> patch.
->
-> Yeah, I also like sticking to datasheet but maybe it is not always worth
-> to reproduce the datasheet in 100%. It is just thinking out loud.
->
+Fixes: b9e4ba541607 ("clk: rockchip: add clock controller for rk3288")
+Cc: stable@vger.kernel.org
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk-rk3288.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Agreed.
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 4f817ed..0211162 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -578,7 +578,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	COMPOSITE(0, "mac_pll_src", mux_pll_src_npll_cpll_gpll_p, 0,
+ 			RK3288_CLKSEL_CON(21), 0, 2, MFLAGS, 8, 5, DFLAGS,
+ 			RK3288_CLKGATE_CON(2), 5, GFLAGS),
+-	MUX(SCLK_MAC, "mac_clk", mux_mac_p, 0,
++	MUX(SCLK_MAC, "mac_clk", mux_mac_p, CLK_SET_RATE_PARENT,
+ 			RK3288_CLKSEL_CON(21), 4, 1, MFLAGS),
+ 	GATE(SCLK_MACREF_OUT, "sclk_macref_out", "mac_clk", 0,
+ 			RK3288_CLKGATE_CON(5), 3, GFLAGS),
+-- 
+2.1.4
 
->> Also, wouldn't changing the CLK_TSADC gate definition cause a
->> regression on an Exynos4210 board that is using the tsadc clock? or
->> maybe I misunderstood the explanation of your Patch 2/2?
->
-> No, no. The Exynos4210 would be unchanged. It has the CLK_TSADC - both
-> in hardware and in kernel driver. The Exynos4x12 SoCs don't have so we can:
-> 1. Add new CLK_PCLK_ADC (id and clock) reflecting datasheet.
-> 2. Add only CLK_TSADC clock  on Exynos4x12 which will be using the
-> register of PCLK_ADC. The id would stay the same as on Exynos4210.
->
-
-I see, thanks for the explanation. Both approaches seems sensible for
-me then, I don't have a strong opinion on either though.
-
-> Best regards,
-> Krzysztof
->
-
-Best regards,
-Javier
