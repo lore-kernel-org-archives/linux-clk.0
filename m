@@ -1,97 +1,105 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Date: Mon, 8 Jun 2015 15:35:13 +0100
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-To: "Jon Medhurst (Tixy)" <tixy@linaro.org>
-Cc: Sudeep Holla <Sudeep.Holla@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v4 6/8] arm64: dts: add SRAM, MHU mailbox and SCPI
- support on Juno
-Message-ID: <20150608143513.GI12807@e106497-lin.cambridge.arm.com>
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
- <1433760002-24120-7-git-send-email-sudeep.holla@arm.com>
- <1433771479.2882.44.camel@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <1433771479.2882.44.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 7/9] dt-bindings: add documentation of rk3668 clock controller
+Date: Thu, 18 Jun 2015 16:18:34 +0200
+Message-Id: <1434637116-17124-8-git-send-email-heiko@sntech.de>
+In-Reply-To: <1434637116-17124-1-git-send-email-heiko@sntech.de>
+References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 08, 2015 at 02:51:19PM +0100, Jon Medhurst (Tixy) wrote:
-> On Mon, 2015-06-08 at 11:40 +0100, Sudeep Holla wrote:
-> [...]
-> > +
-> > +	scpi {
-> > +		compatible = "arm,scpi";
-> > +		mboxes = <&mailbox 1>;
-> > +		shmem = <&cpu_scp_hpri>;
-> > +
-> > +		clocks {
-> > +			compatible = "arm,scpi-clocks";
-> > +
-> > +			scpi_dvfs: scpi_clocks@0 {
-> > +				compatible = "arm,scpi-dvfs-clocks";
-> > +				#clock-cells = <1>;
-> > +				clock-indices = <0>, <1>, <2>;
-> > +				clock-output-names = "vbig", "vlittle", "vgpu";
-> 
-> From where do the clock names derive? They look more like names for
-> voltage domains rather than clocks. My (admittedly very old) Juno docs,
-> have the clocks as ATLCLK, APLCLK and GPUCLK.
-> 
-> > +			};
-> > +			scpi_clk: scpi_clocks@3 {
-> > +				compatible = "arm,scpi-variable-clocks";
-> > +				#clock-cells = <1>;
-> > +				clock-indices = <3>, <4>;
-> > +				clock-output-names = "pxlclk0", "pxlclk1";
-> 
-> Can we also have clock index 5, name 'i2s_clk', for used by audio?
-> (I don't know what other clocks the SCP currently supports, but audio is
-> one being currently used by the out-of-tree code).
-> 
-> Also, I believe that both display outputs share the same clock, and so
-> pxlclk0 and pxlclk1 can't be controlled independently. But I guess these
-> device-tree entries are for the interface to the SCP firmware, not the
-> hardware, and if that pretends the clocks are independent...
+Add the devicetree binding for the cru on the rk3368 which quite similar
+structured as previous clock controllers.
 
-Actually, they can be independent, but the other source for clock generation
-can only be used to drive a VGA resolution.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: Kumar Gala <galak@codeaurora.org>
+Cc: devicetree@vger.kernel.org
+---
+ .../bindings/clock/rockchip,rk3368-cru.txt         | 61 ++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
 
-We were just debating with Sudeep on how to expose this: at the moment the SCP
-is configured so that the request for a clock frequency always succeeds even
-if the other user of the clock is active. That means that if you have 2 monitors
-connected that have different resolutions or pixel clocks then one of the
-monitor will get out of sync (unless it is a VGA monitor). On the other hand the
-HDLCD driver (or more corectly the DRM KMS one) will default to 640x480 if no
-monitor is connected to an HDMI output, meaning the clock could already be used
-but by a driver that should really be inactive. It is very hard to detect in
-which situation we are, so the usual fix is "plug the monitor into the other
-HDMI output if you have problems with single monitors".
-
-Best regards,
-Liviu
-
-> 
-> -- 
-> Tixy
-> 
-> 
-
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
+new file mode 100644
+index 0000000..7c8bbcf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
+@@ -0,0 +1,61 @@
++* Rockchip RK3368 Clock and Reset Unit
++
++The RK3368 clock controller generates and supplies clock to various
++controllers within the SoC and also implements a reset controller for SoC
++peripherals.
++
++Required Properties:
++
++- compatible: should be "rockchip,rk3368-cru"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- #clock-cells: should be 1.
++- #reset-cells: should be 1.
++
++Optional Properties:
++
++- rockchip,grf: phandle to the syscon managing the "general register files"
++  If missing, pll rates are not changeable, due to the missing pll lock status.
++
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. All available clocks are defined as
++preprocessor macros in the dt-bindings/clock/rk3368-cru.h headers and can be
++used in device tree sources. Similar macros exist for the reset sources in
++these files.
++
++External clocks:
++
++There are several clocks that are generated outside the SoC. It is expected
++that they are defined using standard clock bindings with following
++clock-output-names:
++ - "xin24m" - crystal input - required,
++ - "xin32k" - rtc clock - optional,
++ - "ext_i2s" - external I2S clock - optional,
++ - "ext_gmac" - external GMAC clock - optional
++ - "ext_hsadc" - external HSADC clock - optional,
++ - "ext_isp" - external ISP clock - optional,
++ - "ext_jtag" - external JTAG clock - optional
++ - "ext_vip" - external VIP clock - optional,
++ - "usbotg_out" - output clock of the pll in the otg phy
++
++Example: Clock controller node:
++
++	cru: clock-controller@ff760000 {
++		compatible = "rockchip,rk3368-cru";
++		reg = <0x0 0xff760000 0x0 0x1000>;
++		rockchip,grf = <&grf>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++Example: UART controller node that consumes the clock generated by the clock
++  controller:
++
++	uart0: serial@10124000 {
++		compatible = "snps,dw-apb-uart";
++		reg = <0x10124000 0x400>;
++		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
++		reg-shift = <2>;
++		reg-io-width = <1>;
++		clocks = <&cru SCLK_UART0>;
++	};
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
-
+2.1.4
