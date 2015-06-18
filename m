@@ -1,63 +1,175 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <1433771479.2882.44.camel@linaro.org>
-Subject: Re: [PATCH v4 6/8] arm64: dts: add SRAM, MHU mailbox and SCPI
- support on Juno
-From: "Jon Medhurst (Tixy)" <tixy@linaro.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>
-Date: Mon, 08 Jun 2015 14:51:19 +0100
-In-Reply-To: <1433760002-24120-7-git-send-email-sudeep.holla@arm.com>
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
-	 <1433760002-24120-7-git-send-email-sudeep.holla@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danny Huang <dahuang@nvidia.com>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v6 12/25] clk: tegra: Update PLLM handling
+Date: Thu, 18 Jun 2015 17:28:27 -0400
+Message-ID: <1434662920-21469-13-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2015-06-08 at 11:40 +0100, Sudeep Holla wrote:
-[...]
-> +
-> +	scpi {
-> +		compatible = "arm,scpi";
-> +		mboxes = <&mailbox 1>;
-> +		shmem = <&cpu_scp_hpri>;
-> +
-> +		clocks {
-> +			compatible = "arm,scpi-clocks";
-> +
-> +			scpi_dvfs: scpi_clocks@0 {
-> +				compatible = "arm,scpi-dvfs-clocks";
-> +				#clock-cells = <1>;
-> +				clock-indices = <0>, <1>, <2>;
-> +				clock-output-names = "vbig", "vlittle", "vgpu";
+From: Danny Huang <dahuang@nvidia.com>
 
->From where do the clock names derive? They look more like names for
-voltage domains rather than clocks. My (admittedly very old) Juno docs,
-have the clocks as ATLCLK, APLCLK and GPUCLK.
+PLLM is fixed for Tegra30 up through Tegra114. Starting with Tegra124
+PLLM can change rate. Mark PLLM as TEGRA_PLL_FIXED for the generations
+where it should be. Modify the check in clk_pll_round_rate and
+clk_pll_recalc_rate to allow for the non-fixed version to
+return the correct rate.
 
-> +			};
-> +			scpi_clk: scpi_clocks@3 {
-> +				compatible = "arm,scpi-variable-clocks";
-> +				#clock-cells = <1>;
-> +				clock-indices = <3>, <4>;
-> +				clock-output-names = "pxlclk0", "pxlclk1";
+Note that clk-tegra20 is not touched. This is because PLL_M is not
+distinguished in that driver, and adding either the PLL_M or FIXED_RATE
+flags will cause potential problems.
 
-Can we also have clock index 5, name 'i2s_clk', for used by audio?
-(I don't know what other clocks the SCP currently supports, but audio is
-one being currently used by the out-of-tree code).
+PLLM never supported dynamic ramping. On T20/T30, there is no dynamic
+ramping al all, and on T114/T124/T132, only PLLX and PLLC support
+dynamic ramping, so we can go ahead and remove the specialized pllm_ops.
 
-Also, I believe that both display outputs share the same clock, and so
-pxlclk0 and pxlclk1 can't be controlled independently. But I guess these
-device-tree entries are for the interface to the SCP firmware, not the
-hardware, and if that pretends the clocks are independent...
+Signed-off-by: Danny Huang <dahuang@nvidia.com>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c      |   56 +++++---------------------------------
+ drivers/clk/tegra/clk-tegra114.c |    3 +-
+ drivers/clk/tegra/clk-tegra30.c  |    2 +-
+ 3 files changed, 10 insertions(+), 51 deletions(-)
 
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 54ebab2b85e5..ff67f6d77ca9 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -717,12 +717,12 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+ 	struct tegra_clk_pll_freq_table cfg;
+ 
+-	if (pll->params->flags & TEGRA_PLL_FIXED)
++	if (pll->params->flags & TEGRA_PLL_FIXED) {
++		/* PLLM/MB are used for memory; we do not change rate */
++		if (pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB))
++			return __clk_get_rate(hw->clk);
+ 		return pll->params->fixed_rate;
+-
+-	/* PLLM is used for memory; we do not change rate */
+-	if (pll->params->flags & TEGRA_PLLM)
+-		return __clk_get_rate(hw->clk);
++	}
+ 
+ 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
+ 	    pll->params->calc_rate(hw, &cfg, rate, *prate))
+@@ -746,6 +746,7 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 		return parent_rate;
+ 
+ 	if ((pll->params->flags & TEGRA_PLL_FIXED) &&
++	    !(pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
+ 			!(val & PLL_BASE_OVERRIDE)) {
+ 		struct tegra_clk_pll_freq_table sel;
+ 		if (_get_table_rate(hw, &sel, pll->params->fixed_rate,
+@@ -1088,40 +1089,6 @@ static long clk_pll_ramp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	return output_rate;
+ }
+ 
+-static int clk_pllm_set_rate(struct clk_hw *hw, unsigned long rate,
+-				unsigned long parent_rate)
+-{
+-	struct tegra_clk_pll_freq_table cfg;
+-	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long flags = 0;
+-	int state, ret = 0;
+-
+-	if (pll->lock)
+-		spin_lock_irqsave(pll->lock, flags);
+-
+-	state = clk_pll_is_enabled(hw);
+-	if (state) {
+-		if (rate != clk_get_rate(hw->clk)) {
+-			pr_err("%s: Cannot change active PLLM\n", __func__);
+-			ret = -EINVAL;
+-			goto out;
+-		}
+-		goto out;
+-	}
+-
+-	ret = _pll_ramp_calc_pll(hw, &cfg, rate, parent_rate);
+-	if (ret < 0)
+-		goto out;
+-
+-	_update_pll_mnp(pll, &cfg);
+-
+-out:
+-	if (pll->lock)
+-		spin_unlock_irqrestore(pll->lock, flags);
+-
+-	return ret;
+-}
+-
+ static void _pllcx_strobe(struct tegra_clk_pll *pll)
+ {
+ 	u32 val;
+@@ -1589,15 +1556,6 @@ static const struct clk_ops tegra_clk_pllxc_ops = {
+ 	.set_rate = clk_pllxc_set_rate,
+ };
+ 
+-static const struct clk_ops tegra_clk_pllm_ops = {
+-	.is_enabled = clk_pll_is_enabled,
+-	.enable = clk_pll_enable,
+-	.disable = clk_pll_disable,
+-	.recalc_rate = clk_pll_recalc_rate,
+-	.round_rate = clk_pll_ramp_round_rate,
+-	.set_rate = clk_pllm_set_rate,
+-};
+-
+ static const struct clk_ops tegra_clk_pllc_ops = {
+ 	.is_enabled = clk_pll_is_enabled,
+ 	.enable = clk_pllc_enable,
+@@ -1751,7 +1709,7 @@ struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
+ 		return ERR_CAST(pll);
+ 
+ 	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
+-				      &tegra_clk_pllm_ops);
++				      &tegra_clk_pll_ops);
+ 	if (IS_ERR(clk))
+ 		kfree(pll);
+ 
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 2e8ed12a6889..7cbb63175896 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -353,7 +353,8 @@ static struct tegra_clk_pll_params pll_m_params = {
+ 	.pmc_divnm_reg = PMC_PLLM_WB0_OVERRIDE,
+ 	.pmc_divp_reg = PMC_PLLM_WB0_OVERRIDE_2,
+ 	.freq_table = pll_m_freq_table,
+-	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE |
++		 TEGRA_PLL_FIXED,
+ };
+ 
+ static struct div_nmp pllp_nmp = {
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 115ce6e18218..eadef0b802e4 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -457,7 +457,7 @@ static struct tegra_clk_pll_params pll_m_params = {
+ 	.freq_table = pll_m_freq_table,
+ 	.flags = TEGRA_PLLM | TEGRA_PLL_HAS_CPCON |
+ 		 TEGRA_PLL_SET_DCCON | TEGRA_PLL_USE_LOCK |
+-		 TEGRA_PLL_HAS_LOCK_ENABLE,
++		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_FIXED,
+ };
+ 
+ static struct tegra_clk_pll_params pll_p_params = {
 -- 
-Tixy
-
-
+1.7.9.5
