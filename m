@@ -1,29 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 5 Jun 2015 18:11:51 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: dinguyen@opensource.altera.com
-Cc: mturquette@linaro.org, dinh.linux@gmail.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 2/2] clk: socfpga: make use of of_clk_parent_fill
- helper function
-Message-ID: <20150606011151.GE29237@codeaurora.org>
-References: <1433521574-31052-1-git-send-email-dinguyen@opensource.altera.com>
- <1433521574-31052-3-git-send-email-dinguyen@opensource.altera.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1433521574-31052-3-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:45883 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753000AbbFRORj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 18 Jun 2015 10:17:39 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@linaro.org, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 2/9] clk: rockchip: fix faulty vip parent name on rk3288
+Date: Thu, 18 Jun 2015 16:18:29 +0200
+Message-Id: <1434637116-17124-3-git-send-email-heiko@sntech.de>
+In-Reply-To: <1434637116-17124-1-git-send-email-heiko@sntech.de>
+References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/05, dinguyen@opensource.altera.com wrote:
-> From: Dinh Nguyen <dinguyen@opensource.altera.com>
-> 
-> Use of_clk_parent_fill to fill in the parent clock's array.
-> 
-> Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-> ---
+The video input processor (vip) was called camera interface (cif) on
+older socs which seems to have resulted in a copy'n'paste error when
+creating the rk3288 camera clocks.
 
-Applied to clk-next
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk-rk3288.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 0211162..df9dc96 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -189,7 +189,7 @@ PNAME(mux_uart1_p)	= { "uart1_src", "uart1_frac", "xin24m" };
+ PNAME(mux_uart2_p)	= { "uart2_src", "uart2_frac", "xin24m" };
+ PNAME(mux_uart3_p)	= { "uart3_src", "uart3_frac", "xin24m" };
+ PNAME(mux_uart4_p)	= { "uart4_src", "uart4_frac", "xin24m" };
+-PNAME(mux_cif_out_p)	= { "cif_src", "xin24m" };
++PNAME(mux_vip_out_p)	= { "vip_src", "xin24m" };
+ PNAME(mux_mac_p)	= { "mac_pll_src", "ext_gmac" };
+ PNAME(mux_hsadcout_p)	= { "hsadc_src", "ext_hsadc" };
+ PNAME(mux_edp_24m_p)	= { "ext_edp_24m", "xin24m" };
+@@ -434,7 +434,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	COMPOSITE_NODIV(0, "vip_src", mux_pll_src_cpll_gpll_p, 0,
+ 			RK3288_CLKSEL_CON(26), 8, 1, MFLAGS,
+ 			RK3288_CLKGATE_CON(3), 7, GFLAGS),
+-	COMPOSITE_NOGATE(0, "sclk_vip_out", mux_cif_out_p, 0,
++	COMPOSITE_NOGATE(0, "sclk_vip_out", mux_vip_out_p, 0,
+ 			RK3288_CLKSEL_CON(26), 15, 1, MFLAGS, 9, 5, DFLAGS),
+ 
+ 	DIV(0, "pclk_pd_alive", "gpll", 0,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
+
