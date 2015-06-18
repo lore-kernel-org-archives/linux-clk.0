@@ -1,70 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:50962 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752019AbbFZKVl (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jun 2015 06:21:41 -0400
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Dan Carpenter <dan.carpenter@oracle.com>
-Cc: thomas.ab@samsung.com, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: clk: samsung: add infrastructure to register cpu clocks
-Date: Fri, 26 Jun 2015 12:20:35 +0200
-Message-id: <2521313.Iak1gZLfIu@amdc1976>
-In-reply-to: <CAJKOXPfyw=1kh4DkC3j7FCXcERecBWgGVcN6bYvrBZQVjeo=Bg@mail.gmail.com>
-References: <20150626095444.GA30810@mwanda>
- <CAJKOXPfyw=1kh4DkC3j7FCXcERecBWgGVcN6bYvrBZQVjeo=Bg@mail.gmail.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v6 04/25] clk: tegra: pll: add tegra_pll_wait_for_lock to clk header
+Date: Thu, 18 Jun 2015 17:28:19 -0400
+Message-ID: <1434662920-21469-5-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
+Create a wrapper interface to make use of the existing
+clk_pll_wait_for_lock. This will be useful for implementations
+of callbacks in Tegra SoC specific clock drivers.
 
-Hi,
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c |    5 +++++
+ drivers/clk/tegra/clk.h     |    1 +
+ 2 files changed, 6 insertions(+)
 
-On Friday, June 26, 2015 07:03:25 PM Krzysztof Kozlowski wrote:
-> 2015-06-26 18:54 GMT+09:00 Dan Carpenter <dan.carpenter@oracle.com>:
-> > Hello Thomas Abraham,
-> >
-> > The patch ddeac8d968d4: "clk: samsung: add infrastructure to register
-> > cpu clocks" from Apr 3, 2015, leads to the following static checker
-> > warning:
-> >
-> >         drivers/clk/samsung/clk-cpu.c:164 exynos_cpuclk_pre_rate_change()
-> >         warn: test_bit() takes a bit number
-> >
-> > drivers/clk/samsung/clk-cpu.c
-> >    158          /*
-> >    159           * For the selected PLL clock frequency, get the pre-defined divider
-> >    160           * values. If the clock for sclk_hpm is not sourced from apll, then
-> >    161           * the values for DIV_COPY and DIV_HPM dividers need not be set.
-> >    162           */
-> >    163          div0 = cfg_data->div0;
-> >    164          if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
-> >                              ^^^^^^^^^^^^^^^^
-> > CLK_CPU_HAS_DIV1 is (1 << 0).  We sometimes used it correctly as a mask
-> > and sometimes incorrectly (like here) as a bit number.
-
-Fortunately the current value of this flag is "1" so test_bit() still
-works correctly.  I'll fix it up later anyway.  Thanks for catching it.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-> >    165                  div1 = cfg_data->div1;
-> >    166                  if (readl(base + E4210_SRC_CPU) & E4210_MUX_HPM_MASK)
-> >    167                          div1 = readl(base + E4210_DIV_CPU1) &
-> >    168                                  (E4210_DIV1_HPM_MASK | E4210_DIV1_COPY_MASK);
-> >    169          }
-> 
-> +Cc Bartlomiej
-> 
-> Although original author is Thomas but he abandoned this patch and
-> this was actually Bartlomiej's work mostly. Bart, care to look at it?
-> 
-> Best regards,
-> Krzysztof
-
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 05c6d08a6695..b9a739ce4b98 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -269,6 +269,11 @@ static int clk_pll_wait_for_lock(struct tegra_clk_pll *pll)
+ 	return -1;
+ }
+ 
++int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll)
++{
++	return clk_pll_wait_for_lock(pll);
++}
++
+ static int clk_pll_is_enabled(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 5d2678914160..eeb735e3fa72 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -674,5 +674,6 @@ void tegra114_clock_deassert_dfll_dvco_reset(void);
+ 
+ typedef void (*tegra_clk_apply_init_table_func)(void);
+ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
++int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
+ 
+ #endif /* TEGRA_CLK_H */
+-- 
+1.7.9.5
