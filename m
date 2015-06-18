@@ -1,31 +1,114 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 4 Jun 2015 13:53:08 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Tero Kristo <t-kristo@ti.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
-	kernel@stlinux.com, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/5] clk: st: Use of_clk_get_parent_count() instead of
- open coding
-Message-ID: <20150604205308.GL676@codeaurora.org>
-References: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
- <1432891549-23295-3-git-send-email-geert+renesas@glider.be>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1432891549-23295-3-git-send-email-geert+renesas@glider.be>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <55816094.2020208@free-electrons.com>
+Cc: "Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>,
+ "Boris Brezillon" <boris.brezillon@free-electrons.com>,
+ "Jason Cooper" <jason@lakedaemon.net>, "Tawfik Bayouk" <tawfik@marvell.com>,
+ "Andrew Lunn" <andrew@lunn.ch>, "Kevin Hilman" <khilman@kernel.org>,
+ stable@vger.kernel.org, "Eran Ben-Avi" <benavi@marvell.com>,
+ "Nadav Haklai" <nadavh@marvell.com>, "Lior Amsalem" <alior@marvell.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>
+References: <1434470179-20835-1-git-send-email-boris.brezillon@free-electrons.com>
+ <55816094.2020208@free-electrons.com>
+Message-ID: <20150618183654.25948.26168@quantum>
+Subject: Re: [PATCH v2] clk: mvebu: flag the crypto clk as CLK_IGNORE_UNUSED
+Date: Thu, 18 Jun 2015 11:36:54 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/29, Geert Uytterhoeven wrote:
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+Quoting Gregory CLEMENT (2015-06-17 04:57:08)
+> Hi Mike, Stephen,
+> =
 
-Applied to clk-next
+> On 16/06/2015 17:56, Boris Brezillon wrote:
+> > The crypto SRAM, used by the armada 370 cpuidle code to workaround a bug
+> > in the BootROM code, requires the crypto clk to be up and running.
+> > Flag the crypto clk as IGNORE_UNUSED until we add the proper
+> > infrastructure to define the crypto SRAM in the DT and reference the cr=
+ypto
+> > clk in this SRAM node.
+> > =
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> > Reported-by: Kevin Hilman <khilman@linaro.org>
+> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > Tested-by: Kevin Hilman <khilman@linaro.org>
+> > Fixes: 29e623475c50267ee3aaa49ebb6cbe107bce8d2a ("clk: mvebu: add
+> > missing CESA gate clk").
+> > Cc: <stable@vger.kernel.org> #4.1
+> =
+
+> Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> =
+
+> Would it possible to apply this fix on 4.1-rc8 ?
+
+Hi Gregory,
+
+I'm a bit confused by this. This patch fixes "clk: mvebu: add missing
+CESA gate clk", right? That patch lives in clk-next. It was not pushed
+to Linus' tree yet via a -fixes branch.
+
+Thus I can just apply this patch to clk-next and the problem should be
+resolved in clk-next, no?
+
+Furthermore, I do not have 29e623475c50267ee3aaa49ebb6cbe107bce8d2a
+anywhere in my tree. I'm not sure where this sha1 hash came from.
+
+Regards,
+Mike
+
+> =
+
+> Thanks,
+> =
+
+> Gregory
+> =
+
+> > ---
+> > Changes since v1:
+> > - add the Reported-by tag
+> > - add the missing trailing ','
+> > =
+
+> >  drivers/clk/mvebu/armada-370.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > =
+
+> > diff --git a/drivers/clk/mvebu/armada-370.c b/drivers/clk/mvebu/armada-=
+370.c
+> > index c19fd77..2c7c108 100644
+> > --- a/drivers/clk/mvebu/armada-370.c
+> > +++ b/drivers/clk/mvebu/armada-370.c
+> > @@ -163,7 +163,7 @@ static const struct clk_gating_soc_desc a370_gating=
+_desc[] __initconst =3D {
+> >       { "pex1", "pex1_en", 9, 0 },
+> >       { "sata0", NULL, 15, 0 },
+> >       { "sdio", NULL, 17, 0 },
+> > -     { "crypto", NULL, 23, 0 },
+> > +     { "crypto", NULL, 23, CLK_IGNORE_UNUSED },
+> >       { "tdm", NULL, 25, 0 },
+> >       { "ddr", NULL, 28, CLK_IGNORE_UNUSED },
+> >       { "sata1", NULL, 30, 0 },
+> > =
+
+> =
+
+> =
+
+> -- =
+
+> Gregory Clement, Free Electrons
+> Kernel, drivers, real-time and embedded Linux
+> development, consulting, training and support.
+> http://free-electrons.com
+> =
+
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
