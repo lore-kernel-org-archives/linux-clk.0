@@ -1,60 +1,46 @@
-Return-Path: <vigneshr@ti.com>
-From: Vignesh R <vigneshr@ti.com>
-To: Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
-        Thierry
- Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Pawel
- Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell
-	<ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Benoit
- Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell
- King <linux@arm.linux.org.uk>,
-        Mike Turquette <mturquette@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        Vignesh
- R <vigneshr@ti.com>
-Subject: [PATCH v2 0/5] Add support for PWMSS on DRA7
-Date: Wed, 3 Jun 2015 17:21:19 +0530
-Message-ID: <1433332284-10766-1-git-send-email-vigneshr@ti.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Keerthy <j-keerthy@ti.com>
+To: <linux-omap@vger.kernel.org>
+CC: <galak@codeaurora.org>, <tony@atomide.com>, <t-kristo@ti.com>,
+	<pawel.moll@arm.com>, <linux-kernel@vger.kernel.org>,
+	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>,
+	<j-keerthy@ti.com>
+Subject: [PATCH 2/2] ARM: dts: am4372: Set the default clock rate for dpll_clksel_mac_clk clock
+Date: Thu, 18 Jun 2015 13:31:13 +0530
+Message-ID: <1434614473-8500-3-git-send-email-j-keerthy@ti.com>
+In-Reply-To: <1434614473-8500-1-git-send-email-j-keerthy@ti.com>
+References: <1434614473-8500-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+cpsw needs the clock to be running at 50MHz in kernel. Hence setting
+the default rate.
 
-Hi,
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
+ arch/arm/boot/dts/am4372.dtsi | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-This patch series adds support for PWMSS on DRA7. The IP is same as that
-present in AM33XX and AM43XX.
-The first patch changes clock domain in which PWMSS is present
-(l4per2_7xx_clkdm) to SW_WKUP. This is because legacy IPs like PWM
-does'nt support HW_AUTO prorperly. Hence, switch clock domain to
-SW_WKUP. This is based on the input from the hardware team.
-The rest of the patches add hwmod and dt entries and enable PWMSS on
-DRA7 based SoCs.
-
-Vignesh R (5):
-  ARM: OMAP2+: DRA7: clockdomain: change l4per2_7xx_clkdm to SW_WKUP
-  ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
-  ARM: dts: DRA7: Add TBCLK for PWMSS
-  clk: ti: DRA7: Add tbclk data for ehrpwm
-  ARM: dts: DRA7: Add dt nodes for PWMSS
-
- .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       |   8 +
- .../devicetree/bindings/pwm/pwm-tipwmss.txt        |  17 +-
- arch/arm/boot/dts/dra7.dtsi                        |  69 ++++++
- arch/arm/boot/dts/dra7xx-clocks.dtsi               |  26 +++
- arch/arm/mach-omap2/clockdomains7xx_data.c         |   2 +-
- arch/arm/mach-omap2/omap_hwmod_7xx_data.c          | 239 +++++++++++++++++++
- drivers/clk/ti/clk-7xx.c                           |   3 +
- 7 files changed, 362 insertions(+), 2 deletions(-)
-
+diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
+index c80a3e2..1680602 100644
+--- a/arch/arm/boot/dts/am4372.dtsi
++++ b/arch/arm/boot/dts/am4372.dtsi
+@@ -521,8 +521,11 @@
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ti,hwmods = "cpgmac0";
+-			clocks = <&cpsw_125mhz_gclk>, <&cpsw_cpts_rft_clk>;
+-			clock-names = "fck", "cpts";
++			clocks = <&cpsw_125mhz_gclk>, <&cpsw_cpts_rft_clk>,
++				 <&dpll_clksel_mac_clk>;
++			clock-names = "fck", "cpts", "50mclk";
++			assigned-clocks = <&dpll_clksel_mac_clk>;
++			assigned-clock-rates = <50000000>;
+ 			status = "disabled";
+ 			cpdma_channels = <8>;
+ 			ale_entries = <1024>;
 -- 
-2.4.1
+1.9.1
+
