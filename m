@@ -1,68 +1,50 @@
-Return-Path: <dinguyen@opensource.altera.com>
-From: <dinguyen@opensource.altera.com>
-To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
-CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Tero Kristo <t-kristo@ti.com>, Maxime Ripard
-	<maxime.ripard@free-electrons.com>, =?UTF-8?q?Emilio=20L=C3=B3pez?=
-	<emilio@elopez.com.ar>, Peter Griffin <peter.griffin@linaro.org>, "Gabriel
- FERNANDEZ" <gabriel.fernandez@st.com>, Santosh Shilimkar
-	<ssantosh@kernel.org>, Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 0/6] clk: make use of of_clk_parent_fill helper function
-Date: Wed, 10 Jun 2015 16:49:19 -0500
-Message-ID: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v6 06/25] clk: tegra: pll: update warning msg
+Date: Thu, 18 Jun 2015 17:28:21 -0400
+Message-ID: <1434662920-21469-7-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-Path: dinguyen@opensource.altera.com
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
+Swap out the generic WARN_ON with a WARN which gives more
+information about what is happening.
 
-Hello,
-
-This patch series makes use of the new of_clk_parent_fill() helper function.
-This patch series is not intended for v4.2, as I think it's a bit late, but
-I just wanted to make sure people have time to test it. The series is based
-on git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next.
-
-Thank,
-
-Dinh Nguyen (6):
-  clk: at91: make use of of_clk_parent_fill helper function
-  clk: qoriq: make use of of_clk_parent_fill helper function
-  clk: keystone: make use of of_clk_parent_fill helper function
-  clk: st: make use of of_clk_parent_fill helper function
-  clk: sunxi: make use of of_clk_parent_fill helper function
-  clk: ti: make use of of_clk_parent_fill helper function
-
- drivers/clk/at91/clk-main.c         |  7 +------
- drivers/clk/at91/clk-master.c       |  7 +------
- drivers/clk/at91/clk-programmable.c |  7 +------
- drivers/clk/at91/clk-slow.c         | 14 ++------------
- drivers/clk/at91/clk-smd.c          |  7 +------
- drivers/clk/at91/clk-usb.c          |  7 +------
- drivers/clk/clk-qoriq.c             |  5 ++---
- drivers/clk/keystone/pll.c          |  3 +--
- drivers/clk/st/clk-flexgen.c        |  6 ++----
- drivers/clk/st/clkgen-mux.c         |  7 ++-----
- drivers/clk/sunxi/clk-a20-gmac.c    |  3 +--
- drivers/clk/sunxi/clk-factors.c     |  4 +---
- drivers/clk/sunxi/clk-sun6i-ar100.c |  3 +--
- drivers/clk/sunxi/clk-sunxi.c       | 10 ++--------
- drivers/clk/ti/apll.c               |  4 +---
- drivers/clk/ti/composite.c          |  4 +---
- drivers/clk/ti/dpll.c               |  4 +---
- drivers/clk/ti/fapll.c              |  3 +--
- drivers/clk/ti/mux.c                |  4 +---
- 19 files changed, 24 insertions(+), 85 deletions(-)
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
-Cc: Tero Kristo <t-kristo@ti.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: "Emilio López" <emilio@elopez.com.ar>
-Cc: Peter Griffin <peter.griffin@linaro.org>
-Cc: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+ drivers/clk/tegra/clk-pll.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 1e1018dd466f..0282d9f4f2d7 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -692,7 +692,8 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 
+ 	pdiv = _hw_to_p_div(hw, cfg.p);
+ 	if (pdiv < 0) {
+-		WARN_ON(1);
++		WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
++			__clk_get_name(hw->clk), cfg.p);
+ 		pdiv = 1;
+ 	}
+ 
 -- 
-2.2.1
+1.7.9.5
