@@ -1,240 +1,147 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 5/9] clk: rockchip: add support for phase inverters
-Date: Thu, 18 Jun 2015 16:18:32 +0200
-Message-Id: <1434637116-17124-6-git-send-email-heiko@sntech.de>
-In-Reply-To: <1434637116-17124-1-git-send-email-heiko@sntech.de>
-References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
+Return-Path: <mturquette@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Murali Karicheri <m-karicheri2@ti.com>, robh+dt@kernel.org,
+ pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+ galak@codeaurora.org, ssantosh@kernel.org, sboyd@codeaurora.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux@arm.linux.org.uk,
+ linux-arm-kernel@lists.infradead.org
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
+Cc: "Murali Karicheri" <m-karicheri2@ti.com>
+References: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
+Message-ID: <20150618223728.9112.75331@quantum>
+Subject: Re: [PATCH 1/2] clk: keystone: add support for post divider register for
+ main pll
+Date: Thu, 18 Jun 2015 15:37:28 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Most Rockchip socs have optional phase inverters connected to some
-clocks that move the clock-phase by 180 degrees.
-While not having any actual influence on the rate, the inverter
-provides its own simple recalc_rate callback as relying on the
-fallback in the framework is for "lazy developers" according
-to the documentation in the code.
+Quoting Murali Karicheri (2015-05-29 09:04:12)
+> Main PLL controller has post divider bits in a separate register in
+> pll controller. Use the value from this register instead of fixed
+> divider when available.
+> =
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/rockchip/Makefile       |   1 +
- drivers/clk/rockchip/clk-inverter.c | 126 ++++++++++++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.c          |   7 ++
- drivers/clk/rockchip/clk.h          |  20 ++++++
- 4 files changed, 154 insertions(+)
- create mode 100644 drivers/clk/rockchip/clk-inverter.c
+> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
 
-diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
-index 2714097..fd71c7d 100644
---- a/drivers/clk/rockchip/Makefile
-+++ b/drivers/clk/rockchip/Makefile
-@@ -6,6 +6,7 @@ obj-y	+= clk-rockchip.o
- obj-y	+= clk.o
- obj-y	+= clk-pll.o
- obj-y	+= clk-cpu.o
-+obj-y	+= clk-inverter.o
- obj-y	+= clk-mmc-phase.o
- obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
- 
-diff --git a/drivers/clk/rockchip/clk-inverter.c b/drivers/clk/rockchip/clk-inverter.c
-new file mode 100644
-index 0000000..db852cd
---- /dev/null
-+++ b/drivers/clk/rockchip/clk-inverter.c
-@@ -0,0 +1,126 @@
-+/*
-+ * Copyright 2015 Heiko Stuebner <heiko@sntech.de>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/slab.h>
-+#include <linux/clk-provider.h>
-+#include "clk.h"
-+
-+struct rockchip_inv_clock {
-+	struct clk_hw	hw;
-+	void __iomem	*reg;
-+	int		shift;
-+	int		flags;
-+	spinlock_t	*lock;
-+};
-+
-+#define to_inv_clock(_hw) container_of(_hw, struct rockchip_inv_clock, hw)
-+
-+#define INVERTER_MASK 0x1
-+
-+static unsigned long rockchip_inv_recalc(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	return parent_rate;
-+}
-+
-+static int rockchip_inv_get_phase(struct clk_hw *hw)
-+{
-+	struct rockchip_inv_clock *inv_clock = to_inv_clock(hw);
-+	u32 val;
-+
-+	val = readl(inv_clock->reg) >> (inv_clock->shift) & INVERTER_MASK;
-+	return val ? 180 : 0;
-+}
-+
-+static int rockchip_inv_set_phase(struct clk_hw *hw, int degrees)
-+{
-+	struct rockchip_inv_clock *inv_clock = to_inv_clock(hw);
-+	u32 val;
-+
-+	switch (degrees) {
-+	case 0:
-+		val = 0;
-+		break;
-+	case 180:
-+		val = 1;
-+		break;
-+	default:
-+		pr_err("%s: unsupported phase %d for %s\n",
-+		       __func__, degrees, __clk_get_name(hw->clk));
-+		return -EINVAL;
-+	}
-+
-+	if (inv_clock->flags & ROCKCHIP_INVERTER_HIWORD_MASK) {
-+		writel(HIWORD_UPDATE(val, INVERTER_MASK, inv_clock->shift),
-+		       inv_clock->reg);
-+	} else {
-+		unsigned long flags;
-+		u32 reg;
-+
-+		spin_lock_irqsave(inv_clock->lock, flags);
-+
-+		reg = readl(inv_clock->reg);
-+		reg &= ~BIT(inv_clock->shift);
-+		reg |= val;
-+		writel(reg, inv_clock->reg);
-+
-+		spin_unlock_irqrestore(inv_clock->lock, flags);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops rockchip_inv_clk_ops = {
-+	.recalc_rate	= rockchip_inv_recalc,
-+	.get_phase	= rockchip_inv_get_phase,
-+	.set_phase	= rockchip_inv_set_phase,
-+};
-+
-+struct clk *rockchip_clk_register_inverter(const char *name,
-+				const char *const *parent_names, u8 num_parents,
-+				void __iomem *reg, int shift, int flags,
-+				spinlock_t *lock)
-+{
-+	struct clk_init_data init;
-+	struct rockchip_inv_clock *inv_clock;
-+	struct clk *clk;
-+
-+	inv_clock = kmalloc(sizeof(*inv_clock), GFP_KERNEL);
-+	if (!inv_clock)
-+		return NULL;
-+
-+	init.num_parents = num_parents;
-+	init.flags = CLK_SET_RATE_PARENT;
-+	init.parent_names = parent_names;
-+	init.ops = &rockchip_inv_clk_ops;
-+
-+	inv_clock->hw.init = &init;
-+	inv_clock->reg = reg;
-+	inv_clock->shift = shift;
-+	inv_clock->flags = flags;
-+	inv_clock->lock = lock;
-+
-+	if (name)
-+		init.name = name;
-+
-+	clk = clk_register(NULL, &inv_clock->hw);
-+	if (IS_ERR(clk))
-+		goto err_free;
-+
-+	return clk;
-+
-+err_free:
-+	kfree(inv_clock);
-+	return NULL;
-+}
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 052b94d..2493881 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -277,6 +277,13 @@ void __init rockchip_clk_register_branches(
- 				list->div_shift
- 			);
- 			break;
-+		case branch_inverter:
-+			clk = rockchip_clk_register_inverter(
-+				list->name, list->parent_names,
-+				list->num_parents,
-+				reg_base + list->muxdiv_offset,
-+				list->div_shift, list->div_flags, &clk_lock);
-+			break;
- 		}
- 
- 		/* none of the cases above matched */
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 501f02e..b72dad0 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -182,6 +182,13 @@ struct clk *rockchip_clk_register_mmc(const char *name,
- 				const char *const *parent_names, u8 num_parents,
- 				void __iomem *reg, int shift);
- 
-+#define ROCKCHIP_INVERTER_HIWORD_MASK	BIT(0)
-+
-+struct clk *rockchip_clk_register_inverter(const char *name,
-+				const char *const *parent_names, u8 num_parents,
-+				void __iomem *reg, int shift, int flags,
-+				spinlock_t *lock);
-+
- #define PNAME(x) static const char *const x[] __initconst
- 
- enum rockchip_clk_branch_type {
-@@ -191,6 +198,7 @@ enum rockchip_clk_branch_type {
- 	branch_fraction_divider,
- 	branch_gate,
- 	branch_mmc,
-+	branch_inverter,
- };
- 
- struct rockchip_clk_branch {
-@@ -414,6 +422,18 @@ struct rockchip_clk_branch {
- 		.div_shift	= shift,			\
- 	}
- 
-+#define INVERTER(_id, cname, pname, io, is, if)			\
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_inverter,		\
-+		.name		= cname,			\
-+		.parent_names	= (const char *[]){ pname },	\
-+		.num_parents	= 1,				\
-+		.muxdiv_offset	= io,				\
-+		.div_shift	= is,				\
-+		.div_flags	= if,				\
-+	}
-+
- void rockchip_clk_init(struct device_node *np, void __iomem *base,
- 		       unsigned long nr_clks);
- struct regmap *rockchip_clk_get_grf(void);
--- 
-2.1.4
+Applied to clk-next.
+
+Regards,
+Mike
+
+> ---
+>  .../devicetree/bindings/clock/keystone-pll.txt       |  8 ++++----
+>  drivers/clk/keystone/pll.c                           | 20 ++++++++++++++=
+++++--
+>  2 files changed, 22 insertions(+), 6 deletions(-)
+> =
+
+> diff --git a/Documentation/devicetree/bindings/clock/keystone-pll.txt b/D=
+ocumentation/devicetree/bindings/clock/keystone-pll.txt
+> index 225990f..47570d2 100644
+> --- a/Documentation/devicetree/bindings/clock/keystone-pll.txt
+> +++ b/Documentation/devicetree/bindings/clock/keystone-pll.txt
+> @@ -15,8 +15,8 @@ Required properties:
+>  - compatible : shall be "ti,keystone,main-pll-clock" or "ti,keystone,pll=
+-clock"
+>  - clocks : parent clock phandle
+>  - reg - pll control0 and pll multipler registers
+> -- reg-names : control and multiplier. The multiplier is applicable only =
+for
+> -               main pll clock
+> +- reg-names : control, multiplier and post-divider. The multiplier and
+> +               post-divider registers are applicable only for main pll c=
+lock
+>  - fixed-postdiv : fixed post divider value. If absent, use clkod registe=
+r bits
+>                 for postdiv
+>  =
+
+> @@ -25,8 +25,8 @@ Example:
+>                 #clock-cells =3D <0>;
+>                 compatible =3D "ti,keystone,main-pll-clock";
+>                 clocks =3D <&refclksys>;
+> -               reg =3D <0x02620350 4>, <0x02310110 4>;
+> -               reg-names =3D "control", "multiplier";
+> +               reg =3D <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
+> +               reg-names =3D "control", "multiplier", "post-divider";
+>                 fixed-postdiv =3D <2>;
+>         };
+>  =
+
+> diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
+> index 0dd8a4b..4a375ea 100644
+> --- a/drivers/clk/keystone/pll.c
+> +++ b/drivers/clk/keystone/pll.c
+> @@ -37,7 +37,8 @@
+>   *     Main PLL or any other PLLs in the device such as ARM PLL, DDR PLL
+>   *     or PA PLL available on keystone2. These PLLs are controlled by
+>   *     this register. Main PLL is controlled by a PLL controller.
+> - * @pllm: PLL register map address
+> + * @pllm: PLL register map address for multiplier bits
+> + * @pllod: PLL register map address for post divider bits
+>   * @pll_ctl0: PLL controller map address
+>   * @pllm_lower_mask: multiplier lower mask
+>   * @pllm_upper_mask: multiplier upper mask
+> @@ -53,6 +54,7 @@ struct clk_pll_data {
+>         u32 phy_pllm;
+>         u32 phy_pll_ctl0;
+>         void __iomem *pllm;
+> +       void __iomem *pllod;
+>         void __iomem *pll_ctl0;
+>         u32 pllm_lower_mask;
+>         u32 pllm_upper_mask;
+> @@ -102,7 +104,11 @@ static unsigned long clk_pllclk_recalc(struct clk_hw=
+ *hw,
+>                 /* read post divider from od bits*/
+>                 postdiv =3D ((val & pll_data->clkod_mask) >>
+>                                  pll_data->clkod_shift) + 1;
+> -       else
+> +       else if (pll_data->pllod) {
+> +               postdiv =3D readl(pll_data->pllod);
+> +               postdiv =3D ((postdiv & pll_data->clkod_mask) >>
+> +                               pll_data->clkod_shift) + 1;
+> +       } else
+>                 postdiv =3D pll_data->postdiv;
+>  =
+
+>         rate /=3D (prediv + 1);
+> @@ -172,12 +178,21 @@ static void __init _of_pll_clk_init(struct device_n=
+ode *node, bool pllctrl)
+>                 /* assume the PLL has output divider register bits */
+>                 pll_data->clkod_mask =3D CLKOD_MASK;
+>                 pll_data->clkod_shift =3D CLKOD_SHIFT;
+> +
+> +               /*
+> +                * Check if there is an post-divider register. If not
+> +                * assume od bits are part of control register.
+> +                */
+> +               i =3D of_property_match_string(node, "reg-names",
+> +                                            "post-divider");
+> +               pll_data->pllod =3D of_iomap(node, i);
+>         }
+>  =
+
+>         i =3D of_property_match_string(node, "reg-names", "control");
+>         pll_data->pll_ctl0 =3D of_iomap(node, i);
+>         if (!pll_data->pll_ctl0) {
+>                 pr_err("%s: ioremap failed\n", __func__);
+> +               iounmap(pll_data->pllod);
+>                 goto out;
+>         }
+>  =
+
+> @@ -193,6 +208,7 @@ static void __init _of_pll_clk_init(struct device_nod=
+e *node, bool pllctrl)
+>                 pll_data->pllm =3D of_iomap(node, i);
+>                 if (!pll_data->pllm) {
+>                         iounmap(pll_data->pll_ctl0);
+> +                       iounmap(pll_data->pllod);
+>                         goto out;
+>                 }
+>         }
+> -- =
+
+> 1.9.1
+>=20
