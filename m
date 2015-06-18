@@ -1,4 +1,4 @@
-Return-Path: <rklein@nvidia.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Rhyland Klein <rklein@nvidia.com>
 To: Peter De Schrijver <pdeschrijver@nvidia.com>,
 	Thierry Reding <thierry.reding@gmail.com>
@@ -6,170 +6,109 @@ CC: Mike Turquette <mturquette@linaro.org>,
 	Stephen Warren <swarren@wwwdotorg.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Danny Huang <dahuang@nvidia.com>,
+	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 12/25] clk: tegra: Update PLLM handling
-Date: Thu, 18 Jun 2015 17:28:27 -0400
-Message-ID: <1434662920-21469-13-git-send-email-rklein@nvidia.com>
+Subject: [PATCH v6 18/25] clk: tegra: pll: Add logic for SS
+Date: Thu, 18 Jun 2015 17:28:33 -0400
+Message-ID: <1434662920-21469-19-git-send-email-rklein@nvidia.com>
 In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
 References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Danny Huang <dahuang@nvidia.com>
+From: Bill Huang <bilhuang@nvidia.com>
 
-PLLM is fixed for Tegra30 up through Tegra114. Starting with Tegra124
-PLLM can change rate. Mark PLLM as TEGRA_PLL_FIXED for the generations
-where it should be. Modify the check in clk_pll_round_rate and
-clk_pll_recalc_rate to allow for the non-fixed version to
-return the correct rate.
+Add some logic for Spread Spectrum control. It is used in conjuncture
+with SDM fractional dividers. SSC has to be disabled when we configure
+the divider settings.
 
-Note that clk-tegra20 is not touched. This is because PLL_M is not
-distinguished in that driver, and adding either the PLL_M or FIXED_RATE
-flags will cause potential problems.
-
-PLLM never supported dynamic ramping. On T20/T30, there is no dynamic
-ramping al all, and on T114/T124/T132, only PLLX and PLLC support
-dynamic ramping, so we can go ahead and remove the specialized pllm_ops.
-
-Signed-off-by: Danny Huang <dahuang@nvidia.com>
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
 Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/tegra/clk-pll.c      |   56 +++++---------------------------------
- drivers/clk/tegra/clk-tegra114.c |    3 +-
- drivers/clk/tegra/clk-tegra30.c  |    2 +-
- 3 files changed, 10 insertions(+), 51 deletions(-)
+v5:
+  - Reorderd Patch so set_defaults logic is present already
+
+ drivers/clk/tegra/clk-pll.c |   25 ++++++++++++++++++++++++-
+ drivers/clk/tegra/clk.h     |    4 ++++
+ 2 files changed, 28 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 54ebab2b85e5..ff67f6d77ca9 100644
+index c6cb22cebac1..da356fcc7eeb 100644
 --- a/drivers/clk/tegra/clk-pll.c
 +++ b/drivers/clk/tegra/clk-pll.c
-@@ -717,12 +717,12 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	struct tegra_clk_pll_freq_table cfg;
- 
--	if (pll->params->flags & TEGRA_PLL_FIXED)
-+	if (pll->params->flags & TEGRA_PLL_FIXED) {
-+		/* PLLM/MB are used for memory; we do not change rate */
-+		if (pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB))
-+			return __clk_get_rate(hw->clk);
- 		return pll->params->fixed_rate;
--
--	/* PLLM is used for memory; we do not change rate */
--	if (pll->params->flags & TEGRA_PLLM)
--		return __clk_get_rate(hw->clk);
-+	}
- 
- 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
- 	    pll->params->calc_rate(hw, &cfg, rate, *prate))
-@@ -746,6 +746,7 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
- 		return parent_rate;
- 
- 	if ((pll->params->flags & TEGRA_PLL_FIXED) &&
-+	    !(pll->params->flags & (TEGRA_PLLM | TEGRA_PLLMB)) &&
- 			!(val & PLL_BASE_OVERRIDE)) {
- 		struct tegra_clk_pll_freq_table sel;
- 		if (_get_table_rate(hw, &sel, pll->params->fixed_rate,
-@@ -1088,40 +1089,6 @@ static long clk_pll_ramp_round_rate(struct clk_hw *hw, unsigned long rate,
- 	return output_rate;
+@@ -649,6 +649,26 @@ static void _update_pll_cpcon(struct tegra_clk_pll *pll,
+ 	pll_writel_misc(val, pll);
  }
  
--static int clk_pllm_set_rate(struct clk_hw *hw, unsigned long rate,
--				unsigned long parent_rate)
--{
--	struct tegra_clk_pll_freq_table cfg;
--	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	unsigned long flags = 0;
--	int state, ret = 0;
--
--	if (pll->lock)
--		spin_lock_irqsave(pll->lock, flags);
--
--	state = clk_pll_is_enabled(hw);
--	if (state) {
--		if (rate != clk_get_rate(hw->clk)) {
--			pr_err("%s: Cannot change active PLLM\n", __func__);
--			ret = -EINVAL;
--			goto out;
--		}
--		goto out;
--	}
--
--	ret = _pll_ramp_calc_pll(hw, &cfg, rate, parent_rate);
--	if (ret < 0)
--		goto out;
--
--	_update_pll_mnp(pll, &cfg);
--
--out:
--	if (pll->lock)
--		spin_unlock_irqrestore(pll->lock, flags);
--
--	return ret;
--}
--
- static void _pllcx_strobe(struct tegra_clk_pll *pll)
++static void pll_clk_start_ss(struct tegra_clk_pll *pll)
++{
++	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
++		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
++
++		val |= pll->params->ssc_ctrl_en_mask;
++		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
++	}
++}
++
++static void pll_clk_stop_ss(struct tegra_clk_pll *pll)
++{
++	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
++		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
++
++		val &= ~pll->params->ssc_ctrl_en_mask;
++		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
++	}
++}
++
+ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 			unsigned long rate)
  {
- 	u32 val;
-@@ -1589,15 +1556,6 @@ static const struct clk_ops tegra_clk_pllxc_ops = {
- 	.set_rate = clk_pllxc_set_rate,
- };
+@@ -667,8 +687,10 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 			return 0;
+ 	}
  
--static const struct clk_ops tegra_clk_pllm_ops = {
--	.is_enabled = clk_pll_is_enabled,
--	.enable = clk_pll_enable,
--	.disable = clk_pll_disable,
--	.recalc_rate = clk_pll_recalc_rate,
--	.round_rate = clk_pll_ramp_round_rate,
--	.set_rate = clk_pllm_set_rate,
--};
--
- static const struct clk_ops tegra_clk_pllc_ops = {
- 	.is_enabled = clk_pll_is_enabled,
- 	.enable = clk_pllc_enable,
-@@ -1751,7 +1709,7 @@ struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
- 		return ERR_CAST(pll);
+-	if (state)
++	if (state) {
++		pll_clk_stop_ss(pll);
+ 		_clk_pll_disable(hw);
++	}
  
- 	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
--				      &tegra_clk_pllm_ops);
-+				      &tegra_clk_pll_ops);
- 	if (IS_ERR(clk))
- 		kfree(pll);
+ 	if (!pll->params->defaults_set && pll->params->set_defaults)
+ 		pll->params->set_defaults(pll);
+@@ -681,6 +703,7 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 	if (state) {
+ 		_clk_pll_enable(hw);
+ 		ret = clk_pll_wait_for_lock(pll);
++		pll_clk_start_ss(pll);
+ 	}
  
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index 2e8ed12a6889..7cbb63175896 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -353,7 +353,8 @@ static struct tegra_clk_pll_params pll_m_params = {
- 	.pmc_divnm_reg = PMC_PLLM_WB0_OVERRIDE,
- 	.pmc_divp_reg = PMC_PLLM_WB0_OVERRIDE_2,
- 	.freq_table = pll_m_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE |
-+		 TEGRA_PLL_FIXED,
- };
- 
- static struct div_nmp pllp_nmp = {
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 115ce6e18218..eadef0b802e4 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -457,7 +457,7 @@ static struct tegra_clk_pll_params pll_m_params = {
- 	.freq_table = pll_m_freq_table,
- 	.flags = TEGRA_PLLM | TEGRA_PLL_HAS_CPCON |
- 		 TEGRA_PLL_SET_DCCON | TEGRA_PLL_USE_LOCK |
--		 TEGRA_PLL_HAS_LOCK_ENABLE,
-+		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_FIXED,
- };
- 
- static struct tegra_clk_pll_params pll_p_params = {
+ 	return ret;
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index d29d095659a2..87239298043c 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -184,6 +184,8 @@ struct tegra_clk_pll;
+  * @sdm_din_mask:		Mask of SDM divider bits
+  * @sdm_ctrl_reg:		Register offset where SDM enable is
+  * @sdm_ctrl_en_mask:		Mask of SDM enable bit
++ * @ssc_ctrl_reg:		Register offset where SSC settings are
++ * @ssc_ctrl_en_mask:		Mask of SSC enable bit
+  * @aux_reg:			AUX register offset
+  * @dyn_ramp_reg:		Dynamic ramp control register offset
+  * @ext_misc_reg:		Miscellaneous control register offsets
+@@ -262,6 +264,8 @@ struct tegra_clk_pll_params {
+ 	u32		sdm_din_mask;
+ 	u32		sdm_ctrl_reg;
+ 	u32		sdm_ctrl_en_mask;
++	u32		ssc_ctrl_reg;
++	u32		ssc_ctrl_en_mask;
+ 	u32		aux_reg;
+ 	u32		dyn_ramp_reg;
+ 	u32		ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
 -- 
 1.7.9.5
+
