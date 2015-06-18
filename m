@@ -1,62 +1,102 @@
-Return-Path: <dinguyen@opensource.altera.com>
-Message-ID: <5579E7BD.8010908@opensource.altera.com>
-Date: Thu, 11 Jun 2015 14:55:41 -0500
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
-MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-CC: <sboyd@codeaurora.org>, <mturquette@linaro.org>, <dinh.linux@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	=?windows-1252?Q?Emilio_L=F3pez?= <emilio@elopez.com.ar>
-Subject: Re: [PATCH 5/6] clk: sunxi: make use of of_clk_parent_fill helper
- function
-References: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
- <1433972965-24974-6-git-send-email-dinguyen@opensource.altera.com>
- <20150611090653.GH19653@lukather>
-In-Reply-To: <20150611090653.GH19653@lukather>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: dinguyen@opensource.altera.com
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 6/9] clk: rockchip: define the inverters of rk3066/rk3188 and rk3288
+Date: Thu, 18 Jun 2015 16:18:33 +0200
+Message-Id: <1434637116-17124-7-git-send-email-heiko@sntech.de>
+In-Reply-To: <1434637116-17124-1-git-send-email-heiko@sntech.de>
+References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/11/2015 04:06 AM, Maxime Ripard wrote:
-> Hi Dinh,
-> 
-> On Wed, Jun 10, 2015 at 04:49:24PM -0500, dinguyen@opensource.altera.com wrote:
->> From: Dinh Nguyen <dinguyen@opensource.altera.com>
->>
->> Use of_clk_parent_fill to fill in the parent clock names' array.
->>
->> Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
->> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
->> Cc: "Emilio López" <emilio@elopez.com.ar>
->> ---
->>  drivers/clk/sunxi/clk-a20-gmac.c    |  3 +--
->>  drivers/clk/sunxi/clk-factors.c     |  4 +---
->>  drivers/clk/sunxi/clk-sun6i-ar100.c |  3 +--
->>  drivers/clk/sunxi/clk-sunxi.c       | 10 ++--------
->>  4 files changed, 5 insertions(+), 15 deletions(-)
->>
->> diff --git a/drivers/clk/sunxi/clk-a20-gmac.c b/drivers/clk/sunxi/clk-a20-gmac.c
->> index 0dcf4f2..a432edd 100644
->> --- a/drivers/clk/sunxi/clk-a20-gmac.c
->> +++ b/drivers/clk/sunxi/clk-a20-gmac.c
->> @@ -80,8 +80,7 @@ static void __init sun7i_a20_gmac_clk_setup(struct device_node *node)
->>  		goto free_mux;
->>  
->>  	/* gmac clock requires exactly 2 parents */
->> -	parents[0] = of_clk_get_parent_name(node, 0);
->> -	parents[1] = of_clk_get_parent_name(node, 1);
->> +	of_clk_parent_fill(node, parents, 2);
->>  	if (!parents[0] || !parents[1])
-> 
-> Maybe this check can be changed to something like:
-> 
-> if (of_clk_parent_fill(node, parents, 2) != 2)
->    goto free_gate;
-> 
-> Would that make sense?
-> 
+Both soc series' have inverters on the hsadc and camera interface clock
+paths. So define them using the newly added inverter type.
 
-Yes, that would work. Will edit for v2.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk-rk3188.c | 9 ++++++++-
+ drivers/clk/rockchip/clk-rk3288.c | 7 ++++++-
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-Thanks,
-Dinh
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index e4f9d47..a9ab4f9 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -235,6 +235,7 @@ static struct rockchip_pll_clock rk3188_pll_clks[] __initdata = {
+ #define MFLAGS CLK_MUX_HIWORD_MASK
+ #define DFLAGS CLK_DIVIDER_HIWORD_MASK
+ #define GFLAGS (CLK_GATE_HIWORD_MASK | CLK_GATE_SET_TO_DISABLE)
++#define IFLAGS ROCKCHIP_INVERTER_HIWORD_MASK
+ 
+ /* 2 ^ (val + 1) */
+ static struct clk_div_table div_core_peri_t[] = {
+@@ -310,6 +311,8 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
+ 
+ 	GATE(0, "pclkin_cif0", "ext_cif0", 0,
+ 			RK2928_CLKGATE_CON(3), 3, GFLAGS),
++	INVERTER(0, "pclk_cif0", "pclkin_cif0",
++			RK2928_CLKSEL_CON(30), 8, IFLAGS),
+ 
+ 	/*
+ 	 * the 480m are generated inside the usb block from these clocks,
+@@ -334,8 +337,10 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
+ 	COMPOSITE_FRAC(0, "hsadc_frac", "hsadc_src", 0,
+ 			RK2928_CLKSEL_CON(23), 0,
+ 			RK2928_CLKGATE_CON(2), 7, GFLAGS),
+-	MUX(SCLK_HSADC, "sclk_hsadc", mux_sclk_hsadc_p, 0,
++	MUX(0, "sclk_hsadc_out", mux_sclk_hsadc_p, 0,
+ 			RK2928_CLKSEL_CON(22), 4, 2, MFLAGS),
++	INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
++			RK2928_CLKSEL_CON(22), 7, IFLAGS),
+ 
+ 	COMPOSITE_NOMUX(SCLK_SARADC, "sclk_saradc", "xin24m", 0,
+ 			RK2928_CLKSEL_CON(24), 8, 8, DFLAGS,
+@@ -557,6 +562,8 @@ static struct rockchip_clk_branch rk3066a_clk_branches[] __initdata = {
+ 
+ 	GATE(0, "pclkin_cif1", "ext_cif1", 0,
+ 			RK2928_CLKGATE_CON(3), 4, GFLAGS),
++	INVERTER(0, "pclk_cif1", "pclkin_cif1",
++			RK2928_CLKSEL_CON(30), 12, IFLAGS),
+ 
+ 	COMPOSITE(0, "aclk_gpu_src", mux_pll_src_cpll_gpll_p, 0,
+ 			RK2928_CLKSEL_CON(33), 8, 1, MFLAGS, 0, 5, DFLAGS,
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index df9dc96..a8bad7d 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -223,6 +223,7 @@ static struct clk_div_table div_hclk_cpu_t[] = {
+ #define MFLAGS CLK_MUX_HIWORD_MASK
+ #define DFLAGS CLK_DIVIDER_HIWORD_MASK
+ #define GFLAGS (CLK_GATE_HIWORD_MASK | CLK_GATE_SET_TO_DISABLE)
++#define IFLAGS ROCKCHIP_INVERTER_HIWORD_MASK
+ 
+ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	/*
+@@ -592,8 +593,10 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	COMPOSITE(0, "hsadc_src", mux_pll_src_cpll_gpll_p, 0,
+ 			RK3288_CLKSEL_CON(22), 0, 1, MFLAGS, 8, 8, DFLAGS,
+ 			RK3288_CLKGATE_CON(2), 6, GFLAGS),
+-	MUX(SCLK_HSADC, "sclk_hsadc_out", mux_hsadcout_p, 0,
++	MUX(0, "sclk_hsadc_out", mux_hsadcout_p, 0,
+ 			RK3288_CLKSEL_CON(22), 4, 1, MFLAGS),
++	INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
++			RK3288_CLKSEL_CON(22), 7, IFLAGS),
+ 
+ 	GATE(0, "jtag", "ext_jtag", 0,
+ 			RK3288_CLKGATE_CON(4), 14, GFLAGS),
+@@ -768,7 +771,9 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	 */
+ 
+ 	GATE(0, "pclk_vip_in", "ext_vip", 0, RK3288_CLKGATE_CON(16), 0, GFLAGS),
++	INVERTER(0, "pclk_vip", "pclk_vip_in", RK3288_CLKSEL_CON(29), 4, IFLAGS),
+ 	GATE(0, "pclk_isp_in", "ext_isp", 0, RK3288_CLKGATE_CON(16), 3, GFLAGS),
++	INVERTER(0, "pclk_isp", "pclk_isp_in", RK3288_CLKSEL_CON(29), 3, IFLAGS),
+ };
+ 
+ static const char *const rk3288_critical_clocks[] __initconst = {
+-- 
+2.1.4
