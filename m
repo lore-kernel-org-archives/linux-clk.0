@@ -1,211 +1,166 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	devicetree@vger.kernel.org
-Subject: [PATCH v4 1/8] Documentation: add DT binding for ARM System Control and Power Interface(SCPI) protocol
-Date: Mon,  8 Jun 2015 11:39:55 +0100
-Message-Id: <1433760002-24120-2-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v6 10/25] clk: tegra: pll: Add logic for out-of-table rates for T210
+Date: Thu, 18 Jun 2015 17:28:25 -0400
+Message-ID: <1434662920-21469-11-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds devicetree binding for System Control and Power
-Interface (SCPI) Message Protocol used between the Application Cores(AP)
-and the System Control Processor(SCP). The MHU peripheral provides a
-mechanism for inter-processor communication between SCP's M3 processor
-and AP.
+For Tegra210, the logic to calculate out-of-table rates is different
+from previous generations. Add callbacks that can be overridden to
+allow for different ways of calculating rates. Default to
+_cal_rate when not specified.
 
-SCP offers control and management of the core/cluster power states,
-various power domain DVFS including the core/cluster, certain system
-clocks configuration, thermal sensors and many others.
+This patch also includes a new flag which is used to set which method
+of fixed_mdiv calculation is used. The new method for calculating the
+fixed divider value for M can be more accurate especially when
+fractional dividers are in play. This allows for older chipsets to use
+the existing logic and new generations to use a newer version which
+may work better for them.
 
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-CC: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Liviu Dudau <Liviu.Dudau@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
-Cc: devicetree@vger.kernel.org
+Based on original work by Aleksandr Frid <afrid@nvidia.com>
+
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- Documentation/devicetree/bindings/arm/arm,scpi.txt | 156 +++++++++++++++++++++
- 1 file changed, 156 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/arm,scpi.txt
+v5:
+  - Updated description to include mentioning the NEW_MDIV flag
+  - Added kerneldoc info for new members
 
-diff --git a/Documentation/devicetree/bindings/arm/arm,scpi.txt b/Documentation/devicetree/bindings/arm/arm,scpi.txt
-new file mode 100644
-index 000000000000..f5f9684e23b3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/arm,scpi.txt
-@@ -0,0 +1,156 @@
-+System Control and Power Interface (SCPI) Message Protocol
-+----------------------------------------------------------
+ drivers/clk/tegra/clk-pll.c |   24 ++++++++++++++++++++++--
+ drivers/clk/tegra/clk.h     |   13 +++++++++++++
+ 2 files changed, 35 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 8b27cb6fe992..95ad0669291f 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -678,7 +678,7 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	}
+ 
+ 	if (_get_table_rate(hw, &cfg, rate, parent_rate) &&
+-	    _calc_rate(hw, &cfg, rate, parent_rate)) {
++	    pll->params->calc_rate(hw, &cfg, rate, parent_rate)) {
+ 		pr_err("%s: Failed to set %s rate %lu\n", __func__,
+ 		       __clk_get_name(hw->clk), rate);
+ 		WARN_ON(1);
+@@ -713,7 +713,7 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		return __clk_get_rate(hw->clk);
+ 
+ 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
+-	    _calc_rate(hw, &cfg, rate, *prate))
++	    pll->params->calc_rate(hw, &cfg, rate, *prate))
+ 		return -EINVAL;
+ 
+ 	return cfg.output_rate;
+@@ -903,12 +903,28 @@ const struct clk_ops tegra_clk_plle_ops = {
+ static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
+ 			   unsigned long parent_rate)
+ {
++	u16 mdiv = parent_rate / pll_params->cf_min;
 +
-+Firmware implementing the SCPI described in ARM document number ARM DUI 0922B
-+("ARM Compute Subsystem SCP: Message Interface Protocols")[0] can be used
-+by Linux to initiate various system control and power operations.
++	if (pll_params->flags & TEGRA_MDIV_NEW)
++		return (!pll_params->mdiv_default ? mdiv :
++			min(mdiv, pll_params->mdiv_default));
 +
-+Required properties:
++	if (pll_params->mdiv_default)
++		return pll_params->mdiv_default;
 +
-+- compatible : should be "arm,scpi"
-+- mboxes: List of phandle and mailbox channel specifiers
-+	  All the channels reserved by remote SCP firmware for use by
-+	  SCPI message protocol should be specified in any order
-+- shmem : List of phandle pointing to the shared memory(SHM) area between the
-+	  processors using these mailboxes for IPC, one for each mailbox
-+	  SHM can be any memory reserved for the purpose of this communication
-+	  between the processors.
+ 	if (parent_rate > pll_params->cf_max)
+ 		return 2;
+ 	else
+ 		return 1;
+ }
+ 
++u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate)
++{
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
 +
-+See Documentation/devicetree/bindings/mailbox/mailbox.txt
-+for more details about the generic mailbox controller and
-+client driver bindings.
++	return (u16)_pll_fixed_mdiv(pll->params, input_rate);
++}
 +
-+Clock bindings for the clocks based on SCPI Message Protocol
-+------------------------------------------------------------
+ static unsigned long _clip_vco_min(unsigned long vco_min,
+ 				   unsigned long parent_rate)
+ {
+@@ -1483,6 +1499,10 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
+ 	init.parent_names = (parent_name ? &parent_name : NULL);
+ 	init.num_parents = (parent_name ? 1 : 0);
+ 
++	/* Default to _calc_rate if unspecified */
++	if (!pll->params->calc_rate)
++		pll->params->calc_rate = _calc_rate;
 +
-+This binding uses the common clock binding[1].
-+
-+Container Node
-+==============
-+Required properties:
-+- compatible : should be "arm,scpi-clocks"
-+	       All the clocks provided by SCP firmware via SCPI message
-+	       protocol much be listed as sub-nodes under this node.
-+
-+Sub-nodes
-+=========
-+Required properties:
-+- compatible : shall include one of the following
-+	"arm,scpi-dvfs-clocks" - all the clocks that are variable and index based.
-+		These clocks don't provide the full range between the limits
-+		but only discrete points within the range. The firmware
-+		provides the mapping for each such operating frequency and the
-+		index associated with it. The firmware also manages the
-+		voltage scaling appropriately with the clock scaling.
-+	"arm,scpi-variable-clocks" - all the clocks that are variable and provide full
-+		range within the specified range. The firmware provides the
-+		supported range for each clock.
-+
-+Other required properties for all clocks(all from common clock binding):
-+- #clock-cells : should be set to 1 as each of the SCPI clocks have multiple
-+	outputs. The clock specifier will be the index to an entry in the list
-+	of output clocks.
-+- clock-output-names : shall be the corresponding names of the outputs.
-+- clock-indices: The identifyng number for the clocks(clock_id) in the node as
-+	expected by the firmware. It can be non linear and hence provide the
-+	mapping	of identifiers into the clock-output-names array.
-+
-+SRAM and Shared Memory for SCPI
-+-------------------------------
-+
-+A small area of SRAM is reserved for SCPI communication between application
-+processors and SCP.
-+
-+Required properties:
-+- compatible : should be "arm,juno-sram-ns" for Non-secure SRAM on Juno
-+
-+The rest of the properties should follow the generic mmio-sram discription
-+found in ../../misc/sysram.txt
-+
-+Each sub-node represents the reserved area for SCPI.
-+
-+Required sub-node properties:
-+- reg : The base offset and size of the reserved area with the SRAM
-+- compatible : should be "arm,juno-scp-shmem" for Non-secure SRAM based
-+	       shared memory on Juno platforms
-+
-+[0] http://community.arm.com/servlet/JiveServlet/download/8401-45-18326/DUI0922B_scp_message_interface.pdf
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Example:
-+
-+sram: sram@50000000 {
-+	compatible = "arm,juno-sram-ns", "mmio-sram";
-+	reg = <0x0 0x50000000 0x0 0x10000>;
-+
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	ranges = <0 0x0 0x50000000 0x10000>;
-+
-+	cpu_scp_lpri: scp-shmem@0 {
-+		compatible = "arm,juno-scp-shmem";
-+		reg = <0x0 0x200>;
-+	};
-+
-+	cpu_scp_hpri: scp-shmem@200 {
-+		compatible = "arm,juno-scp-shmem";
-+		reg = <0x200 0x200>;
-+	};
-+};
-+
-+mailbox: mailbox0@40000000 {
-+	....
-+	#mbox-cells = <1>;
-+};
-+
-+scpi_protocol: scpi@2e000000 {
-+	compatible = "arm,scpi";
-+	mboxes = <&mailbox 0 &mailbox 1>;
-+	shmem = <&cpu_scp_lpri &cpu_scp_hpri>;
-+
-+	clocks {
-+		compatible = "arm,scpi-clocks";
-+
-+		scpi_dvfs: scpi_clocks@0 {
-+			compatible = "arm,scpi-dvfs-clocks";
-+			#clock-cells = <1>;
-+			clock-indices = <0>, <1>, <2>;
-+			clock-output-names = "vbig", "vlittle", "vgpu";
-+		};
-+		scpi_clk: scpi_clocks@3 {
-+			compatible = "arm,scpi-variable-clocks";
-+			#clock-cells = <1>;
-+			clock-indices = <3>, <4>;
-+			clock-output-names = "pxlclk0", "pxlclk1";
-+		};
-+	};
-+};
-+
-+cpu@0 {
-+	...
-+	reg = <0 0>;
-+	clocks = <&scpi_dvfs 0>;
-+	clock-names = "vbig";
-+};
-+
-+hdlcd@7ff60000 {
-+	...
-+	reg = <0 0x7ff60000 0 0x1000>;
-+	clocks = <&scpi_clk 1>;
-+	clock-names = "pxlclk";
-+};
-+
-+In the above example, the #clock-cells is set to 1 as required.
-+scpi_dvfs has 3 output clocks namely: vbig, vlittle and vgpu with 0, 1
-+and 2 as clock-indices. scpi_clk has 2 output clocks namely: pxlclk0 and
-+pxlclk1 with 3 and 4 as clock-indices.
-+
-+The first consumer in the example is cpu@0 and it has vbig as input clock.
-+The index '0' in the clock specifier here points to the first entry in the
-+output clocks of scpi_dvfs for which clock_id asrequired by the firmware
-+is 0.
-+
-+Similarly the second example is hdlcd@7ff60000 and it has pxlclk0 as input
-+clock. The index '1' in the clock specifier here points to the second entry
-+in the output clocks of scpi_clocks for which clock_id as required by the
-+firmware is 4.
+ 	/* Data in .init is copied by clk_register(), so stack variable OK */
+ 	pll->hw.init = &init;
+ 
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index b5c9f38c5dc6..dfbce9300547 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -194,8 +194,12 @@ struct div_nmp {
+  * @div_nmp:			offsets and widths on n, m and p fields
+  * @freq_table:			array of frequencies supported by PLL
+  * @fixed_rate:			PLL rate if it is fixed
++ * @mdiv_default:		Default value for fixed mdiv for this PLL
++ * @round_p_to_pdiv:		Callback used to round p to the closed pdiv
+  * @set_gain:			Callback to adjust N div for SDM enabled
+  *				PLL's based on fractional divider value.
++ * @calc_rate:			Callback used to change how out of table
++ *				rates (dividers and multipler) are calculated.
+  *
+  * Flags:
+  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+@@ -217,6 +221,8 @@ struct div_nmp {
+  *     base register.
+  * TEGRA_PLL_BYPASS - PLL has bypass bit
+  * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
++ * TEGRA_MDIV_NEW - Switch to new method for calculating fixed mdiv
++ *     it may be more accurate (especially if SDM present)
+  */
+ struct tegra_clk_pll_params {
+ 	unsigned long	input_min;
+@@ -251,7 +257,12 @@ struct tegra_clk_pll_params {
+ 	struct div_nmp	*div_nmp;
+ 	struct tegra_clk_pll_freq_table	*freq_table;
+ 	unsigned long	fixed_rate;
++	u16		mdiv_default;
++	u32	(*round_p_to_pdiv)(u32 p, u32 *pdiv);
+ 	void	(*set_gain)(struct tegra_clk_pll_freq_table *cfg);
++	int	(*calc_rate)(struct clk_hw *hw,
++			struct tegra_clk_pll_freq_table *cfg,
++			unsigned long rate, unsigned long parent_rate);
+ };
+ 
+ #define TEGRA_PLL_USE_LOCK BIT(0)
+@@ -265,6 +276,7 @@ struct tegra_clk_pll_params {
+ #define TEGRA_PLL_LOCK_MISC BIT(8)
+ #define TEGRA_PLL_BYPASS BIT(9)
+ #define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
++#define TEGRA_MDIV_NEW BIT(11)
+ 
+ /**
+  * struct tegra_clk_pll - Tegra PLL clock
+@@ -690,5 +702,6 @@ void tegra114_clock_deassert_dfll_dvco_reset(void);
+ typedef void (*tegra_clk_apply_init_table_func)(void);
+ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+ int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
++u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+ 
+ #endif /* TEGRA_CLK_H */
 -- 
-1.9.1
+1.7.9.5
 
