@@ -1,87 +1,56 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Message-ID: <557981B7.3000303@samsung.com>
-Date: Thu, 11 Jun 2015 21:40:23 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-Version: 1.0
-To: Javier Martinez Canillas <javier@dowhile0.org>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Linux Kernel <linux-kernel@vger.kernel.org>,
- Kukjin Kim <kgene@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- linux-clk@vger.kernel.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 1/2] clk: exynos4: Add PCLK_ADC gate clock on Exynos4x12
-References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com> <55796660.1070702@samsung.com> <CABxcv=kNb2ERqLL2gG73nkU+kpPsYAWKSyu=bkjfxZBMKOwyPQ@mail.gmail.com>
-In-Reply-To: <CABxcv=kNb2ERqLL2gG73nkU+kpPsYAWKSyu=bkjfxZBMKOwyPQ@mail.gmail.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 4/9] clk: rockchip: add COMPOSITE_NOGATE_DIVTBL variant
+Date: Thu, 18 Jun 2015 16:18:31 +0200
+Message-Id: <1434637116-17124-5-git-send-email-heiko@sntech.de>
+In-Reply-To: <1434637116-17124-1-git-send-email-heiko@sntech.de>
+References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-W dniu 11.06.2015 o 21:15, Javier Martinez Canillas pisze:
-> Hello Krzysztof,
-> 
-> On Thu, Jun 11, 2015 at 12:43 PM, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
->> W dniu 11.06.2015 o 17:26, Krzysztof Kozlowski pisze:
->>> Add proper gate clock for the Analog to Digital Converter (ADC) on
->>> Exynos4x12.
->>>
->>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>> ---
->>>  drivers/clk/samsung/clk-exynos4.c   | 3 +++
->>>  include/dt-bindings/clock/exynos4.h | 5 ++++-
->>>  2 files changed, 7 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
->>> index 714d6ba782c8..5f32410a01f8 100644
->>> --- a/drivers/clk/samsung/clk-exynos4.c
->>> +++ b/drivers/clk/samsung/clk-exynos4.c
->>> @@ -85,6 +85,7 @@
->>>  #define DIV_PERIL4           0xc560
->>>  #define DIV_PERIL5           0xc564
->>>  #define E4X12_DIV_CAM1               0xc568
->>> +#define E4X12_GATE_BUS_FSYS1 0xc744
->>>  #define GATE_SCLK_CAM                0xc820
->>>  #define GATE_IP_CAM          0xc920
->>>  #define GATE_IP_TV           0xc924
->>> @@ -1095,6 +1096,8 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
->>>               0),
->>>       GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
->>>               0),
->>> +     GATE(CLK_PCLK_ADC, "pclk_adc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0,
->>> +             0),
->>
->> Now I have even simpler idea. Don't add new clock id but just define
->> here the CLK_TSADC as:
->> GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0);
->>
->> With this change the second patch wouldn't be needed however this does
->> not reflect the Exynos 4x12 datasheet.
->>
->> Any comments?
->>
-> 
-> I think it's better to reflect the datasheet so I prefer your original
-> patch.
+A clock branch consisting of a mux and divider with non-standard
+divider values.
 
-Yeah, I also like sticking to datasheet but maybe it is not always worth
-to reproduce the datasheet in 100%. It is just thinking out loud.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-> Also, wouldn't changing the CLK_TSADC gate definition cause a
-> regression on an Exynos4210 board that is using the tsadc clock? or
-> maybe I misunderstood the explanation of your Patch 2/2?
-
-No, no. The Exynos4210 would be unchanged. It has the CLK_TSADC - both
-in hardware and in kernel driver. The Exynos4x12 SoCs don't have so we can:
-1. Add new CLK_PCLK_ADC (id and clock) reflecting datasheet.
-2. Add only CLK_TSADC clock  on Exynos4x12 which will be using the
-register of PCLK_ADC. The id would stay the same as on Exynos4210.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 92edb5f..501f02e 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -308,6 +308,26 @@ struct rockchip_clk_branch {
+ 		.gate_offset	= -1,				\
+ 	}
+ 
++#define COMPOSITE_NOGATE_DIVTBL(_id, cname, pnames, f, mo, ms,	\
++				mw, mf, ds, dw, df, dt)		\
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_composite,		\
++		.name		= cname,			\
++		.parent_names	= pnames,			\
++		.num_parents	= ARRAY_SIZE(pnames),		\
++		.flags		= f,				\
++		.muxdiv_offset	= mo,				\
++		.mux_shift	= ms,				\
++		.mux_width	= mw,				\
++		.mux_flags	= mf,				\
++		.div_shift	= ds,				\
++		.div_width	= dw,				\
++		.div_flags	= df,				\
++		.div_table	= dt,				\
++		.gate_offset	= -1,				\
++	}
++
+ #define COMPOSITE_FRAC(_id, cname, pname, f, mo, df, go, gs, gf)\
+ 	{							\
+ 		.id		= _id,				\
+-- 
+2.1.4
