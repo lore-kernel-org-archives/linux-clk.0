@@ -1,78 +1,179 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	matthias.bgg@gmail.com
-Cc: s.hauer@pengutronix.de,
-	jamesjj.liao@mediatek.com,
-	henryc.chen@mediatek.com,
-	linux-kernel@vger.kernel.org,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	manabian@gmail.com
-Subject: [PATCH v3 3/3] clk: mediatek: Use regmap clk-mux for mt8135
-Date: Tue,  9 Jun 2015 17:38:03 +0200
-Message-Id: <1433864283-25490-4-git-send-email-matthias.bgg@gmail.com>
-In-Reply-To: <1433864283-25490-1-git-send-email-matthias.bgg@gmail.com>
-References: <1433864283-25490-1-git-send-email-matthias.bgg@gmail.com>
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v6 16/25] clk: tegra: pll: Add Set_default logic
+Date: Thu, 18 Jun 2015 17:28:31 -0400
+Message-ID: <1434662920-21469-17-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The pericfg controller is used by various device drivers, so that it
-is implemented via a regmap. In the actual clk implementation for
-mt8135, some clk-mux use the traditional register approach which
-acceses the register via iomem.
-This patch changes the use from iomem to the needed regmap.
+From: Bill Huang <bilhuang@nvidia.com>
 
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+Add logic which (if specified for a pll) can verify that a PLL is set
+to the proper default value and if not can set it. This can be
+specified per PLL as each will have different default values.
+
+Based on original work by Aleksandr Frid <afrid@nvidia.com>
+
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/mediatek/clk-mt8135.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+v6:
+  - Added kerneldoc
 
-diff --git a/drivers/clk/mediatek/clk-mt8135.c b/drivers/clk/mediatek/clk-mt8135.c
-index 08b4b84..c28a9d4 100644
---- a/drivers/clk/mediatek/clk-mt8135.c
-+++ b/drivers/clk/mediatek/clk-mt8135.c
-@@ -513,11 +513,11 @@ static const char * const uart_ck_sel_parents[] __initconst = {
- 	"uart_sel",
- };
- 
--static const struct mtk_composite peri_clks[] __initconst = {
--	MUX(CLK_PERI_UART0_SEL, "uart0_ck_sel", uart_ck_sel_parents, 0x40c, 0, 1),
--	MUX(CLK_PERI_UART1_SEL, "uart1_ck_sel", uart_ck_sel_parents, 0x40c, 1, 1),
--	MUX(CLK_PERI_UART2_SEL, "uart2_ck_sel", uart_ck_sel_parents, 0x40c, 2, 1),
--	MUX(CLK_PERI_UART3_SEL, "uart3_ck_sel", uart_ck_sel_parents, 0x40c, 3, 1),
-+static const struct mtk_regm_mux peri_clks[] __initconst = {
-+	MUX_REGMAP(CLK_PERI_UART0_SEL, "uart0_ck_sel", uart_ck_sel_parents, 0x40c, 0, 1),
-+	MUX_REGMAP(CLK_PERI_UART1_SEL, "uart1_ck_sel", uart_ck_sel_parents, 0x40c, 1, 1),
-+	MUX_REGMAP(CLK_PERI_UART2_SEL, "uart2_ck_sel", uart_ck_sel_parents, 0x40c, 2, 1),
-+	MUX_REGMAP(CLK_PERI_UART3_SEL, "uart3_ck_sel", uart_ck_sel_parents, 0x40c, 3, 1),
- };
- 
- static void __init mtk_topckgen_init(struct device_node *node)
-@@ -573,20 +573,13 @@ static void __init mtk_pericfg_init(struct device_node *node)
+v2:
+  - Remove MACRO for PLL_MISC_CHECK_DEFAULT as suggested, and instead
+    the tegra210 driver will include an inline version of this function.
+
+ drivers/clk/tegra/clk-pll.c |   39 ++++++++++++++++++++++++++++-----------
+ drivers/clk/tegra/clk.h     |   11 +++++++++++
+ 2 files changed, 39 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 3c348c96f9da..f878bc879df2 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -653,13 +653,19 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 			unsigned long rate)
  {
- 	struct clk_onecell_data *clk_data;
- 	int r;
--	void __iomem *base;
--
--	base = of_iomap(node, 0);
--	if (!base) {
--		pr_err("%s(): ioremap failed\n", __func__);
--		return;
--	}
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
++	struct tegra_clk_pll_freq_table old_cfg;
+ 	int state, ret = 0;
  
- 	clk_data = mtk_alloc_clk_data(CLK_PERI_NR_CLK);
+ 	state = clk_pll_is_enabled(hw);
  
- 	mtk_clk_register_gates(node, peri_gates, ARRAY_SIZE(peri_gates),
- 						clk_data);
--	mtk_clk_register_composites(peri_clks, ARRAY_SIZE(peri_clks), base,
--			&mt8135_clk_lock, clk_data);
-+	mtk_clk_regm_register_mux(node, peri_clks, ARRAY_SIZE(peri_clks),
-+			clk_data);
++	_get_pll_mnp(pll, &old_cfg);
++
+ 	if (state)
+ 		_clk_pll_disable(hw);
  
- 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- 	if (r)
++	if (!pll->params->defaults_set && pll->params->set_defaults)
++		pll->params->set_defaults(pll);
++
+ 	_update_pll_mnp(pll, cfg);
+ 
+ 	if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
+@@ -1485,6 +1491,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
+ 	if (!pll->params->calc_rate)
+ 		pll->params->calc_rate = _calc_rate;
+ 
++	if (pll->params->set_defaults)
++		pll->params->set_defaults(pll);
++
+ 	/* Data in .init is copied by clk_register(), so stack variable OK */
+ 	pll->hw.init = &init;
+ 
+@@ -1595,7 +1604,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+ 	struct tegra_clk_pll *pll;
+ 	struct clk *clk, *parent;
+ 	unsigned long parent_rate;
+-	int err;
+ 	u32 val, val_iddq;
+ 
+ 	parent = __clk_lookup(parent_name);
+@@ -1616,18 +1624,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
+ 		pll_params->vco_min = pll_params->adjust_vco(pll_params,
+ 							     parent_rate);
+ 
+-	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+-	if (err)
+-		return ERR_PTR(err);
++	/*
++	 * If the pll has a set_defaults callback, it will take care of
++	 * configuring dynamic ramping and setting IDDQ in that path.
++	 */
++	if (!pll_params->set_defaults) {
++		int err;
++
++		err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
++		if (err)
++			return ERR_PTR(err);
+ 
+-	val = readl_relaxed(clk_base + pll_params->base_reg);
+-	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
++		val = readl_relaxed(clk_base + pll_params->base_reg);
++		val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+ 
+-	if (val & PLL_BASE_ENABLE)
+-		WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
+-	else {
+-		val_iddq |= BIT(pll_params->iddq_bit_idx);
+-		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
++		if (val & PLL_BASE_ENABLE)
++			WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
++		else {
++			val_iddq |= BIT(pll_params->iddq_bit_idx);
++			writel_relaxed(val_iddq,
++				       clk_base + pll_params->iddq_reg);
++		}
+ 	}
+ 
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 72bf25525bd6..ae42e3e6a116 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -160,6 +160,8 @@ struct div_nmp {
+ 
+ #define MAX_PLL_MISC_REG_COUNT	6
+ 
++struct tegra_clk_pll;
++
+ /**
+  * struct tegra_clk_pll_params - PLL parameters
+  *
+@@ -192,6 +194,7 @@ struct div_nmp {
+  * @stepb_shift:		Dynamic ramp step B field shift
+  * @lock_delay:			Delay in us if PLL lock is not used
+  * @max_p:			maximum value for the p divider
++ * @defaults_set:		Boolean signaling all reg defaults for PLL set.
+  * @pdiv_tohw:			mapping of p divider to register values
+  * @div_nmp:			offsets and widths on n, m and p fields
+  * @freq_table:			array of frequencies supported by PLL
+@@ -204,6 +207,12 @@ struct div_nmp {
+  *				rates (dividers and multipler) are calculated.
+  * @adjust_vco:			Callback to adjust the programming range of the
+  *				divider range (if SDM is present)
++ * @set_defaults:		Callback which will try to initialize PLL
++ *				registers to sane default values. This is first
++ *				tried during PLL registration, but if the PLL
++ *				is already enabled, it will be done the first
++ *				time the rate is changed while the PLL is
++ *				disabled.
+  *
+  * Flags:
+  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+@@ -261,6 +270,7 @@ struct tegra_clk_pll_params {
+ 	int		stepb_shift;
+ 	int		lock_delay;
+ 	int		max_p;
++	bool		defaults_set;
+ 	struct pdiv_map *pdiv_tohw;
+ 	struct div_nmp	*div_nmp;
+ 	struct tegra_clk_pll_freq_table	*freq_table;
+@@ -273,6 +283,7 @@ struct tegra_clk_pll_params {
+ 			unsigned long rate, unsigned long parent_rate);
+ 	unsigned long	(*adjust_vco)(struct tegra_clk_pll_params *pll_params,
+ 				unsigned long parent_rate);
++	void	(*set_defaults)(struct tegra_clk_pll *pll);
+ };
+ 
+ #define TEGRA_PLL_USE_LOCK BIT(0)
 -- 
-1.9.1
+1.7.9.5
