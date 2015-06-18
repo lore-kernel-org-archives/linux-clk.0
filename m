@@ -1,79 +1,74 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <558B0CD7.6040302@codeaurora.org>
-Date: Wed, 24 Jun 2015 13:02:31 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-MIME-Version: 1.0
-To: Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Fabian Frederick <fabf@skynet.be>
-CC: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/9] drivers: clk: st: Incorrect clocks status
-References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org> <1435068567-30995-2-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1435068567-30995-2-git-send-email-gabriel.fernandez@linaro.org>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:45902 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752950AbbFRORl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 18 Jun 2015 10:17:41 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@linaro.org, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 3/9] clk: rockchip: protect register macros against multipart values
+Date: Thu, 18 Jun 2015 16:18:30 +0200
+Message-Id: <1434637116-17124-4-git-send-email-heiko@sntech.de>
+In-Reply-To: <1434637116-17124-1-git-send-email-heiko@sntech.de>
+References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/23/2015 07:09 AM, Gabriel Fernandez wrote:
-> In the clk_summary output, the h/w status of DivMux is incorrect
-> (Parent and Enable status), since the clk_mux_ops.get_parent()
-> returns -ERRCODE when clock is OFF.
->
-> Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-> ---
->  drivers/clk/st/clkgen-mux.c | 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
-> index 4fbe6e0..c94b56b 100644
-> --- a/drivers/clk/st/clkgen-mux.c
-> +++ b/drivers/clk/st/clkgen-mux.c
-> @@ -128,7 +128,7 @@ static int clkgena_divmux_is_enabled(struct clk_hw *hw)
->  
->  	__clk_hw_set_clk(mux_hw, hw);
->  
-> -	return (s8)clk_mux_ops.get_parent(mux_hw) > 0;
-> +	return ((s8)clk_mux_ops.get_parent(mux_hw) >= 0);
+The macros calculate the correct offset from the id in the parameter.
+If this parameter does not consist of a single number, the calculation
+will return wrong registers in the best case or create unaligned accesses
+in the worst case. So protect the calculations against such values.
 
-Useless parentheses around it all, please drop.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
->  }
->  
->  static u8 clkgena_divmux_get_parent(struct clk_hw *hw)
-> @@ -138,11 +138,13 @@ static u8 clkgena_divmux_get_parent(struct clk_hw *hw)
->  
->  	__clk_hw_set_clk(mux_hw, hw);
->  
-> -	genamux->muxsel = clk_mux_ops.get_parent(mux_hw);
-> -	if ((s8)genamux->muxsel < 0) {
-> -		pr_debug("%s: %s: Invalid parent, setting to default.\n",
-> -		      __func__, __clk_get_name(hw->clk));
-> -		genamux->muxsel = 0;
-> +	if (genamux->muxsel == CKGAX_CLKOPSRC_SWITCH_OFF) {
-> +		genamux->muxsel = clk_mux_ops.get_parent(mux_hw);
-
-Hm.. maybe we should fix clk_mux_ops to return 0 if it can't find the
-parent? Or when this clock is registered we should read the hardware and
-set a default parent so that we can't get an error code here.
-
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 6b09267..92edb5f 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -31,22 +31,22 @@
+ 		((val) << (shift) | (mask) << ((shift) + 16))
+ 
+ /* register positions shared by RK2928, RK3066 and RK3188 */
+-#define RK2928_PLL_CON(x)		(x * 0x4)
++#define RK2928_PLL_CON(x)		((x) * 0x4)
+ #define RK2928_MODE_CON		0x40
+-#define RK2928_CLKSEL_CON(x)	(x * 0x4 + 0x44)
+-#define RK2928_CLKGATE_CON(x)	(x * 0x4 + 0xd0)
++#define RK2928_CLKSEL_CON(x)	((x) * 0x4 + 0x44)
++#define RK2928_CLKGATE_CON(x)	((x) * 0x4 + 0xd0)
+ #define RK2928_GLB_SRST_FST		0x100
+ #define RK2928_GLB_SRST_SND		0x104
+-#define RK2928_SOFTRST_CON(x)	(x * 0x4 + 0x110)
++#define RK2928_SOFTRST_CON(x)	((x) * 0x4 + 0x110)
+ #define RK2928_MISC_CON		0x134
+ 
+ #define RK3288_PLL_CON(x)		RK2928_PLL_CON(x)
+ #define RK3288_MODE_CON			0x50
+-#define RK3288_CLKSEL_CON(x)		(x * 0x4 + 0x60)
+-#define RK3288_CLKGATE_CON(x)		(x * 0x4 + 0x160)
++#define RK3288_CLKSEL_CON(x)		((x) * 0x4 + 0x60)
++#define RK3288_CLKGATE_CON(x)		((x) * 0x4 + 0x160)
+ #define RK3288_GLB_SRST_FST		0x1b0
+ #define RK3288_GLB_SRST_SND		0x1b4
+-#define RK3288_SOFTRST_CON(x)		(x * 0x4 + 0x1b8)
++#define RK3288_SOFTRST_CON(x)		((x) * 0x4 + 0x1b8)
+ #define RK3288_MISC_CON			0x1e8
+ #define RK3288_SDMMC_CON0		0x200
+ #define RK3288_SDMMC_CON1		0x204
+@@ -67,7 +67,7 @@ enum rockchip_pll_type {
+ 	.nr = _nr,				\
+ 	.nf = _nf,				\
+ 	.no = _no,				\
+-	.bwadj = (_nf >> 1),			\
++	.bwadj = ((_nf) >> 1),			\
+ }
+ 
+ #define RK3066_PLL_RATE_BWADJ(_rate, _nr, _nf, _no, _bw)	\
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
 
