@@ -1,114 +1,240 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
- <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
- <CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com> <CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Date: Wed, 10 Jun 2015 12:19:49 +0200
-Message-ID: <CAAObsKD97nEARO5eZYA2g8+z_MrazBy-m8PV_kSyj19ya72mAw@mail.gmail.com>
-Subject: Re: [PATCH 00/21] On-demand device registration
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-	linux-clk@vger.kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	"open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-	Grant Likely <grant.likely@linaro.org>,
-	Alexander Holler <holler@ahsoftware.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 5/9] clk: rockchip: add support for phase inverters
+Date: Thu, 18 Jun 2015 16:18:32 +0200
+Message-Id: <1434637116-17124-6-git-send-email-heiko@sntech.de>
+In-Reply-To: <1434637116-17124-1-git-send-email-heiko@sntech.de>
+References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10 June 2015 at 09:30, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Jun 2, 2015 at 12:14 PM, Tomeu Vizoso
-> <tomeu.vizoso@collabora.com> wrote:
->> On 2 June 2015 at 10:48, Linus Walleij <linus.walleij@linaro.org> wrote:
->
->>> This is what systemd is doing in userspace for starting services:
->>> ask for your dependencies and wait for them if they are not
->>> there. So drivers ask for resources and wait for them. It also
->>> needs to be abstract, so for example we need to be able to
->>> hang on regulator_get() until the driver is up and providing that
->>> regulator, and as long as everything is in slowpath it should
->>> be OK. (And vice versa mutatis mutandis for clk, gpio, pin
->>> control, interrupts (!) and DMA channels for example.)
->>
->> I understood above that you propose probing devices in order, but now
->> you mention that resource getters would block until the dependency is
->> fulfilled which confuses me because if we are probing in order then
->> all dependencies would be fulfilled before the device in question gets
->> probed.
->
-> Sorry, the problem space is a bit convoluted so the answers
-> get a bit convoluted. Maybe I'm thinking aloud and altering the course
-> of my thoughts as I type...
->
-> I guess there can be explicit dependencies for resources like this
-> patch does, but another way would be for all resource fetch functions
-> to be instrumented, so that you do not block until you try to take
-> a resource that is not yet there, e.g.:
->
-> regulator_get(...) -> not available, so:
-> - identify target regulator provider - this will need instrumentation
-> - probe it
->
-> It then turns out the regulator driver is on the i2c bus, so we
-> need to probe the i2c driver:
-> - identify target i2c host for the regulator driver - this will need
->   instrumentation
-> - probe the i2c host driver
->
-> i2c host comes out, probes the regulator driver, regulator driver
-> probes and then the regulator_get() call returns.
+Most Rockchip socs have optional phase inverters connected to some
+clocks that move the clock-phase by 180 degrees.
+While not having any actual influence on the rate, the inverter
+provides its own simple recalc_rate callback as relying on the
+fallback in the framework is for "lazy developers" according
+to the documentation in the code.
 
-Hmm, if I understand correctly what you say, this is exactly what this
-particular series does:
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/Makefile       |   1 +
+ drivers/clk/rockchip/clk-inverter.c | 126 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.c          |   7 ++
+ drivers/clk/rockchip/clk.h          |  20 ++++++
+ 4 files changed, 154 insertions(+)
+ create mode 100644 drivers/clk/rockchip/clk-inverter.c
 
-regulator_get -> of_platform_device_ensure -> probe() on the platform
-device that encloses the requested device node (i2c host) -> i2c slave
-gets probed and the regulator registered -> regulator_get returns the
-requested resource
-
-The downside I'm currently looking at is that an explicit dependency
-graph would be useful to have for other purposes. For example to print
-a neat warning when a dependency cannot be fulfilled. Or to refuse to
-unbind a device which other devices depend on, or to automatically
-unbind the devices that depend on it, or to print a warning if a
-device is hotplugged off and other devices depend on it.
-
-> This requires instrumentation on anything providing a resource
-> to another driver like those I mentioned and a lot of overhead
-> infrastructure, but I think it's the right approach. However I don't
-> know if I would ever be able to pull that off myself, I know talk
-> is cheap and I should show the code instead.
-
-Yeah, if you can give it a second look and say if it matches what you
-wrote above, it would be very much appreciated.
-
-> Deepest respect for your efforts!
-
-Thanks!
-
-Tomeu
-
-> Yours,
-> Linus Walleij
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+index 2714097..fd71c7d 100644
+--- a/drivers/clk/rockchip/Makefile
++++ b/drivers/clk/rockchip/Makefile
+@@ -6,6 +6,7 @@ obj-y	+= clk-rockchip.o
+ obj-y	+= clk.o
+ obj-y	+= clk-pll.o
+ obj-y	+= clk-cpu.o
++obj-y	+= clk-inverter.o
+ obj-y	+= clk-mmc-phase.o
+ obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
+ 
+diff --git a/drivers/clk/rockchip/clk-inverter.c b/drivers/clk/rockchip/clk-inverter.c
+new file mode 100644
+index 0000000..db852cd
+--- /dev/null
++++ b/drivers/clk/rockchip/clk-inverter.c
+@@ -0,0 +1,126 @@
++/*
++ * Copyright 2015 Heiko Stuebner <heiko@sntech.de>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/slab.h>
++#include <linux/clk-provider.h>
++#include "clk.h"
++
++struct rockchip_inv_clock {
++	struct clk_hw	hw;
++	void __iomem	*reg;
++	int		shift;
++	int		flags;
++	spinlock_t	*lock;
++};
++
++#define to_inv_clock(_hw) container_of(_hw, struct rockchip_inv_clock, hw)
++
++#define INVERTER_MASK 0x1
++
++static unsigned long rockchip_inv_recalc(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	return parent_rate;
++}
++
++static int rockchip_inv_get_phase(struct clk_hw *hw)
++{
++	struct rockchip_inv_clock *inv_clock = to_inv_clock(hw);
++	u32 val;
++
++	val = readl(inv_clock->reg) >> (inv_clock->shift) & INVERTER_MASK;
++	return val ? 180 : 0;
++}
++
++static int rockchip_inv_set_phase(struct clk_hw *hw, int degrees)
++{
++	struct rockchip_inv_clock *inv_clock = to_inv_clock(hw);
++	u32 val;
++
++	switch (degrees) {
++	case 0:
++		val = 0;
++		break;
++	case 180:
++		val = 1;
++		break;
++	default:
++		pr_err("%s: unsupported phase %d for %s\n",
++		       __func__, degrees, __clk_get_name(hw->clk));
++		return -EINVAL;
++	}
++
++	if (inv_clock->flags & ROCKCHIP_INVERTER_HIWORD_MASK) {
++		writel(HIWORD_UPDATE(val, INVERTER_MASK, inv_clock->shift),
++		       inv_clock->reg);
++	} else {
++		unsigned long flags;
++		u32 reg;
++
++		spin_lock_irqsave(inv_clock->lock, flags);
++
++		reg = readl(inv_clock->reg);
++		reg &= ~BIT(inv_clock->shift);
++		reg |= val;
++		writel(reg, inv_clock->reg);
++
++		spin_unlock_irqrestore(inv_clock->lock, flags);
++	}
++
++	return 0;
++}
++
++static const struct clk_ops rockchip_inv_clk_ops = {
++	.recalc_rate	= rockchip_inv_recalc,
++	.get_phase	= rockchip_inv_get_phase,
++	.set_phase	= rockchip_inv_set_phase,
++};
++
++struct clk *rockchip_clk_register_inverter(const char *name,
++				const char *const *parent_names, u8 num_parents,
++				void __iomem *reg, int shift, int flags,
++				spinlock_t *lock)
++{
++	struct clk_init_data init;
++	struct rockchip_inv_clock *inv_clock;
++	struct clk *clk;
++
++	inv_clock = kmalloc(sizeof(*inv_clock), GFP_KERNEL);
++	if (!inv_clock)
++		return NULL;
++
++	init.num_parents = num_parents;
++	init.flags = CLK_SET_RATE_PARENT;
++	init.parent_names = parent_names;
++	init.ops = &rockchip_inv_clk_ops;
++
++	inv_clock->hw.init = &init;
++	inv_clock->reg = reg;
++	inv_clock->shift = shift;
++	inv_clock->flags = flags;
++	inv_clock->lock = lock;
++
++	if (name)
++		init.name = name;
++
++	clk = clk_register(NULL, &inv_clock->hw);
++	if (IS_ERR(clk))
++		goto err_free;
++
++	return clk;
++
++err_free:
++	kfree(inv_clock);
++	return NULL;
++}
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 052b94d..2493881 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -277,6 +277,13 @@ void __init rockchip_clk_register_branches(
+ 				list->div_shift
+ 			);
+ 			break;
++		case branch_inverter:
++			clk = rockchip_clk_register_inverter(
++				list->name, list->parent_names,
++				list->num_parents,
++				reg_base + list->muxdiv_offset,
++				list->div_shift, list->div_flags, &clk_lock);
++			break;
+ 		}
+ 
+ 		/* none of the cases above matched */
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 501f02e..b72dad0 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -182,6 +182,13 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+ 				const char *const *parent_names, u8 num_parents,
+ 				void __iomem *reg, int shift);
+ 
++#define ROCKCHIP_INVERTER_HIWORD_MASK	BIT(0)
++
++struct clk *rockchip_clk_register_inverter(const char *name,
++				const char *const *parent_names, u8 num_parents,
++				void __iomem *reg, int shift, int flags,
++				spinlock_t *lock);
++
+ #define PNAME(x) static const char *const x[] __initconst
+ 
+ enum rockchip_clk_branch_type {
+@@ -191,6 +198,7 @@ enum rockchip_clk_branch_type {
+ 	branch_fraction_divider,
+ 	branch_gate,
+ 	branch_mmc,
++	branch_inverter,
+ };
+ 
+ struct rockchip_clk_branch {
+@@ -414,6 +422,18 @@ struct rockchip_clk_branch {
+ 		.div_shift	= shift,			\
+ 	}
+ 
++#define INVERTER(_id, cname, pname, io, is, if)			\
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_inverter,		\
++		.name		= cname,			\
++		.parent_names	= (const char *[]){ pname },	\
++		.num_parents	= 1,				\
++		.muxdiv_offset	= io,				\
++		.div_shift	= is,				\
++		.div_flags	= if,				\
++	}
++
+ void rockchip_clk_init(struct device_node *np, void __iomem *base,
+ 		       unsigned long nr_clks);
+ struct regmap *rockchip_clk_get_grf(void);
+-- 
+2.1.4
