@@ -1,76 +1,113 @@
-Return-Path: <ce3a@gmx.de>
-From: Sergej Sawazki <ce3a@gmx.de>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	jsarha@ti.com
-Cc: linux-clk@vger.kernel.org,
-	Sergej Sawazki <ce3a@gmx.de>
-Subject: [PATCH v4 0/4] clk: add gpio controlled clock multiplexer
-Date: Sun, 28 Jun 2015 16:24:52 +0200
-Message-Id: <1435501496-25761-1-git-send-email-ce3a@gmx.de>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v6 00/25] Tegra210 Clock Support
+Date: Thu, 18 Jun 2015 17:28:15 -0400
+Message-ID: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds a common clock driver for basic gpio controlled clock
-multiplexers. It does also contain some minor fixes for the gpio-gate-clock.
+This patch series updates the tegra common clock driver and adds
+support for the Tegra210 clocks. The clocks in Tegra210 changed
+significantly in some ways from earlier generations, so to support
+them, we need to extend our base framework a bit and add some new
+features.
 
-The first two patches are minor fixes for the gpio-gate-clock. Patch three
-refactors the file clk-gpio-gate.c and adds the new gpio-mux-clock driver.
-Finally, patch four renames the file clk-gpio-gate.c to clk-gpio.c. 
+Some patches here also address issues found while adding features
+and other cleanup type work.
 
-Based on clk-next.
+Note this series does depend on
+"clk: tegra: Fix comments for structure definitions"
+which has been reviewed already.
 
-Changes since v3:
- * Suggested by Stephen Boyd:
-   - Split the patch into a patch series, separate gpio-gate-clock fixes and
-     file renaming.
-   - Include linux/gpio/consumer.h.
-   - Remove debug noise.
-   - Remove some comments.
-   - Fix: Do not call free if alloc fails.
+v6:
+  - Add new clks for pllp_out* and xusb clks
+  - Fixed up UTMI programming for XUSB support
+  - Reordered patches to ensure bisectability
 
-Changes since v2:
- * Suggested by Stephen Boyd:
-   - Delete unneeded includes.
-   - Fix some style issues.
-   - Put gpio-gate-clock and gpio-mux-clock into a new file (clk-gpio.c) and
-     refactor the code to minimize code duplication.
+v5:
+  - Reorderd some patches
+  - Added Thierry's kerneldoc update patch as dependency
 
-Changes since v1:
- * Suggested by Stephen Boyd and Jyri Sarha:
-   - Remove the optional enable/disable support. If enable/disable is
-     required, the gpio-mux-clock can be used in combination with the
-     gpio-gate-clock.
+v4:
+  - Fixed minor checkpatch errors and other typos
+  - Rebased ontop of linux-next 20150504
 
- * Suggested by Stephen Boyd:
-   - Remove the (index > 1)-check from clk_gpio_mux_set_parent().
-   - Stay silent if gpio_request_one() fails with -EPROBE_DEFER.
-   - Make sure num_parents is 2 in clk_register_gpio_mux().
-   - Use devm_clk_register() if a device is provided.
-   - Remove the flags variable from of_clk_gpio_mux_delayed_register_get().
-   - Fix num_parents check in of_clk_gpio_mux_delayed_register_get().
-   - Use kcalloc() for parent_names array allocation.
-   - Use pr_debug() instead of pr_warn() for the EPROBE_DEFER message.
-   - Use kzalloc(sizeof(*data)... ) instead of kzalloc(sizeof(struct 
-     clk_gpio_mux_delayed_register_data)... ) in of_gpio_mux_clk_setup().
+v3:
+  - Added a fix from Andrew Bresticker that was found while testing
+    this code.
 
-Many thanks for your time and effort,
-Sergej
 
-Sergej Sawazki (4):
-  clk: gpio-gate: Include export.h instead of module.h
-  clk: gpio-gate: Stay silent on EPROBE_DEFER
-  clk: add gpio controlled clock multiplexer
-  clk: Rename clk-gpio-gate.c to clk-gpio.c
+Andrew Bresticker (2):
+  clk: tegra: pll: Fix issues with rates for VCO PLLs
+  clk: tegra: Add interface to enable hardware control of SATA/XUSB
+    PLLs
 
- .../devicetree/bindings/clock/gpio-mux-clock.txt   |  19 ++
- drivers/clk/Makefile                               |   2 +-
- drivers/clk/clk-gpio-gate.c                        | 207 -------------
- drivers/clk/clk-gpio.c                             | 319 +++++++++++++++++++++
- include/linux/clk-provider.h                       |  17 ++
- 5 files changed, 356 insertions(+), 208 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/gpio-mux-clock.txt
- delete mode 100644 drivers/clk/clk-gpio-gate.c
- create mode 100644 drivers/clk/clk-gpio.c
+Bill Huang (8):
+  clk: tegra: pll-params: change misc_reg count from 3 -> 6
+  clk: tegra: pll: Add code to handle if resets are supported by PLL
+  clk: tegra: pll: Adjust vco_min if SDM present
+  clk: tegra: pll: Add Set_default logic
+  clk: tegra: pll: Add logic for SS
+  clk: tegra: Add Super Gen5 Logic
+  clk: tegra: fix WARN_ON in PLL_RE registration
+  clk: tegra: read correct iddq register in PLL_SS registration
+
+Danny Huang (1):
+  clk: tegra: Update PLLM handling
+
+Rhyland Klein (13):
+  clk: tegra: Modify tegra_audio_clk_init to accept more plls
+  clk: tegra: periph: add new periph clks and muxes for Tegra210
+  clk: tegra: pll: add tegra_pll_wait_for_lock to clk header
+  clk: tegra: pll: simplify clk_enable_path
+  clk: tegra: pll: update warning msg
+  clk: tegra: pll: Don't unconditionally set LOCK flags
+  clk: tegra: pll: Add logic for handling SDM data
+  clk: tegra: pll: Add logic for out-of-table rates for T210
+  clk: tegra: pll: Add specialized logic for T210
+  clk: tegra: pll: Add support for PLLMB for T210
+  clk: tegra: pll: Add dyn_ramp callback
+  clk: tegra: pll: Fix _pll_ramp_calc_pll logic and
+    _calc_dynamic_ramp_rate
+  clk: tegra210: add support for Tegra210 clocks
+
+Thierry Reding (1):
+  clk: tegra: Update struct tegra_clk_pll_params kerneldoc
+
+ .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
+ drivers/clk/tegra/Makefile                         |    1 +
+ drivers/clk/tegra/clk-id.h                         |   75 +-
+ drivers/clk/tegra/clk-pll.c                        |  749 ++++-
+ drivers/clk/tegra/clk-tegra-audio.c                |   25 +-
+ drivers/clk/tegra/clk-tegra-periph.c               |  371 ++-
+ drivers/clk/tegra/clk-tegra-super-gen4.c           |  142 +-
+ drivers/clk/tegra/clk-tegra114.c                   |   32 +-
+ drivers/clk/tegra/clk-tegra124.c                   |   32 +-
+ drivers/clk/tegra/clk-tegra20.c                    |   18 +-
+ drivers/clk/tegra/clk-tegra210.c                   | 2905 ++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra30.c                    |   32 +-
+ drivers/clk/tegra/clk.h                            |  135 +-
+ include/dt-bindings/clock/tegra210-car.h           |  401 +++
+ include/linux/clk/tegra.h                          |    5 +
+ 15 files changed, 4768 insertions(+), 211 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
+ create mode 100644 drivers/clk/tegra/clk-tegra210.c
+ create mode 100644 include/dt-bindings/clock/tegra210-car.h
 
 -- 
-1.9.1
+1.7.9.5
