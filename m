@@ -1,66 +1,93 @@
-Return-Path: <t-kristo@ti.com>
-Message-ID: <556EF42A.9000207@ti.com>
-Date: Wed, 3 Jun 2015 15:33:46 +0300
-From: Tero Kristo <t-kristo@ti.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Scott Wood <scottwood@freescale.com>
+To: Mike Turquette <mturquette@linaro.org>, Tang Yuantian
+ <Yuantian.Tang@freescale.com>
+Subject: [RFC PATCH 0/8] clk: qoriq: Move chip-specific knowledge into driver
+Date: Thu, 18 Jun 2015 21:49:10 -0500
+Message-ID: <1434682158-7243-1-git-send-email-scottwood@freescale.com>
 MIME-Version: 1.0
-To: Tony Lindgren <tony@atomide.com>
-CC: <balbi@ti.com>, <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@linaro.org>, <paul@pwsan.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
-References: <1432566032-10860-1-git-send-email-t-kristo@ti.com> <20150526160557.GD16525@atomide.com> <20150526163216.GF16525@atomide.com> <20150526163931.GO26599@saruman.tx.rr.com> <55660D5B.8020607@ti.com> <20150527231536.GD30984@atomide.com>
-In-Reply-To: <20150527231536.GD30984@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Cc: devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Liberman Igal-B31950 <Igal.Liberman@freescale.com>, Scott
+ Wood <scottwood@freescale.com>, linuxppc-dev@lists.ozlabs.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Bucur Madalin-Cristian-B32716 <madalin.bucur@freescale.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/28/2015 02:15 AM, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [150527 11:32]:
->> On 05/26/2015 07:39 PM, Felipe Balbi wrote:
->>> On Tue, May 26, 2015 at 09:32:16AM -0700, Tony Lindgren wrote:
->>>> * Tony Lindgren <tony@atomide.com> [150526 09:08]:
->>>>> * Tero Kristo <t-kristo@ti.com> [150525 08:01]:
->>>>>> Hi,
->>>>>>
->>>>>> As requested, posting v3 with somewhat changed diff parameters and
->>>>>> diffstat attached. Just some minor Makefile changes compared to v2,
->>>>>> these were discussed under that set.
->>>>>>
->>>>>> Set has been pushed to:
->>>>>> - tree: https://github.com/t-kristo/linux-pm.git
->>>>>> - branch: for-4.2/ti-clk-move
->>>>>
->>>>> Looks like this causes a build error for at least omap2 only .config:
->>>>>
->>>>> drivers/clk/ti/dpll3xxx.o:(.rodata+0x1c): multiple definition of `clkhwops_omap3_dpll'
->>>>> drivers/clk/ti/dpll.o:(.rodata+0x0): first defined here
->>>>>
->>>>> You may want to create a file selecting ARCH_OMAP2PLUS=y, then point
->>>>> KCONFIG_ALLCONFIG to that file for make randconfig. Then just build
->>>>> randconfigs :) Usually the issues like this are exposed within few
->>>>> randconfig builds, some take longer if the options have dependencies.
->>>
->>> alternatively, just clone the repository at [1] and use the example
->>> script provided in README.md.
->>>
->>> [1] https://github.com/felipebalbi/omap-seeds
->>>
->>
->> Ok, I pushed an updated branch named: for-4.2/ti-clk-move-v4
->>
->> This definitely compiles with OMAP2 / OMAP3 / OMAP4 / OMAP5 / DRA7 / AM33xx
->> / AM43xx only setups (tried it out.)
->
-> Thanks yeah seems to work for me now.
->
-> Regards,
->
-> Tony
->
+The existing device tree bindings are error-prone and inflexible. 
+Correct the mistake by moving the knowledge into the driver, which
+has more flexibility in describing the quirks of each chip.  This leaves
+the device tree to its proper role of identifying a programming interface
+rather than describing its individual registers.
 
-Question to Mike / Stephen, any chance of getting this in during the 4.2 
-merge anymore seeing we are already at 4.1-rc6?
+For more detail, see the commit message of patch 4.
 
-I can send a pull request if yes. Otherwise I just wait until we are 
-past the next merge.
+Scott Wood (8):
+  ARM: dts: ls1021a: Fix clockgen node
+  cpufreq: qoriq: Don't look at clock implementation details
+  powerpc/fsl: Move fsl_guts.h out of arch/powerpc
+  clk: qoriq: Move chip-specific knowledge into driver
+  clk: qoriq: Redirect legacy clock nodes to new clocks
+  cpufreq: qoriq: Remove frequency masking and minimum
+  clk: qoriq: Expose OF clocks directly from the clockgen node
+  powerpc/fsl: Use new clockgen binding
 
--Tero
+ .../devicetree/bindings/clock/qoriq-clock.txt      |   57 +-
+ arch/arm/boot/dts/ls1021a.dtsi                     |    3 +
+ arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi         |    4 +-
+ arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi         |    8 +-
+ arch/powerpc/boot/dts/fsl/b4si-post.dtsi           |   15 -
+ arch/powerpc/boot/dts/fsl/p2041si-post.dtsi        |   18 -
+ arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi         |    8 +-
+ arch/powerpc/boot/dts/fsl/p3041si-post.dtsi        |   18 -
+ arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi         |    8 +-
+ arch/powerpc/boot/dts/fsl/p4080si-post.dtsi        |   70 --
+ arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi         |   16 +-
+ arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi         |    4 +-
+ arch/powerpc/boot/dts/fsl/p5040si-post.dtsi        |   18 -
+ arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi         |    8 +-
+ arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi     |   50 +-
+ arch/powerpc/boot/dts/fsl/qoriq-clockgen2.dtsi     |   33 +-
+ arch/powerpc/boot/dts/fsl/t1023si-post.dtsi        |   16 -
+ arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi         |    4 +-
+ arch/powerpc/boot/dts/fsl/t1040si-post.dtsi        |   44 -
+ arch/powerpc/boot/dts/fsl/t104xsi-pre.dtsi         |    8 +-
+ arch/powerpc/boot/dts/fsl/t2081si-post.dtsi        |   22 -
+ arch/powerpc/boot/dts/fsl/t208xsi-pre.dtsi         |    8 +-
+ arch/powerpc/boot/dts/fsl/t4240si-post.dtsi        |   61 -
+ arch/powerpc/boot/dts/fsl/t4240si-pre.dtsi         |   24 +-
+ arch/powerpc/platforms/85xx/mpc85xx_mds.c          |    2 +-
+ arch/powerpc/platforms/85xx/mpc85xx_rdb.c          |    2 +-
+ arch/powerpc/platforms/85xx/p1022_ds.c             |    2 +-
+ arch/powerpc/platforms/85xx/p1022_rdk.c            |    2 +-
+ arch/powerpc/platforms/85xx/smp.c                  |    2 +-
+ arch/powerpc/platforms/85xx/twr_p102x.c            |    2 +-
+ arch/powerpc/platforms/86xx/mpc8610_hpcd.c         |    2 +-
+ drivers/clk/clk-qoriq.c                            | 1191 ++++++++++++++++----
+ drivers/cpufreq/qoriq-cpufreq.c                    |  139 +--
+ drivers/iommu/fsl_pamu.c                           |    2 +-
+ .../asm/fsl_guts.h => include/linux/fsl/guts.h     |    6 +-
+ sound/soc/fsl/mpc8610_hpcd.c                       |    2 +-
+ sound/soc/fsl/p1022_ds.c                           |    2 +-
+ sound/soc/fsl/p1022_rdk.c                          |    2 +-
+ 38 files changed, 1107 insertions(+), 776 deletions(-)
+ rename arch/powerpc/include/asm/fsl_guts.h => include/linux/fsl/guts.h (98%)
+
+-- 
+2.1.4
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
