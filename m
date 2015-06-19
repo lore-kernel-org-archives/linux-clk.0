@@ -1,73 +1,67 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-ID: <55798BE4.2000604@arm.com>
-Date: Thu, 11 Jun 2015 14:23:48 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-MIME-Version: 1.0
-To: Jassi Brar <jaswinder.singh@linaro.org>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
-	lkml <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:37499 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753719AbbFSNww (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 19 Jun 2015 09:52:52 -0400
+Date: Fri, 19 Jun 2015 15:52:46 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	linux-clk@vger.kernel.org,
 	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v4 2/8] firmware: add support for ARM System Control and
- Power Interface(SCPI) protocol
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>	<1433760002-24120-3-git-send-email-sudeep.holla@arm.com> <CAJe_ZheUknLZuMg-02V-AqyjxX8Nx4oK3O2HapqfCLkkXjngAg@mail.gmail.com>
-In-Reply-To: <CAJe_ZheUknLZuMg-02V-AqyjxX8Nx4oK3O2HapqfCLkkXjngAg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-pm-owner@vger.kernel.org
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Subject: [PULL] clk: at91: fixes for 4.1
+Message-ID: <20150619155246.18af1068@bbrezillon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Mike,
+
+As you suggested, here is a PR including several fixes for the at91 clk
+drivers. BTW, thanks for accepting to take this PR so late in the release
+cycle.
+
+Best Regards,
+
+Boris
+
+The following changes since commit 03bc10ab5b0f9b8f81bffbe6e40c944f9d3dbcc5:
+
+  clk: check ->determine/round_rate() return value in clk_calc_new_rates (2015-04-12 21:09:49 -0700)
+
+are available in the git repository at:
+
+  https://github.com/bbrezillon/linux-at91.git ccf/atmel-fixes-for-4.1
+
+for you to fetch changes up to 28df9c2fb6f896179fcffd5a3f5a86e2d1dff0a5:
+
+  clk: at91: fix h32mx prototype inclusion in pmc header (2015-06-19 15:48:34 +0200)
+
+----------------------------------------------------------------
+Boris Brezillon (2):
+      clk: at91: pll: fix input range validity check
+      clk: at91: fix PERIPHERAL_MAX_SHIFT definition
+
+Nicolas Ferre (2):
+      clk: at91: trivial: typo in peripheral clock description
+      clk: at91: fix h32mx prototype inclusion in pmc header
+
+ Documentation/devicetree/bindings/clock/at91-clock.txt |  2 +-
+ drivers/clk/at91/clk-peripheral.c                      |  8 ++++----
+ drivers/clk/at91/clk-pll.c                             | 12 ++++++++++--
+ drivers/clk/at91/pmc.h                                 |  2 +-
+ 4 files changed, 16 insertions(+), 8 deletions(-)
 
 
-On 11/06/15 12:54, Jassi Brar wrote:
-> On 8 June 2015 at 16:09, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> ...
->> +
->> +static void scpi_process_cmd(struct scpi_chan *ch, u32 cmd)
->> +{
->> +       unsigned long flags;
->> +       struct scpi_xfer *t, *match = NULL;
->> +
->> +       spin_lock_irqsave(&ch->rx_lock, flags);
->> +       if (list_empty(&ch->rx_pending)) {
->> +               spin_unlock_irqrestore(&ch->rx_lock, flags);
->> +               return;
->> +       }
->> +
->> +       list_for_each_entry(t, &ch->rx_pending, node)
->> +               if (CMD_XTRACT_UNIQ(t->cmd) == CMD_XTRACT_UNIQ(cmd)) {
->> +                       list_del(&t->node);
->> +                       match = t;
->> +                       break;
->> +               }
->> +       /* check if wait_for_completion is in progress or timed-out */
->> +       if (match && !completion_done(&match->done)) {
->> +               struct scpi_shared_mem *mem = ch->rx_payload;
->> +               unsigned int len = min(match->rx_len, CMD_SIZE(cmd));
->> +
->> +               match->status = le32_to_cpu(mem->status);
->> +               memcpy_fromio(match->rx_buf, mem->payload, len);
->> +               if (match->rx_len > len)
->> +                       memset(match->rx_buf + len, 0, match->rx_len - len);
->> +               complete(&match->done);
->> +       }
->> +       spin_unlock_irqrestore(&ch->rx_lock, flags);
->> +}
-> There doesn't seem to be support for commands sent by remote?
-> Something like when remote is the thermal master and it needs to send
-> sensor readings crossing thresholds.
->
 
-SCP firmware claims to support that but never tested on Juno platform.
-So I would like to add it when there's first user for that.
-
-Regards,
-Sudeep
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+--
+To unsubscribe from this list: send the line "unsubscribe linux-clk" in
