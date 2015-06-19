@@ -1,71 +1,165 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 24/25] clk: tegra: read correct iddq register in PLL_SS registration
-Date: Thu, 18 Jun 2015 17:28:39 -0400
-Message-ID: <1434662920-21469-25-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Scott Wood <scottwood@freescale.com>
+To: Mike Turquette <mturquette@linaro.org>, Tang Yuantian
+ <Yuantian.Tang@freescale.com>
+Subject: [RFC PATCH 2/8] cpufreq: qoriq: Don't look at clock implementation
+ details
+Date: Thu, 18 Jun 2015 21:49:12 -0500
+Message-ID: <1434682158-7243-3-git-send-email-scottwood@freescale.com>
+In-Reply-To: <1434682158-7243-1-git-send-email-scottwood@freescale.com>
+References: <1434682158-7243-1-git-send-email-scottwood@freescale.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Liberman Igal-B31950 <Igal.Liberman@freescale.com>, Scott
+ Wood <scottwood@freescale.com>, linuxppc-dev@lists.ozlabs.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Bucur Madalin-Cristian-B32716 <madalin.bucur@freescale.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bill Huang <bilhuang@nvidia.com>
+Get the CPU clock's potential parent clocks from the clock interface
+itself, rather than manually parsing the clocks property to find a
+phandle, looking at the clock-names property of that, and assuming that
+those are valid parent clocks for the cpu clock.
 
-This fixes bug in tegra_clk_register_pllss() which mistakenly assume the
-iddq register is the PLL base address.
+This is necessary for cpufreq to continue working once the clocks
+are generated based on the clock driver's knowledge of the chip
+rather than a fragile device-tree description of the mux options.
 
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Signed-off-by: Scott Wood <scottwood@freescale.com>
 ---
- drivers/clk/tegra/clk-pll.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/cpufreq/qoriq-cpufreq.c | 47 ++++++++++++++++-------------------------
+ 1 file changed, 18 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 932a18ce821f..82f04a60649c 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -1921,7 +1921,7 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
- 	struct clk *clk, *parent;
- 	struct tegra_clk_pll_freq_table cfg;
- 	unsigned long parent_rate;
--	u32 val;
-+	u32 val, val_iddq;
+diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
+index 358f075..32ab99e 100644
+--- a/drivers/cpufreq/qoriq-cpufreq.c
++++ b/drivers/cpufreq/qoriq-cpufreq.c
+@@ -11,6 +11,7 @@
+ #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/cpufreq.h>
+ #include <linux/errno.h>
+ #include <linux/init.h>
+@@ -99,9 +100,10 @@ static u32 get_bus_freq(void)
+ 	return sysfreq;
+ }
+ 
+-static struct device_node *cpu_to_clk_node(int cpu)
++static struct clk *cpu_to_clk(int cpu)
+ {
+-	struct device_node *np, *clk_np;
++	struct device_node *np;
++	struct clk *clk;
+ 
+ 	if (!cpu_present(cpu))
+ 		return NULL;
+@@ -110,37 +112,32 @@ static struct device_node *cpu_to_clk_node(int cpu)
+ 	if (!np)
+ 		return NULL;
+ 
+-	clk_np = of_parse_phandle(np, "clocks", 0);
+-	if (!clk_np)
+-		return NULL;
+-
++	clk = of_clk_get(np, 0);
+ 	of_node_put(np);
+-
+-	return clk_np;
++	return clk;
+ }
+ 
+ /* traverse cpu nodes to get cpu mask of sharing clock wire */
+ static void set_affected_cpus(struct cpufreq_policy *policy)
+ {
+-	struct device_node *np, *clk_np;
+ 	struct cpumask *dstp = policy->cpus;
++	struct clk *clk;
++	const char *ourname, *theirname;
  	int i;
  
- 	if (!pll_params->div_nmp)
-@@ -1968,14 +1968,17 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
- 	pll_writel(PLLSS_CTRL1_DEFAULT, pll_params->ext_misc_reg[2], pll);
+-	np = cpu_to_clk_node(policy->cpu);
+-	if (!np)
+-		return;
++	ourname = __clk_get_name(policy->clk);
  
- 	val = pll_readl_base(pll);
-+	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
- 	if (val & PLL_BASE_ENABLE) {
--		if (val & BIT(pll_params->iddq_bit_idx)) {
-+		if (val_iddq & BIT(pll_params->iddq_bit_idx)) {
- 			WARN(1, "%s is on but IDDQ set\n", name);
- 			kfree(pll);
- 			return ERR_PTR(-EINVAL);
- 		}
--	} else
--		val |= BIT(pll_params->iddq_bit_idx);
-+	} else {
-+		val_iddq |= BIT(pll_params->iddq_bit_idx);
-+		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
-+	}
+ 	for_each_present_cpu(i) {
+-		clk_np = cpu_to_clk_node(i);
+-		if (!clk_np)
++		clk = cpu_to_clk(i);
++		if (IS_ERR(clk)) {
++			pr_err("%s: no clock for cpu %d\n", __func__, i);
+ 			continue;
++		}
  
- 	val &= ~PLLSS_LOCK_OVERRIDE;
- 	pll_writel_base(val, pll);
+-		if (clk_np == np)
++		theirname = __clk_get_name(clk);
++		if (!strcmp(ourname, theirname))
+ 			cpumask_set_cpu(i, dstp);
+-
+-		of_node_put(clk_np);
+ 	}
+-	of_node_put(np);
+ }
+ 
+ /* reduce the duplicated frequencies in frequency table */
+@@ -219,17 +216,12 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 		goto err_nomem2;
+ 	}
+ 
+-	pnode = of_parse_phandle(np, "clocks", 0);
+-	if (!pnode) {
+-		pr_err("%s: could not get clock information\n", __func__);
+-		goto err_nomem2;
+-	}
++	count = __clk_get_num_parents(policy->clk);
+ 
+-	count = of_property_count_strings(pnode, "clock-names");
+ 	data->pclk = kcalloc(count, sizeof(struct clk *), GFP_KERNEL);
+ 	if (!data->pclk) {
+ 		pr_err("%s: no memory\n", __func__);
+-		goto err_node;
++		goto err_nomem2;
+ 	}
+ 
+ 	table = kcalloc(count + 1, sizeof(*table), GFP_KERNEL);
+@@ -244,7 +236,7 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 		mask = 0x0;
+ 
+ 	for (i = 0; i < count; i++) {
+-		clk = of_clk_get(pnode, i);
++		clk = clk_get_parent_by_index(policy->clk, i);
+ 		data->pclk[i] = clk;
+ 		freq = clk_get_rate(clk);
+ 		/*
+@@ -288,10 +280,7 @@ err_nomem1:
+ 	kfree(table);
+ err_pclk:
+ 	kfree(data->pclk);
+-err_node:
+-	of_node_put(pnode);
+ err_nomem2:
+-	policy->driver_data = NULL;
+ 	kfree(data);
+ err_np:
+ 	of_node_put(np);
 -- 
-1.7.9.5
+2.1.4
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
