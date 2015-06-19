@@ -1,485 +1,444 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 08/25] clk: tegra: pll: Don't unconditionally set LOCK flags
-Date: Thu, 18 Jun 2015 17:28:23 -0400
-Message-ID: <1434662920-21469-9-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bn1on0111.outbound.protection.outlook.com ([157.56.110.111]:54091
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752912AbbFSDW7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 18 Jun 2015 23:22:59 -0400
+From: Scott Wood <scottwood@freescale.com>
+To: Mike Turquette <mturquette@linaro.org>,
+	Tang Yuantian <Yuantian.Tang@freescale.com>
+CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Liberman Igal-B31950 <Igal.Liberman@freescale.com>,
+	Bucur Madalin-Cristian-B32716 <madalin.bucur@freescale.com>,
+	<linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>,
+	"Scott Wood" <scottwood@freescale.com>
+Subject: [RFC PATCH 5/8] clk: qoriq: Redirect legacy clock nodes to new clocks
+Date: Thu, 18 Jun 2015 21:49:15 -0500
+Message-ID: <1434682158-7243-6-git-send-email-scottwood@freescale.com>
+In-Reply-To: <1434682158-7243-1-git-send-email-scottwood@freescale.com>
+References: <1434682158-7243-1-git-send-email-scottwood@freescale.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SoC specific drivers should define the appropriate flags for each
-PLL rather than relying on the registration functions to automatically
-set flags on their behalf. This will properly allow for changes between
-SoC generations where flags might be different and allow sharing the
-same logic functions.
+Having multiple clock implementations pointing at the same hardware is
+asking for trouble if both get used -- for example, cached values will be
+incorrect.  Point the legacy nodes at the new clocks, before anything
+starts using the new clocks.  The pll/mux details in old device trees
+will be ignored, but "clocks" properties pointing at the old nodes will
+still work.
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+This also lets us get rid of most of the legacy code.
+
+Signed-off-by: Scott Wood <scottwood@freescale.com>
 ---
- drivers/clk/tegra/clk-pll.c      |   11 ++---------
- drivers/clk/tegra/clk-tegra114.c |   23 +++++++++++++----------
- drivers/clk/tegra/clk-tegra124.c |   24 +++++++++++++++---------
- drivers/clk/tegra/clk-tegra20.c  |   18 ++++++++++--------
- drivers/clk/tegra/clk-tegra30.c  |   24 +++++++++++++++---------
- 5 files changed, 55 insertions(+), 45 deletions(-)
+ drivers/clk/clk-qoriq.c | 348 ++++++++----------------------------------------
+ 1 file changed, 54 insertions(+), 294 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 0282d9f4f2d7..13d86c5b234d 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -1434,7 +1434,7 @@ struct clk *tegra_clk_register_pll(const char *name, const char *parent_name,
- 	struct clk *clk;
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index b94dc2f..f6aa106 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -763,233 +763,24 @@ static void __init create_muxes(struct clockgen *cg)
+ }
  
- 	pll_params->flags |= TEGRA_PLL_BYPASS;
--	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
-+
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
-@@ -1464,8 +1464,7 @@ struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
- 	struct tegra_clk_pll *pll;
- 	struct clk *clk;
- 
--	pll_params->flags |= TEGRA_PLL_LOCK_MISC | TEGRA_PLL_BYPASS;
--	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
-+	pll_params->flags |= TEGRA_PLL_BYPASS;
- 
- 	if (!pll_params->div_nmp)
- 		pll_params->div_nmp = &pll_e_nmp;
-@@ -1569,7 +1568,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
- 	}
- 
--	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
-@@ -1592,8 +1590,6 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
- 	struct tegra_clk_pll *pll;
- 	struct clk *clk;
- 
--	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_LOCK_MISC;
+ /* Legacy node */
+-struct cmux_clk {
+-	struct clk_hw hw;
+-	void __iomem *reg;
+-	unsigned int clk_per_pll;
+-	u32 flags;
+-};
 -
- 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
- 
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
-@@ -1653,7 +1649,6 @@ struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
- 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
- 
- 	pll_params->flags |= TEGRA_PLL_BYPASS;
--	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
- 	pll_params->flags |= TEGRA_PLLM;
- 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
- 	if (IS_ERR(pll))
-@@ -1751,7 +1746,6 @@ struct clk *tegra_clk_register_plle_tegra114(const char *name,
+-#define PLL_KILL			BIT(31)
+-#define CLKSEL_ADJUST		BIT(0)
+-#define to_cmux_clk(p)		container_of(p, struct cmux_clk, hw)
+-
+-static int cmux_set_parent(struct clk_hw *hw, u8 idx)
+-{
+-	struct cmux_clk *clk = to_cmux_clk(hw);
+-	u32 clksel;
+-
+-	clksel = ((idx / clk->clk_per_pll) << 2) + idx % clk->clk_per_pll;
+-	if (clk->flags & CLKSEL_ADJUST)
+-		clksel += 8;
+-	clksel = (clksel & 0xf) << CLKSEL_SHIFT;
+-	iowrite32be(clksel, clk->reg);
+-
+-	return 0;
+-}
+-
+-static u8 cmux_get_parent(struct clk_hw *hw)
+-{
+-	struct cmux_clk *clk = to_cmux_clk(hw);
+-	u32 clksel;
+-
+-	clksel = ioread32be(clk->reg);
+-	clksel = (clksel >> CLKSEL_SHIFT) & 0xf;
+-	if (clk->flags & CLKSEL_ADJUST)
+-		clksel -= 8;
+-	clksel = (clksel >> 2) * clk->clk_per_pll + clksel % 4;
+-
+-	return clksel;
+-}
+-
+-static const struct clk_ops legacy_cmux_ops = {
+-	.get_parent = cmux_get_parent,
+-	.set_parent = cmux_set_parent,
+-};
+-
+ static void __init core_mux_init(struct device_node *np)
+ {
  	struct clk *clk;
- 	u32 val, val_aux;
+-	struct clk_init_data init;
+-	struct cmux_clk *cmux_clk;
+-	struct device_node *node;
+-	int rc, count, i;
+-	u32	offset;
+-	const char *clk_name;
+-	const char **parent_names;
+-	struct of_phandle_args clkspec;
++	struct resource res;
++	int idx, rc;
  
--	pll_params->flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
- 	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
-@@ -1813,7 +1807,6 @@ struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
- 		return ERR_PTR(-EINVAL);
+-	rc = of_property_read_u32(np, "reg", &offset);
+-	if (rc) {
+-		pr_err("%s: could not get reg property\n", np->name);
++	if (of_address_to_resource(np, 0, &res))
+ 		return;
+-	}
+-
+-	/* get the input clock source count */
+-	count = of_property_count_strings(np, "clock-names");
+-	if (count < 0) {
+-		pr_err("%s: get clock count error\n", np->name);
+-		return;
+-	}
+-	parent_names = kcalloc(count, sizeof(char *), GFP_KERNEL);
+-	if (!parent_names)
+-		return;
+-
+-	for (i = 0; i < count; i++)
+-		parent_names[i] = of_clk_get_parent_name(np, i);
+-
+-	cmux_clk = kzalloc(sizeof(*cmux_clk), GFP_KERNEL);
+-	if (!cmux_clk)
+-		goto err_name;
+ 
+-	cmux_clk->reg = of_iomap(np, 0);
+-	if (!cmux_clk->reg) {
+-		pr_err("%s: could not map register\n", __func__);
+-		goto err_clk;
+-	}
+-
+-	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", 0,
+-					&clkspec);
+-	if (rc) {
+-		pr_err("%s: parse clock node error\n", __func__);
+-		goto err_clk;
+-	}
+-
+-	cmux_clk->clk_per_pll = of_property_count_strings(clkspec.np,
+-			"clock-output-names");
+-	of_node_put(clkspec.np);
+-
+-	node = of_find_compatible_node(NULL, NULL, "fsl,p4080-clockgen");
+-	if (node && (offset >= 0x80))
+-		cmux_clk->flags = CLKSEL_ADJUST;
+-
+-	rc = of_property_read_string_index(np, "clock-output-names",
+-					   0, &clk_name);
+-	if (rc) {
+-		pr_err("%s: read clock names error\n", np->name);
+-		goto err_clk;
+-	}
+-
+-	init.name = clk_name;
+-	init.ops = &legacy_cmux_ops;
+-	init.parent_names = parent_names;
+-	init.num_parents = count;
+-	init.flags = 0;
+-	cmux_clk->hw.init = &init;
+-
+-	clk = clk_register(NULL, &cmux_clk->hw);
+-	if (IS_ERR(clk)) {
+-		pr_err("%s: could not register clock\n", clk_name);
+-		goto err_clk;
+-	}
++	idx = (res.start & 0xf0) >> 5;
++	clk = clockgen.cmux[idx];
+ 
+ 	rc = of_clk_add_provider(np, of_clk_src_simple_get, clk);
+ 	if (rc) {
+-		pr_err("Could not register clock provider for node:%s\n",
+-		       np->name);
+-		goto err_clk;
+-	}
+-	goto err_name;
+-
+-err_clk:
+-	kfree(cmux_clk);
+-err_name:
+-	/* free *_names because they are reallocated when registered */
+-	kfree(parent_names);
+-}
+-
+-/* Legacy node */
+-static void __init core_pll_init(struct device_node *np)
+-{
+-	u32 mult;
+-	int i, rc, count;
+-	const char *clk_name, *parent_name;
+-	struct clk_onecell_data *onecell_data;
+-	struct clk      **subclks;
+-	void __iomem *base;
+-
+-	base = of_iomap(np, 0);
+-	if (!base) {
+-		pr_err("iomap error\n");
++		pr_err("%s: Couldn't register clk provider for node %s: %d\n",
++		       __func__, np->name, rc);
+ 		return;
+ 	}
+-
+-	/* get the multiple of PLL */
+-	mult = ioread32be(base);
+-
+-	/* check if this PLL is disabled */
+-	if (mult & PLL_KILL) {
+-		pr_debug("PLL:%s is disabled\n", np->name);
+-		goto err_map;
+-	}
+-	mult = (mult >> 1) & 0x3f;
+-
+-	parent_name = of_clk_get_parent_name(np, 0);
+-	if (!parent_name) {
+-		pr_err("PLL: %s must have a parent\n", np->name);
+-		goto err_map;
+-	}
+-
+-	count = of_property_count_strings(np, "clock-output-names");
+-	if (count < 0 || count > 4) {
+-		pr_err("%s: clock is not supported\n", np->name);
+-		goto err_map;
+-	}
+-
+-	subclks = kcalloc(count, sizeof(struct clk *), GFP_KERNEL);
+-	if (!subclks)
+-		goto err_map;
+-
+-	onecell_data = kmalloc(sizeof(*onecell_data), GFP_KERNEL);
+-	if (!onecell_data)
+-		goto err_clks;
+-
+-	for (i = 0; i < count; i++) {
+-		rc = of_property_read_string_index(np, "clock-output-names",
+-						   i, &clk_name);
+-		if (rc) {
+-			pr_err("%s: could not get clock names\n", np->name);
+-			goto err_cell;
+-		}
+-
+-		/*
+-		 * when count == 4, there are 4 output clocks:
+-		 * /1, /2, /3, /4 respectively
+-		 * when count < 4, there are at least 2 output clocks:
+-		 * /1, /2, (/4, if count == 3) respectively.
+-		 */
+-		if (count == 4)
+-			subclks[i] = clk_register_fixed_factor(NULL, clk_name,
+-					parent_name, 0, mult, 1 + i);
+-		else
+-
+-			subclks[i] = clk_register_fixed_factor(NULL, clk_name,
+-					parent_name, 0, mult, 1 << i);
+-
+-		if (IS_ERR(subclks[i])) {
+-			pr_err("%s: could not register clock\n", clk_name);
+-			goto err_cell;
+-		}
+-	}
+-
+-	onecell_data->clks = subclks;
+-	onecell_data->clk_num = count;
+-
+-	rc = of_clk_add_provider(np, of_clk_src_onecell_get, onecell_data);
+-	if (rc) {
+-		pr_err("Could not register clk provider for node:%s\n",
+-		       np->name);
+-		goto err_cell;
+-	}
+-
+-	iounmap(base);
+-	return;
+-err_cell:
+-	kfree(onecell_data);
+-err_clks:
+-	kfree(subclks);
+-err_map:
+-	iounmap(base);
+ }
+ 
+ static struct clk * __init create_sysclk(struct device_node *clockgen,
+@@ -1027,21 +818,14 @@ static struct clk * __init create_sysclk(struct device_node *clockgen,
+ /* Legacy node */
+ static void __init sysclk_init(struct device_node *node)
+ {
+-	struct device_node *np = of_get_parent(node);
+-	struct clk *clk;
++	struct clk *clk = clockgen.sysclk;
+ 
+-	if (!np) {
+-		pr_err("could not get parent node\n");
+-		return;
+-	}
+-
+-	clk = create_sysclk(np, "sysclk");
+-	of_node_put(np);
+-
+-	if (!IS_ERR(clk))
++	if (clk)
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+ }
+ 
++#define PLL_KILL BIT(31)
++
+ static void __init create_one_pll(struct clockgen *cg, int idx)
+ {
+ 	u32 __iomem *reg;
+@@ -1097,85 +881,61 @@ static void __init create_plls(struct clockgen *cg)
+ 		create_one_pll(cg, i);
+ }
+ 
+-/* Legacy node */
+-static void __init pltfrm_pll_init(struct device_node *np)
++static void __init legacy_pll_init(struct device_node *np, int idx)
+ {
+-	void __iomem *base;
+-	uint32_t mult;
+-	const char *parent_name, *clk_name;
+-	int i, _errno;
+-	struct clk_onecell_data *cod;
+-
+-	base = of_iomap(np, 0);
+-	if (!base) {
+-		pr_err("%s(): %s: of_iomap() failed\n", __func__, np->name);
+-		return;
+-	}
+-
+-	/* Get the multiple of PLL */
+-	mult = ioread32be(base);
+-
+-	iounmap(base);
++	struct clockgen_pll *pll;
++	struct clk_onecell_data *onecell_data;
++	struct clk **subclks;
++	int count, rc, i;
+ 
+-	/* Check if this PLL is disabled */
+-	if (mult & PLL_KILL) {
+-		pr_debug("%s(): %s: Disabled\n", __func__, np->name);
+-		return;
+-	}
+-	mult = (mult & GENMASK(6, 1)) >> 1;
++	pll = &clockgen.pll[idx];
++	count = ARRAY_SIZE(pll->div);
+ 
+-	parent_name = of_clk_get_parent_name(np, 0);
+-	if (!parent_name) {
+-		pr_err("%s(): %s: of_clk_get_parent_name() failed\n",
+-		       __func__, np->name);
++	subclks = kcalloc(count, sizeof(struct clk *), GFP_KERNEL);
++	if (!subclks)
+ 		return;
+-	}
+ 
+-	i = of_property_count_strings(np, "clock-output-names");
+-	if (i < 0) {
+-		pr_err("%s(): %s: of_property_count_strings(clock-output-names) = %d\n",
+-		       __func__, np->name, i);
+-		return;
+-	}
++	onecell_data = kmalloc(sizeof(*onecell_data), GFP_KERNEL);
++	if (!onecell_data)
++		goto err_clks;
+ 
+-	cod = kmalloc(sizeof(*cod) + i * sizeof(struct clk *), GFP_KERNEL);
+-	if (!cod)
+-		return;
+-	cod->clks = (struct clk **)(cod + 1);
+-	cod->clk_num = i;
+-
+-	for (i = 0; i < cod->clk_num; i++) {
+-		_errno = of_property_read_string_index(np, "clock-output-names",
+-						       i, &clk_name);
+-		if (_errno < 0) {
+-			pr_err("%s(): %s: of_property_read_string_index(clock-output-names) = %d\n",
+-			       __func__, np->name, _errno);
+-			goto return_clk_unregister;
+-		}
++	for (i = 0; i < count; i++)
++		subclks[i] = pll->div[i].clk;
+ 
+-		cod->clks[i] = clk_register_fixed_factor(NULL, clk_name,
+-					       parent_name, 0, mult, 1 + i);
+-		if (IS_ERR(cod->clks[i])) {
+-			pr_err("%s(): %s: clk_register_fixed_factor(%s) = %ld\n",
+-			       __func__, np->name,
+-			       clk_name, PTR_ERR(cod->clks[i]));
+-			goto return_clk_unregister;
+-		}
+-	}
++	onecell_data->clks = subclks;
++	onecell_data->clk_num = count;
+ 
+-	_errno = of_clk_add_provider(np, of_clk_src_onecell_get, cod);
+-	if (_errno < 0) {
+-		pr_err("%s(): %s: of_clk_add_provider() = %d\n",
+-		       __func__, np->name, _errno);
+-		goto return_clk_unregister;
++	rc = of_clk_add_provider(np, of_clk_src_onecell_get, onecell_data);
++	if (rc) {
++		pr_err("%s: Couldn't register clk provider for node %s: %d\n",
++		       __func__, np->name, rc);
++		goto err_cell;
  	}
  
--	pll_params->flags = TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_USE_LOCK;
- 	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
- 	if (IS_ERR(pll))
- 		return ERR_CAST(pll);
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index d8586bd6afce..2e8ed12a6889 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -234,7 +234,7 @@ static struct tegra_clk_pll_params pll_c_params = {
- 	.pdiv_tohw = pllxc_p,
- 	.div_nmp = &pllxc_nmp,
- 	.freq_table = pll_c_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
+ 	return;
++err_cell:
++	kfree(onecell_data);
++err_clks:
++	kfree(subclks);
++}
  
- static struct div_nmp pllcx_nmp = {
-@@ -353,7 +353,7 @@ static struct tegra_clk_pll_params pll_m_params = {
- 	.pmc_divnm_reg = PMC_PLLM_WB0_OVERRIDE,
- 	.pmc_divp_reg = PMC_PLLM_WB0_OVERRIDE_2,
- 	.freq_table = pll_m_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
+-return_clk_unregister:
+-	while (--i >= 0)
+-		clk_unregister(cod->clks[i]);
+-	kfree(cod);
++/* Legacy node */
++static void __init core_pll_init(struct device_node *np)
++{
++	struct resource res;
++	int idx;
++
++	if (of_address_to_resource(np, 0, &res))
++		return;
++
++	idx = (res.start & 0xf0) >> 5;
++	legacy_pll_init(np, CGA_PLL1 + idx);
++}
++
++/* Legacy node */
++static void __init pltfrm_pll_init(struct device_node *np)
++{
++	legacy_pll_init(np, PLATFORM_PLL);
+ }
  
- static struct div_nmp pllp_nmp = {
-@@ -388,7 +388,8 @@ static struct tegra_clk_pll_params pll_p_params = {
- 	.lock_delay = 300,
- 	.div_nmp = &pllp_nmp,
- 	.freq_table = pll_p_freq_table,
--	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- 	.fixed_rate = 408000000,
- };
- 
-@@ -418,7 +419,8 @@ static struct tegra_clk_pll_params pll_a_params = {
- 	.lock_delay = 300,
- 	.div_nmp = &pllp_nmp,
- 	.freq_table = pll_a_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table pll_d_freq_table[] = {
-@@ -457,7 +459,7 @@ static struct tegra_clk_pll_params pll_d_params = {
- 	.div_nmp = &pllp_nmp,
- 	.freq_table = pll_d_freq_table,
- 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_d2_params = {
-@@ -475,7 +477,7 @@ static struct tegra_clk_pll_params pll_d2_params = {
- 	.div_nmp = &pllp_nmp,
- 	.freq_table = pll_d_freq_table,
- 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct pdiv_map pllu_p[] = {
-@@ -518,7 +520,7 @@ static struct tegra_clk_pll_params pll_u_params = {
- 	.div_nmp = &pllu_nmp,
- 	.freq_table = pll_u_freq_table,
- 	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table pll_x_freq_table[] = {
-@@ -553,7 +555,7 @@ static struct tegra_clk_pll_params pll_x_params = {
- 	.pdiv_tohw = pllxc_p,
- 	.div_nmp = &pllxc_nmp,
- 	.freq_table = pll_x_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table pll_e_freq_table[] = {
-@@ -588,7 +590,7 @@ static struct tegra_clk_pll_params pll_e_params = {
- 	.lock_delay = 300,
- 	.div_nmp = &plle_nmp,
- 	.freq_table = pll_e_freq_table,
--	.flags = TEGRA_PLL_FIXED,
-+	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_LOCK_ENABLE,
- 	.fixed_rate = 100000000,
- };
- 
-@@ -616,7 +618,8 @@ static struct tegra_clk_pll_params pll_re_vco_params = {
- 	.iddq_reg = PLLRE_MISC,
- 	.iddq_bit_idx = PLLRE_IDDQ_BIT,
- 	.div_nmp = &pllre_nmp,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE |
-+		 TEGRA_PLL_LOCK_MISC,
- };
- 
- /* possible OSC frequencies in Hz */
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index bd8205d23a33..3af2411c92fc 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -219,7 +219,7 @@ static struct tegra_clk_pll_params pll_x_params = {
- 	.pdiv_tohw = pllxc_p,
- 	.div_nmp = &pllxc_nmp,
- 	.freq_table = pll_x_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table pll_c_freq_table[] = {
-@@ -253,7 +253,7 @@ static struct tegra_clk_pll_params pll_c_params = {
- 	.pdiv_tohw = pllxc_p,
- 	.div_nmp = &pllxc_nmp,
- 	.freq_table = pll_c_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct div_nmp pllcx_nmp = {
-@@ -387,6 +387,7 @@ static struct tegra_clk_pll_params pll_c4_params = {
- 	.ext_misc_reg[1] = 0x5b0,
- 	.ext_misc_reg[2] = 0x5b4,
- 	.freq_table = pll_c4_freq_table,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct pdiv_map pllm_p[] = {
-@@ -434,7 +435,7 @@ static struct tegra_clk_pll_params pll_m_params = {
- 	.pmc_divnm_reg = PMC_PLLM_WB0_OVERRIDE,
- 	.pmc_divp_reg = PMC_PLLM_WB0_OVERRIDE_2,
- 	.freq_table = pll_m_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table pll_e_freq_table[] = {
-@@ -470,7 +471,7 @@ static struct tegra_clk_pll_params pll_e_params = {
- 	.lock_delay = 300,
- 	.div_nmp = &plle_nmp,
- 	.freq_table = pll_e_freq_table,
--	.flags = TEGRA_PLL_FIXED,
-+	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_LOCK_ENABLE,
- 	.fixed_rate = 100000000,
- };
- 
-@@ -508,7 +509,8 @@ static struct tegra_clk_pll_params pll_re_vco_params = {
- 	.iddq_reg = PLLRE_MISC,
- 	.iddq_bit_idx = PLLRE_IDDQ_BIT,
- 	.div_nmp = &pllre_nmp,
--	.flags = TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE |
-+		 TEGRA_PLL_LOCK_MISC,
- };
- 
- static struct div_nmp pllp_nmp = {
-@@ -544,7 +546,8 @@ static struct tegra_clk_pll_params pll_p_params = {
- 	.div_nmp = &pllp_nmp,
- 	.freq_table = pll_p_freq_table,
- 	.fixed_rate = 408000000,
--	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table pll_a_freq_table[] = {
-@@ -572,7 +575,8 @@ static struct tegra_clk_pll_params pll_a_params = {
- 	.lock_delay = 300,
- 	.div_nmp = &pllp_nmp,
- 	.freq_table = pll_a_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct div_nmp plld_nmp = {
-@@ -620,7 +624,7 @@ static struct tegra_clk_pll_params pll_d_params = {
- 	.div_nmp = &plld_nmp,
- 	.freq_table = pll_d_freq_table,
- 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table tegra124_pll_d2_freq_table[] = {
-@@ -653,6 +657,7 @@ static struct tegra_clk_pll_params tegra124_pll_d2_params = {
- 	.ext_misc_reg[2] = 0x578,
- 	.max_p = 15,
- 	.freq_table = tegra124_pll_d2_freq_table,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_freq_table pll_dp_freq_table[] = {
-@@ -685,6 +690,7 @@ static struct tegra_clk_pll_params pll_dp_params = {
- 	.ext_misc_reg[2] = 0x5a0,
- 	.max_p = 5,
- 	.freq_table = pll_dp_freq_table,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct pdiv_map pllu_p[] = {
-@@ -727,7 +733,7 @@ static struct tegra_clk_pll_params pll_u_params = {
- 	.div_nmp = &pllu_nmp,
- 	.freq_table = pll_u_freq_table,
- 	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- struct utmi_clk_param {
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 41272dcc9e22..98ed1a9b8f65 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -303,7 +303,7 @@ static struct tegra_clk_pll_params pll_c_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_c_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_m_params = {
-@@ -319,7 +319,7 @@ static struct tegra_clk_pll_params pll_m_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_m_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_p_params = {
-@@ -335,7 +335,8 @@ static struct tegra_clk_pll_params pll_p_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_p_freq_table,
--	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_CPCON,
-+	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_CPCON |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- 	.fixed_rate =  216000000,
- };
- 
-@@ -352,7 +353,7 @@ static struct tegra_clk_pll_params pll_a_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_a_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_d_params = {
-@@ -368,7 +369,7 @@ static struct tegra_clk_pll_params pll_d_params = {
- 	.lock_enable_bit_idx = PLLDU_MISC_LOCK_ENABLE,
- 	.lock_delay = 1000,
- 	.freq_table = pll_d_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct pdiv_map pllu_p[] = {
-@@ -391,7 +392,7 @@ static struct tegra_clk_pll_params pll_u_params = {
- 	.lock_delay = 1000,
- 	.pdiv_tohw = pllu_p,
- 	.freq_table = pll_u_freq_table,
--	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON,
-+	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_x_params = {
-@@ -407,7 +408,7 @@ static struct tegra_clk_pll_params pll_x_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_x_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_e_params = {
-@@ -423,7 +424,8 @@ static struct tegra_clk_pll_params pll_e_params = {
- 	.lock_enable_bit_idx = PLLE_MISC_LOCK_ENABLE,
- 	.lock_delay = 0,
- 	.freq_table = pll_e_freq_table,
--	.flags = TEGRA_PLL_FIXED,
-+	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_LOCK_MISC |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- 	.fixed_rate = 100000000,
- };
- 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 8d1d569320b7..115ce6e18218 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -423,7 +423,8 @@ static struct tegra_clk_pll_params pll_c_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_c_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct div_nmp pllm_nmp = {
-@@ -455,7 +456,8 @@ static struct tegra_clk_pll_params pll_m_params = {
- 	.pmc_divp_reg = PMC_PLLM_WB0_OVERRIDE,
- 	.freq_table = pll_m_freq_table,
- 	.flags = TEGRA_PLLM | TEGRA_PLL_HAS_CPCON |
--		 TEGRA_PLL_SET_DCCON | TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_SET_DCCON | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_p_params = {
-@@ -471,7 +473,8 @@ static struct tegra_clk_pll_params pll_p_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_p_freq_table,
--	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- 	.fixed_rate = 408000000,
- };
- 
-@@ -488,7 +491,8 @@ static struct tegra_clk_pll_params pll_a_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_a_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_d_params = {
-@@ -505,7 +509,7 @@ static struct tegra_clk_pll_params pll_d_params = {
- 	.lock_delay = 1000,
- 	.freq_table = pll_d_freq_table,
- 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- 
- };
- 
-@@ -523,7 +527,7 @@ static struct tegra_clk_pll_params pll_d2_params = {
- 	.lock_delay = 1000,
- 	.freq_table = pll_d_freq_table,
- 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_u_params = {
-@@ -540,7 +544,8 @@ static struct tegra_clk_pll_params pll_u_params = {
- 	.lock_delay = 1000,
- 	.pdiv_tohw = pllu_p,
- 	.freq_table = pll_u_freq_table,
--	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON,
-+	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_x_params = {
-@@ -557,7 +562,7 @@ static struct tegra_clk_pll_params pll_x_params = {
- 	.lock_delay = 300,
- 	.freq_table = pll_x_freq_table,
- 	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_DCCON |
--		 TEGRA_PLL_USE_LOCK,
-+		 TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
- };
- 
- static struct tegra_clk_pll_params pll_e_params = {
-@@ -573,7 +578,8 @@ static struct tegra_clk_pll_params pll_e_params = {
- 	.lock_enable_bit_idx = PLLE_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_e_freq_table,
--	.flags = TEGRA_PLLE_CONFIGURE | TEGRA_PLL_FIXED,
-+	.flags = TEGRA_PLLE_CONFIGURE | TEGRA_PLL_FIXED |
-+		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_LOCK_MISC,
- 	.fixed_rate = 100000000,
- };
- 
+ #ifdef CONFIG_PPC
 -- 
-1.7.9.5
+2.1.4
+
