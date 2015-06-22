@@ -1,92 +1,41 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-omap-owner@vger.kernel.org>
+From: Keerthy <j-keerthy@ti.com>
+To: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+CC: <galak@codeaurora.org>, <t-kristo@ti.com>, <pawel.moll@arm.com>,
+	<linux-kernel@vger.kernel.org>, <paul@pwsan.com>,
+	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>,
+	<j-keerthy@ti.com>
+Subject: [PATCH 3/6] ARM: dts: AM4372: Add PRCM IRQ entry
+Date: Mon, 22 Jun 2015 11:52:53 +0530
+Message-ID: <1434954176-9605-4-git-send-email-j-keerthy@ti.com>
+In-Reply-To: <1434954176-9605-1-git-send-email-j-keerthy@ti.com>
+References: <1434954176-9605-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-To: Tero Kristo <t-kristo@ti.com>, "Tony Lindgren" <tony@atomide.com>
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <556EF42A.9000207@ti.com>
-Cc: balbi@ti.com, linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
- sboyd@codeaurora.org, paul@pwsan.com, linux-arm-kernel@lists.infradead.org
-References: <1432566032-10860-1-git-send-email-t-kristo@ti.com>
- <20150526160557.GD16525@atomide.com> <20150526163216.GF16525@atomide.com>
- <20150526163931.GO26599@saruman.tx.rr.com> <55660D5B.8020607@ti.com>
- <20150527231536.GD30984@atomide.com> <556EF42A.9000207@ti.com>
-Message-ID: <20150603231136.6017.65683@quantum>
-Subject: Re: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
-Date: Wed, 03 Jun 2015 16:11:36 -0700
+Content-Type: text/plain
+Sender: linux-omap-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Tero Kristo (2015-06-03 05:33:46)
-> On 05/28/2015 02:15 AM, Tony Lindgren wrote:
-> > * Tero Kristo <t-kristo@ti.com> [150527 11:32]:
-> >> On 05/26/2015 07:39 PM, Felipe Balbi wrote:
-> >>> On Tue, May 26, 2015 at 09:32:16AM -0700, Tony Lindgren wrote:
-> >>>> * Tony Lindgren <tony@atomide.com> [150526 09:08]:
-> >>>>> * Tero Kristo <t-kristo@ti.com> [150525 08:01]:
-> >>>>>> Hi,
-> >>>>>>
-> >>>>>> As requested, posting v3 with somewhat changed diff parameters and
-> >>>>>> diffstat attached. Just some minor Makefile changes compared to v2,
-> >>>>>> these were discussed under that set.
-> >>>>>>
-> >>>>>> Set has been pushed to:
-> >>>>>> - tree: https://github.com/t-kristo/linux-pm.git
-> >>>>>> - branch: for-4.2/ti-clk-move
-> >>>>>
-> >>>>> Looks like this causes a build error for at least omap2 only .confi=
-g:
-> >>>>>
-> >>>>> drivers/clk/ti/dpll3xxx.o:(.rodata+0x1c): multiple definition of `c=
-lkhwops_omap3_dpll'
-> >>>>> drivers/clk/ti/dpll.o:(.rodata+0x0): first defined here
-> >>>>>
-> >>>>> You may want to create a file selecting ARCH_OMAP2PLUS=3Dy, then po=
-int
-> >>>>> KCONFIG_ALLCONFIG to that file for make randconfig. Then just build
-> >>>>> randconfigs :) Usually the issues like this are exposed within few
-> >>>>> randconfig builds, some take longer if the options have dependencie=
-s.
-> >>>
-> >>> alternatively, just clone the repository at [1] and use the example
-> >>> script provided in README.md.
-> >>>
-> >>> [1] https://github.com/felipebalbi/omap-seeds
-> >>>
-> >>
-> >> Ok, I pushed an updated branch named: for-4.2/ti-clk-move-v4
-> >>
-> >> This definitely compiles with OMAP2 / OMAP3 / OMAP4 / OMAP5 / DRA7 / A=
-M33xx
-> >> / AM43xx only setups (tried it out.)
-> >
-> > Thanks yeah seems to work for me now.
-> >
-> > Regards,
-> >
-> > Tony
-> >
-> =
+Add PRCM IRQ entry.
 
-> Question to Mike / Stephen, any chance of getting this in during the 4.2 =
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
+ arch/arm/boot/dts/am4372.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-> merge anymore seeing we are already at 4.1-rc6?
-> =
+diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
+index 1680602..7bcdeb2 100644
+--- a/arch/arm/boot/dts/am4372.dtsi
++++ b/arch/arm/boot/dts/am4372.dtsi
+@@ -86,6 +86,7 @@
+ 			prcm: prcm@1f0000 {
+ 				compatible = "ti,am4-prcm";
+ 				reg = <0x1f0000 0x11000>;
++				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 				prcm_clocks: clocks {
+ 					#address-cells = <1>;
+-- 
+1.9.1
 
-> I can send a pull request if yes. Otherwise I just wait until we are =
-
-> past the next merge.
-
-Hi Tero,
-
-I'd like more time for any regressions this introduces to be fixed, so
-lets push back to next merge window. The always-wrong-but-never-by-much
-crystal ball[0] predicts June 14. This is less than two weeks away, so
-the wait should be short.
-
-[0] http://phb-crystal-ball.org/
-
-Thanks,
-Mike
-
-> =
-
-> -Tero
+--
+To unsubscribe from this list: send the line "unsubscribe linux-omap" in
