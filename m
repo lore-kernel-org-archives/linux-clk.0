@@ -1,86 +1,52 @@
-Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Mon, 22 Jun 2015 15:48:32 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH v3 0/3] clk: stm32: Add clock driver for STM32F4[23]xxx
+ devices
+Message-ID: <20150622224832.GI22132@codeaurora.org>
+References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
+ <1433966978-24422-1-git-send-email-daniel.thompson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <558B0CD7.6040302@codeaurora.org>
-References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
- <1435068567-30995-2-git-send-email-gabriel.fernandez@linaro.org> <558B0CD7.6040302@codeaurora.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Date: Thu, 25 Jun 2015 10:41:22 +0200
-Message-ID: <CAG374jAE78p_4=MYg9iNqo-4j8gE5OspzKwphfBUBtr5iOx-1g@mail.gmail.com>
-Subject: Re: [PATCH 1/9] drivers: clk: st: Incorrect clocks status
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Peter Griffin <peter.griffin@linaro.org>, Pankaj Dev <pankaj.dev@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Fabian Frederick <fabf@skynet.be>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"kernel@stlinux.com" <kernel@stlinux.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1433966978-24422-1-git-send-email-daniel.thompson@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ linaro-kernel@lists.linaro.org, Mike Turquette <mturquette@linaro.org>,
+ Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ patches@linaro.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Kamil Lulko <rev13@wp.pl>, Rob Herring <robh+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, Kumar Gala <galak@codeaurora.org>,
+ Russell King <linux@arm.linux.org.uk>, Andreas Farber <afaerber@suse.de>,
+ linux-arm-kernel@lists.infradead.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On 06/10, Daniel Thompson wrote:
+> This patchset implements a clock driver for STM32F42xxx and STM32F43xxx
+> series devices. It supports decoding the state configured by the
+> bootloader (PLL, clock select, bus dividers) and all the gates clocks.
+> It does not currently support the I2S and SAI PLLs.
+> 
+> Relies on "Add support to STMicroeletronics STM32 family" v9 by Maxime
+> Coquelin: http://thread.gmane.org/gmane.linux.kernel/1961049 .
+> 
 
-Thanks for reviewing
+I applied 1 and 2. Looks like #3 should go through arm-soc at
+some later time?
 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-On 24 June 2015 at 22:02, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 06/23/2015 07:09 AM, Gabriel Fernandez wrote:
->> In the clk_summary output, the h/w status of DivMux is incorrect
->> (Parent and Enable status), since the clk_mux_ops.get_parent()
->> returns -ERRCODE when clock is OFF.
->>
->> Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
->> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
->> ---
->>  drivers/clk/st/clkgen-mux.c | 15 +++++++++------
->>  1 file changed, 9 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
->> index 4fbe6e0..c94b56b 100644
->> --- a/drivers/clk/st/clkgen-mux.c
->> +++ b/drivers/clk/st/clkgen-mux.c
->> @@ -128,7 +128,7 @@ static int clkgena_divmux_is_enabled(struct clk_hw *hw)
->>
->>       __clk_hw_set_clk(mux_hw, hw);
->>
->> -     return (s8)clk_mux_ops.get_parent(mux_hw) > 0;
->> +     return ((s8)clk_mux_ops.get_parent(mux_hw) >= 0);
->
-> Useless parentheses around it all, please drop.
->
-Ok
-
->>  }
->>
->>  static u8 clkgena_divmux_get_parent(struct clk_hw *hw)
->> @@ -138,11 +138,13 @@ static u8 clkgena_divmux_get_parent(struct clk_hw *hw)
->>
->>       __clk_hw_set_clk(mux_hw, hw);
->>
->> -     genamux->muxsel = clk_mux_ops.get_parent(mux_hw);
->> -     if ((s8)genamux->muxsel < 0) {
->> -             pr_debug("%s: %s: Invalid parent, setting to default.\n",
->> -                   __func__, __clk_get_name(hw->clk));
->> -             genamux->muxsel = 0;
->> +     if (genamux->muxsel == CKGAX_CLKOPSRC_SWITCH_OFF) {
->> +             genamux->muxsel = clk_mux_ops.get_parent(mux_hw);
->
-> Hm.. maybe we should fix clk_mux_ops to return 0 if it can't find the
-> parent? Or when this clock is registered we should read the hardware and
-> set a default parent so that we can't get an error code here.
->
-I 'll try the second solution.
-
-Best regards
-
-Gabriel
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
