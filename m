@@ -1,59 +1,48 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <557589D9.1050008@melag.de>
-Date: Mon, 8 Jun 2015 14:26:01 +0200
-From: "Enrico Weigelt, metux IT consult" <weigelt@melag.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:35781 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750919AbbFVGYM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Mon, 22 Jun 2015 02:24:12 -0400
+From: Keerthy <j-keerthy@ti.com>
+To: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+CC: <galak@codeaurora.org>, <t-kristo@ti.com>, <pawel.moll@arm.com>,
+	<linux-kernel@vger.kernel.org>, <paul@pwsan.com>,
+	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>,
+	<j-keerthy@ti.com>
+Subject: [PATCH 0/6] ARM: AM437x: Add IO wake up support 
+Date: Mon, 22 Jun 2015 11:52:50 +0530
+Message-ID: <1434954176-9605-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-To: Alexander Holler <holler@ahsoftware.de>,
-	"Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>
-CC: Rob Herring <robherring2@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	=?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?=
-	<stephane.marchesin@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	<dmaengine@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	<linux-clk@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>
-Subject: Re: [PATCH 00/21] On-demand device registration
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com> <556F5C24.1030101@linaro.org> <5570B783.1050808@ahsoftware.de>
-In-Reply-To: <5570B783.1050808@ahsoftware.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am 04.06.2015 um 22:39 schrieb Alexander Holler:
+The patch series adds IO wake up support for AM437x series
+making use of the existing OMAP4 support. Adds the AM437x
+specifics.
 
- > As it seems to have been forgotten or overread, I've mentioned in my
-> series of patches last year that, with a few changes, it's possible to
-> let the algorithm I've used (dfs) to spit out all drivers which can be
-> initialized in parallel.
+The series is boot tested on OMAP4 panda, DAR7 evm and AM437x evms.
+I do not have OMAP3 boards so not able to test on OMAP3.
 
-Unfortunately, I've missed that ... could you please resend you patches?
-Boot time reduction is one of the topics on my 2do in several weeks.
+Keerthy (6):
+  ARM: OMAP4: PRM: Remove hardcoding of PRM_IO_PMCTRL_OFFSET register
+  ARM: AM43xx: Add the PRM IRQ register offsets
+  ARM: dts: AM4372: Add PRCM IRQ entry
+  ARM: OMAP: PRM: Remove hardcoding of IRQENABLE_MPU_2 and
+    IRQSTATUS_MPU_2 register offsets
+  ARM: OMAP4+: PRM: Add AM437x specific data
+  ARM: PRM: AM437x: Enable IO wakeup feature
 
+ arch/arm/boot/dts/am4372.dtsi     |  1 +
+ arch/arm/mach-omap2/prcm-common.h |  9 +++---
+ arch/arm/mach-omap2/prcm43xx.h    |  5 +++
+ arch/arm/mach-omap2/prm3xxx.c     | 20 ++++++------
+ arch/arm/mach-omap2/prm44xx.c     | 65 +++++++++++++++++++++++----------------
+ arch/arm/mach-omap2/prm_common.c  |  6 ++--
+ 6 files changed, 63 insertions(+), 43 deletions(-)
 
-cu
+-- 
+1.9.1
+
 --
-Enrico Weigelt, metux IT consult
-+49-151-27565287
-MELAG Medizintechnik oHG Sitz Berlin Registergericht AG Charlottenburg HRA 21333 B
-
-Wichtiger Hinweis: Diese Nachricht kann vertrauliche oder nur für einen begrenzten Personenkreis bestimmte Informationen enthalten. Sie ist ausschließlich für denjenigen bestimmt, an den sie gerichtet worden ist. Wenn Sie nicht der Adressat dieser E-Mail sind, dürfen Sie diese nicht kopieren, weiterleiten, weitergeben oder sie ganz oder teilweise in irgendeiner Weise nutzen. Sollten Sie diese E-Mail irrtümlich erhalten haben, so benachrichtigen Sie bitte den Absender, indem Sie auf diese Nachricht antworten. Bitte löschen Sie in diesem Fall diese Nachricht und alle Anhänge, ohne eine Kopie zu behalten.
-Important Notice: This message may contain confidential or privileged information. It is intended only for the person it was addressed to. If you are not the intended recipient of this email you may not copy, forward, disclose or otherwise use it or any part of it in any form whatsoever. If you received this email in error please notify the sender by replying and delete this message and any attachments without retaining a copy.
+To unsubscribe from this list: send the line "unsubscribe linux-clk" in
