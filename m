@@ -1,424 +1,234 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:47300 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752261AbbFSATT (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jun 2015 20:19:19 -0400
-Date: Thu, 18 Jun 2015 17:19:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sergej Sawazki <ce3a@gmx.de>
-Cc: mturquette@linaro.org, jsarha@ti.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3] clk: add gpio controlled clock multiplexer
-Message-ID: <20150619001916.GB22132@codeaurora.org>
-References: <1433706264-30008-1-git-send-email-ce3a@gmx.de>
+Return-Path: <linux-omap-owner@vger.kernel.org>
+From: Keerthy <j-keerthy@ti.com>
+To: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+CC: <galak@codeaurora.org>, <t-kristo@ti.com>, <pawel.moll@arm.com>,
+	<linux-kernel@vger.kernel.org>, <paul@pwsan.com>,
+	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>,
+	<j-keerthy@ti.com>
+Subject: [PATCH 4/6] ARM: OMAP: PRM: Remove hardcoding of IRQENABLE_MPU_2 and IRQSTATUS_MPU_2 register offsets
+Date: Mon, 22 Jun 2015 11:52:54 +0530
+Message-ID: <1434954176-9605-5-git-send-email-j-keerthy@ti.com>
+In-Reply-To: <1434954176-9605-1-git-send-email-j-keerthy@ti.com>
+References: <1434954176-9605-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1433706264-30008-1-git-send-email-ce3a@gmx.de>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-omap-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/07, Sergej Sawazki wrote:
-> 
->  .../devicetree/bindings/clock/gpio-mux-clock.txt   |  19 ++
->  drivers/clk/Makefile                               |   2 +-
->  drivers/clk/clk-gpio-gate.c                        | 207 -------------
->  drivers/clk/clk-gpio.c                             | 332 +++++++++++++++++++++
+The register offsets of IRQENABLE_MPU_2 and IRQSTATUS_MPU_2 are hardcoded.
+This makes it difficult to reuse the code for single core SoCs like AM437x.
+Hence making it part of omap_prcm_irq_setup structure so that case of
+single set of IRQ* registers can be handled generically.
 
-Please don't rename the file in the same commit. First, rename
-the file to clk-gpio.c in one patch, and then add the code for
-the gate in another patch. I applied this patch and undid the
-file rename so I could actually review the changes...
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
+ arch/arm/mach-omap2/prcm-common.h |  8 ++++----
+ arch/arm/mach-omap2/prm3xxx.c     | 20 +++++++++---------
+ arch/arm/mach-omap2/prm44xx.c     | 43 +++++++++++++++++++++------------------
+ arch/arm/mach-omap2/prm_common.c  |  5 ++---
+ 4 files changed, 39 insertions(+), 37 deletions(-)
 
-> diff --git a/drivers/clk/clk-gpio-gate.c b/drivers/clk/clk-gpio-gate.c
-> index f564e624fb93..f2bd61015f13 100644
-> --- a/drivers/clk/clk-gpio-gate.c
-> +++ b/drivers/clk/clk-gpio-gate.c
-> @@ -1,19 +1,20 @@
->  /*
->   * Copyright (C) 2013 - 2014 Texas Instruments Incorporated - http://www.ti.com
-> - * Author: Jyri Sarha <jsarha@ti.com>
-> + *
-> + * Authors:
-> + *    Jyri Sarha <jsarha@ti.com>
-> + *    Sergej Sawazki <ce3a@gmx.de>
->   *
->   * This program is free software; you can redistribute it and/or modify
->   * it under the terms of the GNU General Public License version 2 as
->   * published by the Free Software Foundation.
->   *
-> - * Gpio gated clock implementation
-> + * Gpio controlled clock implementation
->   */
->  
->  #include <linux/clk-provider.h>
-> -#include <linux/module.h>
-> +#include <linux/export.h>
->  #include <linux/slab.h>
-> -#include <linux/gpio.h>
-> -#include <linux/gpio/consumer.h>
-
-Seems like an odd removal. Aren't we a gpio consumer?
-
->  #include <linux/of_gpio.h>
->  #include <linux/err.h>
->  #include <linux/device.h>
-> @@ -35,6 +36,7 @@ static int clk_gpio_gate_enable(struct clk_hw *hw)
->  	struct clk_gpio *clk = to_clk_gpio(hw);
->  
->  	gpiod_set_value(clk->gpiod, 1);
-> +	pr_debug("%s: %s\n", __clk_get_name(hw->clk), __func__);
-
-Looks like debugging noise, please remove.
-
->  
->  	return 0;
->  }
-> @@ -44,6 +46,7 @@ static void clk_gpio_gate_disable(struct clk_hw *hw)
->  	struct clk_gpio *clk = to_clk_gpio(hw);
->  
->  	gpiod_set_value(clk->gpiod, 0);
-> +	pr_debug("%s: %s\n", __clk_get_name(hw->clk), __func__);
-
-Ditto.
-
->  }
->  
->  static int clk_gpio_gate_is_enabled(struct clk_hw *hw)
-> @@ -61,24 +64,61 @@ const struct clk_ops clk_gpio_gate_ops = {
->  EXPORT_SYMBOL_GPL(clk_gpio_gate_ops);
->  
->  /**
-> - * clk_register_gpio - register a gpip clock with the clock framework
-> - * @dev: device that is registering this clock
-> - * @name: name of this clock
-> - * @parent_name: name of this clock's parent
-> - * @gpio: gpio number to gate this clock
-> - * @active_low: true if gpio should be set to 0 to enable clock
-> - * @flags: clock flags
-> + * DOC: basic clock multiplexer which can be controlled with a gpio output
-> + * Traits of this clock:
-> + * prepare - clk_prepare only ensures that parents are prepared
-> + * rate - rate is only affected by parent switching.  No clk_set_rate support
-> + * parent - parent is adjustable through clk_set_parent
->   */
-> -struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
-> -		const char *parent_name, unsigned gpio, bool active_low,
-> -		unsigned long flags)
-> +
-> +static u8 clk_gpio_mux_get_parent(struct clk_hw *hw)
-> +{
-> +	struct clk_gpio *clk = to_clk_gpio(hw);
-> +
-> +	return gpiod_get_value(clk->gpiod);
-> +}
-> +
-> +static int clk_gpio_mux_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +	struct clk_gpio *clk = to_clk_gpio(hw);
-> +
-> +	gpiod_set_value(clk->gpiod, index);
-> +	pr_debug("%s: %s: index = %d\n",
-> +			__clk_get_name(hw->clk), __func__, index);
-> +
-
-More debug noise? Please remove.
-
-> +	return 0;
-> +}
-> +
-> +const struct clk_ops clk_gpio_mux_ops = {
-> +	.get_parent = clk_gpio_mux_get_parent,
-> +	.set_parent = clk_gpio_mux_set_parent,
-> +	.determine_rate = __clk_mux_determine_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(clk_gpio_mux_ops);
-> +
-> +/**
-> + * Register functions for gpio controlled clocks
-> + */
-
-This is not kernel-doc. Just lose the comment.
-
-> +
-> +static struct clk *clk_register_gpio(struct device *dev, const char *name,
-> +		const char **parent_names, u8 num_parents, unsigned gpio,
-> +		bool active_low, unsigned long flags,
-> +		const struct clk_ops *clk_gpio_ops)
->  {
-> -	struct clk_gpio *clk_gpio = NULL;
-> -	struct clk *clk = ERR_PTR(-EINVAL);
-> -	struct clk_init_data init = { NULL };
-> +	struct clk_gpio *clk_gpio;
-> +	struct clk *clk;
-> +	struct clk_init_data init = {};
->  	unsigned long gpio_flags;
->  	int err;
->  
-> +	if (dev)
-> +		clk_gpio = devm_kzalloc(dev, sizeof(*clk_gpio),	GFP_KERNEL);
-> +	else
-> +		clk_gpio = kzalloc(sizeof(*clk_gpio), GFP_KERNEL);
-> +
-> +	if (!clk_gpio)
-> +		return ERR_PTR(-ENOMEM);
-> +
->  	if (active_low)
->  		gpio_flags = GPIOF_ACTIVE_LOW | GPIOF_OUT_INIT_HIGH;
->  	else
-> @@ -88,69 +128,107 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
->  		err = devm_gpio_request_one(dev, gpio, gpio_flags, name);
->  	else
->  		err = gpio_request_one(gpio, gpio_flags, name);
-> -
->  	if (err) {
-> -		pr_err("%s: %s: Error requesting clock control gpio %u\n",
-> -		       __func__, name, gpio);
-> +		if (err != -EPROBE_DEFER)
-> +			pr_err("%s: %s: Error requesting GPIO %u\n",
-> +					name, __func__, gpio);
-
-These sorts of cleanups could be another patch too after or
-before the file is renamed.
-
->  		return ERR_PTR(err);
->  	}
->  
-> -	if (dev)
-> -		clk_gpio = devm_kzalloc(dev, sizeof(struct clk_gpio),
-> -					GFP_KERNEL);
-> -	else
-> -		clk_gpio = kzalloc(sizeof(struct clk_gpio), GFP_KERNEL);
-> -
-> -	if (!clk_gpio) {
-> -		clk = ERR_PTR(-ENOMEM);
-> -		goto clk_register_gpio_gate_err;
-> -	}
-> -
->  	init.name = name;
-> -	init.ops = &clk_gpio_gate_ops;
-> +	init.ops = clk_gpio_ops;
->  	init.flags = flags | CLK_IS_BASIC;
-> -	init.parent_names = (parent_name ? &parent_name : NULL);
-> -	init.num_parents = (parent_name ? 1 : 0);
-> +	init.parent_names = parent_names;
-> +	init.num_parents = num_parents;
->  
->  	clk_gpio->gpiod = gpio_to_desc(gpio);
->  	clk_gpio->hw.init = &init;
->  
-> -	clk = clk_register(dev, &clk_gpio->hw);
-> +	if (dev)
-> +		clk = devm_clk_register(dev, &clk_gpio->hw);
-> +	else
-> +		clk = clk_register(NULL, &clk_gpio->hw);
->  
-> -	if (!IS_ERR(clk))
-> +	if (!IS_ERR(clk)) {
-> +		pr_debug("%s: %s: Successful registration\n", name, __func__);
-
-More noise. Please remove.
-
->  		return clk;
-> +	}
->  
-> -	if (!dev)
-> +	if (!dev) {
->  		kfree(clk_gpio);
-> -
-> -clk_register_gpio_gate_err:
-> -	if (!dev)
-> -		gpio_free(gpio);
-> +		gpiod_put(clk_gpio->gpiod);
-> +	}
->  
->  	return clk;
->  }
-> +
-> +/**
-> + * clk_register_gpio - register a gpip clock with the clock framework
-
-s/gpip/gpio/
-
-Needs a () after function name?
-
-> + * @dev: device that is registering this clock
-> + * @name: name of this clock
-> + * @parent_name: name of this clock's parent
-> + * @gpio: gpio number to gate this clock
-> + * @active_low: true if gpio should be set to 0 to enable clock
-> + * @flags: clock flags
-> + */
-> +struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
-> +		const char *parent_name, unsigned gpio, bool active_low,
-> +		unsigned long flags)
-> +{
-> +	return clk_register_gpio(dev, name,
-> +			(parent_name ? &parent_name : NULL),
-> +			(parent_name ? 1 : 0), gpio, active_low, flags,
-> +			&clk_gpio_gate_ops);
-> +}
->  EXPORT_SYMBOL_GPL(clk_register_gpio_gate);
->  
-> +/**
-> + * clk_register_gpio_mux - register a gpio clock mux with the clock framework
-
-Needs a () after function name?
-
-> +
->  #ifdef CONFIG_OF
->  /**
-> - * The clk_register_gpio_gate has to be delayed, because the EPROBE_DEFER
-> + * clk_register_get has to be delayed, because -EPROBE_DEFER
->   * can not be handled properly at of_clk_init() call time.
->   */
->  
-> -struct clk_gpio_gate_delayed_register_data {
-> +struct clk_gpio_delayed_register_data {
-> +	const char *gpio_name;
->  	struct device_node *node;
->  	struct mutex lock;
->  	struct clk *clk;
-> +	struct clk *(*clk_register_get)(const char *name,
-> +			const char **parent_names, u8 num_parents,
-> +			unsigned gpio, bool active_low);
->  };
->  
-> -static struct clk *of_clk_gpio_gate_delayed_register_get(
-> -		struct of_phandle_args *clkspec,
-> -		void *_data)
-> +static struct clk *of_clk_gpio_delayed_register_get(
-> +		struct of_phandle_args *clkspec, void *_data)
->  {
-> -	struct clk_gpio_gate_delayed_register_data *data = _data;
-> +	struct clk_gpio_delayed_register_data *data = _data;
->  	struct clk *clk;
-> -	const char *clk_name = data->node->name;
-> -	const char *parent_name;
-> +	const char **parent_names;
-> +	int i, num_parents;
->  	int gpio;
->  	enum of_gpio_flags of_flags;
->  
-> @@ -161,20 +239,33 @@ static struct clk *of_clk_gpio_gate_delayed_register_get(
->  		return data->clk;
->  	}
->  
-> -	gpio = of_get_named_gpio_flags(data->node, "enable-gpios", 0,
-> -						&of_flags);
-> +	gpio = of_get_named_gpio_flags(data->node, data->gpio_name, 0,
-> +			&of_flags);
->  	if (gpio < 0) {
->  		mutex_unlock(&data->lock);
-> -		if (gpio != -EPROBE_DEFER)
-> -			pr_err("%s: %s: Can't get 'enable-gpios' DT property\n",
-> -			       __func__, clk_name);
-> +		if (gpio == -EPROBE_DEFER)
-> +			pr_debug("%s: %s: GPIOs not yet available, retry later\n",
-> +					data->node->name, __func__);
-> +		else
-> +			pr_err("%s: %s: Can't get '%s' DT property\n",
-> +					data->node->name, __func__,
-> +					data->gpio_name);
->  		return ERR_PTR(gpio);
->  	}
->  
-> -	parent_name = of_clk_get_parent_name(data->node, 0);
-> +	num_parents = of_clk_get_parent_count(data->node);
->  
-> -	clk = clk_register_gpio_gate(NULL, clk_name, parent_name, gpio,
-> -					of_flags & OF_GPIO_ACTIVE_LOW, 0);
-> +	parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
-> +	if (!parent_names) {
-> +		kfree(parent_names);
-
-Huh? Didn't alloc just fail?
-
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +
-> +	for (i = 0; i < num_parents; i++)
-> +		parent_names[i] = of_clk_get_parent_name(data->node, i);
-> +
-> +	clk = data->clk_register_get(data->node->name, parent_names,
-> +			num_parents, gpio, of_flags & OF_GPIO_ACTIVE_LOW);
->  	if (IS_ERR(clk)) {
->  		mutex_unlock(&data->lock);
->  		return clk;
-> @@ -186,22 +277,56 @@ static struct clk *of_clk_gpio_gate_delayed_register_get(
->  	return clk;
->  }
->  
-> +static struct clk *of_clk_gpio_gate_delayed_register_get(const char *name,
-> +		const char **parent_names, u8 num_parents,
-> +		unsigned gpio, bool active_low)
-> +{
-> +	return clk_register_gpio_gate(NULL, name, parent_names[0],
-> +			gpio, active_low, 0);
-> +}
-> +
-> +static struct clk *of_clk_gpio_mux_delayed_register_get(const char *name,
-> +		const char **parent_names, u8 num_parents, unsigned gpio,
-> +		bool active_low)
-> +{
-> +	return clk_register_gpio_mux(NULL, name, parent_names, num_parents,
-> +			gpio, active_low, 0);
-> +}
-> +
->  /**
-> - * of_gpio_gate_clk_setup() - Setup function for gpio controlled clock
-> + * Setup functions for gpio controlled clocks
-
-Maybe drop this comment too.
-
->   */
-> -static void __init of_gpio_gate_clk_setup(struct device_node *node)
-> +static void __init of_gpio_clk_setup(struct device_node *node,
-> +		const char *gpio_name,
-> +		struct clk *(*clk_register_get)(const char *name,
-> +				const char **parent_names, u8 num_parents,
-> +				unsigned gpio, bool active_low))
->  {
-> -	struct clk_gpio_gate_delayed_register_data *data;
-> +	struct clk_gpio_delayed_register_data *data;
->  
-> -	data = kzalloc(sizeof(struct clk_gpio_gate_delayed_register_data),
-> -		       GFP_KERNEL);
-> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
->  	if (!data)
->  		return;
->  
->  	data->node = node;
-> +	data->gpio_name = gpio_name;
-> +	data->clk_register_get = clk_register_get;
->  	mutex_init(&data->lock);
->  
-> -	of_clk_add_provider(node, of_clk_gpio_gate_delayed_register_get, data);
-> +	of_clk_add_provider(node, of_clk_gpio_delayed_register_get, data);
-> +}
-> +
-> +static void __init of_gpio_gate_clk_setup(struct device_node *node)
-> +{
-> +	of_gpio_clk_setup(node, "enable-gpios",
-> +		of_clk_gpio_gate_delayed_register_get);
->  }
->  CLK_OF_DECLARE(gpio_gate_clk, "gpio-gate-clock", of_gpio_gate_clk_setup);
-> +
-> +void __init of_gpio_mux_clk_setup(struct device_node *node)
-> +{
-> +	of_gpio_clk_setup(node, "select-gpios",
-> +		of_clk_gpio_mux_delayed_register_get);
-> +}
-> +CLK_OF_DECLARE(gpio_mux_clk, "gpio-mux-clock", of_gpio_mux_clk_setup);
->  #endif
-
-Actually I really hate this whole probe defer workaround that we
-have here. It seems like it would be a better approach to turn
-this file into a platform driver that has the two compatibles
-"gpio-gate-clock" and "gpio-mux-clock". Then we can defer probe
-of the driver until the gpio provider is available. It would also
-require us to fix the framework to properly support probe defer
-though, so we shouldn't do this right now. Instead we should do
-it after we fix the framework.
-
+diff --git a/arch/arm/mach-omap2/prcm-common.h b/arch/arm/mach-omap2/prcm-common.h
+index 2e60406..99447e7 100644
+--- a/arch/arm/mach-omap2/prcm-common.h
++++ b/arch/arm/mach-omap2/prcm-common.h
+@@ -470,8 +470,8 @@ struct omap_prcm_irq {
+ 
+ /**
+  * struct omap_prcm_irq_setup - PRCM interrupt controller details
+- * @ack: PRM register offset for the first PRM_IRQSTATUS_MPU register
+- * @mask: PRM register offset for the first PRM_IRQENABLE_MPU register
++ * @ack: PRM register offsets for the PRM_IRQSTATUS_MPU registers
++ * @mask: PRM register offsets for the PRM_IRQENABLE_MPU registers
+  * @nr_regs: number of PRM_IRQ{STATUS,ENABLE}_MPU* registers
+  * @nr_irqs: number of entries in the @irqs array
+  * @irqs: ptr to an array of PRCM interrupt bits (see @nr_irqs)
+@@ -492,8 +492,8 @@ struct omap_prcm_irq {
+  * specified in static initializers.
+  */
+ struct omap_prcm_irq_setup {
+-	u16 ack;
+-	u16 mask;
++	u16 ack[2];
++	u16 mask[2];
+ 	u16 pm_ctrl;
+ 	u8 nr_regs;
+ 	u8 nr_irqs;
+diff --git a/arch/arm/mach-omap2/prm3xxx.c b/arch/arm/mach-omap2/prm3xxx.c
+index 62680aa..56649b0 100644
+--- a/arch/arm/mach-omap2/prm3xxx.c
++++ b/arch/arm/mach-omap2/prm3xxx.c
+@@ -42,8 +42,8 @@ static const struct omap_prcm_irq omap3_prcm_irqs[] = {
+ };
+ 
+ static struct omap_prcm_irq_setup omap3_prcm_irq_setup = {
+-	.ack			= OMAP3_PRM_IRQSTATUS_MPU_OFFSET,
+-	.mask			= OMAP3_PRM_IRQENABLE_MPU_OFFSET,
++	.ack[0]			= OMAP3_PRM_IRQSTATUS_MPU_OFFSET,
++	.mask[0]		= OMAP3_PRM_IRQENABLE_MPU_OFFSET,
+ 	.nr_regs		= 1,
+ 	.irqs			= omap3_prcm_irqs,
+ 	.nr_irqs		= ARRAY_SIZE(omap3_prcm_irqs),
+@@ -103,7 +103,7 @@ static u32 omap3_prm_vp_check_txdone(u8 vp_id)
+ 	u32 irqstatus;
+ 
+ 	irqstatus = omap2_prm_read_mod_reg(OCP_MOD,
+-					   OMAP3_PRM_IRQSTATUS_MPU_OFFSET);
++					   omap3_prcm_irq_setup.ack[0]);
+ 	return irqstatus & vp->tranxdone_status;
+ }
+ 
+@@ -112,7 +112,7 @@ static void omap3_prm_vp_clear_txdone(u8 vp_id)
+ 	struct omap3_vp *vp = &omap3_vp[vp_id];
+ 
+ 	omap2_prm_write_mod_reg(vp->tranxdone_status,
+-				OCP_MOD, OMAP3_PRM_IRQSTATUS_MPU_OFFSET);
++				OCP_MOD, omap3_prcm_irq_setup.ack[0]);
+ }
+ 
+ u32 omap3_prm_vcvp_read(u8 offset)
+@@ -158,8 +158,8 @@ static void omap3xxx_prm_read_pending_irqs(unsigned long *events)
+ 	u32 mask, st;
+ 
+ 	/* XXX Can the mask read be avoided (e.g., can it come from RAM?) */
+-	mask = omap2_prm_read_mod_reg(OCP_MOD, OMAP3_PRM_IRQENABLE_MPU_OFFSET);
+-	st = omap2_prm_read_mod_reg(OCP_MOD, OMAP3_PRM_IRQSTATUS_MPU_OFFSET);
++	mask = omap2_prm_read_mod_reg(OCP_MOD, omap3_prcm_irq_setup.mask[0]);
++	st = omap2_prm_read_mod_reg(OCP_MOD, omap3_prcm_irq_setup.ack[0]);
+ 
+ 	events[0] = mask & st;
+ }
+@@ -191,8 +191,8 @@ static void omap3xxx_prm_ocp_barrier(void)
+ static void omap3xxx_prm_save_and_clear_irqen(u32 *saved_mask)
+ {
+ 	saved_mask[0] = omap2_prm_read_mod_reg(OCP_MOD,
+-					       OMAP3_PRM_IRQENABLE_MPU_OFFSET);
+-	omap2_prm_write_mod_reg(0, OCP_MOD, OMAP3_PRM_IRQENABLE_MPU_OFFSET);
++					       omap3_prcm_irq_setup.mask[0]);
++	omap2_prm_write_mod_reg(0, OCP_MOD, omap3_prcm_irq_setup.mask[0]);
+ 
+ 	/* OCP barrier */
+ 	omap2_prm_read_mod_reg(OCP_MOD, OMAP3_PRM_REVISION_OFFSET);
+@@ -211,7 +211,7 @@ static void omap3xxx_prm_save_and_clear_irqen(u32 *saved_mask)
+ static void omap3xxx_prm_restore_irqen(u32 *saved_mask)
+ {
+ 	omap2_prm_write_mod_reg(saved_mask[0], OCP_MOD,
+-				OMAP3_PRM_IRQENABLE_MPU_OFFSET);
++				omap3_prcm_irq_setup.mask[0]);
+ }
+ 
+ /**
+@@ -367,7 +367,7 @@ void __init omap3_prm_init_pm(bool has_uart4, bool has_iva)
+ 				OMAP2_RM_RSTST);
+ 
+ 	/* Clear any pending PRCM interrupts */
+-	omap2_prm_write_mod_reg(0, OCP_MOD, OMAP3_PRM_IRQSTATUS_MPU_OFFSET);
++	omap2_prm_write_mod_reg(0, OCP_MOD, omap3_prcm_irq_setup.ack[0]);
+ 
+ 	/* We need to idle iva2_pwrdm even on am3703 with no iva2. */
+ 	omap3xxx_prm_iva_idle();
+diff --git a/arch/arm/mach-omap2/prm44xx.c b/arch/arm/mach-omap2/prm44xx.c
+index 8149e5a..20b547a 100644
+--- a/arch/arm/mach-omap2/prm44xx.c
++++ b/arch/arm/mach-omap2/prm44xx.c
+@@ -43,8 +43,10 @@ static const struct omap_prcm_irq omap4_prcm_irqs[] = {
+ };
+ 
+ static struct omap_prcm_irq_setup omap4_prcm_irq_setup = {
+-	.ack			= OMAP4_PRM_IRQSTATUS_MPU_OFFSET,
+-	.mask			= OMAP4_PRM_IRQENABLE_MPU_OFFSET,
++	.ack[0]			= OMAP4_PRM_IRQSTATUS_MPU_OFFSET,
++	.mask[0]		= OMAP4_PRM_IRQENABLE_MPU_OFFSET,
++	.ack[1]			= OMAP4_PRM_IRQSTATUS_MPU_2_OFFSET,
++	.mask[1]		= OMAP4_PRM_IRQENABLE_MPU_2_OFFSET,
+ 	.pm_ctrl		= OMAP4_PRM_IO_PMCTRL_OFFSET,
+ 	.nr_regs		= 2,
+ 	.irqs			= omap4_prcm_irqs,
+@@ -217,11 +219,11 @@ static inline u32 _read_pending_irq_reg(u16 irqen_offs, u16 irqst_offs)
+  */
+ static void omap44xx_prm_read_pending_irqs(unsigned long *events)
+ {
+-	events[0] = _read_pending_irq_reg(OMAP4_PRM_IRQENABLE_MPU_OFFSET,
+-					  OMAP4_PRM_IRQSTATUS_MPU_OFFSET);
++	int i;
+ 
+-	events[1] = _read_pending_irq_reg(OMAP4_PRM_IRQENABLE_MPU_2_OFFSET,
+-					  OMAP4_PRM_IRQSTATUS_MPU_2_OFFSET);
++	for (i = 0; i < omap4_prcm_irq_setup.nr_regs; i++)
++		events[i] = _read_pending_irq_reg(omap4_prcm_irq_setup.mask[i],
++						  omap4_prcm_irq_setup.ack[i]);
+ }
+ 
+ /**
+@@ -251,17 +253,16 @@ static void omap44xx_prm_ocp_barrier(void)
+  */
+ static void omap44xx_prm_save_and_clear_irqen(u32 *saved_mask)
+ {
+-	saved_mask[0] =
+-		omap4_prm_read_inst_reg(OMAP4430_PRM_OCP_SOCKET_INST,
+-					OMAP4_PRM_IRQENABLE_MPU_OFFSET);
+-	saved_mask[1] =
+-		omap4_prm_read_inst_reg(OMAP4430_PRM_OCP_SOCKET_INST,
+-					OMAP4_PRM_IRQENABLE_MPU_2_OFFSET);
++	int i;
+ 
+-	omap4_prm_write_inst_reg(0, OMAP4430_PRM_OCP_SOCKET_INST,
+-				 OMAP4_PRM_IRQENABLE_MPU_OFFSET);
+-	omap4_prm_write_inst_reg(0, OMAP4430_PRM_OCP_SOCKET_INST,
+-				 OMAP4_PRM_IRQENABLE_MPU_2_OFFSET);
++	for (i = 0; i < omap4_prcm_irq_setup.nr_regs; i++) {
++		saved_mask[i] =
++			omap4_prm_read_inst_reg(OMAP4430_PRM_OCP_SOCKET_INST,
++						omap4_prcm_irq_setup.mask[i]);
++
++		omap4_prm_write_inst_reg(0, OMAP4430_PRM_OCP_SOCKET_INST,
++					 omap4_prcm_irq_setup.mask[i]);
++	}
+ 
+ 	/* OCP barrier */
+ 	omap4_prm_read_inst_reg(OMAP4430_PRM_OCP_SOCKET_INST,
+@@ -280,10 +281,12 @@ static void omap44xx_prm_save_and_clear_irqen(u32 *saved_mask)
+  */
+ static void omap44xx_prm_restore_irqen(u32 *saved_mask)
+ {
+-	omap4_prm_write_inst_reg(saved_mask[0], OMAP4430_PRM_OCP_SOCKET_INST,
+-				 OMAP4_PRM_IRQENABLE_MPU_OFFSET);
+-	omap4_prm_write_inst_reg(saved_mask[1], OMAP4430_PRM_OCP_SOCKET_INST,
+-				 OMAP4_PRM_IRQENABLE_MPU_2_OFFSET);
++	int i;
++
++	for (i = 0; i < omap4_prcm_irq_setup.nr_regs; i++)
++		omap4_prm_write_inst_reg(saved_mask[i],
++					 OMAP4430_PRM_OCP_SOCKET_INST,
++					 omap4_prcm_irq_setup.mask[i]);
+ }
+ 
+ /**
+diff --git a/arch/arm/mach-omap2/prm_common.c b/arch/arm/mach-omap2/prm_common.c
+index 7add799..10ef0da 100644
+--- a/arch/arm/mach-omap2/prm_common.c
++++ b/arch/arm/mach-omap2/prm_common.c
+@@ -281,7 +281,6 @@ int omap_prcm_register_chain_handler(struct omap_prcm_irq_setup *irq_setup)
+ 		pr_err("PRCM: already initialized; won't reinitialize\n");
+ 		return -EINVAL;
+ 	}
+-
+ 	if (nr_regs > OMAP_PRCM_MAX_NR_PENDING_REG) {
+ 		pr_err("PRCM: nr_regs too large\n");
+ 		return -EINVAL;
+@@ -339,8 +338,8 @@ int omap_prcm_register_chain_handler(struct omap_prcm_irq_setup *irq_setup)
+ 		ct->chip.irq_mask = irq_gc_mask_clr_bit;
+ 		ct->chip.irq_unmask = irq_gc_mask_set_bit;
+ 
+-		ct->regs.ack = irq_setup->ack + i * 4;
+-		ct->regs.mask = irq_setup->mask + i * 4;
++		ct->regs.ack = irq_setup->ack[i];
++		ct->regs.mask = irq_setup->mask[i];
+ 
+ 		irq_setup_generic_chip(gc, mask[i], 0, IRQ_NOREQUEST, 0);
+ 		prcm_irq_chips[i] = gc;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-omap" in
