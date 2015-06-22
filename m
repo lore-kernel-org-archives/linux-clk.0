@@ -1,84 +1,139 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Message-ID: <55796660.1070702@samsung.com>
-Date: Thu, 11 Jun 2015 19:43:44 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-To: Kukjin Kim <kgene@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: exynos4: Add PCLK_ADC gate clock on Exynos4x12
-References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
-In-Reply-To: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
-Content-Type: text/plain; charset=iso-8859-2
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1432839219-475-2-git-send-email-geert+renesas@glider.be>
+References: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
+	<1432839219-475-2-git-send-email-geert+renesas@glider.be>
+Date: Mon, 22 Jun 2015 17:07:23 +0200
+Message-ID: <CAMuHMdUuQkz9oiKdntd9KhMM9NGy1gMkiJ9jVZvkHA2yQNWBTg@mail.gmail.com>
+Subject: Re: [PATCH v2 01/14] clk: shmobile: Add CPG Clock Domain support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-clk@vger.kernel.org,
+	Linux PM list <linux-pm@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-W dniu 11.06.2015 o 17:26, Krzysztof Kozlowski pisze:
-> Add proper gate clock for the Analog to Digital Converter (ADC) on
-> Exynos4x12.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On Thu, May 28, 2015 at 8:53 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> Add Clock Domain support to the Clock Pulse Generator (CPG) Module Stop
+> (MSTP) Clocks driver using the generic PM Domain.  This allows to
+> power-manage the module clocks of SoC devices that are part of the CPG
+> Clock Domain using Runtime PM, or for system suspend/resume.
+>
+> SoC devices that are part of a CPG Clock Domain and can be
+> power-managed through an MSTP clock should be tagged in DT with a
+> proper "power-domains" property.
+>
+> The CPG Clock Domain code will scan such devices for clocks that are
+> suitable for power-managing the device, by looking for a clock that is
+> compatible with "renesas,cpg-mstp-clocks".
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Reviewed-by: Kevin Hilman <khilman@linaro.org>
 > ---
->  drivers/clk/samsung/clk-exynos4.c   | 3 +++
->  include/dt-bindings/clock/exynos4.h | 5 ++++-
->  2 files changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-> index 714d6ba782c8..5f32410a01f8 100644
-> --- a/drivers/clk/samsung/clk-exynos4.c
-> +++ b/drivers/clk/samsung/clk-exynos4.c
-> @@ -85,6 +85,7 @@
->  #define DIV_PERIL4		0xc560
->  #define DIV_PERIL5		0xc564
->  #define E4X12_DIV_CAM1		0xc568
-> +#define E4X12_GATE_BUS_FSYS1	0xc744
->  #define GATE_SCLK_CAM		0xc820
->  #define GATE_IP_CAM		0xc920
->  #define GATE_IP_TV		0xc924
-> @@ -1095,6 +1096,8 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
->  		0),
->  	GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
->  		0),
-> +	GATE(CLK_PCLK_ADC, "pclk_adc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0,
-> +		0),
+> v2:
+>   - Add Acked-by and Reviewed-by,
+>   - Move core CPG Clock Domain code from the R-Car Gen2 driver to the
+>     CPG MSTP Clocks driver, as it's generic, and can be used on other
+>     Renesas SoCs that have a CPG/MSTP block,
+>   - Scan for an MSTP clock instead of using the first clock tied to the
+>     device (con_id NULL),
+>   - Extract R-Car Gen2 specifics to a separate patch.
+> ---
+>  drivers/clk/shmobile/clk-mstp.c      | 86 ++++++++++++++++++++++++++++++++++++
+>  drivers/clk/shmobile/clk-rcar-gen2.c |  2 +
+>  include/linux/clk/shmobile.h         | 12 +++++
+>  3 files changed, 100 insertions(+)
+>
+> diff --git a/drivers/clk/shmobile/clk-mstp.c b/drivers/clk/shmobile/clk-mstp.c
+> index 2d2fe773ac8168f9..619f3eccefd4884f 100644
+> --- a/drivers/clk/shmobile/clk-mstp.c
+> +++ b/drivers/clk/shmobile/clk-mstp.c
 
-Now I have even simpler idea. Don't add new clock id but just define
-here the CLK_TSADC as:
-GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0);
-
-With this change the second patch wouldn't be needed however this does
-not reflect the Exynos 4x12 datasheet.
-
-Any comments?
-
-Best regards,
-Krzysztof
-
-
->  	GATE(CLK_MIPI_HSI, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
->  	GATE(CLK_CHIPID, "chipid", "aclk100", E4X12_GATE_IP_PERIR, 0, 0, 0),
->  	GATE(CLK_SYSREG, "sysreg", "aclk100", E4X12_GATE_IP_PERIR, 1,
-> diff --git a/include/dt-bindings/clock/exynos4.h b/include/dt-bindings/clock/exynos4.h
-> index c4b1676ea674..4548531736c1 100644
-> --- a/include/dt-bindings/clock/exynos4.h
-> +++ b/include/dt-bindings/clock/exynos4.h
-> @@ -268,7 +268,10 @@
->  #define CLK_DIV_GDL		459
->  #define CLK_DIV_GDR		460
->  
-> +/* Exynos4x12 only */
-> +#define CLK_PCLK_ADC		461
+> @@ -236,3 +241,84 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
+>         of_clk_add_provider(np, of_clk_src_onecell_get, &group->data);
+>  }
+>  CLK_OF_DECLARE(cpg_mstp_clks, "renesas,cpg-mstp-clocks", cpg_mstp_clocks_init);
 > +
->  /* must be greater than maximal clock id */
-> -#define CLK_NR_CLKS		461
-> +#define CLK_NR_CLKS		462
->  
->  #endif /* _DT_BINDINGS_CLOCK_EXYNOS_4_H */
-> 
+> +
+> +#ifdef CONFIG_PM_GENERIC_DOMAINS_OF
+> +int cpg_mstp_attach_dev(struct generic_pm_domain *domain, struct device *dev)
+> +{
+> +       struct device_node *np = dev->of_node;
+> +       struct of_phandle_args clkspec;
+> +       struct clk *clk;
+> +       int i = 0;
+> +       int error;
+> +
+> +       while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
+> +                                          &clkspec)) {
+> +               if (of_device_is_compatible(clkspec.np,
+> +                                           "renesas,cpg-mstp-clocks"))
+> +                       goto found;
+> +
+> +               of_node_put(clkspec.np);
+> +               i++;
+> +       }
+> +
+> +       return 0;
+> +
+> +found:
+> +       clk = of_clk_get_from_provider(&clkspec);
+> +       of_node_put(clkspec.np);
+> +
+> +       if (IS_ERR(clk))
+> +               return PTR_ERR(clk);
+> +
+> +       error = pm_clk_create(dev);
+> +       if (error) {
+> +               dev_err(dev, "pm_clk_create failed %d\n", error);
+> +               goto fail_put;
+> +       }
+> +
+> +       error = pm_clk_add_clk(dev, clk);
+> +       if (error) {
+> +               dev_err(dev, "pm_clk_add_clk %pC failed %d\n", clk, error);
+> +               goto fail_destroy;
+> +       }
+> +
+> +       return 0;
+> +
+> +fail_destroy:
+> +       pm_clk_destroy(dev);
+> +fail_put:
+> +       clk_put(clk);
+> +       return error;
+> +}
+> +
+> +void cpg_mstp_detach_dev(struct generic_pm_domain *domain, struct device *dev)
+> +{
+> +       pm_clk_destroy(dev);
+
+This should only be done if cpg_mstp_attach_dev() actually added a clock, i.e.
+
+        if (!list_empty(&dev->power.subsys_data->clock_list))
+                pm_clk_destroy(dev);
+
+Else it will free the subsys_data allocated by genpd_alloc_dev_data()
+prematurely, and genpd_free_dev_data() will crash when dereferencing
+dev->power.subsys_data.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
