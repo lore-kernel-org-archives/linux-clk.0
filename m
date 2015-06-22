@@ -1,32 +1,91 @@
-Return-Path: <pebolle@tiscali.nl>
-Message-ID: <1434376712.2069.5.camel@x220>
-Subject: Re: [PATCH 4/5] clk: qcom: Add A53 clock driver
-From: Paul Bolle <pebolle@tiscali.nl>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, mturquette@linaro.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Date: Mon, 15 Jun 2015 15:58:32 +0200
-In-Reply-To: <1434098519-26406-5-git-send-email-georgi.djakov@linaro.org>
-References: <1434098519-26406-1-git-send-email-georgi.djakov@linaro.org>
-	 <1434098519-26406-5-git-send-email-georgi.djakov@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-omap-owner@vger.kernel.org>
+From: Keerthy <j-keerthy@TI.COM>
+To: <linux-omap@vger.kernel.org>, <tony@atomide.com>
+CC: <galak@codeaurora.org>, <t-kristo@TI.COM>, <pawel.moll@arm.com>,
+	<linux-kernel@vger.kernel.org>, <paul@pwsan.com>,
+	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>,
+	<j-keerthy@TI.COM>
+Subject: [PATCH 1/6] ARM: OMAP4: PRM: Remove hardcoding of PRM_IO_PMCTRL_OFFSET register
+Date: Mon, 22 Jun 2015 11:52:51 +0530
+Message-ID: <1434954176-9605-2-git-send-email-j-keerthy@ti.com>
+In-Reply-To: <1434954176-9605-1-git-send-email-j-keerthy@ti.com>
+References: <1434954176-9605-1-git-send-email-j-keerthy@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-omap-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2015-06-12 at 11:41 +0300, Georgi Djakov wrote:
-> --- /dev/null
-> +++ b/drivers/clk/qcom/clk-a53.c
+PRM_IO_PMCTRL_OFFSET need not be same for all SOCs hence
+remove hardcoding and use the value provided by the omap_prcm_irq_setup
+structure.
 
-> +static int __init qcom_a53_init(void)
-> +{
-> +	return platform_driver_register(&qcom_a53_driver);
-> +}
-> +arch_initcall(qcom_a53_init);
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
+ arch/arm/mach-omap2/prcm-common.h |  1 +
+ arch/arm/mach-omap2/prm44xx.c     | 11 ++++++-----
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
-There's no function that's, well, called by module_exit() that undoes
-the above. So one can build this as a module, load that module, but not
-unload it. That's by design?
+diff --git a/arch/arm/mach-omap2/prcm-common.h b/arch/arm/mach-omap2/prcm-common.h
+index 6ae0b3a..2e60406 100644
+--- a/arch/arm/mach-omap2/prcm-common.h
++++ b/arch/arm/mach-omap2/prcm-common.h
+@@ -494,6 +494,7 @@ struct omap_prcm_irq {
+ struct omap_prcm_irq_setup {
+ 	u16 ack;
+ 	u16 mask;
++	u16 pm_ctrl;
+ 	u8 nr_regs;
+ 	u8 nr_irqs;
+ 	const struct omap_prcm_irq *irqs;
+diff --git a/arch/arm/mach-omap2/prm44xx.c b/arch/arm/mach-omap2/prm44xx.c
+index 4541700..8149e5a 100644
+--- a/arch/arm/mach-omap2/prm44xx.c
++++ b/arch/arm/mach-omap2/prm44xx.c
+@@ -45,6 +45,7 @@ static const struct omap_prcm_irq omap4_prcm_irqs[] = {
+ static struct omap_prcm_irq_setup omap4_prcm_irq_setup = {
+ 	.ack			= OMAP4_PRM_IRQSTATUS_MPU_OFFSET,
+ 	.mask			= OMAP4_PRM_IRQENABLE_MPU_OFFSET,
++	.pm_ctrl		= OMAP4_PRM_IO_PMCTRL_OFFSET,
+ 	.nr_regs		= 2,
+ 	.irqs			= omap4_prcm_irqs,
+ 	.nr_irqs		= ARRAY_SIZE(omap4_prcm_irqs),
+@@ -306,10 +307,10 @@ static void omap44xx_prm_reconfigure_io_chain(void)
+ 	omap4_prm_rmw_inst_reg_bits(OMAP4430_WUCLK_CTRL_MASK,
+ 				    OMAP4430_WUCLK_CTRL_MASK,
+ 				    inst,
+-				    OMAP4_PRM_IO_PMCTRL_OFFSET);
++				    omap4_prcm_irq_setup.pm_ctrl);
+ 	omap_test_timeout(
+ 		(((omap4_prm_read_inst_reg(inst,
+-					   OMAP4_PRM_IO_PMCTRL_OFFSET) &
++					   omap4_prcm_irq_setup.pm_ctrl) &
+ 		   OMAP4430_WUCLK_STATUS_MASK) >>
+ 		  OMAP4430_WUCLK_STATUS_SHIFT) == 1),
+ 		MAX_IOPAD_LATCH_TIME, i);
+@@ -319,10 +320,10 @@ static void omap44xx_prm_reconfigure_io_chain(void)
+ 	/* Trigger WUCLKIN disable */
+ 	omap4_prm_rmw_inst_reg_bits(OMAP4430_WUCLK_CTRL_MASK, 0x0,
+ 				    inst,
+-				    OMAP4_PRM_IO_PMCTRL_OFFSET);
++				    omap4_prcm_irq_setup.pm_ctrl);
+ 	omap_test_timeout(
+ 		(((omap4_prm_read_inst_reg(inst,
+-					   OMAP4_PRM_IO_PMCTRL_OFFSET) &
++					   omap4_prcm_irq_setup.pm_ctrl) &
+ 		   OMAP4430_WUCLK_STATUS_MASK) >>
+ 		  OMAP4430_WUCLK_STATUS_SHIFT) == 0),
+ 		MAX_IOPAD_LATCH_TIME, i);
+@@ -350,7 +351,7 @@ static void __init omap44xx_prm_enable_io_wakeup(void)
+ 	omap4_prm_rmw_inst_reg_bits(OMAP4430_GLOBAL_WUEN_MASK,
+ 				    OMAP4430_GLOBAL_WUEN_MASK,
+ 				    inst,
+-				    OMAP4_PRM_IO_PMCTRL_OFFSET);
++				    omap4_prcm_irq_setup.pm_ctrl);
+ }
+ 
+ /**
+-- 
+1.9.1
 
-
-Paul Bolle
+--
+To unsubscribe from this list: send the line "unsubscribe linux-omap" in
