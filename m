@@ -1,49 +1,42 @@
-Return-Path: <davidcdueck@googlemail.com>
-Return-Path: <davidcdueck@googlemail.com>
-From: David Dueck <davidcdueck@googlemail.com>
-To: boris.brezillon@free-electrons.com
-Cc: mturquette@linaro.org,
-	nicolas.ferre@atmel.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] clk: at91: clk-utmi: fix error path
-Date: Fri, 26 Jun 2015 14:33:32 +0200
-Message-Id: <1435322012-5667-6-git-send-email-davidcdueck@googlemail.com>
-In-Reply-To: <1435322012-5667-1-git-send-email-davidcdueck@googlemail.com>
-References: <1435322012-5667-1-git-send-email-davidcdueck@googlemail.com>
+Return-Path: <m-karicheri2@ti.com>
+Message-ID: <55886CDE.7090906@ti.com>
+Date: Mon, 22 Jun 2015 16:15:26 -0400
+From: Murali Karicheri <m-karicheri2@ti.com>
+MIME-Version: 1.0
+To: santosh shilimkar <santosh.shilimkar@oracle.com>,
+        Michael Turquette
+	<mturquette@linaro.org>, <robh+dt@kernel.org>,
+        <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <ssantosh@kernel.org>, <sboyd@codeaurora.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux@arm.linux.org.uk>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] clk: keystone: add support for post divider register
+ for main pll
+References: <1432915453-409-1-git-send-email-m-karicheri2@ti.com> <20150618223728.9112.75331@quantum> <55834C64.6020703@oracle.com>
+In-Reply-To: <55834C64.6020703@oracle.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Do not leak memory if request_irq fails and free the irq if
-clk_register fails.
+On 06/18/2015 06:55 PM, santosh shilimkar wrote:
+> On 6/18/2015 3:37 PM, Michael Turquette wrote:
+>> Quoting Murali Karicheri (2015-05-29 09:04:12)
+>>> Main PLL controller has post divider bits in a separate register in
+>>> pll controller. Use the value from this register instead of fixed
+>>> divider when available.
+>>>
+>>> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+>>
+>> Applied to clk-next.
+>>
+> Thanks Mike !!
+>
+>
+Thanks Mike.
 
-Signed-off-by: David Dueck <davidcdueck@googlemail.com>
----
- drivers/clk/at91/clk-utmi.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Regards,
 
-diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
-index ae3263b..30dd697 100644
---- a/drivers/clk/at91/clk-utmi.c
-+++ b/drivers/clk/at91/clk-utmi.c
-@@ -118,12 +118,16 @@ at91_clk_register_utmi(struct at91_pmc *pmc, unsigned int irq,
- 	irq_set_status_flags(utmi->irq, IRQ_NOAUTOEN);
- 	ret = request_irq(utmi->irq, clk_utmi_irq_handler,
- 			  IRQF_TRIGGER_HIGH, "clk-utmi", utmi);
--	if (ret)
-+	if (ret) {
-+		kfree(utmi);
- 		return ERR_PTR(ret);
-+	}
- 
- 	clk = clk_register(NULL, &utmi->hw);
--	if (IS_ERR(clk))
-+	if (IS_ERR(clk)) {
-+		free_irq(utmi->irq, utmi);
- 		kfree(utmi);
-+	}
- 
- 	return clk;
- }
 -- 
-2.4.4
+Murali Karicheri
+Linux Kernel, Keystone
