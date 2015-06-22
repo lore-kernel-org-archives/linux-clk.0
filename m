@@ -1,82 +1,195 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 01/25] clk: tegra: Update struct tegra_clk_pll_params kerneldoc
-Date: Thu, 18 Jun 2015 17:28:16 -0400
-Message-ID: <1434662920-21469-2-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+Return-Path: <linux-pm-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Date: Mon, 22 Jun 2015 17:23:53 +0200
+Message-ID: <CAAObsKCdv_X+YPFacO7NjbRMnvuDisAmiQOWE-Xb3xFFrn6Qog@mail.gmail.com>
+Subject: Re: [PATCH 00/21] On-demand device registration
+To: Rob Herring <robherring2@gmail.com>
+Cc: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	=?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Alexander Holler <holler@ahsoftware.de>,
+	Grant Likely <grant.likely@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	dmaengine@vger.kernel.org,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-clk@vger.kernel.org,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thierry Reding <treding@nvidia.com>
+On 28 May 2015 at 06:33, Rob Herring <robherring2@gmail.com> wrote:
+> On Mon, May 25, 2015 at 9:53 AM, Tomeu Vizoso
+> <tomeu.vizoso@collabora.com> wrote:
+>> Hello,
+>>
+>> I have a problem with the panel on my Tegra Chromebook taking longer than
+>> expected to be ready during boot (Stéphane Marchesin reported what is
+>> basically the same issue in [0]), and have looked into ordered probing as a
+>> better way of solving this than moving nodes around in the DT or playing with
+>> initcall levels.
+>>
+>> While reading the thread [1] that Alexander Holler started with his series to
+>> make probing order deterministic, it occurred to me that it should be possible
+>> to achieve the same by registering devices as they are referenced by other
+>> devices.
+>
+> I like the concept and novel approach.
+>
+>> This basically reuses the information that is already implicit in the probe()
+>> implementations, saving us from refactoring existing drivers or adding
+>> information to DTBs.
+>>
+>> Something I'm not completely happy with is that I have had to move the call to
+>> of_platform_populate after all platform drivers have been registered.
+>> Otherwise I don't see how I could register drivers on demand as we don't have
+>> yet each driver's compatible strings.
+>
+> Yeah, this is the opposite of what we'd really like.
 
-Benson Leung pointed out that the kerneldoc for this structure has
-become stale. Update the field descriptions to match the structure
-content.
+Can you elaborate on the reasons why we would like to have devices
+registered before built-in drivers finish registering, even if we
+don't probe them yet?
 
-Reported-by: Benson Leung <bleung@chromium.org>
-Acked-by: Rhyland Klein <rklein@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk.h |   18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+> Ideally, we would
+> have a solution that works for modules too. However, we're no worse
+> off. We pretty much build-in dependencies to avoid module ordering
+> problems.
 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 29799e7f567a..bdc661cb81f0 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -157,7 +157,7 @@ struct div_nmp {
- };
- 
- /**
-- * struct clk_pll_params - PLL parameters
-+ * struct tegra_clk_pll_params - PLL parameters
-  *
-  * @input_min:			Minimum input frequency
-  * @input_max:			Maximum input frequency
-@@ -168,12 +168,24 @@ struct div_nmp {
-  * @base_reg:			PLL base reg offset
-  * @misc_reg:			PLL misc reg offset
-  * @lock_reg:			PLL lock reg offset
-- * @lock_bit_idx:		Bit index for PLL lock status
-+ * @lock_mask:			Bitmask for PLL lock status
-  * @lock_enable_bit_idx:	Bit index to enable PLL lock
-+ * @iddq_reg:			PLL IDDQ register offset
-+ * @iddq_bit_idx:		Bit index to enable PLL IDDQ
-+ * @aux_reg:			AUX register offset
-+ * @dyn_ramp_reg:		Dynamic ramp control register offset
-+ * @ext_misc_reg:		Miscellaneous control register offsets
-+ * @pmc_divnm_reg:		n, m divider PMC override register offset (PLLM)
-+ * @pmc_divp_reg:		p divider PMC override register offset (PLLM)
-+ * @flags:			PLL flags
-+ * @stepa_shift:		Dynamic ramp step A field shift
-+ * @stepb_shift:		Dynamic ramp step B field shift
-  * @lock_delay:			Delay in us if PLL lock is not used
-+ * @max_p:			maximum value for the p divider
-+ * @pdiv_tohw:			mapping of p divider to register values
-+ * @div_nmp:			offsets and widths on n, m and p fields
-  * @freq_table:			array of frequencies supported by PLL
-  * @fixed_rate:			PLL rate if it is fixed
-- * @flags:			PLL flags
-  *
-  * Flags:
-  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
--- 
-1.7.9.5
+Nod, I haven't looked yet at requesting modules on-demand, but I guess
+it should be doable. Modules that have dependencies described in the
+firmware should get them probed automatically already though.
 
+> Perhaps we need to make the probing on-demand rather than simply on
+> device<->driver match occurring.
+
+I'm afraid that too much old code depends on that. For example, Rafael
+pointed out to the PNP subsystem, which registers a driver that will
+probe devices with the EISA ID PNP0c02 to reserve memory regions for
+devices that will be probed later.
+
+http://lxr.free-electrons.com/source/drivers/pnp/system.c
+
+My understanding is that probing of PNP0c02 devices must happen before
+the actual devices that depend on those regions are probed, so if we
+decoupled the probing from the driver/device registration, we would be
+breaking that assumption.
+
+>> For machs that don't move of_platform_populate() to a later point, these
+>> patches shouldn't cause any problems but it's not guaranteed that we'll avoid
+>> all the deferred probes as some drivers may not be registered yet.
+>
+> Ideally, of_platform_populate is not explicitly called by each
+> platform. So I think we need to make this work for the default case.
+
+The problem is that some platforms will need fixing because some
+initcalls assume that some devices will have been registered already,
+or even probed. I think removing those assumptions shouldn't be
+problematic because I haven't had much trouble with this on the four
+platforms I have tested with, but I cannot test every board that is
+supported upstream.
+
+I can ask though the KernelCI folks to boot my branch in all their
+boards and make sure that those work when of_platform_populate is
+called in late_initcall.
+
+http://kernelci.org/boot/all/job/next/kernel/next-20150619/
+
+>> I have tested this on boards with Tegra, iMX.6 and Exynos SoCs, and these
+>> patches were enough to eliminate all the deferred probes.
+>>
+>> With this series I get the kernel to output to the panel in 0.5s, instead of 2.8s.
+>
+> That's certainly compelling.
+
+Have to say that those numbers are with the serial console enabled
+(without, it's 0.5s vs 1.5s), but on machines that take longer to boot
+we should see bigger gains because we won't be sending devices to the
+end of the queue when their probe is deferred.
+
+Regards,
+
+Tomeu
+
+> Rob
+>
+>>
+>> Regards,
+>>
+>> Tomeu
+>>
+>> [0] http://lists.freedesktop.org/archives/dri-devel/2014-August/066527.html
+>>
+>> [1] https://lkml.org/lkml/2014/5/12/452
+>>
+>> Tomeu Vizoso (21):
+>>   regulator: core: Reduce critical area in _regulator_get
+>>   ARM: tegra: Add gpio-ranges property
+>>   ARM: tegra: Register drivers before devices
+>>   ARM: EXYNOS: Register drivers before devices
+>>   ARM i.MX6q: Register drivers before devices
+>>   of/platform: Add of_platform_device_ensure()
+>>   of/platform: Ensure device registration on lookup
+>>   gpio: Probe GPIO drivers on demand
+>>   gpio: Probe pinctrl devices on demand
+>>   regulator: core: Probe regulators on demand
+>>   drm: Probe panels on demand
+>>   drm/tegra: Probe dpaux devices on demand
+>>   i2c: core: Probe i2c master devices on demand
+>>   pwm: Probe PWM chip devices on demand
+>>   backlight: Probe backlight devices on demand
+>>   usb: phy: Probe phy devices on demand
+>>   clk: Probe clk providers on demand
+>>   pinctrl: Probe pinctrl devices on demand
+>>   phy: core: Probe phy providers on demand
+>>   dma: of: Probe DMA controllers on demand
+>>   power-supply: Probe power supplies on demand
+>>
+>>  arch/arm/boot/dts/tegra124.dtsi     |  1 +
+>>  arch/arm/mach-exynos/exynos.c       |  4 +--
+>>  arch/arm/mach-imx/mach-imx6q.c      | 12 ++++-----
+>>  arch/arm/mach-tegra/tegra.c         | 21 ++++++---------
+>>  drivers/clk/clk.c                   |  3 +++
+>>  drivers/dma/of-dma.c                |  3 +++
+>>  drivers/gpio/gpiolib-of.c           |  5 ++++
+>>  drivers/gpu/drm/drm_panel.c         |  3 +++
+>>  drivers/gpu/drm/tegra/dpaux.c       |  3 +++
+>>  drivers/i2c/i2c-core.c              |  3 +++
+>>  drivers/of/platform.c               | 53 +++++++++++++++++++++++++++++++++++++
+>>  drivers/phy/phy-core.c              |  3 +++
+>>  drivers/pinctrl/devicetree.c        |  2 ++
+>>  drivers/power/power_supply_core.c   |  3 +++
+>>  drivers/pwm/core.c                  |  3 +++
+>>  drivers/regulator/core.c            | 45 +++++++++++++++----------------
+>>  drivers/usb/phy/phy.c               |  3 +++
+>>  drivers/video/backlight/backlight.c |  3 +++
+>>  include/linux/of_platform.h         |  2 ++
+>>  19 files changed, 130 insertions(+), 45 deletions(-)
+>>
+>> --
+>> 2.4.1
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+--
+To unsubscribe from this list: send the line "unsubscribe linux-pm" in
