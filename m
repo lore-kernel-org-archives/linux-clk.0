@@ -1,170 +1,150 @@
-Return-Path: <newchief@king.net.pl>
-From: Paul Osmialowski <pawelo@king.net.pl>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        dmaengine@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Paul Bolle <pebolle@tiscali.nl>, Thomas Gleixner <tglx@linutronix.de>,
-        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-        Paul Osmialowski <pawelo@king.net.pl>,
-        Anson Huang <b20788@freescale.com>, Frank Li <Frank.Li@freescale.com>,
-        Jingchang Lu <jingchang.lu@freescale.com>,
-        Rob Herring <r.herring@freescale.com>, Yuri Tikhonov <yur@emcraft.com>,
-        Sergei Poselenov <sposelenov@emcraft.com>,
-        Alexander Potashev <aspotashev@emcraft.com>
-Subject: [PATCH v2 0/9] [New BSP] Add initial support for Freescale Kinetis TWR-K70F120M development kit
-Date: Tue, 30 Jun 2015 14:27:21 +0200
-Message-Id: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
+Return-Path: <ce3a@gmx.de>
+Message-ID: <5589E545.8040502@gmx.de>
+Date: Wed, 24 Jun 2015 01:01:25 +0200
+From: Sergej Sawazki <ce3a@gmx.de>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: mturquette@linaro.org, jsarha@ti.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3] clk: add gpio controlled clock multiplexer
+References: <1433706264-30008-1-git-send-email-ce3a@gmx.de> <20150619001916.GB22132@codeaurora.org>
+In-Reply-To: <20150619001916.GB22132@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This is the second iteration of the patchset that adds a basic initial
-support to TWR-K70F120M development kit which is based on ARM Cortex-M4
-Freescale Kinetis K70 SoC.
+On Thu, 18 Jun 2015 17:19:16 -0700, Stephen Boyd wrote:
+> On 06/07, Sergej Sawazki wrote:
+>>
+>>   .../devicetree/bindings/clock/gpio-mux-clock.txt   |  19 ++
+>>   drivers/clk/Makefile                               |   2 +-
+>>   drivers/clk/clk-gpio-gate.c                        | 207 -------------
+>>   drivers/clk/clk-gpio.c                             | 332 +++++++++++++++++++++
+>
+> Please don't rename the file in the same commit. First, rename
+> the file to clk-gpio.c in one patch, and then add the code for
+> the gate in another patch. I applied this patch and undid the
+> file rename so I could actually review the changes...
+>
 
-Previous iteration met with a broad response for which I would like
-to thank everyone involved.
+Sorry for the inconvenience. I will keep that in mind for v4.
 
-Following is the change list:
+>>   #include <linux/clk-provider.h>
+>> -#include <linux/module.h>
+>> +#include <linux/export.h>
+>>   #include <linux/slab.h>
+>> -#include <linux/gpio.h>
+>> -#include <linux/gpio/consumer.h>
+>
+> Seems like an odd removal. Aren't we a gpio consumer?
+>
 
-1. First three ('controversial') patches are removed.
+You are right. We are using the gpiod_ functions. I will fix it in v4.
 
-   As long as it doesn't hit platform stability, I don't use these Cortex-M
-   compiler flags, it should not stop the whole of the patchset.
+>>   	gpiod_set_value(clk->gpiod, 1);
+>> +	pr_debug("%s: %s\n", __clk_get_name(hw->clk), __func__);
+>
+> Looks like debugging noise, please remove.
+>
 
-   The idle quirks issue is now addressed by adding idle.c which provides
-   callback for arm_pm_idle.
+OK.
 
-   The infamous zlib patch was not needed at all - I didn't really check
-   what it was protecting against.
+>>   	gpiod_set_value(clk->gpiod, 0);
+>> +	pr_debug("%s: %s\n", __clk_get_name(hw->clk), __func__);
+>
+> Ditto.
+>
 
-2. include/mach/idle.h file removed.
+OK.
 
-3. kinetis_platform.c renamed to kinetis.c, obj-$(CONFIG_MACH_KINETIS)
-   changed to obj-y, CONFIG_MACH_KINETIS not needed anymore, removed with
-   the whole of the Kconfig file in mach-kinetis directory.
+>> +	gpiod_set_value(clk->gpiod, index);
+>> +	pr_debug("%s: %s: index = %d\n",
+>> +			__clk_get_name(hw->clk), __func__, index);
+>> +
+>
+> More debug noise? Please remove.
+>
 
-4. Assuming that fsl-edma and fsl-lpuart drivers handle big-endian properly,
-   pinctrl, clk and timer drivers now support big-endian the same way
-   ("big-endian" option in .dts).
+OK.
 
-5. All addresses based on KINETIS_AIPS0PERIPH_BASE and
-   KINETIS_AIPS1PERIPH_BASE are moved to DT. The struct kinetis_sim_regs
-   is moved to clk-kinetis.c. As a result whole include/mach/kinetis.h is
-   now removed.
+>> +/**
+>> + * Register functions for gpio controlled clocks
+>> + */
+>
+> This is not kernel-doc. Just lose the comment.
+>
 
-6. Removed kinetis_map_io() from kinetis.c (formerly kinetis_platform.c).
+OK.
 
-7. Removed kinetis_init() function along with a call to
-   of_platform_populate().
+>> @@ -88,69 +128,107 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
+>>   		err = devm_gpio_request_one(dev, gpio, gpio_flags, name);
+>>   	else
+>>   		err = gpio_request_one(gpio, gpio_flags, name);
+>> -
+>>   	if (err) {
+>> -		pr_err("%s: %s: Error requesting clock control gpio %u\n",
+>> -		       __func__, name, gpio);
+>> +		if (err != -EPROBE_DEFER)
+>> +			pr_err("%s: %s: Error requesting GPIO %u\n",
+>> +					name, __func__, gpio);
+>
+> These sorts of cleanups could be another patch too after or
+> before the file is renamed.
+>
 
-8. Removed MACH_KINETIS from arch/arm/tools/mach-types, removed inclusion
-   of asm/mach-types.h in kinetis.c (formerly kinetis_platform.c).
+I will add it to the v4 patch series.
 
-9. Removed inclusion of linux/clk.h from clk-kinetis.c.
+>> +	if (!IS_ERR(clk)) {
+>> +		pr_debug("%s: %s: Successful registration\n", name, __func__);
+>
+> More noise. Please remove.
+>
 
-10. Clock and timer drivers are in separate patches now.
+OK.
 
-11. '&& ARM' removed from drivers/clocksource/Kconfig.
+>> +/**
+>> + * clk_register_gpio - register a gpip clock with the clock framework
+>
+> s/gpip/gpio/
+>
 
-12. s/clk/evt/ in timer-kinetis.c (actually, the affected *_set_mode()
-    function is replaced by a set of *_set_state_*() functions).
+Thanks.
 
-13. Removed pointless raw_local_irq_save/restore() from timer-kinetis.c.
+> Needs a () after function name?
 
-14. Removed overhead () from each of the &(.....) from timer-kinetis.c.
+To be consistent with the clk_register() comment in clk-provider.h,
+I think we should not have a () here. What do you think?
 
-15. Removed unused KINETIS_PITn_IRQ definitions from timer-kinetis.c.
+>>
+>> -	clk = clk_register_gpio_gate(NULL, clk_name, parent_name, gpio,
+>> -					of_flags & OF_GPIO_ACTIVE_LOW, 0);
+>> +	parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
+>> +	if (!parent_names) {
+>> +		kfree(parent_names);
+>
+> Huh? Didn't alloc just fail?
+>
 
-16. Replaced use of IRQ actions with request_irq() in timer-kinetis.c.
+Oops, thanks.
 
-17. Removed all uses of KINETIS_MKCG() macro and whole include/mach/power.h
-    - now all clock gate details are specified directly in the DT.
-    For each clock gate #clock-cells = <2> where the first part of the gate
-    address is zero-based gate register number, the second part is the bit
-    index.
+>> + * Setup functions for gpio controlled clocks
+>
+> Maybe drop this comment too.
+>
 
-18. Shortened long timer names in timer-kinetis.c.
+OK.
 
-19. Ensured module friendliness of pinctrl driver (tristate
-    CONFIG_PINCTRL_KINETIS)
+>> +CLK_OF_DECLARE(gpio_mux_clk, "gpio-mux-clock", of_gpio_mux_clk_setup);
+>>   #endif
+>
+> Actually I really hate this whole probe defer workaround that we
+> have here. It seems like it would be a better approach to turn
+> this file into a platform driver that has the two compatibles
+> "gpio-gate-clock" and "gpio-mux-clock". Then we can defer probe
+> of the driver until the gpio provider is available. It would also
+> require us to fix the framework to properly support probe defer
+> though, so we shouldn't do this right now. Instead we should do
+> it after we fix the framework.
+>
 
-20. Removed txirq_names[] array from fsl-edma.c - sprinft()-generated
-    strings used instead.
+Many thanks for your feedback.
 
-21. fsl-lpuart and fsl-edma related patches are both split into two:
-    1) changes in the driver and 2) use in platform.
-
-22. Removed all occurences of CONFIG_ARCH_KINETIS from fsl-edma.c - now it
-    looks more like fsl-lpuart driver (boolean 'kinetis' field in the main
-    driver structure).
-
-Paul Osmialowski (9):
-  arm: allow copying of vector table to internal SRAM memory
-  arm: twr-k70f120m: basic support for Kinetis TWR-K70F120M
-  arm: twr-k70f120m: clock driver for Kinetis SoC
-  arm: twr-k70f120m: timer driver for Kinetis SoC
-  arm: twr-k70f120m: IOMUX driver for Kinetis SoC
-  arm: twr-k70f120m: extend Freescale eDMA driver with the ability to
-    support Kinetis SoC
-  arm: twr-k70f120m: use Freescale eDMA driver with Kinetis SoC
-  arm: twr-k70f120m: extend Freescale lpuart driver with ability to
-    support Kinetis SoC
-  arm: twr-k70f120m: use Freescale lpuart driver with Kinetis SoC
-
- Documentation/devicetree/bindings/arm/fsl.txt      |   6 +
- .../devicetree/bindings/clock/kinetis-clock.txt    |  63 +++
- Documentation/devicetree/bindings/dma/fsl-edma.txt |  38 +-
- .../bindings/pinctrl/fsl,kinetis-pinctrl.txt       |  31 ++
- .../devicetree/bindings/serial/fsl-lpuart.txt      |   6 +-
- .../bindings/timer/fsl,kinetis-pit-timer.txt       |  50 ++
- arch/arm/Kconfig                                   |  16 +-
- arch/arm/Kconfig-nommu                             |  12 +
- arch/arm/Makefile                                  |   1 +
- arch/arm/boot/dts/kinetis-twr-k70f120m.dts         |  43 ++
- arch/arm/boot/dts/kinetis.dtsi                     | 241 +++++++++
- arch/arm/kernel/entry-v7m.S                        |   3 +
- arch/arm/mach-kinetis/Makefile                     |   5 +
- arch/arm/mach-kinetis/Makefile.boot                |   3 +
- arch/arm/mach-kinetis/idle.c                       |  27 +
- arch/arm/mach-kinetis/include/mach/memory.h        |  61 +++
- arch/arm/mach-kinetis/kinetis.c                    |  34 ++
- arch/arm/mm/Kconfig                                |   1 +
- arch/arm/mm/proc-v7m.S                             |  11 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-kinetis.c                          | 463 ++++++++++++++++++
- drivers/clocksource/Kconfig                        |   5 +
- drivers/clocksource/Makefile                       |   1 +
- drivers/clocksource/timer-kinetis.c                | 321 ++++++++++++
- drivers/dma/fsl-edma.c                             | 114 ++++-
- drivers/pinctrl/freescale/Kconfig                  |   8 +
- drivers/pinctrl/freescale/Makefile                 |   1 +
- drivers/pinctrl/freescale/pinctrl-kinetis.c        | 541 +++++++++++++++++++++
- drivers/tty/serial/fsl_lpuart.c                    |  90 +++-
- 29 files changed, 2153 insertions(+), 44 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/kinetis-clock.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,kinetis-pinctrl.txt
- create mode 100644 Documentation/devicetree/bindings/timer/fsl,kinetis-pit-timer.txt
- create mode 100644 arch/arm/boot/dts/kinetis-twr-k70f120m.dts
- create mode 100644 arch/arm/boot/dts/kinetis.dtsi
- create mode 100644 arch/arm/mach-kinetis/Makefile
- create mode 100644 arch/arm/mach-kinetis/Makefile.boot
- create mode 100644 arch/arm/mach-kinetis/idle.c
- create mode 100644 arch/arm/mach-kinetis/include/mach/memory.h
- create mode 100644 arch/arm/mach-kinetis/kinetis.c
- create mode 100644 drivers/clk/clk-kinetis.c
- create mode 100644 drivers/clocksource/timer-kinetis.c
- create mode 100644 drivers/pinctrl/freescale/pinctrl-kinetis.c
-
--- 
-2.3.6
+Sergej
