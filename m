@@ -1,94 +1,92 @@
-Return-Path: <dinguyen@opensource.altera.com>
-Message-ID: <5571C1CC.7060404@opensource.altera.com>
-Date: Fri, 5 Jun 2015 10:35:40 -0500
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: <mturquette@linaro.org>, <dinh.linux@gmail.com>, <geert@linux-m68k.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC/PATCHv2 1/2] clk: of: helper for filling parent clock array
- and return num of parents
-References: <1433445153-25320-1-git-send-email-dinguyen@opensource.altera.com>
- <1433445153-25320-2-git-send-email-dinguyen@opensource.altera.com>
- <20150604212447.GP676@codeaurora.org>
-In-Reply-To: <20150604212447.GP676@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: dinguyen@opensource.altera.com
+Return-Path: <newchief@king.net.pl>
+From: Paul Osmialowski <pawelo@king.net.pl>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Anson Huang <b20788@freescale.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Frank Li <Frank.Li@freescale.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>,
+        Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nathan Lynch <nathan_lynch@mentor.com>,
+        Nicolas Pitre <nico@linaro.org>,
+        Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
+        Olof Johansson <olof@lixom.net>, Paul Bolle <pebolle@tiscali.nl>,
+        Rob Herring <r.herring@freescale.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Stefan Agner <stefan@agner.ch>, Stephen Boyd <sboyd@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, dmaengine@vger.kernel.org
+Cc: Paul Osmialowski <pawelo@king.net.pl>, Yuri Tikhonov <yur@emcraft.com>,
+        Sergei Poselenov <sposelenov@emcraft.com>,
+        Dmitry Cherkassov <d_cherkasov@emcraft.com>,
+        Alexander Potashev <aspotashev@emcraft.com>
+Subject: [PATCH 2/9] arm: do not place huge encoder tables on stack when it is too small
+Date: Tue, 23 Jun 2015 23:19:40 +0200
+Message-Id: <1435094387-20146-3-git-send-email-pawelo@king.net.pl>
+In-Reply-To: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
+Since stack on Cortex-M3 is too small, we need configuration option
+to avoid using it for huge encoder tables of zlib.
 
+Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
+---
+ arch/arm/Kconfig-nommu     | 4 ++++
+ lib/zlib_inflate/inflate.c | 5 +++++
+ 2 files changed, 9 insertions(+)
 
-On 6/4/15 4:24 PM, Stephen Boyd wrote:
-> On 06/04, dinguyen@opensource.altera.com wrote:
->> From: Dinh Nguyen <dinguyen@opensource.altera.com>
->>
->> Sprinkled all through the platform clock drivers are code like this to
->> fill the clock parent array:
->>
->> for (i = 0; i < num_parents; ++i)
->> 	parent_names[i] = of_clk_get_parent_name(np, i);
->>
->> The of_clk_parent_fill() will do the same as the code above, and while
->> at it, return the number of parents as well since the logic of the
->> function is to the walk the clock node to look for the parent.
->>
->> Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
->> ---
->> v2: use unsigned int for size
->> ---
->>  drivers/clk/clk.c            | 20 ++++++++++++++++++++
->>  include/linux/clk-provider.h |  1 +
->>  2 files changed, 21 insertions(+)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index 459ce9d..778bebd 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -3060,6 +3060,26 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
->>  }
->>  EXPORT_SYMBOL_GPL(of_clk_get_parent_name);
->>  
->> +/*
-> 
-> Need a double ** here for kernel doc.
-> 
-
-Ok...
-
->> + * of_clk_parent_fill(): Helper clock function that will fill the parent
->> + * clock's array and return the number of parents it found.
-> 
-> Please try to shorten this sentence.
-> 
-> 	Fill @parents with names of @np's parents and return number of parents
-> 
->> + * @np: Device node pointer associated with clock provider
->> + * @parents: pointer to char array that hold the parent's name
-> 
-> s/parent's name/parents' names/ ?
-> 
-
-Will address in v3.
-
->> + * @size: size of the parents array
->> + *
->> + * Returns number of parents for the clock node.
->> + */
->> +int of_clk_parent_fill(struct device_node *np, const char **parents, unsigned int size)
->> +{
->> +	unsigned int i = 0;
->> +
->> +	while (i < size && (parents[i] = of_clk_get_parent_name(np, i)) != NULL)
->> +		i++;
->> +
->> +	return i;
->> +}
->> +EXPORT_SYMBOL(of_clk_parent_fill);
-> 
-> Can this be GPL?
-> 
-
-Yes.
-
-Thanks,
-Dinh
+diff --git a/arch/arm/Kconfig-nommu b/arch/arm/Kconfig-nommu
+index aed66d5..965ca97 100644
+--- a/arch/arm/Kconfig-nommu
++++ b/arch/arm/Kconfig-nommu
+@@ -62,3 +62,7 @@ config ARM_MPU
+ 
+          If your CPU has an MPU then you should choose 'y' here unless you
+          know that you do not want to use the MPU.
++
++config ZLIB_INFLATE_STACK_SAVING
++	bool 'Do not place huge encoder tables on stack' if ZLIB_INFLATE
++	depends on ZLIB_INFLATE
+diff --git a/lib/zlib_inflate/inflate.c b/lib/zlib_inflate/inflate.c
+index 58a733b..917b7cf 100644
+--- a/lib/zlib_inflate/inflate.c
++++ b/lib/zlib_inflate/inflate.c
+@@ -75,9 +75,14 @@ int zlib_inflateInit2(z_streamp strm, int windowBits)
+    Return state with length and distance decoding tables and index sizes set to
+    fixed code decoding.  This returns fixed tables from inffixed.h.
+  */
++#ifdef CONFIG_ZLIB_INFLATE_STACK_SAVING
++#   include "inffixed.h"
++#endif
+ static void zlib_fixedtables(struct inflate_state *state)
+ {
++#ifndef CONFIG_ZLIB_INFLATE_STACK_SAVING
+ #   include "inffixed.h"
++#endif
+     state->lencode = lenfix;
+     state->lenbits = 9;
+     state->distcode = distfix;
+-- 
+2.3.6
