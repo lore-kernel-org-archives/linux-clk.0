@@ -1,107 +1,66 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>
-Subject: [PATCH v4 7/8] arm64: dts: add CPU topology on Juno
-Date: Mon,  8 Jun 2015 11:40:01 +0100
-Message-Id: <1433760002-24120-8-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Pawel Moll <pawel.moll@arm.com>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@arm.linux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Fabian Frederick <fabf@skynet.be>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org
+Subject: [PATCH 4/9] drivers: clk: st: Fix FSYN channel values
+Date: Tue, 23 Jun 2015 16:09:22 +0200
+Message-Id: <1435068567-30995-5-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds CPU topology on Juno. It will be useful for ther other
-IP blocks depending on this topology.
+This patch fixes the value for disabling the FSYN channel clock.
+The 'is_enabled' returned value is also fixed.
 
-Cc: Liviu Dudau <Liviu.Dudau@arm.com>
-Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 ---
- arch/arm64/boot/dts/arm/juno-r1.dts | 26 ++++++++++++++++++++++++++
- arch/arm64/boot/dts/arm/juno.dts    | 26 ++++++++++++++++++++++++++
- 2 files changed, 52 insertions(+)
+ drivers/clk/st/clkgen-fsyn.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/arm/juno-r1.dts b/arch/arm64/boot/dts/arm/juno-r1.dts
-index c62751153a4f..69130840c6cd 100644
---- a/arch/arm64/boot/dts/arm/juno-r1.dts
-+++ b/arch/arm64/boot/dts/arm/juno-r1.dts
-@@ -34,6 +34,32 @@
- 		#address-cells = <2>;
- 		#size-cells = <0>;
+diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
+index e7e6782..9e26099 100644
+--- a/drivers/clk/st/clkgen-fsyn.c
++++ b/drivers/clk/st/clkgen-fsyn.c
+@@ -489,7 +489,7 @@ static int quadfs_pll_is_enabled(struct clk_hw *hw)
+ 	struct st_clk_quadfs_pll *pll = to_quadfs_pll(hw);
+ 	u32 npda = CLKGEN_READ(pll, npda);
  
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&A57_0>;
-+				};
-+				core1 {
-+					cpu = <&A57_1>;
-+				};
-+			};
-+
-+			cluster1 {
-+				core0 {
-+					cpu = <&A53_0>;
-+				};
-+				core1 {
-+					cpu = <&A53_1>;
-+				};
-+				core2 {
-+					cpu = <&A53_2>;
-+				};
-+				core3 {
-+					cpu = <&A53_3>;
-+				};
-+			};
-+		};
-+
- 		A57_0: cpu@0 {
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x0 0x0>;
-diff --git a/arch/arm64/boot/dts/arm/juno.dts b/arch/arm64/boot/dts/arm/juno.dts
-index d7cbdd482a61..ce1128a54c8d 100644
---- a/arch/arm64/boot/dts/arm/juno.dts
-+++ b/arch/arm64/boot/dts/arm/juno.dts
-@@ -34,6 +34,32 @@
- 		#address-cells = <2>;
- 		#size-cells = <0>;
+-	return !!npda;
++	return pll->data->powerup_polarity ? !npda : !!npda;
+ }
  
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&A57_0>;
-+				};
-+				core1 {
-+					cpu = <&A57_1>;
-+				};
-+			};
-+
-+			cluster1 {
-+				core0 {
-+					cpu = <&A53_0>;
-+				};
-+				core1 {
-+					cpu = <&A53_1>;
-+				};
-+				core2 {
-+					cpu = <&A53_2>;
-+				};
-+				core3 {
-+					cpu = <&A53_3>;
-+				};
-+			};
-+		};
-+
- 		A57_0: cpu@0 {
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x0 0x0>;
+ static int clk_fs660c32_vco_get_rate(unsigned long input, struct stm_fs *fs,
+@@ -774,7 +774,7 @@ static void quadfs_fsynth_disable(struct clk_hw *hw)
+ 	if (fs->lock)
+ 		spin_lock_irqsave(fs->lock, flags);
+ 
+-	CLKGEN_WRITE(fs, nsb[fs->chan], !fs->data->standby_polarity);
++	CLKGEN_WRITE(fs, nsb[fs->chan], fs->data->standby_polarity);
+ 
+ 	if (fs->lock)
+ 		spin_unlock_irqrestore(fs->lock, flags);
 -- 
 1.9.1
-
