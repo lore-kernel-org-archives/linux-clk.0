@@ -1,110 +1,59 @@
-Return-Path: <vigneshr@ti.com>
-Message-ID: <556D9220.8050205@ti.com>
-Date: Tue, 2 Jun 2015 16:53:12 +0530
-From: Vignesh R <vigneshr@ti.com>
-MIME-Version: 1.0
-To: Tero Kristo <t-kristo@ti.com>, Paul Walmsley <paul@pwsan.com>,
-        Thierry
- Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Pawel
- Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell
-	<ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Benoit
- Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell
- King <linux@arm.linux.org.uk>,
-        Mike Turquette <mturquette@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 3/5] ARM: dts: DRA7: Add TBCLK for PWMSS
-References: <1433159614-437-1-git-send-email-vigneshr@ti.com> <1433159614-437-4-git-send-email-vigneshr@ti.com> <556D67CB.8090309@ti.com>
-In-Reply-To: <556D67CB.8090309@ti.com>
-Content-Type: text/plain; charset="windows-1252"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 0/9] clk: ST clock fixes
+Date: Tue, 23 Jun 2015 16:09:18 +0200
+Message-Id: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+This first patch-set contains various clock fixes for ST SoC.
 
+Gabriel Fernandez (7):
+  drivers: clk: st: Incorrect clocks status
+  drivers: clk: st: Incorrect register offset used for lock_status
+  drivers: clk: st: Remove unused code
+  drivers: clk: st: Fix FSYN channel values
+  drivers: clk: st: Fix mux bit-setting for Cortex A9 clocks
+  drivers: clk: st: Rename st_pll3200c32_407_c0_x into
+    st_pll3200c32_cx_x
+  ARM: STi: DT: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x
 
-On Tuesday 02 June 2015 01:52 PM, Tero Kristo wrote:
-> On 06/01/2015 02:53 PM, Vignesh R wrote:
->> tbclk is used by ehrpwm to generate PWM waveform on DRA7 SoC. Add Linux
->> clock to control ehrpwm tbclk.
-> 
-> Care to add TRM reference here?
+Giuseppe Cavallaro (1):
+  drivers: clk: st: Fix flexgen lock init
 
-Ok, I will add the following reference.
+Pankaj Dev (1):
+  drivers: clk: st: Add CLK_GET_RATE_NOCACHE flag to clocks
 
-tbclk is derived from SYSCLKOUT. The system clock - SYSCLKOUT is the
-ePWM functional clock derived from the gateable interface and functional
-clock of PWMSS.
-See AM57x TRM SPRUHZ6, October 2014, Section 29.2.2.1, Table 29-19 and
-the NOTE at the end of the table.
+ .../devicetree/bindings/clock/st/st,clkgen-pll.txt |  4 ++--
+ arch/arm/boot/dts/stih407-clock.dtsi               |  4 ++--
+ arch/arm/boot/dts/stih410-clock.dtsi               |  4 ++--
+ arch/arm/boot/dts/stih418-clock.dtsi               |  4 ++--
+ drivers/clk/st/clk-flexgen.c                       |  4 +++-
+ drivers/clk/st/clkgen-fsyn.c                       | 20 +++++++----------
+ drivers/clk/st/clkgen-mux.c                        | 25 +++++++++++++---------
+ drivers/clk/st/clkgen-pll.c                        | 14 ++++++------
+ 8 files changed, 41 insertions(+), 38 deletions(-)
 
-> 
-> -Tero
-> 
->>
->> Signed-off-by: Vignesh R <vigneshr@ti.com>
->> ---
->>   arch/arm/boot/dts/dra7.dtsi          |  5 +++++
->>   arch/arm/boot/dts/dra7xx-clocks.dtsi | 26 ++++++++++++++++++++++++++
->>   2 files changed, 31 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
->> index f03a091cd076..387c76ca41f9 100644
->> --- a/arch/arm/boot/dts/dra7.dtsi
->> +++ b/arch/arm/boot/dts/dra7.dtsi
->> @@ -131,6 +131,11 @@
->>                               regulator-max-microvolt = <3000000>;
->>                           };
->>                       };
->> +
->> +                    scm_conf_clocks: clocks {
->> +                        #address-cells = <1>;
->> +                        #size-cells = <0>;
->> +                    };
->>                   };
->>
->>                   dra7_pmx_core: pinmux@1400 {
->> diff --git a/arch/arm/boot/dts/dra7xx-clocks.dtsi
->> b/arch/arm/boot/dts/dra7xx-clocks.dtsi
->> index 3b933f74d000..92452d61cf58 100644
->> --- a/arch/arm/boot/dts/dra7xx-clocks.dtsi
->> +++ b/arch/arm/boot/dts/dra7xx-clocks.dtsi
->> @@ -2136,3 +2136,29 @@
->>           clocks = <&dpll_usb_ck>;
->>       };
->>   };
->> +
->> +&scm_conf_clocks {
->> +       ehrpwm0_tbclk: ehrpwm0_tbclk {
->> +        #clock-cells = <0>;
->> +        compatible = "ti,gate-clock";
->> +        clocks = <&l4_root_clk_div>;
->> +        ti,bit-shift = <20>;
->> +        reg = <0x0558>;
->> +    };
->> +
->> +    ehrpwm1_tbclk: ehrpwm1_tbclk {
->> +        #clock-cells = <0>;
->> +        compatible = "ti,gate-clock";
->> +        clocks = <&l4_root_clk_div>;
->> +        ti,bit-shift = <21>;
->> +        reg = <0x0558>;
->> +    };
->> +
->> +    ehrpwm2_tbclk: ehrpwm2_tbclk {
->> +        #clock-cells = <0>;
->> +        compatible = "ti,gate-clock";
->> +        clocks = <&l4_root_clk_div>;
->> +        ti,bit-shift = <22>;
->> +        reg = <0x0558>;
->> +    };
->> +};
->>
-> 
+-- 
+1.9.1
+
