@@ -1,259 +1,267 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 09/25] clk: tegra: pll: Add logic for handling SDM data
-Date: Thu, 18 Jun 2015 17:28:24 -0400
-Message-ID: <1434662920-21469-10-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <5589DCB9.2000908@codeaurora.org>
+Date: Tue, 23 Jun 2015 15:24:57 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+To: Paul Osmialowski <pawelo@king.net.pl>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Anson Huang <b20788@freescale.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Frank Li <Frank.Li@freescale.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Jingchang Lu <jingchang.lu@freescale.com>,
+	Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nathan Lynch <nathan_lynch@mentor.com>,
+	Nicolas Pitre <nico@linaro.org>,
+	Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
+	Olof Johansson <olof@lixom.net>,
+	Paul Bolle <pebolle@tiscali.nl>,
+	Rob Herring <r.herring@freescale.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+	Shawn Guo <shawn.guo@linaro.org>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Stefan Agner <stefan@agner.ch>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org, dmaengine@vger.kernel.org
+CC: Yuri Tikhonov <yur@emcraft.com>,
+	Sergei Poselenov <sposelenov@emcraft.com>,
+	Dmitry Cherkassov <d_cherkasov@emcraft.com>,
+	Alexander Potashev <aspotashev@emcraft.com>
+Subject: Re: [PATCH 6/9] arm: twr-k70f120m: clock source drivers for Kinetis
+ SoC
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <1435094387-20146-7-git-send-email-pawelo@king.net.pl>
+In-Reply-To: <1435094387-20146-7-git-send-email-pawelo@king.net.pl>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds logic for taking SDM_DIN (Sigma Delta Modulator) setting into
-the equation to calculate the effective N value for PLL which supports
-fractional divider.
+On 06/23/2015 02:19 PM, Paul Osmialowski wrote:
+>
+> diff --git a/drivers/clk/clk-kinetis.c b/drivers/clk/clk-kinetis.c
+> new file mode 100644
+> index 0000000..dea1054
+> --- /dev/null
+> +++ b/drivers/clk/clk-kinetis.c
+> @@ -0,0 +1,226 @@
+> +/*
+> + * clk-kinetis.c - Clock driver for Kinetis K70 MCG
+> + *
+> + * Based on legacy pre-OF code by Alexander Potashev <aspotashev@emcraft.com>
+> + *
+> + * Copyright (C) 2015 Paul Osmialowski <pawelo@king.net.pl>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it under
+> + * the terms of the GNU General Public License version 2 as published by the
+> + * Free Software Foundation.
+> + */
+> +
+> +#include <linux/clk.h>
 
-The effective N = NDIV + 1/2 + SDM_DIN/2^13, where NDIV is the integer
-feedback divider.
+Is this using the consumer API? Please remove this include.
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
-v5:
-  - made use of sdm_en_mask when possible to clean up logic
-  - added kerneldoc info for new struct params
-  - Added info about SDM near sdm_set_data
-  - rewrote check in sdm_set_data to make it clearer
+> +#include <linux/io.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/err.h>
+> +#include <mach/kinetis.h>
+> +#include <mach/power.h>
 
- drivers/clk/tegra/clk-pll.c |   66 ++++++++++++++++++++++++++++++++++++++++++-
- drivers/clk/tegra/clk.h     |   15 +++++++++-
- 2 files changed, 79 insertions(+), 2 deletions(-)
+It would be nice if we didn't need these mach includes so that this
+driver can be easily build tested.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 13d86c5b234d..8b27cb6fe992 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -187,17 +187,23 @@
- #define pll_readl_base(p) pll_readl(p->params->base_reg, p)
- #define pll_readl_misc(p) pll_readl(p->params->misc_reg, p)
- #define pll_override_readl(offset, p) readl_relaxed(p->pmc + offset)
-+#define pll_readl_sdm_din(p) pll_readl(p->params->sdm_din_reg, p)
-+#define pll_readl_sdm_ctrl(p) pll_readl(p->params->sdm_ctrl_reg, p)
- 
- #define pll_writel(val, offset, p) writel_relaxed(val, p->clk_base + offset)
- #define pll_writel_base(val, p) pll_writel(val, p->params->base_reg, p)
- #define pll_writel_misc(val, p) pll_writel(val, p->params->misc_reg, p)
- #define pll_override_writel(val, offset, p) writel(val, p->pmc + offset)
-+#define pll_writel_sdm_din(val, p) pll_writel(val, p->params->sdm_din_reg, p)
-+#define pll_writel_sdm_ctrl(val, p) pll_writel(val, p->params->sdm_ctrl_reg, p)
- 
- #define mask(w) ((1 << (w)) - 1)
- #define divm_mask(p) mask(p->params->div_nmp->divm_width)
- #define divn_mask(p) mask(p->params->div_nmp->divn_width)
- #define divp_mask(p) (p->params->flags & TEGRA_PLLU ? PLLU_POST_DIVP_MASK :\
- 		      mask(p->params->div_nmp->divp_width))
-+#define sdm_din_mask(p) p->params->sdm_din_mask
-+#define sdm_en_mask(p) p->params->sdm_ctrl_en_mask
- 
- #define divm_shift(p) (p)->params->div_nmp->divm_shift
- #define divn_shift(p) (p)->params->div_nmp->divn_shift
-@@ -211,6 +217,9 @@
- #define divn_max(p) (divn_mask(p))
- #define divp_max(p) (1 << (divp_mask(p)))
- 
-+#define sdin_din_to_data(din)	((u16)((din) ? : 0xFFFFU))
-+#define sdin_data_to_din(dat)	(((dat) == 0xFFFFU) ? 0 : (s16)dat)
-+
- static struct div_nmp default_nmp = {
- 	.divn_shift = PLL_BASE_DIVN_SHIFT,
- 	.divn_width = PLL_BASE_DIVN_WIDTH,
-@@ -429,6 +438,7 @@ static int _get_table_rate(struct clk_hw *hw,
- 	cfg->n = sel->n;
- 	cfg->p = sel->p;
- 	cfg->cpcon = sel->cpcon;
-+	cfg->sdm_data = sel->sdm_data;
- 
- 	return 0;
- }
-@@ -495,6 +505,42 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 	return 0;
- }
- 
-+/*
-+ * SDM (Sigma Delta Modulator) divisor is 16-bit 2's complement signed number
-+ * within (-2^12 ... 2^12-1) range. Represented in PLL data structure as
-+ * unsigned 16-bit value, with "0" divisor mapped to 0xFFFF. Data "0" is used
-+ * to indicate that SDM is disabled.
-+ *
-+ * Effective ndiv value when SDM is enabled: ndiv + 1/2 + sdm_din/2^13
-+ */
-+static void clk_pll_set_sdm_data(struct clk_hw *hw,
-+				 struct tegra_clk_pll_freq_table *cfg)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	u32 val;
-+	bool enabled;
-+
-+	if (!pll->params->sdm_din_reg)
-+		return;
-+
-+	if (cfg->sdm_data) {
-+		val = pll_readl_sdm_din(pll) & (~sdm_din_mask(pll));
-+		val |= sdin_data_to_din(cfg->sdm_data) & sdm_din_mask(pll);
-+		pll_writel_sdm_din(val, pll);
-+	}
-+
-+	val = pll_readl_sdm_ctrl(pll);
-+	enabled = (val & sdm_en_mask(pll));
-+
-+	if (cfg->sdm_data == 0 && enabled)
-+		val &= ~pll->params->sdm_ctrl_en_mask;
-+
-+	if (cfg->sdm_data != 0 && !enabled)
-+		val |= pll->params->sdm_ctrl_en_mask;
-+
-+	pll_writel_sdm_ctrl(val, pll);
-+}
-+
- static void _update_pll_mnp(struct tegra_clk_pll *pll,
- 			    struct tegra_clk_pll_freq_table *cfg)
- {
-@@ -527,6 +573,8 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
- 		       (cfg->p << divp_shift(pll));
- 
- 		pll_writel_base(val, pll);
-+
-+		clk_pll_set_sdm_data(&pll->hw, cfg);
- 	}
- }
- 
-@@ -552,6 +600,14 @@ static void _get_pll_mnp(struct tegra_clk_pll *pll,
- 		cfg->m = (val >> div_nmp->divm_shift) & divm_mask(pll);
- 		cfg->n = (val >> div_nmp->divn_shift) & divn_mask(pll);
- 		cfg->p = (val >> div_nmp->divp_shift) & divp_mask(pll);
-+
-+		if (pll->params->sdm_din_reg) {
-+			if (sdm_en_mask(pll) & pll_readl_sdm_ctrl(pll)) {
-+				val = pll_readl_sdm_din(pll);
-+				val &= sdm_din_mask(pll);
-+				cfg->sdm_data = sdin_din_to_data(val);
-+			}
-+		}
- 	}
- }
- 
-@@ -633,7 +689,8 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	_get_pll_mnp(pll, &old_cfg);
- 
--	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p)
-+	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p ||
-+		old_cfg.sdm_data != cfg.sdm_data)
- 		ret = _program_pll(hw, &cfg, rate);
- 
- 	if (pll->lock)
-@@ -697,6 +754,9 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
- 		pdiv = 1;
- 	}
- 
-+	if (pll->params->set_gain)
-+		pll->params->set_gain(&cfg);
-+
- 	cfg.m *= pdiv;
- 
- 	rate *= cfg.n;
-@@ -978,6 +1038,7 @@ static int clk_pllxc_set_rate(struct clk_hw *hw, unsigned long rate,
- static long clk_pll_ramp_round_rate(struct clk_hw *hw, unsigned long rate,
- 				unsigned long *prate)
- {
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	struct tegra_clk_pll_freq_table cfg;
- 	int ret, p_div;
- 	u64 output_rate = *prate;
-@@ -990,6 +1051,9 @@ static long clk_pll_ramp_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (p_div < 0)
- 		return p_div;
- 
-+	if (pll->params->set_gain)
-+		pll->params->set_gain(&cfg);
-+
- 	output_rate *= cfg.n;
- 	do_div(output_rate, cfg.m * p_div);
- 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index e11951e5f846..b5c9f38c5dc6 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -110,14 +110,16 @@ struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
-  * @m:			input divider
-  * @p:			post divider
-  * @cpcon:		charge pump current
-+ * @sdm_data:		fraction divider setting (0 = disabled)
-  */
- struct tegra_clk_pll_freq_table {
- 	unsigned long	input_rate;
- 	unsigned long	output_rate;
--	u16		n;
-+	u32		n;
- 	u16		m;
- 	u8		p;
- 	u8		cpcon;
-+	u16		sdm_data;
- };
- 
- /**
-@@ -174,6 +176,10 @@ struct div_nmp {
-  * @lock_enable_bit_idx:	Bit index to enable PLL lock
-  * @iddq_reg:			PLL IDDQ register offset
-  * @iddq_bit_idx:		Bit index to enable PLL IDDQ
-+ * @sdm_din_reg:		Register offset where SDM settings are
-+ * @sdm_din_mask:		Mask of SDM divider bits
-+ * @sdm_ctrl_reg:		Register offset where SDM enable is
-+ * @sdm_ctrl_en_mask:		Mask of SDM enable bit
-  * @aux_reg:			AUX register offset
-  * @dyn_ramp_reg:		Dynamic ramp control register offset
-  * @ext_misc_reg:		Miscellaneous control register offsets
-@@ -188,6 +194,8 @@ struct div_nmp {
-  * @div_nmp:			offsets and widths on n, m and p fields
-  * @freq_table:			array of frequencies supported by PLL
-  * @fixed_rate:			PLL rate if it is fixed
-+ * @set_gain:			Callback to adjust N div for SDM enabled
-+ *				PLL's based on fractional divider value.
-  *
-  * Flags:
-  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
-@@ -225,6 +233,10 @@ struct tegra_clk_pll_params {
- 	u32		lock_enable_bit_idx;
- 	u32		iddq_reg;
- 	u32		iddq_bit_idx;
-+	u32		sdm_din_reg;
-+	u32		sdm_din_mask;
-+	u32		sdm_ctrl_reg;
-+	u32		sdm_ctrl_en_mask;
- 	u32		aux_reg;
- 	u32		dyn_ramp_reg;
- 	u32		ext_misc_reg[MAX_PLL_MISC_REG_COUNT];
-@@ -239,6 +251,7 @@ struct tegra_clk_pll_params {
- 	struct div_nmp	*div_nmp;
- 	struct tegra_clk_pll_freq_table	*freq_table;
- 	unsigned long	fixed_rate;
-+	void	(*set_gain)(struct tegra_clk_pll_freq_table *cfg);
- };
- 
- #define TEGRA_PLL_USE_LOCK BIT(0)
+> +
+> +#include <dt-bindings/clock/kinetis-mcg.h>
+[..]
+> +}
+> +
+> +CLK_OF_DECLARE(kinetis_mcg, "fsl,kinetis-cmu", kinetis_mcg_init);
+
+A clocksource isn't the same as a clk provider. Please split this patch
+into two, one for the clk provider (drivers/clk) and one for the
+clocksource driver (drivers/clocksource).
+
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index 0f1c77e..1d2ecde 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -106,6 +106,11 @@ config CLKSRC_EFM32
+>  	  Support to use the timers of EFM32 SoCs as clock source and clock
+>  	  event device.
+>  
+> +config CLKSRC_KINETIS
+> +	bool "Clocksource for Kinetis SoCs"
+> +	depends on OF && ARM && ARCH_KINETIS
+
+Doesn't ARCH_KINETIS imply ARM? Seems that we can drop the ARM
+dependency here.
+
+> +	select CLKSRC_OF
+>
+>
+> diff --git a/drivers/clocksource/timer-kinetis.c b/drivers/clocksource/timer-kinetis.c
+> new file mode 100644
+> index 0000000..634f365
+> --- /dev/null
+> +++ b/drivers/clocksource/timer-kinetis.c
+[..]
+> +
+> +/*
+> + * Clock event device set mode function
+> + */
+> +static void kinetis_clockevent_tmr_set_mode(
+> +	enum clock_event_mode mode, struct clock_event_device *clk)
+
+s/clk/evt/ ?
+
+> +{
+> +	struct kinetis_clock_event_ddata *pit =
+> +		container_of(clk, struct kinetis_clock_event_ddata, evtdev);
+> +
+> +	switch (mode) {
+> +	case CLOCK_EVT_MODE_PERIODIC:
+> +		kinetis_pit_enable(pit->base, 1);
+> +		break;
+> +	case CLOCK_EVT_MODE_ONESHOT:
+> +	case CLOCK_EVT_MODE_UNUSED:
+> +	case CLOCK_EVT_MODE_SHUTDOWN:
+> +	default:
+> +		kinetis_pit_enable(pit->base, 0);
+> +	}
+> +}
+> +
+> +/*
+> + * Configure the timer to generate an interrupt in the specified amount of ticks
+> + */
+> +static int kinetis_clockevent_tmr_set_next_event(
+> +	unsigned long delta, struct clock_event_device *c)
+> +{
+> +	struct kinetis_clock_event_ddata *pit =
+> +		container_of(c, struct kinetis_clock_event_ddata, evtdev);
+> +	unsigned long flags;
+> +
+> +	raw_local_irq_save(flags);
+
+What is this protecting against?
+
+> +	kinetis_pit_init(pit->base, delta);
+> +	kinetis_pit_enable(pit->base, 1);
+> +	raw_local_irq_restore(flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct kinetis_clock_event_ddata
+> +		kinetis_clockevent_tmrs[KINETIS_PIT_CHANNELS] = {
+> +	{
+> +		.evtdev = {
+> +			.name		= "fsl,kinetis-pit-timer0",
+> +			.rating		= 200,
+> +			.features	=
+> +			    CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
+> +			.set_mode	= kinetis_clockevent_tmr_set_mode,
+> +			.set_next_event	= kinetis_clockevent_tmr_set_next_event,
+> +		},
+> +	},
+> +	{
+> +		.evtdev = {
+> +			.name		= "fsl,kinetis-pit-timer1",
+> +		},
+> +	},
+> +	{
+> +		.evtdev = {
+> +			.name		= "fsl,kinetis-pit-timer2",
+> +		},
+> +	},
+> +	{
+> +		.evtdev = {
+> +			.name		= "fsl,kinetis-pit-timer3",
+> +		},
+> +	},
+> +};
+> +
+> +/*
+> + * Timer IRQ handler
+> + */
+> +static irqreturn_t kinetis_clockevent_tmr_irq_handler(int irq, void *dev_id)
+> +{
+> +	struct kinetis_clock_event_ddata *tmr = dev_id;
+> +
+> +	KINETIS_PIT_WR(tmr->base, tflg, KINETIS_PIT_TFLG_TIF_MSK);
+> +
+> +	tmr->evtdev.event_handler(&(tmr->evtdev));
+
+Unnecessary parentheses, please remove them.
+
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +/*
+> + * System timer IRQ action
+> + */
+> +static struct irqaction kinetis_clockevent_irqaction[KINETIS_PIT_CHANNELS] = {
+> +	{
+> +		.name = "Kinetis Kernel Time Tick (pit0)",
+> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
+> +		.dev_id = &kinetis_clockevent_tmrs[0],
+> +		.handler = kinetis_clockevent_tmr_irq_handler,
+> +	}, {
+> +		.name = "Kinetis Kernel Time Tick (pit1)",
+> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
+> +		.dev_id = &kinetis_clockevent_tmrs[1],
+> +		.handler = kinetis_clockevent_tmr_irq_handler,
+> +	}, {
+> +		.name = "Kinetis Kernel Time Tick (pit2)",
+> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
+> +		.dev_id = &kinetis_clockevent_tmrs[2],
+> +		.handler = kinetis_clockevent_tmr_irq_handler,
+> +	}, {
+> +		.name = "Kinetis Kernel Time Tick (pit3)",
+> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
+> +		.dev_id = &kinetis_clockevent_tmrs[3],
+> +		.handler = kinetis_clockevent_tmr_irq_handler,
+> +	},
+> +};
+
+Any reason we can't just use request_irq() instead of having a set of
+static irq actions?
+
+> +
+> +static void __init kinetis_clockevent_init(struct device_node *np)
+> +{
+[..]
+> irq;
+> +	}
+> +
+> +	chan = of_alias_get_id(np, "pit");
+> +	if ((chan < 0) || (chan >= KINETIS_PIT_CHANNELS)) {
+
+Unnecessary parentheses, please remove them.
+
 -- 
-1.7.9.5
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
