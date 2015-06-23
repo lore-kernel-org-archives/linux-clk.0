@@ -1,90 +1,153 @@
-Return-Path: <tomasz.figa@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <557981B7.3000303@samsung.com>
-References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
-	<55796660.1070702@samsung.com>
-	<CABxcv=kNb2ERqLL2gG73nkU+kpPsYAWKSyu=bkjfxZBMKOwyPQ@mail.gmail.com>
-	<557981B7.3000303@samsung.com>
-Date: Thu, 11 Jun 2015 22:54:59 +0900
-Message-ID: <CA+Ln22EqW7_6h_0JoZqzSjV3ToC8gf8joGHiC2uUo6fLJ8aBVQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: exynos4: Add PCLK_ADC gate clock on Exynos4x12
-From: Tomasz Figa <tomasz.figa@gmail.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Linux Kernel <linux-kernel@vger.kernel.org>,
-	Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: shmobile: Remove unneeded #include <linux/clkdev.h>
+Date: Tue, 23 Jun 2015 15:09:27 +0200
+Message-Id: <1435064967-12299-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-2015-06-11 21:40 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
-> W dniu 11.06.2015 o 21:15, Javier Martinez Canillas pisze:
->> Hello Krzysztof,
->>
->> On Thu, Jun 11, 2015 at 12:43 PM, Krzysztof Kozlowski
->> <k.kozlowski@samsung.com> wrote:
->>> W dniu 11.06.2015 o 17:26, Krzysztof Kozlowski pisze:
->>>> Add proper gate clock for the Analog to Digital Converter (ADC) on
->>>> Exynos4x12.
->>>>
->>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> ---
->>>>  drivers/clk/samsung/clk-exynos4.c   | 3 +++
->>>>  include/dt-bindings/clock/exynos4.h | 5 ++++-
->>>>  2 files changed, 7 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
->>>> index 714d6ba782c8..5f32410a01f8 100644
->>>> --- a/drivers/clk/samsung/clk-exynos4.c
->>>> +++ b/drivers/clk/samsung/clk-exynos4.c
->>>> @@ -85,6 +85,7 @@
->>>>  #define DIV_PERIL4           0xc560
->>>>  #define DIV_PERIL5           0xc564
->>>>  #define E4X12_DIV_CAM1               0xc568
->>>> +#define E4X12_GATE_BUS_FSYS1 0xc744
->>>>  #define GATE_SCLK_CAM                0xc820
->>>>  #define GATE_IP_CAM          0xc920
->>>>  #define GATE_IP_TV           0xc924
->>>> @@ -1095,6 +1096,8 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
->>>>               0),
->>>>       GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
->>>>               0),
->>>> +     GATE(CLK_PCLK_ADC, "pclk_adc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0,
->>>> +             0),
->>>
->>> Now I have even simpler idea. Don't add new clock id but just define
->>> here the CLK_TSADC as:
->>> GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0);
->>>
->>> With this change the second patch wouldn't be needed however this does
->>> not reflect the Exynos 4x12 datasheet.
->>>
->>> Any comments?
->>>
->>
->> I think it's better to reflect the datasheet so I prefer your original
->> patch.
->
-> Yeah, I also like sticking to datasheet but maybe it is not always worth
-> to reproduce the datasheet in 100%. It is just thinking out loud.
->
->> Also, wouldn't changing the CLK_TSADC gate definition cause a
->> regression on an Exynos4210 board that is using the tsadc clock? or
->> maybe I misunderstood the explanation of your Patch 2/2?
->
-> No, no. The Exynos4210 would be unchanged. It has the CLK_TSADC - both
-> in hardware and in kernel driver. The Exynos4x12 SoCs don't have so we can:
-> 1. Add new CLK_PCLK_ADC (id and clock) reflecting datasheet.
-> 2. Add only CLK_TSADC clock  on Exynos4x12 which will be using the
-> register of PCLK_ADC. The id would stay the same as on Exynos4210.
+The CCF implementations for the various shmobile SoCs don't use clkdev
+functionality, hence drop the inclusion of <linux/clkdev.h>.
 
-Or we can:
-3. Add new CLK_PCLK_ADC macro equal to current CLK_TSADC. Then drivers
-and dtsi would be able to use the name matching the datasheet, but the
-ID (and so DT ABI) would be preserved.
+Add the missing #include <linux/slab.h>, which was included implicitly
+through <asm/clkdev.h> before.
 
-Best regards,
-Tomasz
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/shmobile/clk-div6.c      | 2 +-
+ drivers/clk/shmobile/clk-r8a73a4.c   | 2 +-
+ drivers/clk/shmobile/clk-r8a7740.c   | 2 +-
+ drivers/clk/shmobile/clk-r8a7778.c   | 2 +-
+ drivers/clk/shmobile/clk-r8a7779.c   | 2 +-
+ drivers/clk/shmobile/clk-rcar-gen2.c | 4 +---
+ drivers/clk/shmobile/clk-sh73a0.c    | 2 +-
+ 7 files changed, 7 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/shmobile/clk-div6.c b/drivers/clk/shmobile/clk-div6.c
+index 036a692c72195db9..6810bfb6ef5e09d1 100644
+--- a/drivers/clk/shmobile/clk-div6.c
++++ b/drivers/clk/shmobile/clk-div6.c
+@@ -11,12 +11,12 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/slab.h>
+ 
+ #define CPG_DIV6_CKSTP		BIT(8)
+ #define CPG_DIV6_DIV(d)		((d) & 0x3f)
+diff --git a/drivers/clk/shmobile/clk-r8a73a4.c b/drivers/clk/shmobile/clk-r8a73a4.c
+index 29b9a0b0012ad326..9326204bed9d6cb7 100644
+--- a/drivers/clk/shmobile/clk-r8a73a4.c
++++ b/drivers/clk/shmobile/clk-r8a73a4.c
+@@ -9,10 +9,10 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
+ #include <linux/clk/shmobile.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
++#include <linux/slab.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/spinlock.h>
+diff --git a/drivers/clk/shmobile/clk-r8a7740.c b/drivers/clk/shmobile/clk-r8a7740.c
+index 1e2eaae21e01947b..1e6b1da580658f46 100644
+--- a/drivers/clk/shmobile/clk-r8a7740.c
++++ b/drivers/clk/shmobile/clk-r8a7740.c
+@@ -9,10 +9,10 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
+ #include <linux/clk/shmobile.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
++#include <linux/slab.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/spinlock.h>
+diff --git a/drivers/clk/shmobile/clk-r8a7778.c b/drivers/clk/shmobile/clk-r8a7778.c
+index fa45684e220c78ae..87c1d2f2fb57a46c 100644
+--- a/drivers/clk/shmobile/clk-r8a7778.c
++++ b/drivers/clk/shmobile/clk-r8a7778.c
+@@ -9,9 +9,9 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
+ #include <linux/clk/shmobile.h>
+ #include <linux/of_address.h>
++#include <linux/slab.h>
+ 
+ struct r8a7778_cpg {
+ 	struct clk_onecell_data data;
+diff --git a/drivers/clk/shmobile/clk-r8a7779.c b/drivers/clk/shmobile/clk-r8a7779.c
+index e42a63a2ad251de2..92275c5f2c60303e 100644
+--- a/drivers/clk/shmobile/clk-r8a7779.c
++++ b/drivers/clk/shmobile/clk-r8a7779.c
+@@ -11,12 +11,12 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
+ #include <linux/clk/shmobile.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+ #include <dt-bindings/clock/r8a7779-clock.h>
+diff --git a/drivers/clk/shmobile/clk-rcar-gen2.c b/drivers/clk/shmobile/clk-rcar-gen2.c
+index 9612e3145b7ea370..745496f7ee9c7402 100644
+--- a/drivers/clk/shmobile/clk-rcar-gen2.c
++++ b/drivers/clk/shmobile/clk-rcar-gen2.c
+@@ -11,15 +11,13 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
+ #include <linux/clk/shmobile.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/math64.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/pm_clock.h>
+-#include <linux/pm_domain.h>
++#include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+ struct rcar_gen2_cpg {
+diff --git a/drivers/clk/shmobile/clk-sh73a0.c b/drivers/clk/shmobile/clk-sh73a0.c
+index cd529cfe412f1d18..8966f8bbfd726e62 100644
+--- a/drivers/clk/shmobile/clk-sh73a0.c
++++ b/drivers/clk/shmobile/clk-sh73a0.c
+@@ -9,12 +9,12 @@
+  */
+ 
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
+ #include <linux/clk/shmobile.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+ struct sh73a0_cpg {
+-- 
+1.9.1
