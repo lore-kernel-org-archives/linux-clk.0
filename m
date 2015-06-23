@@ -1,93 +1,56 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 3 Jun 2015 16:37:28 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org,
-	Mikko Perttunen <mikko.perttunen@kapsi.fi>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Jonathan Corbet <corbet@lwn.net>, Tony Lindgren <tony@atomide.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Emilio L??pez <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Tero Kristo <t-kristo@ti.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-omap@vger.kernel.org, linux-mips@linux-mips.org
-Subject: Re: [PATCH v3] clk: change clk_ops' ->determine_rate() prototype
-Message-ID: <20150603233728.GA490@codeaurora.org>
-References: <1432138345-19044-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1432138345-19044-1-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <55891729.7070809@linaro.org>
+References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
+	<1433966978-24422-1-git-send-email-daniel.thompson@linaro.org>
+	<20150622224832.GI22132@codeaurora.org>
+	<55891729.7070809@linaro.org>
+Date: Tue, 23 Jun 2015 11:24:26 +0200
+Message-ID: <CALszF6Dw7hWATpjVvpxmitKWSJ458JXWOZFXMjudcW_jaNiZdw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] clk: stm32: Add clock driver for STM32F4[23]xxx devices
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Kamil Lulko <rev13@wp.pl>, Andreas Farber <afaerber@suse.de>,
+	linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	patches@linaro.org, linaro-kernel@lists.linaro.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/20, Boris Brezillon wrote:
-> Clock rates are stored in an unsigned long field, but ->determine_rate()
-> (which returns a rounded rate from a requested one) returns a long
-> value (errors are reported using negative error codes), which can lead
-> to long overflow if the clock rate exceed 2Ghz.
-> 
-> Change ->determine_rate() prototype to return 0 or an error code, and pass
-> a pointer to a clk_rate_request structure containing the expected target
-> rate and the rate constraints imposed by clk users.
-> 
-> The clk_rate_request structure might be extended in the future to contain
-> other kind of constraints like the rounding policy, the maximum clock
-> inaccuracy or other things that are not yet supported by the CCF
-> (power consumption constraints ?).
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> 
-> CC: Jonathan Corbet <corbet@lwn.net>
-> CC: Tony Lindgren <tony@atomide.com>
-> CC: Ralf Baechle <ralf@linux-mips.org>
-> CC: "Emilio López" <emilio@elopez.com.ar>
-> CC: Maxime Ripard <maxime.ripard@free-electrons.com>
-> CC: Tero Kristo <t-kristo@ti.com>
-> CC: linux-doc@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
-> CC: linux-arm-kernel@lists.infradead.org
-> CC: linux-omap@vger.kernel.org
-> CC: linux-mips@linux-mips.org
-> ---
-> 
-> Hi Stephen,
-> 
-> This patch is based on clk-next and contains the changes you suggested
-> in your previous review.
-> 
-> It was tested on sama5d4 and compile tested on several ARM platforms
-> (those enabled in multi_v7_defconfig).
-> 
+2015-06-23 10:22 GMT+02:00 Daniel Thompson <daniel.thompson@linaro.org>:
+> On 22/06/15 23:48, Stephen Boyd wrote:
+>>
+>> On 06/10, Daniel Thompson wrote:
+>>>
+>>> This patchset implements a clock driver for STM32F42xxx and STM32F43xxx
+>>> series devices. It supports decoding the state configured by the
+>>> bootloader (PLL, clock select, bus dividers) and all the gates clocks.
+>>> It does not currently support the I2S and SAI PLLs.
+>>>
+>>> Relies on "Add support to STMicroeletronics STM32 family" v9 by Maxime
+>>> Coquelin: http://thread.gmane.org/gmane.linux.kernel/1961049 .
+>>>
+>>
+>> I applied 1 and 2. Looks like #3 should go through arm-soc at
+>> some later time?
+>
+>
+> Agreed (that is also the patch that must be correctly ordered w.r.t.
+> Maxime's patches).
 
-Thanks. I think we should wait until the next -rc1 drops to apply the
-patch for the next merge window. That will make it least likely to conflict
-with other trees, and we can provide it on a stable branch should there
-be clock providers going through other trees somewhere. Please
-remind me if I forget.
+Indeed, I will take care of patch 3.
 
-> @@ -1186,15 +1191,21 @@ EXPORT_SYMBOL_GPL(__clk_determine_rate);
->   */
->  unsigned long __clk_round_rate(struct clk *clk, unsigned long rate)
->  {
-> -	unsigned long min_rate;
-> -	unsigned long max_rate;
-> +
-> +	struct clk_rate_request req;
-> +	int ret;
->  
->  	if (!clk)
->  		return 0;
->  
-> -	clk_core_get_boundaries(clk->core, &min_rate, &max_rate);
-> +	clk_core_get_boundaries(clk->core, &req.min_rate, &req.max_rate);
-> +	req.rate = rate;
-> +
-> +	ret = clk_core_round_rate_nolock(clk->core, &req);
-> +	if (ret)
-> +		return ret;
-
-This returns a negative int for unsigned long. Is that intentional?
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Maxime
