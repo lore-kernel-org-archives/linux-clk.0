@@ -1,92 +1,135 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:13400 "EHLO
-	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752286AbbFRVaX (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jun 2015 17:30:23 -0400
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Osmialowski <pawelo@king.net.pl>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Anson Huang <b20788@freescale.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Frank Li <Frank.Li@freescale.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Jingchang Lu <jingchang.lu@freescale.com>,
+	Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nathan Lynch <nathan_lynch@mentor.com>,
+	Nicolas Pitre <nico@linaro.org>,
+	Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
+	Olof Johansson <olof@lixom.net>,
+	Paul Bolle <pebolle@tiscali.nl>,
+	Rob Herring <r.herring@freescale.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+	Shawn Guo <shawn.guo@linaro.org>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Stefan Agner <stefan@agner.ch>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 22/25] clk: tegra: pll: Fix issues with rates for VCO PLLs
-Date: Thu, 18 Jun 2015 17:28:37 -0400
-Message-ID: <1434662920-21469-23-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org, dmaengine@vger.kernel.org
+Cc: Paul Osmialowski <pawelo@king.net.pl>,
+	Yuri Tikhonov <yur@emcraft.com>,
+	Sergei Poselenov <sposelenov@emcraft.com>,
+	Dmitry Cherkassov <d_cherkasov@emcraft.com>,
+	Alexander Potashev <aspotashev@emcraft.com>
+Subject: [PATCH 4/9] arm: allow copying of vector table to internal SRAM memory
+Date: Tue, 23 Jun 2015 23:19:42 +0200
+Message-Id: <1435094387-20146-5-git-send-email-pawelo@king.net.pl>
+In-Reply-To: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andrew Bresticker <abrestic@chromium.org>
+Based on part of the commit published on Emcraft git repo:
 
-Without this change clk_get_rate would return the final output
-rather than the VCO output as it would factor in the pdiv when
-it shouldn't. This will cause problems for all dividers in the
-subtree of the VCO PLL.
+https://github.com/EmcraftSystems/linux-emcraft.git
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+2ce1841b590d014d8738215fb1ffe05f53c8d9f0 "some commit"
+
+by: Dmitry Cherkassov <d_cherkasov@emcraft.com>
+
+The ARM v7M allows setting the vector table either in
+the boot memory or in the internal SRAM memory, controlled
+by Bit 29 in the Vector Table Base register. This implies
+that the OS vector table needs to be copied to the internal RAM.
+
+New option CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR allows specification
+of the desired destination for the OS vector table.
+
+Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
 ---
-v5:
-  - Switched to using flag for VCO_OUT
+ arch/arm/Kconfig-nommu      | 11 +++++++++++
+ arch/arm/kernel/entry-v7m.S |  3 +++
+ arch/arm/mm/proc-v7m.S      | 11 +++++++++++
+ 3 files changed, 25 insertions(+)
 
-v3:
-  - Added fix for this bug which was found during testing
-
- drivers/clk/tegra/clk-pll.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 7c166894babf..61bd15f9478d 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -743,6 +743,8 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 		spin_lock_irqsave(pll->lock, flags);
+diff --git a/arch/arm/Kconfig-nommu b/arch/arm/Kconfig-nommu
+index 965ca97..98220e8 100644
+--- a/arch/arm/Kconfig-nommu
++++ b/arch/arm/Kconfig-nommu
+@@ -66,3 +66,14 @@ config ARM_MPU
+ config ZLIB_INFLATE_STACK_SAVING
+ 	bool 'Do not place huge encoder tables on stack' if ZLIB_INFLATE
+ 	depends on ZLIB_INFLATE
++
++config COPY_VECTOR_TABLE_TO_SRAM_ADDR
++	hex 'If non-zero, copy Vector Table to this SRAM Address' if CPU_V7M
++	default 0x00000000
++	depends on CPU_V7M
++	help
++	  The ARM v7M allows setting the vector table either in
++	  the boot memory or in the internal SRAM memory, controlled
++	  by Bit 29 in the Vector Table Base register.
++	  This implies that the OS vector table needs to be copied to
++	  the internal RAM.
+diff --git a/arch/arm/kernel/entry-v7m.S b/arch/arm/kernel/entry-v7m.S
+index b6c8bb9..114096e 100644
+--- a/arch/arm/kernel/entry-v7m.S
++++ b/arch/arm/kernel/entry-v7m.S
+@@ -146,3 +146,6 @@ ENTRY(vector_table)
+ 	.rept	CONFIG_CPU_V7M_NUM_IRQ
+ 	.long	__irq_entry		@ External Interrupts
+ 	.endr
++#if CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR > 0x00000000
++ENTRY(vector_table_end)
++#endif
+diff --git a/arch/arm/mm/proc-v7m.S b/arch/arm/mm/proc-v7m.S
+index 67d9209..ded9504 100644
+--- a/arch/arm/mm/proc-v7m.S
++++ b/arch/arm/mm/proc-v7m.S
+@@ -83,7 +83,18 @@ ENDPROC(cpu_v7m_do_resume)
+ __v7m_setup:
+ 	@ Configure the vector table base address
+ 	ldr	r0, =BASEADDR_V7M_SCB
++#if CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR > 0x00000000
++	ldr	r12, =CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR
++	mov	r5, r12			@ Copy the kernel vector_table to
++	ldr	r6, =vector_table	@ the in-SRAM vector table
++	ldr	r4, =vector_table_end
++1:	ldr	r3, [r6], #4
++	str	r3, [r5], #4
++	cmp	r6, r4
++	bne	1b			@ End of the copy code
++#else
+ 	ldr	r12, =vector_table
++#endif
+ 	str	r12, [r0, V7M_SCB_VTOR]
  
- 	_get_pll_mnp(pll, &old_cfg);
-+	if (pll->params->flags & TEGRA_PLL_VCO_OUT)
-+		cfg.p = old_cfg.p;
- 
- 	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p ||
- 		old_cfg.sdm_data != cfg.sdm_data)
-@@ -803,11 +805,15 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
- 
- 	_get_pll_mnp(pll, &cfg);
- 
--	pdiv = _hw_to_p_div(hw, cfg.p);
--	if (pdiv < 0) {
--		WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
--			__clk_get_name(hw->clk), cfg.p);
-+	if (pll->params->flags & TEGRA_PLL_VCO_OUT) {
- 		pdiv = 1;
-+	} else {
-+		pdiv = _hw_to_p_div(hw, cfg.p);
-+		if (pdiv < 0) {
-+			WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
-+				__clk_get_name(hw->clk), cfg.p);
-+			pdiv = 1;
-+		}
- 	}
- 
- 	if (pll->params->set_gain)
-@@ -1094,6 +1100,8 @@ static int clk_pllxc_set_rate(struct clk_hw *hw, unsigned long rate,
- 		spin_lock_irqsave(pll->lock, flags);
- 
- 	_get_pll_mnp(pll, &old_cfg);
-+	if (pll->params->flags & TEGRA_PLL_VCO_OUT)
-+		cfg.p = old_cfg.p;
- 
- 	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p)
- 		ret = _program_pll(hw, &cfg, rate);
+ 	@ enable UsageFault, BusFault and MemManage fault.
 -- 
-1.7.9.5
+2.3.6
 
