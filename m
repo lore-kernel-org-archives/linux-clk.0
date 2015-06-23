@@ -1,38 +1,55 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: shmobile: div6: Document mandatory compatible fallback
-Date: Mon,  1 Jun 2015 12:21:53 +0200
-Message-Id: <1433154113-19013-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 3/9] drivers: clk: st: Remove unused code
+Date: Tue, 23 Jun 2015 16:09:21 +0200
+Message-Id: <1435068567-30995-4-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The generic CPG DIV6 clock compatible value is mandatory, as the driver
-uses only this value for matching.  Document that this is a fallback
-that must be present.
+Remove this duplicated code due to a bad copy / paste.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 ---
- Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/st/clkgen-fsyn.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
-index 3e40c41b05658e5b..5ddb68418655d569 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
-@@ -14,7 +14,7 @@ Required Properties:
-     - "renesas,r8a7793-div6-clock" for R8A7793 (R-Car M2-N) DIV6 clocks
-     - "renesas,r8a7794-div6-clock" for R8A7794 (R-Car E2) DIV6 clocks
-     - "renesas,sh73a0-div6-clock" for SH73A0 (SH-Mobile AG5) DIV6 clocks
--    - "renesas,cpg-div6-clock" for generic DIV6 clocks
-+    and "renesas,cpg-div6-clock" as a fallback.
-   - reg: Base address and length of the memory resource used by the DIV6 clock
-   - clocks: Reference to the parent clock(s); either one, four, or eight
-     clocks must be specified.  For clocks with multiple parents, invalid
+diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
+index e6d7073..e7e6782 100644
+--- a/drivers/clk/st/clkgen-fsyn.c
++++ b/drivers/clk/st/clkgen-fsyn.c
+@@ -1082,10 +1082,6 @@ static const struct of_device_id quadfs_of_match[] = {
+ 		.compatible = "st,stih407-quadfs660-D",
+ 		.data = &st_fs660c32_D_407
+ 	},
+-	{
+-		.compatible = "st,stih407-quadfs660-D",
+-		.data = (void *)&st_fs660c32_D_407
+-	},
+ 	{}
+ };
+ 
 -- 
 1.9.1
+
