@@ -1,96 +1,50 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 11/25] clk: tegra: pll: Add code to handle if resets are supported by PLL
-Date: Thu, 18 Jun 2015 17:28:26 -0400
-Message-ID: <1434662920-21469-12-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+Return-Path: <daniel.thompson@linaro.org>
+Return-Path: <daniel.thompson@linaro.org>
+Message-ID: <558917ED.8080404@linaro.org>
+Date: Tue, 23 Jun 2015 09:25:17 +0100
+From: Daniel Thompson <daniel.thompson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Mike Turquette <mturquette@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Kamil Lulko <rev13@wp.pl>, Andreas Farber <afaerber@suse.de>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ patches@linaro.org, linaro-kernel@lists.linaro.org
+Subject: Re: [PATCH v3 2/3] clk: stm32: Add clock driver for STM32F4[23]xxx
+ devices
+References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org> <1433966978-24422-1-git-send-email-daniel.thompson@linaro.org> <1433966978-24422-3-git-send-email-daniel.thompson@linaro.org> <20150622232114.GK22132@codeaurora.org>
+In-Reply-To: <20150622232114.GK22132@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bill Huang <bilhuang@nvidia.com>
+On 23/06/15 00:21, Stephen Boyd wrote:
+> On 06/10, Daniel Thompson wrote:
+>> The driver supports decoding and statically modelling PLL state (i.e.
+>> we inherit state from bootloader) and provides support for all
+>> peripherals that support simple one-bit gated clocks. The covers all
+>> peripherals whose clocks come from the AHB, APB1 or APB2 buses.
+>>
+>> It has been tested on an STM32F429I-Discovery board. The clock counts
+>> for TIM2, USART1 and SYSTICK are all set correctly and the wall clock
+>> looks OK when checked with a stopwatch. I have also tested a prototype
+>> driver for the RNG hardware. The RNG clock is correctly enabled by the
+>> framework (also did inverse test and proved that by changing DT to
+>> configure the wrong clock bit then we observe the RNG driver to fail).
+>>
+>> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+>> Reviewed-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+>
+> I also squashed in some sparse fixes. Please check.
 
-If a PLL has a reset_reg specified, properly handle that in the
-enable/disable logic paths.
+That was extremely generous! Thanks.
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
-v5:
-  - Added kerneldoc for new members
+The changes all eyeball OK but I'll double check things tonight just in 
+case.
 
-v2:
-  - Moved reset logic to _clk_pll_enable/disable as well
 
- drivers/clk/tegra/clk-pll.c |   12 ++++++++++++
- drivers/clk/tegra/clk.h     |    4 ++++
- 2 files changed, 16 insertions(+)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 95ad0669291f..54ebab2b85e5 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -311,6 +311,12 @@ static void _clk_pll_enable(struct clk_hw *hw)
- 		udelay(2);
- 	}
- 
-+	if (pll->params->reset_reg) {
-+		val = pll_readl(pll->params->reset_reg, pll);
-+		val &= ~BIT(pll->params->reset_bit_idx);
-+		pll_writel(val, pll->params->reset_reg, pll);
-+	}
-+
- 	clk_pll_enable_lock(pll);
- 
- 	val = pll_readl_base(pll);
-@@ -343,6 +349,12 @@ static void _clk_pll_disable(struct clk_hw *hw)
- 		writel_relaxed(val, pll->pmc + PMC_PLLP_WB0_OVERRIDE);
- 	}
- 
-+	if (pll->params->reset_reg) {
-+		val = pll_readl(pll->params->reset_reg, pll);
-+		val |= BIT(pll->params->reset_bit_idx);
-+		pll_writel(val, pll->params->reset_reg, pll);
-+	}
-+
- 	if (pll->params->iddq_reg) {
- 		val = pll_readl(pll->params->iddq_reg, pll);
- 		val |= BIT(pll->params->iddq_bit_idx);
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index dfbce9300547..b5131e4e4c75 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -176,6 +176,8 @@ struct div_nmp {
-  * @lock_enable_bit_idx:	Bit index to enable PLL lock
-  * @iddq_reg:			PLL IDDQ register offset
-  * @iddq_bit_idx:		Bit index to enable PLL IDDQ
-+ * @reset_reg:			Register offset of where RESET bit is
-+ * @reset_bit_idx:		Shift of reset bit in reset_reg
-  * @sdm_din_reg:		Register offset where SDM settings are
-  * @sdm_din_mask:		Mask of SDM divider bits
-  * @sdm_ctrl_reg:		Register offset where SDM enable is
-@@ -239,6 +241,8 @@ struct tegra_clk_pll_params {
- 	u32		lock_enable_bit_idx;
- 	u32		iddq_reg;
- 	u32		iddq_bit_idx;
-+	u32		reset_reg;
-+	u32		reset_bit_idx;
- 	u32		sdm_din_reg;
- 	u32		sdm_din_mask;
- 	u32		sdm_ctrl_reg;
--- 
-1.7.9.5
-
+Daniel.
