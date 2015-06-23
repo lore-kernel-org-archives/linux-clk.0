@@ -1,57 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:59113 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751465AbbFPLWH (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 16 Jun 2015 07:22:07 -0400
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Cc: Tawfik Bayouk <tawfik@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Eran Ben-Avi <benavi@marvell.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Kevin Hilman <khilman@kernel.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH] clk: mvebu: flag the crypto clk as CLK_IGNORE_UNUSED
-Date: Tue, 16 Jun 2015 13:22:01 +0200
-Message-Id: <1434453721-24070-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Paul Osmialowski <pawelo@king.net.pl>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Anson Huang <b20788@freescale.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Bhupesh Sharma <bhupesh.sharma@freescale.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Frank Li <Frank.Li@freescale.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, Michael Turquette <mturquette@baylibre.com>, Nathan Lynch <nathan_lynch@mentor.com>, Nicolas Pitre <nico@linaro.org>, Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>, Olof Johansson <olof@lixom.net>, Paul Bolle <pebolle@tiscali.nl>, Rob Herring <r.herring@freescale.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, Simon Horman <horms+renesas@verge.net.au>, Stefan Agner <stefan@agner.ch>, Stephen Boyd <sboyd@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>, Catalin Marinas <catalin.marinas@arm.com>, Dave Martin <Dave.Martin@arm.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, Yuri Tikhonov <yur@emcraft.com>, Sergei Poselenov <sposelenov@emcraft.com>, Dmitry Cherkassov <d_cherkasov@emcraft.com>, Alexander Potashev <aspotashev@emcraft.com>
+Subject: Re: [PATCH 6/9] arm: twr-k70f120m: clock source drivers for Kinetis SoC
+Date: Wed, 24 Jun 2015 00:25:11 +0200
+Message-ID: <1914738.cJbsHkbelI@wuerfel>
+In-Reply-To: <1435094387-20146-7-git-send-email-pawelo@king.net.pl>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <1435094387-20146-7-git-send-email-pawelo@king.net.pl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Fixes: 29e623475c50267ee3aaa49ebb6cbe107bce8d2a ("clk: mvebu: add
-missing CESA gate clk").
-The crypto SRAM, used by the armada 370 cpuidle code to workaround a bug
-in the BootROM code, requires the crypto clk to be up and running.
-Flag the the crypto clk as IGNORE_UNUSED until we add the proper
-infrastructure to define the crypto SRAM in the DT and reference the crypto
-clk in this SRAM node.
+On Tuesday 23 June 2015 23:19:44 Paul Osmialowski wrote:
+> +#define KINETIS_CG_UART0       KINETIS_MKCG(3, 10)     /* SIM_SCGC4[10] */
+> +#define KINETIS_CG_UART1       KINETIS_MKCG(3, 11)     /* SIM_SCGC4[11] */
+> +#define KINETIS_CG_UART2       KINETIS_MKCG(3, 12)     /* SIM_SCGC4[12] */
+> +#define KINETIS_CG_UART3       KINETIS_MKCG(3, 13)     /* SIM_SCGC4[13] */
+> +#define KINETIS_CG_UART4       KINETIS_MKCG(0, 10)     /* SIM_SCGC1[10] */
+> +#define KINETIS_CG_UART5       KINETIS_MKCG(0, 11)     /* SIM_SCGC1[11] */
+> +/* Ports */
+> +#define KINETIS_CG_PORTA       KINETIS_MKCG(4, 9)      /* SIM_SCGC5[9] */
+> +#define KINETIS_CG_PORTB       KINETIS_MKCG(4, 10)     /* SIM_SCGC5[10] */
+> +#define KINETIS_CG_PORTC       KINETIS_MKCG(4, 11)     /* SIM_SCGC5[11] */
+> +#define KINETIS_CG_PORTD       KINETIS_MKCG(4, 12)     /* SIM_SCGC5[12] */
+> +#define KINETIS_CG_PORTE       KINETIS_MKCG(4, 13)     /* SIM_SCGC5[13] */
+> +#define KINETIS_CG_PORTF       KINETIS_MKCG(4, 14)     /* SIM_SCGC5[14] */
+> 
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: <stable@vger.kernel.org> #4.1
----
- drivers/clk/mvebu/armada-370.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Instead of using a triple indirection here, just put the tuples
+in the DT directly using #clock-cells=<2>, and get rid of both this
+header file and the dt-bindings/clock/kinetis-mcg.h file.
 
-diff --git a/drivers/clk/mvebu/armada-370.c b/drivers/clk/mvebu/armada-370.c
-index c19fd77..7c2a58c 100644
---- a/drivers/clk/mvebu/armada-370.c
-+++ b/drivers/clk/mvebu/armada-370.c
-@@ -163,7 +163,7 @@ static const struct clk_gating_soc_desc a370_gating_desc[] __initconst = {
- 	{ "pex1", "pex1_en", 9, 0 },
- 	{ "sata0", NULL, 15, 0 },
- 	{ "sdio", NULL, 17, 0 },
--	{ "crypto", NULL, 23, 0 },
-+	{ "crypto", NULL, 23, CLK_IGNORE_UNUSED }
- 	{ "tdm", NULL, 25, 0 },
- 	{ "ddr", NULL, 28, CLK_IGNORE_UNUSED },
- 	{ "sata1", NULL, 30, 0 },
--- 
-1.9.1
-
+	Arnd
