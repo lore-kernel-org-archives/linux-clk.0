@@ -1,96 +1,106 @@
-Return-Path: <mike.looijmans@topicproducts.com>
-Message-ID: <556D6BC7.8000308@topic.nl>
-Date: Tue, 2 Jun 2015 10:39:35 +0200
-From: Mike Looijmans <mike.looijmans@topic.nl>
-MIME-Version: 1.0
-To: Paul Bolle <pebolle@tiscali.nl>
-CC: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@linaro.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: Re: [PATCH v3] Add TI CDCE925 I2C controlled clock synthesizer driver
-References: <1433153623-29205-1-git-send-email-mike.looijmans@topic.nl> <1433231444.2361.75.camel@x220>
-In-Reply-To: <1433231444.2361.75.camel@x220>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <newchief@king.net.pl>
+From: Paul Osmialowski <pawelo@king.net.pl>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Anson Huang <b20788@freescale.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Frank Li <Frank.Li@freescale.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>,
+        Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nathan Lynch <nathan_lynch@mentor.com>,
+        Nicolas Pitre <nico@linaro.org>,
+        Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
+        Olof Johansson <olof@lixom.net>, Paul Bolle <pebolle@tiscali.nl>,
+        Rob Herring <r.herring@freescale.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Stefan Agner <stefan@agner.ch>, Stephen Boyd <sboyd@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, dmaengine@vger.kernel.org
+Cc: Paul Osmialowski <pawelo@king.net.pl>, Yuri Tikhonov <yur@emcraft.com>,
+        Sergei Poselenov <sposelenov@emcraft.com>,
+        Dmitry Cherkassov <d_cherkasov@emcraft.com>,
+        Alexander Potashev <aspotashev@emcraft.com>
+Subject: [PATCH 3/9] arm: add call to CPU idle quirks handler
+Date: Tue, 23 Jun 2015 23:19:41 +0200
+Message-Id: <1435094387-20146-4-git-send-email-pawelo@king.net.pl>
+In-Reply-To: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-=EF=BB=BFOn 02-06-15 09:50, Paul Bolle wrote:
-> On Mon, 2015-06-01 at 12:13 +0200, Mike Looijmans wrote:
->> --- /dev/null
->> +++ b/drivers/clk/clk-cdce925.c
->
->> +static int cdce925_regmap_i2c_write(
->> +	void *context, const void *data, size_t count)
->
->> +	dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
->> +			reg_data[0], reg_data[1]);
->
-> For some silly reason (ie, I mistakenly thought I spotted an issue) I
-> did a quick build of this file. That triggered some noise on x86_64.
-> Excerpt:
->
-> drivers/clk/clk-cdce925.c: In function =E2=80=98cdce925_regmap_i2c_write=
-=E2=80=99:
-> include/linux/dynamic_debug.h:64:16: warning: format =E2=80=98%u=E2=80=99=
- expects argument of type =E2=80=98unsigned int=E2=80=99, but argument 5 ha=
-s type =E2=80=98size_t=E2=80=99 [-Wformat=3D]
->    static struct _ddebug  __aligned(8)   \
->                  ^
-> [...]
-> drivers/clk/clk-cdce925.c:505:2: note: in expansion of macro =E2=80=98dev=
-_dbg=E2=80=99
->    dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
->    ^
->
-> A quick look at Documentation/printk-formats.txt suggested this (very
-> lightly tested) fix:
-> @@ -502,7 +502,7 @@ static int cdce925_regmap_i2c_write(
->          reg_data[0] =3D CDCE925_I2C_COMMAND_BYTE_TRANSFER | ((u8 *)data)=
-[0];
->          reg_data[1] =3D ((u8 *)data)[1];
->
-> -       dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
-> +       dev_dbg(&i2c->dev, "%s(%zu) %#x %#x\n", __func__, count,
->                          reg_data[0], reg_data[1]);
->
->          ret =3D i2c_master_send(i2c, reg_data, count);
->
->> +static int cdce925_regmap_i2c_read(void *context,
->> +	   const void *reg, size_t reg_size, void *val, size_t val_size)
->
->> +		dev_dbg(&i2c->dev, "%s(%u, %u) %#x %#x\n", __func__,
->> +				reg_size, val_size, reg_data[0], *((u8 *)val));
->
-> Likewise:
-> @@ -547,7 +547,7 @@ static int cdce925_regmap_i2c_read(void *context,
->
->          ret =3D i2c_transfer(i2c->adapter, xfer, 2);
->          if (likely(ret =3D=3D 2)) {
-> -               dev_dbg(&i2c->dev, "%s(%u, %u) %#x %#x\n", __func__,
-> +               dev_dbg(&i2c->dev, "%s(%zu, %zu) %#x %#x\n", __func__,
->                                  reg_size, val_size, reg_data[0], *((u8 *=
-)val));
->                  return 0;
->          } else if (ret < 0)
->
-> Thanks,
->
->
-> Paul Bolle
->
+Some SoCs need additional actions to be performed after arch idle,
+e.g. Kinetis requires invalidation of the I/D bus cache.
 
+Such handler could be held in provided <mach/idle.h> header file.
 
+Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
+---
+ arch/arm/Kconfig          | 7 +++++++
+ arch/arm/kernel/process.c | 7 +++++++
+ 2 files changed, 14 insertions(+)
 
-Kind regards,
-
-Mike Looijmans
-System Expert
-
-TOPIC Embedded Products
-Eindhovenseweg 32-C, NL-5683 KH Best
-Postbus 440, NL-5680 AK Best
-Telefoon: +31 (0) 499 33 69 79
-Telefax: +31 (0) 499 33 69 70
-E-mail: mike.looijmans@topicproducts.com
-Website: www.topicproducts.com
-
-Please consider the environment before printing this e-mail
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 8e3a833..8ef8f8f 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -98,6 +98,13 @@ config ARM_HAS_SG_CHAIN
+ config NEED_SG_DMA_LENGTH
+ 	bool
+ 
++config NEED_MACH_IDLE_H
++	bool
++
++config ARM_CPU_IDLE_QUIRKS
++	bool
++	select NEED_MACH_IDLE_H
++
+ config ARM_DMA_USE_IOMMU
+ 	bool
+ 	select ARM_HAS_SG_CHAIN
+diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
+index f192a2a..0033460 100644
+--- a/arch/arm/kernel/process.c
++++ b/arch/arm/kernel/process.c
+@@ -37,6 +37,10 @@
+ #include <asm/tls.h>
+ #include <asm/vdso.h>
+ 
++#ifdef CONFIG_NEED_MACH_IDLE_H
++#include <mach/idle.h>
++#endif
++
+ #ifdef CONFIG_CC_STACKPROTECTOR
+ #include <linux/stackprotector.h>
+ unsigned long __stack_chk_guard __read_mostly;
+@@ -70,6 +74,9 @@ void arch_cpu_idle(void)
+ 		arm_pm_idle();
+ 	else
+ 		cpu_do_idle();
++#ifdef CONFIG_ARM_CPU_IDLE_QUIRKS
++	handle_cpu_idle_quirks();
++#endif
+ 	local_irq_enable();
+ }
+ 
+-- 
+2.3.6
