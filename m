@@ -1,117 +1,80 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	matthias.bgg@gmail.com
-Cc: s.hauer@pengutronix.de,
-	jamesjj.liao@mediatek.com,
-	henryc.chen@mediatek.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	manabian@gmail.com
-Subject: [PATCH v3 2/3] clk: mediatek: Add support for clk-mux using regmap
-Date: Tue,  9 Jun 2015 17:38:02 +0200
-Message-Id: <1433864283-25490-3-git-send-email-matthias.bgg@gmail.com>
-In-Reply-To: <1433864283-25490-1-git-send-email-matthias.bgg@gmail.com>
-References: <1433864283-25490-1-git-send-email-matthias.bgg@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 23 Jun 2015 23:33:58 +0100
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Paul Osmialowski <pawelo@king.net.pl>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Anson Huang <b20788@freescale.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Frank Li <Frank.Li@freescale.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Jingchang Lu <jingchang.lu@freescale.com>,
+	Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nathan Lynch <nathan_lynch@mentor.com>,
+	Nicolas Pitre <nico@linaro.org>,
+	Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
+	Olof Johansson <olof@lixom.net>,
+	Paul Bolle <pebolle@tiscali.nl>,
+	Rob Herring <r.herring@freescale.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+	Shawn Guo <shawn.guo@linaro.org>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Stefan Agner <stefan@agner.ch>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+	Yuri Tikhonov <yur@emcraft.com>,
+	Sergei Poselenov <sposelenov@emcraft.com>,
+	Dmitry Cherkassov <d_cherkasov@emcraft.com>,
+	Alexander Potashev <aspotashev@emcraft.com>
+Subject: Re: [PATCH 5/9] arm: twr-k70f120m: basic support for Kinetis
+ TWR-K70F120M
+Message-ID: <20150623223358.GI7557@n2100.arm.linux.org.uk>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
+ <1435094387-20146-6-git-send-email-pawelo@king.net.pl>
+ <3935594.UmXqE2ND2k@wuerfel>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <3935594.UmXqE2ND2k@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patches adds support for the mediatek clocks to be able to register
-and use a clk-mux wich relies on regmap.
+On Wed, Jun 24, 2015 at 12:05:40AM +0200, Arnd Bergmann wrote:
+> On Tuesday 23 June 2015 23:19:43 Paul Osmialowski wrote:
+> > @@ -1740,7 +1752,7 @@ source "mm/Kconfig"
+> >  config FORCE_MAX_ZONEORDER
+> >  	int "Maximum zone order" if ARCH_SHMOBILE_LEGACY
+> >  	range 11 64 if ARCH_SHMOBILE_LEGACY
+> > -	default "12" if SOC_AM33XX
+> > +	default "12" if SOC_AM33XX || ARCH_KINETIS
+> >  	default "9" if SA1111 || ARCH_EFM32
+> >  	default "11"
+> >  	help
+> 
+> Put it in the defconfig?
 
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
----
- drivers/clk/mediatek/clk-mtk.c | 37 +++++++++++++++++++++++++++++++++++++
- drivers/clk/mediatek/clk-mtk.h | 26 ++++++++++++++++++++++++++
- 2 files changed, 63 insertions(+)
+That doesn't work - defconfigs only provide the answers to _visible_
+options.  This option won't be visible.
 
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 18444ae..cf953a8 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -111,6 +111,43 @@ int mtk_clk_register_gates(struct device_node *node, const struct mtk_gate *clks
- 	return 0;
- }
- 
-+int mtk_clk_regm_register_mux(struct device_node *node,
-+		const struct mtk_regm_mux *clks, int num,
-+		struct clk_onecell_data *clk_data)
-+{
-+	int i;
-+	struct clk *clk;
-+	struct regmap *regmap;
-+
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	regmap = syscon_node_to_regmap(node);
-+	if (IS_ERR(regmap)) {
-+		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
-+				PTR_ERR(regmap));
-+		return PTR_ERR(regmap);
-+	}
-+
-+	for (i = 0; i < num; i++) {
-+		const struct mtk_regm_mux *mux = &clks[i];
-+
-+		clk = clk_regm_register_mux(NULL, mux->name, mux->parent_names,
-+					mux->num_parents, 0, regmap,
-+					mux->mux_offset, mux->mux_shift,
-+					mux->mux_width, mux->flags, NULL);
-+		if (IS_ERR(clk)) {
-+			pr_err("Failed to register clk mux %s: %ld\n",
-+					mux->name, PTR_ERR(clk));
-+			continue;
-+		}
-+
-+		clk_data->clks[mux->id] = clk;
-+	}
-+
-+	return 0;
-+}
-+
- struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
- 		void __iomem *base, spinlock_t *lock)
- {
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index 9dda9d8..6fe85ca 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -156,6 +156,32 @@ void __init mtk_clk_register_plls(struct device_node *node,
- 		const struct mtk_pll_data *plls, int num_plls,
- 		struct clk_onecell_data *clk_data);
- 
-+struct mtk_regm_mux {
-+	int id;
-+	const char *name;
-+	const char * const *parent_names;
-+	u8 num_parents;
-+	unsigned flags;
-+	uint32_t mux_offset;
-+	uint32_t mux_shift;
-+	uint32_t mux_width;
-+};
-+
-+int __init mtk_clk_regm_register_mux(struct device_node *node,
-+		const struct mtk_regm_mux *clks, int num,
-+		struct clk_onecell_data *clk_data);
-+
-+#define MUX_REGMAP(_id, _name, _parents, _offset, _shift, _width) {	\
-+		.id = _id,						\
-+		.name = _name,						\
-+		.parent_names = _parents,				\
-+		.num_parents = ARRAY_SIZE(_parents),			\
-+		.flags = CLK_SET_RATE_PARENT,				\
-+		.mux_offset = _offset,					\
-+		.mux_shift = _shift,					\
-+		.mux_width = _width,					\
-+	}
-+
- #ifdef CONFIG_RESET_CONTROLLER
- void mtk_register_reset_controller(struct device_node *np,
- 			unsigned int num_regs, int regofs);
 -- 
-1.9.1
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
