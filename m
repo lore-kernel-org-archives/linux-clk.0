@@ -1,9 +1,11 @@
-Return-Path: <newchief@king.net.pl>
+Return-Path: <pawelo@king.net.pl>
+Date: Wed, 24 Jun 2015 06:42:58 +0200 (CEST)
 From: Paul Osmialowski <pawelo@king.net.pl>
-To: Andrew Morton <akpm@linux-foundation.org>,
+To: Arnd Bergmann <arnd@arndb.de>
+cc: Paul Osmialowski <pawelo@king.net.pl>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Anson Huang <b20788@freescale.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
         Bhupesh Sharma <bhupesh.sharma@freescale.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Frank Li <Frank.Li@freescale.com>,
@@ -36,141 +38,183 @@ To: Andrew Morton <akpm@linux-foundation.org>,
         Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, dmaengine@vger.kernel.org
-Cc: Paul Osmialowski <pawelo@king.net.pl>, Yuri Tikhonov <yur@emcraft.com>,
+        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+        Yuri Tikhonov <yur@emcraft.com>,
         Sergei Poselenov <sposelenov@emcraft.com>,
         Dmitry Cherkassov <d_cherkasov@emcraft.com>,
         Alexander Potashev <aspotashev@emcraft.com>
-Subject: [PATCH 0/9] [New BSP] Add initial support for Freescale Kinetis TWR-K70F120M development kit
-Date: Tue, 23 Jun 2015 23:19:38 +0200
-Message-Id: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
+Subject: Re: [PATCH 5/9] arm: twr-k70f120m: basic support for Kinetis
+ TWR-K70F120M
+In-Reply-To: <3935594.UmXqE2ND2k@wuerfel>
+Message-ID: <alpine.LNX.2.00.1506240627020.24366@localhost.localdomain>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <1435094387-20146-6-git-send-email-pawelo@king.net.pl> <3935594.UmXqE2ND2k@wuerfel>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds a very basic initial support for TWR-K70F120M
-development kit which is based on ARM Cortex-M4 Freescale Kinetis K70 SoC.
+Hi Arnd,
 
-I've found this a very lovely piece of equipment which allowed me to
-explore mysterious world of noMMU Linux. Therefore I think it deserves
-proper support from upstream Linux kernel side.
+Thanks for all of your input. Your comments will all be considered during 
+my works on the second iteration of this patchset.
 
-I based my work on K70 Sub-Family Reference Manual Rev. 3,
-K70P256M150SF3RM.pdf and commits published on Emcraft git repo:
+On Wed, 24 Jun 2015, Arnd Bergmann wrote:
 
-https://github.com/EmcraftSystems/linux-emcraft.git
-
-The BSP published by Emcraft is based on Linux 2.6.33, does not use
-OF Device Tree and implements its own NVIC, clock source, IOMUX and DMA
-controller support routines. I wrote clear remarks whenever I'd used parts
-of the code from their repository.
-
-I decided to make use of recent additions to linux-next whenever it was
-suitable, i.e.:
-
-o all devices are configured in .dts files
-o for NVIC I used in-tree driver
-o for systick I used recently added arm,armv7m-systick driver
-o for clock sources I implemented drivers that in shape are similar
-      to efm32gg drivers (another ARM Cortex-M4 based platform - already
-      supported by upstream kernel so I could use it as a reference on how
-      things should possibly be done)
-o for IOMUX I implemented very simplified pinctrl OF-friendly driver
-  (which is sufficient for now, at least to configure UART pins)
-o for DMA I extended existing Freescale eDMA driver
-o for UART I also extended existing Freescale lpuart driver
-
-You may find the first three patches a bit controversial. They intrude into
-sensitive parts of ARM support in kernel tree. You may not like it, but
-that's how it started to work for me. I tried to minimize the impact as
-much as I could, however any better proposals are more than welcome.
-
-Note that U-boot on my TWR-K70F120M is a bit modest and does not support
-DTBs. Therefore the only option for having bootable uImage is zImage with
-DTB attached at the end. In short it can be done like this:
-
-make uImage                  (this creates normal uImage along with zImage)
-make kinetis-twr-k70f120m.dtb
-cat arch/arm/boot/zImage arch/arm/boot/dts/kinetis-twr-k70f120m.dtb >Image
-mkimage -A arm -O linux -C none -T kernel -a 0x08008000 -e 0x08008001 \
-        -n 'Linux-next-with-dtb' -d Image uImage
-
-I'm booting this image over local network using TFTP. The userspace resides
-in initramfs and consists of busybox and a few very basic command line
-tools.
-
-This initial support is just a beginning. My TWR-K70F120M is equipped with
-many interesting features to which many drivers can be written.
-
-During my work I was using Segger J-Link PRO JTAG which works nicely with
-this development board - I can't imagine myself doing all this stuff
-without it.
-
-Paul Osmialowski (9):
-  arm: select different compiler flags for ARM CortexM3
-  arm: do not place huge encoder tables on stack when it is too small
-  arm: add call to CPU idle quirks handler
-  arm: allow copying of vector table to internal SRAM memory
-  arm: twr-k70f120m: basic support for Kinetis TWR-K70F120M
-  arm: twr-k70f120m: clock source drivers for Kinetis SoC
-  arm: twr-k70f120m: IOMUX driver for Kinetis SoC
-  arm: twr-k70f120m: extend Freescale eDMA driver with ability to
-    support Kinetis SoC
-  arm: twr-k70f120m: extend Freescale lpuart driver with ability to
-    support Kinetis SoC
-
- Documentation/devicetree/bindings/arm/fsl.txt      |   6 +
- .../devicetree/bindings/clock/kinetis-clock.txt    |  25 +
- Documentation/devicetree/bindings/dma/fsl-edma.txt |  38 +-
- .../bindings/pinctrl/fsl,kinetis-pinctrl.txt       |  31 ++
- .../devicetree/bindings/serial/fsl-lpuart.txt      |   6 +-
- .../bindings/timer/fsl,kinetis-pit-timer.txt       |  18 +
- arch/arm/Kconfig                                   |  29 +-
- arch/arm/Kconfig-nommu                             |  16 +
- arch/arm/Makefile                                  |   2 +
- arch/arm/boot/dts/kinetis-twr-k70f120m.dts         |  43 ++
- arch/arm/boot/dts/kinetis.dtsi                     | 215 +++++++++
- arch/arm/kernel/entry-v7m.S                        |   3 +
- arch/arm/kernel/process.c                          |   7 +
- arch/arm/mach-kinetis/Kconfig                      |  15 +
- arch/arm/mach-kinetis/Makefile                     |   5 +
- arch/arm/mach-kinetis/Makefile.boot                |   3 +
- arch/arm/mach-kinetis/include/mach/idle.h          |  33 ++
- arch/arm/mach-kinetis/include/mach/kinetis.h       | 170 +++++++
- arch/arm/mach-kinetis/include/mach/memory.h        |  61 +++
- arch/arm/mach-kinetis/include/mach/power.h         |  83 ++++
- arch/arm/mach-kinetis/kinetis_platform.c           |  61 +++
- arch/arm/mm/Kconfig                                |  12 +-
- arch/arm/mm/proc-v7m.S                             |  11 +
- arch/arm/tools/mach-types                          |   1 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-kinetis.c                          | 297 ++++++++++++
- drivers/clocksource/Kconfig                        |   5 +
- drivers/clocksource/Makefile                       |   1 +
- drivers/clocksource/timer-kinetis.c                | 294 ++++++++++++
- drivers/dma/fsl-edma.c                             |  81 +++-
- drivers/pinctrl/freescale/Kconfig                  |   8 +
- drivers/pinctrl/freescale/Makefile                 |   1 +
- drivers/pinctrl/freescale/pinctrl-kinetis.c        | 529 +++++++++++++++++++++
- drivers/tty/serial/fsl_lpuart.c                    |  90 +++-
- include/dt-bindings/clock/kinetis-mcg.h            |  25 +
- lib/zlib_inflate/inflate.c                         |   5 +
- 36 files changed, 2210 insertions(+), 21 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/kinetis-clock.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,kinetis-pinctrl.txt
- create mode 100644 Documentation/devicetree/bindings/timer/fsl,kinetis-pit-timer.txt
- create mode 100644 arch/arm/boot/dts/kinetis-twr-k70f120m.dts
- create mode 100644 arch/arm/boot/dts/kinetis.dtsi
- create mode 100644 arch/arm/mach-kinetis/Kconfig
- create mode 100644 arch/arm/mach-kinetis/Makefile
- create mode 100644 arch/arm/mach-kinetis/Makefile.boot
- create mode 100644 arch/arm/mach-kinetis/include/mach/idle.h
- create mode 100644 arch/arm/mach-kinetis/include/mach/kinetis.h
- create mode 100644 arch/arm/mach-kinetis/include/mach/memory.h
- create mode 100644 arch/arm/mach-kinetis/include/mach/power.h
- create mode 100644 arch/arm/mach-kinetis/kinetis_platform.c
- create mode 100644 drivers/clk/clk-kinetis.c
- create mode 100644 drivers/clocksource/timer-kinetis.c
- create mode 100644 drivers/pinctrl/freescale/pinctrl-kinetis.c
- create mode 100644 include/dt-bindings/clock/kinetis-mcg.h
-
--- 
-2.3.6
+> On Tuesday 23 June 2015 23:19:43 Paul Osmialowski wrote:
+>> @@ -1740,7 +1752,7 @@ source "mm/Kconfig"
+>>  config FORCE_MAX_ZONEORDER
+>>  	int "Maximum zone order" if ARCH_SHMOBILE_LEGACY
+>>  	range 11 64 if ARCH_SHMOBILE_LEGACY
+>> -	default "12" if SOC_AM33XX
+>> +	default "12" if SOC_AM33XX || ARCH_KINETIS
+>>  	default "9" if SA1111 || ARCH_EFM32
+>>  	default "11"
+>>  	help
+>
+> Put it in the defconfig?
+>
+>> +#
+>> +
+>> +obj-$(CONFIG_MACH_KINETIS)	+= kinetis_platform.o
+>
+> just use
+>
+> obj-y	+= kinetis.o
+>
+>> diff --git a/arch/arm/mach-kinetis/include/mach/idle.h b/arch/arm/mach-kinetis/include/mach/idle.h
+>> new file mode 100644
+>> index 0000000..0aafefd
+>> --- /dev/null
+>> +++ b/arch/arm/mach-kinetis/include/mach/idle.h
+>
+> No mach/*.h files please.
+>
+>> +/*
+>> + * This Kinetis port assumes that the CPU works in little-endian mode.
+>> + * Switching to big-endian will require different bit offsets in peripheral
+>> + * devices' registers. Also, some bit groups may lay on byte edges, so issue
+>> + * with big-endian cannot be fixed only by defining bit offsets differently
+>> + * for the big-endian mode.
+>> + */
+>> +#ifndef __LITTLE_ENDIAN
+>> +#error This Kinetis port assumes that the CPU works in little-endian mode
+>> +#endif
+>
+> Fix the drivers instead?
+>
+>> +/*
+>> + * Peripheral memory map
+>> + */
+>> +#define KINETIS_AIPS0PERIPH_BASE	0x40000000
+>> +#define KINETIS_AIPS1PERIPH_BASE	0x40080000
+>
+> Move it into DT
+>
+>> +/*
+>> + * System Integration Module (SIM) register map
+>> + *
+>> + * This map actually covers two hardware modules:
+>> + *     1. SIM low-power logic, at 0x40047000
+>> + *     2. System integration module (SIM), at 0x40048000
+>> + */
+>> +struct kinetis_sim_regs {
+>> +	u32 sopt1;	/* System Options Register 1 */
+>> +	u32 rsv0[1024];
+>> +	u32 sopt2;	/* System Options Register 2 */
+>> +	u32 rsv1;
+>> +	u32 sopt4;	/* System Options Register 4 */
+>> +	u32 sopt5;	/* System Options Register 5 */
+>> +	u32 sopt6;	/* System Options Register 6 */
+>> +	u32 sopt7;	/* System Options Register 7 */
+>> +	u32 rsv2[2];
+>> +	u32 sdid;	/* System Device Identification Register */
+>> +	u32 scgc[KINETIS_SIM_CG_NUMREGS];	/* Clock Gating Regs 1...7 */
+>> +	u32 clkdiv1;	/* System Clock Divider Register 1 */
+>> +	u32 clkdiv2;	/* System Clock Divider Register 2 */
+>> +	u32 fcfg1;	/* Flash Configuration Register 1 */
+>> +	u32 fcfg2;	/* Flash Configuration Register 2 */
+>> +	u32 uidh;	/* Unique Identification Register High */
+>> +	u32 uidmh;	/* Unique Identification Register Mid-High */
+>> +	u32 uidml;	/* Unique Identification Register Mid Low */
+>> +	u32 uidl;	/* Unique Identification Register Low */
+>> +	u32 clkdiv3;	/* System Clock Divider Register 3 */
+>> +	u32 clkdiv4;	/* System Clock Divider Register 4 */
+>> +	u32 mcr;	/* Misc Control Register */
+>> +};
+>
+> Move it into the driver that uses these.
+>
+>> +/*
+>> + * SIM registers base
+>> + */
+>> +#define KINETIS_SIM_BASE		(KINETIS_AIPS0PERIPH_BASE + 0x00047000)
+>> +#define KINETIS_SIM_PTR(reg) \
+>> +	(&(((struct kinetis_sim_regs *)(KINETIS_SIM_BASE))->reg))
+>> +#define KINETIS_SIM_RD(reg) readl_relaxed(KINETIS_SIM_PTR(reg))
+>> +#define KINETIS_SIM_WR(reg, val) writel_relaxed((val), KINETIS_SIM_PTR(reg))
+>> +#define KINETIS_SIM_SET(reg, mask) \
+>> +	KINETIS_SIM_WR(reg, (KINETIS_SIM_RD(reg)) | (mask))
+>> +#define KINETIS_SIM_RESET(reg, mask) \
+>> +	KINETIS_SIM_WR(reg, (KINETIS_SIM_RD(reg)) & (~(mask)))
+>> +#define KINETIS_SIM_ISSET(reg, mask) \
+>> +	(KINETIS_SIM_RD(reg) & (mask))
+>> +
+>> +/*
+>> + * SIM registers
+>> + */
+>> +/*
+>> + * System Options Register 2
+>> + */
+>> +/* USB HS clock source select */
+>> +#define KINETIS_SIM_SOPT2_USBHSRC_BITS	2
+>> +#define KINETIS_SIM_SOPT2_USBHSRC_MSK	(3 << KINETIS_SIM_SOPT2_USBHSRC_BITS)
+>> +#define KINETIS_SIM_SOPT2_USBHSRC_PLL0	(1 << KINETIS_SIM_SOPT2_USBHSRC_BITS)
+>> +#define KINETIS_SIM_SOPT2_USBHSRC_PLL1	(2 << KINETIS_SIM_SOPT2_USBHSRC_BITS)
+>> +
+>> +/* USB FS clock source select */
+>> +#define KINETIS_SIM_SOPT2_USBFSRC_BITS	22
+>> +#define KINETIS_SIM_SOPT2_USBFSRC_MSK	(3 << KINETIS_SIM_SOPT2_USBFSRC_BITS)
+>> +#define KINETIS_SIM_SOPT2_USBFSRC_PLL0	(1 << KINETIS_SIM_SOPT2_USBFSRC_BITS)
+>> +#define KINETIS_SIM_SOPT2_USBFSRC_PLL1	(2 << KINETIS_SIM_SOPT2_USBFSRC_BITS)
+>> +#define KINETIS_SIM_SOPT2_USBF_CLKSEL	(1 << 18)
+>> +
+>
+> remove all these here.
+>
+>> +/*
+>> + * Map required regions.
+>> + * This being the no-MMU Linux, I am not mapping anything
+>> + * since all I/O registers are available at their physical addresses.
+>> + */
+>> +static void __init kinetis_map_io(void)
+>> +{
+>> +}
+>
+> Not needed, remove.
+>
+>> +/*
+>> + * Freescale Kinetis platform initialization
+>> + */
+>> +static void __init kinetis_init(void)
+>> +{
+>> +	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+>> +}
+>
+> same here.
+>
+>> diff --git a/arch/arm/tools/mach-types b/arch/arm/tools/mach-types
+>> index 2ed1b8a..1d05516 100644
+>> --- a/arch/arm/tools/mach-types
+>> +++ b/arch/arm/tools/mach-types
+>> @@ -554,6 +554,7 @@ smdk4412		MACH_SMDK4412		SMDK4412		3765
+>>  marzen			MACH_MARZEN		MARZEN			3790
+>>  krome			MACH_KROME		KROME			3797
+>>  armadillo800eva		MACH_ARMADILLO800EVA	ARMADILLO800EVA		3863
+>> +kinetis			MACH_KINETIS		KINETIS			3896
+>>  mx53_umobo		MACH_MX53_UMOBO		MX53_UMOBO		3927
+>>  mt4			MACH_MT4		MT4			3981
+>>  u8520			MACH_U8520		U8520			3990
+>
+> Unused, please remove.
+>
+> 	Arnd
+>
