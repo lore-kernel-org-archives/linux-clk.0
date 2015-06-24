@@ -1,72 +1,128 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Return-Path: <tglx@linutronix.de>
+Date: Wed, 24 Jun 2015 09:53:30 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Paul Osmialowski <pawelo@king.net.pl>
+cc: Andrew Morton <akpm@linux-foundation.org>,
+    Anson Huang <b20788@freescale.com>,
+    Ard Biesheuvel <ard.biesheuvel@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+    Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+    Daniel Lezcano <daniel.lezcano@linaro.org>,
+    Frank Li <Frank.Li@freescale.com>,
+    Geert Uytterhoeven <geert+renesas@glider.be>,
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+    Guenter Roeck <linux@roeck-us.net>,
+    Haojian Zhuang <haojian.zhuang@gmail.com>,
+    Ian Campbell <ijc+devicetree@hellion.org.uk>,
+    Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>,
+    Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>,
+    Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+    Linus Walleij <linus.walleij@linaro.org>,
+    Magnus Damm <damm+renesas@opensource.se>,
+    Michael Turquette <mturquette@baylibre.com>,
+    Nathan Lynch <nathan_lynch@mentor.com>, Nicolas Pitre <nico@linaro.org>,
+    Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
+    Olof Johansson <olof@lixom.net>, Paul Bolle <pebolle@tiscali.nl>,
+    Rob Herring <r.herring@freescale.com>, Rob Herring <robh+dt@kernel.org>,
+    Russell King <linux@arm.linux.org.uk>,
+    Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+    Shawn Guo <shawn.guo@linaro.org>,
+    Simon Horman <horms+renesas@verge.net.au>, Stefan Agner <stefan@agner.ch>,
+    Stephen Boyd <sboyd@codeaurora.org>,
+    Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+    Catalin Marinas <catalin.marinas@arm.com>,
+    Dave Martin <Dave.Martin@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+    Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
+    linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+    linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+    devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+    Yuri Tikhonov <yur@emcraft.com>, Sergei Poselenov <sposelenov@emcraft.com>,
+    Dmitry Cherkassov <d_cherkasov@emcraft.com>,
+    Alexander Potashev <aspotashev@emcraft.com>
+Subject: Re: [PATCH 6/9] arm: twr-k70f120m: clock source drivers for Kinetis
+ SoC
+In-Reply-To: <1435094387-20146-7-git-send-email-pawelo@king.net.pl>
+Message-ID: <alpine.DEB.2.11.1506240947330.4037@nanos>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <1435094387-20146-7-git-send-email-pawelo@king.net.pl>
 MIME-Version: 1.0
-To: Joachim  Eastwood <manabian@gmail.com>, 
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <CAGhQ9VwONWTULGUbGuf_2HbLpfU4pp8S49xdtoCcKcm1p=n7hg@mail.gmail.com>
-References: <1432845107-12458-1-git-send-email-manabian@gmail.com>
- <1432845107-12458-4-git-send-email-manabian@gmail.com>
- <20150610021315.6017.58085@quantum>
- <CAGhQ9VwONWTULGUbGuf_2HbLpfU4pp8S49xdtoCcKcm1p=n7hg@mail.gmail.com>
-Message-ID: <20150618224538.9112.61682@quantum>
-Subject: Re: [PATCH v4 3/5] clk: add lpc18xx ccu clk driver
-Date: Thu, 18 Jun 2015 15:45:38 -0700
-Cc: devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
- linux-clk@vger.kernel.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Joachim Eastwood (2015-06-10 07:02:59)
-> Hi Mike,
-> 
-> 
-> > Hi Joachim,
-> >
-> > If it were me, I would have broken this up into two tables, one for each
-> > CCU. In general I would structure the code to reflect the fact that two
-> > different IP blocks are being accessed. This isn't a deal breaker but I
-> > thought I would mention it in case you want to make the change.
-> >
-> > Otherwise this series looks good to me. Let me know if you plan a V5
-> > submission.
-> 
-> If there is still time for 4.2 and you don't have any more comments on
-> how the driver uses the DT bindings I would rather send a follow up
-> patch that splits the ccu table for 4.3.
-> 
-> 
-> > I can take patches #1-4 into the clk tree. Please add my Acked-by to
-> > patch #5. I will create an immutable branch to share with the arm-soc
-> > tree so that they can take #5 and have access to the dt-bindings
-> > headers.
-> 
-> Sounds good. I'll talk to arm-soc team about it. But it isn't critical
-> for me to get the DTS changes in for 4.2, but I would be very grateful
-> for getting the drivers and headers in for 4.2 so that 4.3 is ready
-> and doesn't have any header dependencies for all the driver DTS stuff.
+On Tue, 23 Jun 2015, Paul Osmialowski wrote:
+> +/*
+> + * Clock event device set mode function
+> + */
+> +static void kinetis_clockevent_tmr_set_mode(
+> +	enum clock_event_mode mode, struct clock_event_device *clk)
+> +{
+> +	struct kinetis_clock_event_ddata *pit =
+> +		container_of(clk, struct kinetis_clock_event_ddata, evtdev);
+> +
+> +	switch (mode) {
+> +	case CLOCK_EVT_MODE_PERIODIC:
+> +		kinetis_pit_enable(pit->base, 1);
+> +		break;
+> +	case CLOCK_EVT_MODE_ONESHOT:
+> +	case CLOCK_EVT_MODE_UNUSED:
+> +	case CLOCK_EVT_MODE_SHUTDOWN:
+> +	default:
+> +		kinetis_pit_enable(pit->base, 0);
+> +	}
+> +}
 
-Patches #1-4 applied to clk-next for 4.2.
+Please move to the new set_state_* interfaces. set_mode() is deprecated.
 
-Regards,
-Mike
+> +static int kinetis_clockevent_tmr_set_next_event(
+> +	unsigned long delta, struct clock_event_device *c)
+> +{
+> +	struct kinetis_clock_event_ddata *pit =
+> +		container_of(c, struct kinetis_clock_event_ddata, evtdev);
+> +	unsigned long flags;
+> +
+> +	raw_local_irq_save(flags);
 
-> 
-> Thanks, Mike.
-> 
-> 
-> regards,
-> Joachim Eastwood
+Pointless exercise. This is called with interrupts disabled.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> +	kinetis_pit_init(pit->base, delta);
+> +	kinetis_pit_enable(pit->base, 1);
+> +	raw_local_irq_restore(flags);
+
+
+> +static struct irqaction kinetis_clockevent_irqaction[KINETIS_PIT_CHANNELS] = {
+> +	{
+> +		.name = "Kinetis Kernel Time Tick (pit0)",
+
+Please use oneword descriptive names not half sentences.
+
+> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
+> +		.dev_id = &kinetis_clockevent_tmrs[0],
+> +		.handler = kinetis_clockevent_tmr_irq_handler,
+> +	}, {
+> +		.name = "Kinetis Kernel Time Tick (pit1)",
+> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
+> +		.dev_id = &kinetis_clockevent_tmrs[1],
+> +		.handler = kinetis_clockevent_tmr_irq_handler,
+> +	}, {
+> +		.name = "Kinetis Kernel Time Tick (pit2)",
+> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
+> +		.dev_id = &kinetis_clockevent_tmrs[2],
+> +		.handler = kinetis_clockevent_tmr_irq_handler,
+> +	}, {
+> +		.name = "Kinetis Kernel Time Tick (pit3)",
+> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
+> +		.dev_id = &kinetis_clockevent_tmrs[3],
+> +		.handler = kinetis_clockevent_tmr_irq_handler,
+> +	},
+
+Aside of that. Please use standard request_irq() there is no reason to
+use setup_irq here.
+
+> +
+> +	setup_irq(irq, &(kinetis_clockevent_irqaction[chan]));
+
+  request_irq(irq, handler, flags, "name", &kinetis_clockevent_tmrs[chan]);
+
+....
+
+Thanks,
+
+	tglx
