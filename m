@@ -1,51 +1,79 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: Fix wrong clock for Exynos4x12 ADC
-Date: Thu, 11 Jun 2015 17:26:30 +0900
-Message-id: <1434011190-24563-2-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
-References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <558B0CD7.6040302@codeaurora.org>
+Date: Wed, 24 Jun 2015 13:02:31 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+MIME-Version: 1.0
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>
+CC: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/9] drivers: clk: st: Incorrect clocks status
+References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org> <1435068567-30995-2-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1435068567-30995-2-git-send-email-gabriel.fernandez@linaro.org>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The TSADC gate clock is present only in Exynos4210. It should not be
-added to exynos4x12.dtsi because the register controlling it is reserved
-on Exynos4x12.
+On 06/23/2015 07:09 AM, Gabriel Fernandez wrote:
+> In the clk_summary output, the h/w status of DivMux is incorrect
+> (Parent and Enable status), since the clk_mux_ops.get_parent()
+> returns -ERRCODE when clock is OFF.
+>
+> Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> ---
+>  drivers/clk/st/clkgen-mux.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
+> index 4fbe6e0..c94b56b 100644
+> --- a/drivers/clk/st/clkgen-mux.c
+> +++ b/drivers/clk/st/clkgen-mux.c
+> @@ -128,7 +128,7 @@ static int clkgena_divmux_is_enabled(struct clk_hw *hw)
+>  
+>  	__clk_hw_set_clk(mux_hw, hw);
+>  
+> -	return (s8)clk_mux_ops.get_parent(mux_hw) > 0;
+> +	return ((s8)clk_mux_ops.get_parent(mux_hw) >= 0);
 
-Instead, the Analog to Digital Converter of Exynos4x12 uses PCLK_ADC
-gate clock from different register.
+Useless parentheses around it all, please drop.
 
-By using proper clock this effectively enables usage of exynos-adc
-driver on Exynos4412 boards, enables accessing sensors connected to it
-on Trats2 board (ntc,ncp15wb473 AP and battery thermistors) and fixes
-following warnings during boot:
-[    2.248247] ERROR: could not get clock /adc@126C0000:adc(0)
-[    2.248262] exynos-adc 126c0000.adc: failed getting clock, err = -2
-[    2.248293] exynos-adc: probe of 126c0000.adc failed with error -2
+>  }
+>  
+>  static u8 clkgena_divmux_get_parent(struct clk_hw *hw)
+> @@ -138,11 +138,13 @@ static u8 clkgena_divmux_get_parent(struct clk_hw *hw)
+>  
+>  	__clk_hw_set_clk(mux_hw, hw);
+>  
+> -	genamux->muxsel = clk_mux_ops.get_parent(mux_hw);
+> -	if ((s8)genamux->muxsel < 0) {
+> -		pr_debug("%s: %s: Invalid parent, setting to default.\n",
+> -		      __func__, __clk_get_name(hw->clk));
+> -		genamux->muxsel = 0;
+> +	if (genamux->muxsel == CKGAX_CLKOPSRC_SWITCH_OFF) {
+> +		genamux->muxsel = clk_mux_ops.get_parent(mux_hw);
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos4x12.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hm.. maybe we should fix clk_mux_ops to return 0 if it can't find the
+parent? Or when this clock is registered we should read the hardware and
+set a default parent so that we can't get an error code here.
 
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index b77dac61ffb5..d7738dd062b7 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -101,7 +101,7 @@
- 		reg = <0x126C0000 0x100>;
- 		interrupt-parent = <&combiner>;
- 		interrupts = <10 3>;
--		clocks = <&clock CLK_TSADC>;
-+		clocks = <&clock CLK_PCLK_ADC>;
- 		clock-names = "adc";
- 		#io-channel-cells = <1>;
- 		io-channel-ranges;
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
