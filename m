@@ -1,51 +1,109 @@
-Return-Path: <s.nawrocki@samsung.com>
-Message-id: <556F26C3.9080302@samsung.com>
-Date: Wed, 03 Jun 2015 18:09:39 +0200
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-MIME-version: 1.0
-To: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
- linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Subject: [GIT PULL] clk/samsung updates for 4.2
-Content-type: text/plain; charset=utf-8
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 24 Jun 2015 19:44:30 +0200 (CEST)
+From: Paul Osmialowski <pawelo@king.net.pl>
+To: Paul Bolle <pebolle@tiscali.nl>
+cc: Paul Osmialowski <pawelo@king.net.pl>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Anson Huang <b20788@freescale.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Frank Li <Frank.Li@freescale.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Jingchang Lu <jingchang.lu@freescale.com>,
+	Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nathan Lynch <nathan_lynch@mentor.com>,
+	Nicolas Pitre <nico@linaro.org>,
+	Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
+	Olof Johansson <olof@lixom.net>,
+	Rob Herring <r.herring@freescale.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+	Shawn Guo <shawn.guo@linaro.org>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Stefan Agner <stefan@agner.ch>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+	Yuri Tikhonov <yur@emcraft.com>,
+	Sergei Poselenov <sposelenov@emcraft.com>,
+	Dmitry Cherkassov <d_cherkasov@emcraft.com>,
+	Alexander Potashev <aspotashev@emcraft.com>
+Subject: Re: [PATCH 7/9] arm: twr-k70f120m: IOMUX driver for Kinetis SoC
+In-Reply-To: <1435141282.4528.71.camel@tiscali.nl>
+Message-ID: <alpine.LNX.2.00.1506241944060.32459@localhost.localdomain>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>  <1435094387-20146-8-git-send-email-pawelo@king.net.pl> <1435141282.4528.71.camel@tiscali.nl>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Paul,
 
-The following changes since commit 20db7092e478c33a2bf5254063c51f5db6443959:
+Thanks for your comments. I'll make it tristate.
 
-  Merge branch 'clk-next-hi6220' into clk-next (2015-05-27 22:06:42 -0700)
+On Wed, 24 Jun 2015, Paul Bolle wrote:
 
-are available in the git repository at:
-
-
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-for-4.2
-
-for you to fetch changes up to e5c6fc4f271a27d5b236b5f4929bf0f2dab80a7d:
-
-  clk: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks for SMC (2015-06-02
-14:52:12 +0200)
-
-----------------------------------------------------------------
-Updates of the exynos5433 clock definitions for proper support of SMC,
-DVFS of GPU and CPU big.LITTLE cores and a fix for system suspend adding
-one of the clock controller's registers to save/restore list.
-
-----------------------------------------------------------------
-Chanwoo Choi (1):
-      clk: exynos5433: Add CLK_SET_RATE_PARENT to support DVFS for big.LITTLE core
-
-Hyungwon Hwang (1):
-      clk: exynos5433: Add DIV_CPIF to the list of stored registers on suspend
-
-Jonghwa Lee (1):
-      clk: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks for SMC
-
-Joonyoung Shim (1):
-      clk: exynos5433: Add clock flag to support the DVFS of GPU
-
- drivers/clk/samsung/clk-exynos5433.c |   81 +++++++++++++++++-----------------
- 1 file changed, 40 insertions(+), 41 deletions(-)
-
--- 
-Thanks,
-Sylwester
+> On Tue, 2015-06-23 at 23:19 +0200, Paul Osmialowski wrote:
+>> --- a/drivers/pinctrl/freescale/Kconfig
+>> +++ b/drivers/pinctrl/freescale/Kconfig
+>
+>> +config PINCTRL_KINETIS
+>> +	bool "Kinetis pinctrl driver"
+>> +	depends on OF
+>> +	depends on SOC_K70
+>> +	select PINMUX
+>> +	help
+>> +	  Say Y here to enable the Kinetis pinctrl driver
+>
+>> --- a/drivers/pinctrl/freescale/Makefile
+>> +++ b/drivers/pinctrl/freescale/Makefile
+>
+>> +obj-$(CONFIG_PINCTRL_KINETIS)	+= pinctrl-kinetis.o
+>
+>> --- /dev/null
+>> +++ b/drivers/pinctrl/freescale/pinctrl-kinetis.c
+>
+>> +#include <linux/module.h>
+>
+>> +static struct pinctrl_desc kinetis_pinctrl_desc = {
+>> +	[...]
+>> +	.owner = THIS_MODULE,
+>> +};
+>
+>> +static void __exit kinetis_pinctrl_exit(void)
+>> +{
+>> +	platform_driver_unregister(&kinetis_pinctrl_driver);
+>> +}
+>> +module_exit(kinetis_pinctrl_exit);
+>> +
+>> +MODULE_DESCRIPTION("Freescale Kinetis pinctrl driver");
+>> +MODULE_LICENSE("GPL v2");
+>
+> pinctrl-kinetis.o can only be built-in, right? But the code uses a few
+> module specific constructs. Did you mean to make PINCTRL_KINETIS
+> tristate instead?
+>
+> Thanks,
+>
+>
+> Paul Bolle
+>
