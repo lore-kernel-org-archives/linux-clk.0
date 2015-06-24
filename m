@@ -1,81 +1,100 @@
-Return-Path: <dinguyen@opensource.altera.com>
-From: <dinguyen@opensource.altera.com>
-To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
-CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Peter Griffin <peter.griffin@linaro.org>, Gabriel FERNANDEZ
-	<gabriel.fernandez@st.com>
-Subject: [PATCH 4/6] clk: st: make use of of_clk_parent_fill helper function
-Date: Wed, 10 Jun 2015 16:49:23 -0500
-Message-ID: <1433972965-24974-5-git-send-email-dinguyen@opensource.altera.com>
-In-Reply-To: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
-References: <1433972965-24974-1-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <pawelo@king.net.pl>
+Date: Wed, 24 Jun 2015 09:17:18 +0200 (CEST)
+From: Paul Osmialowski <pawelo@king.net.pl>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+cc: Paul Osmialowski <pawelo@king.net.pl>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anson Huang <b20788@freescale.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Frank Li <Frank.Li@freescale.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>,
+        Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nathan Lynch <nathan_lynch@mentor.com>,
+        Nicolas Pitre <nico@linaro.org>,
+        Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
+        Olof Johansson <olof@lixom.net>, Paul Bolle <pebolle@tiscali.nl>,
+        Rob Herring <r.herring@freescale.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Stefan Agner <stefan@agner.ch>, Stephen Boyd <sboyd@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Pawel Moll <pawel.moll@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+        linux-clk@vger.kernel.org,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        dmaengine@vger.kernel.org, Yuri Tikhonov <yur@emcraft.com>,
+        Sergei Poselenov <sposelenov@emcraft.com>,
+        Dmitry Cherkassov <d_cherkasov@emcraft.com>,
+        Alexander Potashev <aspotashev@emcraft.com>
+Subject: Re: [PATCH 2/9] arm: do not place huge encoder tables on stack when
+ it is too small
+In-Reply-To: <CAMuHMdUhLwZZRQwTecjrJ22v1kTNc-3PUM+w64vHUs=-D06VpA@mail.gmail.com>
+Message-ID: <alpine.LNX.2.00.1506240913001.26071@localhost.localdomain>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <1435094387-20146-3-git-send-email-pawelo@king.net.pl> <CAMuHMdUhLwZZRQwTecjrJ22v1kTNc-3PUM+w64vHUs=-D06VpA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: dinguyen@opensource.altera.com
+Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
+Hi Geert,
 
-Use of_clk_parent_fill to fill in the parent clock names' array.
+You're right. To be removed. Thanks for spotting this.
 
-Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>
-Cc: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
----
- drivers/clk/st/clk-flexgen.c | 6 ++----
- drivers/clk/st/clkgen-mux.c  | 7 ++-----
- 2 files changed, 4 insertions(+), 9 deletions(-)
+On Wed, 24 Jun 2015, Geert Uytterhoeven wrote:
 
-diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
-index 657ca14..ed0696c 100644
---- a/drivers/clk/st/clk-flexgen.c
-+++ b/drivers/clk/st/clk-flexgen.c
-@@ -243,7 +243,7 @@ static const char ** __init flexgen_get_parents(struct device_node *np,
- 						       int *num_parents)
- {
- 	const char **parents;
--	int nparents, i;
-+	int nparents;
- 
- 	nparents = of_clk_get_parent_count(np);
- 	if (WARN_ON(nparents <= 0))
-@@ -253,10 +253,8 @@ static const char ** __init flexgen_get_parents(struct device_node *np,
- 	if (!parents)
- 		return NULL;
- 
--	for (i = 0; i < nparents; i++)
--		parents[i] = of_clk_get_parent_name(np, i);
-+	*num_parents = of_clk_parent_fill(np, parents, nparents);
- 
--	*num_parents = nparents;
- 	return parents;
- }
- 
-diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
-index 4fbe6e0..b83654a 100644
---- a/drivers/clk/st/clkgen-mux.c
-+++ b/drivers/clk/st/clkgen-mux.c
-@@ -24,7 +24,7 @@ static const char ** __init clkgen_mux_get_parents(struct device_node *np,
- 						       int *num_parents)
- {
- 	const char **parents;
--	int nparents, i;
-+	int nparents;
- 
- 	nparents = of_clk_get_parent_count(np);
- 	if (WARN_ON(nparents <= 0))
-@@ -34,10 +34,7 @@ static const char ** __init clkgen_mux_get_parents(struct device_node *np,
- 	if (!parents)
- 		return ERR_PTR(-ENOMEM);
- 
--	for (i = 0; i < nparents; i++)
--		parents[i] = of_clk_get_parent_name(np, i);
--
--	*num_parents = nparents;
-+	*num_parents = of_clk_parent_fill(np, parents, nparents);
- 	return parents;
- }
- 
--- 
-2.2.1
+> On Tue, Jun 23, 2015 at 11:19 PM, Paul Osmialowski <pawelo@king.net.pl> wrote:
+>> Since stack on Cortex-M3 is too small, we need configuration option
+>> to avoid using it for huge encoder tables of zlib.
+>>
+>> Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
+>
+>> --- a/lib/zlib_inflate/inflate.c
+>> +++ b/lib/zlib_inflate/inflate.c
+>> @@ -75,9 +75,14 @@ int zlib_inflateInit2(z_streamp strm, int windowBits)
+>>     Return state with length and distance decoding tables and index sizes set to
+>>     fixed code decoding.  This returns fixed tables from inffixed.h.
+>>   */
+>> +#ifdef CONFIG_ZLIB_INFLATE_STACK_SAVING
+>> +#   include "inffixed.h"
+>> +#endif
+>>  static void zlib_fixedtables(struct inflate_state *state)
+>>  {
+>> +#ifndef CONFIG_ZLIB_INFLATE_STACK_SAVING
+>>  #   include "inffixed.h"
+>
+> All variables in inffixed.h are "static const", so they are not on the stack
+> anyway, and this patch shouldn't make a difference.
+>
+>> +#endif
+>
+> Gr{oetje,eeting}s,
+>
+>                        Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                -- Linus Torvalds
+>
