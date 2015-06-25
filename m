@@ -1,98 +1,86 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v3 1/7] dt/bindings: Add binding for the Raspberry Pi clock provider
-Date: Mon,  8 Jun 2015 16:58:54 -0700
-Message-Id: <1433807940-15328-1-git-send-email-eric@anholt.net>
+Return-Path: <gabriel.fernandez@linaro.org>
 MIME-Version: 1.0
+In-Reply-To: <558B0CD7.6040302@codeaurora.org>
+References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1435068567-30995-2-git-send-email-gabriel.fernandez@linaro.org> <558B0CD7.6040302@codeaurora.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Date: Thu, 25 Jun 2015 10:41:22 +0200
+Message-ID: <CAG374jAE78p_4=MYg9iNqo-4j8gE5OspzKwphfBUBtr5iOx-1g@mail.gmail.com>
+Subject: Re: [PATCH 1/9] drivers: clk: st: Incorrect clocks status
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>, Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Fabian Frederick <fabf@skynet.be>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kernel@stlinux.com" <kernel@stlinux.com>, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The hardware clocks are not controllable by the ARM, so we have to
-make requests to the firmware to do so from the VPU side.  This will
-let us replace fixed clocks in our DT with actual clock control (and
-correct frequency information).
+Hi Stephen,
 
-v2: Include the dt-bindings header in this commit instead of the next
-    one.  Make the clock indices match the firmware clock IDs.  Rename
-    the binding's compat string.  Move the firmware phandle to be
-    under a vendor-specific namespace.
+Thanks for reviewing
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- .../clock/raspberrypi,bcm2835-firmware-clocks.txt  | 25 ++++++++++++++++++++++
- include/dt-bindings/clk/raspberrypi.h              | 23 ++++++++++++++++++++
- 2 files changed, 48 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt
- create mode 100644 include/dt-bindings/clk/raspberrypi.h
 
-diff --git a/Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt b/Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt
-new file mode 100644
-index 0000000..0972602
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt
-@@ -0,0 +1,25 @@
-+Raspberry Pi firmware clock provider.
-+
-+The Raspberry Pi architecture doesn't provide direct access to the
-+CLOCKMAN peripheral from the ARM side, so Linux has to make requests
-+to the VPU firmware to program them.
-+
-+This binding uses the common clock binding:
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Required properties:
-+- compatible:		Should be "raspberrypi,bcm2835-firmware-clocks"
-+
-+- #clock-cells:		Shall have value <1>.  The permitted clock-specifier
-+			  values can be found in
-+			  include/dt-bindings/clk/raspberrypi.h.
-+
-+- raspberrypi,firmware:	Phandle to the firmware driver node.
-+
-+Example:
-+
-+firmware_clocks: firmware-clocks {
-+	compatible = "raspberrypi,bcm2835-firmware-clocks";
-+	#clock-cells = <1>;
-+	raspberrypi,firmware = <&firmware>;
-+};
-diff --git a/include/dt-bindings/clk/raspberrypi.h b/include/dt-bindings/clk/raspberrypi.h
-new file mode 100644
-index 0000000..ceec90f
---- /dev/null
-+++ b/include/dt-bindings/clk/raspberrypi.h
-@@ -0,0 +1,23 @@
-+#/*
-+ *  Copyright © 2015 Broadcom
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_RASPBERRYPI_H
-+#define _DT_BINDINGS_CLK_RASPBERRYPI_H
-+
-+#define RPI_CLOCK_EMMC	1
-+#define RPI_CLOCK_UART0	2
-+#define RPI_CLOCK_ARM	3
-+#define RPI_CLOCK_CORE	4
-+#define RPI_CLOCK_V3D	5
-+#define RPI_CLOCK_H264	6
-+#define RPI_CLOCK_ISP	7
-+#define RPI_CLOCK_SDRAM	8
-+#define RPI_CLOCK_PIXEL	9
-+#define RPI_CLOCK_PWM	10
-+
-+#endif
--- 
-2.1.4
+On 24 June 2015 at 22:02, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 06/23/2015 07:09 AM, Gabriel Fernandez wrote:
+>> In the clk_summary output, the h/w status of DivMux is incorrect
+>> (Parent and Enable status), since the clk_mux_ops.get_parent()
+>> returns -ERRCODE when clock is OFF.
+>>
+>> Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+>> ---
+>>  drivers/clk/st/clkgen-mux.c | 15 +++++++++------
+>>  1 file changed, 9 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
+>> index 4fbe6e0..c94b56b 100644
+>> --- a/drivers/clk/st/clkgen-mux.c
+>> +++ b/drivers/clk/st/clkgen-mux.c
+>> @@ -128,7 +128,7 @@ static int clkgena_divmux_is_enabled(struct clk_hw *hw)
+>>
+>>       __clk_hw_set_clk(mux_hw, hw);
+>>
+>> -     return (s8)clk_mux_ops.get_parent(mux_hw) > 0;
+>> +     return ((s8)clk_mux_ops.get_parent(mux_hw) >= 0);
+>
+> Useless parentheses around it all, please drop.
+>
+Ok
+
+>>  }
+>>
+>>  static u8 clkgena_divmux_get_parent(struct clk_hw *hw)
+>> @@ -138,11 +138,13 @@ static u8 clkgena_divmux_get_parent(struct clk_hw *hw)
+>>
+>>       __clk_hw_set_clk(mux_hw, hw);
+>>
+>> -     genamux->muxsel = clk_mux_ops.get_parent(mux_hw);
+>> -     if ((s8)genamux->muxsel < 0) {
+>> -             pr_debug("%s: %s: Invalid parent, setting to default.\n",
+>> -                   __func__, __clk_get_name(hw->clk));
+>> -             genamux->muxsel = 0;
+>> +     if (genamux->muxsel == CKGAX_CLKOPSRC_SWITCH_OFF) {
+>> +             genamux->muxsel = clk_mux_ops.get_parent(mux_hw);
+>
+> Hm.. maybe we should fix clk_mux_ops to return 0 if it can't find the
+> parent? Or when this clock is registered we should read the hardware and
+> set a default parent so that we can't get an error code here.
+>
+I 'll try the second solution.
+
+Best regards
+
+Gabriel
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
