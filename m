@@ -1,45 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:36029 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932094AbbFVGYY (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jun 2015 02:24:24 -0400
-From: Keerthy <j-keerthy@ti.com>
-To: <linux-omap@vger.kernel.org>, <tony@atomide.com>
-CC: <galak@codeaurora.org>, <t-kristo@ti.com>, <pawel.moll@arm.com>,
-	<linux-kernel@vger.kernel.org>, <paul@pwsan.com>,
-	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>,
-	<j-keerthy@ti.com>
-Subject: [PATCH 6/6] ARM: PRM: AM437x: Enable IO wakeup feature
-Date: Mon, 22 Jun 2015 11:52:56 +0530
-Message-ID: <1434954176-9605-7-git-send-email-j-keerthy@ti.com>
-In-Reply-To: <1434954176-9605-1-git-send-email-j-keerthy@ti.com>
-References: <1434954176-9605-1-git-send-email-j-keerthy@ti.com>
+Return-Path: <Fabio.Estevam@freescale.com>
+From: Fabio Estevam <fabio.estevam@freescale.com>
+To: shawnguo@kernel.org
+CC: kernel@pengutronix.de, eric.nelson@boundarydevices.com,
+        linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org,
+        Ying.liu@freescale.com, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>
+Subject: [PATCH v2 2/2] clk: imx: clk-imx6q: Provide initial IPU clock settings for mx6dl
+Date: Thu, 25 Jun 2015 11:17:10 -0300
+Message-ID: <1435241830-20187-2-git-send-email-fabio.estevam@freescale.com>
+In-Reply-To: <1435241830-20187-1-git-send-email-fabio.estevam@freescale.com>
+References: <1435241830-20187-1-git-send-email-fabio.estevam@freescale.com>
+Return-Path: fabio.estevam@freescale.com
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable IO wakeup feature.
+Currently it is not possible to use HDMI and LVDS at the same time on a 
+imx6dl-sabresd board.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
+Fix this usecase by setting IMX6QDL_CLK_PLL3_PFD1_540M to 540MHz and
+also by setting it as the parent of IMX6QDL_CLK_IPU1_SEL.
+
+Based on the configuration done in the FSL kernel.
+
+Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
 ---
- arch/arm/mach-omap2/prm_common.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes since v1:
+- None. Newly introduced.
 
-diff --git a/arch/arm/mach-omap2/prm_common.c b/arch/arm/mach-omap2/prm_common.c
-index 10ef0da..238cb4a 100644
---- a/arch/arm/mach-omap2/prm_common.c
-+++ b/arch/arm/mach-omap2/prm_common.c
-@@ -695,6 +695,7 @@ static struct omap_prcm_init_data am4_prm_data __initdata = {
- 	.index = TI_CLKM_PRM,
- 	.init = omap44xx_prm_init,
- 	.device_inst_offset = AM43XX_PRM_DEVICE_INST,
-+	.flags = PRM_HAS_IO_WAKEUP,
- };
- #endif
+ drivers/clk/imx/clk-imx6q.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index d046f8e..d735d8f 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -494,6 +494,11 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 		clk_set_parent(clk[IMX6QDL_CLK_LDB_DI1_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
+ 	}
  
++	if (clk_on_imx6dl()) {
++		clk_set_rate(clk[IMX6QDL_CLK_PLL3_PFD1_540M], 540000000);
++		clk_set_parent(clk[IMX6QDL_CLK_IPU1_SEL], clk[IMX6QDL_CLK_PLL3_PFD1_540M]);
++	}
++
+ 	clk_set_parent(clk[IMX6QDL_CLK_IPU1_DI0_PRE_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
+ 	clk_set_parent(clk[IMX6QDL_CLK_IPU1_DI1_PRE_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
+ 	clk_set_parent(clk[IMX6QDL_CLK_IPU2_DI0_PRE_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
 -- 
 1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-clk" in
