@@ -1,67 +1,91 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 9 Jun 2015 20:44:39 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Russell King <linux@arm.linux.org.uk>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	arm@kernel.org, Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 03/15] clk: kill off set_irq_flags usage
-Message-ID: <20150609204439.1461f02b@bbrezillon>
-In-Reply-To: <1433874401-27161-4-git-send-email-robh@kernel.org>
-References: <1433874401-27161-1-git-send-email-robh@kernel.org>
-	<1433874401-27161-4-git-send-email-robh@kernel.org>
+Return-Path: <nicolas.pitre@linaro.org>
+Return-Path: <nicolas.pitre@linaro.org>
+Date: Thu, 25 Jun 2015 12:42:56 -0400 (EDT)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>
+cc: Paul Osmialowski <pawelo@king.net.pl>,
+    Andrew Morton <akpm@linux-foundation.org>,
+    Anson Huang <b20788@freescale.com>,
+    Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+    Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+    Daniel Lezcano <daniel.lezcano@linaro.org>,
+    Frank Li <Frank.Li@freescale.com>,
+    Geert Uytterhoeven <geert+renesas@glider.be>,
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+    Guenter Roeck <linux@roeck-us.net>,
+    Haojian Zhuang <haojian.zhuang@gmail.com>,
+    Ian Campbell <ijc+devicetree@hellion.org.uk>,
+    Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>,
+    Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>,
+    Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+    Linus Walleij <linus.walleij@linaro.org>,
+    Magnus Damm <damm+renesas@opensource.se>,
+    Michael Turquette <mturquette@baylibre.com>,
+    Nathan Lynch <nathan_lynch@mentor.com>,
+    Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
+    Olof Johansson <olof@lixom.net>, Paul Bolle <pebolle@tiscali.nl>,
+    Rob Herring <r.herring@freescale.com>, Rob Herring <robh+dt@kernel.org>,
+    Russell King <linux@arm.linux.org.uk>,
+    Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+    Shawn Guo <shawn.guo@linaro.org>,
+    Simon Horman <horms+renesas@verge.net.au>, Stefan Agner <stefan@agner.ch>,
+    Stephen Boyd <sboyd@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>,
+    Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+    Catalin Marinas <catalin.marinas@arm.com>,
+    Dave Martin <Dave.Martin@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+    Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
+    linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+    linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+    devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+    Yuri Tikhonov <yur@emcraft.com>, Sergei Poselenov <sposelenov@emcraft.com>,
+    Dmitry Cherkassov <d_cherkasov@emcraft.com>,
+    Alexander Potashev <aspotashev@emcraft.com>
+Subject: Re: [PATCH 3/9] arm: add call to CPU idle quirks handler
+In-Reply-To: <2235698.8UjxLOMCMb@wuerfel>
+Message-ID: <alpine.LFD.2.11.1506251237000.2617@knanqh.ubzr>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <1435094387-20146-4-git-send-email-pawelo@king.net.pl> <2235698.8UjxLOMCMb@wuerfel>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue,  9 Jun 2015 13:26:29 -0500
-Rob Herring <robh@kernel.org> wrote:
+On Tue, 23 Jun 2015, Arnd Bergmann wrote:
 
-> set_irq_flags is ARM specific with custom flags which have genirq
-> equivalents. Convert drivers to use the genirq interfaces directly, so we
-> can kill off set_irq_flags. The translation of flags is as follows:
+> On Tuesday 23 June 2015 23:19:41 Paul Osmialowski wrote:
+> > Some SoCs need additional actions to be performed after arch idle,
+> > e.g. Kinetis requires invalidation of the I/D bus cache.
+> > 
+> > Such handler could be held in provided <mach/idle.h> header file.
+> > 
+> > Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
+> > ---
+> >  arch/arm/Kconfig          | 7 +++++++
+> >  arch/arm/kernel/process.c | 7 +++++++
+> >  2 files changed, 14 insertions(+)
+> > 
+> > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> > index 8e3a833..8ef8f8f 100644
+> > --- a/arch/arm/Kconfig
+> > +++ b/arch/arm/Kconfig
+> > @@ -98,6 +98,13 @@ config ARM_HAS_SG_CHAIN
+> >  config NEED_SG_DMA_LENGTH
+> >  	bool
+> >  
+> > +config NEED_MACH_IDLE_H
+> > +	bool
+> > +
+> > +config ARM_CPU_IDLE_QUIRKS
+> > +	bool
+> > +	select NEED_MACH_IDLE_H
+> > +
 > 
-> IRQF_VALID -> !IRQ_NOREQUEST
-> IRQF_PROBE -> !IRQ_NOPROBE
-> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
-> 
-> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
-> and setting IRQ_NOREQUEST already, so there is no need to do this in
-> .map() functions and we can simply remove the set_irq_flags calls. Some
-> users also set IRQ_NOPROBE and this has been maintained although it is not
-> clear that is really needed. There appears to be a great deal of blind
-> copy and paste of this code.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> We're not adding header files like this, please come up
+> with another solution. How about a cpuidle driver, or
+> possibly just overriding arm_pm_idle()?
 
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
-> Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Cc: Mike Turquette <mturquette@linaro.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org
-> ---
->  drivers/clk/at91/pmc.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> index 3f27d21..828b196 100644
-> --- a/drivers/clk/at91/pmc.c
-> +++ b/drivers/clk/at91/pmc.c
-> @@ -125,7 +125,6 @@ static int pmc_irq_map(struct irq_domain *h, unsigned int virq,
->  
->  	irq_set_chip_and_handler(virq, &pmc_irq,
->  				 handle_level_irq);
-> -	set_irq_flags(virq, IRQF_VALID);
->  	irq_set_chip_data(virq, pmc);
->  
->  	return 0;
+If the WFI instruction always requires I and D flushing, then it might 
+be a better idea to provide a replacement for the corresponding 
+cpu_*_do_idle function.  Plenty of examples exist for other cpu_* 
+functions.
 
 
-
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Nicolas
