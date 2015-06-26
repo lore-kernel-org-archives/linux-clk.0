@@ -1,157 +1,70 @@
-Return-Path: <sudeep.holla@arm.com>
-Message-ID: <55716DA4.2090003@arm.com>
-Date: Fri, 05 Jun 2015 10:36:36 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Fabio Estevam <fabio.estevam@freescale.com>
+To: <shawnguo@kernel.org>
+Subject: [PATCH v3 1/2] ARM: dts: imx6qdl-sabresd: Allow HDMI and LVDS to work
+ simultaneously
+Date: Fri, 26 Jun 2015 14:10:53 -0300
+Message-ID: <1435338654-9098-1-git-send-email-fabio.estevam@freescale.com>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- Liviu Dudau <Liviu.Dudau@arm.com>,
- Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
- "Jon Medhurst (Tixy)" <tixy@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- Kevin Hilman <khilman@kernel.org>,
- Olof Johansson <olof@lixom.net>, Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v3 3/5] clk: add support for clocks provided by SCP(System
- Control Processor)
-References: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com> <1432720398-5701-4-git-send-email-sudeep.holla@arm.com> <20150604202009.GI676@codeaurora.org>
-In-Reply-To: <20150604202009.GI676@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Cc: Fabio Estevam <fabio.estevam@freescale.com>, linux@arm.linux.org.uk,
+ mturquette@baylibre.com, eric.nelson@boundarydevices.com,
+ vladimir_zapolskiy@mentor.com, kernel@pengutronix.de, Ying.liu@freescale.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Currently it is not possible to have HDMI and LVDS working simultaneously,
+because both ports try to use PLL5.
+
+Move the LVDS clock parent to PLL3_USB_OTG, so that HDMI and LVDS can be
+driven from independent sources.
+
+With this change the LDB pixel clock goes to 68.57 MHz, which is still
+within the valid range for the HSD100PXN1 LVDS panel.
+
+Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+Changes since v2:
+- None
+Changes since v1:
+- Move the clock assignment inside &clks as suggested by Philipp
+
+ arch/arm/boot/dts/imx6qdl-sabresd.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+index a626e6d..cca847e 100644
+--- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+@@ -141,6 +141,13 @@
+ 	status = "okay";
+ };
+ 
++&clks {
++	assigned-clocks = <&clks IMX6QDL_CLK_LDB_DI0_SEL>,
++			  <&clks IMX6QDL_CLK_LDB_DI1_SEL>;
++	assigned-clock-parents = <&clks IMX6QDL_CLK_PLL3_USB_OTG>,
++				 <&clks IMX6QDL_CLK_PLL3_USB_OTG>;
++};
++
+ &ecspi1 {
+ 	fsl,spi-num-chipselects = <1>;
+ 	cs-gpios = <&gpio4 9 0>;
+-- 
+1.9.1
 
 
-On 04/06/15 21:20, Stephen Boyd wrote:
-> On 05/27, Sudeep Holla wrote:
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/device.h>
->> +#include <linux/err.h>
->> +#include <linux/of.h>
->> +#include <linux/module.h>
->> +#include <linux/of_platform.h>
->> +#include <linux/scpi_protocol.h>
->> +
->> +struct scpi_clk {
->> +	u32 id;
->> +	const char *name;
->> +	struct clk_hw hw;
->> +	struct scpi_dvfs_info *info;
->> +	unsigned long rate_min;
->> +	unsigned long rate_max;
->> +};
->> +
->> +#define to_scpi_clk(clk) container_of(clk, struct scpi_clk, hw)
->> +
->> +static struct scpi_ops *scpi_ops;
->
-> Why do we need this singleton? Can we put this pointer into scpi_clk?
->
-
-Yes I will move it.
-
->> +
->> +static unsigned long scpi_clk_recalc_rate(struct clk_hw *hw,
->> +					  unsigned long parent_rate)
->> +{
->> +	struct scpi_clk *clk = to_scpi_clk(hw);
->> +
->> +	return scpi_ops->clk_get_val(clk->id);
->> +}
->> +
->> +static long scpi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
->> +				unsigned long *parent_rate)
->> +{
->> +	struct scpi_clk *clk = to_scpi_clk(hw);
->> +
->> +	if (WARN_ON(clk->rate_min && rate < clk->rate_min))
->> +		rate = clk->rate_min;
->> +	if (WARN_ON(clk->rate_max && rate > clk->rate_max))
->> +		rate = clk->rate_max;
->> +
->> +	return rate;
->> +}
->
-> Hm.. this seems really generic. It might be better to support a
-> way to tell the framework to limit the min/max rate that's
-> accepted for a clk. That could be done later though.
->
-
-True, framework have some boundary checks in place. I will check if
-I can use it with minimum changes to the core. If not, we can take this
-up later as you suggested.
-
->> +
->> +static int scpi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->> +			     unsigned long parent_rate)
->> +{
->> +	struct scpi_clk *clk = to_scpi_clk(hw);
->> +
->> +	return scpi_ops->clk_set_val(clk->id, rate);
->> +}
->> +
-> [..]
->> +
->> +static int scpi_clk_add(struct device *dev, struct device_node *np)
->> +{
->> +	struct clk **clks;
->> +	int idx, count;
->> +	struct clk_onecell_data *clk_data;
->> +
->> +	count = of_property_count_strings(np, "clock-output-names");
->> +	if (count < 0) {
->> +		dev_err(dev, "%s: invalid clock output count\n", np->name);
->> +		return -EINVAL;
->> +	}
->> +
->> +	clk_data = devm_kmalloc(dev, sizeof(*clk_data), GFP_KERNEL);
->> +	if (!clk_data)
->> +		return -ENOMEM;
->> +
->> +	clks = devm_kcalloc(dev, count, sizeof(*clks), GFP_KERNEL);
->> +	if (!clks)
->> +		return -ENOMEM;
->> +
->> +	for (idx = 0; idx < count; idx++) {
->> +		struct scpi_clk *sclk;
->> +		u32 val;
->> +
->> +		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
->> +		if (!sclk)
->> +			return -ENOMEM;
->> +
->> +		if (of_property_read_string_index(np, "clock-output-names",
->> +						  idx, &sclk->name)) {
->> +			dev_err(dev, "invalid clock name @ %s\n", np->name);
->> +			return -EINVAL;
->> +		}
->> +
->> +		if (of_property_read_u32_index(np, "clock-indices",
->> +					       idx, &val)) {
->> +			dev_err(dev, "invalid clock index @ %s\n", np->name);
->> +			return -EINVAL;
->> +		}
->> +
->> +		sclk->id = val;
->> +
->> +		clks[idx] = scpi_clk_ops_init(dev, np, sclk);
->> +		if (IS_ERR_OR_NULL(clks[idx]))
->> +			dev_err(dev, "failed to register clock '%s'\n",
->> +				sclk->name);
->> +		else
->> +			dev_dbg(dev, "Registered clock '%s'\n", sclk->name);
->> +	}
->> +
->> +	clk_data->clks = clks;
->> +	clk_data->clk_num = idx;
->> +	of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
->
-> And if of_clk_add_provider() fails?
->
-
-Ah, my bad, will fix it.
-
-Regards,
-Sudeep
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
