@@ -1,65 +1,33 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 04/25] clk: tegra: pll: add tegra_pll_wait_for_lock to clk header
-Date: Thu, 18 Jun 2015 17:28:19 -0400
-Message-ID: <1434662920-21469-5-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1435314894.3761.88.camel@pengutronix.de>
+Subject: Re: [PATCH v2 1/2] ARM: dts: imx6qdl-sabresd: Allow HDMI and LVDS
+ to work simultaneously
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Fabio Estevam <fabio.estevam@freescale.com>
+Cc: shawnguo@kernel.org, linux@arm.linux.org.uk, mturquette@baylibre.com,
+ eric.nelson@boundarydevices.com, kernel@pengutronix.de,
+ Ying.liu@freescale.com,  linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Date: Fri, 26 Jun 2015 12:34:54 +0200
+In-Reply-To: <1435241830-20187-1-git-send-email-fabio.estevam@freescale.com>
+References: <1435241830-20187-1-git-send-email-fabio.estevam@freescale.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Create a wrapper interface to make use of the existing
-clk_pll_wait_for_lock. This will be useful for implementations
-of callbacks in Tegra SoC specific clock drivers.
+Am Donnerstag, den 25.06.2015, 11:17 -0300 schrieb Fabio Estevam:
+> Currently it is not possible to have HDMI and LVDS working simultaneously,
+> because both ports try to use PLL5.
+> 
+> Move the LVDS clock parent to PLL3_USB_OTG, so that HDMI and LVDS can be
+> driven from independent sources.
+> 
+> With this change the LDB pixel clock goes to 68.57 MHz, which is still
+> within the valid range for the HSD100PXN1 LVDS panel.
+> 
+> Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c |    5 +++++
- drivers/clk/tegra/clk.h     |    1 +
- 2 files changed, 6 insertions(+)
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 05c6d08a6695..b9a739ce4b98 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -269,6 +269,11 @@ static int clk_pll_wait_for_lock(struct tegra_clk_pll *pll)
- 	return -1;
- }
- 
-+int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll)
-+{
-+	return clk_pll_wait_for_lock(pll);
-+}
-+
- static int clk_pll_is_enabled(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 5d2678914160..eeb735e3fa72 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -674,5 +674,6 @@ void tegra114_clock_deassert_dfll_dvco_reset(void);
- 
- typedef void (*tegra_clk_apply_init_table_func)(void);
- extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
-+int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
- 
- #endif /* TEGRA_CLK_H */
--- 
-1.7.9.5
+regards
+Philipp
