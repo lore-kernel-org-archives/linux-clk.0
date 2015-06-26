@@ -1,115 +1,49 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>
-Subject: [PATCH v4 6/8] arm64: dts: add SRAM, MHU mailbox and SCPI support on Juno
-Date: Mon,  8 Jun 2015 11:40:00 +0100
-Message-Id: <1433760002-24120-7-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <davidcdueck@googlemail.com>
+Return-Path: <davidcdueck@googlemail.com>
+From: David Dueck <davidcdueck@googlemail.com>
+To: boris.brezillon@free-electrons.com
+Cc: mturquette@linaro.org,
+	nicolas.ferre@atmel.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 6/6] clk: at91: clk-utmi: fix error path
+Date: Fri, 26 Jun 2015 14:33:32 +0200
+Message-Id: <1435322012-5667-6-git-send-email-davidcdueck@googlemail.com>
+In-Reply-To: <1435322012-5667-1-git-send-email-davidcdueck@googlemail.com>
+References: <1435322012-5667-1-git-send-email-davidcdueck@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds support for the MHU mailbox peripheral used on Juno by
-application processors to communicate with remote SCP handling most of
-the CPU/system power management. It also adds the SRAM reserving the
-shared memory and SCPI message protocol using that shared memory.
+Do not leak memory if request_irq fails and free the irq if
+clk_register fails.
 
-Cc: Liviu Dudau <Liviu.Dudau@arm.com>
-Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: David Dueck <davidcdueck@googlemail.com>
 ---
- arch/arm64/boot/dts/arm/juno-base.dtsi   | 31 +++++++++++++++++++++++++++++++
- arch/arm64/boot/dts/arm/juno-clocks.dtsi | 23 +++++++++++++++++++++++
- 2 files changed, 54 insertions(+)
+ drivers/clk/at91/clk-utmi.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/arm/juno-base.dtsi b/arch/arm64/boot/dts/arm/juno-base.dtsi
-index e3ee96036eca..f8069a98da25 100644
---- a/arch/arm64/boot/dts/arm/juno-base.dtsi
-+++ b/arch/arm64/boot/dts/arm/juno-base.dtsi
-@@ -17,6 +17,18 @@
- 		};
- 	};
+diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
+index ae3263b..30dd697 100644
+--- a/drivers/clk/at91/clk-utmi.c
++++ b/drivers/clk/at91/clk-utmi.c
+@@ -118,12 +118,16 @@ at91_clk_register_utmi(struct at91_pmc *pmc, unsigned int irq,
+ 	irq_set_status_flags(utmi->irq, IRQ_NOAUTOEN);
+ 	ret = request_irq(utmi->irq, clk_utmi_irq_handler,
+ 			  IRQF_TRIGGER_HIGH, "clk-utmi", utmi);
+-	if (ret)
++	if (ret) {
++		kfree(utmi);
+ 		return ERR_PTR(ret);
++	}
  
-+	mailbox: mhu@2b1f0000 {
-+		compatible = "arm,mhu", "arm,primecell";
-+		reg = <0x0 0x2b1f0000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "mhu_lpri_rx",
-+				  "mhu_hpri_rx";
-+		#mbox-cells = <1>;
-+		clocks = <&soc_refclk100mhz>;
-+		clock-names = "apb_pclk";
-+	};
-+
- 	gic: interrupt-controller@2c010000 {
- 		compatible = "arm,gic-400", "arm,cortex-a15-gic";
- 		reg = <0x0 0x2c010000 0 0x1000>,
-@@ -44,6 +56,25 @@
- 			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
+ 	clk = clk_register(NULL, &utmi->hw);
+-	if (IS_ERR(clk))
++	if (IS_ERR(clk)) {
++		free_irq(utmi->irq, utmi);
+ 		kfree(utmi);
++	}
  
-+	sram: sram@2e000000 {
-+		compatible = "arm,juno-sram-ns", "mmio-sram";
-+		reg = <0x0 0x2e000000 0x0 0x8000>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x0 0x2e000000 0x8000>;
-+
-+		cpu_scp_lpri: scp-shmem@0 {
-+			compatible = "arm,juno-scp-shmem";
-+			reg = <0x0 0x200>;
-+		};
-+
-+		cpu_scp_hpri: scp-shmem@200 {
-+			compatible = "arm,juno-scp-shmem";
-+			reg = <0x200 0x200>;
-+		};
-+	};
-+
- 	/include/ "juno-clocks.dtsi"
- 
- 	dma@7ff00000 {
-diff --git a/arch/arm64/boot/dts/arm/juno-clocks.dtsi b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
-index 25352ed943e6..64af7370815a 100644
---- a/arch/arm64/boot/dts/arm/juno-clocks.dtsi
-+++ b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
-@@ -42,3 +42,26 @@
- 		clock-frequency = <400000000>;
- 		clock-output-names = "faxi_clk";
- 	};
-+
-+	scpi {
-+		compatible = "arm,scpi";
-+		mboxes = <&mailbox 1>;
-+		shmem = <&cpu_scp_hpri>;
-+
-+		clocks {
-+			compatible = "arm,scpi-clocks";
-+
-+			scpi_dvfs: scpi_clocks@0 {
-+				compatible = "arm,scpi-dvfs-clocks";
-+				#clock-cells = <1>;
-+				clock-indices = <0>, <1>, <2>;
-+				clock-output-names = "vbig", "vlittle", "vgpu";
-+			};
-+			scpi_clk: scpi_clocks@3 {
-+				compatible = "arm,scpi-variable-clocks";
-+				#clock-cells = <1>;
-+				clock-indices = <3>, <4>;
-+				clock-output-names = "pxlclk0", "pxlclk1";
-+			};
-+		};
-+	};
+ 	return clk;
+ }
 -- 
-1.9.1
-
+2.4.4
