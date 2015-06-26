@@ -1,90 +1,63 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:43534 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752130AbbFZKbV (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jun 2015 06:31:21 -0400
+Date: Fri, 26 Jun 2015 13:31:10 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: daniel.thompson@linaro.org
+Cc: linux-clk@vger.kernel.org
+Subject: re: clk: stm32: Add clock driver for STM32F4[23]xxx devices
+Message-ID: <20150626103110.GA350@mwanda>
 MIME-Version: 1.0
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
- "Sasha Levin" <sasha.levin@oracle.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1434623543-10517-1-git-send-email-boris.brezillon@free-electrons.com>
-Cc: Nicolas Ferre" <nicolas.ferre@atmel.com>,
- "Jean-Christophe Plagniol-Villard" <plagnioj@jcrosoft.com>,
- "Alexandre Belloni" <alexandre.belloni@free-electrons.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- =?utf-8?b?IiBKacWZw60gUHJjaGFs?= <jiri.prchal@aksignal.cz>,
- "Boris Brezillon" <boris.brezillon@free-electrons.com>,
- stable@vger.kernel.org
-References: <1434623543-10517-1-git-send-email-boris.brezillon@free-electrons.com>
-Message-ID: <20150618204939.9112.25706@quantum>
-Subject: Re: [PATCH] clk: at91: fix determine_rate prototype (again)
-Date: Thu, 18 Jun 2015 13:49:39 -0700
+Content-Type: text/plain; charset=us-ascii
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Boris Brezillon (2015-06-18 03:32:23)
-> Commit ae74ea64ccdb8b99ee2618b58020263d5b1d9b22 ("clk: at91: usb:
-> propagate rate modification to the parent clk") was a backport of a bug
-> fix applied in 4.0, but in the meantime the ->determine_rate() prototype
-> has changed, thus introduction a prototype mismatch bug in pre-4.0
-> kernels. This prototype mismatch was supposed to be fixed by commit
-> 76723e7ed589998384a080e29204df4659c67cf2, which fix the bug on 3.19 kerne=
-ls,
-> but the ->determine_rate() has also changed between 3.18 and 3.19.
-> Hopefully this patch will definitely fix the prototype mismatch for 3.18.
-> =
+Hello Daniel Thompson,
 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Reported-by: Ji=C5=99=C3=AD Prchal <jiri.prchal@aksignal.cz>
-> Tested-by: Ji=C5=99=C3=AD Prchal <jiri.prchal@aksignal.cz>
-> Fixes: 76723e7ed589998384a080e29204df4659c67cf2 ("clk: at91: usb: fix
-> determine_rate prototype")
-> Cc: <stable@vger.kernel.org> # 3.18
+The patch 358bdf892f6b: "clk: stm32: Add clock driver for
+STM32F4[23]xxx devices" from Jun 10, 2015, leads to the following
+static checker warning:
 
-Boris,
+	drivers/clk/clk-stm32f4.c:271 stm32f4_rcc_lookup_clk_idx()
+	warn: buffer overflow 'table' 3 <= 3
 
-Does this only apply to the 3.18 stable kernel? If so,
+drivers/clk/clk-stm32f4.c
+   258  static int stm32f4_rcc_lookup_clk_idx(u8 primary, u8 secondary)
+   259  {
+   260          u64 table[ARRAY_SIZE(stm32f42xx_gate_map)];
+   261  
+   262          if (primary == 1) {
+   263                  if (WARN_ON(secondary > FCLK))
 
-Acked-by: Michael Turquette <mturquette@baylibre.com>
+Is this off by one? >= instead of >?
 
-Regards,
-Mike
+   264                          return -EINVAL;
+   265                  return secondary;
+   266          }
+   267  
+   268          memcpy(table, stm32f42xx_gate_map, sizeof(table));
+   269  
+   270          /* only bits set in table can be used as indices */
+   271          if (WARN_ON(secondary > 8 * sizeof(table) ||
 
-> ---
->  drivers/clk/at91/clk-usb.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> =
+This one is definitely off by one.  Also it might be easier to read as:
 
-> diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
-> index 0283a57..d0d335d 100644
-> --- a/drivers/clk/at91/clk-usb.c
-> +++ b/drivers/clk/at91/clk-usb.c
-> @@ -59,7 +59,7 @@ static unsigned long at91sam9x5_clk_usb_recalc_rate(str=
-uct clk_hw *hw,
->  static long at91sam9x5_clk_usb_determine_rate(struct clk_hw *hw,
->                                               unsigned long rate,
->                                               unsigned long *best_parent_=
-rate,
-> -                                             struct clk_hw **best_parent=
-_hw)
-> +                                             struct clk **best_parent_cl=
-k)
->  {
->         struct clk *parent =3D NULL;
->         long best_rate =3D -EINVAL;
-> @@ -91,7 +91,7 @@ static long at91sam9x5_clk_usb_determine_rate(struct cl=
-k_hw *hw,
->                                 best_rate =3D tmp_rate;
->                                 best_diff =3D tmp_diff;
->                                 *best_parent_rate =3D tmp_parent_rate;
-> -                               *best_parent_hw =3D __clk_get_hw(parent);
-> +                               *best_parent_clk =3D parent;
->                         }
->  =
+		if (WARN_ON(secondary >= 64 * ARRAY_SIZE(table) ||
 
->                         if (!best_diff || tmp_rate < rate)
-> -- =
+   272                      0 == (table[BIT_ULL_WORD(secondary)] &
+   273                            BIT_ULL_MASK(secondary))))
+   274                  return -EINVAL;
+   275  
+   276          /* mask out bits above our current index */
+   277          table[BIT_ULL_WORD(secondary)] &=
+   278              GENMASK_ULL(secondary % BITS_PER_LONG_LONG, 0);
+   279  
+   280          return FCLK + hweight64(table[0]) +
+   281                 (BIT_ULL_WORD(secondary) >= 1 ? hweight64(table[1]) : 0) +
+   282                 (BIT_ULL_WORD(secondary) >= 2 ? hweight64(table[2]) : 0);
+   283  }
 
-> 1.9.1
-> =
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+regards,
+dan carpenter
