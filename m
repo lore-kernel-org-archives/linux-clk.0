@@ -1,126 +1,50 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Pawel Moll <pawel.moll@arm.com>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@arm.linux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Fabian Frederick <fabf@skynet.be>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org
-Subject: [PATCH 9/9] ARM: STi: DT: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x
-Date: Tue, 23 Jun 2015 16:09:27 +0200
-Message-Id: <1435068567-30995-10-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <davidcdueck@googlemail.com>
+Return-Path: <davidcdueck@googlemail.com>
+From: David Dueck <davidcdueck@googlemail.com>
+To: boris.brezillon@free-electrons.com
+Cc: mturquette@linaro.org,
+	nicolas.ferre@atmel.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 5/6] clk: at91: clk-system: fix error path
+Date: Fri, 26 Jun 2015 14:33:31 +0200
+Message-Id: <1435322012-5667-5-git-send-email-davidcdueck@googlemail.com>
+In-Reply-To: <1435322012-5667-1-git-send-email-davidcdueck@googlemail.com>
+References: <1435322012-5667-1-git-send-email-davidcdueck@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Use a generic name for this kind of PLL
+Do not leak memory if request_irq fails and free the irq if
+clk_register fails.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Signed-off-by: David Dueck <davidcdueck@googlemail.com>
 ---
- Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt | 4 ++--
- arch/arm/boot/dts/stih407-clock.dtsi                         | 4 ++--
- arch/arm/boot/dts/stih410-clock.dtsi                         | 4 ++--
- arch/arm/boot/dts/stih418-clock.dtsi                         | 4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/clk/at91/clk-system.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
-index efb51cf..d8b168e 100644
---- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
-+++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
-@@ -21,8 +21,8 @@ Required properties:
- 	"st,stih416-plls-c32-ddr",	"st,clkgen-plls-c32"
- 	"st,stih407-plls-c32-a0",	"st,clkgen-plls-c32"
- 	"st,stih407-plls-c32-a9",	"st,clkgen-plls-c32"
--	"st,stih407-plls-c32-c0_0",	"st,clkgen-plls-c32"
--	"st,stih407-plls-c32-c0_1",	"st,clkgen-plls-c32"
-+	"sst,plls-c32-cx_0",		"st,clkgen-plls-c32"
-+	"sst,plls-c32-cx_1",		"st,clkgen-plls-c32"
+diff --git a/drivers/clk/at91/clk-system.c b/drivers/clk/at91/clk-system.c
+index a76d03f..58008b3 100644
+--- a/drivers/clk/at91/clk-system.c
++++ b/drivers/clk/at91/clk-system.c
+@@ -130,13 +130,17 @@ at91_clk_register_system(struct at91_pmc *pmc, const char *name,
+ 		irq_set_status_flags(sys->irq, IRQ_NOAUTOEN);
+ 		ret = request_irq(sys->irq, clk_system_irq_handler,
+ 				IRQF_TRIGGER_HIGH, name, sys);
+-		if (ret)
++		if (ret) {
++			kfree(sys);
+ 			return ERR_PTR(ret);
++		}
+ 	}
  
- 	"st,stih415-gpu-pll-c32",	"st,clkgengpu-pll-c32"
- 	"st,stih416-gpu-pll-c32",	"st,clkgengpu-pll-c32"
-diff --git a/arch/arm/boot/dts/stih407-clock.dtsi b/arch/arm/boot/dts/stih407-clock.dtsi
-index e65744f..ad45f5e 100644
---- a/arch/arm/boot/dts/stih407-clock.dtsi
-+++ b/arch/arm/boot/dts/stih407-clock.dtsi
-@@ -134,7 +134,7 @@
+ 	clk = clk_register(NULL, &sys->hw);
+-	if (IS_ERR(clk))
++	if (IS_ERR(clk)) {
++		free_irq(sys->irq, sys);
+ 		kfree(sys);
++	}
  
- 			clk_s_c0_pll0: clk-s-c0-pll0 {
- 				#clock-cells = <1>;
--				compatible = "st,stih407-plls-c32-c0_0", "st,clkgen-plls-c32";
-+				compatible = "st,plls-c32-cx_0", "st,clkgen-plls-c32";
- 
- 				clocks = <&clk_sysin>;
- 
-@@ -143,7 +143,7 @@
- 
- 			clk_s_c0_pll1: clk-s-c0-pll1 {
- 				#clock-cells = <1>;
--				compatible = "st,stih407-plls-c32-c0_1", "st,clkgen-plls-c32";
-+				compatible = "st,plls-c32-cx_1", "st,clkgen-plls-c32";
- 
- 				clocks = <&clk_sysin>;
- 
-diff --git a/arch/arm/boot/dts/stih410-clock.dtsi b/arch/arm/boot/dts/stih410-clock.dtsi
-index 6b5803a..d1f2aca 100644
---- a/arch/arm/boot/dts/stih410-clock.dtsi
-+++ b/arch/arm/boot/dts/stih410-clock.dtsi
-@@ -137,7 +137,7 @@
- 
- 			clk_s_c0_pll0: clk-s-c0-pll0 {
- 				#clock-cells = <1>;
--				compatible = "st,stih407-plls-c32-c0_0", "st,clkgen-plls-c32";
-+				compatible = "st,plls-c32-cx_0", "st,clkgen-plls-c32";
- 
- 				clocks = <&clk_sysin>;
- 
-@@ -146,7 +146,7 @@
- 
- 			clk_s_c0_pll1: clk-s-c0-pll1 {
- 				#clock-cells = <1>;
--				compatible = "st,stih407-plls-c32-c0_1", "st,clkgen-plls-c32";
-+				compatible = "st,plls-c32-cx_1", "st,clkgen-plls-c32";
- 
- 				clocks = <&clk_sysin>;
- 
-diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
-index 0ab23da..148e177 100644
---- a/arch/arm/boot/dts/stih418-clock.dtsi
-+++ b/arch/arm/boot/dts/stih418-clock.dtsi
-@@ -137,7 +137,7 @@
- 
- 			clk_s_c0_pll0: clk-s-c0-pll0 {
- 				#clock-cells = <1>;
--				compatible = "st,stih407-plls-c32-c0_0", "st,clkgen-plls-c32";
-+				compatible = "st,plls-c32-cx_0", "st,clkgen-plls-c32";
- 
- 				clocks = <&clk_sysin>;
- 
-@@ -146,7 +146,7 @@
- 
- 			clk_s_c0_pll1: clk-s-c0-pll1 {
- 				#clock-cells = <1>;
--				compatible = "st,stih407-plls-c32-c0_1", "st,clkgen-plls-c32";
-+				compatible = "st,plls-c32-cx_1", "st,clkgen-plls-c32";
- 
- 				clocks = <&clk_sysin>;
- 
+ 	return clk;
+ }
 -- 
-1.9.1
+2.4.4
