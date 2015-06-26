@@ -1,46 +1,73 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 4 Jun 2015 14:19:04 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Paul Osmialowski <pawelo@king.net.pl>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Anson Huang <b20788@freescale.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Frank Li <Frank.Li@freescale.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Jingchang Lu <jingchang.lu@freescale.com>,
+	Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nathan Lynch <nathan_lynch@mentor.com>,
+	Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
 	Olof Johansson <olof@lixom.net>,
-	Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v3 4/5] clk: scpi: add support for cpufreq virtual device
-Message-ID: <20150604211904.GO676@codeaurora.org>
-References: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com>
- <1432720398-5701-5-git-send-email-sudeep.holla@arm.com>
+	Paul Bolle <pebolle@tiscali.nl>,
+	Rob Herring <r.herring@freescale.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+	Shawn Guo <shawn.guo@linaro.org>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Stefan Agner <stefan@agner.ch>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+	Yuri Tikhonov <yur@emcraft.com>,
+	Sergei Poselenov <sposelenov@emcraft.com>,
+	Dmitry Cherkassov <d_cherkasov@emcraft.com>,
+	Alexander Potashev <aspotashev@emcraft.com>
+Subject: Re: [PATCH 3/9] arm: add call to CPU idle quirks handler
+Date: Fri, 26 Jun 2015 09:40:10 +0200
+Message-ID: <2139691.3OPR29uKdT@wuerfel>
+In-Reply-To: <alpine.LNX.2.00.1506260715300.499@localhost.localdomain>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <alpine.LFD.2.11.1506251237000.2617@knanqh.ubzr> <alpine.LNX.2.00.1506260715300.499@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1432720398-5701-5-git-send-email-sudeep.holla@arm.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/27, Sudeep Holla wrote:
-> The clocks for the CPUs are provided by SCP and are managed by this
-> clock driver. So the cpufreq device needs to be added only after the
-> clock get registered and removed when this driver is unloaded.
+On Friday 26 June 2015 07:30:49 Paul Osmialowski wrote:
+> ENDPROC(cpu_kinetis_do_idle)
 > 
-> This patch manages the cpufreq virtual device based on the clock
-> availability.
+> But... what about the rest of this hypothetical proc_kinetis.S file?
 > 
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Mike Turquette <mturquette@linaro.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
-> Cc: linux-clk@vger.kernel.org
-> ---
+> It would be a lot of code duplication with proc-v7m.S I think.
+> 
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+I doubt that the Kinetis has a custom version of the CPU core. Are you
+sure that not all Cortex-M4 need this?
 
+As long as the idle implementation depends only on the CPU core type,
+it's easy to just define multiple .proc.info.init entries in the
+same file, like we do in proc-v7.S.
 
-I guess there's no better place for this right now.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+	Arnd
