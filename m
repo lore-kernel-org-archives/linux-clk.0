@@ -1,68 +1,70 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 4 Jun 2015 11:14:04 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Tero Kristo <t-kristo@ti.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
-	kernel@stlinux.com,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 5/5] [RFC] ARM: timer-sp: Use of_clk_get_parent_count()
- instead of open coding
-Message-ID: <20150604181404.GF490@codeaurora.org>
-References: <1432891549-23295-1-git-send-email-geert+renesas@glider.be>
- <1432891549-23295-6-git-send-email-geert+renesas@glider.be>
- <20150603234426.GB490@codeaurora.org>
- <CAMuHMdXRQbBJWLCiDgx=vRcj=MS5BAQ6gskfcMGZzW1gKa6J8g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdXRQbBJWLCiDgx=vRcj=MS5BAQ6gskfcMGZzW1gKa6J8g@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:50962 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752019AbbFZKVl (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jun 2015 06:21:41 -0400
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Dan Carpenter <dan.carpenter@oracle.com>
+Cc: thomas.ab@samsung.com, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: clk: samsung: add infrastructure to register cpu clocks
+Date: Fri, 26 Jun 2015 12:20:35 +0200
+Message-id: <2521313.Iak1gZLfIu@amdc1976>
+In-reply-to: <CAJKOXPfyw=1kh4DkC3j7FCXcERecBWgGVcN6bYvrBZQVjeo=Bg@mail.gmail.com>
+References: <20150626095444.GA30810@mwanda>
+ <CAJKOXPfyw=1kh4DkC3j7FCXcERecBWgGVcN6bYvrBZQVjeo=Bg@mail.gmail.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/04, Geert Uytterhoeven wrote:
-> Hi Stephen,
-> 
-> On Thu, Jun 4, 2015 at 1:44 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 05/29, Geert Uytterhoeven wrote:
-> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >>  #include <linux/err.h>
-> >>  #include <linux/interrupt.h>
-> >>  #include <linux/irq.h>
-> >> @@ -234,7 +235,7 @@ static void __init sp804_of_init(struct device_node *np)
-> >>               clk1 = NULL;
-> >>
-> >>       /* Get the 2nd clock if the timer has 3 timer clocks */
-> >> -     if (of_count_phandle_with_args(np, "clocks", "#clock-cells") == 3) {
-> >> +     if (of_clk_get_parent_count(np) == 3) {
+
+Hi,
+
+On Friday, June 26, 2015 07:03:25 PM Krzysztof Kozlowski wrote:
+> 2015-06-26 18:54 GMT+09:00 Dan Carpenter <dan.carpenter@oracle.com>:
+> > Hello Thomas Abraham,
 > >
-> > So maybe it means if we want to expose of_clk_get_parent_count()
-> > we should move it to some other header file (of_clk.h?). And then
-> > maybe we should always compile said helpers if OF=y and
-> > HAVE_CLK=y.
-> 
-> That makes sense.
-> 
-> Currently we have lots of of_clk_*() in <linux/clk-provider.h>, and a few
-> of_clk_get*() in <inux/clk.h>.
-> And the mysterious of_clk_set_defaults() in <linux/clk/clk-conf.h>.
-> 
-> All of_clk_get*() could be moved to a new <linux/of_clk.h>.
-> 
-> Alternatively, of_clk_get_parent_count() could just move to <linux/clk.h>?
+> > The patch ddeac8d968d4: "clk: samsung: add infrastructure to register
+> > cpu clocks" from Apr 3, 2015, leads to the following static checker
+> > warning:
+> >
+> >         drivers/clk/samsung/clk-cpu.c:164 exynos_cpuclk_pre_rate_change()
+> >         warn: test_bit() takes a bit number
+> >
+> > drivers/clk/samsung/clk-cpu.c
+> >    158          /*
+> >    159           * For the selected PLL clock frequency, get the pre-defined divider
+> >    160           * values. If the clock for sclk_hpm is not sourced from apll, then
+> >    161           * the values for DIV_COPY and DIV_HPM dividers need not be set.
+> >    162           */
+> >    163          div0 = cfg_data->div0;
+> >    164          if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
+> >                              ^^^^^^^^^^^^^^^^
+> > CLK_CPU_HAS_DIV1 is (1 << 0).  We sometimes used it correctly as a mask
+> > and sometimes incorrectly (like here) as a bit number.
 
-Hmm... of_clk_*() functions that return a struct clk * or work
-with a struct clk * should stay within clk.h. But these ones in
-clk-provider.h should probably move to a new of_clk.h file:
+Fortunately the current value of this flag is "1" so test_bit() still
+works correctly.  I'll fix it up later anyway.  Thanks for catching it.
 
-	of_clk_get_parent_count
-	of_clk_get_parent_name
-	of_clk_init
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> >    165                  div1 = cfg_data->div1;
+> >    166                  if (readl(base + E4210_SRC_CPU) & E4210_MUX_HPM_MASK)
+> >    167                          div1 = readl(base + E4210_DIV_CPU1) &
+> >    168                                  (E4210_DIV1_HPM_MASK | E4210_DIV1_COPY_MASK);
+> >    169          }
+> 
+> +Cc Bartlomiej
+> 
+> Although original author is Thomas but he abandoned this patch and
+> this was actually Bartlomiej's work mostly. Bart, care to look at it?
+> 
+> Best regards,
+> Krzysztof
+
