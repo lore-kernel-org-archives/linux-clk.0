@@ -1,100 +1,75 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>
-Subject: [PATCH v4 0/8] ARM64: juno: add SCPI mailbox protocol, clock and CPUFreq support
-Date: Mon,  8 Jun 2015 11:39:54 +0100
-Message-Id: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:39679 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751721AbbFZKYJ (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jun 2015 06:24:09 -0400
+Date: Fri, 26 Jun 2015 13:23:59 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: rjui@broadcom.com
+Cc: linux-clk@vger.kernel.org
+Subject: re: clk: iproc: add initial common clock support
+Message-ID: <20150626102359.GA32453@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hello Ray Jui,
 
-This patch series adds support for:
-  1. SCPI(System Control and Power Interface) mailbox protocol driver.
-     It uses ARM MHU mailbox controller driver on Juno but can work with
-     any mailbox controllers using standard mailbox APIs
-  2. Add support for clocks provided by SCP firmware through the SCPI
-     interface
-  3. Using the existing arm_big_little cpufreq driver and the newly
-     added SCPI clock driver, it also adds support for CPU DVFS on
-     ARM64 JUNO development platforms.
+The patch 5fe225c105fd: "clk: iproc: add initial common clock
+support" from May 5, 2015, leads to the following static checker
+warning:
 
-The SCPI protocol document is available @[1],[2]
+	drivers/clk/bcm/clk-iproc-pll.c:369 iproc_pll_recalc_rate()
+	warn: should 'ndiv_int << ctrl->ndiv_int.shift' be a 64 bit type?
 
-Changes v3->v4:
-	- Updated the SCPI binding based on MarkR's feedback
-	- Updated SCPI clock driver to incorporate Stephen Boyd's review
-	  comments + used clk_set_rate_range to limit the clock range
-	- Since no major changes are expected in SCPI DT, updated the
-	  Juno DTS to support SCPI and dependent device nodes. The DT
-	  patches are based on Liviu's recent Juno[3]
+drivers/clk/bcm/clk-iproc-pll.c
+  341  static unsigned long iproc_pll_recalc_rate(struct clk_hw *hw,
+   342                                             unsigned long parent_rate)
+   343  {
+   344          struct iproc_clk *clk = to_iproc_clk(hw);
+   345          struct iproc_pll *pll = clk->pll;
+   346          const struct iproc_pll_ctrl *ctrl = pll->ctrl;
+   347          u32 val;
+   348          u64 ndiv;
+   349          unsigned int ndiv_int, ndiv_frac, pdiv;
+   350  
+   351          if (parent_rate == 0)
+   352                  return 0;
+   353  
+   354          /* PLL needs to be locked */
+   355          val = readl(pll->pll_base + ctrl->status.offset);
+   356          if ((val & (1 << ctrl->status.shift)) == 0) {
+   357                  clk->rate = 0;
+   358                  return 0;
+   359          }
+   360  
+   361          /*
+   362           * PLL output frequency =
+   363           *
+   364           * ((ndiv_int + ndiv_frac / 2^20) * (parent clock rate / pdiv)
+   365           */
+   366          val = readl(pll->pll_base + ctrl->ndiv_int.offset);
+   367          ndiv_int = (val >> ctrl->ndiv_int.shift) &
+   368                  bit_mask(ctrl->ndiv_int.width);
+   369          ndiv = ndiv_int << ctrl->ndiv_int.shift;
 
-Changes v2->v3:
-	- Minor fix in SCPI driver and added Tixy's reviewed-by tag
-	- Updated scpi clock driver to incorporate all the comments from
-	  Stephen
-	- Added Viresh's ack
+ndiv is declared u64 but only the lower 32 bits are used because of
+shift wrapping.
 
-Changes v1->v2:
-	- Updated the token handling in scpi driver as per Tixy's
-	  suggestion along with other review comments
-	- Removed multiple drivers in scpi clock as Lorenzo suggested
-	- Added free_opp_table in scpi-cpufreq as Viresh suggested
-	- Separated the DT binding document
-	- Moved SCPI protocol driver to drivers/firmware
+   370  
+   371          if (ctrl->flags & IPROC_CLK_PLL_HAS_NDIV_FRAC) {
+   372                  val = readl(pll->pll_base + ctrl->ndiv_frac.offset);
+   373                  ndiv_frac = (val >> ctrl->ndiv_frac.shift) &
+   374                          bit_mask(ctrl->ndiv_frac.width);
+   375  
+   376                  if (ndiv_frac != 0)
+   377                          ndiv = (ndiv_int << ctrl->ndiv_int.shift) | ndiv_frac;
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Regards,
-Sudeep
+Here as well.
 
-[1] http://community.arm.com/servlet/JiveServlet/download/8401-45-18326/DUI0922B_scp_message_interface.pdf
-[2] https://wiki.linaro.org/ARM/Juno?action=AttachFile&do=get&target=DUI0922B_scp_message_interface.pdf
-[3] http://www.spinics.net/lists/arm-kernel/msg420945.html
-v1: https://lkml.org/lkml/2015/4/27/232
-v2: https://lkml.org/lkml/2015/5/14/470
-v3: https://lkml.org/lkml/2015/5/27/220
+   378          }
 
-Sudeep Holla (8):
-  Documentation: add DT binding for ARM System Control and Power
-    Interface(SCPI) protocol
-  firmware: add support for ARM System Control and Power Interface(SCPI)
-    protocol
-  clk: add support for clocks provided by SCP(System Control Processor)
-  clk: scpi: add support for cpufreq virtual device
-  cpufreq: arm_big_little: add SCPI interface driver
-  arm64: dts: add SRAM, MHU mailbox and SCPI support on Juno
-  arm64: dts: add CPU topology on Juno
-  arm64: dts: add clock support for all the cpus
-
- Documentation/devicetree/bindings/arm/arm,scpi.txt | 156 +++++
- arch/arm64/boot/dts/arm/juno-base.dtsi             |  31 +
- arch/arm64/boot/dts/arm/juno-clocks.dtsi           |  23 +
- arch/arm64/boot/dts/arm/juno-r1.dts                |  32 +
- arch/arm64/boot/dts/arm/juno.dts                   |  32 +
- drivers/clk/Kconfig                                |  10 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-scpi.c                             | 299 +++++++++
- drivers/cpufreq/Kconfig.arm                        |   9 +
- drivers/cpufreq/Makefile                           |   1 +
- drivers/cpufreq/scpi-cpufreq.c                     | 124 ++++
- drivers/firmware/Kconfig                           |  19 +
- drivers/firmware/Makefile                          |   1 +
- drivers/firmware/arm_scpi.c                        | 709 +++++++++++++++++++++
- include/linux/scpi_protocol.h                      |  62 ++
- 15 files changed, 1509 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/arm,scpi.txt
- create mode 100644 drivers/clk/clk-scpi.c
- create mode 100644 drivers/cpufreq/scpi-cpufreq.c
- create mode 100644 drivers/firmware/arm_scpi.c
- create mode 100644 include/linux/scpi_protocol.h
-
--- 
-1.9.1
-
+regards,
+dan carpenter
