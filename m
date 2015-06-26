@@ -1,55 +1,39 @@
-Return-Path: <sudeep.holla@arm.com>
-Message-ID: <5571682C.4040908@arm.com>
-Date: Fri, 05 Jun 2015 10:13:16 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- Liviu Dudau <Liviu.Dudau@arm.com>,
- Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
- "Jon Medhurst (Tixy)" <tixy@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- Kevin Hilman <khilman@kernel.org>,
- Olof Johansson <olof@lixom.net>, Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v3 4/5] clk: scpi: add support for cpufreq virtual device
-References: <1432720398-5701-1-git-send-email-sudeep.holla@arm.com> <1432720398-5701-5-git-send-email-sudeep.holla@arm.com> <20150604211904.GO676@codeaurora.org>
-In-Reply-To: <20150604211904.GO676@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <davidcdueck@googlemail.com>
+Return-Path: <davidcdueck@googlemail.com>
+From: David Dueck <davidcdueck@googlemail.com>
+To: boris.brezillon@free-electrons.com
+Cc: mturquette@linaro.org,
+	nicolas.ferre@atmel.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/6] clk: at91: clk-h32mxclk: fix memory leak
+Date: Fri, 26 Jun 2015 14:33:27 +0200
+Message-Id: <1435322012-5667-1-git-send-email-davidcdueck@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Do not leak memory if clk_register fails.
 
+Signed-off-by: David Dueck <davidcdueck@googlemail.com>
+---
+ drivers/clk/at91/clk-h32mx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-On 04/06/15 22:19, Stephen Boyd wrote:
-> On 05/27, Sudeep Holla wrote:
->> The clocks for the CPUs are provided by SCP and are managed by this
->> clock driver. So the cpufreq device needs to be added only after the
->> clock get registered and removed when this driver is unloaded.
->>
->> This patch manages the cpufreq virtual device based on the clock
->> availability.
->>
->> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->> Cc: Mike Turquette <mturquette@linaro.org>
->> Cc: Stephen Boyd <sboyd@codeaurora.org>
->> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
->> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
->> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
->> Cc: linux-clk@vger.kernel.org
->> ---
->
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
->
->
-
-Thanks
-
-> I guess there's no better place for this right now.
->
-
-True
-
-Regards,
-Sudeep
+diff --git a/drivers/clk/at91/clk-h32mx.c b/drivers/clk/at91/clk-h32mx.c
+index 152dcb3..61566bc 100644
+--- a/drivers/clk/at91/clk-h32mx.c
++++ b/drivers/clk/at91/clk-h32mx.c
+@@ -116,8 +116,10 @@ void __init of_sama5d4_clk_h32mx_setup(struct device_node *np,
+ 	h32mxclk->pmc = pmc;
+ 
+ 	clk = clk_register(NULL, &h32mxclk->hw);
+-	if (!clk)
++	if (!clk) {
++		kfree(h32mxclk);
+ 		return;
++	}
+ 
+ 	of_clk_add_provider(np, of_clk_src_simple_get, clk);
+ }
+-- 
+2.4.4
