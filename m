@@ -1,106 +1,66 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Fabio Estevam <fabio.estevam@freescale.com>
+To: <shawnguo@kernel.org>
+Subject: [PATCH v3 2/2] clk: imx: clk-imx6q: Provide initial IPU clock
+ settings for mx6dl
+Date: Fri, 26 Jun 2015 14:10:54 -0300
+Message-ID: <1435338654-9098-2-git-send-email-fabio.estevam@freescale.com>
+In-Reply-To: <1435338654-9098-1-git-send-email-fabio.estevam@freescale.com>
+References: <1435338654-9098-1-git-send-email-fabio.estevam@freescale.com>
 MIME-Version: 1.0
-To: Boris Brezillon <boris.brezillon@free-electrons.com>, 
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <20150618214729.41acfb07@bbrezillon>
-Cc: "Gregory CLEMENT" <gregory.clement@free-electrons.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>,
- "Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>,
- "Jason Cooper" <jason@lakedaemon.net>, "Tawfik Bayouk" <tawfik@marvell.com>,
- "Andrew Lunn" <andrew@lunn.ch>, "Kevin Hilman" <khilman@kernel.org>,
- stable@vger.kernel.org, "Eran Ben-Avi" <benavi@marvell.com>,
- "Nadav Haklai" <nadavh@marvell.com>, "Lior Amsalem" <alior@marvell.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>
-References: <1434470179-20835-1-git-send-email-boris.brezillon@free-electrons.com>
- <55816094.2020208@free-electrons.com> <20150618183654.25948.26168@quantum>
- <20150618214729.41acfb07@bbrezillon>
-Message-ID: <20150618205236.9112.20427@quantum>
-Subject: Re: [PATCH v2] clk: mvebu: flag the crypto clk as CLK_IGNORE_UNUSED
-Date: Thu, 18 Jun 2015 13:52:36 -0700
+Cc: Fabio Estevam <fabio.estevam@freescale.com>, linux@arm.linux.org.uk,
+ mturquette@baylibre.com, eric.nelson@boundarydevices.com,
+ vladimir_zapolskiy@mentor.com, kernel@pengutronix.de, Ying.liu@freescale.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Boris Brezillon (2015-06-18 12:47:29)
-> Hi Mike,
-> =
+Currently it is not possible to use HDMI and LVDS at the same time on a 
+imx6dl-sabresd board.
 
-> On Thu, 18 Jun 2015 11:36:54 -0700
-> Michael Turquette <mturquette@linaro.org> wrote:
-> =
+Fix this usecase by setting IMX6QDL_CLK_PLL3_PFD1_540M to 540MHz and
+also by setting it as the parent of IMX6QDL_CLK_IPU1_SEL.
 
-> > Quoting Gregory CLEMENT (2015-06-17 04:57:08)
-> > > Hi Mike, Stephen,
-> > > =
+Based on the configuration done in the FSL kernel.
 
-> > > On 16/06/2015 17:56, Boris Brezillon wrote:
-> > > > The crypto SRAM, used by the armada 370 cpuidle code to workaround =
-a bug
-> > > > in the BootROM code, requires the crypto clk to be up and running.
-> > > > Flag the crypto clk as IGNORE_UNUSED until we add the proper
-> > > > infrastructure to define the crypto SRAM in the DT and reference th=
-e crypto
-> > > > clk in this SRAM node.
-> > > > =
+Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
+---
+Changes since v2:
+- Move clk_set_rate for PLL3_PFD1_540M outside the if block as suggested
+by Vladimir Zapolskiy.
 
-> > > > Reported-by: Kevin Hilman <khilman@linaro.org>
-> > > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > > > Tested-by: Kevin Hilman <khilman@linaro.org>
-> > > > Fixes: 29e623475c50267ee3aaa49ebb6cbe107bce8d2a ("clk: mvebu: add
-> > > > missing CESA gate clk").
-> > > > Cc: <stable@vger.kernel.org> #4.1
-> > > =
+ drivers/clk/imx/clk-imx6q.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> > > Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> > > =
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index d046f8e..c507bca 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -494,6 +494,10 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 		clk_set_parent(clk[IMX6QDL_CLK_LDB_DI1_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
+ 	}
+ 
++	clk_set_rate(clk[IMX6QDL_CLK_PLL3_PFD1_540M], 540000000);
++	if (clk_on_imx6dl())
++		clk_set_parent(clk[IMX6QDL_CLK_IPU1_SEL], clk[IMX6QDL_CLK_PLL3_PFD1_540M]);
++
+ 	clk_set_parent(clk[IMX6QDL_CLK_IPU1_DI0_PRE_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
+ 	clk_set_parent(clk[IMX6QDL_CLK_IPU1_DI1_PRE_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
+ 	clk_set_parent(clk[IMX6QDL_CLK_IPU2_DI0_PRE_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
+-- 
+1.9.1
 
-> > > Would it possible to apply this fix on 4.1-rc8 ?
-> > =
 
-> > Hi Gregory,
-> > =
-
-> > I'm a bit confused by this. This patch fixes "clk: mvebu: add missing
-> > CESA gate clk", right? That patch lives in clk-next. It was not pushed
-> > to Linus' tree yet via a -fixes branch.
-> > =
-
-> > Thus I can just apply this patch to clk-next and the problem should be
-> > resolved in clk-next, no?
-> =
-
-> Yes. I've tagged this patch as applicable on stable 4.1 in case it
-> didn't make it in the next -rc (which should be the last one before
-> 4.1 is released).
-
-Applied to clk-next.
-
-Regards,
-Mike
-
-> I don't know if it's a good practice, but I've had several fixes which
-> missed the targeted release in the past, and tagging them as stable
-> helps in getting the patches applied afterwards.
-> =
-
-> > =
-
-> > Furthermore, I do not have 29e623475c50267ee3aaa49ebb6cbe107bce8d2a
-> > anywhere in my tree. I'm not sure where this sha1 hash came from.
-> =
-
-> Oops, I mixed the commit hash in my local branch and the one in clk-next
-> (4d52b2acefdfceae0e47ed08324a96f511dc80b1).
-> =
-
-> Best Regards,
-> =
-
-> Boris
-> =
-
-> -- =
-
-> Boris Brezillon, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
