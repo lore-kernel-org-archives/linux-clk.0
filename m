@@ -1,66 +1,87 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:63072 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752133AbbFZPeC (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jun 2015 11:34:02 -0400
+Message-ID: <558D70E8.1010105@broadcom.com>
+Date: Fri, 26 Jun 2015 08:34:00 -0700
+From: Ray Jui <rjui@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <5591DD9B.4030507@samsung.com>
-References: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
-	<5591DD9B.4030507@samsung.com>
-Date: Tue, 30 Jun 2015 08:27:36 +0200
-Message-ID: <CABxcv=kVL94rdFgNKcxx2JOi9WRFnvhMWrpjEDcEmx7q7cEsgQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: fix cpu clock's flags checking
-From: Javier Martinez Canillas <javier@dowhile0.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
-	"linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-pm-owner@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+CC: <linux-clk@vger.kernel.org>
+Subject: Re: clk: iproc: add initial common clock support
+References: <20150626102359.GA32453@mwanda>
+In-Reply-To: <20150626102359.GA32453@mwanda>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 30, 2015 at 2:06 AM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> On 30.06.2015 02:29, Bartlomiej Zolnierkiewicz wrote:
->> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
->> incorrectly used as a bit numbers.  Fix it.
->>
->> Tested on Exynos4210 based Origen board and on Exynos5250 based
->> Arndale board.
->>
->> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->> Cc: Michael Turquette <mturquette@baylibre.com>
->> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> Cc: Thomas Abraham <thomas.ab@samsung.com>
->> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
->> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-cpu.c | 10 +++++-----
->>  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
+Hi Dan,
 
-Looks good to me as well.
+On 6/26/2015 3:23 AM, Dan Carpenter wrote:
+> Hello Ray Jui,
+> 
+> The patch 5fe225c105fd: "clk: iproc: add initial common clock
+> support" from May 5, 2015, leads to the following static checker
+> warning:
+> 
+> 	drivers/clk/bcm/clk-iproc-pll.c:369 iproc_pll_recalc_rate()
+> 	warn: should 'ndiv_int << ctrl->ndiv_int.shift' be a 64 bit type?
+> 
+> drivers/clk/bcm/clk-iproc-pll.c
+>   341  static unsigned long iproc_pll_recalc_rate(struct clk_hw *hw,
+>    342                                             unsigned long parent_rate)
+>    343  {
+>    344          struct iproc_clk *clk = to_iproc_clk(hw);
+>    345          struct iproc_pll *pll = clk->pll;
+>    346          const struct iproc_pll_ctrl *ctrl = pll->ctrl;
+>    347          u32 val;
+>    348          u64 ndiv;
+>    349          unsigned int ndiv_int, ndiv_frac, pdiv;
+>    350  
+>    351          if (parent_rate == 0)
+>    352                  return 0;
+>    353  
+>    354          /* PLL needs to be locked */
+>    355          val = readl(pll->pll_base + ctrl->status.offset);
+>    356          if ((val & (1 << ctrl->status.shift)) == 0) {
+>    357                  clk->rate = 0;
+>    358                  return 0;
+>    359          }
+>    360  
+>    361          /*
+>    362           * PLL output frequency =
+>    363           *
+>    364           * ((ndiv_int + ndiv_frac / 2^20) * (parent clock rate / pdiv)
+>    365           */
+>    366          val = readl(pll->pll_base + ctrl->ndiv_int.offset);
+>    367          ndiv_int = (val >> ctrl->ndiv_int.shift) &
+>    368                  bit_mask(ctrl->ndiv_int.width);
+>    369          ndiv = ndiv_int << ctrl->ndiv_int.shift;
+> 
+> ndiv is declared u64 but only the lower 32 bits are used because of
+> shift wrapping.
+> 
+>    370  
+>    371          if (ctrl->flags & IPROC_CLK_PLL_HAS_NDIV_FRAC) {
+>    372                  val = readl(pll->pll_base + ctrl->ndiv_frac.offset);
+>    373                  ndiv_frac = (val >> ctrl->ndiv_frac.shift) &
+>    374                          bit_mask(ctrl->ndiv_frac.width);
+>    375  
+>    376                  if (ndiv_frac != 0)
+>    377                          ndiv = (ndiv_int << ctrl->ndiv_int.shift) | ndiv_frac;
+>                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 
+> Here as well.
+> 
+>    378          }
+> 
+> regards,
+> dan carpenter
+> 
 
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Got it. I'll fix both.
 
-> Best regards,
-> Krzysztof
->
+Thanks,
 
-Best regards,
-Javier
+Ray
