@@ -1,51 +1,71 @@
-Return-Path: <Fabio.Estevam@freescale.com>
-From: Fabio Estevam <fabio.estevam@freescale.com>
-To: shawnguo@kernel.org
-CC: kernel@pengutronix.de, eric.nelson@boundarydevices.com,
-        linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org,
-        Ying.liu@freescale.com, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>
-Subject: [PATCH v2 2/2] clk: imx: clk-imx6q: Provide initial IPU clock settings for mx6dl
-Date: Thu, 25 Jun 2015 11:17:10 -0300
-Message-ID: <1435241830-20187-2-git-send-email-fabio.estevam@freescale.com>
-In-Reply-To: <1435241830-20187-1-git-send-email-fabio.estevam@freescale.com>
-References: <1435241830-20187-1-git-send-email-fabio.estevam@freescale.com>
-Return-Path: fabio.estevam@freescale.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:41335 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751585AbbFZPbe (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jun 2015 11:31:34 -0400
+Message-ID: <558D7053.1000106@broadcom.com>
+Date: Fri, 26 Jun 2015 08:31:31 -0700
+From: Ray Jui <rjui@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Dan Carpenter <dan.carpenter@oracle.com>
+CC: <linux-clk@vger.kernel.org>
+Subject: Re: clk: iproc: add initial common clock support
+References: <20150626102010.GA32189@mwanda>
+In-Reply-To: <20150626102010.GA32189@mwanda>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently it is not possible to use HDMI and LVDS at the same time on a 
-imx6dl-sabresd board.
+Hi Dan,
 
-Fix this usecase by setting IMX6QDL_CLK_PLL3_PFD1_540M to 540MHz and
-also by setting it as the parent of IMX6QDL_CLK_IPU1_SEL.
+On 6/26/2015 3:20 AM, Dan Carpenter wrote:
+> Hello Ray Jui,
+> 
+> The patch 5fe225c105fd: "clk: iproc: add initial common clock
+> support" from May 5, 2015, leads to the following static checker
+> warning:
+> 
+> 	drivers/clk/bcm/clk-iproc-asiu.c:229 iproc_asiu_setup()
+> 	warn: did you mean to pass the address of 'clk_name'
+> 
+> drivers/clk/bcm/clk-iproc-asiu.c
+>    218          for (i = 0; i < num_clks; i++) {
+>    219                  struct clk_init_data init;
+>    220                  struct clk *clk;
+>    221                  const char *parent_name;
+>    222                  struct iproc_asiu_clk *asiu_clk;
+>    223                  const char *clk_name;
+>    224  
+>    225                  clk_name = kzalloc(IPROC_CLK_NAME_LEN, GFP_KERNEL);
+> 
+> We shouldn't do this allocation.  of_property_read_string_index() will
+> just re-assign "clk_name" so the memory is leaked.
+> 
 
-Based on the configuration done in the FSL kernel.
+I'll submit a patch to fix this. Thanks.
 
-Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
----
-Changes since v1:
-- None. Newly introduced.
-
- drivers/clk/imx/clk-imx6q.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index d046f8e..d735d8f 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -494,6 +494,11 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 		clk_set_parent(clk[IMX6QDL_CLK_LDB_DI1_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
- 	}
- 
-+	if (clk_on_imx6dl()) {
-+		clk_set_rate(clk[IMX6QDL_CLK_PLL3_PFD1_540M], 540000000);
-+		clk_set_parent(clk[IMX6QDL_CLK_IPU1_SEL], clk[IMX6QDL_CLK_PLL3_PFD1_540M]);
-+	}
-+
- 	clk_set_parent(clk[IMX6QDL_CLK_IPU1_DI0_PRE_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
- 	clk_set_parent(clk[IMX6QDL_CLK_IPU1_DI1_PRE_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
- 	clk_set_parent(clk[IMX6QDL_CLK_IPU2_DI0_PRE_SEL], clk[IMX6QDL_CLK_PLL5_VIDEO_DIV]);
--- 
-1.9.1
+>    226                  if (WARN_ON(!clk_name))
+>    227                          goto err_clk_register;
+>    228  
+>    229                  ret = of_property_read_string_index(node, "clock-output-names",
+>    230                                                      i, &clk_name);
+>    231                  if (WARN_ON(ret))
+>    232                          goto err_clk_register;
+>    233  
+>    234                  asiu_clk = &asiu->clks[i];
+>    235                  asiu_clk->name = clk_name;
+>    236                  asiu_clk->asiu = asiu;
+>    237                  asiu_clk->div = div[i];
+>    238                  asiu_clk->gate = gate[i];
+>    239                  init.name = clk_name;
+>    240                  init.ops = &iproc_asiu_ops;
+>    241                  init.flags = 0;
+>    242                  parent_name = of_clk_get_parent_name(node, 0);
+>    243                  init.parent_names = (parent_name ? &parent_name : NULL);
+>    244                  init.num_parents = (parent_name ? 1 : 0);
+>    245                  asiu_clk->hw.init = &init;
+> 
+> 
+> regards,
+> dan carpenter
+> 
