@@ -1,50 +1,40 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 8 Jun 2015 14:42:45 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/14] ARM: shmobile: Add CPG Clock Domains
-Message-ID: <20150608214245.GA29640@codeaurora.org>
-References: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <ce3a@gmx.de>
+From: Sergej Sawazki <ce3a@gmx.de>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	jsarha@ti.com
+Cc: linux-clk@vger.kernel.org,
+	Sergej Sawazki <ce3a@gmx.de>
+Subject: [PATCH v4 2/4] clk: gpio-gate: Stay silent on EPROBE_DEFER
+Date: Sun, 28 Jun 2015 16:24:54 +0200
+Message-Id: <1435501496-25761-3-git-send-email-ce3a@gmx.de>
+In-Reply-To: <1435501496-25761-1-git-send-email-ce3a@gmx.de>
+References: <1435501496-25761-1-git-send-email-ce3a@gmx.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/28, Geert Uytterhoeven wrote:
-> 	Hi all,
-> 
-> This patch series adds Clock Domain support to the Clock Pulse Generator
-> (CPG) Module Stop (MSTP) Clocks driver using the generic PM Domain, to
-> be used on shmobile SoCs without device power domains (R-Car Gen1 and
-> Gen2, RZ).  This allows to power-manage the module clocks of SoC devices
-> that are part of the CPG Clock Domain using Runtime PM, or for system
-> suspend/resume, similar to SoCs with device power domains (SH-Mobile and
-> R-Mobile).
+Do not output an error message if requesting gpio failes with EPROBE_DEFER.
 
-The clk part looks fine (although it's not really clk framework
-related). Did you want the clk patches to go through the clk tree
-though? It wasn't clear from this cover letter.
+Cc: Jyri Sarha <jsarha@ti.com>
+Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
+---
+ drivers/clk/clk-gpio-gate.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-If not, you can have my ack on these patches:
-
->     clk: shmobile: Add CPG Clock Domain support
->   * clk: shmobile: r8a7778: Add CPG Clock Domain support
->   * clk: shmobile: r8a7779: Add CPG Clock Domain support
->     clk: shmobile: rcar-gen2: Add CPG Clock Domain support
->   * clk: shmobile: rz: Add CPG Clock Domain support
-
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-
+diff --git a/drivers/clk/clk-gpio-gate.c b/drivers/clk/clk-gpio-gate.c
+index a377f88..ef942da 100644
+--- a/drivers/clk/clk-gpio-gate.c
++++ b/drivers/clk/clk-gpio-gate.c
+@@ -90,8 +90,9 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
+ 		err = gpio_request_one(gpio, gpio_flags, name);
+ 
+ 	if (err) {
+-		pr_err("%s: %s: Error requesting clock control gpio %u\n",
+-		       __func__, name, gpio);
++		if (err != -EPROBE_DEFER)
++			pr_err("%s: %s: Error requesting clock control gpio %u\n",
++					__func__, name, gpio);
+ 		return ERR_PTR(err);
+ 	}
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
