@@ -1,48 +1,36 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 22 Jun 2015 15:48:00 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Kamil Lulko <rev13@wp.pl>, Andreas Farber <afaerber@suse.de>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	patches@linaro.org, linaro-kernel@lists.linaro.org
-Subject: Re: [PATCH v3 2/3] clk: stm32: Add clock driver for STM32F4[23]xxx
- devices
-Message-ID: <20150622224800.GH22132@codeaurora.org>
-References: <1432327273-6810-1-git-send-email-daniel.thompson@linaro.org>
- <1433966978-24422-1-git-send-email-daniel.thompson@linaro.org>
- <1433966978-24422-3-git-send-email-daniel.thompson@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1433966978-24422-3-git-send-email-daniel.thompson@linaro.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: uclinux-h8-devel@lists.sourceforge.jp,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: h8300: Remove "sh73a0-" part from compatible value
+Date: Mon, 29 Jun 2015 11:42:58 +0200
+Message-Id: <1435570978-1734-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/10, Daniel Thompson wrote:
-> The driver supports decoding and statically modelling PLL state (i.e.
-> we inherit state from bootloader) and provides support for all
-> peripherals that support simple one-bit gated clocks. The covers all
-> peripherals whose clocks come from the AHB, APB1 or APB2 buses.
-> 
-> It has been tested on an STM32F429I-Discovery board. The clock counts
-> for TIM2, USART1 and SYSTICK are all set correctly and the wall clock
-> looks OK when checked with a stopwatch. I have also tested a prototype
-> driver for the RNG hardware. The RNG clock is correctly enabled by the
-> framework (also did inverse test and proved that by changing DT to
-> configure the wrong clock bit then we observe the RNG driver to fail).
-> 
-> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Reviewed-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> ---
+Drop the bogus "sh73a0-" part (accidentally copied from shmobile?) from
+the compatible value.
 
-Applied to clk-next
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.txt b/Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.txt
+index 36c2b528245cd48f..399e0da22348b19e 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.txt
+@@ -2,7 +2,7 @@
+ 
+ Required Properties:
+ 
+-  - compatible: Must be "renesas,sh73a0-h8300-div-clock"
++  - compatible: Must be "renesas,h8300-div-clock"
+ 
+   - clocks: Reference to the parent clocks ("extal1" and "extal2")
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
