@@ -1,57 +1,59 @@
-Return-Path: <Paul.Gortmaker@windriver.com>
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Paul Gortmaker <paul.gortmaker@windriver.com>,
-        =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-        Mike Turquette
-	<mturquette@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Maxime Ripard
-	<maxime.ripard@free-electrons.com>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH] drivers/clk: convert sunxi/clk-mod0.c to use builtin_platform_driver
-Date: Wed, 3 Jun 2015 15:09:38 -0400
-Message-ID: <1433358578-9579-1-git-send-email-paul.gortmaker@windriver.com>
-In-Reply-To: <1431287385-1526-1-git-send-email-paul.gortmaker@windriver.com>
-References: <1431287385-1526-1-git-send-email-paul.gortmaker@windriver.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH v2 3/4] ARM: Exynos: switch to using generic cpufreq driver for
+ Exynos5250
+Date: Mon, 29 Jun 2015 19:26:11 +0200
+Message-id: <1435598772-21708-4-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1435598772-21708-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1435598772-21708-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This driver builds based on obj-y and hence will not ever be
-modular.  Change it to use the non-modular registration so that it
-won't suffer a compile fail once a header move places the modular
-registration within the module.h file.
+From: Thomas Abraham <thomas.ab@samsung.com>
 
-Cc: "Emilio López" <emilio@elopez.com.ar>
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+The new CPU clock type allows the use of generic CPUfreq driver.
+Switch Exynos5250 to using generic cpufreq driver.
+
+Changes by Bartlomiej:
+- split Exynos5250 support from the original patch
+
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
+ arch/arm/mach-exynos/exynos.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-[appending this to the builtin_platform_driver series of commits; see
- https://lkml.kernel.org/r/1431287385-1526-1-git-send-email-paul.gortmaker@windriver.com
- for original series posting.  The final header move can be found at:
- https://lkml.kernel.org/r/1433276168-21550-1-git-send-email-paul.gortmaker@windriver.com ]
-
- drivers/clk/sunxi/clk-mod0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sunxi/clk-mod0.c b/drivers/clk/sunxi/clk-mod0.c
-index ec8f5a1fca09..9d028aec58e5 100644
---- a/drivers/clk/sunxi/clk-mod0.c
-+++ b/drivers/clk/sunxi/clk-mod0.c
-@@ -128,7 +128,7 @@ static struct platform_driver sun4i_a10_mod0_clk_driver = {
- 	},
- 	.probe = sun4i_a10_mod0_clk_probe,
- };
--module_platform_driver(sun4i_a10_mod0_clk_driver);
-+builtin_platform_driver(sun4i_a10_mod0_clk_driver);
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 5f8ddcd..4015ec3 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -226,6 +226,7 @@ static void __init exynos_init_irq(void)
  
- static const struct factors_data sun9i_a80_mod0_data __initconst = {
- 	.enable = 31,
+ static const struct of_device_id exynos_cpufreq_matches[] = {
+ 	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
++	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
+ 	{ /* sentinel */ }
+ };
+ 
 -- 
-2.2.1
+1.9.1
+
