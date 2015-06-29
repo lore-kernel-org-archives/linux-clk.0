@@ -1,51 +1,40 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-id: <5591DD9B.4030507@samsung.com>
-Date: Tue, 30 Jun 2015 09:06:51 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: samsung: fix cpu clock's flags checking
-References: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <mcoquelin.stm32@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1435485332-14951-1-git-send-email-daniel.thompson@linaro.org>
+References: <1435485332-14951-1-git-send-email-daniel.thompson@linaro.org>
+Date: Mon, 29 Jun 2015 10:50:47 +0200
+Message-ID: <CALszF6D7_MQ0V=-RNsbFWYw22fXbcE+dFTOH3F9Tu4cCJ_Dwsw@mail.gmail.com>
+Subject: Re: [PATCH] clk: stm32: Fix out-by-one error path in the index lookup
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, patches@linaro.org,
+	linaro-kernel@lists.linaro.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30.06.2015 02:29, Bartlomiej Zolnierkiewicz wrote:
-> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
-> incorrectly used as a bit numbers.  Fix it.
-> 
-> Tested on Exynos4210 based Origen board and on Exynos5250 based
-> Arndale board.
-> 
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
+Hi Daniel,
+
+2015-06-28 11:55 GMT+02:00 Daniel Thompson <daniel.thompson@linaro.org>:
+> If stm32f4_rcc_lookup() is called with primary == 0 and secondary == 192
+> then it will read beyond the end of the table array due to an out-by-one
+> error in the range check.
+>
+> In addition to the fixing the inequality we also modify the r.h.s. to
+> make it even more explicit that we are comparing against the size of
+> table in bits.
+>
 > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
 > ---
->  drivers/clk/samsung/clk-cpu.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+>  drivers/clk/clk-stm32f4.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Thanks for the patch.
 
-Best regards,
-Krzysztof
+Acked-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
 
+Regards,
+Maxime
