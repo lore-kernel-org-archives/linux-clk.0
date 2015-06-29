@@ -1,105 +1,93 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH 6/8] dt-bindings: add documentation of rk3668 clock controller
-Date: Sat, 13 Jun 2015 18:22:20 +0200
-Message-Id: <1434212542-17145-7-git-send-email-heiko@sntech.de>
-In-Reply-To: <1434212542-17145-1-git-send-email-heiko@sntech.de>
-References: <1434212542-17145-1-git-send-email-heiko@sntech.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:12908 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752755AbbF2V3Y (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2015 17:29:24 -0400
+From: Ray Jui <rjui@broadcom.com>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Dan Carpenter <dan.carpenter@oracle.com>
+CC: <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	Scott Branden <sbranden@broadcom.com>,
+	<linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>
+Subject: [PATCH 1/2] clk: iproc: fix memory leak from clock name
+Date: Mon, 29 Jun 2015 14:30:09 -0700
+Message-ID: <1435613410-18698-2-git-send-email-rjui@broadcom.com>
+In-Reply-To: <1435613410-18698-1-git-send-email-rjui@broadcom.com>
+References: <1435613410-18698-1-git-send-email-rjui@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the devicetree binding for the cru on the rk3368 which quite similar
-structured as previous clock controllers.
+of_property_read_string_index takes array of pointers and assign them to
+strings read from device tree property. No additional memory allocation
+is needed prior to calling of_property_read_string_index. In fact, since
+the array of pointers will be re-assigned to other strings, any memory
+that it points to prior to calling of_property_read_string_index will be
+leaked
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: Kumar Gala <galak@codeaurora.org>
-Cc: devicetree@vger.kernel.org
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Ray Jui <rjui@broadcom.com>
 ---
- .../bindings/clock/rockchip,rk3368-cru.txt         | 61 ++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
+ drivers/clk/bcm/clk-iproc-asiu.c |    6 +-----
+ drivers/clk/bcm/clk-iproc-pll.c  |    8 +-------
+ 2 files changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
-new file mode 100644
-index 0000000..0815df5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
-@@ -0,0 +1,61 @@
-+* Rockchip RK3368 Clock and Reset Unit
-+
-+The RK3368 clock controller generates and supplies clock to various
-+controllers within the SoC and also implements a reset controller for SoC
-+peripherals.
-+
-+Required Properties:
-+
-+- compatible: should be "rockchip,rk3368-cru"
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+- #clock-cells: should be 1.
-+- #reset-cells: should be 1.
-+
-+Optional Properties:
-+
-+- rockchip,grf: phandle to the syscon managing the "general register files"
-+  If missing, pll rates are not changeable, due to the missing pll lock status.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume. All available clocks are defined as
-+preprocessor macros in the dt-bindings/clock/rk3368-cru.h headers and can be
-+used in device tree sources. Similar macros exist for the reset sources in
-+these files.
-+
-+External clocks:
-+
-+There are several clocks that are generated outside the SoC. It is expected
-+that they are defined using standard clock bindings with following
-+clock-output-names:
-+ - "xin24m" - crystal input - required,
-+ - "xin32k" - rtc clock - optional,
-+ - "ext_i2s" - external I2S clock - optional,
-+ - "ext_gmac" - external GMAC clock - optional
-+ - "ext_hsadc" - external HSADC clock - optional,
-+ - "ext_isp" - external ISP clock - optional,
-+ - "ext_jtag" - external JTAG clock - optional
-+ - "ext_vip" - external VIP clock - optional,
-+ - "usbotg_out" - output clock of the pll in the otg phy
-+
-+Example: Clock controller node:
-+
-+	cru: clock-controller@ff760000 {
-+		compatible = "rockchip,rk3368-cru";
-+		reg = <0x0 0xff760000 0x0 0x1000>;
-+		rockchip,grf = <&grf>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+Example: UART controller node that consumes the clock generated by the clock
-+  controller:
-+
-+	uart0: serial@10124000 {
-+		compatible = "snps,dw-apb-uart";
-+		reg = <0x10124000 0x400>;
-+		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-+		reg-shift = <2>;
-+		reg-io-width = <1>;
-+		clocks = <&cru SCLK_UART0>;
-+	};
+diff --git a/drivers/clk/bcm/clk-iproc-asiu.c b/drivers/clk/bcm/clk-iproc-asiu.c
+index e19c09c..f630e1b 100644
+--- a/drivers/clk/bcm/clk-iproc-asiu.c
++++ b/drivers/clk/bcm/clk-iproc-asiu.c
+@@ -222,10 +222,6 @@ void __init iproc_asiu_setup(struct device_node *node,
+ 		struct iproc_asiu_clk *asiu_clk;
+ 		const char *clk_name;
+ 
+-		clk_name = kzalloc(IPROC_CLK_NAME_LEN, GFP_KERNEL);
+-		if (WARN_ON(!clk_name))
+-			goto err_clk_register;
+-
+ 		ret = of_property_read_string_index(node, "clock-output-names",
+ 						    i, &clk_name);
+ 		if (WARN_ON(ret))
+@@ -259,7 +255,7 @@ void __init iproc_asiu_setup(struct device_node *node,
+ 
+ err_clk_register:
+ 	for (i = 0; i < num_clks; i++)
+-		kfree(asiu->clks[i].name);
++		clk_unregister(asiu->clk_data.clks[i]);
+ 	iounmap(asiu->gate_base);
+ 
+ err_iomap_gate:
+diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+index 46fb84b..a8d971b 100644
+--- a/drivers/clk/bcm/clk-iproc-pll.c
++++ b/drivers/clk/bcm/clk-iproc-pll.c
+@@ -655,10 +655,6 @@ void __init iproc_pll_clk_setup(struct device_node *node,
+ 		memset(&init, 0, sizeof(init));
+ 		parent_name = node->name;
+ 
+-		clk_name = kzalloc(IPROC_CLK_NAME_LEN, GFP_KERNEL);
+-		if (WARN_ON(!clk_name))
+-			goto err_clk_register;
+-
+ 		ret = of_property_read_string_index(node, "clock-output-names",
+ 						    i, &clk_name);
+ 		if (WARN_ON(ret))
+@@ -690,10 +686,8 @@ void __init iproc_pll_clk_setup(struct device_node *node,
+ 	return;
+ 
+ err_clk_register:
+-	for (i = 0; i < num_clks; i++) {
+-		kfree(pll->clks[i].name);
++	for (i = 0; i < num_clks; i++)
+ 		clk_unregister(pll->clk_data.clks[i]);
+-	}
+ 
+ err_pll_register:
+ 	if (pll->asiu_base)
 -- 
-2.1.4
+1.7.9.5
+
