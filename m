@@ -1,92 +1,38 @@
-Return-Path: <newchief@king.net.pl>
-From: Paul Osmialowski <pawelo@king.net.pl>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Anson Huang <b20788@freescale.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Frank Li <Frank.Li@freescale.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>,
-        Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nathan Lynch <nathan_lynch@mentor.com>,
-        Nicolas Pitre <nico@linaro.org>,
-        Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
-        Olof Johansson <olof@lixom.net>, Paul Bolle <pebolle@tiscali.nl>,
-        Rob Herring <r.herring@freescale.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Stefan Agner <stefan@agner.ch>, Stephen Boyd <sboyd@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, dmaengine@vger.kernel.org
-Cc: Paul Osmialowski <pawelo@king.net.pl>, Yuri Tikhonov <yur@emcraft.com>,
-        Sergei Poselenov <sposelenov@emcraft.com>,
-        Dmitry Cherkassov <d_cherkasov@emcraft.com>,
-        Alexander Potashev <aspotashev@emcraft.com>
-Subject: [PATCH 2/9] arm: do not place huge encoder tables on stack when it is too small
-Date: Tue, 23 Jun 2015 23:19:40 +0200
-Message-Id: <1435094387-20146-3-git-send-email-pawelo@king.net.pl>
-In-Reply-To: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <5591B97D.2080003@broadcom.com>
+Date: Mon, 29 Jun 2015 14:32:45 -0700
+From: Ray Jui <rjui@broadcom.com>
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Dan Carpenter <dan.carpenter@oracle.com>
+CC: <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	Scott Branden <sbranden@broadcom.com>,
+	<linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH 0/2] iProc clock driver fixes
+References: <1435613410-18698-1-git-send-email-rjui@broadcom.com>
+In-Reply-To: <1435613410-18698-1-git-send-email-rjui@broadcom.com>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Since stack on Cortex-M3 is too small, we need configuration option
-to avoid using it for huge encoder tables of zlib.
+To Michael's new email.
 
-Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
----
- arch/arm/Kconfig-nommu     | 4 ++++
- lib/zlib_inflate/inflate.c | 5 +++++
- 2 files changed, 9 insertions(+)
-
-diff --git a/arch/arm/Kconfig-nommu b/arch/arm/Kconfig-nommu
-index aed66d5..965ca97 100644
---- a/arch/arm/Kconfig-nommu
-+++ b/arch/arm/Kconfig-nommu
-@@ -62,3 +62,7 @@ config ARM_MPU
- 
-          If your CPU has an MPU then you should choose 'y' here unless you
-          know that you do not want to use the MPU.
-+
-+config ZLIB_INFLATE_STACK_SAVING
-+	bool 'Do not place huge encoder tables on stack' if ZLIB_INFLATE
-+	depends on ZLIB_INFLATE
-diff --git a/lib/zlib_inflate/inflate.c b/lib/zlib_inflate/inflate.c
-index 58a733b..917b7cf 100644
---- a/lib/zlib_inflate/inflate.c
-+++ b/lib/zlib_inflate/inflate.c
-@@ -75,9 +75,14 @@ int zlib_inflateInit2(z_streamp strm, int windowBits)
-    Return state with length and distance decoding tables and index sizes set to
-    fixed code decoding.  This returns fixed tables from inffixed.h.
-  */
-+#ifdef CONFIG_ZLIB_INFLATE_STACK_SAVING
-+#   include "inffixed.h"
-+#endif
- static void zlib_fixedtables(struct inflate_state *state)
- {
-+#ifndef CONFIG_ZLIB_INFLATE_STACK_SAVING
- #   include "inffixed.h"
-+#endif
-     state->lencode = lenfix;
-     state->lenbits = 9;
-     state->distcode = distfix;
--- 
-2.3.6
+On 6/29/2015 2:30 PM, Ray Jui wrote:
+> This patch series fixes two issues in the Broadcom iProc clock driver,
+> reported by Dan Carpenter <dan.carpenter@oracle.com>: 1) a memory leak from
+> the clock names; 2) 32-bit/64-bit arithmetic
+> 
+> Code base used is the latest linux-next (20150629) and its GITHUB link is:
+> https://github.com/Broadcom/cygnus-linux/tree/iproc-clk-misc-fix-v1
+> 
+> Ray Jui (2):
+>   clk: iproc: fix memory leak from clock name
+>   clk: iproc: fix bit manipulation arithmetic
+> 
+>  drivers/clk/bcm/clk-iproc-asiu.c |    6 +-----
+>  drivers/clk/bcm/clk-iproc-pll.c  |   13 ++++---------
+>  2 files changed, 5 insertions(+), 14 deletions(-)
+> 
