@@ -1,63 +1,93 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Vignesh R <vigneshr@ti.com>, "Paul Walmsley" <paul@pwsan.com>,
-	"Tero Kristo" <t-kristo@ti.com>,
-	"Thierry Reding" <thierry.reding@gmail.com>,
-	"Rob Herring" <robh+dt@kernel.org>,
-	"Pawel Moll" <pawel.moll@arm.com>,
-	"Mark Rutland" <mark.rutland@arm.com>,
-	"Ian Campbell" <ijc+devicetree@hellion.org.uk>,
-	"Kumar Gala" <galak@codeaurora.org>,
-	"Benoit Cousson" <bcousson@baylibre.com>,
-	"Tony Lindgren" <tony@atomide.com>,
-	"Russell King" <linux@arm.linux.org.uk>,
-	"Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <1433332284-10766-5-git-send-email-vigneshr@ti.com>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	"Vignesh R" <vigneshr@ti.com>
-References: <1433332284-10766-1-git-send-email-vigneshr@ti.com>
- <1433332284-10766-5-git-send-email-vigneshr@ti.com>
-Message-ID: <20150618223939.9112.75016@quantum>
-Subject: Re: [PATCH v2 4/5] clk: ti: DRA7: Add tbclk data for ehrpwm
-Date: Thu, 18 Jun 2015 15:39:39 -0700
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH] clk: samsung: fix cpu clock's flags checking
+Date: Mon, 29 Jun 2015 19:29:38 +0200
+Message-id: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Vignesh R (2015-06-03 04:51:23)
-> tbclk is needed by ehrpwm to generate pwm waveforms. Hence, register
-> the required clock information.
-> 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
+CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
+incorrectly used as a bit numbers.  Fix it.
 
-Looks good to me. Please feel free to add:
+Tested on Exynos4210 based Origen board and on Exynos5250 based
+Arndale board.
 
-Acked-by: Michael Turquette <mturquette@baylibre.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ drivers/clk/samsung/clk-cpu.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Regards,
-Mike
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index 3a1fe07..dd02356 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -161,7 +161,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+ 	 * the values for DIV_COPY and DIV_HPM dividers need not be set.
+ 	 */
+ 	div0 = cfg_data->div0;
+-	if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
++	if (cpuclk->flags & CLK_CPU_HAS_DIV1) {
+ 		div1 = cfg_data->div1;
+ 		if (readl(base + E4210_SRC_CPU) & E4210_MUX_HPM_MASK)
+ 			div1 = readl(base + E4210_DIV_CPU1) &
+@@ -182,7 +182,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+ 		alt_div = DIV_ROUND_UP(alt_prate, tmp_rate) - 1;
+ 		WARN_ON(alt_div >= MAX_DIV);
+ 
+-		if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
++		if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
+ 			/*
+ 			 * In Exynos4210, ATB clock parent is also mout_core. So
+ 			 * ATB clock also needs to be mantained at safe speed.
+@@ -203,7 +203,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+ 	writel(div0, base + E4210_DIV_CPU0);
+ 	wait_until_divider_stable(base + E4210_DIV_STAT_CPU0, DIV_MASK_ALL);
+ 
+-	if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
++	if (cpuclk->flags & CLK_CPU_HAS_DIV1) {
+ 		writel(div1, base + E4210_DIV_CPU1);
+ 		wait_until_divider_stable(base + E4210_DIV_STAT_CPU1,
+ 				DIV_MASK_ALL);
+@@ -222,7 +222,7 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+ 	unsigned long mux_reg;
+ 
+ 	/* find out the divider values to use for clock data */
+-	if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
++	if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
+ 		while ((cfg_data->prate * 1000) != ndata->new_rate) {
+ 			if (cfg_data->prate == 0)
+ 				return -EINVAL;
+@@ -237,7 +237,7 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+ 	writel(mux_reg & ~(1 << 16), base + E4210_SRC_CPU);
+ 	wait_until_mux_stable(base + E4210_STAT_CPU, 16, 1);
+ 
+-	if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
++	if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
+ 		div |= (cfg_data->div0 & E4210_DIV0_ATB_MASK);
+ 		div_mask |= E4210_DIV0_ATB_MASK;
+ 	}
+-- 
+1.9.1
 
-> ---
->  drivers/clk/ti/clk-7xx.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-> index 5d2217ae4478..366be43d15fe 100644
-> --- a/drivers/clk/ti/clk-7xx.c
-> +++ b/drivers/clk/ti/clk-7xx.c
-> @@ -304,6 +304,9 @@ static struct ti_dt_clk dra7xx_clks[] = {
->         DT_CLK("4882a000.timer", "timer_sys_ck", "timer_sys_clk_div"),
->         DT_CLK("4882c000.timer", "timer_sys_ck", "timer_sys_clk_div"),
->         DT_CLK("4882e000.timer", "timer_sys_ck", "timer_sys_clk_div"),
-> +       DT_CLK("4843e200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
-> +       DT_CLK("48440200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
-> +       DT_CLK("48442200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
->         DT_CLK(NULL, "sys_clkin", "sys_clkin1"),
->         { .node_name = NULL },
->  };
-> -- 
-> 2.4.1
-> 
