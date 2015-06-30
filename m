@@ -1,174 +1,295 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
-References: <1432839219-475-1-git-send-email-geert+renesas@glider.be>
-Date: Mon, 15 Jun 2015 18:15:04 +0200
-Message-ID: <CAMuHMdXntR6c4-uUNGVGx7D7941e8hvnmtVBvDu2+iUsNHQ=Qw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/14] ARM: shmobile: Add CPG Clock Domains
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Magnus Damm <magnus.damm@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-clk@vger.kernel.org,
-	Linux PM list <linux-pm@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Osmialowski <pawelo@king.net.pl>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+	dmaengine@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Nicolas Pitre <nicolas.pitre@linaro.org>,
+	Paul Bolle <pebolle@tiscali.nl>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+	Paul Osmialowski <pawelo@king.net.pl>,
+	Anson Huang <b20788@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Jingchang Lu <jingchang.lu@freescale.com>,
+	Rob Herring <r.herring@freescale.com>,
+	Yuri Tikhonov <yur@emcraft.com>,
+	Sergei Poselenov <sposelenov@emcraft.com>,
+	Alexander Potashev <aspotashev@emcraft.com>
+Subject: [PATCH v2 6/9] arm: twr-k70f120m: extend Freescale eDMA driver with the ability to support Kinetis SoC
+Date: Tue, 30 Jun 2015 14:27:27 +0200
+Message-Id: <1435667250-28299-7-git-send-email-pawelo@king.net.pl>
+In-Reply-To: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 28, 2015 at 8:53 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->         Hi all,
->
-> This patch series adds Clock Domain support to the Clock Pulse Generator
-> (CPG) Module Stop (MSTP) Clocks driver using the generic PM Domain, to
-> be used on shmobile SoCs without device power domains (R-Car Gen1 and
-> Gen2, RZ).  This allows to power-manage the module clocks of SoC devices
-> that are part of the CPG Clock Domain using Runtime PM, or for system
-> suspend/resume, similar to SoCs with device power domains (SH-Mobile and
-> R-Mobile).
->
-> SoC devices that are part of the CPG Clock Domain and can be
-> power-managed through an MSTP clock are tagged in DT with a proper
-> "power-domains" property. This applies to most on-SoC devices, which
-> have a one-to-one mapping from SoC device to DT device node.
-> Notable exceptions are "display" and "sound" device nodes, which
-> represent multiple SoC devices, each having their own MSTP clocks. Hence
-> drivers for such devices still have to manage their (multiple module)
-> clocks themselves.
->
-> The (MSTP) clock to use for power-management is found by scanning for
-> clocks that are compatible with "renesas,cpg-mstp-clocks".
-> Before, the "first" clock tied to each device (con_id NULL) was used,
-> being a bit ad-hoc. It was suggested to use the "fck" clock instead,
-> but this may conflict with DT bindings for devices we don't control
-> (e.g. GIC-400 plans to mandate "clk" for the clk-name of its single
-> clock). Looking for real MSTP clocks avoids this problem.
->
-> Logically, the CPG Clock Domain operates on the SoC CPG/MSTP block.
-> As there's no single device node in DT representing this block (there
-> are separate device nodes for the CPG and for the individual MSTP
-> clocks), I bound the logic to the CPG device node.
-> Perhaps this is something we should change for future SoCs?
+Surprisingly small amount of work was required in order to extend already
+existing eDMA driver with the support for Kinetis SoC architecture.
 
-Inside Renesas, we've been discussing this face-to-face, but haven't
-reached a conclusion yet.
+Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
+---
+ Documentation/devicetree/bindings/dma/fsl-edma.txt |  38 ++++++-
+ drivers/dma/fsl-edma.c                             | 114 ++++++++++++++++-----
+ 2 files changed, 125 insertions(+), 27 deletions(-)
 
-In Linux terminology, "PM domain" is a higher-level abstraction than
-just (hardware) "power domain" (sometimes called "power area").
-A "PM domain" is any collection of devices that are power-managed
-similarly. As such it covers not only hardware power domains, but also
-clock domains, and even firmware controlled devices (e.g. as used by the
-Linux ACPI subsystem).
+diff --git a/Documentation/devicetree/bindings/dma/fsl-edma.txt b/Documentation/devicetree/bindings/dma/fsl-edma.txt
+index 191d7bd..88c3e20 100644
+--- a/Documentation/devicetree/bindings/dma/fsl-edma.txt
++++ b/Documentation/devicetree/bindings/dma/fsl-edma.txt
+@@ -9,6 +9,7 @@ group, DMAMUX0 or DMAMUX1, but not both.
+ Required properties:
+ - compatible :
+ 	- "fsl,vf610-edma" for eDMA used similar to that on Vybrid vf610 SoC
++	- "fsl,kinetis-edma" for eDMA used similar to that on Kinetis SoC
+ - reg : Specifies base physical address(s) and size of the eDMA registers.
+ 	The 1st region is eDMA control register's address and size.
+ 	The 2nd and the 3rd regions are programmable channel multiplexing
+@@ -16,7 +17,8 @@ Required properties:
+ - interrupts : A list of interrupt-specifiers, one for each entry in
+ 	interrupt-names.
+ - interrupt-names : Should contain:
+-	"edma-tx" - the transmission interrupt
++	"edma-tx" - the transmission interrupt (Vybrid)
++	"edma-tx-n,m" - interrupt for channels n (0-15) and m (16-31) (Kinetis)
+ 	"edma-err" - the error interrupt
+ - #dma-cells : Must be <2>.
+ 	The 1st cell specifies the DMAMUX(0 for DMAMUX0 and 1 for DMAMUX1).
+@@ -28,6 +30,7 @@ Required properties:
+ - clock-names : A list of channel group clock names. Should contain:
+ 	"dmamux0" - clock name of mux0 group
+ 	"dmamux1" - clock name of mux1 group
++	"edma"    - clock gate for whole controller (Kinetis only)
+ - clocks : A list of phandle and clock-specifier pairs, one for each entry in
+ 	clock-names.
+ 
+@@ -54,6 +57,39 @@ edma0: dma-controller@40018000 {
+ 		<&clks VF610_CLK_DMAMUX1>;
+ };
+ 
++edma: dma-controller@40008000 {
++	compatible = "fsl,kinetis-edma";
++	reg = <0x40008000 0x2000>, /* DMAC */
++		<0x40021000 0x1000>, /* DMAMUX0 */
++		<0x40022000 0x1000>; /* DMAMUX1 */
++	#dma-cells = <2>;
++	dma-channels = <32>;
++	interrupts =	 <0>,  <1>,  <2>,  <3>,
++			 <4>,  <5>,  <6>,  <7>,
++			 <8>,  <9>, <10>, <11>,
++			<12>, <13>, <14>, <15>,
++			<16>;
++	interrupt-names = "edma-tx-0,16",
++			  "edma-tx-1,17",
++			  "edma-tx-2,18",
++			  "edma-tx-3,19",
++			  "edma-tx-4,20",
++			  "edma-tx-5,21",
++			  "edma-tx-6,22",
++			  "edma-tx-7,23",
++			  "edma-tx-8,24",
++			  "edma-tx-9,25",
++			  "edma-tx-10,26",
++			  "edma-tx-11,27",
++			  "edma-tx-12,28",
++			  "edma-tx-13,29",
++			  "edma-tx-14,30",
++			  "edma-tx-15,31",
++			  "edma-err";
++	clocks = <&mcg_cclk_gate 6 1>,
++		 <&mcg_pclk_gate 5 1>, <&mcg_pclk_gate 5 2>;
++	clock-names = "edma", "dmamux0", "dmamux1";
++};
+ 
+ * DMA clients
+ DMA client drivers that uses the DMA function must use the format described
+diff --git a/drivers/dma/fsl-edma.c b/drivers/dma/fsl-edma.c
+index 915eec3..e41a3b9 100644
+--- a/drivers/dma/fsl-edma.c
++++ b/drivers/dma/fsl-edma.c
+@@ -164,13 +164,13 @@ struct fsl_edma_desc {
+ struct fsl_edma_engine {
+ 	struct dma_device	dma_dev;
+ 	void __iomem		*membase;
++	struct clk		*clk;
+ 	void __iomem		*muxbase[DMAMUX_NR];
+ 	struct clk		*muxclk[DMAMUX_NR];
+ 	struct mutex		fsl_edma_mutex;
+ 	u32			n_chans;
+-	int			txirq;
+-	int			errirq;
+ 	bool			big_endian;
++	bool			kinetis;
+ 	struct fsl_edma_chan	chans[];
+ };
+ 
+@@ -788,42 +788,85 @@ static void fsl_edma_free_chan_resources(struct dma_chan *chan)
+ }
+ 
+ static int
+-fsl_edma_irq_init(struct platform_device *pdev, struct fsl_edma_engine *fsl_edma)
++fsl_edma_irq_init(struct platform_device *pdev,
++		  struct fsl_edma_engine *fsl_edma)
+ {
++	struct device_node *np = pdev->dev.of_node;
++	int irq, errirq;
+ 	int ret;
+ 
+-	fsl_edma->txirq = platform_get_irq_byname(pdev, "edma-tx");
+-	if (fsl_edma->txirq < 0) {
+-		dev_err(&pdev->dev, "Can't get edma-tx irq.\n");
+-		return fsl_edma->txirq;
+-	}
+-
+-	fsl_edma->errirq = platform_get_irq_byname(pdev, "edma-err");
+-	if (fsl_edma->errirq < 0) {
++	errirq = platform_get_irq_byname(pdev, "edma-err");
++	if (errirq < 0) {
+ 		dev_err(&pdev->dev, "Can't get edma-err irq.\n");
+-		return fsl_edma->errirq;
++		return irq;
+ 	}
+ 
+-	if (fsl_edma->txirq == fsl_edma->errirq) {
+-		ret = devm_request_irq(&pdev->dev, fsl_edma->txirq,
+-				fsl_edma_irq_handler, 0, "eDMA", fsl_edma);
+-		if (ret) {
+-			dev_err(&pdev->dev, "Can't register eDMA IRQ.\n");
+-			 return  ret;
++	if (fsl_edma->kinetis) {
++		int i;
++		int irqs = of_irq_count(np);
++
++		if (irqs <= 1) {
++			dev_err(&pdev->dev, "Wrong eDMA irq count %d\n", irqs);
++			return -EINVAL;
+ 		}
+-	} else {
+-		ret = devm_request_irq(&pdev->dev, fsl_edma->txirq,
++
++		for (i = 0; i < (irqs - 1); i++) {
++			char irq_name[32];
++
++			sprintf(irq_name, "edma-tx-%d,%d", i, 16 + i);
++			irq = platform_get_irq_byname(pdev, irq_name);
++			if (irq < 0) {
++				dev_err(&pdev->dev, "Can't get %s irq.\n",
++							irq_name);
++				return irq;
++			}
++
++			ret = devm_request_irq(&pdev->dev, irq,
+ 				fsl_edma_tx_handler, 0, "eDMA tx", fsl_edma);
+-		if (ret) {
+-			dev_err(&pdev->dev, "Can't register eDMA tx IRQ.\n");
+-			return  ret;
++			if (ret) {
++				dev_err(&pdev->dev, "Can't register %s IRQ.\n",
++							irq_name);
++				return  ret;
++			}
+ 		}
+ 
+-		ret = devm_request_irq(&pdev->dev, fsl_edma->errirq,
+-				fsl_edma_err_handler, 0, "eDMA err", fsl_edma);
++		ret = devm_request_irq(&pdev->dev, errirq,
++			fsl_edma_err_handler, 0, "eDMA err", fsl_edma);
+ 		if (ret) {
+ 			dev_err(&pdev->dev, "Can't register eDMA err IRQ.\n");
+-			return  ret;
++		return  ret;
++		}
++	} else {
++		irq = platform_get_irq_byname(pdev, "edma-tx");
++		if (irq < 0) {
++			dev_err(&pdev->dev, "Can't get edma-tx irq.\n");
++			return irq;
++		}
++
++		if (irq == errirq) {
++			ret = devm_request_irq(&pdev->dev, irq,
++				fsl_edma_irq_handler, 0, "eDMA", fsl_edma);
++			if (ret) {
++				dev_err(&pdev->dev,
++						"Can't register eDMA IRQ.\n");
++				return  ret;
++			}
++		} else {
++			ret = devm_request_irq(&pdev->dev, irq,
++				fsl_edma_tx_handler, 0, "eDMA tx", fsl_edma);
++			if (ret) {
++				dev_err(&pdev->dev,
++					    "Can't register eDMA tx IRQ.\n");
++				return  ret;
++			}
++
++			ret = devm_request_irq(&pdev->dev, errirq,
++				fsl_edma_err_handler, 0, "eDMA err", fsl_edma);
++			if (ret) {
++				dev_err(&pdev->dev,
++					    "Can't register eDMA err IRQ.\n");
++				return  ret;
++			}
+ 		}
+ 	}
+ 
+@@ -851,6 +894,7 @@ static int fsl_edma_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	fsl_edma->n_chans = chans;
++	fsl_edma->kinetis = of_device_is_compatible(np, "fsl,kinetis-edma");
+ 	mutex_init(&fsl_edma->fsl_edma_mutex);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -858,6 +902,20 @@ static int fsl_edma_probe(struct platform_device *pdev)
+ 	if (IS_ERR(fsl_edma->membase))
+ 		return PTR_ERR(fsl_edma->membase);
+ 
++	if (fsl_edma->kinetis) {
++		fsl_edma->clk = devm_clk_get(&pdev->dev, "edma");
++		if (IS_ERR(fsl_edma->clk)) {
++			dev_err(&pdev->dev, "Missing EDMA clock.\n");
++			return PTR_ERR(fsl_edma->clk);
++		}
++
++		ret = clk_prepare_enable(fsl_edma->clk);
++		if (ret) {
++			dev_err(&pdev->dev, "EDMA clk failed.\n");
++			return ret;
++		}
++	}
++
+ 	for (i = 0; i < DMAMUX_NR; i++) {
+ 		char clkname[32];
+ 
+@@ -956,10 +1014,14 @@ static int fsl_edma_remove(struct platform_device *pdev)
+ 	for (i = 0; i < DMAMUX_NR; i++)
+ 		clk_disable_unprepare(fsl_edma->muxclk[i]);
+ 
++	if (fsl_edma->kinetis)
++		clk_disable_unprepare(fsl_edma->clk);
++
+ 	return 0;
+ }
+ 
+ static const struct of_device_id fsl_edma_dt_ids[] = {
++	{ .compatible = "fsl,kinetis-edma", },
+ 	{ .compatible = "fsl,vf610-edma", },
+ 	{ /* sentinel */ }
+ };
+-- 
+2.3.6
 
-I find it a bit unfortunate this was not reflected in the DT bindings
-for Generic PM domains, which use "power-domains" properties, making
-believe people this is about hardware power domains only.
-
-One other point of confusion is that there are multiple kernel
-subsystems that can (or seem to be able to) be used for the same
-purpose. Both regulators and power domains are used to "control power".
-The same is true for clocks vs. clock domains.
-My point of view is that the regulator and clock subsystems are more
-about the properties of regulators (voltage, current) resp. clocks
-(frequencies), while power/clock domains are about being active or
-inactive.
-
-On Renesas SoCs (SH/R-Mobile, R-Car, RZ), the MSTP (Module Standby and
-Software Reset) block is very intimately tied to the CPG (Clock Pulse
-Generator) block.
-
-The MSTP block provides two functions:
-  1. Module Standby: "Clock supply to specified modules is stopped by
-     setting the module stop control register bits."
-     However, the clock supply to a module is not stopped until all CPUs
-     in the SoC agree.  Indeed, there are separate MSTP registers for
-     application (Cortex-A) and real-time (SH and/or Cortex-R) cores.
-  2. Reset control. to perform a software reset of a specific module.
-
-Given the second function, perhaps the MSTP bits shouldn't have been
-moduled as clocks, but it made sense at the time of introduction, and
-IMHO it still does.
-
-However, due to the module standby function, all connected devices are
-grouped into a collection of devices that are power-managed similarly,
-by controlling the clock supply to the individual modules. So this
-warrants the use of a PM domain.
-
-Alternative solutions that have been proposed are:
-
-  1. | Explicit opt-in in drivers (from Laurent)
-     | As the driver knows best which clock it wants to manage, the
-     | driver could tell runtime PM if/when which clock to use.
-
-     My rebuttal here is twofold:
-       - Does the driver know best? It may know it may need to enable a
-         clock. But the clock may be optional: on some SoCs, the same IP
-         core may be present without the Module Standby feature (e.g.
-         the GPIO blocks on R-Car Gen1 are not documented to have MSTP
-         bits, while they do on R-Car Gen2). Why would the driver have
-         to care?
-
-         The hardware documentation clearly states the purpose of the
-         MSTP clocks: when a module is not in use, its module clock can
-         be stopped to reduce power consumption.  All of this should be
-         described in DT. We already have the clocks in DT. If a module
-         has an MSTP clock, it means the module can be put in standby
-         mode. This is the same for all modules, hence for all drivers.
-
-       - The idea is to reduce the amount of boilerplate code, not to
-         increase it. The more code we can move into platform code, the
-         less drivers have to care.
-
-         This is the real power behind the abstraction of runtime PM.
-         The driver only has to tell runtime PM when it wants to "use"
-         the hardware module, using pm_runtime_{get_sync,put}().
-         It doesn't have to know this involves enabling clocks and/or
-         power domains, or parent devices. All of this is taken care of
-         by a small piece of platform code, and the generic code.
-         As not all drivers are runtime PM-aware yet, calls to
-         pm_runtime_*() functions may have to be added, though. But
-         that's it.
-
-     Side note: Laurent has been mostly involved with multimedia devices.
-     And let display and sound be the two exceptions where there's no
-     one-to-one mapping from SoC devices to DT device nodes...
-     Hence the multimedia drivers would have to manage the (multiple)
-     module clocks anyway.
-
-     Perhaps the display and sound bindings can be reworked, to better
-     describe the hardware structure, and expose a one-to-one mapping
-     between MSTP clocks and hardware modules, too?
-
-  2. | Handling MSTP clocks automatically in a similar way that the current
-     | code handles the first clock, without requiring usage of a
-     | power-domain property in DT (from Magnus)
-     | As there are already "clocks = <...>" links from device nodes to MSTP
-     | clocks in DT, we can just scan for those, without requiring
-     | (superfluous) "power-domains = <...>" properties in DT.
-
-     Indeed, given the presence of a link to an MSTP clock in a device
-     node, we know the module can be put in standby mode.
-     But without the standard "power-domains" property, we would need
-     our own specialized code to scan all nodes for MSTP clocks (through
-     a platform_bus notifier again?), and add the corresponding devices
-     to the clock domain.  Hence the "power-domains" properties allow to
-     use the generic code, and thus share more code with other SoCs.
-     In addition, a "power-domains" property gives a strong clue to
-     people not familiar with Renesas SoCs and their MSTP clocks.
-
-Thanks for your comments/suggestions/supports/flames/...!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
