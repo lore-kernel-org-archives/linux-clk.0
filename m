@@ -1,34 +1,74 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55828A18.6030608@ti.com>
-Date: Thu, 18 Jun 2015 14:36:32 +0530
-From: Mugunthan V N <mugunthanvnm@ti.com>
-MIME-Version: 1.0
-To: Keerthy <j-keerthy@ti.com>, <linux-omap@vger.kernel.org>
-CC: <galak@codeaurora.org>, <tony@atomide.com>, <t-kristo@ti.com>,
-	<pawel.moll@arm.com>, <linux-kernel@vger.kernel.org>,
-	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 0/2] CLK: TI: add dpll_clksel_mac_clk node
-References: <1434614473-8500-1-git-send-email-j-keerthy@ti.com>
-In-Reply-To: <1434614473-8500-1-git-send-email-j-keerthy@ti.com>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	"linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: samsung: fix cpu clock's flags checking
+Date: Tue, 30 Jun 2015 19:17:51 +0200
+Message-id: <7416838.2ZUPGjSqFp@amdc1976>
+In-reply-to: <CABxcv=kVL94rdFgNKcxx2JOi9WRFnvhMWrpjEDcEmx7q7cEsgQ@mail.gmail.com>
+References: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
+ <5591DD9B.4030507@samsung.com>
+ <CABxcv=kVL94rdFgNKcxx2JOi9WRFnvhMWrpjEDcEmx7q7cEsgQ@mail.gmail.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday 18 June 2015 01:31 PM, Keerthy wrote:
-> The series adds the missing clock node needed for cpsw.
-> 
-> Keerthy (2):
->   CLK: TI: add dpll_clksel_mac_clk node
->   ARM: dts: am4372: Set the default clock rate for dpll_clksel_mac_clk
->     clock
-> 
->  arch/arm/boot/dts/am4372.dtsi        | 7 +++++--
->  arch/arm/boot/dts/am43xx-clocks.dtsi | 9 +++++++++
->  drivers/clk/ti/clk-43xx.c            | 1 +
->  3 files changed, 15 insertions(+), 2 deletions(-)
-> 
 
-Tested-by: Mugunthan V N <mugunthanvnm@ti.com>
+Hi,
 
-Regards
-Mugunthan V N
+On Tuesday, June 30, 2015 08:27:36 AM Javier Martinez Canillas wrote:
+> On Tue, Jun 30, 2015 at 2:06 AM, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+> > On 30.06.2015 02:29, Bartlomiej Zolnierkiewicz wrote:
+> >> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
+> >> incorrectly used as a bit numbers.  Fix it.
+> >>
+> >> Tested on Exynos4210 based Origen board and on Exynos5250 based
+> >> Arndale board.
+> >>
+> >> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> >> Cc: Michael Turquette <mturquette@baylibre.com>
+> >> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> >> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> >> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> >> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> >> ---
+> >>  drivers/clk/samsung/clk-cpu.c | 10 +++++-----
+> >>  1 file changed, 5 insertions(+), 5 deletions(-)
+> >
+> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> >
+> 
+> Looks good to me as well.
+> 
+> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+Krzysztof has noted that I should use your @dowhile0.org e-mail address
+instead of @collabora.co.uk one, is this right?
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
