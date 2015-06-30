@@ -1,155 +1,110 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: sboyd@codeaurora.org,
-	mturquette@linaro.org
-Cc: lho@apm.com,
-	ksankaran@apm.com,
-	fkan@apm.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	matthias.bgg@gmail.com
-Subject: [PATCH v2] clk: xgene: Delete duplicated name field
-Date: Wed, 17 Jun 2015 23:28:49 +0200
-Message-Id: <1434576529-4183-1-git-send-email-matthias.bgg@gmail.com>
+Return-Path: <newchief@king.net.pl>
+From: Paul Osmialowski <pawelo@king.net.pl>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        dmaengine@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Paul Bolle <pebolle@tiscali.nl>, Thomas Gleixner <tglx@linutronix.de>,
+        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+        Paul Osmialowski <pawelo@king.net.pl>,
+        Anson Huang <b20788@freescale.com>, Frank Li <Frank.Li@freescale.com>,
+        Jingchang Lu <jingchang.lu@freescale.com>,
+        Rob Herring <r.herring@freescale.com>, Yuri Tikhonov <yur@emcraft.com>,
+        Sergei Poselenov <sposelenov@emcraft.com>,
+        Alexander Potashev <aspotashev@emcraft.com>
+Subject: [PATCH v2 1/9] arm: allow copying of vector table to internal SRAM memory
+Date: Tue, 30 Jun 2015 14:27:22 +0200
+Message-Id: <1435667250-28299-2-git-send-email-pawelo@king.net.pl>
+In-Reply-To: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-X-Gene clocks implement it's name in the clock private struct.
-This is a duplication of the name field. We can delete the field
-and rely on the common implementation to retrieve the name.
+Based on part of the commit published on Emcraft git repo:
 
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+https://github.com/EmcraftSystems/linux-emcraft.git
+
+2ce1841b590d014d8738215fb1ffe05f53c8d9f0 "some commit"
+
+by: Dmitry Cherkassov <d_cherkasov@emcraft.com>
+
+The ARM v7M allows setting the vector table either in
+the boot memory or in the internal SRAM memory, controlled
+by Bit 29 in the Vector Table Base register. This implies
+that the OS vector table needs to be copied to the internal RAM.
+
+New option CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR allows specification
+of the desired destination for the OS vector table.
+
+Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
 ---
- drivers/clk/clk-xgene.c | 28 +++++++++++++---------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
+ arch/arm/Kconfig-nommu      | 11 +++++++++++
+ arch/arm/kernel/entry-v7m.S |  3 +++
+ arch/arm/mm/proc-v7m.S      | 11 +++++++++++
+ 3 files changed, 25 insertions(+)
 
-diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
-index f26b3ac..4caee93 100644
---- a/drivers/clk/clk-xgene.c
-+++ b/drivers/clk/clk-xgene.c
-@@ -60,7 +60,6 @@ enum xgene_pll_type {
+diff --git a/arch/arm/Kconfig-nommu b/arch/arm/Kconfig-nommu
+index aed66d5..d081fcb 100644
+--- a/arch/arm/Kconfig-nommu
++++ b/arch/arm/Kconfig-nommu
+@@ -62,3 +62,14 @@ config ARM_MPU
  
- struct xgene_clk_pll {
- 	struct clk_hw	hw;
--	const char	*name;
- 	void __iomem	*reg;
- 	spinlock_t	*lock;
- 	u32		pll_offset;
-@@ -75,7 +74,7 @@ static int xgene_clk_pll_is_enabled(struct clk_hw *hw)
- 	u32 data;
- 
- 	data = xgene_clk_read(pllclk->reg + pllclk->pll_offset);
--	pr_debug("%s pll %s\n", pllclk->name,
-+	pr_debug("%s pll %s\n", __clk_get_name(hw->clk),
- 		data & REGSPEC_RESET_F1_MASK ? "disabled" : "enabled");
- 
- 	return data & REGSPEC_RESET_F1_MASK ? 0 : 1;
-@@ -113,7 +112,7 @@ static unsigned long xgene_clk_pll_recalc_rate(struct clk_hw *hw,
- 		fref = parent_rate / nref;
- 		fvco = fref * nfb;
- 	}
--	pr_debug("%s pll recalc rate %ld parent %ld\n", pllclk->name,
-+	pr_debug("%s pll recalc rate %ld parent %ld\n", __clk_get_name(hw->clk),
- 		fvco / nout, parent_rate);
- 
- 	return fvco / nout;
-@@ -146,7 +145,6 @@ static struct clk *xgene_register_clk_pll(struct device *dev,
- 	init.parent_names = parent_name ? &parent_name : NULL;
- 	init.num_parents = parent_name ? 1 : 0;
- 
--	apmclk->name = name;
- 	apmclk->reg = reg;
- 	apmclk->lock = lock;
- 	apmclk->pll_offset = pll_offset;
-@@ -210,7 +208,6 @@ struct xgene_dev_parameters {
- 
- struct xgene_clk {
- 	struct clk_hw	hw;
--	const char	*name;
- 	spinlock_t	*lock;
- 	struct xgene_dev_parameters	param;
- };
-@@ -228,7 +225,7 @@ static int xgene_clk_enable(struct clk_hw *hw)
- 		spin_lock_irqsave(pclk->lock, flags);
- 
- 	if (pclk->param.csr_reg != NULL) {
--		pr_debug("%s clock enabled\n", pclk->name);
-+		pr_debug("%s clock enabled\n", __clk_get_name(hw->clk));
- 		reg = __pa(pclk->param.csr_reg);
- 		/* First enable the clock */
- 		data = xgene_clk_read(pclk->param.csr_reg +
-@@ -237,7 +234,7 @@ static int xgene_clk_enable(struct clk_hw *hw)
- 		xgene_clk_write(data, pclk->param.csr_reg +
- 					pclk->param.reg_clk_offset);
- 		pr_debug("%s clock PADDR base %pa clk offset 0x%08X mask 0x%08X value 0x%08X\n",
--			pclk->name, &reg,
-+			__clk_get_name(hw->clk), &reg,
- 			pclk->param.reg_clk_offset, pclk->param.reg_clk_mask,
- 			data);
- 
-@@ -248,7 +245,7 @@ static int xgene_clk_enable(struct clk_hw *hw)
- 		xgene_clk_write(data, pclk->param.csr_reg +
- 					pclk->param.reg_csr_offset);
- 		pr_debug("%s CSR RESET PADDR base %pa csr offset 0x%08X mask 0x%08X value 0x%08X\n",
--			pclk->name, &reg,
-+			__clk_get_name(hw->clk), &reg,
- 			pclk->param.reg_csr_offset, pclk->param.reg_csr_mask,
- 			data);
- 	}
-@@ -269,7 +266,7 @@ static void xgene_clk_disable(struct clk_hw *hw)
- 		spin_lock_irqsave(pclk->lock, flags);
- 
- 	if (pclk->param.csr_reg != NULL) {
--		pr_debug("%s clock disabled\n", pclk->name);
-+		pr_debug("%s clock disabled\n", __clk_get_name(hw->clk));
- 		/* First put the CSR in reset */
- 		data = xgene_clk_read(pclk->param.csr_reg +
- 					pclk->param.reg_csr_offset);
-@@ -295,10 +292,10 @@ static int xgene_clk_is_enabled(struct clk_hw *hw)
- 	u32 data = 0;
- 
- 	if (pclk->param.csr_reg != NULL) {
--		pr_debug("%s clock checking\n", pclk->name);
-+		pr_debug("%s clock checking\n", __clk_get_name(hw->clk));
- 		data = xgene_clk_read(pclk->param.csr_reg +
- 					pclk->param.reg_clk_offset);
--		pr_debug("%s clock is %s\n", pclk->name,
-+		pr_debug("%s clock is %s\n", __clk_get_name(hw->clk),
- 			data & pclk->param.reg_clk_mask ? "enabled" :
- 							"disabled");
- 	}
-@@ -321,11 +318,13 @@ static unsigned long xgene_clk_recalc_rate(struct clk_hw *hw,
- 		data &= (1 << pclk->param.reg_divider_width) - 1;
- 
- 		pr_debug("%s clock recalc rate %ld parent %ld\n",
--			pclk->name, parent_rate / data, parent_rate);
-+			__clk_get_name(hw->clk),
-+			parent_rate / data, parent_rate);
+          If your CPU has an MPU then you should choose 'y' here unless you
+          know that you do not want to use the MPU.
 +
- 		return parent_rate / data;
- 	} else {
- 		pr_debug("%s clock recalc rate %ld parent %ld\n",
--			pclk->name, parent_rate, parent_rate);
-+			__clk_get_name(hw->clk), parent_rate, parent_rate);
- 		return parent_rate;
- 	}
- }
-@@ -357,7 +356,7 @@ static int xgene_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 		data |= divider;
- 		xgene_clk_write(data, pclk->param.divider_reg +
- 					pclk->param.reg_divider_offset);
--		pr_debug("%s clock set rate %ld\n", pclk->name,
-+		pr_debug("%s clock set rate %ld\n", __clk_get_name(hw->clk),
- 			parent_rate / divider_save);
- 	} else {
- 		divider_save = 1;
-@@ -419,7 +418,6 @@ static struct clk *xgene_register_clk(struct device *dev,
- 	init.parent_names = parent_name ? &parent_name : NULL;
- 	init.num_parents = parent_name ? 1 : 0;
++config COPY_VECTOR_TABLE_TO_SRAM_ADDR
++	hex 'If non-zero, copy Vector Table to this SRAM Address' if CPU_V7M
++	default 0x00000000
++	depends on CPU_V7M
++	help
++	  The ARM v7M allows setting the vector table either in
++	  the boot memory or in the internal SRAM memory, controlled
++	  by Bit 29 in the Vector Table Base register.
++	  This implies that the OS vector table needs to be copied to
++	  the internal RAM.
+diff --git a/arch/arm/kernel/entry-v7m.S b/arch/arm/kernel/entry-v7m.S
+index b6c8bb9..114096e 100644
+--- a/arch/arm/kernel/entry-v7m.S
++++ b/arch/arm/kernel/entry-v7m.S
+@@ -146,3 +146,6 @@ ENTRY(vector_table)
+ 	.rept	CONFIG_CPU_V7M_NUM_IRQ
+ 	.long	__irq_entry		@ External Interrupts
+ 	.endr
++#if CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR > 0x00000000
++ENTRY(vector_table_end)
++#endif
+diff --git a/arch/arm/mm/proc-v7m.S b/arch/arm/mm/proc-v7m.S
+index 67d9209..ded9504 100644
+--- a/arch/arm/mm/proc-v7m.S
++++ b/arch/arm/mm/proc-v7m.S
+@@ -83,7 +83,18 @@ ENDPROC(cpu_v7m_do_resume)
+ __v7m_setup:
+ 	@ Configure the vector table base address
+ 	ldr	r0, =BASEADDR_V7M_SCB
++#if CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR > 0x00000000
++	ldr	r12, =CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR
++	mov	r5, r12			@ Copy the kernel vector_table to
++	ldr	r6, =vector_table	@ the in-SRAM vector table
++	ldr	r4, =vector_table_end
++1:	ldr	r3, [r6], #4
++	str	r3, [r5], #4
++	cmp	r6, r4
++	bne	1b			@ End of the copy code
++#else
+ 	ldr	r12, =vector_table
++#endif
+ 	str	r12, [r0, V7M_SCB_VTOR]
  
--	apmclk->name = name;
- 	apmclk->lock = lock;
- 	apmclk->hw.init = &init;
- 	apmclk->param = *parameters;
+ 	@ enable UsageFault, BusFault and MemManage fault.
 -- 
-1.9.1
+2.3.6
