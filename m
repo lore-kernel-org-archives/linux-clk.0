@@ -1,197 +1,94 @@
-Return-Path: <vinod.koul@intel.com>
-Date: Wed, 24 Jun 2015 21:44:23 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Paul Osmialowski <pawelo@king.net.pl>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Anson Huang <b20788@freescale.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Frank Li <Frank.Li@freescale.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>,
-        Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nathan Lynch <nathan_lynch@mentor.com>,
-        Nicolas Pitre <nico@linaro.org>,
-        Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
-        Olof Johansson <olof@lixom.net>, Paul Bolle <pebolle@tiscali.nl>,
-        Rob Herring <r.herring@freescale.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Stefan Agner <stefan@agner.ch>, Stephen Boyd <sboyd@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        Yuri Tikhonov <yur@emcraft.com>,
-        Sergei Poselenov <sposelenov@emcraft.com>,
-        Dmitry Cherkassov <d_cherkasov@emcraft.com>,
-        Alexander Potashev <aspotashev@emcraft.com>
-Subject: Re: [PATCH 8/9] arm: twr-k70f120m: extend Freescale eDMA driver with
- ability to support Kinetis SoC
-Message-ID: <20150624161423.GO19530@localhost>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
- <1435094387-20146-9-git-send-email-pawelo@king.net.pl>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Paul Osmialowski <pawelo@king.net.pl>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+	Nicolas Pitre <nicolas.pitre@linaro.org>,
+	Sergei Poselenov <sposelenov@emcraft.com>,
+	Paul Bolle <pebolle@tiscali.nl>,
+	Jingchang Lu <jingchang.lu@freescale.com>,
+	Yuri Tikhonov <yur@emcraft.com>,
+	Rob Herring <r.herring@freescale.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+	Alexander Potashev <aspotashev@emcraft.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Anson Huang <b20788@freescale.com>
+Subject: Re: [PATCH v2 7/9] arm: twr-k70f120m: use Freescale eDMA driver with Kinetis SoC
+Date: Tue, 30 Jun 2015 22:49:11 +0200
+Message-ID: <1650263.FfdEQKm1Bu@wuerfel>
+In-Reply-To: <1435667250-28299-8-git-send-email-pawelo@king.net.pl>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <1435667250-28299-8-git-send-email-pawelo@king.net.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1435094387-20146-9-git-send-email-pawelo@king.net.pl>
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 23, 2015 at 11:19:46PM +0200, Paul Osmialowski wrote:
-> Surprisingly small amount of work was required in order to extend already
-> existing eDMA driver with the support for Kinetis SoC architecture.
-> 
+On Tuesday 30 June 2015 14:27:28 Paul Osmialowski wrote:
 > Note that <mach/memory.h> is needed (which is denoted by
 > CONFIG_NEED_MACH_MEMORY_H) as it provides macros required for proper
 > operation of DMA allocation functions.
-> 
+
+You can't do this, it breaks compilation when multiple platforms
+are enabled.
+
 > Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
 > ---
->  Documentation/devicetree/bindings/dma/fsl-edma.txt | 38 +++++++++-
->  arch/arm/Kconfig                                   |  4 ++
->  arch/arm/boot/dts/kinetis.dtsi                     | 34 +++++++++
->  arch/arm/mach-kinetis/include/mach/memory.h        | 61 ++++++++++++++++
->  drivers/clk/clk-kinetis.c                          | 15 ++++
->  drivers/dma/fsl-edma.c                             | 81 +++++++++++++++++++++-
->  include/dt-bindings/clock/kinetis-mcg.h            |  5 +-
-having so many change into one patch is not a great idea, please breka them
-up. I am looking for single/multiple patches which only touch dmaengine
-files
+>  arch/arm/Kconfig                            |  4 ++
+>  arch/arm/boot/dts/kinetis.dtsi              | 34 ++++++++++++++++
+>  arch/arm/mach-kinetis/include/mach/memory.h | 61 +++++++++++++++++++++++++++++
+>  3 files changed, 99 insertions(+)
+>  create mode 100644 arch/arm/mach-kinetis/include/mach/memory.h
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index b21592b..8ccffee 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -971,6 +971,10 @@ config ARCH_KINETIS
+>  	select CLKSRC_KINETIS
+>  	select PINCTRL
+>  	select PINCTRL_KINETIS
+> +	select DMADEVICES
+> +	select FSL_EDMA
+> +	select DMA_OF
+> +	select NEED_MACH_MEMORY_H
 
+I think DMA_OF is implied by dmaengine support in combination with CONFIG_OF
 
-> +#ifdef CONFIG_ARCH_KINETIS
-> +static const char * const txirq_names[] = {
-> +	"edma-tx-0,16",
-> +	"edma-tx-1,17",
-> +	"edma-tx-2,18",
-> +	"edma-tx-3,19",
-> +	"edma-tx-4,20",
-> +	"edma-tx-5,21",
-> +	"edma-tx-6,22",
-> +	"edma-tx-7,23",
-> +	"edma-tx-8,24",
-> +	"edma-tx-9,25",
-> +	"edma-tx-10,26",
-> +	"edma-tx-11,27",
-> +	"edma-tx-12,28",
-> +	"edma-tx-13,29",
-> +	"edma-tx-14,30",
-> +	"edma-tx-15,31",
-> +};
-why do we need this array, these seem to come from DT, right?
-> +#endif
 > +
->  struct fsl_edma_engine {
->  	struct dma_device	dma_dev;
->  	void __iomem		*membase;
-> +#ifdef CONFIG_ARCH_KINETIS
-> +	struct clk		*clk;
-> +#endif
->  	void __iomem		*muxbase[DMAMUX_NR];
->  	struct clk		*muxclk[DMAMUX_NR];
->  	struct mutex		fsl_edma_mutex;
->  	u32			n_chans;
-> +#ifdef CONFIG_ARCH_KINETIS
-> +	int			txirq[ARRAY_SIZE(txirq_names)];
-> +#else
->  	int			txirq;
-> +#endif
->  	int			errirq;
->  	bool			big_endian;
->  	struct fsl_edma_chan	chans[];
-we can define these bits and only be used on kinetis machines?
+> +#ifndef _MACH_KINETIS_MEMORY_H
+> +#define _MACH_KINETIS_MEMORY_H
+> +
+> +#ifndef __ASSEMBLY__
+> +
+> +/*
+> + * On Kinetis K70, consistent DMA memory resides in a special
+> + * DDRAM alias region (non-cacheable DDRAM at 0x80000000).
+> + *
+> + */
+> +#define KINETIS_PHYS_DMA_OFFSET UL(0x80000000)
+> +
+> +/*
+> + * Mask of the field used to distinguish DDRAM aliases
+> + */
+> +#define KINETIS_DRAM_ALIAS_MASK UL(0xf8000000)
 
-> @@ -709,6 +737,7 @@ static irqreturn_t fsl_edma_err_handler(int irq, void *dev_id)
->  	return IRQ_HANDLED;
->  }
->  
-> +#ifndef CONFIG_ARCH_KINETIS
->  static irqreturn_t fsl_edma_irq_handler(int irq, void *dev_id)
->  {
->  	if (fsl_edma_tx_handler(irq, dev_id) == IRQ_HANDLED)
-> @@ -716,6 +745,7 @@ static irqreturn_t fsl_edma_irq_handler(int irq, void *dev_id)
->  
->  	return fsl_edma_err_handler(irq, dev_id);
->  }
-> +#endif
->  
->  static void fsl_edma_issue_pending(struct dma_chan *chan)
->  {
-> @@ -788,15 +818,29 @@ static void fsl_edma_free_chan_resources(struct dma_chan *chan)
->  }
->  
->  static int
-> -fsl_edma_irq_init(struct platform_device *pdev, struct fsl_edma_engine *fsl_edma)
-> +fsl_edma_irq_init(struct platform_device *pdev,
-> +		  struct fsl_edma_engine *fsl_edma)
->  {
->  	int ret;
-> +#ifdef CONFIG_ARCH_KINETIS
-> +	int i;
->  
-> +	for (i = 0; i < ARRAY_SIZE(txirq_names); i++) {
-> +		fsl_edma->txirq[i] = platform_get_irq_byname(pdev,
-> +					txirq_names[i]);
-> +		if (fsl_edma->txirq[i] < 0) {
-> +			dev_err(&pdev->dev, "Can't get %s irq.\n",
-> +						txirq_names[i]);
-> +			return fsl_edma->txirq[i];
-> +		}
-> +	}
-> +#else
->  	fsl_edma->txirq = platform_get_irq_byname(pdev, "edma-tx");
->  	if (fsl_edma->txirq < 0) {
->  		dev_err(&pdev->dev, "Can't get edma-tx irq.\n");
->  		return fsl_edma->txirq;
->  	}
-> +#endif
-can you have two routines and with one of them onvoked based on machine type
-which should be configured based on DT data rather
+This should be expressed using the 'dma-ranges' properties in the
+bus nodes above any DMA master, the normal DMA mapping code will
+then do the right thing.
 
->  
->  	fsl_edma->errirq = platform_get_irq_byname(pdev, "edma-err");
->  	if (fsl_edma->errirq < 0) {
-> @@ -804,6 +848,16 @@ fsl_edma_irq_init(struct platform_device *pdev, struct fsl_edma_engine *fsl_edma
->  		return fsl_edma->errirq;
->  	}
->  
-> +#ifdef CONFIG_ARCH_KINETIS
-> +	for (i = 0; i < ARRAY_SIZE(txirq_names); i++) {
-> +		ret = devm_request_irq(&pdev->dev, fsl_edma->txirq[i],
-> +			fsl_edma_tx_handler, 0, txirq_names[i], fsl_edma);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "Can't register eDMA tx IRQ.\n");
-> +			return  ret;
-> +		}
-> +	}
-> +#else
->  	if (fsl_edma->txirq == fsl_edma->errirq) {
->  		ret = devm_request_irq(&pdev->dev, fsl_edma->txirq,
->  				fsl_edma_irq_handler, 0, "eDMA", fsl_edma);
-> @@ -818,6 +872,7 @@ fsl_edma_irq_init(struct platform_device *pdev, struct fsl_edma_engine *fsl_edma
->  			dev_err(&pdev->dev, "Can't register eDMA tx IRQ.\n");
->  			return  ret;
->  		}
-> +#endif
-only one of them will be populated so if-else should work too
-
-please get rid of these ifdef stuff and make it based on DT data based flags
-
--- 
-~Vinod
+	Arnd
