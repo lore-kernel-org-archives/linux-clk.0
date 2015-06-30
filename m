@@ -1,93 +1,54 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Scott Wood <scottwood@freescale.com>
-To: Mike Turquette <mturquette@linaro.org>, Tang Yuantian
- <Yuantian.Tang@freescale.com>
-Subject: [RFC PATCH 0/8] clk: qoriq: Move chip-specific knowledge into driver
-Date: Thu, 18 Jun 2015 21:49:10 -0500
-Message-ID: <1434682158-7243-1-git-send-email-scottwood@freescale.com>
-MIME-Version: 1.0
-Cc: devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Liberman Igal-B31950 <Igal.Liberman@freescale.com>, Scott
- Wood <scottwood@freescale.com>, linuxppc-dev@lists.ozlabs.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Bucur Madalin-Cristian-B32716 <madalin.bucur@freescale.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Message-id: <5591DFD6.1000408@samsung.com>
+Date: Tue, 30 Jun 2015 09:16:22 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] ARM: Exynos: switch to using generic cpufreq driver
+ for Exynos5250
+References: <1435598772-21708-1-git-send-email-b.zolnierkie@samsung.com>
+ <1435598772-21708-4-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1435598772-21708-4-git-send-email-b.zolnierkie@samsung.com>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The existing device tree bindings are error-prone and inflexible. 
-Correct the mistake by moving the knowledge into the driver, which
-has more flexibility in describing the quirks of each chip.  This leaves
-the device tree to its proper role of identifying a programming interface
-rather than describing its individual registers.
+On 30.06.2015 02:26, Bartlomiej Zolnierkiewicz wrote:
+> From: Thomas Abraham <thomas.ab@samsung.com>
+> 
+> The new CPU clock type allows the use of generic CPUfreq driver.
+> Switch Exynos5250 to using generic cpufreq driver.
+> 
+> Changes by Bartlomiej:
+> - split Exynos5250 support from the original patch
+> 
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  arch/arm/mach-exynos/exynos.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-For more detail, see the commit message of patch 4.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Scott Wood (8):
-  ARM: dts: ls1021a: Fix clockgen node
-  cpufreq: qoriq: Don't look at clock implementation details
-  powerpc/fsl: Move fsl_guts.h out of arch/powerpc
-  clk: qoriq: Move chip-specific knowledge into driver
-  clk: qoriq: Redirect legacy clock nodes to new clocks
-  cpufreq: qoriq: Remove frequency masking and minimum
-  clk: qoriq: Expose OF clocks directly from the clockgen node
-  powerpc/fsl: Use new clockgen binding
+Best regards,
+Krzysztof
 
- .../devicetree/bindings/clock/qoriq-clock.txt      |   57 +-
- arch/arm/boot/dts/ls1021a.dtsi                     |    3 +
- arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi         |    4 +-
- arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi         |    8 +-
- arch/powerpc/boot/dts/fsl/b4si-post.dtsi           |   15 -
- arch/powerpc/boot/dts/fsl/p2041si-post.dtsi        |   18 -
- arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi         |    8 +-
- arch/powerpc/boot/dts/fsl/p3041si-post.dtsi        |   18 -
- arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi         |    8 +-
- arch/powerpc/boot/dts/fsl/p4080si-post.dtsi        |   70 --
- arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi         |   16 +-
- arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi         |    4 +-
- arch/powerpc/boot/dts/fsl/p5040si-post.dtsi        |   18 -
- arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi         |    8 +-
- arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi     |   50 +-
- arch/powerpc/boot/dts/fsl/qoriq-clockgen2.dtsi     |   33 +-
- arch/powerpc/boot/dts/fsl/t1023si-post.dtsi        |   16 -
- arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi         |    4 +-
- arch/powerpc/boot/dts/fsl/t1040si-post.dtsi        |   44 -
- arch/powerpc/boot/dts/fsl/t104xsi-pre.dtsi         |    8 +-
- arch/powerpc/boot/dts/fsl/t2081si-post.dtsi        |   22 -
- arch/powerpc/boot/dts/fsl/t208xsi-pre.dtsi         |    8 +-
- arch/powerpc/boot/dts/fsl/t4240si-post.dtsi        |   61 -
- arch/powerpc/boot/dts/fsl/t4240si-pre.dtsi         |   24 +-
- arch/powerpc/platforms/85xx/mpc85xx_mds.c          |    2 +-
- arch/powerpc/platforms/85xx/mpc85xx_rdb.c          |    2 +-
- arch/powerpc/platforms/85xx/p1022_ds.c             |    2 +-
- arch/powerpc/platforms/85xx/p1022_rdk.c            |    2 +-
- arch/powerpc/platforms/85xx/smp.c                  |    2 +-
- arch/powerpc/platforms/85xx/twr_p102x.c            |    2 +-
- arch/powerpc/platforms/86xx/mpc8610_hpcd.c         |    2 +-
- drivers/clk/clk-qoriq.c                            | 1191 ++++++++++++++++----
- drivers/cpufreq/qoriq-cpufreq.c                    |  139 +--
- drivers/iommu/fsl_pamu.c                           |    2 +-
- .../asm/fsl_guts.h => include/linux/fsl/guts.h     |    6 +-
- sound/soc/fsl/mpc8610_hpcd.c                       |    2 +-
- sound/soc/fsl/p1022_ds.c                           |    2 +-
- sound/soc/fsl/p1022_rdk.c                          |    2 +-
- 38 files changed, 1107 insertions(+), 776 deletions(-)
- rename arch/powerpc/include/asm/fsl_guts.h => include/linux/fsl/guts.h (98%)
-
--- 
-2.1.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
