@@ -1,83 +1,69 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 17/25] clk: tegra: pll: Add dyn_ramp callback
-Date: Thu, 18 Jun 2015 17:28:32 -0400
-Message-ID: <1434662920-21469-18-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:20128 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751398AbbF3AWM (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2015 20:22:12 -0400
+Message-id: <5591E12E.7060007@samsung.com>
+Date: Tue, 30 Jun 2015 09:22:06 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] cpufreq: exynos: remove Exynos5250 specific cpufreq
+ driver support
+References: <1435598772-21708-1-git-send-email-b.zolnierkie@samsung.com>
+ <1435598772-21708-5-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1435598772-21708-5-git-send-email-b.zolnierkie@samsung.com>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a callback to the pll_params for custom dynamic ramping
-functions which can be specified per PLL.
+On 30.06.2015 02:26, Bartlomiej Zolnierkiewicz wrote:
+> Exynos5250 based platforms have switched over to use generic
+> cpufreq driver for cpufreq functionality. So the Exynos
+> specific cpufreq support for these platforms can be removed.
+> 
+> Based on the earlier work by Thomas Abraham.
+> 
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/cpufreq/Kconfig.arm          |  11 --
+>  drivers/cpufreq/Makefile             |   1 -
+>  drivers/cpufreq/exynos-cpufreq.c     |   3 -
+>  drivers/cpufreq/exynos-cpufreq.h     |  17 ---
+>  drivers/cpufreq/exynos5250-cpufreq.c | 210 -----------------------------------
+>  5 files changed, 242 deletions(-)
+>  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
-v6:
-  - Added kerneldoc
-  - Moved adding dyn_ramp callback from set_defaults patch to this patch
-  - Reordered patch
+Nice diff stat, I like it!
 
- drivers/clk/tegra/clk-pll.c |    7 +++++++
- drivers/clk/tegra/clk.h     |    4 ++++
- 2 files changed, 11 insertions(+)
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index f878bc879df2..c6cb22cebac1 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -660,6 +660,13 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 
- 	_get_pll_mnp(pll, &old_cfg);
- 
-+	if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
-+			(cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
-+		ret = pll->params->dyn_ramp(pll, cfg);
-+		if (!ret)
-+			return 0;
-+	}
-+
- 	if (state)
- 		_clk_pll_disable(hw);
- 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index ae42e3e6a116..d29d095659a2 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -213,6 +213,8 @@ struct tegra_clk_pll;
-  *				is already enabled, it will be done the first
-  *				time the rate is changed while the PLL is
-  *				disabled.
-+ * @dyn_ramp:			Callback which can be used to define a custom
-+ *				dynamic ramp function for a given PLL.
-  *
-  * Flags:
-  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
-@@ -284,6 +286,8 @@ struct tegra_clk_pll_params {
- 	unsigned long	(*adjust_vco)(struct tegra_clk_pll_params *pll_params,
- 				unsigned long parent_rate);
- 	void	(*set_defaults)(struct tegra_clk_pll *pll);
-+	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
-+			struct tegra_clk_pll_freq_table *cfg);
- };
- 
- #define TEGRA_PLL_USE_LOCK BIT(0)
--- 
-1.7.9.5
+Few thoughts:
+1. Javier's email has changed, CC-ed the correct one. Can you update it
+in all patches (CC-tags)?
+
+2. It looks like the patchset should go through one tree so the
+Exynos5250 cpufreq support won't disappear, right?
+
+
+Best regards,
+Krzysztof
+
