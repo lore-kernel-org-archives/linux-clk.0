@@ -1,71 +1,72 @@
-Return-Path: <pebolle@tiscali.nl>
-Message-ID: <1433231444.2361.75.camel@x220>
-Subject: Re: [PATCH v3] Add TI CDCE925 I2C controlled clock synthesizer
- driver
-From: Paul Bolle <pebolle@tiscali.nl>
-To: Mike Looijmans <mike.looijmans@topic.nl>
-Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org, mturquette@linaro.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Date: Tue, 02 Jun 2015 09:50:44 +0200
-In-Reply-To: <1433153623-29205-1-git-send-email-mike.looijmans@topic.nl>
-References: <1433153623-29205-1-git-send-email-mike.looijmans@topic.nl>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <javier.martinez@collabora.co.uk>
+Message-ID: <5592D5AB.2020802@collabora.co.uk>
+Date: Tue, 30 Jun 2015 19:45:15 +0200
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+MIME-Version: 1.0
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Javier Martinez Canillas <javier@dowhile0.org>
+CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Dan Carpenter <dan.carpenter@oracle.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Lukasz Majewski <l.majewski@samsung.com>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+ linux-clk@vger.kernel.org,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: samsung: fix cpu clock's flags checking
+References: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com> <5591DD9B.4030507@samsung.com> <CABxcv=kVL94rdFgNKcxx2JOi9WRFnvhMWrpjEDcEmx7q7cEsgQ@mail.gmail.com> <7416838.2ZUPGjSqFp@amdc1976>
+In-Reply-To: <7416838.2ZUPGjSqFp@amdc1976>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2015-06-01 at 12:13 +0200, Mike Looijmans wrote:
-> --- /dev/null
-> +++ b/drivers/clk/clk-cdce925.c
+Hello Bartlomiej,
 
-> +static int cdce925_regmap_i2c_write(
-> +	void *context, const void *data, size_t count)
+On 06/30/2015 07:17 PM, Bartlomiej Zolnierkiewicz wrote:
+> 
+> Hi,
+> 
+> On Tuesday, June 30, 2015 08:27:36 AM Javier Martinez Canillas wrote:
+>> On Tue, Jun 30, 2015 at 2:06 AM, Krzysztof Kozlowski
+>> <k.kozlowski@samsung.com> wrote:
+>> > On 30.06.2015 02:29, Bartlomiej Zolnierkiewicz wrote:
+>> >> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
+>> >> incorrectly used as a bit numbers.  Fix it.
+>> >>
+>> >> Tested on Exynos4210 based Origen board and on Exynos5250 based
+>> >> Arndale board.
+>> >>
+>> >> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+>> >> Cc: Michael Turquette <mturquette@baylibre.com>
+>> >> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> >> Cc: Thomas Abraham <thomas.ab@samsung.com>
+>> >> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> >> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>> >> ---
+>> >>  drivers/clk/samsung/clk-cpu.c | 10 +++++-----
+>> >>  1 file changed, 5 insertions(+), 5 deletions(-)
+>> >
+>> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> >
+>> 
+>> Looks good to me as well.
+>> 
+>> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> 
+> Krzysztof has noted that I should use your @dowhile0.org e-mail address
+> instead of @collabora.co.uk one, is this right?
+>
 
-> +	dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
-> +			reg_data[0], reg_data[1]);
+I don't know what is the policy for tags but Krzysztof is correct that
+this email address is going away this week so for future patches please
+use my personal @dowhile0.org address instead.
 
-For some silly reason (ie, I mistakenly thought I spotted an issue) I
-did a quick build of this file. That triggered some noise on x86_64.
-Excerpt:
-
-drivers/clk/clk-cdce925.c: In function ‘cdce925_regmap_i2c_write’:
-include/linux/dynamic_debug.h:64:16: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 5 has type ‘size_t’ [-Wformat=]
-  static struct _ddebug  __aligned(8)   \
-                ^
-[...]
-drivers/clk/clk-cdce925.c:505:2: note: in expansion of macro ‘dev_dbg’
-  dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
-  ^
-
-A quick look at Documentation/printk-formats.txt suggested this (very
-lightly tested) fix:
-@@ -502,7 +502,7 @@ static int cdce925_regmap_i2c_write(
-        reg_data[0] = CDCE925_I2C_COMMAND_BYTE_TRANSFER | ((u8 *)data)[0];
-        reg_data[1] = ((u8 *)data)[1];
- 
--       dev_dbg(&i2c->dev, "%s(%u) %#x %#x\n", __func__, count,
-+       dev_dbg(&i2c->dev, "%s(%zu) %#x %#x\n", __func__, count,
-                        reg_data[0], reg_data[1]);
- 
-        ret = i2c_master_send(i2c, reg_data, count);
-
-> +static int cdce925_regmap_i2c_read(void *context,
-> +	   const void *reg, size_t reg_size, void *val, size_t val_size)
-
-> +		dev_dbg(&i2c->dev, "%s(%u, %u) %#x %#x\n", __func__,
-> +				reg_size, val_size, reg_data[0], *((u8 *)val));
-
-Likewise:
-@@ -547,7 +547,7 @@ static int cdce925_regmap_i2c_read(void *context,
- 
-        ret = i2c_transfer(i2c->adapter, xfer, 2);
-        if (likely(ret == 2)) {
--               dev_dbg(&i2c->dev, "%s(%u, %u) %#x %#x\n", __func__,
-+               dev_dbg(&i2c->dev, "%s(%zu, %zu) %#x %#x\n", __func__,
-                                reg_size, val_size, reg_data[0], *((u8 *)val));
-                return 0;
-        } else if (ret < 0)
-
-Thanks,
-
-
-Paul Bolle
+Best regards,
+Javier
