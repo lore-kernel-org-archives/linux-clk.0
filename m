@@ -1,78 +1,59 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>
-CC: Russell King <linux@arm.linux.org.uk>,
-	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	<linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	<linux-mediatek@lists.infradead.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Olof Johansson <olof@lixom.net>,
-	Yingjoe Chen <yingjoe.chen@mediatek.com>,
-	<srv_heupstream@mediatek.com>,
-	<linux-arm-kernel@lists.infradead.org>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	<linux-clk@vger.kernel.org>
-Subject: [PATCH 4/5] clk: mediatek: add 13mhz clock for MT8173
-Date: Mon, 13 Jul 2015 17:32:48 +0800
-Message-ID: <1436779969-18610-5-git-send-email-yingjoe.chen@mediatek.com>
-In-Reply-To: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
-References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <k.kozlowski@samsung.com>
+Message-id: <55947D93.3090606@samsung.com>
+Date: Thu, 02 Jul 2015 08:53:55 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+ Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>,
+ Andreas Faerber <afaerber@suse.de>
+Subject: Re: [PATCH v3 2/4] ARM: dts: Exynos5250: add CPU OPP and regulator
+ supply property
+References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
+ <1435756238-845-3-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1435756238-845-3-git-send-email-b.zolnierkie@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Add 13mhz clock used by GPT timer in infracfg.
+On 01.07.2015 22:10, Bartlomiej Zolnierkiewicz wrote:
+> From: Thomas Abraham <thomas.ab@samsung.com>
+> 
+> For Exynos5250 platforms, add CPU operating points and CPU
+> regulator supply properties for migrating from Exynos specific
+> cpufreq driver to using generic cpufreq driver.
+> 
+> Changes by Bartlomiej:
+> - split Exynos5250 support from the original patch
+> - added CPU regulator supply property for Google Spring board
+> - put the new cpu nodes in alphabetical order
+> 
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+> Cc: Andreas Faerber <afaerber@suse.de>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250-arndale.dts  |  4 ++++
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts |  4 ++++
+>  arch/arm/boot/dts/exynos5250-snow.dts     |  4 ++++
+>  arch/arm/boot/dts/exynos5250-spring.dts   |  4 ++++
+>  arch/arm/boot/dts/exynos5250.dtsi         | 22 ++++++++++++++++++++++
+>  5 files changed, 38 insertions(+)
 
-Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
----
- drivers/clk/mediatek/clk-mt8173.c      | 5 +++++
- include/dt-bindings/clock/mt8173-clk.h | 3 ++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+Looks good, thanks!
 
-diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
-index 4b9e04c..540c5c3 100644
---- a/drivers/clk/mediatek/clk-mt8173.c
-+++ b/drivers/clk/mediatek/clk-mt8173.c
-@@ -618,6 +618,10 @@ static const struct mtk_gate infra_clks[] __initconst = {
- 	GATE_ICG(CLK_INFRA_PMICWRAP, "infra_pmicwrap", "axi_sel", 23),
- };
- 
-+static const struct mtk_fixed_factor infra_divs[] __initconst = {
-+	FACTOR(CLK_INFRA_CLK_13M, "clk13m", "clk26m", 1, 2),
-+};
-+
- static const struct mtk_gate_regs peri0_cg_regs = {
- 	.set_ofs = 0x0008,
- 	.clr_ofs = 0x0010,
-@@ -737,6 +741,7 @@ static void __init mtk_infrasys_init(struct device_node *node)
- 
- 	mtk_clk_register_gates(node, infra_clks, ARRAY_SIZE(infra_clks),
- 						clk_data);
-+	mtk_clk_register_factors(infra_divs, ARRAY_SIZE(infra_divs), clk_data);
- 
- 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- 	if (r)
-diff --git a/include/dt-bindings/clock/mt8173-clk.h b/include/dt-bindings/clock/mt8173-clk.h
-index 4ad76ed..fa2a2bb 100644
---- a/include/dt-bindings/clock/mt8173-clk.h
-+++ b/include/dt-bindings/clock/mt8173-clk.h
-@@ -187,7 +187,8 @@
- #define CLK_INFRA_CEC			9
- #define CLK_INFRA_PMICSPI		10
- #define CLK_INFRA_PMICWRAP		11
--#define CLK_INFRA_NR_CLK		12
-+#define CLK_INFRA_CLK_13M		12
-+#define CLK_INFRA_NR_CLK		13
- 
- /* PERI_SYS */
- 
--- 
-1.8.1.1.dirty
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
+Best regards,
+Krzysztof
