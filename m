@@ -1,43 +1,32 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Mon, 27 Jul 2015 17:31:37 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] cpufreq-dt: add turbo modes support
-Message-ID: <20150727120137.GD10181@linux>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <15810554.2OjPyuYJBt@amdc1976>
- <20150727113340.GA10181@linux>
- <2522396.6jWphaZxGp@amdc1976>
+Return-Path: <jim2101024@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <2522396.6jWphaZxGp@amdc1976>
+Date: Wed, 1 Jul 2015 16:52:58 -0400
+Message-ID: <CANCKTBsM0qc8PetNMkEMaCjup1Fu0A=3C202mcFNFvyUncKT2Q@mail.gmail.com>
+Subject: Re: patch submissions need attention please
+From: Jim Quinlan <jim2101024@gmail.com>
+To: linux-clk@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, sboyd@codeaurora.org
+Cc: bcm-kernel-feedback-list@broadcom.com
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 27-07-15, 13:58, Bartlomiej Zolnierkiewicz wrote:
-> Thank you.  This is exactly the case here (I would like to get
-> Exynos4x12 conversion to use cpufreq-dt + exynos-cpufreq removal
-> in v4.3 if possible and adding new DT bindings will most likely
-> slow down the process considerably).
+Hello,
 
-Heh, I never asked you to add new DT bindings, I said we can solve it
-with DT. We already have turbo properties in DT.
+The following three submission threads have been inactive for a while.
+Can they please be continued, ack'd, or nak'd?  Note that I would post
+URLs of my posts but there does not appear to be an archive for
+linux-clk.
 
--- 
-viresh
+Thanks,
+Jim Quinlan
+STB, Broadcom
+
+=======
+
+[PATCH] clk: export function clk_disable_unused()
+    -- sent on May 15, 2015, last response May 28, 2015
+
+[PATCH] clk: allow a clk divider with max divisor when zero
+    -- Sent on May 15, 2015, last response May 26, 2015
+
+[PATCH] clk: multiplier: introduce configurable clock multiplier
+    -- Sent on May 22, 2015, never received a response
