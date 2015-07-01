@@ -1,550 +1,120 @@
-Return-Path: <jun.nie@linaro.org>
-Return-Path: <jun.nie@linaro.org>
-From: Jun Nie <jun.nie@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org
-Cc: shawn.guo@linaro.org,
-	jason.liu@linaro.org,
-	wan.zhijun@zte.com.cn,
-	Jun Nie <jun.nie@linaro.org>
-Subject: [PATCH v2 1/3] clk: zx: Add audio div clock method for zx296702
-Date: Thu, 23 Jul 2015 15:02:51 +0800
-Message-Id: <1437634973-27347-2-git-send-email-jun.nie@linaro.org>
-In-Reply-To: <1437634973-27347-1-git-send-email-jun.nie@linaro.org>
-References: <1437634973-27347-1-git-send-email-jun.nie@linaro.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 03/16] clk: shmobile: r8a7779: Add CPG/MSTP Clock Domain support
+Date: Wed,  1 Jul 2015 17:57:57 +0200
+Message-Id: <1435766290-3005-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
+References: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add SPDIF/I2S divider clock method for zx296702
+Add Clock Domain support to the R-Car H1 Clock Pulse Generator (CPG)
+driver using the generic PM Domain.  This allows to power-manage the
+module clocks of SoC devices that are part of the CPG/MSTP Clock Domain
+using Runtime PM, or for system suspend/resume.
 
-Signed-off-by: Jun Nie <jun.nie@linaro.org>
+SoC devices that are part of the CPG/MSTP Clock Domain and can be
+power-managed through an MSTP clock should be tagged in DT with a proper
+"power-domains" property.
+
+Also update the reg property in the DT binding doc example to match the
+actual dtsi, which uses #address-cells and #size-cells == 1, not 2.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/zte/Makefile  |   2 +-
- drivers/clk/zte/clk-pll.c | 172 --------------------------
- drivers/clk/zte/clk.c     | 309 ++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/zte/clk.h     |   9 ++
- 4 files changed, 319 insertions(+), 173 deletions(-)
- delete mode 100644 drivers/clk/zte/clk-pll.c
- create mode 100644 drivers/clk/zte/clk.c
+v3:
+  - Add Acked-by,
+  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
 
-diff --git a/drivers/clk/zte/Makefile b/drivers/clk/zte/Makefile
-index 95b707c..74005aa 100644
---- a/drivers/clk/zte/Makefile
-+++ b/drivers/clk/zte/Makefile
-@@ -1,2 +1,2 @@
--obj-y := clk-pll.o
-+obj-y := clk.o
- obj-$(CONFIG_SOC_ZX296702) += clk-zx296702.o
-diff --git a/drivers/clk/zte/clk-pll.c b/drivers/clk/zte/clk-pll.c
-deleted file mode 100644
-index c3b221a..0000000
---- a/drivers/clk/zte/clk-pll.c
-+++ /dev/null
-@@ -1,172 +0,0 @@
--/*
-- * Copyright 2014 Linaro Ltd.
-- * Copyright (C) 2014 ZTE Corporation.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--
--#include <linux/clk-provider.h>
--#include <linux/err.h>
--#include <linux/io.h>
--#include <linux/iopoll.h>
--#include <linux/slab.h>
--#include <linux/spinlock.h>
--
--#include "clk.h"
--
--#define to_clk_zx_pll(_hw) container_of(_hw, struct clk_zx_pll, hw)
--
--#define CFG0_CFG1_OFFSET 4
--#define LOCK_FLAG BIT(30)
--#define POWER_DOWN BIT(31)
--
--static int rate_to_idx(struct clk_zx_pll *zx_pll, unsigned long rate)
--{
--	const struct zx_pll_config *config = zx_pll->lookup_table;
--	int i;
--
--	for (i = 0; i < zx_pll->count; i++) {
--		if (config[i].rate > rate)
--			return i > 0 ? i - 1 : 0;
--
--		if (config[i].rate == rate)
--			return i;
--	}
--
--	return i - 1;
--}
--
--static int hw_to_idx(struct clk_zx_pll *zx_pll)
--{
--	const struct zx_pll_config *config = zx_pll->lookup_table;
--	u32 hw_cfg0, hw_cfg1;
--	int i;
--
--	hw_cfg0 = readl_relaxed(zx_pll->reg_base);
--	hw_cfg1 = readl_relaxed(zx_pll->reg_base + CFG0_CFG1_OFFSET);
--
--	/* For matching the value in lookup table */
--	hw_cfg0 &= ~LOCK_FLAG;
--	hw_cfg0 |= POWER_DOWN;
--
--	for (i = 0; i < zx_pll->count; i++) {
--		if (hw_cfg0 == config[i].cfg0 && hw_cfg1 == config[i].cfg1)
--			return i;
--	}
--
--	return -EINVAL;
--}
--
--static unsigned long zx_pll_recalc_rate(struct clk_hw *hw,
--					unsigned long parent_rate)
--{
--	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
--	int idx;
--
--	idx = hw_to_idx(zx_pll);
--	if (unlikely(idx == -EINVAL))
--		return 0;
--
--	return zx_pll->lookup_table[idx].rate;
--}
--
--static long zx_pll_round_rate(struct clk_hw *hw, unsigned long rate,
--			      unsigned long *prate)
--{
--	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
--	int idx;
--
--	idx = rate_to_idx(zx_pll, rate);
--
--	return zx_pll->lookup_table[idx].rate;
--}
--
--static int zx_pll_set_rate(struct clk_hw *hw, unsigned long rate,
--			   unsigned long parent_rate)
--{
--	/* Assume current cpu is not running on current PLL */
--	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
--	const struct zx_pll_config *config;
--	int idx;
--
--	idx = rate_to_idx(zx_pll, rate);
--	config = &zx_pll->lookup_table[idx];
--
--	writel_relaxed(config->cfg0, zx_pll->reg_base);
--	writel_relaxed(config->cfg1, zx_pll->reg_base + CFG0_CFG1_OFFSET);
--
--	return 0;
--}
--
--static int zx_pll_enable(struct clk_hw *hw)
--{
--	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
--	u32 reg;
--
--	reg = readl_relaxed(zx_pll->reg_base);
--	writel_relaxed(reg & ~POWER_DOWN, zx_pll->reg_base);
--
--	return readl_relaxed_poll_timeout(zx_pll->reg_base, reg,
--					  reg & LOCK_FLAG, 0, 100);
--}
--
--static void zx_pll_disable(struct clk_hw *hw)
--{
--	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
--	u32 reg;
--
--	reg = readl_relaxed(zx_pll->reg_base);
--	writel_relaxed(reg | POWER_DOWN, zx_pll->reg_base);
--}
--
--static int zx_pll_is_enabled(struct clk_hw *hw)
--{
--	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
--	u32 reg;
--
--	reg = readl_relaxed(zx_pll->reg_base);
--
--	return !(reg & POWER_DOWN);
--}
--
--static const struct clk_ops zx_pll_ops = {
--	.recalc_rate = zx_pll_recalc_rate,
--	.round_rate = zx_pll_round_rate,
--	.set_rate = zx_pll_set_rate,
--	.enable = zx_pll_enable,
--	.disable = zx_pll_disable,
--	.is_enabled = zx_pll_is_enabled,
--};
--
--struct clk *clk_register_zx_pll(const char *name, const char *parent_name,
--	unsigned long flags, void __iomem *reg_base,
--	const struct zx_pll_config *lookup_table, int count, spinlock_t *lock)
--{
--	struct clk_zx_pll *zx_pll;
--	struct clk *clk;
--	struct clk_init_data init;
--
--	zx_pll = kzalloc(sizeof(*zx_pll), GFP_KERNEL);
--	if (!zx_pll)
--		return ERR_PTR(-ENOMEM);
--
--	init.name = name;
--	init.ops = &zx_pll_ops;
--	init.flags = flags;
--	init.parent_names = parent_name ? &parent_name : NULL;
--	init.num_parents = parent_name ? 1 : 0;
--
--	zx_pll->reg_base = reg_base;
--	zx_pll->lookup_table = lookup_table;
--	zx_pll->count = count;
--	zx_pll->lock = lock;
--	zx_pll->hw.init = &init;
--
--	clk = clk_register(NULL, &zx_pll->hw);
--	if (IS_ERR(clk))
--		kfree(zx_pll);
--
--	return clk;
--}
-diff --git a/drivers/clk/zte/clk.c b/drivers/clk/zte/clk.c
-new file mode 100644
-index 0000000..7c73c53
---- /dev/null
-+++ b/drivers/clk/zte/clk.c
-@@ -0,0 +1,309 @@
-+/*
-+ * Copyright 2014 Linaro Ltd.
-+ * Copyright (C) 2014 ZTE Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <asm/div64.h>
-+
-+#include "clk.h"
-+
-+#define to_clk_zx_pll(_hw) container_of(_hw, struct clk_zx_pll, hw)
-+#define to_clk_zx_audio(_hw) container_of(_hw, struct clk_zx_audio, hw)
-+
-+#define CFG0_CFG1_OFFSET 4
-+#define LOCK_FLAG BIT(30)
-+#define POWER_DOWN BIT(31)
-+
-+static int rate_to_idx(struct clk_zx_pll *zx_pll, unsigned long rate)
-+{
-+	const struct zx_pll_config *config = zx_pll->lookup_table;
-+	int i;
-+
-+	for (i = 0; i < zx_pll->count; i++) {
-+		if (config[i].rate > rate)
-+			return i > 0 ? i - 1 : 0;
-+
-+		if (config[i].rate == rate)
-+			return i;
-+	}
-+
-+	return i - 1;
-+}
-+
-+static int hw_to_idx(struct clk_zx_pll *zx_pll)
-+{
-+	const struct zx_pll_config *config = zx_pll->lookup_table;
-+	u32 hw_cfg0, hw_cfg1;
-+	int i;
-+
-+	hw_cfg0 = readl_relaxed(zx_pll->reg_base);
-+	hw_cfg1 = readl_relaxed(zx_pll->reg_base + CFG0_CFG1_OFFSET);
-+
-+	/* For matching the value in lookup table */
-+	hw_cfg0 &= ~LOCK_FLAG;
-+	hw_cfg0 |= POWER_DOWN;
-+
-+	for (i = 0; i < zx_pll->count; i++) {
-+		if (hw_cfg0 == config[i].cfg0 && hw_cfg1 == config[i].cfg1)
-+			return i;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static unsigned long zx_pll_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
-+	int idx;
-+
-+	idx = hw_to_idx(zx_pll);
-+	if (unlikely(idx == -EINVAL))
-+		return 0;
-+
-+	return zx_pll->lookup_table[idx].rate;
-+}
-+
-+static long zx_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long *prate)
-+{
-+	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
-+	int idx;
-+
-+	idx = rate_to_idx(zx_pll, rate);
-+
-+	return zx_pll->lookup_table[idx].rate;
-+}
-+
-+static int zx_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+			   unsigned long parent_rate)
-+{
-+	/* Assume current cpu is not running on current PLL */
-+	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
-+	const struct zx_pll_config *config;
-+	int idx;
-+
-+	idx = rate_to_idx(zx_pll, rate);
-+	config = &zx_pll->lookup_table[idx];
-+
-+	writel_relaxed(config->cfg0, zx_pll->reg_base);
-+	writel_relaxed(config->cfg1, zx_pll->reg_base + CFG0_CFG1_OFFSET);
-+
-+	return 0;
-+}
-+
-+static int zx_pll_enable(struct clk_hw *hw)
-+{
-+	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
-+	u32 reg;
-+
-+	reg = readl_relaxed(zx_pll->reg_base);
-+	writel_relaxed(reg & ~POWER_DOWN, zx_pll->reg_base);
-+
-+	return readl_relaxed_poll_timeout(zx_pll->reg_base, reg,
-+					  reg & LOCK_FLAG, 0, 100);
-+}
-+
-+static void zx_pll_disable(struct clk_hw *hw)
-+{
-+	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
-+	u32 reg;
-+
-+	reg = readl_relaxed(zx_pll->reg_base);
-+	writel_relaxed(reg | POWER_DOWN, zx_pll->reg_base);
-+}
-+
-+static int zx_pll_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
-+	u32 reg;
-+
-+	reg = readl_relaxed(zx_pll->reg_base);
-+
-+	return !(reg & POWER_DOWN);
-+}
-+
-+static const struct clk_ops zx_pll_ops = {
-+	.recalc_rate = zx_pll_recalc_rate,
-+	.round_rate = zx_pll_round_rate,
-+	.set_rate = zx_pll_set_rate,
-+	.enable = zx_pll_enable,
-+	.disable = zx_pll_disable,
-+	.is_enabled = zx_pll_is_enabled,
-+};
-+
-+struct clk *clk_register_zx_pll(const char *name, const char *parent_name,
-+				unsigned long flags, void __iomem *reg_base,
-+				const struct zx_pll_config *lookup_table,
-+				int count, spinlock_t *lock)
-+{
-+	struct clk_zx_pll *zx_pll;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	zx_pll = kzalloc(sizeof(*zx_pll), GFP_KERNEL);
-+	if (!zx_pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &zx_pll_ops;
-+	init.flags = flags;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = parent_name ? 1 : 0;
-+
-+	zx_pll->reg_base = reg_base;
-+	zx_pll->lookup_table = lookup_table;
-+	zx_pll->count = count;
-+	zx_pll->lock = lock;
-+	zx_pll->hw.init = &init;
-+
-+	clk = clk_register(NULL, &zx_pll->hw);
-+	if (IS_ERR(clk))
-+		kfree(zx_pll);
-+
-+	return clk;
-+}
-+
-+#define BPAR 1000000
-+static u32 calc_reg(u32 parent_rate, u32 rate)
-+{
-+	u32 sel, integ, fra_div, tmp;
-+	u64 tmp64 = (u64)parent_rate * BPAR;
-+
-+	do_div(tmp64, rate);
-+	integ = (u32)tmp64 / BPAR;
-+	integ = integ >> 1;
-+
-+	tmp = (u32)tmp64 % BPAR;
-+	sel = tmp / BPAR;
-+
-+	tmp = tmp % BPAR;
-+	fra_div = tmp * 0xff / BPAR;
-+	tmp = (sel << 24) | (integ << 16) | (0xff << 8) | fra_div;
-+
-+	/* Set I2S integer divider as 1. This bit is reserved for SPDIF
-+	 * and do no harm.
-+	 */
-+	tmp |= BIT(28);
-+	return tmp;
-+}
-+
-+static u32 calc_rate(u32 reg, u32 parent_rate)
-+{
-+	u32 sel, integ, fra_div, tmp;
-+	u64 tmp64 = (u64)parent_rate * BPAR;
-+
-+	tmp = reg;
-+	sel = (tmp >> 24) & BIT(0);
-+	integ = (tmp >> 16) & 0xff;
-+	fra_div = tmp & 0xff;
-+
-+	tmp = fra_div * BPAR;
-+	tmp = tmp / 0xff;
-+	tmp += sel * BPAR;
-+	tmp += 2 * integ * BPAR;
-+	do_div(tmp64, tmp);
-+
-+	return (u32)tmp64;
-+}
-+
-+static unsigned long zx_audio_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct clk_zx_audio *zx_audio = to_clk_zx_audio(hw);
-+	u32 reg;
-+
-+	reg = readl_relaxed(zx_audio->reg_base);
-+	return calc_rate(reg, parent_rate);
-+}
-+
-+static long zx_audio_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *prate)
-+{
-+	u32 reg;
-+
-+	if (rate * 2 > *prate)
-+		return -EINVAL;
-+
-+	reg = calc_reg(*prate, rate);
-+	return calc_rate(reg, *prate);
-+}
-+
-+static int zx_audio_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct clk_zx_audio *zx_audio = to_clk_zx_audio(hw);
-+	u32 reg;
-+
-+	reg = calc_reg(parent_rate, rate);
-+	writel_relaxed(reg, zx_audio->reg_base);
-+
-+	return 0;
-+}
-+
-+#define ZX_AUDIO_EN BIT(25)
-+static int zx_audio_enable(struct clk_hw *hw)
-+{
-+	struct clk_zx_audio *zx_audio = to_clk_zx_audio(hw);
-+	u32 reg;
-+
-+	reg = readl_relaxed(zx_audio->reg_base);
-+	writel_relaxed(reg & ~ZX_AUDIO_EN, zx_audio->reg_base);
-+	return 0;
-+}
-+
-+static void zx_audio_disable(struct clk_hw *hw)
-+{
-+	struct clk_zx_audio *zx_audio = to_clk_zx_audio(hw);
-+	u32 reg;
-+
-+	reg = readl_relaxed(zx_audio->reg_base);
-+	writel_relaxed(reg | ZX_AUDIO_EN, zx_audio->reg_base);
-+}
-+
-+static const struct clk_ops zx_audio_ops = {
-+	.recalc_rate = zx_audio_recalc_rate,
-+	.round_rate = zx_audio_round_rate,
-+	.set_rate = zx_audio_set_rate,
-+	.enable = zx_audio_enable,
-+	.disable = zx_audio_disable,
-+};
-+
-+struct clk *clk_register_zx_audio(const char *name,
-+				  const char * const parent_name,
-+				  unsigned long flags,
-+				  void __iomem *reg_base)
-+{
-+	struct clk_zx_audio *zx_audio;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	zx_audio = kzalloc(sizeof(*zx_audio), GFP_KERNEL);
-+	if (!zx_audio)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &zx_audio_ops;
-+	init.flags = flags;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = parent_name ? 1 : 0;
-+
-+	zx_audio->reg_base = reg_base;
-+	zx_audio->hw.init = &init;
-+
-+	clk = clk_register(NULL, &zx_audio->hw);
-+	if (IS_ERR(clk))
-+		kfree(zx_audio);
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/zte/clk.h b/drivers/clk/zte/clk.h
-index 0914a82..65ae08b 100644
---- a/drivers/clk/zte/clk.h
-+++ b/drivers/clk/zte/clk.h
-@@ -29,4 +29,13 @@ struct clk_zx_pll {
- struct clk *clk_register_zx_pll(const char *name, const char *parent_name,
- 	unsigned long flags, void __iomem *reg_base,
- 	const struct zx_pll_config *lookup_table, int count, spinlock_t *lock);
-+
-+struct clk_zx_audio {
-+	struct clk_hw hw;
-+	void __iomem *reg_base;
-+};
-+
-+struct clk *clk_register_zx_audio(const char *name,
-+				  const char * const parent_name,
-+				  unsigned long flags, void __iomem *reg_base);
- #endif
+v2:
+  - New.
+---
+ .../bindings/clock/renesas,r8a7779-cpg-clocks.txt  | 30 +++++++++++++++++++---
+ drivers/clk/shmobile/clk-r8a7779.c                 |  2 ++
+ 2 files changed, 28 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
+index ed3c8cb12f4eb699..8c81547c29f568e8 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
+@@ -1,7 +1,9 @@
+ * Renesas R8A7779 Clock Pulse Generator (CPG)
+ 
+ The CPG generates core clocks for the R8A7779. It includes one PLL and
+-several fixed ratio dividers
++several fixed ratio dividers.
++The CPG also provides a Clock Domain for SoC devices, in combination with the
++CPG Module Stop (MSTP) Clocks.
+ 
+ Required Properties:
+ 
+@@ -12,16 +14,36 @@ Required Properties:
+   - #clock-cells: Must be 1
+   - clock-output-names: The names of the clocks. Supported clocks are "plla",
+     "z", "zs", "s", "s1", "p", "b", "out".
++  - #power-domain-cells: Must be 0
+ 
++SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
++through an MSTP clock should refer to the CPG device node in their
++"power-domains" property, as documented by the generic PM domain bindings in
++Documentation/devicetree/bindings/power/power_domain.txt.
+ 
+-Example
+--------
++
++Examples
++--------
++
++  - CPG device node:
+ 
+ 	cpg_clocks: cpg_clocks@ffc80000 {
+ 		compatible = "renesas,r8a7779-cpg-clocks";
+-		reg = <0 0xffc80000 0 0x30>;
++		reg = <0xffc80000 0x30>;
+ 		clocks = <&extal_clk>;
+ 		#clock-cells = <1>;
+ 		clock-output-names = "plla", "z", "zs", "s", "s1", "p",
+ 		                     "b", "out";
++		#power-domain-cells = <0>;
++	};
++
++
++  - CPG/MSTP Clock Domain member device node:
++
++	sata: sata@fc600000 {
++		compatible = "renesas,sata-r8a7779", "renesas,rcar-sata";
++		reg = <0xfc600000 0x2000>;
++		interrupts = <0 100 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
++		power-domains = <&cpg_clocks>;
+ 	};
+diff --git a/drivers/clk/shmobile/clk-r8a7779.c b/drivers/clk/shmobile/clk-r8a7779.c
+index 652ecacb6daf7922..e42a63a2ad251de2 100644
+--- a/drivers/clk/shmobile/clk-r8a7779.c
++++ b/drivers/clk/shmobile/clk-r8a7779.c
+@@ -168,6 +168,8 @@ static void __init r8a7779_cpg_clocks_init(struct device_node *np)
+ 	}
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
++
++	cpg_mstp_add_clk_domain(np);
+ }
+ CLK_OF_DECLARE(r8a7779_cpg_clks, "renesas,r8a7779-cpg-clocks",
+ 	       r8a7779_cpg_clocks_init);
 -- 
 1.9.1
