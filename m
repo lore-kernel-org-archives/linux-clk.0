@@ -1,64 +1,70 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Sudeep Holla <sudeep.holla@arm.com>
-Subject: [PATCH 2/3] ARM: dts: vexpress: Use assigned-clock-parents for sp810
-Date: Fri, 31 Jul 2015 16:44:44 -0700
-Message-Id: <1438386285-5070-3-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>
-References: <55BBB2FC.9030102@codeaurora.org>
- <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+ Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] cpufreq: exynos: remove Exynos5250 specific cpufreq
+ driver support
+Date: Wed, 01 Jul 2015 15:26:57 +0200
+Message-id: <3020078.iPsxHyMrL0@amdc1976>
+In-reply-to: <5591E12E.7060007@samsung.com>
+References: <1435598772-21708-1-git-send-email-b.zolnierkie@samsung.com>
+ <1435598772-21708-5-git-send-email-b.zolnierkie@samsung.com>
+ <5591E12E.7060007@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-The sp810 clk driver is calling the clk consumer APIs from
-clk_prepare ops to change the parent to a 1 MHz fixed rate clock
-for each of the clocks that the driver provides. Use
-assigned-clock-parents for this instead of doing it in the driver
-to avoid using the consumer API in provider code. This also
-allows us to remove the usage of clk provider APIs that take a
-struct clk as an argument from the sp810 driver.
 
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- arch/arm/boot/dts/vexpress-v2m-rs1.dtsi | 2 ++
- arch/arm/boot/dts/vexpress-v2m.dtsi     | 2 ++
- 2 files changed, 4 insertions(+)
+Hi,
 
-diff --git a/arch/arm/boot/dts/vexpress-v2m-rs1.dtsi b/arch/arm/boot/dts/vexpress-v2m-rs1.dtsi
-index 2efb2058ba49..21b02874bea3 100644
---- a/arch/arm/boot/dts/vexpress-v2m-rs1.dtsi
-+++ b/arch/arm/boot/dts/vexpress-v2m-rs1.dtsi
-@@ -101,6 +101,8 @@
- 				clock-names = "refclk", "timclk", "apb_pclk";
- 				#clock-cells = <1>;
- 				clock-output-names = "timerclken0", "timerclken1", "timerclken2", "timerclken3";
-+				assigned-clocks = <&v2m_sysctl 0>, <&v2m_sysctl 1>, <&v2m_sysctl 3>, <&v2m_sysctl 3>;
-+				assigned-clock-parents = <&v2m_refclk1mhz>, <&v2m_refclk1mhz>, <&v2m_refclk1mhz>, <&v2m_refclk1mhz>;
- 			};
- 
- 			/* PCI-E I2C bus */
-diff --git a/arch/arm/boot/dts/vexpress-v2m.dtsi b/arch/arm/boot/dts/vexpress-v2m.dtsi
-index cb3090f919a7..e712c0af149b 100644
---- a/arch/arm/boot/dts/vexpress-v2m.dtsi
-+++ b/arch/arm/boot/dts/vexpress-v2m.dtsi
-@@ -100,6 +100,8 @@
- 				clock-names = "refclk", "timclk", "apb_pclk";
- 				#clock-cells = <1>;
- 				clock-output-names = "timerclken0", "timerclken1", "timerclken2", "timerclken3";
-+				assigned-clocks = <&v2m_sysctl 0>, <&v2m_sysctl 1>, <&v2m_sysctl 3>, <&v2m_sysctl 3>;
-+				assigned-clock-parents = <&v2m_refclk1mhz>, <&v2m_refclk1mhz>, <&v2m_refclk1mhz>, <&v2m_refclk1mhz>;
- 			};
- 
- 			/* PCI-E I2C bus */
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Tuesday, June 30, 2015 09:22:06 AM Krzysztof Kozlowski wrote:
+> On 30.06.2015 02:26, Bartlomiej Zolnierkiewicz wrote:
+> > Exynos5250 based platforms have switched over to use generic
+> > cpufreq driver for cpufreq functionality. So the Exynos
+> > specific cpufreq support for these platforms can be removed.
+> > 
+> > Based on the earlier work by Thomas Abraham.
+> > 
+> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> > Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> > Cc: Thomas Abraham <thomas.ab@samsung.com>
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> >  drivers/cpufreq/Kconfig.arm          |  11 --
+> >  drivers/cpufreq/Makefile             |   1 -
+> >  drivers/cpufreq/exynos-cpufreq.c     |   3 -
+> >  drivers/cpufreq/exynos-cpufreq.h     |  17 ---
+> >  drivers/cpufreq/exynos5250-cpufreq.c | 210 -----------------------------------
+> >  5 files changed, 242 deletions(-)
+> >  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
+> 
+> Nice diff stat, I like it!
+> 
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> Few thoughts:
+> 1. Javier's email has changed, CC-ed the correct one. Can you update it
+> in all patches (CC-tags)?
 
+Done in v3.
+
+> 2. It looks like the patchset should go through one tree so the
+> Exynos5250 cpufreq support won't disappear, right?
+
+Right, this would be an ideal situation.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
