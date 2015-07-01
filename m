@@ -1,109 +1,201 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1436779969-18610-2-git-send-email-yingjoe.chen@mediatek.com>
-References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com> <1436779969-18610-2-git-send-email-yingjoe.chen@mediatek.com>
-From: Daniel Kurtz <djkurtz@chromium.org>
-Date: Tue, 14 Jul 2015 15:39:47 +0800
-Message-ID: <CAGS+omD8k_Cfxv3bYyjmjtLbiavo-WmJPn0Z-CBhN_nnv65Tag@mail.gmail.com>
-Subject: Re: [PATCH 1/5] clocksource: mediatek: do not enable GPT_CLK_EVT when setup
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-mediatek@lists.infradead.org,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Olof Johansson <olof@lixom.net>,
-	srv_heupstream <srv_heupstream@mediatek.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 06/16] ARM: shmobile: r7s72100 dtsi: Add CPG/MSTP Clock Domain
+Date: Wed,  1 Jul 2015 17:58:00 +0200
+Message-Id: <1435766290-3005-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
+References: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Yingjoe,
+Add an appropriate "#power-domain-cells" property to the cpg_clocks
+device node, to create the CPG/MSTP Clock Domain.
 
-On Mon, Jul 13, 2015 at 5:32 PM, Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
-> Spurious mtk timer interrupt is noticed at boot and cause kernel
-> crash. It seems if GPT is enabled, it will latch irq status even
-> when its IRQ is disabled. When irq is enabled afterward, we see
-> spurious interrupt.
-> Change init flow to only enable GPT_CLK_SRC at mtk_timer_init.
->
-> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> ---
->  drivers/clocksource/mtk_timer.c | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clocksource/mtk_timer.c b/drivers/clocksource/mtk_timer.c
-> index 68ab423..237c20b 100644
-> --- a/drivers/clocksource/mtk_timer.c
-> +++ b/drivers/clocksource/mtk_timer.c
-> @@ -156,9 +156,11 @@ static void mtk_timer_global_reset(struct mtk_clock_event_device *evt)
->         writel(0x3f, evt->gpt_base + GPT_IRQ_ACK_REG);
->  }
->
-> -static void
-> -mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
-> +static void mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer,
-> +                           u8 option, bool enable)
+Add "power-domains" properties to all device nodes for devices that are
+part of the CPG/MSTP Clock Domain and can be power-managed through an
+MSTP clock.  This applies to most on-SoC devices, which have a
+one-to-one mapping from SoC device to DT device node.
 
-This function can be: __init
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
 
-Other than this tiny nit, and the small potential conflict in patch 4,
-this whole series is:
+v2:
+  - New.
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
-
-(I do think it is a bit strange that the mediatek,mt6577-timer binding
-does not use "clock-names", but that is independent of this patch
-set).
-
-Thanks!
-
-
->  {
-> +       u32 val;
-> +
->         writel(TIMER_CTRL_CLEAR | TIMER_CTRL_DISABLE,
->                 evt->gpt_base + TIMER_CTRL_REG(timer));
->
-> @@ -167,8 +169,10 @@ mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
->
->         writel(0x0, evt->gpt_base + TIMER_CMP_REG(timer));
->
-> -       writel(TIMER_CTRL_OP(option) | TIMER_CTRL_ENABLE,
-> -                       evt->gpt_base + TIMER_CTRL_REG(timer));
-> +       val = TIMER_CTRL_OP(option);
-> +       if (enable)
-> +               val |= TIMER_CTRL_ENABLE;
-> +       writel(val, evt->gpt_base + TIMER_CTRL_REG(timer));
->  }
->
->  static void mtk_timer_enable_irq(struct mtk_clock_event_device *evt, u8 timer)
-> @@ -235,12 +239,12 @@ static void __init mtk_timer_init(struct device_node *node)
->         evt->ticks_per_jiffy = DIV_ROUND_UP(rate, HZ);
->
->         /* Configure clock source */
-> -       mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN);
-> +       mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN, true);
->         clocksource_mmio_init(evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC),
->                         node->name, rate, 300, 32, clocksource_mmio_readl_up);
->
->         /* Configure clock event */
-> -       mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT);
-> +       mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT, false);
->         clockevents_config_and_register(&evt->dev, rate, 0x3,
->                                         0xffffffff);
->
-> --
-> 1.8.1.1.dirty
->
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 277e73c110e5d40c..060c32cbd66923ed 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -86,6 +86,7 @@
+ 			reg = <0xfcfe0000 0x18>;
+ 			clocks = <&extal_clk>, <&usb_x1_clk>;
+ 			clock-output-names = "pll", "i", "g";
++			#power-domain-cells = <0>;
+ 		};
+ 
+ 		/* MSTP clocks */
+@@ -157,6 +158,7 @@
+ 			     <0 189 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF0>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -169,6 +171,7 @@
+ 			     <0 193 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF1>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -181,6 +184,7 @@
+ 			     <0 197 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF2>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -193,6 +197,7 @@
+ 			     <0 201 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF3>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -205,6 +210,7 @@
+ 			     <0 205 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF4>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -217,6 +223,7 @@
+ 			     <0 209 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF5>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -229,6 +236,7 @@
+ 			     <0 213 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF6>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -241,6 +249,7 @@
+ 			     <0 217 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF7>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -252,6 +261,7 @@
+ 			     <0 240 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error", "rx", "tx";
+ 		clocks = <&mstp10_clks R7S72100_CLK_SPI0>;
++		power-domains = <&cpg_clocks>;
+ 		num-cs = <1>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -266,6 +276,7 @@
+ 			     <0 243 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error", "rx", "tx";
+ 		clocks = <&mstp10_clks R7S72100_CLK_SPI1>;
++		power-domains = <&cpg_clocks>;
+ 		num-cs = <1>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -280,6 +291,7 @@
+ 			     <0 246 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error", "rx", "tx";
+ 		clocks = <&mstp10_clks R7S72100_CLK_SPI2>;
++		power-domains = <&cpg_clocks>;
+ 		num-cs = <1>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -294,6 +306,7 @@
+ 			     <0 249 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error", "rx", "tx";
+ 		clocks = <&mstp10_clks R7S72100_CLK_SPI3>;
++		power-domains = <&cpg_clocks>;
+ 		num-cs = <1>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -308,6 +321,7 @@
+ 			     <0 252 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error", "rx", "tx";
+ 		clocks = <&mstp10_clks R7S72100_CLK_SPI4>;
++		power-domains = <&cpg_clocks>;
+ 		num-cs = <1>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -338,6 +352,7 @@
+ 			     <0 164 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R7S72100_CLK_I2C0>;
+ 		clock-frequency = <100000>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -356,6 +371,7 @@
+ 			     <0 172 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R7S72100_CLK_I2C1>;
+ 		clock-frequency = <100000>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -374,6 +390,7 @@
+ 			     <0 180 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R7S72100_CLK_I2C2>;
+ 		clock-frequency = <100000>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -392,6 +409,7 @@
+ 			     <0 188 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R7S72100_CLK_I2C3>;
+ 		clock-frequency = <100000>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -402,6 +420,7 @@
+ 		interrupt-names = "tgi0a";
+ 		clocks = <&mstp3_clks R7S72100_CLK_MTU2>;
+ 		clock-names = "fck";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ };
+-- 
+1.9.1
