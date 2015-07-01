@@ -1,415 +1,79 @@
-Return-Path: <sudeep.holla@arm.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: arm@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@kernel.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Punit Agrawal <punit.agrawal@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v6 3/8] clk: add support for clocks provided by SCP(System Control Processor)
-Date: Fri, 31 Jul 2015 18:43:06 +0100
-Message-Id: <1438364591-1144-4-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1438364591-1144-1-git-send-email-sudeep.holla@arm.com>
-References: <1438364591-1144-1-git-send-email-sudeep.holla@arm.com>
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+ Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH v3 0/4] cpufreq: use generic cpufreq drivers for Exynos5250
+ platform
+Date: Wed, 01 Jul 2015 15:10:34 +0200
+Message-id: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On some ARM based systems, a separate Cortex-M based System Control
-Processor(SCP) provides the overall power, clock, reset and system
-control. System Control and Power Interface(SCPI) Message Protocol
-is defined for the communication between the Application Cores(AP)
-and the SCP.
+Hi,
 
-This patch adds support for the clocks provided by SCP using SCPI
-protocol.
+This patch series removes the use of Exynos5250 specific support
+from cpufreq-exynos driver and enables the use of cpufreq-dt driver
+for this platform.
 
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>
-Cc: Liviu Dudau <Liviu.Dudau@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
-Cc: linux-clk@vger.kernel.org
----
- MAINTAINERS            |   1 +
- drivers/clk/Kconfig    |  10 ++
- drivers/clk/Makefile   |   1 +
- drivers/clk/clk-scpi.c | 312 +++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 324 insertions(+)
- create mode 100644 drivers/clk/clk-scpi.c
+This patch series has been tested on Exynos5250 based Arndale board.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 86bc2d03748f..690122bb4426 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8965,6 +8965,7 @@ M:	Sudeep Holla <sudeep.holla@arm.com>
- L:	linux-arm-kernel@lists.infradead.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/arm/arm,scpi.txt
-+F:	drivers/clk/clk-scpi.c
- F:	drivers/firmware/arm_scpi.c
- F:	include/linux/scpi_protocol.h
- 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 42f7120ca9ce..4aec54b90331 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -59,6 +59,16 @@ config COMMON_CLK_RK808
- 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
- 	  by control register.
- 
-+config COMMON_CLK_SCPI
-+	tristate "Clock driver controlled via SCPI interface"
-+	depends on ARM_SCPI_PROTOCOL || COMPILE_TEST
-+	  ---help---
-+	  This driver provides support for clocks that are controlled
-+	  by firmware that implements the SCPI interface.
-+
-+	  This driver uses SCPI Message Protocol to interact with the
-+	  firmware providing all the clock controls.
-+
- config COMMON_CLK_SI5351
- 	tristate "Clock driver for SiLabs 5351A/B/C"
- 	depends on I2C
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index c4cf075a2320..bef9c7064e5b 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
- obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
- obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
- obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
-+obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
- obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
- obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
- obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
-diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
-new file mode 100644
-index 000000000000..c0766fdd6dbf
---- /dev/null
-+++ b/drivers/clk/clk-scpi.c
-@@ -0,0 +1,312 @@
-+/*
-+ * System Control and Power Interface (SCPI) Protocol based clock driver
-+ *
-+ * Copyright (C) 2015 ARM Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program. If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/of.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/scpi_protocol.h>
-+
-+struct scpi_clk {
-+	u32 id;
-+	struct clk_hw hw;
-+	struct scpi_dvfs_info *info;
-+	struct scpi_ops *scpi_ops;
-+};
-+
-+#define to_scpi_clk(clk) container_of(clk, struct scpi_clk, hw)
-+
-+static unsigned long scpi_clk_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+
-+	return clk->scpi_ops->clk_get_val(clk->id);
-+}
-+
-+static long scpi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	/*
-+	 * We can't figure out what rate it will be, so just return the
-+	 * rate back to the caller. scpi_clk_recalc_rate() will be called
-+	 * after the rate is set and we'll know what rate the clock is
-+	 * running at then.
-+	 */
-+	return rate;
-+}
-+
-+static int scpi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+
-+	return clk->scpi_ops->clk_set_val(clk->id, rate);
-+}
-+
-+static const struct clk_ops scpi_clk_ops = {
-+	.recalc_rate = scpi_clk_recalc_rate,
-+	.round_rate = scpi_clk_round_rate,
-+	.set_rate = scpi_clk_set_rate,
-+};
-+
-+/* find closest match to given frequency in OPP table */
-+static int __scpi_dvfs_round_rate(struct scpi_clk *clk, unsigned long rate)
-+{
-+	int idx;
-+	u32 fmin = 0, fmax = ~0, ftmp;
-+	const struct scpi_opp *opp = clk->info->opps;
-+
-+	for (idx = 0; idx < clk->info->count; idx++, opp++) {
-+		ftmp = opp->freq;
-+		if (ftmp >= (u32)rate) {
-+			if (ftmp <= fmax)
-+				fmax = ftmp;
-+			break;
-+		} else if (ftmp >= fmin) {
-+			fmin = ftmp;
-+		}
-+	}
-+	return fmax != ~0 ? fmax : fmin;
-+}
-+
-+static unsigned long scpi_dvfs_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+	int idx = clk->scpi_ops->dvfs_get_idx(clk->id);
-+	const struct scpi_opp *opp;
-+
-+	if (idx < 0)
-+		return 0;
-+
-+	opp = clk->info->opps + idx;
-+	return opp->freq;
-+}
-+
-+static long scpi_dvfs_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *parent_rate)
-+{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+
-+	return __scpi_dvfs_round_rate(clk, rate);
-+}
-+
-+static int __scpi_find_dvfs_index(struct scpi_clk *clk, unsigned long rate)
-+{
-+	int idx, max_opp = clk->info->count;
-+	const struct scpi_opp *opp = clk->info->opps;
-+
-+	for (idx = 0; idx < max_opp; idx++, opp++)
-+		if (opp->freq == rate)
-+			return idx;
-+	return -EINVAL;
-+}
-+
-+static int scpi_dvfs_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+	int ret = __scpi_find_dvfs_index(clk, rate);
-+
-+	if (ret < 0)
-+		return ret;
-+	return clk->scpi_ops->dvfs_set_idx(clk->id, (u8)ret);
-+}
-+
-+static const struct clk_ops scpi_dvfs_ops = {
-+	.recalc_rate = scpi_dvfs_recalc_rate,
-+	.round_rate = scpi_dvfs_round_rate,
-+	.set_rate = scpi_dvfs_set_rate,
-+};
-+
-+static const struct of_device_id scpi_clk_match[] = {
-+	{ .compatible = "arm,scpi-dvfs-clocks", .data = &scpi_dvfs_ops, },
-+	{ .compatible = "arm,scpi-variable-clocks", .data = &scpi_clk_ops, },
-+	{}
-+};
-+
-+static struct clk *
-+scpi_clk_ops_init(struct device *dev, const struct of_device_id *match,
-+		  struct scpi_clk *sclk, const char *name)
-+{
-+	struct clk_init_data init;
-+	struct clk *clk;
-+	unsigned long min = 0, max = 0;
-+
-+	init.name = name;
-+	init.flags = CLK_IS_ROOT;
-+	init.num_parents = 0;
-+	init.ops = match->data;
-+	sclk->hw.init = &init;
-+	sclk->scpi_ops = get_scpi_ops();
-+
-+	if (init.ops == &scpi_dvfs_ops) {
-+		sclk->info = sclk->scpi_ops->dvfs_get_info(sclk->id);
-+		if (IS_ERR(sclk->info))
-+			return NULL;
-+	} else if (init.ops == &scpi_clk_ops) {
-+		if (sclk->scpi_ops->clk_get_range(sclk->id, &min, &max) || !max)
-+			return NULL;
-+	} else {
-+		return NULL;
-+	}
-+
-+	clk = devm_clk_register(dev, &sclk->hw);
-+	if (!IS_ERR(clk) && max)
-+		clk_set_rate_range(clk, min, max);
-+	return clk;
-+}
-+
-+struct scpi_clk_data {
-+	struct scpi_clk **clk;
-+	unsigned int clk_num;
-+};
-+
-+static struct clk *
-+scpi_of_clk_src_get(struct of_phandle_args *clkspec, void *data)
-+{
-+	struct scpi_clk *sclk;
-+	struct scpi_clk_data *clk_data = data;
-+	unsigned int idx = clkspec->args[0], count;
-+
-+	for (count = 0; count < clk_data->clk_num; count++) {
-+		sclk = clk_data->clk[count];
-+		if (idx == sclk->id)
-+			return sclk->hw.clk;
-+	}
-+
-+	return ERR_PTR(-EINVAL);
-+}
-+
-+static int scpi_clk_add(struct device *dev, struct device_node *np,
-+			const struct of_device_id *match)
-+{
-+	struct clk **clks;
-+	int idx, count;
-+	struct scpi_clk_data *clk_data;
-+
-+	count = of_property_count_strings(np, "clock-output-names");
-+	if (count < 0) {
-+		dev_err(dev, "%s: invalid clock output count\n", np->name);
-+		return -EINVAL;
-+	}
-+
-+	clk_data = devm_kmalloc(dev, sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->clk_num = count;
-+	clk_data->clk = devm_kcalloc(dev, count, sizeof(*clk_data->clk),
-+				     GFP_KERNEL);
-+	if (!clk_data->clk)
-+		return -ENOMEM;
-+
-+	clks = devm_kcalloc(dev, count, sizeof(*clks), GFP_KERNEL);
-+	if (!clks)
-+		return -ENOMEM;
-+
-+	for (idx = 0; idx < count; idx++) {
-+		struct scpi_clk *sclk;
-+		const char *name;
-+		u32 val;
-+
-+		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
-+		if (!sclk)
-+			return -ENOMEM;
-+
-+		if (of_property_read_string_index(np, "clock-output-names",
-+						  idx, &name)) {
-+			dev_err(dev, "invalid clock name @ %s\n", np->name);
-+			return -EINVAL;
-+		}
-+
-+		if (of_property_read_u32_index(np, "clock-indices",
-+					       idx, &val)) {
-+			dev_err(dev, "invalid clock index @ %s\n", np->name);
-+			return -EINVAL;
-+		}
-+
-+		sclk->id = val;
-+
-+		clks[idx] = scpi_clk_ops_init(dev, match, sclk, name);
-+		if (IS_ERR_OR_NULL(clks[idx]))
-+			dev_err(dev, "failed to register clock '%s'\n", name);
-+		else
-+			dev_dbg(dev, "Registered clock '%s'\n", name);
-+		clk_data->clk[idx] = sclk;
-+	}
-+
-+	return of_clk_add_provider(np, scpi_of_clk_src_get, clk_data);
-+}
-+
-+static int scpi_clocks_remove(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *child, *np = dev->of_node;
-+
-+	for_each_available_child_of_node(np, child)
-+		of_clk_del_provider(np);
-+	return 0;
-+}
-+
-+static int scpi_clocks_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *child, *np = dev->of_node;
-+	const struct of_device_id *match;
-+
-+	if (!get_scpi_ops())
-+		return -ENXIO;
-+
-+	for_each_available_child_of_node(np, child) {
-+		match = of_match_node(scpi_clk_match, child);
-+		if (!match)
-+			continue;
-+		ret = scpi_clk_add(dev, child, match);
-+		if (ret) {
-+			scpi_clocks_remove(pdev);
-+			return ret;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static const struct of_device_id scpi_clocks_ids[] = {
-+	{ .compatible = "arm,scpi-clocks", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, scpi_clocks_id);
-+
-+static struct platform_driver scpi_clocks_driver = {
-+	.driver	= {
-+		.name = "scpi_clocks",
-+		.of_match_table = scpi_clocks_ids,
-+	},
-+	.probe = scpi_clocks_probe,
-+	.remove = scpi_clocks_remove,
-+};
-+module_platform_driver(scpi_clocks_driver);
-+
-+MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
-+MODULE_DESCRIPTION("ARM SCPI clock driver");
-+MODULE_LICENSE("GPL v2");
+Changes since v1 (http://lkml.org/lkml/2015/4/13/611):
+- rebased on top of next-20150629 branch of linux-next kernel tree
+- dropped dependency on "[PATCH 0/6] cpufreq: use generic cpufreq
+  drivers for Exynos4x12 platform" patch series as it needs more
+  work (Viresh has requested porting of cpufreq-dt's boost mode
+  support over opp-v2 patches)
+
+Changes since v2 (http://lkml.org/lkml/2015/6/29/361):
+- put the new cpu nodes in alphabetical order
+- updated Javier's and Mike's e-mail adresses
+- removed Cc: tag with stale Sachin's e-mail adress
+- added Reviewed-by: tag from Krzysztof to patches #3 and #4
+
+Depends on:
+- next-20150629 branch of linux-next kernel tree
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (1):
+  cpufreq: exynos: remove Exynos5250 specific cpufreq driver support
+
+Thomas Abraham (3):
+  clk: samsung: exynos5250: add cpu clock configuration data and
+    instantiate cpu clock
+  ARM: dts: Exynos5250: add CPU OPP and regulator supply property
+  ARM: Exynos: switch to using generic cpufreq driver for Exynos5250
+
+ arch/arm/boot/dts/exynos5250-arndale.dts  |   4 +
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |   4 +
+ arch/arm/boot/dts/exynos5250-snow.dts     |   4 +
+ arch/arm/boot/dts/exynos5250-spring.dts   |   4 +
+ arch/arm/boot/dts/exynos5250.dtsi         |  22 ++++
+ arch/arm/mach-exynos/exynos.c             |   1 +
+ drivers/clk/samsung/clk-exynos5250.c      |  31 +++++
+ drivers/cpufreq/Kconfig.arm               |  11 --
+ drivers/cpufreq/Makefile                  |   1 -
+ drivers/cpufreq/exynos-cpufreq.c          |   3 -
+ drivers/cpufreq/exynos-cpufreq.h          |  17 ---
+ drivers/cpufreq/exynos5250-cpufreq.c      | 210 ------------------------------
+ include/dt-bindings/clock/exynos5250.h    |   1 +
+ 13 files changed, 71 insertions(+), 242 deletions(-)
+ delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
+
 -- 
 1.9.1
