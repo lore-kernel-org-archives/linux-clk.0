@@ -1,120 +1,101 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH v2 4/5] clk: qcom: Add MSM8916 gpu clocks
-Date: Fri,  5 Jun 2015 15:40:35 +0300
-Message-Id: <1433508036-28644-5-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1433508036-28644-1-git-send-email-georgi.djakov@linaro.org>
-References: <1433508036-28644-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <linux.amoon@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1431083247-3310-1-git-send-email-linux.amoon@gmail.com>
+References: <1431083247-3310-1-git-send-email-linux.amoon@gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Wed, 1 Jul 2015 11:42:19 +0530
+Message-ID: <CANAwSgQYxkHr5fvR0Ju67mWoYuGsqc2eNt2vmVXYxbf-WmOWvg@mail.gmail.com>
+Subject: Re: [PATCHv3] clk samsung exynos5420 add CLK_RECALC_NEW_RATES flag to
+ mout_apll and mout_kpll clock.
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Linux Kernel <linux-kernel@vger.kernel.org>, Anand Moon <linux.amoon@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the msm8916 bimc clocks that are needed for GPU.
+Hi AlL,
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/gcc-msm8916.c               |   59 ++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8916.h |    3 ++
- 2 files changed, 62 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index d493e9f3a2eb..9b4a8ebb1eb2 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -1094,6 +1094,28 @@ static struct clk_rcg2 apss_tcu_clk_src = {
- 	},
- };
- 
-+static const struct freq_tbl ftbl_gcc_bimc_gpu_clk[] = {
-+	F(100000000, P_GPLL0, 8, 0, 0),
-+	F(200000000, P_GPLL0, 4, 0, 0),
-+	F(266500000, P_BIMC, 4, 0, 0),
-+	F(533000000, P_BIMC, 2, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 bimc_gpu_clk_src = {
-+	.cmd_rcgr = 0x31028,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_bimc_map,
-+	.freq_tbl = ftbl_gcc_bimc_gpu_clk,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "bimc_gpu_clk_src",
-+		.parent_names = gcc_xo_gpll0_bimc,
-+		.num_parents = 3,
-+		.flags = CLK_GET_RATE_NOCACHE,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
- static const struct freq_tbl ftbl_gcc_usb_hs_system_clk[] = {
- 	F(80000000, P_GPLL0, 10, 0, 0),
- 	{ }
-@@ -2420,6 +2442,40 @@ static struct clk_branch gcc_gtcu_ahb_clk = {
- 	},
- };
- 
-+static struct clk_branch gcc_bimc_gfx_clk = {
-+	.halt_reg = 0x31024,
-+	.clkr = {
-+		.enable_reg = 0x31024,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_bimc_gfx_clk",
-+			.parent_names = (const char *[]){
-+				"bimc_gpu_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_bimc_gpu_clk = {
-+	.halt_reg = 0x31040,
-+	.clkr = {
-+		.enable_reg = 0x31040,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_bimc_gpu_clk",
-+			.parent_names = (const char *[]){
-+				"bimc_gpu_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_jpeg_tbu_clk = {
- 	.halt_reg = 0x12034,
- 	.clkr = {
-@@ -2749,6 +2805,9 @@ static struct clk_regmap *gcc_msm8916_clocks[] = {
- 	[BIMC_DDR_CLK_SRC] = &bimc_ddr_clk_src.clkr,
- 	[GCC_APSS_TCU_CLK] = &gcc_apss_tcu_clk.clkr,
- 	[GCC_GFX_TCU_CLK] = &gcc_gfx_tcu_clk.clkr,
-+	[BIMC_GPU_CLK_SRC] = &bimc_gpu_clk_src.clkr,
-+	[GCC_BIMC_GFX_CLK] = &gcc_bimc_gfx_clk.clkr,
-+	[GCC_BIMC_GPU_CLK] = &gcc_bimc_gpu_clk.clkr,
- };
- 
- static const struct qcom_reset_map gcc_msm8916_resets[] = {
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8916.h b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-index 53b39293d759..d54a9715c37e 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8916.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-@@ -155,5 +155,8 @@
- #define BIMC_DDR_CLK_SRC			138
- #define GCC_APSS_TCU_CLK			139
- #define GCC_GFX_TCU_CLK				140
-+#define BIMC_GPU_CLK_SRC			141
-+#define GCC_BIMC_GFX_CLK			142
-+#define GCC_BIMC_GPU_CLK			143
- 
- #endif
+On 8 May 2015 at 16:37, Anand Moon <linux.amoon@gmail.com> wrote:
+> Addition of CLK_RECALC_NEW_RATES flag to support Exynos5420 cpu clk so that
+> correct divider values are re-calculated after both pre/post
+> clock notifiers had run for mout_apll clock and mout_kpll clock.
+>
+> Observation their is considerable improvement in cpufreq stats
+> after applying this patch.
+>
+> Governer : "performance"
+> $ cpupower -c 1 frequency-info
+>
+> Below is table format of the output.
+> cpufreq stats:  Frequency| Before | After  |
+> CPU 1
+>                 200 MHz  | 22.07% | 46.57% |
+>                 300 MHz  | 1.08%  | 8.18%  |
+>                 400 MHz  | 0.17%  | 1.93%  |
+>                 500 MHz  | 0.24%  | 3.51%  |
+>                 600 MHz  | 0.37%  | 2.13%  |
+>                 700 MHz  | 0.20%  | 0.88%  |
+>                 800 MHz  | 0.09%  | 1.69%  |
+>                 900 MHz  | 0.05%  | 1.02%  |
+>                 1000 MHz | 0.02%  | 2.55%  |
+>                 1.10 GHz | 0.12%  | 1.17%  |
+>                 1.20 GHz | 0.05%  | 0.88%  |
+>                 1.30 GHz | 0.07%  | 0.38%  |
+>                 1.40 GHz | 0.04%  | 0.38%  |
+>                 1.50 GHz | 0.02%  | 0.00%  |
+>                 1.60 GHz | 0.00%  | 0.15%  |
+>                 1.70 GHz | 0.00%  | 0.44%  |
+>                 1.80 GHz | 75.43% | 28.26% |
+>
+> Governer : "performance"
+> $ cpupower -c 0 frequency-info
+>
+> Below is table format of the output.
+> cpufreq stats:  Frequency| Before | After  |
+> CPU0            200 MHz  | 33.95% | 60.31% |
+>                 300 MHz  | 4.64%  | 2.13%  |
+>                 400 MHz  | 1.50%  | 0.79%  |
+>                 500 MHz  | 1.46%  | 0.49%  |
+>                 600 MHz  | 0.05%  | 0.27%  |
+>                 700 MHz  | 0.68%  | 0.21%  |
+>                 800 MHz  | 0.08%  | 0.19%  |
+>                 900 MHz  | 0.09%  | 0.12%  |
+>                 1000 MHz | 0.20%  | 0.10%  |
+>                 1.10 GHz | 0.21%  | 0.11%, |
+>                 1.20 GHz | 0.51%  | 0.28%, |
+>                 1.30 GHz | 56.64% | 35.01% |
+>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 462aaee..6c7458c 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -618,10 +618,10 @@ static struct samsung_mux_clock exynos5x_mux_clks[] __initdata = {
+>         MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
+>
+>         MUX_F(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+> -             CLK_SET_RATE_PARENT, 0),
+> +             CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
+>         MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+>         MUX_F(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1,
+> -             CLK_SET_RATE_PARENT, 0),
+> +             CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
+>         MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
+>
+>         MUX(0, "mout_aclk200", mout_group1_p, SRC_TOP0, 8, 2),
+> --
+> 1.9.1
+>
+
+Any comments on this patch.
+
+-Anand Moon
