@@ -1,45 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org, agross@codeaurora.org
-Cc: mturquette@linaro.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v2 0/5] Add support for Qualcomm A53 CPU clock
-Date: Fri, 24 Jul 2015 19:58:34 +0300
-Message-Id: <1437757119-6910-1-git-send-email-georgi.djakov@linaro.org>
+Date: Wed, 1 Jul 2015 15:28:08 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Paul Osmialowski <pawelo@king.net.pl>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+	dmaengine@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Nicolas Pitre <nicolas.pitre@linaro.org>,
+	Paul Bolle <pebolle@tiscali.nl>,
+	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+	Anson Huang <b20788@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Jingchang Lu <jingchang.lu@freescale.com>,
+	Rob Herring <r.herring@freescale.com>,
+	Yuri Tikhonov <yur@emcraft.com>,
+	Sergei Poselenov <sposelenov@emcraft.com>,
+	Alexander Potashev <aspotashev@emcraft.com>
+Subject: Re: [PATCH v2 4/9] arm: twr-k70f120m: timer driver for Kinetis SoC
+In-Reply-To: <alpine.LNX.2.00.1507011031050.9009@localhost.localdomain>
+Message-ID: <alpine.DEB.2.11.1507011527380.3916@nanos>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <1435667250-28299-5-git-send-email-pawelo@king.net.pl> <alpine.DEB.2.11.1507010944580.3916@nanos> <alpine.LNX.2.00.1507011031050.9009@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds support for the A53 CPU clock and allows scaling
-of the CPU frequency on msm8916 based platforms.
+On Wed, 1 Jul 2015, Paul Osmialowski wrote:
 
-Changes since v1 (https://lkml.org/lkml/2015/6/12/193)
- * Drop SR2 PLL patch, as it is already applied.
- * Add gpll0_vote rate propagation patch.
- * Update/rebase patches to the current clk-next.
+> Hi Thomas,
+> 
+> On Wed, 1 Jul 2015, Thomas Gleixner wrote:
+> 
+> > > +		clockevents_register_device(
+> > > +				&kinetis_clockevent_tmrs[chan].evtdev);
+> > > +
+> > > +		kinetis_pit_init(&kinetis_clockevent_tmrs[chan],
+> > > +						(rate / HZ) - 1);
+> > > +		kinetis_pit_enable(&kinetis_clockevent_tmrs[chan], 1);
+> > 
+> > No point doing this. The core code has invoked the set_periodic call
+> > back via clockevents_register_device() already.
+> > 
+> 
+> As I removed this kinetis_pit_enable() line, the timer did not start,
+> therefore the system became unusable. What could be possible reason for that?
 
-Georgi Djakov (4):
-  clk: qcom: Enable gpll0_vote rate propagation on MSM8916
-  clk: qcom: Add support for regmap mux-div clocks
-  clk: qcom: Add A53 clock driver
-  arm64: dts: qcom: msm8916: Add A53 DT node
+Well, you need to move both, the init and the enable into
+set_periodic().
 
-Stephen Boyd (1):
-  clk: Add safe switch hook
+Thanks,
 
- Documentation/devicetree/bindings/clock/qcom,a53cc |   25 ++
- arch/arm64/boot/dts/qcom/msm8916.dtsi              |   12 +
- drivers/clk/clk.c                                  |   73 ++++-
- drivers/clk/qcom/Kconfig                           |    8 +
- drivers/clk/qcom/Makefile                          |    2 +
- drivers/clk/qcom/clk-a53.c                         |  202 ++++++++++++++
- drivers/clk/qcom/clk-regmap-mux-div.c              |  291 ++++++++++++++++++++
- drivers/clk/qcom/clk-regmap-mux-div.h              |   63 +++++
- drivers/clk/qcom/gcc-msm8916.c                     |    1 +
- include/linux/clk-provider.h                       |    2 +
- 10 files changed, 674 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc
- create mode 100644 drivers/clk/qcom/clk-a53.c
- create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.c
- create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.h
+	tglx
 
