@@ -1,63 +1,61 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:59531 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751595AbbGNN2U (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 14 Jul 2015 09:28:20 -0400
-Message-ID: <55A50E87.4060400@ti.com>
-Date: Tue, 14 Jul 2015 16:28:39 +0300
-From: Tero Kristo <t-kristo@ti.com>
-MIME-Version: 1.0
-To: Tony Lindgren <tony@atomide.com>, Keerthy <a0393675@ti.com>
-CC: Mugunthan V N <mugunthanvnm@ti.com>, Keerthy <j-keerthy@ti.com>,
-	<linux-omap@vger.kernel.org>, <galak@codeaurora.org>,
-	<pawel.moll@arm.com>, <linux-kernel@vger.kernel.org>,
-	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 0/2] CLK: TI: add dpll_clksel_mac_clk node
-References: <1434614473-8500-1-git-send-email-j-keerthy@ti.com> <55828A18.6030608@ti.com> <558C0624.4060008@ti.com> <20150714110626.GQ17550@atomide.com>
-In-Reply-To: <20150714110626.GQ17550@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@baylibre.com,
+ sboyd@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: thomas.ab@samsung.com, b.zolnierkie@samsung.com, kyungmin.park@samsung.com,
+ cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v5 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
+Date: Wed, 01 Jul 2015 22:21:14 +0900
+Message-id: <1435756877-26736-1-git-send-email-cw00.choi@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/14/2015 02:06 PM, Tony Lindgren wrote:
-> * Keerthy <a0393675@ti.com> [150625 06:48]:
->>
->> On Thursday 18 June 2015 02:36 PM, Mugunthan V N wrote:
->>> On Thursday 18 June 2015 01:31 PM, Keerthy wrote:
->>>> The series adds the missing clock node needed for cpsw.
->>>>
->>>> Keerthy (2):
->>>>    CLK: TI: add dpll_clksel_mac_clk node
->>>>    ARM: dts: am4372: Set the default clock rate for dpll_clksel_mac_clk
->>>>      clock
->>>>
->>>>   arch/arm/boot/dts/am4372.dtsi        | 7 +++++--
->>>>   arch/arm/boot/dts/am43xx-clocks.dtsi | 9 +++++++++
->>>>   drivers/clk/ti/clk-43xx.c            | 1 +
->>>>   3 files changed, 15 insertions(+), 2 deletions(-)
->>>>
->>>
->>> Tested-by: Mugunthan V N <mugunthanvnm@ti.com>
->>
->> Thanks Mugunthan.
->>
->> A gentle ping on this series.
->
-> Tero, care to review this series?
+This patchset use cpufreq-dt driver to support Exynos3250 cpufreq and tested it
+on Exynos3250-based Rinato board.
 
-Acked-by: Tero Kristo <t-kristo@ti.com>
+Depends on:
+- next-20150701 tag (master branch) of linux-next kernel tree
+- This patch-set is based on Exynos5250 patch-set[1] because two patch-set
+  modify the 'arch/arm/mach-exynos/exynos.c' to add the compatible string.
+  [1] https://lkml.org/lkml/2015/6/29/361
+  : [PATCH v2 0/4] cpufreq: use generic cpufreq drivers for Exynos5250 platform
 
-I guess this should go through your tree as this is mostly dts changes?
+Changes from v4:
+(https://lkml.org/lkml/2014/10/20/215)
+- Rebased on latest linux-next git repository.
+- Remove unnecessary divider clock flag from divider of DIV_CPU0/DIV_CPU1 register
 
--Tero
+Changes from v3:
+- This patchset is based on 3.18-rc1 with new patchset[3] of Thomas Abraham
+  [3] [PATCH v11 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
+  - http://www.spinics.net/lists/arm-kernel/msg370412.html
 
->
-> Regards,
->
-> Tony
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Changes from v2:
+- Rebased on new patchset of Thomas Abraham
+  and for-next branch of samsunc-clk.git of Tomasz Figa
 
+Changes from v1:
+- Rebased on new patchset[1] by Thomas Abraham
+  [1] [PATCH v10 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
+  - http://www.spinics.net/lists/arm-kernel/msg364790.html
+- Modify clk-cpu.c to support Exynos3250
+- Drop documentation patch on previous patchset[2]
+  [2] http://www.spinics.net/lists/cpufreq/msg10265.html
+- Add only operating-points for Exynos3250 without armclk-divider-table
+
+Chanwoo Choi (3):
+  clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
+  ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
+  ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
+
+ arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
+ arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
+ arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
+ arch/arm/mach-exynos/exynos.c           |  1 +
+ drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
+ include/dt-bindings/clock/exynos3250.h  |  1 +
+ 6 files changed, 55 insertions(+), 2 deletions(-)
+
+-- 
+1.8.5.5
