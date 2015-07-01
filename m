@@ -1,200 +1,627 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:35116 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933020AbbGHJ6u (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2015 05:58:50 -0400
-Received: by pactm7 with SMTP id tm7so129187322pac.2
-        for <linux-clk@vger.kernel.org>; Wed, 08 Jul 2015 02:58:50 -0700 (PDT)
-From: Jun Nie <jun.nie@linaro.org>
-To: mturquette@linaro.org, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org
-Cc: shawn.guo@linaro.org, jason.liu@linaro.org, wan.zhijun@zte.com.cn,
-	Jun Nie <jun.nie@linaro.org>
-Subject: [PATCH 2/2] clk: zx: Add audio and GPIO clock for zx296702
-Date: Wed,  8 Jul 2015 17:58:13 +0800
-Message-Id: <1436349493-5453-2-git-send-email-jun.nie@linaro.org>
-In-Reply-To: <1436349493-5453-1-git-send-email-jun.nie@linaro.org>
-References: <1436349493-5453-1-git-send-email-jun.nie@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v3 09/16] ARM: shmobile: r8a7790 dtsi: Add CPG/MSTP Clock
+ Domain
+Date: Wed,  1 Jul 2015 17:58:03 +0200
+Message-Id: <1435766290-3005-10-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
+References: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
+ linux-sh@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add SPDIF/I2S and GPIO clock for zx296702
+Add an appropriate "#power-domain-cells" property to the cpg_clocks
+device node, to create the CPG/MSTP Clock Domain.
 
-Signed-off-by: Jun Nie <jun.nie@linaro.org>
+Add "power-domains" properties to all device nodes for devices that are
+part of the CPG/MSTP Clock Domain and can be power-managed through an
+MSTP clock.  This applies to most on-SoC devices, which have a
+one-to-one mapping from SoC device to DT device node.  Notable
+exceptions are the "display" and "sound" nodes, which represent multiple
+SoC devices, each having their own MSTP clocks.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/clk/zte/clk-zx296702.c             | 92 +++++++++++++++++++++++++++++-
- include/dt-bindings/clock/zx296702-clock.h | 17 +++++-
- 2 files changed, 105 insertions(+), 4 deletions(-)
+v3:
+  - Add "power-domains" property to recently introduced Ethernet AVB
+    device node,
+  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
 
-diff --git a/drivers/clk/zte/clk-zx296702.c b/drivers/clk/zte/clk-zx296702.c
-index 929d033..9dcac73 100644
---- a/drivers/clk/zte/clk-zx296702.c
-+++ b/drivers/clk/zte/clk-zx296702.c
-@@ -36,10 +36,21 @@ static struct clk_onecell_data lsp1clk_data;
- #define CLK_MUX1		(topcrm_base + 0x8c)
+v2:
+  - Add Reviewed-by,
+  - Add "power-domains" properties to recently introduced USB-DMAC
+    device nodes,
+  - Drop adding "power-domains" properties to the GIC device node, as
+    adding the INTC_SYS clock is postponed.
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 79 ++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 73 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 3ae0c3bfb9b96130..83cb6b4de8332118 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -134,6 +134,7 @@
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+ 		clocks = <&mstp9_clks R8A7790_CLK_GPIO0>;
++		power-domains = <&cpg_clocks>;
+ 	};
  
- #define CLK_SDMMC1		(lsp0crpm_base + 0x0c)
-+#define CLK_GPIO		(lsp0crpm_base + 0x2c)
-+#define CLK_SPDIF0		(lsp0crpm_base + 0x10)
-+#define SPDIF0_DIV		(lsp0crpm_base + 0x14)
-+#define CLK_I2S0		(lsp0crpm_base + 0x18)
-+#define I2S0_DIV		(lsp0crpm_base + 0x1c)
-+#define CLK_I2S1		(lsp0crpm_base + 0x20)
-+#define I2S1_DIV		(lsp0crpm_base + 0x24)
-+#define CLK_I2S2		(lsp0crpm_base + 0x34)
-+#define I2S2_DIV		(lsp0crpm_base + 0x38)
+ 	gpio1: gpio@e6051000 {
+@@ -146,6 +147,7 @@
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+ 		clocks = <&mstp9_clks R8A7790_CLK_GPIO1>;
++		power-domains = <&cpg_clocks>;
+ 	};
  
- #define CLK_UART0		(lsp1crpm_base + 0x20)
- #define CLK_UART1		(lsp1crpm_base + 0x24)
- #define CLK_SDMMC0		(lsp1crpm_base + 0x2c)
-+#define CLK_SPDIF1		(lsp1crpm_base + 0x30)
-+#define SPDIF1_DIV		(lsp1crpm_base + 0x34)
+ 	gpio2: gpio@e6052000 {
+@@ -158,6 +160,7 @@
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+ 		clocks = <&mstp9_clks R8A7790_CLK_GPIO2>;
++		power-domains = <&cpg_clocks>;
+ 	};
  
- static const struct zx_pll_config pll_a9_config[] = {
- 	{ .rate = 700000000, .cfg0 = 0x800405d1, .cfg1 = 0x04555555 },
-@@ -170,6 +181,21 @@ static const char * uart_wclk_sel[] = {
- 	"lsp1_26M_wclk",
- };
+ 	gpio3: gpio@e6053000 {
+@@ -170,6 +173,7 @@
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+ 		clocks = <&mstp9_clks R8A7790_CLK_GPIO3>;
++		power-domains = <&cpg_clocks>;
+ 	};
  
-+static const char * spdif0_wclk_sel[] = {
-+	"lsp0_104M_wclk",
-+	"lsp0_26M_wclk",
-+};
-+
-+static const char * spdif1_wclk_sel[] = {
-+	"lsp1_104M_wclk",
-+	"lsp1_26M_wclk",
-+};
-+
-+static const char * i2s_wclk_sel[] = {
-+	"lsp0_104M_wclk",
-+	"lsp0_26M_wclk",
-+};
-+
- static inline struct clk *zx_divtbl(const char *name, const char *parent,
- 				    void __iomem *reg, u8 shift, u8 width,
- 				    const struct clk_div_table *table)
-@@ -196,7 +222,7 @@ static inline struct clk *zx_gate(const char *name, const char *parent,
- 				  void __iomem *reg, u8 shift)
- {
- 	return clk_register_gate(NULL, name, parent, CLK_IGNORE_UNUSED,
--				 reg, shift, 0, &reg_lock);
-+				 reg, shift, CLK_SET_RATE_PARENT, &reg_lock);
- }
+ 	gpio4: gpio@e6054000 {
+@@ -182,6 +186,7 @@
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+ 		clocks = <&mstp9_clks R8A7790_CLK_GPIO4>;
++		power-domains = <&cpg_clocks>;
+ 	};
  
- static void __init zx296702_top_clocks_init(struct device_node *np)
-@@ -585,7 +611,57 @@ static void __init zx296702_lsp0_clocks_init(struct device_node *np)
- 	clk[ZX296702_SDMMC1_WCLK] =
- 		zx_gate("sdmmc1_wclk", "sdmmc1_wclk_div", CLK_SDMMC1, 1);
- 	clk[ZX296702_SDMMC1_PCLK] =
--		zx_gate("sdmmc1_pclk", "lsp1_apb_pclk", CLK_SDMMC1, 0);
-+		zx_gate("sdmmc1_pclk", "lsp0_apb_pclk", CLK_SDMMC1, 0);
-+
-+	clk[ZX296702_GPIO_CLK] =
-+		zx_gate("gpio_clk", "lsp0_apb_pclk", CLK_GPIO, 0);
-+
-+	/* SPDIF */
-+	clk[ZX296702_SPDIF0_WCLK_MUX] =
-+		zx_mux("spdif0_wclk_mux", spdif0_wclk_sel,
-+				ARRAY_SIZE(spdif0_wclk_sel), CLK_SPDIF0, 4, 1);
-+	clk[ZX296702_SPDIF0_WCLK] =
-+		zx_gate("spdif0_wclk", "spdif0_wclk_mux", CLK_SPDIF0, 1);
-+	clk[ZX296702_SPDIF0_PCLK] =
-+		zx_gate("spdif0_pclk", "lsp0_apb_pclk", CLK_SPDIF0, 0);
-+
-+	clk[ZX296702_SPDIF0_DIV] =
-+		clk_register_zx_audio("spdif0_div", "spdif0_wclk", 0,
-+				SPDIF0_DIV);
-+
-+	/* I2S */
-+	clk[ZX296702_I2S0_WCLK_MUX] =
-+		zx_mux("i2s0_wclk_mux", i2s_wclk_sel,
-+				ARRAY_SIZE(i2s_wclk_sel), CLK_I2S0, 4, 1);
-+	clk[ZX296702_I2S0_WCLK] =
-+		zx_gate("i2s0_wclk", "i2s0_wclk_mux", CLK_I2S0, 1);
-+	clk[ZX296702_I2S0_PCLK] =
-+		zx_gate("i2s0_pclk", "lsp0_apb_pclk", CLK_I2S0, 0);
-+
-+	clk[ZX296702_I2S0_DIV] =
-+		clk_register_zx_audio("i2s0_div", "i2s0_wclk", 0, I2S0_DIV);
-+
-+	clk[ZX296702_I2S1_WCLK_MUX] =
-+		zx_mux("i2s1_wclk_mux", i2s_wclk_sel,
-+				ARRAY_SIZE(i2s_wclk_sel), CLK_I2S1, 4, 1);
-+	clk[ZX296702_I2S1_WCLK] =
-+		zx_gate("i2s1_wclk", "i2s1_wclk_mux", CLK_I2S1, 1);
-+	clk[ZX296702_I2S1_PCLK] =
-+		zx_gate("i2s1_pclk", "lsp0_apb_pclk", CLK_I2S1, 0);
-+
-+	clk[ZX296702_I2S1_DIV] =
-+		clk_register_zx_audio("i2s1_div", "i2s1_wclk", 0, I2S1_DIV);
-+
-+	clk[ZX296702_I2S2_WCLK_MUX] =
-+		zx_mux("i2s2_wclk_mux", i2s_wclk_sel,
-+				ARRAY_SIZE(i2s_wclk_sel), CLK_I2S2, 4, 1);
-+	clk[ZX296702_I2S2_WCLK] =
-+		zx_gate("i2s2_wclk", "i2s2_wclk_mux", CLK_I2S2, 1);
-+	clk[ZX296702_I2S2_PCLK] =
-+		zx_gate("i2s2_pclk", "lsp0_apb_pclk", CLK_I2S2, 0);
-+
-+	clk[ZX296702_I2S2_DIV] =
-+		clk_register_zx_audio("i2s2_div", "i2s2_wclk", 0, I2S2_DIV);
+ 	gpio5: gpio@e6055000 {
+@@ -194,6 +199,7 @@
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+ 		clocks = <&mstp9_clks R8A7790_CLK_GPIO5>;
++		power-domains = <&cpg_clocks>;
+ 	};
  
- 	for (i = 0; i < ARRAY_SIZE(lsp0clk); i++) {
- 		if (IS_ERR(clk[i])) {
-@@ -641,6 +717,18 @@ static void __init zx296702_lsp1_clocks_init(struct device_node *np)
- 	clk[ZX296702_SDMMC0_PCLK] =
- 		zx_gate("sdmmc0_pclk", "lsp1_apb_pclk", CLK_SDMMC0, 0);
+ 	thermal@e61f0000 {
+@@ -201,6 +207,7 @@
+ 		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
+ 		interrupts = <0 69 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp5_clks R8A7790_CLK_THERMAL>;
++		power-domains = <&cpg_clocks>;
+ 	};
  
-+	clk[ZX296702_SPDIF1_WCLK_MUX] =
-+		zx_mux("spdif1_wclk_mux", spdif1_wclk_sel,
-+				ARRAY_SIZE(spdif1_wclk_sel), CLK_SPDIF1, 4, 1);
-+	clk[ZX296702_SPDIF1_WCLK] =
-+		zx_gate("spdif1_wclk", "spdif1_wclk_mux", CLK_SPDIF1, 1);
-+	clk[ZX296702_SPDIF1_PCLK] =
-+		zx_gate("spdif1_pclk", "lsp1_apb_pclk", CLK_SPDIF1, 0);
-+
-+	clk[ZX296702_SPDIF1_DIV] =
-+		clk_register_zx_audio("spdif1_div", "spdif1_wclk", 0,
-+				SPDIF1_DIV);
-+
- 	for (i = 0; i < ARRAY_SIZE(lsp1clk); i++) {
- 		if (IS_ERR(clk[i])) {
- 			pr_err("zx296702 clk %d: register failed with %ld\n",
-diff --git a/include/dt-bindings/clock/zx296702-clock.h b/include/dt-bindings/clock/zx296702-clock.h
-index e683dbb..26ee564 100644
---- a/include/dt-bindings/clock/zx296702-clock.h
-+++ b/include/dt-bindings/clock/zx296702-clock.h
-@@ -153,7 +153,16 @@
- #define ZX296702_I2S0_WCLK			9
- #define ZX296702_I2S0_PCLK			10
- #define ZX296702_I2S0_DIV			11
--#define ZX296702_LSP0CLK_END			12
-+#define ZX296702_I2S1_WCLK_MUX			12
-+#define ZX296702_I2S1_WCLK			13
-+#define ZX296702_I2S1_PCLK			14
-+#define ZX296702_I2S1_DIV			15
-+#define ZX296702_I2S2_WCLK_MUX			16
-+#define ZX296702_I2S2_WCLK			17
-+#define ZX296702_I2S2_PCLK			18
-+#define ZX296702_I2S2_DIV			19
-+#define ZX296702_GPIO_CLK			20
-+#define ZX296702_LSP0CLK_END			21
+ 	timer {
+@@ -218,6 +225,7 @@
+ 			     <0 143 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7790_CLK_CMT0>;
+ 		clock-names = "fck";
++		power-domains = <&cpg_clocks>;
  
- #define ZX296702_UART0_WCLK_MUX			0
- #define ZX296702_UART0_WCLK			1
-@@ -165,6 +174,10 @@
- #define ZX296702_SDMMC0_WCLK_DIV		7
- #define ZX296702_SDMMC0_WCLK			8
- #define ZX296702_SDMMC0_PCLK			9
--#define ZX296702_LSP1CLK_END			10
-+#define ZX296702_SPDIF1_WCLK_MUX		10
-+#define ZX296702_SPDIF1_WCLK			11
-+#define ZX296702_SPDIF1_PCLK			12
-+#define ZX296702_SPDIF1_DIV			13
-+#define ZX296702_LSP1CLK_END			14
+ 		renesas,channels-mask = <0x60>;
  
- #endif /* __DT_BINDINGS_CLOCK_ZX296702_H */
+@@ -237,6 +245,7 @@
+ 			     <0 127 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_CMT1>;
+ 		clock-names = "fck";
++		power-domains = <&cpg_clocks>;
+ 
+ 		renesas,channels-mask = <0xff>;
+ 
+@@ -253,6 +262,7 @@
+ 			     <0 2 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <0 3 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R8A7790_CLK_IRQC>;
++		power-domains = <&cpg_clocks>;
+ 	};
+ 
+ 	dmac0: dma-controller@e6700000 {
+@@ -281,6 +291,7 @@
+ 				"ch12", "ch13", "ch14";
+ 		clocks = <&mstp2_clks R8A7790_CLK_SYS_DMAC0>;
+ 		clock-names = "fck";
++		power-domains = <&cpg_clocks>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <15>;
+ 	};
+@@ -311,6 +322,7 @@
+ 				"ch12", "ch13", "ch14";
+ 		clocks = <&mstp2_clks R8A7790_CLK_SYS_DMAC1>;
+ 		clock-names = "fck";
++		power-domains = <&cpg_clocks>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <15>;
+ 	};
+@@ -339,6 +351,7 @@
+ 				"ch12";
+ 		clocks = <&mstp5_clks R8A7790_CLK_AUDIO_DMAC0>;
+ 		clock-names = "fck";
++		power-domains = <&cpg_clocks>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <13>;
+ 	};
+@@ -367,6 +380,7 @@
+ 				"ch12";
+ 		clocks = <&mstp5_clks R8A7790_CLK_AUDIO_DMAC1>;
+ 		clock-names = "fck";
++		power-domains = <&cpg_clocks>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <13>;
+ 	};
+@@ -378,6 +392,7 @@
+ 			      0 109 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "ch0", "ch1";
+ 		clocks = <&mstp3_clks R8A7790_CLK_USBDMAC0>;
++		power-domains = <&cpg_clocks>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <2>;
+ 	};
+@@ -389,6 +404,7 @@
+ 			      0 110 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "ch0", "ch1";
+ 		clocks = <&mstp3_clks R8A7790_CLK_USBDMAC1>;
++		power-domains = <&cpg_clocks>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <2>;
+ 	};
+@@ -400,6 +416,7 @@
+ 		reg = <0 0xe6508000 0 0x40>;
+ 		interrupts = <0 287 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7790_CLK_I2C0>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -410,6 +427,7 @@
+ 		reg = <0 0xe6518000 0 0x40>;
+ 		interrupts = <0 288 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7790_CLK_I2C1>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -420,6 +438,7 @@
+ 		reg = <0 0xe6530000 0 0x40>;
+ 		interrupts = <0 286 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7790_CLK_I2C2>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -430,6 +449,7 @@
+ 		reg = <0 0xe6540000 0 0x40>;
+ 		interrupts = <0 290 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7790_CLK_I2C3>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -440,6 +460,7 @@
+ 		reg = <0 0xe6500000 0 0x425>;
+ 		interrupts = <0 174 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_IIC0>;
++		power-domains = <&cpg_clocks>;
+ 		dmas = <&dmac0 0x61>, <&dmac0 0x62>;
+ 		dma-names = "tx", "rx";
+ 		status = "disabled";
+@@ -452,6 +473,7 @@
+ 		reg = <0 0xe6510000 0 0x425>;
+ 		interrupts = <0 175 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_IIC1>;
++		power-domains = <&cpg_clocks>;
+ 		dmas = <&dmac0 0x65>, <&dmac0 0x66>;
+ 		dma-names = "tx", "rx";
+ 		status = "disabled";
+@@ -464,6 +486,7 @@
+ 		reg = <0 0xe6520000 0 0x425>;
+ 		interrupts = <0 176 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_IIC2>;
++		power-domains = <&cpg_clocks>;
+ 		dmas = <&dmac0 0x69>, <&dmac0 0x6a>;
+ 		dma-names = "tx", "rx";
+ 		status = "disabled";
+@@ -476,6 +499,7 @@
+ 		reg = <0 0xe60b0000 0 0x425>;
+ 		interrupts = <0 173 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7790_CLK_IICDVFS>;
++		power-domains = <&cpg_clocks>;
+ 		dmas = <&dmac0 0x77>, <&dmac0 0x78>;
+ 		dma-names = "tx", "rx";
+ 		status = "disabled";
+@@ -486,6 +510,7 @@
+ 		reg = <0 0xee200000 0 0x80>;
+ 		interrupts = <0 169 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_MMCIF0>;
++		power-domains = <&cpg_clocks>;
+ 		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>;
+ 		dma-names = "tx", "rx";
+ 		reg-io-width = <4>;
+@@ -498,6 +523,7 @@
+ 		reg = <0 0xee220000 0 0x80>;
+ 		interrupts = <0 170 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_MMCIF1>;
++		power-domains = <&cpg_clocks>;
+ 		dmas = <&dmac0 0xe1>, <&dmac0 0xe2>;
+ 		dma-names = "tx", "rx";
+ 		reg-io-width = <4>;
+@@ -515,6 +541,7 @@
+ 		reg = <0 0xee100000 0 0x328>;
+ 		interrupts = <0 165 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_SDHI0>;
++		power-domains = <&cpg_clocks>;
+ 		dmas = <&dmac1 0xcd>, <&dmac1 0xce>;
+ 		dma-names = "tx", "rx";
+ 		status = "disabled";
+@@ -525,6 +552,7 @@
+ 		reg = <0 0xee120000 0 0x328>;
+ 		interrupts = <0 166 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_SDHI1>;
++		power-domains = <&cpg_clocks>;
+ 		dmas = <&dmac1 0xc9>, <&dmac1 0xca>;
+ 		dma-names = "tx", "rx";
+ 		status = "disabled";
+@@ -535,6 +563,7 @@
+ 		reg = <0 0xee140000 0 0x100>;
+ 		interrupts = <0 167 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_SDHI2>;
++		power-domains = <&cpg_clocks>;
+ 		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>;
+ 		dma-names = "tx", "rx";
+ 		status = "disabled";
+@@ -545,6 +574,7 @@
+ 		reg = <0 0xee160000 0 0x100>;
+ 		interrupts = <0 168 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_SDHI3>;
++		power-domains = <&cpg_clocks>;
+ 		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>;
+ 		dma-names = "tx", "rx";
+ 		status = "disabled";
+@@ -558,6 +588,7 @@
+ 		clock-names = "sci_ick";
+ 		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
+ 		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -569,6 +600,7 @@
+ 		clock-names = "sci_ick";
+ 		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
+ 		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -580,6 +612,7 @@
+ 		clock-names = "sci_ick";
+ 		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
+ 		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -591,6 +624,7 @@
+ 		clock-names = "sci_ick";
+ 		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
+ 		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -602,6 +636,7 @@
+ 		clock-names = "sci_ick";
+ 		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
+ 		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -613,6 +648,7 @@
+ 		clock-names = "sci_ick";
+ 		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
+ 		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -624,6 +660,7 @@
+ 		clock-names = "sci_ick";
+ 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
+ 		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -635,6 +672,7 @@
+ 		clock-names = "sci_ick";
+ 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
+ 		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -646,6 +684,7 @@
+ 		clock-names = "sci_ick";
+ 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
+ 		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -657,6 +696,7 @@
+ 		clock-names = "sci_ick";
+ 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
+ 		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -665,6 +705,7 @@
+ 		reg = <0 0xee700000 0 0x400>;
+ 		interrupts = <0 162 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp8_clks R8A7790_CLK_ETHER>;
++		power-domains = <&cpg_clocks>;
+ 		phy-mode = "rmii";
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -676,6 +717,7 @@
+ 		reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
+ 		interrupts = <0 163 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp8_clks R8A7790_CLK_ETHERAVB>;
++		power-domains = <&cpg_clocks>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		status = "disabled";
+@@ -686,6 +728,7 @@
+ 		reg = <0 0xee300000 0 0x2000>;
+ 		interrupts = <0 105 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp8_clks R8A7790_CLK_SATA0>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -694,6 +737,7 @@
+ 		reg = <0 0xee500000 0 0x2000>;
+ 		interrupts = <0 106 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp8_clks R8A7790_CLK_SATA1>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -702,6 +746,7 @@
+ 		reg = <0 0xe6590000 0 0x100>;
+ 		interrupts = <0 107 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7790_CLK_HSUSB>;
++		power-domains = <&cpg_clocks>;
+ 		renesas,buswait = <4>;
+ 		phys = <&usb0 1>;
+ 		phy-names = "usb";
+@@ -718,6 +763,7 @@
+ 		#size-cells = <0>;
+ 		clocks = <&mstp7_clks R8A7790_CLK_HSUSB>;
+ 		clock-names = "usbhs";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 
+ 		usb0: usb-channel@0 {
+@@ -732,33 +778,37 @@
+ 
+ 	vin0: video@e6ef0000 {
+ 		compatible = "renesas,vin-r8a7790";
+-		clocks = <&mstp8_clks R8A7790_CLK_VIN0>;
+ 		reg = <0 0xe6ef0000 0 0x1000>;
+ 		interrupts = <0 188 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp8_clks R8A7790_CLK_VIN0>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+ 	vin1: video@e6ef1000 {
+ 		compatible = "renesas,vin-r8a7790";
+-		clocks = <&mstp8_clks R8A7790_CLK_VIN1>;
+ 		reg = <0 0xe6ef1000 0 0x1000>;
+ 		interrupts = <0 189 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp8_clks R8A7790_CLK_VIN1>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+ 	vin2: video@e6ef2000 {
+ 		compatible = "renesas,vin-r8a7790";
+-		clocks = <&mstp8_clks R8A7790_CLK_VIN2>;
+ 		reg = <0 0xe6ef2000 0 0x1000>;
+ 		interrupts = <0 190 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp8_clks R8A7790_CLK_VIN2>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+ 	vin3: video@e6ef3000 {
+ 		compatible = "renesas,vin-r8a7790";
+-		clocks = <&mstp8_clks R8A7790_CLK_VIN3>;
+ 		reg = <0 0xe6ef3000 0 0x1000>;
+ 		interrupts = <0 191 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp8_clks R8A7790_CLK_VIN3>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -767,6 +817,7 @@
+ 		reg = <0 0xfe920000 0 0x8000>;
+ 		interrupts = <0 266 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_R>;
++		power-domains = <&cpg_clocks>;
+ 
+ 		renesas,has-sru;
+ 		renesas,#rpf = <5>;
+@@ -779,6 +830,7 @@
+ 		reg = <0 0xfe928000 0 0x8000>;
+ 		interrupts = <0 267 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_S>;
++		power-domains = <&cpg_clocks>;
+ 
+ 		renesas,has-lut;
+ 		renesas,has-sru;
+@@ -792,6 +844,7 @@
+ 		reg = <0 0xfe930000 0 0x8000>;
+ 		interrupts = <0 246 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_DU0>;
++		power-domains = <&cpg_clocks>;
+ 
+ 		renesas,has-lif;
+ 		renesas,has-lut;
+@@ -805,6 +858,7 @@
+ 		reg = <0 0xfe938000 0 0x8000>;
+ 		interrupts = <0 247 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_DU1>;
++		power-domains = <&cpg_clocks>;
+ 
+ 		renesas,has-lif;
+ 		renesas,has-lut;
+@@ -859,6 +913,7 @@
+ 		clocks = <&mstp9_clks R8A7790_CLK_RCAN0>,
+ 			 <&cpg_clocks R8A7790_CLK_RCAN>, <&can_clk>;
+ 		clock-names = "clkp1", "clkp2", "can_clk";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -869,6 +924,7 @@
+ 		clocks = <&mstp9_clks R8A7790_CLK_RCAN1>,
+ 			 <&cpg_clocks R8A7790_CLK_RCAN>, <&can_clk>;
+ 		clock-names = "clkp1", "clkp2", "can_clk";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -946,6 +1002,7 @@
+ 			clock-output-names = "main", "pll0", "pll1", "pll3",
+ 					     "lb", "qspi", "sdh", "sd0", "sd1",
+ 					     "z", "rcan", "adsp";
++			#power-domain-cells = <0>;
+ 		};
+ 
+ 		/* Variable factor clocks */
+@@ -1333,6 +1390,7 @@
+ 		clocks = <&mstp9_clks R8A7790_CLK_QSPI_MOD>;
+ 		dmas = <&dmac0 0x17>, <&dmac0 0x18>;
+ 		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
+ 		num-cs = <1>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -1346,6 +1404,7 @@
+ 		clocks = <&mstp0_clks R8A7790_CLK_MSIOF0>;
+ 		dmas = <&dmac0 0x51>, <&dmac0 0x52>;
+ 		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		status = "disabled";
+@@ -1358,6 +1417,7 @@
+ 		clocks = <&mstp2_clks R8A7790_CLK_MSIOF1>;
+ 		dmas = <&dmac0 0x55>, <&dmac0 0x56>;
+ 		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		status = "disabled";
+@@ -1370,6 +1430,7 @@
+ 		clocks = <&mstp2_clks R8A7790_CLK_MSIOF2>;
+ 		dmas = <&dmac0 0x41>, <&dmac0 0x42>;
+ 		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		status = "disabled";
+@@ -1382,6 +1443,7 @@
+ 		clocks = <&mstp2_clks R8A7790_CLK_MSIOF3>;
+ 		dmas = <&dmac0 0x45>, <&dmac0 0x46>;
+ 		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		status = "disabled";
+@@ -1392,6 +1454,7 @@
+ 		reg = <0 0xee000000 0 0xc00>;
+ 		interrupts = <0 101 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_SSUSB>;
++		power-domains = <&cpg_clocks>;
+ 		phys = <&usb2 1>;
+ 		phy-names = "usb";
+ 		status = "disabled";
+@@ -1400,10 +1463,11 @@
+ 	pci0: pci@ee090000 {
+ 		compatible = "renesas,pci-r8a7790";
+ 		device_type = "pci";
+-		clocks = <&mstp7_clks R8A7790_CLK_EHCI>;
+ 		reg = <0 0xee090000 0 0xc00>,
+ 		      <0 0xee080000 0 0x1100>;
+ 		interrupts = <0 108 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp7_clks R8A7790_CLK_EHCI>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 
+ 		bus-range = <0 0>;
+@@ -1434,10 +1498,11 @@
+ 	pci1: pci@ee0b0000 {
+ 		compatible = "renesas,pci-r8a7790";
+ 		device_type = "pci";
+-		clocks = <&mstp7_clks R8A7790_CLK_EHCI>;
+ 		reg = <0 0xee0b0000 0 0xc00>,
+ 		      <0 0xee0a0000 0 0x1100>;
+ 		interrupts = <0 112 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp7_clks R8A7790_CLK_EHCI>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 
+ 		bus-range = <1 1>;
+@@ -1455,6 +1520,7 @@
+ 		compatible = "renesas,pci-r8a7790";
+ 		device_type = "pci";
+ 		clocks = <&mstp7_clks R8A7790_CLK_EHCI>;
++		power-domains = <&cpg_clocks>;
+ 		reg = <0 0xee0d0000 0 0xc00>,
+ 		      <0 0xee0c0000 0 0x1100>;
+ 		interrupts = <0 113 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1507,6 +1573,7 @@
+ 		interrupt-map = <0 0 0 0 &gic 0 116 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7790_CLK_PCIEC>, <&pcie_bus_clk>;
+ 		clock-names = "pcie", "pcie_bus";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
 -- 
 1.9.1
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
