@@ -1,100 +1,76 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:33740 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755460AbbGHBqI (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2015 21:46:08 -0400
-Date: Tue, 7 Jul 2015 18:46:06 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>,
-	Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v4 3/8] clk: add support for clocks provided by
- SCP(System Control Processor)
-Message-ID: <20150708014606.GH30412@codeaurora.org>
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
- <1433760002-24120-4-git-send-email-sudeep.holla@arm.com>
- <20150702172310.GF4301@codeaurora.org>
- <5596A1B6.8020307@arm.com>
- <559ADC94.4080505@codeaurora.org>
- <559BF858.1020301@arm.com>
+Return-Path: <tglx@linutronix.de>
+Date: Wed, 1 Jul 2015 09:51:49 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Paul Osmialowski <pawelo@king.net.pl>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+    Ian Campbell <ijc+devicetree@hellion.org.uk>, Jiri Slaby <jslaby@suse.cz>,
+    Kumar Gala <galak@codeaurora.org>,
+    Linus Walleij <linus.walleij@linaro.org>,
+    Mark Rutland <mark.rutland@arm.com>,
+    Michael Turquette <mturquette@baylibre.com>,
+    Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
+    Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>,
+    Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org,
+    linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+    linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+    devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+    Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert@linux-m68k.org>,
+    Nicolas Pitre <nicolas.pitre@linaro.org>, Paul Bolle <pebolle@tiscali.nl>,
+    Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+    Anson Huang <b20788@freescale.com>, Frank Li <Frank.Li@freescale.com>,
+    Jingchang Lu <jingchang.lu@freescale.com>,
+    Rob Herring <r.herring@freescale.com>, Yuri Tikhonov <yur@emcraft.com>,
+    Sergei Poselenov <sposelenov@emcraft.com>,
+    Alexander Potashev <aspotashev@emcraft.com>
+Subject: Re: [PATCH v2 4/9] arm: twr-k70f120m: timer driver for Kinetis SoC
+In-Reply-To: <1435667250-28299-5-git-send-email-pawelo@king.net.pl>
+Message-ID: <alpine.DEB.2.11.1507010944580.3916@nanos>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <1435667250-28299-5-git-send-email-pawelo@king.net.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <559BF858.1020301@arm.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/07, Sudeep Holla wrote:
-> 
-> 
-> On 06/07/15 20:52, Stephen Boyd wrote:
-> >>
-> >
-> >If I have time I may try to start doing the clk_register() conversion,
-> >but it will take a while so I doubt it will be in v4.3. I'm asking if
-> >you can add a clk_hw based API that does something like
-> >clk_set_rate_range() without requiring a struct clk pointer. i.e.
-> >clk_hw_set_rate_range(struct clk_hw *hw, min, max) that constraints the
-> >min/max rate of the clock. This way, the driver is only using clk
-> >provider APIs and not clk consumer APIs.
-> >
-> 
-> I understand the intention of separating clk provider helpers/APIs
-> and clk consumer APIs. Since {min,max}_rate are part of struct clk
-> itself, I was thinking that you would have moved it to struct clk_core
-> as part of the rework you mentioned and hence asked about the patches.
-> 
-> IIUC, if {min,max}_rate remain part of struct clk, then how are we
-> restricting that operation to just the clk providers ? clk consumer
-> can still directly modify or use clk_set_rate_range.
-> 
-> Do we continue to provide that feature for both provider and consumer ?
-> If so I assume {min,max}_rate range requested by consumer should be
-> within the limits set by provider and do we maintain both the limits ?
-> 
-> Sorry if I am missing something fundamental since I don't have much
-> knowledge of clk layer internals.
-> 
+On Tue, 30 Jun 2015, Paul Osmialowski wrote:
+> +static struct kinetis_clock_event_ddata
+> +		kinetis_clockevent_tmrs[KINETIS_PIT_CHANNELS] = {
+> +	{
+> +		.evtdev = {
+> +			.name		= "kinetis-clockevent0",
+> +			.rating		= 200,
+> +			.features	=
+> +			    CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
+> +			.set_next_event	= kinetis_clockevent_tmr_set_next_event,
+> +			.set_state_periodic =
+> +				kinetis_clockevent_tmr_set_state_periodic,
+> +			.set_state_oneshot =
+> +				kinetis_clockevent_tmr_set_state_oneshot,
+> +			.set_state_oneshot_stopped =
+> +				kinetis_clockevent_tmr_set_state_oneshot,
+> +			.set_state_shutdown =
+> +				kinetis_clockevent_tmr_set_state_oneshot,
+> +		},
+> +	},
+> +	{
+> +		.evtdev = {
+> +			.name		= "kinetis-clockevent1",
+> +		},
 
-Yes struct clk would have min/max, and struct clk_core would have
-min/max. Then some sort of provider API (or possibly even
-clk_init_data) would take the min/max fields and copy them over
-to struct clk_core. Then during set_rate operations we would
-aggregate the constraints from struct clk like we already do and
-add in the constrains in struct clk_core.
+So how is that supposed to work if timer 1,2 or 3 is selected from
+device tree? The function pointers are not initialized.
 
-One downside to adding new fields to clk_init_data is that there
-are drivers out there that aren't initializing that structure to
-0, and they're putting it on the stack, so stack junk can come
-through. Furthermore, min/max would mean that every driver needs
-to specify some large number for max or we have to special case
-min == max == 0 and ignore it. Somehow it needs to be opt-in. If
-we want to go down the clk_init_data route then perhaps we need
-some sort of rate_constraint struct pointer in there that drivers
-can optionally setup.
+You really do not need that array at all. You can simply set the name
+at init time.
 
-	struct clk_rate_constraint {
-		unsigned long min;
-		unsigned long max;
-	};
+> +		clockevents_register_device(
+> +				&kinetis_clockevent_tmrs[chan].evtdev);
+> +
+> +		kinetis_pit_init(&kinetis_clockevent_tmrs[chan],
+> +						(rate / HZ) - 1);
+> +		kinetis_pit_enable(&kinetis_clockevent_tmrs[chan], 1);
 
-	struct clk_init_data {
-		...
-		struct clk_rate_constraint *rate_constraint;
-	};
+No point doing this. The core code has invoked the set_periodic call
+back via clockevents_register_device() already.
 
-I haven't thought it through completely, but I can probably write
-up some patch tomorrow after I sleep on it.
+Thanks,
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+	tglx
