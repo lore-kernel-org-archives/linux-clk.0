@@ -1,304 +1,92 @@
-Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <pawelo@king.net.pl>
+Date: Wed, 1 Jul 2015 16:20:48 +0200 (CEST)
+From: Paul Osmialowski <pawelo@king.net.pl>
+To: Thomas Gleixner <tglx@linutronix.de>
+cc: Paul Osmialowski <pawelo@king.net.pl>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        dmaengine@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Paul Bolle <pebolle@tiscali.nl>,
+        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+        Anson Huang <b20788@freescale.com>, Frank Li <Frank.Li@freescale.com>,
+        Jingchang Lu <jingchang.lu@freescale.com>,
+        Rob Herring <r.herring@freescale.com>, Yuri Tikhonov <yur@emcraft.com>,
+        Sergei Poselenov <sposelenov@emcraft.com>,
+        Alexander Potashev <aspotashev@emcraft.com>
+Subject: Re: [PATCH v2 4/9] arm: twr-k70f120m: timer driver for Kinetis SoC
+In-Reply-To: <alpine.DEB.2.11.1507011527380.3916@nanos>
+Message-ID: <alpine.LNX.2.00.1507011619250.13307@localhost.localdomain>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <1435667250-28299-5-git-send-email-pawelo@king.net.pl> <alpine.DEB.2.11.1507010944580.3916@nanos> <alpine.LNX.2.00.1507011031050.9009@localhost.localdomain>
+ <alpine.DEB.2.11.1507011527380.3916@nanos>
 MIME-Version: 1.0
-In-Reply-To: <1436320227-28896-1-git-send-email-sboyd@codeaurora.org>
-References: <1436320227-28896-1-git-send-email-sboyd@codeaurora.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Date: Wed, 8 Jul 2015 09:18:18 +0200
-Message-ID: <CAG374jCcgbYcZxxo3rifWcj_ZUoB=rQCE00XtE-3Cf6p8DUpMw@mail.gmail.com>
-Subject: Re: [PATCH] clk: st: Fix error paths and allocation style
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Pankaj Dev <pankaj.dev@st.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
 
-You can add my
-Acked-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 
-Thanks
+On Wed, 1 Jul 2015, Thomas Gleixner wrote:
 
-Gabriel.
+>>
+>> As I removed this kinetis_pit_enable() line, the timer did not start,
+>> therefore the system became unusable. What could be possible reason for that?
+>
+> Well, you need to move both, the init and the enable into
+> set_periodic().
+>
 
-On 8 July 2015 at 03:50, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> The error paths in this file leak memory and mappings and test
-> for pointers being valid after dereferencing them. Fix these
-> problems and properly free resources on errors. Fix some
-> stylistic things too like using sizeof(*ptr) and fitting more
-> code on a single line. Note that we don't unregister clocks here.
-> That needs a clk_composite_unregister() API that we don't have
-> right now.
->
-> Cc: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-> Cc: Pankaj Dev <pankaj.dev@st.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/st/clkgen-mux.c | 83 ++++++++++++++++++++++++---------------------
->  1 file changed, 45 insertions(+), 38 deletions(-)
->
-> diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
-> index 717c4a91a17b..ab9298395264 100644
-> --- a/drivers/clk/st/clkgen-mux.c
-> +++ b/drivers/clk/st/clkgen-mux.c
-> @@ -30,7 +30,7 @@ static const char ** __init clkgen_mux_get_parents(struct device_node *np,
->         if (WARN_ON(nparents <= 0))
->                 return ERR_PTR(-EINVAL);
->
-> -       parents = kzalloc(nparents * sizeof(const char *), GFP_KERNEL);
-> +       parents = kcalloc(nparents, sizeof(const char *), GFP_KERNEL);
->         if (!parents)
->                 return ERR_PTR(-ENOMEM);
->
-> @@ -215,7 +215,7 @@ static const struct clk_ops clkgena_divmux_ops = {
->  /**
->   * clk_register_genamux - register a genamux clock with the clock framework
->   */
-> -static struct clk *clk_register_genamux(const char *name,
-> +static struct clk * __init clk_register_genamux(const char *name,
->                                 const char **parent_names, u8 num_parents,
->                                 void __iomem *reg,
->                                 const struct clkgena_divmux_data *muxdata,
-> @@ -369,11 +369,10 @@ static const struct of_device_id clkgena_divmux_of_match[] = {
->         {}
->  };
->
-> -static void __iomem * __init clkgen_get_register_base(
-> -                               struct device_node *np)
-> +static void __iomem * __init clkgen_get_register_base(struct device_node *np)
->  {
->         struct device_node *pnode;
-> -       void __iomem *reg = NULL;
-> +       void __iomem *reg;
->
->         pnode = of_get_parent(np);
->         if (!pnode)
-> @@ -398,7 +397,7 @@ static void __init st_of_clkgena_divmux_setup(struct device_node *np)
->         if (WARN_ON(!match))
->                 return;
->
-> -       data = (struct clkgena_divmux_data *)match->data;
-> +       data = match->data;
->
->         reg = clkgen_get_register_base(np);
->         if (!reg)
-> @@ -406,18 +405,18 @@ static void __init st_of_clkgena_divmux_setup(struct device_node *np)
->
->         parents = clkgen_mux_get_parents(np, &num_parents);
->         if (IS_ERR(parents))
-> -               return;
-> +               goto err_parents;
->
->         clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
->         if (!clk_data)
-> -               goto err;
-> +               goto err_alloc;
->
->         clk_data->clk_num = data->num_outputs;
-> -       clk_data->clks = kzalloc(clk_data->clk_num * sizeof(struct clk *),
-> +       clk_data->clks = kcalloc(clk_data->clk_num, sizeof(struct clk *),
->                                  GFP_KERNEL);
->
->         if (!clk_data->clks)
-> -               goto err;
-> +               goto err_alloc_clks;
->
->         for (i = 0; i < clk_data->clk_num; i++) {
->                 struct clk *clk;
-> @@ -447,11 +446,13 @@ static void __init st_of_clkgena_divmux_setup(struct device_node *np)
->         of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
->         return;
->  err:
-> -       if (clk_data)
-> -               kfree(clk_data->clks);
-> -
-> +       kfree(clk_data->clks);
-> +err_alloc_clks:
->         kfree(clk_data);
-> +err_alloc:
->         kfree(parents);
-> +err_parents:
-> +       iounmap(reg);
->  }
->  CLK_OF_DECLARE(clkgenadivmux, "st,clkgena-divmux", st_of_clkgena_divmux_setup);
->
-> @@ -491,7 +492,7 @@ static void __init st_of_clkgena_prediv_setup(struct device_node *np)
->         void __iomem *reg;
->         const char *parent_name, *clk_name;
->         struct clk *clk;
-> -       struct clkgena_prediv_data *data;
-> +       const struct clkgena_prediv_data *data;
->
->         match = of_match_node(clkgena_prediv_of_match, np);
->         if (!match) {
-> @@ -499,7 +500,7 @@ static void __init st_of_clkgena_prediv_setup(struct device_node *np)
->                 return;
->         }
->
-> -       data = (struct clkgena_prediv_data *)match->data;
-> +       data = match->data;
->
->         reg = clkgen_get_register_base(np);
->         if (!reg)
-> @@ -507,18 +508,18 @@ static void __init st_of_clkgena_prediv_setup(struct device_node *np)
->
->         parent_name = of_clk_get_parent_name(np, 0);
->         if (!parent_name)
-> -               return;
-> +               goto err;
->
->         if (of_property_read_string_index(np, "clock-output-names",
->                                           0, &clk_name))
-> -               return;
-> +               goto err;
->
->         clk = clk_register_divider_table(NULL, clk_name, parent_name,
->                                          CLK_GET_RATE_NOCACHE,
->                                          reg + data->offset, data->shift, 1,
->                                          0, data->table, NULL);
->         if (IS_ERR(clk))
-> -               return;
-> +               goto err;
->
->         of_clk_add_provider(np, of_clk_src_simple_get, clk);
->         pr_debug("%s: parent %s rate %u\n",
-> @@ -527,6 +528,8 @@ static void __init st_of_clkgena_prediv_setup(struct device_node *np)
->                 (unsigned int)clk_get_rate(clk));
->
->         return;
-> +err:
-> +       iounmap(reg);
->  }
->  CLK_OF_DECLARE(clkgenaprediv, "st,clkgena-prediv", st_of_clkgena_prediv_setup);
->
-> @@ -630,7 +633,7 @@ static void __init st_of_clkgen_mux_setup(struct device_node *np)
->         void __iomem *reg;
->         const char **parents;
->         int num_parents;
-> -       struct clkgen_mux_data *data;
-> +       const struct clkgen_mux_data *data;
->
->         match = of_match_node(mux_of_match, np);
->         if (!match) {
-> @@ -638,7 +641,7 @@ static void __init st_of_clkgen_mux_setup(struct device_node *np)
->                 return;
->         }
->
-> -       data = (struct clkgen_mux_data *)match->data;
-> +       data = match->data;
->
->         reg = of_iomap(np, 0);
->         if (!reg) {
-> @@ -650,7 +653,7 @@ static void __init st_of_clkgen_mux_setup(struct device_node *np)
->         if (IS_ERR(parents)) {
->                 pr_err("%s: Failed to get parents (%ld)\n",
->                                 __func__, PTR_ERR(parents));
-> -               return;
-> +               goto err_parents;
->         }
->
->         clk = clk_register_mux(NULL, np->name, parents, num_parents,
-> @@ -666,12 +669,14 @@ static void __init st_of_clkgen_mux_setup(struct device_node *np)
->                         __clk_get_name(clk_get_parent(clk)),
->                         (unsigned int)clk_get_rate(clk));
->
-> +       kfree(parents);
->         of_clk_add_provider(np, of_clk_src_simple_get, clk);
-> +       return;
->
->  err:
->         kfree(parents);
-> -
-> -       return;
-> +err_parents:
-> +       iounmap(reg);
->  }
->  CLK_OF_DECLARE(clkgen_mux, "st,clkgen-mux", st_of_clkgen_mux_setup);
->
-> @@ -707,12 +712,12 @@ static void __init st_of_clkgen_vcc_setup(struct device_node *np)
->         const char **parents;
->         int num_parents, i;
->         struct clk_onecell_data *clk_data;
-> -       struct clkgen_vcc_data *data;
-> +       const struct clkgen_vcc_data *data;
->
->         match = of_match_node(vcc_of_match, np);
->         if (WARN_ON(!match))
->                 return;
-> -       data = (struct clkgen_vcc_data *)match->data;
-> +       data = match->data;
->
->         reg = of_iomap(np, 0);
->         if (!reg)
-> @@ -720,18 +725,18 @@ static void __init st_of_clkgen_vcc_setup(struct device_node *np)
->
->         parents = clkgen_mux_get_parents(np, &num_parents);
->         if (IS_ERR(parents))
-> -               return;
-> +               goto err_parents;
->
->         clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
->         if (!clk_data)
-> -               goto err;
-> +               goto err_alloc;
->
->         clk_data->clk_num = VCC_MAX_CHANNELS;
-> -       clk_data->clks = kzalloc(clk_data->clk_num * sizeof(struct clk *),
-> +       clk_data->clks = kcalloc(clk_data->clk_num, sizeof(struct clk *),
->                                  GFP_KERNEL);
->
->         if (!clk_data->clks)
-> -               goto err;
-> +               goto err_alloc_clks;
->
->         for (i = 0; i < clk_data->clk_num; i++) {
->                 struct clk *clk;
-> @@ -750,21 +755,21 @@ static void __init st_of_clkgen_vcc_setup(struct device_node *np)
->                 if (*clk_name == '\0')
->                         continue;
->
-> -               gate = kzalloc(sizeof(struct clk_gate), GFP_KERNEL);
-> +               gate = kzalloc(sizeof(*gate), GFP_KERNEL);
->                 if (!gate)
-> -                       break;
-> +                       goto err;
->
-> -               div = kzalloc(sizeof(struct clk_divider), GFP_KERNEL);
-> +               div = kzalloc(sizeof(*div), GFP_KERNEL);
->                 if (!div) {
->                         kfree(gate);
-> -                       break;
-> +                       goto err;
->                 }
->
-> -               mux = kzalloc(sizeof(struct clk_mux), GFP_KERNEL);
-> +               mux = kzalloc(sizeof(*mux), GFP_KERNEL);
->                 if (!mux) {
->                         kfree(gate);
->                         kfree(div);
-> -                       break;
-> +                       goto err;
->                 }
->
->                 gate->reg = reg + VCC_GATE_OFFSET;
-> @@ -823,10 +828,12 @@ err:
->                 kfree(container_of(composite->mux_hw, struct clk_mux, hw));
->         }
->
-> -       if (clk_data)
-> -               kfree(clk_data->clks);
-> -
-> +       kfree(clk_data->clks);
-> +err_alloc_clks:
->         kfree(clk_data);
-> +err_alloc:
->         kfree(parents);
-> +err_parents:
-> +       iounmap(reg);
->  }
->  CLK_OF_DECLARE(clkgen_vcc, "st,clkgen-vcc", st_of_clkgen_vcc_setup);
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+Indeed, something like this worked:
+
+diff --git a/drivers/clocksource/timer-kinetis.c 
+b/drivers/clocksource/timer-kinetis.c
+index 1424308..41ef94f 100644
+--- a/drivers/clocksource/timer-kinetis.c
++++ b/drivers/clocksource/timer-kinetis.c
+@@ -61,6 +61,7 @@ struct kinetis_clock_event_ddata {
+         struct clock_event_device evtdev;
+         void __iomem *base;
+         void __iomem *mcr;
++       unsigned long rate;
+         spinlock_t lock;
+  };
+
+@@ -115,6 +116,7 @@ static int kinetis_clockevent_tmr_set_state_periodic(
+         struct kinetis_clock_event_ddata *pit =
+                 container_of(evt, struct kinetis_clock_event_ddata, 
+evtdev);
+
++       kinetis_pit_init(pit, (pit->rate / HZ) - 1);
+         kinetis_pit_enable(pit, 1);
+
+         return 0;
+@@ -235,6 +237,7 @@ static void __init kinetis_clockevent_init(struct 
+device_node *np)
+                                 kinetis_clockevent_tmr_set_state_oneshot;
+                 kinetis_tmr->base = base;
+                 kinetis_tmr->mcr = mcr;
++               kinetis_tmr->rate = rate;
+                 spin_lock_init(&kinetis_tmr->lock);
+
+                 /*
+@@ -250,9 +253,6 @@ static void __init kinetis_clockevent_init(struct 
+device_node *np)
+
+                 clockevents_register_device(&kinetis_tmr->evtdev);
+
+-               kinetis_pit_init(kinetis_tmr, (rate / HZ) - 1);
+-               kinetis_pit_enable(kinetis_tmr, 1);
+-
+                 if (request_irq(irq, kinetis_clockevent_tmr_irq_handler,
+                                         IRQF_TIMER | IRQF_IRQPOLL,
+                                         "kinetis-timer",
