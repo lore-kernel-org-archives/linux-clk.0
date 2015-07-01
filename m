@@ -1,120 +1,55 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55AEB103.9010205@codeaurora.org>
-Date: Tue, 21 Jul 2015 13:52:19 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-MIME-Version: 1.0
-To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-CC: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
-	mturquette@baylibre.com, lee.jones@linaro.org,
-	k.kozlowski@samsung.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/4] clk: 88pm800: Add clk provider driver for 88pm800
- family of devices
-References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org> <1437476823-3358-4-git-send-email-vaibhav.hiremath@linaro.org> <55AE990E.2040004@codeaurora.org> <55AE9F48.20600@linaro.org>
-In-Reply-To: <55AE9F48.20600@linaro.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+ Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH v3 3/4] ARM: Exynos: switch to using generic cpufreq driver for
+ Exynos5250
+Date: Wed, 01 Jul 2015 15:10:37 +0200
+Message-id: <1435756238-845-4-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/21/2015 12:36 PM, Vaibhav Hiremath wrote:
->
-> On Wednesday 22 July 2015 12:40 AM, Stephen Boyd wrote:
->> On 07/21/2015 04:07 AM, Vaibhav Hiremath wrote:
->>> +
->>> +    pm800_clks = devm_kzalloc(&pdev->dev,
->>> +                sizeof(*pm800_clks) * PM800_CLKS_NUM,
->>> +                GFP_KERNEL);
->>
->> devm_kcalloc()
->>
->>> +    if (!pm800_clks)
->>> +        return -ENOMEM;
->>> +
->>> +    clk_table = devm_kzalloc(&pdev->dev,
->>> +                sizeof(struct clk *) * PM800_CLKS_NUM,
->>> +                GFP_KERNEL);
->>
->> devm_kcalloc()
->>
->
-> why kcalloc?
-> Is it because it take another argument for to allocate array?
->
+From: Thomas Abraham <thomas.ab@samsung.com>
 
-Yes. See Chapter 14 of Documentation/CodingStyle for why devm_kcalloc() 
-is preferred.
+The new CPU clock type allows the use of generic CPUfreq driver.
+Switch Exynos5250 to using generic cpufreq driver.
 
->
->>> +    if (!clk_table)
->>> +        return -ENOMEM;
->>> +
->
->
-> < snip >
->
->>> +            of_clk_data);
->>> +    if (ret) {
->>> +        dev_err(&pdev->dev, "Fail to add OF clk provider : %d\n", 
->>> ret);
->>> +        goto err;
->>> +    }
->>> +
->>> +    /* Common for all 32KHz clock output */
->>> +    ret = pm800_init_clk(&pm800_clks[0]);
->>
->> Shouldn't we do this before registering the clocks with the framework?
->>
->
-> Actually I thought of this, but moved it at the end because, I feel
-> this init should happen only when we are sure that clock is ready for
-> consumption. This is HW initialization where we will be setting
-> FREERUNNIG mode (and similar stuffs), so thought it would be bad idea
-> to set it first and then on error (later in probe) clear it. Not sure
-> whether it has any impact on HW behaviour.
-> Also, specially internal reference counter is changing in the init.
-> Just tried to avoid back-n-forth set-n-clear of this.
+Changes by Bartlomiej:
+- split Exynos5250 support from the original patch
 
-Ok.
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/mach-exynos/exynos.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->
->>> +    if (ret) {
->>> +        dev_err(&pdev->dev, "Failed to initialize clk : %d\n", ret);
->>> +        goto err;
->>> +    }
->>> +
->>> +    platform_set_drvdata(pdev, pm800_clks);
->>> +
->>> +    return 0;
->>> +
->>> +err:
->>> +    for (i = 0; i < PM800_CLKS_NUM; i++) {
->>> +        if (pm800_clks[i].lookup)
->>> +            clkdev_drop(pm800_clks[i].lookup);
->>> +    }
->>> +
->>> +    return ret;
->>> +}
->>> +
->>> +static int pm800_clk_remove(struct platform_device *pdev)
->>> +{
->>> +    struct pm800_clk *pm800_clks = platform_get_drvdata(pdev);
->>> +    int i;
->>> +
->>> +    of_clk_del_provider(pm800_clks[0].clk_np);
->>> +    /* Drop the reference obtained in pm800_clk_parse_dt */
->>> +    of_node_put(pm800_clks[0].clk_np);
->>
->> This is odd. Why are we keeping the reference in the driver?
->>
->
-> Honestly I do not have any good answer here. I have to admit that it is
-> getting carry forwarded from legacy driver.
->
-
-Well we shouldn't do things if we don't know why we're doing them. 
-Krzysztof?
-
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 5f8ddcd..4015ec3 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -226,6 +226,7 @@ static void __init exynos_init_irq(void)
+ 
+ static const struct of_device_id exynos_cpufreq_matches[] = {
+ 	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
++	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
+ 	{ /* sentinel */ }
+ };
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+1.9.1
