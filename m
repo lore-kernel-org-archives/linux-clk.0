@@ -1,53 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55B472C7.5000109@gmail.com>
-Date: Sun, 26 Jul 2015 14:40:23 +0900
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-MIME-Version: 1.0
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Stephen Boyd <sboyd@codeaurora.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
-References: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com> <20150721224235.GA30021@codeaurora.org> <55AED88D.2060009@samsung.com>
-In-Reply-To: <55AED88D.2060009@samsung.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Message-id: <55947F65.8010404@samsung.com>
+Date: Thu, 02 Jul 2015 09:01:41 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Chanwoo Choi <cw00.choi@samsung.com>, s.nawrocki@samsung.com,
+	tomasz.figa@gmail.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, kgene@kernel.org
+Cc: thomas.ab@samsung.com, b.zolnierkie@samsung.com,
+	kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 2/3] ARM: dts: Add CPU OPP and regulator supply property
+ for Exynos3250
+References: <1435756877-26736-1-git-send-email-cw00.choi@samsung.com>
+ <1435756877-26736-3-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1435756877-26736-3-git-send-email-cw00.choi@samsung.com>
+Content-type: text/plain; charset=windows-1252
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/22/2015 08:41 AM, Krzysztof Kozlowski wrote:
-> On 22.07.2015 07:42, Stephen Boyd wrote:
->> >On 06/12, Krzysztof Kozlowski wrote:
-[...]
->>> >>Signed-off-by: Krzysztof Kozlowski<k.kozlowski@samsung.com>
->>> >>Cc:<stable@vger.kernel.org>
->>> >>Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
->>> >>Link:https://lkml.org/lkml/2015/6/11/85
->> >
->> >Did you want clk maintainers to apply this? The To: list is not
->> >helping so I'm not sure what's going on and it seems to have
->> >slipped through the cracks.
- >
-> Thank you for being proactive! I appreciate this.
-> Some time ago Sylwester replied that he took care about this patch so I
-> think this will go through Samsung clock tree.
->
-> Sylwester, are you planning to send this as fix for 4.2-rc?
+On 01.07.2015 22:21, Chanwoo Choi wrote:
+> This patch add CPU operating points which include CPU frequency and regulator
+> voltage to use generic cpufreq drivers.
+> 
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
+>  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
+>  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
+>  3 files changed, 23 insertions(+)
 
-I think it qualifies for 4.3, it's not a new regression and will be
-backported to -stable anyway.
-I would prefer clk maintainers have applied this, otherwise I would
-need to make a (questionable) pull request with only one patch, since
-all patches except this one after the last merge window were part
-of bigger series touching multiple subsystems and applied through
-the samsung soc tree.
+The patch looks good. Could you put the 'cpu' nodes in alphabetical
+order? The order for Rinato board is already broken but still putting it
+after 'adc' node would be better.
 
-Thanks,
-Sylwester
+With the change above:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
+Best regards,
+Krzysztof
 
+> 
+> diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+> index a5863acc5fff..fc6604d68864 100644
+> --- a/arch/arm/boot/dts/exynos3250-monk.dts
+> +++ b/arch/arm/boot/dts/exynos3250-monk.dts
+> @@ -118,6 +118,10 @@
+>  	};
+>  };
+>  
+> +&cpu0 {
+> +	cpu0-supply = <&buck2_reg>;
+> +};
+> +
+>  &adc {
+>  	vdd-supply = <&ldo3_reg>;
+>  	status = "okay";
+> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+> index 031853b75528..c8a083b376c9 100644
+> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
+> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+> @@ -109,6 +109,10 @@
+>  	};
+>  };
+>  
+> +&cpu0 {
+> +	cpu0-supply = <&buck2_reg>;
+> +};
+> +
+>  &adc {
+>  	vdd-supply = <&ldo3_reg>;
+>  	status = "okay";
+> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+> index d7201333e3bc..e0f3b2ed41a3 100644
+> --- a/arch/arm/boot/dts/exynos3250.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+> @@ -53,6 +53,21 @@
+>  			compatible = "arm,cortex-a7";
+>  			reg = <0>;
+>  			clock-frequency = <1000000000>;
+> +			clocks = <&cmu CLK_ARM_CLK>;
+> +			clock-names = "cpu";
+> +
+> +			operating-points = <
+> +				1000000 1150000
+> +				900000  1112500
+> +				800000  1075000
+> +				700000  1037500
+> +				600000  1000000
+> +				500000  962500
+> +				400000  925000
+> +				300000  887500
+> +				200000  850000
+> +				100000  850000
+> +			>;
+>  		};
+>  
+>  		cpu1: cpu@1 {
+> 
 
