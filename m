@@ -1,42 +1,76 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com
-Cc: thomas.ab@samsung.com, b.zolnierkie@samsung.com, kyungmin.park@samsung.com,
- cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v6 3/3] ARM: exynos: Add exynos3250 compatible to use generic
- cpufreq driver
-Date: Thu, 02 Jul 2015 09:42:41 +0900
-Message-id: <1435797761-3339-4-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
-References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-yk0-f178.google.com ([209.85.160.178]:34850 "EHLO
+	mail-yk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751982AbbGBLak (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2015 07:30:40 -0400
+Received: by ykdy1 with SMTP id y1so65204431ykd.2
+        for <linux-clk@vger.kernel.org>; Thu, 02 Jul 2015 04:30:39 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1435756238-845-5-git-send-email-b.zolnierkie@samsung.com>
+References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
+	<1435756238-845-5-git-send-email-b.zolnierkie@samsung.com>
+Date: Thu, 2 Jul 2015 13:30:39 +0200
+Message-ID: <CABxcv=ky0ZeLWo0mqgGMOqjXwVySPUMnkx7orpyqGwEPLU9PNA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] cpufreq: exynos: remove Exynos5250 specific
+ cpufreq driver support
+From: Javier Martinez Canillas <javier@dowhile0.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	"linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch add exynos3250 compatible string to exynos_cpufreq_matches
-for supporting generic cpufreq driver on Exynos3250.
+Hello Bartlomiej,
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/mach-exynos/exynos.c | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, Jul 1, 2015 at 3:10 PM, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+> Exynos5250 based platforms have switched over to use generic
+> cpufreq driver for cpufreq functionality. So the Exynos
+> specific cpufreq support for these platforms can be removed.
+>
+> Based on the earlier work by Thomas Abraham.
+>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/cpufreq/Kconfig.arm          |  11 --
+>  drivers/cpufreq/Makefile             |   1 -
+>  drivers/cpufreq/exynos-cpufreq.c     |   3 -
+>  drivers/cpufreq/exynos-cpufreq.h     |  17 ---
+>  drivers/cpufreq/exynos5250-cpufreq.c | 210 -----------------------------------
+>  5 files changed, 242 deletions(-)
+>  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
+>
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 4015ec369ae5..77ac0216ddc4 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -225,6 +225,7 @@ static void __init exynos_init_irq(void)
- }
- 
- static const struct of_device_id exynos_cpufreq_matches[] = {
-+	{ .compatible = "samsung,exynos3250", .data = "cpufreq-dt" },
- 	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
- 	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
- 	{ /* sentinel */ }
--- 
-1.8.5.5
+Reviewed-by: Javier Martinez Canillas <javier@dowhile0.org>
+
+I also tested and on an Exynos5250 Snow Chromebook with
+exynos_defconfig + CONFIG_CPUFREQ_DT + CONFIG_CPU_FREQ_GOV_*, using
+different governors and see that the cpu0 and cpu1 frequencies are
+scaled and that the total number of CPU frequency transitions in
+total_trans are incremented.
+
+Tested-by: Javier Martinez Canillas <javier@dowhile0.org>
+
+Best regards,
+Javier
