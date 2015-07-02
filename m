@@ -1,39 +1,29 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-	=?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>,
-	Michal Simek <michal.simek@xilinx.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: zynq: remove redundant $(CONFIG_ARCH_ZYNQ) in Makefile
-Date: Mon, 27 Jul 2015 16:36:42 +0900
-Message-Id: <1437982602-26886-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 2 Jul 2015 14:39:53 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sergej Sawazki <ce3a@gmx.de>
+Cc: mturquette@baylibre.com, jsarha@ti.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] clk: add gpio controlled clock multiplexer
+Message-ID: <20150702213953.GH4301@codeaurora.org>
+References: <1435501496-25761-1-git-send-email-ce3a@gmx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1435501496-25761-1-git-send-email-ce3a@gmx.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Kbuild descends into drivers/clk/zynq/ only when CONFIG_ARCH_ZYNQ
-is enabled.  (see drivers/clk/Makefile)
+On 06/28, Sergej Sawazki wrote:
+> This patch series adds a common clock driver for basic gpio controlled clock
+> multiplexers. It does also contain some minor fixes for the gpio-gate-clock.
+> 
+> The first two patches are minor fixes for the gpio-gate-clock. Patch three
+> refactors the file clk-gpio-gate.c and adds the new gpio-mux-clock driver.
+> Finally, patch four renames the file clk-gpio-gate.c to clk-gpio.c. 
+> 
+> Based on clk-next.
 
-$(CONFIG_ARCH_ZYNQ) in drivers/clk/zynq/Makefile always evaluates
-to 'y'.
+I applied all of them to clk-next but you won't see it in -next
+until rc1 drops.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- drivers/clk/zynq/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/zynq/Makefile b/drivers/clk/zynq/Makefile
-index 156d923..0afc2e7 100644
---- a/drivers/clk/zynq/Makefile
-+++ b/drivers/clk/zynq/Makefile
-@@ -1,3 +1,3 @@
- # Zynq clock specific Makefile
- 
--obj-$(CONFIG_ARCH_ZYNQ)	+= clkc.o pll.o
-+obj-y	+= clkc.o pll.o
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
