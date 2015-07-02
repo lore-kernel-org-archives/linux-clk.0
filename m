@@ -1,58 +1,31 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Sender: Rob Herring <robherring2@gmail.com>
-From: Rob Herring <robh@kernel.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3] clk: kill off set_irq_flags usage
-Date: Mon, 27 Jul 2015 15:55:14 -0500
-Message-Id: <1438030523-15853-2-git-send-email-robh@kernel.org>
-In-Reply-To: <1438030523-15853-1-git-send-email-robh@kernel.org>
-References: <1438030523-15853-1-git-send-email-robh@kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 2 Jul 2015 14:38:50 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sergej Sawazki <ce3a@gmx.de>
+Cc: mturquette@baylibre.com, jsarha@ti.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 4/4] clk: Rename clk-gpio-gate.c to clk-gpio.c
+Message-ID: <20150702213850.GG4301@codeaurora.org>
+References: <1435501496-25761-1-git-send-email-ce3a@gmx.de>
+ <1435501496-25761-5-git-send-email-ce3a@gmx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1435501496-25761-5-git-send-email-ce3a@gmx.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-set_irq_flags is ARM specific with custom flags which have genirq
-equivalents. Convert drivers to use the genirq interfaces directly, so we
-can kill off set_irq_flags. The translation of flags is as follows:
+On 06/28, Sergej Sawazki wrote:
+> The file clk-gpio-gate.c does not only contain the gate clock, but also
+> the mux clock. Rename the file to clk-gpio.c.
+> 
+> Cc: Jyri Sarha <jsarha@ti.com>
+> Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
+> ---
 
-IRQF_VALID -> !IRQ_NOREQUEST
-IRQF_PROBE -> !IRQ_NOPROBE
-IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+Applied to clk-next (but won't appear in -next until after rc1
+drops).
 
-For IRQs managed by an irqdomain, the irqdomain core code handles clearing
-and setting IRQ_NOREQUEST already, so there is no need to do this in
-.map() functions and we can simply remove the set_irq_flags calls. Some
-users also modify IRQ_NOPROBE and this has been maintained although it
-is not clear that is really needed. There appears to be a great deal of
-blind copy and paste of this code.
+Next time feel free to generate this sort of thing with -M -C so
+that the diff is much smaller.
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
----
-Thomas asked that this be merged thru subsystem trees instead of arm-soc,
-so please apply this to your tree.
-
-Rob
-
- drivers/clk/at91/pmc.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 39be2be..d1844f1 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -125,7 +125,6 @@ static int pmc_irq_map(struct irq_domain *h, unsigned int virq,
-
- 	irq_set_chip_and_handler(virq, &pmc_irq,
- 				 handle_level_irq);
--	set_irq_flags(virq, IRQF_VALID);
- 	irq_set_chip_data(virq, pmc);
-
- 	return 0;
---
-2.1.0
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
