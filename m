@@ -1,32 +1,27 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 13 Jul 2015 11:11:58 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Will Deacon <will.deacon@arm.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] arm64: Remove clk-provider.h include
-Message-ID: <20150713101158.GA18748@e104818-lin.cambridge.arm.com>
-References: <1436568657-26243-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Paul Osmialowski <pawelo@king.net.pl>
+Cc: linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Sergei Poselenov <sposelenov@emcraft.com>, Paul Bolle <pebolle@tiscali.nl>, Jingchang Lu <jingchang.lu@freescale.com>, Yuri Tikhonov <yur@emcraft.com>, Rob Herring <r.herring@freescale.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>, Alexander Potashev <aspotashev@emcraft.com>, Frank Li <Frank.Li@freescale.com>, Thomas Gleixner <tglx@linutronix.de>, Anson Huang <b20788@freescale.com>
+Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
+Date: Thu, 02 Jul 2015 14:40:23 +0200
+Message-ID: <1861313.aMcV1xHCIq@wuerfel>
+In-Reply-To: <alpine.LNX.2.00.1507021206410.13210@localhost.localdomain>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <alpine.LNX.2.00.1507011756140.14440@localhost.localdomain> <alpine.LNX.2.00.1507021206410.13210@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1436568657-26243-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 10, 2015 at 03:50:57PM -0700, Stephen Boyd wrote:
-> This file doesn't use the clk provider APIs. Remove the include.
+On Thursday 02 July 2015 12:08:39 Paul Osmialowski wrote:
+> Nah, I've found this code hard to maintain. I'm attaching simplified 
+> version.
 > 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
-> 
-> Please ack if you want this to go through the clk-tree (along
-> with quite a few other patches that do the same thing). Otherwise,
-> it's fine if it's applied to the arm64 tree.
 
-Fine by me to go through the clock tree.
+Looks better to me, but of course needs full review from the clock
+maintainers.
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+I wonder if you could move out the fixed rate clocks into their own
+nodes. Are they actually controlled by the same block? If they are
+just fixed, you can use the normal binding for fixed rate clocks
+and only describe the clocks that are related to the driver.
+
+	Arnd
