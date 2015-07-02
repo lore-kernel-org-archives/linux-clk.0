@@ -1,34 +1,40 @@
-Return-Path: <linux-omap-owner@vger.kernel.org>
-Date: Wed, 15 Jul 2015 14:05:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	"tony@atomide.com" <tony@atomide.com>,
-	Paul Walmsley <paul@pwsan.com>, linux-clk@vger.kernel.org,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
-Subject: Re: [GIT PULL]
-Message-ID: <20150715210513.GR30412@codeaurora.org>
-References: <55A6494F.7090508@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <55A6494F.7090508@ti.com>
-Sender: linux-omap-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-id: <55948030.3010700@samsung.com>
+Date: Thu, 02 Jul 2015 09:05:04 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Chanwoo Choi <cw00.choi@samsung.com>, s.nawrocki@samsung.com,
+	tomasz.figa@gmail.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, kgene@kernel.org
+Cc: thomas.ab@samsung.com, b.zolnierkie@samsung.com,
+	kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 1/3] clk: samsung: exynos3250: Add cpu clock
+ configuration data and instaniate cpu clock
+References: <1435756877-26736-1-git-send-email-cw00.choi@samsung.com>
+ <1435756877-26736-2-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1435756877-26736-2-git-send-email-cw00.choi@samsung.com>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/15, Tero Kristo wrote:
-> Hi Stephen, Mike,
+On 01.07.2015 22:21, Chanwoo Choi wrote:
+> This patch add CPU clock configuration data and instantiate the CPU clock type
+> for Exynos3250 to support Samsung specific cpu-clock type.
 > 
-> Here is the updated pull-request based on Stephen's request. This is
-> on top of 4.1-rc2. The branch is force updated version of the one
-> Stephen tried yesterday, the old one contained the minor build
-> issues present on v3 of the patch set.
-> 
-> I did a quick try of merging this branch on top of 4.2-rc2 and it
-> works fine without any conflicts.
-> 
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos3250.c   | 32 ++++++++++++++++++++++++++++++--
+>  include/dt-bindings/clock/exynos3250.h |  1 +
+>  2 files changed, 31 insertions(+), 2 deletions(-)
 
-Thanks. Pulled into clk-next.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
+
+
