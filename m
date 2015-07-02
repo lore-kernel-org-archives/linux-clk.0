@@ -1,26 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 2 Jul 2015 09:59:15 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@stlinux.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 8/9] drivers: clk: st: Rename st_pll3200c32_407_c0_x into
+ st_pll3200c32_cx_x
+Message-ID: <20150702165914.GE7201@codeaurora.org>
+References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1435068567-30995-9-git-send-email-gabriel.fernandez@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1436571223-10959-21-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-	<1436571223-10959-21-git-send-email-sboyd@codeaurora.org>
-Date: Sat, 11 Jul 2015 09:24:01 +0200
-Message-ID: <CAGhQ9VyhmFa-dVW8ptXe0Sa5=T1SyvkS7F6F-M8O_EH4DwdgCQ@mail.gmail.com>
-Subject: Re: [PATCH 20/45] clk: nxp: Remove clk.h include
-From: Joachim Eastwood <manabian@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1435068567-30995-9-git-send-email-gabriel.fernandez@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11 July 2015 at 01:33, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> Clock provider drivers generally shouldn't include clk.h because
-> it's the consumer API. Remove the include here because this is a
-> provider driver.
->
-> Cc: Joachim Eastwood <manabian@gmail.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+On 06/23, Gabriel Fernandez wrote:
+> Use a generic name for this kind of PLL
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 
-Acked-by: Joachim Eastwood <manabian@gmail.com>
+Is this just a cleanup/nicety? I could take this patch but patch
+9 needs to go through arm-soc and then we have to deal with DT
+incompatibility. How about we drop these last two patches?
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
