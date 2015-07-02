@@ -1,74 +1,43 @@
-Return-Path: <Aisheng.Dong@freescale.com>
-From: Dong Aisheng <aisheng.dong@freescale.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawn.guo@linaro.org>, <b29396@freescale.com>,
-	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
-	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
-Subject: [PATCH 1/4] clk: imx: move imx_clk_gate_x into one place
-Date: Tue, 28 Jul 2015 21:33:08 +0800
-Message-ID: <1438090391-30329-2-git-send-email-aisheng.dong@freescale.com>
-In-Reply-To: <1438090391-30329-1-git-send-email-aisheng.dong@freescale.com>
-References: <1438090391-30329-1-git-send-email-aisheng.dong@freescale.com>
-Return-Path: aisheng.dong@freescale.com
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 2 Jul 2015 09:59:43 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@stlinux.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 4/9] drivers: clk: st: Fix FSYN channel values
+Message-ID: <20150702165943.GB4301@codeaurora.org>
+References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1435068567-30995-5-git-send-email-gabriel.fernandez@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1435068567-30995-5-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-move imx_clk_gate_x api into one place for better code maintenance.
+On 06/23, Gabriel Fernandez wrote:
+> This patch fixes the value for disabling the FSYN channel clock.
+> The 'is_enabled' returned value is also fixed.
+> 
+> Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> ---
 
-Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
----
- drivers/clk/imx/clk.h | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+Applied to clk-fixes
 
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 1049b0c..cda8756 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -50,21 +50,6 @@ struct clk * imx_obtain_fixed_clock(
- struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
- 	 void __iomem *reg, u8 shift, u32 exclusive_mask);
- 
--static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
--		void __iomem *reg, u8 shift)
--{
--	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
--			shift, 0, &imx_ccm_lock, NULL);
--}
--
--static inline struct clk *imx_clk_gate2_shared(const char *name,
--		const char *parent, void __iomem *reg, u8 shift,
--		unsigned int *share_count)
--{
--	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
--			shift, 0, &imx_ccm_lock, share_count);
--}
--
- struct clk *imx_clk_pfd(const char *name, const char *parent_name,
- 		void __iomem *reg, u8 idx);
- 
-@@ -118,6 +103,21 @@ static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
- 			shift, CLK_GATE_SET_TO_DISABLE, &imx_ccm_lock);
- }
- 
-+static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
-+		void __iomem *reg, u8 shift)
-+{
-+	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
-+			shift, 0, &imx_ccm_lock, NULL);
-+}
-+
-+static inline struct clk *imx_clk_gate2_shared(const char *name,
-+		const char *parent, void __iomem *reg, u8 shift,
-+		unsigned int *share_count)
-+{
-+	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
-+			shift, 0, &imx_ccm_lock, share_count);
-+}
-+
- static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
- 		u8 shift, u8 width, const char **parents, int num_parents)
- {
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
