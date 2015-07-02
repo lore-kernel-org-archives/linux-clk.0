@@ -1,74 +1,41 @@
 Return-Path: <sboyd@codeaurora.org>
-Message-ID: <559B1AB2.10901@codeaurora.org>
-Date: Mon, 06 Jul 2015 17:17:54 -0700
+Date: Thu, 2 Jul 2015 10:00:18 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@stlinux.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 7/9] drivers: clk: st: Fix mux bit-setting for Cortex A9
+ clocks
+Message-ID: <20150702170018.GE4301@codeaurora.org>
+References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1435068567-30995-8-git-send-email-gabriel.fernandez@linaro.org>
 MIME-Version: 1.0
-To: Sergej Sawazki <ce3a@gmx.de>, mturquette@baylibre.com, jsarha@ti.com
-CC: linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 3/4] clk: add gpio controlled clock multiplexer
-References: <1435501496-25761-1-git-send-email-ce3a@gmx.de> <1435501496-25761-4-git-send-email-ce3a@gmx.de>
-In-Reply-To: <1435501496-25761-4-git-send-email-ce3a@gmx.de>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1435068567-30995-8-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/28/2015 07:24 AM, Sergej Sawazki wrote:
-> Add a common clock driver for basic gpio controlled clock multiplexers.
-> This driver can be used for devices like 5V41068A or 831721I from IDT
-> or for discrete multiplexer circuits. The 'select' pin selects one of
-> two parent clocks.
->
-> Cc: Jyri Sarha <jsarha@ti.com>
-> Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
+On 06/23, Gabriel Fernandez wrote:
+> This patch fixes the mux bit-setting for ClockgenA9.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 > ---
->
 
-And this doesn't do a good job of freeing stuff on failure paths. I
-squashed this in
-
----8<---
-
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index 29d8917e8eeb..c0d202c24a97 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -126,6 +126,9 @@ static struct clk *clk_register_gpio(struct device *dev, const char *name,
- 		if (err != -EPROBE_DEFER)
- 			pr_err("%s: %s: Error requesting clock control gpio %u\n",
- 					__func__, name, gpio);
-+		if (!dev)
-+			kfree(clk_gpio);
-+
- 		return ERR_PTR(err);
- 	}
- 
-@@ -147,8 +150,8 @@ static struct clk *clk_register_gpio(struct device *dev, const char *name,
- 		return clk;
- 
- 	if (!dev) {
--		kfree(clk_gpio);
- 		gpiod_put(clk_gpio->gpiod);
-+		kfree(clk_gpio);
- 	}
- 
- 	return clk;
-@@ -256,13 +259,13 @@ static struct clk *of_clk_gpio_delayed_register_get(
- 
- 	clk = data->clk_register_get(data->node->name, parent_names,
- 			num_parents, gpio, of_flags & OF_GPIO_ACTIVE_LOW);
--	if (IS_ERR(clk)) {
--		mutex_unlock(&data->lock);
--		return clk;
--	}
-+	if (IS_ERR(clk))
-+		goto out;
- 
- 	data->clk = clk;
-+out:
- 	mutex_unlock(&data->lock);
-+	kfree(parent_names);
- 
- 	return clk;
- }
+Applied to clk-fixes
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
