@@ -1,48 +1,39 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-ID: <55AF6176.5010405@arm.com>
-Date: Wed, 22 Jul 2015 10:25:10 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:38983 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753653AbbGBQzz (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2015 12:55:55 -0400
+Date: Thu, 2 Jul 2015 09:55:53 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@linaro.org, linaro-kernel@lists.linaro.org
+Subject: Re: [PATCH] clk: stm32: Fix out-by-one error path in the index lookup
+Message-ID: <20150702165553.GC7201@codeaurora.org>
+References: <1435485332-14951-1-git-send-email-daniel.thompson@linaro.org>
 MIME-Version: 1.0
-To: Liviu Dudau <Liviu.Dudau@arm.com>,
-	Mark Rutland <Mark.Rutland@arm.com>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 1/8] Documentation: add DT binding for ARM System Control
- and Power Interface(SCPI) protocol
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com> <1433760002-24120-2-git-send-email-sudeep.holla@arm.com> <20150722084312.GB14923@e106497-lin.cambridge.arm.com>
-In-Reply-To: <20150722084312.GB14923@e106497-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-pm-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1435485332-14951-1-git-send-email-daniel.thompson@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Liviu,
+On 06/28, Daniel Thompson wrote:
+> If stm32f4_rcc_lookup() is called with primary == 0 and secondary == 192
+> then it will read beyond the end of the table array due to an out-by-one
+> error in the range check.
+> 
+> In addition to the fixing the inequality we also modify the r.h.s. to
+> make it even more explicit that we are comparing against the size of
+> table in bits.
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+> ---
 
-On 22/07/15 09:43, Liviu Dudau wrote:
-> Hi Sudeep,
->
-> Minor spelling/phrasing corrections:
->
+Applied to clk-fixes
 
-Thanks for the review, all fixed locally now. I will soon post new
-version. Can you provide ACKs on the Juno DTS files if you are happy
-with it ?
-
-Hi Mark,
-
-Sorry for the nag, but I would like to get feedback(if any) before I
-post new version.
-
-Regards,
-Sudeep
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
