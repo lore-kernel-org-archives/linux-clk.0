@@ -1,88 +1,68 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
- Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
- Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- b.zolnierkie@samsung.com
-Subject: [PATCH v3 0/5] cpufreq: use generic cpufreq drivers for Exynos4x12
- platform
-Date: Fri, 31 Jul 2015 20:49:12 +0200
-Message-id: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 2 Jul 2015 22:04:59 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Boris BREZILLON <boris.brezillon@free-electrons.com>,
+	Lior Amsalem <alior@marvell.com>,
+	Tawfik Bayouk <tawfik@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH] clk: mvebu: update cpu clock frequency
+Message-ID: <20150702200459.GF13481@lunn.ch>
+References: <1435866158-910-1-git-send-email-gregory.clement@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1435866158-910-1-git-send-email-gregory.clement@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Thu, Jul 02, 2015 at 09:42:38PM +0200, Gregory CLEMENT wrote:
+> Since u-boot 2015_T1.0p6 there are new requency settings available.
 
-This patch series removes the use of Exynos4x12 specific support
-from cpufreq-exynos driver and enables the use of cpufreq-dt driver
-for this platform.
+Hi Gregory
 
-This patch series has been tested on Exynos4412 based Odroid-U3 and
-Trats2 boards.
+Missing f in f_requency.
 
-Depends on:
-- next-20150730 branch of linux-next kernel tree
-- "[PATCH V3 00/16] OPP: Add code to support operating-points-v2 bindings"
-  (http://www.spinics.net/lists/arm-kernel/msg435408.html)
+Also, what has u-boot got to do with this? I would expect this is a
+property of the hardware. What happens is an older u-boot is used?
 
-Changes since v2
-(http://thread.gmane.org/gmane.linux.kernel.samsung-soc/46653):
-- rebased on top of next-20150730 branch of linux-next kernel tree
-- ported over V3 of opp-v2 bindings support patch series
-- put cpu0 nodes in alphabetical order in dts files
-- added Reviewed-by tags from Javier and Krzysztof
-- added Acked-by tag from Sylwester
+Thanks
+	Andrew
 
-Changes since v1
-(http://thread.gmane.org/gmane.linux.kernel.samsung-soc/44361):
-- rebased on top of next-20150629 branch of linux-next kernel tree
-- rebased on top of Exynos5250 cpufreq-dt support patch series
-- fixed if-statement in exynos4_clk_init() (noticed by Tobias Jakobi)
-- ported over opp-v2 bindings (requested by Viresh Kumar)
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-
-Bartlomiej Zolnierkiewicz (5):
-  clk: samsung: exynos4x12: add cpu clock configuration data and
-    instantiate cpu clock
-  ARM: dts: Exynos4x12: add CPU OPP and regulator supply property
-  ARM: Exynos: switch to using generic cpufreq driver for Exynos4x12
-  cpufreq: exynos: remove Exynos4x12 specific cpufreq driver support
-  cpufreq: remove no longer needed CPU_FREQ_BOOST_SW config option
-
- arch/arm/boot/dts/exynos4212.dtsi               |  81 ++++++++
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   4 +
- arch/arm/boot/dts/exynos4412-origen.dts         |   4 +
- arch/arm/boot/dts/exynos4412-trats2.dts         |   4 +
- arch/arm/boot/dts/exynos4412.dtsi               |  83 +++++++++
- arch/arm/mach-exynos/exynos.c                   |   2 +
- drivers/clk/samsung/clk-exynos4.c               |  50 +++++
- drivers/cpufreq/Kconfig                         |   5 +-
- drivers/cpufreq/Kconfig.arm                     |  38 ----
- drivers/cpufreq/Makefile                        |   2 -
- drivers/cpufreq/exynos-cpufreq.c                | 236 ------------------------
- drivers/cpufreq/exynos-cpufreq.h                |  72 --------
- drivers/cpufreq/exynos4x12-cpufreq.c            | 236 ------------------------
- drivers/cpufreq/freq_table.c                    |   2 -
- 14 files changed, 229 insertions(+), 590 deletions(-)
- delete mode 100644 drivers/cpufreq/exynos-cpufreq.c
- delete mode 100644 drivers/cpufreq/exynos-cpufreq.h
- delete mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
-
--- 
-1.9.1
+> 
+> Based on a patch from Nadav Haklai <nadavh@marvell.com>
+> 
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> ---
+>  drivers/clk/mvebu/armada-38x.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
+> index 8bccf4ecdab6..c64037e2e89f 100644
+> --- a/drivers/clk/mvebu/armada-38x.c
+> +++ b/drivers/clk/mvebu/armada-38x.c
+> @@ -46,10 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
+>  }
+>  
+>  static const u32 armada_38x_cpu_frequencies[] __initconst = {
+> -	0, 0, 0, 0,
+> -	1066 * 1000 * 1000, 0, 0, 0,
+> +	666 * 1000 * 1000, 0, 800 * 1000 * 1000, 0,
+> +	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
+>  	1332 * 1000 * 1000, 0, 0, 0,
+> -	1600 * 1000 * 1000,
+> +	1600 * 1000 * 1000, 0, 0, 0,
+> +	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
+>  };
+>  
+>  static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
+> -- 
+> 2.1.0
+> 
