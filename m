@@ -1,48 +1,64 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:60603 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752036AbbGNPMJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 14 Jul 2015 11:12:09 -0400
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	heikki.krogerus@linux.intel.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v4 4/6] clk: rockchip: save width in struct clk_fractional_divider
-Date: Tue, 14 Jul 2015 18:12:01 +0300
-Message-Id: <1436886723-111895-5-git-send-email-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <1436886723-111895-1-git-send-email-andriy.shevchenko@linux.intel.com>
-References: <1436886723-111895-1-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <javier@dowhile0.org>
+MIME-Version: 1.0
+In-Reply-To: <1435756238-845-4-git-send-email-b.zolnierkie@samsung.com>
+References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
+	<1435756238-845-4-git-send-email-b.zolnierkie@samsung.com>
+Date: Thu, 2 Jul 2015 13:15:21 +0200
+Message-ID: <CABxcv==_B_e6Tm6vGG9kPPqyL97RTsHUv6oH19xd8ZkecgyA_Q@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] ARM: Exynos: switch to using generic cpufreq
+ driver for Exynos5250
+From: Javier Martinez Canillas <javier@dowhile0.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The ->mwidth and ->nwidth fields will be used by clk-fractional-divider when it
-will be switched to rational base approximation algorithm.
+On Wed, Jul 1, 2015 at 3:10 PM, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+> From: Thomas Abraham <thomas.ab@samsung.com>
+>
+> The new CPU clock type allows the use of generic CPUfreq driver.
+> Switch Exynos5250 to using generic cpufreq driver.
+>
+> Changes by Bartlomiej:
+> - split Exynos5250 support from the original patch
+>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  arch/arm/mach-exynos/exynos.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 5f8ddcd..4015ec3 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -226,6 +226,7 @@ static void __init exynos_init_irq(void)
+>
+>  static const struct of_device_id exynos_cpufreq_matches[] = {
+>         { .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
+> +       { .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
+>         { /* sentinel */ }
+>  };
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/clk/rockchip/clk.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Reviewed-by: Javier Martinez Canillas <javier@dowhile0.org>
 
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 2493881..be6c7fd 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -135,9 +135,11 @@ static struct clk *rockchip_clk_register_frac_branch(const char *name,
- 	div->flags = div_flags;
- 	div->reg = base + muxdiv_offset;
- 	div->mshift = 16;
--	div->mmask = 0xffff0000;
-+	div->mwidth = 16;
-+	div->mmask = GENMASK(div->mwidth - 1, 0) << div->mshift;
- 	div->nshift = 0;
--	div->nmask = 0xffff;
-+	div->nwidth = 16;
-+	div->nmask = GENMASK(div->nwidth - 1, 0) << div->nshift;
- 	div->lock = lock;
- 	div_ops = &clk_fractional_divider_ops;
- 
--- 
-2.1.4
+and on an Exynos5250 Snow Chromebook:
 
+Tested-by: Javier Martinez Canillas <javier@dowhile0.org>
+
+Best regards,
+Javier
