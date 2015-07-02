@@ -1,84 +1,48 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 2 Jul 2015 10:00:09 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v2 3/7] cpufreq-dt: add turbo modes support
-Date: Thu, 09 Jul 2015 17:43:37 +0200
-Message-id: <1436456621-29839-4-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@stlinux.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 6/9] drivers: clk: st: Add CLK_GET_RATE_NOCACHE flag to
+ clocks
+Message-ID: <20150702170009.GD4301@codeaurora.org>
+References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1435068567-30995-7-git-send-email-gabriel.fernandez@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1435068567-30995-7-git-send-email-gabriel.fernandez@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add turbo modes (from opp-v2 bindings) support using
-existing cpufreq 'boost' mode infrastructure:
-- add boost_supported field to struct cpufreq_dt_platform_data
-- set dt_cpufreq_driver.boost_supported in dt_cpufreq_probe()
+On 06/23, Gabriel Fernandez wrote:
+> From: Pankaj Dev <pankaj.dev@st.com>
+> 
+> Add the CLK_GET_RATE_NOCACHE flag to all the clocks with recalc ops,
+> so that they reflect Hw rate after CPS wake-up when a clk_get_rate()
+> is called
+> 
+> Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> ---
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/cpufreq/cpufreq-dt.c | 7 ++++++-
- include/linux/cpufreq-dt.h   | 1 +
- 2 files changed, 7 insertions(+), 1 deletion(-)
+Applied to clk-fixes
 
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index 60d98fb..9024205 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -408,6 +408,7 @@ static struct cpufreq_driver dt_cpufreq_driver = {
- 
- static int dt_cpufreq_probe(struct platform_device *pdev)
- {
-+	struct cpufreq_dt_platform_data *pd;
- 	struct device *cpu_dev;
- 	struct regulator *cpu_reg;
- 	struct clk *cpu_clk;
-@@ -428,7 +429,11 @@ static int dt_cpufreq_probe(struct platform_device *pdev)
- 	if (!IS_ERR(cpu_reg))
- 		regulator_put(cpu_reg);
- 
--	dt_cpufreq_driver.driver_data = dev_get_platdata(&pdev->dev);
-+	pd = dev_get_platdata(&pdev->dev);
-+	dt_cpufreq_driver.driver_data = pd;
-+
-+	if (pd)
-+		dt_cpufreq_driver.boost_supported = pd->boost_supported;
- 
- 	ret = cpufreq_register_driver(&dt_cpufreq_driver);
- 	if (ret)
-diff --git a/include/linux/cpufreq-dt.h b/include/linux/cpufreq-dt.h
-index 0414009..483ca1b 100644
---- a/include/linux/cpufreq-dt.h
-+++ b/include/linux/cpufreq-dt.h
-@@ -17,6 +17,7 @@ struct cpufreq_dt_platform_data {
- 	 * clock.
- 	 */
- 	bool independent_clocks;
-+	bool boost_supported;
- };
- 
- #endif /* __CPUFREQ_DT_H__ */
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
