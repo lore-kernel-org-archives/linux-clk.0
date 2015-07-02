@@ -1,123 +1,66 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-ID: <55AFC1F0.1080207@arm.com>
-Date: Wed, 22 Jul 2015 17:16:48 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 2 Jul 2015 09:59:52 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@stlinux.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 5/9] drivers: clk: st: Fix flexgen lock init
+Message-ID: <20150702165952.GC4301@codeaurora.org>
+References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1435068567-30995-6-git-send-email-gabriel.fernandez@linaro.org>
 MIME-Version: 1.0
-To: Liviu Dudau <Liviu.Dudau@arm.com>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v4 6/8] arm64: dts: add SRAM, MHU mailbox and SCPI support
- on Juno
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com> <1433760002-24120-7-git-send-email-sudeep.holla@arm.com> <20150722132809.GG14923@e106497-lin.cambridge.arm.com> <55AFB96E.1050406@arm.com> <20150722160625.GJ14923@e106497-lin.cambridge.arm.com>
-In-Reply-To: <20150722160625.GJ14923@e106497-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-pm-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1435068567-30995-6-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 06/23, Gabriel Fernandez wrote:
+> From: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+> 
+> While proving lock, the following warning happens
+> and it is fixed after initializing lock in the setup
+> function
+> 
+> INFO: trying to register non-static key.
+> the code is fine but needs lockdep annotation.
+> turning off the locking correctness validator.
+> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 3.10.27-02861-g39df285-dirty #33
+> [<c00154ac>] (unwind_backtrace+0x0/0xf4) from [<c0011b50>] (show_stack+0x10/0x14)
+> [<c0011b50>] (show_stack+0x10/0x14) from [<c00689ac>] (__lock_acquire+0x900/0xb14)
+> [<c00689ac>] (__lock_acquire+0x900/0xb14) from [<c0069394>] (lock_acquire+0x68/0x7c)
+> [<c0069394>] (lock_acquire+0x68/0x7c) from [<c04958f8>] (_raw_spin_lock_irqsave+0x48/0x5c)
+> [<c04958f8>] (_raw_spin_lock_irqsave+0x48/0x5c) from [<c0381e6c>] (clk_gate_endisable+0x28/0x88)
+> [<c0381e6c>] (clk_gate_endisable+0x28/0x88) from [<c0381ee0>] (clk_gate_enable+0xc/0x14)
+> [<c0381ee0>] (clk_gate_enable+0xc/0x14) from [<c0386c68>] (flexgen_enable+0x28/0x40)
+> [<c0386c68>] (flexgen_enable+0x28/0x40) from [<c037f260>] (__clk_enable+0x5c/0x9c)
+> [<c037f260>] (__clk_enable+0x5c/0x9c) from [<c037f558>] (clk_enable+0x18/0x2c)
+> [<c037f558>] (clk_enable+0x18/0x2c) from [<c064a1dc>] (st_lpc_of_register+0xc0/0x248)
+> [<c064a1dc>] (st_lpc_of_register+0xc0/0x248) from [<c0649e44>] (clocksource_of_init+0x34/0x58)
+> [<c0649e44>] (clocksource_of_init+0x34/0x58) from [<c0637ddc>] (sti_timer_init+0x10/0x18)
+> [<c0637ddc>] (sti_timer_init+0x10/0x18) from [<c06343f8>] (time_init+0x20/0x30)
+> [<c06343f8>] (time_init+0x20/0x30) from [<c0632984>] (start_kernel+0x20c/0x2e8)
+> [<c0632984>] (start_kernel+0x20c/0x2e8) from [<40008074>] (0x40008074)
+> 
+> Signed-off-by: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> ---
 
+Applied to clk-fixes
 
-On 22/07/15 17:06, Liviu Dudau wrote:
-> On Wed, Jul 22, 2015 at 04:40:30PM +0100, Sudeep Holla wrote:
->>
->>
->> On 22/07/15 14:28, Liviu Dudau wrote:
->>> On Mon, Jun 08, 2015 at 11:40:00AM +0100, Sudeep Holla wrote:
->>>> This patch adds support for the MHU mailbox peripheral used on Juno by
->>>> application processors to communicate with remote SCP handling most of
->>>> the CPU/system power management. It also adds the SRAM reserving the
->>>> shared memory and SCPI message protocol using that shared memory.
->>>>
->>>> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
->>>> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
->>>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->>>> ---
->>>>    arch/arm64/boot/dts/arm/juno-base.dtsi   | 31 +++++++++++++++++++++++++++++++
->>>>    arch/arm64/boot/dts/arm/juno-clocks.dtsi | 23 +++++++++++++++++++++++
->>>>    2 files changed, 54 insertions(+)
->>>>
->>
->> [..]
->>
->>>> diff --git a/arch/arm64/boot/dts/arm/juno-clocks.dtsi b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
->>>> index 25352ed943e6..64af7370815a 100644
->>>> --- a/arch/arm64/boot/dts/arm/juno-clocks.dtsi
->>>> +++ b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
->>>> @@ -42,3 +42,26 @@
->>>>    		clock-frequency = <400000000>;
->>>>    		clock-output-names = "faxi_clk";
->>>>    	};
->>>> +
->>>> +	scpi {
->>>> +		compatible = "arm,scpi";
->>>> +		mboxes = <&mailbox 1>;
->>>> +		shmem = <&cpu_scp_hpri>;
->>>> +
->>>> +		clocks {
->>>> +			compatible = "arm,scpi-clocks";
->>>> +
->>>> +			scpi_dvfs: scpi_clocks@0 {
->>>> +				compatible = "arm,scpi-dvfs-clocks";
->>>> +				#clock-cells = <1>;
->>>> +				clock-indices = <0>, <1>, <2>;
->>>> +				clock-output-names = "vbig", "vlittle", "vgpu";
->>>> +			};
->>>> +			scpi_clk: scpi_clocks@3 {
->>>> +				compatible = "arm,scpi-variable-clocks";
->>>> +				#clock-cells = <1>;
->>>> +				clock-indices = <3>, <4>;
->>>
->>> Subject to you addressing Mark's comments regarding the indices values (maybe choose
->>> a different property to show the fact that the index is actually an SCPI index
->>> rather than the clock's), you can add my
->>>
->>
->> I don't understand why we need to do that. I will anyway follow up on
->> that thread.
->
-> Because indices are per clock node, i.e. spi_clk should have clock-indices = <0>, <1>.
-> Of course, you could have a gap in the indices, but that is both awkard and not clearly
-> explained in this documentation.
->
-
-Hmm, is it not clear ? I am fine to reword it.
-
-clock-indices: The *identifying number* for the clocks(clock_id) in the
-node as *expected by the firmware*. It can be non linear and hence
-provide the mapping of identifiers into the clock-output-names array.
-
-> The index that you declare here is actually what you pass to SCPI. But the way the device
-> tree is presented it declares that there are two clock blocks, one for DVFS and one for
-> PXLCLK. As far as SCPI is concerned there is only one block of clocks, with 3 of them
-> having a discrete set of values, so we are at the intersection of two concepts.
->
-
-Agreed. The clock-indices is associated with the clock provider which in
-this case is SCPI.
-
-The clock specifier is associated with the clock consumer and all it
-needs to know is which one in the list of clock output am I referring
-to(i.e. the standard definition decoded using of_clk_src_onecell_get
-
-> BTW, for what is worth, the PXLCLK is not really that smooth in its coverage of the range.
-> It might have more accepted frequency values, but the way it is implemented it tends to
-> favour VESA clock values and falls back to a really slow algorithm to generate all other
-> values. Even so, it can fail to find the correct parameters for the PLLs so it will generate
-> a frequency that is different from the requested one.
-
-I don't quite get the context of this info here, but thanks for that :).
-I think most of the clock providers have this limitation and round_rate
-will handle it. Since SCPI specification doesn't provide a mechanism to
-query that, we can't handle it. Hopefully we get that in newer versions
-of the specification ;)
-
-Regards,
-Sudeep
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
