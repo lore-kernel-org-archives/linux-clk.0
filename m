@@ -1,52 +1,41 @@
-Return-Path: <pawel.moll@arm.com>
-Message-ID: <1438362482.2339.89.camel@arm.com>
-Subject: Re: [PATCH 24/26] clk: versatile: Convert to clk_hw based provider
- APIs
-From: Pawel Moll <pawel.moll@arm.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org"
-	 <linux-clk@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 31 Jul 2015 18:08:02 +0100
-In-Reply-To: <1438362246-6664-25-git-send-email-sboyd@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-	 <1438362246-6664-25-git-send-email-sboyd@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Date: Thu, 2 Jul 2015 15:52:58 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v2 4/9] clk: rockchip: add COMPOSITE_NOGATE_DIVTBL variant
+Message-ID: <20150702225258.GN4301@codeaurora.org>
+References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
+ <1434637116-17124-5-git-send-email-heiko@sntech.de>
+MIME-Version: 1.0
+In-Reply-To: <1434637116-17124-5-git-send-email-heiko@sntech.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2015-07-31 at 18:04 +0100, Stephen Boyd wrote:
-> We're removing struct clk from the clk provider API, so switch
-> this code to using the clk_hw based provider APIs.
+On 06/18, Heiko Stuebner wrote:
+> A clock branch consisting of a mux and divider with non-standard
+> divider values.
 > 
-> Cc: Pawel Moll <pawel.moll@arm.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->  drivers/clk/versatile/clk-sp810.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/versatile/clk-sp810.c b/drivers/clk/versatile/clk-sp810.c
-> index 7fbe4d4bf35e..af653bfd4901 100644
-> --- a/drivers/clk/versatile/clk-sp810.c
-> +++ b/drivers/clk/versatile/clk-sp810.c
-> @@ -80,7 +80,7 @@ static int clk_sp810_timerclken_prepare(struct clk_hw *hw)
->  {
->  	struct clk_sp810_timerclken *timerclken = to_clk_sp810_timerclken(hw);
->  	struct clk_sp810 *sp810 = timerclken->sp810;
-> -	struct clk *old_parent = __clk_get_parent(hw->clk);
-> +	struct clk_hw *old_parent = clk_hw_get_parent(hw);
->  	struct clk *new_parent;
->  
->  	if (!sp810->refclk)
 
-Acked-by: Pawel Moll <pawel.moll@arm.com>
+Applied to clk-rk3368. The rest of the series needs a respin.
 
-(disclaimer: not tested ;-)
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-Thanks!
-
-Pawel
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
