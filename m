@@ -1,51 +1,28 @@
-Return-Path: <Aisheng.Dong@freescale.com>
-From: Dong Aisheng <aisheng.dong@freescale.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@linaro.org>, <shawnguo@kernel.org>, <b29396@freescale.com>,
-	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
-	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
-Subject: [PATCH V3 1/5] clk: remove duplicated code with __clk_set_parent_after
-Date: Tue, 28 Jul 2015 21:19:41 +0800
-Message-ID: <1438089585-30103-2-git-send-email-aisheng.dong@freescale.com>
-In-Reply-To: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
-References: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
-Return-Path: aisheng.dong@freescale.com
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 2 Jul 2015 09:55:39 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: David Dueck <davidcdueck@googlemail.com>
+Cc: boris.brezillon@free-electrons.com, mturquette@linaro.org,
+	nicolas.ferre@atmel.com, alexandre.belloni@free-electrons.com,
+	plagnioj@jcrosoft.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2] clk: at91: do not leak resources
+Message-ID: <20150702165539.GB7201@codeaurora.org>
+References: <1435325422-8137-1-git-send-email-davidcdueck@googlemail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1435325422-8137-1-git-send-email-davidcdueck@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-__clk_set_parent_after() actually used the second argument then we
-could put this duplicate logic in there and call it with a different
-order of arguments in the success vs. error paths in this function.
+On 06/26, David Dueck wrote:
+> Do not leak memory and free irqs in case of an error.
+> 
+> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Signed-off-by: David Dueck <davidcdueck@googlemail.com>
+> ---
 
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
----
- drivers/clk/clk.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Applied to clk-fixes
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 7bb9757..4c7f7b2 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1185,14 +1185,8 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
- 		flags = clk_enable_lock();
- 		clk_reparent(core, old_parent);
- 		clk_enable_unlock(flags);
-+		__clk_set_parent_after(core, old_parent, parent);
- 
--		if (core->prepare_count) {
--			flags = clk_enable_lock();
--			clk_core_disable(core);
--			clk_core_disable(parent);
--			clk_enable_unlock(flags);
--			clk_core_unprepare(parent);
--		}
- 		return ret;
- 	}
- 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
