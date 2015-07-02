@@ -1,63 +1,38 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH/RFC 04/11] ARM: shmobile: r8a7793 dtsi: Add device node for
- RST module
-Date: Tue,  7 Jul 2015 16:10:10 +0200
-Message-Id: <1436278217-20522-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
-References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-sh@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Ulrich Hecht <ulrich.hecht@gmail.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 2 Jul 2015 15:51:22 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@linaro.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/9] clk: rockchip: rk3288: add CLK_SET_RATE_PARENT to
+ sclk_mac
+Message-ID: <20150702225122.GK4301@codeaurora.org>
+References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
+ <1434637116-17124-2-git-send-email-heiko@sntech.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1434637116-17124-2-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a device node for the RST module, which provides reset control.
-Declare it to be a system controller (syscon), so other device nodes can
-refer to its registers.
+On 06/18, Heiko Stuebner wrote:
+> The dwmac ethernet controller on the rk3288 supports phys connected
+> via rgmii and rmii. With rgmii phys it is expected that the mac clock
+> is provided externally while with rmii phys the clock can be external
+> but also generated from the plls. In the later case it of course needs
+> be at 50MHz, which gets set from the dwmac_rk driver.
+> As most devices use a rgmii phy it never surfaced so far that the mac
+> clk mux, doesn't go up one lever to the pll clock in the rmii case with
+> internal clock generation, as it is missing the CLK_SET_RATE_PARENT flag,
+> and thus will not set the correct frequency in most cases.
+> 
+> Fixes: b9e4ba541607 ("clk: rockchip: add clock controller for rk3288")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
 
-TODO Add DT binding documentation.
+Applied to clk-rk3368
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7793.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 420fafda442b8a0e..fbb1aa3740e2b55e 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -394,6 +394,11 @@
- 		};
- 	};
- 
-+	rst: reset-controller@e616000 {
-+		compatible = "renesas,rst-r8a7793", "syscon";
-+		reg = <0 0xe6160000 0 0x0100>;
-+	};
-+
- 	sysc: system-controller@e6180000 {
- 		compatible = "renesas,sysc-r8a7793", "renesas,sysc-rcar";
- 		reg = <0 0xe6180000 0 0x0200>;
 -- 
-1.9.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
