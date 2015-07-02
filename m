@@ -1,90 +1,77 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Henry Chen <henryc.chen@mediatek.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 15/45] clk: mediatek: Properly include clk.h
-Date: Fri, 10 Jul 2015 16:33:13 -0700
-Message-Id: <1436571223-10959-16-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <55947D93.3090606@samsung.com>
+References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
+	<1435756238-845-3-git-send-email-b.zolnierkie@samsung.com>
+	<55947D93.3090606@samsung.com>
+Date: Thu, 2 Jul 2015 13:14:40 +0200
+Message-ID: <CABxcv=njwtCfE92LXMX27zQHR5qBt3+Pc54nzYK3nXvEsawK9A@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] ARM: dts: Exynos5250: add CPU OPP and regulator
+ supply property
+From: Javier Martinez Canillas <javier@dowhile0.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	"linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel <linux-kernel@vger.kernel.org>,
+	Doug Anderson <dianders@chromium.org>,
+	Andreas Faerber <afaerber@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-We don't need to include clk.h in header files, just forward
-declare struct clk here. This leads us to a few places where the
-include of clk.h was missing in C files. Add them.
+On Thu, Jul 2, 2015 at 1:53 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On 01.07.2015 22:10, Bartlomiej Zolnierkiewicz wrote:
+>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>
+>> For Exynos5250 platforms, add CPU operating points and CPU
+>> regulator supply properties for migrating from Exynos specific
+>> cpufreq driver to using generic cpufreq driver.
+>>
+>> Changes by Bartlomiej:
+>> - split Exynos5250 support from the original patch
+>> - added CPU regulator supply property for Google Spring board
+>> - put the new cpu nodes in alphabetical order
+>>
+>> Cc: Kukjin Kim <kgene.kim@samsung.com>
+>> Cc: Doug Anderson <dianders@chromium.org>
+>> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+>> Cc: Andreas Faerber <afaerber@suse.de>
+>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5250-arndale.dts  |  4 ++++
+>>  arch/arm/boot/dts/exynos5250-smdk5250.dts |  4 ++++
+>>  arch/arm/boot/dts/exynos5250-snow.dts     |  4 ++++
+>>  arch/arm/boot/dts/exynos5250-spring.dts   |  4 ++++
+>>  arch/arm/boot/dts/exynos5250.dtsi         | 22 ++++++++++++++++++++++
+>>  5 files changed, 38 insertions(+)
+>
+> Looks good, thanks!
+>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
 
-Cc: James Liao <jamesjj.liao@mediatek.com>
-Cc: Henry Chen <henryc.chen@mediatek.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/mediatek/clk-gate.h   | 3 ++-
- drivers/clk/mediatek/clk-mt8135.c | 1 +
- drivers/clk/mediatek/clk-mt8173.c | 1 +
- drivers/clk/mediatek/clk-mtk.h    | 3 ++-
- 4 files changed, 6 insertions(+), 2 deletions(-)
+Reviewed-by: Javier Martinez Canillas <javier@dowhile0.org>
 
-diff --git a/drivers/clk/mediatek/clk-gate.h b/drivers/clk/mediatek/clk-gate.h
-index 6b6780b1e9c5..11e25c992948 100644
---- a/drivers/clk/mediatek/clk-gate.h
-+++ b/drivers/clk/mediatek/clk-gate.h
-@@ -16,9 +16,10 @@
- #define __DRV_CLK_GATE_H
- 
- #include <linux/regmap.h>
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- 
-+struct clk;
-+
- struct mtk_clk_gate {
- 	struct clk_hw	hw;
- 	struct regmap	*regmap;
-diff --git a/drivers/clk/mediatek/clk-mt8135.c b/drivers/clk/mediatek/clk-mt8135.c
-index 08b4b849b491..07c21e44b4b3 100644
---- a/drivers/clk/mediatek/clk-mt8135.c
-+++ b/drivers/clk/mediatek/clk-mt8135.c
-@@ -12,6 +12,7 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/slab.h>
-diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
-index 4b9e04cdf7e8..2e0f17be9ea0 100644
---- a/drivers/clk/mediatek/clk-mt8173.c
-+++ b/drivers/clk/mediatek/clk-mt8173.c
-@@ -12,6 +12,7 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/slab.h>
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index 9dda9d8ad10b..624716c4776b 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -17,9 +17,10 @@
- 
- #include <linux/regmap.h>
- #include <linux/bitops.h>
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- 
-+struct clk;
-+
- #define MAX_MUX_GATE_BIT	31
- #define INVALID_MUX_GATE_BIT	(MAX_MUX_GATE_BIT + 1)
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+and on an Exynos5250 Snow Chromebook:
+
+Tested-by: Javier Martinez Canillas <javier@dowhile0.org>
+
+Best regards,
+Javier
