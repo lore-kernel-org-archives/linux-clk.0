@@ -1,42 +1,49 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Jul 2015 14:54:48 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@linaro.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 8/9] clk: rockchip: add dt-binding header for rk3368
-Message-ID: <20150702215448.GJ4301@codeaurora.org>
-References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
- <1434637116-17124-9-git-send-email-heiko@sntech.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1434637116-17124-9-git-send-email-heiko@sntech.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-id: <559485FD.7030805@samsung.com>
+Date: Thu, 02 Jul 2015 09:29:49 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+MIME-version: 1.0
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
+	thomas.ab@samsung.com, b.zolnierkie@samsung.com,
+	kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 2/3] ARM: dts: Add CPU OPP and regulator supply property
+ for Exynos3250
+References: <1435756877-26736-1-git-send-email-cw00.choi@samsung.com>
+ <1435756877-26736-3-git-send-email-cw00.choi@samsung.com>
+ <55947F65.8010404@samsung.com>
+In-reply-to: <55947F65.8010404@samsung.com>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/18, Heiko Stuebner wrote:
-> diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bindings/clock/rk3368-cru.h
-> new file mode 100644
-> index 0000000..6280753
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/rk3368-cru.h
-> @@ -0,0 +1,379 @@
-> +/*
-> + * Copyright (c) 2015 Heiko Stuebner <heiko@sntech.de>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
+On 07/02/2015 09:01 AM, Krzysztof Kozlowski wrote:
+> On 01.07.2015 22:21, Chanwoo Choi wrote:
+>> This patch add CPU operating points which include CPU frequency and regulator
+>> voltage to use generic cpufreq drivers.
+>>
+>> Cc: Kukjin Kim <kgene@kernel.org>
+>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
+>>  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
+>>  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
+>>  3 files changed, 23 insertions(+)
+> 
+> The patch looks good. Could you put the 'cpu' nodes in alphabetical
+> order? The order for Rinato board is already broken but still putting it
+> after 'adc' node would be better.
+> 
+> With the change above:
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Add some include guards?
+OK. I'll resend it.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Chanwoo Choi
+
