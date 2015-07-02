@@ -1,53 +1,55 @@
-Return-Path: <sjoerd.simons@collabora.co.uk>
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: [PATCH] clk: rockchip: Fix SPIF special clock definition
-Date: Tue, 28 Jul 2015 11:52:42 +0200
-Message-Id: <1438077162-27623-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Return-Path: <pawelo@king.net.pl>
+Date: Thu, 2 Jul 2015 23:42:18 +0200 (CEST)
+From: Paul Osmialowski <pawelo@king.net.pl>
+To: Arnd Bergmann <arnd@arndb.de>
+cc: Paul Osmialowski <pawelo@king.net.pl>,
+        linux-arm-kernel@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Sergei Poselenov <sposelenov@emcraft.com>,
+        Paul Bolle <pebolle@tiscali.nl>,
+        Jingchang Lu <jingchang.lu@freescale.com>,
+        Yuri Tikhonov <yur@emcraft.com>, Rob Herring <r.herring@freescale.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+        Alexander Potashev <aspotashev@emcraft.com>,
+        Frank Li <Frank.Li@freescale.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Anson Huang <b20788@freescale.com>
+Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
+In-Reply-To: <1861313.aMcV1xHCIq@wuerfel>
+Message-ID: <alpine.LNX.2.00.1507022338070.28322@localhost.localdomain>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <alpine.LNX.2.00.1507011756140.14440@localhost.localdomain> <alpine.LNX.2.00.1507021206410.13210@localhost.localdomain> <1861313.aMcV1xHCIq@wuerfel>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Neither spdif_src nor spdif_pll exists, judging by the vendor kernel in
-both cases spdif_pre was meant. This brings the naming in line and
-hierachy in line with that of sclk_i2s0.
+Hi Arnd,
 
-Also allow sclk_spdif and spdif_frac to change their parents rate as
-that the upstream dividers are purely there to feed sclk_spdif
+On Thu, 2 Jul 2015, Arnd Bergmann wrote:
 
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
----
- drivers/clk/rockchip/clk-rk3188.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> I wonder if you could move out the fixed rate clocks into their own
+> nodes. Are they actually controlled by the same block? If they are
+> just fixed, you can use the normal binding for fixed rate clocks
+> and only describe the clocks that are related to the driver.
+>
+> 	Arnd
+>
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index 0abf22d..ed02bbc 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -202,7 +202,7 @@ PNAME(mux_pll_src_cpll_gpll_p)	= { "cpll", "gpll" };
- PNAME(mux_aclk_cpu_p)		= { "apll", "gpll" };
- PNAME(mux_sclk_cif0_p)		= { "cif0_pre", "xin24m" };
- PNAME(mux_sclk_i2s0_p)		= { "i2s0_pre", "i2s0_frac", "xin12m" };
--PNAME(mux_sclk_spdif_p)		= { "spdif_src", "spdif_frac", "xin12m" };
-+PNAME(mux_sclk_spdif_p)		= { "spdif_pre", "spdif_frac", "xin12m" };
- PNAME(mux_sclk_uart0_p)		= { "uart0_pre", "uart0_frac", "xin24m" };
- PNAME(mux_sclk_uart1_p)		= { "uart1_pre", "uart1_frac", "xin24m" };
- PNAME(mux_sclk_uart2_p)		= { "uart2_pre", "uart2_frac", "xin24m" };
-@@ -350,10 +350,10 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "spdif_pre", "i2s_src", 0,
- 			RK2928_CLKSEL_CON(5), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 13, GFLAGS),
--	COMPOSITE_FRAC(0, "spdif_frac", "spdif_pll", 0,
-+	COMPOSITE_FRAC(0, "spdif_frac", "spdif_pre", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(9), 0,
- 			RK2928_CLKGATE_CON(0), 14, GFLAGS),
--	MUX(SCLK_SPDIF, "sclk_spdif", mux_sclk_spdif_p, 0,
-+	MUX(SCLK_SPDIF, "sclk_spdif", mux_sclk_spdif_p, CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(5), 8, 2, MFLAGS),
- 
- 	/*
--- 
-2.4.6
+In my view having these clocks grouped together looks more convincing. 
+After all, they all share the same I/O regs in order to read 
+configuration.
+
+Thanks,
+Paul
