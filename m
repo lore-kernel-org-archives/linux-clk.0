@@ -1,52 +1,164 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <55AE88CF.5040407@codeaurora.org>
-Date: Tue, 21 Jul 2015 11:00:47 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:51336 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753559AbbGBVwG (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2015 17:52:06 -0400
+Date: Thu, 2 Jul 2015 14:52:03 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@linaro.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v2 5/9] clk: rockchip: add support for phase inverters
+Message-ID: <20150702215203.GI4301@codeaurora.org>
+References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
+ <1434637116-17124-6-git-send-email-heiko@sntech.de>
 MIME-Version: 1.0
-To: Tyler Baker <tyler.baker@linaro.org>
-CC: Dinh Nguyen <dinguyen@opensource.altera.com>,
- Mike Turquette <mturquette@linaro.org>,
- dinh.linux@gmail.com, linux-clk@vger.kernel.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, =?UTF-8?B?RW1pbGlvIEzDsw==?=
- =?UTF-8?B?cGV6?= <emilio@elopez.com.ar>
-Subject: Re: [PATCHv2 5/6] clk: sunxi: make use of of_clk_parent_fill helper
- function
-References: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com> <1436241546-16731-6-git-send-email-dinguyen@opensource.altera.com> <20150718005313.GE30412@codeaurora.org> <CANMBJr6q7w4SzB2m4JPgwaAFPmSmQcVFu1Sq3EU0_k_Zx7Sa8A@mail.gmail.com> <alpine.DEB.2.02.1507211020420.22725@linux-builds1> <CANMBJr5FCib=+JG9hdGehbxhayFDkTp341mNCnFTiS0GpGxZZw@mail.gmail.com>
-In-Reply-To: <CANMBJr5FCib=+JG9hdGehbxhayFDkTp341mNCnFTiS0GpGxZZw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1434637116-17124-6-git-send-email-heiko@sntech.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/21/2015 09:29 AM, Tyler Baker wrote:
-> Hi Dinh,
->
-> On 21 July 2015 at 08:22, Dinh Nguyen <dinguyen@opensource.altera.com> wrote:
->> On Tue, 21 Jul 2015, Tyler Baker wrote:
->>
->>> Hi,
->>>
->>> On 17 July 2015 at 17:53, Stephen Boyd <sboyd@codeaurora.org> wrote:
->>>> On 07/06, dinguyen@opensource.altera.com wrote:
->>>>> From: Dinh Nguyen <dinguyen@opensource.altera.com>
->>>>>
->>>>> Use of_clk_parent_fill to fill in the parent clock names' array.
->>>>>
->>>>> Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
->>>>> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
->>>>> Cc: "Emilio López" <emilio@elopez.com.ar>
->>>>> ---
->>>> Applied to clk-next with that fix I posted.
->>> The kernelci.org bot reported sunxi a20 boot failures[1][2] in
->>> next-20150720 and next-20150721. I have bisected[3] these failures to
->>> this commit. However, I have not investigated any further but
->>> reverting this commit on top of next-20150721 gets the boards booting
->>> again.
->>>
->> Can you please try this patch?
-> I've tested the patch below on top of next-20150721 and can confirm it
-> fixes the sunxi a20 issues I've reported.
+On 06/18, Heiko Stuebner wrote:
+> Most Rockchip socs have optional phase inverters connected to some
+> clocks that move the clock-phase by 180 degrees.
+> While not having any actual influence on the rate, the inverter
+> provides its own simple recalc_rate callback as relying on the
+> fallback in the framework is for "lazy developers" according
 
-Thanks both. I've squashed this in and pushed it out to clk-next.
+I don't have a problem with being lazy. We should update the
+documentation to encourage less code by omitting recalc_rate if
+possible instead.
+
+> diff --git a/drivers/clk/rockchip/clk-inverter.c b/drivers/clk/rockchip/clk-inverter.c
+> new file mode 100644
+> index 0000000..db852cd
+> --- /dev/null
+> +++ b/drivers/clk/rockchip/clk-inverter.c
+> @@ -0,0 +1,126 @@
+> +/*
+> + * Copyright 2015 Heiko Stuebner <heiko@sntech.de>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/slab.h>
+> +#include <linux/clk-provider.h>
+
+#include <linux/io.h> ?
+#include <linux/spinlock.h> ?
+#include <linux/kernel.h> ? // for container_of
+
+> +#include "clk.h"
+> +
+> +struct rockchip_inv_clock {
+> +	struct clk_hw	hw;
+> +	void __iomem	*reg;
+> +	int		shift;
+> +	int		flags;
+> +	spinlock_t	*lock;
+> +};
+> +
+> +#define to_inv_clock(_hw) container_of(_hw, struct rockchip_inv_clock, hw)
+> +
+> +#define INVERTER_MASK 0x1
+> +
+> +static unsigned long rockchip_inv_recalc(struct clk_hw *hw,
+> +					 unsigned long parent_rate)
+> +{
+> +	return parent_rate;
+> +}
+> +
+> +static int rockchip_inv_get_phase(struct clk_hw *hw)
+> +{
+> +	struct rockchip_inv_clock *inv_clock = to_inv_clock(hw);
+> +	u32 val;
+> +
+> +	val = readl(inv_clock->reg) >> (inv_clock->shift) & INVERTER_MASK;
+
+What's the parentheses for? Is it supposed to be around the
+readl() and the shift?
+
+> +	return val ? 180 : 0;
+> +}
+> +
+> +static int rockchip_inv_set_phase(struct clk_hw *hw, int degrees)
+> +{
+
+I'm not too familiar with phase api, but the range of degrees
+would be 0 to 360.
+
+> +	struct rockchip_inv_clock *inv_clock = to_inv_clock(hw);
+> +	u32 val;
+> +
+> +	switch (degrees) {
+> +	case 0:
+> +		val = 0;
+> +		break;
+> +	case 180:
+> +		val = 1;
+> +		break;
+> +	default:
+> +		pr_err("%s: unsupported phase %d for %s\n",
+> +		       __func__, degrees, __clk_get_name(hw->clk));
+> +		return -EINVAL;
+> +	}
+
+So this could be
+
+	if (degrees % 180 == 0) {
+		val = !!degrees;
+	} else {
+		pr_err("%s: unsupported phase %d for %s\n",
+		       __func__, degrees, __clk_get_name(hw->clk));
+		return -EINVAL;
+	}
+
+and save some lines?
+
+> +
+> +static const struct clk_ops rockchip_inv_clk_ops = {
+> +	.recalc_rate	= rockchip_inv_recalc,
+> +	.get_phase	= rockchip_inv_get_phase,
+> +	.set_phase	= rockchip_inv_set_phase,
+> +};
+> +
+> +struct clk *rockchip_clk_register_inverter(const char *name,
+> +				const char *const *parent_names, u8 num_parents,
+> +				void __iomem *reg, int shift, int flags,
+> +				spinlock_t *lock)
+> +{
+> +	struct clk_init_data init;
+> +	struct rockchip_inv_clock *inv_clock;
+> +	struct clk *clk;
+> +
+> +	inv_clock = kmalloc(sizeof(*inv_clock), GFP_KERNEL);
+> +	if (!inv_clock)
+> +		return NULL;
+> +
+> +	init.num_parents = num_parents;
+> +	init.flags = CLK_SET_RATE_PARENT;
+> +	init.parent_names = parent_names;
+> +	init.ops = &rockchip_inv_clk_ops;
+> +
+> +	inv_clock->hw.init = &init;
+> +	inv_clock->reg = reg;
+> +	inv_clock->shift = shift;
+> +	inv_clock->flags = flags;
+> +	inv_clock->lock = lock;
+> +
+> +	if (name)
+> +		init.name = name;
+
+And if name is NULL? init.name is junk?
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
