@@ -1,29 +1,91 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <andrew@lunn.ch>
+Date: Fri, 3 Jul 2015 15:54:53 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Boris BREZILLON <boris.brezillon@free-electrons.com>,
+	Lior Amsalem <alior@marvell.com>,
+	Tawfik Bayouk <tawfik@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH RFC 1/5] clk: mvebu: Add Armada 38x support for clk-cpu
+Message-ID: <20150703135453.GI13481@lunn.ch>
+References: <1435903917-20486-1-git-send-email-gregory.clement@free-electrons.com>
+ <1435903917-20486-2-git-send-email-gregory.clement@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <1436571223-10959-12-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-	<1436571223-10959-12-git-send-email-sboyd@codeaurora.org>
-Date: Thu, 16 Jul 2015 15:28:16 +0200
-Message-ID: <CACRpkdbzsA-8mdfK++THv1ibDE7yEt+zx++y5k+5HPf8MrMSdg@mail.gmail.com>
-Subject: Re: [PATCH 11/45] clk: u300: Remove clk.h include
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1435903917-20486-2-git-send-email-gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jul 11, 2015 at 1:33 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+On Fri, Jul 03, 2015 at 08:11:53AM +0200, Gregory CLEMENT wrote:
+> This patch first shortens the registers definition and also introduces
+> difference between Armada XP value and Armada 38x value.
+> 
+> Then it adds specific functions for Armada 38x in order to support cpu
+> freq on these SoCs.
 
-> Clock provider drivers generally shouldn't include clk.h because
-> it's the consumer API. Remove the include here because this is a
-> provider driver. Also add in slab.h because without clkdev.h
-> compilation of this file would fail.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Hi Gregory
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+I would suggest splitting this into two. Because of the #define
+changes, it is not easy to see the new functions from #define changes.
 
-Yours,
-Linus Walleij
+> 
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> ---
+>  .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |  27 ++-
+>  drivers/clk/mvebu/clk-cpu.c                        | 220 ++++++++++++++++-----
+>  2 files changed, 201 insertions(+), 46 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
+> index 99c214660bdc..9272b3464ab1 100644
+> --- a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
+> @@ -1,10 +1,13 @@
+>  Device Tree Clock bindings for cpu clock of Marvell EBU platforms
+
+Maybe i'm reading the following hunk wrong, but....
+  
+>  Required properties:
+> -- compatible : shall be one of the following:
+> +- compatible : shall be the following:
+
+"one of the following" is grammatically better.
+
+>  	"marvell,armada-xp-cpu-clock" - cpu clocks for Armada XP
+> +	"marvell,armada-38x-cpu-clock", "marvell,armada-xp-cpu-clock" - cpu
+> +	clocks for Armada 38x
+
+and don't we now have marvell,armada-xp-cpu-clock twice?
+
+>  - reg : Address and length of the clock complex register set, followed
+> -        by address and length of the PMU DFS registers
+> +	by address and length of the PMU DFS registers, for Armada 38x
+> +	a third register set must be addeed: DFX server.
+>  - #clock-cells : should be set to 1.
+>  - clocks : shall be the input parent clock phandle for the clock.
+>  
+> @@ -20,3 +23,23 @@ cpu@0 {
+>  	reg = <0>;
+>  	clocks = <&cpuclk 0>;
+>  };
+> +
+> +or for Armada38x
+> +
+> +cpuclk: clock-complex@18700 {
+> +	compatible = "marvell,armada-380-cpu-clock",
+> +	"marvell,armada-xp-cpu-clock";
+> +	reg = <0x18700 0xA0>, <0x1c054 0x40>,
+> +	<0xe4260 0x8>;
+
+Maybe this third address property could be better indented?
+
+      Andrew
