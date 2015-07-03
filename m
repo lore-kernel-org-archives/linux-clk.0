@@ -1,50 +1,432 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 27 Jul 2015 17:06:41 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
-Message-ID: <20150727113641.GB10181@linux>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <1595601.YD6UTxy5Qg@amdc1976>
- <20150727103521.GA4103@linux>
- <3141301.RS9TLygaba@amdc1976>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3141301.RS9TLygaba@amdc1976>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Boris BREZILLON <boris.brezillon@free-electrons.com>,
+	Lior Amsalem <alior@marvell.com>,
+	Tawfik Bayouk <tawfik@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>
+Subject: [PATCH RFC 1/5] clk: mvebu: Add Armada 38x support for clk-cpu
+Date: Fri,  3 Jul 2015 08:11:53 +0200
+Message-Id: <1435903917-20486-2-git-send-email-gregory.clement@free-electrons.com>
+In-Reply-To: <1435903917-20486-1-git-send-email-gregory.clement@free-electrons.com>
+References: <1435903917-20486-1-git-send-email-gregory.clement@free-electrons.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 27-07-15, 13:14, Bartlomiej Zolnierkiewicz wrote:
-> Sorry but you don't seem to understand the issue.
+This patch first shortens the registers definition and also introduces
+difference between Armada XP value and Armada 38x value.
 
-:)
+Then it adds specific functions for Armada 38x in order to support cpu
+freq on these SoCs.
 
-No, I did. I understand that if someone uses opp bindings today with
-some entries as turbo OPPs, cpufreq will use them as normal
-frequencies. And that may harm the board.
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |  27 ++-
+ drivers/clk/mvebu/clk-cpu.c                        | 220 ++++++++++++++++-----
+ 2 files changed, 201 insertions(+), 46 deletions(-)
 
-BUT, opp-v2 code isn't ready to be used yet. And platforms should see
-what all is implemented before trying to use them.
-
-All I was saying is, this isn't a FIX as we haven't introduced the
-feature yet. Otherwise I had no issues with the patch.
-
+diff --git a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
+index 99c214660bdc..9272b3464ab1 100644
+--- a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
++++ b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
+@@ -1,10 +1,13 @@
+ Device Tree Clock bindings for cpu clock of Marvell EBU platforms
+ 
+ Required properties:
+-- compatible : shall be one of the following:
++- compatible : shall be the following:
+ 	"marvell,armada-xp-cpu-clock" - cpu clocks for Armada XP
++	"marvell,armada-38x-cpu-clock", "marvell,armada-xp-cpu-clock" - cpu
++	clocks for Armada 38x
+ - reg : Address and length of the clock complex register set, followed
+-        by address and length of the PMU DFS registers
++	by address and length of the PMU DFS registers, for Armada 38x
++	a third register set must be addeed: DFX server.
+ - #clock-cells : should be set to 1.
+ - clocks : shall be the input parent clock phandle for the clock.
+ 
+@@ -20,3 +23,23 @@ cpu@0 {
+ 	reg = <0>;
+ 	clocks = <&cpuclk 0>;
+ };
++
++or for Armada38x
++
++cpuclk: clock-complex@18700 {
++	compatible = "marvell,armada-380-cpu-clock",
++	"marvell,armada-xp-cpu-clock";
++	reg = <0x18700 0xA0>, <0x1c054 0x40>,
++	<0xe4260 0x8>;
++	clocks = <&coreclk 1>;
++	#clock-cells = <1>;
++};
++
++cpu@0 {
++	device_type = "cpu";
++	compatible = "arm,cortex-a9";
++	reg = <0>;
++	clocks = <&cpuclk 0>;
++	clock-latency = <1000000>;
++	clock-names = "cpu0";
++};
+diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
+index 3821a88077ea..19b6e73e3cba 100644
+--- a/drivers/clk/mvebu/clk-cpu.c
++++ b/drivers/clk/mvebu/clk-cpu.c
+@@ -19,16 +19,34 @@
+ #include <linux/mvebu-pmsu.h>
+ #include <asm/smp_plat.h>
+ 
+-#define SYS_CTRL_CLK_DIVIDER_CTRL_OFFSET               0x0
+-#define   SYS_CTRL_CLK_DIVIDER_CTRL_RESET_ALL          0xff
+-#define   SYS_CTRL_CLK_DIVIDER_CTRL_RESET_SHIFT        8
+-#define SYS_CTRL_CLK_DIVIDER_CTRL2_OFFSET              0x8
+-#define   SYS_CTRL_CLK_DIVIDER_CTRL2_NBCLK_RATIO_SHIFT 16
+-#define SYS_CTRL_CLK_DIVIDER_VALUE_OFFSET              0xC
+-#define SYS_CTRL_CLK_DIVIDER_MASK                      0x3F
+-
+-#define PMU_DFS_RATIO_SHIFT 16
+-#define PMU_DFS_RATIO_MASK  0x3F
++/* Clock complex registers */
++#define SYS_CTRL_CLK_DIV_CTRL_OFFSET		    0x0
++#define   SYS_CTRL_CLK_DIV_CTRL_RESET_ALL	    0xFF
++#define   SYS_CTRL_CLK_DIV_CTRL_RESET_SHIFT	    8
++#define SYS_CTRL_CLK_DIV_VALUE_A38X_OFFSET	    0x4
++#define SYS_CTRL_CLK_DIV_CTRL2_OFFSET		    0x8
++#define   SYS_CTRL_CLK_DIV_CTRL2_NBCLK_RATIO_SHIFT  16
++#define SYS_CTRL_CLK_DIV_VALUE_AXP_OFFSET	    0xC
++#define SYS_CTRL_CLK_DIV_MASK			    0x3F
++
++/* PMU registers */
++#define PMU_DFS_CTRL1_OFFSET				0x0
++#define   PMU_DFS_RATIO_SHIFT				16
++#define   PMU_DFS_RATIO_MASK				0x3F
++#define PMUL_ACTIVATE_IF_CTRL_OFFSET			0x3C
++#define   PMUL_ACTIVATE_IF_CTRL_PMU_DFS_OVRD_EN_MASK	0xFF
++#define   PMUL_ACTIVATE_IF_CTRL_PMU_DFS_OVRD_EN_SHIFT	17
++#define   PMUL_ACTIVATE_IF_CTRL_PMU_DFS_OVRD_EN		0x1
++
++/* DFX server registers */
++#define DFX_CPU_PLL_CLK_DIV_CTRL0_OFFSET		0x0
++#define	  DFX_CPU_PLL_CLK_DIV_CTRL0_RELOAD_SMOOTH_MASK	0xFF
++#define   DFX_CPU_PLL_CLK_DIV_CTRL0_RELOAD_SMOOTH_SHIFT	0x8
++#define   DFX_CPU_PLL_CLK_DIV_CTRL0_RELOAD_SMOOTH_PCLK	0x10
++#define DFX_CPU_PLL_CLK_DIV_CTRL1_OFFSET		0x4
++#define   DFX_CPU_PLL_CLK_DIV_CTRL1_RESET_MASK_MASK	0xFF
++#define   DFX_CPU_PLL_CLK_DIV_CTRL1_RESET_MASK_SHIFT	0x0
++#define   DFX_CPU_PLL_CLK_DIV_CTRL1_RESET_MASK_PCLK	0x10
+ 
+ #define MAX_CPU	    4
+ struct cpu_clk {
+@@ -38,6 +56,7 @@ struct cpu_clk {
+ 	const char *parent_name;
+ 	void __iomem *reg_base;
+ 	void __iomem *pmu_dfs;
++	void __iomem *dfx_server_base;
+ };
+ 
+ static struct clk **clks;
+@@ -46,14 +65,30 @@ static struct clk_onecell_data clk_data;
+ 
+ #define to_cpu_clk(p) container_of(p, struct cpu_clk, hw)
+ 
+-static unsigned long clk_cpu_recalc_rate(struct clk_hw *hwclk,
++static unsigned long armada_xp_clk_cpu_recalc_rate(struct clk_hw *hwclk,
++					 unsigned long parent_rate)
++{
++	struct cpu_clk *cpuclk = to_cpu_clk(hwclk);
++	u32 reg, div;
++
++	reg = readl(cpuclk->reg_base + SYS_CTRL_CLK_DIV_VALUE_AXP_OFFSET);
++	div = (reg >> (cpuclk->cpu * 8)) & SYS_CTRL_CLK_DIV_MASK;
++	return parent_rate / div;
++}
++
++static unsigned long armada_38x_clk_cpu_recalc_rate(struct clk_hw *hwclk,
+ 					 unsigned long parent_rate)
+ {
+ 	struct cpu_clk *cpuclk = to_cpu_clk(hwclk);
+ 	u32 reg, div;
+ 
+-	reg = readl(cpuclk->reg_base + SYS_CTRL_CLK_DIVIDER_VALUE_OFFSET);
+-	div = (reg >> (cpuclk->cpu * 8)) & SYS_CTRL_CLK_DIVIDER_MASK;
++	if (__clk_is_enabled(hwclk->clk) == false) {
++		/* for clock init - don't use divider, set maximal rate */
++		return parent_rate;
++	}
++
++	reg = readl(cpuclk->reg_base + SYS_CTRL_CLK_DIV_VALUE_A38X_OFFSET);
++	div = (reg >> (cpuclk->cpu * 8)) & SYS_CTRL_CLK_DIV_MASK;
+ 	return parent_rate / div;
+ }
+ 
+@@ -72,42 +107,43 @@ static long clk_cpu_round_rate(struct clk_hw *hwclk, unsigned long rate,
+ 	return *parent_rate / div;
+ }
+ 
+-static int clk_cpu_off_set_rate(struct clk_hw *hwclk, unsigned long rate,
+-				unsigned long parent_rate)
+-
++static int armada_xp_clk_cpu_off_set_rate(struct clk_hw *hwclk,
++					  unsigned long rate,
++					  unsigned long parent_rate)
+ {
+ 	struct cpu_clk *cpuclk = to_cpu_clk(hwclk);
+ 	u32 reg, div;
+ 	u32 reload_mask;
+ 
+ 	div = parent_rate / rate;
+-	reg = (readl(cpuclk->reg_base + SYS_CTRL_CLK_DIVIDER_VALUE_OFFSET)
+-		& (~(SYS_CTRL_CLK_DIVIDER_MASK << (cpuclk->cpu * 8))))
++	reg = (readl(cpuclk->reg_base + SYS_CTRL_CLK_DIV_VALUE_AXP_OFFSET)
++		& (~(SYS_CTRL_CLK_DIV_MASK << (cpuclk->cpu * 8))))
+ 		| (div << (cpuclk->cpu * 8));
+-	writel(reg, cpuclk->reg_base + SYS_CTRL_CLK_DIVIDER_VALUE_OFFSET);
++	writel(reg, cpuclk->reg_base + SYS_CTRL_CLK_DIV_VALUE_AXP_OFFSET);
+ 	/* Set clock divider reload smooth bit mask */
+ 	reload_mask = 1 << (20 + cpuclk->cpu);
+ 
+-	reg = readl(cpuclk->reg_base + SYS_CTRL_CLK_DIVIDER_CTRL_OFFSET)
++	reg = readl(cpuclk->reg_base + SYS_CTRL_CLK_DIV_CTRL_OFFSET)
+ 	    | reload_mask;
+-	writel(reg, cpuclk->reg_base + SYS_CTRL_CLK_DIVIDER_CTRL_OFFSET);
++	writel(reg, cpuclk->reg_base + SYS_CTRL_CLK_DIV_CTRL_OFFSET);
+ 
+ 	/* Now trigger the clock update */
+-	reg = readl(cpuclk->reg_base + SYS_CTRL_CLK_DIVIDER_CTRL_OFFSET)
++	reg = readl(cpuclk->reg_base + SYS_CTRL_CLK_DIV_CTRL_OFFSET)
+ 	    | 1 << 24;
+-	writel(reg, cpuclk->reg_base + SYS_CTRL_CLK_DIVIDER_CTRL_OFFSET);
++	writel(reg, cpuclk->reg_base + SYS_CTRL_CLK_DIV_CTRL_OFFSET);
+ 
+ 	/* Wait for clocks to settle down then clear reload request */
+ 	udelay(1000);
+ 	reg &= ~(reload_mask | 1 << 24);
+-	writel(reg, cpuclk->reg_base + SYS_CTRL_CLK_DIVIDER_CTRL_OFFSET);
++	writel(reg, cpuclk->reg_base + SYS_CTRL_CLK_DIV_CTRL_OFFSET);
+ 	udelay(1000);
+ 
+ 	return 0;
+ }
+ 
+-static int clk_cpu_on_set_rate(struct clk_hw *hwclk, unsigned long rate,
+-			       unsigned long parent_rate)
++static int armada_xp_clk_cpu_on_set_rate(struct clk_hw *hwclk,
++					 unsigned long rate,
++					 unsigned long parent_rate)
+ {
+ 	u32 reg;
+ 	unsigned long fabric_div, target_div, cur_rate;
+@@ -122,9 +158,9 @@ static int clk_cpu_on_set_rate(struct clk_hw *hwclk, unsigned long rate,
+ 
+ 	cur_rate = __clk_get_rate(hwclk->clk);
+ 
+-	reg = readl(cpuclk->reg_base + SYS_CTRL_CLK_DIVIDER_CTRL2_OFFSET);
+-	fabric_div = (reg >> SYS_CTRL_CLK_DIVIDER_CTRL2_NBCLK_RATIO_SHIFT) &
+-		SYS_CTRL_CLK_DIVIDER_MASK;
++	reg = readl(cpuclk->reg_base + SYS_CTRL_CLK_DIV_CTRL2_OFFSET);
++	fabric_div = (reg >> SYS_CTRL_CLK_DIV_CTRL2_NBCLK_RATIO_SHIFT) &
++		SYS_CTRL_CLK_DIV_MASK;
+ 
+ 	/* Frequency is going up */
+ 	if (rate == 2 * cur_rate)
+@@ -141,40 +177,101 @@ static int clk_cpu_on_set_rate(struct clk_hw *hwclk, unsigned long rate,
+ 	reg |= (target_div << PMU_DFS_RATIO_SHIFT);
+ 	writel(reg, cpuclk->pmu_dfs);
+ 
+-	reg = readl(cpuclk->reg_base + SYS_CTRL_CLK_DIVIDER_CTRL_OFFSET);
+-	reg |= (SYS_CTRL_CLK_DIVIDER_CTRL_RESET_ALL <<
+-		SYS_CTRL_CLK_DIVIDER_CTRL_RESET_SHIFT);
+-	writel(reg, cpuclk->reg_base + SYS_CTRL_CLK_DIVIDER_CTRL_OFFSET);
++	reg = readl(cpuclk->reg_base + SYS_CTRL_CLK_DIV_CTRL_OFFSET);
++	reg |= (SYS_CTRL_CLK_DIV_CTRL_RESET_ALL <<
++		SYS_CTRL_CLK_DIV_CTRL_RESET_SHIFT);
++	writel(reg, cpuclk->reg_base + SYS_CTRL_CLK_DIV_CTRL_OFFSET);
+ 
+ 	return mvebu_pmsu_dfs_request(cpuclk->cpu);
+ }
+ 
+-static int clk_cpu_set_rate(struct clk_hw *hwclk, unsigned long rate,
++static int armada_xp_clk_cpu_set_rate(struct clk_hw *hwclk, unsigned long rate,
+ 			    unsigned long parent_rate)
+ {
+ 	if (__clk_is_enabled(hwclk->clk))
+-		return clk_cpu_on_set_rate(hwclk, rate, parent_rate);
++		return armada_xp_clk_cpu_on_set_rate(hwclk, rate, parent_rate);
+ 	else
+-		return clk_cpu_off_set_rate(hwclk, rate, parent_rate);
++		return armada_xp_clk_cpu_off_set_rate(hwclk, rate, parent_rate);
+ }
++static int armada_38x_clk_cpu_set_rate(struct clk_hw *hwclk, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	u32 reg;
++	u32 target_div;
++	unsigned long cur_rate;
++	struct cpu_clk *cpuclk = to_cpu_clk(hwclk);
++
++	/*
++	 * PMU DFS registers are not mapped, Device Tree does not
++	 * describes them. We cannot change the frequency dynamically.
++	 */
++	if (!cpuclk->pmu_dfs)
++		return -ENODEV;
+ 
+-static const struct clk_ops cpu_ops = {
+-	.recalc_rate = clk_cpu_recalc_rate,
++	cur_rate = __clk_get_rate(hwclk->clk);
++
++	/* Frequency is going up */
++	if (rate >= cur_rate)
++		target_div = 1;
++	/* Frequency is going down */
++	else
++		target_div = 2;
++
++	reg = readl(cpuclk->dfx_server_base + DFX_CPU_PLL_CLK_DIV_CTRL0_OFFSET);
++	reg &= ~(DFX_CPU_PLL_CLK_DIV_CTRL0_RELOAD_SMOOTH_MASK <<
++			 DFX_CPU_PLL_CLK_DIV_CTRL0_RELOAD_SMOOTH_SHIFT);
++	reg |= (DFX_CPU_PLL_CLK_DIV_CTRL0_RELOAD_SMOOTH_PCLK <<
++			DFX_CPU_PLL_CLK_DIV_CTRL0_RELOAD_SMOOTH_SHIFT);
++	writel(reg, cpuclk->dfx_server_base + DFX_CPU_PLL_CLK_DIV_CTRL0_OFFSET);
++
++	reg = readl(cpuclk->dfx_server_base + DFX_CPU_PLL_CLK_DIV_CTRL1_OFFSET);
++	reg &= ~(DFX_CPU_PLL_CLK_DIV_CTRL1_RESET_MASK_MASK <<
++			 DFX_CPU_PLL_CLK_DIV_CTRL1_RESET_MASK_SHIFT);
++	reg |= (DFX_CPU_PLL_CLK_DIV_CTRL1_RESET_MASK_PCLK <<
++			DFX_CPU_PLL_CLK_DIV_CTRL1_RESET_MASK_SHIFT);
++	writel(reg, cpuclk->dfx_server_base + DFX_CPU_PLL_CLK_DIV_CTRL1_OFFSET);
++
++	reg = readl(cpuclk->pmu_dfs);
++	reg &= ~(PMU_DFS_RATIO_MASK << PMU_DFS_RATIO_SHIFT);
++	reg |= (target_div << PMU_DFS_RATIO_SHIFT);
++	writel(reg, cpuclk->pmu_dfs);
++
++	reg = readl(cpuclk->pmu_dfs + PMUL_ACTIVATE_IF_CTRL_OFFSET);
++	reg &= ~(PMUL_ACTIVATE_IF_CTRL_PMU_DFS_OVRD_EN_MASK <<
++			 PMUL_ACTIVATE_IF_CTRL_PMU_DFS_OVRD_EN_SHIFT);
++	reg |= (PMUL_ACTIVATE_IF_CTRL_PMU_DFS_OVRD_EN <<
++			PMUL_ACTIVATE_IF_CTRL_PMU_DFS_OVRD_EN_SHIFT);
++	writel(reg, cpuclk->pmu_dfs + PMUL_ACTIVATE_IF_CTRL_OFFSET);
++
++	return mvebu_pmsu_dfs_request(cpuclk->cpu);
++}
++
++static const struct clk_ops armada_xp_cpu_ops = {
++	.recalc_rate = armada_xp_clk_cpu_recalc_rate,
+ 	.round_rate = clk_cpu_round_rate,
+-	.set_rate = clk_cpu_set_rate,
++	.set_rate = armada_xp_clk_cpu_set_rate,
+ };
+ 
+-static void __init of_cpu_clk_setup(struct device_node *node)
++static const struct clk_ops armada_38x_cpu_ops = {
++	.recalc_rate = armada_38x_clk_cpu_recalc_rate,
++	.round_rate = clk_cpu_round_rate,
++	.set_rate = armada_38x_clk_cpu_set_rate,
++};
++
++static void __init common_cpu_clk_init(struct device_node *node, bool cortexa9)
+ {
+ 	struct cpu_clk *cpuclk;
+ 	void __iomem *clock_complex_base = of_iomap(node, 0);
+ 	void __iomem *pmu_dfs_base = of_iomap(node, 1);
++	void __iomem *dfx_server_base = of_iomap(node, 2);
+ 	int ncpus = 0;
+ 	struct device_node *dn;
++	bool independent_clocks = true;
++	const struct clk_ops *cpu_ops = NULL;
+ 
+ 	if (clock_complex_base == NULL) {
+ 		pr_err("%s: clock-complex base register not set\n",
+-			__func__);
++		       __func__);
+ 		return;
+ 	}
+ 
+@@ -184,7 +281,20 @@ static void __init of_cpu_clk_setup(struct device_node *node)
+ 
+ 	for_each_node_by_type(dn, "cpu")
+ 		ncpus++;
+-
++	if (cortexa9) {
++		if (dfx_server_base == NULL) {
++			pr_err("%s: DFX server base register not set\n",
++			       __func__);
++			return;
++		}
++		cpu_ops = &armada_38x_cpu_ops;
++		independent_clocks = false;
++		ncpus = 1;
++	} else {
++		cpu_ops = &armada_xp_cpu_ops;
++		for_each_node_by_type(dn, "cpu")
++			ncpus++;
++	}
+ 	cpuclk = kzalloc(ncpus * sizeof(*cpuclk), GFP_KERNEL);
+ 	if (WARN_ON(!cpuclk))
+ 		goto cpuclk_out;
+@@ -216,10 +326,12 @@ static void __init of_cpu_clk_setup(struct device_node *node)
+ 		cpuclk[cpu].reg_base = clock_complex_base;
+ 		if (pmu_dfs_base)
+ 			cpuclk[cpu].pmu_dfs = pmu_dfs_base + 4 * cpu;
++
++		cpuclk[cpu].dfx_server_base = dfx_server_base;
+ 		cpuclk[cpu].hw.init = &init;
+ 
+ 		init.name = cpuclk[cpu].clk_name;
+-		init.ops = &cpu_ops;
++		init.ops = cpu_ops;
+ 		init.flags = 0;
+ 		init.parent_names = &cpuclk[cpu].parent_name;
+ 		init.num_parents = 1;
+@@ -228,6 +340,11 @@ static void __init of_cpu_clk_setup(struct device_node *node)
+ 		if (WARN_ON(IS_ERR(clk)))
+ 			goto bail_out;
+ 		clks[cpu] = clk;
++
++		if (independent_clocks == false) {
++			/* use 1 clock to all cpus */
++			break;
++		}
+ 	}
+ 	clk_data.clk_num = MAX_CPU;
+ 	clk_data.clks = clks;
+@@ -242,7 +359,22 @@ clks_out:
+ 	kfree(cpuclk);
+ cpuclk_out:
+ 	iounmap(clock_complex_base);
++	iounmap(pmu_dfs_base);
++	iounmap(dfx_server_base);
++}
++
++static void __init armada_xp_cpu_clk_init(struct device_node *node)
++{
++	common_cpu_clk_init(node, false);
++}
++
++static void __init armada_38x_cpu_clk_init(struct device_node *node)
++{
++	common_cpu_clk_init(node, true);
+ }
+ 
+ CLK_OF_DECLARE(armada_xp_cpu_clock, "marvell,armada-xp-cpu-clock",
+-					 of_cpu_clk_setup);
++	       armada_xp_cpu_clk_init);
++CLK_OF_DECLARE(armada_38x_cpu_clock, "marvell,armada-380-cpu-clock",
++	       armada_38x_cpu_clk_init);
++
 -- 
-viresh
+2.1.0
+
