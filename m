@@ -1,61 +1,99 @@
-Return-Path: <axel.lin@ingics.com>
-Return-Path: <axel.lin@ingics.com>
-Message-ID: <1437056153.15220.1.camel@ingics.com>
-Subject: [PATCH RESEND] clk: twl6040: Convert to use devm_clk_register
-From: Axel Lin <axel.lin@ingics.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	 <mturquette@baylibre.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-clk@vger.kernel.org
-Date: Thu, 16 Jul 2015 22:15:53 +0800
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Boris BREZILLON <boris.brezillon@free-electrons.com>,
+	Lior Amsalem <alior@marvell.com>,
+	Tawfik Bayouk <tawfik@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>
+Subject: [PATCH RFC 5/5] ARM: mvebu: Update Armada 38x DT for dynamic frequency scaling
+Date: Fri,  3 Jul 2015 08:11:57 +0200
+Message-Id: <1435903917-20486-6-git-send-email-gregory.clement@free-electrons.com>
+In-Reply-To: <1435903917-20486-1-git-send-email-gregory.clement@free-electrons.com>
+References: <1435903917-20486-1-git-send-email-gregory.clement@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Use devm_clk_register() to simplify the code by removing
-twl6040_clk_remove().
+In order to support dynamic frequency scaling:
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+- the cpuclk Device Tree node must be added
+
+- the clock property of the CPUs must be filled including the
+  clock-latency property.
+
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
-This patch was sent on https://lkml.org/lkml/2014/5/18/75 with Peter's Ack.
+ arch/arm/boot/dts/armada-380.dtsi | 3 +++
+ arch/arm/boot/dts/armada-385.dtsi | 6 ++++++
+ arch/arm/boot/dts/armada-38x.dtsi | 9 +++++++++
+ 3 files changed, 18 insertions(+)
 
- drivers/clk/clk-twl6040.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
-
-diff --git a/drivers/clk/clk-twl6040.c b/drivers/clk/clk-twl6040.c
-index 3094b10..8e5ed64 100644
---- a/drivers/clk/clk-twl6040.c
-+++ b/drivers/clk/clk-twl6040.c
-@@ -90,7 +90,7 @@ static int twl6040_clk_probe(struct platform_device *pdev)
- 	clkdata->twl6040 = twl6040;
+diff --git a/arch/arm/boot/dts/armada-380.dtsi b/arch/arm/boot/dts/armada-380.dtsi
+index 5102d19cc8f4..f9dbc75bea73 100644
+--- a/arch/arm/boot/dts/armada-380.dtsi
++++ b/arch/arm/boot/dts/armada-380.dtsi
+@@ -61,6 +61,9 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0>;
++			clocks = <&cpuclk 0>;
++			clock-latency = <1000000>;
++			clock-names = "cpu0";
+ 		};
+ 	};
  
- 	clkdata->mcpdm_fclk.init = &wm831x_clkout_init;
--	clkdata->clk = clk_register(&pdev->dev, &clkdata->mcpdm_fclk);
-+	clkdata->clk = devm_clk_register(&pdev->dev, &clkdata->mcpdm_fclk);
- 	if (IS_ERR(clkdata->clk))
- 		return PTR_ERR(clkdata->clk);
+diff --git a/arch/arm/boot/dts/armada-385.dtsi b/arch/arm/boot/dts/armada-385.dtsi
+index 8e67d2c083dd..62660dd377be 100644
+--- a/arch/arm/boot/dts/armada-385.dtsi
++++ b/arch/arm/boot/dts/armada-385.dtsi
+@@ -61,11 +61,17 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0>;
++			clocks = <&cpuclk 0>;
++			clock-latency = <1000000>;
++			clock-names = "cpu0";
+ 		};
+ 		cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <1>;
++			clocks = <&cpuclk 0>;
++			clock-latency = <1000000>;
++			clock-names = "cpu1";
+ 		};
+ 	};
  
-@@ -99,21 +99,11 @@ static int twl6040_clk_probe(struct platform_device *pdev)
- 	return 0;
- }
+diff --git a/arch/arm/boot/dts/armada-38x.dtsi b/arch/arm/boot/dts/armada-38x.dtsi
+index 04ecfe6e2bc6..08409e92f3f3 100644
+--- a/arch/arm/boot/dts/armada-38x.dtsi
++++ b/arch/arm/boot/dts/armada-38x.dtsi
+@@ -369,6 +369,15 @@
+ 				#clock-cells = <1>;
+ 			};
  
--static int twl6040_clk_remove(struct platform_device *pdev)
--{
--	struct twl6040_clk *clkdata = platform_get_drvdata(pdev);
--
--	clk_unregister(clkdata->clk);
--
--	return 0;
--}
--
- static struct platform_driver twl6040_clk_driver = {
- 	.driver = {
- 		.name = "twl6040-clk",
- 	},
- 	.probe = twl6040_clk_probe,
--	.remove = twl6040_clk_remove,
- };
- 
- module_platform_driver(twl6040_clk_driver);
++			cpuclk: clock-complex@18700 {
++				compatible = "marvell,armada-380-cpu-clock",
++				"marvell,armada-xp-cpu-clock";
++				reg = <0x18700 0xA0>, <0x1c054 0x40>,
++				<0xe4260 0x8>;
++				clocks = <&coreclk 1>;
++				#clock-cells = <1>;
++			};
++
+ 			mbusc: mbus-controller@20000 {
+ 				compatible = "marvell,mbus-controller";
+ 				reg = <0x20000 0x100>, <0x20180 0x20>;
 -- 
 2.1.0
+
