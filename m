@@ -1,91 +1,182 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 22 Jul 2015 22:08:10 +0800
-From: Dong Aisheng <b29396@freescale.com>
-To: <mturquette@baylibre.com>
-CC: Dong Aisheng <aisheng.dong@freescale.com>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<sboyd@codeaurora.org>, <shawn.guo@linaro.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<Ranjani.Vaidyanathan@freescale.com>, <b20596@freescale.com>,
-	<r64343@freescale.com>, <b20788@freescale.com>
-Subject: Re: [PATCH v2 1/5] clk: remove duplicated code with
- __clk_set_parent_after
-Message-ID: <20150722140809.GC13623@shlinux1.ap.freescale.net>
-References: <1431610143-21853-1-git-send-email-aisheng.dong@freescale.com>
- <1431610143-21853-2-git-send-email-aisheng.dong@freescale.com>
- <20150528040919.22384.79189@quantum>
- <20150715122522.GA30570@shlinux1.ap.freescale.net>
- <20150715122955.GB30570@shlinux1.ap.freescale.net>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Date: Sun, 5 Jul 2015 12:15:46 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Paul Osmialowski <pawelo@king.net.pl>
+Subject: Re: [PATCH v2 6/9] arm: twr-k70f120m: extend Freescale eDMA driver
+ with the ability to support Kinetis SoC
+Message-ID: <20150705064546.GY3246@localhost>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
+ <1435667250-28299-7-git-send-email-pawelo@king.net.pl>
 MIME-Version: 1.0
+In-Reply-To: <1435667250-28299-7-git-send-email-pawelo@king.net.pl>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Nicolas Pitre <nicolas.pitre@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Rob Herring <r.herring@freescale.com>,
+ Alexander Potashev <aspotashev@emcraft.com>, Jiri Slaby <jslaby@suse.cz>,
+ linux-clk@vger.kernel.org, Russell King <linux@arm.linux.org.uk>,
+ Pawel Moll <pawel.moll@arm.com>, Geert Uytterhoeven <geert@linux-m68k.org>,
+ linux-serial@vger.kernel.org,
+ Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+ Anson Huang <b20788@freescale.com>,
+ Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org,
+ Frank Li <Frank.Li@freescale.com>, Arnd Bergmann <arnd@arndb.de>,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Jingchang Lu <jingchang.lu@freescale.com>, Yuri Tikhonov <yur@emcraft.com>,
+ linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org,
+ Sergei Poselenov <sposelenov@emcraft.com>, Paul Bolle <pebolle@tiscali.nl>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ Kumar Gala <galak@codeaurora.org>, dmaengine@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20150715122955.GB30570@shlinux1.ap.freescale.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Ping...
+On Tue, Jun 30, 2015 at 02:27:27PM +0200, Paul Osmialowski wrote:
+The patch title is not per subsystem semantics, pls fix that
 
-On Wed, Jul 15, 2015 at 08:29:56PM +0800, Dong Aisheng wrote:
-> On Wed, Jul 15, 2015 at 08:25:24PM +0800, Dong Aisheng wrote:
-> > Hi Mike,
-> > 
-> > On Wed, May 27, 2015 at 09:09:19PM -0700, Michael Turquette wrote:
-> > > Quoting Dong Aisheng (2015-05-14 06:28:59)
-> > > > __clk_set_parent_after() actually used the second argument then we
-> > > > could put this duplicate logic in there and call it with a different
-> > > > order of arguments in the success vs. error paths in this function.
-> > > > 
-> > > > Cc: Mike Turquette <mturquette@linaro.org>
-> > > > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > > > Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
-> > > > Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
-> > > 
-> > > Patch looks good to me.
-> > > 
-> > > Also just noticed that the second argument to __clk_set_parent_after is
-> > > never used :-(
-> > > 
-> > 
-> > Ping...
-> > 
-> > I did not see this patch series in your tree for v4.2 rc.
-> > Is this got missed?
-> > 
-> 
-> Updated Mike's email address.
-> 
-> Regards
-> Dong Aisheng
-> 
-> > Regards
-> > Dong Aisheng
-> > 
-> > > Regards,
-> > > Mike
-> > > 
-> > > > ---
-> > > >  drivers/clk/clk.c | 8 +-------
-> > > >  1 file changed, 1 insertion(+), 7 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > > index 659f2b0..0e813ea 100644
-> > > > --- a/drivers/clk/clk.c
-> > > > +++ b/drivers/clk/clk.c
-> > > > @@ -1159,14 +1159,8 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
-> > > >                 flags = clk_enable_lock();
-> > > >                 clk_reparent(core, old_parent);
-> > > >                 clk_enable_unlock(flags);
-> > > > +               __clk_set_parent_after(core, old_parent, parent);
-> > > >  
-> > > > -               if (core->prepare_count) {
-> > > > -                       flags = clk_enable_lock();
-> > > > -                       clk_core_disable(core);
-> > > > -                       clk_core_disable(parent);
-> > > > -                       clk_enable_unlock(flags);
-> > > > -                       clk_core_unprepare(parent);
-> > > > -               }
-> > > >                 return ret;
-> > > >         }
-> > > >  
-> > > > -- 
-> > > > 1.9.1
-> > > > 
+> Surprisingly small amount of work was required in order to extend already
+> existing eDMA driver with the support for Kinetis SoC architecture.
+And this doesn't tell me the stuff you added/removed/fixed in current driver
+to extend to Kinetis. Our changelog should tell what changed and why
+
+Btw is this patch dependent upon the rest of the series?
+
+>  
+>  static int
+> -fsl_edma_irq_init(struct platform_device *pdev, struct fsl_edma_engine *fsl_edma)
+> +fsl_edma_irq_init(struct platform_device *pdev,
+> +		  struct fsl_edma_engine *fsl_edma)
+please keep style changes in a separate patch
+
+>  {
+> +	struct device_node *np = pdev->dev.of_node;
+> +	int irq, errirq;
+>  	int ret;
+>  
+> -	fsl_edma->txirq = platform_get_irq_byname(pdev, "edma-tx");
+> -	if (fsl_edma->txirq < 0) {
+> -		dev_err(&pdev->dev, "Can't get edma-tx irq.\n");
+> -		return fsl_edma->txirq;
+> -	}
+> -
+> -	fsl_edma->errirq = platform_get_irq_byname(pdev, "edma-err");
+> -	if (fsl_edma->errirq < 0) {
+> +	errirq = platform_get_irq_byname(pdev, "edma-err");
+> +	if (errirq < 0) {
+>  		dev_err(&pdev->dev, "Can't get edma-err irq.\n");
+> -		return fsl_edma->errirq;
+> +		return irq;
+shouldn't this be errirq
+
+>  	}
+>  
+> -	if (fsl_edma->txirq == fsl_edma->errirq) {
+> -		ret = devm_request_irq(&pdev->dev, fsl_edma->txirq,
+> -				fsl_edma_irq_handler, 0, "eDMA", fsl_edma);
+> -		if (ret) {
+> -			dev_err(&pdev->dev, "Can't register eDMA IRQ.\n");
+> -			 return  ret;
+> +	if (fsl_edma->kinetis) {
+> +		int i;
+> +		int irqs = of_irq_count(np);
+> +
+> +		if (irqs <= 1) {
+> +			dev_err(&pdev->dev, "Wrong eDMA irq count %d\n", irqs);
+> +			return -EINVAL;
+why not return irqs?
+
+>  		}
+> -	} else {
+> -		ret = devm_request_irq(&pdev->dev, fsl_edma->txirq,
+> +
+> +		for (i = 0; i < (irqs - 1); i++) {
+> +			char irq_name[32];
+> +
+> +			sprintf(irq_name, "edma-tx-%d,%d", i, 16 + i);
+> +			irq = platform_get_irq_byname(pdev, irq_name);
+> +			if (irq < 0) {
+> +				dev_err(&pdev->dev, "Can't get %s irq.\n",
+> +							irq_name);
+> +				return irq;
+> +			}
+> +
+> +			ret = devm_request_irq(&pdev->dev, irq,
+>  				fsl_edma_tx_handler, 0, "eDMA tx", fsl_edma);
+> -		if (ret) {
+> -			dev_err(&pdev->dev, "Can't register eDMA tx IRQ.\n");
+> -			return  ret;
+> +			if (ret) {
+> +				dev_err(&pdev->dev, "Can't register %s IRQ.\n",
+> +							irq_name);
+> +				return  ret;
+> +			}
+>  		}
+>  
+> -		ret = devm_request_irq(&pdev->dev, fsl_edma->errirq,
+> -				fsl_edma_err_handler, 0, "eDMA err", fsl_edma);
+> +		ret = devm_request_irq(&pdev->dev, errirq,
+> +			fsl_edma_err_handler, 0, "eDMA err", fsl_edma);
+>  		if (ret) {
+>  			dev_err(&pdev->dev, "Can't register eDMA err IRQ.\n");
+> -			return  ret;
+> +		return  ret;
+> +		}
+> +	} else {
+> +		irq = platform_get_irq_byname(pdev, "edma-tx");
+> +		if (irq < 0) {
+> +			dev_err(&pdev->dev, "Can't get edma-tx irq.\n");
+> +			return irq;
+> +		}
+> +
+> +		if (irq == errirq) {
+> +			ret = devm_request_irq(&pdev->dev, irq,
+> +				fsl_edma_irq_handler, 0, "eDMA", fsl_edma);
+> +			if (ret) {
+> +				dev_err(&pdev->dev,
+> +						"Can't register eDMA IRQ.\n");
+> +				return  ret;
+> +			}
+> +		} else {
+> +			ret = devm_request_irq(&pdev->dev, irq,
+> +				fsl_edma_tx_handler, 0, "eDMA tx", fsl_edma);
+> +			if (ret) {
+> +				dev_err(&pdev->dev,
+> +					    "Can't register eDMA tx IRQ.\n");
+> +				return  ret;
+> +			}
+> +
+> +			ret = devm_request_irq(&pdev->dev, errirq,
+> +				fsl_edma_err_handler, 0, "eDMA err", fsl_edma);
+> +			if (ret) {
+> +				dev_err(&pdev->dev,
+> +					    "Can't register eDMA err IRQ.\n");
+> +				return  ret;
+> +			}
+>  		}
+>  	}
+Okay here we have a bunch of changes without explanation on why these are
+required and what are they supposed to do. So it is kind of very difficult to
+review!
+
+So please split these up in sequence of patches where each patch does only
+ONE thing with right changelog messages
+
+Thanks
+
+-- 
+~Vinod
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
