@@ -1,203 +1,230 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 26/26] clk: Remove unused provider APIs
-Date: Fri, 31 Jul 2015 10:04:06 -0700
-Message-Id: <1438362246-6664-27-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 1/7] clk: rockchip: add support for phase inverters
+Date: Sun,  5 Jul 2015 11:00:14 +0200
+Message-Id: <1436086820-3757-2-git-send-email-heiko@sntech.de>
+In-Reply-To: <1436086820-3757-1-git-send-email-heiko@sntech.de>
+References: <1436086820-3757-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Remove these APIs now that we've converted the users of these
-APIs to their replacement clk_hw based versions.
+Most Rockchip socs have optional phase inverters connected to some
+clocks that move the clock-phase by 180 degrees.
+While not having any actual influence on the rate, the inverter
+provides its own simple recalc_rate callback as relying on the
+fallback in the framework is for "lazy developers" according
+to the documentation in the code.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/clk/clk.c            | 86 +++++++++-----------------------------------
- include/linux/clk-provider.h |  5 ---
- 2 files changed, 16 insertions(+), 75 deletions(-)
+ drivers/clk/rockchip/Makefile       |   1 +
+ drivers/clk/rockchip/clk-inverter.c | 116 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.c          |   7 +++
+ drivers/clk/rockchip/clk.h          |  20 +++++++
+ 4 files changed, 144 insertions(+)
+ create mode 100644 drivers/clk/rockchip/clk-inverter.c
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 821f1c510955..aaa46f7ed572 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -295,16 +295,6 @@ unsigned int clk_hw_get_num_parents(struct clk_hw *hw)
- }
- EXPORT_SYMBOL_GPL(clk_hw_get_num_parents);
+diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+index 2714097..fd71c7d 100644
+--- a/drivers/clk/rockchip/Makefile
++++ b/drivers/clk/rockchip/Makefile
+@@ -6,6 +6,7 @@ obj-y	+= clk-rockchip.o
+ obj-y	+= clk.o
+ obj-y	+= clk-pll.o
+ obj-y	+= clk-cpu.o
++obj-y	+= clk-inverter.o
+ obj-y	+= clk-mmc-phase.o
+ obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
  
--struct clk *__clk_get_parent(struct clk *clk)
--{
--	if (!clk)
--		return NULL;
--
--	/* TODO: Create a per-user clk and change callers to call clk_put */
--	return !clk->core->parent ? NULL : clk->core->parent->hw->clk;
--}
--EXPORT_SYMBOL_GPL(__clk_get_parent);
--
- struct clk_hw *clk_hw_get_parent(struct clk_hw *hw)
- {
- 	return hw->core->parent ? hw->core->parent->hw : NULL;
-@@ -368,19 +358,6 @@ static struct clk_core *clk_core_get_parent_by_index(struct clk_core *core,
- 		return core->parents[index];
- }
- 
--struct clk *clk_get_parent_by_index(struct clk *clk, u8 index)
--{
--	struct clk_core *parent;
--
--	if (!clk)
--		return NULL;
--
--	parent = clk_core_get_parent_by_index(clk->core, index);
--
--	return !parent ? NULL : parent->hw->clk;
--}
--EXPORT_SYMBOL_GPL(clk_get_parent_by_index);
--
- struct clk_hw *clk_hw_get_parent_by_index(struct clk_hw *hw, unsigned int index)
- {
- 	struct clk_core *parent;
-@@ -417,15 +394,6 @@ out:
- 	return ret;
- }
- 
--unsigned long __clk_get_rate(struct clk *clk)
--{
--	if (!clk)
--		return 0;
--
--	return clk_core_get_rate_nolock(clk->core);
--}
--EXPORT_SYMBOL_GPL(__clk_get_rate);
--
- unsigned long clk_hw_get_rate(struct clk_hw *hw)
- {
- 	return clk_core_get_rate_nolock(hw->core);
-@@ -452,14 +420,6 @@ unsigned long clk_hw_get_flags(struct clk_hw *hw)
- }
- EXPORT_SYMBOL_GPL(clk_hw_get_flags);
- 
--bool __clk_is_prepared(struct clk *clk)
--{
--	if (!clk)
--		return false;
--
--	return clk_core_is_prepared(clk->core);
--}
--
- bool clk_hw_is_prepared(struct clk_hw *hw)
- {
- 	return clk_core_is_prepared(hw->core);
-@@ -873,32 +833,6 @@ int __clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
- }
- EXPORT_SYMBOL_GPL(__clk_determine_rate);
- 
--/**
-- * __clk_round_rate - round the given rate for a clk
-- * @clk: round the rate of this clock
-- * @rate: the rate which is to be rounded
-- *
-- * Useful for clk_ops such as .set_rate
-- */
--unsigned long __clk_round_rate(struct clk *clk, unsigned long rate)
--{
--	struct clk_rate_request req;
--	int ret;
--
--	if (!clk)
--		return 0;
--
--	clk_core_get_boundaries(clk->core, &req.min_rate, &req.max_rate);
--	req.rate = rate;
--
--	ret = clk_core_round_rate_nolock(clk->core, &req);
--	if (ret)
--		return 0;
--
--	return req.rate;
--}
--EXPORT_SYMBOL_GPL(__clk_round_rate);
--
- unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate)
- {
- 	int ret;
-@@ -926,16 +860,24 @@ EXPORT_SYMBOL_GPL(clk_hw_round_rate);
-  */
- long clk_round_rate(struct clk *clk, unsigned long rate)
- {
--	unsigned long ret;
-+	struct clk_rate_request req;
-+	int ret;
- 
- 	if (!clk)
- 		return 0;
- 
- 	clk_prepare_lock();
--	ret = __clk_round_rate(clk, rate);
+diff --git a/drivers/clk/rockchip/clk-inverter.c b/drivers/clk/rockchip/clk-inverter.c
+new file mode 100644
+index 0000000..8054fdb
+--- /dev/null
++++ b/drivers/clk/rockchip/clk-inverter.c
+@@ -0,0 +1,116 @@
++/*
++ * Copyright 2015 Heiko Stuebner <heiko@sntech.de>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+	clk_core_get_boundaries(clk->core, &req.min_rate, &req.max_rate);
-+	req.rate = rate;
++#include <linux/slab.h>
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/spinlock.h>
++#include <linux/kernel.h>
++#include "clk.h"
 +
-+	ret = clk_core_round_rate_nolock(clk->core, &req);
- 	clk_prepare_unlock();
- 
--	return ret;
-+	if (ret)
-+		return ret;
++struct rockchip_inv_clock {
++	struct clk_hw	hw;
++	void __iomem	*reg;
++	int		shift;
++	int		flags;
++	spinlock_t	*lock;
++};
 +
-+	return req.rate;
- }
- EXPORT_SYMBOL_GPL(clk_round_rate);
- 
-@@ -1682,8 +1624,12 @@ struct clk *clk_get_parent(struct clk *clk)
- {
- 	struct clk *parent;
- 
-+	if (!clk)
++#define to_inv_clock(_hw) container_of(_hw, struct rockchip_inv_clock, hw)
++
++#define INVERTER_MASK 0x1
++
++static int rockchip_inv_get_phase(struct clk_hw *hw)
++{
++	struct rockchip_inv_clock *inv_clock = to_inv_clock(hw);
++	u32 val;
++
++	val = readl(inv_clock->reg) >> inv_clock->shift;
++	val &= INVERTER_MASK;
++	return val ? 180 : 0;
++}
++
++static int rockchip_inv_set_phase(struct clk_hw *hw, int degrees)
++{
++	struct rockchip_inv_clock *inv_clock = to_inv_clock(hw);
++	u32 val;
++
++	if (degrees % 180 == 0) {
++		val = !!degrees;
++	} else {
++		pr_err("%s: unsupported phase %d for %s\n",
++		       __func__, degrees, __clk_get_name(hw->clk));
++		return -EINVAL;
++	}
++
++	if (inv_clock->flags & ROCKCHIP_INVERTER_HIWORD_MASK) {
++		writel(HIWORD_UPDATE(val, INVERTER_MASK, inv_clock->shift),
++		       inv_clock->reg);
++	} else {
++		unsigned long flags;
++		u32 reg;
++
++		spin_lock_irqsave(inv_clock->lock, flags);
++
++		reg = readl(inv_clock->reg);
++		reg &= ~BIT(inv_clock->shift);
++		reg |= val;
++		writel(reg, inv_clock->reg);
++
++		spin_unlock_irqrestore(inv_clock->lock, flags);
++	}
++
++	return 0;
++}
++
++static const struct clk_ops rockchip_inv_clk_ops = {
++	.get_phase	= rockchip_inv_get_phase,
++	.set_phase	= rockchip_inv_set_phase,
++};
++
++struct clk *rockchip_clk_register_inverter(const char *name,
++				const char *const *parent_names, u8 num_parents,
++				void __iomem *reg, int shift, int flags,
++				spinlock_t *lock)
++{
++	struct clk_init_data init;
++	struct rockchip_inv_clock *inv_clock;
++	struct clk *clk;
++
++	inv_clock = kmalloc(sizeof(*inv_clock), GFP_KERNEL);
++	if (!inv_clock)
 +		return NULL;
 +
- 	clk_prepare_lock();
--	parent = __clk_get_parent(clk);
-+	/* TODO: Create a per-user clk and change callers to call clk_put */
-+	parent = !clk->core->parent ? NULL : clk->core->parent->hw->clk;
- 	clk_prepare_unlock();
++	init.name = name;
++	init.num_parents = num_parents;
++	init.flags = CLK_SET_RATE_PARENT;
++	init.parent_names = parent_names;
++	init.ops = &rockchip_inv_clk_ops;
++
++	inv_clock->hw.init = &init;
++	inv_clock->reg = reg;
++	inv_clock->shift = shift;
++	inv_clock->flags = flags;
++	inv_clock->lock = lock;
++
++	clk = clk_register(NULL, &inv_clock->hw);
++	if (IS_ERR(clk))
++		goto err_free;
++
++	return clk;
++
++err_free:
++	kfree(inv_clock);
++	return NULL;
++}
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 052b94d..2493881 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -277,6 +277,13 @@ void __init rockchip_clk_register_branches(
+ 				list->div_shift
+ 			);
+ 			break;
++		case branch_inverter:
++			clk = rockchip_clk_register_inverter(
++				list->name, list->parent_names,
++				list->num_parents,
++				reg_base + list->muxdiv_offset,
++				list->div_shift, list->div_flags, &clk_lock);
++			break;
+ 		}
  
- 	return parent;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 2944a515111d..0d3128fbc14e 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -610,17 +610,13 @@ const char *__clk_get_name(struct clk *clk);
- const char *clk_hw_get_name(struct clk_hw *hw);
- struct clk_hw *__clk_get_hw(struct clk *clk);
- unsigned int clk_hw_get_num_parents(struct clk_hw *hw);
--struct clk *__clk_get_parent(struct clk *clk);
- struct clk_hw *clk_hw_get_parent(struct clk_hw *hw);
--struct clk *clk_get_parent_by_index(struct clk *clk, u8 index);
- struct clk_hw *clk_hw_get_parent_by_index(struct clk_hw *hw,
- 					  unsigned int index);
- unsigned int __clk_get_enable_count(struct clk *clk);
--unsigned long __clk_get_rate(struct clk *clk);
- unsigned long clk_hw_get_rate(struct clk_hw *hw);
- unsigned long __clk_get_flags(struct clk *clk);
- unsigned long clk_hw_get_flags(struct clk_hw *hw);
--bool __clk_is_prepared(struct clk *clk);
- bool clk_hw_is_prepared(struct clk_hw *hw);
- bool __clk_is_enabled(struct clk *clk);
- struct clk *__clk_lookup(const char *name);
-@@ -642,7 +638,6 @@ static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
- /*
-  * FIXME clock api without lock protection
-  */
--unsigned long __clk_round_rate(struct clk *clk, unsigned long rate);
- unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate);
+ 		/* none of the cases above matched */
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 501f02e..b72dad0 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -182,6 +182,13 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+ 				const char *const *parent_names, u8 num_parents,
+ 				void __iomem *reg, int shift);
  
- struct of_device_id;
++#define ROCKCHIP_INVERTER_HIWORD_MASK	BIT(0)
++
++struct clk *rockchip_clk_register_inverter(const char *name,
++				const char *const *parent_names, u8 num_parents,
++				void __iomem *reg, int shift, int flags,
++				spinlock_t *lock);
++
+ #define PNAME(x) static const char *const x[] __initconst
+ 
+ enum rockchip_clk_branch_type {
+@@ -191,6 +198,7 @@ enum rockchip_clk_branch_type {
+ 	branch_fraction_divider,
+ 	branch_gate,
+ 	branch_mmc,
++	branch_inverter,
+ };
+ 
+ struct rockchip_clk_branch {
+@@ -414,6 +422,18 @@ struct rockchip_clk_branch {
+ 		.div_shift	= shift,			\
+ 	}
+ 
++#define INVERTER(_id, cname, pname, io, is, if)			\
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_inverter,		\
++		.name		= cname,			\
++		.parent_names	= (const char *[]){ pname },	\
++		.num_parents	= 1,				\
++		.muxdiv_offset	= io,				\
++		.div_shift	= is,				\
++		.div_flags	= if,				\
++	}
++
+ void rockchip_clk_init(struct device_node *np, void __iomem *base,
+ 		       unsigned long nr_clks);
+ struct regmap *rockchip_clk_get_grf(void);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+2.1.4
