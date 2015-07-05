@@ -1,64 +1,105 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: Silence warnings about lock imbalances
-Date: Fri, 24 Jul 2015 12:31:56 -0700
-Message-Id: <1437766316-19587-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 4/7] dt-bindings: add documentation of rk3668 clock controller
+Date: Sun,  5 Jul 2015 11:00:17 +0200
+Message-Id: <1436086820-3757-5-git-send-email-heiko@sntech.de>
+In-Reply-To: <1436086820-3757-1-git-send-email-heiko@sntech.de>
+References: <1436086820-3757-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-The recursive spinlock implementation trips up sparse and it
-complains that these functions have lock imbalances. That isn't
-really true though, so add some __acquires() and __releases()
-information so that sparse is quiet.
+Add the devicetree binding for the cru on the rk3368 which quite similar
+structured as previous clock controllers.
 
-drivers/clk/clk.c:116:22: warning: context imbalance in 'clk_enable_lock' - wrong count at exit
-drivers/clk/clk.c:141:9: warning: context imbalance in 'clk_enable_unlock' - unexpected unlock
-
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: Kumar Gala <galak@codeaurora.org>
+Cc: devicetree@vger.kernel.org
 ---
- drivers/clk/clk.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ .../bindings/clock/rockchip,rk3368-cru.txt         | 61 ++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 67f778bd093b..7bb975747a2c 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -114,12 +114,14 @@ static void clk_prepare_unlock(void)
- }
- 
- static unsigned long clk_enable_lock(void)
-+	__acquires(enable_lock)
- {
- 	unsigned long flags;
- 
- 	if (!spin_trylock_irqsave(&enable_lock, flags)) {
- 		if (enable_owner == current) {
- 			enable_refcnt++;
-+			__acquire(enable_lock);
- 			return flags;
- 		}
- 		spin_lock_irqsave(&enable_lock, flags);
-@@ -132,12 +134,15 @@ static unsigned long clk_enable_lock(void)
- }
- 
- static void clk_enable_unlock(unsigned long flags)
-+	__releases(enable_lock)
- {
- 	WARN_ON_ONCE(enable_owner != current);
- 	WARN_ON_ONCE(enable_refcnt == 0);
- 
--	if (--enable_refcnt)
-+	if (--enable_refcnt) {
-+		__release(enable_lock);
- 		return;
-+	}
- 	enable_owner = NULL;
- 	spin_unlock_irqrestore(&enable_lock, flags);
- }
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
+new file mode 100644
+index 0000000..7c8bbcf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
+@@ -0,0 +1,61 @@
++* Rockchip RK3368 Clock and Reset Unit
++
++The RK3368 clock controller generates and supplies clock to various
++controllers within the SoC and also implements a reset controller for SoC
++peripherals.
++
++Required Properties:
++
++- compatible: should be "rockchip,rk3368-cru"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- #clock-cells: should be 1.
++- #reset-cells: should be 1.
++
++Optional Properties:
++
++- rockchip,grf: phandle to the syscon managing the "general register files"
++  If missing, pll rates are not changeable, due to the missing pll lock status.
++
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. All available clocks are defined as
++preprocessor macros in the dt-bindings/clock/rk3368-cru.h headers and can be
++used in device tree sources. Similar macros exist for the reset sources in
++these files.
++
++External clocks:
++
++There are several clocks that are generated outside the SoC. It is expected
++that they are defined using standard clock bindings with following
++clock-output-names:
++ - "xin24m" - crystal input - required,
++ - "xin32k" - rtc clock - optional,
++ - "ext_i2s" - external I2S clock - optional,
++ - "ext_gmac" - external GMAC clock - optional
++ - "ext_hsadc" - external HSADC clock - optional,
++ - "ext_isp" - external ISP clock - optional,
++ - "ext_jtag" - external JTAG clock - optional
++ - "ext_vip" - external VIP clock - optional,
++ - "usbotg_out" - output clock of the pll in the otg phy
++
++Example: Clock controller node:
++
++	cru: clock-controller@ff760000 {
++		compatible = "rockchip,rk3368-cru";
++		reg = <0x0 0xff760000 0x0 0x1000>;
++		rockchip,grf = <&grf>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++Example: UART controller node that consumes the clock generated by the clock
++  controller:
++
++	uart0: serial@10124000 {
++		compatible = "snps,dw-apb-uart";
++		reg = <0x10124000 0x400>;
++		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
++		reg-shift = <2>;
++		reg-io-width = <1>;
++		clocks = <&cru SCLK_UART0>;
++	};
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+2.1.4
