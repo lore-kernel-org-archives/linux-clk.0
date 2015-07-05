@@ -1,39 +1,195 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 21 Jul 2015 11:43:40 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jun Nie <jun.nie@linaro.org>
-Cc: mturquette@linaro.org, linux-clk@vger.kernel.org, shawn.guo@linaro.org,
-	jason.liu@linaro.org, wan.zhijun@zte.com.cn
-Subject: Re: [PATCH 2/2] clk: zx: Add audio and GPIO clock for zx296702
-Message-ID: <20150721184340.GB3738@codeaurora.org>
-References: <1436349493-5453-1-git-send-email-jun.nie@linaro.org>
- <1436349493-5453-2-git-send-email-jun.nie@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Sun, 5 Jul 2015 11:45:56 +0200 (CEST)
+From: Paul Osmialowski <pawelo@king.net.pl>
+To: Vinod Koul <vinod.koul@intel.com>
+cc: Paul Osmialowski <pawelo@king.net.pl>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+	dmaengine@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Nicolas Pitre <nicolas.pitre@linaro.org>,
+	Paul Bolle <pebolle@tiscali.nl>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+	Anson Huang <b20788@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Jingchang Lu <jingchang.lu@freescale.com>,
+	Rob Herring <r.herring@freescale.com>,
+	Yuri Tikhonov <yur@emcraft.com>,
+	Sergei Poselenov <sposelenov@emcraft.com>,
+	Alexander Potashev <aspotashev@emcraft.com>
+Subject: Re: [PATCH v2 6/9] arm: twr-k70f120m: extend Freescale eDMA driver
+ with the ability to support Kinetis SoC
+In-Reply-To: <20150705064546.GY3246@localhost>
+Message-ID: <alpine.LNX.2.00.1507051141370.15162@localhost.localdomain>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <1435667250-28299-7-git-send-email-pawelo@king.net.pl> <20150705064546.GY3246@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1436349493-5453-2-git-send-email-jun.nie@linaro.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/08, Jun Nie wrote:
-> Add SPDIF/I2S and GPIO clock for zx296702
-> 
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+Hi Vinod,
 
-This patch looks ok.
+You're right, this should be separate patchset. Having patchset too big
+leads to huge list of maintainers and lack of focusing on details 
+(on-error return values are total mess now!).
 
-> @@ -170,6 +181,21 @@ static const char * uart_wclk_sel[] = {
->  	"lsp1_26M_wclk",
->  };
->  
-> +static const char * spdif0_wclk_sel[] = {
+I plan to split it into three: 1) initial support (so the proof that 
+platform is living could be read only on JTAG), 2) DMA support and 3) UART 
+support.
 
-Would be nice if this could be const char * const to avoid
-checkpatch noise.
+Also in my view extending this DMA driver requires acceptance of initial
+platform support first - there's no point in extending this driver without
+having support for a platform for which we are extending it.
 
-> +	"lsp0_104M_wclk",
-> +	"lsp0_26M_wclk",
-> +};
-> +
+Thanks,
+Paul
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Sun, 5 Jul 2015, Vinod Koul wrote:
+
+> On Tue, Jun 30, 2015 at 02:27:27PM +0200, Paul Osmialowski wrote:
+> The patch title is not per subsystem semantics, pls fix that
+>
+>> Surprisingly small amount of work was required in order to extend already
+>> existing eDMA driver with the support for Kinetis SoC architecture.
+> And this doesn't tell me the stuff you added/removed/fixed in current driver
+> to extend to Kinetis. Our changelog should tell what changed and why
+>
+> Btw is this patch dependent upon the rest of the series?
+>
+>>
+>>  static int
+>> -fsl_edma_irq_init(struct platform_device *pdev, struct fsl_edma_engine *fsl_edma)
+>> +fsl_edma_irq_init(struct platform_device *pdev,
+>> +		  struct fsl_edma_engine *fsl_edma)
+> please keep style changes in a separate patch
+>
+>>  {
+>> +	struct device_node *np = pdev->dev.of_node;
+>> +	int irq, errirq;
+>>  	int ret;
+>>
+>> -	fsl_edma->txirq = platform_get_irq_byname(pdev, "edma-tx");
+>> -	if (fsl_edma->txirq < 0) {
+>> -		dev_err(&pdev->dev, "Can't get edma-tx irq.\n");
+>> -		return fsl_edma->txirq;
+>> -	}
+>> -
+>> -	fsl_edma->errirq = platform_get_irq_byname(pdev, "edma-err");
+>> -	if (fsl_edma->errirq < 0) {
+>> +	errirq = platform_get_irq_byname(pdev, "edma-err");
+>> +	if (errirq < 0) {
+>>  		dev_err(&pdev->dev, "Can't get edma-err irq.\n");
+>> -		return fsl_edma->errirq;
+>> +		return irq;
+> shouldn't this be errirq
+>
+>>  	}
+>>
+>> -	if (fsl_edma->txirq == fsl_edma->errirq) {
+>> -		ret = devm_request_irq(&pdev->dev, fsl_edma->txirq,
+>> -				fsl_edma_irq_handler, 0, "eDMA", fsl_edma);
+>> -		if (ret) {
+>> -			dev_err(&pdev->dev, "Can't register eDMA IRQ.\n");
+>> -			 return  ret;
+>> +	if (fsl_edma->kinetis) {
+>> +		int i;
+>> +		int irqs = of_irq_count(np);
+>> +
+>> +		if (irqs <= 1) {
+>> +			dev_err(&pdev->dev, "Wrong eDMA irq count %d\n", irqs);
+>> +			return -EINVAL;
+> why not return irqs?
+>
+>>  		}
+>> -	} else {
+>> -		ret = devm_request_irq(&pdev->dev, fsl_edma->txirq,
+>> +
+>> +		for (i = 0; i < (irqs - 1); i++) {
+>> +			char irq_name[32];
+>> +
+>> +			sprintf(irq_name, "edma-tx-%d,%d", i, 16 + i);
+>> +			irq = platform_get_irq_byname(pdev, irq_name);
+>> +			if (irq < 0) {
+>> +				dev_err(&pdev->dev, "Can't get %s irq.\n",
+>> +							irq_name);
+>> +				return irq;
+>> +			}
+>> +
+>> +			ret = devm_request_irq(&pdev->dev, irq,
+>>  				fsl_edma_tx_handler, 0, "eDMA tx", fsl_edma);
+>> -		if (ret) {
+>> -			dev_err(&pdev->dev, "Can't register eDMA tx IRQ.\n");
+>> -			return  ret;
+>> +			if (ret) {
+>> +				dev_err(&pdev->dev, "Can't register %s IRQ.\n",
+>> +							irq_name);
+>> +				return  ret;
+>> +			}
+>>  		}
+>>
+>> -		ret = devm_request_irq(&pdev->dev, fsl_edma->errirq,
+>> -				fsl_edma_err_handler, 0, "eDMA err", fsl_edma);
+>> +		ret = devm_request_irq(&pdev->dev, errirq,
+>> +			fsl_edma_err_handler, 0, "eDMA err", fsl_edma);
+>>  		if (ret) {
+>>  			dev_err(&pdev->dev, "Can't register eDMA err IRQ.\n");
+>> -			return  ret;
+>> +		return  ret;
+>> +		}
+>> +	} else {
+>> +		irq = platform_get_irq_byname(pdev, "edma-tx");
+>> +		if (irq < 0) {
+>> +			dev_err(&pdev->dev, "Can't get edma-tx irq.\n");
+>> +			return irq;
+>> +		}
+>> +
+>> +		if (irq == errirq) {
+>> +			ret = devm_request_irq(&pdev->dev, irq,
+>> +				fsl_edma_irq_handler, 0, "eDMA", fsl_edma);
+>> +			if (ret) {
+>> +				dev_err(&pdev->dev,
+>> +						"Can't register eDMA IRQ.\n");
+>> +				return  ret;
+>> +			}
+>> +		} else {
+>> +			ret = devm_request_irq(&pdev->dev, irq,
+>> +				fsl_edma_tx_handler, 0, "eDMA tx", fsl_edma);
+>> +			if (ret) {
+>> +				dev_err(&pdev->dev,
+>> +					    "Can't register eDMA tx IRQ.\n");
+>> +				return  ret;
+>> +			}
+>> +
+>> +			ret = devm_request_irq(&pdev->dev, errirq,
+>> +				fsl_edma_err_handler, 0, "eDMA err", fsl_edma);
+>> +			if (ret) {
+>> +				dev_err(&pdev->dev,
+>> +					    "Can't register eDMA err IRQ.\n");
+>> +				return  ret;
+>> +			}
+>>  		}
+>>  	}
+> Okay here we have a bunch of changes without explanation on why these are
+> required and what are they supposed to do. So it is kind of very difficult to
+> review!
+>
+> So please split these up in sequence of patches where each patch does only
+> ONE thing with right changelog messages
+>
+> Thanks
+>
+> -- 
+> ~Vinod
+>
