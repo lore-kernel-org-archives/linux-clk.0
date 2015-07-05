@@ -1,73 +1,64 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
 Cc: linux-clk@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
 	linux-arm-kernel@lists.infradead.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 4/7] ARM: sun7i: Add clock indices
-Date: Sun, 26 Jul 2015 23:14:27 +0200
-Message-Id: <1437945270-32014-5-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
+	linux-rockchip@lists.infradead.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v3 0/7] clk: rockchip: add support for the clock-tree of the rk3368
+Date: Sun,  5 Jul 2015 11:00:13 +0200
+Message-Id: <1436086820-3757-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-The A20 gates have a non continuous set of clock IDs that are valid. Add
-the clock-indices property to the DT to express this.
+This is the respin of the no-yet-applied parts of the rk3368 clock support.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun7i-a20.dtsi | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+It definitly needs the clock-changes that went into the mainline kernel
+during the merge window (constifying stuff etc) and I'd need the
+dt-binding header in a stable branch to be included into armsoc too.
 
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index 6a63f30c9a69..ca0b01a96c52 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -267,6 +267,19 @@
- 			compatible = "allwinner,sun7i-a20-ahb-gates-clk";
- 			reg = <0x01c20060 0x8>;
- 			clocks = <&ahb>;
-+			clock-indices = <0>, <1>,
-+					<2>, <3>, <4>,
-+					<5>, <6>, <7>, <8>,
-+					<9>, <10>, <11>, <12>,
-+					<13>, <14>, <16>,
-+					<17>, <18>, <20>, <21>,
-+					<22>, <23>, <25>,
-+					<28>, <32>, <33>, <34>,
-+					<35>, <36>, <37>, <40>,
-+					<41>, <42>, <43>,
-+					<44>, <45>, <46>,
-+					<47>, <49>, <50>,
-+					<52>;
- 			clock-output-names = "ahb_usb0", "ahb_ehci0",
- 				"ahb_ohci0", "ahb_ehci1", "ahb_ohci1",
- 				"ahb_ss", "ahb_dma", "ahb_bist", "ahb_mmc0",
-@@ -295,6 +308,10 @@
- 			compatible = "allwinner,sun7i-a20-apb0-gates-clk";
- 			reg = <0x01c20068 0x4>;
- 			clocks = <&apb0>;
-+			clock-indices = <0>, <1>,
-+					<2>, <3>, <4>,
-+					<5>, <6>, <7>,
-+					<8>, <10>;
- 			clock-output-names = "apb0_codec", "apb0_spdif",
- 				"apb0_ac97", "apb0_iis0", "apb0_iis1",
- 				"apb0_pio", "apb0_ir0", "apb0_ir1",
-@@ -314,6 +331,12 @@
- 			compatible = "allwinner,sun7i-a20-apb1-gates-clk";
- 			reg = <0x01c2006c 0x4>;
- 			clocks = <&apb1>;
-+			clock-indices = <0>, <1>,
-+					<2>, <3>, <4>,
-+					<5>, <6>, <7>,
-+					<15>, <16>, <17>,
-+					<18>, <19>, <20>,
-+					<21>, <22>, <23>;
- 			clock-output-names = "apb1_i2c0", "apb1_i2c1",
- 				"apb1_i2c2", "apb1_i2c3", "apb1_can",
- 				"apb1_scr", "apb1_ps20", "apb1_ps21",
+
+changes since v2:
+- drop patches already applied
+- address comments from Stephen Boyd:
+  - no dump recalc_rate callback
+  - missing header includes
+  - style issues (parentheses and saving some lines)
+- fix similar issues in the already included code
+changes since v1:
+- add CLK_SET_RATE_PARENT to sclk_mac to provide sane rates
+  when using a rmii phy with soc-side clock generation.
+  Both as fix for the 3288 and in the newly added rk3368.
+
+
+Heiko Stuebner (7):
+  clk: rockchip: add support for phase inverters
+  clk: rockchip: fix issues in the mmc-phase clock
+  clk: rockchip: define the inverters of rk3066/rk3188 and rk3288
+  dt-bindings: add documentation of rk3668 clock controller
+  clk: rockchip: add dt-binding header for rk3368
+  clk: rockchip: add missing include guards
+  clk: rockchip: add rk3368 clock controller
+
+ .../bindings/clock/rockchip,rk3368-cru.txt         |  61 ++
+ drivers/clk/rockchip/Makefile                      |   2 +
+ drivers/clk/rockchip/clk-inverter.c                | 116 +++
+ drivers/clk/rockchip/clk-mmc-phase.c               |   6 +-
+ drivers/clk/rockchip/clk-rk3188.c                  |   9 +-
+ drivers/clk/rockchip/clk-rk3288.c                  |   7 +-
+ drivers/clk/rockchip/clk-rk3368.c                  | 881 +++++++++++++++++++++
+ drivers/clk/rockchip/clk.c                         |   7 +
+ drivers/clk/rockchip/clk.h                         |  36 +
+ include/dt-bindings/clock/rk3066a-cru.h            |   5 +
+ include/dt-bindings/clock/rk3188-cru-common.h      |   5 +
+ include/dt-bindings/clock/rk3188-cru.h             |   5 +
+ include/dt-bindings/clock/rk3288-cru.h             |   5 +
+ include/dt-bindings/clock/rk3368-cru.h             | 384 +++++++++
+ 14 files changed, 1524 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
+ create mode 100644 drivers/clk/rockchip/clk-inverter.c
+ create mode 100644 drivers/clk/rockchip/clk-rk3368.c
+ create mode 100644 include/dt-bindings/clock/rk3368-cru.h
+
 -- 
-2.4.6
+2.1.4
