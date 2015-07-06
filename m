@@ -1,40 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH 12/45] clk: wm831x: Remove clk.h include
-Date: Fri, 10 Jul 2015 16:33:10 -0700
-Message-Id: <1436571223-10959-13-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+In-Reply-To: <CAG374jAE78p_4=MYg9iNqo-4j8gE5OspzKwphfBUBtr5iOx-1g@mail.gmail.com>
+References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1435068567-30995-2-git-send-email-gabriel.fernandez@linaro.org>
+ <558B0CD7.6040302@codeaurora.org> <CAG374jAE78p_4=MYg9iNqo-4j8gE5OspzKwphfBUBtr5iOx-1g@mail.gmail.com>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Date: Mon, 6 Jul 2015 10:11:03 +0200
+Message-ID: <CAG374jAaK0X+ij3rSWqeN6hd7_-3hHQd+hFxNcDULVuXdY9gHg@mail.gmail.com>
+Subject: Re: [PATCH 1/9] drivers: clk: st: Incorrect clocks status
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"kernel@stlinux.com" <kernel@stlinux.com>,
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock provider drivers generally shouldn't include clk.h because
-it's the consumer API. Remove the include here because this is a
-provider driver.
+Hi Stephen,
 
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-wm831x.c | 1 -
- 1 file changed, 1 deletion(-)
+Can you drop also this patch because it's concerns an old platform and
+there no values to make more changes.
 
-diff --git a/drivers/clk/clk-wm831x.c b/drivers/clk/clk-wm831x.c
-index ef67719f4e52..43f9d15255f4 100644
---- a/drivers/clk/clk-wm831x.c
-+++ b/drivers/clk/clk-wm831x.c
-@@ -12,7 +12,6 @@
-  *
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/module.h>
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+BR
+Gabriel.
 
+On 25 June 2015 at 10:41, Gabriel Fernandez
+<gabriel.fernandez@linaro.org> wrote:
+> Hi Stephen,
+>
+> Thanks for reviewing
+>
+>
+> On 24 June 2015 at 22:02, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> On 06/23/2015 07:09 AM, Gabriel Fernandez wrote:
+>>> In the clk_summary output, the h/w status of DivMux is incorrect
+>>> (Parent and Enable status), since the clk_mux_ops.get_parent()
+>>> returns -ERRCODE when clock is OFF.
+>>>
+>>> Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
+>>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+>>> ---
+>>>  drivers/clk/st/clkgen-mux.c | 15 +++++++++------
+>>>  1 file changed, 9 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
+>>> index 4fbe6e0..c94b56b 100644
+>>> --- a/drivers/clk/st/clkgen-mux.c
+>>> +++ b/drivers/clk/st/clkgen-mux.c
+>>> @@ -128,7 +128,7 @@ static int clkgena_divmux_is_enabled(struct clk_hw *hw)
+>>>
+>>>       __clk_hw_set_clk(mux_hw, hw);
+>>>
+>>> -     return (s8)clk_mux_ops.get_parent(mux_hw) > 0;
+>>> +     return ((s8)clk_mux_ops.get_parent(mux_hw) >= 0);
+>>
+>> Useless parentheses around it all, please drop.
+>>
+> Ok
+>
+>>>  }
+>>>
+>>>  static u8 clkgena_divmux_get_parent(struct clk_hw *hw)
+>>> @@ -138,11 +138,13 @@ static u8 clkgena_divmux_get_parent(struct clk_hw *hw)
+>>>
+>>>       __clk_hw_set_clk(mux_hw, hw);
+>>>
+>>> -     genamux->muxsel = clk_mux_ops.get_parent(mux_hw);
+>>> -     if ((s8)genamux->muxsel < 0) {
+>>> -             pr_debug("%s: %s: Invalid parent, setting to default.\n",
+>>> -                   __func__, __clk_get_name(hw->clk));
+>>> -             genamux->muxsel = 0;
+>>> +     if (genamux->muxsel == CKGAX_CLKOPSRC_SWITCH_OFF) {
+>>> +             genamux->muxsel = clk_mux_ops.get_parent(mux_hw);
+>>
+>> Hm.. maybe we should fix clk_mux_ops to return 0 if it can't find the
+>> parent? Or when this clock is registered we should read the hardware and
+>> set a default parent so that we can't get an error code here.
+>>
+> I 'll try the second solution.
+>
+> Best regards
+>
+> Gabriel
+>> --
+>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+>> a Linux Foundation Collaborative Project
+>>
