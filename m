@@ -1,26 +1,28 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 6 Jul 2015 15:15:04 -0700
+Date: Mon, 6 Jul 2015 15:12:02 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: agross@codeaurora.org, mturquette@linaro.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/5] clk: qcom: Add support for SR2 PLLs
-Message-ID: <20150706221504.GB30412@codeaurora.org>
-References: <1434098519-26406-1-git-send-email-georgi.djakov@linaro.org>
- <1434098519-26406-2-git-send-email-georgi.djakov@linaro.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 6/7] clk: rockchip: add missing include guards
+Message-ID: <20150706221202.GL20866@codeaurora.org>
+References: <1436086820-3757-1-git-send-email-heiko@sntech.de>
+ <1436086820-3757-7-git-send-email-heiko@sntech.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1434098519-26406-2-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1436086820-3757-7-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/12, Georgi Djakov wrote:
-> Add support for SR2 type pll operations. SR2 is optimized for Time Interval
-> Error (TIE) or absolute jitter.
+On 07/05, Heiko Stuebner wrote:
+> Review for the rk3368 turned up that the clock header was missing include
+> guards. This is also true for the already existing clock binding headers,
+> so add them.
 > 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 > ---
 
-Applied to clk-next
+Applied to clk-rk3368.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
