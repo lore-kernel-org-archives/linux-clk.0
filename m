@@ -1,39 +1,44 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Jul 2015 09:56:25 -0700
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Date: Mon, 6 Jul 2015 15:11:25 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Ray Jui <rjui@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Dan Carpenter <dan.carpenter@oracle.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Scott Branden <sbranden@broadcom.com>, linux-kernel@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH 0/2] iProc clock driver fixes
-Message-ID: <20150702165625.GD7201@codeaurora.org>
-References: <1435613410-18698-1-git-send-email-rjui@broadcom.com>
- <5591B97D.2080003@broadcom.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH 5/7] clk: rockchip: add dt-binding header for rk3368
+Message-ID: <20150706221125.GK20866@codeaurora.org>
+References: <1436086820-3757-1-git-send-email-heiko@sntech.de>
+ <1436086820-3757-6-git-send-email-heiko@sntech.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5591B97D.2080003@broadcom.com>
+In-Reply-To: <1436086820-3757-6-git-send-email-heiko@sntech.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/29, Ray Jui wrote:
-> To Michael's new email.
+On 07/05, Heiko Stuebner wrote:
+> Add the dt-bindings header for the rk3368, that gets shared between
+> the clock controller and the clock references in the dts.
 > 
-> On 6/29/2015 2:30 PM, Ray Jui wrote:
-> > This patch series fixes two issues in the Broadcom iProc clock driver,
-> > reported by Dan Carpenter <dan.carpenter@oracle.com>: 1) a memory leak from
-> > the clock names; 2) 32-bit/64-bit arithmetic
-> > 
-> > Code base used is the latest linux-next (20150629) and its GITHUB link is:
-> > https://github.com/Broadcom/cygnus-linux/tree/iproc-clk-misc-fix-v1
-> > 
-> > Ray Jui (2):
-> >   clk: iproc: fix memory leak from clock name
-> >   clk: iproc: fix bit manipulation arithmetic
-> > 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+> I only need this dt-binding header in a stable branch to be included
+> into armsoc.
+> 
 
-Applied both to clk-fixes
+Applied to clk-rk3368. It will be stable now.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
