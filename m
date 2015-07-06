@@ -1,101 +1,62 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 11/16] ARM: shmobile: r8a7793 dtsi: Add CPG/MSTP Clock Domain
-Date: Wed,  1 Jul 2015 17:58:05 +0200
-Message-Id: <1435766290-3005-12-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
-References: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:57097 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752695AbbGFVrB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Mon, 6 Jul 2015 17:47:01 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-i2c@vger.kernel.org
+Cc: linux-sh@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms@verge.net.au>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: [PATCH 1/5] clk: shmobile: emev2: deassert reset for IIC0/1
+Date: Mon,  6 Jul 2015 23:46:05 +0200
+Message-Id: <1436219188-4325-2-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1436219188-4325-1-git-send-email-wsa@the-dreams.de>
+References: <1436219188-4325-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add an appropriate "#power-domain-cells" property to the cpg_clocks
-device node, to create the CPG/MSTP Clock Domain.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Add "power-domains" properties to all device nodes for devices that are
-part of the CPG/MSTP Clock Domain and can be power-managed through an
-MSTP clock.  This applies to most on-SoC devices, which have a
-one-to-one mapping from SoC device to DT device node.
+We have a driver now for IIC, so disable reset for them.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v3:
-  - New.
----
- arch/arm/boot/dts/r8a7793.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 3355c487d108360f..c4654047e684ff09 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -68,6 +68,7 @@
- 			     <0 143 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7793_CLK_CMT0>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
+If possible, I'd like to take this patch via the I2C tree because the driver
+will spit WARNs if the dependency to this patch is not met. OK?
+
+ drivers/clk/shmobile/clk-emev2.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/clk/shmobile/clk-emev2.c b/drivers/clk/shmobile/clk-emev2.c
+index 5b60beb7d0ebce..a91825471c79ac 100644
+--- a/drivers/clk/shmobile/clk-emev2.c
++++ b/drivers/clk/shmobile/clk-emev2.c
+@@ -28,6 +28,8 @@
+ #define USIBU1_RSTCTRL 0x0ac
+ #define USIBU2_RSTCTRL 0x0b0
+ #define USIBU3_RSTCTRL 0x0b4
++#define IIC0_RSTCTRL 0x0dc
++#define IIC1_RSTCTRL 0x0e0
+ #define STI_RSTCTRL 0x124
+ #define STI_CLKSEL 0x688
  
- 		renesas,channels-mask = <0x60>;
+@@ -66,6 +68,10 @@ static void __init emev2_smu_init(void)
+ 	emev2_smu_write(2, USIBU1_RSTCTRL);
+ 	emev2_smu_write(2, USIBU2_RSTCTRL);
+ 	emev2_smu_write(2, USIBU3_RSTCTRL);
++
++	/* deassert reset for IIC0->IIC1 */
++	emev2_smu_write(1, IIC0_RSTCTRL);
++	emev2_smu_write(1, IIC1_RSTCTRL);
+ }
  
-@@ -87,6 +88,7 @@
- 			     <0 127 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7793_CLK_CMT1>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		renesas,channels-mask = <0xff>;
- 
-@@ -109,6 +111,7 @@
- 			     <0 16 IRQ_TYPE_LEVEL_HIGH>,
- 			     <0 17 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp4_clks R8A7793_CLK_IRQC>;
-+		power-domains = <&cpg_clocks>;
- 	};
- 
- 	scif0: serial@e6e60000 {
-@@ -117,6 +120,7 @@
- 		interrupts = <0 152 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7793_CLK_SCIF0>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -126,6 +130,7 @@
- 		interrupts = <0 153 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7793_CLK_SCIF1>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -134,6 +139,7 @@
- 		reg = <0 0xee700000 0 0x400>;
- 		interrupts = <0 162 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7793_CLK_ETHER>;
-+		power-domains = <&cpg_clocks>;
- 		phy-mode = "rmii";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -164,6 +170,7 @@
- 			clock-output-names = "main", "pll0", "pll1", "pll3",
- 					     "lb", "qspi", "sdh", "sd0", "z",
- 					     "rcan", "adsp";
-+			#power-domain-cells = <0>;
- 		};
- 
- 		/* Variable factor clocks */
+ static void __init emev2_smu_clkdiv_init(struct device_node *np)
 -- 
-1.9.1
+2.1.4
 
