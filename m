@@ -1,63 +1,63 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
- Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
- Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
- Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
-Date: Fri, 31 Jul 2015 20:58:06 +0200
-Message-id: <55330300.1udBI120uH@amdc1976>
-In-reply-to: <55BA36A7.3050107@kernel.org>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <2681271.3UazeZ9PAQ@amdc1976> <55BA36A7.3050107@kernel.org>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20150702165914.GE7201@codeaurora.org>
+References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1435068567-30995-9-git-send-email-gabriel.fernandez@linaro.org> <20150702165914.GE7201@codeaurora.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Date: Mon, 6 Jul 2015 10:00:54 +0200
+Message-ID: <CAG374jC1fABjS3H+umrqVG2M0OXEHgj3pF0e9R7V0X1rjvvC9g@mail.gmail.com>
+Subject: Re: [PATCH 8/9] drivers: clk: st: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"kernel@stlinux.com" <kernel@stlinux.com>,
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday, July 30, 2015 11:37:27 PM Kukjin Kim wrote:
-> On 07/27/15 20:47, Bartlomiej Zolnierkiewicz wrote:
-> > On Monday, July 27, 2015 05:06:41 PM Viresh Kumar wrote:
-> >> On 27-07-15, 13:14, Bartlomiej Zolnierkiewicz wrote:
-> >>> Sorry but you don't seem to understand the issue.
-> >>
-> >> :)
-> >>
-> >> No, I did. I understand that if someone uses opp bindings today with
-> >> some entries as turbo OPPs, cpufreq will use them as normal
-> >> frequencies. And that may harm the board.
-> >>
-> >> BUT, opp-v2 code isn't ready to be used yet. And platforms should see
-> >> what all is implemented before trying to use them.
-> > 
-> > OK.
-> > 
-> >> All I was saying is, this isn't a FIX as we haven't introduced the
-> >> feature yet. Otherwise I had no issues with the patch.
-> > 
-> > I will update the description for the next patchset revision.
-> > 
-> Hi Bart,
+Hi Stephen,
 
-Hi,
+Sorry for the delay i was in day off.
 
-> When will you re-post v3? Because I have a plan to send a pull-request
-> to arm-soc until this weekend...
+Yes it's just a cleanup but it's to prepare introduction of new
+platform which use this PLL.
 
-I have just posted v3.  I hope that it is not too late..
+If you want apply only fixes we can drop these last two patches.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+And in a second phase,  deals with Maxime to avoid break compatibility.
+
+BR
+
+Gabriel.
+
+On 2 July 2015 at 18:59, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 06/23, Gabriel Fernandez wrote:
+>> Use a generic name for this kind of PLL
+>>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+>
+> Is this just a cleanup/nicety? I could take this patch but patch
+> 9 needs to go through arm-soc and then we have to deal with DT
+> incompatibility. How about we drop these last two patches?
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
