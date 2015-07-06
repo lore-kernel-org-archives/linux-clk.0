@@ -1,87 +1,58 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:57155 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752695AbbGFVwV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Mon, 6 Jul 2015 17:52:21 -0400
+Date: Mon, 6 Jul 2015 23:52:15 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org,
+	linux-sh@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms@verge.net.au>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] clk: shmobile: emev2: annotate smu base pointer
+Message-ID: <20150706215215.GA1528@katana>
+References: <1436216708-1815-1-git-send-email-wsa@the-dreams.de>
+ <20150706214805.GD20866@codeaurora.org>
 MIME-Version: 1.0
-To: Tony Lindgren <tony@atomide.com>, "Tero Kristo" <t-kristo@ti.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20150714104006.GO17550@atomide.com>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Paul Walmsley" <paul@pwsan.com>,
- "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
- linux-clk@vger.kernel.org
-References: <55A4CE41.9070909@ti.com> <20150714095431.GJ17550@atomide.com>
- <55A4E520.8050804@ti.com> <20150714104006.GO17550@atomide.com>
-Message-ID: <20150724003703.642.34807@quantum>
-Subject: Re: [GIT PULL] clk: ti: clock driver code migration to drivers
-Date: Thu, 23 Jul 2015 17:37:03 -0700
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="5mCyUwZo2JvN/JJP"
+In-Reply-To: <20150706214805.GD20866@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Tony Lindgren (2015-07-14 03:40:06)
-> * Tero Kristo <t-kristo@ti.com> [150714 03:34]:
-> > On 07/14/2015 12:54 PM, Tony Lindgren wrote:
-> > >* Tero Kristo <t-kristo@ti.com> [150714 01:56]:
-> > >>
-> > >>This pull request contains the TI clock driver set to move the clock
-> > >>implementations under clock driver. Some small portions of the clock =
-driver
-> > >>code still remain under mach-omap2 after this, it should be decided w=
-hether
-> > >>this code is now obsolete and should be deleted or should someone try=
- to fix
-> > >>it.
-> > >
-> > >Hmm care to clarify what is obsolete or broken after this series?
-> > =
 
-> > Not after this series, was broken/obsolete already before.
-> > =
+--5mCyUwZo2JvN/JJP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > A couple of omap2/omap3 specific clock files still remain under mach-om=
-ap2,
-> > they are DVFS related. OMAP3 core dvfs support is currently completely
-> > unused (this could probably be removed, or shall we re-introduce the pa=
-inful
-> > core dvfs at some point again?), and parts of the omap2 core dpll handl=
-ing
-> > code should probably be re-written; or at least verified that it actual=
-ly
-> > works properly. I can't test OMAP2 DVFS myself so don't dare to fiddle =
-with
-> > it.... I could probably try to get some sort of DVFS test case to work =
-on
-> > the board farm OMAP2 board I have access to though, I can investigate t=
-his.
-> =
 
-> People seem to still want the 1 GiHz support, but I think that only
-> depends on the SmartReflex and some kind of replacement for
-> voltagedomains. So if the core DVFS support is unused, I doubt it's
-> very high on anybody's list right now.
+> Yep, and it was already fixed and merged
 
-As long as the default is to have core running at the fast OPP then 1GHz
-should be fine. There is a voltage domain dependency from ARM->CORE when
-the ARM runs fast at 1GHZ: it requires core to run at the highest OPP as
-well.
+Oops, sorry for the noise and thanks for fixing it!
 
-Regards,
-Mike
 
->  =
+--5mCyUwZo2JvN/JJP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> > >And I take it's not obsolete or broken because of this series? :)
-> > =
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-> > No, this series does not touch the above mentioned pieces of code, so t=
-his
-> > definitely should not break anything. :)
-> =
+iQIcBAEBAgAGBQJVmviPAAoJEBQN5MwUoCm2KAoP/2S7MMcv/GsW2Glr7cpFz3dm
+zq33Tg/kngXfUjazMxCMxY1xpCnoTcPCdvpktPOP167pPuuUkGrrQPv+tE9iJSi7
+va2OC7wclBhRBysBaUX9xHwVerXAZ/RbaQdeksp1PQ4LSA2UZKMir+/qluvDgccF
+1C8MwIz1Dnhn3aEpi3fAoxUuh6Y+928xeP2Pin/bdnSRcoGI7NJP65RfL+r38mcz
+tHS8ovOVXMn3SFih+6hMR0XWtPUrhdfgmbLGHPPmosM1KD8zq8tBVkyrqMv0zrzv
+xe9NKlAZ8dHxPSvoWbNqsXd/GWj5+sTVGby/ZcP5NvW7bGJlblRH6pDCVt1xtofb
+iq46KnXkI0N2ZLrKCRNzpTpS9PP4QONN/Tm5oPRtJu7+v7zmTCURotwMyBLg/D4b
+CvTjs4/6OPRs7ndB2zK6/mqp/g1wlRky4U8R07lg4NyIyBQrbeM6o+MeW2yW9XRF
+oIEw02315Pl9syR+xHyA36sN9RMrecunT0iOXYTZjjiG2yk2BiyUSt3+ps2O4c+o
+0Tud9qu/msXjY5mUj0v3GXumTZP9kr2UissQ8NTl68899gqAaIVWgQ5g7unPszkT
+5gt09lF6TBTbGtlerXFnZC/Kuh4cm059T6x0bl5Yr9SUWZjh971T3O62+mDuLKBT
+n8CeGvAuHcVofygk/vwf
+=nvQz
+-----END PGP SIGNATURE-----
 
-> OK thanks for confirming that.
-> =
-
-> Regards,
-> =
-
-> Tony
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--5mCyUwZo2JvN/JJP--
