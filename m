@@ -1,91 +1,40 @@
-Return-Path: <andrew@lunn.ch>
-Date: Fri, 3 Jul 2015 15:54:53 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Boris BREZILLON <boris.brezillon@free-electrons.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Tawfik Bayouk <tawfik@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH RFC 1/5] clk: mvebu: Add Armada 38x support for clk-cpu
-Message-ID: <20150703135453.GI13481@lunn.ch>
-References: <1435903917-20486-1-git-send-email-gregory.clement@free-electrons.com>
- <1435903917-20486-2-git-send-email-gregory.clement@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 6 Jul 2015 22:38:11 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Boris BREZILLON <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH] clk: at91: Silence warnings and cleanup __init usage
+Message-ID: <20150706203811.GC3127@piout.net>
+References: <1436211105-10491-1-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1435903917-20486-2-git-send-email-gregory.clement@free-electrons.com>
+In-Reply-To: <1436211105-10491-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 03, 2015 at 08:11:53AM +0200, Gregory CLEMENT wrote:
-> This patch first shortens the registers definition and also introduces
-> difference between Armada XP value and Armada 38x value.
+Hi,
+
+On 06/07/2015 at 12:31:45 -0700, Stephen Boyd wrote :
+> Remove useless ifdefs around function prototypes to silence the
+> following sparse warnings when the configs aren't enabled.
 > 
-> Then it adds specific functions for Armada 38x in order to support cpu
-> freq on these SoCs.
-
-Hi Gregory
-
-I would suggest splitting this into two. Because of the #define
-changes, it is not easy to see the new functions from #define changes.
-
+> drivers/clk/at91/clk-h32mx.c:95:13: warning: symbol
+> 'of_sama5d4_clk_h32mx_setup' was not declared. Should it be
+> static?
+> drivers/clk/at91/clk-utmi.c:159:13: warning: symbol
+> 'of_at91sam9x5_clk_utmi_setup' was not declared. Should it be
+> static?
 > 
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
->  .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |  27 ++-
->  drivers/clk/mvebu/clk-cpu.c                        | 220 ++++++++++++++++-----
->  2 files changed, 201 insertions(+), 46 deletions(-)
+> Plus, using __init in function prototypes doesn't do anything, so
+> just drop it throughout this file.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
-> index 99c214660bdc..9272b3464ab1 100644
-> --- a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
-> @@ -1,10 +1,13 @@
->  Device Tree Clock bindings for cpu clock of Marvell EBU platforms
 
-Maybe i'm reading the following hunk wrong, but....
-  
->  Required properties:
-> -- compatible : shall be one of the following:
-> +- compatible : shall be the following:
+The main drawback of that removal is that it destroys the alignment
+throughout the header file :)
 
-"one of the following" is grammatically better.
-
->  	"marvell,armada-xp-cpu-clock" - cpu clocks for Armada XP
-> +	"marvell,armada-38x-cpu-clock", "marvell,armada-xp-cpu-clock" - cpu
-> +	clocks for Armada 38x
-
-and don't we now have marvell,armada-xp-cpu-clock twice?
-
->  - reg : Address and length of the clock complex register set, followed
-> -        by address and length of the PMU DFS registers
-> +	by address and length of the PMU DFS registers, for Armada 38x
-> +	a third register set must be addeed: DFX server.
->  - #clock-cells : should be set to 1.
->  - clocks : shall be the input parent clock phandle for the clock.
->  
-> @@ -20,3 +23,23 @@ cpu@0 {
->  	reg = <0>;
->  	clocks = <&cpuclk 0>;
->  };
-> +
-> +or for Armada38x
-> +
-> +cpuclk: clock-complex@18700 {
-> +	compatible = "marvell,armada-380-cpu-clock",
-> +	"marvell,armada-xp-cpu-clock";
-> +	reg = <0x18700 0xA0>, <0x1c054 0x40>,
-> +	<0xe4260 0x8>;
-
-Maybe this third address property could be better indented?
-
-      Andrew
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
