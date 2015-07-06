@@ -1,27 +1,60 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Paul Osmialowski <pawelo@king.net.pl>
-Cc: linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Sergei Poselenov <sposelenov@emcraft.com>, Paul Bolle <pebolle@tiscali.nl>, Jingchang Lu <jingchang.lu@freescale.com>, Yuri Tikhonov <yur@emcraft.com>, Rob Herring <r.herring@freescale.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>, Alexander Potashev <aspotashev@emcraft.com>, Frank Li <Frank.Li@freescale.com>, Thomas Gleixner <tglx@linutronix.de>, Anson Huang <b20788@freescale.com>
-Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
-Date: Thu, 02 Jul 2015 14:40:23 +0200
-Message-ID: <1861313.aMcV1xHCIq@wuerfel>
-In-Reply-To: <alpine.LNX.2.00.1507021206410.13210@localhost.localdomain>
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <alpine.LNX.2.00.1507011756140.14440@localhost.localdomain> <alpine.LNX.2.00.1507021206410.13210@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Hai Li <hali@codeaurora.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com, georgi.djakov@linaro.org,
+	tomeu.vizoso@collabora.com, architt@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Hai Li <hali@codeaurora.org>
+Subject: [PATCH v2] clk: qcom: Use parent rate when set rate to pixel RCG clock
+Date: Mon,  6 Jul 2015 10:49:36 -0400
+Message-Id: <1436194176-17701-1-git-send-email-hali@codeaurora.org>
+In-Reply-To: <1435271733-24455-1-git-send-email-hali@codeaurora.org>
+References: <1435271733-24455-1-git-send-email-hali@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday 02 July 2015 12:08:39 Paul Osmialowski wrote:
-> Nah, I've found this code hard to maintain. I'm attaching simplified 
-> version.
-> 
+Since the parent rate has been recalculated, pixel RCG clock
+should rely on it to find the correct M/N values during set_rate,
+instead of calling __clk_round_rate() to its parent again.
 
-Looks better to me, but of course needs full review from the clock
-maintainers.
+v2: Rebase on clk-next and avoid build warning
 
-I wonder if you could move out the fixed rate clocks into their own
-nodes. Are they actually controlled by the same block? If they are
-just fixed, you can use the normal binding for fixed rate clocks
-and only describe the clocks that are related to the driver.
+Signed-off-by: Hai Li <hali@codeaurora.org>
+Tested-by: Archit Taneja <architt@codeaurora.org>
+Fixes: 99cbd064b059 ("clk: qcom: Support display RCG clocks")
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rcg2.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-	Arnd
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index b95d17f..92936f0 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -530,19 +530,16 @@ static int clk_pixel_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	struct freq_tbl f = *rcg->freq_tbl;
+ 	const struct frac_entry *frac = frac_table_pixel;
+-	unsigned long request, src_rate;
++	unsigned long request;
+ 	int delta = 100000;
+ 	u32 mask = BIT(rcg->hid_width) - 1;
+ 	u32 hid_div;
+-	int index = qcom_find_src_index(hw, rcg->parent_map, f.src);
+-	struct clk *parent = clk_get_parent_by_index(hw->clk, index);
+ 
+ 	for (; frac->num; frac++) {
+ 		request = (rate * frac->den) / frac->num;
+ 
+-		src_rate = __clk_round_rate(parent, request);
+-		if ((src_rate < (request - delta)) ||
+-			(src_rate > (request + delta)))
++		if ((parent_rate < (request - delta)) ||
++			(parent_rate > (request + delta)))
+ 			continue;
+ 
+ 		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+hosted by The Linux Foundation
+
