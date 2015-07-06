@@ -1,299 +1,276 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
- Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
- Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- b.zolnierkie@samsung.com, Doug Anderson <dianders@chromium.org>,
- Andreas Faerber <afaerber@suse.de>
-Subject: [PATCH v2 5/7] ARM: dts: Exynos4x12: add CPU OPP and regulator supply
- property
-Date: Thu, 09 Jul 2015 17:43:39 +0200
-Message-id: <1436456621-29839-6-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+Return-Path: <linux-omap-owner@vger.kernel.org>
+Date: Mon, 6 Jul 2015 14:32:10 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Tony Lindgren <tony@atomide.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+	linux-mips@linux-mips.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4] clk: change clk_ops' ->determine_rate() prototype
+Message-ID: <20150706213210.GB20866@codeaurora.org>
+References: <1436202872-26533-1-git-send-email-boris.brezillon@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1436202872-26533-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-omap-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-For Exynos4x12 platforms, add CPU operating points (using
-opp-v2 bindings) and CPU regulator supply properties for
-migrating from Exynos specific cpufreq driver to using
-generic cpufreq driver.
+On 07/06, Boris Brezillon wrote:
+> Clock rates are stored in an unsigned long field, but ->determine_rate()
+> (which returns a rounded rate from a requested one) returns a long
+> value (errors are reported using negative error codes), which can lead
+> to long overflow if the clock rate exceed 2Ghz.
+> 
+> Change ->determine_rate() prototype to return 0 or an error code, and pass
+> a pointer to a clk_rate_request structure containing the expected target
+> rate and the rate constraints imposed by clk users.
+> 
+> The clk_rate_request structure might be extended in the future to contain
+> other kind of constraints like the rounding policy, the maximum clock
+> inaccuracy or other things that are not yet supported by the CCF
+> (power consumption constraints ?).
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-Based on the earlier work by Thomas Abraham.
+Which files did you compile? 
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Andreas Faerber <afaerber@suse.de>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- arch/arm/boot/dts/exynos4212.dtsi               | 81 ++++++++++++++++++++++++
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 ++
- arch/arm/boot/dts/exynos4412-origen.dts         |  5 ++
- arch/arm/boot/dts/exynos4412-trats2.dts         |  5 ++
- arch/arm/boot/dts/exynos4412.dtsi               | 83 +++++++++++++++++++++++++
- 5 files changed, 178 insertions(+)
+drivers/clk/mmp/clk-mix.c: In function ‘mmp_clk_mix_determine_rate’:
+drivers/clk/mmp/clk-mix.c:221:13: error: ‘rate’ undeclared (first use in this function)
 
-diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-index d9c8efee..9dc40d5 100644
---- a/arch/arm/boot/dts/exynos4212.dtsi
-+++ b/arch/arm/boot/dts/exynos4212.dtsi
-@@ -30,6 +30,9 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0xA00>;
-+			clocks = <&clock CLK_ARM_CLK>;
-+			clock-names = "cpu";
-+			operating-points-v2 = <&cpu0_opp_table>;
- 			cooling-min-level = <13>;
- 			cooling-max-level = <7>;
- 			#cooling-cells = <2>; /* min followed by max */
-@@ -39,6 +42,84 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0xA01>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+	};
-+
-+	cpu0_opp_table: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp00 {
-+			opp-hz = <200000000>;
-+			opp-microvolt = <900000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp01 {
-+			opp-hz = <300000000>;
-+			opp-microvolt = <900000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp02 {
-+			opp-hz = <400000000>;
-+			opp-microvolt = <925000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp03 {
-+			opp-hz = <500000000>;
-+			opp-microvolt = <950000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp04 {
-+			opp-hz = <600000000>;
-+			opp-microvolt = <975000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp05 {
-+			opp-hz = <700000000>;
-+			opp-microvolt = <987500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp06 {
-+			opp-hz = <800000000>;
-+			opp-microvolt = <1000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp07 {
-+			opp-hz = <900000000>;
-+			opp-microvolt = <1037500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp08 {
-+			opp-hz = <1000000000>;
-+			opp-microvolt = <1087500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp09 {
-+			opp-hz = <1100000000>;
-+			opp-microvolt = <1137500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp10 {
-+			opp-hz = <1200000000>;
-+			opp-microvolt = <1187500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp11 {
-+			opp-hz = <1300000000>;
-+			opp-microvolt = <1250000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp12 {
-+			opp-hz = <1400000000>;
-+			opp-microvolt = <1287500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp13 {
-+			opp-hz = <1500000000>;
-+			opp-microvolt = <1350000>;
-+			clock-latency-ns = <200000>;
-+			turbo-mode;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index ca7d168..1c7811a 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -507,3 +507,7 @@
- &watchdog {
- 	status = "okay";
- };
-+
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
-+};
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index 84c7631..21150b4 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -532,3 +532,8 @@
- &watchdog {
- 	status = "okay";
- };
-+
-+
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
-+};
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index afc199d..1ee43456 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -1313,3 +1313,8 @@
- 	vtmu-supply = <&ldo10_reg>;
- 	status = "okay";
- };
-+
-+
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
-+};
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index b78ada7..cead3a7 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -30,6 +30,9 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0xA00>;
-+			clocks = <&clock CLK_ARM_CLK>;
-+			clock-names = "cpu";
-+			operating-points-v2 = <&cpu0_opp_table>;
- 			cooling-min-level = <13>;
- 			cooling-max-level = <7>;
- 			#cooling-cells = <2>; /* min followed by max */
-@@ -39,18 +42,98 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0xA01>;
-+			operating-points-v2 = <&cpu0_opp_table>;
- 		};
- 
- 		cpu@A02 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0xA02>;
-+			operating-points-v2 = <&cpu0_opp_table>;
- 		};
- 
- 		cpu@A03 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0xA03>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+		};
-+	};
-+
-+	cpu0_opp_table: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp00 {
-+			opp-hz = <200000000>;
-+			opp-microvolt = <900000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp01 {
-+			opp-hz = <300000000>;
-+			opp-microvolt = <900000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp02 {
-+			opp-hz = <400000000>;
-+			opp-microvolt = <925000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp03 {
-+			opp-hz = <500000000>;
-+			opp-microvolt = <950000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp04 {
-+			opp-hz = <600000000>;
-+			opp-microvolt = <975000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp05 {
-+			opp-hz = <700000000>;
-+			opp-microvolt = <987500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp06 {
-+			opp-hz = <800000000>;
-+			opp-microvolt = <1000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp07 {
-+			opp-hz = <900000000>;
-+			opp-microvolt = <1037500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp08 {
-+			opp-hz = <1000000000>;
-+			opp-microvolt = <1087500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp09 {
-+			opp-hz = <1100000000>;
-+			opp-microvolt = <1137500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp10 {
-+			opp-hz = <1200000000>;
-+			opp-microvolt = <1187500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp11 {
-+			opp-hz = <1300000000>;
-+			opp-microvolt = <1250000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp12 {
-+			opp-hz = <1400000000>;
-+			opp-microvolt = <1287500>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp13 {
-+			opp-hz = <1500000000>;
-+			opp-microvolt = <1350000>;
-+			clock-latency-ns = <200000>;
-+			turbo-mode;
- 		};
- 	};
- 
+> 
+> diff --git a/arch/arm/mach-omap2/dpll3xxx.c b/arch/arm/mach-omap2/dpll3xxx.c
+> index 44e57ec..cd27457 100644
+> --- a/arch/arm/mach-omap2/dpll3xxx.c
+> +++ b/arch/arm/mach-omap2/dpll3xxx.c
+> @@ -462,43 +462,38 @@ void omap3_noncore_dpll_disable(struct clk_hw *hw)
+>  /**
+>   * omap3_noncore_dpll_determine_rate - determine rate for a DPLL
+>   * @hw: pointer to the clock to determine rate for
+> - * @rate: target rate for the DPLL
+> - * @best_parent_rate: pointer for returning best parent rate
+> - * @best_parent_clk: pointer for returning best parent clock
+> + * @req: target rate request
+>   *
+>   * Determines which DPLL mode to use for reaching a desired target rate.
+>   * Checks whether the DPLL shall be in bypass or locked mode, and if
+>   * locked, calculates the M,N values for the DPLL via round-rate.
+> - * Returns a positive clock rate with success, negative error value
+> - * in failure.
+> + * Returns a 0 on success, negative error value in failure.
+>   */
+> -long omap3_noncore_dpll_determine_rate(struct clk_hw *hw, unsigned long rate,
+> -				       unsigned long min_rate,
+> -				       unsigned long max_rate,
+> -				       unsigned long *best_parent_rate,
+> -				       struct clk_hw **best_parent_clk)
+> +int omap3_noncore_dpll_determine_rate(struct clk_hw *hw,
+> +				      struct clk_rate_request *req)
+>  {
+>  	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
+>  	struct dpll_data *dd;
+>  
+> -	if (!hw || !rate)
+> +	if (!hw || !req || !req->rate)
+
+Why do we need to check for req? It shouldn't be NULL.
+
+>  		return -EINVAL;
+>  
+>  	dd = clk->dpll_data;
+>  	if (!dd)
+>  		return -EINVAL;
+>  
+> -	if (__clk_get_rate(dd->clk_bypass) == rate &&
+> +	if (__clk_get_rate(dd->clk_bypass) == req->rate &&
+>  	    (dd->modes & (1 << DPLL_LOW_POWER_BYPASS))) {
+> -		*best_parent_clk = __clk_get_hw(dd->clk_bypass);
+> +		req->best_parent_hw = __clk_get_hw(dd->clk_bypass);
+>  	} else {
+> -		rate = omap2_dpll_round_rate(hw, rate, best_parent_rate);
+> -		*best_parent_clk = __clk_get_hw(dd->clk_ref);
+> +		req->rate = omap2_dpll_round_rate(hw, req->rate,
+> +					  &req->best_parent_rate);
+> +		req->best_parent_hw = __clk_get_hw(dd->clk_ref);
+>  	}
+>  
+> -	*best_parent_rate = rate;
+> +	req->best_parent_rate = req->rate;
+>  
+> -	return rate;
+> +	return 0;
+>  }
+>  
+>  /**
+> diff --git a/arch/arm/mach-omap2/dpll44xx.c b/arch/arm/mach-omap2/dpll44xx.c
+> index f231be0..d615571 100644
+> --- a/arch/arm/mach-omap2/dpll44xx.c
+> +++ b/arch/arm/mach-omap2/dpll44xx.c
+> @@ -191,42 +191,36 @@ out:
+>  /**
+>   * omap4_dpll_regm4xen_determine_rate - determine rate for a DPLL
+>   * @hw: pointer to the clock to determine rate for
+> - * @rate: target rate for the DPLL
+> - * @best_parent_rate: pointer for returning best parent rate
+> - * @best_parent_clk: pointer for returning best parent clock
+> + * @req: target rate request
+>   *
+>   * Determines which DPLL mode to use for reaching a desired rate.
+>   * Checks whether the DPLL shall be in bypass or locked mode, and if
+>   * locked, calculates the M,N values for the DPLL via round-rate.
+> - * Returns a positive clock rate with success, negative error value
+> - * in failure.
+> + * Returns 0 on success and a negative error value otherwise.
+>   */
+> -long omap4_dpll_regm4xen_determine_rate(struct clk_hw *hw, unsigned long rate,
+> -					unsigned long min_rate,
+> -					unsigned long max_rate,
+> -					unsigned long *best_parent_rate,
+> -					struct clk_hw **best_parent_clk)
+> +int omap4_dpll_regm4xen_determine_rate(struct clk_hw *hw,
+> +				       struct clk_rate_request *req)
+>  {
+>  	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
+>  	struct dpll_data *dd;
+>  
+> -	if (!hw || !rate)
+> +	if (!hw || !req || !req->rate)
+
+Same comment here. And why would we care about hw being NULL
+either for that matter.
+
+>  		return -EINVAL;
+>  
+>  	dd = clk->dpll_data;
+>  	if (!dd)
+>  		return -EINVAL;
+>  
+> -	if (__clk_get_rate(dd->clk_bypass) == rate &&
+> +	if (__clk_get_rate(dd->clk_bypass) == req->rate &&
+>  	    (dd->modes & (1 << DPLL_LOW_POWER_BYPASS))) {
+> -		*best_parent_clk = __clk_get_hw(dd->clk_bypass);
+> +		req->best_parent_hw = __clk_get_hw(dd->clk_bypass);
+>  	} else {
+> -		rate = omap4_dpll_regm4xen_round_rate(hw, rate,
+> -						      best_parent_rate);
+> -		*best_parent_clk = __clk_get_hw(dd->clk_ref);
+> +		req->rate = omap4_dpll_regm4xen_round_rate(hw, req->rate,
+> +						&req->best_parent_rate);
+> +		req->best_parent_hw = __clk_get_hw(dd->clk_ref);
+>  	}
+>  
+> -	*best_parent_rate = rate;
+> +	req->best_parent_rate = req->rate;
+>  
+> -	return rate;
+> +	return 0;
+>  }
+> diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
+> index 715d34a..e1d72e6 100644
+> --- a/drivers/clk/hisilicon/clk-hi3620.c
+> +++ b/drivers/clk/hisilicon/clk-hi3620.c
+> @@ -294,34 +294,31 @@ static unsigned long mmc_clk_recalc_rate(struct clk_hw *hw,
+>  	}
+>  }
+>  
+> -static long mmc_clk_determine_rate(struct clk_hw *hw, unsigned long rate,
+> -			      unsigned long min_rate,
+> -			      unsigned long max_rate,
+> -			      unsigned long *best_parent_rate,
+> -			      struct clk_hw **best_parent_p)
+> +static int mmc_clk_determine_rate(struct clk_hw *hw,
+> +				  struct clk_rate_request *req)
+>  {
+>  	struct clk_mmc *mclk = to_mmc(hw);
+> -	unsigned long best = 0;
+>  
+> -	if ((rate <= 13000000) && (mclk->id == HI3620_MMC_CIUCLK1)) {
+> -		rate = 13000000;
+> -		best = 26000000;
+> -	} else if (rate <= 26000000) {
+> -		rate = 25000000;
+> -		best = 180000000;
+> -	} else if (rate <= 52000000) {
+> -		rate = 50000000;
+> -		best = 360000000;
+> -	} else if (rate <= 100000000) {
+> -		rate = 100000000;
+> -		best = 720000000;
+> +	req->best_parent_hw = __clk_get_hw(__clk_get_parent(hw->clk));
+> +
+
+Where did this come from? We weren't setting the best_parent_p
+pointer before.
+
+> +	if ((req->rate <= 13000000) && (mclk->id == HI3620_MMC_CIUCLK1)) {
+> +		req->rate = 13000000;
+> +		req->best_parent_rate = 26000000;
+> +	} else if (req->rate <= 26000000) {
+> +		req->rate = 25000000;
+> +		req->best_parent_rate = 180000000;
+> +	} else if (req->rate <= 52000000) {
+> +		req->rate = 50000000;
+> +		req->best_parent_rate = 360000000;
+> +	} else if (req->rate <= 100000000) {
+> +		req->rate = 100000000;
+> +		req->best_parent_rate = 720000000;
+>  	} else {
+>  		/* max is 180M */
+> -		rate = 180000000;
+> -		best = 1440000000;
+> +		req->rate = 180000000;
+> +		req->best_parent_rate = 1440000000;
+>  	}
+> -	*best_parent_rate = best;
+> -	return rate;
+> +	return 0;
+>  }
+>  
+>  static u32 mmc_clk_delay(u32 val, u32 para, u32 off, u32 len)
+> diff --git a/drivers/clk/qcom/clk-pll.c b/drivers/clk/qcom/clk-pll.c
+> index 245d506..f8f1d44 100644
+> --- a/drivers/clk/qcom/clk-pll.c
+> +++ b/drivers/clk/qcom/clk-pll.c
+> @@ -135,17 +135,21 @@ struct pll_freq_tbl *find_freq(const struct pll_freq_tbl *f, unsigned long rate)
+>  	return NULL;
+>  }
+>  
+> -static long
+> -clk_pll_determine_rate(struct clk_hw *hw, unsigned long rate,
+> -		       unsigned long min_rate, unsigned long max_rate,
+> -		       unsigned long *p_rate, struct clk_hw **p)
+> +static int
+> +clk_pll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+>  {
+> +	struct clk *parent = __clk_get_parent(hw->clk);
+>  	struct clk_pll *pll = to_clk_pll(hw);
+>  	const struct pll_freq_tbl *f;
+>  
+> -	f = find_freq(pll->freq_tbl, rate);
+> +	req->best_parent_hw = __clk_get_hw(parent);
+> +	req->best_parent_rate = __clk_get_rate(parent);
+> +
+> +	f = find_freq(pll->freq_tbl, req->rate);
+>  	if (!f)
+> -		return clk_pll_recalc_rate(hw, *p_rate);
+> +		req->rate = clk_pll_recalc_rate(hw, req->best_parent_rate);
+> +	else
+> +		req->rate = f->freq;
+>  
+>  	return f->freq;
+
+return 0?
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
