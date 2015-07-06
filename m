@@ -1,42 +1,42 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <559AF827.3090308@codeaurora.org>
-Date: Mon, 06 Jul 2015 14:50:31 -0700
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Date: Mon, 6 Jul 2015 15:08:10 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH 3/7] clk: rockchip: define the inverters of rk3066/rk3188
+ and rk3288
+Message-ID: <20150706220810.GI20866@codeaurora.org>
+References: <1436086820-3757-1-git-send-email-heiko@sntech.de>
+ <1436086820-3757-4-git-send-email-heiko@sntech.de>
 MIME-Version: 1.0
-To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-CC: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Kumar Gala <galak@codeaurora.org>,
- Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
- Maxime Coquelin <maxime.coquelin@st.com>,
- Patrice Chotard <patrice.chotard@st.com>,
- Russell King <linux@arm.linux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Pankaj Dev <pankaj.dev@st.com>, Olivier Bideau <olivier.bideau@st.com>,
- Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Fabian Frederick <fabf@skynet.be>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "kernel@stlinux.com" <kernel@stlinux.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/9] drivers: clk: st: Incorrect clocks status
-References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org> <1435068567-30995-2-git-send-email-gabriel.fernandez@linaro.org> <558B0CD7.6040302@codeaurora.org> <CAG374jAE78p_4=MYg9iNqo-4j8gE5OspzKwphfBUBtr5iOx-1g@mail.gmail.com> <CAG374jAaK0X+ij3rSWqeN6hd7_-3hHQd+hFxNcDULVuXdY9gHg@mail.gmail.com>
-In-Reply-To: <CAG374jAaK0X+ij3rSWqeN6hd7_-3hHQd+hFxNcDULVuXdY9gHg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1436086820-3757-4-git-send-email-heiko@sntech.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/06/2015 01:11 AM, Gabriel Fernandez wrote:
-> Hi Stephen,
->
-> Can you drop also this patch because it's concerns an old platform and
-> there no values to make more changes.
+On 07/05, Heiko Stuebner wrote:
+> Both soc series' have inverters on the hsadc and camera interface clock
+> paths. So define them using the newly added inverter type.
+> 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
 
-Ok, so I think this series is all applied then. Let me know if anything
-is missing from -next.
+Applied to clk-rk3368.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
