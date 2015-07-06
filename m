@@ -1,78 +1,88 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
- Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
- Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
-Date: Mon, 27 Jul 2015 12:24:30 +0200
-Message-id: <1595601.YD6UTxy5Qg@amdc1976>
-In-reply-to: <20150727083531.GC31611@linux>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <1436456621-29839-3-git-send-email-b.zolnierkie@samsung.com>
- <20150727083531.GC31611@linux>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:36407 "EHLO
+	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751001AbbGFFMF (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jul 2015 01:12:05 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAJKOXPeFxABcm27_tmriY6RreaRYZiEPvUvFav4DK-AoNbUs=Q@mail.gmail.com>
+References: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
+	<CABxcv=mQfcb3jsRzOcWXAbNRf-dumoHS8X-2TEeOdB2E_T5BMQ@mail.gmail.com>
+	<CAJKOXPeFxABcm27_tmriY6RreaRYZiEPvUvFav4DK-AoNbUs=Q@mail.gmail.com>
+Date: Mon, 6 Jul 2015 14:12:04 +0900
+Message-ID: <CA+Ln22HHpdKD8+_zSzX10FBM_aDByePfA3_vactLOxh_J961tA@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
+From: Tomasz Figa <tomasz.figa@gmail.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	"linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	stable@vger.kernel.org,
+	Linux Kernel <linux-kernel@vger.kernel.org>,
+	Kukjin Kim <kgene@kernel.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+2015-07-06 13:03 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+> 2015-06-12 14:46 GMT+09:00 Javier Martinez Canillas <javier@dowhile0.org>:
+>> Hello Krzysztof,
+>>
+>> On Fri, Jun 12, 2015 at 3:53 AM, Krzysztof Kozlowski
+>> <k.kozlowski@samsung.com> wrote:
+>>> The TSADC gate clock was used in Exynos4x12 DTSI for exynos-adc driver.
+>>> However TSADC is present only on Exynos4210 so on Trats2 board (with
+>>> Exynos4412 SoC) the exynos-adc driver could not be probed:
+>>>    ERROR: could not get clock /adc@126C0000:adc(0)
+>>>    exynos-adc 126c0000.adc: failed getting clock, err = -2
+>>>    exynos-adc: probe of 126c0000.adc failed with error -2
+>>>
+>>> Instead on Exynos4x12 SoCs the main clock used by Analog to Digital
+>>> Converter is located in different register and it is named in datasheet
+>>> as PCLK_ADC. Regardless of the name the purpose of this PCLK_ADC clock
+>>> is the same as purpose of TSADC from Exynos4210.
+>>>
+>>> The patch adds gate clock for Exynos4x12 using the proper register so
+>>> backward compatibility is preserved. This fixes the probe of exynos-adc
+>>> driver on Exynos4x12 boards and allows accessing sensors connected to it
+>>> on Trats2 board (ntc,ncp15wb473 AP and battery thermistors).
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>> Cc: <stable@vger.kernel.org>
+>>> Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
+>>> Link: https://lkml.org/lkml/2015/6/11/85
+>>>
+>>> ---
+>>>
+>>> Changes since v1:
+>>> 1. After discussion on LKML this solution was chosen because it smaller,
+>>>    simpler, self-contained (one patch to fix issue) and maintains backward
+>>>    compatibility. Thanks to Javier Martinez Canillas and Tomasz Figa for
+>>>    valuable comments.
+>>> 2. Dropped patch 2/2 because now it is not needed. The clock id "TSADC"
+>>>    will be used on all Exynos4 boards.
+>>> 3. Added CC-stable.
+>>> ---
+>>>  drivers/clk/samsung/clk-exynos4.c | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>>
+>>
+>> Patch looks good to me.
+>>
+>> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>
+> Hi Tomasz and Sylwester,
+>
+> Any comments on this version of patch?
+> Tomasz, you gave me comments on previous version. Are their satisfied?
 
-Hi,
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-On Monday, July 27, 2015 02:05:31 PM Viresh Kumar wrote:
-> $subject is a bit wrong, we aren't fixing any issue here. We are
-> supporting a new feature and so it should be like:
-
-Have you read my explanation of the issue?
-
-With your OPP-v2 patches cpufreq-dt picks turbo frequencies and uses
-them as normal ones.
-
-(More at: http://www.spinics.net/lists/arm-kernel/msg430397.html)
+Thanks for pinging.
 
 Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-> cpufreq: Mark boost frequencies based on OPP's turbo mode
-> 
-> On 09-07-15, 17:43, Bartlomiej Zolnierkiewicz wrote:
-> > Turbo modes should be marked with CPUFREQ_BOOST_FREQ flag in
-> > the frequency table entry.
-> > 
-> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> > Cc: Thomas Abraham <thomas.ab@samsung.com>
-> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> >  drivers/cpufreq/cpufreq_opp.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/cpufreq/cpufreq_opp.c b/drivers/cpufreq/cpufreq_opp.c
-> > index 773bcde..f0cf502 100644
-> > --- a/drivers/cpufreq/cpufreq_opp.c
-> > +++ b/drivers/cpufreq/cpufreq_opp.c
-> > @@ -75,6 +75,8 @@ int dev_pm_opp_init_cpufreq_table(struct device *dev,
-> >  		}
-> >  		freq_table[i].driver_data = i;
-> >  		freq_table[i].frequency = rate / 1000;
-> > +		if (dev_pm_opp_get_turbo_mode_setting(opp) == true)
-> > +			freq_table[i].flags |= CPUFREQ_BOOST_FREQ;
-> >  	}
-> >  
-> >  	freq_table[i].driver_data = i;
-> 
-> Rest look fine.
+Tomasz
