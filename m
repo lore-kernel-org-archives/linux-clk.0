@@ -1,59 +1,39 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:37544 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751691AbbGNPMI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 14 Jul 2015 11:12:08 -0400
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	heikki.krogerus@linux.intel.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v4 0/6] clk: fractional-divider: do a clean up
-Date: Tue, 14 Jul 2015 18:11:57 +0300
-Message-Id: <1436886723-111895-1-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 6 Jul 2015 15:10:55 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 4/7] dt-bindings: add documentation of rk3668 clock
+ controller
+Message-ID: <20150706221055.GJ20866@codeaurora.org>
+References: <1436086820-3757-1-git-send-email-heiko@sntech.de>
+ <1436086820-3757-5-git-send-email-heiko@sntech.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1436086820-3757-5-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-The series provides a clean up for clk-fractional-diveder together with moving
-it to use rational best approximation algorithm. I think the patches are
-self-explanatory.
+On 07/05, Heiko Stuebner wrote:
+> Add the devicetree binding for the cru on the rk3368 which quite similar
+> structured as previous clock controllers.
+> 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Pawel Moll <pawel.moll@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+> Cc: Kumar Gala <galak@codeaurora.org>
+> Cc: devicetree@vger.kernel.org
+> ---
 
-The series was tested with 8250_dw UART driver on Intel Braswell.
-
-Patch 6 is an amendment to existing user of the fractional divider outside of
-clock framework. Greg, it would be nice to have your Ack on this if no
-objections.
-
-Changelog v4:
- - remove dependency to clk_div_mask() and use GENMASK() instead
- - apply changes to rockchip
- - amend 8250_dw driver to use proposed changes
-
-Changelog v3:
- - add patch 2/3 to simplify further usage
- - don't use mult_frac() due to potential overflow on 32 bit kernels
- - guarantee in ->round_rate() that m and n will not overflow
-
-Changelog v2:
- - move to rational_best_approximation() and mult_frac()
- - add patch 2/2
-
-Andy Shevchenko (6):
-  clk: fractional-divider: fix sparse warnings
-  clk: fractional-divider: rename prate -> parent_rate
-  clk: fractional-divider: keep mwidth and nwidth internally
-  clk: rockchip: save width in struct clk_fractional_divider
-  clk: fractional-divider: switch to rational best approximation
-  serial: 8250_dw: allow lower reference frequencies
-
- drivers/clk/Kconfig                  |  1 +
- drivers/clk/clk-fractional-divider.c | 90 ++++++++++++++++++++++--------------
- drivers/clk/rockchip/clk.c           |  6 ++-
- drivers/tty/serial/8250/8250_dw.c    |  4 --
- include/linux/clk-provider.h         |  3 +-
- 5 files changed, 62 insertions(+), 42 deletions(-)
+Applied to clk-rk3368.
 
 -- 
-2.1.4
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
