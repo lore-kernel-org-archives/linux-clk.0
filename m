@@ -1,45 +1,52 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v4 5/8] clk: bcm2835: Drop the fixed sys_pclk.
-Date: Mon, 20 Jul 2015 12:33:04 -0700
-Message-Id: <1437420787-32137-6-git-send-email-eric@anholt.net>
-In-Reply-To: <1437420787-32137-1-git-send-email-eric@anholt.net>
-References: <1437420787-32137-1-git-send-email-eric@anholt.net>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: [PATCH 1/2] clk: Check for allocation errors in of_clk_init()
+Date: Mon,  6 Jul 2015 16:59:37 -0700
+Message-Id: <1436227178-2465-1-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <20150610154941.GJ10549@mwanda>
+References: <20150610154941.GJ10549@mwanda>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Nothing uses it, and I can't find any evidence that anything ever has.
-Its role is now filled by the core clock in the firmware driver.
+Dan Carpenter reports that we don't check the allocation here for
+failure. Add a failure check and free any previously allocated
+providers from the clk_provider_list.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
- drivers/clk/clk-bcm2835.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/clk/clk.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-bcm2835.c b/drivers/clk/clk-bcm2835.c
-index 6b950ca..dd295e4 100644
---- a/drivers/clk/clk-bcm2835.c
-+++ b/drivers/clk/clk-bcm2835.c
-@@ -32,11 +32,6 @@ void __init bcm2835_init_clocks(void)
- 	struct clk *clk;
- 	int ret;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index ddb4b541016f..705156828a7a 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3112,8 +3112,17 @@ void __init of_clk_init(const struct of_device_id *matches)
  
--	clk = clk_register_fixed_rate(NULL, "sys_pclk", NULL, CLK_IS_ROOT,
--					250000000);
--	if (IS_ERR(clk))
--		pr_err("sys_pclk not registered\n");
--
- 	clk = clk_register_fixed_rate(NULL, "apb_pclk", NULL, CLK_IS_ROOT,
- 					126000000);
- 	if (IS_ERR(clk))
+ 	/* First prepare the list of the clocks providers */
+ 	for_each_matching_node_and_match(np, matches, &match) {
+-		struct clock_provider *parent =
+-			kzalloc(sizeof(struct clock_provider),	GFP_KERNEL);
++		struct clock_provider *parent;
++
++		parent = kzalloc(sizeof(*parent), GFP_KERNEL);
++		if (!parent) {
++			list_for_each_entry_safe(clk_provider, next,
++						 &clk_provider_list, node) {
++				list_del(&clk_provider->node);
++				kfree(clk_provider);
++			}
++			return;
++		}
+ 
+ 		parent->clk_init_cb = match->data;
+ 		parent->np = np;
 -- 
-2.1.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
