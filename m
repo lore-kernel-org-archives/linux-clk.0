@@ -1,52 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55AF6570.3010505@st.com>
-Date: Wed, 22 Jul 2015 11:42:08 +0200
-From: Maxime Coquelin <maxime.coquelin@st.com>
-MIME-Version: 1.0
-To: Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Fabian Frederick <fabf@skynet.be>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-	<linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 9/9] ARM: STi: DT: Rename st_pll3200c32_407_c0_x into
- st_pll3200c32_cx_x
-References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org> <1435068567-30995-10-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1435068567-30995-10-git-send-email-gabriel.fernandez@linaro.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Boris BREZILLON <boris.brezillon@free-electrons.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH] clk: at91: Silence warnings and cleanup __init usage
+Date: Mon,  6 Jul 2015 12:31:45 -0700
+Message-Id: <1436211105-10491-1-git-send-email-sboyd@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Gabriel,
+Remove useless ifdefs around function prototypes to silence the
+following sparse warnings when the configs aren't enabled.
 
-On 06/23/2015 04:09 PM, Gabriel Fernandez wrote:
-> Use a generic name for this kind of PLL
->
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-> ---
->   Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt | 4 ++--
->   arch/arm/boot/dts/stih407-clock.dtsi                         | 4 ++--
->   arch/arm/boot/dts/stih410-clock.dtsi                         | 4 ++--
->   arch/arm/boot/dts/stih418-clock.dtsi                         | 4 ++--
->   4 files changed, 8 insertions(+), 8 deletions(-)
->
->
+drivers/clk/at91/clk-h32mx.c:95:13: warning: symbol
+'of_sama5d4_clk_h32mx_setup' was not declared. Should it be
+static?
+drivers/clk/at91/clk-utmi.c:159:13: warning: symbol
+'of_at91sam9x5_clk_utmi_setup' was not declared. Should it be
+static?
 
-Patch applied to sti-dt-for-v4.3.
+Plus, using __init in function prototypes doesn't do anything, so
+just drop it throughout this file.
 
-Thanks!
-Maxime
+Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/at91/pmc.h | 56 ++++++++++++++++++++++----------------------------
+ 1 file changed, 24 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 69abb08cf146..0caad646583d 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -59,71 +59,63 @@ static inline void pmc_write(struct at91_pmc *pmc, int offset, u32 value)
+ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+ 			  struct clk_range *range);
+ 
+-extern void __init of_at91sam9260_clk_slow_setup(struct device_node *np,
++extern void of_at91sam9260_clk_slow_setup(struct device_node *np,
+ 						 struct at91_pmc *pmc);
+ 
+-extern void __init of_at91rm9200_clk_main_osc_setup(struct device_node *np,
++extern void of_at91rm9200_clk_main_osc_setup(struct device_node *np,
+ 						    struct at91_pmc *pmc);
+-extern void __init of_at91sam9x5_clk_main_rc_osc_setup(struct device_node *np,
++extern void of_at91sam9x5_clk_main_rc_osc_setup(struct device_node *np,
+ 						       struct at91_pmc *pmc);
+-extern void __init of_at91rm9200_clk_main_setup(struct device_node *np,
++extern void of_at91rm9200_clk_main_setup(struct device_node *np,
+ 						struct at91_pmc *pmc);
+-extern void __init of_at91sam9x5_clk_main_setup(struct device_node *np,
++extern void of_at91sam9x5_clk_main_setup(struct device_node *np,
+ 						struct at91_pmc *pmc);
+ 
+-extern void __init of_at91rm9200_clk_pll_setup(struct device_node *np,
++extern void of_at91rm9200_clk_pll_setup(struct device_node *np,
+ 					       struct at91_pmc *pmc);
+-extern void __init of_at91sam9g45_clk_pll_setup(struct device_node *np,
++extern void of_at91sam9g45_clk_pll_setup(struct device_node *np,
+ 						struct at91_pmc *pmc);
+-extern void __init of_at91sam9g20_clk_pllb_setup(struct device_node *np,
++extern void of_at91sam9g20_clk_pllb_setup(struct device_node *np,
+ 						 struct at91_pmc *pmc);
+-extern void __init of_sama5d3_clk_pll_setup(struct device_node *np,
++extern void of_sama5d3_clk_pll_setup(struct device_node *np,
+ 					    struct at91_pmc *pmc);
+-extern void __init of_at91sam9x5_clk_plldiv_setup(struct device_node *np,
++extern void of_at91sam9x5_clk_plldiv_setup(struct device_node *np,
+ 						  struct at91_pmc *pmc);
+ 
+-extern void __init of_at91rm9200_clk_master_setup(struct device_node *np,
++extern void of_at91rm9200_clk_master_setup(struct device_node *np,
+ 						  struct at91_pmc *pmc);
+-extern void __init of_at91sam9x5_clk_master_setup(struct device_node *np,
++extern void of_at91sam9x5_clk_master_setup(struct device_node *np,
+ 						  struct at91_pmc *pmc);
+ 
+-extern void __init of_at91rm9200_clk_sys_setup(struct device_node *np,
++extern void of_at91rm9200_clk_sys_setup(struct device_node *np,
+ 					       struct at91_pmc *pmc);
+ 
+-extern void __init of_at91rm9200_clk_periph_setup(struct device_node *np,
++extern void of_at91rm9200_clk_periph_setup(struct device_node *np,
+ 						  struct at91_pmc *pmc);
+-extern void __init of_at91sam9x5_clk_periph_setup(struct device_node *np,
++extern void of_at91sam9x5_clk_periph_setup(struct device_node *np,
+ 						  struct at91_pmc *pmc);
+ 
+-extern void __init of_at91rm9200_clk_prog_setup(struct device_node *np,
++extern void of_at91rm9200_clk_prog_setup(struct device_node *np,
+ 						struct at91_pmc *pmc);
+-extern void __init of_at91sam9g45_clk_prog_setup(struct device_node *np,
++extern void of_at91sam9g45_clk_prog_setup(struct device_node *np,
+ 						 struct at91_pmc *pmc);
+-extern void __init of_at91sam9x5_clk_prog_setup(struct device_node *np,
++extern void of_at91sam9x5_clk_prog_setup(struct device_node *np,
+ 						struct at91_pmc *pmc);
+ 
+-#if defined(CONFIG_HAVE_AT91_UTMI)
+-extern void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np,
++extern void of_at91sam9x5_clk_utmi_setup(struct device_node *np,
+ 						struct at91_pmc *pmc);
+-#endif
+ 
+-#if defined(CONFIG_HAVE_AT91_USB_CLK)
+-extern void __init of_at91rm9200_clk_usb_setup(struct device_node *np,
++extern void of_at91rm9200_clk_usb_setup(struct device_node *np,
+ 					       struct at91_pmc *pmc);
+-extern void __init of_at91sam9x5_clk_usb_setup(struct device_node *np,
++extern void of_at91sam9x5_clk_usb_setup(struct device_node *np,
+ 					       struct at91_pmc *pmc);
+-extern void __init of_at91sam9n12_clk_usb_setup(struct device_node *np,
++extern void of_at91sam9n12_clk_usb_setup(struct device_node *np,
+ 						struct at91_pmc *pmc);
+-#endif
+ 
+-#if defined(CONFIG_HAVE_AT91_SMD)
+-extern void __init of_at91sam9x5_clk_smd_setup(struct device_node *np,
++extern void of_at91sam9x5_clk_smd_setup(struct device_node *np,
+ 					       struct at91_pmc *pmc);
+-#endif
+ 
+-#if defined(CONFIG_HAVE_AT91_SMD)
+-extern void __init of_sama5d4_clk_h32mx_setup(struct device_node *np,
++extern void of_sama5d4_clk_h32mx_setup(struct device_node *np,
+ 					      struct at91_pmc *pmc);
+-#endif
+ 
+ #endif /* __PMC_H_ */
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
