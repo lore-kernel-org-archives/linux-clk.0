@@ -1,52 +1,39 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ulrich Hecht <ulrich.hecht@gmail.com>, linux-sh@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH/RFC 06/11] ARM: shmobile: r8a7790: Link CPG to RST using "renesas,modemr"
-Date: Tue, 07 Jul 2015 17:23:10 +0300
-Message-ID: <3792169.nKlDE6xfl4@avalon>
-In-Reply-To: <1436278217-20522-7-git-send-email-geert+renesas@glider.be>
-References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be> <1436278217-20522-7-git-send-email-geert+renesas@glider.be>
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <559AD7BE.3090402@codeaurora.org>
+Date: Mon, 06 Jul 2015 12:32:14 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: Hai Li <hali@codeaurora.org>
+CC: mturquette@baylibre.com, georgi.djakov@linaro.org,
+ tomeu.vizoso@collabora.com, architt@codeaurora.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: qcom: Use parent rate when set rate to pixel
+ RCG clock
+References: <1435271733-24455-1-git-send-email-hali@codeaurora.org> <1436194176-17701-1-git-send-email-hali@codeaurora.org>
+In-Reply-To: <1436194176-17701-1-git-send-email-hali@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
-
-Thank you for the patches.
-
-On Tuesday 07 July 2015 16:10:12 Geert Uytterhoeven wrote:
-> Add a link from the Clock Pulse Generator node to the Reset Controller
-> node, so the CPG can read the Mode Monitoring Register (MODEMR) to
-> obtain the MD pin values.x
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On 07/06/2015 07:49 AM, Hai Li wrote:
+> Since the parent rate has been recalculated, pixel RCG clock
+> should rely on it to find the correct M/N values during set_rate,
+> instead of calling __clk_round_rate() to its parent again.
+>
+> v2: Rebase on clk-next and avoid build warning
+>
+> Signed-off-by: Hai Li <hali@codeaurora.org>
+> Tested-by: Archit Taneja <architt@codeaurora.org>
+> Fixes: 99cbd064b059 ("clk: qcom: Support display RCG clocks")
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 > ---
->  arch/arm/boot/dts/r8a7790.dtsi | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-> index 08067ae177643b8f..4ee5523fc3e13e12 100644
-> --- a/arch/arm/boot/dts/r8a7790.dtsi
-> +++ b/arch/arm/boot/dts/r8a7790.dtsi
-> @@ -1115,6 +1115,7 @@
->  					     "lb", "qspi", "sdh", "sd0", "sd1",
->  					     "z", "rcan", "adsp";
->  			#power-domain-cells = <0>;
-> +			renesas,modemr = <&rst 0x60>;
 
-I have mixed feelings about this as I don't think it really describes the 
-hardware.
-
-Wouldn't it make sense to instead add a standard kernel API to retrieve the 
-boot mode value ? It seems to be a pretty common feature of SoCs across all 
-vendors.
-
->  		};
-> 
->  		/* Variable factor clocks */
+Huh? I didn't sign this off. The original patch was already applied, so
+a new patch on top of the patch in -next that removed the index and
+parent lines and renamed the variable should have been sent. Then we
+have the option of applying the new patch on top to silence the warning,
+or to squash it into the original patch if we want to redo clk-fixes.
+I've opted to redo clk-fixes this time.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
