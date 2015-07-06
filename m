@@ -1,314 +1,678 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Sun, 26 Jul 2015 22:24:08 +0200 (CEST)
-From: Paul Osmialowski <pawelo@king.net.pl>
-To: Michael Turquette <mturquette@baylibre.com>
-cc: Paul Osmialowski <pawelo@king.net.pl>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Nicolas Pitre <nicolas.pitre@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <r.herring@freescale.com>,
-	Alexander Potashev <aspotashev@emcraft.com>,
-	Frank Li <Frank.Li@freescale.com>, Jiri Slaby <jslaby@suse.cz>,
-	linux-clk@vger.kernel.org, Russell King <linux@arm.linux.org.uk>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-serial@vger.kernel.org,
-	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-	Anson Huang <b20788@freescale.com>, devicetree@vger.kernel.org,
-	Pawel Moll <pawel.moll@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Yuri Tikhonov <yur@emcraft.com>, linux-gpio@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Sergei Poselenov <sposelenov@emcraft.com>,
-	Paul Bolle <pebolle@tiscali.nl>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	Jingchang Lu <jingchang.lu@freescale.com>,
-	dmaengine@vger.kernel.org
-Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
-In-Reply-To: <20150724034229.642.88156@quantum>
-Message-ID: <alpine.LNX.2.00.1507262211470.28341@localhost.localdomain>
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <alpine.LNX.2.00.1507022338070.28322@localhost.localdomain> <alpine.DEB.2.11.1507030006280.3916@nanos> <2009463.YLtdMegFel@wuerfel> <alpine.LNX.2.00.1507042327490.1296@localhost.localdomain>
- <20150724034229.642.88156@quantum>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH] clk: qcom: Constify the parent names arrays
+Date: Mon,  6 Jul 2015 16:51:30 +0300
+Message-Id: <1436190690-15983-1-git-send-email-georgi.djakov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+Make const both the array and the strings, so they can be
+moved to .rodata section.
 
-Thank you for spending time on this and pointing me into the right 
-direction. I'm wondering about going even further with it. Assuming that I 
-know everything about my board, I can skip run-time discovery phase (note 
-that the original driver was designed for other Kinetis-based boards too) 
-and move everything into DTS, somewhat like this:
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+Patch based on v4.2-rc1
 
-/ {
-	osc0: clock {
-		compatible = "fixed-clock";
-		#clock-cells = <0>;
-		clock-frequency = <50000000>;
-	};
+ drivers/clk/qcom/gcc-apq8084.c  |   12 ++++++------
+ drivers/clk/qcom/gcc-ipq806x.c  |   10 +++++-----
+ drivers/clk/qcom/gcc-msm8660.c  |    8 ++++----
+ drivers/clk/qcom/gcc-msm8916.c  |   24 ++++++++++++------------
+ drivers/clk/qcom/gcc-msm8960.c  |   12 ++++++------
+ drivers/clk/qcom/gcc-msm8974.c  |    4 ++--
+ drivers/clk/qcom/lcc-ipq806x.c  |    6 +++---
+ drivers/clk/qcom/lcc-msm8960.c  |    8 ++++----
+ drivers/clk/qcom/mmcc-apq8084.c |   20 ++++++++++----------
+ drivers/clk/qcom/mmcc-msm8960.c |   14 +++++++-------
+ drivers/clk/qcom/mmcc-msm8974.c |   16 ++++++++--------
+ 11 files changed, 67 insertions(+), 67 deletions(-)
 
-	osc1: clock {
-		compatible = "fixed-clock";
-		#clock-cells = <0>;
-		clock-frequency = <12000000>;
-	};
-
-	rtc: clock {
-		compatible = "fixed-clock";
-		#clock-cells = <0>;
-		clock-frequency = <32768>;
-	};
-
-	mcgout: clock {
-		compatible = "fixed-factor-clock";
-		#clock-cells = <0>;
-		clocks = <&osc0>;
-		clock-mult = <12>;
-		clock-div = <5>;
-	};
-
-	core: clock {
-		compatible = "fixed-factor-clock";
-		#clock-cells = <0>;
-		clocks = <&mcgout>;
-		clock-mult = <1>;
-		clock-div = <1>;
-	};
-
-	bus: clock {
-		compatible = "fixed-factor-clock";
-		#clock-cells = <0>;
-		clocks = <&mcgout>;
-		clock-mult = <1>;
-		clock-div = <2>;
-	};
-
-	soc {
-		cmu@0x40047000 {
-			compatible = "fsl,kinetis-gate-clock";
-			reg = <0x40047000 0x1100>;
-
-			mcg_core_gate: clock-gate {
-				clocks = <&core>;
-				#clock-cells = <2>;
-			};
-
-			mcg_bus_gate: clock-gate {
-				clocks = <&bus>;
-				#clock-cells = <2>;
-			};
-
-			osc0_erclk_gate: clock-gate {
-				clocks = <&osc0>;
-				#clock-cells = <2>;
-			};
-		};
-
-		uart0: serial@4006a000 {
-			compatible = "fsl,kinetis-lpuart";
-			reg = <0x4006a000 0x1000>;
-			interrupts = <45>, <46>;
-			interrupt-names = "uart-stat", "uart-err";
-			clocks = <&mcg_core_gate 3 10>;
-			clock-names = "ipg";
-			dmas = <&edma 0 2>;
-			dma-names = "rx";
-			status = "disabled";
-		};
-	};
-};
-
-As you can see, mcg part is not required anymore.
-
-I guess that the approach above would require split into soc-specific and 
-board-specific part (as I said, dividers arrangement is something board 
-specific), but I wonder what you thing about this proposal.
-
-Thanks,
-Paul
-
-On Thu, 23 Jul 2015, Michael Turquette wrote:
-
-> Quoting Paul Osmialowski (2015-07-04 14:50:03)
-> > Hi Arnd,
-> > 
-> > I'm attaching excerpt from Kinetis reference manual that may make 
-> > situation clearer.
-> 
-> Hi Paul,
-> 
-> Can you please post the patch in the body of the email instead of an
-> attachment? It makes it easier to review. Another small nitpick is that
-> the $SUBJECT for this patch might be better off as something like:
-> 
-> clk: mcg and sim clock drivers for twr-k70f120m Kinetis SoC
-> 
-> At least it helps me find the patch I care about when skimming the
-> series ;-)
-> 
-> > 
-> > These MCG and SIM registers are used only to determine configuration 
-> > (clock fixed rates and clock signal origins) at run time.
-> > 
-> > Namely, the real MCGOUTCLK source (in the middle) which is the parent for 
-> > core clock (CCLK) and peripheral clock (PCLK) is determined at run time by 
-> > reading MCG registers, let me quote commit message from Emcraft git repo:
-> > 
-> >       * Determine in run-time what oscillator module (OSC0 or OSC1) is used
-> >      as clock source for the main PLL.
-> 
-> According to [0] there are three options: a 32k RTC osc clock and osc0
-> both feed into a mux. You should model this 32k clock with the
-> fixed-rate binding.
-> 
-> >       * When OSC1 is selected, assume its frequency to be 12 MHz on all
-> >      boards (there is a 12 MHz oscillator on XTAL1/EXTAL1 on K70-SOM and
-> >      TWR-K70F120M boards).
-> > 
-> > In my .dts I'm trying to possibly follow real clock hierarchy, but to go 
-> > anywhere behind MCGOUTCLK would require ability to rewrite .dtb e.g. by 
-> > U-boot. But that's too demanding for any potential users of this BSP. So 
-> > let's asume that MCGOUTCLK is the root clock and a parent for CCLK and 
-> > PCLK.
-> 
-> I'm confused. The point of device tree is to solve problems like this;
-> i.e. board-specific differences such as different oscillator
-> frequencies.
-> 
-> OSC0 and OSC1 should each be a fixed-rate clock in your board-specific
-> TWR-K70F120M DTS (not a chip-specific file). They do not belong in the
-> cmu node, and they should use the "fixed-clock" binding. The 32k RTC osc
-> can probably go in your chip-specific .dtsi as a fixed-rate clock since
-> it appears to mandated in the reference manual[0].
-> 
-> These three fixed-rate clocks are your root clock nodes. Customers only
-> need to worry about this if they spin a board, and then they will need
-> to populate the frequencies of OSC0 and OSC1 in their board-specific
-> .dts.
-> 
-> Please break clk-kinetis.c into two files:
-> drivers/clk/kinetis/clk-mcg.c
-> drivers/clk/kinetis/clk-sim.c
-> 
-> Below is what your binding/dts should look like:
-> 
-> {
-> 	osc0: clock {
-> 		compatible = "fixed-clock";
-> 		#clock-cells = <0>;
-> 		clock-frequency = <50000000>;
-> 	};
-> 
-> 	osc1: clock {
-> 		compatible = "fixed-clock";
-> 		#clock-cells = <0>;
-> 		clock-frequency = <12000000>;
-> 	};
-> 
-> 	rtc: clock {
-> 		compatible = "fixed-clock";
-> 		#clock-cells = <0>;
-> 		clock-frequency = <32768>;
-> 	};
-> 
-> 	soc: soc {
-> 		mcg: clock-controller@40064000 {
-> 			compatible = "fsl,kinetis-mcg";
-> 			clock-cells = <1>;
-> 			reg = <0x40064000 0x14>;
-> 			clocks = <&osc0>, <&osc1>, <&rtc>;
-> 			clock-names = "osc0", "osc1", "rtc";
-> 		};
-> 
-> 		sim: clock-controller@40047000 {
-> 			compatible = "fsl,kinetis-sim";
-> 			clock-cells = <1>;
-> 			reg = <0x40047000 0x1100>;
-> 			clocks = <&mcg MCG_MCGOUTCLK_DIV1>, <&mcg MCG_MCGOUTCLK_DIV2>, <&mcg MCG_MCGOUTCLK_DIV3> <&mcg MCG_MCGOUTCLK_DIV4>;
-> 			clock-names = "core", "bus", "flexbus", "flash";
-> 		};
-> 	};
-> 
-> 	uart0: serial@4006a000 {
-> 		compatible = "fsl,kinetis-lpuart";
-> 		reg = <0x4006a000 0x1000>;
-> 		clocks = <&sim SIM_SCGC4_UART1_CLK>;
-> 		clock-names = "gate";
-> 	};
-> 
-> I removed the interrupts and dma stuff from the uart0 node for clarity.
-> The above is the only style of binding that I have been accepting for
-> some time; first declare the clock controller and establish its register
-> space, and then consumers can consume clocks by providing the phandle to
-> the controller plus an offset corresponding to a unique clock. The
-> clock-names property makes it really easy to use with the clkdev stuff
-> (e.g. clk_get()).
-> 
-> I've covered this before on the mailing list so here is a link
-> describing how the qcom bindings do it in detail:
-> 
-> http://lkml.kernel.org/r/<20150416192014.19585.9663@quantum>
-> 
-> Technically you could encode the same bits as sub-nodes of the mcg and
-> sim nodes, but the shared header is how the magic happens with the
-> driver so it's best to keep the clock controller binding small and
-> light.
-> 
-> I think this means you can also get rid of kinetis_of_clk_get_name and
-> kinetis_clk_gate_get but my brain is tired so I'll leave that as an
-> exercise to the reader.
-> 
-> [0] http://cache.freescale.com/files/microcontrollers/doc/ref_manual/K70P256M150SF3RM.pdf
-> 
-> Regards,
-> Mike
-> 
-> > 
-> > In my most recent version I added OSC0ERCLK explicitly as one more root 
-> > clock, since it is also used directly (through CG reg. 1 bit 0) by 
-> > Freescale fec network device whose in-tree driver I'm trying to make 
-> > usable for Kinetis.
-> > 
-> > On Sat, 4 Jul 2015, Arnd Bergmann wrote:
-> > 
-> > > On Friday 03 July 2015 00:08:27 Thomas Gleixner wrote:
-> > >> On Thu, 2 Jul 2015, Paul Osmialowski wrote:
-> > >>> On Thu, 2 Jul 2015, Arnd Bergmann wrote:
-> > >>>
-> > >>>> I wonder if you could move out the fixed rate clocks into their own
-> > >>>> nodes. Are they actually controlled by the same block? If they are
-> > >>>> just fixed, you can use the normal binding for fixed rate clocks
-> > >>>> and only describe the clocks that are related to the driver.
-> > >>>
-> > >>> In my view having these clocks grouped together looks more convincing. After
-> > >>> all, they all share the same I/O regs in order to read configuration.
-> > >>
-> > >> The fact that they share a register is not making them a group. That's
-> > >> just a HW design decision and you need to deal with that by protecting
-> > >> the register access, but not by trying to group them artificially at
-> > >> the functional level.
-> > >
-> > > I'd disagree with that: The clock controller is the device that owns the
-> > > registers and that should be one node in DT, as Paul's first version does.
-> > >
-> > > The part I'm still struggling with is understanding how the fixed-rate
-> > > clocks are controlled through those registers. If they are indeed configured
-> > > through the registers, the name is probably wrong and should be changed
-> > > to whatever kind of non-fixed clock this is.
-> > >
-> > >       Arnd
-> > >
-> > 
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+diff --git a/drivers/clk/qcom/gcc-apq8084.c b/drivers/clk/qcom/gcc-apq8084.c
+index 54a756b90a37..05b7a25b80e8 100644
+--- a/drivers/clk/qcom/gcc-apq8084.c
++++ b/drivers/clk/qcom/gcc-apq8084.c
+@@ -48,7 +48,7 @@ static const struct parent_map gcc_xo_gpll0_map[] = {
+ 	{ P_GPLL0, 1 }
+ };
+ 
+-static const char *gcc_xo_gpll0[] = {
++static const char * const gcc_xo_gpll0[] = {
+ 	"xo",
+ 	"gpll0_vote",
+ };
+@@ -59,7 +59,7 @@ static const struct parent_map gcc_xo_gpll0_gpll4_map[] = {
+ 	{ P_GPLL4, 5 }
+ };
+ 
+-static const char *gcc_xo_gpll0_gpll4[] = {
++static const char * const gcc_xo_gpll0_gpll4[] = {
+ 	"xo",
+ 	"gpll0_vote",
+ 	"gpll4_vote",
+@@ -70,7 +70,7 @@ static const struct parent_map gcc_xo_sata_asic0_map[] = {
+ 	{ P_SATA_ASIC0_CLK, 2 }
+ };
+ 
+-static const char *gcc_xo_sata_asic0[] = {
++static const char * const gcc_xo_sata_asic0[] = {
+ 	"xo",
+ 	"sata_asic0_clk",
+ };
+@@ -80,7 +80,7 @@ static const struct parent_map gcc_xo_sata_rx_map[] = {
+ 	{ P_SATA_RX_CLK, 2}
+ };
+ 
+-static const char *gcc_xo_sata_rx[] = {
++static const char * const gcc_xo_sata_rx[] = {
+ 	"xo",
+ 	"sata_rx_clk",
+ };
+@@ -90,7 +90,7 @@ static const struct parent_map gcc_xo_pcie_map[] = {
+ 	{ P_PCIE_0_1_PIPE_CLK, 2 }
+ };
+ 
+-static const char *gcc_xo_pcie[] = {
++static const char * const gcc_xo_pcie[] = {
+ 	"xo",
+ 	"pcie_pipe",
+ };
+@@ -100,7 +100,7 @@ static const struct parent_map gcc_xo_pcie_sleep_map[] = {
+ 	{ P_SLEEP_CLK, 6 }
+ };
+ 
+-static const char *gcc_xo_pcie_sleep[] = {
++static const char * const gcc_xo_pcie_sleep[] = {
+ 	"xo",
+ 	"sleep_clk_src",
+ };
+diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+index 563969942a1d..40e480220cd3 100644
+--- a/drivers/clk/qcom/gcc-ipq806x.c
++++ b/drivers/clk/qcom/gcc-ipq806x.c
+@@ -188,7 +188,7 @@ static const struct parent_map gcc_pxo_pll8_map[] = {
+ 	{ P_PLL8, 3 }
+ };
+ 
+-static const char *gcc_pxo_pll8[] = {
++static const char * const gcc_pxo_pll8[] = {
+ 	"pxo",
+ 	"pll8_vote",
+ };
+@@ -199,7 +199,7 @@ static const struct parent_map gcc_pxo_pll8_cxo_map[] = {
+ 	{ P_CXO, 5 }
+ };
+ 
+-static const char *gcc_pxo_pll8_cxo[] = {
++static const char * const gcc_pxo_pll8_cxo[] = {
+ 	"pxo",
+ 	"pll8_vote",
+ 	"cxo",
+@@ -215,7 +215,7 @@ static const struct parent_map gcc_pxo_pll3_sata_map[] = {
+ 	{ P_PLL3, 6 }
+ };
+ 
+-static const char *gcc_pxo_pll3[] = {
++static const char * const gcc_pxo_pll3[] = {
+ 	"pxo",
+ 	"pll3",
+ };
+@@ -226,7 +226,7 @@ static const struct parent_map gcc_pxo_pll8_pll0[] = {
+ 	{ P_PLL0, 2 }
+ };
+ 
+-static const char *gcc_pxo_pll8_pll0_map[] = {
++static const char * const gcc_pxo_pll8_pll0_map[] = {
+ 	"pxo",
+ 	"pll8_vote",
+ 	"pll0_vote",
+@@ -240,7 +240,7 @@ static const struct parent_map gcc_pxo_pll8_pll14_pll18_pll0_map[] = {
+ 	{ P_PLL18, 1 }
+ };
+ 
+-static const char *gcc_pxo_pll8_pll14_pll18_pll0[] = {
++static const char * const gcc_pxo_pll8_pll14_pll18_pll0[] = {
+ 	"pxo",
+ 	"pll8_vote",
+ 	"pll0_vote",
+diff --git a/drivers/clk/qcom/gcc-msm8660.c b/drivers/clk/qcom/gcc-msm8660.c
+index fc6b12da5b30..b02826ed770a 100644
+--- a/drivers/clk/qcom/gcc-msm8660.c
++++ b/drivers/clk/qcom/gcc-msm8660.c
+@@ -70,7 +70,7 @@ static const struct parent_map gcc_pxo_pll8_map[] = {
+ 	{ P_PLL8, 3 }
+ };
+ 
+-static const char *gcc_pxo_pll8[] = {
++static const char * const gcc_pxo_pll8[] = {
+ 	"pxo",
+ 	"pll8_vote",
+ };
+@@ -81,7 +81,7 @@ static const struct parent_map gcc_pxo_pll8_cxo_map[] = {
+ 	{ P_CXO, 5 }
+ };
+ 
+-static const char *gcc_pxo_pll8_cxo[] = {
++static const char * const gcc_pxo_pll8_cxo[] = {
+ 	"pxo",
+ 	"pll8_vote",
+ 	"cxo",
+@@ -1917,7 +1917,7 @@ static struct clk_rcg usb_fs1_xcvr_fs_src = {
+ 	}
+ };
+ 
+-static const char *usb_fs1_xcvr_fs_src_p[] = { "usb_fs1_xcvr_fs_src" };
++static const char * const usb_fs1_xcvr_fs_src_p[] = { "usb_fs1_xcvr_fs_src" };
+ 
+ static struct clk_branch usb_fs1_xcvr_fs_clk = {
+ 	.halt_reg = 0x2fcc,
+@@ -1984,7 +1984,7 @@ static struct clk_rcg usb_fs2_xcvr_fs_src = {
+ 	}
+ };
+ 
+-static const char *usb_fs2_xcvr_fs_src_p[] = { "usb_fs2_xcvr_fs_src" };
++static const char * const usb_fs2_xcvr_fs_src_p[] = { "usb_fs2_xcvr_fs_src" };
+ 
+ static struct clk_branch usb_fs2_xcvr_fs_clk = {
+ 	.halt_reg = 0x2fcc,
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index c66f7bc2ae87..3bf4fb3deef6 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -51,7 +51,7 @@ static const struct parent_map gcc_xo_gpll0_map[] = {
+ 	{ P_GPLL0, 1 },
+ };
+ 
+-static const char *gcc_xo_gpll0[] = {
++static const char * const gcc_xo_gpll0[] = {
+ 	"xo",
+ 	"gpll0_vote",
+ };
+@@ -62,7 +62,7 @@ static const struct parent_map gcc_xo_gpll0_bimc_map[] = {
+ 	{ P_BIMC, 2 },
+ };
+ 
+-static const char *gcc_xo_gpll0_bimc[] = {
++static const char * const gcc_xo_gpll0_bimc[] = {
+ 	"xo",
+ 	"gpll0_vote",
+ 	"bimc_pll_vote",
+@@ -75,7 +75,7 @@ static const struct parent_map gcc_xo_gpll0a_gpll1_gpll2a_map[] = {
+ 	{ P_GPLL2_AUX, 2 },
+ };
+ 
+-static const char *gcc_xo_gpll0a_gpll1_gpll2a[] = {
++static const char * const gcc_xo_gpll0a_gpll1_gpll2a[] = {
+ 	"xo",
+ 	"gpll0_vote",
+ 	"gpll1_vote",
+@@ -88,7 +88,7 @@ static const struct parent_map gcc_xo_gpll0_gpll2_map[] = {
+ 	{ P_GPLL2, 2 },
+ };
+ 
+-static const char *gcc_xo_gpll0_gpll2[] = {
++static const char * const gcc_xo_gpll0_gpll2[] = {
+ 	"xo",
+ 	"gpll0_vote",
+ 	"gpll2_vote",
+@@ -99,7 +99,7 @@ static const struct parent_map gcc_xo_gpll0a_map[] = {
+ 	{ P_GPLL0_AUX, 2 },
+ };
+ 
+-static const char *gcc_xo_gpll0a[] = {
++static const char * const gcc_xo_gpll0a[] = {
+ 	"xo",
+ 	"gpll0_vote",
+ };
+@@ -111,7 +111,7 @@ static const struct parent_map gcc_xo_gpll0_gpll1a_sleep_map[] = {
+ 	{ P_SLEEP_CLK, 6 },
+ };
+ 
+-static const char *gcc_xo_gpll0_gpll1a_sleep[] = {
++static const char * const gcc_xo_gpll0_gpll1a_sleep[] = {
+ 	"xo",
+ 	"gpll0_vote",
+ 	"gpll1_vote",
+@@ -124,7 +124,7 @@ static const struct parent_map gcc_xo_gpll0_gpll1a_map[] = {
+ 	{ P_GPLL1_AUX, 2 },
+ };
+ 
+-static const char *gcc_xo_gpll0_gpll1a[] = {
++static const char * const gcc_xo_gpll0_gpll1a[] = {
+ 	"xo",
+ 	"gpll0_vote",
+ 	"gpll1_vote",
+@@ -135,7 +135,7 @@ static const struct parent_map gcc_xo_dsibyte_map[] = {
+ 	{ P_DSI0_PHYPLL_BYTE, 2 },
+ };
+ 
+-static const char *gcc_xo_dsibyte[] = {
++static const char * const gcc_xo_dsibyte[] = {
+ 	"xo",
+ 	"dsi0pllbyte",
+ };
+@@ -146,7 +146,7 @@ static const struct parent_map gcc_xo_gpll0a_dsibyte_map[] = {
+ 	{ P_DSI0_PHYPLL_BYTE, 1 },
+ };
+ 
+-static const char *gcc_xo_gpll0a_dsibyte[] = {
++static const char * const gcc_xo_gpll0a_dsibyte[] = {
+ 	"xo",
+ 	"gpll0_vote",
+ 	"dsi0pllbyte",
+@@ -158,7 +158,7 @@ static const struct parent_map gcc_xo_gpll0_dsiphy_map[] = {
+ 	{ P_DSI0_PHYPLL_DSI, 2 },
+ };
+ 
+-static const char *gcc_xo_gpll0_dsiphy[] = {
++static const char * const gcc_xo_gpll0_dsiphy[] = {
+ 	"xo",
+ 	"gpll0_vote",
+ 	"dsi0pll",
+@@ -170,7 +170,7 @@ static const struct parent_map gcc_xo_gpll0a_dsiphy_map[] = {
+ 	{ P_DSI0_PHYPLL_DSI, 1 },
+ };
+ 
+-static const char *gcc_xo_gpll0a_dsiphy[] = {
++static const char * const gcc_xo_gpll0a_dsiphy[] = {
+ 	"xo",
+ 	"gpll0_vote",
+ 	"dsi0pll",
+@@ -183,7 +183,7 @@ static const struct parent_map gcc_xo_gpll0a_gpll1_gpll2_map[] = {
+ 	{ P_GPLL2, 2 },
+ };
+ 
+-static const char *gcc_xo_gpll0a_gpll1_gpll2[] = {
++static const char * const gcc_xo_gpll0a_gpll1_gpll2[] = {
+ 	"xo",
+ 	"gpll0_vote",
+ 	"gpll1_vote",
+diff --git a/drivers/clk/qcom/gcc-msm8960.c b/drivers/clk/qcom/gcc-msm8960.c
+index eb6a4f9fa107..aa294b1bad34 100644
+--- a/drivers/clk/qcom/gcc-msm8960.c
++++ b/drivers/clk/qcom/gcc-msm8960.c
+@@ -125,7 +125,7 @@ static const struct parent_map gcc_pxo_pll8_map[] = {
+ 	{ P_PLL8, 3 }
+ };
+ 
+-static const char *gcc_pxo_pll8[] = {
++static const char * const gcc_pxo_pll8[] = {
+ 	"pxo",
+ 	"pll8_vote",
+ };
+@@ -136,7 +136,7 @@ static const struct parent_map gcc_pxo_pll8_cxo_map[] = {
+ 	{ P_CXO, 5 }
+ };
+ 
+-static const char *gcc_pxo_pll8_cxo[] = {
++static const char * const gcc_pxo_pll8_cxo[] = {
+ 	"pxo",
+ 	"pll8_vote",
+ 	"cxo",
+@@ -148,7 +148,7 @@ static const struct parent_map gcc_pxo_pll8_pll3_map[] = {
+ 	{ P_PLL3, 6 }
+ };
+ 
+-static const char *gcc_pxo_pll8_pll3[] = {
++static const char * const gcc_pxo_pll8_pll3[] = {
+ 	"pxo",
+ 	"pll8_vote",
+ 	"pll3",
+@@ -2085,7 +2085,7 @@ static struct clk_rcg usb_hsic_xcvr_fs_src = {
+ 	}
+ };
+ 
+-static const char *usb_hsic_xcvr_fs_src_p[] = { "usb_hsic_xcvr_fs_src" };
++static const char * const usb_hsic_xcvr_fs_src_p[] = { "usb_hsic_xcvr_fs_src" };
+ 
+ static struct clk_branch usb_hsic_xcvr_fs_clk = {
+ 	.halt_reg = 0x2fc8,
+@@ -2181,7 +2181,7 @@ static struct clk_rcg usb_fs1_xcvr_fs_src = {
+ 	}
+ };
+ 
+-static const char *usb_fs1_xcvr_fs_src_p[] = { "usb_fs1_xcvr_fs_src" };
++static const char * const usb_fs1_xcvr_fs_src_p[] = { "usb_fs1_xcvr_fs_src" };
+ 
+ static struct clk_branch usb_fs1_xcvr_fs_clk = {
+ 	.halt_reg = 0x2fcc,
+@@ -2248,7 +2248,7 @@ static struct clk_rcg usb_fs2_xcvr_fs_src = {
+ 	}
+ };
+ 
+-static const char *usb_fs2_xcvr_fs_src_p[] = { "usb_fs2_xcvr_fs_src" };
++static const char * const usb_fs2_xcvr_fs_src_p[] = { "usb_fs2_xcvr_fs_src" };
+ 
+ static struct clk_branch usb_fs2_xcvr_fs_clk = {
+ 	.halt_reg = 0x2fcc,
+diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
+index c39d09874e74..2c289702119f 100644
+--- a/drivers/clk/qcom/gcc-msm8974.c
++++ b/drivers/clk/qcom/gcc-msm8974.c
+@@ -44,7 +44,7 @@ static const struct parent_map gcc_xo_gpll0_map[] = {
+ 	{ P_GPLL0, 1 }
+ };
+ 
+-static const char *gcc_xo_gpll0[] = {
++static const char * const gcc_xo_gpll0[] = {
+ 	"xo",
+ 	"gpll0_vote",
+ };
+@@ -55,7 +55,7 @@ static const struct parent_map gcc_xo_gpll0_gpll4_map[] = {
+ 	{ P_GPLL4, 5 }
+ };
+ 
+-static const char *gcc_xo_gpll0_gpll4[] = {
++static const char * const gcc_xo_gpll0_gpll4[] = {
+ 	"xo",
+ 	"gpll0_vote",
+ 	"gpll4_vote",
+diff --git a/drivers/clk/qcom/lcc-ipq806x.c b/drivers/clk/qcom/lcc-ipq806x.c
+index 47f0ac16d149..93ad42b14366 100644
+--- a/drivers/clk/qcom/lcc-ipq806x.c
++++ b/drivers/clk/qcom/lcc-ipq806x.c
+@@ -71,7 +71,7 @@ static const struct parent_map lcc_pxo_pll4_map[] = {
+ 	{ P_PLL4, 2 }
+ };
+ 
+-static const char *lcc_pxo_pll4[] = {
++static const char * const lcc_pxo_pll4[] = {
+ 	"pxo",
+ 	"pll4_vote",
+ };
+@@ -146,7 +146,7 @@ static struct clk_rcg mi2s_osr_src = {
+ 	},
+ };
+ 
+-static const char *lcc_mi2s_parents[] = {
++static const char * const lcc_mi2s_parents[] = {
+ 	"mi2s_osr_src",
+ };
+ 
+@@ -340,7 +340,7 @@ static struct clk_rcg spdif_src = {
+ 	},
+ };
+ 
+-static const char *lcc_spdif_parents[] = {
++static const char * const lcc_spdif_parents[] = {
+ 	"spdif_src",
+ };
+ 
+diff --git a/drivers/clk/qcom/lcc-msm8960.c b/drivers/clk/qcom/lcc-msm8960.c
+index d0df9d5fc3af..ecb96c284675 100644
+--- a/drivers/clk/qcom/lcc-msm8960.c
++++ b/drivers/clk/qcom/lcc-msm8960.c
+@@ -57,7 +57,7 @@ static const struct parent_map lcc_pxo_pll4_map[] = {
+ 	{ P_PLL4, 2 }
+ };
+ 
+-static const char *lcc_pxo_pll4[] = {
++static const char * const lcc_pxo_pll4[] = {
+ 	"pxo",
+ 	"pll4_vote",
+ };
+@@ -127,7 +127,7 @@ static struct clk_rcg mi2s_osr_src = {
+ 	},
+ };
+ 
+-static const char *lcc_mi2s_parents[] = {
++static const char * const lcc_mi2s_parents[] = {
+ 	"mi2s_osr_src",
+ };
+ 
+@@ -233,7 +233,7 @@ static struct clk_rcg prefix##_osr_src = {			\
+ 	},							\
+ };								\
+ 								\
+-static const char *lcc_##prefix##_parents[] = {			\
++static const char * const lcc_##prefix##_parents[] = {		\
+ 	#prefix "_osr_src",					\
+ };								\
+ 								\
+@@ -445,7 +445,7 @@ static struct clk_rcg slimbus_src = {
+ 	},
+ };
+ 
+-static const char *lcc_slimbus_parents[] = {
++static const char * const lcc_slimbus_parents[] = {
+ 	"slimbus_src",
+ };
+ 
+diff --git a/drivers/clk/qcom/mmcc-apq8084.c b/drivers/clk/qcom/mmcc-apq8084.c
+index 1b17df2cb0af..f0ee6bde11af 100644
+--- a/drivers/clk/qcom/mmcc-apq8084.c
++++ b/drivers/clk/qcom/mmcc-apq8084.c
+@@ -53,7 +53,7 @@ static const struct parent_map mmcc_xo_mmpll0_mmpll1_gpll0_map[] = {
+ 	{ P_GPLL0, 5 }
+ };
+ 
+-static const char *mmcc_xo_mmpll0_mmpll1_gpll0[] = {
++static const char * const mmcc_xo_mmpll0_mmpll1_gpll0[] = {
+ 	"xo",
+ 	"mmpll0_vote",
+ 	"mmpll1_vote",
+@@ -69,7 +69,7 @@ static const struct parent_map mmcc_xo_mmpll0_dsi_hdmi_gpll0_map[] = {
+ 	{ P_DSI1PLL, 3 }
+ };
+ 
+-static const char *mmcc_xo_mmpll0_dsi_hdmi_gpll0[] = {
++static const char * const mmcc_xo_mmpll0_dsi_hdmi_gpll0[] = {
+ 	"xo",
+ 	"mmpll0_vote",
+ 	"hdmipll",
+@@ -86,7 +86,7 @@ static const struct parent_map mmcc_xo_mmpll0_1_2_gpll0_map[] = {
+ 	{ P_MMPLL2, 3 }
+ };
+ 
+-static const char *mmcc_xo_mmpll0_1_2_gpll0[] = {
++static const char * const mmcc_xo_mmpll0_1_2_gpll0[] = {
+ 	"xo",
+ 	"mmpll0_vote",
+ 	"mmpll1_vote",
+@@ -102,7 +102,7 @@ static const struct parent_map mmcc_xo_mmpll0_1_3_gpll0_map[] = {
+ 	{ P_MMPLL3, 3 }
+ };
+ 
+-static const char *mmcc_xo_mmpll0_1_3_gpll0[] = {
++static const char * const mmcc_xo_mmpll0_1_3_gpll0[] = {
+ 	"xo",
+ 	"mmpll0_vote",
+ 	"mmpll1_vote",
+@@ -119,7 +119,7 @@ static const struct parent_map mmcc_xo_dsi_hdmi_edp_map[] = {
+ 	{ P_DSI1PLL, 2 }
+ };
+ 
+-static const char *mmcc_xo_dsi_hdmi_edp[] = {
++static const char * const mmcc_xo_dsi_hdmi_edp[] = {
+ 	"xo",
+ 	"edp_link_clk",
+ 	"hdmipll",
+@@ -137,7 +137,7 @@ static const struct parent_map mmcc_xo_dsi_hdmi_edp_gpll0_map[] = {
+ 	{ P_DSI1PLL, 2 }
+ };
+ 
+-static const char *mmcc_xo_dsi_hdmi_edp_gpll0[] = {
++static const char * const mmcc_xo_dsi_hdmi_edp_gpll0[] = {
+ 	"xo",
+ 	"edp_link_clk",
+ 	"hdmipll",
+@@ -155,7 +155,7 @@ static const struct parent_map mmcc_xo_dsibyte_hdmi_edp_gpll0_map[] = {
+ 	{ P_DSI1PLL_BYTE, 2 }
+ };
+ 
+-static const char *mmcc_xo_dsibyte_hdmi_edp_gpll0[] = {
++static const char * const mmcc_xo_dsibyte_hdmi_edp_gpll0[] = {
+ 	"xo",
+ 	"edp_link_clk",
+ 	"hdmipll",
+@@ -172,7 +172,7 @@ static const struct parent_map mmcc_xo_mmpll0_1_4_gpll0_map[] = {
+ 	{ P_MMPLL4, 3 }
+ };
+ 
+-static const char *mmcc_xo_mmpll0_1_4_gpll0[] = {
++static const char * const mmcc_xo_mmpll0_1_4_gpll0[] = {
+ 	"xo",
+ 	"mmpll0",
+ 	"mmpll1",
+@@ -189,7 +189,7 @@ static const struct parent_map mmcc_xo_mmpll0_1_4_gpll1_0_map[] = {
+ 	{ P_GPLL1, 4 }
+ };
+ 
+-static const char *mmcc_xo_mmpll0_1_4_gpll1_0[] = {
++static const char * const mmcc_xo_mmpll0_1_4_gpll1_0[] = {
+ 	"xo",
+ 	"mmpll0",
+ 	"mmpll1",
+@@ -208,7 +208,7 @@ static const struct parent_map mmcc_xo_mmpll0_1_4_gpll1_0_sleep_map[] = {
+ 	{ P_MMSLEEP, 6 }
+ };
+ 
+-static const char *mmcc_xo_mmpll0_1_4_gpll1_0_sleep[] = {
++static const char * const mmcc_xo_mmpll0_1_4_gpll1_0_sleep[] = {
+ 	"xo",
+ 	"mmpll0",
+ 	"mmpll1",
+diff --git a/drivers/clk/qcom/mmcc-msm8960.c b/drivers/clk/qcom/mmcc-msm8960.c
+index 9711bca9cc06..54aadbcda61a 100644
+--- a/drivers/clk/qcom/mmcc-msm8960.c
++++ b/drivers/clk/qcom/mmcc-msm8960.c
+@@ -50,7 +50,7 @@ static const struct parent_map mmcc_pxo_pll8_pll2_map[] = {
+ 	{ P_PLL2, 1 }
+ };
+ 
+-static const char *mmcc_pxo_pll8_pll2[] = {
++static const char * const mmcc_pxo_pll8_pll2[] = {
+ 	"pxo",
+ 	"pll8_vote",
+ 	"pll2",
+@@ -63,7 +63,7 @@ static const struct parent_map mmcc_pxo_pll8_pll2_pll3_map[] = {
+ 	{ P_PLL3, 3 }
+ };
+ 
+-static const char *mmcc_pxo_pll8_pll2_pll15[] = {
++static const char * const mmcc_pxo_pll8_pll2_pll15[] = {
+ 	"pxo",
+ 	"pll8_vote",
+ 	"pll2",
+@@ -77,7 +77,7 @@ static const struct parent_map mmcc_pxo_pll8_pll2_pll15_map[] = {
+ 	{ P_PLL15, 3 }
+ };
+ 
+-static const char *mmcc_pxo_pll8_pll2_pll3[] = {
++static const char * const mmcc_pxo_pll8_pll2_pll3[] = {
+ 	"pxo",
+ 	"pll8_vote",
+ 	"pll2",
+@@ -579,7 +579,7 @@ static const struct clk_ops clk_ops_pix_rdi = {
+ 	.determine_rate = __clk_mux_determine_rate,
+ };
+ 
+-static const char *pix_rdi_parents[] = {
++static const char * const pix_rdi_parents[] = {
+ 	"csi0_clk",
+ 	"csi1_clk",
+ 	"csi2_clk",
+@@ -709,7 +709,7 @@ static struct clk_rcg csiphytimer_src = {
+ 	},
+ };
+ 
+-static const char *csixphy_timer_src[] = { "csiphytimer_src" };
++static const char * const csixphy_timer_src[] = { "csiphytimer_src" };
+ 
+ static struct clk_branch csiphy0_timer_clk = {
+ 	.halt_reg = 0x01e8,
+@@ -1385,7 +1385,7 @@ static const struct parent_map mmcc_pxo_hdmi_map[] = {
+ 	{ P_HDMI_PLL, 3 }
+ };
+ 
+-static const char *mmcc_pxo_hdmi[] = {
++static const char * const mmcc_pxo_hdmi[] = {
+ 	"pxo",
+ 	"hdmi_pll",
+ };
+@@ -1428,7 +1428,7 @@ static struct clk_rcg tv_src = {
+ 	},
+ };
+ 
+-static const char *tv_src_name[] = { "tv_src" };
++static const char * const tv_src_name[] = { "tv_src" };
+ 
+ static struct clk_branch tv_enc_clk = {
+ 	.halt_reg = 0x01d4,
+diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+index 07f4cc159ad3..0987bf443e1f 100644
+--- a/drivers/clk/qcom/mmcc-msm8974.c
++++ b/drivers/clk/qcom/mmcc-msm8974.c
+@@ -56,7 +56,7 @@ static const struct parent_map mmcc_xo_mmpll0_mmpll1_gpll0_map[] = {
+ 	{ P_GPLL0, 5 }
+ };
+ 
+-static const char *mmcc_xo_mmpll0_mmpll1_gpll0[] = {
++static const char * const mmcc_xo_mmpll0_mmpll1_gpll0[] = {
+ 	"xo",
+ 	"mmpll0_vote",
+ 	"mmpll1_vote",
+@@ -72,7 +72,7 @@ static const struct parent_map mmcc_xo_mmpll0_dsi_hdmi_gpll0_map[] = {
+ 	{ P_DSI1PLL, 3 }
+ };
+ 
+-static const char *mmcc_xo_mmpll0_dsi_hdmi_gpll0[] = {
++static const char * const mmcc_xo_mmpll0_dsi_hdmi_gpll0[] = {
+ 	"xo",
+ 	"mmpll0_vote",
+ 	"hdmipll",
+@@ -89,7 +89,7 @@ static const struct parent_map mmcc_xo_mmpll0_1_2_gpll0_map[] = {
+ 	{ P_MMPLL2, 3 }
+ };
+ 
+-static const char *mmcc_xo_mmpll0_1_2_gpll0[] = {
++static const char * const mmcc_xo_mmpll0_1_2_gpll0[] = {
+ 	"xo",
+ 	"mmpll0_vote",
+ 	"mmpll1_vote",
+@@ -105,7 +105,7 @@ static const struct parent_map mmcc_xo_mmpll0_1_3_gpll0_map[] = {
+ 	{ P_MMPLL3, 3 }
+ };
+ 
+-static const char *mmcc_xo_mmpll0_1_3_gpll0[] = {
++static const char * const mmcc_xo_mmpll0_1_3_gpll0[] = {
+ 	"xo",
+ 	"mmpll0_vote",
+ 	"mmpll1_vote",
+@@ -121,7 +121,7 @@ static const struct parent_map mmcc_xo_mmpll0_1_gpll1_0_map[] = {
+ 	{ P_GPLL1, 4 }
+ };
+ 
+-static const char *mmcc_xo_mmpll0_1_gpll1_0[] = {
++static const char * const mmcc_xo_mmpll0_1_gpll1_0[] = {
+ 	"xo",
+ 	"mmpll0_vote",
+ 	"mmpll1_vote",
+@@ -138,7 +138,7 @@ static const struct parent_map mmcc_xo_dsi_hdmi_edp_map[] = {
+ 	{ P_DSI1PLL, 2 }
+ };
+ 
+-static const char *mmcc_xo_dsi_hdmi_edp[] = {
++static const char * const mmcc_xo_dsi_hdmi_edp[] = {
+ 	"xo",
+ 	"edp_link_clk",
+ 	"hdmipll",
+@@ -156,7 +156,7 @@ static const struct parent_map mmcc_xo_dsi_hdmi_edp_gpll0_map[] = {
+ 	{ P_DSI1PLL, 2 }
+ };
+ 
+-static const char *mmcc_xo_dsi_hdmi_edp_gpll0[] = {
++static const char * const mmcc_xo_dsi_hdmi_edp_gpll0[] = {
+ 	"xo",
+ 	"edp_link_clk",
+ 	"hdmipll",
+@@ -174,7 +174,7 @@ static const struct parent_map mmcc_xo_dsibyte_hdmi_edp_gpll0_map[] = {
+ 	{ P_DSI1PLL_BYTE, 2 }
+ };
+ 
+-static const char *mmcc_xo_dsibyte_hdmi_edp_gpll0[] = {
++static const char * const mmcc_xo_dsibyte_hdmi_edp_gpll0[] = {
+ 	"xo",
+ 	"edp_link_clk",
+ 	"hdmipll",
