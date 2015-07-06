@@ -1,54 +1,111 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 03/26] clk: Remove __clk_get_num_parents()
-Date: Fri, 31 Jul 2015 10:03:43 -0700
-Message-Id: <1438362246-6664-4-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:54316 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754829AbbGFRPv convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jul 2015 13:15:51 -0400
+Date: Mon, 6 Jul 2015 19:15:34 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org,
+	Mikko Perttunen <mikko.perttunen@kapsi.fi>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Tony Lindgren <tony@atomide.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Emilio L??pez <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Tero Kristo <t-kristo@ti.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-omap@vger.kernel.org, linux-mips@linux-mips.org
+Subject: Re: [PATCH v3] clk: change clk_ops' ->determine_rate() prototype
+Message-ID: <20150706191534.3d0778e0@bbrezillon>
+In-Reply-To: <20150603233728.GA490@codeaurora.org>
+References: <1432138345-19044-1-git-send-email-boris.brezillon@free-electrons.com>
+	<20150603233728.GA490@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-... as all the users have been converted to
-clk_hw_get_num_parents() now.
+On Wed, 3 Jun 2015 16:37:28 -0700
+Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk.c            | 6 ------
- include/linux/clk-provider.h | 1 -
- 2 files changed, 7 deletions(-)
+> On 05/20, Boris Brezillon wrote:
+> > Clock rates are stored in an unsigned long field, but ->determine_rate()
+> > (which returns a rounded rate from a requested one) returns a long
+> > value (errors are reported using negative error codes), which can lead
+> > to long overflow if the clock rate exceed 2Ghz.
+> > 
+> > Change ->determine_rate() prototype to return 0 or an error code, and pass
+> > a pointer to a clk_rate_request structure containing the expected target
+> > rate and the rate constraints imposed by clk users.
+> > 
+> > The clk_rate_request structure might be extended in the future to contain
+> > other kind of constraints like the rounding policy, the maximum clock
+> > inaccuracy or other things that are not yet supported by the CCF
+> > (power consumption constraints ?).
+> > 
+> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > 
+> > CC: Jonathan Corbet <corbet@lwn.net>
+> > CC: Tony Lindgren <tony@atomide.com>
+> > CC: Ralf Baechle <ralf@linux-mips.org>
+> > CC: "Emilio López" <emilio@elopez.com.ar>
+> > CC: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > CC: Tero Kristo <t-kristo@ti.com>
+> > CC: linux-doc@vger.kernel.org
+> > CC: linux-kernel@vger.kernel.org
+> > CC: linux-arm-kernel@lists.infradead.org
+> > CC: linux-omap@vger.kernel.org
+> > CC: linux-mips@linux-mips.org
+> > ---
+> > 
+> > Hi Stephen,
+> > 
+> > This patch is based on clk-next and contains the changes you suggested
+> > in your previous review.
+> > 
+> > It was tested on sama5d4 and compile tested on several ARM platforms
+> > (those enabled in multi_v7_defconfig).
+> > 
+> 
+> Thanks. I think we should wait until the next -rc1 drops to apply the
+> patch for the next merge window. That will make it least likely to conflict
+> with other trees, and we can provide it on a stable branch should there
+> be clock providers going through other trees somewhere. Please
+> remind me if I forget.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 5a147c2b1e36..3e295f255913 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -283,12 +283,6 @@ struct clk_hw *__clk_get_hw(struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(__clk_get_hw);
- 
--u8 __clk_get_num_parents(struct clk *clk)
--{
--	return !clk ? 0 : clk->core->num_parents;
--}
--EXPORT_SYMBOL_GPL(__clk_get_num_parents);
--
- unsigned int clk_hw_get_num_parents(struct clk_hw *hw)
- {
- 	return hw->core->num_parents;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 214634a88f38..8fe7dac77a0d 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -608,7 +608,6 @@ void devm_clk_unregister(struct device *dev, struct clk *clk);
- /* helper functions */
- const char *__clk_get_name(struct clk *clk);
- struct clk_hw *__clk_get_hw(struct clk *clk);
--u8 __clk_get_num_parents(struct clk *clk);
- unsigned int clk_hw_get_num_parents(struct clk_hw *hw);
- struct clk *__clk_get_parent(struct clk *clk);
- struct clk *clk_get_parent_by_index(struct clk *clk, u8 index);
+Just sent a v4 fixing the bug you reported and rebasing my work on
+4.2-rc1.
+
+> 
+> > @@ -1186,15 +1191,21 @@ EXPORT_SYMBOL_GPL(__clk_determine_rate);
+> >   */
+> >  unsigned long __clk_round_rate(struct clk *clk, unsigned long rate)
+> >  {
+> > -	unsigned long min_rate;
+> > -	unsigned long max_rate;
+> > +
+> > +	struct clk_rate_request req;
+> > +	int ret;
+> >  
+> >  	if (!clk)
+> >  		return 0;
+> >  
+> > -	clk_core_get_boundaries(clk->core, &min_rate, &max_rate);
+> > +	clk_core_get_boundaries(clk->core, &req.min_rate, &req.max_rate);
+> > +	req.rate = rate;
+> > +
+> > +	ret = clk_core_round_rate_nolock(clk->core, &req);
+> > +	if (ret)
+> > +		return ret;
+> 
+> This returns a negative int for unsigned long. Is that intentional?
+> 
+
+
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
