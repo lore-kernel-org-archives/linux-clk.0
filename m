@@ -1,34 +1,32 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Sat, 11 Jul 2015 19:24:53 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 04/45] clk: efm32gg: Remove clk.h include
-Message-ID: <20150711172453.GS1426@pengutronix.de>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
- <1436571223-10959-5-git-send-email-sboyd@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 6 Jul 2015 14:57:20 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, linux-sh@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms@verge.net.au>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/5] clk: shmobile: emev2: deassert reset for IIC0/1
+Message-ID: <20150706215720.GE20866@codeaurora.org>
+References: <1436219188-4325-1-git-send-email-wsa@the-dreams.de>
+ <1436219188-4325-2-git-send-email-wsa@the-dreams.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1436571223-10959-5-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1436219188-4325-2-git-send-email-wsa@the-dreams.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 10, 2015 at 04:33:02PM -0700, Stephen Boyd wrote:
-> Clock provider drivers generally shouldn't include clk.h because
-> it's the consumer API. Remove the include here because this is a
-> provider driver.
+On 07/06, Wolfram Sang wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > 
-> Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-Still compiles with your change, so fine.
+> We have a driver now for IIC, so disable reset for them.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
 
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-
-Best regards
-Uwe
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
