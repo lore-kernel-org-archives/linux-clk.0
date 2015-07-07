@@ -1,127 +1,75 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from eu-smtp-delivery-143.mimecast.com ([207.82.80.143]:25609 "EHLO
-	eu-smtp-delivery-143.mimecast.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S934322AbbGVQG2 convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 22 Jul 2015 12:06:28 -0400
-Date: Wed, 22 Jul 2015 17:06:25 +0100
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v4 6/8] arm64: dts: add SRAM, MHU mailbox and SCPI
- support on Juno
-Message-ID: <20150722160625.GJ14923@e106497-lin.cambridge.arm.com>
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
- <1433760002-24120-7-git-send-email-sudeep.holla@arm.com>
- <20150722132809.GG14923@e106497-lin.cambridge.arm.com>
- <55AFB96E.1050406@arm.com>
+Received: from down.free-electrons.com ([37.187.137.238]:37737 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750760AbbGGFKP (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2015 01:10:15 -0400
+Date: Tue, 7 Jul 2015 07:07:47 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: dinguyen@opensource.altera.com
+Cc: sboyd@codeaurora.org, mturquette@linaro.org, dinh.linux@gmail.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>
+Subject: Re: [PATCHv2 5/6] clk: sunxi: make use of of_clk_parent_fill helper
+ function
+Message-ID: <20150707050747.GB28632@lukather>
+References: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
+ <1436241546-16731-6-git-send-email-dinguyen@opensource.altera.com>
 MIME-Version: 1.0
-In-Reply-To: <55AFB96E.1050406@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XF85m9dhOBO43t/C"
+In-Reply-To: <1436241546-16731-6-git-send-email-dinguyen@opensource.altera.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 22, 2015 at 04:40:30PM +0100, Sudeep Holla wrote:
-> 
-> 
-> On 22/07/15 14:28, Liviu Dudau wrote:
-> > On Mon, Jun 08, 2015 at 11:40:00AM +0100, Sudeep Holla wrote:
-> >> This patch adds support for the MHU mailbox peripheral used on Juno by
-> >> application processors to communicate with remote SCP handling most of
-> >> the CPU/system power management. It also adds the SRAM reserving the
-> >> shared memory and SCPI message protocol using that shared memory.
-> >>
-> >> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
-> >> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
-> >> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> >> ---
-> >>   arch/arm64/boot/dts/arm/juno-base.dtsi   | 31 +++++++++++++++++++++++++++++++
-> >>   arch/arm64/boot/dts/arm/juno-clocks.dtsi | 23 +++++++++++++++++++++++
-> >>   2 files changed, 54 insertions(+)
-> >>
-> 
-> [..]
-> 
-> >> diff --git a/arch/arm64/boot/dts/arm/juno-clocks.dtsi b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
-> >> index 25352ed943e6..64af7370815a 100644
-> >> --- a/arch/arm64/boot/dts/arm/juno-clocks.dtsi
-> >> +++ b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
-> >> @@ -42,3 +42,26 @@
-> >>   		clock-frequency = <400000000>;
-> >>   		clock-output-names = "faxi_clk";
-> >>   	};
-> >> +
-> >> +	scpi {
-> >> +		compatible = "arm,scpi";
-> >> +		mboxes = <&mailbox 1>;
-> >> +		shmem = <&cpu_scp_hpri>;
-> >> +
-> >> +		clocks {
-> >> +			compatible = "arm,scpi-clocks";
-> >> +
-> >> +			scpi_dvfs: scpi_clocks@0 {
-> >> +				compatible = "arm,scpi-dvfs-clocks";
-> >> +				#clock-cells = <1>;
-> >> +				clock-indices = <0>, <1>, <2>;
-> >> +				clock-output-names = "vbig", "vlittle", "vgpu";
-> >> +			};
-> >> +			scpi_clk: scpi_clocks@3 {
-> >> +				compatible = "arm,scpi-variable-clocks";
-> >> +				#clock-cells = <1>;
-> >> +				clock-indices = <3>, <4>;
-> >
-> > Subject to you addressing Mark's comments regarding the indices values (maybe choose
-> > a different property to show the fact that the index is actually an SCPI index
-> > rather than the clock's), you can add my
-> >
-> 
-> I don't understand why we need to do that. I will anyway follow up on
-> that thread.
 
-Because indices are per clock node, i.e. spi_clk should have clock-indices = <0>, <1>.
-Of course, you could have a gap in the indices, but that is both awkard and not clearly
-explained in this documentation.
+--XF85m9dhOBO43t/C
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The index that you declare here is actually what you pass to SCPI. But the way the device
-tree is presented it declares that there are two clock blocks, one for DVFS and one for
-PXLCLK. As far as SCPI is concerned there is only one block of clocks, with 3 of them
-having a discrete set of values, so we are at the intersection of two concepts.
+Hi Dinh,
 
-BTW, for what is worth, the PXLCLK is not really that smooth in its coverage of the range.
-It might have more accepted frequency values, but the way it is implemented it tends to
-favour VESA clock values and falls back to a really slow algorithm to generate all other
-values. Even so, it can fail to find the correct parameters for the PLLs so it will generate
-a frequency that is different from the requested one.
+On Mon, Jul 06, 2015 at 10:59:05PM -0500, dinguyen@opensource.altera.com wr=
+ote:
+> From: Dinh Nguyen <dinguyen@opensource.altera.com>
+>=20
+> Use of_clk_parent_fill to fill in the parent clock names' array.
+>=20
+> Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: "Emilio L=F3pez" <emilio@elopez.com.ar>
 
-Best regards,
-Liviu
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
+Thanks!
 
-> 
-> > Acked-by: Liviu Dudau <Liviu.Dudau@arm.com>
-> 
-> Thanks for all the ACKs.
-> 
-> Regards,
-> Sudeep
-> 
+Maxime
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
+--XF85m9dhOBO43t/C
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVm16jAAoJEBx+YmzsjxAgSqkQAJE/2/Kou1DG/Rpt6QgFPO5+
+LPE5h6cJ5RcoACftRxBcz8JLQka1habWZdtSWqdmc3y78qWzW8QpsdqeEZq3g71S
+miXmOnQy6GCBbw32AviTIiNF7rr+AaFM7j19kX2SalAbJBRmjvu7zaAhHY8HQhPx
+uE1UeRlXoWbuOUR6VIs4QFQsgBL01u8POF3g4oqu8hW5Fae5b/+hhvdpbjo8MNpU
+hlxCMv6rIQohQ2WRolsyzNnDqLD+npRmdUkXxIcUkwTCEIAZlUnYo60BhhtNM3bb
+BXMySc79c4KhNDCJVo8bIHGPEAvpc+xuj8O3a4fv4MhYxs3zAqXBhf9F1b+TvLCp
+B2hx9bKLTMdJOA8VDAtnYztREKcx9a8fi2s6wa33jCsU5Jt91yokNVJ5Ck+VUjBl
+KceY6NfJNdJJNKlU/QE7OpOYwiG8LS/DihAvSLr/P1roWDVvg6guZ8N2hb1izFxg
+3ALGm6TS61TcHYtCNbwFDTyxXuVh9rkJlmXE7FgBycC5gEUKcWtt8yzXR/aqsRDV
+hPPu40cKX2zzzLMULHx2CYiRABV2qqBxU+hd4ToJaVmUnoxa7qSLAKxstVPPS06D
+g8hm/MV4bMGv0VDnZLNx9mijiKqpvdAtpAFHVctiETUWDtOv8bzAHe2PtRQA5NGb
++C+4eZU28JUtDKOhIepR
+=m2G1
+-----END PGP SIGNATURE-----
+
+--XF85m9dhOBO43t/C--
