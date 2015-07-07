@@ -1,93 +1,198 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qk0-f175.google.com ([209.85.220.175]:36558 "EHLO
-	mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752974AbbGIAXe (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2015 20:23:34 -0400
+Return-Path: <dinguyen@opensource.altera.com>
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCHv2 1/6] clk: at91: make use of of_clk_parent_fill helper function
+Date: Mon, 6 Jul 2015 22:59:01 -0500
+Message-ID: <1436241546-16731-2-git-send-email-dinguyen@opensource.altera.com>
+In-Reply-To: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
+References: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+Ln22HHpdKD8+_zSzX10FBM_aDByePfA3_vactLOxh_J961tA@mail.gmail.com>
-References: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
-	<CABxcv=mQfcb3jsRzOcWXAbNRf-dumoHS8X-2TEeOdB2E_T5BMQ@mail.gmail.com>
-	<CAJKOXPeFxABcm27_tmriY6RreaRYZiEPvUvFav4DK-AoNbUs=Q@mail.gmail.com>
-	<CA+Ln22HHpdKD8+_zSzX10FBM_aDByePfA3_vactLOxh_J961tA@mail.gmail.com>
-Date: Thu, 9 Jul 2015 09:23:32 +0900
-Message-ID: <CAJKOXPeGMTabQ6CEfMrd1S1dFYTfNoaf2XKvJwoEZzaiTUfq7A@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	"linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	stable@vger.kernel.org,
-	Linux Kernel <linux-kernel@vger.kernel.org>,
-	Kukjin Kim <kgene@kernel.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-2015-07-06 14:12 GMT+09:00 Tomasz Figa <tomasz.figa@gmail.com>:
-> 2015-07-06 13:03 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
->> 2015-06-12 14:46 GMT+09:00 Javier Martinez Canillas <javier@dowhile0.org>:
->>> Hello Krzysztof,
->>>
->>> On Fri, Jun 12, 2015 at 3:53 AM, Krzysztof Kozlowski
->>> <k.kozlowski@samsung.com> wrote:
->>>> The TSADC gate clock was used in Exynos4x12 DTSI for exynos-adc driver.
->>>> However TSADC is present only on Exynos4210 so on Trats2 board (with
->>>> Exynos4412 SoC) the exynos-adc driver could not be probed:
->>>>    ERROR: could not get clock /adc@126C0000:adc(0)
->>>>    exynos-adc 126c0000.adc: failed getting clock, err = -2
->>>>    exynos-adc: probe of 126c0000.adc failed with error -2
->>>>
->>>> Instead on Exynos4x12 SoCs the main clock used by Analog to Digital
->>>> Converter is located in different register and it is named in datasheet
->>>> as PCLK_ADC. Regardless of the name the purpose of this PCLK_ADC clock
->>>> is the same as purpose of TSADC from Exynos4210.
->>>>
->>>> The patch adds gate clock for Exynos4x12 using the proper register so
->>>> backward compatibility is preserved. This fixes the probe of exynos-adc
->>>> driver on Exynos4x12 boards and allows accessing sensors connected to it
->>>> on Trats2 board (ntc,ncp15wb473 AP and battery thermistors).
->>>>
->>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> Cc: <stable@vger.kernel.org>
->>>> Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
->>>> Link: https://lkml.org/lkml/2015/6/11/85
->>>>
->>>> ---
->>>>
->>>> Changes since v1:
->>>> 1. After discussion on LKML this solution was chosen because it smaller,
->>>>    simpler, self-contained (one patch to fix issue) and maintains backward
->>>>    compatibility. Thanks to Javier Martinez Canillas and Tomasz Figa for
->>>>    valuable comments.
->>>> 2. Dropped patch 2/2 because now it is not needed. The clock id "TSADC"
->>>>    will be used on all Exynos4 boards.
->>>> 3. Added CC-stable.
->>>> ---
->>>>  drivers/clk/samsung/clk-exynos4.c | 2 ++
->>>>  1 file changed, 2 insertions(+)
->>>>
->>>
->>> Patch looks good to me.
->>>
->>> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->>
->> Hi Tomasz and Sylwester,
->>
->> Any comments on this version of patch?
->> Tomasz, you gave me comments on previous version. Are their satisfied?
->
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-Thanks for ack.
+Use of_clk_parent_fill to fill in the parent clock names' array.
 
-Sylwester, are you gonna to pick it up or this should go through other tree?
+Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/clk/at91/clk-main.c         |    7 +------
+ drivers/clk/at91/clk-master.c       |    7 +------
+ drivers/clk/at91/clk-programmable.c |    7 +------
+ drivers/clk/at91/clk-slow.c         |   14 ++------------
+ drivers/clk/at91/clk-smd.c          |    7 +------
+ drivers/clk/at91/clk-usb.c          |    7 +------
+ 6 files changed, 7 insertions(+), 42 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
+index c240045..13f481b 100644
+--- a/drivers/clk/at91/clk-main.c
++++ b/drivers/clk/at91/clk-main.c
+@@ -612,17 +612,12 @@ void __init of_at91sam9x5_clk_main_setup(struct device_node *np,
+ 	int num_parents;
+ 	unsigned int irq;
+ 	const char *name = np->name;
+-	int i;
+ 
+ 	num_parents = of_clk_get_parent_count(np);
+ 	if (num_parents <= 0 || num_parents > 2)
+ 		return;
+ 
+-	for (i = 0; i < num_parents; ++i) {
+-		parent_names[i] = of_clk_get_parent_name(np, i);
+-		if (!parent_names[i])
+-			return;
+-	}
++	of_clk_parent_fill(np, parent_names, num_parents);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
+index f98eafe..38f646d 100644
+--- a/drivers/clk/at91/clk-master.c
++++ b/drivers/clk/at91/clk-master.c
+@@ -218,7 +218,6 @@ of_at91_clk_master_setup(struct device_node *np, struct at91_pmc *pmc,
+ {
+ 	struct clk *clk;
+ 	int num_parents;
+-	int i;
+ 	unsigned int irq;
+ 	const char *parent_names[MASTER_SOURCE_MAX];
+ 	const char *name = np->name;
+@@ -228,11 +227,7 @@ of_at91_clk_master_setup(struct device_node *np, struct at91_pmc *pmc,
+ 	if (num_parents <= 0 || num_parents > MASTER_SOURCE_MAX)
+ 		return;
+ 
+-	for (i = 0; i < num_parents; ++i) {
+-		parent_names[i] = of_clk_get_parent_name(np, i);
+-		if (!parent_names[i])
+-			return;
+-	}
++	of_clk_parent_fill(np, parent_names, num_parents);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
+index 8c86c0f..21492ac 100644
+--- a/drivers/clk/at91/clk-programmable.c
++++ b/drivers/clk/at91/clk-programmable.c
+@@ -230,7 +230,6 @@ of_at91_clk_prog_setup(struct device_node *np, struct at91_pmc *pmc,
+ {
+ 	int num;
+ 	u32 id;
+-	int i;
+ 	struct clk *clk;
+ 	int num_parents;
+ 	const char *parent_names[PROG_SOURCE_MAX];
+@@ -241,11 +240,7 @@ of_at91_clk_prog_setup(struct device_node *np, struct at91_pmc *pmc,
+ 	if (num_parents <= 0 || num_parents > PROG_SOURCE_MAX)
+ 		return;
+ 
+-	for (i = 0; i < num_parents; ++i) {
+-		parent_names[i] = of_clk_get_parent_name(np, i);
+-		if (!parent_names[i])
+-			return;
+-	}
++	of_clk_parent_fill(np, parent_names, num_parents);
+ 
+ 	num = of_get_child_count(np);
+ 	if (!num || num > (PROG_ID_MAX + 1))
+diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
+index 98a84a8..84c19d7 100644
+--- a/drivers/clk/at91/clk-slow.c
++++ b/drivers/clk/at91/clk-slow.c
+@@ -371,17 +371,12 @@ void __init of_at91sam9x5_clk_slow_setup(struct device_node *np,
+ 	const char *parent_names[2];
+ 	int num_parents;
+ 	const char *name = np->name;
+-	int i;
+ 
+ 	num_parents = of_clk_get_parent_count(np);
+ 	if (num_parents <= 0 || num_parents > 2)
+ 		return;
+ 
+-	for (i = 0; i < num_parents; ++i) {
+-		parent_names[i] = of_clk_get_parent_name(np, i);
+-		if (!parent_names[i])
+-			return;
+-	}
++	of_clk_parent_fill(np, parent_names, num_parents);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+@@ -449,17 +444,12 @@ void __init of_at91sam9260_clk_slow_setup(struct device_node *np,
+ 	const char *parent_names[2];
+ 	int num_parents;
+ 	const char *name = np->name;
+-	int i;
+ 
+ 	num_parents = of_clk_get_parent_count(np);
+ 	if (num_parents != 2)
+ 		return;
+ 
+-	for (i = 0; i < num_parents; ++i) {
+-		parent_names[i] = of_clk_get_parent_name(np, i);
+-		if (!parent_names[i])
+-			return;
+-	}
++	of_clk_parent_fill(np, parent_names, num_parents);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+diff --git a/drivers/clk/at91/clk-smd.c b/drivers/clk/at91/clk-smd.c
+index 3817ea8..a7f8501 100644
+--- a/drivers/clk/at91/clk-smd.c
++++ b/drivers/clk/at91/clk-smd.c
+@@ -145,7 +145,6 @@ void __init of_at91sam9x5_clk_smd_setup(struct device_node *np,
+ 					struct at91_pmc *pmc)
+ {
+ 	struct clk *clk;
+-	int i;
+ 	int num_parents;
+ 	const char *parent_names[SMD_SOURCE_MAX];
+ 	const char *name = np->name;
+@@ -154,11 +153,7 @@ void __init of_at91sam9x5_clk_smd_setup(struct device_node *np,
+ 	if (num_parents <= 0 || num_parents > SMD_SOURCE_MAX)
+ 		return;
+ 
+-	for (i = 0; i < num_parents; i++) {
+-		parent_names[i] = of_clk_get_parent_name(np, i);
+-		if (!parent_names[i])
+-			return;
+-	}
++	of_clk_parent_fill(np, parent_names, num_parents);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
+index b0cbd2b..b3cbf45 100644
+--- a/drivers/clk/at91/clk-usb.c
++++ b/drivers/clk/at91/clk-usb.c
+@@ -373,7 +373,6 @@ void __init of_at91sam9x5_clk_usb_setup(struct device_node *np,
+ 					struct at91_pmc *pmc)
+ {
+ 	struct clk *clk;
+-	int i;
+ 	int num_parents;
+ 	const char *parent_names[USB_SOURCE_MAX];
+ 	const char *name = np->name;
+@@ -382,11 +381,7 @@ void __init of_at91sam9x5_clk_usb_setup(struct device_node *np,
+ 	if (num_parents <= 0 || num_parents > USB_SOURCE_MAX)
+ 		return;
+ 
+-	for (i = 0; i < num_parents; i++) {
+-		parent_names[i] = of_clk_get_parent_name(np, i);
+-		if (!parent_names[i])
+-			return;
+-	}
++	of_clk_parent_fill(np, parent_names, num_parents);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+-- 
+1.7.9.5
