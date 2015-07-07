@@ -1,52 +1,57 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: [PATCH 1/2] clk: Check for allocation errors in of_clk_init()
-Date: Mon,  6 Jul 2015 16:59:37 -0700
-Message-Id: <1436227178-2465-1-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <20150610154941.GJ10549@mwanda>
-References: <20150610154941.GJ10549@mwanda>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH/RFC 08/11] ARM: shmobile: r8a7793: Link CPG to RST using
+ "renesas, modemr"
+Date: Tue,  7 Jul 2015 16:10:14 +0200
+Message-Id: <1436278217-20522-9-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
+References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-sh@vger.kernel.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Ulrich Hecht <ulrich.hecht@gmail.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dan Carpenter reports that we don't check the allocation here for
-failure. Add a failure check and free any previously allocated
-providers from the clk_provider_list.
+Add a link from the Clock Pulse Generator node to the Reset Controller
+node, so the CPG can read the Mode Monitoring Register (MODEMR) to
+obtain the MD pin values.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/clk.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ddb4b541016f..705156828a7a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3112,8 +3112,17 @@ void __init of_clk_init(const struct of_device_id *matches)
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index fbb1aa3740e2b55e..4bddaf2fbd0b2e1c 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -192,6 +192,7 @@
+ 					     "lb", "qspi", "sdh", "sd0", "z",
+ 					     "rcan", "adsp";
+ 			#power-domain-cells = <0>;
++			renesas,modemr = <&rst 0x60>;
+ 		};
  
- 	/* First prepare the list of the clocks providers */
- 	for_each_matching_node_and_match(np, matches, &match) {
--		struct clock_provider *parent =
--			kzalloc(sizeof(struct clock_provider),	GFP_KERNEL);
-+		struct clock_provider *parent;
-+
-+		parent = kzalloc(sizeof(*parent), GFP_KERNEL);
-+		if (!parent) {
-+			list_for_each_entry_safe(clk_provider, next,
-+						 &clk_provider_list, node) {
-+				list_del(&clk_provider->node);
-+				kfree(clk_provider);
-+			}
-+			return;
-+		}
- 
- 		parent->clk_init_cb = match->data;
- 		parent->np = np;
+ 		/* Variable factor clocks */
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
