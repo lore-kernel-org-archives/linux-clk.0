@@ -1,45 +1,42 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	=?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 2/7] staging: clocking-wizard: Include clk.h
-Date: Fri, 10 Jul 2015 16:03:24 -0700
-Message-Id: <1436569409-27964-3-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org>
-References: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-la0-f46.google.com ([209.85.215.46]:33553 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753472AbbGGFBX (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2015 01:01:23 -0400
+Received: by laar3 with SMTP id r3so180949022laa.0
+        for <linux-clk@vger.kernel.org>; Mon, 06 Jul 2015 22:01:21 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <20150622230456.GJ22132@codeaurora.org>
+References: <1434785223.6159.3.camel@ingics.com>
+	<20150622230456.GJ22132@codeaurora.org>
+Date: Tue, 7 Jul 2015 13:01:21 +0800
+Message-ID: <CAFRkauDqtytL9xq_+pjJ3WWdYnZoSk86uMJozmOe9+Mrr7QX7w@mail.gmail.com>
+Subject: Re: [PATCH] clk: h8300: Fix signness bug
+From: Axel Lin <axel.lin@ingics.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@linaro.org>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	uclinux-h8-devel@lists.sourceforge.jp,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This clock provider uses the consumer API, so include clk.h
-explicitly.
+2015-06-23 7:04 GMT+08:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 06/20, Axel Lin wrote:
+>> of_clk_get_parent_count() may return negative error code, so num_parents
+>> needs to be int rather than unsigned int.
+>>
+>> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+>> ---
+>
+> Hmph. I don't recall being Cced on this clk driver and it looks
+> to be in linux-next via h8300 architecture tree. This patch
+> should probably be squashed into the patch that introduced the
+> problem.
+Hi Stephen,
+This driver is already in Linus' tree.
+So would you pick up this patch?
 
-Cc: Sören Brinkmann <soren.brinkmann@xilinx.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
-
-Please ack so this can go through the clk-tree.
-
- drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c b/drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c
-index 5455bf3d5a91..b8e2f611fd47 100644
---- a/drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c
-+++ b/drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c
-@@ -19,6 +19,7 @@
-  */
- 
- #include <linux/platform_device.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/slab.h>
- #include <linux/io.h>
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Axel
