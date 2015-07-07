@@ -1,47 +1,86 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Yingjoe Chen <yingjoe.chen@mediatek.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	linux-mediatek@lists.infradead.org,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Olof Johansson <olof@lixom.net>, srv_heupstream@mediatek.com,
-	linux-arm-kernel@lists.infradead.org,
-	Daniel Kurtz <djkurtz@chromium.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/5] arm64: mediatek: enable MTK_TIMER
-Date: Tue, 21 Jul 2015 09:52:21 +0200
-Message-ID: <8509032.5CRGhrucRP@ubix>
-In-Reply-To: <alpine.DEB.2.11.1507180931190.18576@nanos>
-References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com> <1956087.MUsCyY7Qyv@ubix> <alpine.DEB.2.11.1507180931190.18576@nanos>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <3792169.nKlDE6xfl4@avalon>
+References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
+	<1436278217-20522-7-git-send-email-geert+renesas@glider.be>
+	<3792169.nKlDE6xfl4@avalon>
+Date: Tue, 7 Jul 2015 16:58:21 +0200
+Message-ID: <CAMuHMdWCXFbBAPS46d7+3o=FiLLzVacdiTiJq09tCHSCQPUfxw@mail.gmail.com>
+Subject: Re: [PATCH/RFC 06/11] ARM: shmobile: r8a7790: Link CPG to RST using "renesas,modemr"
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Ulrich Hecht <ulrich.hecht@gmail.com>,
+	Linux-sh list <linux-sh@vger.kernel.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday, July 18, 2015 09:31:53 AM Thomas Gleixner wrote:
-> On Fri, 17 Jul 2015, Matthias Brugger wrote:
-> > On Monday, July 13, 2015 05:32:47 PM Yingjoe Chen wrote:
-> > > Enable MTK_TIMER for MediaTek plaform, which will be used as
-> > > schedule clock.
-> > > 
-> > > Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> > > ---
-> > 
-> > Applied, thanks.
-> 
-> So you enable the current code w/o the modifications required for this
-> to work?
-> 
+Hi Laurent,
 
-Well as the timer is not defined in dts it should not break the board...
-But yes you are right, I will drop this commit for now.
+On Tue, Jul 7, 2015 at 4:23 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Tuesday 07 July 2015 16:10:12 Geert Uytterhoeven wrote:
+>> Add a link from the Clock Pulse Generator node to the Reset Controller
+>> node, so the CPG can read the Mode Monitoring Register (MODEMR) to
+>> obtain the MD pin values.x
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>>  arch/arm/boot/dts/r8a7790.dtsi | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+>> index 08067ae177643b8f..4ee5523fc3e13e12 100644
+>> --- a/arch/arm/boot/dts/r8a7790.dtsi
+>> +++ b/arch/arm/boot/dts/r8a7790.dtsi
+>> @@ -1115,6 +1115,7 @@
+>>                                            "lb", "qspi", "sdh", "sd0", "sd1",
+>>                                            "z", "rcan", "adsp";
+>>                       #power-domain-cells = <0>;
+>> +                     renesas,modemr = <&rst 0x60>;
+>
+> I have mixed feelings about this as I don't think it really describes the
+> hardware.
 
-Thanks,
-Matthias
+>From the R-Car Gen2 manual:
+
+8. Reset (RST)
+8.1 Features
+The following functions are implemented by RST.
+[...]
+Latching of the levels on mode pins when PRESET# is negated
+Mode monitoring register
+
+7. Clock Pulse Generator (CPG)
+7.2 Input/Output Pins
+Table 7.1 lists the CPG pin configuration.
+Table 7.1 Pin Configuration and Functions of CPG
+Pin Name Function I/O Description
+[...]
+MD0 Mode 0 ...
+
+Hence there definitely is a link between the (latched) values in the RST module
+and CPG configuration. This link is expressed using the "renesas,modemr"
+property, where the phandle provides the link to the RST block, and the
+register offset provides a way for software to read the configuration.
+
+> Wouldn't it make sense to instead add a standard kernel API to retrieve the
+> boot mode value ? It seems to be a pretty common feature of SoCs across all
+> vendors.
+
+What format would the boot mode value be in? One u32 word, an array
+of u32s?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
