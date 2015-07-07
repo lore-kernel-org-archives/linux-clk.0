@@ -1,37 +1,48 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 6/7] ARM: s3c64xx: Remove clk-provider.h include
-Date: Fri, 10 Jul 2015 15:45:46 -0700
-Message-Id: <1436568347-24554-7-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org>
-References: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	linux-sh@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 02/11] ARM: shmobile: r8a7790 dtsi: Add device node for RST module
+Date: Tue,  7 Jul 2015 16:10:08 +0200
+Message-Id: <1436278217-20522-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
+References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-This file doesn't use the clk provider APIs. Remove the include.
+Add a device node for the RST module, which provides reset control.
+Declare it to be a system controller (syscon), so other device nodes can
+refer to its registers.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+TODO Add DT binding documentation.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-s3c64xx/common.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/boot/dts/r8a7790.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/common.c
-index 16547f2641a3..25d6676f8d6e 100644
---- a/arch/arm/mach-s3c64xx/common.c
-+++ b/arch/arm/mach-s3c64xx/common.c
-@@ -21,7 +21,6 @@
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/module.h>
--#include <linux/clk-provider.h>
- #include <linux/interrupt.h>
- #include <linux/ioport.h>
- #include <linux/serial_core.h>
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 837090ec9b4fb987..08067ae177643b8f 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1495,6 +1495,11 @@
+ 		};
+ 	};
+ 
++	rst: reset-controller@e616000 {
++		compatible = "renesas,rst-r8a7790", "syscon";
++		reg = <0 0xe6160000 0 0x0100>;
++	};
++
+ 	sysc: system-controller@e6180000 {
+ 		compatible = "renesas,sysc-r8a7790", "renesas,sysc-rcar";
+ 		reg = <0 0xe6180000 0 0x0200>;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+1.9.1
