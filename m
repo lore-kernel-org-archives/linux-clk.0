@@ -1,58 +1,63 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 18/45] clk: mvebu: Remove clk.h include
-Date: Fri, 10 Jul 2015 16:33:16 -0700
-Message-Id: <1436571223-10959-19-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH/RFC 03/11] ARM: shmobile: r8a7791 dtsi: Add device node for
+ RST module
+Date: Tue,  7 Jul 2015 16:10:09 +0200
+Message-Id: <1436278217-20522-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
+References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-sh@vger.kernel.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Ulrich Hecht <ulrich.hecht@gmail.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock provider drivers generally shouldn't include clk.h because
-it's the consumer API. Only include the header if necessary. The
-clkdev.h include isn't used here either, so drop it and add in
-slab.h to keep things compiling.
+Add a device node for the RST module, which provides reset control.
+Declare it to be a system controller (syscon), so other device nodes can
+refer to its registers.
 
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+TODO Add DT binding documentation.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/mvebu/clk-cpu.c | 3 ++-
- drivers/clk/mvebu/common.c  | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
-index 3821a88077ea..86888a658d4c 100644
---- a/drivers/clk/mvebu/clk-cpu.c
-+++ b/drivers/clk/mvebu/clk-cpu.c
-@@ -10,7 +10,8 @@
-  * warranty of any kind, whether express or implied.
-  */
- #include <linux/kernel.h>
--#include <linux/clkdev.h>
-+#include <linux/slab.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/of_address.h>
- #include <linux/io.h>
-diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
-index 15b370ff3748..4a22429cd7a2 100644
---- a/drivers/clk/mvebu/common.c
-+++ b/drivers/clk/mvebu/common.c
-@@ -13,8 +13,8 @@
-  */
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index b83f63bd2b1ae6e9..17a6e0fd779fb7a4 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1405,6 +1405,11 @@
+ 		};
+ 	};
  
- #include <linux/kernel.h>
-+#include <linux/slab.h>
- #include <linux/clk.h>
--#include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
- #include <linux/of.h>
++	rst: reset-controller@e616000 {
++		compatible = "renesas,rst-r8a7791", "syscon";
++		reg = <0 0xe6160000 0 0x0100>;
++	};
++
+ 	sysc: system-controller@e6180000 {
+ 		compatible = "renesas,sysc-r8a7791", "renesas,sysc-rcar";
+ 		reg = <0 0xe6180000 0 0x0200>;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
