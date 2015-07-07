@@ -1,194 +1,52 @@
-Return-Path: <Aisheng.Dong@freescale.com>
-From: Dong Aisheng <aisheng.dong@freescale.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@linaro.org>, <shawnguo@kernel.org>, <b29396@freescale.com>,
-	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
-	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
-Subject: [PATCH V3 2/5] clk: introduce clk_core_enable_lock and clk_core_disable_lock functions
-Date: Tue, 28 Jul 2015 21:19:42 +0800
-Message-ID: <1438089585-30103-3-git-send-email-aisheng.dong@freescale.com>
-In-Reply-To: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
-References: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
-Return-Path: aisheng.dong@freescale.com
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Ulrich Hecht <ulrich.hecht@gmail.com>, linux-sh@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH/RFC 06/11] ARM: shmobile: r8a7790: Link CPG to RST using "renesas,modemr"
+Date: Tue, 07 Jul 2015 17:23:10 +0300
+Message-ID: <3792169.nKlDE6xfl4@avalon>
+In-Reply-To: <1436278217-20522-7-git-send-email-geert+renesas@glider.be>
+References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be> <1436278217-20522-7-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-This can be useful when clock core wants to enable/disable clocks.
-Then we don't have to convert the struct clk_core to struct clk to call
-clk_enable/clk_disable which is a bit un-align with exist using.
+Hi Geert,
 
-And after introduce clk_core_{enable|disable}_lock, we can refine
-clk_eanble and clk_disable a bit.
+Thank you for the patches.
 
-As well as clk_core_{enable|disable}_lock, we also added
-clk_core_{prepare|unprepare}_lock and clk_core_prepare_enable/
-clk_core_unprepare_disable for clock core to easily use.
+On Tuesday 07 July 2015 16:10:12 Geert Uytterhoeven wrote:
+> Add a link from the Clock Pulse Generator node to the Reset Controller
+> node, so the CPG can read the Mode Monitoring Register (MODEMR) to
+> obtain the MD pin values.x
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  arch/arm/boot/dts/r8a7790.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+> index 08067ae177643b8f..4ee5523fc3e13e12 100644
+> --- a/arch/arm/boot/dts/r8a7790.dtsi
+> +++ b/arch/arm/boot/dts/r8a7790.dtsi
+> @@ -1115,6 +1115,7 @@
+>  					     "lb", "qspi", "sdh", "sd0", "sd1",
+>  					     "z", "rcan", "adsp";
+>  			#power-domain-cells = <0>;
+> +			renesas,modemr = <&rst 0x60>;
 
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
----
- drivers/clk/clk.c | 85 +++++++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 63 insertions(+), 22 deletions(-)
+I have mixed feelings about this as I don't think it really describes the 
+hardware.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 4c7f7b2..c2310d5 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -583,6 +583,13 @@ static void clk_core_unprepare(struct clk_core *core)
- 	clk_core_unprepare(core->parent);
- }
- 
-+static void clk_core_unprepare_lock(struct clk_core *core)
-+{
-+	clk_prepare_lock();
-+	clk_core_unprepare(core);
-+	clk_prepare_unlock();
-+}
-+
- /**
-  * clk_unprepare - undo preparation of a clock source
-  * @clk: the clk being unprepared
-@@ -599,9 +606,7 @@ void clk_unprepare(struct clk *clk)
- 	if (IS_ERR_OR_NULL(clk))
- 		return;
- 
--	clk_prepare_lock();
--	clk_core_unprepare(clk->core);
--	clk_prepare_unlock();
-+	clk_core_unprepare_lock(clk->core);
- }
- EXPORT_SYMBOL_GPL(clk_unprepare);
- 
-@@ -637,6 +642,17 @@ static int clk_core_prepare(struct clk_core *core)
- 	return 0;
- }
- 
-+static int clk_core_prepare_lock(struct clk_core *core)
-+{
-+	int ret;
-+
-+	clk_prepare_lock();
-+	ret = clk_core_prepare(core);
-+	clk_prepare_unlock();
-+
-+	return ret;
-+}
-+
- /**
-  * clk_prepare - prepare a clock source
-  * @clk: the clk being prepared
-@@ -651,16 +667,10 @@ static int clk_core_prepare(struct clk_core *core)
-  */
- int clk_prepare(struct clk *clk)
- {
--	int ret;
--
- 	if (!clk)
- 		return 0;
- 
--	clk_prepare_lock();
--	ret = clk_core_prepare(clk->core);
--	clk_prepare_unlock();
--
--	return ret;
-+	return clk_core_prepare_lock(clk->core);
- }
- EXPORT_SYMBOL_GPL(clk_prepare);
- 
-@@ -687,6 +697,15 @@ static void clk_core_disable(struct clk_core *core)
- 	clk_core_disable(core->parent);
- }
- 
-+static void clk_core_disable_lock(struct clk_core *core)
-+{
-+	unsigned long flags;
-+
-+	flags = clk_enable_lock();
-+	clk_core_disable(core);
-+	clk_enable_unlock(flags);
-+}
-+
- /**
-  * clk_disable - gate a clock
-  * @clk: the clk being gated
-@@ -701,14 +720,10 @@ static void clk_core_disable(struct clk_core *core)
-  */
- void clk_disable(struct clk *clk)
- {
--	unsigned long flags;
--
- 	if (IS_ERR_OR_NULL(clk))
- 		return;
- 
--	flags = clk_enable_lock();
--	clk_core_disable(clk->core);
--	clk_enable_unlock(flags);
-+	clk_core_disable_lock(clk->core);
- }
- EXPORT_SYMBOL_GPL(clk_disable);
- 
-@@ -747,6 +762,18 @@ static int clk_core_enable(struct clk_core *core)
- 	return 0;
- }
- 
-+static int clk_core_enable_lock(struct clk_core *core)
-+{
-+	unsigned long flags;
-+	int ret;
-+
-+	flags = clk_enable_lock();
-+	ret = clk_core_enable(core);
-+	clk_enable_unlock(flags);
-+
-+	return ret;
-+}
-+
- /**
-  * clk_enable - ungate a clock
-  * @clk: the clk being ungated
-@@ -762,19 +789,33 @@ static int clk_core_enable(struct clk_core *core)
-  */
- int clk_enable(struct clk *clk)
- {
--	unsigned long flags;
--	int ret;
--
- 	if (!clk)
- 		return 0;
- 
--	flags = clk_enable_lock();
--	ret = clk_core_enable(clk->core);
--	clk_enable_unlock(flags);
-+	return clk_core_enable_lock(clk->core);
-+}
-+EXPORT_SYMBOL_GPL(clk_enable);
-+
-+static int clk_core_prepare_enable(struct clk_core *core)
-+{
-+	int ret;
-+
-+	ret = clk_core_prepare_lock(core);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_core_enable_lock(core);
-+	if (ret)
-+		clk_core_unprepare_lock(core);
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(clk_enable);
-+
-+static void clk_core_disable_unprepare(struct clk_core *core)
-+{
-+	clk_core_disable_lock(core);
-+	clk_core_unprepare_lock(core);
-+}
- 
- static int clk_core_round_rate_nolock(struct clk_core *core,
- 				      struct clk_rate_request *req)
+Wouldn't it make sense to instead add a standard kernel API to retrieve the 
+boot mode value ? It seems to be a pretty common feature of SoCs across all 
+vendors.
+
+>  		};
+> 
+>  		/* Variable factor clocks */
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
