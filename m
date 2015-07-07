@@ -1,106 +1,96 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55A7D79B.3080305@arm.com>
-Date: Thu, 16 Jul 2015 17:11:07 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>,
-	Mike Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v4 3/8] clk: add support for clocks provided by SCP(System
- Control Processor)
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com> <1433760002-24120-4-git-send-email-sudeep.holla@arm.com> <20150702172310.GF4301@codeaurora.org> <5596A1B6.8020307@arm.com> <559ADC94.4080505@codeaurora.org> <559BF858.1020301@arm.com> <20150708014606.GH30412@codeaurora.org>
-In-Reply-To: <20150708014606.GH30412@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	linux-sh@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 00/11] ARM: shmobile: Let CPG use syscon for MD pin values
+Date: Tue,  7 Jul 2015 16:10:06 +0200
+Message-Id: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+	Hi,
 
-On 08/07/15 02:46, Stephen Boyd wrote:
-> On 07/07, Sudeep Holla wrote:
->>
->>
->> On 06/07/15 20:52, Stephen Boyd wrote:
->>>>
->>>
->>> If I have time I may try to start doing the clk_register() conversion,
->>> but it will take a while so I doubt it will be in v4.3. I'm asking if
->>> you can add a clk_hw based API that does something like
->>> clk_set_rate_range() without requiring a struct clk pointer. i.e.
->>> clk_hw_set_rate_range(struct clk_hw *hw, min, max) that constraints the
->>> min/max rate of the clock. This way, the driver is only using clk
->>> provider APIs and not clk consumer APIs.
->>>
->>
->> I understand the intention of separating clk provider helpers/APIs
->> and clk consumer APIs. Since {min,max}_rate are part of struct clk
->> itself, I was thinking that you would have moved it to struct clk_core
->> as part of the rework you mentioned and hence asked about the patches.
->>
->> IIUC, if {min,max}_rate remain part of struct clk, then how are we
->> restricting that operation to just the clk providers ? clk consumer
->> can still directly modify or use clk_set_rate_range.
->>
->> Do we continue to provide that feature for both provider and consumer ?
->> If so I assume {min,max}_rate range requested by consumer should be
->> within the limits set by provider and do we maintain both the limits ?
->>
->> Sorry if I am missing something fundamental since I don't have much
->> knowledge of clk layer internals.
->>
->
-> Yes struct clk would have min/max, and struct clk_core would have
-> min/max. Then some sort of provider API (or possibly even
-> clk_init_data) would take the min/max fields and copy them over
-> to struct clk_core. Then during set_rate operations we would
-> aggregate the constraints from struct clk like we already do and
-> add in the constrains in struct clk_core.
->
-> One downside to adding new fields to clk_init_data is that there
-> are drivers out there that aren't initializing that structure to
-> 0, and they're putting it on the stack, so stack junk can come
-> through. Furthermore, min/max would mean that every driver needs
-> to specify some large number for max or we have to special case
-> min == max == 0 and ignore it. Somehow it needs to be opt-in. If
-> we want to go down the clk_init_data route then perhaps we need
-> some sort of rate_constraint struct pointer in there that drivers
-> can optionally setup.
->
-> 	struct clk_rate_constraint {
-> 		unsigned long min;
-> 		unsigned long max;
-> 	};
->
-> 	struct clk_init_data {
-> 		...
-> 		struct clk_rate_constraint *rate_constraint;
-> 	};
->
-> I haven't thought it through completely, but I can probably write
-> up some patch tomorrow after I sleep on it.
->
+Currently the R-Car Gen2 Clock Pulse Generator (CPG) driver obtains the
+values of the MD pins by a direct call from the R-Car Gen2 platform
+code. This is a bit messy, and creates a dependency between driver and
+platform code.
 
-I am hoping to get this series for v4.3. In order to avoid using
-consumer API, I can revert back to the min,max check I had in the
-round_rate earlier if that's fine with you ? Let me know so that I can
-post the next version based on that. All the other comments are already
-addressed.
+This RFC patch series makes the CPG driver obtain the MD pin values by
+reading the Mode Monitoring Register (MODEMR) using syscon and regmap
+instead.  The syscon device and register offset to use are obtained from
+the "renesas,modemr" property in DT, which contains a phandle to the Reset
+Controller module, and the register offset of the MODEMR register inside the
+RST module's register block.
 
-Also since this series depends on SCPI, I was thinking to get it merged
-via ARM-SoC, but that might conflict with the round_rate prototype
-change. Do do plan to share a stable base with arm-soc guys or you
-expect all the changes to be contained in clk tree ?
+For backward-compatibility with old DTs, a fallback is added to call
+rcar_gen2_read_mode_pins() in the R-Car Gen2 platform code when needed.
+Once backward-compatibility is deemed no longer necessary, the call to
+rcar_gen2_read_mode_pins() can be removed.
 
-Regards,
-Sudeep
+Patches:
+  - Patch 1 adds syscon/regmap support to the CPG driver,
+  - Patches 2-5 add device nodes for the RST modules on all R-Car Gen2
+    SoCs,
+  - Patches 6-9 add "renesas,modemr" links on all R-Car Gen2 SoCs,
+  - Patch 10 removes the old call from platform code to CPG driver,
+  - Patch 11 removes the obsolete code called by the platform code from
+    the CPG driver.
+
+TODO:
+  - Write DT binding docs for the RST Reset Controller Module,
+  - Document the "renesas,modemr" DT property in the R-Car Gen2 CPG DT
+    binding docs,
+  - Extend this technique to R-Car Gen1 (r8a7778/r8a7779) and RZ
+    (r7s72100) SoCs.
+
+Dependencies:
+  - This patch series is against my local tree, which a.o. contains the
+    R-Car Gen2 CPG/MSTP Clock Domain and R-Car Gen2 SYSC PM Domain
+    patches.  This mostly impacts the .dtsi patches.  But there's no
+    functional dependency, only contextually.
+  - Patch 10 (run-time) depends on patches 1-9,
+  - Patch 11 (build-time) depends on patch 10.
+
+Geert Uytterhoeven (11):
+  clk: shmobile: rcar-gen2: Obtain MD pin values using syscon/regmap
+  ARM: shmobile: r8a7790 dtsi: Add device node for RST module
+  ARM: shmobile: r8a7791 dtsi: Add device node for RST module
+  ARM: shmobile: r8a7793 dtsi: Add device node for RST module
+  ARM: shmobile: r8a7794 dtsi: Add device node for RST module
+  ARM: shmobile: r8a7790: Link CPG to RST using "renesas,modemr"
+  ARM: shmobile: r8a7791: Link CPG to RST using "renesas,modemr"
+  ARM: shmobile: r8a7793: Link CPG to RST using "renesas,modemr"
+  ARM: shmobile: r8a7794: Link CPG to RST using "renesas,modemr"
+  ARM: shmobile: rcar-gen2: Use syscon to configure the CPG
+  clk: shmobile: rcar-gen2: Remove obsolete rcar_gen2_clocks_init()
+
+ arch/arm/boot/dts/r8a7790.dtsi           |  6 ++++++
+ arch/arm/boot/dts/r8a7791.dtsi           |  6 ++++++
+ arch/arm/boot/dts/r8a7793.dtsi           |  6 ++++++
+ arch/arm/boot/dts/r8a7794.dtsi           |  6 ++++++
+ arch/arm/mach-shmobile/Kconfig           |  1 +
+ arch/arm/mach-shmobile/setup-rcar-gen2.c |  3 ++-
+ drivers/clk/shmobile/clk-rcar-gen2.c     | 22 +++++++++++++++-------
+ include/linux/clk/shmobile.h             |  1 -
+ 8 files changed, 42 insertions(+), 9 deletions(-)
+
+-- 
+1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
