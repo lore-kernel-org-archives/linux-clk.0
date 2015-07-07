@@ -1,334 +1,239 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Tero Kristo <t-kristo@ti.com>
-Subject: [PATCH 23/26] clk: tegra: Convert to clk_hw based provider APIs
-Date: Fri, 31 Jul 2015 10:04:03 -0700
-Message-Id: <1438362246-6664-24-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:47601 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753364AbbGGMbb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 7 Jul 2015 08:31:31 -0400
+Message-ID: <559BC694.1050602@ti.com>
+Date: Tue, 7 Jul 2015 18:01:16 +0530
+From: Keerthy <a0393675@ti.com>
+MIME-Version: 1.0
+To: Tero Kristo <t-kristo@ti.com>, Keerthy <j-keerthy@ti.com>,
+	<linux-omap@vger.kernel.org>, <tony@atomide.com>
+CC: <galak@codeaurora.org>, <pawel.moll@arm.com>,
+	<linux-kernel@vger.kernel.org>, <paul@pwsan.com>,
+	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 4/6] ARM: OMAP: PRM: Remove hardcoding of IRQENABLE_MPU_2
+ and IRQSTATUS_MPU_2 register offsets
+References: <1434954176-9605-1-git-send-email-j-keerthy@ti.com> <1434954176-9605-5-git-send-email-j-keerthy@ti.com> <559BBD38.9070104@ti.com>
+In-Reply-To: <559BBD38.9070104@ti.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-We're removing struct clk from the clk provider API, so switch
-this code to using the clk_hw based provider APIs.
 
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/ti/autoidle.c  |  8 ++++----
- drivers/clk/ti/clkt_dpll.c | 11 ++++++-----
- drivers/clk/ti/clock.h     |  2 +-
- drivers/clk/ti/divider.c   |  6 +++---
- drivers/clk/ti/dpll3xxx.c  | 31 ++++++++++++++-----------------
- drivers/clk/ti/dpll44xx.c  |  4 ++--
- drivers/clk/ti/gate.c      |  6 +++---
- 7 files changed, 33 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
-index 527f2c6dd0aa..345af43465f0 100644
---- a/drivers/clk/ti/autoidle.c
-+++ b/drivers/clk/ti/autoidle.c
-@@ -169,21 +169,21 @@ int __init of_ti_clk_autoidle_setup(struct device_node *node)
- 
- /**
-  * omap2_init_clk_hw_omap_clocks - initialize an OMAP clock
-- * @clk: struct clk * to initialize
-+ * @hw: struct clk_hw * to initialize
-  *
-  * Add an OMAP clock @clk to the internal list of OMAP clocks.  Used
-  * temporarily for autoidle handling, until this support can be
-  * integrated into the common clock framework code in some way.  No
-  * return value.
-  */
--void omap2_init_clk_hw_omap_clocks(struct clk *clk)
-+void omap2_init_clk_hw_omap_clocks(struct clk_hw *hw)
- {
- 	struct clk_hw_omap *c;
- 
--	if (__clk_get_flags(clk) & CLK_IS_BASIC)
-+	if (clk_hw_get_flags(hw) & CLK_IS_BASIC)
- 		return;
- 
--	c = to_clk_hw_omap(__clk_get_hw(clk));
-+	c = to_clk_hw_omap(hw);
- 	list_add(&c->node, &clk_hw_omap_clocks);
- }
- 
-diff --git a/drivers/clk/ti/clkt_dpll.c b/drivers/clk/ti/clkt_dpll.c
-index a01fc7f305c1..9023ca9caf84 100644
---- a/drivers/clk/ti/clkt_dpll.c
-+++ b/drivers/clk/ti/clkt_dpll.c
-@@ -16,6 +16,7 @@
- 
- #include <linux/kernel.h>
- #include <linux/errno.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
- #include <linux/clk/ti.h>
-@@ -75,7 +76,7 @@ static int _dpll_test_fint(struct clk_hw_omap *clk, unsigned int n)
- 	dd = clk->dpll_data;
- 
- 	/* DPLL divider must result in a valid jitter correction val */
--	fint = __clk_get_rate(__clk_get_parent(clk->hw.clk)) / n;
-+	fint = clk_hw_get_rate(clk_hw_get_parent(&clk->hw)) / n;
- 
- 	if (dd->flags & DPLL_J_TYPE) {
- 		fint_min = OMAP3PLUS_DPLL_FINT_JTYPE_MIN;
-@@ -253,7 +254,7 @@ unsigned long omap2_get_dpll_rate(struct clk_hw_omap *clk)
- 	v >>= __ffs(dd->enable_mask);
- 
- 	if (_omap2_dpll_is_in_bypass(v))
--		return __clk_get_rate(dd->clk_bypass);
-+		return clk_get_rate(dd->clk_bypass);
- 
- 	v = ti_clk_ll_ops->clk_readl(dd->mult_div1_reg);
- 	dpll_mult = v & dd->mult_mask;
-@@ -261,7 +262,7 @@ unsigned long omap2_get_dpll_rate(struct clk_hw_omap *clk)
- 	dpll_div = v & dd->div1_mask;
- 	dpll_div >>= __ffs(dd->div1_mask);
- 
--	dpll_clk = (long long)__clk_get_rate(dd->clk_ref) * dpll_mult;
-+	dpll_clk = (long long)clk_get_rate(dd->clk_ref) * dpll_mult;
- 	do_div(dpll_clk, dpll_div + 1);
- 
- 	return dpll_clk;
-@@ -300,8 +301,8 @@ long omap2_dpll_round_rate(struct clk_hw *hw, unsigned long target_rate,
- 
- 	dd = clk->dpll_data;
- 
--	ref_rate = __clk_get_rate(dd->clk_ref);
--	clk_name = __clk_get_name(hw->clk);
-+	ref_rate = clk_get_rate(dd->clk_ref);
-+	clk_name = clk_hw_get_name(hw);
- 	pr_debug("clock: %s: starting DPLL round_rate, target rate %lu\n",
- 		 clk_name, target_rate);
- 
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index d8aafd333058..90f3f472ae1c 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -204,7 +204,7 @@ int ti_clk_retry_init(struct device_node *node, struct clk_hw *hw,
- 		      ti_of_clk_init_cb_t func);
- int ti_clk_add_component(struct device_node *node, struct clk_hw *hw, int type);
- 
--void omap2_init_clk_hw_omap_clocks(struct clk *clk);
-+void omap2_init_clk_hw_omap_clocks(struct clk_hw *hw);
- int of_ti_clk_autoidle_setup(struct device_node *node);
- void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks);
- 
-diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-index b6b2ac37dfad..5b1726829e6d 100644
---- a/drivers/clk/ti/divider.c
-+++ b/drivers/clk/ti/divider.c
-@@ -109,7 +109,7 @@ static unsigned long ti_clk_divider_recalc_rate(struct clk_hw *hw,
- 	if (!div) {
- 		WARN(!(divider->flags & CLK_DIVIDER_ALLOW_ZERO),
- 		     "%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
--		     __clk_get_name(hw->clk));
-+		     clk_hw_get_name(hw));
- 		return parent_rate;
- 	}
- 
-@@ -181,7 +181,7 @@ static int ti_clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
- 			*best_parent_rate = parent_rate_saved;
- 			return i;
- 		}
--		parent_rate = __clk_round_rate(__clk_get_parent(hw->clk),
-+		parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
- 				MULT_ROUND_UP(rate, i));
- 		now = DIV_ROUND_UP(parent_rate, i);
- 		if (now <= rate && now > best) {
-@@ -194,7 +194,7 @@ static int ti_clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
- 	if (!bestdiv) {
- 		bestdiv = _get_maxdiv(divider);
- 		*best_parent_rate =
--			__clk_round_rate(__clk_get_parent(hw->clk), 1);
-+			clk_hw_round_rate(clk_hw_get_parent(hw), 1);
- 	}
- 
- 	return bestdiv;
-diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
-index 353a9b772025..f4dec00fb684 100644
---- a/drivers/clk/ti/dpll3xxx.c
-+++ b/drivers/clk/ti/dpll3xxx.c
-@@ -69,7 +69,7 @@ static int _omap3_wait_dpll_status(struct clk_hw_omap *clk, u8 state)
- 	const char *clk_name;
- 
- 	dd = clk->dpll_data;
--	clk_name = __clk_get_name(clk->hw.clk);
-+	clk_name = clk_hw_get_name(&clk->hw);
- 
- 	state <<= __ffs(dd->idlest_mask);
- 
-@@ -98,7 +98,7 @@ static u16 _omap3_dpll_compute_freqsel(struct clk_hw_omap *clk, u8 n)
- 	unsigned long fint;
- 	u16 f = 0;
- 
--	fint = __clk_get_rate(clk->dpll_data->clk_ref) / n;
-+	fint = clk_get_rate(clk->dpll_data->clk_ref) / n;
- 
- 	pr_debug("clock: fint is %lu\n", fint);
- 
-@@ -145,7 +145,7 @@ static int _omap3_noncore_dpll_lock(struct clk_hw_omap *clk)
- 	u8 state = 1;
- 	int r = 0;
- 
--	pr_debug("clock: locking DPLL %s\n", __clk_get_name(clk->hw.clk));
-+	pr_debug("clock: locking DPLL %s\n", clk_hw_get_name(&clk->hw));
- 
- 	dd = clk->dpll_data;
- 	state <<= __ffs(dd->idlest_mask);
-@@ -193,7 +193,7 @@ static int _omap3_noncore_dpll_bypass(struct clk_hw_omap *clk)
- 		return -EINVAL;
- 
- 	pr_debug("clock: configuring DPLL %s for low-power bypass\n",
--		 __clk_get_name(clk->hw.clk));
-+		 clk_hw_get_name(&clk->hw));
- 
- 	ai = omap3_dpll_autoidle_read(clk);
- 
-@@ -223,7 +223,7 @@ static int _omap3_noncore_dpll_stop(struct clk_hw_omap *clk)
- 	if (!(clk->dpll_data->modes & (1 << DPLL_LOW_POWER_STOP)))
- 		return -EINVAL;
- 
--	pr_debug("clock: stopping DPLL %s\n", __clk_get_name(clk->hw.clk));
-+	pr_debug("clock: stopping DPLL %s\n", clk_hw_get_name(&clk->hw));
- 
- 	ai = omap3_dpll_autoidle_read(clk);
- 
-@@ -251,7 +251,7 @@ static void _lookup_dco(struct clk_hw_omap *clk, u8 *dco, u16 m, u8 n)
- {
- 	unsigned long fint, clkinp; /* watch out for overflow */
- 
--	clkinp = __clk_get_rate(__clk_get_parent(clk->hw.clk));
-+	clkinp = clk_hw_get_rate(clk_hw_get_parent(&clk->hw));
- 	fint = (clkinp / n) * m;
- 
- 	if (fint < 1000000000)
-@@ -277,7 +277,7 @@ static void _lookup_sddiv(struct clk_hw_omap *clk, u8 *sd_div, u16 m, u8 n)
- 	unsigned long clkinp, sd; /* watch out for overflow */
- 	int mod1, mod2;
- 
--	clkinp = __clk_get_rate(__clk_get_parent(clk->hw.clk));
-+	clkinp = clk_hw_get_rate(clk_hw_get_parent(&clk->hw));
- 
- 	/*
- 	 * target sigma-delta to near 250MHz
-@@ -429,15 +429,15 @@ int omap3_noncore_dpll_enable(struct clk_hw *hw)
- 		if (r) {
- 			WARN(1,
- 			     "%s: could not enable %s's clockdomain %s: %d\n",
--			     __func__, __clk_get_name(hw->clk),
-+			     __func__, clk_hw_get_name(hw),
- 			     clk->clkdm_name, r);
- 			return r;
- 		}
- 	}
- 
--	parent = __clk_get_hw(__clk_get_parent(hw->clk));
-+	parent = clk_hw_get_parent(hw);
- 
--	if (__clk_get_rate(hw->clk) == __clk_get_rate(dd->clk_bypass)) {
-+	if (clk_hw_get_rate(hw) == clk_get_rate(dd->clk_bypass)) {
- 		WARN_ON(parent != __clk_get_hw(dd->clk_bypass));
- 		r = _omap3_noncore_dpll_bypass(clk);
- 	} else {
-@@ -489,7 +489,7 @@ int omap3_noncore_dpll_determine_rate(struct clk_hw *hw,
- 	if (!dd)
- 		return -EINVAL;
- 
--	if (__clk_get_rate(dd->clk_bypass) == req->rate &&
-+	if (clk_get_rate(dd->clk_bypass) == req->rate &&
- 	    (dd->modes & (1 << DPLL_LOW_POWER_BYPASS))) {
- 		req->best_parent_hw = __clk_get_hw(dd->clk_bypass);
- 	} else {
-@@ -553,8 +553,7 @@ int omap3_noncore_dpll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (!dd)
- 		return -EINVAL;
- 
--	if (__clk_get_hw(__clk_get_parent(hw->clk)) !=
--	    __clk_get_hw(dd->clk_ref))
-+	if (clk_hw_get_parent(hw) != __clk_get_hw(dd->clk_ref))
- 		return -EINVAL;
- 
- 	if (dd->last_rounded_rate == 0)
-@@ -567,7 +566,7 @@ int omap3_noncore_dpll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	}
- 
- 	pr_debug("%s: %s: set rate: locking rate to %lu.\n", __func__,
--		 __clk_get_name(hw->clk), rate);
-+		 clk_hw_get_name(hw), rate);
- 
- 	ret = omap3_noncore_dpll_program(clk, freqsel);
- 
-@@ -704,13 +703,11 @@ static void omap3_dpll_deny_idle(struct clk_hw_omap *clk)
- static struct clk_hw_omap *omap3_find_clkoutx2_dpll(struct clk_hw *hw)
- {
- 	struct clk_hw_omap *pclk = NULL;
--	struct clk *parent;
- 
- 	/* Walk up the parents of clk, looking for a DPLL */
- 	do {
- 		do {
--			parent = __clk_get_parent(hw->clk);
--			hw = __clk_get_hw(parent);
-+			hw = clk_hw_get_parent(hw);
- 		} while (hw && (clk_hw_get_flags(hw) & CLK_IS_BASIC));
- 		if (!hw)
- 			break;
-diff --git a/drivers/clk/ti/dpll44xx.c b/drivers/clk/ti/dpll44xx.c
-index 73af77a90586..660d7436ac24 100644
---- a/drivers/clk/ti/dpll44xx.c
-+++ b/drivers/clk/ti/dpll44xx.c
-@@ -94,7 +94,7 @@ static void omap4_dpll_lpmode_recalc(struct dpll_data *dd)
- {
- 	long fint, fout;
- 
--	fint = __clk_get_rate(dd->clk_ref) / (dd->last_rounded_n + 1);
-+	fint = clk_get_rate(dd->clk_ref) / (dd->last_rounded_n + 1);
- 	fout = fint * dd->last_rounded_m;
- 
- 	if ((fint < OMAP4_DPLL_LP_FINT_MAX) && (fout < OMAP4_DPLL_LP_FOUT_MAX))
-@@ -212,7 +212,7 @@ int omap4_dpll_regm4xen_determine_rate(struct clk_hw *hw,
- 	if (!dd)
- 		return -EINVAL;
- 
--	if (__clk_get_rate(dd->clk_bypass) == req->rate &&
-+	if (clk_get_rate(dd->clk_bypass) == req->rate &&
- 	    (dd->modes & (1 << DPLL_LOW_POWER_BYPASS))) {
- 		req->best_parent_hw = __clk_get_hw(dd->clk_bypass);
- 	} else {
-diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
-index 0c6fdfcd5f93..5429d3534363 100644
---- a/drivers/clk/ti/gate.c
-+++ b/drivers/clk/ti/gate.c
-@@ -62,7 +62,7 @@ static const struct clk_ops omap_gate_clk_hsdiv_restore_ops = {
-  * (Any other value different from the Read value) to the
-  * corresponding CM_CLKSEL register will refresh the dividers.
-  */
--static int omap36xx_gate_clk_enable_with_hsdiv_restore(struct clk_hw *clk)
-+static int omap36xx_gate_clk_enable_with_hsdiv_restore(struct clk_hw *hw)
- {
- 	struct clk_divider *parent;
- 	struct clk_hw *parent_hw;
-@@ -70,10 +70,10 @@ static int omap36xx_gate_clk_enable_with_hsdiv_restore(struct clk_hw *clk)
- 	int ret;
- 
- 	/* Clear PWRDN bit of HSDIVIDER */
--	ret = omap2_dflt_clk_enable(clk);
-+	ret = omap2_dflt_clk_enable(hw);
- 
- 	/* Parent is the x2 node, get parent of parent for the m2 div */
--	parent_hw = __clk_get_hw(__clk_get_parent(__clk_get_parent(clk->clk)));
-+	parent_hw = clk_hw_get_parent(clk_hw_get_parent(hw));
- 	parent = to_clk_divider(parent_hw);
- 
- 	/* Restore the dividers */
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Tuesday 07 July 2015 05:21 PM, Tero Kristo wrote:
+> On 06/22/2015 09:22 AM, Keerthy wrote:
+>> The register offsets of IRQENABLE_MPU_2 and IRQSTATUS_MPU_2 are
+>> hardcoded.
+>> This makes it difficult to reuse the code for single core SoCs like
+>> AM437x.
+>
+> Single core vs. having two sets of IRQENABLE / IRQSTATUS registers do
+> not have any relation to each other. OMAP4+ has two IRQ registers,
+> because the number of IRQ events is so large it does not fit into single
+> register. Thus, the commit message is somewhat misleading, please fix.
 
+Okay i will make it clearer.
+
+>
+>> Hence making it part of omap_prcm_irq_setup structure so that case of
+>> single set of IRQ* registers can be handled generically.
+>>
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> ---
+>>   arch/arm/mach-omap2/prcm-common.h |  8 ++++----
+>>   arch/arm/mach-omap2/prm3xxx.c     | 20 +++++++++---------
+>>   arch/arm/mach-omap2/prm44xx.c     | 43
+>> +++++++++++++++++++++------------------
+>>   arch/arm/mach-omap2/prm_common.c  |  5 ++---
+>>   4 files changed, 39 insertions(+), 37 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-omap2/prcm-common.h
+>> b/arch/arm/mach-omap2/prcm-common.h
+>> index 2e60406..99447e7 100644
+>> --- a/arch/arm/mach-omap2/prcm-common.h
+>> +++ b/arch/arm/mach-omap2/prcm-common.h
+>> @@ -470,8 +470,8 @@ struct omap_prcm_irq {
+>>
+>>   /**
+>>    * struct omap_prcm_irq_setup - PRCM interrupt controller details
+>> - * @ack: PRM register offset for the first PRM_IRQSTATUS_MPU register
+>> - * @mask: PRM register offset for the first PRM_IRQENABLE_MPU register
+>> + * @ack: PRM register offsets for the PRM_IRQSTATUS_MPU registers
+>> + * @mask: PRM register offsets for the PRM_IRQENABLE_MPU registers
+>>    * @nr_regs: number of PRM_IRQ{STATUS,ENABLE}_MPU* registers
+>>    * @nr_irqs: number of entries in the @irqs array
+>>    * @irqs: ptr to an array of PRCM interrupt bits (see @nr_irqs)
+>> @@ -492,8 +492,8 @@ struct omap_prcm_irq {
+>>    * specified in static initializers.
+>>    */
+>>   struct omap_prcm_irq_setup {
+>> -    u16 ack;
+>> -    u16 mask;
+>> +    u16 ack[2];
+>> +    u16 mask[2];
+>
+> You don't really need two pairs of offsets; in generic case, if we have
+> two IRQ registers, the offset between the two is 4, as used elsewhere in
+> the code. By keeping the previous struct layout, you can save a few
+> bytes of memory, and don't need to touch the omap3 code all over the
+> place either.
+
+Okay
+
+>
+>>       u16 pm_ctrl;
+>>       u8 nr_regs;
+>>       u8 nr_irqs;
+>> diff --git a/arch/arm/mach-omap2/prm3xxx.c
+>> b/arch/arm/mach-omap2/prm3xxx.c
+>> index 62680aa..56649b0 100644
+>> --- a/arch/arm/mach-omap2/prm3xxx.c
+>> +++ b/arch/arm/mach-omap2/prm3xxx.c
+>
+> <snip>
+>
+> No need to touch the OMAP3 code, as the offsets are always the default
+> ones.
+>
+>> diff --git a/arch/arm/mach-omap2/prm44xx.c
+>> b/arch/arm/mach-omap2/prm44xx.c
+>> index 8149e5a..20b547a 100644
+>> --- a/arch/arm/mach-omap2/prm44xx.c
+>> +++ b/arch/arm/mach-omap2/prm44xx.c
+>> @@ -43,8 +43,10 @@ static const struct omap_prcm_irq omap4_prcm_irqs[]
+>> = {
+>>   };
+>>
+>>   static struct omap_prcm_irq_setup omap4_prcm_irq_setup = {
+>> -    .ack            = OMAP4_PRM_IRQSTATUS_MPU_OFFSET,
+>> -    .mask            = OMAP4_PRM_IRQENABLE_MPU_OFFSET,
+>> +    .ack[0]            = OMAP4_PRM_IRQSTATUS_MPU_OFFSET,
+>> +    .mask[0]        = OMAP4_PRM_IRQENABLE_MPU_OFFSET,
+>> +    .ack[1]            = OMAP4_PRM_IRQSTATUS_MPU_2_OFFSET,
+>> +    .mask[1]        = OMAP4_PRM_IRQENABLE_MPU_2_OFFSET,
+>
+> I think you should just keep the single IRQENABLE / IRQSTATUS
+> definitions in place, and use +4 addressing where applicable. Having an
+> array of the ack + mask definitions is kind of ugly.
+
+Okay.
+
+>
+>>       .pm_ctrl        = OMAP4_PRM_IO_PMCTRL_OFFSET,
+>>       .nr_regs        = 2,
+>>       .irqs            = omap4_prcm_irqs,
+>> @@ -217,11 +219,11 @@ static inline u32 _read_pending_irq_reg(u16
+>> irqen_offs, u16 irqst_offs)
+>>    */
+>>   static void omap44xx_prm_read_pending_irqs(unsigned long *events)
+>>   {
+>> -    events[0] = _read_pending_irq_reg(OMAP4_PRM_IRQENABLE_MPU_OFFSET,
+>> -                      OMAP4_PRM_IRQSTATUS_MPU_OFFSET);
+>> +    int i;
+>>
+>> -    events[1] = _read_pending_irq_reg(OMAP4_PRM_IRQENABLE_MPU_2_OFFSET,
+>> -                      OMAP4_PRM_IRQSTATUS_MPU_2_OFFSET);
+>> +    for (i = 0; i < omap4_prcm_irq_setup.nr_regs; i++)
+>> +        events[i] = _read_pending_irq_reg(omap4_prcm_irq_setup.mask[i],
+>> +                          omap4_prcm_irq_setup.ack[i]);
+>
+> ... change to mask + i * 4 / ack + i * 4.
+
+got it.
+
+>
+>>   }
+>>
+>>   /**
+>> @@ -251,17 +253,16 @@ static void omap44xx_prm_ocp_barrier(void)
+>>    */
+>>   static void omap44xx_prm_save_and_clear_irqen(u32 *saved_mask)
+>>   {
+>> -    saved_mask[0] =
+>> -        omap4_prm_read_inst_reg(OMAP4430_PRM_OCP_SOCKET_INST,
+>> -                    OMAP4_PRM_IRQENABLE_MPU_OFFSET);
+>> -    saved_mask[1] =
+>> -        omap4_prm_read_inst_reg(OMAP4430_PRM_OCP_SOCKET_INST,
+>> -                    OMAP4_PRM_IRQENABLE_MPU_2_OFFSET);
+>> +    int i;
+>>
+>> -    omap4_prm_write_inst_reg(0, OMAP4430_PRM_OCP_SOCKET_INST,
+>> -                 OMAP4_PRM_IRQENABLE_MPU_OFFSET);
+>> -    omap4_prm_write_inst_reg(0, OMAP4430_PRM_OCP_SOCKET_INST,
+>> -                 OMAP4_PRM_IRQENABLE_MPU_2_OFFSET);
+>> +    for (i = 0; i < omap4_prcm_irq_setup.nr_regs; i++) {
+>> +        saved_mask[i] =
+>> +            omap4_prm_read_inst_reg(OMAP4430_PRM_OCP_SOCKET_INST,
+>> +                        omap4_prcm_irq_setup.mask[i]);
+>> +
+>> +        omap4_prm_write_inst_reg(0, OMAP4430_PRM_OCP_SOCKET_INST,
+>> +                     omap4_prcm_irq_setup.mask[i]);
+>
+> ditto.
+>
+>> +    }
+>>
+>>       /* OCP barrier */
+>>       omap4_prm_read_inst_reg(OMAP4430_PRM_OCP_SOCKET_INST,
+>> @@ -280,10 +281,12 @@ static void
+>> omap44xx_prm_save_and_clear_irqen(u32 *saved_mask)
+>>    */
+>>   static void omap44xx_prm_restore_irqen(u32 *saved_mask)
+>>   {
+>> -    omap4_prm_write_inst_reg(saved_mask[0],
+>> OMAP4430_PRM_OCP_SOCKET_INST,
+>> -                 OMAP4_PRM_IRQENABLE_MPU_OFFSET);
+>> -    omap4_prm_write_inst_reg(saved_mask[1],
+>> OMAP4430_PRM_OCP_SOCKET_INST,
+>> -                 OMAP4_PRM_IRQENABLE_MPU_2_OFFSET);
+>> +    int i;
+>> +
+>> +    for (i = 0; i < omap4_prcm_irq_setup.nr_regs; i++)
+>> +        omap4_prm_write_inst_reg(saved_mask[i],
+>> +                     OMAP4430_PRM_OCP_SOCKET_INST,
+>> +                     omap4_prcm_irq_setup.mask[i]);
+>
+> ...and here.
+>
+>>   }
+>>
+>>   /**
+>> diff --git a/arch/arm/mach-omap2/prm_common.c
+>> b/arch/arm/mach-omap2/prm_common.c
+>> index 7add799..10ef0da 100644
+>> --- a/arch/arm/mach-omap2/prm_common.c
+>> +++ b/arch/arm/mach-omap2/prm_common.c
+>> @@ -281,7 +281,6 @@ int omap_prcm_register_chain_handler(struct
+>> omap_prcm_irq_setup *irq_setup)
+>>           pr_err("PRCM: already initialized; won't reinitialize\n");
+>>           return -EINVAL;
+>>       }
+>> -
+>
+> This change is against the coding style.
+>
+
+I will fix this. Thanks for catching this.
+
+>>       if (nr_regs > OMAP_PRCM_MAX_NR_PENDING_REG) {
+>>           pr_err("PRCM: nr_regs too large\n");
+>>           return -EINVAL;
+>> @@ -339,8 +338,8 @@ int omap_prcm_register_chain_handler(struct
+>> omap_prcm_irq_setup *irq_setup)
+>>           ct->chip.irq_mask = irq_gc_mask_clr_bit;
+>>           ct->chip.irq_unmask = irq_gc_mask_set_bit;
+>>
+>> -        ct->regs.ack = irq_setup->ack + i * 4;
+>> -        ct->regs.mask = irq_setup->mask + i * 4;
+>> +        ct->regs.ack = irq_setup->ack[i];
+>> +        ct->regs.mask = irq_setup->mask[i];
+>
+> ... and you can drop this change.
+>
+>>
+>>           irq_setup_generic_chip(gc, mask[i], 0, IRQ_NOREQUEST, 0);
+>>           prcm_irq_chips[i] = gc;
+>>
+>
