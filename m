@@ -1,137 +1,114 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Boris BREZILLON <boris.brezillon@free-electrons.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH] clk: at91: Silence warnings and cleanup __init usage
-Date: Mon,  6 Jul 2015 12:31:45 -0700
-Message-Id: <1436211105-10491-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bl2on0086.outbound.protection.outlook.com ([65.55.169.86]:56192
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751391AbbGGEFc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 7 Jul 2015 00:05:32 -0400
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>
+Subject: [PATCHv2 5/6] clk: sunxi: make use of of_clk_parent_fill helper function
+Date: Mon, 6 Jul 2015 22:59:05 -0500
+Message-ID: <1436241546-16731-6-git-send-email-dinguyen@opensource.altera.com>
+In-Reply-To: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
+References: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Remove useless ifdefs around function prototypes to silence the
-following sparse warnings when the configs aren't enabled.
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-drivers/clk/at91/clk-h32mx.c:95:13: warning: symbol
-'of_sama5d4_clk_h32mx_setup' was not declared. Should it be
-static?
-drivers/clk/at91/clk-utmi.c:159:13: warning: symbol
-'of_at91sam9x5_clk_utmi_setup' was not declared. Should it be
-static?
+Use of_clk_parent_fill to fill in the parent clock names' array.
 
-Plus, using __init in function prototypes doesn't do anything, so
-just drop it throughout this file.
-
-Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: "Emilio López" <emilio@elopez.com.ar>
 ---
- drivers/clk/at91/pmc.h | 56 ++++++++++++++++++++++----------------------------
- 1 file changed, 24 insertions(+), 32 deletions(-)
+v2: Add if (of_clk_parent_fill(node, parents, 2) != 2) to clk-a20-gmac.c
+---
+ drivers/clk/sunxi/clk-a20-gmac.c    |    4 +---
+ drivers/clk/sunxi/clk-factors.c     |    4 +---
+ drivers/clk/sunxi/clk-sun6i-ar100.c |    3 +--
+ drivers/clk/sunxi/clk-sunxi.c       |   10 ++--------
+ 4 files changed, 5 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 69abb08cf146..0caad646583d 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -59,71 +59,63 @@ static inline void pmc_write(struct at91_pmc *pmc, int offset, u32 value)
- int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 			  struct clk_range *range);
+diff --git a/drivers/clk/sunxi/clk-a20-gmac.c b/drivers/clk/sunxi/clk-a20-gmac.c
+index 0dcf4f2..1611b03 100644
+--- a/drivers/clk/sunxi/clk-a20-gmac.c
++++ b/drivers/clk/sunxi/clk-a20-gmac.c
+@@ -80,9 +80,7 @@ static void __init sun7i_a20_gmac_clk_setup(struct device_node *node)
+ 		goto free_mux;
  
--extern void __init of_at91sam9260_clk_slow_setup(struct device_node *np,
-+extern void of_at91sam9260_clk_slow_setup(struct device_node *np,
- 						 struct at91_pmc *pmc);
+ 	/* gmac clock requires exactly 2 parents */
+-	parents[0] = of_clk_get_parent_name(node, 0);
+-	parents[1] = of_clk_get_parent_name(node, 1);
+-	if (!parents[0] || !parents[1])
++	if (of_clk_parent_fill(node, parents, 2) != 2)
+ 		goto free_gate;
  
--extern void __init of_at91rm9200_clk_main_osc_setup(struct device_node *np,
-+extern void of_at91rm9200_clk_main_osc_setup(struct device_node *np,
- 						    struct at91_pmc *pmc);
--extern void __init of_at91sam9x5_clk_main_rc_osc_setup(struct device_node *np,
-+extern void of_at91sam9x5_clk_main_rc_osc_setup(struct device_node *np,
- 						       struct at91_pmc *pmc);
--extern void __init of_at91rm9200_clk_main_setup(struct device_node *np,
-+extern void of_at91rm9200_clk_main_setup(struct device_node *np,
- 						struct at91_pmc *pmc);
--extern void __init of_at91sam9x5_clk_main_setup(struct device_node *np,
-+extern void of_at91sam9x5_clk_main_setup(struct device_node *np,
- 						struct at91_pmc *pmc);
+ 	reg = of_iomap(node, 0);
+diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
+index 8c20190..2589457 100644
+--- a/drivers/clk/sunxi/clk-factors.c
++++ b/drivers/clk/sunxi/clk-factors.c
+@@ -174,9 +174,7 @@ struct clk *sunxi_factors_register(struct device_node *node,
+ 	int i = 0;
  
--extern void __init of_at91rm9200_clk_pll_setup(struct device_node *np,
-+extern void of_at91rm9200_clk_pll_setup(struct device_node *np,
- 					       struct at91_pmc *pmc);
--extern void __init of_at91sam9g45_clk_pll_setup(struct device_node *np,
-+extern void of_at91sam9g45_clk_pll_setup(struct device_node *np,
- 						struct at91_pmc *pmc);
--extern void __init of_at91sam9g20_clk_pllb_setup(struct device_node *np,
-+extern void of_at91sam9g20_clk_pllb_setup(struct device_node *np,
- 						 struct at91_pmc *pmc);
--extern void __init of_sama5d3_clk_pll_setup(struct device_node *np,
-+extern void of_sama5d3_clk_pll_setup(struct device_node *np,
- 					    struct at91_pmc *pmc);
--extern void __init of_at91sam9x5_clk_plldiv_setup(struct device_node *np,
-+extern void of_at91sam9x5_clk_plldiv_setup(struct device_node *np,
- 						  struct at91_pmc *pmc);
+ 	/* if we have a mux, we will have >1 parents */
+-	while (i < FACTORS_MAX_PARENTS &&
+-	       (parents[i] = of_clk_get_parent_name(node, i)) != NULL)
+-		i++;
++	i = of_clk_parent_fill(node, parents, FACTORS_MAX_PARENTS);
  
--extern void __init of_at91rm9200_clk_master_setup(struct device_node *np,
-+extern void of_at91rm9200_clk_master_setup(struct device_node *np,
- 						  struct at91_pmc *pmc);
--extern void __init of_at91sam9x5_clk_master_setup(struct device_node *np,
-+extern void of_at91sam9x5_clk_master_setup(struct device_node *np,
- 						  struct at91_pmc *pmc);
+ 	/*
+ 	 * some factor clocks, such as pll5 and pll6, may have multiple
+diff --git a/drivers/clk/sunxi/clk-sun6i-ar100.c b/drivers/clk/sunxi/clk-sun6i-ar100.c
+index 63cf149..6f229ff 100644
+--- a/drivers/clk/sunxi/clk-sun6i-ar100.c
++++ b/drivers/clk/sunxi/clk-sun6i-ar100.c
+@@ -195,8 +195,7 @@ static int sun6i_a31_ar100_clk_probe(struct platform_device *pdev)
+ 	if (nparents > SUN6I_AR100_MAX_PARENTS)
+ 		nparents = SUN6I_AR100_MAX_PARENTS;
  
--extern void __init of_at91rm9200_clk_sys_setup(struct device_node *np,
-+extern void of_at91rm9200_clk_sys_setup(struct device_node *np,
- 					       struct at91_pmc *pmc);
+-	for (i = 0; i < nparents; i++)
+-		parents[i] = of_clk_get_parent_name(np, i);
++	of_clk_parent_fill(np, parents, nparents);
  
--extern void __init of_at91rm9200_clk_periph_setup(struct device_node *np,
-+extern void of_at91rm9200_clk_periph_setup(struct device_node *np,
- 						  struct at91_pmc *pmc);
--extern void __init of_at91sam9x5_clk_periph_setup(struct device_node *np,
-+extern void of_at91sam9x5_clk_periph_setup(struct device_node *np,
- 						  struct at91_pmc *pmc);
+ 	of_property_read_string(np, "clock-output-names", &clk_name);
  
--extern void __init of_at91rm9200_clk_prog_setup(struct device_node *np,
-+extern void of_at91rm9200_clk_prog_setup(struct device_node *np,
- 						struct at91_pmc *pmc);
--extern void __init of_at91sam9g45_clk_prog_setup(struct device_node *np,
-+extern void of_at91sam9g45_clk_prog_setup(struct device_node *np,
- 						 struct at91_pmc *pmc);
--extern void __init of_at91sam9x5_clk_prog_setup(struct device_node *np,
-+extern void of_at91sam9x5_clk_prog_setup(struct device_node *np,
- 						struct at91_pmc *pmc);
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 9a82f17..eed66f8 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -202,10 +202,7 @@ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
+ 		return;
  
--#if defined(CONFIG_HAVE_AT91_UTMI)
--extern void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np,
-+extern void of_at91sam9x5_clk_utmi_setup(struct device_node *np,
- 						struct at91_pmc *pmc);
--#endif
+ 	/* we have a mux, we will have >1 parents */
+-	while (i < SUN6I_AHB1_MAX_PARENTS &&
+-	       (parents[i] = of_clk_get_parent_name(node, i)) != NULL)
+-		i++;
+-
++	of_clk_parent_fill(node, parents, SUN6I_AHB1_MAX_PARENTS);
+ 	of_property_read_string(node, "clock-output-names", &clk_name);
  
--#if defined(CONFIG_HAVE_AT91_USB_CLK)
--extern void __init of_at91rm9200_clk_usb_setup(struct device_node *np,
-+extern void of_at91rm9200_clk_usb_setup(struct device_node *np,
- 					       struct at91_pmc *pmc);
--extern void __init of_at91sam9x5_clk_usb_setup(struct device_node *np,
-+extern void of_at91sam9x5_clk_usb_setup(struct device_node *np,
- 					       struct at91_pmc *pmc);
--extern void __init of_at91sam9n12_clk_usb_setup(struct device_node *np,
-+extern void of_at91sam9n12_clk_usb_setup(struct device_node *np,
- 						struct at91_pmc *pmc);
--#endif
+ 	ahb1 = kzalloc(sizeof(struct sun6i_ahb1_clk), GFP_KERNEL);
+@@ -790,10 +787,7 @@ static void __init sunxi_mux_clk_setup(struct device_node *node,
  
--#if defined(CONFIG_HAVE_AT91_SMD)
--extern void __init of_at91sam9x5_clk_smd_setup(struct device_node *np,
-+extern void of_at91sam9x5_clk_smd_setup(struct device_node *np,
- 					       struct at91_pmc *pmc);
--#endif
+ 	reg = of_iomap(node, 0);
  
--#if defined(CONFIG_HAVE_AT91_SMD)
--extern void __init of_sama5d4_clk_h32mx_setup(struct device_node *np,
-+extern void of_sama5d4_clk_h32mx_setup(struct device_node *np,
- 					      struct at91_pmc *pmc);
--#endif
+-	while (i < SUNXI_MAX_PARENTS &&
+-	       (parents[i] = of_clk_get_parent_name(node, i)) != NULL)
+-		i++;
+-
++	of_clk_parent_fill(node, parents, SUNXI_MAX_PARENTS);
+ 	of_property_read_string(node, "clock-output-names", &clk_name);
  
- #endif /* __PMC_H_ */
+ 	clk = clk_register_mux(NULL, clk_name, parents, i,
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
 
