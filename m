@@ -1,83 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:55298 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750970AbbGaJhr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 31 Jul 2015 05:37:47 -0400
-Subject: Re: [PATCH] PM / devfreq: event: Remove incorrect property in
- exynos-ppmu DT binding
-References: <1436770732-9430-1-git-send-email-javier@osg.samsung.com>
- <55B0A376.2080906@samsung.com> <55B0A616.2070608@osg.samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-To: "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <55BB41E5.8010209@osg.samsung.com>
-Date: Fri, 31 Jul 2015 11:37:41 +0200
-MIME-Version: 1.0
-In-Reply-To: <55B0A616.2070608@osg.samsung.com>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	linux-sh@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 06/11] ARM: shmobile: r8a7790: Link CPG to RST using "renesas,modemr"
+Date: Tue,  7 Jul 2015 16:10:12 +0200
+Message-Id: <1436278217-20522-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
+References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Myungjoo,
+Add a link from the Clock Pulse Generator node to the Reset Controller
+node, so the CPG can read the Mode Monitoring Register (MODEMR) to
+obtain the MD pin values.x
 
-On 07/23/2015 10:30 AM, Javier Martinez Canillas wrote:
-> Hello Chanwoo,
-> 
-> On 07/23/2015 10:19 AM, Chanwoo Choi wrote:
->> Hi Javier,
->>
->> On 07/13/2015 03:58 PM, Javier Martinez Canillas wrote:
->>> The exynos-ppmu driver is only a clock consumer and not a clock
->>> provider but its Device Tree binding listed #clock-cells as an
->>> optional property.
->>>
->>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>>
->>> ---
->>>
->>> Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt | 1
->>> - 1 file changed, 1 deletion(-)
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
->>> b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt 
->>> index b54bf3a2ff57..aed486692880 100644 ---
->>> a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt 
->>> +++
->>> b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt 
->>> @@ -17,7 +17,6 @@ Required properties: Optional properties: -
->>> clock-names : the name of clock used by the PPMU, "ppmu" - clocks :
->>> phandles for clock specified in "clock-names" property --
->>> #clock-cells: should be 1.
->>>
->>> Example1 : PPMU nodes in exynos3250.dtsi are listed below.
->>>
->>>
->>
->> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->>
->> + Devfreq maintainer (Myungjoo Ham)
-> 
-> Thanks for the review and for cc'ing Myungjoo. The get_maintainer.pl script
-> didn't tell me that so I think Documentation/devicetree/bindings/devfreq/
-> sub-dir should be added to the DEVICE FREQUENCY (DEVFREQ) entry in the
-> MAINTAINERS file.
-> 
->> I think that this patch will be more appropriate on devfreq git tree 
->> than linux-samsung git tree.
->>
-> 
-> Agreed.
-> 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-Any comments about this patch?
-
-Best regards,
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 08067ae177643b8f..4ee5523fc3e13e12 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1115,6 +1115,7 @@
+ 					     "lb", "qspi", "sdh", "sd0", "sd1",
+ 					     "z", "rcan", "adsp";
+ 			#power-domain-cells = <0>;
++			renesas,modemr = <&rst 0x60>;
+ 		};
+ 
+ 		/* Variable factor clocks */
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
