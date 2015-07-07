@@ -1,68 +1,60 @@
-Return-Path: <yingjoe.chen@mediatek.com>
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	<mturquette@baylibre.com>, James Liao <jamesjj.liao@mediatek.com>
-CC: Russell King <linux@arm.linux.org.uk>, <devicetree@vger.kernel.org>, Arnd
- Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, Daniel
- Lezcano <daniel.lezcano@linaro.org>, <linux-kernel@vger.kernel.org>, Rob
- Herring <robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>, Sascha
- Hauer <kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>, Yingjoe Chen
-	<yingjoe.chen@mediatek.com>, <srv_heupstream@mediatek.com>,
-	<linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
-	<linux-clk@vger.kernel.org>
-Subject: [PATCH 2/5] clocksource: mediatek: Use GPT as sched clock source
-Date: Mon, 13 Jul 2015 17:32:46 +0800
-Message-ID: <1436779969-18610-3-git-send-email-yingjoe.chen@mediatek.com>
-In-Reply-To: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
-References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bl2on0069.outbound.protection.outlook.com ([65.55.169.69]:11268
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752171AbbGGEFZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 7 Jul 2015 00:05:25 -0400
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>
+Subject: [PATCHv2 0/6] clk: make use of of_clk_parent_fill helper function
+Date: Mon, 6 Jul 2015 22:59:00 -0500
+Message-ID: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yingjoe.chen@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-When cpu is in deep idle, arch timer will stop counting. Setup GPT as
-sched clock source so it can keep counting in idle.
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
----
- drivers/clocksource/mtk_timer.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Hello,
 
-diff --git a/drivers/clocksource/mtk_timer.c b/drivers/clocksource/mtk_timer.c
-index 237c20b..ae95b29 100644
---- a/drivers/clocksource/mtk_timer.c
-+++ b/drivers/clocksource/mtk_timer.c
-@@ -24,6 +24,7 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
-+#include <linux/sched_clock.h>
- #include <linux/slab.h>
- 
- #define GPT_IRQ_EN_REG		0x00
-@@ -59,6 +60,13 @@ struct mtk_clock_event_device {
- 	struct clock_event_device dev;
- };
- 
-+static void __iomem *gpt_sched_reg __read_mostly;
-+
-+static u64 notrace mtk_read_sched_clock(void)
-+{
-+	return readl_relaxed(gpt_sched_reg);
-+}
-+
- static inline struct mtk_clock_event_device *to_mtk_clk(
- 				struct clock_event_device *c)
- {
-@@ -242,6 +250,8 @@ static void __init mtk_timer_init(struct device_node *node)
- 	mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN, true);
- 	clocksource_mmio_init(evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC),
- 			node->name, rate, 300, 32, clocksource_mmio_readl_up);
-+	gpt_sched_reg = evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC);
-+	sched_clock_register(mtk_read_sched_clock, 32, rate);
- 
- 	/* Configure clock event */
- 	mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT, false);
+This is v2 of the patchset that makes use of of_clk_parent_fill helper function
+on various platforms.
+
+Thanks,
+
+Dinh Nguyen (6):
+  clk: at91: make use of of_clk_parent_fill helper function
+  clk: qoriq: make use of of_clk_parent_fill helper function
+  clk: keystone: make use of of_clk_parent_fill helper function
+  clk: st: make use of of_clk_parent_fill helper function
+  clk: sunxi: make use of of_clk_parent_fill helper function
+  clk: ti: make use of of_clk_parent_fill helper function
+
+ drivers/clk/at91/clk-main.c         |    7 +------
+ drivers/clk/at91/clk-master.c       |    7 +------
+ drivers/clk/at91/clk-programmable.c |    7 +------
+ drivers/clk/at91/clk-slow.c         |   14 ++------------
+ drivers/clk/at91/clk-smd.c          |    7 +------
+ drivers/clk/at91/clk-usb.c          |    7 +------
+ drivers/clk/clk-qoriq.c             |    5 ++---
+ drivers/clk/keystone/pll.c          |    3 +--
+ drivers/clk/st/clk-flexgen.c        |    6 ++----
+ drivers/clk/st/clkgen-mux.c         |    7 ++-----
+ drivers/clk/sunxi/clk-a20-gmac.c    |    4 +---
+ drivers/clk/sunxi/clk-factors.c     |    4 +---
+ drivers/clk/sunxi/clk-sun6i-ar100.c |    3 +--
+ drivers/clk/sunxi/clk-sunxi.c       |   10 ++--------
+ drivers/clk/ti/apll.c               |    4 +---
+ drivers/clk/ti/composite.c          |    4 +---
+ drivers/clk/ti/dpll.c               |    4 +---
+ drivers/clk/ti/fapll.c              |    3 +--
+ drivers/clk/ti/mux.c                |    4 +---
+ 19 files changed, 24 insertions(+), 86 deletions(-)
+
 -- 
-1.8.1.1.dirty
+1.7.9.5
+
