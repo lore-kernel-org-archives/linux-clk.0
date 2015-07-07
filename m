@@ -1,60 +1,49 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Hai Li <hali@codeaurora.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com, georgi.djakov@linaro.org,
-	tomeu.vizoso@collabora.com, architt@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Hai Li <hali@codeaurora.org>
-Subject: [PATCH v2] clk: qcom: Use parent rate when set rate to pixel RCG clock
-Date: Mon,  6 Jul 2015 10:49:36 -0400
-Message-Id: <1436194176-17701-1-git-send-email-hali@codeaurora.org>
-In-Reply-To: <1435271733-24455-1-git-send-email-hali@codeaurora.org>
-References: <1435271733-24455-1-git-send-email-hali@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <dinguyen@opensource.altera.com>
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
+CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
+Subject: [PATCHv2 2/6] clk: qoriq: make use of of_clk_parent_fill helper function
+Date: Mon, 6 Jul 2015 22:59:02 -0500
+Message-ID: <1436241546-16731-3-git-send-email-dinguyen@opensource.altera.com>
+In-Reply-To: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
+References: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Since the parent rate has been recalculated, pixel RCG clock
-should rely on it to find the correct M/N values during set_rate,
-instead of calling __clk_round_rate() to its parent again.
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-v2: Rebase on clk-next and avoid build warning
+Use of_clk_parent_fill to fill in the parent clock names' array.
 
-Signed-off-by: Hai Li <hali@codeaurora.org>
-Tested-by: Archit Taneja <architt@codeaurora.org>
-Fixes: 99cbd064b059 ("clk: qcom: Support display RCG clocks")
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
 ---
- drivers/clk/qcom/clk-rcg2.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/clk/clk-qoriq.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index b95d17f..92936f0 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -530,19 +530,16 @@ static int clk_pixel_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
- 	struct freq_tbl f = *rcg->freq_tbl;
- 	const struct frac_entry *frac = frac_table_pixel;
--	unsigned long request, src_rate;
-+	unsigned long request;
- 	int delta = 100000;
- 	u32 mask = BIT(rcg->hid_width) - 1;
- 	u32 hid_div;
--	int index = qcom_find_src_index(hw, rcg->parent_map, f.src);
--	struct clk *parent = clk_get_parent_by_index(hw->clk, index);
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index cda90a9..d3f4570 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -70,7 +70,7 @@ static void __init core_mux_init(struct device_node *np)
+ 	struct clk_init_data init;
+ 	struct cmux_clk *cmux_clk;
+ 	struct device_node *node;
+-	int rc, count, i;
++	int rc, count;
+ 	u32	offset;
+ 	const char *clk_name;
+ 	const char **parent_names;
+@@ -92,8 +92,7 @@ static void __init core_mux_init(struct device_node *np)
+ 	if (!parent_names)
+ 		return;
  
- 	for (; frac->num; frac++) {
- 		request = (rate * frac->den) / frac->num;
+-	for (i = 0; i < count; i++)
+-		parent_names[i] = of_clk_get_parent_name(np, i);
++	of_clk_parent_fill(np, parent_names, count);
  
--		src_rate = __clk_round_rate(parent, request);
--		if ((src_rate < (request - delta)) ||
--			(src_rate > (request + delta)))
-+		if ((parent_rate < (request - delta)) ||
-+			(parent_rate > (request + delta)))
- 			continue;
- 
- 		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
+ 	cmux_clk = kzalloc(sizeof(*cmux_clk), GFP_KERNEL);
+ 	if (!cmux_clk)
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-hosted by The Linux Foundation
-
+1.7.9.5
