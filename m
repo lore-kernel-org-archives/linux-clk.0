@@ -1,231 +1,73 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Thu, 30 Jul 2015 12:17:47 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Michael Turquette <mturquette@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@stlinux.com, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, geert@linux-m68k.org,
-	maxime.ripard@free-electrons.com, s.hauer@pengutronix.de,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v7 3/5] clk: Supply the critical clock {init, enable,
- disable} framework
-Message-ID: <20150730111747.GF14642@x1>
-References: <1437570255-21049-1-git-send-email-lee.jones@linaro.org>
- <1437570255-21049-4-git-send-email-lee.jones@linaro.org>
- <20150730010213.642.10831@quantum>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20150730010213.642.10831@quantum>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	linux-sh@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 01/11] clk: shmobile: rcar-gen2: Obtain MD pin values using syscon/regmap
+Date: Tue,  7 Jul 2015 16:10:07 +0200
+Message-Id: <1436278217-20522-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
+References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 29 Jul 2015, Michael Turquette wrote:
+Obtain the values of the MD pins by reading the Mode Monitoring Register
+(MODEMR) using syscon and regmap. The syscon device and register offset
+to use are obtained from the "renesas,modemr" property in DT.
 
-> Hi Lee,
-> 
-> + linux-clk ml
-> 
-> Quoting Lee Jones (2015-07-22 06:04:13)
-> > These new API calls will firstly provide a mechanisms to tag a clock as
-> > critical and secondly allow any knowledgeable driver to (un)gate clocks,
-> > even if they are marked as critical.
-> > 
-> > Suggested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > ---
-> >  drivers/clk/clk.c            | 45 ++++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/clk-provider.h |  2 ++
-> >  include/linux/clk.h          | 30 +++++++++++++++++++++++++++++
-> >  3 files changed, 77 insertions(+)
-> > 
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 61c3fc5..486b1da 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -46,6 +46,21 @@ static struct clk_core *clk_core_lookup(const char *name);
-> >  
-> >  /***    private data structures    ***/
-> >  
-> > +/**
-> > + * struct critical -   Provides 'play' over critical clocks.  A clock can be
-> > + *                     marked as critical, meaning that it should not be
-> > + *                     disabled.  However, if a driver which is aware of the
-> > + *                     critical behaviour wants to control it, it can do so
-> > + *                     using clk_enable_critical() and clk_disable_critical().
-> > + *
-> > + * @enabled    Is clock critical?  Once set, doesn't change
-> > + * @leave_on   Self explanatory.  Can be disabled by knowledgeable drivers
-> 
-> Not self explanatory. I need this explained to me. What does leave_on
-> do? Better yet, what would happen if leave_on did not exist?
-> 
-> > + */
-> > +struct critical {
-> > +       bool enabled;
-> > +       bool leave_on;
-> > +};
-> > +
-> >  struct clk_core {
-> >         const char              *name;
-> >         const struct clk_ops    *ops;
-> > @@ -75,6 +90,7 @@ struct clk_core {
-> >         struct dentry           *dentry;
-> >  #endif
-> >         struct kref             ref;
-> > +       struct critical         critical;
-> >  };
-> >  
-> >  struct clk {
-> > @@ -995,6 +1011,10 @@ static void clk_core_disable(struct clk_core *clk)
-> >         if (WARN_ON(clk->enable_count == 0))
-> >                 return;
-> >  
-> > +       /* Refuse to turn off a critical clock */
-> > +       if (clk->enable_count == 1 && clk->critical.leave_on)
-> > +               return;
-> 
-> How do we get to this point? clk_enable_critical actually calls
-> clk_enable, thus incrementing the enable_count. The only time that we
-> could hit the above case is if,
-> 
-> a) there is an imbalance in clk_enable and clk_disable calls. If this is
-> the case then the drivers need to be fixed. Or better yet some
-> infrastructure to catch that, now that we have per-user struct clk
-> cookies.
-> 
-> b) a driver knowingly calls clk_enable_critical(foo) and then regular,
-> old clk_disable(foo). But why would a driver do that?
-> 
-> It might be that I am missing the point here, so please feel free to
-> clue me in.
+Fall back to calling rcar_gen2_read_mode_pins() in the R-Car Gen2
+platform code for backward-compatibility with old DTs.
 
-This check behaves in a very similar to the WARN() above.  It's more
-of a fail-safe.  If all drivers are behaving properly, then it
-shouldn't ever be true.  If they're not, it prevents an incorrectly
-written driver from irrecoverably crippling the system.
+TODO Document "renesas,modemr" property in DT binding doc.
 
-As I said in the other mail.  We can do without these 3 new wrappers.
-We _could_ just write a driver which only calls clk_enable() _after_
-it calls clk_disable(), a kind of intentional unbalance and it would
-do that same thing.  However, what we're trying to do here is provide
-a proper API, so we can see at first glance what the 'knowledgeable'
-driver is trying to do and not have someone attempt to submit a 'fix'
-which calls clk_enable() or something.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/shmobile/clk-rcar-gen2.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-> > +
-> >         if (--clk->enable_count > 0)
-> >                 return;
-> >  
-> > @@ -1037,6 +1057,13 @@ void clk_disable(struct clk *clk)
-> >  }
-> >  EXPORT_SYMBOL_GPL(clk_disable);
-> >  
-> > +void clk_disable_critical(struct clk *clk)
-> > +{
-> > +       clk->core->critical.leave_on = false;
-> > +       clk_disable(clk);
-> > +}
-> > +EXPORT_SYMBOL_GPL(clk_disable_critical);
-> > +
-> >  static int clk_core_enable(struct clk_core *clk)
-> >  {
-> >         int ret = 0;
-> > @@ -1100,6 +1127,15 @@ int clk_enable(struct clk *clk)
-> >  }
-> >  EXPORT_SYMBOL_GPL(clk_enable);
-> >  
-> > +int clk_enable_critical(struct clk *clk)
-> > +{
-> > +       if (clk->core->critical.enabled)
-> > +               clk->core->critical.leave_on = true;
-> > +
-> > +       return clk_enable(clk);
-> > +}
-> > +EXPORT_SYMBOL_GPL(clk_enable_critical);
-> > +
-> >  static unsigned long clk_core_round_rate_nolock(struct clk_core *clk,
-> >                                                 unsigned long rate,
-> >                                                 unsigned long min_rate,
-> > @@ -2482,6 +2518,15 @@ fail_out:
-> >  }
-> >  EXPORT_SYMBOL_GPL(clk_register);
-> >  
-> > +void clk_init_critical(struct clk *clk)
-> > +{
-> > +       struct critical *critical = &clk->core->critical;
-> > +
-> > +       critical->enabled = true;
-> > +       critical->leave_on = true;
-> > +}
-> > +EXPORT_SYMBOL_GPL(clk_init_critical);
-> > +
-> >  /*
-> >   * Free memory allocated for a clock.
-> >   * Caller must hold prepare_lock.
-> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> > index 5591ea7..15ef8c9 100644
-> > --- a/include/linux/clk-provider.h
-> > +++ b/include/linux/clk-provider.h
-> > @@ -563,6 +563,8 @@ struct clk *devm_clk_register(struct device *dev, struct clk_hw *hw);
-> >  void clk_unregister(struct clk *clk);
-> >  void devm_clk_unregister(struct device *dev, struct clk *clk);
-> >  
-> > +void clk_init_critical(struct clk *clk);
-> > +
-> >  /* helper functions */
-> >  const char *__clk_get_name(struct clk *clk);
-> >  struct clk_hw *__clk_get_hw(struct clk *clk);
-> > diff --git a/include/linux/clk.h b/include/linux/clk.h
-> > index 8381bbf..9807f3b 100644
-> > --- a/include/linux/clk.h
-> > +++ b/include/linux/clk.h
-> > @@ -231,6 +231,19 @@ struct clk *devm_clk_get(struct device *dev, const char *id);
-> >  int clk_enable(struct clk *clk);
-> >  
-> >  /**
-> > + * clk_enable_critical - inform the system when the clock source should be
-> > + *                      running, even if clock is critical.
-> > + * @clk: clock source
-> > + *
-> > + * If the clock can not be enabled/disabled, this should return success.
-> > + *
-> > + * May be called from atomic contexts.
-> > + *
-> > + * Returns success (0) or negative errno.
-> > + */
-> > +int clk_enable_critical(struct clk *clk);
-> > +
-> > +/**
-> >   * clk_disable - inform the system when the clock source is no longer required.
-> >   * @clk: clock source
-> >   *
-> > @@ -247,6 +260,23 @@ int clk_enable(struct clk *clk);
-> >  void clk_disable(struct clk *clk);
-> >  
-> >  /**
-> > + * clk_disable_critical - inform the system when the clock source is no
-> > + *                       longer required, even if clock is critical.
-> > + * @clk: clock source
-> > + *
-> > + * Inform the system that a clock source is no longer required by
-> > + * a driver and may be shut down.
-> > + *
-> > + * May be called from atomic contexts.
-> > + *
-> > + * Implementation detail: if the clock source is shared between
-> > + * multiple drivers, clk_enable_critical() calls must be balanced
-> > + * by the same number of clk_disable_critical() calls for the clock
-> > + * source to be disabled.
-> > + */
-> > +void clk_disable_critical(struct clk *clk);
-> > +
-> > +/**
-> >   * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
-> >   *               This is only valid once the clock source has been enabled.
-> >   * @clk: clock source
-
+diff --git a/drivers/clk/shmobile/clk-rcar-gen2.c b/drivers/clk/shmobile/clk-rcar-gen2.c
+index 745496f7ee9c7402..b121a49f7575a97b 100644
+--- a/drivers/clk/shmobile/clk-rcar-gen2.c
++++ b/drivers/clk/shmobile/clk-rcar-gen2.c
+@@ -15,8 +15,10 @@
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/math64.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/regmap.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+@@ -368,9 +370,22 @@ static void __init rcar_gen2_cpg_clocks_init(struct device_node *np)
+ {
+ 	const struct cpg_pll_config *config;
+ 	struct rcar_gen2_cpg *cpg;
++	struct regmap *regmap;
+ 	struct clk **clks;
+ 	unsigned int i;
+ 	int num_clks;
++	u32 reg;
++
++	regmap = syscon_regmap_lookup_by_phandle(np, "renesas,modemr");
++	if (IS_ERR(regmap) ||
++	    of_property_read_u32_index(np, "renesas,modemr", 1, &reg) ||
++	    regmap_read(regmap, reg, &cpg_mode)) {
++		/* Backward-compatibility with old DT */
++		extern u32 rcar_gen2_read_mode_pins(void);
++
++		pr_warn("%s: failed to parse renesas,modemr\n", np->full_name);
++		cpg_mode = rcar_gen2_read_mode_pins();
++	}
+ 
+ 	num_clks = of_property_count_strings(np, "clock-output-names");
+ 	if (num_clks < 0) {
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+1.9.1
