@@ -1,28 +1,52 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Jul 2015 14:39:53 -0700
+Date: Mon, 6 Jul 2015 17:27:33 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sergej Sawazki <ce3a@gmx.de>
-Cc: mturquette@baylibre.com, jsarha@ti.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 0/4] clk: add gpio controlled clock multiplexer
-Message-ID: <20150702213953.GH4301@codeaurora.org>
-References: <1435501496-25761-1-git-send-email-ce3a@gmx.de>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kernel@stlinux.com" <kernel@stlinux.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/9] drivers: clk: st: Incorrect clocks status
+Message-ID: <20150707002733.GC30412@codeaurora.org>
+References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1435068567-30995-2-git-send-email-gabriel.fernandez@linaro.org>
+ <558B0CD7.6040302@codeaurora.org>
+ <CAG374jAE78p_4=MYg9iNqo-4j8gE5OspzKwphfBUBtr5iOx-1g@mail.gmail.com>
+ <CAG374jAaK0X+ij3rSWqeN6hd7_-3hHQd+hFxNcDULVuXdY9gHg@mail.gmail.com>
+ <559AF827.3090308@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1435501496-25761-1-git-send-email-ce3a@gmx.de>
+In-Reply-To: <559AF827.3090308@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/28, Sergej Sawazki wrote:
-> This patch series adds a common clock driver for basic gpio controlled clock
-> multiplexers. It does also contain some minor fixes for the gpio-gate-clock.
+On 07/06, Stephen Boyd wrote:
+> On 07/06/2015 01:11 AM, Gabriel Fernandez wrote:
+> > Hi Stephen,
+> >
+> > Can you drop also this patch because it's concerns an old platform and
+> > there no values to make more changes.
 > 
-> The first two patches are minor fixes for the gpio-gate-clock. Patch three
-> refactors the file clk-gpio-gate.c and adds the new gpio-mux-clock driver.
-> Finally, patch four renames the file clk-gpio-gate.c to clk-gpio.c. 
+> Ok, so I think this series is all applied then. Let me know if anything
+> is missing from -next.
 > 
-> Based on clk-next.
 
-I applied all of them to clk-next but you won't see it in -next
-until rc1 drops.
+Except for patch 2. Please resend that with your Signed-off-by.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
