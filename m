@@ -1,61 +1,58 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Douglas Anderson <dianders@chromium.org>,
-	linux-rockchip@lists.infradead.org, ykk@rock-chips.com,
-	Alexandru Stan <amstan@chromium.org>, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: Fix PLL bandwidth
-Date: Wed, 22 Jul 2015 00:14:19 +0200
-Message-ID: <3846129.lKetE2zB83@diego>
-In-Reply-To: <55AEB6AE.2070006@codeaurora.org>
-References: <1437511283-14216-1-git-send-email-dianders@chromium.org> <55AEB6AE.2070006@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	linux-sh@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 11/11] clk: shmobile: rcar-gen2: Remove obsolete rcar_gen2_clocks_init()
+Date: Tue,  7 Jul 2015 16:10:17 +0200
+Message-Id: <1436278217-20522-12-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
+References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 21. Juli 2015, 14:16:30 schrieb Stephen Boyd:
-> On 07/21/2015 01:41 PM, Douglas Anderson wrote:
-> > In the TRM we see that BWADJ is "a 12-bit bus that selects the values
-> > 
-> > 1-4096 for the bandwidth divider (NB)":
-> >   NB = BWADJ[11:0] + 1
-> > 
-> > The recommended setting of NB: NB = NF / 2.
-> > 
-> > So:
-> >    NB = NF / 2
-> >    BWADJ[11:0] + 1 = NF / 2
-> >    BWADJ[11:0] = NF / 2 - 1
-> > 
-> > Right now, we have:
-> > 
-> > {                                               \
-> > 
-> >          .rate   = _rate##U,                     \
-> >          .nr = _nr,                              \
-> >          .nf = _nf,                              \
-> >          .no = _no,                              \
-> >          .bwadj = (_nf >> 1),                    \
-> > 
-> > }
-> > 
-> > That means we set bwadj to NF / 2, not NF / 2 - 1
-> > 
-> > All of this is a bit confusing because we specify "NR" (the 1-based
-> > value), "NF" (the 1-based value), "NO" (the 1-based value), but
-> > "BWADJ" (the 0-based value) instead of "NB" (the 1-based value).
-> > 
-> > Let's change to working with "NB" and fix the off by one error.  This
-> > may affect PLL jitter in a small way (hopefully for the better).
-> > 
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> 
-> There's no Fixes tag or stable Cc so I take it this isn't fixing any
-> manifesting regression, more of a visual inspection bug find?
+Since "ARM: shmobile: rcar-gen2: Use syscon to configure the CPG",
+rcar_gen2_clocks_init() is no longer called by the R-Car Gen2 platform
+code. Remove it.
 
-Looks like it ... i.e. all Rockchip SoCs I have (rk3066, rk3188, rk3288, 
-rk3368) run fine for me with the off-by-one setting till now.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/shmobile/clk-rcar-gen2.c | 7 -------
+ include/linux/clk/shmobile.h         | 1 -
+ 2 files changed, 8 deletions(-)
 
+diff --git a/drivers/clk/shmobile/clk-rcar-gen2.c b/drivers/clk/shmobile/clk-rcar-gen2.c
+index b121a49f7575a97b..3f02b40b4911831c 100644
+--- a/drivers/clk/shmobile/clk-rcar-gen2.c
++++ b/drivers/clk/shmobile/clk-rcar-gen2.c
+@@ -435,10 +435,3 @@ static void __init rcar_gen2_cpg_clocks_init(struct device_node *np)
+ }
+ CLK_OF_DECLARE(rcar_gen2_cpg_clks, "renesas,rcar-gen2-cpg-clocks",
+ 	       rcar_gen2_cpg_clocks_init);
+-
+-void __init rcar_gen2_clocks_init(u32 mode)
+-{
+-	cpg_mode = mode;
+-
+-	of_clk_init(NULL);
+-}
+diff --git a/include/linux/clk/shmobile.h b/include/linux/clk/shmobile.h
+index cb19cc1865ca5cfb..95357cdde185d518 100644
+--- a/include/linux/clk/shmobile.h
++++ b/include/linux/clk/shmobile.h
+@@ -22,7 +22,6 @@ struct generic_pm_domain;
+ 
+ void r8a7778_clocks_init(u32 mode);
+ void r8a7779_clocks_init(u32 mode);
+-void rcar_gen2_clocks_init(u32 mode);
+ 
+ #ifdef CONFIG_PM_GENERIC_DOMAINS_OF
+ void cpg_mstp_add_clk_domain(struct device_node *np);
+-- 
+1.9.1
