@@ -1,73 +1,79 @@
-Return-Path: <geert@linux-m68k.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	linux-sh@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 01/11] clk: shmobile: rcar-gen2: Obtain MD pin values using syscon/regmap
-Date: Tue,  7 Jul 2015 16:10:07 +0200
-Message-Id: <1436278217-20522-2-git-send-email-geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH/RFC 10/11] ARM: shmobile: rcar-gen2: Use syscon to configure
+ the CPG
+Date: Tue,  7 Jul 2015 16:10:16 +0200
+Message-Id: <1436278217-20522-11-git-send-email-geert+renesas@glider.be>
 In-Reply-To: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
 References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-sh@vger.kernel.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Ulrich Hecht <ulrich.hecht@gmail.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Obtain the values of the MD pins by reading the Mode Monitoring Register
-(MODEMR) using syscon and regmap. The syscon device and register offset
-to use are obtained from the "renesas,modemr" property in DT.
-
-Fall back to calling rcar_gen2_read_mode_pins() in the R-Car Gen2
-platform code for backward-compatibility with old DTs.
-
-TODO Document "renesas,modemr" property in DT binding doc.
+Let the R-Car Gen2 CPG clock driver rely on syscon to read the Mode
+Monitoring Register (MODEMR), instead of passing the register value
+directly.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/shmobile/clk-rcar-gen2.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/mach-shmobile/Kconfig           | 1 +
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/shmobile/clk-rcar-gen2.c b/drivers/clk/shmobile/clk-rcar-gen2.c
-index 745496f7ee9c7402..b121a49f7575a97b 100644
---- a/drivers/clk/shmobile/clk-rcar-gen2.c
-+++ b/drivers/clk/shmobile/clk-rcar-gen2.c
-@@ -15,8 +15,10 @@
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/math64.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/regmap.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index 26a036c3ab522128..37faf6e18d26344f 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -23,6 +23,7 @@ config ARCH_RCAR_GEN2
+ 	select SYS_SUPPORTS_SH_CMT
+ 	select PCI_DOMAINS if PCI
+ 	select HAVE_ARM_ARCH_TIMER
++	select MFD_SYSCON
  
-@@ -368,9 +370,22 @@ static void __init rcar_gen2_cpg_clocks_init(struct device_node *np)
- {
- 	const struct cpg_pll_config *config;
- 	struct rcar_gen2_cpg *cpg;
-+	struct regmap *regmap;
- 	struct clk **clks;
- 	unsigned int i;
- 	int num_clks;
-+	u32 reg;
-+
-+	regmap = syscon_regmap_lookup_by_phandle(np, "renesas,modemr");
-+	if (IS_ERR(regmap) ||
-+	    of_property_read_u32_index(np, "renesas,modemr", 1, &reg) ||
-+	    regmap_read(regmap, reg, &cpg_mode)) {
-+		/* Backward-compatibility with old DT */
-+		extern u32 rcar_gen2_read_mode_pins(void);
-+
-+		pr_warn("%s: failed to parse renesas,modemr\n", np->full_name);
-+		cpg_mode = rcar_gen2_read_mode_pins();
-+	}
+ config ARCH_RMOBILE
+ 	bool
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index 570d6bd3784f7464..7a845f4829081cd9 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -15,6 +15,7 @@
+  * GNU General Public License for more details.
+  */
  
- 	num_clks = of_property_count_strings(np, "clock-output-names");
- 	if (num_clks < 0) {
++#include <linux/clk-provider.h>
+ #include <linux/clk/shmobile.h>
+ #include <linux/clocksource.h>
+ #include <linux/device.h>
+@@ -125,7 +126,7 @@ void __init rcar_gen2_timer_init(void)
+ 
+ 	iounmap(base);
+ 
+-	rcar_gen2_clocks_init(mode);
++	of_clk_init(NULL);
+ 	clocksource_of_init();
+ }
+ 
 -- 
 1.9.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
