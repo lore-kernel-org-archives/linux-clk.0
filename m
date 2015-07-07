@@ -1,42 +1,39 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 7/7] lib/vsprintf.c: Include clk.h
-Date: Fri, 10 Jul 2015 16:03:29 -0700
-Message-Id: <1436569409-27964-8-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org>
-References: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga02-in.huawei.com ([119.145.14.65]:6149 "EHLO
+	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756589AbbGGKID (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2015 06:08:03 -0400
+Message-ID: <559BA4C4.4070509@huawei.com>
+Date: Tue, 7 Jul 2015 18:07:00 +0800
+From: Bintian <bintian.wang@huawei.com>
+MIME-Version: 1.0
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+CC: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] amba: Support clk parents and rates assigned in DT
+References: <1432846332-17692-1-git-send-email-sboyd@codeaurora.org> <559B15DE.7040200@codeaurora.org> <559B9225.6090607@huawei.com> <20150707093343.GI7557@n2100.arm.linux.org.uk>
+In-Reply-To: <20150707093343.GI7557@n2100.arm.linux.org.uk>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This file uses the clk API so it should include clk.h directly
-instead of indirectly including it through clk-provider.h.
+On 2015/7/7 17:33, Russell King - ARM Linux wrote:
+> On Tue, Jul 07, 2015 at 04:47:33PM +0800, Bintian wrote:
+>> Hi Russell,
+>>
+>> Could you spend several minutes to review Stephen's patch?
+>
+> Sorry, I'm busy this week, I need to sort out my git tree, get some fixes
+> out which should've been pushed during the merge window, and other stuff.
+> I'm not going to have much time to read email, let alone do reviews.
+> Please be patient.
+>
+No problem, just keep your own pace.
 
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
+Thanks,
 
-Please ack so this can go through clk-tree.
+Bintian
 
- lib/vsprintf.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index da39c608a28c..95cd63b43b99 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -17,6 +17,7 @@
-  */
- 
- #include <stdarg.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/module.h>	/* for KSYM_SYMBOL_LEN */
- #include <linux/types.h>
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
 
