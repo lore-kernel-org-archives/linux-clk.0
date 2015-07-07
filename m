@@ -1,50 +1,52 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-ID: <559D2CBA.10607@arm.com>
-Date: Wed, 08 Jul 2015 14:59:22 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-MIME-Version: 1.0
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Mark Rutland <Mark.Rutland@arm.com>
-CC: Sudeep Holla <Sudeep.Holla@arm.com>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 1/8] Documentation: add DT binding for ARM System Control
- and Power Interface(SCPI) protocol
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com> <1433760002-24120-2-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1433760002-24120-2-git-send-email-sudeep.holla@arm.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 1/9] drivers: clk: st: Incorrect register offset used for lock_status
+Date: Tue,  7 Jul 2015 09:40:50 +0200
+Message-Id: <1436254850-22928-1-git-send-email-gabriel.fernandez@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mark,
+Incorrect register offset used for sthi407 clockgenC
 
-On 08/06/15 11:39, Sudeep Holla wrote:
-> This patch adds devicetree binding for System Control and Power
-> Interface (SCPI) Message Protocol used between the Application Cores(AP)
-> and the System Control Processor(SCP). The MHU peripheral provides a
-> mechanism for inter-processor communication between SCP's M3 processor
-> and AP.
->
-> SCP offers control and management of the core/cluster power states,
-> various power domain DVFS including the core/cluster, certain system
-> clocks configuration, thermal sensors and many others.
->
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+---
+ drivers/clk/st/clkgen-fsyn.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Can you review this version ?
+diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
+index e94197f..e6d7073 100644
+--- a/drivers/clk/st/clkgen-fsyn.c
++++ b/drivers/clk/st/clkgen-fsyn.c
+@@ -340,7 +340,7 @@ static const struct clkgen_quadfs_data st_fs660c32_C_407 = {
+ 		    CLKGEN_FIELD(0x30c, 0xf, 20),
+ 		    CLKGEN_FIELD(0x310, 0xf, 20) },
+ 	.lockstatus_present = true,
+-	.lock_status = CLKGEN_FIELD(0x2A0, 0x1, 24),
++	.lock_status = CLKGEN_FIELD(0x2f0, 0x1, 24),
+ 	.powerup_polarity = 1,
+ 	.standby_polarity = 1,
+ 	.pll_ops	= &st_quadfs_pll_c32_ops,
+-- 
+1.9.1
 
-Regards,
-Sudeep
