@@ -1,43 +1,48 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Date: Mon, 6 Jul 2015 15:00:22 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 1/7] clk: rockchip: add support for phase inverters
-Message-ID: <20150706220021.GF20866@codeaurora.org>
-References: <1436086820-3757-1-git-send-email-heiko@sntech.de>
- <1436086820-3757-2-git-send-email-heiko@sntech.de>
-MIME-Version: 1.0
-In-Reply-To: <1436086820-3757-2-git-send-email-heiko@sntech.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	linux-sh@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 05/11] ARM: shmobile: r8a7794 dtsi: Add device node for RST module
+Date: Tue,  7 Jul 2015 16:10:11 +0200
+Message-Id: <1436278217-20522-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
+References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/05, Heiko Stuebner wrote:
-> Most Rockchip socs have optional phase inverters connected to some
-> clocks that move the clock-phase by 180 degrees.
-> While not having any actual influence on the rate, the inverter
-> provides its own simple recalc_rate callback as relying on the
-> fallback in the framework is for "lazy developers" according
-> to the documentation in the code.
+Add a device node for the RST module, which provides reset control.
+Declare it to be a system controller (syscon), so other device nodes can
+refer to its registers.
 
-The comment about lazy doesn't seem to apply anymore? So I've
-dropped this last sentence.
+TODO Add DT binding documentation.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index b1505d2537772e82..bd37ec229329ed9c 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -786,6 +786,11 @@
+ 		};
+ 	};
+ 
++	rst: reset-controller@e616000 {
++		compatible = "renesas,rst-r8a7794", "syscon";
++		reg = <0 0xe6160000 0 0x0100>;
++	};
++
+ 	sysc: system-controller@e6180000 {
+ 		compatible = "renesas,sysc-r8a7794", "renesas,sysc-rcar";
+ 		reg = <0 0xe6180000 0 0x0200>;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+1.9.1
