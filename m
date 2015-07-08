@@ -1,165 +1,200 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Sudeep Holla <sudeep.holla@arm.com>
-Subject: [PATCH 1/3] clk: versatile: Switch to assigned clock parents
-Date: Fri, 31 Jul 2015 16:44:43 -0700
-Message-Id: <1438386285-5070-2-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>
-References: <55BBB2FC.9030102@codeaurora.org>
- <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:35116 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933020AbbGHJ6u (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2015 05:58:50 -0400
+Received: by pactm7 with SMTP id tm7so129187322pac.2
+        for <linux-clk@vger.kernel.org>; Wed, 08 Jul 2015 02:58:50 -0700 (PDT)
+From: Jun Nie <jun.nie@linaro.org>
+To: mturquette@linaro.org, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org
+Cc: shawn.guo@linaro.org, jason.liu@linaro.org, wan.zhijun@zte.com.cn,
+	Jun Nie <jun.nie@linaro.org>
+Subject: [PATCH 2/2] clk: zx: Add audio and GPIO clock for zx296702
+Date: Wed,  8 Jul 2015 17:58:13 +0800
+Message-Id: <1436349493-5453-2-git-send-email-jun.nie@linaro.org>
+In-Reply-To: <1436349493-5453-1-git-send-email-jun.nie@linaro.org>
+References: <1436349493-5453-1-git-send-email-jun.nie@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-We're removing struct clk from the clk provider API. This code is
-calling the consumer APIs to change the parent to a 1 MHz fixed
-rate clock for each of the clocks that the driver provides. Move
-to using the assigned-clock-parents DT property for this instead.
-Because this is an ABI break, detect if the property is missing
-and fall back to setting the parent explicitly before the clocks
-are registered.
+Add SPDIF/I2S and GPIO clock for zx296702
 
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Jun Nie <jun.nie@linaro.org>
 ---
- drivers/clk/versatile/clk-sp810.c | 76 ++++++++-------------------------------
- 1 file changed, 15 insertions(+), 61 deletions(-)
+ drivers/clk/zte/clk-zx296702.c             | 92 +++++++++++++++++++++++++++++-
+ include/dt-bindings/clock/zx296702-clock.h | 17 +++++-
+ 2 files changed, 105 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/versatile/clk-sp810.c b/drivers/clk/versatile/clk-sp810.c
-index 7fbe4d4bf35e..a1cdef6b0f90 100644
---- a/drivers/clk/versatile/clk-sp810.c
-+++ b/drivers/clk/versatile/clk-sp810.c
-@@ -33,12 +33,9 @@ struct clk_sp810_timerclken {
+diff --git a/drivers/clk/zte/clk-zx296702.c b/drivers/clk/zte/clk-zx296702.c
+index 929d033..9dcac73 100644
+--- a/drivers/clk/zte/clk-zx296702.c
++++ b/drivers/clk/zte/clk-zx296702.c
+@@ -36,10 +36,21 @@ static struct clk_onecell_data lsp1clk_data;
+ #define CLK_MUX1		(topcrm_base + 0x8c)
  
- struct clk_sp810 {
- 	struct device_node *node;
--	int refclk_index, timclk_index;
- 	void __iomem *base;
- 	spinlock_t lock;
- 	struct clk_sp810_timerclken timerclken[4];
--	struct clk *refclk;
--	struct clk *timclk;
+ #define CLK_SDMMC1		(lsp0crpm_base + 0x0c)
++#define CLK_GPIO		(lsp0crpm_base + 0x2c)
++#define CLK_SPDIF0		(lsp0crpm_base + 0x10)
++#define SPDIF0_DIV		(lsp0crpm_base + 0x14)
++#define CLK_I2S0		(lsp0crpm_base + 0x18)
++#define I2S0_DIV		(lsp0crpm_base + 0x1c)
++#define CLK_I2S1		(lsp0crpm_base + 0x20)
++#define I2S1_DIV		(lsp0crpm_base + 0x24)
++#define CLK_I2S2		(lsp0crpm_base + 0x34)
++#define I2S2_DIV		(lsp0crpm_base + 0x38)
+ 
+ #define CLK_UART0		(lsp1crpm_base + 0x20)
+ #define CLK_UART1		(lsp1crpm_base + 0x24)
+ #define CLK_SDMMC0		(lsp1crpm_base + 0x2c)
++#define CLK_SPDIF1		(lsp1crpm_base + 0x30)
++#define SPDIF1_DIV		(lsp1crpm_base + 0x34)
+ 
+ static const struct zx_pll_config pll_a9_config[] = {
+ 	{ .rate = 700000000, .cfg0 = 0x800405d1, .cfg1 = 0x04555555 },
+@@ -170,6 +181,21 @@ static const char * uart_wclk_sel[] = {
+ 	"lsp1_26M_wclk",
  };
  
- static u8 clk_sp810_timerclken_get_parent(struct clk_hw *hw)
-@@ -71,55 +68,7 @@ static int clk_sp810_timerclken_set_parent(struct clk_hw *hw, u8 index)
- 	return 0;
++static const char * spdif0_wclk_sel[] = {
++	"lsp0_104M_wclk",
++	"lsp0_26M_wclk",
++};
++
++static const char * spdif1_wclk_sel[] = {
++	"lsp1_104M_wclk",
++	"lsp1_26M_wclk",
++};
++
++static const char * i2s_wclk_sel[] = {
++	"lsp0_104M_wclk",
++	"lsp0_26M_wclk",
++};
++
+ static inline struct clk *zx_divtbl(const char *name, const char *parent,
+ 				    void __iomem *reg, u8 shift, u8 width,
+ 				    const struct clk_div_table *table)
+@@ -196,7 +222,7 @@ static inline struct clk *zx_gate(const char *name, const char *parent,
+ 				  void __iomem *reg, u8 shift)
+ {
+ 	return clk_register_gate(NULL, name, parent, CLK_IGNORE_UNUSED,
+-				 reg, shift, 0, &reg_lock);
++				 reg, shift, CLK_SET_RATE_PARENT, &reg_lock);
  }
  
--/*
-- * FIXME - setting the parent every time .prepare is invoked is inefficient.
-- * This is better handled by a dedicated clock tree configuration mechanism at
-- * init-time.  Revisit this later when such a mechanism exists
-- */
--static int clk_sp810_timerclken_prepare(struct clk_hw *hw)
--{
--	struct clk_sp810_timerclken *timerclken = to_clk_sp810_timerclken(hw);
--	struct clk_sp810 *sp810 = timerclken->sp810;
--	struct clk *old_parent = __clk_get_parent(hw->clk);
--	struct clk *new_parent;
--
--	if (!sp810->refclk)
--		sp810->refclk = of_clk_get(sp810->node, sp810->refclk_index);
--
--	if (!sp810->timclk)
--		sp810->timclk = of_clk_get(sp810->node, sp810->timclk_index);
--
--	if (WARN_ON(IS_ERR(sp810->refclk) || IS_ERR(sp810->timclk)))
--		return -ENOENT;
--
--	/* Select fastest parent */
--	if (clk_get_rate(sp810->refclk) > clk_get_rate(sp810->timclk))
--		new_parent = sp810->refclk;
--	else
--		new_parent = sp810->timclk;
--
--	/* Switch the parent if necessary */
--	if (old_parent != new_parent) {
--		clk_prepare(new_parent);
--		clk_set_parent(hw->clk, new_parent);
--		clk_unprepare(old_parent);
--	}
--
--	return 0;
--}
--
--static void clk_sp810_timerclken_unprepare(struct clk_hw *hw)
--{
--	struct clk_sp810_timerclken *timerclken = to_clk_sp810_timerclken(hw);
--	struct clk_sp810 *sp810 = timerclken->sp810;
--
--	clk_put(sp810->timclk);
--	clk_put(sp810->refclk);
--}
--
- static const struct clk_ops clk_sp810_timerclken_ops = {
--	.prepare = clk_sp810_timerclken_prepare,
--	.unprepare = clk_sp810_timerclken_unprepare,
- 	.get_parent = clk_sp810_timerclken_get_parent,
- 	.set_parent = clk_sp810_timerclken_set_parent,
- };
-@@ -140,24 +89,18 @@ static void __init clk_sp810_of_setup(struct device_node *node)
- {
- 	struct clk_sp810 *sp810 = kzalloc(sizeof(*sp810), GFP_KERNEL);
- 	const char *parent_names[2];
-+	int num = ARRAY_SIZE(parent_names);
- 	char name[12];
- 	struct clk_init_data init;
- 	int i;
-+	bool deprecated;
- 
- 	if (!sp810) {
- 		pr_err("Failed to allocate memory for SP810!\n");
- 		return;
- 	}
- 
--	sp810->refclk_index = of_property_match_string(node, "clock-names",
--			"refclk");
--	parent_names[0] = of_clk_get_parent_name(node, sp810->refclk_index);
--
--	sp810->timclk_index = of_property_match_string(node, "clock-names",
--			"timclk");
--	parent_names[1] = of_clk_get_parent_name(node, sp810->timclk_index);
--
--	if (!parent_names[0] || !parent_names[1]) {
-+	if (of_clk_parent_fill(node, parent_names, num) != num) {
- 		pr_warn("Failed to obtain parent clocks for SP810!\n");
- 		return;
- 	}
-@@ -170,7 +113,9 @@ static void __init clk_sp810_of_setup(struct device_node *node)
- 	init.ops = &clk_sp810_timerclken_ops;
- 	init.flags = CLK_IS_BASIC;
- 	init.parent_names = parent_names;
--	init.num_parents = ARRAY_SIZE(parent_names);
-+	init.num_parents = num;
+ static void __init zx296702_top_clocks_init(struct device_node *np)
+@@ -585,7 +611,57 @@ static void __init zx296702_lsp0_clocks_init(struct device_node *np)
+ 	clk[ZX296702_SDMMC1_WCLK] =
+ 		zx_gate("sdmmc1_wclk", "sdmmc1_wclk_div", CLK_SDMMC1, 1);
+ 	clk[ZX296702_SDMMC1_PCLK] =
+-		zx_gate("sdmmc1_pclk", "lsp1_apb_pclk", CLK_SDMMC1, 0);
++		zx_gate("sdmmc1_pclk", "lsp0_apb_pclk", CLK_SDMMC1, 0);
 +
-+	deprecated = !of_find_property(node, "assigned-clock-parents", NULL);
- 
- 	for (i = 0; i < ARRAY_SIZE(sp810->timerclken); i++) {
- 		snprintf(name, ARRAY_SIZE(name), "timerclken%d", i);
-@@ -179,6 +124,15 @@ static void __init clk_sp810_of_setup(struct device_node *node)
- 		sp810->timerclken[i].channel = i;
- 		sp810->timerclken[i].hw.init = &init;
- 
-+		/*
-+		 * If DT isn't setting the parent, force it to be
-+		 * the 1 MHz clock without going through the framework.
-+		 * We do this before clk_register() so that it can determine
-+		 * the parent and setup the tree properly.
-+		 */
-+		if (deprecated)
-+			init.ops->set_parent(&sp810->timerclken[i].hw, 1);
++	clk[ZX296702_GPIO_CLK] =
++		zx_gate("gpio_clk", "lsp0_apb_pclk", CLK_GPIO, 0);
 +
- 		sp810->timerclken[i].clk = clk_register(NULL,
- 				&sp810->timerclken[i].hw);
- 		WARN_ON(IS_ERR(sp810->timerclken[i].clk));
++	/* SPDIF */
++	clk[ZX296702_SPDIF0_WCLK_MUX] =
++		zx_mux("spdif0_wclk_mux", spdif0_wclk_sel,
++				ARRAY_SIZE(spdif0_wclk_sel), CLK_SPDIF0, 4, 1);
++	clk[ZX296702_SPDIF0_WCLK] =
++		zx_gate("spdif0_wclk", "spdif0_wclk_mux", CLK_SPDIF0, 1);
++	clk[ZX296702_SPDIF0_PCLK] =
++		zx_gate("spdif0_pclk", "lsp0_apb_pclk", CLK_SPDIF0, 0);
++
++	clk[ZX296702_SPDIF0_DIV] =
++		clk_register_zx_audio("spdif0_div", "spdif0_wclk", 0,
++				SPDIF0_DIV);
++
++	/* I2S */
++	clk[ZX296702_I2S0_WCLK_MUX] =
++		zx_mux("i2s0_wclk_mux", i2s_wclk_sel,
++				ARRAY_SIZE(i2s_wclk_sel), CLK_I2S0, 4, 1);
++	clk[ZX296702_I2S0_WCLK] =
++		zx_gate("i2s0_wclk", "i2s0_wclk_mux", CLK_I2S0, 1);
++	clk[ZX296702_I2S0_PCLK] =
++		zx_gate("i2s0_pclk", "lsp0_apb_pclk", CLK_I2S0, 0);
++
++	clk[ZX296702_I2S0_DIV] =
++		clk_register_zx_audio("i2s0_div", "i2s0_wclk", 0, I2S0_DIV);
++
++	clk[ZX296702_I2S1_WCLK_MUX] =
++		zx_mux("i2s1_wclk_mux", i2s_wclk_sel,
++				ARRAY_SIZE(i2s_wclk_sel), CLK_I2S1, 4, 1);
++	clk[ZX296702_I2S1_WCLK] =
++		zx_gate("i2s1_wclk", "i2s1_wclk_mux", CLK_I2S1, 1);
++	clk[ZX296702_I2S1_PCLK] =
++		zx_gate("i2s1_pclk", "lsp0_apb_pclk", CLK_I2S1, 0);
++
++	clk[ZX296702_I2S1_DIV] =
++		clk_register_zx_audio("i2s1_div", "i2s1_wclk", 0, I2S1_DIV);
++
++	clk[ZX296702_I2S2_WCLK_MUX] =
++		zx_mux("i2s2_wclk_mux", i2s_wclk_sel,
++				ARRAY_SIZE(i2s_wclk_sel), CLK_I2S2, 4, 1);
++	clk[ZX296702_I2S2_WCLK] =
++		zx_gate("i2s2_wclk", "i2s2_wclk_mux", CLK_I2S2, 1);
++	clk[ZX296702_I2S2_PCLK] =
++		zx_gate("i2s2_pclk", "lsp0_apb_pclk", CLK_I2S2, 0);
++
++	clk[ZX296702_I2S2_DIV] =
++		clk_register_zx_audio("i2s2_div", "i2s2_wclk", 0, I2S2_DIV);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(lsp0clk); i++) {
+ 		if (IS_ERR(clk[i])) {
+@@ -641,6 +717,18 @@ static void __init zx296702_lsp1_clocks_init(struct device_node *np)
+ 	clk[ZX296702_SDMMC0_PCLK] =
+ 		zx_gate("sdmmc0_pclk", "lsp1_apb_pclk", CLK_SDMMC0, 0);
+ 
++	clk[ZX296702_SPDIF1_WCLK_MUX] =
++		zx_mux("spdif1_wclk_mux", spdif1_wclk_sel,
++				ARRAY_SIZE(spdif1_wclk_sel), CLK_SPDIF1, 4, 1);
++	clk[ZX296702_SPDIF1_WCLK] =
++		zx_gate("spdif1_wclk", "spdif1_wclk_mux", CLK_SPDIF1, 1);
++	clk[ZX296702_SPDIF1_PCLK] =
++		zx_gate("spdif1_pclk", "lsp1_apb_pclk", CLK_SPDIF1, 0);
++
++	clk[ZX296702_SPDIF1_DIV] =
++		clk_register_zx_audio("spdif1_div", "spdif1_wclk", 0,
++				SPDIF1_DIV);
++
+ 	for (i = 0; i < ARRAY_SIZE(lsp1clk); i++) {
+ 		if (IS_ERR(clk[i])) {
+ 			pr_err("zx296702 clk %d: register failed with %ld\n",
+diff --git a/include/dt-bindings/clock/zx296702-clock.h b/include/dt-bindings/clock/zx296702-clock.h
+index e683dbb..26ee564 100644
+--- a/include/dt-bindings/clock/zx296702-clock.h
++++ b/include/dt-bindings/clock/zx296702-clock.h
+@@ -153,7 +153,16 @@
+ #define ZX296702_I2S0_WCLK			9
+ #define ZX296702_I2S0_PCLK			10
+ #define ZX296702_I2S0_DIV			11
+-#define ZX296702_LSP0CLK_END			12
++#define ZX296702_I2S1_WCLK_MUX			12
++#define ZX296702_I2S1_WCLK			13
++#define ZX296702_I2S1_PCLK			14
++#define ZX296702_I2S1_DIV			15
++#define ZX296702_I2S2_WCLK_MUX			16
++#define ZX296702_I2S2_WCLK			17
++#define ZX296702_I2S2_PCLK			18
++#define ZX296702_I2S2_DIV			19
++#define ZX296702_GPIO_CLK			20
++#define ZX296702_LSP0CLK_END			21
+ 
+ #define ZX296702_UART0_WCLK_MUX			0
+ #define ZX296702_UART0_WCLK			1
+@@ -165,6 +174,10 @@
+ #define ZX296702_SDMMC0_WCLK_DIV		7
+ #define ZX296702_SDMMC0_WCLK			8
+ #define ZX296702_SDMMC0_PCLK			9
+-#define ZX296702_LSP1CLK_END			10
++#define ZX296702_SPDIF1_WCLK_MUX		10
++#define ZX296702_SPDIF1_WCLK			11
++#define ZX296702_SPDIF1_PCLK			12
++#define ZX296702_SPDIF1_DIV			13
++#define ZX296702_LSP1CLK_END			14
+ 
+ #endif /* __DT_BINDINGS_CLOCK_ZX296702_H */
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
 
