@@ -1,57 +1,57 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH/RFC 09/11] ARM: shmobile: r8a7794: Link CPG to RST using
- "renesas, modemr"
-Date: Tue,  7 Jul 2015 16:10:15 +0200
-Message-Id: <1436278217-20522-10-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
-References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-sh@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Ulrich Hecht <ulrich.hecht@gmail.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-omap-owner@vger.kernel.org>
+Message-ID: <559D66EE.4060707@codeaurora.org>
+Date: Wed, 08 Jul 2015 11:07:42 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Tony Lindgren <tony@atomide.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	=?UTF-8?B?RW1pbGlvIEzDs3Bleg==?= <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+	linux-mips@linux-mips.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v5] clk: change clk_ops' ->determine_rate() prototype
+References: <1436294888-25752-1-git-send-email-boris.brezillon@free-electrons.com>	<20150708005748.GG30412@codeaurora.org> <20150708110005.704c49ff@bbrezillon>
+In-Reply-To: <20150708110005.704c49ff@bbrezillon>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-omap-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a link from the Clock Pulse Generator node to the Reset Controller
-node, so the CPG can read the Mode Monitoring Register (MODEMR) to
-obtain MD pin values.
+On 07/08/2015 02:00 AM, Boris Brezillon wrote:
+> Hi Stephen,
+>
+> On Tue, 7 Jul 2015 17:57:48 -0700
+> Stephen Boyd <sboyd@codeaurora.org> wrote:
+>
+>> On 07/07, Boris Brezillon wrote:
+>>>
+>>>  	} else {
+>>>  		pr_err("clk: clk_composite_determine_rate function called, but no mux or rate callback set!\n");
+>>> +		req->rate = 0;
+>>>  		return 0;
+>> Shouldn't this return an error now? And then assigning req->rate
+>> wouldn't be necessary. Sorry I must have missed this last round.
+>>
+> Actually I wanted to keep the existing behavior: return a 0 rate (not
+> an error) when there is no mux or rate ops.
+>
+> That's something we can change afterwards, but it might reveals
+> new bugs if some users are checking for a 0 rate to detect errors.
+>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7794.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Ok. Care to send the patch now to do that while we're thinking about it?
+We can test it out for a month or two.
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index bd37ec229329ed9c..e4cddf164330e77b 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -484,6 +484,7 @@
- 			clock-output-names = "main", "pll0", "pll1", "pll3",
- 					     "lb", "qspi", "sdh", "sd0", "z";
- 			#power-domain-cells = <0>;
-+			renesas,modemr = <&rst 0x60>;
- 		};
- 		/* Variable factor clocks */
- 		sd2_clk: sd2_clk@e6150078 {
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
