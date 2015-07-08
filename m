@@ -1,79 +1,80 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:53981 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752209AbbGWIaU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 23 Jul 2015 04:30:20 -0400
-Subject: Re: [PATCH] PM / devfreq: event: Remove incorrect property in
- exynos-ppmu DT binding
-To: Chanwoo Choi <cw00.choi@samsung.com>
-References: <1436770732-9430-1-git-send-email-javier@osg.samsung.com>
- <55B0A376.2080906@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	"myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <55B0A616.2070608@osg.samsung.com>
-Date: Thu, 23 Jul 2015 10:30:14 +0200
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <55B0A376.2080906@samsung.com>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+To: Leo Yan <leo.yan@linaro.org>,
+	"Jassi Brar" <jassisinghbrar@gmail.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20150707140424.GA12992@leoy-linaro>
+Cc: "Russell King <linux@arm.linux.org.uk>, Linux Kernel Mailing List"
+	<linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org
+References: <20150706113355.GA6967@leoy-linaro>
+ <CABb+yY1qjq_uXTb-S4GO7rugs1Wa9j_VpSb3=0rq1Zv+-t+u2Q@mail.gmail.com>
+ <20150707140424.GA12992@leoy-linaro>
+Message-ID: <20150708165429.9112.88891@quantum>
+Subject: Re: Query: Clock driver requests mailbox channel
+Date: Wed, 08 Jul 2015 09:54:29 -0700
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Chanwoo,
+Cc'ing linux-clk and Stephen Boyd
 
-On 07/23/2015 10:19 AM, Chanwoo Choi wrote:
-> Hi Javier,
+Quoting Leo Yan (2015-07-07 07:04:25)
+> On Tue, Jul 07, 2015 at 10:54:55AM +0530, Jassi Brar wrote:
+> > On Mon, Jul 6, 2015 at 5:03 PM, Leo Yan <leo.yan@linaro.org> wrote:
+> > > Hi all,
+> > >
+> > > i'm working with one clock driver, which will invoke mailbox API to
+> > > request the mailbox channel and send message.
+> > >
+> > > Usually clock driver will init with devicetree, below is the example:
+> > > CLK_OF_DECLARE(hi6220_clk_power, "hisilicon,hi6220-clock-power",
+> > > hi6220_clk_power_init);
+> > >
+> > > Clock init function it will pass the pointer of struct device_node
+> > > but not the pointer of struct device. So finally it's difficult to
+> > > invoke mailbox API *mbox_request_channel()*, due it need use the
+> > > struct device to search DT's property "mboxes".
+> > >
+> > > I want to find which is the best way to resolve this issue, so do you
+> > > suggest clock driver to manually register one device? Or can we add
+> > > one more API to request the mailbox channel directly with device_node?
+> > >
+> > IIUC, such clocks (that require platform resources) should be
+> > populated from the platform_device's probe()?
 > 
-> On 07/13/2015 03:58 PM, Javier Martinez Canillas wrote:
->> The exynos-ppmu driver is only a clock consumer and not a clock
->> provider but its Device Tree binding listed #clock-cells as an
->> optional property.
->> 
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->> 
->> ---
->> 
->> Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt | 1
->> - 1 file changed, 1 deletion(-)
->> 
->> diff --git
->> a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
->> b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt 
->> index b54bf3a2ff57..aed486692880 100644 ---
->> a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt 
->> +++
->> b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt 
->> @@ -17,7 +17,6 @@ Required properties: Optional properties: -
->> clock-names : the name of clock used by the PPMU, "ppmu" - clocks :
->> phandles for clock specified in "clock-names" property --
->> #clock-cells: should be 1.
->> 
->> Example1 : PPMU nodes in exynos3250.dtsi are listed below.
->> 
->> 
+> Thanks for response, Jassi. If we use general platform_device's probe()
+> function, then we can smoothly to get device poiner.
 > 
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> But if we use the method with CLK_OF_DECLARE, then i tried to get device
+> pointer with the function of_find_device_by_node(), it will return the
+> device pointer is NULL. But this is the common case in many clock drivers.
+
+Using platform_device is the right approach. Stephen has been trying to
+encourage use of that and discourage use of CLK_OF_DECLARE where
+possible.
+
+If your clock driver needs to register some early clocks then perhaps
+those can be handled separately with CLK_OF_DECLARE and the rest can be
+managed through a proper platform_driver?
+
 > 
-> + Devfreq maintainer (Myungjoo Ham)
+> So i just wander if can provide another mailbox API for this case,
+> which will only need to pass device node pointer?
 
-Thanks for the review and for cc'ing Myungjoo. The get_maintainer.pl script
-didn't tell me that so I think Documentation/devicetree/bindings/devfreq/
-sub-dir should be added to the DEVICE FREQUENCY (DEVFREQ) entry in the
-MAINTAINERS file.
+I can't comment on the mailbox API question, but I think the Right Thing
+is to use a platform_driver for your clock driver, which would solve
+your particular issue. This is something we are encouraging in Clock
+Land ;)
 
-> I think that this patch will be more appropriate on devfreq git tree 
-> than linux-samsung git tree.
->
+Regards,
+Mike
 
-Agreed.
-
-> Thanks, Chanwoo Choi --
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+> 
+> Thanks,
+> Leo Yan
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
