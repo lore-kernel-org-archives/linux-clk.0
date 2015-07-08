@@ -1,75 +1,114 @@
-Return-Path: <djkurtz@google.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH/RFC 06/11] ARM: shmobile: r8a7790: Link CPG to RST using
+ "renesas, modemr"
+Date: Wed, 08 Jul 2015 13:54:45 +0300
+Message-ID: <2505402.iuhaUfZBWq@avalon>
+In-Reply-To: <CAMuHMdUpMFLqA+jRwq=tA1niRkm=L5cMyZ5mxSj18BQnc8CpJw@mail.gmail.com>
+References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
+ <15446450.YUqyGq9qOl@avalon>
+ <CAMuHMdUpMFLqA+jRwq=tA1niRkm=L5cMyZ5mxSj18BQnc8CpJw@mail.gmail.com>
 MIME-Version: 1.0
-Sender: djkurtz@google.com
-In-Reply-To: <CAGS+omAQ7bKD4Jqwm=hv=D_aMxXpT4dKgzU4QqntnLEa0Fup-g@mail.gmail.com>
-References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
- <1436779969-18610-6-git-send-email-yingjoe.chen@mediatek.com> <CAGS+omAQ7bKD4Jqwm=hv=D_aMxXpT4dKgzU4QqntnLEa0Fup-g@mail.gmail.com>
-From: Daniel Kurtz <djkurtz@chromium.org>
-Date: Tue, 14 Jul 2015 12:27:34 +0800
-Message-ID: <CAGS+omCU=phZABBbBw_ad04BBT=Vd2HtfiBmSxepGT9nOpvYaw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] arm64: dts: mt8173: add timer node
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>, Russell King <linux@arm.linux.org.uk>,
-	"open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	linux-mediatek@lists.infradead.org, Sascha Hauer <kernel@pengutronix.de>,
-	Olof Johansson <olof@lixom.net>, srv_heupstream <srv_heupstream@mediatek.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	Eddie Huang <eddie.huang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Linux-sh list <linux-sh@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+ Ulrich Hecht <ulrich.hecht@gmail.com>, linux-clk@vger.kernel.org,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 14, 2015 at 12:26 PM, Daniel Kurtz <djkurtz@chromium.org> wrote:
-> On Mon, Jul 13, 2015 at 5:32 PM, Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
->> From: Daniel Kurtz <djkurtz@chromium.org>
->>
->> Add device node to enable GPT timer. This timer will be
->> used as sched clock source.
->>
->> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
->> Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
->> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
->
-> This binding needs documentation.
+Hi Geert,
 
-Whoops.  I just found it at:
-Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
+On Wednesday 08 July 2015 10:29:56 Geert Uytterhoeven wrote:
+> On Tue, Jul 7, 2015 at 6:20 PM, Laurent Pinchart wrote:
+> >>>> --- a/arch/arm/boot/dts/r8a7790.dtsi
+> >>>> +++ b/arch/arm/boot/dts/r8a7790.dtsi
+> >>>> @@ -1115,6 +1115,7 @@
+> >>>>                                            "lb", "qspi", "sdh", "sd0",
+> >>>>                                            "sd1",
+> >>>>                                            "z", "rcan", "adsp";
+> >>>>                       #power-domain-cells = <0>;
+> >>>> +                     renesas,modemr = <&rst 0x60>;
+> >>> 
+> >>> I have mixed feelings about this as I don't think it really describes
+> >>> the hardware.
+> >> 
+> >> From the R-Car Gen2 manual:
+> >> 
+> >> 8. Reset (RST)
+> >> 8.1 Features
+> >> The following functions are implemented by RST.
+> >> [...]
+> >> Latching of the levels on mode pins when PRESET# is negated
+> >> Mode monitoring register
+> >> 
+> >> 7. Clock Pulse Generator (CPG)
+> >> 7.2 Input/Output Pins
+> >> Table 7.1 lists the CPG pin configuration.
+> >> Table 7.1 Pin Configuration and Functions of CPG
+> >> Pin Name Function I/O Description
+> >> [...]
+> >> MD0 Mode 0 ...
+> >> 
+> >> Hence there definitely is a link between the (latched) values in the RST
+> >> module and CPG configuration. This link is expressed using the
+> >> "renesas,modemr" property, where the phandle provides the link to the RST
+> >> block, and the register offset provides a way for software to read the
+> >> configuration.
+> > 
+> > The mode bits of course influence the CPG (otherwise we wouldn't be having
+> > this discussion :-)), but to me it looks more like a configuration
+> > broadcast through the whole SoC than a real link between two IP cores.
+> > It's obviously subject to interpretation.
+> 
+> Yep.
+> 
+> Broadcast? Like a bus clock? For that we also have properties with
+> phandles...
 
->
->> ---
->>  arch/arm64/boot/dts/mediatek/mt8173.dtsi | 9 +++++++++
->>  1 file changed, 9 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
->> index 0696f8f..04bdd8f 100644
->> --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
->> +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
->> @@ -219,6 +219,15 @@
->>                         reg = <0 0x10007000 0 0x100>;
->>                 };
->>
->> +               timer: timer@10008000 {
->> +                       compatible = "mediatek,mt8173-timer",
->> +                                    "mediatek,mt6577-timer";
->> +                       reg = <0 0x10008000 0 0x1000>;
->> +                       interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_LOW>;
->> +                       clocks = <&infracfg CLK_INFRA_CLK_13M>,
->> +                                <&topckgen CLK_TOP_RTC_SEL>;
->
-> Why two clocks?  The driver only uses one.
-> Please use a clock-names property.
->
-> Thanks,
-> -Dan
->
->> +               };
->> +
->>                 pwrap: pwrap@1000d000 {
->>                         compatible = "mediatek,mt8173-pwrap";
->>                         reg = <0 0x1000d000 0 0x1000>;
->> --
->> 1.8.1.1.dirty
->>
+I knew someone would raise that topic ;-)
+
+> Syscon is the Hot New Abstraction for a module that provides a bunch of
+> registers needed by drivers for other modules. Those other modules need
+> some way to refer to the appropriate syscon register.
+> 
+> The RST module definitely falls in that category: CPG needs the MODEMR
+> register, watchdog (RWDT/SWDT) needs the Watchdog Timer Reset Control
+> Register, and APMU probably needs the CA15/7 reset control registers.
+
+syscon is a quick hack to be used when no clean solution exists. Sometimes 
+implementing a proper API is just overkill, especially when the "system 
+controller" aggregates registers that really belong to individual IP cores.
+
+Proper abstract kernel APIs should of course be used wherever possible. Some 
+system controllers are already supported in such a way, using the MFD 
+subsystem and exposing proper APIs for part of their features, and letting 
+drivers access registers directly for other features.
+
+In the boot mode case I believe adding a new API would be both useful and 
+quite simple, so I'd like to explore that option.
+
+By the way, regarding the CA15/7 reset control registers, shouldn't they be 
+exposed through the reset controller API ?
+
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
