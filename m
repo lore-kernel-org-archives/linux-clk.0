@@ -1,86 +1,122 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:43753 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753604AbbGVXpE (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jul 2015 19:45:04 -0400
-Date: Wed, 22 Jul 2015 16:45:00 -0700
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 7 Jul 2015 17:57:48 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, heikki.krogerus@linux.intel.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 3/6] clk: fractional-divider: keep mwidth and nwidth
- internally
-Message-ID: <20150722234500.GF15042@codeaurora.org>
-References: <1436886723-111895-1-git-send-email-andriy.shevchenko@linux.intel.com>
- <1436886723-111895-4-git-send-email-andriy.shevchenko@linux.intel.com>
- <20150722004124.GE15042@codeaurora.org>
- <1437570566.8014.37.camel@linux.intel.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Tony Lindgren <tony@atomide.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+	linux-mips@linux-mips.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v5] clk: change clk_ops' ->determine_rate() prototype
+Message-ID: <20150708005748.GG30412@codeaurora.org>
+References: <1436294888-25752-1-git-send-email-boris.brezillon@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1437570566.8014.37.camel@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1436294888-25752-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/22, Andy Shevchenko wrote:
-> On Tue, 2015-07-21 at 17:41 -0700, Stephen Boyd wrote:
-> > On 07/14, Andy Shevchenko wrote:
-> > > diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk
-> > > -fractional-divider.c
-> > > index 7cfcc56..16f42ae 100644
-> > > --- a/drivers/clk/clk-fractional-divider.c
-> > > +++ b/drivers/clk/clk-fractional-divider.c
-> > > @@ -128,9 +128,11 @@ struct clk 
-> > > *clk_register_fractional_divider(struct device *dev,
-> > >  
-> > >  	fd->reg = reg;
-> > >  	fd->mshift = mshift;
-> > > -	fd->mmask = (BIT(mwidth) - 1) << mshift;
-> > > +	fd->mwidth = mwidth;
-> > > +	fd->mmask = GENMASK(mwidth - 1, 0) << mshift;
-> > >  	fd->nshift = nshift;
-> > > -	fd->nmask = (BIT(nwidth) - 1) << nshift;
-> > > +	fd->nwidth = nwidth;
-> > > +	fd->nmask = GENMASK(nwidth - 1, 0) << nshift;
-> > 
-> > Please do the shifts in the GENMASK.
+On 07/07, Boris Brezillon wrote:
+> Clock rates are stored in an unsigned long field, but ->determine_rate()
+> (which returns a rounded rate from a requested one) returns a long
+> value (errors are reported using negative error codes), which can lead
+> to long overflow if the clock rate exceed 2Ghz.
 > 
-> It's not optimal. Waste of performance.
+> Change ->determine_rate() prototype to return 0 or an error code, and pass
+> a pointer to a clk_rate_request structure containing the expected target
+> rate and the rate constraints imposed by clk users.
 > 
-> 32-bit case on 32-bit machine (similar to other cases on x86).
+> The clk_rate_request structure might be extended in the future to contain
+> other kind of constraints like the rounding policy, the maximum clock
+> inaccuracy or other things that are not yet supported by the CCF
+> (power consumption constraints ?).
 > 
-> a) GENMASK(x - 1, 0) << y
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 > 
->         movl    $32, %ecx
->         subb    4(%esp), %cl
->         movl    $-1, %eax
->         shrl    %cl, %eax
->         movzbl  8(%esp), %ecx
->         sall    %cl, %eax
->         ret
+> CC: Jonathan Corbet <corbet@lwn.net>
+> CC: Tony Lindgren <tony@atomide.com>
+> CC: Ralf Baechle <ralf@linux-mips.org>
+> CC: "Emilio López" <emilio@elopez.com.ar>
+> CC: Maxime Ripard <maxime.ripard@free-electrons.com>
+> CC: Tero Kristo <t-kristo@ti.com>
+> CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+> CC: Prashant Gaikwad <pgaikwad@nvidia.com>
+> CC: Stephen Warren <swarren@wwwdotorg.org>
+> CC: Thierry Reding <thierry.reding@gmail.com>
+> CC: Alexandre Courbot <gnurou@gmail.com>
+> CC: linux-doc@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> CC: linux-arm-kernel@lists.infradead.org
+> CC: linux-omap@vger.kernel.org
+> CC: linux-mips@linux-mips.org
+> CC: linux-tegra@vger.kernel.org
 > 
-> b) GENMASK(x + y - 1, y)
-> 
->         pushl   %esi
->         pushl   %ebx
->         movl    $1, %edx
->         movzbl  12(%esp), %eax
->         movzbl  16(%esp), %esi
->         movl    $-1, %ebx
->         subl    %eax, %edx
->         movl    %ebx, %eax
->         subl    %esi, %edx
->         leal    31(%edx), %ecx
->         shrl    %cl, %eax
->         movl    %esi, %ecx
->         sall    %cl, %ebx
->         andl    %ebx, %eax
->         popl    %ebx
->         popl    %esi
->         ret
-> 
+> ---
 
-This is not hotpath code, so why do we care?
+I'll throw this patch into -next now to see if any other problems
+shake out. I'm hoping we get some more acks though, so it'll be
+on it's own branch and become immutable in a week or so. One
+question below.
+
+> diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+> index 616f5ae..9e69f34 100644
+> --- a/drivers/clk/clk-composite.c
+> +++ b/drivers/clk/clk-composite.c
+> @@ -99,33 +99,33 @@ static long clk_composite_determine_rate(struct clk_hw *hw, unsigned long rate,
+>  
+>  			parent_rate = __clk_get_rate(parent);
+>  
+> -			tmp_rate = rate_ops->round_rate(rate_hw, rate,
+> +			tmp_rate = rate_ops->round_rate(rate_hw, req->rate,
+>  							&parent_rate);
+>  			if (tmp_rate < 0)
+>  				continue;
+>  
+> -			rate_diff = abs(rate - tmp_rate);
+> +			rate_diff = abs(req->rate - tmp_rate);
+>  
+> -			if (!rate_diff || !*best_parent_p
+> +			if (!rate_diff || !req->best_parent_hw
+>  				       || best_rate_diff > rate_diff) {
+> -				*best_parent_p = __clk_get_hw(parent);
+> -				*best_parent_rate = parent_rate;
+> +				req->best_parent_hw = __clk_get_hw(parent);
+> +				req->best_parent_rate = parent_rate;
+>  				best_rate_diff = rate_diff;
+>  				best_rate = tmp_rate;
+>  			}
+>  
+>  			if (!rate_diff)
+> -				return rate;
+> +				return 0;
+>  		}
+>  
+> -		return best_rate;
+> +		req->rate = best_rate;
+> +		return 0;
+>  	} else if (mux_hw && mux_ops && mux_ops->determine_rate) {
+>  		__clk_hw_set_clk(mux_hw, hw);
+> -		return mux_ops->determine_rate(mux_hw, rate, min_rate,
+> -					       max_rate, best_parent_rate,
+> -					       best_parent_p);
+> +		return mux_ops->determine_rate(mux_hw, req);
+>  	} else {
+>  		pr_err("clk: clk_composite_determine_rate function called, but no mux or rate callback set!\n");
+> +		req->rate = 0;
+>  		return 0;
+
+Shouldn't this return an error now? And then assigning req->rate
+wouldn't be necessary. Sorry I must have missed this last round.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
