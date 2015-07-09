@@ -1,38 +1,57 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Jul 2015 15:51:22 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@linaro.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/9] clk: rockchip: rk3288: add CLK_SET_RATE_PARENT to
- sclk_mac
-Message-ID: <20150702225122.GK4301@codeaurora.org>
-References: <1434637116-17124-1-git-send-email-heiko@sntech.de>
- <1434637116-17124-2-git-send-email-heiko@sntech.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1434637116-17124-2-git-send-email-heiko@sntech.de>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
+Date: Thu, 09 Jul 2015 17:43:36 +0200
+Message-id: <1436456621-29839-3-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/18, Heiko Stuebner wrote:
-> The dwmac ethernet controller on the rk3288 supports phys connected
-> via rgmii and rmii. With rgmii phys it is expected that the mac clock
-> is provided externally while with rmii phys the clock can be external
-> but also generated from the plls. In the later case it of course needs
-> be at 50MHz, which gets set from the dwmac_rk driver.
-> As most devices use a rgmii phy it never surfaced so far that the mac
-> clk mux, doesn't go up one lever to the pll clock in the rmii case with
-> internal clock generation, as it is missing the CLK_SET_RATE_PARENT flag,
-> and thus will not set the correct frequency in most cases.
-> 
-> Fixes: b9e4ba541607 ("clk: rockchip: add clock controller for rk3288")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
+Turbo modes should be marked with CPUFREQ_BOOST_FREQ flag in
+the frequency table entry.
 
-Applied to clk-rk3368
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ drivers/cpufreq/cpufreq_opp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/cpufreq/cpufreq_opp.c b/drivers/cpufreq/cpufreq_opp.c
+index 773bcde..f0cf502 100644
+--- a/drivers/cpufreq/cpufreq_opp.c
++++ b/drivers/cpufreq/cpufreq_opp.c
+@@ -75,6 +75,8 @@ int dev_pm_opp_init_cpufreq_table(struct device *dev,
+ 		}
+ 		freq_table[i].driver_data = i;
+ 		freq_table[i].frequency = rate / 1000;
++		if (dev_pm_opp_get_turbo_mode_setting(opp) == true)
++			freq_table[i].flags |= CPUFREQ_BOOST_FREQ;
+ 	}
+ 
+ 	freq_table[i].driver_data = i;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
