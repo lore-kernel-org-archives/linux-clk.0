@@ -1,112 +1,119 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:33959 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753046AbbGJXds (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jul 2015 19:33:48 -0400
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Bintian Wang <bintian.wang@huawei.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>
-Subject: [PATCH 13/45] clk: hisilicon: Remove clk.h include
-Date: Fri, 10 Jul 2015 16:33:11 -0700
-Message-Id: <1436571223-10959-14-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH v2 6/7] ARM: Exynos: switch to using generic cpufreq driver for
+ Exynos4x12
+Date: Thu, 09 Jul 2015 17:43:40 +0200
+Message-id: <1436456621-29839-7-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock provider drivers generally shouldn't include clk.h because
-it's the consumer API. Remove the include here because this is a
-provider driver. Also drop the clkdev.h include in files that
-aren't using it.
+The new CPU clock type allows the use of generic CPUfreq driver.
+Switch Exynos4x12 to using generic cpufreq driver.
 
-Cc: Bintian Wang <bintian.wang@huawei.com>
-Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
-Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+This patch also takes care of making ARM_EXYNOS_CPU_FREQ_BOOST_SW
+config option depend on cpufreq-dt driver instead of exynos-cpufreq
+one and fixes the minor issue present with the old code (support
+for 'boost' mode in the exynos-cpufreq driver was enabled for all
+supported SoCs even though 'boost' frequency was provided only for
+Exynos4x12 ones).
+
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/clk/hisilicon/clk-hi3620.c        | 2 --
- drivers/clk/hisilicon/clk-hip04.c         | 2 --
- drivers/clk/hisilicon/clk.c               | 3 +--
- drivers/clk/hisilicon/clkgate-separated.c | 2 --
- 4 files changed, 1 insertion(+), 8 deletions(-)
+ arch/arm/mach-exynos/exynos.c    | 14 ++++++++++++++
+ drivers/cpufreq/Kconfig.arm      |  2 +-
+ drivers/cpufreq/exynos-cpufreq.c |  3 ---
+ 3 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
-index 715d34a5ef9b..5502803a391e 100644
---- a/drivers/clk/hisilicon/clk-hi3620.c
-+++ b/drivers/clk/hisilicon/clk-hi3620.c
-@@ -25,13 +25,11 @@
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 4015ec3..0c74e90 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -20,6 +20,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+ #include <linux/irqchip.h>
++#include <linux/cpufreq-dt.h>
  
- #include <linux/kernel.h>
- #include <linux/clk-provider.h>
--#include <linux/clkdev.h>
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/slab.h>
--#include <linux/clk.h>
+ #include <asm/cacheflush.h>
+ #include <asm/hardware/cache-l2x0.h>
+@@ -224,6 +225,12 @@ static void __init exynos_init_irq(void)
+ 	exynos_map_pmu();
+ }
  
- #include <dt-bindings/clock/hi3620-clock.h>
++struct cpufreq_dt_platform_data cpufreq_dt_pd = {
++#ifdef CONFIG_ARM_EXYNOS_CPU_FREQ_BOOST_SW
++	.boost_supported = true,
++#endif
++};
++
+ static const struct of_device_id exynos_cpufreq_matches[] = {
+ 	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
+ 	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
+@@ -235,6 +242,13 @@ static void __init exynos_cpufreq_init(void)
+ 	struct device_node *root = of_find_node_by_path("/");
+ 	const struct of_device_id *match;
  
-diff --git a/drivers/clk/hisilicon/clk-hip04.c b/drivers/clk/hisilicon/clk-hip04.c
-index 132b57a0ce09..8ca967308343 100644
---- a/drivers/clk/hisilicon/clk-hip04.c
-+++ b/drivers/clk/hisilicon/clk-hip04.c
-@@ -24,13 +24,11 @@
++	if (of_machine_is_compatible("samsung,exynos4212") ||
++	    of_machine_is_compatible("samsung,exynos4412")) {
++		platform_device_register_data(NULL, "cpufreq-dt", -1,
++					&cpufreq_dt_pd, sizeof(cpufreq_dt_pd));
++		return;
++	}
++
+ 	match = of_match_node(exynos_cpufreq_matches, root);
+ 	if (!match) {
+ 		platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 9ab6388c1..5f5a15a 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -49,7 +49,7 @@ config ARM_EXYNOS4X12_CPUFREQ
  
- #include <linux/kernel.h>
- #include <linux/clk-provider.h>
--#include <linux/clkdev.h>
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/slab.h>
--#include <linux/clk.h>
- 
- #include <dt-bindings/clock/hip04-clock.h>
- 
-diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-index c90a89739b03..155e2e6c8316 100644
---- a/drivers/clk/hisilicon/clk.c
-+++ b/drivers/clk/hisilicon/clk.c
-@@ -24,15 +24,14 @@
-  */
- 
- #include <linux/kernel.h>
--#include <linux/clk-provider.h>
- #include <linux/clkdev.h>
-+#include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/slab.h>
--#include <linux/clk.h>
- 
- #include "clk.h"
- 
-diff --git a/drivers/clk/hisilicon/clkgate-separated.c b/drivers/clk/hisilicon/clkgate-separated.c
-index b03d5a7246f9..a47812f56a17 100644
---- a/drivers/clk/hisilicon/clkgate-separated.c
-+++ b/drivers/clk/hisilicon/clkgate-separated.c
-@@ -25,10 +25,8 @@
- 
- #include <linux/kernel.h>
- #include <linux/clk-provider.h>
--#include <linux/clkdev.h>
- #include <linux/io.h>
- #include <linux/slab.h>
--#include <linux/clk.h>
- 
- #include "clk.h"
- 
+ config ARM_EXYNOS_CPU_FREQ_BOOST_SW
+ 	bool "EXYNOS Frequency Overclocking - Software"
+-	depends on ARM_EXYNOS_CPUFREQ && THERMAL
++	depends on CPUFREQ_DT && THERMAL
+ 	select CPU_FREQ_BOOST_SW
+ 	select EXYNOS_THERMAL
+ 	help
+diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+index 71d8891..89d252e 100644
+--- a/drivers/cpufreq/exynos-cpufreq.c
++++ b/drivers/cpufreq/exynos-cpufreq.c
+@@ -150,9 +150,6 @@ static struct cpufreq_driver exynos_driver = {
+ 	.init		= exynos_cpufreq_cpu_init,
+ 	.name		= "exynos_cpufreq",
+ 	.attr		= cpufreq_generic_attr,
+-#ifdef CONFIG_ARM_EXYNOS_CPU_FREQ_BOOST_SW
+-	.boost_supported = true,
+-#endif
+ #ifdef CONFIG_PM
+ 	.suspend	= cpufreq_generic_suspend,
+ #endif
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
 
