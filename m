@@ -1,107 +1,63 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
- Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
- Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- b.zolnierkie@samsung.com
-Subject: [PATCH v2 1/7] opp: add dev_pm_opp_get_turbo_mode_setting() helper
-Date: Thu, 09 Jul 2015 17:43:35 +0200
-Message-id: <1436456621-29839-2-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <559E91CD.5020707@linaro.org>
+Date: Thu, 09 Jul 2015 18:22:53 +0300
+From: Georgi Djakov <georgi.djakov@linaro.org>
+MIME-Version: 1.0
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	sboyd@codeaurora.org
+CC: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: qcom: Add support for RPM Clocks
+References: <1436444310-15108-1-git-send-email-georgi.djakov@linaro.org> <1436444310-15108-2-git-send-email-georgi.djakov@linaro.org> <559E68A9.2020809@linaro.org>
+In-Reply-To: <559E68A9.2020809@linaro.org>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add dev_pm_opp_get_turbo_mode_setting() helper for getting turbo
-mode setting for a given opp.
+Hi Srini,
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/base/power/opp.c | 31 +++++++++++++++++++++++++++++++
- include/linux/pm_opp.h   |  7 +++++++
- 2 files changed, 38 insertions(+)
+On 07/09/2015 03:27 PM, Srinivas Kandagatla wrote:
+> 
+> On 09/07/15 13:18, Georgi Djakov wrote:
+>> This patch adds initial support for clocks controlled by the RPM
+>> (Resource Power Manager) processor found on some Qualcomm SoCs.
+>>
+>> The RPM is a dedicated hardware engine for managing the shared
+>> SoC resources in order to keep the lowest power profile. It
+>> communicates with other hardware subsystems via shared memory
+>> and accepts clock requests, aggregates the requests and turns
+>> the clocks on/off or scales them on demand.
+>>
+>> This work is based on the codeaurora.org driver:
+>> https://www.codeaurora.org/cgit/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-rpm.c
+>>
+>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>> ---
+>>   drivers/clk/qcom/Makefile  |    1 +
+>>   drivers/clk/qcom/clk-rpm.c |  164 ++++++++++++++++++++++++++++++++++++++++++++
+>>   drivers/clk/qcom/clk-rpm.h |  137 ++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 302 insertions(+)
+>>   create mode 100644 drivers/clk/qcom/clk-rpm.c
+>>   create mode 100644 drivers/clk/qcom/clk-rpm.h
+>>
+>> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+>> index 50b337a24a87..4d14a73ee4ed 100644
+>> --- a/drivers/clk/qcom/Makefile
+>> +++ b/drivers/clk/qcom/Makefile
+>> @@ -8,6 +8,7 @@ clk-qcom-y += clk-rcg2.o
+>>   clk-qcom-y += clk-branch.o
+>>   clk-qcom-y += clk-regmap-divider.o
+>>   clk-qcom-y += clk-regmap-mux.o
+>> +clk-qcom-y += clk-rpm.o
+> 
+> Is this generic enough to be built by default. It will break builds on A family whose rpm clocks are not based on SMD.
+> 
+> IMO, this should be either renamed to clk-rpm-smd.* or only built with SOC's which support rpm-clks based on SMD.
+> 
 
-diff --git a/drivers/base/power/opp.c b/drivers/base/power/opp.c
-index e24502a2..6b34b2a 100644
---- a/drivers/base/power/opp.c
-+++ b/drivers/base/power/opp.c
-@@ -287,6 +287,37 @@ unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp)
- EXPORT_SYMBOL_GPL(dev_pm_opp_get_freq);
- 
- /**
-+ * dev_pm_opp_get_turbo_mode_setting() - Gets the turbo setting
-+ * @opp:	opp for which turbo mode setting has to be returned for
-+ *
-+ * Return: turbo mode setting corresponding to the opp (true or false)
-+ *
-+ * Locking: This function must be called under rcu_read_lock(). opp is a rcu
-+ * protected pointer. This means that opp which could have been fetched by
-+ * opp_find_freq_{exact,ceil,floor} functions is valid as long as we are
-+ * under RCU lock. The pointer returned by the opp_find_freq family must be
-+ * used in the same section as the usage of this function with the pointer
-+ * prior to unlocking with rcu_read_unlock() to maintain the integrity of the
-+ * pointer.
-+ */
-+bool dev_pm_opp_get_turbo_mode_setting(struct dev_pm_opp *opp)
-+{
-+	struct dev_pm_opp *tmp_opp;
-+	bool f = false;
-+
-+	opp_rcu_lockdep_assert();
-+
-+	tmp_opp = rcu_dereference(opp);
-+	if (unlikely(IS_ERR_OR_NULL(tmp_opp)) || !tmp_opp->available)
-+		pr_err("%s: Invalid parameters\n", __func__);
-+	else
-+		f = tmp_opp->turbo;
-+
-+	return f;
-+}
-+EXPORT_SYMBOL_GPL(dev_pm_opp_get_turbo_mode_setting);
-+
-+/**
-  * dev_pm_opp_get_max_clock_latency() - Get max clock latency in nanoseconds
-  * @dev:	device for which we do this operation
-  *
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index bb52fae..7856baf 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -30,6 +30,8 @@ unsigned long dev_pm_opp_get_voltage(struct dev_pm_opp *opp);
- 
- unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp);
- 
-+bool dev_pm_opp_get_turbo_mode_setting(struct dev_pm_opp *opp);
-+
- int dev_pm_opp_get_opp_count(struct device *dev);
- unsigned long dev_pm_opp_get_max_clock_latency(struct device *dev);
- 
-@@ -63,6 +65,11 @@ static inline unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp)
- 	return 0;
- }
- 
-+static inline bool dev_pm_opp_get_turbo_mode_setting(struct dev_pm_opp *opp)
-+{
-+	return false;
-+}
-+
- static inline int dev_pm_opp_get_opp_count(struct device *dev)
- {
- 	return 0;
--- 
-1.9.1
+There is no A-family RPM clock support in the upstream kernel yet,
+but sure, you are right, we want to build only what is actually used.
+Thanks for the suggestion!
+
+BR,
+Georgi
