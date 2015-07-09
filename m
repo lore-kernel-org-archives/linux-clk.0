@@ -1,112 +1,115 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH 6/7] ARM: sun9i: Add clock indices
-Date: Sun, 26 Jul 2015 23:14:29 +0200
-Message-Id: <1437945270-32014-7-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH v2 4/7] clk: samsung: exynos4x12: add cpu clock configuration
+ data and instantiate cpu clock
+Date: Thu, 09 Jul 2015 17:43:38 +0200
+Message-id: <1436456621-29839-5-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The A80 gates have a non continuous set of clock IDs that are valid. Add
-the clock-indices property to the DT to express this.
+With the addition of the new Samsung specific cpu-clock type, the
+arm clock can be represented as a cpu-clock type. Add the CPU clock
+configuration data and instantiate the CPU clock type for Exynos4x12.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Based on the earlier work by Thomas Abraham.
+
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- arch/arm/boot/dts/sun9i-a80.dtsi | 32 ++++++++++++++++++++++----------
- 1 file changed, 22 insertions(+), 10 deletions(-)
+ drivers/clk/samsung/clk-exynos4.c | 50 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
-index a43ad779ee2f..5908e3dcf965 100644
---- a/arch/arm/boot/dts/sun9i-a80.dtsi
-+++ b/arch/arm/boot/dts/sun9i-a80.dtsi
-@@ -277,9 +277,12 @@
- 			compatible = "allwinner,sun9i-a80-ahb0-gates-clk";
- 			reg = <0x06000580 0x4>;
- 			clocks = <&ahb0>;
--			clock-indices = <0>, <1>, <3>, <5>, <8>, <12>, <13>,
--					<14>, <15>, <16>, <18>, <20>, <21>,
--					<22>, <23>;
-+			clock-indices = <0>, <1>, <3>,
-+					<5>, <8>, <12>,
-+					<13>, <14>,
-+					<15>, <16>, <18>,
-+					<20>, <21>, <22>,
-+					<23>;
- 			clock-output-names = "ahb0_fd", "ahb0_ve", "ahb0_gpu",
- 					"ahb0_ss", "ahb0_sd", "ahb0_nand1",
- 					"ahb0_nand0", "ahb0_sdram",
-@@ -293,7 +296,10 @@
- 			compatible = "allwinner,sun9i-a80-ahb1-gates-clk";
- 			reg = <0x06000584 0x4>;
- 			clocks = <&ahb1>;
--			clock-indices = <0>, <1>, <17>, <21>, <22>, <23>, <24>;
-+			clock-indices = <0>, <1>,
-+					<17>, <21>,
-+					<22>, <23>,
-+					<24>;
- 			clock-output-names = "ahb1_usbotg", "ahb1_usbhci",
- 					"ahb1_gmac", "ahb1_msgbox",
- 					"ahb1_spinlock", "ahb1_hstimer",
-@@ -305,8 +311,9 @@
- 			compatible = "allwinner,sun9i-a80-ahb2-gates-clk";
- 			reg = <0x06000588 0x4>;
- 			clocks = <&ahb2>;
--			clock-indices = <0>, <1>, <2>, <4>, <5>, <7>, <8>,
--					<11>;
-+			clock-indices = <0>, <1>,
-+					<2>, <4>, <5>,
-+					<7>, <8>, <11>;
- 			clock-output-names = "ahb2_lcd0", "ahb2_lcd1",
- 					"ahb2_edp", "ahb2_csi", "ahb2_hdmi",
- 					"ahb2_de", "ahb2_mp", "ahb2_mipi_dsi";
-@@ -317,8 +324,10 @@
- 			compatible = "allwinner,sun9i-a80-apb0-gates-clk";
- 			reg = <0x06000590 0x4>;
- 			clocks = <&apb0>;
--			clock-indices = <1>, <5>, <11>, <12>, <13>, <15>,
--					<17>, <18>, <19>;
-+			clock-indices = <1>, <5>,
-+					<11>, <12>, <13>,
-+					<15>, <17>, <18>,
-+					<19>;
- 			clock-output-names = "apb0_spdif", "apb0_pio",
- 					"apb0_ac97", "apb0_i2s0", "apb0_i2s1",
- 					"apb0_lradc", "apb0_gpadc", "apb0_twd",
-@@ -330,8 +339,11 @@
- 			compatible = "allwinner,sun9i-a80-apb1-gates-clk";
- 			reg = <0x06000594 0x4>;
- 			clocks = <&apb1>;
--			clock-indices = <0>, <1>, <2>, <3>, <4>,
--					<16>, <17>, <18>, <19>, <20>, <21>;
-+			clock-indices = <0>, <1>,
-+					<2>, <3>, <4>,
-+					<16>, <17>,
-+					<18>, <19>,
-+					<20>, <21>;
- 			clock-output-names = "apb1_i2c0", "apb1_i2c1",
- 					"apb1_i2c2", "apb1_i2c3", "apb1_i2c4",
- 					"apb1_uart0", "apb1_uart1",
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index cae2c048..3071260 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1396,6 +1396,45 @@ static const struct exynos_cpuclk_cfg_data e4210_armclk_d[] __initconst = {
+ 	{  0 },
+ };
+ 
++static const struct exynos_cpuclk_cfg_data e4212_armclk_d[] __initconst = {
++	{ 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
++	{ 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
++	{ 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
++	{ 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
++	{ 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4210_CPU_DIV1(2, 4), },
++	{ 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4210_CPU_DIV1(2, 4), },
++	{  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
++	{  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
++	{  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
++	{  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
++	{  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
++	{  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
++	{  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
++	{  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4210_CPU_DIV1(2, 3), },
++	{  0 },
++};
++
++#define E4412_CPU_DIV1(cores, hpm, copy)				\
++		(((cores) << 8) | ((hpm) << 4) | ((copy) << 0))
++
++static const struct exynos_cpuclk_cfg_data e4412_armclk_d[] __initconst = {
++	{ 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(7, 0, 6), },
++	{ 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(6, 0, 6), },
++	{ 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(6, 0, 5), },
++	{ 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(5, 0, 5), },
++	{ 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4412_CPU_DIV1(5, 0, 4), },
++	{ 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4412_CPU_DIV1(4, 0, 4), },
++	{  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(4, 0, 3), },
++	{  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(3, 0, 3), },
++	{  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(3, 0, 3), },
++	{  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
++	{  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
++	{  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
++	{  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
++	{  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4412_CPU_DIV1(0, 0, 3), },
++	{  0 },
++};
++
+ /* register exynos4 clocks */
+ static void __init exynos4_clk_init(struct device_node *np,
+ 				    enum exynos4_soc soc)
+@@ -1489,6 +1528,17 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 		samsung_clk_register_fixed_factor(ctx,
+ 			exynos4x12_fixed_factor_clks,
+ 			ARRAY_SIZE(exynos4x12_fixed_factor_clks));
++		if (of_machine_is_compatible("samsung,exynos4412")) {
++			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
++				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
++				e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
++				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
++		} else {
++			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
++				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
++				e4212_armclk_d, ARRAY_SIZE(e4212_armclk_d),
++				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
++		}
+ 	}
+ 
+ 	samsung_clk_register_alias(ctx, exynos4_aliases,
 -- 
-2.4.6
+1.9.1
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
