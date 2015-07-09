@@ -1,93 +1,93 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-id: <55AF3C2E.7010205@samsung.com>
-Date: Wed, 22 Jul 2015 15:46:06 +0900
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qk0-f175.google.com ([209.85.220.175]:36558 "EHLO
+	mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752974AbbGIAXe (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2015 20:23:34 -0400
+MIME-Version: 1.0
+In-Reply-To: <CA+Ln22HHpdKD8+_zSzX10FBM_aDByePfA3_vactLOxh_J961tA@mail.gmail.com>
+References: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
+	<CABxcv=mQfcb3jsRzOcWXAbNRf-dumoHS8X-2TEeOdB2E_T5BMQ@mail.gmail.com>
+	<CAJKOXPeFxABcm27_tmriY6RreaRYZiEPvUvFav4DK-AoNbUs=Q@mail.gmail.com>
+	<CA+Ln22HHpdKD8+_zSzX10FBM_aDByePfA3_vactLOxh_J961tA@mail.gmail.com>
+Date: Thu, 9 Jul 2015 09:23:32 +0900
+Message-ID: <CAJKOXPeGMTabQ6CEfMrd1S1dFYTfNoaf2XKvJwoEZzaiTUfq7A@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
-	mturquette@baylibre.com, lee.jones@linaro.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/4] clk: 88pm800: Add clk provider driver for 88pm800
- family of devices
-References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
- <1437476823-3358-4-git-send-email-vaibhav.hiremath@linaro.org>
- <55AE990E.2040004@codeaurora.org> <55AE9F48.20600@linaro.org>
- <55AEB103.9010205@codeaurora.org> <55AF37D9.3000006@linaro.org>
-In-reply-to: <55AF37D9.3000006@linaro.org>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	"linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	stable@vger.kernel.org,
+	Linux Kernel <linux-kernel@vger.kernel.org>,
+	Kukjin Kim <kgene@kernel.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 22.07.2015 15:27, Vaibhav Hiremath wrote:
-> 
-> 
-> On Wednesday 22 July 2015 02:22 AM, Stephen Boyd wrote:
->> On 07/21/2015 12:36 PM, Vaibhav Hiremath wrote:
+2015-07-06 14:12 GMT+09:00 Tomasz Figa <tomasz.figa@gmail.com>:
+> 2015-07-06 13:03 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+>> 2015-06-12 14:46 GMT+09:00 Javier Martinez Canillas <javier@dowhile0.org>:
+>>> Hello Krzysztof,
 >>>
->>> On Wednesday 22 July 2015 12:40 AM, Stephen Boyd wrote:
->>>> On 07/21/2015 04:07 AM, Vaibhav Hiremath wrote:
->>>>> +
-> 
-> <snip>
-> 
->>>>> +static int pm800_clk_remove(struct platform_device *pdev)
->>>>> +{
->>>>> +    struct pm800_clk *pm800_clks = platform_get_drvdata(pdev);
->>>>> +    int i;
->>>>> +
->>>>> +    of_clk_del_provider(pm800_clks[0].clk_np);
->>>>> +    /* Drop the reference obtained in pm800_clk_parse_dt */
->>>>> +    of_node_put(pm800_clks[0].clk_np);
+>>> On Fri, Jun 12, 2015 at 3:53 AM, Krzysztof Kozlowski
+>>> <k.kozlowski@samsung.com> wrote:
+>>>> The TSADC gate clock was used in Exynos4x12 DTSI for exynos-adc driver.
+>>>> However TSADC is present only on Exynos4210 so on Trats2 board (with
+>>>> Exynos4412 SoC) the exynos-adc driver could not be probed:
+>>>>    ERROR: could not get clock /adc@126C0000:adc(0)
+>>>>    exynos-adc 126c0000.adc: failed getting clock, err = -2
+>>>>    exynos-adc: probe of 126c0000.adc failed with error -2
 >>>>
->>>> This is odd. Why are we keeping the reference in the driver?
+>>>> Instead on Exynos4x12 SoCs the main clock used by Analog to Digital
+>>>> Converter is located in different register and it is named in datasheet
+>>>> as PCLK_ADC. Regardless of the name the purpose of this PCLK_ADC clock
+>>>> is the same as purpose of TSADC from Exynos4210.
+>>>>
+>>>> The patch adds gate clock for Exynos4x12 using the proper register so
+>>>> backward compatibility is preserved. This fixes the probe of exynos-adc
+>>>> driver on Exynos4x12 boards and allows accessing sensors connected to it
+>>>> on Trats2 board (ntc,ncp15wb473 AP and battery thermistors).
+>>>>
+>>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>> Cc: <stable@vger.kernel.org>
+>>>> Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
+>>>> Link: https://lkml.org/lkml/2015/6/11/85
+>>>>
+>>>> ---
+>>>>
+>>>> Changes since v1:
+>>>> 1. After discussion on LKML this solution was chosen because it smaller,
+>>>>    simpler, self-contained (one patch to fix issue) and maintains backward
+>>>>    compatibility. Thanks to Javier Martinez Canillas and Tomasz Figa for
+>>>>    valuable comments.
+>>>> 2. Dropped patch 2/2 because now it is not needed. The clock id "TSADC"
+>>>>    will be used on all Exynos4 boards.
+>>>> 3. Added CC-stable.
+>>>> ---
+>>>>  drivers/clk/samsung/clk-exynos4.c | 2 ++
+>>>>  1 file changed, 2 insertions(+)
 >>>>
 >>>
->>> Honestly I do not have any good answer here. I have to admit that it is
->>> getting carry forwarded from legacy driver.
+>>> Patch looks good to me.
 >>>
+>>> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 >>
->> Well we shouldn't do things if we don't know why we're doing them.
->> Krzysztof?
-
-I am really busy now so I am not following closely other discussions. I
-assume you are referring to clk-s2mps11.c. The of_node_put() matches
-of_get_child_by_name() when parsing DT.
-
-So why not of_node_put() just after parsing DT? Well, the result of
-of_get_child_by_name() is stored in state container for entire device
-life-cycle so we can use it in of_clk_del_provider().
-
-That was the idea behind it. If it looks incorrect I would be happy to
-see a patch :) .
-
+>> Hi Tomasz and Sylwester,
 >>
-> 
-> Hold on,
-> After looking more in to this, it seems we really do not need it.
-> It is already taken care by
-> 
-> of_clk_add_provider() and
-> of_clk_del_provider()
-> 
-> Sorry for not investigating this before. Just left out from my eyes
-> somehow.
-> 
-> 
-> Actually I can cleanup clk-s2mps11.c driver as well, but only thing is
-> I can validate it, as I do not have platform to test it.
-> It should be trivial changes.
-> 
-> If somebody can help me out in validation I can submit the patch for
-> clk-s2mps11.c driver as well.
+>> Any comments on this version of patch?
+>> Tomasz, you gave me comments on previous version. Are their satisfied?
+>
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-Sure, I can do this. The clock is present on few devices I can test.
-Depending on the current workqueue it may take few days. Just please
-mark the patch RFT so it won't be applied before receiving
-reviewed/tested tags.
+Thanks for ack.
+
+Sylwester, are you gonna to pick it up or this should go through other tree?
 
 Best regards,
 Krzysztof
-
-
