@@ -1,99 +1,71 @@
-Return-Path: <linux-omap-owner@vger.kernel.org>
-Message-ID: <55A38973.3020802@ti.com>
-Date: Mon, 13 Jul 2015 12:48:35 +0300
-From: Tero Kristo <t-kristo@ti.com>
-MIME-Version: 1.0
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
 To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Tero Kristo <t-kristo@ti.com>,
 	Tony Lindgren <tony@atomide.com>
-CC: <balbi@ti.com>, <linux-clk@vger.kernel.org>,
-	<linux-omap@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<paul@pwsan.com>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
-References: <1432566032-10860-1-git-send-email-t-kristo@ti.com> <20150526160557.GD16525@atomide.com> <20150526163216.GF16525@atomide.com> <20150526163931.GO26599@saruman.tx.rr.com> <55660D5B.8020607@ti.com> <20150527231536.GD30984@atomide.com> <556EF42A.9000207@ti.com> <20150603231136.6017.65683@quantum>
-In-Reply-To: <20150603231136.6017.65683@quantum>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-omap-owner@vger.kernel.org
+Subject: [PATCH 7/7] ARM: OMAP2+: Include clk.h
+Date: Fri, 10 Jul 2015 15:45:47 -0700
+Message-Id: <1436568347-24554-8-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org>
+References: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/04/2015 02:11 AM, Michael Turquette wrote:
-> Quoting Tero Kristo (2015-06-03 05:33:46)
->> On 05/28/2015 02:15 AM, Tony Lindgren wrote:
->>> * Tero Kristo <t-kristo@ti.com> [150527 11:32]:
->>>> On 05/26/2015 07:39 PM, Felipe Balbi wrote:
->>>>> On Tue, May 26, 2015 at 09:32:16AM -0700, Tony Lindgren wrote:
->>>>>> * Tony Lindgren <tony@atomide.com> [150526 09:08]:
->>>>>>> * Tero Kristo <t-kristo@ti.com> [150525 08:01]:
->>>>>>>> Hi,
->>>>>>>>
->>>>>>>> As requested, posting v3 with somewhat changed diff parameters and
->>>>>>>> diffstat attached. Just some minor Makefile changes compared to v2,
->>>>>>>> these were discussed under that set.
->>>>>>>>
->>>>>>>> Set has been pushed to:
->>>>>>>> - tree: https://github.com/t-kristo/linux-pm.git
->>>>>>>> - branch: for-4.2/ti-clk-move
->>>>>>>
->>>>>>> Looks like this causes a build error for at least omap2 only .config:
->>>>>>>
->>>>>>> drivers/clk/ti/dpll3xxx.o:(.rodata+0x1c): multiple definition of `clkhwops_omap3_dpll'
->>>>>>> drivers/clk/ti/dpll.o:(.rodata+0x0): first defined here
->>>>>>>
->>>>>>> You may want to create a file selecting ARCH_OMAP2PLUS=y, then point
->>>>>>> KCONFIG_ALLCONFIG to that file for make randconfig. Then just build
->>>>>>> randconfigs :) Usually the issues like this are exposed within few
->>>>>>> randconfig builds, some take longer if the options have dependencies.
->>>>>
->>>>> alternatively, just clone the repository at [1] and use the example
->>>>> script provided in README.md.
->>>>>
->>>>> [1] https://github.com/felipebalbi/omap-seeds
->>>>>
->>>>
->>>> Ok, I pushed an updated branch named: for-4.2/ti-clk-move-v4
->>>>
->>>> This definitely compiles with OMAP2 / OMAP3 / OMAP4 / OMAP5 / DRA7 / AM33xx
->>>> / AM43xx only setups (tried it out.)
->>>
->>> Thanks yeah seems to work for me now.
->>>
->>> Regards,
->>>
->>> Tony
->>>
->>
->> Question to Mike / Stephen, any chance of getting this in during the 4.2
->> merge anymore seeing we are already at 4.1-rc6?
->>
->> I can send a pull request if yes. Otherwise I just wait until we are
->> past the next merge.
->
-> Hi Tero,
->
-> I'd like more time for any regressions this introduces to be fixed, so
-> lets push back to next merge window. The always-wrong-but-never-by-much
-> crystal ball[0] predicts June 14. This is less than two weeks away, so
-> the wait should be short.
+These files use the consumer API, so include clk.h explicitly.
 
-Hi Mike / Stephen,
+Cc: Tero Kristo <t-kristo@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
 
-I am planning to send a pull-request out for this, but this set is going 
-to cause some minor merge conflicts with the recent header file change 
-patches from Stephen, and the determine rate prototype change from Boris.
+Please ack so this can be routed through clk-tree. Otherwise
+when clk.h is removed from clk-provider.h these files will
+fail to compile.
 
-I can alternatively just ignore these issues and send these patches on 
-top of rc2 and let you handle the conflicts within clk-tree, or 
-cherry-pick some stable commits for the same if you like.
+ arch/arm/mach-omap2/clock.c      | 1 +
+ arch/arm/mach-omap2/omap_hwmod.c | 1 +
+ arch/arm/mach-omap2/pm24xx.c     | 1 +
+ 3 files changed, 3 insertions(+)
 
-Which way do you prefer?
-
--Tero
-
->
-> [0] http://phb-crystal-ball.org/
->
-> Thanks,
-> Mike
->
->>
->> -Tero
-
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index a699d7169307..f664dc664ded 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -20,6 +20,7 @@
+ #include <linux/errno.h>
+ #include <linux/err.h>
+ #include <linux/delay.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/io.h>
+ #include <linux/bitops.h>
+diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
+index d78c12e7cb5e..de43e4c9a865 100644
+--- a/arch/arm/mach-omap2/omap_hwmod.c
++++ b/arch/arm/mach-omap2/omap_hwmod.c
+@@ -130,6 +130,7 @@
+ #include <linux/kernel.h>
+ #include <linux/errno.h>
+ #include <linux/io.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/err.h>
+diff --git a/arch/arm/mach-omap2/pm24xx.c b/arch/arm/mach-omap2/pm24xx.c
+index b1aad7e1426c..2a1a4180d5d0 100644
+--- a/arch/arm/mach-omap2/pm24xx.c
++++ b/arch/arm/mach-omap2/pm24xx.c
+@@ -25,6 +25,7 @@
+ #include <linux/sysfs.h>
+ #include <linux/module.h>
+ #include <linux/delay.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/irq.h>
+ #include <linux/time.h>
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
