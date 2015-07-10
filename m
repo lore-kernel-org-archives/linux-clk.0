@@ -1,98 +1,90 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>,
-	Sangbeom Kim <sbkim73@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org (open list:SAMSUNG MULTIFUNCTION PMIC
-	DEVICE DRIVERS),
-	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG MULTIFUNCTION PMIC
-	DEVICE DRIVERS),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH] clk: s2mps11: Use kcalloc instead of kzalloc for array allocation
-Date: Wed, 22 Jul 2015 15:04:53 +0530
-Message-Id: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	James Liao <jamesjj.liao@mediatek.com>,
+	Henry Chen <henryc.chen@mediatek.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH 15/45] clk: mediatek: Properly include clk.h
+Date: Fri, 10 Jul 2015 16:33:13 -0700
+Message-Id: <1436571223-10959-16-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch cleans up the driver for,
+We don't need to include clk.h in header files, just forward
+declare struct clk here. This leads us to a few places where the
+include of clk.h was missing in C files. Add them.
 
-  - Use devm_kcalloc varient instead of devm_kzalloc for array
-    allocation.
-  - clk_prepare/unprepare, remove "ret" variable as it is not required
-  - use __exit for cleanup function
-
-As I am referring this driver as a reference for my 88pm800 clk driver,
-applying same changes here as well.
-
-Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Cc: James Liao <jamesjj.liao@mediatek.com>
+Cc: Henry Chen <henryc.chen@mediatek.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
-Since I do not have platform to test, it would be helpful if someone
-tests it for me.
-I have build tested it.
+ drivers/clk/mediatek/clk-gate.h   | 3 ++-
+ drivers/clk/mediatek/clk-mt8135.c | 1 +
+ drivers/clk/mediatek/clk-mt8173.c | 1 +
+ drivers/clk/mediatek/clk-mtk.h    | 3 ++-
+ 4 files changed, 6 insertions(+), 2 deletions(-)
 
- drivers/clk/clk-s2mps11.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index 9b13a30..e17c66a 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -58,21 +58,17 @@ static struct s2mps11_clk *to_s2mps11_clk(struct clk_hw *hw)
- static int s2mps11_clk_prepare(struct clk_hw *hw)
- {
- 	struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
--	int ret;
+diff --git a/drivers/clk/mediatek/clk-gate.h b/drivers/clk/mediatek/clk-gate.h
+index 6b6780b1e9c5..11e25c992948 100644
+--- a/drivers/clk/mediatek/clk-gate.h
++++ b/drivers/clk/mediatek/clk-gate.h
+@@ -16,9 +16,10 @@
+ #define __DRV_CLK_GATE_H
  
--	ret = regmap_update_bits(s2mps11->iodev->regmap_pmic,
-+	return regmap_update_bits(s2mps11->iodev->regmap_pmic,
- 				 s2mps11->reg,
- 				 s2mps11->mask, s2mps11->mask);
--
--	return ret;
- }
+ #include <linux/regmap.h>
+-#include <linux/clk.h>
+ #include <linux/clk-provider.h>
  
- static void s2mps11_clk_unprepare(struct clk_hw *hw)
- {
- 	struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
--	int ret;
++struct clk;
++
+ struct mtk_clk_gate {
+ 	struct clk_hw	hw;
+ 	struct regmap	*regmap;
+diff --git a/drivers/clk/mediatek/clk-mt8135.c b/drivers/clk/mediatek/clk-mt8135.c
+index 08b4b849b491..07c21e44b4b3 100644
+--- a/drivers/clk/mediatek/clk-mt8135.c
++++ b/drivers/clk/mediatek/clk-mt8135.c
+@@ -12,6 +12,7 @@
+  * GNU General Public License for more details.
+  */
  
--	ret = regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
-+	regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
- 			   s2mps11->mask, ~s2mps11->mask);
- }
++#include <linux/clk.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/slab.h>
+diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
+index 4b9e04cdf7e8..2e0f17be9ea0 100644
+--- a/drivers/clk/mediatek/clk-mt8173.c
++++ b/drivers/clk/mediatek/clk-mt8173.c
+@@ -12,6 +12,7 @@
+  * GNU General Public License for more details.
+  */
  
-@@ -186,15 +182,15 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	struct clk_init_data *clks_init;
- 	int i, ret = 0;
++#include <linux/clk.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/slab.h>
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index 9dda9d8ad10b..624716c4776b 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -17,9 +17,10 @@
  
--	s2mps11_clks = devm_kzalloc(&pdev->dev, sizeof(*s2mps11_clk) *
--					S2MPS11_CLKS_NUM, GFP_KERNEL);
-+	s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
-+				sizeof(*s2mps11_clk), GFP_KERNEL);
- 	if (!s2mps11_clks)
- 		return -ENOMEM;
+ #include <linux/regmap.h>
+ #include <linux/bitops.h>
+-#include <linux/clk.h>
+ #include <linux/clk-provider.h>
  
- 	s2mps11_clk = s2mps11_clks;
++struct clk;
++
+ #define MAX_MUX_GATE_BIT	31
+ #define INVALID_MUX_GATE_BIT	(MAX_MUX_GATE_BIT + 1)
  
--	clk_table = devm_kzalloc(&pdev->dev, sizeof(struct clk *) *
--				 S2MPS11_CLKS_NUM, GFP_KERNEL);
-+	clk_table = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
-+				sizeof(struct clk *), GFP_KERNEL);
- 	if (!clk_table)
- 		return -ENOMEM;
- 
-@@ -322,7 +318,7 @@ static int __init s2mps11_clk_init(void)
- }
- subsys_initcall(s2mps11_clk_init);
- 
--static void __init s2mps11_clk_cleanup(void)
-+static void __exit s2mps11_clk_cleanup(void)
- {
- 	platform_driver_unregister(&s2mps11_clk_driver);
- }
 -- 
-1.9.1
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
