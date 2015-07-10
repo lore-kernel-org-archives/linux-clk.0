@@ -1,148 +1,123 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH v2 2/7] ARM: sun5i: Add clock indices
-Date: Fri, 31 Jul 2015 19:46:17 +0200
-Message-Id: <1438364782-3968-3-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-id: <559F2B52.4060903@samsung.com>
+Date: Fri, 10 Jul 2015 11:17:54 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] opp: add dev_pm_opp_get_turbo_mode_setting() helper
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+ <1436456621-29839-2-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1436456621-29839-2-git-send-email-b.zolnierkie@samsung.com>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The A10s and A13 gates have a non continuous set of clock IDs that are
-valid. Add the clock-indices property to the DT to express this.
+On 10.07.2015 00:43, Bartlomiej Zolnierkiewicz wrote:
+> Add dev_pm_opp_get_turbo_mode_setting() helper for getting turbo
+> mode setting for a given opp.
+> 
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/base/power/opp.c | 31 +++++++++++++++++++++++++++++++
+>  include/linux/pm_opp.h   |  7 +++++++
+>  2 files changed, 38 insertions(+)
+> 
+> diff --git a/drivers/base/power/opp.c b/drivers/base/power/opp.c
+> index e24502a2..6b34b2a 100644
+> --- a/drivers/base/power/opp.c
+> +++ b/drivers/base/power/opp.c
+> @@ -287,6 +287,37 @@ unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp)
+>  EXPORT_SYMBOL_GPL(dev_pm_opp_get_freq);
+>  
+>  /**
+> + * dev_pm_opp_get_turbo_mode_setting() - Gets the turbo setting
+> + * @opp:	opp for which turbo mode setting has to be returned for
+> + *
+> + * Return: turbo mode setting corresponding to the opp (true or false)
+> + *
+> + * Locking: This function must be called under rcu_read_lock(). opp is a rcu
+> + * protected pointer. This means that opp which could have been fetched by
+> + * opp_find_freq_{exact,ceil,floor} functions is valid as long as we are
+> + * under RCU lock. The pointer returned by the opp_find_freq family must be
+> + * used in the same section as the usage of this function with the pointer
+> + * prior to unlocking with rcu_read_unlock() to maintain the integrity of the
+> + * pointer.
+> + */
+> +bool dev_pm_opp_get_turbo_mode_setting(struct dev_pm_opp *opp)
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun5i-a10s.dtsi | 23 +++++++++++++++++++++--
- arch/arm/boot/dts/sun5i-a13.dtsi  | 18 +++++++++++++++++-
- arch/arm/boot/dts/sun5i.dtsi      |  1 +
- 3 files changed, 39 insertions(+), 3 deletions(-)
+It is just true or false, so maybe dev_pm_opp_is_turbo_mode()?
 
-diff --git a/arch/arm/boot/dts/sun5i-a10s.dtsi b/arch/arm/boot/dts/sun5i-a10s.dtsi
-index f11efb722bbb..a513b416a807 100644
---- a/arch/arm/boot/dts/sun5i-a10s.dtsi
-+++ b/arch/arm/boot/dts/sun5i-a10s.dtsi
-@@ -85,6 +85,17 @@
- 			compatible = "allwinner,sun5i-a10s-ahb-gates-clk";
- 			reg = <0x01c20060 0x8>;
- 			clocks = <&ahb>;
-+			clock-indices = <0>, <1>,
-+					<2>, <5>, <6>,
-+					<7>, <8>, <9>,
-+					<10>, <13>,
-+					<14>, <17>, <18>,
-+					<20>, <21>, <22>,
-+					<26>, <28>, <32>,
-+					<34>, <36>, <40>,
-+					<43>, <44>,
-+					<46>, <51>,
-+					<52>;
- 			clock-output-names = "ahb_usbotg", "ahb_ehci",
- 					     "ahb_ohci", "ahb_ss", "ahb_dma",
- 					     "ahb_bist", "ahb_mmc0", "ahb_mmc1",
-@@ -103,6 +114,9 @@
- 			compatible = "allwinner,sun5i-a10s-apb0-gates-clk";
- 			reg = <0x01c20068 0x4>;
- 			clocks = <&apb0>;
-+			clock-indices = <0>, <3>,
-+					<5>, <6>,
-+					<10>;
- 			clock-output-names = "apb0_codec", "apb0_iis",
- 					     "apb0_pio", "apb0_ir",
- 					     "apb0_keypad";
-@@ -113,9 +127,14 @@
- 			compatible = "allwinner,sun5i-a10s-apb1-gates-clk";
- 			reg = <0x01c2006c 0x4>;
- 			clocks = <&apb1>;
-+			clock-indices = <0>, <1>,
-+					<2>, <16>,
-+					<17>, <18>,
-+					<19>;
- 			clock-output-names = "apb1_i2c0", "apb1_i2c1",
--				"apb1_i2c2", "apb1_uart0", "apb1_uart1",
--				"apb1_uart2", "apb1_uart3";
-+					     "apb1_i2c2", "apb1_uart0",
-+					     "apb1_uart1", "apb1_uart2",
-+					     "apb1_uart3";
- 		};
- 	};
- 
-diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
-index 976d4faa2179..f3631c9c6fa2 100644
---- a/arch/arm/boot/dts/sun5i-a13.dtsi
-+++ b/arch/arm/boot/dts/sun5i-a13.dtsi
-@@ -104,6 +104,16 @@
- 			compatible = "allwinner,sun5i-a13-ahb-gates-clk";
- 			reg = <0x01c20060 0x8>;
- 			clocks = <&ahb>;
-+			clock-indices = <0>, <1>,
-+					<2>, <5>, <6>,
-+					<7>, <8>, <9>,
-+					<10>, <13>,
-+					<14>, <20>,
-+					<21>, <22>,
-+				        <28>, <32>, <36>,
-+				        <40>, <44>,
-+					<46>, <51>,
-+					<52>;
- 			clock-output-names = "ahb_usbotg", "ahb_ehci",
- 					     "ahb_ohci", "ahb_ss", "ahb_dma",
- 					     "ahb_bist", "ahb_mmc0", "ahb_mmc1",
-@@ -121,6 +131,8 @@
- 			compatible = "allwinner,sun5i-a13-apb0-gates-clk";
- 			reg = <0x01c20068 0x4>;
- 			clocks = <&apb0>;
-+			clock-indices = <0>, <5>,
-+					<6>;
- 			clock-output-names = "apb0_codec", "apb0_pio",
- 					     "apb0_ir";
- 		};
-@@ -130,8 +142,12 @@
- 			compatible = "allwinner,sun5i-a13-apb1-gates-clk";
- 			reg = <0x01c2006c 0x4>;
- 			clocks = <&apb1>;
-+			clock-indices = <0>, <1>,
-+					<2>, <17>,
-+					<19>;
- 			clock-output-names = "apb1_i2c0", "apb1_i2c1",
--				"apb1_i2c2", "apb1_uart1", "apb1_uart3";
-+					     "apb1_i2c2", "apb1_uart1",
-+					     "apb1_uart3";
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index 54b097830434..427c0e7289fa 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -178,6 +178,7 @@
- 			compatible = "allwinner,sun4i-a10-axi-gates-clk";
- 			reg = <0x01c2005c 0x4>;
- 			clocks = <&axi>;
-+			clock-indices = <0>;
- 			clock-output-names = "axi_dram";
- 		};
- 
--- 
-2.4.6
+Everything else looks good to me.
 
+Best regards,
+Krzysztof
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> +{
+> +	struct dev_pm_opp *tmp_opp;
+> +	bool f = false;
+> +
+> +	opp_rcu_lockdep_assert();
+> +
+> +	tmp_opp = rcu_dereference(opp);
+> +	if (unlikely(IS_ERR_OR_NULL(tmp_opp)) || !tmp_opp->available)
+> +		pr_err("%s: Invalid parameters\n", __func__);
+> +	else
+> +		f = tmp_opp->turbo;
+> +
+> +	return f;
+> +}
+> +EXPORT_SYMBOL_GPL(dev_pm_opp_get_turbo_mode_setting);
+> +
+> +/**
+>   * dev_pm_opp_get_max_clock_latency() - Get max clock latency in nanoseconds
+>   * @dev:	device for which we do this operation
+>   *
+> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+> index bb52fae..7856baf 100644
+> --- a/include/linux/pm_opp.h
+> +++ b/include/linux/pm_opp.h
+> @@ -30,6 +30,8 @@ unsigned long dev_pm_opp_get_voltage(struct dev_pm_opp *opp);
+>  
+>  unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp);
+>  
+> +bool dev_pm_opp_get_turbo_mode_setting(struct dev_pm_opp *opp);
+> +
+>  int dev_pm_opp_get_opp_count(struct device *dev);
+>  unsigned long dev_pm_opp_get_max_clock_latency(struct device *dev);
+>  
+> @@ -63,6 +65,11 @@ static inline unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp)
+>  	return 0;
+>  }
+>  
+> +static inline bool dev_pm_opp_get_turbo_mode_setting(struct dev_pm_opp *opp)
+> +{
+> +	return false;
+> +}
+> +
+>  static inline int dev_pm_opp_get_opp_count(struct device *dev)
+>  {
+>  	return 0;
+> 
+
