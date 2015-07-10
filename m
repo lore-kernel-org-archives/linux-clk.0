@@ -1,69 +1,39 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
 To: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH 0/7] ARM: sunxi: Switch to clock indices
-Date: Sun, 26 Jul 2015 23:14:23 +0200
-Message-Id: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 02/45] clk: cdce706: Include clk.h
+Date: Fri, 10 Jul 2015 16:33:00 -0700
+Message-Id: <1436571223-10959-3-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+This clock provider uses the consumer API, so include clk.h
+explicitly.
 
-We currently have in our clock driver a logic very similar to the one
-that clock-indices is supposed to cover.
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-cdce706.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Using this property, we can create a new driver generic for all gates
-that will get the valid indices directly from the device tree, instead
-of storing that in the driver itself.
-
-While we're at it, we also move to using CLK_OF_DECLARE for that new
-driver, which should ease the orphan clocks breakage we saw.
-
-Let me know what you think,
-Maxime
-
-Maxime Ripard (7):
-  ARM: sun4i: Add clock indices
-  ARM: sun5i: Add clock indices
-  ARM: sun6i: Add clock indices
-  ARM: sun7i: Add clock indices
-  ARM: sun8i: Add clock indices
-  ARM: sun9i: Add clock indices
-  clk: sunxi: Add a simple gates driver
-
- arch/arm/boot/dts/sun4i-a10.dtsi     |  69 ++++++++++----
- arch/arm/boot/dts/sun5i-a10s.dtsi    |  23 ++++-
- arch/arm/boot/dts/sun5i-a13.dtsi     |  18 +++-
- arch/arm/boot/dts/sun5i.dtsi         |   1 +
- arch/arm/boot/dts/sun6i-a31.dtsi     |  24 +++++
- arch/arm/boot/dts/sun7i-a20.dtsi     |  23 +++++
- arch/arm/boot/dts/sun8i-a23-a33.dtsi |  15 +++
- arch/arm/boot/dts/sun9i-a80.dtsi     |  32 +++++--
- drivers/clk/sunxi/Makefile           |   1 +
- drivers/clk/sunxi/clk-simple-gates.c | 159 +++++++++++++++++++++++++++++++
- drivers/clk/sunxi/clk-sunxi.c        | 177 -----------------------------------
- 11 files changed, 335 insertions(+), 207 deletions(-)
- create mode 100644 drivers/clk/sunxi/clk-simple-gates.c
-
+diff --git a/drivers/clk/clk-cdce706.c b/drivers/clk/clk-cdce706.c
+index f01164fada5d..21830526fd8e 100644
+--- a/drivers/clk/clk-cdce706.c
++++ b/drivers/clk/clk-cdce706.c
+@@ -10,6 +10,7 @@
+  * published by the Free Software Foundation.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/i2c.h>
 -- 
-2.4.6
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
