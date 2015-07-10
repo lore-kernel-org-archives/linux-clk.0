@@ -1,48 +1,43 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	agross@codeaurora.org
-Cc: mturquette@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v2 5/5] arm64: dts: qcom: msm8916: Add A53 DT node
-Date: Fri, 24 Jul 2015 19:58:39 +0300
-Message-Id: <1437757119-6910-6-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1437757119-6910-1-git-send-email-georgi.djakov@linaro.org>
-References: <1437757119-6910-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 11/45] clk: u300: Remove clk.h include
+Date: Fri, 10 Jul 2015 16:33:09 -0700
+Message-Id: <1436571223-10959-12-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add nodes for the A53 clocks and apcs, so that the driver
-can probe and register the clocks.
+Clock provider drivers generally shouldn't include clk.h because
+it's the consumer API. Remove the include here because this is a
+provider driver. Also add in slab.h because without clkdev.h
+compilation of this file would fail.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- arch/arm64/boot/dts/qcom/msm8916.dtsi |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/clk/clk-u300.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index fd4813e9696b..14cb08cd59af 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -320,6 +320,18 @@
- 			reg = <0x1800000 0x80000>;
- 		};
- 
-+		apcs: syscon@b011000 {
-+			compatible = "syscon";
-+			reg = <0x0b011000 0x1000>;
-+		};
-+
-+		a53cc: qcom,a53cc@0b016000 {
-+			compatible = "qcom,clock-a53-msm8916";
-+			reg = <0x0b016000 0x40>;
-+			#clock-cells = <1>;
-+			qcom,apcs = <&apcs>;
-+		};
-+
- 		blsp1_uart2: serial@78b0000 {
- 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
- 			reg = <0x78b0000 0x200>;
+diff --git a/drivers/clk/clk-u300.c b/drivers/clk/clk-u300.c
+index 18bf5e576b93..95d1742dac30 100644
+--- a/drivers/clk/clk-u300.c
++++ b/drivers/clk/clk-u300.c
+@@ -5,8 +5,8 @@
+  * Author: Linus Walleij <linus.walleij@stericsson.com>
+  * Author: Jonas Aaberg <jonas.aberg@stericsson.com>
+  */
+-#include <linux/clk.h>
+ #include <linux/clkdev.h>
++#include <linux/slab.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/clk-provider.h>
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
