@@ -1,36 +1,44 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 24 Jul 2015 14:41:13 -0700
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: dinguyen@opensource.altera.com
-Cc: mturquette@baylibre.com, dinh.linux@gmail.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: socfpga: Add a second parent option for the
- dbg_base_clk
-Message-ID: <20150724214113.GH15042@codeaurora.org>
-References: <1437591858-12552-1-git-send-email-dinguyen@opensource.altera.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1437591858-12552-1-git-send-email-dinguyen@opensource.altera.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Wei Xu <xuwei5@hisilicon.com>
+Subject: [PATCH 2/7] ARM: hisi: Remove clk-provider.h include
+Date: Fri, 10 Jul 2015 15:45:42 -0700
+Message-Id: <1436568347-24554-3-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org>
+References: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/22, dinguyen@opensource.altera.com wrote:
-> diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
-> index 80f924d..7d5db54 100644
-> --- a/arch/arm/boot/dts/socfpga.dtsi
-> +++ b/arch/arm/boot/dts/socfpga.dtsi
-> @@ -164,7 +164,7 @@
->  						dbg_base_clk: dbg_base_clk {
->  							#clock-cells = <0>;
->  							compatible = "altr,socfpga-perip-clk";
-> -							clocks = <&main_pll>;
-> +							clocks = <&main_pll>, <&osc1>;
->  							div-reg = <0xe8 0 9>;
->  							reg = <0x50>;
->  						};
+This file doesn't use the clk provider APIs. Remove the include.
 
-We don't usually take changes in dts files. Can you split this
-off and take it through arm-soc?
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
+Cc: Wei Xu <xuwei5@hisilicon.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
 
+Please ack if you want this to go through clk-tree.
+
+ arch/arm/mach-hisi/hisilicon.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/mach-hisi/hisilicon.c b/arch/arm/mach-hisi/hisilicon.c
+index c6bd7c7bd4aa..8cc62150116a 100644
+--- a/arch/arm/mach-hisi/hisilicon.c
++++ b/arch/arm/mach-hisi/hisilicon.c
+@@ -11,7 +11,6 @@
+  * published by the Free Software Foundation.
+ */
+ 
+-#include <linux/clk-provider.h>
+ #include <linux/clocksource.h>
+ #include <linux/irqchip.h>
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
+
