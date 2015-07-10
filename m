@@ -1,39 +1,72 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55948899.4050707@codeaurora.org>
-Date: Wed, 01 Jul 2015 17:40:57 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:33967 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753332AbbGJXdv (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jul 2015 19:33:51 -0400
 From: Stephen Boyd <sboyd@codeaurora.org>
-MIME-Version: 1.0
-To: Chanwoo Choi <cw00.choi@samsung.com>, s.nawrocki@samsung.com,
-	tomasz.figa@gmail.com, mturquette@baylibre.com, kgene@kernel.org,
-	k.kozlowski@samsung.com
-CC: thomas.ab@samsung.com, b.zolnierkie@samsung.com,
-	kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] clk: samsung: exynos3250: Add cpu clock configuration
- data and instaniate cpu clock
-References: <1435756877-26736-1-git-send-email-cw00.choi@samsung.com> <1435756877-26736-2-git-send-email-cw00.choi@samsung.com>
-In-Reply-To: <1435756877-26736-2-git-send-email-cw00.choi@samsung.com>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Barry Song <Baohua.Song@csr.com>
+Subject: [PATCH 23/45] clk: sirf: Properly include clk.h
+Date: Fri, 10 Jul 2015 16:33:21 -0700
+Message-Id: <1436571223-10959-24-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/01/2015 06:21 AM, Chanwoo Choi wrote:
-> This patch add CPU clock configuration data and instantiate the CPU clock type
-> for Exynos3250 to support Samsung specific cpu-clock type.
->
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->
+Clock provider drivers generally shouldn't include clk.h because
+it's the consumer API. Move the include of clk.h into
+clk-common.c because that's the only file that's really using
+clk.h, even if it's included into the atlas6 and prima2 files.
 
-Looks ok.
+Cc: Barry Song <Baohua.Song@csr.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/sirf/clk-atlas6.c | 1 -
+ drivers/clk/sirf/clk-common.c | 2 ++
+ drivers/clk/sirf/clk-prima2.c | 1 -
+ 3 files changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-
+diff --git a/drivers/clk/sirf/clk-atlas6.c b/drivers/clk/sirf/clk-atlas6.c
+index d63b76ca60c3..c5eaa9d16247 100644
+--- a/drivers/clk/sirf/clk-atlas6.c
++++ b/drivers/clk/sirf/clk-atlas6.c
+@@ -10,7 +10,6 @@
+ #include <linux/module.h>
+ #include <linux/bitops.h>
+ #include <linux/io.h>
+-#include <linux/clk.h>
+ #include <linux/clkdev.h>
+ #include <linux/clk-provider.h>
+ #include <linux/of_address.h>
+diff --git a/drivers/clk/sirf/clk-common.c b/drivers/clk/sirf/clk-common.c
+index 9fc285d784d3..2f64d4beeb52 100644
+--- a/drivers/clk/sirf/clk-common.c
++++ b/drivers/clk/sirf/clk-common.c
+@@ -7,6 +7,8 @@
+  * Licensed under GPLv2 or later.
+  */
+ 
++#include <linux/clk.h>
++
+ #define KHZ     1000
+ #define MHZ     (KHZ * KHZ)
+ 
+diff --git a/drivers/clk/sirf/clk-prima2.c b/drivers/clk/sirf/clk-prima2.c
+index 6968e2ebcd8a..f92c40264342 100644
+--- a/drivers/clk/sirf/clk-prima2.c
++++ b/drivers/clk/sirf/clk-prima2.c
+@@ -10,7 +10,6 @@
+ #include <linux/module.h>
+ #include <linux/bitops.h>
+ #include <linux/io.h>
+-#include <linux/clk.h>
+ #include <linux/clkdev.h>
+ #include <linux/clk-provider.h>
+ #include <linux/of_address.h>
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
 
