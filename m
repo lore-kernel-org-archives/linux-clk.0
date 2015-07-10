@@ -1,45 +1,50 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: [PATCH 1/7] ARM: at91: Remove clk-provider.h include
-Date: Fri, 10 Jul 2015 15:45:41 -0700
-Message-Id: <1436568347-24554-2-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org>
-References: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Message-id: <559F2BFC.4030806@samsung.com>
+Date: Fri, 10 Jul 2015 11:20:44 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+ <1436456621-29839-3-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1436456621-29839-3-git-send-email-b.zolnierkie@samsung.com>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This file doesn't use the clk provider APIs. Remove the include.
+On 10.07.2015 00:43, Bartlomiej Zolnierkiewicz wrote:
+> Turbo modes should be marked with CPUFREQ_BOOST_FREQ flag in
+> the frequency table entry.
+> 
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/cpufreq/cpufreq_opp.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Please ack if you want this to go through clk-tree.
+Best regards,
+Krzysztof
 
- arch/arm/mach-at91/at91rm9200.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm/mach-at91/at91rm9200.c b/arch/arm/mach-at91/at91rm9200.c
-index eaf58f88ef5d..685826c4a710 100644
---- a/arch/arm/mach-at91/at91rm9200.c
-+++ b/arch/arm/mach-at91/at91rm9200.c
-@@ -8,7 +8,6 @@
-  * Licensed under GPLv2 or later.
-  */
- 
--#include <linux/clk-provider.h>
- #include <linux/of.h>
- #include <linux/of_platform.h>
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
