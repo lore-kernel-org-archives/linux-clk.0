@@ -1,70 +1,98 @@
-Return-Path: <kgene.kim@samsung.com>
-From: Kukjin Kim <kgene@kernel.org>
-Sender: Kukjin Kim <kgene.kim@samsung.com>
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>,
- 'Kukjin Kim' <kgene@kernel.org>
-Cc: 'Michael Turquette' <mturquette@baylibre.com>,
- 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>,
- 'Chanwoo Choi' <cw00.choi@samsung.com>, s.nawrocki@samsung.com,
- tomasz.figa@gmail.com, sboyd@codeaurora.org, thomas.ab@samsung.com,
- kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
- <4464631.oZyVO4Z0Ov@amdc1976> <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org>
- <20150724003005.642.21781@quantum> <55B1B3B0.8090106@kernel.org>
- <55B1D9A3.8060301@samsung.com>
-In-reply-to: <55B1D9A3.8060301@samsung.com>
-Subject: RE: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
-Date: Sat, 25 Jul 2015 11:11:32 +0900
-Message-id: <060201d0c67f$3a0cfba0$ae26f2e0$@kernel.org>
-MIME-version: 1.0
-Content-type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:33995 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753312AbbGJXdv (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jul 2015 19:33:51 -0400
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 21/45] clk: rockchip: Properly include clk.h
+Date: Fri, 10 Jul 2015 16:33:19 -0700
+Message-Id: <1436571223-10959-22-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Krzysztof Kozlowski wrote:
-> 
-> On 24.07.2015 12:40, Kukjin Kim wrote:
-> > On 07/24/15 09:30, Michael Turquette wrote:
-> >> Quoting Kukjin Kim (2015-07-07 07:43:31)
-> >>> Bartlomiej Zolnierkiewicz wrote:
-> >
-> > [...]
-> >
-> >>>>> Chanwoo Choi (3):
-> >>>>>   clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
-> >>>>>   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
-> >>>>>   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
-> >>>>>
-> >>>>>  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
-> >>>>>  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
-> >>>>>  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
-> >>>>>  arch/arm/mach-exynos/exynos.c           |  1 +
-> >>>>>  drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
-> >>>>>  include/dt-bindings/clock/exynos3250.h  |  1 +
-> >>>>>  6 files changed, 55 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> >>>>
-> >>>> Thank you for working on this.
-> >>>>
-> >>> +1 Thanks.
-> >>>
-> >>> Mike and Sylwester, if you're OK on this series, I'd like to pick up in Samsung
-> >>> tree together. And if you want, I could provide topic branch for clk tree.
-> >>
-> >> Kukjin,
-> >>
-> >> A topic branch would be great.
-> >>
-> > Sure, BTW it means you did 'ack' on this clk change? If not, please let
-> > em know ;-) I'll let you know once the topic branch is ready.
-> 
-> Dear Kukjin,
-> 
-> Will you handle this patchset and dependants (ARM: dts: Add CPU cooling
-> binding for Exynos3250-based Rinato/Monk board) for v4.3?
-> 
-You mean Chanwoo's patch. Yes, I'll. Thanks for your gentle reminder.
+Clock provider drivers generally shouldn't include clk.h because
+it's the consumer API. Only include clk.h if it's actually used.
 
-- Kukjin
+Cc: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/rockchip/clk-cpu.c       | 1 +
+ drivers/clk/rockchip/clk-mmc-phase.c | 1 +
+ drivers/clk/rockchip/clk-pll.c       | 1 -
+ drivers/clk/rockchip/clk-rk3188.c    | 1 +
+ drivers/clk/rockchip/clk.h           | 4 ++--
+ 5 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index fb7721bd37e6..330870a6d8bf 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -35,6 +35,7 @@
+ #include <linux/of.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include "clk.h"
+ 
+diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+index e9f8df324e7c..3244c6e391d7 100644
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -14,6 +14,7 @@
+  */
+ 
+ #include <linux/slab.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include "clk.h"
+ 
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 76027261f7ed..1f88dd158b93 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -17,7 +17,6 @@
+ #include <linux/slab.h>
+ #include <linux/io.h>
+ #include <linux/delay.h>
+-#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/regmap.h>
+ #include "clk.h"
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index e4f9d472f1ff..91ea848c9d18 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -13,6 +13,7 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 6b092673048a..1b16781b67c5 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -24,8 +24,8 @@
+ #define CLK_ROCKCHIP_CLK_H
+ 
+ #include <linux/io.h>
+-#include <linux/clk.h>
+-#include <linux/clk-provider.h>
++
++struct clk;
+ 
+ #define HIWORD_UPDATE(val, mask, shift) \
+ 		((val) << (shift) | (mask) << ((shift) + 16))
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
