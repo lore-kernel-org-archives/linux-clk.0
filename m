@@ -1,72 +1,100 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Antoine Tenart <antoine.tenart@free-electrons.com>
-To: sebastian.hesselbarth@gmail.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: Antoine Tenart <antoine.tenart@free-electrons.com>,
-	zmxu@marvell.com, jszhang@marvell.com,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] clk: berlin: add cpuclk
-Date: Thu, 30 Jul 2015 14:35:50 +0200
-Message-Id: <1438259752-16320-2-git-send-email-antoine.tenart@free-electrons.com>
-In-Reply-To: <1438259752-16320-1-git-send-email-antoine.tenart@free-electrons.com>
-References: <1438259752-16320-1-git-send-email-antoine.tenart@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 28/45] clk: versatile: Remove clk.h and clkdev.h includes
+Date: Fri, 10 Jul 2015 16:33:26 -0700
+Message-Id: <1436571223-10959-29-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add cpuclk in the Berlin BG2Q clock driver. This clk has a divider
-fixed to 1.
+Clock provider drivers generally shouldn't include clk.h because
+it's the consumer API. Remove the include here because this is a
+provider driver. Also remove clkdev.h in files that aren't using
+it and replace them with slab.h in files that were relying on the
+implicit include of slab.h in clkdev.h.
 
-Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/berlin/bg2q.c            | 14 +++++++-------
- include/dt-bindings/clock/berlin2q.h |  3 ++-
- 2 files changed, 9 insertions(+), 8 deletions(-)
+ drivers/clk/versatile/clk-icst.c      | 5 +++--
+ drivers/clk/versatile/clk-impd1.c     | 1 -
+ drivers/clk/versatile/clk-realview.c  | 1 -
+ drivers/clk/versatile/clk-sp810.c     | 3 ++-
+ drivers/clk/versatile/clk-versatile.c | 2 --
+ 5 files changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
-index 221f40c2b850..72d2f3500db8 100644
---- a/drivers/clk/berlin/bg2q.c
-+++ b/drivers/clk/berlin/bg2q.c
-@@ -45,7 +45,7 @@
- #define REG_SDIO0XIN_CLKCTL	0x0158
- #define REG_SDIO1XIN_CLKCTL	0x015c
+diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
+index bc96f103bd7c..a3893ea2199d 100644
+--- a/drivers/clk/versatile/clk-icst.c
++++ b/drivers/clk/versatile/clk-icst.c
+@@ -13,8 +13,9 @@
+  * ICST clock code from the ARM tree should probably be merged into this
+  * file.
+  */
+-#include <linux/clk.h>
+-#include <linux/clkdev.h>
++#include <linux/kernel.h>
++#include <linux/slab.h>
++#include <linux/export.h>
+ #include <linux/err.h>
+ #include <linux/clk-provider.h>
+ #include <linux/io.h>
+diff --git a/drivers/clk/versatile/clk-impd1.c b/drivers/clk/versatile/clk-impd1.c
+index 1cc1330dc570..65c842a21c62 100644
+--- a/drivers/clk/versatile/clk-impd1.c
++++ b/drivers/clk/versatile/clk-impd1.c
+@@ -7,7 +7,6 @@
+  * published by the Free Software Foundation.
+  */
+ #include <linux/clk-provider.h>
+-#include <linux/clk.h>
+ #include <linux/clkdev.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+diff --git a/drivers/clk/versatile/clk-realview.c b/drivers/clk/versatile/clk-realview.c
+index c8b523117fb7..940cc6f14578 100644
+--- a/drivers/clk/versatile/clk-realview.c
++++ b/drivers/clk/versatile/clk-realview.c
+@@ -6,7 +6,6 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
+-#include <linux/clk.h>
+ #include <linux/clkdev.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+diff --git a/drivers/clk/versatile/clk-sp810.c b/drivers/clk/versatile/clk-sp810.c
+index a96dd8e53fdb..64b0129a0216 100644
+--- a/drivers/clk/versatile/clk-sp810.c
++++ b/drivers/clk/versatile/clk-sp810.c
+@@ -12,7 +12,8 @@
+  */
  
--#define	MAX_CLKS 27
-+#define	MAX_CLKS 28
- static struct clk *clks[MAX_CLKS];
- static struct clk_onecell_data clk_data;
- static DEFINE_SPINLOCK(lock);
-@@ -356,13 +356,13 @@ static void __init berlin2q_clock_setup(struct device_node *np)
- 			    gd->bit_idx, 0, &lock);
- 	}
- 
--	/*
--	 * twdclk is derived from cpu/3
--	 * TODO: use cpupll until cpuclk is not available
--	 */
-+	/* cpuclk divider is fixed to 1 */
-+	clks[CLKID_CPU] =
-+		clk_register_fixed_factor(NULL, "cpu", clk_names[CPUPLL],
-+					  0, 1, 1);
-+	/* twdclk is derived from cpu/3 */
- 	clks[CLKID_TWD] =
--		clk_register_fixed_factor(NULL, "twd", clk_names[CPUPLL],
--					  0, 1, 3);
-+		clk_register_fixed_factor(NULL, "twd", "cpu", 0, 1, 3);
- 
- 	/* check for errors on leaf clocks */
- 	for (n = 0; n < MAX_CLKS; n++) {
-diff --git a/include/dt-bindings/clock/berlin2q.h b/include/dt-bindings/clock/berlin2q.h
-index 287fc3b4afb2..a80c3272794d 100644
---- a/include/dt-bindings/clock/berlin2q.h
-+++ b/include/dt-bindings/clock/berlin2q.h
-@@ -28,4 +28,5 @@
- #define CLKID_NFC		23
- #define CLKID_SMEMC		24
- #define CLKID_PCIE		25
--#define CLKID_TWD		26
-+#define CLKID_CPU		26
-+#define CLKID_TWD		27
+ #include <linux/amba/sp810.h>
+-#include <linux/clkdev.h>
++#include <linux/slab.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
+diff --git a/drivers/clk/versatile/clk-versatile.c b/drivers/clk/versatile/clk-versatile.c
+index 7a4f8635bd1e..71fa5da89afd 100644
+--- a/drivers/clk/versatile/clk-versatile.c
++++ b/drivers/clk/versatile/clk-versatile.c
+@@ -8,8 +8,6 @@
+  * published by the Free Software Foundation.
+  */
+ #include <linux/clk-provider.h>
+-#include <linux/clk.h>
+-#include <linux/clkdev.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
 -- 
-2.5.0
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
