@@ -1,41 +1,41 @@
-Return-Path: <dinguyen@opensource.altera.com>
-From: <dinguyen@opensource.altera.com>
-To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
-CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
-Subject: [PATCHv2 3/6] clk: keystone: make use of of_clk_parent_fill helper function
-Date: Mon, 6 Jul 2015 22:59:03 -0500
-Message-ID: <1436241546-16731-4-git-send-email-dinguyen@opensource.altera.com>
-In-Reply-To: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
-References: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	=?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>
+Subject: [PATCH 35/45] clk: zynq: Include clk.h
+Date: Fri, 10 Jul 2015 16:33:33 -0700
+Message-Id: <1436571223-10959-36-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: dinguyen@opensource.altera.com
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
+This clock provider uses the consumer API, so include clk.h
+explicitly.
 
-Use of_clk_parent_fill to fill in the parent clock names' array.
-
-Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+Cc: Sören Brinkmann <soren.brinkmann@xilinx.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/keystone/pll.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/zynq/clkc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
-index 4a375ea..d6ef063 100644
---- a/drivers/clk/keystone/pll.c
-+++ b/drivers/clk/keystone/pll.c
-@@ -309,8 +309,7 @@ static void __init of_pll_mux_clk_init(struct device_node *node)
- 		return;
- 	}
+diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
+index de614384bb44..38a65c3e62fc 100644
+--- a/drivers/clk/zynq/clkc.c
++++ b/drivers/clk/zynq/clkc.c
+@@ -19,6 +19,7 @@
+  */
  
--	parents[0] = of_clk_get_parent_name(node, 0);
--	parents[1] = of_clk_get_parent_name(node, 1);
-+	of_clk_parent_fill(node, parents, 2);
- 	if (!parents[0] || !parents[1]) {
- 		pr_err("%s: missing parent clocks\n", __func__);
- 		return;
+ #include <linux/clk/zynq.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
 -- 
-1.7.9.5
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
