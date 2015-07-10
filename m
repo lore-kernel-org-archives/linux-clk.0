@@ -1,79 +1,37 @@
-Return-Path: <vaibhav.hiremath@linaro.org>
-Return-Path: <vaibhav.hiremath@linaro.org>
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: robh+dt@kernel.org,
-	mturquette@baylibre.com,
-	lee.jones@linaro.org,
-	k.kozlowski@samsung.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Subject: [PATCH 4/4] mfd: 88pm800: Add support for clk subdevice
-Date: Tue, 21 Jul 2015 16:37:03 +0530
-Message-Id: <1437476823-3358-5-git-send-email-vaibhav.hiremath@linaro.org>
-In-Reply-To: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
-References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 36/45] clk: Include clk.h in clk.c
+Date: Fri, 10 Jul 2015 16:33:34 -0700
+Message-Id: <1436571223-10959-37-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds mfd_cell/clk-subdevice for 88PM800 MFD
-(and family of devices).
+This file implements the clk API and so it should include clk.h
+directly instead of indirectly including it through
+clk-provider.h.
 
-Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/mfd/88pm800.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/clk/clk.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
-index f104a32..9723eac 100644
---- a/drivers/mfd/88pm800.c
-+++ b/drivers/mfd/88pm800.c
-@@ -173,6 +173,14 @@ static const struct mfd_cell regulator_devs[] = {
- 	},
- };
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index ddb4b541016f..89e531a3f384 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -9,6 +9,7 @@
+  * Standard functionality for the common clock API.  See Documentation/clk.txt
+  */
  
-+static struct mfd_cell clk_devs[] = {
-+	{
-+	 .name = "88pm80x-clk",
-+	 .of_compatible = "marvell,88pm800-clk",
-+	 .id = -1,
-+	},
-+};
-+
- static const struct regmap_irq pm800_irqs[] = {
- 	/* INT0 */
- 	[PM800_IRQ_ONKEY] = {
-@@ -344,6 +352,17 @@ static int device_regulator_init(struct pm80x_chip *chip)
- 			      ARRAY_SIZE(regulator_devs), NULL, 0, NULL);
- }
- 
-+static int device_clk_init(struct pm80x_chip *chip)
-+{
-+	if (chip->type == CHIP_PM800)
-+		clk_devs[0].name = "88pm800-clk";
-+	else if (chip->type == CHIP_PM860)
-+		clk_devs[0].name = "88pm860-clk";
-+
-+	return mfd_add_devices(chip->dev, 0, &clk_devs[0],
-+			      ARRAY_SIZE(clk_devs), NULL, 0, NULL);
-+}
-+
- static int device_irq_init_800(struct pm80x_chip *chip)
- {
- 	struct regmap *map = chip->regmap;
-@@ -513,6 +532,12 @@ static int device_800_init(struct pm80x_chip *chip)
- 		goto out;
- 	}
- 
-+	ret = device_clk_init(chip);
-+	if (ret) {
-+		dev_err(chip->dev, "Failed to add clk subdev\n");
-+		goto out;
-+	}
-+
- 	return 0;
- out_dev:
- 	mfd_remove_devices(chip->dev);
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clk/clk-conf.h>
+ #include <linux/module.h>
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
