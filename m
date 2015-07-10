@@ -1,72 +1,41 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <55AECB0F.3090701@codeaurora.org>
-Date: Tue, 21 Jul 2015 15:43:27 -0700
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Stephen Boyd <sboyd@codeaurora.org>
-MIME-Version: 1.0
-To: Doug Anderson <dianders@chromium.org>
-CC: Heiko Stuebner <heiko@sntech.de>,
- "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
- Yakir Yang <ykk@rock-chips.com>, Alexandru Stan <amstan@chromium.org>,
- mturquette@baylibre.com, linux-clk@vger.kernel.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: rockchip: Fix PLL bandwidth
-References: <1437511283-14216-1-git-send-email-dianders@chromium.org> <55AEB6AE.2070006@codeaurora.org> <CAD=FV=VpY4j=HOGCMdFJ8g1bWeUTKqk=GWoEB+EB3y52UMbrLg@mail.gmail.com>
-In-Reply-To: <CAD=FV=VpY4j=HOGCMdFJ8g1bWeUTKqk=GWoEB+EB3y52UMbrLg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 42/45] clk: samsung: s5pv210-audss: Include clk.h
+Date: Fri, 10 Jul 2015 16:33:40 -0700
+Message-Id: <1436571223-10959-43-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/21/2015 03:37 PM, Doug Anderson wrote:
-> Stephen,
->
-> On Tue, Jul 21, 2015 at 2:16 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> On 07/21/2015 01:41 PM, Douglas Anderson wrote:
->>> In the TRM we see that BWADJ is "a 12-bit bus that selects the values
->>> 1-4096 for the bandwidth divider (NB)":
->>>    NB = BWADJ[11:0] + 1
->>> The recommended setting of NB: NB = NF / 2.
->>>
->>> So:
->>>     NB = NF / 2
->>>     BWADJ[11:0] + 1 = NF / 2
->>>     BWADJ[11:0] = NF / 2 - 1
->>>
->>> Right now, we have:
->>>
->>> {                                               \
->>>           .rate   = _rate##U,                     \
->>>           .nr = _nr,                              \
->>>           .nf = _nf,                              \
->>>           .no = _no,                              \
->>>           .bwadj = (_nf >> 1),                    \
->>> }
->>>
->>> That means we set bwadj to NF / 2, not NF / 2 - 1
->>>
->>> All of this is a bit confusing because we specify "NR" (the 1-based
->>> value), "NF" (the 1-based value), "NO" (the 1-based value), but
->>> "BWADJ" (the 0-based value) instead of "NB" (the 1-based value).
->>>
->>> Let's change to working with "NB" and fix the off by one error.  This
->>> may affect PLL jitter in a small way (hopefully for the better).
->>>
->>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->>>
->> There's no Fixes tag or stable Cc so I take it this isn't fixing any
->> manifesting regression, more of a visual inspection bug find?
-> There is no known problem fixed.  I've been looking at HDMI and
-> controlling PLL jitter is an important part of supporting HDMI clock
-> rates.  That got me to looking at this parameter and deciding that we
-> should set it correctly.  Apparently it doesn't help in any hugely
-> significant way...  I just got done re-testing a whole lot of rates
-> and if it helped or hurt my jitter it's in the noise (AKA there's
-> enough variance run-to-run that it's hard to tell if this made any
-> difference).
->
->
+This clock provider uses the consumer API, so include clk.h
+explicitly.
 
-Ok. Applied to clk-next.
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/samsung/clk-s5pv210-audss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/samsung/clk-s5pv210-audss.c b/drivers/clk/samsung/clk-s5pv210-audss.c
+index de4455b75e8a..eefb84b22566 100644
+--- a/drivers/clk/samsung/clk-s5pv210-audss.c
++++ b/drivers/clk/samsung/clk-s5pv210-audss.c
+@@ -13,8 +13,8 @@
+  * Driver for Audio Subsystem Clock Controller of S5PV210-compatible SoCs.
+ */
+ 
+-#include <linux/clkdev.h>
+ #include <linux/io.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/of_address.h>
+ #include <linux/syscore_ops.h>
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
+
