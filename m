@@ -1,108 +1,44 @@
-Return-Path: <linux.amoon@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
-References: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Wed, 22 Jul 2015 17:09:20 +0530
-Message-ID: <CANAwSgSEUaSd9xM4deOO_=MabdknKCT148nXud7rWabzaXD9Bg@mail.gmail.com>
-Subject: Re: [PATCH] clk: s2mps11: Use kcalloc instead of kzalloc for array allocation
-To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-kernel@vger.kernel.org>,
-	"open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-samsung-soc@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: [PATCH 4/7] ARM: mvebu: Remove clk-provider.h include
+Date: Fri, 10 Jul 2015 15:45:44 -0700
+Message-Id: <1436568347-24554-5-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org>
+References: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Vaibhav,
+This file doesn't use the clk provider APIs. Remove the include.
 
-On 22 July 2015 at 15:04, Vaibhav Hiremath <vaibhav.hiremath@linaro.org> wrote:
-> This patch cleans up the driver for,
->
->   - Use devm_kcalloc varient instead of devm_kzalloc for array
->     allocation.
->   - clk_prepare/unprepare, remove "ret" variable as it is not required
->   - use __exit for cleanup function
->
-> As I am referring this driver as a reference for my 88pm800 clk driver,
-> applying same changes here as well.
->
-> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-> ---
-> Since I do not have platform to test, it would be helpful if someone
-> tests it for me.
-> I have build tested it.
->
->  drivers/clk/clk-s2mps11.c | 18 +++++++-----------
->  1 file changed, 7 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-> index 9b13a30..e17c66a 100644
-> --- a/drivers/clk/clk-s2mps11.c
-> +++ b/drivers/clk/clk-s2mps11.c
-> @@ -58,21 +58,17 @@ static struct s2mps11_clk *to_s2mps11_clk(struct clk_hw *hw)
->  static int s2mps11_clk_prepare(struct clk_hw *hw)
->  {
->         struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
-> -       int ret;
->
-> -       ret = regmap_update_bits(s2mps11->iodev->regmap_pmic,
-> +       return regmap_update_bits(s2mps11->iodev->regmap_pmic,
->                                  s2mps11->reg,
->                                  s2mps11->mask, s2mps11->mask);
-> -
-> -       return ret;
->  }
->
->  static void s2mps11_clk_unprepare(struct clk_hw *hw)
->  {
->         struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
-> -       int ret;
->
-> -       ret = regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
-> +       regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
->                            s2mps11->mask, ~s2mps11->mask);
->  }
->
-> @@ -186,15 +182,15 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
->         struct clk_init_data *clks_init;
->         int i, ret = 0;
->
-> -       s2mps11_clks = devm_kzalloc(&pdev->dev, sizeof(*s2mps11_clk) *
-> -                                       S2MPS11_CLKS_NUM, GFP_KERNEL);
-> +       s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
-> +                               sizeof(*s2mps11_clk), GFP_KERNEL);
->         if (!s2mps11_clks)
->                 return -ENOMEM;
->
->         s2mps11_clk = s2mps11_clks;
->
-> -       clk_table = devm_kzalloc(&pdev->dev, sizeof(struct clk *) *
-> -                                S2MPS11_CLKS_NUM, GFP_KERNEL);
-> +       clk_table = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
-> +                               sizeof(struct clk *), GFP_KERNEL);
->         if (!clk_table)
->                 return -ENOMEM;
->
-> @@ -322,7 +318,7 @@ static int __init s2mps11_clk_init(void)
->  }
->  subsys_initcall(s2mps11_clk_init);
->
-> -static void __init s2mps11_clk_cleanup(void)
-> +static void __exit s2mps11_clk_cleanup(void)
->  {
->         platform_driver_unregister(&s2mps11_clk_driver);
->  }
-> --
-> 1.9.1
->
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
 
-Tested on Odroid-XU3 board.
+Please ack if you want this to go through clk-tree.
 
-Tested-by: Anand Moon <linux.amoon@gmail.com>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ arch/arm/mach-mvebu/board-v7.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/mach-mvebu/board-v7.c b/arch/arm/mach-mvebu/board-v7.c
+index afee9083ad92..9f739f3cad4c 100644
+--- a/arch/arm/mach-mvebu/board-v7.c
++++ b/arch/arm/mach-mvebu/board-v7.c
+@@ -14,7 +14,6 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+-#include <linux/clk-provider.h>
+ #include <linux/of_address.h>
+ #include <linux/of_fdt.h>
+ #include <linux/of_platform.h>
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
