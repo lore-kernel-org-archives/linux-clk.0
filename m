@@ -1,54 +1,50 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Mon, 20 Jul 2015 09:29:23 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: [PATCH 1/7] ARM: at91: Remove clk-provider.h include
-Message-ID: <20150720072923.GD15539@piout.net>
-References: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org>
- <1436568347-24554-2-git-send-email-sboyd@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1436568347-24554-2-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH 3/7] spi: spi-pxa2xx: Remove clk.h include
+Date: Fri, 10 Jul 2015 16:03:25 -0700
+Message-Id: <1436569409-27964-4-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org>
+References: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/07/2015 at 15:45:41 -0700, Stephen Boyd wrote :
-> This file doesn't use the clk provider APIs. Remove the include.
-> 
-> Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Cc: Nicolas Ferre <nicolas.ferre@atmel.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Clock provider drivers generally shouldn't include clk.h because
+it's the consumer API. Remove the include here because this is a
+provider driver.
 
-> ---
-> 
-> Please ack if you want this to go through clk-tree.
-> 
->  arch/arm/mach-at91/at91rm9200.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-at91/at91rm9200.c b/arch/arm/mach-at91/at91rm9200.c
-> index eaf58f88ef5d..685826c4a710 100644
-> --- a/arch/arm/mach-at91/at91rm9200.c
-> +++ b/arch/arm/mach-at91/at91rm9200.c
-> @@ -8,7 +8,6 @@
->   * Licensed under GPLv2 or later.
->   */
->  
-> -#include <linux/clk-provider.h>
->  #include <linux/of.h>
->  #include <linux/of_platform.h>
->  
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+Cc: Daniel Mack <daniel@zonque.org>
+Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
 
+Please ack so this can go through the clk tree. Otherwise
+it's ok to go through spi tree.
+
+ drivers/spi/spi-pxa2xx-pci.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/spi/spi-pxa2xx-pci.c b/drivers/spi/spi-pxa2xx-pci.c
+index 3cfd4357489a..d19d7f28aecb 100644
+--- a/drivers/spi/spi-pxa2xx-pci.c
++++ b/drivers/spi/spi-pxa2xx-pci.c
+@@ -7,7 +7,6 @@
+ #include <linux/of_device.h>
+ #include <linux/module.h>
+ #include <linux/spi/pxa2xx_spi.h>
+-#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ 
+ #include <linux/dmaengine.h>
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
