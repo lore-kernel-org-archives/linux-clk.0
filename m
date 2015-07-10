@@ -1,55 +1,40 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:42396 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754034AbbGaRET (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jul 2015 13:04:19 -0400
+Return-Path: <sboyd@codeaurora.org>
 From: Stephen Boyd <sboyd@codeaurora.org>
 To: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Wentao Xu <wentaox@codeaurora.org>,
-	Rob Clark <robdclark@gmail.com>
-Subject: [PATCH 25/26] drm/msm/dsi: Convert to clk_hw based provider APIs
-Date: Fri, 31 Jul 2015 10:04:05 -0700
-Message-Id: <1438362246-6664-26-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Soren Brinkmann <soren.brinkmann@xilinx.com>
+Subject: [PATCH 39/45] clk: si570: Include clk.h
+Date: Fri, 10 Jul 2015 16:33:37 -0700
+Message-Id: <1436571223-10959-40-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-We're removing struct clk from the clk provider API, so switch
-this code to using the clk_hw based provider APIs.
+This clock provider uses the consumer API, so include clk.h
+explicitly.
 
-Cc: Wentao Xu <wentaox@codeaurora.org>
-Cc: Rob Clark <robdclark@gmail.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Soren Brinkmann <soren.brinkmann@xilinx.com>
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-si570.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
-index eb8ac3097ff5..18b7727bdc57 100644
---- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
-+++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
-@@ -455,7 +455,7 @@ static void dsi_pll_28nm_save_state(struct msm_dsi_pll *pll)
- 	cached_state->postdiv1 =
- 			pll_read(base + REG_DSI_28nm_PHY_PLL_POSTDIV1_CFG);
- 	cached_state->byte_mux = pll_read(base + REG_DSI_28nm_PHY_PLL_VREG_CFG);
--	cached_state->vco_rate = __clk_get_rate(pll->clk_hw.clk);
-+	cached_state->vco_rate = clk_hw_get_rate(&pll->clk_hw);
- }
+diff --git a/drivers/clk/clk-si570.c b/drivers/clk/clk-si570.c
+index 20a5aec98b1a..cf478aa9fa5d 100644
+--- a/drivers/clk/clk-si570.c
++++ b/drivers/clk/clk-si570.c
+@@ -19,6 +19,7 @@
+  * GNU General Public License for more details.
+  */
  
- static int dsi_pll_28nm_restore_state(struct msm_dsi_pll *pll)
-@@ -466,7 +466,7 @@ static int dsi_pll_28nm_restore_state(struct msm_dsi_pll *pll)
- 	int ret;
- 
- 	if ((cached_state->vco_rate != 0) &&
--		(cached_state->vco_rate == __clk_get_rate(pll->clk_hw.clk))) {
-+		(cached_state->vco_rate == clk_hw_get_rate(&pll->clk_hw))) {
- 		ret = dsi_pll_28nm_clk_set_rate(&pll->clk_hw,
- 						cached_state->vco_rate, 0);
- 		if (ret) {
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/module.h>
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
-
