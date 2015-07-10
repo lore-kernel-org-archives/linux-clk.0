@@ -1,84 +1,43 @@
-Return-Path: <Aisheng.Dong@freescale.com>
-From: Dong Aisheng <aisheng.dong@freescale.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawn.guo@linaro.org>, <b29396@freescale.com>,
-	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
-	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
-Subject: [PATCH 2/4] clk: imx: add clk api for supporting clk_OPS_PARENT_ON clocks
-Date: Tue, 28 Jul 2015 21:33:09 +0800
-Message-ID: <1438090391-30329-3-git-send-email-aisheng.dong@freescale.com>
-In-Reply-To: <1438090391-30329-1-git-send-email-aisheng.dong@freescale.com>
-References: <1438090391-30329-1-git-send-email-aisheng.dong@freescale.com>
-Return-Path: aisheng.dong@freescale.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 06/45] clk: nomadik: Remove clk.h and clkdev.h includes
+Date: Fri, 10 Jul 2015 16:33:04 -0700
+Message-Id: <1436571223-10959-7-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some IMX SoC like i.MX7D requires using clk_OPS_PARENT_ON flags,
-adding the corresponding clock APIs variants for easy use.
+Clock provider drivers generally shouldn't include clk.h because
+it's the consumer API. Remove the include here because this is a
+provider driver. This driver also includes clkdev.h even though
+it isn't used, so drop it too and add slab.h to make sure
+everything still compiles.
 
-Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/imx/clk.h | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/clk/clk-nomadik.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index cda8756..e579fc0 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -89,6 +89,14 @@ static inline struct clk *imx_clk_divider_flags(const char *name,
- 			reg, shift, width, 0, &imx_ccm_lock);
- }
+diff --git a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
+index c9487179f25f..e4d8a991c58f 100644
+--- a/drivers/clk/clk-nomadik.c
++++ b/drivers/clk/clk-nomadik.c
+@@ -8,8 +8,7 @@
+ #define pr_fmt(fmt) "Nomadik SRC clocks: " fmt
  
-+static inline struct clk *imx_clk_divider2(const char *name, const char *parent,
-+		void __iomem *reg, u8 shift, u8 width)
-+{
-+	return clk_register_divider(NULL, name, parent,
-+			CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ON,
-+			reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_gate(const char *name, const char *parent,
- 		void __iomem *reg, u8 shift)
- {
-@@ -118,6 +126,22 @@ static inline struct clk *imx_clk_gate2_shared(const char *name,
- 			shift, 0, &imx_ccm_lock, share_count);
- }
- 
-+static inline struct clk *imx_clk_gate3(const char *name, const char *parent,
-+		void __iomem *reg, u8 shift)
-+{
-+	return clk_register_gate(NULL, name, parent,
-+			CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ON,
-+			reg, shift, 0, &imx_ccm_lock);
-+}
-+
-+static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
-+		void __iomem *reg, u8 shift)
-+{
-+	return clk_register_gate2(NULL, name, parent,
-+			CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ON,
-+			reg, shift, 0, &imx_ccm_lock, NULL);
-+}
-+
- static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
- 		u8 shift, u8 width, const char **parents, int num_parents)
- {
-@@ -126,6 +150,14 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
- 			width, 0, &imx_ccm_lock);
- }
- 
-+static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
-+		u8 shift, u8 width, const char **parents, int num_parents)
-+{
-+	return clk_register_mux(NULL, name, parents, num_parents,
-+			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ON,
-+			reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_mux_flags(const char *name,
- 		void __iomem *reg, u8 shift, u8 width, const char **parents,
- 		int num_parents, unsigned long flags)
+ #include <linux/bitops.h>
+-#include <linux/clk.h>
+-#include <linux/clkdev.h>
++#include <linux/slab.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/clk-provider.h>
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
