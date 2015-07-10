@@ -1,69 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55AF37D9.3000006@linaro.org>
-Date: Wed, 22 Jul 2015 11:57:37 +0530
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
-	mturquette@baylibre.com, lee.jones@linaro.org,
-	k.kozlowski@samsung.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/4] clk: 88pm800: Add clk provider driver for 88pm800
- family of devices
-References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org> <1437476823-3358-4-git-send-email-vaibhav.hiremath@linaro.org> <55AE990E.2040004@codeaurora.org> <55AE9F48.20600@linaro.org> <55AEB103.9010205@codeaurora.org>
-In-Reply-To: <55AEB103.9010205@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: [PATCH 09/45] clk: si5351: Include clk.h
+Date: Fri, 10 Jul 2015 16:33:07 -0700
+Message-Id: <1436571223-10959-10-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+This clock provider uses the consumer API, so include clk.h
+explicitly.
 
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-si5351.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wednesday 22 July 2015 02:22 AM, Stephen Boyd wrote:
-> On 07/21/2015 12:36 PM, Vaibhav Hiremath wrote:
->>
->> On Wednesday 22 July 2015 12:40 AM, Stephen Boyd wrote:
->>> On 07/21/2015 04:07 AM, Vaibhav Hiremath wrote:
->>>> +
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index e39e1e680b3c..9e6de57eae3b 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -18,7 +18,7 @@
+ 
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+-#include <linux/clkdev.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/err.h>
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-<snip>
-
->>>> +static int pm800_clk_remove(struct platform_device *pdev)
->>>> +{
->>>> +    struct pm800_clk *pm800_clks = platform_get_drvdata(pdev);
->>>> +    int i;
->>>> +
->>>> +    of_clk_del_provider(pm800_clks[0].clk_np);
->>>> +    /* Drop the reference obtained in pm800_clk_parse_dt */
->>>> +    of_node_put(pm800_clks[0].clk_np);
->>>
->>> This is odd. Why are we keeping the reference in the driver?
->>>
->>
->> Honestly I do not have any good answer here. I have to admit that it is
->> getting carry forwarded from legacy driver.
->>
->
-> Well we shouldn't do things if we don't know why we're doing them.
-> Krzysztof?
->
-
-Hold on,
-After looking more in to this, it seems we really do not need it.
-It is already taken care by
-
-of_clk_add_provider() and
-of_clk_del_provider()
-
-Sorry for not investigating this before. Just left out from my eyes
-somehow.
-
-
-Actually I can cleanup clk-s2mps11.c driver as well, but only thing is
-I can validate it, as I do not have platform to test it.
-It should be trivial changes.
-
-If somebody can help me out in validation I can submit the patch for
-clk-s2mps11.c driver as well.
-
-Thanks,
-Vaibhav
