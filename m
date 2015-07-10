@@ -1,34 +1,45 @@
-Return-Path: <tony@atomide.com>
-Date: Tue, 14 Jul 2015 02:54:32 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Paul Walmsley <paul@pwsan.com>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	linux-clk@vger.kernel.org
-Subject: Re: [GIT PULL] clk: ti: clock driver code migration to drivers
-Message-ID: <20150714095431.GJ17550@atomide.com>
-References: <55A4CE41.9070909@ti.com>
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	=?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 2/7] staging: clocking-wizard: Include clk.h
+Date: Fri, 10 Jul 2015 16:03:24 -0700
+Message-Id: <1436569409-27964-3-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org>
+References: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <55A4CE41.9070909@ti.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [150714 01:56]:
-> 
-> This pull request contains the TI clock driver set to move the clock
-> implementations under clock driver. Some small portions of the clock driver
-> code still remain under mach-omap2 after this, it should be decided whether
-> this code is now obsolete and should be deleted or should someone try to fix
-> it.
+This clock provider uses the consumer API, so include clk.h
+explicitly.
 
-Hmm care to clarify what is obsolete or broken after this series?
+Cc: Sören Brinkmann <soren.brinkmann@xilinx.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
 
-And I take it's not obsolete or broken because of this series? :)
+Please ack so this can go through the clk-tree.
 
-Also, I just gave this branch a quick boot test and it seems to
-behave for me.
+ drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Regards,
-
-Tony
+diff --git a/drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c b/drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c
+index 5455bf3d5a91..b8e2f611fd47 100644
+--- a/drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c
++++ b/drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c
+@@ -19,6 +19,7 @@
+  */
+ 
+ #include <linux/platform_device.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
