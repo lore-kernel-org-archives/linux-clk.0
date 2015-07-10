@@ -1,114 +1,112 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH/RFC 06/11] ARM: shmobile: r8a7790: Link CPG to RST using
- "renesas, modemr"
-Date: Wed, 08 Jul 2015 13:54:45 +0300
-Message-ID: <2505402.iuhaUfZBWq@avalon>
-In-Reply-To: <CAMuHMdUpMFLqA+jRwq=tA1niRkm=L5cMyZ5mxSj18BQnc8CpJw@mail.gmail.com>
-References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
- <15446450.YUqyGq9qOl@avalon>
- <CAMuHMdUpMFLqA+jRwq=tA1niRkm=L5cMyZ5mxSj18BQnc8CpJw@mail.gmail.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Linux-sh list <linux-sh@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
- Ulrich Hecht <ulrich.hecht@gmail.com>, linux-clk@vger.kernel.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:33959 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753046AbbGJXds (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jul 2015 19:33:48 -0400
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Bintian Wang <bintian.wang@huawei.com>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>
+Subject: [PATCH 13/45] clk: hisilicon: Remove clk.h include
+Date: Fri, 10 Jul 2015 16:33:11 -0700
+Message-Id: <1436571223-10959-14-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+Clock provider drivers generally shouldn't include clk.h because
+it's the consumer API. Remove the include here because this is a
+provider driver. Also drop the clkdev.h include in files that
+aren't using it.
 
-On Wednesday 08 July 2015 10:29:56 Geert Uytterhoeven wrote:
-> On Tue, Jul 7, 2015 at 6:20 PM, Laurent Pinchart wrote:
-> >>>> --- a/arch/arm/boot/dts/r8a7790.dtsi
-> >>>> +++ b/arch/arm/boot/dts/r8a7790.dtsi
-> >>>> @@ -1115,6 +1115,7 @@
-> >>>>                                            "lb", "qspi", "sdh", "sd0",
-> >>>>                                            "sd1",
-> >>>>                                            "z", "rcan", "adsp";
-> >>>>                       #power-domain-cells = <0>;
-> >>>> +                     renesas,modemr = <&rst 0x60>;
-> >>> 
-> >>> I have mixed feelings about this as I don't think it really describes
-> >>> the hardware.
-> >> 
-> >> From the R-Car Gen2 manual:
-> >> 
-> >> 8. Reset (RST)
-> >> 8.1 Features
-> >> The following functions are implemented by RST.
-> >> [...]
-> >> Latching of the levels on mode pins when PRESET# is negated
-> >> Mode monitoring register
-> >> 
-> >> 7. Clock Pulse Generator (CPG)
-> >> 7.2 Input/Output Pins
-> >> Table 7.1 lists the CPG pin configuration.
-> >> Table 7.1 Pin Configuration and Functions of CPG
-> >> Pin Name Function I/O Description
-> >> [...]
-> >> MD0 Mode 0 ...
-> >> 
-> >> Hence there definitely is a link between the (latched) values in the RST
-> >> module and CPG configuration. This link is expressed using the
-> >> "renesas,modemr" property, where the phandle provides the link to the RST
-> >> block, and the register offset provides a way for software to read the
-> >> configuration.
-> > 
-> > The mode bits of course influence the CPG (otherwise we wouldn't be having
-> > this discussion :-)), but to me it looks more like a configuration
-> > broadcast through the whole SoC than a real link between two IP cores.
-> > It's obviously subject to interpretation.
-> 
-> Yep.
-> 
-> Broadcast? Like a bus clock? For that we also have properties with
-> phandles...
+Cc: Bintian Wang <bintian.wang@huawei.com>
+Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
+Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/hisilicon/clk-hi3620.c        | 2 --
+ drivers/clk/hisilicon/clk-hip04.c         | 2 --
+ drivers/clk/hisilicon/clk.c               | 3 +--
+ drivers/clk/hisilicon/clkgate-separated.c | 2 --
+ 4 files changed, 1 insertion(+), 8 deletions(-)
 
-I knew someone would raise that topic ;-)
-
-> Syscon is the Hot New Abstraction for a module that provides a bunch of
-> registers needed by drivers for other modules. Those other modules need
-> some way to refer to the appropriate syscon register.
-> 
-> The RST module definitely falls in that category: CPG needs the MODEMR
-> register, watchdog (RWDT/SWDT) needs the Watchdog Timer Reset Control
-> Register, and APMU probably needs the CA15/7 reset control registers.
-
-syscon is a quick hack to be used when no clean solution exists. Sometimes 
-implementing a proper API is just overkill, especially when the "system 
-controller" aggregates registers that really belong to individual IP cores.
-
-Proper abstract kernel APIs should of course be used wherever possible. Some 
-system controllers are already supported in such a way, using the MFD 
-subsystem and exposing proper APIs for part of their features, and letting 
-drivers access registers directly for other features.
-
-In the boot mode case I believe adding a new API would be both useful and 
-quite simple, so I'd like to explore that option.
-
-By the way, regarding the CA15/7 reset control registers, shouldn't they be 
-exposed through the reset controller API ?
-
+diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
+index 715d34a5ef9b..5502803a391e 100644
+--- a/drivers/clk/hisilicon/clk-hi3620.c
++++ b/drivers/clk/hisilicon/clk-hi3620.c
+@@ -25,13 +25,11 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/slab.h>
+-#include <linux/clk.h>
+ 
+ #include <dt-bindings/clock/hi3620-clock.h>
+ 
+diff --git a/drivers/clk/hisilicon/clk-hip04.c b/drivers/clk/hisilicon/clk-hip04.c
+index 132b57a0ce09..8ca967308343 100644
+--- a/drivers/clk/hisilicon/clk-hip04.c
++++ b/drivers/clk/hisilicon/clk-hip04.c
+@@ -24,13 +24,11 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/slab.h>
+-#include <linux/clk.h>
+ 
+ #include <dt-bindings/clock/hip04-clock.h>
+ 
+diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+index c90a89739b03..155e2e6c8316 100644
+--- a/drivers/clk/hisilicon/clk.c
++++ b/drivers/clk/hisilicon/clk.c
+@@ -24,15 +24,14 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
++#include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/slab.h>
+-#include <linux/clk.h>
+ 
+ #include "clk.h"
+ 
+diff --git a/drivers/clk/hisilicon/clkgate-separated.c b/drivers/clk/hisilicon/clkgate-separated.c
+index b03d5a7246f9..a47812f56a17 100644
+--- a/drivers/clk/hisilicon/clkgate-separated.c
++++ b/drivers/clk/hisilicon/clkgate-separated.c
+@@ -25,10 +25,8 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
+ #include <linux/io.h>
+ #include <linux/slab.h>
+-#include <linux/clk.h>
+ 
+ #include "clk.h"
+ 
 -- 
-Regards,
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-Laurent Pinchart
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
