@@ -1,58 +1,119 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:52213 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751985AbbGWITE (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jul 2015 04:19:04 -0400
-Message-id: <55B0A376.2080906@samsung.com>
-Date: Thu, 23 Jul 2015 17:19:02 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-MIME-version: 1.0
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	"myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH] PM / devfreq: event: Remove incorrect property in
- exynos-ppmu DT binding
-References: <1436770732-9430-1-git-send-email-javier@osg.samsung.com>
-In-reply-to: <1436770732-9430-1-git-send-email-javier@osg.samsung.com>
-Content-type: text/plain; charset=ISO-8859-1
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 33/45] clk: sunxi: Include clk.h
+Date: Fri, 10 Jul 2015 16:33:31 -0700
+Message-Id: <1436571223-10959-34-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Javier,
+This clock provider uses the consumer API, so include clk.h
+explicitly.
 
-On 07/13/2015 03:58 PM, Javier Martinez Canillas wrote:
-> The exynos-ppmu driver is only a clock consumer and not a clock provider
-> but its Device Tree binding listed #clock-cells as an optional property.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> ---
-> 
->  Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
-> index b54bf3a2ff57..aed486692880 100644
-> --- a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
-> +++ b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
-> @@ -17,7 +17,6 @@ Required properties:
->  Optional properties:
->  - clock-names : the name of clock used by the PPMU, "ppmu"
->  - clocks : phandles for clock specified in "clock-names" property
-> -- #clock-cells: should be 1.
->  
->  Example1 : PPMU nodes in exynos3250.dtsi are listed below.
->  
-> 
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/sunxi/clk-mod0.c       | 3 ++-
+ drivers/clk/sunxi/clk-sun8i-mbus.c | 2 +-
+ drivers/clk/sunxi/clk-sun9i-core.c | 2 +-
+ drivers/clk/sunxi/clk-sun9i-mmc.c  | 3 ++-
+ drivers/clk/sunxi/clk-sunxi.c      | 2 ++
+ drivers/clk/sunxi/clk-usb.c        | 3 ++-
+ 6 files changed, 10 insertions(+), 5 deletions(-)
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-+ Devfreq maintainer (Myungjoo Ham)
-I think that this patch will be more appropriate on devfreq git tree
-than linux-samsung git tree.
-
-Thanks,
-Chanwoo Choi
+diff --git a/drivers/clk/sunxi/clk-mod0.c b/drivers/clk/sunxi/clk-mod0.c
+index 9d028aec58e5..39ba5c3d5d3a 100644
+--- a/drivers/clk/sunxi/clk-mod0.c
++++ b/drivers/clk/sunxi/clk-mod0.c
+@@ -14,8 +14,9 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
++#include <linux/slab.h>
+ #include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ 
+diff --git a/drivers/clk/sunxi/clk-sun8i-mbus.c b/drivers/clk/sunxi/clk-sun8i-mbus.c
+index 14cd026064bf..bf117a636d23 100644
+--- a/drivers/clk/sunxi/clk-sun8i-mbus.c
++++ b/drivers/clk/sunxi/clk-sun8i-mbus.c
+@@ -14,8 +14,8 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
+ #include <linux/of_address.h>
+ 
+ #include "clk-factors.h"
+diff --git a/drivers/clk/sunxi/clk-sun9i-core.c b/drivers/clk/sunxi/clk-sun9i-core.c
+index 887f4ea161bb..6c4c98324d3c 100644
+--- a/drivers/clk/sunxi/clk-sun9i-core.c
++++ b/drivers/clk/sunxi/clk-sun9i-core.c
+@@ -14,8 +14,8 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/log2.h>
+diff --git a/drivers/clk/sunxi/clk-sun9i-mmc.c b/drivers/clk/sunxi/clk-sun9i-mmc.c
+index 710c273648d7..abc9a216b36c 100644
+--- a/drivers/clk/sunxi/clk-sun9i-mmc.c
++++ b/drivers/clk/sunxi/clk-sun9i-mmc.c
+@@ -14,8 +14,9 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
++#include <linux/slab.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 9a82f17d2d73..3be234138d1d 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -14,6 +14,8 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/slab.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
+ #include <linux/of.h>
+diff --git a/drivers/clk/sunxi/clk-usb.c b/drivers/clk/sunxi/clk-usb.c
+index 3a25f9588e67..ecaf9dadcf6b 100644
+--- a/drivers/clk/sunxi/clk-usb.c
++++ b/drivers/clk/sunxi/clk-usb.c
+@@ -14,8 +14,9 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
++#include <linux/slab.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/reset-controller.h>
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
