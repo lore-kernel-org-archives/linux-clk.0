@@ -1,42 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Eric Anholt <eric@anholt.net>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v4 4/8] ARM: bcm2835: Drop never-used clock-frequency property of uart0.
-Date: Mon, 20 Jul 2015 12:33:03 -0700
-Message-Id: <1437420787-32137-5-git-send-email-eric@anholt.net>
-In-Reply-To: <1437420787-32137-1-git-send-email-eric@anholt.net>
-References: <1437420787-32137-1-git-send-email-eric@anholt.net>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Boris BREZILLON <boris.brezillon@free-electrons.com>
+Subject: [PATCH 44/45] clk: at91: Include clk.h and slab.h
+Date: Fri, 10 Jul 2015 16:33:42 -0700
+Message-Id: <1436571223-10959-45-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This appears to have been copy-and-paste from another serial driver's
-DT.  The driver has never used this value -- instead, the pl011 driver
-is getting the fixed 20201000.uart clock from clk-bcm2835.c.
+This clock provider uses the consumer API, so include clk.h
+explicitly. Also include slab.h instead of relying on clkdev.h
+for it.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- arch/arm/boot/dts/bcm2835.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/clk/at91/clk-slow.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
-index 301c73f..32f5830 100644
---- a/arch/arm/boot/dts/bcm2835.dtsi
-+++ b/arch/arm/boot/dts/bcm2835.dtsi
-@@ -96,7 +96,6 @@
- 			compatible = "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
- 			reg = <0x7e201000 0x1000>;
- 			interrupts = <2 25>;
--			clock-frequency = <3000000>;
- 			arm,primecell-periphid = <0x00241011>;
- 		};
+diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
+index 98a84a865fe1..0a7aef39ab5b 100644
+--- a/drivers/clk/at91/clk-slow.c
++++ b/drivers/clk/at91/clk-slow.c
+@@ -10,8 +10,10 @@
+  *
+  */
  
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
++#include <linux/slab.h>
+ #include <linux/clk/at91_pmc.h>
+ #include <linux/delay.h>
+ #include <linux/of.h>
 -- 
-2.1.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
