@@ -1,140 +1,40 @@
-Return-Path: <Aisheng.Dong@freescale.com>
-From: Dong Aisheng <aisheng.dong@freescale.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@linaro.org>, <shawnguo@kernel.org>, <b29396@freescale.com>,
-	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
-	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
-Subject: [PATCH V3 5/5] clk: core: add CLK_OPS_PARENT_ON flags to support clocks require parent on
-Date: Tue, 28 Jul 2015 21:19:45 +0800
-Message-ID: <1438089585-30103-6-git-send-email-aisheng.dong@freescale.com>
-In-Reply-To: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
-References: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
-Return-Path: aisheng.dong@freescale.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Chris Zhong <zyw@rock-chips.com>
+Subject: [PATCH 08/45] clk: rk808: Remove clk.h include
+Date: Fri, 10 Jul 2015 16:33:06 -0700
+Message-Id: <1436571223-10959-9-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Freescale i.MX7D platform, all clocks operations, including
-enable/disable, rate change and re-parent, requires its parent clock on.
-Current clock core can not support it well.
-This patch adding flag CLK_OPS_PARENT_ON to handle this special case in
-clock core that enable its parent clock firstly for each operation and
-disable it later after operation complete.
+Clock provider drivers generally shouldn't include clk.h because
+it's the consumer API. Remove the include here because this is a
+provider driver.
 
-This patch fixes changing clock rate and switch parent while its parent
-is off. The most special case is for set_parent() operation which requires
-both parent, including old one and new one, to be enabled at the same time
-during the operation.
-
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
+Cc: Chris Zhong <zyw@rock-chips.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/clk.c | 46 +++++++++++++++++++++++++++++-----------------
- 1 file changed, 29 insertions(+), 17 deletions(-)
+ drivers/clk/clk-rk808.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index cf31dc4..93eb9e3 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1159,7 +1159,7 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
- 	struct clk_core *old_parent = core->parent;
+diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
+index 83902b9cd49e..0fee2f4ca258 100644
+--- a/drivers/clk/clk-rk808.c
++++ b/drivers/clk/clk-rk808.c
+@@ -15,7 +15,6 @@
+  * more details.
+  */
  
- 	/*
--	 * Migrate prepare state between parents and prevent race with
-+	 * 1. Migrate prepare state between parents and prevent race with
- 	 * clk_enable().
- 	 *
- 	 * If the clock is not prepared, then a race with
-@@ -1174,13 +1174,17 @@ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
- 	 * hardware and software states.
- 	 *
- 	 * See also: Comment for clk_set_parent() below.
-+	 *
-+	 * 2. enable two parents clock for .set_parent() operation if finding
-+	 * flag CLK_OPS_PARENT_ON
- 	 */
--	if (core->prepare_count) {
--		clk_core_prepare(parent);
--		flags = clk_enable_lock();
--		clk_core_enable(parent);
--		clk_core_enable(core);
--		clk_enable_unlock(flags);
-+	if (core->prepare_count || core->flags & CLK_OPS_PARENT_ON) {
-+		clk_core_prepare_enable(parent);
-+		if (core->prepare_count)
-+			clk_core_enable_lock(core);
-+		else
-+			clk_core_prepare_enable(old_parent);
-+
- 	}
- 
- 	/* update the clk tree topology */
-@@ -1195,18 +1199,16 @@ static void __clk_set_parent_after(struct clk_core *core,
- 				   struct clk_core *parent,
- 				   struct clk_core *old_parent)
- {
--	unsigned long flags;
--
- 	/*
- 	 * Finish the migration of prepare state and undo the changes done
- 	 * for preventing a race with clk_enable().
- 	 */
--	if (core->prepare_count) {
--		flags = clk_enable_lock();
--		clk_core_disable(core);
--		clk_core_disable(old_parent);
--		clk_enable_unlock(flags);
--		clk_core_unprepare(old_parent);
-+	if (core->prepare_count || core->flags & CLK_OPS_PARENT_ON) {
-+		clk_core_disable_unprepare(old_parent);
-+		if (core->prepare_count)
-+			clk_core_disable_lock(core);
-+		else
-+			clk_core_disable_unprepare(parent);
- 	}
- }
- 
-@@ -1453,13 +1455,17 @@ static void clk_change_rate(struct clk_core *core)
- 	unsigned long best_parent_rate = 0;
- 	bool skip_set_rate = false;
- 	struct clk_core *old_parent;
-+	struct clk_core *parent = NULL;
- 
- 	old_rate = core->rate;
- 
--	if (core->new_parent)
-+	if (core->new_parent) {
-+		parent = core->new_parent;
- 		best_parent_rate = core->new_parent->rate;
--	else if (core->parent)
-+	} else if (core->parent) {
-+		parent = core->parent;
- 		best_parent_rate = core->parent->rate;
-+	}
- 
- 	if (core->new_parent && core->new_parent != core->parent) {
- 		old_parent = __clk_set_parent_before(core, core->new_parent);
-@@ -1480,6 +1486,9 @@ static void clk_change_rate(struct clk_core *core)
- 
- 	trace_clk_set_rate(core, core->new_rate);
- 
-+	if (core->flags & CLK_OPS_PARENT_ON)
-+		clk_core_prepare_enable(parent);
-+
- 	if (!skip_set_rate && core->ops->set_rate)
- 		core->ops->set_rate(core->hw, core->new_rate, best_parent_rate);
- 
-@@ -1487,6 +1496,9 @@ static void clk_change_rate(struct clk_core *core)
- 
- 	core->rate = clk_recalc(core, best_parent_rate);
- 
-+	if (core->flags & CLK_OPS_PARENT_ON)
-+		clk_core_disable_unprepare(parent);
-+
- 	if (core->notifier_count && old_rate != core->rate)
- 		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
- 
+-#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
