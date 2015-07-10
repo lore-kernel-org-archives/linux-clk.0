@@ -1,60 +1,133 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:33979 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753288AbbGJXdu (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jul 2015 19:33:50 -0400
 From: Stephen Boyd <sboyd@codeaurora.org>
 To: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
 Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Yoshinori Sato <ysato@users.sourceforge.jp>
-Subject: [PATCH 2/2] clk: h8300: Use standard Linux I/O accessors
-Date: Mon, 13 Jul 2015 17:11:50 -0700
-Message-Id: <1436832710-23989-2-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436832710-23989-1-git-send-email-sboyd@codeaurora.org>
-References: <1436832710-23989-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH 19/45] clk: mxs: Include clk.h in C files that use it
+Date: Fri, 10 Jul 2015 16:33:17 -0700
+Message-Id: <1436571223-10959-20-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-There doesn't seem to be any reason why we can't use the standard
-readb()/writeb() accessors here because ctrl_inb() and
-ctrl_outb() match the generic implementation of readb() and
-writeb() that the h8300 architecture uses. This allows us to test
-compile this driver on other architectures besides h8300.
+Clock provider drivers generally shouldn't include clk.h because
+it's the consumer API. The clk.h include is being included in all
+mxs files because it's part of mxs/clk.h even though nothing
+actually requires it in that file. Move the clk.h include to the
+C files that are actually using it and remove the clk.h include
+from the header file. The clkdev.h include isn't used either, so
+drop it too.
 
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Shawn Guo <shawn.guo@linaro.org>
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/h8300/clk-h8s2678.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/clk/mxs/clk-div.c   | 1 -
+ drivers/clk/mxs/clk-frac.c  | 1 -
+ drivers/clk/mxs/clk-imx23.c | 3 +--
+ drivers/clk/mxs/clk-imx28.c | 2 +-
+ drivers/clk/mxs/clk-pll.c   | 1 -
+ drivers/clk/mxs/clk-ref.c   | 1 -
+ drivers/clk/mxs/clk.h       | 3 ++-
+ 7 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/h8300/clk-h8s2678.c b/drivers/clk/h8300/clk-h8s2678.c
-index c121eb55e2e1..11808cb4f141 100644
---- a/drivers/clk/h8300/clk-h8s2678.c
-+++ b/drivers/clk/h8300/clk-h8s2678.c
-@@ -28,7 +28,7 @@ static unsigned long pll_recalc_rate(struct clk_hw *hw,
- 		unsigned long parent_rate)
- {
- 	struct pll_clock *pll_clock = to_pll_clock(hw);
--	int mul = 1 << (ctrl_inb((unsigned long)pll_clock->pllcr) & 3);
-+	int mul = 1 << (readb(pll_clock->pllcr) & 3);
+diff --git a/drivers/clk/mxs/clk-div.c b/drivers/clk/mxs/clk-div.c
+index 90e1da93877e..049ee27d5a22 100644
+--- a/drivers/clk/mxs/clk-div.c
++++ b/drivers/clk/mxs/clk-div.c
+@@ -9,7 +9,6 @@
+  * http://www.gnu.org/copyleft/gpl.html
+  */
  
- 	return parent_rate * mul;
- }
-@@ -65,13 +65,13 @@ static int pll_set_rate(struct clk_hw *hw, unsigned long rate,
+-#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
+diff --git a/drivers/clk/mxs/clk-frac.c b/drivers/clk/mxs/clk-frac.c
+index e6aa6b567d68..73f0240569ac 100644
+--- a/drivers/clk/mxs/clk-frac.c
++++ b/drivers/clk/mxs/clk-frac.c
+@@ -9,7 +9,6 @@
+  * http://www.gnu.org/copyleft/gpl.html
+  */
  
- 	pll = ((rate / parent_rate) / 2) & 0x03;
- 	spin_lock_irqsave(&clklock, flags);
--	val = ctrl_inb((unsigned long)pll_clock->sckcr);
-+	val = readb(pll_clock->sckcr);
- 	val |= 0x08;
--	ctrl_outb(val, (unsigned long)pll_clock->sckcr);
--	val = ctrl_inb((unsigned long)pll_clock->pllcr);
-+	writeb(val, pll_clock->sckcr);
-+	val = readb(pll_clock->pllcr);
- 	val &= ~0x03;
- 	val |= pll;
--	ctrl_outb(val, (unsigned long)pll_clock->pllcr);
-+	writeb(val, pll_clock->pllcr);
- 	spin_unlock_irqrestore(&clklock, flags);
- 	return 0;
- }
+-#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+diff --git a/drivers/clk/mxs/clk-imx23.c b/drivers/clk/mxs/clk-imx23.c
+index 32216f9b7f03..f01876af6bb8 100644
+--- a/drivers/clk/mxs/clk-imx23.c
++++ b/drivers/clk/mxs/clk-imx23.c
+@@ -9,9 +9,8 @@
+  * http://www.gnu.org/copyleft/gpl.html
+  */
+ 
+-#include <linux/clk.h>
+ #include <linux/clk/mxs.h>
+-#include <linux/clkdev.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+diff --git a/drivers/clk/mxs/clk-imx28.c b/drivers/clk/mxs/clk-imx28.c
+index a68670868baa..6b572b759f9a 100644
+--- a/drivers/clk/mxs/clk-imx28.c
++++ b/drivers/clk/mxs/clk-imx28.c
+@@ -9,9 +9,9 @@
+  * http://www.gnu.org/copyleft/gpl.html
+  */
+ 
+-#include <linux/clk.h>
+ #include <linux/clk/mxs.h>
+ #include <linux/clkdev.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+diff --git a/drivers/clk/mxs/clk-pll.c b/drivers/clk/mxs/clk-pll.c
+index fadae41833ec..d4ca79a868e0 100644
+--- a/drivers/clk/mxs/clk-pll.c
++++ b/drivers/clk/mxs/clk-pll.c
+@@ -9,7 +9,6 @@
+  * http://www.gnu.org/copyleft/gpl.html
+  */
+ 
+-#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/err.h>
+diff --git a/drivers/clk/mxs/clk-ref.c b/drivers/clk/mxs/clk-ref.c
+index 4adeed6c2f94..495f99b7965e 100644
+--- a/drivers/clk/mxs/clk-ref.c
++++ b/drivers/clk/mxs/clk-ref.c
+@@ -9,7 +9,6 @@
+  * http://www.gnu.org/copyleft/gpl.html
+  */
+ 
+-#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+diff --git a/drivers/clk/mxs/clk.h b/drivers/clk/mxs/clk.h
+index f07d821dd75d..a4590956d2a2 100644
+--- a/drivers/clk/mxs/clk.h
++++ b/drivers/clk/mxs/clk.h
+@@ -12,7 +12,8 @@
+ #ifndef __MXS_CLK_H
+ #define __MXS_CLK_H
+ 
+-#include <linux/clk.h>
++struct clk;
++
+ #include <linux/clk-provider.h>
+ #include <linux/spinlock.h>
+ 
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
