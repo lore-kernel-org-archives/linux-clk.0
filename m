@@ -1,66 +1,136 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 2 Jul 2015 09:59:52 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@arm.linux.org.uk>,
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Message-id: <559F8865.1040608@samsung.com>
+Date: Fri, 10 Jul 2015 17:55:01 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@stlinux.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 5/9] drivers: clk: st: Fix flexgen lock init
-Message-ID: <20150702165952.GC4301@codeaurora.org>
-References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
- <1435068567-30995-6-git-send-email-gabriel.fernandez@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1435068567-30995-6-git-send-email-gabriel.fernandez@linaro.org>
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] ARM: Exynos: switch to using generic cpufreq driver
+ for Exynos4x12
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+ <1436456621-29839-7-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1436456621-29839-7-git-send-email-b.zolnierkie@samsung.com>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/23, Gabriel Fernandez wrote:
-> From: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+On 10.07.2015 00:43, Bartlomiej Zolnierkiewicz wrote:
+> The new CPU clock type allows the use of generic CPUfreq driver.
+> Switch Exynos4x12 to using generic cpufreq driver.
 > 
-> While proving lock, the following warning happens
-> and it is fixed after initializing lock in the setup
-> function
+> This patch also takes care of making ARM_EXYNOS_CPU_FREQ_BOOST_SW
+> config option depend on cpufreq-dt driver instead of exynos-cpufreq
+> one and fixes the minor issue present with the old code (support
+> for 'boost' mode in the exynos-cpufreq driver was enabled for all
+> supported SoCs even though 'boost' frequency was provided only for
+> Exynos4x12 ones).
 > 
-> INFO: trying to register non-static key.
-> the code is fine but needs lockdep annotation.
-> turning off the locking correctness validator.
-> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 3.10.27-02861-g39df285-dirty #33
-> [<c00154ac>] (unwind_backtrace+0x0/0xf4) from [<c0011b50>] (show_stack+0x10/0x14)
-> [<c0011b50>] (show_stack+0x10/0x14) from [<c00689ac>] (__lock_acquire+0x900/0xb14)
-> [<c00689ac>] (__lock_acquire+0x900/0xb14) from [<c0069394>] (lock_acquire+0x68/0x7c)
-> [<c0069394>] (lock_acquire+0x68/0x7c) from [<c04958f8>] (_raw_spin_lock_irqsave+0x48/0x5c)
-> [<c04958f8>] (_raw_spin_lock_irqsave+0x48/0x5c) from [<c0381e6c>] (clk_gate_endisable+0x28/0x88)
-> [<c0381e6c>] (clk_gate_endisable+0x28/0x88) from [<c0381ee0>] (clk_gate_enable+0xc/0x14)
-> [<c0381ee0>] (clk_gate_enable+0xc/0x14) from [<c0386c68>] (flexgen_enable+0x28/0x40)
-> [<c0386c68>] (flexgen_enable+0x28/0x40) from [<c037f260>] (__clk_enable+0x5c/0x9c)
-> [<c037f260>] (__clk_enable+0x5c/0x9c) from [<c037f558>] (clk_enable+0x18/0x2c)
-> [<c037f558>] (clk_enable+0x18/0x2c) from [<c064a1dc>] (st_lpc_of_register+0xc0/0x248)
-> [<c064a1dc>] (st_lpc_of_register+0xc0/0x248) from [<c0649e44>] (clocksource_of_init+0x34/0x58)
-> [<c0649e44>] (clocksource_of_init+0x34/0x58) from [<c0637ddc>] (sti_timer_init+0x10/0x18)
-> [<c0637ddc>] (sti_timer_init+0x10/0x18) from [<c06343f8>] (time_init+0x20/0x30)
-> [<c06343f8>] (time_init+0x20/0x30) from [<c0632984>] (start_kernel+0x20c/0x2e8)
-> [<c0632984>] (start_kernel+0x20c/0x2e8) from [<40008074>] (0x40008074)
-> 
-> Signed-off-by: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > ---
+>  arch/arm/mach-exynos/exynos.c    | 14 ++++++++++++++
+>  drivers/cpufreq/Kconfig.arm      |  2 +-
+>  drivers/cpufreq/exynos-cpufreq.c |  3 ---
+>  3 files changed, 15 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 4015ec3..0c74e90 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_domain.h>
+>  #include <linux/irqchip.h>
+> +#include <linux/cpufreq-dt.h>
+>  
+>  #include <asm/cacheflush.h>
+>  #include <asm/hardware/cache-l2x0.h>
+> @@ -224,6 +225,12 @@ static void __init exynos_init_irq(void)
+>  	exynos_map_pmu();
+>  }
+>  
+> +struct cpufreq_dt_platform_data cpufreq_dt_pd = {
 
-Applied to clk-fixes
+Shouldn't this be static?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> +#ifdef CONFIG_ARM_EXYNOS_CPU_FREQ_BOOST_SW
+> +	.boost_supported = true,
+> +#endif
+> +};
+> +
+>  static const struct of_device_id exynos_cpufreq_matches[] = {
+>  	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
+>  	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
+> @@ -235,6 +242,13 @@ static void __init exynos_cpufreq_init(void)
+>  	struct device_node *root = of_find_node_by_path("/");
+>  	const struct of_device_id *match;
+>  
+> +	if (of_machine_is_compatible("samsung,exynos4212") ||
+> +	    of_machine_is_compatible("samsung,exynos4412")) {
+> +		platform_device_register_data(NULL, "cpufreq-dt", -1,
+> +					&cpufreq_dt_pd, sizeof(cpufreq_dt_pd));
+> +		return;
+> +	}
+> +
+>  	match = of_match_node(exynos_cpufreq_matches, root);
+>  	if (!match) {
+>  		platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
+
+Now we have two places with compatibles for matching cpufreq-dt driver.
+It is confusing especially when grepping for compatibles.
+
+Instead why not use 'data' from exynos_cpufreq_matches? Currently it
+stores the "cpufreq-dt" string which looks useless.
+
+Best regards,
+Krzysztof
+
+
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 9ab6388c1..5f5a15a 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -49,7 +49,7 @@ config ARM_EXYNOS4X12_CPUFREQ
+>  
+>  config ARM_EXYNOS_CPU_FREQ_BOOST_SW
+>  	bool "EXYNOS Frequency Overclocking - Software"
+> -	depends on ARM_EXYNOS_CPUFREQ && THERMAL
+> +	depends on CPUFREQ_DT && THERMAL
+>  	select CPU_FREQ_BOOST_SW
+>  	select EXYNOS_THERMAL
+>  	help
+> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+> index 71d8891..89d252e 100644
+> --- a/drivers/cpufreq/exynos-cpufreq.c
+> +++ b/drivers/cpufreq/exynos-cpufreq.c
+> @@ -150,9 +150,6 @@ static struct cpufreq_driver exynos_driver = {
+>  	.init		= exynos_cpufreq_cpu_init,
+>  	.name		= "exynos_cpufreq",
+>  	.attr		= cpufreq_generic_attr,
+> -#ifdef CONFIG_ARM_EXYNOS_CPU_FREQ_BOOST_SW
+> -	.boost_supported = true,
+> -#endif
+>  #ifdef CONFIG_PM
+>  	.suspend	= cpufreq_generic_suspend,
+>  #endif
+> 
+
