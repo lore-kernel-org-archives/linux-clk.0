@@ -1,45 +1,39 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1436569409-27964-7-git-send-email-sboyd@codeaurora.org>
-References: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org>
-	<1436569409-27964-7-git-send-email-sboyd@codeaurora.org>
-Date: Sun, 12 Jul 2015 12:40:18 +0200
-Message-ID: <CAMuHMdXsgQQJG99yimSeejsh0wJacMCqHwa9T2gtHuqduKXcwg@mail.gmail.com>
-Subject: Re: [PATCH 6/7] simplefb: Include clk.h
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, Luc Verhaegen <libv@skynet.be>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	David Herrmann <dh.herrmann@gmail.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH 01/45] clk: axi-clkgen: Remove clk.h include
+Date: Fri, 10 Jul 2015 16:32:59 -0700
+Message-Id: <1436571223-10959-2-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jul 11, 2015 at 1:03 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> This driver uses the consumer API, so include clk.h explicitly
-> instead of impliclty through the provider API.
->
-> Cc: Luc Verhaegen <libv@skynet.be>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: David Herrmann <dh.herrmann@gmail.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Clock provider drivers generally shouldn't include clk.h because
+it's the consumer API. Remove the include here because this is a
+provider driver.
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-axi-clkgen.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
+index e619285c6def..3bcd42fbb55e 100644
+--- a/drivers/clk/clk-axi-clkgen.c
++++ b/drivers/clk/clk-axi-clkgen.c
+@@ -10,7 +10,6 @@
+ 
+ #include <linux/platform_device.h>
+ #include <linux/clk-provider.h>
+-#include <linux/clk.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
