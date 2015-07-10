@@ -1,144 +1,146 @@
-Return-Path: <cw00.choi@samsung.com>
-Message-id: <55AC3F78.3050108@samsung.com>
-Date: Mon, 20 Jul 2015 09:23:20 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-MIME-version: 1.0
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, tomasz.figa@gmail.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
- thomas.ab@samsung.com, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
- <b.zolnierkie@samsung.com>, kyungmin.park@samsung.com,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 1/3] clk: samsung: exynos3250: Add cpu clock
- configuration data and instaniate cpu clock
-References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
- <1435797761-3339-2-git-send-email-cw00.choi@samsung.com>
- <CAJKOXPczs6OL-JH0hfQg7QtONzJKVRq=e_3JQ8bs7S+OiMOr-w@mail.gmail.com>
-In-reply-to: 
- <CAJKOXPczs6OL-JH0hfQg7QtONzJKVRq=e_3JQ8bs7S+OiMOr-w@mail.gmail.com>
-Content-type: text/plain; charset=UTF-8
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 4/7] clk: samsung: exynos4x12: add cpu clock
+ configuration data and instantiate cpu clock
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+ <1436456621-29839-5-git-send-email-b.zolnierkie@samsung.com>
+ <559F82AE.8070108@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+ Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <559FEEE2.6060608@osg.samsung.com>
+Date: Fri, 10 Jul 2015 09:12:18 -0700
+MIME-Version: 1.0
+In-Reply-To: <559F82AE.8070108@samsung.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sylwester,
+Hello Krzysztof,
 
-Please review this patch.
-
-Best Regards,
-Chanwoo Choi
-
-On 07/16/2015 04:46 PM, Krzysztof Kozlowski wrote:
-> 2015-07-02 9:42 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
->> This patch add CPU clock configuration data and instantiate the CPU clock type
->> for Exynos3250 to support Samsung specific cpu-clock type.
+On 07/10/2015 01:30 AM, Krzysztof Kozlowski wrote:
+> On 10.07.2015 00:43, Bartlomiej Zolnierkiewicz wrote:
+>> With the addition of the new Samsung specific cpu-clock type, the
+>> arm clock can be represented as a cpu-clock type. Add the CPU clock
+>> configuration data and instantiate the CPU clock type for Exynos4x12.
 >>
->> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> Based on the earlier work by Thomas Abraham.
+>>
 >> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+>> Cc: Thomas Abraham <thomas.ab@samsung.com>
+>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 >> ---
->>  drivers/clk/samsung/clk-exynos3250.c   | 32 ++++++++++++++++++++++++++++++--
->>  include/dt-bindings/clock/exynos3250.h |  1 +
-> 
-> Sylwester,
-> 
-> I think this patch also waits for your review or ack.
-> The patchset is rebased on Bartlomiej's series for Exynos5250 cpufreq
-> so the easiest way would be to take it through samsung-soc tree.
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
->>  2 files changed, 31 insertions(+), 2 deletions(-)
+>>  drivers/clk/samsung/clk-exynos4.c | 50 +++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 50 insertions(+)
 >>
->> diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
->> index 538de66a759e..378ad5ad3492 100644
->> --- a/drivers/clk/samsung/clk-exynos3250.c
->> +++ b/drivers/clk/samsung/clk-exynos3250.c
->> @@ -19,6 +19,7 @@
->>  #include <dt-bindings/clock/exynos3250.h>
->>
->>  #include "clk.h"
->> +#include "clk-cpu.h"
->>  #include "clk-pll.h"
->>
->>  #define SRC_LEFTBUS            0x4200
->> @@ -319,8 +320,10 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
->>         MUX(CLK_MOUT_MPLL_USER_C, "mout_mpll_user_c", mout_mpll_user_p,
->>             SRC_CPU, 24, 1),
->>         MUX(CLK_MOUT_HPM, "mout_hpm", mout_hpm_p, SRC_CPU, 20, 1),
->> -       MUX(CLK_MOUT_CORE, "mout_core", mout_core_p, SRC_CPU, 16, 1),
->> -       MUX(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
->> +       MUX_F(CLK_MOUT_CORE, "mout_core", mout_core_p, SRC_CPU, 16, 1,
->> +                       CLK_SET_RATE_PARENT, 0),
->> +       MUX_F(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
->> +                       CLK_SET_RATE_PARENT, 0),
+>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+>> index cae2c048..3071260 100644
+>> --- a/drivers/clk/samsung/clk-exynos4.c
+>> +++ b/drivers/clk/samsung/clk-exynos4.c
+>> @@ -1396,6 +1396,45 @@ static const struct exynos_cpuclk_cfg_data e4210_armclk_d[] __initconst = {
+>>  	{  0 },
 >>  };
->>
->>  static struct samsung_div_clock div_clks[] __initdata = {
->> @@ -772,6 +775,26 @@ static struct samsung_cmu_info cmu_info __initdata = {
->>         .nr_clk_regs            = ARRAY_SIZE(exynos3250_cmu_clk_regs),
->>  };
->>
->> +#define E3250_CPU_DIV0(apll, pclk_dbg, atb, corem)                     \
->> +               (((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |  \
->> +               ((corem) << 4))
->> +#define E3250_CPU_DIV1(hpm, copy)                                      \
->> +               (((hpm) << 4) | ((copy) << 0))
->> +
->> +static const struct exynos_cpuclk_cfg_data e3250_armclk_d[] __initconst = {
->> +       { 1000000, E3250_CPU_DIV0(1, 7, 4, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  900000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  800000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  700000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  600000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  500000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  400000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  300000, E3250_CPU_DIV0(1, 5, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  200000, E3250_CPU_DIV0(1, 3, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  100000, E3250_CPU_DIV0(1, 1, 1, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  0 },
+>>  
+>> +static const struct exynos_cpuclk_cfg_data e4212_armclk_d[] __initconst = {
+>> +	{ 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
+>> +	{ 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
+>> +	{ 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
+>> +	{ 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
+>> +	{ 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4210_CPU_DIV1(2, 4), },
+>> +	{ 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4210_CPU_DIV1(2, 4), },
+>> +	{  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
+>> +	{  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
+>> +	{  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+>> +	{  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+>> +	{  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+>> +	{  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+>> +	{  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
+>> +	{  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4210_CPU_DIV1(2, 3), },
+>> +	{  0 },
 >> +};
 >> +
->>  static void __init exynos3250_cmu_init(struct device_node *np)
->>  {
->>         struct samsung_clk_provider *ctx;
->> @@ -780,6 +803,11 @@ static void __init exynos3250_cmu_init(struct device_node *np)
->>         if (!ctx)
->>                 return;
->>
->> +       exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
->> +                       mout_core_p[0], mout_core_p[1], 0x14200,
->> +                       e3250_armclk_d, ARRAY_SIZE(e3250_armclk_d),
->> +                       CLK_CPU_HAS_DIV1);
+>> +#define E4412_CPU_DIV1(cores, hpm, copy)				\
+>> +		(((cores) << 8) | ((hpm) << 4) | ((copy) << 0))
 >> +
->>         exynos3_core_down_clock(ctx->reg_base);
->>  }
->>  CLK_OF_DECLARE(exynos3250_cmu, "samsung,exynos3250-cmu", exynos3250_cmu_init);
->> diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
->> index aab088d30199..63d01c15d2b3 100644
->> --- a/include/dt-bindings/clock/exynos3250.h
->> +++ b/include/dt-bindings/clock/exynos3250.h
->> @@ -31,6 +31,7 @@
->>  #define CLK_FOUT_VPLL                  4
->>  #define CLK_FOUT_UPLL                  5
->>  #define CLK_FOUT_MPLL                  6
->> +#define CLK_ARM_CLK                    7
->>
->>  /* Muxes */
->>  #define CLK_MOUT_MPLL_USER_L           16
->> --
->> 1.8.5.5
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> +static const struct exynos_cpuclk_cfg_data e4412_armclk_d[] __initconst = {
+>> +	{ 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(7, 0, 6), },
+>> +	{ 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(6, 0, 6), },
+>> +	{ 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(6, 0, 5), },
+>> +	{ 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(5, 0, 5), },
+>> +	{ 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4412_CPU_DIV1(5, 0, 4), },
+>> +	{ 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4412_CPU_DIV1(4, 0, 4), },
+>> +	{  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(4, 0, 3), },
+>> +	{  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(3, 0, 3), },
+>> +	{  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(3, 0, 3), },
+>> +	{  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
+>> +	{  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
+>> +	{  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
+>> +	{  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
+>> +	{  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4412_CPU_DIV1(0, 0, 3), },
+>> +	{  0 },
+>> +};
 > 
+> Numbers look fine!
+> 
+>> +
+>>  /* register exynos4 clocks */
+>>  static void __init exynos4_clk_init(struct device_node *np,
+>>  				    enum exynos4_soc soc)
+>> @@ -1489,6 +1528,17 @@ static void __init exynos4_clk_init(struct device_node *np,
+>>  		samsung_clk_register_fixed_factor(ctx,
+>>  			exynos4x12_fixed_factor_clks,
+>>  			ARRAY_SIZE(exynos4x12_fixed_factor_clks));
+>> +		if (of_machine_is_compatible("samsung,exynos4412")) {
+> 
+> The driver uses here enum exynos4_soc to differentiate between SoC
+> (unless I missed some changes). This of_machine_is_compatible() makes
+> sense but introduces inconsistency. I would prefer sticking to one
+> convention: always enum or switch everything (before this patch) to
+> of_compatible.
+>
+
+When reviewing this patch I also ran into the same thing because as you
+said, it's not consistent. But digging a little bit I found that is not
+that easy since the two are not checking exactly the same.
+
+The enum is to differentiate between "samsung,exynos4412-clock" and
+"samsung,exynos4210-clock" while the of_machine_is_compatible() is for
+"samsung,exynos4412" and "samsung,exynos4212".
+
+The problem is that both exynos4412 and exynos4212 use the same
+"samsung,exynos4412-clock" compatible for their clock controller nodes.
+But there are differences so it would had been better to also have a
+"samsung,exynos4212-clock" to avoid the of_machine_is_compatible() but
+that is not possible anymore without breaking DT backward compatibility.
+
+On the other hand, if of_machine_is_compatible() is used for everything,
+then there is no point anymore to have both "samsung,exynos4412-clock"
+and "samsung,exynos4210-clock". A single "samsung,exynos4-clock" plus
+checking the SoC would had been enough.
+
+That's why I thought that Bart's approach was sensible although is true
+that the of_compatible() check can be moved to exynos4412_clk_init()
+and the enum be extended so at least exynos4_clk_init() is consistent.
+
+> Best regards,
+> Krzysztof
+
+Best regards,
+
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
