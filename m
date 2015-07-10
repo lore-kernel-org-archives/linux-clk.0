@@ -1,55 +1,63 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 01/26] clk: Add clk_hw_get_num_parents()
-Date: Fri, 31 Jul 2015 10:03:41 -0700
-Message-Id: <1438362246-6664-2-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Message-id: <559F88DE.1020202@samsung.com>
+Date: Fri, 10 Jul 2015 17:57:02 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] cpufreq: exynos: remove Exynos4x12 specific cpufreq
+ driver support
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+ <1436456621-29839-8-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1436456621-29839-8-git-send-email-b.zolnierkie@samsung.com>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Most provider drivers don't need to deal with struct clk, but
-they may want to call __clk_get_num_parents() and so they have to
-get the struct clk out of struct clk_hw so they can ask the
-framework for the number of parents. Hide this all behind a
-clk_hw specific API.
----
- drivers/clk/clk.c            | 6 ++++++
- include/linux/clk-provider.h | 1 +
- 2 files changed, 7 insertions(+)
+On 10.07.2015 00:43, Bartlomiej Zolnierkiewicz wrote:
+> Exynos4x12 based platforms have switched over to use generic
+> cpufreq driver for cpufreq functionality.  So the Exynos
+> specific cpufreq support for these platforms can be removed.
+> 
+> Also once Exynos4x12 based platforms support have been removed
+> the shared exynos-cpufreq driver is no longer needed and can
+> be deleted.
+> 
+> Based on the earlier work by Thomas Abraham.
+> 
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/cpufreq/Kconfig.arm          |  23 ----
+>  drivers/cpufreq/Makefile             |   2 -
+>  drivers/cpufreq/exynos-cpufreq.c     | 231 ----------------------------------
+>  drivers/cpufreq/exynos-cpufreq.h     |  72 -----------
+>  drivers/cpufreq/exynos4x12-cpufreq.c | 236 -----------------------------------
+>  5 files changed, 564 deletions(-)
+>  delete mode 100644 drivers/cpufreq/exynos-cpufreq.c
+>  delete mode 100644 drivers/cpufreq/exynos-cpufreq.h
+>  delete mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 898052ee0efa..5a147c2b1e36 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -289,6 +289,12 @@ u8 __clk_get_num_parents(struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(__clk_get_num_parents);
- 
-+unsigned int clk_hw_get_num_parents(struct clk_hw *hw)
-+{
-+	return hw->core->num_parents;
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_get_num_parents);
-+
- struct clk *__clk_get_parent(struct clk *clk)
- {
- 	if (!clk)
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 06a56e55cfaf..214634a88f38 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -609,6 +609,7 @@ void devm_clk_unregister(struct device *dev, struct clk *clk);
- const char *__clk_get_name(struct clk *clk);
- struct clk_hw *__clk_get_hw(struct clk *clk);
- u8 __clk_get_num_parents(struct clk *clk);
-+unsigned int clk_hw_get_num_parents(struct clk_hw *hw);
- struct clk *__clk_get_parent(struct clk *clk);
- struct clk *clk_get_parent_by_index(struct clk *clk, u8 index);
- unsigned int __clk_get_enable_count(struct clk *clk);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Code removal is awesome!
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
