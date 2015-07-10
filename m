@@ -1,66 +1,45 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 1 Jul 2015 15:28:08 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Paul Osmialowski <pawelo@king.net.pl>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-	dmaengine@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Nicolas Pitre <nicolas.pitre@linaro.org>,
-	Paul Bolle <pebolle@tiscali.nl>,
-	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-	Anson Huang <b20788@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Jingchang Lu <jingchang.lu@freescale.com>,
-	Rob Herring <r.herring@freescale.com>,
-	Yuri Tikhonov <yur@emcraft.com>,
-	Sergei Poselenov <sposelenov@emcraft.com>,
-	Alexander Potashev <aspotashev@emcraft.com>
-Subject: Re: [PATCH v2 4/9] arm: twr-k70f120m: timer driver for Kinetis SoC
-In-Reply-To: <alpine.LNX.2.00.1507011031050.9009@localhost.localdomain>
-Message-ID: <alpine.DEB.2.11.1507011527380.3916@nanos>
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <1435667250-28299-5-git-send-email-pawelo@king.net.pl> <alpine.DEB.2.11.1507010944580.3916@nanos> <alpine.LNX.2.00.1507011031050.9009@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: [PATCH 1/7] ARM: at91: Remove clk-provider.h include
+Date: Fri, 10 Jul 2015 15:45:41 -0700
+Message-Id: <1436568347-24554-2-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org>
+References: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 1 Jul 2015, Paul Osmialowski wrote:
+This file doesn't use the clk provider APIs. Remove the include.
 
-> Hi Thomas,
-> 
-> On Wed, 1 Jul 2015, Thomas Gleixner wrote:
-> 
-> > > +		clockevents_register_device(
-> > > +				&kinetis_clockevent_tmrs[chan].evtdev);
-> > > +
-> > > +		kinetis_pit_init(&kinetis_clockevent_tmrs[chan],
-> > > +						(rate / HZ) - 1);
-> > > +		kinetis_pit_enable(&kinetis_clockevent_tmrs[chan], 1);
-> > 
-> > No point doing this. The core code has invoked the set_periodic call
-> > back via clockevents_register_device() already.
-> > 
-> 
-> As I removed this kinetis_pit_enable() line, the timer did not start,
-> therefore the system became unusable. What could be possible reason for that?
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
 
-Well, you need to move both, the init and the enable into
-set_periodic().
+Please ack if you want this to go through clk-tree.
 
-Thanks,
+ arch/arm/mach-at91/at91rm9200.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-	tglx
-
+diff --git a/arch/arm/mach-at91/at91rm9200.c b/arch/arm/mach-at91/at91rm9200.c
+index eaf58f88ef5d..685826c4a710 100644
+--- a/arch/arm/mach-at91/at91rm9200.c
++++ b/arch/arm/mach-at91/at91rm9200.c
+@@ -8,7 +8,6 @@
+  * Licensed under GPLv2 or later.
+  */
+ 
+-#include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
