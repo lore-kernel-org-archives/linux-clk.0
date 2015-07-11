@@ -1,84 +1,96 @@
-Return-Path: <tyler.baker@linaro.org>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Message-ID: <55A0C0A6.8060600@samsung.com>
+Date: Sat, 11 Jul 2015 16:07:18 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.02.1507211020420.22725@linux-builds1>
-References: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
-	<1436241546-16731-6-git-send-email-dinguyen@opensource.altera.com>
-	<20150718005313.GE30412@codeaurora.org>
-	<CANMBJr6q7w4SzB2m4JPgwaAFPmSmQcVFu1Sq3EU0_k_Zx7Sa8A@mail.gmail.com>
-	<alpine.DEB.2.02.1507211020420.22725@linux-builds1>
-Date: Tue, 21 Jul 2015 09:29:17 -0700
-Message-ID: <CANMBJr5FCib=+JG9hdGehbxhayFDkTp341mNCnFTiS0GpGxZZw@mail.gmail.com>
-Subject: Re: [PATCHv2 5/6] clk: sunxi: make use of of_clk_parent_fill helper function
-From: Tyler Baker <tyler.baker@linaro.org>
-To: Dinh Nguyen <dinguyen@opensource.altera.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, dinh.linux@gmail.com,
-	linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>
-Content-Type: text/plain; charset=UTF-8
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>
+CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 22/45] clk: samsung: Properly include clk.h and clkdev.h
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org> <1436571223-10959-23-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-23-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=iso-8859-2
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dinh,
+W dniu 11.07.2015 o 08:33, Stephen Boyd pisze:
+> Clock provider drivers generally shouldn't include clk.h because
+> it's the consumer API. Only include clk.h in files that are
+> using it. The clkdev.h header isn't always used either, so remove
+> it and add in slab.h where files were relying on it to include
+> slab for them.
+> 
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/samsung/clk-cpu.c           | 3 +++
+>  drivers/clk/samsung/clk-exynos-audss.c  | 3 ++-
+>  drivers/clk/samsung/clk-exynos-clkout.c | 2 +-
+>  drivers/clk/samsung/clk-exynos3250.c    | 2 --
+>  drivers/clk/samsung/clk-exynos4.c       | 2 +-
+>  drivers/clk/samsung/clk-exynos4415.c    | 2 --
+>  drivers/clk/samsung/clk-exynos5250.c    | 2 --
+>  drivers/clk/samsung/clk-exynos5260.c    | 2 --
+>  drivers/clk/samsung/clk-exynos5410.c    | 2 --
+>  drivers/clk/samsung/clk-exynos5420.c    | 3 +--
+>  drivers/clk/samsung/clk-exynos5433.c    | 2 --
+>  drivers/clk/samsung/clk-exynos5440.c    | 2 --
+>  drivers/clk/samsung/clk-exynos7.c       | 2 --
+>  drivers/clk/samsung/clk-pll.c           | 2 ++
+>  drivers/clk/samsung/clk-s3c2410.c       | 2 --
+>  drivers/clk/samsung/clk-s3c2412.c       | 2 --
+>  drivers/clk/samsung/clk-s3c2443.c       | 2 --
+>  drivers/clk/samsung/clk-s3c64xx.c       | 2 --
+>  drivers/clk/samsung/clk-s5pv210.c       | 2 --
+>  drivers/clk/samsung/clk.c               | 4 ++++
+>  drivers/clk/samsung/clk.h               | 3 ++-
+>  21 files changed, 16 insertions(+), 32 deletions(-)
 
-On 21 July 2015 at 08:22, Dinh Nguyen <dinguyen@opensource.altera.com> wrot=
-e:
-> On Tue, 21 Jul 2015, Tyler Baker wrote:
->
->> Hi,
->>
->> On 17 July 2015 at 17:53, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> > On 07/06, dinguyen@opensource.altera.com wrote:
->> >> From: Dinh Nguyen <dinguyen@opensource.altera.com>
->> >>
->> >> Use of_clk_parent_fill to fill in the parent clock names' array.
->> >>
->> >> Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
->> >> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
->> >> Cc: "Emilio L=C3=B3pez" <emilio@elopez.com.ar>
->> >> ---
->> >
->> > Applied to clk-next with that fix I posted.
->>
->> The kernelci.org bot reported sunxi a20 boot failures[1][2] in
->> next-20150720 and next-20150721. I have bisected[3] these failures to
->> this commit. However, I have not investigated any further but
->> reverting this commit on top of next-20150721 gets the boards booting
->> again.
->>
->
-> Can you please try this patch?
+One comment at the end.
 
-I've tested the patch below on top of next-20150721 and can confirm it
-fixes the sunxi a20 issues I've reported.
+(...)
 
-> -->8-
->
-> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.=
-c
-> index e8c5185..958655f 100644
-> --- a/drivers/clk/sunxi/clk-sunxi.c
-> +++ b/drivers/clk/sunxi/clk-sunxi.c
-> @@ -204,7 +204,7 @@ static void __init sun6i_ahb1_clk_setup(struct device=
-_node *node)
->                 return;
->
->         /* we have a mux, we will have >1 parents */
-> -       of_clk_parent_fill(node, parents, SUN6I_AHB1_MAX_PARENTS);
-> +       i =3D of_clk_parent_fill(node, parents, SUN6I_AHB1_MAX_PARENTS);
->         of_property_read_string(node, "clock-output-names", &clk_name);
->
->         ahb1 =3D kzalloc(sizeof(struct sun6i_ahb1_clk), GFP_KERNEL);
-> @@ -789,7 +789,7 @@ static void __init sunxi_mux_clk_setup(struct device_=
-node *node,
->
->         reg =3D of_iomap(node, 0);
->
-> -       of_clk_parent_fill(node, parents, SUNXI_MAX_PARENTS);
-> +       i =3D of_clk_parent_fill(node, parents, SUNXI_MAX_PARENTS);
->         of_property_read_string(node, "clock-output-names", &clk_name);
->
->         clk =3D clk_register_mux(NULL, clk_name, parents, i,
+> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+> index 0117238391d6..f38a6c49f744 100644
+> --- a/drivers/clk/samsung/clk.c
+> +++ b/drivers/clk/samsung/clk.c
+> @@ -11,6 +11,10 @@
+>   * clock framework for Samsung platforms.
+>  */
+>  
+> +#include <linux/slab.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+>  #include <linux/of_address.h>
+>  #include <linux/syscore_ops.h>
+>  
+> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+> index b775fc29caa5..aa872d2c5105 100644
+> --- a/drivers/clk/samsung/clk.h
+> +++ b/drivers/clk/samsung/clk.h
+> @@ -13,10 +13,11 @@
+>  #ifndef __SAMSUNG_CLK_H
+>  #define __SAMSUNG_CLK_H
+>  
+> -#include <linux/clkdev.h>
+>  #include <linux/clk-provider.h>
+>  #include "clk-pll.h"
+>  
+> +struct clk;
+> +
 
-Thanks,
+Hmmm... why? Including clk-provider (which declares struct clk in your
+last patch) is not sufficient?
 
-Tyler
+Best regards,
+Krzysztof
+
+>  /**
+>   * struct samsung_clk_provider: information about clock provider
+>   * @reg_base: virtual address for the register base.
+> 
