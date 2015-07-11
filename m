@@ -1,55 +1,84 @@
-Return-Path: <t-kristo@ti.com>
-Message-ID: <55A4E520.8050804@ti.com>
-Date: Tue, 14 Jul 2015 13:32:00 +0300
-From: Tero Kristo <t-kristo@ti.com>
-MIME-Version: 1.0
-To: Tony Lindgren <tony@atomide.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Paul Walmsley <paul@pwsan.com>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [GIT PULL] clk: ti: clock driver code migration to drivers
-References: <55A4CE41.9070909@ti.com> <20150714095431.GJ17550@atomide.com>
-In-Reply-To: <20150714095431.GJ17550@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/2] doc: dt: add documentation for lpc1850-creg-clk driver
+Date: Sat, 11 Jul 2015 23:48:27 +0200
+Message-Id: <1436651307-24098-3-git-send-email-manabian@gmail.com>
+In-Reply-To: <1436651307-24098-1-git-send-email-manabian@gmail.com>
+References: <1436651307-24098-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/14/2015 12:54 PM, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [150714 01:56]:
->>
->> This pull request contains the TI clock driver set to move the clock
->> implementations under clock driver. Some small portions of the clock driver
->> code still remain under mach-omap2 after this, it should be decided whether
->> this code is now obsolete and should be deleted or should someone try to fix
->> it.
->
-> Hmm care to clarify what is obsolete or broken after this series?
+Add DT binding documentation for lpc1850-creg-clk driver.
 
-Not after this series, was broken/obsolete already before.
+Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+---
+ .../devicetree/bindings/clock/lpc1850-creg-clk.txt | 52 ++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
 
-A couple of omap2/omap3 specific clock files still remain under 
-mach-omap2, they are DVFS related. OMAP3 core dvfs support is currently 
-completely unused (this could probably be removed, or shall we 
-re-introduce the painful core dvfs at some point again?), and parts of 
-the omap2 core dpll handling code should probably be re-written; or at 
-least verified that it actually works properly. I can't test OMAP2 DVFS 
-myself so don't dare to fiddle with it.... I could probably try to get 
-some sort of DVFS test case to work on the board farm OMAP2 board I have 
-access to though, I can investigate this.
-
-> And I take it's not obsolete or broken because of this series? :)
-
-No, this series does not touch the above mentioned pieces of code, so 
-this definitely should not break anything. :)
-
--Tero
-
->
-> Also, I just gave this branch a quick boot test and it seems to
-> behave for me.
->
-> Regards,
->
-> Tony
->
+diff --git a/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+new file mode 100644
+index 000000000000..0c83d373b766
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+@@ -0,0 +1,52 @@
++* NXP LPC1850 CREG clocks
++
++The NXP LPC18xx/43xx CREG (Configuration Registers) block contains
++control registers for two low speed clocks. One of the clocks is a
++32 kHz oscillator driver with power up/down and clock gating. Next
++is a fixed divider that creates a 1 kHz clock from the 32 kHz osc.
++
++These clocks are used by the RTC and the Event Router peripherials.
++The 32 kHz can also be routed to other peripherials to enable low
++power modes.
++
++This binding uses the common clock binding:
++    Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible:
++	Should be "nxp,lpc1850-creg-clk"
++- #clock-cells:
++	Shall have value <1>.
++- clocks:
++	Shall contain a phandle to the fix 32 kHz crystall.
++
++The creg-clk node must be a child of the creg syscon node.
++
++The following clocks are available from the clock node.
++
++Clock ID	Name
++   0		 1 kHz clock
++   1		32 kHz Oscillator
++
++Example:
++soc {
++	creg: syscon@40043000 {
++		compatible = "nxp,lpc1850-creg", "syscon", "simple-mfd";
++		reg = <0x40043000 0x1000>;
++
++		creg_clk: clock-controller@004 {
++			compatible = "nxp,lpc1850-creg-clk";
++			clocks = <&xtal32>;
++			#clock-cells = <1>;
++		};
++
++		...
++	};
++
++	rtc: rtc@40046000 {
++		...
++		clocks = <&creg_clk 0>, <&ccu1 CLK_CPU_BUS>;
++		clock-names = "rtc", "reg";
++		...
++	};
++};
+-- 
+1.8.0
