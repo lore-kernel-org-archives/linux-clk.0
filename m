@@ -1,35 +1,38 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 6 Jul 2015 14:48:05 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org,
-	linux-sh@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms@verge.net.au>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] clk: shmobile: emev2: annotate smu base pointer
-Message-ID: <20150706214805.GD20866@codeaurora.org>
-References: <1436216708-1815-1-git-send-email-wsa@the-dreams.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1436216708-1815-1-git-send-email-wsa@the-dreams.de>
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/2] CREG clk driver for NXP LPC18xx family
+Date: Sat, 11 Jul 2015 23:48:25 +0200
+Message-Id: <1436651307-24098-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/06, Wolfram Sang wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> 
-> sparse rightfully says:
-> 
-> drivers/clk/shmobile/clk-emev2.c:39:14: warning: symbol 'smu_base' was not declared. Should it be static?
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
+This patch set adds a clk driver for the low power clocks found in
+the CREG block on lpc18xx. CREG is a collection of miscellaneous
+configuration registers that can be accessed through a syscon
+regmap interface. The clk driver makes it possible to setup and
+enabled these two clocks.
 
-Yep, and it was already fixed and merged
+This need to support peripherals like the internal RTC on the
+lpc18xx platform.
 
-$ git tag -l --contains 43f535702bb2c7b96091c0267fc105d44c18348c v4.*
-v4.2-rc1
+Based on v4.2-rc1.
+
+Joachim Eastwood (2):
+  clk: add lpc18xx creg clk driver
+  doc: dt: add documentation for lpc1850-creg-clk driver
+
+ .../devicetree/bindings/clock/lpc1850-creg-clk.txt |  52 +++++++
+ drivers/clk/nxp/Makefile                           |   1 +
+ drivers/clk/nxp/clk-lpc18xx-creg.c                 | 173 +++++++++++++++++++++
+ 3 files changed, 226 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+ create mode 100644 drivers/clk/nxp/clk-lpc18xx-creg.c
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.8.0
