@@ -1,91 +1,234 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] cpufreq-dt: add turbo modes support
-Date: Mon, 27 Jul 2015 13:58:09 +0200
-Message-id: <2522396.6jWphaZxGp@amdc1976>
-In-reply-to: <20150727113340.GA10181@linux>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <15810554.2OjPyuYJBt@amdc1976> <20150727113340.GA10181@linux>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Subject: [PATCH 1/2] clk: add lpc18xx creg clk driver
+Date: Sat, 11 Jul 2015 23:48:26 +0200
+Message-Id: <1436651307-24098-2-git-send-email-manabian@gmail.com>
+In-Reply-To: <1436651307-24098-1-git-send-email-manabian@gmail.com>
+References: <1436651307-24098-1-git-send-email-manabian@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Joachim Eastwood <manabian@gmail.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, July 27, 2015 05:03:40 PM Viresh Kumar wrote:
-> On 27-07-15, 13:01, Bartlomiej Zolnierkiewicz wrote:
-> 
-> First of all, please don't be angry :).. We can discuss and get things
-> sorted out ...
+The CREG block on lpc18xx contains configuration register
+for two low power clocks. Support enabling of these two
+clocks with a clk driver that access CREG trough the
+syscon regmap interface.
 
-OK :)
+These clocks are needed to support peripherals like the
+internal RTC on lpc18xx.
 
-> > This change was in the original patch posted in April:
-> > https://lkml.org/lkml/2015/4/10/646
-> 
-> Yeah, and I already apologized for missing the request :)
-> 
-> > your review from a month ago didn't contain this request:
-> > https://lkml.org/lkml/2015/6/22/667
-> 
-> Your patch inserted almost 116 lines and most of the stuff was around
-> adding new bindings to get things working with cpufreq-dt driver.
-> 
-> And so I replied to the most important stuff, i.e. don't add new
-> bindings, we will sort it out with opp-v2.
-> 
-> And frankly that wasn't the time where we could have discussed how
-> exactly we are going to use it. Ofcourse we should get it via DT,
-> platform data is just not required.
-> 
-> So, me not NAK ing this approach was fine as it wasn't about keeping
-> this data in the platform data part.
-> 
-> > and now (after nearly 4 months) you are telling me that
-> 
-> I will say a month, as we discarded most of that patch recently :)
-> 
-> > I should change this because you are planning to do some
-> > more changes in the future.
-> 
-> Its not about me doing some changes. But the whole point of doing the
-> opp-v2 thing was to get rid of such platform data things..
-> 
-> Just that your work is competing with opp-v2 code :)
-> 
-> > Could we please keep it as it is for now and change it
-> > later (after independent_clocks configuration will get
-> > ported to use device tree)?
-> 
-> I thought we can get your work to a better shape, with all credit to
-> you. But if you have some dependency on this for 4.3, then I don't
-> mind killing this structure after you have polluted it a bit more :)
+Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+---
+ drivers/clk/nxp/Makefile           |   1 +
+ drivers/clk/nxp/clk-lpc18xx-creg.c | 173 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 174 insertions(+)
+ create mode 100644 drivers/clk/nxp/clk-lpc18xx-creg.c
 
-Thank you.  This is exactly the case here (I would like to get
-Exynos4x12 conversion to use cpufreq-dt + exynos-cpufreq removal
-in v4.3 if possible and adding new DT bindings will most likely
-slow down the process considerably).
+diff --git a/drivers/clk/nxp/Makefile b/drivers/clk/nxp/Makefile
+index 7f608b0ad7b4..6f6b0f9aa320 100644
+--- a/drivers/clk/nxp/Makefile
++++ b/drivers/clk/nxp/Makefile
+@@ -1,2 +1,3 @@
+ obj-$(CONFIG_ARCH_LPC18XX)	+= clk-lpc18xx-cgu.o
+ obj-$(CONFIG_ARCH_LPC18XX)	+= clk-lpc18xx-ccu.o
++obj-$(CONFIG_ARCH_LPC18XX)	+= clk-lpc18xx-creg.o
+diff --git a/drivers/clk/nxp/clk-lpc18xx-creg.c b/drivers/clk/nxp/clk-lpc18xx-creg.c
+new file mode 100644
+index 000000000000..4bca11eca4a1
+--- /dev/null
++++ b/drivers/clk/nxp/clk-lpc18xx-creg.c
+@@ -0,0 +1,173 @@
++/*
++ * Clk driver for NXP LPC18xx/43xx Configuration Registers (CREG)
++ *
++ * Copyright (C) 2015 Joachim Eastwood <manabian@gmail.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/delay.h>
++#include <linux/kernel.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++
++#define LPC18XX_CREG_CREG0			0x004
++#define  LPC18XX_CREG_CREG0_EN1KHZ		BIT(0)
++#define  LPC18XX_CREG_CREG0_EN32KHZ		BIT(1)
++#define  LPC18XX_CREG_CREG0_RESET32KHZ		BIT(2)
++#define  LPC18XX_CREG_CREG0_PD32KHZ		BIT(3)
++
++#define to_clk_creg(_hw) container_of(_hw, struct clk_creg_data, hw)
++
++enum {
++	CREG_CLK_1KHZ,
++	CREG_CLK_32KHZ,
++	CREG_CLK_MAX,
++};
++
++struct clk_creg_data {
++	struct clk_hw hw;
++	const char *name;
++	struct regmap *reg;
++	unsigned int en_mask;
++	const struct clk_ops *ops;
++};
++
++#define CREG_CLK(_name, _emask, _ops)		\
++{						\
++	.name = _name,				\
++	.en_mask = LPC18XX_CREG_CREG0_##_emask,	\
++	.ops = &_ops,				\
++}
++
++static int clk_creg_32k_prepare(struct clk_hw *hw)
++{
++	struct clk_creg_data *creg = to_clk_creg(hw);
++	int ret;
++
++	ret = regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
++				 LPC18XX_CREG_CREG0_PD32KHZ |
++				 LPC18XX_CREG_CREG0_RESET32KHZ, 0);
++
++	/*
++	 * Powering up the 32k oscillator takes a long while
++	 * and sadly there aren't any status bit to poll.
++	 */
++	msleep(2500);
++
++	return ret;
++}
++
++static void clk_creg_32k_unprepare(struct clk_hw *hw)
++{
++	struct clk_creg_data *creg = to_clk_creg(hw);
++
++	regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
++			   LPC18XX_CREG_CREG0_PD32KHZ,
++			   LPC18XX_CREG_CREG0_PD32KHZ);
++}
++
++static int clk_creg_32k_is_prepared(struct clk_hw *hw)
++{
++	struct clk_creg_data *creg = to_clk_creg(hw);
++	u32 reg;
++
++	regmap_read(creg->reg, LPC18XX_CREG_CREG0, &reg);
++
++	return !(reg & LPC18XX_CREG_CREG0_PD32KHZ) &&
++	       !(reg & LPC18XX_CREG_CREG0_RESET32KHZ);
++}
++
++static unsigned long clk_creg_1k_recalc_rate(struct clk_hw *hw,
++					     unsigned long parent_rate)
++{
++	return parent_rate / 32;
++}
++
++static int clk_creg_enable(struct clk_hw *hw)
++{
++	struct clk_creg_data *creg = to_clk_creg(hw);
++
++	return regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
++				  creg->en_mask, creg->en_mask);
++}
++
++static void clk_creg_disable(struct clk_hw *hw)
++{
++	struct clk_creg_data *creg = to_clk_creg(hw);
++
++	regmap_update_bits(creg->reg, LPC18XX_CREG_CREG0,
++			   creg->en_mask, 0);
++}
++
++static const struct clk_ops clk_creg_32k = {
++	.enable		= clk_creg_enable,
++	.disable	= clk_creg_disable,
++	.prepare	= clk_creg_32k_prepare,
++	.unprepare	= clk_creg_32k_unprepare,
++	.is_prepared	= clk_creg_32k_is_prepared,
++};
++
++static const struct clk_ops clk_creg_1k = {
++	.enable		= clk_creg_enable,
++	.disable	= clk_creg_disable,
++	.recalc_rate	= clk_creg_1k_recalc_rate,
++};
++
++static struct clk_creg_data clk_creg_clocks[] = {
++	[CREG_CLK_1KHZ]  = CREG_CLK("1khz_clk",  EN1KHZ,  clk_creg_1k),
++	[CREG_CLK_32KHZ] = CREG_CLK("32khz_clk", EN32KHZ, clk_creg_32k),
++};
++
++static struct clk *clk_register_creg_clk(struct clk_creg_data *creg_clk,
++					 const char **parent_name,
++					 struct regmap *syscon)
++{
++	struct clk_init_data init;
++
++	init.ops = creg_clk->ops;
++	init.name = creg_clk->name;
++	init.parent_names = parent_name;
++	init.num_parents = 1;
++
++	creg_clk->reg = syscon;
++	creg_clk->hw.init = &init;
++
++	return clk_register(NULL, &creg_clk->hw);
++}
++
++static struct clk *clk_creg[CREG_CLK_MAX];
++static struct clk_onecell_data clk_base_data = {
++	.clks = clk_creg,
++	.clk_num = CREG_CLK_MAX,
++};
++
++static void __init lpc18xx_creg_clk_init(struct device_node *np)
++{
++	const char *clk_32khz_parent;
++	struct regmap *syscon;
++
++	syscon = syscon_node_to_regmap(np->parent);
++	if (IS_ERR(syscon)) {
++		pr_err("%s: syscon lookup failed\n", __func__);
++		return;
++	}
++
++	clk_32khz_parent = of_clk_get_parent_name(np, 0);
++
++	clk_creg[CREG_CLK_32KHZ] =
++		clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_32KHZ],
++				      &clk_32khz_parent, syscon);
++
++	clk_creg[CREG_CLK_1KHZ] =
++		clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_1KHZ],
++				      &clk_creg_clocks[CREG_CLK_32KHZ].name,
++				      syscon);
++
++	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_base_data);
++}
++CLK_OF_DECLARE(lpc18xx_creg_clk, "nxp,lpc1850-creg-clk", lpc18xx_creg_clk_init);
+-- 
+1.8.0
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
 
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
