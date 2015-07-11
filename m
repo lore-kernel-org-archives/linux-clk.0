@@ -1,42 +1,34 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Date: Mon, 6 Jul 2015 15:08:10 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 3/7] clk: rockchip: define the inverters of rk3066/rk3188
- and rk3288
-Message-ID: <20150706220810.GI20866@codeaurora.org>
-References: <1436086820-3757-1-git-send-email-heiko@sntech.de>
- <1436086820-3757-4-git-send-email-heiko@sntech.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Sat, 11 Jul 2015 19:24:53 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 04/45] clk: efm32gg: Remove clk.h include
+Message-ID: <20150711172453.GS1426@pengutronix.de>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+ <1436571223-10959-5-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1436086820-3757-4-git-send-email-heiko@sntech.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1436571223-10959-5-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/05, Heiko Stuebner wrote:
-> Both soc series' have inverters on the hsadc and camera interface clock
-> paths. So define them using the newly added inverter type.
+On Fri, Jul 10, 2015 at 04:33:02PM -0700, Stephen Boyd wrote:
+> Clock provider drivers generally shouldn't include clk.h because
+> it's the consumer API. Remove the include here because this is a
+> provider driver.
 > 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
+> Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Still compiles with your change, so fine.
 
-Applied to clk-rk3368.
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+
+Best regards
+Uwe
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
