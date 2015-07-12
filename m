@@ -1,39 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:6149 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756589AbbGGKID (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2015 06:08:03 -0400
-Message-ID: <559BA4C4.4070509@huawei.com>
-Date: Tue, 7 Jul 2015 18:07:00 +0800
-From: Bintian <bintian.wang@huawei.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-CC: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] amba: Support clk parents and rates assigned in DT
-References: <1432846332-17692-1-git-send-email-sboyd@codeaurora.org> <559B15DE.7040200@codeaurora.org> <559B9225.6090607@huawei.com> <20150707093343.GI7557@n2100.arm.linux.org.uk>
-In-Reply-To: <20150707093343.GI7557@n2100.arm.linux.org.uk>
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1436569409-27964-7-git-send-email-sboyd@codeaurora.org>
+References: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org>
+	<1436569409-27964-7-git-send-email-sboyd@codeaurora.org>
+Date: Sun, 12 Jul 2015 12:40:18 +0200
+Message-ID: <CAMuHMdXsgQQJG99yimSeejsh0wJacMCqHwa9T2gtHuqduKXcwg@mail.gmail.com>
+Subject: Re: [PATCH 6/7] simplefb: Include clk.h
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, Luc Verhaegen <libv@skynet.be>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Herrmann <dh.herrmann@gmail.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2015/7/7 17:33, Russell King - ARM Linux wrote:
-> On Tue, Jul 07, 2015 at 04:47:33PM +0800, Bintian wrote:
->> Hi Russell,
->>
->> Could you spend several minutes to review Stephen's patch?
+On Sat, Jul 11, 2015 at 1:03 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> This driver uses the consumer API, so include clk.h explicitly
+> instead of impliclty through the provider API.
 >
-> Sorry, I'm busy this week, I need to sort out my git tree, get some fixes
-> out which should've been pushed during the merge window, and other stuff.
-> I'm not going to have much time to read email, let alone do reviews.
-> Please be patient.
->
-No problem, just keep your own pace.
+> Cc: Luc Verhaegen <libv@skynet.be>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: David Herrmann <dh.herrmann@gmail.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Thanks,
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Bintian
+Gr{oetje,eeting}s,
 
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
