@@ -1,50 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 3/7] spi: spi-pxa2xx: Remove clk.h include
-Date: Fri, 10 Jul 2015 16:03:25 -0700
-Message-Id: <1436569409-27964-4-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org>
-References: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org>
+Message-ID: <55A2BA30.1000903@oracle.com>
+Date: Sun, 12 Jul 2015 12:04:16 -0700
+From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>
+CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Nishanth Menon <nm@ti.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>
+Subject: Re: [PATCH 3/7] ARM: keystone: Remove clk-provider.h include
+References: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org> <1436568347-24554-4-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436568347-24554-4-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock provider drivers generally shouldn't include clk.h because
-it's the consumer API. Remove the include here because this is a
-provider driver.
 
-Cc: Daniel Mack <daniel@zonque.org>
-Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Mark Brown <broonie@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
 
-Please ack so this can go through the clk tree. Otherwise
-it's ok to go through spi tree.
+On 7/10/15 3:45 PM, Stephen Boyd wrote:
+> This file doesn't use the clk provider APIs. Remove the include.
+>
+> Cc: Nishanth Menon <nm@ti.com>
+> Cc: Sekhar Nori <nsekhar@ti.com>
+> Cc: Santosh Shilimkar <ssantosh@kernel.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>
+> Please ack if you want this to go through clk-tree.
+>
+Sure.
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
 
- drivers/spi/spi-pxa2xx-pci.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/spi/spi-pxa2xx-pci.c b/drivers/spi/spi-pxa2xx-pci.c
-index 3cfd4357489a..d19d7f28aecb 100644
---- a/drivers/spi/spi-pxa2xx-pci.c
-+++ b/drivers/spi/spi-pxa2xx-pci.c
-@@ -7,7 +7,6 @@
- #include <linux/of_device.h>
- #include <linux/module.h>
- #include <linux/spi/pxa2xx_spi.h>
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- 
- #include <linux/dmaengine.h>
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+>   arch/arm/mach-keystone/pm_domain.c | 1 -
+>   1 file changed, 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-keystone/pm_domain.c b/arch/arm/mach-keystone/pm_domain.c
+> index edea697e8253..e283939a216f 100644
+> --- a/arch/arm/mach-keystone/pm_domain.c
+> +++ b/arch/arm/mach-keystone/pm_domain.c
+> @@ -16,7 +16,6 @@
+>   #include <linux/pm_runtime.h>
+>   #include <linux/pm_clock.h>
+>   #include <linux/platform_device.h>
+> -#include <linux/clk-provider.h>
+>   #include <linux/of.h>
+>
+>   static struct dev_pm_domain keystone_pm_domain = {
+>
