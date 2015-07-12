@@ -1,40 +1,55 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: [PATCH 10/45] clk: twl6040: Remove clk.h include
-Date: Fri, 10 Jul 2015 16:33:08 -0700
-Message-Id: <1436571223-10959-11-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Sender: Rob Herring <robherring2@gmail.com>
+From: Rob Herring <robh@kernel.org>
+To: linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@arm.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org,
+	arm@kernel.org,
+	Mike Turquette <mturquette@linaro.org>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 02/13] clk: kill off set_irq_flags usage
+Date: Sun, 12 Jul 2015 09:26:40 -0500
+Message-Id: <1436711211-18223-3-git-send-email-robh@kernel.org>
+In-Reply-To: <1436711211-18223-1-git-send-email-robh@kernel.org>
+References: <1436711211-18223-1-git-send-email-robh@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock provider drivers generally shouldn't include clk.h because
-it's the consumer API. Remove the include here because this is a
-provider driver.
+set_irq_flags is ARM specific with custom flags which have genirq
+equivalents. Convert drivers to use the genirq interfaces directly, so we
+can kill off set_irq_flags. The translation of flags is as follows:
 
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+IRQF_VALID -> !IRQ_NOREQUEST
+IRQF_PROBE -> !IRQ_NOPROBE
+IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+
+For IRQs managed by an irqdomain, the irqdomain core code handles clearing
+and setting IRQ_NOREQUEST already, so there is no need to do this in
+.map() functions and we can simply remove the set_irq_flags calls. Some
+users also set IRQ_NOPROBE and this has been maintained although it is not
+clear that is really needed. There appears to be a great deal of blind
+copy and paste of this code.
+
+Signed-off-by: Rob Herring <robh@kernel.org>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Mike Turquette <mturquette@linaro.org>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
 ---
- drivers/clk/clk-twl6040.c | 1 -
+ drivers/clk/at91/pmc.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clk/clk-twl6040.c b/drivers/clk/clk-twl6040.c
-index 4a755135bcd3..3094b10c6149 100644
---- a/drivers/clk/clk-twl6040.c
-+++ b/drivers/clk/clk-twl6040.c
-@@ -20,7 +20,6 @@
- *
- */
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 39be2be..d1844f1 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -125,7 +125,6 @@ static int pmc_irq_map(struct irq_domain *h, unsigned int virq,
  
--#include <linux/clk.h>
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/platform_device.h>
+ 	irq_set_chip_and_handler(virq, &pmc_irq,
+ 				 handle_level_irq);
+-	set_irq_flags(virq, IRQF_VALID);
+ 	irq_set_chip_data(virq, pmc);
+ 
+ 	return 0;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+2.1.0
