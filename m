@@ -1,39 +1,82 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55A3E0E4.3050104@opensource.altera.com>
-Date: Mon, 13 Jul 2015 11:01:40 -0500
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
+Return-Path: <yingjoe.chen@mediatek.com>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+	<mturquette@baylibre.com>, James Liao <jamesjj.liao@mediatek.com>
+CC: Russell King <linux@arm.linux.org.uk>, <devicetree@vger.kernel.org>, Arnd
+ Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, Daniel
+ Lezcano <daniel.lezcano@linaro.org>, <linux-kernel@vger.kernel.org>, Rob
+ Herring <robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>, Sascha
+ Hauer <kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>, Yingjoe Chen
+	<yingjoe.chen@mediatek.com>, <srv_heupstream@mediatek.com>,
+	<linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH 1/5] clocksource: mediatek: do not enable GPT_CLK_EVT when setup
+Date: Mon, 13 Jul 2015 17:32:45 +0800
+Message-ID: <1436779969-18610-2-git-send-email-yingjoe.chen@mediatek.com>
+In-Reply-To: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
+References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 24/45] clk: socfpga: Remove clk.h and clkdev.h includes
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org> <1436571223-10959-25-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436571223-10959-25-git-send-email-sboyd@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: yingjoe.chen@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/10/2015 06:33 PM, Stephen Boyd wrote:
-> Clock provider drivers generally shouldn't include clk.h because
-> it's the consumer API. Remove the include here because this is a
-> provider driver. The clkdev.h include isn't used either, remove
-> it and add in slab.h to make sure things keep compiling.
-> 
-> Cc: Dinh Nguyen <dinguyen@opensource.altera.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/socfpga/clk-gate-a10.c   | 1 +
->  drivers/clk/socfpga/clk-gate.c       | 3 +--
->  drivers/clk/socfpga/clk-periph-a10.c | 1 +
->  drivers/clk/socfpga/clk-periph.c     | 3 +--
->  drivers/clk/socfpga/clk-pll-a10.c    | 1 +
->  drivers/clk/socfpga/clk-pll.c        | 3 +--
->  drivers/clk/socfpga/clk.h            | 1 -
->  7 files changed, 6 insertions(+), 7 deletions(-)
-> 
+Spurious mtk timer interrupt is noticed at boot and cause kernel
+crash. It seems if GPT is enabled, it will latch irq status even
+when its IRQ is disabled. When irq is enabled afterward, we see
+spurious interrupt.
+Change init flow to only enable GPT_CLK_SRC at mtk_timer_init.
 
-Acked-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+---
+ drivers/clocksource/mtk_timer.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-Thanks,
-Dinh
-
+diff --git a/drivers/clocksource/mtk_timer.c b/drivers/clocksource/mtk_timer.c
+index 68ab423..237c20b 100644
+--- a/drivers/clocksource/mtk_timer.c
++++ b/drivers/clocksource/mtk_timer.c
+@@ -156,9 +156,11 @@ static void mtk_timer_global_reset(struct mtk_clock_event_device *evt)
+ 	writel(0x3f, evt->gpt_base + GPT_IRQ_ACK_REG);
+ }
+ 
+-static void
+-mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
++static void mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer,
++			    u8 option, bool enable)
+ {
++	u32 val;
++
+ 	writel(TIMER_CTRL_CLEAR | TIMER_CTRL_DISABLE,
+ 		evt->gpt_base + TIMER_CTRL_REG(timer));
+ 
+@@ -167,8 +169,10 @@ mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
+ 
+ 	writel(0x0, evt->gpt_base + TIMER_CMP_REG(timer));
+ 
+-	writel(TIMER_CTRL_OP(option) | TIMER_CTRL_ENABLE,
+-			evt->gpt_base + TIMER_CTRL_REG(timer));
++	val = TIMER_CTRL_OP(option);
++	if (enable)
++		val |= TIMER_CTRL_ENABLE;
++	writel(val, evt->gpt_base + TIMER_CTRL_REG(timer));
+ }
+ 
+ static void mtk_timer_enable_irq(struct mtk_clock_event_device *evt, u8 timer)
+@@ -235,12 +239,12 @@ static void __init mtk_timer_init(struct device_node *node)
+ 	evt->ticks_per_jiffy = DIV_ROUND_UP(rate, HZ);
+ 
+ 	/* Configure clock source */
+-	mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN);
++	mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN, true);
+ 	clocksource_mmio_init(evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC),
+ 			node->name, rate, 300, 32, clocksource_mmio_readl_up);
+ 
+ 	/* Configure clock event */
+-	mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT);
++	mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT, false);
+ 	clockevents_config_and_register(&evt->dev, rate, 0x3,
+ 					0xffffffff);
+ 
+-- 
+1.8.1.1.dirty
