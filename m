@@ -1,37 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Dong Aisheng <aisheng.dong@freescale.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@baylibre.com>, <shawn.guo@linaro.org>,
-	<b29396@freescale.com>, <linux-arm-kernel@lists.infradead.org>,
-	<Ranjani.Vaidyanathan@freescale.com>, <b20596@freescale.com>,
-	<r64343@freescale.com>, <b20788@freescale.com>
-Subject: [PATCH 0/4] clk: imx7d: switch to clk api with CLK_OPS_PARENT_ON enabled
-Date: Tue, 28 Jul 2015 21:33:07 +0800
-Message-ID: <1438090391-30329-1-git-send-email-aisheng.dong@freescale.com>
+Date: Mon, 13 Jul 2015 09:54:37 -0700
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Mike Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 35/45] clk: zynq: Include clk.h
+Message-ID: <20150713165437.GH3129@xsjsorenbubuntu>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+ <1436571223-10959-36-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1436571223-10959-36-git-send-email-sboyd@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-After clk core supports mx7d type clocks, we don't have to enable all clock
-by default anymore, this patch series remove the enable all clocks code and
-only enable set of minimum required clocks instead.
+On Fri, 2015-07-10 at 04:33PM -0700, Stephen Boyd wrote:
+> This clock provider uses the consumer API, so include clk.h
+> explicitly.
+> 
+> Cc: Sören Brinkmann <soren.brinkmann@xilinx.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Acked-by: Sören Brinkmann <soren.brinkmann@xilinx.com>
 
-This patch series depends on:
-[PATCH V3 0/5] clk: support clocks which requires parent clock on during operation
-http://www.spinics.net/lists/arm-kernel/msg435136.html
-
-Dong Aisheng (4):
-  clk: imx: move imx_clk_gate_x into one place
-  clk: imx: add clk api for supporting clk_OPS_PARENT_ON clocks
-  clk: imx7d: using api with flag CLK_OPS_PARENT_ON
-  clk: imx7d: only enable minimum required clocks
-
- drivers/clk/imx/clk-imx7d.c | 730 ++++++++++++++++++++++----------------------
- drivers/clk/imx/clk.h       |  62 +++-
- 2 files changed, 413 insertions(+), 379 deletions(-)
-
--- 
-1.9.1
-
+	Thanks,
+	Sören
