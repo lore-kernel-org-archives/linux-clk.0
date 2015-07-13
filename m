@@ -1,43 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: [PATCH 04/45] clk: efm32gg: Remove clk.h include
-Date: Fri, 10 Jul 2015 16:33:02 -0700
-Message-Id: <1436571223-10959-5-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+Message-ID: <55A386F8.5010404@ti.com>
+Date: Mon, 13 Jul 2015 12:38:00 +0300
+From: Tero Kristo <t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 7/7] ARM: OMAP2+: Include clk.h
+References: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org> <1436568347-24554-8-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436568347-24554-8-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock provider drivers generally shouldn't include clk.h because
-it's the consumer API. Remove the include here because this is a
-provider driver.
+On 07/11/2015 01:45 AM, Stephen Boyd wrote:
+> These files use the consumer API, so include clk.h explicitly.
+>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>
+> Please ack so this can be routed through clk-tree. Otherwise
+> when clk.h is removed from clk-provider.h these files will
+> fail to compile.
 
-Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-efm32gg.c | 1 -
- 1 file changed, 1 deletion(-)
+Acked-by: Tero Kristo <t-kristo@ti.com>
 
-diff --git a/drivers/clk/clk-efm32gg.c b/drivers/clk/clk-efm32gg.c
-index 73a8d0ff530c..bac4553f04b8 100644
---- a/drivers/clk/clk-efm32gg.c
-+++ b/drivers/clk/clk-efm32gg.c
-@@ -6,7 +6,6 @@
-  * the terms of the GNU General Public License version 2 as published by the
-  * Free Software Foundation.
-  */
--#include <linux/clk.h>
- #include <linux/io.h>
- #include <linux/clk-provider.h>
- #include <linux/of.h>
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>
+>   arch/arm/mach-omap2/clock.c      | 1 +
+>   arch/arm/mach-omap2/omap_hwmod.c | 1 +
+>   arch/arm/mach-omap2/pm24xx.c     | 1 +
+>   3 files changed, 3 insertions(+)
+>
+> diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+> index a699d7169307..f664dc664ded 100644
+> --- a/arch/arm/mach-omap2/clock.c
+> +++ b/arch/arm/mach-omap2/clock.c
+> @@ -20,6 +20,7 @@
+>   #include <linux/errno.h>
+>   #include <linux/err.h>
+>   #include <linux/delay.h>
+> +#include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/io.h>
+>   #include <linux/bitops.h>
+> diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
+> index d78c12e7cb5e..de43e4c9a865 100644
+> --- a/arch/arm/mach-omap2/omap_hwmod.c
+> +++ b/arch/arm/mach-omap2/omap_hwmod.c
+> @@ -130,6 +130,7 @@
+>   #include <linux/kernel.h>
+>   #include <linux/errno.h>
+>   #include <linux/io.h>
+> +#include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/delay.h>
+>   #include <linux/err.h>
+> diff --git a/arch/arm/mach-omap2/pm24xx.c b/arch/arm/mach-omap2/pm24xx.c
+> index b1aad7e1426c..2a1a4180d5d0 100644
+> --- a/arch/arm/mach-omap2/pm24xx.c
+> +++ b/arch/arm/mach-omap2/pm24xx.c
+> @@ -25,6 +25,7 @@
+>   #include <linux/sysfs.h>
+>   #include <linux/module.h>
+>   #include <linux/delay.h>
+> +#include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/irq.h>
+>   #include <linux/time.h>
+>
 
