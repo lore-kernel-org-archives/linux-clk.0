@@ -1,42 +1,37 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Date: Mon, 6 Jul 2015 15:07:13 -0700
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 2/7] clk: rockchip: fix issues in the mmc-phase clock
-Message-ID: <20150706220713.GH20866@codeaurora.org>
-References: <1436086820-3757-1-git-send-email-heiko@sntech.de>
- <1436086820-3757-3-git-send-email-heiko@sntech.de>
-MIME-Version: 1.0
-In-Reply-To: <1436086820-3757-3-git-send-email-heiko@sntech.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Yoshinori Sato <ysato@users.sourceforge.jp>
+Subject: [PATCH] clk: h8300: Remove clk.h and clkdev.h includes
+Date: Mon, 13 Jul 2015 16:48:57 -0700
+Message-Id: <1436831337-8996-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/05, Heiko Stuebner wrote:
-> The review for the new inverter clock type uncovered some issues (missing
-> headers and name handling) that are also present in the mmc-phase clock
-> type, I got (to much) inspiration from. Fix these there too.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
+Neither of these includes are used in this driver, remove them.
 
-Applied to clk-rk3368.
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/h8300/clk-h8s2678.c | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/drivers/clk/h8300/clk-h8s2678.c b/drivers/clk/h8300/clk-h8s2678.c
+index 4701b093e497..44aa45f71f1b 100644
+--- a/drivers/clk/h8300/clk-h8s2678.c
++++ b/drivers/clk/h8300/clk-h8s2678.c
+@@ -4,8 +4,6 @@
+  * Copyright 2015 Yoshinori Sato <ysato@users.sourceforge.jp>
+  */
+ 
+-#include <linux/clk.h>
+-#include <linux/clkdev.h>
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/device.h>
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
