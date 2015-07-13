@@ -1,128 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 13 Jul 2015 15:36:25 -0700
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+CC: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	<sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH 1/2] clk: qcom: Add support for RPM Clocks
+Message-ID: <20150713223625.GE15178@usrtlx11787.corpusers.net>
+References: <1436444310-15108-1-git-send-email-georgi.djakov@linaro.org>
+ <1436444310-15108-2-git-send-email-georgi.djakov@linaro.org>
+ <559E68A9.2020809@linaro.org>
+ <559E91CD.5020707@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1436571223-10959-28-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-	<1436571223-10959-28-git-send-email-sboyd@codeaurora.org>
-Date: Mon, 20 Jul 2015 13:21:11 +0200
-Message-ID: <CAPDyKFpz3dKvsajG0-yVC0aoE_afwzzaK-e+Kptu+ViQ+vmvrg@mail.gmail.com>
-Subject: Re: [PATCH 27/45] clk: ux500: Remove clk.h and clkdev.h includes
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <559E91CD.5020707@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11 July 2015 at 01:33, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> Clock provider drivers generally shouldn't include clk.h because
-> it's the consumer API. Remove the include here because this is a
-> provider driver. Also remove clkdev.h in files that aren't using
-> it.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+On Thu 09 Jul 08:22 PDT 2015, Georgi Djakov wrote:
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Hi Srini,
+> 
+> On 07/09/2015 03:27 PM, Srinivas Kandagatla wrote:
+> > 
+> > On 09/07/15 13:18, Georgi Djakov wrote:
+> >> This patch adds initial support for clocks controlled by the RPM
+> >> (Resource Power Manager) processor found on some Qualcomm SoCs.
+> >>
+> >> The RPM is a dedicated hardware engine for managing the shared
+> >> SoC resources in order to keep the lowest power profile. It
+> >> communicates with other hardware subsystems via shared memory
+> >> and accepts clock requests, aggregates the requests and turns
+> >> the clocks on/off or scales them on demand.
+> >>
+> >> This work is based on the codeaurora.org driver:
+> >> https://www.codeaurora.org/cgit/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-rpm.c
+> >>
+> >> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> >> ---
+> >>   drivers/clk/qcom/Makefile  |    1 +
+> >>   drivers/clk/qcom/clk-rpm.c |  164 ++++++++++++++++++++++++++++++++++++++++++++
+> >>   drivers/clk/qcom/clk-rpm.h |  137 ++++++++++++++++++++++++++++++++++++
+> >>   3 files changed, 302 insertions(+)
+> >>   create mode 100644 drivers/clk/qcom/clk-rpm.c
+> >>   create mode 100644 drivers/clk/qcom/clk-rpm.h
+> >>
+> >> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> >> index 50b337a24a87..4d14a73ee4ed 100644
+> >> --- a/drivers/clk/qcom/Makefile
+> >> +++ b/drivers/clk/qcom/Makefile
+> >> @@ -8,6 +8,7 @@ clk-qcom-y += clk-rcg2.o
+> >>   clk-qcom-y += clk-branch.o
+> >>   clk-qcom-y += clk-regmap-divider.o
+> >>   clk-qcom-y += clk-regmap-mux.o
+> >> +clk-qcom-y += clk-rpm.o
+> > 
+> > Is this generic enough to be built by default. It will break builds on A family whose rpm clocks are not based on SMD.
+> > 
+> > IMO, this should be either renamed to clk-rpm-smd.* or only built with SOC's which support rpm-clks based on SMD.
+> > 
+> 
+> There is no A-family RPM clock support in the upstream kernel yet,
+> but sure, you are right, we want to build only what is actually used.
+> Thanks for the suggestion!
+> 
 
-Kind regards
-Uffe
+Following the regulator naming I would suggest this being the
+clk-smd-rpm driver - unless one driver is enough for both.
 
-> ---
->  drivers/clk/ux500/abx500-clk.c   | 1 -
->  drivers/clk/ux500/clk.h          | 3 ++-
->  drivers/clk/ux500/u8500_clk.c    | 1 -
->  drivers/clk/ux500/u8500_of_clk.c | 2 --
->  drivers/clk/ux500/u8540_clk.c    | 1 -
->  drivers/clk/ux500/u9540_clk.c    | 2 --
->  6 files changed, 2 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/ux500/abx500-clk.c b/drivers/clk/ux500/abx500-clk.c
-> index 3e5e05101302..222425d08ab6 100644
-> --- a/drivers/clk/ux500/abx500-clk.c
-> +++ b/drivers/clk/ux500/abx500-clk.c
-> @@ -13,7 +13,6 @@
->  #include <linux/platform_device.h>
->  #include <linux/mfd/abx500/ab8500.h>
->  #include <linux/mfd/abx500/ab8500-sysctrl.h>
-> -#include <linux/clk.h>
->  #include <linux/clkdev.h>
->  #include <linux/clk-provider.h>
->  #include <linux/mfd/dbx500-prcmu.h>
-> diff --git a/drivers/clk/ux500/clk.h b/drivers/clk/ux500/clk.h
-> index a2bb92d85ee0..b42485da704e 100644
-> --- a/drivers/clk/ux500/clk.h
-> +++ b/drivers/clk/ux500/clk.h
-> @@ -10,10 +10,11 @@
->  #ifndef __UX500_CLK_H
->  #define __UX500_CLK_H
->
-> -#include <linux/clk.h>
->  #include <linux/device.h>
->  #include <linux/types.h>
->
-> +struct clk;
-> +
->  struct clk *clk_reg_prcc_pclk(const char *name,
->                               const char *parent_name,
->                               resource_size_t phy_base,
-> diff --git a/drivers/clk/ux500/u8500_clk.c b/drivers/clk/ux500/u8500_clk.c
-> index 4626b97b7d83..1c7b639d9222 100644
-> --- a/drivers/clk/ux500/u8500_clk.c
-> +++ b/drivers/clk/ux500/u8500_clk.c
-> @@ -7,7 +7,6 @@
->   * License terms: GNU General Public License (GPL) version 2
->   */
->
-> -#include <linux/clk.h>
->  #include <linux/clkdev.h>
->  #include <linux/clk-provider.h>
->  #include <linux/mfd/dbx500-prcmu.h>
-> diff --git a/drivers/clk/ux500/u8500_of_clk.c b/drivers/clk/ux500/u8500_of_clk.c
-> index e319ef912dc6..c3e3b20e4b43 100644
-> --- a/drivers/clk/ux500/u8500_of_clk.c
-> +++ b/drivers/clk/ux500/u8500_of_clk.c
-> @@ -8,8 +8,6 @@
->   */
->
->  #include <linux/of.h>
-> -#include <linux/clk.h>
-> -#include <linux/clkdev.h>
->  #include <linux/clk-provider.h>
->  #include <linux/mfd/dbx500-prcmu.h>
->  #include <linux/platform_data/clk-ux500.h>
-> diff --git a/drivers/clk/ux500/u8540_clk.c b/drivers/clk/ux500/u8540_clk.c
-> index 20c8add90d11..d0de335ea1e9 100644
-> --- a/drivers/clk/ux500/u8540_clk.c
-> +++ b/drivers/clk/ux500/u8540_clk.c
-> @@ -7,7 +7,6 @@
->   * License terms: GNU General Public License (GPL) version 2
->   */
->
-> -#include <linux/clk.h>
->  #include <linux/clkdev.h>
->  #include <linux/clk-provider.h>
->  #include <linux/mfd/dbx500-prcmu.h>
-> diff --git a/drivers/clk/ux500/u9540_clk.c b/drivers/clk/ux500/u9540_clk.c
-> index 44794782e7e0..179bd3871b34 100644
-> --- a/drivers/clk/ux500/u9540_clk.c
-> +++ b/drivers/clk/ux500/u9540_clk.c
-> @@ -7,8 +7,6 @@
->   * License terms: GNU General Public License (GPL) version 2
->   */
->
-> -#include <linux/clk.h>
-> -#include <linux/clkdev.h>
->  #include <linux/clk-provider.h>
->  #include <linux/mfd/dbx500-prcmu.h>
->  #include <linux/platform_data/clk-ux500.h>
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+It should definitely be possible to build and boot a kernel with both a
+family A and B rpm-clock driver compiled in. The details seems to be a
+little bit different in the A driver, but I think that with this driver
+as reference it should be an easy writeup.
+
+Regards,
+Bjorn
