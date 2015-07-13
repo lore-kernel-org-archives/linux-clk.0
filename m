@@ -1,44 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55BAA17F.1070305@codeaurora.org>
-Date: Thu, 30 Jul 2015 15:13:19 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Message-ID: <55A3872C.3020301@ti.com>
+Date: Mon, 13 Jul 2015 12:38:52 +0300
+From: Tero Kristo <t-kristo@ti.com>
 MIME-Version: 1.0
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	mturquette@baylibre.com, linux-kernel@vger.kernel.org,
-	robh+dt@kernel.org, lee.jones@linaro.org,
-	linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 2/4] mfd: devicetree: bindings: Add clock subdevice node
- information
-References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org> <1437476823-3358-3-git-send-email-vaibhav.hiremath@linaro.org> <CAJKOXPeUJ-7je67q+9X1_FcFiczoQ6rqwMAoPLswapFEmqGGVg@mail.gmail.com>
-In-Reply-To: <CAJKOXPeUJ-7je67q+9X1_FcFiczoQ6rqwMAoPLswapFEmqGGVg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 43/45] clk: ti: Switch clk-provider.h include to clk.h
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org> <1436571223-10959-44-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-44-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/22/2015 10:08 PM, Krzysztof Kozlowski wrote:
-> 2015-07-21 20:07 GMT+09:00 Vaibhav Hiremath <vaibhav.hiremath@linaro.org>:
->> This patch updates the binding documentation for optional
->> clocks node and related information for buffered 32KHz clock.
->>
->> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
->> ---
->>   Documentation/devicetree/bindings/mfd/88pm800.txt | 28 +++++++++++++++++++++++
->>   1 file changed, 28 insertions(+)
-> +Cc Stephen Boyd (clocks)
+On 07/11/2015 02:33 AM, Stephen Boyd wrote:
+> This file isn't a clock provider but uses the consumer API, so
+> include clk.h instead of clk-provider.h.
 >
-> We had a discussion whether clock bindings should be put in MFD
-> bindings documentation or into separate file in bindings/clock but
-> either way is fine for me:
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-No patch? :)
+Acked-by: Tero Kristo <t-kristo@ti.com>
 
-I think Rob has been pushing for MFDs to document everything within one 
-file, but either way is fine from clk perspective.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> ---
+>   drivers/clk/ti/clk-2xxx.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/ti/clk-2xxx.c b/drivers/clk/ti/clk-2xxx.c
+> index c808ab3d2bb2..20cf5eed8c3d 100644
+> --- a/drivers/clk/ti/clk-2xxx.c
+> +++ b/drivers/clk/ti/clk-2xxx.c
+> @@ -16,7 +16,7 @@
+>
+>   #include <linux/kernel.h>
+>   #include <linux/list.h>
+> -#include <linux/clk-provider.h>
+> +#include <linux/clk.h>
+>   #include <linux/clk/ti.h>
+>
+>   static struct ti_dt_clk omap2xxx_clks[] = {
+>
 
