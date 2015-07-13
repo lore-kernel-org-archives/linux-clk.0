@@ -1,97 +1,99 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <55BBB1AC.6070102@codeaurora.org>
-Date: Fri, 31 Jul 2015 10:34:36 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <linux-omap-owner@vger.kernel.org>
+Message-ID: <55A38973.3020802@ti.com>
+Date: Mon, 13 Jul 2015 12:48:35 +0300
+From: Tero Kristo <t-kristo@ti.com>
 MIME-Version: 1.0
-To: Victorien Vedrine <victorien.vedrine@ophrys.net>
-CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- mturquette@baylibre.com, Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH] clk:mxs: Fix bug on frequency divider
-References: <1438359857-11074-1-git-send-email-victorien.vedrine@ophrys.net>
-In-Reply-To: <1438359857-11074-1-git-send-email-victorien.vedrine@ophrys.net>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+To: Mike Turquette <mturquette@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>
+CC: <balbi@ti.com>, <linux-clk@vger.kernel.org>,
+	<linux-omap@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<paul@pwsan.com>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com> <20150526160557.GD16525@atomide.com> <20150526163216.GF16525@atomide.com> <20150526163931.GO26599@saruman.tx.rr.com> <55660D5B.8020607@ti.com> <20150527231536.GD30984@atomide.com> <556EF42A.9000207@ti.com> <20150603231136.6017.65683@quantum>
+In-Reply-To: <20150603231136.6017.65683@quantum>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-omap-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-+Shawn
-
-On 07/31/2015 09:24 AM, Victorien Vedrine wrote:
-> On drivers/clk/mxs/clk-frac.c, the function clk_frac_round_rate returned a bad
-> result. The division before multiplication computes a wrong value ; the
-> calculation is inverted to fix the problem. The second issue is that the exact
-> rate have decimals and they are truncate. The consequence is that the function
-> clk_frac_set_rate (which use the result of clk_frac_round_rate) computes a
-> wrong value for the register (the rate generated can be closer to the desired
-> rate). The correction is : if there is decimal to the result, it is rounded to
-> the next larger integer.
+On 06/04/2015 02:11 AM, Michael Turquette wrote:
+> Quoting Tero Kristo (2015-06-03 05:33:46)
+>> On 05/28/2015 02:15 AM, Tony Lindgren wrote:
+>>> * Tero Kristo <t-kristo@ti.com> [150527 11:32]:
+>>>> On 05/26/2015 07:39 PM, Felipe Balbi wrote:
+>>>>> On Tue, May 26, 2015 at 09:32:16AM -0700, Tony Lindgren wrote:
+>>>>>> * Tony Lindgren <tony@atomide.com> [150526 09:08]:
+>>>>>>> * Tero Kristo <t-kristo@ti.com> [150525 08:01]:
+>>>>>>>> Hi,
+>>>>>>>>
+>>>>>>>> As requested, posting v3 with somewhat changed diff parameters and
+>>>>>>>> diffstat attached. Just some minor Makefile changes compared to v2,
+>>>>>>>> these were discussed under that set.
+>>>>>>>>
+>>>>>>>> Set has been pushed to:
+>>>>>>>> - tree: https://github.com/t-kristo/linux-pm.git
+>>>>>>>> - branch: for-4.2/ti-clk-move
+>>>>>>>
+>>>>>>> Looks like this causes a build error for at least omap2 only .config:
+>>>>>>>
+>>>>>>> drivers/clk/ti/dpll3xxx.o:(.rodata+0x1c): multiple definition of `clkhwops_omap3_dpll'
+>>>>>>> drivers/clk/ti/dpll.o:(.rodata+0x0): first defined here
+>>>>>>>
+>>>>>>> You may want to create a file selecting ARCH_OMAP2PLUS=y, then point
+>>>>>>> KCONFIG_ALLCONFIG to that file for make randconfig. Then just build
+>>>>>>> randconfigs :) Usually the issues like this are exposed within few
+>>>>>>> randconfig builds, some take longer if the options have dependencies.
+>>>>>
+>>>>> alternatively, just clone the repository at [1] and use the example
+>>>>> script provided in README.md.
+>>>>>
+>>>>> [1] https://github.com/felipebalbi/omap-seeds
+>>>>>
+>>>>
+>>>> Ok, I pushed an updated branch named: for-4.2/ti-clk-move-v4
+>>>>
+>>>> This definitely compiles with OMAP2 / OMAP3 / OMAP4 / OMAP5 / DRA7 / AM33xx
+>>>> / AM43xx only setups (tried it out.)
+>>>
+>>> Thanks yeah seems to work for me now.
+>>>
+>>> Regards,
+>>>
+>>> Tony
+>>>
+>>
+>> Question to Mike / Stephen, any chance of getting this in during the 4.2
+>> merge anymore seeing we are already at 4.1-rc6?
+>>
+>> I can send a pull request if yes. Otherwise I just wait until we are
+>> past the next merge.
 >
-> On drivers/clk/mxs/clk-frac.c, the function clk_frac_recalc_rate returned
-> a bad result. The multiplication is made before the division to compute a
-> correct value.
+> Hi Tero,
 >
-> The issue is reproducible by this way : Set the SAIF frequency to 22579200Hz
-> (it's the appropriate frequency for 44100hz sample rate for SGTL5000 codec).
-> With the divider register (HW_CLKCTRL_SAIF0), the closest lower value is
-> 22573242.1875Hz (0xC0A on register). The original clk-frac functions give 0xC09
-> on the divider register.
+> I'd like more time for any regressions this introduces to be fixed, so
+> lets push back to next merge window. The always-wrong-but-never-by-much
+> crystal ball[0] predicts June 14. This is less than two weeks away, so
+> the wait should be short.
+
+Hi Mike / Stephen,
+
+I am planning to send a pull-request out for this, but this set is going 
+to cause some minor merge conflicts with the recent header file change 
+patches from Stephen, and the determine rate prototype change from Boris.
+
+I can alternatively just ignore these issues and send these patches on 
+top of rc2 and let you handle the conflicts within clk-tree, or 
+cherry-pick some stable commits for the same if you like.
+
+Which way do you prefer?
+
+-Tero
+
 >
-> Signed-off-by: Victorien Vedrine <victorien.vedrine@ophrys.net>
-> ---
->   drivers/clk/mxs/clk-frac.c | 13 ++++++++++---
->   1 file changed, 10 insertions(+), 3 deletions(-)
+> [0] http://phb-crystal-ball.org/
 >
-> diff --git a/drivers/clk/mxs/clk-frac.c b/drivers/clk/mxs/clk-frac.c
-> index e6aa6b5..d51cf03 100644
-> --- a/drivers/clk/mxs/clk-frac.c
-> +++ b/drivers/clk/mxs/clk-frac.c
-> @@ -42,11 +42,13 @@ static unsigned long clk_frac_recalc_rate(struct clk_hw *hw,
->   {
->   	struct clk_frac *frac = to_clk_frac(hw);
->   	u32 div;
-> +	u64 tmp_rate;
->   
->   	div = readl_relaxed(frac->reg) >> frac->shift;
->   	div &= (1 << frac->width) - 1;
->   
-> -	return (parent_rate >> frac->width) * div;
-> +	tmp_rate = (u64)parent_rate * (u64)div;
+> Thanks,
+> Mike
+>
+>>
+>> -Tero
 
-We shouldn't need to cast both to 64 bits...
-
-> +	return (unsigned long)(tmp_rate >> frac->width);
-
-Isn't the cast implicit by means of the return type of this function?
-
->   }
->   
->   static long clk_frac_round_rate(struct clk_hw *hw, unsigned long rate,
-> @@ -55,7 +57,7 @@ static long clk_frac_round_rate(struct clk_hw *hw, unsigned long rate,
->   	struct clk_frac *frac = to_clk_frac(hw);
->   	unsigned long parent_rate = *prate;
->   	u32 div;
-> -	u64 tmp;
-> +	u64 tmp, tmp_rate, result;
->   
->   	if (rate > parent_rate)
->   		return -EINVAL;
-> @@ -68,7 +70,12 @@ static long clk_frac_round_rate(struct clk_hw *hw, unsigned long rate,
->   	if (!div)
->   		return -EINVAL;
->   
-> -	return (parent_rate >> frac->width) * div;
-> +	tmp_rate = (u64)parent_rate * (u64)div;
-> +	result = (u64)(tmp_rate >> frac->width);
-
-Cast looks useless here too.
-
-> +	if ((result << frac->width) < tmp_rate)
-> +		return result + 1;
-> +	else
-> +		return result;
-
-The else could be dropped and just be return result. Also, have you see 
-mult_frac()? I suppose we're doing shifts with width because it's a 
-power-of-2 denominator?
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
