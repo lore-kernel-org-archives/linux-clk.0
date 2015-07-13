@@ -1,43 +1,36 @@
-Return-Path: <lee@kernel.org>
-Date: Fri, 24 Jul 2015 16:22:17 +0100
-From: Lee Jones <lee@kernel.org>
-To: Eric Anholt <eric@anholt.net>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>, linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v4 8/8] ARM: bcm2835: Use the firmware on rpi to get the
- EMMC clock.
-Message-ID: <20150724152217.GM3436@x1>
-References: <1437420787-32137-1-git-send-email-eric@anholt.net>
- <1437420787-32137-9-git-send-email-eric@anholt.net>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Mon, 13 Jul 2015 08:03:43 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 25/45] clk: socfpga: Remove clk.h include
+Message-ID: <20150713023343.GD10415@linux>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+ <1436571223-10959-26-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1437420787-32137-9-git-send-email-eric@anholt.net>
+In-Reply-To: <1436571223-10959-26-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 20 Jul 2015, Eric Anholt wrote:
-
-> This updates the MMC frequency from 100Mhz to 250Mhz.
+On 10-07-15, 16:33, Stephen Boyd wrote:
+> Clock provider drivers generally shouldn't include clk.h because
+> it's the consumer API. Remove the include here because this is a
+> provider driver.
 > 
-> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 > ---
->  arch/arm/boot/dts/bcm2835-rpi.dtsi | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/clk/spear/spear1310_clock.c | 1 -
+>  drivers/clk/spear/spear1340_clock.c | 1 -
+>  drivers/clk/spear/spear3xx_clock.c  | 1 -
+>  drivers/clk/spear/spear6xx_clock.c  | 1 -
+>  4 files changed, 4 deletions(-)
 
-For my own reference:
- Acked-by: Lee Jones <lee@kernel.org>
+I hope you have compiled it :)
 
-> diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
-> index 0a32123..5d370cb 100644
-> --- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
-> +++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
-> @@ -62,6 +62,7 @@
->  &sdhci {
->  	status = "okay";
->  	bus-width = <4>;
-> +	clocks = <&firmware_clocks RPI_CLOCK_EMMC>;
->  };
->  
->  &uart0 {
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+-- 
+viresh
