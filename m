@@ -1,52 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 21 Jul 2015 15:42:36 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Kukjin Kim <kgene@kernel.org>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
-Message-ID: <20150721224235.GA30021@codeaurora.org>
-References: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	James Liao <jamesjj.liao@mediatek.com>
+CC: Russell King <linux@arm.linux.org.uk>,
+	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	<linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	<linux-mediatek@lists.infradead.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Olof Johansson <olof@lixom.net>,
+	Yingjoe Chen <yingjoe.chen@mediatek.com>,
+	<srv_heupstream@mediatek.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH 3/5] arm64: mediatek: enable MTK_TIMER
+Date: Mon, 13 Jul 2015 17:32:47 +0800
+Message-ID: <1436779969-18610-4-git-send-email-yingjoe.chen@mediatek.com>
+In-Reply-To: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
+References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/12, Krzysztof Kozlowski wrote:
-> The TSADC gate clock was used in Exynos4x12 DTSI for exynos-adc driver.
-> However TSADC is present only on Exynos4210 so on Trats2 board (with
-> Exynos4412 SoC) the exynos-adc driver could not be probed:
->    ERROR: could not get clock /adc@126C0000:adc(0)
->    exynos-adc 126c0000.adc: failed getting clock, err = -2
->    exynos-adc: probe of 126c0000.adc failed with error -2
-> 
-> Instead on Exynos4x12 SoCs the main clock used by Analog to Digital
-> Converter is located in different register and it is named in datasheet
-> as PCLK_ADC. Regardless of the name the purpose of this PCLK_ADC clock
-> is the same as purpose of TSADC from Exynos4210.
-> 
-> The patch adds gate clock for Exynos4x12 using the proper register so
-> backward compatibility is preserved. This fixes the probe of exynos-adc
-> driver on Exynos4x12 boards and allows accessing sensors connected to it
-> on Trats2 board (ntc,ncp15wb473 AP and battery thermistors).
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: <stable@vger.kernel.org>
-> Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
-> Link: https://lkml.org/lkml/2015/6/11/85
-> 
+Enable MTK_TIMER for MediaTek plaform, which will be used as
+schedule clock.
 
-Did you want clk maintainers to apply this? The To: list is not
-helping so I'm not sure what's going on and it seems to have
-slipped through the cracks.
+Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+---
+ arch/arm64/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 0f6edb1..5934f51 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -193,6 +193,7 @@ config ARCH_MEDIATEK
+ 	bool "Mediatek MT65xx & MT81xx ARMv8 SoC"
+ 	select ARM_GIC
+ 	select PINCTRL
++	select MTK_TIMER
+ 	help
+ 	  Support for Mediatek MT65xx & MT81xx ARMv8 SoCs
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.8.1.1.dirty
+
