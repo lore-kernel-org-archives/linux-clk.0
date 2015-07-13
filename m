@@ -1,50 +1,28 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55A2BA30.1000903@oracle.com>
-Date: Sun, 12 Jul 2015 12:04:16 -0700
-From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Return-Path: <soren.brinkmann@xilinx.com>
+Return-Path: soren.brinkmann@xilinx.com
+Date: Mon, 13 Jul 2015 09:54:09 -0700
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 2/7] staging: clocking-wizard: Include clk.h
+Message-ID: <20150713165409.GG3129@xsjsorenbubuntu>
+References: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org>
+ <1436569409-27964-3-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>
-CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Nishanth Menon <nm@ti.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>
-Subject: Re: [PATCH 3/7] ARM: keystone: Remove clk-provider.h include
-References: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org> <1436568347-24554-4-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436568347-24554-4-git-send-email-sboyd@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1436569409-27964-3-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 7/10/15 3:45 PM, Stephen Boyd wrote:
-> This file doesn't use the clk provider APIs. Remove the include.
->
-> Cc: Nishanth Menon <nm@ti.com>
-> Cc: Sekhar Nori <nsekhar@ti.com>
-> Cc: Santosh Shilimkar <ssantosh@kernel.org>
+On Fri, 2015-07-10 at 04:03PM -0700, Stephen Boyd wrote:
+> This clock provider uses the consumer API, so include clk.h
+> explicitly.
+> 
+> Cc: Sören Brinkmann <soren.brinkmann@xilinx.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->
-> Please ack if you want this to go through clk-tree.
->
-Sure.
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+Acked-by: Sören Brinkmann <soren.brinkmann@xilinx.com>
 
->   arch/arm/mach-keystone/pm_domain.c | 1 -
->   1 file changed, 1 deletion(-)
->
-> diff --git a/arch/arm/mach-keystone/pm_domain.c b/arch/arm/mach-keystone/pm_domain.c
-> index edea697e8253..e283939a216f 100644
-> --- a/arch/arm/mach-keystone/pm_domain.c
-> +++ b/arch/arm/mach-keystone/pm_domain.c
-> @@ -16,7 +16,6 @@
->   #include <linux/pm_runtime.h>
->   #include <linux/pm_clock.h>
->   #include <linux/platform_device.h>
-> -#include <linux/clk-provider.h>
->   #include <linux/of.h>
->
->   static struct dev_pm_domain keystone_pm_domain = {
->
+	Thanks,
+	Sören
