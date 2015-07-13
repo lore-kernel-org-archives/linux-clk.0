@@ -1,63 +1,68 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH/RFC 03/11] ARM: shmobile: r8a7791 dtsi: Add device node for
- RST module
-Date: Tue,  7 Jul 2015 16:10:09 +0200
-Message-Id: <1436278217-20522-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
-References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-sh@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Ulrich Hecht <ulrich.hecht@gmail.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <yingjoe.chen@mediatek.com>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+	<mturquette@baylibre.com>, James Liao <jamesjj.liao@mediatek.com>
+CC: Russell King <linux@arm.linux.org.uk>, <devicetree@vger.kernel.org>, Arnd
+ Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, Daniel
+ Lezcano <daniel.lezcano@linaro.org>, <linux-kernel@vger.kernel.org>, Rob
+ Herring <robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>, Sascha
+ Hauer <kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>, Yingjoe Chen
+	<yingjoe.chen@mediatek.com>, <srv_heupstream@mediatek.com>,
+	<linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH 2/5] clocksource: mediatek: Use GPT as sched clock source
+Date: Mon, 13 Jul 2015 17:32:46 +0800
+Message-ID: <1436779969-18610-3-git-send-email-yingjoe.chen@mediatek.com>
+In-Reply-To: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
+References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Content-Type: text/plain
+Return-Path: yingjoe.chen@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a device node for the RST module, which provides reset control.
-Declare it to be a system controller (syscon), so other device nodes can
-refer to its registers.
+When cpu is in deep idle, arch timer will stop counting. Setup GPT as
+sched clock source so it can keep counting in idle.
 
-TODO Add DT binding documentation.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/clocksource/mtk_timer.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index b83f63bd2b1ae6e9..17a6e0fd779fb7a4 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1405,6 +1405,11 @@
- 		};
- 	};
+diff --git a/drivers/clocksource/mtk_timer.c b/drivers/clocksource/mtk_timer.c
+index 237c20b..ae95b29 100644
+--- a/drivers/clocksource/mtk_timer.c
++++ b/drivers/clocksource/mtk_timer.c
+@@ -24,6 +24,7 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
++#include <linux/sched_clock.h>
+ #include <linux/slab.h>
  
-+	rst: reset-controller@e616000 {
-+		compatible = "renesas,rst-r8a7791", "syscon";
-+		reg = <0 0xe6160000 0 0x0100>;
-+	};
+ #define GPT_IRQ_EN_REG		0x00
+@@ -59,6 +60,13 @@ struct mtk_clock_event_device {
+ 	struct clock_event_device dev;
+ };
+ 
++static void __iomem *gpt_sched_reg __read_mostly;
 +
- 	sysc: system-controller@e6180000 {
- 		compatible = "renesas,sysc-r8a7791", "renesas,sysc-rcar";
- 		reg = <0 0xe6180000 0 0x0200>;
++static u64 notrace mtk_read_sched_clock(void)
++{
++	return readl_relaxed(gpt_sched_reg);
++}
++
+ static inline struct mtk_clock_event_device *to_mtk_clk(
+ 				struct clock_event_device *c)
+ {
+@@ -242,6 +250,8 @@ static void __init mtk_timer_init(struct device_node *node)
+ 	mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN, true);
+ 	clocksource_mmio_init(evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC),
+ 			node->name, rate, 300, 32, clocksource_mmio_readl_up);
++	gpt_sched_reg = evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC);
++	sched_clock_register(mtk_read_sched_clock, 32, rate);
+ 
+ 	/* Configure clock event */
+ 	mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT, false);
 -- 
-1.9.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+1.8.1.1.dirty
