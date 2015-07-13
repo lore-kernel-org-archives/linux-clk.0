@@ -1,99 +1,159 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Date: Wed, 15 Jul 2015 20:29:56 +0800
-From: Dong Aisheng <b29396@freescale.com>
-To: <mturquette@baylibre.com>
-Subject: Re: [PATCH v2 1/5] clk: remove duplicated code with
- __clk_set_parent_after
-Message-ID: <20150715122955.GB30570@shlinux1.ap.freescale.net>
-References: <1431610143-21853-1-git-send-email-aisheng.dong@freescale.com>
- <1431610143-21853-2-git-send-email-aisheng.dong@freescale.com>
- <20150528040919.22384.79189@quantum>
- <20150715122522.GA30570@shlinux1.ap.freescale.net>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55A38710.20406@ti.com>
+Date: Mon, 13 Jul 2015 12:38:24 +0300
+From: Tero Kristo <t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20150715122522.GA30570@shlinux1.ap.freescale.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Dong Aisheng <aisheng.dong@freescale.com>,
- Ranjani.Vaidyanathan@freescale.com, b20596@freescale.com, sboyd@codeaurora.org,
- linux-kernel@vger.kernel.org, r64343@freescale.com, b20788@freescale.com,
- shawn.guo@linaro.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 34/45] clk: ti: Include clk.h
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org> <1436571223-10959-35-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436571223-10959-35-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 15, 2015 at 08:25:24PM +0800, Dong Aisheng wrote:
-> Hi Mike,
-> 
-> On Wed, May 27, 2015 at 09:09:19PM -0700, Michael Turquette wrote:
-> > Quoting Dong Aisheng (2015-05-14 06:28:59)
-> > > __clk_set_parent_after() actually used the second argument then we
-> > > could put this duplicate logic in there and call it with a different
-> > > order of arguments in the success vs. error paths in this function.
-> > > 
-> > > Cc: Mike Turquette <mturquette@linaro.org>
-> > > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > > Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
-> > > Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
-> > 
-> > Patch looks good to me.
-> > 
-> > Also just noticed that the second argument to __clk_set_parent_after is
-> > never used :-(
-> > 
-> 
-> Ping...
-> 
-> I did not see this patch series in your tree for v4.2 rc.
-> Is this got missed?
-> 
+On 07/11/2015 02:33 AM, Stephen Boyd wrote:
+> This clock provider uses the consumer API, so include clk.h
+> explicitly.
+>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Updated Mike's email address.
+Acked-by: Tero Kristo <t-kristo@ti.com>
 
-Regards
-Dong Aisheng
+> ---
+>   drivers/clk/ti/apll.c            | 1 +
+>   drivers/clk/ti/clk-33xx.c        | 1 +
+>   drivers/clk/ti/clk-3xxx-legacy.c | 1 +
+>   drivers/clk/ti/clk-3xxx.c        | 1 +
+>   drivers/clk/ti/clk-43xx.c        | 1 +
+>   drivers/clk/ti/clk-dra7-atl.c    | 1 +
+>   drivers/clk/ti/clk.c             | 1 +
+>   drivers/clk/ti/clockdomain.c     | 1 +
+>   drivers/clk/ti/dpll.c            | 1 +
+>   drivers/clk/ti/fapll.c           | 1 +
+>   10 files changed, 10 insertions(+)
+>
+> diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
+> index 49baf3831546..671f4d89db93 100644
+> --- a/drivers/clk/ti/apll.c
+> +++ b/drivers/clk/ti/apll.c
+> @@ -15,6 +15,7 @@
+>    * GNU General Public License for more details.
+>    */
+>
+> +#include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/module.h>
+>   #include <linux/slab.h>
+> diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+> index 028b33783d38..9616bcdba220 100644
+> --- a/drivers/clk/ti/clk-33xx.c
+> +++ b/drivers/clk/ti/clk-33xx.c
+> @@ -16,6 +16,7 @@
+>
+>   #include <linux/kernel.h>
+>   #include <linux/list.h>
+> +#include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/clk/ti.h>
+>
+> diff --git a/drivers/clk/ti/clk-3xxx-legacy.c b/drivers/clk/ti/clk-3xxx-legacy.c
+> index 0b61548d569b..0fbf8a917955 100644
+> --- a/drivers/clk/ti/clk-3xxx-legacy.c
+> +++ b/drivers/clk/ti/clk-3xxx-legacy.c
+> @@ -15,6 +15,7 @@
+>    */
+>
+>   #include <linux/kernel.h>
+> +#include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/clk/ti.h>
+>
+> diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
+> index 757636d166cf..5df21b258658 100644
+> --- a/drivers/clk/ti/clk-3xxx.c
+> +++ b/drivers/clk/ti/clk-3xxx.c
+> @@ -16,6 +16,7 @@
+>
+>   #include <linux/kernel.h>
+>   #include <linux/list.h>
+> +#include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/clk/ti.h>
+>
+> diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
+> index 3795fce8a830..39a594c0d100 100644
+> --- a/drivers/clk/ti/clk-43xx.c
+> +++ b/drivers/clk/ti/clk-43xx.c
+> @@ -16,6 +16,7 @@
+>
+>   #include <linux/kernel.h>
+>   #include <linux/list.h>
+> +#include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/clk/ti.h>
+>
+> diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
+> index 19e543a32e2b..2e14dfb588f4 100644
+> --- a/drivers/clk/ti/clk-dra7-atl.c
+> +++ b/drivers/clk/ti/clk-dra7-atl.c
+> @@ -16,6 +16,7 @@
+>    */
+>
+>   #include <linux/module.h>
+> +#include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/slab.h>
+>   #include <linux/io.h>
+> diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+> index 64bb5e8a3b8c..7132cec33f00 100644
+> --- a/drivers/clk/ti/clk.c
+> +++ b/drivers/clk/ti/clk.c
+> @@ -15,6 +15,7 @@
+>    * GNU General Public License for more details.
+>    */
+>
+> +#include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/clkdev.h>
+>   #include <linux/clk/ti.h>
+> diff --git a/drivers/clk/ti/clockdomain.c b/drivers/clk/ti/clockdomain.c
+> index b82ef07f3403..41eb5d105846 100644
+> --- a/drivers/clk/ti/clockdomain.c
+> +++ b/drivers/clk/ti/clockdomain.c
+> @@ -15,6 +15,7 @@
+>    * GNU General Public License for more details.
+>    */
+>
+> +#include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/slab.h>
+>   #include <linux/of.h>
+> diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+> index 2aacf7a3bcae..74e94b9bae55 100644
+> --- a/drivers/clk/ti/dpll.c
+> +++ b/drivers/clk/ti/dpll.c
+> @@ -15,6 +15,7 @@
+>    * GNU General Public License for more details.
+>    */
+>
+> +#include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/slab.h>
+>   #include <linux/err.h>
+> diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
+> index 730aa62454a2..f158c2ab019d 100644
+> --- a/drivers/clk/ti/fapll.c
+> +++ b/drivers/clk/ti/fapll.c
+> @@ -9,6 +9,7 @@
+>    * GNU General Public License for more details.
+>    */
+>
+> +#include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/delay.h>
+>   #include <linux/err.h>
+>
 
-> Regards
-> Dong Aisheng
-> 
-> > Regards,
-> > Mike
-> > 
-> > > ---
-> > >  drivers/clk/clk.c | 8 +-------
-> > >  1 file changed, 1 insertion(+), 7 deletions(-)
-> > > 
-> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > index 659f2b0..0e813ea 100644
-> > > --- a/drivers/clk/clk.c
-> > > +++ b/drivers/clk/clk.c
-> > > @@ -1159,14 +1159,8 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
-> > >                 flags = clk_enable_lock();
-> > >                 clk_reparent(core, old_parent);
-> > >                 clk_enable_unlock(flags);
-> > > +               __clk_set_parent_after(core, old_parent, parent);
-> > >  
-> > > -               if (core->prepare_count) {
-> > > -                       flags = clk_enable_lock();
-> > > -                       clk_core_disable(core);
-> > > -                       clk_core_disable(parent);
-> > > -                       clk_enable_unlock(flags);
-> > > -                       clk_core_unprepare(parent);
-> > > -               }
-> > >                 return ret;
-> > >         }
-> > >  
-> > > -- 
-> > > 1.9.1
-> > > 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
