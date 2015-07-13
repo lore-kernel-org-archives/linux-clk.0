@@ -1,117 +1,60 @@
-Return-Path: <vaibhav.hiremath@linaro.org>
-Return-Path: <vaibhav.hiremath@linaro.org>
-Message-ID: <55AF866A.1090306@linaro.org>
-Date: Wed, 22 Jul 2015 17:32:50 +0530
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <55A42299.3040809@codeaurora.org>
+Date: Mon, 13 Jul 2015 13:42:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 MIME-Version: 1.0
-To: Anand Moon <linux.amoon@gmail.com>
-CC: linux-arm-kernel@lists.infradead.org,
- Sangbeom Kim <sbkim73@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS <linux-kernel@vger.kernel.org>,
- open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS <linux-samsung-soc@vger.kernel.org>,
- open list:COMMON CLK FRAMEWORK <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: s2mps11: Use kcalloc instead of kzalloc for array
- allocation
-References: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org> <CANAwSgSEUaSd9xM4deOO_=MabdknKCT148nXud7rWabzaXD9Bg@mail.gmail.com>
-In-Reply-To: <CANAwSgSEUaSd9xM4deOO_=MabdknKCT148nXud7rWabzaXD9Bg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 22/45] clk: samsung: Properly include clk.h and clkdev.h
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org> <1436571223-10959-23-git-send-email-sboyd@codeaurora.org> <55A0C0A6.8060600@samsung.com>
+In-Reply-To: <55A0C0A6.8060600@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-2; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On Wednesday 22 July 2015 05:09 PM, Anand Moon wrote:
-> Hi Vaibhav,
+On 07/11/2015 12:07 AM, Krzysztof Kozlowski wrote:
+> W dniu 11.07.2015 o 08:33, Stephen Boyd pisze:
 >
-> On 22 July 2015 at 15:04, Vaibhav Hiremath <vaibhav.hiremath@linaro.org> wrote:
->> This patch cleans up the driver for,
->>
->>    - Use devm_kcalloc varient instead of devm_kzalloc for array
->>      allocation.
->>    - clk_prepare/unprepare, remove "ret" variable as it is not required
->>    - use __exit for cleanup function
->>
->> As I am referring this driver as a reference for my 88pm800 clk driver,
->> applying same changes here as well.
->>
->> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
->> ---
->> Since I do not have platform to test, it would be helpful if someone
->> tests it for me.
->> I have build tested it.
->>
->>   drivers/clk/clk-s2mps11.c | 18 +++++++-----------
->>   1 file changed, 7 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
->> index 9b13a30..e17c66a 100644
->> --- a/drivers/clk/clk-s2mps11.c
->> +++ b/drivers/clk/clk-s2mps11.c
->> @@ -58,21 +58,17 @@ static struct s2mps11_clk *to_s2mps11_clk(struct clk_hw *hw)
->>   static int s2mps11_clk_prepare(struct clk_hw *hw)
->>   {
->>          struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
->> -       int ret;
->>
->> -       ret = regmap_update_bits(s2mps11->iodev->regmap_pmic,
->> +       return regmap_update_bits(s2mps11->iodev->regmap_pmic,
->>                                   s2mps11->reg,
->>                                   s2mps11->mask, s2mps11->mask);
->> -
->> -       return ret;
->>   }
->>
->>   static void s2mps11_clk_unprepare(struct clk_hw *hw)
->>   {
->>          struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
->> -       int ret;
->>
->> -       ret = regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
->> +       regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
->>                             s2mps11->mask, ~s2mps11->mask);
->>   }
->>
->> @@ -186,15 +182,15 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
->>          struct clk_init_data *clks_init;
->>          int i, ret = 0;
->>
->> -       s2mps11_clks = devm_kzalloc(&pdev->dev, sizeof(*s2mps11_clk) *
->> -                                       S2MPS11_CLKS_NUM, GFP_KERNEL);
->> +       s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
->> +                               sizeof(*s2mps11_clk), GFP_KERNEL);
->>          if (!s2mps11_clks)
->>                  return -ENOMEM;
->>
->>          s2mps11_clk = s2mps11_clks;
->>
->> -       clk_table = devm_kzalloc(&pdev->dev, sizeof(struct clk *) *
->> -                                S2MPS11_CLKS_NUM, GFP_KERNEL);
->> +       clk_table = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
->> +                               sizeof(struct clk *), GFP_KERNEL);
->>          if (!clk_table)
->>                  return -ENOMEM;
->>
->> @@ -322,7 +318,7 @@ static int __init s2mps11_clk_init(void)
->>   }
->>   subsys_initcall(s2mps11_clk_init);
->>
->> -static void __init s2mps11_clk_cleanup(void)
->> +static void __exit s2mps11_clk_cleanup(void)
->>   {
->>          platform_driver_unregister(&s2mps11_clk_driver);
->>   }
->> --
->> 1.9.1
->>
+>> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+>> index 0117238391d6..f38a6c49f744 100644
+>> --- a/drivers/clk/samsung/clk.c
+>> +++ b/drivers/clk/samsung/clk.c
+>> @@ -11,6 +11,10 @@
+>>    * clock framework for Samsung platforms.
+>>   */
+>>   
+>> +#include <linux/slab.h>
+>> +#include <linux/clkdev.h>
+>> +#include <linux/clk.h>
+>> +#include <linux/clk-provider.h>
+>>   #include <linux/of_address.h>
+>>   #include <linux/syscore_ops.h>
+>>   
+>> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+>> index b775fc29caa5..aa872d2c5105 100644
+>> --- a/drivers/clk/samsung/clk.h
+>> +++ b/drivers/clk/samsung/clk.h
+>> @@ -13,10 +13,11 @@
+>>   #ifndef __SAMSUNG_CLK_H
+>>   #define __SAMSUNG_CLK_H
+>>   
+>> -#include <linux/clkdev.h>
+>>   #include <linux/clk-provider.h>
+>>   #include "clk-pll.h"
+>>   
+>> +struct clk;
+>> +
+> Hmmm... why? Including clk-provider (which declares struct clk in your
+> last patch) is not sufficient?
 >
-> Tested on Odroid-XU3 board.
->
-> Tested-by: Anand Moon <linux.amoon@gmail.com>
 
-Thanks Anand, really appreciate your help here.
+I hope to eventually remove the forward declaration of struct clk in 
+clk-provider.h too. That will take some more time though. I can leave 
+this part out of the patch if you like and add it back when that work is 
+done, it doesn't matter to me.
 
-
-Thanks,
-Vaibhav
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
