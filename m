@@ -1,35 +1,45 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	linux-mediatek@lists.infradead.org,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Olof Johansson <olof@lixom.net>, srv_heupstream@mediatek.com,
-	linux-arm-kernel@lists.infradead.org,
-	Daniel Kurtz <djkurtz@chromium.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/5] arm64: mediatek: enable MTK_TIMER
-Date: Fri, 17 Jul 2015 23:54:48 +0200
-Message-ID: <1956087.MUsCyY7Qyv@ubix>
-In-Reply-To: <1436779969-18610-4-git-send-email-yingjoe.chen@mediatek.com>
-References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com> <1436779969-18610-4-git-send-email-yingjoe.chen@mediatek.com>
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <55A41EE9.5030808@codeaurora.org>
+Date: Mon, 13 Jul 2015 13:26:17 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+To: Tero Kristo <t-kristo@ti.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+ Tony Lindgren <tony@atomide.com>,
+ balbi@ti.com, linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+ paul@pwsan.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv3 00/27] ARM: OMAP2+: clock code move under clk driver
+References: <1432566032-10860-1-git-send-email-t-kristo@ti.com> <20150526160557.GD16525@atomide.com> <20150526163216.GF16525@atomide.com> <20150526163931.GO26599@saruman.tx.rr.com> <55660D5B.8020607@ti.com> <20150527231536.GD30984@atomide.com> <556EF42A.9000207@ti.com> <20150603231136.6017.65683@quantum> <55A38973.3020802@ti.com>
+In-Reply-To: <55A38973.3020802@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, July 13, 2015 05:32:47 PM Yingjoe Chen wrote:
-> Enable MTK_TIMER for MediaTek plaform, which will be used as
-> schedule clock.
-> 
-> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> ---
+On 07/13/2015 02:48 AM, Tero Kristo wrote:
+> On 06/04/2015 02:11 AM, Michael Turquette wrote:
+>>
+>> Hi Tero,
+>>
+>> I'd like more time for any regressions this introduces to be fixed, so
+>> lets push back to next merge window. The always-wrong-but-never-by-much
+>> crystal ball[0] predicts June 14. This is less than two weeks away, so
+>> the wait should be short.
+>
+> Hi Mike / Stephen,
+>
+> I am planning to send a pull-request out for this, but this set is 
+> going to cause some minor merge conflicts with the recent header file 
+> change patches from Stephen, and the determine rate prototype change 
+> from Boris.
+>
+> I can alternatively just ignore these issues and send these patches on 
+> top of rc2 and let you handle the conflicts within clk-tree, or 
+> cherry-pick some stable commits for the same if you like.
+>
+> Which way do you prefer?
 
-Applied, thanks.
+It doesn't sound too bad to resolve those conflicts so send the branch 
+that you already made based on v4.1-rc2.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
