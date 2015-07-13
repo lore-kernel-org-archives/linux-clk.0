@@ -1,51 +1,93 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Mon, 27 Jul 2015 16:05:21 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
-Message-ID: <20150727103521.GA4103@linux>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <1436456621-29839-3-git-send-email-b.zolnierkie@samsung.com>
- <20150727083531.GC31611@linux>
- <1595601.YD6UTxy5Qg@amdc1976>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 13 Jul 2015 16:02:18 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Tony Lindgren <tony@atomide.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+	linux-mips@linux-mips.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v5] clk: change clk_ops' ->determine_rate() prototype
+Message-ID: <20150713230217.GI30412@codeaurora.org>
+References: <1436294888-25752-1-git-send-email-boris.brezillon@free-electrons.com>
+ <20150708005748.GG30412@codeaurora.org>
+ <20150708110005.704c49ff@bbrezillon>
+ <559D66EE.4060707@codeaurora.org>
+ <20150709223938.19450e75@bbrezillon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1595601.YD6UTxy5Qg@amdc1976>
+In-Reply-To: <20150709223938.19450e75@bbrezillon>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 27-07-15, 12:24, Bartlomiej Zolnierkiewicz wrote:
-> Have you read my explanation of the issue?
+On 07/09, Boris Brezillon wrote:
+> Hi Stephen,
 > 
-> With your OPP-v2 patches cpufreq-dt picks turbo frequencies and uses
-> them as normal ones.
+> On Wed, 08 Jul 2015 11:07:42 -0700
+> Stephen Boyd <sboyd@codeaurora.org> wrote:
 > 
-> (More at: http://www.spinics.net/lists/arm-kernel/msg430397.html)
+> > On 07/08/2015 02:00 AM, Boris Brezillon wrote:
+> > > Hi Stephen,
+> > >
+> > > On Tue, 7 Jul 2015 17:57:48 -0700
+> > > Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > >
+> > >> On 07/07, Boris Brezillon wrote:
+> > >>>
+> > >>>  	} else {
+> > >>>  		pr_err("clk: clk_composite_determine_rate function called, but no mux or rate callback set!\n");
+> > >>> +		req->rate = 0;
+> > >>>  		return 0;
+> > >> Shouldn't this return an error now? And then assigning req->rate
+> > >> wouldn't be necessary. Sorry I must have missed this last round.
+> > >>
+> > > Actually I wanted to keep the existing behavior: return a 0 rate (not
+> > > an error) when there is no mux or rate ops.
+> > >
+> > > That's something we can change afterwards, but it might reveals
+> > > new bugs if some users are checking for a 0 rate to detect errors.
+> > >
+> > 
+> > Ok. Care to send the patch now to do that while we're thinking about it?
+> > We can test it out for a month or two.
+> > 
+> 
+> Here is a patch modifying a few drivers to return errors instead of a 0
+> rate. Feel free to squash it in the previous one if you think this is
+> better.
+> 
+> Best Regards,
+> 
+> Boris
+> 
+> --- >8 ---
+> 
+> From dca9c28301042cf19dad4b1e4555cdb7c1063745 Mon Sep 17 00:00:00 2001
+> From: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Date: Thu, 9 Jul 2015 12:20:21 +0200
+> Subject: [PATCH] clk: fix some determine_rate implementations
+> 
+> Some determine_rate implementations are not returning an error when then
+> failed to adapt the rate according to the rate request.
+> Fix them so that they return an error instead of silently returning 0.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-Yes I did. I understand that the turbo frequencies are not considered
-as such by OPP/cpufreq core and it requires your changes to get it
-working.
-
-But its not an issue or bug we are fixing, the problem is that the
-code for opp-v2 isn't complete yet and your patches is putting things
-in place. So, we are still doing the bring up here and not fixing a
-bug really.
+The linewrap is seriously messed up here. Please fix your mailer
+next time. I had to hand edit the patch to get it to apply. I've
+applied this in top of the original patch as a different commit,
+in case we need to revert it later.
 
 -- 
-viresh
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
