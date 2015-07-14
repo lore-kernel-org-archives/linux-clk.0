@@ -1,118 +1,63 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v3 1/4] clk: samsung: exynos5250: add cpu clock configuration
- data and instantiate cpu clock
-Date: Wed, 01 Jul 2015 15:10:35 +0200
-Message-id: <1435756238-845-2-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:59531 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751595AbbGNN2U (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 14 Jul 2015 09:28:20 -0400
+Message-ID: <55A50E87.4060400@ti.com>
+Date: Tue, 14 Jul 2015 16:28:39 +0300
+From: Tero Kristo <t-kristo@ti.com>
+MIME-Version: 1.0
+To: Tony Lindgren <tony@atomide.com>, Keerthy <a0393675@ti.com>
+CC: Mugunthan V N <mugunthanvnm@ti.com>, Keerthy <j-keerthy@ti.com>,
+	<linux-omap@vger.kernel.org>, <galak@codeaurora.org>,
+	<pawel.moll@arm.com>, <linux-kernel@vger.kernel.org>,
+	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 0/2] CLK: TI: add dpll_clksel_mac_clk node
+References: <1434614473-8500-1-git-send-email-j-keerthy@ti.com> <55828A18.6030608@ti.com> <558C0624.4060008@ti.com> <20150714110626.GQ17550@atomide.com>
+In-Reply-To: <20150714110626.GQ17550@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thomas Abraham <thomas.ab@samsung.com>
+On 07/14/2015 02:06 PM, Tony Lindgren wrote:
+> * Keerthy <a0393675@ti.com> [150625 06:48]:
+>>
+>> On Thursday 18 June 2015 02:36 PM, Mugunthan V N wrote:
+>>> On Thursday 18 June 2015 01:31 PM, Keerthy wrote:
+>>>> The series adds the missing clock node needed for cpsw.
+>>>>
+>>>> Keerthy (2):
+>>>>    CLK: TI: add dpll_clksel_mac_clk node
+>>>>    ARM: dts: am4372: Set the default clock rate for dpll_clksel_mac_clk
+>>>>      clock
+>>>>
+>>>>   arch/arm/boot/dts/am4372.dtsi        | 7 +++++--
+>>>>   arch/arm/boot/dts/am43xx-clocks.dtsi | 9 +++++++++
+>>>>   drivers/clk/ti/clk-43xx.c            | 1 +
+>>>>   3 files changed, 15 insertions(+), 2 deletions(-)
+>>>>
+>>>
+>>> Tested-by: Mugunthan V N <mugunthanvnm@ti.com>
+>>
+>> Thanks Mugunthan.
+>>
+>> A gentle ping on this series.
+>
+> Tero, care to review this series?
 
-With the addition of the new Samsung specific cpu-clock type, the
-arm clock can be represented as a cpu-clock type. Add the CPU clock
-configuration data and instantiate the CPU clock type for Exynos5250.
+Acked-by: Tero Kristo <t-kristo@ti.com>
 
-Changes by Bartlomiej:
-- split Exynos5250 support from the original patch
-- moved E5250_CPU_DIV[0,1]() macros to clk-exynos5250.c
+I guess this should go through your tree as this is mostly dts changes?
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/clk/samsung/clk-exynos5250.c   | 31 +++++++++++++++++++++++++++++++
- include/dt-bindings/clock/exynos5250.h |  1 +
- 2 files changed, 32 insertions(+)
+-Tero
 
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 70ec3d2..d87f34d 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -19,6 +19,7 @@
- #include <linux/syscore_ops.h>
- 
- #include "clk.h"
-+#include "clk-cpu.h"
- 
- #define APLL_LOCK		0x0
- #define APLL_CON0		0x100
-@@ -748,6 +749,32 @@ static struct samsung_pll_clock exynos5250_plls[nr_plls] __initdata = {
- 		VPLL_LOCK, VPLL_CON0, NULL),
- };
- 
-+#define E5250_CPU_DIV0(apll, pclk_dbg, atb, periph, acp, cpud)		\
-+		((((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |	\
-+		 ((periph) << 12) | ((acp) << 8) | ((cpud) << 4)))
-+#define E5250_CPU_DIV1(hpm, copy)					\
-+		(((hpm) << 4) | (copy))
-+
-+static const struct exynos_cpuclk_cfg_data exynos5250_armclk_d[] __initconst = {
-+	{ 1700000, E5250_CPU_DIV0(5, 3, 7, 7, 7, 3), E5250_CPU_DIV1(2, 0), },
-+	{ 1600000, E5250_CPU_DIV0(4, 1, 7, 7, 7, 3), E5250_CPU_DIV1(2, 0), },
-+	{ 1500000, E5250_CPU_DIV0(4, 1, 7, 7, 7, 2), E5250_CPU_DIV1(2, 0), },
-+	{ 1400000, E5250_CPU_DIV0(4, 1, 6, 7, 7, 2), E5250_CPU_DIV1(2, 0), },
-+	{ 1300000, E5250_CPU_DIV0(3, 1, 6, 7, 7, 2), E5250_CPU_DIV1(2, 0), },
-+	{ 1200000, E5250_CPU_DIV0(3, 1, 5, 7, 7, 2), E5250_CPU_DIV1(2, 0), },
-+	{ 1100000, E5250_CPU_DIV0(3, 1, 5, 7, 7, 3), E5250_CPU_DIV1(2, 0), },
-+	{ 1000000, E5250_CPU_DIV0(2, 1, 4, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-+	{  900000, E5250_CPU_DIV0(2, 1, 4, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-+	{  800000, E5250_CPU_DIV0(2, 1, 4, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-+	{  700000, E5250_CPU_DIV0(1, 1, 3, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-+	{  600000, E5250_CPU_DIV0(1, 1, 3, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-+	{  500000, E5250_CPU_DIV0(1, 1, 2, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-+	{  400000, E5250_CPU_DIV0(1, 1, 2, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-+	{  300000, E5250_CPU_DIV0(1, 1, 1, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-+	{  200000, E5250_CPU_DIV0(1, 1, 1, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-+	{  0 },
-+};
-+
- static const struct of_device_id ext_clk_match[] __initconst = {
- 	{ .compatible = "samsung,clock-xxti", .data = (void *)0, },
- 	{ },
-@@ -797,6 +824,10 @@ static void __init exynos5250_clk_init(struct device_node *np)
- 			ARRAY_SIZE(exynos5250_div_clks));
- 	samsung_clk_register_gate(ctx, exynos5250_gate_clks,
- 			ARRAY_SIZE(exynos5250_gate_clks));
-+	exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
-+			mout_cpu_p[0], mout_cpu_p[1], 0x200,
-+			exynos5250_armclk_d, ARRAY_SIZE(exynos5250_armclk_d),
-+			CLK_CPU_HAS_DIV1);
- 
- 	/*
- 	 * Enable arm clock down (in idle) and set arm divider
-diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
-index 4273891d..8183d1c 100644
---- a/include/dt-bindings/clock/exynos5250.h
-+++ b/include/dt-bindings/clock/exynos5250.h
-@@ -21,6 +21,7 @@
- #define CLK_FOUT_CPLL		6
- #define CLK_FOUT_EPLL		7
- #define CLK_FOUT_VPLL		8
-+#define CLK_ARM_CLK		9
- 
- /* gate for special clocks (sclk) */
- #define CLK_SCLK_CAM_BAYER	128
--- 
-1.9.1
+>
+> Regards,
+>
+> Tony
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
 
