@@ -1,105 +1,97 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-MIME-Version: 1.0
-In-Reply-To: <20150727202648.GB14521@codeaurora.org>
-References: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
- <1437945270-32014-8-git-send-email-maxime.ripard@free-electrons.com>
- <20150727202648.GB14521@codeaurora.org>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 30 Jul 2015 15:55:17 +0800
-Message-ID: <CAGb2v6517qCXmNkYihnfBmc5fL7bqTDOQwedNYjq+p2Mg45+gQ@mail.gmail.com>
-Subject: Re: [PATCH 7/7] clk: sunxi: Add a simple gates driver
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Tue, 14 Jul 2015 12:47:48 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
 To: Stephen Boyd <sboyd@codeaurora.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, Tony Lindgren <tony@atomide.com>, Ralf
+ Baechle <ralf@linux-mips.org>, Emilio =?UTF-8?B?TMOzcGV6?=
+ <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Tero Kristo <t-kristo@ti.com>, Peter De Schrijver
+ <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen
+ Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
+ Alexandre Courbot <gnurou@gmail.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-omap@vger.kernel.org, linux-mips@linux-mips.org,
+ linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v5] clk: change clk_ops' ->determine_rate() prototype
+Message-ID: <20150714124748.55dd6213@bbrezillon>
+In-Reply-To: <20150713230217.GI30412@codeaurora.org>
+References: <1436294888-25752-1-git-send-email-boris.brezillon@free-electrons.com>
+	<20150708005748.GG30412@codeaurora.org>
+	<20150708110005.704c49ff@bbrezillon>
+	<559D66EE.4060707@codeaurora.org>
+	<20150709223938.19450e75@bbrezillon>
+	<20150713230217.GI30412@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 28, 2015 at 4:26 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 07/26, Maxime Ripard wrote:
->> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
->> new file mode 100644
->> index 000000000000..1a3963a8a686
->> --- /dev/null
->> +++ b/drivers/clk/sunxi/clk-simple-gates.c
->> @@ -0,0 +1,159 @@
->> +/*
->> + * Copyright 2015 Maxime Ripard
->> + *
->> + * Maxime Ripard <maxime.ripard@free-electrons.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License as published by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + */
->> +
+On Mon, 13 Jul 2015 16:02:18 -0700
+Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-I'm guessing the following were copied from clk-sunxi.c.
+> On 07/09, Boris Brezillon wrote:
+> > Hi Stephen,
+> > 
+> > On Wed, 08 Jul 2015 11:07:42 -0700
+> > Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > 
+> > > On 07/08/2015 02:00 AM, Boris Brezillon wrote:
+> > > > Hi Stephen,
+> > > >
+> > > > On Tue, 7 Jul 2015 17:57:48 -0700
+> > > > Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > > >
+> > > >> On 07/07, Boris Brezillon wrote:
+> > > >>>
+> > > >>>  	} else {
+> > > >>>  		pr_err("clk: clk_composite_determine_rate function called, but no mux or rate callback set!\n");
+> > > >>> +		req->rate = 0;
+> > > >>>  		return 0;
+> > > >> Shouldn't this return an error now? And then assigning req->rate
+> > > >> wouldn't be necessary. Sorry I must have missed this last round.
+> > > >>
+> > > > Actually I wanted to keep the existing behavior: return a 0 rate (not
+> > > > an error) when there is no mux or rate ops.
+> > > >
+> > > > That's something we can change afterwards, but it might reveals
+> > > > new bugs if some users are checking for a 0 rate to detect errors.
+> > > >
+> > > 
+> > > Ok. Care to send the patch now to do that while we're thinking about it?
+> > > We can test it out for a month or two.
+> > > 
+> > 
+> > Here is a patch modifying a few drivers to return errors instead of a 0
+> > rate. Feel free to squash it in the previous one if you think this is
+> > better.
+> > 
+> > Best Regards,
+> > 
+> > Boris
+> > 
+> > --- >8 ---
+> > 
+> > From dca9c28301042cf19dad4b1e4555cdb7c1063745 Mon Sep 17 00:00:00 2001
+> > From: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > Date: Thu, 9 Jul 2015 12:20:21 +0200
+> > Subject: [PATCH] clk: fix some determine_rate implementations
+> > 
+> > Some determine_rate implementations are not returning an error when then
+> > failed to adapt the rate according to the rate request.
+> > Fix them so that they return an error instead of silently returning 0.
+> > 
+> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> 
+> The linewrap is seriously messed up here. Please fix your mailer
+> next time. I had to hand edit the patch to get it to apply. I've
+> applied this in top of the original patch as a different commit,
+> in case we need to revert it later.
 
->> +#include <linux/clk-provider.h>
->> +#include <linux/clkdev.h>
->
-> Is this used?
+Sorry about that, I forgot to remove the line wrapper when copying the
+content of the patch into my mailer :-/.
 
-clk_register_clkdev() is not used in this file, so not needed.
 
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/reset-controller.h>
->
-> Is this used?
-
-A remnant of the USB clocks, which has been moved to clk-usb.c.
-
-Not needed here nor in clk-sunxi.c.
-
->> +#include <linux/spinlock.h>
->> +#include <linux/log2.h>
->
-> Is this used?
-
-This is only used for clock factor calculation. Not applicable in
-clk-simple-gates.c, so no.
-
->> +
->> +static DEFINE_SPINLOCK(gates_lock);
->> +
-> [...]
->> +
->> +static const int sun4i_a10_ahb_critical_clocks[] __initdata = {
->
-> Shouldn't it be __initconst ?
-
-Not sure why our critical clocks lists are __initdata...
-
->> +     14,     /* ahb_sdram */
->> +};
->> +
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
