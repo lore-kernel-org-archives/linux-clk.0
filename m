@@ -1,55 +1,59 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <alpine.LNX.2.00.1507011619250.13307@localhost.localdomain>
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
-	<1435667250-28299-5-git-send-email-pawelo@king.net.pl>
-	<alpine.DEB.2.11.1507010944580.3916@nanos>
-	<alpine.LNX.2.00.1507011031050.9009@localhost.localdomain>
-	<alpine.DEB.2.11.1507011527380.3916@nanos>
-	<alpine.LNX.2.00.1507011619250.13307@localhost.localdomain>
-Date: Tue, 14 Jul 2015 10:59:44 +0200
-Message-ID: <CACRpkdbh063kZtmPf5HLuLXhmXDewG0atDjUt+LE2doGrdB-NQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/9] arm: twr-k70f120m: timer driver for Kinetis SoC
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Paul Osmialowski <pawelo@king.net.pl>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:37544 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751691AbbGNPMI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 14 Jul 2015 11:12:08 -0400
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	heikki.krogerus@linux.intel.com,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	dmaengine@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Nicolas Pitre <nicolas.pitre@linaro.org>,
-	Paul Bolle <pebolle@tiscali.nl>,
-	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-	Anson Huang <b20788@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Jingchang Lu <jingchang.lu@freescale.com>,
-	Rob Herring <r.herring@freescale.com>,
-	Yuri Tikhonov <yur@emcraft.com>,
-	Sergei Poselenov <sposelenov@emcraft.com>,
-	Alexander Potashev <aspotashev@emcraft.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 0/6] clk: fractional-divider: do a clean up
+Date: Tue, 14 Jul 2015 18:11:57 +0300
+Message-Id: <1436886723-111895-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 1, 2015 at 4:20 PM, Paul Osmialowski <pawelo@king.net.pl> wrote:
+The series provides a clean up for clk-fractional-diveder together with moving
+it to use rational best approximation algorithm. I think the patches are
+self-explanatory.
 
-> -               kinetis_pit_init(kinetis_tmr, (rate / HZ) - 1);
+The series was tested with 8250_dw UART driver on Intel Braswell.
 
-Do you want to do DIV_ROUND_UP() or why is this -1 here?
+Patch 6 is an amendment to existing user of the fractional divider outside of
+clock framework. Greg, it would be nice to have your Ack on this if no
+objections.
 
-Yours,
-Linus Walleij
+Changelog v4:
+ - remove dependency to clk_div_mask() and use GENMASK() instead
+ - apply changes to rockchip
+ - amend 8250_dw driver to use proposed changes
+
+Changelog v3:
+ - add patch 2/3 to simplify further usage
+ - don't use mult_frac() due to potential overflow on 32 bit kernels
+ - guarantee in ->round_rate() that m and n will not overflow
+
+Changelog v2:
+ - move to rational_best_approximation() and mult_frac()
+ - add patch 2/2
+
+Andy Shevchenko (6):
+  clk: fractional-divider: fix sparse warnings
+  clk: fractional-divider: rename prate -> parent_rate
+  clk: fractional-divider: keep mwidth and nwidth internally
+  clk: rockchip: save width in struct clk_fractional_divider
+  clk: fractional-divider: switch to rational best approximation
+  serial: 8250_dw: allow lower reference frequencies
+
+ drivers/clk/Kconfig                  |  1 +
+ drivers/clk/clk-fractional-divider.c | 90 ++++++++++++++++++++++--------------
+ drivers/clk/rockchip/clk.c           |  6 ++-
+ drivers/tty/serial/8250/8250_dw.c    |  4 --
+ include/linux/clk-provider.h         |  3 +-
+ 5 files changed, 62 insertions(+), 42 deletions(-)
+
+-- 
+2.1.4
+
