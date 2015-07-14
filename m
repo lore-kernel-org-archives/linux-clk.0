@@ -1,66 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:55799 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751697AbbGMXqc (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jul 2015 19:46:32 -0400
-Message-id: <55A44DD3.9020005@samsung.com>
-Date: Tue, 14 Jul 2015 08:46:27 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 22/45] clk: samsung: Properly include clk.h and clkdev.h
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
- <1436571223-10959-23-git-send-email-sboyd@codeaurora.org>
- <55A0C0A6.8060600@samsung.com> <55A42299.3040809@codeaurora.org>
-In-reply-to: <55A42299.3040809@codeaurora.org>
-Content-type: text/plain; charset=iso-8859-2
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	heikki.krogerus@linux.intel.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] clk: rockchip: save width in struct clk_fractional_divider
+Date: Tue, 14 Jul 2015 18:16:17 +0200
+Message-ID: <1709104.30ipufp3Og@diego>
+In-Reply-To: <1436886723-111895-5-git-send-email-andriy.shevchenko@linux.intel.com>
+References: <1436886723-111895-1-git-send-email-andriy.shevchenko@linux.intel.com> <1436886723-111895-5-git-send-email-andriy.shevchenko@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14.07.2015 05:42, Stephen Boyd wrote:
-> On 07/11/2015 12:07 AM, Krzysztof Kozlowski wrote:
->> W dniu 11.07.2015 o 08:33, Stephen Boyd pisze:
->>
->>> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
->>> index 0117238391d6..f38a6c49f744 100644
->>> --- a/drivers/clk/samsung/clk.c
->>> +++ b/drivers/clk/samsung/clk.c
->>> @@ -11,6 +11,10 @@
->>>    * clock framework for Samsung platforms.
->>>   */
->>>   +#include <linux/slab.h>
->>> +#include <linux/clkdev.h>
->>> +#include <linux/clk.h>
->>> +#include <linux/clk-provider.h>
->>>   #include <linux/of_address.h>
->>>   #include <linux/syscore_ops.h>
->>>   diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
->>> index b775fc29caa5..aa872d2c5105 100644
->>> --- a/drivers/clk/samsung/clk.h
->>> +++ b/drivers/clk/samsung/clk.h
->>> @@ -13,10 +13,11 @@
->>>   #ifndef __SAMSUNG_CLK_H
->>>   #define __SAMSUNG_CLK_H
->>>   -#include <linux/clkdev.h>
->>>   #include <linux/clk-provider.h>
->>>   #include "clk-pll.h"
->>>   +struct clk;
->>> +
->> Hmmm... why? Including clk-provider (which declares struct clk in your
->> last patch) is not sufficient?
->>
+Am Dienstag, 14. Juli 2015, 18:12:01 schrieb Andy Shevchenko:
+> The ->mwidth and ->nwidth fields will be used by clk-fractional-divider when
+> it will be switched to rational base approximation algorithm.
 > 
-> I hope to eventually remove the forward declaration of struct clk in
-> clk-provider.h too. That will take some more time though. I can leave
-> this part out of the patch if you like and add it back when that work is
-> done, it doesn't matter to me.
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Thanks for explanation, it's fine as it is.
+Looks sane to me
 
-Best regards,
-Krzysztof
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+
+> ---
+>  drivers/clk/rockchip/clk.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+> index 2493881..be6c7fd 100644
+> --- a/drivers/clk/rockchip/clk.c
+> +++ b/drivers/clk/rockchip/clk.c
+> @@ -135,9 +135,11 @@ static struct clk
+> *rockchip_clk_register_frac_branch(const char *name, div->flags =
+> div_flags;
+>  	div->reg = base + muxdiv_offset;
+>  	div->mshift = 16;
+> -	div->mmask = 0xffff0000;
+> +	div->mwidth = 16;
+> +	div->mmask = GENMASK(div->mwidth - 1, 0) << div->mshift;
+>  	div->nshift = 0;
+> -	div->nmask = 0xffff;
+> +	div->nwidth = 16;
+> +	div->nmask = GENMASK(div->nwidth - 1, 0) << div->nshift;
+>  	div->lock = lock;
+>  	div_ops = &clk_fractional_divider_ops;
 
