@@ -1,57 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:55916 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932168AbbGGLz1 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2015 07:55:27 -0400
-Message-ID: <559BBE3E.809@ti.com>
-Date: Tue, 7 Jul 2015 14:55:42 +0300
-From: Tero Kristo <t-kristo@ti.com>
+Return-Path: <ralf@linux-mips.org>
+Date: Tue, 14 Jul 2015 14:21:54 +0200
+From: Ralf Baechle <ralf@linux-mips.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Manuel Lauss <manuel.lauss@gmail.com>,
+        Linux-MIPS <linux-mips@linux-mips.org>
+Subject: Re: [PATCH] MIPS: Alchemy: Include clk.h
+Message-ID: <20150714122154.GA30195@linux-mips.org>
+References: <1436819450-16440-1-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-To: Keerthy <j-keerthy@ti.com>, <linux-omap@vger.kernel.org>,
-	<tony@atomide.com>
-CC: <galak@codeaurora.org>, <pawel.moll@arm.com>,
-	<linux-kernel@vger.kernel.org>, <paul@pwsan.com>,
-	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 2/6] ARM: AM43xx: Add the PRM IRQ register offsets
-References: <1434954176-9605-1-git-send-email-j-keerthy@ti.com> <1434954176-9605-3-git-send-email-j-keerthy@ti.com>
-In-Reply-To: <1434954176-9605-3-git-send-email-j-keerthy@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1436819450-16440-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/22/2015 09:22 AM, Keerthy wrote:
-> Add the PRM IRQ register offsets.
+On Mon, Jul 13, 2015 at 01:30:50PM -0700, Stephen Boyd wrote:
 
-This patch doesn't apply cleanly to 4.2-rc1.
-
--Tero
-
->
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> This clock provider uses the consumer API, so include clk.h
+> explicitly.
+> 
+> Cc: Manuel Lauss <manuel.lauss@gmail.com>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Linux-MIPS <linux-mips@linux-mips.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 > ---
->   arch/arm/mach-omap2/prcm43xx.h | 5 +++++
->   1 file changed, 5 insertions(+)
->
-> diff --git a/arch/arm/mach-omap2/prcm43xx.h b/arch/arm/mach-omap2/prcm43xx.h
-> index d026199..ec1ac5c 100644
-> --- a/arch/arm/mach-omap2/prcm43xx.h
-> +++ b/arch/arm/mach-omap2/prcm43xx.h
-> @@ -25,6 +25,10 @@
->   #define AM43XX_PRM_WKUP_INST				0x2000
->   #define AM43XX_PRM_DEVICE_INST				0x4000
->
-> +/* PRM_IRQ offsets */
-> +#define AM43XX_PRM_IRQSTATUS_MPU_OFFSET			0x0004
-> +#define AM43XX_PRM_IRQENABLE_MPU_OFFSET			0x0008
-> +
->   /* RM RSTCTRL offsets */
->   #define AM43XX_RM_PER_RSTCTRL_OFFSET			0x0010
->   #define AM43XX_RM_GFX_RSTCTRL_OFFSET			0x0010
-> @@ -146,4 +150,5 @@
->   #define AM43XX_CM_PER_HDQ1W_CLKCTRL_OFFSET		0x04a0
->   #define AM43XX_CM_PER_VPFE0_CLKCTRL_OFFSET		0x0068
->   #define AM43XX_CM_PER_VPFE1_CLKCTRL_OFFSET		0x0070
-> +#define AM43XX_PRM_IO_PMCTRL_OFFSET			0x0024
->   #endif
->
+> 
+> Please ack so this can go through the clk tree. We're removing
+> the include of clk.h in clk-provider.h so that the consumer
+> and provider APIs are clearly split.
 
+Acked-by: Ralf Baechle <ralf@linux-mips.org>
+
+  Ralf
