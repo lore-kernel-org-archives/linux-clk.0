@@ -1,36 +1,48 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org, agross@codeaurora.org
-Cc: mturquette@linaro.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v2 1/5] clk: qcom: Enable gpll0_vote rate propagation on MSM8916
-Date: Fri, 24 Jul 2015 19:58:35 +0300
-Message-Id: <1437757119-6910-2-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1437757119-6910-1-git-send-email-georgi.djakov@linaro.org>
-References: <1437757119-6910-1-git-send-email-georgi.djakov@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga03.intel.com ([134.134.136.65]:60603 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752036AbbGNPMJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 14 Jul 2015 11:12:09 -0400
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	heikki.krogerus@linux.intel.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 4/6] clk: rockchip: save width in struct clk_fractional_divider
+Date: Tue, 14 Jul 2015 18:12:01 +0300
+Message-Id: <1436886723-111895-5-git-send-email-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <1436886723-111895-1-git-send-email-andriy.shevchenko@linux.intel.com>
+References: <1436886723-111895-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently we are missing the SET_RATE_PARENT flag on gpll0_vote and
-as a result of that, when it has a child with SET_RATE_PARENT flag,
-the rate of the child is not propagated up to the gpll0. Fix that
-by adding the SET_RATE_PARENT flag to gpll0_vote.
+The ->mwidth and ->nwidth fields will be used by clk-fractional-divider when it
+will be switched to rational base approximation algorithm.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/clk/qcom/gcc-msm8916.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/rockchip/clk.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index 28ef2c771157..3019e89cdfa8 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -216,6 +216,7 @@ static struct clk_regmap gpll0_vote = {
- 		.parent_names = (const char *[]){ "gpll0" },
- 		.num_parents = 1,
- 		.ops = &clk_pll_vote_ops,
-+		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 2493881..be6c7fd 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -135,9 +135,11 @@ static struct clk *rockchip_clk_register_frac_branch(const char *name,
+ 	div->flags = div_flags;
+ 	div->reg = base + muxdiv_offset;
+ 	div->mshift = 16;
+-	div->mmask = 0xffff0000;
++	div->mwidth = 16;
++	div->mmask = GENMASK(div->mwidth - 1, 0) << div->mshift;
+ 	div->nshift = 0;
+-	div->nmask = 0xffff;
++	div->nwidth = 16;
++	div->nmask = GENMASK(div->nwidth - 1, 0) << div->nshift;
+ 	div->lock = lock;
+ 	div_ops = &clk_fractional_divider_ops;
  
+-- 
+2.1.4
+
