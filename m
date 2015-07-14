@@ -1,57 +1,85 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH/RFC 08/11] ARM: shmobile: r8a7793: Link CPG to RST using
- "renesas, modemr"
-Date: Tue,  7 Jul 2015 16:10:14 +0200
-Message-Id: <1436278217-20522-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
-References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-sh@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Ulrich Hecht <ulrich.hecht@gmail.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+In-Reply-To: <1435667250-28299-4-git-send-email-pawelo@king.net.pl>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
+	<1435667250-28299-4-git-send-email-pawelo@king.net.pl>
+Date: Tue, 14 Jul 2015 11:03:59 +0200
+Message-ID: <CACRpkdasMqFCwy=ZEvMLeG2Z-xV01dbf8cXaPACP1=RSz2gdjw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Paul Osmialowski <pawelo@king.net.pl>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	dmaengine@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Nicolas Pitre <nicolas.pitre@linaro.org>,
+	Paul Bolle <pebolle@tiscali.nl>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+	Anson Huang <b20788@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Jingchang Lu <jingchang.lu@freescale.com>,
+	Rob Herring <r.herring@freescale.com>,
+	Yuri Tikhonov <yur@emcraft.com>,
+	Sergei Poselenov <sposelenov@emcraft.com>,
+	Alexander Potashev <aspotashev@emcraft.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a link from the Clock Pulse Generator node to the Reset Controller
-node, so the CPG can read the Mode Monitoring Register (MODEMR) to
-obtain the MD pin values.
+On Tue, Jun 30, 2015 at 2:27 PM, Paul Osmialowski <pawelo@king.net.pl> wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7793.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+> Based on K70P256M150SF3RM.pdf K70 Sub-Family Reference Manual, Rev. 3.
+>
+> Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
+(...)
+> +struct kinetis_sim_regs {
+> +       u32 sopt1;      /* System Options Register 1 */
+> +       u32 rsv0[1024];
+> +       u32 sopt2;      /* System Options Register 2 */
+> +       u32 rsv1;
+> +       u32 sopt4;      /* System Options Register 4 */
+> +       u32 sopt5;      /* System Options Register 5 */
+> +       u32 sopt6;      /* System Options Register 6 */
+> +       u32 sopt7;      /* System Options Register 7 */
+> +       u32 rsv2[2];
+> +       u32 sdid;       /* System Device Identification Register */
+> +       u32 scgc[KINETIS_SIM_CG_NUMREGS];       /* Clock Gating Regs 1...7 */
+> +       u32 clkdiv1;    /* System Clock Divider Register 1 */
+> +       u32 clkdiv2;    /* System Clock Divider Register 2 */
+> +       u32 fcfg1;      /* Flash Configuration Register 1 */
+> +       u32 fcfg2;      /* Flash Configuration Register 2 */
+> +       u32 uidh;       /* Unique Identification Register High */
+> +       u32 uidmh;      /* Unique Identification Register Mid-High */
+> +       u32 uidml;      /* Unique Identification Register Mid Low */
+> +       u32 uidl;       /* Unique Identification Register Low */
+> +       u32 clkdiv3;    /* System Clock Divider Register 3 */
+> +       u32 clkdiv4;    /* System Clock Divider Register 4 */
+> +       u32 mcr;        /* Misc Control Register */
+> +};
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index fbb1aa3740e2b55e..4bddaf2fbd0b2e1c 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -192,6 +192,7 @@
- 					     "lb", "qspi", "sdh", "sd0", "z",
- 					     "rcan", "adsp";
- 			#power-domain-cells = <0>;
-+			renesas,modemr = <&rst 0x60>;
- 		};
- 
- 		/* Variable factor clocks */
--- 
-1.9.1
+Now there is this design pattern where you copy the datasheet
+register map to a struct again.
 
+This is not good if there is a second revision of the hardware and some
+registers are shuffled around. IMO it is better to just use #defines
+for register
+offsets, so you can do exceptions later. Else a new hardware revision
+leads to a new struct with new accessor functions etc etc.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Yours,
+Linus Walleij
