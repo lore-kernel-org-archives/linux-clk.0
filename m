@@ -1,85 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1435667250-28299-4-git-send-email-pawelo@king.net.pl>
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
-	<1435667250-28299-4-git-send-email-pawelo@king.net.pl>
-Date: Tue, 14 Jul 2015 11:03:59 +0200
-Message-ID: <CACRpkdasMqFCwy=ZEvMLeG2Z-xV01dbf8cXaPACP1=RSz2gdjw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Paul Osmialowski <pawelo@king.net.pl>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	dmaengine@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Nicolas Pitre <nicolas.pitre@linaro.org>,
-	Paul Bolle <pebolle@tiscali.nl>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-	Anson Huang <b20788@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Jingchang Lu <jingchang.lu@freescale.com>,
-	Rob Herring <r.herring@freescale.com>,
-	Yuri Tikhonov <yur@emcraft.com>,
-	Sergei Poselenov <sposelenov@emcraft.com>,
-	Alexander Potashev <aspotashev@emcraft.com>
-Content-Type: text/plain; charset=UTF-8
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Yoshinori Sato <ysato@users.sourceforge.jp>
+Subject: [PATCH 2/2] clk: h8300: Use standard Linux I/O accessors
+Date: Mon, 13 Jul 2015 17:11:50 -0700
+Message-Id: <1436832710-23989-2-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436832710-23989-1-git-send-email-sboyd@codeaurora.org>
+References: <1436832710-23989-1-git-send-email-sboyd@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 30, 2015 at 2:27 PM, Paul Osmialowski <pawelo@king.net.pl> wrote:
+There doesn't seem to be any reason why we can't use the standard
+readb()/writeb() accessors here because ctrl_inb() and
+ctrl_outb() match the generic implementation of readb() and
+writeb() that the h8300 architecture uses. This allows us to test
+compile this driver on other architectures besides h8300.
 
-> Based on K70P256M150SF3RM.pdf K70 Sub-Family Reference Manual, Rev. 3.
->
-> Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
-(...)
-> +struct kinetis_sim_regs {
-> +       u32 sopt1;      /* System Options Register 1 */
-> +       u32 rsv0[1024];
-> +       u32 sopt2;      /* System Options Register 2 */
-> +       u32 rsv1;
-> +       u32 sopt4;      /* System Options Register 4 */
-> +       u32 sopt5;      /* System Options Register 5 */
-> +       u32 sopt6;      /* System Options Register 6 */
-> +       u32 sopt7;      /* System Options Register 7 */
-> +       u32 rsv2[2];
-> +       u32 sdid;       /* System Device Identification Register */
-> +       u32 scgc[KINETIS_SIM_CG_NUMREGS];       /* Clock Gating Regs 1...7 */
-> +       u32 clkdiv1;    /* System Clock Divider Register 1 */
-> +       u32 clkdiv2;    /* System Clock Divider Register 2 */
-> +       u32 fcfg1;      /* Flash Configuration Register 1 */
-> +       u32 fcfg2;      /* Flash Configuration Register 2 */
-> +       u32 uidh;       /* Unique Identification Register High */
-> +       u32 uidmh;      /* Unique Identification Register Mid-High */
-> +       u32 uidml;      /* Unique Identification Register Mid Low */
-> +       u32 uidl;       /* Unique Identification Register Low */
-> +       u32 clkdiv3;    /* System Clock Divider Register 3 */
-> +       u32 clkdiv4;    /* System Clock Divider Register 4 */
-> +       u32 mcr;        /* Misc Control Register */
-> +};
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/h8300/clk-h8s2678.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Now there is this design pattern where you copy the datasheet
-register map to a struct again.
+diff --git a/drivers/clk/h8300/clk-h8s2678.c b/drivers/clk/h8300/clk-h8s2678.c
+index c121eb55e2e1..11808cb4f141 100644
+--- a/drivers/clk/h8300/clk-h8s2678.c
++++ b/drivers/clk/h8300/clk-h8s2678.c
+@@ -28,7 +28,7 @@ static unsigned long pll_recalc_rate(struct clk_hw *hw,
+ 		unsigned long parent_rate)
+ {
+ 	struct pll_clock *pll_clock = to_pll_clock(hw);
+-	int mul = 1 << (ctrl_inb((unsigned long)pll_clock->pllcr) & 3);
++	int mul = 1 << (readb(pll_clock->pllcr) & 3);
+ 
+ 	return parent_rate * mul;
+ }
+@@ -65,13 +65,13 @@ static int pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	pll = ((rate / parent_rate) / 2) & 0x03;
+ 	spin_lock_irqsave(&clklock, flags);
+-	val = ctrl_inb((unsigned long)pll_clock->sckcr);
++	val = readb(pll_clock->sckcr);
+ 	val |= 0x08;
+-	ctrl_outb(val, (unsigned long)pll_clock->sckcr);
+-	val = ctrl_inb((unsigned long)pll_clock->pllcr);
++	writeb(val, pll_clock->sckcr);
++	val = readb(pll_clock->pllcr);
+ 	val &= ~0x03;
+ 	val |= pll;
+-	ctrl_outb(val, (unsigned long)pll_clock->pllcr);
++	writeb(val, pll_clock->pllcr);
+ 	spin_unlock_irqrestore(&clklock, flags);
+ 	return 0;
+ }
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-This is not good if there is a second revision of the hardware and some
-registers are shuffled around. IMO it is better to just use #defines
-for register
-offsets, so you can do exceptions later. Else a new hardware revision
-leads to a new struct with new accessor functions etc etc.
-
-Yours,
-Linus Walleij
