@@ -1,55 +1,109 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
- Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
- Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v3 3/4] ARM: Exynos: switch to using generic cpufreq driver for
- Exynos5250
-Date: Wed, 01 Jul 2015 15:10:37 +0200
-Message-id: <1435756238-845-4-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1436779969-18610-2-git-send-email-yingjoe.chen@mediatek.com>
+References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com> <1436779969-18610-2-git-send-email-yingjoe.chen@mediatek.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Date: Tue, 14 Jul 2015 15:39:47 +0800
+Message-ID: <CAGS+omD8k_Cfxv3bYyjmjtLbiavo-WmJPn0Z-CBhN_nnv65Tag@mail.gmail.com>
+Subject: Re: [PATCH 1/5] clocksource: mediatek: do not enable GPT_CLK_EVT when setup
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	James Liao <jamesjj.liao@mediatek.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-mediatek@lists.infradead.org,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Olof Johansson <olof@lixom.net>,
+	srv_heupstream <srv_heupstream@mediatek.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thomas Abraham <thomas.ab@samsung.com>
+Hi Yingjoe,
 
-The new CPU clock type allows the use of generic CPUfreq driver.
-Switch Exynos5250 to using generic cpufreq driver.
+On Mon, Jul 13, 2015 at 5:32 PM, Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
+> Spurious mtk timer interrupt is noticed at boot and cause kernel
+> crash. It seems if GPT is enabled, it will latch irq status even
+> when its IRQ is disabled. When irq is enabled afterward, we see
+> spurious interrupt.
+> Change init flow to only enable GPT_CLK_SRC at mtk_timer_init.
+>
+> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> ---
+>  drivers/clocksource/mtk_timer.c | 16 ++++++++++------
+>  1 file changed, 10 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/clocksource/mtk_timer.c b/drivers/clocksource/mtk_timer.c
+> index 68ab423..237c20b 100644
+> --- a/drivers/clocksource/mtk_timer.c
+> +++ b/drivers/clocksource/mtk_timer.c
+> @@ -156,9 +156,11 @@ static void mtk_timer_global_reset(struct mtk_clock_event_device *evt)
+>         writel(0x3f, evt->gpt_base + GPT_IRQ_ACK_REG);
+>  }
+>
+> -static void
+> -mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
+> +static void mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer,
+> +                           u8 option, bool enable)
 
-Changes by Bartlomiej:
-- split Exynos5250 support from the original patch
+This function can be: __init
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- arch/arm/mach-exynos/exynos.c | 1 +
- 1 file changed, 1 insertion(+)
+Other than this tiny nit, and the small potential conflict in patch 4,
+this whole series is:
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 5f8ddcd..4015ec3 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -226,6 +226,7 @@ static void __init exynos_init_irq(void)
- 
- static const struct of_device_id exynos_cpufreq_matches[] = {
- 	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
-+	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
- 	{ /* sentinel */ }
- };
- 
--- 
-1.9.1
+Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+
+(I do think it is a bit strange that the mediatek,mt6577-timer binding
+does not use "clock-names", but that is independent of this patch
+set).
+
+Thanks!
+
+
+>  {
+> +       u32 val;
+> +
+>         writel(TIMER_CTRL_CLEAR | TIMER_CTRL_DISABLE,
+>                 evt->gpt_base + TIMER_CTRL_REG(timer));
+>
+> @@ -167,8 +169,10 @@ mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
+>
+>         writel(0x0, evt->gpt_base + TIMER_CMP_REG(timer));
+>
+> -       writel(TIMER_CTRL_OP(option) | TIMER_CTRL_ENABLE,
+> -                       evt->gpt_base + TIMER_CTRL_REG(timer));
+> +       val = TIMER_CTRL_OP(option);
+> +       if (enable)
+> +               val |= TIMER_CTRL_ENABLE;
+> +       writel(val, evt->gpt_base + TIMER_CTRL_REG(timer));
+>  }
+>
+>  static void mtk_timer_enable_irq(struct mtk_clock_event_device *evt, u8 timer)
+> @@ -235,12 +239,12 @@ static void __init mtk_timer_init(struct device_node *node)
+>         evt->ticks_per_jiffy = DIV_ROUND_UP(rate, HZ);
+>
+>         /* Configure clock source */
+> -       mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN);
+> +       mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN, true);
+>         clocksource_mmio_init(evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC),
+>                         node->name, rate, 300, 32, clocksource_mmio_readl_up);
+>
+>         /* Configure clock event */
+> -       mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT);
+> +       mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT, false);
+>         clockevents_config_and_register(&evt->dev, rate, 0x3,
+>                                         0xffffffff);
+>
+> --
+> 1.8.1.1.dirty
+>
