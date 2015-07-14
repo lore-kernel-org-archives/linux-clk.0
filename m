@@ -1,70 +1,66 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>,
- Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
- Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] cpufreq: exynos: remove Exynos5250 specific cpufreq
- driver support
-Date: Wed, 01 Jul 2015 15:26:57 +0200
-Message-id: <3020078.iPsxHyMrL0@amdc1976>
-In-reply-to: <5591E12E.7060007@samsung.com>
-References: <1435598772-21708-1-git-send-email-b.zolnierkie@samsung.com>
- <1435598772-21708-5-git-send-email-b.zolnierkie@samsung.com>
- <5591E12E.7060007@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	heikki.krogerus@linux.intel.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 3/6] clk: fractional-divider: keep mwidth and nwidth internally
+Date: Tue, 14 Jul 2015 18:12:00 +0300
+Message-Id: <1436886723-111895-4-git-send-email-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <1436886723-111895-1-git-send-email-andriy.shevchenko@linux.intel.com>
+References: <1436886723-111895-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+The patch adds mwidth and nwidth fields to the struct clk_fractional_divider
+for further usage. While here, use GENMASK() instead of open coding this
+functionality.
 
-Hi,
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/clk/clk-fractional-divider.c | 6 ++++--
+ include/linux/clk-provider.h         | 3 ++-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-On Tuesday, June 30, 2015 09:22:06 AM Krzysztof Kozlowski wrote:
-> On 30.06.2015 02:26, Bartlomiej Zolnierkiewicz wrote:
-> > Exynos5250 based platforms have switched over to use generic
-> > cpufreq driver for cpufreq functionality. So the Exynos
-> > specific cpufreq support for these platforms can be removed.
-> > 
-> > Based on the earlier work by Thomas Abraham.
-> > 
-> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> > Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> > Cc: Thomas Abraham <thomas.ab@samsung.com>
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> >  drivers/cpufreq/Kconfig.arm          |  11 --
-> >  drivers/cpufreq/Makefile             |   1 -
-> >  drivers/cpufreq/exynos-cpufreq.c     |   3 -
-> >  drivers/cpufreq/exynos-cpufreq.h     |  17 ---
-> >  drivers/cpufreq/exynos5250-cpufreq.c | 210 -----------------------------------
-> >  5 files changed, 242 deletions(-)
-> >  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
-> 
-> Nice diff stat, I like it!
-> 
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> Few thoughts:
-> 1. Javier's email has changed, CC-ed the correct one. Can you update it
-> in all patches (CC-tags)?
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index 7cfcc56..16f42ae 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -128,9 +128,11 @@ struct clk *clk_register_fractional_divider(struct device *dev,
+ 
+ 	fd->reg = reg;
+ 	fd->mshift = mshift;
+-	fd->mmask = (BIT(mwidth) - 1) << mshift;
++	fd->mwidth = mwidth;
++	fd->mmask = GENMASK(mwidth - 1, 0) << mshift;
+ 	fd->nshift = nshift;
+-	fd->nmask = (BIT(nwidth) - 1) << nshift;
++	fd->nwidth = nwidth;
++	fd->nmask = GENMASK(nwidth - 1, 0) << nshift;
+ 	fd->flags = clk_divider_flags;
+ 	fd->lock = lock;
+ 	fd->hw.init = &init;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 2116e2b..bb3c626 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -496,13 +496,14 @@ struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
+  *
+  * Clock with adjustable fractional divider affecting its output frequency.
+  */
+-
+ struct clk_fractional_divider {
+ 	struct clk_hw	hw;
+ 	void __iomem	*reg;
+ 	u8		mshift;
++	u8		mwidth;
+ 	u32		mmask;
+ 	u8		nshift;
++	u8		nwidth;
+ 	u32		nmask;
+ 	u8		flags;
+ 	spinlock_t	*lock;
+-- 
+2.1.4
 
-Done in v3.
-
-> 2. It looks like the patchset should go through one tree so the
-> Exynos5250 cpufreq support won't disappear, right?
-
-Right, this would be an ideal situation.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
