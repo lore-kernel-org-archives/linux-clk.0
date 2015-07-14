@@ -1,206 +1,135 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:55776 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756531AbbGGLvI (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2015 07:51:08 -0400
-Message-ID: <559BBD38.9070104@ti.com>
-Date: Tue, 7 Jul 2015 14:51:20 +0300
+Return-Path: <t-kristo@ti.com>
+Message-ID: <55A4CE41.9070909@ti.com>
+Date: Tue, 14 Jul 2015 11:54:25 +0300
 From: Tero Kristo <t-kristo@ti.com>
 MIME-Version: 1.0
-To: Keerthy <j-keerthy@ti.com>, <linux-omap@vger.kernel.org>,
-	<tony@atomide.com>
-CC: <galak@codeaurora.org>, <pawel.moll@arm.com>,
-	<linux-kernel@vger.kernel.org>, <paul@pwsan.com>,
-	<bcousson@baylibre.com>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 4/6] ARM: OMAP: PRM: Remove hardcoding of IRQENABLE_MPU_2
- and IRQSTATUS_MPU_2 register offsets
-References: <1434954176-9605-1-git-send-email-j-keerthy@ti.com> <1434954176-9605-5-git-send-email-j-keerthy@ti.com>
-In-Reply-To: <1434954176-9605-5-git-send-email-j-keerthy@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+To: Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: "tony@atomide.com" <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [GIT PULL] clk: ti: clock driver code migration to drivers
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/22/2015 09:22 AM, Keerthy wrote:
-> The register offsets of IRQENABLE_MPU_2 and IRQSTATUS_MPU_2 are hardcoded.
-> This makes it difficult to reuse the code for single core SoCs like AM437x.
+The following changes since commit bc0195aad0daa2ad5b0d76cce22b167bc3435590:
 
-Single core vs. having two sets of IRQENABLE / IRQSTATUS registers do 
-not have any relation to each other. OMAP4+ has two IRQ registers, 
-because the number of IRQ events is so large it does not fit into single 
-register. Thus, the commit message is somewhat misleading, please fix.
+   Linux 4.2-rc2 (2015-07-12 15:10:30 -0700)
 
-> Hence making it part of omap_prcm_irq_setup structure so that case of
-> single set of IRQ* registers can be handled generically.
->
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> ---
->   arch/arm/mach-omap2/prcm-common.h |  8 ++++----
->   arch/arm/mach-omap2/prm3xxx.c     | 20 +++++++++---------
->   arch/arm/mach-omap2/prm44xx.c     | 43 +++++++++++++++++++++------------------
->   arch/arm/mach-omap2/prm_common.c  |  5 ++---
->   4 files changed, 39 insertions(+), 37 deletions(-)
->
-> diff --git a/arch/arm/mach-omap2/prcm-common.h b/arch/arm/mach-omap2/prcm-common.h
-> index 2e60406..99447e7 100644
-> --- a/arch/arm/mach-omap2/prcm-common.h
-> +++ b/arch/arm/mach-omap2/prcm-common.h
-> @@ -470,8 +470,8 @@ struct omap_prcm_irq {
->
->   /**
->    * struct omap_prcm_irq_setup - PRCM interrupt controller details
-> - * @ack: PRM register offset for the first PRM_IRQSTATUS_MPU register
-> - * @mask: PRM register offset for the first PRM_IRQENABLE_MPU register
-> + * @ack: PRM register offsets for the PRM_IRQSTATUS_MPU registers
-> + * @mask: PRM register offsets for the PRM_IRQENABLE_MPU registers
->    * @nr_regs: number of PRM_IRQ{STATUS,ENABLE}_MPU* registers
->    * @nr_irqs: number of entries in the @irqs array
->    * @irqs: ptr to an array of PRCM interrupt bits (see @nr_irqs)
-> @@ -492,8 +492,8 @@ struct omap_prcm_irq {
->    * specified in static initializers.
->    */
->   struct omap_prcm_irq_setup {
-> -	u16 ack;
-> -	u16 mask;
-> +	u16 ack[2];
-> +	u16 mask[2];
+are available in the git repository at:
 
-You don't really need two pairs of offsets; in generic case, if we have 
-two IRQ registers, the offset between the two is 4, as used elsewhere in 
-the code. By keeping the previous struct layout, you can save a few 
-bytes of memory, and don't need to touch the omap3 code all over the 
-place either.
+   git@github.com:t-kristo/linux-pm.git for-4.3/ti-clk-move
 
->   	u16 pm_ctrl;
->   	u8 nr_regs;
->   	u8 nr_irqs;
-> diff --git a/arch/arm/mach-omap2/prm3xxx.c b/arch/arm/mach-omap2/prm3xxx.c
-> index 62680aa..56649b0 100644
-> --- a/arch/arm/mach-omap2/prm3xxx.c
-> +++ b/arch/arm/mach-omap2/prm3xxx.c
+for you to fetch changes up to 792ee6c3ecf813a4e702bdaceee249c722ab89f5:
 
-<snip>
+   clk: ti: move low-level access and init code under clock driver 
+(2015-07-14 09:26:34 +0300)
 
-No need to touch the OMAP3 code, as the offsets are always the default ones.
+----------------------------------------------------------------
+Hi Mike, Stephen,
 
-> diff --git a/arch/arm/mach-omap2/prm44xx.c b/arch/arm/mach-omap2/prm44xx.c
-> index 8149e5a..20b547a 100644
-> --- a/arch/arm/mach-omap2/prm44xx.c
-> +++ b/arch/arm/mach-omap2/prm44xx.c
-> @@ -43,8 +43,10 @@ static const struct omap_prcm_irq omap4_prcm_irqs[] = {
->   };
->
->   static struct omap_prcm_irq_setup omap4_prcm_irq_setup = {
-> -	.ack			= OMAP4_PRM_IRQSTATUS_MPU_OFFSET,
-> -	.mask			= OMAP4_PRM_IRQENABLE_MPU_OFFSET,
-> +	.ack[0]			= OMAP4_PRM_IRQSTATUS_MPU_OFFSET,
-> +	.mask[0]		= OMAP4_PRM_IRQENABLE_MPU_OFFSET,
-> +	.ack[1]			= OMAP4_PRM_IRQSTATUS_MPU_2_OFFSET,
-> +	.mask[1]		= OMAP4_PRM_IRQENABLE_MPU_2_OFFSET,
+This pull request contains the TI clock driver set to move the clock 
+implementations under clock driver. Some small portions of the clock 
+driver code still remain under mach-omap2 after this, it should be 
+decided whether this code is now obsolete and should be deleted or 
+should someone try to fix it.
 
-I think you should just keep the single IRQENABLE / IRQSTATUS 
-definitions in place, and use +4 addressing where applicable. Having an 
-array of the ack + mask definitions is kind of ugly.
+-Tero
 
->   	.pm_ctrl		= OMAP4_PRM_IO_PMCTRL_OFFSET,
->   	.nr_regs		= 2,
->   	.irqs			= omap4_prcm_irqs,
-> @@ -217,11 +219,11 @@ static inline u32 _read_pending_irq_reg(u16 irqen_offs, u16 irqst_offs)
->    */
->   static void omap44xx_prm_read_pending_irqs(unsigned long *events)
->   {
-> -	events[0] = _read_pending_irq_reg(OMAP4_PRM_IRQENABLE_MPU_OFFSET,
-> -					  OMAP4_PRM_IRQSTATUS_MPU_OFFSET);
-> +	int i;
->
-> -	events[1] = _read_pending_irq_reg(OMAP4_PRM_IRQENABLE_MPU_2_OFFSET,
-> -					  OMAP4_PRM_IRQSTATUS_MPU_2_OFFSET);
-> +	for (i = 0; i < omap4_prcm_irq_setup.nr_regs; i++)
-> +		events[i] = _read_pending_irq_reg(omap4_prcm_irq_setup.mask[i],
-> +						  omap4_prcm_irq_setup.ack[i]);
+----------------------------------------------------------------
+Tero Kristo (27):
+       ARM: OMAP2+: clock: export driver API to setup/get clock features
+       clk: ti: move generic OMAP DPLL implementation under drivers/clk
+       clk: ti: move OMAP4+ DPLL implementation under drivers/clk
+       clk: ti: move interface clock implementation under drivers/clk
+       ARM: OMAP3: dpll3-m2: get rid of obsolete clksel access
+       ARM: OMAP2+: clk: remove obsolete clksel support code
+       ARM: OMAP2+: clock: remove clock_common_data.c file
+       ARM: OMAP36xx: remove clock36xx.c/.h files
+       clk: ti: autoidle: move generic autoidle handling code to clock 
+driver
+       clk: ti: move omap2_clk_enable_init_clocks under clock driver
+       ARM: OMAP2+: clock: remove support for legacy mpurate command 
+line param
+       ARM: OMAP2+: clock: add support for clkdm ops to the low level 
+clk ops
+       ARM: OMAP2+: clock: add support for specific CM ops to ti_clk_ll_ops
+       clk: ti: dpll: move omap3 DPLL functionality to clock driver
+       ARM: OMAP3: clock: remove clock3xxx.c file
+       ARM: OMAP2+: clock: remove clkdm_control static boolean from code
+       clk: ti: dflt: move support for default gate clock to clock driver
+       clk: ti: omap2430: move clock support code under clock driver
+       clk: ti: clkdm: move clkdm gate clock support code to clock driver
+       clk: ti: omap34xx: move omap34xx clock type support code to clock 
+driver
+       ARM: OMAP4: clock: remove clock44xx.h header
+       clk: ti: am3517: move remaining am3517 clock support code to 
+clock driver
+       clk: ti: move some public definitions to private header
+       ARM: OMAP2+: clock: remove dead definitions from the clock header 
+file
+       clk: ti: remove exported ll_ops struct, instead add an API for 
+registration
+       ARM: OMAP2+: clock: remove legacy omap2_clk_readl/writel APIs
+       clk: ti: move low-level access and init code under clock driver
 
-... change to mask + i * 4 / ack + i * 4.
-
->   }
->
->   /**
-> @@ -251,17 +253,16 @@ static void omap44xx_prm_ocp_barrier(void)
->    */
->   static void omap44xx_prm_save_and_clear_irqen(u32 *saved_mask)
->   {
-> -	saved_mask[0] =
-> -		omap4_prm_read_inst_reg(OMAP4430_PRM_OCP_SOCKET_INST,
-> -					OMAP4_PRM_IRQENABLE_MPU_OFFSET);
-> -	saved_mask[1] =
-> -		omap4_prm_read_inst_reg(OMAP4430_PRM_OCP_SOCKET_INST,
-> -					OMAP4_PRM_IRQENABLE_MPU_2_OFFSET);
-> +	int i;
->
-> -	omap4_prm_write_inst_reg(0, OMAP4430_PRM_OCP_SOCKET_INST,
-> -				 OMAP4_PRM_IRQENABLE_MPU_OFFSET);
-> -	omap4_prm_write_inst_reg(0, OMAP4430_PRM_OCP_SOCKET_INST,
-> -				 OMAP4_PRM_IRQENABLE_MPU_2_OFFSET);
-> +	for (i = 0; i < omap4_prcm_irq_setup.nr_regs; i++) {
-> +		saved_mask[i] =
-> +			omap4_prm_read_inst_reg(OMAP4430_PRM_OCP_SOCKET_INST,
-> +						omap4_prcm_irq_setup.mask[i]);
-> +
-> +		omap4_prm_write_inst_reg(0, OMAP4430_PRM_OCP_SOCKET_INST,
-> +					 omap4_prcm_irq_setup.mask[i]);
-
-ditto.
-
-> +	}
->
->   	/* OCP barrier */
->   	omap4_prm_read_inst_reg(OMAP4430_PRM_OCP_SOCKET_INST,
-> @@ -280,10 +281,12 @@ static void omap44xx_prm_save_and_clear_irqen(u32 *saved_mask)
->    */
->   static void omap44xx_prm_restore_irqen(u32 *saved_mask)
->   {
-> -	omap4_prm_write_inst_reg(saved_mask[0], OMAP4430_PRM_OCP_SOCKET_INST,
-> -				 OMAP4_PRM_IRQENABLE_MPU_OFFSET);
-> -	omap4_prm_write_inst_reg(saved_mask[1], OMAP4430_PRM_OCP_SOCKET_INST,
-> -				 OMAP4_PRM_IRQENABLE_MPU_2_OFFSET);
-> +	int i;
-> +
-> +	for (i = 0; i < omap4_prcm_irq_setup.nr_regs; i++)
-> +		omap4_prm_write_inst_reg(saved_mask[i],
-> +					 OMAP4430_PRM_OCP_SOCKET_INST,
-> +					 omap4_prcm_irq_setup.mask[i]);
-
-...and here.
-
->   }
->
->   /**
-> diff --git a/arch/arm/mach-omap2/prm_common.c b/arch/arm/mach-omap2/prm_common.c
-> index 7add799..10ef0da 100644
-> --- a/arch/arm/mach-omap2/prm_common.c
-> +++ b/arch/arm/mach-omap2/prm_common.c
-> @@ -281,7 +281,6 @@ int omap_prcm_register_chain_handler(struct omap_prcm_irq_setup *irq_setup)
->   		pr_err("PRCM: already initialized; won't reinitialize\n");
->   		return -EINVAL;
->   	}
-> -
-
-This change is against the coding style.
-
->   	if (nr_regs > OMAP_PRCM_MAX_NR_PENDING_REG) {
->   		pr_err("PRCM: nr_regs too large\n");
->   		return -EINVAL;
-> @@ -339,8 +338,8 @@ int omap_prcm_register_chain_handler(struct omap_prcm_irq_setup *irq_setup)
->   		ct->chip.irq_mask = irq_gc_mask_clr_bit;
->   		ct->chip.irq_unmask = irq_gc_mask_set_bit;
->
-> -		ct->regs.ack = irq_setup->ack + i * 4;
-> -		ct->regs.mask = irq_setup->mask + i * 4;
-> +		ct->regs.ack = irq_setup->ack[i];
-> +		ct->regs.mask = irq_setup->mask[i];
-
-... and you can drop this change.
-
->
->   		irq_setup_generic_chip(gc, mask[i], 0, IRQ_NOREQUEST, 0);
->   		prcm_irq_chips[i] = gc;
->
-
+  arch/arm/mach-omap2/Makefile                       |   22 +-
+  arch/arm/mach-omap2/clkt34xx_dpll3m2.c             |    7 +-
+  arch/arm/mach-omap2/clkt_clksel.c                  |  466 --------------
+  arch/arm/mach-omap2/clkt_iclk.c                    |   68 --
+  arch/arm/mach-omap2/clock.c                        |  675 
++-------------------
+  arch/arm/mach-omap2/clock.h                        |  205 +-----
+  arch/arm/mach-omap2/clock2430.c                    |   57 --
+  arch/arm/mach-omap2/clock2xxx.c                    |   57 --
+  arch/arm/mach-omap2/clock34xx.c                    |  138 ----
+  arch/arm/mach-omap2/clock34xx.h                    |   18 -
+  arch/arm/mach-omap2/clock3517.c                    |  118 ----
+  arch/arm/mach-omap2/clock3517.h                    |   14 -
+  arch/arm/mach-omap2/clock36xx.c                    |   69 --
+  arch/arm/mach-omap2/clock36xx.h                    |   13 -
+  arch/arm/mach-omap2/clock3xxx.c                    |  135 ----
+  arch/arm/mach-omap2/clock44xx.h                    |   20 -
+  arch/arm/mach-omap2/clock_common_data.c            |  115 ----
+  arch/arm/mach-omap2/io.c                           |    3 +-
+  drivers/clk/ti/Makefile                            |   17 +-
+  drivers/clk/ti/apll.c                              |    2 +
+  drivers/clk/ti/autoidle.c                          |  121 +++-
+  drivers/clk/ti/clk-2xxx.c                          |    2 +
+  drivers/clk/ti/clk-33xx.c                          |    2 +
+  drivers/clk/ti/clk-3xxx.c                          |  244 +++++++
+  drivers/clk/ti/clk-43xx.c                          |    2 +
+  drivers/clk/ti/clk-44xx.c                          |    2 +
+  drivers/clk/ti/clk-54xx.c                          |    2 +
+  drivers/clk/ti/clk-7xx.c                           |    3 +-
+  drivers/clk/ti/clk-816x.c                          |    2 +
+  drivers/clk/ti/clk.c                               |  145 ++++-
+  drivers/clk/ti/clkt_dflt.c                         |  316 +++++++++
+  .../arm/mach-omap2 => drivers/clk/ti}/clkt_dpll.c  |   27 +-
+  drivers/clk/ti/clkt_iclk.c                         |  101 +++
+  drivers/clk/ti/clock.h                             |  113 ++++
+  drivers/clk/ti/clockdomain.c                       |   78 +++
+  {arch/arm/mach-omap2 => drivers/clk/ti}/dpll3xxx.c |  157 ++---
+  {arch/arm/mach-omap2 => drivers/clk/ti}/dpll44xx.c |   23 +-
+  drivers/clk/ti/fixed-factor.c                      |    2 +
+  include/linux/clk/ti.h                             |  157 ++---
+  39 files changed, 1328 insertions(+), 2390 deletions(-)
+  delete mode 100644 arch/arm/mach-omap2/clkt_clksel.c
+  delete mode 100644 arch/arm/mach-omap2/clkt_iclk.c
+  delete mode 100644 arch/arm/mach-omap2/clock2430.c
+  delete mode 100644 arch/arm/mach-omap2/clock2xxx.c
+  delete mode 100644 arch/arm/mach-omap2/clock34xx.c
+  delete mode 100644 arch/arm/mach-omap2/clock34xx.h
+  delete mode 100644 arch/arm/mach-omap2/clock3517.c
+  delete mode 100644 arch/arm/mach-omap2/clock3517.h
+  delete mode 100644 arch/arm/mach-omap2/clock36xx.c
+  delete mode 100644 arch/arm/mach-omap2/clock36xx.h
+  delete mode 100644 arch/arm/mach-omap2/clock3xxx.c
+  delete mode 100644 arch/arm/mach-omap2/clock44xx.h
+  delete mode 100644 arch/arm/mach-omap2/clock_common_data.c
+  create mode 100644 drivers/clk/ti/clkt_dflt.c
+  rename {arch/arm/mach-omap2 => drivers/clk/ti}/clkt_dpll.c (94%)
+  create mode 100644 drivers/clk/ti/clkt_iclk.c
+  rename {arch/arm/mach-omap2 => drivers/clk/ti}/dpll3xxx.c (84%)
+  rename {arch/arm/mach-omap2 => drivers/clk/ti}/dpll44xx.c (91%)
