@@ -1,40 +1,44 @@
-Return-Path: <tglx@linutronix.de>
-Date: Sat, 18 Jul 2015 09:31:53 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-cc: Yingjoe Chen <yingjoe.chen@mediatek.com>,
-    Stephen Boyd <sboyd@codeaurora.org>,
-    Michael Turquette <mturquette@baylibre.com>,
-    James Liao <jamesjj.liao@mediatek.com>,
-    Russell King <linux@arm.linux.org.uk>, devicetree@vger.kernel.org,
-    Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>,
-    Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org,
-    Rob Herring <robh+dt@kernel.org>, linux-mediatek@lists.infradead.org,
-    Sascha Hauer <kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>,
-    srv_heupstream@mediatek.com, linux-arm-kernel@lists.infradead.org,
-    Daniel Kurtz <djkurtz@chromium.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/5] arm64: mediatek: enable MTK_TIMER
-In-Reply-To: <1956087.MUsCyY7Qyv@ubix>
-Message-ID: <alpine.DEB.2.11.1507180931190.18576@nanos>
-References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com> <1436779969-18610-4-git-send-email-yingjoe.chen@mediatek.com> <1956087.MUsCyY7Qyv@ubix>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Yoshinori Sato <ysato@users.sourceforge.jp>
+Subject: [PATCH 1/2] clk: h8300: Drop allocation printk and cleanup sizeof style
+Date: Mon, 13 Jul 2015 17:11:49 -0700
+Message-Id: <1436832710-23989-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 17 Jul 2015, Matthias Brugger wrote:
+We don't need to print an error on allocation failures, drop it.
+While we're here, change the sizeof() to be sizeof(*<ptr>) to
+make code more future proof.
 
-> On Monday, July 13, 2015 05:32:47 PM Yingjoe Chen wrote:
-> > Enable MTK_TIMER for MediaTek plaform, which will be used as
-> > schedule clock.
-> > 
-> > Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> > ---
-> 
-> Applied, thanks.
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/h8300/clk-h8s2678.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-So you enable the current code w/o the modifications required for this
-to work?
+diff --git a/drivers/clk/h8300/clk-h8s2678.c b/drivers/clk/h8300/clk-h8s2678.c
+index 4701b093e497..c121eb55e2e1 100644
+--- a/drivers/clk/h8300/clk-h8s2678.c
++++ b/drivers/clk/h8300/clk-h8s2678.c
+@@ -98,11 +98,9 @@ static void __init h8s2678_pll_clk_setup(struct device_node *node)
+ 	}
+ 
+ 
+-	pll_clock = kzalloc(sizeof(struct pll_clock), GFP_KERNEL);
+-	if (!pll_clock) {
+-		pr_err("%s: failed to alloc memory", clk_name);
++	pll_clock = kzalloc(sizeof(*pll_clock), GFP_KERNEL);
++	if (!pll_clock)
+ 		return;
+-	}
+ 
+ 	pll_clock->sckcr = of_iomap(node, 0);
+ 	if (pll_clock->sckcr == NULL) {
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-Thanks,
-
-	tglx
