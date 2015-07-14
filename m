@@ -1,43 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 2 Jul 2015 09:59:15 -0700
+Date: Mon, 13 Jul 2015 17:40:23 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@arm.linux.org.uk>,
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@stlinux.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 8/9] drivers: clk: st: Rename st_pll3200c32_407_c0_x into
- st_pll3200c32_cx_x
-Message-ID: <20150702165914.GE7201@codeaurora.org>
-References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org>
- <1435068567-30995-9-git-send-email-gabriel.fernandez@linaro.org>
+	James Liao <jamesjj.liao@mediatek.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	linux-mediatek@lists.infradead.org,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Olof Johansson <olof@lixom.net>, srv_heupstream@mediatek.com,
+	linux-arm-kernel@lists.infradead.org,
+	Daniel Kurtz <djkurtz@chromium.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 4/5] clk: mediatek: add 13mhz clock for MT8173
+Message-ID: <20150714004023.GL30412@codeaurora.org>
+References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
+ <1436779969-18610-5-git-send-email-yingjoe.chen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1435068567-30995-9-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1436779969-18610-5-git-send-email-yingjoe.chen@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/23, Gabriel Fernandez wrote:
-> Use a generic name for this kind of PLL
+On 07/13, Yingjoe Chen wrote:
+> Add 13mhz clock used by GPT timer in infracfg.
 > 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> ---
 
-Is this just a cleanup/nicety? I could take this patch but patch
-9 needs to go through arm-soc and then we have to deal with DT
-incompatibility. How about we drop these last two patches?
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
