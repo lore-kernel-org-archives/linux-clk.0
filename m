@@ -1,61 +1,38 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com
-Cc: thomas.ab@samsung.com, b.zolnierkie@samsung.com, kyungmin.park@samsung.com,
- cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v5 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
-Date: Wed, 01 Jul 2015 22:21:14 +0900
-Message-id: <1435756877-26736-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <linux-omap-owner@vger.kernel.org>
+Message-ID: <55A64788.6000206@ti.com>
+Date: Wed, 15 Jul 2015 14:44:08 +0300
+From: Tero Kristo <t-kristo@ti.com>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Mike Turquette <mturquette@baylibre.com>,
+	"tony@atomide.com" <tony@atomide.com>,
+	Paul Walmsley <paul@pwsan.com>,
+	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+Subject: Re: [GIT PULL] clk: ti: clock driver code migration to drivers
+References: <55A4CE41.9070909@ti.com> <55A5630E.8030901@codeaurora.org> <55A56C5E.2000309@ti.com> <55A57195.80609@codeaurora.org>
+In-Reply-To: <55A57195.80609@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-omap-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset use cpufreq-dt driver to support Exynos3250 cpufreq and tested it
-on Exynos3250-based Rinato board.
+On 07/14/2015 11:31 PM, Stephen Boyd wrote:
+> On 07/14/2015 01:09 PM, Tero Kristo wrote:
+>> On 07/14/2015 10:29 PM, Stephen Boyd wrote:
+>>> On 07/14/2015 01:54 AM, Tero Kristo wrote:
+>>>> The following changes since commit
+>>>> bc0195aad0daa2ad5b0d76cce22b167bc3435590:
+>>>>
+>>>>   Linux 4.2-rc2 (2015-07-12 15:10:30 -0700)
+>>>
+>>> Why did this get rebased onto v4.2-rc2? I thought it was all ready to go
+>>> based on v4.1-rc2? If possible leave it on v4.1-rc2 please.
+>>
+>> You mean 4.2-rc1 I guess...? Or do you really mean the old 4.1-rc2....?
+>
+> Old 4.1-rc2 please
+>
 
-Depends on:
-- next-20150701 tag (master branch) of linux-next kernel tree
-- This patch-set is based on Exynos5250 patch-set[1] because two patch-set
-  modify the 'arch/arm/mach-exynos/exynos.c' to add the compatible string.
-  [1] https://lkml.org/lkml/2015/6/29/361
-  : [PATCH v2 0/4] cpufreq: use generic cpufreq drivers for Exynos5250 platform
+Ok, posting a new one after this, this one can be ignored.
 
-Changes from v4:
-(https://lkml.org/lkml/2014/10/20/215)
-- Rebased on latest linux-next git repository.
-- Remove unnecessary divider clock flag from divider of DIV_CPU0/DIV_CPU1 register
-
-Changes from v3:
-- This patchset is based on 3.18-rc1 with new patchset[3] of Thomas Abraham
-  [3] [PATCH v11 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-  - http://www.spinics.net/lists/arm-kernel/msg370412.html
-
-Changes from v2:
-- Rebased on new patchset of Thomas Abraham
-  and for-next branch of samsunc-clk.git of Tomasz Figa
-
-Changes from v1:
-- Rebased on new patchset[1] by Thomas Abraham
-  [1] [PATCH v10 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-  - http://www.spinics.net/lists/arm-kernel/msg364790.html
-- Modify clk-cpu.c to support Exynos3250
-- Drop documentation patch on previous patchset[2]
-  [2] http://www.spinics.net/lists/cpufreq/msg10265.html
-- Add only operating-points for Exynos3250 without armclk-divider-table
-
-Chanwoo Choi (3):
-  clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
-  ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
-  ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
-
- arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
- arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
- arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
- arch/arm/mach-exynos/exynos.c           |  1 +
- drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
- include/dt-bindings/clock/exynos3250.h  |  1 +
- 6 files changed, 55 insertions(+), 2 deletions(-)
-
--- 
-1.8.5.5
+-Tero
