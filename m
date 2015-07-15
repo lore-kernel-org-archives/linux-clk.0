@@ -1,37 +1,33 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 28 Jul 2015 14:34:34 -0700
+Return-Path: <linux-omap-owner@vger.kernel.org>
+Date: Wed, 15 Jul 2015 14:05:13 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: mturquette@baylibre.com,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	romain.perier@gmail.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: handle fixed-rate clocks correctly in
- clk_core_round_rate_nolock
-Message-ID: <20150728213434.GD14521@codeaurora.org>
-References: <110607065.NoWaKp3mDJ@diego>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	"tony@atomide.com" <tony@atomide.com>,
+	Paul Walmsley <paul@pwsan.com>, linux-clk@vger.kernel.org,
+	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+Subject: Re: [GIT PULL]
+Message-ID: <20150715210513.GR30412@codeaurora.org>
+References: <55A6494F.7090508@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <110607065.NoWaKp3mDJ@diego>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <55A6494F.7090508@ti.com>
+Sender: linux-omap-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/26, Heiko Stübner wrote:
-> Commit 6edc753d8ecc ("clk: change clk_ops' ->determine_rate() prototype")
-> changed the behaviour of clk_core_round_rate_nolock as it forgot to also
-> include the else conditional simply returning the clock rate for clocks
-> that neither have a parent or can determine their rate - for example
-> said fixed clocks.
+On 07/15, Tero Kristo wrote:
+> Hi Stephen, Mike,
 > 
-> This resulted in failures to set pll rates on rockchip socs, as it
-> returned the target pll rate as suitable rate for the 24MHz xin24m clock,
-> thus making the ccf want to set this fixed clock to 1.6GHz or similar.
+> Here is the updated pull-request based on Stephen's request. This is
+> on top of 4.1-rc2. The branch is force updated version of the one
+> Stephen tried yesterday, the old one contained the minor build
+> issues present on v3 of the patch set.
 > 
-> Fixes: 6edc753d8ecc ("clk: change clk_ops' ->determine_rate() prototype")
-> Reported-by: Romain Perier <romain.perier@gmail.com>
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
+> I did a quick try of merging this branch on top of 4.2-rc2 and it
+> works fine without any conflicts.
+> 
 
-Thanks I folded this into the original patch and pushed it out to
--next.
+Thanks. Pulled into clk-next.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
