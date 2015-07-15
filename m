@@ -1,40 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 15 Jul 2015 16:48:23 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Tero Kristo <t-kristo@ti.com>
-Subject: [PATCH 43/45] clk: ti: Switch clk-provider.h include to clk.h
-Date: Fri, 10 Jul 2015 16:33:41 -0700
-Message-Id: <1436571223-10959-44-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@stlinux.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/3] drivers: clk: st: Support for enable/disable in
+ Clockgen PLLs
+Message-ID: <20150715234823.GT30412@codeaurora.org>
+References: <1436443060-12866-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1436443060-12866-2-git-send-email-gabriel.fernandez@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1436443060-12866-2-git-send-email-gabriel.fernandez@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This file isn't a clock provider but uses the consumer API, so
-include clk.h instead of clk-provider.h.
+On 07/09, Gabriel Fernandez wrote:
+> @@ -270,6 +285,73 @@ static int clkgen_pll_is_enabled(struct clk_hw *hw)
+>  	return !poweroff;
+>  }
+>  
+> +static int __clkgen_pll_enable(struct clk_hw *hw)
+> +{
+> +	struct clkgen_pll *pll = to_clkgen_pll(hw);
+> +	unsigned long timeout;
+> +	int ret = 0;
+> +
+> +	if (clkgen_pll_is_enabled(hw))
+> +		return 0;
+> +
+> +	CLKGEN_WRITE(pll, pdn_ctrl, 0);
+> +
+> +	timeout = jiffies + msecs_to_jiffies(10);
 
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/ti/clk-2xxx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Jiffies isn't guaranteed to increment here because
+.enable/.disable is called with irqs disabled and if this is the
+only CPU running it won't be getting interrupts to update
+jiffies.
 
-diff --git a/drivers/clk/ti/clk-2xxx.c b/drivers/clk/ti/clk-2xxx.c
-index c808ab3d2bb2..20cf5eed8c3d 100644
---- a/drivers/clk/ti/clk-2xxx.c
-+++ b/drivers/clk/ti/clk-2xxx.c
-@@ -16,7 +16,7 @@
- 
- #include <linux/kernel.h>
- #include <linux/list.h>
--#include <linux/clk-provider.h>
-+#include <linux/clk.h>
- #include <linux/clk/ti.h>
- 
- static struct ti_dt_clk omap2xxx_clks[] = {
+> +
+> +	while (!clkgen_pll_is_locked(hw)) {
+> +		if (time_after(jiffies, timeout))
+> +			return -ETIMEDOUT;
+> +		cpu_relax();
+> +	}
+> +
+> +	pr_debug("%s:%s enabled\n", __clk_get_name(hw->clk), __func__);
+> +
+> +	return ret;
+> +}
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
-
