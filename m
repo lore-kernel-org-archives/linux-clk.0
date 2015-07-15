@@ -1,67 +1,91 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Mon, 27 Jul 2015 14:05:31 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
-Message-ID: <20150727083531.GC31611@linux>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <1436456621-29839-3-git-send-email-b.zolnierkie@samsung.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Wed, 15 Jul 2015 20:25:24 +0800
+From: Dong Aisheng <b29396@freescale.com>
+To: Michael Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v2 1/5] clk: remove duplicated code with
+ __clk_set_parent_after
+Message-ID: <20150715122522.GA30570@shlinux1.ap.freescale.net>
+References: <1431610143-21853-1-git-send-email-aisheng.dong@freescale.com>
+ <1431610143-21853-2-git-send-email-aisheng.dong@freescale.com>
+ <20150528040919.22384.79189@quantum>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1436456621-29839-3-git-send-email-b.zolnierkie@samsung.com>
+In-Reply-To: <20150528040919.22384.79189@quantum>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Dong Aisheng <aisheng.dong@freescale.com>,
+ Ranjani.Vaidyanathan@freescale.com, b20596@freescale.com, sboyd@codeaurora.org,
+ linux-kernel@vger.kernel.org, r64343@freescale.com, b20788@freescale.com,
+ shawn.guo@linaro.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-$subject is a bit wrong, we aren't fixing any issue here. We are
-supporting a new feature and so it should be like:
+Hi Mike,
 
-cpufreq: Mark boost frequencies based on OPP's turbo mode
-
-On 09-07-15, 17:43, Bartlomiej Zolnierkiewicz wrote:
-> Turbo modes should be marked with CPUFREQ_BOOST_FREQ flag in
-> the frequency table entry.
+On Wed, May 27, 2015 at 09:09:19PM -0700, Michael Turquette wrote:
+> Quoting Dong Aisheng (2015-05-14 06:28:59)
+> > __clk_set_parent_after() actually used the second argument then we
+> > could put this duplicate logic in there and call it with a different
+> > order of arguments in the success vs. error paths in this function.
+> > 
+> > Cc: Mike Turquette <mturquette@linaro.org>
+> > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+> > Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
 > 
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  drivers/cpufreq/cpufreq_opp.c | 2 ++
->  1 file changed, 2 insertions(+)
+> Patch looks good to me.
 > 
-> diff --git a/drivers/cpufreq/cpufreq_opp.c b/drivers/cpufreq/cpufreq_opp.c
-> index 773bcde..f0cf502 100644
-> --- a/drivers/cpufreq/cpufreq_opp.c
-> +++ b/drivers/cpufreq/cpufreq_opp.c
-> @@ -75,6 +75,8 @@ int dev_pm_opp_init_cpufreq_table(struct device *dev,
->  		}
->  		freq_table[i].driver_data = i;
->  		freq_table[i].frequency = rate / 1000;
-> +		if (dev_pm_opp_get_turbo_mode_setting(opp) == true)
-> +			freq_table[i].flags |= CPUFREQ_BOOST_FREQ;
->  	}
->  
->  	freq_table[i].driver_data = i;
+> Also just noticed that the second argument to __clk_set_parent_after is
+> never used :-(
+> 
 
-Rest look fine.
+Ping...
 
--- 
-viresh
+I did not see this patch series in your tree for v4.2 rc.
+Is this got missed?
+
+Regards
+Dong Aisheng
+
+> Regards,
+> Mike
+> 
+> > ---
+> >  drivers/clk/clk.c | 8 +-------
+> >  1 file changed, 1 insertion(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 659f2b0..0e813ea 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -1159,14 +1159,8 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
+> >                 flags = clk_enable_lock();
+> >                 clk_reparent(core, old_parent);
+> >                 clk_enable_unlock(flags);
+> > +               __clk_set_parent_after(core, old_parent, parent);
+> >  
+> > -               if (core->prepare_count) {
+> > -                       flags = clk_enable_lock();
+> > -                       clk_core_disable(core);
+> > -                       clk_core_disable(parent);
+> > -                       clk_enable_unlock(flags);
+> > -                       clk_core_unprepare(parent);
+> > -               }
+> >                 return ret;
+> >         }
+> >  
+> > -- 
+> > 1.9.1
+> > 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
