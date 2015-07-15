@@ -1,113 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 27/45] clk: ux500: Remove clk.h and clkdev.h includes
-Date: Fri, 10 Jul 2015 16:33:25 -0700
-Message-Id: <1436571223-10959-28-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+Date: Wed, 15 Jul 2015 19:56:25 +0000 (UTC)
+From: Paul Walmsley <paul@pwsan.com>
+To: Vignesh R <vigneshr@ti.com>
+cc: Tero Kristo <t-kristo@ti.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Benoit Cousson <bcousson@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] ARM: OMAP2+: DRA7: clockdomain: change l4per2_7xx_clkdm
+ to SW_WKUP
+In-Reply-To: <1433332284-10766-2-git-send-email-vigneshr@ti.com>
+Message-ID: <alpine.DEB.2.02.1507151955330.32764@utopia.booyaka.com>
+References: <1433332284-10766-1-git-send-email-vigneshr@ti.com> <1433332284-10766-2-git-send-email-vigneshr@ti.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock provider drivers generally shouldn't include clk.h because
-it's the consumer API. Remove the include here because this is a
-provider driver. Also remove clkdev.h in files that aren't using
-it.
+On Wed, 3 Jun 2015, Vignesh R wrote:
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/ux500/abx500-clk.c   | 1 -
- drivers/clk/ux500/clk.h          | 3 ++-
- drivers/clk/ux500/u8500_clk.c    | 1 -
- drivers/clk/ux500/u8500_of_clk.c | 2 --
- drivers/clk/ux500/u8540_clk.c    | 1 -
- drivers/clk/ux500/u9540_clk.c    | 2 --
- 6 files changed, 2 insertions(+), 8 deletions(-)
+> Legacy IPs like PWMSS, present under l4per2_7xx_clkdm, cannot support
+> smart-idle when its clock domain is in HW_AUTO on DRA7 SoCs. Hence,
+> program clock domain to SW_WKUP.
+> 
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> ---
+>  arch/arm/mach-omap2/clockdomains7xx_data.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-omap2/clockdomains7xx_data.c b/arch/arm/mach-omap2/clockdomains7xx_data.c
+> index 57d5df0c1fbd..7581e036bda6 100644
+> --- a/arch/arm/mach-omap2/clockdomains7xx_data.c
+> +++ b/arch/arm/mach-omap2/clockdomains7xx_data.c
+> @@ -331,7 +331,7 @@ static struct clockdomain l4per2_7xx_clkdm = {
+>  	.dep_bit	  = DRA7XX_L4PER2_STATDEP_SHIFT,
+>  	.wkdep_srcs	  = l4per2_wkup_sleep_deps,
+>  	.sleepdep_srcs	  = l4per2_wkup_sleep_deps,
+> -	.flags		  = CLKDM_CAN_HWSUP_SWSUP,
+> +	.flags		  = CLKDM_CAN_SWSUP,
+>  };
+>  
+>  static struct clockdomain mpu0_7xx_clkdm = {
 
-diff --git a/drivers/clk/ux500/abx500-clk.c b/drivers/clk/ux500/abx500-clk.c
-index 3e5e05101302..222425d08ab6 100644
---- a/drivers/clk/ux500/abx500-clk.c
-+++ b/drivers/clk/ux500/abx500-clk.c
-@@ -13,7 +13,6 @@
- #include <linux/platform_device.h>
- #include <linux/mfd/abx500/ab8500.h>
- #include <linux/mfd/abx500/ab8500-sysctrl.h>
--#include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/mfd/dbx500-prcmu.h>
-diff --git a/drivers/clk/ux500/clk.h b/drivers/clk/ux500/clk.h
-index a2bb92d85ee0..b42485da704e 100644
---- a/drivers/clk/ux500/clk.h
-+++ b/drivers/clk/ux500/clk.h
-@@ -10,10 +10,11 @@
- #ifndef __UX500_CLK_H
- #define __UX500_CLK_H
- 
--#include <linux/clk.h>
- #include <linux/device.h>
- #include <linux/types.h>
- 
-+struct clk;
-+
- struct clk *clk_reg_prcc_pclk(const char *name,
- 			      const char *parent_name,
- 			      resource_size_t phy_base,
-diff --git a/drivers/clk/ux500/u8500_clk.c b/drivers/clk/ux500/u8500_clk.c
-index 4626b97b7d83..1c7b639d9222 100644
---- a/drivers/clk/ux500/u8500_clk.c
-+++ b/drivers/clk/ux500/u8500_clk.c
-@@ -7,7 +7,6 @@
-  * License terms: GNU General Public License (GPL) version 2
-  */
- 
--#include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/mfd/dbx500-prcmu.h>
-diff --git a/drivers/clk/ux500/u8500_of_clk.c b/drivers/clk/ux500/u8500_of_clk.c
-index e319ef912dc6..c3e3b20e4b43 100644
---- a/drivers/clk/ux500/u8500_of_clk.c
-+++ b/drivers/clk/ux500/u8500_of_clk.c
-@@ -8,8 +8,6 @@
-  */
- 
- #include <linux/of.h>
--#include <linux/clk.h>
--#include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/mfd/dbx500-prcmu.h>
- #include <linux/platform_data/clk-ux500.h>
-diff --git a/drivers/clk/ux500/u8540_clk.c b/drivers/clk/ux500/u8540_clk.c
-index 20c8add90d11..d0de335ea1e9 100644
---- a/drivers/clk/ux500/u8540_clk.c
-+++ b/drivers/clk/ux500/u8540_clk.c
-@@ -7,7 +7,6 @@
-  * License terms: GNU General Public License (GPL) version 2
-  */
- 
--#include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/mfd/dbx500-prcmu.h>
-diff --git a/drivers/clk/ux500/u9540_clk.c b/drivers/clk/ux500/u9540_clk.c
-index 44794782e7e0..179bd3871b34 100644
---- a/drivers/clk/ux500/u9540_clk.c
-+++ b/drivers/clk/ux500/u9540_clk.c
-@@ -7,8 +7,6 @@
-  * License terms: GNU General Public License (GPL) version 2
-  */
- 
--#include <linux/clk.h>
--#include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/mfd/dbx500-prcmu.h>
- #include <linux/platform_data/clk-ux500.h>
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks, queued for v4.2-rc fixes.  Note that I cannot test this, since I 
+don't have a DRA7xx board.
 
+- Paul
