@@ -1,38 +1,62 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <559B9225.6090607@huawei.com>
-Date: Tue, 7 Jul 2015 16:47:33 +0800
-From: Bintian <bintian.wang@huawei.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:35402 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751032AbbGOFNl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 15 Jul 2015 01:13:41 -0400
+Date: Tue, 14 Jul 2015 22:13:37 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Keerthy <a0393675@ti.com>, Mugunthan V N <mugunthanvnm@ti.com>,
+	Keerthy <j-keerthy@ti.com>, linux-omap@vger.kernel.org,
+	galak@codeaurora.org, pawel.moll@arm.com,
+	linux-kernel@vger.kernel.org, bcousson@baylibre.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/2] CLK: TI: add dpll_clksel_mac_clk node
+Message-ID: <20150715051336.GW17550@atomide.com>
+References: <1434614473-8500-1-git-send-email-j-keerthy@ti.com>
+ <55828A18.6030608@ti.com>
+ <558C0624.4060008@ti.com>
+ <20150714110626.GQ17550@atomide.com>
+ <55A50E87.4060400@ti.com>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>
-CC: Mike Turquette <mturquette@linaro.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] amba: Support clk parents and rates assigned in DT
-References: <1432846332-17692-1-git-send-email-sboyd@codeaurora.org> <559B15DE.7040200@codeaurora.org>
-In-Reply-To: <559B15DE.7040200@codeaurora.org>
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <55A50E87.4060400@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Russell,
+* Tero Kristo <t-kristo@ti.com> [150714 06:30]:
+> On 07/14/2015 02:06 PM, Tony Lindgren wrote:
+> >* Keerthy <a0393675@ti.com> [150625 06:48]:
+> >>
+> >>On Thursday 18 June 2015 02:36 PM, Mugunthan V N wrote:
+> >>>On Thursday 18 June 2015 01:31 PM, Keerthy wrote:
+> >>>>The series adds the missing clock node needed for cpsw.
+> >>>>
+> >>>>Keerthy (2):
+> >>>>   CLK: TI: add dpll_clksel_mac_clk node
+> >>>>   ARM: dts: am4372: Set the default clock rate for dpll_clksel_mac_clk
+> >>>>     clock
+> >>>>
+> >>>>  arch/arm/boot/dts/am4372.dtsi        | 7 +++++--
+> >>>>  arch/arm/boot/dts/am43xx-clocks.dtsi | 9 +++++++++
+> >>>>  drivers/clk/ti/clk-43xx.c            | 1 +
+> >>>>  3 files changed, 15 insertions(+), 2 deletions(-)
+> >>>>
+> >>>
+> >>>Tested-by: Mugunthan V N <mugunthanvnm@ti.com>
+> >>
+> >>Thanks Mugunthan.
+> >>
+> >>A gentle ping on this series.
+> >
+> >Tero, care to review this series?
+> 
+> Acked-by: Tero Kristo <t-kristo@ti.com>
+> 
+> I guess this should go through your tree as this is mostly dts changes?
 
-Could you spend several minutes to review Stephen's patch?
+Actually I don't have anything coming for the clock dtsi files for
+v4.3 merge window, so it's best that you queue these. For the dts
+changes, please feel free to add:
 
-Thanks,
-
-Bintian
-
-On 2015/7/7 7:57, Stephen Boyd wrote:
-> On 05/28/2015 01:52 PM, Stephen Boyd wrote:
->> Add the call to of_clk_set_defaults() into the amba probe path so
->> that devices on the amba bus can use the assigned rates and
->> parents feature of the common clock framework.
->>
->> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
->> ---
->
-> Shall I put this into the patch tracker? Turns out it wasn't needed for
-> the hisi stuff immediately.
->
-
+Acked-by: Tony Lindgren <tony@atomide.com>
