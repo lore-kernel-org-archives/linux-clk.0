@@ -1,40 +1,79 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH 0/2] Add initial support for RPM clocks
-Date: Thu,  9 Jul 2015 15:18:28 +0300
-Message-Id: <1436444310-15108-1-git-send-email-georgi.djakov@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <vigneshr@ti.com>
+Message-ID: <55A7CD3E.3030803@ti.com>
+Date: Thu, 16 Jul 2015 20:56:54 +0530
+From: "R, Vignesh" <vigneshr@ti.com>
+MIME-Version: 1.0
+To: Paul Walmsley <paul@pwsan.com>
+CC: Tero Kristo <t-kristo@ti.com>, Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark
+ Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Benoit Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Mike
+ Turquette <mturquette@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, <linux-pwm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 1/5] ARM: OMAP2+: DRA7: clockdomain: change l4per2_7xx_clkdm
+ to SW_WKUP
+References: <1433332284-10766-1-git-send-email-vigneshr@ti.com> <1433332284-10766-2-git-send-email-vigneshr@ti.com> <alpine.DEB.2.02.1507151955330.32764@utopia.booyaka.com> <alpine.DEB.2.02.1507152020240.32764@utopia.booyaka.com>
+In-Reply-To: <alpine.DEB.2.02.1507152020240.32764@utopia.booyaka.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds initial support for the clocks controlled by the
-RPM (Resource Power Manager) processor on Qualcomm platforms. It
-depends on Bjorn Andersson's Qualcomm SMD & RPM drivers patchset [1]
+Hi,
 
-The first patch implements the RPM clock operations, which are
-using a shared memory for sending requests to the RPM processor.
-The second patch adds the support of RPM clocks on the MSM8916
-platform.
+On 07/16/2015 01:57 AM, Paul Walmsley wrote:
+> On Wed, 15 Jul 2015, Paul Walmsley wrote:
+> 
+>> On Wed, 3 Jun 2015, Vignesh R wrote:
+>>
+>>> Legacy IPs like PWMSS, present under l4per2_7xx_clkdm, cannot support
+>>> smart-idle when its clock domain is in HW_AUTO on DRA7 SoCs. Hence,
+>>> program clock domain to SW_WKUP.
+>>>
+>>> Signed-off-by: Vignesh R <vigneshr@ti.com>
+>>> ---
+>>>  arch/arm/mach-omap2/clockdomains7xx_data.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm/mach-omap2/clockdomains7xx_data.c b/arch/arm/mach-omap2/clockdomains7xx_data.c
+>>> index 57d5df0c1fbd..7581e036bda6 100644
+>>> --- a/arch/arm/mach-omap2/clockdomains7xx_data.c
+>>> +++ b/arch/arm/mach-omap2/clockdomains7xx_data.c
+>>> @@ -331,7 +331,7 @@ static struct clockdomain l4per2_7xx_clkdm = {
+>>>  	.dep_bit	  = DRA7XX_L4PER2_STATDEP_SHIFT,
+>>>  	.wkdep_srcs	  = l4per2_wkup_sleep_deps,
+>>>  	.sleepdep_srcs	  = l4per2_wkup_sleep_deps,
+>>> -	.flags		  = CLKDM_CAN_HWSUP_SWSUP,
+>>> +	.flags		  = CLKDM_CAN_SWSUP,
+>>>  };
+>>>  
+>>>  static struct clockdomain mpu0_7xx_clkdm = {
+>>
+>> Thanks, queued for v4.2-rc fixes.  Note that I cannot test this, since I 
+>> don't have a DRA7xx board.
+> 
+> You know, upon further thought, this doesn't make sense.  If the bug
+> is with the PWMSS IP block specifically, why not just set 
+> HWMOD_SWSUP_SIDLE on all the IP blocks where the hardware folks didn't 
+> implement hardware smart-idle?  At least that way, if those legacy IP 
+> blocks aren't in use, the clockdomain can still enter hardware-supervised 
+> idle?
 
-[1] https://lkml.org/lkml/2015/6/26/577
+According to hardware folks, HW_AUTO (for clockdomain) and
+HWMOD_SWSUP_SIDLE (PWMSS in NO-IDLE) for PWMSS *is not* a good
+combination. If clockdomain is in HW_AUTO and PWMSS is put in NO-IDLE,
+then IDLEST of PWMSSx_CLKCTRL reads "stuck in wakeup/ sleep transition"
+which is not a consistent state (this is because of problems with PWM
+IP). Hence, it is recommended to program the clock domain to SW_WKUP and
+leave the PWMSS idlemode as smart-idle.
 
-Georgi Djakov (2):
-  clk: qcom: Add support for RPM Clocks
-  clk: qcom: Add MSM8916 RPM clock driver
-
- .../devicetree/bindings/clock/qcom,rpmcc.txt       |   20 +++
- drivers/clk/qcom/Makefile                          |    2 +
- drivers/clk/qcom/clk-rpm.c                         |  164 ++++++++++++++++++
- drivers/clk/qcom/clk-rpm.h                         |  137 +++++++++++++++
- drivers/clk/qcom/gcc-msm8916.c                     |   13 --
- drivers/clk/qcom/rpmcc-msm8916.c                   |  183 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmcc-msm8916.h     |   44 +++++
- 7 files changed, 550 insertions(+), 13 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
- create mode 100644 drivers/clk/qcom/clk-rpm.c
- create mode 100644 drivers/clk/qcom/clk-rpm.h
- create mode 100644 drivers/clk/qcom/rpmcc-msm8916.c
- create mode 100644 include/dt-bindings/clock/qcom,rpmcc-msm8916.h
-
+-- 
+Regards
+Vignesh
