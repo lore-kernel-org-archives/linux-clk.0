@@ -1,45 +1,34 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Pawel Moll <pawel.moll@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Sudeep Holla <sudeep.holla@arm.com>
-Subject: [PATCH 0/3] Move clk-sp810 to assigned clock parents
-Date: Fri, 31 Jul 2015 16:44:42 -0700
-Message-Id: <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <55BBB2FC.9030102@codeaurora.org>
-References: <55BBB2FC.9030102@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1436571223-10959-28-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+	<1436571223-10959-28-git-send-email-sboyd@codeaurora.org>
+Date: Thu, 16 Jul 2015 15:29:39 +0200
+Message-ID: <CACRpkdaA-CAON7Juv8ot5rcMvG9EnKR8xjHAH_VCPoh=FX=Mxg@mail.gmail.com>
+Subject: Re: [PATCH 27/45] clk: ux500: Remove clk.h and clkdev.h includes
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set converts this code to use the assigned-clock-parents
-property instead of doing some interesting stuff in the .prepare
-op. I can route the dts patches through arm-soc but I'd like to take
-the clk patch through clk tree because it removes some usage of the
-struct clk based provider APIs that we're trying to get rid of. Also,
-this is completely untested, so testing would be appreciated.
-Can this be tested with qemu? I haven't tried but I was thinking
-that might be an option.
+On Sat, Jul 11, 2015 at 1:33 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Clock provider drivers generally shouldn't include clk.h because
+> it's the consumer API. Remove the include here because this is a
+> provider driver. Also remove clkdev.h in files that aren't using
+> it.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Stephen Boyd (3):
-  clk: versatile: Switch to assigned clock parents
-  ARM: dts: vexpress: Use assigned-clock-parents for sp810
-  ARM64: dts: vexpress: Use assigned-clock-parents for sp810
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
- arch/arm/boot/dts/vexpress-v2m-rs1.dtsi          |  2 +
- arch/arm/boot/dts/vexpress-v2m.dtsi              |  2 +
- arch/arm64/boot/dts/arm/juno-motherboard.dtsi    |  2 +
- arch/arm64/boot/dts/arm/rtsm_ve-motherboard.dtsi |  2 +
- drivers/clk/versatile/clk-sp810.c                | 76 +++++-------------------
- 5 files changed, 23 insertions(+), 61 deletions(-)
+Ulf Hansson should also look at this preferably.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Yours,
+Linus Walleij
