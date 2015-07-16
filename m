@@ -1,80 +1,53 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <paul@pwsan.com>
+Date: Thu, 16 Jul 2015 01:51:12 +0000 (UTC)
+From: Paul Walmsley <paul@pwsan.com>
+To: Tony Lindgren <tony@atomide.com>
+cc: Tero Kristo <t-kristo@ti.com>, Mike Turquette <mturquette@baylibre.com>,
+  Stephen Boyd <sboyd@codeaurora.org>,
+  "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+  linux-clk@vger.kernel.org
+Subject: Re: [GIT PULL] clk: ti: clock driver code migration to drivers
+In-Reply-To: <20150714104006.GO17550@atomide.com>
+Message-ID: <alpine.DEB.2.02.1507160148340.32764@utopia.booyaka.com>
+References: <55A4CE41.9070909@ti.com> <20150714095431.GJ17550@atomide.com> <55A4E520.8050804@ti.com> <20150714104006.GO17550@atomide.com>
 MIME-Version: 1.0
-To: Leo Yan <leo.yan@linaro.org>,
-	"Jassi Brar" <jassisinghbrar@gmail.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20150707140424.GA12992@leoy-linaro>
-Cc: "Russell King <linux@arm.linux.org.uk>, Linux Kernel Mailing List"
-	<linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org
-References: <20150706113355.GA6967@leoy-linaro>
- <CABb+yY1qjq_uXTb-S4GO7rugs1Wa9j_VpSb3=0rq1Zv+-t+u2Q@mail.gmail.com>
- <20150707140424.GA12992@leoy-linaro>
-Message-ID: <20150708165429.9112.88891@quantum>
-Subject: Re: Query: Clock driver requests mailbox channel
-Date: Wed, 08 Jul 2015 09:54:29 -0700
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Cc'ing linux-clk and Stephen Boyd
+On Tue, 14 Jul 2015, Tony Lindgren wrote:
 
-Quoting Leo Yan (2015-07-07 07:04:25)
-> On Tue, Jul 07, 2015 at 10:54:55AM +0530, Jassi Brar wrote:
-> > On Mon, Jul 6, 2015 at 5:03 PM, Leo Yan <leo.yan@linaro.org> wrote:
-> > > Hi all,
+> * Tero Kristo <t-kristo@ti.com> [150714 03:34]:
+> > On 07/14/2015 12:54 PM, Tony Lindgren wrote:
+> > >* Tero Kristo <t-kristo@ti.com> [150714 01:56]:
+> > >>
+> > >>This pull request contains the TI clock driver set to move the clock
+> > >>implementations under clock driver. Some small portions of the clock driver
+> > >>code still remain under mach-omap2 after this, it should be decided whether
+> > >>this code is now obsolete and should be deleted or should someone try to fix
+> > >>it.
 > > >
-> > > i'm working with one clock driver, which will invoke mailbox API to
-> > > request the mailbox channel and send message.
-> > >
-> > > Usually clock driver will init with devicetree, below is the example:
-> > > CLK_OF_DECLARE(hi6220_clk_power, "hisilicon,hi6220-clock-power",
-> > > hi6220_clk_power_init);
-> > >
-> > > Clock init function it will pass the pointer of struct device_node
-> > > but not the pointer of struct device. So finally it's difficult to
-> > > invoke mailbox API *mbox_request_channel()*, due it need use the
-> > > struct device to search DT's property "mboxes".
-> > >
-> > > I want to find which is the best way to resolve this issue, so do you
-> > > suggest clock driver to manually register one device? Or can we add
-> > > one more API to request the mailbox channel directly with device_node?
-> > >
-> > IIUC, such clocks (that require platform resources) should be
-> > populated from the platform_device's probe()?
+> > >Hmm care to clarify what is obsolete or broken after this series?
+> > 
+> > Not after this series, was broken/obsolete already before.
+> > 
+> > A couple of omap2/omap3 specific clock files still remain under mach-omap2,
+> > they are DVFS related. OMAP3 core dvfs support is currently completely
+> > unused (this could probably be removed, or shall we re-introduce the painful
+> > core dvfs at some point again?), and parts of the omap2 core dpll handling
+> > code should probably be re-written; or at least verified that it actually
+> > works properly. I can't test OMAP2 DVFS myself so don't dare to fiddle with
+> > it.... I could probably try to get some sort of DVFS test case to work on
+> > the board farm OMAP2 board I have access to though, I can investigate this.
 > 
-> Thanks for response, Jassi. If we use general platform_device's probe()
-> function, then we can smoothly to get device poiner.
-> 
-> But if we use the method with CLK_OF_DECLARE, then i tried to get device
-> pointer with the function of_find_device_by_node(), it will return the
-> device pointer is NULL. But this is the common case in many clock drivers.
+> People seem to still want the 1 GiHz support, but I think that only
+> depends on the SmartReflex and some kind of replacement for
+> voltagedomains. So if the core DVFS support is unused, I doubt it's
+> very high on anybody's list right now.
 
-Using platform_device is the right approach. Stephen has been trying to
-encourage use of that and discourage use of CLK_OF_DECLARE where
-possible.
+At least several years ago, basic CORE DVFS support was working on OMAP3.  
+The clock source changed rate, DRAM parameters were 
+changed on the SDRC, etc.  What was not implemented was pre-rate-change 
+and post-rate-change notifiers in many of the device drivers, because the 
+infrastructure didn't exist at the time in the clock code.
 
-If your clock driver needs to register some early clocks then perhaps
-those can be handled separately with CLK_OF_DECLARE and the rest can be
-managed through a proper platform_driver?
-
-> 
-> So i just wander if can provide another mailbox API for this case,
-> which will only need to pass device node pointer?
-
-I can't comment on the mailbox API question, but I think the Right Thing
-is to use a platform_driver for your clock driver, which would solve
-your particular issue. This is something we are encouraging in Clock
-Land ;)
-
-Regards,
-Mike
-
-> 
-> Thanks,
-> Leo Yan
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+- Paul
