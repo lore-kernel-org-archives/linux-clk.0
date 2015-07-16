@@ -1,115 +1,183 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Return-Path: <k.kozlowski@samsung.com>
+Message-id: <55A70B2B.1060100@samsung.com>
+Date: Thu, 16 Jul 2015 10:38:51 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v2 4/7] clk: samsung: exynos4x12: add cpu clock configuration
- data and instantiate cpu clock
-Date: Thu, 09 Jul 2015 17:43:38 +0200
-Message-id: <1436456621-29839-5-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+ Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>,
+ Andreas Faerber <afaerber@suse.de>
+Subject: Re: [PATCH v3 2/4] ARM: dts: Exynos5250: add CPU OPP and regulator
+ supply property
+References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
+ <1435756238-845-3-git-send-email-b.zolnierkie@samsung.com>
+ <55A70A3E.5020600@samsung.com>
+In-reply-to: <55A70A3E.5020600@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-With the addition of the new Samsung specific cpu-clock type, the
-arm clock can be represented as a cpu-clock type. Add the CPU clock
-configuration data and instantiate the CPU clock type for Exynos4x12.
+On 16.07.2015 10:34, Krzysztof Kozlowski wrote:
+> On 01.07.2015 22:10, Bartlomiej Zolnierkiewicz wrote:
+>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>
+>> For Exynos5250 platforms, add CPU operating points and CPU
+>> regulator supply properties for migrating from Exynos specific
+>> cpufreq driver to using generic cpufreq driver.
+>>
+>> Changes by Bartlomiej:
+>> - split Exynos5250 support from the original patch
+>> - added CPU regulator supply property for Google Spring board
+>> - put the new cpu nodes in alphabetical order
+>>
+>> Cc: Kukjin Kim <kgene.kim@samsung.com>
+>> Cc: Doug Anderson <dianders@chromium.org>
+>> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+>> Cc: Andreas Faerber <afaerber@suse.de>
+>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5250-arndale.dts  |  4 ++++
+>>  arch/arm/boot/dts/exynos5250-smdk5250.dts |  4 ++++
+>>  arch/arm/boot/dts/exynos5250-snow.dts     |  4 ++++
+>>  arch/arm/boot/dts/exynos5250-spring.dts   |  4 ++++
+>>  arch/arm/boot/dts/exynos5250.dtsi         | 22 ++++++++++++++++++++++
+>>  5 files changed, 38 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+>> index 7e728a1..db3f65f 100644
+>> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+>> @@ -117,6 +117,10 @@
+>>  	};
+>>  };
+>>  
+>> +&cpu0 {
+>> +	cpu0-supply = <&buck2_reg>;
+>> +};
+>> +
+>>  &dp {
+>>  	status = "okay";
+>>  	samsung,color-space = <0>;
+>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> index 4fe186d..15aea76 100644
+>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> @@ -74,6 +74,10 @@
+>>  	};
+>>  };
+>>  
+>> +&cpu0 {
+>> +	cpu0-supply = <&buck2_reg>;
+>> +};
+>> +
+>>  &dp {
+>>  	samsung,color-space = <0>;
+>>  	samsung,dynamic-range = <0>;
+>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+>> index b7f4122..a4133df 100644
+>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+>> @@ -235,6 +235,10 @@
+>>  	};
+>>  };
+>>  
+>> +&cpu0 {
+>> +	cpu0-supply = <&buck2_reg>;
+>> +};
+>> +
+>>  &dp {
+>>  	status = "okay";
+>>  	pinctrl-names = "default";
+>> diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/exynos5250-spring.dts
+>> index d03f9b8..c1edd6d 100644
+>> --- a/arch/arm/boot/dts/exynos5250-spring.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-spring.dts
+>> @@ -65,6 +65,10 @@
+>>  	};
+>>  };
+>>  
+>> +&cpu0 {
+>> +	cpu0-supply = <&buck2_reg>;
+>> +};
+>> +
+>>  &dp {
+>>  	status = "okay";
+>>  	pinctrl-names = "default";
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+>> index bf9bee6..0c7ef12 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> @@ -63,6 +63,28 @@
+>>  			compatible = "arm,cortex-a15";
+>>  			reg = <0>;
+>>  			clock-frequency = <1700000000>;
+>> +			clocks = <&clock CLK_ARM_CLK>;
+>> +			clock-names = "cpu";
+>> +			clock-latency = <140000>;
+>> +
+>> +			operating-points = <
+>> +				1700000 1300000
+>> +				1600000 1250000
+>> +				1500000 1225000
+>> +				1400000 1200000
+>> +				1300000 1150000
+>> +				1200000 1125000
+>> +				1100000 1100000
+>> +				1000000 1075000
+>> +				 900000 1050000
+>> +				 800000 1025000
+>> +				 700000 1012500
+>> +				 600000 1000000
+>> +				 500000  975000
+>> +				 400000  950000
+>> +				 300000  937500
+>> +				 200000  925000
+>> +			>;
+>>  			cooling-min-level = <15>;
+>>  			cooling-max-level = <9>;
+>>  			#cooling-cells = <2>; /* min followed by max */
+>>
+> 
+> 
+> I see you have all necessary acks so this can go through samsung-soc. I
+> started applying everything. Patch 4/4 does not apply cleanly but this
+> was easy to solve (I think it is better to rebase on Linus tree not on
+> next in such case; subsystems cannot apply easily something depending on
+> next).
+> 
+> Unfortunately this patch (2/4) has build errors:
+> 
+>   DTC     arch/arm/boot/dts/exynos5250-arndale.dtb
+> Error: ../arch/arm/boot/dts/exynos5250.dtsi:65.21-22 syntax error
+> FATAL ERROR: Unable to parse input tree
+> make[2]: *** [arch/arm/boot/dts/exynos5250-arndale.dtb] Error 1
+> make[1]: *** [dtbs] Error 2
+> make[1]: *** Waiting for unfinished jobs....
+> make[1]: Leaving directory `/home/kozik/dev/linux/krzk/out'
+> make: *** [sub-make] Error 2
+> Fail: Make error
+> 
+> I tried to apply this patch on my dt-for-next branch:
+> https://github.com/krzk/linux/commits/dt-for-next
+> 
+> I hold back other patches until this is clarified.
 
-Based on the earlier work by Thomas Abraham.
+Stupid me, it should not be split into separate branches as it depends
+on clock id from headers.
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/clk/samsung/clk-exynos4.c | 50 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+Everything is fine, I applied patchset with respective tags (Javier's
+reviewed/tested, Sylwester's and Viresh's acks). I'll send later to
+Kukjin for v4.3 unless he picks it also.
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index cae2c048..3071260 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -1396,6 +1396,45 @@ static const struct exynos_cpuclk_cfg_data e4210_armclk_d[] __initconst = {
- 	{  0 },
- };
- 
-+static const struct exynos_cpuclk_cfg_data e4212_armclk_d[] __initconst = {
-+	{ 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
-+	{ 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
-+	{ 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
-+	{ 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
-+	{ 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4210_CPU_DIV1(2, 4), },
-+	{ 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4210_CPU_DIV1(2, 4), },
-+	{  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
-+	{  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
-+	{  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
-+	{  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
-+	{  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
-+	{  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
-+	{  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
-+	{  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4210_CPU_DIV1(2, 3), },
-+	{  0 },
-+};
-+
-+#define E4412_CPU_DIV1(cores, hpm, copy)				\
-+		(((cores) << 8) | ((hpm) << 4) | ((copy) << 0))
-+
-+static const struct exynos_cpuclk_cfg_data e4412_armclk_d[] __initconst = {
-+	{ 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(7, 0, 6), },
-+	{ 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(6, 0, 6), },
-+	{ 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(6, 0, 5), },
-+	{ 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(5, 0, 5), },
-+	{ 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4412_CPU_DIV1(5, 0, 4), },
-+	{ 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4412_CPU_DIV1(4, 0, 4), },
-+	{  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(4, 0, 3), },
-+	{  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(3, 0, 3), },
-+	{  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(3, 0, 3), },
-+	{  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
-+	{  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
-+	{  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
-+	{  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
-+	{  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4412_CPU_DIV1(0, 0, 3), },
-+	{  0 },
-+};
-+
- /* register exynos4 clocks */
- static void __init exynos4_clk_init(struct device_node *np,
- 				    enum exynos4_soc soc)
-@@ -1489,6 +1528,17 @@ static void __init exynos4_clk_init(struct device_node *np,
- 		samsung_clk_register_fixed_factor(ctx,
- 			exynos4x12_fixed_factor_clks,
- 			ARRAY_SIZE(exynos4x12_fixed_factor_clks));
-+		if (of_machine_is_compatible("samsung,exynos4412")) {
-+			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
-+				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
-+				e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
-+				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
-+		} else {
-+			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
-+				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
-+				e4212_armclk_d, ARRAY_SIZE(e4212_armclk_d),
-+				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
-+		}
- 	}
- 
- 	samsung_clk_register_alias(ctx, exynos4_aliases,
--- 
-1.9.1
-
+Best regards,
+Krzysztof
