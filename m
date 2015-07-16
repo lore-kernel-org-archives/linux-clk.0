@@ -1,98 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:33995 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753312AbbGJXdv (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jul 2015 19:33:51 -0400
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 21/45] clk: rockchip: Properly include clk.h
-Date: Fri, 10 Jul 2015 16:33:19 -0700
-Message-Id: <1436571223-10959-22-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55A7908A.2080306@linaro.org>
+Date: Thu, 16 Jul 2015 13:07:54 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>
+CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH 4/7] clocksource: cadence_ttc: Remove clk-provider.h include
+References: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org> <1436569409-27964-5-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436569409-27964-5-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock provider drivers generally shouldn't include clk.h because
-it's the consumer API. Only include clk.h if it's actually used.
+On 07/11/2015 01:03 AM, Stephen Boyd wrote:
+> This file doesn't use the clk provider APIs. Remove the include.
+>
+> Cc: Michal Simek <michal.simek@xilinx.com>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>
+> Please ack if you want this to go through clk-tree, otherwise
+> it's ok to take it through the clocksource side.
 
-Cc: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/rockchip/clk-cpu.c       | 1 +
- drivers/clk/rockchip/clk-mmc-phase.c | 1 +
- drivers/clk/rockchip/clk-pll.c       | 1 -
- drivers/clk/rockchip/clk-rk3188.c    | 1 +
- drivers/clk/rockchip/clk.h           | 4 ++--
- 5 files changed, 5 insertions(+), 3 deletions(-)
+This patchset touches different parts, so I guess it makes sense I take 
+this one through my tree. But if Mike is willing to take it I am ok with 
+that.
 
-diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
-index fb7721bd37e6..330870a6d8bf 100644
---- a/drivers/clk/rockchip/clk-cpu.c
-+++ b/drivers/clk/rockchip/clk-cpu.c
-@@ -35,6 +35,7 @@
- #include <linux/of.h>
- #include <linux/slab.h>
- #include <linux/io.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include "clk.h"
- 
-diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
-index e9f8df324e7c..3244c6e391d7 100644
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -14,6 +14,7 @@
-  */
- 
- #include <linux/slab.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include "clk.h"
- 
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 76027261f7ed..1f88dd158b93 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -17,7 +17,6 @@
- #include <linux/slab.h>
- #include <linux/io.h>
- #include <linux/delay.h>
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/regmap.h>
- #include "clk.h"
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index e4f9d472f1ff..91ea848c9d18 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -13,6 +13,7 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 6b092673048a..1b16781b67c5 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -24,8 +24,8 @@
- #define CLK_ROCKCHIP_CLK_H
- 
- #include <linux/io.h>
--#include <linux/clk.h>
--#include <linux/clk-provider.h>
-+
-+struct clk;
- 
- #define HIWORD_UPDATE(val, mask, shift) \
- 		((val) << (shift) | (mask) << ((shift) + 16))
+>   drivers/clocksource/cadence_ttc_timer.c | 1 -
+>   1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/clocksource/cadence_ttc_timer.c b/drivers/clocksource/cadence_ttc_timer.c
+> index 510c8a1d37b3..5ea91e3818d0 100644
+> --- a/drivers/clocksource/cadence_ttc_timer.c
+> +++ b/drivers/clocksource/cadence_ttc_timer.c
+> @@ -16,7 +16,6 @@
+>    */
+>
+>   #include <linux/clk.h>
+> -#include <linux/clk-provider.h>
+>   #include <linux/interrupt.h>
+>   #include <linux/clockchips.h>
+>   #include <linux/of_address.h>
+
+
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
