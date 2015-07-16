@@ -1,81 +1,60 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: mturquette@linaro.org,
-	sboyd@codeaurora.org,
-	matthias.bgg@gmail.com
-Cc: s.hauer@pengutronix.de,
-	jamesjj.liao@mediatek.com,
-	henryc.chen@mediatek.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	manabian@gmail.com,
-	p.zabel@pengutronix.com
-Subject: [PATCH v4 RESEND 0/3] clk: Add regmap support for basic clocks
-Date: Fri, 31 Jul 2015 17:14:16 +0200
-Message-Id: <1438355659-21558-1-git-send-email-matthias.bgg@gmail.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20150716000819.GU30412@codeaurora.org>
+References: <1435064967-12299-1-git-send-email-geert+renesas@glider.be>
+	<20150716000819.GU30412@codeaurora.org>
+Date: Thu, 16 Jul 2015 08:29:01 +0200
+Message-ID: <CAMuHMdXnUgWFCrEt6hBh9bThzk-VexoyU54h-xmiWeShMLmzeg@mail.gmail.com>
+Subject: Re: [PATCH] clk: shmobile: Remove unneeded #include <linux/clkdev.h>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set adds regmap support for the simple clock multiplexer,
-the divider clock and the clock gate.
-Regmap use, apart from a pointer to the regmap struct needs an
-offset value to know where in the regmap it has to read/write.
-We add both fields to the corresponding structs.
+Hi Stephen,
 
-The driver will distinguish between a clock which is based on regmap or not
-through a flag specified in the clock hardware struct.
-The approach does not break the existing clock framework API but adds
-new functions for registering regmap clocks. Unregistering the clocks is
-independent of the use of regmap or not, so that no new functions were
-implemented.
+On Thu, Jul 16, 2015 at 2:08 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 06/23, Geert Uytterhoeven wrote:
+>> diff --git a/drivers/clk/shmobile/clk-rcar-gen2.c b/drivers/clk/shmobile/clk-rcar-gen2.c
+>> index 9612e3145b7ea370..745496f7ee9c7402 100644
+>> --- a/drivers/clk/shmobile/clk-rcar-gen2.c
+>> +++ b/drivers/clk/shmobile/clk-rcar-gen2.c
+>> @@ -11,15 +11,13 @@
+>>   */
+>>
+>>  #include <linux/clk-provider.h>
+>> -#include <linux/clkdev.h>
+>>  #include <linux/clk/shmobile.h>
+>>  #include <linux/init.h>
+>>  #include <linux/kernel.h>
+>>  #include <linux/math64.h>
+>>  #include <linux/of.h>
+>>  #include <linux/of_address.h>
+>> -#include <linux/pm_clock.h>
+>> -#include <linux/pm_domain.h>
+>> +#include <linux/slab.h>
+>
+> Is this the right diff? I wanted to apply this to clk-next but it
+> fails here because we don't have the pm_clock.h and pm_domain.h
+> includes in this file.
+>
+>>  #include <linux/spinlock.h>
 
-As an example user of the regmap clock multiplexer, it was implemented on
-the mt8135. When accepted it will also be applied to the other Mediatek SoCs.
-Other possible user are Qualcomm SoCs which up to now implement their own
-regmap based clock multiplexer.
+Oops, these two lines were due to a bad rebase, and shouldn't be there.
+Just ignore them. Sorry for the trouble.
 
-This patch set is based on linux next.
+Shall I send a new patch?
 
-Changes for v4-resend:
-- add reviewed-by and acked-by
+Gr{oetje,eeting}s,
 
-Changes for v4:
-- fix style issues
-- use __clk_get_flags
-- delete #ifdef CONFIG_REGMAP
+                        Geert
 
-Changes for v3:
-- rebase against linux-next
-- provide regmap access to all three clock types in a unified way
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Changes for v2:
-- use regmap_update_bits instead of read-write
-- fix flag check
-- add union in struct clk_mux
-- fix typo in commit message
-
----
-
-Matthias Brugger (3):
-  clk: Add regmap support
-  clk: mediatek: Add support for clk-mux using regmap
-  clk: mediatek: Use regmap clk-mux for mt8135
-
- drivers/clk/Makefile              |  1 +
- drivers/clk/clk-divider.c         | 68 ++++++++++++++++++++++------
- drivers/clk/clk-gate.c            | 57 +++++++++++++++++++-----
- drivers/clk/clk-io.c              | 48 ++++++++++++++++++++
- drivers/clk/clk-io.h              | 22 +++++++++
- drivers/clk/clk-mux.c             | 94 ++++++++++++++++++++++++++++++++-------
- drivers/clk/mediatek/clk-mt8135.c | 21 +++------
- drivers/clk/mediatek/clk-mtk.c    | 37 +++++++++++++++
- drivers/clk/mediatek/clk-mtk.h    | 26 +++++++++++
- include/linux/clk-provider.h      | 54 ++++++++++++++++++++--
- 10 files changed, 370 insertions(+), 58 deletions(-)
- create mode 100644 drivers/clk/clk-io.c
- create mode 100644 drivers/clk/clk-io.h
-
--- 
-1.9.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
