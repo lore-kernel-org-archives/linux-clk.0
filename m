@@ -1,60 +1,60 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 15/16] clk: shmobile: mstp: Consider "zb_clk" suitable for power management
-Date: Wed,  1 Jul 2015 17:58:09 +0200
-Message-Id: <1435766290-3005-16-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
-References: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <axel.lin@ingics.com>
+Return-Path: <axel.lin@ingics.com>
+Message-ID: <1437055183.7087.1.camel@ingics.com>
+Subject: [PATCH RESEND] clk: s2mps11: Simplify s2mps11_clk_probe unwind paths
+From: Axel Lin <axel.lin@ingics.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+	 <mturquette@baylibre.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-clk@vger.kernel.org
+Date: Thu, 16 Jul 2015 21:59:43 +0800
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently the CPG/MSTP Clock Domain code looks for MSTP clocks to power
-manage a device.
+The devm_clk_unregister() in .probe error case is not necessary as it will
+be automatically called when probe fails.
 
-Unfortunately, on R-Mobile APE6 (r8a73a4) and SH-Mobile AG5 (sh73a0),
-the Bus State Controller (BSC) is not power-managed by an MSTP clock,
-but by a plain CPG clock (zb_clk).  Add a special case to handle this,
-so the clock is properly managed, and devices connected to the BSC work
-as expected.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
-v3:
-  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
+This patch was sent on https://lkml.org/lkml/2014/5/18/96 with Krzysztof's
+review.
 
-v2:
-  - New.
----
- drivers/clk/shmobile/clk-mstp.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/clk-s2mps11.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/shmobile/clk-mstp.c b/drivers/clk/shmobile/clk-mstp.c
-index 9b4451304f5732d4..9975695ca814614f 100644
---- a/drivers/clk/shmobile/clk-mstp.c
-+++ b/drivers/clk/shmobile/clk-mstp.c
-@@ -258,6 +258,10 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *domain, struct device *dev)
- 					    "renesas,cpg-mstp-clocks"))
- 			goto found;
- 
-+		/* BSC on r8a73a4/sh73a0 uses zb_clk instead of an mstp clock*/
-+		if (!strcmp(clkspec.np->name, "zb_clk"))
-+			goto found;
-+
- 		of_node_put(clkspec.np);
- 		i++;
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index 9b13a30..ba7fb1b 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -246,7 +246,7 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 					s2mps11_name(s2mps11_clk), NULL);
+ 		if (!s2mps11_clk->lookup) {
+ 			ret = -ENOMEM;
+-			goto err_lup;
++			goto err_reg;
+ 		}
  	}
+ 
+@@ -265,16 +265,10 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, s2mps11_clks);
+ 
+ 	return ret;
+-err_lup:
+-	devm_clk_unregister(&pdev->dev, s2mps11_clk->clk);
++
+ err_reg:
+-	while (s2mps11_clk > s2mps11_clks) {
+-		if (s2mps11_clk->lookup) {
+-			clkdev_drop(s2mps11_clk->lookup);
+-			devm_clk_unregister(&pdev->dev, s2mps11_clk->clk);
+-		}
+-		s2mps11_clk--;
+-	}
++	while (--i >= 0)
++		clkdev_drop(s2mps11_clks[i].lookup);
+ 
+ 	return ret;
+ }
 -- 
-1.9.1
-
+2.1.0
