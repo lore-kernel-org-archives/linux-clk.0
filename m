@@ -1,104 +1,109 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Mark Brown <broonie@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	devicetree@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-acpi@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	linux-fbdev@vger.kernel.org, linux-usb@vger.kernel.org,
-	Felipe Balbi <balbi@ti.com>, linux-pwm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Len Brown <lenb@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-pm@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-gpio@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	dri-devel@lists.freedesktop.org, Lee Jones <lee.jones@linaro.org>,
-	linux-tegra@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v2 0/22] On-demand device probing
-Date: Wed, 29 Jul 2015 02:36:33 +0200
-Message-ID: <2554489.GlTphZsHuX@vostro.rjw.lan>
-In-Reply-To: <1438089593-7696-1-git-send-email-tomeu.vizoso@collabora.com>
-References: <1438089593-7696-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <55A945DF.3@codeaurora.org>
+Date: Fri, 17 Jul 2015 11:13:51 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-pm-owner@vger.kernel.org
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ Liviu Dudau <Liviu.Dudau@arm.com>,
+ Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+ "Jon Medhurst (Tixy)" <tixy@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ Kevin Hilman <khilman@kernel.org>,
+ Olof Johansson <olof@lixom.net>,
+ Mike Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v4 3/8] clk: add support for clocks provided by SCP(System
+ Control Processor)
+References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com> <1433760002-24120-4-git-send-email-sudeep.holla@arm.com> <20150702172310.GF4301@codeaurora.org> <5596A1B6.8020307@arm.com> <559ADC94.4080505@codeaurora.org> <559BF858.1020301@arm.com> <20150708014606.GH30412@codeaurora.org> <55A7D79B.3080305@arm.com> <20150716193114.GA17952@codeaurora.org> <55A8E434.2010709@arm.com>
+In-Reply-To: <55A8E434.2010709@arm.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday, July 28, 2015 03:19:31 PM Tomeu Vizoso wrote:
-> Hello,
-> 
-> I have a problem with the panel on my Tegra Chromebook taking longer
-> than expected to be ready during boot (Stéphane Marchesin reported what
-> is basically the same issue in [0]), and have looked into ordered
-> probing as a better way of solving this than moving nodes around in the
-> DT or playing with initcall levels and linking order.
-> 
-> While reading the thread [1] that Alexander Holler started with his
-> series to make probing order deterministic, it occurred to me that it
-> should be possible to achieve the same by probing devices as they are
-> referenced by other devices.
-> 
-> This basically reuses the information that is already implicit in the
-> probe() implementations, saving us from refactoring existing drivers or
-> adding information to DTBs.
-> 
-> During review of v1 of this series Linus Walleij suggested that it
-> should be the device driver core to make sure that dependencies are
-> ready before probing a device. I gave this idea a try [2] but Mark Brown
-> pointed out to the logic duplication between the resource acquisition
-> and dependency discovery code paths (though I think it's fairly minor).
-> 
-> To address that code duplication I experimented with Arnd's devm_probe
-> [3] concept of having drivers declare their dependencies instead of
-> acquiring them during probe, and while it worked [4], I don't think we
-> end up winning anything when compared to just probing devices on-demand
-> from resource getters.
-> 
-> One remaining objection is to the "sprinkling" of calls to
-> fwnode_ensure_device() in the resource getters of each subsystem, but I
-> think it's the right thing to do given that the storage of resources is
-> currently subsystem-specific.
-> 
-> We could avoid the above by moving resource storage into the core, but I
-> don't think there's a compelling case for that.
-> 
-> I have tested this on boards with Tegra, iMX.6, Exynos and OMAP SoCs,
-> and these patches were enough to eliminate all the deferred probes
-> (except one in PandaBoard because omap_dma_system doesn't have a
-> firmware node as of yet).
-> 
-> With this series I get the kernel to output to the panel in 0.5s,
-> instead of 2.8s.
+On 07/17/2015 04:17 AM, Sudeep Holla wrote:
+>
+>
+> On 16/07/15 20:31, Stephen Boyd wrote:
+>> On 07/16, Sudeep Holla wrote:
+>>> On 08/07/15 02:46, Stephen Boyd wrote:
+>>>>
+>>>> Yes struct clk would have min/max, and struct clk_core would have
+>>>> min/max. Then some sort of provider API (or possibly even
+>>>> clk_init_data) would take the min/max fields and copy them over
+>>>> to struct clk_core. Then during set_rate operations we would
+>>>> aggregate the constraints from struct clk like we already do and
+>>>> add in the constrains in struct clk_core.
+>>>>
+>>>> One downside to adding new fields to clk_init_data is that there
+>>>> are drivers out there that aren't initializing that structure to
+>>>> 0, and they're putting it on the stack, so stack junk can come
+>>>> through. Furthermore, min/max would mean that every driver needs
+>>>> to specify some large number for max or we have to special case
+>>>> min == max == 0 and ignore it. Somehow it needs to be opt-in. If
+>>>> we want to go down the clk_init_data route then perhaps we need
+>>>> some sort of rate_constraint struct pointer in there that drivers
+>>>> can optionally setup.
+>>>>
+>>>>     struct clk_rate_constraint {
+>>>>         unsigned long min;
+>>>>         unsigned long max;
+>>>>     };
+>>>>
+>>>>     struct clk_init_data {
+>>>>         ...
+>>>>         struct clk_rate_constraint *rate_constraint;
+>>>>     };
+>>>>
+>>>> I haven't thought it through completely, but I can probably write
+>>>> up some patch tomorrow after I sleep on it.
+>>>>
+>>>
+>>> I am hoping to get this series for v4.3. In order to avoid using
+>>> consumer API, I can revert back to the min,max check I had in the
+>>> round_rate earlier if that's fine with you ? Let me know so that I can
+>>> post the next version based on that. All the other comments are already
+>>> addressed.
+>>
+>> Ok. I'm fine with the consumer API being used, but it would be
+>> nice if we didn't have to do so. Try out the patch below,
+>> hopefully it's good enough for your purposes. It may need to be
+>> more robust, and we may still want to use the init_data structure
+>> to avoid races with providers and consumers, but we can leave
+>> that for later after sweeping all the structure users.
+>>
+>
+> Agreed, I would avoid using clk consumer API or use it with TODO so that
+> I remember to remove it soon. Anyways, thanks for the patch, I tested it
+> and works fine to me. You can add Tested-by if you decide to push it.
 
-Can you trim your CC list somewhat, please?
+Thanks. I pushed it to -next last night but it probably hasn't shown up yet.
 
-I'm definitely going to look at this, but not before then next week.
-Sorry about that.
+>
+>>>
+>>> Also since this series depends on SCPI, I was thinking to get it merged
+>>> via ARM-SoC, but that might conflict with the round_rate prototype
+>>> change. Do do plan to share a stable base with arm-soc guys or you
+>>> expect all the changes to be contained in clk tree ?
+>>>
+>>
+>> We can share a stable branch for the determine_rate change with
+>> arm-soc. We already have it on a separate branch but haven't
+>> published it so far because nobody has asked.
+>>
+>
+> determine_rate change shouldn't affect SCPI clock driver but I remember
+> seeing round_rate change too on the list which returns value using the
+> argument from Boris. Is that planned for v4.3 ? I would need the stable
+> branch from this clk_hw_set_rate_range if you decide to push. Let me
+> know your preferences. I will post the updated version of the patch
+> accordingly.
+>
 
-Thanks,
-Rafael
+We're not going to change round_rate() so it sounds like you don't need 
+a stable branch. But you would need this new consumer API. So you still 
+need a branch right?
 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
