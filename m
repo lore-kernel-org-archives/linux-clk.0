@@ -1,92 +1,35 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 23/23] clk: at91: Revert "keep slow clk enabled to prevent system hang"
-Date: Fri, 31 Jul 2015 11:39:59 +0200
-Message-Id: <1438335599-3301-24-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1438335599-3301-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1438335599-3301-1-git-send-email-alexandre.belloni@free-electrons.com>
+	Michael Turquette <mturquette@baylibre.com>,
+	James Liao <jamesjj.liao@mediatek.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	linux-mediatek@lists.infradead.org,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Olof Johansson <olof@lixom.net>, srv_heupstream@mediatek.com,
+	linux-arm-kernel@lists.infradead.org,
+	Daniel Kurtz <djkurtz@chromium.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 3/5] arm64: mediatek: enable MTK_TIMER
+Date: Fri, 17 Jul 2015 23:54:48 +0200
+Message-ID: <1956087.MUsCyY7Qyv@ubix>
+In-Reply-To: <1436779969-18610-4-git-send-email-yingjoe.chen@mediatek.com>
+References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com> <1436779969-18610-4-git-send-email-yingjoe.chen@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit dca1a4b5ff6e ("clk: at91: keep slow clk enabled to prevent system
-hang") added a workaround for the slow clock as it is not properly handled
-by its users.
+On Monday, July 13, 2015 05:32:47 PM Yingjoe Chen wrote:
+> Enable MTK_TIMER for MediaTek plaform, which will be used as
+> schedule clock.
+> 
+> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> ---
 
-Now that the slow clock is taken properly by the drivers, this workaround
-is not necessary anymore, revert it.
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
- drivers/clk/at91/clk-slow.c | 27 ---------------------------
- 1 file changed, 27 deletions(-)
-
-diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
-index 98a84a865fe1..2c59d6a64dd5 100644
---- a/drivers/clk/at91/clk-slow.c
-+++ b/drivers/clk/at91/clk-slow.c
-@@ -70,7 +70,6 @@ struct clk_sam9x5_slow {
- 
- #define to_clk_sam9x5_slow(hw) container_of(hw, struct clk_sam9x5_slow, hw)
- 
--static struct clk *slow_clk;
- 
- static int clk_slow_osc_prepare(struct clk_hw *hw)
- {
-@@ -358,8 +357,6 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
- 	clk = clk_register(NULL, &slowck->hw);
- 	if (IS_ERR(clk))
- 		kfree(slowck);
--	else
--		slow_clk = clk;
- 
- 	return clk;
- }
-@@ -436,8 +433,6 @@ at91_clk_register_sam9260_slow(struct at91_pmc *pmc,
- 	clk = clk_register(NULL, &slowck->hw);
- 	if (IS_ERR(clk))
- 		kfree(slowck);
--	else
--		slow_clk = clk;
- 
- 	return clk;
- }
-@@ -470,25 +465,3 @@ void __init of_at91sam9260_clk_slow_setup(struct device_node *np,
- 
- 	of_clk_add_provider(np, of_clk_src_simple_get, clk);
- }
--
--/*
-- * FIXME: All slow clk users are not properly claiming it (get + prepare +
-- * enable) before using it.
-- * If all users properly claiming this clock decide that they don't need it
-- * anymore (or are removed), it is disabled while faulty users are still
-- * requiring it, and the system hangs.
-- * Prevent this clock from being disabled until all users are properly
-- * requesting it.
-- * Once this is done we should remove this function and the slow_clk variable.
-- */
--static int __init of_at91_clk_slow_retain(void)
--{
--	if (!slow_clk)
--		return 0;
--
--	__clk_get(slow_clk);
--	clk_prepare_enable(slow_clk);
--
--	return 0;
--}
--arch_initcall(of_at91_clk_slow_retain);
--- 
-2.1.4
+Applied, thanks.
