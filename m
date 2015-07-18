@@ -1,44 +1,40 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Fri, 31 Jul 2015 12:20:09 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	rtc-linux@googlegroups.com, Sebastian Reichel <sre@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: [PATCH 00/23] ARM: at91: Properly handle slow clock
-Message-ID: <20150731102009.GH27985@piout.net>
-References: <1438335599-3301-1-git-send-email-alexandre.belloni@free-electrons.com>
- <20150731115903.4ef23e83@bbrezillon>
+Return-Path: <tglx@linutronix.de>
+Date: Sat, 18 Jul 2015 09:31:53 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+cc: Yingjoe Chen <yingjoe.chen@mediatek.com>,
+    Stephen Boyd <sboyd@codeaurora.org>,
+    Michael Turquette <mturquette@baylibre.com>,
+    James Liao <jamesjj.liao@mediatek.com>,
+    Russell King <linux@arm.linux.org.uk>, devicetree@vger.kernel.org,
+    Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>,
+    Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org,
+    Rob Herring <robh+dt@kernel.org>, linux-mediatek@lists.infradead.org,
+    Sascha Hauer <kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>,
+    srv_heupstream@mediatek.com, linux-arm-kernel@lists.infradead.org,
+    Daniel Kurtz <djkurtz@chromium.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 3/5] arm64: mediatek: enable MTK_TIMER
+In-Reply-To: <1956087.MUsCyY7Qyv@ubix>
+Message-ID: <alpine.DEB.2.11.1507180931190.18576@nanos>
+References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com> <1436779969-18610-4-git-send-email-yingjoe.chen@mediatek.com> <1956087.MUsCyY7Qyv@ubix>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20150731115903.4ef23e83@bbrezillon>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Fri, 17 Jul 2015, Matthias Brugger wrote:
 
-On 31/07/2015 at 11:59:03 +0200, Boris Brezillon wrote :
-> I would have squashed commit 5 to 14 into a single patch, but apart
-> from that it looks good to me.
+> On Monday, July 13, 2015 05:32:47 PM Yingjoe Chen wrote:
+> > Enable MTK_TIMER for MediaTek plaform, which will be used as
+> > schedule clock.
+> > 
+> > Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> > ---
 > 
+> Applied, thanks.
 
-I wanted to clearly list were the slow clock was needed for each soc. It
-actually allowed me to find one that was missing.
+So you enable the current code w/o the modifications required for this
+to work?
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Thanks,
+
+	tglx
