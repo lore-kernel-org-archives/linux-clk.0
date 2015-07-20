@@ -1,41 +1,67 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Daniel Thompson <daniel.thompson@linaro.org>
-Subject: [PATCH 15/26] clk: stm32f4: Convert to clk_hw based provider APIs
-Date: Fri, 31 Jul 2015 10:03:55 -0700
-Message-Id: <1438362246-6664-16-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from gabe.freedesktop.org ([131.252.210.177]:50906 "EHLO
+	gabe.freedesktop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754292AbbGTTdY (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jul 2015 15:33:24 -0400
+From: Eric Anholt <eric@anholt.net>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH v4 6/8] ARM: bcm2835: Use the RPi firmware clocks for uart.
+Date: Mon, 20 Jul 2015 12:33:05 -0700
+Message-Id: <1437420787-32137-7-git-send-email-eric@anholt.net>
+In-Reply-To: <1437420787-32137-1-git-send-email-eric@anholt.net>
+References: <1437420787-32137-1-git-send-email-eric@anholt.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-We're removing struct clk from the clk provider API, so switch
-this code to using the clk_hw based provider APIs.
+This gets us a correct apb_pclk, which previously was accidentally
+using the "20201000.uart" clock from clk-bcm2835.c, due to the
+fallback clk_get_sys() path.
 
-Cc: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Acked-by: Stephen Warren <swarren@wwwdotorg.org>
 ---
- drivers/clk/clk-stm32f4.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/bcm2835-rpi.dtsi | 7 +++++++
+ arch/arm/boot/dts/bcm2835.dtsi     | 2 +-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 5cfe50717536..fd89e771107e 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -178,8 +178,7 @@ static long clk_apb_mul_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
- 		unsigned long best_parent = rate / mult;
+diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+index 7cc47fb..9549eb8 100644
+--- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
++++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+@@ -1,3 +1,4 @@
++#include <dt-bindings/clk/raspberrypi.h>
+ #include "bcm2835.dtsi"
  
--		*prate =
--		    __clk_round_rate(__clk_get_parent(hw->clk), best_parent);
-+		*prate = clk_hw_round_rate(clk_hw_get_parent(hw), best_parent);
- 	}
+ / {
+@@ -62,3 +63,9 @@
+ 	status = "okay";
+ 	bus-width = <4>;
+ };
++
++&uart0 {
++	clocks = <&firmware_clocks RPI_CLOCK_UART0>,
++		 <&firmware_clocks RPI_CLOCK_CORE>;
++	clock-names = "uartclk", "apb_pclk";
++};
+diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
+index 32f5830..5be2862 100644
+--- a/arch/arm/boot/dts/bcm2835.dtsi
++++ b/arch/arm/boot/dts/bcm2835.dtsi
+@@ -92,7 +92,7 @@
+ 			#interrupt-cells = <2>;
+ 		};
  
- 	return *prate * mult;
+-		uart@7e201000 {
++		uart0: uart@7e201000 {
+ 			compatible = "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
+ 			reg = <0x7e201000 0x1000>;
+ 			interrupts = <2 25>;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
 
