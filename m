@@ -1,45 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	heikki.krogerus@linux.intel.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v5 5/5] serial: 8250_dw: allow lower reference frequencies
-Date: Mon, 27 Jul 2015 14:48:53 +0300
-Message-Id: <1437997733-135331-6-git-send-email-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <1437997733-135331-1-git-send-email-andriy.shevchenko@linux.intel.com>
-References: <1437997733-135331-1-git-send-email-andriy.shevchenko@linux.intel.com>
+From: Eric Anholt <eric@anholt.net>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH v4 4/8] ARM: bcm2835: Drop never-used clock-frequency property of uart0.
+Date: Mon, 20 Jul 2015 12:33:03 -0700
+Message-Id: <1437420787-32137-5-git-send-email-eric@anholt.net>
+In-Reply-To: <1437420787-32137-1-git-send-email-eric@anholt.net>
+References: <1437420787-32137-1-git-send-email-eric@anholt.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-We have couple of standard but rare used baudrates which are not supported by
-1,8432MHz reference frequency. Besides that user can potentially ask for any
-baudrate (via BOTHER flag) and we currently don't fully support that. Since
-clk-fractional-divider is moved to use rational best approximation for
-reference frequency we may amend the driver to support whatever user wants.
+This appears to have been copy-and-paste from another serial driver's
+DT.  The driver has never used this value -- instead, the pl011 driver
+is getting the fixed 20201000.uart clock from clk-bcm2835.c.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Acked-by: Stephen Warren <swarren@wwwdotorg.org>
 ---
- drivers/tty/serial/8250/8250_dw.c | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/arm/boot/dts/bcm2835.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index d48b506..c30e4ba 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -246,10 +246,6 @@ static void dw8250_set_termios(struct uart_port *p, struct ktermios *termios,
- 	if (IS_ERR(d->clk) || !old)
- 		goto out;
+diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
+index 301c73f..32f5830 100644
+--- a/arch/arm/boot/dts/bcm2835.dtsi
++++ b/arch/arm/boot/dts/bcm2835.dtsi
+@@ -96,7 +96,6 @@
+ 			compatible = "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
+ 			reg = <0x7e201000 0x1000>;
+ 			interrupts = <2 25>;
+-			clock-frequency = <3000000>;
+ 			arm,primecell-periphid = <0x00241011>;
+ 		};
  
--	/* Not requesting clock rates below 1.8432Mhz */
--	if (baud < 115200)
--		baud = 115200;
--
- 	clk_disable_unprepare(d->clk);
- 	rate = clk_round_rate(d->clk, baud * 16);
- 	ret = clk_set_rate(d->clk, rate);
 -- 
-2.4.6
+2.1.4
 
