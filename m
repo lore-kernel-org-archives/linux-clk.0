@@ -1,40 +1,42 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	Soren Brinkmann <soren.brinkmann@xilinx.com>
-Subject: [PATCH 39/45] clk: si570: Include clk.h
-Date: Fri, 10 Jul 2015 16:33:37 -0700
-Message-Id: <1436571223-10959-40-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Eric Anholt <eric@anholt.net>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH v4 7/8] ARM: bcm2835: Tie SPI clock to the core clock rate.
+Date: Mon, 20 Jul 2015 12:33:06 -0700
+Message-Id: <1437420787-32137-8-git-send-email-eric@anholt.net>
+In-Reply-To: <1437420787-32137-1-git-send-email-eric@anholt.net>
+References: <1437420787-32137-1-git-send-email-eric@anholt.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This clock provider uses the consumer API, so include clk.h
-explicitly.
+We were previously using a fixed clock declared in the 2835 DT, but
+it's actually the core clock, and it might not be the same if you had
+adjusted it using the firmware's config.txt.
 
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Soren Brinkmann <soren.brinkmann@xilinx.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Acked-by: Stephen Warren <swarren@wwwdotorg.org>
 ---
- drivers/clk/clk-si570.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/bcm2835-rpi.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/clk-si570.c b/drivers/clk/clk-si570.c
-index 20a5aec98b1a..cf478aa9fa5d 100644
---- a/drivers/clk/clk-si570.c
-+++ b/drivers/clk/clk-si570.c
-@@ -19,6 +19,7 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/module.h>
+diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+index 9549eb8..0a32123 100644
+--- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
++++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+@@ -69,3 +69,7 @@
+ 		 <&firmware_clocks RPI_CLOCK_CORE>;
+ 	clock-names = "uartclk", "apb_pclk";
+ };
++
++&spi {
++	clocks = <&firmware_clocks RPI_CLOCK_CORE>;
++};
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
+
