@@ -1,91 +1,53 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: [PATCH 20/20] clk: at91: Revert "keep slow clk enabled to prevent system hang"
-Date: Thu, 30 Jul 2015 02:22:06 +0200
-Message-Id: <1438215726-27452-21-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1438215726-27452-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1438215726-27452-1-git-send-email-alexandre.belloni@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Mon, 20 Jul 2015 10:36:37 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH 44/45] clk: at91: Include clk.h and slab.h
+Message-ID: <20150720103637.7bb5d082@bbrezillon>
+In-Reply-To: <1436571223-10959-45-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+	<1436571223-10959-45-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit dca1a4b5ff6e ("clk: at91: keep slow clk enabled to prevent system
-hang") added a workaround for the slow clock as it is not properly handled
-by its users.
+On Fri, 10 Jul 2015 16:33:42 -0700
+Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-Now that the slow clock is taken properly by the drivers, this workaround
-is not necessary anymore, revert it.
+> This clock provider uses the consumer API, so include clk.h
+> explicitly. Also include slab.h instead of relying on clkdev.h
+> for it.
+> 
+> Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
- drivers/clk/at91/clk-slow.c | 27 ---------------------------
- 1 file changed, 27 deletions(-)
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
-index 98a84a865fe1..2c59d6a64dd5 100644
---- a/drivers/clk/at91/clk-slow.c
-+++ b/drivers/clk/at91/clk-slow.c
-@@ -70,7 +70,6 @@ struct clk_sam9x5_slow {
- 
- #define to_clk_sam9x5_slow(hw) container_of(hw, struct clk_sam9x5_slow, hw)
- 
--static struct clk *slow_clk;
- 
- static int clk_slow_osc_prepare(struct clk_hw *hw)
- {
-@@ -358,8 +357,6 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
- 	clk = clk_register(NULL, &slowck->hw);
- 	if (IS_ERR(clk))
- 		kfree(slowck);
--	else
--		slow_clk = clk;
- 
- 	return clk;
- }
-@@ -436,8 +433,6 @@ at91_clk_register_sam9260_slow(struct at91_pmc *pmc,
- 	clk = clk_register(NULL, &slowck->hw);
- 	if (IS_ERR(clk))
- 		kfree(slowck);
--	else
--		slow_clk = clk;
- 
- 	return clk;
- }
-@@ -470,25 +465,3 @@ void __init of_at91sam9260_clk_slow_setup(struct device_node *np,
- 
- 	of_clk_add_provider(np, of_clk_src_simple_get, clk);
- }
--
--/*
-- * FIXME: All slow clk users are not properly claiming it (get + prepare +
-- * enable) before using it.
-- * If all users properly claiming this clock decide that they don't need it
-- * anymore (or are removed), it is disabled while faulty users are still
-- * requiring it, and the system hangs.
-- * Prevent this clock from being disabled until all users are properly
-- * requesting it.
-- * Once this is done we should remove this function and the slow_clk variable.
-- */
--static int __init of_at91_clk_slow_retain(void)
--{
--	if (!slow_clk)
--		return 0;
--
--	__clk_get(slow_clk);
--	clk_prepare_enable(slow_clk);
--
--	return 0;
--}
--arch_initcall(of_at91_clk_slow_retain);
+> ---
+>  drivers/clk/at91/clk-slow.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
+> index 98a84a865fe1..0a7aef39ab5b 100644
+> --- a/drivers/clk/at91/clk-slow.c
+> +++ b/drivers/clk/at91/clk-slow.c
+> @@ -10,8 +10,10 @@
+>   *
+>   */
+>  
+> +#include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/clkdev.h>
+> +#include <linux/slab.h>
+>  #include <linux/clk/at91_pmc.h>
+>  #include <linux/delay.h>
+>  #include <linux/of.h>
+
+
+
 -- 
-2.1.4
-
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
