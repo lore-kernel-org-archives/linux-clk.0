@@ -1,36 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:37325 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755772AbbGRAwz (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jul 2015 20:52:55 -0400
-Date: Fri, 17 Jul 2015 17:52:52 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: dinguyen@opensource.altera.com
-Cc: mturquette@linaro.org, dinh.linux@gmail.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Tero Kristo <t-kristo@ti.com>
-Subject: Re: [PATCHv2 6/6] clk: ti: make use of of_clk_parent_fill helper
- function
-Message-ID: <20150718005252.GD30412@codeaurora.org>
-References: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
- <1436241546-16731-7-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <sudeep.holla@arm.com>
+Message-ID: <55ACB733.2080609@arm.com>
+Date: Mon, 20 Jul 2015 09:54:11 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1436241546-16731-7-git-send-email-dinguyen@opensource.altera.com>
-Sender: linux-clk-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Sudeep Holla <sudeep.holla@arm.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ Liviu Dudau <Liviu.Dudau@arm.com>,
+ Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+ "Jon Medhurst (Tixy)" <tixy@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ Kevin Hilman <khilman@kernel.org>,
+ Olof Johansson <olof@lixom.net>,
+ Mike Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v4 3/8] clk: add support for clocks provided by SCP(System
+ Control Processor)
+References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com> <1433760002-24120-4-git-send-email-sudeep.holla@arm.com> <20150702172310.GF4301@codeaurora.org> <5596A1B6.8020307@arm.com> <559ADC94.4080505@codeaurora.org> <559BF858.1020301@arm.com> <20150708014606.GH30412@codeaurora.org> <55A7D79B.3080305@arm.com> <20150716193114.GA17952@codeaurora.org> <55A8E434.2010709@arm.com> <55A945DF.3@codeaurora.org>
+In-Reply-To: <55A945DF.3@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/06, dinguyen@opensource.altera.com wrote:
-> From: Dinh Nguyen <dinguyen@opensource.altera.com>
-> 
-> Use of_clk_parent_fill to fill in the parent clock names' array.
-> 
-> Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> ---
 
-Applied to clk-next
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 17/07/15 19:13, Stephen Boyd wrote:
+> On 07/17/2015 04:17 AM, Sudeep Holla wrote:
+
+[...]
+
+>>
+>> determine_rate change shouldn't affect SCPI clock driver but I remember
+>> seeing round_rate change too on the list which returns value using the
+>> argument from Boris. Is that planned for v4.3 ? I would need the stable
+>> branch from this clk_hw_set_rate_range if you decide to push. Let me
+>> know your preferences. I will post the updated version of the patch
+>> accordingly.
+>>
+>
+> We're not going to change round_rate() so it sounds like you don't need
+> a stable branch. But you would need this new consumer API. So you still
+> need a branch right?
+>
+
+I am fine either way. If no one else need the stable branch to be shared
+with arm-soc, I prefer to use clock consumer API for now to avoid all
+the troubles to you guys and switch to provider API later. I will post
+it once the both this driver and that provider API is merged, if that's
+fine with you ?
+
+Regards,
+Sudeep
