@@ -1,50 +1,71 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-id: <559F2BFC.4030806@samsung.com>
-Date: Fri, 10 Jul 2015 11:20:44 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <1436456621-29839-3-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1436456621-29839-3-git-send-email-b.zolnierkie@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Mon, 20 Jul 2015 10:39:25 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Thomas Petazzoni
+ <thomas.petazzoni@free-electrons.com>, Gregory CLEMENT
+ <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn
+ <andrew@lunn.ch>
+Subject: Re: [PATCH 18/45] clk: mvebu: Remove clk.h include
+Message-ID: <20150720103925.4466345f@bbrezillon>
+In-Reply-To: <1436571223-10959-19-git-send-email-sboyd@codeaurora.org>
+References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+	<1436571223-10959-19-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10.07.2015 00:43, Bartlomiej Zolnierkiewicz wrote:
-> Turbo modes should be marked with CPUFREQ_BOOST_FREQ flag in
-> the frequency table entry.
+Adding the mvebu maintainers in Cc.
+
+On Fri, 10 Jul 2015 16:33:16 -0700
+Stephen Boyd <sboyd@codeaurora.org> wrote:
+
+> Clock provider drivers generally shouldn't include clk.h because
+> it's the consumer API. Only include the header if necessary. The
+> clkdev.h include isn't used here either, so drop it and add in
+> slab.h to keep things compiling.
 > 
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 > ---
->  drivers/cpufreq/cpufreq_opp.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/clk/mvebu/clk-cpu.c | 3 ++-
+>  drivers/clk/mvebu/common.c  | 2 +-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
+> index 3821a88077ea..86888a658d4c 100644
+> --- a/drivers/clk/mvebu/clk-cpu.c
+> +++ b/drivers/clk/mvebu/clk-cpu.c
+> @@ -10,7 +10,8 @@
+>   * warranty of any kind, whether express or implied.
+>   */
+>  #include <linux/kernel.h>
+> -#include <linux/clkdev.h>
+> +#include <linux/slab.h>
+> +#include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/of_address.h>
+>  #include <linux/io.h>
+> diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
+> index 15b370ff3748..4a22429cd7a2 100644
+> --- a/drivers/clk/mvebu/common.c
+> +++ b/drivers/clk/mvebu/common.c
+> @@ -13,8 +13,8 @@
+>   */
+>  
+>  #include <linux/kernel.h>
+> +#include <linux/slab.h>
+>  #include <linux/clk.h>
+> -#include <linux/clkdev.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/io.h>
+>  #include <linux/of.h>
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Best regards,
-Krzysztof
 
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
