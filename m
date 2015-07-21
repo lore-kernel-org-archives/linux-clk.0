@@ -1,81 +1,58 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH v2 5/7] ARM: sun8i: Add clock indices
-Date: Fri, 31 Jul 2015 19:46:20 +0200
-Message-Id: <1438364782-3968-6-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55AEB6AE.2070006@codeaurora.org>
+Date: Tue, 21 Jul 2015 14:16:30 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+To: Douglas Anderson <dianders@chromium.org>
+CC: Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org, ykk@rock-chips.com,
+	Alexandru Stan <amstan@chromium.org>, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: rockchip: Fix PLL bandwidth
+References: <1437511283-14216-1-git-send-email-dianders@chromium.org>
+In-Reply-To: <1437511283-14216-1-git-send-email-dianders@chromium.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The A23 and A33 gates have a non continuous set of clock IDs that are
-valid. Add the clock-indices property to the DT to express this.
+On 07/21/2015 01:41 PM, Douglas Anderson wrote:
+> In the TRM we see that BWADJ is "a 12-bit bus that selects the values
+> 1-4096 for the bandwidth divider (NB)":
+>   NB = BWADJ[11:0] + 1
+> The recommended setting of NB: NB = NF / 2.
+>
+> So:
+>    NB = NF / 2
+>    BWADJ[11:0] + 1 = NF / 2
+>    BWADJ[11:0] = NF / 2 - 1
+>
+> Right now, we have:
+>
+> {                                               \
+>          .rate   = _rate##U,                     \
+>          .nr = _nr,                              \
+>          .nf = _nf,                              \
+>          .no = _no,                              \
+>          .bwadj = (_nf >> 1),                    \
+> }
+>
+> That means we set bwadj to NF / 2, not NF / 2 - 1
+>
+> All of this is a bit confusing because we specify "NR" (the 1-based
+> value), "NF" (the 1-based value), "NO" (the 1-based value), but
+> "BWADJ" (the 0-based value) instead of "NB" (the 1-based value).
+>
+> Let's change to working with "NB" and fix the off by one error.  This
+> may affect PLL jitter in a small way (hopefully for the better).
+>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun8i-a23-a33.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+There's no Fixes tag or stable Cc so I take it this isn't fixing any 
+manifesting regression, more of a visual inspection bug find?
 
-diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-index 7abd0ae3143d..c318c770b6c1 100644
---- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-@@ -180,6 +180,15 @@
- 			compatible = "allwinner,sun8i-a23-ahb1-gates-clk";
- 			reg = <0x01c20060 0x8>;
- 			clocks = <&ahb1>;
-+			clock-indices = <1>, <6>,
-+					<8>, <9>, <10>,
-+					<13>, <14>,
-+					<19>, <20>,
-+					<21>, <24>, <26>,
-+					<29>, <32>, <36>,
-+					<40>, <44>, <46>,
-+					<52>, <54>,
-+					<57>;
- 			clock-output-names = "ahb1_mipidsi", "ahb1_dma",
- 					"ahb1_mmc0", "ahb1_mmc1", "ahb1_mmc2",
- 					"ahb1_nand", "ahb1_sdram",
-@@ -196,6 +205,8 @@
- 			compatible = "allwinner,sun8i-a23-apb1-gates-clk";
- 			reg = <0x01c20068 0x4>;
- 			clocks = <&apb1>;
-+			clock-indices = <0>, <5>,
-+					<12>, <13>;
- 			clock-output-names = "apb1_codec", "apb1_pio",
- 					"apb1_daudio0",	"apb1_daudio1";
- 		};
-@@ -213,6 +224,10 @@
- 			compatible = "allwinner,sun8i-a23-apb2-gates-clk";
- 			reg = <0x01c2006c 0x4>;
- 			clocks = <&apb2>;
-+			clock-indices = <0>, <1>,
-+					<2>, <16>,
-+					<17>, <18>,
-+					<19>, <20>;
- 			clock-output-names = "apb2_i2c0", "apb2_i2c1",
- 					"apb2_i2c2", "apb2_uart0",
- 					"apb2_uart1", "apb2_uart2",
 -- 
-2.4.6
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
