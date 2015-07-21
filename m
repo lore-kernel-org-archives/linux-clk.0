@@ -1,145 +1,56 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH 1/7] ARM: sun4i: Add clock indices
-Date: Sun, 26 Jul 2015 23:14:24 +0200
-Message-Id: <1437945270-32014-2-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <vaibhav.hiremath@linaro.org>
+Return-Path: <vaibhav.hiremath@linaro.org>
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: robh+dt@kernel.org,
+	mturquette@baylibre.com,
+	lee.jones@linaro.org,
+	k.kozlowski@samsung.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Subject: [PATCH 0/4] clk: 88pm800: Add new clk provider driver for 88PM800 MFD
+Date: Tue, 21 Jul 2015 16:36:59 +0530
+Message-Id: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The A10 gates have a non continuous set of clock IDs that are valid. Add
-the clock-indices property to the DT to express this.
+88PM800 family of devices provides multiple buffered 32.768 KHz clock
+output.
+88PM800 : CLK32k_1, CLK32k_2 and CLK32k_3
+88PM860 : CLK32k_1 and CLK32k_2
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun4i-a10.dtsi | 69 ++++++++++++++++++++++++++++++----------
- 1 file changed, 52 insertions(+), 17 deletions(-)
+This patch-series adds new clock provider driver for enabling/disabling
+buffered 32Khz clock output from 88PM800 family of device. Adds clock device to
+MFD and updates the binding documentation.
 
-diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
-index 61c03d1fe530..ab0e131587bb 100644
---- a/arch/arm/boot/dts/sun4i-a10.dtsi
-+++ b/arch/arm/boot/dts/sun4i-a10.dtsi
-@@ -241,6 +241,7 @@
- 			compatible = "allwinner,sun4i-a10-axi-gates-clk";
- 			reg = <0x01c2005c 0x4>;
- 			clocks = <&axi>;
-+			clock-indices = <0>;
- 			clock-output-names = "axi_dram";
- 		};
- 
-@@ -257,17 +258,36 @@
- 			compatible = "allwinner,sun4i-a10-ahb-gates-clk";
- 			reg = <0x01c20060 0x8>;
- 			clocks = <&ahb>;
-+			clock-indices = <0>, <1>,
-+					<2>, <3>,
-+					<4>, <5>, <6>,
-+					<7>, <8>, <9>,
-+					<10>, <11>, <12>,
-+					<13>, <14>, <16>,
-+					<17>, <18>, <20>,
-+					<21>, <22>, <23>,
-+					<24>, <25>, <26>,
-+					<32>, <33>, <34>,
-+					<35>, <36>, <37>,
-+					<40>, <41>, <43>,
-+					<44>, <45>,
-+					<46>, <47>,
-+					<50>, <52>;
- 			clock-output-names = "ahb_usb0", "ahb_ehci0",
--				"ahb_ohci0", "ahb_ehci1", "ahb_ohci1", "ahb_ss",
--				"ahb_dma", "ahb_bist", "ahb_mmc0", "ahb_mmc1",
--				"ahb_mmc2", "ahb_mmc3", "ahb_ms", "ahb_nand",
--				"ahb_sdram", "ahb_ace",	"ahb_emac", "ahb_ts",
--				"ahb_spi0", "ahb_spi1", "ahb_spi2", "ahb_spi3",
--				"ahb_pata", "ahb_sata", "ahb_gps", "ahb_ve",
--				"ahb_tvd", "ahb_tve0", "ahb_tve1", "ahb_lcd0",
--				"ahb_lcd1", "ahb_csi0", "ahb_csi1", "ahb_hdmi",
--				"ahb_de_be0", "ahb_de_be1", "ahb_de_fe0",
--				"ahb_de_fe1", "ahb_mp", "ahb_mali400";
-+					     "ahb_ohci0", "ahb_ehci1",
-+					     "ahb_ohci1", "ahb_ss", "ahb_dma",
-+					     "ahb_bist", "ahb_mmc0", "ahb_mmc1",
-+					     "ahb_mmc2", "ahb_mmc3", "ahb_ms",
-+					     "ahb_nand", "ahb_sdram", "ahb_ace",
-+					     "ahb_emac", "ahb_ts", "ahb_spi0",
-+					     "ahb_spi1", "ahb_spi2", "ahb_spi3",
-+					     "ahb_pata", "ahb_sata", "ahb_gps",
-+					     "ahb_ve", "ahb_tvd", "ahb_tve0",
-+					     "ahb_tve1", "ahb_lcd0", "ahb_lcd1",
-+					     "ahb_csi0", "ahb_csi1", "ahb_hdmi",
-+					     "ahb_de_be0", "ahb_de_be1",
-+					     "ahb_de_fe0", "ahb_de_fe1",
-+					     "ahb_mp", "ahb_mali400";
- 		};
- 
- 		apb0: apb0@01c20054 {
-@@ -283,9 +303,14 @@
- 			compatible = "allwinner,sun4i-a10-apb0-gates-clk";
- 			reg = <0x01c20068 0x4>;
- 			clocks = <&apb0>;
-+			clock-indices = <0>, <1>,
-+					<2>, <3>,
-+					<5>, <6>,
-+					<7>, <10>;
- 			clock-output-names = "apb0_codec", "apb0_spdif",
--				"apb0_ac97", "apb0_iis", "apb0_pio", "apb0_ir0",
--				"apb0_ir1", "apb0_keypad";
-+					     "apb0_ac97", "apb0_iis",
-+					     "apb0_pio", "apb0_ir0",
-+					     "apb0_ir1", "apb0_keypad";
- 		};
- 
- 		apb1: clk@01c20058 {
-@@ -301,12 +326,22 @@
- 			compatible = "allwinner,sun4i-a10-apb1-gates-clk";
- 			reg = <0x01c2006c 0x4>;
- 			clocks = <&apb1>;
-+			clock-indices = <0>, <1>,
-+					<2>, <4>,
-+					<5>, <6>,
-+					<7>, <16>,
-+					<17>, <18>,
-+					<19>, <20>,
-+					<21>, <22>,
-+					<23>;
- 			clock-output-names = "apb1_i2c0", "apb1_i2c1",
--				"apb1_i2c2", "apb1_can", "apb1_scr",
--				"apb1_ps20", "apb1_ps21", "apb1_uart0",
--				"apb1_uart1", "apb1_uart2", "apb1_uart3",
--				"apb1_uart4", "apb1_uart5", "apb1_uart6",
--				"apb1_uart7";
-+					     "apb1_i2c2", "apb1_can",
-+					     "apb1_scr", "apb1_ps20",
-+					     "apb1_ps21", "apb1_uart0",
-+					     "apb1_uart1", "apb1_uart2",
-+					     "apb1_uart3", "apb1_uart4",
-+					     "apb1_uart5", "apb1_uart6",
-+					     "apb1_uart7";
- 		};
- 
- 		nand_clk: clk@01c20080 {
+The PATCH [1/4], created separately, as it would be easy between maintainers to
+queue it.
+
+
+Note that, I have access to only 88PM800 and 88PM860 datasheet,
+so enabling support for only above two devices.
+
+Testing:
+  - Boot tested on 88PM860 based platform
+  - Clock enable/disable
+  - Non PM860, to make sure that it won't lead to any issues
+
+
+Vaibhav Hiremath (4):
+  mfd: 88pm800: Update the header file with 32K clk related macros
+  mfd: devicetree: bindings: Add clock subdevice node information
+  clk: 88pm800: Add clk provider driver for 88pm800 family of devices
+  mfd: 88pm800: Add support for clk subdevice
+
+ Documentation/devicetree/bindings/mfd/88pm800.txt |  28 ++
+ drivers/clk/Kconfig                               |   8 +
+ drivers/clk/Makefile                              |   1 +
+ drivers/clk/clk-88pm800.c                         | 345 ++++++++++++++++++++++
+ drivers/mfd/88pm800.c                             |  25 ++
+ include/linux/mfd/88pm80x.h                       |  12 +
+ 6 files changed, 419 insertions(+)
+ create mode 100644 drivers/clk/clk-88pm800.c
+
 -- 
-2.4.6
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+1.9.1
