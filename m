@@ -1,71 +1,56 @@
 Return-Path: <sboyd@codeaurora.org>
+Message-ID: <55AE8A02.9070801@codeaurora.org>
+Date: Tue, 21 Jul 2015 11:05:54 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Tero Kristo <t-kristo@ti.com>,
-	Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 7/7] ARM: OMAP2+: Include clk.h
-Date: Fri, 10 Jul 2015 15:45:47 -0700
-Message-Id: <1436568347-24554-8-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org>
-References: <1436568347-24554-1-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ Liviu Dudau <Liviu.Dudau@arm.com>,
+ Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+ "Jon Medhurst (Tixy)" <tixy@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ Kevin Hilman <khilman@kernel.org>,
+ Olof Johansson <olof@lixom.net>,
+ Mike Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v4 3/8] clk: add support for clocks provided by SCP(System
+ Control Processor)
+References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com> <1433760002-24120-4-git-send-email-sudeep.holla@arm.com> <20150702172310.GF4301@codeaurora.org> <5596A1B6.8020307@arm.com> <559ADC94.4080505@codeaurora.org> <559BF858.1020301@arm.com> <20150708014606.GH30412@codeaurora.org> <55A7D79B.3080305@arm.com> <20150716193114.GA17952@codeaurora.org> <55A8E434.2010709@arm.com> <55A945DF.3@codeaurora.org> <55ACB733.2080609@arm.com>
+In-Reply-To: <55ACB733.2080609@arm.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-These files use the consumer API, so include clk.h explicitly.
+On 07/20/2015 01:54 AM, Sudeep Holla wrote:
+>
+>
+> On 17/07/15 19:13, Stephen Boyd wrote:
+>> On 07/17/2015 04:17 AM, Sudeep Holla wrote:
+>
+> [...]
+>
+>>>
+>>> determine_rate change shouldn't affect SCPI clock driver but I remember
+>>> seeing round_rate change too on the list which returns value using the
+>>> argument from Boris. Is that planned for v4.3 ? I would need the stable
+>>> branch from this clk_hw_set_rate_range if you decide to push. Let me
+>>> know your preferences. I will post the updated version of the patch
+>>> accordingly.
+>>>
+>>
+>> We're not going to change round_rate() so it sounds like you don't need
+>> a stable branch. But you would need this new consumer API. So you still
+>> need a branch right?
+>>
+>
+> I am fine either way. If no one else need the stable branch to be shared
+> with arm-soc, I prefer to use clock consumer API for now to avoid all
+> the troubles to you guys and switch to provider API later. I will post
+> it once the both this driver and that provider API is merged, if that's
+> fine with you ?
 
-Cc: Tero Kristo <t-kristo@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
+Ok. Sounds fine as long as we don't forget.
 
-Please ack so this can be routed through clk-tree. Otherwise
-when clk.h is removed from clk-provider.h these files will
-fail to compile.
-
- arch/arm/mach-omap2/clock.c      | 1 +
- arch/arm/mach-omap2/omap_hwmod.c | 1 +
- arch/arm/mach-omap2/pm24xx.c     | 1 +
- 3 files changed, 3 insertions(+)
-
-diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
-index a699d7169307..f664dc664ded 100644
---- a/arch/arm/mach-omap2/clock.c
-+++ b/arch/arm/mach-omap2/clock.c
-@@ -20,6 +20,7 @@
- #include <linux/errno.h>
- #include <linux/err.h>
- #include <linux/delay.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
- #include <linux/bitops.h>
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-index d78c12e7cb5e..de43e4c9a865 100644
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -130,6 +130,7 @@
- #include <linux/kernel.h>
- #include <linux/errno.h>
- #include <linux/io.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/err.h>
-diff --git a/arch/arm/mach-omap2/pm24xx.c b/arch/arm/mach-omap2/pm24xx.c
-index b1aad7e1426c..2a1a4180d5d0 100644
---- a/arch/arm/mach-omap2/pm24xx.c
-+++ b/arch/arm/mach-omap2/pm24xx.c
-@@ -25,6 +25,7 @@
- #include <linux/sysfs.h>
- #include <linux/module.h>
- #include <linux/delay.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/irq.h>
- #include <linux/time.h>
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
