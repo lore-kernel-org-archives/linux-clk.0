@@ -1,82 +1,167 @@
-Return-Path: <vaibhav.hiremath@linaro.org>
-Return-Path: <vaibhav.hiremath@linaro.org>
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: robh+dt@kernel.org,
-	mturquette@baylibre.com,
-	lee.jones@linaro.org,
-	k.kozlowski@samsung.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Subject: [PATCH 2/4] mfd: devicetree: bindings: Add clock subdevice node information
-Date: Tue, 21 Jul 2015 16:37:01 +0530
-Message-Id: <1437476823-3358-3-git-send-email-vaibhav.hiremath@linaro.org>
-In-Reply-To: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
-References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Douglas Anderson <dianders@chromium.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: linux-rockchip@lists.infradead.org, ykk@rock-chips.com,
+	Alexandru Stan <amstan@chromium.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: rockchip: Fix PLL bandwidth
+Date: Tue, 21 Jul 2015 13:41:23 -0700
+Message-Id: <1437511283-14216-1-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the binding documentation for optional
-clocks node and related information for buffered 32KHz clock.
+In the TRM we see that BWADJ is "a 12-bit bus that selects the values
+1-4096 for the bandwidth divider (NB)":
+ NB = BWADJ[11:0] + 1
+The recommended setting of NB: NB = NF / 2.
 
-Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+So:
+  NB = NF / 2
+  BWADJ[11:0] + 1 = NF / 2
+  BWADJ[11:0] = NF / 2 - 1
+
+Right now, we have:
+
+{                                               \
+        .rate   = _rate##U,                     \
+        .nr = _nr,                              \
+        .nf = _nf,                              \
+        .no = _no,                              \
+        .bwadj = (_nf >> 1),                    \
+}
+
+That means we set bwadj to NF / 2, not NF / 2 - 1
+
+All of this is a bit confusing because we specify "NR" (the 1-based
+value), "NF" (the 1-based value), "NO" (the 1-based value), but
+"BWADJ" (the 0-based value) instead of "NB" (the 1-based value).
+
+Let's change to working with "NB" and fix the off by one error.  This
+may affect PLL jitter in a small way (hopefully for the better).
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
- Documentation/devicetree/bindings/mfd/88pm800.txt | 28 +++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/clk/rockchip/clk-pll.c    | 18 +++++++++---------
+ drivers/clk/rockchip/clk-rk3188.c |  2 +-
+ drivers/clk/rockchip/clk-rk3288.c |  2 +-
+ drivers/clk/rockchip/clk.h        |  8 ++++----
+ 4 files changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/88pm800.txt b/Documentation/devicetree/bindings/mfd/88pm800.txt
-index dec842f..60cab78 100644
---- a/Documentation/devicetree/bindings/mfd/88pm800.txt
-+++ b/Documentation/devicetree/bindings/mfd/88pm800.txt
-@@ -9,6 +9,27 @@ Required parent device properties:
- - #interrupt-cells 	: should be 1.
- 			  The cell is the 88pm80x local IRQ number
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 1f88dd1..96903ae 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -120,8 +120,8 @@ static int rockchip_pll_wait_lock(struct rockchip_clk_pll *pll)
+ #define RK3066_PLLCON0_NR_SHIFT		8
+ #define RK3066_PLLCON1_NF_MASK		0x1fff
+ #define RK3066_PLLCON1_NF_SHIFT		0
+-#define RK3066_PLLCON2_BWADJ_MASK	0xfff
+-#define RK3066_PLLCON2_BWADJ_SHIFT	0
++#define RK3066_PLLCON2_NB_MASK		0xfff
++#define RK3066_PLLCON2_NB_SHIFT		0
+ #define RK3066_PLLCON3_RESET		(1 << 5)
+ #define RK3066_PLLCON3_PWRDOWN		(1 << 1)
+ #define RK3066_PLLCON3_BYPASS		(1 << 0)
+@@ -207,8 +207,8 @@ static int rockchip_rk3066_pll_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	writel_relaxed(HIWORD_UPDATE(rate->nf - 1, RK3066_PLLCON1_NF_MASK,
+ 						   RK3066_PLLCON1_NF_SHIFT),
+ 		       pll->reg_base + RK3066_PLLCON(1));
+-	writel_relaxed(HIWORD_UPDATE(rate->bwadj, RK3066_PLLCON2_BWADJ_MASK,
+-						  RK3066_PLLCON2_BWADJ_SHIFT),
++	writel_relaxed(HIWORD_UPDATE(rate->nb - 1, RK3066_PLLCON2_NB_MASK,
++						   RK3066_PLLCON2_NB_SHIFT),
+ 		       pll->reg_base + RK3066_PLLCON(2));
  
-+Optional nodes:
-+- clocks: 88pm800 family of devices provide multiple buffered 32.768
-+  KHz outputs, so to register these as clocks with common clock framework
-+  instantiate a sub-node named "clocks". It uses the common clock binding
-+  documented in :
-+  [Documentation/devicetree/bindings/clock/clock-bindings.txt]
-+
-+  - #clock-cells: should be 1.
-+
-+  - The following is the list of clocks generated by the controller. Each clock
-+    is assigned an identifier and client nodes use this identifier to specify
-+    the clock which they consume.
-+    Clock		ID           	Devices
-+    ----------------------------------------------------------
-+    pm800_clk32k_1	0		88PM800 and 88PM860
-+    pm800_clk32k_2	1		88PM800 and 88PM860
-+    pm800_clk32k_3	2		88PM800
-+
-+  - compatible: Should be : "marvell,88pm800-clk"
-+
-+
- 88pm80x family of devices consists of varied group of sub-devices:
+ 	/* leave reset and wait the reset_delay */
+@@ -261,7 +261,7 @@ static void rockchip_rk3066_pll_init(struct clk_hw *hw)
+ {
+ 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
+ 	const struct rockchip_pll_rate_table *rate;
+-	unsigned int nf, nr, no, bwadj;
++	unsigned int nf, nr, no, nb;
+ 	unsigned long drate;
+ 	u32 pllcon;
  
- Device		 	Supply Names	 Description
-@@ -16,6 +37,7 @@ Device		 	Supply Names	 Description
- 88pm80x-onkey		:		: On key
- 88pm80x-rtc		:		: RTC
- 88pm80x-regulator	:		: Regulators
-+88pm80x-clk		:		: 32KHz Clk provider
+@@ -283,13 +283,13 @@ static void rockchip_rk3066_pll_init(struct clk_hw *hw)
+ 	nf = ((pllcon >> RK3066_PLLCON1_NF_SHIFT) & RK3066_PLLCON1_NF_MASK) + 1;
  
- Example:
+ 	pllcon = readl_relaxed(pll->reg_base + RK3066_PLLCON(2));
+-	bwadj = (pllcon >> RK3066_PLLCON2_BWADJ_SHIFT) & RK3066_PLLCON2_BWADJ_MASK;
++	nb = ((pllcon >> RK3066_PLLCON2_NB_SHIFT) & RK3066_PLLCON2_NB_MASK) + 1;
  
-@@ -27,6 +49,12 @@ Example:
- 		interrupt-controller;
- 		#interrupt-cells = <1>;
+-	pr_debug("%s: pll %s@%lu: nr (%d:%d); no (%d:%d); nf(%d:%d), bwadj(%d:%d)\n",
++	pr_debug("%s: pll %s@%lu: nr (%d:%d); no (%d:%d); nf(%d:%d), nb(%d:%d)\n",
+ 		 __func__, __clk_get_name(hw->clk), drate, rate->nr, nr,
+-		rate->no, no, rate->nf, nf, rate->bwadj, bwadj);
++		rate->no, no, rate->nf, nf, rate->nb, nb);
+ 	if (rate->nr != nr || rate->no != no || rate->nf != nf
+-					     || rate->bwadj != bwadj) {
++					     || rate->nb != nb) {
+ 		struct clk *parent = __clk_get_parent(hw->clk);
+ 		unsigned long prate;
  
-+		pm800clk: clocks {
-+			compatible = "marvell,88pm800-clk";
-+			#clock-cells = <1>;
-+			clock-output-names = "xx", "yy", "zz";
-+		};
-+
- 		regulators {
- 			compatible = "marvell,88pm80x-regulator";
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index edbafbc..0abf22d 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -817,7 +817,7 @@ static void __init rk3188_clk_init(struct device_node *np)
  
+ 		rate = pll->rate_table;
+ 		while (rate->rate > 0) {
+-			rate->bwadj = 0;
++			rate->nb = 1;
+ 			rate++;
+ 		}
+ 	}
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index a8bad7d..0df5bae 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -84,7 +84,7 @@ static struct rockchip_pll_rate_table rk3288_pll_rates[] = {
+ 	RK3066_PLL_RATE( 742500000, 8, 495, 2),
+ 	RK3066_PLL_RATE( 696000000, 1, 58, 2),
+ 	RK3066_PLL_RATE( 600000000, 1, 50, 2),
+-	RK3066_PLL_RATE_BWADJ(594000000, 1, 198, 8, 1),
++	RK3066_PLL_RATE_NB(594000000, 1, 198, 8, 1),
+ 	RK3066_PLL_RATE( 552000000, 1, 46, 2),
+ 	RK3066_PLL_RATE( 504000000, 1, 84, 4),
+ 	RK3066_PLL_RATE( 500000000, 3, 125, 2),
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 93ea335..dc8ecb2 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -83,16 +83,16 @@ enum rockchip_pll_type {
+ 	.nr = _nr,				\
+ 	.nf = _nf,				\
+ 	.no = _no,				\
+-	.bwadj = ((_nf) >> 1),			\
++	.nb = ((_nf) < 2) ? 1 : (_nf) >> 1,	\
+ }
+ 
+-#define RK3066_PLL_RATE_BWADJ(_rate, _nr, _nf, _no, _bw)	\
++#define RK3066_PLL_RATE_NB(_rate, _nr, _nf, _no, _nb)		\
+ {								\
+ 	.rate	= _rate##U,					\
+ 	.nr = _nr,						\
+ 	.nf = _nf,						\
+ 	.no = _no,						\
+-	.bwadj = _bw,						\
++	.nb = _nb,						\
+ }
+ 
+ struct rockchip_pll_rate_table {
+@@ -100,7 +100,7 @@ struct rockchip_pll_rate_table {
+ 	unsigned int nr;
+ 	unsigned int nf;
+ 	unsigned int no;
+-	unsigned int bwadj;
++	unsigned int nb;
+ };
+ 
+ /**
 -- 
-1.9.1
+2.4.3.573.g4eafbef
+
