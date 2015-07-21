@@ -1,58 +1,48 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55AEB6AE.2070006@codeaurora.org>
-Date: Tue, 21 Jul 2015 14:16:30 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <tyler.baker@linaro.org>
 MIME-Version: 1.0
-To: Douglas Anderson <dianders@chromium.org>
-CC: Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org, ykk@rock-chips.com,
-	Alexandru Stan <amstan@chromium.org>, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: Fix PLL bandwidth
-References: <1437511283-14216-1-git-send-email-dianders@chromium.org>
-In-Reply-To: <1437511283-14216-1-git-send-email-dianders@chromium.org>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20150718005313.GE30412@codeaurora.org>
+References: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
+	<1436241546-16731-6-git-send-email-dinguyen@opensource.altera.com>
+	<20150718005313.GE30412@codeaurora.org>
+Date: Tue, 21 Jul 2015 07:42:16 -0700
+Message-ID: <CANMBJr6q7w4SzB2m4JPgwaAFPmSmQcVFu1Sq3EU0_k_Zx7Sa8A@mail.gmail.com>
+Subject: Re: [PATCHv2 5/6] clk: sunxi: make use of of_clk_parent_fill helper function
+From: Tyler Baker <tyler.baker@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: dinguyen@opensource.altera.com, Mike Turquette <mturquette@linaro.org>,
+	dinh.linux@gmail.com, linux-clk@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/21/2015 01:41 PM, Douglas Anderson wrote:
-> In the TRM we see that BWADJ is "a 12-bit bus that selects the values
-> 1-4096 for the bandwidth divider (NB)":
->   NB = BWADJ[11:0] + 1
-> The recommended setting of NB: NB = NF / 2.
->
-> So:
->    NB = NF / 2
->    BWADJ[11:0] + 1 = NF / 2
->    BWADJ[11:0] = NF / 2 - 1
->
-> Right now, we have:
->
-> {                                               \
->          .rate   = _rate##U,                     \
->          .nr = _nr,                              \
->          .nf = _nf,                              \
->          .no = _no,                              \
->          .bwadj = (_nf >> 1),                    \
-> }
->
-> That means we set bwadj to NF / 2, not NF / 2 - 1
->
-> All of this is a bit confusing because we specify "NR" (the 1-based
-> value), "NF" (the 1-based value), "NO" (the 1-based value), but
-> "BWADJ" (the 0-based value) instead of "NB" (the 1-based value).
->
-> Let's change to working with "NB" and fix the off by one error.  This
-> may affect PLL jitter in a small way (hopefully for the better).
->
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->
+Hi,
 
-There's no Fixes tag or stable Cc so I take it this isn't fixing any 
-manifesting regression, more of a visual inspection bug find?
+On 17 July 2015 at 17:53, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 07/06, dinguyen@opensource.altera.com wrote:
+>> From: Dinh Nguyen <dinguyen@opensource.altera.com>
+>>
+>> Use of_clk_parent_fill to fill in the parent clock names' array.
+>>
+>> Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+>> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+>> Cc: "Emilio L=C3=B3pez" <emilio@elopez.com.ar>
+>> ---
+>
+> Applied to clk-next with that fix I posted.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The kernelci.org bot reported sunxi a20 boot failures[1][2] in
+next-20150720 and next-20150721. I have bisected[3] these failures to
+this commit. However, I have not investigated any further but
+reverting this commit on top of next-20150721 gets the boards booting
+again.
 
+Cheers,
+
+Tyler
+
+[1] http://storage.kernelci.org/next/next-20150721/arm-sunxi_defconfig/lab-=
+tbaker/boot-sun7i-a20-cubietruck.html
+[2] http://storage.kernelci.org/next/next-20150721/arm-multi_v7_defconfig+C=
+ONFIG_PROVE_LOCKING=3Dy/lab-mhart/boot-sun7i-a20-cubieboard2.html
+[3] http://hastebin.com/nehatedece.vhdl
