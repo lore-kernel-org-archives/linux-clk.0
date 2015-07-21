@@ -1,71 +1,79 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
+Return-Path: <vaibhav.hiremath@linaro.org>
+Return-Path: <vaibhav.hiremath@linaro.org>
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: robh+dt@kernel.org,
+	mturquette@baylibre.com,
+	lee.jones@linaro.org,
+	k.kozlowski@samsung.com,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	linux-pm@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Boris BREZILLON <boris.brezillon@free-electrons.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Tawfik Bayouk <tawfik@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>
-Subject: [PATCH RFC 0/5] cpufreq support for Marvell Armada 38x
-Date: Fri,  3 Jul 2015 08:11:52 +0200
-Message-Id: <1435903917-20486-1-git-send-email-gregory.clement@free-electrons.com>
+	linux-clk@vger.kernel.org,
+	Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Subject: [PATCH 4/4] mfd: 88pm800: Add support for clk subdevice
+Date: Tue, 21 Jul 2015 16:37:03 +0530
+Message-Id: <1437476823-3358-5-git-send-email-vaibhav.hiremath@linaro.org>
+In-Reply-To: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
+References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+This patch adds mfd_cell/clk-subdevice for 88PM800 MFD
+(and family of devices).
 
-This series of patches adds cpufreq support for the Marvell Armada 38x
-processor. It is done in the same way it was done for Armada XP. It
-was based on the work of Nadav Haklai and Neta Zur.
+Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+---
+ drivers/mfd/88pm800.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-The first patch extends the clk-cpu clock family with the support of
-the Armada 38x SoCs
-
-The second and the third patches prepare the pmsu part to add Armada
-38x support.
-
-The third patch really add the cpufreq support, the main differences
-with Armada XP is that Armada 38x SoCs uses cortex A9 and that the
-frequency of the CPUs are not independent.
-
-Then the last patch update the deice tree in order to activate this
-feature.
-
-This is still an RFC because there is still some stability issue to
-fix with the current code.The solution has been found but still need
-time to write it properly. As most of the code is already there your
-feedback is very welcome.
-
-Thanks,
-
-Gregory
-
-Gregory CLEMENT (5):
-  clk: mvebu: Add Armada 38x support for clk-cpu
-  ARM: mvebu: Use shorter register definition in pmsu.c
-  ARM: mvebu: Made the dynamic frequency scaling support more generic
-  ARM: mvebu: Armada 38x: Add dynamic frequency scaling support in pmsu
-  ARM: mvebu: Update Armada 38x DT for dynamic frequency scaling
-
- .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |  27 ++-
- arch/arm/boot/dts/armada-380.dtsi                  |   3 +
- arch/arm/boot/dts/armada-385.dtsi                  |   6 +
- arch/arm/boot/dts/armada-38x.dtsi                  |   9 +
- arch/arm/mach-mvebu/pmsu.c                         | 207 ++++++++++++-------
- drivers/clk/mvebu/clk-cpu.c                        | 220 ++++++++++++++++-----
- 6 files changed, 353 insertions(+), 119 deletions(-)
-
+diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
+index f104a32..9723eac 100644
+--- a/drivers/mfd/88pm800.c
++++ b/drivers/mfd/88pm800.c
+@@ -173,6 +173,14 @@ static const struct mfd_cell regulator_devs[] = {
+ 	},
+ };
+ 
++static struct mfd_cell clk_devs[] = {
++	{
++	 .name = "88pm80x-clk",
++	 .of_compatible = "marvell,88pm800-clk",
++	 .id = -1,
++	},
++};
++
+ static const struct regmap_irq pm800_irqs[] = {
+ 	/* INT0 */
+ 	[PM800_IRQ_ONKEY] = {
+@@ -344,6 +352,17 @@ static int device_regulator_init(struct pm80x_chip *chip)
+ 			      ARRAY_SIZE(regulator_devs), NULL, 0, NULL);
+ }
+ 
++static int device_clk_init(struct pm80x_chip *chip)
++{
++	if (chip->type == CHIP_PM800)
++		clk_devs[0].name = "88pm800-clk";
++	else if (chip->type == CHIP_PM860)
++		clk_devs[0].name = "88pm860-clk";
++
++	return mfd_add_devices(chip->dev, 0, &clk_devs[0],
++			      ARRAY_SIZE(clk_devs), NULL, 0, NULL);
++}
++
+ static int device_irq_init_800(struct pm80x_chip *chip)
+ {
+ 	struct regmap *map = chip->regmap;
+@@ -513,6 +532,12 @@ static int device_800_init(struct pm80x_chip *chip)
+ 		goto out;
+ 	}
+ 
++	ret = device_clk_init(chip);
++	if (ret) {
++		dev_err(chip->dev, "Failed to add clk subdev\n");
++		goto out;
++	}
++
+ 	return 0;
+ out_dev:
+ 	mfd_remove_devices(chip->dev);
 -- 
-2.1.0
+1.9.1
