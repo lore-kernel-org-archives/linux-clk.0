@@ -1,91 +1,69 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
-	k.kozlowski@samsung.com
-Cc: thomas.ab@samsung.com, b.zolnierkie@samsung.com,
-	kyungmin.park@samsung.com, cw00.choi@samsung.com,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v5 2/3] ARM: dts: Add CPU OPP and regulator supply property for
- Exynos3250
-Date: Wed, 01 Jul 2015 22:21:16 +0900
-Message-id: <1435756877-26736-3-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1435756877-26736-1-git-send-email-cw00.choi@samsung.com>
-References: <1435756877-26736-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <dianders@google.com>
+MIME-Version: 1.0
+Sender: dianders@google.com
+In-Reply-To: <55AEB6AE.2070006@codeaurora.org>
+References: <1437511283-14216-1-git-send-email-dianders@chromium.org>
+	<55AEB6AE.2070006@codeaurora.org>
+Date: Tue, 21 Jul 2015 15:37:38 -0700
+Message-ID: <CAD=FV=VpY4j=HOGCMdFJ8g1bWeUTKqk=GWoEB+EB3y52UMbrLg@mail.gmail.com>
+Subject: Re: [PATCH] clk: rockchip: Fix PLL bandwidth
+From: Doug Anderson <dianders@chromium.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Yakir Yang <ykk@rock-chips.com>,
+	Alexandru Stan <amstan@chromium.org>, mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch add CPU operating points which include CPU frequency and regulator
-voltage to use generic cpufreq drivers.
+Stephen,
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
- arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
- arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
- 3 files changed, 23 insertions(+)
+On Tue, Jul 21, 2015 at 2:16 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 07/21/2015 01:41 PM, Douglas Anderson wrote:
+>>
+>> In the TRM we see that BWADJ is "a 12-bit bus that selects the values
+>> 1-4096 for the bandwidth divider (NB)":
+>>   NB = BWADJ[11:0] + 1
+>> The recommended setting of NB: NB = NF / 2.
+>>
+>> So:
+>>    NB = NF / 2
+>>    BWADJ[11:0] + 1 = NF / 2
+>>    BWADJ[11:0] = NF / 2 - 1
+>>
+>> Right now, we have:
+>>
+>> {                                               \
+>>          .rate   = _rate##U,                     \
+>>          .nr = _nr,                              \
+>>          .nf = _nf,                              \
+>>          .no = _no,                              \
+>>          .bwadj = (_nf >> 1),                    \
+>> }
+>>
+>> That means we set bwadj to NF / 2, not NF / 2 - 1
+>>
+>> All of this is a bit confusing because we specify "NR" (the 1-based
+>> value), "NF" (the 1-based value), "NO" (the 1-based value), but
+>> "BWADJ" (the 0-based value) instead of "NB" (the 1-based value).
+>>
+>> Let's change to working with "NB" and fix the off by one error.  This
+>> may affect PLL jitter in a small way (hopefully for the better).
+>>
+>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>>
+>
+> There's no Fixes tag or stable Cc so I take it this isn't fixing any
+> manifesting regression, more of a visual inspection bug find?
 
-diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-index a5863acc5fff..fc6604d68864 100644
---- a/arch/arm/boot/dts/exynos3250-monk.dts
-+++ b/arch/arm/boot/dts/exynos3250-monk.dts
-@@ -118,6 +118,10 @@
- 	};
- };
- 
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
-+};
-+
- &adc {
- 	vdd-supply = <&ldo3_reg>;
- 	status = "okay";
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index 031853b75528..c8a083b376c9 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -109,6 +109,10 @@
- 	};
- };
- 
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
-+};
-+
- &adc {
- 	vdd-supply = <&ldo3_reg>;
- 	status = "okay";
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index d7201333e3bc..e0f3b2ed41a3 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -53,6 +53,21 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0>;
- 			clock-frequency = <1000000000>;
-+			clocks = <&cmu CLK_ARM_CLK>;
-+			clock-names = "cpu";
-+
-+			operating-points = <
-+				1000000 1150000
-+				900000  1112500
-+				800000  1075000
-+				700000  1037500
-+				600000  1000000
-+				500000  962500
-+				400000  925000
-+				300000  887500
-+				200000  850000
-+				100000  850000
-+			>;
- 		};
- 
- 		cpu1: cpu@1 {
--- 
-1.8.5.5
+There is no known problem fixed.  I've been looking at HDMI and
+controlling PLL jitter is an important part of supporting HDMI clock
+rates.  That got me to looking at this parameter and deciding that we
+should set it correctly.  Apparently it doesn't help in any hugely
+significant way...  I just got done re-testing a whole lot of rates
+and if it helped or hurt my jitter it's in the noise (AKA there's
+enough variance run-to-run that it's hard to tell if this made any
+difference).
 
+-Doug
