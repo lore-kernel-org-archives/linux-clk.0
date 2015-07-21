@@ -1,226 +1,120 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 07/16] ARM: shmobile: r8a7778 dtsi: Add CPG/MSTP Clock Domain
-Date: Wed,  1 Jul 2015 17:58:01 +0200
-Message-Id: <1435766290-3005-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
-References: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55AEB103.9010205@codeaurora.org>
+Date: Tue, 21 Jul 2015 13:52:19 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+MIME-Version: 1.0
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+CC: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	mturquette@baylibre.com, lee.jones@linaro.org,
+	k.kozlowski@samsung.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 3/4] clk: 88pm800: Add clk provider driver for 88pm800
+ family of devices
+References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org> <1437476823-3358-4-git-send-email-vaibhav.hiremath@linaro.org> <55AE990E.2040004@codeaurora.org> <55AE9F48.20600@linaro.org>
+In-Reply-To: <55AE9F48.20600@linaro.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add an appropriate "#power-domain-cells" property to the cpg_clocks
-device node, to create the CPG/MSTP Clock Domain.
+On 07/21/2015 12:36 PM, Vaibhav Hiremath wrote:
+>
+> On Wednesday 22 July 2015 12:40 AM, Stephen Boyd wrote:
+>> On 07/21/2015 04:07 AM, Vaibhav Hiremath wrote:
+>>> +
+>>> +    pm800_clks = devm_kzalloc(&pdev->dev,
+>>> +                sizeof(*pm800_clks) * PM800_CLKS_NUM,
+>>> +                GFP_KERNEL);
+>>
+>> devm_kcalloc()
+>>
+>>> +    if (!pm800_clks)
+>>> +        return -ENOMEM;
+>>> +
+>>> +    clk_table = devm_kzalloc(&pdev->dev,
+>>> +                sizeof(struct clk *) * PM800_CLKS_NUM,
+>>> +                GFP_KERNEL);
+>>
+>> devm_kcalloc()
+>>
+>
+> why kcalloc?
+> Is it because it take another argument for to allocate array?
+>
 
-Add "power-domains" properties to all device nodes for devices that are
-part of the CPG/MSTP Clock Domain and can be power-managed through an
-MSTP clock.  This applies to most on-SoC devices, which have a
-one-to-one mapping from SoC device to DT device node.  A notable
-exception is the "sound" node, which represents multiple SoC devices,
-each having their own MSTP clocks.
+Yes. See Chapter 14 of Documentation/CodingStyle for why devm_kcalloc() 
+is preferred.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
+>
+>>> +    if (!clk_table)
+>>> +        return -ENOMEM;
+>>> +
+>
+>
+> < snip >
+>
+>>> +            of_clk_data);
+>>> +    if (ret) {
+>>> +        dev_err(&pdev->dev, "Fail to add OF clk provider : %d\n", 
+>>> ret);
+>>> +        goto err;
+>>> +    }
+>>> +
+>>> +    /* Common for all 32KHz clock output */
+>>> +    ret = pm800_init_clk(&pm800_clks[0]);
+>>
+>> Shouldn't we do this before registering the clocks with the framework?
+>>
+>
+> Actually I thought of this, but moved it at the end because, I feel
+> this init should happen only when we are sure that clock is ready for
+> consumption. This is HW initialization where we will be setting
+> FREERUNNIG mode (and similar stuffs), so thought it would be bad idea
+> to set it first and then on error (later in probe) clear it. Not sure
+> whether it has any impact on HW behaviour.
+> Also, specially internal reference counter is changing in the init.
+> Just tried to avoid back-n-forth set-n-clear of this.
 
-v2:
-  - New.
----
- arch/arm/boot/dts/r8a7778.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Ok.
 
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index 7ce9f5fd586504f2..4b1fa9f42ad5457b 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -53,6 +53,7 @@
- 		reg = <0xfde00000 0x400>;
- 		interrupts = <0 105 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7778_CLK_ETHER>;
-+		power-domains = <&cpg_clocks>;
- 		phy-mode = "rmii";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -152,6 +153,7 @@
- 		reg = <0xffc70000 0x1000>;
- 		interrupts = <0 67 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_I2C0>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -162,6 +164,7 @@
- 		reg = <0xffc71000 0x1000>;
- 		interrupts = <0 78 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_I2C1>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -172,6 +175,7 @@
- 		reg = <0xffc72000 0x1000>;
- 		interrupts = <0 76 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_I2C2>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -182,6 +186,7 @@
- 		reg = <0xffc73000 0x1000>;
- 		interrupts = <0 77 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_I2C3>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -193,6 +198,7 @@
- 			     <0 34 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_TMU0>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		#renesas,channels = <3>;
- 
-@@ -207,6 +213,7 @@
- 			     <0 38 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_TMU1>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		#renesas,channels = <3>;
- 
-@@ -221,6 +228,7 @@
- 			     <0 42 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_TMU2>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		#renesas,channels = <3>;
- 
-@@ -288,6 +296,7 @@
- 		interrupts = <0 70 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF0>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -297,6 +306,7 @@
- 		interrupts = <0 71 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF1>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -306,6 +316,7 @@
- 		interrupts = <0 72 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF2>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -315,6 +326,7 @@
- 		interrupts = <0 73 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF3>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -324,6 +336,7 @@
- 		interrupts = <0 74 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF4>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -333,6 +346,7 @@
- 		interrupts = <0 75 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF5>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -341,6 +355,7 @@
- 		reg = <0xffe4e000 0x100>;
- 		interrupts = <0 61 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_MMC>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -349,6 +364,7 @@
- 		reg = <0xffe4c000 0x100>;
- 		interrupts = <0 87 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_SDHI0>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -357,6 +373,7 @@
- 		reg = <0xffe4d000 0x100>;
- 		interrupts = <0 88 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_SDHI1>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -365,6 +382,7 @@
- 		reg = <0xffe4f000 0x100>;
- 		interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_SDHI2>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -373,6 +391,7 @@
- 		reg = <0xfffc7000 0x18>;
- 		interrupts = <0 63 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_HSPI>;
-+		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		status = "disabled";
-@@ -383,6 +402,7 @@
- 		reg = <0xfffc8000 0x18>;
- 		interrupts = <0 84 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_HSPI>;
-+		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		status = "disabled";
-@@ -393,6 +413,7 @@
- 		reg = <0xfffc6000 0x18>;
- 		interrupts = <0 85 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_HSPI>;
-+		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		status = "disabled";
-@@ -419,6 +440,7 @@
- 			clocks = <&extal_clk>;
- 			clock-output-names = "plla", "pllb", "b",
- 					     "out", "p", "s", "s1";
-+			#power-domain-cells = <0>;
- 		};
- 
- 		/* Audio clocks; frequencies are set by boards if applicable. */
+>
+>>> +    if (ret) {
+>>> +        dev_err(&pdev->dev, "Failed to initialize clk : %d\n", ret);
+>>> +        goto err;
+>>> +    }
+>>> +
+>>> +    platform_set_drvdata(pdev, pm800_clks);
+>>> +
+>>> +    return 0;
+>>> +
+>>> +err:
+>>> +    for (i = 0; i < PM800_CLKS_NUM; i++) {
+>>> +        if (pm800_clks[i].lookup)
+>>> +            clkdev_drop(pm800_clks[i].lookup);
+>>> +    }
+>>> +
+>>> +    return ret;
+>>> +}
+>>> +
+>>> +static int pm800_clk_remove(struct platform_device *pdev)
+>>> +{
+>>> +    struct pm800_clk *pm800_clks = platform_get_drvdata(pdev);
+>>> +    int i;
+>>> +
+>>> +    of_clk_del_provider(pm800_clks[0].clk_np);
+>>> +    /* Drop the reference obtained in pm800_clk_parse_dt */
+>>> +    of_node_put(pm800_clks[0].clk_np);
+>>
+>> This is odd. Why are we keeping the reference in the driver?
+>>
+>
+> Honestly I do not have any good answer here. I have to admit that it is
+> getting carry forwarded from legacy driver.
+>
+
+Well we shouldn't do things if we don't know why we're doing them. 
+Krzysztof?
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
