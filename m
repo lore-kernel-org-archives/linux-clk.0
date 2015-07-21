@@ -1,38 +1,36 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 13 Jul 2015 17:40:23 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:41033 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933239AbbGUXN4 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jul 2015 19:13:56 -0400
+Date: Tue, 21 Jul 2015 16:13:53 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	linux-mediatek@lists.infradead.org,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Olof Johansson <olof@lixom.net>, srv_heupstream@mediatek.com,
-	linux-arm-kernel@lists.infradead.org,
-	Daniel Kurtz <djkurtz@chromium.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 4/5] clk: mediatek: add 13mhz clock for MT8173
-Message-ID: <20150714004023.GL30412@codeaurora.org>
-References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
- <1436779969-18610-5-git-send-email-yingjoe.chen@mediatek.com>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: pxa: fix core frequency reporting unit
+Message-ID: <20150721231353.GC3738@codeaurora.org>
+References: <1436734193-6915-1-git-send-email-robert.jarzmik@free.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1436779969-18610-5-git-send-email-yingjoe.chen@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1436734193-6915-1-git-send-email-robert.jarzmik@free.fr>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/13, Yingjoe Chen wrote:
-> Add 13mhz clock used by GPT timer in infracfg.
+On 07/12, Robert Jarzmik wrote:
+> Legacy drivers which are not yet ported, such as cpufreq-pxa[23]xx, rely
+> on pxaXXx_get_clk_frequency_khz() to find the CPU core frequency.
 > 
-> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> This reporting was broken because the expected unit is kHz and not
+> Hz. Fix the reporting for pxa25x, pxa27x and pxa3xx.
+> 
+> Fixes: fe7710fae477 ("clk: add pxa25x clock drivers")
+> Fixes: d40670dc6169 ("clk: add pxa27x clock drivers")
+> Fixes: 9bbb8a338fb2 ("clk: pxa: add pxa3xx clock driver")
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 > ---
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
