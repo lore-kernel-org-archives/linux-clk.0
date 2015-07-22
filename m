@@ -1,318 +1,83 @@
-Return-Path: <k.kozlowski@samsung.com>
-Message-id: <559F83D6.8040409@samsung.com>
-Date: Fri, 10 Jul 2015 17:35:34 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
- Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
- Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>
-Subject: Re: [PATCH v2 5/7] ARM: dts: Exynos4x12: add CPU OPP and regulator
- supply property
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <1436456621-29839-6-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1436456621-29839-6-git-send-email-b.zolnierkie@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:13292 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933478AbbGVNJ3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 22 Jul 2015 09:09:29 -0400
+Message-ID: <1437570566.8014.37.camel@linux.intel.com>
+Subject: Re: [PATCH v4 3/6] clk: fractional-divider: keep mwidth and nwidth
+ internally
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, heikki.krogerus@linux.intel.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
+Date: Wed, 22 Jul 2015 16:09:26 +0300
+In-Reply-To: <20150722004124.GE15042@codeaurora.org>
+References: <1436886723-111895-1-git-send-email-andriy.shevchenko@linux.intel.com>
+	 <1436886723-111895-4-git-send-email-andriy.shevchenko@linux.intel.com>
+	 <20150722004124.GE15042@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10.07.2015 00:43, Bartlomiej Zolnierkiewicz wrote:
-> For Exynos4x12 platforms, add CPU operating points (using
-> opp-v2 bindings) and CPU regulator supply properties for
-> migrating from Exynos specific cpufreq driver to using
-> generic cpufreq driver.
+On Tue, 2015-07-21 at 17:41 -0700, Stephen Boyd wrote:
+> On 07/14, Andy Shevchenko wrote:
+> > diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk
+> > -fractional-divider.c
+> > index 7cfcc56..16f42ae 100644
+> > --- a/drivers/clk/clk-fractional-divider.c
+> > +++ b/drivers/clk/clk-fractional-divider.c
+> > @@ -128,9 +128,11 @@ struct clk 
+> > *clk_register_fractional_divider(struct device *dev,
+> >  
+> >  	fd->reg = reg;
+> >  	fd->mshift = mshift;
+> > -	fd->mmask = (BIT(mwidth) - 1) << mshift;
+> > +	fd->mwidth = mwidth;
+> > +	fd->mmask = GENMASK(mwidth - 1, 0) << mshift;
+> >  	fd->nshift = nshift;
+> > -	fd->nmask = (BIT(nwidth) - 1) << nshift;
+> > +	fd->nwidth = nwidth;
+> > +	fd->nmask = GENMASK(nwidth - 1, 0) << nshift;
 > 
-> Based on the earlier work by Thomas Abraham.
-> 
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> Cc: Andreas Faerber <afaerber@suse.de>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4212.dtsi               | 81 ++++++++++++++++++++++++
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 ++
->  arch/arm/boot/dts/exynos4412-origen.dts         |  5 ++
->  arch/arm/boot/dts/exynos4412-trats2.dts         |  5 ++
->  arch/arm/boot/dts/exynos4412.dtsi               | 83 +++++++++++++++++++++++++
->  5 files changed, 178 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-> index d9c8efee..9dc40d5 100644
-> --- a/arch/arm/boot/dts/exynos4212.dtsi
-> +++ b/arch/arm/boot/dts/exynos4212.dtsi
-> @@ -30,6 +30,9 @@
->  			device_type = "cpu";
->  			compatible = "arm,cortex-a9";
->  			reg = <0xA00>;
-> +			clocks = <&clock CLK_ARM_CLK>;
-> +			clock-names = "cpu";
-> +			operating-points-v2 = <&cpu0_opp_table>;
->  			cooling-min-level = <13>;
->  			cooling-max-level = <7>;
->  			#cooling-cells = <2>; /* min followed by max */
-> @@ -39,6 +42,84 @@
->  			device_type = "cpu";
->  			compatible = "arm,cortex-a9";
->  			reg = <0xA01>;
-> +			operating-points-v2 = <&cpu0_opp_table>;
-> +		};
-> +	};
-> +
-> +	cpu0_opp_table: opp_table0 {
-> +		compatible = "operating-points-v2";
-> +		opp-shared;
-> +
-> +		opp00 {
-> +			opp-hz = <200000000>;
-> +			opp-microvolt = <900000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp01 {
-> +			opp-hz = <300000000>;
-> +			opp-microvolt = <900000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp02 {
-> +			opp-hz = <400000000>;
-> +			opp-microvolt = <925000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp03 {
-> +			opp-hz = <500000000>;
-> +			opp-microvolt = <950000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp04 {
-> +			opp-hz = <600000000>;
-> +			opp-microvolt = <975000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp05 {
-> +			opp-hz = <700000000>;
-> +			opp-microvolt = <987500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp06 {
-> +			opp-hz = <800000000>;
-> +			opp-microvolt = <1000000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp07 {
-> +			opp-hz = <900000000>;
-> +			opp-microvolt = <1037500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp08 {
-> +			opp-hz = <1000000000>;
-> +			opp-microvolt = <1087500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp09 {
-> +			opp-hz = <1100000000>;
-> +			opp-microvolt = <1137500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp10 {
-> +			opp-hz = <1200000000>;
-> +			opp-microvolt = <1187500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp11 {
-> +			opp-hz = <1300000000>;
-> +			opp-microvolt = <1250000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp12 {
-> +			opp-hz = <1400000000>;
-> +			opp-microvolt = <1287500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp13 {
-> +			opp-hz = <1500000000>;
-> +			opp-microvolt = <1350000>;
-> +			clock-latency-ns = <200000>;
-> +			turbo-mode;
->  		};
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> index ca7d168..1c7811a 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> @@ -507,3 +507,7 @@
->  &watchdog {
->  	status = "okay";
->  };
-> +
-> +&cpu0 {
-> +	cpu0-supply = <&buck2_reg>;
-> +};
+> Please do the shifts in the GENMASK.
 
-Can you put this in alphabetical order (before ehci node)?
+It's not optimal. Waste of performance.
 
-> diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-> index 84c7631..21150b4 100644
-> --- a/arch/arm/boot/dts/exynos4412-origen.dts
-> +++ b/arch/arm/boot/dts/exynos4412-origen.dts
-> @@ -532,3 +532,8 @@
->  &watchdog {
->  	status = "okay";
->  };
-> +
-> +
-> +&cpu0 {
-> +	cpu0-supply = <&buck2_reg>;
-> +};
+32-bit case on 32-bit machine (similar to other cases on x86).
 
-Ditto
+a) GENMASK(x - 1, 0) << y
 
-> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-> index afc199d..1ee43456 100644
-> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
-> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-> @@ -1313,3 +1313,8 @@
->  	vtmu-supply = <&ldo10_reg>;
->  	status = "okay";
->  };
-> +
-> +
-> +&cpu0 {
-> +	cpu0-supply = <&buck2_reg>;
-> +};
+        movl    $32, %ecx
+        subb    4(%esp), %cl
+        movl    $-1, %eax
+        shrl    %cl, %eax
+        movzbl  8(%esp), %ecx
+        sall    %cl, %eax
+        ret
 
-The same.
+b) GENMASK(x + y - 1, y)
 
-Rest looks fine, so with the re-ordering:
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
+        pushl   %esi
+        pushl   %ebx
+        movl    $1, %edx
+        movzbl  12(%esp), %eax
+        movzbl  16(%esp), %esi
+        movl    $-1, %ebx
+        subl    %eax, %edx
+        movl    %ebx, %eax
+        subl    %esi, %edx
+        leal    31(%edx), %ecx
+        shrl    %cl, %eax
+        movl    %esi, %ecx
+        sall    %cl, %ebx
+        andl    %ebx, %eax
+        popl    %ebx
+        popl    %esi
+        ret
 
 
-> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-> index b78ada7..cead3a7 100644
-> --- a/arch/arm/boot/dts/exynos4412.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412.dtsi
-> @@ -30,6 +30,9 @@
->  			device_type = "cpu";
->  			compatible = "arm,cortex-a9";
->  			reg = <0xA00>;
-> +			clocks = <&clock CLK_ARM_CLK>;
-> +			clock-names = "cpu";
-> +			operating-points-v2 = <&cpu0_opp_table>;
->  			cooling-min-level = <13>;
->  			cooling-max-level = <7>;
->  			#cooling-cells = <2>; /* min followed by max */
-> @@ -39,18 +42,98 @@
->  			device_type = "cpu";
->  			compatible = "arm,cortex-a9";
->  			reg = <0xA01>;
-> +			operating-points-v2 = <&cpu0_opp_table>;
->  		};
->  
->  		cpu@A02 {
->  			device_type = "cpu";
->  			compatible = "arm,cortex-a9";
->  			reg = <0xA02>;
-> +			operating-points-v2 = <&cpu0_opp_table>;
->  		};
->  
->  		cpu@A03 {
->  			device_type = "cpu";
->  			compatible = "arm,cortex-a9";
->  			reg = <0xA03>;
-> +			operating-points-v2 = <&cpu0_opp_table>;
-> +		};
-> +	};
-> +
-> +	cpu0_opp_table: opp_table0 {
-> +		compatible = "operating-points-v2";
-> +		opp-shared;
-> +
-> +		opp00 {
-> +			opp-hz = <200000000>;
-> +			opp-microvolt = <900000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp01 {
-> +			opp-hz = <300000000>;
-> +			opp-microvolt = <900000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp02 {
-> +			opp-hz = <400000000>;
-> +			opp-microvolt = <925000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp03 {
-> +			opp-hz = <500000000>;
-> +			opp-microvolt = <950000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp04 {
-> +			opp-hz = <600000000>;
-> +			opp-microvolt = <975000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp05 {
-> +			opp-hz = <700000000>;
-> +			opp-microvolt = <987500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp06 {
-> +			opp-hz = <800000000>;
-> +			opp-microvolt = <1000000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp07 {
-> +			opp-hz = <900000000>;
-> +			opp-microvolt = <1037500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp08 {
-> +			opp-hz = <1000000000>;
-> +			opp-microvolt = <1087500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp09 {
-> +			opp-hz = <1100000000>;
-> +			opp-microvolt = <1137500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp10 {
-> +			opp-hz = <1200000000>;
-> +			opp-microvolt = <1187500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp11 {
-> +			opp-hz = <1300000000>;
-> +			opp-microvolt = <1250000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp12 {
-> +			opp-hz = <1400000000>;
-> +			opp-microvolt = <1287500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp13 {
-> +			opp-hz = <1500000000>;
-> +			opp-microvolt = <1350000>;
-> +			clock-latency-ns = <200000>;
-> +			turbo-mode;
->  		};
->  	};
->  
-> 
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
