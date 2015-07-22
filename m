@@ -1,69 +1,93 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH] clk: pxa: fix core frequency reporting unit
-Date: Sun, 12 Jul 2015 22:49:53 +0200
-Message-Id: <1436734193-6915-1-git-send-email-robert.jarzmik@free.fr>
+Return-Path: <yingjoe.chen@mediatek.com>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Daniel Kurtz <djkurtz@chromium.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+CC: James Liao <jamesjj.liao@mediatek.com>, Russell King
+	<linux@arm.linux.org.uk>, srv_heupstream <srv_heupstream@mediatek.com>, Arnd
+ Bergmann <arnd@arndb.de>, "open list:OPEN FIRMWARE AND..."
+	<devicetree@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, " linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Rob Herring
+	<robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>, Sascha Hauer
+	<kernel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>,
+	<linux-clk@vger.kernel.org>, " linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Yingjoe Chen
+	<yingjoe.chen@mediatek.com>
+Subject: [PATCH v2 1/5] clocksource: mediatek: do not enable GPT_CLK_EVT when setup
+Date: Wed, 22 Jul 2015 16:14:38 +0800
+Message-ID: <1437552878-3684-1-git-send-email-yingjoe.chen@mediatek.com>
+In-Reply-To: <CAGS+omD8k_Cfxv3bYyjmjtLbiavo-WmJPn0Z-CBhN_nnv65Tag@mail.gmail.com>
+References: <CAGS+omD8k_Cfxv3bYyjmjtLbiavo-WmJPn0Z-CBhN_nnv65Tag@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: yingjoe.chen@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Legacy drivers which are not yet ported, such as cpufreq-pxa[23]xx, rely
-on pxaXXx_get_clk_frequency_khz() to find the CPU core frequency.
+Spurious mtk timer interrupt is noticed at boot and cause kernel
+crash. It seems if GPT is enabled, it will latch irq status even
+when its IRQ is disabled. When irq is enabled afterward, we see
+spurious interrupt.
+Change init flow to only enable GPT_CLK_SRC at mtk_timer_init.
 
-This reporting was broken because the expected unit is kHz and not
-Hz. Fix the reporting for pxa25x, pxa27x and pxa3xx.
-
-Fixes: fe7710fae477 ("clk: add pxa25x clock drivers")
-Fixes: d40670dc6169 ("clk: add pxa27x clock drivers")
-Fixes: 9bbb8a338fb2 ("clk: pxa: add pxa3xx clock driver")
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
+Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
 ---
- drivers/clk/pxa/clk-pxa25x.c | 2 +-
- drivers/clk/pxa/clk-pxa27x.c | 2 +-
- drivers/clk/pxa/clk-pxa3xx.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/pxa/clk-pxa25x.c b/drivers/clk/pxa/clk-pxa25x.c
-index 6cd88d963a7f..542e45ef5087 100644
---- a/drivers/clk/pxa/clk-pxa25x.c
-+++ b/drivers/clk/pxa/clk-pxa25x.c
-@@ -79,7 +79,7 @@ unsigned int pxa25x_get_clk_frequency_khz(int info)
- 			clks[3] / 1000000, (clks[3] % 1000000) / 10000);
- 	}
- 
--	return (unsigned int)clks[0];
-+	return (unsigned int)clks[0] / KHz;
+Update to my patch [1], added __init as Daniel suggest. This is the
+only patch that need to change in that series, so I only sent this one.
+
+http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001545.html
+
+ drivers/clocksource/mtk_timer.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clocksource/mtk_timer.c b/drivers/clocksource/mtk_timer.c
+index 68ab423..2ba5b66 100644
+--- a/drivers/clocksource/mtk_timer.c
++++ b/drivers/clocksource/mtk_timer.c
+@@ -156,9 +156,11 @@ static void mtk_timer_global_reset(struct mtk_clock_event_device *evt)
+ 	writel(0x3f, evt->gpt_base + GPT_IRQ_ACK_REG);
  }
  
- static unsigned long clk_pxa25x_memory_get_rate(struct clk_hw *hw,
-diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
-index 9a31b77eed23..5b82d30baf9f 100644
---- a/drivers/clk/pxa/clk-pxa27x.c
-+++ b/drivers/clk/pxa/clk-pxa27x.c
-@@ -80,7 +80,7 @@ unsigned int pxa27x_get_clk_frequency_khz(int info)
- 		pr_info("System bus clock: %ld.%02ldMHz\n",
- 			clks[4] / 1000000, (clks[4] % 1000000) / 10000);
- 	}
--	return (unsigned int)clks[0];
-+	return (unsigned int)clks[0] / KHz;
+-static void
+-mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
++static void __init mtk_timer_setup(struct mtk_clock_event_device *evt,
++				   u8 timer, u8 option, bool enable)
+ {
++	u32 val;
++
+ 	writel(TIMER_CTRL_CLEAR | TIMER_CTRL_DISABLE,
+ 		evt->gpt_base + TIMER_CTRL_REG(timer));
+ 
+@@ -167,8 +169,10 @@ mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
+ 
+ 	writel(0x0, evt->gpt_base + TIMER_CMP_REG(timer));
+ 
+-	writel(TIMER_CTRL_OP(option) | TIMER_CTRL_ENABLE,
+-			evt->gpt_base + TIMER_CTRL_REG(timer));
++	val = TIMER_CTRL_OP(option);
++	if (enable)
++		val |= TIMER_CTRL_ENABLE;
++	writel(val, evt->gpt_base + TIMER_CTRL_REG(timer));
  }
  
- bool pxa27x_is_ppll_disabled(void)
-diff --git a/drivers/clk/pxa/clk-pxa3xx.c b/drivers/clk/pxa/clk-pxa3xx.c
-index 4b93a1efb36d..c677b9ab5367 100644
---- a/drivers/clk/pxa/clk-pxa3xx.c
-+++ b/drivers/clk/pxa/clk-pxa3xx.c
-@@ -78,7 +78,7 @@ unsigned int pxa3xx_get_clk_frequency_khz(int info)
- 		pr_info("System bus clock: %ld.%02ldMHz\n",
- 			clks[4] / 1000000, (clks[4] % 1000000) / 10000);
- 	}
--	return (unsigned int)clks[0];
-+	return (unsigned int)clks[0] / KHz;
- }
+ static void mtk_timer_enable_irq(struct mtk_clock_event_device *evt, u8 timer)
+@@ -235,12 +239,12 @@ static void __init mtk_timer_init(struct device_node *node)
+ 	evt->ticks_per_jiffy = DIV_ROUND_UP(rate, HZ);
  
- static unsigned long clk_pxa3xx_ac97_get_rate(struct clk_hw *hw,
+ 	/* Configure clock source */
+-	mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN);
++	mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN, true);
+ 	clocksource_mmio_init(evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC),
+ 			node->name, rate, 300, 32, clocksource_mmio_readl_up);
+ 
+ 	/* Configure clock event */
+-	mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT);
++	mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT, false);
+ 	clockevents_config_and_register(&evt->dev, rate, 0x3,
+ 					0xffffffff);
+ 
 -- 
-2.1.4
+1.8.1.1.dirty
