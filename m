@@ -1,48 +1,52 @@
-Return-Path: <k.kozlowski@samsung.com>
-Message-id: <559F80A8.9050706@samsung.com>
-Date: Fri, 10 Jul 2015 17:22:00 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
- Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
- Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] cpufreq-dt: add turbo modes support
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <1436456621-29839-4-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1436456621-29839-4-git-send-email-b.zolnierkie@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55AF6570.3010505@st.com>
+Date: Wed, 22 Jul 2015 11:42:08 +0200
+From: Maxime Coquelin <maxime.coquelin@st.com>
+MIME-Version: 1.0
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 9/9] ARM: STi: DT: Rename st_pll3200c32_407_c0_x into
+ st_pll3200c32_cx_x
+References: <1435068567-30995-1-git-send-email-gabriel.fernandez@linaro.org> <1435068567-30995-10-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1435068567-30995-10-git-send-email-gabriel.fernandez@linaro.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10.07.2015 00:43, Bartlomiej Zolnierkiewicz wrote:
-> Add turbo modes (from opp-v2 bindings) support using
-> existing cpufreq 'boost' mode infrastructure:
-> - add boost_supported field to struct cpufreq_dt_platform_data
-> - set dt_cpufreq_driver.boost_supported in dt_cpufreq_probe()
-> 
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Hi Gabriel,
+
+On 06/23/2015 04:09 PM, Gabriel Fernandez wrote:
+> Use a generic name for this kind of PLL
+>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 > ---
->  drivers/cpufreq/cpufreq-dt.c | 7 ++++++-
->  include/linux/cpufreq-dt.h   | 1 +
->  2 files changed, 7 insertions(+), 1 deletion(-)
+>   Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt | 4 ++--
+>   arch/arm/boot/dts/stih407-clock.dtsi                         | 4 ++--
+>   arch/arm/boot/dts/stih410-clock.dtsi                         | 4 ++--
+>   arch/arm/boot/dts/stih418-clock.dtsi                         | 4 ++--
+>   4 files changed, 8 insertions(+), 8 deletions(-)
+>
+>
 
-Looks fine,
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Patch applied to sti-dt-for-v4.3.
 
-Best regards,
-Krzysztof
+Thanks!
+Maxime
