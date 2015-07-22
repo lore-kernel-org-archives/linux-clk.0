@@ -1,117 +1,155 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:36239 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754638AbbGaPOh (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jul 2015 11:14:37 -0400
-From: Matthias Brugger <matthias.bgg@gmail.com>
-To: mturquette@linaro.org, sboyd@codeaurora.org, matthias.bgg@gmail.com
-Cc: s.hauer@pengutronix.de, jamesjj.liao@mediatek.com,
-	henryc.chen@mediatek.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, manabian@gmail.com,
-	p.zabel@pengutronix.com
-Subject: [PATCH v4 RESEND 2/3] clk: mediatek: Add support for clk-mux using regmap
-Date: Fri, 31 Jul 2015 17:14:18 +0200
-Message-Id: <1438355659-21558-3-git-send-email-matthias.bgg@gmail.com>
-In-Reply-To: <1438355659-21558-1-git-send-email-matthias.bgg@gmail.com>
-References: <1438355659-21558-1-git-send-email-matthias.bgg@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Date: Wed, 22 Jul 2015 14:32:23 +0100
+From: Liviu Dudau <Liviu.Dudau@arm.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v4 8/8] arm64: dts: add clock support for all the cpus
+Message-ID: <20150722133223.GI14923@e106497-lin.cambridge.arm.com>
+References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
+ <1433760002-24120-9-git-send-email-sudeep.holla@arm.com>
+MIME-Version: 1.0
+In-Reply-To: <1433760002-24120-9-git-send-email-sudeep.holla@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patches adds support for the mediatek clocks to be able to register
-and use a clk-mux wich relies on regmap.
+On Mon, Jun 08, 2015 at 11:40:02AM +0100, Sudeep Holla wrote:
+> This patch adds the CPU clocks so that the CPU DVFS can be enabled.
+> 
+> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>  arch/arm64/boot/dts/arm/juno-r1.dts | 6 ++++++
+>  arch/arm64/boot/dts/arm/juno.dts    | 6 ++++++
+>  2 files changed, 12 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/arm/juno-r1.dts b/arch/arm64/boot/dts/arm/juno-r1.dts
+> index 69130840c6cd..5eef4aa0c532 100644
+> --- a/arch/arm64/boot/dts/arm/juno-r1.dts
+> +++ b/arch/arm64/boot/dts/arm/juno-r1.dts
+> @@ -66,6 +66,7 @@
+>  			device_type = "cpu";
+>  			enable-method = "psci";
+>  			next-level-cache = <&A57_L2>;
+> +			clocks = <&scpi_dvfs 0>;
+>  		};
+>  
+>  		A57_1: cpu@1 {
+> @@ -74,6 +75,7 @@
+>  			device_type = "cpu";
+>  			enable-method = "psci";
+>  			next-level-cache = <&A57_L2>;
+> +			clocks = <&scpi_dvfs 0>;
+>  		};
+>  
+>  		A53_0: cpu@100 {
+> @@ -82,6 +84,7 @@
+>  			device_type = "cpu";
+>  			enable-method = "psci";
+>  			next-level-cache = <&A53_L2>;
+> +			clocks = <&scpi_dvfs 1>;
+>  		};
+>  
+>  		A53_1: cpu@101 {
+> @@ -90,6 +93,7 @@
+>  			device_type = "cpu";
+>  			enable-method = "psci";
+>  			next-level-cache = <&A53_L2>;
+> +			clocks = <&scpi_dvfs 1>;
+>  		};
+>  
+>  		A53_2: cpu@102 {
+> @@ -98,6 +102,7 @@
+>  			device_type = "cpu";
+>  			enable-method = "psci";
+>  			next-level-cache = <&A53_L2>;
+> +			clocks = <&scpi_dvfs 1>;
+>  		};
+>  
+>  		A53_3: cpu@103 {
+> @@ -106,6 +111,7 @@
+>  			device_type = "cpu";
+>  			enable-method = "psci";
+>  			next-level-cache = <&A53_L2>;
+> +			clocks = <&scpi_dvfs 1>;
+>  		};
+>  
+>  		A57_L2: l2-cache0 {
+> diff --git a/arch/arm64/boot/dts/arm/juno.dts b/arch/arm64/boot/dts/arm/juno.dts
+> index ce1128a54c8d..c02f880584e8 100644
+> --- a/arch/arm64/boot/dts/arm/juno.dts
+> +++ b/arch/arm64/boot/dts/arm/juno.dts
+> @@ -66,6 +66,7 @@
+>  			device_type = "cpu";
+>  			enable-method = "psci";
+>  			next-level-cache = <&A57_L2>;
+> +			clocks = <&scpi_dvfs 0>;
+>  		};
+>  
+>  		A57_1: cpu@1 {
+> @@ -74,6 +75,7 @@
+>  			device_type = "cpu";
+>  			enable-method = "psci";
+>  			next-level-cache = <&A57_L2>;
+> +			clocks = <&scpi_dvfs 0>;
+>  		};
+>  
+>  		A53_0: cpu@100 {
+> @@ -82,6 +84,7 @@
+>  			device_type = "cpu";
+>  			enable-method = "psci";
+>  			next-level-cache = <&A53_L2>;
+> +			clocks = <&scpi_dvfs 1>;
+>  		};
+>  
+>  		A53_1: cpu@101 {
+> @@ -90,6 +93,7 @@
+>  			device_type = "cpu";
+>  			enable-method = "psci";
+>  			next-level-cache = <&A53_L2>;
+> +			clocks = <&scpi_dvfs 1>;
+>  		};
+>  
+>  		A53_2: cpu@102 {
+> @@ -98,6 +102,7 @@
+>  			device_type = "cpu";
+>  			enable-method = "psci";
+>  			next-level-cache = <&A53_L2>;
+> +			clocks = <&scpi_dvfs 1>;
+>  		};
+>  
+>  		A53_3: cpu@103 {
+> @@ -106,6 +111,7 @@
+>  			device_type = "cpu";
+>  			enable-method = "psci";
+>  			next-level-cache = <&A53_L2>;
+> +			clocks = <&scpi_dvfs 1>;
+>  		};
+>  
+>  		A57_L2: l2-cache0 {
+> -- 
+> 1.9.1
+> 
 
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
----
- drivers/clk/mediatek/clk-mtk.c | 37 +++++++++++++++++++++++++++++++++++++
- drivers/clk/mediatek/clk-mtk.h | 26 ++++++++++++++++++++++++++
- 2 files changed, 63 insertions(+)
+Acked-by: Liviu Dudau <Liviu.Dudau@arm.com>
 
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 18444ae..cf953a8 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -111,6 +111,43 @@ int mtk_clk_register_gates(struct device_node *node, const struct mtk_gate *clks
- 	return 0;
- }
- 
-+int mtk_clk_regm_register_mux(struct device_node *node,
-+		const struct mtk_regm_mux *clks, int num,
-+		struct clk_onecell_data *clk_data)
-+{
-+	int i;
-+	struct clk *clk;
-+	struct regmap *regmap;
-+
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	regmap = syscon_node_to_regmap(node);
-+	if (IS_ERR(regmap)) {
-+		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
-+				PTR_ERR(regmap));
-+		return PTR_ERR(regmap);
-+	}
-+
-+	for (i = 0; i < num; i++) {
-+		const struct mtk_regm_mux *mux = &clks[i];
-+
-+		clk = clk_regm_register_mux(NULL, mux->name, mux->parent_names,
-+					mux->num_parents, 0, regmap,
-+					mux->mux_offset, mux->mux_shift,
-+					mux->mux_width, mux->flags, NULL);
-+		if (IS_ERR(clk)) {
-+			pr_err("Failed to register clk mux %s: %ld\n",
-+					mux->name, PTR_ERR(clk));
-+			continue;
-+		}
-+
-+		clk_data->clks[mux->id] = clk;
-+	}
-+
-+	return 0;
-+}
-+
- struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
- 		void __iomem *base, spinlock_t *lock)
- {
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index 9dda9d8..6fe85ca 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -156,6 +156,32 @@ void __init mtk_clk_register_plls(struct device_node *node,
- 		const struct mtk_pll_data *plls, int num_plls,
- 		struct clk_onecell_data *clk_data);
- 
-+struct mtk_regm_mux {
-+	int id;
-+	const char *name;
-+	const char * const *parent_names;
-+	u8 num_parents;
-+	unsigned flags;
-+	uint32_t mux_offset;
-+	uint32_t mux_shift;
-+	uint32_t mux_width;
-+};
-+
-+int __init mtk_clk_regm_register_mux(struct device_node *node,
-+		const struct mtk_regm_mux *clks, int num,
-+		struct clk_onecell_data *clk_data);
-+
-+#define MUX_REGMAP(_id, _name, _parents, _offset, _shift, _width) {	\
-+		.id = _id,						\
-+		.name = _name,						\
-+		.parent_names = _parents,				\
-+		.num_parents = ARRAY_SIZE(_parents),			\
-+		.flags = CLK_SET_RATE_PARENT,				\
-+		.mux_offset = _offset,					\
-+		.mux_shift = _shift,					\
-+		.mux_width = _width,					\
-+	}
-+
- #ifdef CONFIG_RESET_CONTROLLER
- void mtk_register_reset_controller(struct device_node *np,
- 			unsigned int num_regs, int regofs);
 -- 
-1.9.1
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
