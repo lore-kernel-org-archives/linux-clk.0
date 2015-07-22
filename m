@@ -1,106 +1,246 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com
-Cc: thomas.ab@samsung.com, b.zolnierkie@samsung.com, kyungmin.park@samsung.com,
- cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v5 1/3] clk: samsung: exynos3250: Add cpu clock configuration
- data and instaniate cpu clock
-Date: Wed, 01 Jul 2015 22:21:15 +0900
-Message-id: <1435756877-26736-2-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1435756877-26736-1-git-send-email-cw00.choi@samsung.com>
-References: <1435756877-26736-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Date: Wed, 22 Jul 2015 10:55:01 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 1/8] Documentation: add DT binding for ARM System
+ Control and Power Interface(SCPI) protocol
+Message-ID: <20150722095501.GA15809@leverpostej>
+References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
+ <1433760002-24120-2-git-send-email-sudeep.holla@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1433760002-24120-2-git-send-email-sudeep.holla@arm.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch add CPU clock configuration data and instantiate the CPU clock type
-for Exynos3250 to support Samsung specific cpu-clock type.
+Hi,
 
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/clk/samsung/clk-exynos3250.c   | 32 ++++++++++++++++++++++++++++++--
- include/dt-bindings/clock/exynos3250.h |  1 +
- 2 files changed, 31 insertions(+), 2 deletions(-)
+This generally looks fine, but I believe you've misunderstood the usage
+of clock-indices, and I think that your usage of clock-specifiers is
+somewhat confusing.
 
-diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
-index 538de66a759e..378ad5ad3492 100644
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -19,6 +19,7 @@
- #include <dt-bindings/clock/exynos3250.h>
- 
- #include "clk.h"
-+#include "clk-cpu.h"
- #include "clk-pll.h"
- 
- #define SRC_LEFTBUS		0x4200
-@@ -319,8 +320,10 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
- 	MUX(CLK_MOUT_MPLL_USER_C, "mout_mpll_user_c", mout_mpll_user_p,
- 	    SRC_CPU, 24, 1),
- 	MUX(CLK_MOUT_HPM, "mout_hpm", mout_hpm_p, SRC_CPU, 20, 1),
--	MUX(CLK_MOUT_CORE, "mout_core", mout_core_p, SRC_CPU, 16, 1),
--	MUX(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
-+	MUX_F(CLK_MOUT_CORE, "mout_core", mout_core_p, SRC_CPU, 16, 1,
-+			CLK_SET_RATE_PARENT, 0),
-+	MUX_F(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
-+			CLK_SET_RATE_PARENT, 0),
- };
- 
- static struct samsung_div_clock div_clks[] __initdata = {
-@@ -772,6 +775,26 @@ static struct samsung_cmu_info cmu_info __initdata = {
- 	.nr_clk_regs		= ARRAY_SIZE(exynos3250_cmu_clk_regs),
- };
- 
-+#define E3250_CPU_DIV0(apll, pclk_dbg, atb, corem)                     \
-+               (((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |  \
-+               ((corem) << 4))
-+#define E3250_CPU_DIV1(hpm, copy)					\
-+		(((hpm) << 4) | ((copy) << 0))
-+
-+static const struct exynos_cpuclk_cfg_data e3250_armclk_d[] __initconst = {
-+       { 1000000, E3250_CPU_DIV0(1, 7, 4, 1), E3250_CPU_DIV1(7, 7), },
-+       {  900000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
-+       {  800000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
-+       {  700000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
-+       {  600000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
-+       {  500000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
-+       {  400000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
-+       {  300000, E3250_CPU_DIV0(1, 5, 3, 1), E3250_CPU_DIV1(7, 7), },
-+       {  200000, E3250_CPU_DIV0(1, 3, 3, 1), E3250_CPU_DIV1(7, 7), },
-+       {  100000, E3250_CPU_DIV0(1, 1, 1, 1), E3250_CPU_DIV1(7, 7), },
-+       {  0 },
-+};
-+
- static void __init exynos3250_cmu_init(struct device_node *np)
- {
- 	struct samsung_clk_provider *ctx;
-@@ -780,6 +803,11 @@ static void __init exynos3250_cmu_init(struct device_node *np)
- 	if (!ctx)
- 		return;
- 
-+	exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
-+			mout_core_p[0], mout_core_p[1], 0x14200,
-+			e3250_armclk_d, ARRAY_SIZE(e3250_armclk_d),
-+			CLK_CPU_HAS_DIV1);
-+
- 	exynos3_core_down_clock(ctx->reg_base);
- }
- CLK_OF_DECLARE(exynos3250_cmu, "samsung,exynos3250-cmu", exynos3250_cmu_init);
-diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
-index aab088d30199..63d01c15d2b3 100644
---- a/include/dt-bindings/clock/exynos3250.h
-+++ b/include/dt-bindings/clock/exynos3250.h
-@@ -31,6 +31,7 @@
- #define CLK_FOUT_VPLL			4
- #define CLK_FOUT_UPLL			5
- #define CLK_FOUT_MPLL			6
-+#define CLK_ARM_CLK			7
- 
- /* Muxes */
- #define CLK_MOUT_MPLL_USER_L		16
--- 
-1.8.5.5
+More on that below.
+
+On Mon, Jun 08, 2015 at 11:39:55AM +0100, Sudeep Holla wrote:
+> This patch adds devicetree binding for System Control and Power
+> Interface (SCPI) Message Protocol used between the Application Cores(AP)
+> and the System Control Processor(SCP). The MHU peripheral provides a
+> mechanism for inter-processor communication between SCP's M3 processor
+> and AP.
+> 
+> SCP offers control and management of the core/cluster power states,
+> various power domain DVFS including the core/cluster, certain system
+> clocks configuration, thermal sensors and many others.
+> 
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> CC: Jassi Brar <jassisinghbrar@gmail.com>
+> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
+> Cc: devicetree@vger.kernel.org
+> ---
+>  Documentation/devicetree/bindings/arm/arm,scpi.txt | 156 +++++++++++++++++++++
+>  1 file changed, 156 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/arm,scpi.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/arm,scpi.txt b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+> new file mode 100644
+> index 000000000000..f5f9684e23b3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+> @@ -0,0 +1,156 @@
+> +System Control and Power Interface (SCPI) Message Protocol
+> +----------------------------------------------------------
+> +
+> +Firmware implementing the SCPI described in ARM document number ARM DUI 0922B
+> +("ARM Compute Subsystem SCP: Message Interface Protocols")[0] can be used
+> +by Linux to initiate various system control and power operations.
+> +
+> +Required properties:
+> +
+> +- compatible : should be "arm,scpi"
+> +- mboxes: List of phandle and mailbox channel specifiers
+> +	  All the channels reserved by remote SCP firmware for use by
+> +	  SCPI message protocol should be specified in any order
+> +- shmem : List of phandle pointing to the shared memory(SHM) area between the
+> +	  processors using these mailboxes for IPC, one for each mailbox
+> +	  SHM can be any memory reserved for the purpose of this communication
+> +	  between the processors.
+> +
+> +See Documentation/devicetree/bindings/mailbox/mailbox.txt
+> +for more details about the generic mailbox controller and
+> +client driver bindings.
+> +
+> +Clock bindings for the clocks based on SCPI Message Protocol
+> +------------------------------------------------------------
+> +
+> +This binding uses the common clock binding[1].
+> +
+> +Container Node
+> +==============
+> +Required properties:
+> +- compatible : should be "arm,scpi-clocks"
+> +	       All the clocks provided by SCP firmware via SCPI message
+> +	       protocol much be listed as sub-nodes under this node.
+> +
+> +Sub-nodes
+> +=========
+> +Required properties:
+> +- compatible : shall include one of the following
+> +	"arm,scpi-dvfs-clocks" - all the clocks that are variable and index based.
+> +		These clocks don't provide the full range between the limits
+> +		but only discrete points within the range. The firmware
+> +		provides the mapping for each such operating frequency and the
+> +		index associated with it. The firmware also manages the
+> +		voltage scaling appropriately with the clock scaling.
+> +	"arm,scpi-variable-clocks" - all the clocks that are variable and provide full
+> +		range within the specified range. The firmware provides the
+> +		supported range for each clock.
+> +
+> +Other required properties for all clocks(all from common clock binding):
+> +- #clock-cells : should be set to 1 as each of the SCPI clocks have multiple
+> +	outputs. The clock specifier will be the index to an entry in the list
+> +	of output clocks.
+
+Huh? That's somewhat a circular definition.
+
+What does that number correspond to in the HW? If it's just the number
+that the FW expects, that's a reasonable definition.
+
+> +- clock-output-names : shall be the corresponding names of the outputs.
+
+This is mandatory? What is it used for?
+
+> +- clock-indices: The identifyng number for the clocks(clock_id) in the node as
+
+s/identifyng/identifying/
+
+> +	expected by the firmware. It can be non linear and hence provide the
+> +	mapping	of identifiers into the clock-output-names array.
+> +
+> +SRAM and Shared Memory for SCPI
+> +-------------------------------
+> +
+> +A small area of SRAM is reserved for SCPI communication between application
+> +processors and SCP.
+> +
+> +Required properties:
+> +- compatible : should be "arm,juno-sram-ns" for Non-secure SRAM on Juno
+> +
+> +The rest of the properties should follow the generic mmio-sram discription
+> +found in ../../misc/sysram.txt
+> +
+> +Each sub-node represents the reserved area for SCPI.
+> +
+> +Required sub-node properties:
+> +- reg : The base offset and size of the reserved area with the SRAM
+> +- compatible : should be "arm,juno-scp-shmem" for Non-secure SRAM based
+> +	       shared memory on Juno platforms
+> +
+> +[0] http://community.arm.com/servlet/JiveServlet/download/8401-45-18326/DUI0922B_scp_message_interface.pdf
+> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +Example:
+> +
+> +sram: sram@50000000 {
+> +	compatible = "arm,juno-sram-ns", "mmio-sram";
+> +	reg = <0x0 0x50000000 0x0 0x10000>;
+> +
+> +	#address-cells = <1>;
+> +	#size-cells = <1>;
+> +	ranges = <0 0x0 0x50000000 0x10000>;
+> +
+> +	cpu_scp_lpri: scp-shmem@0 {
+> +		compatible = "arm,juno-scp-shmem";
+> +		reg = <0x0 0x200>;
+> +	};
+> +
+> +	cpu_scp_hpri: scp-shmem@200 {
+> +		compatible = "arm,juno-scp-shmem";
+> +		reg = <0x200 0x200>;
+> +	};
+> +};
+> +
+> +mailbox: mailbox0@40000000 {
+> +	....
+> +	#mbox-cells = <1>;
+> +};
+> +
+> +scpi_protocol: scpi@2e000000 {
+> +	compatible = "arm,scpi";
+> +	mboxes = <&mailbox 0 &mailbox 1>;
+> +	shmem = <&cpu_scp_lpri &cpu_scp_hpri>;
+> +
+> +	clocks {
+> +		compatible = "arm,scpi-clocks";
+> +
+> +		scpi_dvfs: scpi_clocks@0 {
+> +			compatible = "arm,scpi-dvfs-clocks";
+> +			#clock-cells = <1>;
+> +			clock-indices = <0>, <1>, <2>;
+> +			clock-output-names = "vbig", "vlittle", "vgpu";
+> +		};
+> +		scpi_clk: scpi_clocks@3 {
+> +			compatible = "arm,scpi-variable-clocks";
+> +			#clock-cells = <1>;
+> +			clock-indices = <3>, <4>;
+> +			clock-output-names = "pxlclk0", "pxlclk1";
+> +		};
+> +	};
+> +};
+> +
+> +cpu@0 {
+> +	...
+> +	reg = <0 0>;
+> +	clocks = <&scpi_dvfs 0>;
+> +	clock-names = "vbig";
+> +};
+> +
+> +hdlcd@7ff60000 {
+> +	...
+> +	reg = <0 0x7ff60000 0 0x1000>;
+> +	clocks = <&scpi_clk 1>;
+> +	clock-names = "pxlclk";
+> +};
+> +
+> +In the above example, the #clock-cells is set to 1 as required.
+> +scpi_dvfs has 3 output clocks namely: vbig, vlittle and vgpu with 0, 1
+> +and 2 as clock-indices. scpi_clk has 2 output clocks namely: pxlclk0 and
+> +pxlclk1 with 3 and 4 as clock-indices.
+> +
+> +The first consumer in the example is cpu@0 and it has vbig as input clock.
+> +The index '0' in the clock specifier here points to the first entry in the
+> +output clocks of scpi_dvfs for which clock_id asrequired by the firmware
+> +is 0.
+> +
+> +Similarly the second example is hdlcd@7ff60000 and it has pxlclk0 as input
+> +clock. The index '1' in the clock specifier here points to the second entry
+> +in the output clocks of scpi_clocks for which clock_id as required by the
+> +firmware is 4.
+
+To the best of my knowledge, this is wrong. Per the example in
+Documentation/devicetree/bindings/clock/clock-bindings.txt, the
+clock-indices apply to the logical value in the clock-specifier.
+
+So <&scpi_clk 3>, <&scpi_clk 4> exist, (and are named "pxlclk0",
+"pxlclk1" respectively), but <&scpi_clk 0>, <&scpi_clk 1> do not (or at
+least don't have names).
+
+Thanks,
+Mark.
