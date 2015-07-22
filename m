@@ -1,97 +1,98 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH 3/7] ARM: sun6i: Add clock indices
-Date: Sun, 26 Jul 2015 23:14:26 +0200
-Message-Id: <1437945270-32014-4-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>,
+	Sangbeom Kim <sbkim73@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org (open list:SAMSUNG MULTIFUNCTION PMIC
+	DEVICE DRIVERS),
+	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG MULTIFUNCTION PMIC
+	DEVICE DRIVERS),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH] clk: s2mps11: Use kcalloc instead of kzalloc for array allocation
+Date: Wed, 22 Jul 2015 15:04:53 +0530
+Message-Id: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The A31 gates have a non continuous set of clock IDs that are valid. Add
-the clock-indices property to the DT to express this.
+This patch cleans up the driver for,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+  - Use devm_kcalloc varient instead of devm_kzalloc for array
+    allocation.
+  - clk_prepare/unprepare, remove "ret" variable as it is not required
+  - use __exit for cleanup function
+
+As I am referring this driver as a reference for my 88pm800 clk driver,
+applying same changes here as well.
+
+Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
 ---
- arch/arm/boot/dts/sun6i-a31.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Since I do not have platform to test, it would be helpful if someone
+tests it for me.
+I have build tested it.
 
-diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
-index 008047a018cf..3ec456fa03a4 100644
---- a/arch/arm/boot/dts/sun6i-a31.dtsi
-+++ b/arch/arm/boot/dts/sun6i-a31.dtsi
-@@ -252,6 +252,20 @@
- 			compatible = "allwinner,sun6i-a31-ahb1-gates-clk";
- 			reg = <0x01c20060 0x8>;
- 			clocks = <&ahb1>;
-+			clock-indices = <1>, <5>,
-+					<6>, <8>, <9>,
-+					<10>, <11>, <12>,
-+					<13>, <14>,
-+					<17>, <18>, <19>,
-+					<20>, <21>, <22>,
-+					<23>, <24>, <26>,
-+					<27>, <29>,
-+					<30>, <31>, <32>,
-+					<36>, <37>, <40>,
-+					<43>, <44>, <45>,
-+					<46>, <47>, <50>,
-+					<52>, <55>, <56>,
-+					<57>, <58>;
- 			clock-output-names = "ahb1_mipidsi", "ahb1_ss",
- 					"ahb1_dma", "ahb1_mmc0", "ahb1_mmc1",
- 					"ahb1_mmc2", "ahb1_mmc3", "ahb1_nand1",
-@@ -281,6 +295,9 @@
- 			compatible = "allwinner,sun6i-a31-apb1-gates-clk";
- 			reg = <0x01c20068 0x4>;
- 			clocks = <&apb1>;
-+			clock-indices = <0>, <4>,
-+					<5>, <12>,
-+					<13>;
- 			clock-output-names = "apb1_codec", "apb1_digital_mic",
- 					"apb1_pio", "apb1_daudio0",
- 					"apb1_daudio1";
-@@ -299,6 +316,10 @@
- 			compatible = "allwinner,sun6i-a31-apb2-gates-clk";
- 			reg = <0x01c2006c 0x4>;
- 			clocks = <&apb2>;
-+			clock-indices = <0>, <1>,
-+					<2>, <3>, <16>,
-+					<17>, <18>, <19>,
-+					<20>, <21>;
- 			clock-output-names = "apb2_i2c0", "apb2_i2c1",
- 					     "apb2_i2c2", "apb2_i2c3",
- 					     "apb2_uart0", "apb2_uart1",
-@@ -384,6 +405,9 @@
- 			compatible = "allwinner,sun6i-a31-usb-clk";
- 			reg = <0x01c200cc 0x4>;
- 			clocks = <&osc24M>;
-+			clock-indices = <8>, <9>, <10>,
-+					<16>, <17>,
-+					<18>;
- 			clock-output-names = "usb_phy0", "usb_phy1", "usb_phy2",
- 					     "usb_ohci0", "usb_ohci1",
- 					     "usb_ohci2";
+ drivers/clk/clk-s2mps11.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index 9b13a30..e17c66a 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -58,21 +58,17 @@ static struct s2mps11_clk *to_s2mps11_clk(struct clk_hw *hw)
+ static int s2mps11_clk_prepare(struct clk_hw *hw)
+ {
+ 	struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
+-	int ret;
+ 
+-	ret = regmap_update_bits(s2mps11->iodev->regmap_pmic,
++	return regmap_update_bits(s2mps11->iodev->regmap_pmic,
+ 				 s2mps11->reg,
+ 				 s2mps11->mask, s2mps11->mask);
+-
+-	return ret;
+ }
+ 
+ static void s2mps11_clk_unprepare(struct clk_hw *hw)
+ {
+ 	struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
+-	int ret;
+ 
+-	ret = regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
++	regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
+ 			   s2mps11->mask, ~s2mps11->mask);
+ }
+ 
+@@ -186,15 +182,15 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 	struct clk_init_data *clks_init;
+ 	int i, ret = 0;
+ 
+-	s2mps11_clks = devm_kzalloc(&pdev->dev, sizeof(*s2mps11_clk) *
+-					S2MPS11_CLKS_NUM, GFP_KERNEL);
++	s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
++				sizeof(*s2mps11_clk), GFP_KERNEL);
+ 	if (!s2mps11_clks)
+ 		return -ENOMEM;
+ 
+ 	s2mps11_clk = s2mps11_clks;
+ 
+-	clk_table = devm_kzalloc(&pdev->dev, sizeof(struct clk *) *
+-				 S2MPS11_CLKS_NUM, GFP_KERNEL);
++	clk_table = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
++				sizeof(struct clk *), GFP_KERNEL);
+ 	if (!clk_table)
+ 		return -ENOMEM;
+ 
+@@ -322,7 +318,7 @@ static int __init s2mps11_clk_init(void)
+ }
+ subsys_initcall(s2mps11_clk_init);
+ 
+-static void __init s2mps11_clk_cleanup(void)
++static void __exit s2mps11_clk_cleanup(void)
+ {
+ 	platform_driver_unregister(&s2mps11_clk_driver);
+ }
 -- 
-2.4.6
+1.9.1
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
