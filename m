@@ -1,48 +1,57 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-id: <55A62F81.3080801@samsung.com>
-Date: Wed, 15 Jul 2015 19:01:37 +0900
-From: Sylwester nawrocki <s.nawrocki@samsung.com>
-MIME-version: 1.0
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] clk: samsung: exynos5250: add cpu clock
- configuration data and instantiate cpu clock
-References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
- <1435756238-845-2-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1435756238-845-2-git-send-email-b.zolnierkie@samsung.com>
-Content-type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <55B0131F.80404@codeaurora.org>
+Date: Wed, 22 Jul 2015 15:03:11 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+MIME-Version: 1.0
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+ mturquette@baylibre.com, lee.jones@linaro.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH 3/4] clk: 88pm800: Add clk provider driver for 88pm800
+ family of devices
+References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org> <1437476823-3358-4-git-send-email-vaibhav.hiremath@linaro.org> <55AE990E.2040004@codeaurora.org> <55AE9F48.20600@linaro.org> <55AEB103.9010205@codeaurora.org> <55AF37D9.3000006@linaro.org> <55AF3C2E.7010205@samsung.com> <55AF5175.2010701@linaro.org>
+In-Reply-To: <55AF5175.2010701@linaro.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/01/2015 10:10 PM, Bartlomiej Zolnierkiewicz wrote:
-> From: Thomas Abraham<thomas.ab@samsung.com>
+On 07/22/2015 01:16 AM, Vaibhav Hiremath wrote:
 >
-> With the addition of the new Samsung specific cpu-clock type, the
-> arm clock can be represented as a cpu-clock type. Add the CPU clock
-> configuration data and instantiate the CPU clock type for Exynos5250.
 >
-> Changes by Bartlomiej:
-> - split Exynos5250 support from the original patch
-> - moved E5250_CPU_DIV[0,1]() macros to clk-exynos5250.c
+> On Wednesday 22 July 2015 12:16 PM, Krzysztof Kozlowski wrote:
+>>
+>> I am really busy now so I am not following closely other discussions. I
+>> assume you are referring to clk-s2mps11.c. The of_node_put() matches
+>> of_get_child_by_name() when parsing DT.
+>>
+>> So why not of_node_put() just after parsing DT? Well, the result of
+>> of_get_child_by_name() is stored in state container for entire device
+>> life-cycle so we can use it in of_clk_del_provider().
+>>
+>> That was the idea behind it. If it looks incorrect I would be happy to
+>> see a patch :) .
+>>
 >
-> Cc: Tomasz Figa<tomasz.figa@gmail.com>
-> Cc: Michael Turquette<mturquette@baylibre.com>
-> Cc: Javier Martinez Canillas<javier@dowhile0.org>
-> Signed-off-by: Thomas Abraham<thomas.ab@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz<b.zolnierkie@samsung.com>
+> About to respond, I digged more on kobject stuff and sequence in
+> of/dynamic.c and
+>
+> I think you are right, we need of_node_put, as a result of
+> of_get_child_by_name().
+>
+> Stephen,
+> Please let me know if you think otherwise.
+>
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Yes, sounds fine. I was thinking that we grab the reference to the node 
+in of_clk_add_provider() so dropping it here was to undo that, but that 
+isn't true. It probably can be dropped after we register the provider 
+because adding the provider will keep it pinned, but this way is more 
+symmetric so it's fine.
+
+Either way, the error path on probe doesn't call of_node_put(), so 
+that's a leak.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
