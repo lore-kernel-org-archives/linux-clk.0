@@ -1,79 +1,123 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH/RFC 10/11] ARM: shmobile: rcar-gen2: Use syscon to configure
- the CPG
-Date: Tue,  7 Jul 2015 16:10:16 +0200
-Message-Id: <1436278217-20522-11-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
-References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-sh@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Ulrich Hecht <ulrich.hecht@gmail.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Message-ID: <55AFC1F0.1080207@arm.com>
+Date: Wed, 22 Jul 2015 17:16:48 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+To: Liviu Dudau <Liviu.Dudau@arm.com>
+CC: Sudeep Holla <sudeep.holla@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v4 6/8] arm64: dts: add SRAM, MHU mailbox and SCPI support
+ on Juno
+References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com> <1433760002-24120-7-git-send-email-sudeep.holla@arm.com> <20150722132809.GG14923@e106497-lin.cambridge.arm.com> <55AFB96E.1050406@arm.com> <20150722160625.GJ14923@e106497-lin.cambridge.arm.com>
+In-Reply-To: <20150722160625.GJ14923@e106497-lin.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Let the R-Car Gen2 CPG clock driver rely on syscon to read the Mode
-Monitoring Register (MODEMR), instead of passing the register value
-directly.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/mach-shmobile/Kconfig           | 1 +
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 26a036c3ab522128..37faf6e18d26344f 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -23,6 +23,7 @@ config ARCH_RCAR_GEN2
- 	select SYS_SUPPORTS_SH_CMT
- 	select PCI_DOMAINS if PCI
- 	select HAVE_ARM_ARCH_TIMER
-+	select MFD_SYSCON
- 
- config ARCH_RMOBILE
- 	bool
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 570d6bd3784f7464..7a845f4829081cd9 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -15,6 +15,7 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <linux/clk-provider.h>
- #include <linux/clk/shmobile.h>
- #include <linux/clocksource.h>
- #include <linux/device.h>
-@@ -125,7 +126,7 @@ void __init rcar_gen2_timer_init(void)
- 
- 	iounmap(base);
- 
--	rcar_gen2_clocks_init(mode);
-+	of_clk_init(NULL);
- 	clocksource_of_init();
- }
- 
--- 
-1.9.1
 
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+On 22/07/15 17:06, Liviu Dudau wrote:
+> On Wed, Jul 22, 2015 at 04:40:30PM +0100, Sudeep Holla wrote:
+>>
+>>
+>> On 22/07/15 14:28, Liviu Dudau wrote:
+>>> On Mon, Jun 08, 2015 at 11:40:00AM +0100, Sudeep Holla wrote:
+>>>> This patch adds support for the MHU mailbox peripheral used on Juno by
+>>>> application processors to communicate with remote SCP handling most of
+>>>> the CPU/system power management. It also adds the SRAM reserving the
+>>>> shared memory and SCPI message protocol using that shared memory.
+>>>>
+>>>> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+>>>> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
+>>>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+>>>> ---
+>>>>    arch/arm64/boot/dts/arm/juno-base.dtsi   | 31 +++++++++++++++++++++++++++++++
+>>>>    arch/arm64/boot/dts/arm/juno-clocks.dtsi | 23 +++++++++++++++++++++++
+>>>>    2 files changed, 54 insertions(+)
+>>>>
+>>
+>> [..]
+>>
+>>>> diff --git a/arch/arm64/boot/dts/arm/juno-clocks.dtsi b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
+>>>> index 25352ed943e6..64af7370815a 100644
+>>>> --- a/arch/arm64/boot/dts/arm/juno-clocks.dtsi
+>>>> +++ b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
+>>>> @@ -42,3 +42,26 @@
+>>>>    		clock-frequency = <400000000>;
+>>>>    		clock-output-names = "faxi_clk";
+>>>>    	};
+>>>> +
+>>>> +	scpi {
+>>>> +		compatible = "arm,scpi";
+>>>> +		mboxes = <&mailbox 1>;
+>>>> +		shmem = <&cpu_scp_hpri>;
+>>>> +
+>>>> +		clocks {
+>>>> +			compatible = "arm,scpi-clocks";
+>>>> +
+>>>> +			scpi_dvfs: scpi_clocks@0 {
+>>>> +				compatible = "arm,scpi-dvfs-clocks";
+>>>> +				#clock-cells = <1>;
+>>>> +				clock-indices = <0>, <1>, <2>;
+>>>> +				clock-output-names = "vbig", "vlittle", "vgpu";
+>>>> +			};
+>>>> +			scpi_clk: scpi_clocks@3 {
+>>>> +				compatible = "arm,scpi-variable-clocks";
+>>>> +				#clock-cells = <1>;
+>>>> +				clock-indices = <3>, <4>;
+>>>
+>>> Subject to you addressing Mark's comments regarding the indices values (maybe choose
+>>> a different property to show the fact that the index is actually an SCPI index
+>>> rather than the clock's), you can add my
+>>>
+>>
+>> I don't understand why we need to do that. I will anyway follow up on
+>> that thread.
+>
+> Because indices are per clock node, i.e. spi_clk should have clock-indices = <0>, <1>.
+> Of course, you could have a gap in the indices, but that is both awkard and not clearly
+> explained in this documentation.
+>
+
+Hmm, is it not clear ? I am fine to reword it.
+
+clock-indices: The *identifying number* for the clocks(clock_id) in the
+node as *expected by the firmware*. It can be non linear and hence
+provide the mapping of identifiers into the clock-output-names array.
+
+> The index that you declare here is actually what you pass to SCPI. But the way the device
+> tree is presented it declares that there are two clock blocks, one for DVFS and one for
+> PXLCLK. As far as SCPI is concerned there is only one block of clocks, with 3 of them
+> having a discrete set of values, so we are at the intersection of two concepts.
+>
+
+Agreed. The clock-indices is associated with the clock provider which in
+this case is SCPI.
+
+The clock specifier is associated with the clock consumer and all it
+needs to know is which one in the list of clock output am I referring
+to(i.e. the standard definition decoded using of_clk_src_onecell_get
+
+> BTW, for what is worth, the PXLCLK is not really that smooth in its coverage of the range.
+> It might have more accepted frequency values, but the way it is implemented it tends to
+> favour VESA clock values and falls back to a really slow algorithm to generate all other
+> values. Even so, it can fail to find the correct parameters for the PLLs so it will generate
+> a frequency that is different from the requested one.
+
+I don't quite get the context of this info here, but thanks for that :).
+I think most of the clock providers have this limitation and round_rate
+will handle it. Since SCPI specification doesn't provide a mechanism to
+query that, we can't handle it. Hopefully we get that in newer versions
+of the specification ;)
+
+Regards,
+Sudeep
