@@ -1,177 +1,149 @@
-Return-Path: <tomeu.vizoso@gmail.com>
-Return-Path: <tomeu.vizoso@gmail.com>
-Sender: Tomeu Vizoso <tomeu.vizoso@gmail.com>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Stephen Warren <swarren@wwwdotorg.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Mark Brown <broonie@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	linux-arm-kernel@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	devicetree@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-acpi@vger.kernel.org,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from eu-smtp-delivery-143.mimecast.com ([146.101.78.143]:17176 "EHLO
+	eu-smtp-delivery-143.mimecast.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756684AbbGVN2M convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 22 Jul 2015 09:28:12 -0400
+Date: Wed, 22 Jul 2015 14:28:09 +0100
+From: Liviu Dudau <Liviu.Dudau@arm.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
 	Arnd Bergmann <arnd@arndb.de>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	linux-fbdev@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Felipe Balbi <balbi@ti.com>,
-	linux-pwm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	=?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
-	Len Brown <lenb@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-pm@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-gpio@vger.kernel.org,
-	Vinod Koul <vinod.koul@intel.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-tegra@vger.kernel.org,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH v2 0/22] On-demand device probing
-Date: Tue, 28 Jul 2015 15:19:31 +0200
-Message-Id: <1438089593-7696-1-git-send-email-tomeu.vizoso@collabora.com>
+	Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v4 6/8] arm64: dts: add SRAM, MHU mailbox and SCPI
+ support on Juno
+Message-ID: <20150722132809.GG14923@e106497-lin.cambridge.arm.com>
+References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
+ <1433760002-24120-7-git-send-email-sudeep.holla@arm.com>
 MIME-Version: 1.0
+In-Reply-To: <1433760002-24120-7-git-send-email-sudeep.holla@arm.com>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+On Mon, Jun 08, 2015 at 11:40:00AM +0100, Sudeep Holla wrote:
+> This patch adds support for the MHU mailbox peripheral used on Juno by
+> application processors to communicate with remote SCP handling most of
+> the CPU/system power management. It also adds the SRAM reserving the
+> shared memory and SCPI message protocol using that shared memory.
+> 
+> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>  arch/arm64/boot/dts/arm/juno-base.dtsi   | 31 +++++++++++++++++++++++++++++++
+>  arch/arm64/boot/dts/arm/juno-clocks.dtsi | 23 +++++++++++++++++++++++
+>  2 files changed, 54 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/arm/juno-base.dtsi b/arch/arm64/boot/dts/arm/juno-base.dtsi
+> index e3ee96036eca..f8069a98da25 100644
+> --- a/arch/arm64/boot/dts/arm/juno-base.dtsi
+> +++ b/arch/arm64/boot/dts/arm/juno-base.dtsi
+> @@ -17,6 +17,18 @@
+>  		};
+>  	};
+>  
+> +	mailbox: mhu@2b1f0000 {
+> +		compatible = "arm,mhu", "arm,primecell";
+> +		reg = <0x0 0x2b1f0000 0x0 0x1000>;
+> +		interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-names = "mhu_lpri_rx",
+> +				  "mhu_hpri_rx";
+> +		#mbox-cells = <1>;
+> +		clocks = <&soc_refclk100mhz>;
+> +		clock-names = "apb_pclk";
+> +	};
+> +
+>  	gic: interrupt-controller@2c010000 {
+>  		compatible = "arm,gic-400", "arm,cortex-a15-gic";
+>  		reg = <0x0 0x2c010000 0 0x1000>,
+> @@ -44,6 +56,25 @@
+>  			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
+>  	};
+>  
+> +	sram: sram@2e000000 {
+> +		compatible = "arm,juno-sram-ns", "mmio-sram";
+> +		reg = <0x0 0x2e000000 0x0 0x8000>;
+> +
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0 0x0 0x2e000000 0x8000>;
+> +
+> +		cpu_scp_lpri: scp-shmem@0 {
+> +			compatible = "arm,juno-scp-shmem";
+> +			reg = <0x0 0x200>;
+> +		};
+> +
+> +		cpu_scp_hpri: scp-shmem@200 {
+> +			compatible = "arm,juno-scp-shmem";
+> +			reg = <0x200 0x200>;
+> +		};
+> +	};
+> +
+>  	/include/ "juno-clocks.dtsi"
+>  
+>  	dma@7ff00000 {
+> diff --git a/arch/arm64/boot/dts/arm/juno-clocks.dtsi b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
+> index 25352ed943e6..64af7370815a 100644
+> --- a/arch/arm64/boot/dts/arm/juno-clocks.dtsi
+> +++ b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
+> @@ -42,3 +42,26 @@
+>  		clock-frequency = <400000000>;
+>  		clock-output-names = "faxi_clk";
+>  	};
+> +
+> +	scpi {
+> +		compatible = "arm,scpi";
+> +		mboxes = <&mailbox 1>;
+> +		shmem = <&cpu_scp_hpri>;
+> +
+> +		clocks {
+> +			compatible = "arm,scpi-clocks";
+> +
+> +			scpi_dvfs: scpi_clocks@0 {
+> +				compatible = "arm,scpi-dvfs-clocks";
+> +				#clock-cells = <1>;
+> +				clock-indices = <0>, <1>, <2>;
+> +				clock-output-names = "vbig", "vlittle", "vgpu";
+> +			};
+> +			scpi_clk: scpi_clocks@3 {
+> +				compatible = "arm,scpi-variable-clocks";
+> +				#clock-cells = <1>;
+> +				clock-indices = <3>, <4>;
 
-I have a problem with the panel on my Tegra Chromebook taking longer
-than expected to be ready during boot (Stéphane Marchesin reported what
-is basically the same issue in [0]), and have looked into ordered
-probing as a better way of solving this than moving nodes around in the
-DT or playing with initcall levels and linking order.
+Subject to you addressing Mark's comments regarding the indices values (maybe choose
+a different property to show the fact that the index is actually an SCPI index
+rather than the clock's), you can add my
 
-While reading the thread [1] that Alexander Holler started with his
-series to make probing order deterministic, it occurred to me that it
-should be possible to achieve the same by probing devices as they are
-referenced by other devices.
+Acked-by: Liviu Dudau <Liviu.Dudau@arm.com>
 
-This basically reuses the information that is already implicit in the
-probe() implementations, saving us from refactoring existing drivers or
-adding information to DTBs.
+Best regards,
+Liviu
 
-During review of v1 of this series Linus Walleij suggested that it
-should be the device driver core to make sure that dependencies are
-ready before probing a device. I gave this idea a try [2] but Mark Brown
-pointed out to the logic duplication between the resource acquisition
-and dependency discovery code paths (though I think it's fairly minor).
 
-To address that code duplication I experimented with Arnd's devm_probe
-[3] concept of having drivers declare their dependencies instead of
-acquiring them during probe, and while it worked [4], I don't think we
-end up winning anything when compared to just probing devices on-demand
-from resource getters.
-
-One remaining objection is to the "sprinkling" of calls to
-fwnode_ensure_device() in the resource getters of each subsystem, but I
-think it's the right thing to do given that the storage of resources is
-currently subsystem-specific.
-
-We could avoid the above by moving resource storage into the core, but I
-don't think there's a compelling case for that.
-
-I have tested this on boards with Tegra, iMX.6, Exynos and OMAP SoCs,
-and these patches were enough to eliminate all the deferred probes
-(except one in PandaBoard because omap_dma_system doesn't have a
-firmware node as of yet).
-
-With this series I get the kernel to output to the panel in 0.5s,
-instead of 2.8s.
-
-Regards,
-
-Tomeu
-
-[0] http://lists.freedesktop.org/archives/dri-devel/2014-August/066527.html
-
-[1] https://lkml.org/lkml/2014/5/12/452
-
-[2] https://lkml.org/lkml/2015/6/17/305
-
-[3] http://article.gmane.org/gmane.linux.ports.arm.kernel/277689
-
-[4] https://lkml.org/lkml/2015/7/21/441
-
-Changes in v2:
-- Move delay to platform.c
-- Use set_primary_fwnode()
-- Use of_node_full_name()
-- Move the logic for finding a platform device from its firmware node to
-  of/platform.c as it's not needed for ACPI nodes.
-- Add acpi_dev_get_device()
-- Add fwnode_ensure_device() so the mechanism for probing devices on
-  demand is independent of the firmware format.
-- Acquire regulator device lock before returning from regulator_dev_lookup()
-
-Tomeu Vizoso (22):
-  platform: delay device-driver matches until late_initcall
-  of/platform: Set fwnode field for new devices
-  device property: add fwnode_get_name()
-  of/platform: add of_platform_device_find()
-  ACPI: add acpi_dev_get_device()
-  device property: add fwnode_ensure_device()
-  gpio: Probe GPIO drivers on demand
-  gpio: Probe pinctrl devices on demand
-  regulator: core: Reduce critical area in _regulator_get
-  regulator: core: Probe regulators on demand
-  drm: Probe panels on demand
-  drm/tegra: Probe dpaux devices on demand
-  i2c: core: Probe i2c master devices on demand
-  pwm: Probe PWM chip devices on demand
-  backlight: Probe backlight devices on demand
-  usb: phy: Probe phy devices on demand
-  clk: Probe clk providers on demand
-  pinctrl: Probe pinctrl devices on demand
-  phy: core: Probe phy providers on demand
-  dma: of: Probe DMA controllers on demand
-  power-supply: Probe power supplies on demand
-  ASoC: core: Probe components on demand
-
- drivers/base/platform.c             | 28 +++++++++++
- drivers/base/property.c             | 73 +++++++++++++++++++++++++++
- drivers/clk/clk.c                   |  3 ++
- drivers/dma/of-dma.c                |  2 +
- drivers/gpio/gpiolib-of.c           |  4 ++
- drivers/gpu/drm/drm_panel.c         |  2 +
- drivers/gpu/drm/tegra/dpaux.c       |  2 +
- drivers/i2c/i2c-core.c              |  2 +
- drivers/of/platform.c               | 61 +++++++++++++++++++++++
- drivers/phy/phy-core.c              |  2 +
- drivers/pinctrl/devicetree.c        |  1 +
- drivers/power/power_supply_core.c   |  2 +
- drivers/pwm/core.c                  |  2 +
- drivers/regulator/core.c            | 99 +++++++++++++++++++++----------------
- drivers/usb/phy/phy.c               |  2 +
- drivers/video/backlight/backlight.c |  2 +
- include/linux/acpi.h                | 10 ++++
- include/linux/of_platform.h         |  1 +
- include/linux/property.h            |  4 ++
- sound/soc/soc-core.c                |  6 ++-
- 20 files changed, 264 insertions(+), 44 deletions(-)
+> +				clock-output-names = "pxlclk0", "pxlclk1";
+> +			};
+> +		};
+> +	};
+> -- 
+> 1.9.1
+> 
 
 -- 
-2.4.3
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
+
