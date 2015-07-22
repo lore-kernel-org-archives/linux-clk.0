@@ -1,71 +1,117 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] cpufreq-dt: add turbo modes support
-Date: Mon, 27 Jul 2015 13:01:43 +0200
-Message-id: <15810554.2OjPyuYJBt@amdc1976>
-In-reply-to: <20150727083754.GD31611@linux>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <1436456621-29839-4-git-send-email-b.zolnierkie@samsung.com>
- <20150727083754.GD31611@linux>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <vaibhav.hiremath@linaro.org>
+Return-Path: <vaibhav.hiremath@linaro.org>
+Message-ID: <55AF866A.1090306@linaro.org>
+Date: Wed, 22 Jul 2015 17:32:50 +0530
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+MIME-Version: 1.0
+To: Anand Moon <linux.amoon@gmail.com>
+CC: linux-arm-kernel@lists.infradead.org,
+ Sangbeom Kim <sbkim73@samsung.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS <linux-kernel@vger.kernel.org>,
+ open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS <linux-samsung-soc@vger.kernel.org>,
+ open list:COMMON CLK FRAMEWORK <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: s2mps11: Use kcalloc instead of kzalloc for array
+ allocation
+References: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org> <CANAwSgSEUaSd9xM4deOO_=MabdknKCT148nXud7rWabzaXD9Bg@mail.gmail.com>
+In-Reply-To: <CANAwSgSEUaSd9xM4deOO_=MabdknKCT148nXud7rWabzaXD9Bg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
 
-Hi,
 
-On Monday, July 27, 2015 02:07:54 PM Viresh Kumar wrote:
-> On 09-07-15, 17:43, Bartlomiej Zolnierkiewicz wrote:
-> > diff --git a/include/linux/cpufreq-dt.h b/include/linux/cpufreq-dt.h
-> > index 0414009..483ca1b 100644
-> > --- a/include/linux/cpufreq-dt.h
-> > +++ b/include/linux/cpufreq-dt.h
-> > @@ -17,6 +17,7 @@ struct cpufreq_dt_platform_data {
-> >  	 * clock.
-> >  	 */
-> >  	bool independent_clocks;
-> > +	bool boost_supported;
-> >  };
-> 
-> I am planning to kill this structure soon, don't add anything to it.
-> We should be doing this based on DT.
+On Wednesday 22 July 2015 05:09 PM, Anand Moon wrote:
+> Hi Vaibhav,
+>
+> On 22 July 2015 at 15:04, Vaibhav Hiremath <vaibhav.hiremath@linaro.org> wrote:
+>> This patch cleans up the driver for,
+>>
+>>    - Use devm_kcalloc varient instead of devm_kzalloc for array
+>>      allocation.
+>>    - clk_prepare/unprepare, remove "ret" variable as it is not required
+>>    - use __exit for cleanup function
+>>
+>> As I am referring this driver as a reference for my 88pm800 clk driver,
+>> applying same changes here as well.
+>>
+>> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+>> ---
+>> Since I do not have platform to test, it would be helpful if someone
+>> tests it for me.
+>> I have build tested it.
+>>
+>>   drivers/clk/clk-s2mps11.c | 18 +++++++-----------
+>>   1 file changed, 7 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+>> index 9b13a30..e17c66a 100644
+>> --- a/drivers/clk/clk-s2mps11.c
+>> +++ b/drivers/clk/clk-s2mps11.c
+>> @@ -58,21 +58,17 @@ static struct s2mps11_clk *to_s2mps11_clk(struct clk_hw *hw)
+>>   static int s2mps11_clk_prepare(struct clk_hw *hw)
+>>   {
+>>          struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
+>> -       int ret;
+>>
+>> -       ret = regmap_update_bits(s2mps11->iodev->regmap_pmic,
+>> +       return regmap_update_bits(s2mps11->iodev->regmap_pmic,
+>>                                   s2mps11->reg,
+>>                                   s2mps11->mask, s2mps11->mask);
+>> -
+>> -       return ret;
+>>   }
+>>
+>>   static void s2mps11_clk_unprepare(struct clk_hw *hw)
+>>   {
+>>          struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
+>> -       int ret;
+>>
+>> -       ret = regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
+>> +       regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
+>>                             s2mps11->mask, ~s2mps11->mask);
+>>   }
+>>
+>> @@ -186,15 +182,15 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>>          struct clk_init_data *clks_init;
+>>          int i, ret = 0;
+>>
+>> -       s2mps11_clks = devm_kzalloc(&pdev->dev, sizeof(*s2mps11_clk) *
+>> -                                       S2MPS11_CLKS_NUM, GFP_KERNEL);
+>> +       s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
+>> +                               sizeof(*s2mps11_clk), GFP_KERNEL);
+>>          if (!s2mps11_clks)
+>>                  return -ENOMEM;
+>>
+>>          s2mps11_clk = s2mps11_clks;
+>>
+>> -       clk_table = devm_kzalloc(&pdev->dev, sizeof(struct clk *) *
+>> -                                S2MPS11_CLKS_NUM, GFP_KERNEL);
+>> +       clk_table = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
+>> +                               sizeof(struct clk *), GFP_KERNEL);
+>>          if (!clk_table)
+>>                  return -ENOMEM;
+>>
+>> @@ -322,7 +318,7 @@ static int __init s2mps11_clk_init(void)
+>>   }
+>>   subsys_initcall(s2mps11_clk_init);
+>>
+>> -static void __init s2mps11_clk_cleanup(void)
+>> +static void __exit s2mps11_clk_cleanup(void)
+>>   {
+>>          platform_driver_unregister(&s2mps11_clk_driver);
+>>   }
+>> --
+>> 1.9.1
+>>
+>
+> Tested on Odroid-XU3 board.
+>
+> Tested-by: Anand Moon <linux.amoon@gmail.com>
 
-This change was in the original patch posted in April:
-https://lkml.org/lkml/2015/4/10/646
+Thanks Anand, really appreciate your help here.
 
-your review from a month ago didn't contain this request:
-https://lkml.org/lkml/2015/6/22/667
 
-and now (after nearly 4 months) you are telling me that
-I should change this because you are planning to do some
-more changes in the future.
-
-Could we please keep it as it is for now and change it
-later (after independent_clocks configuration will get
-ported to use device tree)?
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+Thanks,
+Vaibhav
