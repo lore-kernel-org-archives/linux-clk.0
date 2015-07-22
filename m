@@ -1,89 +1,76 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH v2 4/7] ARM: sun7i: Add clock indices
-Date: Fri, 31 Jul 2015 19:46:19 +0200
-Message-Id: <1438364782-3968-5-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 21 Jul 2015 17:40:18 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, heikki.krogerus@linux.intel.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] clk: fractional-divider: fix sparse warnings
+Message-ID: <20150722004018.GD15042@codeaurora.org>
+References: <1436886723-111895-1-git-send-email-andriy.shevchenko@linux.intel.com>
+ <1436886723-111895-2-git-send-email-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1436886723-111895-2-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The A20 gates have a non continuous set of clock IDs that are valid. Add
-the clock-indices property to the DT to express this.
+On 07/14, Andy Shevchenko wrote:
+> Sparse complains about possible imbalance in locking.
+> 
+> drivers/clk/clk-fractional-divider.c:37:9: warning: context imbalance in 'clk_fd_recalc_rate' - different lock contexts for basic block
+> drivers/clk/clk-fractional-divider.c:61:12: warning: context imbalance in 'clk_fd_set_rate' - different lock contexts for basic block
+> 
+> Let's rewrite code to fix this and make it more straight.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/clk/clk-fractional-divider.c | 44 +++++++++++++++++++++---------------
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun7i-a20.dtsi | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+This can be "fixed" with far fewer lines of code.
 
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index 6a63f30c9a69..ca0b01a96c52 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -267,6 +267,19 @@
- 			compatible = "allwinner,sun7i-a20-ahb-gates-clk";
- 			reg = <0x01c20060 0x8>;
- 			clocks = <&ahb>;
-+			clock-indices = <0>, <1>,
-+					<2>, <3>, <4>,
-+					<5>, <6>, <7>, <8>,
-+					<9>, <10>, <11>, <12>,
-+					<13>, <14>, <16>,
-+					<17>, <18>, <20>, <21>,
-+					<22>, <23>, <25>,
-+					<28>, <32>, <33>, <34>,
-+					<35>, <36>, <37>, <40>,
-+					<41>, <42>, <43>,
-+					<44>, <45>, <46>,
-+					<47>, <49>, <50>,
-+					<52>;
- 			clock-output-names = "ahb_usb0", "ahb_ehci0",
- 				"ahb_ohci0", "ahb_ehci1", "ahb_ohci1",
- 				"ahb_ss", "ahb_dma", "ahb_bist", "ahb_mmc0",
-@@ -295,6 +308,10 @@
- 			compatible = "allwinner,sun7i-a20-apb0-gates-clk";
- 			reg = <0x01c20068 0x4>;
- 			clocks = <&apb0>;
-+			clock-indices = <0>, <1>,
-+					<2>, <3>, <4>,
-+					<5>, <6>, <7>,
-+					<8>, <10>;
- 			clock-output-names = "apb0_codec", "apb0_spdif",
- 				"apb0_ac97", "apb0_iis0", "apb0_iis1",
- 				"apb0_pio", "apb0_ir0", "apb0_ir1",
-@@ -314,6 +331,12 @@
- 			compatible = "allwinner,sun7i-a20-apb1-gates-clk";
- 			reg = <0x01c2006c 0x4>;
- 			clocks = <&apb1>;
-+			clock-indices = <0>, <1>,
-+					<2>, <3>, <4>,
-+					<5>, <6>, <7>,
-+					<15>, <16>, <17>,
-+					<18>, <19>, <20>,
-+					<21>, <22>, <23>;
- 			clock-output-names = "apb1_i2c0", "apb1_i2c1",
- 				"apb1_i2c2", "apb1_i2c3", "apb1_can",
- 				"apb1_scr", "apb1_ps20", "apb1_ps21",
+ drivers/clk/clk-fractional-divider.c | 8 ++++++++
+  1 file changed, 8 insertions(+)
+
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index 140eb5844dc4..e85f856b8592 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -27,11 +27,15 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
+ 
+ 	if (fd->lock)
+ 		spin_lock_irqsave(fd->lock, flags);
++	else
++		__acquire(fd->lock);
+ 
+ 	val = clk_readl(fd->reg);
+ 
+ 	if (fd->lock)
+ 		spin_unlock_irqrestore(fd->lock, flags);
++	else
++		__release(fd->lock);
+ 
+ 	m = (val & fd->mmask) >> fd->mshift;
+ 	n = (val & fd->nmask) >> fd->nshift;
+@@ -80,6 +84,8 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	if (fd->lock)
+ 		spin_lock_irqsave(fd->lock, flags);
++	else
++		__acquire(fd->lock);
+ 
+ 	val = clk_readl(fd->reg);
+ 	val &= ~(fd->mmask | fd->nmask);
+@@ -88,6 +94,8 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	if (fd->lock)
+ 		spin_unlock_irqrestore(fd->lock, flags);
++	else
++		__release(fd->lock);
+ 
+ 	return 0;
+ }
+
 -- 
-2.4.6
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
