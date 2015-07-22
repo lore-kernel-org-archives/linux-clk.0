@@ -1,57 +1,91 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
-Date: Mon, 27 Jul 2015 13:47:41 +0200
-Message-id: <2681271.3UazeZ9PAQ@amdc1976>
-In-reply-to: <20150727113641.GB10181@linux>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <3141301.RS9TLygaba@amdc1976> <20150727113641.GB10181@linux>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 22 Jul 2015 22:08:10 +0800
+From: Dong Aisheng <b29396@freescale.com>
+To: <mturquette@baylibre.com>
+CC: Dong Aisheng <aisheng.dong@freescale.com>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<sboyd@codeaurora.org>, <shawn.guo@linaro.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<Ranjani.Vaidyanathan@freescale.com>, <b20596@freescale.com>,
+	<r64343@freescale.com>, <b20788@freescale.com>
+Subject: Re: [PATCH v2 1/5] clk: remove duplicated code with
+ __clk_set_parent_after
+Message-ID: <20150722140809.GC13623@shlinux1.ap.freescale.net>
+References: <1431610143-21853-1-git-send-email-aisheng.dong@freescale.com>
+ <1431610143-21853-2-git-send-email-aisheng.dong@freescale.com>
+ <20150528040919.22384.79189@quantum>
+ <20150715122522.GA30570@shlinux1.ap.freescale.net>
+ <20150715122955.GB30570@shlinux1.ap.freescale.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20150715122955.GB30570@shlinux1.ap.freescale.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, July 27, 2015 05:06:41 PM Viresh Kumar wrote:
-> On 27-07-15, 13:14, Bartlomiej Zolnierkiewicz wrote:
-> > Sorry but you don't seem to understand the issue.
+Ping...
+
+On Wed, Jul 15, 2015 at 08:29:56PM +0800, Dong Aisheng wrote:
+> On Wed, Jul 15, 2015 at 08:25:24PM +0800, Dong Aisheng wrote:
+> > Hi Mike,
+> > 
+> > On Wed, May 27, 2015 at 09:09:19PM -0700, Michael Turquette wrote:
+> > > Quoting Dong Aisheng (2015-05-14 06:28:59)
+> > > > __clk_set_parent_after() actually used the second argument then we
+> > > > could put this duplicate logic in there and call it with a different
+> > > > order of arguments in the success vs. error paths in this function.
+> > > > 
+> > > > Cc: Mike Turquette <mturquette@linaro.org>
+> > > > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > > > Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+> > > > Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
+> > > 
+> > > Patch looks good to me.
+> > > 
+> > > Also just noticed that the second argument to __clk_set_parent_after is
+> > > never used :-(
+> > > 
+> > 
+> > Ping...
+> > 
+> > I did not see this patch series in your tree for v4.2 rc.
+> > Is this got missed?
+> > 
 > 
-> :)
+> Updated Mike's email address.
 > 
-> No, I did. I understand that if someone uses opp bindings today with
-> some entries as turbo OPPs, cpufreq will use them as normal
-> frequencies. And that may harm the board.
+> Regards
+> Dong Aisheng
 > 
-> BUT, opp-v2 code isn't ready to be used yet. And platforms should see
-> what all is implemented before trying to use them.
-
-OK.
-
-> All I was saying is, this isn't a FIX as we haven't introduced the
-> feature yet. Otherwise I had no issues with the patch.
-
-I will update the description for the next patchset revision.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+> > Regards
+> > Dong Aisheng
+> > 
+> > > Regards,
+> > > Mike
+> > > 
+> > > > ---
+> > > >  drivers/clk/clk.c | 8 +-------
+> > > >  1 file changed, 1 insertion(+), 7 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > > index 659f2b0..0e813ea 100644
+> > > > --- a/drivers/clk/clk.c
+> > > > +++ b/drivers/clk/clk.c
+> > > > @@ -1159,14 +1159,8 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
+> > > >                 flags = clk_enable_lock();
+> > > >                 clk_reparent(core, old_parent);
+> > > >                 clk_enable_unlock(flags);
+> > > > +               __clk_set_parent_after(core, old_parent, parent);
+> > > >  
+> > > > -               if (core->prepare_count) {
+> > > > -                       flags = clk_enable_lock();
+> > > > -                       clk_core_disable(core);
+> > > > -                       clk_core_disable(parent);
+> > > > -                       clk_enable_unlock(flags);
+> > > > -                       clk_core_unprepare(parent);
+> > > > -               }
+> > > >                 return ret;
+> > > >         }
+> > > >  
+> > > > -- 
+> > > > 1.9.1
+> > > > 
