@@ -1,116 +1,108 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 30 Jul 2015 12:09:08 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Kevin Hilman <khilman@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Doug Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
-	lkml <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Alex Elder <elder@linaro.org>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Chao Xie <chao.xie@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Georgi Djakov <georgi.djakov@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Barry Song <baohua@kernel.org>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Viresh Kumar <viresh.linux@gmail.com>,
-	Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Peter De Sc hrijver <pdeschrijver@nvidia.com>,
-	Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Michal Simek <michal.simek@xilinx.com>,
-	Olof Johansson <olof@lixom.net>,
-	Tyler Baker <tyler.baker@linaro.org>
-Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
-Message-ID: <20150730100908.GI2564@lukather>
-References: <1429735986-18592-1-git-send-email-heiko@sntech.de>
- <554BD33D.7050907@codeaurora.org>
- <20150508100247.GQ11057@lukather>
- <4099394.C7vEjTFs8V@diego>
+Return-Path: <linux.amoon@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0OMWfJhzSPULbgPV"
-In-Reply-To: <4099394.C7vEjTFs8V@diego>
+In-Reply-To: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
+References: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Wed, 22 Jul 2015 17:09:20 +0530
+Message-ID: <CANAwSgSEUaSd9xM4deOO_=MabdknKCT148nXud7rWabzaXD9Bg@mail.gmail.com>
+Subject: Re: [PATCH] clk: s2mps11: Use kcalloc instead of kzalloc for array allocation
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-kernel@vger.kernel.org>,
+	"open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-samsung-soc@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Vaibhav,
 
---0OMWfJhzSPULbgPV
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 22 July 2015 at 15:04, Vaibhav Hiremath <vaibhav.hiremath@linaro.org> wrote:
+> This patch cleans up the driver for,
+>
+>   - Use devm_kcalloc varient instead of devm_kzalloc for array
+>     allocation.
+>   - clk_prepare/unprepare, remove "ret" variable as it is not required
+>   - use __exit for cleanup function
+>
+> As I am referring this driver as a reference for my 88pm800 clk driver,
+> applying same changes here as well.
+>
+> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+> ---
+> Since I do not have platform to test, it would be helpful if someone
+> tests it for me.
+> I have build tested it.
+>
+>  drivers/clk/clk-s2mps11.c | 18 +++++++-----------
+>  1 file changed, 7 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+> index 9b13a30..e17c66a 100644
+> --- a/drivers/clk/clk-s2mps11.c
+> +++ b/drivers/clk/clk-s2mps11.c
+> @@ -58,21 +58,17 @@ static struct s2mps11_clk *to_s2mps11_clk(struct clk_hw *hw)
+>  static int s2mps11_clk_prepare(struct clk_hw *hw)
+>  {
+>         struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
+> -       int ret;
+>
+> -       ret = regmap_update_bits(s2mps11->iodev->regmap_pmic,
+> +       return regmap_update_bits(s2mps11->iodev->regmap_pmic,
+>                                  s2mps11->reg,
+>                                  s2mps11->mask, s2mps11->mask);
+> -
+> -       return ret;
+>  }
+>
+>  static void s2mps11_clk_unprepare(struct clk_hw *hw)
+>  {
+>         struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
+> -       int ret;
+>
+> -       ret = regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
+> +       regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
+>                            s2mps11->mask, ~s2mps11->mask);
+>  }
+>
+> @@ -186,15 +182,15 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>         struct clk_init_data *clks_init;
+>         int i, ret = 0;
+>
+> -       s2mps11_clks = devm_kzalloc(&pdev->dev, sizeof(*s2mps11_clk) *
+> -                                       S2MPS11_CLKS_NUM, GFP_KERNEL);
+> +       s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
+> +                               sizeof(*s2mps11_clk), GFP_KERNEL);
+>         if (!s2mps11_clks)
+>                 return -ENOMEM;
+>
+>         s2mps11_clk = s2mps11_clks;
+>
+> -       clk_table = devm_kzalloc(&pdev->dev, sizeof(struct clk *) *
+> -                                S2MPS11_CLKS_NUM, GFP_KERNEL);
+> +       clk_table = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
+> +                               sizeof(struct clk *), GFP_KERNEL);
+>         if (!clk_table)
+>                 return -ENOMEM;
+>
+> @@ -322,7 +318,7 @@ static int __init s2mps11_clk_init(void)
+>  }
+>  subsys_initcall(s2mps11_clk_init);
+>
+> -static void __init s2mps11_clk_cleanup(void)
+> +static void __exit s2mps11_clk_cleanup(void)
+>  {
+>         platform_driver_unregister(&s2mps11_clk_driver);
+>  }
+> --
+> 1.9.1
+>
 
-Hi Heiko,
+Tested on Odroid-XU3 board.
 
-On Mon, Jul 27, 2015 at 10:57:33AM +0200, Heiko St=FCbner wrote:
-> > > Also we can try to see if critical clocks aren't being forced on by
-> > > applying this patch and looking for clk_get() failures
-> >=20
-> > And that shows that the CPU and DDR clocks are not protected, which
-> > obviously is pretty mad.
-> >=20
-> > I've mass converted all our probing code to use OF_CLK_DECLARE, and
-> > make things work again.
-> >=20
-> > http://code.bulix.org/5goa5j-88345?raw
-> >=20
-> > Is this an acceptable solution?
-> >=20
-> > We were already moving to this, I'm not really fond of doing this like
-> > that, but I guess this whole debacle makes it necessary.
->=20
->=20
-> did this lead anywhere meanwhile.
->=20
-> Last I remember the change to orphan handling made sunxi fail, but
-> I'm still hoping to get this usable at some point :-)
-
-To be honest, I don't know what the current status is. I haven't get
-any news since that mail.
-
-I started to move a significant portion of our clocks to
-CLK_OF_DECLARE, but not all of them are (which probably make the
-situation worse for the time being).
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---0OMWfJhzSPULbgPV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVuffEAAoJEBx+YmzsjxAgj+AP/jqrMrqEMYIGWB1/O1aWO+rc
-jEt9NgPjkRayhyb8e7EbS7yAPbn2g9Y08LzPE1R4JAhyLh/5SLmGErz+vtzDGzs1
-46eoSBeo3BulYWdZadj0gFX7bj+JhmNG2wYgl7BcMXoqkwHxD/pYk/tCAahXwyBQ
-Qd50eMDQkCKnfSiTHqPjM59ot2/E7bUrce9KFf1lJ5CkV4c7WyhMCXEUMnmrXqhk
-zfy73/GwR1ehWPkZJDKVdYwMB4k0xa89zskMCb7UWphpi7UVPCtEgTwsXq9NvMGK
-Af1dKba9Tsd6nNSdB58A5bG4yb0Kk1krQuAK1TN5qYdfvDH/6sdJGX+RSB2yOKUm
-yL3/Wizw/kL71jtJgNQZ50WTQfs6dhTYsfuKsA6y59QV8EyM2TjxyFo9IqjyJ79g
-bVT0jfxJVgHrhLeAsOGHv6Gg2jKDp5Okbousi+XbiEhX+ufBCcJf2T5OCSsIV5FQ
-7brGQlr6N0vAjSE5XUl2qWLDrh3q5Ykm98clYSkt+Fu7/kMeD2/E8uNxBkk91f5f
-lLHJYb/wYVNGu4xWKIR9WuA6qVViguGid+uQ6B2SCzeYj9EoLU6xSS7fnzHs+yHN
-OYWcERBHbQYe2W3qv+F4OLYM9LWt347vvJ7kEQewJoHMhCpx6Lx9U4HJ68SzkKI1
-l91PtXPaPeh+Mqbfy2te
-=ej/e
------END PGP SIGNATURE-----
-
---0OMWfJhzSPULbgPV--
+Tested-by: Anand Moon <linux.amoon@gmail.com>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
