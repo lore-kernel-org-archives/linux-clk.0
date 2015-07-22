@@ -1,29 +1,93 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 6 Jul 2015 15:12:02 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 6/7] clk: rockchip: add missing include guards
-Message-ID: <20150706221202.GL20866@codeaurora.org>
-References: <1436086820-3757-1-git-send-email-heiko@sntech.de>
- <1436086820-3757-7-git-send-email-heiko@sntech.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1436086820-3757-7-git-send-email-heiko@sntech.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-id: <55AF3C2E.7010205@samsung.com>
+Date: Wed, 22 Jul 2015 15:46:06 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	mturquette@baylibre.com, lee.jones@linaro.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 3/4] clk: 88pm800: Add clk provider driver for 88pm800
+ family of devices
+References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
+ <1437476823-3358-4-git-send-email-vaibhav.hiremath@linaro.org>
+ <55AE990E.2040004@codeaurora.org> <55AE9F48.20600@linaro.org>
+ <55AEB103.9010205@codeaurora.org> <55AF37D9.3000006@linaro.org>
+In-reply-to: <55AF37D9.3000006@linaro.org>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/05, Heiko Stuebner wrote:
-> Review for the rk3368 turned up that the clock header was missing include
-> guards. This is also true for the already existing clock binding headers,
-> so add them.
+On 22.07.2015 15:27, Vaibhav Hiremath wrote:
 > 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
+> 
+> On Wednesday 22 July 2015 02:22 AM, Stephen Boyd wrote:
+>> On 07/21/2015 12:36 PM, Vaibhav Hiremath wrote:
+>>>
+>>> On Wednesday 22 July 2015 12:40 AM, Stephen Boyd wrote:
+>>>> On 07/21/2015 04:07 AM, Vaibhav Hiremath wrote:
+>>>>> +
+> 
+> <snip>
+> 
+>>>>> +static int pm800_clk_remove(struct platform_device *pdev)
+>>>>> +{
+>>>>> +    struct pm800_clk *pm800_clks = platform_get_drvdata(pdev);
+>>>>> +    int i;
+>>>>> +
+>>>>> +    of_clk_del_provider(pm800_clks[0].clk_np);
+>>>>> +    /* Drop the reference obtained in pm800_clk_parse_dt */
+>>>>> +    of_node_put(pm800_clks[0].clk_np);
+>>>>
+>>>> This is odd. Why are we keeping the reference in the driver?
+>>>>
+>>>
+>>> Honestly I do not have any good answer here. I have to admit that it is
+>>> getting carry forwarded from legacy driver.
+>>>
+>>
+>> Well we shouldn't do things if we don't know why we're doing them.
+>> Krzysztof?
 
-Applied to clk-rk3368.
+I am really busy now so I am not following closely other discussions. I
+assume you are referring to clk-s2mps11.c. The of_node_put() matches
+of_get_child_by_name() when parsing DT.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+So why not of_node_put() just after parsing DT? Well, the result of
+of_get_child_by_name() is stored in state container for entire device
+life-cycle so we can use it in of_clk_del_provider().
+
+That was the idea behind it. If it looks incorrect I would be happy to
+see a patch :) .
+
+>>
+> 
+> Hold on,
+> After looking more in to this, it seems we really do not need it.
+> It is already taken care by
+> 
+> of_clk_add_provider() and
+> of_clk_del_provider()
+> 
+> Sorry for not investigating this before. Just left out from my eyes
+> somehow.
+> 
+> 
+> Actually I can cleanup clk-s2mps11.c driver as well, but only thing is
+> I can validate it, as I do not have platform to test it.
+> It should be trivial changes.
+> 
+> If somebody can help me out in validation I can submit the patch for
+> clk-s2mps11.c driver as well.
+
+Sure, I can do this. The clock is present on few devices I can test.
+Depending on the current workqueue it may take few days. Just please
+mark the patch RFT so it won't be applied before receiving
+reviewed/tested tags.
+
+Best regards,
+Krzysztof
+
+
