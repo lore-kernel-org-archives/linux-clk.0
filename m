@@ -1,65 +1,127 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
- Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
- Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
-Date: Mon, 27 Jul 2015 13:14:34 +0200
-Message-id: <3141301.RS9TLygaba@amdc1976>
-In-reply-to: <20150727103521.GA4103@linux>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <1595601.YD6UTxy5Qg@amdc1976> <20150727103521.GA4103@linux>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from eu-smtp-delivery-143.mimecast.com ([207.82.80.143]:25609 "EHLO
+	eu-smtp-delivery-143.mimecast.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S934322AbbGVQG2 convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 22 Jul 2015 12:06:28 -0400
+Date: Wed, 22 Jul 2015 17:06:25 +0100
+From: Liviu Dudau <Liviu.Dudau@arm.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v4 6/8] arm64: dts: add SRAM, MHU mailbox and SCPI
+ support on Juno
+Message-ID: <20150722160625.GJ14923@e106497-lin.cambridge.arm.com>
+References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
+ <1433760002-24120-7-git-send-email-sudeep.holla@arm.com>
+ <20150722132809.GG14923@e106497-lin.cambridge.arm.com>
+ <55AFB96E.1050406@arm.com>
+MIME-Version: 1.0
+In-Reply-To: <55AFB96E.1050406@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
-Hi,
-
-On Monday, July 27, 2015 04:05:21 PM Viresh Kumar wrote:
-> On 27-07-15, 12:24, Bartlomiej Zolnierkiewicz wrote:
-> > Have you read my explanation of the issue?
-> > 
-> > With your OPP-v2 patches cpufreq-dt picks turbo frequencies and uses
-> > them as normal ones.
-> > 
-> > (More at: http://www.spinics.net/lists/arm-kernel/msg430397.html)
+On Wed, Jul 22, 2015 at 04:40:30PM +0100, Sudeep Holla wrote:
 > 
-> Yes I did. I understand that the turbo frequencies are not considered
-> as such by OPP/cpufreq core and it requires your changes to get it
-> working.
+> 
+> On 22/07/15 14:28, Liviu Dudau wrote:
+> > On Mon, Jun 08, 2015 at 11:40:00AM +0100, Sudeep Holla wrote:
+> >> This patch adds support for the MHU mailbox peripheral used on Juno by
+> >> application processors to communicate with remote SCP handling most of
+> >> the CPU/system power management. It also adds the SRAM reserving the
+> >> shared memory and SCPI message protocol using that shared memory.
+> >>
+> >> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+> >> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
+> >> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> >> ---
+> >>   arch/arm64/boot/dts/arm/juno-base.dtsi   | 31 +++++++++++++++++++++++++++++++
+> >>   arch/arm64/boot/dts/arm/juno-clocks.dtsi | 23 +++++++++++++++++++++++
+> >>   2 files changed, 54 insertions(+)
+> >>
+> 
+> [..]
+> 
+> >> diff --git a/arch/arm64/boot/dts/arm/juno-clocks.dtsi b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
+> >> index 25352ed943e6..64af7370815a 100644
+> >> --- a/arch/arm64/boot/dts/arm/juno-clocks.dtsi
+> >> +++ b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
+> >> @@ -42,3 +42,26 @@
+> >>   		clock-frequency = <400000000>;
+> >>   		clock-output-names = "faxi_clk";
+> >>   	};
+> >> +
+> >> +	scpi {
+> >> +		compatible = "arm,scpi";
+> >> +		mboxes = <&mailbox 1>;
+> >> +		shmem = <&cpu_scp_hpri>;
+> >> +
+> >> +		clocks {
+> >> +			compatible = "arm,scpi-clocks";
+> >> +
+> >> +			scpi_dvfs: scpi_clocks@0 {
+> >> +				compatible = "arm,scpi-dvfs-clocks";
+> >> +				#clock-cells = <1>;
+> >> +				clock-indices = <0>, <1>, <2>;
+> >> +				clock-output-names = "vbig", "vlittle", "vgpu";
+> >> +			};
+> >> +			scpi_clk: scpi_clocks@3 {
+> >> +				compatible = "arm,scpi-variable-clocks";
+> >> +				#clock-cells = <1>;
+> >> +				clock-indices = <3>, <4>;
+> >
+> > Subject to you addressing Mark's comments regarding the indices values (maybe choose
+> > a different property to show the fact that the index is actually an SCPI index
+> > rather than the clock's), you can add my
+> >
+> 
+> I don't understand why we need to do that. I will anyway follow up on
+> that thread.
 
-Sorry but you don't seem to understand the issue.
+Because indices are per clock node, i.e. spi_clk should have clock-indices = <0>, <1>.
+Of course, you could have a gap in the indices, but that is both awkard and not clearly
+explained in this documentation.
 
-The problem is that without my patch and with your OPP-v2 patches
-turbo frequencies get picked by OPP/cpufreq core and then by cpufreq-dt.
-This happens without enabling any boost & thermal etc. support for
-turbo frequencies.
+The index that you declare here is actually what you pass to SCPI. But the way the device
+tree is presented it declares that there are two clock blocks, one for DVFS and one for
+PXLCLK. As far as SCPI is concerned there is only one block of clocks, with 3 of them
+having a discrete set of values, so we are at the intersection of two concepts.
 
-> But its not an issue or bug we are fixing, the problem is that the
-> code for opp-v2 isn't complete yet and your patches is putting things
-> in place. So, we are still doing the bring up here and not fixing a
-> bug really.
-
-I consider the possibility to use turbo frequencies without explicitly
-enabling boost support to be a buggy behavior.  While it is unlikely
-that somebody defines turbo frequencies in their dts file in the near
-future (except Exynos ones) it costs as nearly nothing to prevent
-such behavior now.
+BTW, for what is worth, the PXLCLK is not really that smooth in its coverage of the range.
+It might have more accepted frequency values, but the way it is implemented it tends to
+favour VESA clock values and falls back to a really slow algorithm to generate all other
+values. Even so, it can fail to find the correct parameters for the PLLs so it will generate
+a frequency that is different from the requested one.
 
 Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Liviu
+
+
+> 
+> > Acked-by: Liviu Dudau <Liviu.Dudau@arm.com>
+> 
+> Thanks for all the ACKs.
+> 
+> Regards,
+> Sudeep
+> 
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
+
