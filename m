@@ -1,84 +1,101 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
-	k.kozlowski@samsung.com, thomas.ab@samsung.com,
-	kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
-Date: Thu, 02 Jul 2015 18:13:22 +0200
-Message-id: <4464631.oZyVO4Z0Ov@amdc1976>
-In-reply-to: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
-References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <dinguyen@opensource.altera.com>
+From: <dinguyen@opensource.altera.com>
+To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
+Subject: [PATCH] clk: socfpga: Add a second parent option for the dbg_base_clk
+Date: Wed, 22 Jul 2015 14:04:18 -0500
+Message-ID: <1437591858-12552-1-git-send-email-dinguyen@opensource.altera.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
 
-Hi,
+The debug base clock can be bypassed from the main PLL to the OSC1 clock.
+The bypass register is the staysoc1(0x10) register that is in the clock
+manager.
 
-On Thursday, July 02, 2015 09:42:38 AM Chanwoo Choi wrote:
-> This patchset use cpufreq-dt driver to support Exynos3250 cpufreq and tested it
-> on Exynos3250-based Rinato board.
-> 
-> Depends on:
-> - next-20150701 tag (master branch) of linux-next kernel tree
-> - This patch-set is based on Exynos5250 patch-set[1] because two patch-set
->   modify the 'arch/arm/mach-exynos/exynos.c' to add the compatible string.
->   [1] https://lkml.org/lkml/2015/6/29/361
->   : [PATCH v2 0/4] cpufreq: use generic cpufreq drivers for Exynos5250 platform
-> 
-> Changes from v5:
-> (https://lkml.org/lkml/2015/7/1/324)
-> - Reorder the cpu dt node in exynos3250-rinato/monk.dts alpabetically.
-> - Add reviewed-by tag of Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> Changes from v4:
-> (https://lkml.org/lkml/2014/10/20/215)
-> - Rebased on latest linux-next git repository.
-> - Remove unnecessary divider clock flag from divider of DIV_CPU0/DIV_CPU1 register
-> 
-> Changes from v3:
-> - This patchset is based on 3.18-rc1 with new patchset[3] of Thomas Abraham
->   [3] [PATCH v11 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
->   - http://www.spinics.net/lists/arm-kernel/msg370412.html
-> 
-> Changes from v2:
-> - Rebased on new patchset of Thomas Abraham
->   and for-next branch of samsunc-clk.git of Tomasz Figa
-> 
-> Changes from v1:
-> - Rebased on new patchset[1] by Thomas Abraham
->   [1] [PATCH v10 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
->   - http://www.spinics.net/lists/arm-kernel/msg364790.html
-> - Modify clk-cpu.c to support Exynos3250
-> - Drop documentation patch on previous patchset[2]
->   [2] http://www.spinics.net/lists/cpufreq/msg10265.html
-> - Add only operating-points for Exynos3250 without armclk-divider-table
-> 
-> Chanwoo Choi (3):
->   clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
->   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
->   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
-> 
->  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
->  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
->  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
->  arch/arm/mach-exynos/exynos.c           |  1 +
->  drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
->  include/dt-bindings/clock/exynos3250.h  |  1 +
->  6 files changed, 55 insertions(+), 2 deletions(-)
+This patch adds the option to get the correct parent for the debug base
+clock.
 
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+---
+ arch/arm/boot/dts/socfpga.dtsi   |  2 +-
+ drivers/clk/socfpga/clk-periph.c | 18 ++++++++++++++----
+ drivers/clk/socfpga/clk.h        |  1 +
+ 3 files changed, 16 insertions(+), 5 deletions(-)
 
-Thank you for working on this.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
+index 80f924d..7d5db54 100644
+--- a/arch/arm/boot/dts/socfpga.dtsi
++++ b/arch/arm/boot/dts/socfpga.dtsi
+@@ -164,7 +164,7 @@
+ 						dbg_base_clk: dbg_base_clk {
+ 							#clock-cells = <0>;
+ 							compatible = "altr,socfpga-perip-clk";
+-							clocks = <&main_pll>;
++							clocks = <&main_pll>, <&osc1>;
+ 							div-reg = <0xe8 0 9>;
+ 							reg = <0x50>;
+ 						};
+diff --git a/drivers/clk/socfpga/clk-periph.c b/drivers/clk/socfpga/clk-periph.c
+index 0c66863..52c883e 100644
+--- a/drivers/clk/socfpga/clk-periph.c
++++ b/drivers/clk/socfpga/clk-periph.c
+@@ -44,8 +44,17 @@ static unsigned long clk_periclk_recalc_rate(struct clk_hw *hwclk,
+ 	return parent_rate / div;
+ }
+ 
++static u8 clk_periclk_get_parent(struct clk_hw *hwclk)
++{
++	u32 clk_src;
++
++	clk_src = readl(clk_mgr_base_addr + CLKMGR_DBCTRL);
++	return clk_src & 0x1;
++}
++
+ static const struct clk_ops periclk_ops = {
+ 	.recalc_rate = clk_periclk_recalc_rate,
++	.get_parent = clk_periclk_get_parent,
+ };
+ 
+ static __init void __socfpga_periph_init(struct device_node *node,
+@@ -55,7 +64,7 @@ static __init void __socfpga_periph_init(struct device_node *node,
+ 	struct clk *clk;
+ 	struct socfpga_periph_clk *periph_clk;
+ 	const char *clk_name = node->name;
+-	const char *parent_name;
++	const char *parent_name[SOCFPGA_MAX_PARENTS];
+ 	struct clk_init_data init;
+ 	int rc;
+ 	u32 fixed_div;
+@@ -89,9 +98,10 @@ static __init void __socfpga_periph_init(struct device_node *node,
+ 	init.name = clk_name;
+ 	init.ops = ops;
+ 	init.flags = 0;
+-	parent_name = of_clk_get_parent_name(node, 0);
+-	init.parent_names = &parent_name;
+-	init.num_parents = 1;
++
++	init.num_parents = of_clk_parent_fill(node, parent_name,
++					      SOCFPGA_MAX_PARENTS);
++	init.parent_names = parent_name;
+ 
+ 	periph_clk->hw.hw.init = &init;
+ 
+diff --git a/drivers/clk/socfpga/clk.h b/drivers/clk/socfpga/clk.h
+index aa2741d..814c724 100644
+--- a/drivers/clk/socfpga/clk.h
++++ b/drivers/clk/socfpga/clk.h
+@@ -22,6 +22,7 @@
+ /* Clock Manager offsets */
+ #define CLKMGR_CTRL		0x0
+ #define CLKMGR_BYPASS		0x4
++#define CLKMGR_DBCTRL		0x10
+ #define CLKMGR_L4SRC		0x70
+ #define CLKMGR_PERPLL_SRC	0xAC
+ 
+-- 
+2.4.5
