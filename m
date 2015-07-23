@@ -1,57 +1,34 @@
-Return-Path: <linux-omap-owner@vger.kernel.org>
-Message-ID: <559D66EE.4060707@codeaurora.org>
-Date: Wed, 08 Jul 2015 11:07:42 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Tony Lindgren <tony@atomide.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	=?UTF-8?B?RW1pbGlvIEzDs3Bleg==?= <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Tero Kristo <t-kristo@ti.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-	linux-mips@linux-mips.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v5] clk: change clk_ops' ->determine_rate() prototype
-References: <1436294888-25752-1-git-send-email-boris.brezillon@free-electrons.com>	<20150708005748.GG30412@codeaurora.org> <20150708110005.704c49ff@bbrezillon>
-In-Reply-To: <20150708110005.704c49ff@bbrezillon>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-omap-owner@vger.kernel.org
+In-Reply-To: <1437476823-3358-5-git-send-email-vaibhav.hiremath@linaro.org>
+References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
+	<1437476823-3358-5-git-send-email-vaibhav.hiremath@linaro.org>
+Date: Thu, 23 Jul 2015 13:58:11 +0900
+Message-ID: <CAJKOXPd_cKoj05DmriyKu3xrNMtEr0A=CsRJJP2-JZ0JyrdOrQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] mfd: 88pm800: Add support for clk subdevice
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	mturquette@baylibre.com, lee.jones@linaro.org,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/08/2015 02:00 AM, Boris Brezillon wrote:
-> Hi Stephen,
+2015-07-21 20:07 GMT+09:00 Vaibhav Hiremath <vaibhav.hiremath@linaro.org>:
+> This patch adds mfd_cell/clk-subdevice for 88PM800 MFD
+> (and family of devices).
 >
-> On Tue, 7 Jul 2015 17:57:48 -0700
-> Stephen Boyd <sboyd@codeaurora.org> wrote:
->
->> On 07/07, Boris Brezillon wrote:
->>>
->>>  	} else {
->>>  		pr_err("clk: clk_composite_determine_rate function called, but no mux or rate callback set!\n");
->>> +		req->rate = 0;
->>>  		return 0;
->> Shouldn't this return an error now? And then assigning req->rate
->> wouldn't be necessary. Sorry I must have missed this last round.
->>
-> Actually I wanted to keep the existing behavior: return a 0 rate (not
-> an error) when there is no mux or rate ops.
->
-> That's something we can change afterwards, but it might reveals
-> new bugs if some users are checking for a 0 rate to detect errors.
+> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+> ---
+>  drivers/mfd/88pm800.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
 >
 
-Ok. Care to send the patch now to do that while we're thinking about it?
-We can test it out for a month or two.
+Looks OK:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Best regards,
+Krzysztof
