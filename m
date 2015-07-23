@@ -1,47 +1,58 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 14 Jul 2015 04:06:27 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Keerthy <a0393675@ti.com>, Tero Kristo <t-kristo@ti.com>
-Cc: Mugunthan V N <mugunthanvnm@ti.com>, Keerthy <j-keerthy@ti.com>,
-	linux-omap@vger.kernel.org, galak@codeaurora.org, t-kristo@ti.com,
-	pawel.moll@arm.com, linux-kernel@vger.kernel.org,
-	bcousson@baylibre.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/2] CLK: TI: add dpll_clksel_mac_clk node
-Message-ID: <20150714110626.GQ17550@atomide.com>
-References: <1434614473-8500-1-git-send-email-j-keerthy@ti.com>
- <55828A18.6030608@ti.com>
- <558C0624.4060008@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <558C0624.4060008@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:52213 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751985AbbGWITE (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jul 2015 04:19:04 -0400
+Message-id: <55B0A376.2080906@samsung.com>
+Date: Thu, 23 Jul 2015 17:19:02 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+MIME-version: 1.0
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	"myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH] PM / devfreq: event: Remove incorrect property in
+ exynos-ppmu DT binding
+References: <1436770732-9430-1-git-send-email-javier@osg.samsung.com>
+In-reply-to: <1436770732-9430-1-git-send-email-javier@osg.samsung.com>
+Content-type: text/plain; charset=ISO-8859-1
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-* Keerthy <a0393675@ti.com> [150625 06:48]:
-> 
-> On Thursday 18 June 2015 02:36 PM, Mugunthan V N wrote:
-> >On Thursday 18 June 2015 01:31 PM, Keerthy wrote:
-> >>The series adds the missing clock node needed for cpsw.
-> >>
-> >>Keerthy (2):
-> >>   CLK: TI: add dpll_clksel_mac_clk node
-> >>   ARM: dts: am4372: Set the default clock rate for dpll_clksel_mac_clk
-> >>     clock
-> >>
-> >>  arch/arm/boot/dts/am4372.dtsi        | 7 +++++--
-> >>  arch/arm/boot/dts/am43xx-clocks.dtsi | 9 +++++++++
-> >>  drivers/clk/ti/clk-43xx.c            | 1 +
-> >>  3 files changed, 15 insertions(+), 2 deletions(-)
-> >>
-> >
-> >Tested-by: Mugunthan V N <mugunthanvnm@ti.com>
-> 
-> Thanks Mugunthan.
-> 
-> A gentle ping on this series.
+Hi Javier,
 
-Tero, care to review this series?
+On 07/13/2015 03:58 PM, Javier Martinez Canillas wrote:
+> The exynos-ppmu driver is only a clock consumer and not a clock provider
+> but its Device Tree binding listed #clock-cells as an optional property.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> ---
+> 
+>  Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
+> index b54bf3a2ff57..aed486692880 100644
+> --- a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
+> +++ b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
+> @@ -17,7 +17,6 @@ Required properties:
+>  Optional properties:
+>  - clock-names : the name of clock used by the PPMU, "ppmu"
+>  - clocks : phandles for clock specified in "clock-names" property
+> -- #clock-cells: should be 1.
+>  
+>  Example1 : PPMU nodes in exynos3250.dtsi are listed below.
+>  
+> 
 
-Regards,
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Tony
++ Devfreq maintainer (Myungjoo Ham)
+I think that this patch will be more appropriate on devfreq git tree
+than linux-samsung git tree.
+
+Thanks,
+Chanwoo Choi
