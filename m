@@ -1,157 +1,83 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Punit Agrawal <punit.agrawal@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+	Kevin Hilman <khilman@kernel.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	linux-pm@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Boris BREZILLON <boris.brezillon@free-electrons.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Tawfik Bayouk <tawfik@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>
-Subject: [PATCH RFC 4/5] ARM: mvebu: Armada 38x: Add dynamic frequency scaling support in pmsu
-Date: Fri,  3 Jul 2015 08:11:56 +0200
-Message-Id: <1435903917-20486-5-git-send-email-gregory.clement@free-electrons.com>
-In-Reply-To: <1435903917-20486-1-git-send-email-gregory.clement@free-electrons.com>
-References: <1435903917-20486-1-git-send-email-gregory.clement@free-electrons.com>
+	Mike Turquette <mturquette@baylibre.com>,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v5 4/8] clk: scpi: add support for cpufreq virtual device
+Date: Thu, 23 Jul 2015 12:10:24 +0100
+Message-Id: <1437649828-14540-5-git-send-email-sudeep.holla@arm.com>
+In-Reply-To: <1437649828-14540-1-git-send-email-sudeep.holla@arm.com>
+References: <1437649828-14540-1-git-send-email-sudeep.holla@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit add the last missing piece of code enabling dynamic
-frequency scaling support for Armada 38x.
+The clocks for the CPUs are provided by SCP and are managed by this
+clock driver. So the cpufreq device needs to be added only after the
+clock get registered and removed when this driver is unloaded.
 
-The main difference with Armada XP is that the Cortex A9 CPU
-frequencies of the Armada 38x SoCs are not independent. Even if a SoC
-contains a single CPU, some specific initialization has to be done at
-pmsu level: this unit must not wait for the second CPU when the
-frequency is modified.
+This patch manages the cpufreq virtual device based on the clock
+availability.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>
+Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
+Cc: linux-clk@vger.kernel.org
 ---
- arch/arm/mach-mvebu/pmsu.c | 67 +++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 61 insertions(+), 6 deletions(-)
+ drivers/clk/clk-scpi.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/mach-mvebu/pmsu.c b/arch/arm/mach-mvebu/pmsu.c
-index f19be0ac0068..a2ced0b7fa0a 100644
---- a/arch/arm/mach-mvebu/pmsu.c
-+++ b/arch/arm/mach-mvebu/pmsu.c
-@@ -352,6 +352,13 @@ void mvebu_v7_pmsu_idle_exit(void)
- 	/* cancel ask HW to power down the L2 Cache if possible */
- 	reg = readl(pmsu_mp_base + PMSU_CTL_CFG(hw_cpu));
- 	reg &= ~PMSU_CTL_CFG_L2_PWDDN;
-+
-+	/*
-+	 * When exiting from idle state such as cpuidle or hotplug,
-+	 * Enable PMU wait for the CPU to enter WFI when doing DFS
-+	 * by setting CPUx Frequency ID to 1
-+	 */
-+	reg |= 1 << PMSU_CTL_CFG_CPU0_FRQ_ID_SFT;
- 	writel(reg, pmsu_mp_base + PMSU_CTL_CFG(hw_cpu));
+diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
+index 3ce4b34a4128..b76db39ca671 100644
+--- a/drivers/clk/clk-scpi.c
++++ b/drivers/clk/clk-scpi.c
+@@ -34,6 +34,8 @@ struct scpi_clk {
  
- 	/* cancel Enable wakeup events and mask interrupts */
-@@ -586,6 +593,38 @@ int armada_xp_pmsu_dfs_request(int cpu)
+ #define to_scpi_clk(clk) container_of(clk, struct scpi_clk, hw)
+ 
++static struct platform_device *cpufreq_dev;
++
+ static unsigned long scpi_clk_recalc_rate(struct clk_hw *hw,
+ 					  unsigned long parent_rate)
+ {
+@@ -263,6 +265,11 @@ static int scpi_clocks_remove(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *child, *np = dev->of_node;
+ 
++	if (cpufreq_dev) {
++		platform_device_unregister(cpufreq_dev);
++		cpufreq_dev = NULL;
++	}
++
+ 	for_each_available_child_of_node(np, child)
+ 		of_clk_del_provider(np);
  	return 0;
- }
- 
-+void mvebu_v7_pmsu_disable_dfs_cpu(int hw_cpu)
-+{
-+	u32 reg;
-+
-+	if (pmsu_mp_base == NULL)
-+		return;
-+	/*
-+	 * Disable PMU wait for the CPU to enter WFI when doing DFS
-+	 * by setting CPUx Frequency ID to 0
-+	 */
-+	reg = readl(pmsu_mp_base + PMSU_CTL_CFG(hw_cpu));
-+	reg &= ~(PMSU_CTL_CFG_CPU0_FRQ_ID_MSK << PMSU_CTL_CFG_CPU0_FRQ_ID_SFT);
-+	writel(reg, pmsu_mp_base + PMSU_CTL_CFG(hw_cpu));
-+}
-+
-+int armada_38x_pmsu_dfs_request(int cpu)
-+{
-+	/*
-+	 * Protect CPU DFS from changing the number of online cpus number during
-+	 * frequency transition by temporarily disable cpu hotplug
-+	 */
-+	cpu_hotplug_disable();
-+
-+	/* Trigger the DFS on all the CPUs */
-+	on_each_cpu(mvebu_pmsu_dfs_request_local,
-+		    NULL, false);
-+
-+	cpu_hotplug_enable();
-+
-+	return 0;
-+}
-+
- int mvebu_pmsu_dfs_request(int cpu)
- {
- 	return mvebu_pmsu_dfs_request_ptr(cpu);
-@@ -595,15 +634,19 @@ struct cpufreq_dt_platform_data armada_xp_cpufreq_dt_pd = {
- 	.independent_clocks = true,
- };
- 
-+struct cpufreq_dt_platform_data armada_38x_cpufreq_dt_pd = {
-+	.independent_clocks = false,
-+};
-+
- static int __init mvebu_pmsu_cpufreq_init(void)
- {
- 	struct device_node *np;
- 	struct resource res;
- 	int ret, cpu;
- 
--	if (!of_machine_is_compatible("marvell,armadaxp"))
-+	if (!of_machine_is_compatible("marvell,armadaxp") &&
-+	    !of_machine_is_compatible("marvell,armada380"))
- 		return 0;
--
- 	/*
- 	 * In order to have proper cpufreq handling, we need to ensure
- 	 * that the Device Tree description of the CPU clock includes
-@@ -648,6 +691,8 @@ static int __init mvebu_pmsu_cpufreq_init(void)
- 			return PTR_ERR(clk);
- 		}
- 
-+		clk_prepare_enable(clk);
-+
- 		/*
- 		 * In case of a failure of dev_pm_opp_add(), we don't
- 		 * bother with cleaning up the registered OPP (there's
-@@ -666,10 +711,20 @@ static int __init mvebu_pmsu_cpufreq_init(void)
+@@ -288,6 +295,12 @@ static int scpi_clocks_probe(struct platform_device *pdev)
  			return ret;
  		}
  	}
--	mvebu_pmsu_dfs_request_ptr = armada_xp_pmsu_dfs_request;
--	platform_device_register_data(NULL, "cpufreq-dt", -1,
--				      &armada_xp_cpufreq_dt_pd,
--				      sizeof(armada_xp_cpufreq_dt_pd));
-+	if (of_machine_is_compatible("marvell,armada380")) {
-+		if (num_online_cpus() == 1)
-+			mvebu_v7_pmsu_disable_dfs_cpu(1);
++	/* Add the virtual cpufreq device */
++	cpufreq_dev = platform_device_register_simple("scpi-cpufreq",
++						      -1, NULL, 0);
++	if (!cpufreq_dev)
++		pr_warn("unable to register cpufreq device");
 +
-+		mvebu_pmsu_dfs_request_ptr = armada_38x_pmsu_dfs_request;
-+		platform_device_register_data(NULL, "cpufreq-dt", -1,
-+					      &armada_38x_cpufreq_dt_pd,
-+					      sizeof(armada_38x_cpufreq_dt_pd));
-+	} else if (of_machine_is_compatible("marvell,armadaxp")) {
-+		mvebu_pmsu_dfs_request_ptr = armada_xp_pmsu_dfs_request;
-+		platform_device_register_data(NULL, "cpufreq-dt", -1,
-+					      &armada_xp_cpufreq_dt_pd,
-+					      sizeof(armada_xp_cpufreq_dt_pd));
-+	}
  	return 0;
  }
  
 -- 
-2.1.0
+1.9.1
+
