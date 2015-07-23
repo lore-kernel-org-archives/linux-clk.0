@@ -1,120 +1,175 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 04/16] clk: shmobile: rcar-gen2: Add CPG/MSTP Clock Domain support
-Date: Wed,  1 Jul 2015 17:57:58 +0200
-Message-Id: <1435766290-3005-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
-References: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <jun.nie@linaro.org>
+Return-Path: <jun.nie@linaro.org>
+From: Jun Nie <jun.nie@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org
+Cc: shawn.guo@linaro.org,
+	jason.liu@linaro.org,
+	wan.zhijun@zte.com.cn,
+	Jun Nie <jun.nie@linaro.org>
+Subject: [PATCH v2 3/3] clk: zx: Constify parent names in clock init data
+Date: Thu, 23 Jul 2015 15:02:53 +0800
+Message-Id: <1437634973-27347-4-git-send-email-jun.nie@linaro.org>
+In-Reply-To: <1437634973-27347-1-git-send-email-jun.nie@linaro.org>
+References: <1437634973-27347-1-git-send-email-jun.nie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Clock Domain support to the R-Car Gen2 Clock Pulse Generator (CPG)
-driver using the generic PM Domain.  This allows to power-manage the
-module clocks of SoC devices that are part of the CPG/MSTP Clock Domain
-using Runtime PM, or for system suspend/resume.
+The array of parent names can be made as array of const pointers to
+const strings.
 
-SoC devices that are part of the CPG/MSTP Clock Domain and can be
-power-managed through an MSTP clock should be tagged in DT with a proper
-"power-domains" property.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Jun Nie <jun.nie@linaro.org>
 ---
-v3:
-  - Add Acked-by,
-  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
+ drivers/clk/zte/clk-zx296702.c | 40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
-v2:
-  - Add Acked-by and Reviewed-by,
-  - Move core CPG Clock Domain code from the R-Car Gen2 driver to the
-    CPG MSTP Clocks driver, as it's generic, and can be used on other
-    Renesas SoCs that have a CPG/MSTP block,
-  - Scan for an MSTP clock instead of using the first clock tied to the
-    device (con_id NULL),
-  - Extract R-Car Gen2 specifics from "[PATCH/RFC 1/5] clk: shmobile:
-    rcar-gen2: Add CPG Clock Domain support" into this patch.
----
- .../clock/renesas,rcar-gen2-cpg-clocks.txt         | 26 ++++++++++++++++++++--
- drivers/clk/shmobile/clk-rcar-gen2.c               |  2 ++
- 2 files changed, 26 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
-index 56f111bd3e456619..2a9a8edc8f3547b0 100644
---- a/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
-@@ -2,6 +2,8 @@
+diff --git a/drivers/clk/zte/clk-zx296702.c b/drivers/clk/zte/clk-zx296702.c
+index 9dcac73..ebd20d8 100644
+--- a/drivers/clk/zte/clk-zx296702.c
++++ b/drivers/clk/zte/clk-zx296702.c
+@@ -83,115 +83,115 @@ static const struct clk_div_table sec_wclk_divider[] = {
+ 	{ /* sentinel */ }
+ };
  
- The CPG generates core clocks for the R-Car Gen2 SoCs. It includes three PLLs
- and several fixed ratio dividers.
-+The CPG also provides a Clock Domain for SoC devices, in combination with the
-+CPG Module Stop (MSTP) Clocks.
+-static const char * matrix_aclk_sel[] = {
++static const char * const matrix_aclk_sel[] = {
+ 	"pll_mm0_198M",
+ 	"osc",
+ 	"clk_148M5",
+ 	"pll_lsp_104M",
+ };
  
- Required Properties:
+-static const char * a9_wclk_sel[] = {
++static const char * const a9_wclk_sel[] = {
+ 	"pll_a9",
+ 	"osc",
+ 	"clk_500",
+ 	"clk_250",
+ };
  
-@@ -20,10 +22,18 @@ Required Properties:
-   - clock-output-names: The names of the clocks. Supported clocks are "main",
-     "pll0", "pll1", "pll3", "lb", "qspi", "sdh", "sd0", "sd1", "z", "rcan", and
-     "adsp"
-+  - #power-domain-cells: Must be 0
+-static const char * a9_as1_aclk_sel[] = {
++static const char * const a9_as1_aclk_sel[] = {
+ 	"clk_250",
+ 	"osc",
+ 	"pll_mm0_396M",
+ 	"pll_mac_333M",
+ };
  
-+SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
-+through an MSTP clock should refer to the CPG device node in their
-+"power-domains" property, as documented by the generic PM domain bindings in
-+Documentation/devicetree/bindings/power/power_domain.txt.
+-static const char * a9_trace_clkin_sel[] = {
++static const char * const a9_trace_clkin_sel[] = {
+ 	"clk_74M25",
+ 	"pll_mm1_108M",
+ 	"clk_125",
+ 	"clk_148M5",
+ };
  
--Example
---------
-+
-+Examples
-+--------
-+
-+  - CPG device node:
+-static const char * decppu_aclk_sel[] = {
++static const char * const decppu_aclk_sel[] = {
+ 	"clk_250",
+ 	"pll_mm0_198M",
+ 	"pll_lsp_104M",
+ 	"pll_audio_294M912",
+ };
  
- 	cpg_clocks: cpg_clocks@e6150000 {
- 		compatible = "renesas,r8a7790-cpg-clocks",
-@@ -34,4 +44,16 @@ Example
- 		clock-output-names = "main", "pll0, "pll1", "pll3",
- 				     "lb", "qspi", "sdh", "sd0", "sd1", "z",
- 				     "rcan", "adsp";
-+		#power-domain-cells = <0>;
-+	};
-+
-+
-+  - CPG/MSTP Clock Domain member device node:
-+
-+	thermal@e61f0000 {
-+		compatible = "renesas,thermal-r8a7790", "renesas,rcar-thermal";
-+		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
-+		interrupts = <0 69 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp5_clks R8A7790_CLK_THERMAL>;
-+		power-domains = <&cpg_clocks>;
- 	};
-diff --git a/drivers/clk/shmobile/clk-rcar-gen2.c b/drivers/clk/shmobile/clk-rcar-gen2.c
-index acfb6d7dbd6bc049..f2c457f494ebb6b0 100644
---- a/drivers/clk/shmobile/clk-rcar-gen2.c
-+++ b/drivers/clk/shmobile/clk-rcar-gen2.c
-@@ -415,6 +415,8 @@ static void __init rcar_gen2_cpg_clocks_init(struct device_node *np)
- 	}
+-static const char * vou_main_wclk_sel[] = {
++static const char * const vou_main_wclk_sel[] = {
+ 	"clk_148M5",
+ 	"clk_74M25",
+ 	"clk_27",
+ 	"pll_mm1_54M",
+ };
  
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
-+
-+	cpg_mstp_add_clk_domain(np);
+-static const char * vou_scaler_wclk_sel[] = {
++static const char * const vou_scaler_wclk_sel[] = {
+ 	"clk_250",
+ 	"pll_mac_333M",
+ 	"pll_audio_294M912",
+ 	"pll_mm0_198M",
+ };
+ 
+-static const char * r2d_wclk_sel[] = {
++static const char * const r2d_wclk_sel[] = {
+ 	"pll_audio_294M912",
+ 	"pll_mac_333M",
+ 	"pll_a9_350M",
+ 	"pll_mm0_396M",
+ };
+ 
+-static const char * ddr_wclk_sel[] = {
++static const char * const ddr_wclk_sel[] = {
+ 	"pll_mac_333M",
+ 	"pll_ddr_266M",
+ 	"pll_audio_294M912",
+ 	"pll_mm0_198M",
+ };
+ 
+-static const char * nand_wclk_sel[] = {
++static const char * const nand_wclk_sel[] = {
+ 	"pll_lsp_104M",
+ 	"osc",
+ };
+ 
+-static const char * lsp_26_wclk_sel[] = {
++static const char * const lsp_26_wclk_sel[] = {
+ 	"pll_lsp_26M",
+ 	"osc",
+ };
+ 
+-static const char * vl0_sel[] = {
++static const char * const vl0_sel[] = {
+ 	"vou_main_channel_div",
+ 	"vou_aux_channel_div",
+ };
+ 
+-static const char * hdmi_sel[] = {
++static const char * const hdmi_sel[] = {
+ 	"vou_main_channel_wclk",
+ 	"vou_aux_channel_wclk",
+ };
+ 
+-static const char * sdmmc0_wclk_sel[] = {
++static const char * const sdmmc0_wclk_sel[] = {
+ 	"lsp1_104M_wclk",
+ 	"lsp1_26M_wclk",
+ };
+ 
+-static const char * sdmmc1_wclk_sel[] = {
++static const char * const sdmmc1_wclk_sel[] = {
+ 	"lsp0_104M_wclk",
+ 	"lsp0_26M_wclk",
+ };
+ 
+-static const char * uart_wclk_sel[] = {
++static const char * const uart_wclk_sel[] = {
+ 	"lsp1_104M_wclk",
+ 	"lsp1_26M_wclk",
+ };
+ 
+-static const char * spdif0_wclk_sel[] = {
++static const char * const spdif0_wclk_sel[] = {
+ 	"lsp0_104M_wclk",
+ 	"lsp0_26M_wclk",
+ };
+ 
+-static const char * spdif1_wclk_sel[] = {
++static const char * const spdif1_wclk_sel[] = {
+ 	"lsp1_104M_wclk",
+ 	"lsp1_26M_wclk",
+ };
+ 
+-static const char * i2s_wclk_sel[] = {
++static const char * const i2s_wclk_sel[] = {
+ 	"lsp0_104M_wclk",
+ 	"lsp0_26M_wclk",
+ };
+@@ -211,7 +211,7 @@ static inline struct clk *zx_div(const char *name, const char *parent,
+ 				    reg, shift, width, 0, &reg_lock);
  }
- CLK_OF_DECLARE(rcar_gen2_cpg_clks, "renesas,rcar-gen2-cpg-clocks",
- 	       rcar_gen2_cpg_clocks_init);
+ 
+-static inline struct clk *zx_mux(const char *name, const char **parents,
++static inline struct clk *zx_mux(const char *name, const char * const *parents,
+ 		int num_parents, void __iomem *reg, u8 shift, u8 width)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
 -- 
 1.9.1
