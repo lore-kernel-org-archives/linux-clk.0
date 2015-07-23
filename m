@@ -1,48 +1,37 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	linux-sh@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 02/11] ARM: shmobile: r8a7790 dtsi: Add device node for RST module
-Date: Tue,  7 Jul 2015 16:10:08 +0200
-Message-Id: <1436278217-20522-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
-References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <k.kozlowski.k@gmail.com>
+MIME-Version: 1.0
+Sender: k.kozlowski.k@gmail.com
+In-Reply-To: <1437476823-3358-3-git-send-email-vaibhav.hiremath@linaro.org>
+References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
+	<1437476823-3358-3-git-send-email-vaibhav.hiremath@linaro.org>
+Date: Thu, 23 Jul 2015 14:08:03 +0900
+Message-ID: <CAJKOXPeUJ-7je67q+9X1_FcFiczoQ6rqwMAoPLswapFEmqGGVg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] mfd: devicetree: bindings: Add clock subdevice node information
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>, mturquette@baylibre.com,
+	linux-kernel@vger.kernel.org, robh+dt@kernel.org, lee.jones@linaro.org,
+	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a device node for the RST module, which provides reset control.
-Declare it to be a system controller (syscon), so other device nodes can
-refer to its registers.
+2015-07-21 20:07 GMT+09:00 Vaibhav Hiremath <vaibhav.hiremath@linaro.org>:
+> This patch updates the binding documentation for optional
+> clocks node and related information for buffered 32KHz clock.
+>
+> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/mfd/88pm800.txt | 28 +++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
 
-TODO Add DT binding documentation.
++Cc Stephen Boyd (clocks)
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7790.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+We had a discussion whether clock bindings should be put in MFD
+bindings documentation or into separate file in bindings/clock but
+either way is fine for me:
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 837090ec9b4fb987..08067ae177643b8f 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1495,6 +1495,11 @@
- 		};
- 	};
- 
-+	rst: reset-controller@e616000 {
-+		compatible = "renesas,rst-r8a7790", "syscon";
-+		reg = <0 0xe6160000 0 0x0100>;
-+	};
-+
- 	sysc: system-controller@e6180000 {
- 		compatible = "renesas,sysc-r8a7790", "renesas,sysc-rcar";
- 		reg = <0 0xe6180000 0 0x0200>;
--- 
-1.9.1
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
