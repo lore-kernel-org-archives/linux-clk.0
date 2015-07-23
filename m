@@ -1,130 +1,88 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 30 Jul 2015 12:17:23 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 7/7] clk: sunxi: Add a simple gates driver
-Message-ID: <20150730101723.GL2564@lukather>
-References: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
- <1437945270-32014-8-git-send-email-maxime.ripard@free-electrons.com>
- <20150727202648.GB14521@codeaurora.org>
- <CAGb2v6517qCXmNkYihnfBmc5fL7bqTDOQwedNYjq+p2Mg45+gQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="U2AV99o4bq1UPJQr"
-In-Reply-To: <CAGb2v6517qCXmNkYihnfBmc5fL7bqTDOQwedNYjq+p2Mg45+gQ@mail.gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1437636434.29746.1.camel@linux.intel.com>
+Subject: Re: [PATCH v4 3/6] clk: fractional-divider: keep mwidth and nwidth
+ internally
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, heikki.krogerus@linux.intel.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
+Date: Thu, 23 Jul 2015 10:27:14 +0300
+In-Reply-To: <20150722234500.GF15042@codeaurora.org>
+References: <1436886723-111895-1-git-send-email-andriy.shevchenko@linux.intel.com>
+	 <1436886723-111895-4-git-send-email-andriy.shevchenko@linux.intel.com>
+	 <20150722004124.GE15042@codeaurora.org>
+	 <1437570566.8014.37.camel@linux.intel.com>
+	 <20150722234500.GF15042@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Wed, 2015-07-22 at 16:45 -0700, Stephen Boyd wrote:
+> On 07/22, Andy Shevchenko wrote:
+> > On Tue, 2015-07-21 at 17:41 -0700, Stephen Boyd wrote:
+> > > On 07/14, Andy Shevchenko wrote:
+> > > > diff --git a/drivers/clk/clk-fractional-divider.c 
+> > > > b/drivers/clk/clk
+> > > > -fractional-divider.c
+> > > > index 7cfcc56..16f42ae 100644
+> > > > --- a/drivers/clk/clk-fractional-divider.c
+> > > > +++ b/drivers/clk/clk-fractional-divider.c
+> > > > @@ -128,9 +128,11 @@ struct clk 
+> > > > *clk_register_fractional_divider(struct device *dev,
+> > > >  
+> > > >  	fd->reg = reg;
+> > > >  	fd->mshift = mshift;
+> > > > -	fd->mmask = (BIT(mwidth) - 1) << mshift;
+> > > > +	fd->mwidth = mwidth;
+> > > > +	fd->mmask = GENMASK(mwidth - 1, 0) << mshift;
+> > > >  	fd->nshift = nshift;
+> > > > -	fd->nmask = (BIT(nwidth) - 1) << nshift;
+> > > > +	fd->nwidth = nwidth;
+> > > > +	fd->nmask = GENMASK(nwidth - 1, 0) << nshift;
+> > > 
+> > > Please do the shifts in the GENMASK.
+> > 
+> > It's not optimal. Waste of performance.
+> > 
+> > 32-bit case on 32-bit machine (similar to other cases on x86).
+> > 
+> > a) GENMASK(x - 1, 0) << y
+> > 
+> >         movl    $32, %ecx
+> >         subb    4(%esp), %cl
+> >         movl    $-1, %eax
+> >         shrl    %cl, %eax
+> >         movzbl  8(%esp), %ecx
+> >         sall    %cl, %eax
+> >         ret
+> > 
+> > b) GENMASK(x + y - 1, y)
+> > 
+> >         pushl   %esi
+> >         pushl   %ebx
+> >         movl    $1, %edx
+> >         movzbl  12(%esp), %eax
+> >         movzbl  16(%esp), %esi
+> >         movl    $-1, %ebx
+> >         subl    %eax, %edx
+> >         movl    %ebx, %eax
+> >         subl    %esi, %edx
+> >         leal    31(%edx), %ecx
+> >         shrl    %cl, %eax
+> >         movl    %esi, %ecx
+> >         sall    %cl, %ebx
+> >         andl    %ebx, %eax
+> >         popl    %ebx
+> >         popl    %esi
+> >         ret
+> > 
+> 
+> This is not hotpath code, so why do we care?
 
---U2AV99o4bq1UPJQr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I care about memory foot print of kernel's .text as well.
 
-On Thu, Jul 30, 2015 at 03:55:17PM +0800, Chen-Yu Tsai wrote:
-> On Tue, Jul 28, 2015 at 4:26 AM, Stephen Boyd <sboyd@codeaurora.org> wrot=
-e:
-> > On 07/26, Maxime Ripard wrote:
-> >> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/=
-clk-simple-gates.c
-> >> new file mode 100644
-> >> index 000000000000..1a3963a8a686
-> >> --- /dev/null
-> >> +++ b/drivers/clk/sunxi/clk-simple-gates.c
-> >> @@ -0,0 +1,159 @@
-> >> +/*
-> >> + * Copyright 2015 Maxime Ripard
-> >> + *
-> >> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> >> + *
-> >> + * This program is free software; you can redistribute it and/or modi=
-fy
-> >> + * it under the terms of the GNU General Public License as published =
-by
-> >> + * the Free Software Foundation; either version 2 of the License, or
-> >> + * (at your option) any later version.
-> >> + *
-> >> + * This program is distributed in the hope that it will be useful,
-> >> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> >> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> >> + * GNU General Public License for more details.
-> >> + */
-> >> +
->=20
-> I'm guessing the following were copied from clk-sunxi.c.
->=20
-> >> +#include <linux/clk-provider.h>
-> >> +#include <linux/clkdev.h>
-> >
-> > Is this used?
->=20
-> clk_register_clkdev() is not used in this file, so not needed.
->=20
-> >> +#include <linux/of.h>
-> >> +#include <linux/of_address.h>
-> >> +#include <linux/reset-controller.h>
-> >
-> > Is this used?
->=20
-> A remnant of the USB clocks, which has been moved to clk-usb.c.
->=20
-> Not needed here nor in clk-sunxi.c.
->=20
-> >> +#include <linux/spinlock.h>
-> >> +#include <linux/log2.h>
-> >
-> > Is this used?
->=20
-> This is only used for clock factor calculation. Not applicable in
-> clk-simple-gates.c, so no.
-
-You're right, we don't need any of these...
-
-> >> +static DEFINE_SPINLOCK(gates_lock);
-> >> +
-> > [...]
-> >> +
-> >> +static const int sun4i_a10_ahb_critical_clocks[] __initdata =3D {
-> >
-> > Shouldn't it be __initconst ?
->=20
-> Not sure why our critical clocks lists are __initdata...
-
-Why shouldn't it be?
-
-CLK_OF_DECLARE callbacks only run at of_clk_init time, which is way
-before the init memory is discarded.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---U2AV99o4bq1UPJQr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVufmzAAoJEBx+YmzsjxAgIGMQAJi3Il801R+XKMczFNKx9a+4
-dWBg/2zGJq8lF6aAhHFD6zS5yza1cAaulpJSSlb+rt7QjRMnmlvZCx4ch53c+tyA
-U4L6X4UijJYmUK+i9cjuQVo34uxXV3H0ZHBW+2esd7LtnZgfbicLiLOLBkZ2c3oY
-cEOytZ98eEgD9JTS0+eXjvl3zpM/X0tus8PXCXqXndJJNRBFAk8w6htfRHRAo76Z
-t7/BXSqATaN4zd71pst2XxluvbSSyeCXZOyA3DewI2Q3DB70NGKO0HeLPc2PKew+
-Q6WHjukirONwNR14oEFzolTRyC4xs5/suMlGEjlxhtyFxT5ldSJuAvlTnARC2O5I
-5ozu9CmgAaCb4ORKwT/2y63+vbaXYFnhzJ7047NVDF36qFSvSF1yAPGxho1n4KGc
-9EDEdcBP5DweYjwOmYGCwt5hcCp74aGr5/hvMoo3xyBwswcwx1Glk36+wgSzzVJA
-VSsq13D7+XbBUK3jIzum05qblQ2QTBWCsfpFXxtgcdwEse3CGEynPSb6PAaSt5l0
-LiSfg1v9AoPbvw9DIPpHzeX3LE8YXazQ0rJ71asefxGd1ePdhV8YJL6cP+kF8bW3
-GFi3OWkAP/e054YPZGGdWTTk8ojHU9wuksng6UT7vFVeAZoDQbC6kPDfgwXQgs1F
-wzqiVcKRSOYTQlv4q9jC
-=LjxL
------END PGP SIGNATURE-----
-
---U2AV99o4bq1UPJQr--
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
