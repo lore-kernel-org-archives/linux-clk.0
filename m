@@ -1,64 +1,550 @@
-Return-Path: <linux-omap-owner@vger.kernel.org>
-Message-ID: <55A748F6.5050100@ti.com>
-Date: Thu, 16 Jul 2015 09:02:30 +0300
-From: Tero Kristo <t-kristo@ti.com>
-MIME-Version: 1.0
-To: Paul Walmsley <paul@pwsan.com>, Tony Lindgren <tony@atomide.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-Subject: Re: [GIT PULL] clk: ti: clock driver code migration to drivers
-References: <55A4CE41.9070909@ti.com> <20150714095431.GJ17550@atomide.com> <55A4E520.8050804@ti.com> <20150714104006.GO17550@atomide.com> <alpine.DEB.2.02.1507160148340.32764@utopia.booyaka.com>
-In-Reply-To: <alpine.DEB.2.02.1507160148340.32764@utopia.booyaka.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Sender: linux-omap-owner@vger.kernel.org
+Return-Path: <jun.nie@linaro.org>
+Return-Path: <jun.nie@linaro.org>
+From: Jun Nie <jun.nie@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org
+Cc: shawn.guo@linaro.org,
+	jason.liu@linaro.org,
+	wan.zhijun@zte.com.cn,
+	Jun Nie <jun.nie@linaro.org>
+Subject: [PATCH v2 1/3] clk: zx: Add audio div clock method for zx296702
+Date: Thu, 23 Jul 2015 15:02:51 +0800
+Message-Id: <1437634973-27347-2-git-send-email-jun.nie@linaro.org>
+In-Reply-To: <1437634973-27347-1-git-send-email-jun.nie@linaro.org>
+References: <1437634973-27347-1-git-send-email-jun.nie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/16/2015 04:51 AM, Paul Walmsley wrote:
-> On Tue, 14 Jul 2015, Tony Lindgren wrote:
->
->> * Tero Kristo <t-kristo@ti.com> [150714 03:34]:
->>> On 07/14/2015 12:54 PM, Tony Lindgren wrote:
->>>> * Tero Kristo <t-kristo@ti.com> [150714 01:56]:
->>>>>
->>>>> This pull request contains the TI clock driver set to move the clock
->>>>> implementations under clock driver. Some small portions of the clock driver
->>>>> code still remain under mach-omap2 after this, it should be decided whether
->>>>> this code is now obsolete and should be deleted or should someone try to fix
->>>>> it.
->>>>
->>>> Hmm care to clarify what is obsolete or broken after this series?
->>>
->>> Not after this series, was broken/obsolete already before.
->>>
->>> A couple of omap2/omap3 specific clock files still remain under mach-omap2,
->>> they are DVFS related. OMAP3 core dvfs support is currently completely
->>> unused (this could probably be removed, or shall we re-introduce the painful
->>> core dvfs at some point again?), and parts of the omap2 core dpll handling
->>> code should probably be re-written; or at least verified that it actually
->>> works properly. I can't test OMAP2 DVFS myself so don't dare to fiddle with
->>> it.... I could probably try to get some sort of DVFS test case to work on
->>> the board farm OMAP2 board I have access to though, I can investigate this.
->>
->> People seem to still want the 1 GiHz support, but I think that only
->> depends on the SmartReflex and some kind of replacement for
->> voltagedomains. So if the core DVFS support is unused, I doubt it's
->> very high on anybody's list right now.
->
-> At least several years ago, basic CORE DVFS support was working on OMAP3.
-> The clock source changed rate, DRAM parameters were
-> changed on the SDRC, etc.  What was not implemented was pre-rate-change
-> and post-rate-change notifiers in many of the device drivers, because the
-> infrastructure didn't exist at the time in the clock code.
+Add SPDIF/I2S divider clock method for zx296702
 
-Yes this is true, Nokia did an internal implementation for the pre/post 
-notifier stuff which was never accepted upstream. The core dvfs code is 
-no longer used in kernel for anything, it is just built in. The 
-usefulness of the whole feature can be debated also, the use cases where 
-it actually gives power savings is rather limited.
+Signed-off-by: Jun Nie <jun.nie@linaro.org>
+---
+ drivers/clk/zte/Makefile  |   2 +-
+ drivers/clk/zte/clk-pll.c | 172 --------------------------
+ drivers/clk/zte/clk.c     | 309 ++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/zte/clk.h     |   9 ++
+ 4 files changed, 319 insertions(+), 173 deletions(-)
+ delete mode 100644 drivers/clk/zte/clk-pll.c
+ create mode 100644 drivers/clk/zte/clk.c
 
-I'll post a patch to remove the 'dead' core-dvfs code to the list, we 
-can debate the issue there.
-
--Tero
+diff --git a/drivers/clk/zte/Makefile b/drivers/clk/zte/Makefile
+index 95b707c..74005aa 100644
+--- a/drivers/clk/zte/Makefile
++++ b/drivers/clk/zte/Makefile
+@@ -1,2 +1,2 @@
+-obj-y := clk-pll.o
++obj-y := clk.o
+ obj-$(CONFIG_SOC_ZX296702) += clk-zx296702.o
+diff --git a/drivers/clk/zte/clk-pll.c b/drivers/clk/zte/clk-pll.c
+deleted file mode 100644
+index c3b221a..0000000
+--- a/drivers/clk/zte/clk-pll.c
++++ /dev/null
+@@ -1,172 +0,0 @@
+-/*
+- * Copyright 2014 Linaro Ltd.
+- * Copyright (C) 2014 ZTE Corporation.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-#include <linux/clk-provider.h>
+-#include <linux/err.h>
+-#include <linux/io.h>
+-#include <linux/iopoll.h>
+-#include <linux/slab.h>
+-#include <linux/spinlock.h>
+-
+-#include "clk.h"
+-
+-#define to_clk_zx_pll(_hw) container_of(_hw, struct clk_zx_pll, hw)
+-
+-#define CFG0_CFG1_OFFSET 4
+-#define LOCK_FLAG BIT(30)
+-#define POWER_DOWN BIT(31)
+-
+-static int rate_to_idx(struct clk_zx_pll *zx_pll, unsigned long rate)
+-{
+-	const struct zx_pll_config *config = zx_pll->lookup_table;
+-	int i;
+-
+-	for (i = 0; i < zx_pll->count; i++) {
+-		if (config[i].rate > rate)
+-			return i > 0 ? i - 1 : 0;
+-
+-		if (config[i].rate == rate)
+-			return i;
+-	}
+-
+-	return i - 1;
+-}
+-
+-static int hw_to_idx(struct clk_zx_pll *zx_pll)
+-{
+-	const struct zx_pll_config *config = zx_pll->lookup_table;
+-	u32 hw_cfg0, hw_cfg1;
+-	int i;
+-
+-	hw_cfg0 = readl_relaxed(zx_pll->reg_base);
+-	hw_cfg1 = readl_relaxed(zx_pll->reg_base + CFG0_CFG1_OFFSET);
+-
+-	/* For matching the value in lookup table */
+-	hw_cfg0 &= ~LOCK_FLAG;
+-	hw_cfg0 |= POWER_DOWN;
+-
+-	for (i = 0; i < zx_pll->count; i++) {
+-		if (hw_cfg0 == config[i].cfg0 && hw_cfg1 == config[i].cfg1)
+-			return i;
+-	}
+-
+-	return -EINVAL;
+-}
+-
+-static unsigned long zx_pll_recalc_rate(struct clk_hw *hw,
+-					unsigned long parent_rate)
+-{
+-	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
+-	int idx;
+-
+-	idx = hw_to_idx(zx_pll);
+-	if (unlikely(idx == -EINVAL))
+-		return 0;
+-
+-	return zx_pll->lookup_table[idx].rate;
+-}
+-
+-static long zx_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+-			      unsigned long *prate)
+-{
+-	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
+-	int idx;
+-
+-	idx = rate_to_idx(zx_pll, rate);
+-
+-	return zx_pll->lookup_table[idx].rate;
+-}
+-
+-static int zx_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+-			   unsigned long parent_rate)
+-{
+-	/* Assume current cpu is not running on current PLL */
+-	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
+-	const struct zx_pll_config *config;
+-	int idx;
+-
+-	idx = rate_to_idx(zx_pll, rate);
+-	config = &zx_pll->lookup_table[idx];
+-
+-	writel_relaxed(config->cfg0, zx_pll->reg_base);
+-	writel_relaxed(config->cfg1, zx_pll->reg_base + CFG0_CFG1_OFFSET);
+-
+-	return 0;
+-}
+-
+-static int zx_pll_enable(struct clk_hw *hw)
+-{
+-	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
+-	u32 reg;
+-
+-	reg = readl_relaxed(zx_pll->reg_base);
+-	writel_relaxed(reg & ~POWER_DOWN, zx_pll->reg_base);
+-
+-	return readl_relaxed_poll_timeout(zx_pll->reg_base, reg,
+-					  reg & LOCK_FLAG, 0, 100);
+-}
+-
+-static void zx_pll_disable(struct clk_hw *hw)
+-{
+-	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
+-	u32 reg;
+-
+-	reg = readl_relaxed(zx_pll->reg_base);
+-	writel_relaxed(reg | POWER_DOWN, zx_pll->reg_base);
+-}
+-
+-static int zx_pll_is_enabled(struct clk_hw *hw)
+-{
+-	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
+-	u32 reg;
+-
+-	reg = readl_relaxed(zx_pll->reg_base);
+-
+-	return !(reg & POWER_DOWN);
+-}
+-
+-static const struct clk_ops zx_pll_ops = {
+-	.recalc_rate = zx_pll_recalc_rate,
+-	.round_rate = zx_pll_round_rate,
+-	.set_rate = zx_pll_set_rate,
+-	.enable = zx_pll_enable,
+-	.disable = zx_pll_disable,
+-	.is_enabled = zx_pll_is_enabled,
+-};
+-
+-struct clk *clk_register_zx_pll(const char *name, const char *parent_name,
+-	unsigned long flags, void __iomem *reg_base,
+-	const struct zx_pll_config *lookup_table, int count, spinlock_t *lock)
+-{
+-	struct clk_zx_pll *zx_pll;
+-	struct clk *clk;
+-	struct clk_init_data init;
+-
+-	zx_pll = kzalloc(sizeof(*zx_pll), GFP_KERNEL);
+-	if (!zx_pll)
+-		return ERR_PTR(-ENOMEM);
+-
+-	init.name = name;
+-	init.ops = &zx_pll_ops;
+-	init.flags = flags;
+-	init.parent_names = parent_name ? &parent_name : NULL;
+-	init.num_parents = parent_name ? 1 : 0;
+-
+-	zx_pll->reg_base = reg_base;
+-	zx_pll->lookup_table = lookup_table;
+-	zx_pll->count = count;
+-	zx_pll->lock = lock;
+-	zx_pll->hw.init = &init;
+-
+-	clk = clk_register(NULL, &zx_pll->hw);
+-	if (IS_ERR(clk))
+-		kfree(zx_pll);
+-
+-	return clk;
+-}
+diff --git a/drivers/clk/zte/clk.c b/drivers/clk/zte/clk.c
+new file mode 100644
+index 0000000..7c73c53
+--- /dev/null
++++ b/drivers/clk/zte/clk.c
+@@ -0,0 +1,309 @@
++/*
++ * Copyright 2014 Linaro Ltd.
++ * Copyright (C) 2014 ZTE Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++#include <asm/div64.h>
++
++#include "clk.h"
++
++#define to_clk_zx_pll(_hw) container_of(_hw, struct clk_zx_pll, hw)
++#define to_clk_zx_audio(_hw) container_of(_hw, struct clk_zx_audio, hw)
++
++#define CFG0_CFG1_OFFSET 4
++#define LOCK_FLAG BIT(30)
++#define POWER_DOWN BIT(31)
++
++static int rate_to_idx(struct clk_zx_pll *zx_pll, unsigned long rate)
++{
++	const struct zx_pll_config *config = zx_pll->lookup_table;
++	int i;
++
++	for (i = 0; i < zx_pll->count; i++) {
++		if (config[i].rate > rate)
++			return i > 0 ? i - 1 : 0;
++
++		if (config[i].rate == rate)
++			return i;
++	}
++
++	return i - 1;
++}
++
++static int hw_to_idx(struct clk_zx_pll *zx_pll)
++{
++	const struct zx_pll_config *config = zx_pll->lookup_table;
++	u32 hw_cfg0, hw_cfg1;
++	int i;
++
++	hw_cfg0 = readl_relaxed(zx_pll->reg_base);
++	hw_cfg1 = readl_relaxed(zx_pll->reg_base + CFG0_CFG1_OFFSET);
++
++	/* For matching the value in lookup table */
++	hw_cfg0 &= ~LOCK_FLAG;
++	hw_cfg0 |= POWER_DOWN;
++
++	for (i = 0; i < zx_pll->count; i++) {
++		if (hw_cfg0 == config[i].cfg0 && hw_cfg1 == config[i].cfg1)
++			return i;
++	}
++
++	return -EINVAL;
++}
++
++static unsigned long zx_pll_recalc_rate(struct clk_hw *hw,
++					unsigned long parent_rate)
++{
++	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
++	int idx;
++
++	idx = hw_to_idx(zx_pll);
++	if (unlikely(idx == -EINVAL))
++		return 0;
++
++	return zx_pll->lookup_table[idx].rate;
++}
++
++static long zx_pll_round_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long *prate)
++{
++	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
++	int idx;
++
++	idx = rate_to_idx(zx_pll, rate);
++
++	return zx_pll->lookup_table[idx].rate;
++}
++
++static int zx_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++			   unsigned long parent_rate)
++{
++	/* Assume current cpu is not running on current PLL */
++	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
++	const struct zx_pll_config *config;
++	int idx;
++
++	idx = rate_to_idx(zx_pll, rate);
++	config = &zx_pll->lookup_table[idx];
++
++	writel_relaxed(config->cfg0, zx_pll->reg_base);
++	writel_relaxed(config->cfg1, zx_pll->reg_base + CFG0_CFG1_OFFSET);
++
++	return 0;
++}
++
++static int zx_pll_enable(struct clk_hw *hw)
++{
++	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
++	u32 reg;
++
++	reg = readl_relaxed(zx_pll->reg_base);
++	writel_relaxed(reg & ~POWER_DOWN, zx_pll->reg_base);
++
++	return readl_relaxed_poll_timeout(zx_pll->reg_base, reg,
++					  reg & LOCK_FLAG, 0, 100);
++}
++
++static void zx_pll_disable(struct clk_hw *hw)
++{
++	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
++	u32 reg;
++
++	reg = readl_relaxed(zx_pll->reg_base);
++	writel_relaxed(reg | POWER_DOWN, zx_pll->reg_base);
++}
++
++static int zx_pll_is_enabled(struct clk_hw *hw)
++{
++	struct clk_zx_pll *zx_pll = to_clk_zx_pll(hw);
++	u32 reg;
++
++	reg = readl_relaxed(zx_pll->reg_base);
++
++	return !(reg & POWER_DOWN);
++}
++
++static const struct clk_ops zx_pll_ops = {
++	.recalc_rate = zx_pll_recalc_rate,
++	.round_rate = zx_pll_round_rate,
++	.set_rate = zx_pll_set_rate,
++	.enable = zx_pll_enable,
++	.disable = zx_pll_disable,
++	.is_enabled = zx_pll_is_enabled,
++};
++
++struct clk *clk_register_zx_pll(const char *name, const char *parent_name,
++				unsigned long flags, void __iomem *reg_base,
++				const struct zx_pll_config *lookup_table,
++				int count, spinlock_t *lock)
++{
++	struct clk_zx_pll *zx_pll;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	zx_pll = kzalloc(sizeof(*zx_pll), GFP_KERNEL);
++	if (!zx_pll)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &zx_pll_ops;
++	init.flags = flags;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.num_parents = parent_name ? 1 : 0;
++
++	zx_pll->reg_base = reg_base;
++	zx_pll->lookup_table = lookup_table;
++	zx_pll->count = count;
++	zx_pll->lock = lock;
++	zx_pll->hw.init = &init;
++
++	clk = clk_register(NULL, &zx_pll->hw);
++	if (IS_ERR(clk))
++		kfree(zx_pll);
++
++	return clk;
++}
++
++#define BPAR 1000000
++static u32 calc_reg(u32 parent_rate, u32 rate)
++{
++	u32 sel, integ, fra_div, tmp;
++	u64 tmp64 = (u64)parent_rate * BPAR;
++
++	do_div(tmp64, rate);
++	integ = (u32)tmp64 / BPAR;
++	integ = integ >> 1;
++
++	tmp = (u32)tmp64 % BPAR;
++	sel = tmp / BPAR;
++
++	tmp = tmp % BPAR;
++	fra_div = tmp * 0xff / BPAR;
++	tmp = (sel << 24) | (integ << 16) | (0xff << 8) | fra_div;
++
++	/* Set I2S integer divider as 1. This bit is reserved for SPDIF
++	 * and do no harm.
++	 */
++	tmp |= BIT(28);
++	return tmp;
++}
++
++static u32 calc_rate(u32 reg, u32 parent_rate)
++{
++	u32 sel, integ, fra_div, tmp;
++	u64 tmp64 = (u64)parent_rate * BPAR;
++
++	tmp = reg;
++	sel = (tmp >> 24) & BIT(0);
++	integ = (tmp >> 16) & 0xff;
++	fra_div = tmp & 0xff;
++
++	tmp = fra_div * BPAR;
++	tmp = tmp / 0xff;
++	tmp += sel * BPAR;
++	tmp += 2 * integ * BPAR;
++	do_div(tmp64, tmp);
++
++	return (u32)tmp64;
++}
++
++static unsigned long zx_audio_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct clk_zx_audio *zx_audio = to_clk_zx_audio(hw);
++	u32 reg;
++
++	reg = readl_relaxed(zx_audio->reg_base);
++	return calc_rate(reg, parent_rate);
++}
++
++static long zx_audio_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *prate)
++{
++	u32 reg;
++
++	if (rate * 2 > *prate)
++		return -EINVAL;
++
++	reg = calc_reg(*prate, rate);
++	return calc_rate(reg, *prate);
++}
++
++static int zx_audio_set_rate(struct clk_hw *hw, unsigned long rate,
++			     unsigned long parent_rate)
++{
++	struct clk_zx_audio *zx_audio = to_clk_zx_audio(hw);
++	u32 reg;
++
++	reg = calc_reg(parent_rate, rate);
++	writel_relaxed(reg, zx_audio->reg_base);
++
++	return 0;
++}
++
++#define ZX_AUDIO_EN BIT(25)
++static int zx_audio_enable(struct clk_hw *hw)
++{
++	struct clk_zx_audio *zx_audio = to_clk_zx_audio(hw);
++	u32 reg;
++
++	reg = readl_relaxed(zx_audio->reg_base);
++	writel_relaxed(reg & ~ZX_AUDIO_EN, zx_audio->reg_base);
++	return 0;
++}
++
++static void zx_audio_disable(struct clk_hw *hw)
++{
++	struct clk_zx_audio *zx_audio = to_clk_zx_audio(hw);
++	u32 reg;
++
++	reg = readl_relaxed(zx_audio->reg_base);
++	writel_relaxed(reg | ZX_AUDIO_EN, zx_audio->reg_base);
++}
++
++static const struct clk_ops zx_audio_ops = {
++	.recalc_rate = zx_audio_recalc_rate,
++	.round_rate = zx_audio_round_rate,
++	.set_rate = zx_audio_set_rate,
++	.enable = zx_audio_enable,
++	.disable = zx_audio_disable,
++};
++
++struct clk *clk_register_zx_audio(const char *name,
++				  const char * const parent_name,
++				  unsigned long flags,
++				  void __iomem *reg_base)
++{
++	struct clk_zx_audio *zx_audio;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	zx_audio = kzalloc(sizeof(*zx_audio), GFP_KERNEL);
++	if (!zx_audio)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &zx_audio_ops;
++	init.flags = flags;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.num_parents = parent_name ? 1 : 0;
++
++	zx_audio->reg_base = reg_base;
++	zx_audio->hw.init = &init;
++
++	clk = clk_register(NULL, &zx_audio->hw);
++	if (IS_ERR(clk))
++		kfree(zx_audio);
++
++	return clk;
++}
+diff --git a/drivers/clk/zte/clk.h b/drivers/clk/zte/clk.h
+index 0914a82..65ae08b 100644
+--- a/drivers/clk/zte/clk.h
++++ b/drivers/clk/zte/clk.h
+@@ -29,4 +29,13 @@ struct clk_zx_pll {
+ struct clk *clk_register_zx_pll(const char *name, const char *parent_name,
+ 	unsigned long flags, void __iomem *reg_base,
+ 	const struct zx_pll_config *lookup_table, int count, spinlock_t *lock);
++
++struct clk_zx_audio {
++	struct clk_hw hw;
++	void __iomem *reg_base;
++};
++
++struct clk *clk_register_zx_audio(const char *name,
++				  const char * const parent_name,
++				  unsigned long flags, void __iomem *reg_base);
+ #endif
+-- 
+1.9.1
