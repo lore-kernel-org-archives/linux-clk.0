@@ -1,60 +1,36 @@
-Return-Path: <sudeep.holla@arm.com>
-Message-ID: <5596B462.6050103@arm.com>
-Date: Fri, 03 Jul 2015 17:12:18 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 24 Jul 2015 14:41:13 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: dinguyen@opensource.altera.com
+Cc: mturquette@baylibre.com, dinh.linux@gmail.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: socfpga: Add a second parent option for the
+ dbg_base_clk
+Message-ID: <20150724214113.GH15042@codeaurora.org>
+References: <1437591858-12552-1-git-send-email-dinguyen@opensource.altera.com>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Sudeep Holla <Sudeep.Holla@arm.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- Liviu Dudau <Liviu.Dudau@arm.com>,
- Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
- "Jon Medhurst (Tixy)" <tixy@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- Kevin Hilman <khilman@kernel.org>,
- Olof Johansson <olof@lixom.net>, Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v4 3/8] clk: add support for clocks provided by SCP(System
- Control Processor)
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com> <1433760002-24120-4-git-send-email-sudeep.holla@arm.com> <20150702172310.GF4301@codeaurora.org> <5596A1B6.8020307@arm.com>
-In-Reply-To: <5596A1B6.8020307@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1437591858-12552-1-git-send-email-dinguyen@opensource.altera.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 07/22, dinguyen@opensource.altera.com wrote:
+> diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
+> index 80f924d..7d5db54 100644
+> --- a/arch/arm/boot/dts/socfpga.dtsi
+> +++ b/arch/arm/boot/dts/socfpga.dtsi
+> @@ -164,7 +164,7 @@
+>  						dbg_base_clk: dbg_base_clk {
+>  							#clock-cells = <0>;
+>  							compatible = "altr,socfpga-perip-clk";
+> -							clocks = <&main_pll>;
+> +							clocks = <&main_pll>, <&osc1>;
+>  							div-reg = <0xe8 0 9>;
+>  							reg = <0x50>;
+>  						};
 
+We don't usually take changes in dts files. Can you split this
+off and take it through arm-soc?
 
-On 03/07/15 15:52, Sudeep Holla wrote:
-
-[...]
-
->>> +static int scpi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->>> +			     unsigned long parent_rate)
->>> +{
->>> +	struct scpi_clk *clk = to_scpi_clk(hw);
->>> +
->>> +	return clk->scpi_ops->clk_set_val(clk->id, rate);
->>> +}
->>> +
->>> +static void scpi_clk_disable(struct clk_hw *hw)
->>> +{
->>> +	scpi_clk_set_rate(hw, 0, 0);
->>
->> Does this mean you have to set a rate to enable the clock? Are
->> you relying on drivers to call clk_set_rate() to implicitly
->> enable the clock? If so, it would be better to cache the rate of
->> the clock in set_rate if the clock isn't enabled in software and
->> then send the cached rate during enable.
->>
->
-> Agreed, I have asked the firmware/SCPI specification guys about
-> more details on what to expect from firmware. Once they get back,
-> will update the code considering your feedback.
->
-
-OK, I got feedback and looks like it was never planned to implement that
-and even specification needs to be fixed. So I will drop the disable
-callback support. For now, we don't support {en,dis}able
-features. We need to amend the specification to fix that.
-
-Regards,
-Sudeep
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
