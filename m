@@ -1,68 +1,173 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 30 Jul 2015 12:12:42 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 6/7] ARM: sun9i: Add clock indices
-Message-ID: <20150730101242.GK2564@lukather>
-References: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
- <1437945270-32014-7-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v65o8wh50u4pWuArspq+Bi=33JGp0TDF_N+hWZqHcRn4qQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="I2DZnI03i1DS0lOz"
-In-Reply-To: <CAGb2v65o8wh50u4pWuArspq+Bi=33JGp0TDF_N+hWZqHcRn4qQ@mail.gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org, agross@codeaurora.org
+Cc: mturquette@linaro.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v2 2/5] clk: Add safe switch hook
+Date: Fri, 24 Jul 2015 19:58:36 +0300
+Message-Id: <1437757119-6910-3-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1437757119-6910-1-git-send-email-georgi.djakov@linaro.org>
+References: <1437757119-6910-1-git-send-email-georgi.djakov@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Stephen Boyd <sboyd@codeaurora.org>
 
---I2DZnI03i1DS0lOz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sometimes clocks can't accept their parent source turning off
+while the source is reprogrammed to a different rate. Most
+notably CPU clocks require a way to switch away from the current
+PLL they're running on, reprogram that PLL to a new rate, and
+then switch back to the PLL with the new rate once they're done.
+Add a hook that drivers can implement allowing them to return a
+'safe parent' and 'safe frequency' that they can switch their
+parent to while the upstream source is reprogrammed to support
+this.
 
-On Thu, Jul 30, 2015 at 03:44:59PM +0800, Chen-Yu Tsai wrote:
-> On Mon, Jul 27, 2015 at 5:14 AM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > The A80 gates have a non continuous set of clock IDs that are valid. Add
-> > the clock-indices property to the DT to express this.
->=20
-> The commit message does not match the patch, which is just a reformatting=
- of
-> existing clock-indices properties.
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/clk/clk.c            |   73 +++++++++++++++++++++++++++++++++++++++---
+ include/linux/clk-provider.h |    2 ++
+ 2 files changed, 70 insertions(+), 5 deletions(-)
 
-Indeed... That's what happens when you automate too much things.. :)
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---I2DZnI03i1DS0lOz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVufiaAAoJEBx+YmzsjxAgrocP/3dpa+iGMf1yU/Tw4s9hCzTu
-Vn9mz/+LjtGsQqrlM0ZenkZf/Tiro4gW5Ak9kM3o9euB3/Im6sx3LvNh4CU+jC6p
-yQzR/Y2/+dvc81WO4+xDdsSO9LCL7EzB3T9qGnQFUnYUPjMWa/2b81EfQQNV5rhe
-hcxYcFegTnzPMzKM4JGAzzdOuQ+0KepsK4lnBGGYaSuwknSJwD0QrsVKHqKW/UdY
-cKX9iMfW+SKm7h5UiAPUowzNxx5OI7ML3HV1rO46aM0PsJ7XJ1b1n/FEWv9PMtnC
-L3w4JR4wVHvZx7y5Nl+Irao/IudUsqY7fdas7TvwiAeM4AXDmU0xqxbX6EawTBgd
-2nY2UlQG1bXjQYN8/NSvQCH3CiaHrEi9c/WMug9s9e4Ets/Ao9Uc5SDwGRSPjq5S
-jj5CPqMsNf5zJkuoKp/M03UoBDWiV17Qrst5OQvs7IPil/fzWm4a1v+w2YDMQwEC
-hP/jWlB3iJOEebS1qCxaYLZA1AWirWaVDAnz17b+sOIciHMSB2OgO2IH0ga2GTq2
-GEqgSFP69/fdi5k3X+4RHfgDzHql83a0u+qTg4RovmbQNVcPfNTnxPNmF7to8DiE
-dpYIUZ3Fqj4eeq5qC23L6B38ruypNlCzSthd8drZvvR+6IfWxUm8OXRdUc/5tmK8
-ixu+FtYJWEPy1DDSlyls
-=EyBb
------END PGP SIGNATURE-----
-
---I2DZnI03i1DS0lOz--
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 67f778bd093b..94d52ddafc21 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -51,9 +51,13 @@ struct clk_core {
+ 	struct clk_core		**parents;
+ 	u8			num_parents;
+ 	u8			new_parent_index;
++	u8			safe_parent_index;
+ 	unsigned long		rate;
+ 	unsigned long		req_rate;
++	unsigned long		old_rate;
+ 	unsigned long		new_rate;
++	unsigned long		safe_freq;
++	struct clk_core		*safe_parent;
+ 	struct clk_core		*new_parent;
+ 	struct clk_core		*new_child;
+ 	unsigned long		flags;
+@@ -1244,7 +1248,9 @@ out:
+ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
+ 			     struct clk_core *new_parent, u8 p_index)
+ {
+-	struct clk_core *child;
++	struct clk_core *child, *parent;
++	struct clk_hw *parent_hw;
++	unsigned long safe_freq = 0;
+ 
+ 	core->new_rate = new_rate;
+ 	core->new_parent = new_parent;
+@@ -1254,6 +1260,23 @@ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
+ 	if (new_parent && new_parent != core->parent)
+ 		new_parent->new_child = core;
+ 
++	if (core->ops->get_safe_parent) {
++		parent_hw = core->ops->get_safe_parent(core->hw, &safe_freq);
++		if (parent_hw) {
++			parent = parent_hw->core;
++			p_index = clk_fetch_parent_index(core, parent);
++			core->safe_parent_index = p_index;
++			core->safe_parent = parent;
++			if (safe_freq)
++				core->safe_freq = safe_freq;
++			else
++				core->safe_freq = 0;
++		}
++	} else {
++		core->safe_parent = NULL;
++		core->safe_freq = 0;
++	}
++
+ 	hlist_for_each_entry(child, &core->children, child_node) {
+ 		child->new_rate = clk_recalc(child, new_rate);
+ 		clk_calc_subtree(child, child->new_rate, NULL, 0);
+@@ -1366,14 +1389,51 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
+ 						  unsigned long event)
+ {
+ 	struct clk_core *child, *tmp_clk, *fail_clk = NULL;
++	struct clk_core *old_parent;
+ 	int ret = NOTIFY_DONE;
+ 
+-	if (core->rate == core->new_rate)
++	if (core->rate == core->new_rate && event != POST_RATE_CHANGE)
+ 		return NULL;
+ 
++	switch (event) {
++	case PRE_RATE_CHANGE:
++		if (core->safe_parent) {
++			if (core->safe_freq)
++				core->ops->set_rate_and_parent(core->hw,
++						core->safe_freq,
++						core->safe_parent->rate,
++						core->safe_parent_index);
++			else
++				core->ops->set_parent(core->hw,
++						core->safe_parent_index);
++		}
++		core->old_rate = core->rate;
++		break;
++	case POST_RATE_CHANGE:
++		if (core->safe_parent) {
++			old_parent = __clk_set_parent_before(core,
++							     core->new_parent);
++			if (core->ops->set_rate_and_parent) {
++				core->ops->set_rate_and_parent(core->hw,
++						core->new_rate,
++						core->new_parent ?
++						core->new_parent->rate : 0,
++						core->new_parent_index);
++			} else if (core->ops->set_parent) {
++				core->ops->set_parent(core->hw,
++						core->new_parent_index);
++			}
++			__clk_set_parent_after(core, core->new_parent,
++					       old_parent);
++		}
++		break;
++	}
++
+ 	if (core->notifier_count) {
+-		ret = __clk_notify(core, event, core->rate, core->new_rate);
+-		if (ret & NOTIFY_STOP_MASK)
++		if (event != POST_RATE_CHANGE || core->old_rate != core->rate)
++			ret = __clk_notify(core, event, core->old_rate,
++					   core->new_rate);
++		if (ret & NOTIFY_STOP_MASK && event != POST_RATE_CHANGE)
+ 			fail_clk = core;
+ 	}
+ 
+@@ -1416,7 +1476,8 @@ static void clk_change_rate(struct clk_core *core)
+ 	else if (core->parent)
+ 		best_parent_rate = core->parent->rate;
+ 
+-	if (core->new_parent && core->new_parent != core->parent) {
++	if (core->new_parent && core->new_parent != core->parent &&
++	    !core->safe_parent) {
+ 		old_parent = __clk_set_parent_before(core, core->new_parent);
+ 		trace_clk_set_parent(core, core->new_parent);
+ 
+@@ -1500,6 +1561,8 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 
+ 	core->req_rate = req_rate;
+ 
++	clk_propagate_rate_change(top, POST_RATE_CHANGE);
++
+ 	return ret;
+ }
+ 
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 402478ed9933..9e032c52462d 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -202,6 +202,8 @@ struct clk_ops {
+ 					  struct clk_rate_request *req);
+ 	int		(*set_parent)(struct clk_hw *hw, u8 index);
+ 	u8		(*get_parent)(struct clk_hw *hw);
++	struct clk_hw	*(*get_safe_parent)(struct clk_hw *hw,
++					    unsigned long *safe_freq);
+ 	int		(*set_rate)(struct clk_hw *hw, unsigned long rate,
+ 				    unsigned long parent_rate);
+ 	int		(*set_rate_and_parent)(struct clk_hw *hw,
