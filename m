@@ -1,81 +1,97 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 27 Jul 2015 17:03:40 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] cpufreq-dt: add turbo modes support
-Message-ID: <20150727113340.GA10181@linux>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <1436456621-29839-4-git-send-email-b.zolnierkie@samsung.com>
- <20150727083754.GD31611@linux>
- <15810554.2OjPyuYJBt@amdc1976>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <15810554.2OjPyuYJBt@amdc1976>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Sergej Sawazki <ce3a@gmx.de>
+Subject: [PATCH] clk: gpio: Mark parent_names array const
+Date: Fri, 24 Jul 2015 11:54:39 -0700
+Message-Id: <1437764079-30022-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 27-07-15, 13:01, Bartlomiej Zolnierkiewicz wrote:
+Let's encourage const arrays of parent names like other basic
+clock types.
 
-First of all, please don't be angry :).. We can discuss and get things
-sorted out ...
+Cc: Sergej Sawazki <ce3a@gmx.de>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-gpio.c       | 13 +++++++------
+ include/linux/clk-provider.h |  2 +-
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
-> This change was in the original patch posted in April:
-> https://lkml.org/lkml/2015/4/10/646
-
-Yeah, and I already apologized for missing the request :)
-
-> your review from a month ago didn't contain this request:
-> https://lkml.org/lkml/2015/6/22/667
-
-Your patch inserted almost 116 lines and most of the stuff was around
-adding new bindings to get things working with cpufreq-dt driver.
-
-And so I replied to the most important stuff, i.e. don't add new
-bindings, we will sort it out with opp-v2.
-
-And frankly that wasn't the time where we could have discussed how
-exactly we are going to use it. Ofcourse we should get it via DT,
-platform data is just not required.
-
-So, me not NAK ing this approach was fine as it wasn't about keeping
-this data in the platform data part.
-
-> and now (after nearly 4 months) you are telling me that
-
-I will say a month, as we discarded most of that patch recently :)
-
-> I should change this because you are planning to do some
-> more changes in the future.
-
-Its not about me doing some changes. But the whole point of doing the
-opp-v2 thing was to get rid of such platform data things..
-
-Just that your work is competing with opp-v2 code :)
-
-> Could we please keep it as it is for now and change it
-> later (after independent_clocks configuration will get
-> ported to use device tree)?
-
-I thought we can get your work to a better shape, with all credit to
-you. But if you have some dependency on this for 4.3, then I don't
-mind killing this structure after you have polluted it a bit more :)
-
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index 41277a1526c7..10819e248414 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -95,7 +95,7 @@ const struct clk_ops clk_gpio_mux_ops = {
+ EXPORT_SYMBOL_GPL(clk_gpio_mux_ops);
+ 
+ static struct clk *clk_register_gpio(struct device *dev, const char *name,
+-		const char **parent_names, u8 num_parents, unsigned gpio,
++		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags,
+ 		const struct clk_ops *clk_gpio_ops)
+ {
+@@ -188,7 +188,7 @@ EXPORT_SYMBOL_GPL(clk_register_gpio_gate);
+  * @flags: clock flags
+  */
+ struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
+-		const char **parent_names, u8 num_parents, unsigned gpio,
++		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags)
+ {
+ 	if (num_parents != 2) {
+@@ -213,7 +213,7 @@ struct clk_gpio_delayed_register_data {
+ 	struct mutex lock;
+ 	struct clk *clk;
+ 	struct clk *(*clk_register_get)(const char *name,
+-			const char **parent_names, u8 num_parents,
++			const char * const *parent_names, u8 num_parents,
+ 			unsigned gpio, bool active_low);
+ };
+ 
+@@ -273,7 +273,7 @@ out:
+ }
+ 
+ static struct clk *of_clk_gpio_gate_delayed_register_get(const char *name,
+-		const char **parent_names, u8 num_parents,
++		const char * const *parent_names, u8 num_parents,
+ 		unsigned gpio, bool active_low)
+ {
+ 	return clk_register_gpio_gate(NULL, name, parent_names[0],
+@@ -281,7 +281,7 @@ static struct clk *of_clk_gpio_gate_delayed_register_get(const char *name,
+ }
+ 
+ static struct clk *of_clk_gpio_mux_delayed_register_get(const char *name,
+-		const char **parent_names, u8 num_parents, unsigned gpio,
++		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low)
+ {
+ 	return clk_register_gpio_mux(NULL, name, parent_names, num_parents,
+@@ -291,7 +291,8 @@ static struct clk *of_clk_gpio_mux_delayed_register_get(const char *name,
+ static void __init of_gpio_clk_setup(struct device_node *node,
+ 		const char *gpio_name,
+ 		struct clk *(*clk_register_get)(const char *name,
+-				const char **parent_names, u8 num_parents,
++				const char * const *parent_names,
++				u8 num_parents,
+ 				unsigned gpio, bool active_low))
+ {
+ 	struct clk_gpio_delayed_register_data *data;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 402478ed9933..07f615f8eb92 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -579,7 +579,7 @@ void of_gpio_clk_gate_setup(struct device_node *node);
+ 
+ extern const struct clk_ops clk_gpio_mux_ops;
+ struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
+-		const char **parent_names, u8 num_parents, unsigned gpio,
++		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags);
+ 
+ void of_gpio_mux_clk_setup(struct device_node *node);
 -- 
-viresh
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
