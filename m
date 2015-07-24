@@ -1,114 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bl2on0086.outbound.protection.outlook.com ([65.55.169.86]:56192
-	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751391AbbGGEFc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 7 Jul 2015 00:05:32 -0400
-From: <dinguyen@opensource.altera.com>
-To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
-CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>
-Subject: [PATCHv2 5/6] clk: sunxi: make use of of_clk_parent_fill helper function
-Date: Mon, 6 Jul 2015 22:59:05 -0500
-Message-ID: <1436241546-16731-6-git-send-email-dinguyen@opensource.altera.com>
-In-Reply-To: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
-References: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-id: <55B1D9A3.8060301@samsung.com>
+Date: Fri, 24 Jul 2015 15:22:27 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>,
+	'Chanwoo Choi' <cw00.choi@samsung.com>, s.nawrocki@samsung.com,
+	tomasz.figa@gmail.com, sboyd@codeaurora.org, thomas.ab@samsung.com,
+	kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
+References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
+ <4464631.oZyVO4Z0Ov@amdc1976> <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org>
+ <20150724003005.642.21781@quantum> <55B1B3B0.8090106@kernel.org>
+In-reply-to: <55B1B3B0.8090106@kernel.org>
+Content-type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
+On 24.07.2015 12:40, Kukjin Kim wrote:
+> On 07/24/15 09:30, Michael Turquette wrote:
+>> Quoting Kukjin Kim (2015-07-07 07:43:31)
+>>> Bartlomiej Zolnierkiewicz wrote:
+> 
+> [...]
+> 
+>>>>> Chanwoo Choi (3):
+>>>>>   clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
+>>>>>   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
+>>>>>   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
+>>>>>
+>>>>>  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
+>>>>>  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
+>>>>>  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
+>>>>>  arch/arm/mach-exynos/exynos.c           |  1 +
+>>>>>  drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
+>>>>>  include/dt-bindings/clock/exynos3250.h  |  1 +
+>>>>>  6 files changed, 55 insertions(+), 2 deletions(-)
+>>>>
+>>>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>>>>
+>>>> Thank you for working on this.
+>>>>
+>>> +1 Thanks.
+>>>
+>>> Mike and Sylwester, if you're OK on this series, I'd like to pick up in Samsung
+>>> tree together. And if you want, I could provide topic branch for clk tree.
+>>
+>> Kukjin,
+>>
+>> A topic branch would be great.
+>>
+> Sure, BTW it means you did 'ack' on this clk change? If not, please let
+> em know ;-) I'll let you know once the topic branch is ready.
 
-Use of_clk_parent_fill to fill in the parent clock names' array.
+Dear Kukjin,
 
-Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: "Emilio López" <emilio@elopez.com.ar>
----
-v2: Add if (of_clk_parent_fill(node, parents, 2) != 2) to clk-a20-gmac.c
----
- drivers/clk/sunxi/clk-a20-gmac.c    |    4 +---
- drivers/clk/sunxi/clk-factors.c     |    4 +---
- drivers/clk/sunxi/clk-sun6i-ar100.c |    3 +--
- drivers/clk/sunxi/clk-sunxi.c       |   10 ++--------
- 4 files changed, 5 insertions(+), 16 deletions(-)
+Will you handle this patchset and dependants (ARM: dts: Add CPU cooling
+binding for Exynos3250-based Rinato/Monk board) for v4.3?
 
-diff --git a/drivers/clk/sunxi/clk-a20-gmac.c b/drivers/clk/sunxi/clk-a20-gmac.c
-index 0dcf4f2..1611b03 100644
---- a/drivers/clk/sunxi/clk-a20-gmac.c
-+++ b/drivers/clk/sunxi/clk-a20-gmac.c
-@@ -80,9 +80,7 @@ static void __init sun7i_a20_gmac_clk_setup(struct device_node *node)
- 		goto free_mux;
- 
- 	/* gmac clock requires exactly 2 parents */
--	parents[0] = of_clk_get_parent_name(node, 0);
--	parents[1] = of_clk_get_parent_name(node, 1);
--	if (!parents[0] || !parents[1])
-+	if (of_clk_parent_fill(node, parents, 2) != 2)
- 		goto free_gate;
- 
- 	reg = of_iomap(node, 0);
-diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
-index 8c20190..2589457 100644
---- a/drivers/clk/sunxi/clk-factors.c
-+++ b/drivers/clk/sunxi/clk-factors.c
-@@ -174,9 +174,7 @@ struct clk *sunxi_factors_register(struct device_node *node,
- 	int i = 0;
- 
- 	/* if we have a mux, we will have >1 parents */
--	while (i < FACTORS_MAX_PARENTS &&
--	       (parents[i] = of_clk_get_parent_name(node, i)) != NULL)
--		i++;
-+	i = of_clk_parent_fill(node, parents, FACTORS_MAX_PARENTS);
- 
- 	/*
- 	 * some factor clocks, such as pll5 and pll6, may have multiple
-diff --git a/drivers/clk/sunxi/clk-sun6i-ar100.c b/drivers/clk/sunxi/clk-sun6i-ar100.c
-index 63cf149..6f229ff 100644
---- a/drivers/clk/sunxi/clk-sun6i-ar100.c
-+++ b/drivers/clk/sunxi/clk-sun6i-ar100.c
-@@ -195,8 +195,7 @@ static int sun6i_a31_ar100_clk_probe(struct platform_device *pdev)
- 	if (nparents > SUN6I_AR100_MAX_PARENTS)
- 		nparents = SUN6I_AR100_MAX_PARENTS;
- 
--	for (i = 0; i < nparents; i++)
--		parents[i] = of_clk_get_parent_name(np, i);
-+	of_clk_parent_fill(np, parents, nparents);
- 
- 	of_property_read_string(np, "clock-output-names", &clk_name);
- 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 9a82f17..eed66f8 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -202,10 +202,7 @@ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
- 		return;
- 
- 	/* we have a mux, we will have >1 parents */
--	while (i < SUN6I_AHB1_MAX_PARENTS &&
--	       (parents[i] = of_clk_get_parent_name(node, i)) != NULL)
--		i++;
--
-+	of_clk_parent_fill(node, parents, SUN6I_AHB1_MAX_PARENTS);
- 	of_property_read_string(node, "clock-output-names", &clk_name);
- 
- 	ahb1 = kzalloc(sizeof(struct sun6i_ahb1_clk), GFP_KERNEL);
-@@ -790,10 +787,7 @@ static void __init sunxi_mux_clk_setup(struct device_node *node,
- 
- 	reg = of_iomap(node, 0);
- 
--	while (i < SUNXI_MAX_PARENTS &&
--	       (parents[i] = of_clk_get_parent_name(node, i)) != NULL)
--		i++;
--
-+	of_clk_parent_fill(node, parents, SUNXI_MAX_PARENTS);
- 	of_property_read_string(node, "clock-output-names", &clk_name);
- 
- 	clk = clk_register_mux(NULL, clk_name, parents, i,
--- 
-1.7.9.5
+Best regards,
+Krzysztof
 
