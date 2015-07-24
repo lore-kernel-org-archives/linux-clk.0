@@ -1,67 +1,114 @@
-Return-Path: <vaibhav.hiremath@linaro.org>
-Return-Path: <vaibhav.hiremath@linaro.org>
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: robh+dt@kernel.org,
-	mturquette@baylibre.com,
-	lee.jones@linaro.org,
-	k.kozlowski@samsung.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Subject: [PATCH 1/4] mfd: 88pm800: Update the header file with 32K clk related macros
-Date: Tue, 21 Jul 2015 16:37:00 +0530
-Message-Id: <1437476823-3358-2-git-send-email-vaibhav.hiremath@linaro.org>
-In-Reply-To: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
-References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
+Return-Path: <Aisheng.Dong@freescale.com>
+Date: Fri, 24 Jul 2015 11:23:07 +0800
+From: Dong Aisheng <b29396@freescale.com>
+To: Michael Turquette <mturquette@baylibre.com>
+CC: Dong Aisheng <aisheng.dong@freescale.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<shawn.guo@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+	<Ranjani.Vaidyanathan@freescale.com>, <b20596@freescale.com>,
+	<r64343@freescale.com>, <b20788@freescale.com>
+Subject: Re: [PATCH v2 1/5] clk: remove duplicated code with
+ __clk_set_parent_after
+Message-ID: <20150724032304.GA16916@shlinux1.ap.freescale.net>
+References: <1431610143-21853-1-git-send-email-aisheng.dong@freescale.com>
+ <1431610143-21853-2-git-send-email-aisheng.dong@freescale.com>
+ <20150528040919.22384.79189@quantum>
+ <20150715122522.GA30570@shlinux1.ap.freescale.net>
+ <20150715122955.GB30570@shlinux1.ap.freescale.net>
+ <20150722140809.GC13623@shlinux1.ap.freescale.net>
+ <20150724001135.642.54711@quantum>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20150724001135.642.54711@quantum>
+Return-Path: b29396@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Update header file with required macros for 32KHz buffered clock
-output of 88PM800 family of device.
-These macros will be used in clk provider driver.
+On Thu, Jul 23, 2015 at 05:11:35PM -0700, Michael Turquette wrote:
+> Quoting Dong Aisheng (2015-07-22 07:08:10)
+> > Ping...
+> > 
+> > On Wed, Jul 15, 2015 at 08:29:56PM +0800, Dong Aisheng wrote:
+> > > On Wed, Jul 15, 2015 at 08:25:24PM +0800, Dong Aisheng wrote:
+> > > > Hi Mike,
+> > > > 
+> > > > On Wed, May 27, 2015 at 09:09:19PM -0700, Michael Turquette wrote:
+> > > > > Quoting Dong Aisheng (2015-05-14 06:28:59)
+> > > > > > __clk_set_parent_after() actually used the second argument then we
+> > > > > > could put this duplicate logic in there and call it with a different
+> > > > > > order of arguments in the success vs. error paths in this function.
+> > > > > > 
+> > > > > > Cc: Mike Turquette <mturquette@linaro.org>
+> > > > > > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > > > > > Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+> > > > > > Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
+> > > > > 
+> > > > > Patch looks good to me.
+> > > > > 
+> > > > > Also just noticed that the second argument to __clk_set_parent_after is
+> > > > > never used :-(
+> > > > > 
+> > > > 
+> > > > Ping...
+> > > > 
+> > > > I did not see this patch series in your tree for v4.2 rc.
+> > > > Is this got missed?
+> 
+> Dong Aisheng,
+> 
+> Yes it was missed. My apologies. Can you refresh it and re-send?
+> 
 
-Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
----
- include/linux/mfd/88pm80x.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Will do it.
+Thanks
 
-diff --git a/include/linux/mfd/88pm80x.h b/include/linux/mfd/88pm80x.h
-index 05d9bad..680e4eb 100644
---- a/include/linux/mfd/88pm80x.h
-+++ b/include/linux/mfd/88pm80x.h
-@@ -91,6 +91,7 @@ enum {
- /* Referance and low power registers */
- #define PM800_LOW_POWER1		(0x20)
- #define PM800_LOW_POWER2		(0x21)
-+#define PM800_LOW_POWER2_XO_LJ_EN	BIT(5)
- 
- #define PM800_LOW_POWER_CONFIG3		(0x22)
- #define PM800_LDOBK_FREEZE		BIT(7)
-@@ -138,6 +139,13 @@ enum {
- #define PM800_ALARM			BIT(5)
- #define PM800_RTC1_USE_XO		BIT(7)
- 
-+#define PM800_32K_OUTX_SEL_MASK		(0x3)
-+/* 32KHz clk output sel mode */
-+#define PM800_32K_OUTX_SEL_ZERO		(0x0)
-+#define PM800_32K_OUTX_SEL_INT_32KHZ	(0x1)
-+#define PM800_32K_OUTX_SEL_XO_32KHZ	(0x2)
-+#define PM800_32K_OUTX_SEL_HIZ		(0x3)
-+
- /* Regulator Control Registers: BUCK1,BUCK5,LDO1 have DVC */
- 
- /* buck registers */
-@@ -208,6 +216,10 @@ enum {
- #define PM800_PMOD_MEAS1		0x52
- #define PM800_PMOD_MEAS2		0x53
- 
-+/* Oscillator control */
-+#define PM800_OSC_CNTRL1		(0x50)
-+#define PM800_OSC_CNTRL1_OSC_FREERUN_EN	BIT(1)
-+
- #define PM800_GPADC0_MEAS1		0x54
- #define PM800_GPADC0_MEAS2		0x55
- #define PM800_GPADC1_MEAS1		0x56
--- 
-1.9.1
+Regards
+Dong Aisheng
+
+> Thanks,
+> Mike
+> 
+> > > > 
+> > > 
+> > > Updated Mike's email address.
+> > > 
+> > > Regards
+> > > Dong Aisheng
+> > > 
+> > > > Regards
+> > > > Dong Aisheng
+> > > > 
+> > > > > Regards,
+> > > > > Mike
+> > > > > 
+> > > > > > ---
+> > > > > >  drivers/clk/clk.c | 8 +-------
+> > > > > >  1 file changed, 1 insertion(+), 7 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > > > > index 659f2b0..0e813ea 100644
+> > > > > > --- a/drivers/clk/clk.c
+> > > > > > +++ b/drivers/clk/clk.c
+> > > > > > @@ -1159,14 +1159,8 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
+> > > > > >                 flags = clk_enable_lock();
+> > > > > >                 clk_reparent(core, old_parent);
+> > > > > >                 clk_enable_unlock(flags);
+> > > > > > +               __clk_set_parent_after(core, old_parent, parent);
+> > > > > >  
+> > > > > > -               if (core->prepare_count) {
+> > > > > > -                       flags = clk_enable_lock();
+> > > > > > -                       clk_core_disable(core);
+> > > > > > -                       clk_core_disable(parent);
+> > > > > > -                       clk_enable_unlock(flags);
+> > > > > > -                       clk_core_unprepare(parent);
+> > > > > > -               }
+> > > > > >                 return ret;
+> > > > > >         }
+> > > > > >  
+> > > > > > -- 
+> > > > > > 1.9.1
+> > > > > > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > Please read the FAQ at  http://www.tux.org/lkml/
