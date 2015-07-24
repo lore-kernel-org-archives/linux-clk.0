@@ -1,60 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 3 Jul 2015 00:08:27 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Paul Osmialowski <pawelo@king.net.pl>
-cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
+Date: Fri, 24 Jul 2015 14:39:00 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Sangbeom Kim <sbkim73@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-	Nicolas Pitre <nicolas.pitre@linaro.org>,
-	Sergei Poselenov <sposelenov@emcraft.com>,
-	Paul Bolle <pebolle@tiscali.nl>,
-	Jingchang Lu <jingchang.lu@freescale.com>,
-	Yuri Tikhonov <yur@emcraft.com>,
-	Rob Herring <r.herring@freescale.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-	Alexander Potashev <aspotashev@emcraft.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Anson Huang <b20788@freescale.com>
-Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
-In-Reply-To: <alpine.LNX.2.00.1507022338070.28322@localhost.localdomain>
-Message-ID: <alpine.DEB.2.11.1507030006280.3916@nanos>
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <alpine.LNX.2.00.1507011756140.14440@localhost.localdomain> <alpine.LNX.2.00.1507021206410.13210@localhost.localdomain> <1861313.aMcV1xHCIq@wuerfel>
- <alpine.LNX.2.00.1507022338070.28322@localhost.localdomain>
+	"open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS"
+	<linux-kernel@vger.kernel.org>,
+	"open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS"
+	<linux-samsung-soc@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: s2mps11: Use kcalloc instead of kzalloc for array
+ allocation
+Message-ID: <20150724213900.GG15042@codeaurora.org>
+References: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2 Jul 2015, Paul Osmialowski wrote:
-> On Thu, 2 Jul 2015, Arnd Bergmann wrote:
+On 07/22, Vaibhav Hiremath wrote:
+> This patch cleans up the driver for,
 > 
-> > I wonder if you could move out the fixed rate clocks into their own
-> > nodes. Are they actually controlled by the same block? If they are
-> > just fixed, you can use the normal binding for fixed rate clocks
-> > and only describe the clocks that are related to the driver.
+>   - Use devm_kcalloc varient instead of devm_kzalloc for array
+>     allocation.
+>   - clk_prepare/unprepare, remove "ret" variable as it is not required
+>   - use __exit for cleanup function
 > 
-> In my view having these clocks grouped together looks more convincing. After
-> all, they all share the same I/O regs in order to read configuration.
+> As I am referring this driver as a reference for my 88pm800 clk driver,
+> applying same changes here as well.
+> 
+> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+> ---
 
-The fact that they share a register is not making them a group. That's
-just a HW design decision and you need to deal with that by protecting
-the register access, but not by trying to group them artificially at
-the functional level.
+Applied to clk-next
 
-Thanks,
-
-	tglx
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
