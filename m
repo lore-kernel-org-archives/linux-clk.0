@@ -1,50 +1,69 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Tero Kristo <t-kristo@ti.com>
-Subject: [PATCH 08/26] ARM: OMAP: Convert __clk_get_rate() to provider/consumer APIs
-Date: Fri, 31 Jul 2015 10:03:48 -0700
-Message-Id: <1438362246-6664-9-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <kgene@kernel.org>
+Message-ID: <55B1B595.4040906@kernel.org>
+Date: Fri, 24 Jul 2015 12:48:37 +0900
+From: Kukjin Kim <kgene@kernel.org>
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>
+CC: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Kukjin Kim <kgene.kim@samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Lukasz Majewski <l.majewski@samsung.com>,
+ Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] clk: samsung: exynos5250: add cpu clock configuration
+ data and instantiate cpu clock
+References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com> <1435756238-845-2-git-send-email-b.zolnierkie@samsung.com> <20150724003918.642.78653@quantum>
+In-Reply-To: <20150724003918.642.78653@quantum>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-We're removing struct clk from the clk provider API, so switch to
-clk_get_rate() and clk_hw_get_rate() here appropriately.
+On 07/24/15 09:39, Michael Turquette wrote:
+> Quoting Bartlomiej Zolnierkiewicz (2015-07-01 06:10:35)
+>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>
+>> With the addition of the new Samsung specific cpu-clock type, the
+>> arm clock can be represented as a cpu-clock type. Add the CPU clock
+>> configuration data and instantiate the CPU clock type for Exynos5250.
+>>
+>> Changes by Bartlomiej:
+>> - split Exynos5250 support from the original patch
+>> - moved E5250_CPU_DIV[0,1]() macros to clk-exynos5250.c
+>>
+>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> 
+> Acked-by: Michael Turquette <mturquette@baylibre.com>
+> 
+Thanks, Mike.
 
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- arch/arm/mach-omap2/clkt34xx_dpll3m2.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> If Kukjin wants to merge this through the samsung tree then an immutable
+> branch would be much appreciated.
+> 
+Here is the topic branch for clk tree and it will not be rebased.
 
-diff --git a/arch/arm/mach-omap2/clkt34xx_dpll3m2.c b/arch/arm/mach-omap2/clkt34xx_dpll3m2.c
-index 07e1956a26ce..3f6521313c93 100644
---- a/arch/arm/mach-omap2/clkt34xx_dpll3m2.c
-+++ b/arch/arm/mach-omap2/clkt34xx_dpll3m2.c
-@@ -67,8 +67,8 @@ int omap3_core_dpll_m2_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (validrate != rate)
- 		return -EINVAL;
- 
--	sdrcrate = __clk_get_rate(sdrc_ick_p);
--	clkrate = __clk_get_rate(hw->clk);
-+	sdrcrate = clk_get_rate(sdrc_ick_p);
-+	clkrate = clk_hw_get_rate(hw);
- 	if (rate > clkrate)
- 		sdrcrate <<= ((rate / clkrate) >> 1);
- 	else
-@@ -86,7 +86,7 @@ int omap3_core_dpll_m2_set_rate(struct clk_hw *hw, unsigned long rate,
- 	/*
- 	 * XXX This only needs to be done when the CPU frequency changes
- 	 */
--	_mpurate = __clk_get_rate(arm_fck_p) / CYCLES_PER_MHZ;
-+	_mpurate = clk_get_rate(arm_fck_p) / CYCLES_PER_MHZ;
- 	c = (_mpurate << SDRC_MPURATE_SCALE) >> SDRC_MPURATE_BASE_SHIFT;
- 	c += 1;  /* for safety */
- 	c *= SDRC_MPURATE_LOOPS;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v4.3-topic/clk-samsung
+
+If any problems, please kindly let me know.
+
+Thanks,
+Kukjin
+
+> Regards,
+> Mike
+> 
+>> ---
+>>  drivers/clk/samsung/clk-exynos5250.c   | 31 +++++++++++++++++++++++++++++++
+>>  include/dt-bindings/clock/exynos5250.h |  1 +
+>>  2 files changed, 32 insertions(+)
