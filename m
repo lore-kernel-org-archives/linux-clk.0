@@ -1,141 +1,124 @@
-Return-Path: <linux-omap-owner@vger.kernel.org>
-Date: Wed, 8 Jul 2015 11:00:05 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Tony Lindgren <tony@atomide.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Tero Kristo <t-kristo@ti.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-	linux-mips@linux-mips.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v5] clk: change clk_ops' ->determine_rate() prototype
-Message-ID: <20150708110005.704c49ff@bbrezillon>
-In-Reply-To: <20150708005748.GG30412@codeaurora.org>
-References: <1436294888-25752-1-git-send-email-boris.brezillon@free-electrons.com>
-	<20150708005748.GG30412@codeaurora.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-omap-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>,
+ "'Bartlomiej Zolnierkiewicz'" <b.zolnierkie@samsung.com>,
+ "'Chanwoo Choi'" <cw00.choi@samsung.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org>
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, sboyd@codeaurora.org,
+ kgene@kernel.org, k.kozlowski@samsung.com, thomas.ab@samsung.com,
+ kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
+ <4464631.oZyVO4Z0Ov@amdc1976> <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org>
+Message-ID: <20150724003005.642.21781@quantum>
+Subject: RE: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
+Date: Thu, 23 Jul 2015 17:30:05 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Quoting Kukjin Kim (2015-07-07 07:43:31)
+> Bartlomiej Zolnierkiewicz wrote:
+> > =
 
-On Tue, 7 Jul 2015 17:57:48 -0700
-Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > Hi,
+> >
+> Hi,
+> =
 
-> On 07/07, Boris Brezillon wrote:
-> > Clock rates are stored in an unsigned long field, but ->determine_rate()
-> > (which returns a rounded rate from a requested one) returns a long
-> > value (errors are reported using negative error codes), which can lead
-> > to long overflow if the clock rate exceed 2Ghz.
-> > 
-> > Change ->determine_rate() prototype to return 0 or an error code, and pass
-> > a pointer to a clk_rate_request structure containing the expected target
-> > rate and the rate constraints imposed by clk users.
-> > 
-> > The clk_rate_request structure might be extended in the future to contain
-> > other kind of constraints like the rounding policy, the maximum clock
-> > inaccuracy or other things that are not yet supported by the CCF
-> > (power consumption constraints ?).
-> > 
-> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > 
-> > CC: Jonathan Corbet <corbet@lwn.net>
-> > CC: Tony Lindgren <tony@atomide.com>
-> > CC: Ralf Baechle <ralf@linux-mips.org>
-> > CC: "Emilio López" <emilio@elopez.com.ar>
-> > CC: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > CC: Tero Kristo <t-kristo@ti.com>
-> > CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > CC: Prashant Gaikwad <pgaikwad@nvidia.com>
-> > CC: Stephen Warren <swarren@wwwdotorg.org>
-> > CC: Thierry Reding <thierry.reding@gmail.com>
-> > CC: Alexandre Courbot <gnurou@gmail.com>
-> > CC: linux-doc@vger.kernel.org
-> > CC: linux-kernel@vger.kernel.org
-> > CC: linux-arm-kernel@lists.infradead.org
-> > CC: linux-omap@vger.kernel.org
-> > CC: linux-mips@linux-mips.org
-> > CC: linux-tegra@vger.kernel.org
-> > 
-> > ---
-> 
-> I'll throw this patch into -next now to see if any other problems
-> shake out. I'm hoping we get some more acks though, so it'll be
-> on it's own branch and become immutable in a week or so. One
-> question below.
-> 
-> > diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-> > index 616f5ae..9e69f34 100644
-> > --- a/drivers/clk/clk-composite.c
-> > +++ b/drivers/clk/clk-composite.c
-> > @@ -99,33 +99,33 @@ static long clk_composite_determine_rate(struct clk_hw *hw, unsigned long rate,
-> >  
-> >  			parent_rate = __clk_get_rate(parent);
-> >  
-> > -			tmp_rate = rate_ops->round_rate(rate_hw, rate,
-> > +			tmp_rate = rate_ops->round_rate(rate_hw, req->rate,
-> >  							&parent_rate);
-> >  			if (tmp_rate < 0)
-> >  				continue;
-> >  
-> > -			rate_diff = abs(rate - tmp_rate);
-> > +			rate_diff = abs(req->rate - tmp_rate);
-> >  
-> > -			if (!rate_diff || !*best_parent_p
-> > +			if (!rate_diff || !req->best_parent_hw
-> >  				       || best_rate_diff > rate_diff) {
-> > -				*best_parent_p = __clk_get_hw(parent);
-> > -				*best_parent_rate = parent_rate;
-> > +				req->best_parent_hw = __clk_get_hw(parent);
-> > +				req->best_parent_rate = parent_rate;
-> >  				best_rate_diff = rate_diff;
-> >  				best_rate = tmp_rate;
-> >  			}
-> >  
-> >  			if (!rate_diff)
-> > -				return rate;
-> > +				return 0;
-> >  		}
-> >  
-> > -		return best_rate;
-> > +		req->rate = best_rate;
-> > +		return 0;
-> >  	} else if (mux_hw && mux_ops && mux_ops->determine_rate) {
-> >  		__clk_hw_set_clk(mux_hw, hw);
-> > -		return mux_ops->determine_rate(mux_hw, rate, min_rate,
-> > -					       max_rate, best_parent_rate,
-> > -					       best_parent_p);
-> > +		return mux_ops->determine_rate(mux_hw, req);
-> >  	} else {
-> >  		pr_err("clk: clk_composite_determine_rate function called, but no mux or rate callback set!\n");
-> > +		req->rate = 0;
-> >  		return 0;
-> 
-> Shouldn't this return an error now? And then assigning req->rate
-> wouldn't be necessary. Sorry I must have missed this last round.
-> 
+> > On Thursday, July 02, 2015 09:42:38 AM Chanwoo Choi wrote:
+> > > This patchset use cpufreq-dt driver to support Exynos3250 cpufreq and=
+ tested it
+> > > on Exynos3250-based Rinato board.
+> > >
+> > > Depends on:
+> > > - next-20150701 tag (master branch) of linux-next kernel tree
+> > > - This patch-set is based on Exynos5250 patch-set[1] because two patc=
+h-set
+> > >   modify the 'arch/arm/mach-exynos/exynos.c' to add the compatible st=
+ring.
+> > >   [1] https://lkml.org/lkml/2015/6/29/361
+> > >   : [PATCH v2 0/4] cpufreq: use generic cpufreq drivers for Exynos525=
+0 platform
+> > >
+> > > Changes from v5:
+> > > (https://lkml.org/lkml/2015/7/1/324)
+> > > - Reorder the cpu dt node in exynos3250-rinato/monk.dts alpabetically.
+> > > - Add reviewed-by tag of Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > >
+> > > Changes from v4:
+> > > (https://lkml.org/lkml/2014/10/20/215)
+> > > - Rebased on latest linux-next git repository.
+> > > - Remove unnecessary divider clock flag from divider of DIV_CPU0/DIV_=
+CPU1 register
+> > >
+> > > Changes from v3:
+> > > - This patchset is based on 3.18-rc1 with new patchset[3] of Thomas A=
+braham
+> > >   [3] [PATCH v11 0/6] cpufreq: use generic cpufreq drivers for exynos=
+ platforms
+> > >   - http://www.spinics.net/lists/arm-kernel/msg370412.html
+> > >
+> > > Changes from v2:
+> > > - Rebased on new patchset of Thomas Abraham
+> > >   and for-next branch of samsunc-clk.git of Tomasz Figa
+> > >
+> > > Changes from v1:
+> > > - Rebased on new patchset[1] by Thomas Abraham
+> > >   [1] [PATCH v10 0/6] cpufreq: use generic cpufreq drivers for exynos=
+ platforms
+> > >   - http://www.spinics.net/lists/arm-kernel/msg364790.html
+> > > - Modify clk-cpu.c to support Exynos3250
+> > > - Drop documentation patch on previous patchset[2]
+> > >   [2] http://www.spinics.net/lists/cpufreq/msg10265.html
+> > > - Add only operating-points for Exynos3250 without armclk-divider-tab=
+le
+> > >
+> > > Chanwoo Choi (3):
+> > >   clk: samsung: exynos3250: Add cpu clock configuration data and inst=
+aniate cpu clock
+> > >   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
+> > >   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
+> > >
+> > >  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
+> > >  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
+> > >  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
+> > >  arch/arm/mach-exynos/exynos.c           |  1 +
+> > >  drivers/clk/samsung/clk-exynos3250.c    | 32 +++++++++++++++++++++++=
++++++++--
+> > >  include/dt-bindings/clock/exynos3250.h  |  1 +
+> > >  6 files changed, 55 insertions(+), 2 deletions(-)
+> > =
 
-Actually I wanted to keep the existing behavior: return a 0 rate (not
-an error) when there is no mux or rate ops.
+> > Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > =
 
-That's something we can change afterwards, but it might reveals
-new bugs if some users are checking for a 0 rate to detect errors.
+> > Thank you for working on this.
+> > =
 
-Best Regards,
+> +1 Thanks.
+> =
 
-Boris
+> Mike and Sylwester, if you're OK on this series, I'd like to pick up in S=
+amsung
+> tree together. And if you want, I could provide topic branch for clk tree.
 
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Kukjin,
+
+A topic branch would be great.
+
+Thanks,
+Mike
+
+> =
+
+> Thanks,
+> Kukjin
+> =
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
