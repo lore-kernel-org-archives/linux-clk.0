@@ -1,39 +1,43 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 13 Jul 2015 17:40:48 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Russell King <linux@arm.linux.org.uk>, devicetree@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	linux-mediatek@lists.infradead.org,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Olof Johansson <olof@lixom.net>, srv_heupstream@mediatek.com,
-	linux-arm-kernel@lists.infradead.org,
-	Daniel Kurtz <djkurtz@chromium.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/5] clocksource: mediatek: Use GPT as sched clock source
-Message-ID: <20150714004048.GM30412@codeaurora.org>
-References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
- <1436779969-18610-3-git-send-email-yingjoe.chen@mediatek.com>
+Return-Path: <lee@kernel.org>
+Date: Fri, 24 Jul 2015 16:22:17 +0100
+From: Lee Jones <lee@kernel.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v4 8/8] ARM: bcm2835: Use the firmware on rpi to get the
+ EMMC clock.
+Message-ID: <20150724152217.GM3436@x1>
+References: <1437420787-32137-1-git-send-email-eric@anholt.net>
+ <1437420787-32137-9-git-send-email-eric@anholt.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1436779969-18610-3-git-send-email-yingjoe.chen@mediatek.com>
+In-Reply-To: <1437420787-32137-9-git-send-email-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/13, Yingjoe Chen wrote:
-> When cpu is in deep idle, arch timer will stop counting. Setup GPT as
-> sched clock source so it can keep counting in idle.
+On Mon, 20 Jul 2015, Eric Anholt wrote:
+
+> This updates the MMC frequency from 100Mhz to 250Mhz.
 > 
-> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 > ---
+>  arch/arm/boot/dts/bcm2835-rpi.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+For my own reference:
+ Acked-by: Lee Jones <lee@kernel.org>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+> index 0a32123..5d370cb 100644
+> --- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
+> +++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+> @@ -62,6 +62,7 @@
+>  &sdhci {
+>  	status = "okay";
+>  	bus-width = <4>;
+> +	clocks = <&firmware_clocks RPI_CLOCK_EMMC>;
+>  };
+>  
+>  &uart0 {
