@@ -1,34 +1,64 @@
-Return-Path: <ralf@linux-mips.org>
-Date: Tue, 14 Jul 2015 14:21:54 +0200
-From: Ralf Baechle <ralf@linux-mips.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Manuel Lauss <manuel.lauss@gmail.com>,
-        Linux-MIPS <linux-mips@linux-mips.org>
-Subject: Re: [PATCH] MIPS: Alchemy: Include clk.h
-Message-ID: <20150714122154.GA30195@linux-mips.org>
-References: <1436819450-16440-1-git-send-email-sboyd@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1436819450-16440-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH] clk: Silence warnings about lock imbalances
+Date: Fri, 24 Jul 2015 12:31:56 -0700
+Message-Id: <1437766316-19587-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jul 13, 2015 at 01:30:50PM -0700, Stephen Boyd wrote:
+The recursive spinlock implementation trips up sparse and it
+complains that these functions have lock imbalances. That isn't
+really true though, so add some __acquires() and __releases()
+information so that sparse is quiet.
 
-> This clock provider uses the consumer API, so include clk.h
-> explicitly.
-> 
-> Cc: Manuel Lauss <manuel.lauss@gmail.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Linux-MIPS <linux-mips@linux-mips.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
-> 
-> Please ack so this can go through the clk tree. We're removing
-> the include of clk.h in clk-provider.h so that the consumer
-> and provider APIs are clearly split.
+drivers/clk/clk.c:116:22: warning: context imbalance in 'clk_enable_lock' - wrong count at exit
+drivers/clk/clk.c:141:9: warning: context imbalance in 'clk_enable_unlock' - unexpected unlock
 
-Acked-by: Ralf Baechle <ralf@linux-mips.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-  Ralf
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 67f778bd093b..7bb975747a2c 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -114,12 +114,14 @@ static void clk_prepare_unlock(void)
+ }
+ 
+ static unsigned long clk_enable_lock(void)
++	__acquires(enable_lock)
+ {
+ 	unsigned long flags;
+ 
+ 	if (!spin_trylock_irqsave(&enable_lock, flags)) {
+ 		if (enable_owner == current) {
+ 			enable_refcnt++;
++			__acquire(enable_lock);
+ 			return flags;
+ 		}
+ 		spin_lock_irqsave(&enable_lock, flags);
+@@ -132,12 +134,15 @@ static unsigned long clk_enable_lock(void)
+ }
+ 
+ static void clk_enable_unlock(unsigned long flags)
++	__releases(enable_lock)
+ {
+ 	WARN_ON_ONCE(enable_owner != current);
+ 	WARN_ON_ONCE(enable_refcnt == 0);
+ 
+-	if (--enable_refcnt)
++	if (--enable_refcnt) {
++		__release(enable_lock);
+ 		return;
++	}
+ 	enable_owner = NULL;
+ 	spin_unlock_irqrestore(&enable_lock, flags);
+ }
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
