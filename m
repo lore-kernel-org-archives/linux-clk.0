@@ -1,83 +1,87 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Date: Mon, 27 Jul 2015 13:26:48 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH 7/7] clk: sunxi: Add a simple gates driver
-Message-ID: <20150727202648.GB14521@codeaurora.org>
-References: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
- <1437945270-32014-8-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1437945270-32014-8-git-send-email-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+To: Tony Lindgren <tony@atomide.com>, "Tero Kristo" <t-kristo@ti.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20150714104006.GO17550@atomide.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Paul Walmsley" <paul@pwsan.com>,
+ "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+ linux-clk@vger.kernel.org
+References: <55A4CE41.9070909@ti.com> <20150714095431.GJ17550@atomide.com>
+ <55A4E520.8050804@ti.com> <20150714104006.GO17550@atomide.com>
+Message-ID: <20150724003703.642.34807@quantum>
+Subject: Re: [GIT PULL] clk: ti: clock driver code migration to drivers
+Date: Thu, 23 Jul 2015 17:37:03 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/26, Maxime Ripard wrote:
-> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
-> new file mode 100644
-> index 000000000000..1a3963a8a686
-> --- /dev/null
-> +++ b/drivers/clk/sunxi/clk-simple-gates.c
-> @@ -0,0 +1,159 @@
-> +/*
-> + * Copyright 2015 Maxime Ripard
-> + *
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/clkdev.h>
+Quoting Tony Lindgren (2015-07-14 03:40:06)
+> * Tero Kristo <t-kristo@ti.com> [150714 03:34]:
+> > On 07/14/2015 12:54 PM, Tony Lindgren wrote:
+> > >* Tero Kristo <t-kristo@ti.com> [150714 01:56]:
+> > >>
+> > >>This pull request contains the TI clock driver set to move the clock
+> > >>implementations under clock driver. Some small portions of the clock =
+driver
+> > >>code still remain under mach-omap2 after this, it should be decided w=
+hether
+> > >>this code is now obsolete and should be deleted or should someone try=
+ to fix
+> > >>it.
+> > >
+> > >Hmm care to clarify what is obsolete or broken after this series?
+> > =
 
-Is this used?
+> > Not after this series, was broken/obsolete already before.
+> > =
 
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/reset-controller.h>
+> > A couple of omap2/omap3 specific clock files still remain under mach-om=
+ap2,
+> > they are DVFS related. OMAP3 core dvfs support is currently completely
+> > unused (this could probably be removed, or shall we re-introduce the pa=
+inful
+> > core dvfs at some point again?), and parts of the omap2 core dpll handl=
+ing
+> > code should probably be re-written; or at least verified that it actual=
+ly
+> > works properly. I can't test OMAP2 DVFS myself so don't dare to fiddle =
+with
+> > it.... I could probably try to get some sort of DVFS test case to work =
+on
+> > the board farm OMAP2 board I have access to though, I can investigate t=
+his.
+> =
 
-Is this used?
+> People seem to still want the 1 GiHz support, but I think that only
+> depends on the SmartReflex and some kind of replacement for
+> voltagedomains. So if the core DVFS support is unused, I doubt it's
+> very high on anybody's list right now.
 
-> +#include <linux/spinlock.h>
-> +#include <linux/log2.h>
+As long as the default is to have core running at the fast OPP then 1GHz
+should be fine. There is a voltage domain dependency from ARM->CORE when
+the ARM runs fast at 1GHZ: it requires core to run at the highest OPP as
+well.
 
-Is this used?
+Regards,
+Mike
 
-> +
-> +static DEFINE_SPINLOCK(gates_lock);
-> +
-[...]
-> +
-> +static const int sun4i_a10_ahb_critical_clocks[] __initdata = {
+>  =
 
-Shouldn't it be __initconst ?
+> > >And I take it's not obsolete or broken because of this series? :)
+> > =
 
-> +	14,	/* ahb_sdram */
-> +};
-> +
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> > No, this series does not touch the above mentioned pieces of code, so t=
+his
+> > definitely should not break anything. :)
+> =
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> OK thanks for confirming that.
+> =
+
+> Regards,
+> =
+
+> Tony
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
