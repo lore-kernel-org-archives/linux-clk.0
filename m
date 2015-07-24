@@ -1,56 +1,51 @@
-Return-Path: <vaibhav.hiremath@linaro.org>
-Return-Path: <vaibhav.hiremath@linaro.org>
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: robh+dt@kernel.org,
-	mturquette@baylibre.com,
-	lee.jones@linaro.org,
-	k.kozlowski@samsung.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Subject: [PATCH 0/4] clk: 88pm800: Add new clk provider driver for 88PM800 MFD
-Date: Tue, 21 Jul 2015 16:36:59 +0530
-Message-Id: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:36415 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753765AbbGXPXm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 24 Jul 2015 11:23:42 -0400
+Date: Fri, 24 Jul 2015 16:23:36 +0100
+From: Lee Jones <lee@kernel.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v4 7/8] ARM: bcm2835: Tie SPI clock to the core clock
+ rate.
+Message-ID: <20150724152336.GP3436@x1>
+References: <1437420787-32137-1-git-send-email-eric@anholt.net>
+ <1437420787-32137-8-git-send-email-eric@anholt.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1437420787-32137-8-git-send-email-eric@anholt.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-88PM800 family of devices provides multiple buffered 32.768 KHz clock
-output.
-88PM800 : CLK32k_1, CLK32k_2 and CLK32k_3
-88PM860 : CLK32k_1 and CLK32k_2
+On Mon, 20 Jul 2015, Eric Anholt wrote:
 
-This patch-series adds new clock provider driver for enabling/disabling
-buffered 32Khz clock output from 88PM800 family of device. Adds clock device to
-MFD and updates the binding documentation.
+> We were previously using a fixed clock declared in the 2835 DT, but
+> it's actually the core clock, and it might not be the same if you had
+> adjusted it using the firmware's config.txt.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+> ---
+>  arch/arm/boot/dts/bcm2835-rpi.dtsi | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-The PATCH [1/4], created separately, as it would be easy between maintainers to
-queue it.
+For my own reference:
+ Acked-by: Lee Jones <lee@kernel.org>
 
-
-Note that, I have access to only 88PM800 and 88PM860 datasheet,
-so enabling support for only above two devices.
-
-Testing:
-  - Boot tested on 88PM860 based platform
-  - Clock enable/disable
-  - Non PM860, to make sure that it won't lead to any issues
-
-
-Vaibhav Hiremath (4):
-  mfd: 88pm800: Update the header file with 32K clk related macros
-  mfd: devicetree: bindings: Add clock subdevice node information
-  clk: 88pm800: Add clk provider driver for 88pm800 family of devices
-  mfd: 88pm800: Add support for clk subdevice
-
- Documentation/devicetree/bindings/mfd/88pm800.txt |  28 ++
- drivers/clk/Kconfig                               |   8 +
- drivers/clk/Makefile                              |   1 +
- drivers/clk/clk-88pm800.c                         | 345 ++++++++++++++++++++++
- drivers/mfd/88pm800.c                             |  25 ++
- include/linux/mfd/88pm80x.h                       |  12 +
- 6 files changed, 419 insertions(+)
- create mode 100644 drivers/clk/clk-88pm800.c
-
--- 
-1.9.1
+> diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+> index 9549eb8..0a32123 100644
+> --- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
+> +++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+> @@ -69,3 +69,7 @@
+>  		 <&firmware_clocks RPI_CLOCK_CORE>;
+>  	clock-names = "uartclk", "apb_pclk";
+>  };
+> +
+> +&spi {
+> +	clocks = <&firmware_clocks RPI_CLOCK_CORE>;
+> +};
