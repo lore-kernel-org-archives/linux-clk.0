@@ -1,131 +1,144 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55A37E51.7080803@ti.com>
-Date: Mon, 13 Jul 2015 12:01:05 +0300
-From: Tero Kristo <t-kristo@ti.com>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
-	<linux-clk@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Tony Lindgren <tony@atomide.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	=?windows-1252?Q?Emilio_L=F3pez?= <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-omap@vger.kernel.org>, <linux-mips@linux-mips.org>,
-	<linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v5] clk: change clk_ops' ->determine_rate() prototype
-References: <1436294888-25752-1-git-send-email-boris.brezillon@free-electrons.com> <20150708005748.GG30412@codeaurora.org>
-In-Reply-To: <20150708005748.GG30412@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:59013 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752539AbbGXTaJ (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jul 2015 15:30:09 -0400
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH] clk: basic-type: Silence warnings about lock imbalances
+Date: Fri, 24 Jul 2015 12:30:06 -0700
+Message-Id: <1437766206-17176-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/08/2015 03:57 AM, Stephen Boyd wrote:
-> On 07/07, Boris Brezillon wrote:
->> Clock rates are stored in an unsigned long field, but ->determine_rate()
->> (which returns a rounded rate from a requested one) returns a long
->> value (errors are reported using negative error codes), which can lead
->> to long overflow if the clock rate exceed 2Ghz.
->>
->> Change ->determine_rate() prototype to return 0 or an error code, and pass
->> a pointer to a clk_rate_request structure containing the expected target
->> rate and the rate constraints imposed by clk users.
->>
->> The clk_rate_request structure might be extended in the future to contain
->> other kind of constraints like the rounding policy, the maximum clock
->> inaccuracy or other things that are not yet supported by the CCF
->> (power consumption constraints ?).
->>
->> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
->>
->> CC: Jonathan Corbet <corbet@lwn.net>
->> CC: Tony Lindgren <tony@atomide.com>
->> CC: Ralf Baechle <ralf@linux-mips.org>
->> CC: "Emilio López" <emilio@elopez.com.ar>
->> CC: Maxime Ripard <maxime.ripard@free-electrons.com>
->> CC: Tero Kristo <t-kristo@ti.com>
->> CC: Peter De Schrijver <pdeschrijver@nvidia.com>
->> CC: Prashant Gaikwad <pgaikwad@nvidia.com>
->> CC: Stephen Warren <swarren@wwwdotorg.org>
->> CC: Thierry Reding <thierry.reding@gmail.com>
->> CC: Alexandre Courbot <gnurou@gmail.com>
->> CC: linux-doc@vger.kernel.org
->> CC: linux-kernel@vger.kernel.org
->> CC: linux-arm-kernel@lists.infradead.org
->> CC: linux-omap@vger.kernel.org
->> CC: linux-mips@linux-mips.org
->> CC: linux-tegra@vger.kernel.org
->>
->> ---
->
-> I'll throw this patch into -next now to see if any other problems
-> shake out. I'm hoping we get some more acks though, so it'll be
-> on it's own branch and become immutable in a week or so. One
-> question below.
+The basic clock types use conditional locking for the register
+accessor spinlocks. Add __acquire() and __release() markings in
+the right locations so that sparse isn't tripped up on the
+conditional locking.
 
-Gave this patch a quick test on the boards I have access to, and didn't 
-notice any obvious problems.
+drivers/clk/clk-mux.c:68:12: warning: context imbalance in 'clk_mux_set_parent' - different lock contexts for basic block
+drivers/clk/clk-divider.c:379:12: warning: context imbalance in 'clk_divider_set_rate' - different lock contexts for basic block
+drivers/clk/clk-gate.c:71:9: warning: context imbalance in 'clk_gate_endisable' - different lock contexts for basic block
+drivers/clk/clk-fractional-divider.c:36:9: warning: context imbalance in 'clk_fd_recalc_rate' - different lock contexts for basic block
+drivers/clk/clk-fractional-divider.c:68:12: warning: context imbalance in 'clk_fd_set_rate' - different lock contexts for basic block
 
-So, for the TI parts:
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com> 
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-divider.c            | 4 ++++
+ drivers/clk/clk-fractional-divider.c | 8 ++++++++
+ drivers/clk/clk-gate.c               | 4 ++++
+ drivers/clk/clk-mux.c                | 4 ++++
+ 4 files changed, 20 insertions(+)
 
-Acked-by: Tero Kristo <t-kristo@ti.com>
-
->
->> diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
->> index 616f5ae..9e69f34 100644
->> --- a/drivers/clk/clk-composite.c
->> +++ b/drivers/clk/clk-composite.c
->> @@ -99,33 +99,33 @@ static long clk_composite_determine_rate(struct clk_hw *hw, unsigned long rate,
->>
->>   			parent_rate = __clk_get_rate(parent);
->>
->> -			tmp_rate = rate_ops->round_rate(rate_hw, rate,
->> +			tmp_rate = rate_ops->round_rate(rate_hw, req->rate,
->>   							&parent_rate);
->>   			if (tmp_rate < 0)
->>   				continue;
->>
->> -			rate_diff = abs(rate - tmp_rate);
->> +			rate_diff = abs(req->rate - tmp_rate);
->>
->> -			if (!rate_diff || !*best_parent_p
->> +			if (!rate_diff || !req->best_parent_hw
->>   				       || best_rate_diff > rate_diff) {
->> -				*best_parent_p = __clk_get_hw(parent);
->> -				*best_parent_rate = parent_rate;
->> +				req->best_parent_hw = __clk_get_hw(parent);
->> +				req->best_parent_rate = parent_rate;
->>   				best_rate_diff = rate_diff;
->>   				best_rate = tmp_rate;
->>   			}
->>
->>   			if (!rate_diff)
->> -				return rate;
->> +				return 0;
->>   		}
->>
->> -		return best_rate;
->> +		req->rate = best_rate;
->> +		return 0;
->>   	} else if (mux_hw && mux_ops && mux_ops->determine_rate) {
->>   		__clk_hw_set_clk(mux_hw, hw);
->> -		return mux_ops->determine_rate(mux_hw, rate, min_rate,
->> -					       max_rate, best_parent_rate,
->> -					       best_parent_p);
->> +		return mux_ops->determine_rate(mux_hw, req);
->>   	} else {
->>   		pr_err("clk: clk_composite_determine_rate function called, but no mux or rate callback set!\n");
->> +		req->rate = 0;
->>   		return 0;
->
-> Shouldn't this return an error now? And then assigning req->rate
-> wouldn't be necessary. Sorry I must have missed this last round.
->
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index 2cab88b9c1a8..a417162537b8 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -395,6 +395,8 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	if (divider->lock)
+ 		spin_lock_irqsave(divider->lock, flags);
++	else
++		__acquire(divider->lock);
+ 
+ 	if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
+ 		val = div_mask(divider->width) << (divider->shift + 16);
+@@ -407,6 +409,8 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	if (divider->lock)
+ 		spin_unlock_irqrestore(divider->lock, flags);
++	else
++		__release(divider->lock);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index 140eb5844dc4..e85f856b8592 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -27,11 +27,15 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
+ 
+ 	if (fd->lock)
+ 		spin_lock_irqsave(fd->lock, flags);
++	else
++		__acquire(fd->lock);
+ 
+ 	val = clk_readl(fd->reg);
+ 
+ 	if (fd->lock)
+ 		spin_unlock_irqrestore(fd->lock, flags);
++	else
++		__release(fd->lock);
+ 
+ 	m = (val & fd->mmask) >> fd->mshift;
+ 	n = (val & fd->nmask) >> fd->nshift;
+@@ -80,6 +84,8 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	if (fd->lock)
+ 		spin_lock_irqsave(fd->lock, flags);
++	else
++		__acquire(fd->lock);
+ 
+ 	val = clk_readl(fd->reg);
+ 	val &= ~(fd->mmask | fd->nmask);
+@@ -88,6 +94,8 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	if (fd->lock)
+ 		spin_unlock_irqrestore(fd->lock, flags);
++	else
++		__release(fd->lock);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
+index 551dd0672794..de0b322f5f58 100644
+--- a/drivers/clk/clk-gate.c
++++ b/drivers/clk/clk-gate.c
+@@ -52,6 +52,8 @@ static void clk_gate_endisable(struct clk_hw *hw, int enable)
+ 
+ 	if (gate->lock)
+ 		spin_lock_irqsave(gate->lock, flags);
++	else
++		__acquire(gate->lock);
+ 
+ 	if (gate->flags & CLK_GATE_HIWORD_MASK) {
+ 		reg = BIT(gate->bit_idx + 16);
+@@ -70,6 +72,8 @@ static void clk_gate_endisable(struct clk_hw *hw, int enable)
+ 
+ 	if (gate->lock)
+ 		spin_unlock_irqrestore(gate->lock, flags);
++	else
++		__release(gate->lock);
+ }
+ 
+ static int clk_gate_enable(struct clk_hw *hw)
+diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+index c705cf573569..33c09a3bfa51 100644
+--- a/drivers/clk/clk-mux.c
++++ b/drivers/clk/clk-mux.c
+@@ -84,6 +84,8 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 
+ 	if (mux->lock)
+ 		spin_lock_irqsave(mux->lock, flags);
++	else
++		__acquire(mux->lock);
+ 
+ 	if (mux->flags & CLK_MUX_HIWORD_MASK) {
+ 		val = mux->mask << (mux->shift + 16);
+@@ -96,6 +98,8 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 
+ 	if (mux->lock)
+ 		spin_unlock_irqrestore(mux->lock, flags);
++	else
++		__release(mux->lock);
+ 
+ 	return 0;
+ }
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
