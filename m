@@ -1,142 +1,51 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 02/16] clk: shmobile: r8a7778: Add CPG/MSTP Clock Domain
- support
-Date: Wed,  1 Jul 2015 17:57:56 +0200
-Message-Id: <1435766290-3005-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
-References: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
- linux-sh@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <lee@kernel.org>
+Date: Fri, 24 Jul 2015 16:23:17 +0100
+From: Lee Jones <lee@kernel.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v4 3/8] ARM: bcm2835: Add DT for the firmware clocks
+ driver.
+Message-ID: <20150724152317.GO3436@x1>
+References: <1437420787-32137-1-git-send-email-eric@anholt.net>
+ <1437420787-32137-4-git-send-email-eric@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1437420787-32137-4-git-send-email-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Clock Domain support to the R-Car M1A Clock Pulse Generator (CPG)
-driver using the generic PM Domain.  This allows to power-manage the
-module clocks of SoC devices that are part of the CPG/MSTP Clock Domain
-using Runtime PM, or for system suspend/resume.
+On Mon, 20 Jul 2015, Eric Anholt wrote:
 
-SoC devices that are part of the CPG/MSTP Clock Domain and can be
-power-managed through an MSTP clock should be tagged in DT with a proper
-"power-domains" property.
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+> ---
+> 
+> v2: Rename our compat string to mention bcm2835, and make our firmware
+>     phandle be under a vendor-namespaced property.
+> 
+>  arch/arm/boot/dts/bcm2835-rpi.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
----
-v3:
-  - Add Acked-by,
-  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
+For my own reference:
+ Acked-by: Lee Jones <lee@kernel.org>
 
-v2:
-  - New.
----
- .../bindings/clock/renesas,r8a7778-cpg-clocks.txt  | 29 +++++++++++++++++++---
- arch/arm/mach-shmobile/Kconfig                     |  1 +
- drivers/clk/shmobile/clk-r8a7778.c                 |  2 ++
- 3 files changed, 29 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
-index 2f3747fdcf1c5305..e4cdaf1cb3333012 100644
---- a/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
-@@ -1,7 +1,9 @@
- * Renesas R8A7778 Clock Pulse Generator (CPG)
- 
- The CPG generates core clocks for the R8A7778. It includes two PLLs and
--several fixed ratio dividers
-+several fixed ratio dividers.
-+The CPG also provides a Clock Domain for SoC devices, in combination with the
-+CPG Module Stop (MSTP) Clocks.
- 
- Required Properties:
- 
-@@ -10,10 +12,18 @@ Required Properties:
-   - #clock-cells: Must be 1
-   - clock-output-names: The names of the clocks. Supported clocks are
-     "plla", "pllb", "b", "out", "p", "s", and "s1".
-+  - #power-domain-cells: Must be 0
- 
-+SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
-+through an MSTP clock should refer to the CPG device node in their
-+"power-domains" property, as documented by the generic PM domain bindings in
-+Documentation/devicetree/bindings/power/power_domain.txt.
- 
--Example
---------
-+
-+Examples
-+--------
-+
-+  - CPG device node:
- 
- 	cpg_clocks: cpg_clocks@ffc80000 {
- 		compatible = "renesas,r8a7778-cpg-clocks";
-@@ -22,4 +32,17 @@ Example
- 		clocks = <&extal_clk>;
- 		clock-output-names = "plla", "pllb", "b",
- 				     "out", "p", "s", "s1";
-+		#power-domain-cells = <0>;
-+	};
-+
-+
-+  - CPG/MSTP Clock Domain member device node:
-+
-+	sdhi0: sd@ffe4c000 {
-+		compatible = "renesas,sdhi-r8a7778";
-+		reg = <0xffe4c000 0x100>;
-+		interrupts = <0 87 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp3_clks R8A7778_CLK_SDHI0>;
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
- 	};
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 85d669f14929e365..cb525fea87367321 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -4,6 +4,7 @@ config ARCH_SHMOBILE
- 
- config PM_RCAR
- 	bool
-+	select PM_GENERIC_DOMAINS if PM
- 
- config PM_RMOBILE
- 	bool
-diff --git a/drivers/clk/shmobile/clk-r8a7778.c b/drivers/clk/shmobile/clk-r8a7778.c
-index cb33b57274bf9f55..fa45684e220c78ae 100644
---- a/drivers/clk/shmobile/clk-r8a7778.c
-+++ b/drivers/clk/shmobile/clk-r8a7778.c
-@@ -124,6 +124,8 @@ static void __init r8a7778_cpg_clocks_init(struct device_node *np)
- 	}
- 
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
-+
-+	cpg_mstp_add_clk_domain(np);
- }
- 
- CLK_OF_DECLARE(r8a7778_cpg_clks, "renesas,r8a7778-cpg-clocks",
--- 
-1.9.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+> index ab5474e..7cc47fb 100644
+> --- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
+> +++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+> @@ -20,6 +20,12 @@
+>  			compatible = "raspberrypi,bcm2835-firmware";
+>  			mboxes = <&mailbox>;
+>  		};
+> +
+> +		firmware_clocks: firmware-clocks {
+> +			compatible = "raspberrypi,bcm2835-firmware-clocks";
+> +			#clock-cells = <1>;
+> +			raspberrypi,firmware = <&firmware>;
+> +		};
+>  	};
+>  };
+>  
