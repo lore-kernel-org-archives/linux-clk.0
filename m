@@ -1,58 +1,34 @@
-Return-Path: <t-kristo@ti.com>
-Message-ID: <559BCADB.4070606@ti.com>
-Date: Tue, 7 Jul 2015 15:49:31 +0300
-From: Tero Kristo <t-kristo@ti.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 24 Jul 2015 14:45:23 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jun Nie <jun.nie@linaro.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	shawn.guo@linaro.org, jason.liu@linaro.org, wan.zhijun@zte.com.cn
+Subject: Re: [PATCH v2 1/3] clk: zx: Add audio div clock method for zx296702
+Message-ID: <20150724214523.GI15042@codeaurora.org>
+References: <1437634973-27347-1-git-send-email-jun.nie@linaro.org>
+ <1437634973-27347-2-git-send-email-jun.nie@linaro.org>
 MIME-Version: 1.0
-To: Vignesh R <vigneshr@ti.com>, Paul Walmsley <paul@pwsan.com>,
-        Thierry
- Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Pawel
- Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell
-	<ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        Benoit
- Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell
- King <linux@arm.linux.org.uk>,
-        Mike Turquette <mturquette@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 0/5] Add support for PWMSS on DRA7
-References: <1433332284-10766-1-git-send-email-vigneshr@ti.com> <559A1C1F.7000309@ti.com>
-In-Reply-To: <559A1C1F.7000309@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1437634973-27347-2-git-send-email-jun.nie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/06/2015 09:11 AM, Vignesh R wrote:
->
->
-> On Wednesday 03 June 2015 05:21 PM, Vignesh R wrote:
->>
->> Hi,
->>
->> This patch series adds support for PWMSS on DRA7. The IP is same as that
->> present in AM33XX and AM43XX.
->> The first patch changes clock domain in which PWMSS is present
->> (l4per2_7xx_clkdm) to SW_WKUP. This is because legacy IPs like PWM
->> does'nt support HW_AUTO prorperly. Hence, switch clock domain to
->> SW_WKUP. This is based on the input from the hardware team.
->> The rest of the patches add hwmod and dt entries and enable PWMSS on
->> DRA7 based SoCs.
->
-> Gentle ping...
->
->
+On 07/23, Jun Nie wrote:
+> Add SPDIF/I2S divider clock method for zx296702
+> 
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> ---
 
-Patches 1-4 look good to me, not going to try to review patch 5 as I 
-have no clue about PWM driver itself. So, for 1-4:
+Applied to clk-next
 
-    Acked-by: Tero Kristo <t-kristo@ti.com>
+Please format patches with -M -C so that the diff is more
+readable next time. Or you can add
 
-Some of the patches cause trivial merge conflicts with 4.2-rc1 though.
+	[diff]
+		renames = copy
 
--Tero
+in your .gitconfig file.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
