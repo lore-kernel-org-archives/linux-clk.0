@@ -1,37 +1,72 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 31/45] clk: qcom: Include clk.h
-Date: Fri, 10 Jul 2015 16:33:29 -0700
-Message-Id: <1436571223-10959-32-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:36053 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751895AbbGXPWG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 24 Jul 2015 11:22:06 -0400
+Date: Fri, 24 Jul 2015 16:22:00 +0100
+From: Lee Jones <lee@kernel.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v4 6/8] ARM: bcm2835: Use the RPi firmware clocks for
+ uart.
+Message-ID: <20150724152200.GL3436@x1>
+References: <1437420787-32137-1-git-send-email-eric@anholt.net>
+ <1437420787-32137-7-git-send-email-eric@anholt.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1437420787-32137-7-git-send-email-eric@anholt.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This clock provider uses the consumer API, so include clk.h
-explicitly.
+On Mon, 20 Jul 2015, Eric Anholt wrote:
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/qcom/mmcc-msm8960.c | 1 +
- 1 file changed, 1 insertion(+)
+> This gets us a correct apb_pclk, which previously was accidentally
+> using the "20201000.uart" clock from clk-bcm2835.c, due to the
+> fallback clk_get_sys() path.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+> ---
+>  arch/arm/boot/dts/bcm2835-rpi.dtsi | 7 +++++++
+>  arch/arm/boot/dts/bcm2835.dtsi     | 2 +-
+>  2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/mmcc-msm8960.c b/drivers/clk/qcom/mmcc-msm8960.c
-index 9711bca9cc06..2de05e321ad0 100644
---- a/drivers/clk/qcom/mmcc-msm8960.c
-+++ b/drivers/clk/qcom/mmcc-msm8960.c
-@@ -19,6 +19,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/regmap.h>
- #include <linux/reset-controller.h>
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+For my own reference:
+ Acked-by: Lee Jones <lee@kernel.org>
 
+> diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+> index 7cc47fb..9549eb8 100644
+> --- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
+> +++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+> @@ -1,3 +1,4 @@
+> +#include <dt-bindings/clk/raspberrypi.h>
+>  #include "bcm2835.dtsi"
+>  
+>  / {
+> @@ -62,3 +63,9 @@
+>  	status = "okay";
+>  	bus-width = <4>;
+>  };
+> +
+> +&uart0 {
+> +	clocks = <&firmware_clocks RPI_CLOCK_UART0>,
+> +		 <&firmware_clocks RPI_CLOCK_CORE>;
+> +	clock-names = "uartclk", "apb_pclk";
+> +};
+> diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
+> index 32f5830..5be2862 100644
+> --- a/arch/arm/boot/dts/bcm2835.dtsi
+> +++ b/arch/arm/boot/dts/bcm2835.dtsi
+> @@ -92,7 +92,7 @@
+>  			#interrupt-cells = <2>;
+>  		};
+>  
+> -		uart@7e201000 {
+> +		uart0: uart@7e201000 {
+>  			compatible = "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
+>  			reg = <0x7e201000 0x1000>;
+>  			interrupts = <2 25>;
