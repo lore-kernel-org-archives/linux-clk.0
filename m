@@ -1,38 +1,118 @@
-Return-Path: <linux-omap-owner@vger.kernel.org>
-Message-ID: <55A64788.6000206@ti.com>
-Date: Wed, 15 Jul 2015 14:44:08 +0300
-From: Tero Kristo <t-kristo@ti.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Mike Turquette <mturquette@baylibre.com>,
-	"tony@atomide.com" <tony@atomide.com>,
-	Paul Walmsley <paul@pwsan.com>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-Subject: Re: [GIT PULL] clk: ti: clock driver code migration to drivers
-References: <55A4CE41.9070909@ti.com> <55A5630E.8030901@codeaurora.org> <55A56C5E.2000309@ti.com> <55A57195.80609@codeaurora.org>
-In-Reply-To: <55A57195.80609@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-omap-owner@vger.kernel.org
+To: Dong Aisheng <b29396@freescale.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20150722140809.GC13623@shlinux1.ap.freescale.net>
+References: <1431610143-21853-1-git-send-email-aisheng.dong@freescale.com>
+ <1431610143-21853-2-git-send-email-aisheng.dong@freescale.com>
+ <20150528040919.22384.79189@quantum>
+ <20150715122522.GA30570@shlinux1.ap.freescale.net>
+ <20150715122955.GB30570@shlinux1.ap.freescale.net>
+ <20150722140809.GC13623@shlinux1.ap.freescale.net>
+Message-ID: <20150724001135.642.54711@quantum>
+Subject: Re: [PATCH v2 1/5] clk: remove duplicated code with
+ __clk_set_parent_after
+Date: Thu, 23 Jul 2015 17:11:35 -0700
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Dong Aisheng <aisheng.dong@freescale.com>,
+ Ranjani.Vaidyanathan@freescale.com, b20596@freescale.com, sboyd@codeaurora.org,
+ linux-kernel@vger.kernel.org, r64343@freescale.com, b20788@freescale.com,
+ shawn.guo@linaro.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/14/2015 11:31 PM, Stephen Boyd wrote:
-> On 07/14/2015 01:09 PM, Tero Kristo wrote:
->> On 07/14/2015 10:29 PM, Stephen Boyd wrote:
->>> On 07/14/2015 01:54 AM, Tero Kristo wrote:
->>>> The following changes since commit
->>>> bc0195aad0daa2ad5b0d76cce22b167bc3435590:
->>>>
->>>>   Linux 4.2-rc2 (2015-07-12 15:10:30 -0700)
->>>
->>> Why did this get rebased onto v4.2-rc2? I thought it was all ready to go
->>> based on v4.1-rc2? If possible leave it on v4.1-rc2 please.
->>
->> You mean 4.2-rc1 I guess...? Or do you really mean the old 4.1-rc2....?
->
-> Old 4.1-rc2 please
->
+Quoting Dong Aisheng (2015-07-22 07:08:10)
+> Ping...
+> 
+> On Wed, Jul 15, 2015 at 08:29:56PM +0800, Dong Aisheng wrote:
+> > On Wed, Jul 15, 2015 at 08:25:24PM +0800, Dong Aisheng wrote:
+> > > Hi Mike,
+> > > 
+> > > On Wed, May 27, 2015 at 09:09:19PM -0700, Michael Turquette wrote:
+> > > > Quoting Dong Aisheng (2015-05-14 06:28:59)
+> > > > > __clk_set_parent_after() actually used the second argument then we
+> > > > > could put this duplicate logic in there and call it with a different
+> > > > > order of arguments in the success vs. error paths in this function.
+> > > > > 
+> > > > > Cc: Mike Turquette <mturquette@linaro.org>
+> > > > > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > > > > Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+> > > > > Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
+> > > > 
+> > > > Patch looks good to me.
+> > > > 
+> > > > Also just noticed that the second argument to __clk_set_parent_after is
+> > > > never used :-(
+> > > > 
+> > > 
+> > > Ping...
+> > > 
+> > > I did not see this patch series in your tree for v4.2 rc.
+> > > Is this got missed?
 
-Ok, posting a new one after this, this one can be ignored.
+Dong Aisheng,
 
--Tero
+Yes it was missed. My apologies. Can you refresh it and re-send?
+
+Thanks,
+Mike
+
+> > > 
+> > 
+> > Updated Mike's email address.
+> > 
+> > Regards
+> > Dong Aisheng
+> > 
+> > > Regards
+> > > Dong Aisheng
+> > > 
+> > > > Regards,
+> > > > Mike
+> > > > 
+> > > > > ---
+> > > > >  drivers/clk/clk.c | 8 +-------
+> > > > >  1 file changed, 1 insertion(+), 7 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > > > index 659f2b0..0e813ea 100644
+> > > > > --- a/drivers/clk/clk.c
+> > > > > +++ b/drivers/clk/clk.c
+> > > > > @@ -1159,14 +1159,8 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
+> > > > >                 flags = clk_enable_lock();
+> > > > >                 clk_reparent(core, old_parent);
+> > > > >                 clk_enable_unlock(flags);
+> > > > > +               __clk_set_parent_after(core, old_parent, parent);
+> > > > >  
+> > > > > -               if (core->prepare_count) {
+> > > > > -                       flags = clk_enable_lock();
+> > > > > -                       clk_core_disable(core);
+> > > > > -                       clk_core_disable(parent);
+> > > > > -                       clk_enable_unlock(flags);
+> > > > > -                       clk_core_unprepare(parent);
+> > > > > -               }
+> > > > >                 return ret;
+> > > > >         }
+> > > > >  
+> > > > > -- 
+> > > > > 1.9.1
+> > > > > 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
