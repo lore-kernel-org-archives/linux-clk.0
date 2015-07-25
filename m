@@ -1,38 +1,41 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-id: <55947EA9.60204@samsung.com>
-Date: Thu, 02 Jul 2015 08:58:33 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Chanwoo Choi <cw00.choi@samsung.com>, s.nawrocki@samsung.com,
-	tomasz.figa@gmail.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, kgene@kernel.org
-Cc: thomas.ab@samsung.com, b.zolnierkie@samsung.com,
-	kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] ARM: exynos: Add exynos3250 compatible to use
- generic cpufreq driver
-References: <1435756877-26736-1-git-send-email-cw00.choi@samsung.com>
- <1435756877-26736-4-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1435756877-26736-4-git-send-email-cw00.choi@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <dinguyen@opensource.altera.com>
+Message-ID: <55B2F79E.3000101@opensource.altera.com>
+Date: Fri, 24 Jul 2015 21:42:38 -0500
+From: Dinh Nguyen <dinguyen@opensource.altera.com>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: <mturquette@baylibre.com>, <dinh.linux@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: socfpga: Add a second parent option for the dbg_base_clk
+References: <1437591858-12552-1-git-send-email-dinguyen@opensource.altera.com> <20150724214113.GH15042@codeaurora.org>
+In-Reply-To: <20150724214113.GH15042@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: dinguyen@opensource.altera.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01.07.2015 22:21, Chanwoo Choi wrote:
-> This patch add exynos3250 compatible string to exynos_cpufreq_matches
-> for supporting generic cpufreq driver on Exynos3250.
+
+
+On 7/24/15 4:41 PM, Stephen Boyd wrote:
+> On 07/22, dinguyen@opensource.altera.com wrote:
+>> diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
+>> index 80f924d..7d5db54 100644
+>> --- a/arch/arm/boot/dts/socfpga.dtsi
+>> +++ b/arch/arm/boot/dts/socfpga.dtsi
+>> @@ -164,7 +164,7 @@
+>>  						dbg_base_clk: dbg_base_clk {
+>>  							#clock-cells = <0>;
+>>  							compatible = "altr,socfpga-perip-clk";
+>> -							clocks = <&main_pll>;
+>> +							clocks = <&main_pll>, <&osc1>;
+>>  							div-reg = <0xe8 0 9>;
+>>  							reg = <0x50>;
+>>  						};
 > 
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-exynos/exynos.c | 1 +
->  1 file changed, 1 insertion(+)
+> We don't usually take changes in dts files. Can you split this
+> off and take it through arm-soc?
+> 
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Ah okay..will do.
 
-Best regards,
-Krzysztof
-
+Thanks,
+Dinh
