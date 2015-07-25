@@ -1,34 +1,36 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Kukjin Kim <kgene@kernel.org>, "Kukjin Kim" <kgene@kernel.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <55B1BA3B.3080906@kernel.org>
-Cc: "'Bartlomiej Zolnierkiewicz'" <b.zolnierkie@samsung.com>,
-	"'Chanwoo Choi'" <cw00.choi@samsung.com>, s.nawrocki@samsung.com,
-	tomasz.figa@gmail.com, sboyd@codeaurora.org,
-	k.kozlowski@samsung.com, thomas.ab@samsung.com,
-	kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Return-Path: <kgene.kim@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Sender: Kukjin Kim <kgene.kim@samsung.com>
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>,
+ 'Kukjin Kim' <kgene@kernel.org>
+Cc: 'Michael Turquette' <mturquette@baylibre.com>,
+ 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>,
+ 'Chanwoo Choi' <cw00.choi@samsung.com>, s.nawrocki@samsung.com,
+ tomasz.figa@gmail.com, sboyd@codeaurora.org, thomas.ab@samsung.com,
+ kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
  <4464631.oZyVO4Z0Ov@amdc1976> <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org>
  <20150724003005.642.21781@quantum> <55B1B3B0.8090106@kernel.org>
- <55B1BA3B.3080906@kernel.org>
-Message-ID: <20150724183020.642.56856@quantum>
-Subject: Re: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
-Date: Fri, 24 Jul 2015 11:30:20 -0700
-Sender: linux-kernel-owner@vger.kernel.org
+ <55B1D9A3.8060301@samsung.com>
+In-reply-to: <55B1D9A3.8060301@samsung.com>
+Subject: RE: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
+Date: Sat, 25 Jul 2015 11:11:32 +0900
+Message-id: <060201d0c67f$3a0cfba0$ae26f2e0$@kernel.org>
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Kukjin Kim (2015-07-23 21:08:27)
-> On 07/24/15 12:40, Kukjin Kim wrote:
+Krzysztof Kozlowski wrote:
+> 
+> On 24.07.2015 12:40, Kukjin Kim wrote:
 > > On 07/24/15 09:30, Michael Turquette wrote:
 > >> Quoting Kukjin Kim (2015-07-07 07:43:31)
 > >>> Bartlomiej Zolnierkiewicz wrote:
-> > 
+> >
 > > [...]
-> > 
+> >
 > >>>>> Chanwoo Choi (3):
 > >>>>>   clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
 > >>>>>   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
@@ -57,21 +59,12 @@ Quoting Kukjin Kim (2015-07-23 21:08:27)
 > >>
 > > Sure, BTW it means you did 'ack' on this clk change? If not, please let
 > > em know ;-) I'll let you know once the topic branch is ready.
-> > 
-> Mike,
 > 
-> Done, the topic branch 'v4.3-topic/clk-samsung' in samsung tree is for
-> your clk tree.
-
-Thanks!
-
-Mike
-
+> Dear Kukjin,
 > 
-> Thanks,
-> Kukjin
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> Will you handle this patchset and dependants (ARM: dts: Add CPU cooling
+> binding for Exynos3250-based Rinato/Monk board) for v4.3?
+> 
+You mean Chanwoo's patch. Yes, I'll. Thanks for your gentle reminder.
+
+- Kukjin
