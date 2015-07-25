@@ -1,246 +1,145 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Date: Wed, 22 Jul 2015 10:55:01 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 1/8] Documentation: add DT binding for ARM System
- Control and Power Interface(SCPI) protocol
-Message-ID: <20150722095501.GA15809@leverpostej>
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
- <1433760002-24120-2-git-send-email-sudeep.holla@arm.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Date: Sat, 25 Jul 2015 09:39:25 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v2 1/7] clk: Add a basic factor clock
+Message-ID: <20150725073925.GK2564@lukather>
+References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1432241646-9511-2-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v64rqRC24wPWz5xYZv=w2QAtsCb-pd76Qynkb5NBCptXhQ@mail.gmail.com>
+ <20150523074930.GI8557@lukather> <20150724000001.642.84690@quantum>
+ <20150724065017.GJ2373@lukather> <20150724182619.642.11590@quantum>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1433760002-24120-2-git-send-email-sudeep.holla@arm.com>
-Sender: linux-pm-owner@vger.kernel.org
+In-Reply-To: <20150724182619.642.11590@quantum>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Chen-Yu Tsai <wens@csie.org>, Jim Quinlan <jim2101024@gmail.com>,
+ "Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>,
+ Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/mixed; boundary="===============8272873375693517763=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-This generally looks fine, but I believe you've misunderstood the usage
-of clock-indices, and I think that your usage of clock-specifiers is
-somewhat confusing.
+--===============8272873375693517763==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zPXeIxDajdrcF2en"
+Content-Disposition: inline
 
-More on that below.
 
-On Mon, Jun 08, 2015 at 11:39:55AM +0100, Sudeep Holla wrote:
-> This patch adds devicetree binding for System Control and Power
-> Interface (SCPI) Message Protocol used between the Application Cores(AP)
-> and the System Control Processor(SCP). The MHU peripheral provides a
-> mechanism for inter-processor communication between SCP's M3 processor
-> and AP.
-> 
-> SCP offers control and management of the core/cluster power states,
-> various power domain DVFS including the core/cluster, certain system
-> clocks configuration, thermal sensors and many others.
-> 
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> CC: Jassi Brar <jassisinghbrar@gmail.com>
-> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
-> Cc: devicetree@vger.kernel.org
-> ---
->  Documentation/devicetree/bindings/arm/arm,scpi.txt | 156 +++++++++++++++++++++
->  1 file changed, 156 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/arm,scpi.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/arm,scpi.txt b/Documentation/devicetree/bindings/arm/arm,scpi.txt
-> new file mode 100644
-> index 000000000000..f5f9684e23b3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/arm,scpi.txt
-> @@ -0,0 +1,156 @@
-> +System Control and Power Interface (SCPI) Message Protocol
-> +----------------------------------------------------------
-> +
-> +Firmware implementing the SCPI described in ARM document number ARM DUI 0922B
-> +("ARM Compute Subsystem SCP: Message Interface Protocols")[0] can be used
-> +by Linux to initiate various system control and power operations.
-> +
-> +Required properties:
-> +
-> +- compatible : should be "arm,scpi"
-> +- mboxes: List of phandle and mailbox channel specifiers
-> +	  All the channels reserved by remote SCP firmware for use by
-> +	  SCPI message protocol should be specified in any order
-> +- shmem : List of phandle pointing to the shared memory(SHM) area between the
-> +	  processors using these mailboxes for IPC, one for each mailbox
-> +	  SHM can be any memory reserved for the purpose of this communication
-> +	  between the processors.
-> +
-> +See Documentation/devicetree/bindings/mailbox/mailbox.txt
-> +for more details about the generic mailbox controller and
-> +client driver bindings.
-> +
-> +Clock bindings for the clocks based on SCPI Message Protocol
-> +------------------------------------------------------------
-> +
-> +This binding uses the common clock binding[1].
-> +
-> +Container Node
-> +==============
-> +Required properties:
-> +- compatible : should be "arm,scpi-clocks"
-> +	       All the clocks provided by SCP firmware via SCPI message
-> +	       protocol much be listed as sub-nodes under this node.
-> +
-> +Sub-nodes
-> +=========
-> +Required properties:
-> +- compatible : shall include one of the following
-> +	"arm,scpi-dvfs-clocks" - all the clocks that are variable and index based.
-> +		These clocks don't provide the full range between the limits
-> +		but only discrete points within the range. The firmware
-> +		provides the mapping for each such operating frequency and the
-> +		index associated with it. The firmware also manages the
-> +		voltage scaling appropriately with the clock scaling.
-> +	"arm,scpi-variable-clocks" - all the clocks that are variable and provide full
-> +		range within the specified range. The firmware provides the
-> +		supported range for each clock.
-> +
-> +Other required properties for all clocks(all from common clock binding):
-> +- #clock-cells : should be set to 1 as each of the SCPI clocks have multiple
-> +	outputs. The clock specifier will be the index to an entry in the list
-> +	of output clocks.
+--zPXeIxDajdrcF2en
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Huh? That's somewhat a circular definition.
+Hi Mike,
 
-What does that number correspond to in the HW? If it's just the number
-that the FW expects, that's a reasonable definition.
+On Fri, Jul 24, 2015 at 11:26:19AM -0700, Michael Turquette wrote:
+> > What are the issues with maintaining them? The only drawback I'm
+> > seeing with introducing such a driver is that you can't really have a
+> > clock that is both a divider and a multiplier, but that can be solved
+> > by splitting it into two sub-clocks.
+>=20
+> There are a bunch of problems with the basic clock types. First is that
+> there is some feature creep every merge window that subtly breaks an
+> existing user (e.g. the round_rate stuff in clk-divider.c), and then
+> there are the growing number of flags to handle corner cases that are
+> one-off quirks for a single chip.
+>=20
+> These make it harder to maintain, but it is possible.
 
-> +- clock-output-names : shall be the corresponding names of the outputs.
+Ok. It's the downside of having common code I guess, everyone wants to
+use it, and the clocks are just more subject to it than other drivers :/
 
-This is mandatory? What is it used for?
+> The real problem with these basic clock types is that they are an
+> abstraction layer at the wrong level. Each clock type implements both
+> the policy of a given clock, as well as the machine-specific details.
+> For example clk-divider.c has made some assumptions in the past about
+> rounding the rate, or how to calculate the best divider; this is a
+> matter of policy and is useful on its own. But additionally that same
+> policy is glued to a specific implementation: memory-mapped register
+> controls for a clock divider.
+>=20
+> The I/O accessor stuff needs to be addressed at some point.  Currently
+> the basic clock types assume specific patterns of access to
+> memory-mapped clock registers. There are lots of other clock controls
+> out there that talk to firmware, or over i2c, or whatever. The amount of
+> code that has to be copy/pasted for each different type of access is
+> 100%; i.e. we do not have abstractions at the right level such as
+> .get_best_div(struct clk_hw *hw, unsigned long rate).
+>=20
+> What I would like to see in time is a re-usable layer for clock policy
+> (e.g. common rules for how dividers or multipliers should behave), and
+> then have that sit on top of the machine-specific callbacks that
+> directly touch the hardware, such as the .get_best_div callback above.
 
-> +- clock-indices: The identifyng number for the clocks(clock_id) in the node as
+Can't that be solved by moving to regmap using Matthias' patches, or
+at least the IO method abstraction?
 
-s/identifyng/identifying/
+We would then have to only provide an additional callback then for
+providers that have specific requirements about the divider
+calculation.
 
-> +	expected by the firmware. It can be non linear and hence provide the
-> +	mapping	of identifiers into the clock-output-names array.
-> +
-> +SRAM and Shared Memory for SCPI
-> +-------------------------------
-> +
-> +A small area of SRAM is reserved for SCPI communication between application
-> +processors and SCP.
-> +
-> +Required properties:
-> +- compatible : should be "arm,juno-sram-ns" for Non-secure SRAM on Juno
-> +
-> +The rest of the properties should follow the generic mmio-sram discription
-> +found in ../../misc/sysram.txt
-> +
-> +Each sub-node represents the reserved area for SCPI.
-> +
-> +Required sub-node properties:
-> +- reg : The base offset and size of the reserved area with the SRAM
-> +- compatible : should be "arm,juno-scp-shmem" for Non-secure SRAM based
-> +	       shared memory on Juno platforms
-> +
-> +[0] http://community.arm.com/servlet/JiveServlet/download/8401-45-18326/DUI0922B_scp_message_interface.pdf
-> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +Example:
-> +
-> +sram: sram@50000000 {
-> +	compatible = "arm,juno-sram-ns", "mmio-sram";
-> +	reg = <0x0 0x50000000 0x0 0x10000>;
-> +
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +	ranges = <0 0x0 0x50000000 0x10000>;
-> +
-> +	cpu_scp_lpri: scp-shmem@0 {
-> +		compatible = "arm,juno-scp-shmem";
-> +		reg = <0x0 0x200>;
-> +	};
-> +
-> +	cpu_scp_hpri: scp-shmem@200 {
-> +		compatible = "arm,juno-scp-shmem";
-> +		reg = <0x200 0x200>;
-> +	};
-> +};
-> +
-> +mailbox: mailbox0@40000000 {
-> +	....
-> +	#mbox-cells = <1>;
-> +};
-> +
-> +scpi_protocol: scpi@2e000000 {
-> +	compatible = "arm,scpi";
-> +	mboxes = <&mailbox 0 &mailbox 1>;
-> +	shmem = <&cpu_scp_lpri &cpu_scp_hpri>;
-> +
-> +	clocks {
-> +		compatible = "arm,scpi-clocks";
-> +
-> +		scpi_dvfs: scpi_clocks@0 {
-> +			compatible = "arm,scpi-dvfs-clocks";
-> +			#clock-cells = <1>;
-> +			clock-indices = <0>, <1>, <2>;
-> +			clock-output-names = "vbig", "vlittle", "vgpu";
-> +		};
-> +		scpi_clk: scpi_clocks@3 {
-> +			compatible = "arm,scpi-variable-clocks";
-> +			#clock-cells = <1>;
-> +			clock-indices = <3>, <4>;
-> +			clock-output-names = "pxlclk0", "pxlclk1";
-> +		};
-> +	};
-> +};
-> +
-> +cpu@0 {
-> +	...
-> +	reg = <0 0>;
-> +	clocks = <&scpi_dvfs 0>;
-> +	clock-names = "vbig";
-> +};
-> +
-> +hdlcd@7ff60000 {
-> +	...
-> +	reg = <0 0x7ff60000 0 0x1000>;
-> +	clocks = <&scpi_clk 1>;
-> +	clock-names = "pxlclk";
-> +};
-> +
-> +In the above example, the #clock-cells is set to 1 as required.
-> +scpi_dvfs has 3 output clocks namely: vbig, vlittle and vgpu with 0, 1
-> +and 2 as clock-indices. scpi_clk has 2 output clocks namely: pxlclk0 and
-> +pxlclk1 with 3 and 4 as clock-indices.
-> +
-> +The first consumer in the example is cpu@0 and it has vbig as input clock.
-> +The index '0' in the clock specifier here points to the first entry in the
-> +output clocks of scpi_dvfs for which clock_id asrequired by the firmware
-> +is 0.
-> +
-> +Similarly the second example is hdlcd@7ff60000 and it has pxlclk0 as input
-> +clock. The index '1' in the clock specifier here points to the second entry
-> +in the output clocks of scpi_clocks for which clock_id as required by the
-> +firmware is 4.
+So far, I haven't had any usecase where I needed anything but having
+the as-close-as-possible rate, so I would expect to not provide
+anything beside whether I'd like to round down or round up, but I do
+understand that some other might have different requirements.
 
-To the best of my knowledge, this is wrong. Per the example in
-Documentation/devicetree/bindings/clock/clock-bindings.txt, the
-clock-indices apply to the logical value in the clock-specifier.
+> For this reason I like to limit the number of new basic clock types. If
+> there is a single user then I'm inclined to have the author put it with
+> the machine-specific code. But in this case since there are two users, I
+> see the value in making a new basic clock type.
 
-So <&scpi_clk 3>, <&scpi_clk 4> exist, (and are named "pxlclk0",
-"pxlclk1" respectively), but <&scpi_clk 0>, <&scpi_clk 1> do not (or at
-least don't have names).
+That makes sense.
 
-Thanks,
-Mark.
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--zPXeIxDajdrcF2en
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVsz0tAAoJEBx+YmzsjxAgTzEP/2W5nrIBlUMEIvnu5OLPOD1R
+BIviyFd8sjr+arE+B5R2biH1bCIviom2FpVCPnc8jOo4itU31SgsXg5VCCEoZkg3
+z3ZYI40iqpWmUV294uhjSpe90P89ULlb8ykiLepWON9hty6Vgz+guQ37pLi7sDLb
+/noP4aSFq/o+LbgrQVcP2lgWNL4arFFnGhFcG5R7gzSttKnUCWAj0JYOkBiHSsFQ
+B5vW13TyAjvkAxh97Iu0/cAqdsII7+Anno94bnhbaf68BqiVCpbAhOWZKZBjotRo
+41rofdwcbvygIZihA9+ebGsJ9Q3BGHXmlpTv4GyafT/dc8xbcLBL7vb/TJUEhY9/
+N2fq8V++kP28zY8zmmKVue9on//eX7R2jSKsAd1gYMOuX9xrJqNzvzOybJePLmIH
+EP/TBReFqkMtXUxG8FrP4JvGQ2getuva80wg7WKTB8jQSyxBP0FfXxWPeQhiGQfX
+07GkR8wmJWqkt5RhtcLVfgnFuKA/T984ntiwdn6CzrP5/2s1tC/mYQox5HCQgNTn
+zxyMI2+MzCNqn0c0fC4ozQXz1AqmP38I8Yho4oLFEYifWy1YmQtJpLDc1PZSiiPy
+023eoVxYJu/nXa3LhYLcouupn8LZi0eSGpPCGe4Yn3feaSTLlbj2uVBwjYO0y8ON
+cI2kmNmsaFivdQcKXeHg
+=u8uG
+-----END PGP SIGNATURE-----
+
+--zPXeIxDajdrcF2en--
+
+
+--===============8272873375693517763==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============8272873375693517763==--
