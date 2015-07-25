@@ -1,134 +1,43 @@
-Return-Path: <dinguyen@opensource.altera.com>
-From: <dinguyen@opensource.altera.com>
-To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
-CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv2 6/6] clk: ti: make use of of_clk_parent_fill helper function
-Date: Mon, 6 Jul 2015 22:59:06 -0500
-Message-ID: <1436241546-16731-7-git-send-email-dinguyen@opensource.altera.com>
-In-Reply-To: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
-References: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: sboyd@codeaurora.org, mturquette@baylibre.com
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, romain.perier@gmail.com, linux-clk@vger.kernel.org
+Subject: [PATCH] clk: handle fixed-rate clocks correctly in clk_core_round_rate_nolock
+Date: Sun, 26 Jul 2015 00:18:40 +0200
+Message-ID: <110607065.NoWaKp3mDJ@diego>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: dinguyen@opensource.altera.com
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
+Commit 6edc753d8ecc ("clk: change clk_ops' ->determine_rate() prototype")
+changed the behaviour of clk_core_round_rate_nolock as it forgot to also
+include the else conditional simply returning the clock rate for clocks
+that neither have a parent or can determine their rate - for example
+said fixed clocks.
 
-Use of_clk_parent_fill to fill in the parent clock names' array.
+This resulted in failures to set pll rates on rockchip socs, as it
+returned the target pll rate as suitable rate for the 24MHz xin24m clock,
+thus making the ccf want to set this fixed clock to 1.6GHz or similar.
 
-Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-Cc: Tero Kristo <t-kristo@ti.com>
+Fixes: 6edc753d8ecc ("clk: change clk_ops' ->determine_rate() prototype")
+Reported-by: Romain Perier <romain.perier@gmail.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/clk/ti/apll.c      |    4 +---
- drivers/clk/ti/composite.c |    4 +---
- drivers/clk/ti/dpll.c      |    4 +---
- drivers/clk/ti/fapll.c     |    3 +--
- drivers/clk/ti/mux.c       |    4 +---
- 5 files changed, 5 insertions(+), 14 deletions(-)
+ drivers/clk/clk.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
-index 49baf38..523880e 100644
---- a/drivers/clk/ti/apll.c
-+++ b/drivers/clk/ti/apll.c
-@@ -170,7 +170,6 @@ static void __init of_dra7_apll_setup(struct device_node *node)
- 	struct clk_hw_omap *clk_hw = NULL;
- 	struct clk_init_data *init = NULL;
- 	const char **parent_names = NULL;
--	int i;
- 
- 	ad = kzalloc(sizeof(*ad), GFP_KERNEL);
- 	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
-@@ -195,8 +194,7 @@ static void __init of_dra7_apll_setup(struct device_node *node)
- 	if (!parent_names)
- 		goto cleanup;
- 
--	for (i = 0; i < init->num_parents; i++)
--		parent_names[i] = of_clk_get_parent_name(node, i);
-+	of_clk_parent_fill(node, parent_names, init->num_parents);
- 
- 	init->parent_names = parent_names;
- 
-diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
-index 96f83ce..dbef218 100644
---- a/drivers/clk/ti/composite.c
-+++ b/drivers/clk/ti/composite.c
-@@ -276,7 +276,6 @@ int __init ti_clk_add_component(struct device_node *node, struct clk_hw *hw,
- 	int num_parents;
- 	const char **parent_names;
- 	struct component_clk *clk;
--	int i;
- 
- 	num_parents = of_clk_get_parent_count(node);
- 
-@@ -289,8 +288,7 @@ int __init ti_clk_add_component(struct device_node *node, struct clk_hw *hw,
- 	if (!parent_names)
- 		return -ENOMEM;
- 
--	for (i = 0; i < num_parents; i++)
--		parent_names[i] = of_clk_get_parent_name(node, i);
-+	of_clk_parent_fill(node, parent_names, num_parents);
- 
- 	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
- 	if (!clk) {
-diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-index 2aacf7a..49acdf2 100644
---- a/drivers/clk/ti/dpll.c
-+++ b/drivers/clk/ti/dpll.c
-@@ -341,7 +341,6 @@ static void __init of_ti_dpll_setup(struct device_node *node,
- 	struct clk_init_data *init = NULL;
- 	const char **parent_names = NULL;
- 	struct dpll_data *dd = NULL;
--	int i;
- 	u8 dpll_mode = 0;
- 
- 	dd = kzalloc(sizeof(*dd), GFP_KERNEL);
-@@ -370,8 +369,7 @@ static void __init of_ti_dpll_setup(struct device_node *node,
- 	if (!parent_names)
- 		goto cleanup;
- 
--	for (i = 0; i < init->num_parents; i++)
--		parent_names[i] = of_clk_get_parent_name(node, i);
-+	of_clk_parent_fill(node, parent_names, init->num_parents);
- 
- 	init->parent_names = parent_names;
- 
-diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
-index 730aa62..b1c741b 100644
---- a/drivers/clk/ti/fapll.c
-+++ b/drivers/clk/ti/fapll.c
-@@ -558,8 +558,7 @@ static void __init ti_fapll_setup(struct device_node *node)
- 		goto free;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 67f778b..819ffa6 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -802,6 +802,8 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
+ 		req->rate = rate;
+ 	} else if (core->flags & CLK_SET_RATE_PARENT) {
+ 		return clk_core_round_rate_nolock(parent, req);
++	} else {
++		req->rate = core->rate;
  	}
  
--	parent_name[0] = of_clk_get_parent_name(node, 0);
--	parent_name[1] = of_clk_get_parent_name(node, 1);
-+	of_clk_parent_fill(node, parent_name, 2);
- 	init->parent_names = parent_name;
- 
- 	fd->clk_ref = of_clk_get(node, 0);
-diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
-index 5cdeed5..99fe27e 100644
---- a/drivers/clk/ti/mux.c
-+++ b/drivers/clk/ti/mux.c
-@@ -190,7 +190,6 @@ static void of_mux_clk_setup(struct device_node *node)
- 	void __iomem *reg;
- 	int num_parents;
- 	const char **parent_names;
--	int i;
- 	u8 clk_mux_flags = 0;
- 	u32 mask = 0;
- 	u32 shift = 0;
-@@ -205,8 +204,7 @@ static void of_mux_clk_setup(struct device_node *node)
- 	if (!parent_names)
- 		goto cleanup;
- 
--	for (i = 0; i < num_parents; i++)
--		parent_names[i] = of_clk_get_parent_name(node, i);
-+	of_clk_parent_fill(node, parent_names, num_parents);
- 
- 	reg = ti_clk_get_reg_addr(node, 0);
- 
+ 	return 0;
 -- 
-1.7.9.5
+2.1.4
