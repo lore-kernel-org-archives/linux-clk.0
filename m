@@ -1,63 +1,31 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-id: <559F88DE.1020202@samsung.com>
-Date: Fri, 10 Jul 2015 17:57:02 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] cpufreq: exynos: remove Exynos4x12 specific cpufreq
- driver support
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <1436456621-29839-8-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1436456621-29839-8-git-send-email-b.zolnierkie@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v2 1/5] clk: qcom: Enable gpll0_vote rate propagation on
+ MSM8916
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1437757119-6910-1-git-send-email-georgi.djakov@linaro.org>
+ <1437757119-6910-2-git-send-email-georgi.djakov@linaro.org>
+ <55B27509.8080108@codeaurora.org>
+Cc: agross@codeaurora.org, mturquette@linaro.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Message-ID: <55B2F0A7.8070005@linaro.org>
+Date: Sat, 25 Jul 2015 05:12:55 +0300
+MIME-Version: 1.0
+In-Reply-To: <55B27509.8080108@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10.07.2015 00:43, Bartlomiej Zolnierkiewicz wrote:
-> Exynos4x12 based platforms have switched over to use generic
-> cpufreq driver for cpufreq functionality.  So the Exynos
-> specific cpufreq support for these platforms can be removed.
+On 24.07.15 20:25, Stephen Boyd wrote:
+> On 07/24/2015 09:58 AM, Georgi Djakov wrote:
+>> Currently we are missing the SET_RATE_PARENT flag on gpll0_vote and
+>> as a result of that, when it has a child with SET_RATE_PARENT flag,
+>> the rate of the child is not propagated up to the gpll0. Fix that
+>> by adding the SET_RATE_PARENT flag to gpll0_vote.
+>>
+>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 > 
-> Also once Exynos4x12 based platforms support have been removed
-> the shared exynos-cpufreq driver is no longer needed and can
-> be deleted.
+> This doesn't make any sense. GPLL0 doesn't change rate, so having the flag here on the GPLL0 vote clock doesn't help anything.
 > 
-> Based on the earlier work by Thomas Abraham.
-> 
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  drivers/cpufreq/Kconfig.arm          |  23 ----
->  drivers/cpufreq/Makefile             |   2 -
->  drivers/cpufreq/exynos-cpufreq.c     | 231 ----------------------------------
->  drivers/cpufreq/exynos-cpufreq.h     |  72 -----------
->  drivers/cpufreq/exynos4x12-cpufreq.c | 236 -----------------------------------
->  5 files changed, 564 deletions(-)
->  delete mode 100644 drivers/cpufreq/exynos-cpufreq.c
->  delete mode 100644 drivers/cpufreq/exynos-cpufreq.h
->  delete mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
 
-Code removal is awesome!
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
+Right, gpll0 has a fixed rate. Sorry for the confusion.
