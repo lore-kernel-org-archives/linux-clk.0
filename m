@@ -1,90 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:39143 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751900AbbGNT3U (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jul 2015 15:29:20 -0400
-Message-ID: <55A5630E.8030901@codeaurora.org>
-Date: Tue, 14 Jul 2015 12:29:18 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-MIME-Version: 1.0
-To: Tero Kristo <t-kristo@ti.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
-	"tony@atomide.com" <tony@atomide.com>,
-	Paul Walmsley <paul@pwsan.com>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	linux-clk@vger.kernel.org
-Subject: Re: [GIT PULL] clk: ti: clock driver code migration to drivers
-References: <55A4CE41.9070909@ti.com>
-In-Reply-To: <55A4CE41.9070909@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-id: <55B33DDA.9020605@samsung.com>
+Date: Sat, 25 Jul 2015 09:42:18 +0200
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+MIME-version: 1.0
+To: Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kukjin Kim <kgene@kernel.org>,
+	linux-samsung-soc@vger.kernel.org,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
+References: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/14/2015 01:54 AM, Tero Kristo wrote:
-> The following changes since commit 
-> bc0195aad0daa2ad5b0d76cce22b167bc3435590:
->
->   Linux 4.2-rc2 (2015-07-12 15:10:30 -0700)
+On 12/06/15 03:53, Krzysztof Kozlowski wrote:
+> The TSADC gate clock was used in Exynos4x12 DTSI for exynos-adc driver.
+> However TSADC is present only on Exynos4210 so on Trats2 board (with
+> Exynos4412 SoC) the exynos-adc driver could not be probed:
+>    ERROR: could not get clock /adc@126C0000:adc(0)
+>    exynos-adc 126c0000.adc: failed getting clock, err = -2
+>    exynos-adc: probe of 126c0000.adc failed with error -2
+> 
+> Instead on Exynos4x12 SoCs the main clock used by Analog to Digital
+> Converter is located in different register and it is named in datasheet
+> as PCLK_ADC. Regardless of the name the purpose of this PCLK_ADC clock
+> is the same as purpose of TSADC from Exynos4210.
+> 
+> The patch adds gate clock for Exynos4x12 using the proper register so
+> backward compatibility is preserved. This fixes the probe of exynos-adc
+> driver on Exynos4x12 boards and allows accessing sensors connected to it
+> on Trats2 board (ntc,ncp15wb473 AP and battery thermistors).
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: <stable@vger.kernel.org>
+> Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
+> Link: https://lkml.org/lkml/2015/6/11/85
 
-Why did this get rebased onto v4.2-rc2? I thought it was all ready to go 
-based on v4.1-rc2? If possible leave it on v4.1-rc2 please.
+Mike, could you apply this patch directly? I can't seem to find any
+more independent patches for clk/samsung pull request.
+Alternatively here is a branch you could cherry-pick it from with
+all Acked/Reviewed tags:
 
->
-> are available in the git repository at:
->
->   git@github.com:t-kristo/linux-pm.git for-4.3/ti-clk-move
+git://linuxtv.org/snawrocki/samsung.git for-v4.2/clk/fixes-1
 
-Also I can't fetch this. Please give a public URL and not the one you 
-use for github.
+--
+Regards,
+Sylwester
 
-I fetched the for-4.2/ti-clk-move branch and did a test merge and fixed 
-up omap3_noncore_dpll_determine_rate() and 
-omap4_dpll_regm4xen_determine_rate() for the new determine rate 
-signature and it looks like things are still compiling. So please redo 
-the tag for that branch.
+> Changes since v1:
+> 1. After discussion on LKML this solution was chosen because it smaller,
+>    simpler, self-contained (one patch to fix issue) and maintains backward
+>    compatibility. Thanks to Javier Martinez Canillas and Tomasz Figa for
+>    valuable comments.
+> 2. Dropped patch 2/2 because now it is not needed. The clock id "TSADC"
+>    will be used on all Exynos4 boards.
+> 3. Added CC-stable.
+> ---
+>  drivers/clk/samsung/clk-exynos4.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index 714d6ba782c8..f7890bf652e6 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -85,6 +85,7 @@
+>  #define DIV_PERIL4		0xc560
+>  #define DIV_PERIL5		0xc564
+>  #define E4X12_DIV_CAM1		0xc568
+> +#define E4X12_GATE_BUS_FSYS1	0xc744
+>  #define GATE_SCLK_CAM		0xc820
+>  #define GATE_IP_CAM		0xc920
+>  #define GATE_IP_TV		0xc924
+> @@ -1095,6 +1096,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+>  		0),
+>  	GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
+>  		0),
+> +	GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0),
+>  	GATE(CLK_MIPI_HSI, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
+>  	GATE(CLK_CHIPID, "chipid", "aclk100", E4X12_GATE_IP_PERIR, 0, 0, 0),
+>  	GATE(CLK_SYSREG, "sysreg", "aclk100", E4X12_GATE_IP_PERIR, 1,
+> 
 
-----8<-----
-
-diff --cc include/linux/clk/ti.h
-index 448b4f87b9eb,f1838256fbaa..000000000000
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index d4d232fd89bc..d8aafd333058 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -250,12 +250,8 @@ int omap3_noncore_dpll_set_rate_and_parent(struct clk_hw *hw,
-  					   unsigned long rate,
-  					   unsigned long parent_rate,
-  					   u8 index);
--long omap3_noncore_dpll_determine_rate(struct clk_hw *hw,
--				       unsigned long rate,
--				       unsigned long min_rate,
--				       unsigned long max_rate,
--				       unsigned long *best_parent_rate,
--				       struct clk_hw **best_parent_clk);
-+int omap3_noncore_dpll_determine_rate(struct clk_hw *hw,
-+				      struct clk_rate_request *req);
-  long omap2_dpll_round_rate(struct clk_hw *hw, unsigned long target_rate,
-  			   unsigned long *parent_rate);
-  unsigned long omap3_clkoutx2_recalc(struct clk_hw *hw,
-@@ -273,12 +269,8 @@ unsigned long omap4_dpll_regm4xen_recalc(struct clk_hw *hw,
-  long omap4_dpll_regm4xen_round_rate(struct clk_hw *hw,
-  				    unsigned long target_rate,
-  				    unsigned long *parent_rate);
--long omap4_dpll_regm4xen_determine_rate(struct clk_hw *hw,
--					unsigned long rate,
--					unsigned long min_rate,
--					unsigned long max_rate,
--					unsigned long *best_parent_rate,
--					struct clk_hw **best_parent_clk);
-+int omap4_dpll_regm4xen_determine_rate(struct clk_hw *hw,
-+				       struct clk_rate_request *req);
-  
-  extern struct ti_clk_ll_ops *ti_clk_ll_ops;
-  
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Sylwester Nawrocki
+Samsung R&D Institute Poland
