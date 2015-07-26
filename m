@@ -1,57 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <55B0131F.80404@codeaurora.org>
-Date: Wed, 22 Jul 2015 15:03:11 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55B472C7.5000109@gmail.com>
+Date: Sun, 26 Jul 2015 14:40:23 +0900
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 MIME-Version: 1.0
-To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
- mturquette@baylibre.com, lee.jones@linaro.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/4] clk: 88pm800: Add clk provider driver for 88pm800
- family of devices
-References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org> <1437476823-3358-4-git-send-email-vaibhav.hiremath@linaro.org> <55AE990E.2040004@codeaurora.org> <55AE9F48.20600@linaro.org> <55AEB103.9010205@codeaurora.org> <55AF37D9.3000006@linaro.org> <55AF3C2E.7010205@samsung.com> <55AF5175.2010701@linaro.org>
-In-Reply-To: <55AF5175.2010701@linaro.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Stephen Boyd <sboyd@codeaurora.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
+References: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com> <20150721224235.GA30021@codeaurora.org> <55AED88D.2060009@samsung.com>
+In-Reply-To: <55AED88D.2060009@samsung.com>
 Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/22/2015 01:16 AM, Vaibhav Hiremath wrote:
+On 07/22/2015 08:41 AM, Krzysztof Kozlowski wrote:
+> On 22.07.2015 07:42, Stephen Boyd wrote:
+>> >On 06/12, Krzysztof Kozlowski wrote:
+[...]
+>>> >>Signed-off-by: Krzysztof Kozlowski<k.kozlowski@samsung.com>
+>>> >>Cc:<stable@vger.kernel.org>
+>>> >>Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
+>>> >>Link:https://lkml.org/lkml/2015/6/11/85
+>> >
+>> >Did you want clk maintainers to apply this? The To: list is not
+>> >helping so I'm not sure what's going on and it seems to have
+>> >slipped through the cracks.
+ >
+> Thank you for being proactive! I appreciate this.
+> Some time ago Sylwester replied that he took care about this patch so I
+> think this will go through Samsung clock tree.
 >
->
-> On Wednesday 22 July 2015 12:16 PM, Krzysztof Kozlowski wrote:
->>
->> I am really busy now so I am not following closely other discussions. I
->> assume you are referring to clk-s2mps11.c. The of_node_put() matches
->> of_get_child_by_name() when parsing DT.
->>
->> So why not of_node_put() just after parsing DT? Well, the result of
->> of_get_child_by_name() is stored in state container for entire device
->> life-cycle so we can use it in of_clk_del_provider().
->>
->> That was the idea behind it. If it looks incorrect I would be happy to
->> see a patch :) .
->>
->
-> About to respond, I digged more on kobject stuff and sequence in
-> of/dynamic.c and
->
-> I think you are right, we need of_node_put, as a result of
-> of_get_child_by_name().
->
-> Stephen,
-> Please let me know if you think otherwise.
->
+> Sylwester, are you planning to send this as fix for 4.2-rc?
 
-Yes, sounds fine. I was thinking that we grab the reference to the node 
-in of_clk_add_provider() so dropping it here was to undo that, but that 
-isn't true. It probably can be dropped after we register the provider 
-because adding the provider will keep it pinned, but this way is more 
-symmetric so it's fine.
+I think it qualifies for 4.3, it's not a new regression and will be
+backported to -stable anyway.
+I would prefer clk maintainers have applied this, otherwise I would
+need to make a (questionable) pull request with only one patch, since
+all patches except this one after the last merge window were part
+of bigger series touching multiple subsystems and applied through
+the samsung soc tree.
 
-Either way, the error path on probe doesn't call of_node_put(), so 
-that's a leak.
+Thanks,
+Sylwester
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+
