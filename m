@@ -1,92 +1,81 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org,
-	k.kozlowski@samsung.com
-Cc: thomas.ab@samsung.com, b.zolnierkie@samsung.com,
-	kyungmin.park@samsung.com, cw00.choi@samsung.com,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v6 2/3] ARM: dts: Add CPU OPP and regulator supply property for
- Exynos3250
-Date: Thu, 02 Jul 2015 09:42:40 +0900
-Message-id: <1435797761-3339-3-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
-References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <romain.perier@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20150726092705.183a44c3@bbrezillon>
+References: <110607065.NoWaKp3mDJ@diego>
+	<20150726092705.183a44c3@bbrezillon>
+Date: Sun, 26 Jul 2015 14:16:57 +0200
+Message-ID: <CABgxDoJ1sSRyzKco5v=WG0Dfi2cL6n9qXgQOLwbGuVLtDo2CDw@mail.gmail.com>
+Subject: Re: [PATCH] clk: handle fixed-rate clocks correctly in clk_core_round_rate_nolock
+From: Romain Perier <romain.perier@gmail.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch add CPU operating points which include CPU frequency and regulator
-voltage to use generic cpufreq drivers.
+Hi all,
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
- arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
- arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
- 3 files changed, 23 insertions(+)
+A side effect produced by this issue was cpufreq complaining about
+incorrect clk rate when it tried to change cpu frequency (on cpu0). It
+is fixed now.
 
-diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-index a5863acc5fff..7863265d4868 100644
---- a/arch/arm/boot/dts/exynos3250-monk.dts
-+++ b/arch/arm/boot/dts/exynos3250-monk.dts
-@@ -141,6 +141,10 @@
- 	};
- };
- 
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
-+};
-+
- &exynos_usbphy {
- 	status = "okay";
- };
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index 031853b75528..ddd7ac283045 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -132,6 +132,10 @@
- 	};
- };
- 
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
-+};
-+
- &exynos_usbphy {
- 	status = "okay";
- };
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index d7201333e3bc..e0f3b2ed41a3 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -53,6 +53,21 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0>;
- 			clock-frequency = <1000000000>;
-+			clocks = <&cmu CLK_ARM_CLK>;
-+			clock-names = "cpu";
-+
-+			operating-points = <
-+				1000000 1150000
-+				900000  1112500
-+				800000  1075000
-+				700000  1037500
-+				600000  1000000
-+				500000  962500
-+				400000  925000
-+				300000  887500
-+				200000  850000
-+				100000  850000
-+			>;
- 		};
- 
- 		cpu1: cpu@1 {
--- 
-1.8.5.5
+Tested-by: Romain Perier <romain.perier@gmail.com>
 
+2015-07-26 9:27 GMT+02:00 Boris Brezillon <boris.brezillon@free-electrons.c=
+om>:
+> Hi Heiko,
+>
+> On Sun, 26 Jul 2015 00:18:40 +0200
+> Heiko St=C3=BCbner <heiko@sntech.de> wrote:
+>
+>> Commit 6edc753d8ecc ("clk: change clk_ops' ->determine_rate() prototype"=
+)
+>> changed the behaviour of clk_core_round_rate_nolock as it forgot to also
+>> include the else conditional simply returning the clock rate for clocks
+>> that neither have a parent or can determine their rate - for example
+>> said fixed clocks.
+>
+> Indeed.
+>
+>>
+>> This resulted in failures to set pll rates on rockchip socs, as it
+>> returned the target pll rate as suitable rate for the 24MHz xin24m clock=
+,
+>> thus making the ccf want to set this fixed clock to 1.6GHz or similar.
+>>
+>> Fixes: 6edc753d8ecc ("clk: change clk_ops' ->determine_rate() prototype"=
+)
+>> Reported-by: Romain Perier <romain.perier@gmail.com>
+>> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+>
+> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+>
+> Thanks,
+>
+> Boris
+>
+>> ---
+>>  drivers/clk/clk.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> index 67f778b..819ffa6 100644
+>> --- a/drivers/clk/clk.c
+>> +++ b/drivers/clk/clk.c
+>> @@ -802,6 +802,8 @@ static int clk_core_round_rate_nolock(struct clk_cor=
+e *core,
+>>               req->rate =3D rate;
+>>       } else if (core->flags & CLK_SET_RATE_PARENT) {
+>>               return clk_core_round_rate_nolock(parent, req);
+>> +     } else {
+>> +             req->rate =3D core->rate;
+>>       }
+>>
+>>       return 0;
+>
+>
+>
+> --
+> Boris Brezillon, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
