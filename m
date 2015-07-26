@@ -1,77 +1,145 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
 To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Gabriel Fernandez <gabriel.fernandez@st.com>
-Subject: [PATCH 32/45] clk: st: Include clk.h
-Date: Fri, 10 Jul 2015 16:33:30 -0700
-Message-Id: <1436571223-10959-33-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
+ Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH 1/7] ARM: sun4i: Add clock indices
+Date: Sun, 26 Jul 2015 23:14:24 +0200
+Message-Id: <1437945270-32014-2-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This clock provider uses the consumer API, so include clk.h
-explicitly.
+The A10 gates have a non continuous set of clock IDs that are valid. Add
+the clock-indices property to the DT to express this.
 
-Cc: Gabriel Fernandez <gabriel.fernandez@st.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/st/clk-flexgen.c | 1 +
- drivers/clk/st/clkgen-fsyn.c | 1 +
- drivers/clk/st/clkgen-mux.c  | 1 +
- drivers/clk/st/clkgen-pll.c  | 1 +
- 4 files changed, 4 insertions(+)
+ arch/arm/boot/dts/sun4i-a10.dtsi | 69 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 52 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
-index 657ca14ba709..8e0dbb1f81f8 100644
---- a/drivers/clk/st/clk-flexgen.c
-+++ b/drivers/clk/st/clk-flexgen.c
-@@ -5,6 +5,7 @@
-  * Author:  Maxime Coquelin <maxime.coquelin@st.com> for ST-Microelectronics.
-  * License terms:  GNU General Public License (GPL), version 2  */
+diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
+index 61c03d1fe530..ab0e131587bb 100644
+--- a/arch/arm/boot/dts/sun4i-a10.dtsi
++++ b/arch/arm/boot/dts/sun4i-a10.dtsi
+@@ -241,6 +241,7 @@
+ 			compatible = "allwinner,sun4i-a10-axi-gates-clk";
+ 			reg = <0x01c2005c 0x4>;
+ 			clocks = <&axi>;
++			clock-indices = <0>;
+ 			clock-output-names = "axi_dram";
+ 		};
  
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/slab.h>
-diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
-index e94197f04b0b..90c20717a6bb 100644
---- a/drivers/clk/st/clkgen-fsyn.c
-+++ b/drivers/clk/st/clkgen-fsyn.c
-@@ -15,6 +15,7 @@
+@@ -257,17 +258,36 @@
+ 			compatible = "allwinner,sun4i-a10-ahb-gates-clk";
+ 			reg = <0x01c20060 0x8>;
+ 			clocks = <&ahb>;
++			clock-indices = <0>, <1>,
++					<2>, <3>,
++					<4>, <5>, <6>,
++					<7>, <8>, <9>,
++					<10>, <11>, <12>,
++					<13>, <14>, <16>,
++					<17>, <18>, <20>,
++					<21>, <22>, <23>,
++					<24>, <25>, <26>,
++					<32>, <33>, <34>,
++					<35>, <36>, <37>,
++					<40>, <41>, <43>,
++					<44>, <45>,
++					<46>, <47>,
++					<50>, <52>;
+ 			clock-output-names = "ahb_usb0", "ahb_ehci0",
+-				"ahb_ohci0", "ahb_ehci1", "ahb_ohci1", "ahb_ss",
+-				"ahb_dma", "ahb_bist", "ahb_mmc0", "ahb_mmc1",
+-				"ahb_mmc2", "ahb_mmc3", "ahb_ms", "ahb_nand",
+-				"ahb_sdram", "ahb_ace",	"ahb_emac", "ahb_ts",
+-				"ahb_spi0", "ahb_spi1", "ahb_spi2", "ahb_spi3",
+-				"ahb_pata", "ahb_sata", "ahb_gps", "ahb_ve",
+-				"ahb_tvd", "ahb_tve0", "ahb_tve1", "ahb_lcd0",
+-				"ahb_lcd1", "ahb_csi0", "ahb_csi1", "ahb_hdmi",
+-				"ahb_de_be0", "ahb_de_be1", "ahb_de_fe0",
+-				"ahb_de_fe1", "ahb_mp", "ahb_mali400";
++					     "ahb_ohci0", "ahb_ehci1",
++					     "ahb_ohci1", "ahb_ss", "ahb_dma",
++					     "ahb_bist", "ahb_mmc0", "ahb_mmc1",
++					     "ahb_mmc2", "ahb_mmc3", "ahb_ms",
++					     "ahb_nand", "ahb_sdram", "ahb_ace",
++					     "ahb_emac", "ahb_ts", "ahb_spi0",
++					     "ahb_spi1", "ahb_spi2", "ahb_spi3",
++					     "ahb_pata", "ahb_sata", "ahb_gps",
++					     "ahb_ve", "ahb_tvd", "ahb_tve0",
++					     "ahb_tve1", "ahb_lcd0", "ahb_lcd1",
++					     "ahb_csi0", "ahb_csi1", "ahb_hdmi",
++					     "ahb_de_be0", "ahb_de_be1",
++					     "ahb_de_fe0", "ahb_de_fe1",
++					     "ahb_mp", "ahb_mali400";
+ 		};
  
- #include <linux/slab.h>
- #include <linux/of_address.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
+ 		apb0: apb0@01c20054 {
+@@ -283,9 +303,14 @@
+ 			compatible = "allwinner,sun4i-a10-apb0-gates-clk";
+ 			reg = <0x01c20068 0x4>;
+ 			clocks = <&apb0>;
++			clock-indices = <0>, <1>,
++					<2>, <3>,
++					<5>, <6>,
++					<7>, <10>;
+ 			clock-output-names = "apb0_codec", "apb0_spdif",
+-				"apb0_ac97", "apb0_iis", "apb0_pio", "apb0_ir0",
+-				"apb0_ir1", "apb0_keypad";
++					     "apb0_ac97", "apb0_iis",
++					     "apb0_pio", "apb0_ir0",
++					     "apb0_ir1", "apb0_keypad";
+ 		};
  
- #include "clkgen.h"
-diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
-index 4fbe6e099587..4fc95d5332e2 100644
---- a/drivers/clk/st/clkgen-mux.c
-+++ b/drivers/clk/st/clkgen-mux.c
-@@ -15,6 +15,7 @@
+ 		apb1: clk@01c20058 {
+@@ -301,12 +326,22 @@
+ 			compatible = "allwinner,sun4i-a10-apb1-gates-clk";
+ 			reg = <0x01c2006c 0x4>;
+ 			clocks = <&apb1>;
++			clock-indices = <0>, <1>,
++					<2>, <4>,
++					<5>, <6>,
++					<7>, <16>,
++					<17>, <18>,
++					<19>, <20>,
++					<21>, <22>,
++					<23>;
+ 			clock-output-names = "apb1_i2c0", "apb1_i2c1",
+-				"apb1_i2c2", "apb1_can", "apb1_scr",
+-				"apb1_ps20", "apb1_ps21", "apb1_uart0",
+-				"apb1_uart1", "apb1_uart2", "apb1_uart3",
+-				"apb1_uart4", "apb1_uart5", "apb1_uart6",
+-				"apb1_uart7";
++					     "apb1_i2c2", "apb1_can",
++					     "apb1_scr", "apb1_ps20",
++					     "apb1_ps21", "apb1_uart0",
++					     "apb1_uart1", "apb1_uart2",
++					     "apb1_uart3", "apb1_uart4",
++					     "apb1_uart5", "apb1_uart6",
++					     "apb1_uart7";
+ 		};
  
- #include <linux/slab.h>
- #include <linux/of_address.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- 
- static DEFINE_SPINLOCK(clkgena_divmux_lock);
-diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
-index 106532207213..cdb14b9bb942 100644
---- a/drivers/clk/st/clkgen-pll.c
-+++ b/drivers/clk/st/clkgen-pll.c
-@@ -16,6 +16,7 @@
- 
- #include <linux/slab.h>
- #include <linux/of_address.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- 
- #include "clkgen.h"
+ 		nand_clk: clk@01c20080 {
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.4.6
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
