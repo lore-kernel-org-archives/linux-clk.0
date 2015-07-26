@@ -1,73 +1,73 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Return-Path: <maxime.ripard@free-electrons.com>
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
 To: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH v2 0/7] ARM: sunxi: Switch to clock indices
-Date: Fri, 31 Jul 2015 19:46:15 +0200
-Message-Id: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 4/7] ARM: sun7i: Add clock indices
+Date: Sun, 26 Jul 2015 23:14:27 +0200
+Message-Id: <1437945270-32014-5-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+The A20 gates have a non continuous set of clock IDs that are valid. Add
+the clock-indices property to the DT to express this.
 
-We currently have in our clock driver a logic very similar to the one
-that clock-indices is supposed to cover.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun7i-a20.dtsi | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-Using this property, we can create a new driver generic for all gates
-that will get the valid indices directly from the device tree, instead
-of storing that in the driver itself.
-
-While we're at it, we also move to using CLK_OF_DECLARE for that new
-driver, which should ease the orphan clocks breakage we saw.
-
-Let me know what you think,
-Maxime
-
-Changes from v1:
-  - Remove unused headers in the driver
-  - Fix the wrong commit log for the A80
-
-Maxime Ripard (7):
-  ARM: sun4i: Add clock indices
-  ARM: sun5i: Add clock indices
-  ARM: sun6i: Add clock indices
-  ARM: sun7i: Add clock indices
-  ARM: sun8i: Add clock indices
-  ARM: sun9i: Wrap the clock-indices
-  clk: sunxi: Add a simple gates driver
-
- arch/arm/boot/dts/sun4i-a10.dtsi     |  69 ++++++++++----
- arch/arm/boot/dts/sun5i-a10s.dtsi    |  23 ++++-
- arch/arm/boot/dts/sun5i-a13.dtsi     |  18 +++-
- arch/arm/boot/dts/sun5i.dtsi         |   1 +
- arch/arm/boot/dts/sun6i-a31.dtsi     |  24 +++++
- arch/arm/boot/dts/sun7i-a20.dtsi     |  23 +++++
- arch/arm/boot/dts/sun8i-a23-a33.dtsi |  15 +++
- arch/arm/boot/dts/sun9i-a80.dtsi     |  32 +++++--
- drivers/clk/sunxi/Makefile           |   1 +
- drivers/clk/sunxi/clk-simple-gates.c | 157 +++++++++++++++++++++++++++++++
- drivers/clk/sunxi/clk-sunxi.c        | 177 -----------------------------------
- 11 files changed, 333 insertions(+), 207 deletions(-)
- create mode 100644 drivers/clk/sunxi/clk-simple-gates.c
-
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index 6a63f30c9a69..ca0b01a96c52 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -267,6 +267,19 @@
+ 			compatible = "allwinner,sun7i-a20-ahb-gates-clk";
+ 			reg = <0x01c20060 0x8>;
+ 			clocks = <&ahb>;
++			clock-indices = <0>, <1>,
++					<2>, <3>, <4>,
++					<5>, <6>, <7>, <8>,
++					<9>, <10>, <11>, <12>,
++					<13>, <14>, <16>,
++					<17>, <18>, <20>, <21>,
++					<22>, <23>, <25>,
++					<28>, <32>, <33>, <34>,
++					<35>, <36>, <37>, <40>,
++					<41>, <42>, <43>,
++					<44>, <45>, <46>,
++					<47>, <49>, <50>,
++					<52>;
+ 			clock-output-names = "ahb_usb0", "ahb_ehci0",
+ 				"ahb_ohci0", "ahb_ehci1", "ahb_ohci1",
+ 				"ahb_ss", "ahb_dma", "ahb_bist", "ahb_mmc0",
+@@ -295,6 +308,10 @@
+ 			compatible = "allwinner,sun7i-a20-apb0-gates-clk";
+ 			reg = <0x01c20068 0x4>;
+ 			clocks = <&apb0>;
++			clock-indices = <0>, <1>,
++					<2>, <3>, <4>,
++					<5>, <6>, <7>,
++					<8>, <10>;
+ 			clock-output-names = "apb0_codec", "apb0_spdif",
+ 				"apb0_ac97", "apb0_iis0", "apb0_iis1",
+ 				"apb0_pio", "apb0_ir0", "apb0_ir1",
+@@ -314,6 +331,12 @@
+ 			compatible = "allwinner,sun7i-a20-apb1-gates-clk";
+ 			reg = <0x01c2006c 0x4>;
+ 			clocks = <&apb1>;
++			clock-indices = <0>, <1>,
++					<2>, <3>, <4>,
++					<5>, <6>, <7>,
++					<15>, <16>, <17>,
++					<18>, <19>, <20>,
++					<21>, <22>, <23>;
+ 			clock-output-names = "apb1_i2c0", "apb1_i2c1",
+ 				"apb1_i2c2", "apb1_i2c3", "apb1_can",
+ 				"apb1_scr", "apb1_ps20", "apb1_ps21",
 -- 
 2.4.6
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
