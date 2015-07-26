@@ -1,58 +1,68 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	linux-sh@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 11/11] clk: shmobile: rcar-gen2: Remove obsolete rcar_gen2_clocks_init()
-Date: Tue,  7 Jul 2015 16:10:17 +0200
-Message-Id: <1436278217-20522-12-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
-References: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Sun, 26 Jul 2015 09:27:05 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, romain.perier@gmail.com,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: handle fixed-rate clocks correctly in
+ clk_core_round_rate_nolock
+Message-ID: <20150726092705.183a44c3@bbrezillon>
+In-Reply-To: <110607065.NoWaKp3mDJ@diego>
+References: <110607065.NoWaKp3mDJ@diego>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Since "ARM: shmobile: rcar-gen2: Use syscon to configure the CPG",
-rcar_gen2_clocks_init() is no longer called by the R-Car Gen2 platform
-code. Remove it.
+Hi Heiko,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/shmobile/clk-rcar-gen2.c | 7 -------
- include/linux/clk/shmobile.h         | 1 -
- 2 files changed, 8 deletions(-)
+On Sun, 26 Jul 2015 00:18:40 +0200
+Heiko St=C3=BCbner <heiko@sntech.de> wrote:
 
-diff --git a/drivers/clk/shmobile/clk-rcar-gen2.c b/drivers/clk/shmobile/clk-rcar-gen2.c
-index b121a49f7575a97b..3f02b40b4911831c 100644
---- a/drivers/clk/shmobile/clk-rcar-gen2.c
-+++ b/drivers/clk/shmobile/clk-rcar-gen2.c
-@@ -435,10 +435,3 @@ static void __init rcar_gen2_cpg_clocks_init(struct device_node *np)
- }
- CLK_OF_DECLARE(rcar_gen2_cpg_clks, "renesas,rcar-gen2-cpg-clocks",
- 	       rcar_gen2_cpg_clocks_init);
--
--void __init rcar_gen2_clocks_init(u32 mode)
--{
--	cpg_mode = mode;
--
--	of_clk_init(NULL);
--}
-diff --git a/include/linux/clk/shmobile.h b/include/linux/clk/shmobile.h
-index cb19cc1865ca5cfb..95357cdde185d518 100644
---- a/include/linux/clk/shmobile.h
-+++ b/include/linux/clk/shmobile.h
-@@ -22,7 +22,6 @@ struct generic_pm_domain;
- 
- void r8a7778_clocks_init(u32 mode);
- void r8a7779_clocks_init(u32 mode);
--void rcar_gen2_clocks_init(u32 mode);
- 
- #ifdef CONFIG_PM_GENERIC_DOMAINS_OF
- void cpg_mstp_add_clk_domain(struct device_node *np);
--- 
-1.9.1
+> Commit 6edc753d8ecc ("clk: change clk_ops' ->determine_rate() prototype")
+> changed the behaviour of clk_core_round_rate_nolock as it forgot to also
+> include the else conditional simply returning the clock rate for clocks
+> that neither have a parent or can determine their rate - for example
+> said fixed clocks.
+
+Indeed.
+
+>=20
+> This resulted in failures to set pll rates on rockchip socs, as it
+> returned the target pll rate as suitable rate for the 24MHz xin24m clock,
+> thus making the ccf want to set this fixed clock to 1.6GHz or similar.
+>=20
+> Fixes: 6edc753d8ecc ("clk: change clk_ops' ->determine_rate() prototype")
+> Reported-by: Romain Perier <romain.perier@gmail.com>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+
+Thanks,
+
+Boris
+
+> ---
+>  drivers/clk/clk.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 67f778b..819ffa6 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -802,6 +802,8 @@ static int clk_core_round_rate_nolock(struct clk_core=
+ *core,
+>  		req->rate =3D rate;
+>  	} else if (core->flags & CLK_SET_RATE_PARENT) {
+>  		return clk_core_round_rate_nolock(parent, req);
+> +	} else {
+> +		req->rate =3D core->rate;
+>  	}
+> =20
+>  	return 0;
+
+
+
+--=20
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
