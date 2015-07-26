@@ -1,83 +1,112 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:13292 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933478AbbGVNJ3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 22 Jul 2015 09:09:29 -0400
-Message-ID: <1437570566.8014.37.camel@linux.intel.com>
-Subject: Re: [PATCH v4 3/6] clk: fractional-divider: keep mwidth and nwidth
- internally
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, heikki.krogerus@linux.intel.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
-Date: Wed, 22 Jul 2015 16:09:26 +0300
-In-Reply-To: <20150722004124.GE15042@codeaurora.org>
-References: <1436886723-111895-1-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <1436886723-111895-4-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <20150722004124.GE15042@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH 6/7] ARM: sun9i: Add clock indices
+Date: Sun, 26 Jul 2015 23:14:29 +0200
+Message-Id: <1437945270-32014-7-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2015-07-21 at 17:41 -0700, Stephen Boyd wrote:
-> On 07/14, Andy Shevchenko wrote:
-> > diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk
-> > -fractional-divider.c
-> > index 7cfcc56..16f42ae 100644
-> > --- a/drivers/clk/clk-fractional-divider.c
-> > +++ b/drivers/clk/clk-fractional-divider.c
-> > @@ -128,9 +128,11 @@ struct clk 
-> > *clk_register_fractional_divider(struct device *dev,
-> >  
-> >  	fd->reg = reg;
-> >  	fd->mshift = mshift;
-> > -	fd->mmask = (BIT(mwidth) - 1) << mshift;
-> > +	fd->mwidth = mwidth;
-> > +	fd->mmask = GENMASK(mwidth - 1, 0) << mshift;
-> >  	fd->nshift = nshift;
-> > -	fd->nmask = (BIT(nwidth) - 1) << nshift;
-> > +	fd->nwidth = nwidth;
-> > +	fd->nmask = GENMASK(nwidth - 1, 0) << nshift;
-> 
-> Please do the shifts in the GENMASK.
+The A80 gates have a non continuous set of clock IDs that are valid. Add
+the clock-indices property to the DT to express this.
 
-It's not optimal. Waste of performance.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun9i-a80.dtsi | 32 ++++++++++++++++++++++----------
+ 1 file changed, 22 insertions(+), 10 deletions(-)
 
-32-bit case on 32-bit machine (similar to other cases on x86).
-
-a) GENMASK(x - 1, 0) << y
-
-        movl    $32, %ecx
-        subb    4(%esp), %cl
-        movl    $-1, %eax
-        shrl    %cl, %eax
-        movzbl  8(%esp), %ecx
-        sall    %cl, %eax
-        ret
-
-b) GENMASK(x + y - 1, y)
-
-        pushl   %esi
-        pushl   %ebx
-        movl    $1, %edx
-        movzbl  12(%esp), %eax
-        movzbl  16(%esp), %esi
-        movl    $-1, %ebx
-        subl    %eax, %edx
-        movl    %ebx, %eax
-        subl    %esi, %edx
-        leal    31(%edx), %ecx
-        shrl    %cl, %eax
-        movl    %esi, %ecx
-        sall    %cl, %ebx
-        andl    %ebx, %eax
-        popl    %ebx
-        popl    %esi
-        ret
-
-
+diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
+index a43ad779ee2f..5908e3dcf965 100644
+--- a/arch/arm/boot/dts/sun9i-a80.dtsi
++++ b/arch/arm/boot/dts/sun9i-a80.dtsi
+@@ -277,9 +277,12 @@
+ 			compatible = "allwinner,sun9i-a80-ahb0-gates-clk";
+ 			reg = <0x06000580 0x4>;
+ 			clocks = <&ahb0>;
+-			clock-indices = <0>, <1>, <3>, <5>, <8>, <12>, <13>,
+-					<14>, <15>, <16>, <18>, <20>, <21>,
+-					<22>, <23>;
++			clock-indices = <0>, <1>, <3>,
++					<5>, <8>, <12>,
++					<13>, <14>,
++					<15>, <16>, <18>,
++					<20>, <21>, <22>,
++					<23>;
+ 			clock-output-names = "ahb0_fd", "ahb0_ve", "ahb0_gpu",
+ 					"ahb0_ss", "ahb0_sd", "ahb0_nand1",
+ 					"ahb0_nand0", "ahb0_sdram",
+@@ -293,7 +296,10 @@
+ 			compatible = "allwinner,sun9i-a80-ahb1-gates-clk";
+ 			reg = <0x06000584 0x4>;
+ 			clocks = <&ahb1>;
+-			clock-indices = <0>, <1>, <17>, <21>, <22>, <23>, <24>;
++			clock-indices = <0>, <1>,
++					<17>, <21>,
++					<22>, <23>,
++					<24>;
+ 			clock-output-names = "ahb1_usbotg", "ahb1_usbhci",
+ 					"ahb1_gmac", "ahb1_msgbox",
+ 					"ahb1_spinlock", "ahb1_hstimer",
+@@ -305,8 +311,9 @@
+ 			compatible = "allwinner,sun9i-a80-ahb2-gates-clk";
+ 			reg = <0x06000588 0x4>;
+ 			clocks = <&ahb2>;
+-			clock-indices = <0>, <1>, <2>, <4>, <5>, <7>, <8>,
+-					<11>;
++			clock-indices = <0>, <1>,
++					<2>, <4>, <5>,
++					<7>, <8>, <11>;
+ 			clock-output-names = "ahb2_lcd0", "ahb2_lcd1",
+ 					"ahb2_edp", "ahb2_csi", "ahb2_hdmi",
+ 					"ahb2_de", "ahb2_mp", "ahb2_mipi_dsi";
+@@ -317,8 +324,10 @@
+ 			compatible = "allwinner,sun9i-a80-apb0-gates-clk";
+ 			reg = <0x06000590 0x4>;
+ 			clocks = <&apb0>;
+-			clock-indices = <1>, <5>, <11>, <12>, <13>, <15>,
+-					<17>, <18>, <19>;
++			clock-indices = <1>, <5>,
++					<11>, <12>, <13>,
++					<15>, <17>, <18>,
++					<19>;
+ 			clock-output-names = "apb0_spdif", "apb0_pio",
+ 					"apb0_ac97", "apb0_i2s0", "apb0_i2s1",
+ 					"apb0_lradc", "apb0_gpadc", "apb0_twd",
+@@ -330,8 +339,11 @@
+ 			compatible = "allwinner,sun9i-a80-apb1-gates-clk";
+ 			reg = <0x06000594 0x4>;
+ 			clocks = <&apb1>;
+-			clock-indices = <0>, <1>, <2>, <3>, <4>,
+-					<16>, <17>, <18>, <19>, <20>, <21>;
++			clock-indices = <0>, <1>,
++					<2>, <3>, <4>,
++					<16>, <17>,
++					<18>, <19>,
++					<20>, <21>;
+ 			clock-output-names = "apb1_i2c0", "apb1_i2c1",
+ 					"apb1_i2c2", "apb1_i2c3", "apb1_i2c4",
+ 					"apb1_uart0", "apb1_uart1",
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.4.6
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
