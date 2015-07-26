@@ -1,43 +1,69 @@
-Return-Path: <santosh.shilimkar@oracle.com>
-Subject: Re: [PATCH 2/2] ARM: dts: keystone: fix dt bindings to use post div
- register for mainpll
-To: Murali Karicheri <m-karicheri2@ti.com>, robh+dt@kernel.org,
-        pawel.moll@arm.com, mark.rutland@arm.com,
-        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-        ssantosh@kernel.org, mturquette@linaro.org, sboyd@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-References: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
- <1432915453-409-2-git-send-email-m-karicheri2@ti.com>
- <55BB8412.2000905@ti.com>
-From: santosh shilimkar <santosh.shilimkar@oracle.com>
-Message-ID: <55BB94A4.1010200@oracle.com>
-Date: Fri, 31 Jul 2015 08:30:44 -0700
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH 0/7] ARM: sunxi: Switch to clock indices
+Date: Sun, 26 Jul 2015 23:14:23 +0200
+Message-Id: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-In-Reply-To: <55BB8412.2000905@ti.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 7/31/2015 7:20 AM, Murali Karicheri wrote:
-> On 05/29/2015 12:04 PM, Murali Karicheri wrote:
->> All of the keystone devices have a separate register to hold post
->> divider value for main pll clock. Currently the fixed-postdiv
->> value used for k2hk/l/e SoCs works by sheer luck as u-boot happens to
->> use a value of 2 for this. Now that we have fixed this in the pll
->> clock driver change the dt bindings for the same.
->>
->> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
->> ---
+Hi,
 
-[..]
+We currently have in our clock driver a logic very similar to the one
+that clock-indices is supposed to cover.
 
-> Santosh,
->
-> The clk driver update is already merged to v4.2-rc. Could you send this
-> DT update as well for 4.2-rc?
->
-Sure.
+Using this property, we can create a new driver generic for all gates
+that will get the valid indices directly from the device tree, instead
+of storing that in the driver itself.
 
-Regards,
-Santosh
+While we're at it, we also move to using CLK_OF_DECLARE for that new
+driver, which should ease the orphan clocks breakage we saw.
+
+Let me know what you think,
+Maxime
+
+Maxime Ripard (7):
+  ARM: sun4i: Add clock indices
+  ARM: sun5i: Add clock indices
+  ARM: sun6i: Add clock indices
+  ARM: sun7i: Add clock indices
+  ARM: sun8i: Add clock indices
+  ARM: sun9i: Add clock indices
+  clk: sunxi: Add a simple gates driver
+
+ arch/arm/boot/dts/sun4i-a10.dtsi     |  69 ++++++++++----
+ arch/arm/boot/dts/sun5i-a10s.dtsi    |  23 ++++-
+ arch/arm/boot/dts/sun5i-a13.dtsi     |  18 +++-
+ arch/arm/boot/dts/sun5i.dtsi         |   1 +
+ arch/arm/boot/dts/sun6i-a31.dtsi     |  24 +++++
+ arch/arm/boot/dts/sun7i-a20.dtsi     |  23 +++++
+ arch/arm/boot/dts/sun8i-a23-a33.dtsi |  15 +++
+ arch/arm/boot/dts/sun9i-a80.dtsi     |  32 +++++--
+ drivers/clk/sunxi/Makefile           |   1 +
+ drivers/clk/sunxi/clk-simple-gates.c | 159 +++++++++++++++++++++++++++++++
+ drivers/clk/sunxi/clk-sunxi.c        | 177 -----------------------------------
+ 11 files changed, 335 insertions(+), 207 deletions(-)
+ create mode 100644 drivers/clk/sunxi/clk-simple-gates.c
+
+-- 
+2.4.6
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
