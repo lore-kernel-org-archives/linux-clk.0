@@ -1,406 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 15 Jul 2015 21:54:22 +0000 (UTC)
-From: Paul Walmsley <paul@pwsan.com>
-To: Vignesh R <vigneshr@ti.com>
-cc: Tero Kristo <t-kristo@ti.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Benoit Cousson <bcousson@baylibre.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
-In-Reply-To: <1433332284-10766-3-git-send-email-vigneshr@ti.com>
-Message-ID: <alpine.DEB.2.02.1507152029460.32764@utopia.booyaka.com>
-References: <1433332284-10766-1-git-send-email-vigneshr@ti.com> <1433332284-10766-3-git-send-email-vigneshr@ti.com>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/7] cpufreq-dt: add turbo modes support
+Date: Mon, 27 Jul 2015 13:58:09 +0200
+Message-id: <2522396.6jWphaZxGp@amdc1976>
+In-reply-to: <20150727113340.GA10181@linux>
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+ <15810554.2OjPyuYJBt@amdc1976> <20150727113340.GA10181@linux>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-some comments.
-
-On Wed, 3 Jun 2015, Vignesh R wrote:
-
-> Add hwmod entries for the PWMSS on DRA7.
+On Monday, July 27, 2015 05:03:40 PM Viresh Kumar wrote:
+> On 27-07-15, 13:01, Bartlomiej Zolnierkiewicz wrote:
 > 
-> Set l4_root_clk_div as the main_clk of PWMSS. It is fixed-factored clock
-> equal to L4PER2_L3_GICLK/2(l3_iclk_div/2).
-> As per AM57x TRM SPRUHZ6[1], October 2014, Section 29.1.3 Table 29-4,
-> clock source to PWMSS is L4PER2_L3_GICLK. But it is actually
-> L4PER2_L3_GICLK/2. The TRM does not show the division by 2.
+> First of all, please don't be angry :).. We can discuss and get things
+> sorted out ...
 
-Is the divide-by-two coming from PWMSS_EPWM.EPWM_TBCTL[HSPCLKDIV]?  Or is 
-HSPCLKDIV a separate divider after the divide-by-2 you mention above?
+OK :)
 
-> [1] www.ti.com/lit/ug/spruhz6/spruhz6.pdf
+> > This change was in the original patch posted in April:
+> > https://lkml.org/lkml/2015/4/10/646
 > 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> ---
+> Yeah, and I already apologized for missing the request :)
 > 
-> v2:
->  * add TRM references.
+> > your review from a month ago didn't contain this request:
+> > https://lkml.org/lkml/2015/6/22/667
 > 
->  arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 239 ++++++++++++++++++++++++++++++
->  1 file changed, 239 insertions(+)
+> Your patch inserted almost 116 lines and most of the stuff was around
+> adding new bindings to get things working with cpufreq-dt driver.
 > 
-> diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-> index 0e64c2fac0b5..86a7ac9a3138 100644
-> --- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-> +++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-> @@ -362,6 +362,149 @@ static struct omap_hwmod dra7xx_dcan2_hwmod = {
->  	},
->  };
->  
-> +/* pwmss  */
-> +static struct omap_hwmod_class_sysconfig dra7xx_epwmss_sysc = {
-> +	.rev_offs	= 0x0,
-> +	.sysc_offs	= 0x4,
-> +	.sysc_flags	= SYSC_HAS_SIDLEMODE | SYSC_HAS_RESET_STATUS,
-
-This doesn't match SPRUHZ6 Table 29-13 "PWMSS_SYSCONFIG".  There's no 
-RESETSTATUS bit.  There is a SOFTRESET bit. 
-
-Could you please confirm whether this is intentional?
-
-> +	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART),
-> +	.sysc_fields	= &omap_hwmod_sysc_type2,
-> +};
-> +
-> +struct omap_hwmod_class dra7xx_epwmss_hwmod_class = {
-> +	.name		= "epwmss",
-> +	.sysc		= &dra7xx_epwmss_sysc,
-> +};
-> +
-> +static struct omap_hwmod_class dra7xx_ecap_hwmod_class = {
-> +	.name		= "ecap",
-> +};
-> +
-> +static struct omap_hwmod_class dra7xx_eqep_hwmod_class = {
-> +	.name		= "eqep",
-> +};
-> +
-> +struct omap_hwmod_class dra7xx_ehrpwm_hwmod_class = {
-> +	.name		= "ehrpwm",
-> +};
-> +
-> +/* epwmss0 */
-> +struct omap_hwmod dra7xx_epwmss0_hwmod = {
-> +	.name		= "epwmss0",
-> +	.class		= &dra7xx_epwmss_hwmod_class,
-> +	.clkdm_name	= "l4per2_clkdm",
-> +	.main_clk	= "l4_root_clk_div",
-> +	.prcm		= {
-> +		.omap4	= {
-> +			.modulemode	= MODULEMODE_SWCTRL,
-> +			.clkctrl_offs	= DRA7XX_CM_L4PER2_PWMSS1_CLKCTRL_OFFSET,
-> +			.context_offs	= DRA7XX_RM_L4PER2_PWMSS1_CONTEXT_OFFSET,
-> +		},
-> +	},
-
-Per my comment on the previous patch, sounds like it might be better to 
-mark this as HWMOD_SWSUP_SIDLE?  Then again, see the next comment below 
-re: main_clk.
-
-> +};
-> +
-> +/* ecap0 */
-> +struct omap_hwmod dra7xx_ecap0_hwmod = {
-> +	.name		= "ecap0",
-> +	.class		= &dra7xx_ecap_hwmod_class,
-> +	.clkdm_name	= "l4per2_clkdm",
-> +	.main_clk	= "l4_root_clk_div",
-
-Looking at SPRUHZ6 Section 29.1.4.2 "PWMSS Modules Local Clock Gating", 
-there appears to be a local "mini-PRCM" for the PWMSS which implements 
-clock gating and reports back on the status of what I'd guess is the local 
-clock gating FSM.
-
-So from that point of view, you should probably create a clock driver that 
-manages both the clock gate request bit and the FSM status bit.  It should 
-be something that can be reused for the other PWMSS IP blocks.  Then 
-you'd create per-IP block clock nodes and set the main_clk to point to 
-that node.
-
-> +};
-> +
-> +/* eqep0 */
-> +struct omap_hwmod dra7xx_eqep0_hwmod = {
-> +	.name		= "eqep0",
-> +	.class		= &dra7xx_eqep_hwmod_class,
-> +	.clkdm_name	= "l4per2_clkdm",
-> +	.main_clk	= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +};
-> +
-> +/* ehrpwm0 */
-> +struct omap_hwmod dra7xx_ehrpwm0_hwmod = {
-> +	.name		= "ehrpwm0",
-> +	.class		= &dra7xx_ehrpwm_hwmod_class,
-> +	.clkdm_name	= "l4per2_clkdm",
-> +	.main_clk	= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +};
-> +
-> +/* epwmss1 */
-> +struct omap_hwmod dra7xx_epwmss1_hwmod = {
-> +	.name		= "epwmss1",
-> +	.class		= &dra7xx_epwmss_hwmod_class,
-> +	.clkdm_name	= "l4per2_clkdm",
-> +	.main_clk	= "l4_root_clk_div",
-> +	.prcm		= {
-> +		.omap4	= {
-> +			.modulemode	= MODULEMODE_SWCTRL,
-> +			.clkctrl_offs	= DRA7XX_CM_L4PER2_PWMSS2_CLKCTRL_OFFSET,
-> +			.context_offs	= DRA7XX_RM_L4PER2_PWMSS2_CONTEXT_OFFSET,
-> +		},
-> +	},
-
-Same flags comment as for epwmss0.
-
-> +};
-> +
-> +/* ecap1 */
-> +struct omap_hwmod dra7xx_ecap1_hwmod = {
-> +	.name		= "ecap1",
-> +	.class		= &dra7xx_ecap_hwmod_class,
-> +	.clkdm_name	= "l4per2_clkdm",
-> +	.main_clk	= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +};
-> +
-> +/* eqep1 */
-> +struct omap_hwmod dra7xx_eqep1_hwmod = {
-> +	.name		= "eqep1",
-> +	.class		= &dra7xx_eqep_hwmod_class,
-> +	.clkdm_name	= "l4per2_clkdm",
-> +	.main_clk	= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +};
-> +
-> +/* ehrpwm1 */
-> +struct omap_hwmod dra7xx_ehrpwm1_hwmod = {
-> +	.name		= "ehrpwm1",
-> +	.class		= &dra7xx_ehrpwm_hwmod_class,
-> +	.clkdm_name	= "l4per2_clkdm",
-> +	.main_clk	= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +};
-> +
-> +/* epwmss2 */
-> +struct omap_hwmod dra7xx_epwmss2_hwmod = {
-> +	.name		= "epwmss2",
-> +	.class		= &dra7xx_epwmss_hwmod_class,
-> +	.clkdm_name	= "l4per2_clkdm",
-> +	.main_clk	= "l4_root_clk_div",
-> +	.prcm		= {
-> +		.omap4	= {
-> +			.modulemode	= MODULEMODE_SWCTRL,
-> +			.clkctrl_offs	= DRA7XX_CM_L4PER2_PWMSS3_CLKCTRL_OFFSET,
-> +			.context_offs	= DRA7XX_RM_L4PER2_PWMSS3_CONTEXT_OFFSET,
-> +		},
-> +	},
-
-Same flags comment as for epwmss0.
-
-> +};
-> +
-> +/* ecap2 */
-> +struct omap_hwmod dra7xx_ecap2_hwmod = {
-> +	.name		= "ecap2",
-> +	.class		= &dra7xx_ecap_hwmod_class,
-> +	.clkdm_name	= "l4per2_clkdm",
-> +	.main_clk	= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +};
-> +
-> +/* eqep2 */
-> +struct omap_hwmod dra7xx_eqep2_hwmod = {
-> +	.name		= "eqep2",
-> +	.class		= &dra7xx_eqep_hwmod_class,
-> +	.clkdm_name	= "l4per2_clkdm",
-> +	.main_clk	= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +};
-> +
-> +/* ehrpwm2 */
-> +struct omap_hwmod dra7xx_ehrpwm2_hwmod = {
-> +	.name		= "ehrpwm2",
-> +	.class		= &dra7xx_ehrpwm_hwmod_class,
-> +	.clkdm_name	= "l4per2_clkdm",
-> +	.main_clk	= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +};
-> +
->  /*
->   * 'dma' class
->   *
-> @@ -2601,6 +2744,90 @@ static struct omap_hwmod_ocp_if dra7xx_l4_per1__gpio6 = {
->  	.user		= OCP_USER_MPU | OCP_USER_SDMA,
->  };
->  
-> +struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss0 = {
-> +	.master		= &dra7xx_l4_per2_hwmod,
-> +	.slave		= &dra7xx_epwmss0_hwmod,
-> +	.clk		= "l4_root_clk_div",
-> +	.user		= OCP_USER_MPU,
-> +};
-> +
-> +struct omap_hwmod_ocp_if dra7xx_epwmss0__ecap0 = {
-> +	.master		= &dra7xx_epwmss0_hwmod,
-> +	.slave		= &dra7xx_ecap0_hwmod,
-> +	.clk		= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +	.user		= OCP_USER_MPU,
-> +};
-> +
-> +struct omap_hwmod_ocp_if dra7xx_epwmss0__eqep0 = {
-> +	.master		= &dra7xx_epwmss0_hwmod,
-> +	.slave		= &dra7xx_eqep0_hwmod,
-> +	.clk		= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +	.user		= OCP_USER_MPU,
-> +};
-> +
-> +struct omap_hwmod_ocp_if dra7xx_epwmss0__ehrpwm0 = {
-> +	.master		= &dra7xx_epwmss0_hwmod,
-> +	.slave		= &dra7xx_ehrpwm0_hwmod,
-> +	.clk		= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +	.user		= OCP_USER_MPU,
-> +};
-> +
-> +struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss1 = {
-> +	.master		= &dra7xx_l4_per2_hwmod,
-> +	.slave		= &dra7xx_epwmss1_hwmod,
-> +	.clk		= "l4_root_clk_div",
-> +	.user		= OCP_USER_MPU,
-> +};
-> +
-> +struct omap_hwmod_ocp_if dra7xx_epwmss1__ecap1 = {
-> +	.master		= &dra7xx_epwmss1_hwmod,
-> +	.slave		= &dra7xx_ecap1_hwmod,
-> +	.clk		= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +	.user		= OCP_USER_MPU,
-> +};
-> +
-> +struct omap_hwmod_ocp_if dra7xx_epwmss1__eqep1 = {
-> +	.master		= &dra7xx_epwmss1_hwmod,
-> +	.slave		= &dra7xx_eqep1_hwmod,
-> +	.clk		= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +	.user		= OCP_USER_MPU,
-> +};
-> +
-> +struct omap_hwmod_ocp_if dra7xx_epwmss1__ehrpwm1 = {
-> +	.master		= &dra7xx_epwmss1_hwmod,
-> +	.slave		= &dra7xx_ehrpwm1_hwmod,
-> +	.clk		= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +	.user		= OCP_USER_MPU,
-> +};
-> +
-> +struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss2 = {
-> +	.master		= &dra7xx_l4_per2_hwmod,
-> +	.slave		= &dra7xx_epwmss2_hwmod,
-> +	.clk		= "l4_root_clk_div",
-> +	.user		= OCP_USER_MPU,
-> +};
-> +
-> +struct omap_hwmod_ocp_if dra7xx_epwmss2__ecap2 = {
-> +	.master		= &dra7xx_epwmss2_hwmod,
-> +	.slave		= &dra7xx_ecap2_hwmod,
-> +	.clk		= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +	.user		= OCP_USER_MPU,
-> +};
-> +
-> +struct omap_hwmod_ocp_if dra7xx_epwmss2__eqep2 = {
-> +	.master		= &dra7xx_epwmss2_hwmod,
-> +	.slave		= &dra7xx_eqep2_hwmod,
-> +	.clk		= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +	.user		= OCP_USER_MPU,
-> +};
-> +
-> +struct omap_hwmod_ocp_if dra7xx_epwmss2__ehrpwm2 = {
-> +	.master		= &dra7xx_epwmss2_hwmod,
-> +	.slave		= &dra7xx_ehrpwm2_hwmod,
-> +	.clk		= "l4_root_clk_div",
-
-Same main_clk comments as for ecap0.
-
-> +	.user		= OCP_USER_MPU,
-> +};
-> +
->  /* l4_per1 -> gpio7 */
->  static struct omap_hwmod_ocp_if dra7xx_l4_per1__gpio7 = {
->  	.master		= &dra7xx_l4_per1_hwmod,
-> @@ -3394,6 +3621,18 @@ static struct omap_hwmod_ocp_if *dra7xx_hwmod_ocp_ifs[] __initdata = {
->  	&dra7xx_l3_main_1__vcp2,
->  	&dra7xx_l4_per2__vcp2,
->  	&dra7xx_l4_wkup__wd_timer2,
-> +	&dra7xx_l4_per2__epwmss0,
-> +	&dra7xx_epwmss0__ecap0,
-> +	&dra7xx_epwmss0__eqep0,
-> +	&dra7xx_epwmss0__ehrpwm0,
-> +	&dra7xx_l4_per2__epwmss1,
-> +	&dra7xx_epwmss1__ecap1,
-> +	&dra7xx_epwmss1__eqep1,
-> +	&dra7xx_epwmss1__ehrpwm1,
-> +	&dra7xx_l4_per2__epwmss2,
-> +	&dra7xx_epwmss2__ecap2,
-> +	&dra7xx_epwmss2__eqep2,
-> +	&dra7xx_epwmss2__ehrpwm2,
->  	NULL,
->  };
->  
-> -- 
-> 2.4.1
+> And so I replied to the most important stuff, i.e. don't add new
+> bindings, we will sort it out with opp-v2.
 > 
+> And frankly that wasn't the time where we could have discussed how
+> exactly we are going to use it. Ofcourse we should get it via DT,
+> platform data is just not required.
+> 
+> So, me not NAK ing this approach was fine as it wasn't about keeping
+> this data in the platform data part.
+> 
+> > and now (after nearly 4 months) you are telling me that
+> 
+> I will say a month, as we discarded most of that patch recently :)
+> 
+> > I should change this because you are planning to do some
+> > more changes in the future.
+> 
+> Its not about me doing some changes. But the whole point of doing the
+> opp-v2 thing was to get rid of such platform data things..
+> 
+> Just that your work is competing with opp-v2 code :)
+> 
+> > Could we please keep it as it is for now and change it
+> > later (after independent_clocks configuration will get
+> > ported to use device tree)?
+> 
+> I thought we can get your work to a better shape, with all credit to
+> you. But if you have some dependency on this for 4.3, then I don't
+> mind killing this structure after you have polluted it a bit more :)
 
+Thank you.  This is exactly the case here (I would like to get
+Exynos4x12 conversion to use cpufreq-dt + exynos-cpufreq removal
+in v4.3 if possible and adding new DT bindings will most likely
+slow down the process considerably).
 
-- Paul
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
