@@ -1,49 +1,56 @@
-Return-Path: <dinguyen@opensource.altera.com>
-From: <dinguyen@opensource.altera.com>
-To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
-CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
-Subject: [PATCHv2 2/6] clk: qoriq: make use of of_clk_parent_fill helper function
-Date: Mon, 6 Jul 2015 22:59:02 -0500
-Message-ID: <1436241546-16731-3-git-send-email-dinguyen@opensource.altera.com>
-In-Reply-To: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
-References: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: dinguyen@opensource.altera.com
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	heikki.krogerus@linux.intel.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v5 1/5] clk: fractional-divider: rename prate -> parent_rate
+Date: Mon, 27 Jul 2015 14:48:49 +0300
+Message-Id: <1437997733-135331-2-git-send-email-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <1437997733-135331-1-git-send-email-andriy.shevchenko@linux.intel.com>
+References: <1437997733-135331-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
+Rename function parameter to be more explicit what it is for. This also makes
+it in align with struct clk_ops.
 
-Use of_clk_parent_fill to fill in the parent clock names' array.
+There is no functional change.
 
-Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/clk/clk-qoriq.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/clk/clk-fractional-divider.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index cda90a9..d3f4570 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -70,7 +70,7 @@ static void __init core_mux_init(struct device_node *np)
- 	struct clk_init_data init;
- 	struct cmux_clk *cmux_clk;
- 	struct device_node *node;
--	int rc, count, i;
-+	int rc, count;
- 	u32	offset;
- 	const char *clk_name;
- 	const char **parent_names;
-@@ -92,8 +92,7 @@ static void __init core_mux_init(struct device_node *np)
- 	if (!parent_names)
- 		return;
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index e85f856..1af9c1e 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -50,18 +50,18 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
+ }
  
--	for (i = 0; i < count; i++)
--		parent_names[i] = of_clk_get_parent_name(np, i);
-+	of_clk_parent_fill(np, parent_names, count);
+ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
+-			      unsigned long *prate)
++			      unsigned long *parent_rate)
+ {
+ 	struct clk_fractional_divider *fd = to_clk_fd(hw);
+ 	unsigned maxn = (fd->nmask >> fd->nshift) + 1;
+ 	unsigned div;
  
- 	cmux_clk = kzalloc(sizeof(*cmux_clk), GFP_KERNEL);
- 	if (!cmux_clk)
+-	if (!rate || rate >= *prate)
+-		return *prate;
++	if (!rate || rate >= *parent_rate)
++		return *parent_rate;
+ 
+-	div = gcd(*prate, rate);
++	div = gcd(*parent_rate, rate);
+ 
+-	while ((*prate / div) > maxn) {
++	while ((*parent_rate / div) > maxn) {
+ 		div <<= 1;
+ 		rate <<= 1;
+ 	}
 -- 
-1.7.9.5
+2.4.6
+
