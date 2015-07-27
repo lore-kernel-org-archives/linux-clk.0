@@ -1,54 +1,43 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 27 Jul 2015 14:29:36 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Subject: [PATCH] clk: qcom: Set CLK_SET_RATE_PARENT on ce1 clocks
-Date: Tue, 14 Jul 2015 17:09:24 -0700
-Message-Id: <1436918964-3895-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3] clk: kill off set_irq_flags usage
+Message-ID: <20150727212935.GC14521@codeaurora.org>
+References: <1438030523-15853-1-git-send-email-robh@kernel.org>
+ <1438030523-15853-2-git-send-email-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1438030523-15853-2-git-send-email-robh@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The other ce clocks have the flag set, but ce1 doesn't, so
-clk_set_rate() doesn't propagate up the tree to the ce1_src_clk.
-Set the flag as this is supported.
+On 07/27, Rob Herring wrote:
+> set_irq_flags is ARM specific with custom flags which have genirq
+> equivalents. Convert drivers to use the genirq interfaces directly, so we
+> can kill off set_irq_flags. The translation of flags is as follows:
+> 
+> IRQF_VALID -> !IRQ_NOREQUEST
+> IRQF_PROBE -> !IRQ_NOPROBE
+> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+> 
+> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
+> and setting IRQ_NOREQUEST already, so there is no need to do this in
+> .map() functions and we can simply remove the set_irq_flags calls. Some
+> users also modify IRQ_NOPROBE and this has been maintained although it
+> is not clear that is really needed. There appears to be a great deal of
+> blind copy and paste of this code.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Cc: Mike Turquette <mturquette@baylibre.com>
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: linux-clk@vger.kernel.org
+> ---
 
-Reported-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Fixes: 02824653200b ("clk: qcom: Add APQ8084 Global Clock Controller support")
-Fixes: d33faa9ead8d ("clk: qcom: Add support for MSM8974's global clock controller (GCC)")
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/qcom/gcc-apq8084.c | 1 +
- drivers/clk/qcom/gcc-msm8974.c | 1 +
- 2 files changed, 2 insertions(+)
+Applied to clk-next
 
-diff --git a/drivers/clk/qcom/gcc-apq8084.c b/drivers/clk/qcom/gcc-apq8084.c
-index 05b7a25b80e8..3563019b8e3c 100644
---- a/drivers/clk/qcom/gcc-apq8084.c
-+++ b/drivers/clk/qcom/gcc-apq8084.c
-@@ -2105,6 +2105,7 @@ static struct clk_branch gcc_ce1_clk = {
- 				"ce1_clk_src",
- 			},
- 			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
-index 2c289702119f..2bcf87538f9d 100644
---- a/drivers/clk/qcom/gcc-msm8974.c
-+++ b/drivers/clk/qcom/gcc-msm8974.c
-@@ -1783,6 +1783,7 @@ static struct clk_branch gcc_ce1_clk = {
- 				"ce1_clk_src",
- 			},
- 			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
-
