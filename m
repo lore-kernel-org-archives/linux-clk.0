@@ -1,44 +1,50 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Date: Mon, 6 Jul 2015 15:11:25 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 5/7] clk: rockchip: add dt-binding header for rk3368
-Message-ID: <20150706221125.GK20866@codeaurora.org>
-References: <1436086820-3757-1-git-send-email-heiko@sntech.de>
- <1436086820-3757-6-git-send-email-heiko@sntech.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 27 Jul 2015 17:06:41 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
+Message-ID: <20150727113641.GB10181@linux>
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+ <1595601.YD6UTxy5Qg@amdc1976>
+ <20150727103521.GA4103@linux>
+ <3141301.RS9TLygaba@amdc1976>
 MIME-Version: 1.0
-In-Reply-To: <1436086820-3757-6-git-send-email-heiko@sntech.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <3141301.RS9TLygaba@amdc1976>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/05, Heiko Stuebner wrote:
-> Add the dt-bindings header for the rk3368, that gets shared between
-> the clock controller and the clock references in the dts.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-> I only need this dt-binding header in a stable branch to be included
-> into armsoc.
-> 
+On 27-07-15, 13:14, Bartlomiej Zolnierkiewicz wrote:
+> Sorry but you don't seem to understand the issue.
 
-Applied to clk-rk3368. It will be stable now.
+:)
+
+No, I did. I understand that if someone uses opp bindings today with
+some entries as turbo OPPs, cpufreq will use them as normal
+frequencies. And that may harm the board.
+
+BUT, opp-v2 code isn't ready to be used yet. And platforms should see
+what all is implemented before trying to use them.
+
+All I was saying is, this isn't a FIX as we haven't introduced the
+feature yet. Otherwise I had no issues with the patch.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+viresh
