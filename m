@@ -1,49 +1,57 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-id: <55B0377D.10908@samsung.com>
-Date: Thu, 23 Jul 2015 09:38:21 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>,
-	linux-arm-kernel@lists.infradead.org
-Cc: Sangbeom Kim <sbkim73@samsung.com>,
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS"
-	<linux-kernel@vger.kernel.org>,
-	"open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS"
-	<linux-samsung-soc@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: s2mps11: Use kcalloc instead of kzalloc for array
- allocation
-References: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
-In-reply-to: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-kernel-owner@vger.kernel.org
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
+Date: Mon, 27 Jul 2015 13:47:41 +0200
+Message-id: <2681271.3UazeZ9PAQ@amdc1976>
+In-reply-to: <20150727113641.GB10181@linux>
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+ <3141301.RS9TLygaba@amdc1976> <20150727113641.GB10181@linux>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 22.07.2015 18:34, Vaibhav Hiremath wrote:
-> This patch cleans up the driver for,
+On Monday, July 27, 2015 05:06:41 PM Viresh Kumar wrote:
+> On 27-07-15, 13:14, Bartlomiej Zolnierkiewicz wrote:
+> > Sorry but you don't seem to understand the issue.
 > 
->   - Use devm_kcalloc varient instead of devm_kzalloc for array
->     allocation.
->   - clk_prepare/unprepare, remove "ret" variable as it is not required
->   - use __exit for cleanup function
+> :)
 > 
-> As I am referring this driver as a reference for my 88pm800 clk driver,
-> applying same changes here as well.
+> No, I did. I understand that if someone uses opp bindings today with
+> some entries as turbo OPPs, cpufreq will use them as normal
+> frequencies. And that may harm the board.
 > 
-> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-> ---
-> Since I do not have platform to test, it would be helpful if someone
-> tests it for me.
-> I have build tested it.
-> 
->  drivers/clk/clk-s2mps11.c | 18 +++++++-----------
->  1 file changed, 7 insertions(+), 11 deletions(-)
+> BUT, opp-v2 code isn't ready to be used yet. And platforms should see
+> what all is implemented before trying to use them.
 
-Looks good, simplifies the code and fixes the __init/__exit.
+OK.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> All I was saying is, this isn't a FIX as we haven't introduced the
+> feature yet. Otherwise I had no issues with the patch.
+
+I will update the description for the next patchset revision.
 
 Best regards,
-Krzysztof
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
