@@ -1,86 +1,194 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Manuel Lauss <manuel.lauss@gmail.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Linux-MIPS <linux-mips@linux-mips.org>
-Subject: [PATCH 09/26] MIPS: alchemy: Convert to clk_hw based provider APIs
-Date: Fri, 31 Jul 2015 10:03:49 -0700
-Message-Id: <1438362246-6664-10-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <Aisheng.Dong@freescale.com>
+From: Dong Aisheng <aisheng.dong@freescale.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@linaro.org>, <shawnguo@kernel.org>, <b29396@freescale.com>,
+	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
+	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
+Subject: [PATCH V3 2/5] clk: introduce clk_core_enable_lock and clk_core_disable_lock functions
+Date: Tue, 28 Jul 2015 21:19:42 +0800
+Message-ID: <1438089585-30103-3-git-send-email-aisheng.dong@freescale.com>
+In-Reply-To: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
+References: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
+Return-Path: aisheng.dong@freescale.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-We're removing struct clk from the clk provider API, so switch
-this code to using the clk_hw based provider APIs.
+This can be useful when clock core wants to enable/disable clocks.
+Then we don't have to convert the struct clk_core to struct clk to call
+clk_enable/clk_disable which is a bit un-align with exist using.
 
-Cc: Manuel Lauss <manuel.lauss@gmail.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Linux-MIPS <linux-mips@linux-mips.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+And after introduce clk_core_{enable|disable}_lock, we can refine
+clk_eanble and clk_disable a bit.
+
+As well as clk_core_{enable|disable}_lock, we also added
+clk_core_{prepare|unprepare}_lock and clk_core_prepare_enable/
+clk_core_unprepare_disable for clock core to easily use.
+
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
 ---
- arch/mips/alchemy/common/clock.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/clk.c | 85 +++++++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 63 insertions(+), 22 deletions(-)
 
-diff --git a/arch/mips/alchemy/common/clock.c b/arch/mips/alchemy/common/clock.c
-index 5a62b18b8500..bd34f4093cd9 100644
---- a/arch/mips/alchemy/common/clock.c
-+++ b/arch/mips/alchemy/common/clock.c
-@@ -394,7 +394,7 @@ static int alchemy_clk_fgcs_detr(struct clk_hw *hw,
- 				 struct clk_rate_request *req,
- 				 int scale, int maxdiv)
- {
--	struct clk *pc, *bpc, *free;
-+	struct clk_hw *pc, *bpc, *free;
- 	long tdv, tpr, pr, nr, br, bpr, diff, lastdiff;
- 	int j;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 4c7f7b2..c2310d5 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -583,6 +583,13 @@ static void clk_core_unprepare(struct clk_core *core)
+ 	clk_core_unprepare(core->parent);
+ }
  
-@@ -408,7 +408,7 @@ static int alchemy_clk_fgcs_detr(struct clk_hw *hw,
- 	 * the one that gets closest to but not over the requested rate.
- 	 */
- 	for (j = 0; j < 7; j++) {
--		pc = clk_get_parent_by_index(hw->clk, j);
-+		pc = clk_hw_get_parent_by_index(hw, j);
- 		if (!pc)
- 			break;
++static void clk_core_unprepare_lock(struct clk_core *core)
++{
++	clk_prepare_lock();
++	clk_core_unprepare(core);
++	clk_prepare_unlock();
++}
++
+ /**
+  * clk_unprepare - undo preparation of a clock source
+  * @clk: the clk being unprepared
+@@ -599,9 +606,7 @@ void clk_unprepare(struct clk *clk)
+ 	if (IS_ERR_OR_NULL(clk))
+ 		return;
  
-@@ -416,12 +416,12 @@ static int alchemy_clk_fgcs_detr(struct clk_hw *hw,
- 		 * XXX: we would actually want clk_has_active_children()
- 		 * but this is a good-enough approximation for now.
- 		 */
--		if (!__clk_is_prepared(pc)) {
-+		if (!clk_hw_is_prepared(pc)) {
- 			if (!free)
- 				free = pc;
- 		}
+-	clk_prepare_lock();
+-	clk_core_unprepare(clk->core);
+-	clk_prepare_unlock();
++	clk_core_unprepare_lock(clk->core);
+ }
+ EXPORT_SYMBOL_GPL(clk_unprepare);
  
--		pr = clk_get_rate(pc);
-+		pr = clk_hw_get_rate(pc);
- 		if (pr < req->rate)
- 			continue;
- 
-@@ -451,7 +451,7 @@ static int alchemy_clk_fgcs_detr(struct clk_hw *hw,
- 			tpr = req->rate * j;
- 			if (tpr < 0)
- 				break;
--			pr = clk_round_rate(free, tpr);
-+			pr = clk_hw_round_rate(free, tpr);
- 
- 			tdv = alchemy_calc_div(req->rate, pr, scale, maxdiv,
- 					       NULL);
-@@ -474,7 +474,7 @@ static int alchemy_clk_fgcs_detr(struct clk_hw *hw,
- 		return br;
- 
- 	req->best_parent_rate = bpr;
--	req->best_parent_hw = __clk_get_hw(bpc);
-+	req->best_parent_hw = bpc;
- 	req->rate = br;
- 
+@@ -637,6 +642,17 @@ static int clk_core_prepare(struct clk_core *core)
  	return 0;
+ }
+ 
++static int clk_core_prepare_lock(struct clk_core *core)
++{
++	int ret;
++
++	clk_prepare_lock();
++	ret = clk_core_prepare(core);
++	clk_prepare_unlock();
++
++	return ret;
++}
++
+ /**
+  * clk_prepare - prepare a clock source
+  * @clk: the clk being prepared
+@@ -651,16 +667,10 @@ static int clk_core_prepare(struct clk_core *core)
+  */
+ int clk_prepare(struct clk *clk)
+ {
+-	int ret;
+-
+ 	if (!clk)
+ 		return 0;
+ 
+-	clk_prepare_lock();
+-	ret = clk_core_prepare(clk->core);
+-	clk_prepare_unlock();
+-
+-	return ret;
++	return clk_core_prepare_lock(clk->core);
+ }
+ EXPORT_SYMBOL_GPL(clk_prepare);
+ 
+@@ -687,6 +697,15 @@ static void clk_core_disable(struct clk_core *core)
+ 	clk_core_disable(core->parent);
+ }
+ 
++static void clk_core_disable_lock(struct clk_core *core)
++{
++	unsigned long flags;
++
++	flags = clk_enable_lock();
++	clk_core_disable(core);
++	clk_enable_unlock(flags);
++}
++
+ /**
+  * clk_disable - gate a clock
+  * @clk: the clk being gated
+@@ -701,14 +720,10 @@ static void clk_core_disable(struct clk_core *core)
+  */
+ void clk_disable(struct clk *clk)
+ {
+-	unsigned long flags;
+-
+ 	if (IS_ERR_OR_NULL(clk))
+ 		return;
+ 
+-	flags = clk_enable_lock();
+-	clk_core_disable(clk->core);
+-	clk_enable_unlock(flags);
++	clk_core_disable_lock(clk->core);
+ }
+ EXPORT_SYMBOL_GPL(clk_disable);
+ 
+@@ -747,6 +762,18 @@ static int clk_core_enable(struct clk_core *core)
+ 	return 0;
+ }
+ 
++static int clk_core_enable_lock(struct clk_core *core)
++{
++	unsigned long flags;
++	int ret;
++
++	flags = clk_enable_lock();
++	ret = clk_core_enable(core);
++	clk_enable_unlock(flags);
++
++	return ret;
++}
++
+ /**
+  * clk_enable - ungate a clock
+  * @clk: the clk being ungated
+@@ -762,19 +789,33 @@ static int clk_core_enable(struct clk_core *core)
+  */
+ int clk_enable(struct clk *clk)
+ {
+-	unsigned long flags;
+-	int ret;
+-
+ 	if (!clk)
+ 		return 0;
+ 
+-	flags = clk_enable_lock();
+-	ret = clk_core_enable(clk->core);
+-	clk_enable_unlock(flags);
++	return clk_core_enable_lock(clk->core);
++}
++EXPORT_SYMBOL_GPL(clk_enable);
++
++static int clk_core_prepare_enable(struct clk_core *core)
++{
++	int ret;
++
++	ret = clk_core_prepare_lock(core);
++	if (ret)
++		return ret;
++
++	ret = clk_core_enable_lock(core);
++	if (ret)
++		clk_core_unprepare_lock(core);
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(clk_enable);
++
++static void clk_core_disable_unprepare(struct clk_core *core)
++{
++	clk_core_disable_lock(core);
++	clk_core_unprepare_lock(core);
++}
+ 
+ static int clk_core_round_rate_nolock(struct clk_core *core,
+ 				      struct clk_rate_request *req)
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+1.9.1
