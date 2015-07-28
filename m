@@ -1,68 +1,61 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Sun, 26 Jul 2015 09:27:05 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com, romain.perier@gmail.com,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: handle fixed-rate clocks correctly in
- clk_core_round_rate_nolock
-Message-ID: <20150726092705.183a44c3@bbrezillon>
-In-Reply-To: <110607065.NoWaKp3mDJ@diego>
-References: <110607065.NoWaKp3mDJ@diego>
+Return-Path: <Aisheng.Dong@freescale.com>
+From: Dong Aisheng <aisheng.dong@freescale.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@linaro.org>, <shawnguo@kernel.org>, <b29396@freescale.com>,
+	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
+	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
+Subject: [PATCH V3 0/5] clk: support clocks which requires parent clock on during operation
+Date: Tue, 28 Jul 2015 21:19:40 +0800
+Message-ID: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
+Return-Path: Aisheng.Dong@freescale.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Heiko,
+This patch series adds support in clock framework for clocks which operations
+requires its parent clock is on.
 
-On Sun, 26 Jul 2015 00:18:40 +0200
-Heiko St=C3=BCbner <heiko@sntech.de> wrote:
+Such clock type is initially met on Freescale i.MX7D platform that all clocks
+operations, including enable/disable, rate change and re-parent, requires its
+parent clock on. No sure if any other SoC has the similar clock type.
 
-> Commit 6edc753d8ecc ("clk: change clk_ops' ->determine_rate() prototype")
-> changed the behaviour of clk_core_round_rate_nolock as it forgot to also
-> include the else conditional simply returning the clock rate for clocks
-> that neither have a parent or can determine their rate - for example
-> said fixed clocks.
+Current clock core can not support such type of clock well.
 
-Indeed.
+This patch introduce a new flag CLK_SET_PARENT_ON to handle this special case
+in clock core that enable its parent clock firstly for each operation and disable
+it later after operation complete.
 
->=20
-> This resulted in failures to set pll rates on rockchip socs, as it
-> returned the target pll rate as suitable rate for the 24MHz xin24m clock,
-> thus making the ccf want to set this fixed clock to 1.6GHz or similar.
->=20
-> Fixes: 6edc753d8ecc ("clk: change clk_ops' ->determine_rate() prototype")
-> Reported-by: Romain Perier <romain.perier@gmail.com>
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+The most special case is for set_parent() operation which requires both parent,
+old one and new one, to be enabled at the same time during the operation.
 
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+The patch series is based on for-next branch of Michael's git:
+git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
 
-Thanks,
+Change Log:
+v2->v3:
+ * rebased version, no other changes.
 
-Boris
+v1->v2:
+ Mainly addressed Stephen Boyd's comments
+ * remove dupliciated code with __clk_set_parent_after
+ * introduce more clk_core_x APIs for core easily use
+ * move clk_disable_unused code position
+ * use clk_core_x API to make code more clean and easily read
 
-> ---
->  drivers/clk/clk.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 67f778b..819ffa6 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -802,6 +802,8 @@ static int clk_core_round_rate_nolock(struct clk_core=
- *core,
->  		req->rate =3D rate;
->  	} else if (core->flags & CLK_SET_RATE_PARENT) {
->  		return clk_core_round_rate_nolock(parent, req);
-> +	} else {
-> +		req->rate =3D core->rate;
->  	}
-> =20
->  	return 0;
+Dong Aisheng (5):
+  clk: remove duplicated code with __clk_set_parent_after
+  clk: introduce clk_core_enable_lock and clk_core_disable_lock
+    functions
+  clk: move clk_disable_unused after clk_core_disable_unprepare function
+  clk: core: add CLK_OPS_PARENT_ON flags to support clocks require
+    parent on
+  clk: core: add CLK_OPS_PARENT_ON flags to support clocks require
+    parent on
 
+ drivers/clk/clk.c            | 338 +++++++++++++++++++++++++------------------
+ include/linux/clk-provider.h |   5 +
+ 2 files changed, 200 insertions(+), 143 deletions(-)
 
-
---=20
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+-- 
+1.9.1
