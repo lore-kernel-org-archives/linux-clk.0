@@ -1,59 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <559E68A9.2020809@linaro.org>
-Date: Thu, 09 Jul 2015 13:27:21 +0100
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+From: Dong Aisheng <aisheng.dong@freescale.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawn.guo@linaro.org>,
+	<b29396@freescale.com>, <linux-arm-kernel@lists.infradead.org>,
+	<Ranjani.Vaidyanathan@freescale.com>, <b20596@freescale.com>,
+	<r64343@freescale.com>, <b20788@freescale.com>
+Subject: [PATCH 0/4] clk: imx7d: switch to clk api with CLK_OPS_PARENT_ON enabled
+Date: Tue, 28 Jul 2015 21:33:07 +0800
+Message-ID: <1438090391-30329-1-git-send-email-aisheng.dong@freescale.com>
 MIME-Version: 1.0
-To: Georgi Djakov <georgi.djakov@linaro.org>, sboyd@codeaurora.org
-CC: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: qcom: Add support for RPM Clocks
-References: <1436444310-15108-1-git-send-email-georgi.djakov@linaro.org> <1436444310-15108-2-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1436444310-15108-2-git-send-email-georgi.djakov@linaro.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+After clk core supports mx7d type clocks, we don't have to enable all clock
+by default anymore, this patch series remove the enable all clocks code and
+only enable set of minimum required clocks instead.
 
+This patch series depends on:
+[PATCH V3 0/5] clk: support clocks which requires parent clock on during operation
+http://www.spinics.net/lists/arm-kernel/msg435136.html
 
-On 09/07/15 13:18, Georgi Djakov wrote:
-> This patch adds initial support for clocks controlled by the RPM
-> (Resource Power Manager) processor found on some Qualcomm SoCs.
->
-> The RPM is a dedicated hardware engine for managing the shared
-> SoC resources in order to keep the lowest power profile. It
-> communicates with other hardware subsystems via shared memory
-> and accepts clock requests, aggregates the requests and turns
-> the clocks on/off or scales them on demand.
->
-> This work is based on the codeaurora.org driver:
-> https://www.codeaurora.org/cgit/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-rpm.c
->
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
->   drivers/clk/qcom/Makefile  |    1 +
->   drivers/clk/qcom/clk-rpm.c |  164 ++++++++++++++++++++++++++++++++++++++++++++
->   drivers/clk/qcom/clk-rpm.h |  137 ++++++++++++++++++++++++++++++++++++
->   3 files changed, 302 insertions(+)
->   create mode 100644 drivers/clk/qcom/clk-rpm.c
->   create mode 100644 drivers/clk/qcom/clk-rpm.h
->
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 50b337a24a87..4d14a73ee4ed 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -8,6 +8,7 @@ clk-qcom-y += clk-rcg2.o
->   clk-qcom-y += clk-branch.o
->   clk-qcom-y += clk-regmap-divider.o
->   clk-qcom-y += clk-regmap-mux.o
-> +clk-qcom-y += clk-rpm.o
+Dong Aisheng (4):
+  clk: imx: move imx_clk_gate_x into one place
+  clk: imx: add clk api for supporting clk_OPS_PARENT_ON clocks
+  clk: imx7d: using api with flag CLK_OPS_PARENT_ON
+  clk: imx7d: only enable minimum required clocks
 
-Is this generic enough to be built by default. It will break builds on A 
-family whose rpm clocks are not based on SMD.
+ drivers/clk/imx/clk-imx7d.c | 730 ++++++++++++++++++++++----------------------
+ drivers/clk/imx/clk.h       |  62 +++-
+ 2 files changed, 413 insertions(+), 379 deletions(-)
 
-IMO, this should be either renamed to clk-rpm-smd.* or only built with 
-SOC's which support rpm-clks based on SMD.
-
-
->   clk-qcom-y += reset.o
->
+-- 
+1.9.1
 
