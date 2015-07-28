@@ -1,69 +1,84 @@
-Return-Path: <dianders@google.com>
+Return-Path: <Aisheng.Dong@freescale.com>
+From: Dong Aisheng <aisheng.dong@freescale.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawn.guo@linaro.org>, <b29396@freescale.com>,
+	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
+	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
+Subject: [PATCH 2/4] clk: imx: add clk api for supporting clk_OPS_PARENT_ON clocks
+Date: Tue, 28 Jul 2015 21:33:09 +0800
+Message-ID: <1438090391-30329-3-git-send-email-aisheng.dong@freescale.com>
+In-Reply-To: <1438090391-30329-1-git-send-email-aisheng.dong@freescale.com>
+References: <1438090391-30329-1-git-send-email-aisheng.dong@freescale.com>
+Return-Path: aisheng.dong@freescale.com
 MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <55AEB6AE.2070006@codeaurora.org>
-References: <1437511283-14216-1-git-send-email-dianders@chromium.org>
-	<55AEB6AE.2070006@codeaurora.org>
-Date: Tue, 21 Jul 2015 15:37:38 -0700
-Message-ID: <CAD=FV=VpY4j=HOGCMdFJ8g1bWeUTKqk=GWoEB+EB3y52UMbrLg@mail.gmail.com>
-Subject: Re: [PATCH] clk: rockchip: Fix PLL bandwidth
-From: Doug Anderson <dianders@chromium.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Yakir Yang <ykk@rock-chips.com>,
-	Alexandru Stan <amstan@chromium.org>, mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen,
+Some IMX SoC like i.MX7D requires using clk_OPS_PARENT_ON flags,
+adding the corresponding clock APIs variants for easy use.
 
-On Tue, Jul 21, 2015 at 2:16 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 07/21/2015 01:41 PM, Douglas Anderson wrote:
->>
->> In the TRM we see that BWADJ is "a 12-bit bus that selects the values
->> 1-4096 for the bandwidth divider (NB)":
->>   NB = BWADJ[11:0] + 1
->> The recommended setting of NB: NB = NF / 2.
->>
->> So:
->>    NB = NF / 2
->>    BWADJ[11:0] + 1 = NF / 2
->>    BWADJ[11:0] = NF / 2 - 1
->>
->> Right now, we have:
->>
->> {                                               \
->>          .rate   = _rate##U,                     \
->>          .nr = _nr,                              \
->>          .nf = _nf,                              \
->>          .no = _no,                              \
->>          .bwadj = (_nf >> 1),                    \
->> }
->>
->> That means we set bwadj to NF / 2, not NF / 2 - 1
->>
->> All of this is a bit confusing because we specify "NR" (the 1-based
->> value), "NF" (the 1-based value), "NO" (the 1-based value), but
->> "BWADJ" (the 0-based value) instead of "NB" (the 1-based value).
->>
->> Let's change to working with "NB" and fix the off by one error.  This
->> may affect PLL jitter in a small way (hopefully for the better).
->>
->> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->>
->
-> There's no Fixes tag or stable Cc so I take it this isn't fixing any
-> manifesting regression, more of a visual inspection bug find?
+Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
+---
+ drivers/clk/imx/clk.h | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-There is no known problem fixed.  I've been looking at HDMI and
-controlling PLL jitter is an important part of supporting HDMI clock
-rates.  That got me to looking at this parameter and deciding that we
-should set it correctly.  Apparently it doesn't help in any hugely
-significant way...  I just got done re-testing a whole lot of rates
-and if it helped or hurt my jitter it's in the noise (AKA there's
-enough variance run-to-run that it's hard to tell if this made any
-difference).
-
--Doug
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index cda8756..e579fc0 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -89,6 +89,14 @@ static inline struct clk *imx_clk_divider_flags(const char *name,
+ 			reg, shift, width, 0, &imx_ccm_lock);
+ }
+ 
++static inline struct clk *imx_clk_divider2(const char *name, const char *parent,
++		void __iomem *reg, u8 shift, u8 width)
++{
++	return clk_register_divider(NULL, name, parent,
++			CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ON,
++			reg, shift, width, 0, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_gate(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift)
+ {
+@@ -118,6 +126,22 @@ static inline struct clk *imx_clk_gate2_shared(const char *name,
+ 			shift, 0, &imx_ccm_lock, share_count);
+ }
+ 
++static inline struct clk *imx_clk_gate3(const char *name, const char *parent,
++		void __iomem *reg, u8 shift)
++{
++	return clk_register_gate(NULL, name, parent,
++			CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ON,
++			reg, shift, 0, &imx_ccm_lock);
++}
++
++static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
++		void __iomem *reg, u8 shift)
++{
++	return clk_register_gate2(NULL, name, parent,
++			CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ON,
++			reg, shift, 0, &imx_ccm_lock, NULL);
++}
++
+ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ 		u8 shift, u8 width, const char **parents, int num_parents)
+ {
+@@ -126,6 +150,14 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ 			width, 0, &imx_ccm_lock);
+ }
+ 
++static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
++		u8 shift, u8 width, const char **parents, int num_parents)
++{
++	return clk_register_mux(NULL, name, parents, num_parents,
++			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ON,
++			reg, shift, width, 0, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_mux_flags(const char *name,
+ 		void __iomem *reg, u8 shift, u8 width, const char **parents,
+ 		int num_parents, unsigned long flags)
+-- 
+1.9.1
