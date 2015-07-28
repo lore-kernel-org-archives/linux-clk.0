@@ -1,40 +1,74 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH 20/26] clk: spear: Convert to clk_hw based provider APIs
-Date: Fri, 31 Jul 2015 10:04:00 -0700
-Message-Id: <1438362246-6664-21-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <Aisheng.Dong@freescale.com>
+From: Dong Aisheng <aisheng.dong@freescale.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>, <shawn.guo@linaro.org>, <b29396@freescale.com>,
+	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
+	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
+Subject: [PATCH 1/4] clk: imx: move imx_clk_gate_x into one place
+Date: Tue, 28 Jul 2015 21:33:08 +0800
+Message-ID: <1438090391-30329-2-git-send-email-aisheng.dong@freescale.com>
+In-Reply-To: <1438090391-30329-1-git-send-email-aisheng.dong@freescale.com>
+References: <1438090391-30329-1-git-send-email-aisheng.dong@freescale.com>
+Return-Path: aisheng.dong@freescale.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-We're removing struct clk from the clk provider API, so switch
-this code to using the clk_hw based provider APIs.
+move imx_clk_gate_x api into one place for better code maintenance.
 
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
 ---
- drivers/clk/spear/clk-vco-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/imx/clk.h | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/spear/clk-vco-pll.c b/drivers/clk/spear/clk-vco-pll.c
-index 1b9b65bca51e..185b294c923b 100644
---- a/drivers/clk/spear/clk-vco-pll.c
-+++ b/drivers/clk/spear/clk-vco-pll.c
-@@ -87,7 +87,7 @@ static long clk_pll_round_rate_index(struct clk_hw *hw, unsigned long drate,
- 	struct clk_pll *pll = to_clk_pll(hw);
- 	unsigned long prev_rate, vco_prev_rate, rate = 0;
- 	unsigned long vco_parent_rate =
--		__clk_get_rate(__clk_get_parent(__clk_get_parent(hw->clk)));
-+		clk_hw_get_rate(clk_hw_get_parent(clk_hw_get_parent(hw)));
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 1049b0c..cda8756 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -50,21 +50,6 @@ struct clk * imx_obtain_fixed_clock(
+ struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
+ 	 void __iomem *reg, u8 shift, u32 exclusive_mask);
  
- 	if (!prate) {
- 		pr_err("%s: prate is must for pll clk\n", __func__);
+-static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
+-		void __iomem *reg, u8 shift)
+-{
+-	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
+-			shift, 0, &imx_ccm_lock, NULL);
+-}
+-
+-static inline struct clk *imx_clk_gate2_shared(const char *name,
+-		const char *parent, void __iomem *reg, u8 shift,
+-		unsigned int *share_count)
+-{
+-	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
+-			shift, 0, &imx_ccm_lock, share_count);
+-}
+-
+ struct clk *imx_clk_pfd(const char *name, const char *parent_name,
+ 		void __iomem *reg, u8 idx);
+ 
+@@ -118,6 +103,21 @@ static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
+ 			shift, CLK_GATE_SET_TO_DISABLE, &imx_ccm_lock);
+ }
+ 
++static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
++		void __iomem *reg, u8 shift)
++{
++	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
++			shift, 0, &imx_ccm_lock, NULL);
++}
++
++static inline struct clk *imx_clk_gate2_shared(const char *name,
++		const char *parent, void __iomem *reg, u8 shift,
++		unsigned int *share_count)
++{
++	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
++			shift, 0, &imx_ccm_lock, share_count);
++}
++
+ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ 		u8 shift, u8 width, const char **parents, int num_parents)
+ {
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+1.9.1
