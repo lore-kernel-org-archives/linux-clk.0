@@ -1,111 +1,51 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Alex Elder <elder@linaro.org>
-Subject: [PATCH 11/26] clk: bcm: Convert to clk_hw based provider APIs
-Date: Fri, 31 Jul 2015 10:03:51 -0700
-Message-Id: <1438362246-6664-12-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <Aisheng.Dong@freescale.com>
+From: Dong Aisheng <aisheng.dong@freescale.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
+	<mturquette@linaro.org>, <shawnguo@kernel.org>, <b29396@freescale.com>,
+	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
+	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
+Subject: [PATCH V3 1/5] clk: remove duplicated code with __clk_set_parent_after
+Date: Tue, 28 Jul 2015 21:19:41 +0800
+Message-ID: <1438089585-30103-2-git-send-email-aisheng.dong@freescale.com>
+In-Reply-To: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
+References: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
+Return-Path: aisheng.dong@freescale.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-We're removing struct clk from the clk provider API, so switch
-this code to using the clk_hw based provider APIs.
+__clk_set_parent_after() actually used the second argument then we
+could put this duplicate logic in there and call it with a different
+order of arguments in the success vs. error paths in this function.
 
-Cc: Alex Elder <elder@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
 ---
- drivers/clk/bcm/clk-kona.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/clk/clk.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-kona.c b/drivers/clk/bcm/clk-kona.c
-index 05fa322bc5fb..3a15347b4233 100644
---- a/drivers/clk/bcm/clk-kona.c
-+++ b/drivers/clk/bcm/clk-kona.c
-@@ -1011,7 +1011,7 @@ static long kona_peri_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct bcm_clk_div *div = &bcm_clk->u.peri->div;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 7bb9757..4c7f7b2 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1185,14 +1185,8 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
+ 		flags = clk_enable_lock();
+ 		clk_reparent(core, old_parent);
+ 		clk_enable_unlock(flags);
++		__clk_set_parent_after(core, old_parent, parent);
  
- 	if (!divider_exists(div))
--		return __clk_get_rate(hw->clk);
-+		return clk_hw_get_rate(hw);
- 
- 	/* Quietly avoid a zero rate */
- 	return round_rate(bcm_clk->ccu, div, &bcm_clk->u.peri->pre_div,
-@@ -1022,8 +1022,7 @@ static int kona_peri_clk_determine_rate(struct clk_hw *hw,
- 					struct clk_rate_request *req)
- {
- 	struct kona_clk *bcm_clk = to_kona_clk(hw);
--	struct clk *clk = hw->clk;
--	struct clk *current_parent;
-+	struct clk_hw *current_parent;
- 	unsigned long parent_rate;
- 	unsigned long best_delta;
- 	unsigned long best_rate;
-@@ -1048,14 +1047,14 @@ static int kona_peri_clk_determine_rate(struct clk_hw *hw,
- 	}
- 
- 	/* Unless we can do better, stick with current parent */
--	current_parent = clk_get_parent(clk);
--	parent_rate = __clk_get_rate(current_parent);
-+	current_parent = clk_hw_get_parent(hw);
-+	parent_rate = clk_hw_get_rate(current_parent);
- 	best_rate = kona_peri_clk_round_rate(hw, req->rate, &parent_rate);
- 	best_delta = abs(best_rate - req->rate);
- 
- 	/* Check whether any other parent clock can produce a better result */
- 	for (which = 0; which < parent_count; which++) {
--		struct clk *parent = clk_get_parent_by_index(clk, which);
-+		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, which);
- 		unsigned long delta;
- 		unsigned long other_rate;
- 
-@@ -1064,14 +1063,14 @@ static int kona_peri_clk_determine_rate(struct clk_hw *hw,
- 			continue;
- 
- 		/* We don't support CLK_SET_RATE_PARENT */
--		parent_rate = __clk_get_rate(parent);
-+		parent_rate = clk_hw_get_rate(parent);
- 		other_rate = kona_peri_clk_round_rate(hw, req->rate,
- 						      &parent_rate);
- 		delta = abs(other_rate - req->rate);
- 		if (delta < best_delta) {
- 			best_delta = delta;
- 			best_rate = other_rate;
--			req->best_parent_hw = __clk_get_hw(parent);
-+			req->best_parent_hw = parent;
- 			req->best_parent_rate = parent_rate;
- 		}
- 	}
-@@ -1139,7 +1138,7 @@ static int kona_peri_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (parent_rate > (unsigned long)LONG_MAX)
- 		return -EINVAL;
- 
--	if (rate == __clk_get_rate(hw->clk))
-+	if (rate == clk_hw_get_rate(hw))
- 		return 0;
- 
- 	if (!divider_exists(div))
-@@ -1258,6 +1257,7 @@ bool __init kona_ccu_init(struct ccu_data *ccu)
- 	unsigned long flags;
- 	unsigned int which;
- 	struct clk **clks = ccu->clk_data.clks;
-+	struct kona_clk *kona_clks = ccu->kona_clks;
- 	bool success = true;
- 
- 	flags = ccu_lock(ccu);
-@@ -1268,7 +1268,7 @@ bool __init kona_ccu_init(struct ccu_data *ccu)
- 
- 		if (!clks[which])
- 			continue;
--		bcm_clk = to_kona_clk(__clk_get_hw(clks[which]));
-+		bcm_clk = &kona_clks[which];
- 		success &= __kona_clk_init(bcm_clk);
+-		if (core->prepare_count) {
+-			flags = clk_enable_lock();
+-			clk_core_disable(core);
+-			clk_core_disable(parent);
+-			clk_enable_unlock(flags);
+-			clk_core_unprepare(parent);
+-		}
+ 		return ret;
  	}
  
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+1.9.1
