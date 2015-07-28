@@ -1,135 +1,177 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <tomeu.vizoso@gmail.com>
+Return-Path: <tomeu.vizoso@gmail.com>
+Sender: Tomeu Vizoso <tomeu.vizoso@gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Stephen Warren <swarren@wwwdotorg.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	linux-arm-kernel@lists.infradead.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	devicetree@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-acpi@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	linux-fbdev@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Felipe Balbi <balbi@ti.com>,
+	linux-pwm@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	=?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Len Brown <lenb@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-pm@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-gpio@vger.kernel.org,
+	Vinod Koul <vinod.koul@intel.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-tegra@vger.kernel.org,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	linux-i2c@vger.kernel.org
+Subject: [PATCH v2 0/22] On-demand device probing
+Date: Tue, 28 Jul 2015 15:19:31 +0200
+Message-Id: <1438089593-7696-1-git-send-email-tomeu.vizoso@collabora.com>
 MIME-Version: 1.0
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	"Thomas Abraham" <thomas.ab@samsung.com>,
-	"Sylwester Nawrocki" <s.nawrocki@samsung.com>,
-	"Kukjin Kim" <kgene.kim@samsung.com>,
-	"Kukjin Kim" <kgene@kernel.org>,
-	"Viresh Kumar" <viresh.kumar@linaro.org>,
-	"Krzysztof Kozlowski" <k.kozlowski@samsung.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1435756238-845-2-git-send-email-b.zolnierkie@samsung.com>
-Cc: "Tomasz Figa" <tomasz.figa@gmail.com>,
-	"Lukasz Majewski" <l.majewski@samsung.com>,
-	"Heiko Stuebner" <heiko@sntech.de>,
-	"Chanwoo Choi" <cw00.choi@samsung.com>,
-	"Kevin Hilman" <khilman@linaro.org>,
-	"Javier Martinez Canillas" <javier@dowhile0.org>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
- <1435756238-845-2-git-send-email-b.zolnierkie@samsung.com>
-Message-ID: <20150724003918.642.78653@quantum>
-Subject: Re: [PATCH v3 1/4] clk: samsung: exynos5250: add cpu clock configuration
- data and instantiate cpu clock
-Date: Thu, 23 Jul 2015 17:39:18 -0700
-Sender: linux-pm-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Bartlomiej Zolnierkiewicz (2015-07-01 06:10:35)
-> From: Thomas Abraham <thomas.ab@samsung.com>
-> 
-> With the addition of the new Samsung specific cpu-clock type, the
-> arm clock can be represented as a cpu-clock type. Add the CPU clock
-> configuration data and instantiate the CPU clock type for Exynos5250.
-> 
-> Changes by Bartlomiej:
-> - split Exynos5250 support from the original patch
-> - moved E5250_CPU_DIV[0,1]() macros to clk-exynos5250.c
-> 
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Hello,
 
-Acked-by: Michael Turquette <mturquette@baylibre.com>
+I have a problem with the panel on my Tegra Chromebook taking longer
+than expected to be ready during boot (Stéphane Marchesin reported what
+is basically the same issue in [0]), and have looked into ordered
+probing as a better way of solving this than moving nodes around in the
+DT or playing with initcall levels and linking order.
 
-If Kukjin wants to merge this through the samsung tree then an immutable
-branch would be much appreciated.
+While reading the thread [1] that Alexander Holler started with his
+series to make probing order deterministic, it occurred to me that it
+should be possible to achieve the same by probing devices as they are
+referenced by other devices.
+
+This basically reuses the information that is already implicit in the
+probe() implementations, saving us from refactoring existing drivers or
+adding information to DTBs.
+
+During review of v1 of this series Linus Walleij suggested that it
+should be the device driver core to make sure that dependencies are
+ready before probing a device. I gave this idea a try [2] but Mark Brown
+pointed out to the logic duplication between the resource acquisition
+and dependency discovery code paths (though I think it's fairly minor).
+
+To address that code duplication I experimented with Arnd's devm_probe
+[3] concept of having drivers declare their dependencies instead of
+acquiring them during probe, and while it worked [4], I don't think we
+end up winning anything when compared to just probing devices on-demand
+from resource getters.
+
+One remaining objection is to the "sprinkling" of calls to
+fwnode_ensure_device() in the resource getters of each subsystem, but I
+think it's the right thing to do given that the storage of resources is
+currently subsystem-specific.
+
+We could avoid the above by moving resource storage into the core, but I
+don't think there's a compelling case for that.
+
+I have tested this on boards with Tegra, iMX.6, Exynos and OMAP SoCs,
+and these patches were enough to eliminate all the deferred probes
+(except one in PandaBoard because omap_dma_system doesn't have a
+firmware node as of yet).
+
+With this series I get the kernel to output to the panel in 0.5s,
+instead of 2.8s.
 
 Regards,
-Mike
 
-> ---
->  drivers/clk/samsung/clk-exynos5250.c   | 31 +++++++++++++++++++++++++++++++
->  include/dt-bindings/clock/exynos5250.h |  1 +
->  2 files changed, 32 insertions(+)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-> index 70ec3d2..d87f34d 100644
-> --- a/drivers/clk/samsung/clk-exynos5250.c
-> +++ b/drivers/clk/samsung/clk-exynos5250.c
-> @@ -19,6 +19,7 @@
->  #include <linux/syscore_ops.h>
->  
->  #include "clk.h"
-> +#include "clk-cpu.h"
->  
->  #define APLL_LOCK              0x0
->  #define APLL_CON0              0x100
-> @@ -748,6 +749,32 @@ static struct samsung_pll_clock exynos5250_plls[nr_plls] __initdata = {
->                 VPLL_LOCK, VPLL_CON0, NULL),
->  };
->  
-> +#define E5250_CPU_DIV0(apll, pclk_dbg, atb, periph, acp, cpud)         \
-> +               ((((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) | \
-> +                ((periph) << 12) | ((acp) << 8) | ((cpud) << 4)))
-> +#define E5250_CPU_DIV1(hpm, copy)                                      \
-> +               (((hpm) << 4) | (copy))
-> +
-> +static const struct exynos_cpuclk_cfg_data exynos5250_armclk_d[] __initconst = {
-> +       { 1700000, E5250_CPU_DIV0(5, 3, 7, 7, 7, 3), E5250_CPU_DIV1(2, 0), },
-> +       { 1600000, E5250_CPU_DIV0(4, 1, 7, 7, 7, 3), E5250_CPU_DIV1(2, 0), },
-> +       { 1500000, E5250_CPU_DIV0(4, 1, 7, 7, 7, 2), E5250_CPU_DIV1(2, 0), },
-> +       { 1400000, E5250_CPU_DIV0(4, 1, 6, 7, 7, 2), E5250_CPU_DIV1(2, 0), },
-> +       { 1300000, E5250_CPU_DIV0(3, 1, 6, 7, 7, 2), E5250_CPU_DIV1(2, 0), },
-> +       { 1200000, E5250_CPU_DIV0(3, 1, 5, 7, 7, 2), E5250_CPU_DIV1(2, 0), },
-> +       { 1100000, E5250_CPU_DIV0(3, 1, 5, 7, 7, 3), E5250_CPU_DIV1(2, 0), },
-> +       { 1000000, E5250_CPU_DIV0(2, 1, 4, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-> +       {  900000, E5250_CPU_DIV0(2, 1, 4, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-> +       {  800000, E5250_CPU_DIV0(2, 1, 4, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-> +       {  700000, E5250_CPU_DIV0(1, 1, 3, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-> +       {  600000, E5250_CPU_DIV0(1, 1, 3, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-> +       {  500000, E5250_CPU_DIV0(1, 1, 2, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-> +       {  400000, E5250_CPU_DIV0(1, 1, 2, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-> +       {  300000, E5250_CPU_DIV0(1, 1, 1, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-> +       {  200000, E5250_CPU_DIV0(1, 1, 1, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
-> +       {  0 },
-> +};
-> +
->  static const struct of_device_id ext_clk_match[] __initconst = {
->         { .compatible = "samsung,clock-xxti", .data = (void *)0, },
->         { },
-> @@ -797,6 +824,10 @@ static void __init exynos5250_clk_init(struct device_node *np)
->                         ARRAY_SIZE(exynos5250_div_clks));
->         samsung_clk_register_gate(ctx, exynos5250_gate_clks,
->                         ARRAY_SIZE(exynos5250_gate_clks));
-> +       exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
-> +                       mout_cpu_p[0], mout_cpu_p[1], 0x200,
-> +                       exynos5250_armclk_d, ARRAY_SIZE(exynos5250_armclk_d),
-> +                       CLK_CPU_HAS_DIV1);
->  
->         /*
->          * Enable arm clock down (in idle) and set arm divider
-> diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
-> index 4273891d..8183d1c 100644
-> --- a/include/dt-bindings/clock/exynos5250.h
-> +++ b/include/dt-bindings/clock/exynos5250.h
-> @@ -21,6 +21,7 @@
->  #define CLK_FOUT_CPLL          6
->  #define CLK_FOUT_EPLL          7
->  #define CLK_FOUT_VPLL          8
-> +#define CLK_ARM_CLK            9
->  
->  /* gate for special clocks (sclk) */
->  #define CLK_SCLK_CAM_BAYER     128
-> -- 
-> 1.9.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Tomeu
+
+[0] http://lists.freedesktop.org/archives/dri-devel/2014-August/066527.html
+
+[1] https://lkml.org/lkml/2014/5/12/452
+
+[2] https://lkml.org/lkml/2015/6/17/305
+
+[3] http://article.gmane.org/gmane.linux.ports.arm.kernel/277689
+
+[4] https://lkml.org/lkml/2015/7/21/441
+
+Changes in v2:
+- Move delay to platform.c
+- Use set_primary_fwnode()
+- Use of_node_full_name()
+- Move the logic for finding a platform device from its firmware node to
+  of/platform.c as it's not needed for ACPI nodes.
+- Add acpi_dev_get_device()
+- Add fwnode_ensure_device() so the mechanism for probing devices on
+  demand is independent of the firmware format.
+- Acquire regulator device lock before returning from regulator_dev_lookup()
+
+Tomeu Vizoso (22):
+  platform: delay device-driver matches until late_initcall
+  of/platform: Set fwnode field for new devices
+  device property: add fwnode_get_name()
+  of/platform: add of_platform_device_find()
+  ACPI: add acpi_dev_get_device()
+  device property: add fwnode_ensure_device()
+  gpio: Probe GPIO drivers on demand
+  gpio: Probe pinctrl devices on demand
+  regulator: core: Reduce critical area in _regulator_get
+  regulator: core: Probe regulators on demand
+  drm: Probe panels on demand
+  drm/tegra: Probe dpaux devices on demand
+  i2c: core: Probe i2c master devices on demand
+  pwm: Probe PWM chip devices on demand
+  backlight: Probe backlight devices on demand
+  usb: phy: Probe phy devices on demand
+  clk: Probe clk providers on demand
+  pinctrl: Probe pinctrl devices on demand
+  phy: core: Probe phy providers on demand
+  dma: of: Probe DMA controllers on demand
+  power-supply: Probe power supplies on demand
+  ASoC: core: Probe components on demand
+
+ drivers/base/platform.c             | 28 +++++++++++
+ drivers/base/property.c             | 73 +++++++++++++++++++++++++++
+ drivers/clk/clk.c                   |  3 ++
+ drivers/dma/of-dma.c                |  2 +
+ drivers/gpio/gpiolib-of.c           |  4 ++
+ drivers/gpu/drm/drm_panel.c         |  2 +
+ drivers/gpu/drm/tegra/dpaux.c       |  2 +
+ drivers/i2c/i2c-core.c              |  2 +
+ drivers/of/platform.c               | 61 +++++++++++++++++++++++
+ drivers/phy/phy-core.c              |  2 +
+ drivers/pinctrl/devicetree.c        |  1 +
+ drivers/power/power_supply_core.c   |  2 +
+ drivers/pwm/core.c                  |  2 +
+ drivers/regulator/core.c            | 99 +++++++++++++++++++++----------------
+ drivers/usb/phy/phy.c               |  2 +
+ drivers/video/backlight/backlight.c |  2 +
+ include/linux/acpi.h                | 10 ++++
+ include/linux/of_platform.h         |  1 +
+ include/linux/property.h            |  4 ++
+ sound/soc/soc-core.c                |  6 ++-
+ 20 files changed, 264 insertions(+), 44 deletions(-)
+
+-- 
+2.4.3
