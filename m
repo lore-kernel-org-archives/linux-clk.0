@@ -1,75 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:37737 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750760AbbGGFKP (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2015 01:10:15 -0400
-Date: Tue, 7 Jul 2015 07:07:47 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: dinguyen@opensource.altera.com
-Cc: sboyd@codeaurora.org, mturquette@linaro.org, dinh.linux@gmail.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>
-Subject: Re: [PATCHv2 5/6] clk: sunxi: make use of of_clk_parent_fill helper
- function
-Message-ID: <20150707050747.GB28632@lukather>
-References: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
- <1436241546-16731-6-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 28 Jul 2015 14:41:26 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
+Message-ID: <20150728214126.GA3159@codeaurora.org>
+References: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
+ <20150721224235.GA30021@codeaurora.org>
+ <55AED88D.2060009@samsung.com>
+ <55B472C7.5000109@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XF85m9dhOBO43t/C"
-In-Reply-To: <1436241546-16731-6-git-send-email-dinguyen@opensource.altera.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <55B472C7.5000109@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 07/26, Sylwester Nawrocki wrote:
+> On 07/22/2015 08:41 AM, Krzysztof Kozlowski wrote:
+> >On 22.07.2015 07:42, Stephen Boyd wrote:
+> >>>On 06/12, Krzysztof Kozlowski wrote:
+> [...]
+> >>>>>Signed-off-by: Krzysztof Kozlowski<k.kozlowski@samsung.com>
+> >>>>>Cc:<stable@vger.kernel.org>
+> >>>>>Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
+> >>>>>Link:https://lkml.org/lkml/2015/6/11/85
+> >>>
+> >>>Did you want clk maintainers to apply this? The To: list is not
+> >>>helping so I'm not sure what's going on and it seems to have
+> >>>slipped through the cracks.
+> >
+> >Thank you for being proactive! I appreciate this.
+> >Some time ago Sylwester replied that he took care about this patch so I
+> >think this will go through Samsung clock tree.
+> >
+> >Sylwester, are you planning to send this as fix for 4.2-rc?
+> 
+> I think it qualifies for 4.3, it's not a new regression and will be
+> backported to -stable anyway.
+> I would prefer clk maintainers have applied this, otherwise I would
+> need to make a (questionable) pull request with only one patch, since
+> all patches except this one after the last merge window were part
+> of bigger series touching multiple subsystems and applied through
+> the samsung soc tree.
+> 
 
---XF85m9dhOBO43t/C
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok. Applied to clk-next.
 
-Hi Dinh,
-
-On Mon, Jul 06, 2015 at 10:59:05PM -0500, dinguyen@opensource.altera.com wr=
-ote:
-> From: Dinh Nguyen <dinguyen@opensource.altera.com>
->=20
-> Use of_clk_parent_fill to fill in the parent clock names' array.
->=20
-> Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: "Emilio L=F3pez" <emilio@elopez.com.ar>
-
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-
-Thanks!
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---XF85m9dhOBO43t/C
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVm16jAAoJEBx+YmzsjxAgSqkQAJE/2/Kou1DG/Rpt6QgFPO5+
-LPE5h6cJ5RcoACftRxBcz8JLQka1habWZdtSWqdmc3y78qWzW8QpsdqeEZq3g71S
-miXmOnQy6GCBbw32AviTIiNF7rr+AaFM7j19kX2SalAbJBRmjvu7zaAhHY8HQhPx
-uE1UeRlXoWbuOUR6VIs4QFQsgBL01u8POF3g4oqu8hW5Fae5b/+hhvdpbjo8MNpU
-hlxCMv6rIQohQ2WRolsyzNnDqLD+npRmdUkXxIcUkwTCEIAZlUnYo60BhhtNM3bb
-BXMySc79c4KhNDCJVo8bIHGPEAvpc+xuj8O3a4fv4MhYxs3zAqXBhf9F1b+TvLCp
-B2hx9bKLTMdJOA8VDAtnYztREKcx9a8fi2s6wa33jCsU5Jt91yokNVJ5Ck+VUjBl
-KceY6NfJNdJJNKlU/QE7OpOYwiG8LS/DihAvSLr/P1roWDVvg6guZ8N2hb1izFxg
-3ALGm6TS61TcHYtCNbwFDTyxXuVh9rkJlmXE7FgBycC5gEUKcWtt8yzXR/aqsRDV
-hPPu40cKX2zzzLMULHx2CYiRABV2qqBxU+hd4ToJaVmUnoxa7qSLAKxstVPPS06D
-g8hm/MV4bMGv0VDnZLNx9mijiKqpvdAtpAFHVctiETUWDtOv8bzAHe2PtRQA5NGb
-+C+4eZU28JUtDKOhIepR
-=m2G1
------END PGP SIGNATURE-----
-
---XF85m9dhOBO43t/C--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
