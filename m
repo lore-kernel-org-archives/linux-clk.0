@@ -1,80 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq driver for
- Exynos4x12
-Date: Fri, 31 Jul 2015 20:49:15 +0200
-Message-id: <1438368557-2352-4-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+Message-ID: <55B7578D.10306@arm.com>
+Date: Tue, 28 Jul 2015 11:21:01 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+MIME-Version: 1.0
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Sudeep Holla <Sudeep.Holla@arm.com>,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Punit Agrawal <Punit.Agrawal@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+	Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH v5 3/8] clk: add support for clocks provided by SCP(System
+ Control Processor)
+References: <1437649828-14540-1-git-send-email-sudeep.holla@arm.com> <1437649828-14540-4-git-send-email-sudeep.holla@arm.com>
+In-Reply-To: <1437649828-14540-4-git-send-email-sudeep.holla@arm.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The new CPU clock type allows the use of generic CPUfreq driver.
-Switch Exynos4x12 to using generic cpufreq driver.
+Hi Stephen/Mike,
 
-Also make CPUFREQ_DT config option select Exynos thermal driver
-if Exynos platform support is enabled.
+On 23/07/15 12:10, Sudeep Holla wrote:
+> On some ARM based systems, a separate Cortex-M based System Control
+> Processor(SCP) provides the overall power, clock, reset and system
+> control. System Control and Power Interface(SCPI) Message Protocol
+> is defined for the communication between the Application Cores(AP)
+> and the SCP.
+>
+> This patch adds support for the clocks provided by SCP using SCPI
+> protocol.
+>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Mike Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
 
-Please also note that the switch to use the generic cpufreq-dt
-driver fixes the minor issue present with the old code (support
-for 'boost' mode in the exynos-cpufreq driver was enabled for
-all supported SoCs even though 'boost' frequency was provided
-only for Exynos4x12 ones).
+Can one of you provide ACK if this patch looks fine, so that I can take 
+this series via ARM-SoC ?
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- arch/arm/mach-exynos/exynos.c | 2 ++
- drivers/cpufreq/Kconfig       | 1 +
- 2 files changed, 3 insertions(+)
-
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 77ac021..1c47aee 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -227,6 +227,8 @@ static void __init exynos_init_irq(void)
- static const struct of_device_id exynos_cpufreq_matches[] = {
- 	{ .compatible = "samsung,exynos3250", .data = "cpufreq-dt" },
- 	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
-+	{ .compatible = "samsung,exynos4212", .data = "cpufreq-dt" },
-+	{ .compatible = "samsung,exynos4412", .data = "cpufreq-dt" },
- 	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
- 	{ /* sentinel */ }
- };
-diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
-index 659879a..bf6d596 100644
---- a/drivers/cpufreq/Kconfig
-+++ b/drivers/cpufreq/Kconfig
-@@ -191,6 +191,7 @@ config CPUFREQ_DT
- 	# if CPU_THERMAL is on and THERMAL=m, CPUFREQ_DT cannot be =y:
- 	depends on !CPU_THERMAL || THERMAL
- 	select PM_OPP
-+	select EXYNOS_THERMAL if ARCH_EXYNOS
- 	help
- 	  This adds a generic DT based cpufreq driver for frequency management.
- 	  It supports both uniprocessor (UP) and symmetric multiprocessor (SMP)
--- 
-1.9.1
-
+Regards,
+Sudeep
