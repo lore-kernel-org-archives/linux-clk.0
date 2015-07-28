@@ -1,109 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <55A945DF.3@codeaurora.org>
-Date: Fri, 17 Jul 2015 11:13:51 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-MIME-Version: 1.0
-To: Sudeep Holla <sudeep.holla@arm.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- Liviu Dudau <Liviu.Dudau@arm.com>,
- Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
- "Jon Medhurst (Tixy)" <tixy@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- Kevin Hilman <khilman@kernel.org>,
- Olof Johansson <olof@lixom.net>,
- Mike Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v4 3/8] clk: add support for clocks provided by SCP(System
- Control Processor)
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com> <1433760002-24120-4-git-send-email-sudeep.holla@arm.com> <20150702172310.GF4301@codeaurora.org> <5596A1B6.8020307@arm.com> <559ADC94.4080505@codeaurora.org> <559BF858.1020301@arm.com> <20150708014606.GH30412@codeaurora.org> <55A7D79B.3080305@arm.com> <20150716193114.GA17952@codeaurora.org> <55A8E434.2010709@arm.com>
-In-Reply-To: <55A8E434.2010709@arm.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <sjoerd.simons@collabora.co.uk>
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH] clk: rockchip: Fix SPIF special clock definition
+Date: Tue, 28 Jul 2015 11:52:42 +0200
+Message-Id: <1438077162-27623-1-git-send-email-sjoerd.simons@collabora.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/17/2015 04:17 AM, Sudeep Holla wrote:
->
->
-> On 16/07/15 20:31, Stephen Boyd wrote:
->> On 07/16, Sudeep Holla wrote:
->>> On 08/07/15 02:46, Stephen Boyd wrote:
->>>>
->>>> Yes struct clk would have min/max, and struct clk_core would have
->>>> min/max. Then some sort of provider API (or possibly even
->>>> clk_init_data) would take the min/max fields and copy them over
->>>> to struct clk_core. Then during set_rate operations we would
->>>> aggregate the constraints from struct clk like we already do and
->>>> add in the constrains in struct clk_core.
->>>>
->>>> One downside to adding new fields to clk_init_data is that there
->>>> are drivers out there that aren't initializing that structure to
->>>> 0, and they're putting it on the stack, so stack junk can come
->>>> through. Furthermore, min/max would mean that every driver needs
->>>> to specify some large number for max or we have to special case
->>>> min == max == 0 and ignore it. Somehow it needs to be opt-in. If
->>>> we want to go down the clk_init_data route then perhaps we need
->>>> some sort of rate_constraint struct pointer in there that drivers
->>>> can optionally setup.
->>>>
->>>>     struct clk_rate_constraint {
->>>>         unsigned long min;
->>>>         unsigned long max;
->>>>     };
->>>>
->>>>     struct clk_init_data {
->>>>         ...
->>>>         struct clk_rate_constraint *rate_constraint;
->>>>     };
->>>>
->>>> I haven't thought it through completely, but I can probably write
->>>> up some patch tomorrow after I sleep on it.
->>>>
->>>
->>> I am hoping to get this series for v4.3. In order to avoid using
->>> consumer API, I can revert back to the min,max check I had in the
->>> round_rate earlier if that's fine with you ? Let me know so that I can
->>> post the next version based on that. All the other comments are already
->>> addressed.
->>
->> Ok. I'm fine with the consumer API being used, but it would be
->> nice if we didn't have to do so. Try out the patch below,
->> hopefully it's good enough for your purposes. It may need to be
->> more robust, and we may still want to use the init_data structure
->> to avoid races with providers and consumers, but we can leave
->> that for later after sweeping all the structure users.
->>
->
-> Agreed, I would avoid using clk consumer API or use it with TODO so that
-> I remember to remove it soon. Anyways, thanks for the patch, I tested it
-> and works fine to me. You can add Tested-by if you decide to push it.
+Neither spdif_src nor spdif_pll exists, judging by the vendor kernel in
+both cases spdif_pre was meant. This brings the naming in line and
+hierachy in line with that of sclk_i2s0.
 
-Thanks. I pushed it to -next last night but it probably hasn't shown up yet.
+Also allow sclk_spdif and spdif_frac to change their parents rate as
+that the upstream dividers are purely there to feed sclk_spdif
 
->
->>>
->>> Also since this series depends on SCPI, I was thinking to get it merged
->>> via ARM-SoC, but that might conflict with the round_rate prototype
->>> change. Do do plan to share a stable base with arm-soc guys or you
->>> expect all the changes to be contained in clk tree ?
->>>
->>
->> We can share a stable branch for the determine_rate change with
->> arm-soc. We already have it on a separate branch but haven't
->> published it so far because nobody has asked.
->>
->
-> determine_rate change shouldn't affect SCPI clock driver but I remember
-> seeing round_rate change too on the list which returns value using the
-> argument from Boris. Is that planned for v4.3 ? I would need the stable
-> branch from this clk_hw_set_rate_range if you decide to push. Let me
-> know your preferences. I will post the updated version of the patch
-> accordingly.
->
+Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+---
+ drivers/clk/rockchip/clk-rk3188.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-We're not going to change round_rate() so it sounds like you don't need 
-a stable branch. But you would need this new consumer API. So you still 
-need a branch right?
-
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index 0abf22d..ed02bbc 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -202,7 +202,7 @@ PNAME(mux_pll_src_cpll_gpll_p)	= { "cpll", "gpll" };
+ PNAME(mux_aclk_cpu_p)		= { "apll", "gpll" };
+ PNAME(mux_sclk_cif0_p)		= { "cif0_pre", "xin24m" };
+ PNAME(mux_sclk_i2s0_p)		= { "i2s0_pre", "i2s0_frac", "xin12m" };
+-PNAME(mux_sclk_spdif_p)		= { "spdif_src", "spdif_frac", "xin12m" };
++PNAME(mux_sclk_spdif_p)		= { "spdif_pre", "spdif_frac", "xin12m" };
+ PNAME(mux_sclk_uart0_p)		= { "uart0_pre", "uart0_frac", "xin24m" };
+ PNAME(mux_sclk_uart1_p)		= { "uart1_pre", "uart1_frac", "xin24m" };
+ PNAME(mux_sclk_uart2_p)		= { "uart2_pre", "uart2_frac", "xin24m" };
+@@ -350,10 +350,10 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
+ 	COMPOSITE_NOMUX(0, "spdif_pre", "i2s_src", 0,
+ 			RK2928_CLKSEL_CON(5), 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(0), 13, GFLAGS),
+-	COMPOSITE_FRAC(0, "spdif_frac", "spdif_pll", 0,
++	COMPOSITE_FRAC(0, "spdif_frac", "spdif_pre", CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(9), 0,
+ 			RK2928_CLKGATE_CON(0), 14, GFLAGS),
+-	MUX(SCLK_SPDIF, "sclk_spdif", mux_sclk_spdif_p, 0,
++	MUX(SCLK_SPDIF, "sclk_spdif", mux_sclk_spdif_p, CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(5), 8, 2, MFLAGS),
+ 
+ 	/*
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.4.6
