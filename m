@@ -1,119 +1,104 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	devicetree@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-acpi@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	linux-fbdev@vger.kernel.org, linux-usb@vger.kernel.org,
+	Felipe Balbi <balbi@ti.com>, linux-pwm@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Len Brown <lenb@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	David Airlie <airlied@linux.ie>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v2 6/7] ARM: Exynos: switch to using generic cpufreq driver for
- Exynos4x12
-Date: Thu, 09 Jul 2015 17:43:40 +0200
-Message-id: <1436456621-29839-7-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-pm@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-gpio@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	dri-devel@lists.freedesktop.org, Lee Jones <lee.jones@linaro.org>,
+	linux-tegra@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v2 0/22] On-demand device probing
+Date: Wed, 29 Jul 2015 02:36:33 +0200
+Message-ID: <2554489.GlTphZsHuX@vostro.rjw.lan>
+In-Reply-To: <1438089593-7696-1-git-send-email-tomeu.vizoso@collabora.com>
+References: <1438089593-7696-1-git-send-email-tomeu.vizoso@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The new CPU clock type allows the use of generic CPUfreq driver.
-Switch Exynos4x12 to using generic cpufreq driver.
+On Tuesday, July 28, 2015 03:19:31 PM Tomeu Vizoso wrote:
+> Hello,
+> 
+> I have a problem with the panel on my Tegra Chromebook taking longer
+> than expected to be ready during boot (Stéphane Marchesin reported what
+> is basically the same issue in [0]), and have looked into ordered
+> probing as a better way of solving this than moving nodes around in the
+> DT or playing with initcall levels and linking order.
+> 
+> While reading the thread [1] that Alexander Holler started with his
+> series to make probing order deterministic, it occurred to me that it
+> should be possible to achieve the same by probing devices as they are
+> referenced by other devices.
+> 
+> This basically reuses the information that is already implicit in the
+> probe() implementations, saving us from refactoring existing drivers or
+> adding information to DTBs.
+> 
+> During review of v1 of this series Linus Walleij suggested that it
+> should be the device driver core to make sure that dependencies are
+> ready before probing a device. I gave this idea a try [2] but Mark Brown
+> pointed out to the logic duplication between the resource acquisition
+> and dependency discovery code paths (though I think it's fairly minor).
+> 
+> To address that code duplication I experimented with Arnd's devm_probe
+> [3] concept of having drivers declare their dependencies instead of
+> acquiring them during probe, and while it worked [4], I don't think we
+> end up winning anything when compared to just probing devices on-demand
+> from resource getters.
+> 
+> One remaining objection is to the "sprinkling" of calls to
+> fwnode_ensure_device() in the resource getters of each subsystem, but I
+> think it's the right thing to do given that the storage of resources is
+> currently subsystem-specific.
+> 
+> We could avoid the above by moving resource storage into the core, but I
+> don't think there's a compelling case for that.
+> 
+> I have tested this on boards with Tegra, iMX.6, Exynos and OMAP SoCs,
+> and these patches were enough to eliminate all the deferred probes
+> (except one in PandaBoard because omap_dma_system doesn't have a
+> firmware node as of yet).
+> 
+> With this series I get the kernel to output to the panel in 0.5s,
+> instead of 2.8s.
 
-This patch also takes care of making ARM_EXYNOS_CPU_FREQ_BOOST_SW
-config option depend on cpufreq-dt driver instead of exynos-cpufreq
-one and fixes the minor issue present with the old code (support
-for 'boost' mode in the exynos-cpufreq driver was enabled for all
-supported SoCs even though 'boost' frequency was provided only for
-Exynos4x12 ones).
+Can you trim your CC list somewhat, please?
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- arch/arm/mach-exynos/exynos.c    | 14 ++++++++++++++
- drivers/cpufreq/Kconfig.arm      |  2 +-
- drivers/cpufreq/exynos-cpufreq.c |  3 ---
- 3 files changed, 15 insertions(+), 4 deletions(-)
+I'm definitely going to look at this, but not before then next week.
+Sorry about that.
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 4015ec3..0c74e90 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -20,6 +20,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/irqchip.h>
-+#include <linux/cpufreq-dt.h>
- 
- #include <asm/cacheflush.h>
- #include <asm/hardware/cache-l2x0.h>
-@@ -224,6 +225,12 @@ static void __init exynos_init_irq(void)
- 	exynos_map_pmu();
- }
- 
-+struct cpufreq_dt_platform_data cpufreq_dt_pd = {
-+#ifdef CONFIG_ARM_EXYNOS_CPU_FREQ_BOOST_SW
-+	.boost_supported = true,
-+#endif
-+};
-+
- static const struct of_device_id exynos_cpufreq_matches[] = {
- 	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
- 	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
-@@ -235,6 +242,13 @@ static void __init exynos_cpufreq_init(void)
- 	struct device_node *root = of_find_node_by_path("/");
- 	const struct of_device_id *match;
- 
-+	if (of_machine_is_compatible("samsung,exynos4212") ||
-+	    of_machine_is_compatible("samsung,exynos4412")) {
-+		platform_device_register_data(NULL, "cpufreq-dt", -1,
-+					&cpufreq_dt_pd, sizeof(cpufreq_dt_pd));
-+		return;
-+	}
-+
- 	match = of_match_node(exynos_cpufreq_matches, root);
- 	if (!match) {
- 		platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 9ab6388c1..5f5a15a 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -49,7 +49,7 @@ config ARM_EXYNOS4X12_CPUFREQ
- 
- config ARM_EXYNOS_CPU_FREQ_BOOST_SW
- 	bool "EXYNOS Frequency Overclocking - Software"
--	depends on ARM_EXYNOS_CPUFREQ && THERMAL
-+	depends on CPUFREQ_DT && THERMAL
- 	select CPU_FREQ_BOOST_SW
- 	select EXYNOS_THERMAL
- 	help
-diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
-index 71d8891..89d252e 100644
---- a/drivers/cpufreq/exynos-cpufreq.c
-+++ b/drivers/cpufreq/exynos-cpufreq.c
-@@ -150,9 +150,6 @@ static struct cpufreq_driver exynos_driver = {
- 	.init		= exynos_cpufreq_cpu_init,
- 	.name		= "exynos_cpufreq",
- 	.attr		= cpufreq_generic_attr,
--#ifdef CONFIG_ARM_EXYNOS_CPU_FREQ_BOOST_SW
--	.boost_supported = true,
--#endif
- #ifdef CONFIG_PM
- 	.suspend	= cpufreq_generic_suspend,
- #endif
--- 
-1.9.1
+Thanks,
+Rafael
 
