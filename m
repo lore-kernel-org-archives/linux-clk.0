@@ -1,73 +1,34 @@
-Return-Path: <mturquette@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <dan.carpenter@oracle.com>
+Date: Wed, 29 Jul 2015 13:17:06 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Pawel Moll <pawel.moll@arm.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij <linus.walleij@linaro.org>, linux-clk@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [patch] clk: versatile: off by one in clk_sp810_timerclken_of_get()
+Message-ID: <20150729101705.GB12100@mwanda>
 MIME-Version: 1.0
-To: Dan Carpenter <dan.carpenter@oracle.com>, 
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <20150720214855.GA22901@mwanda>
-Cc: linux-clk@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
-References: <20150720214855.GA22901@mwanda>
-Message-ID: <20150724001848.642.48609@quantum>
-Subject: re: ARM: OMAP4: clock: Convert to common clk
-Date: Thu, 23 Jul 2015 17:18:48 -0700
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Dan Carpenter (2015-07-20 14:48:55)
-> Hello Mike Turquette,
-> =
+The ">" should be ">=" or we end up reading beyond the end of the array.
 
-> The patch 32cc002116b8: "ARM: OMAP4: clock: Convert to common clk"
-> from Nov 10, 2012, leads to the following Smatch warning:
-> =
+Fixes: 6e973d2c4385 ('clk: vexpress: Add separate SP810 driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->         drivers/clk/ti/clkt_dpll.c:213 omap2_init_dpll_parent()
->         warn: signedness bug returning '(-22)'
-> =
-
-> drivers/clk/ti/clkt_dpll.c
->    204  /* Public functions */
->    205  u8 omap2_init_dpll_parent(struct clk_hw *hw)
->         ^^
-> =
-
->    206  {
->    207          struct clk_hw_omap *clk =3D to_clk_hw_omap(hw);
->    208          u32 v;
->    209          struct dpll_data *dd;
->    210  =
-
->    211          dd =3D clk->dpll_data;
->    212          if (!dd)
->    213                  return -EINVAL;
->                                ^^^^^^^
-> Truncated to positive u8.
-
-Thanks Dan.
-
-Tero,
-
-Looks like this still exists at line 237 in clk-next.
-
-Regards,
-Mike
-
-> =
-
->    214  =
-
->    215          v =3D ti_clk_ll_ops->clk_readl(dd->control_reg);
->    216          v &=3D dd->enable_mask;
->    217          v >>=3D __ffs(dd->enable_mask);
->    218  =
-
->    219          /* Reparent the struct clk in case the dpll is in bypass =
-*/
->    220          if (_omap2_dpll_is_in_bypass(v))
->    221                  return 1;
->    222  =
-
->    223          return 0;
->    224  }
-> =
-
-> regards,
-> dan carpenter
+diff --git a/drivers/clk/versatile/clk-sp810.c b/drivers/clk/versatile/clk-sp810.c
+index 64b0129..7fbe4d4 100644
+--- a/drivers/clk/versatile/clk-sp810.c
++++ b/drivers/clk/versatile/clk-sp810.c
+@@ -129,8 +129,8 @@ static struct clk *clk_sp810_timerclken_of_get(struct of_phandle_args *clkspec,
+ {
+ 	struct clk_sp810 *sp810 = data;
+ 
+-	if (WARN_ON(clkspec->args_count != 1 || clkspec->args[0] >
+-			ARRAY_SIZE(sp810->timerclken)))
++	if (WARN_ON(clkspec->args_count != 1 ||
++		    clkspec->args[0] >=	ARRAY_SIZE(sp810->timerclken)))
+ 		return NULL;
+ 
+ 	return sp810->timerclken[clkspec->args[0]].clk;
