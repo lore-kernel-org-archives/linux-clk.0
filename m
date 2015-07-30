@@ -1,173 +1,130 @@
-Return-Path: <vaibhav.hiremath@linaro.org>
-Return-Path: <vaibhav.hiremath@linaro.org>
-Message-ID: <55AE9F48.20600@linaro.org>
-Date: Wed, 22 Jul 2015 01:06:40 +0530
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 30 Jul 2015 12:17:23 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 7/7] clk: sunxi: Add a simple gates driver
+Message-ID: <20150730101723.GL2564@lukather>
+References: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1437945270-32014-8-git-send-email-maxime.ripard@free-electrons.com>
+ <20150727202648.GB14521@codeaurora.org>
+ <CAGb2v6517qCXmNkYihnfBmc5fL7bqTDOQwedNYjq+p2Mg45+gQ@mail.gmail.com>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
- mturquette@baylibre.com, lee.jones@linaro.org, k.kozlowski@samsung.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/4] clk: 88pm800: Add clk provider driver for 88pm800
- family of devices
-References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org> <1437476823-3358-4-git-send-email-vaibhav.hiremath@linaro.org> <55AE990E.2040004@codeaurora.org>
-In-Reply-To: <55AE990E.2040004@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="U2AV99o4bq1UPJQr"
+In-Reply-To: <CAGb2v6517qCXmNkYihnfBmc5fL7bqTDOQwedNYjq+p2Mg45+gQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--U2AV99o4bq1UPJQr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wednesday 22 July 2015 12:40 AM, Stephen Boyd wrote:
-> On 07/21/2015 04:07 AM, Vaibhav Hiremath wrote:
->> diff --git a/drivers/clk/clk-88pm800.c b/drivers/clk/clk-88pm800.c
->> new file mode 100644
->> index 0000000..cf1c162
->> --- /dev/null
->> +++ b/drivers/clk/clk-88pm800.c
->> @@ -0,0 +1,345 @@
->> +/*
->> + * clk-88pm800.c - Clock driver for 88PM800 family of devices
->> + *
->> + * This driver is created based on clk-s2mps11.c
->> + *
->> + * Copyright (C) 2015 Linaro Ltd.
->> + *
->> + * This program is free software; you can redistribute  it and/or
->> modify it
->> + * under  the terms of  the GNU General  Public License as published
->> by the
->> + * Free Software Foundation;  either version 2 of the  License, or
->> (at your
->> + * option) any later version.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + *
->> + */
->> +
+On Thu, Jul 30, 2015 at 03:55:17PM +0800, Chen-Yu Tsai wrote:
+> On Tue, Jul 28, 2015 at 4:26 AM, Stephen Boyd <sboyd@codeaurora.org> wrot=
+e:
+> > On 07/26, Maxime Ripard wrote:
+> >> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/=
+clk-simple-gates.c
+> >> new file mode 100644
+> >> index 000000000000..1a3963a8a686
+> >> --- /dev/null
+> >> +++ b/drivers/clk/sunxi/clk-simple-gates.c
+> >> @@ -0,0 +1,159 @@
+> >> +/*
+> >> + * Copyright 2015 Maxime Ripard
+> >> + *
+> >> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> >> + *
+> >> + * This program is free software; you can redistribute it and/or modi=
+fy
+> >> + * it under the terms of the GNU General Public License as published =
+by
+> >> + * the Free Software Foundation; either version 2 of the License, or
+> >> + * (at your option) any later version.
+> >> + *
+> >> + * This program is distributed in the hope that it will be useful,
+> >> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> >> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> >> + * GNU General Public License for more details.
+> >> + */
+> >> +
+>=20
+> I'm guessing the following were copied from clk-sunxi.c.
+>=20
+> >> +#include <linux/clk-provider.h>
+> >> +#include <linux/clkdev.h>
+> >
+> > Is this used?
+>=20
+> clk_register_clkdev() is not used in this file, so not needed.
+>=20
+> >> +#include <linux/of.h>
+> >> +#include <linux/of_address.h>
+> >> +#include <linux/reset-controller.h>
+> >
+> > Is this used?
+>=20
+> A remnant of the USB clocks, which has been moved to clk-usb.c.
+>=20
+> Not needed here nor in clk-sunxi.c.
+>=20
+> >> +#include <linux/spinlock.h>
+> >> +#include <linux/log2.h>
+> >
+> > Is this used?
+>=20
+> This is only used for clock factor calculation. Not applicable in
+> clk-simple-gates.c, so no.
 
-<snip>
+You're right, we don't need any of these...
 
->> +    struct pm80x_chip *chip = dev_get_drvdata(pdev->dev.parent);
->> +    struct pm800_clk *pm800_clks;
->> +    struct clk_init_data *clks_init;
->> +    static struct clk **clk_table;
->> +    static struct clk_onecell_data *of_clk_data;
->> +    int i, ret = 0;
->
-> Drop assignment to ret please.
->
+> >> +static DEFINE_SPINLOCK(gates_lock);
+> >> +
+> > [...]
+> >> +
+> >> +static const int sun4i_a10_ahb_critical_clocks[] __initdata =3D {
+> >
+> > Shouldn't it be __initconst ?
+>=20
+> Not sure why our critical clocks lists are __initdata...
 
-Agreed to this and all above comments.
+Why shouldn't it be?
 
->> +
->> +    pm800_clks = devm_kzalloc(&pdev->dev,
->> +                sizeof(*pm800_clks) * PM800_CLKS_NUM,
->> +                GFP_KERNEL);
->
-> devm_kcalloc()
->
->> +    if (!pm800_clks)
->> +        return -ENOMEM;
->> +
->> +    clk_table = devm_kzalloc(&pdev->dev,
->> +                sizeof(struct clk *) * PM800_CLKS_NUM,
->> +                GFP_KERNEL);
->
-> devm_kcalloc()
->
+CLK_OF_DECLARE callbacks only run at of_clk_init time, which is way
+before the init memory is discarded.
 
-why kcalloc?
-Is it because it take another argument for to allocate array?
+Maxime
 
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
->> +    if (!clk_table)
->> +        return -ENOMEM;
->> +
+--U2AV99o4bq1UPJQr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-< snip >
+iQIcBAEBAgAGBQJVufmzAAoJEBx+YmzsjxAgIGMQAJi3Il801R+XKMczFNKx9a+4
+dWBg/2zGJq8lF6aAhHFD6zS5yza1cAaulpJSSlb+rt7QjRMnmlvZCx4ch53c+tyA
+U4L6X4UijJYmUK+i9cjuQVo34uxXV3H0ZHBW+2esd7LtnZgfbicLiLOLBkZ2c3oY
+cEOytZ98eEgD9JTS0+eXjvl3zpM/X0tus8PXCXqXndJJNRBFAk8w6htfRHRAo76Z
+t7/BXSqATaN4zd71pst2XxluvbSSyeCXZOyA3DewI2Q3DB70NGKO0HeLPc2PKew+
+Q6WHjukirONwNR14oEFzolTRyC4xs5/suMlGEjlxhtyFxT5ldSJuAvlTnARC2O5I
+5ozu9CmgAaCb4ORKwT/2y63+vbaXYFnhzJ7047NVDF36qFSvSF1yAPGxho1n4KGc
+9EDEdcBP5DweYjwOmYGCwt5hcCp74aGr5/hvMoo3xyBwswcwx1Glk36+wgSzzVJA
+VSsq13D7+XbBUK3jIzum05qblQ2QTBWCsfpFXxtgcdwEse3CGEynPSb6PAaSt5l0
+LiSfg1v9AoPbvw9DIPpHzeX3LE8YXazQ0rJ71asefxGd1ePdhV8YJL6cP+kF8bW3
+GFi3OWkAP/e054YPZGGdWTTk8ojHU9wuksng6UT7vFVeAZoDQbC6kPDfgwXQgs1F
+wzqiVcKRSOYTQlv4q9jC
+=LjxL
+-----END PGP SIGNATURE-----
 
->> +            of_clk_data);
->> +    if (ret) {
->> +        dev_err(&pdev->dev, "Fail to add OF clk provider : %d\n", ret);
->> +        goto err;
->> +    }
->> +
->> +    /* Common for all 32KHz clock output */
->> +    ret = pm800_init_clk(&pm800_clks[0]);
->
-> Shouldn't we do this before registering the clocks with the framework?
->
-
-Actually I thought of this, but moved it at the end because, I feel
-this init should happen only when we are sure that clock is ready for
-consumption. This is HW initialization where we will be setting
-FREERUNNIG mode (and similar stuffs), so thought it would be bad idea
-to set it first and then on error (later in probe) clear it. Not sure
-whether it has any impact on HW behaviour.
-Also, specially internal reference counter is changing in the init.
-Just tried to avoid back-n-forth set-n-clear of this.
-
->> +    if (ret) {
->> +        dev_err(&pdev->dev, "Failed to initialize clk : %d\n", ret);
->> +        goto err;
->> +    }
->> +
->> +    platform_set_drvdata(pdev, pm800_clks);
->> +
->> +    return 0;
->> +
->> +err:
->> +    for (i = 0; i < PM800_CLKS_NUM; i++) {
->> +        if (pm800_clks[i].lookup)
->> +            clkdev_drop(pm800_clks[i].lookup);
->> +    }
->> +
->> +    return ret;
->> +}
->> +
->> +static int pm800_clk_remove(struct platform_device *pdev)
->> +{
->> +    struct pm800_clk *pm800_clks = platform_get_drvdata(pdev);
->> +    int i;
->> +
->> +    of_clk_del_provider(pm800_clks[0].clk_np);
->> +    /* Drop the reference obtained in pm800_clk_parse_dt */
->> +    of_node_put(pm800_clks[0].clk_np);
->
-> This is odd. Why are we keeping the reference in the driver?
->
-
-Honestly I do not have any good answer here. I have to admit that it is
-getting carry forwarded from legacy driver.
-
->> +
->> +    for (i = 0; i < PM800_CLKS_NUM; i++) {
->> +        if (pm800_clks[i].lookup)
->> +            clkdev_drop(pm800_clks[i].lookup);
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->> [..]
->> +
->> +static int __init pm800_clk_init(void)
->> +{
->> +    return platform_driver_register(&pm800_clk_driver);
->> +}
->> +subsys_initcall(pm800_clk_init);
->> +
->> +static void __init pm800_clk_cleanup(void)
->
-> s/__init/__exit/
->
-
-I will all other comments.  Thanks for your review.
-
-Thanks,
-Vaibhav
+--U2AV99o4bq1UPJQr--
