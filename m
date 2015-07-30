@@ -1,12 +1,15 @@
 Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <1437945270-32014-7-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <20150730101723.GL2564@lukather>
 References: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
- <1437945270-32014-7-git-send-email-maxime.ripard@free-electrons.com>
+ <1437945270-32014-8-git-send-email-maxime.ripard@free-electrons.com>
+ <20150727202648.GB14521@codeaurora.org>
+ <CAGb2v6517qCXmNkYihnfBmc5fL7bqTDOQwedNYjq+p2Mg45+gQ@mail.gmail.com>
+ <20150730101723.GL2564@lukather>
 From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 30 Jul 2015 15:44:59 +0800
-Message-ID: <CAGb2v65o8wh50u4pWuArspq+Bi=33JGp0TDF_N+hWZqHcRn4qQ@mail.gmail.com>
-Subject: Re: [PATCH 6/7] ARM: sun9i: Add clock indices
+Date: Thu, 30 Jul 2015 22:34:15 +0800
+Message-ID: <CAGb2v64zHJsD-CwG4Z=UMuL7xqNdgWGjv-9T9OF6jKuz2WkXUw@mail.gmail.com>
+Subject: Re: [PATCH 7/7] clk: sunxi: Add a simple gates driver
 To: Maxime Ripard <maxime.ripard@free-electrons.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -15,101 +18,90 @@ List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
 List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jul 27, 2015 at 5:14 AM, Maxime Ripard
+On Thu, Jul 30, 2015 at 6:17 PM, Maxime Ripard
 <maxime.ripard@free-electrons.com> wrote:
-> The A80 gates have a non continuous set of clock IDs that are valid. Add
-> the clock-indices property to the DT to express this.
-
-The commit message does not match the patch, which is just a reformatting of
-existing clock-indices properties.
-
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  arch/arm/boot/dts/sun9i-a80.dtsi | 32 ++++++++++++++++++++++----------
->  1 file changed, 22 insertions(+), 10 deletions(-)
+> On Thu, Jul 30, 2015 at 03:55:17PM +0800, Chen-Yu Tsai wrote:
+>> On Tue, Jul 28, 2015 at 4:26 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> > On 07/26, Maxime Ripard wrote:
+>> >> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
+>> >> new file mode 100644
+>> >> index 000000000000..1a3963a8a686
+>> >> --- /dev/null
+>> >> +++ b/drivers/clk/sunxi/clk-simple-gates.c
+>> >> @@ -0,0 +1,159 @@
+>> >> +/*
+>> >> + * Copyright 2015 Maxime Ripard
+>> >> + *
+>> >> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+>> >> + *
+>> >> + * This program is free software; you can redistribute it and/or modify
+>> >> + * it under the terms of the GNU General Public License as published by
+>> >> + * the Free Software Foundation; either version 2 of the License, or
+>> >> + * (at your option) any later version.
+>> >> + *
+>> >> + * This program is distributed in the hope that it will be useful,
+>> >> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> >> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> >> + * GNU General Public License for more details.
+>> >> + */
+>> >> +
+>>
+>> I'm guessing the following were copied from clk-sunxi.c.
+>>
+>> >> +#include <linux/clk-provider.h>
+>> >> +#include <linux/clkdev.h>
+>> >
+>> > Is this used?
+>>
+>> clk_register_clkdev() is not used in this file, so not needed.
+>>
+>> >> +#include <linux/of.h>
+>> >> +#include <linux/of_address.h>
+>> >> +#include <linux/reset-controller.h>
+>> >
+>> > Is this used?
+>>
+>> A remnant of the USB clocks, which has been moved to clk-usb.c.
+>>
+>> Not needed here nor in clk-sunxi.c.
+>>
+>> >> +#include <linux/spinlock.h>
+>> >> +#include <linux/log2.h>
+>> >
+>> > Is this used?
+>>
+>> This is only used for clock factor calculation. Not applicable in
+>> clk-simple-gates.c, so no.
 >
-> diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
-> index a43ad779ee2f..5908e3dcf965 100644
-> --- a/arch/arm/boot/dts/sun9i-a80.dtsi
-> +++ b/arch/arm/boot/dts/sun9i-a80.dtsi
-> @@ -277,9 +277,12 @@
->                         compatible = "allwinner,sun9i-a80-ahb0-gates-clk";
->                         reg = <0x06000580 0x4>;
->                         clocks = <&ahb0>;
-> -                       clock-indices = <0>, <1>, <3>, <5>, <8>, <12>, <13>,
-> -                                       <14>, <15>, <16>, <18>, <20>, <21>,
-> -                                       <22>, <23>;
-> +                       clock-indices = <0>, <1>, <3>,
-> +                                       <5>, <8>, <12>,
-> +                                       <13>, <14>,
-> +                                       <15>, <16>, <18>,
-> +                                       <20>, <21>, <22>,
-> +                                       <23>;
->                         clock-output-names = "ahb0_fd", "ahb0_ve", "ahb0_gpu",
->                                         "ahb0_ss", "ahb0_sd", "ahb0_nand1",
->                                         "ahb0_nand0", "ahb0_sdram",
-> @@ -293,7 +296,10 @@
->                         compatible = "allwinner,sun9i-a80-ahb1-gates-clk";
->                         reg = <0x06000584 0x4>;
->                         clocks = <&ahb1>;
-> -                       clock-indices = <0>, <1>, <17>, <21>, <22>, <23>, <24>;
-> +                       clock-indices = <0>, <1>,
-> +                                       <17>, <21>,
-> +                                       <22>, <23>,
-> +                                       <24>;
->                         clock-output-names = "ahb1_usbotg", "ahb1_usbhci",
->                                         "ahb1_gmac", "ahb1_msgbox",
->                                         "ahb1_spinlock", "ahb1_hstimer",
-> @@ -305,8 +311,9 @@
->                         compatible = "allwinner,sun9i-a80-ahb2-gates-clk";
->                         reg = <0x06000588 0x4>;
->                         clocks = <&ahb2>;
-> -                       clock-indices = <0>, <1>, <2>, <4>, <5>, <7>, <8>,
-> -                                       <11>;
-> +                       clock-indices = <0>, <1>,
-> +                                       <2>, <4>, <5>,
-> +                                       <7>, <8>, <11>;
->                         clock-output-names = "ahb2_lcd0", "ahb2_lcd1",
->                                         "ahb2_edp", "ahb2_csi", "ahb2_hdmi",
->                                         "ahb2_de", "ahb2_mp", "ahb2_mipi_dsi";
-> @@ -317,8 +324,10 @@
->                         compatible = "allwinner,sun9i-a80-apb0-gates-clk";
->                         reg = <0x06000590 0x4>;
->                         clocks = <&apb0>;
-> -                       clock-indices = <1>, <5>, <11>, <12>, <13>, <15>,
-> -                                       <17>, <18>, <19>;
-> +                       clock-indices = <1>, <5>,
-> +                                       <11>, <12>, <13>,
-> +                                       <15>, <17>, <18>,
-> +                                       <19>;
->                         clock-output-names = "apb0_spdif", "apb0_pio",
->                                         "apb0_ac97", "apb0_i2s0", "apb0_i2s1",
->                                         "apb0_lradc", "apb0_gpadc", "apb0_twd",
-> @@ -330,8 +339,11 @@
->                         compatible = "allwinner,sun9i-a80-apb1-gates-clk";
->                         reg = <0x06000594 0x4>;
->                         clocks = <&apb1>;
-> -                       clock-indices = <0>, <1>, <2>, <3>, <4>,
-> -                                       <16>, <17>, <18>, <19>, <20>, <21>;
-> +                       clock-indices = <0>, <1>,
-> +                                       <2>, <3>, <4>,
-> +                                       <16>, <17>,
-> +                                       <18>, <19>,
-> +                                       <20>, <21>;
->                         clock-output-names = "apb1_i2c0", "apb1_i2c1",
->                                         "apb1_i2c2", "apb1_i2c3", "apb1_i2c4",
->                                         "apb1_uart0", "apb1_uart1",
-> --
-> 2.4.6
+> You're right, we don't need any of these...
 >
+>> >> +static DEFINE_SPINLOCK(gates_lock);
+>> >> +
+>> > [...]
+>> >> +
+>> >> +static const int sun4i_a10_ahb_critical_clocks[] __initdata = {
+>> >
+>> > Shouldn't it be __initconst ?
+>>
+>> Not sure why our critical clocks lists are __initdata...
+>
+> Why shouldn't it be?
+>
+> CLK_OF_DECLARE callbacks only run at of_clk_init time, which is way
+> before the init memory is discarded.
+
+Sorry, I meant why __initdata and not __initconst.
+
+ChenYu
 
 _______________________________________________
 linux-arm-kernel mailing list
