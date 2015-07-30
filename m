@@ -1,96 +1,91 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Ulrich Hecht <ulrich.hecht@gmail.com>,
-	linux-sh@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 00/11] ARM: shmobile: Let CPG use syscon for MD pin values
-Date: Tue,  7 Jul 2015 16:10:06 +0200
-Message-Id: <1436278217-20522-1-git-send-email-geert+renesas@glider.be>
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: [PATCH 20/20] clk: at91: Revert "keep slow clk enabled to prevent system hang"
+Date: Thu, 30 Jul 2015 02:22:06 +0200
+Message-Id: <1438215726-27452-21-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1438215726-27452-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1438215726-27452-1-git-send-email-alexandre.belloni@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi,
+Commit dca1a4b5ff6e ("clk: at91: keep slow clk enabled to prevent system
+hang") added a workaround for the slow clock as it is not properly handled
+by its users.
 
-Currently the R-Car Gen2 Clock Pulse Generator (CPG) driver obtains the
-values of the MD pins by a direct call from the R-Car Gen2 platform
-code. This is a bit messy, and creates a dependency between driver and
-platform code.
+Now that the slow clock is taken properly by the drivers, this workaround
+is not necessary anymore, revert it.
 
-This RFC patch series makes the CPG driver obtain the MD pin values by
-reading the Mode Monitoring Register (MODEMR) using syscon and regmap
-instead.  The syscon device and register offset to use are obtained from
-the "renesas,modemr" property in DT, which contains a phandle to the Reset
-Controller module, and the register offset of the MODEMR register inside the
-RST module's register block.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+ drivers/clk/at91/clk-slow.c | 27 ---------------------------
+ 1 file changed, 27 deletions(-)
 
-For backward-compatibility with old DTs, a fallback is added to call
-rcar_gen2_read_mode_pins() in the R-Car Gen2 platform code when needed.
-Once backward-compatibility is deemed no longer necessary, the call to
-rcar_gen2_read_mode_pins() can be removed.
-
-Patches:
-  - Patch 1 adds syscon/regmap support to the CPG driver,
-  - Patches 2-5 add device nodes for the RST modules on all R-Car Gen2
-    SoCs,
-  - Patches 6-9 add "renesas,modemr" links on all R-Car Gen2 SoCs,
-  - Patch 10 removes the old call from platform code to CPG driver,
-  - Patch 11 removes the obsolete code called by the platform code from
-    the CPG driver.
-
-TODO:
-  - Write DT binding docs for the RST Reset Controller Module,
-  - Document the "renesas,modemr" DT property in the R-Car Gen2 CPG DT
-    binding docs,
-  - Extend this technique to R-Car Gen1 (r8a7778/r8a7779) and RZ
-    (r7s72100) SoCs.
-
-Dependencies:
-  - This patch series is against my local tree, which a.o. contains the
-    R-Car Gen2 CPG/MSTP Clock Domain and R-Car Gen2 SYSC PM Domain
-    patches.  This mostly impacts the .dtsi patches.  But there's no
-    functional dependency, only contextually.
-  - Patch 10 (run-time) depends on patches 1-9,
-  - Patch 11 (build-time) depends on patch 10.
-
-Geert Uytterhoeven (11):
-  clk: shmobile: rcar-gen2: Obtain MD pin values using syscon/regmap
-  ARM: shmobile: r8a7790 dtsi: Add device node for RST module
-  ARM: shmobile: r8a7791 dtsi: Add device node for RST module
-  ARM: shmobile: r8a7793 dtsi: Add device node for RST module
-  ARM: shmobile: r8a7794 dtsi: Add device node for RST module
-  ARM: shmobile: r8a7790: Link CPG to RST using "renesas,modemr"
-  ARM: shmobile: r8a7791: Link CPG to RST using "renesas,modemr"
-  ARM: shmobile: r8a7793: Link CPG to RST using "renesas,modemr"
-  ARM: shmobile: r8a7794: Link CPG to RST using "renesas,modemr"
-  ARM: shmobile: rcar-gen2: Use syscon to configure the CPG
-  clk: shmobile: rcar-gen2: Remove obsolete rcar_gen2_clocks_init()
-
- arch/arm/boot/dts/r8a7790.dtsi           |  6 ++++++
- arch/arm/boot/dts/r8a7791.dtsi           |  6 ++++++
- arch/arm/boot/dts/r8a7793.dtsi           |  6 ++++++
- arch/arm/boot/dts/r8a7794.dtsi           |  6 ++++++
- arch/arm/mach-shmobile/Kconfig           |  1 +
- arch/arm/mach-shmobile/setup-rcar-gen2.c |  3 ++-
- drivers/clk/shmobile/clk-rcar-gen2.c     | 22 +++++++++++++++-------
- include/linux/clk/shmobile.h             |  1 -
- 8 files changed, 42 insertions(+), 9 deletions(-)
-
+diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
+index 98a84a865fe1..2c59d6a64dd5 100644
+--- a/drivers/clk/at91/clk-slow.c
++++ b/drivers/clk/at91/clk-slow.c
+@@ -70,7 +70,6 @@ struct clk_sam9x5_slow {
+ 
+ #define to_clk_sam9x5_slow(hw) container_of(hw, struct clk_sam9x5_slow, hw)
+ 
+-static struct clk *slow_clk;
+ 
+ static int clk_slow_osc_prepare(struct clk_hw *hw)
+ {
+@@ -358,8 +357,6 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
+ 	clk = clk_register(NULL, &slowck->hw);
+ 	if (IS_ERR(clk))
+ 		kfree(slowck);
+-	else
+-		slow_clk = clk;
+ 
+ 	return clk;
+ }
+@@ -436,8 +433,6 @@ at91_clk_register_sam9260_slow(struct at91_pmc *pmc,
+ 	clk = clk_register(NULL, &slowck->hw);
+ 	if (IS_ERR(clk))
+ 		kfree(slowck);
+-	else
+-		slow_clk = clk;
+ 
+ 	return clk;
+ }
+@@ -470,25 +465,3 @@ void __init of_at91sam9260_clk_slow_setup(struct device_node *np,
+ 
+ 	of_clk_add_provider(np, of_clk_src_simple_get, clk);
+ }
+-
+-/*
+- * FIXME: All slow clk users are not properly claiming it (get + prepare +
+- * enable) before using it.
+- * If all users properly claiming this clock decide that they don't need it
+- * anymore (or are removed), it is disabled while faulty users are still
+- * requiring it, and the system hangs.
+- * Prevent this clock from being disabled until all users are properly
+- * requesting it.
+- * Once this is done we should remove this function and the slow_clk variable.
+- */
+-static int __init of_at91_clk_slow_retain(void)
+-{
+-	if (!slow_clk)
+-		return 0;
+-
+-	__clk_get(slow_clk);
+-	clk_prepare_enable(slow_clk);
+-
+-	return 0;
+-}
+-arch_initcall(of_at91_clk_slow_retain);
 -- 
-1.9.1
+2.1.4
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
