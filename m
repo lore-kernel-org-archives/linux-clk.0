@@ -1,55 +1,68 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Sender: Rob Herring <robherring2@gmail.com>
-From: Rob Herring <robh@kernel.org>
-To: linux-arm-kernel@lists.infradead.org,
-	Russell King <linux@arm.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org,
-	arm@kernel.org,
-	Mike Turquette <mturquette@linaro.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 02/13] clk: kill off set_irq_flags usage
-Date: Sun, 12 Jul 2015 09:26:40 -0500
-Message-Id: <1436711211-18223-3-git-send-email-robh@kernel.org>
-In-Reply-To: <1436711211-18223-1-git-send-email-robh@kernel.org>
-References: <1436711211-18223-1-git-send-email-robh@kernel.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 30 Jul 2015 12:12:42 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 6/7] ARM: sun9i: Add clock indices
+Message-ID: <20150730101242.GK2564@lukather>
+References: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1437945270-32014-7-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v65o8wh50u4pWuArspq+Bi=33JGp0TDF_N+hWZqHcRn4qQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="I2DZnI03i1DS0lOz"
+In-Reply-To: <CAGb2v65o8wh50u4pWuArspq+Bi=33JGp0TDF_N+hWZqHcRn4qQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-set_irq_flags is ARM specific with custom flags which have genirq
-equivalents. Convert drivers to use the genirq interfaces directly, so we
-can kill off set_irq_flags. The translation of flags is as follows:
 
-IRQF_VALID -> !IRQ_NOREQUEST
-IRQF_PROBE -> !IRQ_NOPROBE
-IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+--I2DZnI03i1DS0lOz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For IRQs managed by an irqdomain, the irqdomain core code handles clearing
-and setting IRQ_NOREQUEST already, so there is no need to do this in
-.map() functions and we can simply remove the set_irq_flags calls. Some
-users also set IRQ_NOPROBE and this has been maintained although it is not
-clear that is really needed. There appears to be a great deal of blind
-copy and paste of this code.
+On Thu, Jul 30, 2015 at 03:44:59PM +0800, Chen-Yu Tsai wrote:
+> On Mon, Jul 27, 2015 at 5:14 AM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > The A80 gates have a non continuous set of clock IDs that are valid. Add
+> > the clock-indices property to the DT to express this.
+>=20
+> The commit message does not match the patch, which is just a reformatting=
+ of
+> existing clock-indices properties.
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Mike Turquette <mturquette@linaro.org>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
----
- drivers/clk/at91/pmc.c | 1 -
- 1 file changed, 1 deletion(-)
+Indeed... That's what happens when you automate too much things.. :)
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 39be2be..d1844f1 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -125,7 +125,6 @@ static int pmc_irq_map(struct irq_domain *h, unsigned int virq,
- 
- 	irq_set_chip_and_handler(virq, &pmc_irq,
- 				 handle_level_irq);
--	set_irq_flags(virq, IRQF_VALID);
- 	irq_set_chip_data(virq, pmc);
- 
- 	return 0;
--- 
-2.1.0
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--I2DZnI03i1DS0lOz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVufiaAAoJEBx+YmzsjxAgrocP/3dpa+iGMf1yU/Tw4s9hCzTu
+Vn9mz/+LjtGsQqrlM0ZenkZf/Tiro4gW5Ak9kM3o9euB3/Im6sx3LvNh4CU+jC6p
+yQzR/Y2/+dvc81WO4+xDdsSO9LCL7EzB3T9qGnQFUnYUPjMWa/2b81EfQQNV5rhe
+hcxYcFegTnzPMzKM4JGAzzdOuQ+0KepsK4lnBGGYaSuwknSJwD0QrsVKHqKW/UdY
+cKX9iMfW+SKm7h5UiAPUowzNxx5OI7ML3HV1rO46aM0PsJ7XJ1b1n/FEWv9PMtnC
+L3w4JR4wVHvZx7y5Nl+Irao/IudUsqY7fdas7TvwiAeM4AXDmU0xqxbX6EawTBgd
+2nY2UlQG1bXjQYN8/NSvQCH3CiaHrEi9c/WMug9s9e4Ets/Ao9Uc5SDwGRSPjq5S
+jj5CPqMsNf5zJkuoKp/M03UoBDWiV17Qrst5OQvs7IPil/fzWm4a1v+w2YDMQwEC
+hP/jWlB3iJOEebS1qCxaYLZA1AWirWaVDAnz17b+sOIciHMSB2OgO2IH0ga2GTq2
+GEqgSFP69/fdi5k3X+4RHfgDzHql83a0u+qTg4RovmbQNVcPfNTnxPNmF7to8DiE
+dpYIUZ3Fqj4eeq5qC23L6B38ruypNlCzSthd8drZvvR+6IfWxUm8OXRdUc/5tmK8
+ixu+FtYJWEPy1DDSlyls
+=EyBb
+-----END PGP SIGNATURE-----
+
+--I2DZnI03i1DS0lOz--
