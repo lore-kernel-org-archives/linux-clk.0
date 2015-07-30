@@ -1,132 +1,105 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 2/7] ARM: sun5i: Add clock indices
-Date: Sun, 26 Jul 2015 23:14:25 +0200
-Message-Id: <1437945270-32014-3-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+MIME-Version: 1.0
+In-Reply-To: <20150727202648.GB14521@codeaurora.org>
 References: <1437945270-32014-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1437945270-32014-8-git-send-email-maxime.ripard@free-electrons.com>
+ <20150727202648.GB14521@codeaurora.org>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 30 Jul 2015 15:55:17 +0800
+Message-ID: <CAGb2v6517qCXmNkYihnfBmc5fL7bqTDOQwedNYjq+p2Mg45+gQ@mail.gmail.com>
+Subject: Re: [PATCH 7/7] clk: sunxi: Add a simple gates driver
+To: Stephen Boyd <sboyd@codeaurora.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The A10s and A13 gates have a non continuous set of clock IDs that are
-valid. Add the clock-indices property to the DT to express this.
+On Tue, Jul 28, 2015 at 4:26 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 07/26, Maxime Ripard wrote:
+>> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
+>> new file mode 100644
+>> index 000000000000..1a3963a8a686
+>> --- /dev/null
+>> +++ b/drivers/clk/sunxi/clk-simple-gates.c
+>> @@ -0,0 +1,159 @@
+>> +/*
+>> + * Copyright 2015 Maxime Ripard
+>> + *
+>> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by
+>> + * the Free Software Foundation; either version 2 of the License, or
+>> + * (at your option) any later version.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + */
+>> +
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun5i-a10s.dtsi | 23 +++++++++++++++++++++--
- arch/arm/boot/dts/sun5i-a13.dtsi  | 18 +++++++++++++++++-
- arch/arm/boot/dts/sun5i.dtsi      |  1 +
- 3 files changed, 39 insertions(+), 3 deletions(-)
+I'm guessing the following were copied from clk-sunxi.c.
 
-diff --git a/arch/arm/boot/dts/sun5i-a10s.dtsi b/arch/arm/boot/dts/sun5i-a10s.dtsi
-index f11efb722bbb..a513b416a807 100644
---- a/arch/arm/boot/dts/sun5i-a10s.dtsi
-+++ b/arch/arm/boot/dts/sun5i-a10s.dtsi
-@@ -85,6 +85,17 @@
- 			compatible = "allwinner,sun5i-a10s-ahb-gates-clk";
- 			reg = <0x01c20060 0x8>;
- 			clocks = <&ahb>;
-+			clock-indices = <0>, <1>,
-+					<2>, <5>, <6>,
-+					<7>, <8>, <9>,
-+					<10>, <13>,
-+					<14>, <17>, <18>,
-+					<20>, <21>, <22>,
-+					<26>, <28>, <32>,
-+					<34>, <36>, <40>,
-+					<43>, <44>,
-+					<46>, <51>,
-+					<52>;
- 			clock-output-names = "ahb_usbotg", "ahb_ehci",
- 					     "ahb_ohci", "ahb_ss", "ahb_dma",
- 					     "ahb_bist", "ahb_mmc0", "ahb_mmc1",
-@@ -103,6 +114,9 @@
- 			compatible = "allwinner,sun5i-a10s-apb0-gates-clk";
- 			reg = <0x01c20068 0x4>;
- 			clocks = <&apb0>;
-+			clock-indices = <0>, <3>,
-+					<5>, <6>,
-+					<10>;
- 			clock-output-names = "apb0_codec", "apb0_iis",
- 					     "apb0_pio", "apb0_ir",
- 					     "apb0_keypad";
-@@ -113,9 +127,14 @@
- 			compatible = "allwinner,sun5i-a10s-apb1-gates-clk";
- 			reg = <0x01c2006c 0x4>;
- 			clocks = <&apb1>;
-+			clock-indices = <0>, <1>,
-+					<2>, <16>,
-+					<17>, <18>,
-+					<19>;
- 			clock-output-names = "apb1_i2c0", "apb1_i2c1",
--				"apb1_i2c2", "apb1_uart0", "apb1_uart1",
--				"apb1_uart2", "apb1_uart3";
-+					     "apb1_i2c2", "apb1_uart0",
-+					     "apb1_uart1", "apb1_uart2",
-+					     "apb1_uart3";
- 		};
- 	};
- 
-diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
-index 976d4faa2179..f3631c9c6fa2 100644
---- a/arch/arm/boot/dts/sun5i-a13.dtsi
-+++ b/arch/arm/boot/dts/sun5i-a13.dtsi
-@@ -104,6 +104,16 @@
- 			compatible = "allwinner,sun5i-a13-ahb-gates-clk";
- 			reg = <0x01c20060 0x8>;
- 			clocks = <&ahb>;
-+			clock-indices = <0>, <1>,
-+					<2>, <5>, <6>,
-+					<7>, <8>, <9>,
-+					<10>, <13>,
-+					<14>, <20>,
-+					<21>, <22>,
-+				        <28>, <32>, <36>,
-+				        <40>, <44>,
-+					<46>, <51>,
-+					<52>;
- 			clock-output-names = "ahb_usbotg", "ahb_ehci",
- 					     "ahb_ohci", "ahb_ss", "ahb_dma",
- 					     "ahb_bist", "ahb_mmc0", "ahb_mmc1",
-@@ -121,6 +131,8 @@
- 			compatible = "allwinner,sun5i-a13-apb0-gates-clk";
- 			reg = <0x01c20068 0x4>;
- 			clocks = <&apb0>;
-+			clock-indices = <0>, <5>,
-+					<6>;
- 			clock-output-names = "apb0_codec", "apb0_pio",
- 					     "apb0_ir";
- 		};
-@@ -130,8 +142,12 @@
- 			compatible = "allwinner,sun5i-a13-apb1-gates-clk";
- 			reg = <0x01c2006c 0x4>;
- 			clocks = <&apb1>;
-+			clock-indices = <0>, <1>,
-+					<2>, <17>,
-+					<19>;
- 			clock-output-names = "apb1_i2c0", "apb1_i2c1",
--				"apb1_i2c2", "apb1_uart1", "apb1_uart3";
-+					     "apb1_i2c2", "apb1_uart1",
-+					     "apb1_uart3";
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index 54b097830434..427c0e7289fa 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -178,6 +178,7 @@
- 			compatible = "allwinner,sun4i-a10-axi-gates-clk";
- 			reg = <0x01c2005c 0x4>;
- 			clocks = <&axi>;
-+			clock-indices = <0>;
- 			clock-output-names = "axi_dram";
- 		};
- 
--- 
-2.4.6
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/clkdev.h>
+>
+> Is this used?
+
+clk_register_clkdev() is not used in this file, so not needed.
+
+>> +#include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/reset-controller.h>
+>
+> Is this used?
+
+A remnant of the USB clocks, which has been moved to clk-usb.c.
+
+Not needed here nor in clk-sunxi.c.
+
+>> +#include <linux/spinlock.h>
+>> +#include <linux/log2.h>
+>
+> Is this used?
+
+This is only used for clock factor calculation. Not applicable in
+clk-simple-gates.c, so no.
+
+>> +
+>> +static DEFINE_SPINLOCK(gates_lock);
+>> +
+> [...]
+>> +
+>> +static const int sun4i_a10_ahb_critical_clocks[] __initdata = {
+>
+> Shouldn't it be __initconst ?
+
+Not sure why our critical clocks lists are __initdata...
+
+>> +     14,     /* ahb_sdram */
+>> +};
+>> +
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
