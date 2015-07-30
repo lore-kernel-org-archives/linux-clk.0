@@ -1,61 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Ken Xue <Ken.Xue@amd.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5/7] ACPI: Remove clk.h include
-Date: Fri, 10 Jul 2015 16:03:27 -0700
-Message-Id: <1436569409-27964-6-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org>
-References: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+In-Reply-To: <55BAA17F.1070305@codeaurora.org>
+References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
+ <1437476823-3358-3-git-send-email-vaibhav.hiremath@linaro.org>
+ <CAJKOXPeUJ-7je67q+9X1_FcFiczoQ6rqwMAoPLswapFEmqGGVg@mail.gmail.com> <55BAA17F.1070305@codeaurora.org>
+From: Rob Herring <robherring2@gmail.com>
+Date: Thu, 30 Jul 2015 17:21:56 -0500
+Message-ID: <CAL_Jsq+BuhbHgnYi6HfAJx986vtDuUJzbxBRgivX9pF1GhUSvQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] mfd: devicetree: bindings: Add clock subdevice node information
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Vaibhav Hiremath <vaibhav.hiremath@linaro.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock provider drivers generally shouldn't include clk.h because
-it's the consumer API. Remove the includes here because these are
-provider drivers.
+On Thu, Jul 30, 2015 at 5:13 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 07/22/2015 10:08 PM, Krzysztof Kozlowski wrote:
+>>
+>> 2015-07-21 20:07 GMT+09:00 Vaibhav Hiremath <vaibhav.hiremath@linaro.org>:
+>>>
+>>> This patch updates the binding documentation for optional
+>>> clocks node and related information for buffered 32KHz clock.
+>>>
+>>> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+>>> ---
+>>>   Documentation/devicetree/bindings/mfd/88pm800.txt | 28
+>>> +++++++++++++++++++++++
+>>>   1 file changed, 28 insertions(+)
+>>
+>> +Cc Stephen Boyd (clocks)
+>>
+>> We had a discussion whether clock bindings should be put in MFD
+>> bindings documentation or into separate file in bindings/clock but
+>> either way is fine for me:
+>
+>
+> No patch? :)
+>
+> I think Rob has been pushing for MFDs to document everything within one
+> file, but either way is fine from clk perspective.
 
-Cc: Ken Xue <Ken.Xue@amd.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
+I don't recall that exactly. I did say that child bindings need to
+point back to the MFD binding. So this is fine with me:
 
-Please ack so this can go through clk-tree. Otherwise it's ok
-to go through the acpi tree.
+Acked-by: Rob Herring <robh@kernel.org>
 
- drivers/acpi/acpi_apd.c  | 1 -
- drivers/acpi/acpi_lpss.c | 1 -
- 2 files changed, 2 deletions(-)
-
-diff --git a/drivers/acpi/acpi_apd.c b/drivers/acpi/acpi_apd.c
-index 3984ea96e5f7..a450e7af877c 100644
---- a/drivers/acpi/acpi_apd.c
-+++ b/drivers/acpi/acpi_apd.c
-@@ -16,7 +16,6 @@
- #include <linux/clkdev.h>
- #include <linux/acpi.h>
- #include <linux/err.h>
--#include <linux/clk.h>
- #include <linux/pm.h>
- 
- #include "internal.h"
-diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
-index 569ee090343f..6817b18ed722 100644
---- a/drivers/acpi/acpi_lpss.c
-+++ b/drivers/acpi/acpi_lpss.c
-@@ -11,7 +11,6 @@
-  */
- 
- #include <linux/acpi.h>
--#include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/err.h>
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Rob
