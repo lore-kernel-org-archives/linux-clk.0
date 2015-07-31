@@ -1,49 +1,55 @@
-Return-Path: <sboyd@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:42396 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754034AbbGaRET (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jul 2015 13:04:19 -0400
 From: Stephen Boyd <sboyd@codeaurora.org>
 To: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: [PATCH 2/2] clk: Move clk_provider_list to scope of function using it
-Date: Mon,  6 Jul 2015 16:59:38 -0700
-Message-Id: <1436227178-2465-2-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436227178-2465-1-git-send-email-sboyd@codeaurora.org>
-References: <20150610154941.GJ10549@mwanda>
- <1436227178-2465-1-git-send-email-sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Wentao Xu <wentaox@codeaurora.org>,
+	Rob Clark <robdclark@gmail.com>
+Subject: [PATCH 25/26] drm/msm/dsi: Convert to clk_hw based provider APIs
+Date: Fri, 31 Jul 2015 10:04:05 -0700
+Message-Id: <1438362246-6664-26-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The list isn't used after of_clk_init() is called, so we don't
-need to keep an empty list around after init. Put the list on the
-stack.
+We're removing struct clk from the clk provider API, so switch
+this code to using the clk_hw based provider APIs.
 
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Wentao Xu <wentaox@codeaurora.org>
+Cc: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/clk.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 705156828a7a..7873151a7ff8 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3054,8 +3054,6 @@ struct clock_provider {
- 	struct list_head node;
- };
+diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
+index eb8ac3097ff5..18b7727bdc57 100644
+--- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
++++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
+@@ -455,7 +455,7 @@ static void dsi_pll_28nm_save_state(struct msm_dsi_pll *pll)
+ 	cached_state->postdiv1 =
+ 			pll_read(base + REG_DSI_28nm_PHY_PLL_POSTDIV1_CFG);
+ 	cached_state->byte_mux = pll_read(base + REG_DSI_28nm_PHY_PLL_VREG_CFG);
+-	cached_state->vco_rate = __clk_get_rate(pll->clk_hw.clk);
++	cached_state->vco_rate = clk_hw_get_rate(&pll->clk_hw);
+ }
  
--static LIST_HEAD(clk_provider_list);
--
- /*
-  * This function looks for a parent clock. If there is one, then it
-  * checks that the provider for this parent clock was initialized, in
-@@ -3106,6 +3104,7 @@ void __init of_clk_init(const struct of_device_id *matches)
- 	struct clock_provider *clk_provider, *next;
- 	bool is_init_done;
- 	bool force = false;
-+	LIST_HEAD(clk_provider_list);
+ static int dsi_pll_28nm_restore_state(struct msm_dsi_pll *pll)
+@@ -466,7 +466,7 @@ static int dsi_pll_28nm_restore_state(struct msm_dsi_pll *pll)
+ 	int ret;
  
- 	if (!matches)
- 		matches = &__clk_of_table;
+ 	if ((cached_state->vco_rate != 0) &&
+-		(cached_state->vco_rate == __clk_get_rate(pll->clk_hw.clk))) {
++		(cached_state->vco_rate == clk_hw_get_rate(&pll->clk_hw))) {
+ 		ret = dsi_pll_28nm_clk_set_rate(&pll->clk_hw,
+ 						cached_state->vco_rate, 0);
+ 		if (ret) {
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
+
