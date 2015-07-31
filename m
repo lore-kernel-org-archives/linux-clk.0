@@ -1,101 +1,53 @@
-Return-Path: <dinguyen@opensource.altera.com>
-From: <dinguyen@opensource.altera.com>
-To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
-Subject: [PATCH] clk: socfpga: Add a second parent option for the dbg_base_clk
-Date: Wed, 22 Jul 2015 14:04:18 -0500
-Message-ID: <1437591858-12552-1-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <55BBB2FC.9030102@codeaurora.org>
+Date: Fri, 31 Jul 2015 10:40:12 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: dinguyen@opensource.altera.com
+To: Pawel Moll <pawel.moll@arm.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 24/26] clk: versatile: Convert to clk_hw based provider
+ APIs
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>  <1438362246-6664-25-git-send-email-sboyd@codeaurora.org> <1438362482.2339.89.camel@arm.com>
+In-Reply-To: <1438362482.2339.89.camel@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
+On 07/31/2015 10:08 AM, Pawel Moll wrote:
+> On Fri, 2015-07-31 at 18:04 +0100, Stephen Boyd wrote:
+>> We're removing struct clk from the clk provider API, so switch
+>> this code to using the clk_hw based provider APIs.
+>>
+>> Cc: Pawel Moll <pawel.moll@arm.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+>> ---
+>>   drivers/clk/versatile/clk-sp810.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/versatile/clk-sp810.c b/drivers/clk/versatile/clk-sp810.c
+>> index 7fbe4d4bf35e..af653bfd4901 100644
+>> --- a/drivers/clk/versatile/clk-sp810.c
+>> +++ b/drivers/clk/versatile/clk-sp810.c
+>> @@ -80,7 +80,7 @@ static int clk_sp810_timerclken_prepare(struct clk_hw *hw)
+>>   {
+>>   	struct clk_sp810_timerclken *timerclken = to_clk_sp810_timerclken(hw);
+>>   	struct clk_sp810 *sp810 = timerclken->sp810;
+>> -	struct clk *old_parent = __clk_get_parent(hw->clk);
+>> +	struct clk_hw *old_parent = clk_hw_get_parent(hw);
+>>   	struct clk *new_parent;
+>>   
+>>   	if (!sp810->refclk)
+> Acked-by: Pawel Moll <pawel.moll@arm.com>
+>
+> (disclaimer: not tested ;-)
+>
 
-The debug base clock can be bypassed from the main PLL to the OSC1 clock.
-The bypass register is the staysoc1(0x10) register that is in the clock
-manager.
+Oh yeah this patch is broken... better patch coming soon that will force 
+usage of assigned-parents in DT.
 
-This patch adds the option to get the correct parent for the debug base
-clock.
-
-Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
----
- arch/arm/boot/dts/socfpga.dtsi   |  2 +-
- drivers/clk/socfpga/clk-periph.c | 18 ++++++++++++++----
- drivers/clk/socfpga/clk.h        |  1 +
- 3 files changed, 16 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
-index 80f924d..7d5db54 100644
---- a/arch/arm/boot/dts/socfpga.dtsi
-+++ b/arch/arm/boot/dts/socfpga.dtsi
-@@ -164,7 +164,7 @@
- 						dbg_base_clk: dbg_base_clk {
- 							#clock-cells = <0>;
- 							compatible = "altr,socfpga-perip-clk";
--							clocks = <&main_pll>;
-+							clocks = <&main_pll>, <&osc1>;
- 							div-reg = <0xe8 0 9>;
- 							reg = <0x50>;
- 						};
-diff --git a/drivers/clk/socfpga/clk-periph.c b/drivers/clk/socfpga/clk-periph.c
-index 0c66863..52c883e 100644
---- a/drivers/clk/socfpga/clk-periph.c
-+++ b/drivers/clk/socfpga/clk-periph.c
-@@ -44,8 +44,17 @@ static unsigned long clk_periclk_recalc_rate(struct clk_hw *hwclk,
- 	return parent_rate / div;
- }
- 
-+static u8 clk_periclk_get_parent(struct clk_hw *hwclk)
-+{
-+	u32 clk_src;
-+
-+	clk_src = readl(clk_mgr_base_addr + CLKMGR_DBCTRL);
-+	return clk_src & 0x1;
-+}
-+
- static const struct clk_ops periclk_ops = {
- 	.recalc_rate = clk_periclk_recalc_rate,
-+	.get_parent = clk_periclk_get_parent,
- };
- 
- static __init void __socfpga_periph_init(struct device_node *node,
-@@ -55,7 +64,7 @@ static __init void __socfpga_periph_init(struct device_node *node,
- 	struct clk *clk;
- 	struct socfpga_periph_clk *periph_clk;
- 	const char *clk_name = node->name;
--	const char *parent_name;
-+	const char *parent_name[SOCFPGA_MAX_PARENTS];
- 	struct clk_init_data init;
- 	int rc;
- 	u32 fixed_div;
-@@ -89,9 +98,10 @@ static __init void __socfpga_periph_init(struct device_node *node,
- 	init.name = clk_name;
- 	init.ops = ops;
- 	init.flags = 0;
--	parent_name = of_clk_get_parent_name(node, 0);
--	init.parent_names = &parent_name;
--	init.num_parents = 1;
-+
-+	init.num_parents = of_clk_parent_fill(node, parent_name,
-+					      SOCFPGA_MAX_PARENTS);
-+	init.parent_names = parent_name;
- 
- 	periph_clk->hw.hw.init = &init;
- 
-diff --git a/drivers/clk/socfpga/clk.h b/drivers/clk/socfpga/clk.h
-index aa2741d..814c724 100644
---- a/drivers/clk/socfpga/clk.h
-+++ b/drivers/clk/socfpga/clk.h
-@@ -22,6 +22,7 @@
- /* Clock Manager offsets */
- #define CLKMGR_CTRL		0x0
- #define CLKMGR_BYPASS		0x4
-+#define CLKMGR_DBCTRL		0x10
- #define CLKMGR_L4SRC		0x70
- #define CLKMGR_PERPLL_SRC	0xAC
- 
 -- 
-2.4.5
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
