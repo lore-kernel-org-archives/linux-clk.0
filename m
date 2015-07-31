@@ -1,42 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Eric Anholt <eric@anholt.net>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v4 7/8] ARM: bcm2835: Tie SPI clock to the core clock rate.
-Date: Mon, 20 Jul 2015 12:33:06 -0700
-Message-Id: <1437420787-32137-8-git-send-email-eric@anholt.net>
-In-Reply-To: <1437420787-32137-1-git-send-email-eric@anholt.net>
-References: <1437420787-32137-1-git-send-email-eric@anholt.net>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>
+Subject: [PATCH 21/26] clk: sunxi: Convert to clk_hw based provider APIs
+Date: Fri, 31 Jul 2015 10:04:01 -0700
+Message-Id: <1438362246-6664-22-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-We were previously using a fixed clock declared in the 2835 DT, but
-it's actually the core clock, and it might not be the same if you had
-adjusted it using the firmware's config.txt.
+We're removing struct clk from the clk provider API, so switch
+this code to using the clk_hw based provider APIs.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: "Emilio López" <emilio@elopez.com.ar>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- arch/arm/boot/dts/bcm2835-rpi.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/sunxi/clk-factors.c     | 10 +++++-----
+ drivers/clk/sunxi/clk-sun6i-ar100.c |  8 ++++----
+ drivers/clk/sunxi/clk-sunxi.c       | 10 +++++-----
+ 3 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
-index 9549eb8..0a32123 100644
---- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
-+++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
-@@ -69,3 +69,7 @@
- 		 <&firmware_clocks RPI_CLOCK_CORE>;
- 	clock-names = "uartclk", "apb_pclk";
- };
-+
-+&spi {
-+	clocks = <&firmware_clocks RPI_CLOCK_CORE>;
-+};
+diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
+index b8c3ee5688f4..59428dbd607a 100644
+--- a/drivers/clk/sunxi/clk-factors.c
++++ b/drivers/clk/sunxi/clk-factors.c
+@@ -82,20 +82,20 @@ static long clk_factors_round_rate(struct clk_hw *hw, unsigned long rate,
+ static int clk_factors_determine_rate(struct clk_hw *hw,
+ 				      struct clk_rate_request *req)
+ {
+-	struct clk *clk = hw->clk, *parent, *best_parent = NULL;
++	struct clk_hw *parent, *best_parent = NULL;
+ 	int i, num_parents;
+ 	unsigned long parent_rate, best = 0, child_rate, best_child_rate = 0;
+ 
+ 	/* find the parent that can help provide the fastest rate <= rate */
+ 	num_parents = clk_hw_get_num_parents(hw);
+ 	for (i = 0; i < num_parents; i++) {
+-		parent = clk_get_parent_by_index(clk, i);
++		parent = clk_hw_get_parent_by_index(hw, i);
+ 		if (!parent)
+ 			continue;
+ 		if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)
+-			parent_rate = __clk_round_rate(parent, req->rate);
++			parent_rate = clk_hw_round_rate(parent, req->rate);
+ 		else
+-			parent_rate = __clk_get_rate(parent);
++			parent_rate = clk_hw_get_rate(parent);
+ 
+ 		child_rate = clk_factors_round_rate(hw, req->rate,
+ 						    &parent_rate);
+@@ -110,7 +110,7 @@ static int clk_factors_determine_rate(struct clk_hw *hw,
+ 	if (!best_parent)
+ 		return -EINVAL;
+ 
+-	req->best_parent_hw = __clk_get_hw(best_parent);
++	req->best_parent_hw = best_parent;
+ 	req->best_parent_rate = best;
+ 	req->rate = best_child_rate;
+ 
+diff --git a/drivers/clk/sunxi/clk-sun6i-ar100.c b/drivers/clk/sunxi/clk-sun6i-ar100.c
+index 3a9459197f9b..806fd019c05d 100644
+--- a/drivers/clk/sunxi/clk-sun6i-ar100.c
++++ b/drivers/clk/sunxi/clk-sun6i-ar100.c
+@@ -56,12 +56,12 @@ static int ar100_determine_rate(struct clk_hw *hw,
+ 	for (i = 0; i < nparents; i++) {
+ 		unsigned long parent_rate;
+ 		unsigned long tmp_rate;
+-		struct clk *parent;
++		struct clk_hw *parent;
+ 		unsigned long div;
+ 		int shift;
+ 
+-		parent = clk_get_parent_by_index(hw->clk, i);
+-		parent_rate = __clk_get_rate(parent);
++		parent = clk_hw_get_parent_by_index(hw, i);
++		parent_rate = clk_hw_get_rate(parent);
+ 		div = DIV_ROUND_UP(parent_rate, req->rate);
+ 
+ 		/*
+@@ -99,7 +99,7 @@ static int ar100_determine_rate(struct clk_hw *hw,
+ 
+ 		tmp_rate = (parent_rate >> shift) / div;
+ 		if (!req->best_parent_hw || tmp_rate > best_rate) {
+-			req->best_parent_hw = __clk_get_hw(parent);
++			req->best_parent_hw = parent;
+ 			req->best_parent_rate = parent_rate;
+ 			best_rate = tmp_rate;
+ 		}
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 305193db6048..a834e4a9ecbc 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -123,20 +123,20 @@ static long sun6i_ahb1_clk_round(unsigned long rate, u8 *divp, u8 *pre_divp,
+ static int sun6i_ahb1_clk_determine_rate(struct clk_hw *hw,
+ 					 struct clk_rate_request *req)
+ {
+-	struct clk *clk = hw->clk, *parent, *best_parent = NULL;
++	struct clk_hw *parent, *best_parent = NULL;
+ 	int i, num_parents;
+ 	unsigned long parent_rate, best = 0, child_rate, best_child_rate = 0;
+ 
+ 	/* find the parent that can help provide the fastest rate <= rate */
+ 	num_parents = clk_hw_get_num_parents(hw);
+ 	for (i = 0; i < num_parents; i++) {
+-		parent = clk_get_parent_by_index(clk, i);
++		parent = clk_hw_get_parent_by_index(hw, i);
+ 		if (!parent)
+ 			continue;
+ 		if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)
+-			parent_rate = __clk_round_rate(parent, req->rate);
++			parent_rate = clk_hw_round_rate(parent, req->rate);
+ 		else
+-			parent_rate = __clk_get_rate(parent);
++			parent_rate = clk_hw_get_rate(parent);
+ 
+ 		child_rate = sun6i_ahb1_clk_round(req->rate, NULL, NULL, i,
+ 						  parent_rate);
+@@ -151,7 +151,7 @@ static int sun6i_ahb1_clk_determine_rate(struct clk_hw *hw,
+ 	if (!best_parent)
+ 		return -EINVAL;
+ 
+-	req->best_parent_hw = __clk_get_hw(best_parent);
++	req->best_parent_hw = best_parent;
+ 	req->best_parent_rate = best;
+ 	req->rate = best_child_rate;
+ 
 -- 
-2.1.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
