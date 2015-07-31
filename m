@@ -1,88 +1,223 @@
 Return-Path: <lee.jones@linaro.org>
 Return-Path: <lee.jones@linaro.org>
-Date: Thu, 23 Jul 2015 16:50:08 +0100
+Date: Fri, 31 Jul 2015 10:02:19 +0100
 From: Lee Jones <lee.jones@linaro.org>
-To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
-	mturquette@baylibre.com, k.kozlowski@samsung.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Michael Turquette <mturquette@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel@stlinux.com, sboyd@codeaurora.org,
+	devicetree@vger.kernel.org, geert@linux-m68k.org,
+	maxime.ripard@free-electrons.com, s.hauer@pengutronix.de,
 	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 4/4] mfd: 88pm800: Add support for clk subdevice
-Message-ID: <20150723155008.GS3436@x1>
-References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org>
- <1437476823-3358-5-git-send-email-vaibhav.hiremath@linaro.org>
+Subject: Re: [PATCH v7 3/5] clk: Supply the critical clock {init, enable,
+ disable} framework
+Message-ID: <20150731090219.GE3208@x1>
+References: <1437570255-21049-1-git-send-email-lee.jones@linaro.org>
+ <1437570255-21049-4-git-send-email-lee.jones@linaro.org>
+ <20150730010213.642.10831@quantum>
+ <20150730111747.GF14642@x1>
+ <20150730233530.23791.17746@quantum>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1437476823-3358-5-git-send-email-vaibhav.hiremath@linaro.org>
+In-Reply-To: <20150730233530.23791.17746@quantum>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 21 Jul 2015, Vaibhav Hiremath wrote:
+On Thu, 30 Jul 2015, Michael Turquette wrote:
 
-> This patch adds mfd_cell/clk-subdevice for 88PM800 MFD
-> (and family of devices).
+> Quoting Lee Jones (2015-07-30 04:17:47)
+> > On Wed, 29 Jul 2015, Michael Turquette wrote:
+> > 
+> > > Hi Lee,
+> > > 
+> > > + linux-clk ml
+> > > 
+> > > Quoting Lee Jones (2015-07-22 06:04:13)
+> > > > These new API calls will firstly provide a mechanisms to tag a clock as
+> > > > critical and secondly allow any knowledgeable driver to (un)gate clocks,
+> > > > even if they are marked as critical.
+> > > > 
+> > > > Suggested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > > > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> > > > ---
+> > > >  drivers/clk/clk.c            | 45 ++++++++++++++++++++++++++++++++++++++++++++
+> > > >  include/linux/clk-provider.h |  2 ++
+> > > >  include/linux/clk.h          | 30 +++++++++++++++++++++++++++++
+> > > >  3 files changed, 77 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > > index 61c3fc5..486b1da 100644
+> > > > --- a/drivers/clk/clk.c
+> > > > +++ b/drivers/clk/clk.c
+> > > > @@ -46,6 +46,21 @@ static struct clk_core *clk_core_lookup(const char *name);
+> > > >  
+> > > >  /***    private data structures    ***/
+> > > >  
+> > > > +/**
+> > > > + * struct critical -   Provides 'play' over critical clocks.  A clock can be
+> > > > + *                     marked as critical, meaning that it should not be
+> > > > + *                     disabled.  However, if a driver which is aware of the
+> > > > + *                     critical behaviour wants to control it, it can do so
+> > > > + *                     using clk_enable_critical() and clk_disable_critical().
+> > > > + *
+> > > > + * @enabled    Is clock critical?  Once set, doesn't change
+> > > > + * @leave_on   Self explanatory.  Can be disabled by knowledgeable drivers
+> > > 
+> > > Not self explanatory. I need this explained to me. What does leave_on
+> > > do? Better yet, what would happen if leave_on did not exist?
+> > > 
+> > > > + */
+> > > > +struct critical {
+> > > > +       bool enabled;
+> > > > +       bool leave_on;
+> > > > +};
+> > > > +
+> > > >  struct clk_core {
+> > > >         const char              *name;
+> > > >         const struct clk_ops    *ops;
+> > > > @@ -75,6 +90,7 @@ struct clk_core {
+> > > >         struct dentry           *dentry;
+> > > >  #endif
+> > > >         struct kref             ref;
+> > > > +       struct critical         critical;
+> > > >  };
+> > > >  
+> > > >  struct clk {
+> > > > @@ -995,6 +1011,10 @@ static void clk_core_disable(struct clk_core *clk)
+> > > >         if (WARN_ON(clk->enable_count == 0))
+> > > >                 return;
+> > > >  
+> > > > +       /* Refuse to turn off a critical clock */
+> > > > +       if (clk->enable_count == 1 && clk->critical.leave_on)
+> > > > +               return;
+> > > 
+> > > How do we get to this point? clk_enable_critical actually calls
+> > > clk_enable, thus incrementing the enable_count. The only time that we
+> > > could hit the above case is if,
+> > > 
+> > > a) there is an imbalance in clk_enable and clk_disable calls. If this is
+> > > the case then the drivers need to be fixed. Or better yet some
+> > > infrastructure to catch that, now that we have per-user struct clk
+> > > cookies.
+> > > 
+> > > b) a driver knowingly calls clk_enable_critical(foo) and then regular,
+> > > old clk_disable(foo). But why would a driver do that?
+> > > 
+> > > It might be that I am missing the point here, so please feel free to
+> > > clue me in.
+> > 
+> > This check behaves in a very similar to the WARN() above.  It's more
+> > of a fail-safe.  If all drivers are behaving properly, then it
+> > shouldn't ever be true.  If they're not, it prevents an incorrectly
+> > written driver from irrecoverably crippling the system.
 > 
-> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+> Then this check should be replaced with a generic approach that refuses
+> to honor imbalances anyways. Below are two patches that probably resolve
+> the issue of badly behaving drivers that cause enable imbalances.
+
+Your patch should make the requirement for this check moot, so it can
+probably be removed.
+
+> > As I said in the other mail.  We can do without these 3 new wrappers.
+> > We _could_ just write a driver which only calls clk_enable() _after_
+> > it calls clk_disable(), a kind of intentional unbalance and it would
+> > do that same thing.
+> 
+> This naive approach will not work with per-user imbalance tracking.
+
+Steady on.  I said we "_could_", that that I think it's a good idea.
+
+I think it's a bad idea, which is why I wrote this set. ;)
+
+> > However, what we're trying to do here is provide
+> > a proper API, so we can see at first glance what the 'knowledgeable'
+> > driver is trying to do and not have someone attempt to submit a 'fix'
+> > which calls clk_enable() or something.
+> 
+> We'll need some type of api for sure for the handoff.
+
+This set will not trigger your new checks.  The clocks will be in
+perfect ballance becuase a reference will be taken at start-up.
+
+Again:
+
+start-up:
+  clk_prepare_enable()
+
+knowlegable_driver_probe:
+  clk_get()
+
+knowlegable_driver_gate_clk:
+  clk_disable_critical()
+
+knowlegable_driver_ungate_clk:
+  clk_enable_critical()
+
+knowlegable_driver_remove:
+  clk_put()
+
+> From 3599ed206da9ce770bfafcfd95cbb9a03ac44473 Mon Sep 17 00:00:00 2001
+> From: Michael Turquette <mturquette@baylibre.com>
+> Date: Wed, 29 Jul 2015 18:22:45 -0700
+> Subject: [PATCH 1/2] clk: per-user clk prepare & enable ref counts
+> 
+> This patch adds prepare and enable reference counts for the per-user
+> handles that clock consumers have for a clock node. This patch warns if
+> an imbalance occurs while trying to disable or unprepare a clock and
+> aborts, leaving the hardware unaffected.
+> 
+> Signed-off-by: Michael Turquette <mturquette@baylibre.com>
 > ---
->  drivers/mfd/88pm800.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
+>  drivers/clk/clk.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
-> diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
-> index f104a32..9723eac 100644
-> --- a/drivers/mfd/88pm800.c
-> +++ b/drivers/mfd/88pm800.c
-> @@ -173,6 +173,14 @@ static const struct mfd_cell regulator_devs[] = {
->  	},
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 898052e..72feee9 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -84,6 +84,8 @@ struct clk {
+>  	unsigned long min_rate;
+>  	unsigned long max_rate;
+>  	struct hlist_node clks_node;
+> +	unsigned int enable_count;
+> +	unsigned int prepare_count;
 >  };
 >  
-> +static struct mfd_cell clk_devs[] = {
-> +	{
-> +	 .name = "88pm80x-clk",
-> +	 .of_compatible = "marvell,88pm800-clk",
-> +	 .id = -1,
-> +	},
-> +};
-
-Why does each device in 88pm800.c have it's own mfd_cell?
-
-Take the opportunity to correct the tabbing in the remainder of the
-file.  Make that fix-up patch 1 of this set.  Then fixup this patch.
-
->  static const struct regmap_irq pm800_irqs[] = {
->  	/* INT0 */
->  	[PM800_IRQ_ONKEY] = {
-> @@ -344,6 +352,17 @@ static int device_regulator_init(struct pm80x_chip *chip)
->  			      ARRAY_SIZE(regulator_devs), NULL, 0, NULL);
+>  /***           locking             ***/
+> @@ -600,6 +602,9 @@ void clk_unprepare(struct clk *clk)
+>  		return;
+>  
+>  	clk_prepare_lock();
+> +	if (WARN_ON(clk->prepare_count == 0))
+> +		return;
+> +	clk->prepare_count--;
+>  	clk_core_unprepare(clk->core);
+>  	clk_prepare_unlock();
 >  }
+> @@ -657,6 +662,7 @@ int clk_prepare(struct clk *clk)
+>  		return 0;
 >  
-> +static int device_clk_init(struct pm80x_chip *chip)
-> +{
-> +	if (chip->type == CHIP_PM800)
-> +		clk_devs[0].name = "88pm800-clk";
-> +	else if (chip->type == CHIP_PM860)
-> +		clk_devs[0].name = "88pm860-clk";
-> +
-> +	return mfd_add_devices(chip->dev, 0, &clk_devs[0],
-> +			      ARRAY_SIZE(clk_devs), NULL, 0, NULL);
-> +}
-> +
->  static int device_irq_init_800(struct pm80x_chip *chip)
->  {
->  	struct regmap *map = chip->regmap;
-> @@ -513,6 +532,12 @@ static int device_800_init(struct pm80x_chip *chip)
->  		goto out;
->  	}
+>  	clk_prepare_lock();
+> +	clk->prepare_count++;
+>  	ret = clk_core_prepare(clk->core);
+>  	clk_prepare_unlock();
 >  
-> +	ret = device_clk_init(chip);
-> +	if (ret) {
-> +		dev_err(chip->dev, "Failed to add clk subdev\n");
-> +		goto out;
-> +	}
-
-Why do these have to be seperate?
-
->  	return 0;
->  out_dev:
->  	mfd_remove_devices(chip->dev);
+> @@ -707,6 +713,9 @@ void clk_disable(struct clk *clk)
+>  		return;
+>  
+>  	flags = clk_enable_lock();
+> +	if (WARN_ON(clk->enable_count == 0))
+> +		return;
+> +	clk->enable_count--;
+>  	clk_core_disable(clk->core);
+>  	clk_enable_unlock(flags);
+>  }
+> @@ -769,6 +778,7 @@ int clk_enable(struct clk *clk)
+>  		return 0;
+>  
+>  	flags = clk_enable_lock();
+> +	clk->enable_count++;
+>  	ret = clk_core_enable(clk->core);
+>  	clk_enable_unlock(flags);
+>  
 
 -- 
 Lee Jones
