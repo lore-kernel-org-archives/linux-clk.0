@@ -1,65 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1438312441.26889.5.camel@mtksdaap41>
+Subject: Re: [PATCH v2 1/5] clocksource: mediatek: do not enable GPT_CLK_EVT
+ when setup
 From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>
-CC: Russell King <linux@arm.linux.org.uk>,
-	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+CC: Stephen Boyd <sboyd@codeaurora.org>,
+	James Liao <jamesjj.liao@mediatek.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	srv_heupstream <srv_heupstream@mediatek.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
 	Catalin Marinas <catalin.marinas@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	<linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Matthias Brugger" <matthias.bgg@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
 	<linux-mediatek@lists.infradead.org>,
 	Sascha Hauer <kernel@pengutronix.de>,
-	Olof Johansson <olof@lixom.net>,
-	Yingjoe Chen <yingjoe.chen@mediatek.com>,
-	<srv_heupstream@mediatek.com>,
+	Olof Johansson <olof@lixom.net>, <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	<linux-clk@vger.kernel.org>, Eddie Huang <eddie.huang@mediatek.com>
-Subject: [PATCH 5/5] arm64: dts: mt8173: add timer node
-Date: Mon, 13 Jul 2015 17:32:49 +0800
-Message-ID: <1436779969-18610-6-git-send-email-yingjoe.chen@mediatek.com>
-In-Reply-To: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
-References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
+	Daniel Kurtz <djkurtz@chromium.org>
+Date: Fri, 31 Jul 2015 11:14:01 +0800
+In-Reply-To: <1437552878-3684-1-git-send-email-yingjoe.chen@mediatek.com>
+References: <CAGS+omD8k_Cfxv3bYyjmjtLbiavo-WmJPn0Z-CBhN_nnv65Tag@mail.gmail.com>
+	 <1437552878-3684-1-git-send-email-yingjoe.chen@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Daniel Kurtz <djkurtz@chromium.org>
+On Wed, 2015-07-22 at 16:14 +0800, Yingjoe Chen wrote:
+> Spurious mtk timer interrupt is noticed at boot and cause kernel
+> crash. It seems if GPT is enabled, it will latch irq status even
+> when its IRQ is disabled. When irq is enabled afterward, we see
+> spurious interrupt.
+> Change init flow to only enable GPT_CLK_SRC at mtk_timer_init.
+> 
+> Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
+> Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> ---
+> Update to my patch [1], added __init as Daniel suggest. This is the
+> only patch that need to change in that series, so I only sent this one.
+> 
+> http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001545.html
 
-Add device node to enable GPT timer. This timer will be
-used as sched clock source.
 
-Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
-Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8173.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Hi Daniel, Thomas,
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 0696f8f..04bdd8f 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -219,6 +219,15 @@
- 			reg = <0 0x10007000 0 0x100>;
- 		};
- 
-+		timer: timer@10008000 {
-+			compatible = "mediatek,mt8173-timer",
-+				     "mediatek,mt6577-timer";
-+			reg = <0 0x10008000 0 0x1000>;
-+			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&infracfg CLK_INFRA_CLK_13M>,
-+				 <&topckgen CLK_TOP_RTC_SEL>;
-+		};
-+
- 		pwrap: pwrap@1000d000 {
- 			compatible = "mediatek,mt8173-pwrap";
- 			reg = <0 0x1000d000 0 0x1000>;
--- 
-1.8.1.1.dirty
+Any suggestions for mtk_timer fixes in this series?
+Should I resend and add tags from the reviewers?
+
+Joe.C
+
 
