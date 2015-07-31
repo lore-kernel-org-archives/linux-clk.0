@@ -1,43 +1,40 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <55BBE47F.3010307@codeaurora.org>
+Date: Fri, 31 Jul 2015 14:11:27 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Tero Kristo <t-kristo@ti.com>
-Subject: [PATCH 4/4] clk: ti: Force pointer to be __iomem
-Date: Wed, 15 Jul 2015 13:08:19 -0700
-Message-Id: <1436990899-13105-5-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436990899-13105-1-git-send-email-sboyd@codeaurora.org>
-References: <1436990899-13105-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+MIME-Version: 1.0
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+CC: Nicolas Ferre <nicolas.ferre@atmel.com>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH 23/23] clk: at91: Revert "keep slow clk enabled to prevent
+ system hang"
+References: <1438335599-3301-1-git-send-email-alexandre.belloni@free-electrons.com> <1438335599-3301-24-git-send-email-alexandre.belloni@free-electrons.com> <55BBC5CC.80406@codeaurora.org> <20150731210905.GM27985@piout.net>
+In-Reply-To: <20150731210905.GM27985@piout.net>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Add __force here so that sparse doesn't complain about us playing
-tricks with __iomem.
+On 07/31/2015 02:09 PM, Alexandre Belloni wrote:
+> On 31/07/2015 at 12:00:28 -0700, Stephen Boyd wrote :
+>> On 07/31/2015 02:39 AM, Alexandre Belloni wrote:
+>>> -	clk_prepare_enable(slow_clk);
+>>> -
+>>> -	return 0;
+>>> -}
+>>> -arch_initcall(of_at91_clk_slow_retain);
+>> Can you drop the include of clk.h in this file too?
+>>
+> Sure! I will do that in v3. However, I'll wait for some feedback from
+> the other maintainers before sending again.
+>
 
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
+Cool. Also, are you going to take this through arm-soc? If so, feel free 
+to add my ack.
 
-This whole scheme is really ugly, hopefully it can be cleaned up soon.
-
- drivers/clk/ti/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index 5dcc1bdfc7f4..ace35047783b 100644
---- a/drivers/clk/ti/clk.c
-+++ b/drivers/clk/ti/clk.c
-@@ -194,7 +194,7 @@ void __iomem *ti_clk_get_reg_addr(struct device_node *node, int index)
- 
- 	reg->offset = val;
- 
--	return (void __iomem *)tmp;
-+	return (__force void __iomem *)tmp;
- }
- 
- /**
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
-
