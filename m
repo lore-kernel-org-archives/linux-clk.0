@@ -1,68 +1,79 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 2 Jul 2015 22:04:59 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	matthias.bgg@gmail.com
+Cc: s.hauer@pengutronix.de,
+	jamesjj.liao@mediatek.com,
+	henryc.chen@mediatek.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Boris BREZILLON <boris.brezillon@free-electrons.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Tawfik Bayouk <tawfik@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH] clk: mvebu: update cpu clock frequency
-Message-ID: <20150702200459.GF13481@lunn.ch>
-References: <1435866158-910-1-git-send-email-gregory.clement@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1435866158-910-1-git-send-email-gregory.clement@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+	linux-mediatek@lists.infradead.org,
+	manabian@gmail.com,
+	p.zabel@pengutronix.com
+Subject: [PATCH v4 RESEND 3/3] clk: mediatek: Use regmap clk-mux for mt8135
+Date: Fri, 31 Jul 2015 17:14:19 +0200
+Message-Id: <1438355659-21558-4-git-send-email-matthias.bgg@gmail.com>
+In-Reply-To: <1438355659-21558-1-git-send-email-matthias.bgg@gmail.com>
+References: <1438355659-21558-1-git-send-email-matthias.bgg@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jul 02, 2015 at 09:42:38PM +0200, Gregory CLEMENT wrote:
-> Since u-boot 2015_T1.0p6 there are new requency settings available.
+The pericfg controller is used by various device drivers, so that it
+is implemented via a regmap. In the actual clk implementation for
+mt8135, some clk-mux use the traditional register approach which
+acceses the register via iomem.
+This patch changes the use from iomem to the needed regmap.
 
-Hi Gregory
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+---
+ drivers/clk/mediatek/clk-mt8135.c | 21 +++++++--------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
 
-Missing f in f_requency.
-
-Also, what has u-boot got to do with this? I would expect this is a
-property of the hardware. What happens is an older u-boot is used?
-
-Thanks
-	Andrew
-
-> 
-> Based on a patch from Nadav Haklai <nadavh@marvell.com>
-> 
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
->  drivers/clk/mvebu/armada-38x.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
-> index 8bccf4ecdab6..c64037e2e89f 100644
-> --- a/drivers/clk/mvebu/armada-38x.c
-> +++ b/drivers/clk/mvebu/armada-38x.c
-> @@ -46,10 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
->  }
->  
->  static const u32 armada_38x_cpu_frequencies[] __initconst = {
-> -	0, 0, 0, 0,
-> -	1066 * 1000 * 1000, 0, 0, 0,
-> +	666 * 1000 * 1000, 0, 800 * 1000 * 1000, 0,
-> +	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
->  	1332 * 1000 * 1000, 0, 0, 0,
-> -	1600 * 1000 * 1000,
-> +	1600 * 1000 * 1000, 0, 0, 0,
-> +	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
->  };
->  
->  static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
-> -- 
-> 2.1.0
-> 
+diff --git a/drivers/clk/mediatek/clk-mt8135.c b/drivers/clk/mediatek/clk-mt8135.c
+index 08b4b84..c28a9d4 100644
+--- a/drivers/clk/mediatek/clk-mt8135.c
++++ b/drivers/clk/mediatek/clk-mt8135.c
+@@ -513,11 +513,11 @@ static const char * const uart_ck_sel_parents[] __initconst = {
+ 	"uart_sel",
+ };
+ 
+-static const struct mtk_composite peri_clks[] __initconst = {
+-	MUX(CLK_PERI_UART0_SEL, "uart0_ck_sel", uart_ck_sel_parents, 0x40c, 0, 1),
+-	MUX(CLK_PERI_UART1_SEL, "uart1_ck_sel", uart_ck_sel_parents, 0x40c, 1, 1),
+-	MUX(CLK_PERI_UART2_SEL, "uart2_ck_sel", uart_ck_sel_parents, 0x40c, 2, 1),
+-	MUX(CLK_PERI_UART3_SEL, "uart3_ck_sel", uart_ck_sel_parents, 0x40c, 3, 1),
++static const struct mtk_regm_mux peri_clks[] __initconst = {
++	MUX_REGMAP(CLK_PERI_UART0_SEL, "uart0_ck_sel", uart_ck_sel_parents, 0x40c, 0, 1),
++	MUX_REGMAP(CLK_PERI_UART1_SEL, "uart1_ck_sel", uart_ck_sel_parents, 0x40c, 1, 1),
++	MUX_REGMAP(CLK_PERI_UART2_SEL, "uart2_ck_sel", uart_ck_sel_parents, 0x40c, 2, 1),
++	MUX_REGMAP(CLK_PERI_UART3_SEL, "uart3_ck_sel", uart_ck_sel_parents, 0x40c, 3, 1),
+ };
+ 
+ static void __init mtk_topckgen_init(struct device_node *node)
+@@ -573,20 +573,13 @@ static void __init mtk_pericfg_init(struct device_node *node)
+ {
+ 	struct clk_onecell_data *clk_data;
+ 	int r;
+-	void __iomem *base;
+-
+-	base = of_iomap(node, 0);
+-	if (!base) {
+-		pr_err("%s(): ioremap failed\n", __func__);
+-		return;
+-	}
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_PERI_NR_CLK);
+ 
+ 	mtk_clk_register_gates(node, peri_gates, ARRAY_SIZE(peri_gates),
+ 						clk_data);
+-	mtk_clk_register_composites(peri_clks, ARRAY_SIZE(peri_clks), base,
+-			&mt8135_clk_lock, clk_data);
++	mtk_clk_regm_register_mux(node, peri_clks, ARRAY_SIZE(peri_clks),
++			clk_data);
+ 
+ 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+ 	if (r)
+-- 
+1.9.1
