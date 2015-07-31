@@ -1,40 +1,307 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20150731065008.GU3159@codeaurora.org>
-References: <1438172615-11276-1-git-send-email-linus.walleij@linaro.org>
-	<20150731065008.GU3159@codeaurora.org>
-Date: Fri, 31 Jul 2015 12:26:14 +0200
-Message-ID: <CACRpkdbaGU8jMQY=WpkV0ZF_KfFCq167kWCD_CropJM10RC9QQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: versatile/impd1: switch order of CLCD clocks
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+ Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ b.zolnierkie@samsung.com, Doug Anderson <dianders@chromium.org>,
+ Andreas Faerber <afaerber@suse.de>
+Subject: [PATCH v3 2/5] ARM: dts: Exynos4x12: add CPU OPP and regulator supply
+ property
+Date: Fri, 31 Jul 2015 20:49:14 +0200
+Message-id: <1438368557-2352-3-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 31, 2015 at 8:50 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 07/29, Linus Walleij wrote:
->> The CLCD clocks are registered in the wrong order: first the
->> APB clock, then the pixelclock. This should be the other way
->> around so the driver gets the pixelclock, not the APB clock,
->> when it asks for the first clock for the block.
->>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->
-> Is this because the consumer driver is calling clk_get() with a
-> NULL connection id for the pixelclock and then a more specific
-> connection id for the apb clk?
+For Exynos4x12 platforms, add CPU operating points (using
+opp-v2 bindings) and CPU regulator supply properties for
+migrating from Exynos specific cpufreq driver to using
+generic cpufreq driver.
 
-Yes. Like most PrimeCells do.
+Based on the earlier work by Thomas Abraham.
 
-> Where's the consumer driver?
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Andreas Faerber <afaerber@suse.de>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/boot/dts/exynos4212.dtsi               | 81 ++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 ++
+ arch/arm/boot/dts/exynos4412-origen.dts         |  4 ++
+ arch/arm/boot/dts/exynos4412-trats2.dts         |  4 ++
+ arch/arm/boot/dts/exynos4412.dtsi               | 83 +++++++++++++++++++++++++
+ 5 files changed, 176 insertions(+)
 
-The NULL (pixel) clock is taken by:
-drivers/video/fbdev/amba-clcd.c
-
-The APB "apb_pclk" clock is taken by:
-drivers/amba/bus.c
-
-Yours,
-Linus Walleij
+diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
+index d9c8efee..5389011 100644
+--- a/arch/arm/boot/dts/exynos4212.dtsi
++++ b/arch/arm/boot/dts/exynos4212.dtsi
+@@ -30,6 +30,9 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0xA00>;
++			clocks = <&clock CLK_ARM_CLK>;
++			clock-names = "cpu";
++			operating-points-v2 = <&cpu0_opp_table>;
+ 			cooling-min-level = <13>;
+ 			cooling-max-level = <7>;
+ 			#cooling-cells = <2>; /* min followed by max */
+@@ -39,6 +42,84 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0xA01>;
++			operating-points-v2 = <&cpu0_opp_table>;
++		};
++	};
++
++	cpu0_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp00 {
++			opp-hz = /bits/ 64 <200000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <200000>;
++		};
++		opp01 {
++			opp-hz = /bits/ 64 <300000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <200000>;
++		};
++		opp02 {
++			opp-hz = /bits/ 64 <400000000>;
++			opp-microvolt = <925000>;
++			clock-latency-ns = <200000>;
++		};
++		opp03 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <950000>;
++			clock-latency-ns = <200000>;
++		};
++		opp04 {
++			opp-hz = /bits/ 64 <600000000>;
++			opp-microvolt = <975000>;
++			clock-latency-ns = <200000>;
++		};
++		opp05 {
++			opp-hz = /bits/ 64 <700000000>;
++			opp-microvolt = <987500>;
++			clock-latency-ns = <200000>;
++		};
++		opp06 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <1000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp07 {
++			opp-hz = /bits/ 64 <900000000>;
++			opp-microvolt = <1037500>;
++			clock-latency-ns = <200000>;
++		};
++		opp08 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <1087500>;
++			clock-latency-ns = <200000>;
++		};
++		opp09 {
++			opp-hz = /bits/ 64 <1100000000>;
++			opp-microvolt = <1137500>;
++			clock-latency-ns = <200000>;
++		};
++		opp10 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <1187500>;
++			clock-latency-ns = <200000>;
++		};
++		opp11 {
++			opp-hz = /bits/ 64 <1300000000>;
++			opp-microvolt = <1250000>;
++			clock-latency-ns = <200000>;
++		};
++		opp12 {
++			opp-hz = /bits/ 64 <1400000000>;
++			opp-microvolt = <1287500>;
++			clock-latency-ns = <200000>;
++		};
++		opp13 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <1350000>;
++			clock-latency-ns = <200000>;
++			turbo-mode;
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index ca7d168..db52841 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -107,6 +107,10 @@
+ 	};
+ };
+ 
++&cpu0 {
++	cpu0-supply = <&buck2_reg>;
++};
++
+ /* RSTN signal for eMMC */
+ &sd1_cd {
+ 	samsung,pin-pud = <0>;
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index 84c7631..9d528af 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -78,6 +78,10 @@
+ 	};
+ };
+ 
++&cpu0 {
++	cpu0-supply = <&buck2_reg>;
++};
++
+ &fimd {
+ 	pinctrl-0 = <&lcd_clk &lcd_data24 &pwm1_out>;
+ 	pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 8848400..2a1ebb7 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -288,6 +288,10 @@
+ 	status = "okay";
+ };
+ 
++&cpu0 {
++	cpu0-supply = <&buck2_reg>;
++};
++
+ &csis_0 {
+ 	status = "okay";
+ 	vddcore-supply = <&ldo8_reg>;
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index b78ada7..ca0e3c1 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -30,6 +30,9 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0xA00>;
++			clocks = <&clock CLK_ARM_CLK>;
++			clock-names = "cpu";
++			operating-points-v2 = <&cpu0_opp_table>;
+ 			cooling-min-level = <13>;
+ 			cooling-max-level = <7>;
+ 			#cooling-cells = <2>; /* min followed by max */
+@@ -39,18 +42,98 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0xA01>;
++			operating-points-v2 = <&cpu0_opp_table>;
+ 		};
+ 
+ 		cpu@A02 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0xA02>;
++			operating-points-v2 = <&cpu0_opp_table>;
+ 		};
+ 
+ 		cpu@A03 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0xA03>;
++			operating-points-v2 = <&cpu0_opp_table>;
++		};
++	};
++
++	cpu0_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp00 {
++			opp-hz = /bits/ 64 <200000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <200000>;
++		};
++		opp01 {
++			opp-hz = /bits/ 64 <300000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <200000>;
++		};
++		opp02 {
++			opp-hz = /bits/ 64 <400000000>;
++			opp-microvolt = <925000>;
++			clock-latency-ns = <200000>;
++		};
++		opp03 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <950000>;
++			clock-latency-ns = <200000>;
++		};
++		opp04 {
++			opp-hz = /bits/ 64 <600000000>;
++			opp-microvolt = <975000>;
++			clock-latency-ns = <200000>;
++		};
++		opp05 {
++			opp-hz = /bits/ 64 <700000000>;
++			opp-microvolt = <987500>;
++			clock-latency-ns = <200000>;
++		};
++		opp06 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <1000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp07 {
++			opp-hz = /bits/ 64 <900000000>;
++			opp-microvolt = <1037500>;
++			clock-latency-ns = <200000>;
++		};
++		opp08 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <1087500>;
++			clock-latency-ns = <200000>;
++		};
++		opp09 {
++			opp-hz = /bits/ 64 <1100000000>;
++			opp-microvolt = <1137500>;
++			clock-latency-ns = <200000>;
++		};
++		opp10 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <1187500>;
++			clock-latency-ns = <200000>;
++		};
++		opp11 {
++			opp-hz = /bits/ 64 <1300000000>;
++			opp-microvolt = <1250000>;
++			clock-latency-ns = <200000>;
++		};
++		opp12 {
++			opp-hz = /bits/ 64 <1400000000>;
++			opp-microvolt = <1287500>;
++			clock-latency-ns = <200000>;
++		};
++		opp13 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <1350000>;
++			clock-latency-ns = <200000>;
++			turbo-mode;
+ 		};
+ 	};
+ 
+-- 
+1.9.1
