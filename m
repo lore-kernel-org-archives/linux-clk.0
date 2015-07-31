@@ -1,96 +1,80 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:59314 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753099AbbGaOVT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 31 Jul 2015 10:21:19 -0400
-Message-ID: <55BB8412.2000905@ti.com>
-Date: Fri, 31 Jul 2015 10:20:02 -0400
-From: Murali Karicheri <m-karicheri2@ti.com>
-MIME-Version: 1.0
-To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<ssantosh@kernel.org>, <mturquette@linaro.org>,
-	<sboyd@codeaurora.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux@arm.linux.org.uk>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/2] ARM: dts: keystone: fix dt bindings to use post div
- register for mainpll
-References: <1432915453-409-1-git-send-email-m-karicheri2@ti.com> <1432915453-409-2-git-send-email-m-karicheri2@ti.com>
-In-Reply-To: <1432915453-409-2-git-send-email-m-karicheri2@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq driver for
+ Exynos4x12
+Date: Fri, 31 Jul 2015 20:49:15 +0200
+Message-id: <1438368557-2352-4-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/29/2015 12:04 PM, Murali Karicheri wrote:
-> All of the keystone devices have a separate register to hold post
-> divider value for main pll clock. Currently the fixed-postdiv
-> value used for k2hk/l/e SoCs works by sheer luck as u-boot happens to
-> use a value of 2 for this. Now that we have fixed this in the pll
-> clock driver change the dt bindings for the same.
->
-> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
-> ---
->   arch/arm/boot/dts/k2e-clocks.dtsi  | 5 ++---
->   arch/arm/boot/dts/k2hk-clocks.dtsi | 5 ++---
->   arch/arm/boot/dts/k2l-clocks.dtsi  | 5 ++---
->   3 files changed, 6 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/k2e-clocks.dtsi b/arch/arm/boot/dts/k2e-clocks.dtsi
-> index 4773d6a..d56d68f 100644
-> --- a/arch/arm/boot/dts/k2e-clocks.dtsi
-> +++ b/arch/arm/boot/dts/k2e-clocks.dtsi
-> @@ -13,9 +13,8 @@ clocks {
->   		#clock-cells = <0>;
->   		compatible = "ti,keystone,main-pll-clock";
->   		clocks = <&refclksys>;
-> -		reg = <0x02620350 4>, <0x02310110 4>;
-> -		reg-names = "control", "multiplier";
-> -		fixed-postdiv = <2>;
-> +		reg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
-> +		reg-names = "control", "multiplier", "post-divider";
->   	};
->
->   	papllclk: papllclk@2620358 {
-> diff --git a/arch/arm/boot/dts/k2hk-clocks.dtsi b/arch/arm/boot/dts/k2hk-clocks.dtsi
-> index d5adee3..af9b719 100644
-> --- a/arch/arm/boot/dts/k2hk-clocks.dtsi
-> +++ b/arch/arm/boot/dts/k2hk-clocks.dtsi
-> @@ -22,9 +22,8 @@ clocks {
->   		#clock-cells = <0>;
->   		compatible = "ti,keystone,main-pll-clock";
->   		clocks = <&refclksys>;
-> -		reg = <0x02620350 4>, <0x02310110 4>;
-> -		reg-names = "control", "multiplier";
-> -		fixed-postdiv = <2>;
-> +		reg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
-> +		reg-names = "control", "multiplier", "post-divider";
->   	};
->
->   	papllclk: papllclk@2620358 {
-> diff --git a/arch/arm/boot/dts/k2l-clocks.dtsi b/arch/arm/boot/dts/k2l-clocks.dtsi
-> index eb1e3e2..ef8464b 100644
-> --- a/arch/arm/boot/dts/k2l-clocks.dtsi
-> +++ b/arch/arm/boot/dts/k2l-clocks.dtsi
-> @@ -22,9 +22,8 @@ clocks {
->   		#clock-cells = <0>;
->   		compatible = "ti,keystone,main-pll-clock";
->   		clocks = <&refclksys>;
-> -		reg = <0x02620350 4>, <0x02310110 4>;
-> -		reg-names = "control", "multiplier";
-> -		fixed-postdiv = <2>;
-> +		reg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
-> +		reg-names = "control", "multiplier", "post-divider";
->   	};
->
->   	papllclk: papllclk@2620358 {
->
-Santosh,
+The new CPU clock type allows the use of generic CPUfreq driver.
+Switch Exynos4x12 to using generic cpufreq driver.
 
-The clk driver update is already merged to v4.2-rc. Could you send this 
-DT update as well for 4.2-rc?
+Also make CPUFREQ_DT config option select Exynos thermal driver
+if Exynos platform support is enabled.
 
-Murali
+Please also note that the switch to use the generic cpufreq-dt
+driver fixes the minor issue present with the old code (support
+for 'boost' mode in the exynos-cpufreq driver was enabled for
+all supported SoCs even though 'boost' frequency was provided
+only for Exynos4x12 ones).
 
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/mach-exynos/exynos.c | 2 ++
+ drivers/cpufreq/Kconfig       | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 77ac021..1c47aee 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -227,6 +227,8 @@ static void __init exynos_init_irq(void)
+ static const struct of_device_id exynos_cpufreq_matches[] = {
+ 	{ .compatible = "samsung,exynos3250", .data = "cpufreq-dt" },
+ 	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
++	{ .compatible = "samsung,exynos4212", .data = "cpufreq-dt" },
++	{ .compatible = "samsung,exynos4412", .data = "cpufreq-dt" },
+ 	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
+ 	{ /* sentinel */ }
+ };
+diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+index 659879a..bf6d596 100644
+--- a/drivers/cpufreq/Kconfig
++++ b/drivers/cpufreq/Kconfig
+@@ -191,6 +191,7 @@ config CPUFREQ_DT
+ 	# if CPU_THERMAL is on and THERMAL=m, CPUFREQ_DT cannot be =y:
+ 	depends on !CPU_THERMAL || THERMAL
+ 	select PM_OPP
++	select EXYNOS_THERMAL if ARCH_EXYNOS
+ 	help
+ 	  This adds a generic DT based cpufreq driver for frequency management.
+ 	  It supports both uniprocessor (UP) and symmetric multiprocessor (SMP)
 -- 
-Murali Karicheri
-Linux Kernel, Keystone
+1.9.1
+
