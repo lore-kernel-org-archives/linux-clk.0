@@ -1,54 +1,43 @@
-Return-Path: <kgene@kernel.org>
-Message-ID: <55BA36A7.3050107@kernel.org>
-Date: Thu, 30 Jul 2015 23:37:27 +0900
-From: Kukjin Kim <kgene@kernel.org>
+Return-Path: <santosh.shilimkar@oracle.com>
+Subject: Re: [PATCH 2/2] ARM: dts: keystone: fix dt bindings to use post div
+ register for mainpll
+To: Murali Karicheri <m-karicheri2@ti.com>, robh+dt@kernel.org,
+        pawel.moll@arm.com, mark.rutland@arm.com,
+        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+        ssantosh@kernel.org, mturquette@linaro.org, sboyd@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+References: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
+ <1432915453-409-2-git-send-email-m-karicheri2@ti.com>
+ <55BB8412.2000905@ti.com>
+From: santosh shilimkar <santosh.shilimkar@oracle.com>
+Message-ID: <55BB94A4.1010200@oracle.com>
+Date: Fri, 31 Jul 2015 08:30:44 -0700
 MIME-Version: 1.0
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-CC: Viresh Kumar <viresh.kumar@linaro.org>,
- Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Lukasz Majewski <l.majewski@samsung.com>,
- Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
- Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com> <3141301.RS9TLygaba@amdc1976> <20150727113641.GB10181@linux> <2681271.3UazeZ9PAQ@amdc1976>
-In-Reply-To: <2681271.3UazeZ9PAQ@amdc1976>
-Content-Type: text/plain; charset=ISO-8859-1
+In-Reply-To: <55BB8412.2000905@ti.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/27/15 20:47, Bartlomiej Zolnierkiewicz wrote:
-> On Monday, July 27, 2015 05:06:41 PM Viresh Kumar wrote:
->> On 27-07-15, 13:14, Bartlomiej Zolnierkiewicz wrote:
->>> Sorry but you don't seem to understand the issue.
+On 7/31/2015 7:20 AM, Murali Karicheri wrote:
+> On 05/29/2015 12:04 PM, Murali Karicheri wrote:
+>> All of the keystone devices have a separate register to hold post
+>> divider value for main pll clock. Currently the fixed-postdiv
+>> value used for k2hk/l/e SoCs works by sheer luck as u-boot happens to
+>> use a value of 2 for this. Now that we have fixed this in the pll
+>> clock driver change the dt bindings for the same.
 >>
->> :)
->>
->> No, I did. I understand that if someone uses opp bindings today with
->> some entries as turbo OPPs, cpufreq will use them as normal
->> frequencies. And that may harm the board.
->>
->> BUT, opp-v2 code isn't ready to be used yet. And platforms should see
->> what all is implemented before trying to use them.
-> 
-> OK.
-> 
->> All I was saying is, this isn't a FIX as we haven't introduced the
->> feature yet. Otherwise I had no issues with the patch.
-> 
-> I will update the description for the next patchset revision.
-> 
-Hi Bart,
+>> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+>> ---
 
-When will you re-post v3? Because I have a plan to send a pull-request
-to arm-soc until this weekend...
+[..]
 
-- Kukjin
+> Santosh,
+>
+> The clk driver update is already merged to v4.2-rc. Could you send this
+> DT update as well for 4.2-rc?
+>
+Sure.
+
+Regards,
+Santosh
