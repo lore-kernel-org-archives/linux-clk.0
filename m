@@ -1,146 +1,81 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	linux-pm@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Boris BREZILLON <boris.brezillon@free-electrons.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Tawfik Bayouk <tawfik@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>
-Subject: [PATCH RFC 3/5] ARM: mvebu: Made the dynamic frequency scaling support more generic
-Date: Fri,  3 Jul 2015 08:11:55 +0200
-Message-Id: <1435903917-20486-4-git-send-email-gregory.clement@free-electrons.com>
-In-Reply-To: <1435903917-20486-1-git-send-email-gregory.clement@free-electrons.com>
-References: <1435903917-20486-1-git-send-email-gregory.clement@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH v2 5/7] ARM: sun8i: Add clock indices
+Date: Fri, 31 Jul 2015 19:46:20 +0200
+Message-Id: <1438364782-3968-6-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-In preparation to support cpufreq for Armada 38x:
+The A23 and A33 gates have a non continuous set of clock IDs that are
+valid. Add the clock-indices property to the DT to express this.
 
-- rename the function to be more generic.
-
-- move masking interrupt to the _dfs_request_local function in order
-  to be use by both SoCs.
-
-- add stubs allowing registering the support for a new SoC
-
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- arch/arm/mach-mvebu/pmsu.c | 48 +++++++++++++++++++++++++---------------------
- 1 file changed, 26 insertions(+), 22 deletions(-)
+ arch/arm/boot/dts/sun8i-a23-a33.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/arch/arm/mach-mvebu/pmsu.c b/arch/arm/mach-mvebu/pmsu.c
-index d207f5fc13a6..f19be0ac0068 100644
---- a/arch/arm/mach-mvebu/pmsu.c
-+++ b/arch/arm/mach-mvebu/pmsu.c
-@@ -105,6 +105,7 @@ static phys_addr_t pmsu_mp_phys_base;
- static void __iomem *pmsu_mp_base;
- 
- static void *mvebu_cpu_resume;
-+static int (*mvebu_pmsu_dfs_request_ptr)(int cpu);
- 
- static const struct of_device_id of_pmsu_table[] = {
- 	{ .compatible = "marvell,armada-370-pmsu", },
-@@ -522,6 +523,14 @@ static void mvebu_pmsu_dfs_request_local(void *data)
- 
- 	local_irq_save(flags);
- 
-+	/* Clear any previous DFS DONE event */
-+	reg = readl(pmsu_mp_base + PMSU_EVENT_STATUS_MSK(cpu));
-+	reg &= ~PMSU_EVENT_STATUS_MSK_DFS_DONE;
-+
-+	/* Mask the DFS done interrupt, since we are going to poll */
-+	reg |= PMSU_EVENT_STATUS_MSK_DFS_DONE_MASK;
-+	writel(reg, pmsu_mp_base + PMSU_EVENT_STATUS_MSK(cpu));
-+
- 	/* Prepare to enter idle */
- 	reg = readl(pmsu_mp_base + PMSU_STATUS_MSK(cpu));
- 	reg |= PMSU_STATUS_MSK_CPU_IDLE_WAIT |
-@@ -545,25 +554,20 @@ static void mvebu_pmsu_dfs_request_local(void *data)
- 	reg &= ~PMSU_STATUS_MSK_CPU_IDLE_WAIT;
- 	writel(reg, pmsu_mp_base + PMSU_STATUS_MSK(cpu));
- 
-+	/* Restore the DFS mask to its original state */
-+	reg = readl(pmsu_mp_base + PMSU_EVENT_STATUS_MSK(cpu));
-+	reg &= ~PMSU_EVENT_STATUS_MSK_DFS_DONE_MASK;
-+	writel(reg, pmsu_mp_base + PMSU_EVENT_STATUS_MSK(cpu));
-+
- 	local_irq_restore(flags);
- }
- 
--int mvebu_pmsu_dfs_request(int cpu)
-+int armada_xp_pmsu_dfs_request(int cpu)
- {
- 	unsigned long timeout;
- 	int hwcpu = cpu_logical_map(cpu);
- 	u32 reg;
- 
--	/* Clear any previous DFS DONE event */
--	reg = readl(pmsu_mp_base + PMSU_EVENT_STATUS_AND_MASK(hwcpu));
--	reg &= ~PMSU_EVENT_STATUS_AND_MASK_DFS_DONE;
--	writel(reg, pmsu_mp_base + PMSU_EVENT_STATUS_AND_MASK(hwcpu));
--
--	/* Mask the DFS done interrupt, since we are going to poll */
--	reg = readl(pmsu_mp_base + PMSU_EVENT_STATUS_AND_MASK(hwcpu));
--	reg |= PMSU_EVENT_STATUS_AND_MASK_DFS_DONE_MASK;
--	writel(reg, pmsu_mp_base + PMSU_EVENT_STATUS_AND_MASK(hwcpu));
--
- 	/* Trigger the DFS on the appropriate CPU */
- 	smp_call_function_single(cpu, mvebu_pmsu_dfs_request_local,
- 				 NULL, false);
-@@ -579,20 +583,19 @@ int mvebu_pmsu_dfs_request(int cpu)
- 
- 	if (time_after(jiffies, timeout))
- 		return -ETIME;
--
--	/* Restore the DFS mask to its original state */
--	reg = readl(pmsu_mp_base + PMSU_EVENT_STATUS_AND_MASK(hwcpu));
--	reg &= ~PMSU_EVENT_STATUS_AND_MASK_DFS_DONE_MASK;
--	writel(reg, pmsu_mp_base + PMSU_EVENT_STATUS_AND_MASK(hwcpu));
--
- 	return 0;
- }
- 
--struct cpufreq_dt_platform_data cpufreq_dt_pd = {
-+int mvebu_pmsu_dfs_request(int cpu)
-+{
-+	return mvebu_pmsu_dfs_request_ptr(cpu);
-+}
-+
-+struct cpufreq_dt_platform_data armada_xp_cpufreq_dt_pd = {
- 	.independent_clocks = true,
- };
- 
--static int __init armada_xp_pmsu_cpufreq_init(void)
-+static int __init mvebu_pmsu_cpufreq_init(void)
- {
- 	struct device_node *np;
- 	struct resource res;
-@@ -663,10 +666,11 @@ static int __init armada_xp_pmsu_cpufreq_init(void)
- 			return ret;
- 		}
- 	}
--
-+	mvebu_pmsu_dfs_request_ptr = armada_xp_pmsu_dfs_request;
- 	platform_device_register_data(NULL, "cpufreq-dt", -1,
--				      &cpufreq_dt_pd, sizeof(cpufreq_dt_pd));
-+				      &armada_xp_cpufreq_dt_pd,
-+				      sizeof(armada_xp_cpufreq_dt_pd));
- 	return 0;
- }
- 
--device_initcall(armada_xp_pmsu_cpufreq_init);
-+device_initcall(mvebu_pmsu_cpufreq_init);
+diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+index 7abd0ae3143d..c318c770b6c1 100644
+--- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
++++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+@@ -180,6 +180,15 @@
+ 			compatible = "allwinner,sun8i-a23-ahb1-gates-clk";
+ 			reg = <0x01c20060 0x8>;
+ 			clocks = <&ahb1>;
++			clock-indices = <1>, <6>,
++					<8>, <9>, <10>,
++					<13>, <14>,
++					<19>, <20>,
++					<21>, <24>, <26>,
++					<29>, <32>, <36>,
++					<40>, <44>, <46>,
++					<52>, <54>,
++					<57>;
+ 			clock-output-names = "ahb1_mipidsi", "ahb1_dma",
+ 					"ahb1_mmc0", "ahb1_mmc1", "ahb1_mmc2",
+ 					"ahb1_nand", "ahb1_sdram",
+@@ -196,6 +205,8 @@
+ 			compatible = "allwinner,sun8i-a23-apb1-gates-clk";
+ 			reg = <0x01c20068 0x4>;
+ 			clocks = <&apb1>;
++			clock-indices = <0>, <5>,
++					<12>, <13>;
+ 			clock-output-names = "apb1_codec", "apb1_pio",
+ 					"apb1_daudio0",	"apb1_daudio1";
+ 		};
+@@ -213,6 +224,10 @@
+ 			compatible = "allwinner,sun8i-a23-apb2-gates-clk";
+ 			reg = <0x01c2006c 0x4>;
+ 			clocks = <&apb2>;
++			clock-indices = <0>, <1>,
++					<2>, <16>,
++					<17>, <18>,
++					<19>, <20>;
+ 			clock-output-names = "apb2_i2c0", "apb2_i2c1",
+ 					"apb2_i2c2", "apb2_uart0",
+ 					"apb2_uart1", "apb2_uart2",
 -- 
-2.1.0
+2.4.6
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
