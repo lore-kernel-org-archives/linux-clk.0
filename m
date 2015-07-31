@@ -1,118 +1,313 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Doug Anderson <dianders@chromium.org>,
-	linux-clk@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Alex Elder <elder@linaro.org>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
+Date: Fri, 31 Jul 2015 20:46:04 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
 	Chao Xie <chao.xie@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Georgi Djakov <georgi.djakov@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Barry Song <baohua@kernel.org>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Viresh Kumar <viresh.linux@gmail.com>,
-	Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
-	Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Peter De Sc hrijver <pdeschrijver@nvidia.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio =?UTF-8?B?TMOz?= =?UTF-8?B?cGV6?= <emilio@elopez.com.ar>,
 	Tero Kristo <t-kristo@ti.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Michal Simek <michal.simek@xilinx.com>,
-	Olof Johansson <olof@lixom.net>,
-	Tyler Baker <tyler.baker@linaro.org>
-Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
-Date: Mon, 27 Jul 2015 10:57:33 +0200
-Message-ID: <4099394.C7vEjTFs8V@diego>
-In-Reply-To: <20150508100247.GQ11057@lukather>
-References: <1429735986-18592-1-git-send-email-heiko@sntech.de> <554BD33D.7050907@codeaurora.org> <20150508100247.GQ11057@lukather>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH 02/26] clk: Replace __clk_get_num_parents with
+ clk_hw_get_num_parents()
+Message-ID: <20150731204604.1d0b753b@bbrezillon>
+In-Reply-To: <1438362246-6664-3-git-send-email-sboyd@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+	<1438362246-6664-3-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime, Stephen,
+On Fri, 31 Jul 2015 10:03:42 -0700
+Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-Am Freitag, 8. Mai 2015, 12:02:47 schrieb Maxime Ripard:
-> On Thu, May 07, 2015 at 02:03:57PM -0700, Stephen Boyd wrote:
-> > On 05/07/15 08:17, Kevin Hilman wrote:
-> > > On Fri, May 1, 2015 at 4:40 PM, Stephen Boyd <sboyd@codeaurora.org> 
-wrote:
-> > >> On 05/01/15 15:07, Heiko Stübner wrote:
-> > >>> Am Freitag, 1. Mai 2015, 13:52:47 schrieb Stephen Boyd:
-> > >>>>> Instead I guess we could hook it less deep into clk_get_sys, like in
-> > >>>>> the
-> > >>>>> following patch?
-> > >>>> 
-> > >>>> It looks like it will work at least, but still I'd prefer to keep the
-> > >>>> orphan check contained to clk.c. How about this compile tested only
-> > >>>> patch?
-> > >>> 
-> > >>> I gave this a spin on my rk3288-firefly board. It still boots, the
-> > >>> clock tree looks the same and it also still defers nicely in the
-> > >>> scenario I needed it for. The implementation also looks nice - and of
-> > >>> course much more compact than my check in two places :-) . I don't
-> > >>> know if you want to put this as follow-up on top or fold it into the
-> > >>> original orphan-check, so in any case
-> > >>> 
-> > >>> Tested-by: Heiko Stuebner <heiko@sntech.de>
-> > >>> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> > >> 
-> > >> Thanks. I'm leaning towards tossing your patch 2/2 and replacing it
-> > >> with
-> > >> my patch and a note that it's based on an earlier patch from you.
-> > > 
-> > > It appears this has landed in linux-next in the form of 882667c1fcf1
-> > > clk: prevent orphan clocks from being used.  A bunch of boot failures
-> > > for sunxi in today's linux-next[1] were bisected down to that patch.
-> > > 
-> > > I confirmed that reverting that commit on top of next/master gets
-> > > sunxi booting again.
-> > 
-> > Thanks for the report. I've removed the two clk orphan patches from
-> > clk-next. Would it be possible to try with next-20150507 and
-> > clk_ignore_unused on the command line?
+> Mostly converted with the following semantic patch:
 > 
-> This makes it work, but it's not really an option.
+> @@
+> struct clk_hw *E;
+> @@
 > 
-> > Also we can try to see if critical clocks aren't being forced on by
-> > applying this patch and looking for clk_get() failures
+> -__clk_get_num_parents(E->clk)
+> +clk_hw_get_num_parents(E)
 > 
-> And that shows that the CPU and DDR clocks are not protected, which
-> obviously is pretty mad.
+> Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+
+> Cc: Chao Xie <chao.xie@marvell.com>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: "Emilio LÃ³pez" <emilio@elopez.com.ar>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/at91/clk-programmable.c    | 2 +-
+>  drivers/clk/at91/clk-usb.c             | 2 +-
+>  drivers/clk/clk-composite.c            | 2 +-
+>  drivers/clk/clk-mux.c                  | 2 +-
+>  drivers/clk/mmp/clk-mix.c              | 8 ++++----
+>  drivers/clk/qcom/clk-rcg.c             | 4 ++--
+>  drivers/clk/qcom/clk-rcg2.c            | 2 +-
+>  drivers/clk/qcom/common.c              | 2 +-
+>  drivers/clk/qcom/mmcc-msm8960.c        | 2 +-
+>  drivers/clk/samsung/clk-s3c2410-dclk.c | 2 +-
+>  drivers/clk/shmobile/clk-div6.c        | 4 ++--
+>  drivers/clk/sunxi/clk-factors.c        | 2 +-
+>  drivers/clk/sunxi/clk-sun6i-ar100.c    | 2 +-
+>  drivers/clk/sunxi/clk-sunxi.c          | 2 +-
+>  drivers/clk/ti/mux.c                   | 2 +-
+>  15 files changed, 20 insertions(+), 20 deletions(-)
 > 
-> I've mass converted all our probing code to use OF_CLK_DECLARE, and
-> make things work again.
-> 
-> http://code.bulix.org/5goa5j-88345?raw
-> 
-> Is this an acceptable solution?
-> 
-> We were already moving to this, I'm not really fond of doing this like
-> that, but I guess this whole debacle makes it necessary.
+> diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
+> index ce9c3b9d00f2..42ec812404ab 100644
+> --- a/drivers/clk/at91/clk-programmable.c
+> +++ b/drivers/clk/at91/clk-programmable.c
+> @@ -64,7 +64,7 @@ static int clk_programmable_determine_rate(struct clk_hw *hw,
+>  	int shift;
+>  	int i;
+>  
+> -	for (i = 0; i < __clk_get_num_parents(hw->clk); i++) {
+> +	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+>  		parent = clk_get_parent_by_index(hw->clk, i);
+>  		if (!parent)
+>  			continue;
+> diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
+> index 1fdf0e33545d..82dce8f2e03b 100644
+> --- a/drivers/clk/at91/clk-usb.c
+> +++ b/drivers/clk/at91/clk-usb.c
+> @@ -66,7 +66,7 @@ static int at91sam9x5_clk_usb_determine_rate(struct clk_hw *hw,
+>  	int tmp_diff;
+>  	int i;
+>  
+> -	for (i = 0; i < __clk_get_num_parents(hw->clk); i++) {
+> +	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+>  		int div;
+>  
+>  		parent = clk_get_parent_by_index(hw->clk, i);
+> diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+> index 35ac062d7df6..7835cc4d1cf9 100644
+> --- a/drivers/clk/clk-composite.c
+> +++ b/drivers/clk/clk-composite.c
+> @@ -92,7 +92,7 @@ static int clk_composite_determine_rate(struct clk_hw *hw,
+>  			return 0;
+>  		}
+>  
+> -		for (i = 0; i < __clk_get_num_parents(mux_hw->clk); i++) {
+> +		for (i = 0; i < clk_hw_get_num_parents(mux_hw); i++) {
+>  			parent = clk_get_parent_by_index(mux_hw->clk, i);
+>  			if (!parent)
+>  				continue;
+> diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+> index 33c09a3bfa51..7129c86a79db 100644
+> --- a/drivers/clk/clk-mux.c
+> +++ b/drivers/clk/clk-mux.c
+> @@ -31,7 +31,7 @@
+>  static u8 clk_mux_get_parent(struct clk_hw *hw)
+>  {
+>  	struct clk_mux *mux = to_clk_mux(hw);
+> -	int num_parents = __clk_get_num_parents(hw->clk);
+> +	int num_parents = clk_hw_get_num_parents(hw);
+>  	u32 val;
+>  
+>  	/*
+> diff --git a/drivers/clk/mmp/clk-mix.c b/drivers/clk/mmp/clk-mix.c
+> index 665cb6794639..8653e555c920 100644
+> --- a/drivers/clk/mmp/clk-mix.c
+> +++ b/drivers/clk/mmp/clk-mix.c
+> @@ -63,7 +63,7 @@ static unsigned int _get_div(struct mmp_clk_mix *mix, unsigned int val)
+>  
+>  static unsigned int _get_mux(struct mmp_clk_mix *mix, unsigned int val)
+>  {
+> -	int num_parents = __clk_get_num_parents(mix->hw.clk);
+> +	int num_parents = clk_hw_get_num_parents(hw);
+>  	int i;
+>  
+>  	if (mix->mux_flags & CLK_MUX_INDEX_BIT)
+> @@ -241,7 +241,7 @@ static int mmp_clk_mix_determine_rate(struct clk_hw *hw,
+>  			}
+>  		}
+>  	} else {
+> -		for (i = 0; i < __clk_get_num_parents(mix_clk); i++) {
+> +		for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+>  			parent = clk_get_parent_by_index(mix_clk, i);
+>  			parent_rate = __clk_get_rate(parent);
+>  			div_val_max = _get_maxdiv(mix);
+> @@ -408,13 +408,13 @@ static int mmp_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+>  		else
+>  			return -EINVAL;
+>  	} else {
+> -		for (i = 0; i < __clk_get_num_parents(mix_clk); i++) {
+> +		for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+>  			parent = clk_get_parent_by_index(mix_clk, i);
+>  			parent_rate = __clk_get_rate(parent);
+>  			if (parent_rate == best_parent_rate)
+>  				break;
+>  		}
+> -		if (i < __clk_get_num_parents(mix_clk))
+> +		if (i < clk_hw_get_num_parents(hw))
+>  			return _set_rate(mix, _get_mux_val(mix, i),
+>  					_get_div_val(mix, best_divisor), 1, 1);
+>  		else
+> diff --git a/drivers/clk/qcom/clk-rcg.c b/drivers/clk/qcom/clk-rcg.c
+> index 2bc42bb21b3d..e5c60826b7a9 100644
+> --- a/drivers/clk/qcom/clk-rcg.c
+> +++ b/drivers/clk/qcom/clk-rcg.c
+> @@ -45,7 +45,7 @@ static u32 src_to_ns(struct src_sel *s, u8 src, u32 ns)
+>  static u8 clk_rcg_get_parent(struct clk_hw *hw)
+>  {
+>  	struct clk_rcg *rcg = to_clk_rcg(hw);
+> -	int num_parents = __clk_get_num_parents(hw->clk);
+> +	int num_parents = clk_hw_get_num_parents(hw);
+>  	u32 ns;
+>  	int i, ret;
+>  
+> @@ -72,7 +72,7 @@ static int reg_to_bank(struct clk_dyn_rcg *rcg, u32 bank)
+>  static u8 clk_dyn_rcg_get_parent(struct clk_hw *hw)
+>  {
+>  	struct clk_dyn_rcg *rcg = to_clk_dyn_rcg(hw);
+> -	int num_parents = __clk_get_num_parents(hw->clk);
+> +	int num_parents = clk_hw_get_num_parents(hw);
+>  	u32 ns, reg;
+>  	int bank;
+>  	int i, ret;
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index db3471eecfee..d1d24917c531 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -63,7 +63,7 @@ static int clk_rcg2_is_enabled(struct clk_hw *hw)
+>  static u8 clk_rcg2_get_parent(struct clk_hw *hw)
+>  {
+>  	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> -	int num_parents = __clk_get_num_parents(hw->clk);
+> +	int num_parents = clk_hw_get_num_parents(hw);
+>  	u32 cfg;
+>  	int i, ret;
+>  
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index 34e60c552cea..2dedceefd21d 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -46,7 +46,7 @@ EXPORT_SYMBOL_GPL(qcom_find_freq);
+>  
+>  int qcom_find_src_index(struct clk_hw *hw, const struct parent_map *map, u8 src)
+>  {
+> -	int i, num_parents = __clk_get_num_parents(hw->clk);
+> +	int i, num_parents = clk_hw_get_num_parents(hw);
+>  
+>  	for (i = 0; i < num_parents; i++)
+>  		if (src == map[i].src)
+> diff --git a/drivers/clk/qcom/mmcc-msm8960.c b/drivers/clk/qcom/mmcc-msm8960.c
+> index 70316a3a107d..97e98278c21a 100644
+> --- a/drivers/clk/qcom/mmcc-msm8960.c
+> +++ b/drivers/clk/qcom/mmcc-msm8960.c
+> @@ -510,7 +510,7 @@ static int pix_rdi_set_parent(struct clk_hw *hw, u8 index)
+>  	u32 val;
+>  	struct clk_pix_rdi *rdi = to_clk_pix_rdi(hw);
+>  	struct clk *clk = hw->clk;
+> -	int num_parents = __clk_get_num_parents(hw->clk);
+> +	int num_parents = clk_hw_get_num_parents(hw);
+>  
+>  	/*
+>  	 * These clocks select three inputs via two muxes. One mux selects
+> diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+> index 71ebad941f86..e9eb935d7616 100644
+> --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
+> +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+> @@ -61,7 +61,7 @@ struct s3c24xx_clkout {
+>  static u8 s3c24xx_clkout_get_parent(struct clk_hw *hw)
+>  {
+>  	struct s3c24xx_clkout *clkout = to_s3c24xx_clkout(hw);
+> -	int num_parents = __clk_get_num_parents(hw->clk);
+> +	int num_parents = clk_hw_get_num_parents(hw);
+>  	u32 val;
+>  
+>  	val = readl_relaxed(S3C24XX_MISCCR) >> clkout->shift;
+> diff --git a/drivers/clk/shmobile/clk-div6.c b/drivers/clk/shmobile/clk-div6.c
+> index 6810bfb6ef5e..ee66f49812df 100644
+> --- a/drivers/clk/shmobile/clk-div6.c
+> +++ b/drivers/clk/shmobile/clk-div6.c
+> @@ -133,7 +133,7 @@ static u8 cpg_div6_clock_get_parent(struct clk_hw *hw)
+>  
+>  	hw_index = (clk_readl(clock->reg) >> clock->src_shift) &
+>  		   (BIT(clock->src_width) - 1);
+> -	for (i = 0; i < __clk_get_num_parents(hw->clk); i++) {
+> +	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+>  		if (clock->parents[i] == hw_index)
+>  			return i;
+>  	}
+> @@ -149,7 +149,7 @@ static int cpg_div6_clock_set_parent(struct clk_hw *hw, u8 index)
+>  	u8 hw_index;
+>  	u32 mask;
+>  
+> -	if (index >= __clk_get_num_parents(hw->clk))
+> +	if (index >= clk_hw_get_num_parents(hw))
+>  		return -EINVAL;
+>  
+>  	mask = ~((BIT(clock->src_width) - 1) << clock->src_shift);
+> diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
+> index a650eae4cc49..574a3da33b58 100644
+> --- a/drivers/clk/sunxi/clk-factors.c
+> +++ b/drivers/clk/sunxi/clk-factors.c
+> @@ -87,7 +87,7 @@ static int clk_factors_determine_rate(struct clk_hw *hw,
+>  	unsigned long parent_rate, best = 0, child_rate, best_child_rate = 0;
+>  
+>  	/* find the parent that can help provide the fastest rate <= rate */
+> -	num_parents = __clk_get_num_parents(clk);
+> +	num_parents = clk_hw_get_num_parents(hw);
+>  	for (i = 0; i < num_parents; i++) {
+>  		parent = clk_get_parent_by_index(clk, i);
+>  		if (!parent)
+> diff --git a/drivers/clk/sunxi/clk-sun6i-ar100.c b/drivers/clk/sunxi/clk-sun6i-ar100.c
+> index 3a2ea010f148..3a9459197f9b 100644
+> --- a/drivers/clk/sunxi/clk-sun6i-ar100.c
+> +++ b/drivers/clk/sunxi/clk-sun6i-ar100.c
+> @@ -47,7 +47,7 @@ static unsigned long ar100_recalc_rate(struct clk_hw *hw,
+>  static int ar100_determine_rate(struct clk_hw *hw,
+>  				struct clk_rate_request *req)
+>  {
+> -	int nparents = __clk_get_num_parents(hw->clk);
+> +	int nparents = clk_hw_get_num_parents(hw);
+>  	long best_rate = -EINVAL;
+>  	int i;
+>  
+> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+> index 1c5b1369e8f3..76e07a19ad38 100644
+> --- a/drivers/clk/sunxi/clk-sunxi.c
+> +++ b/drivers/clk/sunxi/clk-sunxi.c
+> @@ -128,7 +128,7 @@ static int sun6i_ahb1_clk_determine_rate(struct clk_hw *hw,
+>  	unsigned long parent_rate, best = 0, child_rate, best_child_rate = 0;
+>  
+>  	/* find the parent that can help provide the fastest rate <= rate */
+> -	num_parents = __clk_get_num_parents(clk);
+> +	num_parents = clk_hw_get_num_parents(hw);
+>  	for (i = 0; i < num_parents; i++) {
+>  		parent = clk_get_parent_by_index(clk, i);
+>  		if (!parent)
+> diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+> index 99fe27e8376b..69f08a1d047d 100644
+> --- a/drivers/clk/ti/mux.c
+> +++ b/drivers/clk/ti/mux.c
+> @@ -31,7 +31,7 @@
+>  static u8 ti_clk_mux_get_parent(struct clk_hw *hw)
+>  {
+>  	struct clk_mux *mux = to_clk_mux(hw);
+> -	int num_parents = __clk_get_num_parents(hw->clk);
+> +	int num_parents = clk_hw_get_num_parents(hw);
+>  	u32 val;
+>  
+>  	/*
 
 
-did this lead anywhere meanwhile.
 
-Last I remember the change to orphan handling made sunxi fail, but I'm still 
-hoping to get this usable at some point :-)
-
-
-Thanks
-Heiko
-
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
