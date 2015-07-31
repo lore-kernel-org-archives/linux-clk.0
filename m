@@ -1,150 +1,424 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <559FEEE2.6060608@osg.samsung.com>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
-	<1436456621-29839-5-git-send-email-b.zolnierkie@samsung.com>
-	<559F82AE.8070108@samsung.com>
-	<559FEEE2.6060608@osg.samsung.com>
-Date: Sat, 11 Jul 2015 15:36:35 +0900
-Message-ID: <CAJKOXPeziDFrxHcKL8LPTcT9nVbeZqbjGjEL6ioSaWHVdpF_vQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] clk: samsung: exynos4x12: add cpu clock
- configuration data and instantiate cpu clock
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 7/7] clk: sunxi: Add a simple gates driver
+Date: Fri, 31 Jul 2015 19:46:22 +0200
+Message-Id: <1438364782-3968-8-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2015-07-11 1:12 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
-> Hello Krzysztof,
->
-> On 07/10/2015 01:30 AM, Krzysztof Kozlowski wrote:
->> On 10.07.2015 00:43, Bartlomiej Zolnierkiewicz wrote:
->>> With the addition of the new Samsung specific cpu-clock type, the
->>> arm clock can be represented as a cpu-clock type. Add the CPU clock
->>> configuration data and instantiate the CPU clock type for Exynos4x12.
->>>
->>> Based on the earlier work by Thomas Abraham.
->>>
->>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->>> Cc: Michael Turquette <mturquette@baylibre.com>
->>> Cc: Javier Martinez Canillas <javier@dowhile0.org>
->>> Cc: Thomas Abraham <thomas.ab@samsung.com>
->>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->>> ---
->>>  drivers/clk/samsung/clk-exynos4.c | 50 +++++++++++++++++++++++++++++++++++++++
->>>  1 file changed, 50 insertions(+)
->>>
->>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
->>> index cae2c048..3071260 100644
->>> --- a/drivers/clk/samsung/clk-exynos4.c
->>> +++ b/drivers/clk/samsung/clk-exynos4.c
->>> @@ -1396,6 +1396,45 @@ static const struct exynos_cpuclk_cfg_data e4210_armclk_d[] __initconst = {
->>>      {  0 },
->>>  };
->>>
->>> +static const struct exynos_cpuclk_cfg_data e4212_armclk_d[] __initconst = {
->>> +    { 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
->>> +    { 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
->>> +    { 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
->>> +    { 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
->>> +    { 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4210_CPU_DIV1(2, 4), },
->>> +    { 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4210_CPU_DIV1(2, 4), },
->>> +    {  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
->>> +    {  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
->>> +    {  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
->>> +    {  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
->>> +    {  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
->>> +    {  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
->>> +    {  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
->>> +    {  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4210_CPU_DIV1(2, 3), },
->>> +    {  0 },
->>> +};
->>> +
->>> +#define E4412_CPU_DIV1(cores, hpm, copy)                            \
->>> +            (((cores) << 8) | ((hpm) << 4) | ((copy) << 0))
->>> +
->>> +static const struct exynos_cpuclk_cfg_data e4412_armclk_d[] __initconst = {
->>> +    { 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(7, 0, 6), },
->>> +    { 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(6, 0, 6), },
->>> +    { 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(6, 0, 5), },
->>> +    { 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(5, 0, 5), },
->>> +    { 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4412_CPU_DIV1(5, 0, 4), },
->>> +    { 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4412_CPU_DIV1(4, 0, 4), },
->>> +    {  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(4, 0, 3), },
->>> +    {  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(3, 0, 3), },
->>> +    {  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(3, 0, 3), },
->>> +    {  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
->>> +    {  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
->>> +    {  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
->>> +    {  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
->>> +    {  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4412_CPU_DIV1(0, 0, 3), },
->>> +    {  0 },
->>> +};
->>
->> Numbers look fine!
->>
->>> +
->>>  /* register exynos4 clocks */
->>>  static void __init exynos4_clk_init(struct device_node *np,
->>>                                  enum exynos4_soc soc)
->>> @@ -1489,6 +1528,17 @@ static void __init exynos4_clk_init(struct device_node *np,
->>>              samsung_clk_register_fixed_factor(ctx,
->>>                      exynos4x12_fixed_factor_clks,
->>>                      ARRAY_SIZE(exynos4x12_fixed_factor_clks));
->>> +            if (of_machine_is_compatible("samsung,exynos4412")) {
->>
->> The driver uses here enum exynos4_soc to differentiate between SoC
->> (unless I missed some changes). This of_machine_is_compatible() makes
->> sense but introduces inconsistency. I would prefer sticking to one
->> convention: always enum or switch everything (before this patch) to
->> of_compatible.
->>
->
-> When reviewing this patch I also ran into the same thing because as you
-> said, it's not consistent. But digging a little bit I found that is not
-> that easy since the two are not checking exactly the same.
->
-> The enum is to differentiate between "samsung,exynos4412-clock" and
-> "samsung,exynos4210-clock" while the of_machine_is_compatible() is for
-> "samsung,exynos4412" and "samsung,exynos4212".
->
-> The problem is that both exynos4412 and exynos4212 use the same
-> "samsung,exynos4412-clock" compatible for their clock controller nodes.
-> But there are differences so it would had been better to also have a
-> "samsung,exynos4212-clock" to avoid the of_machine_is_compatible() but
-> that is not possible anymore without breaking DT backward compatibility.
->
-> On the other hand, if of_machine_is_compatible() is used for everything,
-> then there is no point anymore to have both "samsung,exynos4412-clock"
-> and "samsung,exynos4210-clock". A single "samsung,exynos4-clock" plus
-> checking the SoC would had been enough.
->
-> That's why I thought that Bart's approach was sensible although is true
-> that the of_compatible() check can be moved to exynos4412_clk_init()
-> and the enum be extended so at least exynos4_clk_init() is consistent.
+The gates were handled with a common piece of framework that was
+registering all gates array, that was not using the CLK_OF_DECLARE logic,
+and was not using clock-indices but some private masks that were pretty
+much equivalent.
 
-You're right, I missed that difference. Thanks for explaining, I agree now:
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Move this code in a new driver that handles all the gates array and solves
+both these issues.
 
-Best regards,
-Krzysztof
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi/Makefile           |   1 +
+ drivers/clk/sunxi/clk-simple-gates.c | 157 +++++++++++++++++++++++++++++++
+ drivers/clk/sunxi/clk-sunxi.c        | 177 -----------------------------------
+ 3 files changed, 158 insertions(+), 177 deletions(-)
+ create mode 100644 drivers/clk/sunxi/clk-simple-gates.c
+
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index 058f273d6154..f5a35b82cc1a 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -6,6 +6,7 @@ obj-y += clk-sunxi.o clk-factors.o
+ obj-y += clk-a10-hosc.o
+ obj-y += clk-a20-gmac.o
+ obj-y += clk-mod0.o
++obj-y += clk-simple-gates.o
+ obj-y += clk-sun8i-mbus.o
+ obj-y += clk-sun9i-core.o
+ obj-y += clk-sun9i-mmc.o
+diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
+new file mode 100644
+index 000000000000..39e57e3d745c
+--- /dev/null
++++ b/drivers/clk/sunxi/clk-simple-gates.c
+@@ -0,0 +1,157 @@
++/*
++ * Copyright 2015 Maxime Ripard
++ *
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++
++static DEFINE_SPINLOCK(gates_lock);
++
++static void __init sunxi_simple_gates_setup(struct device_node *node,
++					    const int protected[],
++					    int nprotected)
++{
++	struct clk_onecell_data *clk_data;
++	const char *clk_parent, *clk_name;
++	struct property *prop;
++	struct resource res;
++	void __iomem *clk_reg;
++	void __iomem *reg;
++	const __be32 *p;
++	int number, i = 0, j;
++	u8 clk_bit;
++	u32 index;
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg))
++		return;
++
++	clk_parent = of_clk_get_parent_name(node, 0);
++
++	clk_data = kmalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
++	if (!clk_data)
++		goto err_unmap;
++
++	number = of_property_count_u32_elems(node, "clock-indices");
++	of_property_read_u32_index(node, "clock-indices", number - 1, &number);
++
++	clk_data->clks = kcalloc(number + 1, sizeof(struct clk *), GFP_KERNEL);
++	if (!clk_data->clks)
++		goto err_free_data;
++
++	of_property_for_each_u32(node, "clock-indices", prop, p, index) {
++		of_property_read_string_index(node, "clock-output-names",
++					      i, &clk_name);
++
++		clk_reg = reg + 4 * (index / 32);
++		clk_bit = index % 32;
++
++		clk_data->clks[index] = clk_register_gate(NULL, clk_name,
++							  clk_parent, 0,
++							  clk_reg,
++							  clk_bit,
++							  0, &gates_lock);
++		i++;
++
++		if (IS_ERR(clk_data->clks[index])) {
++			WARN_ON(true);
++			continue;
++		}
++
++		for (j = 0; j < nprotected; j++)
++			if (protected[j] == index)
++				clk_prepare_enable(clk_data->clks[index]);
++
++	}
++
++	clk_data->clk_num = number + 1;
++	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	return;
++
++err_free_data:
++	kfree(clk_data);
++err_unmap:
++	iounmap(reg);
++	of_address_to_resource(node, 0, &res);
++	release_mem_region(res.start, resource_size(&res));
++}
++
++static void __init sunxi_simple_gates_init(struct device_node *node)
++{
++	sunxi_simple_gates_setup(node, NULL, 0);
++}
++
++CLK_OF_DECLARE(sun4i_a10_apb0, "allwinner,sun4i-a10-apb0-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun4i_a10_apb1, "allwinner,sun4i-a10-apb1-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun4i_a10_axi, "allwinner,sun4i-a10-axi-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun5i_a10s_apb0, "allwinner,sun5i-a10s-apb0-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun5i_a10s_apb1, "allwinner,sun5i-a10s-apb1-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun5i_a13_apb0, "allwinner,sun5i-a13-apb0-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun5i_a13_apb1, "allwinner,sun5i-a13-apb1-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun6i_a31_apb1, "allwinner,sun6i-a31-apb1-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun6i_a31_apb2, "allwinner,sun6i-a31-apb2-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun7i_a20_apb0, "allwinner,sun7i-a20-apb0-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun7i_a20_apb1, "allwinner,sun7i-a20-apb1-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun8i_a23_ahb1, "allwinner,sun8i-a23-ahb1-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun8i_a23_apb1, "allwinner,sun8i-a23-apb1-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun8i_a23_apb2, "allwinner,sun8i-a23-apb2-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun9i_a80_ahb0, "allwinner,sun9i-a80-ahb0-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun9i_a80_ahb1, "allwinner,sun9i-a80-ahb1-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun9i_a80_ahb2, "allwinner,sun9i-a80-ahb2-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun9i_a80_apb0, "allwinner,sun9i-a80-apb0-gates-clk",
++	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun9i_a80_apb1, "allwinner,sun9i-a80-apb1-gates-clk",
++	       sunxi_simple_gates_init);
++
++static const int sun4i_a10_ahb_critical_clocks[] __initconst = {
++	14,	/* ahb_sdram */
++};
++
++static void __init sun4i_a10_ahb_init(struct device_node *node)
++{
++	sunxi_simple_gates_setup(node, sun4i_a10_ahb_critical_clocks,
++				 ARRAY_SIZE(sun4i_a10_ahb_critical_clocks));
++}
++CLK_OF_DECLARE(sun4i_a10_ahb, "allwinner,sun4i-a10-ahb-gates-clk",
++	       sun4i_a10_ahb_init);
++CLK_OF_DECLARE(sun5i_a10s_ahb, "allwinner,sun5i-a10s-ahb-gates-clk",
++	       sun4i_a10_ahb_init);
++CLK_OF_DECLARE(sun5i_a13_ahb, "allwinner,sun5i-a13-ahb-gates-clk",
++	       sun4i_a10_ahb_init);
++CLK_OF_DECLARE(sun7i_a20_ahb, "allwinner,sun7i-a20-ahb-gates-clk",
++	       sun4i_a10_ahb_init);
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index abf7b37faf73..1fec91093fcd 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -900,150 +900,6 @@ struct gates_data {
+ 	DECLARE_BITMAP(mask, SUNXI_GATES_MAX_SIZE);
+ };
+ 
+-static const struct gates_data sun4i_axi_gates_data __initconst = {
+-	.mask = {1},
+-};
+-
+-static const struct gates_data sun4i_ahb_gates_data __initconst = {
+-	.mask = {0x7F77FFF, 0x14FB3F},
+-};
+-
+-static const struct gates_data sun5i_a10s_ahb_gates_data __initconst = {
+-	.mask = {0x147667e7, 0x185915},
+-};
+-
+-static const struct gates_data sun5i_a13_ahb_gates_data __initconst = {
+-	.mask = {0x107067e7, 0x185111},
+-};
+-
+-static const struct gates_data sun6i_a31_ahb1_gates_data __initconst = {
+-	.mask = {0xEDFE7F62, 0x794F931},
+-};
+-
+-static const struct gates_data sun7i_a20_ahb_gates_data __initconst = {
+-	.mask = { 0x12f77fff, 0x16ff3f },
+-};
+-
+-static const struct gates_data sun8i_a23_ahb1_gates_data __initconst = {
+-	.mask = {0x25386742, 0x2505111},
+-};
+-
+-static const struct gates_data sun9i_a80_ahb0_gates_data __initconst = {
+-	.mask = {0xF5F12B},
+-};
+-
+-static const struct gates_data sun9i_a80_ahb1_gates_data __initconst = {
+-	.mask = {0x1E20003},
+-};
+-
+-static const struct gates_data sun9i_a80_ahb2_gates_data __initconst = {
+-	.mask = {0x9B7},
+-};
+-
+-static const struct gates_data sun4i_apb0_gates_data __initconst = {
+-	.mask = {0x4EF},
+-};
+-
+-static const struct gates_data sun5i_a10s_apb0_gates_data __initconst = {
+-	.mask = {0x469},
+-};
+-
+-static const struct gates_data sun5i_a13_apb0_gates_data __initconst = {
+-	.mask = {0x61},
+-};
+-
+-static const struct gates_data sun7i_a20_apb0_gates_data __initconst = {
+-	.mask = { 0x4ff },
+-};
+-
+-static const struct gates_data sun9i_a80_apb0_gates_data __initconst = {
+-	.mask = {0xEB822},
+-};
+-
+-static const struct gates_data sun4i_apb1_gates_data __initconst = {
+-	.mask = {0xFF00F7},
+-};
+-
+-static const struct gates_data sun5i_a10s_apb1_gates_data __initconst = {
+-	.mask = {0xf0007},
+-};
+-
+-static const struct gates_data sun5i_a13_apb1_gates_data __initconst = {
+-	.mask = {0xa0007},
+-};
+-
+-static const struct gates_data sun6i_a31_apb1_gates_data __initconst = {
+-	.mask = {0x3031},
+-};
+-
+-static const struct gates_data sun8i_a23_apb1_gates_data __initconst = {
+-	.mask = {0x3021},
+-};
+-
+-static const struct gates_data sun6i_a31_apb2_gates_data __initconst = {
+-	.mask = {0x3F000F},
+-};
+-
+-static const struct gates_data sun7i_a20_apb1_gates_data __initconst = {
+-	.mask = { 0xff80ff },
+-};
+-
+-static const struct gates_data sun9i_a80_apb1_gates_data __initconst = {
+-	.mask = {0x3F001F},
+-};
+-
+-static const struct gates_data sun8i_a23_apb2_gates_data __initconst = {
+-	.mask = {0x1F0007},
+-};
+-
+-static void __init sunxi_gates_clk_setup(struct device_node *node,
+-					 struct gates_data *data)
+-{
+-	struct clk_onecell_data *clk_data;
+-	const char *clk_parent;
+-	const char *clk_name;
+-	void __iomem *reg;
+-	int qty;
+-	int i = 0;
+-	int j = 0;
+-
+-	reg = of_iomap(node, 0);
+-
+-	clk_parent = of_clk_get_parent_name(node, 0);
+-
+-	/* Worst-case size approximation and memory allocation */
+-	qty = find_last_bit(data->mask, SUNXI_GATES_MAX_SIZE);
+-	clk_data = kmalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
+-	if (!clk_data)
+-		return;
+-	clk_data->clks = kzalloc((qty+1) * sizeof(struct clk *), GFP_KERNEL);
+-	if (!clk_data->clks) {
+-		kfree(clk_data);
+-		return;
+-	}
+-
+-	for_each_set_bit(i, data->mask, SUNXI_GATES_MAX_SIZE) {
+-		of_property_read_string_index(node, "clock-output-names",
+-					      j, &clk_name);
+-
+-		clk_data->clks[i] = clk_register_gate(NULL, clk_name,
+-						      clk_parent, 0,
+-						      reg + 4 * (i/32), i % 32,
+-						      0, &clk_lock);
+-		WARN_ON(IS_ERR(clk_data->clks[i]));
+-		clk_register_clkdev(clk_data->clks[i], clk_name, NULL);
+-
+-		j++;
+-	}
+-
+-	/* Adjust to the real max */
+-	clk_data->clk_num = i;
+-
+-	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+-}
+-
+-
+-
+ /**
+  * sunxi_divs_clk_setup() helper data
+  */
+@@ -1281,34 +1137,6 @@ static const struct of_device_id clk_mux_match[] __initconst = {
+ 	{}
+ };
+ 
+-/* Matches for gate clocks */
+-static const struct of_device_id clk_gates_match[] __initconst = {
+-	{.compatible = "allwinner,sun4i-a10-axi-gates-clk", .data = &sun4i_axi_gates_data,},
+-	{.compatible = "allwinner,sun4i-a10-ahb-gates-clk", .data = &sun4i_ahb_gates_data,},
+-	{.compatible = "allwinner,sun5i-a10s-ahb-gates-clk", .data = &sun5i_a10s_ahb_gates_data,},
+-	{.compatible = "allwinner,sun5i-a13-ahb-gates-clk", .data = &sun5i_a13_ahb_gates_data,},
+-	{.compatible = "allwinner,sun6i-a31-ahb1-gates-clk", .data = &sun6i_a31_ahb1_gates_data,},
+-	{.compatible = "allwinner,sun7i-a20-ahb-gates-clk", .data = &sun7i_a20_ahb_gates_data,},
+-	{.compatible = "allwinner,sun8i-a23-ahb1-gates-clk", .data = &sun8i_a23_ahb1_gates_data,},
+-	{.compatible = "allwinner,sun9i-a80-ahb0-gates-clk", .data = &sun9i_a80_ahb0_gates_data,},
+-	{.compatible = "allwinner,sun9i-a80-ahb1-gates-clk", .data = &sun9i_a80_ahb1_gates_data,},
+-	{.compatible = "allwinner,sun9i-a80-ahb2-gates-clk", .data = &sun9i_a80_ahb2_gates_data,},
+-	{.compatible = "allwinner,sun4i-a10-apb0-gates-clk", .data = &sun4i_apb0_gates_data,},
+-	{.compatible = "allwinner,sun5i-a10s-apb0-gates-clk", .data = &sun5i_a10s_apb0_gates_data,},
+-	{.compatible = "allwinner,sun5i-a13-apb0-gates-clk", .data = &sun5i_a13_apb0_gates_data,},
+-	{.compatible = "allwinner,sun7i-a20-apb0-gates-clk", .data = &sun7i_a20_apb0_gates_data,},
+-	{.compatible = "allwinner,sun9i-a80-apb0-gates-clk", .data = &sun9i_a80_apb0_gates_data,},
+-	{.compatible = "allwinner,sun4i-a10-apb1-gates-clk", .data = &sun4i_apb1_gates_data,},
+-	{.compatible = "allwinner,sun5i-a10s-apb1-gates-clk", .data = &sun5i_a10s_apb1_gates_data,},
+-	{.compatible = "allwinner,sun5i-a13-apb1-gates-clk", .data = &sun5i_a13_apb1_gates_data,},
+-	{.compatible = "allwinner,sun6i-a31-apb1-gates-clk", .data = &sun6i_a31_apb1_gates_data,},
+-	{.compatible = "allwinner,sun7i-a20-apb1-gates-clk", .data = &sun7i_a20_apb1_gates_data,},
+-	{.compatible = "allwinner,sun8i-a23-apb1-gates-clk", .data = &sun8i_a23_apb1_gates_data,},
+-	{.compatible = "allwinner,sun9i-a80-apb1-gates-clk", .data = &sun9i_a80_apb1_gates_data,},
+-	{.compatible = "allwinner,sun6i-a31-apb2-gates-clk", .data = &sun6i_a31_apb2_gates_data,},
+-	{.compatible = "allwinner,sun8i-a23-apb2-gates-clk", .data = &sun8i_a23_apb2_gates_data,},
+-	{}
+-};
+ 
+ static void __init of_sunxi_table_clock_setup(const struct of_device_id *clk_match,
+ 					      void *function)
+@@ -1340,9 +1168,6 @@ static void __init sunxi_init_clocks(const char *clocks[], int nclocks)
+ 	/* Register mux clocks */
+ 	of_sunxi_table_clock_setup(clk_mux_match, sunxi_mux_clk_setup);
+ 
+-	/* Register gate clocks */
+-	of_sunxi_table_clock_setup(clk_gates_match, sunxi_gates_clk_setup);
+-
+ 	/* Protect the clocks that needs to stay on */
+ 	for (i = 0; i < nclocks; i++) {
+ 		struct clk *clk = clk_get(NULL, clocks[i]);
+@@ -1354,7 +1179,6 @@ static void __init sunxi_init_clocks(const char *clocks[], int nclocks)
+ 
+ static const char *sun4i_a10_critical_clocks[] __initdata = {
+ 	"pll5_ddr",
+-	"ahb_sdram",
+ };
+ 
+ static void __init sun4i_a10_init_clocks(struct device_node *node)
+@@ -1367,7 +1191,6 @@ CLK_OF_DECLARE(sun4i_a10_clk_init, "allwinner,sun4i-a10", sun4i_a10_init_clocks)
+ static const char *sun5i_critical_clocks[] __initdata = {
+ 	"cpu",
+ 	"pll5_ddr",
+-	"ahb_sdram",
+ };
+ 
+ static void __init sun5i_init_clocks(struct device_node *node)
+-- 
+2.4.6
