@@ -1,118 +1,64 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Heiko Stuebner <heiko@sntech.de>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Subject: [PATCH 3/7] clk: rockchip: define the inverters of rk3066/rk3188 and
- rk3288
-Date: Sun,  5 Jul 2015 11:00:16 +0200
-Message-Id: <1436086820-3757-4-git-send-email-heiko@sntech.de>
-In-Reply-To: <1436086820-3757-1-git-send-email-heiko@sntech.de>
-References: <1436086820-3757-1-git-send-email-heiko@sntech.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Heiko Stuebner <heiko@sntech.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Pawel Moll <pawel.moll@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Sudeep Holla <sudeep.holla@arm.com>
+Subject: [PATCH 3/3] ARM64: dts: vexpress: Use assigned-clock-parents for sp810
+Date: Fri, 31 Jul 2015 16:44:45 -0700
+Message-Id: <1438386285-5070-4-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>
+References: <55BBB2FC.9030102@codeaurora.org>
+ <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Both soc series' have inverters on the hsadc and camera interface clock
-paths. So define them using the newly added inverter type.
+The sp810 clk driver is calling the clk consumer APIs from
+clk_prepare ops to change the parent to a 1 MHz fixed rate clock
+for each of the clocks that the driver provides. Use
+assigned-clock-parents for this instead of doing it in the driver
+to avoid using the consumer API in provider code. This also
+allows us to remove the usage of clk provider APIs that take a
+struct clk as an argument from the sp810 driver.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/rockchip/clk-rk3188.c | 9 ++++++++-
- drivers/clk/rockchip/clk-rk3288.c | 7 ++++++-
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/arm/juno-motherboard.dtsi    | 2 ++
+ arch/arm64/boot/dts/arm/rtsm_ve-motherboard.dtsi | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index e4f9d47..a9ab4f9 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -235,6 +235,7 @@ static struct rockchip_pll_clock rk3188_pll_clks[] __initdata = {
- #define MFLAGS CLK_MUX_HIWORD_MASK
- #define DFLAGS CLK_DIVIDER_HIWORD_MASK
- #define GFLAGS (CLK_GATE_HIWORD_MASK | CLK_GATE_SET_TO_DISABLE)
-+#define IFLAGS ROCKCHIP_INVERTER_HIWORD_MASK
+diff --git a/arch/arm64/boot/dts/arm/juno-motherboard.dtsi b/arch/arm64/boot/dts/arm/juno-motherboard.dtsi
+index 021e0f40f419..637e046f0e36 100644
+--- a/arch/arm64/boot/dts/arm/juno-motherboard.dtsi
++++ b/arch/arm64/boot/dts/arm/juno-motherboard.dtsi
+@@ -136,6 +136,8 @@
+ 					clock-names = "refclk", "timclk", "apb_pclk";
+ 					#clock-cells = <1>;
+ 					clock-output-names = "timerclken0", "timerclken1", "timerclken2", "timerclken3";
++					assigned-clocks = <&v2m_sysctl 0>, <&v2m_sysctl 1>, <&v2m_sysctl 3>, <&v2m_sysctl 3>;
++					assigned-clock-parents = <&v2m_refclk1mhz>, <&v2m_refclk1mhz>, <&v2m_refclk1mhz>, <&v2m_refclk1mhz>;
+ 				};
  
- /* 2 ^ (val + 1) */
- static struct clk_div_table div_core_peri_t[] = {
-@@ -310,6 +311,8 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
+ 				apbregs@010000 {
+diff --git a/arch/arm64/boot/dts/arm/rtsm_ve-motherboard.dtsi b/arch/arm64/boot/dts/arm/rtsm_ve-motherboard.dtsi
+index c46cbb29f3c6..88a7583ed7a7 100644
+--- a/arch/arm64/boot/dts/arm/rtsm_ve-motherboard.dtsi
++++ b/arch/arm64/boot/dts/arm/rtsm_ve-motherboard.dtsi
+@@ -74,6 +74,8 @@
+ 				clock-names = "refclk", "timclk", "apb_pclk";
+ 				#clock-cells = <1>;
+ 				clock-output-names = "timerclken0", "timerclken1", "timerclken2", "timerclken3";
++				assigned-clocks = <&v2m_sysctl 0>, <&v2m_sysctl 1>, <&v2m_sysctl 3>, <&v2m_sysctl 3>;
++				assigned-clock-parents = <&v2m_refclk1mhz>, <&v2m_refclk1mhz>, <&v2m_refclk1mhz>, <&v2m_refclk1mhz>;
+ 			};
  
- 	GATE(0, "pclkin_cif0", "ext_cif0", 0,
- 			RK2928_CLKGATE_CON(3), 3, GFLAGS),
-+	INVERTER(0, "pclk_cif0", "pclkin_cif0",
-+			RK2928_CLKSEL_CON(30), 8, IFLAGS),
- 
- 	/*
- 	 * the 480m are generated inside the usb block from these clocks,
-@@ -334,8 +337,10 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
- 	COMPOSITE_FRAC(0, "hsadc_frac", "hsadc_src", 0,
- 			RK2928_CLKSEL_CON(23), 0,
- 			RK2928_CLKGATE_CON(2), 7, GFLAGS),
--	MUX(SCLK_HSADC, "sclk_hsadc", mux_sclk_hsadc_p, 0,
-+	MUX(0, "sclk_hsadc_out", mux_sclk_hsadc_p, 0,
- 			RK2928_CLKSEL_CON(22), 4, 2, MFLAGS),
-+	INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
-+			RK2928_CLKSEL_CON(22), 7, IFLAGS),
- 
- 	COMPOSITE_NOMUX(SCLK_SARADC, "sclk_saradc", "xin24m", 0,
- 			RK2928_CLKSEL_CON(24), 8, 8, DFLAGS,
-@@ -557,6 +562,8 @@ static struct rockchip_clk_branch rk3066a_clk_branches[] __initdata = {
- 
- 	GATE(0, "pclkin_cif1", "ext_cif1", 0,
- 			RK2928_CLKGATE_CON(3), 4, GFLAGS),
-+	INVERTER(0, "pclk_cif1", "pclkin_cif1",
-+			RK2928_CLKSEL_CON(30), 12, IFLAGS),
- 
- 	COMPOSITE(0, "aclk_gpu_src", mux_pll_src_cpll_gpll_p, 0,
- 			RK2928_CLKSEL_CON(33), 8, 1, MFLAGS, 0, 5, DFLAGS,
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index df9dc96..a8bad7d 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -223,6 +223,7 @@ static struct clk_div_table div_hclk_cpu_t[] = {
- #define MFLAGS CLK_MUX_HIWORD_MASK
- #define DFLAGS CLK_DIVIDER_HIWORD_MASK
- #define GFLAGS (CLK_GATE_HIWORD_MASK | CLK_GATE_SET_TO_DISABLE)
-+#define IFLAGS ROCKCHIP_INVERTER_HIWORD_MASK
- 
- static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	/*
-@@ -592,8 +593,10 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	COMPOSITE(0, "hsadc_src", mux_pll_src_cpll_gpll_p, 0,
- 			RK3288_CLKSEL_CON(22), 0, 1, MFLAGS, 8, 8, DFLAGS,
- 			RK3288_CLKGATE_CON(2), 6, GFLAGS),
--	MUX(SCLK_HSADC, "sclk_hsadc_out", mux_hsadcout_p, 0,
-+	MUX(0, "sclk_hsadc_out", mux_hsadcout_p, 0,
- 			RK3288_CLKSEL_CON(22), 4, 1, MFLAGS),
-+	INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
-+			RK3288_CLKSEL_CON(22), 7, IFLAGS),
- 
- 	GATE(0, "jtag", "ext_jtag", 0,
- 			RK3288_CLKGATE_CON(4), 14, GFLAGS),
-@@ -768,7 +771,9 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	 */
- 
- 	GATE(0, "pclk_vip_in", "ext_vip", 0, RK3288_CLKGATE_CON(16), 0, GFLAGS),
-+	INVERTER(0, "pclk_vip", "pclk_vip_in", RK3288_CLKSEL_CON(29), 4, IFLAGS),
- 	GATE(0, "pclk_isp_in", "ext_isp", 0, RK3288_CLKGATE_CON(16), 3, GFLAGS),
-+	INVERTER(0, "pclk_isp", "pclk_isp_in", RK3288_CLKSEL_CON(29), 3, IFLAGS),
- };
- 
- static const char *const rk3288_critical_clocks[] __initconst = {
+ 			aaci@040000 {
 -- 
-2.1.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
