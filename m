@@ -1,47 +1,112 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:34075 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753504AbbGJXd4 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jul 2015 19:33:56 -0400
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
 To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Paul Burton <paul.burton@imgtec.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Ralf Baechle <ralf@linux-mips.org>
-Subject: [PATCH 40/45] clk: ingenic: Include clk.h
-Date: Fri, 10 Jul 2015 16:33:38 -0700
-Message-Id: <1436571223-10959-41-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+ Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH v2 6/7] ARM: sun9i: Wrap the clock-indices
+Date: Fri, 31 Jul 2015 19:46:21 +0200
+Message-Id: <1438364782-3968-7-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This clock provider uses the consumer API, so include clk.h
-explicitly.
+Wrap the clock-indices to match the wrapping of the clock-output-names in
+order to make it easier to match indices to names.
 
-Cc: Paul Burton <paul.burton@imgtec.com>
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/ingenic/cgu.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/sun9i-a80.dtsi | 32 ++++++++++++++++++++++----------
+ 1 file changed, 22 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-index b936cdd1a13c..7cfb7b2a2ed6 100644
---- a/drivers/clk/ingenic/cgu.c
-+++ b/drivers/clk/ingenic/cgu.c
-@@ -16,6 +16,7 @@
-  */
- 
- #include <linux/bitops.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
- #include <linux/delay.h>
+diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
+index a43ad779ee2f..5908e3dcf965 100644
+--- a/arch/arm/boot/dts/sun9i-a80.dtsi
++++ b/arch/arm/boot/dts/sun9i-a80.dtsi
+@@ -277,9 +277,12 @@
+ 			compatible = "allwinner,sun9i-a80-ahb0-gates-clk";
+ 			reg = <0x06000580 0x4>;
+ 			clocks = <&ahb0>;
+-			clock-indices = <0>, <1>, <3>, <5>, <8>, <12>, <13>,
+-					<14>, <15>, <16>, <18>, <20>, <21>,
+-					<22>, <23>;
++			clock-indices = <0>, <1>, <3>,
++					<5>, <8>, <12>,
++					<13>, <14>,
++					<15>, <16>, <18>,
++					<20>, <21>, <22>,
++					<23>;
+ 			clock-output-names = "ahb0_fd", "ahb0_ve", "ahb0_gpu",
+ 					"ahb0_ss", "ahb0_sd", "ahb0_nand1",
+ 					"ahb0_nand0", "ahb0_sdram",
+@@ -293,7 +296,10 @@
+ 			compatible = "allwinner,sun9i-a80-ahb1-gates-clk";
+ 			reg = <0x06000584 0x4>;
+ 			clocks = <&ahb1>;
+-			clock-indices = <0>, <1>, <17>, <21>, <22>, <23>, <24>;
++			clock-indices = <0>, <1>,
++					<17>, <21>,
++					<22>, <23>,
++					<24>;
+ 			clock-output-names = "ahb1_usbotg", "ahb1_usbhci",
+ 					"ahb1_gmac", "ahb1_msgbox",
+ 					"ahb1_spinlock", "ahb1_hstimer",
+@@ -305,8 +311,9 @@
+ 			compatible = "allwinner,sun9i-a80-ahb2-gates-clk";
+ 			reg = <0x06000588 0x4>;
+ 			clocks = <&ahb2>;
+-			clock-indices = <0>, <1>, <2>, <4>, <5>, <7>, <8>,
+-					<11>;
++			clock-indices = <0>, <1>,
++					<2>, <4>, <5>,
++					<7>, <8>, <11>;
+ 			clock-output-names = "ahb2_lcd0", "ahb2_lcd1",
+ 					"ahb2_edp", "ahb2_csi", "ahb2_hdmi",
+ 					"ahb2_de", "ahb2_mp", "ahb2_mipi_dsi";
+@@ -317,8 +324,10 @@
+ 			compatible = "allwinner,sun9i-a80-apb0-gates-clk";
+ 			reg = <0x06000590 0x4>;
+ 			clocks = <&apb0>;
+-			clock-indices = <1>, <5>, <11>, <12>, <13>, <15>,
+-					<17>, <18>, <19>;
++			clock-indices = <1>, <5>,
++					<11>, <12>, <13>,
++					<15>, <17>, <18>,
++					<19>;
+ 			clock-output-names = "apb0_spdif", "apb0_pio",
+ 					"apb0_ac97", "apb0_i2s0", "apb0_i2s1",
+ 					"apb0_lradc", "apb0_gpadc", "apb0_twd",
+@@ -330,8 +339,11 @@
+ 			compatible = "allwinner,sun9i-a80-apb1-gates-clk";
+ 			reg = <0x06000594 0x4>;
+ 			clocks = <&apb1>;
+-			clock-indices = <0>, <1>, <2>, <3>, <4>,
+-					<16>, <17>, <18>, <19>, <20>, <21>;
++			clock-indices = <0>, <1>,
++					<2>, <3>, <4>,
++					<16>, <17>,
++					<18>, <19>,
++					<20>, <21>;
+ 			clock-output-names = "apb1_i2c0", "apb1_i2c1",
+ 					"apb1_i2c2", "apb1_i2c3", "apb1_i2c4",
+ 					"apb1_uart0", "apb1_uart1",
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.4.6
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
