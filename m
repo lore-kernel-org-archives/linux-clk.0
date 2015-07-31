@@ -1,105 +1,92 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-rpi-kernel@lists.infradead.org,
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v4 1/8] clk: bcm2835: Add binding docs for the Raspberry Pi clock provider
-Date: Mon, 20 Jul 2015 12:33:00 -0700
-Message-Id: <1437420787-32137-2-git-send-email-eric@anholt.net>
-In-Reply-To: <1437420787-32137-1-git-send-email-eric@anholt.net>
-References: <1437420787-32137-1-git-send-email-eric@anholt.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=m
+	linux-clk@vger.kernel.org
+Subject: [PATCH 23/23] clk: at91: Revert "keep slow clk enabled to prevent system hang"
+Date: Fri, 31 Jul 2015 11:39:59 +0200
+Message-Id: <1438335599-3301-24-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1438335599-3301-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1438335599-3301-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The hardware clocks are not controllable by the ARM, so we have to
-make requests to the firmware to do so from the VPU side.  This will
-let us replace fixed clocks in our DT with actual clock control (and
-correct frequency information).
+Commit dca1a4b5ff6e ("clk: at91: keep slow clk enabled to prevent system
+hang") added a workaround for the slow clock as it is not properly handled
+by its users.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Acked-by: Stephen Warren <swarren@wwwdotorg.org>
-Acked-by: Lee Jones <lee@kernel.org>
+Now that the slow clock is taken properly by the drivers, this workaround
+is not necessary anymore, revert it.
+
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 ---
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+ drivers/clk/at91/clk-slow.c | 27 ---------------------------
+ 1 file changed, 27 deletions(-)
 
-v2: Include the dt-bindings header in this commit instead of the next
-    one.  Make the clock indices match the firmware clock IDs.  Rename
-    the binding's compat string.  Move the firmware phandle to be
-    under a vendor-specific namespace.
-v4: Mention 'clk' in the subject instead of the more generic
-    dt/bindings.
-
- .../clock/raspberrypi,bcm2835-firmware-clocks.txt  | 25 ++++++++++++++++++++++
- include/dt-bindings/clk/raspberrypi.h              | 23 ++++++++++++++++++++
- 2 files changed, 48 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt
- create mode 100644 include/dt-bindings/clk/raspberrypi.h
-
-diff --git a/Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt b/Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt
-new file mode 100644
-index 0000000..0972602
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt
-@@ -0,0 +1,25 @@
-+Raspberry Pi firmware clock provider.
-+
-+The Raspberry Pi architecture doesn't provide direct access to the
-+CLOCKMAN peripheral from the ARM side, so Linux has to make requests
-+to the VPU firmware to program them.
-+
-+This binding uses the common clock binding:
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Required properties:
-+- compatible:		Should be "raspberrypi,bcm2835-firmware-clocks"
-+
-+- #clock-cells:		Shall have value <1>.  The permitted clock-specifier
-+			  values can be found in
-+			  include/dt-bindings/clk/raspberrypi.h.
-+
-+- raspberrypi,firmware:	Phandle to the firmware driver node.
-+
-+Example:
-+
-+firmware_clocks: firmware-clocks {
-+	compatible = "raspberrypi,bcm2835-firmware-clocks";
-+	#clock-cells = <1>;
-+	raspberrypi,firmware = <&firmware>;
-+};
-diff --git a/include/dt-bindings/clk/raspberrypi.h b/include/dt-bindings/clk/raspberrypi.h
-new file mode 100644
-index 0000000..ceec90f
---- /dev/null
-+++ b/include/dt-bindings/clk/raspberrypi.h
-@@ -0,0 +1,23 @@
-+#/*
-+ *  Copyright © 2015 Broadcom
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_RASPBERRYPI_H
-+#define _DT_BINDINGS_CLK_RASPBERRYPI_H
-+
-+#define RPI_CLOCK_EMMC	1
-+#define RPI_CLOCK_UART0	2
-+#define RPI_CLOCK_ARM	3
-+#define RPI_CLOCK_CORE	4
-+#define RPI_CLOCK_V3D	5
-+#define RPI_CLOCK_H264	6
-+#define RPI_CLOCK_ISP	7
-+#define RPI_CLOCK_SDRAM	8
-+#define RPI_CLOCK_PIXEL	9
-+#define RPI_CLOCK_PWM	10
-+
-+#endif
+diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
+index 98a84a865fe1..2c59d6a64dd5 100644
+--- a/drivers/clk/at91/clk-slow.c
++++ b/drivers/clk/at91/clk-slow.c
+@@ -70,7 +70,6 @@ struct clk_sam9x5_slow {
+ 
+ #define to_clk_sam9x5_slow(hw) container_of(hw, struct clk_sam9x5_slow, hw)
+ 
+-static struct clk *slow_clk;
+ 
+ static int clk_slow_osc_prepare(struct clk_hw *hw)
+ {
+@@ -358,8 +357,6 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
+ 	clk = clk_register(NULL, &slowck->hw);
+ 	if (IS_ERR(clk))
+ 		kfree(slowck);
+-	else
+-		slow_clk = clk;
+ 
+ 	return clk;
+ }
+@@ -436,8 +433,6 @@ at91_clk_register_sam9260_slow(struct at91_pmc *pmc,
+ 	clk = clk_register(NULL, &slowck->hw);
+ 	if (IS_ERR(clk))
+ 		kfree(slowck);
+-	else
+-		slow_clk = clk;
+ 
+ 	return clk;
+ }
+@@ -470,25 +465,3 @@ void __init of_at91sam9260_clk_slow_setup(struct device_node *np,
+ 
+ 	of_clk_add_provider(np, of_clk_src_simple_get, clk);
+ }
+-
+-/*
+- * FIXME: All slow clk users are not properly claiming it (get + prepare +
+- * enable) before using it.
+- * If all users properly claiming this clock decide that they don't need it
+- * anymore (or are removed), it is disabled while faulty users are still
+- * requiring it, and the system hangs.
+- * Prevent this clock from being disabled until all users are properly
+- * requesting it.
+- * Once this is done we should remove this function and the slow_clk variable.
+- */
+-static int __init of_at91_clk_slow_retain(void)
+-{
+-	if (!slow_clk)
+-		return 0;
+-
+-	__clk_get(slow_clk);
+-	clk_prepare_enable(slow_clk);
+-
+-	return 0;
+-}
+-arch_initcall(of_at91_clk_slow_retain);
 -- 
 2.1.4
