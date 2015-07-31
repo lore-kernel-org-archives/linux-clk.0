@@ -1,40 +1,63 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Chris Zhong <zyw@rock-chips.com>
-Subject: [PATCH 08/45] clk: rk808: Remove clk.h include
-Date: Fri, 10 Jul 2015 16:33:06 -0700
-Message-Id: <1436571223-10959-9-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-References: <1436571223-10959-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+ Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
+ Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
+Date: Fri, 31 Jul 2015 20:58:06 +0200
+Message-id: <55330300.1udBI120uH@amdc1976>
+In-reply-to: <55BA36A7.3050107@kernel.org>
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+ <2681271.3UazeZ9PAQ@amdc1976> <55BA36A7.3050107@kernel.org>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock provider drivers generally shouldn't include clk.h because
-it's the consumer API. Remove the include here because this is a
-provider driver.
+On Thursday, July 30, 2015 11:37:27 PM Kukjin Kim wrote:
+> On 07/27/15 20:47, Bartlomiej Zolnierkiewicz wrote:
+> > On Monday, July 27, 2015 05:06:41 PM Viresh Kumar wrote:
+> >> On 27-07-15, 13:14, Bartlomiej Zolnierkiewicz wrote:
+> >>> Sorry but you don't seem to understand the issue.
+> >>
+> >> :)
+> >>
+> >> No, I did. I understand that if someone uses opp bindings today with
+> >> some entries as turbo OPPs, cpufreq will use them as normal
+> >> frequencies. And that may harm the board.
+> >>
+> >> BUT, opp-v2 code isn't ready to be used yet. And platforms should see
+> >> what all is implemented before trying to use them.
+> > 
+> > OK.
+> > 
+> >> All I was saying is, this isn't a FIX as we haven't introduced the
+> >> feature yet. Otherwise I had no issues with the patch.
+> > 
+> > I will update the description for the next patchset revision.
+> > 
+> Hi Bart,
 
-Cc: Chris Zhong <zyw@rock-chips.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-rk808.c | 1 -
- 1 file changed, 1 deletion(-)
+Hi,
 
-diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
-index 83902b9cd49e..0fee2f4ca258 100644
---- a/drivers/clk/clk-rk808.c
-+++ b/drivers/clk/clk-rk808.c
-@@ -15,7 +15,6 @@
-  * more details.
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/slab.h>
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> When will you re-post v3? Because I have a plan to send a pull-request
+> to arm-soc until this weekend...
 
+I have just posted v3.  I hope that it is not too late..
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
