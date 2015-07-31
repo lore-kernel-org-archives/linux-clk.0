@@ -1,79 +1,81 @@
-Return-Path: <sudeep.holla@arm.com>
-Message-ID: <559BF858.1020301@arm.com>
-Date: Tue, 07 Jul 2015 17:03:36 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- Liviu Dudau <Liviu.Dudau@arm.com>,
- Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
- "Jon Medhurst (Tixy)" <tixy@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- Kevin Hilman <khilman@kernel.org>,
- Olof Johansson <olof@lixom.net>, Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v4 3/8] clk: add support for clocks provided by SCP(System
- Control Processor)
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com> <1433760002-24120-4-git-send-email-sudeep.holla@arm.com> <20150702172310.GF4301@codeaurora.org> <5596A1B6.8020307@arm.com> <559ADC94.4080505@codeaurora.org>
-In-Reply-To: <559ADC94.4080505@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	matthias.bgg@gmail.com
+Cc: s.hauer@pengutronix.de,
+	jamesjj.liao@mediatek.com,
+	henryc.chen@mediatek.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	manabian@gmail.com,
+	p.zabel@pengutronix.com
+Subject: [PATCH v4 RESEND 0/3] clk: Add regmap support for basic clocks
+Date: Fri, 31 Jul 2015 17:14:16 +0200
+Message-Id: <1438355659-21558-1-git-send-email-matthias.bgg@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch set adds regmap support for the simple clock multiplexer,
+the divider clock and the clock gate.
+Regmap use, apart from a pointer to the regmap struct needs an
+offset value to know where in the regmap it has to read/write.
+We add both fields to the corresponding structs.
 
+The driver will distinguish between a clock which is based on regmap or not
+through a flag specified in the clock hardware struct.
+The approach does not break the existing clock framework API but adds
+new functions for registering regmap clocks. Unregistering the clocks is
+independent of the use of regmap or not, so that no new functions were
+implemented.
 
-On 06/07/15 20:52, Stephen Boyd wrote:
-> On 07/03/2015 07:52 AM, Sudeep Holla wrote:
->> Hi Stephen,
->>
->>
->> Thanks for the review.
->>
->> On 02/07/15 18:23, Stephen Boyd wrote:
->>> On 06/08, Sudeep Holla wrote:
+As an example user of the regmap clock multiplexer, it was implemented on
+the mt8135. When accepted it will also be applied to the other Mediatek SoCs.
+Other possible user are Qualcomm SoCs which up to now implement their own
+regmap based clock multiplexer.
 
-[...]
+This patch set is based on linux next.
 
->>>> +
->>>> +    clk = devm_clk_register(dev, &sclk->hw);
->>>> +    if (!IS_ERR(clk) && max)
->>>> +        clk_set_rate_range(clk, min, max);
->>>
->>> Hm.. we're planning to make clk_register() return a struct
->>> clk_hw, so this will block that. We need some sort of clk_hw API
->>> that allows us to setup min/max limits on the clock from the
->>> provider side. Care to add that?
->>>
->>
->> Can you provide pointer to the patches or the tree containing those
->> changes ? Are they targeted for v4.3 ?
->>
->
-> If I have time I may try to start doing the clk_register() conversion,
-> but it will take a while so I doubt it will be in v4.3. I'm asking if
-> you can add a clk_hw based API that does something like
-> clk_set_rate_range() without requiring a struct clk pointer. i.e.
-> clk_hw_set_rate_range(struct clk_hw *hw, min, max) that constraints the
-> min/max rate of the clock. This way, the driver is only using clk
-> provider APIs and not clk consumer APIs.
->
+Changes for v4-resend:
+- add reviewed-by and acked-by
 
-I understand the intention of separating clk provider helpers/APIs
-and clk consumer APIs. Since {min,max}_rate are part of struct clk
-itself, I was thinking that you would have moved it to struct clk_core
-as part of the rework you mentioned and hence asked about the patches.
+Changes for v4:
+- fix style issues
+- use __clk_get_flags
+- delete #ifdef CONFIG_REGMAP
 
-IIUC, if {min,max}_rate remain part of struct clk, then how are we
-restricting that operation to just the clk providers ? clk consumer
-can still directly modify or use clk_set_rate_range.
+Changes for v3:
+- rebase against linux-next
+- provide regmap access to all three clock types in a unified way
 
-Do we continue to provide that feature for both provider and consumer ?
-If so I assume {min,max}_rate range requested by consumer should be
-within the limits set by provider and do we maintain both the limits ?
+Changes for v2:
+- use regmap_update_bits instead of read-write
+- fix flag check
+- add union in struct clk_mux
+- fix typo in commit message
 
-Sorry if I am missing something fundamental since I don't have much
-knowledge of clk layer internals.
+---
 
-Regards,
-Sudeep
+Matthias Brugger (3):
+  clk: Add regmap support
+  clk: mediatek: Add support for clk-mux using regmap
+  clk: mediatek: Use regmap clk-mux for mt8135
+
+ drivers/clk/Makefile              |  1 +
+ drivers/clk/clk-divider.c         | 68 ++++++++++++++++++++++------
+ drivers/clk/clk-gate.c            | 57 +++++++++++++++++++-----
+ drivers/clk/clk-io.c              | 48 ++++++++++++++++++++
+ drivers/clk/clk-io.h              | 22 +++++++++
+ drivers/clk/clk-mux.c             | 94 ++++++++++++++++++++++++++++++++-------
+ drivers/clk/mediatek/clk-mt8135.c | 21 +++------
+ drivers/clk/mediatek/clk-mtk.c    | 37 +++++++++++++++
+ drivers/clk/mediatek/clk-mtk.h    | 26 +++++++++++
+ include/linux/clk-provider.h      | 54 ++++++++++++++++++++--
+ 10 files changed, 370 insertions(+), 58 deletions(-)
+ create mode 100644 drivers/clk/clk-io.c
+ create mode 100644 drivers/clk/clk-io.h
+
+-- 
+1.9.1
