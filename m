@@ -1,57 +1,71 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	heikki.krogerus@linux.intel.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v5 0/5] clk: fractional-divider: do a clean up
-Date: Mon, 27 Jul 2015 14:48:48 +0300
-Message-Id: <1437997733-135331-1-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+ Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ b.zolnierkie@samsung.com, Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH v3 5/5] cpufreq: remove no longer needed CPU_FREQ_BOOST_SW
+ config option
+Date: Fri, 31 Jul 2015 20:49:17 +0200
+Message-id: <1438368557-2352-6-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The series provides a clean up for clk-fractional-diveder together with moving
-it to use rational best approximation algorithm. I think the patches are
-self-explanatory.
+Remove no longer needed CPU_FREQ_BOOST_SW config option.
 
-The series was tested with 8250_dw UART driver on Intel Braswell.
+As a result scaling_boost_freqs sysfs attribute is available
+when cpufreq-dt driver is used and boost support is enabled.
 
-Patch 5 is an amendment to existing user of the fractional divider outside of
-clock framework.
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ drivers/cpufreq/Kconfig      | 4 ----
+ drivers/cpufreq/freq_table.c | 2 --
+ 2 files changed, 6 deletions(-)
 
-Changelog v5:
- - drop patch 1 (there is another fix already in upstream)
- - add tags (Ack, Review)
-
-Changelog v4:
- - remove dependency to clk_div_mask() and use GENMASK() instead
- - apply changes to rockchip
- - amend 8250_dw driver to use proposed changes
-
-Changelog v3:
- - add patch 2/3 to simplify further usage
- - don't use mult_frac() due to potential overflow on 32 bit kernels
- - guarantee in ->round_rate() that m and n will not overflow
-
-Changelog v2:
- - move to rational_best_approximation() and mult_frac()
- - add patch 2/2
-
-Andy Shevchenko (5):
-  clk: fractional-divider: rename prate -> parent_rate
-  clk: fractional-divider: keep mwidth and nwidth internally
-  clk: rockchip: save width in struct clk_fractional_divider
-  clk: fractional-divider: switch to rational best approximation
-  serial: 8250_dw: allow lower reference frequencies
-
- drivers/clk/Kconfig                  |  1 +
- drivers/clk/clk-fractional-divider.c | 53 ++++++++++++++++++++++--------------
- drivers/clk/rockchip/clk.c           |  6 ++--
- drivers/tty/serial/8250/8250_dw.c    |  4 ---
- include/linux/clk-provider.h         |  3 +-
- 5 files changed, 40 insertions(+), 27 deletions(-)
-
+diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+index bf6d596..de00a52 100644
+--- a/drivers/cpufreq/Kconfig
++++ b/drivers/cpufreq/Kconfig
+@@ -21,10 +21,6 @@ if CPU_FREQ
+ config CPU_FREQ_GOV_COMMON
+ 	bool
+ 
+-config CPU_FREQ_BOOST_SW
+-	bool
+-	depends on THERMAL
+-
+ config CPU_FREQ_STAT
+ 	tristate "CPU frequency translation statistics"
+ 	default y
+diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
+index a8f1daf..4c5de5b 100644
+--- a/drivers/cpufreq/freq_table.c
++++ b/drivers/cpufreq/freq_table.c
+@@ -293,9 +293,7 @@ EXPORT_SYMBOL_GPL(cpufreq_freq_attr_scaling_boost_freqs);
+ 
+ struct freq_attr *cpufreq_generic_attr[] = {
+ 	&cpufreq_freq_attr_scaling_available_freqs,
+-#ifdef CONFIG_CPU_FREQ_BOOST_SW
+ 	&cpufreq_freq_attr_scaling_boost_freqs,
+-#endif
+ 	NULL,
+ };
+ EXPORT_SYMBOL_GPL(cpufreq_generic_attr);
 -- 
-2.4.6
-
+1.9.1
