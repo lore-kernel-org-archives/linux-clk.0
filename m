@@ -1,198 +1,101 @@
-Return-Path: <dinguyen@opensource.altera.com>
-From: <dinguyen@opensource.altera.com>
-To: <sboyd@codeaurora.org>, <mturquette@linaro.org>
-CC: <dinh.linux@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCHv2 1/6] clk: at91: make use of of_clk_parent_fill helper function
-Date: Mon, 6 Jul 2015 22:59:01 -0500
-Message-ID: <1436241546-16731-2-git-send-email-dinguyen@opensource.altera.com>
-In-Reply-To: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
-References: <1436241546-16731-1-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH 00/26] Remove struct clk based provider APIs
+Date: Fri, 31 Jul 2015 10:03:40 -0700
+Message-Id: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: dinguyen@opensource.altera.com
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
+This is the beginning of an effort to remove struct clk from
+provider drivers. I've split the patches out to be per-SoC
+to make review easier, except for the automated conversions
+done by Coccinelle. Those go into one patch.
 
-Use of_clk_parent_fill to fill in the parent clock names' array.
+Stephen Boyd (26):
+  clk: Add clk_hw_get_num_parents()
+  clk: Replace __clk_get_num_parents with clk_hw_get_num_parents()
+  clk: Remove __clk_get_num_parents()
+  clk: Add clk_hw_get_flags()
+  clk: Convert __clk_get_flags() to clk_hw_get_flags()
+  clk: Add clk_hw_*() API for use by providers
+  clk: ti: Remove CLK_IS_BASIC check
+  ARM: OMAP: Convert __clk_get_rate() to provider/consumer APIs
+  MIPS: alchemy: Convert to clk_hw based provider APIs
+  clk: at91: Convert to clk_hw based provider APIs
+  clk: bcm: Convert to clk_hw based provider APIs
+  clk: Convert basic types to clk_hw based provider APIs
+  clk: mmp: Convert to clk_hw based provider APIs
+  clk: mvebu: Convert to clk_hw based provider APIs
+  clk: stm32f4: Convert to clk_hw based provider APIs
+  clk: qcom: Convert to clk_hw based provider APIs
+  clk: rockchip: Convert to clk_hw based provider APIs
+  clk: samsung: Convert to clk_hw based provider APIs
+  clk: sirf: Convert to clk_hw based provider APIs
+  clk: spear: Convert to clk_hw based provider APIs
+  clk: sunxi: Convert to clk_hw based provider APIs
+  clk: tegra: Convert to clk_hw based provider APIs
+  clk: tegra: Convert to clk_hw based provider APIs
+  clk: versatile: Convert to clk_hw based provider APIs
+  drm/msm/dsi: Convert to clk_hw based provider APIs
+  clk: Remove unused provider APIs
 
-Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/clk/at91/clk-main.c         |    7 +------
- drivers/clk/at91/clk-master.c       |    7 +------
- drivers/clk/at91/clk-programmable.c |    7 +------
- drivers/clk/at91/clk-slow.c         |   14 ++------------
- drivers/clk/at91/clk-smd.c          |    7 +------
- drivers/clk/at91/clk-usb.c          |    7 +------
- 6 files changed, 7 insertions(+), 42 deletions(-)
+ arch/arm/mach-omap2/clkt34xx_dpll3m2.c     |  6 +-
+ arch/mips/alchemy/common/clock.c           | 12 ++--
+ drivers/clk/at91/clk-peripheral.c          |  6 +-
+ drivers/clk/at91/clk-programmable.c        | 10 ++--
+ drivers/clk/at91/clk-usb.c                 | 14 ++---
+ drivers/clk/bcm/clk-kona.c                 | 20 +++----
+ drivers/clk/clk-cdce706.c                  |  2 +-
+ drivers/clk/clk-composite.c                | 18 +++---
+ drivers/clk/clk-divider.c                  |  8 +--
+ drivers/clk/clk-fixed-factor.c             |  5 +-
+ drivers/clk/clk-mux.c                      |  2 +-
+ drivers/clk/clk-si5351.c                   |  4 +-
+ drivers/clk/clk-stm32f4.c                  |  5 +-
+ drivers/clk/clk.c                          | 93 +++++++++++++++---------------
+ drivers/clk/mmp/clk-gate.c                 |  3 +-
+ drivers/clk/mmp/clk-mix.c                  | 43 +++++++-------
+ drivers/clk/mvebu/clk-cpu.c                |  6 +-
+ drivers/clk/qcom/clk-pll.c                 |  8 +--
+ drivers/clk/qcom/clk-rcg.c                 | 23 ++++----
+ drivers/clk/qcom/clk-rcg2.c                | 33 +++++------
+ drivers/clk/qcom/common.c                  |  2 +-
+ drivers/clk/qcom/mmcc-msm8960.c            | 12 ++--
+ drivers/clk/rockchip/clk-pll.c             | 18 +++---
+ drivers/clk/samsung/clk-cpu.c              |  4 +-
+ drivers/clk/samsung/clk-s3c2410-dclk.c     |  2 +-
+ drivers/clk/shmobile/clk-div6.c            |  4 +-
+ drivers/clk/sirf/clk-common.c              | 12 ++--
+ drivers/clk/spear/clk-vco-pll.c            |  2 +-
+ drivers/clk/st/clk-flexgen.c               |  2 +-
+ drivers/clk/sunxi/clk-factors.c            | 14 ++---
+ drivers/clk/sunxi/clk-sun6i-ar100.c        | 10 ++--
+ drivers/clk/sunxi/clk-sunxi.c              | 14 ++---
+ drivers/clk/tegra/clk-emc.c                | 10 ++--
+ drivers/clk/tegra/clk-pll.c                | 10 ++--
+ drivers/clk/ti/autoidle.c                  | 14 ++---
+ drivers/clk/ti/clk.c                       |  4 +-
+ drivers/clk/ti/clkt_dpll.c                 | 11 ++--
+ drivers/clk/ti/clock.h                     |  2 +-
+ drivers/clk/ti/clockdomain.c               |  4 +-
+ drivers/clk/ti/divider.c                   |  8 +--
+ drivers/clk/ti/dpll.c                      |  4 +-
+ drivers/clk/ti/dpll3xxx.c                  | 33 +++++------
+ drivers/clk/ti/dpll44xx.c                  |  4 +-
+ drivers/clk/ti/gate.c                      |  6 +-
+ drivers/clk/ti/interface.c                 |  2 +-
+ drivers/clk/ti/mux.c                       |  2 +-
+ drivers/clk/versatile/clk-sp810.c          |  2 +-
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c |  4 +-
+ include/linux/clk-provider.h               | 15 +++--
+ 49 files changed, 267 insertions(+), 285 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
-index c240045..13f481b 100644
---- a/drivers/clk/at91/clk-main.c
-+++ b/drivers/clk/at91/clk-main.c
-@@ -612,17 +612,12 @@ void __init of_at91sam9x5_clk_main_setup(struct device_node *np,
- 	int num_parents;
- 	unsigned int irq;
- 	const char *name = np->name;
--	int i;
- 
- 	num_parents = of_clk_get_parent_count(np);
- 	if (num_parents <= 0 || num_parents > 2)
- 		return;
- 
--	for (i = 0; i < num_parents; ++i) {
--		parent_names[i] = of_clk_get_parent_name(np, i);
--		if (!parent_names[i])
--			return;
--	}
-+	of_clk_parent_fill(np, parent_names, num_parents);
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 
-diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
-index f98eafe..38f646d 100644
---- a/drivers/clk/at91/clk-master.c
-+++ b/drivers/clk/at91/clk-master.c
-@@ -218,7 +218,6 @@ of_at91_clk_master_setup(struct device_node *np, struct at91_pmc *pmc,
- {
- 	struct clk *clk;
- 	int num_parents;
--	int i;
- 	unsigned int irq;
- 	const char *parent_names[MASTER_SOURCE_MAX];
- 	const char *name = np->name;
-@@ -228,11 +227,7 @@ of_at91_clk_master_setup(struct device_node *np, struct at91_pmc *pmc,
- 	if (num_parents <= 0 || num_parents > MASTER_SOURCE_MAX)
- 		return;
- 
--	for (i = 0; i < num_parents; ++i) {
--		parent_names[i] = of_clk_get_parent_name(np, i);
--		if (!parent_names[i])
--			return;
--	}
-+	of_clk_parent_fill(np, parent_names, num_parents);
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 
-diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
-index 8c86c0f..21492ac 100644
---- a/drivers/clk/at91/clk-programmable.c
-+++ b/drivers/clk/at91/clk-programmable.c
-@@ -230,7 +230,6 @@ of_at91_clk_prog_setup(struct device_node *np, struct at91_pmc *pmc,
- {
- 	int num;
- 	u32 id;
--	int i;
- 	struct clk *clk;
- 	int num_parents;
- 	const char *parent_names[PROG_SOURCE_MAX];
-@@ -241,11 +240,7 @@ of_at91_clk_prog_setup(struct device_node *np, struct at91_pmc *pmc,
- 	if (num_parents <= 0 || num_parents > PROG_SOURCE_MAX)
- 		return;
- 
--	for (i = 0; i < num_parents; ++i) {
--		parent_names[i] = of_clk_get_parent_name(np, i);
--		if (!parent_names[i])
--			return;
--	}
-+	of_clk_parent_fill(np, parent_names, num_parents);
- 
- 	num = of_get_child_count(np);
- 	if (!num || num > (PROG_ID_MAX + 1))
-diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
-index 98a84a8..84c19d7 100644
---- a/drivers/clk/at91/clk-slow.c
-+++ b/drivers/clk/at91/clk-slow.c
-@@ -371,17 +371,12 @@ void __init of_at91sam9x5_clk_slow_setup(struct device_node *np,
- 	const char *parent_names[2];
- 	int num_parents;
- 	const char *name = np->name;
--	int i;
- 
- 	num_parents = of_clk_get_parent_count(np);
- 	if (num_parents <= 0 || num_parents > 2)
- 		return;
- 
--	for (i = 0; i < num_parents; ++i) {
--		parent_names[i] = of_clk_get_parent_name(np, i);
--		if (!parent_names[i])
--			return;
--	}
-+	of_clk_parent_fill(np, parent_names, num_parents);
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 
-@@ -449,17 +444,12 @@ void __init of_at91sam9260_clk_slow_setup(struct device_node *np,
- 	const char *parent_names[2];
- 	int num_parents;
- 	const char *name = np->name;
--	int i;
- 
- 	num_parents = of_clk_get_parent_count(np);
- 	if (num_parents != 2)
- 		return;
- 
--	for (i = 0; i < num_parents; ++i) {
--		parent_names[i] = of_clk_get_parent_name(np, i);
--		if (!parent_names[i])
--			return;
--	}
-+	of_clk_parent_fill(np, parent_names, num_parents);
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 
-diff --git a/drivers/clk/at91/clk-smd.c b/drivers/clk/at91/clk-smd.c
-index 3817ea8..a7f8501 100644
---- a/drivers/clk/at91/clk-smd.c
-+++ b/drivers/clk/at91/clk-smd.c
-@@ -145,7 +145,6 @@ void __init of_at91sam9x5_clk_smd_setup(struct device_node *np,
- 					struct at91_pmc *pmc)
- {
- 	struct clk *clk;
--	int i;
- 	int num_parents;
- 	const char *parent_names[SMD_SOURCE_MAX];
- 	const char *name = np->name;
-@@ -154,11 +153,7 @@ void __init of_at91sam9x5_clk_smd_setup(struct device_node *np,
- 	if (num_parents <= 0 || num_parents > SMD_SOURCE_MAX)
- 		return;
- 
--	for (i = 0; i < num_parents; i++) {
--		parent_names[i] = of_clk_get_parent_name(np, i);
--		if (!parent_names[i])
--			return;
--	}
-+	of_clk_parent_fill(np, parent_names, num_parents);
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 
-diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
-index b0cbd2b..b3cbf45 100644
---- a/drivers/clk/at91/clk-usb.c
-+++ b/drivers/clk/at91/clk-usb.c
-@@ -373,7 +373,6 @@ void __init of_at91sam9x5_clk_usb_setup(struct device_node *np,
- 					struct at91_pmc *pmc)
- {
- 	struct clk *clk;
--	int i;
- 	int num_parents;
- 	const char *parent_names[USB_SOURCE_MAX];
- 	const char *name = np->name;
-@@ -382,11 +381,7 @@ void __init of_at91sam9x5_clk_usb_setup(struct device_node *np,
- 	if (num_parents <= 0 || num_parents > USB_SOURCE_MAX)
- 		return;
- 
--	for (i = 0; i < num_parents; i++) {
--		parent_names[i] = of_clk_get_parent_name(np, i);
--		if (!parent_names[i])
--			return;
--	}
-+	of_clk_parent_fill(np, parent_names, num_parents);
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 
 -- 
-1.7.9.5
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
