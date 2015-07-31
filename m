@@ -1,287 +1,73 @@
-Return-Path: <pi-cheng.chen@linaro.org>
-Return-Path: <pi-cheng.chen@linaro.org>
-From: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Daniel Kurtz <djkurtz@chromium.org>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	linux-mediatek@lists.infradead.org,
-	linaro-kernel@lists.linaro.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	"pi-cheng.chen" <pi-cheng.chen@linaro.org>
-Subject: [PATCH v4] clk: mediatek: Export CPU mux clocks for CPU frequency control
-Date: Tue, 14 Jul 2015 17:34:19 +0800
-Message-Id: <1436866459-14217-1-git-send-email-pi-cheng.chen@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH v2 0/7] ARM: sunxi: Switch to clock indices
+Date: Fri, 31 Jul 2015 19:46:15 +0200
+Message-Id: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: "pi-cheng.chen" <pi-cheng.chen@linaro.org>
+Hi,
 
-This patch adds CPU mux clocks which are used by Mediatek cpufreq driver
-for intermediate clock source switching.
+We currently have in our clock driver a logic very similar to the one
+that clock-indices is supposed to cover.
 
-Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
----
-Changes in v4:
-- Address comments for v3
-- Rebase to the patch that adds 13mhz clock for MT8173[1]
+Using this property, we can create a new driver generic for all gates
+that will get the valid indices directly from the device tree, instead
+of storing that in the driver itself.
 
-Changes in v3:
-- Rebase to 4.2-rc1
-- Fix some issues of v2
+While we're at it, we also move to using CLK_OF_DECLARE for that new
+driver, which should ease the orphan clocks breakage we saw.
 
-Changes in v2:
-- Remove use of .determine_rate callback
+Let me know what you think,
+Maxime
 
-[1] http://patchwork.kernerl.xyz/patch/6777041/
----
- drivers/clk/mediatek/Makefile          |   2 +-
- drivers/clk/mediatek/clk-cpumux.c      | 127 +++++++++++++++++++++++++++++++++
- drivers/clk/mediatek/clk-cpumux.h      |  22 ++++++
- drivers/clk/mediatek/clk-mt8173.c      |  23 ++++++
- include/dt-bindings/clock/mt8173-clk.h |   4 +-
- 5 files changed, 176 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/mediatek/clk-cpumux.c
- create mode 100644 drivers/clk/mediatek/clk-cpumux.h
+Changes from v1:
+  - Remove unused headers in the driver
+  - Fix the wrong commit log for the A80
 
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 8e4b2a4..299917a 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -1,4 +1,4 @@
--obj-y += clk-mtk.o clk-pll.o clk-gate.o
-+obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-cpumux.o
- obj-$(CONFIG_RESET_CONTROLLER) += reset.o
- obj-y += clk-mt8135.o
- obj-y += clk-mt8173.o
-diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
-new file mode 100644
-index 0000000..fb04fe1
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-cpumux.c
-@@ -0,0 +1,127 @@
-+/*
-+ * Copyright (c) 2015 Linaro Ltd.
-+ * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/slab.h>
-+
-+#include "clk-mtk.h"
-+#include "clk-cpumux.h"
-+
-+struct mtk_clk_cpumux {
-+	struct clk_hw	hw;
-+	struct regmap	*regmap;
-+	u32		reg;
-+	u32		mask;
-+	u8		shift;
-+};
-+
-+static inline struct mtk_clk_cpumux *to_clk_mux(struct clk_hw *_hw)
-+{
-+	return container_of(_hw, struct mtk_clk_cpumux, hw);
-+}
-+
-+static u8 clk_cpumux_get_parent(struct clk_hw *hw)
-+{
-+	struct mtk_clk_cpumux *mux = to_clk_mux(hw);
-+	int num_parents = __clk_get_num_parents(hw->clk);
-+	unsigned int val;
-+
-+	regmap_read(mux->regmap, mux->reg, &val);
-+
-+	val >>= mux->shift;
-+	val &= mux->mask;
-+
-+	if (val >= num_parents)
-+		return -EINVAL;
-+
-+	return val;
-+}
-+
-+static int clk_cpumux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct mtk_clk_cpumux *mux = to_clk_mux(hw);
-+	u32 mask, val;
-+
-+	val = index << mux->shift;
-+	mask = mux->mask << mux->shift;
-+
-+	return regmap_update_bits(mux->regmap, mux->reg, mask, val);
-+}
-+
-+static const struct clk_ops clk_cpumux_ops = {
-+	.get_parent = clk_cpumux_get_parent,
-+	.set_parent = clk_cpumux_set_parent,
-+};
-+
-+static struct clk __init *mtk_clk_register_cpumux(const struct mtk_composite *mux,
-+					   struct regmap *regmap)
-+{
-+	struct mtk_clk_cpumux *cpumux;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	cpumux = kzalloc(sizeof(*cpumux), GFP_KERNEL);
-+	if (!cpumux)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = mux->name;
-+	init.ops = &clk_cpumux_ops;
-+	init.parent_names = mux->parent_names;
-+	init.num_parents = mux->num_parents;
-+	init.flags = mux->flags;
-+
-+	cpumux->reg = mux->mux_reg;
-+	cpumux->shift = mux->mux_shift;
-+	cpumux->mask = BIT(mux->mux_width) - 1;
-+	cpumux->regmap = regmap;
-+	cpumux->hw.init = &init;
-+
-+	clk = clk_register(NULL, &cpumux->hw);
-+	if (IS_ERR(clk))
-+		kfree(cpumux);
-+
-+	return clk;
-+}
-+
-+int __init mtk_clk_register_cpumuxes(struct device_node *node,
-+			      const struct mtk_composite *clks, int num,
-+			      struct clk_onecell_data *clk_data)
-+{
-+	int i;
-+	struct clk *clk;
-+	struct regmap *regmap;
-+
-+	regmap = syscon_node_to_regmap(node);
-+	if (IS_ERR(regmap)) {
-+		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
-+		       PTR_ERR(regmap));
-+		return PTR_ERR(regmap);
-+	}
-+
-+	for (i = 0; i < num; i++) {
-+		const struct mtk_composite *mux = &clks[i];
-+
-+		clk = mtk_clk_register_cpumux(mux, regmap);
-+		if (IS_ERR(clk)) {
-+			pr_err("Failed to register clk %s: %ld\n",
-+			       mux->name, PTR_ERR(clk));
-+			continue;
-+		}
-+
-+		clk_data->clks[mux->id] = clk;
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/clk/mediatek/clk-cpumux.h b/drivers/clk/mediatek/clk-cpumux.h
-new file mode 100644
-index 0000000..52c769f
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-cpumux.h
-@@ -0,0 +1,22 @@
-+/*
-+ * Copyright (c) 2015 Linaro Ltd.
-+ * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __DRV_CLK_CPUMUX_H
-+#define __DRV_CLK_CPUMUX_H
-+
-+int mtk_clk_register_cpumuxes(struct device_node *node,
-+			      const struct mtk_composite *clks, int num,
-+			      struct clk_onecell_data *clk_data);
-+
-+#endif /* __DRV_CLK_CPUMUX_H */
-diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
-index 540c5c3..3cf9ca9 100644
---- a/drivers/clk/mediatek/clk-mt8173.c
-+++ b/drivers/clk/mediatek/clk-mt8173.c
-@@ -19,6 +19,7 @@
- 
- #include "clk-mtk.h"
- #include "clk-gate.h"
-+#include "clk-cpumux.h"
- 
- #include <dt-bindings/clock/mt8173-clk.h>
- 
-@@ -517,6 +518,25 @@ static const char * const i2s3_b_ck_parents[] __initconst = {
- 	"apll2_div5"
- };
- 
-+static const char * const ca53_parents[] __initconst = {
-+	"clk26m",
-+	"armca7pll",
-+	"mainpll",
-+	"univpll"
-+};
-+
-+static const char * const ca57_parents[] __initconst = {
-+	"clk26m",
-+	"armca15pll",
-+	"mainpll",
-+	"univpll"
-+};
-+
-+static const struct mtk_composite cpu_muxes[] __initdata = {
-+	MUX(CLK_INFRA_CA53SEL, "infra_ca53_sel", ca53_parents, 0x0000, 0, 2),
-+	MUX(CLK_INFRA_CA57SEL, "infra_ca57_sel", ca57_parents, 0x0000, 2, 2),
-+};
-+
- static const struct mtk_composite top_muxes[] __initconst = {
- 	/* CLK_CFG_0 */
- 	MUX(CLK_TOP_AXI_SEL, "axi_sel", axi_parents, 0x0040, 0, 3),
-@@ -743,6 +763,9 @@ static void __init mtk_infrasys_init(struct device_node *node)
- 						clk_data);
- 	mtk_clk_register_factors(infra_divs, ARRAY_SIZE(infra_divs), clk_data);
- 
-+	mtk_clk_register_cpumuxes(node, cpu_muxes, ARRAY_SIZE(cpu_muxes),
-+						clk_data);
-+
- 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
-diff --git a/include/dt-bindings/clock/mt8173-clk.h b/include/dt-bindings/clock/mt8173-clk.h
-index fa2a2bb..a17cbaa 100644
---- a/include/dt-bindings/clock/mt8173-clk.h
-+++ b/include/dt-bindings/clock/mt8173-clk.h
-@@ -188,7 +188,9 @@
- #define CLK_INFRA_PMICSPI		10
- #define CLK_INFRA_PMICWRAP		11
- #define CLK_INFRA_CLK_13M		12
--#define CLK_INFRA_NR_CLK		13
-+#define CLK_INFRA_CA53SEL		13
-+#define CLK_INFRA_CA57SEL		14
-+#define CLK_INFRA_NR_CLK		15
- 
- /* PERI_SYS */
- 
+Maxime Ripard (7):
+  ARM: sun4i: Add clock indices
+  ARM: sun5i: Add clock indices
+  ARM: sun6i: Add clock indices
+  ARM: sun7i: Add clock indices
+  ARM: sun8i: Add clock indices
+  ARM: sun9i: Wrap the clock-indices
+  clk: sunxi: Add a simple gates driver
+
+ arch/arm/boot/dts/sun4i-a10.dtsi     |  69 ++++++++++----
+ arch/arm/boot/dts/sun5i-a10s.dtsi    |  23 ++++-
+ arch/arm/boot/dts/sun5i-a13.dtsi     |  18 +++-
+ arch/arm/boot/dts/sun5i.dtsi         |   1 +
+ arch/arm/boot/dts/sun6i-a31.dtsi     |  24 +++++
+ arch/arm/boot/dts/sun7i-a20.dtsi     |  23 +++++
+ arch/arm/boot/dts/sun8i-a23-a33.dtsi |  15 +++
+ arch/arm/boot/dts/sun9i-a80.dtsi     |  32 +++++--
+ drivers/clk/sunxi/Makefile           |   1 +
+ drivers/clk/sunxi/clk-simple-gates.c | 157 +++++++++++++++++++++++++++++++
+ drivers/clk/sunxi/clk-sunxi.c        | 177 -----------------------------------
+ 11 files changed, 333 insertions(+), 207 deletions(-)
+ create mode 100644 drivers/clk/sunxi/clk-simple-gates.c
+
 -- 
-1.9.1
+2.4.6
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
