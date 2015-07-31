@@ -1,496 +1,691 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Paul Osmialowski <pawelo@king.net.pl>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <alpine.LNX.2.00.1507262211470.28341@localhost.localdomain>
-Cc: "Paul Osmialowski" <pawelo@king.net.pl>, "Arnd Bergmann" <arnd@arndb.de>,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Nicolas Pitre" <nicolas.pitre@linaro.org>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Rob Herring" <r.herring@freescale.com>,
- "Alexander Potashev" <aspotashev@emcraft.com>,
- "Frank Li" <Frank.Li@freescale.com>, "Jiri Slaby" <jslaby@suse.cz>,
- linux-clk@vger.kernel.org, "Russell King" <linux@arm.linux.org.uk>,
- "Vinod Koul" <vinod.koul@intel.com>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>, linux-serial@vger.kernel.org,
- "Uwe Kleine-Koenig" <u.kleine-koenig@pengutronix.de>,
- "Anson Huang" <b20788@freescale.com>, devicetree@vger.kernel.org,
- "Pawel Moll" <pawel.moll@arm.com>,
- "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
- "Kumar Gala" <galak@codeaurora.org>, "Yuri Tikhonov" <yur@emcraft.com>,
- linux-gpio@vger.kernel.org, "Rob Herring" <robh+dt@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org,
- "Sergei Poselenov" <sposelenov@emcraft.com>,
- "Paul Bolle" <pebolle@tiscali.nl>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Stephen Boyd" <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- "Jingchang Lu" <jingchang.lu@freescale.com>, dmaengine@vger.kernel.org
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
- <alpine.LNX.2.00.1507022338070.28322@localhost.localdomain>
- <alpine.DEB.2.11.1507030006280.3916@nanos> <2009463.YLtdMegFel@wuerfel>
- <alpine.LNX.2.00.1507042327490.1296@localhost.localdomain>
- <20150724034229.642.88156@quantum>
- <alpine.LNX.2.00.1507262211470.28341@localhost.localdomain>
-Message-ID: <20150728160347.642.31950@quantum>
-Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
-Date: Tue, 28 Jul 2015 09:03:47 -0700
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: mturquette@linaro.org,
+	sboyd@codeaurora.org,
+	matthias.bgg@gmail.com
+Cc: s.hauer@pengutronix.de,
+	jamesjj.liao@mediatek.com,
+	henryc.chen@mediatek.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	manabian@gmail.com,
+	p.zabel@pengutronix.com
+Subject: [PATCH v4 RESEND 1/3] clk: Add regmap support
+Date: Fri, 31 Jul 2015 17:14:17 +0200
+Message-Id: <1438355659-21558-2-git-send-email-matthias.bgg@gmail.com>
+In-Reply-To: <1438355659-21558-1-git-send-email-matthias.bgg@gmail.com>
+References: <1438355659-21558-1-git-send-email-matthias.bgg@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Paul Osmialowski (2015-07-26 13:24:08)
-> Hi Mike,
-> =
-
-> Thank you for spending time on this and pointing me into the right =
-
-> direction. I'm wondering about going even further with it. Assuming that =
-I =
-
-
-Hi Paul,
-
-No problem! And thanks for the quick turnaround on your patches so far.
-
-> know everything about my board, I can skip run-time discovery phase (note =
-
-> that the original driver was designed for other Kinetis-based boards too) =
-
-> and move everything into DTS, somewhat like this:
-> =
-
-> / {
->         osc0: clock {
->                 compatible =3D "fixed-clock";
->                 #clock-cells =3D <0>;
->                 clock-frequency =3D <50000000>;
->         };
-> =
-
->         osc1: clock {
->                 compatible =3D "fixed-clock";
->                 #clock-cells =3D <0>;
->                 clock-frequency =3D <12000000>;
->         };
-> =
-
->         rtc: clock {
->                 compatible =3D "fixed-clock";
->                 #clock-cells =3D <0>;
->                 clock-frequency =3D <32768>;
->         };
-> =
-
->         mcgout: clock {
->                 compatible =3D "fixed-factor-clock";
->                 #clock-cells =3D <0>;
->                 clocks =3D <&osc0>;
->                 clock-mult =3D <12>;
->                 clock-div =3D <5>;
->         };
-
-I think this is a step backwards.
-
-Did you look at the qcom clock binding and read the email where I
-detailed how that binding works?
-
-The point of that type of binding is to not shove per-clock data into
-DT, but instead to declare every clock controller IP block (e.g. the
-device) as well as every board-level clock (e.g. as osc that feeds into
-your mcu). Once these "clock providers" are enumerated in DT, then we
-create linkage between the clock providers and the clock consumers by
-using phandles + an index. Linux device drivers tap into this by using
-clk_get() and using the "clock-names" property from DT.
-
-Put another way: we mostly use DT to model "devices". That is open to
-interpretation for but for clock-related stuff we typically interpret
-the clock controller as the device, not the individual clock outputs
-coming out of the controller.
-
-Note that a clock controller IP block may be both a provider and a
-consumer.  I/O controllers are a very common type of consumer (e.g. USB
-host controller, MMC controller, GPU, etc).
-
-Additionally, from my reading of the reference manual, mcgout is defined
-as:
-
-"""
-MCG output of either IRC, MCGFLLCLK MCGPLL0CLK,
-MCGPLL1CLK, or MCG's external reference clock that
-sources the core, system, bus, FlexBus, and flash clock. It is
-also an option for the debug trace clock.
-"""
-
-So why is it listed here as a fixed-factor clock? Is it not a
-multiplexer? Also, why is it listed here at all? Please take another
-look at the qcom binding example I linked to in my previous mail.
-
-> =
-
->         core: clock {
->                 compatible =3D "fixed-factor-clock";
->                 #clock-cells =3D <0>;
->                 clocks =3D <&mcgout>;
->                 clock-mult =3D <1>;
->                 clock-div =3D <1>;
->         };
-> =
-
->         bus: clock {
->                 compatible =3D "fixed-factor-clock";
->                 #clock-cells =3D <0>;
->                 clocks =3D <&mcgout>;
->                 clock-mult =3D <1>;
->                 clock-div =3D <2>;
-
-These are actually not fixed dividers but programmable dividers. You can
-probably use drivers/clk/clk-divider.c for these. I'm fine with using
-fixed-dividers for the initial merge just to get things up and running
-if that is your strategy, but you'll need to revisit them later on when
-you need more flexible support for other boards.
-
-Again, I'm not sure why these clocks are enumerated in DT. Why not just
-enumerate your mcg clock controller and your sim clock controller? If
-you want to be a perfectionist then it appears that there is an osc
-clock controller upstream from the mcg controller as well ;-)
-
-It occurs to me that maybe you are trying to use fixed-factor clocks so
-that you can program a sane default rate? We use the
-assigned-clock-rates property for that. Note that this value is a
-property of some device which *consumes* the clock, not the clock
-controller or the clock output itself.
-
->         };
-> =
-
->         soc {
->                 cmu@0x40047000 {
->                         compatible =3D "fsl,kinetis-gate-clock";
->                         reg =3D <0x40047000 0x1100>;
-> =
-
->                         mcg_core_gate: clock-gate {
->                                 clocks =3D <&core>;
->                                 #clock-cells =3D <2>;
->                         };
-> =
-
->                         mcg_bus_gate: clock-gate {
->                                 clocks =3D <&bus>;
->                                 #clock-cells =3D <2>;
->                         };
-> =
-
->                         osc0_erclk_gate: clock-gate {
->                                 clocks =3D <&osc0>;
->                                 #clock-cells =3D <2>;
->                         };
->                 };
-> =
-
->                 uart0: serial@4006a000 {
->                         compatible =3D "fsl,kinetis-lpuart";
->                         reg =3D <0x4006a000 0x1000>;
->                         interrupts =3D <45>, <46>;
->                         interrupt-names =3D "uart-stat", "uart-err";
->                         clocks =3D <&mcg_core_gate 3 10>;
-
-Magic numbers are not good. dtc has been able to use preprocessor macros
-for a while now which means we can use constants instead of magic
-numbers. Please look at the shared header in the qcom binding for an
-example.
-
->                         clock-names =3D "ipg";
->                         dmas =3D <&edma 0 2>;
->                         dma-names =3D "rx";
->                         status =3D "disabled";
->                 };
->         };
-> };
-> =
-
-> As you can see, mcg part is not required anymore.
-
-I think the mcg should be required. The mcg is a real IP block on your
-SoC, according to my reading of your technical reference manual. Just
-because you can model a few of its output clocks in dts does not mean
-that you should.
-
-I did a quick grep and didn't find "cmu" anywhere in the reference
-manual.
-
-> =
-
-> I guess that the approach above would require split into soc-specific and =
-
-> board-specific part (as I said, dividers arrangement is something board =
-
-> specific), but I wonder what you thing about this proposal.
-
-Splitting is good. Chip-specific stuff can go into the chip-specific
-dtsi file. The board-level (osc) stuff can go into the individual board
-files. The ultimate goal is to make it trivial to add new boards.
-
-Regards,
-Mike
-
-> =
-
-> Thanks,
-> Paul
-> =
-
-> On Thu, 23 Jul 2015, Michael Turquette wrote:
-> =
-
-> > Quoting Paul Osmialowski (2015-07-04 14:50:03)
-> > > Hi Arnd,
-> > > =
-
-> > > I'm attaching excerpt from Kinetis reference manual that may make =
-
-> > > situation clearer.
-> > =
-
-> > Hi Paul,
-> > =
-
-> > Can you please post the patch in the body of the email instead of an
-> > attachment? It makes it easier to review. Another small nitpick is that
-> > the $SUBJECT for this patch might be better off as something like:
-> > =
-
-> > clk: mcg and sim clock drivers for twr-k70f120m Kinetis SoC
-> > =
-
-> > At least it helps me find the patch I care about when skimming the
-> > series ;-)
-> > =
-
-> > > =
-
-> > > These MCG and SIM registers are used only to determine configuration =
-
-> > > (clock fixed rates and clock signal origins) at run time.
-> > > =
-
-> > > Namely, the real MCGOUTCLK source (in the middle) which is the parent=
- for =
-
-> > > core clock (CCLK) and peripheral clock (PCLK) is determined at run ti=
-me by =
-
-> > > reading MCG registers, let me quote commit message from Emcraft git r=
-epo:
-> > > =
-
-> > >       * Determine in run-time what oscillator module (OSC0 or OSC1) i=
-s used
-> > >      as clock source for the main PLL.
-> > =
-
-> > According to [0] there are three options: a 32k RTC osc clock and osc0
-> > both feed into a mux. You should model this 32k clock with the
-> > fixed-rate binding.
-> > =
-
-> > >       * When OSC1 is selected, assume its frequency to be 12 MHz on a=
-ll
-> > >      boards (there is a 12 MHz oscillator on XTAL1/EXTAL1 on K70-SOM =
-and
-> > >      TWR-K70F120M boards).
-> > > =
-
-> > > In my .dts I'm trying to possibly follow real clock hierarchy, but to=
- go =
-
-> > > anywhere behind MCGOUTCLK would require ability to rewrite .dtb e.g. =
-by =
-
-> > > U-boot. But that's too demanding for any potential users of this BSP.=
- So =
-
-> > > let's asume that MCGOUTCLK is the root clock and a parent for CCLK an=
-d =
-
-> > > PCLK.
-> > =
-
-> > I'm confused. The point of device tree is to solve problems like this;
-> > i.e. board-specific differences such as different oscillator
-> > frequencies.
-> > =
-
-> > OSC0 and OSC1 should each be a fixed-rate clock in your board-specific
-> > TWR-K70F120M DTS (not a chip-specific file). They do not belong in the
-> > cmu node, and they should use the "fixed-clock" binding. The 32k RTC osc
-> > can probably go in your chip-specific .dtsi as a fixed-rate clock since
-> > it appears to mandated in the reference manual[0].
-> > =
-
-> > These three fixed-rate clocks are your root clock nodes. Customers only
-> > need to worry about this if they spin a board, and then they will need
-> > to populate the frequencies of OSC0 and OSC1 in their board-specific
-> > .dts.
-> > =
-
-> > Please break clk-kinetis.c into two files:
-> > drivers/clk/kinetis/clk-mcg.c
-> > drivers/clk/kinetis/clk-sim.c
-> > =
-
-> > Below is what your binding/dts should look like:
-> > =
-
-> > {
-> >       osc0: clock {
-> >               compatible =3D "fixed-clock";
-> >               #clock-cells =3D <0>;
-> >               clock-frequency =3D <50000000>;
-> >       };
-> > =
-
-> >       osc1: clock {
-> >               compatible =3D "fixed-clock";
-> >               #clock-cells =3D <0>;
-> >               clock-frequency =3D <12000000>;
-> >       };
-> > =
-
-> >       rtc: clock {
-> >               compatible =3D "fixed-clock";
-> >               #clock-cells =3D <0>;
-> >               clock-frequency =3D <32768>;
-> >       };
-> > =
-
-> >       soc: soc {
-> >               mcg: clock-controller@40064000 {
-> >                       compatible =3D "fsl,kinetis-mcg";
-> >                       clock-cells =3D <1>;
-> >                       reg =3D <0x40064000 0x14>;
-> >                       clocks =3D <&osc0>, <&osc1>, <&rtc>;
-> >                       clock-names =3D "osc0", "osc1", "rtc";
-> >               };
-> > =
-
-> >               sim: clock-controller@40047000 {
-> >                       compatible =3D "fsl,kinetis-sim";
-> >                       clock-cells =3D <1>;
-> >                       reg =3D <0x40047000 0x1100>;
-> >                       clocks =3D <&mcg MCG_MCGOUTCLK_DIV1>, <&mcg MCG_M=
-CGOUTCLK_DIV2>, <&mcg MCG_MCGOUTCLK_DIV3> <&mcg MCG_MCGOUTCLK_DIV4>;
-> >                       clock-names =3D "core", "bus", "flexbus", "flash";
-> >               };
-> >       };
-> > =
-
-> >       uart0: serial@4006a000 {
-> >               compatible =3D "fsl,kinetis-lpuart";
-> >               reg =3D <0x4006a000 0x1000>;
-> >               clocks =3D <&sim SIM_SCGC4_UART1_CLK>;
-> >               clock-names =3D "gate";
-> >       };
-> > =
-
-> > I removed the interrupts and dma stuff from the uart0 node for clarity.
-> > The above is the only style of binding that I have been accepting for
-> > some time; first declare the clock controller and establish its register
-> > space, and then consumers can consume clocks by providing the phandle to
-> > the controller plus an offset corresponding to a unique clock. The
-> > clock-names property makes it really easy to use with the clkdev stuff
-> > (e.g. clk_get()).
-> > =
-
-> > I've covered this before on the mailing list so here is a link
-> > describing how the qcom bindings do it in detail:
-> > =
-
-> > http://lkml.kernel.org/r/<20150416192014.19585.9663@quantum>
-> > =
-
-> > Technically you could encode the same bits as sub-nodes of the mcg and
-> > sim nodes, but the shared header is how the magic happens with the
-> > driver so it's best to keep the clock controller binding small and
-> > light.
-> > =
-
-> > I think this means you can also get rid of kinetis_of_clk_get_name and
-> > kinetis_clk_gate_get but my brain is tired so I'll leave that as an
-> > exercise to the reader.
-> > =
-
-> > [0] http://cache.freescale.com/files/microcontrollers/doc/ref_manual/K7=
-0P256M150SF3RM.pdf
-> > =
-
-> > Regards,
-> > Mike
-> > =
-
-> > > =
-
-> > > In my most recent version I added OSC0ERCLK explicitly as one more ro=
-ot =
-
-> > > clock, since it is also used directly (through CG reg. 1 bit 0) by =
-
-> > > Freescale fec network device whose in-tree driver I'm trying to make =
-
-> > > usable for Kinetis.
-> > > =
-
-> > > On Sat, 4 Jul 2015, Arnd Bergmann wrote:
-> > > =
-
-> > > > On Friday 03 July 2015 00:08:27 Thomas Gleixner wrote:
-> > > >> On Thu, 2 Jul 2015, Paul Osmialowski wrote:
-> > > >>> On Thu, 2 Jul 2015, Arnd Bergmann wrote:
-> > > >>>
-> > > >>>> I wonder if you could move out the fixed rate clocks into their =
-own
-> > > >>>> nodes. Are they actually controlled by the same block? If they a=
-re
-> > > >>>> just fixed, you can use the normal binding for fixed rate clocks
-> > > >>>> and only describe the clocks that are related to the driver.
-> > > >>>
-> > > >>> In my view having these clocks grouped together looks more convin=
-cing. After
-> > > >>> all, they all share the same I/O regs in order to read configurat=
-ion.
-> > > >>
-> > > >> The fact that they share a register is not making them a group. Th=
-at's
-> > > >> just a HW design decision and you need to deal with that by protec=
-ting
-> > > >> the register access, but not by trying to group them artificially =
-at
-> > > >> the functional level.
-> > > >
-> > > > I'd disagree with that: The clock controller is the device that own=
-s the
-> > > > registers and that should be one node in DT, as Paul's first versio=
-n does.
-> > > >
-> > > > The part I'm still struggling with is understanding how the fixed-r=
-ate
-> > > > clocks are controlled through those registers. If they are indeed c=
-onfigured
-> > > > through the registers, the name is probably wrong and should be cha=
-nged
-> > > > to whatever kind of non-fixed clock this is.
-> > > >
-> > > >       Arnd
-> > > >
-> > > =
-
-> > > _______________________________________________
-> > > linux-arm-kernel mailing list
-> > > linux-arm-kernel@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> > =
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Some devices like SoCs from Mediatek need to use the clock
+through a regmap interface.
+This patch adds regmap support for the simple multiplexer clock,
+the divider clock and the clock gate code.
+
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+Acked-by: Joachim Eastwood <manabian@gmail.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/Makefile         |  1 +
+ drivers/clk/clk-divider.c    | 68 +++++++++++++++++++++++++-------
+ drivers/clk/clk-gate.c       | 57 +++++++++++++++++++++------
+ drivers/clk/clk-io.c         | 48 ++++++++++++++++++++++
+ drivers/clk/clk-io.h         | 22 +++++++++++
+ drivers/clk/clk-mux.c        | 94 +++++++++++++++++++++++++++++++++++++-------
+ include/linux/clk-provider.h | 54 +++++++++++++++++++++++--
+ 7 files changed, 300 insertions(+), 44 deletions(-)
+ create mode 100644 drivers/clk/clk-io.c
+ create mode 100644 drivers/clk/clk-io.h
+
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 3233f0e..63a94f2 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -10,6 +10,7 @@ obj-$(CONFIG_COMMON_CLK)	+= clk-mux.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-composite.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-fractional-divider.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-gpio-gate.o
++obj-$(CONFIG_COMMON_CLK)	+= clk-io.o
+ ifeq ($(CONFIG_OF), y)
+ obj-$(CONFIG_COMMON_CLK)	+= clk-conf.o
+ endif
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index 706b578..411f143 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -18,6 +18,8 @@
+ #include <linux/string.h>
+ #include <linux/log2.h>
+ 
++#include "clk-io.h"
++
+ /*
+  * DOC: basic adjustable divider clock that cannot gate
+  *
+@@ -137,7 +139,8 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
+ 	struct clk_divider *divider = to_clk_divider(hw);
+ 	unsigned int val;
+ 
+-	val = clk_readl(divider->reg) >> divider->shift;
++	val = clk_io_readl(hw, divider->reg, divider->regmap, divider->offset);
++	val >>= divider->shift;
+ 	val &= div_mask(divider->width);
+ 
+ 	return divider_recalc_rate(hw, parent_rate, val, divider->table,
+@@ -349,7 +352,10 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	/* if read only, just return current value */
+ 	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
+-		bestdiv = readl(divider->reg) >> divider->shift;
++		bestdiv = clk_io_readl(hw, divider->reg, divider->regmap,
++				divider->offset);
++
++		bestdiv >>= divider->shift;
+ 		bestdiv &= div_mask(divider->width);
+ 		bestdiv = _get_div(divider->table, bestdiv, divider->flags);
+ 		return DIV_ROUND_UP(*prate, bestdiv);
+@@ -392,12 +398,16 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
+ 		val = div_mask(divider->width) << (divider->shift + 16);
++		val |= value << divider->shift;
++		clk_io_writel(hw, divider->reg, divider->regmap,
++			divider->offset, val);
+ 	} else {
+-		val = clk_readl(divider->reg);
+-		val &= ~(div_mask(divider->width) << divider->shift);
++		u32 mask = div_mask(divider->width) << divider->shift;
++
++		val = value << divider->shift;
++		clk_io_update_bits(hw, divider->reg, divider->regmap,
++			divider->offset, mask, val);
+ 	}
+-	val |= value << divider->shift;
+-	clk_writel(val, divider->reg);
+ 
+ 	if (divider->lock)
+ 		spin_unlock_irqrestore(divider->lock, flags);
+@@ -414,9 +424,9 @@ EXPORT_SYMBOL_GPL(clk_divider_ops);
+ 
+ static struct clk *_register_divider(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+-		void __iomem *reg, u8 shift, u8 width,
+-		u8 clk_divider_flags, const struct clk_div_table *table,
+-		spinlock_t *lock)
++		void __iomem *reg, struct regmap *regmap, u32 offset,
++		u8 shift, u8 width, u8 clk_divider_flags,
++		const struct clk_div_table *table, spinlock_t *lock)
+ {
+ 	struct clk_divider *div;
+ 	struct clk *clk;
+@@ -441,7 +451,12 @@ static struct clk *_register_divider(struct device *dev, const char *name,
+ 	init.num_parents = (parent_name ? 1 : 0);
+ 
+ 	/* struct clk_divider assignments */
+-	div->reg = reg;
++	if (flags & CLK_USE_REGMAP)
++		div->regmap = regmap;
++	else
++		div->reg = reg;
++
++	div->offset = offset;
+ 	div->shift = shift;
+ 	div->width = width;
+ 	div->flags = clk_divider_flags;
+@@ -475,8 +490,8 @@ struct clk *clk_register_divider(struct device *dev, const char *name,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, spinlock_t *lock)
+ {
+-	return _register_divider(dev, name, parent_name, flags, reg, shift,
+-			width, clk_divider_flags, NULL, lock);
++	return _register_divider(dev, name, parent_name, flags, reg, NULL, 0,
++			shift, width, clk_divider_flags, NULL, lock);
+ }
+ EXPORT_SYMBOL_GPL(clk_register_divider);
+ 
+@@ -500,8 +515,8 @@ struct clk *clk_register_divider_table(struct device *dev, const char *name,
+ 		u8 clk_divider_flags, const struct clk_div_table *table,
+ 		spinlock_t *lock)
+ {
+-	return _register_divider(dev, name, parent_name, flags, reg, shift,
+-			width, clk_divider_flags, table, lock);
++	return _register_divider(dev, name, parent_name, flags, reg, NULL, 0,
++			shift, width, clk_divider_flags, table, lock);
+ }
+ EXPORT_SYMBOL_GPL(clk_register_divider_table);
+ 
+@@ -520,3 +535,28 @@ void clk_unregister_divider(struct clk *clk)
+ 	kfree(div);
+ }
+ EXPORT_SYMBOL_GPL(clk_unregister_divider);
++
++struct clk *clk_regm_register_divider(struct device *dev, const char *name,
++		const char *parent_name, unsigned long flags,
++		struct regmap *regmap, u32 offset, u8 shift, u8 width,
++		u8 clk_divider_flags, spinlock_t *lock)
++{
++	flags |= CLK_USE_REGMAP;
++
++	return _register_divider(dev, name, parent_name, flags, NULL, regmap,
++			offset,	shift, width, clk_divider_flags, NULL, lock);
++}
++EXPORT_SYMBOL_GPL(clk_regm_register_divider);
++
++struct clk *clk_regm_register_divider_table(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags,
++		struct regmap *regmap, u32 offset, u8 shift, u8 width,
++		u8 clk_divider_flags, const struct clk_div_table *table,
++		spinlock_t *lock)
++{
++	flags |= CLK_USE_REGMAP;
++
++	return _register_divider(dev, name, parent_name, flags, NULL, regmap,
++			offset,	shift, width, clk_divider_flags, table, lock);
++}
++EXPORT_SYMBOL_GPL(clk_regm_register_divider_table);
+diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
+index 551dd06..0be95a8 100644
+--- a/drivers/clk/clk-gate.c
++++ b/drivers/clk/clk-gate.c
+@@ -16,6 +16,8 @@
+ #include <linux/err.h>
+ #include <linux/string.h>
+ 
++#include "clk-io.h"
++
+ /**
+  * DOC: basic gatable clock which can gate and ungate it's ouput
+  *
+@@ -46,7 +48,7 @@ static void clk_gate_endisable(struct clk_hw *hw, int enable)
+ 	struct clk_gate *gate = to_clk_gate(hw);
+ 	int set = gate->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
+ 	unsigned long uninitialized_var(flags);
+-	u32 reg;
++	u32 reg, mask;
+ 
+ 	set ^= enable;
+ 
+@@ -57,16 +59,21 @@ static void clk_gate_endisable(struct clk_hw *hw, int enable)
+ 		reg = BIT(gate->bit_idx + 16);
+ 		if (set)
+ 			reg |= BIT(gate->bit_idx);
++
++		clk_io_writel(hw, gate->reg, gate->regmap, gate->offset, reg);
+ 	} else {
+-		reg = clk_readl(gate->reg);
++		if (set) {
++			reg = BIT(gate->bit_idx);
++			mask = 0x0;
++		} else {
++			reg = 0x0;
++			mask = BIT(gate->bit_idx);
++		}
+ 
+-		if (set)
+-			reg |= BIT(gate->bit_idx);
+-		else
+-			reg &= ~BIT(gate->bit_idx);
++		clk_io_update_bits(hw, gate->reg, gate->regmap, gate->offset,
++				mask, reg);
+ 	}
+ 
+-	clk_writel(reg, gate->reg);
+ 
+ 	if (gate->lock)
+ 		spin_unlock_irqrestore(gate->lock, flags);
+@@ -89,7 +96,7 @@ static int clk_gate_is_enabled(struct clk_hw *hw)
+ 	u32 reg;
+ 	struct clk_gate *gate = to_clk_gate(hw);
+ 
+-	reg = clk_readl(gate->reg);
++	reg = clk_io_readl(hw, gate->reg, gate->regmap, gate->offset);
+ 
+ 	/* if a set bit disables this clk, flip it before masking */
+ 	if (gate->flags & CLK_GATE_SET_TO_DISABLE)
+@@ -118,10 +125,10 @@ EXPORT_SYMBOL_GPL(clk_gate_ops);
+  * @clk_gate_flags: gate-specific flags for this clock
+  * @lock: shared register lock for this clock
+  */
+-struct clk *clk_register_gate(struct device *dev, const char *name,
++struct clk *__clk_register_gate(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+-		void __iomem *reg, u8 bit_idx,
+-		u8 clk_gate_flags, spinlock_t *lock)
++		void __iomem *reg, struct regmap *regmap, u32 offset,
++		u8 bit_idx, u8 clk_gate_flags, spinlock_t *lock)
+ {
+ 	struct clk_gate *gate;
+ 	struct clk *clk;
+@@ -146,7 +153,12 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
+ 	init.num_parents = (parent_name ? 1 : 0);
+ 
+ 	/* struct clk_gate assignments */
+-	gate->reg = reg;
++	if (flags & CLK_USE_REGMAP)
++		gate->regmap = regmap;
++	else
++		gate->reg = reg;
++
++	gate->offset = offset;
+ 	gate->bit_idx = bit_idx;
+ 	gate->flags = clk_gate_flags;
+ 	gate->lock = lock;
+@@ -159,6 +171,15 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
+ 
+ 	return clk;
+ }
++
++struct clk *clk_register_gate(struct device *dev, const char *name,
++		const char *parent_name, unsigned long flags,
++		void __iomem *reg, u8 bit_idx,
++		u8 clk_gate_flags, spinlock_t *lock)
++{
++	return __clk_register_gate(dev, name, parent_name, flags,
++			reg, NULL, 0, bit_idx, clk_gate_flags, lock);
++}
+ EXPORT_SYMBOL_GPL(clk_register_gate);
+ 
+ void clk_unregister_gate(struct clk *clk)
+@@ -176,3 +197,15 @@ void clk_unregister_gate(struct clk *clk)
+ 	kfree(gate);
+ }
+ EXPORT_SYMBOL_GPL(clk_unregister_gate);
++
++struct clk *clk_regm_register_gate(struct device *dev, const char *name,
++		const char *parent_name, unsigned long flags,
++		struct regmap *regmap, u32 offset, u8 bit_idx,
++		u8 clk_gate_flags, spinlock_t *lock)
++{
++	flags |= CLK_USE_REGMAP;
++
++	return __clk_register_gate(dev, name, parent_name, flags,
++			NULL, regmap, offset, bit_idx, clk_gate_flags, lock);
++}
++EXPORT_SYMBOL_GPL(clk_regm_register_gate);
+diff --git a/drivers/clk/clk-io.c b/drivers/clk/clk-io.c
+new file mode 100644
+index 0000000..9630ef5
+--- /dev/null
++++ b/drivers/clk/clk-io.c
+@@ -0,0 +1,48 @@
++/*
++ * Copyright (C) 2015 Matthias Brugger <matthias.bgg@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/clk-provider.h>
++
++void clk_io_writel(struct clk_hw *hw, void __iomem *reg, struct regmap *regmap,
++			u32 offset, u32 val)
++{
++	if (__clk_get_flags(hw->clk) & CLK_USE_REGMAP)
++		regmap_write(regmap, offset, val);
++	else
++		clk_writel(val, reg);
++}
++
++u32 clk_io_readl(struct clk_hw *hw, void __iomem *reg, struct regmap *regmap,
++			u32 offset)
++{
++	u32 val;
++
++	if (__clk_get_flags(hw->clk) & CLK_USE_REGMAP)
++		regmap_read(regmap, offset, &val);
++	else
++		val = clk_readl(reg);
++
++	return val;
++}
++
++int clk_io_update_bits(struct clk_hw *hw, void __iomem *reg,
++			struct regmap *regmap, u32 offset, u32 mask, u32 val)
++{
++	unsigned int tmp;
++
++	if (__clk_get_flags(hw->clk) & CLK_USE_REGMAP)
++		return regmap_update_bits(regmap, offset, mask, val);
++
++	tmp = clk_readl(reg);
++	tmp &= ~mask;
++	tmp |= val;
++	clk_writel(tmp, reg);
++
++	return 0;
++}
+diff --git a/drivers/clk/clk-io.h b/drivers/clk/clk-io.h
+new file mode 100644
+index 0000000..ab65129
+--- /dev/null
++++ b/drivers/clk/clk-io.h
+@@ -0,0 +1,22 @@
++/*
++ * linux/drivers/clk/clk-io.h
++ *
++ * Copyright (C) 2015 Matthias Brugger <matthias.bgg@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#ifndef __LINUX_CLK_IO_H
++#define __LINUX_CLK_IO_H
++
++#include <linux/clk-provider.h>
++
++void clk_io_writel(struct clk_hw *hw, void __iomem *reg, struct regmap *regmap,
++			u32 offset, u32 val);
++u32 clk_io_readl(struct clk_hw *hw, void __iomem *reg, struct regmap *regmap,
++			u32 offset);
++int clk_io_update_bits(struct clk_hw *hw, void __iomem *reg,
++			struct regmap *regmap, u32 offset, u32 mask, u32 val);
++
++#endif
+diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+index 6066a01..ec00de1 100644
+--- a/drivers/clk/clk-mux.c
++++ b/drivers/clk/clk-mux.c
+@@ -17,6 +17,8 @@
+ #include <linux/io.h>
+ #include <linux/err.h>
+ 
++#include "clk-io.h"
++
+ /*
+  * DOC: basic adjustable multiplexer clock that cannot gate
+  *
+@@ -42,7 +44,9 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
+ 	 * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
+ 	 * val = 0x4 really means "bit 2, index starts at bit 0"
+ 	 */
+-	val = clk_readl(mux->reg) >> mux->shift;
++	val = clk_io_readl(hw, mux->reg, mux->regmap, mux->offset);
++
++	val >>= mux->shift;
+ 	val &= mux->mask;
+ 
+ 	if (mux->table) {
+@@ -71,6 +75,7 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	struct clk_mux *mux = to_clk_mux(hw);
+ 	u32 val;
+ 	unsigned long flags = 0;
++	int ret = 0;
+ 
+ 	if (mux->table)
+ 		index = mux->table[index];
+@@ -88,17 +93,20 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 
+ 	if (mux->flags & CLK_MUX_HIWORD_MASK) {
+ 		val = mux->mask << (mux->shift + 16);
++		val |= index << mux->shift;
++		clk_io_writel(hw, mux->reg, mux->regmap, mux->offset, val);
+ 	} else {
+-		val = clk_readl(mux->reg);
+-		val &= ~(mux->mask << mux->shift);
++		u32 mask = mux->mask << mux->shift;
++
++		val = index << mux->shift;
++		ret = clk_io_update_bits(hw, mux->reg, mux->regmap,
++				mux->offset, mask, val);
+ 	}
+-	val |= index << mux->shift;
+-	clk_writel(val, mux->reg);
+ 
+ 	if (mux->lock)
+ 		spin_unlock_irqrestore(mux->lock, flags);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ const struct clk_ops clk_mux_ops = {
+@@ -113,10 +121,11 @@ const struct clk_ops clk_mux_ro_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_mux_ro_ops);
+ 
+-struct clk *clk_register_mux_table(struct device *dev, const char *name,
++struct clk *__clk_register_mux_table(struct device *dev, const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned long flags,
+-		void __iomem *reg, u8 shift, u32 mask,
++		void __iomem *reg, struct regmap *regmap,
++		u32 offset, u8 shift, u32 mask,
+ 		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
+ {
+ 	struct clk_mux *mux;
+@@ -149,7 +158,12 @@ struct clk *clk_register_mux_table(struct device *dev, const char *name,
+ 	init.num_parents = num_parents;
+ 
+ 	/* struct clk_mux assignments */
+-	mux->reg = reg;
++	if (flags & CLK_USE_REGMAP)
++		mux->regmap = regmap;
++	else
++		mux->reg = reg;
++
++	mux->offset = offset;
+ 	mux->shift = shift;
+ 	mux->mask = mask;
+ 	mux->flags = clk_mux_flags;
+@@ -164,19 +178,40 @@ struct clk *clk_register_mux_table(struct device *dev, const char *name,
+ 
+ 	return clk;
+ }
++
++struct clk *clk_register_mux_table(struct device *dev, const char *name,
++		const char * const *parent_names, u8 num_parents,
++		unsigned long flags, void __iomem *reg, u8 shift, u32 mask,
++		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
++{
++	return __clk_register_mux_table(dev, name, parent_names, num_parents,
++						flags, reg, NULL, 0,
++						shift, mask, clk_mux_flags,
++						table, lock);
++}
+ EXPORT_SYMBOL_GPL(clk_register_mux_table);
+ 
+-struct clk *clk_register_mux(struct device *dev, const char *name,
++struct clk *__clk_register_mux(struct device *dev, const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+-		unsigned long flags,
+-		void __iomem *reg, u8 shift, u8 width,
++		unsigned long flags, void __iomem *reg, struct regmap *regmap,
++		u32 offset, u8 shift, u8 width,
+ 		u8 clk_mux_flags, spinlock_t *lock)
+ {
+ 	u32 mask = BIT(width) - 1;
+ 
+-	return clk_register_mux_table(dev, name, parent_names, num_parents,
+-				      flags, reg, shift, mask, clk_mux_flags,
+-				      NULL, lock);
++	return __clk_register_mux_table(dev, name, parent_names, num_parents,
++					flags, reg, regmap, offset, shift, mask,
++					clk_mux_flags, NULL, lock);
++}
++
++struct clk *clk_register_mux(struct device *dev, const char *name,
++		const char * const *parent_names, u8 num_parents,
++		unsigned long flags, void __iomem *reg, u8 shift, u8 width,
++		u8 clk_mux_flags, spinlock_t *lock)
++{
++	return __clk_register_mux(dev, name, parent_names, num_parents, flags,
++					reg, NULL, 0, shift, width,
++					clk_mux_flags, lock);
+ }
+ EXPORT_SYMBOL_GPL(clk_register_mux);
+ 
+@@ -195,3 +230,32 @@ void clk_unregister_mux(struct clk *clk)
+ 	kfree(mux);
+ }
+ EXPORT_SYMBOL_GPL(clk_unregister_mux);
++
++struct clk *clk_regm_register_mux(struct device *dev, const char *name,
++		const char * const *parent_names, u8 num_parents,
++		unsigned long flags, struct regmap *regmap,
++		u32 offset, u8 shift, u8 width,
++		u8 clk_mux_flags, spinlock_t *lock)
++{
++	flags |= CLK_USE_REGMAP;
++
++	return __clk_register_mux(dev, name, parent_names, num_parents, flags,
++					NULL, regmap, offset, shift, width,
++					clk_mux_flags, lock);
++}
++EXPORT_SYMBOL_GPL(clk_regm_register_mux);
++
++struct clk *clk_regm_register_mux_table(struct device *dev, const char *name,
++		const char * const *parent_names, u8 num_parents,
++		unsigned long flags, struct regmap *regmap,
++		u32 offset, u8 shift, u32 mask,
++		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
++{
++	flags |= CLK_USE_REGMAP;
++
++	return __clk_register_mux_table(dev, name, parent_names, num_parents,
++					flags, NULL, regmap, offset,
++					shift, mask, clk_mux_flags,
++					table, lock);
++}
++EXPORT_SYMBOL_GPL(clk_regm_register_mux_table);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 4a943d1..1cb4d6d 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -14,6 +14,7 @@
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
++#include <linux/regmap.h>
+ 
+ #ifdef CONFIG_COMMON_CLK
+ 
+@@ -31,6 +32,7 @@
+ #define CLK_GET_RATE_NOCACHE	BIT(6) /* do not use the cached clk rate */
+ #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
+ #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
++#define CLK_USE_REGMAP		BIT(9) /* uses regmap to access registers */
+ 
+ struct clk_hw;
+ struct clk_core;
+@@ -271,6 +273,8 @@ void of_fixed_clk_setup(struct device_node *np);
+  *
+  * @hw:		handle between common and hardware-specific interfaces
+  * @reg:	register controlling gate
++ * @regmap:	regmap used to control the gate
++ * @offset:	offset inside the regmap
+  * @bit_idx:	single bit controlling gate
+  * @flags:	hardware-specific flags
+  * @lock:	register lock
+@@ -288,7 +292,11 @@ void of_fixed_clk_setup(struct device_node *np);
+  */
+ struct clk_gate {
+ 	struct clk_hw hw;
+-	void __iomem	*reg;
++	union {
++		void __iomem	*reg;
++		struct regmap	*regmap;
++	};
++	u32		offset;
+ 	u8		bit_idx;
+ 	u8		flags;
+ 	spinlock_t	*lock;
+@@ -304,6 +312,11 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
+ 		u8 clk_gate_flags, spinlock_t *lock);
+ void clk_unregister_gate(struct clk *clk);
+ 
++struct clk *clk_regm_register_gate(struct device *dev, const char *name,
++		const char *parent_name, unsigned long flags,
++		struct regmap *regmap, u32 offset, u8 bit_idx,
++		u8 clk_gate_flags, spinlock_t *lock);
++
+ struct clk_div_table {
+ 	unsigned int	val;
+ 	unsigned int	div;
+@@ -314,6 +327,8 @@ struct clk_div_table {
+  *
+  * @hw:		handle between common and hardware-specific interfaces
+  * @reg:	register containing the divider
++ * @regmap:	regmap used to access the divider
++ * @offest:	offset inside the regmap
+  * @shift:	shift to the divider bit field
+  * @width:	width of the divider bit field
+  * @table:	array of value/divider pairs, last entry should have div = 0
+@@ -345,7 +360,11 @@ struct clk_div_table {
+  */
+ struct clk_divider {
+ 	struct clk_hw	hw;
+-	void __iomem	*reg;
++	union {
++		void __iomem	*reg;
++		struct regmap	*regmap;
++	};
++	u32		offset;
+ 	u8		shift;
+ 	u8		width;
+ 	u8		flags;
+@@ -383,11 +402,24 @@ struct clk *clk_register_divider_table(struct device *dev, const char *name,
+ 		spinlock_t *lock);
+ void clk_unregister_divider(struct clk *clk);
+ 
++struct clk *clk_regm_register_divider(struct device *dev, const char *name,
++		const char *parent_name, unsigned long flags,
++		struct regmap *regmap, u32 offset, u8 shift, u8 width,
++		u8 clk_divider_flags, spinlock_t *lock);
++
++struct clk *clk_regm_register_divider_table(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags,
++		struct regmap *regmap, u32 offset, u8 shift, u8 width,
++		u8 clk_divider_flags, const struct clk_div_table *table,
++		spinlock_t *lock);
++
+ /**
+  * struct clk_mux - multiplexer clock
+  *
+  * @hw:		handle between common and hardware-specific interfaces
+  * @reg:	register controlling multiplexer
++ * @regmap:	regmap for controlling multiplexer
++ * @offset:	offset inside the regmap
+  * @shift:	shift to multiplexer bit field
+  * @width:	width of mutliplexer bit field
+  * @flags:	hardware-specific flags
+@@ -408,8 +440,12 @@ void clk_unregister_divider(struct clk *clk);
+  */
+ struct clk_mux {
+ 	struct clk_hw	hw;
+-	void __iomem	*reg;
++	union {
++		void __iomem	*reg;
++		struct regmap	*regmap;
++	};
+ 	u32		*table;
++	u32		offset;
+ 	u32		mask;
+ 	u8		shift;
+ 	u8		flags;
+@@ -439,6 +475,18 @@ struct clk *clk_register_mux_table(struct device *dev, const char *name,
+ 
+ void clk_unregister_mux(struct clk *clk);
+ 
++struct clk *clk_regm_register_mux_table(struct device *dev, const char *name,
++		const char * const *parent_names, u8 num_parents,
++		unsigned long flags, struct regmap *regmap,
++		u32 offset, u8 shift, u32 mask,
++		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
++
++struct clk *clk_regm_register_mux(struct device *dev, const char *name,
++		const char * const *parent_names, u8 num_parents,
++		unsigned long flags, struct regmap *regmap,
++		u32 offset, u8 shift, u8 width,
++		u8 clk_mux_flags, spinlock_t *lock);
++
+ void of_fixed_factor_clk_setup(struct device_node *node);
+ 
+ /**
+-- 
+1.9.1
