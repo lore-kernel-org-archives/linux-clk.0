@@ -1,42 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:33553 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753472AbbGGFBX (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2015 01:01:23 -0400
-Received: by laar3 with SMTP id r3so180949022laa.0
-        for <linux-clk@vger.kernel.org>; Mon, 06 Jul 2015 22:01:21 -0700 (PDT)
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20150622230456.GJ22132@codeaurora.org>
-References: <1434785223.6159.3.camel@ingics.com>
-	<20150622230456.GJ22132@codeaurora.org>
-Date: Tue, 7 Jul 2015 13:01:21 +0800
-Message-ID: <CAFRkauDqtytL9xq_+pjJ3WWdYnZoSk86uMJozmOe9+Mrr7QX7w@mail.gmail.com>
-Subject: Re: [PATCH] clk: h8300: Fix signness bug
-From: Axel Lin <axel.lin@ingics.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@linaro.org>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	uclinux-h8-devel@lists.sourceforge.jp,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+In-Reply-To: <20150724232045.GA14059@www.outflux.net>
+References: <20150724232045.GA14059@www.outflux.net>
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Date: Fri, 31 Jul 2015 11:13:59 +0200
+Message-ID: <CAAObsKBp-hPknWUxJxJGPV1RTj+Q_yc+xxVG315FjQXk9_CK2g@mail.gmail.com>
+Subject: Re: [PATCH] clk_register_clkdev: handle callers needing format string
+To: Kees Cook <keescook@chromium.org>
+Cc: akpm@linux-foundation.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2015-06-23 7:04 GMT+08:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 06/20, Axel Lin wrote:
->> of_clk_get_parent_count() may return negative error code, so num_parents
->> needs to be int rather than unsigned int.
->>
->> Signed-off-by: Axel Lin <axel.lin@ingics.com>
->> ---
+On 25 July 2015 at 01:20, Kees Cook <keescook@chromium.org> wrote:
+> Many callers either use NULL or const strings for the third argument of
+> clk_register_clkdev. For those that do not, this is a risk for format
+> strings being accidentally processed (for example in device names). This
+> adds the missing "%s" arguments to make sure format strings will not leak
+> into the clkdev.
 >
-> Hmph. I don't recall being Cced on this clk driver and it looks
-> to be in linux-next via h8300 architecture tree. This patch
-> should probably be squashed into the patch that introduced the
-> problem.
-Hi Stephen,
-This driver is already in Linus' tree.
-So would you pick up this patch?
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
 
-Thanks,
-Axel
+[...]
+
+> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+> index 41cd87c67be6..97d9fb7e89ad 100644
+> --- a/drivers/clk/tegra/clk.c
+> +++ b/drivers/clk/tegra/clk.c
+> @@ -296,7 +296,7 @@ void __init tegra_register_devclks(struct tegra_devclk *dev_clks, int num)
+>
+>         for (i = 0; i < num; i++, dev_clks++)
+>                 clk_register_clkdev(clks[dev_clks->dt_id], dev_clks->con_id,
+> -                               dev_clks->dev_id);
+> +                               "%s", dev_clks->dev_id);
+
+This causes clocks to be registered with a dev_id string of "(null)",
+which is causing lookups that used to succeed before to fail.
+
+Regards,
+
+Tomeu
