@@ -1,132 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from eu-smtp-delivery-143.mimecast.com ([146.101.78.143]:41911 "EHLO
-	eu-smtp-delivery-143.mimecast.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S934344AbbGVNbk convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 22 Jul 2015 09:31:40 -0400
-Date: Wed, 22 Jul 2015 14:31:36 +0100
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v4 7/8] arm64: dts: add CPU topology on Juno
-Message-ID: <20150722133136.GH14923@e106497-lin.cambridge.arm.com>
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com>
- <1433760002-24120-8-git-send-email-sudeep.holla@arm.com>
-MIME-Version: 1.0
-In-Reply-To: <1433760002-24120-8-git-send-email-sudeep.holla@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 03/26] clk: Remove __clk_get_num_parents()
+Date: Fri, 31 Jul 2015 10:03:43 -0700
+Message-Id: <1438362246-6664-4-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 08, 2015 at 11:40:01AM +0100, Sudeep Holla wrote:
-> This patch adds CPU topology on Juno. It will be useful for ther other
-> IP blocks depending on this topology.
-> 
-> Cc: Liviu Dudau <Liviu.Dudau@arm.com>
-> Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->  arch/arm64/boot/dts/arm/juno-r1.dts | 26 ++++++++++++++++++++++++++
->  arch/arm64/boot/dts/arm/juno.dts    | 26 ++++++++++++++++++++++++++
->  2 files changed, 52 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/arm/juno-r1.dts b/arch/arm64/boot/dts/arm/juno-r1.dts
-> index c62751153a4f..69130840c6cd 100644
-> --- a/arch/arm64/boot/dts/arm/juno-r1.dts
-> +++ b/arch/arm64/boot/dts/arm/juno-r1.dts
-> @@ -34,6 +34,32 @@
->  		#address-cells = <2>;
->  		#size-cells = <0>;
->  
-> +		cpu-map {
-> +			cluster0 {
-> +				core0 {
-> +					cpu = <&A57_0>;
-> +				};
-> +				core1 {
-> +					cpu = <&A57_1>;
-> +				};
-> +			};
-> +
-> +			cluster1 {
-> +				core0 {
-> +					cpu = <&A53_0>;
-> +				};
-> +				core1 {
-> +					cpu = <&A53_1>;
-> +				};
-> +				core2 {
-> +					cpu = <&A53_2>;
-> +				};
-> +				core3 {
-> +					cpu = <&A53_3>;
-> +				};
-> +			};
-> +		};
-> +
->  		A57_0: cpu@0 {
->  			compatible = "arm,cortex-a57","arm,armv8";
->  			reg = <0x0 0x0>;
-> diff --git a/arch/arm64/boot/dts/arm/juno.dts b/arch/arm64/boot/dts/arm/juno.dts
-> index d7cbdd482a61..ce1128a54c8d 100644
-> --- a/arch/arm64/boot/dts/arm/juno.dts
-> +++ b/arch/arm64/boot/dts/arm/juno.dts
-> @@ -34,6 +34,32 @@
->  		#address-cells = <2>;
->  		#size-cells = <0>;
->  
-> +		cpu-map {
-> +			cluster0 {
-> +				core0 {
-> +					cpu = <&A57_0>;
-> +				};
-> +				core1 {
-> +					cpu = <&A57_1>;
-> +				};
-> +			};
-> +
-> +			cluster1 {
-> +				core0 {
-> +					cpu = <&A53_0>;
-> +				};
-> +				core1 {
-> +					cpu = <&A53_1>;
-> +				};
-> +				core2 {
-> +					cpu = <&A53_2>;
-> +				};
-> +				core3 {
-> +					cpu = <&A53_3>;
-> +				};
-> +			};
-> +		};
-> +
+... as all the users have been converted to
+clk_hw_get_num_parents() now.
 
-Acked-by: Liviu Dudau <Liviu.Dudau@arm.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk.c            | 6 ------
+ include/linux/clk-provider.h | 1 -
+ 2 files changed, 7 deletions(-)
 
->  		A57_0: cpu@0 {
->  			compatible = "arm,cortex-a57","arm,armv8";
->  			reg = <0x0 0x0>;
-> -- 
-> 1.9.1
-> 
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 5a147c2b1e36..3e295f255913 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -283,12 +283,6 @@ struct clk_hw *__clk_get_hw(struct clk *clk)
+ }
+ EXPORT_SYMBOL_GPL(__clk_get_hw);
+ 
+-u8 __clk_get_num_parents(struct clk *clk)
+-{
+-	return !clk ? 0 : clk->core->num_parents;
+-}
+-EXPORT_SYMBOL_GPL(__clk_get_num_parents);
+-
+ unsigned int clk_hw_get_num_parents(struct clk_hw *hw)
+ {
+ 	return hw->core->num_parents;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 214634a88f38..8fe7dac77a0d 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -608,7 +608,6 @@ void devm_clk_unregister(struct device *dev, struct clk *clk);
+ /* helper functions */
+ const char *__clk_get_name(struct clk *clk);
+ struct clk_hw *__clk_get_hw(struct clk *clk);
+-u8 __clk_get_num_parents(struct clk *clk);
+ unsigned int clk_hw_get_num_parents(struct clk_hw *hw);
+ struct clk *__clk_get_parent(struct clk *clk);
+ struct clk *clk_get_parent_by_index(struct clk *clk, u8 index);
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
