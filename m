@@ -1,31 +1,46 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v2 1/5] clk: qcom: Enable gpll0_vote rate propagation on
- MSM8916
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1437757119-6910-1-git-send-email-georgi.djakov@linaro.org>
- <1437757119-6910-2-git-send-email-georgi.djakov@linaro.org>
- <55B27509.8080108@codeaurora.org>
-Cc: agross@codeaurora.org, mturquette@linaro.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Message-ID: <55B2F0A7.8070005@linaro.org>
-Date: Sat, 25 Jul 2015 05:12:55 +0300
+Return-Path: <olof@lixom.net>
+Return-Path: <olof@lixom.net>
+Date: Fri, 31 Jul 2015 22:30:35 +0200
+From: Olof Johansson <olof@lixom.net>
+To: santosh shilimkar <santosh.shilimkar@oracle.com>
+Cc: mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, ssantosh@kernel.org, mturquette@linaro.org,
+	sboyd@codeaurora.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	arm@kernel.org, Murali Karicheri <m-karicheri2@ti.com>,
+	robh+dt@kernel.org, pawel.moll@arm.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] ARM: dts: keystone: fix dt bindings to use post div
+ register for mainpll
+Message-ID: <20150731203035.GA23144@localhost>
+References: <1432915453-409-1-git-send-email-m-karicheri2@ti.com>
+ <1432915453-409-2-git-send-email-m-karicheri2@ti.com>
+ <55BB947B.7090608@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <55B27509.8080108@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <55BB947B.7090608@oracle.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 24.07.15 20:25, Stephen Boyd wrote:
-> On 07/24/2015 09:58 AM, Georgi Djakov wrote:
->> Currently we are missing the SET_RATE_PARENT flag on gpll0_vote and
->> as a result of that, when it has a child with SET_RATE_PARENT flag,
->> the rate of the child is not propagated up to the gpll0. Fix that
->> by adding the SET_RATE_PARENT flag to gpll0_vote.
->>
->> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+On Fri, Jul 31, 2015 at 08:30:03AM -0700, santosh shilimkar wrote:
+> Olof,
 > 
-> This doesn't make any sense. GPLL0 doesn't change rate, so having the flag here on the GPLL0 vote clock doesn't help anything.
+> As discussed patch 1/2 is already made it via clock tree. Please
+> pick the subject fix for your upcoming fixes pull request.
+> 
+> On 5/29/2015 9:04 AM, Murali Karicheri wrote:
+> >All of the keystone devices have a separate register to hold post
+> >divider value for main pll clock. Currently the fixed-postdiv
+> >value used for k2hk/l/e SoCs works by sheer luck as u-boot happens to
+> >use a value of 2 for this. Now that we have fixed this in the pll
+> >clock driver change the dt bindings for the same.
+> >
+> >Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+> >---
+> Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+> 
 > 
 
-Right, gpll0 has a fixed rate. Sorry for the confusion.
+Thanks, applied.
+
+
+-Olof
