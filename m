@@ -1,124 +1,86 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Kukjin Kim <kgene@kernel.org>,
- "'Bartlomiej Zolnierkiewicz'" <b.zolnierkie@samsung.com>,
- "'Chanwoo Choi'" <cw00.choi@samsung.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, sboyd@codeaurora.org,
- kgene@kernel.org, k.kozlowski@samsung.com, thomas.ab@samsung.com,
- kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
- <4464631.oZyVO4Z0Ov@amdc1976> <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org>
-Message-ID: <20150724003005.642.21781@quantum>
-Subject: RE: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
-Date: Thu, 23 Jul 2015 17:30:05 -0700
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Manuel Lauss <manuel.lauss@gmail.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Linux-MIPS <linux-mips@linux-mips.org>
+Subject: [PATCH 09/26] MIPS: alchemy: Convert to clk_hw based provider APIs
+Date: Fri, 31 Jul 2015 10:03:49 -0700
+Message-Id: <1438362246-6664-10-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Kukjin Kim (2015-07-07 07:43:31)
-> Bartlomiej Zolnierkiewicz wrote:
-> > =
+We're removing struct clk from the clk provider API, so switch
+this code to using the clk_hw based provider APIs.
 
-> > Hi,
-> >
-> Hi,
-> =
+Cc: Manuel Lauss <manuel.lauss@gmail.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Linux-MIPS <linux-mips@linux-mips.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ arch/mips/alchemy/common/clock.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-> > On Thursday, July 02, 2015 09:42:38 AM Chanwoo Choi wrote:
-> > > This patchset use cpufreq-dt driver to support Exynos3250 cpufreq and=
- tested it
-> > > on Exynos3250-based Rinato board.
-> > >
-> > > Depends on:
-> > > - next-20150701 tag (master branch) of linux-next kernel tree
-> > > - This patch-set is based on Exynos5250 patch-set[1] because two patc=
-h-set
-> > >   modify the 'arch/arm/mach-exynos/exynos.c' to add the compatible st=
-ring.
-> > >   [1] https://lkml.org/lkml/2015/6/29/361
-> > >   : [PATCH v2 0/4] cpufreq: use generic cpufreq drivers for Exynos525=
-0 platform
-> > >
-> > > Changes from v5:
-> > > (https://lkml.org/lkml/2015/7/1/324)
-> > > - Reorder the cpu dt node in exynos3250-rinato/monk.dts alpabetically.
-> > > - Add reviewed-by tag of Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > >
-> > > Changes from v4:
-> > > (https://lkml.org/lkml/2014/10/20/215)
-> > > - Rebased on latest linux-next git repository.
-> > > - Remove unnecessary divider clock flag from divider of DIV_CPU0/DIV_=
-CPU1 register
-> > >
-> > > Changes from v3:
-> > > - This patchset is based on 3.18-rc1 with new patchset[3] of Thomas A=
-braham
-> > >   [3] [PATCH v11 0/6] cpufreq: use generic cpufreq drivers for exynos=
- platforms
-> > >   - http://www.spinics.net/lists/arm-kernel/msg370412.html
-> > >
-> > > Changes from v2:
-> > > - Rebased on new patchset of Thomas Abraham
-> > >   and for-next branch of samsunc-clk.git of Tomasz Figa
-> > >
-> > > Changes from v1:
-> > > - Rebased on new patchset[1] by Thomas Abraham
-> > >   [1] [PATCH v10 0/6] cpufreq: use generic cpufreq drivers for exynos=
- platforms
-> > >   - http://www.spinics.net/lists/arm-kernel/msg364790.html
-> > > - Modify clk-cpu.c to support Exynos3250
-> > > - Drop documentation patch on previous patchset[2]
-> > >   [2] http://www.spinics.net/lists/cpufreq/msg10265.html
-> > > - Add only operating-points for Exynos3250 without armclk-divider-tab=
-le
-> > >
-> > > Chanwoo Choi (3):
-> > >   clk: samsung: exynos3250: Add cpu clock configuration data and inst=
-aniate cpu clock
-> > >   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
-> > >   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
-> > >
-> > >  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
-> > >  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
-> > >  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
-> > >  arch/arm/mach-exynos/exynos.c           |  1 +
-> > >  drivers/clk/samsung/clk-exynos3250.c    | 32 +++++++++++++++++++++++=
-+++++++--
-> > >  include/dt-bindings/clock/exynos3250.h  |  1 +
-> > >  6 files changed, 55 insertions(+), 2 deletions(-)
-> > =
+diff --git a/arch/mips/alchemy/common/clock.c b/arch/mips/alchemy/common/clock.c
+index 5a62b18b8500..bd34f4093cd9 100644
+--- a/arch/mips/alchemy/common/clock.c
++++ b/arch/mips/alchemy/common/clock.c
+@@ -394,7 +394,7 @@ static int alchemy_clk_fgcs_detr(struct clk_hw *hw,
+ 				 struct clk_rate_request *req,
+ 				 int scale, int maxdiv)
+ {
+-	struct clk *pc, *bpc, *free;
++	struct clk_hw *pc, *bpc, *free;
+ 	long tdv, tpr, pr, nr, br, bpr, diff, lastdiff;
+ 	int j;
+ 
+@@ -408,7 +408,7 @@ static int alchemy_clk_fgcs_detr(struct clk_hw *hw,
+ 	 * the one that gets closest to but not over the requested rate.
+ 	 */
+ 	for (j = 0; j < 7; j++) {
+-		pc = clk_get_parent_by_index(hw->clk, j);
++		pc = clk_hw_get_parent_by_index(hw, j);
+ 		if (!pc)
+ 			break;
+ 
+@@ -416,12 +416,12 @@ static int alchemy_clk_fgcs_detr(struct clk_hw *hw,
+ 		 * XXX: we would actually want clk_has_active_children()
+ 		 * but this is a good-enough approximation for now.
+ 		 */
+-		if (!__clk_is_prepared(pc)) {
++		if (!clk_hw_is_prepared(pc)) {
+ 			if (!free)
+ 				free = pc;
+ 		}
+ 
+-		pr = clk_get_rate(pc);
++		pr = clk_hw_get_rate(pc);
+ 		if (pr < req->rate)
+ 			continue;
+ 
+@@ -451,7 +451,7 @@ static int alchemy_clk_fgcs_detr(struct clk_hw *hw,
+ 			tpr = req->rate * j;
+ 			if (tpr < 0)
+ 				break;
+-			pr = clk_round_rate(free, tpr);
++			pr = clk_hw_round_rate(free, tpr);
+ 
+ 			tdv = alchemy_calc_div(req->rate, pr, scale, maxdiv,
+ 					       NULL);
+@@ -474,7 +474,7 @@ static int alchemy_clk_fgcs_detr(struct clk_hw *hw,
+ 		return br;
+ 
+ 	req->best_parent_rate = bpr;
+-	req->best_parent_hw = __clk_get_hw(bpc);
++	req->best_parent_hw = bpc;
+ 	req->rate = br;
+ 
+ 	return 0;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-> > Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > =
-
-> > Thank you for working on this.
-> > =
-
-> +1 Thanks.
-> =
-
-> Mike and Sylwester, if you're OK on this series, I'd like to pick up in S=
-amsung
-> tree together. And if you want, I could provide topic branch for clk tree.
-
-Kukjin,
-
-A topic branch would be great.
-
-Thanks,
-Mike
-
-> =
-
-> Thanks,
-> Kukjin
-> =
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
