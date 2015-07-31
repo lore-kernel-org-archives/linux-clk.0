@@ -1,176 +1,61 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- "Jim Quinlan" <jim2101024@gmail.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20150724065017.GJ2373@lukather>
-References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
- <1432241646-9511-2-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v64rqRC24wPWz5xYZv=w2QAtsCb-pd76Qynkb5NBCptXhQ@mail.gmail.com>
- <20150523074930.GI8557@lukather> <20150724000001.642.84690@quantum>
- <20150724065017.GJ2373@lukather>
-Message-ID: <20150724182619.642.11590@quantum>
-Subject: Re: [PATCH v2 1/7] clk: Add a basic factor clock
-Date: Fri, 24 Jul 2015 11:26:19 -0700
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Chen-Yu Tsai <wens@csie.org>, "Stephen Boyd <sboyd@codeaurora.org>,
- Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:42352 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752607AbbGaREQ (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jul 2015 13:04:16 -0400
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Barry Song <Baohua.Song@csr.com>
+Subject: [PATCH 19/26] clk: sirf: Convert to clk_hw based provider APIs
+Date: Fri, 31 Jul 2015 10:03:59 -0700
+Message-Id: <1438362246-6664-20-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Maxime Ripard (2015-07-23 23:50:17)
-> Hi Mike,
-> 
-> On Thu, Jul 23, 2015 at 05:00:01PM -0700, Michael Turquette wrote:
-> > Quoting Maxime Ripard (2015-05-23 00:49:30)
-> > > On Fri, May 22, 2015 at 12:35:35PM +0800, Chen-Yu Tsai wrote:
-> > > > Hi,
-> > > > 
-> > > > On Fri, May 22, 2015 at 4:54 AM, Maxime Ripard
-> > > > <maxime.ripard@free-electrons.com> wrote:
-> > > > > Some clocks are using a factor component, however, unlike their mux, gate
-> > > > > or divider counterpart, these factors don't have a basic clock
-> > > > > implementation.
-> > > > 
-> > > > I think "multiplier" would be a better name here, considering it is the
-> > > > counterpart of "divider". "factor" implies you can multiply and/or divide
-> > > > the clock rate.
-> > > 
-> > > You're probably right, I didn't though of it that way :)
-> > 
-> > I also prefer multiplier over factor.
-> 
-> Ok. Note that I re-submitted it some time this week and forgot to
-> change it, but I'm perfectly fine with the name.
+We're removing struct clk from the clk provider API, so switch
+this code to using the clk_hw based provider APIs.
 
-Hi Maxime,
+Cc: Barry Song <Baohua.Song@csr.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/sirf/clk-common.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Yes, I saw your V2 after the fact.
+diff --git a/drivers/clk/sirf/clk-common.c b/drivers/clk/sirf/clk-common.c
+index 2f64d4beeb52..77e1e2491689 100644
+--- a/drivers/clk/sirf/clk-common.c
++++ b/drivers/clk/sirf/clk-common.c
+@@ -167,10 +167,10 @@ static long cpu_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	 * SiRF SoC has not cpu clock control,
+ 	 * So bypass to it's parent pll.
+ 	 */
+-	struct clk *parent_clk = clk_get_parent(hw->clk);
+-	struct clk *pll_parent_clk = clk_get_parent(parent_clk);
+-	unsigned long pll_parent_rate = clk_get_rate(pll_parent_clk);
+-	return pll_clk_round_rate(__clk_get_hw(parent_clk), rate, &pll_parent_rate);
++	struct clk_hw *parent_clk = clk_hw_get_parent(hw);
++	struct clk_hw *pll_parent_clk = clk_hw_get_parent(parent_clk);
++	unsigned long pll_parent_rate = clk_hw_get_rate(pll_parent_clk);
++	return pll_clk_round_rate(parent_clk, rate, &pll_parent_rate);
+ }
+ 
+ static unsigned long cpu_clk_recalc_rate(struct clk_hw *hw,
+@@ -180,8 +180,8 @@ static unsigned long cpu_clk_recalc_rate(struct clk_hw *hw,
+ 	 * SiRF SoC has not cpu clock control,
+ 	 * So return the parent pll rate.
+ 	 */
+-	struct clk *parent_clk = clk_get_parent(hw->clk);
+-	return __clk_get_rate(parent_clk);
++	struct clk_hw *parent_clk = clk_hw_get_parent(hw);
++	return clk_hw_get_rate(parent_clk);
+ }
+ 
+ static struct clk_ops std_pll_ops = {
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-> 
-> > Jim Quinlan submitted a similar patch. See here:
-> > 
-> > http://www.spinics.net/lists/linux-clk/msg00691.html
-> 
-> It looks very similar indeed.
-> 
-> > I nacked that patch because Stephen and I are trying to figure out how
-> > the basic clock types should work going forward. Code reuse is good, but
-> > they are not very maintainable.
-> 
-> What are the issues with maintaining them? The only drawback I'm
-> seeing with introducing such a driver is that you can't really have a
-> clock that is both a divider and a multiplier, but that can be solved
-> by splitting it into two sub-clocks.
-
-There are a bunch of problems with the basic clock types. First is that
-there is some feature creep every merge window that subtly breaks an
-existing user (e.g. the round_rate stuff in clk-divider.c), and then
-there are the growing number of flags to handle corner cases that are
-one-off quirks for a single chip.
-
-These make it harder to maintain, but it is possible.
-
-The real problem with these basic clock types is that they are an
-abstraction layer at the wrong level. Each clock type implements both
-the policy of a given clock, as well as the machine-specific details.
-For example clk-divider.c has made some assumptions in the past about
-rounding the rate, or how to calculate the best divider; this is a
-matter of policy and is useful on its own. But additionally that same
-policy is glued to a specific implementation: memory-mapped register
-controls for a clock divider.
-
-The I/O accessor stuff needs to be addressed at some point.  Currently
-the basic clock types assume specific patterns of access to
-memory-mapped clock registers. There are lots of other clock controls
-out there that talk to firmware, or over i2c, or whatever. The amount of
-code that has to be copy/pasted for each different type of access is
-100%; i.e. we do not have abstractions at the right level such as
-.get_best_div(struct clk_hw *hw, unsigned long rate).
-
-What I would like to see in time is a re-usable layer for clock policy
-(e.g. common rules for how dividers or multipliers should behave), and
-then have that sit on top of the machine-specific callbacks that
-directly touch the hardware, such as the .get_best_div callback above.
-
-For this reason I like to limit the number of new basic clock types. If
-there is a single user then I'm inclined to have the author put it with
-the machine-specific code. But in this case since there are two users, I
-see the value in making a new basic clock type. It will just be more
-code to update in the far away future when we get around to implementing
-the changes above.
-
-> 
-> From a pure maintainance point of view, refusing it would mean that
-> each and every platform would have to come up with its own
-> implementation. For example, we do have clk-factors.c for sunxi that
-> does just that, and implies some cooperation from each clock driver
-> that have to provide some code to determine the various components of
-> the output formula. This can prove to be very challenging (and bug
-> prone) for clocks like the audio one we have where we have 1
-> multiplier and 2 dividers that needs some adjusting.
-> 
-> Splitting it into sub-clocks for each of these components would allow
-> to have less bugs, while keeping the whole thing very simple, and the
-> implementation on the driver side very trivial.
-> 
-> Overall, the clk-factors code we have (client side) is approximately a
-> thousand lines of code logic that could be replaced by (less) trivial
-> probing code for such a driver.
-> 
-> > Since there are two potential users of this code, I should reconsider.
-> 
-> Like I said, eventually, I'd like to leverage that code a lot more
-> than for the single clock alone, and I think it could benefit other
-> platforms too (like Jim has proven).
-> 
-> > Can you two come up with a common implementation that works for both of
-> > you?
-> 
-> Yes, sure. Jim, how do you want to go with this? Do you want to
-> resubmit your patch on top of 4.2-rc something so that I could give it
-> a try? Otherwise, I posted such a patch this week
-> 
-> https://lkml.kernel.org/r/1437235304-2208-1-git-send-email-maxime.ripard@free-electrons.com
-> 
-> Can you give it a try and your feedback?
-> 
-> > Please do not put any CLK_OF_DECLARE stuff in there (there isn't
-> > any now, but I wanted to be clear).
-> 
-> That's never been my intention ;)
-
-OK, sounds great.
-
-Thanks,
-Mike
-
-> 
-> Thanks!
-> Maxime
-> 
-> -- 
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
