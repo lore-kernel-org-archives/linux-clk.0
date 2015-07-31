@@ -1,90 +1,115 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Dong Aisheng <aisheng.dong@freescale.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <sboyd@codeaurora.org>,
-	<mturquette@linaro.org>, <shawnguo@kernel.org>,
-	<b29396@freescale.com>, <linux-arm-kernel@lists.infradead.org>,
-	<Ranjani.Vaidyanathan@freescale.com>, <b20596@freescale.com>,
-	<r64343@freescale.com>, <b20788@freescale.com>
-Subject: [PATCH V3 4/5] clk: core: add CLK_OPS_PARENT_ON flags to support clocks require parent on
-Date: Tue, 28 Jul 2015 21:19:44 +0800
-Message-ID: <1438089585-30103-5-git-send-email-aisheng.dong@freescale.com>
-In-Reply-To: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
-References: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
+Return-Path: <tomeu.vizoso@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: tomeu.vizoso@gmail.com
+In-Reply-To: <CAL_Jsq+2q=c6JbER8EMOGFtR=a6gvHermb8DRo9dKyj6fvdnXg@mail.gmail.com>
+References: <1438089593-7696-1-git-send-email-tomeu.vizoso@collabora.com> <CAL_Jsq+2q=c6JbER8EMOGFtR=a6gvHermb8DRo9dKyj6fvdnXg@mail.gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Date: Fri, 31 Jul 2015 12:28:13 +0200
+Message-ID: <CAAObsKDALm94ZFwY+jBv3o8++-trTviiaGctAvvuySw9sxmLRQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/22] On-demand device probing
+To: Rob Herring <robherring2@gmail.com>
+Cc: "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linux PWM List <linux-pwm@vger.kernel.org>,
+	David Airlie <airlied@linux.ie>, Stephen Boyd <sboyd@codeaurora.org>,
+	Linus Walleij <linus.walleij@linaro.org>, Linux-ALSA <alsa-devel@alsa-project.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>, Sebastian Reichel <sre@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
+	linux-clk@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>,
+	=?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Javier Martinez Canillas <javier@osg.samsung.com>, Vinod Koul <vinod.koul@intel.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Michael Turquette <mturquette@baylibre.com>,
+	Len Brown <lenb@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>,
+	Takashi Iwai <tiwai@suse.com>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux USB List <linux-usb@vger.kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, dmaengine@vger.kernel.org,
+	David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Freescale i.MX7D platform, all clocks operations, including
-enable/disable, rate change and re-parent, requires its parent
-clock on. Current clock core can not support it well.
-This patch introduce a new flag CLK_OPS_PARENT_ON to handle this
-special case in clock core that enable its parent clock firstly for
-each operation and disable it later after operation complete.
+On 30 July 2015 at 05:06, Rob Herring <robherring2@gmail.com> wrote:
+> On Tue, Jul 28, 2015 at 8:19 AM, Tomeu Vizoso
+> <tomeu.vizoso@collabora.com> wrote:
+>> Hello,
+>>
+>> I have a problem with the panel on my Tegra Chromebook taking longer
+>> than expected to be ready during boot (St=C3=A9phane Marchesin reported =
+what
+>> is basically the same issue in [0]), and have looked into ordered
+>> probing as a better way of solving this than moving nodes around in the
+>> DT or playing with initcall levels and linking order.
+>>
+>> While reading the thread [1] that Alexander Holler started with his
+>> series to make probing order deterministic, it occurred to me that it
+>> should be possible to achieve the same by probing devices as they are
+>> referenced by other devices.
+>>
+>> This basically reuses the information that is already implicit in the
+>> probe() implementations, saving us from refactoring existing drivers or
+>> adding information to DTBs.
+>>
+>> During review of v1 of this series Linus Walleij suggested that it
+>> should be the device driver core to make sure that dependencies are
+>> ready before probing a device. I gave this idea a try [2] but Mark Brown
+>> pointed out to the logic duplication between the resource acquisition
+>> and dependency discovery code paths (though I think it's fairly minor).
+>>
+>> To address that code duplication I experimented with Arnd's devm_probe
+>> [3] concept of having drivers declare their dependencies instead of
+>> acquiring them during probe, and while it worked [4], I don't think we
+>> end up winning anything when compared to just probing devices on-demand
+>> from resource getters.
+>>
+>> One remaining objection is to the "sprinkling" of calls to
+>> fwnode_ensure_device() in the resource getters of each subsystem, but I
+>> think it's the right thing to do given that the storage of resources is
+>> currently subsystem-specific.
+>
+> Seems like a minor change to me.
+>
+>> We could avoid the above by moving resource storage into the core, but I
+>> don't think there's a compelling case for that.
+>>
+>> I have tested this on boards with Tegra, iMX.6, Exynos and OMAP SoCs,
+>> and these patches were enough to eliminate all the deferred probes
+>> (except one in PandaBoard because omap_dma_system doesn't have a
+>> firmware node as of yet).
+>>
+>> With this series I get the kernel to output to the panel in 0.5s,
+>> instead of 2.8s.
+>
+> Generally, I think this looks pretty good. It is simple and the error
+> path is simply falling back to deferred probe.
+>
+> One overall comment is I'm not so sure if fwnode_ensure_device
+> shouldn't just be of_ensure_device. At least currently, it looks like
+> all the calling locations are DT specific functions anyway. There's
+> very little logic within the function to really benefit sharing with
+> ACPI. It is basically just a call to of_platform_device_find and then
+> bus_probe_device. I expect the get functions will always call into
+> DT/ACPI specific functions which can then call the firmware specific
+> device find function.
 
-This patch fixes disaling clocks while its parent is off.
-This is a special case that is caused by a state mis-align between
-HW and SW in clock tree during booting.
-Usually in uboot, we may enable all clocks in HW by default.
-And during kernel booting time, the parent clock could be disabled in its
-driver probe due to calling clk_prepare_enable and clk_disable_unprepare.
-Because it's child clock is only enabled in HW while its SW usecount
-in clock tree is still 0, so clk_disable of parent clock will gate
-the parent clock in both HW and SW usecount ultimately.
-Then there will be a clock is on in HW while its parent is disabled.
+That's fine with me. I just went that way because I assumed the plan
+was for subsystems to move to consume fw data through fwnode and drop
+as much fw-specific code as possible.
 
-Later when clock core does clk_disable_unused, this clock disable
-will cause system hang due to the limitation of operation requiring
-its parent clock on.
+But I have just looked at fwnode_get_named_gpiod and the OF and ACPI
+code paths are so dissimilar that I guess that's not so and would be
+better to do as you say.
 
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
----
- drivers/clk/clk.c            | 5 +++++
- include/linux/clk-provider.h | 5 +++++
- 2 files changed, 10 insertions(+)
+Thanks,
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ac158c4..cf31dc4 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -754,6 +754,9 @@ static void clk_disable_unused_subtree(struct clk_core *core)
- 	hlist_for_each_entry(child, &core->children, child_node)
- 		clk_disable_unused_subtree(child);
- 
-+	if (core->flags & CLK_OPS_PARENT_ON)
-+		clk_core_prepare_enable(core->parent);
-+
- 	flags = clk_enable_lock();
- 
- 	if (core->enable_count)
-@@ -778,6 +781,8 @@ static void clk_disable_unused_subtree(struct clk_core *core)
- 
- unlock_out:
- 	clk_enable_unlock(flags);
-+	if (core->flags & CLK_OPS_PARENT_ON)
-+		clk_core_disable_unprepare(core->parent);
- }
- 
- static bool clk_ignore_unused;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 06a56e5..006fafb 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -31,6 +31,11 @@
- #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
- #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
- #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
-+/*
-+ * parent clock must be on across any operation including
-+ * clock gate/ungate, rate change and re-parent
-+ */
-+#define CLK_OPS_PARENT_ON	BIT(10)
- 
- struct clk;
- struct clk_hw;
--- 
-1.9.1
-
+Tomeu
