@@ -1,36 +1,97 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:53414 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753370AbbGGJdx (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2015 05:33:53 -0400
-Date: Tue, 7 Jul 2015 10:33:43 +0100
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: Bintian <bintian.wang@huawei.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] amba: Support clk parents and rates assigned in DT
-Message-ID: <20150707093343.GI7557@n2100.arm.linux.org.uk>
-References: <1432846332-17692-1-git-send-email-sboyd@codeaurora.org>
- <559B15DE.7040200@codeaurora.org>
- <559B9225.6090607@huawei.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH v2 3/7] ARM: sun6i: Add clock indices
+Date: Fri, 31 Jul 2015 19:46:18 +0200
+Message-Id: <1438364782-3968-4-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <559B9225.6090607@huawei.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 07, 2015 at 04:47:33PM +0800, Bintian wrote:
-> Hi Russell,
-> 
-> Could you spend several minutes to review Stephen's patch?
+The A31 gates have a non continuous set of clock IDs that are valid. Add
+the clock-indices property to the DT to express this.
 
-Sorry, I'm busy this week, I need to sort out my git tree, get some fixes
-out which should've been pushed during the merge window, and other stuff.
-I'm not going to have much time to read email, let alone do reviews.
-Please be patient.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun6i-a31.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
+diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
+index 008047a018cf..3ec456fa03a4 100644
+--- a/arch/arm/boot/dts/sun6i-a31.dtsi
++++ b/arch/arm/boot/dts/sun6i-a31.dtsi
+@@ -252,6 +252,20 @@
+ 			compatible = "allwinner,sun6i-a31-ahb1-gates-clk";
+ 			reg = <0x01c20060 0x8>;
+ 			clocks = <&ahb1>;
++			clock-indices = <1>, <5>,
++					<6>, <8>, <9>,
++					<10>, <11>, <12>,
++					<13>, <14>,
++					<17>, <18>, <19>,
++					<20>, <21>, <22>,
++					<23>, <24>, <26>,
++					<27>, <29>,
++					<30>, <31>, <32>,
++					<36>, <37>, <40>,
++					<43>, <44>, <45>,
++					<46>, <47>, <50>,
++					<52>, <55>, <56>,
++					<57>, <58>;
+ 			clock-output-names = "ahb1_mipidsi", "ahb1_ss",
+ 					"ahb1_dma", "ahb1_mmc0", "ahb1_mmc1",
+ 					"ahb1_mmc2", "ahb1_mmc3", "ahb1_nand1",
+@@ -281,6 +295,9 @@
+ 			compatible = "allwinner,sun6i-a31-apb1-gates-clk";
+ 			reg = <0x01c20068 0x4>;
+ 			clocks = <&apb1>;
++			clock-indices = <0>, <4>,
++					<5>, <12>,
++					<13>;
+ 			clock-output-names = "apb1_codec", "apb1_digital_mic",
+ 					"apb1_pio", "apb1_daudio0",
+ 					"apb1_daudio1";
+@@ -299,6 +316,10 @@
+ 			compatible = "allwinner,sun6i-a31-apb2-gates-clk";
+ 			reg = <0x01c2006c 0x4>;
+ 			clocks = <&apb2>;
++			clock-indices = <0>, <1>,
++					<2>, <3>, <16>,
++					<17>, <18>, <19>,
++					<20>, <21>;
+ 			clock-output-names = "apb2_i2c0", "apb2_i2c1",
+ 					     "apb2_i2c2", "apb2_i2c3",
+ 					     "apb2_uart0", "apb2_uart1",
+@@ -384,6 +405,9 @@
+ 			compatible = "allwinner,sun6i-a31-usb-clk";
+ 			reg = <0x01c200cc 0x4>;
+ 			clocks = <&osc24M>;
++			clock-indices = <8>, <9>, <10>,
++					<16>, <17>,
++					<18>;
+ 			clock-output-names = "usb_phy0", "usb_phy1", "usb_phy2",
+ 					     "usb_ohci0", "usb_ohci1",
+ 					     "usb_ohci2";
 -- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
+2.4.6
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
