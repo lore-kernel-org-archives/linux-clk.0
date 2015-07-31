@@ -1,99 +1,41 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 3/3] clk: add bindings for the Ux500 clocks
-Date: Thu, 30 Jul 2015 15:20:00 +0200
-Message-Id: <1438262400-29213-1-git-send-email-linus.walleij@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Daniel Thompson <daniel.thompson@linaro.org>
+Subject: [PATCH 15/26] clk: stm32f4: Convert to clk_hw based provider APIs
+Date: Fri, 31 Jul 2015 10:03:55 -0700
+Message-Id: <1438362246-6664-16-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-These Ux500 clocks have been around for years and were never
-properly documented. Add the proper binding documentation.
+We're removing struct clk from the clk provider API, so switch
+this code to using the clk_hw based provider APIs.
 
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
-Ulf/Mike: please ACK this patch so I can take it through
-ARM SoC.
----
- Documentation/devicetree/bindings/clock/ux500.txt | 64 +++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ux500.txt
+ drivers/clk/clk-stm32f4.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/ux500.txt b/Documentation/devicetree/bindings/clock/ux500.txt
-new file mode 100644
-index 000000000000..e52bd4b72348
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ux500.txt
-@@ -0,0 +1,64 @@
-+Clock bindings for ST-Ericsson Ux500 clocks
-+
-+Required properties :
-+- compatible : shall contain only one of the following:
-+  "stericsson,u8500-clks"
-+  "stericsson,u8540-clks"
-+  "stericsson,u9540-clks"
-+- reg : shall contain base register location and length for
-+  CLKRST1, 2, 3, 5, and 6 in an array. Note the absence of
-+  CLKRST4, which does not exist.
-+
-+Required subnodes:
-+- prcmu-clock: a subnode with one clock cell for PRCMU (power,
-+  reset, control unit) clocks. The cell indicates which PRCMU
-+  clock in the prcmu-clock node the consumer wants to use.
-+- prcc-periph-clock: a subnode with two clock cells for
-+  PRCC (programmable reset- and clock controller) peripheral clocks.
-+  The first cell indicates which PRCC block the consumer
-+  wants to use, possible values are 1, 2, 3, 5, 6. The second
-+  cell indicates which clock inside the PRCC block it wants,
-+  possible values are 0 thru 31.
-+- prcc-kernel-clock: a subnode with two clock cells for
-+  PRCC (programmable reset- and clock controller) kernel clocks
-+  The first cell indicates which PRCC block the consumer
-+  wants to use, possible values are 1, 2, 3, 5, 6. The second
-+  cell indicates which clock inside the PRCC block it wants,
-+  possible values are 0 thru 31.
-+- rtc32k-clock: a subnode with zero clock cells for the 32kHz
-+  RTC clock.
-+- smp-twd-clock: a subnode for the ARM SMP Timer Watchdog cluster
-+  with zero clock cells.
-+
-+Example:
-+
-+clocks {
-+	compatible = "stericsson,u8500-clks";
-+	/*
-+	 * Registers for the CLKRST block on peripheral
-+	 * groups 1, 2, 3, 5, 6,
-+	 */
-+	reg = <0x8012f000 0x1000>, <0x8011f000 0x1000>,
-+	    <0x8000f000 0x1000>, <0xa03ff000 0x1000>,
-+	    <0xa03cf000 0x1000>;
-+
-+	prcmu_clk: prcmu-clock {
-+		#clock-cells = <1>;
-+	};
-+
-+	prcc_pclk: prcc-periph-clock {
-+		#clock-cells = <2>;
-+	};
-+
-+	prcc_kclk: prcc-kernel-clock {
-+		#clock-cells = <2>;
-+	};
-+
-+	rtc_clk: rtc32k-clock {
-+		#clock-cells = <0>;
-+	};
-+
-+	smp_twd_clk: smp-twd-clock {
-+		#clock-cells = <0>;
-+	};
-+};
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 5cfe50717536..fd89e771107e 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -178,8 +178,7 @@ static long clk_apb_mul_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
+ 		unsigned long best_parent = rate / mult;
+ 
+-		*prate =
+-		    __clk_round_rate(__clk_get_parent(hw->clk), best_parent);
++		*prate = clk_hw_round_rate(clk_hw_get_parent(hw), best_parent);
+ 	}
+ 
+ 	return *prate * mult;
 -- 
-2.4.3
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
