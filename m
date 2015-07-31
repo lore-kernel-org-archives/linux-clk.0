@@ -1,53 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 31 Jul 2015 23:27:24 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 23/23] clk: at91: Revert "keep slow clk enabled to
- prevent system hang"
-Message-ID: <20150731212724.GN27985@piout.net>
-References: <1438335599-3301-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1438335599-3301-24-git-send-email-alexandre.belloni@free-electrons.com>
- <55BBC5CC.80406@codeaurora.org>
- <20150731210905.GM27985@piout.net>
- <55BBE47F.3010307@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <55BBE47F.3010307@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 18/26] clk: samsung: Convert to clk_hw based provider APIs
+Date: Fri, 31 Jul 2015 10:03:58 -0700
+Message-Id: <1438362246-6664-19-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 31/07/2015 at 14:11:27 -0700, Stephen Boyd wrote :
-> On 07/31/2015 02:09 PM, Alexandre Belloni wrote:
-> >On 31/07/2015 at 12:00:28 -0700, Stephen Boyd wrote :
-> >>On 07/31/2015 02:39 AM, Alexandre Belloni wrote:
-> >>>-	clk_prepare_enable(slow_clk);
-> >>>-
-> >>>-	return 0;
-> >>>-}
-> >>>-arch_initcall(of_at91_clk_slow_retain);
-> >>Can you drop the include of clk.h in this file too?
-> >>
-> >Sure! I will do that in v3. However, I'll wait for some feedback from
-> >the other maintainers before sending again.
-> >
-> 
-> Cool. Also, are you going to take this through arm-soc? If so, feel free to
-> add my ack.
-> 
+We're removing struct clk from the clk provider API, so switch
+this code to using the clk_hw based provider APIs.
 
-Actually, clk.h has never been included in that file.
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/samsung/clk-cpu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I was thinking you could take it once the other patch made it in each
-subsystem. It is not urgent, it can probably skip one or two cycles.
-
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index 8e7f36f105c1..7c1e1f58e2da 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -100,8 +100,8 @@ static void wait_until_mux_stable(void __iomem *mux_reg, u32 mux_pos,
+ static long exynos_cpuclk_round_rate(struct clk_hw *hw,
+ 			unsigned long drate, unsigned long *prate)
+ {
+-	struct clk *parent = __clk_get_parent(hw->clk);
+-	*prate = __clk_round_rate(parent, drate);
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++	*prate = clk_hw_round_rate(parent, drate);
+ 	return *prate;
+ }
+ 
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
