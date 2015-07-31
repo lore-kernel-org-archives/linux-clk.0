@@ -1,46 +1,117 @@
-Return-Path: <s.nawrocki@samsung.com>
-Message-id: <55A62EB9.7040902@samsung.com>
-Date: Wed, 15 Jul 2015 18:58:17 +0900
-From: Sylwester nawrocki <s.nawrocki@samsung.com>
-MIME-version: 1.0
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>,
- Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
- Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] clk: samsung: exynos4x12: add cpu clock
- configuration data and instantiate cpu clock
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <1436456621-29839-5-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1436456621-29839-5-git-send-email-b.zolnierkie@samsung.com>
-Content-type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:36239 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754638AbbGaPOh (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jul 2015 11:14:37 -0400
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: mturquette@linaro.org, sboyd@codeaurora.org, matthias.bgg@gmail.com
+Cc: s.hauer@pengutronix.de, jamesjj.liao@mediatek.com,
+	henryc.chen@mediatek.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, manabian@gmail.com,
+	p.zabel@pengutronix.com
+Subject: [PATCH v4 RESEND 2/3] clk: mediatek: Add support for clk-mux using regmap
+Date: Fri, 31 Jul 2015 17:14:18 +0200
+Message-Id: <1438355659-21558-3-git-send-email-matthias.bgg@gmail.com>
+In-Reply-To: <1438355659-21558-1-git-send-email-matthias.bgg@gmail.com>
+References: <1438355659-21558-1-git-send-email-matthias.bgg@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/10/2015 12:43 AM, Bartlomiej Zolnierkiewicz wrote:
-> With the addition of the new Samsung specific cpu-clock type, the
-> arm clock can be represented as a cpu-clock type. Add the CPU clock
-> configuration data and instantiate the CPU clock type for Exynos4x12.
->
-> Based on the earlier work by Thomas Abraham.
->
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->   drivers/clk/samsung/clk-exynos4.c | 50 +++++++++++++++++++++++++++++++++++++++
->   1 file changed, 50 insertions(+)
+This patches adds support for the mediatek clocks to be able to register
+and use a clk-mux wich relies on regmap.
 
-I guess you prefer to have this whole series applied through one,
-e.g samsung-soc tree? If so, here is my ack.
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+---
+ drivers/clk/mediatek/clk-mtk.c | 37 +++++++++++++++++++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.h | 26 ++++++++++++++++++++++++++
+ 2 files changed, 63 insertions(+)
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 18444ae..cf953a8 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -111,6 +111,43 @@ int mtk_clk_register_gates(struct device_node *node, const struct mtk_gate *clks
+ 	return 0;
+ }
+ 
++int mtk_clk_regm_register_mux(struct device_node *node,
++		const struct mtk_regm_mux *clks, int num,
++		struct clk_onecell_data *clk_data)
++{
++	int i;
++	struct clk *clk;
++	struct regmap *regmap;
++
++	if (!clk_data)
++		return -ENOMEM;
++
++	regmap = syscon_node_to_regmap(node);
++	if (IS_ERR(regmap)) {
++		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
++				PTR_ERR(regmap));
++		return PTR_ERR(regmap);
++	}
++
++	for (i = 0; i < num; i++) {
++		const struct mtk_regm_mux *mux = &clks[i];
++
++		clk = clk_regm_register_mux(NULL, mux->name, mux->parent_names,
++					mux->num_parents, 0, regmap,
++					mux->mux_offset, mux->mux_shift,
++					mux->mux_width, mux->flags, NULL);
++		if (IS_ERR(clk)) {
++			pr_err("Failed to register clk mux %s: %ld\n",
++					mux->name, PTR_ERR(clk));
++			continue;
++		}
++
++		clk_data->clks[mux->id] = clk;
++	}
++
++	return 0;
++}
++
+ struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
+ 		void __iomem *base, spinlock_t *lock)
+ {
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index 9dda9d8..6fe85ca 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -156,6 +156,32 @@ void __init mtk_clk_register_plls(struct device_node *node,
+ 		const struct mtk_pll_data *plls, int num_plls,
+ 		struct clk_onecell_data *clk_data);
+ 
++struct mtk_regm_mux {
++	int id;
++	const char *name;
++	const char * const *parent_names;
++	u8 num_parents;
++	unsigned flags;
++	uint32_t mux_offset;
++	uint32_t mux_shift;
++	uint32_t mux_width;
++};
++
++int __init mtk_clk_regm_register_mux(struct device_node *node,
++		const struct mtk_regm_mux *clks, int num,
++		struct clk_onecell_data *clk_data);
++
++#define MUX_REGMAP(_id, _name, _parents, _offset, _shift, _width) {	\
++		.id = _id,						\
++		.name = _name,						\
++		.parent_names = _parents,				\
++		.num_parents = ARRAY_SIZE(_parents),			\
++		.flags = CLK_SET_RATE_PARENT,				\
++		.mux_offset = _offset,					\
++		.mux_shift = _shift,					\
++		.mux_width = _width,					\
++	}
++
+ #ifdef CONFIG_RESET_CONTROLLER
+ void mtk_register_reset_controller(struct device_node *np,
+ 			unsigned int num_regs, int regofs);
+-- 
+1.9.1
+
