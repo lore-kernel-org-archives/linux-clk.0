@@ -1,34 +1,83 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55BBC5CC.80406@codeaurora.org>
-Date: Fri, 31 Jul 2015 12:00:28 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:55298 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750970AbbGaJhr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 31 Jul 2015 05:37:47 -0400
+Subject: Re: [PATCH] PM / devfreq: event: Remove incorrect property in
+ exynos-ppmu DT binding
+References: <1436770732-9430-1-git-send-email-javier@osg.samsung.com>
+ <55B0A376.2080906@samsung.com> <55B0A616.2070608@osg.samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <55BB41E5.8010209@osg.samsung.com>
+Date: Fri, 31 Jul 2015 11:37:41 +0200
 MIME-Version: 1.0
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-CC: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 23/23] clk: at91: Revert "keep slow clk enabled to prevent
- system hang"
-References: <1438335599-3301-1-git-send-email-alexandre.belloni@free-electrons.com> <1438335599-3301-24-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1438335599-3301-24-git-send-email-alexandre.belloni@free-electrons.com>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <55B0A616.2070608@osg.samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/31/2015 02:39 AM, Alexandre Belloni wrote:
-> -	clk_prepare_enable(slow_clk);
-> -
-> -	return 0;
-> -}
-> -arch_initcall(of_at91_clk_slow_retain);
+Hello Myungjoo,
 
-Can you drop the include of clk.h in this file too?
+On 07/23/2015 10:30 AM, Javier Martinez Canillas wrote:
+> Hello Chanwoo,
+> 
+> On 07/23/2015 10:19 AM, Chanwoo Choi wrote:
+>> Hi Javier,
+>>
+>> On 07/13/2015 03:58 PM, Javier Martinez Canillas wrote:
+>>> The exynos-ppmu driver is only a clock consumer and not a clock
+>>> provider but its Device Tree binding listed #clock-cells as an
+>>> optional property.
+>>>
+>>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>>
+>>> ---
+>>>
+>>> Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt | 1
+>>> - 1 file changed, 1 deletion(-)
+>>>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
+>>> b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt 
+>>> index b54bf3a2ff57..aed486692880 100644 ---
+>>> a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt 
+>>> +++
+>>> b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt 
+>>> @@ -17,7 +17,6 @@ Required properties: Optional properties: -
+>>> clock-names : the name of clock used by the PPMU, "ppmu" - clocks :
+>>> phandles for clock specified in "clock-names" property --
+>>> #clock-cells: should be 1.
+>>>
+>>> Example1 : PPMU nodes in exynos3250.dtsi are listed below.
+>>>
+>>>
+>>
+>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>
+>> + Devfreq maintainer (Myungjoo Ham)
+> 
+> Thanks for the review and for cc'ing Myungjoo. The get_maintainer.pl script
+> didn't tell me that so I think Documentation/devicetree/bindings/devfreq/
+> sub-dir should be added to the DEVICE FREQUENCY (DEVFREQ) entry in the
+> MAINTAINERS file.
+> 
+>> I think that this patch will be more appropriate on devfreq git tree 
+>> than linux-samsung git tree.
+>>
+> 
+> Agreed.
+> 
 
+Any comments about this patch?
+
+Best regards,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
