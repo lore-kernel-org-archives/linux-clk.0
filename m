@@ -1,656 +1,264 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Paul Osmialowski <pawelo@king.net.pl>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <alpine.LNX.2.00.1507282201220.2619@localhost.localdomain>
-Cc: "Paul Osmialowski" <pawelo@king.net.pl>, "Arnd Bergmann" <arnd@arndb.de>,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Nicolas Pitre" <nicolas.pitre@linaro.org>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Rob Herring" <r.herring@freescale.com>,
- "Alexander Potashev" <aspotashev@emcraft.com>,
- "Frank Li" <Frank.Li@freescale.com>, "Jiri Slaby" <jslaby@suse.cz>,
- linux-clk@vger.kernel.org, "Russell King" <linux@arm.linux.org.uk>,
- "Vinod Koul" <vinod.koul@intel.com>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>, linux-serial@vger.kernel.org,
- "Uwe Kleine-Koenig" <u.kleine-koenig@pengutronix.de>,
- "Anson Huang" <b20788@freescale.com>, devicetree@vger.kernel.org,
- "Pawel Moll" <pawel.moll@arm.com>,
- "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
- "Kumar Gala" <galak@codeaurora.org>, "Yuri Tikhonov" <yur@emcraft.com>,
- linux-gpio@vger.kernel.org, "Rob Herring" <robh+dt@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org,
- "Sergei Poselenov" <sposelenov@emcraft.com>,
- "Paul Bolle" <pebolle@tiscali.nl>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Stephen Boyd" <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- "Jingchang Lu" <jingchang.lu@freescale.com>, dmaengine@vger.kernel.org
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
- <alpine.LNX.2.00.1507022338070.28322@localhost.localdomain>
- <alpine.DEB.2.11.1507030006280.3916@nanos> <2009463.YLtdMegFel@wuerfel>
- <alpine.LNX.2.00.1507042327490.1296@localhost.localdomain>
- <20150724034229.642.88156@quantum>
- <alpine.LNX.2.00.1507262211470.28341@localhost.localdomain>
- <20150728160347.642.31950@quantum>
- <alpine.LNX.2.00.1507282201220.2619@localhost.localdomain>
-Message-ID: <20150729230517.642.66061@quantum>
-Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
-Date: Wed, 29 Jul 2015 16:05:17 -0700
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH 16/26] clk: qcom: Convert to clk_hw based provider APIs
+Date: Fri, 31 Jul 2015 10:03:56 -0700
+Message-Id: <1438362246-6664-17-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Paul Osmialowski (2015-07-28 13:30:17)
-> Hi Mike,
-> =
+We're removing struct clk from the clk provider API, so switch
+this code to using the clk_hw based provider APIs.
+
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/qcom/clk-pll.c      |  8 ++------
+ drivers/clk/qcom/clk-rcg.c      | 17 ++++++++---------
+ drivers/clk/qcom/clk-rcg2.c     | 29 +++++++++++++----------------
+ drivers/clk/qcom/mmcc-msm8960.c | 10 ++++++----
+ 4 files changed, 29 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-pll.c b/drivers/clk/qcom/clk-pll.c
+index a34656bec648..5b940d629045 100644
+--- a/drivers/clk/qcom/clk-pll.c
++++ b/drivers/clk/qcom/clk-pll.c
+@@ -138,13 +138,9 @@ struct pll_freq_tbl *find_freq(const struct pll_freq_tbl *f, unsigned long rate)
+ static int
+ clk_pll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ {
+-	struct clk *parent = __clk_get_parent(hw->clk);
+ 	struct clk_pll *pll = to_clk_pll(hw);
+ 	const struct pll_freq_tbl *f;
+ 
+-	req->best_parent_hw = __clk_get_hw(parent);
+-	req->best_parent_rate = __clk_get_rate(parent);
+-
+ 	f = find_freq(pll->freq_tbl, req->rate);
+ 	if (!f)
+ 		req->rate = clk_pll_recalc_rate(hw, req->best_parent_rate);
+@@ -198,7 +194,7 @@ static int wait_for_pll(struct clk_pll *pll)
+ 	u32 val;
+ 	int count;
+ 	int ret;
+-	const char *name = __clk_get_name(pll->clkr.hw.clk);
++	const char *name = clk_hw_get_name(&pll->clkr.hw);
+ 
+ 	/* Wait for pll to enable. */
+ 	for (count = 200; count > 0; count--) {
+@@ -217,7 +213,7 @@ static int wait_for_pll(struct clk_pll *pll)
+ static int clk_pll_vote_enable(struct clk_hw *hw)
+ {
+ 	int ret;
+-	struct clk_pll *p = to_clk_pll(__clk_get_hw(__clk_get_parent(hw->clk)));
++	struct clk_pll *p = to_clk_pll(clk_hw_get_parent(hw));
+ 
+ 	ret = clk_enable_regmap(hw);
+ 	if (ret)
+diff --git a/drivers/clk/qcom/clk-rcg.c b/drivers/clk/qcom/clk-rcg.c
+index 070162abc2b6..fd8b3c68634f 100644
+--- a/drivers/clk/qcom/clk-rcg.c
++++ b/drivers/clk/qcom/clk-rcg.c
+@@ -59,7 +59,7 @@ static u8 clk_rcg_get_parent(struct clk_hw *hw)
+ 
+ err:
+ 	pr_debug("%s: Clock %s has invalid parent, using default.\n",
+-		 __func__, __clk_get_name(hw->clk));
++		 __func__, clk_hw_get_name(hw));
+ 	return 0;
+ }
+ 
+@@ -95,7 +95,7 @@ static u8 clk_dyn_rcg_get_parent(struct clk_hw *hw)
+ 
+ err:
+ 	pr_debug("%s: Clock %s has invalid parent, using default.\n",
+-		 __func__, __clk_get_name(hw->clk));
++		 __func__, clk_hw_get_name(hw));
+ 	return 0;
+ }
+ 
+@@ -409,7 +409,7 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+ 		const struct parent_map *parent_map)
+ {
+ 	unsigned long clk_flags, rate = req->rate;
+-	struct clk *p;
++	struct clk_hw *p;
+ 	int index;
+ 
+ 	f = qcom_find_freq(f, rate);
+@@ -421,7 +421,7 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+ 		return index;
+ 
+ 	clk_flags = clk_hw_get_flags(hw);
+-	p = clk_get_parent_by_index(hw->clk, index);
++	p = clk_hw_get_parent_by_index(hw, index);
+ 	if (clk_flags & CLK_SET_RATE_PARENT) {
+ 		rate = rate * f->pre_div;
+ 		if (f->n) {
+@@ -431,9 +431,9 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+ 			rate = tmp;
+ 		}
+ 	} else {
+-		rate =  __clk_get_rate(p);
++		rate =  clk_hw_get_rate(p);
+ 	}
+-	req->best_parent_hw = __clk_get_hw(p);
++	req->best_parent_hw = p;
+ 	req->best_parent_rate = rate;
+ 	req->rate = f->freq;
+ 
+@@ -472,9 +472,8 @@ static int clk_rcg_bypass_determine_rate(struct clk_hw *hw,
+ 	struct clk *p;
+ 	int index = qcom_find_src_index(hw, rcg->s.parent_map, f->src);
+ 
+-	p = clk_get_parent_by_index(hw->clk, index);
+-	req->best_parent_hw = __clk_get_hw(p);
+-	req->best_parent_rate = __clk_round_rate(p, req->rate);
++	req->best_parent_hw = p = clk_hw_get_parent_by_index(hw, index);
++	req->best_parent_rate = clk_hw_round_rate(p, req->rate);
+ 	req->rate = req->best_parent_rate;
+ 
+ 	return 0;
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 98cf7192a61d..9aec1761fd29 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -80,7 +80,7 @@ static u8 clk_rcg2_get_parent(struct clk_hw *hw)
+ 
+ err:
+ 	pr_debug("%s: Clock %s has invalid parent, using default.\n",
+-		 __func__, __clk_get_name(hw->clk));
++		 __func__, clk_hw_get_name(hw));
+ 	return 0;
+ }
+ 
+@@ -89,7 +89,7 @@ static int update_config(struct clk_rcg2 *rcg)
+ 	int count, ret;
+ 	u32 cmd;
+ 	struct clk_hw *hw = &rcg->clkr.hw;
+-	const char *name = __clk_get_name(hw->clk);
++	const char *name = clk_hw_get_name(hw);
+ 
+ 	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
+ 				 CMD_UPDATE, CMD_UPDATE);
+@@ -180,7 +180,7 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw,
+ 		const struct freq_tbl *f, struct clk_rate_request *req)
+ {
+ 	unsigned long clk_flags, rate = req->rate;
+-	struct clk *p;
++	struct clk_hw *p;
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	int index;
+ 
+@@ -193,7 +193,7 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw,
+ 		return index;
+ 
+ 	clk_flags = clk_hw_get_flags(hw);
+-	p = clk_get_parent_by_index(hw->clk, index);
++	p = clk_hw_get_parent_by_index(hw, index);
+ 	if (clk_flags & CLK_SET_RATE_PARENT) {
+ 		if (f->pre_div) {
+ 			rate /= 2;
+@@ -207,9 +207,9 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw,
+ 			rate = tmp;
+ 		}
+ 	} else {
+-		rate =  __clk_get_rate(p);
++		rate =  clk_hw_get_rate(p);
+ 	}
+-	req->best_parent_hw = __clk_get_hw(p);
++	req->best_parent_hw = p;
+ 	req->best_parent_rate = rate;
+ 	req->rate = f->freq;
+ 
+@@ -384,11 +384,10 @@ static int clk_edp_pixel_determine_rate(struct clk_hw *hw,
+ 	u32 mask = BIT(rcg->hid_width) - 1;
+ 	u32 hid_div;
+ 	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
+-	struct clk *p = clk_get_parent_by_index(hw->clk, index);
+ 
+ 	/* Force the correct parent */
+-	req->best_parent_hw = __clk_get_hw(p);
+-	req->best_parent_rate = __clk_get_rate(p);
++	req->best_parent_hw = clk_hw_get_parent_by_index(hw, index);
++	req->best_parent_rate = clk_hw_get_rate(req->best_parent_hw);
+ 
+ 	if (req->best_parent_rate == 810000000)
+ 		frac = frac_table_810m;
+@@ -436,14 +435,13 @@ static int clk_byte_determine_rate(struct clk_hw *hw,
+ 	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
+ 	unsigned long parent_rate, div;
+ 	u32 mask = BIT(rcg->hid_width) - 1;
+-	struct clk *p;
++	struct clk_hw *p;
+ 
+ 	if (req->rate == 0)
+ 		return -EINVAL;
+ 
+-	p = clk_get_parent_by_index(hw->clk, index);
+-	req->best_parent_hw = __clk_get_hw(p);
+-	req->best_parent_rate = parent_rate = __clk_round_rate(p, req->rate);
++	req->best_parent_hw = p = clk_hw_get_parent_by_index(hw, index);
++	req->best_parent_rate = parent_rate = clk_hw_round_rate(p, req->rate);
+ 
+ 	div = DIV_ROUND_UP((2 * parent_rate), req->rate) - 1;
+ 	div = min_t(u32, div, mask);
+@@ -504,14 +502,13 @@ static int clk_pixel_determine_rate(struct clk_hw *hw,
+ 	const struct freq_tbl *f = rcg->freq_tbl;
+ 	const struct frac_entry *frac = frac_table_pixel;
+ 	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
+-	struct clk *parent = clk_get_parent_by_index(hw->clk, index);
+ 
+-	req->best_parent_hw = __clk_get_hw(parent);
++	req->best_parent_hw = clk_hw_get_parent_by_index(hw, index);
+ 
+ 	for (; frac->num; frac++) {
+ 		request = (req->rate * frac->den) / frac->num;
+ 
+-		src_rate = __clk_round_rate(parent, request);
++		src_rate = clk_hw_round_rate(req->best_parent_hw, request);
+ 		if ((src_rate < (request - delta)) ||
+ 			(src_rate > (request + delta)))
+ 			continue;
+diff --git a/drivers/clk/qcom/mmcc-msm8960.c b/drivers/clk/qcom/mmcc-msm8960.c
+index 97e98278c21a..bad02aebf959 100644
+--- a/drivers/clk/qcom/mmcc-msm8960.c
++++ b/drivers/clk/qcom/mmcc-msm8960.c
+@@ -509,7 +509,6 @@ static int pix_rdi_set_parent(struct clk_hw *hw, u8 index)
+ 	int ret = 0;
+ 	u32 val;
+ 	struct clk_pix_rdi *rdi = to_clk_pix_rdi(hw);
+-	struct clk *clk = hw->clk;
+ 	int num_parents = clk_hw_get_num_parents(hw);
+ 
+ 	/*
+@@ -521,7 +520,8 @@ static int pix_rdi_set_parent(struct clk_hw *hw, u8 index)
+ 	 * needs to be on at what time.
+ 	 */
+ 	for (i = 0; i < num_parents; i++) {
+-		ret = clk_prepare_enable(clk_get_parent_by_index(clk, i));
++		struct clk_hw *p = clk_hw_get_parent_by_index(hw, i);
++		ret = clk_prepare_enable(p->clk);
+ 		if (ret)
+ 			goto err;
+ 	}
+@@ -549,8 +549,10 @@ static int pix_rdi_set_parent(struct clk_hw *hw, u8 index)
+ 	udelay(1);
+ 
+ err:
+-	for (i--; i >= 0; i--)
+-		clk_disable_unprepare(clk_get_parent_by_index(clk, i));
++	for (i--; i >= 0; i--) {
++		struct clk_hw *p = clk_hw_get_parent_by_index(hw, i);
++		clk_disable_unprepare(p->clk);
++	}
+ 
+ 	return ret;
+ }
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-> My trouble is that now I'm dealing with two conradictory opinions on how =
-
-> this driver should be written. The one you presented in your previous pos=
-t =
-
-> assumes that there will be a header file with defines shared between the =
-
-> clock driver and DTS, also with clock gating details hidden behind some =
-
-> additional level of indirection, e.g.:
-> =
-
-> clocks =3D <&sim SIM_SCGC4_UART1_CLK>;
-> =
-
-> Note that I've been through this at the very beginning, though the names =
-
-> I used have been bit different, e.g.:
-> =
-
-> #define KINETIS_CG_UART1       KINETIS_MKCG(3, 11)     /* SIM_SCGC4[11] */
-> =
-
-> This was rejected with a comment by Arnd:
-> =
-
-> Instead of using a triple indirection here, just put the tuples
-> in the DT directly using #clock-cells=3D<2>, and get rid of both this
-> header file and the dt-bindings/clock/kinetis-mcg.h file.
-
-Arnd, are you OK with my type of binding description now that I
-explained it with some examples?
-
-> =
-
-> So I dropped all of these includes and started to use magic numbers (as =
-
-> you put it). Now I need to go one way or another or even go the third way=
-: =
-
-> extend #clock-cells to <3> and address it like: <&sim parent_clock_id =
-
-> scgc_register_number bit_index_number>.
-
-Paul,
-
-From=20my understanding the DT folks do not like register-level or
-bit-level details going into DT. It is better to handle the clock
-signals as abstract resources and link a provider and consumer with a
-simple phandle plus an index representing that abstract resource (i.e.
-the clock output signal).
-
-> =
-
-> Reading your previous post I'm starting to feel that it would bring me =
-
-> closer to final acceptance if I stick to what you proposed in that post =
-
-> (I'm really grateful to you for writting so huge chunk of DTS for me!), s=
-o =
-
-> I'll probably adopt that.
-> =
-
-> You're right about my "get things up and running" attitude - currently I =
-
-> want to develop things extensively (cover as much subsystems as =
-
-> possible) and then at some stage switch to intensive approach. This board =
-
-> is a somewhat huge monster (for a Cortex-M4 SoC) and there will be a lot =
-
-> of coding opportunity in this field in the future.
-
-I'm happy to take clock drivers and add my Reviewed-by to .dts files
-that make use of fixed-rate and fixed-factor clocks as an interim
-solution.  Of course it will be best to get The Real Thing merged
-upstream asap, but this is something I've done before to help get new
-platform upstream before and I'm fine to do it again.
-
-With that said, Devicetree bindings are allegedly a stable ABI that
-cannot be broken. So let's make sure that any Kinetis clock binding
-description is in good shape before merging it. The rest can follow on
-later if it needs to.
-
-Regards,
-Mike
-
-> =
-
-> Thanks,
-> Paul
-> =
-
-> On Tue, 28 Jul 2015, Michael Turquette wrote:
-> =
-
-> > Quoting Paul Osmialowski (2015-07-26 13:24:08)
-> > > Hi Mike,
-> > > =
-
-> > > Thank you for spending time on this and pointing me into the right =
-
-> > > direction. I'm wondering about going even further with it. Assuming t=
-hat I =
-
-> > =
-
-> > Hi Paul,
-> > =
-
-> > No problem! And thanks for the quick turnaround on your patches so far.
-> > =
-
-> > > know everything about my board, I can skip run-time discovery phase (=
-note =
-
-> > > that the original driver was designed for other Kinetis-based boards =
-too) =
-
-> > > and move everything into DTS, somewhat like this:
-> > > =
-
-> > > / {
-> > >         osc0: clock {
-> > >                 compatible =3D "fixed-clock";
-> > >                 #clock-cells =3D <0>;
-> > >                 clock-frequency =3D <50000000>;
-> > >         };
-> > > =
-
-> > >         osc1: clock {
-> > >                 compatible =3D "fixed-clock";
-> > >                 #clock-cells =3D <0>;
-> > >                 clock-frequency =3D <12000000>;
-> > >         };
-> > > =
-
-> > >         rtc: clock {
-> > >                 compatible =3D "fixed-clock";
-> > >                 #clock-cells =3D <0>;
-> > >                 clock-frequency =3D <32768>;
-> > >         };
-> > > =
-
-> > >         mcgout: clock {
-> > >                 compatible =3D "fixed-factor-clock";
-> > >                 #clock-cells =3D <0>;
-> > >                 clocks =3D <&osc0>;
-> > >                 clock-mult =3D <12>;
-> > >                 clock-div =3D <5>;
-> > >         };
-> > =
-
-> > I think this is a step backwards.
-> > =
-
-> > Did you look at the qcom clock binding and read the email where I
-> > detailed how that binding works?
-> > =
-
-> > The point of that type of binding is to not shove per-clock data into
-> > DT, but instead to declare every clock controller IP block (e.g. the
-> > device) as well as every board-level clock (e.g. as osc that feeds into
-> > your mcu). Once these "clock providers" are enumerated in DT, then we
-> > create linkage between the clock providers and the clock consumers by
-> > using phandles + an index. Linux device drivers tap into this by using
-> > clk_get() and using the "clock-names" property from DT.
-> > =
-
-> > Put another way: we mostly use DT to model "devices". That is open to
-> > interpretation for but for clock-related stuff we typically interpret
-> > the clock controller as the device, not the individual clock outputs
-> > coming out of the controller.
-> > =
-
-> > Note that a clock controller IP block may be both a provider and a
-> > consumer.  I/O controllers are a very common type of consumer (e.g. USB
-> > host controller, MMC controller, GPU, etc).
-> > =
-
-> > Additionally, from my reading of the reference manual, mcgout is defined
-> > as:
-> > =
-
-> > """
-> > MCG output of either IRC, MCGFLLCLK MCGPLL0CLK,
-> > MCGPLL1CLK, or MCG's external reference clock that
-> > sources the core, system, bus, FlexBus, and flash clock. It is
-> > also an option for the debug trace clock.
-> > """
-> > =
-
-> > So why is it listed here as a fixed-factor clock? Is it not a
-> > multiplexer? Also, why is it listed here at all? Please take another
-> > look at the qcom binding example I linked to in my previous mail.
-> > =
-
-> > > =
-
-> > >         core: clock {
-> > >                 compatible =3D "fixed-factor-clock";
-> > >                 #clock-cells =3D <0>;
-> > >                 clocks =3D <&mcgout>;
-> > >                 clock-mult =3D <1>;
-> > >                 clock-div =3D <1>;
-> > >         };
-> > > =
-
-> > >         bus: clock {
-> > >                 compatible =3D "fixed-factor-clock";
-> > >                 #clock-cells =3D <0>;
-> > >                 clocks =3D <&mcgout>;
-> > >                 clock-mult =3D <1>;
-> > >                 clock-div =3D <2>;
-> > =
-
-> > These are actually not fixed dividers but programmable dividers. You can
-> > probably use drivers/clk/clk-divider.c for these. I'm fine with using
-> > fixed-dividers for the initial merge just to get things up and running
-> > if that is your strategy, but you'll need to revisit them later on when
-> > you need more flexible support for other boards.
-> > =
-
-> > Again, I'm not sure why these clocks are enumerated in DT. Why not just
-> > enumerate your mcg clock controller and your sim clock controller? If
-> > you want to be a perfectionist then it appears that there is an osc
-> > clock controller upstream from the mcg controller as well ;-)
-> > =
-
-> > It occurs to me that maybe you are trying to use fixed-factor clocks so
-> > that you can program a sane default rate? We use the
-> > assigned-clock-rates property for that. Note that this value is a
-> > property of some device which *consumes* the clock, not the clock
-> > controller or the clock output itself.
-> > =
-
-> > >         };
-> > > =
-
-> > >         soc {
-> > >                 cmu@0x40047000 {
-> > >                         compatible =3D "fsl,kinetis-gate-clock";
-> > >                         reg =3D <0x40047000 0x1100>;
-> > > =
-
-> > >                         mcg_core_gate: clock-gate {
-> > >                                 clocks =3D <&core>;
-> > >                                 #clock-cells =3D <2>;
-> > >                         };
-> > > =
-
-> > >                         mcg_bus_gate: clock-gate {
-> > >                                 clocks =3D <&bus>;
-> > >                                 #clock-cells =3D <2>;
-> > >                         };
-> > > =
-
-> > >                         osc0_erclk_gate: clock-gate {
-> > >                                 clocks =3D <&osc0>;
-> > >                                 #clock-cells =3D <2>;
-> > >                         };
-> > >                 };
-> > > =
-
-> > >                 uart0: serial@4006a000 {
-> > >                         compatible =3D "fsl,kinetis-lpuart";
-> > >                         reg =3D <0x4006a000 0x1000>;
-> > >                         interrupts =3D <45>, <46>;
-> > >                         interrupt-names =3D "uart-stat", "uart-err";
-> > >                         clocks =3D <&mcg_core_gate 3 10>;
-> > =
-
-> > Magic numbers are not good. dtc has been able to use preprocessor macros
-> > for a while now which means we can use constants instead of magic
-> > numbers. Please look at the shared header in the qcom binding for an
-> > example.
-> > =
-
-> > >                         clock-names =3D "ipg";
-> > >                         dmas =3D <&edma 0 2>;
-> > >                         dma-names =3D "rx";
-> > >                         status =3D "disabled";
-> > >                 };
-> > >         };
-> > > };
-> > > =
-
-> > > As you can see, mcg part is not required anymore.
-> > =
-
-> > I think the mcg should be required. The mcg is a real IP block on your
-> > SoC, according to my reading of your technical reference manual. Just
-> > because you can model a few of its output clocks in dts does not mean
-> > that you should.
-> > =
-
-> > I did a quick grep and didn't find "cmu" anywhere in the reference
-> > manual.
-> > =
-
-> > > =
-
-> > > I guess that the approach above would require split into soc-specific=
- and =
-
-> > > board-specific part (as I said, dividers arrangement is something boa=
-rd =
-
-> > > specific), but I wonder what you thing about this proposal.
-> > =
-
-> > Splitting is good. Chip-specific stuff can go into the chip-specific
-> > dtsi file. The board-level (osc) stuff can go into the individual board
-> > files. The ultimate goal is to make it trivial to add new boards.
-> > =
-
-> > Regards,
-> > Mike
-> > =
-
-> > > =
-
-> > > Thanks,
-> > > Paul
-> > > =
-
-> > > On Thu, 23 Jul 2015, Michael Turquette wrote:
-> > > =
-
-> > > > Quoting Paul Osmialowski (2015-07-04 14:50:03)
-> > > > > Hi Arnd,
-> > > > > =
-
-> > > > > I'm attaching excerpt from Kinetis reference manual that may make =
-
-> > > > > situation clearer.
-> > > > =
-
-> > > > Hi Paul,
-> > > > =
-
-> > > > Can you please post the patch in the body of the email instead of an
-> > > > attachment? It makes it easier to review. Another small nitpick is =
-that
-> > > > the $SUBJECT for this patch might be better off as something like:
-> > > > =
-
-> > > > clk: mcg and sim clock drivers for twr-k70f120m Kinetis SoC
-> > > > =
-
-> > > > At least it helps me find the patch I care about when skimming the
-> > > > series ;-)
-> > > > =
-
-> > > > > =
-
-> > > > > These MCG and SIM registers are used only to determine configurat=
-ion =
-
-> > > > > (clock fixed rates and clock signal origins) at run time.
-> > > > > =
-
-> > > > > Namely, the real MCGOUTCLK source (in the middle) which is the pa=
-rent for =
-
-> > > > > core clock (CCLK) and peripheral clock (PCLK) is determined at ru=
-n time by =
-
-> > > > > reading MCG registers, let me quote commit message from Emcraft g=
-it repo:
-> > > > > =
-
-> > > > >       * Determine in run-time what oscillator module (OSC0 or OSC=
-1) is used
-> > > > >      as clock source for the main PLL.
-> > > > =
-
-> > > > According to [0] there are three options: a 32k RTC osc clock and o=
-sc0
-> > > > both feed into a mux. You should model this 32k clock with the
-> > > > fixed-rate binding.
-> > > > =
-
-> > > > >       * When OSC1 is selected, assume its frequency to be 12 MHz =
-on all
-> > > > >      boards (there is a 12 MHz oscillator on XTAL1/EXTAL1 on K70-=
-SOM and
-> > > > >      TWR-K70F120M boards).
-> > > > > =
-
-> > > > > In my .dts I'm trying to possibly follow real clock hierarchy, bu=
-t to go =
-
-> > > > > anywhere behind MCGOUTCLK would require ability to rewrite .dtb e=
-.g. by =
-
-> > > > > U-boot. But that's too demanding for any potential users of this =
-BSP. So =
-
-> > > > > let's asume that MCGOUTCLK is the root clock and a parent for CCL=
-K and =
-
-> > > > > PCLK.
-> > > > =
-
-> > > > I'm confused. The point of device tree is to solve problems like th=
-is;
-> > > > i.e. board-specific differences such as different oscillator
-> > > > frequencies.
-> > > > =
-
-> > > > OSC0 and OSC1 should each be a fixed-rate clock in your board-speci=
-fic
-> > > > TWR-K70F120M DTS (not a chip-specific file). They do not belong in =
-the
-> > > > cmu node, and they should use the "fixed-clock" binding. The 32k RT=
-C osc
-> > > > can probably go in your chip-specific .dtsi as a fixed-rate clock s=
-ince
-> > > > it appears to mandated in the reference manual[0].
-> > > > =
-
-> > > > These three fixed-rate clocks are your root clock nodes. Customers =
-only
-> > > > need to worry about this if they spin a board, and then they will n=
-eed
-> > > > to populate the frequencies of OSC0 and OSC1 in their board-specific
-> > > > .dts.
-> > > > =
-
-> > > > Please break clk-kinetis.c into two files:
-> > > > drivers/clk/kinetis/clk-mcg.c
-> > > > drivers/clk/kinetis/clk-sim.c
-> > > > =
-
-> > > > Below is what your binding/dts should look like:
-> > > > =
-
-> > > > {
-> > > >       osc0: clock {
-> > > >               compatible =3D "fixed-clock";
-> > > >               #clock-cells =3D <0>;
-> > > >               clock-frequency =3D <50000000>;
-> > > >       };
-> > > > =
-
-> > > >       osc1: clock {
-> > > >               compatible =3D "fixed-clock";
-> > > >               #clock-cells =3D <0>;
-> > > >               clock-frequency =3D <12000000>;
-> > > >       };
-> > > > =
-
-> > > >       rtc: clock {
-> > > >               compatible =3D "fixed-clock";
-> > > >               #clock-cells =3D <0>;
-> > > >               clock-frequency =3D <32768>;
-> > > >       };
-> > > > =
-
-> > > >       soc: soc {
-> > > >               mcg: clock-controller@40064000 {
-> > > >                       compatible =3D "fsl,kinetis-mcg";
-> > > >                       clock-cells =3D <1>;
-> > > >                       reg =3D <0x40064000 0x14>;
-> > > >                       clocks =3D <&osc0>, <&osc1>, <&rtc>;
-> > > >                       clock-names =3D "osc0", "osc1", "rtc";
-> > > >               };
-> > > > =
-
-> > > >               sim: clock-controller@40047000 {
-> > > >                       compatible =3D "fsl,kinetis-sim";
-> > > >                       clock-cells =3D <1>;
-> > > >                       reg =3D <0x40047000 0x1100>;
-> > > >                       clocks =3D <&mcg MCG_MCGOUTCLK_DIV1>, <&mcg M=
-CG_MCGOUTCLK_DIV2>, <&mcg MCG_MCGOUTCLK_DIV3> <&mcg MCG_MCGOUTCLK_DIV4>;
-> > > >                       clock-names =3D "core", "bus", "flexbus", "fl=
-ash";
-> > > >               };
-> > > >       };
-> > > > =
-
-> > > >       uart0: serial@4006a000 {
-> > > >               compatible =3D "fsl,kinetis-lpuart";
-> > > >               reg =3D <0x4006a000 0x1000>;
-> > > >               clocks =3D <&sim SIM_SCGC4_UART1_CLK>;
-> > > >               clock-names =3D "gate";
-> > > >       };
-> > > > =
-
-> > > > I removed the interrupts and dma stuff from the uart0 node for clar=
-ity.
-> > > > The above is the only style of binding that I have been accepting f=
-or
-> > > > some time; first declare the clock controller and establish its reg=
-ister
-> > > > space, and then consumers can consume clocks by providing the phand=
-le to
-> > > > the controller plus an offset corresponding to a unique clock. The
-> > > > clock-names property makes it really easy to use with the clkdev st=
-uff
-> > > > (e.g. clk_get()).
-> > > > =
-
-> > > > I've covered this before on the mailing list so here is a link
-> > > > describing how the qcom bindings do it in detail:
-> > > > =
-
-> > > > http://lkml.kernel.org/r/<20150416192014.19585.9663@quantum>
-> > > > =
-
-> > > > Technically you could encode the same bits as sub-nodes of the mcg =
-and
-> > > > sim nodes, but the shared header is how the magic happens with the
-> > > > driver so it's best to keep the clock controller binding small and
-> > > > light.
-> > > > =
-
-> > > > I think this means you can also get rid of kinetis_of_clk_get_name =
-and
-> > > > kinetis_clk_gate_get but my brain is tired so I'll leave that as an
-> > > > exercise to the reader.
-> > > > =
-
-> > > > [0] http://cache.freescale.com/files/microcontrollers/doc/ref_manua=
-l/K70P256M150SF3RM.pdf
-> > > > =
-
-> > > > Regards,
-> > > > Mike
-> > > > =
-
-> > > > > =
-
-> > > > > In my most recent version I added OSC0ERCLK explicitly as one mor=
-e root =
-
-> > > > > clock, since it is also used directly (through CG reg. 1 bit 0) b=
-y =
-
-> > > > > Freescale fec network device whose in-tree driver I'm trying to m=
-ake =
-
-> > > > > usable for Kinetis.
-> > > > > =
-
-> > > > > On Sat, 4 Jul 2015, Arnd Bergmann wrote:
-> > > > > =
-
-> > > > > > On Friday 03 July 2015 00:08:27 Thomas Gleixner wrote:
-> > > > > >> On Thu, 2 Jul 2015, Paul Osmialowski wrote:
-> > > > > >>> On Thu, 2 Jul 2015, Arnd Bergmann wrote:
-> > > > > >>>
-> > > > > >>>> I wonder if you could move out the fixed rate clocks into th=
-eir own
-> > > > > >>>> nodes. Are they actually controlled by the same block? If th=
-ey are
-> > > > > >>>> just fixed, you can use the normal binding for fixed rate cl=
-ocks
-> > > > > >>>> and only describe the clocks that are related to the driver.
-> > > > > >>>
-> > > > > >>> In my view having these clocks grouped together looks more co=
-nvincing. After
-> > > > > >>> all, they all share the same I/O regs in order to read config=
-uration.
-> > > > > >>
-> > > > > >> The fact that they share a register is not making them a group=
-. That's
-> > > > > >> just a HW design decision and you need to deal with that by pr=
-otecting
-> > > > > >> the register access, but not by trying to group them artificia=
-lly at
-> > > > > >> the functional level.
-> > > > > >
-> > > > > > I'd disagree with that: The clock controller is the device that=
- owns the
-> > > > > > registers and that should be one node in DT, as Paul's first ve=
-rsion does.
-> > > > > >
-> > > > > > The part I'm still struggling with is understanding how the fix=
-ed-rate
-> > > > > > clocks are controlled through those registers. If they are inde=
-ed configured
-> > > > > > through the registers, the name is probably wrong and should be=
- changed
-> > > > > > to whatever kind of non-fixed clock this is.
-> > > > > >
-> > > > > >       Arnd
-> > > > > >
-> > > > > =
-
-> > > > > _______________________________________________
-> > > > > linux-arm-kernel mailing list
-> > > > > linux-arm-kernel@lists.infradead.org
-> > > > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> > > > =
-
-> > > --
-> > > To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> > > the body of a message to majordomo@vger.kernel.org
-> > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > > Please read the FAQ at  http://www.tux.org/lkml/
-> > =
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
