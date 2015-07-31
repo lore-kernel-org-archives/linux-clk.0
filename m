@@ -1,57 +1,51 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 28 Jul 2015 14:41:26 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
-Message-ID: <20150728214126.GA3159@codeaurora.org>
-References: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
- <20150721224235.GA30021@codeaurora.org>
- <55AED88D.2060009@samsung.com>
- <55B472C7.5000109@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <55B472C7.5000109@gmail.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 04/26] clk: Add clk_hw_get_flags()
+Date: Fri, 31 Jul 2015 10:03:44 -0700
+Message-Id: <1438362246-6664-5-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/26, Sylwester Nawrocki wrote:
-> On 07/22/2015 08:41 AM, Krzysztof Kozlowski wrote:
-> >On 22.07.2015 07:42, Stephen Boyd wrote:
-> >>>On 06/12, Krzysztof Kozlowski wrote:
-> [...]
-> >>>>>Signed-off-by: Krzysztof Kozlowski<k.kozlowski@samsung.com>
-> >>>>>Cc:<stable@vger.kernel.org>
-> >>>>>Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
-> >>>>>Link:https://lkml.org/lkml/2015/6/11/85
-> >>>
-> >>>Did you want clk maintainers to apply this? The To: list is not
-> >>>helping so I'm not sure what's going on and it seems to have
-> >>>slipped through the cracks.
-> >
-> >Thank you for being proactive! I appreciate this.
-> >Some time ago Sylwester replied that he took care about this patch so I
-> >think this will go through Samsung clock tree.
-> >
-> >Sylwester, are you planning to send this as fix for 4.2-rc?
-> 
-> I think it qualifies for 4.3, it's not a new regression and will be
-> backported to -stable anyway.
-> I would prefer clk maintainers have applied this, otherwise I would
-> need to make a (questionable) pull request with only one patch, since
-> all patches except this one after the last merge window were part
-> of bigger series touching multiple subsystems and applied through
-> the samsung soc tree.
-> 
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk.c            | 6 ++++++
+ include/linux/clk-provider.h | 1 +
+ 2 files changed, 7 insertions(+)
 
-Ok. Applied to clk-next.
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 3e295f255913..e06e906315e1 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -418,6 +418,12 @@ unsigned long __clk_get_flags(struct clk *clk)
+ }
+ EXPORT_SYMBOL_GPL(__clk_get_flags);
+ 
++unsigned long clk_hw_get_flags(struct clk_hw *hw)
++{
++	return hw->core->flags;
++}
++EXPORT_SYMBOL_GPL(clk_hw_get_flags);
++
+ bool __clk_is_prepared(struct clk *clk)
+ {
+ 	if (!clk)
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 8fe7dac77a0d..a0e7d626bc90 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -614,6 +614,7 @@ struct clk *clk_get_parent_by_index(struct clk *clk, u8 index);
+ unsigned int __clk_get_enable_count(struct clk *clk);
+ unsigned long __clk_get_rate(struct clk *clk);
+ unsigned long __clk_get_flags(struct clk *clk);
++unsigned long clk_hw_get_flags(struct clk_hw *hw);
+ bool __clk_is_prepared(struct clk *clk);
+ bool __clk_is_enabled(struct clk *clk);
+ struct clk *__clk_lookup(const char *name);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
