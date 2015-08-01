@@ -1,55 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.139]:53394 "EHLO
-	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751637AbbH1KHf (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 28 Aug 2015 06:07:35 -0400
-Message-ID: <55E032DC.1090703@rock-chips.com>
-Date: Fri, 28 Aug 2015 18:07:24 +0800
-From: Xing Zheng <zhengxing@rock-chips.com>
-MIME-Version: 1.0
-To: Heiko Stuebner <heiko@sntech.de>
-CC: linux-rockchip@lists.infradead.org,
-	Russell King <linux@arm.linux.org.uk>,
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Sat, 1 Aug 2015 16:47:21 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-gpio@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kumar Gala <galak@codeaurora.org>,
+	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 0/3] Port and support rk3036 SoC platform
-References: <1440740808-15004-1-git-send-email-zhengxing@rock-chips.com> <6551991.RUDkGfdSCp@phil>
-In-Reply-To: <6551991.RUDkGfdSCp@phil>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq
+ driver for Exynos4x12
+Message-ID: <20150801111721.GI899@linux>
+References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+ <1438368557-2352-4-git-send-email-b.zolnierkie@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1438368557-2352-4-git-send-email-b.zolnierkie@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-HI Heiko,
-Thank you for your reply. I will improve them as quickly as possible.
+On 31-07-15, 20:49, Bartlomiej Zolnierkiewicz wrote:
+> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+> index 659879a..bf6d596 100644
+> --- a/drivers/cpufreq/Kconfig
+> +++ b/drivers/cpufreq/Kconfig
+> @@ -191,6 +191,7 @@ config CPUFREQ_DT
+>  	# if CPU_THERMAL is on and THERMAL=m, CPUFREQ_DT cannot be =y:
+>  	depends on !CPU_THERMAL || THERMAL
+>  	select PM_OPP
+> +	select EXYNOS_THERMAL if ARCH_EXYNOS
+>  	help
+>  	  This adds a generic DT based cpufreq driver for frequency management.
+>  	  It supports both uniprocessor (UP) and symmetric multiprocessor (SMP)
 
-Thanks. :)
+No, we shouldn't pollute generic Kconfig options with platform specific stuff.
+Why don't you enable thermal in your .config?
 
-On 2015年08月28日 17:59, Heiko Stuebner wrote:
-> Hi,
->
-> Am Freitag, 28. August 2015, 13:46:45 schrieb Xing Zheng:
->> We need to support rk3036 soc platform via upstream, there are
->> 3 parts for the initial release of minimum system: dts, pinctrl,
->> and clock tree for rk3036, startup and run to init processs.
-> this is really cool that you're working on supporting the rk3036.
-> I had some comments to the individual patches, but overall it looks quite nice
-> already.
->
->
-> So, thanks for working on this
-> Heiko
->
->
->
->
-
-
+-- 
+viresh
