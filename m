@@ -1,116 +1,41 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Sat, 1 Aug 2015 17:06:40 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 20/26] clk: spear: Convert to clk_hw based provider APIs
+Message-ID: <20150801113640.GN899@linux>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+ <1438362246-6664-21-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v64nvA1K=Ya7_99-2G1LtFjcuj+qQbO1GJaqsL+yPF+Xdw@mail.gmail.com>
-References: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
- <1438364782-3968-6-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v64nvA1K=Ya7_99-2G1LtFjcuj+qQbO1GJaqsL+yPF+Xdw@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 11 Aug 2015 12:49:54 +0800
-Message-ID: <CAGb2v64-=1Byzo-h=7Pq=HK9Xx01KaTKT89Nx6jVWUc_kqthyg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] ARM: sun8i: Add clock indices
-To: Chen-Yu Tsai <wens@csie.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1438362246-6664-21-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Aug 8, 2015 at 12:21 AM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Sat, Aug 1, 2015 at 1:46 AM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->> The A23 and A33 gates have a non continuous set of clock IDs that are
->> valid. Add the clock-indices property to the DT to express this.
->>
->> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->> ---
->>  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 15 +++++++++++++++
->>  1 file changed, 15 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
->> index 7abd0ae3143d..c318c770b6c1 100644
->> --- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
->> +++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
->> @@ -180,6 +180,15 @@
->>                         compatible = "allwinner,sun8i-a23-ahb1-gates-clk";
->>                         reg = <0x01c20060 0x8>;
->>                         clocks = <&ahb1>;
->> +                       clock-indices = <1>, <6>,
->
-> Turns out the A33 (and I assume the same with the A23) has
-> an ahb1 clock gate for the Security System at clock-index <5>.
+On 31-07-15, 10:04, Stephen Boyd wrote:
+> We're removing struct clk from the clk provider API, so switch
+> this code to using the clk_hw based provider APIs.
+> 
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/spear/clk-vco-pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/spear/clk-vco-pll.c b/drivers/clk/spear/clk-vco-pll.c
+> index 1b9b65bca51e..185b294c923b 100644
+> --- a/drivers/clk/spear/clk-vco-pll.c
+> +++ b/drivers/clk/spear/clk-vco-pll.c
+> @@ -87,7 +87,7 @@ static long clk_pll_round_rate_index(struct clk_hw *hw, unsigned long drate,
+>  	struct clk_pll *pll = to_clk_pll(hw);
+>  	unsigned long prev_rate, vco_prev_rate, rate = 0;
+>  	unsigned long vco_parent_rate =
+> -		__clk_get_rate(__clk_get_parent(__clk_get_parent(hw->clk)));
+> +		clk_hw_get_rate(clk_hw_get_parent(clk_hw_get_parent(hw)));
 
-Looks like the A23 does not have this one, nor the SS mod clock.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-> This is found in the updated A33 user manual.
->
->> +                                       <8>, <9>, <10>,
->> +                                       <13>, <14>,
->> +                                       <19>, <20>,
->> +                                       <21>, <24>, <26>,
->> +                                       <29>, <32>, <36>,
->> +                                       <40>, <44>, <46>,
->> +                                       <52>, <54>,
->
-> <53> is ahb1 clock gate for msgbox, again found in A33 manual.
-
-A23 has this one. Found in Allwinner kernel sources.
-
->> +                                       <57>;
->
-> <58> is ahb1 clock gate for SAT, which seems to be part of the
-> display pipeline.
-
-This one is A33 only.
-
-I guess we should do a separate compatible for A33 AHB1 clock gates.
-
-ChenYu
-
->>                         clock-output-names = "ahb1_mipidsi", "ahb1_dma",
->>                                         "ahb1_mmc0", "ahb1_mmc1", "ahb1_mmc2",
->>                                         "ahb1_nand", "ahb1_sdram",
->> @@ -196,6 +205,8 @@
->>                         compatible = "allwinner,sun8i-a23-apb1-gates-clk";
->>                         reg = <0x01c20068 0x4>;
->>                         clocks = <&apb1>;
->> +                       clock-indices = <0>, <5>,
->> +                                       <12>, <13>;
->>                         clock-output-names = "apb1_codec", "apb1_pio",
->>                                         "apb1_daudio0", "apb1_daudio1";
->>                 };
->> @@ -213,6 +224,10 @@
->>                         compatible = "allwinner,sun8i-a23-apb2-gates-clk";
->>                         reg = <0x01c2006c 0x4>;
->>                         clocks = <&apb2>;
->> +                       clock-indices = <0>, <1>,
->> +                                       <2>, <16>,
->> +                                       <17>, <18>,
->> +                                       <19>, <20>;
->>                         clock-output-names = "apb2_i2c0", "apb2_i2c1",
->>                                         "apb2_i2c2", "apb2_uart0",
->>                                         "apb2_uart1", "apb2_uart2",
->> --
->> 2.4.6
->>
->
-> Not sure if you want to add the clocks I mentioned together
-> in this patch, or do a separate patch.
->
-> The rest look good.
->
-> ChenYu
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+viresh
