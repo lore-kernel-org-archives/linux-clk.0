@@ -1,111 +1,161 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Sat, 1 Aug 2015 16:18:25 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>,
+	Andreas Faerber <afaerber@suse.de>
+Subject: Re: [PATCH v3 2/5] ARM: dts: Exynos4x12: add CPU OPP and regulator
+ supply property
+Message-ID: <20150801104825.GF899@linux>
+References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+ <1438368557-2352-3-git-send-email-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	"Nicolas Ferre" <nicolas.ferre@atmel.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1438215726-27452-21-git-send-email-alexandre.belloni@free-electrons.com>
-Cc: "Boris Brezillon" <boris.brezillon@free-electrons.com>,
-	"Maxime Ripard" <maxime.ripard@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	"Alexandre Belloni" <alexandre.belloni@free-electrons.com>,
-	"Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-References: <1438215726-27452-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1438215726-27452-21-git-send-email-alexandre.belloni@free-electrons.com>
-Message-ID: <20150811232649.31346.37488@quantum>
-Subject: Re: [PATCH 20/20] clk: at91: Revert "keep slow clk enabled to prevent system
- hang"
-Date: Tue, 11 Aug 2015 16:26:49 -0700
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1438368557-2352-3-git-send-email-b.zolnierkie@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Alexandre Belloni (2015-07-29 17:22:06)
-> Commit dca1a4b5ff6e ("clk: at91: keep slow clk enabled to prevent system
-> hang") added a workaround for the slow clock as it is not properly handled
-> by its users.
+On 31-07-15, 20:49, Bartlomiej Zolnierkiewicz wrote:
+> For Exynos4x12 platforms, add CPU operating points (using
+> opp-v2 bindings) and CPU regulator supply properties for
+> migrating from Exynos specific cpufreq driver to using
+> generic cpufreq driver.
 > 
-> Now that the slow clock is taken properly by the drivers, this workaround
-> is not necessary anymore, revert it.
+> Based on the earlier work by Thomas Abraham.
 > 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Cc: Andreas Faerber <afaerber@suse.de>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > ---
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org
->  drivers/clk/at91/clk-slow.c | 27 ---------------------------
->  1 file changed, 27 deletions(-)
+>  arch/arm/boot/dts/exynos4212.dtsi               | 81 ++++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 ++
+>  arch/arm/boot/dts/exynos4412-origen.dts         |  4 ++
+>  arch/arm/boot/dts/exynos4412-trats2.dts         |  4 ++
+>  arch/arm/boot/dts/exynos4412.dtsi               | 83 +++++++++++++++++++++++++
+>  5 files changed, 176 insertions(+)
 > 
-> diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
-> index 98a84a865fe1..2c59d6a64dd5 100644
-> --- a/drivers/clk/at91/clk-slow.c
-> +++ b/drivers/clk/at91/clk-slow.c
-> @@ -70,7 +70,6 @@ struct clk_sam9x5_slow {
->  
->  #define to_clk_sam9x5_slow(hw) container_of(hw, struct clk_sam9x5_slow, hw)
->  
-> -static struct clk *slow_clk;
->  
+> diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
+> index d9c8efee..5389011 100644
+> --- a/arch/arm/boot/dts/exynos4212.dtsi
+> +++ b/arch/arm/boot/dts/exynos4212.dtsi
+> @@ -30,6 +30,9 @@
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a9";
+>  			reg = <0xA00>;
+> +			clocks = <&clock CLK_ARM_CLK>;
+> +			clock-names = "cpu";
+> +			operating-points-v2 = <&cpu0_opp_table>;
+>  			cooling-min-level = <13>;
+>  			cooling-max-level = <7>;
+>  			#cooling-cells = <2>; /* min followed by max */
+> @@ -39,6 +42,84 @@
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a9";
+>  			reg = <0xA01>;
+> +			operating-points-v2 = <&cpu0_opp_table>;
+> +		};
+> +	};
+> +
+> +	cpu0_opp_table: opp_table0 {
+> +		compatible = "operating-points-v2";
+> +		opp-shared;
+> +
+> +		opp00 {
+> +			opp-hz = /bits/ 64 <200000000>;
+> +			opp-microvolt = <900000>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp01 {
+> +			opp-hz = /bits/ 64 <300000000>;
+> +			opp-microvolt = <900000>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp02 {
+> +			opp-hz = /bits/ 64 <400000000>;
+> +			opp-microvolt = <925000>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp03 {
+> +			opp-hz = /bits/ 64 <500000000>;
+> +			opp-microvolt = <950000>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp04 {
+> +			opp-hz = /bits/ 64 <600000000>;
+> +			opp-microvolt = <975000>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp05 {
+> +			opp-hz = /bits/ 64 <700000000>;
+> +			opp-microvolt = <987500>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp06 {
+> +			opp-hz = /bits/ 64 <800000000>;
+> +			opp-microvolt = <1000000>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp07 {
+> +			opp-hz = /bits/ 64 <900000000>;
+> +			opp-microvolt = <1037500>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp08 {
+> +			opp-hz = /bits/ 64 <1000000000>;
+> +			opp-microvolt = <1087500>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp09 {
+> +			opp-hz = /bits/ 64 <1100000000>;
+> +			opp-microvolt = <1137500>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp10 {
+> +			opp-hz = /bits/ 64 <1200000000>;
+> +			opp-microvolt = <1187500>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp11 {
+> +			opp-hz = /bits/ 64 <1300000000>;
+> +			opp-microvolt = <1250000>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp12 {
+> +			opp-hz = /bits/ 64 <1400000000>;
+> +			opp-microvolt = <1287500>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp13 {
+> +			opp-hz = /bits/ 64 <1500000000>;
+> +			opp-microvolt = <1350000>;
+> +			clock-latency-ns = <200000>;
+> +			turbo-mode;
+>  		};
+>  	};
+>  };
 
-Might want to remove one extra line of white space?
+I'm lovin' it :)
 
->  static int clk_slow_osc_prepare(struct clk_hw *hw)
->  {
-> @@ -358,8 +357,6 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
->         clk = clk_register(NULL, &slowck->hw);
->         if (IS_ERR(clk))
->                 kfree(slowck);
-> -       else
-> -               slow_clk = clk;
->  
->         return clk;
->  }
-> @@ -436,8 +433,6 @@ at91_clk_register_sam9260_slow(struct at91_pmc *pmc,
->         clk = clk_register(NULL, &slowck->hw);
->         if (IS_ERR(clk))
->                 kfree(slowck);
-> -       else
-> -               slow_clk = clk;
->  
->         return clk;
->  }
-> @@ -470,25 +465,3 @@ void __init of_at91sam9260_clk_slow_setup(struct device_node *np,
->  
->         of_clk_add_provider(np, of_clk_src_simple_get, clk);
->  }
-> -
-> -/*
-> - * FIXME: All slow clk users are not properly claiming it (get + prepare +
-> - * enable) before using it.
-> - * If all users properly claiming this clock decide that they don't need it
-> - * anymore (or are removed), it is disabled while faulty users are still
-> - * requiring it, and the system hangs.
-> - * Prevent this clock from being disabled until all users are properly
-> - * requesting it.
-> - * Once this is done we should remove this function and the slow_clk variable.
-> - */
-> -static int __init of_at91_clk_slow_retain(void)
-> -{
-> -       if (!slow_clk)
-> -               return 0;
-> -
-> -       __clk_get(slow_clk);
-> -       clk_prepare_enable(slow_clk);
-> -
-> -       return 0;
-> -}
-> -arch_initcall(of_at91_clk_slow_retain);
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-This is a cool series. Thanks. Feel free to add my Ack, or we can take
-this through clk-next once the other patches are applied.
-
-Regards,
-Mike
-
-> -- 
-> 2.1.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+-- 
+viresh
