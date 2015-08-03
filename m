@@ -1,52 +1,58 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Sat, 8 Aug 2015 07:39:00 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v3] cpufreq-dt: make scaling_boost_freqs sysfs attr
- available when boost is enabled
-Message-ID: <20150808020900.GN6939@linux>
-References: <2130756.euuUs9t9I5@amdc1976>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <2130756.euuUs9t9I5@amdc1976>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:36647 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752597AbbHCE6z (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 3 Aug 2015 00:58:55 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NSH007HDPU50MD0@mailout3.samsung.com> for
+ linux-clk@vger.kernel.org; Mon, 03 Aug 2015 13:58:53 +0900 (KST)
+Date: Mon, 03 Aug 2015 04:58:53 +0000 (GMT)
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: Re: [PATCH] PM / devfreq: event: Remove incorrect property in
+ exynos-ppmu DT binding
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	"linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	=?utf-8?Q?=ED=81=AC=EC=89=AC=EC=8B=9C=ED=86=A0=ED=94=84?=
+	<k.kozlowski@samsung.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Reply-to: myungjoo.ham@samsung.com
+MIME-version: 1.0
+Content-type: text/plain; charset=utf-8
+MIME-version: 1.0
+Message-id: <1733224792.341671438577931309.JavaMail.weblogic@epmlwas06d>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07-08-15, 13:59, Bartlomiej Zolnierkiewicz wrote:
-> Make scaling_boost_freqs sysfs attribute is available when
-> cpufreq-dt driver is used and boost support is enabled.
-> 
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
-> v2: Removed leftover prototype.
-> v3: added missing Acked-by
-> Sorry for two resends, this is not my day..
-> Rafael, please apply for v4.3.
+PiBIZWxsbyBNeXVuZ2pvbywNCj4gDQo+IE9uIDA3LzIzLzIwMTUgMTA6MzAgQU0sIEphdmllciBN
+YXJ0aW5leiBDYW5pbGxhcyB3cm90ZToNCj4gPiBIZWxsbyBDaGFud29vLA0KPiA+DQo+ID4gT24g
+MDcvMjMvMjAxNSAxMDoxOSBBTSwgQ2hhbndvbyBDaG9pIHdyb3RlOg0KPiA+PiBIaSBKYXZpZXIs
+DQo+ID4+DQo+ID4+IE9uIDA3LzEzLzIwMTUgMDM6NTggUE0sIEphdmllciBNYXJ0aW5leiBDYW5p
+bGxhcyB3cm90ZToNCj4gPj4+IFRoZSBleHlub3MtcHBtdSBkcml2ZXIgaXMgb25seSBhIGNsb2Nr
+IGNvbnN1bWVyIGFuZCBub3QgYSBjbG9jaw0KPiA+Pj4gcHJvdmlkZXIgYnV0IGl0cyBEZXZpY2Ug
+VHJlZSBiaW5kaW5nIGxpc3RlZCAjY2xvY2stY2VsbHMgYXMgYW4NCj4gPj4+IG9wdGlvbmFsIHBy
+b3BlcnR5Lg0KPiA+Pj4NCj4gPj4+IFNpZ25lZC1vZmYtYnk6IEphdmllciBNYXJ0aW5leiBDYW5p
+bGxhcyA8amF2aWVyQG9zZy5zYW1zdW5nLmNvbT4NCj4gPj4+DQpbXQ0KPiA+Pj4NCj4gPj4+IEV4
+YW1wbGUxIDogUFBNVSBub2RlcyBpbiBleHlub3MzMjUwLmR0c2kgYXJlIGxpc3RlZCBiZWxvdy4N
+Cj4gPj4+DQo+ID4+Pg0KPiA+Pg0KPiA+PiBSZXZpZXdlZC1ieTogQ2hhbndvbyBDaG9pIDxjdzAw
+LmNob2lAc2Ftc3VuZy5jb20+DQo+ID4+DQo+ID4+ICsgRGV2ZnJlcSBtYWludGFpbmVyIChNeXVu
+Z2pvbyBIYW0pDQo+ID4NCj4gPiBUaGFua3MgZm9yIHRoZSByZXZpZXcgYW5kIGZvciBjYydpbmcg
+TXl1bmdqb28uIFRoZSBnZXRfbWFpbnRhaW5lci5wbCBzY3JpcHQNCj4gPiBkaWRuJ3QgdGVsbCBt
+ZSB0aGF0IHNvIEkgdGhpbmsgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2RldmZy
+ZXEvDQo+ID4gc3ViLWRpciBzaG91bGQgYmUgYWRkZWQgdG8gdGhlIERFVklDRSBGUkVRVUVOQ1kg
+KERFVkZSRVEpIGVudHJ5IGluIHRoZQ0KPiA+IE1BSU5UQUlORVJTIGZpbGUuDQo+ID4NCj4gPj4g
+SSB0aGluayB0aGF0IHRoaXMgcGF0Y2ggd2lsbCBiZSBtb3JlIGFwcHJvcHJpYXRlIG9uIGRldmZy
+ZXEgZ2l0IHRyZWUNCj4gPj4gdGhhbiBsaW51eC1zYW1zdW5nIGdpdCB0cmVlLg0KPiA+Pg0KPiA+
+DQo+ID4gQWdyZWVkLg0KPiA+DQo+IA0KPiBBbnkgY29tbWVudHMgYWJvdXQgdGhpcyBwYXRjaD8N
+Cg0KTm9wZS4gSXQncyBhcHBsaWVkLg0KDQoNClRoYW5rcy4NCg0KDQoNCk15dW5nSm9vDQoNCj4g
+DQo+IA0KPiANCj4gQmVzdCByZWdhcmRzLA0KPiAtLQ0K
 
-Yeah, please apply only this patch from the series.
 
--- 
-viresh
