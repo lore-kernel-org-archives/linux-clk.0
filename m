@@ -1,83 +1,68 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 13 Aug 2015 11:07:32 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Tero Kristo <t-kristo@ti.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Ezequiel Garcia <ezequiel.garcia@imgtec.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Kevin Cernekee <cernekee@chromium.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Bintian Wang <bintian.wang@huawei.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: Convert __clk_get_name(hw->clk) to
- clk_hw_get_name(hw)
-Message-ID: <20150813090731.GC21716@ulmo>
-References: <1439421161-17868-1-git-send-email-sboyd@codeaurora.org>
- <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oJ71EGRlYNjSvfq7"
-In-Reply-To: <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+	linux-clk@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Jian Zhang <zhangjian001@hisilicon.com>,
+	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
+	Haoju Mo <mohaoju@hisilicon.com>,
+	Dan Zhao <dan.zhao@hisilicon.com>,
+	sunzhaosheng@hisilicon.com,
+	victor.lixin@hisilicon.com
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v3 1/5] clk: hisi: refine parameter checking for init
+Date: Mon,  3 Aug 2015 09:13:34 +0800
+Message-Id: <1438564418-15948-2-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
+References: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+*of_iomap()* will check the device node pointer, and if the pointer is
+NULL it will return error code. So refine clock's init flow by checking
+the device node with this simple way; and polish a little for the print
+out message.
 
---oJ71EGRlYNjSvfq7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ drivers/clk/hisilicon/clk.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-On Wed, Aug 12, 2015 at 04:12:41PM -0700, Stephen Boyd wrote:
-> Use the provider based method to get a clock's name so that we
-> can get rid of the clk member in struct clk_hw one day. Mostly
-> converted with the following coccinelle script.
->=20
-> @@
-> struct clk_hw *E;
-> @@
->=20
-> -__clk_get_name(E->clk)
-> +clk_hw_get_name(E)
->=20
-[...]
->  drivers/clk/tegra/clk-pll.c          |  8 ++++----
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---oJ71EGRlYNjSvfq7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVzF5SAAoJEN0jrNd/PrOhHT0P/iJrUUYIutPfBNvH8txerL+7
-xnmwuEmllVmcxsJsk8a+CogZtFbkZQvYifmGh2IlSy9XcsOsDruHgdsp1330NSr0
-Fuh7nla7Ygt7L98jGh+8Dplpiy9le6F3n4Wr5YWgsXZ2cUgpihp8hSRynx4arTYn
-zmK//oqvSarKhzChh4bjUwHH0f5GZwt9amftL1QY1nwinuVHN3VTz2j6GFoGki3J
-KC6+PD9KvHiqxjmZbiDe8PNk3gph6qZj2g6g9BZAn1oHy2HwIYPyG964kgjuVwSw
-g4wfSg51pDuQW/LQgh53bRo9wrnbCc3Lb8DwlWzlc99fwIKuPC09A7pC01/8sQl8
-09WOSh9v9O5+Df+lMzp0wV0021KrfEWeZTHlMo5zKHVF5yTbF6q0pxrJ5kysxkKz
-MtbpCqWXtpER0OVPl7Ekj0l3f3b7N4ZeqWvqcaHD3WTPrS9h2tmE4SLyErtfEaMH
-NW7icXmC3vZ2keQL6ffjQgrNs110h3zSy1yC0znHl2ofFsJSmlGvk5qiS81oW0j5
-QE5pSbT5tacz6EvOQA92waF4rDPn2gWzy0vyPhhHHIEQUmDrkGotzGyorAgULLqO
-s1ka0NDRwZ+DswuRd+KEKU/XC5IyBp/9EK2fAIzx5qG4spBwj5pN3gDEmY7WzuiG
-IYTtgeucC9Ose6KTNzjn
-=QsVn
------END PGP SIGNATURE-----
-
---oJ71EGRlYNjSvfq7--
+diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+index c90a897..156435d 100644
+--- a/drivers/clk/hisilicon/clk.c
++++ b/drivers/clk/hisilicon/clk.c
+@@ -45,14 +45,9 @@ struct hisi_clock_data __init *hisi_clk_init(struct device_node *np,
+ 	struct clk **clk_table;
+ 	void __iomem *base;
+ 
+-	if (np) {
+-		base = of_iomap(np, 0);
+-		if (!base) {
+-			pr_err("failed to map Hisilicon clock registers\n");
+-			goto err;
+-		}
+-	} else {
+-		pr_err("failed to find Hisilicon clock node in DTS\n");
++	base = of_iomap(np, 0);
++	if (!base) {
++		pr_err("%s: failed to map clock registers\n", __func__);
+ 		goto err;
+ 	}
+ 
+-- 
+1.9.1
