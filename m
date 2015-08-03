@@ -1,68 +1,69 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <govindraj.raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Govindraj Raja
-	<govindraj.raja@imgtec.com>
-Subject: [PATCH v5 2/4] clk: pistachio: Fix override of clk-pll settings from boot loader
-Date: Thu, 20 Aug 2015 14:45:53 +0100
-Message-ID: <1440078355-8828-3-git-send-email-govindraj.raja@imgtec.com>
-In-Reply-To: <1440078355-8828-1-git-send-email-govindraj.raja@imgtec.com>
-References: <1440078355-8828-1-git-send-email-govindraj.raja@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Bintian Wang <bintian.wang@huawei.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Jian Zhang <zhangjian001@hisilicon.com>,
+	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
+	Haoju Mo <mohaoju@hisilicon.com>,
+	Dan Zhao <dan.zhao@hisilicon.com>, sunzhaosheng@hisilicon.com,
+	victor.lixin@hisilicon.com
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v3 2/5] dt-bindings: arm: Hi6220: add doc for SRAM controller
+Date: Mon,  3 Aug 2015 09:13:35 +0800
+Message-Id: <1438564418-15948-3-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
+References: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+Document "hisilicon,hi6220-sramctrl" for SRAM controller.
 
-PLL enable callbacks are overriding PLL mode (int/frac) and
-Noise reduction (on/off) settings set by the boot loader which
-results in the incorrect clock rate.
-
-PLL mode and noise reduction are defined by the DSMPD and DACPD bits
-of the PLL control register. PLL .enable() callbacks enable PLL
-by deasserting all power-down bits of the PLL control register,
-including DSMPD and DACPD bits, which is not necessary since
-these bits don't actually enable/disable PLL.
-
-This commit fixes the problem by removing DSMPD and DACPD bits
-from the "PLL enable" mask.
-
-Reviewed-by: Andrew Bresitcker <abrestic@chromium.org>
-Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
-Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- drivers/clk/pistachio/clk-pll.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/arm/hisilicon/hisilicon.txt    | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
-index 68066ef..9a38a2b 100644
---- a/drivers/clk/pistachio/clk-pll.c
-+++ b/drivers/clk/pistachio/clk-pll.c
-@@ -134,8 +134,7 @@ static int pll_gf40lp_frac_enable(struct clk_hw *hw)
- 	u32 val;
+diff --git a/Documentation/devicetree/bindings/arm/hisilicon/hisilicon.txt b/Documentation/devicetree/bindings/arm/hisilicon/hisilicon.txt
+index c431c67..c733e28 100644
+--- a/Documentation/devicetree/bindings/arm/hisilicon/hisilicon.txt
++++ b/Documentation/devicetree/bindings/arm/hisilicon/hisilicon.txt
+@@ -127,6 +127,24 @@ Example:
+ 		#clock-cells = <1>;
+ 	};
  
- 	val = pll_readl(pll, PLL_CTRL3);
--	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_DACPD |
--		 PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
-+	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
- 		 PLL_FRAC_CTRL3_FOUT4PHASEPD | PLL_FRAC_CTRL3_FOUTVCOPD);
- 	pll_writel(pll, val, PLL_CTRL3);
- 
-@@ -277,7 +276,7 @@ static int pll_gf40lp_laint_enable(struct clk_hw *hw)
- 	u32 val;
- 
- 	val = pll_readl(pll, PLL_CTRL1);
--	val &= ~(PLL_INT_CTRL1_PD | PLL_INT_CTRL1_DSMPD |
-+	val &= ~(PLL_INT_CTRL1_PD |
- 		 PLL_INT_CTRL1_FOUTPOSTDIVPD | PLL_INT_CTRL1_FOUTVCOPD);
- 	pll_writel(pll, val, PLL_CTRL1);
++
++Hisilicon Hi6220 SRAM controller
++
++Required properties:
++- compatible : "hisilicon,hi6220-sramctrl", "syscon"
++- reg : Register address and size
++
++Hisilicon's SoCs use sram for multiple purpose; on Hi6220 there have several
++SRAM banks for power management, modem, security, etc. Further, use "syscon"
++managing the common sram which can be shared by multiple modules.
++
++Example:
++	/*for Hi6220*/
++	sram: sram@fff80000 {
++		compatible = "hisilicon,hi6220-sramctrl", "syscon";
++		reg = <0x0 0xfff80000 0x0 0x12000>;
++	};
++
+ -----------------------------------------------------------------------
+ Hisilicon HiP01 system controller
  
 -- 
 1.9.1
+
