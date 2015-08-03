@@ -1,45 +1,40 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
-	linux-clk@vger.kernel.org,
-	ezequiel@vanguardiasur.com.ar
-Subject: [PATCH 0/2] Fix unused clock disabling on LPC18xx
-Date: Sun, 16 Aug 2015 23:08:32 +0200
-Message-Id: <1439759314-12494-1-git-send-email-manabian@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1438574211-4887-1-git-send-email-hl@rock-chips.com>
+References: <1438574211-4887-1-git-send-email-hl@rock-chips.com>
+Date: Mon, 3 Aug 2015 12:57:26 -0700
+Message-ID: <CAD=FV=VpYF7+Qkw3qiuQyU4n9k7aigf_on+t-kJcBQ_kHE7Nhg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] clk: rockchip: add pclk_pd_pmu to the list of
+ rk3288 critical clocks
+From: Doug Anderson <dianders@chromium.org>
+To: huang lin <hl@rock-chips.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-I have finally managed to track down the reason for the hang that would
-occur when disabling clocks on lpc18xx under certain conditions. These
-conditions depend on boot mode used, what the boot loader does and if
-certain devices are enabled.
+hl,
 
-One of reasons why it took me a while was that my primary platform was
-not affected by it and the data sheet has a rather misleading typo.
+On Sun, Aug 2, 2015 at 8:56 PM, huang lin <hl@rock-chips.com> wrote:
+> pclk_pd_pmu needs to keep running and with the upcoming gpio clock
+> handling this is not always the case anymore. So add it to the list
+> of critical clocks for now.
+>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+>
+> Signed-off-by: huang lin <hl@rock-chips.com>
+> ---
+>  drivers/clk/rockchip/clk-rk3288.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-The hang will occur if the boot rom/loader doesn't setup USB0 clocks
-and if certain AMBA devices are enabled (PL022 SSP and maybe others).
+Probably should get rid of the blank line between the two SoBs.
+...and probably should fix your name to be capitalized?  ...but I
+assume the maintainer can fix that when landing?  Otherwise:
 
-Cause of the hang is that the CCU registers can not be accessed if the
-base (parent) clock is not enabled. To make sure the parent is running
-a check for this has been added to the is_enabled clk_ops callback.
-Since clocks in the CGU can be cascaded this check must also be added
-here.
-
-Maybe this check to see if the parent clock is running clock be added
-to the clk core and enabled with a flag(?) For now this patch set fixes
-the issue seen on lpc18xx.
-
-
-Joachim Eastwood (2):
-  clk: lpc18xx-ccu: fix potential system hang when disabling unused clocks
-  clk: lpc18xx-cgu: fix potential system hang when disabling unused clocks
-
- drivers/clk/nxp/clk-lpc18xx-ccu.c | 14 +++++++++++++
- drivers/clk/nxp/clk-lpc18xx-cgu.c | 42 ++++++++++++++++++++++++++++++++++++---
- 2 files changed, 53 insertions(+), 3 deletions(-)
-
--- 
-1.8.0
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
