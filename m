@@ -1,40 +1,86 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 3 Aug 2015 14:51:29 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk/ARM: delete the non-DT U8500 clock implementation
-Message-ID: <20150803215129.GD21068@codeaurora.org>
-References: <1438262352-29118-1-git-send-email-linus.walleij@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1438262352-29118-1-git-send-email-linus.walleij@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Bintian Wang <bintian.wang@huawei.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Jian Zhang <zhangjian001@hisilicon.com>,
+	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
+	Haoju Mo <mohaoju@hisilicon.com>,
+	Dan Zhao <dan.zhao@hisilicon.com>,
+	sunzhaosheng@hisilicon.com,
+	victor.lixin@hisilicon.com
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v3 3/5] dt-bindings: clk: Hi6220: Document stub clock driver
+Date: Mon,  3 Aug 2015 09:13:36 +0800
+Message-Id: <1438564418-15948-4-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
+References: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/30, Linus Walleij wrote:
-> This code is unused and not coming back. Let's kill it off.
-> 
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Mike/Ulf: please ACK this so I can take this in through ARM
-> SoC.
-> ---
->  drivers/clk/ux500/Makefile              |   1 -
->  drivers/clk/ux500/u8500_clk.c           | 526 --------------------------------
+Document the new compatible for stub clock driver which is used for CPU
+and DDR's dynamic frequency scaling.
 
-There's a patch in -next against this file.
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ .../devicetree/bindings/clock/hi6220-clock.txt        | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-commit a162ca912cf792073b0b2450377fd1cd5d5c6cb5
-Author: Stephen Boyd <sboyd@codeaurora.org>
-Date:   Fri Jun 19 15:00:46 2015 -0700
-
-    clk: ux500: Remove clk.h and clkdev.h includes
-
-so I wonder why we need to take this patch through arm-soc? Would
-an immutable branch from the clk tree work as well?
-
+diff --git a/Documentation/devicetree/bindings/clock/hi6220-clock.txt b/Documentation/devicetree/bindings/clock/hi6220-clock.txt
+index 259e30a..e4d5fea 100644
+--- a/Documentation/devicetree/bindings/clock/hi6220-clock.txt
++++ b/Documentation/devicetree/bindings/clock/hi6220-clock.txt
+@@ -15,19 +15,36 @@ Required Properties:
+ 	- "hisilicon,hi6220-sysctrl"
+ 	- "hisilicon,hi6220-mediactrl"
+ 	- "hisilicon,hi6220-pmctrl"
++	- "hisilicon,hi6220-stub-clk"
+ 
+ - reg: physical base address of the controller and length of memory mapped
+   region.
+ 
+ - #clock-cells: should be 1.
+ 
+-For example:
++Optional Properties:
++
++- hisilicon,hi6220-clk-sram: phandle to the syscon managing the SoC internal sram;
++  the driver need use the sram to pass parameters for frequency change.
++
++- mboxes: use the label reference for the mailbox as the first parameter, the
++  second parameter is the channel number.
++
++Example 1:
+ 	sys_ctrl: sys_ctrl@f7030000 {
+ 		compatible = "hisilicon,hi6220-sysctrl", "syscon";
+ 		reg = <0x0 0xf7030000 0x0 0x2000>;
+ 		#clock-cells = <1>;
+ 	};
+ 
++Example 2:
++	stub_clock: stub_clock {
++		compatible = "hisilicon,hi6220-stub-clk";
++		hisilicon,hi6220-clk-sram = <&sram>;
++		#clock-cells = <1>;
++		mboxes = <&mailbox 1>;
++	};
++
+ Each clock is assigned an identifier and client nodes use this identifier
+ to specify the clock which they consume.
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
