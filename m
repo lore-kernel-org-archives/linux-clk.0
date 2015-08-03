@@ -1,96 +1,79 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <4206643.R1gTHQZqhM@avalon>
-References: <877fpdw3av.wl%kuninori.morimoto.gx@renesas.com>
-	<12310001.Bt8qbPIiMv@avalon>
-	<CAMuHMdWMNLf-fDsiLNFwO05i0cqBHkdM2mwC3GinwWFN4pWFZg@mail.gmail.com>
-	<4206643.R1gTHQZqhM@avalon>
-Date: Mon, 24 Aug 2015 09:51:07 +0200
-Message-ID: <CAMuHMdXdN4JgjUzLaSwqh61bZ3=NvrPHOW1xWjmyD+f=TLXDfg@mail.gmail.com>
-Subject: Re: [PATCH 3/4 v3][RFC] arm64: renesas: Add initial r8a7795 SoC support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Simon <horms@verge.net.au>,
-	Magnus <magnus.damm@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>,
-	linux-clk@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
+ Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq driver
+ for Exynos4x12
+Date: Mon, 03 Aug 2015 12:36:14 +0200
+Message-id: <4532306.AVvo5hem3c@amdc1976>
+In-reply-to: <20150803102926.GA21529@linux>
+References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+ <5201904.0cZWHobiJs@amdc1976> <20150803102926.GA21529@linux>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Laurent,
+On Monday, August 03, 2015 03:59:26 PM Viresh Kumar wrote:
+> On 03-08-15, 12:17, Bartlomiej Zolnierkiewicz wrote:
+> > 
+> > Hi,
+> > 
+> > On Saturday, August 01, 2015 04:47:21 PM Viresh Kumar wrote:
+> > > On 31-07-15, 20:49, Bartlomiej Zolnierkiewicz wrote:
+> > > > diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+> > > > index 659879a..bf6d596 100644
+> > > > --- a/drivers/cpufreq/Kconfig
+> > > > +++ b/drivers/cpufreq/Kconfig
+> > > > @@ -191,6 +191,7 @@ config CPUFREQ_DT
+> > > >  	# if CPU_THERMAL is on and THERMAL=m, CPUFREQ_DT cannot be =y:
+> > > >  	depends on !CPU_THERMAL || THERMAL
+> > > >  	select PM_OPP
+> > > > +	select EXYNOS_THERMAL if ARCH_EXYNOS
+> > > >  	help
+> > > >  	  This adds a generic DT based cpufreq driver for frequency management.
+> > > >  	  It supports both uniprocessor (UP) and symmetric multiprocessor (SMP)
+> > > 
+> > > No, we shouldn't pollute generic Kconfig options with platform specific stuff.
+> > 
+> > The old code depended on this.  You couldn't enable boost support
+> > without enabling thermal support (ARM_EXYNOS_CPU_FREQ_BOOST_SW
+> > config option selected EXYNOS_THERMAL).
+> > 
+> > > Why don't you enable thermal in your .config?
+> > 
+> > It is enabled in exynos_defconfig but without the above change it
+> > can disabled manually which is something that we don't want.
+> 
+> You are not getting it. I am not asking you to not select thermal, but
+> to select it from within your architecture Kconfig option if you want.
 
-On Thu, Aug 20, 2015 at 9:48 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Thursday 20 August 2015 09:43:34 Geert Uytterhoeven wrote:
->> On Wed, Aug 19, 2015 at 11:29 PM, Laurent Pinchart wrote:
->> >> > Also, while you're thinking about the perfect clock binding, please do
->> >> > consider dropping clock-output-names if you can. Specifying clock-names
->> >> > alongside the clocks property inside of the consumer node is a bit more
->> >> > elegant in my opinion. This is also a bit easier if you think about
->> >> > expressing your clock data with C inside of your provider driver.
->> >>
->> >> Makes sense. I don't think anything relies on the "clock-output-names"
->> >> ... currently.
->> >>
->> >> I was going to use it for identifying the GIC clock, though:
->> >>
->> >> --- a/drivers/clk/shmobile/clk-mstp.c
->> >> +++ b/drivers/clk/shmobile/clk-mstp.c
->> >> @@ -144,6 +144,9 @@ cpg_mstp_clock_register(const char *name, const char
->> >> *paren init.name = name;
->> >>
->> >>         init.ops = &cpg_mstp_clock_ops;
->> >>         init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
->> >>
->> >> +       /* INTC-SYS is the module clock of the GIC, and must not be
->> >> disabled */
->> >> +       if (!strcmp(name, "intc-sys"))
->> >> +               init.flags |= CLK_ENABLE_HAND_OFF;
->> >>
->> >>         init.parent_names = &parent_name;
->> >>         init.num_parents = 1;
->> >>
->> >> (FTR, on R-Car Gen3 the clock is called "intc-ap", not "intc-sys",
->> >> doh...).
->> >>
->> >> This does put some reliance on (undocumented) naming in DT, though, so
->> >> not
->> >> having the "clock-output-names" would solve that.
->> >
->> > Using the clock name is indeed very messy, let's avoid that.
->> >
->> >> However, while "intc-sys"/"intc-ap" (if existent) is always MSTP408,
->> >> MSTP408 is used for other modules on R-Car Gen1 and most older SoCs. so
->> >> it would complicate the driver code.
->> >
->> > How about setting the flag based on information provided in DT ?
->>
->> Like scanning DT for the GIC, and looking for its clock?
->>
->> I don't want to add an explicit flag in DT, as it's not a hardware property,
->> but a deficiency of the current GIC driver/subsystem.
->
-> What are the changes we can fix the GIC driver in a reasonable time frame ?
+OK.  Krzysztof/Kukjin do you agree with selecting EXYNOS_THERMAL
+from ARCH_EXYNOS in the platform code?
 
-Very low.
+> Over that, thermal is really an option, not a dependency. So, if
+> someone manually disables it, its his problem not yours :)
 
-The GIC driver uses IRQCHIP_DECLARE(), hence it's initialized from
-of_irq_init() <- irqchip_init() <- init_IRQ() <- start_kernel().
+I would really like it to be dependency not an option (+ I think
+that ideally it should be checked at runtime, IOW we should be
+checking from cpufreq-dt driver if the thermal support is enabled
+before enabling boost support).
 
-The MSTP clock driver uses CLK_OF_DECLARE(), hence it's initialized from
-of_clk_init() <- time_init() <- start_kernel(), but 7 calls later.
-
-IRQCHIP_DECLARE() doesn't support deferred probing.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+Best regards,
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvald
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
