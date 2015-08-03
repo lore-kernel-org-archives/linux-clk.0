@@ -1,59 +1,105 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <55BFAB11.7080600@codeaurora.org>
-Date: Mon, 03 Aug 2015 10:55:29 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <tjakobi@math.uni-bielefeld.de>
+Message-ID: <55BFD524.6080102@math.uni-bielefeld.de>
+Date: Mon, 03 Aug 2015 22:55:00 +0200
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 MIME-Version: 1.0
-To: Pawel Moll <pawel.moll@arm.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Sudeep Holla <Sudeep.Holla@arm.com>
-Subject: Re: [PATCH 1/3] clk: versatile: Switch to assigned clock parents
-References: <55BBB2FC.9030102@codeaurora.org>  <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>  <1438386285-5070-2-git-send-email-sboyd@codeaurora.org> <1438610480.2142.14.camel@arm.com>
-In-Reply-To: <1438610480.2142.14.camel@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Tomasz Figa <tomasz.figa@gmail.com>,
+ Lukasz Majewski <l.majewski@samsung.com>,
+ Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi
+ <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] cpufreq: use generic cpufreq drivers for
+ Exynos4x12 platform
+References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+In-Reply-To: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/03/2015 07:01 AM, Pawel Moll wrote:
-> On Sat, 2015-08-01 at 00:44 +0100, Stephen Boyd wrote:
->> @@ -179,6 +124,15 @@ static void __init clk_sp810_of_setup(struct device_node *node)
->>   		sp810->timerclken[i].channel = i;
->>   		sp810->timerclken[i].hw.init = &init;
->>   
->> +		/*
->> +		 * If DT isn't setting the parent, force it to be
->> +		 * the 1 MHz clock without going through the framework.
->> +		 * We do this before clk_register() so that it can determine
->> +		 * the parent and setup the tree properly.
->> +		 */
->> +		if (deprecated)
->> +			init.ops->set_parent(&sp810->timerclken[i].hw, 1);
->> +
->>   		sp810->timerclken[i].clk = clk_register(NULL,
->>   				&sp810->timerclken[i].hw);
->>   		WARN_ON(IS_ERR(sp810->timerclken[i].clk));
-> So that's one thing I've got a (small) problem here...
->
-> The above change assumes that SP810 always have 32kHz clock on input 0
-> and 1MHz clock on input 1. Yes, this is how it made on VExpress, but it
-> doesn't have to be the case. The magic picking up the faster clock was
-> added to handle all possible cases.
->
-> The bottom line is: if all we care is VExpress than it works, but it's
-> still a hack. Personally I don't like it, however I won't nak the patch
-> because of this.
->
+Hello,
 
-All current dts files in the kernel tree have 1MHz on input 1, so we 
-make this change here to set the parent to input 1 if there isn't an 
-assigned-clock-parents property. Presumably new dts files should have 
-the new property so that things work properly. I tried to find the 
-binding document, but it doesn't look to exist, so I didn't have 
-anything to update.
+Bartlomiej Zolnierkiewicz wrote:
+> Hi,
+> 
+> This patch series removes the use of Exynos4x12 specific support
+> from cpufreq-exynos driver and enables the use of cpufreq-dt driver
+> for this platform.
+> 
+> This patch series has been tested on Exynos4412 based Odroid-U3 and
+> Trats2 boards.
+I've tested this series on my Odroid-X2 (also Exynos4412) with
+powersave, performance and ondemand governor. Scaling works like
+expected, so no issues to report!
+
+Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+With best wishes,
+Tobias
+
+
+> 
+> Depends on:
+> - next-20150730 branch of linux-next kernel tree
+> - "[PATCH V3 00/16] OPP: Add code to support operating-points-v2 bindings"
+>   (http://www.spinics.net/lists/arm-kernel/msg435408.html)
+> 
+> Changes since v2
+> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/46653):
+> - rebased on top of next-20150730 branch of linux-next kernel tree
+> - ported over V3 of opp-v2 bindings support patch series
+> - put cpu0 nodes in alphabetical order in dts files
+> - added Reviewed-by tags from Javier and Krzysztof
+> - added Acked-by tag from Sylwester
+> 
+> Changes since v1
+> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/44361):
+> - rebased on top of next-20150629 branch of linux-next kernel tree
+> - rebased on top of Exynos5250 cpufreq-dt support patch series
+> - fixed if-statement in exynos4_clk_init() (noticed by Tobias Jakobi)
+> - ported over opp-v2 bindings (requested by Viresh Kumar)
+> 
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+> 
+> Bartlomiej Zolnierkiewicz (5):
+>   clk: samsung: exynos4x12: add cpu clock configuration data and
+>     instantiate cpu clock
+>   ARM: dts: Exynos4x12: add CPU OPP and regulator supply property
+>   ARM: Exynos: switch to using generic cpufreq driver for Exynos4x12
+>   cpufreq: exynos: remove Exynos4x12 specific cpufreq driver support
+>   cpufreq: remove no longer needed CPU_FREQ_BOOST_SW config option
+> 
+>  arch/arm/boot/dts/exynos4212.dtsi               |  81 ++++++++
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   4 +
+>  arch/arm/boot/dts/exynos4412-origen.dts         |   4 +
+>  arch/arm/boot/dts/exynos4412-trats2.dts         |   4 +
+>  arch/arm/boot/dts/exynos4412.dtsi               |  83 +++++++++
+>  arch/arm/mach-exynos/exynos.c                   |   2 +
+>  drivers/clk/samsung/clk-exynos4.c               |  50 +++++
+>  drivers/cpufreq/Kconfig                         |   5 +-
+>  drivers/cpufreq/Kconfig.arm                     |  38 ----
+>  drivers/cpufreq/Makefile                        |   2 -
+>  drivers/cpufreq/exynos-cpufreq.c                | 236 ------------------------
+>  drivers/cpufreq/exynos-cpufreq.h                |  72 --------
+>  drivers/cpufreq/exynos4x12-cpufreq.c            | 236 ------------------------
+>  drivers/cpufreq/freq_table.c                    |   2 -
+>  14 files changed, 229 insertions(+), 590 deletions(-)
+>  delete mode 100644 drivers/cpufreq/exynos-cpufreq.c
+>  delete mode 100644 drivers/cpufreq/exynos-cpufreq.h
+>  delete mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
+> 
