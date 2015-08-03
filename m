@@ -1,80 +1,58 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Date: Tue, 11 Aug 2015 16:59:21 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [GIT PULL] i.MX clock updates for 4.2
-Message-ID: <20150811085921.GB10035@tiger>
+Return-Path: <linux-pm-owner@vger.kernel.org>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- kernel@pengutronix.de
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+In-Reply-To: <CAPDyKFp=zoo1OY9K-dYh9e2OV-OFVp36MbXX83vT19uFWB+0Yg@mail.gmail.com>
+References: <1435766290-3005-1-git-send-email-geert+renesas@glider.be>
+	<CAPDyKFp=zoo1OY9K-dYh9e2OV-OFVp36MbXX83vT19uFWB+0Yg@mail.gmail.com>
+Date: Mon, 3 Aug 2015 19:20:47 +0200
+Message-ID: <CAMuHMdUxCgXnF6AM=LefR7ZHX0d8XNcn-O=eA7o4C18O4kJbAg@mail.gmail.com>
+Subject: Re: [PATCH v3 00/16] ARM: shmobile: Add CPG/MSTP Clock Domain
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>, linux-clk@vger.kernel.org,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux-sh list <linux-sh@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michael, Stephen,
+On Wed, Jul 22, 2015 at 3:00 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 1 July 2015 at 17:57, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+>> This patch series adds Clock Domain support to the Clock Pulse Generator
+>> (CPG) Module Stop (MSTP) Clocks driver using the generic PM Domain, to
+>> be used on shmobile SoCs without device power domains (R-Car Gen1 and
+>> Gen2, RZ).  This allows to power-manage the module clocks of SoC devices
+>> that are part of the CPG/MSTP Clock Domain using Runtime PM, or for
+>> system suspend/resume, similar to SoCs with device power domains
+>> (SH-Mobile and R-Mobile).
 
-The i.MX clock drivers were moved into drivers/clk/imx folder since
-v4.2-rc1, so I would like to send i.MX clock changes through clock tree
-from this cycle.  Here is my first pull request to you guys.  I'm using
-signed tags, same as how I work with arm-soc folks.  Let me know if
-there is any problem with it.
+[...]
 
-Also, please keep it stable, because I need to pull it into other
-branch as dependency which I will send via arm-soc tree.
+> Unless it's too late; for the series - feel free to add:
+>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Thanks,
-Shawn
+Thank you.
 
-The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
+I have to respin anyway, as new nodes have been added to various .dtsi files.
 
-  Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
+Gr{oetje,eeting}s,
 
-are available in the git repository at:
+                        Geert
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-4.3
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-for you to fetch changes up to 3713e3f5e9274bbe52e94716bde303071364c1ed:
-
-  clk: imx35: define two clocks for rtc (2015-08-05 20:01:21 +0800)
-
-----------------------------------------------------------------
-The i.MX clock updates for 4.3:
- - Provide a better IPU clock initial settings on imx6dl for getting
-   HDMI and LVDS at the same time.
- - Add clock driver support for i.MX6UL SoC
- - Add a second clock for RTC device on i.MX31 and i.MX35
-
-----------------------------------------------------------------
-Fabio Estevam (1):
-      clk: imx: clk-imx6q: Provide initial IPU clock settings for mx6dl
-
-Frank Li (1):
-      clk: imx: add imx6ul clk tree support
-
-Philippe Reynes (2):
-      clk: imx31: add a second rtc clock
-      clk: imx35: define two clocks for rtc
-
- drivers/clk/imx/Makefile                 |   1 +
- drivers/clk/imx/clk-imx31.c              |   3 +-
- drivers/clk/imx/clk-imx35.c              |   6 +-
- drivers/clk/imx/clk-imx6q.c              |   4 +
- drivers/clk/imx/clk-imx6ul.c             | 432 +++++++++++++++++++++++++++++++
- include/dt-bindings/clock/imx6ul-clock.h | 240 +++++++++++++++++
- 6 files changed, 684 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/imx/clk-imx6ul.c
- create mode 100644 include/dt-bindings/clock/imx6ul-clock.h
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
