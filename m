@@ -1,66 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55DC2A51.6090008@linaro.org>
-Date: Tue, 25 Aug 2015 14:11:53 +0530
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-MIME-Version: 1.0
-To: Lee Jones <lee.jones@linaro.org>
-CC: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
-	mturquette@baylibre.com, k.kozlowski@samsung.com,
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Bintian Wang <bintian.wang@huawei.com>,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH-v2 1/5] mfd: 88pm800: Fix tabbing issue
-References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org> <1440442594-3102-2-git-send-email-vaibhav.hiremath@linaro.org> <20150825075121.GE19409@x1>
-In-Reply-To: <20150825075121.GE19409@x1>
-Content-Type: text/plain; charset=utf-8; format=flowed
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Jian Zhang <zhangjian001@hisilicon.com>,
+	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
+	Haoju Mo <mohaoju@hisilicon.com>,
+	Dan Zhao <dan.zhao@hisilicon.com>, sunzhaosheng@hisilicon.com,
+	victor.lixin@hisilicon.com
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v3 0/5] clk: hisilicon: support stub clock
+Date: Mon,  3 Aug 2015 09:13:33 +0800
+Message-Id: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+This series adds support for hisilicon stub clock driver. On hi6220,
+the bootloader needs load the firmware image and set info for OPPs;
+after run into kernel, the stub clock driver is used to communicate
+w/t firmware for cpu dynamic frequency scaling.
+
+In patch series v1/v2, the stub clock driver simply writes request in
+sram and send ipc to firmware; For patch series v3, the firmware has
+been upgraded to use mailbox, so stub clock driver will call standard
+mailbox APIs to request mailbox channel and send message to firmware.
+
+These patches have been tested on 96board hikey and is used by cpufreq
+driver.
+
+Changes from v2:
+* Use platform_device's probe for clock's initialization
+* Use mailbox channel for clock frequency change
+
+Changes from v1:
+* Refine parameter checking for init flow
+* Remove unnecessary debugging info
+* Modify to check spinlock pointer when register clocks
 
 
-On Tuesday 25 August 2015 01:21 PM, Lee Jones wrote:
-> On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
->
->> Driver had coding style issues where spaces were used instead
->> of tabs. This patch fixes them all.
->
-> That's not all it's doing though is it?
->
+Leo Yan (5):
+  clk: hisi: refine parameter checking for init
+  dt-bindings: arm: Hi6220: add doc for SRAM controller
+  dt-bindings: clk: Hi6220: Document stub clock driver
+  clk: Hi6220: add stub clock driver
+  arm64: dts: add Hi6220's stub clock node
 
-Yes, its just tabbing related fixes.
+ .../bindings/arm/hisilicon/hisilicon.txt           |  18 ++
+ .../devicetree/bindings/clock/hi6220-clock.txt     |  19 +-
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi          |  23 ++
+ drivers/clk/hisilicon/Kconfig                      |   2 +-
+ drivers/clk/hisilicon/Makefile                     |   2 +-
+ drivers/clk/hisilicon/clk-hi6220-stub.c            | 279 +++++++++++++++++++++
+ drivers/clk/hisilicon/clk.c                        |  11 +-
+ 7 files changed, 343 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/clk/hisilicon/clk-hi6220-stub.c
 
+-- 
+1.9.1
 
-> Please describe all of your changes.
->
->> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
->> ---
->>   drivers/mfd/88pm800.c | 125 ++++++++++++++++++++++++--------------------------
->>   1 file changed, 61 insertions(+), 64 deletions(-)
->>
->> diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
->> index f104a32..c4e097d 100644
->> --- a/drivers/mfd/88pm800.c
->> +++ b/drivers/mfd/88pm800.c
->> @@ -30,55 +30,55 @@
->>   #include <linux/of_device.h>
->>
->>   /* Interrupt Registers */
->> -#define PM800_INT_STATUS1		(0x05)
->> +#define PM800_INT_STATUS1		0x05
->>   #define PM800_ONKEY_INT_STS1		(1 << 0)
->>   #define PM800_EXTON_INT_STS1		(1 << 1)
->> -#define PM800_CHG_INT_STS1			(1 << 2)
->> -#define PM800_BAT_INT_STS1			(1 << 3)
->> -#define PM800_RTC_INT_STS1			(1 << 4)
->> +#define PM800_CHG_INT_STS1		(1 << 2)
->> +#define PM800_BAT_INT_STS1		(1 << 3)
->> +#define PM800_RTC_INT_STS1		(1 << 4)
->>   #define PM800_CLASSD_OC_INT_STS1	(1 << 5)
->
-> These should all be replaced by BIT().
->
-> Please fix the whole file.
-
-Will do.
-
-Thanks,
-Vaibhav
