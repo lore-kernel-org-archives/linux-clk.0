@@ -1,67 +1,55 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <govindraj.raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Mike Turquette
-	<mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, "Michael
- Turquette" <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Govindraj Raja <govindraj.raja@imgtec.com>
-Subject: [PATCH 2/6] clk: pistachio: Fix override of clk-pll settings from boot loader
-Date: Thu, 6 Aug 2015 14:43:30 +0100
-Message-ID: <1438868614-7672-3-git-send-email-govindraj.raja@imgtec.com>
-In-Reply-To: <1438868614-7672-1-git-send-email-govindraj.raja@imgtec.com>
-References: <1438868614-7672-1-git-send-email-govindraj.raja@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
+ Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq driver
+ for Exynos4x12
+Date: Mon, 03 Aug 2015 12:47:57 +0200
+Message-id: <2295533.OBI6Q4a3b9@amdc1976>
+In-reply-to: <20150803104044.GB21529@linux>
+References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+ <4532306.AVvo5hem3c@amdc1976> <20150803104044.GB21529@linux>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+On Monday, August 03, 2015 04:10:44 PM Viresh Kumar wrote:
+> On 03-08-15, 12:36, Bartlomiej Zolnierkiewicz wrote:
+> > I would really like it to be dependency not an option (+ I think
+> > that ideally it should be checked at runtime, IOW we should be
+> > checking from cpufreq-dt driver if the thermal support is enabled
+> > before enabling boost support).
+> 
+> I don't think boost has any dependency on thermal support. Yeah, it
+> may be true for your platform but we can't force it. People might have
+> different algorithms to control boost modes, thermal is just one
+> option they may look at. For few, enabling boost may not be a thermal
+> issue, but power. So, they want to allow it only when they want, but
+> that wouldn't burn their chip.
 
-Pll enable callbacks are overriding PLL mode (int/frac) and
-Noise reduction (on/off) settings set by the boot loader which
-results in the incorrect clock rate.
+OK, I see your point (I have not thought about power being the boost
+limitation previously).
 
-PLL mode and noise reduction are defined by the DSMPD and DACPD bits
-of the pll control register. Pll .enable() callbacks enable pll
-by deasserting all power-down bits of the pll control register,
-including DSMPD and DACPD bits, which is not necessary since
-these bits don't actually enable/disable pll.
+> So, a platform can choose how it wants to have it. :)
 
-This commit fixes the problem by removing DSMPD and DACPD bits
-from the "pll enable" mask.
+I'll re-do this patch.  Thank you.
 
-Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
-Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
----
- drivers/clk/pistachio/clk-pll.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
-index 68066ef..9a38a2b 100644
---- a/drivers/clk/pistachio/clk-pll.c
-+++ b/drivers/clk/pistachio/clk-pll.c
-@@ -134,8 +134,7 @@ static int pll_gf40lp_frac_enable(struct clk_hw *hw)
- 	u32 val;
- 
- 	val = pll_readl(pll, PLL_CTRL3);
--	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_DACPD |
--		 PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
-+	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
- 		 PLL_FRAC_CTRL3_FOUT4PHASEPD | PLL_FRAC_CTRL3_FOUTVCOPD);
- 	pll_writel(pll, val, PLL_CTRL3);
- 
-@@ -277,7 +276,7 @@ static int pll_gf40lp_laint_enable(struct clk_hw *hw)
- 	u32 val;
- 
- 	val = pll_readl(pll, PLL_CTRL1);
--	val &= ~(PLL_INT_CTRL1_PD | PLL_INT_CTRL1_DSMPD |
-+	val &= ~(PLL_INT_CTRL1_PD |
- 		 PLL_INT_CTRL1_FOUTPOSTDIVPD | PLL_INT_CTRL1_FOUTVCOPD);
- 	pll_writel(pll, val, PLL_CTRL1);
- 
--- 
-1.9.1
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
