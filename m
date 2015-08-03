@@ -1,50 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Fabian Frederick <fabf@skynet.be>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 0/4] ST PLL improvement
-Date: Mon, 24 Aug 2015 11:40:47 +0200
-Message-Id: <1440409251-11166-1-git-send-email-gabriel.fernandez@linaro.org>
+Date: Mon, 3 Aug 2015 11:08:46 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 23/26] clk: tegra: Convert to clk_hw based provider APIs
+Message-ID: <20150803180846.GA8318@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+ <1438362246-6664-24-git-send-email-sboyd@codeaurora.org>
+ <55BF2395.8000604@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <55BF2395.8000604@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Changes in v2:
- - Add const for st_pll4600c28_418_a9 structure
- - Use readl_relaxed_poll_timeout macro instead Jiffies
- - Add patch to enable stih418 A9 pll via DT.
+On 08/03, Tero Kristo wrote:
+> On 07/31/2015 08:04 PM, Stephen Boyd wrote:
+> >We're removing struct clk from the clk provider API, so switch
+> >this code to using the clk_hw based provider APIs.
+> >
+> 
+> Subject should be clk: ti: ...
+> 
+> Other than that, seems ok to me. Also, gave clk-next + this set a
+> quick testing on the boards accessible to me, and seems to work
+> fine.
+> 
+> So, once the subject is fixed, for TI relevant parts for patches 2,
+> 5, 7, 8, 23:
+> 
+> Acked-by: Tero Kristo <t-kristo@ti.com>
+> 
 
-This patchset is based on '[PATCH 0/2] ST PLL fixes for 4.3'
-
-Gabriel Fernandez (4):
-  drivers: clk: st: Support for enable/disable in Clockgen PLLs
-  drivers: clk: st: PLL rate change implementation for DVFS
-  drivers: clk: st: Correct the pll-type for A9 for stih418
-  ARM: STi: DT: Add support for stih418 A9 pll
-
- .../devicetree/bindings/clock/st/st,clkgen-pll.txt |   1 +
- arch/arm/boot/dts/stih418-clock.dtsi               |   2 +-
- drivers/clk/st/clkgen-mux.c                        |   3 +
- drivers/clk/st/clkgen-pll.c                        | 469 ++++++++++++++++++++-
- drivers/clk/st/clkgen.h                            |   2 +
- 5 files changed, 468 insertions(+), 9 deletions(-)
+Thanks. I fixed the subject.
 
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
