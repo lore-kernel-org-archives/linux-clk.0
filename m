@@ -1,47 +1,59 @@
-Return-Path: <lee@kernel.org>
-Date: Thu, 27 Aug 2015 11:48:54 +0100
-From: Lee Jones <lee@kernel.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Eric Anholt <eric@anholt.net>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] ARM: bcm2835: Add DT for the firmware clocks
- driver.
-Message-ID: <20150827104854.GA4796@x1>
-References: <1439507142-2965-1-git-send-email-eric@anholt.net>
- <1439507142-2965-4-git-send-email-eric@anholt.net>
- <55CEBC6B.9070001@wwwdotorg.org>
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <55BFAB11.7080600@codeaurora.org>
+Date: Mon, 03 Aug 2015 10:55:29 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <55CEBC6B.9070001@wwwdotorg.org>
+To: Pawel Moll <pawel.moll@arm.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Sudeep Holla <Sudeep.Holla@arm.com>
+Subject: Re: [PATCH 1/3] clk: versatile: Switch to assigned clock parents
+References: <55BBB2FC.9030102@codeaurora.org>  <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>  <1438386285-5070-2-git-send-email-sboyd@codeaurora.org> <1438610480.2142.14.camel@arm.com>
+In-Reply-To: <1438610480.2142.14.camel@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 14 Aug 2015, Stephen Warren wrote:
+On 08/03/2015 07:01 AM, Pawel Moll wrote:
+> On Sat, 2015-08-01 at 00:44 +0100, Stephen Boyd wrote:
+>> @@ -179,6 +124,15 @@ static void __init clk_sp810_of_setup(struct device_node *node)
+>>   		sp810->timerclken[i].channel = i;
+>>   		sp810->timerclken[i].hw.init = &init;
+>>   
+>> +		/*
+>> +		 * If DT isn't setting the parent, force it to be
+>> +		 * the 1 MHz clock without going through the framework.
+>> +		 * We do this before clk_register() so that it can determine
+>> +		 * the parent and setup the tree properly.
+>> +		 */
+>> +		if (deprecated)
+>> +			init.ops->set_parent(&sp810->timerclken[i].hw, 1);
+>> +
+>>   		sp810->timerclken[i].clk = clk_register(NULL,
+>>   				&sp810->timerclken[i].hw);
+>>   		WARN_ON(IS_ERR(sp810->timerclken[i].clk));
+> So that's one thing I've got a (small) problem here...
+>
+> The above change assumes that SP810 always have 32kHz clock on input 0
+> and 1MHz clock on input 1. Yes, this is how it made on VExpress, but it
+> doesn't have to be the case. The magic picking up the faster clock was
+> added to handle all possible cases.
+>
+> The bottom line is: if all we care is VExpress than it works, but it's
+> still a hack. Personally I don't like it, however I won't nak the patch
+> because of this.
+>
 
-> On 08/13/2015 05:05 PM, Eric Anholt wrote:
-> > Signed-off-by: Eric Anholt <eric@anholt.net>
-> > Acked-by: Lee Jones <lee@kernel.org>
-> 
-> A patch description might be nice, although admittedly the subject seems
-> clear enough.
+All current dts files in the kernel tree have 1MHz on input 1, so we 
+make this change here to set the parent to input 1 if there isn't an 
+assigned-clock-parents property. Presumably new dts files should have 
+the new property so that things work properly. I tried to find the 
+binding document, but it doesn't look to exist, so I didn't have 
+anything to update.
 
-Agreed that the subject is clear enough on this occasion.
 
-> > diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
-> 
-> > +		firmware_clocks: firmware-clocks {
-> > +			compatible = "raspberrypi,bcm2835-firmware-clocks";
-> > +			#clock-cells = <1>;
-> > +			raspberrypi,firmware = <&firmware>;
-> > +		};
-> 
-> No need to resend for this, but just a background note: DT node names
-> usually contain a device type not a device identity, so "clocks" not
-> "firmware-clocks" would be typical.
-
-Please fix this up when you re-send the set.
-
-> This patch,
-> Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
