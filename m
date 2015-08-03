@@ -1,351 +1,156 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55E027D8.4030406@codeaurora.org>
-Date: Fri, 28 Aug 2015 14:50:24 +0530
-From: Archit Taneja <architt@codeaurora.org>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>
-CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Hai Li <hali@codeaurora.org>
-Subject: Re: [PATCH] clk: qcom: Allow clk_set_parent() to work on display
- clocks
-References: <1440722536-11197-1-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1440722536-11197-1-git-send-email-sboyd@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+ Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
+ Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq driver
+ for Exynos4x12
+Date: Mon, 03 Aug 2015 15:55:17 +0200
+Message-id: <2347616.SxxJmTVssu@amdc1976>
+In-reply-to: <55BF4D41.1060903@samsung.com>
+References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+ <4532306.AVvo5hem3c@amdc1976> <55BF4D41.1060903@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
 
+Hi,
 
-On 08/28/2015 06:12 AM, Stephen Boyd wrote:
-> Sometimes the display driver may want to change the parent PLL of
-> the display clocks (byte and pixel clocks) depending on the
-> use-case. Currently the parent is fixed by means of having a
-> frequency table with one entry that chooses a particular parent.
-> Remove this restriction and use the parent the clock is
-> configured for in the hardware during clk_set_rate(). This
-> requires consumers to rely on the default parent or to configure
-> the parent with clk_set_parent()/assigned-clock-parents on the
-> clocks before calling clk_set_rate().
+On Monday, August 03, 2015 08:15:13 PM Krzysztof Kozlowski wrote:
+> W dniu 03.08.2015 o 19:36, Bartlomiej Zolnierkiewicz pisze:
+> > On Monday, August 03, 2015 03:59:26 PM Viresh Kumar wrote:
+> >> On 03-08-15, 12:17, Bartlomiej Zolnierkiewicz wrote:
+> >>>
+> >>> Hi,
+> >>>
+> >>> On Saturday, August 01, 2015 04:47:21 PM Viresh Kumar wrote:
+> >>>> On 31-07-15, 20:49, Bartlomiej Zolnierkiewicz wrote:
+> >>>>> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+> >>>>> index 659879a..bf6d596 100644
+> >>>>> --- a/drivers/cpufreq/Kconfig
+> >>>>> +++ b/drivers/cpufreq/Kconfig
+> >>>>> @@ -191,6 +191,7 @@ config CPUFREQ_DT
+> >>>>>  	# if CPU_THERMAL is on and THERMAL=m, CPUFREQ_DT cannot be =y:
+> >>>>>  	depends on !CPU_THERMAL || THERMAL
+> >>>>>  	select PM_OPP
+> >>>>> +	select EXYNOS_THERMAL if ARCH_EXYNOS
+> >>>>>  	help
+> >>>>>  	  This adds a generic DT based cpufreq driver for frequency management.
+> >>>>>  	  It supports both uniprocessor (UP) and symmetric multiprocessor (SMP)
+> >>>>
+> >>>> No, we shouldn't pollute generic Kconfig options with platform specific stuff.
+> >>>
+> >>> The old code depended on this.  You couldn't enable boost support
+> >>> without enabling thermal support (ARM_EXYNOS_CPU_FREQ_BOOST_SW
+> >>> config option selected EXYNOS_THERMAL).
+> >>>
+> >>>> Why don't you enable thermal in your .config?
+> >>>
+> >>> It is enabled in exynos_defconfig but without the above change it
+> >>> can disabled manually which is something that we don't want.
+> >>
+> >> You are not getting it. I am not asking you to not select thermal, but
+> >> to select it from within your architecture Kconfig option if you want.
+> > 
+> > OK.  Krzysztof/Kukjin do you agree with selecting EXYNOS_THERMAL
+> > from ARCH_EXYNOS in the platform code?
+> 
+> I agree, with your explanation it seems good. Can you just add this
+> justification to the commit message?
 
-Tested-by: Archit Taneja <architt@codeaurora.org>
+Updated patch below (I'm not resending the whole series as all other
+patches remain unchanged).
 
->
-> Cc: Archit Taneja <architt@codeaurora.org>
-> Cc: Hai Li <hali@codeaurora.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->   drivers/clk/qcom/clk-rcg.h      |  1 +
->   drivers/clk/qcom/clk-rcg2.c     | 91 +++++++++++++++++++++++++++++++++++++----
->   drivers/clk/qcom/gcc-msm8916.c  | 14 +------
->   drivers/clk/qcom/mmcc-apq8084.c | 18 +-------
->   drivers/clk/qcom/mmcc-msm8974.c | 11 +----
->   5 files changed, 89 insertions(+), 46 deletions(-)
->
-> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> index 56028bb31d87..31f92d70e8e0 100644
-> --- a/drivers/clk/qcom/clk-rcg.h
-> +++ b/drivers/clk/qcom/clk-rcg.h
-> @@ -171,6 +171,7 @@ struct clk_rcg2 {
->   extern const struct clk_ops clk_rcg2_ops;
->   extern const struct clk_ops clk_edp_pixel_ops;
->   extern const struct clk_ops clk_byte_ops;
-> +extern const struct clk_ops clk_byte2_ops;
->   extern const struct clk_ops clk_pixel_ops;
->
->   #endif
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index 9aec1761fd29..d941dea6f7c7 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -485,6 +485,76 @@ const struct clk_ops clk_byte_ops = {
->   };
->   EXPORT_SYMBOL_GPL(clk_byte_ops);
->
-> +static int clk_byte2_determine_rate(struct clk_hw *hw,
-> +				    struct clk_rate_request *req)
-> +{
-> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> +	unsigned long parent_rate, div;
-> +	u32 mask = BIT(rcg->hid_width) - 1;
-> +	struct clk_hw *p;
-> +	unsigned long rate = req->rate;
-> +
-> +	if (rate == 0)
-> +		return -EINVAL;
-> +
-> +	p = req->best_parent_hw;
-> +	req->best_parent_rate = parent_rate = clk_hw_round_rate(p, rate);
-> +
-> +	div = DIV_ROUND_UP((2 * parent_rate), rate) - 1;
-> +	div = min_t(u32, div, mask);
-> +
-> +	req->rate = calc_rate(parent_rate, 0, 0, 0, div);
-> +
-> +	return 0;
-> +}
-> +
-> +static int clk_byte2_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			 unsigned long parent_rate)
-> +{
-> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> +	struct freq_tbl f = { 0 };
-> +	unsigned long div;
-> +	int i, num_parents = clk_hw_get_num_parents(hw);
-> +	u32 mask = BIT(rcg->hid_width) - 1;
-> +	u32 cfg;
-> +
-> +	div = DIV_ROUND_UP((2 * parent_rate), rate) - 1;
-> +	div = min_t(u32, div, mask);
-> +
-> +	f.pre_div = div;
-> +
-> +	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
-> +	cfg &= CFG_SRC_SEL_MASK;
-> +	cfg >>= CFG_SRC_SEL_SHIFT;
-> +
-> +	for (i = 0; i < num_parents; i++) {
-> +		if (cfg == rcg->parent_map[i].cfg) {
-> +			f.src = rcg->parent_map[i].src;
-> +			return clk_rcg2_configure(rcg, &f);
-> +		}
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int clk_byte2_set_rate_and_parent(struct clk_hw *hw,
-> +		unsigned long rate, unsigned long parent_rate, u8 index)
-> +{
-> +	/* Read the hardware to determine parent during set_rate */
-> +	return clk_byte2_set_rate(hw, rate, parent_rate);
-> +}
-> +
-> +const struct clk_ops clk_byte2_ops = {
-> +	.is_enabled = clk_rcg2_is_enabled,
-> +	.get_parent = clk_rcg2_get_parent,
-> +	.set_parent = clk_rcg2_set_parent,
-> +	.recalc_rate = clk_rcg2_recalc_rate,
-> +	.set_rate = clk_byte2_set_rate,
-> +	.set_rate_and_parent = clk_byte2_set_rate_and_parent,
-> +	.determine_rate = clk_byte2_determine_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(clk_byte2_ops);
-> +
->   static const struct frac_entry frac_table_pixel[] = {
->   	{ 3, 8 },
->   	{ 2, 9 },
-> @@ -496,14 +566,9 @@ static const struct frac_entry frac_table_pixel[] = {
->   static int clk_pixel_determine_rate(struct clk_hw *hw,
->   				    struct clk_rate_request *req)
->   {
-> -	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
->   	unsigned long request, src_rate;
->   	int delta = 100000;
-> -	const struct freq_tbl *f = rcg->freq_tbl;
->   	const struct frac_entry *frac = frac_table_pixel;
-> -	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
-> -
-> -	req->best_parent_hw = clk_hw_get_parent_by_index(hw, index);
->
->   	for (; frac->num; frac++) {
->   		request = (req->rate * frac->den) / frac->num;
-> @@ -525,12 +590,23 @@ static int clk_pixel_set_rate(struct clk_hw *hw, unsigned long rate,
->   		unsigned long parent_rate)
->   {
->   	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> -	struct freq_tbl f = *rcg->freq_tbl;
-> +	struct freq_tbl f = { 0 };
->   	const struct frac_entry *frac = frac_table_pixel;
->   	unsigned long request;
->   	int delta = 100000;
->   	u32 mask = BIT(rcg->hid_width) - 1;
-> -	u32 hid_div;
-> +	u32 hid_div, cfg;
-> +	int i, num_parents = clk_hw_get_num_parents(hw);
-> +
-> +	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
-> +	cfg &= CFG_SRC_SEL_MASK;
-> +	cfg >>= CFG_SRC_SEL_SHIFT;
-> +
-> +	for (i = 0; i < num_parents; i++)
-> +		if (cfg == rcg->parent_map[i].cfg) {
-> +			f.src = rcg->parent_map[i].src;
-> +			break;
-> +		}
->
->   	for (; frac->num; frac++) {
->   		request = (rate * frac->den) / frac->num;
-> @@ -555,7 +631,6 @@ static int clk_pixel_set_rate(struct clk_hw *hw, unsigned long rate,
->   static int clk_pixel_set_rate_and_parent(struct clk_hw *hw, unsigned long rate,
->   		unsigned long parent_rate, u8 index)
->   {
-> -	/* Parent index is set statically in frequency table */
->   	return clk_pixel_set_rate(hw, rate, parent_rate);
->   }
->
-> diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-> index 22a4e1e732c0..3de282365d8d 100644
-> --- a/drivers/clk/qcom/gcc-msm8916.c
-> +++ b/drivers/clk/qcom/gcc-msm8916.c
-> @@ -906,21 +906,15 @@ static struct clk_rcg2 gp3_clk_src = {
->   	},
->   };
->
-> -static struct freq_tbl ftbl_gcc_mdss_byte0_clk[] = {
-> -	{ .src = P_DSI0_PHYPLL_BYTE },
-> -	{ }
-> -};
-> -
->   static struct clk_rcg2 byte0_clk_src = {
->   	.cmd_rcgr = 0x4d044,
->   	.hid_width = 5,
->   	.parent_map = gcc_xo_gpll0a_dsibyte_map,
-> -	.freq_tbl = ftbl_gcc_mdss_byte0_clk,
->   	.clkr.hw.init = &(struct clk_init_data){
->   		.name = "byte0_clk_src",
->   		.parent_names = gcc_xo_gpll0a_dsibyte,
->   		.num_parents = 3,
-> -		.ops = &clk_byte_ops,
-> +		.ops = &clk_byte2_ops,
->   		.flags = CLK_SET_RATE_PARENT,
->   	},
->   };
-> @@ -968,17 +962,11 @@ static struct clk_rcg2 mdp_clk_src = {
->   	},
->   };
->
-> -static struct freq_tbl ftbl_gcc_mdss_pclk[] = {
-> -	{ .src = P_DSI0_PHYPLL_DSI },
-> -	{ }
-> -};
-> -
->   static struct clk_rcg2 pclk0_clk_src = {
->   	.cmd_rcgr = 0x4d000,
->   	.mnd_width = 8,
->   	.hid_width = 5,
->   	.parent_map = gcc_xo_gpll0a_dsiphy_map,
-> -	.freq_tbl = ftbl_gcc_mdss_pclk,
->   	.clkr.hw.init = &(struct clk_init_data){
->   		.name = "pclk0_clk_src",
->   		.parent_names = gcc_xo_gpll0a_dsiphy,
-> diff --git a/drivers/clk/qcom/mmcc-apq8084.c b/drivers/clk/qcom/mmcc-apq8084.c
-> index f0ee6bde11af..5d2aab7663f0 100644
-> --- a/drivers/clk/qcom/mmcc-apq8084.c
-> +++ b/drivers/clk/qcom/mmcc-apq8084.c
-> @@ -571,17 +571,11 @@ static struct clk_rcg2 jpeg2_clk_src = {
->   	},
->   };
->
-> -static struct freq_tbl pixel_freq_tbl[] = {
-> -	{ .src = P_DSI0PLL },
-> -	{ }
-> -};
-> -
->   static struct clk_rcg2 pclk0_clk_src = {
->   	.cmd_rcgr = 0x2000,
->   	.mnd_width = 8,
->   	.hid_width = 5,
->   	.parent_map = mmcc_xo_dsi_hdmi_edp_gpll0_map,
-> -	.freq_tbl = pixel_freq_tbl,
->   	.clkr.hw.init = &(struct clk_init_data){
->   		.name = "pclk0_clk_src",
->   		.parent_names = mmcc_xo_dsi_hdmi_edp_gpll0,
-> @@ -596,7 +590,6 @@ static struct clk_rcg2 pclk1_clk_src = {
->   	.mnd_width = 8,
->   	.hid_width = 5,
->   	.parent_map = mmcc_xo_dsi_hdmi_edp_gpll0_map,
-> -	.freq_tbl = pixel_freq_tbl,
->   	.clkr.hw.init = &(struct clk_init_data){
->   		.name = "pclk1_clk_src",
->   		.parent_names = mmcc_xo_dsi_hdmi_edp_gpll0,
-> @@ -844,21 +837,15 @@ static struct clk_rcg2 cpp_clk_src = {
->   	},
->   };
->
-> -static struct freq_tbl byte_freq_tbl[] = {
-> -	{ .src = P_DSI0PLL_BYTE },
-> -	{ }
-> -};
-> -
->   static struct clk_rcg2 byte0_clk_src = {
->   	.cmd_rcgr = 0x2120,
->   	.hid_width = 5,
->   	.parent_map = mmcc_xo_dsibyte_hdmi_edp_gpll0_map,
-> -	.freq_tbl = byte_freq_tbl,
->   	.clkr.hw.init = &(struct clk_init_data){
->   		.name = "byte0_clk_src",
->   		.parent_names = mmcc_xo_dsibyte_hdmi_edp_gpll0,
->   		.num_parents = 6,
-> -		.ops = &clk_byte_ops,
-> +		.ops = &clk_byte2_ops,
->   		.flags = CLK_SET_RATE_PARENT,
->   	},
->   };
-> @@ -867,12 +854,11 @@ static struct clk_rcg2 byte1_clk_src = {
->   	.cmd_rcgr = 0x2140,
->   	.hid_width = 5,
->   	.parent_map = mmcc_xo_dsibyte_hdmi_edp_gpll0_map,
-> -	.freq_tbl = byte_freq_tbl,
->   	.clkr.hw.init = &(struct clk_init_data){
->   		.name = "byte1_clk_src",
->   		.parent_names = mmcc_xo_dsibyte_hdmi_edp_gpll0,
->   		.num_parents = 6,
-> -		.ops = &clk_byte_ops,
-> +		.ops = &clk_byte2_ops,
->   		.flags = CLK_SET_RATE_PARENT,
->   	},
->   };
-> diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-> index 0987bf443e1f..197700e3b2c9 100644
-> --- a/drivers/clk/qcom/mmcc-msm8974.c
-> +++ b/drivers/clk/qcom/mmcc-msm8974.c
-> @@ -522,17 +522,11 @@ static struct clk_rcg2 jpeg2_clk_src = {
->   	},
->   };
->
-> -static struct freq_tbl pixel_freq_tbl[] = {
-> -	{ .src = P_DSI0PLL },
-> -	{ }
-> -};
-> -
->   static struct clk_rcg2 pclk0_clk_src = {
->   	.cmd_rcgr = 0x2000,
->   	.mnd_width = 8,
->   	.hid_width = 5,
->   	.parent_map = mmcc_xo_dsi_hdmi_edp_gpll0_map,
-> -	.freq_tbl = pixel_freq_tbl,
->   	.clkr.hw.init = &(struct clk_init_data){
->   		.name = "pclk0_clk_src",
->   		.parent_names = mmcc_xo_dsi_hdmi_edp_gpll0,
-> @@ -547,7 +541,6 @@ static struct clk_rcg2 pclk1_clk_src = {
->   	.mnd_width = 8,
->   	.hid_width = 5,
->   	.parent_map = mmcc_xo_dsi_hdmi_edp_gpll0_map,
-> -	.freq_tbl = pixel_freq_tbl,
->   	.clkr.hw.init = &(struct clk_init_data){
->   		.name = "pclk1_clk_src",
->   		.parent_names = mmcc_xo_dsi_hdmi_edp_gpll0,
-> @@ -785,7 +778,7 @@ static struct clk_rcg2 byte0_clk_src = {
->   		.name = "byte0_clk_src",
->   		.parent_names = mmcc_xo_dsibyte_hdmi_edp_gpll0,
->   		.num_parents = 6,
-> -		.ops = &clk_byte_ops,
-> +		.ops = &clk_byte2_ops,
->   		.flags = CLK_SET_RATE_PARENT,
->   	},
->   };
-> @@ -799,7 +792,7 @@ static struct clk_rcg2 byte1_clk_src = {
->   		.name = "byte1_clk_src",
->   		.parent_names = mmcc_xo_dsibyte_hdmi_edp_gpll0,
->   		.num_parents = 6,
-> -		.ops = &clk_byte_ops,
-> +		.ops = &clk_byte2_ops,
->   		.flags = CLK_SET_RATE_PARENT,
->   	},
->   };
->
+> > 
+> >> Over that, thermal is really an option, not a dependency. So, if
+> >> someone manually disables it, its his problem not yours :)
+> > 
+> > I would really like it to be dependency not an option (+ I think
+> > that ideally it should be checked at runtime, IOW we should be
+> > checking from cpufreq-dt driver if the thermal support is enabled
+> > before enabling boost support).
+> 
+> That would be the best. It is fine with me if you want to do this in
+> consecutive patches (after applying patch selecting/depending on it in
+> mach-exynos code).
 
+---------------------8<-------------------
+
+>From 2595b5e6164a2d1b76626e14302b148b7af5e050 Mon Sep 17 00:00:00 2001
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date: Mon, 3 Aug 2015 15:49:06 +0200
+Subject: [PATCH] ARM: Exynos: switch to using generic cpufreq driver for
+ Exynos4x12
+
+The new CPU clock type allows the use of generic CPUfreq driver.
+Switch Exynos4x12 to using generic cpufreq driver.
+
+Previously (when exynos-cpufreq driver was used with boost
+functionality) ARM_EXYNOS_CPU_FREQ_BOOST_SW config option
+(which enabled boost functionality) selected EXYNOS_THERMAL
+one.  After switching Exynos4x12 platforms to use cpufreq-dt
+driver boost support is enabled in the cpufreq-dt driver
+itself (because there are turbo OPPs defined in the board's
+DTS file).  However we still would like to allow enabling
+boost support only if thermal support is also enabled for
+Exynos platforms.  To achieve this make ARCH_EXYNOS config
+option select THERMAL and EXYNOS_THERMAL ones.
+
+Please also note that the switch to use the generic cpufreq-dt
+driver fixes the minor issue present with the old code (support
+for 'boost' mode in the exynos-cpufreq driver was enabled for
+all supported SoCs even though 'boost' frequency was provided
+only for Exynos4x12 ones).
+
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/mach-exynos/Kconfig  | 2 ++
+ arch/arm/mach-exynos/exynos.c | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 81064cd..491914c 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -25,6 +25,8 @@ menuconfig ARCH_EXYNOS
+ 	select S5P_DEV_MFC
+ 	select SRAM
+ 	select MFD_SYSCON
++	select THERMAL
++	select EXYNOS_THERMAL
+ 	help
+ 	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
+ 
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 77ac021..1c47aee 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -227,6 +227,8 @@ static void __init exynos_init_irq(void)
+ static const struct of_device_id exynos_cpufreq_matches[] = {
+ 	{ .compatible = "samsung,exynos3250", .data = "cpufreq-dt" },
+ 	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
++	{ .compatible = "samsung,exynos4212", .data = "cpufreq-dt" },
++	{ .compatible = "samsung,exynos4412", .data = "cpufreq-dt" },
+ 	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
+ 	{ /* sentinel */ }
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
