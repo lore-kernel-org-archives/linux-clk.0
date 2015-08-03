@@ -1,107 +1,74 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: [PATCH] clk: si5351: Convert __clk_get_name() to clk_hw_get_name()
-Date: Fri,  7 Aug 2015 16:35:44 -0700
-Message-Id: <1438990544-8464-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Date: Mon, 3 Aug 2015 21:20:41 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq
+ driver for Exynos4x12
+Message-ID: <20150803155041.GE21529@linux>
+References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+ <4532306.AVvo5hem3c@amdc1976>
+ <55BF4D41.1060903@samsung.com>
+ <2347616.SxxJmTVssu@amdc1976>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2347616.SxxJmTVssu@amdc1976>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This driver uses __clk_get_name() when it's dealing with struct
-clk_hw pointers. Use the simpler form so that we can get rid of
-the clk member in struct clk_hw one day.
+On 03-08-15, 15:55, Bartlomiej Zolnierkiewicz wrote:
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 81064cd..491914c 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -25,6 +25,8 @@ menuconfig ARCH_EXYNOS
+>  	select S5P_DEV_MFC
+>  	select SRAM
+>  	select MFD_SYSCON
+> +	select THERMAL
+> +	select EXYNOS_THERMAL
 
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
+Why do you need to select both of them?
 
-This depends on the series that introduces clk_hw_get_name()[1].
+>  	help
+>  	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
+>  
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 77ac021..1c47aee 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -227,6 +227,8 @@ static void __init exynos_init_irq(void)
+>  static const struct of_device_id exynos_cpufreq_matches[] = {
+>  	{ .compatible = "samsung,exynos3250", .data = "cpufreq-dt" },
+>  	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
+> +	{ .compatible = "samsung,exynos4212", .data = "cpufreq-dt" },
+> +	{ .compatible = "samsung,exynos4412", .data = "cpufreq-dt" },
+>  	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
+>  	{ /* sentinel */ }
+>  };
 
-[1] http://lkml.kernel.org/r/<1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+Otherwise looks fine:
 
- drivers/clk/clk-si5351.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 4b2ee39f05fd..5596c0aac22f 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -439,7 +439,7 @@ static unsigned long si5351_pll_recalc_rate(struct clk_hw *hw,
- 
- 	dev_dbg(&hwdata->drvdata->client->dev,
- 		"%s - %s: p1 = %lu, p2 = %lu, p3 = %lu, parent_rate = %lu, rate = %lu\n",
--		__func__, __clk_get_name(hwdata->hw.clk),
-+		__func__, clk_hw_get_name(hw),
- 		hwdata->params.p1, hwdata->params.p2, hwdata->params.p3,
- 		parent_rate, (unsigned long)rate);
- 
-@@ -497,7 +497,7 @@ static long si5351_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	dev_dbg(&hwdata->drvdata->client->dev,
- 		"%s - %s: a = %lu, b = %lu, c = %lu, parent_rate = %lu, rate = %lu\n",
--		__func__, __clk_get_name(hwdata->hw.clk), a, b, c,
-+		__func__, clk_hw_get_name(hw), a, b, c,
- 		*parent_rate, rate);
- 
- 	return rate;
-@@ -521,7 +521,7 @@ static int si5351_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	dev_dbg(&hwdata->drvdata->client->dev,
- 		"%s - %s: p1 = %lu, p2 = %lu, p3 = %lu, parent_rate = %lu, rate = %lu\n",
--		__func__, __clk_get_name(hwdata->hw.clk),
-+		__func__, clk_hw_get_name(hw),
- 		hwdata->params.p1, hwdata->params.p2, hwdata->params.p3,
- 		parent_rate, rate);
- 
-@@ -632,7 +632,7 @@ static unsigned long si5351_msynth_recalc_rate(struct clk_hw *hw,
- 
- 	dev_dbg(&hwdata->drvdata->client->dev,
- 		"%s - %s: p1 = %lu, p2 = %lu, p3 = %lu, m = %lu, parent_rate = %lu, rate = %lu\n",
--		__func__, __clk_get_name(hwdata->hw.clk),
-+		__func__, clk_hw_get_name(hw),
- 		hwdata->params.p1, hwdata->params.p2, hwdata->params.p3,
- 		m, parent_rate, (unsigned long)rate);
- 
-@@ -745,7 +745,7 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	dev_dbg(&hwdata->drvdata->client->dev,
- 		"%s - %s: a = %lu, b = %lu, c = %lu, divby4 = %d, parent_rate = %lu, rate = %lu\n",
--		__func__, __clk_get_name(hwdata->hw.clk), a, b, c, divby4,
-+		__func__, clk_hw_get_name(hw), a, b, c, divby4,
- 		*parent_rate, rate);
- 
- 	return rate;
-@@ -777,7 +777,7 @@ static int si5351_msynth_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	dev_dbg(&hwdata->drvdata->client->dev,
- 		"%s - %s: p1 = %lu, p2 = %lu, p3 = %lu, divby4 = %d, parent_rate = %lu, rate = %lu\n",
--		__func__, __clk_get_name(hwdata->hw.clk),
-+		__func__, clk_hw_get_name(hw),
- 		hwdata->params.p1, hwdata->params.p2, hwdata->params.p3,
- 		divby4, parent_rate, rate);
- 
-@@ -1042,7 +1042,7 @@ static long si5351_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	dev_dbg(&hwdata->drvdata->client->dev,
- 		"%s - %s: rdiv = %u, parent_rate = %lu, rate = %lu\n",
--		__func__, __clk_get_name(hwdata->hw.clk), (1 << rdiv),
-+		__func__, clk_hw_get_name(hw), (1 << rdiv),
- 		*parent_rate, rate);
- 
- 	return rate;
-@@ -1093,7 +1093,7 @@ static int si5351_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	dev_dbg(&hwdata->drvdata->client->dev,
- 		"%s - %s: rdiv = %u, parent_rate = %lu, rate = %lu\n",
--		__func__, __clk_get_name(hwdata->hw.clk), (1 << rdiv),
-+		__func__, clk_hw_get_name(hw), (1 << rdiv),
- 		parent_rate, rate);
- 
- 	return 0;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+viresh
