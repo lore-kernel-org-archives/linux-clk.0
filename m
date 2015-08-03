@@ -1,130 +1,60 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <govindraj.raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Govindraj Raja
-	<govindraj.raja@imgtec.com>
-Subject: [PATCH v4 3/4] clk: pistachio: Fix PLL rate calculation in integer mode
-Date: Tue, 18 Aug 2015 10:32:16 +0100
-Message-ID: <1439890337-13803-4-git-send-email-govindraj.raja@imgtec.com>
-In-Reply-To: <1439890337-13803-1-git-send-email-govindraj.raja@imgtec.com>
-References: <1439890337-13803-1-git-send-email-govindraj.raja@imgtec.com>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Message-ID: <55BF4705.9030300@arm.com>
+Date: Mon, 03 Aug 2015 11:48:37 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Liviu Dudau <Liviu.Dudau@arm.com>
+CC: Sudeep Holla <sudeep.holla@arm.com>,
+	"arm@kernel.org" <arm@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Olof Johansson <olof@lixom.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Punit Agrawal <Punit.Agrawal@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v6 0/8] ARM64: juno: add SCPI mailbox protocol, clock
+ and CPUFreq support
+References: <1438364591-1144-1-git-send-email-sudeep.holla@arm.com> <20150803101845.GU20890@e106497-lin.cambridge.arm.com>
+In-Reply-To: <20150803101845.GU20890@e106497-lin.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
 
-.recalc_rate callback for the fractional PLL doesn't take operating
-mode into account when calculating PLL rate. This results in
-the incorrect PLL rates when PLL is operating in integer mode.
 
-Operating mode of fractional PLL is based on the value of the
-fractional divider. Currently it assumes that the PLL will always
-be configured in fractional mode which may not be
-the case. This may result in the wrong output frequency.
+On 03/08/15 11:18, Liviu Dudau wrote:
+> On Fri, Jul 31, 2015 at 06:43:03PM +0100, Sudeep Holla wrote:
+>> Hi ARM-SoC guys,
+>>
+>> It has been on the list for a while and have got all the necessary ACKs.
+>> Can you please pull this series for v4.3 ?
+>>
+>> Regards,
+>> Sudeep
+>>
+>> This patch series adds support for:
+>>    1. SCPI(System Control and Power Interface) mailbox protocol driver.
+>>       It uses ARM MHU mailbox controller driver on Juno but can work with
+>>       any mailbox controllers using standard mailbox APIs
+>>    2. Add support for clocks provided by SCP firmware through the SCPI
+>>       interface
+>>    3. Using the existing arm_big_little cpufreq driver and the newly
+>>       added SCPI clock driver, it also adds support for CPU DVFS on
+>>       ARM64 JUNO development platforms.
+>
+> Hi Sudeep,
+>
+> Is there a branch where I can pull this series from?
+>
 
-Also vco was calculated based on the current operating mode which
-makes no sense because .set_rate is setting operating mode. Instead,
-vco should be calculated using PLL settings that are about to be set.
+Yes, you can pull from
+git://linux-arm.org/linux-skn.git juno_dvfs
 
-Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
-Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
----
- drivers/clk/pistachio/clk-pll.c | 46 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
-index 9a38a2b..5554fa4 100644
---- a/drivers/clk/pistachio/clk-pll.c
-+++ b/drivers/clk/pistachio/clk-pll.c
-@@ -65,6 +65,10 @@
- #define MIN_OUTPUT_FRAC			12000000UL
- #define MAX_OUTPUT_FRAC			1600000000UL
- 
-+/* Fractional PLL operating modes */
-+#define PLL_MODE_INT			1
-+#define PLL_MODE_FRAC			0
-+
- struct pistachio_clk_pll {
- 	struct clk_hw hw;
- 	void __iomem *base;
-@@ -99,6 +103,29 @@ static inline struct pistachio_clk_pll *to_pistachio_pll(struct clk_hw *hw)
- 	return container_of(hw, struct pistachio_clk_pll, hw);
- }
- 
-+static inline u32 pll_frac_get_mode(struct clk_hw *hw)
-+{
-+	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
-+	u32 val;
-+
-+	val = pll_readl(pll, PLL_CTRL3) & PLL_FRAC_CTRL3_DSMPD;
-+	return val ? PLL_MODE_INT : PLL_MODE_FRAC;
-+}
-+
-+static inline void pll_frac_set_mode(struct clk_hw *hw, u32 mode)
-+{
-+	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
-+	u32 val;
-+
-+	val = pll_readl(pll, PLL_CTRL3);
-+	if (mode == PLL_MODE_INT)
-+		val |= PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_DACPD;
-+	else
-+		val &= ~(PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_DACPD);
-+
-+	pll_writel(pll, val, PLL_CTRL3);
-+}
-+
- static struct pistachio_pll_rate_table *
- pll_get_params(struct pistachio_clk_pll *pll, unsigned long fref,
- 	       unsigned long fout)
-@@ -180,7 +207,11 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (!params || !params->refdiv)
- 		return -EINVAL;
- 
--	vco = div64_u64(params->fref * params->fbdiv, params->refdiv);
-+	/* calculate vco */
-+	vco = params->fref;
-+	vco *= (params->fbdiv << 24) + params->frac;
-+	vco = div64_u64(vco, params->refdiv << 24);
-+
- 	if (vco < MIN_VCO_FRAC_FRAC || vco > MAX_VCO_FRAC_FRAC)
- 		pr_warn("%s: VCO %llu is out of range %lu..%lu\n", name, vco,
- 			MIN_VCO_FRAC_FRAC, MAX_VCO_FRAC_FRAC);
-@@ -224,6 +255,12 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
- 		(params->postdiv2 << PLL_FRAC_CTRL2_POSTDIV2_SHIFT);
- 	pll_writel(pll, val, PLL_CTRL2);
- 
-+	/* set operating mode */
-+	if (params->frac)
-+		pll_frac_set_mode(hw, PLL_MODE_FRAC);
-+	else
-+		pll_frac_set_mode(hw, PLL_MODE_INT);
-+
- 	if (enabled)
- 		pll_lock(pll);
- 
-@@ -247,8 +284,13 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
- 		PLL_FRAC_CTRL2_POSTDIV2_MASK;
- 	frac = (val >> PLL_FRAC_CTRL2_FRAC_SHIFT) & PLL_FRAC_CTRL2_FRAC_MASK;
- 
-+	/* get operating mode (int/frac) and calculate rate accordingly */
- 	rate = parent_rate;
--	rate *= (fbdiv << 24) + frac;
-+	if (pll_frac_get_mode(hw) == PLL_MODE_FRAC)
-+		rate *= (fbdiv << 24) + frac;
-+	else
-+		rate *= (fbdiv << 24);
-+
- 	rate = do_div_round_closest(rate, (prediv * postdiv1 * postdiv2) << 24);
- 
- 	return rate;
--- 
-1.9.1
+Regards,
+Sudeep
