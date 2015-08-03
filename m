@@ -1,91 +1,78 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-ID: <55BF4D41.1060903@samsung.com>
-Date: Mon, 03 Aug 2015 20:15:13 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-Version: 1.0
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-CC: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
+ Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
 Subject: Re: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq driver
  for Exynos4x12
-References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com> <5201904.0cZWHobiJs@amdc1976> <20150803102926.GA21529@linux> <4532306.AVvo5hem3c@amdc1976>
-In-Reply-To: <4532306.AVvo5hem3c@amdc1976>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-pm-owner@vger.kernel.org
+Date: Mon, 03 Aug 2015 17:57:36 +0200
+Message-id: <1560319.pWyQuLxb1l@amdc1976>
+In-reply-to: <20150803155041.GE21529@linux>
+References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+ <2347616.SxxJmTVssu@amdc1976> <20150803155041.GE21529@linux>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-W dniu 03.08.2015 o 19:36, Bartlomiej Zolnierkiewicz pisze:
-> On Monday, August 03, 2015 03:59:26 PM Viresh Kumar wrote:
->> On 03-08-15, 12:17, Bartlomiej Zolnierkiewicz wrote:
->>>
->>> Hi,
->>>
->>> On Saturday, August 01, 2015 04:47:21 PM Viresh Kumar wrote:
->>>> On 31-07-15, 20:49, Bartlomiej Zolnierkiewicz wrote:
->>>>> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
->>>>> index 659879a..bf6d596 100644
->>>>> --- a/drivers/cpufreq/Kconfig
->>>>> +++ b/drivers/cpufreq/Kconfig
->>>>> @@ -191,6 +191,7 @@ config CPUFREQ_DT
->>>>>  	# if CPU_THERMAL is on and THERMAL=m, CPUFREQ_DT cannot be =y:
->>>>>  	depends on !CPU_THERMAL || THERMAL
->>>>>  	select PM_OPP
->>>>> +	select EXYNOS_THERMAL if ARCH_EXYNOS
->>>>>  	help
->>>>>  	  This adds a generic DT based cpufreq driver for frequency management.
->>>>>  	  It supports both uniprocessor (UP) and symmetric multiprocessor (SMP)
->>>>
->>>> No, we shouldn't pollute generic Kconfig options with platform specific stuff.
->>>
->>> The old code depended on this.  You couldn't enable boost support
->>> without enabling thermal support (ARM_EXYNOS_CPU_FREQ_BOOST_SW
->>> config option selected EXYNOS_THERMAL).
->>>
->>>> Why don't you enable thermal in your .config?
->>>
->>> It is enabled in exynos_defconfig but without the above change it
->>> can disabled manually which is something that we don't want.
->>
->> You are not getting it. I am not asking you to not select thermal, but
->> to select it from within your architecture Kconfig option if you want.
+On Monday, August 03, 2015 09:20:41 PM Viresh Kumar wrote:
+> On 03-08-15, 15:55, Bartlomiej Zolnierkiewicz wrote:
+> > diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> > index 81064cd..491914c 100644
+> > --- a/arch/arm/mach-exynos/Kconfig
+> > +++ b/arch/arm/mach-exynos/Kconfig
+> > @@ -25,6 +25,8 @@ menuconfig ARCH_EXYNOS
+> >  	select S5P_DEV_MFC
+> >  	select SRAM
+> >  	select MFD_SYSCON
+> > +	select THERMAL
+> > +	select EXYNOS_THERMAL
 > 
-> OK.  Krzysztof/Kukjin do you agree with selecting EXYNOS_THERMAL
-> from ARCH_EXYNOS in the platform code?
+> Why do you need to select both of them?
 
-I agree, with your explanation it seems good. Can you just add this
-justification to the commit message?
+Because otherwise you can disable the whole THERMAL subsystem support
+(effectively disabling EXYNOS_THERMAL in the process).
 
+This is the same way in which ARCH_EXYNOS handles PINCTRL_EXYNOS
+support currently (it also selects PINCTRL subsystem).
+
+> >  	help
+> >  	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
+> >  
+> > diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> > index 77ac021..1c47aee 100644
+> > --- a/arch/arm/mach-exynos/exynos.c
+> > +++ b/arch/arm/mach-exynos/exynos.c
+> > @@ -227,6 +227,8 @@ static void __init exynos_init_irq(void)
+> >  static const struct of_device_id exynos_cpufreq_matches[] = {
+> >  	{ .compatible = "samsung,exynos3250", .data = "cpufreq-dt" },
+> >  	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
+> > +	{ .compatible = "samsung,exynos4212", .data = "cpufreq-dt" },
+> > +	{ .compatible = "samsung,exynos4412", .data = "cpufreq-dt" },
+> >  	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
+> >  	{ /* sentinel */ }
+> >  };
 > 
->> Over that, thermal is really an option, not a dependency. So, if
->> someone manually disables it, its his problem not yours :)
+> Otherwise looks fine:
 > 
-> I would really like it to be dependency not an option (+ I think
-> that ideally it should be checked at runtime, IOW we should be
-> checking from cpufreq-dt driver if the thermal support is enabled
-> before enabling boost support).
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-That would be the best. It is fine with me if you want to do this in
-consecutive patches (after applying patch selecting/depending on it in
-mach-exynos code).
+Thanks!
 
 Best regards,
-Krzysztof
-
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
