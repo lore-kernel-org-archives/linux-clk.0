@@ -1,47 +1,41 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 0/2] Fix unused clock disabling on LPC18xx
-Date: Tue, 25 Aug 2015 20:34:01 +0200
-Message-Id: <1440527643-2960-1-git-send-email-manabian@gmail.com>
+Return-Path: <sudeep.holla@arm.com>
+Message-ID: <55BF4003.3040708@arm.com>
+Date: Mon, 03 Aug 2015 11:18:43 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Mike Turquette <mturquette@baylibre.com>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Pawel Moll <Pawel.Moll@arm.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/3] Move clk-sp810 to assigned clock parents
+References: <55BBB2FC.9030102@codeaurora.org> <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-I have finally managed to track down the reason for the hang that would
-occur when disabling clocks on lpc18xx under certain conditions. These
-conditions depend on boot mode used, what the boot loader does and if
-certain devices are enabled.
+Hi Stephen,
 
-One of reasons why it took me a while was that my primary platform was
-not affected by it and the data sheet has a rather misleading typo.
+On 01/08/15 00:44, Stephen Boyd wrote:
+> This patch set converts this code to use the assigned-clock-parents
+> property instead of doing some interesting stuff in the .prepare
+> op. I can route the dts patches through arm-soc but I'd like to take
+> the clk patch through clk tree because it removes some usage of the
+> struct clk based provider APIs that we're trying to get rid of. Also,
+> this is completely untested, so testing would be appreciated.
+> Can this be tested with qemu? I haven't tried but I was thinking
+> that might be an option.
+>
+> Cc: Pawel Moll <pawel.moll@arm.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+>
 
-The hang will occur if the boot rom/loader doesn't setup USB0 clocks
-and if certain AMBA devices are enabled (PL022 SSP and maybe others).
+Tested-by: Sudeep Holla <sudeep.holla@arm.com>
+(Tested the series on Juno R0 and Vexpress TC2 platform)
 
-Cause of the hang is that the CCU registers can not be accessed if the
-base (parent) clock is not enabled. To make sure the parent is running
-a check for this has been added to the is_enabled clk_ops callback.
-Since clocks in the CGU can be cascaded this check must also be added
-here.
-
-Maybe this check to see if the parent clock is running clock be added
-to the clk core and enabled with a flag(?) For now this patch set fixes
-the issue seen on lpc18xx.
-
-Changes since v2:
- - Add clk.h to cgu since it uses clk_get_parent().
- - Rebase on clk-next
-
-Joachim Eastwood (2):
-  clk: lpc18xx-ccu: fix potential system hang when disabling unused clocks
-  clk: lpc18xx-cgu: fix potential system hang when disabling unused clocks
-
- drivers/clk/nxp/clk-lpc18xx-ccu.c | 14 +++++++++++++
- drivers/clk/nxp/clk-lpc18xx-cgu.c | 43 ++++++++++++++++++++++++++++++++++++---
- 2 files changed, 54 insertions(+), 3 deletions(-)
-
--- 
-1.8.0
+Regards,
+Sudeep
