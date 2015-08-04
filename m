@@ -1,78 +1,123 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 11 Aug 2015 15:34:09 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
 	Kevin Hilman <khilman@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Doug Anderson <dianders@chromium.org>,
-	linux-clk@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Alex Elder <elder@linaro.org>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Chao Xie <chao.xie@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Georgi Djakov <georgi.djakov@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Barry Song <baohua@kernel.org>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	Viresh Kumar <viresh.linux@gmail.com>,
-	Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Peter De Sc hrijver <pdeschrijver@nvidia.com>,
-	Tero Kristo <t-kristo@ti.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Michal Simek <michal.simek@xilinx.com>,
-	Olof Johansson <olof@lixom.net>,
-	Tyler Baker <tyler.baker@linaro.org>
-Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
-Message-ID: <20150811223409.GN2839@codeaurora.org>
-References: <1429735986-18592-1-git-send-email-heiko@sntech.de>
- <554BD33D.7050907@codeaurora.org>
- <20150508100247.GQ11057@lukather>
- <4099394.C7vEjTFs8V@diego>
- <20150730100908.GI2564@lukather>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20150730100908.GI2564@lukather>
-Sender: linux-kernel-owner@vger.kernel.org
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 03/16] clk: shmobile: r8a7779: Add CPG/MSTP Clock Domain support
+Date: Tue,  4 Aug 2015 14:28:04 +0200
+Message-Id: <1438691297-29235-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
+References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/30, Maxime Ripard wrote:
-> On Mon, Jul 27, 2015 at 10:57:33AM +0200, Heiko Stübner wrote:
-> > 
-> > did this lead anywhere meanwhile.
-> > 
-> > Last I remember the change to orphan handling made sunxi fail, but
-> > I'm still hoping to get this usable at some point :-)
-> 
-> To be honest, I don't know what the current status is. I haven't get
-> any news since that mail.
-> 
-> I started to move a significant portion of our clocks to
-> CLK_OF_DECLARE, but not all of them are (which probably make the
-> situation worse for the time being).
-> 
+Add Clock Domain support to the R-Car H1 Clock Pulse Generator (CPG)
+driver using the generic PM Domain.  This allows to power-manage the
+module clocks of SoC devices that are part of the CPG/MSTP Clock Domain
+using Runtime PM, or for system suspend/resume.
 
-Sorry, I think we're still waiting for the critical clocks stuff
-to settle down so that Sunxi can use that instead of calling
-clk_prepare_enable() in init code. For now, I've put the first
-patch of the two into clk-next so that we can have proper orphan
-tracking. Hopefully we resolve critical clocks soon so that we
-can merge the defer part.
+SoC devices that are part of the CPG/MSTP Clock Domain and can be
+power-managed through an MSTP clock should be tagged in DT with a proper
+"power-domains" property.
 
+Also update the reg property in the DT binding doc example to match the
+actual dtsi, which uses #address-cells and #size-cells == 1, not 2.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+v4:
+  - Add Reviewed-by,
+
+v3:
+  - Add Acked-by,
+  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
+
+v2:
+  - New.
+---
+ .../bindings/clock/renesas,r8a7779-cpg-clocks.txt  | 30 +++++++++++++++++++---
+ drivers/clk/shmobile/clk-r8a7779.c                 |  2 ++
+ 2 files changed, 28 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
+index ed3c8cb12f4eb699..8c81547c29f568e8 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
+@@ -1,7 +1,9 @@
+ * Renesas R8A7779 Clock Pulse Generator (CPG)
+ 
+ The CPG generates core clocks for the R8A7779. It includes one PLL and
+-several fixed ratio dividers
++several fixed ratio dividers.
++The CPG also provides a Clock Domain for SoC devices, in combination with the
++CPG Module Stop (MSTP) Clocks.
+ 
+ Required Properties:
+ 
+@@ -12,16 +14,36 @@ Required Properties:
+   - #clock-cells: Must be 1
+   - clock-output-names: The names of the clocks. Supported clocks are "plla",
+     "z", "zs", "s", "s1", "p", "b", "out".
++  - #power-domain-cells: Must be 0
+ 
++SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
++through an MSTP clock should refer to the CPG device node in their
++"power-domains" property, as documented by the generic PM domain bindings in
++Documentation/devicetree/bindings/power/power_domain.txt.
+ 
+-Example
+--------
++
++Examples
++--------
++
++  - CPG device node:
+ 
+ 	cpg_clocks: cpg_clocks@ffc80000 {
+ 		compatible = "renesas,r8a7779-cpg-clocks";
+-		reg = <0 0xffc80000 0 0x30>;
++		reg = <0xffc80000 0x30>;
+ 		clocks = <&extal_clk>;
+ 		#clock-cells = <1>;
+ 		clock-output-names = "plla", "z", "zs", "s", "s1", "p",
+ 		                     "b", "out";
++		#power-domain-cells = <0>;
++	};
++
++
++  - CPG/MSTP Clock Domain member device node:
++
++	sata: sata@fc600000 {
++		compatible = "renesas,sata-r8a7779", "renesas,rcar-sata";
++		reg = <0xfc600000 0x2000>;
++		interrupts = <0 100 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
++		power-domains = <&cpg_clocks>;
+ 	};
+diff --git a/drivers/clk/shmobile/clk-r8a7779.c b/drivers/clk/shmobile/clk-r8a7779.c
+index af297963489f473d..92275c5f2c60303e 100644
+--- a/drivers/clk/shmobile/clk-r8a7779.c
++++ b/drivers/clk/shmobile/clk-r8a7779.c
+@@ -168,6 +168,8 @@ static void __init r8a7779_cpg_clocks_init(struct device_node *np)
+ 	}
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
++
++	cpg_mstp_add_clk_domain(np);
+ }
+ CLK_OF_DECLARE(r8a7779_cpg_clks, "renesas,r8a7779-cpg-clocks",
+ 	       r8a7779_cpg_clocks_init);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
