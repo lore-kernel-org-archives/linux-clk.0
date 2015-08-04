@@ -1,65 +1,55 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 26 Aug 2015 16:43:09 +0900
-Message-Id: <20150826074309.4298.76147.sendpatchset@little-apple>
-Subject: [PATCH v2] clk: shmobile: Get rid of CONFIG_SHMOBILE_MULTI
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <55C10BC3.9080204@codeaurora.org>
+Date: Tue, 04 Aug 2015 12:00:19 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+MIME-Version: 1.0
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+CC: Michael Turquette <mturquette@baylibre.com>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Subject: Re: [PATCH] clk: pxa: pxa3xx: fix CKEN register access
+References: <1438631907-27993-1-git-send-email-robert.jarzmik@free.fr> <55C00A6B.2030508@codeaurora.org> <87h9ofmv2n.fsf@belgarion.home> <55C0FD5E.7000705@codeaurora.org> <874mkenbsp.fsf@belgarion.home>
+In-Reply-To: <874mkenbsp.fsf@belgarion.home>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 08/04/2015 11:33 AM, Robert Jarzmik wrote:
+> Stephen Boyd <sboyd@codeaurora.org> writes:
+>
+>> On 08/03/2015 11:22 PM, Robert Jarzmik wrote:
+>>> Stephen Boyd <sboyd@codeaurora.org> writes:
+>>>
+>>>> On 08/03/2015 12:58 PM, Robert Jarzmik wrote:
+>>>>> Clocks 0 to 31 are on CKENA, and not CKENB. The clock register names
+>>>>> were inadequately inverted. As a consequence, all clock operations were
+>>>>> happening on CKENB, because almost all but 2 clocks are on CKENA.
+>>>>>
+>>>>> As the clocks were activated by the bootloader in the former tests, it
+>>>>> escaped the testing that the wrong clock gate was manipulated. The error
+>>>>> was revealed by changing the pxa3xx-and driver to a module, where tupon
+>>>>> unloading the wrong clock was disabled in CKENB.
+>>>>>
+>>>>> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+>>>>> ---
+>>>> Did you want a fixes tag to send this back to stable?
+>>> Ah yes, good point, v2 on its way.
+>>>
+>>> Stephen and Mike, do you think this can still get in -rc6 ?
+>>>
+>> It's not a new regression for v4.2 so we'll leave it to v4.3. I'll apply it to
+>> clk-next.
+> Euh how so, not "new" ?
+>
+> The clock switch for pxa architecture happens just now, on v4.2, see [1]. So the
+> regression wasn't here on v4.1, but is introduced in v4.2
+>
+> I know I'm terribly late, but isn't it still possible to have it in v4.2 ?
+>
 
-Shmobile is all multiplatform these days, so get rid of the
-reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
-enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
-MSTP depending on if they are included in the SoC or not.
+Ah ok. I wasn't aware that we switched on CCF for PXA this time around. 
+Did the commit text mean to mention the pxa3xx-nand driver? I can fix 
+that up when applying.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-
- Changes since V1:
- - dropped DIV6 from R-Car Gen1 variants - thanks Geert!
-
- drivers/clk/Makefile          |    2 +-
- drivers/clk/shmobile/Makefile |   22 ++++++++++------------
- 2 files changed, 11 insertions(+), 13 deletions(-)
-
---- 0001/drivers/clk/Makefile
-+++ work/drivers/clk/Makefile	2015-08-26 16:39:50.052366518 +0900
-@@ -66,7 +66,7 @@ obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
- obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
- obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
- obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
--obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= shmobile/
-+obj-$(CONFIG_ARCH_SHMOBILE)		+= shmobile/
- obj-$(CONFIG_ARCH_SIRF)			+= sirf/
- obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
- obj-$(CONFIG_PLAT_SPEAR)		+= spear/
---- 0001/drivers/clk/shmobile/Makefile
-+++ work/drivers/clk/shmobile/Makefile	2015-08-26 16:40:04.832366518 +0900
-@@ -1,13 +1,11 @@
- obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
--obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
--obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
--obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
--obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
--obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
--obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o
--obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-div6.o
--obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-mstp.o
-+obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
