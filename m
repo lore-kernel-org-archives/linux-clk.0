@@ -1,63 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 7 Aug 2015 16:11:56 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v4 1/6] cpufreq: make scaling_boost_freqs sysfs attr
- available when boost is enabled
-Message-ID: <20150807104156.GE6939@linux>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <1438868514-8814-2-git-send-email-b.zolnierkie@samsung.com>
- <20150807034128.GE6325@linux>
- <5184469.cOpIkgzX4h@amdc1976>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5184469.cOpIkgzX4h@amdc1976>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: [PATCH v2] clk: pxa: pxa3xx: fix CKEN register access
+Date: Tue,  4 Aug 2015 08:21:33 +0200
+Message-Id: <1438669293-6033-1-git-send-email-robert.jarzmik@free.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07-08-15, 12:34, Bartlomiej Zolnierkiewicz wrote:
-> > I would suggest you sending such patches as reply to the earlier
-> > threads only, instead of a new chain. This will save your time.
-> 
-> Please explain it more.  This patch needs to be first for cpufreq-dt
-> switch to be complete.  scaling_boost_freqs is available currently
-> for exynos-cpufreq users when boost is enabled and ideally we would
-> like it to be available immediately after the switch to cpufreq-dt.
+Clocks 0 to 31 are on CKENA, and not CKENB. The clock register names
+were inadequately inverted. As a consequence, all clock operations were
+happening on CKENB, because almost all but 2 clocks are on CKENA.
 
-I wasn't talking about the ordering of the patches here, but when to
-send patches.
+As the clocks were activated by the bootloader in the former tests, it
+escaped the testing that the wrong clock gate was manipulated. The error
+was revealed by changing the pxa3xx-and driver to a module, where tupon
+unloading the wrong clock was disabled in CKENB.
 
-So, you now sent these patches again, but what you could have done
-is: only send the first patch in reply to the earlier thread. And ask
-if it looks fine. If yes, resend the whole series properly or keep
-fixing there only..
+Fixes: 9bbb8a338fb2 ("clk: pxa: add pxa3xx clock driver")
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+---
+Since v1: added Fixes:
+---
+ drivers/clk/pxa/clk-pxa3xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-That makes things really fast. You don't have to resend the series and
-people wouldn't stay away from it. I stayed away from this series to
-find enough available time to see your 6 patches. Had it been just a
-reply, I would have replied immediately like now.
-
-Look at how updated versions in the same mail chain in case of OPP
-series..
-
+diff --git a/drivers/clk/pxa/clk-pxa3xx.c b/drivers/clk/pxa/clk-pxa3xx.c
+index c677b9ab5367..4af4eed5f89f 100644
+--- a/drivers/clk/pxa/clk-pxa3xx.c
++++ b/drivers/clk/pxa/clk-pxa3xx.c
+@@ -126,7 +126,7 @@ PARENTS(pxa3xx_ac97_bus) = { "ring_osc_60mhz", "ac97" };
+ PARENTS(pxa3xx_sbus) = { "ring_osc_60mhz", "system_bus" };
+ PARENTS(pxa3xx_smemcbus) = { "ring_osc_60mhz", "smemc" };
+ 
+-#define CKEN_AB(bit) ((CKEN_ ## bit > 31) ? &CKENA : &CKENB)
++#define CKEN_AB(bit) ((CKEN_ ## bit > 31) ? &CKENB : &CKENA)
+ #define PXA3XX_CKEN(dev_id, con_id, parents, mult_lp, div_lp, mult_hp,	\
+ 		    div_hp, bit, is_lp, flags)				\
+ 	PXA_CKEN(dev_id, con_id, bit, parents, mult_lp, div_lp,		\
 -- 
-viresh
+2.1.4
+
