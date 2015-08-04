@@ -1,66 +1,62 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 24 Aug 2015 16:43:19 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: rockchip: register pll mux before pll itself
-Message-ID: <20150824234319.GG14330@codeaurora.org>
-References: <7060610.CC2Q1RMG2L@phil>
- <CAD=FV=UG_QkU0W5tpb3Y7zxuq6X7dtQmC4m5_j9vMtJgjdiquQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAD=FV=UG_QkU0W5tpb3Y7zxuq6X7dtQmC4m5_j9vMtJgjdiquQ@mail.gmail.com>
+Return-Path: <k.kozlowski@samsung.com>
+Message-id: <55C0160F.6080301@samsung.com>
+Date: Tue, 04 Aug 2015 10:31:59 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Kukjin Kim <kgene@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+ Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
+ Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+ <3141301.RS9TLygaba@amdc1976> <20150727113641.GB10181@linux>
+ <2681271.3UazeZ9PAQ@amdc1976> <55BA36A7.3050107@kernel.org>
+In-reply-to: <55BA36A7.3050107@kernel.org>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/24, Doug Anderson wrote:
-> Heiko
+On 30.07.2015 23:37, Kukjin Kim wrote:
+> On 07/27/15 20:47, Bartlomiej Zolnierkiewicz wrote:
+>> On Monday, July 27, 2015 05:06:41 PM Viresh Kumar wrote:
+>>> On 27-07-15, 13:14, Bartlomiej Zolnierkiewicz wrote:
+>>>> Sorry but you don't seem to understand the issue.
+>>>
+>>> :)
+>>>
+>>> No, I did. I understand that if someone uses opp bindings today with
+>>> some entries as turbo OPPs, cpufreq will use them as normal
+>>> frequencies. And that may harm the board.
+>>>
+>>> BUT, opp-v2 code isn't ready to be used yet. And platforms should see
+>>> what all is implemented before trying to use them.
+>>
+>> OK.
+>>
+>>> All I was saying is, this isn't a FIX as we haven't introduced the
+>>> feature yet. Otherwise I had no issues with the patch.
+>>
+>> I will update the description for the next patchset revision.
+>>
+> Hi Bart,
 > 
-> On Wed, Aug 19, 2015 at 6:06 AM, Heiko Stuebner <heiko@sntech.de> wrote:
-> > The structure is xin24m -> pll -> pll-mux (xin24m,pll,xin32k). The pll
-> > does have an init callback to make sure the boot-selected frequency is
-> > using the expected pll settings and resets the same frequency using
-> > the values provided in the driver if necessary.
-> >
-> > The setting itself also involves remuxing the pll-mux temporarily to
-> > the xin24m source to let the new pll rate settle. Until now this worked
-> > flawlessly, even when it had the flaw of accessing the mux settings
-> > before the mux actually got registered.
-> >
-> > With the recent clock-core conversions this flaw became apparent in
-> > null pointer dereference in
-> > [<c03fc400>] (clk_hw_get_num_parents) from [<c0400df0>] (clk_mux_get_parent+0x14/0xc8)
-> > [<c0400ddc>] (clk_mux_get_parent) from [<c040246c>] (rockchip_rk3066_pll_set_rate+0xd8/0x320)
-> >
-> > So to fix that, simply register the pll-mux before the pll, so that
-> > it will be fully initialized when the pll clock executes its init-
-> > callback and possibly touches the pll-mux clock.
-> >
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> > This only surfaced with the clk_core changes for 4.3, so should
-> > probably just go on top.
-> >
-> >  drivers/clk/rockchip/clk-pll.c | 63 +++++++++++++++++++++---------------------
-> >  1 file changed, 32 insertions(+), 31 deletions(-)
-> 
-> Fixes boot crash on rk3288-veyron-jerry on next-20150824.  It'd be
-> super great to get this landed somewhere so that we can boot linuxnext
-> again.  :)
-> 
-> Tested-by: Douglas Anderson <dianders@chromium.org>
+> When will you re-post v3? Because I have a plan to send a pull-request
+> to arm-soc until this weekend...
 
-So I understand the fix, but how could it have ever possibly
-worked flawlessly? clk_mux_get_parent() should have returned
--EINVAL through that u8 which would have meant that the check in
-rockchip_rk3066_pll_set_rate() for cur_parent == PLL_MODE_NORM
-would never have been true, and we would never have switched the
-PLL mux over. I guess we've been getting away with this because
-we don't need to actually switch the mux at this time?
+Dear Kukjin,
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+We are already at 4.2-rc5 and you did not send the pull request before
+the weekend as you said. It is really late and there is no special
+reason for delaying the request. What happened?
+
+Best regards,
+Krzysztof
