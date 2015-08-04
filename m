@@ -1,55 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Shunqian Zheng <zhengsq@rock-chips.com>
-To: gregkh@linuxfoundation.org, srinivas.kandagatla@linaro.org,
-	maxime.ripard@free-electrons.com, heiko@sntech.de,
-	caesar.wang@rock-chips.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, dianders@chromium.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	xjq@rock-chips.com, ZhengShunQian <zhengsq@rock-chips.com>
-Subject: [PATCH v2 5/5] ARM: dts: rockchip: add eFuse config of rk3288 SoC
-Date: Tue, 11 Aug 2015 18:13:44 +0800
-Message-Id: <1439288024-13359-6-git-send-email-zhengsq@rock-chips.com>
-In-Reply-To: <1439288024-13359-1-git-send-email-zhengsq@rock-chips.com>
-References: <1439288024-13359-1-git-send-email-zhengsq@rock-chips.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 08/16] ARM: shmobile: r8a7779 dtsi: Add CPG/MSTP Clock Domain
+Date: Tue,  4 Aug 2015 14:28:09 +0200
+Message-Id: <1438691297-29235-9-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
+References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: ZhengShunQian <zhengsq@rock-chips.com>
+Add an appropriate "#power-domain-cells" property to the cpg_clocks
+device node, to create the CPG/MSTP Clock Domain.
 
-This patch add the eFuse dt config of rk3288 SoC.
+Add "power-domains" properties to all device nodes for devices that are
+part of the CPG/MSTP Clock Domain and can be power-managed through an
+MSTP clock.  This applies to most on-SoC devices, which have a
+one-to-one mapping from SoC device to DT device node.
 
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: ZhengShunQian <zhengsq@rock-chips.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- arch/arm/boot/dts/rk3288.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+v4:
+  - Add Reviewed-by,
 
-diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 2db91c9..4632e0d 100644
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -749,6 +749,19 @@
- 		interrupts = <GIC_PPI 9 0xf04>;
+v3:
+  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
+
+v2:
+  - New.
+---
+ arch/arm/boot/dts/r8a7779.dtsi | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index a2b5430d32575f99..6afa909865b52b71 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -173,6 +173,7 @@
+ 		reg = <0xffc70000 0x1000>;
+ 		interrupts = <0 79 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C0>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
  	};
  
-+	efuse: efuse@ffb40000 {
-+		compatible = "rockchip,rockchip-efuse";
-+		reg = <0xffb40000 0x20>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		clocks = <&cru PCLK_EFUSE256>;
-+		clock-names = "pclk_efuse";
-+
-+		cpu_leakage: cpu_leakage {
-+			reg = <0x17 0x1>;
-+		};
-+	};
-+
- 	usbphy: phy {
- 		compatible = "rockchip,rk3288-usb-phy";
- 		rockchip,grf = <&grf>;
+@@ -183,6 +184,7 @@
+ 		reg = <0xffc71000 0x1000>;
+ 		interrupts = <0 82 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C1>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -193,6 +195,7 @@
+ 		reg = <0xffc72000 0x1000>;
+ 		interrupts = <0 80 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C2>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -203,6 +206,7 @@
+ 		reg = <0xffc73000 0x1000>;
+ 		interrupts = <0 81 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C3>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -212,6 +216,7 @@
+ 		interrupts = <0 88 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF0>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -221,6 +226,7 @@
+ 		interrupts = <0 89 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF1>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -230,6 +236,7 @@
+ 		interrupts = <0 90 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF2>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -239,6 +246,7 @@
+ 		interrupts = <0 91 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF3>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -248,6 +256,7 @@
+ 		interrupts = <0 92 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF4>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -257,6 +266,7 @@
+ 		interrupts = <0 93 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF5>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -278,6 +288,7 @@
+ 			     <0 34 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_TMU0>;
+ 		clock-names = "fck";
++		power-domains = <&cpg_clocks>;
+ 
+ 		#renesas,channels = <3>;
+ 
+@@ -292,6 +303,7 @@
+ 			     <0 38 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_TMU1>;
+ 		clock-names = "fck";
++		power-domains = <&cpg_clocks>;
+ 
+ 		#renesas,channels = <3>;
+ 
+@@ -306,6 +318,7 @@
+ 			     <0 42 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_TMU2>;
+ 		clock-names = "fck";
++		power-domains = <&cpg_clocks>;
+ 
+ 		#renesas,channels = <3>;
+ 
+@@ -317,6 +330,7 @@
+ 		reg = <0xfc600000 0x2000>;
+ 		interrupts = <0 100 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
++		power-domains = <&cpg_clocks>;
+ 	};
+ 
+ 	sdhi0: sd@ffe4c000 {
+@@ -324,6 +338,7 @@
+ 		reg = <0xffe4c000 0x100>;
+ 		interrupts = <0 104 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI0>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -332,6 +347,7 @@
+ 		reg = <0xffe4d000 0x100>;
+ 		interrupts = <0 105 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI1>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -340,6 +356,7 @@
+ 		reg = <0xffe4e000 0x100>;
+ 		interrupts = <0 107 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI2>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -348,6 +365,7 @@
+ 		reg = <0xffe4f000 0x100>;
+ 		interrupts = <0 106 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI3>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -358,6 +376,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -368,6 +387,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -378,6 +398,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -386,6 +407,7 @@
+ 		reg = <0 0xfff80000 0 0x40000>;
+ 		interrupts = <0 31 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7779_CLK_DU>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 
+ 		ports {
+@@ -427,6 +449,7 @@
+ 			#clock-cells = <1>;
+ 			clock-output-names = "plla", "z", "zs", "s",
+ 					     "s1", "p", "b", "out";
++			#power-domain-cells = <0>;
+ 		};
+ 
+ 		/* Fixed factor clocks */
 -- 
 1.9.1
 
