@@ -1,88 +1,32 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk@vger.kernel.org, kuninori.morimoto.gx@renesas.com, linux-sh@vger.kernel.org, mturquette@baylibre.com, gaku.inami.xw@bp.renesas.com, sboyd@codeaurora.org, horms@verge.net.au, geert@linux-m68k.org
-Subject: Re: [PATCH v3 01/04] clk: shmobile: Get rid of CONFIG_ARCH_SHMOBILE_MULTI
-Date: Fri, 28 Aug 2015 22:59:25 +0300
-Message-ID: <1746913.nJHMkg2anu@avalon>
-In-Reply-To: <20150828091602.21731.21262.sendpatchset@little-apple>
-References: <20150828091550.21731.85227.sendpatchset@little-apple> <20150828091602.21731.21262.sendpatchset@little-apple>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 4 Aug 2015 13:42:38 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 4/5] clk: fractional-divider: switch to rational best
+ approximation
+Message-ID: <20150804104238.GD7675@kuha.fi.intel.com>
+References: <1437997733-135331-1-git-send-email-andriy.shevchenko@linux.intel.com>
+ <1437997733-135331-5-git-send-email-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1437997733-135331-5-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus,
+On Mon, Jul 27, 2015 at 02:48:52PM +0300, Andy Shevchenko wrote:
+> This patch converts the code to use rational best approximation algorithm which
+> is much more precise.
+> 
+> Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Thank you for the patch.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-On Friday 28 August 2015 18:16:02 Magnus Damm wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
-> 
-> Shmobile is all multiplatform these days, so get rid of the
-> reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
-> enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
-> MSTP depending on if they are included in the SoC or not.
-> 
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Assuming you have verified that adding the same object file several times to 
-obj-y won't cause any issue,
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
-> 
->  Changes since V2:
->  - Fixed patch subject typo CONFIG_SHMOBILE_MULTI ->
-> CONFIG_ARCH_SHMOBILE_MULTI
-> 
->  Changes since V1:
->  - dropped DIV6 from R-Car Gen1 variants - thanks Geert!
-> 
->  drivers/clk/Makefile          |    2 +-
->  drivers/clk/shmobile/Makefile |   22 ++++++++++------------
->  2 files changed, 11 insertions(+), 13 deletions(-)
-> 
-> --- 0001/drivers/clk/Makefile
-> +++ work/drivers/clk/Makefile	2015-08-26 16:39:50.052366518 +0900
-> @@ -66,7 +66,7 @@ obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
->  obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
->  obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
->  obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
-> -obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= shmobile/
-> +obj-$(CONFIG_ARCH_SHMOBILE)		+= shmobile/
->  obj-$(CONFIG_ARCH_SIRF)			+= sirf/
->  obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
->  obj-$(CONFIG_PLAT_SPEAR)		+= spear/
-> --- 0001/drivers/clk/shmobile/Makefile
-> +++ work/drivers/clk/shmobile/Makefile	2015-08-26 16:40:04.832366518 +0900
-> @@ -1,13 +1,11 @@
->  obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
-> -obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
-> -obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
-> -obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
-> -obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
-> -obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
-> -obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
-> -obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o
-> -obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o
-> -obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o
-> -obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o
-> -obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-div6.o
-> -obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-mstp.o
-> +obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o clk-mstp.o
-> +obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-mstp.o clk-div6.o
-> +obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-mstp.o clk-div6.o
-> +obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o clk-mstp.o
-> +obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o clk-mstp.o
-> +obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-> +obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-> +obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-> +obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-> +obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
+Thanks,
 
 -- 
-Regards,
-
-Laurent Pinchart
+heikki
