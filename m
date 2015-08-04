@@ -1,66 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 10/31] clk/mmp: use kmemdup rather than duplicating its
- implementation
-Date: Fri, 07 Aug 2015 09:59:16 +0200
-Message-id: <1438934377-4922-11-git-send-email-a.hajda@samsung.com>
-In-reply-to: <1438934377-4922-1-git-send-email-a.hajda@samsung.com>
-References: <1438934377-4922-1-git-send-email-a.hajda@samsung.com>
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Bintian Wang <bintian.wang@huawei.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Jian Zhang <zhangjian001@hisilicon.com>,
+	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
+	Haoju Mo <mohaoju@hisilicon.com>,
+	Dan Zhao <dan.zhao@hisilicon.com>, sunzhaosheng@hisilicon.com,
+	victor.lixin@hisilicon.com
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v4 0/4] clk: hisilicon: support stub clock
+Date: Tue,  4 Aug 2015 15:27:25 +0800
+Message-Id: <1438673249-6051-1-git-send-email-leo.yan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch was generated using fixed coccinelle semantic patch
-scripts/coccinelle/api/memdup.cocci [1].
+This series adds support for hisilicon stub clock driver. On hi6220,
+the bootloader needs load the firmware image and set info for OPPs;
+after run into kernel, the stub clock driver is used to communicate
+w/t firmware for cpu dynamic frequency scaling.
 
-[1]: http://permalink.gmane.org/gmane.linux.kernel/2014320
+In patch series v1/v2, the stub clock driver simply writes request in
+sram and send ipc to firmware; For patch series v3, the firmware has
+been upgraded to use mailbox, so stub clock driver will call standard
+mailbox APIs to request mailbox channel and send message to firmware.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/clk/mmp/clk-mix.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Patch 4 adds stub clock node into dts and it references mailbox with
+phandle, so patch 4 will depend on mailbox driver's patch series [1].
+These patches have been tested on 96board hikey and is used by cpufreq
+driver.
 
-diff --git a/drivers/clk/mmp/clk-mix.c b/drivers/clk/mmp/clk-mix.c
-index 665cb67..3383410 100644
---- a/drivers/clk/mmp/clk-mix.c
-+++ b/drivers/clk/mmp/clk-mix.c
-@@ -469,20 +469,20 @@ struct clk *mmp_clk_register_mix(struct device *dev,
- 	memcpy(&mix->reg_info, &config->reg_info, sizeof(config->reg_info));
- 	if (config->table) {
- 		table_bytes = sizeof(*config->table) * config->table_size;
--		mix->table = kzalloc(table_bytes, GFP_KERNEL);
-+		mix->table = kmemdup(config->table, table_bytes, GFP_KERNEL);
- 		if (!mix->table) {
- 			pr_err("%s:%s: could not allocate mmp mix table\n",
- 				__func__, name);
- 			kfree(mix);
- 			return ERR_PTR(-ENOMEM);
- 		}
--		memcpy(mix->table, config->table, table_bytes);
- 		mix->table_size = config->table_size;
- 	}
- 
- 	if (config->mux_table) {
- 		table_bytes = sizeof(u32) * num_parents;
--		mix->mux_table = kzalloc(table_bytes, GFP_KERNEL);
-+		mix->mux_table = kmemdup(config->mux_table, table_bytes,
-+					 GFP_KERNEL);
- 		if (!mix->mux_table) {
- 			pr_err("%s:%s: could not allocate mmp mix mux-table\n",
- 				__func__, name);
-@@ -490,7 +490,6 @@ struct clk *mmp_clk_register_mix(struct device *dev,
- 			kfree(mix);
- 			return ERR_PTR(-ENOMEM);
- 		}
--		memcpy(mix->mux_table, config->mux_table, table_bytes);
- 	}
- 
- 	mix->div_flags = config->div_flags;
+Changes from v3:
+* Patch "clk: hisi: refine parameter checking for init" [2] has been
+  applied to clk-next, so skip it in v4
+* According to Stephen Boyd's review, fix and refine stub clock driver
+* The stub clock driver depends on mailbox channel's initialization, so
+  mailbox init firstly with core_initcall() and use subsys_initcall()
+  for stub clock driver
+
+Changes from v2:
+* Use platform_device's probe for clock's initialization
+* Use mailbox channel for clock frequency change
+
+Changes from v1:
+* Refine parameter checking for init flow
+* Remove unnecessary debugging info
+* Modify to check spinlock pointer when register clocks
+
+[1] http://archive.arm.linux.org.uk/lurker/message/20150803.011307.1062b247.en.html
+[2] http://archive.arm.linux.org.uk/lurker/message/20150803.011334.4b6f2fc7.en.html
+
+
+Leo Yan (4):
+  dt-bindings: arm: Hi6220: add doc for SRAM controller
+  dt-bindings: clk: Hi6220: Document stub clock driver
+  clk: Hi6220: add stub clock driver
+  arm64: dts: add Hi6220's stub clock node
+
+ .../bindings/arm/hisilicon/hisilicon.txt           |  18 ++
+ .../devicetree/bindings/clock/hi6220-clock.txt     |  19 +-
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi          |  23 ++
+ drivers/clk/hisilicon/Kconfig                      |   2 +-
+ drivers/clk/hisilicon/Makefile                     |   2 +-
+ drivers/clk/hisilicon/clk-hi6220-stub.c            | 276 +++++++++++++++++++++
+ 6 files changed, 337 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/hisilicon/clk-hi6220-stub.c
+
 -- 
 1.9.1
 
