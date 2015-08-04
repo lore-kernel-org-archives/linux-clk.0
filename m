@@ -1,33 +1,119 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 4 Aug 2015 13:41:27 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 1/5] clk: fractional-divider: rename prate ->
- parent_rate
-Message-ID: <20150804104127.GB7675@kuha.fi.intel.com>
-References: <1437997733-135331-1-git-send-email-andriy.shevchenko@linux.intel.com>
- <1437997733-135331-2-git-send-email-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1437997733-135331-2-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 16/16] ARM: shmobile: R-Mobile: Use CPG/MSTP Clock Domain attach/detach helpers
+Date: Tue,  4 Aug 2015 14:28:17 +0200
+Message-Id: <1438691297-29235-17-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
+References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jul 27, 2015 at 02:48:49PM +0300, Andy Shevchenko wrote:
-> Rename function parameter to be more explicit what it is for. This also makes
-> it in align with struct clk_ops.
-> 
-> There is no functional change.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+The R-Mobile PM Domain driver manages both power domains and a clock
+domain.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+The clock domain part is very similar to the CPG/MSTP Clock Domain,
+which is used on shmobile SoCs without device power domains, except for
+the way how clocks suitable for power management are selected:
+  - The former uses the first clock tied to the device through the NULL
+    con_id, which is a relic from the legacy pm_clk_notifier-based
+    method in drivers/sh/pm_runtime.c,
+  - The latter looks for suitable clocks in DT, which is more
+    future-proof.
 
+All platforms using this driver are now supported in DT-based ARM
+multi-platform builds only, hence switch to using the CPG/MSTP Clock
+Domain helpers.
 
-Thanks,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+v4:
+  - Add Reviewed-by,
 
+v3:
+  - Drop -legacy support, hence this patch depends on r8a7740/sh73a0
+    legacy removal,
+  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
+
+v2:
+  - New.
+---
+ arch/arm/mach-shmobile/pm-rmobile.c | 35 +++--------------------------------
+ 1 file changed, 3 insertions(+), 32 deletions(-)
+
+diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
+index a5b96b990aea8dfc..89068c8ec50f2c76 100644
+--- a/arch/arm/mach-shmobile/pm-rmobile.c
++++ b/arch/arm/mach-shmobile/pm-rmobile.c
+@@ -12,6 +12,7 @@
+  * License.  See the file "COPYING" in the main directory of this archive
+  * for more details.
+  */
++#include <linux/clk/shmobile.h>
+ #include <linux/console.h>
+ #include <linux/delay.h>
+ #include <linux/of.h>
+@@ -124,36 +125,6 @@ static bool rmobile_pd_active_wakeup(struct device *dev)
+ 	return true;
+ }
+ 
+-static int rmobile_pd_attach_dev(struct generic_pm_domain *domain,
+-				 struct device *dev)
+-{
+-	int error;
+-
+-	error = pm_clk_create(dev);
+-	if (error) {
+-		dev_err(dev, "pm_clk_create failed %d\n", error);
+-		return error;
+-	}
+-
+-	error = pm_clk_add(dev, NULL);
+-	if (error) {
+-		dev_err(dev, "pm_clk_add failed %d\n", error);
+-		goto fail;
+-	}
+-
+-	return 0;
+-
+-fail:
+-	pm_clk_destroy(dev);
+-	return error;
+-}
+-
+-static void rmobile_pd_detach_dev(struct generic_pm_domain *domain,
+-				  struct device *dev)
+-{
+-	pm_clk_destroy(dev);
+-}
+-
+ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
+ {
+ 	struct generic_pm_domain *genpd = &rmobile_pd->genpd;
+@@ -164,8 +135,8 @@ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
+ 	genpd->dev_ops.active_wakeup	= rmobile_pd_active_wakeup;
+ 	genpd->power_off		= rmobile_pd_power_down;
+ 	genpd->power_on			= rmobile_pd_power_up;
+-	genpd->attach_dev		= rmobile_pd_attach_dev;
+-	genpd->detach_dev		= rmobile_pd_detach_dev;
++	genpd->attach_dev		= cpg_mstp_attach_dev;
++	genpd->detach_dev		= cpg_mstp_detach_dev;
+ 	__rmobile_pd_power_up(rmobile_pd, false);
+ }
+ 
 -- 
-heikki
+1.9.1
