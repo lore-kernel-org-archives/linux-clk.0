@@ -1,117 +1,83 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Michael Niewoehner <linux@mniewoehner.de>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org
-Subject: Re: [PATCH] clk: rockchip: add pclk_cpu to the list of rk3188 critical clocks
-Date: Mon, 17 Aug 2015 21:37:22 +0200
-Message-ID: <10213368.VjAQGt7Kjq@phil>
-In-Reply-To: <9DBF9CCE-196E-43FB-BA76-BFB4B5F47A22@mniewoehner.de>
-References: <5400BEF8-5245-4F7B-845B-D326A7BC56B5@mniewoehner.de> <5275855.eah07vmf4I@phil> <9DBF9CCE-196E-43FB-BA76-BFB4B5F47A22@mniewoehner.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Bintian Wang <bintian.wang@huawei.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Jian Zhang <zhangjian001@hisilicon.com>,
+	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
+	Haoju Mo <mohaoju@hisilicon.com>,
+	Dan Zhao <dan.zhao@hisilicon.com>, sunzhaosheng@hisilicon.com,
+	victor.lixin@hisilicon.com
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v4 2/4] dt-bindings: clk: Hi6220: Document stub clock driver
+Date: Tue,  4 Aug 2015 15:27:27 +0800
+Message-Id: <1438673249-6051-3-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1438673249-6051-1-git-send-email-leo.yan@linaro.org>
+References: <1438673249-6051-1-git-send-email-leo.yan@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michael,
+Document the new compatible for stub clock driver which is used for CPU
+and DDR's dynamic frequency scaling.
 
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ .../devicetree/bindings/clock/hi6220-clock.txt        | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-need to pick a bit more on your patch submission :-)
+diff --git a/Documentation/devicetree/bindings/clock/hi6220-clock.txt b/Documentation/devicetree/bindings/clock/hi6220-clock.txt
+index 259e30a..e4d5fea 100644
+--- a/Documentation/devicetree/bindings/clock/hi6220-clock.txt
++++ b/Documentation/devicetree/bindings/clock/hi6220-clock.txt
+@@ -15,19 +15,36 @@ Required Properties:
+ 	- "hisilicon,hi6220-sysctrl"
+ 	- "hisilicon,hi6220-mediactrl"
+ 	- "hisilicon,hi6220-pmctrl"
++	- "hisilicon,hi6220-stub-clk"
+ 
+ - reg: physical base address of the controller and length of memory mapped
+   region.
+ 
+ - #clock-cells: should be 1.
+ 
+-For example:
++Optional Properties:
++
++- hisilicon,hi6220-clk-sram: phandle to the syscon managing the SoC internal sram;
++  the driver need use the sram to pass parameters for frequency change.
++
++- mboxes: use the label reference for the mailbox as the first parameter, the
++  second parameter is the channel number.
++
++Example 1:
+ 	sys_ctrl: sys_ctrl@f7030000 {
+ 		compatible = "hisilicon,hi6220-sysctrl", "syscon";
+ 		reg = <0x0 0xf7030000 0x0 0x2000>;
+ 		#clock-cells = <1>;
+ 	};
+ 
++Example 2:
++	stub_clock: stub_clock {
++		compatible = "hisilicon,hi6220-stub-clk";
++		hisilicon,hi6220-clk-sram = <&sram>;
++		#clock-cells = <1>;
++		mboxes = <&mailbox 1>;
++	};
++
+ Each clock is assigned an identifier and client nodes use this identifier
+ to specify the clock which they consume.
+ 
+-- 
+1.9.1
 
-Please take a look for example at
-http://lists.infradead.org/pipermail/linux-rockchip/2014-November/001043.html
-
-on how a v2 submission needs to look like.
-
-Specifically:
-- In most cases not as a reply to a reply to another mail.
-- Mail subject: [PATCH v2] clk: rockchip: add pclk_cpu to the list of rk3188 
-critical clocks
-
-
-Am Montag, 17. August 2015, 20:51:14 schrieb Michael Niewoehner:
-> Hi Heiko,
-> 
-> I merged yours and mine :-)
-> 
-> 
-
-no prose nor empty lines. If necessary such stuff could sit below the "---" 
-which results in it not making it into the actuall commit message.
-
-
-> pclk_cpu needs to keep running because it is needed for devices like
-> the act8865 regulator but with the recent gpio clock handling this is
-> not always the case anymore. So add it to the list of critical clocks.
-> 
-> Signed-off-by: Michael Niewoehner <linux@mniewoehner.de>
-> ---
-
-Here any prose-text you like to add.
-
-Also, changelog:
-changes in v2:
-- adapt commit message
-- add Linus Walleij to recipients, as the patch is related to the gpio clock
-  change in the rockchip pinctrl driver it should go through his tree as well
-
-> drivers/clk/rockchip/clk-rk3188.c | 1 +
-> 1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3188.c
-> b/drivers/clk/rockchip/clk-rk3188.c index e4f9d47..1c93229 100644
-> --- a/drivers/clk/rockchip/clk-rk3188.c
-> +++ b/drivers/clk/rockchip/clk-rk3188.c
-> @@ -708,6 +708,7 @@ static const char *const rk3188_critical_clocks[]
-> __initconst = { "aclk_cpu",
-> 	"aclk_peri",
-> 	"hclk_peri",
-> +	"pclk_cpu",
-> };
-> 
-> static void __init rk3188_common_clk_init(struct device_node *np)
-
-
-no quotes of other mails, like the stuff below.
-
-
-Heiko
-
-> 
-> > Hi,
-> > 
-> > Am Montag, 17. August 2015, 19:38:22 schrieb Michael Niewoehner:
-> >> gpio clock is getting disabled to save power but pclk_cpu is needed for
-> >> act8865 regulator
-> > 
-> > Please refine the commit message a bit :-) . Something along
-> > 
-> > pclk_cpu needs to keep running and with the recent gpio clock
-> > handling this is not always the case anymore. So add it to the list
-> > of critical clocks.
-> > 
-> > 
-> > and also please add "Linus Walleij <linus.walleij@linaro.org>" to the list
-> > of recipients. As the gpio clock handling change does go through his
-> > tree, the matching critical clock handling should also go through him.
-> > 
-> > 
-> > Heiko
-> > 
-> >> Signed-off-by: Michael Niewoehner <linux@mniewoehner.de>
-> >> ---
-> >> drivers/clk/rockchip/clk-rk3188.c | 1 +
-> >> 1 file changed, 1 insertion(+)
-> >> 
-> >> diff --git a/drivers/clk/rockchip/clk-rk3188.c
-> >> b/drivers/clk/rockchip/clk-rk3188.c index e4f9d47..1c93229 100644
-> >> --- a/drivers/clk/rockchip/clk-rk3188.c
-> >> +++ b/drivers/clk/rockchip/clk-rk3188.c
-> >> @@ -708,6 +708,7 @@ static const char *const rk3188_critical_clocks[]
-> >> __initconst = { "aclk_cpu",
-> >> 
-> >> 	"aclk_peri",
-> >> 	"hclk_peri",
-> >> 
-> >> +	"pclk_cpu",
-> >> };
-> >> 
-> >> static void __init rk3188_common_clk_init(struct device_node *np)
