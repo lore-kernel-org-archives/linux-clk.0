@@ -1,87 +1,59 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 20 Aug 2015 17:39:22 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, lee.jones@linaro.org, s.hauer@pengutronix.de,
-	geert@linux-m68k.org
-Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
-Message-ID: <20150820153922.GE30520@lukather>
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
- <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
- <20150818155854.GK2547@lukather>
- <20150818163931.31346.78267@quantum>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from pandora.arm.linux.org.uk ([78.32.30.218]:34620 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752692AbbHDPgs (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 4 Aug 2015 11:36:48 -0400
+Date: Tue, 4 Aug 2015 16:36:41 +0100
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Nishanth Menon <nm@ti.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	linux-rt-users@vger.kernel.org, Felipe Balbi <balbi@ti.com>,
+	Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org
+Subject: Re: Common clock framework API vs RT patchset
+Message-ID: <20150804153641.GR7557@n2100.arm.linux.org.uk>
+References: <55C0A96F.80307@ti.com>
+ <alpine.DEB.2.11.1508041405290.3983@nanos>
+ <55C0D8F3.3030105@ti.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="AKuaMbydVAlrc5ow"
-In-Reply-To: <20150818163931.31346.78267@quantum>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <55C0D8F3.3030105@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, Aug 04, 2015 at 10:23:31AM -0500, Nishanth Menon wrote:
+> Consider clk_enable/disable/set_parent/setfreq operations. none of these
+> operations are "atomic" from hardware point of view. instead, they are a
+> set of steps which culminates to moving from state A to state B of the
+> clock tree configuration.
 
---AKuaMbydVAlrc5ow
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There's a world of difference between clk_enable()/clk_disable() and
+the rest of the clk API.
 
-On Tue, Aug 18, 2015 at 09:39:31AM -0700, Michael Turquette wrote:
-> > In my mind, the fact that we hand off the clock reference is a direct
-> > result to the clock being critical (or whatever name we want to call
-> > it). The hand off is a side effect, but the real information we want
-> > to carry is that it should not be gated.
->=20
-> I chose the "hand-off" name because I want to set an expectation to
-> users of this feature. That expectation is that some day they will have
-> a Linux device driver that claims and manages this "critical clock".
-> Clearly this is not always the case. Many clocks using this feature will
-> never have a driver that "owns" them.
->=20
-> But I wanted to avoid any kind of "always on" or "easy hack to avoid
-> writing proper driver code" naming convention that encourages bad
-> behavior down the line.
->=20
-> Also, the hand-off thing is sort of a big deal. If driver writers only
-> thought of this as an "alway on" mechanism then subtle bugs might creep
-> in where drivers are getting and disabling a clock that the author
-> incorrectly thought would always be enabled. So I'd like the name to
-> reflect that somehow.
->=20
-> As always I am open to suggestions.
+clk_enable()/clk_disable() _should_ be callable from any context, since
+you may need to enable or disable a clock from any context.  The remainder
+of the clk API is callable only from contexts where sleeping is permissible.
 
-For the record, I think always-on would be just as bad, since it has
-the same issue of describing the behaviour instead of describing what
-the clock is.
+The reason we have this split is because clk_enable()/clk_disable() have
+historically been used in interrupt handlers, and they're specifically
+not supposed to impose big delays.
 
-I would think critical is better, and if you feel there's some
-unexpected behaviour, we can always add some comment / documentation
-for that (heresy, I know ;))
+Things like waiting for a PLL to re-lock is time-consuming, so it's not
+something I'd expect to see behind a clk_enable() implementation (the
+fact you can't sleep in there is a big hint.)  Such waits should be in
+the clk_prepare() stage instead.
 
-Maxime
+Now, as for clk_enable() being interrupted - if clk_enable() is interrupted
+and another clk_enable() comes along for the same clock, that second
+clk_enable() should not return until the clock has actually been enabled,
+and it's up to the implementation to decode how to achieve that.  If that
+means a RT implementation using a raw spinlock, then that's one option
+(which basically would have the side effect of blocking until the preempted
+clk_enable() finishes its business.)  Alternatively, if we can preempt
+inside clk_enable(), then the clk_enable() implementation should be written
+to cope with that (eg, by the second clk_enable() fiddling with the hardware,
+and the first thread noticing that it has nothing to do.)
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---AKuaMbydVAlrc5ow
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJV1fSqAAoJEBx+YmzsjxAgPR4QAIGJMet5N1jPPOFuyIOKjb9n
-Dn8tnJZfXHmxD0Ub3ZaV0zS9lrrDyt1ewqPB/yDjLSlXVcsUPVLW4VpmArMA6vl+
-gsRVLZQP/7kjr/SouLdnXSflsbmTN3I5ZkYXWS1cj6RCgtI1KG5MnhaZ52R6xkh2
-+zGq/LiHjgCgjlaxD6gPw6mnoj2d8kMzv6Nris/Lv9NNNzNFWBpA0gCP3+Vgs9YZ
-q0Lqw2QyHZGSaoRH6RCwcnhIPI1L2/qiL5ShRNOg2Mq8FOsAP6Iuy4uPVBv8NWKG
-Tx+6s0URaAwL5mYcSSom78/mCxMQ4UdIbPtQ1GecQRwOh8nPDnz+KyKqOWkOlgz2
-veOkRhT/51gPU53u9oprX0WkRYVAY23PtSTuS9Zef6PttRz6dI0C5Zw8cLKQX3xO
-urRw4vbiD+oK4r0qzhY1VGWuqBTDbEl58+tWPYtbpL3IE6OF4VB+tJsify74f/H4
-eY4tC5PuEe6zaQOm7ac8k1ShwmmQ7bFjEkVIrI0W9pgFuHXsJ5qHHVFXxhSmchup
-8oeQ/Vw85svKJEwBnw1Q66no5ss1HcmQK6VxxipAg+ick3JFnBLFbOwhBNFvGNMU
-o+HF31Enw7mlYAkzKJv0gzPQrPCC7QIE7JGA72Cam14cfjl9u5WHMw7cbOR1ySCr
-povg1AWz5S/P/lpVlpXC
-=ttVF
------END PGP SIGNATURE-----
-
---AKuaMbydVAlrc5ow--
+-- 
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
