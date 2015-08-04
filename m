@@ -1,60 +1,57 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <55C9DF7B.4040308@st.com>
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
-	<1438974570-20812-4-git-send-email-mturquette@baylibre.com>
-	<20150810144811.GN3249@x1>
-	<20150810185516.2416.32293@quantum>
-	<20150811084329.GA13374@x1>
-	<55C9C82F.6060401@st.com>
-	<CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com>
-	<55C9DE57.2090105@st.com>
-	<55C9DF7B.4040308@st.com>
-Date: Tue, 11 Aug 2015 13:49:09 +0200
-Message-ID: <CAMuHMdVvS2n=J5paZzXdtD0vZ4Q4m9k7XeF_MF1zV4pD-nk9aw@mail.gmail.com>
-Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Maxime Coquelin <maxime.coquelin@st.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 13/16] drivers: sh: Disable legacy default PM Domain on emev2
+Date: Tue,  4 Aug 2015 14:28:14 +0200
+Message-Id: <1438691297-29235-14-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
+References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
+EMMA Mobile EV2 doesn't have MSTP clocks. All its device drivers manage
+clocks explicitly, without relying on Runtime PM, so it doesn't need the
+legacy default PM Domain.
 
-On Tue, Aug 11, 2015 at 1:41 PM, Maxime Coquelin <maxime.coquelin@st.com> wrote:
-> On 08/11/2015 01:36 PM, Maxime Coquelin wrote:
->> On 08/11/2015 12:11 PM, Geert Uytterhoeven wrote:
->>> On Tue, Aug 11, 2015 at 12:02 PM, Maxime Coquelin
->>> <maxime.coquelin@st.com> wrote:
->>>> How can we pass CLK_ENABLE_HAND_OFF flag to a specific clock on STi
->>>> platform?
->>>
->>> Add the flag to the relevant clocks in the C code, e.g. in
->>> clk_register_flexgen():
->>>
->>>          if (!strcmp(name, "clk-icn-cpu"))
->>>                  init.flags |= CLK_ENABLE_HAND_OFF;
->
-> The main problem I see with this proposal is that clk_register_flexgen() is
-> called for several SoCs (STiH407/410/418...).
-> Each of these SoCs have this clock, but maybe STiH407 will need the flag,
-> but not STiH410 and STiH418.
-> So I think the best place to set this information is in DT, where the
-> differentiation is made between the SoCs.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+v4:
+  - Add Reviewed-by,
 
-If (of_machine_is_compatible("st,stih410")) ...
+v3:
+  - New, extracted from "[PATCH v2 12/14] drivers: sh: Stop using
+    pm_runtime.c for multi-platform shmobile with genpd".
+---
+ drivers/sh/pm_runtime.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/sh/pm_runtime.c b/drivers/sh/pm_runtime.c
+index d3d1891cda3cf9a8..ad9188138ed56ffb 100644
+--- a/drivers/sh/pm_runtime.c
++++ b/drivers/sh/pm_runtime.c
+@@ -35,8 +35,7 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
+ static int __init sh_pm_runtime_init(void)
+ {
+ 	if (IS_ENABLED(CONFIG_ARCH_SHMOBILE_MULTI)) {
+-		if (!of_machine_is_compatible("renesas,emev2") &&
+-		    !of_machine_is_compatible("renesas,r7s72100") &&
++		if (!of_machine_is_compatible("renesas,r7s72100") &&
+ #ifndef CONFIG_PM_GENERIC_DOMAINS_OF
+ 		    !of_machine_is_compatible("renesas,r8a73a4") &&
+ 		    !of_machine_is_compatible("renesas,r8a7740") &&
+-- 
+1.9.1
