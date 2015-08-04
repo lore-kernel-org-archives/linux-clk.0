@@ -1,42 +1,36 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga14.intel.com ([192.55.52.115]:43907 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932655AbbHDKmH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 4 Aug 2015 06:42:07 -0400
+Date: Tue, 4 Aug 2015 13:42:02 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] clk: fractional-divider: keep mwidth and nwidth
+ internally
+Message-ID: <20150804104202.GC7675@kuha.fi.intel.com>
+References: <1437997733-135331-1-git-send-email-andriy.shevchenko@linux.intel.com>
+ <1437997733-135331-3-git-send-email-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1439287924-6988-1-git-send-email-hl@rock-chips.com>
-References: <1439287924-6988-1-git-send-email-hl@rock-chips.com>
-Date: Thu, 13 Aug 2015 16:10:52 +0200
-Message-ID: <CACRpkdZpk+djjb08Ls0CQdCD=wmNYQSDTMWwgJs_CMGYWXpoQw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] clk: rockchip: add pclk_pd_pmu to the list of
- rk3288 critical clocks
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Lin Huang <hl@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	Doug Anderson <dianders@chromium.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1437997733-135331-3-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 11, 2015 at 12:12 PM, Lin Huang <hl@rock-chips.com> wrote:
+On Mon, Jul 27, 2015 at 02:48:50PM +0300, Andy Shevchenko wrote:
+> The patch adds mwidth and nwidth fields to the struct clk_fractional_divider
+> for further usage. While here, use GENMASK() instead of open coding this
+> functionality.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> From: Heiko Stuebner <heiko@sntech.de>
->
-> pclk_pd_pmu needs to keep running and with the upcoming gpio clock
-> handling this is not always the case anymore. So add it to the list
-> of critical clocks for now.
->
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
-> ---
-> Changes in v5:
-> - Add From: Heiko Stuebner <heiko@sntech.de>
-> - Add Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Patch applied to the pinctrl tree with Doug's reviwe tag and
-Stephen B's ACK.
 
-Yours,
-Linus Walleij
+Thanks,
+
+-- 
+heikki
