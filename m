@@ -1,100 +1,173 @@
-Return-Path: <balbi@ti.com>
-Date: Wed, 12 Aug 2015 10:02:53 -0500
-From: Felipe Balbi <balbi@ti.com>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-CC: Grygorii Strashko <grygorii.strashko@ti.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Nishanth Menon <nm@ti.com>, Thomas Gleixner
-	<tglx@linutronix.de>,
-        <linux-rt-users@vger.kernel.org>, Felipe Balbi
-	<balbi@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, <linux-clk@vger.kernel.org>
-Subject: Re: Common clock framework API vs RT patchset
-Message-ID: <20150812150253.GE13884@saruman.tx.rr.com>
-Reply-To: <balbi@ti.com>
-References: <55C0A96F.80307@ti.com>
- <alpine.DEB.2.11.1508041405290.3983@nanos>
- <55C0D8F3.3030105@ti.com>
- <20150804153641.GR7557@n2100.arm.linux.org.uk>
- <55CA4BC2.4020505@ti.com>
- <20150811192514.GB7557@n2100.arm.linux.org.uk>
- <20150811220609.31346.15943@quantum>
- <55CB1A86.2050802@ti.com>
- <20150812101151.GK7557@n2100.arm.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="AGZzQgpsuUlWC1xT"
-In-Reply-To: <20150812101151.GK7557@n2100.arm.linux.org.uk>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:39298 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932553AbbHDAny (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 3 Aug 2015 20:43:54 -0400
+Message-id: <55C00ABD.3050805@samsung.com>
+Date: Tue, 04 Aug 2015 09:43:41 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq driver
+ for Exynos4x12
+References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+ <4532306.AVvo5hem3c@amdc1976> <55BF4D41.1060903@samsung.com>
+ <2347616.SxxJmTVssu@amdc1976>
+In-reply-to: <2347616.SxxJmTVssu@amdc1976>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
---AGZzQgpsuUlWC1xT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 03.08.2015 22:55, Bartlomiej Zolnierkiewicz wrote:
+> 
+> Hi,
+> 
+> On Monday, August 03, 2015 08:15:13 PM Krzysztof Kozlowski wrote:
+>> W dniu 03.08.2015 o 19:36, Bartlomiej Zolnierkiewicz pisze:
+>>> On Monday, August 03, 2015 03:59:26 PM Viresh Kumar wrote:
+>>>> On 03-08-15, 12:17, Bartlomiej Zolnierkiewicz wrote:
+>>>>>
+>>>>> Hi,
+>>>>>
+>>>>> On Saturday, August 01, 2015 04:47:21 PM Viresh Kumar wrote:
+>>>>>> On 31-07-15, 20:49, Bartlomiej Zolnierkiewicz wrote:
+>>>>>>> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+>>>>>>> index 659879a..bf6d596 100644
+>>>>>>> --- a/drivers/cpufreq/Kconfig
+>>>>>>> +++ b/drivers/cpufreq/Kconfig
+>>>>>>> @@ -191,6 +191,7 @@ config CPUFREQ_DT
+>>>>>>>  	# if CPU_THERMAL is on and THERMAL=m, CPUFREQ_DT cannot be =y:
+>>>>>>>  	depends on !CPU_THERMAL || THERMAL
+>>>>>>>  	select PM_OPP
+>>>>>>> +	select EXYNOS_THERMAL if ARCH_EXYNOS
+>>>>>>>  	help
+>>>>>>>  	  This adds a generic DT based cpufreq driver for frequency management.
+>>>>>>>  	  It supports both uniprocessor (UP) and symmetric multiprocessor (SMP)
+>>>>>>
+>>>>>> No, we shouldn't pollute generic Kconfig options with platform specific stuff.
+>>>>>
+>>>>> The old code depended on this.  You couldn't enable boost support
+>>>>> without enabling thermal support (ARM_EXYNOS_CPU_FREQ_BOOST_SW
+>>>>> config option selected EXYNOS_THERMAL).
+>>>>>
+>>>>>> Why don't you enable thermal in your .config?
+>>>>>
+>>>>> It is enabled in exynos_defconfig but without the above change it
+>>>>> can disabled manually which is something that we don't want.
+>>>>
+>>>> You are not getting it. I am not asking you to not select thermal, but
+>>>> to select it from within your architecture Kconfig option if you want.
+>>>
+>>> OK.  Krzysztof/Kukjin do you agree with selecting EXYNOS_THERMAL
+>>> from ARCH_EXYNOS in the platform code?
+>>
+>> I agree, with your explanation it seems good. Can you just add this
+>> justification to the commit message?
+> 
+> Updated patch below (I'm not resending the whole series as all other
+> patches remain unchanged).
+> 
+>>>
+>>>> Over that, thermal is really an option, not a dependency. So, if
+>>>> someone manually disables it, its his problem not yours :)
+>>>
+>>> I would really like it to be dependency not an option (+ I think
+>>> that ideally it should be checked at runtime, IOW we should be
+>>> checking from cpufreq-dt driver if the thermal support is enabled
+>>> before enabling boost support).
+>>
+>> That would be the best. It is fine with me if you want to do this in
+>> consecutive patches (after applying patch selecting/depending on it in
+>> mach-exynos code).
+> 
+> ---------------------8<-------------------
+> 
+>>From 2595b5e6164a2d1b76626e14302b148b7af5e050 Mon Sep 17 00:00:00 2001
+> From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Date: Mon, 3 Aug 2015 15:49:06 +0200
+> Subject: [PATCH] ARM: Exynos: switch to using generic cpufreq driver for
+>  Exynos4x12
+> 
+> The new CPU clock type allows the use of generic CPUfreq driver.
+> Switch Exynos4x12 to using generic cpufreq driver.
+> 
+> Previously (when exynos-cpufreq driver was used with boost
+> functionality) ARM_EXYNOS_CPU_FREQ_BOOST_SW config option
+> (which enabled boost functionality) selected EXYNOS_THERMAL
+> one.  After switching Exynos4x12 platforms to use cpufreq-dt
+> driver boost support is enabled in the cpufreq-dt driver
+> itself (because there are turbo OPPs defined in the board's
+> DTS file).  However we still would like to allow enabling
+> boost support only if thermal support is also enabled for
+> Exynos platforms.  To achieve this make ARCH_EXYNOS config
+> option select THERMAL and EXYNOS_THERMAL ones.
+> 
+> Please also note that the switch to use the generic cpufreq-dt
+> driver fixes the minor issue present with the old code (support
+> for 'boost' mode in the exynos-cpufreq driver was enabled for
+> all supported SoCs even though 'boost' frequency was provided
+> only for Exynos4x12 ones).
+> 
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  arch/arm/mach-exynos/Kconfig  | 2 ++
+>  arch/arm/mach-exynos/exynos.c | 2 ++
+>  2 files changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 81064cd..491914c 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -25,6 +25,8 @@ menuconfig ARCH_EXYNOS
+>  	select S5P_DEV_MFC
+>  	select SRAM
+>  	select MFD_SYSCON
+> +	select THERMAL
+> +	select EXYNOS_THERMAL
+>  	help
+>  	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
+>  
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 77ac021..1c47aee 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -227,6 +227,8 @@ static void __init exynos_init_irq(void)
+>  static const struct of_device_id exynos_cpufreq_matches[] = {
+>  	{ .compatible = "samsung,exynos3250", .data = "cpufreq-dt" },
+>  	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
+> +	{ .compatible = "samsung,exynos4212", .data = "cpufreq-dt" },
+> +	{ .compatible = "samsung,exynos4412", .data = "cpufreq-dt" },
+>  	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
+>  	{ /* sentinel */ }
+>  };
+> 
 
-On Wed, Aug 12, 2015 at 11:11:51AM +0100, Russell King - ARM Linux wrote:
-> On Wed, Aug 12, 2015 at 01:05:58PM +0300, Grygorii Strashko wrote:
-> > On 08/12/2015 01:06 AM, Michael Turquette wrote:
-> > > Quoting Russell King - ARM Linux (2015-08-11 12:25:15)
-> > >>
-> > >> clk_enable/clk_disable _should_ be usable from atomic contexts.
-> >=20
-> > Thanks Russell - above is not true on -RT.
->=20
-> What I'm saying is that it _should_ be true.  You _should_ be able to
-> call clk_enable()/clk_disable() from atomic contexts.  It's been
-> documented since forever:
->=20
-> /**
->  * clk_enable - inform the system when the clock source should be running.
->  * @clk: clock source
->  *
->  * If the clock can not be enabled/disabled, this should return success.
->  *
->  * May be called from atomic contexts.
-> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->=20
-> /**
->  * clk_disable - inform the system when the clock source is no longer req=
-uired.
->  * @clk: clock source
->  *
->  * Inform the system that a clock source is no longer required by
->  * a driver and may be shut down.
->  *
->  * May be called from atomic contexts.
-> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->=20
-> If that's not true with CCF, that's a CCF bug, not a usage bug.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-in that case, CCF's clock need to be converted to raw_spin_locks, that's
-the only way to prevent its locks from being reimplemented as rt
-mutexes.
+Best regards,
+Krzysztof
 
---=20
-balbi
-
---AGZzQgpsuUlWC1xT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVy2AdAAoJEIaOsuA1yqREBVUP+wbNa5pHqZOlUmSHpp7l2MHW
-DrQvlU3TnTq8Et4yjnscMT3DLIAH1Doo0QyQE94PQXj2flDyJ6w/3fGfLvylJre4
-nJ2a7ifLCPcQiQSHr7X1wype2JVPQE1E4L0cEnZhGEef9N0MUr0Cu+JJP2z13Ax4
-DXqC9dqH/CYsRE3FR1A5aMd1JS5F10vaA7sL5u/ZYS+UJKTIsiMSTjL366iaKOgf
-Aqk3iQZunS6HY/08bHLtUJMfz8LNN+5ME05iK9XS9C+JDFPVtkkIzNWfMHvo8Ox4
-7OxEV3jecS2IETC3aitJ2IoLs7ITyYG6HILPomN847kg7voATmdrZb4zhFVCuprw
-xSA2g41d3Z+PvUoT+zO6T2mL7io38VcnaSvTtAy51ybvGANx5vtLDOHJZ0eAHHbk
-NpEA2SiKYGT+cPxwDKAKXFoVe8nni8KZTiqGkWIIMvxS5dlRQOa+mTKVBxEPmQvW
-RreOK0ylTYohrHeFqTyNLHfIwRR37hkotHgE0XPZHxHSa+s9ORr+azgCizTTaqRR
-1VMD3DgkNl9e/rUmBTXKebZXyR4yt2qCsW46P8A9Zn1dt15TlR6BBDo351LVePuI
-KnJD/Trzyvj6SQJIoaH5ootawQxAeD5n2hcbWKaANJFYPjKhJk2OdNiW2YTqbDHt
-QMZsBn+6uOkXXNcPUJ1N
-=F/uV
------END PGP SIGNATURE-----
-
---AGZzQgpsuUlWC1xT--
