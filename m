@@ -1,48 +1,49 @@
-Return-Path: <nicolas.pitre@linaro.org>
-Return-Path: <nicolas.pitre@linaro.org>
-Date: Wed, 19 Aug 2015 14:40:47 -0400 (EDT)
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>
-cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] drivers/clk: appropriate __init annotation for const
- data
-In-Reply-To: <20150811231416.31346.83289@quantum>
-Message-ID: <alpine.LFD.2.20.1508191437410.25645@knanqh.ubzr>
-References: <alpine.LFD.2.20.1507281430130.26147@knanqh.ubzr> <20150811231416.31346.83289@quantum>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Lin Huang <hl@rock-chips.com>
+Cc: dianders@chromium.org, linux-rockchip@lists.infradead.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] clk: rockchip: add pclk_pd_pmu to the list of rk3288 critical clocks
+Date: Tue, 04 Aug 2015 10:54:06 +0200
+Message-ID: <1588782.u2WKR6eVuV@diego>
+In-Reply-To: <1438670487-27598-1-git-send-email-hl@rock-chips.com>
+References: <1438670487-27598-1-git-send-email-hl@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 11 Aug 2015, Michael Turquette wrote:
+Hi,
 
-> Quoting Nicolas Pitre (2015-07-28 16:43:20)
-> > 
-> > Init data marked const should be annotated with __initconst for
-> > correctness and not __initdata.  This also fixes LTO builds that
-> > otherwise fail with section mismatch errors.
-> > 
-> > Signed-off-by: Nicolas Pitre <nico@linaro.org>
+Am Dienstag, 4. August 2015, 14:41:26 schrieb Lin Huang:
+
+I guess this patch then would need a
+
+From: Heiko Stuebner <heiko@sntech.de>
+
+at this point to override the author then.
+
+
+> pclk_pd_pmu needs to keep running and with the upcoming gpio clock
+> handling this is not always the case anymore. So add it to the list
+> of critical clocks for now.
 > 
-> Thanks for the patch Nico. Applied.
-
-
-Is it possible for you to amend that patch with the following?
-
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 5404a001c3..3f6f7ad394 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -293,7 +293,7 @@ stm32f4_rcc_lookup_clk(struct of_phandle_args *clkspec, void *data)
- 	return clks[i];
- }
- 
--static const char *const sys_parents[] __initconst =   { "hsi", NULL, "pll" };
-+static const char *sys_parents[] __initdata =   { "hsi", NULL, "pll" };
- 
- static const struct clk_div_table ahb_div_table[] = {
- 	{ 0x0,   1 }, { 0x1,   1 }, { 0x2,   1 }, { 0x3,   1 },
-
-Turns out that sys_parents[] is actually written to.
-
-
-Nicolas
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Lin Huang <hl@rock-chips.com>
+> ---
+> Changes in v3:
+> -match the author and Signed-off-by name
+> 
+>  drivers/clk/rockchip/clk-rk3288.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/rockchip/clk-rk3288.c
+> b/drivers/clk/rockchip/clk-rk3288.c index 0df5bae..9040878 100644
+> --- a/drivers/clk/rockchip/clk-rk3288.c
+> +++ b/drivers/clk/rockchip/clk-rk3288.c
+> @@ -780,6 +780,7 @@ static const char *const rk3288_critical_clocks[]
+> __initconst = { "aclk_cpu",
+>  	"aclk_peri",
+>  	"hclk_peri",
+> +	"pclk_pd_pmu",
+>  };
+> 
+>  #ifdef CONFIG_PM_SLEEP
