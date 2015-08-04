@@ -1,93 +1,47 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 31 Aug 2015 21:49:38 +0900
-Message-Id: <20150831124938.31057.21553.sendpatchset@little-apple>
-In-Reply-To: <20150831124842.31057.54534.sendpatchset@little-apple>
-References: <20150831124842.31057.54534.sendpatchset@little-apple>
-Subject: [PATCH v5 05/05] clk: shmobile: Make MSTP clock-output-names optional
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <55C11621.1000609@codeaurora.org>
+Date: Tue, 04 Aug 2015 12:44:33 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+MIME-Version: 1.0
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+CC: Lin Huang <hl@rock-chips.com>, dianders@chromium.org,
+ linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] clk: rockchip: add pclk_pd_pmu to the list of
+ rk3288 critical clocks
+References: <1438670487-27598-1-git-send-email-hl@rock-chips.com> <1588782.u2WKR6eVuV@diego> <55C113CF.2000601@codeaurora.org> <10063547.S7PvqCkF78@diego>
+In-Reply-To: <10063547.S7PvqCkF78@diego>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 08/04/2015 12:40 PM, Heiko Stübner wrote:
+> Am Dienstag, 4. August 2015, 12:34:39 schrieb Stephen Boyd:
+>> On 08/04/2015 01:54 AM, Heiko Stübner wrote:
+>>> Hi,
+>>>
+>>> Am Dienstag, 4. August 2015, 14:41:26 schrieb Lin Huang:
+>>>
+>>> I guess this patch then would need a
+>>>
+>>> From: Heiko Stuebner <heiko@sntech.de>
+>>>
+>>> at this point to override the author then.
+>> Sounds right. Please resend the patch properly. Also, is there a 2/2? I
+>> never got it.
+> Patch 2/2 is a pinctrl change, that actually depends in this patch.
+> Improved clock-handling in the pinctrl driver caused the pd_pmu clock to get
+> deactivated.
+>
+> So, perhaps it might be even better to get an Ack from the clock maintainer
+> and merge both patches through the pinctrl tree?
+>
+>
+> In which case Linus Walleij should also be included as recipient of this patch
+> when resending.
 
-This patch updates the MSTP driver to make the "clock-output-names"
-DT property optional instead of mandatory. In case the DT property
-is omitted then the function clk_register_clkdev() is skipped.
+Ok that's fine. We can ack it and you can take it through pinctrl if needed.
 
-The default for new SoCs is to not use "clock-output-names".
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Changes since V4:
- - None
-
- Changes since V3:
- - Added support for multiple MSTP bits. =)
-
- drivers/clk/shmobile/clk-mstp.c |   28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
-
---- 0001/drivers/clk/shmobile/clk-mstp.c
-+++ work/drivers/clk/shmobile/clk-mstp.c	2015-08-29 18:01:00.662366518 +0900
-@@ -199,26 +199,29 @@ static void __init cpg_mstp_clocks_init(
- 	for (i = 0; i < MSTP_MAX_CLOCKS; ++i) {
- 		const char *parent_name;
- 		const char *name;
-+		bool allocated_name;
- 		u32 clkidx;
- 		int ret;
- 
--		/* Skip clocks with no name. */
--		ret = of_property_read_string_index(np, "clock-output-names",
--						    i, &name);
--		if (ret < 0 || strlen(name) == 0)
--			continue;
--
- 		parent_name = of_clk_get_parent_name(np, i);
- 		ret = of_property_read_u32_index(np, idxname, i, &clkidx);
- 		if (parent_name == NULL || ret < 0)
- 			break;
- 
- 		if (clkidx >= MSTP_MAX_CLOCKS) {
--			pr_err("%s: invalid clock %s %s index %u)\n",
--			       __func__, np->name, name, clkidx);
-+			pr_err("%s: invalid clock %s index %u)\n",
-+			       __func__, np->name, clkidx);
- 			continue;
- 		}
- 
-+		if (of_property_read_string_index(np, "clock-output-names",
-+						  i, &name) == 0) {
-+			allocated_name = false;
-+		} else {
-+			name = kasprintf(GFP_KERNEL, "%s.%u", np->name, clkidx);
-+			allocated_name = true;
-+		}
-+
- 		clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
- 						       clkidx, group);
- 		if (!IS_ERR(clks[clkidx])) {
-@@ -231,12 +234,19 @@ static void __init cpg_mstp_clocks_init(
- 			 *
- 			 * FIXME: Remove this when all devices that require a
- 			 * clock will be instantiated from DT.
-+			 *
-+			 * We currently register clkdev only when the DT
-+			 * property clock-output-names is present.
- 			 */
--			clk_register_clkdev(clks[clkidx], name, NULL);
-+			if (!allocated_name)
-+				clk_register_clkdev(clks[clkidx], name, NULL);
- 		} else {
- 			pr_err("%s: failed to register %s %s clock (%ld)\n",
- 			       __func__, np->name, name, PTR_ERR(clks[clkidx]));
- 		}
-+
-+		if (allocated_name)
-+			kfree(name);
- 	}
- 
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &group->data);
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
