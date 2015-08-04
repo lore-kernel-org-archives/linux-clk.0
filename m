@@ -1,57 +1,42 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk@vger.kernel.org, kuninori.morimoto.gx@renesas.com, gaku.inami.xw@bp.renesas.com, mturquette@baylibre.com, linux-sh@vger.kernel.org, sboyd@codeaurora.org, horms@verge.net.au, geert@linux-m68k.org
-Subject: Re: [PATCH v5 04/05] clk: shmobile: Add r8a7795 SoC to MSTP bindings
-Date: Tue, 01 Sep 2015 09:02:25 +0300
-Message-ID: <2606402.bJ14FcIpy4@avalon>
-In-Reply-To: <20150831124927.31057.69961.sendpatchset@little-apple>
-References: <20150831124842.31057.54534.sendpatchset@little-apple> <20150831124927.31057.69961.sendpatchset@little-apple>
+Return-Path: <sboyd@codeaurora.org>
+Message-ID: <55C0FD5E.7000705@codeaurora.org>
+Date: Tue, 04 Aug 2015 10:58:54 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+CC: Michael Turquette <mturquette@baylibre.com>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Subject: Re: [PATCH] clk: pxa: pxa3xx: fix CKEN register access
+References: <1438631907-27993-1-git-send-email-robert.jarzmik@free.fr> <55C00A6B.2030508@codeaurora.org> <87h9ofmv2n.fsf@belgarion.home>
+In-Reply-To: <87h9ofmv2n.fsf@belgarion.home>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+On 08/03/2015 11:22 PM, Robert Jarzmik wrote:
+> Stephen Boyd <sboyd@codeaurora.org> writes:
+>
+>> On 08/03/2015 12:58 PM, Robert Jarzmik wrote:
+>>> Clocks 0 to 31 are on CKENA, and not CKENB. The clock register names
+>>> were inadequately inverted. As a consequence, all clock operations were
+>>> happening on CKENB, because almost all but 2 clocks are on CKENA.
+>>>
+>>> As the clocks were activated by the bootloader in the former tests, it
+>>> escaped the testing that the wrong clock gate was manipulated. The error
+>>> was revealed by changing the pxa3xx-and driver to a module, where tupon
+>>> unloading the wrong clock was disabled in CKENB.
+>>>
+>>> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+>>> ---
+>> Did you want a fixes tag to send this back to stable?
+> Ah yes, good point, v2 on its way.
+>
+> Stephen and Mike, do you think this can still get in -rc6 ?
+>
 
-Thank you for the patch.
-
-On Monday 31 August 2015 21:49:27 Magnus Damm wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> 
-> Add r8a7795 to the MSTP DT binding documentation.
-> 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
-> 
->  Changes since V4: (Magnus Damm <damm+renesas@opensource.se>)
->  - Added Acked-by from Geert
-> 
->  Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
->  - Picked up patch floating around on ML, added change log
-> 
->  Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt |    1
-> + 1 file changed, 1 insertion(+)
-> 
-> --- 0001/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-> +++
-> work/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt	
-20
-> 15-08-29 16:18:30.672366518 +0900 @@ -19,6 +19,7 @@ Required Properties:
->      - "renesas,r8a7791-mstp-clocks" for R8A7791 (R-Car M2-W) MSTP gate
-> clocks - "renesas,r8a7793-mstp-clocks" for R8A7793 (R-Car M2-N) MSTP gate
-> clocks - "renesas,r8a7794-mstp-clocks" for R8A7794 (R-Car E2) MSTP gate
-> clocks +    - "renesas,r8a7795-mstp-clocks" for R8A7795 (R-Car H3) MSTP
-> gate clocks - "renesas,sh73a0-mstp-clocks" for SH73A0 (SH-MobileAG5) MSTP
-> gate clocks and "renesas,cpg-mstp-clocks" as a fallback.
->    - reg: Base address and length of the I/O mapped registers used by the
-> MSTP
+It's not a new regression for v4.2 so we'll leave it to v4.3. I'll apply 
+it to clk-next.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
