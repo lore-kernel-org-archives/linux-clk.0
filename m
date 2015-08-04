@@ -1,53 +1,43 @@
-Return-Path: <vaibhav.hiremath@linaro.org>
-Return-Path: <vaibhav.hiremath@linaro.org>
-Message-ID: <55DC27C6.3020500@linaro.org>
-Date: Tue, 25 Aug 2015 14:01:02 +0530
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-MIME-Version: 1.0
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-arm-kernel@lists.infradead.org
-CC: robh+dt@kernel.org, mturquette@baylibre.com, lee.jones@linaro.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH-v2 5/5] mfd: 88pm800: Add support for clk subdevice
-References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org> <1440442594-3102-7-git-send-email-vaibhav.hiremath@linaro.org> <55DBFC40.3010603@samsung.com>
-In-Reply-To: <55DBFC40.3010603@samsung.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <hl@rock-chips.com>
+From: Lin Huang <hl@rock-chips.com>
+To: heiko@sntech.de,
+	dianders@chromium.org
+Cc: linux-rockchip@lists.infradead.org,
+	Lin Huang <hl@rock-chips.com>,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] clk: rockchip: add pclk_pd_pmu to the list of rk3288 critical clocks
+Date: Tue,  4 Aug 2015 14:41:26 +0800
+Message-Id: <1438670487-27598-1-git-send-email-hl@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+pclk_pd_pmu needs to keep running and with the upcoming gpio clock
+handling this is not always the case anymore. So add it to the list
+of critical clocks for now.
 
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+---
+Changes in v3:
+-match the author and Signed-off-by name
 
-On Tuesday 25 August 2015 10:55 AM, Krzysztof Kozlowski wrote:
-> On 25.08.2015 03:56, Vaibhav Hiremath wrote:
->> This patch adds mfd_cell/clk-subdevice for 88PM800 MFD
->> (and family of devices).
->>
->> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
->> ---
->>   drivers/mfd/88pm800.c | 25 +++++++++++++++++++++++++
->>   1 file changed, 25 insertions(+)
->>
->> diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
->> index c4e097d..a928eed 100644
->> --- a/drivers/mfd/88pm800.c
->> +++ b/drivers/mfd/88pm800.c
->> @@ -173,6 +173,14 @@ static const struct mfd_cell regulator_devs[] = {
->>   	},
->>   };
->>
->> +static struct mfd_cell clk_devs[] = {
->> +	{
->> +		.name = "88pm80x-clk",
->> +		.of_compatible = "marvell,88pm800-clk",
->> +		.id = -1,
->
-> The "-1" here stands for PLATFORM_DEVID_NONE?
->
+ drivers/clk/rockchip/clk-rk3288.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Yes,
-
-But it is rarely used in the kernel. so was reluctant to use and
-decided to follow existing implementation.
-
-Thanks,
-Vaibhav
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 0df5bae..9040878 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -780,6 +780,7 @@ static const char *const rk3288_critical_clocks[] __initconst = {
+ 	"aclk_cpu",
+ 	"aclk_peri",
+ 	"hclk_peri",
++	"pclk_pd_pmu",
+ };
+ 
+ #ifdef CONFIG_PM_SLEEP
+-- 
+1.9.1
