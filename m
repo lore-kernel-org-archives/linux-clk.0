@@ -1,60 +1,86 @@
-Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
-Date: Wed, 12 Aug 2015 11:11:51 +0100
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Nishanth Menon <nm@ti.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-rt-users@vger.kernel.org, Felipe Balbi <balbi@ti.com>,
-	Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org
-Subject: Re: Common clock framework API vs RT patchset
-Message-ID: <20150812101151.GK7557@n2100.arm.linux.org.uk>
-References: <55C0A96F.80307@ti.com>
- <alpine.DEB.2.11.1508041405290.3983@nanos>
- <55C0D8F3.3030105@ti.com>
- <20150804153641.GR7557@n2100.arm.linux.org.uk>
- <55CA4BC2.4020505@ti.com>
- <20150811192514.GB7557@n2100.arm.linux.org.uk>
- <20150811220609.31346.15943@quantum>
- <55CB1A86.2050802@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:51700 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757566AbbHDPXy (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 4 Aug 2015 11:23:54 -0400
+Message-ID: <55C0D8F3.3030105@ti.com>
+Date: Tue, 4 Aug 2015 10:23:31 -0500
+From: Nishanth Menon <nm@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <55CB1A86.2050802@ti.com>
-Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Grygorii Strashko <grygorii.strashko@ti.com>
+CC: <linux-rt-users@vger.kernel.org>, Felipe Balbi <balbi@ti.com>,
+	Sekhar Nori <nsekhar@ti.com>, <linux-clk@vger.kernel.org>,
+	Russell King <linux@arm.linux.org.uk>
+Subject: Re: Common clock framework API vs RT patchset
+References: <55C0A96F.80307@ti.com> <alpine.DEB.2.11.1508041405290.3983@nanos>
+In-Reply-To: <alpine.DEB.2.11.1508041405290.3983@nanos>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Aug 12, 2015 at 01:05:58PM +0300, Grygorii Strashko wrote:
-> On 08/12/2015 01:06 AM, Michael Turquette wrote:
-> > Quoting Russell King - ARM Linux (2015-08-11 12:25:15)
-> >>
-> >> clk_enable/clk_disable _should_ be usable from atomic contexts.
+On 08/04/2015 07:06 AM, Thomas Gleixner wrote:
+> On Tue, 4 Aug 2015, Grygorii Strashko wrote:
 > 
-> Thanks Russell - above is not true on -RT.
+>> Hi All,
+>>
+>> I'd very appreciated if someone can clarify one point for me.
+>>
+>> Is allowed/expected/prohibited to use CLK API like clk_enable/disable
+>> in atomic context now on RT-Kernel (HW IRQ or under RAW spinlocks)?
+> 
+> It's not possible, if the spinlock in the clock framework is not a raw
+> spinlock.
+>  
+>> How safe is it to allow CLK API to be preemptive?
+> 
+> The functions are protected by the locks. So it's not an issue at all.
 
-What I'm saying is that it _should_ be true.  You _should_ be able to
-call clk_enable()/clk_disable() from atomic contexts.  It's been
-documented since forever:
+interesting topic, looping in linux-clk. original thread in [1].
 
-/**
- * clk_enable - inform the system when the clock source should be running.
- * @clk: clock source
- *
- * If the clock can not be enabled/disabled, this should return success.
- *
- * May be called from atomic contexts.
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+clk apis are protected by spinlocks which in turn should make the clock
+apis pre-emptible in RT kernel build.
 
-/**
- * clk_disable - inform the system when the clock source is no longer required.
- * @clk: clock source
- *
- * Inform the system that a clock source is no longer required by
- * a driver and may be shut down.
- *
- * May be called from atomic contexts.
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+I think Grygorii's question is "what happens(is it safe) when clock APIs
+are pre-empted"? I think it is a bit dependent on the hardware behavior
+I think..
 
-If that's not true with CCF, that's a CCF bug, not a usage bug.
+Two angles to this:
 
+i) is there an upper time bound in the programming sequence: if any step
+x to step y in the sequence takes more than N time, then we can have  a
+failure - but then, that is a broken hardware in itself.. Linux (non-RT)
+cannot guarantee a strict upper bound either.
+
+ii) if by preempting the operation itself CPU cannot guarantee time
+accuracy for scheduling. This can be an issue. more below:
+
+Consider clk_enable/disable/set_parent/setfreq operations. none of these
+operations are "atomic" from hardware point of view. instead, they are a
+set of steps which culminates to moving from state A to state B of the
+clock tree configuration.
+
+specific example could be as follows: changing clock parent in the clock
+tree results in kernel tick timer configuration to be in an intermediate
+state before going to a final "relocked" state which is expected at the
+end of clock setparent call, could be involved in a few steps:
+step a) unlock pll (put in bypass)
+step b) change parent
+step c) relock pll with new parent frequency
+
+if interrupted between (a), (c), we could be in "bypass" frequency or
+"new parent" frequency... final frequency is guarenteed only when step
+(c) is completed.
+
+In the above example if the clock generated is fundamental to kernel
+scheduler accuracy, well, we do have a problem..
+
+
+I am not sure any of these cases can happen could happen in at least the
+hardware I am aware of... not sure if other SoC vendors might have
+interesting scenarios..
+
+[1] http://marc.info/?t=143868984600001&r=1&w=2
 -- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
+Regards,
+Nishanth Menon
