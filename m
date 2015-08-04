@@ -1,109 +1,204 @@
-Return-Path: <alexander.stein@systec-electronic.com>
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 1/1] ARM: imx35: Do not call mxc_timer_init twice when booting with DT
-Date: Tue, 11 Aug 2015 09:18:22 +0200
-Message-Id: <1439277502-16917-1-git-send-email-alexander.stein@systec-electronic.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 06/16] ARM: shmobile: r7s72100 dtsi: Add CPG/MSTP Clock Domain
+Date: Tue,  4 Aug 2015 14:28:07 +0200
+Message-Id: <1438691297-29235-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
+References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-mxc_timer_init must not be called from within mx35_clocks_init_dt. It will
-eventually be called by imx31_timer_init_dt
-(drivers/clocksources/timer-imx-gpt.c).
-This arranges the initialization code similar to clk-imx27.c
+Add an appropriate "#power-domain-cells" property to the cpg_clocks
+device node, to create the CPG/MSTP Clock Domain.
 
-Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+Add "power-domains" properties to all device nodes for devices that are
+part of the CPG/MSTP Clock Domain and can be power-managed through an
+MSTP clock.  This applies to most on-SoC devices, which have a
+one-to-one mapping from SoC device to DT device node.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/clk/imx/clk-imx35.c | 49 +++++++++++++++++++++++++--------------------
- 1 file changed, 27 insertions(+), 22 deletions(-)
+v4:
+  - Add Reviewed-by,
 
-diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
-index 69138ba..3e7c805 100644
---- a/drivers/clk/imx/clk-imx35.c
-+++ b/drivers/clk/imx/clk-imx35.c
-@@ -84,7 +84,7 @@ enum mx35_clks {
+v3:
+  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
+
+v2:
+  - New.
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 277e73c110e5d40c..060c32cbd66923ed 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -86,6 +86,7 @@
+ 			reg = <0xfcfe0000 0x18>;
+ 			clocks = <&extal_clk>, <&usb_x1_clk>;
+ 			clock-output-names = "pll", "i", "g";
++			#power-domain-cells = <0>;
+ 		};
  
- static struct clk *clk[clk_max];
+ 		/* MSTP clocks */
+@@ -157,6 +158,7 @@
+ 			     <0 189 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF0>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
  
--int __init mx35_clocks_init(void)
-+static void __init _mx35_clocks_init(void)
- {
- 	void __iomem *base;
- 	u32 pdr0, consumer_sel, hsp_sel;
-@@ -219,6 +219,30 @@ int __init mx35_clocks_init(void)
+@@ -169,6 +171,7 @@
+ 			     <0 193 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF1>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
  
- 	imx_check_clocks(clk, ARRAY_SIZE(clk));
+@@ -181,6 +184,7 @@
+ 			     <0 197 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF2>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
  
-+	clk_prepare_enable(clk[spba_gate]);
-+	clk_prepare_enable(clk[gpio1_gate]);
-+	clk_prepare_enable(clk[gpio2_gate]);
-+	clk_prepare_enable(clk[gpio3_gate]);
-+	clk_prepare_enable(clk[iim_gate]);
-+	clk_prepare_enable(clk[emi_gate]);
-+	clk_prepare_enable(clk[max_gate]);
-+	clk_prepare_enable(clk[iomuxc_gate]);
-+
-+	/*
-+	 * SCC is needed to boot via mmc after a watchdog reset. The clock code
-+	 * before conversion to common clk also enabled UART1 (which isn't
-+	 * handled here and not needed for mmc) and IIM (which is enabled
-+	 * unconditionally above).
-+	 */
-+	clk_prepare_enable(clk[scc_gate]);
-+
-+	imx_print_silicon_rev("i.MX35", mx35_revision());
-+}
-+
-+int __init mx35_clocks_init(void)
-+{
-+	_mx35_clocks_init();
-+
- 	clk_register_clkdev(clk[pata_gate], NULL, "pata_imx");
- 	clk_register_clkdev(clk[can1_gate], NULL, "flexcan.0");
- 	clk_register_clkdev(clk[can2_gate], NULL, "flexcan.1");
-@@ -275,25 +299,6 @@ int __init mx35_clocks_init(void)
- 	clk_register_clkdev(clk[csi_gate], NULL, "mx3-camera.0");
- 	clk_register_clkdev(clk[admux_gate], "audmux", NULL);
+@@ -193,6 +197,7 @@
+ 			     <0 201 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF3>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
  
--	clk_prepare_enable(clk[spba_gate]);
--	clk_prepare_enable(clk[gpio1_gate]);
--	clk_prepare_enable(clk[gpio2_gate]);
--	clk_prepare_enable(clk[gpio3_gate]);
--	clk_prepare_enable(clk[iim_gate]);
--	clk_prepare_enable(clk[emi_gate]);
--	clk_prepare_enable(clk[max_gate]);
--	clk_prepare_enable(clk[iomuxc_gate]);
--
--	/*
--	 * SCC is needed to boot via mmc after a watchdog reset. The clock code
--	 * before conversion to common clk also enabled UART1 (which isn't
--	 * handled here and not needed for mmc) and IIM (which is enabled
--	 * unconditionally above).
--	 */
--	clk_prepare_enable(clk[scc_gate]);
--
--	imx_print_silicon_rev("i.MX35", mx35_revision());
--
- 	mxc_timer_init(MX35_GPT1_BASE_ADDR, MX35_INT_GPT, GPT_TYPE_IMX31);
+@@ -205,6 +210,7 @@
+ 			     <0 205 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF4>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
  
- 	return 0;
-@@ -301,10 +306,10 @@ int __init mx35_clocks_init(void)
+@@ -217,6 +223,7 @@
+ 			     <0 209 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF5>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
  
- static void __init mx35_clocks_init_dt(struct device_node *ccm_node)
- {
-+	_mx35_clocks_init();
-+
- 	clk_data.clks = clk;
- 	clk_data.clk_num = ARRAY_SIZE(clk);
- 	of_clk_add_provider(ccm_node, of_clk_src_onecell_get, &clk_data);
--
--	mx35_clocks_init();
- }
- CLK_OF_DECLARE(imx35, "fsl,imx35-ccm", mx35_clocks_init_dt);
+@@ -229,6 +236,7 @@
+ 			     <0 213 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF6>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -241,6 +249,7 @@
+ 			     <0 217 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF7>;
+ 		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -252,6 +261,7 @@
+ 			     <0 240 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error", "rx", "tx";
+ 		clocks = <&mstp10_clks R7S72100_CLK_SPI0>;
++		power-domains = <&cpg_clocks>;
+ 		num-cs = <1>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -266,6 +276,7 @@
+ 			     <0 243 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error", "rx", "tx";
+ 		clocks = <&mstp10_clks R7S72100_CLK_SPI1>;
++		power-domains = <&cpg_clocks>;
+ 		num-cs = <1>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -280,6 +291,7 @@
+ 			     <0 246 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error", "rx", "tx";
+ 		clocks = <&mstp10_clks R7S72100_CLK_SPI2>;
++		power-domains = <&cpg_clocks>;
+ 		num-cs = <1>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -294,6 +306,7 @@
+ 			     <0 249 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error", "rx", "tx";
+ 		clocks = <&mstp10_clks R7S72100_CLK_SPI3>;
++		power-domains = <&cpg_clocks>;
+ 		num-cs = <1>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -308,6 +321,7 @@
+ 			     <0 252 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error", "rx", "tx";
+ 		clocks = <&mstp10_clks R7S72100_CLK_SPI4>;
++		power-domains = <&cpg_clocks>;
+ 		num-cs = <1>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -338,6 +352,7 @@
+ 			     <0 164 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R7S72100_CLK_I2C0>;
+ 		clock-frequency = <100000>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -356,6 +371,7 @@
+ 			     <0 172 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R7S72100_CLK_I2C1>;
+ 		clock-frequency = <100000>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -374,6 +390,7 @@
+ 			     <0 180 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R7S72100_CLK_I2C2>;
+ 		clock-frequency = <100000>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -392,6 +409,7 @@
+ 			     <0 188 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R7S72100_CLK_I2C3>;
+ 		clock-frequency = <100000>;
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -402,6 +420,7 @@
+ 		interrupt-names = "tgi0a";
+ 		clocks = <&mstp3_clks R7S72100_CLK_MTU2>;
+ 		clock-names = "fck";
++		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+ };
 -- 
-2.4.6
+1.9.1
+
