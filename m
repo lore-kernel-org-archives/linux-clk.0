@@ -1,102 +1,952 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Shawn Guo <shawnguo@kernel.org>, "Stephen Boyd" <sboyd@codeaurora.org>
+To: Paul Osmialowski <pawelo@king.net.pl>, 
 From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20150811085921.GB10035@tiger>
-References: <20150811085921.GB10035@tiger>
-Message-ID: <20150811174657.2416.1270@quantum>
-Subject: Re: [GIT PULL] i.MX clock updates for 4.2
-Date: Tue, 11 Aug 2015 10:46:57 -0700
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: kernel@pengutronix.de, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+In-Reply-To: <alpine.LNX.2.00.1508011647140.32078@localhost.localdomain>
+Cc: "Paul Osmialowski" <pawelo@king.net.pl>, "Arnd Bergmann" <arnd@arndb.de>,
+ "Mark Rutland" <mark.rutland@arm.com>,
+ "Nicolas Pitre" <nicolas.pitre@linaro.org>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Rob Herring" <r.herring@freescale.com>,
+ "Alexander Potashev" <aspotashev@emcraft.com>,
+ "Frank Li" <Frank.Li@freescale.com>, "Jiri Slaby" <jslaby@suse.cz>,
+ linux-clk@vger.kernel.org, "Russell King" <linux@arm.linux.org.uk>,
+ "Vinod Koul" <vinod.koul@intel.com>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>, linux-serial@vger.kernel.org,
+ "Uwe Kleine-Koenig" <u.kleine-koenig@pengutronix.de>,
+ "Anson Huang" <b20788@freescale.com>, devicetree@vger.kernel.org,
+ "Pawel Moll" <pawel.moll@arm.com>,
+ "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
+ "Kumar Gala" <galak@codeaurora.org>, "Yuri Tikhonov" <yur@emcraft.com>,
+ linux-gpio@vger.kernel.org, "Rob Herring" <robh+dt@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org,
+ "Sergei Poselenov" <sposelenov@emcraft.com>,
+ "Paul Bolle" <pebolle@tiscali.nl>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ "Jingchang Lu" <jingchang.lu@freescale.com>, dmaengine@vger.kernel.org
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
+ <alpine.LNX.2.00.1507042327490.1296@localhost.localdomain>
+ <20150724034229.642.88156@quantum>
+ <alpine.LNX.2.00.1507262211470.28341@localhost.localdomain>
+ <20150728160347.642.31950@quantum>
+ <alpine.LNX.2.00.1507282201220.2619@localhost.localdomain>
+ <20150729230517.642.66061@quantum>
+ <alpine.LNX.2.00.1507302326500.20387@localhost.localdomain>
+ <20150801005810.23791.8199@quantum>
+ <alpine.LNX.2.00.1508011647140.32078@localhost.localdomain>
+Message-ID: <20150805192748.23791.32178@quantum>
+Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
+Date: Wed, 05 Aug 2015 12:27:48 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shawn,
+Quoting Paul Osmialowski (2015-08-01 08:27:30)
+> =
 
-Quoting Shawn Guo (2015-08-11 01:59:21)
-> Hi Michael, Stephen,
-> 
-> The i.MX clock drivers were moved into drivers/clk/imx folder since
-> v4.2-rc1, so I would like to send i.MX clock changes through clock tree
-> from this cycle.  Here is my first pull request to you guys.  I'm using
-> signed tags, same as how I work with arm-soc folks.  Let me know if
-> there is any problem with it.
+> Hi Mike,
+> =
 
-Everything looks good. Pulled.
+> On Fri, 31 Jul 2015, Michael Turquette wrote:
+> =
 
-> 
-> Also, please keep it stable, because I need to pull it into other
-> branch as dependency which I will send via arm-soc tree.
+> > Quoting Paul Osmialowski (2015-07-30 14:40:48)
+> > > Hi Mike,
+> > > =
 
-Will do.
+> > > I encountered some trouble while I tried to implement code fitting to=
+ DTS =
 
-Also, the clock driver was not Cc'd to linux-clk mailing list nor did it
-Cc myself or Stephen. I've taken a quick look at it and it seems fine,
-but please post clk patches to the linux-clk mailing list in the future.
+> > > that you proposed. SIM_CLKDIVx are SIM device registers, not MCG. =
 
-Thanks,
+> > > Therefore, in MCG device code I won't be able to figure out clock rat=
+e =
+
+> > > for outputed clocks unles I try to access SIM registers from MCG driv=
+er - =
+
+> > =
+
+> > Right, the MCG driver will only know the rates of the clocks that it
+> > outputs, namely:
+> > =
+
+> > MCGIRCLK
+> > MCGFFCLK
+> > MCGOUTCLK
+> > MCGFLLCLK
+> > MCGPLL0CLK
+> > MCGPLL1CLK
+> > =
+
+> > The naming scheme in the TRM is a bit unfortunate; it looks like some of
+> > the clock outputs coming out of SIM also retain the MCG* names.
+> =
+
+> I wonder if I really need to implement support for all of these clocks =
+
+> while to run Linux on this board reference 2.6 kernel uses only MCGOUTCLK =
+
+> (and for this, it never considers FLL as a source). =
+
+> I can also provide support for MCGPLL0CLK and MCGPLL1CLK as well since =
+
+> their rates are computed as a byproduct while determining rate of =
+
+> MCGOUTCLK. I may define constants for all of them in related header file, =
+
+> but I'm thinking about leaving most of implementations as TBD - otherwise =
+
+> I doubt I'll be ever able to test that my driver fully works.
+
+You do not need to implement support for everything in your driver if
+you don't want to, but DT binding descriptions are supposed to a stable
+ABI. Why not make clock-cells =3D=3D 1 and sleep better at night knowing
+that you can grow the number of clocks you expose in the mcg node?
+
+As kernel developers it is our job to write code that allows for restful
+sleep.
+
+> =
+
+> > =
+
+> > Why is clock-cells zero? I think the MCG block outputs all of the clocks
+> > that I listed above? As such they should be addressable as <&mcg N> by
+> > any downstream users.
+> > =
+
+> =
+
+> Ok, will be 1, to distinguish between MCGOUTCLK, MCGPLL0CLK, MCGPLL1CLK.
+
+Great.
+
+> =
+
+> =
+
+> > >                         reg =3D <0x40064000 0x14>;
+> > >                         clocks =3D <&osc0>, <&osc1>, <&rtc>;
+> > >                         clock-names =3D "osc0", "osc1", "rtc";
+> > =
+
+> > Are the oscN and rtc clocks modeled as fixed-rate clocks in DT?
+> > =
+
+> =
+
+> Yes, I skipped the part above soc during copy-paste.
+> =
+
+> > It looks like the SIM block should also consume:
+> > =
+
+> > MCGFLLCLK
+> > MCGIRCLK
+> > MCGFFCLK
+> > MCGPLL0CLK
+> > MCGPLL1CLK
+> > OSC0ERCLK
+> > OSC1ERCLK
+> > OSC032KCLK
+> > RTCCLK (I made that name up)
+> > =
+
+> > The mcg clocks should come out of the mcg node. It looks like you
+> > already modeled oscN and rtc clocks, which is great. There are some
+> > gates after these clocks (e.g. OSC0ERCLK). I wonder if those gates are
+> > actually in the osc IP block or if they actually live in SIM. More on
+> > that below...
+> > =
+
+> > Well they certainly can be exposed if you need them to be. If a device
+> > driver wants to get the core clock and set it's rate then it should be
+> > able to with something like <&sim CORE_CLK>.
+> > =
+
+> =
+
+> Ok, the user of the clock does not relly need to know whether it is clock =
+
+> device or a clock gate - fortunately, I already learnt how to implement =
+
+> such thing.
+> =
+
+> > > =
+
+> > > Also note that fec (ethernet device) driver is connected directly to =
+osc0 =
+
+> > > (though clock gate, you can see this CG attached to osc0 on the diagr=
+am =
+
+> > > too) - to control this gate I need to access SIM device registers, so=
+ it =
+
+> > > should be covered by the same fsl,kinetis-sim driver.
+> > =
+
+> > Do you mean the SIM_SOPT2 register? It looks like the connection is not
+> > "direct", as the osc0 signal feeds into the SIM block and the gate there
+> > controls it.  Perhaps the diagram is incorrect by placing the CG block
+> > inside osc0? It looks like you correctly modeled this relationship in
+> > the sim node.
+> =
+
+> In order to enable network device, bit 0 of SIM_SCGC2 must be set for RMI=
+I =
+
+> mode to work, and according to what I see on the page 228 of the reference
+> manual, it is osc0 clock behind this gate.
+> =
+
+> In the context of network device, I would need to read SIM_SOPT2 to =
+
+> determine clock source for IEEE 1588 timestamp while implementing PTP =
+
+> support - which currently I don't have in my plans, network device can do =
+
+> without it.
+
+OK, I'll leave all of that stuff in your hands. The bindings are looking
+good and when the day comes for you to add more depth to your clock
+driver then it won't require breaking backwards compatibility with
+existing/deployed dtb blobs.
+
+Regards,
 Mike
 
-> 
-> Thanks,
-> Shawn
-> 
-> The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
-> 
->   Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-4.3
-> 
-> for you to fetch changes up to 3713e3f5e9274bbe52e94716bde303071364c1ed:
-> 
->   clk: imx35: define two clocks for rtc (2015-08-05 20:01:21 +0800)
-> 
-> ----------------------------------------------------------------
-> The i.MX clock updates for 4.3:
->  - Provide a better IPU clock initial settings on imx6dl for getting
->    HDMI and LVDS at the same time.
->  - Add clock driver support for i.MX6UL SoC
->  - Add a second clock for RTC device on i.MX31 and i.MX35
-> 
-> ----------------------------------------------------------------
-> Fabio Estevam (1):
->       clk: imx: clk-imx6q: Provide initial IPU clock settings for mx6dl
-> 
-> Frank Li (1):
->       clk: imx: add imx6ul clk tree support
-> 
-> Philippe Reynes (2):
->       clk: imx31: add a second rtc clock
->       clk: imx35: define two clocks for rtc
-> 
->  drivers/clk/imx/Makefile                 |   1 +
->  drivers/clk/imx/clk-imx31.c              |   3 +-
->  drivers/clk/imx/clk-imx35.c              |   6 +-
->  drivers/clk/imx/clk-imx6q.c              |   4 +
->  drivers/clk/imx/clk-imx6ul.c             | 432 +++++++++++++++++++++++++++++++
->  include/dt-bindings/clock/imx6ul-clock.h | 240 +++++++++++++++++
->  6 files changed, 684 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/clk/imx/clk-imx6ul.c
->  create mode 100644 include/dt-bindings/clock/imx6ul-clock.h
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> =
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Thanks,
+> Paul
+> =
+
+> > =
+
+> > Besides my annoying questions above this binding is starting to shape up
+> > very well. Thanks for your patience!
+> > =
+
+> > Regards,
+> > Mike
+> > =
+
+> > > =
+
+> > > On Wed, 29 Jul 2015, Michael Turquette wrote:
+> > > =
+
+> > > > Quoting Paul Osmialowski (2015-07-28 13:30:17)
+> > > > > Hi Mike,
+> > > > > =
+
+> > > > > My trouble is that now I'm dealing with two conradictory opinions=
+ on how =
+
+> > > > > this driver should be written. The one you presented in your prev=
+ious post =
+
+> > > > > assumes that there will be a header file with defines shared betw=
+een the =
+
+> > > > > clock driver and DTS, also with clock gating details hidden behin=
+d some =
+
+> > > > > additional level of indirection, e.g.:
+> > > > > =
+
+> > > > > clocks =3D <&sim SIM_SCGC4_UART1_CLK>;
+> > > > > =
+
+> > > > > Note that I've been through this at the very beginning, though th=
+e names =
+
+> > > > > I used have been bit different, e.g.:
+> > > > > =
+
+> > > > > #define KINETIS_CG_UART1       KINETIS_MKCG(3, 11)     /* SIM_SCG=
+C4[11] */
+> > > > > =
+
+> > > > > This was rejected with a comment by Arnd:
+> > > > > =
+
+> > > > > Instead of using a triple indirection here, just put the tuples
+> > > > > in the DT directly using #clock-cells=3D<2>, and get rid of both =
+this
+> > > > > header file and the dt-bindings/clock/kinetis-mcg.h file.
+> > > > =
+
+> > > > Arnd, are you OK with my type of binding description now that I
+> > > > explained it with some examples?
+> > > > =
+
+> > > > > =
+
+> > > > > So I dropped all of these includes and started to use magic numbe=
+rs (as =
+
+> > > > > you put it). Now I need to go one way or another or even go the t=
+hird way: =
+
+> > > > > extend #clock-cells to <3> and address it like: <&sim parent_cloc=
+k_id =
+
+> > > > > scgc_register_number bit_index_number>.
+> > > > =
+
+> > > > Paul,
+> > > > =
+
+> > > > >From my understanding the DT folks do not like register-level or
+> > > > bit-level details going into DT. It is better to handle the clock
+> > > > signals as abstract resources and link a provider and consumer with=
+ a
+> > > > simple phandle plus an index representing that abstract resource (i=
+.e.
+> > > > the clock output signal).
+> > > > =
+
+> > > > > =
+
+> > > > > Reading your previous post I'm starting to feel that it would bri=
+ng me =
+
+> > > > > closer to final acceptance if I stick to what you proposed in tha=
+t post =
+
+> > > > > (I'm really grateful to you for writting so huge chunk of DTS for=
+ me!), so =
+
+> > > > > I'll probably adopt that.
+> > > > > =
+
+> > > > > You're right about my "get things up and running" attitude - curr=
+ently I =
+
+> > > > > want to develop things extensively (cover as much subsystems as =
+
+> > > > > possible) and then at some stage switch to intensive approach. Th=
+is board =
+
+> > > > > is a somewhat huge monster (for a Cortex-M4 SoC) and there will b=
+e a lot =
+
+> > > > > of coding opportunity in this field in the future.
+> > > > =
+
+> > > > I'm happy to take clock drivers and add my Reviewed-by to .dts files
+> > > > that make use of fixed-rate and fixed-factor clocks as an interim
+> > > > solution.  Of course it will be best to get The Real Thing merged
+> > > > upstream asap, but this is something I've done before to help get n=
+ew
+> > > > platform upstream before and I'm fine to do it again.
+> > > > =
+
+> > > > With that said, Devicetree bindings are allegedly a stable ABI that
+> > > > cannot be broken. So let's make sure that any Kinetis clock binding
+> > > > description is in good shape before merging it. The rest can follow=
+ on
+> > > > later if it needs to.
+> > > > =
+
+> > > > Regards,
+> > > > Mike
+> > > > =
+
+> > > > > =
+
+> > > > > Thanks,
+> > > > > Paul
+> > > > > =
+
+> > > > > On Tue, 28 Jul 2015, Michael Turquette wrote:
+> > > > > =
+
+> > > > > > Quoting Paul Osmialowski (2015-07-26 13:24:08)
+> > > > > > > Hi Mike,
+> > > > > > > =
+
+> > > > > > > Thank you for spending time on this and pointing me into the =
+right =
+
+> > > > > > > direction. I'm wondering about going even further with it. As=
+suming that I =
+
+> > > > > > =
+
+> > > > > > Hi Paul,
+> > > > > > =
+
+> > > > > > No problem! And thanks for the quick turnaround on your patches=
+ so far.
+> > > > > > =
+
+> > > > > > > know everything about my board, I can skip run-time discovery=
+ phase (note =
+
+> > > > > > > that the original driver was designed for other Kinetis-based=
+ boards too) =
+
+> > > > > > > and move everything into DTS, somewhat like this:
+> > > > > > > =
+
+> > > > > > > / {
+> > > > > > >         osc0: clock {
+> > > > > > >                 compatible =3D "fixed-clock";
+> > > > > > >                 #clock-cells =3D <0>;
+> > > > > > >                 clock-frequency =3D <50000000>;
+> > > > > > >         };
+> > > > > > > =
+
+> > > > > > >         osc1: clock {
+> > > > > > >                 compatible =3D "fixed-clock";
+> > > > > > >                 #clock-cells =3D <0>;
+> > > > > > >                 clock-frequency =3D <12000000>;
+> > > > > > >         };
+> > > > > > > =
+
+> > > > > > >         rtc: clock {
+> > > > > > >                 compatible =3D "fixed-clock";
+> > > > > > >                 #clock-cells =3D <0>;
+> > > > > > >                 clock-frequency =3D <32768>;
+> > > > > > >         };
+> > > > > > > =
+
+> > > > > > >         mcgout: clock {
+> > > > > > >                 compatible =3D "fixed-factor-clock";
+> > > > > > >                 #clock-cells =3D <0>;
+> > > > > > >                 clocks =3D <&osc0>;
+> > > > > > >                 clock-mult =3D <12>;
+> > > > > > >                 clock-div =3D <5>;
+> > > > > > >         };
+> > > > > > =
+
+> > > > > > I think this is a step backwards.
+> > > > > > =
+
+> > > > > > Did you look at the qcom clock binding and read the email where=
+ I
+> > > > > > detailed how that binding works?
+> > > > > > =
+
+> > > > > > The point of that type of binding is to not shove per-clock dat=
+a into
+> > > > > > DT, but instead to declare every clock controller IP block (e.g=
+. the
+> > > > > > device) as well as every board-level clock (e.g. as osc that fe=
+eds into
+> > > > > > your mcu). Once these "clock providers" are enumerated in DT, t=
+hen we
+> > > > > > create linkage between the clock providers and the clock consum=
+ers by
+> > > > > > using phandles + an index. Linux device drivers tap into this b=
+y using
+> > > > > > clk_get() and using the "clock-names" property from DT.
+> > > > > > =
+
+> > > > > > Put another way: we mostly use DT to model "devices". That is o=
+pen to
+> > > > > > interpretation for but for clock-related stuff we typically int=
+erpret
+> > > > > > the clock controller as the device, not the individual clock ou=
+tputs
+> > > > > > coming out of the controller.
+> > > > > > =
+
+> > > > > > Note that a clock controller IP block may be both a provider an=
+d a
+> > > > > > consumer.  I/O controllers are a very common type of consumer (=
+e.g. USB
+> > > > > > host controller, MMC controller, GPU, etc).
+> > > > > > =
+
+> > > > > > Additionally, from my reading of the reference manual, mcgout i=
+s defined
+> > > > > > as:
+> > > > > > =
+
+> > > > > > """
+> > > > > > MCG output of either IRC, MCGFLLCLK MCGPLL0CLK,
+> > > > > > MCGPLL1CLK, or MCG's external reference clock that
+> > > > > > sources the core, system, bus, FlexBus, and flash clock. It is
+> > > > > > also an option for the debug trace clock.
+> > > > > > """
+> > > > > > =
+
+> > > > > > So why is it listed here as a fixed-factor clock? Is it not a
+> > > > > > multiplexer? Also, why is it listed here at all? Please take an=
+other
+> > > > > > look at the qcom binding example I linked to in my previous mai=
+l.
+> > > > > > =
+
+> > > > > > > =
+
+> > > > > > >         core: clock {
+> > > > > > >                 compatible =3D "fixed-factor-clock";
+> > > > > > >                 #clock-cells =3D <0>;
+> > > > > > >                 clocks =3D <&mcgout>;
+> > > > > > >                 clock-mult =3D <1>;
+> > > > > > >                 clock-div =3D <1>;
+> > > > > > >         };
+> > > > > > > =
+
+> > > > > > >         bus: clock {
+> > > > > > >                 compatible =3D "fixed-factor-clock";
+> > > > > > >                 #clock-cells =3D <0>;
+> > > > > > >                 clocks =3D <&mcgout>;
+> > > > > > >                 clock-mult =3D <1>;
+> > > > > > >                 clock-div =3D <2>;
+> > > > > > =
+
+> > > > > > These are actually not fixed dividers but programmable dividers=
+. You can
+> > > > > > probably use drivers/clk/clk-divider.c for these. I'm fine with=
+ using
+> > > > > > fixed-dividers for the initial merge just to get things up and =
+running
+> > > > > > if that is your strategy, but you'll need to revisit them later=
+ on when
+> > > > > > you need more flexible support for other boards.
+> > > > > > =
+
+> > > > > > Again, I'm not sure why these clocks are enumerated in DT. Why =
+not just
+> > > > > > enumerate your mcg clock controller and your sim clock controll=
+er? If
+> > > > > > you want to be a perfectionist then it appears that there is an=
+ osc
+> > > > > > clock controller upstream from the mcg controller as well ;-)
+> > > > > > =
+
+> > > > > > It occurs to me that maybe you are trying to use fixed-factor c=
+locks so
+> > > > > > that you can program a sane default rate? We use the
+> > > > > > assigned-clock-rates property for that. Note that this value is=
+ a
+> > > > > > property of some device which *consumes* the clock, not the clo=
+ck
+> > > > > > controller or the clock output itself.
+> > > > > > =
+
+> > > > > > >         };
+> > > > > > > =
+
+> > > > > > >         soc {
+> > > > > > >                 cmu@0x40047000 {
+> > > > > > >                         compatible =3D "fsl,kinetis-gate-cloc=
+k";
+> > > > > > >                         reg =3D <0x40047000 0x1100>;
+> > > > > > > =
+
+> > > > > > >                         mcg_core_gate: clock-gate {
+> > > > > > >                                 clocks =3D <&core>;
+> > > > > > >                                 #clock-cells =3D <2>;
+> > > > > > >                         };
+> > > > > > > =
+
+> > > > > > >                         mcg_bus_gate: clock-gate {
+> > > > > > >                                 clocks =3D <&bus>;
+> > > > > > >                                 #clock-cells =3D <2>;
+> > > > > > >                         };
+> > > > > > > =
+
+> > > > > > >                         osc0_erclk_gate: clock-gate {
+> > > > > > >                                 clocks =3D <&osc0>;
+> > > > > > >                                 #clock-cells =3D <2>;
+> > > > > > >                         };
+> > > > > > >                 };
+> > > > > > > =
+
+> > > > > > >                 uart0: serial@4006a000 {
+> > > > > > >                         compatible =3D "fsl,kinetis-lpuart";
+> > > > > > >                         reg =3D <0x4006a000 0x1000>;
+> > > > > > >                         interrupts =3D <45>, <46>;
+> > > > > > >                         interrupt-names =3D "uart-stat", "uar=
+t-err";
+> > > > > > >                         clocks =3D <&mcg_core_gate 3 10>;
+> > > > > > =
+
+> > > > > > Magic numbers are not good. dtc has been able to use preprocess=
+or macros
+> > > > > > for a while now which means we can use constants instead of mag=
+ic
+> > > > > > numbers. Please look at the shared header in the qcom binding f=
+or an
+> > > > > > example.
+> > > > > > =
+
+> > > > > > >                         clock-names =3D "ipg";
+> > > > > > >                         dmas =3D <&edma 0 2>;
+> > > > > > >                         dma-names =3D "rx";
+> > > > > > >                         status =3D "disabled";
+> > > > > > >                 };
+> > > > > > >         };
+> > > > > > > };
+> > > > > > > =
+
+> > > > > > > As you can see, mcg part is not required anymore.
+> > > > > > =
+
+> > > > > > I think the mcg should be required. The mcg is a real IP block =
+on your
+> > > > > > SoC, according to my reading of your technical reference manual=
+. Just
+> > > > > > because you can model a few of its output clocks in dts does no=
+t mean
+> > > > > > that you should.
+> > > > > > =
+
+> > > > > > I did a quick grep and didn't find "cmu" anywhere in the refere=
+nce
+> > > > > > manual.
+> > > > > > =
+
+> > > > > > > =
+
+> > > > > > > I guess that the approach above would require split into soc-=
+specific and =
+
+> > > > > > > board-specific part (as I said, dividers arrangement is somet=
+hing board =
+
+> > > > > > > specific), but I wonder what you thing about this proposal.
+> > > > > > =
+
+> > > > > > Splitting is good. Chip-specific stuff can go into the chip-spe=
+cific
+> > > > > > dtsi file. The board-level (osc) stuff can go into the individu=
+al board
+> > > > > > files. The ultimate goal is to make it trivial to add new board=
+s.
+> > > > > > =
+
+> > > > > > Regards,
+> > > > > > Mike
+> > > > > > =
+
+> > > > > > > =
+
+> > > > > > > Thanks,
+> > > > > > > Paul
+> > > > > > > =
+
+> > > > > > > On Thu, 23 Jul 2015, Michael Turquette wrote:
+> > > > > > > =
+
+> > > > > > > > Quoting Paul Osmialowski (2015-07-04 14:50:03)
+> > > > > > > > > Hi Arnd,
+> > > > > > > > > =
+
+> > > > > > > > > I'm attaching excerpt from Kinetis reference manual that =
+may make =
+
+> > > > > > > > > situation clearer.
+> > > > > > > > =
+
+> > > > > > > > Hi Paul,
+> > > > > > > > =
+
+> > > > > > > > Can you please post the patch in the body of the email inst=
+ead of an
+> > > > > > > > attachment? It makes it easier to review. Another small nit=
+pick is that
+> > > > > > > > the $SUBJECT for this patch might be better off as somethin=
+g like:
+> > > > > > > > =
+
+> > > > > > > > clk: mcg and sim clock drivers for twr-k70f120m Kinetis SoC
+> > > > > > > > =
+
+> > > > > > > > At least it helps me find the patch I care about when skimm=
+ing the
+> > > > > > > > series ;-)
+> > > > > > > > =
+
+> > > > > > > > > =
+
+> > > > > > > > > These MCG and SIM registers are used only to determine co=
+nfiguration =
+
+> > > > > > > > > (clock fixed rates and clock signal origins) at run time.
+> > > > > > > > > =
+
+> > > > > > > > > Namely, the real MCGOUTCLK source (in the middle) which i=
+s the parent for =
+
+> > > > > > > > > core clock (CCLK) and peripheral clock (PCLK) is determin=
+ed at run time by =
+
+> > > > > > > > > reading MCG registers, let me quote commit message from E=
+mcraft git repo:
+> > > > > > > > > =
+
+> > > > > > > > >       * Determine in run-time what oscillator module (OSC=
+0 or OSC1) is used
+> > > > > > > > >      as clock source for the main PLL.
+> > > > > > > > =
+
+> > > > > > > > According to [0] there are three options: a 32k RTC osc clo=
+ck and osc0
+> > > > > > > > both feed into a mux. You should model this 32k clock with =
+the
+> > > > > > > > fixed-rate binding.
+> > > > > > > > =
+
+> > > > > > > > >       * When OSC1 is selected, assume its frequency to be=
+ 12 MHz on all
+> > > > > > > > >      boards (there is a 12 MHz oscillator on XTAL1/EXTAL1=
+ on K70-SOM and
+> > > > > > > > >      TWR-K70F120M boards).
+> > > > > > > > > =
+
+> > > > > > > > > In my .dts I'm trying to possibly follow real clock hiera=
+rchy, but to go =
+
+> > > > > > > > > anywhere behind MCGOUTCLK would require ability to rewrit=
+e .dtb e.g. by =
+
+> > > > > > > > > U-boot. But that's too demanding for any potential users =
+of this BSP. So =
+
+> > > > > > > > > let's asume that MCGOUTCLK is the root clock and a parent=
+ for CCLK and =
+
+> > > > > > > > > PCLK.
+> > > > > > > > =
+
+> > > > > > > > I'm confused. The point of device tree is to solve problems=
+ like this;
+> > > > > > > > i.e. board-specific differences such as different oscillator
+> > > > > > > > frequencies.
+> > > > > > > > =
+
+> > > > > > > > OSC0 and OSC1 should each be a fixed-rate clock in your boa=
+rd-specific
+> > > > > > > > TWR-K70F120M DTS (not a chip-specific file). They do not be=
+long in the
+> > > > > > > > cmu node, and they should use the "fixed-clock" binding. Th=
+e 32k RTC osc
+> > > > > > > > can probably go in your chip-specific .dtsi as a fixed-rate=
+ clock since
+> > > > > > > > it appears to mandated in the reference manual[0].
+> > > > > > > > =
+
+> > > > > > > > These three fixed-rate clocks are your root clock nodes. Cu=
+stomers only
+> > > > > > > > need to worry about this if they spin a board, and then the=
+y will need
+> > > > > > > > to populate the frequencies of OSC0 and OSC1 in their board=
+-specific
+> > > > > > > > .dts.
+> > > > > > > > =
+
+> > > > > > > > Please break clk-kinetis.c into two files:
+> > > > > > > > drivers/clk/kinetis/clk-mcg.c
+> > > > > > > > drivers/clk/kinetis/clk-sim.c
+> > > > > > > > =
+
+> > > > > > > > Below is what your binding/dts should look like:
+> > > > > > > > =
+
+> > > > > > > > {
+> > > > > > > >       osc0: clock {
+> > > > > > > >               compatible =3D "fixed-clock";
+> > > > > > > >               #clock-cells =3D <0>;
+> > > > > > > >               clock-frequency =3D <50000000>;
+> > > > > > > >       };
+> > > > > > > > =
+
+> > > > > > > >       osc1: clock {
+> > > > > > > >               compatible =3D "fixed-clock";
+> > > > > > > >               #clock-cells =3D <0>;
+> > > > > > > >               clock-frequency =3D <12000000>;
+> > > > > > > >       };
+> > > > > > > > =
+
+> > > > > > > >       rtc: clock {
+> > > > > > > >               compatible =3D "fixed-clock";
+> > > > > > > >               #clock-cells =3D <0>;
+> > > > > > > >               clock-frequency =3D <32768>;
+> > > > > > > >       };
+> > > > > > > > =
+
+> > > > > > > >       soc: soc {
+> > > > > > > >               mcg: clock-controller@40064000 {
+> > > > > > > >                       compatible =3D "fsl,kinetis-mcg";
+> > > > > > > >                       clock-cells =3D <1>;
+> > > > > > > >                       reg =3D <0x40064000 0x14>;
+> > > > > > > >                       clocks =3D <&osc0>, <&osc1>, <&rtc>;
+> > > > > > > >                       clock-names =3D "osc0", "osc1", "rtc";
+> > > > > > > >               };
+> > > > > > > > =
+
+> > > > > > > >               sim: clock-controller@40047000 {
+> > > > > > > >                       compatible =3D "fsl,kinetis-sim";
+> > > > > > > >                       clock-cells =3D <1>;
+> > > > > > > >                       reg =3D <0x40047000 0x1100>;
+> > > > > > > >                       clocks =3D <&mcg MCG_MCGOUTCLK_DIV1>,=
+ <&mcg MCG_MCGOUTCLK_DIV2>, <&mcg MCG_MCGOUTCLK_DIV3> <&mcg MCG_MCGOUTCLK_D=
+IV4>;
+> > > > > > > >                       clock-names =3D "core", "bus", "flexb=
+us", "flash";
+> > > > > > > >               };
+> > > > > > > >       };
+> > > > > > > > =
+
+> > > > > > > >       uart0: serial@4006a000 {
+> > > > > > > >               compatible =3D "fsl,kinetis-lpuart";
+> > > > > > > >               reg =3D <0x4006a000 0x1000>;
+> > > > > > > >               clocks =3D <&sim SIM_SCGC4_UART1_CLK>;
+> > > > > > > >               clock-names =3D "gate";
+> > > > > > > >       };
+> > > > > > > > =
+
+> > > > > > > > I removed the interrupts and dma stuff from the uart0 node =
+for clarity.
+> > > > > > > > The above is the only style of binding that I have been acc=
+epting for
+> > > > > > > > some time; first declare the clock controller and establish=
+ its register
+> > > > > > > > space, and then consumers can consume clocks by providing t=
+he phandle to
+> > > > > > > > the controller plus an offset corresponding to a unique clo=
+ck. The
+> > > > > > > > clock-names property makes it really easy to use with the c=
+lkdev stuff
+> > > > > > > > (e.g. clk_get()).
+> > > > > > > > =
+
+> > > > > > > > I've covered this before on the mailing list so here is a l=
+ink
+> > > > > > > > describing how the qcom bindings do it in detail:
+> > > > > > > > =
+
+> > > > > > > > http://lkml.kernel.org/r/<20150416192014.19585.9663@quantum>
+> > > > > > > > =
+
+> > > > > > > > Technically you could encode the same bits as sub-nodes of =
+the mcg and
+> > > > > > > > sim nodes, but the shared header is how the magic happens w=
+ith the
+> > > > > > > > driver so it's best to keep the clock controller binding sm=
+all and
+> > > > > > > > light.
+> > > > > > > > =
+
+> > > > > > > > I think this means you can also get rid of kinetis_of_clk_g=
+et_name and
+> > > > > > > > kinetis_clk_gate_get but my brain is tired so I'll leave th=
+at as an
+> > > > > > > > exercise to the reader.
+> > > > > > > > =
+
+> > > > > > > > [0] http://cache.freescale.com/files/microcontrollers/doc/r=
+ef_manual/K70P256M150SF3RM.pdf
+> > > > > > > > =
+
+> > > > > > > > Regards,
+> > > > > > > > Mike
+> > > > > > > > =
+
+> > > > > > > > > =
+
+> > > > > > > > > In my most recent version I added OSC0ERCLK explicitly as=
+ one more root =
+
+> > > > > > > > > clock, since it is also used directly (through CG reg. 1 =
+bit 0) by =
+
+> > > > > > > > > Freescale fec network device whose in-tree driver I'm try=
+ing to make =
+
+> > > > > > > > > usable for Kinetis.
+> > > > > > > > > =
+
+> > > > > > > > > On Sat, 4 Jul 2015, Arnd Bergmann wrote:
+> > > > > > > > > =
+
+> > > > > > > > > > On Friday 03 July 2015 00:08:27 Thomas Gleixner wrote:
+> > > > > > > > > >> On Thu, 2 Jul 2015, Paul Osmialowski wrote:
+> > > > > > > > > >>> On Thu, 2 Jul 2015, Arnd Bergmann wrote:
+> > > > > > > > > >>>
+> > > > > > > > > >>>> I wonder if you could move out the fixed rate clocks=
+ into their own
+> > > > > > > > > >>>> nodes. Are they actually controlled by the same bloc=
+k? If they are
+> > > > > > > > > >>>> just fixed, you can use the normal binding for fixed=
+ rate clocks
+> > > > > > > > > >>>> and only describe the clocks that are related to the=
+ driver.
+> > > > > > > > > >>>
+> > > > > > > > > >>> In my view having these clocks grouped together looks=
+ more convincing. After
+> > > > > > > > > >>> all, they all share the same I/O regs in order to rea=
+d configuration.
+> > > > > > > > > >>
+> > > > > > > > > >> The fact that they share a register is not making them=
+ a group. That's
+> > > > > > > > > >> just a HW design decision and you need to deal with th=
+at by protecting
+> > > > > > > > > >> the register access, but not by trying to group them a=
+rtificially at
+> > > > > > > > > >> the functional level.
+> > > > > > > > > >
+> > > > > > > > > > I'd disagree with that: The clock controller is the dev=
+ice that owns the
+> > > > > > > > > > registers and that should be one node in DT, as Paul's =
+first version does.
+> > > > > > > > > >
+> > > > > > > > > > The part I'm still struggling with is understanding how=
+ the fixed-rate
+> > > > > > > > > > clocks are controlled through those registers. If they =
+are indeed configured
+> > > > > > > > > > through the registers, the name is probably wrong and s=
+hould be changed
+> > > > > > > > > > to whatever kind of non-fixed clock this is.
+> > > > > > > > > >
+> > > > > > > > > >       Arnd
+> > > > > > > > > >
+> > > > > > > > > =
+
+> > > > > > > > > _______________________________________________
+> > > > > > > > > linux-arm-kernel mailing list
+> > > > > > > > > linux-arm-kernel@lists.infradead.org
+> > > > > > > > > http://lists.infradead.org/mailman/listinfo/linux-arm-ker=
+nel
+> > > > > > > > =
+
+> > > > > > > --
+> > > > > > > To unsubscribe from this list: send the line "unsubscribe lin=
+ux-kernel" in
+> > > > > > > the body of a message to majordomo@vger.kernel.org
+> > > > > > > More majordomo info at  http://vger.kernel.org/majordomo-info=
+.html
+> > > > > > > Please read the FAQ at  http://www.tux.org/lkml/
+> > > > > > =
+
+> > > > > --
+> > > > > To unsubscribe from this list: send the line "unsubscribe linux-k=
+ernel" in
+> > > > > the body of a message to majordomo@vger.kernel.org
+> > > > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > > > > Please read the FAQ at  http://www.tux.org/lkml/
+> > > > =
+
+> > > --
+> > > To unsubscribe from this list: send the line "unsubscribe linux-kerne=
+l" in
+> > > the body of a message to majordomo@vger.kernel.org
+> > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > > Please read the FAQ at  http://www.tux.org/lkml/
+> > =
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
