@@ -1,161 +1,70 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Sat, 1 Aug 2015 16:18:25 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+Return-Path: <horms@verge.net.au>
+Date: Wed, 5 Aug 2015 09:55:44 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>,
-	Andreas Faerber <afaerber@suse.de>
-Subject: Re: [PATCH v3 2/5] ARM: dts: Exynos4x12: add CPU OPP and regulator
- supply property
-Message-ID: <20150801104825.GF899@linux>
-References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
- <1438368557-2352-3-git-send-email-b.zolnierkie@samsung.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/16] ARM: shmobile: Add CPG/MSTP Clock Domain
+Message-ID: <20150805005543.GC20726@verge.net.au>
+References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
+ <20150804134824.GA10194@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1438368557-2352-3-git-send-email-b.zolnierkie@samsung.com>
+In-Reply-To: <20150804134824.GA10194@verge.net.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 31-07-15, 20:49, Bartlomiej Zolnierkiewicz wrote:
-> For Exynos4x12 platforms, add CPU operating points (using
-> opp-v2 bindings) and CPU regulator supply properties for
-> migrating from Exynos specific cpufreq driver to using
-> generic cpufreq driver.
+On Tue, Aug 04, 2015 at 10:48:28PM +0900, Simon Horman wrote:
+> Thanks Geert,
 > 
-> Based on the earlier work by Thomas Abraham.
-> 
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Cc: Andreas Faerber <afaerber@suse.de>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4212.dtsi               | 81 ++++++++++++++++++++++++
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 ++
->  arch/arm/boot/dts/exynos4412-origen.dts         |  4 ++
->  arch/arm/boot/dts/exynos4412-trats2.dts         |  4 ++
->  arch/arm/boot/dts/exynos4412.dtsi               | 83 +++++++++++++++++++++++++
->  5 files changed, 176 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-> index d9c8efee..5389011 100644
-> --- a/arch/arm/boot/dts/exynos4212.dtsi
-> +++ b/arch/arm/boot/dts/exynos4212.dtsi
-> @@ -30,6 +30,9 @@
->  			device_type = "cpu";
->  			compatible = "arm,cortex-a9";
->  			reg = <0xA00>;
-> +			clocks = <&clock CLK_ARM_CLK>;
-> +			clock-names = "cpu";
-> +			operating-points-v2 = <&cpu0_opp_table>;
->  			cooling-min-level = <13>;
->  			cooling-max-level = <7>;
->  			#cooling-cells = <2>; /* min followed by max */
-> @@ -39,6 +42,84 @@
->  			device_type = "cpu";
->  			compatible = "arm,cortex-a9";
->  			reg = <0xA01>;
-> +			operating-points-v2 = <&cpu0_opp_table>;
-> +		};
-> +	};
-> +
-> +	cpu0_opp_table: opp_table0 {
-> +		compatible = "operating-points-v2";
-> +		opp-shared;
-> +
-> +		opp00 {
-> +			opp-hz = /bits/ 64 <200000000>;
-> +			opp-microvolt = <900000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp01 {
-> +			opp-hz = /bits/ 64 <300000000>;
-> +			opp-microvolt = <900000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp02 {
-> +			opp-hz = /bits/ 64 <400000000>;
-> +			opp-microvolt = <925000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp03 {
-> +			opp-hz = /bits/ 64 <500000000>;
-> +			opp-microvolt = <950000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp04 {
-> +			opp-hz = /bits/ 64 <600000000>;
-> +			opp-microvolt = <975000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp05 {
-> +			opp-hz = /bits/ 64 <700000000>;
-> +			opp-microvolt = <987500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp06 {
-> +			opp-hz = /bits/ 64 <800000000>;
-> +			opp-microvolt = <1000000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp07 {
-> +			opp-hz = /bits/ 64 <900000000>;
-> +			opp-microvolt = <1037500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp08 {
-> +			opp-hz = /bits/ 64 <1000000000>;
-> +			opp-microvolt = <1087500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp09 {
-> +			opp-hz = /bits/ 64 <1100000000>;
-> +			opp-microvolt = <1137500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp10 {
-> +			opp-hz = /bits/ 64 <1200000000>;
-> +			opp-microvolt = <1187500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp11 {
-> +			opp-hz = /bits/ 64 <1300000000>;
-> +			opp-microvolt = <1250000>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp12 {
-> +			opp-hz = /bits/ 64 <1400000000>;
-> +			opp-microvolt = <1287500>;
-> +			clock-latency-ns = <200000>;
-> +		};
-> +		opp13 {
-> +			opp-hz = /bits/ 64 <1500000000>;
-> +			opp-microvolt = <1350000>;
-> +			clock-latency-ns = <200000>;
-> +			turbo-mode;
->  		};
->  	};
->  };
+> I have tentatively queued this up in its own branch,
+> cpg-mstp-clock-domain-for-v4.3.
 
-I'm lovin' it :)
+Where possible I prefer not to apply non-DTS/DTSI patches on top of
+DTS/DTSI patches, I believe this is in keeping with how the ARM SoC
+maintainers like things handled.  With this in mind I have shuffled things
+around a little, the result is:
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+1. The following are (still) queued up for v4.3 in their own
+   cpg-mstp-clock-domain-for-v4.3 branch:
 
--- 
-viresh
+   clk: shmobile: Add CPG/MSTP Clock Domain support
+   clk: shmobile: r8a7778: Add CPG/MSTP Clock Domain support
+   clk: shmobile: r8a7779: Add CPG/MSTP Clock Domain support
+   clk: shmobile: rcar-gen2: Add CPG/MSTP Clock Domain support
+   clk: shmobile: rz: Add CPG/MSTP Clock Domain support
+   ARM: shmobile: r7s72100 dtsi: Add CPG/MSTP Clock Domain
+   ARM: shmobile: r8a7778 dtsi: Add CPG/MSTP Clock Domain
+   ARM: shmobile: r8a7779 dtsi: Add CPG/MSTP Clock Domain
+   ARM: shmobile: r8a7790 dtsi: Add CPG/MSTP Clock Domain
+   ARM: shmobile: r8a7791 dtsi: Add CPG/MSTP Clock Domain
+   ARM: shmobile: r8a7793 dtsi: Add CPG/MSTP Clock Domain
+   ARM: shmobile: r8a7794 dtsi: Add CPG/MSTP Clock Domain
+
+2. The following are now queued up for v4.3 in a separate
+   sh-drivers-for-v4.3 branch. That branch is on top of the
+   cpg-mstp-clock-domain-for-v4.3 branch and I intend to send it directly
+   to Linus if/when a v4.3-rc has been released with the patches
+   listed in 1. present.
+
+   drivers: sh: Disable legacy default PM Domain on emev2
+   drivers: sh: Disable PM runtime for multi-platform ARM with genpd
+
+3. I have deferred the remaining two patches, listed below, for v4.4.
+   they currently reside in cpg-mstp-clock-domain-for-v4.4. That
+   branch is based on the sh-drivers-for-v4.3 branch.
+
+   clk: shmobile: mstp: Consider "zb_clk" suitable for power management
+   ARM: shmobile: R-Mobile: Use CPG/MSTP Clock Domain attach/detach helpers
+
+
+This means that the last two patches will disappear from next until
+after v4.3-rc1 is released but they, along with all the other patches,
+will be present in the renesas devel branch.
