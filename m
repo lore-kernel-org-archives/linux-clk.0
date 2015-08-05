@@ -1,76 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: robh+dt@kernel.org, mturquette@baylibre.com, lee.jones@linaro.org,
-	k.kozlowski@samsung.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Subject: [PATCH-v2 5/5] mfd: 88pm800: Add support for clk subdevice
-Date: Tue, 25 Aug 2015 00:26:34 +0530
-Message-Id: <1440442594-3102-7-git-send-email-vaibhav.hiremath@linaro.org>
-In-Reply-To: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
-References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <CAGXu5jKnvPw=LM6uynk532AzON1hoD+PmA0t-eA4oOfW=R986w@mail.gmail.com>
+References: <20150724232045.GA14059@www.outflux.net> <CAAObsKBp-hPknWUxJxJGPV1RTj+Q_yc+xxVG315FjQXk9_CK2g@mail.gmail.com>
+ <CAGXu5jKnvPw=LM6uynk532AzON1hoD+PmA0t-eA4oOfW=R986w@mail.gmail.com>
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Date: Wed, 5 Aug 2015 15:09:07 +0200
+Message-ID: <CAAObsKAyKVM-Y4XZJZ-dPXnZZpQ4_ytovkshAXCWj6UFU7-XGw@mail.gmail.com>
+Subject: Re: [PATCH] clk_register_clkdev: handle callers needing format string
+To: Kees Cook <keescook@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds mfd_cell/clk-subdevice for 88PM800 MFD
-(and family of devices).
+On 31 July 2015 at 21:03, Kees Cook <keescook@chromium.org> wrote:
+> On Fri, Jul 31, 2015 at 2:13 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
+>> On 25 July 2015 at 01:20, Kees Cook <keescook@chromium.org> wrote:
+>>> Many callers either use NULL or const strings for the third argument of
+>>> clk_register_clkdev. For those that do not, this is a risk for format
+>>> strings being accidentally processed (for example in device names). This
+>>> adds the missing "%s" arguments to make sure format strings will not leak
+>>> into the clkdev.
+>>>
+>>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>>> ---
+>>
+>> [...]
+>>
+>>> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+>>> index 41cd87c67be6..97d9fb7e89ad 100644
+>>> --- a/drivers/clk/tegra/clk.c
+>>> +++ b/drivers/clk/tegra/clk.c
+>>> @@ -296,7 +296,7 @@ void __init tegra_register_devclks(struct tegra_devclk *dev_clks, int num)
+>>>
+>>>         for (i = 0; i < num; i++, dev_clks++)
+>>>                 clk_register_clkdev(clks[dev_clks->dt_id], dev_clks->con_id,
+>>> -                               dev_clks->dev_id);
+>>> +                               "%s", dev_clks->dev_id);
+>>
+>> This causes clocks to be registered with a dev_id string of "(null)",
+>> which is causing lookups that used to succeed before to fail.
+>
+> Oh yuck. Yeah, clk_register_clkdev handles a NULL argument differently
+> than other format-string style functions. Using
+> clk_register_clkdev(..., dev_clks->dev_id ? "%s" : NULL,
+> dev_clks->dev_id) seems really ugly to work around this, though.
+> Perhaps the format string capability should be removed?
 
-Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
----
- drivers/mfd/88pm800.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Yeah, that sounds good to me. At least, I don't see as that good of an
+idea to save a few lines of code by making the API so prone to
+mistakes.
 
-diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
-index c4e097d..a928eed 100644
---- a/drivers/mfd/88pm800.c
-+++ b/drivers/mfd/88pm800.c
-@@ -173,6 +173,14 @@ static const struct mfd_cell regulator_devs[] = {
- 	},
- };
- 
-+static struct mfd_cell clk_devs[] = {
-+	{
-+		.name = "88pm80x-clk",
-+		.of_compatible = "marvell,88pm800-clk",
-+		.id = -1,
-+	},
-+};
-+
- static const struct regmap_irq pm800_irqs[] = {
- 	/* INT0 */
- 	[PM800_IRQ_ONKEY] = {
-@@ -344,6 +352,17 @@ static int device_regulator_init(struct pm80x_chip *chip)
- 			ARRAY_SIZE(regulator_devs), NULL, 0, NULL);
- }
- 
-+static int device_clk_init(struct pm80x_chip *chip)
-+{
-+	if (chip->type == CHIP_PM800)
-+		clk_devs[0].name = "88pm800-clk";
-+	else if (chip->type == CHIP_PM860)
-+		clk_devs[0].name = "88pm860-clk";
-+
-+	return mfd_add_devices(chip->dev, 0, &clk_devs[0],
-+			ARRAY_SIZE(clk_devs), NULL, 0, NULL);
-+}
-+
- static int device_irq_init_800(struct pm80x_chip *chip)
- {
- 	struct regmap *map = chip->regmap;
-@@ -511,6 +530,12 @@ static int device_800_init(struct pm80x_chip *chip)
- 		goto out;
- 	}
- 
-+	ret = device_clk_init(chip);
-+	if (ret) {
-+		dev_err(chip->dev, "Failed to add clk subdev\n");
-+		goto out;
-+	}
-+
- 	return 0;
- out_dev:
- 	mfd_remove_devices(chip->dev);
--- 
-1.9.1
+Could this patch be removed from linux-next in the meantime?
 
+Thanks,
+
+Tomeu
+
+> -Kees
+>
+> --
+> Kees Cook
+> Chrome OS Security
