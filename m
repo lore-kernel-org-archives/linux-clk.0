@@ -1,56 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Message-ID: <55C1D266.5090804@linaro.org>
+Date: Wed, 05 Aug 2015 14:37:50 +0530
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
 MIME-Version: 1.0
-To: Eric Anholt <eric@anholt.net>, linux-arm-kernel@lists.infradead.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <87wpx04c4q.fsf@eliezer.anholt.net>
-Cc: linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	"Stephen Warren" <swarren@wwwdotorg.org>,
-	"Lee Jones" <lee@kernel.org>, linux-clk@vger.kernel.org,
-	"Stephen Boyd" <sboyd@codeaurora.org>
-References: <1437420787-32137-1-git-send-email-eric@anholt.net>
- <1437420787-32137-3-git-send-email-eric@anholt.net>
- <20150811211733.31346.11122@quantum> <87wpx04c4q.fsf@eliezer.anholt.net>
-Message-ID: <20150812190014.31346.89987@quantum>
-Subject: Re: [PATCH v4 2/8] clk: Add a Raspberry Pi-specific clock driver.
-Date: Wed, 12 Aug 2015 12:00:14 -0700
+To: Lee Jones <lee.jones@linaro.org>
+CC: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	yhanin@marvell.com, haojian.zhuang@marvell.com,
+	zhouqiao@marvell.com, mturquette@baylibre.com,
+	k.kozlowski@samsung.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 4/4] mfd: 88pm800: Add support for clk subdevice
+References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org> <1437476823-3358-5-git-send-email-vaibhav.hiremath@linaro.org> <20150723155008.GS3436@x1>
+In-Reply-To: <20150723155008.GS3436@x1>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Eric Anholt (2015-08-12 11:04:05)
-> Michael Turquette <mturquette@linaro.org> writes:
-> 
-> > Hi Eric,
-> >
-> > Quoting Eric Anholt (2015-07-20 12:33:01)
-> >> +void __init rpi_firmware_init_clock_provider(struct device_node *node)
-> >> +{
-> >> +       /* We delay construction of our struct clks until get time,
-> >> +        * because we need to be able to return -EPROBE_DEFER if the
-> >> +        * firmware driver isn't up yet.  clk core doesn't support
-> >> +        * re-probing on -EPROBE_DEFER, but callers of clk_get can.
-> >> +        */
-> >> +       of_clk_add_provider(node, rpi_firmware_delayed_get_clk, node);
-> >> +}
-> >> +
-> >> +CLK_OF_DECLARE(rpi_firmware_clocks, "raspberrypi,bcm2835-firmware-clocks",
-> >> +              rpi_firmware_init_clock_provider);
-> >
-> > Do you require CLK_OF_DECLARE here? Could this be a platform driver
-> > instead?
-> 
-> I'm not actually sure.  The common pattern seemed to be using
-> CLK_OF_DECLARE (130 files using it versus declaring a struct
-> platform_driver), and it seems to avoid a whole lot of boilerplate.
-> What would the advantage be?
 
-Correctly using the Linux driver model, having a nice struct device and
-things like supsend and resume handlers, etc.
 
-There is a lot of CLK_OF_DECLARE going on in drivers/clk, but I am
-hoping we can fix that. The main reason for CLK_OF_DECLARE is when you
-need to register clocks very early (e.g. timers). This is often not the
-case.
+On Thursday 23 July 2015 09:20 PM, Lee Jones wrote:
+> On Tue, 21 Jul 2015, Vaibhav Hiremath wrote:
+>
+>> This patch adds mfd_cell/clk-subdevice for 88PM800 MFD
+>> (and family of devices).
+>>
+>> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+>> ---
+>>   drivers/mfd/88pm800.c | 25 +++++++++++++++++++++++++
+>>   1 file changed, 25 insertions(+)
+>>
+>> diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
+>> index f104a32..9723eac 100644
+>> --- a/drivers/mfd/88pm800.c
+>> +++ b/drivers/mfd/88pm800.c
+>> @@ -173,6 +173,14 @@ static const struct mfd_cell regulator_devs[] = {
+>>   	},
+>>   };
+>>
+>> +static struct mfd_cell clk_devs[] = {
+>> +	{
+>> +	 .name = "88pm80x-clk",
+>> +	 .of_compatible = "marvell,88pm800-clk",
+>> +	 .id = -1,
+>> +	},
+>> +};
+>
+> Why does each device in 88pm800.c have it's own mfd_cell?
+>
 
-Regards,
-Mike
+Probably, the author of the driver can comment on this. I have cc'ed
+all of them.
+
+But looking at the driver it looks like, except onkey and regulator all
+other devices need per-initialization. For example,
+
+in case of clock,
+
+static int device_clk_init(struct pm80x_chip *chip)
+{
+         if (chip->type == CHIP_PM800)
+                 clk_devs[0].name = "88pm800-clk";
+         else if (chip->type == CHIP_PM860)
+                 clk_devs[0].name = "88pm860-clk";
+
+         return mfd_add_devices(chip->dev, 0, &clk_devs[0],
+                               ARRAY_SIZE(clk_devs), NULL, 0, NULL);
+}
+
+
+
+> Take the opportunity to correct the tabbing in the remainder of the
+> file.  Make that fix-up patch 1 of this set.  Then fixup this patch.
+>
+
+Ok, I will.
+
+Thanks,
+Vaibhav
