@@ -1,101 +1,65 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk@vger.kernel.org, kuninori.morimoto.gx@renesas.com, gaku.inami.xw@bp.renesas.com, mturquette@baylibre.com, linux-sh@vger.kernel.org, sboyd@codeaurora.org, horms@verge.net.au, geert@linux-m68k.org
-Subject: Re: [PATCH v3 02/04] clk: shmobile: Make MSTP clock-output-names optional
-Date: Fri, 28 Aug 2015 22:37:47 +0300
-Message-ID: <1776985.pyjG3Le2BL@avalon>
-In-Reply-To: <20150828091613.21731.8527.sendpatchset@little-apple>
-References: <20150828091550.21731.85227.sendpatchset@little-apple> <20150828091613.21731.8527.sendpatchset@little-apple>
+Return-Path: <vaibhav.hiremath@linaro.org>
+Return-Path: <vaibhav.hiremath@linaro.org>
+Message-ID: <55C1CF0C.1010805@linaro.org>
+Date: Wed, 05 Aug 2015 14:23:32 +0530
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: Lee Jones <lee.jones@linaro.org>
+CC: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+ mturquette@baylibre.com, k.kozlowski@samsung.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/4] mfd: 88pm800: Update the header file with 32K clk
+ related macros
+References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org> <1437476823-3358-2-git-send-email-vaibhav.hiremath@linaro.org> <20150723155233.GT3436@x1>
+In-Reply-To: <20150723155233.GT3436@x1>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus,
 
-Thank you for the patch.
 
-On Friday 28 August 2015 18:16:13 Magnus Damm wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
-> 
-> This patch updates the MSTP driver to make the "clock-output-names"
-> DT property optional instead of mandatory. In case the DT property
-> is omitted then the function clk_register_clkdev() is skipped.
-> 
-> The default for new SoCs is to not use "clock-output-names".
-> 
-> This version of the patch is kind of early, so please handle with care.
-> So far the patch has only been tested with a single MSTP clock. =)
-> 
-> Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> ---
-> 
->  drivers/clk/shmobile/clk-mstp.c |   15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
-> 
-> --- 0001/drivers/clk/shmobile/clk-mstp.c
-> +++ work/drivers/clk/shmobile/clk-mstp.c	2015-08-28 15:03:28.002366518 
-+0900
-> @@ -198,15 +198,12 @@ static void __init cpg_mstp_clocks_init(
-> 
->  	for (i = 0; i < MSTP_MAX_CLOCKS; ++i) {
->  		const char *parent_name;
-> -		const char *name;
-> +		const char *name = NULL;
->  		u32 clkidx;
->  		int ret;
-> 
-> -		/* Skip clocks with no name. */
->  		ret = of_property_read_string_index(np, "clock-output-names",
->  						    i, &name);
+On Thursday 23 July 2015 09:22 PM, Lee Jones wrote:
+> On Tue, 21 Jul 2015, Vaibhav Hiremath wrote:
+>
+>> Update header file with required macros for 32KHz buffered clock
+>> output of 88PM800 family of device.
+>> These macros will be used in clk provider driver.
+>>
+>> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+>> ---
+>>   include/linux/mfd/88pm80x.h | 12 ++++++++++++
+>>   1 file changed, 12 insertions(+)
+>>
+>> diff --git a/include/linux/mfd/88pm80x.h b/include/linux/mfd/88pm80x.h
+>> index 05d9bad..680e4eb 100644
+>> --- a/include/linux/mfd/88pm80x.h
+>> +++ b/include/linux/mfd/88pm80x.h
+>> @@ -91,6 +91,7 @@ enum {
+>>   /* Referance and low power registers */
+>>   #define PM800_LOW_POWER1		(0x20)
+>>   #define PM800_LOW_POWER2		(0x21)
+>> +#define PM800_LOW_POWER2_XO_LJ_EN	BIT(5)
+>>
+>>   #define PM800_LOW_POWER_CONFIG3		(0x22)
+>>   #define PM800_LDOBK_FREEZE		BIT(7)
+>> @@ -138,6 +139,13 @@ enum {
+>>   #define PM800_ALARM			BIT(5)
+>>   #define PM800_RTC1_USE_XO		BIT(7)
+>>
+>> +#define PM800_32K_OUTX_SEL_MASK		(0x3)
+>> +/* 32KHz clk output sel mode */
+>> +#define PM800_32K_OUTX_SEL_ZERO		(0x0)
+>> +#define PM800_32K_OUTX_SEL_INT_32KHZ	(0x1)
+>> +#define PM800_32K_OUTX_SEL_XO_32KHZ	(0x2)
+>> +#define PM800_32K_OUTX_SEL_HIZ		(0x3)
+>
+> Why do these need to be in brackets?
+>
 
-I think we can remove this completely.
+No specific reason, just made it consistent with other definitions in
+the file.
 
-> -		if (ret < 0 || strlen(name) == 0)
-> -			continue;
-> 
->  		parent_name = of_clk_get_parent_name(np, i);
->  		ret = of_property_read_u32_index(np, idxname, i, &clkidx);
-> @@ -214,12 +211,13 @@ static void __init cpg_mstp_clocks_init(
->  			break;
-> 
->  		if (clkidx >= MSTP_MAX_CLOCKS) {
-> -			pr_err("%s: invalid clock %s %s index %u)\n",
-> -			       __func__, np->name, name, clkidx);
-> +			pr_err("%s: invalid clock %s index %u)\n",
-> +			       __func__, np->name, clkidx);
->  			continue;
->  		}
-> 
-> -		clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
-> +		clks[clkidx] = cpg_mstp_clock_register(name ? name : np->name,
+I will fix in V2.
 
-This would result in several clocks being registered with the same name. I 
-would instead construct the name with sprintf(name, "%s.%u", np->name, 
-clkidx).
-
-> +						       parent_name,
->  						       clkidx, group);
->  		if (!IS_ERR(clks[clkidx])) {
->  			group->data.clk_num = max(group->data.clk_num,
-> @@ -232,7 +230,8 @@ static void __init cpg_mstp_clocks_init(
->  			 * FIXME: Remove this when all devices that require a
->  			 * clock will be instantiated from DT.
->  			 */
-> -			clk_register_clkdev(clks[clkidx], name, NULL);
-> +			if (name) /* only if clock-output-names is provided */
-> +				clk_register_clkdev(clks[clkidx], name, NULL);
-
-Better than that, as all our devices are now instantiated from DT, we can 
-remove the clk_register_clkdev() call completely as well as the FIXME comment.
-
->  		} else {
->  			pr_err("%s: failed to register %s %s clock (%ld)\n",
->  			       __func__, np->name, name, PTR_ERR(clks[clkidx]));
-
-name can be NULL here, I'd use "%s.%u", np->name, clkidx.
-
--- 
-Regards,
-
-Laurent Pinchart
+Thanks,
+Vaibhav
