@@ -1,53 +1,41 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v2 4/4] clk: pistachio: correct critical clock list
-To: Govindraj Raja <govindraj.raja@imgtec.com>, linux-mips@linux-mips.org,
- linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-References: <1438964413-18876-1-git-send-email-govindraj.raja@imgtec.com>
- <1438964413-18876-5-git-send-email-govindraj.raja@imgtec.com>
-Cc: Zdenko Pulitika <zdenko.pulitika@imgtec.com>,
- Kevin Cernekee <cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>,
- Andrew Bresticker <abrestic@chromium.org>,
- James Hartley <James.Hartley@imgtec.com>,
- Damien Horsley <Damien.Horsley@imgtec.com>,
- James Hogan <James.Hogan@imgtec.com>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <55C5E956.5060308@cogentembedded.com>
-Date: Sat, 8 Aug 2015 14:34:46 +0300
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55C1DE7F.5040002@arm.com>
+Date: Wed, 05 Aug 2015 10:59:27 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <1438964413-18876-5-git-send-email-govindraj.raja@imgtec.com>
+To: "arm@kernel.org" <arm@kernel.org>, Olof Johansson <olof@lixom.net>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Sudeep Holla <Sudeep.Holla@arm.com>,
+	Liviu Dudau <Liviu.Dudau@arm.com>,
+	Punit Agrawal <Punit.Agrawal@arm.com>,
+	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v6 0/8] ARM64: juno: add SCPI mailbox protocol, clock
+ and CPUFreq support
+References: <1438364591-1144-1-git-send-email-sudeep.holla@arm.com>
+In-Reply-To: <1438364591-1144-1-git-send-email-sudeep.holla@arm.com>
 Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello.
+Hi Olof,
 
-On 8/7/2015 7:20 PM, Govindraj Raja wrote:
+On 31/07/15 18:43, Sudeep Holla wrote:
+> Hi ARM-SoC guys,
+>
+> It has been on the list for a while and have got all the necessary
+> ACKs. Can you please pull this series for v4.3 ?
+>
 
-> From: "Damien.Horsley" <Damien.Horsley@imgtec.com>
+Can you pull this patch series directly from the mail or do you prefer
+pull-request ?
 
-> Current critical clock list for pistachio enables
-> only mips and sys clocks by default but there also
-                                                ^ are
-
-> other clocks that are not claimed by anyone and
-> needs to be enabled by default.
-
-> This patch updates the critical clocks that needs
-> to enabled by default.
-     ^ be
-
-> Add a separate struct to distinguish the critical clocks
-
-    Need colon here.
-
-> one is core clock(mips) and others are from periph_clk_*
-
-> Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
-> Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-> Signed-off-by: Damien.Horsley <Damien.Horsley@imgtec.com>
-> Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
-
-MBR, Sergei
+Regards,
+Sudeep
