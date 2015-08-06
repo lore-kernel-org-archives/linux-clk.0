@@ -1,92 +1,101 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55DD88CD.6010608@st.com>
-Date: Wed, 26 Aug 2015 11:37:17 +0200
-From: Maxime Coquelin <maxime.coquelin@st.com>
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <govindraj.raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Mike Turquette
+	<mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, "Michael
+ Turquette" <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Govindraj Raja <govindraj.raja@imgtec.com>
+Subject: [PATCH 3/6] clk: pistachio: Fix pll rate calculation in integer mode
+Date: Thu, 6 Aug 2015 14:43:31 +0100
+Message-ID: <1438868614-7672-4-git-send-email-govindraj.raja@imgtec.com>
+In-Reply-To: <1438868614-7672-1-git-send-email-govindraj.raja@imgtec.com>
+References: <1438868614-7672-1-git-send-email-govindraj.raja@imgtec.com>
 MIME-Version: 1.0
-To: Lee Jones <lee.jones@linaro.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<sboyd@codeaurora.org>, <s.hauer@pengutronix.de>,
-	<geert@linux-m68k.org>
-Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and
- implement hand-off
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com> <20150818154552.GI2547@lukather> <20150818164356.31346.80341@quantum> <20150820151510.GD30520@lukather> <20150825215051.31346.56261@quantum> <20150826065423.GR19409@x1> <55DD7C05.6030207@st.com> <20150826090956.GW19409@x1>
-In-Reply-To: <20150826090956.GW19409@x1>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
 
+.recalc_rate callback for the fractional pll doesn't take operating
+mode into account when calculating pll rate. This results in
+the incorrect pll rates when pll is operating in integer mode.
 
-On 08/26/2015 11:09 AM, Lee Jones wrote:
-> On Wed, 26 Aug 2015, Maxime Coquelin wrote:
->
->> Hi Lee,
->>
->> On 08/26/2015 08:54 AM, Lee Jones wrote:
->>> On Tue, 25 Aug 2015, Michael Turquette wrote:
->>>
->>>
->>>> Maybe I am the one missing something? My goal was to allow the consumer
->>>> driver to gate the critical clock. So we need clk_disable_unused to
->>>> actually disable the clock for that to work.
->>>>
->>>> I think you are suggesting that clk_disable_unused should *not* disable
->>>> the clock if it is critical. Can you confirm that?
->>> My take is that a critical clock should only be disabled when a
->>> knowledgeable driver wants to gate it for a specific purpose [probably
->>> using clk_disable()].  Once the aforementioned driver no longer has a
->>> use for the clock [whether that happens with clk_unprepare_disable()
->>> or clk_put() ...] the clock should be ungated and be provided with
->>> critical status once more.
->>>
->> How do you differentiate between a knowledgeable and
->> non-knowledgeable driver?
->> Let's take the example of the clock used by the i2c on STi SoCs.
->> This clock is used by i2c, and is also critical to the system, but
->> only i2c takes it.
->>
->> At first transfer, the i2c will enable the clock and then disables it.
->>
->> What we would expect here is that the clk_disable does not gate the
->> clock, even if only user since the hand-off flag has been set.
->> Else, system will freeze.
-> The I2C driver in this instance is not a knowledgeable driver and
-> should not be taking a reference to a critical clock.
-This is the case:
-         i2c@9840000 {
-             ...
-             clocks = <&clk_s_c0_flexgen CLK_EXT2F_A9>;
-             clock-names = "ssc";
-             ...
-         }
+This commit fixes this by checking the operating mode before
+calculating pll rate.
 
-CLK_EXT2F_A9 is a critical clock I think.
-Indeed, this clock corresponds to output 13 of clockgen c0.
-This ouput has several clock names in the datasheet, but is in reality 
-the same clock from HW point of view (i.e. "same wire"):
+Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+---
+ drivers/clk/pistachio/clk-pll.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
-- CLK_ICN_REG
-- CLK_TRACE_A9
-- CLK_PTI_STM
-- CLK_EXT2F_A9
-
-I'm pretty sure CLK_ICN_REG is a critical clock.
-
-Try to gate it without gating its parent, and see if system is still alive.
-
-
->
-> In the example you provide, the real issue is that the I2C driver uses
-> one of the critical clock's siblings.  Without this framework, if it
-> gives up the reference to its own clock and there are no users of any
-> sibling clocks, the parent is gated.  This has the unfortunate effect
-> of gating the entire family, critical clock included.
-I don't see why a clock used by i2c could not be a critical clock, if it 
-is used by other parts of the system that cannot be represented as 
-drivers, and rely on the clock to be always on.
-
-
-
-
+diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
+index 9a38a2b..8802b2e 100644
+--- a/drivers/clk/pistachio/clk-pll.c
++++ b/drivers/clk/pistachio/clk-pll.c
+@@ -65,6 +65,10 @@
+ #define MIN_OUTPUT_FRAC			12000000UL
+ #define MAX_OUTPUT_FRAC			1600000000UL
+ 
++/* Fractional PLL operating modes */
++#define PLL_MODE_INT			1
++#define PLL_MODE_FRAC			0
++
+ struct pistachio_clk_pll {
+ 	struct clk_hw hw;
+ 	void __iomem *base;
+@@ -99,6 +103,15 @@ static inline struct pistachio_clk_pll *to_pistachio_pll(struct clk_hw *hw)
+ 	return container_of(hw, struct pistachio_clk_pll, hw);
+ }
+ 
++static inline u32 pll_frac_get_mode(struct clk_hw *hw)
++{
++	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
++	u32 val;
++
++	val = pll_readl(pll, PLL_CTRL3) & PLL_FRAC_CTRL3_DSMPD;
++	return val ? PLL_MODE_INT : PLL_MODE_FRAC;
++}
++
+ static struct pistachio_pll_rate_table *
+ pll_get_params(struct pistachio_clk_pll *pll, unsigned long fref,
+ 	       unsigned long fout)
+@@ -180,7 +193,15 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!params || !params->refdiv)
+ 		return -EINVAL;
+ 
+-	vco = div64_u64(params->fref * params->fbdiv, params->refdiv);
++	/* get operating mode and calculate vco accordingly */
++	vco = params->fref;
++	if (pll_frac_get_mode(hw) == PLL_MODE_INT)
++		vco *= params->fbdiv << 24;
++	else
++		vco *= (params->fbdiv << 24) + params->frac;
++
++	vco = div64_u64(vco, params->refdiv << 24);
++
+ 	if (vco < MIN_VCO_FRAC_FRAC || vco > MAX_VCO_FRAC_FRAC)
+ 		pr_warn("%s: VCO %llu is out of range %lu..%lu\n", name, vco,
+ 			MIN_VCO_FRAC_FRAC, MAX_VCO_FRAC_FRAC);
+@@ -247,8 +268,13 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
+ 		PLL_FRAC_CTRL2_POSTDIV2_MASK;
+ 	frac = (val >> PLL_FRAC_CTRL2_FRAC_SHIFT) & PLL_FRAC_CTRL2_FRAC_MASK;
+ 
++	/* get operating mode (int/frac) and calculate rate accordingly */
+ 	rate = parent_rate;
+-	rate *= (fbdiv << 24) + frac;
++	if (pll_frac_get_mode(hw) == PLL_MODE_FRAC)
++		rate *= (fbdiv << 24) + frac;
++	else
++		rate *= (fbdiv << 24);
++
+ 	rate = do_div_round_closest(rate, (prediv * postdiv1 * postdiv2) << 24);
+ 
+ 	return rate;
+-- 
+1.9.1
