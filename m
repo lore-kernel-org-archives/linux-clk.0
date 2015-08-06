@@ -1,107 +1,124 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RESEND PATCH] clk: rockchip: disable init state before mmc card initialization
-Date: Mon, 24 Aug 2015 12:01:19 +0200
-Message-ID: <120036049.vlT25D4un8@phil>
-In-Reply-To: <1440404863-14350-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1440404863-14350-1-git-send-email-shawn.lin@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <kgene.kim@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Sender: Kukjin Kim <kgene.kim@samsung.com>
+To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>,
+ 'Thomas Abraham' <thomas.ab@samsung.com>,
+ 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+ 'Michael Turquette' <mturquette@baylibre.com>,
+ 'Kukjin Kim' <kgene@kernel.org>, 'Viresh Kumar' <viresh.kumar@linaro.org>,
+ 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>
+Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>,
+ 'Lukasz Majewski' <l.majewski@samsung.com>,
+ 'Heiko Stuebner' <heiko@sntech.de>, 'Chanwoo Choi' <cw00.choi@samsung.com>,
+ 'Kevin Hilman' <khilman@linaro.org>,
+ 'Javier Martinez Canillas' <javier@dowhile0.org>,
+ 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
+ 'Anand Moon' <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+Subject: RE: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
+ platform
+Date: Fri, 07 Aug 2015 08:53:18 +0900
+Message-id: <015301d0d0a3$1396c900$3ac45b00$@kernel.org>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shawn,
-
-Am Montag, 24. August 2015, 16:27:43 schrieb Shawn Lin:
-> mmc host controller's IO input/output timing is unpredictable if
-> bootloader execute tuning for HS200 mode. It might make kernel failed
-> to initialize mmc card in identification mode. The root cause is
-> tuning phase and degree setting for HS200 mode in bootloader aren't
-> applicable to that of identification mode in kernel stage. Anyway, we
-> can't force all bootloaders to disable tuning phase and degree setting
-> before into kernel. Simply disable it in rockchip_clk_register_mmc.
+Bartlomiej Zolnierkiewicz wrote:
 > 
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+> Hi,
 > 
-> ---
+Hi Bart,
+
+> This patch series removes the use of Exynos4x12 specific support
+> from cpufreq-exynos driver and enables the use of cpufreq-dt driver
+> for this platform.
 > 
->  drivers/clk/rockchip/clk-mmc-phase.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+Thanks for this series.
+
+> This patch series has been tested on Exynos4412 based Odroid-U3 and
+> Trats2 boards.
 > 
-> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c
-> b/drivers/clk/rockchip/clk-mmc-phase.c index e9f8df32..ae21592 100644
-> --- a/drivers/clk/rockchip/clk-mmc-phase.c
-> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
-> @@ -38,6 +38,9 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw
-> *hw, #define ROCKCHIP_MMC_DEGREE_MASK 0x3
->  #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
->  #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
-> +#define ROCKCHIP_MMC_INIT_STATE_DISABLE (0x1)
-> +#define ROCKCHIP_MMC_INIT_STATE_SHIFT (1)
-> +#define ROCKCHIP_MMC_INIT_STATE_MASK  (0x1)
+Sounds good.
 
-you don't need the "()" around primitive values. Also I don't think you need 
-the second MASK attribute, doing
-	writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_DISABLE,
-				     ROCKCHIP_MMC_INIT_STATE_DISABLE,
-				     mmc_clock->shift),
-
-should be enough. And thirdly I'm undecided about the naming of the constant. 
-The manual describes the init_state as "Assert init_state to soft reset the 
-CLKGEN.", so I guess I'd prefer
-
-	ROCKCHIP_MMC_INIT_STATE_RESET
-
-or so
-
+> Depends on:
+> - next-20150806 branch of linux-next kernel tree
+> - "[PATCH V3 00/16] OPP: Add code to support operating-points-v2 bindings"
+>   (http://www.spinics.net/lists/arm-kernel/msg435408.html)
 > 
->  #define PSECS_PER_SEC 1000000000000LL
+BTW, hmm...how can we see this series in v4.3?...to be honest, I don't think it
+can be done in v4.3 because of dependencies with PM / OPP series and previous
+exynos CPU OPP series in each cross trees...maybe that's why you created based
+on linux-next...any idea?
+
+Thanks,
+Kukjin
+
+> Changes since v3
+> (http://thread.gmane.org/gmane.linux.power-management.general/63464):
+> - rebased on top of next-20150806 branch of linux-next kernel tree
+> - made ARCH_EXYNOS config option select thermal support
+> - made scaling_boost_freqs sysfs attribute available only when boost
+>   support is enabled
+> - added Acked-by tag from Viresh to patches #3, #4 and #5
+> - added Tested-by tag from Tobias to patches #2-5
+> - added Reviewed-by tag from Krzysztof to patch #4
 > 
-> @@ -119,6 +122,21 @@ static const struct clk_ops rockchip_mmc_clk_ops = {
->  	.set_phase	= rockchip_mmc_set_phase,
->  };
+> Changes since v2
+> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/46653):
+> - rebased on top of next-20150730 branch of linux-next kernel tree
+> - ported over V3 of opp-v2 bindings support patch series
+> - put cpu0 nodes in alphabetical order in dts files
+> - added Reviewed-by tags from Javier and Krzysztof
+> - added Acked-by tag from Sylwester
 > 
-> +static void rockchip_clk_mmc_disable_init(struct rockchip_mmc_clock
-
-I guess similar to the thoughts above, simply name this
-	rockchip_clk_mmc_reset()
-
-or alternatively just do the reset in rockchip_clk_register_mmc directly:
-
-if (mmc_clock->shift == ROCKCHIP_MMC_INIT_STATE_SHIFT))
-	writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_DISABLE,
-				     ROCKCHIP_MMC_INIT_STATE_MASK,
-			     mmc_clock->shift),
-	       mmc_clock->reg);
-
-as the pr_debug does not really serve a purpose.
-
-
-Heiko
-
-> *mmc_clock) +{
-> +	if (mmc_clock->shift != ROCKCHIP_MMC_INIT_STATE_SHIFT)
-> +		return;
-> +
-> +	writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_DISABLE,
-> +			     ROCKCHIP_MMC_INIT_STATE_MASK,
-> +			     mmc_clock->shift),
-> +	       mmc_clock->reg);
-> +
-> +	pr_debug("%s: clear mmc init state to %d", __func__,
-> +		 (readl(mmc_clock->reg) >> (mmc_clock->shift)) &
-> +		 ROCKCHIP_MMC_INIT_STATE_MASK);
-> +}
-> +
->  struct clk *rockchip_clk_register_mmc(const char *name,
->  				const char *const *parent_names, u8 num_parents,
->  				void __iomem *reg, int shift)
-> @@ -139,6 +157,8 @@ struct clk *rockchip_clk_register_mmc(const char *name,
->  	mmc_clock->reg = reg;
->  	mmc_clock->shift = shift;
+> Changes since v1
+> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/44361):
+> - rebased on top of next-20150629 branch of linux-next kernel tree
+> - rebased on top of Exynos5250 cpufreq-dt support patch series
+> - fixed if-statement in exynos4_clk_init() (noticed by Tobias Jakobi)
+> - ported over opp-v2 bindings (requested by Viresh Kumar)
 > 
-> +	rockchip_clk_mmc_disable_init(mmc_clock);
-> +
->  	if (name)
->  		init.name = name;
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+> 
+> Bartlomiej Zolnierkiewicz (6):
+>   cpufreq: make scaling_boost_freqs sysfs attr available when boost is
+>     enabled
+>   clk: samsung: exynos4x12: add cpu clock configuration data and
+>     instantiate cpu clock
+>   ARM: dts: Exynos4x12: add CPU OPP and regulator supply property
+>   ARM: Exynos: switch to using generic cpufreq driver for Exynos4x12
+>   cpufreq: exynos: remove Exynos4x12 specific cpufreq driver support
+>   cpufreq: remove no longer needed CPU_FREQ_BOOST_SW config option
+> 
+>  arch/arm/boot/dts/exynos4212.dtsi               |  81 ++++++++
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   4 +
+>  arch/arm/boot/dts/exynos4412-origen.dts         |   4 +
+>  arch/arm/boot/dts/exynos4412-trats2.dts         |   4 +
+>  arch/arm/boot/dts/exynos4412.dtsi               |  83 +++++++++
+>  arch/arm/mach-exynos/Kconfig                    |   2 +
+>  arch/arm/mach-exynos/exynos.c                   |   2 +
+>  drivers/clk/samsung/clk-exynos4.c               |  50 +++++
+>  drivers/cpufreq/Kconfig                         |   4 -
+>  drivers/cpufreq/Kconfig.arm                     |  38 ----
+>  drivers/cpufreq/Makefile                        |   2 -
+>  drivers/cpufreq/cpufreq-dt.c                    |   3 +
+>  drivers/cpufreq/exynos-cpufreq.c                | 236 ------------------------
+>  drivers/cpufreq/exynos-cpufreq.h                |  72 --------
+>  drivers/cpufreq/exynos4x12-cpufreq.c            | 236 ------------------------
+>  drivers/cpufreq/freq_table.c                    |  10 +-
+>  include/linux/cpufreq.h                         |   1 +
+>  17 files changed, 241 insertions(+), 591 deletions(-)
+>  delete mode 100644 drivers/cpufreq/exynos-cpufreq.c
+>  delete mode 100644 drivers/cpufreq/exynos-cpufreq.h
+>  delete mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
+> 
+> --
+> 1.9.1
