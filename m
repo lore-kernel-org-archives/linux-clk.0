@@ -1,46 +1,51 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Sat, 8 Aug 2015 07:37:40 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
-	Arnd Bergmann <arnd.bergmann@linaro.org>,
-	'Thomas Abraham' <thomas.ab@samsung.com>,
-	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
-	'Michael Turquette' <mturquette@baylibre.com>,
-	'Tomasz Figa' <tomasz.figa@gmail.com>,
-	'Lukasz Majewski' <l.majewski@samsung.com>,
-	'Heiko Stuebner' <heiko@sntech.de>,
-	'Chanwoo Choi' <cw00.choi@samsung.com>,
-	'Kevin Hilman' <khilman@linaro.org>,
-	'Javier Martinez Canillas' <javier@dowhile0.org>,
-	'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
-	'Anand Moon' <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for
- Exynos4x12 platform
-Message-ID: <20150808020740.GM6939@linux>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <2359635.Hxe4cb8zKm@amdc1976>
- <20150807115627.GH6939@linux>
- <1525406.7aXvVQzEDd@vostro.rjw.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1525406.7aXvVQzEDd@vostro.rjw.lan>
+Return-Path: <s.nawrocki@samsung.com>
+Message-id: <55C31653.7070000@samsung.com>
+Date: Thu, 06 Aug 2015 10:09:55 +0200
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+MIME-version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Chao Xie <chao.xie@marvell.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ =?UTF-8?B?RW1pbGlvIEzDsw==?= =?UTF-8?B?cGV6?= <emilio@elopez.com.ar>,
+ Tero Kristo <t-kristo@ti.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH 02/26] clk: Replace __clk_get_num_parents with
+ clk_hw_get_num_parents()
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+ <1438362246-6664-3-git-send-email-sboyd@codeaurora.org>
+In-reply-to: <1438362246-6664-3-git-send-email-sboyd@codeaurora.org>
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08-08-15, 00:24, Rafael J. Wysocki wrote:
-> OK, so please let me know which patches you want me to pick up.
-> 
-> Ideally, I'd prefer them to be resent in a separate series with ACKs and all
-> with a cover letter clearly stating whose tree they are being targeted at.
+On 31/07/15 19:03, Stephen Boyd wrote:
+> diff --git a/drivers/clk/mmp/clk-mix.c b/drivers/clk/mmp/clk-mix.c
+> index 665cb6794639..8653e555c920 100644
+> --- a/drivers/clk/mmp/clk-mix.c
+> +++ b/drivers/clk/mmp/clk-mix.c
+> @@ -63,7 +63,7 @@ static unsigned int _get_div(struct mmp_clk_mix *mix, unsigned int val)
+>  
+>  static unsigned int _get_mux(struct mmp_clk_mix *mix, unsigned int val)
+>  {
+> -	int num_parents = __clk_get_num_parents(mix->hw.clk);
+> +	int num_parents = clk_hw_get_num_parents(hw);
 
-He already sent it separately, let me send a confirmatory mail in
-reply to that.
+Shouldn't this be:
+	int num_parents = clk_hw_get_num_parents(&mix->hw);
+
+?
+>  	int i;
+>  
+>  	if (mix->mux_flags & CLK_MUX_INDEX_BIT)
+
+With the above fixed
+
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
 -- 
-viresh
+Thanks,
+Sylwester
