@@ -1,145 +1,68 @@
-Return-Path: <daniel.lezcano@linaro.org>
-Return-Path: <daniel.lezcano@linaro.org>
-Message-ID: <55D5E40A.6080904@linaro.org>
-Date: Thu, 20 Aug 2015 16:28:26 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Anson Huang <b20788@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH] clk: imx: increase AXI clock rate to 264MHz for i.MX6UL
+Date: Thu, 6 Aug 2015 22:13:56 +0800
+Message-ID: <1438870436-16061-1-git-send-email-b20788@freescale.com>
 MIME-Version: 1.0
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-CC: Daniel Kurtz <djkurtz@chromium.org>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- James Liao <jamesjj.liao@mediatek.com>,
- Russell King <linux@arm.linux.org.uk>,
- srv_heupstream <srv_heupstream@mediatek.com>,
- Arnd Bergmann <arnd@arndb.de>,
- "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Olof Johansson <olof@lixom.net>,
- Rob Herring <robh+dt@kernel.org>, linux-mediatek@lists.infradead.org,
- Sascha Hauer <kernel@pengutronix.de>,
- Matthias Brugger <matthias.bgg@gmail.com>, linux-clk@vger.kernel.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 1/5] clocksource: mediatek: do not enable GPT_CLK_EVT
- when setup
-References: <CAGS+omD8k_Cfxv3bYyjmjtLbiavo-WmJPn0Z-CBhN_nnv65Tag@mail.gmail.com>	 <1437552878-3684-1-git-send-email-yingjoe.chen@mediatek.com>	 <55CC56C4.8080201@linaro.org> <1439820602.3414.12.camel@mtksdaap41>
-In-Reply-To: <1439820602.3414.12.camel@mtksdaap41>
-Content-Type: text/plain; charset=utf-8; format=flowed
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/17/2015 04:10 PM, Yingjoe Chen wrote:
-> On Thu, 2015-08-13 at 10:35 +0200, Daniel Lezcano wrote:
->> On 07/22/2015 10:14 AM, Yingjoe Chen wrote:
->>> Spurious mtk timer interrupt is noticed at boot and cause kernel
->>> crash. It seems if GPT is enabled, it will latch irq status even
->>> when its IRQ is disabled.
+On i.MX6UL, AXI clock rate's design target is 264MHz, but by default
+it is only set to 198MHz which is NOT good enough for performance,
+this patch increases AXI clock rate from 198MHz to 264MHz to meet
+the design target, this is done by switching its parent clock
+"periph" from 396MHz PFD to 528MHz PLL.
 
-It "seems" ?
+Signed-off-by: Anson Huang <b20788@freescale.com>
+---
+ drivers/clk/imx/clk-imx6ul.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
->>> When irq is enabled afterward, we see
->>> spurious interrupt.
-
-Doesn't have the firmware something to do with that ?
-
-I have a mtk 8173 board I can use next week. How do you reproduce the 
-issue ?
-
->>> Change init flow to only enable GPT_CLK_SRC at mtk_timer_init.
->>>
->>> Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
->>> Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
->>> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
->>> ---
->>>
->>> Update to my patch [1], added __init as Daniel suggest. This is the
->>> only patch that need to change in that series, so I only sent this one.
->>>
->>> http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001545.html
->>>
->>>    drivers/clocksource/mtk_timer.c | 16 ++++++++++------
->>>    1 file changed, 10 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/clocksource/mtk_timer.c b/drivers/clocksource/mtk_timer.c
->>> index 68ab423..2ba5b66 100644
->>> --- a/drivers/clocksource/mtk_timer.c
->>> +++ b/drivers/clocksource/mtk_timer.c
->>> @@ -156,9 +156,11 @@ static void mtk_timer_global_reset(struct mtk_clock_event_device *evt)
->>>    	writel(0x3f, evt->gpt_base + GPT_IRQ_ACK_REG);
->>>    }
->>>
->>> -static void
->>> -mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
->>> +static void __init mtk_timer_setup(struct mtk_clock_event_device *evt,
->>> +				   u8 timer, u8 option, bool enable)
->>>    {
->>> +	u32 val;
->>> +
->>>    	writel(TIMER_CTRL_CLEAR | TIMER_CTRL_DISABLE,
->>>    		evt->gpt_base + TIMER_CTRL_REG(timer));
->>>
->>> @@ -167,8 +169,10 @@ mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
->>>
->>>    	writel(0x0, evt->gpt_base + TIMER_CMP_REG(timer));
->>>
->>> -	writel(TIMER_CTRL_OP(option) | TIMER_CTRL_ENABLE,
->>> -			evt->gpt_base + TIMER_CTRL_REG(timer));
->>> +	val = TIMER_CTRL_OP(option);
->>> +	if (enable)
->>> +		val |= TIMER_CTRL_ENABLE;
->>> +	writel(val, evt->gpt_base + TIMER_CTRL_REG(timer));
->>
->> Instead of the 'enable' new option, I prefer a test with 'timer' with a
->> comment:
->>
->> 	/*
->> 	 * the timer hw is broken in that way ... bla bla, so we only
->> 	 * enable the clocksource ...
->> 	 */
->> 	if (timer == GPT_CLK_SRC)
->> 		val |= TIMER_CTRL_ENABLE;
->
-> Hi Daniel,
->
-> Thanks for your review.
-> Since this bug happens to anyone using interrupt,
-
-Can you elaborate ? I don't get the point.
-
-> I'm not sure checking
-> timer and only enable it for GPT_CLK_SRC is easier to read. Anyway, I'll
-> change to this in next version.
->> That said, can you have a look at commit 1096be08 ?
->> "clockevents: sun5i: Fix setup_irq init sequence"
->>
->> first and check if moving the interrupt request after the
->> clockevents_config_and_register could fix your issue.
->
-> I've tested this before, see:
->
-> http://lists.infradead.org/pipermail/linux-mediatek/2015-May/000539.html
-> http://lists.infradead.org/pipermail/linux-mediatek/2015-May/000551.html
-
-I could take or ack this patch trusting it fixes the issue but there are 
-some points that need clarifications.
-
-  - Does the spurious interrupt occurs *every* time ? at each boot ?
-
-The previous patches were supposed to fix the issue but they actually 
-didn't. So how is tested the patch ?
-
-Regarding the different fixes for this problem, it sounds like you are 
-proceeding by trial and error.
-
-Please give a more detailed analysis of the problem and especially check 
-the timer is not altered by the firmware leaving it in a transient state 
-or whatever.
-
-   -- Daniel
-
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index aaa3665..01718d0 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -407,6 +407,24 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clk_data.clk_num = ARRAY_SIZE(clks);
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+ 
++	/*
++	 * Lower the AHB clock rate before changing the parent clock source,
++	 * as AHB clock rate can NOT be higher than 133MHz, but its parent
++	 * will be switched from 396MHz PFD to 528MHz PLL in order to increase
++	 * AXI clock rate, so we need to lower AHB rate first to make sure at
++	 * any time, AHB rate is <= 133MHz.
++	 */
++	clk_set_rate(clks[IMX6UL_CLK_AHB], 99000000);
++
++	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264MHz */
++	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL], clks[IMX6UL_CLK_PLL3_USB_OTG]);
++	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_CLK2]);
++	clk_set_parent(clks[IMX6UL_CLK_PERIPH_PRE], clks[IMX6UL_CLK_PLL2_BUS]);
++	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_PRE]);
++
++	/* Make sure AHB rate is 132MHz  */
++	clk_set_rate(clks[IMX6UL_CLK_AHB], 132000000);
++
+ 	/* set perclk to from OSC */
+ 	clk_set_parent(clks[IMX6UL_CLK_PERCLK_SEL], clks[IMX6UL_CLK_OSC]);
+ 
 -- 
-  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+1.9.1
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
