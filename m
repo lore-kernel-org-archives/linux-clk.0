@@ -1,86 +1,65 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Antoine Tenart <antoine.tenart@free-electrons.com>,
-	sebastian.hesselbarth@gmail.com, sboyd@codeaurora.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1439898368-11543-2-git-send-email-antoine.tenart@free-electrons.com>
-Cc: "Antoine Tenart" <antoine.tenart@free-electrons.com>,
-	zmxu@marvell.com, jszhang@marvell.com,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <1439898368-11543-1-git-send-email-antoine.tenart@free-electrons.com>
- <1439898368-11543-2-git-send-email-antoine.tenart@free-electrons.com>
-Message-ID: <20150825202551.31346.93685@quantum>
-Subject: Re: [PATCH v2 1/6] clk: berlin: move MAX_CLKS out of drivers/clk/berlin
-Date: Tue, 25 Aug 2015 13:25:51 -0700
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:33225 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932256AbbHFKkF (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 6 Aug 2015 06:40:05 -0400
+Received: by pabyb7 with SMTP id yb7so28013788pab.0
+        for <linux-clk@vger.kernel.org>; Thu, 06 Aug 2015 03:40:04 -0700 (PDT)
+From: Rajan Vaja <rajan.vaja@gmail.com>
+To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
+	ulrich.hecht+renesas@gmail.com, wsa+renesas@sang-engineering.com
+Cc: linux-clk@vger.kernel.org
+Subject: [PATCH] clk: shmobile: div6: Fix memory leaks in cpg_div6_clock_init()
+Date: Thu,  6 Aug 2015 16:09:50 +0530
+Message-Id: <1438857590-9605-1-git-send-email-rajan.vaja@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Antoine Tenart (2015-08-18 04:46:03)
-> Move the MAX_CLKS definition used in the Berlin clock driver outside the
-> driver.
-> 
-> Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+Found memory leak while doing static analysis with cppcheck:
+[drivers/clk/shmobile/clk-div6.c:194]: (error) Memory leak: clock
 
-Acked-by: Michael Turquette <mturquette@baylibre.com>
+This patch fixes this memory leak as well other memory leaks found
+in same function.
 
-> ---
->  drivers/clk/berlin/bg2.c             | 1 -
->  drivers/clk/berlin/bg2q.c            | 1 -
->  include/dt-bindings/clock/berlin2.h  | 2 ++
->  include/dt-bindings/clock/berlin2q.h | 2 ++
->  4 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/berlin/bg2.c b/drivers/clk/berlin/bg2.c
-> index 73153fc45ee9..469a2c57e1b4 100644
-> --- a/drivers/clk/berlin/bg2.c
-> +++ b/drivers/clk/berlin/bg2.c
-> @@ -91,7 +91,6 @@
->   *
->   */
->  
-> -#define        MAX_CLKS 41
->  static struct clk *clks[MAX_CLKS];
->  static struct clk_onecell_data clk_data;
->  static DEFINE_SPINLOCK(lock);
-> diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
-> index 221f40c2b850..a27958efab92 100644
-> --- a/drivers/clk/berlin/bg2q.c
-> +++ b/drivers/clk/berlin/bg2q.c
-> @@ -45,7 +45,6 @@
->  #define REG_SDIO0XIN_CLKCTL    0x0158
->  #define REG_SDIO1XIN_CLKCTL    0x015c
->  
-> -#define        MAX_CLKS 27
->  static struct clk *clks[MAX_CLKS];
->  static struct clk_onecell_data clk_data;
->  static DEFINE_SPINLOCK(lock);
-> diff --git a/include/dt-bindings/clock/berlin2.h b/include/dt-bindings/clock/berlin2.h
-> index 0c30800175df..97832b840beb 100644
-> --- a/include/dt-bindings/clock/berlin2.h
-> +++ b/include/dt-bindings/clock/berlin2.h
-> @@ -43,3 +43,5 @@
->  #define CLKID_VIDEO1           38
->  #define CLKID_VIDEO2           39
->  #define CLKID_TWD              40
-> +
-> +#define MAX_CLKS               41
-> diff --git a/include/dt-bindings/clock/berlin2q.h b/include/dt-bindings/clock/berlin2q.h
-> index 287fc3b4afb2..c79af928ae92 100644
-> --- a/include/dt-bindings/clock/berlin2q.h
-> +++ b/include/dt-bindings/clock/berlin2q.h
-> @@ -29,3 +29,5 @@
->  #define CLKID_SMEMC            24
->  #define CLKID_PCIE             25
->  #define CLKID_TWD              26
-> +
-> +#define MAX_CLKS               27
-> -- 
-> 2.5.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Signed-off-by: Rajan Vaja <rajan.vaja@gmail.com>
+---
+ drivers/clk/shmobile/clk-div6.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/shmobile/clk-div6.c b/drivers/clk/shmobile/clk-div6.c
+index 036a692..9affdfa 100644
+--- a/drivers/clk/shmobile/clk-div6.c
++++ b/drivers/clk/shmobile/clk-div6.c
+@@ -191,6 +191,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 	if (num_parents < 1) {
+ 		pr_err("%s: no parent found for %s DIV6 clock\n",
+ 		       __func__, np->name);
++		kfree(clock);
+ 		return;
+ 	}
+ 
+@@ -198,8 +199,12 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 		GFP_KERNEL);
+ 	parent_names = kmalloc_array(num_parents, sizeof(*parent_names),
+ 				GFP_KERNEL);
+-	if (!parent_names)
++	if (!clock->parents || !parent_names) {
++		kfree(clock->parents);
++		kfree(parent_names);
++		kfree(clock);
+ 		return;
++	}
+ 
+ 	/* Remap the clock register and read the divisor. Disabling the
+ 	 * clock overwrites the divisor, so we need to cache its value for the
+@@ -278,6 +283,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ error:
+ 	if (clock->reg)
+ 		iounmap(clock->reg);
++	kfree(clock->parents);
+ 	kfree(parent_names);
+ 	kfree(clock);
+ }
+-- 
+1.7.9.5
+
