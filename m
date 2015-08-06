@@ -1,83 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH] PM / devfreq: event: Remove incorrect property in
- exynos-ppmu DT binding
-To: myungjoo.ham@samsung.com
-References: <1733224792.341671438577931309.JavaMail.weblogic@epmlwas06d>
-Cc: =?UTF-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>,
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
 	Kukjin Kim <kgene@kernel.org>,
-	"linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	=?UTF-8?B?7YGs7Ims7Iuc7Yag7ZSE?= <k.kozlowski@samsung.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <55BF1A74.50105@osg.samsung.com>
-Date: Mon, 3 Aug 2015 09:38:28 +0200
-MIME-Version: 1.0
-In-Reply-To: <1733224792.341671438577931309.JavaMail.weblogic@epmlwas06d>
-Content-Type: text/plain; charset=utf-8
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH v4 2/6] clk: samsung: exynos4x12: add cpu clock configuration
+ data and instantiate cpu clock
+Date: Thu, 06 Aug 2015 15:41:50 +0200
+Message-id: <1438868514-8814-3-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello MyungJoo,
+With the addition of the new Samsung specific cpu-clock type, the
+arm clock can be represented as a cpu-clock type. Add the CPU clock
+configuration data and instantiate the CPU clock type for Exynos4x12.
 
-On 08/03/2015 06:58 AM, MyungJoo Ham wrote:
->> Hello Myungjoo,
->>
->> On 07/23/2015 10:30 AM, Javier Martinez Canillas wrote:
->>> Hello Chanwoo,
->>>
->>> On 07/23/2015 10:19 AM, Chanwoo Choi wrote:
->>>> Hi Javier,
->>>>
->>>> On 07/13/2015 03:58 PM, Javier Martinez Canillas wrote:
->>>>> The exynos-ppmu driver is only a clock consumer and not a clock
->>>>> provider but its Device Tree binding listed #clock-cells as an
->>>>> optional property.
->>>>>
->>>>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>>>>
-> []
->>>>>
->>>>> Example1 : PPMU nodes in exynos3250.dtsi are listed below.
->>>>>
->>>>>
->>>>
->>>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>>
->>>> + Devfreq maintainer (Myungjoo Ham)
->>>
->>> Thanks for the review and for cc'ing Myungjoo. The get_maintainer.pl script
->>> didn't tell me that so I think Documentation/devicetree/bindings/devfreq/
->>> sub-dir should be added to the DEVICE FREQUENCY (DEVFREQ) entry in the
->>> MAINTAINERS file.
->>>
->>>> I think that this patch will be more appropriate on devfreq git tree
->>>> than linux-samsung git tree.
->>>>
->>>
->>> Agreed.
->>>
->>
->> Any comments about this patch?
-> 
-> Nope. It's applied.
-> 
-> 
-> Thanks.
-> 
->
+Based on the earlier work by Thomas Abraham.
 
-Great, thanks a lot.
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos4.c | 50 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 251f48d..7f370d3 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1398,6 +1398,45 @@ static const struct exynos_cpuclk_cfg_data e4210_armclk_d[] __initconst = {
+ 	{  0 },
+ };
  
-> 
-> MyungJoo
-> 
-
-Best regards,
++static const struct exynos_cpuclk_cfg_data e4212_armclk_d[] __initconst = {
++	{ 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
++	{ 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
++	{ 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
++	{ 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
++	{ 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4210_CPU_DIV1(2, 4), },
++	{ 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4210_CPU_DIV1(2, 4), },
++	{  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
++	{  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
++	{  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
++	{  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
++	{  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
++	{  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
++	{  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
++	{  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4210_CPU_DIV1(2, 3), },
++	{  0 },
++};
++
++#define E4412_CPU_DIV1(cores, hpm, copy)				\
++		(((cores) << 8) | ((hpm) << 4) | ((copy) << 0))
++
++static const struct exynos_cpuclk_cfg_data e4412_armclk_d[] __initconst = {
++	{ 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(7, 0, 6), },
++	{ 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(6, 0, 6), },
++	{ 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(6, 0, 5), },
++	{ 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(5, 0, 5), },
++	{ 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4412_CPU_DIV1(5, 0, 4), },
++	{ 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4412_CPU_DIV1(4, 0, 4), },
++	{  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(4, 0, 3), },
++	{  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(3, 0, 3), },
++	{  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(3, 0, 3), },
++	{  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
++	{  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
++	{  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
++	{  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
++	{  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4412_CPU_DIV1(0, 0, 3), },
++	{  0 },
++};
++
+ /* register exynos4 clocks */
+ static void __init exynos4_clk_init(struct device_node *np,
+ 				    enum exynos4_soc soc)
+@@ -1491,6 +1530,17 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 		samsung_clk_register_fixed_factor(ctx,
+ 			exynos4x12_fixed_factor_clks,
+ 			ARRAY_SIZE(exynos4x12_fixed_factor_clks));
++		if (of_machine_is_compatible("samsung,exynos4412")) {
++			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
++				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
++				e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
++				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
++		} else {
++			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
++				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
++				e4212_armclk_d, ARRAY_SIZE(e4212_armclk_d),
++				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
++		}
+ 	}
+ 
+ 	samsung_clk_register_alias(ctx, exynos4_aliases,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
+
