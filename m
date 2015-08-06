@@ -1,53 +1,74 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <govindraj.raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Mike Turquette
-	<mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, "Michael
- Turquette" <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Govindraj Raja <govindraj.raja@imgtec.com>
-Subject: [PATCH 5/6] pistachio: pll: Fix vco calculation in .set_rate (fractional)
-Date: Thu, 6 Aug 2015 14:46:51 +0100
-Message-ID: <1438868811-7769-1-git-send-email-govindraj.raja@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH v4 6/6] cpufreq: remove no longer needed CPU_FREQ_BOOST_SW
+ config option
+Date: Thu, 06 Aug 2015 15:41:54 +0200
+Message-id: <1438868514-8814-7-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+Remove no longer needed CPU_FREQ_BOOST_SW config option.
 
-Vco was calculated based on the current operating mode which
-makes no sense because .set_rate is setting operating mode. Instead,
-vco should be calculated using pll settings that are about to be set.
-
-Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
-Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/clk/pistachio/clk-pll.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/cpufreq/Kconfig      | 4 ----
+ drivers/cpufreq/freq_table.c | 3 ---
+ 2 files changed, 7 deletions(-)
 
-diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
-index eb91748..5554fa4 100644
---- a/drivers/clk/pistachio/clk-pll.c
-+++ b/drivers/clk/pistachio/clk-pll.c
-@@ -207,13 +207,9 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (!params || !params->refdiv)
- 		return -EINVAL;
+diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+index 659879a..aacc0ef 100644
+--- a/drivers/cpufreq/Kconfig
++++ b/drivers/cpufreq/Kconfig
+@@ -21,10 +21,6 @@ if CPU_FREQ
+ config CPU_FREQ_GOV_COMMON
+ 	bool
  
--	/* get operating mode and calculate vco accordingly */
-+	/* calculate vco */
- 	vco = params->fref;
--	if (pll_frac_get_mode(hw) == PLL_MODE_INT)
--		vco *= params->fbdiv << 24;
--	else
--		vco *= (params->fbdiv << 24) + params->frac;
+-config CPU_FREQ_BOOST_SW
+-	bool
+-	depends on THERMAL
 -
-+	vco *= (params->fbdiv << 24) + params->frac;
- 	vco = div64_u64(vco, params->refdiv << 24);
+ config CPU_FREQ_STAT
+ 	tristate "CPU frequency translation statistics"
+ 	default y
+diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
+index 5a00a09..2c6a325 100644
+--- a/drivers/cpufreq/freq_table.c
++++ b/drivers/cpufreq/freq_table.c
+@@ -293,9 +293,6 @@ EXPORT_SYMBOL_GPL(cpufreq_freq_attr_scaling_boost_freqs);
  
- 	if (vco < MIN_VCO_FRAC_FRAC || vco > MAX_VCO_FRAC_FRAC)
+ struct freq_attr *cpufreq_generic_attr[] = {
+ 	&cpufreq_freq_attr_scaling_available_freqs,
+-#ifdef CONFIG_CPU_FREQ_BOOST_SW
+-	&cpufreq_freq_attr_scaling_boost_freqs,
+-#endif
+ 	NULL,
+ };
+ EXPORT_SYMBOL_GPL(cpufreq_generic_attr);
 -- 
 1.9.1
+
