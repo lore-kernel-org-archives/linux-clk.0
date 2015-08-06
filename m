@@ -1,89 +1,53 @@
-Return-Path: <mathieu@codeaurora.org>
-From: Mathieu Olivari <mathieu@codeaurora.org>
-To: sboyd@codeaurora.org,
-	agross@codeaurora.org,
-	rnayak@codeaurora.org,
-	architt@codeaurora.org
-Cc: robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	linux@arm.linux.org.uk,
-	mturquette@baylibre.com,
-	mathieu@codeaurora.org,
-	mturquette@linaro.org,
-	georgi.djakov@linaro.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] ARM: qcom: Disable i2c device on gsbi4 for ipq806x
-Date: Tue, 18 Aug 2015 15:21:28 -0700
-Message-Id: <1439936488-14870-1-git-send-email-mathieu@codeaurora.org>
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <govindraj.raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Mike Turquette
+	<mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, "Michael
+ Turquette" <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Govindraj Raja <govindraj.raja@imgtec.com>
+Subject: [PATCH 5/6] pistachio: pll: Fix vco calculation in .set_rate (fractional)
+Date: Thu, 6 Aug 2015 14:46:51 +0100
+Message-ID: <1438868811-7769-1-git-send-email-govindraj.raja@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Disable the i2c device on gsbi4 and mark gsbi4_h and gsbi4_qup clks as
-unused. If they are enabled, clock framework will turn them off at end
-of probe. On ipq806x by design gsbi4_qup, gsbi4_h clks and i2c on gsbi4
-are meant for RPM usage. So turning them off in kernel is incorrect.
+From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
 
-Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
+Vco was calculated based on the current operating mode which
+makes no sense because .set_rate is setting operating mode. Instead,
+vco should be calculated using pll settings that are about to be set.
+
+Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
 ---
- arch/arm/boot/dts/qcom-ipq8064-ap148.dts | 9 ---------
- drivers/clk/qcom/gcc-ipq806x.c           | 6 +++---
- 2 files changed, 3 insertions(+), 12 deletions(-)
+ drivers/clk/pistachio/clk-pll.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/qcom-ipq8064-ap148.dts b/arch/arm/boot/dts/qcom-ipq8064-ap148.dts
-index b08907a..36e2b04 100644
---- a/arch/arm/boot/dts/qcom-ipq8064-ap148.dts
-+++ b/arch/arm/boot/dts/qcom-ipq8064-ap148.dts
-@@ -46,15 +46,6 @@
- 			serial@16340000 {
- 				status = "ok";
- 			};
--
--			i2c4: i2c@16380000 {
--				status = "ok";
--
--				clock-frequency = <200000>;
--
--				pinctrl-0 = <&i2c4_pins>;
--				pinctrl-names = "default";
--			};
- 		};
+diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
+index eb91748..5554fa4 100644
+--- a/drivers/clk/pistachio/clk-pll.c
++++ b/drivers/clk/pistachio/clk-pll.c
+@@ -207,13 +207,9 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!params || !params->refdiv)
+ 		return -EINVAL;
  
- 		gsbi5: gsbi@1a200000 {
-diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-index 5639699..eb4065e 100644
---- a/drivers/clk/qcom/gcc-ipq806x.c
-+++ b/drivers/clk/qcom/gcc-ipq806x.c
-@@ -809,7 +809,7 @@ static struct clk_rcg gsbi6_qup_src = {
- 			.parent_names = gcc_pxo_pll8,
- 			.num_parents = 2,
- 			.ops = &clk_rcg_ops,
--			.flags = CLK_SET_PARENT_GATE,
-+			.flags = CLK_SET_PARENT_GATE | CLK_IGNORE_UNUSED,
- 		},
- 	},
- };
-@@ -874,7 +874,7 @@ static struct clk_branch gsbi7_qup_clk = {
- 			.parent_names = (const char *[]){ "gsbi7_qup_src" },
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
- 		},
- 	},
- };
-@@ -922,7 +922,7 @@ static struct clk_branch gsbi4_h_clk = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi4_h_clk",
- 			.ops = &clk_branch_ops,
--			.flags = CLK_IS_ROOT,
-+			.flags = CLK_IS_ROOT | CLK_IGNORE_UNUSED,
- 		},
- 	},
- };
+-	/* get operating mode and calculate vco accordingly */
++	/* calculate vco */
+ 	vco = params->fref;
+-	if (pll_frac_get_mode(hw) == PLL_MODE_INT)
+-		vco *= params->fbdiv << 24;
+-	else
+-		vco *= (params->fbdiv << 24) + params->frac;
+-
++	vco *= (params->fbdiv << 24) + params->frac;
+ 	vco = div64_u64(vco, params->refdiv << 24);
+ 
+ 	if (vco < MIN_VCO_FRAC_FRAC || vco > MAX_VCO_FRAC_FRAC)
 -- 
-2.1.4
+1.9.1
