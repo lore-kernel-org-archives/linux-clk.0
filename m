@@ -1,123 +1,164 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 03/16] clk: shmobile: r8a7779: Add CPG/MSTP Clock Domain support
-Date: Tue,  4 Aug 2015 14:28:04 +0200
-Message-Id: <1438691297-29235-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
-References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <abrestic@google.com>
+MIME-Version: 1.0
+Sender: abrestic@google.com
+In-Reply-To: <1438868614-7672-2-git-send-email-govindraj.raja@imgtec.com>
+References: <1438868614-7672-1-git-send-email-govindraj.raja@imgtec.com>
+	<1438868614-7672-2-git-send-email-govindraj.raja@imgtec.com>
+Date: Thu, 6 Aug 2015 09:16:38 -0700
+Message-ID: <CAL1qeaHBkJqiWSR8wSqjLShFSAWku=M8+qwjbig9qGys2SAS7Q@mail.gmail.com>
+Subject: Re: [PATCH 1/6] clk: pistachio: Fix 32bit integer overflows
+From: Andrew Bresticker <abrestic@chromium.org>
+To: Govindraj Raja <govindraj.raja@imgtec.com>
+Cc: Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
+	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, Zdenko Pulitika <zdenko.pulitika@imgtec.com>,
+	Kevin Cernekee <cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>,
+	James Hartley <James.Hartley@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>,
+	James Hogan <James.Hogan@imgtec.com>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Clock Domain support to the R-Car H1 Clock Pulse Generator (CPG)
-driver using the generic PM Domain.  This allows to power-manage the
-module clocks of SoC devices that are part of the CPG/MSTP Clock Domain
-using Runtime PM, or for system suspend/resume.
+Govindraj,
 
-SoC devices that are part of the CPG/MSTP Clock Domain and can be
-power-managed through an MSTP clock should be tagged in DT with a proper
-"power-domains" property.
+On Thu, Aug 6, 2015 at 6:43 AM, Govindraj Raja
+<govindraj.raja@imgtec.com> wrote:
+> From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+>
+> This commit fixes 32bit integer overflows throughout the pll driver
+> (i.e. wherever the result of integer multiplication may exceed the
+> range of u32).
+>
+> One of the functions affected by this problem is .recalc_rate. It
+> returns incorrect rate for some pll settings (not for all though)
+> which in turn results in the incorrect rate setup of pll's child
+> clocks.
+>
+> Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+> Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+> ---
+>  drivers/clk/pistachio/clk-pll.c | 26 ++++++++++++--------------
+>  drivers/clk/pistachio/clk.h     | 18 +++++++++++-------
+>  2 files changed, 23 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
+> index e17dada..68066ef 100644
+> --- a/drivers/clk/pistachio/clk-pll.c
+> +++ b/drivers/clk/pistachio/clk-pll.c
+> @@ -88,12 +88,10 @@ static inline void pll_lock(struct pistachio_clk_pll *pll)
+>                 cpu_relax();
+>  }
+>
+> -static inline u32 do_div_round_closest(u64 dividend, u32 divisor)
+> +static inline u64 do_div_round_closest(u64 dividend, u64 divisor)
+>  {
+>         dividend += divisor / 2;
+> -       do_div(dividend, divisor);
+> -
+> -       return dividend;
+> +       return div64_u64(dividend, divisor);
+>  }
+>
+>  static inline struct pistachio_clk_pll *to_pistachio_pll(struct clk_hw *hw)
+> @@ -173,7 +171,7 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+>         struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
+>         struct pistachio_pll_rate_table *params;
+>         int enabled = pll_gf40lp_frac_is_enabled(hw);
+> -       u32 val, vco, old_postdiv1, old_postdiv2;
+> +       u64 val, vco, old_postdiv1, old_postdiv2;
+>         const char *name = __clk_get_name(hw->clk);
+>
+>         if (rate < MIN_OUTPUT_FRAC || rate > MAX_OUTPUT_FRAC)
+> @@ -183,17 +181,17 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+>         if (!params || !params->refdiv)
+>                 return -EINVAL;
+>
+> -       vco = params->fref * params->fbdiv / params->refdiv;
+> +       vco = div64_u64(params->fref * params->fbdiv, params->refdiv);
+>         if (vco < MIN_VCO_FRAC_FRAC || vco > MAX_VCO_FRAC_FRAC)
+> -               pr_warn("%s: VCO %u is out of range %lu..%lu\n", name, vco,
+> +               pr_warn("%s: VCO %llu is out of range %lu..%lu\n", name, vco,
+>                         MIN_VCO_FRAC_FRAC, MAX_VCO_FRAC_FRAC);
+>
+> -       val = params->fref / params->refdiv;
+> +       val = div64_u64(params->fref, params->refdiv);
+>         if (val < MIN_PFD)
+> -               pr_warn("%s: PFD %u is too low (min %lu)\n",
+> +               pr_warn("%s: PFD %llu is too low (min %lu)\n",
+>                         name, val, MIN_PFD);
+>         if (val > vco / 16)
+> -               pr_warn("%s: PFD %u is too high (max %u)\n",
+> +               pr_warn("%s: PFD %llu is too high (max %llu)\n",
+>                         name, val, vco / 16);
+>
+>         val = pll_readl(pll, PLL_CTRL1);
+> @@ -237,8 +235,7 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
+>                                                  unsigned long parent_rate)
+>  {
+>         struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
+> -       u32 val, prediv, fbdiv, frac, postdiv1, postdiv2;
+> -       u64 rate = parent_rate;
+> +       u64 val, prediv, fbdiv, frac, postdiv1, postdiv2, rate;
+>
+>         val = pll_readl(pll, PLL_CTRL1);
+>         prediv = (val >> PLL_CTRL1_REFDIV_SHIFT) & PLL_CTRL1_REFDIV_MASK;
+> @@ -251,6 +248,7 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
+>                 PLL_FRAC_CTRL2_POSTDIV2_MASK;
+>         frac = (val >> PLL_FRAC_CTRL2_FRAC_SHIFT) & PLL_FRAC_CTRL2_FRAC_MASK;
+>
+> +       rate = parent_rate;
+>         rate *= (fbdiv << 24) + frac;
+>         rate = do_div_round_closest(rate, (prediv * postdiv1 * postdiv2) << 24);
+>
+> @@ -325,12 +323,12 @@ static int pll_gf40lp_laint_set_rate(struct clk_hw *hw, unsigned long rate,
+>         if (!params || !params->refdiv)
+>                 return -EINVAL;
+>
+> -       vco = params->fref * params->fbdiv / params->refdiv;
+> +       vco = div_u64(params->fref * params->fbdiv, params->refdiv);
+>         if (vco < MIN_VCO_LA || vco > MAX_VCO_LA)
+>                 pr_warn("%s: VCO %u is out of range %lu..%lu\n", name, vco,
+>                         MIN_VCO_LA, MAX_VCO_LA);
+>
+> -       val = params->fref / params->refdiv;
+> +       val = div_u64(params->fref, params->refdiv);
+>         if (val < MIN_PFD)
+>                 pr_warn("%s: PFD %u is too low (min %lu)\n",
+>                         name, val, MIN_PFD);
+> diff --git a/drivers/clk/pistachio/clk.h b/drivers/clk/pistachio/clk.h
+> index 52fabbc..6ea6f4b 100644
+> --- a/drivers/clk/pistachio/clk.h
+> +++ b/drivers/clk/pistachio/clk.h
+> @@ -94,14 +94,18 @@ struct pistachio_fixed_factor {
+>                 .parent         = _pname,                       \
+>         }
+>
+> +/*
+> + * in order to avoid u32 multiplication overflow, declare all
+> + * members of this structure as u64
+> + */
 
-Also update the reg property in the DT binding doc example to match the
-actual dtsi, which uses #address-cells and #size-cells == 1, not 2.
+These parameters should all fit within 32-bits and they're not used to
+store the results of any computation, so I think it's fine to leave
+these as 32-bit values.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-v4:
-  - Add Reviewed-by,
-
-v3:
-  - Add Acked-by,
-  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
-
-v2:
-  - New.
----
- .../bindings/clock/renesas,r8a7779-cpg-clocks.txt  | 30 +++++++++++++++++++---
- drivers/clk/shmobile/clk-r8a7779.c                 |  2 ++
- 2 files changed, 28 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
-index ed3c8cb12f4eb699..8c81547c29f568e8 100644
---- a/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
-@@ -1,7 +1,9 @@
- * Renesas R8A7779 Clock Pulse Generator (CPG)
- 
- The CPG generates core clocks for the R8A7779. It includes one PLL and
--several fixed ratio dividers
-+several fixed ratio dividers.
-+The CPG also provides a Clock Domain for SoC devices, in combination with the
-+CPG Module Stop (MSTP) Clocks.
- 
- Required Properties:
- 
-@@ -12,16 +14,36 @@ Required Properties:
-   - #clock-cells: Must be 1
-   - clock-output-names: The names of the clocks. Supported clocks are "plla",
-     "z", "zs", "s", "s1", "p", "b", "out".
-+  - #power-domain-cells: Must be 0
- 
-+SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
-+through an MSTP clock should refer to the CPG device node in their
-+"power-domains" property, as documented by the generic PM domain bindings in
-+Documentation/devicetree/bindings/power/power_domain.txt.
- 
--Example
---------
-+
-+Examples
-+--------
-+
-+  - CPG device node:
- 
- 	cpg_clocks: cpg_clocks@ffc80000 {
- 		compatible = "renesas,r8a7779-cpg-clocks";
--		reg = <0 0xffc80000 0 0x30>;
-+		reg = <0xffc80000 0x30>;
- 		clocks = <&extal_clk>;
- 		#clock-cells = <1>;
- 		clock-output-names = "plla", "z", "zs", "s", "s1", "p",
- 		                     "b", "out";
-+		#power-domain-cells = <0>;
-+	};
-+
-+
-+  - CPG/MSTP Clock Domain member device node:
-+
-+	sata: sata@fc600000 {
-+		compatible = "renesas,sata-r8a7779", "renesas,rcar-sata";
-+		reg = <0xfc600000 0x2000>;
-+		interrupts = <0 100 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
-+		power-domains = <&cpg_clocks>;
- 	};
-diff --git a/drivers/clk/shmobile/clk-r8a7779.c b/drivers/clk/shmobile/clk-r8a7779.c
-index af297963489f473d..92275c5f2c60303e 100644
---- a/drivers/clk/shmobile/clk-r8a7779.c
-+++ b/drivers/clk/shmobile/clk-r8a7779.c
-@@ -168,6 +168,8 @@ static void __init r8a7779_cpg_clocks_init(struct device_node *np)
- 	}
- 
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
-+
-+	cpg_mstp_add_clk_domain(np);
- }
- CLK_OF_DECLARE(r8a7779_cpg_clks, "renesas,r8a7779-cpg-clocks",
- 	       r8a7779_cpg_clocks_init);
--- 
-1.9.1
-
+>  struct pistachio_pll_rate_table {
+> -       unsigned long fref;
+> -       unsigned long fout;
+> -       unsigned int refdiv;
+> -       unsigned int fbdiv;
+> -       unsigned int postdiv1;
+> -       unsigned int postdiv2;
+> -       unsigned int frac;
+> +       unsigned long long fref;
+> +       unsigned long long fout;
+> +       unsigned long long refdiv;
+> +       unsigned long long fbdiv;
+> +       unsigned long long postdiv1;
+> +       unsigned long long postdiv2;
+> +       unsigned long long frac;
+>  };
+>
+>  enum pistachio_pll_type {
+> --
+> 1.9.1
+>
