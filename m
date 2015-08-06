@@ -1,95 +1,98 @@
-Return-Path: <swarren@wwwdotorg.org>
-Message-ID: <55CEBFEA.7080505@wwwdotorg.org>
-Date: Fri, 14 Aug 2015 22:28:26 -0600
-From: Stephen Warren <swarren@wwwdotorg.org>
-MIME-Version: 1.0
-To: Eric Anholt <eric@anholt.net>
-CC: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Lee Jones <lee@kernel.org>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Mike Turquette <mturquette@linaro.org>,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] clk: Add a Raspberry Pi-specific clock driver.
-References: <1439507142-2965-1-git-send-email-eric@anholt.net> <1439507142-2965-3-git-send-email-eric@anholt.net>
-In-Reply-To: <1439507142-2965-3-git-send-email-eric@anholt.net>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1438873513.2142.95.camel@arm.com>
+Subject: Re: [PATCH 1/3] clk: versatile: Switch to assigned clock parents
+From: Pawel Moll <pawel.moll@arm.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Sudeep Holla <Sudeep.Holla@arm.com>
+Date: Thu, 06 Aug 2015 16:05:13 +0100
+In-Reply-To: <55C24E56.3020004@codeaurora.org>
+References: <55BBB2FC.9030102@codeaurora.org>
+	 <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>
+	 <1438386285-5070-2-git-send-email-sboyd@codeaurora.org>
+	 <1438610480.2142.14.camel@arm.com> <55BFAB11.7080600@codeaurora.org>
+	 <1438770574.2142.80.camel@arm.com> <55C24E56.3020004@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/13/2015 05:05 PM, Eric Anholt wrote:
-> Unfortunately, the clock manager's registers are not accessible by the
-> ARM, so we have to request that the firmware modify our clocks for us.
+On Wed, 2015-08-05 at 18:56 +0100, Stephen Boyd wrote:
+> On 08/05/2015 03:29 AM, Pawel Moll wrote:
+> >
+> > Right, that's probably my fault. The sp810 nodes appeared in the VE
+> > trees very early (in terms of the "DT era"), when we weren't so strict
+> > about documentation. So far, it would be fairly simple, something like
+> > the text below - feel free to take it, mend it, extend it with your
+> > changes and include in the series:
+> >
+> > Thanks!
 > 
-> This driver only registers the clocks at the point they are requested
-> by a client driver.  This is partially to support returning
-> -EPROBE_DEFER when the firmware driver isn't supported yet, but it
-> also avoids issues with disabling "unused" clocks due to them not yet
-> being connected to their consumers in the DT.
+> Great! Can you please provide your signed-off-by? 
 
-> diff --git a/drivers/clk/clk-raspberrypi.c b/drivers/clk/clk-raspberrypi.c
+Sure. 
 
-> +static const struct {
-> +	const char *name;
-> +	int flags;
-> +} rpi_clocks[] = {
-> +	[RPI_CLOCK_EMMC] = { "emmc", CLK_IS_ROOT },
-> +	[RPI_CLOCK_UART0] = { "uart0", CLK_IS_ROOT },
-> +	[RPI_CLOCK_ARM] = { "arm", CLK_IS_ROOT | CLK_IGNORE_UNUSED },
-> +	[RPI_CLOCK_CORE] = { "core", CLK_IS_ROOT | CLK_IGNORE_UNUSED },
-> +	[RPI_CLOCK_V3D] = { "v3d", CLK_IS_ROOT },
-> +	[RPI_CLOCK_H264] = { "h264", CLK_IS_ROOT },
-> +	[RPI_CLOCK_ISP] = { "isp", CLK_IS_ROOT },
-> +	[RPI_CLOCK_SDRAM] = { "sdram", CLK_IS_ROOT | CLK_IGNORE_UNUSED },
-> +	[RPI_CLOCK_PIXEL] = { "pixel", CLK_IS_ROOT | CLK_IGNORE_UNUSED },
-> +	[RPI_CLOCK_PWM] = { "pwm", CLK_IS_ROOT },
-> +};
-> +
-> +struct rpi_firmware_clock {
-> +	/* Clock definitions in our static struct. */
-> +	const char *name;
-> +	int flags;
+8<--------------------------------------------------------
 
-Are these duplicates of the values in rpi_clocks[]? Why not just store a
-pointer to or index of the entry in that array?
+>From cddb00e4c8b6b57e82008fa23a7359560e5c997c Mon Sep 17 00:00:00 2001
+From: Pawel Moll <pawel.moll@arm.com>
+Date: Thu, 6 Aug 2015 16:04:10 +0100
+Subject: [PATCH] clk: versatile: Add SP810 device tree bindings document
 
-> +static int rpi_clk_set_state(struct clk_hw *hw, bool on)
-> +{
-> +	struct rpi_firmware_clock *rpi_clk =
-> +		container_of(hw, struct rpi_firmware_clock, hw);
-> +	u32 packet[2];
-> +	int ret;
-> +
-> +	if (on == (rpi_clk->last_rate != 0))
-> +		return 0;
+Signed-off-by: Pawel Moll <pawel.moll@arm.com>
+---
+ Documentation/devicetree/bindings/arm/sp810.txt | 35 +++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/sp810.txt
 
-The overloading of last_rate to represent both rate information and
-on/off status is slightly confusing. I would have expected this function
-to clear last_rate to 0 when switching the clock off, and some specific
-rate when turning a clock on. Is there some guarantee that the clock
-core will always call recalc_rate() at certain times, thus ensuring that
-last_rate is always accurate?
+diff --git a/Documentation/devicetree/bindings/arm/sp810.txt b/Documentation/devicetree/bindings/arm/sp810.txt
+new file mode 100644
+index 0000000..440ee08
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/sp810.txt
+@@ -0,0 +1,35 @@
++SP810 System Controller
++-----------------------
++
++Required properties:
++
++- compatible:	standard compatible string for a Primecell peripheral,
++		see Documentation/devicetree/bindings/arm/primecell.txt
++		for more details
++		should be: "arm,sp810", "arm,primecell"
++
++- reg:		standard registers property, physical address and size
++		of the control registers
++
++- clock-names:	from the common clock bindings, for more details see
++		Documentation/devicetree/bindings/clock/clock-bindings.txt;
++		should be: "refclk", "timclk", "apb_pclk"
++
++- clocks:	from the common clock bindings, phandle and clock
++		specifier pairs for the entries of clock-names property
++
++- #clock-cells: from the common clock bindings;
++		should be: <1>
++
++- clock-output-names: from the common clock bindings;
++		should be: "timerclken0", "timerclken1", "timerclken2", "timerclken3"
++
++Example:
++	sysctl@020000 {
++		compatible = "arm,sp810", "arm,primecell";
++		reg = <0x020000 0x1000>;
++		clocks = <&v2m_refclk32khz>, <&v2m_refclk1mhz>, <&smbclk>;
++		clock-names = "refclk", "timclk", "apb_pclk";
++		#clock-cells = <1>;
++		clock-output-names = "timerclken0", "timerclken1", "timerclken2", "timerclken3";
++	};
+-- 
+2.1.4
 
-Wouldn't it be simpler to let last_rate always represent that actual
-rate, and have a separate last_on or is_on field to represent the
-enable/disable state?
 
-> +static unsigned long rpi_clk_get_rate(struct clk_hw *hw,
-> +				      unsigned long parent_rate)
-...
-> +	rpi_clk->last_rate = packet[1];
 
-Since this is a query API, I wouldn't have expected it to have
-side-effects like this. Don't we know what rate the clock runs at based
-on the firmware's response in set_rate()?
-
-> +static int rpi_clk_probe(struct platform_device *pdev)
-
-> +	onecell = devm_kmalloc(dev, sizeof(*onecell), GFP_KERNEL);
-> +	if (!onecell)
-> +		return -ENOMEM;
-> +	onecell->clk_num = ARRAY_SIZE(rpi_clocks);
-> +	onecell->clks = devm_kzalloc(dev, sizeof(*onecell->clks), GFP_KERNEL);
-
-Don't you need to multiply the size by ARRAY_SIZE(rpi_clocks)? I assume
-onecell->clks is an array with one entry per each of onecell->clk_num?
-Yes, the for loop right after that allocation confirms this.
