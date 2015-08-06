@@ -1,125 +1,85 @@
-Return-Path: <pankaj.dubey@samsung.com>
-Message-id: <55D15522.7080603@samsung.com>
-Date: Mon, 17 Aug 2015 08:59:38 +0530
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-MIME-version: 1.0
-To: Chanwoo Choi <cw00.choi@samsung.com>, s.nawrocki@samsung.com,
- tomasz.figa@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [1/4] clk: samsung: exynos3250: Add UART2 clock
-References: <1439264784-30322-2-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1439264784-30322-2-git-send-email-cw00.choi@samsung.com>
-Content-type: text/plain; charset=utf-8; format=flowed
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <govindraj.raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Mike Turquette
+	<mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, "Michael
+ Turquette" <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+Subject: [PATCH 6/6] clk: pistachio: correct critical clock list
+Date: Thu, 6 Aug 2015 14:48:10 +0100
+Message-ID: <1438868890-7810-1-git-send-email-govindraj.raja@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chanwoo,
+From: "Damien.Horsley" <Damien.Horsley@imgtec.com>
 
-Thanks for this patch. Similar patch[1] was posted long back, and there 
-were some concern from your side, if you think those concerns are fixed, 
-then my patch [1] are still valid and can be taken. If it needs to be 
-rebase I am happy to do that.
+Current critical clock list for pistachio enables
+only mips and sys clocks by default but there also
+other clocks that are not claimed by anyone and
+needs to be enabled by default.
 
-[1] 
-http://lists.infradead.org/pipermail/linux-arm-kernel/2014-September/291239.html
+This patch updates the critical clocks that needs
+to enabled by default.
 
+Add a separate struct to distinguish the critical clocks
+one is core clock(mips) and others are from periph_clk_*
 
-Thanks,
-Pankaj Dubey
-On Tuesday 11 August 2015 09:16 AM, Chanwoo Choi wrote:
-> This patch add the UART2 clocks (mux, divider, gate) of Exynos3250 SoC.
->
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
-> ---
-> drivers/clk/samsung/clk-exynos3250.c   | 6 ++++++
->   include/dt-bindings/clock/exynos3250.h | 6 +++++-
->   2 files changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
-> index 538de66a759e..2105863a3ace 100644
-> --- a/drivers/clk/samsung/clk-exynos3250.c
-> +++ b/drivers/clk/samsung/clk-exynos3250.c
-> @@ -307,6 +307,7 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
->   	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 4),
->
->   	/* SRC_PERIL0 */
-> +	MUX(CLK_MOUT_UART2, "mout_uart2", group_sclk_p, SRC_PERIL0, 8, 4),
->   	MUX(CLK_MOUT_UART1, "mout_uart1", group_sclk_p, SRC_PERIL0, 4, 4),
->   	MUX(CLK_MOUT_UART0, "mout_uart0", group_sclk_p, SRC_PERIL0, 0, 4),
->
-> @@ -389,6 +390,7 @@ static struct samsung_div_clock div_clks[] __initdata = {
->   	DIV(CLK_DIV_MMC0, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
->
->   	/* DIV_PERIL0 */
-> +	DIV(CLK_DIV_UART2, "div_uart2", "mout_uart2", DIV_PERIL0, 8, 4),
->   	DIV(CLK_DIV_UART1, "div_uart1", "mout_uart1", DIV_PERIL0, 4, 4),
->   	DIV(CLK_DIV_UART0, "div_uart0", "mout_uart0", DIV_PERIL0, 0, 4),
->
-> @@ -551,6 +553,9 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
->   		GATE_SCLK_PERIL, 7, CLK_SET_RATE_PARENT, 0),
->   	GATE(CLK_SCLK_SPI0, "sclk_spi0", "div_spi0_pre",
->   		GATE_SCLK_PERIL, 6, CLK_SET_RATE_PARENT, 0),
-> +
-> +	GATE(CLK_SCLK_UART2, "sclk_uart2", "div_uart2",
-> +		GATE_SCLK_PERIL, 2, CLK_SET_RATE_PARENT, 0),
->   	GATE(CLK_SCLK_UART1, "sclk_uart1", "div_uart1",
->   		GATE_SCLK_PERIL, 1, CLK_SET_RATE_PARENT, 0),
->   	GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0",
-> @@ -648,6 +653,7 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
->   	GATE(CLK_I2C2, "i2c2", "div_aclk_100", GATE_IP_PERIL, 8, 0, 0),
->   	GATE(CLK_I2C1, "i2c1", "div_aclk_100", GATE_IP_PERIL, 7, 0, 0),
->   	GATE(CLK_I2C0, "i2c0", "div_aclk_100", GATE_IP_PERIL, 6, 0, 0),
-> +	GATE(CLK_UART2, "uart2", "div_aclk_100", GATE_IP_PERIL, 2, 0, 0),
->   	GATE(CLK_UART1, "uart1", "div_aclk_100", GATE_IP_PERIL, 1, 0, 0),
->   	GATE(CLK_UART0, "uart0", "div_aclk_100", GATE_IP_PERIL, 0, 0, 0),
->   };
-> diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
-> index aab088d30199..89a7d97b002c 100644
-> --- a/include/dt-bindings/clock/exynos3250.h
-> +++ b/include/dt-bindings/clock/exynos3250.h
-> @@ -78,6 +78,7 @@
->   #define CLK_MOUT_CORE			58
->   #define CLK_MOUT_APLL			59
->   #define CLK_MOUT_ACLK_266_SUB		60
-> +#define CLK_MOUT_UART2			61
->
->   /* Dividers */
->   #define CLK_DIV_GPL			64
-> @@ -126,6 +127,7 @@
->   #define CLK_DIV_CORE			107
->   #define CLK_DIV_HPM			108
->   #define CLK_DIV_COPY			109
-> +#define CLK_DIV_UART2			110
->
->   /* Gates */
->   #define CLK_ASYNC_G3D			128
-> @@ -222,6 +224,7 @@
->   #define CLK_BLOCK_MFC			219
->   #define CLK_BLOCK_CAM			220
->   #define CLK_SMIES			221
-> +#define CLK_UART2			222
->
->   /* Special clocks */
->   #define CLK_SCLK_JPEG			224
-> @@ -248,12 +251,13 @@
->   #define CLK_SCLK_SPI0			245
->   #define CLK_SCLK_UART1			246
->   #define CLK_SCLK_UART0			247
-> +#define CLK_SCLK_UART2			248
->
->   /*
->    * Total number of clocks of main CMU.
->    * NOTE: Must be equal to last clock ID increased by one.
->    */
-> -#define CLK_NR_CLKS			248
-> +#define CLK_NR_CLKS			249
->
->   /*
->    * CMU DMC
->
+Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+Signed-off-by: Damien.Horsley <Damien.Horsley@imgtec.com>
+---
+ drivers/clk/pistachio/clk-pistachio.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
+index 8c0fe88..c4ceb5e 100644
+--- a/drivers/clk/pistachio/clk-pistachio.c
++++ b/drivers/clk/pistachio/clk-pistachio.c
+@@ -159,9 +159,15 @@ PNAME(mux_debug) = { "mips_pll_mux", "rpu_v_pll_mux",
+ 		     "wifi_pll_mux", "bt_pll_mux" };
+ static u32 mux_debug_idx[] = { 0x0, 0x1, 0x2, 0x4, 0x8, 0x10 };
+ 
+-static unsigned int pistachio_critical_clks[] __initdata = {
+-	CLK_MIPS,
+-	CLK_PERIPH_SYS,
++static unsigned int pistachio_critical_clks_core[] __initdata = {
++	CLK_MIPS
++};
++
++static unsigned int pistachio_critical_clks_sys[] __initdata = {
++	PERIPH_CLK_SYS,
++	PERIPH_CLK_SYS_BUS,
++	PERIPH_CLK_DDR,
++	PERIPH_CLK_ROM,
+ };
+ 
+ static void __init pistachio_clk_init(struct device_node *np)
+@@ -193,8 +199,8 @@ static void __init pistachio_clk_init(struct device_node *np)
+ 
+ 	pistachio_clk_register_provider(p);
+ 
+-	pistachio_clk_force_enable(p, pistachio_critical_clks,
+-				   ARRAY_SIZE(pistachio_critical_clks));
++	pistachio_clk_force_enable(p, pistachio_critical_clks_core,
++				   ARRAY_SIZE(pistachio_critical_clks_core));
+ }
+ CLK_OF_DECLARE(pistachio_clk, "img,pistachio-clk", pistachio_clk_init);
+ 
+@@ -261,6 +267,9 @@ static void __init pistachio_clk_periph_init(struct device_node *np)
+ 				    ARRAY_SIZE(pistachio_periph_gates));
+ 
+ 	pistachio_clk_register_provider(p);
++
++	pistachio_clk_force_enable(p, pistachio_critical_clks_sys,
++				   ARRAY_SIZE(pistachio_critical_clks_sys));
+ }
+ CLK_OF_DECLARE(pistachio_clk_periph, "img,pistachio-clk-periph",
+ 	       pistachio_clk_periph_init);
+-- 
+1.9.1
