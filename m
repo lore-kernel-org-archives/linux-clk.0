@@ -1,40 +1,42 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 31 Aug 2015 21:48:42 +0900
-Message-Id: <20150831124842.31057.54534.sendpatchset@little-apple>
-Subject: [PATCH v5 00/05] Renesas R-Car Gen3 CPG support V5
+Return-Path: <abrestic@google.com>
+MIME-Version: 1.0
+Sender: abrestic@google.com
+In-Reply-To: <1438868890-7810-1-git-send-email-govindraj.raja@imgtec.com>
+References: <1438868890-7810-1-git-send-email-govindraj.raja@imgtec.com>
+Date: Thu, 6 Aug 2015 09:37:05 -0700
+Message-ID: <CAL1qeaHLqj+vicU8FbxSnJW81STP4uPbOMnM5m42ecBJu1Vokg@mail.gmail.com>
+Subject: Re: [PATCH 6/6] clk: pistachio: correct critical clock list
+From: Andrew Bresticker <abrestic@chromium.org>
+To: Govindraj Raja <govindraj.raja@imgtec.com>
+Cc: Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
+	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, Zdenko Pulitika <zdenko.pulitika@imgtec.com>,
+	Kevin Cernekee <cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>,
+	James Hartley <James.Hartley@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>,
+	James Hogan <James.Hogan@imgtec.com>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Renesas R-Car Gen3 CPG support V5
+Govindraj,
 
-[PATCH v5 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
-[PATCH v5 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
-[PATCH v5 03/05] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
-[PATCH v5 04/05] clk: shmobile: Add r8a7795 SoC to MSTP bindings
-[PATCH v5 05/05] clk: shmobile: Make MSTP clock-output-names optional
+On Thu, Aug 6, 2015 at 6:48 AM, Govindraj Raja
+<govindraj.raja@imgtec.com> wrote:
+> From: "Damien.Horsley" <Damien.Horsley@imgtec.com>
+>
+> Current critical clock list for pistachio enables
+> only mips and sys clocks by default but there also
+> other clocks that are not claimed by anyone and
+> needs to be enabled by default.
+>
+> This patch updates the critical clocks that needs
+> to enabled by default.
+>
+> Add a separate struct to distinguish the critical clocks
+> one is core clock(mips) and others are from periph_clk_*
+>
+> Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
+> Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+> Signed-off-by: Damien.Horsley <Damien.Horsley@imgtec.com>
 
-This series is my latest attempt to provide R-Car Gen3 clock support
-through a single "easy to use" patch series for drivers/clk and DT
-documentation bits.
-
-There are no special runtime or build time dependencies. SoC / board
-specific integration code (DTS) is provided separately from this series.
-
-This version includes several minor updates for all the patches.
-For details please see each individual patch.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Written to be picked up independently from other R-Car Gen3 patches.
-
- Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt      |    1 
- Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   58 ++
- drivers/clk/Makefile                                                     |    1 
- drivers/clk/shmobile/Makefile                                            |   23 
- drivers/clk/shmobile/clk-mstp.c                                          |   28 -
- drivers/clk/shmobile/clk-rcar-gen3.c                                     |  247 ++++++++++
- 6 files changed, 335 insertions(+), 23 deletions(-)
+Since you're the one sending the patch, you should include your Signed-off-by.
