@@ -1,81 +1,95 @@
-Return-Path: <Aisheng.Dong@freescale.com>
-Date: Tue, 4 Aug 2015 17:45:57 +0800
-From: Dong Aisheng <aisheng.dong@freescale.com>
-To: Dong Aisheng <b29396@freescale.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <Ranjani.Vaidyanathan@freescale.com>,
-	<b20596@freescale.com>, <r64343@freescale.com>, <b20788@freescale.com>
-Subject: Re: [PATCH V3 0/5] clk: support clocks which requires parent clock
- on during operation
-Message-ID: <20150804094556.GE24870@shlinux1.ap.freescale.net>
-References: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
- <20150728143824.GB16916@shlinux1.ap.freescale.net>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 6 Aug 2015 09:50:30 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-clk@vger.kernel.org,
+	Linux PM list <linux-pm@vger.kernel.org>,
+	Linux-sh list <linux-sh@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 00/16] ARM: shmobile: Add CPG/MSTP Clock Domain
+Message-ID: <20150806005029.GE17231@verge.net.au>
+References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
+ <20150804134824.GA10194@verge.net.au>
+ <20150805005543.GC20726@verge.net.au>
+ <CAMuHMdUFjgVWBc0hdm_L0Z0Os1OT8H4NzwQyQTGZQt8Bu7-9PQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20150728143824.GB16916@shlinux1.ap.freescale.net>
-Return-Path: aisheng.dong@freescale.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMuHMdUFjgVWBc0hdm_L0Z0Os1OT8H4NzwQyQTGZQt8Bu7-9PQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 28, 2015 at 10:38:25PM +0800, Dong Aisheng wrote:
-> On Tue, Jul 28, 2015 at 09:19:40PM +0800, Dong Aisheng wrote:
-> > This patch series adds support in clock framework for clocks which operations
-> > requires its parent clock is on.
-> > 
-> > Such clock type is initially met on Freescale i.MX7D platform that all clocks
-> > operations, including enable/disable, rate change and re-parent, requires its
-> > parent clock on. No sure if any other SoC has the similar clock type.
-> > 
-> > Current clock core can not support such type of clock well.
-> > 
-> > This patch introduce a new flag CLK_SET_PARENT_ON to handle this special case
-> > in clock core that enable its parent clock firstly for each operation and disable
-> > it later after operation complete.
-> > 
-> > The most special case is for set_parent() operation which requires both parent,
-> > old one and new one, to be enabled at the same time during the operation.
-> > 
-> > The patch series is based on for-next branch of Michael's git:
-> > git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-> > 
-> > Change Log:
-> > v2->v3:
-> >  * rebased version, no other changes.
-> > 
-> > v1->v2:
-> >  Mainly addressed Stephen Boyd's comments
-> >  * remove dupliciated code with __clk_set_parent_after
-> >  * introduce more clk_core_x APIs for core easily use
-> >  * move clk_disable_unused code position
-> >  * use clk_core_x API to make code more clean and easily read
-> > 
-> > Dong Aisheng (5):
-> >   clk: remove duplicated code with __clk_set_parent_after
-> >   clk: introduce clk_core_enable_lock and clk_core_disable_lock
-> >     functions
-> >   clk: move clk_disable_unused after clk_core_disable_unprepare function
-> >   clk: core: add CLK_OPS_PARENT_ON flags to support clocks require
-> >     parent on
-> >   clk: core: add CLK_OPS_PARENT_ON flags to support clocks require
-> >     parent on
-> > 
-> >  drivers/clk/clk.c            | 338 +++++++++++++++++++++++++------------------
-> >  include/linux/clk-provider.h |   5 +
-> >  2 files changed, 200 insertions(+), 143 deletions(-)
-> > 
+On Wed, Aug 05, 2015 at 08:58:29AM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
 > 
-> Sorry, forgot to update Mike's new email address.
-> Updated.
+> On Wed, Aug 5, 2015 at 2:55 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Tue, Aug 04, 2015 at 10:48:28PM +0900, Simon Horman wrote:
+> >> I have tentatively queued this up in its own branch,
+> >> cpg-mstp-clock-domain-for-v4.3.
+> >
+> > Where possible I prefer not to apply non-DTS/DTSI patches on top of
+> > DTS/DTSI patches, I believe this is in keeping with how the ARM SoC
+> > maintainers like things handled.  With this in mind I have shuffled things
+> > around a little, the result is:
+> >
+> > 1. The following are (still) queued up for v4.3 in their own
+> >    cpg-mstp-clock-domain-for-v4.3 branch:
+> >
+> >    clk: shmobile: Add CPG/MSTP Clock Domain support
+> >    clk: shmobile: r8a7778: Add CPG/MSTP Clock Domain support
+> >    clk: shmobile: r8a7779: Add CPG/MSTP Clock Domain support
+> >    clk: shmobile: rcar-gen2: Add CPG/MSTP Clock Domain support
+> >    clk: shmobile: rz: Add CPG/MSTP Clock Domain support
+> >    ARM: shmobile: r7s72100 dtsi: Add CPG/MSTP Clock Domain
+> >    ARM: shmobile: r8a7778 dtsi: Add CPG/MSTP Clock Domain
+> >    ARM: shmobile: r8a7779 dtsi: Add CPG/MSTP Clock Domain
+> >    ARM: shmobile: r8a7790 dtsi: Add CPG/MSTP Clock Domain
+> >    ARM: shmobile: r8a7791 dtsi: Add CPG/MSTP Clock Domain
+> >    ARM: shmobile: r8a7793 dtsi: Add CPG/MSTP Clock Domain
+> >    ARM: shmobile: r8a7794 dtsi: Add CPG/MSTP Clock Domain
 > 
-
-Ping...
-
-Regards
-Dong Aisheng
-
-> Regards
-> Dong Aisheng
+> OK.
 > 
-> > -- 
-> > 1.9.1
-> > 
+> > 2. The following are now queued up for v4.3 in a separate
+> >    sh-drivers-for-v4.3 branch. That branch is on top of the
+> >    cpg-mstp-clock-domain-for-v4.3 branch and I intend to send it directly
+> >    to Linus if/when a v4.3-rc has been released with the patches
+> >    listed in 1. present.
+> >
+> >    drivers: sh: Disable legacy default PM Domain on emev2
+> >    drivers: sh: Disable PM runtime for multi-platform ARM with genpd
+> 
+> OK
+> 
+> > 3. I have deferred the remaining two patches, listed below, for v4.4.
+> >    they currently reside in cpg-mstp-clock-domain-for-v4.4. That
+> >    branch is based on the sh-drivers-for-v4.3 branch.
+> >
+> >    clk: shmobile: mstp: Consider "zb_clk" suitable for power management
+> >    ARM: shmobile: R-Mobile: Use CPG/MSTP Clock Domain attach/detach helpers
+> >
+> > This means that the last two patches will disappear from next until
+> > after v4.3-rc1 is released but they, along with all the other patches,
+> > will be present in the renesas devel branch.
+> 
+> OK.
+> 
+> Note that as the last two depend on patch 1 only, you could e.g. queue
+> them up in group 1, between the clk and dtsi patches.
+> But it's up to you to reconsider.
+> I'm happy as-is, as the last two patches are just a code duplication clean up.
+
+Thanks, and sorry for not realising that.
+
+For now I will keep things as-is because I would like to stabilise my
+branches.
