@@ -1,59 +1,103 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Date: Wed, 12 Aug 2015 10:34:57 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [GIT PULL] i.MX clock updates for 4.2
-Message-ID: <20150812023456.GC10035@tiger>
-References: <20150811085921.GB10035@tiger> <20150811174657.2416.1270@quantum>
-MIME-Version: 1.0
-In-Reply-To: <20150811174657.2416.1270@quantum>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: kernel@pengutronix.de, Stephen Boyd <sboyd@codeaurora.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+ Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ b.zolnierkie@samsung.com
+Subject: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
+ platform
+Date: Thu, 06 Aug 2015 15:41:48 +0200
+Message-id: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 11, 2015 at 10:46:57AM -0700, Michael Turquette wrote:
-> Hi Shawn,
-> 
-> Quoting Shawn Guo (2015-08-11 01:59:21)
-> > Hi Michael, Stephen,
-> > 
-> > The i.MX clock drivers were moved into drivers/clk/imx folder since
-> > v4.2-rc1, so I would like to send i.MX clock changes through clock tree
-> > from this cycle.  Here is my first pull request to you guys.  I'm using
-> > signed tags, same as how I work with arm-soc folks.  Let me know if
-> > there is any problem with it.
-> 
-> Everything looks good. Pulled.
+Hi,
 
-Thanks, Mike.
+This patch series removes the use of Exynos4x12 specific support
+from cpufreq-exynos driver and enables the use of cpufreq-dt driver
+for this platform.
 
-> 
-> > 
-> > Also, please keep it stable, because I need to pull it into other
-> > branch as dependency which I will send via arm-soc tree.
-> 
-> Will do.
-> 
-> Also, the clock driver was not Cc'd to linux-clk mailing list nor did it
-> Cc myself or Stephen. I've taken a quick look at it and it seems fine,
-> but please post clk patches to the linux-clk mailing list in the future.
+This patch series has been tested on Exynos4412 based Odroid-U3 and
+Trats2 boards.
 
-I will ensure that all i.MX clock patches get Cc'd to linux-clk and you
-guys in the future.
+Depends on:
+- next-20150806 branch of linux-next kernel tree
+- "[PATCH V3 00/16] OPP: Add code to support operating-points-v2 bindings"
+  (http://www.spinics.net/lists/arm-kernel/msg435408.html)
 
-Shawn
+Changes since v3
+(http://thread.gmane.org/gmane.linux.power-management.general/63464):
+- rebased on top of next-20150806 branch of linux-next kernel tree
+- made ARCH_EXYNOS config option select thermal support
+- made scaling_boost_freqs sysfs attribute available only when boost
+  support is enabled
+- added Acked-by tag from Viresh to patches #3, #4 and #5
+- added Tested-by tag from Tobias to patches #2-5
+- added Reviewed-by tag from Krzysztof to patch #4
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Changes since v2
+(http://thread.gmane.org/gmane.linux.kernel.samsung-soc/46653):
+- rebased on top of next-20150730 branch of linux-next kernel tree
+- ported over V3 of opp-v2 bindings support patch series
+- put cpu0 nodes in alphabetical order in dts files
+- added Reviewed-by tags from Javier and Krzysztof
+- added Acked-by tag from Sylwester
+
+Changes since v1
+(http://thread.gmane.org/gmane.linux.kernel.samsung-soc/44361):
+- rebased on top of next-20150629 branch of linux-next kernel tree
+- rebased on top of Exynos5250 cpufreq-dt support patch series
+- fixed if-statement in exynos4_clk_init() (noticed by Tobias Jakobi)
+- ported over opp-v2 bindings (requested by Viresh Kumar)
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (6):
+  cpufreq: make scaling_boost_freqs sysfs attr available when boost is
+    enabled
+  clk: samsung: exynos4x12: add cpu clock configuration data and
+    instantiate cpu clock
+  ARM: dts: Exynos4x12: add CPU OPP and regulator supply property
+  ARM: Exynos: switch to using generic cpufreq driver for Exynos4x12
+  cpufreq: exynos: remove Exynos4x12 specific cpufreq driver support
+  cpufreq: remove no longer needed CPU_FREQ_BOOST_SW config option
+
+ arch/arm/boot/dts/exynos4212.dtsi               |  81 ++++++++
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   4 +
+ arch/arm/boot/dts/exynos4412-origen.dts         |   4 +
+ arch/arm/boot/dts/exynos4412-trats2.dts         |   4 +
+ arch/arm/boot/dts/exynos4412.dtsi               |  83 +++++++++
+ arch/arm/mach-exynos/Kconfig                    |   2 +
+ arch/arm/mach-exynos/exynos.c                   |   2 +
+ drivers/clk/samsung/clk-exynos4.c               |  50 +++++
+ drivers/cpufreq/Kconfig                         |   4 -
+ drivers/cpufreq/Kconfig.arm                     |  38 ----
+ drivers/cpufreq/Makefile                        |   2 -
+ drivers/cpufreq/cpufreq-dt.c                    |   3 +
+ drivers/cpufreq/exynos-cpufreq.c                | 236 ------------------------
+ drivers/cpufreq/exynos-cpufreq.h                |  72 --------
+ drivers/cpufreq/exynos4x12-cpufreq.c            | 236 ------------------------
+ drivers/cpufreq/freq_table.c                    |  10 +-
+ include/linux/cpufreq.h                         |   1 +
+ 17 files changed, 241 insertions(+), 591 deletions(-)
+ delete mode 100644 drivers/cpufreq/exynos-cpufreq.c
+ delete mode 100644 drivers/cpufreq/exynos-cpufreq.h
+ delete mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
+
+-- 
+1.9.1
