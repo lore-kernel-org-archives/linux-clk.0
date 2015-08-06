@@ -1,42 +1,49 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Lin Huang <hl@rock-chips.com>, dianders@chromium.org, linux-rockchip@lists.infradead.org, mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] clk: rockchip: add pclk_pd_pmu to the list of rk3288 critical clocks
-Date: Tue, 04 Aug 2015 21:40:16 +0200
-Message-ID: <10063547.S7PvqCkF78@diego>
-In-Reply-To: <55C113CF.2000601@codeaurora.org>
-References: <1438670487-27598-1-git-send-email-hl@rock-chips.com> <1588782.u2WKR6eVuV@diego> <55C113CF.2000601@codeaurora.org>
+Return-Path: <abrestic@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Sender: abrestic@google.com
+In-Reply-To: <1438868614-7672-3-git-send-email-govindraj.raja@imgtec.com>
+References: <1438868614-7672-1-git-send-email-govindraj.raja@imgtec.com>
+	<1438868614-7672-3-git-send-email-govindraj.raja@imgtec.com>
+Date: Thu, 6 Aug 2015 09:23:18 -0700
+Message-ID: <CAL1qeaEEndYJc7kVW9hgEZYGnVs8tFBy7y0sObiS8GVj=ta88w@mail.gmail.com>
+Subject: Re: [PATCH 2/6] clk: pistachio: Fix override of clk-pll settings from
+ boot loader
+From: Andrew Bresticker <abrestic@chromium.org>
+To: Govindraj Raja <govindraj.raja@imgtec.com>
+Cc: Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
+	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, Zdenko Pulitika <zdenko.pulitika@imgtec.com>,
+	Kevin Cernekee <cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>,
+	James Hartley <James.Hartley@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>,
+	James Hogan <James.Hogan@imgtec.com>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 4. August 2015, 12:34:39 schrieb Stephen Boyd:
-> On 08/04/2015 01:54 AM, Heiko St=FCbner wrote:
-> > Hi,
-> >=20
-> > Am Dienstag, 4. August 2015, 14:41:26 schrieb Lin Huang:
-> >=20
-> > I guess this patch then would need a
-> >=20
-> > From: Heiko Stuebner <heiko@sntech.de>
-> >=20
-> > at this point to override the author then.
->=20
-> Sounds right. Please resend the patch properly. Also, is there a 2/2?=
- I
-> never got it.
+Govindraj,
 
-Patch 2/2 is a pinctrl change, that actually depends in this patch.
-Improved clock-handling in the pinctrl driver caused the pd_pmu clock t=
-o get=20
-deactivated.
+On Thu, Aug 6, 2015 at 6:43 AM, Govindraj Raja
+<govindraj.raja@imgtec.com> wrote:
+> From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+>
+> Pll enable callbacks are overriding PLL mode (int/frac) and
+> Noise reduction (on/off) settings set by the boot loader which
+> results in the incorrect clock rate.
 
-So, perhaps it might be even better to get an Ack from the clock mainta=
-iner=20
-and merge both patches through the pinctrl tree?
+Please be consistent about how "PLL" is written out.  Since it's an
+acronym, it should be in caps.
 
+> PLL mode and noise reduction are defined by the DSMPD and DACPD bits
+> of the pll control register. Pll .enable() callbacks enable pll
+> by deasserting all power-down bits of the pll control register,
+> including DSMPD and DACPD bits, which is not necessary since
+> these bits don't actually enable/disable pll.
+>
+> This commit fixes the problem by removing DSMPD and DACPD bits
+> from the "pll enable" mask.
+>
+> Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+> Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
 
-In which case Linus Walleij should also be included as recipient of thi=
-s patch=20
-when resending.
+Otherwise,
+
+Reviewed-by: Andrew Bresitcker <abrestic@chromium.org>
