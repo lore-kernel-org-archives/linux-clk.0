@@ -1,61 +1,67 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Subject: Re: [PATCH] clk: pxa: pxa3xx: fix CKEN register access
-References: <1438631907-27993-1-git-send-email-robert.jarzmik@free.fr>
-	<55C00A6B.2030508@codeaurora.org> <87h9ofmv2n.fsf@belgarion.home>
-	<55C0FD5E.7000705@codeaurora.org> <874mkenbsp.fsf@belgarion.home>
-	<55C10BC3.9080204@codeaurora.org>
-Date: Tue, 04 Aug 2015 21:05:54 +0200
-In-Reply-To: <55C10BC3.9080204@codeaurora.org> (Stephen Boyd's message of
-	"Tue, 04 Aug 2015 12:00:19 -0700")
-Message-ID: <87zj26lvql.fsf@belgarion.home>
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <govindraj.raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Mike Turquette
+	<mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, "Michael
+ Turquette" <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Govindraj Raja <govindraj.raja@imgtec.com>
+Subject: [PATCH 2/6] clk: pistachio: Fix override of clk-pll settings from boot loader
+Date: Thu, 6 Aug 2015 14:43:30 +0100
+Message-ID: <1438868614-7672-3-git-send-email-govindraj.raja@imgtec.com>
+In-Reply-To: <1438868614-7672-1-git-send-email-govindraj.raja@imgtec.com>
+References: <1438868614-7672-1-git-send-email-govindraj.raja@imgtec.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen Boyd <sboyd@codeaurora.org> writes:
+From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
 
-> On 08/04/2015 11:33 AM, Robert Jarzmik wrote:
->> Stephen Boyd <sboyd@codeaurora.org> writes:
->>
->>> On 08/03/2015 11:22 PM, Robert Jarzmik wrote:
->>>> Stephen Boyd <sboyd@codeaurora.org> writes:
->>>>
->>>>> On 08/03/2015 12:58 PM, Robert Jarzmik wrote:
->>>>>> Clocks 0 to 31 are on CKENA, and not CKENB. The clock register names
->>>>>> were inadequately inverted. As a consequence, all clock operations were
->>>>>> happening on CKENB, because almost all but 2 clocks are on CKENA.
->>>>>>
->>>>>> As the clocks were activated by the bootloader in the former tests, it
->>>>>> escaped the testing that the wrong clock gate was manipulated. The error
->>>>>> was revealed by changing the pxa3xx-and driver to a module, where tupon
->>>>>> unloading the wrong clock was disabled in CKENB.
->>>>>>
->>>>>> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
->>>>>> ---
->>>>> Did you want a fixes tag to send this back to stable?
->>>> Ah yes, good point, v2 on its way.
->>>>
->>>> Stephen and Mike, do you think this can still get in -rc6 ?
->>>>
->>> It's not a new regression for v4.2 so we'll leave it to v4.3. I'll apply it to
->>> clk-next.
->> Euh how so, not "new" ?
->>
->> The clock switch for pxa architecture happens just now, on v4.2, see [1]. So the
->> regression wasn't here on v4.1, but is introduced in v4.2
->>
->> I know I'm terribly late, but isn't it still possible to have it in v4.2 ?
->>
->
-> Ah ok. I wasn't aware that we switched on CCF for PXA this time around. Did the
-> commit text mean to mention the pxa3xx-nand driver? I can fix that up when
-> applying.
-Oh yes please, it's indeed pxa3xx-nand driver.
+Pll enable callbacks are overriding PLL mode (int/frac) and
+Noise reduction (on/off) settings set by the boot loader which
+results in the incorrect clock rate.
 
-Thanks.
+PLL mode and noise reduction are defined by the DSMPD and DACPD bits
+of the pll control register. Pll .enable() callbacks enable pll
+by deasserting all power-down bits of the pll control register,
+including DSMPD and DACPD bits, which is not necessary since
+these bits don't actually enable/disable pll.
 
+This commit fixes the problem by removing DSMPD and DACPD bits
+from the "pll enable" mask.
+
+Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+---
+ drivers/clk/pistachio/clk-pll.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
+index 68066ef..9a38a2b 100644
+--- a/drivers/clk/pistachio/clk-pll.c
++++ b/drivers/clk/pistachio/clk-pll.c
+@@ -134,8 +134,7 @@ static int pll_gf40lp_frac_enable(struct clk_hw *hw)
+ 	u32 val;
+ 
+ 	val = pll_readl(pll, PLL_CTRL3);
+-	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_DACPD |
+-		 PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
++	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
+ 		 PLL_FRAC_CTRL3_FOUT4PHASEPD | PLL_FRAC_CTRL3_FOUTVCOPD);
+ 	pll_writel(pll, val, PLL_CTRL3);
+ 
+@@ -277,7 +276,7 @@ static int pll_gf40lp_laint_enable(struct clk_hw *hw)
+ 	u32 val;
+ 
+ 	val = pll_readl(pll, PLL_CTRL1);
+-	val &= ~(PLL_INT_CTRL1_PD | PLL_INT_CTRL1_DSMPD |
++	val &= ~(PLL_INT_CTRL1_PD |
+ 		 PLL_INT_CTRL1_FOUTPOSTDIVPD | PLL_INT_CTRL1_FOUTVCOPD);
+ 	pll_writel(pll, val, PLL_CTRL1);
+ 
 -- 
-Robert
+1.9.1
