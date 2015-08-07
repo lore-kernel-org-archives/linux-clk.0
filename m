@@ -1,79 +1,59 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Heiko Stuebner <heiko@sntech.de>
-To: ulf.hansson@linaro.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, tgih.jun@samsung.com, jh80.chung@samsung.com
-Cc: linux-mmc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 2/8] clk: rockchip: Make calculations use rounding
-Date: Mon, 31 Aug 2015 20:24:00 +0200
-Message-Id: <1441045446-30858-3-git-send-email-heiko@sntech.de>
-In-Reply-To: <1441045446-30858-1-git-send-email-heiko@sntech.de>
-References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Message-ID: <55C47D59.8080403@rock-chips.com>
+Date: Fri, 07 Aug 2015 17:41:45 +0800
+From: hl <hl@rock-chips.com>
+MIME-Version: 1.0
+To: heiko@sntech.de, dianders@chromium.org
+Subject: Re: [PATCH v4 1/2] clk: rockchip: add pclk_pd_pmu to the list of
+ rk3288 critical clocks
+References: <1438939872-2116-1-git-send-email-hl@rock-chips.com>
+In-Reply-To: <1438939872-2116-1-git-send-email-hl@rock-chips.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Douglas Anderson <dianders@chromium.org>
+Hi Heiko,
+> pclk_pd_pmu needs to keep running and with the upcoming gpio clock
+> handling this is not always the case anymore. So add it to the list
+> of critical clocks for now.
+>
+> From: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Lin Huang <hl@rock-chips.com>
+     is it the right way?  if it still can not meet the requirement, 
+please let me know.
+> ---
+> Changes in v4:
+> - Add From: Heiko Stuebner <heiko@sntech.de>
+>
+>   drivers/clk/rockchip/clk-rk3288.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+> index 0df5bae..9040878 100644
+> --- a/drivers/clk/rockchip/clk-rk3288.c
+> +++ b/drivers/clk/rockchip/clk-rk3288.c
+> @@ -780,6 +780,7 @@ static const char *const rk3288_critical_clocks[] __initconst = {
+>   	"aclk_cpu",
+>   	"aclk_peri",
+>   	"hclk_peri",
+> +	"pclk_pd_pmu",
+>   };
+>   
+>   #ifdef CONFIG_PM_SLEEP
 
-Let's use DIV_ROUND_CLOSEST for rounding, not just truncating
-division.  This lets us get closer to the right rate.
 
-Before this:
-  set_phase(86) delay_nums=26 reg[0xf000420c]=0x468 actual_degrees=83
-  set_phase(89) delay_nums=27 reg[0xf000420c]=0x46c actual_degrees=86
-
-After this:
-  set_phase(86) delay_nums=27 reg[0xf000420c]=0x46c actual_degrees=86
-  set_phase(89) delay_nums=28 reg[0xf000420c]=0x470 actual_degrees=90
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/rockchip/clk-mmc-phase.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
-index a797d86..bc24e5a 100644
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -69,7 +69,7 @@ static int rockchip_mmc_get_phase(struct clk_hw *hw)
- 
- 		delay_num = (raw_value & ROCKCHIP_MMC_DELAYNUM_MASK);
- 		delay_num >>= ROCKCHIP_MMC_DELAYNUM_OFFSET;
--		degrees += delay_num * factor / 10000;
-+		degrees += DIV_ROUND_CLOSEST(delay_num * factor, 10000);
- 	}
- 
- 	return degrees % 360;
-@@ -82,7 +82,7 @@ static int rockchip_mmc_set_phase(struct clk_hw *hw, int degrees)
- 	u8 nineties, remainder;
- 	u8 delay_num;
- 	u32 raw_value;
--	u64 delay;
-+	u32 delay;
- 
- 	nineties = degrees / 90;
- 	remainder = (degrees % 90);
-@@ -110,12 +110,13 @@ static int rockchip_mmc_set_phase(struct clk_hw *hw, int degrees)
- 	 * Convert to delay; do a little extra work to make sure we
- 	 * don't overflow 32-bit / 64-bit numbers.
- 	 */
--	delay = PSECS_PER_SEC;
-+	delay = 10000000; /* PSECS_PER_SEC / 10000 / 10 */
- 	delay *= remainder;
--	do_div(delay, 10000);
--	do_div(delay, (rate / 1000) * 36 * ROCKCHIP_MMC_DELAY_ELEMENT_PSEC);
-+	delay = DIV_ROUND_CLOSEST(delay,
-+			(rate / 1000) * 36 *
-+				(ROCKCHIP_MMC_DELAY_ELEMENT_PSEC / 10));
- 
--	delay_num = (u8) min(delay, 255ULL);
-+	delay_num = (u8) min_t(u32, delay, 255);
- 
- 	raw_value = delay_num ? ROCKCHIP_MMC_DELAY_SEL : 0;
- 	raw_value |= delay_num << ROCKCHIP_MMC_DELAYNUM_OFFSET;
--- 
-2.1.4
-
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
