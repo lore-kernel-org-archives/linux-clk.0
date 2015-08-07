@@ -1,68 +1,33 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <govindraj.raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Govindraj Raja
-	<govindraj.raja@imgtec.com>
-Subject: [PATCH v4 2/4] clk: pistachio: Fix override of clk-pll settings from boot loader
-Date: Tue, 18 Aug 2015 10:32:15 +0100
-Message-ID: <1439890337-13803-3-git-send-email-govindraj.raja@imgtec.com>
-In-Reply-To: <1439890337-13803-1-git-send-email-govindraj.raja@imgtec.com>
-References: <1439890337-13803-1-git-send-email-govindraj.raja@imgtec.com>
+Return-Path: <rjw@rjwysocki.net>
+Return-Path: <rjw@rjwysocki.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd.bergmann@linaro.org>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Michael Turquette' <mturquette@baylibre.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Heiko Stuebner' <heiko@sntech.de>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Kevin Hilman' <khilman@linaro.org>, 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>, 'Anand Moon' <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12 platform
+Date: Sat, 08 Aug 2015 00:24:36 +0200
+Message-ID: <1525406.7aXvVQzEDd@vostro.rjw.lan>
+In-Reply-To: <20150807115627.GH6939@linux>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com> <2359635.Hxe4cb8zKm@amdc1976> <20150807115627.GH6939@linux>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+On Friday, August 07, 2015 05:26:27 PM Viresh Kumar wrote:
+> On 07-08-15, 13:47, Bartlomiej Zolnierkiewicz wrote:
+> > Hmm, wait.  Patch 6/6 depends on earlier changes.  I cannot remove
+> > the config option in question now as it is currently used by
+> > exynos-cpufreq specific boost support.  Patch 1/6 can be applied
+> > now but 6/6 needs to wait for patches 2-5 to be applied first.
+> > 
+> > Actually 6/6 is trivial and can be applied later in v4.3 cycle or
+> > even in v4.4 one.
+> 
+> Ack.
 
-PLL enable callbacks are overriding PLL mode (int/frac) and
-Noise reduction (on/off) settings set by the boot loader which
-results in the incorrect clock rate.
+OK, so please let me know which patches you want me to pick up.
 
-PLL mode and noise reduction are defined by the DSMPD and DACPD bits
-of the PLL control register. PLL .enable() callbacks enable PLL
-by deasserting all power-down bits of the PLL control register,
-including DSMPD and DACPD bits, which is not necessary since
-these bits don't actually enable/disable PLL.
+Ideally, I'd prefer them to be resent in a separate series with ACKs and all
+with a cover letter clearly stating whose tree they are being targeted at.
 
-This commit fixes the problem by removing DSMPD and DACPD bits
-from the "PLL enable" mask.
-
-Reviewed-by: Andrew Bresitcker <abrestic@chromium.org>
-Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
-Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
----
- drivers/clk/pistachio/clk-pll.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
-index 68066ef..9a38a2b 100644
---- a/drivers/clk/pistachio/clk-pll.c
-+++ b/drivers/clk/pistachio/clk-pll.c
-@@ -134,8 +134,7 @@ static int pll_gf40lp_frac_enable(struct clk_hw *hw)
- 	u32 val;
- 
- 	val = pll_readl(pll, PLL_CTRL3);
--	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_DACPD |
--		 PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
-+	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
- 		 PLL_FRAC_CTRL3_FOUT4PHASEPD | PLL_FRAC_CTRL3_FOUTVCOPD);
- 	pll_writel(pll, val, PLL_CTRL3);
- 
-@@ -277,7 +276,7 @@ static int pll_gf40lp_laint_enable(struct clk_hw *hw)
- 	u32 val;
- 
- 	val = pll_readl(pll, PLL_CTRL1);
--	val &= ~(PLL_INT_CTRL1_PD | PLL_INT_CTRL1_DSMPD |
-+	val &= ~(PLL_INT_CTRL1_PD |
- 		 PLL_INT_CTRL1_FOUTPOSTDIVPD | PLL_INT_CTRL1_FOUTVCOPD);
- 	pll_writel(pll, val, PLL_CTRL1);
- 
--- 
-1.9.1
+Thanks,
+Rafael
