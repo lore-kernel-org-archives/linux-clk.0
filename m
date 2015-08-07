@@ -1,61 +1,66 @@
-Return-Path: <shengjiu.wang@freescale.com>
-Date: Wed, 26 Aug 2015 09:19:24 +0800
-From: Shengjiu Wang <shengjiu.wang@freescale.com>
-To: Michael Turquette <mturquette@baylibre.com>
-CC: <shawnguo@kernel.org>, <kernel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <sboyd@codeaurora.org>,
-	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH V1 0/3] fix clock issue for fsl,spdif
-Message-ID: <20150826011922.GA9708@shlinux2>
-References: <cover.1439284957.git.shengjiu.wang@freescale.com>
- <20150825184527.31346.52324@quantum>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20150825184527.31346.52324@quantum>
-Return-Path: shengjiu.wang@freescale.com
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH 10/31] clk/mmp: use kmemdup rather than duplicating its
+ implementation
+Date: Fri, 07 Aug 2015 09:59:16 +0200
+Message-id: <1438934377-4922-11-git-send-email-a.hajda@samsung.com>
+In-reply-to: <1438934377-4922-1-git-send-email-a.hajda@samsung.com>
+References: <1438934377-4922-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 25, 2015 at 11:45:27AM -0700, Michael Turquette wrote:
-> Quoting Shengjiu Wang (2015-08-11 02:26:51)
-> > fix clock issue for fsl,spdif
-> > 
-> > Shengjiu Wang (3):
-> >   ARM: imx6q: Add SPDIF_GCLK clock in clock tree
-> >   ARM: imx6sl: Add SPDIF_GCLK clock in clock tree
-> >   ARM: imx6sx: Add SPDIF_GCLK clock in clock tree
-> 
-> Hello Shengjiu Wang,
-> 
-> Please move the dts changes into separate patches. I can take the
-> changes to the clock driver and the header through the clk tree, but the
-> dt patches need to go through arm-soc.
-> 
-> Regards,
-> Mike
+The patch was generated using fixed coccinelle semantic patch
+scripts/coccinelle/api/memdup.cocci [1].
 
-Thanks Mike. I will send another patches for dts changes.
+[1]: http://permalink.gmane.org/gmane.linux.kernel/2014320
 
-> 
-> > 
-> >  arch/arm/boot/dts/imx6qdl.dtsi            |  2 +-
-> >  arch/arm/boot/dts/imx6sl.dtsi             | 16 ++++++++++++++++
-> >  arch/arm/boot/dts/imx6sx.dtsi             |  2 +-
-> >  drivers/clk/imx/clk-imx6q.c               |  4 +++-
-> >  drivers/clk/imx/clk-imx6sl.c              |  4 +++-
-> >  drivers/clk/imx/clk-imx6sx.c              |  1 +
-> >  include/dt-bindings/clock/imx6qdl-clock.h |  3 ++-
-> >  include/dt-bindings/clock/imx6sl-clock.h  |  3 ++-
-> >  include/dt-bindings/clock/imx6sx-clock.h  |  3 ++-
-> >  9 files changed, 31 insertions(+), 7 deletions(-)
-> > 
-> > -- 
-> > 1.9.1
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > Please read the FAQ at  http://www.tux.org/lkml/
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/clk/mmp/clk-mix.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/mmp/clk-mix.c b/drivers/clk/mmp/clk-mix.c
+index 665cb67..3383410 100644
+--- a/drivers/clk/mmp/clk-mix.c
++++ b/drivers/clk/mmp/clk-mix.c
+@@ -469,20 +469,20 @@ struct clk *mmp_clk_register_mix(struct device *dev,
+ 	memcpy(&mix->reg_info, &config->reg_info, sizeof(config->reg_info));
+ 	if (config->table) {
+ 		table_bytes = sizeof(*config->table) * config->table_size;
+-		mix->table = kzalloc(table_bytes, GFP_KERNEL);
++		mix->table = kmemdup(config->table, table_bytes, GFP_KERNEL);
+ 		if (!mix->table) {
+ 			pr_err("%s:%s: could not allocate mmp mix table\n",
+ 				__func__, name);
+ 			kfree(mix);
+ 			return ERR_PTR(-ENOMEM);
+ 		}
+-		memcpy(mix->table, config->table, table_bytes);
+ 		mix->table_size = config->table_size;
+ 	}
+ 
+ 	if (config->mux_table) {
+ 		table_bytes = sizeof(u32) * num_parents;
+-		mix->mux_table = kzalloc(table_bytes, GFP_KERNEL);
++		mix->mux_table = kmemdup(config->mux_table, table_bytes,
++					 GFP_KERNEL);
+ 		if (!mix->mux_table) {
+ 			pr_err("%s:%s: could not allocate mmp mix mux-table\n",
+ 				__func__, name);
+@@ -490,7 +490,6 @@ struct clk *mmp_clk_register_mix(struct device *dev,
+ 			kfree(mix);
+ 			return ERR_PTR(-ENOMEM);
+ 		}
+-		memcpy(mix->mux_table, config->mux_table, table_bytes);
+ 	}
+ 
+ 	mix->div_flags = config->div_flags;
+-- 
+1.9.1
+
