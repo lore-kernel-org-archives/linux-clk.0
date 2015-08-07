@@ -1,80 +1,65 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH 8/8] clk: imx7d: retain early UART clocks during kernel init
-Date: Thu, 27 Aug 2015 18:39:21 +0200
-Message-Id: <1440693561-28095-9-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
-References: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
- kernel@pengutronix.de, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd.bergmann@linaro.org>,
+ 'Thomas Abraham' <thomas.ab@samsung.com>,
+ 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+ 'Michael Turquette' <mturquette@baylibre.com>,
+ 'Tomasz Figa' <tomasz.figa@gmail.com>,
+ 'Lukasz Majewski' <l.majewski@samsung.com>,
+ 'Heiko Stuebner' <heiko@sntech.de>, 'Chanwoo Choi' <cw00.choi@samsung.com>,
+ 'Kevin Hilman' <khilman@linaro.org>,
+ 'Javier Martinez Canillas' <javier@dowhile0.org>,
+ 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
+ 'Anand Moon' <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
+ platform
+Date: Fri, 07 Aug 2015 13:47:26 +0200
+Message-id: <2359635.Hxe4cb8zKm@amdc1976>
+In-reply-to: <20150807113950.GG6939@linux>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+ <2061119.GBaoSb4YSL@amdc1976> <20150807113950.GG6939@linux>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure to keep UART clocks enabled during kernel init if
-earlyprintk or earlycon are active.
+On Friday, August 07, 2015 05:09:50 PM Viresh Kumar wrote:
+> On 07-08-15, 13:31, Bartlomiej Zolnierkiewicz wrote:
+> > Users don't need to enable the config option to get boost
+> > functionality working.  It is only needed to get scaling_boost_freqs
+> > sysfs attribute visible (which lists available boost freqs) when
+> > using cpufreq-dt driver.  Also the config option in question is not
+> > user visible.
+> 
+> By users I meant the people who will prepare the build images for the
+> release. They can just enable the config option :)
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- drivers/clk/imx/clk-imx7d.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+OK.
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 71f3a94b472c..8daef5202841 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -363,6 +363,17 @@ static const char *pll_video_bypass_sel[] = { "pll_video_main", "pll_video_main_
- 
- static struct clk_onecell_data clk_data;
- 
-+static void __init imx7d_uart_disable_cb(void)
-+{
-+	clk_disable_unprepare(clks[IMX7D_UART1_ROOT_CLK]);
-+	clk_disable_unprepare(clks[IMX7D_UART2_ROOT_CLK]);
-+	clk_disable_unprepare(clks[IMX7D_UART3_ROOT_CLK]);
-+	clk_disable_unprepare(clks[IMX7D_UART4_ROOT_CLK]);
-+	clk_disable_unprepare(clks[IMX7D_UART5_ROOT_CLK]);
-+	clk_disable_unprepare(clks[IMX7D_UART6_ROOT_CLK]);
-+	clk_disable_unprepare(clks[IMX7D_UART7_ROOT_CLK]);
-+}
-+
- static void __init imx7d_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
-@@ -856,5 +867,16 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	/* set uart module clock's parent clock source that must be great then 80MHz */
- 	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
- 
-+	if (imx_clk_keep_uart()) {
-+		clk_prepare_enable(clks[IMX7D_UART1_ROOT_CLK]);
-+		clk_prepare_enable(clks[IMX7D_UART2_ROOT_CLK]);
-+		clk_prepare_enable(clks[IMX7D_UART3_ROOT_CLK]);
-+		clk_prepare_enable(clks[IMX7D_UART4_ROOT_CLK]);
-+		clk_prepare_enable(clks[IMX7D_UART5_ROOT_CLK]);
-+		clk_prepare_enable(clks[IMX7D_UART6_ROOT_CLK]);
-+		clk_prepare_enable(clks[IMX7D_UART7_ROOT_CLK]);
-+		imx_clk_set_uart_disable_callback(imx7d_uart_disable_cb);
-+	}
-+
- }
- CLK_OF_DECLARE(imx7d, "fsl,imx7d-ccm", imx7d_clocks_init);
--- 
-2.5.0
+> > The worst thing that happens if these 2 PM patches don't make it
+> > in time is that there will be no scaling_boost_freqs available
+> > when using cpufreq-dt driver.  Which is not very important from
+> > Exynos4x12 POV as it only supports single boost freq currently.
+> 
+> Right. So, now that your patch is Acked, send 1/6 and 6/6 separately
+> to pm-list and Rafael can get them merged himself..
+> 
+> I hope, your 6/6 patch will change a bit now ?
 
+Hmm, wait.  Patch 6/6 depends on earlier changes.  I cannot remove
+the config option in question now as it is currently used by
+exynos-cpufreq specific boost support.  Patch 1/6 can be applied
+now but 6/6 needs to wait for patches 2-5 to be applied first.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Actually 6/6 is trivial and can be applied later in v4.3 cycle or
+even in v4.4 one.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
