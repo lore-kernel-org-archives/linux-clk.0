@@ -1,76 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 11 Aug 2015 19:20:13 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Maxime Coquelin <maxime.coquelin@st.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, maxime.ripard@free-electrons.com,
-	s.hauer@pengutronix.de, geert@linux-m68k.org
-Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
-Message-ID: <20150811182013.GS18282@x1>
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
- <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
- <20150810144811.GN3249@x1>
- <20150810185516.2416.32293@quantum>
- <20150811084329.GA13374@x1>
- <55C9C82F.6060401@st.com>
- <20150811170924.2416.97764@quantum>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20150811170924.2416.97764@quantum>
+From: Michael Turquette <mturquette@baylibre.com>
+To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: sboyd@codeaurora.org, lee.jones@linaro.org,
+	maxime.ripard@free-electrons.com, s.hauer@pengutronix.de,
+	geert@linux-m68k.org, Michael Turquette <mturquette@baylibre.com>
+Subject: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and implement hand-off
+Date: Fri,  7 Aug 2015 12:09:27 -0700
+Message-Id: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 11 Aug 2015, Michael Turquette wrote:
+This is an alternative solution to Lee's "clk: Provide support for
+always-on clocks" series[0].
 
-> Quoting Maxime Coquelin (2015-08-11 03:02:23)
-> > Hi Mike,
-> > 
-> > On 08/11/2015 10:43 AM, Lee Jones wrote:
-> > > On Mon, 10 Aug 2015, Michael Turquette wrote:
-> > >
-> > >>
-> > >>
-> > >> ST's driver is an unfortunate case. All of the clock data was shoved
-> > >> into DT before we had a clue that doing so is a terrible idea.
-> > 
-> > I tend to agree, and wouldn't do it this way if we could rewrite the 
-> > history.
-> > But now, we have to support it.
-> > 
-> > How can we pass CLK_ENABLE_HAND_OFF flag to a specific clock on STi 
-> > platform?
-> > 
-> > Could we imagine having a kind of "clocks-enable-hand-off" property we 
-> > could use in our clock controller DT node?
-> 
-> Maxime,
-> 
-> Yes. I'm sure that the ST binding isn't the only one that needs
-> something like this. Furthermore I am sure that there are interesting
-> users like the FPGA people that would love to dynamically set this flag
-> from DT based on their hardware description.
-> 
-> So the question is, what does it look like? We've already discussed
-> doing a clk-conf.c approach, but that is really meant for consumers of a
-> clock to set their default parameters. I don't think that is the right
-> way here.
-> 
-> Probably we should list the hand-off clocks directly in the
-> clock-provider node itself. We can design it as a list (for
-> clock-controller nodes that expose multiple clocks). In practice for the
-> st,flexgen binding it will always be a list with one element in it.
-> 
-> In my email to Lee a few minutes ago I asked if ST actually needs to
-> turn on gated clocks, or if the goal is to prevent already-on clocks
-> (enabled by default out of reset, or bootloader) from being gated? I
-> guess that the goal is the latter since we've been discussing "critical"
-> clocks that will crash the system if disabled.
+The first two patches introduce run-time checks to ensure that clock
+consumer drivers are respecting the clk.h api. The former patch checks
+for prepare and enable imbalances. The latter checks for calls to
+clk_put without first disabling and unpreparing the clk.
 
-The latter is correct.  Clocks are on at boot-up.
+The third patch introduces a new flag, CLK_ENABLE_HAND_OFF, which
+prepares and enables a clk at registration-time. The reference counts
+(prepare & enable) are transferred to the first clock consumer driver
+that clk_get's the clk with this flag set AND calls clk_prepare or
+clk_enable.
+
+The net result is that a clock with this flag set will be enabled at
+boot and neither the clk_disable_unused garbage collector or the
+"sibling clock disables a shared parent" scenario will cause the flagged
+clock to be disabled. The first driver to come along and explicitly
+claim, prepare and enable this clock will inherit those reference
+counts. No change to clock consumer drivers is required for this to
+work. Please continue to use the clk.h api properly.
+
+In time this approach can probably replace the CLK_IGNORE_UNUSED flag
+and hopefully reduce the number of users of the clk_ignore_unused boot
+parameter.
+
+Finally, a quick note on comparing this series to Lee's. I went with the
+simplest approach to solve a real problem: preventing critical clocks
+from being spuriously disabled at boot, or before a their parent clock
+becomes accidentally disabled by a sibling.
+
+All of the other kitchen sink stuff (DT binding, passing the flag back
+to the framework when the clock consumer driver calls clk_put) was left
+out because I do not see a real use case for it. If one can demonstrate
+a real use case (and not a hypothetical one) then this patch series can
+be expanded further.
+
+[0] http://lkml.kernel.org/r/<1437570255-21049-1-git-send-email-lee.jones@linaro.org>
+
+Michael Turquette (3):
+  clk: per-user clk prepare & enable ref counts
+  clk: clk_put WARNs if user has not disabled clk
+  clk: introduce CLK_ENABLE_HAND_OFF flag
+
+ drivers/clk/clk.c            | 79 +++++++++++++++++++++++++++++++++++++++++---
+ include/linux/clk-provider.h |  3 ++
+ 2 files changed, 78 insertions(+), 4 deletions(-)
 
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+1.9.1
+
