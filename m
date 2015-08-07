@@ -1,46 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Guenter Roeck <linux@roeck-us.net>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	uclinux-h8-devel@lists.sourceforge.jp, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH] clk: h8s2678: Fix compile error
-Date: Mon, 31 Aug 2015 20:27:32 -0700
-Message-Id: <1441078052-14790-1-git-send-email-linux@roeck-us.net>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: hl <hl@rock-chips.com>
+Cc: dianders@chromium.org, linux-rockchip@lists.infradead.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] clk: rockchip: add pclk_pd_pmu to the list of rk3288 critical clocks
+Date: Fri, 07 Aug 2015 13:36:38 +0200
+Message-ID: <2226681.uyCeUEdNHm@diego>
+In-Reply-To: <55C47D59.8080403@rock-chips.com>
+References: <1438939872-2116-1-git-send-email-hl@rock-chips.com> <55C47D59.8080403@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Recent cleanup removed some include files without checking if the cleaned
-up code still compiles. This results in the following compile error.
+Am Freitag, 7. August 2015, 17:41:45 schrieb hl:
+> Hi Heiko,
+> 
+> > pclk_pd_pmu needs to keep running and with the upcoming gpio clock
+> > handling this is not always the case anymore. So add it to the list
+> > of critical clocks for now.
+> > 
+> > From: Heiko Stuebner <heiko@sntech.de>
+> > Signed-off-by: Lin Huang <hl@rock-chips.com>
+> 
+>      is it the right way?  if it still can not meet the requirement,
+> please let me know.
 
-drivers/clk/h8300/clk-h8s2678.c: In function ‘h8s2678_pll_clk_setup’:
-drivers/clk/h8300/clk-h8s2678.c:99:14: error:
-	implicit declaration of function ‘kzalloc’
-drivers/clk/h8300/clk-h8s2678.c:138:2: error:
-      implicit declaration of function ‘kfree’
+nearly, but not quite ;-)
 
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- drivers/clk/h8300/clk-h8s2678.c | 1 +
- 1 file changed, 1 insertion(+)
+You can take a look at my minnie patch [0] for inspiration.
 
-diff --git a/drivers/clk/h8300/clk-h8s2678.c b/drivers/clk/h8300/clk-h8s2678.c
-index 2a38eb4a2552..6cf38dc1c929 100644
---- a/drivers/clk/h8300/clk-h8s2678.c
-+++ b/drivers/clk/h8300/clk-h8s2678.c
-@@ -8,6 +8,7 @@
- #include <linux/err.h>
- #include <linux/device.h>
- #include <linux/of_address.h>
-+#include <linux/slab.h>
- 
- static DEFINE_SPINLOCK(clklock);
- 
--- 
-2.1.4
+
+Also please make sure to include linus.walleij@linaro.org also in this
+first mail. This clock patch is a prequisite for the pinctrl change so
+we would like Linus Walleij to merge both into his pinctrl tree.
+
+Ideally both times in the "To" and not the "Cc" recipients, as To vs. Cc
+is often used to distinguish whom you want to apply the patch.
+
+
+Heiko
+
+
+[0] http://lists.infradead.org/pipermail/linux-rockchip/2015-August/003608.html
+
+
+
+
+> 
+> > ---
+> > Changes in v4:
+> > - Add From: Heiko Stuebner <heiko@sntech.de>
+> > 
+> >   drivers/clk/rockchip/clk-rk3288.c | 1 +
+> >   1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/clk/rockchip/clk-rk3288.c
+> > b/drivers/clk/rockchip/clk-rk3288.c index 0df5bae..9040878 100644
+> > --- a/drivers/clk/rockchip/clk-rk3288.c
+> > +++ b/drivers/clk/rockchip/clk-rk3288.c
+> > @@ -780,6 +780,7 @@ static const char *const rk3288_critical_clocks[]
+> > __initconst = {> 
+> >   	"aclk_cpu",
+> >   	"aclk_peri",
+> >   	"hclk_peri",
+> > 
+> > +	"pclk_pd_pmu",
+> > 
+> >   };
+> >   
+> >   #ifdef CONFIG_PM_SLEEP
 
