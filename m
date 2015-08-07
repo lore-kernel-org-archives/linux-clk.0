@@ -1,32 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 7 Aug 2015 15:17:06 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 10/31] clk/mmp: use kmemdup rather than duplicating its
- implementation
-Message-ID: <20150807221706.GA16477@codeaurora.org>
-References: <1438934377-4922-1-git-send-email-a.hajda@samsung.com>
- <1438934377-4922-11-git-send-email-a.hajda@samsung.com>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Fri, 7 Aug 2015 09:20:18 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Kukjin Kim <kgene@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Olof Johansson <olof@lixom.ne>,
+	Arnd Bergmann <arnd.bergmann@linaro.org>
+Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>,
+	'Thomas Abraham' <thomas.ab@samsung.com>,
+	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+	'Michael Turquette' <mturquette@baylibre.com>,
+	'Krzysztof Kozlowski' <k.kozlowski@samsung.com>,
+	'Tomasz Figa' <tomasz.figa@gmail.com>,
+	'Lukasz Majewski' <l.majewski@samsung.com>,
+	'Heiko Stuebner' <heiko@sntech.de>,
+	'Chanwoo Choi' <cw00.choi@samsung.com>,
+	'Kevin Hilman' <khilman@linaro.org>,
+	'Javier Martinez Canillas' <javier@dowhile0.org>,
+	'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
+	'Anand Moon' <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for
+ Exynos4x12 platform
+Message-ID: <20150807035018.GF6325@linux>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+ <015301d0d0a3$1396c900$3ac45b00$@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1438934377-4922-11-git-send-email-a.hajda@samsung.com>
+In-Reply-To: <015301d0d0a3$1396c900$3ac45b00$@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/07, Andrzej Hajda wrote:
-> The patch was generated using fixed coccinelle semantic patch
-> scripts/coccinelle/api/memdup.cocci [1].
-> 
-> [1]: http://permalink.gmane.org/gmane.linux.kernel/2014320
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
+Cc'ing Rafael again. Guys please don't miss him for any PM related
+stuff or use get_maintainers ..
 
-Applied to clk-next
+Cc'ing Arnd/Olof as well to discuss the merge stuff..
+
+On 07-08-15, 08:53, Kukjin Kim wrote:
+> > Depends on:
+> > - next-20150806 branch of linux-next kernel tree
+> > - "[PATCH V3 00/16] OPP: Add code to support operating-points-v2 bindings"
+> >   (http://www.spinics.net/lists/arm-kernel/msg435408.html)
+> > 
+> BTW, hmm...how can we see this series in v4.3?...to be honest, I don't think it
+> can be done in v4.3 because of dependencies with PM / OPP series
+
+That is merged by Rafael Yesterday. That is manageable 
+
+> and previous
+> exynos CPU OPP series in each cross trees...maybe that's why you created based
+> on linux-next...any idea?
+
+So there is no build dependency with OPP patches I hope, as its all
+about using the bindings defined by them. And so you don't need to
+depend on that.
+
+You might have to rebase on the ARM tree to manage your conflicts. In
+this case you can rebase directly on ARM SoC branch which has your
+patches (rebase directly over the last patch instead of the whole
+branch) and make sure Olof knows about this and he doesn't update
+(i.e. rebase) his branch, which he might not anyway.
+
+The whole idea is to keep a single sha-id for a commit. So you can
+rebase over the published material present in ARM-SoC ..
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+viresh
