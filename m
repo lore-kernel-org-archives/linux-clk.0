@@ -1,100 +1,57 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v3] cpufreq-dt: make scaling_boost_freqs sysfs attr available
- when boost is enabled
-Date: Fri, 07 Aug 2015 13:59:16 +0200
-Message-id: <2130756.euuUs9t9I5@amdc1976>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Michael Turquette <mturquette@baylibre.com>
+To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: sboyd@codeaurora.org, lee.jones@linaro.org,
+	maxime.ripard@free-electrons.com, s.hauer@pengutronix.de,
+	geert@linux-m68k.org, Michael Turquette <mturquette@baylibre.com>
+Subject: [PATCH RFC RFT 2/3] clk: clk_put WARNs if user has not disabled clk
+Date: Fri,  7 Aug 2015 12:09:29 -0700
+Message-Id: <1438974570-20812-3-git-send-email-mturquette@baylibre.com>
+In-Reply-To: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Make scaling_boost_freqs sysfs attribute is available when
-cpufreq-dt driver is used and boost support is enabled.
+>From the clk_put kerneldoc in include/linux/clk.h:
 
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+"""
+Note: drivers must ensure that all clk_enable calls made on this clock
+source are balanced by clk_disable calls prior to calling this function.
+"""
+
+The common clock framework implementation of the clk.h api has per-user
+reference counts for calls to clk_prepare and clk_disable. As such it
+can enforce the requirement to properly call clk_disable and
+clk_unprepare before calling clk_put.
+
+Because this requirement is probably violated in many places, this patch
+starts with a simple warning. Once offending code has been fixed this
+check could additionally release the reference counts automatically.
+
+Signed-off-by: Michael Turquette <mturquette@baylibre.com>
 ---
-v2: Removed leftover prototype.
-v3: added missing Acked-by
-Sorry for two resends, this is not my day..
-Rafael, please apply for v4.3.
+ drivers/clk/clk.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- drivers/cpufreq/cpufreq-dt.c | 9 ++++++++-
- include/linux/cpufreq.h      | 1 +
- 2 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index b9259ab..c3583cd 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -36,6 +36,12 @@ struct private_data {
- 	unsigned int voltage_tolerance; /* in percentage */
- };
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 72feee9..6ec0f77 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2764,6 +2764,14 @@ void __clk_put(struct clk *clk)
+ 	    clk->max_rate < clk->core->req_rate)
+ 		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
  
-+static struct freq_attr *cpufreq_dt_attr[] = {
-+	&cpufreq_freq_attr_scaling_available_freqs,
-+	NULL,   /* Extra space for boost-attr if required */
-+	NULL,
-+};
++	/*
++	 * before calling clk_put, all calls to clk_prepare and clk_enable from
++	 * a given user must be balanced with calls to clk_disable and
++	 * clk_unprepare by that same user
++	 */
++	WARN_ON(clk->prepare_count);
++	WARN_ON(clk->enable_count);
 +
- static int set_target(struct cpufreq_policy *policy, unsigned int index)
- {
- 	struct dev_pm_opp *opp;
-@@ -336,6 +342,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 		ret = cpufreq_enable_boost_support();
- 		if (ret)
- 			goto out_free_cpufreq_table;
-+		cpufreq_dt_attr[1] = &cpufreq_freq_attr_scaling_boost_freqs;
- 	}
+ 	owner = clk->core->owner;
+ 	kref_put(&clk->core->ref, __clk_release);
  
- 	policy->cpuinfo.transition_latency = transition_latency;
-@@ -411,7 +418,7 @@ static struct cpufreq_driver dt_cpufreq_driver = {
- 	.exit = cpufreq_exit,
- 	.ready = cpufreq_ready,
- 	.name = "cpufreq-dt",
--	.attr = cpufreq_generic_attr,
-+	.attr = cpufreq_dt_attr,
- };
- 
- static int dt_cpufreq_probe(struct platform_device *pdev)
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 95f0186..657542d 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -609,6 +609,7 @@ struct cpufreq_frequency_table *cpufreq_frequency_get_table(unsigned int cpu);
- 
- /* the following are really really optional */
- extern struct freq_attr cpufreq_freq_attr_scaling_available_freqs;
-+extern struct freq_attr cpufreq_freq_attr_scaling_boost_freqs;
- extern struct freq_attr *cpufreq_generic_attr[];
- int cpufreq_table_validate_and_show(struct cpufreq_policy *policy,
- 				      struct cpufreq_frequency_table *table);
 -- 
 1.9.1
-
 
