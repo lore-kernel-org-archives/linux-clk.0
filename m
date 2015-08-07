@@ -1,57 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Michael Turquette <mturquette@baylibre.com>
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: sboyd@codeaurora.org, lee.jones@linaro.org,
-	maxime.ripard@free-electrons.com, s.hauer@pengutronix.de,
-	geert@linux-m68k.org, Michael Turquette <mturquette@baylibre.com>
-Subject: [PATCH RFC RFT 2/3] clk: clk_put WARNs if user has not disabled clk
-Date: Fri,  7 Aug 2015 12:09:29 -0700
-Message-Id: <1438974570-20812-3-git-send-email-mturquette@baylibre.com>
-In-Reply-To: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+From: Lin Huang <hl@rock-chips.com>
+To: heiko@sntech.de, dianders@chromium.org
+Cc: linux-rockchip@lists.infradead.org, Lin Huang <hl@rock-chips.com>,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/2] clk: rockchip: add pclk_pd_pmu to the list of rk3288 critical clocks
+Date: Fri,  7 Aug 2015 17:31:11 +0800
+Message-Id: <1438939872-2116-1-git-send-email-hl@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
->From the clk_put kerneldoc in include/linux/clk.h:
+pclk_pd_pmu needs to keep running and with the upcoming gpio clock
+handling this is not always the case anymore. So add it to the list
+of critical clocks for now.
 
-"""
-Note: drivers must ensure that all clk_enable calls made on this clock
-source are balanced by clk_disable calls prior to calling this function.
-"""
-
-The common clock framework implementation of the clk.h api has per-user
-reference counts for calls to clk_prepare and clk_disable. As such it
-can enforce the requirement to properly call clk_disable and
-clk_unprepare before calling clk_put.
-
-Because this requirement is probably violated in many places, this patch
-starts with a simple warning. Once offending code has been fixed this
-check could additionally release the reference counts automatically.
-
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
 ---
- drivers/clk/clk.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Changes in v4:
+- Add From: Heiko Stuebner <heiko@sntech.de>
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 72feee9..6ec0f77 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2764,6 +2764,14 @@ void __clk_put(struct clk *clk)
- 	    clk->max_rate < clk->core->req_rate)
- 		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
+ drivers/clk/rockchip/clk-rk3288.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 0df5bae..9040878 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -780,6 +780,7 @@ static const char *const rk3288_critical_clocks[] __initconst = {
+ 	"aclk_cpu",
+ 	"aclk_peri",
+ 	"hclk_peri",
++	"pclk_pd_pmu",
+ };
  
-+	/*
-+	 * before calling clk_put, all calls to clk_prepare and clk_enable from
-+	 * a given user must be balanced with calls to clk_disable and
-+	 * clk_unprepare by that same user
-+	 */
-+	WARN_ON(clk->prepare_count);
-+	WARN_ON(clk->enable_count);
-+
- 	owner = clk->core->owner;
- 	kref_put(&clk->core->ref, __clk_release);
- 
+ #ifdef CONFIG_PM_SLEEP
 -- 
 1.9.1
 
