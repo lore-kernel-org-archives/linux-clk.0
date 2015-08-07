@@ -1,100 +1,137 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <govindraj.raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Ezequiel Garcia
-	<ezequiel.garcia@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>
-Subject: [PATCH v3 4/4] clk: pistachio: correct critical clock list
-Date: Mon, 10 Aug 2015 11:10:08 +0100
-Message-ID: <1439201408-9009-1-git-send-email-govindraj.raja@imgtec.com>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Date: Fri, 7 Aug 2015 09:11:28 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v4 1/6] cpufreq: make scaling_boost_freqs sysfs attr
+ available when boost is enabled
+Message-ID: <20150807034128.GE6325@linux>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+ <1438868514-8814-2-git-send-email-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1438868514-8814-2-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: "Damien.Horsley" <Damien.Horsley@imgtec.com>
+Hi,
 
-Current critical clock list for pistachio enables
-only mips and sys clocks by default but there are
-also other clocks that are not claimed by anyone and
-needs to be enabled by default.
+I would suggest you sending such patches as reply to the earlier
+threads only, instead of a new chain. This will save your time.
 
-This patch updates the critical clocks that needs
-to be enabled by default.
+For example, you will need to resend other patches unnecessarily if I
+NAK this patch :)
 
-Add a separate struct to distinguish the critical clocks
-as listed below which needs to enabled by default:
-1.) core clocks:
-	a.) mips clock
-2.) peripheral system clocks:
-	a.) sys clock
-	b.) sys_bus clock
-	c.) DDR clock
-	d.) ROM clock
+On 06-08-15, 15:41, Bartlomiej Zolnierkiewicz wrote:
+> Add cpufreq_boost_enabled_generic_attr table and use it in
+> cpufreq-dt driver instead of cpufreq_generic_attr one when
+> boost support is enabled.  As a result scaling_boost_freqs
+> sysfs attribute is available when cpufreq-dt driver is
+> used and boost support is enabled.
+> 
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/cpufreq/cpufreq-dt.c | 3 +++
+>  drivers/cpufreq/freq_table.c | 7 +++++++
+>  include/linux/cpufreq.h      | 1 +
+>  3 files changed, 11 insertions(+)
+> 
+> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+> index b9259ab..7b091c0 100644
+> --- a/drivers/cpufreq/cpufreq-dt.c
+> +++ b/drivers/cpufreq/cpufreq-dt.c
+> @@ -182,6 +182,8 @@ try_again:
+>  	return ret;
+>  }
+>  
+> +static struct cpufreq_driver dt_cpufreq_driver;
+> +
+>  static int cpufreq_init(struct cpufreq_policy *policy)
+>  {
+>  	struct cpufreq_frequency_table *freq_table;
+> @@ -336,6 +338,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+>  		ret = cpufreq_enable_boost_support();
+>  		if (ret)
+>  			goto out_free_cpufreq_table;
+> +		dt_cpufreq_driver.attr = cpufreq_boost_enabled_generic_attr;
+>  	}
+>  
+>  	policy->cpuinfo.transition_latency = transition_latency;
+> diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
+> index a8f1daf..5a00a09 100644
+> --- a/drivers/cpufreq/freq_table.c
+> +++ b/drivers/cpufreq/freq_table.c
+> @@ -300,6 +300,13 @@ struct freq_attr *cpufreq_generic_attr[] = {
+>  };
+>  EXPORT_SYMBOL_GPL(cpufreq_generic_attr);
+>  
+> +struct freq_attr *cpufreq_boost_enabled_generic_attr[] = {
+> +	&cpufreq_freq_attr_scaling_available_freqs,
+> +	&cpufreq_freq_attr_scaling_boost_freqs,
+> +	NULL,
+> +};
+> +EXPORT_SYMBOL_GPL(cpufreq_boost_enabled_generic_attr);
 
-Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
-Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-Signed-off-by: Damien.Horsley <Damien.Horsley@imgtec.com>
-Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
----
+This isn't scalable. We can't create a new generic structure every time
+a entry comes in. Rather we should leave the generic attr for
+cpufreq-dt and do something like this in the cpufreq-dt driver (And
+that patch should rather go via cpufreq tree and not ARM SoC)..
 
-Changes from v2:
-----------------
-Fixes comments from Sergei as dicussed in below thread:
-http://patchwork.linux-mips.org/patch/10903/
-
-
- drivers/clk/pistachio/clk-pistachio.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
-index 8c0fe88..c4ceb5e 100644
---- a/drivers/clk/pistachio/clk-pistachio.c
-+++ b/drivers/clk/pistachio/clk-pistachio.c
-@@ -159,9 +159,15 @@ PNAME(mux_debug) = { "mips_pll_mux", "rpu_v_pll_mux",
- 		     "wifi_pll_mux", "bt_pll_mux" };
- static u32 mux_debug_idx[] = { 0x0, 0x1, 0x2, 0x4, 0x8, 0x10 };
- 
--static unsigned int pistachio_critical_clks[] __initdata = {
--	CLK_MIPS,
--	CLK_PERIPH_SYS,
-+static unsigned int pistachio_critical_clks_core[] __initdata = {
-+	CLK_MIPS
-+};
-+
-+static unsigned int pistachio_critical_clks_sys[] __initdata = {
-+	PERIPH_CLK_SYS,
-+	PERIPH_CLK_SYS_BUS,
-+	PERIPH_CLK_DDR,
-+	PERIPH_CLK_ROM,
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index a5b6a854661f..e229258ad791 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -36,6 +36,12 @@ struct private_data {
+ 	unsigned int voltage_tolerance; /* in percentage */
  };
  
- static void __init pistachio_clk_init(struct device_node *np)
-@@ -193,8 +199,8 @@ static void __init pistachio_clk_init(struct device_node *np)
- 
- 	pistachio_clk_register_provider(p);
- 
--	pistachio_clk_force_enable(p, pistachio_critical_clks,
--				   ARRAY_SIZE(pistachio_critical_clks));
-+	pistachio_clk_force_enable(p, pistachio_critical_clks_core,
-+				   ARRAY_SIZE(pistachio_critical_clks_core));
- }
- CLK_OF_DECLARE(pistachio_clk, "img,pistachio-clk", pistachio_clk_init);
- 
-@@ -261,6 +267,9 @@ static void __init pistachio_clk_periph_init(struct device_node *np)
- 				    ARRAY_SIZE(pistachio_periph_gates));
- 
- 	pistachio_clk_register_provider(p);
++static struct freq_attr *cpufreq_dt_attr[] = {
++	&cpufreq_freq_attr_scaling_available_freqs,
++	NULL,	/* Extra space for boost-attr if required */
++	NULL,
++};
 +
-+	pistachio_clk_force_enable(p, pistachio_critical_clks_sys,
-+				   ARRAY_SIZE(pistachio_critical_clks_sys));
- }
- CLK_OF_DECLARE(pistachio_clk_periph, "img,pistachio-clk-periph",
- 	       pistachio_clk_periph_init);
+ static int set_target(struct cpufreq_policy *policy, unsigned int index)
+ {
+ 	struct dev_pm_opp *opp;
+@@ -337,6 +343,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 		ret = cpufreq_enable_boost_support();
+ 		if (ret)
+ 			goto out_free_cpufreq_table;
++		cpufreq_dt_attr[1] = &cpufreq_freq_attr_scaling_boost_freqs;
+ 	}
+ 
+ 	policy->cpuinfo.transition_latency = transition_latency;
+@@ -412,7 +419,7 @@ static struct cpufreq_driver dt_cpufreq_driver = {
+ 	.exit = cpufreq_exit,
+ 	.ready = cpufreq_ready,
+ 	.name = "cpufreq-dt",
+-	.attr = cpufreq_generic_attr,
++	.attr = cpufreq_dt_attr,
+ };
+ 
+ static int dt_cpufreq_probe(struct platform_device *pdev)
+
 -- 
-1.9.1
+viresh
