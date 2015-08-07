@@ -1,78 +1,166 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Wed, 26 Aug 2015 10:09:56 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Maxime Coquelin <maxime.coquelin@st.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, s.hauer@pengutronix.de, geert@linux-m68k.org
-Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and
- implement hand-off
-Message-ID: <20150826090956.GW19409@x1>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Michael Turquette <mturquette@baylibre.com>
+To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: sboyd@codeaurora.org, lee.jones@linaro.org,
+	maxime.ripard@free-electrons.com, s.hauer@pengutronix.de,
+	geert@linux-m68k.org, Michael Turquette <mturquette@baylibre.com>
+Subject: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+Date: Fri,  7 Aug 2015 12:09:30 -0700
+Message-Id: <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+In-Reply-To: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
 References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
- <20150818154552.GI2547@lukather>
- <20150818164356.31346.80341@quantum>
- <20150820151510.GD30520@lukather>
- <20150825215051.31346.56261@quantum>
- <20150826065423.GR19409@x1>
- <55DD7C05.6030207@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <55DD7C05.6030207@st.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 26 Aug 2015, Maxime Coquelin wrote:
+Some clocks are critical to system operation (e.g. cpu, memory, etc) and
+should not be gated until a driver that knows best claims such a clock
+and expressly gates that clock through the normal clk.h api.
 
-> Hi Lee,
-> 
-> On 08/26/2015 08:54 AM, Lee Jones wrote:
-> >On Tue, 25 Aug 2015, Michael Turquette wrote:
-> >
-> >
-> >>Maybe I am the one missing something? My goal was to allow the consumer
-> >>driver to gate the critical clock. So we need clk_disable_unused to
-> >>actually disable the clock for that to work.
-> >>
-> >>I think you are suggesting that clk_disable_unused should *not* disable
-> >>the clock if it is critical. Can you confirm that?
-> >My take is that a critical clock should only be disabled when a
-> >knowledgeable driver wants to gate it for a specific purpose [probably
-> >using clk_disable()].  Once the aforementioned driver no longer has a
-> >use for the clock [whether that happens with clk_unprepare_disable()
-> >or clk_put() ...] the clock should be ungated and be provided with
-> >critical status once more.
-> >
-> How do you differentiate between a knowledgeable and
-> non-knowledgeable driver?
-> Let's take the example of the clock used by the i2c on STi SoCs.
-> This clock is used by i2c, and is also critical to the system, but
-> only i2c takes it.
-> 
-> At first transfer, the i2c will enable the clock and then disables it.
-> 
-> What we would expect here is that the clk_disable does not gate the
-> clock, even if only user since the hand-off flag has been set.
-> Else, system will freeze.
+The typical way to handle this is for the clk driver or some other early
+code to call clk_prepare_enable on this important clock as soon as it is
+registered and before the clk_disable_unused garbage collector kicks in.
 
-The I2C driver in this instance is not a knowledgeable driver and
-should not be taking a reference to a critical clock.
+This patch introduces a formal way to handle this scenario that is
+provided by the clk framework. Clk driver authors can set the
+CLK_ENABLE_HAND_OFF flag in their clk data, which will cause the clk to
+be enabled in clk_register(). Then when the first clk consumer driver
+comes along and calls clk_get() & clk_prepare_enable(), the reference
+counts taken during clk registration are transfered (or handed off) to
+the clk consumer.
 
-In the example you provide, the real issue is that the I2C driver uses
-one of the critical clock's siblings.  Without this framework, if it
-gives up the reference to its own clock and there are no users of any
-sibling clocks, the parent is gated.  This has the unfortunate effect
-of gating the entire family, critical clock included.
+At this point handling the clk is the same as any other clock which as
+not set the new CLK_ENABLE_HAND_OFF flag. In fact no changes to any
+clock consumer driver are needed for this to work.
 
-These sorts of issues are precisely what we're trying to fix here.
+Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+---
+ drivers/clk/clk.c            | 61 +++++++++++++++++++++++++++++++++++++++++---
+ include/linux/clk-provider.h |  3 +++
+ 2 files changed, 60 insertions(+), 4 deletions(-)
 
-For clarification, a knowledgeable driver is one that requests an
-actual (not a sibling of) critical clock.  It's knowledgeable in the
-fact that it knows what gating the clock will do to the system, but it
-"knows best" that this is actually fine.
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 6ec0f77..a3fdeab 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -59,6 +59,8 @@ struct clk_core {
+ 	unsigned long		flags;
+ 	unsigned int		enable_count;
+ 	unsigned int		prepare_count;
++	bool			need_handoff_enable;
++	bool			need_handoff_prepare;
+ 	unsigned long		min_rate;
+ 	unsigned long		max_rate;
+ 	unsigned long		accuracy;
+@@ -656,16 +658,31 @@ static int clk_core_prepare(struct clk_core *core)
+  */
+ int clk_prepare(struct clk *clk)
+ {
+-	int ret;
++	int ret = 0;
+ 
+ 	if (!clk)
+ 		return 0;
+ 
+ 	clk_prepare_lock();
+ 	clk->prepare_count++;
++
++	/*
++	 * setting CLK_ENABLE_HAND_OFF flag triggers this conditional
++	 *
++	 * need_handoff_prepare implies this clk was already prepared by
++	 * __clk_init. now we have a proper user, so unset the flag in our
++	 * internal bookkeeping. See CLK_ENABLE_HAND_OFF flag in clk-provider.h
++	 * for details.
++	 */
++	if (clk->core->need_handoff_prepare) {
++		clk->core->need_handoff_prepare = false;
++		goto out;
++	}
++
+ 	ret = clk_core_prepare(clk->core);
+-	clk_prepare_unlock();
+ 
++out:
++	clk_prepare_unlock();
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(clk_prepare);
+@@ -772,16 +789,31 @@ static int clk_core_enable(struct clk_core *core)
+ int clk_enable(struct clk *clk)
+ {
+ 	unsigned long flags;
+-	int ret;
++	int ret = 0;
+ 
+ 	if (!clk)
+ 		return 0;
+ 
+ 	flags = clk_enable_lock();
+ 	clk->enable_count++;
++
++	/*
++	 * setting CLK_ENABLE_HAND_OFF flag triggers this conditional
++	 *
++	 * need_handoff_enable implies this clk was already enabled by
++	 * __clk_init. now we have a proper user, so unset the flag in our
++	 * internal bookkeeping. See CLK_ENABLE_HAND_OFF flag in clk-provider.h
++	 * for details.
++	 */
++	if (clk->core->need_handoff_enable) {
++		clk->core->need_handoff_enable = false;
++		goto out;
++	}
++
+ 	ret = clk_core_enable(clk->core);
+-	clk_enable_unlock(flags);
+ 
++out:
++	clk_enable_unlock(flags);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(clk_enable);
+@@ -2447,6 +2479,27 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
+ 	if (core->ops->init)
+ 		core->ops->init(core->hw);
+ 
++	/*
++	 * enable clocks with the CLK_ENABLE_HAND_OFF flag set
++	 *
++	 * This flag causes the framework to enable the clock at registration
++	 * time, which is sometimes necessary for clocks that would cause a
++	 * system crash when gated (e.g. cpu, memory, etc). The prepare_count
++	 * is migrated over to the first clk consumer to call clk_prepare().
++	 * Similarly the clk's enable_count is migrated to the first consumer
++	 * to call clk_enable().
++	 */
++	if (core->flags & CLK_ENABLE_HAND_OFF) {
++		core->need_handoff_prepare = true;
++		core->need_handoff_enable = true;
++		ret = clk_core_prepare(core);
++		if (ret)
++			goto out;
++		clk_core_enable(core);
++		if (ret)
++			goto out;
++	}
++
+ 	kref_init(&core->ref);
+ out:
+ 	clk_prepare_unlock();
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 06a56e5..0230900 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -31,6 +31,9 @@
+ #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
+ #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
+ #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
++#define CLK_ENABLE_HAND_OFF	BIT(10) /* enable clock when registered.
++					   hand-off enable_count & prepare_count
++					   to first consumer that enables clk */
+ 
+ struct clk;
+ struct clk_hw;
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+1.9.1
+
