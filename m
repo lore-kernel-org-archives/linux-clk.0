@@ -1,37 +1,84 @@
-Return-Path: <abrestic@google.com>
-MIME-Version: 1.0
-Sender: abrestic@google.com
-In-Reply-To: <1438868614-7672-5-git-send-email-govindraj.raja@imgtec.com>
-References: <1438868614-7672-1-git-send-email-govindraj.raja@imgtec.com>
-	<1438868614-7672-5-git-send-email-govindraj.raja@imgtec.com>
-Date: Thu, 6 Aug 2015 09:35:30 -0700
-Message-ID: <CAL1qeaG8bP4EKEHONAEpd+8CeNBDs=NPTrPzp8nfAAiV=gGzzA@mail.gmail.com>
-Subject: Re: [PATCH 4/6] clk: pistachio: Set operating mode in .set_rate
-From: Andrew Bresticker <abrestic@chromium.org>
-To: Govindraj Raja <govindraj.raja@imgtec.com>
-Cc: Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
-	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Zdenko Pulitika <zdenko.pulitika@imgtec.com>,
-	Kevin Cernekee <cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>,
-	James Hartley <James.Hartley@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>,
-	James Hogan <James.Hogan@imgtec.com>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Olof Johansson <olof@lixom.net>,
+	Arnd Bergmann <arnd.bergmann@linaro.org>,
+	'Thomas Abraham' <thomas.ab@samsung.com>,
+	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+	'Michael Turquette' <mturquette@baylibre.com>,
+	'Tomasz Figa' <tomasz.figa@gmail.com>,
+	'Lukasz Majewski' <l.majewski@samsung.com>,
+	'Heiko Stuebner' <heiko@sntech.de>,
+	'Chanwoo Choi' <cw00.choi@samsung.com>,
+	'Kevin Hilman' <khilman@linaro.org>,
+	'Javier Martinez Canillas' <javier@dowhile0.org>,
+	'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
+	'Anand Moon' <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
+ platform
+Date: Fri, 07 Aug 2015 13:31:15 +0200
+Message-id: <2061119.GBaoSb4YSL@amdc1976>
+In-reply-to: <20150807051826.GJ6325@linux>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+ <55C43971.5010504@samsung.com> <20150807051826.GJ6325@linux>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Govindraj,
 
-On Thu, Aug 6, 2015 at 6:43 AM, Govindraj Raja
-<govindraj.raja@imgtec.com> wrote:
-> From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
->
-> This commit sets operating mode of fractional pll based on
-> the value of the fractional divider. Currently it assumes that
-> the pll will always be configured in fractional mode which may not be
-> the case. This may result in the wrong output frequency.
->
-> Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
-> Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+Hi,
 
-This seems like it should also be squashed with patch 3/6 (i.e. there
-need only be a single patch to add integer-mode support to fractional
-PLLs).
+On Friday, August 07, 2015 10:48:26 AM Viresh Kumar wrote:
+> On 07-08-15, 13:52, Krzysztof Kozlowski wrote:
+> > Thanks for explanation. As fair as I understand, Bartlomiej wanted to
+> > merge this in a way which would avoid loosing the boost mode. Kukjin
+> > prepared topic branches for previous cpu-freq/clk stuff so maybe
+> > everything could go through PM?
+> 
+> We aren't loosing anything at all. There can be two cases here:
+> 
+> 1. Patch 1/6 and 6/6 make it to 4.3 (with suggested changes) via PM tree:
+> - All will work fine in this case, no issues at all..
+> 
+> 2. They don't make it:
+> - Even in this case, nothing will break. Users can just enable a
+>   config option and that's all..
+
+Users don't need to enable the config option to get boost
+functionality working.  It is only needed to get scaling_boost_freqs
+sysfs attribute visible (which lists available boost freqs) when
+using cpufreq-dt driver.  Also the config option in question is not
+user visible.
+
+The worst thing that happens if these 2 PM patches don't make it
+in time is that there will be no scaling_boost_freqs available
+when using cpufreq-dt driver.  Which is not very important from
+Exynos4x12 POV as it only supports single boost freq currently.
+
+> So, no need to divert things into another tree this late.
+
+I agree.
+
+> Over that, Rafael will not be around for 2 weeks now (Plumbers and
+> other stuff) ..
+> 
+> So, just target the cpufreq core changes via PM tree.. rest is just
+> fine.
+> 
+> I hope that makes sense :)
+
+Yes. :)
+ 
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
