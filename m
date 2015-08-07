@@ -1,52 +1,89 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Fabian Frederick <fabf@skynet.be>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 4/4] ARM: STi: DT: Add support for stih418 A9 pll
-Date: Mon, 24 Aug 2015 11:40:51 +0200
-Message-Id: <1440409251-11166-5-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1440409251-11166-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1440409251-11166-1-git-send-email-gabriel.fernandez@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <1438364782-3968-6-git-send-email-maxime.ripard@free-electrons.com>
+References: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1438364782-3968-6-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 8 Aug 2015 00:21:17 +0800
+Message-ID: <CAGb2v64nvA1K=Ya7_99-2G1LtFjcuj+qQbO1GJaqsL+yPF+Xdw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] ARM: sun8i: Add clock indices
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for new PLL-type for stih418 A9-PLL.
+On Sat, Aug 1, 2015 at 1:46 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The A23 and A33 gates have a non continuous set of clock IDs that are
+> valid. Add the clock-indices property to the DT to express this.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+> index 7abd0ae3143d..c318c770b6c1 100644
+> --- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+> @@ -180,6 +180,15 @@
+>                         compatible = "allwinner,sun8i-a23-ahb1-gates-clk";
+>                         reg = <0x01c20060 0x8>;
+>                         clocks = <&ahb1>;
+> +                       clock-indices = <1>, <6>,
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
----
- arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Turns out the A33 (and I assume the same with the A23) has
+an ahb1 clock gate for the Security System at clock-index <5>.
 
-diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
-index 148e177..ae6d997 100644
---- a/arch/arm/boot/dts/stih418-clock.dtsi
-+++ b/arch/arm/boot/dts/stih418-clock.dtsi
-@@ -44,7 +44,7 @@
- 
- 			clockgen_a9_pll: clockgen-a9-pll {
- 				#clock-cells = <1>;
--				compatible = "st,stih407-plls-c32-a9", "st,clkgen-plls-c32";
-+				compatible = "st,stih418-plls-c28-a9", "st,clkgen-plls-c32";
- 
- 				clocks = <&clk_sysin>;
- 
--- 
-1.9.1
+This is found in the updated A33 user manual.
 
+> +                                       <8>, <9>, <10>,
+> +                                       <13>, <14>,
+> +                                       <19>, <20>,
+> +                                       <21>, <24>, <26>,
+> +                                       <29>, <32>, <36>,
+> +                                       <40>, <44>, <46>,
+> +                                       <52>, <54>,
+
+<53> is ahb1 clock gate for msgbox, again found in A33 manual.
+
+> +                                       <57>;
+
+<58> is ahb1 clock gate for SAT, which seems to be part of the
+display pipeline.
+
+>                         clock-output-names = "ahb1_mipidsi", "ahb1_dma",
+>                                         "ahb1_mmc0", "ahb1_mmc1", "ahb1_mmc2",
+>                                         "ahb1_nand", "ahb1_sdram",
+> @@ -196,6 +205,8 @@
+>                         compatible = "allwinner,sun8i-a23-apb1-gates-clk";
+>                         reg = <0x01c20068 0x4>;
+>                         clocks = <&apb1>;
+> +                       clock-indices = <0>, <5>,
+> +                                       <12>, <13>;
+>                         clock-output-names = "apb1_codec", "apb1_pio",
+>                                         "apb1_daudio0", "apb1_daudio1";
+>                 };
+> @@ -213,6 +224,10 @@
+>                         compatible = "allwinner,sun8i-a23-apb2-gates-clk";
+>                         reg = <0x01c2006c 0x4>;
+>                         clocks = <&apb2>;
+> +                       clock-indices = <0>, <1>,
+> +                                       <2>, <16>,
+> +                                       <17>, <18>,
+> +                                       <19>, <20>;
+>                         clock-output-names = "apb2_i2c0", "apb2_i2c1",
+>                                         "apb2_i2c2", "apb2_uart0",
+>                                         "apb2_uart1", "apb2_uart2",
+> --
+> 2.4.6
+>
+
+Not sure if you want to add the clocks I mentioned together
+in this patch, or do a separate patch.
+
+The rest look good.
+
+ChenYu
