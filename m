@@ -1,91 +1,58 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Fri, 7 Aug 2015 17:09:50 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Olof Johansson <olof@lixom.net>,
+	Arnd Bergmann <arnd.bergmann@linaro.org>,
+	'Thomas Abraham' <thomas.ab@samsung.com>,
+	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+	'Michael Turquette' <mturquette@baylibre.com>,
+	'Tomasz Figa' <tomasz.figa@gmail.com>,
+	'Lukasz Majewski' <l.majewski@samsung.com>,
+	'Heiko Stuebner' <heiko@sntech.de>,
+	'Chanwoo Choi' <cw00.choi@samsung.com>,
+	'Kevin Hilman' <khilman@linaro.org>,
+	'Javier Martinez Canillas' <javier@dowhile0.org>,
+	'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
+	'Anand Moon' <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for
+ Exynos4x12 platform
+Message-ID: <20150807113950.GG6939@linux>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+ <55C43971.5010504@samsung.com>
+ <20150807051826.GJ6325@linux>
+ <2061119.GBaoSb4YSL@amdc1976>
 MIME-Version: 1.0
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20150818102401.17de779b@bbrezillon>
-Cc: "Jean-Christophe Plagniol-Villard" <plagnioj@jcrosoft.com>,
- "Alexandre Belloni" <alexandre.belloni@free-electrons.com>,
- "Nicolas Ferre" <nicolas.ferre@atmel.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20150818102401.17de779b@bbrezillon>
-Message-ID: <20150825191033.31346.67237@quantum>
-Subject: Re: [PULL] clk: at91: sama5d2 materials
-Date: Tue, 25 Aug 2015 12:10:33 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2061119.GBaoSb4YSL@amdc1976>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Boris Brezillon (2015-08-18 01:24:01)
-> Stephen, Mike,
-> =
+On 07-08-15, 13:31, Bartlomiej Zolnierkiewicz wrote:
+> Users don't need to enable the config option to get boost
+> functionality working.  It is only needed to get scaling_boost_freqs
+> sysfs attribute visible (which lists available boost freqs) when
+> using cpufreq-dt driver.  Also the config option in question is not
+> user visible.
 
-> Here is a PR for the sama5d2 materials.
-> I know we're already late in the release cycle and I'm not sure you can
-> take this PR into account for 4.3, so if you can't could you please
-> queue it for 4.4?
+By users I meant the people who will prepare the build images for the
+release. They can just enable the config option :)
 
-Queued for 4.4.
+> The worst thing that happens if these 2 PM patches don't make it
+> in time is that there will be no scaling_boost_freqs available
+> when using cpufreq-dt driver.  Which is not very important from
+> Exynos4x12 POV as it only supports single boost freq currently.
 
-Thanks,
-Mike
+Right. So, now that your patch is Acked, send 1/6 and 6/6 separately
+to pm-list and Rafael can get them merged himself..
 
-> =
+I hope, your 6/6 patch will change a bit now ?
 
-> Thanks,
-> =
-
-> Boris
-> =
-
-> The following changes since commit c42743f11f58646a50bc4b96da363429dca0c5=
-e6:
-> =
-
->   clk: add bindings for the Ux500 clocks (2015-08-13 11:29:45 -0700)
-> =
-
-> are available in the git repository at:
-> =
-
->   https://github.com/bbrezillon/linux-at91.git clk/atmel-clk-next
-> =
-
-> for you to fetch changes up to 3be0527c0f8bbbb744a6a34603d6a83e511c6741:
-> =
-
->   clk: at91: add generated clock driver (2015-08-18 10:11:57 +0200)
-> =
-
-> ----------------------------------------------------------------
-> Nicolas Ferre (4):
->       clk: at91: cleanup PMC header file for PCR register fields
->       clk: at91: modify PMC peripheral clock to deal with newer register =
-layout
->       clk: at91: add PMC sama5d2 support
->       clk: at91: add generated clock driver
-> =
-
->  Documentation/devicetree/bindings/clock/at91-clock.txt |  35 +++++++++++=
-++++++++++
->  arch/arm/mach-at91/Kconfig                             |   3 ++
->  drivers/clk/at91/Makefile                              |   1 +
->  drivers/clk/at91/clk-generated.c                       | 306 +++++++++++=
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-+++++++++++++++
->  drivers/clk/at91/clk-peripheral.c                      |  24 +++++++++--=
----
->  drivers/clk/at91/pmc.c                                 |  21 +++++++++++=
-++
->  drivers/clk/at91/pmc.h                                 |   3 ++
->  include/dt-bindings/clock/at91.h                       |   1 +
->  include/linux/clk/at91_pmc.h                           |  22 ++++++++---=
---
->  9 files changed, 400 insertions(+), 16 deletions(-)
->  create mode 100644 drivers/clk/at91/clk-generated.c
-> =
-
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+viresh
