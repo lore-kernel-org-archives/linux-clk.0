@@ -1,230 +1,154 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 07/16] ARM: shmobile: r8a7778 dtsi: Add CPG/MSTP Clock Domain
-Date: Tue,  4 Aug 2015 14:28:08 +0200
-Message-Id: <1438691297-29235-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
-References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
+ Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v4 1/6] cpufreq: make scaling_boost_freqs sysfs attr
+ available when boost is enabled
+Date: Fri, 07 Aug 2015 12:34:23 +0200
+Message-id: <5184469.cOpIkgzX4h@amdc1976>
+In-reply-to: <20150807034128.GE6325@linux>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+ <1438868514-8814-2-git-send-email-b.zolnierkie@samsung.com>
+ <20150807034128.GE6325@linux>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Add an appropriate "#power-domain-cells" property to the cpg_clocks
-device node, to create the CPG/MSTP Clock Domain.
 
-Add "power-domains" properties to all device nodes for devices that are
-part of the CPG/MSTP Clock Domain and can be power-managed through an
-MSTP clock.  This applies to most on-SoC devices, which have a
-one-to-one mapping from SoC device to DT device node.  A notable
-exception is the "sound" node, which represents multiple SoC devices,
-each having their own MSTP clocks.
+Hi,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-v4:
-  - Add Reviewed-by,
+On Friday, August 07, 2015 09:11:28 AM Viresh Kumar wrote:
+> Hi,
+> 
+> I would suggest you sending such patches as reply to the earlier
+> threads only, instead of a new chain. This will save your time.
 
-v3:
-  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
+Please explain it more.  This patch needs to be first for cpufreq-dt
+switch to be complete.  scaling_boost_freqs is available currently
+for exynos-cpufreq users when boost is enabled and ideally we would
+like it to be available immediately after the switch to cpufreq-dt.
 
-v2:
-  - New.
----
- arch/arm/boot/dts/r8a7778.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+> For example, you will need to resend other patches unnecessarily if I
+> NAK this patch :)
+> 
+> On 06-08-15, 15:41, Bartlomiej Zolnierkiewicz wrote:
+> > Add cpufreq_boost_enabled_generic_attr table and use it in
+> > cpufreq-dt driver instead of cpufreq_generic_attr one when
+> > boost support is enabled.  As a result scaling_boost_freqs
+> > sysfs attribute is available when cpufreq-dt driver is
+> > used and boost support is enabled.
+> > 
+> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> > Cc: Thomas Abraham <thomas.ab@samsung.com>
+> > Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> > Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> >  drivers/cpufreq/cpufreq-dt.c | 3 +++
+> >  drivers/cpufreq/freq_table.c | 7 +++++++
+> >  include/linux/cpufreq.h      | 1 +
+> >  3 files changed, 11 insertions(+)
+> > 
+> > diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+> > index b9259ab..7b091c0 100644
+> > --- a/drivers/cpufreq/cpufreq-dt.c
+> > +++ b/drivers/cpufreq/cpufreq-dt.c
+> > @@ -182,6 +182,8 @@ try_again:
+> >  	return ret;
+> >  }
+> >  
+> > +static struct cpufreq_driver dt_cpufreq_driver;
+> > +
+> >  static int cpufreq_init(struct cpufreq_policy *policy)
+> >  {
+> >  	struct cpufreq_frequency_table *freq_table;
+> > @@ -336,6 +338,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+> >  		ret = cpufreq_enable_boost_support();
+> >  		if (ret)
+> >  			goto out_free_cpufreq_table;
+> > +		dt_cpufreq_driver.attr = cpufreq_boost_enabled_generic_attr;
+> >  	}
+> >  
+> >  	policy->cpuinfo.transition_latency = transition_latency;
+> > diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
+> > index a8f1daf..5a00a09 100644
+> > --- a/drivers/cpufreq/freq_table.c
+> > +++ b/drivers/cpufreq/freq_table.c
+> > @@ -300,6 +300,13 @@ struct freq_attr *cpufreq_generic_attr[] = {
+> >  };
+> >  EXPORT_SYMBOL_GPL(cpufreq_generic_attr);
+> >  
+> > +struct freq_attr *cpufreq_boost_enabled_generic_attr[] = {
+> > +	&cpufreq_freq_attr_scaling_available_freqs,
+> > +	&cpufreq_freq_attr_scaling_boost_freqs,
+> > +	NULL,
+> > +};
+> > +EXPORT_SYMBOL_GPL(cpufreq_boost_enabled_generic_attr);
+> 
+> This isn't scalable. We can't create a new generic structure every time
+> a entry comes in. Rather we should leave the generic attr for
 
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index 7ce9f5fd586504f2..4b1fa9f42ad5457b 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -53,6 +53,7 @@
- 		reg = <0xfde00000 0x400>;
- 		interrupts = <0 105 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7778_CLK_ETHER>;
-+		power-domains = <&cpg_clocks>;
- 		phy-mode = "rmii";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -152,6 +153,7 @@
- 		reg = <0xffc70000 0x1000>;
- 		interrupts = <0 67 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_I2C0>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -162,6 +164,7 @@
- 		reg = <0xffc71000 0x1000>;
- 		interrupts = <0 78 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_I2C1>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -172,6 +175,7 @@
- 		reg = <0xffc72000 0x1000>;
- 		interrupts = <0 76 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_I2C2>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -182,6 +186,7 @@
- 		reg = <0xffc73000 0x1000>;
- 		interrupts = <0 77 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_I2C3>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -193,6 +198,7 @@
- 			     <0 34 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_TMU0>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		#renesas,channels = <3>;
- 
-@@ -207,6 +213,7 @@
- 			     <0 38 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_TMU1>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		#renesas,channels = <3>;
- 
-@@ -221,6 +228,7 @@
- 			     <0 42 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_TMU2>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		#renesas,channels = <3>;
- 
-@@ -288,6 +296,7 @@
- 		interrupts = <0 70 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF0>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -297,6 +306,7 @@
- 		interrupts = <0 71 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF1>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -306,6 +316,7 @@
- 		interrupts = <0 72 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF2>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -315,6 +326,7 @@
- 		interrupts = <0 73 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF3>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -324,6 +336,7 @@
- 		interrupts = <0 74 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF4>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -333,6 +346,7 @@
- 		interrupts = <0 75 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF5>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -341,6 +355,7 @@
- 		reg = <0xffe4e000 0x100>;
- 		interrupts = <0 61 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_MMC>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -349,6 +364,7 @@
- 		reg = <0xffe4c000 0x100>;
- 		interrupts = <0 87 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_SDHI0>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -357,6 +373,7 @@
- 		reg = <0xffe4d000 0x100>;
- 		interrupts = <0 88 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_SDHI1>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -365,6 +382,7 @@
- 		reg = <0xffe4f000 0x100>;
- 		interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7778_CLK_SDHI2>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -373,6 +391,7 @@
- 		reg = <0xfffc7000 0x18>;
- 		interrupts = <0 63 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_HSPI>;
-+		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		status = "disabled";
-@@ -383,6 +402,7 @@
- 		reg = <0xfffc8000 0x18>;
- 		interrupts = <0 84 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_HSPI>;
-+		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		status = "disabled";
-@@ -393,6 +413,7 @@
- 		reg = <0xfffc6000 0x18>;
- 		interrupts = <0 85 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_HSPI>;
-+		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		status = "disabled";
-@@ -419,6 +440,7 @@
- 			clocks = <&extal_clk>;
- 			clock-output-names = "plla", "pllb", "b",
- 					     "out", "p", "s", "s1";
-+			#power-domain-cells = <0>;
- 		};
- 
- 		/* Audio clocks; frequencies are set by boards if applicable. */
--- 
-1.9.1
+boost entry is rather generic one so I imagine that other cpufreq
+drivers that add support for boost would also like to use it.
 
+Anyway since there are no such drivers currently I agree that
+making a new generic structure may be premature and I will re-do
+this patch according to your request.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> cpufreq-dt and do something like this in the cpufreq-dt driver (And
+> that patch should rather go via cpufreq tree and not ARM SoC)..
+> 
+> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+> index a5b6a854661f..e229258ad791 100644
+> --- a/drivers/cpufreq/cpufreq-dt.c
+> +++ b/drivers/cpufreq/cpufreq-dt.c
+> @@ -36,6 +36,12 @@ struct private_data {
+>  	unsigned int voltage_tolerance; /* in percentage */
+>  };
+>  
+> +static struct freq_attr *cpufreq_dt_attr[] = {
+> +	&cpufreq_freq_attr_scaling_available_freqs,
+> +	NULL,	/* Extra space for boost-attr if required */
+> +	NULL,
+> +};
+> +
+>  static int set_target(struct cpufreq_policy *policy, unsigned int index)
+>  {
+>  	struct dev_pm_opp *opp;
+> @@ -337,6 +343,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+>  		ret = cpufreq_enable_boost_support();
+>  		if (ret)
+>  			goto out_free_cpufreq_table;
+> +		cpufreq_dt_attr[1] = &cpufreq_freq_attr_scaling_boost_freqs;
+>  	}
+>  
+>  	policy->cpuinfo.transition_latency = transition_latency;
+> @@ -412,7 +419,7 @@ static struct cpufreq_driver dt_cpufreq_driver = {
+>  	.exit = cpufreq_exit,
+>  	.ready = cpufreq_ready,
+>  	.name = "cpufreq-dt",
+> -	.attr = cpufreq_generic_attr,
+> +	.attr = cpufreq_dt_attr,
+>  };
+>  
+>  static int dt_cpufreq_probe(struct platform_device *pdev)
