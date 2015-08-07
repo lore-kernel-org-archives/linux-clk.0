@@ -1,78 +1,76 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [RESEND PATCH] clk: rockchip: disable init state before mmc card initialization
-Date: Mon, 24 Aug 2015 16:27:43 +0800
-Message-Id: <1440404863-14350-1-git-send-email-shawn.lin@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <k.kozlowski@samsung.com>
+Message-id: <55C43085.8090506@samsung.com>
+Date: Fri, 07 Aug 2015 13:13:57 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene@kernel.org>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>, Olof Johansson <olof@lixom.net>,
+ Arnd Bergmann <arnd.bergmann@linaro.org>
+Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>,
+ 'Thomas Abraham' <thomas.ab@samsung.com>,
+ 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+ 'Michael Turquette' <mturquette@baylibre.com>,
+ 'Tomasz Figa' <tomasz.figa@gmail.com>,
+ 'Lukasz Majewski' <l.majewski@samsung.com>,
+ 'Heiko Stuebner' <heiko@sntech.de>, 'Chanwoo Choi' <cw00.choi@samsung.com>,
+ 'Kevin Hilman' <khilman@linaro.org>,
+ 'Javier Martinez Canillas' <javier@dowhile0.org>,
+ 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
+ 'Anand Moon' <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
+ platform
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+ <015301d0d0a3$1396c900$3ac45b00$@kernel.org> <20150807035018.GF6325@linux>
+ <20150807035156.GG6325@linux>
+In-reply-to: <20150807035156.GG6325@linux>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-mmc host controller's IO input/output timing is unpredictable if
-bootloader execute tuning for HS200 mode. It might make kernel failed
-to initialize mmc card in identification mode. The root cause is
-tuning phase and degree setting for HS200 mode in bootloader aren't
-applicable to that of identification mode in kernel stage. Anyway, we
-can't force all bootloaders to disable tuning phase and degree setting
-before into kernel. Simply disable it in rockchip_clk_register_mmc.
+On 07.08.2015 12:51, Viresh Kumar wrote:
+> Fixed Olof's email id..
+> 
+> On 07-08-15, 09:20, Viresh Kumar wrote:
+>> Cc'ing Rafael again. Guys please don't miss him for any PM related
+>> stuff or use get_maintainers ..
+>>
+>> Cc'ing Arnd/Olof as well to discuss the merge stuff..
+>>
+>> On 07-08-15, 08:53, Kukjin Kim wrote:
+>>>> Depends on:
+>>>> - next-20150806 branch of linux-next kernel tree
+>>>> - "[PATCH V3 00/16] OPP: Add code to support operating-points-v2 bindings"
+>>>>   (http://www.spinics.net/lists/arm-kernel/msg435408.html)
+>>>>
+>>> BTW, hmm...how can we see this series in v4.3?...to be honest, I don't think it
+>>> can be done in v4.3 because of dependencies with PM / OPP series
+>>
+>> That is merged by Rafael Yesterday. That is manageable 
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+Indeed, happy to hear it! So the patchset has no external dependencies.
 
----
+>>
+>>> and previous
+>>> exynos CPU OPP series in each cross trees...maybe that's why you created based
+>>> on linux-next...any idea?
+>>
+>> So there is no build dependency with OPP patches I hope, as its all
+>> about using the bindings defined by them. And so you don't need to
+>> depend on that.
+>>
+>> You might have to rebase on the ARM tree to manage your conflicts. In
+>> this case you can rebase directly on ARM SoC branch which has your
+>> patches (rebase directly over the last patch instead of the whole
+>> branch) and make sure Olof knows about this and he doesn't update
+>> (i.e. rebase) his branch, which he might not anyway.
+>>
+>> The whole idea is to keep a single sha-id for a commit. So you can
+>> rebase over the published material present in ARM-SoC ..
 
- drivers/clk/rockchip/clk-mmc-phase.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Still patches 1/6 and 6/6 need your acks. Is the patch 1/6 a
+prerequisite for others? It does not look like a prerequisite... but it
+was put at the beginning of the patchset.
 
-diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
-index e9f8df32..ae21592 100644
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -38,6 +38,9 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw *hw,
- #define ROCKCHIP_MMC_DEGREE_MASK 0x3
- #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
- #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
-+#define ROCKCHIP_MMC_INIT_STATE_DISABLE (0x1)
-+#define ROCKCHIP_MMC_INIT_STATE_SHIFT (1)
-+#define ROCKCHIP_MMC_INIT_STATE_MASK  (0x1)
- 
- #define PSECS_PER_SEC 1000000000000LL
- 
-@@ -119,6 +122,21 @@ static const struct clk_ops rockchip_mmc_clk_ops = {
- 	.set_phase	= rockchip_mmc_set_phase,
- };
- 
-+static void rockchip_clk_mmc_disable_init(struct rockchip_mmc_clock *mmc_clock)
-+{
-+	if (mmc_clock->shift != ROCKCHIP_MMC_INIT_STATE_SHIFT)
-+		return;
-+
-+	writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_DISABLE,
-+			     ROCKCHIP_MMC_INIT_STATE_MASK,
-+			     mmc_clock->shift),
-+	       mmc_clock->reg);
-+
-+	pr_debug("%s: clear mmc init state to %d", __func__,
-+		 (readl(mmc_clock->reg) >> (mmc_clock->shift)) &
-+		 ROCKCHIP_MMC_INIT_STATE_MASK);
-+}
-+
- struct clk *rockchip_clk_register_mmc(const char *name,
- 				const char *const *parent_names, u8 num_parents,
- 				void __iomem *reg, int shift)
-@@ -139,6 +157,8 @@ struct clk *rockchip_clk_register_mmc(const char *name,
- 	mmc_clock->reg = reg;
- 	mmc_clock->shift = shift;
- 
-+	rockchip_clk_mmc_disable_init(mmc_clock);
-+
- 	if (name)
- 		init.name = name;
- 
--- 
-2.3.7
-
-
+Best regards,
+Krzysztof
