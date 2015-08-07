@@ -1,31 +1,28 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 13 Aug 2015 11:25:10 -0700
+Date: Fri, 7 Aug 2015 15:17:06 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@freescale.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mturquette@linaro.org, shawnguo@kernel.org, b29396@freescale.com,
-	linux-arm-kernel@lists.infradead.org,
-	Ranjani.Vaidyanathan@freescale.com, b20596@freescale.com,
-	r64343@freescale.com, b20788@freescale.com
-Subject: Re: [PATCH V3 1/5] clk: remove duplicated code with
- __clk_set_parent_after
-Message-ID: <20150813182510.GQ26614@codeaurora.org>
-References: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
- <1438089585-30103-2-git-send-email-aisheng.dong@freescale.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 10/31] clk/mmp: use kmemdup rather than duplicating its
+ implementation
+Message-ID: <20150807221706.GA16477@codeaurora.org>
+References: <1438934377-4922-1-git-send-email-a.hajda@samsung.com>
+ <1438934377-4922-11-git-send-email-a.hajda@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1438089585-30103-2-git-send-email-aisheng.dong@freescale.com>
+In-Reply-To: <1438934377-4922-11-git-send-email-a.hajda@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/28, Dong Aisheng wrote:
-> __clk_set_parent_after() actually used the second argument then we
-> could put this duplicate logic in there and call it with a different
-> order of arguments in the success vs. error paths in this function.
+On 08/07, Andrzej Hajda wrote:
+> The patch was generated using fixed coccinelle semantic patch
+> scripts/coccinelle/api/memdup.cocci [1].
 > 
-> Cc: Mike Turquette <mturquette@linaro.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
-> Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
+> [1]: http://permalink.gmane.org/gmane.linux.kernel/2014320
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 > ---
 
 Applied to clk-next
