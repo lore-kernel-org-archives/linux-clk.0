@@ -1,79 +1,52 @@
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Message-ID: <55C901A4.4050605@gmail.com>
-Date: Mon, 10 Aug 2015 21:55:16 +0200
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-To: Antoine Tenart <antoine.tenart@free-electrons.com>,
- mturquette@baylibre.com, sboyd@codeaurora.org
-CC: zmxu@marvell.com, jszhang@marvell.com,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk: berlin: add cpuclk
-References: <1438259752-16320-1-git-send-email-antoine.tenart@free-electrons.com> <1438259752-16320-2-git-send-email-antoine.tenart@free-electrons.com>
-In-Reply-To: <1438259752-16320-2-git-send-email-antoine.tenart@free-electrons.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Sat, 8 Aug 2015 07:39:00 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v3] cpufreq-dt: make scaling_boost_freqs sysfs attr
+ available when boost is enabled
+Message-ID: <20150808020900.GN6939@linux>
+References: <2130756.euuUs9t9I5@amdc1976>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2130756.euuUs9t9I5@amdc1976>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30.07.2015 14:35, Antoine Tenart wrote:
-> Add cpuclk in the Berlin BG2Q clock driver. This clk has a divider
-> fixed to 1.
->
-> Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+On 07-08-15, 13:59, Bartlomiej Zolnierkiewicz wrote:
+> Make scaling_boost_freqs sysfs attribute is available when
+> cpufreq-dt driver is used and boost support is enabled.
+> 
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > ---
->   drivers/clk/berlin/bg2q.c            | 14 +++++++-------
->   include/dt-bindings/clock/berlin2q.h |  3 ++-
->   2 files changed, 9 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
-> index 221f40c2b850..72d2f3500db8 100644
-> --- a/drivers/clk/berlin/bg2q.c
-> +++ b/drivers/clk/berlin/bg2q.c
-> @@ -45,7 +45,7 @@
->   #define REG_SDIO0XIN_CLKCTL	0x0158
->   #define REG_SDIO1XIN_CLKCTL	0x015c
->
-> -#define	MAX_CLKS 27
-> +#define	MAX_CLKS 28
+> v2: Removed leftover prototype.
+> v3: added missing Acked-by
+> Sorry for two resends, this is not my day..
+> Rafael, please apply for v4.3.
 
-Following Stephen's suggesting, how about moving this to the
-dt-bindings include?
+Yeah, please apply only this patch from the series.
 
->   static struct clk *clks[MAX_CLKS];
->   static struct clk_onecell_data clk_data;
->   static DEFINE_SPINLOCK(lock);
-> @@ -356,13 +356,13 @@ static void __init berlin2q_clock_setup(struct device_node *np)
->   			    gd->bit_idx, 0, &lock);
->   	}
->
-> -	/*
-> -	 * twdclk is derived from cpu/3
-> -	 * TODO: use cpupll until cpuclk is not available
-> -	 */
-> +	/* cpuclk divider is fixed to 1 */
-> +	clks[CLKID_CPU] =
-> +		clk_register_fixed_factor(NULL, "cpu", clk_names[CPUPLL],
-> +					  0, 1, 1);
-> +	/* twdclk is derived from cpu/3 */
->   	clks[CLKID_TWD] =
-> -		clk_register_fixed_factor(NULL, "twd", clk_names[CPUPLL],
-> -					  0, 1, 3);
-> +		clk_register_fixed_factor(NULL, "twd", "cpu", 0, 1, 3);
->
->   	/* check for errors on leaf clocks */
->   	for (n = 0; n < MAX_CLKS; n++) {
-> diff --git a/include/dt-bindings/clock/berlin2q.h b/include/dt-bindings/clock/berlin2q.h
-> index 287fc3b4afb2..a80c3272794d 100644
-> --- a/include/dt-bindings/clock/berlin2q.h
-> +++ b/include/dt-bindings/clock/berlin2q.h
-> @@ -28,4 +28,5 @@
->   #define CLKID_NFC		23
->   #define CLKID_SMEMC		24
->   #define CLKID_PCIE		25
-> -#define CLKID_TWD		26
-> +#define CLKID_CPU		26
-> +#define CLKID_TWD		27
-
-Is there any good reason to brake existing dts[i] by moving TWD to 27
-instead of adding CPU as 27?
-
-Sebastian
+-- 
+viresh
