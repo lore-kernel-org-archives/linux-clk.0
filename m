@@ -1,43 +1,46 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Michael Niewoehner <linux@mniewoehner.de>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org
-Subject: Re: [PATCH v2] clk: rockchip: add pclk_cpu to the list of rk3188 critical clocks
-Date: Mon, 17 Aug 2015 21:55:11 +0200
-Message-ID: <14545587.HIDVkPerl6@phil>
-In-Reply-To: <F5234F5E-2A91-4B63-B260-3F20A4D16A9D@mniewoehner.de>
-References: <5400BEF8-5245-4F7B-845B-D326A7BC56B5@mniewoehner.de> <10213368.VjAQGt7Kjq@phil> <F5234F5E-2A91-4B63-B260-3F20A4D16A9D@mniewoehner.de>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Sat, 8 Aug 2015 07:37:40 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
+	Arnd Bergmann <arnd.bergmann@linaro.org>,
+	'Thomas Abraham' <thomas.ab@samsung.com>,
+	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+	'Michael Turquette' <mturquette@baylibre.com>,
+	'Tomasz Figa' <tomasz.figa@gmail.com>,
+	'Lukasz Majewski' <l.majewski@samsung.com>,
+	'Heiko Stuebner' <heiko@sntech.de>,
+	'Chanwoo Choi' <cw00.choi@samsung.com>,
+	'Kevin Hilman' <khilman@linaro.org>,
+	'Javier Martinez Canillas' <javier@dowhile0.org>,
+	'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
+	'Anand Moon' <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for
+ Exynos4x12 platform
+Message-ID: <20150808020740.GM6939@linux>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+ <2359635.Hxe4cb8zKm@amdc1976>
+ <20150807115627.GH6939@linux>
+ <1525406.7aXvVQzEDd@vostro.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1525406.7aXvVQzEDd@vostro.rjw.lan>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, 17. August 2015, 21:50:53 schrieb Michael Niewoehner:
-> pclk_cpu needs to keep running because it is needed for devices like
-> the act8865 regulator but with the recent gpio clock handling this is
-> not always the case anymore. So add it to the list of critical clocks.
+On 08-08-15, 00:24, Rafael J. Wysocki wrote:
+> OK, so please let me know which patches you want me to pick up.
 > 
-> Signed-off-by: Michael Niewoehner <linux@mniewoehner.de>
+> Ideally, I'd prefer them to be resent in a separate series with ACKs and all
+> with a cover letter clearly stating whose tree they are being targeted at.
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+He already sent it separately, let me send a confirmatory mail in
+reply to that.
 
-> ---
-> Changes in v2:
-> - adapt commit message
-> - add Linus Walleij to recipients, as the patch is related to the gpio clock
-> change in the rockchip pinctrl driver it should go through his tree as well
-> 
-> drivers/clk/rockchip/clk-rk3188.c | 1 +
-> 1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3188.c
-> b/drivers/clk/rockchip/clk-rk3188.c index e4f9d47..1c93229 100644
-> --- a/drivers/clk/rockchip/clk-rk3188.c
-> +++ b/drivers/clk/rockchip/clk-rk3188.c
-> @@ -708,6 +708,7 @@ static const char *const rk3188_critical_clocks[]
-> __initconst = { "aclk_cpu",
-> 	"aclk_peri",
-> 	"hclk_peri",
-> +	"pclk_cpu",
-> };
-> 
-> static void __init rk3188_common_clk_init(struct device_node *np)
+-- 
+viresh
