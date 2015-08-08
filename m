@@ -1,65 +1,76 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55DC49D0.1030608@linaro.org>
-Date: Tue, 25 Aug 2015 16:26:16 +0530
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Lee Jones <lee.jones@linaro.org>
-CC: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
-	mturquette@baylibre.com, k.kozlowski@samsung.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH-v2 1/5] mfd: 88pm800: Fix tabbing issue
-References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org> <1440442594-3102-3-git-send-email-vaibhav.hiremath@linaro.org> <20150825075246.GF19409@x1> <55DC2C4D.1040304@linaro.org> <20150825103546.GQ19409@x1>
-In-Reply-To: <20150825103546.GQ19409@x1>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+To: Yoshinori Sato <ysato@users.sourceforge.jp>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <878ub2h8tg.wl-ysato@users.sourceforge.jp>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>, uclinux-h8-devel@lists.sourceforge.jp,
+ linux-clk@vger.kernel.org
+References: <1435570978-1734-1-git-send-email-geert+renesas@glider.be>
+ <878ub2h8tg.wl-ysato@users.sourceforge.jp>
+Message-ID: <20150808005844.2416.62598@quantum>
+Subject: Re: [PATCH] clk: h8300: Remove "sh73a0-" part from compatible value
+Date: Fri, 07 Aug 2015 17:58:44 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Yoshinori Sato (2015-06-29 07:45:47)
+> On Mon, 29 Jun 2015 18:42:58 +0900,
+> Geert Uytterhoeven wrote:
+> > =
 
+> > Drop the bogus "sh73a0-" part (accidentally copied from shmobile?) from
+> > the compatible value.
+> =
 
-On Tuesday 25 August 2015 04:05 PM, Lee Jones wrote:
-> On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
->
->>
->>
->> On Tuesday 25 August 2015 01:22 PM, Lee Jones wrote:
->>> On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
->>>
->>>> Driver had coding style issues where spaces were used instead
->>>> of tabs. This patch fixes them all.
->>>>
->>>> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
->>>> ---
->>>>   drivers/mfd/88pm800.c | 125 ++++++++++++++++++++++++--------------------------
->>>>   1 file changed, 61 insertions(+), 64 deletions(-)
->>>
->>> Same comment as before.
->>>
->>> How similar is this file to the other one?
->>
->> I believe you are referring to include/linux/mfd/88pm80x.h
->>
->>>
->>> Can you reduce the size by having shared register defines?
->>>
->>
->> Not sure whether I understand your comment here,
->> They are common defines.
->
-> I guess the question was a little convoluted.
->
-> How about; why are the extra defines in the driver?  Why aren't all of
-> them in the header file?  What is the difference between the defines
-> in the C file compared with the ones defined in the header?
->
+> Ouch.
+> Applied. Thanks.
 
+Sato-san,
 
-I do not see any difference and need of having defines separately in C
-file.
-That's the cleanup I was referring to in another email.
-
-I will walk through the whole driver code and try to cleanup all such
-coding related issues. Probably expect separate series here.
+Do you plan to send pull requests for h8300 clock patches in the future?
 
 Thanks,
-Vaibhav
+Mike
+
+> =
+
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> >  Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.txt | =
+2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > =
+
+> > diff --git a/Documentation/devicetree/bindings/clock/renesas,h8300-div-=
+clock.txt b/Documentation/devicetree/bindings/clock/renesas,h8300-div-clock=
+.txt
+> > index 36c2b528245cd48f..399e0da22348b19e 100644
+> > --- a/Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.t=
+xt
+> > +++ b/Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.t=
+xt
+> > @@ -2,7 +2,7 @@
+> >  =
+
+> >  Required Properties:
+> >  =
+
+> > -  - compatible: Must be "renesas,sh73a0-h8300-div-clock"
+> > +  - compatible: Must be "renesas,h8300-div-clock"
+> >  =
+
+> >    - clocks: Reference to the parent clocks ("extal1" and "extal2")
+> >  =
+
+> > -- =
+
+> > 1.9.1
+> > =
+
+> =
+
+> -- =
+
+> Yoshinori Sato
+> <ysato@users.sourceforge.jp>
