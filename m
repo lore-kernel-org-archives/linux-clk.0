@@ -1,52 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 12 Aug 2015 01:33:36 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
+Date: Sat, 8 Aug 2015 07:36:42 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Bintian Wang <bintian.wang@huawei.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Jian Zhang <zhangjian001@hisilicon.com>,
-	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
-	Haoju Mo <mohaoju@hisilicon.com>,
-	Dan Zhao <dan.zhao@hisilicon.com>, sunzhaosheng@hisilicon.com,
-	victor.lixin@hisilicon.com
-Subject: Re: [PATCH v4 3/4] clk: Hi6220: add stub clock driver
-Message-ID: <20150812083336.GC13623@codeaurora.org>
-References: <1438673249-6051-1-git-send-email-leo.yan@linaro.org>
- <1438673249-6051-4-git-send-email-leo.yan@linaro.org>
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v4 1/6] cpufreq: make scaling_boost_freqs sysfs attr
+ available when boost is enabled
+Message-ID: <20150808020642.GL6939@linux>
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+ <1594902.Dv5JKhve0y@amdc1976>
+ <20150807113739.GF6939@linux>
+ <11605783.uxKCOKbq1D@vostro.rjw.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1438673249-6051-4-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <11605783.uxKCOKbq1D@vostro.rjw.lan>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/04, Leo Yan wrote:
-> On Hi6220, there have some clocks which can use mailbox channel to send
-> messages to power controller to change frequency; this includes CPU, GPU
-> and DDR clocks.
+On 08-08-15, 00:21, Rafael J. Wysocki wrote:
+> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 > 
-> For dynamic frequency scaling, firstly need write the frequency value to
-> SRAM region, and then send message to mailbox to trigger power controller
-> to handle this requirement. This driver will use syscon APIs to pass SRAM
-> memory region and use common mailbox APIs for channels accessing.
+> And what exactly am I supposed to do with this?
 > 
-> This init driver will support cpu frequency change firstly.
-> 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
+> Have a robot that will pick up all patches ACKed by you magically or what?
 
-Applied to clk-next
+:)
+
+That's why I have asked Bartlomiej specifically to send it separately
+to the pm list as a cpufreq patch. I wasn't expecting you to apply
+right from here.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+viresh
