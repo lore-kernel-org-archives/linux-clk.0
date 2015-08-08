@@ -1,64 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: robh+dt@kernel.org, mturquette@baylibre.com, lee.jones@linaro.org,
-	k.kozlowski@samsung.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Subject: [PATCH-v2 2/5] mfd: 88pm800: Update the header file with 32K clk related macros
-Date: Tue, 25 Aug 2015 00:26:31 +0530
-Message-Id: <1440442594-3102-4-git-send-email-vaibhav.hiremath@linaro.org>
-In-Reply-To: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
-References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
+Message-ID: <55C5AF4E.3010500@samsung.com>
+Date: Sat, 08 Aug 2015 16:27:10 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-Version: 1.0
+To: Kukjin Kim <kgene@kernel.org>
+CC: Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	linux-arm-kernel@lists.infradead.org,
+	'Anand Moon' <linux.amoon@gmail.com>,
+	'Kevin Hilman' <khilman@linaro.org>,
+	linux-kernel@vger.kernel.org, 'Heiko Stuebner' <heiko@sntech.de>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
+	'Lukasz Majewski' <l.majewski@samsung.com>,
+	'Michael Turquette' <mturquette@baylibre.com>,
+	linux-pm@vger.kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>,
+	linux-clk@vger.kernel.org, 'Chanwoo Choi' <cw00.choi@samsung.com>,
+	'Thomas Abraham' <thomas.ab@samsung.com>,
+	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+	Olof Johansson <olof@lixom.net>,
+	Arnd Bergmann <arnd.bergmann@linaro.org>,
+	'Javier Martinez Canillas' <javier@dowhile0.org>,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
+ platform
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com> <2359635.Hxe4cb8zKm@amdc1976> <20150807115627.GH6939@linux> <1525406.7aXvVQzEDd@vostro.rjw.lan> <20150808020740.GM6939@linux>
+In-Reply-To: <20150808020740.GM6939@linux>
+Content-Type: text/plain; charset=windows-1252
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Update header file with required macros for 32KHz buffered clock
-output of 88PM800 family of device.
-These macros will be used in clk provider driver.
+W dniu 08.08.2015 o 11:07, Viresh Kumar pisze:
+> On 08-08-15, 00:24, Rafael J. Wysocki wrote:
+>> OK, so please let me know which patches you want me to pick up.
+>>
+>> Ideally, I'd prefer them to be resent in a separate series with ACKs and all
+>> with a cover letter clearly stating whose tree they are being targeted at.
+> 
+> He already sent it separately, let me send a confirmatory mail in
+> reply to that.
 
-Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
----
- include/linux/mfd/88pm80x.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Dear Kukjin,
 
-diff --git a/include/linux/mfd/88pm80x.h b/include/linux/mfd/88pm80x.h
-index 122cfd2..0215d5f 100644
---- a/include/linux/mfd/88pm80x.h
-+++ b/include/linux/mfd/88pm80x.h
-@@ -91,6 +91,7 @@ enum {
- /* Referance and low power registers */
- #define PM800_LOW_POWER1		(0x20)
- #define PM800_LOW_POWER2		(0x21)
-+#define PM800_LOW_POWER2_XO_LJ_EN	BIT(5)
- 
- #define PM800_LOW_POWER_CONFIG3		(0x22)
- #define PM800_LDOBK_FREEZE		BIT(7)
-@@ -138,6 +139,13 @@ enum {
- #define PM800_ALARM			BIT(5)
- #define PM800_RTC1_USE_XO		BIT(7)
- 
-+#define PM800_32K_OUTX_SEL_MASK		0x3
-+/* 32KHz clk output sel mode */
-+#define PM800_32K_OUTX_SEL_ZERO		0x0
-+#define PM800_32K_OUTX_SEL_INT_32KHZ	0x1
-+#define PM800_32K_OUTX_SEL_XO_32KHZ	0x2
-+#define PM800_32K_OUTX_SEL_HIZ		0x3
-+
- /* Regulator Control Registers: BUCK1,BUCK5,LDO1 have DVC */
- 
- /* buck registers */
-@@ -208,6 +216,10 @@ enum {
- #define PM800_PMOD_MEAS1		0x52
- #define PM800_PMOD_MEAS2		0x53
- 
-+/* Oscillator control */
-+#define PM800_OSC_CNTRL1		0x50
-+#define PM800_OSC_CNTRL1_OSC_FREERUN_EN	BIT(1)
-+
- #define PM800_GPADC0_MEAS1		0x54
- #define PM800_GPADC0_MEAS2		0x55
- #define PM800_GPADC1_MEAS1		0x56
--- 
-1.9.1
+Can you apply the 2-5 of this series to v4.3? It's getting late but
+maybe they still could go?
 
+Best regards,
+Krzysztof
