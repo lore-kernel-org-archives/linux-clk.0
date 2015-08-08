@@ -1,36 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:43907 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932655AbbHDKmH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 4 Aug 2015 06:42:07 -0400
-Date: Tue, 4 Aug 2015 13:42:02 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 2/5] clk: fractional-divider: keep mwidth and nwidth
- internally
-Message-ID: <20150804104202.GC7675@kuha.fi.intel.com>
-References: <1437997733-135331-1-git-send-email-andriy.shevchenko@linux.intel.com>
- <1437997733-135331-3-git-send-email-andriy.shevchenko@linux.intel.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v2 4/4] clk: pistachio: correct critical clock list
+To: Govindraj Raja <govindraj.raja@imgtec.com>, linux-mips@linux-mips.org,
+ linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+References: <1438964413-18876-1-git-send-email-govindraj.raja@imgtec.com>
+ <1438964413-18876-5-git-send-email-govindraj.raja@imgtec.com>
+Cc: Zdenko Pulitika <zdenko.pulitika@imgtec.com>,
+ Kevin Cernekee <cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>,
+ Andrew Bresticker <abrestic@chromium.org>,
+ James Hartley <James.Hartley@imgtec.com>,
+ Damien Horsley <Damien.Horsley@imgtec.com>,
+ James Hogan <James.Hogan@imgtec.com>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <55C5E956.5060308@cogentembedded.com>
+Date: Sat, 8 Aug 2015 14:34:46 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1437997733-135331-3-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1438964413-18876-5-git-send-email-govindraj.raja@imgtec.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jul 27, 2015 at 02:48:50PM +0300, Andy Shevchenko wrote:
-> The patch adds mwidth and nwidth fields to the struct clk_fractional_divider
-> for further usage. While here, use GENMASK() instead of open coding this
-> functionality.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hello.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+On 8/7/2015 7:20 PM, Govindraj Raja wrote:
 
+> From: "Damien.Horsley" <Damien.Horsley@imgtec.com>
 
-Thanks,
+> Current critical clock list for pistachio enables
+> only mips and sys clocks by default but there also
+                                                ^ are
 
--- 
-heikki
+> other clocks that are not claimed by anyone and
+> needs to be enabled by default.
+
+> This patch updates the critical clocks that needs
+> to enabled by default.
+     ^ be
+
+> Add a separate struct to distinguish the critical clocks
+
+    Need colon here.
+
+> one is core clock(mips) and others are from periph_clk_*
+
+> Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
+> Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+> Signed-off-by: Damien.Horsley <Damien.Horsley@imgtec.com>
+> Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+
+MBR, Sergei
