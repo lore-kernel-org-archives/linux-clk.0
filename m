@@ -1,78 +1,100 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Tue, 25 Aug 2015 11:30:19 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
-	mturquette@baylibre.com, k.kozlowski@samsung.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH-v2 1/5] mfd: 88pm800: Fix tabbing issue
-Message-ID: <20150825103019.GP19409@x1>
-References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
- <1440442594-3102-2-git-send-email-vaibhav.hiremath@linaro.org>
- <20150825075121.GE19409@x1>
- <55DC2A51.6090008@linaro.org>
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <govindraj.raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Ezequiel Garcia
+	<ezequiel.garcia@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>
+Subject: [PATCH v3 4/4] clk: pistachio: correct critical clock list
+Date: Mon, 10 Aug 2015 11:10:08 +0100
+Message-ID: <1439201408-9009-1-git-send-email-govindraj.raja@imgtec.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <55DC2A51.6090008@linaro.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
-> On Tuesday 25 August 2015 01:21 PM, Lee Jones wrote:
-> >On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
-> >
-> >>Driver had coding style issues where spaces were used instead
-> >>of tabs. This patch fixes them all.
-> >
-> >That's not all it's doing though is it?
-> >
-> 
-> Yes, its just tabbing related fixes.
+From: "Damien.Horsley" <Damien.Horsley@imgtec.com>
 
-No, it's really not.
+Current critical clock list for pistachio enables
+only mips and sys clocks by default but there are
+also other clocks that are not claimed by anyone and
+needs to be enabled by default.
 
-> >Please describe all of your changes.
+This patch updates the critical clocks that needs
+to be enabled by default.
 
-... we're also taking the opportunity to remove the unnecessary
-protection surrounding some of the defined values.
+Add a separate struct to distinguish the critical clocks
+as listed below which needs to enabled by default:
+1.) core clocks:
+	a.) mips clock
+2.) peripheral system clocks:
+	a.) sys clock
+	b.) sys_bus clock
+	c.) DDR clock
+	d.) ROM clock
 
-> >>Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-> >>---
-> >>  drivers/mfd/88pm800.c | 125 ++++++++++++++++++++++++--------------------------
-> >>  1 file changed, 61 insertions(+), 64 deletions(-)
-> >>
-> >>diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
-> >>index f104a32..c4e097d 100644
-> >>--- a/drivers/mfd/88pm800.c
-> >>+++ b/drivers/mfd/88pm800.c
-> >>@@ -30,55 +30,55 @@
-> >>  #include <linux/of_device.h>
-> >>
-> >>  /* Interrupt Registers */
-> >>-#define PM800_INT_STATUS1		(0x05)
-> >>+#define PM800_INT_STATUS1		0x05
-> >>  #define PM800_ONKEY_INT_STS1		(1 << 0)
-> >>  #define PM800_EXTON_INT_STS1		(1 << 1)
-> >>-#define PM800_CHG_INT_STS1			(1 << 2)
-> >>-#define PM800_BAT_INT_STS1			(1 << 3)
-> >>-#define PM800_RTC_INT_STS1			(1 << 4)
-> >>+#define PM800_CHG_INT_STS1		(1 << 2)
-> >>+#define PM800_BAT_INT_STS1		(1 << 3)
-> >>+#define PM800_RTC_INT_STS1		(1 << 4)
-> >>  #define PM800_CLASSD_OC_INT_STS1	(1 << 5)
-> >
-> >These should all be replaced by BIT().
-> >
-> >Please fix the whole file.
-> 
-> Will do.
-> 
-> Thanks,
-> Vaibhav
+Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+Signed-off-by: Damien.Horsley <Damien.Horsley@imgtec.com>
+Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+---
 
+Changes from v2:
+----------------
+Fixes comments from Sergei as dicussed in below thread:
+http://patchwork.linux-mips.org/patch/10903/
+
+
+ drivers/clk/pistachio/clk-pistachio.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
+index 8c0fe88..c4ceb5e 100644
+--- a/drivers/clk/pistachio/clk-pistachio.c
++++ b/drivers/clk/pistachio/clk-pistachio.c
+@@ -159,9 +159,15 @@ PNAME(mux_debug) = { "mips_pll_mux", "rpu_v_pll_mux",
+ 		     "wifi_pll_mux", "bt_pll_mux" };
+ static u32 mux_debug_idx[] = { 0x0, 0x1, 0x2, 0x4, 0x8, 0x10 };
+ 
+-static unsigned int pistachio_critical_clks[] __initdata = {
+-	CLK_MIPS,
+-	CLK_PERIPH_SYS,
++static unsigned int pistachio_critical_clks_core[] __initdata = {
++	CLK_MIPS
++};
++
++static unsigned int pistachio_critical_clks_sys[] __initdata = {
++	PERIPH_CLK_SYS,
++	PERIPH_CLK_SYS_BUS,
++	PERIPH_CLK_DDR,
++	PERIPH_CLK_ROM,
+ };
+ 
+ static void __init pistachio_clk_init(struct device_node *np)
+@@ -193,8 +199,8 @@ static void __init pistachio_clk_init(struct device_node *np)
+ 
+ 	pistachio_clk_register_provider(p);
+ 
+-	pistachio_clk_force_enable(p, pistachio_critical_clks,
+-				   ARRAY_SIZE(pistachio_critical_clks));
++	pistachio_clk_force_enable(p, pistachio_critical_clks_core,
++				   ARRAY_SIZE(pistachio_critical_clks_core));
+ }
+ CLK_OF_DECLARE(pistachio_clk, "img,pistachio-clk", pistachio_clk_init);
+ 
+@@ -261,6 +267,9 @@ static void __init pistachio_clk_periph_init(struct device_node *np)
+ 				    ARRAY_SIZE(pistachio_periph_gates));
+ 
+ 	pistachio_clk_register_provider(p);
++
++	pistachio_clk_force_enable(p, pistachio_critical_clks_sys,
++				   ARRAY_SIZE(pistachio_critical_clks_sys));
+ }
+ CLK_OF_DECLARE(pistachio_clk_periph, "img,pistachio-clk-periph",
+ 	       pistachio_clk_periph_init);
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+1.9.1
