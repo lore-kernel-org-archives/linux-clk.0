@@ -1,59 +1,59 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Shengjiu Wang <shengjiu.wang@freescale.com>, shawnguo@kernel.org,
- kernel@pengutronix.de, robh+dt@kernel.org, pawel.moll@arm.com,
- mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
- linux@arm.linux.org.uk, sboyd@codeaurora.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <cover.1439284957.git.shengjiu.wang@freescale.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <cover.1439284957.git.shengjiu.wang@freescale.com>
-Message-ID: <20150825184527.31346.52324@quantum>
-Subject: Re: [PATCH V1 0/3] fix clock issue for fsl,spdif
-Date: Tue, 25 Aug 2015 11:45:27 -0700
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Kukjin Kim <kgene@kernel.org>
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>,
+	'Kukjin Kim' <kgene@kernel.org>
+Cc: 'Viresh Kumar' <viresh.kumar@linaro.org>,
+	"'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
+	linux-arm-kernel@lists.infradead.org,
+	'Anand Moon' <linux.amoon@gmail.com>,
+	'Kevin Hilman' <khilman@linaro.org>,
+	linux-kernel@vger.kernel.org, 'Heiko Stuebner' <heiko@sntech.de>,
+	'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>,
+	'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
+	'Lukasz Majewski' <l.majewski@samsung.com>,
+	'Michael Turquette' <mturquette@baylibre.com>,
+	linux-pm@vger.kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>,
+	linux-clk@vger.kernel.org, 'Chanwoo Choi' <cw00.choi@samsung.com>,
+	'Thomas Abraham' <thomas.ab@samsung.com>,
+	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+	'Olof Johansson' <olof@lixom.net>,
+	'Arnd Bergmann' <arnd.bergmann@linaro.org>,
+	'Javier Martinez Canillas' <javier@dowhile0.org>,
+	linux-samsung-soc@vger.kernel.org
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+ <2359635.Hxe4cb8zKm@amdc1976> <20150807115627.GH6939@linux>
+ <1525406.7aXvVQzEDd@vostro.rjw.lan> <20150808020740.GM6939@linux>
+ <55C5AF4E.3010500@samsung.com>
+In-reply-to: <55C5AF4E.3010500@samsung.com>
+Subject: RE: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
+ platform
+Date: Mon, 10 Aug 2015 10:27:18 +0900
+Message-id: <03ee01d0d30b$b279c490$176d4db0$@kernel.org>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Shengjiu Wang (2015-08-11 02:26:51)
-> fix clock issue for fsl,spdif
-> =
+Krzysztof Kozlowski wrote:
+> 
+> W dniu 08.08.2015 o 11:07, Viresh Kumar pisze:
+> > On 08-08-15, 00:24, Rafael J. Wysocki wrote:
+> >> OK, so please let me know which patches you want me to pick up.
+> >>
+> >> Ideally, I'd prefer them to be resent in a separate series with ACKs and all
+> >> with a cover letter clearly stating whose tree they are being targeted at.
+> >
+> > He already sent it separately, let me send a confirmatory mail in
+> > reply to that.
+> 
+> Dear Kukjin,
+> 
+> Can you apply the 2-5 of this series to v4.3? It's getting late but
+> maybe they still could go?
+> 
+Once my previous pull-request landed into arm-soc, I'll try to send out this
+series 2-5 for v4.3.
 
-> Shengjiu Wang (3):
->   ARM: imx6q: Add SPDIF_GCLK clock in clock tree
->   ARM: imx6sl: Add SPDIF_GCLK clock in clock tree
->   ARM: imx6sx: Add SPDIF_GCLK clock in clock tree
+Thanks,
+Kukjin
 
-Hello Shengjiu Wang,
-
-Please move the dts changes into separate patches. I can take the
-changes to the clock driver and the header through the clk tree, but the
-dt patches need to go through arm-soc.
-
-Regards,
-Mike
-
-> =
-
->  arch/arm/boot/dts/imx6qdl.dtsi            |  2 +-
->  arch/arm/boot/dts/imx6sl.dtsi             | 16 ++++++++++++++++
->  arch/arm/boot/dts/imx6sx.dtsi             |  2 +-
->  drivers/clk/imx/clk-imx6q.c               |  4 +++-
->  drivers/clk/imx/clk-imx6sl.c              |  4 +++-
->  drivers/clk/imx/clk-imx6sx.c              |  1 +
->  include/dt-bindings/clock/imx6qdl-clock.h |  3 ++-
->  include/dt-bindings/clock/imx6sl-clock.h  |  3 ++-
->  include/dt-bindings/clock/imx6sx-clock.h  |  3 ++-
->  9 files changed, 31 insertions(+), 7 deletions(-)
-> =
-
-> -- =
-
-> 1.9.1
-> =
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
