@@ -1,132 +1,190 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 02/16] clk: shmobile: r8a7778: Add CPG/MSTP Clock Domain support
-Date: Tue,  4 Aug 2015 14:28:03 +0200
-Message-Id: <1438691297-29235-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
-References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Mon, 10 Aug 2015 15:48:11 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, maxime.ripard@free-electrons.com,
+	s.hauer@pengutronix.de, geert@linux-m68k.org
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+Message-ID: <20150810144811.GN3249@x1>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Clock Domain support to the R-Car M1A Clock Pulse Generator (CPG)
-driver using the generic PM Domain.  This allows to power-manage the
-module clocks of SoC devices that are part of the CPG/MSTP Clock Domain
-using Runtime PM, or for system suspend/resume.
+On Fri, 07 Aug 2015, Michael Turquette wrote:
 
-SoC devices that are part of the CPG/MSTP Clock Domain and can be
-power-managed through an MSTP clock should be tagged in DT with a proper
-"power-domains" property.
+> Some clocks are critical to system operation (e.g. cpu, memory, etc) and
+> should not be gated until a driver that knows best claims such a clock
+> and expressly gates that clock through the normal clk.h api.
+> 
+> The typical way to handle this is for the clk driver or some other early
+> code to call clk_prepare_enable on this important clock as soon as it is
+> registered and before the clk_disable_unused garbage collector kicks in.
+> 
+> This patch introduces a formal way to handle this scenario that is
+> provided by the clk framework. Clk driver authors can set the
+> CLK_ENABLE_HAND_OFF flag in their clk data, which will cause the clk to
+> be enabled in clk_register(). 
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-v4:
-  - Add Reviewed-by,
+Doesn't this patch put as right back at square one?  We still require
+each of the clock providers to know which of its clocks are critical
+on any given platform.  Only this time we're setting a flag as opposed
+to actually enabling the clock.  The code for doing so will still be
+little per-vendor hand-rolled chunks scattered all over the subsystem.
 
-v3:
-  - Add Acked-by,
-  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
+Mitigating this was the whole point of my critical clocks set.  It
+appears we're not solving the problem here at all.
 
-v2:
-  - New.
----
- .../bindings/clock/renesas,r8a7778-cpg-clocks.txt  | 29 +++++++++++++++++++---
- arch/arm/mach-shmobile/Kconfig                     |  1 +
- drivers/clk/shmobile/clk-r8a7778.c                 |  2 ++
- 3 files changed, 29 insertions(+), 3 deletions(-)
+> Then when the first clk consumer driver
+> comes along and calls clk_get() & clk_prepare_enable(), the reference
+> counts taken during clk registration are transfered (or handed off) to
+> the clk consumer.
+> 
+> At this point handling the clk is the same as any other clock which as
+> not set the new CLK_ENABLE_HAND_OFF flag. In fact no changes to any
+> clock consumer driver are needed for this to work.
+> 
+> Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+> ---
+>  drivers/clk/clk.c            | 61 +++++++++++++++++++++++++++++++++++++++++---
+>  include/linux/clk-provider.h |  3 +++
+>  2 files changed, 60 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 6ec0f77..a3fdeab 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -59,6 +59,8 @@ struct clk_core {
+>  	unsigned long		flags;
+>  	unsigned int		enable_count;
+>  	unsigned int		prepare_count;
+> +	bool			need_handoff_enable;
+> +	bool			need_handoff_prepare;
+>  	unsigned long		min_rate;
+>  	unsigned long		max_rate;
+>  	unsigned long		accuracy;
+> @@ -656,16 +658,31 @@ static int clk_core_prepare(struct clk_core *core)
+>   */
+>  int clk_prepare(struct clk *clk)
+>  {
+> -	int ret;
+> +	int ret = 0;
+>  
+>  	if (!clk)
+>  		return 0;
+>  
+>  	clk_prepare_lock();
+>  	clk->prepare_count++;
+> +
+> +	/*
+> +	 * setting CLK_ENABLE_HAND_OFF flag triggers this conditional
+> +	 *
+> +	 * need_handoff_prepare implies this clk was already prepared by
+> +	 * __clk_init. now we have a proper user, so unset the flag in our
+> +	 * internal bookkeeping. See CLK_ENABLE_HAND_OFF flag in clk-provider.h
+> +	 * for details.
+> +	 */
+> +	if (clk->core->need_handoff_prepare) {
+> +		clk->core->need_handoff_prepare = false;
+> +		goto out;
+> +	}
+> +
+>  	ret = clk_core_prepare(clk->core);
+> -	clk_prepare_unlock();
+>  
+> +out:
+> +	clk_prepare_unlock();
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(clk_prepare);
+> @@ -772,16 +789,31 @@ static int clk_core_enable(struct clk_core *core)
+>  int clk_enable(struct clk *clk)
+>  {
+>  	unsigned long flags;
+> -	int ret;
+> +	int ret = 0;
+>  
+>  	if (!clk)
+>  		return 0;
+>  
+>  	flags = clk_enable_lock();
+>  	clk->enable_count++;
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
-index 2f3747fdcf1c5305..e4cdaf1cb3333012 100644
---- a/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
-@@ -1,7 +1,9 @@
- * Renesas R8A7778 Clock Pulse Generator (CPG)
- 
- The CPG generates core clocks for the R8A7778. It includes two PLLs and
--several fixed ratio dividers
-+several fixed ratio dividers.
-+The CPG also provides a Clock Domain for SoC devices, in combination with the
-+CPG Module Stop (MSTP) Clocks.
- 
- Required Properties:
- 
-@@ -10,10 +12,18 @@ Required Properties:
-   - #clock-cells: Must be 1
-   - clock-output-names: The names of the clocks. Supported clocks are
-     "plla", "pllb", "b", "out", "p", "s", and "s1".
-+  - #power-domain-cells: Must be 0
- 
-+SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
-+through an MSTP clock should refer to the CPG device node in their
-+"power-domains" property, as documented by the generic PM domain bindings in
-+Documentation/devicetree/bindings/power/power_domain.txt.
- 
--Example
---------
-+
-+Examples
-+--------
-+
-+  - CPG device node:
- 
- 	cpg_clocks: cpg_clocks@ffc80000 {
- 		compatible = "renesas,r8a7778-cpg-clocks";
-@@ -22,4 +32,17 @@ Example
- 		clocks = <&extal_clk>;
- 		clock-output-names = "plla", "pllb", "b",
- 				     "out", "p", "s", "s1";
-+		#power-domain-cells = <0>;
-+	};
-+
-+
-+  - CPG/MSTP Clock Domain member device node:
-+
-+	sdhi0: sd@ffe4c000 {
-+		compatible = "renesas,sdhi-r8a7778";
-+		reg = <0xffe4c000 0x100>;
-+		interrupts = <0 87 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp3_clks R8A7778_CLK_SDHI0>;
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
- 	};
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index aa38a438af8990ef..5b1f9eca7c871aee 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -4,6 +4,7 @@ config ARCH_SHMOBILE
- 
- config PM_RCAR
- 	bool
-+	select PM_GENERIC_DOMAINS if PM
- 
- config PM_RMOBILE
- 	bool
-diff --git a/drivers/clk/shmobile/clk-r8a7778.c b/drivers/clk/shmobile/clk-r8a7778.c
-index e97e28fcfc13d102..87c1d2f2fb57a46c 100644
---- a/drivers/clk/shmobile/clk-r8a7778.c
-+++ b/drivers/clk/shmobile/clk-r8a7778.c
-@@ -124,6 +124,8 @@ static void __init r8a7778_cpg_clocks_init(struct device_node *np)
- 	}
- 
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
-+
-+	cpg_mstp_add_clk_domain(np);
- }
- 
- CLK_OF_DECLARE(r8a7778_cpg_clks, "renesas,r8a7778-cpg-clocks",
+This insinuates that we now have two users.  Same goes for the prepare
+count.
+
+What happens during disable() and unprepare()?
+
+> +	/*
+> +	 * setting CLK_ENABLE_HAND_OFF flag triggers this conditional
+> +	 *
+> +	 * need_handoff_enable implies this clk was already enabled by
+> +	 * __clk_init. now we have a proper user, so unset the flag in our
+> +	 * internal bookkeeping. See CLK_ENABLE_HAND_OFF flag in clk-provider.h
+> +	 * for details.
+> +	 */
+> +	if (clk->core->need_handoff_enable) {
+> +		clk->core->need_handoff_enable = false;
+> +		goto out;
+> +	}
+> +
+>  	ret = clk_core_enable(clk->core);
+> -	clk_enable_unlock(flags);
+>  
+> +out:
+> +	clk_enable_unlock(flags);
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(clk_enable);
+> @@ -2447,6 +2479,27 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
+>  	if (core->ops->init)
+>  		core->ops->init(core->hw);
+>  
+> +	/*
+> +	 * enable clocks with the CLK_ENABLE_HAND_OFF flag set
+> +	 *
+> +	 * This flag causes the framework to enable the clock at registration
+> +	 * time, which is sometimes necessary for clocks that would cause a
+> +	 * system crash when gated (e.g. cpu, memory, etc). The prepare_count
+> +	 * is migrated over to the first clk consumer to call clk_prepare().
+> +	 * Similarly the clk's enable_count is migrated to the first consumer
+> +	 * to call clk_enable().
+> +	 */
+> +	if (core->flags & CLK_ENABLE_HAND_OFF) {
+> +		core->need_handoff_prepare = true;
+> +		core->need_handoff_enable = true;
+> +		ret = clk_core_prepare(core);
+> +		if (ret)
+> +			goto out;
+> +		clk_core_enable(core);
+> +		if (ret)
+> +			goto out;
+> +	}
+> +
+>  	kref_init(&core->ref);
+>  out:
+>  	clk_prepare_unlock();
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 06a56e5..0230900 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -31,6 +31,9 @@
+>  #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
+>  #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
+>  #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
+> +#define CLK_ENABLE_HAND_OFF	BIT(10) /* enable clock when registered.
+> +					   hand-off enable_count & prepare_count
+> +					   to first consumer that enables clk */
+>  
+>  struct clk;
+>  struct clk_hw;
+
 -- 
-1.9.1
-
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
