@@ -1,76 +1,121 @@
-Return-Path: <k.kozlowski@samsung.com>
-Message-id: <55C43085.8090506@samsung.com>
-Date: Fri, 07 Aug 2015 13:13:57 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene@kernel.org>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>, Olof Johansson <olof@lixom.net>,
- Arnd Bergmann <arnd.bergmann@linaro.org>
-Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>,
- 'Thomas Abraham' <thomas.ab@samsung.com>,
- 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
- 'Michael Turquette' <mturquette@baylibre.com>,
- 'Tomasz Figa' <tomasz.figa@gmail.com>,
- 'Lukasz Majewski' <l.majewski@samsung.com>,
- 'Heiko Stuebner' <heiko@sntech.de>, 'Chanwoo Choi' <cw00.choi@samsung.com>,
- 'Kevin Hilman' <khilman@linaro.org>,
- 'Javier Martinez Canillas' <javier@dowhile0.org>,
- 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
- 'Anand Moon' <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
- platform
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <015301d0d0a3$1396c900$3ac45b00$@kernel.org> <20150807035018.GF6325@linux>
- <20150807035156.GG6325@linux>
-In-reply-to: <20150807035156.GG6325@linux>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Mon, 10 Aug 2015 16:36:38 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, maxime.ripard@free-electrons.com,
+	s.hauer@pengutronix.de, geert@linux-m68k.org
+Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and
+ implement hand-off
+Message-ID: <20150810153638.GO3249@x1>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07.08.2015 12:51, Viresh Kumar wrote:
-> Fixed Olof's email id..
+On Fri, 07 Aug 2015, Michael Turquette wrote:
+> This is an alternative solution to Lee's "clk: Provide support for
+> always-on clocks" series[0].
+ 
+So after all the hours of work that's been put in and all of the
+versions that have been authored, you're just going to write your own
+solution anyway, without any further discussion?
+
+That's one way to make your contributors feel valued.
+
+> The first two patches introduce run-time checks to ensure that clock
+> consumer drivers are respecting the clk.h api. The former patch checks
+> for prepare and enable imbalances. The latter checks for calls to
+> clk_put without first disabling and unpreparing the clk.
+
+Are these real issues that people are having trouble with, or just
+hypothetical ones?  I can understand the need for them if they're
+causing people some pain, but if they are unnecessarily hardening the
+API, then it makes it difficult for proper issues (such as critical
+clocks) to be solved easily.
+
+> The third patch introduces a new flag, CLK_ENABLE_HAND_OFF, which
+> prepares and enables a clk at registration-time. The reference counts
+> (prepare & enable) are transferred to the first clock consumer driver
+> that clk_get's the clk with this flag set AND calls clk_prepare or
+> clk_enable.
 > 
-> On 07-08-15, 09:20, Viresh Kumar wrote:
->> Cc'ing Rafael again. Guys please don't miss him for any PM related
->> stuff or use get_maintainers ..
->>
->> Cc'ing Arnd/Olof as well to discuss the merge stuff..
->>
->> On 07-08-15, 08:53, Kukjin Kim wrote:
->>>> Depends on:
->>>> - next-20150806 branch of linux-next kernel tree
->>>> - "[PATCH V3 00/16] OPP: Add code to support operating-points-v2 bindings"
->>>>   (http://www.spinics.net/lists/arm-kernel/msg435408.html)
->>>>
->>> BTW, hmm...how can we see this series in v4.3?...to be honest, I don't think it
->>> can be done in v4.3 because of dependencies with PM / OPP series
->>
->> That is merged by Rafael Yesterday. That is manageable 
+> The net result is that a clock with this flag set will be enabled at
+> boot and neither the clk_disable_unused garbage collector or the
+> "sibling clock disables a shared parent" scenario will cause the flagged
+> clock to be disabled.
 
-Indeed, happy to hear it! So the patchset has no external dependencies.
+I'm not sure if the third patch actually solves the _real_ issue you
+allude to here.  The original critical (then called always-on) clock
+patch-set solved it just fine.  However others were concerned about
+how you would then turn the clock off if some knowledgeable consumer
+(who knew the full consequences of their actions) came along and had a
+good reason to gate it.  That, the turning off the clock if still
+desired is what the third patch _actually_ solves.
 
->>
->>> and previous
->>> exynos CPU OPP series in each cross trees...maybe that's why you created based
->>> on linux-next...any idea?
->>
->> So there is no build dependency with OPP patches I hope, as its all
->> about using the bindings defined by them. And so you don't need to
->> depend on that.
->>
->> You might have to rebase on the ARM tree to manage your conflicts. In
->> this case you can rebase directly on ARM SoC branch which has your
->> patches (rebase directly over the last patch instead of the whole
->> branch) and make sure Olof knows about this and he doesn't update
->> (i.e. rebase) his branch, which he might not anyway.
->>
->> The whole idea is to keep a single sha-id for a commit. So you can
->> rebase over the published material present in ARM-SoC ..
+Now we are back where we started however, and still need to figure out
+a generic method to mark the clocks (either by setting a FLAG or
+actually calling enable()) as critical.
 
-Still patches 1/6 and 6/6 need your acks. Is the patch 1/6 a
-prerequisite for others? It does not look like a prerequisite... but it
-was put at the beginning of the patchset.
+> The first driver to come along and explicitly
+> claim, prepare and enable this clock will inherit those reference
+> counts. No change to clock consumer drivers is required for this to
+> work.
 
-Best regards,
-Krzysztof
+Do you mean it won't break anything?  I think to make use of the
+functionality each of the providers still have to figure out which of
+their clocks are critical (which may change from platform to platform)
+then mark them as such before registration.
+
+> Please continue to use the clk.h api properly.
+> 
+> In time this approach can probably replace the CLK_IGNORE_UNUSED flag
+> and hopefully reduce the number of users of the clk_ignore_unused boot
+> parameter.
+> 
+> Finally, a quick note on comparing this series to Lee's. I went with the
+> simplest approach to solve a real problem: preventing critical clocks
+> from being spuriously disabled at boot, or before a their parent clock
+> becomes accidentally disabled by a sibling.
+
+This wasn't the problem.  Platforms are already doing this.  The _real_
+problem was doing it in a generic way, so vendors didn't have to roll
+their own 'gather' and 'mark' code, which unfortunately they still have
+to do with this solution.
+
+> All of the other kitchen sink stuff (DT binding, 
+
+The DT binding will still be required, at least for ST, as they have
+gone for the more Linuxy approach of having a generic set of clock
+drivers and provide all of the platform specific information in
+platform code (i.e. DT).  So to identify which clocks are critical on
+each platform the DT will need to be interrogated in some way.
+
+> passing the flag back to the framework when the clock consumer
+> driver calls clk_put) was left
+
+I'm not sure what this is.
+
+> out because I do not see a real use case for it. If one can demonstrate
+> a real use case (and not a hypothetical one) then this patch series can
+> be expanded further.
+> 
+> [0] http://lkml.kernel.org/r/<1437570255-21049-1-git-send-email-lee.jones@linaro.org>
+> 
+> Michael Turquette (3):
+>   clk: per-user clk prepare & enable ref counts
+>   clk: clk_put WARNs if user has not disabled clk
+>   clk: introduce CLK_ENABLE_HAND_OFF flag
+> 
+>  drivers/clk/clk.c            | 79 +++++++++++++++++++++++++++++++++++++++++---
+>  include/linux/clk-provider.h |  3 ++
+>  2 files changed, 78 insertions(+), 4 deletions(-)
+> 
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
