@@ -1,356 +1,114 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Bintian Wang <bintian.wang@huawei.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Jian Zhang <zhangjian001@hisilicon.com>,
-	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
-	Haoju Mo <mohaoju@hisilicon.com>,
-	Dan Zhao <dan.zhao@hisilicon.com>, sunzhaosheng@hisilicon.com,
-	victor.lixin@hisilicon.com
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v4 3/4] clk: Hi6220: add stub clock driver
-Date: Tue,  4 Aug 2015 15:27:28 +0800
-Message-Id: <1438673249-6051-4-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1438673249-6051-1-git-send-email-leo.yan@linaro.org>
-References: <1438673249-6051-1-git-send-email-leo.yan@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Message-ID: <55C91082.6040705@gmail.com>
+Date: Mon, 10 Aug 2015 22:58:42 +0200
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>
+CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: si5351: Convert __clk_get_name() to clk_hw_get_name()
+References: <1438990544-8464-1-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1438990544-8464-1-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Hi6220, there have some clocks which can use mailbox channel to send
-messages to power controller to change frequency; this includes CPU, GPU
-and DDR clocks.
+On 08.08.2015 01:35, Stephen Boyd wrote:
+> This driver uses __clk_get_name() when it's dealing with struct
+> clk_hw pointers. Use the simpler form so that we can get rid of
+> the clk member in struct clk_hw one day.
+>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-For dynamic frequency scaling, firstly need write the frequency value to
-SRAM region, and then send message to mailbox to trigger power controller
-to handle this requirement. This driver will use syscon APIs to pass SRAM
-memory region and use common mailbox APIs for channels accessing.
+Sorry for the late response,
 
-This init driver will support cpu frequency change firstly.
+Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- drivers/clk/hisilicon/Kconfig           |   2 +-
- drivers/clk/hisilicon/Makefile          |   2 +-
- drivers/clk/hisilicon/clk-hi6220-stub.c | 276 ++++++++++++++++++++++++++++++++
- 3 files changed, 278 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/hisilicon/clk-hi6220-stub.c
 
-diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
-index b4165ba..2c16807 100644
---- a/drivers/clk/hisilicon/Kconfig
-+++ b/drivers/clk/hisilicon/Kconfig
-@@ -1,6 +1,6 @@
- config COMMON_CLK_HI6220
- 	bool "Hi6220 Clock Driver"
--	depends on ARCH_HISI || COMPILE_TEST
-+	depends on (ARCH_HISI || COMPILE_TEST) && MAILBOX
- 	default ARCH_HISI
- 	help
- 	  Build the Hisilicon Hi6220 clock driver based on the common clock framework.
-diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
-index 48f0116..4a1001a 100644
---- a/drivers/clk/hisilicon/Makefile
-+++ b/drivers/clk/hisilicon/Makefile
-@@ -7,4 +7,4 @@ obj-y	+= clk.o clkgate-separated.o clkdivider-hi6220.o
- obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
- obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
- obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
--obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
-+obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o clk-hi6220-stub.o
-diff --git a/drivers/clk/hisilicon/clk-hi6220-stub.c b/drivers/clk/hisilicon/clk-hi6220-stub.c
-new file mode 100644
-index 0000000..9337d43
---- /dev/null
-+++ b/drivers/clk/hisilicon/clk-hi6220-stub.c
-@@ -0,0 +1,276 @@
-+/*
-+ * Hi6220 stub clock driver
-+ *
-+ * Copyright (c) 2015 Hisilicon Limited.
-+ * Copyright (c) 2015 Linaro Limited.
-+ *
-+ * Author: Leo Yan <leo.yan@linaro.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/mailbox_client.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/regmap.h>
-+
-+/* Stub clocks id */
-+#define HI6220_STUB_ACPU0		0
-+#define HI6220_STUB_ACPU1		1
-+#define HI6220_STUB_GPU			2
-+#define HI6220_STUB_DDR			5
-+
-+/* Mailbox message */
-+#define HI6220_MBOX_MSG_LEN		8
-+
-+#define HI6220_MBOX_FREQ		0xA
-+#define HI6220_MBOX_CMD_SET		0x3
-+#define HI6220_MBOX_OBJ_AP		0x0
-+
-+/* CPU dynamic frequency scaling */
-+#define ACPU_DFS_FREQ_MAX		0x1724
-+#define ACPU_DFS_CUR_FREQ		0x17CC
-+#define ACPU_DFS_FLAG			0x1B30
-+#define ACPU_DFS_FREQ_REQ		0x1B34
-+#define ACPU_DFS_FREQ_LMT		0x1B38
-+#define ACPU_DFS_LOCK_FLAG		0xAEAEAEAE
-+
-+#define to_stub_clk(hw) container_of(hw, struct hi6220_stub_clk, hw)
-+
-+struct hi6220_stub_clk {
-+	u32 id;
-+
-+	struct device *dev;
-+	struct clk_hw hw;
-+
-+	struct regmap *dfs_map;
-+	struct mbox_client cl;
-+	struct mbox_chan *mbox;
-+};
-+
-+struct hi6220_mbox_msg {
-+	unsigned char type;
-+	unsigned char cmd;
-+	unsigned char obj;
-+	unsigned char src;
-+	unsigned char para[4];
-+};
-+
-+union hi6220_mbox_data {
-+	unsigned int data[HI6220_MBOX_MSG_LEN];
-+	struct hi6220_mbox_msg msg;
-+};
-+
-+static unsigned int hi6220_acpu_get_freq(struct hi6220_stub_clk *stub_clk)
-+{
-+	unsigned int freq;
-+
-+	regmap_read(stub_clk->dfs_map, ACPU_DFS_CUR_FREQ, &freq);
-+	return freq;
-+}
-+
-+static int hi6220_acpu_set_freq(struct hi6220_stub_clk *stub_clk,
-+				unsigned int freq)
-+{
-+	union hi6220_mbox_data data;
-+
-+	/* set the frequency in sram */
-+	regmap_write(stub_clk->dfs_map, ACPU_DFS_FREQ_REQ, freq);
-+
-+	/* compound mailbox message */
-+	data.msg.type = HI6220_MBOX_FREQ;
-+	data.msg.cmd  = HI6220_MBOX_CMD_SET;
-+	data.msg.obj  = HI6220_MBOX_OBJ_AP;
-+	data.msg.src  = HI6220_MBOX_OBJ_AP;
-+
-+	mbox_send_message(stub_clk->mbox, &data);
-+	return 0;
-+}
-+
-+static int hi6220_acpu_round_freq(struct hi6220_stub_clk *stub_clk,
-+				  unsigned int freq)
-+{
-+	unsigned int limit_flag, limit_freq = UINT_MAX;
-+	unsigned int max_freq;
-+
-+	/* check the constrained frequency */
-+	regmap_read(stub_clk->dfs_map, ACPU_DFS_FLAG, &limit_flag);
-+	if (limit_flag == ACPU_DFS_LOCK_FLAG)
-+		regmap_read(stub_clk->dfs_map, ACPU_DFS_FREQ_LMT, &limit_freq);
-+
-+	/* check the supported maximum frequency */
-+	regmap_read(stub_clk->dfs_map, ACPU_DFS_FREQ_MAX, &max_freq);
-+
-+	/* calculate the real maximum frequency */
-+	max_freq = min(max_freq, limit_freq);
-+
-+	if (WARN_ON(freq > max_freq))
-+		freq = max_freq;
-+
-+	return freq;
-+}
-+
-+static unsigned long hi6220_stub_clk_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	u32 rate = 0;
-+	struct hi6220_stub_clk *stub_clk = to_stub_clk(hw);
-+
-+	switch (stub_clk->id) {
-+	case HI6220_STUB_ACPU0:
-+		rate = hi6220_acpu_get_freq(stub_clk);
-+
-+		/* convert from kHz to Hz */
-+		rate *= 1000;
-+		break;
-+
-+	default:
-+		dev_err(stub_clk->dev, "%s: un-supported clock id %d\n",
-+			__func__, stub_clk->id);
-+		break;
-+	}
-+
-+	return rate;
-+}
-+
-+static int hi6220_stub_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+                    unsigned long parent_rate)
-+{
-+	struct hi6220_stub_clk *stub_clk = to_stub_clk(hw);
-+	unsigned long new_rate = rate / 1000;  /* kHz */
-+	int ret = 0;
-+
-+	switch (stub_clk->id) {
-+	case HI6220_STUB_ACPU0:
-+		ret = hi6220_acpu_set_freq(stub_clk, new_rate);
-+		if (ret < 0)
-+			return ret;
-+
-+		break;
-+
-+	default:
-+		dev_err(stub_clk->dev, "%s: un-supported clock id %d\n",
-+			__func__, stub_clk->id);
-+		break;
-+	}
-+
-+	pr_debug("%s: set rate=%ldkHz\n", __func__, new_rate);
-+	return ret;
-+}
-+
-+static long hi6220_stub_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long *parent_rate)
-+{
-+	struct hi6220_stub_clk *stub_clk = to_stub_clk(hw);
-+	unsigned long new_rate = rate / 1000;  /* kHz */
-+
-+	switch (stub_clk->id) {
-+	case HI6220_STUB_ACPU0:
-+		new_rate = hi6220_acpu_round_freq(stub_clk, new_rate);
-+
-+		/* convert from kHz to Hz */
-+		new_rate *= 1000;
-+		break;
-+
-+	default:
-+		dev_err(stub_clk->dev, "%s: un-supported clock id %d\n",
-+			__func__, stub_clk->id);
-+		break;
-+	}
-+
-+	return new_rate;
-+}
-+
-+static const struct clk_ops hi6220_stub_clk_ops = {
-+	.recalc_rate	= hi6220_stub_clk_recalc_rate,
-+	.round_rate	= hi6220_stub_clk_round_rate,
-+	.set_rate	= hi6220_stub_clk_set_rate,
-+};
-+
-+static int hi6220_stub_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct clk_init_data init;
-+	struct hi6220_stub_clk *stub_clk;
-+	struct clk *clk;
-+	struct device_node *np = pdev->dev.of_node;
-+	int ret;
-+
-+	stub_clk = devm_kzalloc(dev, sizeof(*stub_clk), GFP_KERNEL);
-+	if (!stub_clk)
-+		return -ENOMEM;
-+
-+	stub_clk->dfs_map = syscon_regmap_lookup_by_phandle(np,
-+				"hisilicon,hi6220-clk-sram");
-+	if (IS_ERR(stub_clk->dfs_map)) {
-+		dev_err(dev, "failed to get sram regmap\n");
-+		return PTR_ERR(stub_clk->dfs_map);
-+	}
-+
-+	stub_clk->hw.init = &init;
-+	stub_clk->dev = dev;
-+	stub_clk->id = HI6220_STUB_ACPU0;
-+
-+	/* Use mailbox client with blocking mode */
-+	stub_clk->cl.dev = dev;
-+	stub_clk->cl.tx_done = NULL;
-+	stub_clk->cl.tx_block = true;
-+	stub_clk->cl.tx_tout = 500;
-+	stub_clk->cl.knows_txdone = false;
-+
-+	/* Allocate mailbox channel */
-+	stub_clk->mbox = mbox_request_channel(&stub_clk->cl, 0);
-+	if (IS_ERR(stub_clk->mbox)) {
-+		dev_err(dev, "failed get mailbox channel\n");
-+		return PTR_ERR(stub_clk->mbox);
-+	};
-+
-+	init.name = "acpu0";
-+	init.ops = &hi6220_stub_clk_ops;
-+	init.num_parents = 0;
-+	init.flags = CLK_IS_ROOT;
-+
-+	clk = devm_clk_register(dev, &stub_clk->hw);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	ret = of_clk_add_provider(np, of_clk_src_simple_get, clk);
-+	if (ret) {
-+		dev_err(dev, "failed to register OF clock provider\n");
-+		return ret;
-+	}
-+
-+	/* initialize buffer to zero */
-+	regmap_write(stub_clk->dfs_map, ACPU_DFS_FLAG, 0x0);
-+	regmap_write(stub_clk->dfs_map, ACPU_DFS_FREQ_REQ, 0x0);
-+	regmap_write(stub_clk->dfs_map, ACPU_DFS_FREQ_LMT, 0x0);
-+
-+	dev_dbg(dev, "Registered clock '%s'\n", init.name);
-+	return 0;
-+}
-+
-+static const struct of_device_id hi6220_stub_clk_of_match[] = {
-+	{ .compatible = "hisilicon,hi6220-stub-clk", },
-+	{}
-+};
-+
-+static struct platform_driver hi6220_stub_clk_driver = {
-+	.driver	= {
-+		.name = "hi6220-stub-clk",
-+		.of_match_table = hi6220_stub_clk_of_match,
-+	},
-+	.probe = hi6220_stub_clk_probe,
-+};
-+
-+static int __init hi6220_stub_clk_init(void)
-+{
-+	return platform_driver_register(&hi6220_stub_clk_driver);
-+}
-+subsys_initcall(hi6220_stub_clk_init);
--- 
-1.9.1
 
+> ---
+>
+> This depends on the series that introduces clk_hw_get_name()[1].
+>
+> [1] http://lkml.kernel.org/r/<1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+>
+>   drivers/clk/clk-si5351.c | 16 ++++++++--------
+>   1 file changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+> index 4b2ee39f05fd..5596c0aac22f 100644
+> --- a/drivers/clk/clk-si5351.c
+> +++ b/drivers/clk/clk-si5351.c
+> @@ -439,7 +439,7 @@ static unsigned long si5351_pll_recalc_rate(struct clk_hw *hw,
+>
+>   	dev_dbg(&hwdata->drvdata->client->dev,
+>   		"%s - %s: p1 = %lu, p2 = %lu, p3 = %lu, parent_rate = %lu, rate = %lu\n",
+> -		__func__, __clk_get_name(hwdata->hw.clk),
+> +		__func__, clk_hw_get_name(hw),
+>   		hwdata->params.p1, hwdata->params.p2, hwdata->params.p3,
+>   		parent_rate, (unsigned long)rate);
+>
+> @@ -497,7 +497,7 @@ static long si5351_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+>
+>   	dev_dbg(&hwdata->drvdata->client->dev,
+>   		"%s - %s: a = %lu, b = %lu, c = %lu, parent_rate = %lu, rate = %lu\n",
+> -		__func__, __clk_get_name(hwdata->hw.clk), a, b, c,
+> +		__func__, clk_hw_get_name(hw), a, b, c,
+>   		*parent_rate, rate);
+>
+>   	return rate;
+> @@ -521,7 +521,7 @@ static int si5351_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>
+>   	dev_dbg(&hwdata->drvdata->client->dev,
+>   		"%s - %s: p1 = %lu, p2 = %lu, p3 = %lu, parent_rate = %lu, rate = %lu\n",
+> -		__func__, __clk_get_name(hwdata->hw.clk),
+> +		__func__, clk_hw_get_name(hw),
+>   		hwdata->params.p1, hwdata->params.p2, hwdata->params.p3,
+>   		parent_rate, rate);
+>
+> @@ -632,7 +632,7 @@ static unsigned long si5351_msynth_recalc_rate(struct clk_hw *hw,
+>
+>   	dev_dbg(&hwdata->drvdata->client->dev,
+>   		"%s - %s: p1 = %lu, p2 = %lu, p3 = %lu, m = %lu, parent_rate = %lu, rate = %lu\n",
+> -		__func__, __clk_get_name(hwdata->hw.clk),
+> +		__func__, clk_hw_get_name(hw),
+>   		hwdata->params.p1, hwdata->params.p2, hwdata->params.p3,
+>   		m, parent_rate, (unsigned long)rate);
+>
+> @@ -745,7 +745,7 @@ static long si5351_msynth_round_rate(struct clk_hw *hw, unsigned long rate,
+>
+>   	dev_dbg(&hwdata->drvdata->client->dev,
+>   		"%s - %s: a = %lu, b = %lu, c = %lu, divby4 = %d, parent_rate = %lu, rate = %lu\n",
+> -		__func__, __clk_get_name(hwdata->hw.clk), a, b, c, divby4,
+> +		__func__, clk_hw_get_name(hw), a, b, c, divby4,
+>   		*parent_rate, rate);
+>
+>   	return rate;
+> @@ -777,7 +777,7 @@ static int si5351_msynth_set_rate(struct clk_hw *hw, unsigned long rate,
+>
+>   	dev_dbg(&hwdata->drvdata->client->dev,
+>   		"%s - %s: p1 = %lu, p2 = %lu, p3 = %lu, divby4 = %d, parent_rate = %lu, rate = %lu\n",
+> -		__func__, __clk_get_name(hwdata->hw.clk),
+> +		__func__, clk_hw_get_name(hw),
+>   		hwdata->params.p1, hwdata->params.p2, hwdata->params.p3,
+>   		divby4, parent_rate, rate);
+>
+> @@ -1042,7 +1042,7 @@ static long si5351_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
+>
+>   	dev_dbg(&hwdata->drvdata->client->dev,
+>   		"%s - %s: rdiv = %u, parent_rate = %lu, rate = %lu\n",
+> -		__func__, __clk_get_name(hwdata->hw.clk), (1 << rdiv),
+> +		__func__, clk_hw_get_name(hw), (1 << rdiv),
+>   		*parent_rate, rate);
+>
+>   	return rate;
+> @@ -1093,7 +1093,7 @@ static int si5351_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
+>
+>   	dev_dbg(&hwdata->drvdata->client->dev,
+>   		"%s - %s: rdiv = %u, parent_rate = %lu, rate = %lu\n",
+> -		__func__, __clk_get_name(hwdata->hw.clk), (1 << rdiv),
+> +		__func__, clk_hw_get_name(hw), (1 << rdiv),
+>   		parent_rate, rate);
+>
+>   	return 0;
+>
