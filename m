@@ -1,156 +1,114 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:46163 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933555AbbHKIDW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 11 Aug 2015 04:03:22 -0400
-Message-ID: <55C9AC41.9050608@ti.com>
-Date: Tue, 11 Aug 2015 11:03:13 +0300
-From: Jyri Sarha <jsarha@ti.com>
-MIME-Version: 1.0
-To: Michael Allwright <michael.allwright@upb.de>
-CC: <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH RFC] clk-gpio-gate: use prepare/unprepare to do the GPIO
- work
-References: <CALcgO_49YPGoCOv23Vz9vbnq9+AN3WqvYyg9_TtvsQcz8ia2Hw@mail.gmail.com>	<55C9A349.8080807@ti.com> <CALcgO_7=_WOV8oEi2Nj-WnpWY=nXJH15heBB-OfgJJNmGTPQUg@mail.gmail.com>
-In-Reply-To: <CALcgO_7=_WOV8oEi2Nj-WnpWY=nXJH15heBB-OfgJJNmGTPQUg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+	k.kozlowski@samsung.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+	cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH 2/4] clk: samsung: exynos3250: Add MMC2 clock
+Date: Tue, 11 Aug 2015 12:46:22 +0900
+Message-id: <1439264784-30322-3-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
+References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/11/15 10:54, Michael Allwright wrote:
-> On 11 August 2015 at 09:24, Jyri Sarha <jsarha@ti.com> wrote:
->> On 08/10/15 17:50, Michael Allwright wrote:
->>>
->>>   From 19512587a6799c3cb96dc3f95d989b7c778a6f8c Mon Sep 17 00:00:00 2001
->>> From: Michael Allwright <allsey87@gmail.com>
->>> Date: Mon, 10 Aug 2015 16:44:05 +0200
->>> Subject: [PATCH] clk-gpio-gate: use prepare/unprepare ops to control clock
->>>    enabling via gpiod_set_value_cansleep. This allows for GPIO expanders on
->>> I2C
->>>    and SPI buses
->>>
->>
->> Hi,
->> I sounds a bit weird if a clock gets turned on already at the prepare state,
->> but I can see that this is the simples solution to your problem. Anyway, at
->> least this should not be the default behavior. If this is really widely
->> needed then adding a flag to device tree binding for changing the behavior
->> would sound more feasible, but then again I am no common clock framework
->> expert. Better to turn to CCF maintainers for that.
->>
->> BTW, if you propose some clk-gpio-gate changes to mainline, you should know
->> that the clk-gpio-gate.c was replaced with clk-gpio.c in linux-next. The new
->> file contains both gpio-gate and gpio-mux functionality. I think this is the
->> patch set was applied:
->> http://www.spinics.net/lists/linux-clk/msg01280.html
->>
->> Best regards,
->> Jyri
->
-> Thanks for the reply Jyri, if you have a look over on slide #18 of
-> http://elinux.org/images/b/b8/Elc2013_Clement.pdf - I think this use
-> case has been considered and that actually doing the enable work in
-> prepare could be an acceptable solution. How do/should we get in
-> contact with the CCF maintainers?
->
-> Cheers,
->
-> Michael
->
+This patch add the MMC2 clocks (mux, divider, gate) of Exynos3250 SoC.
 
-Checking from MAINTAINERS file in linux git:
-COMMON CLK FRAMEWORK
-M:      Michael Turquette <mturquette@baylibre.com>
-M:      Stephen Boyd <sboyd@codeaurora.org>
-L:      linux-clk@vger.kernel.org
-T:      git git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-S:      Maintained
-F:      drivers/clk/
-X:      drivers/clk/clkdev.c
-F:      include/linux/clk-pr*
-F:      include/linux/clk/
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos3250.c   | 9 +++++++++
+ include/dt-bindings/clock/exynos3250.h | 7 ++++++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
 
-Cheers,
-Jyri
-
-
->>> ---$ grep -A 3 "COMMON CLK FRAMEWORK" MAINTAINERS
-COMMON CLK FRAMEWORK
-M:      Michael Turquette <mturquette@baylibre.com>
-M:      Stephen Boyd <sboyd@codeaurora.org>
-L:      linux-clk@vger.kernel.org
-
->>>    drivers/clk/clk-gpio-gate.c | 31 ++++++++++++++++++++++++-------
->>>    1 file changed, 24 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/clk/clk-gpio-gate.c b/drivers/clk/clk-gpio-gate.c
->>> index a71cabe..432edd9 100644
->>> --- a/drivers/clk/clk-gpio-gate.c
->>> +++ b/drivers/clk/clk-gpio-gate.c
->>> @@ -22,8 +22,8 @@
->>>     * DOC: basic gpio gated clock which can be enabled and disabled
->>>     *      with gpio output
->>>     * Traits of this clock:
->>> - * prepare - clk_(un)prepare only ensures parent is (un)prepared
->>> - * enable - clk_enable and clk_disable are functional & control gpio
->>> + * prepare - clk_(un)prepare ensures parent is (un)prepared and control
->>> gpio
->>> + * enable - clk_enable and clk_disable only ensures parent is
->>> enabled/disabled
->>>     * rate - inherits rate from parent.  No clk_set_rate support
->>>     * parent - fixed parent.  No clk_set_parent support
->>>     */
->>> @@ -32,28 +32,45 @@
->>>
->>>    static int clk_gpio_gate_enable(struct clk_hw *hw)
->>>    {
->>> +    return 0;
->>> +}
->>> +
->>> +static void clk_gpio_gate_disable(struct clk_hw *hw)
->>> +{
->>> +}
->>> +
->>> +static int clk_gpio_gate_is_enabled(struct clk_hw *hw)
->>> +{
->>> +    return 0;
->>> +}
->>> +
->>> +static int clk_gpio_gate_prepare(struct clk_hw *hw)
->>> +{
->>>        struct clk_gpio *clk = to_clk_gpio(hw);
->>>
->>> -    gpiod_set_value(clk->gpiod, 1);
->>> +    gpiod_set_value_cansleep(clk->gpiod, 1);
->>>
->>>        return 0;
->>>    }
->>>
->>> -static void clk_gpio_gate_disable(struct clk_hw *hw)
->>> +static void clk_gpio_gate_unprepare(struct clk_hw *hw)
->>>    {
->>>        struct clk_gpio *clk = to_clk_gpio(hw);
->>>
->>> -    gpiod_set_value(clk->gpiod, 0);
->>> +    gpiod_set_value_cansleep(clk->gpiod, 0);
->>>    }
->>>
->>> -static int clk_gpio_gate_is_enabled(struct clk_hw *hw)
->>> +static int clk_gpio_gate_is_prepared(struct clk_hw *hw)
->>>    {
->>>        struct clk_gpio *clk = to_clk_gpio(hw);
->>>
->>> -    return gpiod_get_value(clk->gpiod);
->>> +    return gpiod_get_value_cansleep(clk->gpiod);
->>>    }
->>>
->>>    const struct clk_ops clk_gpio_gate_ops = {
->>> +    .prepare = clk_gpio_gate_prepare,
->>> +    .unprepare = clk_gpio_gate_unprepare,
->>> +    .is_prepared = clk_gpio_gate_is_prepared,
->>>        .enable = clk_gpio_gate_enable,
->>>        .disable = clk_gpio_gate_disable,
->>>        .is_enabled = clk_gpio_gate_is_enabled,
->>>
->>
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index 2105863a3ace..2683cf03e656 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -303,6 +303,7 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
+ 
+ 	/* SRC_FSYS */
+ 	MUX(CLK_MOUT_TSADC, "mout_tsadc", group_sclk_p, SRC_FSYS, 28, 4),
++	MUX(CLK_MOUT_MMC2, "mout_mmc2", group_sclk_p, SRC_FSYS, 8, 4),
+ 	MUX(CLK_MOUT_MMC1, "mout_mmc1", group_sclk_p, SRC_FSYS, 4, 4),
+ 	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 4),
+ 
+@@ -389,6 +390,11 @@ static struct samsung_div_clock div_clks[] __initdata = {
+ 		CLK_SET_RATE_PARENT, 0),
+ 	DIV(CLK_DIV_MMC0, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
+ 
++	/* DIV_FSYS2 */
++	DIV_F(CLK_DIV_MMC2_PRE, "div_mmc2_pre", "div_mmc2", DIV_FSYS2, 8, 8,
++		CLK_SET_RATE_PARENT, 0),
++	DIV(CLK_DIV_MMC2, "div_mmc2", "mout_mmc2", DIV_FSYS2, 0, 4),
++
+ 	/* DIV_PERIL0 */
+ 	DIV(CLK_DIV_UART2, "div_uart2", "mout_uart2", DIV_PERIL0, 8, 4),
+ 	DIV(CLK_DIV_UART1, "div_uart1", "mout_uart1", DIV_PERIL0, 4, 4),
+@@ -539,6 +545,8 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+ 		GATE_SCLK_FSYS, 9, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_EBI, "sclk_ebi", "div_ebi",
+ 		GATE_SCLK_FSYS, 6, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_MMC2, "sclk_mmc2", "div_mmc2_pre",
++		GATE_SCLK_FSYS, 2, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_MMC1, "sclk_mmc1", "div_mmc1_pre",
+ 		GATE_SCLK_FSYS, 1, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "div_mmc0_pre",
+@@ -634,6 +642,7 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+ 	GATE(CLK_USBOTG, "usbotg", "div_aclk_200", GATE_IP_FSYS, 13, 0, 0),
+ 	GATE(CLK_USBHOST, "usbhost", "div_aclk_200", GATE_IP_FSYS, 12, 0, 0),
+ 	GATE(CLK_SROMC, "sromc", "div_aclk_200", GATE_IP_FSYS, 11, 0, 0),
++	GATE(CLK_SDMMC2, "sdmmc2", "div_aclk_200", GATE_IP_FSYS, 7, 0, 0),
+ 	GATE(CLK_SDMMC1, "sdmmc1", "div_aclk_200", GATE_IP_FSYS, 6, 0, 0),
+ 	GATE(CLK_SDMMC0, "sdmmc0", "div_aclk_200", GATE_IP_FSYS, 5, 0, 0),
+ 	GATE(CLK_PDMA1, "pdma1", "div_aclk_200", GATE_IP_FSYS, 1, 0, 0),
+diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
+index 89a7d97b002c..fbc9ef61b191 100644
+--- a/include/dt-bindings/clock/exynos3250.h
++++ b/include/dt-bindings/clock/exynos3250.h
+@@ -79,6 +79,7 @@
+ #define CLK_MOUT_APLL			59
+ #define CLK_MOUT_ACLK_266_SUB		60
+ #define CLK_MOUT_UART2			61
++#define CLK_MOUT_MMC2			62
+ 
+ /* Dividers */
+ #define CLK_DIV_GPL			64
+@@ -128,6 +129,8 @@
+ #define CLK_DIV_HPM			108
+ #define CLK_DIV_COPY			109
+ #define CLK_DIV_UART2			110
++#define CLK_DIV_MMC2_PRE		111
++#define CLK_DIV_MMC2			112
+ 
+ /* Gates */
+ #define CLK_ASYNC_G3D			128
+@@ -225,6 +228,7 @@
+ #define CLK_BLOCK_CAM			220
+ #define CLK_SMIES			221
+ #define CLK_UART2			222
++#define CLK_SDMMC2			223
+ 
+ /* Special clocks */
+ #define CLK_SCLK_JPEG			224
+@@ -252,12 +256,13 @@
+ #define CLK_SCLK_UART1			246
+ #define CLK_SCLK_UART0			247
+ #define CLK_SCLK_UART2			248
++#define CLK_SCLK_MMC2			249
+ 
+ /*
+  * Total number of clocks of main CMU.
+  * NOTE: Must be equal to last clock ID increased by one.
+  */
+-#define CLK_NR_CLKS			249
++#define CLK_NR_CLKS			250
+ 
+ /*
+  * CMU DMC
+-- 
+1.8.5.5
 
