@@ -1,97 +1,76 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Shengjiu Wang <shengjiu.wang@freescale.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH V1 3/3] ARM: imx6sx: Add SPDIF_GCLK clock in clock tree
+Date: Tue, 11 Aug 2015 17:26:54 +0800
+Message-ID: <d1ffad5bac99d16c3b8377a2cc9370e35efcc7e7.1439284957.git.shengjiu.wang@freescale.com>
+In-Reply-To: <cover.1439284957.git.shengjiu.wang@freescale.com>
+References: <cover.1439284957.git.shengjiu.wang@freescale.com>
 MIME-Version: 1.0
-In-Reply-To: <2414716.nTJ39zAhgn@phil>
-References: <7060610.CC2Q1RMG2L@phil>
- <CAD=FV=UG_QkU0W5tpb3Y7zxuq6X7dtQmC4m5_j9vMtJgjdiquQ@mail.gmail.com>
- <20150824234319.GG14330@codeaurora.org> <2414716.nTJ39zAhgn@phil>
-Date: Wed, 26 Aug 2015 14:47:30 -0700
-Message-ID: <CAMAWPa_6pY3cGBpSWH1soKfEThgd_X3-iq9tO6O25-edzFVuyg@mail.gmail.com>
-Subject: Re: [PATCH] clk: rockchip: register pll mux before pll itself
-From: Kevin Hilman <khilman@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Doug Anderson <dianders@chromium.org>,
- "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
- linux-clk@vger.kernel.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Aug 24, 2015 at 11:53 PM, Heiko Stuebner <heiko@sntech.de> wrote:
-> Am Montag, 24. August 2015, 16:43:19 schrieb Stephen Boyd:
->> On 08/24, Doug Anderson wrote:
->> > Heiko
->> >
->> > On Wed, Aug 19, 2015 at 6:06 AM, Heiko Stuebner <heiko@sntech.de> wrote:
->> > > The structure is xin24m -> pll -> pll-mux (xin24m,pll,xin32k). The pll
->> > > does have an init callback to make sure the boot-selected frequency is
->> > > using the expected pll settings and resets the same frequency using
->> > > the values provided in the driver if necessary.
->> > >
->> > > The setting itself also involves remuxing the pll-mux temporarily to
->> > > the xin24m source to let the new pll rate settle. Until now this worked
->> > > flawlessly, even when it had the flaw of accessing the mux settings
->> > > before the mux actually got registered.
->> > >
->> > > With the recent clock-core conversions this flaw became apparent in
->> > > null pointer dereference in
->> > > [<c03fc400>] (clk_hw_get_num_parents) from [<c0400df0>]
->> > > (clk_mux_get_parent+0x14/0xc8) [<c0400ddc>] (clk_mux_get_parent) from
->> > > [<c040246c>] (rockchip_rk3066_pll_set_rate+0xd8/0x320)
->> > >
->> > > So to fix that, simply register the pll-mux before the pll, so that
->> > > it will be fully initialized when the pll clock executes its init-
->> > > callback and possibly touches the pll-mux clock.
->> > >
->> > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->> > > ---
->> > > This only surfaced with the clk_core changes for 4.3, so should
->> > > probably just go on top.
->> > >
->> > >  drivers/clk/rockchip/clk-pll.c | 63
->> > >  +++++++++++++++++++++--------------------- 1 file changed, 32
->> > >  insertions(+), 31 deletions(-)
->> >
->> > Fixes boot crash on rk3288-veyron-jerry on next-20150824.  It'd be
->> > super great to get this landed somewhere so that we can boot linuxnext
->> > again.  :)
->> >
->> > Tested-by: Douglas Anderson <dianders@chromium.org>
->>
->> So I understand the fix, but how could it have ever possibly
->> worked flawlessly? clk_mux_get_parent() should have returned
->> -EINVAL through that u8 which would have meant that the check in
->> rockchip_rk3066_pll_set_rate() for cur_parent == PLL_MODE_NORM
->> would never have been true, and we would never have switched the
->> PLL mux over. I guess we've been getting away with this because
->> we don't need to actually switch the mux at this time?
->
-> The manual mandates the switch away from the pll source before touching the
-> pll settings, aka to the slow mode from the 24MHz source. I guess we were
-> lucky it simply still worked nevertheless.
->
-> In normal rate changes both clocks will have been registered already, so only
-> the init callback is affected and also only runs on plls that generate the rate
-> from a different settings-touple that what we have in the rate-table, so not
-> even all plls normally.
+As spdif driver will register SPDIF clock to regmap, regmap will do
+clk_prepare in init function, so SPDIF clock is prepared in probe, then its
+root clock (pll clock) is prepared also, which cause the arm can't enter
+low power mode.
+Add SPDIF_GCLK in clock tree which share same gate bits with SPDIF clock.
+Its root clock is ipg clock, and register it to regmap, then the issue can
+be fixed.
 
-FYI... I also confirm this patch is needed to boot linux-next on the
-rk3288-veyron-jerry.
+Signed-off-by: Shengjiu Wang <shengjiu.wang@freescale.com>
+---
+ arch/arm/boot/dts/imx6sx.dtsi            | 2 +-
+ drivers/clk/imx/clk-imx6sx.c             | 1 +
+ include/dt-bindings/clock/imx6sx-clock.h | 3 ++-
+ 3 files changed, 4 insertions(+), 2 deletions(-)
 
-Tested-by: Kevin Hilman <khilman@linaro.org>
+diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
+index e391d63..af9c28e 100644
+--- a/arch/arm/boot/dts/imx6sx.dtsi
++++ b/arch/arm/boot/dts/imx6sx.dtsi
+@@ -211,7 +211,7 @@
+ 					dmas = <&sdma 14 18 0>,
+ 					       <&sdma 15 18 0>;
+ 					dma-names = "rx", "tx";
+-					clocks = <&clks IMX6SX_CLK_SPDIF>,
++					clocks = <&clks IMX6SX_CLK_SPDIF_GCLK>,
+ 						 <&clks IMX6SX_CLK_OSC>,
+ 						 <&clks IMX6SX_CLK_SPDIF>,
+ 						 <&clks 0>, <&clks 0>, <&clks 0>,
+diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+index 5b95c2c..f2bc511 100644
+--- a/drivers/clk/imx/clk-imx6sx.c
++++ b/drivers/clk/imx/clk-imx6sx.c
+@@ -454,6 +454,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SX_CLK_SPBA]         = imx_clk_gate2("spba",          "ipg",               base + 0x7c, 12);
+ 	clks[IMX6SX_CLK_AUDIO]        = imx_clk_gate2_shared("audio",  "audio_podf",        base + 0x7c, 14, &share_count_audio);
+ 	clks[IMX6SX_CLK_SPDIF]        = imx_clk_gate2_shared("spdif",  "spdif_podf",        base + 0x7c, 14, &share_count_audio);
++	clks[IMX6SX_CLK_SPDIF_GCLK]   = imx_clk_gate2_shared("spdif_gclk",    "ipg",        base + 0x7c, 14, &share_count_audio);
+ 	clks[IMX6SX_CLK_SSI1_IPG]     = imx_clk_gate2_shared("ssi1_ipg",      "ipg",        base + 0x7c, 18, &share_count_ssi1);
+ 	clks[IMX6SX_CLK_SSI2_IPG]     = imx_clk_gate2_shared("ssi2_ipg",      "ipg",        base + 0x7c, 20, &share_count_ssi2);
+ 	clks[IMX6SX_CLK_SSI3_IPG]     = imx_clk_gate2_shared("ssi3_ipg",      "ipg",        base + 0x7c, 22, &share_count_ssi3);
+diff --git a/include/dt-bindings/clock/imx6sx-clock.h b/include/dt-bindings/clock/imx6sx-clock.h
+index 9957091..36f0324 100644
+--- a/include/dt-bindings/clock/imx6sx-clock.h
++++ b/include/dt-bindings/clock/imx6sx-clock.h
+@@ -274,6 +274,7 @@
+ #define IMX6SX_PLL5_BYPASS		261
+ #define IMX6SX_PLL6_BYPASS		262
+ #define IMX6SX_PLL7_BYPASS		263
+-#define IMX6SX_CLK_CLK_END		264
++#define IMX6SX_CLK_SPDIF_GCLK		264
++#define IMX6SX_CLK_CLK_END		265
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6SX_H */
+-- 
+1.9.1
 
-Kevin
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
