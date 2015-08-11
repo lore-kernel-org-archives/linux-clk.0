@@ -1,88 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from sender163-mail.zoho.com ([74.201.84.163]:25628 "EHLO
-	sender163-mail.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752674AbbHVPKH (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sat, 22 Aug 2015 11:10:07 -0400
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 7.3 \(1878.6\))
-Subject: Re: [PATCH] clk: rockchip: handle critical clocks after registrering all clocks
-From: Michael Niewoehner <linux@mniewoehner.de>
-In-Reply-To: <7786473.0oe27txQFN@phil>
-Date: Sat, 22 Aug 2015 17:04:52 +0200
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-rockchip@lists.infradead.org, linus.walleij@linaro.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Message-Id: <12B8A81E-1B35-4EF1-AEC4-08714F91AEC0@mniewoehner.de>
-References: <7786473.0oe27txQFN@phil>
-To: Heiko Stuebner <heiko@sntech.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 11 Aug 2015 13:03:12 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Maxime Coquelin <maxime.coquelin@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+Message-ID: <20150811120312.GF18282@x1>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+ <20150810144811.GN3249@x1>
+ <20150810185516.2416.32293@quantum>
+ <20150811084329.GA13374@x1>
+ <55C9C82F.6060401@st.com>
+ <CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com>
+ <55C9DE57.2090105@st.com>
+ <55C9DF7B.4040308@st.com>
+ <CAMuHMdVvS2n=J5paZzXdtD0vZ4Q4m9k7XeF_MF1zV4pD-nk9aw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAMuHMdVvS2n=J5paZzXdtD0vZ4Q4m9k7XeF_MF1zV4pD-nk9aw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, 11 Aug 2015, Geert Uytterhoeven wrote:
 
-Am 21.08.2015 um 19:51 schrieb Heiko Stuebner <heiko@sntech.de>:
+> Hi Maxime,
+> 
+> On Tue, Aug 11, 2015 at 1:41 PM, Maxime Coquelin <maxime.coquelin@st.com> wrote:
+> > On 08/11/2015 01:36 PM, Maxime Coquelin wrote:
+> >> On 08/11/2015 12:11 PM, Geert Uytterhoeven wrote:
+> >>> On Tue, Aug 11, 2015 at 12:02 PM, Maxime Coquelin
+> >>> <maxime.coquelin@st.com> wrote:
+> >>>> How can we pass CLK_ENABLE_HAND_OFF flag to a specific clock on STi
+> >>>> platform?
+> >>>
+> >>> Add the flag to the relevant clocks in the C code, e.g. in
+> >>> clk_register_flexgen():
+> >>>
+> >>>          if (!strcmp(name, "clk-icn-cpu"))
+> >>>                  init.flags |= CLK_ENABLE_HAND_OFF;
+> >
+> > The main problem I see with this proposal is that clk_register_flexgen() is
+> > called for several SoCs (STiH407/410/418...).
+> > Each of these SoCs have this clock, but maybe STiH407 will need the flag,
+> > but not STiH410 and STiH418.
+> > So I think the best place to set this information is in DT, where the
+> > differentiation is made between the SoCs.
+> 
+> If (of_machine_is_compatible("st,stih410")) ...
 
-> Currently the registration of critical clocks is done in the function
-> shared between rk3066 and rk3188 clock trees. That results in them
-> getting handled maybe before all of them are registered.
-> 
-> Therefore move the critical clock handling down to the end of the soc-
-> specific clock registration function, so that all clocks are registered
-> before they're maybe handled as critical clock.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Tested-by: Michael Niewoehner <linux@mniewoehner.de>
-> ---
-> It looks like with the recent flexibilization of the gpio clocks in the
-> pinctrl driver, we're shaking out some oddities from the clock trees.
-> This is another one that surfaced.
-> 
-> drivers/clk/rockchip/clk-rk3188.c | 7 +++++--
-> 1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-
-> rk3188.c
-> index faa6695..bd88542 100644
-> --- a/drivers/clk/rockchip/clk-rk3188.c
-> +++ b/drivers/clk/rockchip/clk-rk3188.c
-> @@ -744,8 +744,6 @@ static void __init rk3188_common_clk_init(struct 
-> device_node *np)
-> 
-> 	rockchip_clk_register_branches(common_clk_branches,
-> 				  ARRAY_SIZE(common_clk_branches));
-> -	rockchip_clk_protect_critical(rk3188_critical_clocks,
-> -				      ARRAY_SIZE(rk3188_critical_clocks));
-> 
-> 	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
-> 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-> @@ -765,6 +763,8 @@ static void __init rk3066a_clk_init(struct device_node 
-> *np)
-> 			mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
-> 			&rk3066_cpuclk_data, rk3066_cpuclk_rates,
-> 			ARRAY_SIZE(rk3066_cpuclk_rates));
-> +	rockchip_clk_protect_critical(rk3188_critical_clocks,
-> +				      ARRAY_SIZE(rk3188_critical_clocks));
-> }
-> CLK_OF_DECLARE(rk3066a_cru, "rockchip,rk3066a-cru", rk3066a_clk_init);
-> 
-> @@ -801,6 +801,9 @@ static void __init rk3188a_clk_init(struct device_node 
-> *np)
-> 		pr_warn("%s: missing clocks to reparent aclk_cpu_pre to gpll\n",
-> 			__func__);
-> 	}
-> +
-> +	rockchip_clk_protect_critical(rk3188_critical_clocks,
-> +				      ARRAY_SIZE(rk3188_critical_clocks));
-> }
-> CLK_OF_DECLARE(rk3188a_cru, "rockchip,rk3188a-cru", rk3188a_clk_init);
-> 
-> -- 
-> 2.1.4
-> 
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+This is getting very messy.
 
+Ideally we'd like to keep platform code out of device drivers.
+Critical clock description belongs in DT for our use-case.  We can
+write code to extract the information from there and set the flag is
+Mike's solution is deemed appropriate.
 
+With regards to your "Software Policy Vs Hardware Description"
+comment; we already have 10's of "Software Policy" bindings which do
+not describe hardware in the purest sense; frequency specifications,
+line/voltage levels, GPIO configuration, the list goes on.
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
