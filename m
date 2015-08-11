@@ -1,143 +1,39 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v3 2/4] clk: qcom: Add support for RCGs with shared branches
-Date: Thu, 13 Aug 2015 17:48:35 +0300
-Message-Id: <1439477317-1902-3-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1439477317-1902-1-git-send-email-georgi.djakov@linaro.org>
-References: <1439477317-1902-1-git-send-email-georgi.djakov@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <maxime.coquelin@st.com>
+Message-ID: <55C9C82F.6060401@st.com>
+Date: Tue, 11 Aug 2015 12:02:23 +0200
+From: Maxime Coquelin <maxime.coquelin@st.com>
+MIME-Version: 1.0
+To: Lee Jones <lee.jones@linaro.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <maxime.ripard@free-electrons.com>,
+        <s.hauer@pengutronix.de>, <geert@linux-m68k.org>
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com> <1438974570-20812-4-git-send-email-mturquette@baylibre.com> <20150810144811.GN3249@x1> <20150810185516.2416.32293@quantum> <20150811084329.GA13374@x1>
+In-Reply-To: <20150811084329.GA13374@x1>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Some root clock generators may have child branches that are controlled
-by different CPUs. These RCGs require some special operations:
- - some enable bits have to be toggled when we set the rate;
- - if RCG is disabled we only cache the rate and set it later when enabled;
- - when the RCG is disabled, the mux is set to the safe source;
+Hi Mike,
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/clk-rcg.h  |    4 ++-
- drivers/clk/qcom/clk-rcg2.c |   77 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 80 insertions(+), 1 deletion(-)
+On 08/11/2015 10:43 AM, Lee Jones wrote:
+> On Mon, 10 Aug 2015, Michael Turquette wrote:
+>
+>>
+>>
+>> ST's driver is an unfortunate case. All of the clock data was shoved
+>> into DT before we had a clue that doing so is a terrible idea.
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index 56028bb31d87..0693b9e0b15e 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -153,8 +153,8 @@ extern const struct clk_ops clk_dyn_rcg_ops;
-  * @hid_width: number of bits in half integer divider
-  * @parent_map: map from software's parent index to hardware's src_sel field
-  * @freq_tbl: frequency table
-+ * @current_freq: last cached frequency when using branches with shared RCGs
-  * @clkr: regmap clock handle
-- * @lock: register lock
-  *
-  */
- struct clk_rcg2 {
-@@ -163,12 +163,14 @@ struct clk_rcg2 {
- 	u8			hid_width;
- 	const struct parent_map	*parent_map;
- 	const struct freq_tbl	*freq_tbl;
-+	unsigned long		current_freq;
- 	struct clk_regmap	clkr;
- };
- 
- #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
- 
- extern const struct clk_ops clk_rcg2_ops;
-+extern const struct clk_ops clk_rcg2_shared_ops;
- extern const struct clk_ops clk_edp_pixel_ops;
- extern const struct clk_ops clk_byte_ops;
- extern const struct clk_ops clk_pixel_ops;
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 9aec1761fd29..681faf2dcdc5 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -300,6 +300,83 @@ const struct clk_ops clk_rcg2_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_rcg2_ops);
- 
-+static int clk_rcg2_shared_force_enable(struct clk_hw *hw, unsigned long rate)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	const char *name = clk_hw_get_name(hw);
-+	int ret, count;
-+
-+	/* force enable RCG */
-+	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
-+				 CMD_ROOT_EN, CMD_ROOT_EN);
-+	if (ret)
-+		return ret;
-+
-+	/* wait for RCG to turn ON */
-+	for (count = 500; count > 0; count--) {
-+		ret = clk_rcg2_is_enabled(hw);
-+		if (ret)
-+			break;
-+		udelay(1);
-+	}
-+	if (!count)
-+		pr_err("%s: RCG did not turn on\n", name);
-+
-+	/* set clock rate */
-+	ret = __clk_rcg2_set_rate(hw, rate);
-+	if (ret)
-+		return ret;
-+
-+	/* clear force enable RCG */
-+	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
-+				 CMD_ROOT_EN, 0);
-+}
-+
-+static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	/* cache the rate */
-+	rcg->current_freq = rate;
-+
-+	if (!__clk_is_enabled(hw->clk))
-+		return 0;
-+
-+	return clk_rcg2_shared_force_enable(hw, rcg->current_freq);
-+}
-+
-+static int clk_rcg2_shared_enable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	const char *name = clk_hw_get_name(hw);
-+
-+	if (!rcg->current_freq) {
-+		pr_err("%s: Please set rate before enabling\n", name);
-+		rcg->current_freq = rcg->freq_tbl[0].freq;
-+	}
-+
-+	return clk_rcg2_shared_force_enable(hw, rcg->current_freq);
-+}
-+
-+static void clk_rcg2_shared_disable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	/* switch to XO, which is the lowest entry in the freq table */
-+	clk_rcg2_shared_set_rate(hw, rcg->freq_tbl[0].freq, 0);
-+}
-+
-+const struct clk_ops clk_rcg2_shared_ops = {
-+	.enable = clk_rcg2_shared_enable,
-+	.disable = clk_rcg2_shared_disable,
-+	.get_parent = clk_rcg2_get_parent,
-+	.recalc_rate = clk_rcg2_recalc_rate,
-+	.determine_rate = clk_rcg2_determine_rate,
-+	.set_rate = clk_rcg2_shared_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
-+
- struct frac_entry {
- 	int num;
- 	int den;
+I tend to agree, and wouldn't do it this way if we could rewrite the 
+history.
+But now, we have to support it.
+
+How can we pass CLK_ENABLE_HAND_OFF flag to a specific clock on STi 
+platform?
+
+Could we imagine having a kind of "clocks-enable-hand-off" property we 
+could use in our clock controller DT node?
+
+Regards,
+Maxime
