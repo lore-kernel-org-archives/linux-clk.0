@@ -1,123 +1,91 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20150829091346.28546.42552.sendpatchset@little-apple>
-References: <20150829091323.28546.28287.sendpatchset@little-apple>
-	<20150829091346.28546.42552.sendpatchset@little-apple>
-Date: Mon, 31 Aug 2015 10:45:30 +0200
-Message-ID: <CAMuHMdUR7gYXoJMRGXdcReZ4fX+2SQDvTsK8Jny67GcW995_9Q@mail.gmail.com>
-Subject: Re: [PATCH v4 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
-	Linux-sh list <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ "Maxime Coquelin" <maxime.coquelin@st.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com>
+Cc: "Lee Jones" <lee.jones@linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-clk@vger.kernel.org, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Maxime Ripard" <maxime.ripard@free-electrons.com>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+ <20150810144811.GN3249@x1> <20150810185516.2416.32293@quantum>
+ <20150811084329.GA13374@x1> <55C9C82F.6060401@st.com>
+ <CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com>
+Message-ID: <20150811170928.2416.70005@quantum>
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+Date: Tue, 11 Aug 2015 10:09:28 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus,
+Quoting Geert Uytterhoeven (2015-08-11 03:11:05)
+> Hi Maxime,
+> =
 
-On Sat, Aug 29, 2015 at 11:13 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
->
-> This patch adds initial CPG support for R-Car Generation 3 and in
-> particular the R8A7795 SoC.
->
-> The R-Car Gen3 clock hardware has a register write protection feature that
-> needs to be shared between the CPG function needs to be shared between
-> the CPG and MSTP hardware somehow. So far this feature is simply ignored.
->
-> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> ---
->
->  Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
->  - Reworked driver to incorporate most feedback from Stephen Boyd - thanks!!
->  - Major things like syscon and driver model require more discussion.
->  - Added hunk to build drivers/clk/shmobile if ARCH_RENESAS is set.
+> On Tue, Aug 11, 2015 at 12:02 PM, Maxime Coquelin
+> <maxime.coquelin@st.com> wrote:
+> > How can we pass CLK_ENABLE_HAND_OFF flag to a specific clock on STi
+> > platform?
+> =
 
-Thanks for the updates!
+> Add the flag to the relevant clocks in the C code, e.g. in
+> clk_register_flexgen():
+> =
 
->  Changes since V2: (Magnus Damm <damm+renesas@opensource.se>)
->  - Reworked driver to rely on clock index instead of strings.
+>         if (!strcmp(name, "clk-icn-cpu"))
+>                 init.flags |=3D CLK_ENABLE_HAND_OFF;
+> =
 
-I had completely missed this part in the previous version...
+> > Could we imagine having a kind of "clocks-enable-hand-off" property we =
+could
+> > use in our clock controller DT node?
+> =
 
->  - Dropped use of "clock-output-names".
+> You can imagine doing "flex_flags |=3D CLK_ENABLE_HAND_OFF" in
+> st_of_flexgen_setup(), depending on the presence of such a property.
 
+This is precisely what Lee is trying to avoid. The would constitute a
+hand-rolled, open-code, gather-and-mark exercise that drivers would have
+to re-invent each time. (rough paraphrase of what Lee said)
 
-> --- /dev/null
-> +++ work/drivers/clk/shmobile/clk-rcar-gen3.c   2015-08-29 16:30:59.032366518 +0900
-> @@ -0,0 +1,249 @@
+I think that we can come up with a reasonable DT wrapper around the
+flag. I will be ecstatic if we can agree that the meaning of the flag
+can be tweaked just a bit to mean, "prevent this critical clock from
+being disabled, as it was enabled out of reset or by the bootloader,
+until a driver claims it and calls clk_prepare_enable".
 
-> +#define RCAR_GEN3_CLK_MAIN     0
-> +#define RCAR_GEN3_CLK_PLL0     1
-> +#define RCAR_GEN3_CLK_PLL1     2
-> +#define RCAR_GEN3_CLK_PLL2     3
-> +#define RCAR_GEN3_CLK_PLL3     4
-> +#define RCAR_GEN3_CLK_PLL4     5
+Then everyone should be happy.
 
-These values are intimately tied to R8A7795_CLK_* in
-include/dt-bindings/clock/r8a7795-clock.h.
-Perhaps we can use these instead?
+Regards,
+Mike
 
-If we ever have a Gen3 SoC with more clocks, we have to update
-this anyway.
+> =
 
-> +struct rcar_gen3_cpg {
-> +       struct clk_onecell_data data;
-> +       spinlock_t lock;
-> +       void __iomem *reg;
+> However, not disabling clocks is a software policy, not a hardware descri=
+ption,
+> so IMHO it doesn't belong in DT.
+> =
 
-If you add the clocks here, you don't have to allocate them separately
-later:
+> Gr{oetje,eeting}s,
+> =
 
-        struct clk clocks[...];
+>                         Geert
+> =
 
-> +static void __init rcar_gen3_cpg_clocks_init(struct device_node *np)
-> +{
-> +       const struct cpg_pll_config *config;
-> +       struct rcar_gen3_cpg *cpg;
-> +       struct clk **clks;
-> +       u32 cpg_mode;
-> +       unsigned int i;
-> +       int num_clks;
-> +
-> +       cpg_mode = rcar_gen3_read_mode_pins();
-> +
-> +       num_clks = of_property_count_strings(np, "clock-indices");
-> +       if (num_clks < 0) {
-> +               pr_err("%s: failed to count clocks\n", __func__);
-> +               return;
-> +       }
-> +
-> +       cpg = kzalloc(sizeof(*cpg), GFP_KERNEL);
-> +       clks = kcalloc(num_clks, sizeof(*clks), GFP_KERNEL);
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+> =
 
-I.e. these 2 allocation can be combined by embedding the struct clks in
-struct rcar_gen3_cpg...
-
-> +       if (cpg == NULL || clks == NULL) {
-> +               kfree(cpg);
-> +               kfree(clks);
-
-... and there's no longer a need to kfree() anything.
-
-> +               pr_err("%s: failed to allocate cpg\n", __func__);
-
-There's no need to print an error on allocation failures. The system
-will scream anyway (if there's already a console ;-).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
