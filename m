@@ -1,47 +1,102 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <Govindraj.Raja@imgtec.com>
-To: Andrew Bresticker <abrestic@chromium.org>
-CC: Linux-MIPS <linux-mips@linux-mips.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Stephen
- Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
-	Zdenko Pulitika <Zdenko.Pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, James Hartley
-	<James.Hartley@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>, James
- Hogan <James.Hogan@imgtec.com>, "Ezequiel Garcia"
-	<ezequiel@vanguardiasur.com.ar>, Ezequiel Garcia <Ezequiel.Garcia@imgtec.com>
-Subject: RE: [PATCH 6/6] clk: pistachio: correct critical clock list
-Date: Thu, 6 Aug 2015 16:50:34 +0000
-Message-ID: <4BF5E8683E87FC4DA89822A5A3EB60CB6F2313@hhmail02.hh.imgtec.org>
-References: <1438868890-7810-1-git-send-email-govindraj.raja@imgtec.com>
- <CAL1qeaHLqj+vicU8FbxSnJW81STP4uPbOMnM5m42ecBJu1Vokg@mail.gmail.com>
-In-Reply-To: <CAL1qeaHLqj+vicU8FbxSnJW81STP4uPbOMnM5m42ecBJu1Vokg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Shengjiu Wang <shengjiu.wang@freescale.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH V1 2/3] ARM: imx6sl: Add SPDIF_GCLK clock in clock tree
+Date: Tue, 11 Aug 2015 17:26:53 +0800
+Message-ID: <22e9a375a152703a52895af8d2596f6f58b93249.1439284957.git.shengjiu.wang@freescale.com>
+In-Reply-To: <cover.1439284957.git.shengjiu.wang@freescale.com>
+References: <cover.1439284957.git.shengjiu.wang@freescale.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgQW5kcmV3LA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGFicmVz
-dGljQGdvb2dsZS5jb20gW21haWx0bzphYnJlc3RpY0Bnb29nbGUuY29tXSBPbiBCZWhhbGYgT2Yg
-QW5kcmV3DQo+IEJyZXN0aWNrZXINCj4gU2VudDogMDYgQXVndXN0IDIwMTUgMDU6MzcgUE0NCj4g
-VG86IEdvdmluZHJhaiBSYWphDQo+IENjOiBMaW51eC1NSVBTOyBsaW51eC1jbGtAdmdlci5rZXJu
-ZWwub3JnOyBNaWtlIFR1cnF1ZXR0ZTsgU3RlcGhlbiBCb3lkOw0KPiBNaWNoYWVsIFR1cnF1ZXR0
-ZTsgWmRlbmtvIFB1bGl0aWthOyBLZXZpbiBDZXJuZWtlZTsgUmFsZiBCYWVjaGxlOyBKYW1lcyBI
-YXJ0bGV5Ow0KPiBEYW1pZW4gSG9yc2xleTsgSmFtZXMgSG9nYW47IEV6ZXF1aWVsIEdhcmNpYTsg
-RXplcXVpZWwgR2FyY2lhDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggNi82XSBjbGs6IHBpc3RhY2hp
-bzogY29ycmVjdCBjcml0aWNhbCBjbG9jayBsaXN0DQo+IA0KPiBHb3ZpbmRyYWosDQo+IA0KPiBP
-biBUaHUsIEF1ZyA2LCAyMDE1IGF0IDY6NDggQU0sIEdvdmluZHJhaiBSYWphIDxnb3ZpbmRyYWou
-cmFqYUBpbWd0ZWMuY29tPg0KPiB3cm90ZToNCj4gPiBGcm9tOiAiRGFtaWVuLkhvcnNsZXkiIDxE
-YW1pZW4uSG9yc2xleUBpbWd0ZWMuY29tPg0KPiA+DQo+ID4gQ3VycmVudCBjcml0aWNhbCBjbG9j
-ayBsaXN0IGZvciBwaXN0YWNoaW8gZW5hYmxlcyBvbmx5IG1pcHMgYW5kIHN5cw0KPiA+IGNsb2Nr
-cyBieSBkZWZhdWx0IGJ1dCB0aGVyZSBhbHNvIG90aGVyIGNsb2NrcyB0aGF0IGFyZSBub3QgY2xh
-aW1lZCBieQ0KPiA+IGFueW9uZSBhbmQgbmVlZHMgdG8gYmUgZW5hYmxlZCBieSBkZWZhdWx0Lg0K
-PiA+DQo+ID4gVGhpcyBwYXRjaCB1cGRhdGVzIHRoZSBjcml0aWNhbCBjbG9ja3MgdGhhdCBuZWVk
-cyB0byBlbmFibGVkIGJ5DQo+ID4gZGVmYXVsdC4NCj4gPg0KPiA+IEFkZCBhIHNlcGFyYXRlIHN0
-cnVjdCB0byBkaXN0aW5ndWlzaCB0aGUgY3JpdGljYWwgY2xvY2tzIG9uZSBpcyBjb3JlDQo+ID4g
-Y2xvY2sobWlwcykgYW5kIG90aGVycyBhcmUgZnJvbSBwZXJpcGhfY2xrXyoNCj4gPg0KPiA+IFJl
-dmlld2VkLWJ5OiBBbmRyZXcgQnJlc3RpY2tlciA8YWJyZXN0aWNAY2hyb21pdW0ub3JnPg0KPiA+
-IFNpZ25lZC1vZmYtYnk6IEV6ZXF1aWVsIEdhcmNpYSA8ZXplcXVpZWwuZ2FyY2lhQGltZ3RlYy5j
-b20+DQo+ID4gU2lnbmVkLW9mZi1ieTogRGFtaWVuLkhvcnNsZXkgPERhbWllbi5Ib3JzbGV5QGlt
-Z3RlYy5jb20+DQo+IA0KPiBTaW5jZSB5b3UncmUgdGhlIG9uZSBzZW5kaW5nIHRoZSBwYXRjaCwg
-eW91IHNob3VsZCBpbmNsdWRlIHlvdXIgU2lnbmVkLW9mZi1ieS4NCg0KVGhhbmtzIGZvciB0aGUg
-cmV2aWV3LCBJIHdpbGwgZml4IHRoZSBjb21tZW50cyBhbmQgcG9zdCB2Mi4NCg0KLS0NClRoYW5r
-cywNCkdvdmluZHJhai5SDQoNCg==
+As spdif driver will register SPDIF clock to regmap, regmap will do
+clk_prepare in init function, so SPDIF clock is prepared in probe, then its
+root clock (pll clock) is prepared also, which cause the arm can't enter
+low power mode.
+Add SPDIF_GCLK in clock tree which share same gate bits with SPDIF clock.
+Its root clock is ipg clock, and register it to regmap, then the issue can
+be fixed.
+
+Signed-off-by: Shengjiu Wang <shengjiu.wang@freescale.com>
+---
+ arch/arm/boot/dts/imx6sl.dtsi            | 16 ++++++++++++++++
+ drivers/clk/imx/clk-imx6sl.c             |  4 +++-
+ include/dt-bindings/clock/imx6sl-clock.h |  3 ++-
+ 3 files changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx6sl.dtsi b/arch/arm/boot/dts/imx6sl.dtsi
+index 320a27f..c247756 100644
+--- a/arch/arm/boot/dts/imx6sl.dtsi
++++ b/arch/arm/boot/dts/imx6sl.dtsi
+@@ -135,8 +135,24 @@
+ 				ranges;
+ 
+ 				spdif: spdif@02004000 {
++					compatible = "fsl,imx6sl-spdif",
++						"fsl,imx35-spdif";
+ 					reg = <0x02004000 0x4000>;
+ 					interrupts = <0 52 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&sdma 14 18 0>,
++						<&sdma 15 18 0>;
++					dma-names = "rx", "tx";
++					clocks = <&clks IMX6SL_CLK_SPDIF_GCLK>, <&clks IMX6SL_CLK_OSC>,
++						 <&clks IMX6SL_CLK_SPDIF>, <&clks IMX6SL_CLK_DUMMY>,
++						 <&clks IMX6SL_CLK_DUMMY>, <&clks IMX6SL_CLK_DUMMY>,
++						 <&clks IMX6SL_CLK_IPG>, <&clks IMX6SL_CLK_DUMMY>,
++						 <&clks IMX6SL_CLK_DUMMY>, <&clks IMX6SL_CLK_SPBA>;
++					clock-names = "core", "rxtx0",
++						"rxtx1", "rxtx2",
++						"rxtx3", "rxtx4",
++						"rxtx5", "rxtx6",
++						"rxtx7", "dma";
++					status = "disabled";
+ 				};
+ 
+ 				ecspi1: ecspi@02008000 {
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index a0d4cf2..a73cedd 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -97,6 +97,7 @@ static struct clk_div_table video_div_table[] = {
+ static unsigned int share_count_ssi1;
+ static unsigned int share_count_ssi2;
+ static unsigned int share_count_ssi3;
++static unsigned int share_count_spdif;
+ 
+ static struct clk *clks[IMX6SL_CLK_END];
+ static struct clk_onecell_data clk_data;
+@@ -391,7 +392,8 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SL_CLK_PWM4]         = imx_clk_gate2("pwm4",         "perclk",            base + 0x78, 22);
+ 	clks[IMX6SL_CLK_SDMA]         = imx_clk_gate2("sdma",         "ipg",               base + 0x7c, 6);
+ 	clks[IMX6SL_CLK_SPBA]         = imx_clk_gate2("spba",         "ipg",               base + 0x7c, 12);
+-	clks[IMX6SL_CLK_SPDIF]        = imx_clk_gate2("spdif",        "spdif0_podf",       base + 0x7c, 14);
++	clks[IMX6SL_CLK_SPDIF]        = imx_clk_gate2_shared("spdif",     "spdif0_podf",   base + 0x7c, 14, &share_count_spdif);
++	clks[IMX6SL_CLK_SPDIF_GCLK]   = imx_clk_gate2_shared("spdif_gclk",  "ipg",         base + 0x7c, 14, &share_count_spdif);
+ 	clks[IMX6SL_CLK_SSI1_IPG]     = imx_clk_gate2_shared("ssi1_ipg",     "ipg",        base + 0x7c, 18, &share_count_ssi1);
+ 	clks[IMX6SL_CLK_SSI2_IPG]     = imx_clk_gate2_shared("ssi2_ipg",     "ipg",        base + 0x7c, 20, &share_count_ssi2);
+ 	clks[IMX6SL_CLK_SSI3_IPG]     = imx_clk_gate2_shared("ssi3_ipg",     "ipg",        base + 0x7c, 22, &share_count_ssi3);
+diff --git a/include/dt-bindings/clock/imx6sl-clock.h b/include/dt-bindings/clock/imx6sl-clock.h
+index 9ce4e42..e14573e 100644
+--- a/include/dt-bindings/clock/imx6sl-clock.h
++++ b/include/dt-bindings/clock/imx6sl-clock.h
+@@ -174,6 +174,7 @@
+ #define IMX6SL_CLK_SSI1_IPG		161
+ #define IMX6SL_CLK_SSI2_IPG		162
+ #define IMX6SL_CLK_SSI3_IPG		163
+-#define IMX6SL_CLK_END			164
++#define IMX6SL_CLK_SPDIF_GCLK		164
++#define IMX6SL_CLK_END			165
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6SL_H */
+-- 
+1.9.1
+
