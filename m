@@ -1,101 +1,220 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <govindraj.raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Mike Turquette
-	<mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, "Michael
- Turquette" <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Govindraj Raja <govindraj.raja@imgtec.com>
-Subject: [PATCH 3/6] clk: pistachio: Fix pll rate calculation in integer mode
-Date: Thu, 6 Aug 2015 14:43:31 +0100
-Message-ID: <1438868614-7672-4-git-send-email-govindraj.raja@imgtec.com>
-In-Reply-To: <1438868614-7672-1-git-send-email-govindraj.raja@imgtec.com>
-References: <1438868614-7672-1-git-send-email-govindraj.raja@imgtec.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 11 Aug 2015 10:11:46 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, maxime.ripard@free-electrons.com,
+	s.hauer@pengutronix.de, geert@linux-m68k.org
+Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and
+ implement hand-off
+Message-ID: <20150811091146.GB13374@x1>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <20150810153638.GO3249@x1>
+ <20150810192810.2416.25672@quantum>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20150810192810.2416.25672@quantum>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+On Mon, 10 Aug 2015, Michael Turquette wrote:
+> Quoting Lee Jones (2015-08-10 08:36:38)
+> > On Fri, 07 Aug 2015, Michael Turquette wrote:
+> > > This is an alternative solution to Lee's "clk: Provide support for
+> > > always-on clocks" series[0].
+> >  
+> > So after all the hours of work that's been put in and all of the
+> > versions that have been authored, you're just going to write your own
+> > solution anyway, without any further discussion?
+> 
+> This certainly seems like "further discussion" to me. In fact the
+> capital C in RFC pretty much announces that this is a big, wide open
+> discussion.
+> 
+> If I had ninja-merged the patches then I would understand your
+> frustration, but that clearly is not the case.
 
-.recalc_rate callback for the fractional pll doesn't take operating
-mode into account when calculating pll rate. This results in
-the incorrect pll rates when pll is operating in integer mode.
+This doesn't have anything to do with merging code.
 
-This commit fixes this by checking the operating mode before
-calculating pll rate.
+When contributors submit patches to subsystem I maintain, I provide
+reviews, advice and guidance.  If I think an approach is wrong, I
+state why I think that and provide ideas for an alternative approach
+if required.  If instead of providing feedback I just replied with a
+patch-set containing my own alternative method, I would expect the
+original submitter to be justifiably cross.
 
-Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
-Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
----
- drivers/clk/pistachio/clk-pll.c | 30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+> > That's one way to make your contributors feel valued.
+> 
+> Lee, your contributions are very much valued. You and I both know that
+> there are times when a concept is far better communicated with code than
+> with prose. This is one of those times. The DT-centric solution that
+> requires a clock consumer driver to call clk_disable() before calling
+> clk_enable() (an obvious violation of the clk.h api) is just plain wrong
+> and this implementation hopes to get it back on the right course.
 
-diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
-index 9a38a2b..8802b2e 100644
---- a/drivers/clk/pistachio/clk-pll.c
-+++ b/drivers/clk/pistachio/clk-pll.c
-@@ -65,6 +65,10 @@
- #define MIN_OUTPUT_FRAC			12000000UL
- #define MAX_OUTPUT_FRAC			1600000000UL
- 
-+/* Fractional PLL operating modes */
-+#define PLL_MODE_INT			1
-+#define PLL_MODE_FRAC			0
-+
- struct pistachio_clk_pll {
- 	struct clk_hw hw;
- 	void __iomem *base;
-@@ -99,6 +103,15 @@ static inline struct pistachio_clk_pll *to_pistachio_pll(struct clk_hw *hw)
- 	return container_of(hw, struct pistachio_clk_pll, hw);
- }
- 
-+static inline u32 pll_frac_get_mode(struct clk_hw *hw)
-+{
-+	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
-+	u32 val;
-+
-+	val = pll_readl(pll, PLL_CTRL3) & PLL_FRAC_CTRL3_DSMPD;
-+	return val ? PLL_MODE_INT : PLL_MODE_FRAC;
-+}
-+
- static struct pistachio_pll_rate_table *
- pll_get_params(struct pistachio_clk_pll *pll, unsigned long fref,
- 	       unsigned long fout)
-@@ -180,7 +193,15 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (!params || !params->refdiv)
- 		return -EINVAL;
- 
--	vco = div64_u64(params->fref * params->fbdiv, params->refdiv);
-+	/* get operating mode and calculate vco accordingly */
-+	vco = params->fref;
-+	if (pll_frac_get_mode(hw) == PLL_MODE_INT)
-+		vco *= params->fbdiv << 24;
-+	else
-+		vco *= (params->fbdiv << 24) + params->frac;
-+
-+	vco = div64_u64(vco, params->refdiv << 24);
-+
- 	if (vco < MIN_VCO_FRAC_FRAC || vco > MAX_VCO_FRAC_FRAC)
- 		pr_warn("%s: VCO %llu is out of range %lu..%lu\n", name, vco,
- 			MIN_VCO_FRAC_FRAC, MAX_VCO_FRAC_FRAC);
-@@ -247,8 +268,13 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
- 		PLL_FRAC_CTRL2_POSTDIV2_MASK;
- 	frac = (val >> PLL_FRAC_CTRL2_FRAC_SHIFT) & PLL_FRAC_CTRL2_FRAC_MASK;
- 
-+	/* get operating mode (int/frac) and calculate rate accordingly */
- 	rate = parent_rate;
--	rate *= (fbdiv << 24) + frac;
-+	if (pll_frac_get_mode(hw) == PLL_MODE_FRAC)
-+		rate *= (fbdiv << 24) + frac;
-+	else
-+		rate *= (fbdiv << 24);
-+
- 	rate = do_div_round_closest(rate, (prediv * postdiv1 * postdiv2) << 24);
- 
- 	return rate;
+See my previous email about what I think about "bastardizing the clk.h
+api".
+
+> > > The first two patches introduce run-time checks to ensure that clock
+> > > consumer drivers are respecting the clk.h api. The former patch checks
+> > > for prepare and enable imbalances. The latter checks for calls to
+> > > clk_put without first disabling and unpreparing the clk.
+> > 
+> > Are these real issues that people are having trouble with, or just
+> > hypothetical ones?  I can understand the need for them if they're
+> > causing people some pain, but if they are unnecessarily hardening the
+> > API, then it makes it difficult for proper issues (such as critical
+> > clocks) to be solved easily.
+> 
+> They are deeply related. Per-user accounting gives us a graceful method
+> to implement hand-off, which is the real feature that is needed here.
+
+The hand-off feature was mentioned a week ago, as part of an 8 month
+discussion.  This only aids knowledgeable consumers to turn of a
+critical clock after the introduction of the API tightening which
+happens in _this_ set.  So I disagree that this is the "real feature
+that is needed here".
+
+The _real_ feature that's required is a generic way to keep critical
+clocks enabled and a way for them to be gated if another driver knows
+best.  Granted this method is pretty clean for drivers which have all
+of their platform data in driver code, but it's still not ideal.
+
+> > > The third patch introduces a new flag, CLK_ENABLE_HAND_OFF, which
+> > > prepares and enables a clk at registration-time. The reference counts
+> > > (prepare & enable) are transferred to the first clock consumer driver
+> > > that clk_get's the clk with this flag set AND calls clk_prepare or
+> > > clk_enable.
+> > > 
+> > > The net result is that a clock with this flag set will be enabled at
+> > > boot and neither the clk_disable_unused garbage collector or the
+> > > "sibling clock disables a shared parent" scenario will cause the flagged
+> > > clock to be disabled.
+> > 
+> > I'm not sure if the third patch actually solves the _real_ issue you
+> > allude to here.  The original critical (then called always-on) clock
+> > patch-set solved it just fine.  However others were concerned about
+> > how you would then turn the clock off if some knowledgeable consumer
+> > (who knew the full consequences of their actions) came along and had a
+> > good reason to gate it.  That, the turning off the clock if still
+> > desired is what the third patch _actually_ solves.
+> > 
+> > Now we are back where we started however, and still need to figure out
+> > a generic method to mark the clocks (either by setting a FLAG or
+> > actually calling enable()) as critical.
+> 
+> The third patch:
+> 
+> 1) implements an always-on behavior
+> 2) allows knowledgeable drivers to gate the clock
+> 3) marks such clocks with a flag
+> 
+> What is missing?
+
+The difficuly is marking the clock in the first place.  We already
+have drivers doing 1), just not in a generic way.  This solution is
+more generic (as was mine), but it's still not completely generic.
+
+2) is a new requirement that would have required a little more
+thought.  My solution to this was only in V1/RFC and admitted would
+have required a little more discussion.
+
+3) isn't really a 'thing'.
+
+> > > The first driver to come along and explicitly
+> > > claim, prepare and enable this clock will inherit those reference
+> > > counts. No change to clock consumer drivers is required for this to
+> > > work.
+> > 
+> > Do you mean it won't break anything?  I think to make use of the
+> > functionality each of the providers still have to figure out which of
+> > their clocks are critical (which may change from platform to platform)
+> > then mark them as such before registration.
+> 
+> What I meant was: "does not require any new api such as
+> clk_critical_enable() or clk_critical_disable()". There is zero change
+> to clk.h as a part of this series, which is a good thing.
+
+Okay, fine.
+
+> > > Please continue to use the clk.h api properly.
+> > > 
+> > > In time this approach can probably replace the CLK_IGNORE_UNUSED flag
+> > > and hopefully reduce the number of users of the clk_ignore_unused boot
+> > > parameter.
+> > > 
+> > > Finally, a quick note on comparing this series to Lee's. I went with the
+> > > simplest approach to solve a real problem: preventing critical clocks
+> > > from being spuriously disabled at boot, or before a their parent clock
+> > > becomes accidentally disabled by a sibling.
+> > 
+> > This wasn't the problem.  Platforms are already doing this.  The _real_
+> 
+> Yes, this is a very real problem. In fact it is two very real problems:
+> 
+> 1) Platforms are open-coding this "always-on" behavior by calling
+> clk_prepare_enable a bunch in their clock provider driver. I'm still OK
+> with that, but this flag provides a coherent way to do it. And,
+> 
+> 2) Drivers that open-code calls to clk_prepare_enable in their clock
+> provider driver have no way to allow clock knowledgeable consumer
+> drivers to gate those clocks later on.
+> 
+> > problem was doing it in a generic way, so vendors didn't have to roll
+> > their own 'gather' and 'mark' code, which unfortunately they still have
+> > to do with this solution.
+> 
+> There is no gather. The data for clocks belongs in most drivers, just
+> not yours. Marking is as simple as setting a flag (which many drives
+> already do). Please see my response to you in patch #3 for an example.
+
+I have also replied in #3.  No need for me to labour the points here
+too.
+
+> > > All of the other kitchen sink stuff (DT binding, 
+> > 
+> > The DT binding will still be required, at least for ST, as they have
+> > gone for the more Linuxy approach of having a generic set of clock
+> > drivers and provide all of the platform specific information in
+> > platform code (i.e. DT).  So to identify which clocks are critical on
+> > each platform the DT will need to be interrogated in some way.
+> 
+> At the risk of instigating a serious religious conflict, I humbly
+> disagree that using Devicetree as a data-driven interface for device
+> drivers is the "more Linuxy approach". I think that the Devicetree
+> people would disagree with you too.
+> 
+> The more Linuxy approach is for device drivers to contain all of the
+> information they need to function.  Devicetree does a stellar job of
+> linking up providers and consumers of these resources, which is outside
+> the purview of individual drivers.
+
+I agree to disagree.
+
+> > > passing the flag back to the framework when the clock consumer
+> > > driver calls clk_put) was left
+> > 
+> > I'm not sure what this is.
+> > 
+> > > out because I do not see a real use case for it. If one can demonstrate
+> > > a real use case (and not a hypothetical one) then this patch series can
+> > > be expanded further.
+> > > 
+> > > [0] http://lkml.kernel.org/r/<1437570255-21049-1-git-send-email-lee.jones@linaro.org>
+> > > 
+> > > Michael Turquette (3):
+> > >   clk: per-user clk prepare & enable ref counts
+> > >   clk: clk_put WARNs if user has not disabled clk
+> > >   clk: introduce CLK_ENABLE_HAND_OFF flag
+> > > 
+> > >  drivers/clk/clk.c            | 79 +++++++++++++++++++++++++++++++++++++++++---
+> > >  include/linux/clk-provider.h |  3 ++
+> > >  2 files changed, 78 insertions(+), 4 deletions(-)
+> > > 
+> > 
+
 -- 
-1.9.1
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
