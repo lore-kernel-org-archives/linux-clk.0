@@ -1,72 +1,66 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:45480 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932312AbbHKTYH (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 11 Aug 2015 15:24:07 -0400
+Message-ID: <55CA4BC2.4020505@ti.com>
+Date: Tue, 11 Aug 2015 22:23:46 +0300
+From: Grygorii Strashko <grygorii.strashko@ti.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20150826063325.5381.76761.sendpatchset@little-apple>
-References: <20150826063325.5381.76761.sendpatchset@little-apple>
-Date: Wed, 26 Aug 2015 09:25:20 +0200
-Message-ID: <CAMuHMdVEaJ_HXfXj182EpO+iT2E7-hbA+OqM17QnGPWHZC7Fug@mail.gmail.com>
-Subject: Re: [PATCH] clk: shmobile: Get rid of CONFIG_SHMOBILE_MULTI
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	Nishanth Menon <nm@ti.com>
+CC: Thomas Gleixner <tglx@linutronix.de>,
+	<linux-rt-users@vger.kernel.org>, Felipe Balbi <balbi@ti.com>,
+	Sekhar Nori <nsekhar@ti.com>, <linux-clk@vger.kernel.org>
+Subject: Re: Common clock framework API vs RT patchset
+References: <55C0A96F.80307@ti.com> <alpine.DEB.2.11.1508041405290.3983@nanos> <55C0D8F3.3030105@ti.com> <20150804153641.GR7557@n2100.arm.linux.org.uk>
+In-Reply-To: <20150804153641.GR7557@n2100.arm.linux.org.uk>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus,
+Hi All,
 
-On Wed, Aug 26, 2015 at 8:33 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
->
-> Shmobile is all multiplatform these days, so get rid of the
-> reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
-> enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
-> MSTP depending on if they are included in the SoC or not.
->
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+On 08/04/2015 06:36 PM, Russell King - ARM Linux wrote:
+> On Tue, Aug 04, 2015 at 10:23:31AM -0500, Nishanth Menon wrote:
+>> Consider clk_enable/disable/set_parent/setfreq operations. none of these
+>> operations are "atomic" from hardware point of view. instead, they are a
+>> set of steps which culminates to moving from state A to state B of the
+>> clock tree configuration.
+> 
+> There's a world of difference between clk_enable()/clk_disable() and
+> the rest of the clk API.
+> 
+> clk_enable()/clk_disable() _should_ be callable from any context, since
+> you may need to enable or disable a clock from any context.  The remainder
+> of the clk API is callable only from contexts where sleeping is permissible.
+> 
+> The reason we have this split is because clk_enable()/clk_disable() have
+> historically been used in interrupt handlers, and they're specifically
+> not supposed to impose big delays.
+> 
+> Things like waiting for a PLL to re-lock is time-consuming, so it's not
+> something I'd expect to see behind a clk_enable() implementation (the
+> fact you can't sleep in there is a big hint.)  Such waits should be in
+> the clk_prepare() stage instead.
+> 
+> Now, as for clk_enable() being interrupted - if clk_enable() is interrupted
+> and another clk_enable() comes along for the same clock, that second
+> clk_enable() should not return until the clock has actually been enabled,
+> and it's up to the implementation to decode how to achieve that.  If that
+> means a RT implementation using a raw spinlock, then that's one option
+> (which basically would have the side effect of blocking until the preempted
+> clk_enable() finishes its business.)  Alternatively, if we can preempt
+> inside clk_enable(), then the clk_enable() implementation should be written
+> to cope with that (eg, by the second clk_enable() fiddling with the hardware,
+> and the first thread noticing that it has nothing to do.)
+> 
 
-> --- 0001/drivers/clk/shmobile/Makefile
-> +++ work/drivers/clk/shmobile/Makefile  2015-08-26 15:16:57.742366518 +0900
-> @@ -1,13 +1,11 @@
->  obj-$(CONFIG_ARCH_EMEV2)               += clk-emev2.o
-> -obj-$(CONFIG_ARCH_R7S72100)            += clk-rz.o
-> -obj-$(CONFIG_ARCH_R8A73A4)             += clk-r8a73a4.o
-> -obj-$(CONFIG_ARCH_R8A7740)             += clk-r8a7740.o
-> -obj-$(CONFIG_ARCH_R8A7778)             += clk-r8a7778.o
-> -obj-$(CONFIG_ARCH_R8A7779)             += clk-r8a7779.o
-> -obj-$(CONFIG_ARCH_R8A7790)             += clk-rcar-gen2.o
-> -obj-$(CONFIG_ARCH_R8A7791)             += clk-rcar-gen2.o
-> -obj-$(CONFIG_ARCH_R8A7793)             += clk-rcar-gen2.o
-> -obj-$(CONFIG_ARCH_R8A7794)             += clk-rcar-gen2.o
-> -obj-$(CONFIG_ARCH_SH73A0)              += clk-sh73a0.o
-> -obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += clk-div6.o
-> -obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += clk-mstp.o
-> +obj-$(CONFIG_ARCH_R7S72100)            += clk-rz.o clk-mstp.o
-> +obj-$(CONFIG_ARCH_R8A73A4)             += clk-r8a73a4.o clk-mstp.o clk-div6.o
-> +obj-$(CONFIG_ARCH_R8A7740)             += clk-r8a7740.o clk-mstp.o clk-div6.o
-> +obj-$(CONFIG_ARCH_R8A7778)             += clk-r8a7778.o clk-mstp.o clk-div6.o
-> +obj-$(CONFIG_ARCH_R8A7779)             += clk-r8a7779.o clk-mstp.o clk-div6.o
+Thanks a lot for your comments and explanations.
 
-R-Car Gen1 doesn't have div6 clocks.
+Now lock object in CCF is not a raw spinlock, so, seems, I have to update 
+code and try to move clk_enable()/clk_disable() out of atomic context.
 
-If you fix that,
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> +obj-$(CONFIG_ARCH_R8A7790)             += clk-rcar-gen2.o clk-mstp.o clk-div6.o
-> +obj-$(CONFIG_ARCH_R8A7791)             += clk-rcar-gen2.o clk-mstp.o clk-div6.o
-> +obj-$(CONFIG_ARCH_R8A7793)             += clk-rcar-gen2.o clk-mstp.o clk-div6.o
-> +obj-$(CONFIG_ARCH_R8A7794)             += clk-rcar-gen2.o clk-mstp.o clk-div6.o
-> +obj-$(CONFIG_ARCH_SH73A0)              += clk-sh73a0.o clk-mstp.o clk-div6.o
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+regards,
+-grygorii
