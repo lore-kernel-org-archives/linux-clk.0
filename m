@@ -1,115 +1,54 @@
-Return-Path: <pawel.moll@arm.com>
-Message-ID: <1438770574.2142.80.camel@arm.com>
-Subject: Re: [PATCH 1/3] clk: versatile: Switch to assigned clock parents
-From: Pawel Moll <pawel.moll@arm.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	 <linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	 <linux-clk@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Sudeep Holla <Sudeep.Holla@arm.com>
-Date: Wed, 05 Aug 2015 11:29:34 +0100
-In-Reply-To: <55BFAB11.7080600@codeaurora.org>
-References: <55BBB2FC.9030102@codeaurora.org>
-	 <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>
-	 <1438386285-5070-2-git-send-email-sboyd@codeaurora.org>
-	 <1438610480.2142.14.camel@arm.com> <55BFAB11.7080600@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <maxime.coquelin@st.com>
+Message-ID: <55C9E47D.4020606@st.com>
+Date: Tue, 11 Aug 2015 14:03:09 +0200
+From: Maxime Coquelin <maxime.coquelin@st.com>
+MIME-Version: 1.0
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Lee Jones <lee.jones@linaro.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>	<1438974570-20812-4-git-send-email-mturquette@baylibre.com>	<20150810144811.GN3249@x1>	<20150810185516.2416.32293@quantum>	<20150811084329.GA13374@x1>	<55C9C82F.6060401@st.com>	<CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com>	<55C9DE57.2090105@st.com>	<55C9DF7B.4040308@st.com> <CAMuHMdVvS2n=J5paZzXdtD0vZ4Q4m9k7XeF_MF1zV4pD-nk9aw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVvS2n=J5paZzXdtD0vZ4Q4m9k7XeF_MF1zV4pD-nk9aw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2015-08-03 at 18:55 +0100, Stephen Boyd wrote:
-> On 08/03/2015 07:01 AM, Pawel Moll wrote:
-> > On Sat, 2015-08-01 at 00:44 +0100, Stephen Boyd wrote:
-> >> @@ -179,6 +124,15 @@ static void __init clk_sp810_of_setup(struct device_node *node)
-> >>   		sp810->timerclken[i].channel = i;
-> >>   		sp810->timerclken[i].hw.init = &init;
-> >>   
-> >> +		/*
-> >> +		 * If DT isn't setting the parent, force it to be
-> >> +		 * the 1 MHz clock without going through the framework.
-> >> +		 * We do this before clk_register() so that it can determine
-> >> +		 * the parent and setup the tree properly.
-> >> +		 */
-> >> +		if (deprecated)
-> >> +			init.ops->set_parent(&sp810->timerclken[i].hw, 1);
-> >> +
-> >>   		sp810->timerclken[i].clk = clk_register(NULL,
-> >>   				&sp810->timerclken[i].hw);
-> >>   		WARN_ON(IS_ERR(sp810->timerclken[i].clk));
-> > So that's one thing I've got a (small) problem here...
-> >
-> > The above change assumes that SP810 always have 32kHz clock on input 0
-> > and 1MHz clock on input 1. Yes, this is how it made on VExpress, but it
-> > doesn't have to be the case. The magic picking up the faster clock was
-> > added to handle all possible cases.
-> >
-> > The bottom line is: if all we care is VExpress than it works, but it's
-> > still a hack. Personally I don't like it, however I won't nak the patch
-> > because of this.
-> 
-> All current dts files in the kernel tree have 1MHz on input 1, so we 
-> make this change here to set the parent to input 1 if there isn't an 
-> assigned-clock-parents property.
 
-That's what I said - all VE platforms known to me will work, because
-they all have the clocks wired up the same way. And I still don't like
-code in a "generic SP810 driver" assuming this. Call me what you
-want ;-)
 
-> Presumably new dts files should have 
-> the new property so that things work properly. 
+On 08/11/2015 01:49 PM, Geert Uytterhoeven wrote:
+> Hi Maxime,
+>
+> On Tue, Aug 11, 2015 at 1:41 PM, Maxime Coquelin <maxime.coquelin@st.com> wrote:
+>> On 08/11/2015 01:36 PM, Maxime Coquelin wrote:
+>>> On 08/11/2015 12:11 PM, Geert Uytterhoeven wrote:
+>>>> On Tue, Aug 11, 2015 at 12:02 PM, Maxime Coquelin
+>>>> <maxime.coquelin@st.com> wrote:
+>>>>> How can we pass CLK_ENABLE_HAND_OFF flag to a specific clock on STi
+>>>>> platform?
+>>>> Add the flag to the relevant clocks in the C code, e.g. in
+>>>> clk_register_flexgen():
+>>>>
+>>>>           if (!strcmp(name, "clk-icn-cpu"))
+>>>>                   init.flags |= CLK_ENABLE_HAND_OFF;
+>> The main problem I see with this proposal is that clk_register_flexgen() is
+>> called for several SoCs (STiH407/410/418...).
+>> Each of these SoCs have this clock, but maybe STiH407 will need the flag,
+>> but not STiH410 and STiH418.
+>> So I think the best place to set this information is in DT, where the
+>> differentiation is made between the SoCs.
+> If (of_machine_is_compatible("st,stih410")) ...
+>
+It works, but is it really what we want?
+Each time we will add a new soc, we will have to patch this SoC agnostic 
+function?
+With the number of SoCs and the number of clocks, it will be a nightmare 
+to maintain and debug, no?
 
-Sure, no argument here.
-
-> I tried to find the 
-> binding document, but it doesn't look to exist, so I didn't have 
-> anything to update.
-
-Right, that's probably my fault. The sp810 nodes appeared in the VE
-trees very early (in terms of the "DT era"), when we weren't so strict
-about documentation. So far, it would be fairly simple, something like
-the text below - feel free to take it, mend it, extend it with your
-changes and include in the series:
-
-Thanks!
-
-Pawel
-
-8<-------------------------
-
-SP810 System Controller
------------------------
-
-Required properties:
-
-- compatible:	standard compatible string for a Primecell peripheral,
-		see Documentation/devicetree/bindings/arm/primecell.txt
-		for more details
-		should be: "arm,sp810", "arm,primecell"
-
-- reg:		standard registers property, physical address and size
-		of the control registers
-
-- clock-names:	from the common clock bindings, for more details see
-		Documentation/devicetree/bindings/clock/clock-bindings.txt;
-		should be: "refclk", "timclk", "apb_pclk"
-
-- clocks:	from the common clock bindings, phandle and clock
-		specifier pairs for the entries of clock-names property
-
-- #clock-cells:	from the common clock bindings;
-		should be: <1>
-
-- clock-output-names:	from the common clock bindings;
-		should be: "timerclken0", "timerclken1", "timerclken2", "timerclken3"
-
-Example:
-	sysctl@020000 {
-		compatible = "arm,sp810", "arm,primecell";
-		reg = <0x020000 0x1000>;
-		clocks = <&v2m_refclk32khz>, <&v2m_refclk1mhz>,	<&smbclk>;
-		clock-names = "refclk", "timclk", "apb_pclk";
-		#clock-cells = <1>;
-		clock-output-names = "timerclken0", "timerclken1", "timerclken2", "timerclken3";
-	};
+Regards,
+Maxime
