@@ -1,72 +1,102 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 11 Aug 2015 13:03:12 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Maxime Coquelin <maxime.coquelin@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
-Message-ID: <20150811120312.GF18282@x1>
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
- <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
- <20150810144811.GN3249@x1>
- <20150810185516.2416.32293@quantum>
- <20150811084329.GA13374@x1>
- <55C9C82F.6060401@st.com>
- <CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com>
- <55C9DE57.2090105@st.com>
- <55C9DF7B.4040308@st.com>
- <CAMuHMdVvS2n=J5paZzXdtD0vZ4Q4m9k7XeF_MF1zV4pD-nk9aw@mail.gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <CAMuHMdVvS2n=J5paZzXdtD0vZ4Q4m9k7XeF_MF1zV4pD-nk9aw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+To: Shawn Guo <shawnguo@kernel.org>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20150811085921.GB10035@tiger>
+References: <20150811085921.GB10035@tiger>
+Message-ID: <20150811174657.2416.1270@quantum>
+Subject: Re: [GIT PULL] i.MX clock updates for 4.2
+Date: Tue, 11 Aug 2015 10:46:57 -0700
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: kernel@pengutronix.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 11 Aug 2015, Geert Uytterhoeven wrote:
+Hi Shawn,
 
-> Hi Maxime,
+Quoting Shawn Guo (2015-08-11 01:59:21)
+> Hi Michael, Stephen,
 > 
-> On Tue, Aug 11, 2015 at 1:41 PM, Maxime Coquelin <maxime.coquelin@st.com> wrote:
-> > On 08/11/2015 01:36 PM, Maxime Coquelin wrote:
-> >> On 08/11/2015 12:11 PM, Geert Uytterhoeven wrote:
-> >>> On Tue, Aug 11, 2015 at 12:02 PM, Maxime Coquelin
-> >>> <maxime.coquelin@st.com> wrote:
-> >>>> How can we pass CLK_ENABLE_HAND_OFF flag to a specific clock on STi
-> >>>> platform?
-> >>>
-> >>> Add the flag to the relevant clocks in the C code, e.g. in
-> >>> clk_register_flexgen():
-> >>>
-> >>>          if (!strcmp(name, "clk-icn-cpu"))
-> >>>                  init.flags |= CLK_ENABLE_HAND_OFF;
-> >
-> > The main problem I see with this proposal is that clk_register_flexgen() is
-> > called for several SoCs (STiH407/410/418...).
-> > Each of these SoCs have this clock, but maybe STiH407 will need the flag,
-> > but not STiH410 and STiH418.
-> > So I think the best place to set this information is in DT, where the
-> > differentiation is made between the SoCs.
+> The i.MX clock drivers were moved into drivers/clk/imx folder since
+> v4.2-rc1, so I would like to send i.MX clock changes through clock tree
+> from this cycle.  Here is my first pull request to you guys.  I'm using
+> signed tags, same as how I work with arm-soc folks.  Let me know if
+> there is any problem with it.
+
+Everything looks good. Pulled.
+
 > 
-> If (of_machine_is_compatible("st,stih410")) ...
+> Also, please keep it stable, because I need to pull it into other
+> branch as dependency which I will send via arm-soc tree.
 
-This is getting very messy.
+Will do.
 
-Ideally we'd like to keep platform code out of device drivers.
-Critical clock description belongs in DT for our use-case.  We can
-write code to extract the information from there and set the flag is
-Mike's solution is deemed appropriate.
+Also, the clock driver was not Cc'd to linux-clk mailing list nor did it
+Cc myself or Stephen. I've taken a quick look at it and it seems fine,
+but please post clk patches to the linux-clk mailing list in the future.
 
-With regards to your "Software Policy Vs Hardware Description"
-comment; we already have 10's of "Software Policy" bindings which do
-not describe hardware in the purest sense; frequency specifications,
-line/voltage levels, GPIO configuration, the list goes on.
+Thanks,
+Mike
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> 
+> Thanks,
+> Shawn
+> 
+> The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
+> 
+>   Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-4.3
+> 
+> for you to fetch changes up to 3713e3f5e9274bbe52e94716bde303071364c1ed:
+> 
+>   clk: imx35: define two clocks for rtc (2015-08-05 20:01:21 +0800)
+> 
+> ----------------------------------------------------------------
+> The i.MX clock updates for 4.3:
+>  - Provide a better IPU clock initial settings on imx6dl for getting
+>    HDMI and LVDS at the same time.
+>  - Add clock driver support for i.MX6UL SoC
+>  - Add a second clock for RTC device on i.MX31 and i.MX35
+> 
+> ----------------------------------------------------------------
+> Fabio Estevam (1):
+>       clk: imx: clk-imx6q: Provide initial IPU clock settings for mx6dl
+> 
+> Frank Li (1):
+>       clk: imx: add imx6ul clk tree support
+> 
+> Philippe Reynes (2):
+>       clk: imx31: add a second rtc clock
+>       clk: imx35: define two clocks for rtc
+> 
+>  drivers/clk/imx/Makefile                 |   1 +
+>  drivers/clk/imx/clk-imx31.c              |   3 +-
+>  drivers/clk/imx/clk-imx35.c              |   6 +-
+>  drivers/clk/imx/clk-imx6q.c              |   4 +
+>  drivers/clk/imx/clk-imx6ul.c             | 432 +++++++++++++++++++++++++++++++
+>  include/dt-bindings/clock/imx6ul-clock.h | 240 +++++++++++++++++
+>  6 files changed, 684 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/clk/imx/clk-imx6ul.c
+>  create mode 100644 include/dt-bindings/clock/imx6ul-clock.h
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
