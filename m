@@ -1,49 +1,124 @@
-Return-Path: <abrestic@google.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: abrestic@google.com
-In-Reply-To: <1438868614-7672-3-git-send-email-govindraj.raja@imgtec.com>
-References: <1438868614-7672-1-git-send-email-govindraj.raja@imgtec.com>
-	<1438868614-7672-3-git-send-email-govindraj.raja@imgtec.com>
-Date: Thu, 6 Aug 2015 09:23:18 -0700
-Message-ID: <CAL1qeaEEndYJc7kVW9hgEZYGnVs8tFBy7y0sObiS8GVj=ta88w@mail.gmail.com>
-Subject: Re: [PATCH 2/6] clk: pistachio: Fix override of clk-pll settings from
- boot loader
-From: Andrew Bresticker <abrestic@chromium.org>
-To: Govindraj Raja <govindraj.raja@imgtec.com>
-Cc: Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
-	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Zdenko Pulitika <zdenko.pulitika@imgtec.com>,
-	Kevin Cernekee <cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>,
-	James Hartley <James.Hartley@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>,
-	James Hogan <James.Hogan@imgtec.com>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Content-Type: text/plain; charset=UTF-8
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20150725073925.GK2564@lukather>
+Cc: "Chen-Yu Tsai" <wens@csie.org>, "Jim Quinlan" <jim2101024@gmail.com>,
+ "Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>,
+ Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>
+References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1432241646-9511-2-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v64rqRC24wPWz5xYZv=w2QAtsCb-pd76Qynkb5NBCptXhQ@mail.gmail.com>
+ <20150523074930.GI8557@lukather> <20150724000001.642.84690@quantum>
+ <20150724065017.GJ2373@lukather> <20150724182619.642.11590@quantum>
+ <20150725073925.GK2564@lukather>
+Message-ID: <20150811213041.31346.58562@quantum>
+Subject: Re: [PATCH v2 1/7] clk: Add a basic factor clock
+Date: Tue, 11 Aug 2015 14:30:41 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Govindraj,
+Quoting Maxime Ripard (2015-07-25 00:39:25)
+> Hi Mike,
+> =
 
-On Thu, Aug 6, 2015 at 6:43 AM, Govindraj Raja
-<govindraj.raja@imgtec.com> wrote:
-> From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
->
-> Pll enable callbacks are overriding PLL mode (int/frac) and
-> Noise reduction (on/off) settings set by the boot loader which
-> results in the incorrect clock rate.
+> On Fri, Jul 24, 2015 at 11:26:19AM -0700, Michael Turquette wrote:
+> > > What are the issues with maintaining them? The only drawback I'm
+> > > seeing with introducing such a driver is that you can't really have a
+> > > clock that is both a divider and a multiplier, but that can be solved
+> > > by splitting it into two sub-clocks.
+> > =
 
-Please be consistent about how "PLL" is written out.  Since it's an
-acronym, it should be in caps.
+> > There are a bunch of problems with the basic clock types. First is that
+> > there is some feature creep every merge window that subtly breaks an
+> > existing user (e.g. the round_rate stuff in clk-divider.c), and then
+> > there are the growing number of flags to handle corner cases that are
+> > one-off quirks for a single chip.
+> > =
 
-> PLL mode and noise reduction are defined by the DSMPD and DACPD bits
-> of the pll control register. Pll .enable() callbacks enable pll
-> by deasserting all power-down bits of the pll control register,
-> including DSMPD and DACPD bits, which is not necessary since
-> these bits don't actually enable/disable pll.
->
-> This commit fixes the problem by removing DSMPD and DACPD bits
-> from the "pll enable" mask.
->
-> Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
-> Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+> > These make it harder to maintain, but it is possible.
+> =
 
-Otherwise,
+> Ok. It's the downside of having common code I guess, everyone wants to
+> use it, and the clocks are just more subject to it than other drivers :/
+> =
 
-Reviewed-by: Andrew Bresitcker <abrestic@chromium.org>
+> > The real problem with these basic clock types is that they are an
+> > abstraction layer at the wrong level. Each clock type implements both
+> > the policy of a given clock, as well as the machine-specific details.
+> > For example clk-divider.c has made some assumptions in the past about
+> > rounding the rate, or how to calculate the best divider; this is a
+> > matter of policy and is useful on its own. But additionally that same
+> > policy is glued to a specific implementation: memory-mapped register
+> > controls for a clock divider.
+> > =
+
+> > The I/O accessor stuff needs to be addressed at some point.  Currently
+> > the basic clock types assume specific patterns of access to
+> > memory-mapped clock registers. There are lots of other clock controls
+> > out there that talk to firmware, or over i2c, or whatever. The amount of
+> > code that has to be copy/pasted for each different type of access is
+> > 100%; i.e. we do not have abstractions at the right level such as
+> > .get_best_div(struct clk_hw *hw, unsigned long rate).
+> > =
+
+> > What I would like to see in time is a re-usable layer for clock policy
+> > (e.g. common rules for how dividers or multipliers should behave), and
+> > then have that sit on top of the machine-specific callbacks that
+> > directly touch the hardware, such as the .get_best_div callback above.
+> =
+
+> Can't that be solved by moving to regmap using Matthias' patches, or
+> at least the IO method abstraction?
+
+I need to look at those patches again, but I do not think they address
+the problem I described above: abstraction at the wrong level (or more
+specifically, combining two abstract layers into one).
+
+I'll have more bandwidth to look at this problem after the next merge
+window. The clk framework is slowly be rewritten in bits and pieces here
+on the list (shh don't tell anybody) and this is on my radar and
+Stephen's.
+
+Regards,
+Mike
+
+> =
+
+> We would then have to only provide an additional callback then for
+> providers that have specific requirements about the divider
+> calculation.
+> =
+
+> So far, I haven't had any usecase where I needed anything but having
+> the as-close-as-possible rate, so I would expect to not provide
+> anything beside whether I'd like to round down or round up, but I do
+> understand that some other might have different requirements.
+> =
+
+> > For this reason I like to limit the number of new basic clock types. If
+> > there is a single user then I'm inclined to have the author put it with
+> > the machine-specific code. But in this case since there are two users, I
+> > see the value in making a new basic clock type.
+> =
+
+> That makes sense.
+> =
+
+> Maxime
+> =
+
+> -- =
+
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
+> =
+
+> =
+
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
