@@ -1,121 +1,201 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Mon, 10 Aug 2015 16:36:38 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, maxime.ripard@free-electrons.com,
-	s.hauer@pengutronix.de, geert@linux-m68k.org
-Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and
- implement hand-off
-Message-ID: <20150810153638.GO3249@x1>
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+Return-Path: <zhjwpku@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+In-Reply-To: <CAEG3pNA8BL65AoaKg+yuKEc5SwWD56GE95TnF44ke69NWesKTw@mail.gmail.com>
+References: <CAEG8a3JL=nfbTGR-svK3fPovwK=ums9-q-vGQiiG3iiv8SXUTA@mail.gmail.com>
+	<CAEG3pNA8BL65AoaKg+yuKEc5SwWD56GE95TnF44ke69NWesKTw@mail.gmail.com>
+Date: Tue, 11 Aug 2015 15:46:53 +0800
+Message-ID: <CAEG8a3JYPkf6HtyJca775WKthRj8aXspREu4dOj+PBtVAEuqCw@mail.gmail.com>
+Subject: Re: question about clk.h
+From: John Hunter <zhjwpku@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org
+Content-Type: multipart/alternative; boundary=089e0160bd103c60c9051d044e09
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 07 Aug 2015, Michael Turquette wrote:
-> This is an alternative solution to Lee's "clk: Provide support for
-> always-on clocks" series[0].
- 
-So after all the hours of work that's been put in and all of the
-versions that have been authored, you're just going to write your own
-solution anyway, without any further discussion?
+--089e0160bd103c60c9051d044e09
+Content-Type: text/plain; charset=UTF-8
 
-That's one way to make your contributors feel valued.
+Hi Michael,
 
-> The first two patches introduce run-time checks to ensure that clock
-> consumer drivers are respecting the clk.h api. The former patch checks
-> for prepare and enable imbalances. The latter checks for calls to
-> clk_put without first disabling and unpreparing the clk.
+Sorry I didn't reply soon, cause something goes wrong with my gmail, your
+reply was automatically deleted, I really have no idea why this happened.
 
-Are these real issues that people are having trouble with, or just
-hypothetical ones?  I can understand the need for them if they're
-causing people some pain, but if they are unnecessarily hardening the
-API, then it makes it difficult for proper issues (such as critical
-clocks) to be solved easily.
+Anyway, here is the code:
+    ret = clk_register_clkdev(clk_info[i].clk, clk_info[i].clk->name, NULL);
+so after move it to 4.1, I change it to:
+    ret = clk_register_clkdev(clk_info[i].clk, clk_info[i].clk->core->name,
+NULL);
 
-> The third patch introduces a new flag, CLK_ENABLE_HAND_OFF, which
-> prepares and enables a clk at registration-time. The reference counts
-> (prepare & enable) are transferred to the first clock consumer driver
-> that clk_get's the clk with this flag set AND calls clk_prepare or
-> clk_enable.
-> 
-> The net result is that a clock with this flag set will be enabled at
-> boot and neither the clk_disable_unused garbage collector or the
-> "sibling clock disables a shared parent" scenario will cause the flagged
-> clock to be disabled.
+This give me the error msg.
 
-I'm not sure if the third patch actually solves the _real_ issue you
-allude to here.  The original critical (then called always-on) clock
-patch-set solved it just fine.  However others were concerned about
-how you would then turn the clock off if some knowledgeable consumer
-(who knew the full consequences of their actions) came along and had a
-good reason to gate it.  That, the turning off the clock if still
-desired is what the third patch _actually_ solves.
+On Fri, Aug 7, 2015 at 10:07 PM, Michael Turquette <mturquette@baylibre.com>
+wrote:
 
-Now we are back where we started however, and still need to figure out
-a generic method to mark the clocks (either by setting a FLAG or
-actually calling enable()) as critical.
+> Hello Junwang Zhao,
+>
+> Thanks for asking! And it is not a stupid question. The only stupid
+> question is the one that is never asked.
+>
+> Drivers should never need to know the definitions of struct clk. This
+> is true for both clk consumer drivers (example: USB host controller
+> driver) and for clock provider drivers (example: clock controller
+> driver).
+>
+> clk.h declares but does not define struct clk, so your drivers may use
+> struct clk has a handle or opaque cookie, but may never dereference
+> that pointer.
+>
+> Can you share your code that is dereferencing struct clk? I may be
+> able to help you.
+>
+> Also, if you want you can Cc linux-clk@vger.kernel.org. It is always
+> best to Cc the mailing list for these types of discussions.
+>
+> Best regards,
+> Mike
+>
+> On Fri, Aug 7, 2015 at 6:50 AM, John Hunter <zhjwpku@gmail.com> wrote:
+> > hi Mike,
+> >
+> > I used to include <linux/clk-private.h> in my driver, and my linux tree
+> is
+> > 3.17, but
+> > when I move to linux 4.1, I found that this file was deleted, and the
+> struct
+> > clk was
+> > moving to drivers/clk/clk.c, but this gives me a problem:
+> >
+> >     error: dereferencing pointer to incomplete type
+> >
+> > This is because I just include the <linux/clk.h>, and in this file, we
+> only
+> > declared
+> > the struct clk, but not define it (definition is in drivers/clk/clk.c).
+> >
+> > Some how I might need the definition, so I want to know how can I fix
+> this.
+> >
+> > I am new learner of linux device driver, so thanks very much for any of
+> your
+> > help,
+> > pls show some mercy if I asked a stupid question.
+> >
+> > --
+> > Best regards
+> > Junwang Zhao
+> > Microprocessor Research and Develop Center
+> > Department of Computer Science &Technology
+> > Peking University
+> > Beijing, 100871, PRC
+>
+>
+>
+> --
+> Michael Turquette
+> CEO
+> BayLibre - At the Heart of Embedded Linux
+> http://baylibre.com/
+>
 
-> The first driver to come along and explicitly
-> claim, prepare and enable this clock will inherit those reference
-> counts. No change to clock consumer drivers is required for this to
-> work.
 
-Do you mean it won't break anything?  I think to make use of the
-functionality each of the providers still have to figure out which of
-their clocks are critical (which may change from platform to platform)
-then mark them as such before registration.
-
-> Please continue to use the clk.h api properly.
-> 
-> In time this approach can probably replace the CLK_IGNORE_UNUSED flag
-> and hopefully reduce the number of users of the clk_ignore_unused boot
-> parameter.
-> 
-> Finally, a quick note on comparing this series to Lee's. I went with the
-> simplest approach to solve a real problem: preventing critical clocks
-> from being spuriously disabled at boot, or before a their parent clock
-> becomes accidentally disabled by a sibling.
-
-This wasn't the problem.  Platforms are already doing this.  The _real_
-problem was doing it in a generic way, so vendors didn't have to roll
-their own 'gather' and 'mark' code, which unfortunately they still have
-to do with this solution.
-
-> All of the other kitchen sink stuff (DT binding, 
-
-The DT binding will still be required, at least for ST, as they have
-gone for the more Linuxy approach of having a generic set of clock
-drivers and provide all of the platform specific information in
-platform code (i.e. DT).  So to identify which clocks are critical on
-each platform the DT will need to be interrogated in some way.
-
-> passing the flag back to the framework when the clock consumer
-> driver calls clk_put) was left
-
-I'm not sure what this is.
-
-> out because I do not see a real use case for it. If one can demonstrate
-> a real use case (and not a hypothetical one) then this patch series can
-> be expanded further.
-> 
-> [0] http://lkml.kernel.org/r/<1437570255-21049-1-git-send-email-lee.jones@linaro.org>
-> 
-> Michael Turquette (3):
->   clk: per-user clk prepare & enable ref counts
->   clk: clk_put WARNs if user has not disabled clk
->   clk: introduce CLK_ENABLE_HAND_OFF flag
-> 
->  drivers/clk/clk.c            | 79 +++++++++++++++++++++++++++++++++++++++++---
->  include/linux/clk-provider.h |  3 ++
->  2 files changed, 78 insertions(+), 4 deletions(-)
-> 
 
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Best regards
+Junwang Zhao
+Microprocessor Research and Develop Center
+Department of Computer Science &Technology
+Peking University
+Beijing, 100871, PRC
+
+--089e0160bd103c60c9051d044e09
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi Michael,<div><br></div><div>Sorry I didn&#39;t reply so=
+on, cause something goes wrong with my gmail, your</div><div>reply was auto=
+matically deleted, I really have no idea why this happened.</div><div><br><=
+/div><div>Anyway, here is the code:</div><div>=C2=A0 =C2=A0 ret =3D clk_reg=
+ister_clkdev(clk_info[i].clk, clk_info[i].clk-&gt;name, NULL);</div><div>so=
+ after move it to 4.1, I change it to:</div><div>=C2=A0 =C2=A0 ret =3D clk_=
+register_clkdev(clk_info[i].clk, clk_info[i].clk-&gt;core-&gt;name, NULL);<=
+/div><div><br></div><div>This give me the error msg.</div></div><div class=
+=3D"gmail_extra"><br><div class=3D"gmail_quote">On Fri, Aug 7, 2015 at 10:0=
+7 PM, Michael Turquette <span dir=3D"ltr">&lt;<a href=3D"mailto:mturquette@=
+baylibre.com" target=3D"_blank">mturquette@baylibre.com</a>&gt;</span> wrot=
+e:<br><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-l=
+eft:1px #ccc solid;padding-left:1ex">Hello Junwang Zhao,<br>
+<br>
+Thanks for asking! And it is not a stupid question. The only stupid<br>
+question is the one that is never asked.<br>
+<br>
+Drivers should never need to know the definitions of struct clk. This<br>
+is true for both clk consumer drivers (example: USB host controller<br>
+driver) and for clock provider drivers (example: clock controller<br>
+driver).<br>
+<br>
+clk.h declares but does not define struct clk, so your drivers may use<br>
+struct clk has a handle or opaque cookie, but may never dereference<br>
+that pointer.<br>
+<br>
+Can you share your code that is dereferencing struct clk? I may be<br>
+able to help you.<br>
+<br>
+Also, if you want you can Cc <a href=3D"mailto:linux-clk@vger.kernel.org">l=
+inux-clk@vger.kernel.org</a>. It is always<br>
+best to Cc the mailing list for these types of discussions.<br>
+<br>
+Best regards,<br>
+Mike<br>
+<div class=3D"HOEnZb"><div class=3D"h5"><br>
+On Fri, Aug 7, 2015 at 6:50 AM, John Hunter &lt;<a href=3D"mailto:zhjwpku@g=
+mail.com">zhjwpku@gmail.com</a>&gt; wrote:<br>
+&gt; hi Mike,<br>
+&gt;<br>
+&gt; I used to include &lt;linux/clk-private.h&gt; in my driver, and my lin=
+ux tree is<br>
+&gt; 3.17, but<br>
+&gt; when I move to linux 4.1, I found that this file was deleted, and the =
+struct<br>
+&gt; clk was<br>
+&gt; moving to drivers/clk/clk.c, but this gives me a problem:<br>
+&gt;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0error: dereferencing pointer to incomplete type<br>
+&gt;<br>
+&gt; This is because I just include the &lt;linux/clk.h&gt;, and in this fi=
+le, we only<br>
+&gt; declared<br>
+&gt; the struct clk, but not define it (definition is in drivers/clk/clk.c)=
+.<br>
+&gt;<br>
+&gt; Some how I might need the definition, so I want to know how can I fix =
+this.<br>
+&gt;<br>
+&gt; I am new learner of linux device driver, so thanks very much for any o=
+f your<br>
+&gt; help,<br>
+&gt; pls show some mercy if I asked a stupid question.<br>
+&gt;<br>
+&gt; --<br>
+&gt; Best regards<br>
+&gt; Junwang Zhao<br>
+&gt; Microprocessor Research and Develop Center<br>
+&gt; Department of Computer Science &amp;Technology<br>
+&gt; Peking University<br>
+&gt; Beijing, 100871, PRC<br>
+<br>
+<br>
+<br>
+</div></div><span class=3D"HOEnZb"><font color=3D"#888888">--<br>
+Michael Turquette<br>
+CEO<br>
+BayLibre - At the Heart of Embedded Linux<br>
+<a href=3D"http://baylibre.com/" rel=3D"noreferrer" target=3D"_blank">http:=
+//baylibre.com/</a><br>
+</font></span></blockquote></div><br><br clear=3D"all"><div><br></div>-- <b=
+r><div class=3D"gmail_signature"><div dir=3D"ltr"><div>Best regards<br></di=
+v><div>Junwang Zhao</div><div>Microprocessor Research and Develop Center</d=
+iv><div>Department of Computer Science &amp;Technology</div><div>Peking Uni=
+versity</div><div>Beijing, 100871, PRC</div></div></div>
+</div>
+
+--089e0160bd103c60c9051d044e09--
