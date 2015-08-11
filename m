@@ -1,78 +1,104 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 7 Aug 2015 15:28:23 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Pawel Moll <pawel.moll@arm.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Sudeep Holla <Sudeep.Holla@arm.com>
-Subject: Re: [PATCH 1/3] clk: versatile: Switch to assigned clock parents
-Message-ID: <20150807222823.GB16477@codeaurora.org>
-References: <55BBB2FC.9030102@codeaurora.org>
- <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>
- <1438386285-5070-2-git-send-email-sboyd@codeaurora.org>
- <1438610480.2142.14.camel@arm.com>
- <55BFAB11.7080600@codeaurora.org>
- <1438770574.2142.80.camel@arm.com>
- <55C24E56.3020004@codeaurora.org>
- <1438873513.2142.95.camel@arm.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:33364 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753448AbbHKSZu convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 11 Aug 2015 14:25:50 -0400
+Received: by pabyb7 with SMTP id yb7so135418543pab.0
+        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2015 11:25:50 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1438873513.2142.95.camel@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
+To: Scott Wood <scottwood@freescale.com>,
+	"Tang Yuantian" <Yuantian.Tang@freescale.com>
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <1434682158-7243-1-git-send-email-scottwood@freescale.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	"Liberman Igal-B31950" <Igal.Liberman@freescale.com>,
+	"Bucur Madalin-Cristian-B32716" <madalin.bucur@freescale.com>,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	"Scott Wood" <scottwood@freescale.com>
+References: <1434682158-7243-1-git-send-email-scottwood@freescale.com>
+Message-ID: <20150811182535.31346.52965@quantum>
+Subject: Re: [RFC PATCH 0/8] clk: qoriq: Move chip-specific knowledge into driver
+Date: Tue, 11 Aug 2015 11:25:35 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/06, Pawel Moll wrote:
-> On Wed, 2015-08-05 at 18:56 +0100, Stephen Boyd wrote:
-> > On 08/05/2015 03:29 AM, Pawel Moll wrote:
-> > >
-> > > Right, that's probably my fault. The sp810 nodes appeared in the VE
-> > > trees very early (in terms of the "DT era"), when we weren't so strict
-> > > about documentation. So far, it would be fairly simple, something like
-> > > the text below - feel free to take it, mend it, extend it with your
-> > > changes and include in the series:
-> > >
-> > > Thanks!
-> > 
-> > Great! Can you please provide your signed-off-by? 
+Hi Scott,
+
+Quoting Scott Wood (2015-06-18 19:49:10)
+> The existing device tree bindings are error-prone and inflexible. 
+> Correct the mistake by moving the knowledge into the driver, which
+> has more flexibility in describing the quirks of each chip.  This leaves
+> the device tree to its proper role of identifying a programming interface
+> rather than describing its individual registers.
+
+Sorry for not responding to this one sooner. Fell through the cracks.
+
+All of the changes to drives/clk/clk-qoriq.c look great to me. I assume
+you need to keep all of these patches together and want to the take
+through the freescale tree? If so feel free to add,
+
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+
+Regards,
+Mike
+
 > 
-> Sure. 
-
-Thanks! I've put that patch before my series and squashed this into patch 1/3.
-
-----8<----
-diff --git a/Documentation/devicetree/bindings/arm/sp810.txt b/Documentation/devicetree/bindings/arm/sp810.txt
-index 440ee0892a4d..6808fb5dee40 100644
---- a/Documentation/devicetree/bindings/arm/sp810.txt
-+++ b/Documentation/devicetree/bindings/arm/sp810.txt
-@@ -24,12 +24,23 @@ Required properties:
- - clock-output-names: from the common clock bindings;
- 		should be: "timerclken0", "timerclken1", "timerclken2", "timerclken3"
- 
-+- assigned-clocks: from the common clock binding;
-+		should be: clock specifier for each output clock of this
-+		provider node
-+
-+- assigned-clock-parents: from the common clock binding;
-+		should be: clock specifier of input clock listed in clocks
-+		property with the highest frequency
-+
- Example:
--	sysctl@020000 {
-+	v2m_sysctl: sysctl@020000 {
- 		compatible = "arm,sp810", "arm,primecell";
- 		reg = <0x020000 0x1000>;
- 		clocks = <&v2m_refclk32khz>, <&v2m_refclk1mhz>, <&smbclk>;
- 		clock-names = "refclk", "timclk", "apb_pclk";
- 		#clock-cells = <1>;
- 		clock-output-names = "timerclken0", "timerclken1", "timerclken2", "timerclken3";
-+		assigned-clocks = <&v2m_sysctl 0>, <&v2m_sysctl 1>, <&v2m_sysctl 3>, <&v2m_sysctl 3>;
-+		assigned-clock-parents = <&v2m_refclk1mhz>, <&v2m_refclk1mhz>, <&v2m_refclk1mhz>, <&v2m_refclk1mhz>;
-+
- 	};
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> For more detail, see the commit message of patch 4.
+> 
+> Scott Wood (8):
+>   ARM: dts: ls1021a: Fix clockgen node
+>   cpufreq: qoriq: Don't look at clock implementation details
+>   powerpc/fsl: Move fsl_guts.h out of arch/powerpc
+>   clk: qoriq: Move chip-specific knowledge into driver
+>   clk: qoriq: Redirect legacy clock nodes to new clocks
+>   cpufreq: qoriq: Remove frequency masking and minimum
+>   clk: qoriq: Expose OF clocks directly from the clockgen node
+>   powerpc/fsl: Use new clockgen binding
+> 
+>  .../devicetree/bindings/clock/qoriq-clock.txt      |   57 +-
+>  arch/arm/boot/dts/ls1021a.dtsi                     |    3 +
+>  arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi         |    4 +-
+>  arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi         |    8 +-
+>  arch/powerpc/boot/dts/fsl/b4si-post.dtsi           |   15 -
+>  arch/powerpc/boot/dts/fsl/p2041si-post.dtsi        |   18 -
+>  arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi         |    8 +-
+>  arch/powerpc/boot/dts/fsl/p3041si-post.dtsi        |   18 -
+>  arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi         |    8 +-
+>  arch/powerpc/boot/dts/fsl/p4080si-post.dtsi        |   70 --
+>  arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi         |   16 +-
+>  arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi         |    4 +-
+>  arch/powerpc/boot/dts/fsl/p5040si-post.dtsi        |   18 -
+>  arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi         |    8 +-
+>  arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi     |   50 +-
+>  arch/powerpc/boot/dts/fsl/qoriq-clockgen2.dtsi     |   33 +-
+>  arch/powerpc/boot/dts/fsl/t1023si-post.dtsi        |   16 -
+>  arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi         |    4 +-
+>  arch/powerpc/boot/dts/fsl/t1040si-post.dtsi        |   44 -
+>  arch/powerpc/boot/dts/fsl/t104xsi-pre.dtsi         |    8 +-
+>  arch/powerpc/boot/dts/fsl/t2081si-post.dtsi        |   22 -
+>  arch/powerpc/boot/dts/fsl/t208xsi-pre.dtsi         |    8 +-
+>  arch/powerpc/boot/dts/fsl/t4240si-post.dtsi        |   61 -
+>  arch/powerpc/boot/dts/fsl/t4240si-pre.dtsi         |   24 +-
+>  arch/powerpc/platforms/85xx/mpc85xx_mds.c          |    2 +-
+>  arch/powerpc/platforms/85xx/mpc85xx_rdb.c          |    2 +-
+>  arch/powerpc/platforms/85xx/p1022_ds.c             |    2 +-
+>  arch/powerpc/platforms/85xx/p1022_rdk.c            |    2 +-
+>  arch/powerpc/platforms/85xx/smp.c                  |    2 +-
+>  arch/powerpc/platforms/85xx/twr_p102x.c            |    2 +-
+>  arch/powerpc/platforms/86xx/mpc8610_hpcd.c         |    2 +-
+>  drivers/clk/clk-qoriq.c                            | 1191 ++++++++++++++++----
+>  drivers/cpufreq/qoriq-cpufreq.c                    |  139 +--
+>  drivers/iommu/fsl_pamu.c                           |    2 +-
+>  .../asm/fsl_guts.h => include/linux/fsl/guts.h     |    6 +-
+>  sound/soc/fsl/mpc8610_hpcd.c                       |    2 +-
+>  sound/soc/fsl/p1022_ds.c                           |    2 +-
+>  sound/soc/fsl/p1022_rdk.c                          |    2 +-
+>  38 files changed, 1107 insertions(+), 776 deletions(-)
+>  rename arch/powerpc/include/asm/fsl_guts.h => include/linux/fsl/guts.h (98%)
+> 
+> -- 
+> 2.1.4
+> 
