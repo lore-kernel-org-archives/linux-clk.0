@@ -1,82 +1,142 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Heiko Stuebner <heiko@sntech.de>
-To: ulf.hansson@linaro.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, tgih.jun@samsung.com, jh80.chung@samsung.com
-Cc: linux-mmc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4/8] mmc: dw_mmc: Use mmc_regulator_set_vqmmc in start_signal_voltage_switch
-Date: Mon, 31 Aug 2015 20:24:02 +0200
-Message-Id: <1441045446-30858-5-git-send-email-heiko@sntech.de>
-In-Reply-To: <1441045446-30858-1-git-send-email-heiko@sntech.de>
-References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 11 Aug 2015 19:33:17 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, maxime.ripard@free-electrons.com,
+	s.hauer@pengutronix.de, geert@linux-m68k.org
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+Message-ID: <20150811183317.GT18282@x1>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+ <20150810144811.GN3249@x1>
+ <20150810185516.2416.32293@quantum>
+ <20150811084329.GA13374@x1>
+ <20150811170904.2416.43354@quantum>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20150811170904.2416.43354@quantum>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Douglas Anderson <dianders@chromium.org>
+On Tue, 11 Aug 2015, Michael Turquette wrote:
 
-We've introduced a new helper in the MMC core:
-mmc_regulator_set_vqmmc().  Let's use this in dw_mmc.  Using this new
-helper has some advantages:
+> Quoting Lee Jones (2015-08-11 01:43:29)
+> > On Mon, 10 Aug 2015, Michael Turquette wrote:
+> > > Quoting Lee Jones (2015-08-10 07:48:11)
+> > > > On Fri, 07 Aug 2015, Michael Turquette wrote:
+> > > This series is solving the following problems:
+> > > 
+> > > 1) enabling specified clocks at boot
+> > > 2) preventing those clocks from being gated by clk_disable_unused
+> > 
+> > The original patch-set did this just fine.
+> 
+> There is a very real difference between the implementations.
+> 
+> The original patch made it easy to call clk_prepare_enable on a clock
+> from some place other than a Linux device driver (e.g. DT).
+> 
+> The hand-off semantic establishes an expectation that a driver will come
+> along and claim ownership of the clk using standard Linux apis; we're
+> just preserving the enabled state of the clock until that time.
+> 
+> I had a chat with Stephen Boyd about this yesterday and we discussed
+> taking it even further: do not explicitly enable the clock, but instead
+> simply refrain from disabling a clock that is both ON and has this flag
+> set.
 
-1. We get the mmc_regulator_set_vqmmc() behavior of trying to match
-   VQMMC and VMMC when the signal voltage is 3.3V.  This ensures max
-   compatibility.
+Doing so will prevent clk_disable_unused() from gating it, but if we
+don't take a reference sibling clocks will be able to disable the
+parent which will be fatal.
 
-2. We get rid of a few more warnings when probing unsupported
-   voltages.
+> It sounds like that would that work for ST, yes? Are you interested in
+> using a flag (or a DT property) to enable an otherwise-gated clock, or
+> simply insuring that bootloader-enabled and reset-enabled clocks are not
+> spuriously turned off?
 
-3. We get rid of some non-dw_mmc specific code in dw_mmc.
+Clocks are ungated by the bootloader.
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/mmc/host/dw_mmc.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+> > > If you mean to say, "this patch doesn't let me toss this data in
+> > > Devicetree, a data orifice that is used by only a fraction of Linux
+> > > kernel users" then you would be right.
+> > 
+> > A fraction of Linux kernel users, yes, but the majority (all?) of
+> > the Clock Framework users do use DT.
+> 
+> At last count we had 5 architectures using ccf, I haven't counted in a
+> while. x86 definitely does not use Devicetree. I have no clue if MIPS
+> does. PowerPC and ARM-ish both do.
 
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index fcbf552..b1b7e7f 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -1279,7 +1279,6 @@ static int dw_mci_switch_voltage(struct mmc_host *mmc, struct mmc_ios *ios)
- 	const struct dw_mci_drv_data *drv_data = host->drv_data;
- 	u32 uhs;
- 	u32 v18 = SDMMC_UHS_18V << slot->id;
--	int min_uv, max_uv;
- 	int ret;
- 
- 	if (drv_data && drv_data->switch_voltage)
-@@ -1291,22 +1290,18 @@ static int dw_mci_switch_voltage(struct mmc_host *mmc, struct mmc_ios *ios)
- 	 * does no harm but you need to set the regulator directly.  Try both.
- 	 */
- 	uhs = mci_readl(host, UHS_REG);
--	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
--		min_uv = 2700000;
--		max_uv = 3600000;
-+	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330)
- 		uhs &= ~v18;
--	} else {
--		min_uv = 1700000;
--		max_uv = 1950000;
-+	else
- 		uhs |= v18;
--	}
-+
- 	if (!IS_ERR(mmc->supply.vqmmc)) {
--		ret = regulator_set_voltage(mmc->supply.vqmmc, min_uv, max_uv);
-+		ret = mmc_regulator_set_vqmmc(mmc, ios);
- 
- 		if (ret) {
- 			dev_dbg(&mmc->class_dev,
--					 "Regulator set error %d: %d - %d\n",
--					 ret, min_uv, max_uv);
-+					 "Regulator set error %d - %s V\n",
-+					 ret, uhs & v18 ? "1.8" : "3.3");
- 			return ret;
- 		}
- 	}
+I believe that most of your users are ARM-ish.
+
+> > > diff --git a/drivers/clk/qcom/gcc-apq8084.c b/drivers/clk/qcom/gcc-apq8084.c
+> > > index 3563019..d2f5e5a 100644
+> > > --- a/drivers/clk/qcom/gcc-apq8084.c
+> > > +++ b/drivers/clk/qcom/gcc-apq8084.c
+> > > @@ -1450,23 +1450,23 @@ static struct clk_branch gcc_blsp1_qup1_spi_apps_clk = {
+> > >  static struct clk_branch gcc_blsp1_qup2_i2c_apps_clk = {
+> > >         .halt_reg = 0x06c8,
+> > >         .clkr = {
+> > >                 .enable_reg = 0x06c8,
+> > >                 .enable_mask = BIT(0),
+> > >                 .hw.init = &(struct clk_init_data){
+> > >                         .name = "gcc_blsp1_qup2_i2c_apps_clk",
+> > >                         .parent_names = (const char *[]){
+> > >                                 "blsp1_qup2_i2c_apps_clk_src",
+> > >                         },
+> > >                         .num_parents = 1,
+> > > -                       .flags = CLK_SET_RATE_PARENT,
+> > > +                       .flags = CLK_SET_RATE_PARENT | CLK_ENABLE_HAND_OFF,
+> > >                         .ops = &clk_branch2_ops,
+> > >                 },
+> > >         },
+> > >  };
+> > 
+> > Fair enough.  Obviously for anyone using Device Tree, this solution
+> > makes it pretty difficult to partake.
+> 
+> QCOM is using Devicetree. I've covered how to make a clock-controller
+> style binding before using QCOM's driver & binding as examples. Take a
+> look here if you have some spare time:
+> 
+> http://lkml.kernel.org/r/<20150416192014.19585.9663@quantum>
+
+Spare time, what's that?
+
+> > > > What happens during disable() and unprepare()?
+> > > 
+> > > The reference counts go to zero. As I stated in my cover letter, I'll
+> > > need to see evidence of a real use case where the "leave the clock on on
+> > > when I call clk_disable, clk_unprepare and clk_put" behavior is
+> > > warranted.
+> > 
+> > I can't say for sure (get-out clause), but I doubt we'd need that, as
+> > this would only be required if a knowledgeable consumer existed
+> > i.e. one which actually wanted to the disable critical clock.  On ST's
+> > platforms I don't think there is a use-case for these clocks to ever
+> > be gated, as the platform would be unrecoverable and require a reboot.
+> 
+> That's great. I suspected that behavior was not necessary at all.
+> 
+> Let's zero in on the technical concerns here:
+> 
+> 1) ST's flexgen binding should not get screwed over. So we'll need a DT
+> wrapper around the flag
+
+Great.
+
+> 2) I would love feedback on whether you expect the flag/property to
+> enable a disabled clock or if you merely want to keep an already-enabled
+> clock from being disabled
+
+For us, we only need the clock not to be turned off, either by
+clk_disable_unused() or by drivers using critical clock siblings, but
+as I'm striving for a generic approach, it would be hypocritical of me
+to encourage not to cover all bases with this solution.
+
 -- 
-2.1.4
-
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
