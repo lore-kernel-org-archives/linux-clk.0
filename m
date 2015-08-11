@@ -1,53 +1,52 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 7 Aug 2015 18:13:10 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v2] cpufreq-dt: make scaling_boost_freqs sysfs attr
- available when boost is enabled
-Message-ID: <20150807124310.GI6939@linux>
-References: <3835403.gWyHpfh1Gz@amdc1976>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3835403.gWyHpfh1Gz@amdc1976>
-Sender: linux-kernel-owner@vger.kernel.org
+To: Joachim Eastwood <manabian@gmail.com>,  sboyd@codeaurora.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1436651307-24098-2-git-send-email-manabian@gmail.com>
+Cc: devicetree@vger.kernel.org, "Joachim Eastwood" <manabian@gmail.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1436651307-24098-1-git-send-email-manabian@gmail.com>
+ <1436651307-24098-2-git-send-email-manabian@gmail.com>
+Message-ID: <20150811204127.31346.16729@quantum>
+Subject: Re: [PATCH 1/2] clk: add lpc18xx creg clk driver
+Date: Tue, 11 Aug 2015 13:41:27 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07-08-15, 13:56, Bartlomiej Zolnierkiewicz wrote:
-> Make scaling_boost_freqs sysfs attribute is available when
-> cpufreq-dt driver is used and boost support is enabled.
-> 
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
-> v2: Removed leftover prototype.
-> 
->  drivers/cpufreq/cpufreq-dt.c | 9 ++++++++-
->  include/linux/cpufreq.h      | 1 +
->  2 files changed, 9 insertions(+), 1 deletion(-)
+Hi Joachim,
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Quoting Joachim Eastwood (2015-07-11 14:48:26)
+> +static void __init lpc18xx_creg_clk_init(struct device_node *np)
+> +{
+> +       const char *clk_32khz_parent;
+> +       struct regmap *syscon;
+> +
+> +       syscon =3D syscon_node_to_regmap(np->parent);
+> +       if (IS_ERR(syscon)) {
+> +               pr_err("%s: syscon lookup failed\n", __func__);
+> +               return;
+> +       }
+> +
+> +       clk_32khz_parent =3D of_clk_get_parent_name(np, 0);
+> +
+> +       clk_creg[CREG_CLK_32KHZ] =3D
+> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_32KHZ],
+> +                                     &clk_32khz_parent, syscon);
+> +
+> +       clk_creg[CREG_CLK_1KHZ] =3D
+> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_1KHZ],
+> +                                     &clk_creg_clocks[CREG_CLK_32KHZ].na=
+me,
+> +                                     syscon);
+> +
+> +       of_clk_add_provider(np, of_clk_src_onecell_get, &clk_base_data);
+> +}
+> +CLK_OF_DECLARE(lpc18xx_creg_clk, "nxp,lpc1850-creg-clk", lpc18xx_creg_cl=
+k_init);
 
--- 
-viresh
+I'll ask the same question that Stephen asked in your CCU/CGU driver
+series: is it necessary to use CLK_OF_DECLARE here or can you use the
+platform device model?
+
+Thanks,
+Mike
