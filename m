@@ -1,33 +1,109 @@
-Return-Path: <rjw@rjwysocki.net>
-Return-Path: <rjw@rjwysocki.net>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd.bergmann@linaro.org>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Michael Turquette' <mturquette@baylibre.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Heiko Stuebner' <heiko@sntech.de>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Kevin Hilman' <khilman@linaro.org>, 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>, 'Anand Moon' <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12 platform
-Date: Sat, 08 Aug 2015 00:24:36 +0200
-Message-ID: <1525406.7aXvVQzEDd@vostro.rjw.lan>
-In-Reply-To: <20150807115627.GH6939@linux>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com> <2359635.Hxe4cb8zKm@amdc1976> <20150807115627.GH6939@linux>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <alexander.stein@systec-electronic.com>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/1] ARM: imx35: Do not call mxc_timer_init twice when booting with DT
+Date: Tue, 11 Aug 2015 09:18:22 +0200
+Message-Id: <1439277502-16917-1-git-send-email-alexander.stein@systec-electronic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday, August 07, 2015 05:26:27 PM Viresh Kumar wrote:
-> On 07-08-15, 13:47, Bartlomiej Zolnierkiewicz wrote:
-> > Hmm, wait.  Patch 6/6 depends on earlier changes.  I cannot remove
-> > the config option in question now as it is currently used by
-> > exynos-cpufreq specific boost support.  Patch 1/6 can be applied
-> > now but 6/6 needs to wait for patches 2-5 to be applied first.
-> > 
-> > Actually 6/6 is trivial and can be applied later in v4.3 cycle or
-> > even in v4.4 one.
-> 
-> Ack.
+mxc_timer_init must not be called from within mx35_clocks_init_dt. It will
+eventually be called by imx31_timer_init_dt
+(drivers/clocksources/timer-imx-gpt.c).
+This arranges the initialization code similar to clk-imx27.c
 
-OK, so please let me know which patches you want me to pick up.
+Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+---
+ drivers/clk/imx/clk-imx35.c | 49 +++++++++++++++++++++++++--------------------
+ 1 file changed, 27 insertions(+), 22 deletions(-)
 
-Ideally, I'd prefer them to be resent in a separate series with ACKs and all
-with a cover letter clearly stating whose tree they are being targeted at.
-
-Thanks,
-Rafael
+diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
+index 69138ba..3e7c805 100644
+--- a/drivers/clk/imx/clk-imx35.c
++++ b/drivers/clk/imx/clk-imx35.c
+@@ -84,7 +84,7 @@ enum mx35_clks {
+ 
+ static struct clk *clk[clk_max];
+ 
+-int __init mx35_clocks_init(void)
++static void __init _mx35_clocks_init(void)
+ {
+ 	void __iomem *base;
+ 	u32 pdr0, consumer_sel, hsp_sel;
+@@ -219,6 +219,30 @@ int __init mx35_clocks_init(void)
+ 
+ 	imx_check_clocks(clk, ARRAY_SIZE(clk));
+ 
++	clk_prepare_enable(clk[spba_gate]);
++	clk_prepare_enable(clk[gpio1_gate]);
++	clk_prepare_enable(clk[gpio2_gate]);
++	clk_prepare_enable(clk[gpio3_gate]);
++	clk_prepare_enable(clk[iim_gate]);
++	clk_prepare_enable(clk[emi_gate]);
++	clk_prepare_enable(clk[max_gate]);
++	clk_prepare_enable(clk[iomuxc_gate]);
++
++	/*
++	 * SCC is needed to boot via mmc after a watchdog reset. The clock code
++	 * before conversion to common clk also enabled UART1 (which isn't
++	 * handled here and not needed for mmc) and IIM (which is enabled
++	 * unconditionally above).
++	 */
++	clk_prepare_enable(clk[scc_gate]);
++
++	imx_print_silicon_rev("i.MX35", mx35_revision());
++}
++
++int __init mx35_clocks_init(void)
++{
++	_mx35_clocks_init();
++
+ 	clk_register_clkdev(clk[pata_gate], NULL, "pata_imx");
+ 	clk_register_clkdev(clk[can1_gate], NULL, "flexcan.0");
+ 	clk_register_clkdev(clk[can2_gate], NULL, "flexcan.1");
+@@ -275,25 +299,6 @@ int __init mx35_clocks_init(void)
+ 	clk_register_clkdev(clk[csi_gate], NULL, "mx3-camera.0");
+ 	clk_register_clkdev(clk[admux_gate], "audmux", NULL);
+ 
+-	clk_prepare_enable(clk[spba_gate]);
+-	clk_prepare_enable(clk[gpio1_gate]);
+-	clk_prepare_enable(clk[gpio2_gate]);
+-	clk_prepare_enable(clk[gpio3_gate]);
+-	clk_prepare_enable(clk[iim_gate]);
+-	clk_prepare_enable(clk[emi_gate]);
+-	clk_prepare_enable(clk[max_gate]);
+-	clk_prepare_enable(clk[iomuxc_gate]);
+-
+-	/*
+-	 * SCC is needed to boot via mmc after a watchdog reset. The clock code
+-	 * before conversion to common clk also enabled UART1 (which isn't
+-	 * handled here and not needed for mmc) and IIM (which is enabled
+-	 * unconditionally above).
+-	 */
+-	clk_prepare_enable(clk[scc_gate]);
+-
+-	imx_print_silicon_rev("i.MX35", mx35_revision());
+-
+ 	mxc_timer_init(MX35_GPT1_BASE_ADDR, MX35_INT_GPT, GPT_TYPE_IMX31);
+ 
+ 	return 0;
+@@ -301,10 +306,10 @@ int __init mx35_clocks_init(void)
+ 
+ static void __init mx35_clocks_init_dt(struct device_node *ccm_node)
+ {
++	_mx35_clocks_init();
++
+ 	clk_data.clks = clk;
+ 	clk_data.clk_num = ARRAY_SIZE(clk);
+ 	of_clk_add_provider(ccm_node, of_clk_src_onecell_get, &clk_data);
+-
+-	mx35_clocks_init();
+ }
+ CLK_OF_DECLARE(imx35, "fsl,imx35-ccm", mx35_clocks_init_dt);
+-- 
+2.4.6
