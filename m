@@ -1,98 +1,122 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <Govindraj.Raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	<stable@vger.kernel.org>, "Ezequiel Garcia" <ezequiel.garcia@imgtec.com>,
-	Govindraj Raja <govindraj.raja@imgtec.com>
-Subject: [PATCH v6 4/4] clk: pistachio: correct critical clock list
-Date: Wed, 26 Aug 2015 17:11:40 +0100
-Message-ID: <1440605500-13274-5-git-send-email-Govindraj.Raja@imgtec.com>
-In-Reply-To: <1440605500-13274-1-git-send-email-Govindraj.Raja@imgtec.com>
-References: <1440605500-13274-1-git-send-email-Govindraj.Raja@imgtec.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:34822 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752586AbbHKVSz convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 11 Aug 2015 17:18:55 -0400
+Received: by pdrg1 with SMTP id g1so87628059pdr.2
+        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2015 14:18:54 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Eric Anholt <eric@anholt.net>, linux-arm-kernel@lists.infradead.org
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <1437420787-32137-2-git-send-email-eric@anholt.net>
+Cc: linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	"Stephen Warren" <swarren@wwwdotorg.org>,
+	"Lee Jones" <lee@kernel.org>, linux-clk@vger.kernel.org,
+	"Stephen Boyd" <sboyd@codeaurora.org>,
+	"Eric Anholt" <eric@anholt.net>
+References: <1437420787-32137-1-git-send-email-eric@anholt.net>
+ <1437420787-32137-2-git-send-email-eric@anholt.net>
+Message-ID: <20150811211840.31346.28666@quantum>
+Subject: Re: [PATCH v4 1/8] clk: bcm2835: Add binding docs for the Raspberry Pi clock
+ provider
+Date: Tue, 11 Aug 2015 14:18:40 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: "Damien.Horsley" <Damien.Horsley@imgtec.com>
+Quoting Eric Anholt (2015-07-20 12:33:00)
+> The hardware clocks are not controllable by the ARM, so we have to
+> make requests to the firmware to do so from the VPU side.  This will
+> let us replace fixed clocks in our DT with actual clock control (and
+> correct frequency information).
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+> Acked-by: Lee Jones <lee@kernel.org>
 
-Current critical clock list for pistachio enables
-only mips and sys clocks by default but there are
-also other clocks that are not claimed by anyone and
-needs to be enabled by default.
+Looks good to me. Do you want the clk patches to go through the clk tree
+or do you want them all together? For this patch feel free to add:
 
-This patch updates the critical clocks that need
-to be enabled by default.
+Acked-by: Michael Turquette <mturquette@baylibre.com>
 
-Add a separate struct to distinguish the critical clocks
-as listed:
-1.) core clocks:
-	a.) mips clock
-2.) peripheral system clocks:
-	a.) sys clock
-	b.) sys_bus clock
-	c.) DDR clock
-	d.) ROM clock
+Regards,
+Mike
 
-Fixes: b35d7c33419c("CLK: Pistachio: Register core clocks")
-Cc: <stable@vger.kernel.org> # 4.1
-Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
-Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-Signed-off-by: Damien.Horsley <Damien.Horsley@imgtec.com>
-Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
----
- drivers/clk/pistachio/clk-pistachio.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
-index 8c0fe88..c4ceb5e 100644
---- a/drivers/clk/pistachio/clk-pistachio.c
-+++ b/drivers/clk/pistachio/clk-pistachio.c
-@@ -159,9 +159,15 @@ PNAME(mux_debug) = { "mips_pll_mux", "rpu_v_pll_mux",
- 		     "wifi_pll_mux", "bt_pll_mux" };
- static u32 mux_debug_idx[] = { 0x0, 0x1, 0x2, 0x4, 0x8, 0x10 };
- 
--static unsigned int pistachio_critical_clks[] __initdata = {
--	CLK_MIPS,
--	CLK_PERIPH_SYS,
-+static unsigned int pistachio_critical_clks_core[] __initdata = {
-+	CLK_MIPS
-+};
-+
-+static unsigned int pistachio_critical_clks_sys[] __initdata = {
-+	PERIPH_CLK_SYS,
-+	PERIPH_CLK_SYS_BUS,
-+	PERIPH_CLK_DDR,
-+	PERIPH_CLK_ROM,
- };
- 
- static void __init pistachio_clk_init(struct device_node *np)
-@@ -193,8 +199,8 @@ static void __init pistachio_clk_init(struct device_node *np)
- 
- 	pistachio_clk_register_provider(p);
- 
--	pistachio_clk_force_enable(p, pistachio_critical_clks,
--				   ARRAY_SIZE(pistachio_critical_clks));
-+	pistachio_clk_force_enable(p, pistachio_critical_clks_core,
-+				   ARRAY_SIZE(pistachio_critical_clks_core));
- }
- CLK_OF_DECLARE(pistachio_clk, "img,pistachio-clk", pistachio_clk_init);
- 
-@@ -261,6 +267,9 @@ static void __init pistachio_clk_periph_init(struct device_node *np)
- 				    ARRAY_SIZE(pistachio_periph_gates));
- 
- 	pistachio_clk_register_provider(p);
-+
-+	pistachio_clk_force_enable(p, pistachio_critical_clks_sys,
-+				   ARRAY_SIZE(pistachio_critical_clks_sys));
- }
- CLK_OF_DECLARE(pistachio_clk_periph, "img,pistachio-clk-periph",
- 	       pistachio_clk_periph_init);
--- 
-1.9.1
+> ---
+> 
+> v2: Include the dt-bindings header in this commit instead of the next
+>     one.  Make the clock indices match the firmware clock IDs.  Rename
+>     the binding's compat string.  Move the firmware phandle to be
+>     under a vendor-specific namespace.
+> v4: Mention 'clk' in the subject instead of the more generic
+>     dt/bindings.
+> 
+>  .../clock/raspberrypi,bcm2835-firmware-clocks.txt  | 25 ++++++++++++++++++++++
+>  include/dt-bindings/clk/raspberrypi.h              | 23 ++++++++++++++++++++
+>  2 files changed, 48 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt
+>  create mode 100644 include/dt-bindings/clk/raspberrypi.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt b/Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt
+> new file mode 100644
+> index 0000000..0972602
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/raspberrypi,bcm2835-firmware-clocks.txt
+> @@ -0,0 +1,25 @@
+> +Raspberry Pi firmware clock provider.
+> +
+> +The Raspberry Pi architecture doesn't provide direct access to the
+> +CLOCKMAN peripheral from the ARM side, so Linux has to make requests
+> +to the VPU firmware to program them.
+> +
+> +This binding uses the common clock binding:
+> +Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +Required properties:
+> +- compatible:          Should be "raspberrypi,bcm2835-firmware-clocks"
+> +
+> +- #clock-cells:                Shall have value <1>.  The permitted clock-specifier
+> +                         values can be found in
+> +                         include/dt-bindings/clk/raspberrypi.h.
+> +
+> +- raspberrypi,firmware:        Phandle to the firmware driver node.
+> +
+> +Example:
+> +
+> +firmware_clocks: firmware-clocks {
+> +       compatible = "raspberrypi,bcm2835-firmware-clocks";
+> +       #clock-cells = <1>;
+> +       raspberrypi,firmware = <&firmware>;
+> +};
+> diff --git a/include/dt-bindings/clk/raspberrypi.h b/include/dt-bindings/clk/raspberrypi.h
+> new file mode 100644
+> index 0000000..ceec90f
+> --- /dev/null
+> +++ b/include/dt-bindings/clk/raspberrypi.h
+> @@ -0,0 +1,23 @@
+> +#/*
+> + *  Copyright �� 2015 Broadcom
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_RASPBERRYPI_H
+> +#define _DT_BINDINGS_CLK_RASPBERRYPI_H
+> +
+> +#define RPI_CLOCK_EMMC 1
+> +#define RPI_CLOCK_UART0        2
+> +#define RPI_CLOCK_ARM  3
+> +#define RPI_CLOCK_CORE 4
+> +#define RPI_CLOCK_V3D  5
+> +#define RPI_CLOCK_H264 6
+> +#define RPI_CLOCK_ISP  7
+> +#define RPI_CLOCK_SDRAM        8
+> +#define RPI_CLOCK_PIXEL        9
+> +#define RPI_CLOCK_PWM  10
+> +
+> +#endif
+> -- 
+> 2.1.4
+> 
