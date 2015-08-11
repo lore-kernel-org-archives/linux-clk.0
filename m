@@ -1,65 +1,113 @@
-Return-Path: <yingjoe.chen@mediatek.com>
-Message-ID: <1440598208.30139.3.camel@mtksdaap41>
-Subject: Re: [PATCH 0/5] add GPT timer support for mt8173
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>, "Michael
- Turquette" <mturquette@baylibre.com>, James Liao <jamesjj.liao@mediatek.com>,
-	Russell King <linux@arm.linux.org.uk>, <devicetree@vger.kernel.org>, Arnd
- Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>,
-	<linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	<linux-mediatek@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Olof Johansson <olof@lixom.net>, <srv_heupstream@mediatek.com>,
-	<linux-arm-kernel@lists.infradead.org>, "Daniel Kurtz"
-	<djkurtz@chromium.org>, <linux-clk@vger.kernel.org>
-Date: Wed, 26 Aug 2015 22:10:08 +0800
-In-Reply-To: <55DD6CC4.6010708@linaro.org>
-References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com>
-	 <55DD6CC4.6010708@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Return-Path: yingjoe.chen@mediatek.com
+To: Linus Walleij <linus.walleij@linaro.org>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, "Ulf Hansson" <ulf.hansson@linaro.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1438262400-29213-1-git-send-email-linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ "Linus Walleij" <linus.walleij@linaro.org>
+References: <1438262400-29213-1-git-send-email-linus.walleij@linaro.org>
+Message-ID: <20150811233905.31346.32970@quantum>
+Subject: Re: [PATCH 3/3] clk: add bindings for the Ux500 clocks
+Date: Tue, 11 Aug 2015 16:39:05 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2015-08-26 at 09:37 +0200, Daniel Lezcano wrote:
-> On 07/13/2015 11:32 AM, Yingjoe Chen wrote:
-> > This series add GPT timer support for mt8173. This is based on v4.2-rc1
-> > and Matthias' next branch (for dts parts).
-> >
-> > The first 2 patches comes from 'Add SMP bringup support for mt65xx socs'
-> > series [1]. I decide to move these 2 patches to this series, since it
-> > is more relevent here. They are changed based on Matthias' and Daniel's
-> > comments.
-> >
-> > [1] http://lists.infradead.org/pipermail/linux-mediatek/2015-May/000714.html
-> >
-> > Daniel Kurtz (1):
-> >    arm64: dts: mt8173: add timer node
-> >
-> > Yingjoe Chen (4):
-> >    clocksource: mediatek: do not enable GPT_CLK_EVT when setup
-> >    clocksource: mediatek: Use GPT as sched clock source
-> >    arm64: mediatek: enable MTK_TIMER
-> >    clk: mediatek: add 13mhz clock for MT8173
-> >
-> >   arch/arm64/Kconfig                       |  1 +
-> >   arch/arm64/boot/dts/mediatek/mt8173.dtsi |  9 +++++++++
-> >   drivers/clk/mediatek/clk-mt8173.c        |  5 +++++
-> >   drivers/clocksource/mtk_timer.c          | 26 ++++++++++++++++++++------
-> >   include/dt-bindings/clock/mt8173-clk.h   |  3 ++-
-> >   5 files changed, 37 insertions(+), 7 deletions(-)
-> 
-> Who will take this patchset ? I can take the patch 2 if needed.
-> 
-> 
+Quoting Linus Walleij (2015-07-30 06:20:00)
+> These Ux500 clocks have been around for years and were never
+> properly documented. Add the proper binding documentation.
+> =
 
-Hi Daniel,
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Please take patch 2 with your fix. Thanks.
+This type of binding description isn't preferred but I guess we've been
+supporting it all this time:
 
-I think patch 3(enable MTK_TIMER in Kconfig) and 5 (add timer node)
-should go through Matthias' tree to arm-soc and patch 4(add 13mhz clock)
-should go through James' mtk-clk tree to clk maintainer.
+Acked-by: Michael Turquette <mturquette@baylibre.com>
 
-Joe.C
+> ---
+> Ulf/Mike: please ACK this patch so I can take it through
+> ARM SoC.
+> ---
+>  Documentation/devicetree/bindings/clock/ux500.txt | 64 +++++++++++++++++=
+++++++
+>  1 file changed, 64 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ux500.txt
+> =
+
+> diff --git a/Documentation/devicetree/bindings/clock/ux500.txt b/Document=
+ation/devicetree/bindings/clock/ux500.txt
+> new file mode 100644
+> index 000000000000..e52bd4b72348
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ux500.txt
+> @@ -0,0 +1,64 @@
+> +Clock bindings for ST-Ericsson Ux500 clocks
+> +
+> +Required properties :
+> +- compatible : shall contain only one of the following:
+> +  "stericsson,u8500-clks"
+> +  "stericsson,u8540-clks"
+> +  "stericsson,u9540-clks"
+> +- reg : shall contain base register location and length for
+> +  CLKRST1, 2, 3, 5, and 6 in an array. Note the absence of
+> +  CLKRST4, which does not exist.
+> +
+> +Required subnodes:
+> +- prcmu-clock: a subnode with one clock cell for PRCMU (power,
+> +  reset, control unit) clocks. The cell indicates which PRCMU
+> +  clock in the prcmu-clock node the consumer wants to use.
+> +- prcc-periph-clock: a subnode with two clock cells for
+> +  PRCC (programmable reset- and clock controller) peripheral clocks.
+> +  The first cell indicates which PRCC block the consumer
+> +  wants to use, possible values are 1, 2, 3, 5, 6. The second
+> +  cell indicates which clock inside the PRCC block it wants,
+> +  possible values are 0 thru 31.
+> +- prcc-kernel-clock: a subnode with two clock cells for
+> +  PRCC (programmable reset- and clock controller) kernel clocks
+> +  The first cell indicates which PRCC block the consumer
+> +  wants to use, possible values are 1, 2, 3, 5, 6. The second
+> +  cell indicates which clock inside the PRCC block it wants,
+> +  possible values are 0 thru 31.
+> +- rtc32k-clock: a subnode with zero clock cells for the 32kHz
+> +  RTC clock.
+> +- smp-twd-clock: a subnode for the ARM SMP Timer Watchdog cluster
+> +  with zero clock cells.
+> +
+> +Example:
+> +
+> +clocks {
+> +       compatible =3D "stericsson,u8500-clks";
+> +       /*
+> +        * Registers for the CLKRST block on peripheral
+> +        * groups 1, 2, 3, 5, 6,
+> +        */
+> +       reg =3D <0x8012f000 0x1000>, <0x8011f000 0x1000>,
+> +           <0x8000f000 0x1000>, <0xa03ff000 0x1000>,
+> +           <0xa03cf000 0x1000>;
+> +
+> +       prcmu_clk: prcmu-clock {
+> +               #clock-cells =3D <1>;
+> +       };
+> +
+> +       prcc_pclk: prcc-periph-clock {
+> +               #clock-cells =3D <2>;
+> +       };
+> +
+> +       prcc_kclk: prcc-kernel-clock {
+> +               #clock-cells =3D <2>;
+> +       };
+> +
+> +       rtc_clk: rtc32k-clock {
+> +               #clock-cells =3D <0>;
+> +       };
+> +
+> +       smp_twd_clk: smp-twd-clock {
+> +               #clock-cells =3D <0>;
+> +       };
+> +};
+> -- =
+
+> 2.4.3
+>=20
