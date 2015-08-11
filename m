@@ -1,48 +1,105 @@
-Return-Path: <maxime.coquelin@st.com>
-Message-ID: <55C9DF7B.4040308@st.com>
-Date: Tue, 11 Aug 2015 13:41:47 +0200
-From: Maxime Coquelin <maxime.coquelin@st.com>
-MIME-Version: 1.0
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Lee Jones <lee.jones@linaro.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>	<1438974570-20812-4-git-send-email-mturquette@baylibre.com>	<20150810144811.GN3249@x1>	<20150810185516.2416.32293@quantum>	<20150811084329.GA13374@x1>	<55C9C82F.6060401@st.com> <CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com> <55C9DE57.2090105@st.com>
-In-Reply-To: <55C9DE57.2090105@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+ k.kozlowski@samsung.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, cw00.choi@samsung.com,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: [PATCH 4/4] ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
+Date: Tue, 11 Aug 2015 12:46:24 +0900
+Message-id: <1439264784-30322-5-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
+References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Sorry Geert, my reply has been cut:
+This patch add the MSHC2 (Mobile Storage Host Controller) devicetree node for
+Exynos3250 SoC.
 
-On 08/11/2015 01:36 PM, Maxime Coquelin wrote:
-> Hi Geert,
->
-> On 08/11/2015 12:11 PM, Geert Uytterhoeven wrote:
->> Hi Maxime,
->>
->> On Tue, Aug 11, 2015 at 12:02 PM, Maxime Coquelin
->> <maxime.coquelin@st.com> wrote:
->>> How can we pass CLK_ENABLE_HAND_OFF flag to a specific clock on STi
->>> platform?
->> Add the flag to the relevant clocks in the C code, e.g. in
->> clk_register_flexgen():
->>
->>          if (!strcmp(name, "clk-icn-cpu"))
->>                  init.flags |= CLK_ENABLE_HAND_OFF;
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 35 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos3250.dtsi         | 13 ++++++++++++
+ 2 files changed, 48 insertions(+)
 
-The main problem I see with this proposal is that clk_register_flexgen() 
-is called for several SoCs (STiH407/410/418...).
-Each of these SoCs have this clock, but maybe STiH407 will need the 
-flag, but not STiH410 and STiH418.
-So I think the best place to set this information is in DT, where the 
-differentiation is made between the SoCs.
-
-Kind regards,
-Maxime
+diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+index eac1d21c10d4..78b995fed6c7 100644
+--- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+@@ -452,6 +452,41 @@
+ 		samsung,pin-drv = <3>;
+ 	};
+ 
++	sd2_clk: sd2-clk {
++		samsung,pins = "gpk2-0";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_cmd: sd2-cmd {
++		samsung,pins = "gpk2-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_cd: sd2-cd {
++		samsung,pins = "gpk2-2";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_bus1: sd2-bus-width1 {
++		samsung,pins = "gpk2-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd2_bus4: sd2-bus-width4 {
++		samsung,pins = "gpk2-4", "gpk2-5", "gpk2-6";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
+ 	cam_port_b_io: cam-port-b-io {
+ 		samsung,pins = "gpm0-0", "gpm0-1", "gpm0-2", "gpm0-3",
+ 				"gpm0-4", "gpm0-5", "gpm0-6", "gpm0-7",
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 02f3250766c9..5a91eaa26565 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -30,6 +30,7 @@
+ 		pinctrl1 = &pinctrl_1;
+ 		mshc0 = &mshc_0;
+ 		mshc1 = &mshc_1;
++		mshc2 = &mshc_2;
+ 		spi0 = &spi_0;
+ 		spi1 = &spi_1;
+ 		i2c0 = &i2c_0;
+@@ -341,6 +342,18 @@
+ 			status = "disabled";
+ 		};
+ 
++		mshc_2: mshc@12530000 {
++			compatible = "samsung,exynos5250-dw-mshc";
++			reg = <0x12530000 0x1000>;
++			interrupts = <0 144 0>;
++			clocks = <&cmu CLK_SDMMC2>, <&cmu CLK_SCLK_MMC2>;
++			clock-names = "biu", "ciu";
++			fifo-depth = <0x80>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		exynos_usbphy: exynos-usbphy@125B0000 {
+ 			compatible = "samsung,exynos3250-usb2-phy";
+ 			reg = <0x125B0000 0x100>;
+-- 
+1.8.5.5
