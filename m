@@ -1,47 +1,53 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 13 Aug 2015 11:29:12 -0700
+Date: Tue, 11 Aug 2015 16:45:52 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Olof Johansson <olof@lixom.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	"arm@kernel.org" <arm@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk/ARM: move Ux500 PRCC bases to the device tree
-Message-ID: <20150813182814.GR26614@codeaurora.org>
-References: <1438262365-29164-1-git-send-email-linus.walleij@linaro.org>
- <CACRpkdZJKNph9cbJvBMQKdOCe0L8kKP=AEDaYqtBuc9vxxKPeg@mail.gmail.com>
- <20150813122831.GC23581@localhost>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk/ARM: delete the non-DT U8500 clock implementation
+Message-ID: <20150811234552.GP2839@codeaurora.org>
+References: <1438262352-29118-1-git-send-email-linus.walleij@linaro.org>
+ <20150803215129.GD21068@codeaurora.org>
+ <CACRpkdYdFAjRGMfsG4Kx=xNBACofcjFR3U1+P4U3yBmgQcFATQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20150813122831.GC23581@localhost>
+In-Reply-To: <CACRpkdYdFAjRGMfsG4Kx=xNBACofcjFR3U1+P4U3yBmgQcFATQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/13, Olof Johansson wrote:
-> On Wed, Aug 12, 2015 at 02:02:50PM +0200, Linus Walleij wrote:
-> > On Thu, Jul 30, 2015 at 3:19 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > 
-> > > The base addresses for the Ux500 PRCC controllers are hardcoded,
-> > > let's move them to the clock node in the device tree and delete
-> > > the constants.
-> > >
-> > > Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> > > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> > > ---
-> > > Ulf/Mike: please ACK this so I can take it through ARM SoC.
-> > 
-> > It appears this needs to go through the clk tree with the rest
-> > (1/3, 3/3).
-> > 
-> > Can I have an ACK from the ARM SoC people so they know
-> > this is happening?
+On 08/10, Linus Walleij wrote:
+> On Mon, Aug 3, 2015 at 11:51 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 07/30, Linus Walleij wrote:
+> >> This code is unused and not coming back. Let's kill it off.
+> >>
+> >> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> >> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> >> ---
+> >> Mike/Ulf: please ACK this so I can take this in through ARM
+> >> SoC.
+> >> ---
+> >>  drivers/clk/ux500/Makefile              |   1 -
+> >>  drivers/clk/ux500/u8500_clk.c           | 526 --------------------------------
+> >
+> > There's a patch in -next against this file.
+> >
+> > commit a162ca912cf792073b0b2450377fd1cd5d5c6cb5
+> > Author: Stephen Boyd <sboyd@codeaurora.org>
+> > Date:   Fri Jun 19 15:00:46 2015 -0700
+> >
+> >     clk: ux500: Remove clk.h and clkdev.h includes
+> >
+> > so I wonder why we need to take this patch through arm-soc? Would
+> > an immutable branch from the clk tree work as well?
 > 
-> Acked-by: Olof Johansson <olof@lixom.net>
+> No you can actually apply it in isolation. I was just collecting
+> them in one spot for testing.
 > 
-> I'm assuming you'll keep track of/avoid conflicts yourself, so I didn't
-> double-check for it.
-> 
+> Can you please apply this directly to the clk tree and
+> fix any clashes?
 
-Thanks. Applied to clk-next.
+Sure. Do we need to apply patches 2 and 3 too? I'm mostly trying
+to avoid merge conflicts.
+
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
