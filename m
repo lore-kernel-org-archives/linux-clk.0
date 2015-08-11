@@ -1,98 +1,48 @@
-Return-Path: <rjw@rjwysocki.net>
-Return-Path: <rjw@rjwysocki.net>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v4 1/6] cpufreq: make scaling_boost_freqs sysfs attr available when boost is enabled
-Date: Sat, 08 Aug 2015 00:21:04 +0200
-Message-ID: <11605783.uxKCOKbq1D@vostro.rjw.lan>
-In-Reply-To: <20150807113739.GF6939@linux>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com> <1594902.Dv5JKhve0y@amdc1976> <20150807113739.GF6939@linux>
+Return-Path: <maxime.coquelin@st.com>
+Message-ID: <55C9DF7B.4040308@st.com>
+Date: Tue, 11 Aug 2015 13:41:47 +0200
+From: Maxime Coquelin <maxime.coquelin@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Lee Jones <lee.jones@linaro.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>	<1438974570-20812-4-git-send-email-mturquette@baylibre.com>	<20150810144811.GN3249@x1>	<20150810185516.2416.32293@quantum>	<20150811084329.GA13374@x1>	<55C9C82F.6060401@st.com> <CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com> <55C9DE57.2090105@st.com>
+In-Reply-To: <55C9DE57.2090105@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday, August 07, 2015 05:07:39 PM Viresh Kumar wrote:
-> On 07-08-15, 13:12, Bartlomiej Zolnierkiewicz wrote:
-> > >From 993ebb6fc632ec7b61654c9610c90ff4dca4be34 Mon Sep 17 00:00:00 2001
-> > From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > Date: Fri, 7 Aug 2015 13:07:51 +0200
-> > Subject: [PATCH] cpufreq-dt: make scaling_boost_freqs sysfs attr available
-> >  when boost is enabled
-> > 
-> > Make scaling_boost_freqs sysfs attribute is available when
-> > cpufreq-dt driver is used and boost support is enabled.
-> > 
-> > Cc: Thomas Abraham <thomas.ab@samsung.com>
-> > Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> > Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> >  drivers/cpufreq/cpufreq-dt.c | 11 ++++++++++-
-> >  include/linux/cpufreq.h      |  1 +
-> >  2 files changed, 11 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-> > index b9259ab..c6a3b98 100644
-> > --- a/drivers/cpufreq/cpufreq-dt.c
-> > +++ b/drivers/cpufreq/cpufreq-dt.c
-> > @@ -36,6 +36,12 @@ struct private_data {
-> >  	unsigned int voltage_tolerance; /* in percentage */
-> >  };
-> >  
-> > +static struct freq_attr *cpufreq_dt_attr[] = {
-> > +	&cpufreq_freq_attr_scaling_available_freqs,
-> > +	NULL,   /* Extra space for boost-attr if required */
-> > +	NULL,
-> > +};
-> > +
-> >  static int set_target(struct cpufreq_policy *policy, unsigned int index)
-> >  {
-> >  	struct dev_pm_opp *opp;
-> > @@ -182,6 +188,8 @@ try_again:
-> >  	return ret;
-> >  }
-> >  
-> > +static struct cpufreq_driver dt_cpufreq_driver;
-> > +
-> >  static int cpufreq_init(struct cpufreq_policy *policy)
-> >  {
-> >  	struct cpufreq_frequency_table *freq_table;
-> > @@ -336,6 +344,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
-> >  		ret = cpufreq_enable_boost_support();
-> >  		if (ret)
-> >  			goto out_free_cpufreq_table;
-> > +		cpufreq_dt_attr[1] = &cpufreq_freq_attr_scaling_boost_freqs;
-> >  	}
-> >  
-> >  	policy->cpuinfo.transition_latency = transition_latency;
-> > @@ -411,7 +420,7 @@ static struct cpufreq_driver dt_cpufreq_driver = {
-> >  	.exit = cpufreq_exit,
-> >  	.ready = cpufreq_ready,
-> >  	.name = "cpufreq-dt",
-> > -	.attr = cpufreq_generic_attr,
-> > +	.attr = cpufreq_dt_attr,
-> >  };
-> >  
-> >  static int dt_cpufreq_probe(struct platform_device *pdev)
-> > diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-> > index 95f0186..657542d 100644
-> > --- a/include/linux/cpufreq.h
-> > +++ b/include/linux/cpufreq.h
-> > @@ -609,6 +609,7 @@ struct cpufreq_frequency_table *cpufreq_frequency_get_table(unsigned int cpu);
-> >  
-> >  /* the following are really really optional */
-> >  extern struct freq_attr cpufreq_freq_attr_scaling_available_freqs;
-> > +extern struct freq_attr cpufreq_freq_attr_scaling_boost_freqs;
-> >  extern struct freq_attr *cpufreq_generic_attr[];
-> >  int cpufreq_table_validate_and_show(struct cpufreq_policy *policy,
-> >  				      struct cpufreq_frequency_table *table);
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Sorry Geert, my reply has been cut:
 
-And what exactly am I supposed to do with this?
+On 08/11/2015 01:36 PM, Maxime Coquelin wrote:
+> Hi Geert,
+>
+> On 08/11/2015 12:11 PM, Geert Uytterhoeven wrote:
+>> Hi Maxime,
+>>
+>> On Tue, Aug 11, 2015 at 12:02 PM, Maxime Coquelin
+>> <maxime.coquelin@st.com> wrote:
+>>> How can we pass CLK_ENABLE_HAND_OFF flag to a specific clock on STi
+>>> platform?
+>> Add the flag to the relevant clocks in the C code, e.g. in
+>> clk_register_flexgen():
+>>
+>>          if (!strcmp(name, "clk-icn-cpu"))
+>>                  init.flags |= CLK_ENABLE_HAND_OFF;
 
-Have a robot that will pick up all patches ACKed by you magically or what?
+The main problem I see with this proposal is that clk_register_flexgen() 
+is called for several SoCs (STiH407/410/418...).
+Each of these SoCs have this clock, but maybe STiH407 will need the 
+flag, but not STiH410 and STiH418.
+So I think the best place to set this information is in DT, where the 
+differentiation is made between the SoCs.
 
-Rafael
+Kind regards,
+Maxime
