@@ -1,185 +1,140 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-Date: Mon, 31 Aug 2015 17:56:49 +0200
-Message-ID: <CAMuHMdWXpkiKwywgT37EP-iSc9sLOiWAjFzNeAE+T5KJzaNwfA@mail.gmail.com>
-Subject: Regression due to dropping "clock-output-names" (was: Re: [PATCH v5
- 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support)
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>,
-	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+To: Lee Jones <lee.jones@linaro.org>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20150811084329.GA13374@x1>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+ maxime.ripard@free-electrons.com, s.hauer@pengutronix.de,
+ geert@linux-m68k.org
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+ <20150810144811.GN3249@x1> <20150810185516.2416.32293@quantum>
+ <20150811084329.GA13374@x1>
+Message-ID: <20150811170904.2416.43354@quantum>
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+Date: Tue, 11 Aug 2015 10:09:04 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus, Mike, Stephen,
+Quoting Lee Jones (2015-08-11 01:43:29)
+> On Mon, 10 Aug 2015, Michael Turquette wrote:
+> > Quoting Lee Jones (2015-08-10 07:48:11)
+> > > On Fri, 07 Aug 2015, Michael Turquette wrote:
+> > This series is solving the following problems:
+> > =
 
-On Mon, Aug 31, 2015 at 2:49 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
->
-> This V5 patch adds initial CPG support for R-Car Generation 3 and in
-> particular the R8A7795 SoC.
->
-> The R-Car Gen3 clock hardware has a register write protection feature that
-> needs to be shared between the CPG function needs to be shared between
-> the CPG and MSTP hardware somehow. So far this feature is simply ignored.
->
-> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> ---
->
->  Changes since V4: (Magnus Damm <damm+renesas@opensource.se>)
->  - Simplified clks array handling - thanks Geert!
->  - Updated th DT binding documentation to reflect latest state
->  - of_property_count_strings() -> of_property_count_u32_elems() fix
->
->  Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
->  - Reworked driver to incorporate most feedback from Stephen Boyd - thanks!!
->  - Major things like syscon and driver model require more discussion.
->  - Added hunk to build drivers/clk/shmobile if ARCH_RENESAS is set.
->
->  Changes since V2: (Magnus Damm <damm+renesas@opensource.se>)
->  - Reworked driver to rely on clock index instead of strings.
->  - Dropped use of "clock-output-names".
+> > 1) enabling specified clocks at boot
+> > 2) preventing those clocks from being gated by clk_disable_unused
+> =
 
-Unfortunately dropping "clock-output-names" causes a regression: it turns
-out all fixed-factor clocks that have <&cpg_clocks R8A7795_CLK_*> as a parent
-have lost their parent clock, and have rate zero.
+> The original patch-set did this just fine.
 
-E.g. instead of
+There is a very real difference between the implementations.
 
-   clock                         enable_cnt  prepare_cnt        rate
-accuracy   phase
-----------------------------------------------------------------------------------------
- extal                                    1            1    16666600
-   50000 0
-    main                                  1            1     8333300
-   50000 0
-       pll1                               1            2   799996800
-   50000 0
-          cl                              0            0    16666600
-   50000 0
-          s3                              1            1   133332800
-   50000 0
-             s3d4                         1            2    33333200
-   50000 0
-                mstp3_clks.10             2            2    33333200
-   50000 0
+The original patch made it easy to call clk_prepare_enable on a clock
+from some place other than a Linux device driver (e.g. DT).
 
-/sys/kernel/debug/clk/clk_summary now has:
+The hand-off semantic establishes an expectation that a driver will come
+along and claim ownership of the clk using standard Linux apis; we're
+just preserving the enabled state of the clock until that time.
 
-   clock                         enable_cnt  prepare_cnt        rate
-accuracy   phase
-----------------------------------------------------------------------------------------
- extal                                    0            0    16666600
-   50000 0
-    main                                  0            0     8333300
-   50000 0
-       pll1                               0            0   799996800
-   50000 0
- cl                                       0            0           0
-       0 0
- s3                                       1            1           0
-       0 0
-    s3d4                                  1            2           0
-       0 0
-       mstp3_clks.10                      2            2           0
-       0 0
+I had a chat with Stephen Boyd about this yesterday and we discussed
+taking it even further: do not explicitly enable the clock, but instead
+simply refrain from disabling a clock that is both ON and has this flag
+set.
 
-Surprisingly, the system still works.
+It sounds like that would that work for ST, yes? Are you interested in
+using a flag (or a DT property) to enable an otherwise-gated clock, or
+simply insuring that bootloader-enabled and reset-enabled clocks are not
+spuriously turned off?
 
-Several clock drivers (e.g. fixed-factor-clock) use of_clk_get_parent_name()
-to find the name of the parent clock.
-In the absence of "clock-output-names", this returns the name of the device
-node of the parent's clock. Which is always "cpg_clocks", and no longer the
-name of the clock matching the index.
+> > If you mean to say, "this patch doesn't let me toss this data in
+> > Devicetree, a data orifice that is used by only a fraction of Linux
+> > kernel users" then you would be right.
+> =
 
-I believe the same issue is present for MSTP clocks, but there we don't have
-children clocks, so it doesn't manifest itself (yet).
+> A fraction of Linux kernel users, yes, but the majority (all?) of
+> the Clock Framework users do use DT.
 
-A quick workaround is to just re-add the clock-output-names to r8a7795.dtsi:
+At last count we had 5 architectures using ccf, I haven't counted in a
+while. x86 definitely does not use Devicetree. I have no clue if MIPS
+does. PowerPC and ARM-ish both do.
 
-                                clock-output-names =
-                                        "main", "pll0", "pll1","pll2",
-                                        "pll3", "pll4";
+> > diff --git a/drivers/clk/qcom/gcc-apq8084.c b/drivers/clk/qcom/gcc-apq8=
+084.c
+> > index 3563019..d2f5e5a 100644
+> > --- a/drivers/clk/qcom/gcc-apq8084.c
+> > +++ b/drivers/clk/qcom/gcc-apq8084.c
+> > @@ -1450,23 +1450,23 @@ static struct clk_branch gcc_blsp1_qup1_spi_app=
+s_clk =3D {
+> >  static struct clk_branch gcc_blsp1_qup2_i2c_apps_clk =3D {
+> >         .halt_reg =3D 0x06c8,
+> >         .clkr =3D {
+> >                 .enable_reg =3D 0x06c8,
+> >                 .enable_mask =3D BIT(0),
+> >                 .hw.init =3D &(struct clk_init_data){
+> >                         .name =3D "gcc_blsp1_qup2_i2c_apps_clk",
+> >                         .parent_names =3D (const char *[]){
+> >                                 "blsp1_qup2_i2c_apps_clk_src",
+> >                         },
+> >                         .num_parents =3D 1,
+> > -                       .flags =3D CLK_SET_RATE_PARENT,
+> > +                       .flags =3D CLK_SET_RATE_PARENT | CLK_ENABLE_HAN=
+D_OFF,
+> >                         .ops =3D &clk_branch2_ops,
+> >                 },
+> >         },
+> >  };
+> =
 
-Hence it seems like dropping "clock-output-names" for clocks with multiple
-outputs is not such a good idea?
+> Fair enough.  Obviously for anyone using Device Tree, this solution
+> makes it pretty difficult to partake.
 
-See also my question in "Re: [PATCH 3/4 v3][RFC] arm64: renesas: Add initial
-r8a7795 SoC support" (http://www.spinics.net/lists/linux-sh/msg44609.html):
+QCOM is using Devicetree. I've covered how to make a clock-controller
+style binding before using QCOM's driver & binding as examples. Take a
+look here if you have some spare time:
 
-| BTW, was "dropping clock-output-names" a general comment for all clock
-| drivers, or specific to the SoC's Clock Pulse Generator?
-|
-| For e.g. "fixed-factor-clock", the driver falls back to using the node's
-| name if  "clock-output-names" is not present.
-|
-| But e.g. for MSTP clocks, that can't be done, as the clocks wouldn't have
-| names in that case (single node with multiple clocks). Unless we start
-| fabricating them from the node name and the indices."
+http://lkml.kernel.org/r/<20150416192014.19585.9663@quantum>
 
-For MSTP, we started fabricating them, but that doesn't solve the
-of_clk_get_parent_name() issue.
+> > > What happens during disable() and unprepare()?
+> > =
 
-Thanks for your comments!
+> > The reference counts go to zero. As I stated in my cover letter, I'll
+> > need to see evidence of a real use case where the "leave the clock on on
+> > when I call clk_disable, clk_unprepare and clk_put" behavior is
+> > warranted.
+> =
 
->  Earlier versions: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->  Initial version: Gaku Inami <gaku.inami.xw@bp.renesas.com>
->
->  Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   32 +
->  drivers/clk/Makefile                                                     |    1
->  drivers/clk/shmobile/Makefile                                            |    1
->  drivers/clk/shmobile/clk-rcar-gen3.c                                     |  245 ++++++++++
->  4 files changed, 279 insertions(+)
->
-> --- /dev/null
-> +++ work/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt       2015-08-31 15:49:10.000000000 +0900
-> @@ -0,0 +1,32 @@
-> +* Renesas R-Car Gen3 Clock Pulse Generator (CPG)
-> +
-> +The CPG generates core clocks for the R-Car Gen3 SoCs. It includes three PLLs
-> +and several fixed ratio dividers.
-> +
-> +Required Properties:
-> +
-> +  - compatible: Must be one of
-> +    - "renesas,r8a7795-cpg-clocks" for the r8a7795 CPG
-> +    - "renesas,rcar-gen3-cpg-clocks" for the generic R-Car Gen3 CPG
-> +
-> +  - reg: Base address and length of the memory resource used by the CPG
-> +
-> +  - clocks: References to the parent clocks: first to the EXTAL clock
-> +  - #clock-cells: Must be 1
-> +  - clock-indices: Indices of the exported clocks
-> +
-> +Example
-> +-------
-> +
-> +       cpg_clocks: cpg_clocks@e6150000 {
-> +               compatible = "renesas,r8a7795-cpg-clocks",
-> +                            "renesas,rcar-gen3-cpg-clocks";
-> +               reg = <0 0xe6150000 0 0x1000>;
-> +               clocks = <&extal_clk>;
-> +               #clock-cells = <1>;
-> +                clock-indices = <
-> +                             R8A7795_CLK_MAIN R8A7795_CLK_PLL0
-> +                             R8A7795_CLK_PLL1 R8A7795_CLK_PLL2
-> +                             R8A7795_CLK_PLL3 R8A7795_CLK_PLL4
-> +                >;
-> +       };
+> I can't say for sure (get-out clause), but I doubt we'd need that, as
+> this would only be required if a knowledgeable consumer existed
+> i.e. one which actually wanted to the disable critical clock.  On ST's
+> platforms I don't think there is a use-case for these clocks to ever
+> be gated, as the platform would be unrecoverable and require a reboot.
 
-Gr{oetje,eeting}s,
+That's great. I suspected that behavior was not necessary at all.
 
-                        Geert
+Let's zero in on the technical concerns here:
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+1) ST's flexgen binding should not get screwed over. So we'll need a DT
+wrapper around the flag
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2) I would love feedback on whether you expect the flag/property to
+enable a disabled clock or if you merely want to keep an already-enabled
+clock from being disabled
+
+Thanks,
+Mike
+
+> =
+
+> -- =
+
+> Lee Jones
+> Linaro STMicroelectronics Landing Team Lead
+> Linaro.org =E2=94=82 Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
