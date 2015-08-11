@@ -1,95 +1,117 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Sat, 29 Aug 2015 18:13:57 +0900
-Message-Id: <20150829091357.28546.72024.sendpatchset@little-apple>
-In-Reply-To: <20150829091323.28546.28287.sendpatchset@little-apple>
-References: <20150829091323.28546.28287.sendpatchset@little-apple>
-Subject: [PATCH v4 03/05] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:52854 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752173AbbHKHZF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 11 Aug 2015 03:25:05 -0400
+Message-ID: <55C9A349.8080807@ti.com>
+Date: Tue, 11 Aug 2015 10:24:57 +0300
+From: Jyri Sarha <jsarha@ti.com>
+MIME-Version: 1.0
+To: Michael Allwright <michael.allwright@upb.de>,
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH RFC] clk-gpio-gate: use prepare/unprepare to do the GPIO
+ work
+References: <CALcgO_49YPGoCOv23Vz9vbnq9+AN3WqvYyg9_TtvsQcz8ia2Hw@mail.gmail.com>
+In-Reply-To: <CALcgO_49YPGoCOv23Vz9vbnq9+AN3WqvYyg9_TtvsQcz8ia2Hw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On 08/10/15 17:50, Michael Allwright wrote:
+>  From 19512587a6799c3cb96dc3f95d989b7c778a6f8c Mon Sep 17 00:00:00 2001
+> From: Michael Allwright <allsey87@gmail.com>
+> Date: Mon, 10 Aug 2015 16:44:05 +0200
+> Subject: [PATCH] clk-gpio-gate: use prepare/unprepare ops to control clock
+>   enabling via gpiod_set_value_cansleep. This allows for GPIO expanders on I2C
+>   and SPI buses
+>
 
-Add Clock Domain support to the R-Car Gen3 Clock Pulse Generator (CPG)
-driver using the generic PM Domain.  This allows to power-manage the
-module clocks of SoC devices that are part of the CPG/MSTP Clock Domain
-using Runtime PM, or for system suspend/resume.
+Hi,
+I sounds a bit weird if a clock gets turned on already at the prepare 
+state, but I can see that this is the simples solution to your problem. 
+Anyway, at least this should not be the default behavior. If this is 
+really widely needed then adding a flag to device tree binding for 
+changing the behavior would sound more feasible, but then again I am no 
+common clock framework expert. Better to turn to CCF maintainers for that.
 
-SoC devices that are part of the CPG/MSTP Clock Domain and can be
-power-managed through an MSTP clock should be tagged in DT with a proper
-"power-domains" property.
+BTW, if you propose some clk-gpio-gate changes to mainline, you should 
+know that the clk-gpio-gate.c was replaced with clk-gpio.c in 
+linux-next. The new file contains both gpio-gate and gpio-mux 
+functionality. I think this is the patch set was applied:
+http://www.spinics.net/lists/linux-clk/msg01280.html
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+Best regards,
+Jyri
 
- Changes since V3:
- - Fixed so correct file is actually used. =)
- - Took V2 from Geert but filtered out Kconfig.platforms bits
+> ---
+>   drivers/clk/clk-gpio-gate.c | 31 ++++++++++++++++++++++++-------
+>   1 file changed, 24 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/clk/clk-gpio-gate.c b/drivers/clk/clk-gpio-gate.c
+> index a71cabe..432edd9 100644
+> --- a/drivers/clk/clk-gpio-gate.c
+> +++ b/drivers/clk/clk-gpio-gate.c
+> @@ -22,8 +22,8 @@
+>    * DOC: basic gpio gated clock which can be enabled and disabled
+>    *      with gpio output
+>    * Traits of this clock:
+> - * prepare - clk_(un)prepare only ensures parent is (un)prepared
+> - * enable - clk_enable and clk_disable are functional & control gpio
+> + * prepare - clk_(un)prepare ensures parent is (un)prepared and control gpio
+> + * enable - clk_enable and clk_disable only ensures parent is enabled/disabled
+>    * rate - inherits rate from parent.  No clk_set_rate support
+>    * parent - fixed parent.  No clk_set_parent support
+>    */
+> @@ -32,28 +32,45 @@
+>
+>   static int clk_gpio_gate_enable(struct clk_hw *hw)
+>   {
+> +    return 0;
+> +}
+> +
+> +static void clk_gpio_gate_disable(struct clk_hw *hw)
+> +{
+> +}
+> +
+> +static int clk_gpio_gate_is_enabled(struct clk_hw *hw)
+> +{
+> +    return 0;
+> +}
+> +
+> +static int clk_gpio_gate_prepare(struct clk_hw *hw)
+> +{
+>       struct clk_gpio *clk = to_clk_gpio(hw);
+>
+> -    gpiod_set_value(clk->gpiod, 1);
+> +    gpiod_set_value_cansleep(clk->gpiod, 1);
+>
+>       return 0;
+>   }
+>
+> -static void clk_gpio_gate_disable(struct clk_hw *hw)
+> +static void clk_gpio_gate_unprepare(struct clk_hw *hw)
+>   {
+>       struct clk_gpio *clk = to_clk_gpio(hw);
+>
+> -    gpiod_set_value(clk->gpiod, 0);
+> +    gpiod_set_value_cansleep(clk->gpiod, 0);
+>   }
+>
+> -static int clk_gpio_gate_is_enabled(struct clk_hw *hw)
+> +static int clk_gpio_gate_is_prepared(struct clk_hw *hw)
+>   {
+>       struct clk_gpio *clk = to_clk_gpio(hw);
+>
+> -    return gpiod_get_value(clk->gpiod);
+> +    return gpiod_get_value_cansleep(clk->gpiod);
+>   }
+>
+>   const struct clk_ops clk_gpio_gate_ops = {
+> +    .prepare = clk_gpio_gate_prepare,
+> +    .unprepare = clk_gpio_gate_unprepare,
+> +    .is_prepared = clk_gpio_gate_is_prepared,
+>       .enable = clk_gpio_gate_enable,
+>       .disable = clk_gpio_gate_disable,
+>       .is_enabled = clk_gpio_gate_is_enabled,
+>
 
- Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   26 +++++++++-
- drivers/clk/shmobile/clk-rcar-gen3.c                                     |    2 
- 2 files changed, 26 insertions(+), 2 deletions(-)
-
---- 0011/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt
-+++ work/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt	2015-08-29 16:41:04.842366518 +0900
-@@ -2,6 +2,8 @@
- 
- The CPG generates core clocks for the R-Car Gen3 SoCs. It includes three PLLs
- and several fixed ratio dividers.
-+The CPG also provides a Clock Domain for SoC devices, in combination with the
-+CPG Module Stop (MSTP) Clocks.
- 
- Required Properties:
- 
-@@ -15,10 +17,18 @@ Required Properties:
-   - #clock-cells: Must be 1
-   - clock-output-names: The names of the clocks. Supported clocks are
-     "main", "pll0", "pll1", "pll2", "pll3", "pll4"
-+  - #power-domain-cells: Must be 0
- 
-+SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
-+through an MSTP clock should refer to the CPG device node in their
-+"power-domains" property, as documented by the generic PM domain bindings in
-+Documentation/devicetree/bindings/power/power_domain.txt.
- 
--Example
---------
-+
-+Examples
-+--------
-+
-+  - CPG device node:
- 
- 	cpg_clocks: cpg_clocks@e6150000 {
- 		compatible = "renesas,r8a7795-cpg-clocks",
-@@ -28,4 +38,16 @@ Example
- 		#clock-cells = <1>;
- 		clock-output-names = "main", "pll0", "pll1","pll2",
- 				     "pll3", "pll4";
-+		#power-domain-cells = <0>;
-+	};
-+
-+  - CPG/MSTP Clock Domain member device node:
-+
-+	scif2: serial@e6e88000 {
-+		compatible = "renesas,scif-r8a7795", "renesas,scif";
-+		reg = <0 0xe6e88000 0 64>;
-+		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp3_clks RCAR_R8A7795_CLK_SCIF2>;
-+		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 	};
---- 0011/drivers/clk/shmobile/clk-rcar-gen3.c
-+++ work/drivers/clk/shmobile/clk-rcar-gen3.c	2015-08-29 16:41:04.842366518 +0900
-@@ -244,6 +244,8 @@ static void __init rcar_gen3_cpg_clocks_
- 	}
- 
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
-+
-+	cpg_mstp_add_clk_domain(np);
- }
- CLK_OF_DECLARE(rcar_gen3_cpg_clks, "renesas,rcar-gen3-cpg-clocks",
- 	       rcar_gen3_cpg_clocks_init);
