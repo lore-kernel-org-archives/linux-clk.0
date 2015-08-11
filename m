@@ -1,87 +1,111 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH 6/8] clk: imx5: retain early UART clocks during kernel init
-Date: Thu, 27 Aug 2015 18:39:19 +0200
-Message-Id: <1440693561-28095-7-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
-References: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
- kernel@pengutronix.de, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	"Nicolas Ferre" <nicolas.ferre@atmel.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1438215726-27452-21-git-send-email-alexandre.belloni@free-electrons.com>
+Cc: "Boris Brezillon" <boris.brezillon@free-electrons.com>,
+	"Maxime Ripard" <maxime.ripard@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	"Alexandre Belloni" <alexandre.belloni@free-electrons.com>,
+	"Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+References: <1438215726-27452-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1438215726-27452-21-git-send-email-alexandre.belloni@free-electrons.com>
+Message-ID: <20150811232649.31346.37488@quantum>
+Subject: Re: [PATCH 20/20] clk: at91: Revert "keep slow clk enabled to prevent system
+ hang"
+Date: Tue, 11 Aug 2015 16:26:49 -0700
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure to keep UART clocks enabled during kernel init if
-earlyprintk or earlycon are active.
+Quoting Alexandre Belloni (2015-07-29 17:22:06)
+> Commit dca1a4b5ff6e ("clk: at91: keep slow clk enabled to prevent system
+> hang") added a workaround for the slow clock as it is not properly handled
+> by its users.
+> 
+> Now that the slow clock is taken properly by the drivers, this workaround
+> is not necessary anymore, revert it.
+> 
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: linux-clk@vger.kernel.org
+>  drivers/clk/at91/clk-slow.c | 27 ---------------------------
+>  1 file changed, 27 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
+> index 98a84a865fe1..2c59d6a64dd5 100644
+> --- a/drivers/clk/at91/clk-slow.c
+> +++ b/drivers/clk/at91/clk-slow.c
+> @@ -70,7 +70,6 @@ struct clk_sam9x5_slow {
+>  
+>  #define to_clk_sam9x5_slow(hw) container_of(hw, struct clk_sam9x5_slow, hw)
+>  
+> -static struct clk *slow_clk;
+>  
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- drivers/clk/imx/clk-imx51-imx53.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Might want to remove one extra line of white space?
 
-diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-imx53.c
-index a7e4f394be0d..701d1d912a4b 100644
---- a/drivers/clk/imx/clk-imx51-imx53.c
-+++ b/drivers/clk/imx/clk-imx51-imx53.c
-@@ -130,6 +130,20 @@ static const char *cpu_podf_sels[] = { "pll1_sw", "step_sel" };
- static struct clk *clk[IMX5_CLK_END];
- static struct clk_onecell_data clk_data;
- 
-+static void __init imx5_uart_disable_cb(void)
-+{
-+	clk_disable_unprepare(clk[IMX5_CLK_UART1_IPG_GATE]);
-+	clk_disable_unprepare(clk[IMX5_CLK_UART1_PER_GATE]);
-+	clk_disable_unprepare(clk[IMX5_CLK_UART2_IPG_GATE]);
-+	clk_disable_unprepare(clk[IMX5_CLK_UART2_PER_GATE]);
-+	clk_disable_unprepare(clk[IMX5_CLK_UART3_IPG_GATE]);
-+	clk_disable_unprepare(clk[IMX5_CLK_UART3_PER_GATE]);
-+	clk_disable_unprepare(clk[IMX5_CLK_UART4_IPG_GATE]);
-+	clk_disable_unprepare(clk[IMX5_CLK_UART4_PER_GATE]);
-+	clk_disable_unprepare(clk[IMX5_CLK_UART5_IPG_GATE]);
-+	clk_disable_unprepare(clk[IMX5_CLK_UART5_PER_GATE]);
-+}
-+
- static void __init mx5_clocks_common_init(void __iomem *ccm_base)
- {
- 	clk[IMX5_CLK_DUMMY]		= imx_clk_fixed("dummy", 0);
-@@ -310,6 +324,20 @@ static void __init mx5_clocks_common_init(void __iomem *ccm_base)
- 	clk_prepare_enable(clk[IMX5_CLK_TMAX1]);
- 	clk_prepare_enable(clk[IMX5_CLK_TMAX2]); /* esdhc2, fec */
- 	clk_prepare_enable(clk[IMX5_CLK_TMAX3]); /* esdhc1, esdhc4 */
-+
-+	if (imx_clk_keep_uart()) {
-+		clk_prepare_enable(clk[IMX5_CLK_UART1_IPG_GATE]);
-+		clk_prepare_enable(clk[IMX5_CLK_UART1_PER_GATE]);
-+		clk_prepare_enable(clk[IMX5_CLK_UART2_IPG_GATE]);
-+		clk_prepare_enable(clk[IMX5_CLK_UART2_PER_GATE]);
-+		clk_prepare_enable(clk[IMX5_CLK_UART3_IPG_GATE]);
-+		clk_prepare_enable(clk[IMX5_CLK_UART3_PER_GATE]);
-+		clk_prepare_enable(clk[IMX5_CLK_UART4_IPG_GATE]);
-+		clk_prepare_enable(clk[IMX5_CLK_UART4_PER_GATE]);
-+		clk_prepare_enable(clk[IMX5_CLK_UART5_IPG_GATE]);
-+		clk_prepare_enable(clk[IMX5_CLK_UART5_PER_GATE]);
-+		imx_clk_set_uart_disable_callback(imx5_uart_disable_cb);
-+	}
- }
- 
- static void __init mx50_clocks_init(struct device_node *np)
--- 
-2.5.0
+>  static int clk_slow_osc_prepare(struct clk_hw *hw)
+>  {
+> @@ -358,8 +357,6 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
+>         clk = clk_register(NULL, &slowck->hw);
+>         if (IS_ERR(clk))
+>                 kfree(slowck);
+> -       else
+> -               slow_clk = clk;
+>  
+>         return clk;
+>  }
+> @@ -436,8 +433,6 @@ at91_clk_register_sam9260_slow(struct at91_pmc *pmc,
+>         clk = clk_register(NULL, &slowck->hw);
+>         if (IS_ERR(clk))
+>                 kfree(slowck);
+> -       else
+> -               slow_clk = clk;
+>  
+>         return clk;
+>  }
+> @@ -470,25 +465,3 @@ void __init of_at91sam9260_clk_slow_setup(struct device_node *np,
+>  
+>         of_clk_add_provider(np, of_clk_src_simple_get, clk);
+>  }
+> -
+> -/*
+> - * FIXME: All slow clk users are not properly claiming it (get + prepare +
+> - * enable) before using it.
+> - * If all users properly claiming this clock decide that they don't need it
+> - * anymore (or are removed), it is disabled while faulty users are still
+> - * requiring it, and the system hangs.
+> - * Prevent this clock from being disabled until all users are properly
+> - * requesting it.
+> - * Once this is done we should remove this function and the slow_clk variable.
+> - */
+> -static int __init of_at91_clk_slow_retain(void)
+> -{
+> -       if (!slow_clk)
+> -               return 0;
+> -
+> -       __clk_get(slow_clk);
+> -       clk_prepare_enable(slow_clk);
+> -
+> -       return 0;
+> -}
+> -arch_initcall(of_at91_clk_slow_retain);
 
+This is a cool series. Thanks. Feel free to add my Ack, or we can take
+this through clk-next once the other patches are applied.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Regards,
+Mike
+
+> -- 
+> 2.1.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
