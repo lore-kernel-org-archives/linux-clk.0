@@ -1,40 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 3 Aug 2015 11:08:46 -0700
+Message-ID: <55CA7ED7.90003@codeaurora.org>
+Date: Tue, 11 Aug 2015 16:01:43 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 23/26] clk: tegra: Convert to clk_hw based provider APIs
-Message-ID: <20150803180846.GA8318@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
- <1438362246-6664-24-git-send-email-sboyd@codeaurora.org>
- <55BF2395.8000604@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <55BF2395.8000604@ti.com>
+To: Lin Huang <hl@rock-chips.com>
+CC: heiko@sntech.de, dianders@chromium.org, linus.walleij@linaro.org,
+	linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] clk: rockchip: add pclk_pd_pmu to the list of
+ rk3288 critical clocks
+References: <1439287924-6988-1-git-send-email-hl@rock-chips.com>
+In-Reply-To: <1439287924-6988-1-git-send-email-hl@rock-chips.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/03, Tero Kristo wrote:
-> On 07/31/2015 08:04 PM, Stephen Boyd wrote:
-> >We're removing struct clk from the clk provider API, so switch
-> >this code to using the clk_hw based provider APIs.
-> >
-> 
-> Subject should be clk: ti: ...
-> 
-> Other than that, seems ok to me. Also, gave clk-next + this set a
-> quick testing on the boards accessible to me, and seems to work
-> fine.
-> 
-> So, once the subject is fixed, for TI relevant parts for patches 2,
-> 5, 7, 8, 23:
-> 
-> Acked-by: Tero Kristo <t-kristo@ti.com>
-> 
+On 08/11/2015 03:12 AM, Lin Huang wrote:
+> From: Heiko Stuebner <heiko@sntech.de>
+>
+> pclk_pd_pmu needs to keep running and with the upcoming gpio clock
+> handling this is not always the case anymore. So add it to the list
+> of critical clocks for now.
+>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Lin Huang <hl@rock-chips.com>
+> ---
+>
 
-Thanks. I fixed the subject.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
+
