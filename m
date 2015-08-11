@@ -1,98 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <1438873513.2142.95.camel@arm.com>
-Subject: Re: [PATCH 1/3] clk: versatile: Switch to assigned clock parents
-From: Pawel Moll <pawel.moll@arm.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Sudeep Holla <Sudeep.Holla@arm.com>
-Date: Thu, 06 Aug 2015 16:05:13 +0100
-In-Reply-To: <55C24E56.3020004@codeaurora.org>
-References: <55BBB2FC.9030102@codeaurora.org>
-	 <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>
-	 <1438386285-5070-2-git-send-email-sboyd@codeaurora.org>
-	 <1438610480.2142.14.camel@arm.com> <55BFAB11.7080600@codeaurora.org>
-	 <1438770574.2142.80.camel@arm.com> <55C24E56.3020004@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+	k.kozlowski@samsung.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+	cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH 3/4] ARM: dts: Add UART2 dt node for Exynos3250 SoC
+Date: Tue, 11 Aug 2015 12:46:23 +0900
+Message-id: <1439264784-30322-4-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
+References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2015-08-05 at 18:56 +0100, Stephen Boyd wrote:
-> On 08/05/2015 03:29 AM, Pawel Moll wrote:
-> >
-> > Right, that's probably my fault. The sp810 nodes appeared in the VE
-> > trees very early (in terms of the "DT era"), when we weren't so strict
-> > about documentation. So far, it would be fairly simple, something like
-> > the text below - feel free to take it, mend it, extend it with your
-> > changes and include in the series:
-> >
-> > Thanks!
-> 
-> Great! Can you please provide your signed-off-by? 
+This patch add the uart2 devicetree node for Exynos3250 SoC.
 
-Sure. 
-
-8<--------------------------------------------------------
-
->From cddb00e4c8b6b57e82008fa23a7359560e5c997c Mon Sep 17 00:00:00 2001
-From: Pawel Moll <pawel.moll@arm.com>
-Date: Thu, 6 Aug 2015 16:04:10 +0100
-Subject: [PATCH] clk: versatile: Add SP810 device tree bindings document
-
-Signed-off-by: Pawel Moll <pawel.moll@arm.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- Documentation/devicetree/bindings/arm/sp810.txt | 35 +++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/sp810.txt
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  7 +++++++
+ arch/arm/boot/dts/exynos3250.dtsi         | 12 ++++++++++++
+ 2 files changed, 19 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/sp810.txt b/Documentation/devicetree/bindings/arm/sp810.txt
-new file mode 100644
-index 0000000..440ee08
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/sp810.txt
-@@ -0,0 +1,35 @@
-+SP810 System Controller
-+-----------------------
-+
-+Required properties:
-+
-+- compatible:	standard compatible string for a Primecell peripheral,
-+		see Documentation/devicetree/bindings/arm/primecell.txt
-+		for more details
-+		should be: "arm,sp810", "arm,primecell"
-+
-+- reg:		standard registers property, physical address and size
-+		of the control registers
-+
-+- clock-names:	from the common clock bindings, for more details see
-+		Documentation/devicetree/bindings/clock/clock-bindings.txt;
-+		should be: "refclk", "timclk", "apb_pclk"
-+
-+- clocks:	from the common clock bindings, phandle and clock
-+		specifier pairs for the entries of clock-names property
-+
-+- #clock-cells: from the common clock bindings;
-+		should be: <1>
-+
-+- clock-output-names: from the common clock bindings;
-+		should be: "timerclken0", "timerclken1", "timerclken2", "timerclken3"
-+
-+Example:
-+	sysctl@020000 {
-+		compatible = "arm,sp810", "arm,primecell";
-+		reg = <0x020000 0x1000>;
-+		clocks = <&v2m_refclk32khz>, <&v2m_refclk1mhz>, <&smbclk>;
-+		clock-names = "refclk", "timclk", "apb_pclk";
-+		#clock-cells = <1>;
-+		clock-output-names = "timerclken0", "timerclken1", "timerclken2", "timerclken3";
+diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+index 5ab81c39e2c9..eac1d21c10d4 100644
+--- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+@@ -120,6 +120,13 @@
+ 		samsung,pin-drv = <0>;
+ 	};
+ 
++	uart2_data: uart2-data {
++		samsung,pins = "gpa1-0", "gpa1-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
 +	};
++
+ 	i2c3_bus: i2c3-bus {
+ 		samsung,pins = "gpa1-2", "gpa1-3";
+ 		samsung,pin-function = <3>;
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 2db99433e17f..02f3250766c9 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -42,6 +42,7 @@
+ 		i2c7 = &i2c_7;
+ 		serial0 = &serial_0;
+ 		serial1 = &serial_1;
++		serial2 = &serial_2;
+ 	};
+ 
+ 	cpus {
+@@ -435,6 +436,17 @@
+ 			status = "disabled";
+ 		};
+ 
++		serial_2: serial@13820000 {
++			compatible = "samsung,exynos4210-uart";
++			reg = <0x13820000 0x100>;
++			interrupts = <0 111 0>;
++			clocks = <&cmu CLK_UART2>, <&cmu CLK_SCLK_UART2>;
++			clock-names = "uart", "clk_uart_baud0";
++			pinctrl-names = "default";
++			pinctrl-0 = <&uart2_data>;
++			status = "disabled";
++		};
++
+ 		i2c_0: i2c@13860000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
-2.1.4
-
-
+1.8.5.5
 
