@@ -1,104 +1,115 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:33364 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753448AbbHKSZu convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 11 Aug 2015 14:25:50 -0400
-Received: by pabyb7 with SMTP id yb7so135418543pab.0
-        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2015 11:25:50 -0700 (PDT)
+Return-Path: <mturquette@baylibre.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Scott Wood <scottwood@freescale.com>,
-	"Tang Yuantian" <Yuantian.Tang@freescale.com>
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <1434682158-7243-1-git-send-email-scottwood@freescale.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	"Liberman Igal-B31950" <Igal.Liberman@freescale.com>,
-	"Bucur Madalin-Cristian-B32716" <madalin.bucur@freescale.com>,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	"Scott Wood" <scottwood@freescale.com>
-References: <1434682158-7243-1-git-send-email-scottwood@freescale.com>
-Message-ID: <20150811182535.31346.52965@quantum>
-Subject: Re: [RFC PATCH 0/8] clk: qoriq: Move chip-specific knowledge into driver
-Date: Tue, 11 Aug 2015 11:25:35 -0700
-Sender: linux-clk-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>,
+ "Grygorii Strashko" <grygorii.strashko@ti.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20150811192514.GB7557@n2100.arm.linux.org.uk>
+Cc: "Nishanth Menon" <nm@ti.com>, "Thomas Gleixner" <tglx@linutronix.de>,
+ linux-rt-users@vger.kernel.org, "Felipe Balbi" <balbi@ti.com>,
+ "Sekhar Nori" <nsekhar@ti.com>, linux-clk@vger.kernel.org
+References: <55C0A96F.80307@ti.com> <alpine.DEB.2.11.1508041405290.3983@nanos>
+ <55C0D8F3.3030105@ti.com> <20150804153641.GR7557@n2100.arm.linux.org.uk>
+ <55CA4BC2.4020505@ti.com> <20150811192514.GB7557@n2100.arm.linux.org.uk>
+Message-ID: <20150811220609.31346.15943@quantum>
+Subject: Re: Common clock framework API vs RT patchset
+Date: Tue, 11 Aug 2015 15:06:09 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Scott,
+Quoting Russell King - ARM Linux (2015-08-11 12:25:15)
+> On Tue, Aug 11, 2015 at 10:23:46PM +0300, Grygorii Strashko wrote:
+> > Hi All,
+> > =
 
-Quoting Scott Wood (2015-06-18 19:49:10)
-> The existing device tree bindings are error-prone and inflexible. 
-> Correct the mistake by moving the knowledge into the driver, which
-> has more flexibility in describing the quirks of each chip.  This leaves
-> the device tree to its proper role of identifying a programming interface
-> rather than describing its individual registers.
+> > On 08/04/2015 06:36 PM, Russell King - ARM Linux wrote:
+> > > On Tue, Aug 04, 2015 at 10:23:31AM -0500, Nishanth Menon wrote:
+> > >> Consider clk_enable/disable/set_parent/setfreq operations. none of t=
+hese
+> > >> operations are "atomic" from hardware point of view. instead, they a=
+re a
+> > >> set of steps which culminates to moving from state A to state B of t=
+he
+> > >> clock tree configuration.
+> > > =
 
-Sorry for not responding to this one sooner. Fell through the cracks.
+> > > There's a world of difference between clk_enable()/clk_disable() and
+> > > the rest of the clk API.
+> > > =
 
-All of the changes to drives/clk/clk-qoriq.c look great to me. I assume
-you need to keep all of these patches together and want to the take
-through the freescale tree? If so feel free to add,
+> > > clk_enable()/clk_disable() _should_ be callable from any context, sin=
+ce
+> > > you may need to enable or disable a clock from any context.  The rema=
+inder
+> > > of the clk API is callable only from contexts where sleeping is permi=
+ssible.
+> > > =
 
-Acked-by: Michael Turquette <mturquette@baylibre.com>
+> > > The reason we have this split is because clk_enable()/clk_disable() h=
+ave
+> > > historically been used in interrupt handlers, and they're specifically
+> > > not supposed to impose big delays.
+> > > =
+
+> > > Things like waiting for a PLL to re-lock is time-consuming, so it's n=
+ot
+> > > something I'd expect to see behind a clk_enable() implementation (the
+> > > fact you can't sleep in there is a big hint.)  Such waits should be in
+> > > the clk_prepare() stage instead.
+> > > =
+
+> > > Now, as for clk_enable() being interrupted - if clk_enable() is inter=
+rupted
+> > > and another clk_enable() comes along for the same clock, that second
+> > > clk_enable() should not return until the clock has actually been enab=
+led,
+> > > and it's up to the implementation to decode how to achieve that.  If =
+that
+> > > means a RT implementation using a raw spinlock, then that's one option
+> > > (which basically would have the side effect of blocking until the pre=
+empted
+> > > clk_enable() finishes its business.)  Alternatively, if we can preempt
+> > > inside clk_enable(), then the clk_enable() implementation should be w=
+ritten
+> > > to cope with that (eg, by the second clk_enable() fiddling with the h=
+ardware,
+> > > and the first thread noticing that it has nothing to do.)
+> > > =
+
+> > =
+
+> > Thanks a lot for your comments and explanations.
+> > =
+
+> > Now lock object in CCF is not a raw spinlock, so, seems, I have to upda=
+te =
+
+> > code and try to move clk_enable()/clk_disable() out of atomic context.
+> =
+
+> clk_enable/clk_disable _should_ be usable from atomic contexts.
+
+Grygorii,
+
+Note that the common clk implementation allows for the same thread to
+re-enter the clock framework even while the lock is held. For instance
+if calling clk_enable(foo) resulted in a call to clk_enable(bar), this
+would not deadlock. However this re-entrant behavior is ONLY for the
+same thread that is already holding the lock.
+
+I doubt that the above bit of trivial will solve your problem and it
+probably does not add any new complexity for you either, but it seems
+relevant enough for me to add here.
 
 Regards,
 Mike
 
-> 
-> For more detail, see the commit message of patch 4.
-> 
-> Scott Wood (8):
->   ARM: dts: ls1021a: Fix clockgen node
->   cpufreq: qoriq: Don't look at clock implementation details
->   powerpc/fsl: Move fsl_guts.h out of arch/powerpc
->   clk: qoriq: Move chip-specific knowledge into driver
->   clk: qoriq: Redirect legacy clock nodes to new clocks
->   cpufreq: qoriq: Remove frequency masking and minimum
->   clk: qoriq: Expose OF clocks directly from the clockgen node
->   powerpc/fsl: Use new clockgen binding
-> 
->  .../devicetree/bindings/clock/qoriq-clock.txt      |   57 +-
->  arch/arm/boot/dts/ls1021a.dtsi                     |    3 +
->  arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi         |    4 +-
->  arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi         |    8 +-
->  arch/powerpc/boot/dts/fsl/b4si-post.dtsi           |   15 -
->  arch/powerpc/boot/dts/fsl/p2041si-post.dtsi        |   18 -
->  arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi         |    8 +-
->  arch/powerpc/boot/dts/fsl/p3041si-post.dtsi        |   18 -
->  arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi         |    8 +-
->  arch/powerpc/boot/dts/fsl/p4080si-post.dtsi        |   70 --
->  arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi         |   16 +-
->  arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi         |    4 +-
->  arch/powerpc/boot/dts/fsl/p5040si-post.dtsi        |   18 -
->  arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi         |    8 +-
->  arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi     |   50 +-
->  arch/powerpc/boot/dts/fsl/qoriq-clockgen2.dtsi     |   33 +-
->  arch/powerpc/boot/dts/fsl/t1023si-post.dtsi        |   16 -
->  arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi         |    4 +-
->  arch/powerpc/boot/dts/fsl/t1040si-post.dtsi        |   44 -
->  arch/powerpc/boot/dts/fsl/t104xsi-pre.dtsi         |    8 +-
->  arch/powerpc/boot/dts/fsl/t2081si-post.dtsi        |   22 -
->  arch/powerpc/boot/dts/fsl/t208xsi-pre.dtsi         |    8 +-
->  arch/powerpc/boot/dts/fsl/t4240si-post.dtsi        |   61 -
->  arch/powerpc/boot/dts/fsl/t4240si-pre.dtsi         |   24 +-
->  arch/powerpc/platforms/85xx/mpc85xx_mds.c          |    2 +-
->  arch/powerpc/platforms/85xx/mpc85xx_rdb.c          |    2 +-
->  arch/powerpc/platforms/85xx/p1022_ds.c             |    2 +-
->  arch/powerpc/platforms/85xx/p1022_rdk.c            |    2 +-
->  arch/powerpc/platforms/85xx/smp.c                  |    2 +-
->  arch/powerpc/platforms/85xx/twr_p102x.c            |    2 +-
->  arch/powerpc/platforms/86xx/mpc8610_hpcd.c         |    2 +-
->  drivers/clk/clk-qoriq.c                            | 1191 ++++++++++++++++----
->  drivers/cpufreq/qoriq-cpufreq.c                    |  139 +--
->  drivers/iommu/fsl_pamu.c                           |    2 +-
->  .../asm/fsl_guts.h => include/linux/fsl/guts.h     |    6 +-
->  sound/soc/fsl/mpc8610_hpcd.c                       |    2 +-
->  sound/soc/fsl/p1022_ds.c                           |    2 +-
->  sound/soc/fsl/p1022_rdk.c                          |    2 +-
->  38 files changed, 1107 insertions(+), 776 deletions(-)
->  rename arch/powerpc/include/asm/fsl_guts.h => include/linux/fsl/guts.h (98%)
-> 
-> -- 
-> 2.1.4
-> 
+> =
+
+> -- =
+
+> FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+> according to speedtest.net.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
