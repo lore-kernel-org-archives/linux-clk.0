@@ -1,65 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-id: <55D12C73.6090101@samsung.com>
-Date: Mon, 17 Aug 2015 09:36:03 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
+Message-id: <55C95BD6.7010200@samsung.com>
+Date: Tue, 11 Aug 2015 11:20:06 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 MIME-version: 1.0
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, tomasz.figa@gmail.com,
-	kgene@kernel.org, devicetree@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/4] ARM: dts: exynos3250: Add UART2 and MMC2 dt node with
- related clocks
-References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
- <CAJKOXPfvGypFymHzXDMEA295Copi0sjpMG9oKmJ+a_BQoK+SNw@mail.gmail.com>
-In-reply-to: <CAJKOXPfvGypFymHzXDMEA295Copi0sjpMG9oKmJ+a_BQoK+SNw@mail.gmail.com>
-Content-type: text/plain; charset=UTF-8
+To: Kukjin Kim <kgene@kernel.org>
+Cc: 'Viresh Kumar' <viresh.kumar@linaro.org>,
+	"'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
+	linux-arm-kernel@lists.infradead.org,
+	'Anand Moon' <linux.amoon@gmail.com>,
+	'Kevin Hilman' <khilman@linaro.org>,
+	linux-kernel@vger.kernel.org, 'Heiko Stuebner' <heiko@sntech.de>,
+	'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>,
+	'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
+	'Lukasz Majewski' <l.majewski@samsung.com>,
+	'Michael Turquette' <mturquette@baylibre.com>,
+	linux-pm@vger.kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>,
+	linux-clk@vger.kernel.org, 'Chanwoo Choi' <cw00.choi@samsung.com>,
+	'Thomas Abraham' <thomas.ab@samsung.com>,
+	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+	'Olof Johansson' <olof@lixom.net>,
+	'Arnd Bergmann' <arnd.bergmann@linaro.org>,
+	'Javier Martinez Canillas' <javier@dowhile0.org>,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
+ platform
+References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+ <2359635.Hxe4cb8zKm@amdc1976> <20150807115627.GH6939@linux>
+ <1525406.7aXvVQzEDd@vostro.rjw.lan> <20150808020740.GM6939@linux>
+ <55C5AF4E.3010500@samsung.com> <03ee01d0d30b$b279c490$176d4db0$@kernel.org>
+In-reply-to: <03ee01d0d30b$b279c490$176d4db0$@kernel.org>
+Content-type: text/plain; charset=windows-1252
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/17/2015 09:33 AM, Krzysztof Kozlowski wrote:
-> 2015-08-11 12:46 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
->> This patch add the UART2 / MMC2 devicetree node for Exynos3250 SoC and add
->> the related clocks (mux, divider, gate) of UART2 / MMC2 device.
-> 
-> What is the benefit of adding them? Why they are needed?
+On 10.08.2015 10:27, Kukjin Kim wrote:
+> Krzysztof Kozlowski wrote:
+>>
+>> W dniu 08.08.2015 o 11:07, Viresh Kumar pisze:
+>>> On 08-08-15, 00:24, Rafael J. Wysocki wrote:
+>>>> OK, so please let me know which patches you want me to pick up.
+>>>>
+>>>> Ideally, I'd prefer them to be resent in a separate series with ACKs and all
+>>>> with a cover letter clearly stating whose tree they are being targeted at.
+>>>
+>>> He already sent it separately, let me send a confirmatory mail in
+>>> reply to that.
+>>
+>> Dear Kukjin,
+>>
+>> Can you apply the 2-5 of this series to v4.3? It's getting late but
+>> maybe they still could go?
+>>
+> Once my previous pull-request landed into arm-soc, I'll try to send out this
+> series 2-5 for v4.3.
 
-UART2 /MMC2 are used on Exynos3250-based ARTIK-5 board[1].
-[1] https://www.artik.io/hardware/artik-5
+Additionally (better late than never):
+Patches 2-5 tested on Trats2 board (Exynos4412)
 
-Thanks,
-Chanwoo Choi
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
->>
->> Chanwoo Choi (4):
->>   clk: samsung: exynos3250: Add UART2 clock
->>   clk: samsung: exynos3250: Add MMC2 clock
->>   ARM: dts: Add UART2 dt node for Exynos3250 SoC
->>   ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
->>
->>  arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 42 +++++++++++++++++++++++++++++++
->>  arch/arm/boot/dts/exynos3250.dtsi         | 25 ++++++++++++++++++
->>  drivers/clk/samsung/clk-exynos3250.c      | 15 +++++++++++
->>  include/dt-bindings/clock/exynos3250.h    | 11 +++++++-
->>  4 files changed, 92 insertions(+), 1 deletion(-)
->>
->> --
->> 1.8.5.5
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Best regards,
+Krzysztof
 
