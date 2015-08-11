@@ -1,45 +1,92 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-id: <55E03CEB.4070102@samsung.com>
-Date: Fri, 28 Aug 2015 12:50:19 +0200
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-MIME-version: 1.0
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Thomas Abraham <thomas.ab@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: samsung: fix cpu clock's flags checking
-References: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ "Sjoerd Simons" <sjoerd.simons@collabora.co.uk>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <2030894.j0VJujBTor@diego>
+Cc: linux-rockchip@lists.infradead.org, "Stephen Boyd" <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1438077162-27623-1-git-send-email-sjoerd.simons@collabora.co.uk>
+ <2030894.j0VJujBTor@diego>
+Message-ID: <20150811213433.31346.58424@quantum>
+Subject: Re: [PATCH] clk: rockchip: Fix SPIF special clock definition
+Date: Tue, 11 Aug 2015 14:34:33 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 29/06/15 19:29, Bartlomiej Zolnierkiewicz wrote:
-> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
-> incorrectly used as a bit numbers.  Fix it.
-> 
-> Tested on Exynos4210 based Origen board and on Exynos5250 based
-> Arndale board.
-> 
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Quoting Heiko St=C3=BCbner (2015-07-28 03:08:54)
+> Am Dienstag, 28. Juli 2015, 11:52:42 schrieb Sjoerd Simons:
+> > Neither spdif_src nor spdif_pll exists, judging by the vendor kernel in
+> > both cases spdif_pre was meant. This brings the naming in line and
+> > hierachy in line with that of sclk_i2s0.
+> > =
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > Also allow sclk_spdif and spdif_frac to change their parents rate as
+> > that the upstream dividers are purely there to feed sclk_spdif
+> > =
 
+> > Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> =
+
+> I guess there was one rename to many back in the time :-) .
+> Verified this with the CRU documentation, so
+> =
+
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+Applied to clk-next.
+
+Regards,
+Mike
+
+> =
+
+> > ---
+> >  drivers/clk/rockchip/clk-rk3188.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > =
+
+> > diff --git a/drivers/clk/rockchip/clk-rk3188.c
+> > b/drivers/clk/rockchip/clk-rk3188.c index 0abf22d..ed02bbc 100644
+> > --- a/drivers/clk/rockchip/clk-rk3188.c
+> > +++ b/drivers/clk/rockchip/clk-rk3188.c
+> > @@ -202,7 +202,7 @@ PNAME(mux_pll_src_cpll_gpll_p)    =3D { "cpll", "gp=
+ll" };
+> >  PNAME(mux_aclk_cpu_p)                =3D { "apll", "gpll" };
+> >  PNAME(mux_sclk_cif0_p)               =3D { "cif0_pre", "xin24m" };
+> >  PNAME(mux_sclk_i2s0_p)               =3D { "i2s0_pre", "i2s0_frac", "x=
+in12m" };
+> > -PNAME(mux_sclk_spdif_p)              =3D { "spdif_src", "spdif_frac", =
+"xin12m" };
+> > +PNAME(mux_sclk_spdif_p)              =3D { "spdif_pre", "spdif_frac", =
+"xin12m" };
+> >  PNAME(mux_sclk_uart0_p)              =3D { "uart0_pre", "uart0_frac", =
+"xin24m" };
+> >  PNAME(mux_sclk_uart1_p)              =3D { "uart1_pre", "uart1_frac", =
+"xin24m" };
+> >  PNAME(mux_sclk_uart2_p)              =3D { "uart2_pre", "uart2_frac", =
+"xin24m" };
+> > @@ -350,10 +350,10 @@ static struct rockchip_clk_branch
+> > common_clk_branches[] __initdata =3D { COMPOSITE_NOMUX(0, "spdif_pre",
+> > "i2s_src", 0,
+> >                       RK2928_CLKSEL_CON(5), 0, 7, DFLAGS,
+> >                       RK2928_CLKGATE_CON(0), 13, GFLAGS),
+> > -     COMPOSITE_FRAC(0, "spdif_frac", "spdif_pll", 0,
+> > +     COMPOSITE_FRAC(0, "spdif_frac", "spdif_pre", CLK_SET_RATE_PARENT,
+> >                       RK2928_CLKSEL_CON(9), 0,
+> >                       RK2928_CLKGATE_CON(0), 14, GFLAGS),
+> > -     MUX(SCLK_SPDIF, "sclk_spdif", mux_sclk_spdif_p, 0,
+> > +     MUX(SCLK_SPDIF, "sclk_spdif", mux_sclk_spdif_p, CLK_SET_RATE_PARE=
+NT,
+> >                       RK2928_CLKSEL_CON(5), 8, 2, MFLAGS),
+> > =
+
+> >       /*
+> =
+
+> =
+
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
