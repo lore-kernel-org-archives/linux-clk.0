@@ -1,46 +1,78 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Fri, 28 Aug 2015 18:15:50 +0900
-Message-Id: <20150828091550.21731.85227.sendpatchset@little-apple>
-Subject: [PATCH v3 00/04] Renesas R-Car Gen3 CPG support V3
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 11 Aug 2015 15:34:09 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Doug Anderson <dianders@chromium.org>,
+	linux-clk@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Alex Elder <elder@linaro.org>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Chao Xie <chao.xie@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Georgi Djakov <georgi.djakov@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Barry Song <baohua@kernel.org>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>,
+	Viresh Kumar <viresh.linux@gmail.com>,
+	Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Peter De Sc hrijver <pdeschrijver@nvidia.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Michal Simek <michal.simek@xilinx.com>,
+	Olof Johansson <olof@lixom.net>,
+	Tyler Baker <tyler.baker@linaro.org>
+Subject: Re: [PATCH v3 0/2] clk: improve handling of orphan clocks
+Message-ID: <20150811223409.GN2839@codeaurora.org>
+References: <1429735986-18592-1-git-send-email-heiko@sntech.de>
+ <554BD33D.7050907@codeaurora.org>
+ <20150508100247.GQ11057@lukather>
+ <4099394.C7vEjTFs8V@diego>
+ <20150730100908.GI2564@lukather>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20150730100908.GI2564@lukather>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Renesas R-Car Gen3 CPG support V3
+On 07/30, Maxime Ripard wrote:
+> On Mon, Jul 27, 2015 at 10:57:33AM +0200, Heiko Stübner wrote:
+> > 
+> > did this lead anywhere meanwhile.
+> > 
+> > Last I remember the change to orphan handling made sunxi fail, but
+> > I'm still hoping to get this usable at some point :-)
+> 
+> To be honest, I don't know what the current status is. I haven't get
+> any news since that mail.
+> 
+> I started to move a significant portion of our clocks to
+> CLK_OF_DECLARE, but not all of them are (which probably make the
+> situation worse for the time being).
+> 
 
-[PATCH v3 01/04] clk: shmobile: Get rid of CONFIG_ARCH_SHMOBILE_MULTI
-[PATCH v3 02/04] clk: shmobile: Make MSTP clock-output-names optional
-[PATCH v3 03/04] clk: shmobile: Add Renesas R-Car Gen3 CPG support
-[PATCH v3 04/04] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
+Sorry, I think we're still waiting for the critical clocks stuff
+to settle down so that Sunxi can use that instead of calling
+clk_prepare_enable() in init code. For now, I've put the first
+patch of the two into clk-next so that we can have proper orphan
+tracking. Hopefully we resolve critical clocks soon so that we
+can merge the defer part.
 
-This series is the first attempt to take the CCF code from the single patch:
-"[PATCH 1/9] clk: shmobile: add Renesas R-Car Gen3 CPG support"
-to a full series of various CCF related updates related to R-Car Gen3.
-
-In this series patch 1 and 2 get rid of CONFIG_ARCH_SHMOBILE_MULTI kconfig
-bits and converts the MSTP CCF driver to not rely on clock-output-names. The
-latter may need a bit more work.
-
-Patch 3 and 4 introduce an updated R-Car Gen3 CPG driver where I have reworked
-the code to not depend on clock-output-names instead of using strings simply
-rely on RCAR_GEN3_CLK_xxx. Those must match the ABI defined in SoC specific
-indicies such as the ones included in r8a7795-clock.h.
-
-Patch 3 most likely needs to be reworked further to incorporate earlier
-feedback from CCF maintainers.
-
-Comments are very welcome!
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Written to be picked up independently from other R-Car Gen3 patches.
-
- Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   31 +
- drivers/clk/Makefile                                                     |    2 
- drivers/clk/shmobile/Makefile                                            |   23 
- drivers/clk/shmobile/clk-mstp.c                                          |   15 
- drivers/clk/shmobile/clk-rcar-gen3.c                                     |  254 ++++++++++
- 5 files changed, 304 insertions(+), 21 deletions(-)
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
