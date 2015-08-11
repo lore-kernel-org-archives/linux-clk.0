@@ -1,44 +1,54 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Sat, 8 Aug 2015 19:29:36 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	linux-arm-kernel@lists.infradead.org,
-	'Anand Moon' <linux.amoon@gmail.com>,
-	'Kevin Hilman' <khilman@linaro.org>, linux-kernel@vger.kernel.org,
-	'Heiko Stuebner' <heiko@sntech.de>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
-	'Lukasz Majewski' <l.majewski@samsung.com>,
-	'Michael Turquette' <mturquette@baylibre.com>,
-	linux-pm@vger.kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>,
-	linux-clk@vger.kernel.org, 'Chanwoo Choi' <cw00.choi@samsung.com>,
-	'Thomas Abraham' <thomas.ab@samsung.com>,
-	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
-	Olof Johansson <olof@lixom.net>,
-	Arnd Bergmann <arnd.bergmann@linaro.org>,
-	'Javier Martinez Canillas' <javier@dowhile0.org>,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for
- Exynos4x12 platform
-Message-ID: <20150808135936.GQ6939@linux>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <2359635.Hxe4cb8zKm@amdc1976>
- <20150807115627.GH6939@linux>
- <1525406.7aXvVQzEDd@vostro.rjw.lan>
- <20150808020740.GM6939@linux>
- <55C5AF4E.3010500@samsung.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <55C5AF4E.3010500@samsung.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <55C9C82F.6060401@st.com>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+	<1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+	<20150810144811.GN3249@x1>
+	<20150810185516.2416.32293@quantum>
+	<20150811084329.GA13374@x1>
+	<55C9C82F.6060401@st.com>
+Date: Tue, 11 Aug 2015 12:11:05 +0200
+Message-ID: <CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com>
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Maxime Coquelin <maxime.coquelin@st.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08-08-15, 16:27, Krzysztof Kozlowski wrote:
-> Can you apply the 2-5 of this series to v4.3? It's getting late but
-> maybe they still could go?
+Hi Maxime,
 
-FWIW, 1/6 (updated version) is already applied by Rafael.
+On Tue, Aug 11, 2015 at 12:02 PM, Maxime Coquelin
+<maxime.coquelin@st.com> wrote:
+> How can we pass CLK_ENABLE_HAND_OFF flag to a specific clock on STi
+> platform?
 
--- 
-viresh
+Add the flag to the relevant clocks in the C code, e.g. in
+clk_register_flexgen():
+
+        if (!strcmp(name, "clk-icn-cpu"))
+                init.flags |= CLK_ENABLE_HAND_OFF;
+
+> Could we imagine having a kind of "clocks-enable-hand-off" property we could
+> use in our clock controller DT node?
+
+You can imagine doing "flex_flags |= CLK_ENABLE_HAND_OFF" in
+st_of_flexgen_setup(), depending on the presence of such a property.
+
+However, not disabling clocks is a software policy, not a hardware description,
+so IMHO it doesn't belong in DT.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
