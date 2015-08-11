@@ -1,62 +1,81 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20150811164151.2416.33353@quantum>
+To: Maxime Coquelin <maxime.coquelin@st.com>, "Lee Jones" <lee.jones@linaro.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <55C9C82F.6060401@st.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+ maxime.ripard@free-electrons.com, s.hauer@pengutronix.de,
+ geert@linux-m68k.org
 References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
-	<CAMuHMdXeaVUyDxnW5JoqpA-meLsFBp8HYYM=5ETY6goKwBQ=cQ@mail.gmail.com>
-	<20150811164151.2416.33353@quantum>
-Date: Tue, 11 Aug 2015 19:42:59 +0200
-Message-ID: <CAMuHMdU59mzgDe+mpvtMG76yGsCQ3QhHsxuXif9+c9bwr_J1Yg@mail.gmail.com>
-Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and
- implement hand-off
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+ <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+ <20150810144811.GN3249@x1> <20150810185516.2416.32293@quantum>
+ <20150811084329.GA13374@x1> <55C9C82F.6060401@st.com>
+Message-ID: <20150811170924.2416.97764@quantum>
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+Date: Tue, 11 Aug 2015 10:09:24 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+Quoting Maxime Coquelin (2015-08-11 03:02:23)
+> Hi Mike,
+> =
 
-On Tue, Aug 11, 2015 at 6:41 PM, Michael Turquette
-<mturquette@baylibre.com> wrote:
-> Quoting Geert Uytterhoeven (2015-08-11 02:20:12)
->> On Fri, Aug 7, 2015 at 9:09 PM, Michael Turquette
->> <mturquette@baylibre.com> wrote:
->> > This is an alternative solution to Lee's "clk: Provide support for
->> > always-on clocks" series[0].
+> On 08/11/2015 10:43 AM, Lee Jones wrote:
+> > On Mon, 10 Aug 2015, Michael Turquette wrote:
+> >
+> >>
+> >>
+> >> ST's driver is an unfortunate case. All of the clock data was shoved
+> >> into DT before we had a clue that doing so is a terrible idea.
+> =
 
->> I gave it a try on r8a7791/koelsch, where I replaced the hack from
->> "[PATCH/RFC 1/5] clk: shmobile: mstp: Never disable INTC-SYS"
->> (http://www.spinics.net/lists/linux-sh/msg41107.html) by setting
->>
->>         init.flags |= CLK_ENABLE_HAND_OFF
->>
->> in cpg_mstp_clock_register() for "intc-sys".
->>
->> The end result is fine (the "intc-sys" clock is never disabled), but I get
->> a few annoying lockdep splats like below (one for the "intc-sys" clock,
->> and one more for each parent up to the root clock):
->>
->> ------------[ cut here ]------------
->> WARNING: CPU: 0 PID: 0 at drivers/clk/clk.c:745 clk_core_enable+0x6c/0xdc()
+> I tend to agree, and wouldn't do it this way if we could rewrite the =
 
-> Thanks much for testing! I forgot to hold the enable lock in __clk_init
-> (we already hold the prepare lock). Can you tell me if this diff fixes
-> it?
+> history.
+> But now, we have to support it.
+> =
 
-Yes it does. Thanks for the quick fix!
+> How can we pass CLK_ENABLE_HAND_OFF flag to a specific clock on STi =
 
-Gr{oetje,eeting}s,
+> platform?
+> =
 
-                        Geert
+> Could we imagine having a kind of "clocks-enable-hand-off" property we =
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> could use in our clock controller DT node?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Maxime,
+
+Yes. I'm sure that the ST binding isn't the only one that needs
+something like this. Furthermore I am sure that there are interesting
+users like the FPGA people that would love to dynamically set this flag
+from DT based on their hardware description.
+
+So the question is, what does it look like? We've already discussed
+doing a clk-conf.c approach, but that is really meant for consumers of a
+clock to set their default parameters. I don't think that is the right
+way here.
+
+Probably we should list the hand-off clocks directly in the
+clock-provider node itself. We can design it as a list (for
+clock-controller nodes that expose multiple clocks). In practice for the
+st,flexgen binding it will always be a list with one element in it.
+
+In my email to Lee a few minutes ago I asked if ST actually needs to
+turn on gated clocks, or if the goal is to prevent already-on clocks
+(enabled by default out of reset, or bootloader) from being gated? I
+guess that the goal is the latter since we've been discussing "critical"
+clocks that will crash the system if disabled.
+
+Regards,
+Mike
+
+> =
+
+> Regards,
+> Maxime
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
