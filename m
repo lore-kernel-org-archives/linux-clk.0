@@ -1,75 +1,169 @@
-Return-Path: <srinivas.pandruvada@intel.com>
-From: "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>
-To: "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>
-CC: "heiko@sntech.de" <heiko@sntech.de>, "s.nawrocki@samsung.com"
-	<s.nawrocki@samsung.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kgene.kim@samsung.com"
-	<kgene.kim@samsung.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"javier@osg.samsung.com" <javier@osg.samsung.com>, "linux.amoon@gmail.com"
-	<linux.amoon@gmail.com>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "tjakobi@math.uni-bielefeld.de"
-	<tjakobi@math.uni-bielefeld.de>, "b.zolnierkie@samsung.com"
-	<b.zolnierkie@samsung.com>, "cw00.choi@samsung.com" <cw00.choi@samsung.com>,
-	"rjw@rjwysocki.net" <rjw@rjwysocki.net>, "kgene@kernel.org"
-	<kgene@kernel.org>, "l.majewski@samsung.com" <l.majewski@samsung.com>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "khilman@linaro.org" <khilman@linaro.org>,
-	"tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "k.kozlowski@samsung.com"
-	<k.kozlowski@samsung.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>,
-	"javier@dowhile0.org" <javier@dowhile0.org>
-Subject: Re: [PATCH v3 5/5] cpufreq: remove no longer needed
- CPU_FREQ_BOOST_SW config option
-Date: Mon, 3 Aug 2015 17:12:03 +0000
-Message-ID: <1438621775.17718.22.camel@spandruv-DESK3.jf.intel.com>
-References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
-	 <1438368557-2352-6-git-send-email-b.zolnierkie@samsung.com>
-	 <20150801111537.GH899@linux>
-In-Reply-To: <20150801111537.GH899@linux>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
 MIME-Version: 1.0
-Return-Path: srinivas.pandruvada@intel.com
+To: Nicolas Pitre <nicolas.pitre@linaro.org>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <alpine.LFD.2.20.1507281430130.26147@knanqh.ubzr>
+References: <alpine.LFD.2.20.1507281430130.26147@knanqh.ubzr>
+Message-ID: <20150811231416.31346.83289@quantum>
+Subject: Re: [PATCH] drivers/clk: appropriate __init annotation for const data
+Date: Tue, 11 Aug 2015 16:14:16 -0700
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-T24gU2F0LCAyMDE1LTA4LTAxIGF0IDE2OjQ1ICswNTMwLCBWaXJlc2ggS3VtYXIgd3JvdGU6DQo+
-IE9uIDMxLTA3LTE1LCAyMDo0OSwgQmFydGxvbWllaiBab2xuaWVya2lld2ljeiB3cm90ZToNCj4g
-PiBSZW1vdmUgbm8gbG9uZ2VyIG5lZWRlZCBDUFVfRlJFUV9CT09TVF9TVyBjb25maWcgb3B0aW9u
-Lg0KPiA+IA0KPiA+IEFzIGEgcmVzdWx0IHNjYWxpbmdfYm9vc3RfZnJlcXMgc3lzZnMgYXR0cmli
-dXRlIGlzIGF2YWlsYWJsZQ0KPiA+IHdoZW4gY3B1ZnJlcS1kdCBkcml2ZXIgaXMgdXNlZCBhbmQg
-Ym9vc3Qgc3VwcG9ydCBpcyBlbmFibGVkLg0KPiA+IA0KPiA+IENjOiBWaXJlc2ggS3VtYXIgPHZp
-cmVzaC5rdW1hckBsaW5hcm8ub3JnPg0KPiA+IENjOiBUaG9tYXMgQWJyYWhhbSA8dGhvbWFzLmFi
-QHNhbXN1bmcuY29tPg0KPiA+IENjOiBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMgPGphdmllckBv
-c2cuc2Ftc3VuZy5jb20+DQo+ID4gQ2M6IEtyenlzenRvZiBLb3psb3dza2kgPGsua296bG93c2tp
-QHNhbXN1bmcuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEJhcnRsb21pZWogWm9sbmllcmtpZXdp
-Y3ogPGIuem9sbmllcmtpZUBzYW1zdW5nLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9jcHVm
-cmVxL0tjb25maWcgICAgICB8IDQgLS0tLQ0KPiA+ICBkcml2ZXJzL2NwdWZyZXEvZnJlcV90YWJs
-ZS5jIHwgMiAtLQ0KPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDYgZGVsZXRpb25zKC0pDQo+ID4gDQo+
-ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3B1ZnJlcS9LY29uZmlnIGIvZHJpdmVycy9jcHVmcmVx
-L0tjb25maWcNCj4gPiBpbmRleCBiZjZkNTk2Li5kZTAwYTUyIDEwMDY0NA0KPiA+IC0tLSBhL2Ry
-aXZlcnMvY3B1ZnJlcS9LY29uZmlnDQo+ID4gKysrIGIvZHJpdmVycy9jcHVmcmVxL0tjb25maWcN
-Cj4gPiBAQCAtMjEsMTAgKzIxLDYgQEAgaWYgQ1BVX0ZSRVENCj4gPiAgY29uZmlnIENQVV9GUkVR
-X0dPVl9DT01NT04NCj4gPiAgCWJvb2wNCj4gPiAgDQo+ID4gLWNvbmZpZyBDUFVfRlJFUV9CT09T
-VF9TVw0KPiA+IC0JYm9vbA0KPiA+IC0JZGVwZW5kcyBvbiBUSEVSTUFMDQo+ID4gLQ0KPiA+ICBj
-b25maWcgQ1BVX0ZSRVFfU1RBVA0KPiA+ICAJdHJpc3RhdGUgIkNQVSBmcmVxdWVuY3kgdHJhbnNs
-YXRpb24gc3RhdGlzdGljcyINCj4gPiAgCWRlZmF1bHQgeQ0KPiA+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2NwdWZyZXEvZnJlcV90YWJsZS5jIGIvZHJpdmVycy9jcHVmcmVxL2ZyZXFfdGFibGUuYw0K
-PiA+IGluZGV4IGE4ZjFkYWYuLjRjNWRlNWIgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jcHVm
-cmVxL2ZyZXFfdGFibGUuYw0KPiA+ICsrKyBiL2RyaXZlcnMvY3B1ZnJlcS9mcmVxX3RhYmxlLmMN
-Cj4gPiBAQCAtMjkzLDkgKzI5Myw3IEBAIEVYUE9SVF9TWU1CT0xfR1BMKGNwdWZyZXFfZnJlcV9h
-dHRyX3NjYWxpbmdfYm9vc3RfZnJlcXMpOw0KPiA+ICANCj4gPiAgc3RydWN0IGZyZXFfYXR0ciAq
-Y3B1ZnJlcV9nZW5lcmljX2F0dHJbXSA9IHsNCj4gPiAgCSZjcHVmcmVxX2ZyZXFfYXR0cl9zY2Fs
-aW5nX2F2YWlsYWJsZV9mcmVxcywNCj4gPiAtI2lmZGVmIENPTkZJR19DUFVfRlJFUV9CT09TVF9T
-Vw0KPiA+ICAJJmNwdWZyZXFfZnJlcV9hdHRyX3NjYWxpbmdfYm9vc3RfZnJlcXMsDQo+ID4gLSNl
-bmRpZg0KPiA+ICAJTlVMTCwNCj4gPiAgfTsNCj4gPiAgRVhQT1JUX1NZTUJPTF9HUEwoY3B1ZnJl
-cV9nZW5lcmljX2F0dHIpOw0KPiANCj4gU28sIHRoaXMgd2lsbCBzdGFydCBhcHBlYXJpbmcgZm9y
-IGFsbCBwbGF0Zm9ybXMgdGhhdCB1c2UgY3B1ZnJlcV9nZW5lcmljX2F0dHINCj4gYW5kIHRoYXQg
-bWF5IG5vdCBiZSB0aGUgcmlnaHQgdGhpbmcuIFdlIG1heSBvbmx5IHdhbnQgdG8gc2hvdyBib29z
-dCBmcmVxdWVuY2llcw0KPiBvbmx5IGlmIHRoZSBkcml2ZXIgc3VwcG9ydHMgaXQuDQpJIGFncmVl
-LiBBbHRob3VnaCBhY3BpLWNwdWZyZXEgb3IgSW50ZWwgUCBzdGF0ZSBkcml2ZXIgaXMgbm90IHVz
-aW5nDQpnZW5lcmljX2F0dHIsIGJ1dCB3ZSBoYXZlIGEgcGxhbiB0byBzaG93IGJvb3N0IGZyZXF1
-ZW5jaWVzIG9uIHBsYXRmb3JtcywNCndoZXJlIHdlIGhhdmUgc29tZSBjb250cm9sLiBTdXBwb3J0
-IG9mIGJvb3N0IG1vZGUgZG9lc24ndCBtZWFuIHRoYXQgd2UNCmNhbiBzZWxlY3QgdGhlIGJvb3N0
-IGZyZXF1ZW5jeSwgc28gaW4gdGhhdCBjYXNlIHdlIHdpbGwgYXZvaWQgc2hvd2luZw0KdGhlbS4N
-Cg0KVGhhbmtzLA0KU3Jpbml2YXMNCj4gDQo+IEBSYWZhZWw6IFdoYXQgZG8geW91IHNheT8NCj4g
-DQoNCg==
+Quoting Nicolas Pitre (2015-07-28 16:43:20)
+> 
+> Init data marked const should be annotated with __initconst for
+> correctness and not __initdata.  This also fixes LTO builds that
+> otherwise fail with section mismatch errors.
+> 
+> Signed-off-by: Nicolas Pitre <nico@linaro.org>
+
+Thanks for the patch Nico. Applied.
+
+Regards,
+Mike
+
+> 
+> diff --git a/drivers/clk/clk-asm9260.c b/drivers/clk/clk-asm9260.c
+> index 90897af8d9..25308ce09a 100644
+> --- a/drivers/clk/clk-asm9260.c
+> +++ b/drivers/clk/clk-asm9260.c
+> @@ -244,10 +244,10 @@ static const struct asm9260_gate_data asm9260_ahb_gates[] __initconst = {
+>                 HW_AHBCLKCTRL1, 16 },
+>  };
+>  
+> -static const char __initdata *main_mux_p[] =   { NULL, NULL };
+> -static const char __initdata *i2s0_mux_p[] =   { NULL, NULL, "i2s0m_div"};
+> -static const char __initdata *i2s1_mux_p[] =   { NULL, NULL, "i2s1m_div"};
+> -static const char __initdata *clkout_mux_p[] = { NULL, NULL, "rtc"};
+> +static const char *const main_mux_p[] __initconst =   { NULL, NULL };
+> +static const char *const i2s0_mux_p[] __initconst =   { NULL, NULL, "i2s0m_div"};
+> +static const char *const i2s1_mux_p[] __initconst =   { NULL, NULL, "i2s1m_div"};
+> +static const char *const clkout_mux_p[] __initconst = { NULL, NULL, "rtc"};
+>  static u32 three_mux_table[] = {0, 1, 3};
+>  
+>  static struct asm9260_mux_clock asm9260_mux_clks[] __initdata = {
+> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+> index 3f6f7ad394..c316454ef8 100644
+> --- a/drivers/clk/clk-stm32f4.c
+> +++ b/drivers/clk/clk-stm32f4.c
+> @@ -293,7 +293,7 @@ stm32f4_rcc_lookup_clk(struct of_phandle_args *clkspec, void *data)
+>         return clks[i];
+>  }
+>  
+> -static const char *sys_parents[] __initdata =   { "hsi", NULL, "pll" };
+> +static const char *const sys_parents[] __initconst =   { "hsi", NULL, "pll" };
+>  
+>  static const struct clk_div_table ahb_div_table[] = {
+>         { 0x0,   1 }, { 0x1,   1 }, { 0x2,   1 }, { 0x3,   1 },
+> diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
+> index 4563343b64..d7c7d73bd3 100644
+> --- a/drivers/clk/hisilicon/clk-hi6220.c
+> +++ b/drivers/clk/hisilicon/clk-hi6220.c
+> @@ -91,23 +91,23 @@ CLK_OF_DECLARE(hi6220_clk_ao, "hisilicon,hi6220-aoctrl", hi6220_clk_ao_init);
+>  
+>  
+>  /* clocks in sysctrl */
+> -static const char *mmc0_mux0_p[] __initdata = { "pll_ddr_gate", "syspll", };
+> -static const char *mmc0_mux1_p[] __initdata = { "mmc0_mux0", "pll_media_gate", };
+> -static const char *mmc0_src_p[] __initdata = { "mmc0srcsel", "mmc0_div", };
+> -static const char *mmc1_mux0_p[] __initdata = { "pll_ddr_gate", "syspll", };
+> -static const char *mmc1_mux1_p[] __initdata = { "mmc1_mux0", "pll_media_gate", };
+> -static const char *mmc1_src_p[]  __initdata = { "mmc1srcsel", "mmc1_div", };
+> -static const char *mmc2_mux0_p[] __initdata = { "pll_ddr_gate", "syspll", };
+> -static const char *mmc2_mux1_p[] __initdata = { "mmc2_mux0", "pll_media_gate", };
+> -static const char *mmc2_src_p[]  __initdata = { "mmc2srcsel", "mmc2_div", };
+> -static const char *mmc0_sample_in[] __initdata = { "mmc0_sample", "mmc0_pad", };
+> -static const char *mmc1_sample_in[] __initdata = { "mmc1_sample", "mmc1_pad", };
+> -static const char *mmc2_sample_in[] __initdata = { "mmc2_sample", "mmc2_pad", };
+> -static const char *uart1_src[] __initdata = { "clk_tcxo", "clk_150m", };
+> -static const char *uart2_src[] __initdata = { "clk_tcxo", "clk_150m", };
+> -static const char *uart3_src[] __initdata = { "clk_tcxo", "clk_150m", };
+> -static const char *uart4_src[] __initdata = { "clk_tcxo", "clk_150m", };
+> -static const char *hifi_src[] __initdata = { "syspll", "pll_media_gate", };
+> +static const char *const mmc0_mux0_p[] __initconst = { "pll_ddr_gate", "syspll", };
+> +static const char *const mmc0_mux1_p[] __initconst = { "mmc0_mux0", "pll_media_gate", };
+> +static const char *const mmc0_src_p[] __initconst = { "mmc0srcsel", "mmc0_div", };
+> +static const char *const mmc1_mux0_p[] __initconst = { "pll_ddr_gate", "syspll", };
+> +static const char *const mmc1_mux1_p[] __initconst = { "mmc1_mux0", "pll_media_gate", };
+> +static const char *const mmc1_src_p[]  __initconst = { "mmc1srcsel", "mmc1_div", };
+> +static const char *const mmc2_mux0_p[] __initconst = { "pll_ddr_gate", "syspll", };
+> +static const char *const mmc2_mux1_p[] __initconst = { "mmc2_mux0", "pll_media_gate", };
+> +static const char *const mmc2_src_p[]  __initconst = { "mmc2srcsel", "mmc2_div", };
+> +static const char *const mmc0_sample_in[] __initconst = { "mmc0_sample", "mmc0_pad", };
+> +static const char *const mmc1_sample_in[] __initconst = { "mmc1_sample", "mmc1_pad", };
+> +static const char *const mmc2_sample_in[] __initconst = { "mmc2_sample", "mmc2_pad", };
+> +static const char *const uart1_src[] __initconst = { "clk_tcxo", "clk_150m", };
+> +static const char *const uart2_src[] __initconst = { "clk_tcxo", "clk_150m", };
+> +static const char *const uart3_src[] __initconst = { "clk_tcxo", "clk_150m", };
+> +static const char *const uart4_src[] __initconst = { "clk_tcxo", "clk_150m", };
+> +static const char *const hifi_src[] __initconst = { "syspll", "pll_media_gate", };
+>  
+>  static struct hisi_gate_clock hi6220_separated_gate_clks_sys[] __initdata = {
+>         { HI6220_MMC0_CLK,      "mmc0_clk",      "mmc0_src",       CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x200, 0,  0, },
+> @@ -197,9 +197,9 @@ CLK_OF_DECLARE(hi6220_clk_sys, "hisilicon,hi6220-sysctrl", hi6220_clk_sys_init);
+>  
+>  
+>  /* clocks in media controller */
+> -static const char *clk_1000_1200_src[] __initdata = { "pll_gpu_gate", "media_syspll_src", };
+> -static const char *clk_1440_1200_src[] __initdata = { "media_syspll_src", "media_pll_src", };
+> -static const char *clk_1000_1440_src[] __initdata = { "pll_gpu_gate", "media_pll_src", };
+> +static const char *const clk_1000_1200_src[] __initconst = { "pll_gpu_gate", "media_syspll_src", };
+> +static const char *const clk_1440_1200_src[] __initconst = { "media_syspll_src", "media_pll_src", };
+> +static const char *const clk_1000_1440_src[] __initconst = { "pll_gpu_gate", "media_pll_src", };
+>  
+>  static struct hisi_gate_clock hi6220_separated_gate_clks_media[] __initdata = {
+>         { HI6220_DSI_PCLK,       "dsi_pclk",         "vpucodec",      CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x520, 0,  0, },
+> diff --git a/drivers/clk/versatile/clk-realview.c b/drivers/clk/versatile/clk-realview.c
+> index c8b523117f..0c1f224515 100644
+> --- a/drivers/clk/versatile/clk-realview.c
+> +++ b/drivers/clk/versatile/clk-realview.c
+> @@ -33,13 +33,13 @@ static const struct icst_params realview_oscvco_params = {
+>         .idx2s          = icst307_idx2s,
+>  };
+>  
+> -static const struct clk_icst_desc __initdata realview_osc0_desc = {
+> +static const struct clk_icst_desc realview_osc0_desc __initconst = {
+>         .params = &realview_oscvco_params,
+>         .vco_offset = REALVIEW_SYS_OSC0_OFFSET,
+>         .lock_offset = REALVIEW_SYS_LOCK_OFFSET,
+>  };
+>  
+> -static const struct clk_icst_desc __initdata realview_osc4_desc = {
+> +static const struct clk_icst_desc realview_osc4_desc __initconst = {
+>         .params = &realview_oscvco_params,
+>         .vco_offset = REALVIEW_SYS_OSC4_OFFSET,
+>         .lock_offset = REALVIEW_SYS_LOCK_OFFSET,
+> diff --git a/drivers/clk/versatile/clk-versatile.c b/drivers/clk/versatile/clk-versatile.c
+> index 7a4f8635bd..81d59eada2 100644
+> --- a/drivers/clk/versatile/clk-versatile.c
+> +++ b/drivers/clk/versatile/clk-versatile.c
+> @@ -35,7 +35,7 @@ static const struct icst_params cp_auxosc_params = {
+>         .idx2s          = icst525_idx2s,
+>  };
+>  
+> -static const struct clk_icst_desc __initdata cm_auxosc_desc = {
+> +static const struct clk_icst_desc cm_auxosc_desc __initconst = {
+>         .params = &cp_auxosc_params,
+>         .vco_offset = 0x1c,
+>         .lock_offset = INTEGRATOR_HDR_LOCK_OFFSET,
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
