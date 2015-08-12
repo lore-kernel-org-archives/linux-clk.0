@@ -1,75 +1,52 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: ulf.hansson@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	tgih.jun@samsung.com,
-	jh80.chung@samsung.com
-Cc: linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Alexandru M Stan <amstan@chromium.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 5/8] mmc: dw_mmc: dt-binding: Add tuning related things
-Date: Mon, 31 Aug 2015 20:24:03 +0200
-Message-Id: <1441045446-30858-6-git-send-email-heiko@sntech.de>
-In-Reply-To: <1441045446-30858-1-git-send-email-heiko@sntech.de>
-References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 12 Aug 2015 01:33:36 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Bintian Wang <bintian.wang@huawei.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Jian Zhang <zhangjian001@hisilicon.com>,
+	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
+	Haoju Mo <mohaoju@hisilicon.com>,
+	Dan Zhao <dan.zhao@hisilicon.com>, sunzhaosheng@hisilicon.com,
+	victor.lixin@hisilicon.com
+Subject: Re: [PATCH v4 3/4] clk: Hi6220: add stub clock driver
+Message-ID: <20150812083336.GC13623@codeaurora.org>
+References: <1438673249-6051-1-git-send-email-leo.yan@linaro.org>
+ <1438673249-6051-4-git-send-email-leo.yan@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1438673249-6051-4-git-send-email-leo.yan@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Alexandru M Stan <amstan@chromium.org>
+On 08/04, Leo Yan wrote:
+> On Hi6220, there have some clocks which can use mailbox channel to send
+> messages to power controller to change frequency; this includes CPU, GPU
+> and DDR clocks.
+> 
+> For dynamic frequency scaling, firstly need write the frequency value to
+> SRAM region, and then send message to mailbox to trigger power controller
+> to handle this requirement. This driver will use syscon APIs to pass SRAM
+> memory region and use common mailbox APIs for channels accessing.
+> 
+> This init driver will support cpu frequency change firstly.
+> 
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
 
-Add ciu_drv, ciu_sample clocks and default-sample-phase. This will later
-be used by tuning code.
+Applied to clk-next
 
-We do not touch ciu_drive (and by extension define default-drive-phase).
-Drive phase is mostly used to define minimum hold times, while one could
-write some code to determine what phase meets the minimum hold time
-(ex 10 degrees) this will not work with the current clock phase framework
-(which floors angles, so we'll get 0 deg, and there's no way to know what
-resolution the floors happen at). We assume that the default drive angles
-set by the hardware are good enough.
-
-Signed-off-by: Alexandru M Stan <amstan@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-index 346c609..5edadc2 100644
---- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-+++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-@@ -42,11 +42,13 @@ Optional properties:
- * clocks: from common clock binding: handle to biu and ciu clocks for the
-   bus interface unit clock and the card interface unit clock.
- 
--* clock-names: from common clock binding: Shall be "biu" and "ciu".
--  If the biu clock is missing we'll simply skip enabling it.  If the
--  ciu clock is missing we'll just assume that the clock is running at
-+* clock-names: from common clock binding: Shall be "biu", "ciu", "ciu_drv" and
-+  "ciu_sample".  If the biu clock is missing we'll simply skip enabling it.
-+  If the ciu clock is missing we'll just assume that the clock is running at
-   clock-frequency.  It is an error to omit both the ciu clock and the
--  clock-frequency.
-+  clock-frequency.  "ciu_drv" and "ciu_sample" are used to control the clock
-+  phases, "ciu_sample" is required for tuning high speed modes (if no other
-+  custom tuning method is defined).
- 
- * clock-frequency: should be the frequency (in Hz) of the ciu clock.  If this
-   is specified and the ciu clock is specified then we'll try to set the ciu
-@@ -75,6 +77,10 @@ Optional properties:
- * vmmc-supply: The phandle to the regulator to use for vmmc.  If this is
-   specified we'll defer probe until we can find this regulator.
- 
-+* default-sample-phase: The default phase to set ciu_sample at probing, low
-+  speeds or in case where all phases work at tuning time. If not specified
-+  0 deg will be used.
-+
- Aliases:
- 
- - All the MSHC controller nodes should be represented in the aliases node using
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
