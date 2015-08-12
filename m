@@ -1,84 +1,75 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:34223 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755573AbbHFLTS (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 6 Aug 2015 07:19:18 -0400
-Received: by oip136 with SMTP id 136so35480118oip.1
-        for <linux-clk@vger.kernel.org>; Thu, 06 Aug 2015 04:19:17 -0700 (PDT)
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55CB0FCD.7050303@hisilicon.com>
+Date: Wed, 12 Aug 2015 10:20:13 +0100
+From: Wei Xu <xuwei5@hisilicon.com>
 MIME-Version: 1.0
-In-Reply-To: <1438857590-9605-1-git-send-email-rajan.vaja@gmail.com>
-References: <1438857590-9605-1-git-send-email-rajan.vaja@gmail.com>
-Date: Thu, 6 Aug 2015 13:19:17 +0200
-Message-ID: <CAMuHMdXqn3=9PYs3nOS6sdbOFh0F4e0_rF5sXF81v-sA6ivk_A@mail.gmail.com>
-Subject: Re: [PATCH] clk: shmobile: div6: Fix memory leaks in cpg_div6_clock_init()
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Rajan Vaja <rajan.vaja@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+To: Leo Yan <leo.yan@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
+CC: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	"Mark Rutland" <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"Catalin Marinas" <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	"Michael Turquette" <mturquette@baylibre.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Bintian Wang <bintian.wang@huawei.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, "Guodong Xu" <guodong.xu@linaro.org>,
+	Jian Zhang <zhangjian001@hisilicon.com>,
+	"Zhenwei Wang" <Zhenwei.wang@hisilicon.com>,
+	Haoju Mo <mohaoju@hisilicon.com>,
+	Dan Zhao <dan.zhao@hisilicon.com>,
+	<sunzhaosheng@hisilicon.com>, <victor.lixin@hisilicon.com>
+Subject: Re: [PATCH v4 0/4] clk: hisilicon: support stub clock
+References: <1438673249-6051-1-git-send-email-leo.yan@linaro.org> <20150812003817.GI26614@codeaurora.org> <20150812014954.GA6215@leoy-linaro>
+In-Reply-To: <20150812014954.GA6215@leoy-linaro>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 6, 2015 at 12:39 PM, Rajan Vaja <rajan.vaja@gmail.com> wrote:
-> Found memory leak while doing static analysis with cppcheck:
-> [drivers/clk/shmobile/clk-div6.c:194]: (error) Memory leak: clock
->
-> This patch fixes this memory leak as well other memory leaks found
-> in same function.
 
-We didn't bother adding those, as the system is completely busted if any of
-these error paths are taken.
 
-> Signed-off-by: Rajan Vaja <rajan.vaja@gmail.com>
-> ---
->  drivers/clk/shmobile/clk-div6.c |    8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/shmobile/clk-div6.c b/drivers/clk/shmobile/clk-div6.c
-> index 036a692..9affdfa 100644
-> --- a/drivers/clk/shmobile/clk-div6.c
-> +++ b/drivers/clk/shmobile/clk-div6.c
-> @@ -191,6 +191,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
->         if (num_parents < 1) {
->                 pr_err("%s: no parent found for %s DIV6 clock\n",
->                        __func__, np->name);
-> +               kfree(clock);
->                 return;
->         }
->
-> @@ -198,8 +199,12 @@ static void __init cpg_div6_clock_init(struct device_node *np)
->                 GFP_KERNEL);
->         parent_names = kmalloc_array(num_parents, sizeof(*parent_names),
->                                 GFP_KERNEL);
-> -       if (!parent_names)
-> +       if (!clock->parents || !parent_names) {
-> +               kfree(clock->parents);
-> +               kfree(parent_names);
-> +               kfree(clock);
->                 return;
-> +       }
->
->         /* Remap the clock register and read the divisor. Disabling the
->          * clock overwrites the divisor, so we need to cache its value for the
-> @@ -278,6 +283,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
->  error:
->         if (clock->reg)
->                 iounmap(clock->reg);
-> +       kfree(clock->parents);
->         kfree(parent_names);
->         kfree(clock);
->  }
+On 8/12/2015 2:49 AM, Leo Yan wrote:
+> Hi Stephen,
+> 
+> On Tue, Aug 11, 2015 at 05:38:17PM -0700, Stephen Boyd wrote:
+>> On 08/04, Leo Yan wrote:
+>>> This series adds support for hisilicon stub clock driver. On hi6220,
+>>> the bootloader needs load the firmware image and set info for OPPs;
+>>> after run into kernel, the stub clock driver is used to communicate
+>>> w/t firmware for cpu dynamic frequency scaling.
+>>>
+>>> In patch series v1/v2, the stub clock driver simply writes request in
+>>> sram and send ipc to firmware; For patch series v3, the firmware has
+>>> been upgraded to use mailbox, so stub clock driver will call standard
+>>> mailbox APIs to request mailbox channel and send message to firmware.
+>>>
+>>> Patch 4 adds stub clock node into dts and it references mailbox with
+>>> phandle, so patch 4 will depend on mailbox driver's patch series [1].
+>>> These patches have been tested on 96board hikey and is used by cpufreq
+>>> driver.
+>>
+>> The To: list is everyone, so I'm not sure who is supposed to
+>> apply these patches. I'd like to take patches 1, 2, and 3 through
+>> the clk tree though.
+> 
+> Thanks, you could take first three patches. For patch 4, i will
+> re-send it after mailbox driver's patches have been merged.
 
-Gr{oetje,eeting}s,
+Hi Leo,
 
-                        Geert
+> Wei Xu, is this okay for you?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+OK :)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best Regards,
+Wei
+
+> 
+> Thanks,
+> Leo Yan
+> 
+> .
+> 
+
