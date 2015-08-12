@@ -1,82 +1,31 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Bintian Wang <bintian.wang@huawei.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Jian Zhang <zhangjian001@hisilicon.com>,
-	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
-	Haoju Mo <mohaoju@hisilicon.com>,
-	Dan Zhao <dan.zhao@hisilicon.com>, sunzhaosheng@hisilicon.com,
-	victor.lixin@hisilicon.com
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v4 0/4] clk: hisilicon: support stub clock
-Date: Tue,  4 Aug 2015 15:27:25 +0800
-Message-Id: <1438673249-6051-1-git-send-email-leo.yan@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20150812012530.GJ26614@codeaurora.org>
+References: <1438172615-11276-1-git-send-email-linus.walleij@linaro.org>
+	<20150731065008.GU3159@codeaurora.org>
+	<CACRpkdbaGU8jMQY=WpkV0ZF_KfFCq167kWCD_CropJM10RC9QQ@mail.gmail.com>
+	<20150812012530.GJ26614@codeaurora.org>
+Date: Wed, 12 Aug 2015 10:40:00 +0200
+Message-ID: <CACRpkdZ-c=gmxu2G1Bv__gtpXTHBRe4NdDn5OOg7kcdFT5-3TQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: versatile/impd1: switch order of CLCD clocks
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This series adds support for hisilicon stub clock driver. On hi6220,
-the bootloader needs load the firmware image and set info for OPPs;
-after run into kernel, the stub clock driver is used to communicate
-w/t firmware for cpu dynamic frequency scaling.
+On Wed, Aug 12, 2015 at 3:25 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-In patch series v1/v2, the stub clock driver simply writes request in
-sram and send ipc to firmware; For patch series v3, the firmware has
-been upgraded to use mailbox, so stub clock driver will call standard
-mailbox APIs to request mailbox channel and send message to firmware.
+> Ok. I'm still confused and concerned that putting the clocks into
+> the list in a certain order fixes anything.
 
-Patch 4 adds stub clock node into dts and it references mailbox with
-phandle, so patch 4 will depend on mailbox driver's patch series [1].
-These patches have been tested on 96board hikey and is used by cpufreq
-driver.
+Oh maybe it doesn't I could've been mistaken here.
+clk_find() should indeed find the right clock.
 
-Changes from v3:
-* Patch "clk: hisi: refine parameter checking for init" [2] has been
-  applied to clk-next, so skip it in v4
-* According to Stephen Boyd's review, fix and refine stub clock driver
-* The stub clock driver depends on mailbox channel's initialization, so
-  mailbox init firstly with core_initcall() and use subsys_initcall()
-  for stub clock driver
+> If this fix is valid, did you want a fixes tag on this so it goes
+> back to stable?
 
-Changes from v2:
-* Use platform_device's probe for clock's initialization
-* Use mailbox channel for clock frequency change
+Nah you can drop it, sorry for the fuzz.
 
-Changes from v1:
-* Refine parameter checking for init flow
-* Remove unnecessary debugging info
-* Modify to check spinlock pointer when register clocks
-
-[1] http://archive.arm.linux.org.uk/lurker/message/20150803.011307.1062b247.en.html
-[2] http://archive.arm.linux.org.uk/lurker/message/20150803.011334.4b6f2fc7.en.html
-
-
-Leo Yan (4):
-  dt-bindings: arm: Hi6220: add doc for SRAM controller
-  dt-bindings: clk: Hi6220: Document stub clock driver
-  clk: Hi6220: add stub clock driver
-  arm64: dts: add Hi6220's stub clock node
-
- .../bindings/arm/hisilicon/hisilicon.txt           |  18 ++
- .../devicetree/bindings/clock/hi6220-clock.txt     |  19 +-
- arch/arm64/boot/dts/hisilicon/hi6220.dtsi          |  23 ++
- drivers/clk/hisilicon/Kconfig                      |   2 +-
- drivers/clk/hisilicon/Makefile                     |   2 +-
- drivers/clk/hisilicon/clk-hi6220-stub.c            | 276 +++++++++++++++++++++
- 6 files changed, 337 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/hisilicon/clk-hi6220-stub.c
-
--- 
-1.9.1
-
+Yours,
+Linus Walleij
