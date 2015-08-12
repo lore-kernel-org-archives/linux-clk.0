@@ -1,102 +1,175 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Shengjiu Wang <shengjiu.wang@freescale.com>
-To: <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-Subject: [PATCH V1 2/3] ARM: imx6sl: Add SPDIF_GCLK clock in clock tree
-Date: Tue, 11 Aug 2015 17:26:53 +0800
-Message-ID: <22e9a375a152703a52895af8d2596f6f58b93249.1439284957.git.shengjiu.wang@freescale.com>
-In-Reply-To: <cover.1439284957.git.shengjiu.wang@freescale.com>
-References: <cover.1439284957.git.shengjiu.wang@freescale.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v3 1/3] clk: Add safe switch hook
+Date: Wed, 12 Aug 2015 16:54:31 +0300
+Message-Id: <1439387673-13015-2-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1439387673-13015-1-git-send-email-georgi.djakov@linaro.org>
+References: <1439387673-13015-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-As spdif driver will register SPDIF clock to regmap, regmap will do
-clk_prepare in init function, so SPDIF clock is prepared in probe, then its
-root clock (pll clock) is prepared also, which cause the arm can't enter
-low power mode.
-Add SPDIF_GCLK in clock tree which share same gate bits with SPDIF clock.
-Its root clock is ipg clock, and register it to regmap, then the issue can
-be fixed.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@freescale.com>
+Sometimes clocks can't accept their parent source turning off
+while the source is reprogrammed to a different rate. Most
+notably CPU clocks require a way to switch away from the current
+PLL they're running on, reprogram that PLL to a new rate, and
+then switch back to the PLL with the new rate once they're done.
+Add a hook that drivers can implement allowing them to return a
+'safe parent' and 'safe frequency' that they can switch their
+parent to while the upstream source is reprogrammed to support
+this.
+
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
- arch/arm/boot/dts/imx6sl.dtsi            | 16 ++++++++++++++++
- drivers/clk/imx/clk-imx6sl.c             |  4 +++-
- include/dt-bindings/clock/imx6sl-clock.h |  3 ++-
- 3 files changed, 21 insertions(+), 2 deletions(-)
+ drivers/clk/clk.c            |   73 +++++++++++++++++++++++++++++++++++++++---
+ include/linux/clk-provider.h |    2 ++
+ 2 files changed, 70 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6sl.dtsi b/arch/arm/boot/dts/imx6sl.dtsi
-index 320a27f..c247756 100644
---- a/arch/arm/boot/dts/imx6sl.dtsi
-+++ b/arch/arm/boot/dts/imx6sl.dtsi
-@@ -135,8 +135,24 @@
- 				ranges;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 128ad748b682..df5f5b65833c 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -51,9 +51,13 @@ struct clk_core {
+ 	struct clk_core		**parents;
+ 	u8			num_parents;
+ 	u8			new_parent_index;
++	u8			safe_parent_index;
+ 	unsigned long		rate;
+ 	unsigned long		req_rate;
++	unsigned long		old_rate;
+ 	unsigned long		new_rate;
++	unsigned long		safe_freq;
++	struct clk_core		*safe_parent;
+ 	struct clk_core		*new_parent;
+ 	struct clk_core		*new_child;
+ 	unsigned long		flags;
+@@ -1271,7 +1275,9 @@ out:
+ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
+ 			     struct clk_core *new_parent, u8 p_index)
+ {
+-	struct clk_core *child;
++	struct clk_core *child, *parent;
++	struct clk_hw *parent_hw;
++	unsigned long safe_freq = 0;
  
- 				spdif: spdif@02004000 {
-+					compatible = "fsl,imx6sl-spdif",
-+						"fsl,imx35-spdif";
- 					reg = <0x02004000 0x4000>;
- 					interrupts = <0 52 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&sdma 14 18 0>,
-+						<&sdma 15 18 0>;
-+					dma-names = "rx", "tx";
-+					clocks = <&clks IMX6SL_CLK_SPDIF_GCLK>, <&clks IMX6SL_CLK_OSC>,
-+						 <&clks IMX6SL_CLK_SPDIF>, <&clks IMX6SL_CLK_DUMMY>,
-+						 <&clks IMX6SL_CLK_DUMMY>, <&clks IMX6SL_CLK_DUMMY>,
-+						 <&clks IMX6SL_CLK_IPG>, <&clks IMX6SL_CLK_DUMMY>,
-+						 <&clks IMX6SL_CLK_DUMMY>, <&clks IMX6SL_CLK_SPBA>;
-+					clock-names = "core", "rxtx0",
-+						"rxtx1", "rxtx2",
-+						"rxtx3", "rxtx4",
-+						"rxtx5", "rxtx6",
-+						"rxtx7", "dma";
-+					status = "disabled";
- 				};
+ 	core->new_rate = new_rate;
+ 	core->new_parent = new_parent;
+@@ -1281,6 +1287,23 @@ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
+ 	if (new_parent && new_parent != core->parent)
+ 		new_parent->new_child = core;
  
- 				ecspi1: ecspi@02008000 {
-diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-index a0d4cf2..a73cedd 100644
---- a/drivers/clk/imx/clk-imx6sl.c
-+++ b/drivers/clk/imx/clk-imx6sl.c
-@@ -97,6 +97,7 @@ static struct clk_div_table video_div_table[] = {
- static unsigned int share_count_ssi1;
- static unsigned int share_count_ssi2;
- static unsigned int share_count_ssi3;
-+static unsigned int share_count_spdif;
++	if (core->ops->get_safe_parent) {
++		parent_hw = core->ops->get_safe_parent(core->hw, &safe_freq);
++		if (parent_hw) {
++			parent = parent_hw->core;
++			p_index = clk_fetch_parent_index(core, parent);
++			core->safe_parent_index = p_index;
++			core->safe_parent = parent;
++			if (safe_freq)
++				core->safe_freq = safe_freq;
++			else
++				core->safe_freq = 0;
++		}
++	} else {
++		core->safe_parent = NULL;
++		core->safe_freq = 0;
++	}
++
+ 	hlist_for_each_entry(child, &core->children, child_node) {
+ 		child->new_rate = clk_recalc(child, new_rate);
+ 		clk_calc_subtree(child, child->new_rate, NULL, 0);
+@@ -1393,14 +1416,51 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
+ 						  unsigned long event)
+ {
+ 	struct clk_core *child, *tmp_clk, *fail_clk = NULL;
++	struct clk_core *old_parent;
+ 	int ret = NOTIFY_DONE;
  
- static struct clk *clks[IMX6SL_CLK_END];
- static struct clk_onecell_data clk_data;
-@@ -391,7 +392,8 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SL_CLK_PWM4]         = imx_clk_gate2("pwm4",         "perclk",            base + 0x78, 22);
- 	clks[IMX6SL_CLK_SDMA]         = imx_clk_gate2("sdma",         "ipg",               base + 0x7c, 6);
- 	clks[IMX6SL_CLK_SPBA]         = imx_clk_gate2("spba",         "ipg",               base + 0x7c, 12);
--	clks[IMX6SL_CLK_SPDIF]        = imx_clk_gate2("spdif",        "spdif0_podf",       base + 0x7c, 14);
-+	clks[IMX6SL_CLK_SPDIF]        = imx_clk_gate2_shared("spdif",     "spdif0_podf",   base + 0x7c, 14, &share_count_spdif);
-+	clks[IMX6SL_CLK_SPDIF_GCLK]   = imx_clk_gate2_shared("spdif_gclk",  "ipg",         base + 0x7c, 14, &share_count_spdif);
- 	clks[IMX6SL_CLK_SSI1_IPG]     = imx_clk_gate2_shared("ssi1_ipg",     "ipg",        base + 0x7c, 18, &share_count_ssi1);
- 	clks[IMX6SL_CLK_SSI2_IPG]     = imx_clk_gate2_shared("ssi2_ipg",     "ipg",        base + 0x7c, 20, &share_count_ssi2);
- 	clks[IMX6SL_CLK_SSI3_IPG]     = imx_clk_gate2_shared("ssi3_ipg",     "ipg",        base + 0x7c, 22, &share_count_ssi3);
-diff --git a/include/dt-bindings/clock/imx6sl-clock.h b/include/dt-bindings/clock/imx6sl-clock.h
-index 9ce4e42..e14573e 100644
---- a/include/dt-bindings/clock/imx6sl-clock.h
-+++ b/include/dt-bindings/clock/imx6sl-clock.h
-@@ -174,6 +174,7 @@
- #define IMX6SL_CLK_SSI1_IPG		161
- #define IMX6SL_CLK_SSI2_IPG		162
- #define IMX6SL_CLK_SSI3_IPG		163
--#define IMX6SL_CLK_END			164
-+#define IMX6SL_CLK_SPDIF_GCLK		164
-+#define IMX6SL_CLK_END			165
+-	if (core->rate == core->new_rate)
++	if (core->rate == core->new_rate && event != POST_RATE_CHANGE)
+ 		return NULL;
  
- #endif /* __DT_BINDINGS_CLOCK_IMX6SL_H */
--- 
-1.9.1
-
++	switch (event) {
++	case PRE_RATE_CHANGE:
++		if (core->safe_parent) {
++			if (core->safe_freq)
++				core->ops->set_rate_and_parent(core->hw,
++						core->safe_freq,
++						core->safe_parent->rate,
++						core->safe_parent_index);
++			else
++				core->ops->set_parent(core->hw,
++						core->safe_parent_index);
++		}
++		core->old_rate = core->rate;
++		break;
++	case POST_RATE_CHANGE:
++		if (core->safe_parent) {
++			old_parent = __clk_set_parent_before(core,
++							     core->new_parent);
++			if (core->ops->set_rate_and_parent) {
++				core->ops->set_rate_and_parent(core->hw,
++						core->new_rate,
++						core->new_parent ?
++						core->new_parent->rate : 0,
++						core->new_parent_index);
++			} else if (core->ops->set_parent) {
++				core->ops->set_parent(core->hw,
++						core->new_parent_index);
++			}
++			__clk_set_parent_after(core, core->new_parent,
++					       old_parent);
++		}
++		break;
++	}
++
+ 	if (core->notifier_count) {
+-		ret = __clk_notify(core, event, core->rate, core->new_rate);
+-		if (ret & NOTIFY_STOP_MASK)
++		if (event != POST_RATE_CHANGE || core->old_rate != core->rate)
++			ret = __clk_notify(core, event, core->old_rate,
++					   core->new_rate);
++		if (ret & NOTIFY_STOP_MASK && event != POST_RATE_CHANGE)
+ 			fail_clk = core;
+ 	}
+ 
+@@ -1443,7 +1503,8 @@ static void clk_change_rate(struct clk_core *core)
+ 	else if (core->parent)
+ 		best_parent_rate = core->parent->rate;
+ 
+-	if (core->new_parent && core->new_parent != core->parent) {
++	if (core->new_parent && core->new_parent != core->parent &&
++	    !core->safe_parent) {
+ 		old_parent = __clk_set_parent_before(core, core->new_parent);
+ 		trace_clk_set_parent(core, core->new_parent);
+ 
+@@ -1527,6 +1588,8 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 
+ 	core->req_rate = req_rate;
+ 
++	clk_propagate_rate_change(top, POST_RATE_CHANGE);
++
+ 	return ret;
+ }
+ 
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 0d3128fbc14e..173f681001f2 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -202,6 +202,8 @@ struct clk_ops {
+ 					  struct clk_rate_request *req);
+ 	int		(*set_parent)(struct clk_hw *hw, u8 index);
+ 	u8		(*get_parent)(struct clk_hw *hw);
++	struct clk_hw	*(*get_safe_parent)(struct clk_hw *hw,
++					    unsigned long *safe_freq);
+ 	int		(*set_rate)(struct clk_hw *hw, unsigned long rate,
+ 				    unsigned long parent_rate);
+ 	int		(*set_rate_and_parent)(struct clk_hw *hw,
