@@ -1,118 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v4 2/6] clk: samsung: exynos4x12: add cpu clock configuration
- data and instantiate cpu clock
-Date: Thu, 06 Aug 2015 15:41:50 +0200
-Message-id: <1438868514-8814-3-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Eric Anholt <eric@anholt.net>, linux-arm-kernel@lists.infradead.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <87wpx04c4q.fsf@eliezer.anholt.net>
+Cc: linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	"Stephen Warren" <swarren@wwwdotorg.org>,
+	"Lee Jones" <lee@kernel.org>, linux-clk@vger.kernel.org,
+	"Stephen Boyd" <sboyd@codeaurora.org>
+References: <1437420787-32137-1-git-send-email-eric@anholt.net>
+ <1437420787-32137-3-git-send-email-eric@anholt.net>
+ <20150811211733.31346.11122@quantum> <87wpx04c4q.fsf@eliezer.anholt.net>
+Message-ID: <20150812190014.31346.89987@quantum>
+Subject: Re: [PATCH v4 2/8] clk: Add a Raspberry Pi-specific clock driver.
+Date: Wed, 12 Aug 2015 12:00:14 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-With the addition of the new Samsung specific cpu-clock type, the
-arm clock can be represented as a cpu-clock type. Add the CPU clock
-configuration data and instantiate the CPU clock type for Exynos4x12.
+Quoting Eric Anholt (2015-08-12 11:04:05)
+> Michael Turquette <mturquette@linaro.org> writes:
+> 
+> > Hi Eric,
+> >
+> > Quoting Eric Anholt (2015-07-20 12:33:01)
+> >> +void __init rpi_firmware_init_clock_provider(struct device_node *node)
+> >> +{
+> >> +       /* We delay construction of our struct clks until get time,
+> >> +        * because we need to be able to return -EPROBE_DEFER if the
+> >> +        * firmware driver isn't up yet.  clk core doesn't support
+> >> +        * re-probing on -EPROBE_DEFER, but callers of clk_get can.
+> >> +        */
+> >> +       of_clk_add_provider(node, rpi_firmware_delayed_get_clk, node);
+> >> +}
+> >> +
+> >> +CLK_OF_DECLARE(rpi_firmware_clocks, "raspberrypi,bcm2835-firmware-clocks",
+> >> +              rpi_firmware_init_clock_provider);
+> >
+> > Do you require CLK_OF_DECLARE here? Could this be a platform driver
+> > instead?
+> 
+> I'm not actually sure.  The common pattern seemed to be using
+> CLK_OF_DECLARE (130 files using it versus declaring a struct
+> platform_driver), and it seems to avoid a whole lot of boilerplate.
+> What would the advantage be?
 
-Based on the earlier work by Thomas Abraham.
+Correctly using the Linux driver model, having a nice struct device and
+things like supsend and resume handlers, etc.
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/clk/samsung/clk-exynos4.c | 50 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+There is a lot of CLK_OF_DECLARE going on in drivers/clk, but I am
+hoping we can fix that. The main reason for CLK_OF_DECLARE is when you
+need to register clocks very early (e.g. timers). This is often not the
+case.
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 251f48d..7f370d3 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -1398,6 +1398,45 @@ static const struct exynos_cpuclk_cfg_data e4210_armclk_d[] __initconst = {
- 	{  0 },
- };
- 
-+static const struct exynos_cpuclk_cfg_data e4212_armclk_d[] __initconst = {
-+	{ 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
-+	{ 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
-+	{ 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
-+	{ 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
-+	{ 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4210_CPU_DIV1(2, 4), },
-+	{ 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4210_CPU_DIV1(2, 4), },
-+	{  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
-+	{  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
-+	{  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
-+	{  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
-+	{  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
-+	{  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
-+	{  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
-+	{  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4210_CPU_DIV1(2, 3), },
-+	{  0 },
-+};
-+
-+#define E4412_CPU_DIV1(cores, hpm, copy)				\
-+		(((cores) << 8) | ((hpm) << 4) | ((copy) << 0))
-+
-+static const struct exynos_cpuclk_cfg_data e4412_armclk_d[] __initconst = {
-+	{ 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(7, 0, 6), },
-+	{ 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(6, 0, 6), },
-+	{ 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(6, 0, 5), },
-+	{ 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(5, 0, 5), },
-+	{ 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4412_CPU_DIV1(5, 0, 4), },
-+	{ 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4412_CPU_DIV1(4, 0, 4), },
-+	{  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(4, 0, 3), },
-+	{  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(3, 0, 3), },
-+	{  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(3, 0, 3), },
-+	{  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
-+	{  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
-+	{  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
-+	{  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
-+	{  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4412_CPU_DIV1(0, 0, 3), },
-+	{  0 },
-+};
-+
- /* register exynos4 clocks */
- static void __init exynos4_clk_init(struct device_node *np,
- 				    enum exynos4_soc soc)
-@@ -1491,6 +1530,17 @@ static void __init exynos4_clk_init(struct device_node *np,
- 		samsung_clk_register_fixed_factor(ctx,
- 			exynos4x12_fixed_factor_clks,
- 			ARRAY_SIZE(exynos4x12_fixed_factor_clks));
-+		if (of_machine_is_compatible("samsung,exynos4412")) {
-+			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
-+				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
-+				e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
-+				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
-+		} else {
-+			exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
-+				mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
-+				e4212_armclk_d, ARRAY_SIZE(e4212_armclk_d),
-+				CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
-+		}
- 	}
- 
- 	samsung_clk_register_alias(ctx, exynos4_aliases,
--- 
-1.9.1
-
+Regards,
+Mike
