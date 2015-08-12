@@ -1,120 +1,52 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Pawel Moll <pawel.moll@arm.com>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@arm.linux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Fabian Frederick <fabf@skynet.be>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] drivers: clk: st: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x
-Date: Wed, 19 Aug 2015 10:48:14 +0200
-Message-Id: <1439974094-32322-3-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1439974094-32322-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1439974094-32322-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20150811181713.GR18282@x1>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+	<1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+	<20150810144811.GN3249@x1>
+	<20150810185516.2416.32293@quantum>
+	<20150811084329.GA13374@x1>
+	<55C9C82F.6060401@st.com>
+	<CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com>
+	<20150811170928.2416.70005@quantum>
+	<20150811181713.GR18282@x1>
+Date: Wed, 12 Aug 2015 09:27:06 +0200
+Message-ID: <CAMuHMdXfH6JQfMnJwRA9f0pD0qbc3bNwPJd38c6=BuAgOxZ-fg@mail.gmail.com>
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Maxime Coquelin <maxime.coquelin@st.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Use a generic name for this kind of PLL
+On Tue, Aug 11, 2015 at 8:17 PM, Lee Jones <lee.jones@linaro.org> wrote:
+>> I think that we can come up with a reasonable DT wrapper around the
+>> flag. I will be ecstatic if we can agree that the meaning of the flag
+>> can be tweaked just a bit to mean, "prevent this critical clock from
+>> being disabled, as it was enabled out of reset or by the bootloader,
+>> until a driver claims it and calls clk_prepare_enable".
+>
+> Easy, how about:
+>
+> 'prevent_this_critical_clock_from_being_disabled_as_it_was_enabled_out_of_reset_or_by_the_bootloader_until_a_driver_claims_it_and_calls_clk_prepare_enable'
 
-Correction in dts files are already done here:
-commit 5eb26c605909 ("ARM: STi: DT: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x")
+To make it less Linux-centric:
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
----
- drivers/clk/st/clkgen-fsyn.c |  8 ++++----
- drivers/clk/st/clkgen-pll.c  | 12 ++++++------
- 2 files changed, 10 insertions(+), 10 deletions(-)
+"Prevent this critical clock from being disabled implicitly by the OS, as it
+ was enabled out of reset or by the bootloader, until it's explicitly managed
+ by a driver."
 
-diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
-index 83ccf14..576cd03 100644
---- a/drivers/clk/st/clkgen-fsyn.c
-+++ b/drivers/clk/st/clkgen-fsyn.c
-@@ -307,7 +307,7 @@ static const struct clkgen_quadfs_data st_fs660c32_F_416 = {
- 	.get_rate	= clk_fs660c32_dig_get_rate,
- };
- 
--static const struct clkgen_quadfs_data st_fs660c32_C_407 = {
-+static const struct clkgen_quadfs_data st_fs660c32_C = {
- 	.nrst_present = true,
- 	.nrst	= { CLKGEN_FIELD(0x2f0, 0x1, 0),
- 		    CLKGEN_FIELD(0x2f0, 0x1, 1),
-@@ -350,7 +350,7 @@ static const struct clkgen_quadfs_data st_fs660c32_C_407 = {
- 	.get_rate	= clk_fs660c32_dig_get_rate,
- };
- 
--static const struct clkgen_quadfs_data st_fs660c32_D_407 = {
-+static const struct clkgen_quadfs_data st_fs660c32_D = {
- 	.nrst_present = true,
- 	.nrst	= { CLKGEN_FIELD(0x2a0, 0x1, 0),
- 		    CLKGEN_FIELD(0x2a0, 0x1, 1),
-@@ -1077,11 +1077,11 @@ static const struct of_device_id quadfs_of_match[] = {
- 	},
- 	{
- 		.compatible = "st,stih407-quadfs660-C",
--		.data = &st_fs660c32_C_407
-+		.data = &st_fs660c32_C
- 	},
- 	{
- 		.compatible = "st,stih407-quadfs660-D",
--		.data = &st_fs660c32_D_407
-+		.data = &st_fs660c32_D
- 	},
- 	{}
- };
-diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
-index 47a38a9..b2a332c 100644
---- a/drivers/clk/st/clkgen-pll.c
-+++ b/drivers/clk/st/clkgen-pll.c
-@@ -193,7 +193,7 @@ static const struct clkgen_pll_data st_pll3200c32_407_a0 = {
- 	.ops		= &stm_pll3200c32_ops,
- };
- 
--static const struct clkgen_pll_data st_pll3200c32_407_c0_0 = {
-+static const struct clkgen_pll_data st_pll3200c32_cx_0 = {
- 	/* 407 C0 PLL0 */
- 	.pdn_status	= CLKGEN_FIELD(0x2a0,	0x1,			8),
- 	.locked_status	= CLKGEN_FIELD(0x2a0,	0x1,			24),
-@@ -205,7 +205,7 @@ static const struct clkgen_pll_data st_pll3200c32_407_c0_0 = {
- 	.ops		= &stm_pll3200c32_ops,
- };
- 
--static const struct clkgen_pll_data st_pll3200c32_407_c0_1 = {
-+static const struct clkgen_pll_data st_pll3200c32_cx_1 = {
- 	/* 407 C0 PLL1 */
- 	.pdn_status	= CLKGEN_FIELD(0x2c8,	0x1,			8),
- 	.locked_status	= CLKGEN_FIELD(0x2c8,	0x1,			24),
-@@ -624,12 +624,12 @@ static const struct of_device_id c32_pll_of_match[] = {
- 		.data = &st_pll3200c32_407_a0,
- 	},
- 	{
--		.compatible = "st,stih407-plls-c32-c0_0",
--		.data = &st_pll3200c32_407_c0_0,
-+		.compatible = "st,plls-c32-cx_0",
-+		.data = &st_pll3200c32_cx_0,
- 	},
- 	{
--		.compatible = "st,stih407-plls-c32-c0_1",
--		.data = &st_pll3200c32_407_c0_1,
-+		.compatible = "st,plls-c32-cx_1",
-+		.data = &st_pll3200c32_cx_1,
- 	},
- 	{
- 		.compatible = "st,stih407-plls-c32-a9",
--- 
-1.9.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
