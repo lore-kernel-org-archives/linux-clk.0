@@ -1,27 +1,53 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Kumar Gala <galak@codeaurora.org>, linux-kernel@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 0/3] Port and support rk3036 SoC platform
-Date: Fri, 28 Aug 2015 11:59:59 +0200
-Message-ID: <6551991.RUDkGfdSCp@phil>
-In-Reply-To: <1440740808-15004-1-git-send-email-zhengxing@rock-chips.com>
-References: <1440740808-15004-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 11 Aug 2015 18:25:30 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: versatile/impd1: switch order of CLCD clocks
+Message-ID: <20150812012530.GJ26614@codeaurora.org>
+References: <1438172615-11276-1-git-send-email-linus.walleij@linaro.org>
+ <20150731065008.GU3159@codeaurora.org>
+ <CACRpkdbaGU8jMQY=WpkV0ZF_KfFCq167kWCD_CropJM10RC9QQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CACRpkdbaGU8jMQY=WpkV0ZF_KfFCq167kWCD_CropJM10RC9QQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 07/31, Linus Walleij wrote:
+> On Fri, Jul 31, 2015 at 8:50 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 07/29, Linus Walleij wrote:
+> >> The CLCD clocks are registered in the wrong order: first the
+> >> APB clock, then the pixelclock. This should be the other way
+> >> around so the driver gets the pixelclock, not the APB clock,
+> >> when it asks for the first clock for the block.
+> >>
+> >> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> >> ---
+> >
+> > Is this because the consumer driver is calling clk_get() with a
+> > NULL connection id for the pixelclock and then a more specific
+> > connection id for the apb clk?
+> 
+> Yes. Like most PrimeCells do.
+> 
+> > Where's the consumer driver?
+> 
+> The NULL (pixel) clock is taken by:
+> drivers/video/fbdev/amba-clcd.c
+> 
+> The APB "apb_pclk" clock is taken by:
+> drivers/amba/bus.c
+> 
 
-Am Freitag, 28. August 2015, 13:46:45 schrieb Xing Zheng:
-> We need to support rk3036 soc platform via upstream, there are
-> 3 parts for the initial release of minimum system: dts, pinctrl,
-> and clock tree for rk3036, startup and run to init processs.
+Ok. I'm still confused and concerned that putting the clocks into
+the list in a certain order fixes anything. I thought the purpose
+of a NULL clkdev connection ID was to make it so that we didn't
+match the apb_pclk lookup. Instead we find the second lookup for
+the device with the wildcard connection id and use that. 
 
-this is really cool that you're working on supporting the rk3036.
-I had some comments to the individual patches, but overall it looks quite nice 
-already.
+If this fix is valid, did you want a fixes tag on this so it goes
+back to stable?
 
-
-So, thanks for working on this
-Heiko
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
