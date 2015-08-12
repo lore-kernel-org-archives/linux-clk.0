@@ -1,41 +1,71 @@
-Return-Path: <bethencourt@gmail.com>
-Return-Path: <bethencourt@gmail.com>
-Sender: Luis de Bethencourt <bethencourt@gmail.com>
-Date: Fri, 28 Aug 2015 14:43:14 +0200
-From: Luis de Bethencourt <luis@debethencourt.com>
-To: linux-kernel@vger.kernel.org
-Cc: Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 1/5] clk: sunxi: sun6i-apb0: Fix module autoload for OF
- platform driver
-Message-ID: <20150828124314.GA26550@goodgumbo.baconseed.org>
+Return-Path: <daniel.lezcano@linaro.org>
+Return-Path: <daniel.lezcano@linaro.org>
+Message-ID: <55CB3CCB.6020607@linaro.org>
+Date: Wed, 12 Aug 2015 14:32:11 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+To: Daniel Kurtz <djkurtz@chromium.org>,
+ Yingjoe Chen <yingjoe.chen@mediatek.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Russell King <linux@arm.linux.org.uk>,
+ "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Rob Herring <robh+dt@kernel.org>, linux-mediatek@lists.infradead.org,
+ Sascha Hauer <kernel@pengutronix.de>,
+ Olof Johansson <olof@lixom.net>,
+ srv_heupstream <srv_heupstream@mediatek.com>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/5] add GPT timer support for mt8173
+References: <1436779969-18610-1-git-send-email-yingjoe.chen@mediatek.com> <CAGS+omAeYhXDpBueG-F_gYBccqeaejN9k5bRKC78aDLfvHfnBA@mail.gmail.com>
+In-Reply-To: <CAGS+omAeYhXDpBueG-F_gYBccqeaejN9k5bRKC78aDLfvHfnBA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This platform driver has a OF device ID table but the OF module
-alias information is not created so module autoloading won't work.
+On 08/11/2015 05:54 PM, Daniel Kurtz wrote:
+> On Mon, Jul 13, 2015 at 5:32 PM, Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
+>> This series add GPT timer support for mt8173. This is based on v4.2-rc1
+>> and Matthias' next branch (for dts parts).
+>>
+>> The first 2 patches comes from 'Add SMP bringup support for mt65xx socs'
+>> series [1]. I decide to move these 2 patches to this series, since it
+>> is more relevent here. They are changed based on Matthias' and Daniel's
+>> comments.
+>>
+>> [1] http://lists.infradead.org/pipermail/linux-mediatek/2015-May/000714.html
+>>
+>> Daniel Kurtz (1):
+>>    arm64: dts: mt8173: add timer node
+>>
+>> Yingjoe Chen (4):
+>>    clocksource: mediatek: do not enable GPT_CLK_EVT when setup
+>>    clocksource: mediatek: Use GPT as sched clock source
+>>    arm64: mediatek: enable MTK_TIMER
+>>    clk: mediatek: add 13mhz clock for MT8173
+>
+> Was this mediatek clocksource patch set get forgotten again?
 
-Signed-off-by: Luis de Bethencourt <luis@debethencourt.com>
----
- drivers/clk/sunxi/clk-sun6i-apb0.c | 1 +
- 1 file changed, 1 insertion(+)
+Yep. Sounds like it felt at the wrong moment.
 
-diff --git a/drivers/clk/sunxi/clk-sun6i-apb0.c b/drivers/clk/sunxi/clk-sun6i-apb0.c
-index 7076360..e703e18 100644
---- a/drivers/clk/sunxi/clk-sun6i-apb0.c
-+++ b/drivers/clk/sunxi/clk-sun6i-apb0.c
-@@ -61,6 +61,7 @@ static const struct of_device_id sun6i_a31_apb0_clk_dt_ids[] = {
- 	{ .compatible = "allwinner,sun6i-a31-apb0-clk" },
- 	{ /* sentinel */ }
- };
-+MODULE_DEVICE_TABLE(of, sun6i_a31_apb0_clk_dt_ids);
- 
- static struct platform_driver sun6i_a31_apb0_clk_driver = {
- 	.driver = {
+> All 5 patches have have been reviewed, and I think the ones that need
+> it have been Ack'ed by Matthias and/or Stephen.
+> What is the plan for merging them?
+
+So if I am not wrong we have two patches I can take in my tree as a 
+couple of fixes (1 and 2), right ?
+
+
+
+
 -- 
-2.4.6
+  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
