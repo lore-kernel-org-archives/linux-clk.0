@@ -1,84 +1,146 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <govindraj.raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Govindraj Raja
-	<govindraj.raja@imgtec.com>
-Subject: [PATCH v5 0/4] clk: pistachio: Fixes for pll calculations.
-Date: Thu, 20 Aug 2015 14:45:51 +0100
-Message-ID: <1440078355-8828-1-git-send-email-govindraj.raja@imgtec.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20150811175019.2416.93864@quantum>
+References: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1438364782-3968-6-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v64nvA1K=Ya7_99-2G1LtFjcuj+qQbO1GJaqsL+yPF+Xdw@mail.gmail.com>
+ <CAGb2v64-=1Byzo-h=7Pq=HK9Xx01KaTKT89Nx6jVWUc_kqthyg@mail.gmail.com>
+ <20150811175019.2416.93864@quantum>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 12 Aug 2015 11:17:11 +0800
+Message-ID: <CAGb2v65AtLwsnk11qHj6K_JzO2+2C9tcp3QBUeSzVBuJZ+Feeg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] ARM: sun8i: Add clock indices
+To: Michael Turquette <mturquette@baylibre.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Patch 1/4 to 3/4 are pll calculation fixes for clock settings.
+On Wed, Aug 12, 2015 at 1:50 AM, Michael Turquette
+<mturquette@baylibre.com> wrote:
+> Quoting Chen-Yu Tsai (2015-08-10 21:49:54)
+>> On Sat, Aug 8, 2015 at 12:21 AM, Chen-Yu Tsai <wens@csie.org> wrote:
+>> > On Sat, Aug 1, 2015 at 1:46 AM, Maxime Ripard
+>> > <maxime.ripard@free-electrons.com> wrote:
+>> >> The A23 and A33 gates have a non continuous set of clock IDs that are
+>> >> valid. Add the clock-indices property to the DT to express this.
+>> >>
+>> >> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>> >> ---
+>> >>  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 15 +++++++++++++++
+>> >>  1 file changed, 15 insertions(+)
+>> >>
+>> >> diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+>> >> index 7abd0ae3143d..c318c770b6c1 100644
+>> >> --- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+>> >> +++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+>> >> @@ -180,6 +180,15 @@
+>> >>                         compatible = "allwinner,sun8i-a23-ahb1-gates-clk";
+>> >>                         reg = <0x01c20060 0x8>;
+>> >>                         clocks = <&ahb1>;
+>> >> +                       clock-indices = <1>, <6>,
+>> >
+>> > Turns out the A33 (and I assume the same with the A23) has
+>> > an ahb1 clock gate for the Security System at clock-index <5>.
+>>
+>> Looks like the A23 does not have this one, nor the SS mod clock.
+>>
+>> > This is found in the updated A33 user manual.
+>> >
+>> >> +                                       <8>, <9>, <10>,
+>> >> +                                       <13>, <14>,
+>> >> +                                       <19>, <20>,
+>> >> +                                       <21>, <24>, <26>,
+>> >> +                                       <29>, <32>, <36>,
+>> >> +                                       <40>, <44>, <46>,
+>> >> +                                       <52>, <54>,
+>> >
+>> > <53> is ahb1 clock gate for msgbox, again found in A33 manual.
+>>
+>> A23 has this one. Found in Allwinner kernel sources.
+>>
+>> >> +                                       <57>;
+>> >
+>> > <58> is ahb1 clock gate for SAT, which seems to be part of the
+>> > display pipeline.
+>>
+>> This one is A33 only.
+>>
+>> I guess we should do a separate compatible for A33 AHB1 clock gates.
+>
+> ChenYu,
+>
+> I believe Maxime is on vacation. I told him that I would pick these
+> patches directly. It looks like your comments can be fixed up in
+> follow-up patches at a later date, correct?
 
-Patch 4/4: Is a reword and repost based on earlier thread:
-http://patchwork.linux-mips.org/patch/10108/
+That's right. I was mostly asking how to proceed with adding them.
 
-Series Based on 4.2-rc7
-Tested with Pistachio Bring-up-Board.
+> If so then I will apply them to clk-next.
 
-Changes from v4:
-----------------
-Fixes comments from Andrew and added Andrew's
-reviewed by.
+Please do. (I see they are already in.)
 
-http://patchwork.linux-mips.org/patch/11014/
-http://patchwork.linux-mips.org/patch/11016/
+Thanks
+ChenYu
 
 
-Changes from v3:
----------------
-Fixes comments to bring back the poll rate table with
-unsigned long int as discussed in below thread.
+> Regards,
+> Mike
+>
+>>
+>> ChenYu
+>>
+>> >>                         clock-output-names = "ahb1_mipidsi", "ahb1_dma",
+>> >>                                         "ahb1_mmc0", "ahb1_mmc1", "ahb1_mmc2",
+>> >>                                         "ahb1_nand", "ahb1_sdram",
+>> >> @@ -196,6 +205,8 @@
+>> >>                         compatible = "allwinner,sun8i-a23-apb1-gates-clk";
+>> >>                         reg = <0x01c20068 0x4>;
+>> >>                         clocks = <&apb1>;
+>> >> +                       clock-indices = <0>, <5>,
+>> >> +                                       <12>, <13>;
+>> >>                         clock-output-names = "apb1_codec", "apb1_pio",
+>> >>                                         "apb1_daudio0", "apb1_daudio1";
+>> >>                 };
+>> >> @@ -213,6 +224,10 @@
+>> >>                         compatible = "allwinner,sun8i-a23-apb2-gates-clk";
+>> >>                         reg = <0x01c2006c 0x4>;
+>> >>                         clocks = <&apb2>;
+>> >> +                       clock-indices = <0>, <1>,
+>> >> +                                       <2>, <16>,
+>> >> +                                       <17>, <18>,
+>> >> +                                       <19>, <20>;
+>> >>                         clock-output-names = "apb2_i2c0", "apb2_i2c1",
+>> >>                                         "apb2_i2c2", "apb2_uart0",
+>> >>                                         "apb2_uart1", "apb2_uart2",
+>> >> --
+>> >> 2.4.6
+>> >>
+>> >
+>> > Not sure if you want to add the clocks I mentioned together
+>> > in this patch, or do a separate patch.
+>> >
+>> > The rest look good.
+>> >
+>> > ChenYu
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-http://patchwork.linux-mips.org/patch/10900/
-
-Changes from v2:
----------------
-Fixes comments from Sergei as dicussed in below thread:
-http://patchwork.linux-mips.org/patch/10903/
-
-Changes from v1:
----------------
-Fix comments from Andrew.
-Topics:
-
-* http://patchwork.linux-mips.org/patch/10888/
-  (Remove long conversion for pll_rate_table variables)
-	
-* http://patchwork.linux-mips.org/patch/10889/
-  (reword pll to PLL)
-
-* http://patchwork.linux-mips.org/patch/10891/
-  (squash 4/6 to 3/6)
-
-* http://patchwork.linux-mips.org/patch/10892/
-  (squash 5/6 to 3/6) 
-
-* http://patchwork.linux-mips.org/patch/10893/
-  (Add missing signed-off)
-
-
-Damien.Horsley (1):
-  clk: pistachio: correct critical clock list
-
-Zdenko Pulitika (3):
-  clk: pistachio: Fix 32bit integer overflows
-  clk: pistachio: Fix override of clk-pll settings from boot loader
-  clk: pistachio: Fix PLL rate calculation in integer mode
-
- drivers/clk/pistachio/clk-pistachio.c | 19 ++++++---
- drivers/clk/pistachio/clk-pll.c       | 77 +++++++++++++++++++++++++++--------
- drivers/clk/pistachio/clk.h           | 14 +++----
- 3 files changed, 80 insertions(+), 30 deletions(-)
-
--- 
-1.9.1
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
