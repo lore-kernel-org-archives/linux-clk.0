@@ -1,55 +1,51 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
- Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
- Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq driver
- for Exynos4x12
-Date: Mon, 03 Aug 2015 12:47:57 +0200
-Message-id: <2295533.OBI6Q4a3b9@amdc1976>
-In-reply-to: <20150803104044.GB21529@linux>
-References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
- <4532306.AVvo5hem3c@amdc1976> <20150803104044.GB21529@linux>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 11 Aug 2015 17:38:17 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Bintian Wang <bintian.wang@huawei.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, Guodong Xu <guodong.xu@linaro.org>,
+	Jian Zhang <zhangjian001@hisilicon.com>,
+	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
+	Haoju Mo <mohaoju@hisilicon.com>, Dan Zhao <dan.zhao@hisilicon.com>,
+	sunzhaosheng@hisilicon.com, victor.lixin@hisilicon.com
+Subject: Re: [PATCH v4 0/4] clk: hisilicon: support stub clock
+Message-ID: <20150812003817.GI26614@codeaurora.org>
+References: <1438673249-6051-1-git-send-email-leo.yan@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1438673249-6051-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, August 03, 2015 04:10:44 PM Viresh Kumar wrote:
-> On 03-08-15, 12:36, Bartlomiej Zolnierkiewicz wrote:
-> > I would really like it to be dependency not an option (+ I think
-> > that ideally it should be checked at runtime, IOW we should be
-> > checking from cpufreq-dt driver if the thermal support is enabled
-> > before enabling boost support).
+On 08/04, Leo Yan wrote:
+> This series adds support for hisilicon stub clock driver. On hi6220,
+> the bootloader needs load the firmware image and set info for OPPs;
+> after run into kernel, the stub clock driver is used to communicate
+> w/t firmware for cpu dynamic frequency scaling.
 > 
-> I don't think boost has any dependency on thermal support. Yeah, it
-> may be true for your platform but we can't force it. People might have
-> different algorithms to control boost modes, thermal is just one
-> option they may look at. For few, enabling boost may not be a thermal
-> issue, but power. So, they want to allow it only when they want, but
-> that wouldn't burn their chip.
+> In patch series v1/v2, the stub clock driver simply writes request in
+> sram and send ipc to firmware; For patch series v3, the firmware has
+> been upgraded to use mailbox, so stub clock driver will call standard
+> mailbox APIs to request mailbox channel and send message to firmware.
+> 
+> Patch 4 adds stub clock node into dts and it references mailbox with
+> phandle, so patch 4 will depend on mailbox driver's patch series [1].
+> These patches have been tested on 96board hikey and is used by cpufreq
+> driver.
 
-OK, I see your point (I have not thought about power being the boost
-limitation previously).
+The To: list is everyone, so I'm not sure who is supposed to
+apply these patches. I'd like to take patches 1, 2, and 3 through
+the clk tree though.
 
-> So, a platform can choose how it wants to have it. :)
-
-I'll re-do this patch.  Thank you.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
