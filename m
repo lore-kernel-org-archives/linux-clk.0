@@ -1,95 +1,35 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <govindraj.raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Ezequiel Garcia
-	<ezequiel.garcia@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>
-Subject: [PATCH v4 4/4] clk: pistachio: correct critical clock list
-Date: Tue, 18 Aug 2015 10:32:17 +0100
-Message-ID: <1439890337-13803-5-git-send-email-govindraj.raja@imgtec.com>
-In-Reply-To: <1439890337-13803-1-git-send-email-govindraj.raja@imgtec.com>
-References: <1439890337-13803-1-git-send-email-govindraj.raja@imgtec.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20150811234552.GP2839@codeaurora.org>
+References: <1438262352-29118-1-git-send-email-linus.walleij@linaro.org>
+	<20150803215129.GD21068@codeaurora.org>
+	<CACRpkdYdFAjRGMfsG4Kx=xNBACofcjFR3U1+P4U3yBmgQcFATQ@mail.gmail.com>
+	<20150811234552.GP2839@codeaurora.org>
+Date: Wed, 12 Aug 2015 10:27:31 +0200
+Message-ID: <CACRpkdbxyT=-w3jYEnRuhRWid2BRJ+ftSOTyZpbTVocN8Fj4MA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk/ARM: delete the non-DT U8500 clock implementation
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: "Damien.Horsley" <Damien.Horsley@imgtec.com>
+On Wed, Aug 12, 2015 at 1:45 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 08/10, Linus Walleij wrote:
 
-Current critical clock list for pistachio enables
-only mips and sys clocks by default but there are
-also other clocks that are not claimed by anyone and
-needs to be enabled by default.
+>> No you can actually apply it in isolation. I was just collecting
+>> them in one spot for testing.
+>>
+>> Can you please apply this directly to the clk tree and
+>> fix any clashes?
+>
+> Sure. Do we need to apply patches 2 and 3 too? I'm mostly trying
+> to avoid merge conflicts.
 
-This patch updates the critical clocks that need
-to be enabled by default.
+Nope these should be orthogonal, this patch only deletes stuff
+that isn't used anywhere or in close proximity of anything else
+that is being patched now.
 
-Add a separate struct to distinguish the critical clocks
-as listed:
-1.) core clocks:
-	a.) mips clock
-2.) peripheral system clocks:
-	a.) sys clock
-	b.) sys_bus clock
-	c.) DDR clock
-	d.) ROM clock
-
-Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
-Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-Signed-off-by: Damien.Horsley <Damien.Horsley@imgtec.com>
-Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
----
- drivers/clk/pistachio/clk-pistachio.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
-index 8c0fe88..c4ceb5e 100644
---- a/drivers/clk/pistachio/clk-pistachio.c
-+++ b/drivers/clk/pistachio/clk-pistachio.c
-@@ -159,9 +159,15 @@ PNAME(mux_debug) = { "mips_pll_mux", "rpu_v_pll_mux",
- 		     "wifi_pll_mux", "bt_pll_mux" };
- static u32 mux_debug_idx[] = { 0x0, 0x1, 0x2, 0x4, 0x8, 0x10 };
- 
--static unsigned int pistachio_critical_clks[] __initdata = {
--	CLK_MIPS,
--	CLK_PERIPH_SYS,
-+static unsigned int pistachio_critical_clks_core[] __initdata = {
-+	CLK_MIPS
-+};
-+
-+static unsigned int pistachio_critical_clks_sys[] __initdata = {
-+	PERIPH_CLK_SYS,
-+	PERIPH_CLK_SYS_BUS,
-+	PERIPH_CLK_DDR,
-+	PERIPH_CLK_ROM,
- };
- 
- static void __init pistachio_clk_init(struct device_node *np)
-@@ -193,8 +199,8 @@ static void __init pistachio_clk_init(struct device_node *np)
- 
- 	pistachio_clk_register_provider(p);
- 
--	pistachio_clk_force_enable(p, pistachio_critical_clks,
--				   ARRAY_SIZE(pistachio_critical_clks));
-+	pistachio_clk_force_enable(p, pistachio_critical_clks_core,
-+				   ARRAY_SIZE(pistachio_critical_clks_core));
- }
- CLK_OF_DECLARE(pistachio_clk, "img,pistachio-clk", pistachio_clk_init);
- 
-@@ -261,6 +267,9 @@ static void __init pistachio_clk_periph_init(struct device_node *np)
- 				    ARRAY_SIZE(pistachio_periph_gates));
- 
- 	pistachio_clk_register_provider(p);
-+
-+	pistachio_clk_force_enable(p, pistachio_critical_clks_sys,
-+				   ARRAY_SIZE(pistachio_critical_clks_sys));
- }
- CLK_OF_DECLARE(pistachio_clk_periph, "img,pistachio-clk-periph",
- 	       pistachio_clk_periph_init);
--- 
-1.9.1
+Yours,
+Linus Walleij
