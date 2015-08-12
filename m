@@ -1,154 +1,115 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
- Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
- Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v4 1/6] cpufreq: make scaling_boost_freqs sysfs attr
- available when boost is enabled
-Date: Fri, 07 Aug 2015 12:34:23 +0200
-Message-id: <5184469.cOpIkgzX4h@amdc1976>
-In-reply-to: <20150807034128.GE6325@linux>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <1438868514-8814-2-git-send-email-b.zolnierkie@samsung.com>
- <20150807034128.GE6325@linux>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <Govindraj.Raja@imgtec.com>
+To: "Andrew Bresticker (abrestic@chromium.org)" <abrestic@chromium.org>,
+	Zdenko Pulitika <Zdenko.Pulitika@imgtec.com>, "linux-mips@linux-mips.org"
+	<linux-mips@linux-mips.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, "Michael
+ Turquette" <mturquette@baylibre.com>
+CC: Kevin Cernekee <cernekee@chromium.org>, Ralf Baechle
+	<ralf@linux-mips.org>, Andrew Bresticker <abrestic@chromium.org>, "James
+ Hartley" <James.Hartley@imgtec.com>, Damien Horsley
+	<Damien.Horsley@imgtec.com>, James Hogan <James.Hogan@imgtec.com>, "Ezequiel
+ Garcia" <ezequiel@vanguardiasur.com.ar>
+Subject: RE: [PATCH v2 1/4] clk: pistachio: Fix 32bit integer overflows
+Date: Wed, 12 Aug 2015 14:31:38 +0000
+Message-ID: <4BF5E8683E87FC4DA89822A5A3EB60CB6F32EA@hhmail02.hh.imgtec.org>
+References: <1438964413-18876-1-git-send-email-govindraj.raja@imgtec.com>
+ <1438964413-18876-2-git-send-email-govindraj.raja@imgtec.com>
+ <E3EE94C54B0A8346A2210452C2C8281D288B1B8C@hhmail02.hh.imgtec.org>
+In-Reply-To: <E3EE94C54B0A8346A2210452C2C8281D288B1B8C@hhmail02.hh.imgtec.org>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Andrew,
 
-Hi,
-
-On Friday, August 07, 2015 09:11:28 AM Viresh Kumar wrote:
-> Hi,
-> 
-> I would suggest you sending such patches as reply to the earlier
-> threads only, instead of a new chain. This will save your time.
-
-Please explain it more.  This patch needs to be first for cpufreq-dt
-switch to be complete.  scaling_boost_freqs is available currently
-for exynos-cpufreq users when boost is enabled and ideally we would
-like it to be available immediately after the switch to cpufreq-dt.
-
-> For example, you will need to resend other patches unnecessarily if I
-> NAK this patch :)
-> 
-> On 06-08-15, 15:41, Bartlomiej Zolnierkiewicz wrote:
-> > Add cpufreq_boost_enabled_generic_attr table and use it in
-> > cpufreq-dt driver instead of cpufreq_generic_attr one when
-> > boost support is enabled.  As a result scaling_boost_freqs
-> > sysfs attribute is available when cpufreq-dt driver is
-> > used and boost support is enabled.
-> > 
-> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> > Cc: Thomas Abraham <thomas.ab@samsung.com>
-> > Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> > Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> -----Original Message-----
+> From: Zdenko Pulitika
+> Sent: 10 August 2015 04:56 PM
+> To: Govindraj Raja; linux-mips@linux-mips.org; linux-clk@vger.kernel.org;
+> Stephen Boyd; Michael Turquette
+> Cc: Kevin Cernekee; Ralf Baechle; Andrew Bresticker; James Hartley; Damie=
+n
+> Horsley; James Hogan; Ezequiel Garcia
+> Subject: RE: [PATCH v2 1/4] clk: pistachio: Fix 32bit integer overflows
+>=20
+> Govindraj,
+>=20
+> > -----Original Message-----
+> > From: Govindraj Raja
+> > Sent: 07 August 2015 17:20
+> > To: linux-mips@linux-mips.org; linux-clk@vger.kernel.org; Stephen
+> > Boyd; Michael Turquette
+> > Cc: Zdenko Pulitika; Kevin Cernekee; Ralf Baechle; Andrew Bresticker;
+> > James Hartley; Govindraj Raja; Damien Horsley; James Hogan; Ezequiel
+> > Garcia; Govindraj Raja
+> > Subject: [PATCH v2 1/4] clk: pistachio: Fix 32bit integer overflows
+> >
+> > From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+> >
+> > This commit fixes 32bit integer overflows throughout the pll driver (i.=
+e.
+> > wherever the result of integer multiplication may exceed the range of u=
+32).
+> >
+> > One of the functions affected by this problem is .recalc_rate. It
+> > returns incorrect rate for some pll settings (not for all though)
+> > which in turn results in the incorrect rate setup of pll's child clocks=
+.
+> >
+> > Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+> > Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
 > > ---
-> >  drivers/cpufreq/cpufreq-dt.c | 3 +++
-> >  drivers/cpufreq/freq_table.c | 7 +++++++
-> >  include/linux/cpufreq.h      | 1 +
-> >  3 files changed, 11 insertions(+)
-> > 
-> > diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-> > index b9259ab..7b091c0 100644
-> > --- a/drivers/cpufreq/cpufreq-dt.c
-> > +++ b/drivers/cpufreq/cpufreq-dt.c
-> > @@ -182,6 +182,8 @@ try_again:
-> >  	return ret;
+> >  drivers/clk/pistachio/clk-pll.c | 26 ++++++++++++--------------
+> >  1 file changed, 12 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/clk/pistachio/clk-pll.c
+> > b/drivers/clk/pistachio/clk-pll.c index e17dada..68066ef 100644
+> > --- a/drivers/clk/pistachio/clk-pll.c
+> > +++ b/drivers/clk/pistachio/clk-pll.c
+> > @@ -88,12 +88,10 @@ static inline void pll_lock(struct pistachio_clk_pl=
+l *pll)
+> >  		cpu_relax();
 > >  }
-> >  
-> > +static struct cpufreq_driver dt_cpufreq_driver;
-> > +
-> >  static int cpufreq_init(struct cpufreq_policy *policy)
-> >  {
-> >  	struct cpufreq_frequency_table *freq_table;
-> > @@ -336,6 +338,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
-> >  		ret = cpufreq_enable_boost_support();
-> >  		if (ret)
-> >  			goto out_free_cpufreq_table;
-> > +		dt_cpufreq_driver.attr = cpufreq_boost_enabled_generic_attr;
-> >  	}
-> >  
-> >  	policy->cpuinfo.transition_latency = transition_latency;
-> > diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
-> > index a8f1daf..5a00a09 100644
-> > --- a/drivers/cpufreq/freq_table.c
-> > +++ b/drivers/cpufreq/freq_table.c
-> > @@ -300,6 +300,13 @@ struct freq_attr *cpufreq_generic_attr[] = {
-> >  };
-> >  EXPORT_SYMBOL_GPL(cpufreq_generic_attr);
-> >  
-> > +struct freq_attr *cpufreq_boost_enabled_generic_attr[] = {
-> > +	&cpufreq_freq_attr_scaling_available_freqs,
-> > +	&cpufreq_freq_attr_scaling_boost_freqs,
-> > +	NULL,
-> > +};
-> > +EXPORT_SYMBOL_GPL(cpufreq_boost_enabled_generic_attr);
-> 
-> This isn't scalable. We can't create a new generic structure every time
-> a entry comes in. Rather we should leave the generic attr for
+> >
+> > -static inline u32 do_div_round_closest(u64 dividend, u32 divisor)
 
-boost entry is rather generic one so I imagine that other cpufreq
-drivers that add support for boost would also like to use it.
+[...]
 
-Anyway since there are no such drivers currently I agree that
-making a new generic structure may be premature and I will re-do
-this patch according to your request.
 
-Best regards,
+> > 1.9.1
+>=20
+> [Zdenko Pulitika] Reverting pll_rate_table members from 64 to 32 bit re-
+> introduces multiplication overflow issue.
+> We can either 1) keep 64bit members in pll_rate_table and forget about ov=
+erflow
+> or 2) have 32 bit members but then we need to type cast them to u64 in ev=
+ery
+> multiplication expression which may overflow. In my opinion, first soluti=
+on is
+> safer and nicer, 2nd will result in ugly typecasts throughout the code an=
+d, more
+> importantly, there's a risk of overflow bug being repeated if somebody wi=
+shes to
+> modify/upgrade the existing code.
+
+Like Zdenko pointed out some operations in pll calculation may overflow wit=
+hout=20
+converting the struct pistachio_pll_rate_table members to long=20
+
+For example in below code snippet operation:
+
+[..]
+
+params->fref * params->fbdiv
+
+[..]
+
+So to be on safer side it's better to have the original code [1].
+
 --
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Thanks,
+Govindraj.R
 
-> cpufreq-dt and do something like this in the cpufreq-dt driver (And
-> that patch should rather go via cpufreq tree and not ARM SoC)..
-> 
-> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-> index a5b6a854661f..e229258ad791 100644
-> --- a/drivers/cpufreq/cpufreq-dt.c
-> +++ b/drivers/cpufreq/cpufreq-dt.c
-> @@ -36,6 +36,12 @@ struct private_data {
->  	unsigned int voltage_tolerance; /* in percentage */
->  };
->  
-> +static struct freq_attr *cpufreq_dt_attr[] = {
-> +	&cpufreq_freq_attr_scaling_available_freqs,
-> +	NULL,	/* Extra space for boost-attr if required */
-> +	NULL,
-> +};
-> +
->  static int set_target(struct cpufreq_policy *policy, unsigned int index)
->  {
->  	struct dev_pm_opp *opp;
-> @@ -337,6 +343,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
->  		ret = cpufreq_enable_boost_support();
->  		if (ret)
->  			goto out_free_cpufreq_table;
-> +		cpufreq_dt_attr[1] = &cpufreq_freq_attr_scaling_boost_freqs;
->  	}
->  
->  	policy->cpuinfo.transition_latency = transition_latency;
-> @@ -412,7 +419,7 @@ static struct cpufreq_driver dt_cpufreq_driver = {
->  	.exit = cpufreq_exit,
->  	.ready = cpufreq_ready,
->  	.name = "cpufreq-dt",
-> -	.attr = cpufreq_generic_attr,
-> +	.attr = cpufreq_dt_attr,
->  };
->  
->  static int dt_cpufreq_probe(struct platform_device *pdev)
+[1]:
+http://patchwork.linux-mips.org/patch/10888/
