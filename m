@@ -1,39 +1,34 @@
-Return-Path: <wens@mirror2.csie.ntu.edu.tw>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: Add missing header for 'bool' definition to clk-conf.h
-Date: Tue, 18 Aug 2015 15:16:45 +0800
-Message-Id: <1439882205-10978-1-git-send-email-wens@csie.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 11 Aug 2015 18:31:27 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shunqian Zheng <zhengsq@rock-chips.com>
+Cc: gregkh@linuxfoundation.org, srinivas.kandagatla@linaro.org,
+	maxime.ripard@free-electrons.com, heiko@sntech.de,
+	caesar.wang@rock-chips.com, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, dianders@chromium.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	xjq@rock-chips.com
+Subject: Re: [PATCH v2 1/5] clk: rockchip: rk3288: Add the clock id of eFuse
+Message-ID: <20150812013127.GK26614@codeaurora.org>
+References: <1439288024-13359-1-git-send-email-zhengsq@rock-chips.com>
+ <1439288024-13359-2-git-send-email-zhengsq@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1439288024-13359-2-git-send-email-zhengsq@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-of_clk_set_defaults uses the type 'bool', but clk-conf.h does not
-include its definition.
+On 08/11, Shunqian Zheng wrote:
+> From: ZhengShunQian <zhengsq@rock-chips.com>
+> 
+> The clock id is necessary item, changing it from 0
+> then can be referred in driver and device tree.
+> 
+> Signed-off-by: ZhengShunQian <zhengsq@rock-chips.com>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> ---
 
-This results in a compile error when only clk-conf.h is used.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Cc: stable@vger.kernel.org
----
- include/linux/clk/clk-conf.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/include/linux/clk/clk-conf.h b/include/linux/clk/clk-conf.h
-index f3050e15f833..e0c362363c38 100644
---- a/include/linux/clk/clk-conf.h
-+++ b/include/linux/clk/clk-conf.h
-@@ -7,6 +7,8 @@
-  * published by the Free Software Foundation.
-  */
- 
-+#include <linux/types.h>
-+
- struct device_node;
- 
- #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
 -- 
-2.5.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
