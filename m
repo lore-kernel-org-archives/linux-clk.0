@@ -1,46 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v3 0/3] Add support for Qualcomm A53 CPU clock
-Date: Wed, 12 Aug 2015 16:54:30 +0300
-Message-Id: <1439387673-13015-1-git-send-email-georgi.djakov@linaro.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/2] clk: Constify clk_hw argument to provider APIs
+Date: Wed, 12 Aug 2015 16:12:40 -0700
+Message-Id: <1439421161-17868-1-git-send-email-sboyd@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds support for the A53 CPU clock and allows scaling
-of the CPU frequency on msm8916 based platforms.
+We don't modify the clk_hw argument in these functions, so it's
+safe to mark it as const.
 
-Changes since v2 (https://lkml.org/lkml/2015/7/24/526)
- * Drop gpll0_vote patch.
- * Switch to the new clk_hw_* APIs.
- * Rebase to the current clk-next.
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk.c            | 15 ++++++++-------
+ include/linux/clk-provider.h | 14 +++++++-------
+ 2 files changed, 15 insertions(+), 14 deletions(-)
 
-Changes since v1 (https://lkml.org/lkml/2015/6/12/193)
- * Drop SR2 PLL patch, as it is already applied.
- * Add gpll0_vote rate propagation patch.
- * Update/rebase patches to the current clk-next.
-
-Georgi Djakov (2):
-  clk: qcom: Add support for regmap mux-div clocks
-  clk: qcom: Add A53 clock driver
-
-Stephen Boyd (1):
-  clk: Add safe switch hook
-
- Documentation/devicetree/bindings/clock/qcom,a53cc |   25 ++
- drivers/clk/clk.c                                  |   73 ++++-
- drivers/clk/qcom/Kconfig                           |    8 +
- drivers/clk/qcom/Makefile                          |    2 +
- drivers/clk/qcom/clk-a53.c                         |  202 ++++++++++++++
- drivers/clk/qcom/clk-regmap-mux-div.c              |  288 ++++++++++++++++++++
- drivers/clk/qcom/clk-regmap-mux-div.h              |   63 +++++
- include/linux/clk-provider.h                       |    2 +
- 8 files changed, 658 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc
- create mode 100644 drivers/clk/qcom/clk-a53.c
- create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.c
- create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.h
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 128ad748b682..8e6688d1ecbd 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -278,7 +278,7 @@ const char *__clk_get_name(struct clk *clk)
+ }
+ EXPORT_SYMBOL_GPL(__clk_get_name);
+ 
+-const char *clk_hw_get_name(struct clk_hw *hw)
++const char *clk_hw_get_name(const struct clk_hw *hw)
+ {
+ 	return hw->core->name;
+ }
+@@ -290,13 +290,13 @@ struct clk_hw *__clk_get_hw(struct clk *clk)
+ }
+ EXPORT_SYMBOL_GPL(__clk_get_hw);
+ 
+-unsigned int clk_hw_get_num_parents(struct clk_hw *hw)
++unsigned int clk_hw_get_num_parents(const struct clk_hw *hw)
+ {
+ 	return hw->core->num_parents;
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_get_num_parents);
+ 
+-struct clk_hw *clk_hw_get_parent(struct clk_hw *hw)
++struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw)
+ {
+ 	return hw->core->parent ? hw->core->parent->hw : NULL;
+ }
+@@ -359,7 +359,8 @@ static struct clk_core *clk_core_get_parent_by_index(struct clk_core *core,
+ 		return core->parents[index];
+ }
+ 
+-struct clk_hw *clk_hw_get_parent_by_index(struct clk_hw *hw, unsigned int index)
++struct clk_hw *
++clk_hw_get_parent_by_index(const struct clk_hw *hw, unsigned int index)
+ {
+ 	struct clk_core *parent;
+ 
+@@ -395,7 +396,7 @@ out:
+ 	return ret;
+ }
+ 
+-unsigned long clk_hw_get_rate(struct clk_hw *hw)
++unsigned long clk_hw_get_rate(const struct clk_hw *hw)
+ {
+ 	return clk_core_get_rate_nolock(hw->core);
+ }
+@@ -415,13 +416,13 @@ unsigned long __clk_get_flags(struct clk *clk)
+ }
+ EXPORT_SYMBOL_GPL(__clk_get_flags);
+ 
+-unsigned long clk_hw_get_flags(struct clk_hw *hw)
++unsigned long clk_hw_get_flags(const struct clk_hw *hw)
+ {
+ 	return hw->core->flags;
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_get_flags);
+ 
+-bool clk_hw_is_prepared(struct clk_hw *hw)
++bool clk_hw_is_prepared(const struct clk_hw *hw)
+ {
+ 	return clk_core_is_prepared(hw->core);
+ }
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 0d3128fbc14e..3ecc07d0da77 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -607,17 +607,17 @@ void devm_clk_unregister(struct device *dev, struct clk *clk);
+ 
+ /* helper functions */
+ const char *__clk_get_name(struct clk *clk);
+-const char *clk_hw_get_name(struct clk_hw *hw);
++const char *clk_hw_get_name(const struct clk_hw *hw);
+ struct clk_hw *__clk_get_hw(struct clk *clk);
+-unsigned int clk_hw_get_num_parents(struct clk_hw *hw);
+-struct clk_hw *clk_hw_get_parent(struct clk_hw *hw);
+-struct clk_hw *clk_hw_get_parent_by_index(struct clk_hw *hw,
++unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
++struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
++struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
+ 					  unsigned int index);
+ unsigned int __clk_get_enable_count(struct clk *clk);
+-unsigned long clk_hw_get_rate(struct clk_hw *hw);
++unsigned long clk_hw_get_rate(const struct clk_hw *hw);
+ unsigned long __clk_get_flags(struct clk *clk);
+-unsigned long clk_hw_get_flags(struct clk_hw *hw);
+-bool clk_hw_is_prepared(struct clk_hw *hw);
++unsigned long clk_hw_get_flags(const struct clk_hw *hw);
++bool clk_hw_is_prepared(const struct clk_hw *hw);
+ bool __clk_is_enabled(struct clk *clk);
+ struct clk *__clk_lookup(const char *name);
+ int __clk_mux_determine_rate(struct clk_hw *hw,
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
