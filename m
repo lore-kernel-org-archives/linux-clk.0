@@ -1,94 +1,51 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <Govindraj.Raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Govindraj Raja
-	<govindraj.raja@imgtec.com>, <stable@vger.kernel.org>
-Subject: [PATCH v6 0/4] clk: pistachio: Fixes for pll calculations.
-Date: Wed, 26 Aug 2015 17:11:36 +0100
-Message-ID: <1440605500-13274-1-git-send-email-Govindraj.Raja@imgtec.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 12 Aug 2015 10:36:10 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [GIT PULL] i.MX clock updates for 4.2
+Message-ID: <20150812023609.GD10035@tiger>
+References: <20150811085921.GB10035@tiger>
+ <20150811174657.2416.1270@quantum>
+ <20150811183425.GL2839@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20150811183425.GL2839@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Govindraj Raja <govindraj.raja@imgtec.com>
+On Tue, Aug 11, 2015 at 11:34:25AM -0700, Stephen Boyd wrote:
+> Yes. We would have found this unused include too. I'll apply this
+> after we merge it into clk-next.
 
-Patch 1/4 to 3/4 are pll calculation fixes for clock settings.
+Thanks Stephen for the fixup.  I will make sure that i.MX clock patches
+get Cc'd to you and Mike.
 
-Patch 4/4: Is a reword and repost based on earlier thread:
-http://patchwork.linux-mips.org/patch/10108/
+Shawn
 
-Series Based on 4.2-rc7
-Tested with Pistachio Bring-up-Board.
-
-Changes from v5:
-----------------
-Cc: <stable@vger.kernel.org> # 4.1
-
-This patch series is needed for 4.1-stable as well.
-So adding necessary commit-id for Fixes.
-Boot is broken on 4.1 stable without this patch series.
-
-Changes from v4:
-----------------
-Fixes comments from Andrew and added Andrew's
-reviewed by.
-
-http://patchwork.linux-mips.org/patch/11014/
-http://patchwork.linux-mips.org/patch/11016/
-
-
-Changes from v3:
----------------
-Fixes comments to bring back the poll rate table with
-unsigned long int as discussed in below thread.
-
-http://patchwork.linux-mips.org/patch/10900/
-
-Changes from v2:
----------------
-Fixes comments from Sergei as dicussed in below thread:
-http://patchwork.linux-mips.org/patch/10903/
-
-Changes from v1:
----------------
-Fix comments from Andrew.
-Topics:
-
-* http://patchwork.linux-mips.org/patch/10888/
-  (Remove long conversion for pll_rate_table variables)
-	
-* http://patchwork.linux-mips.org/patch/10889/
-  (reword pll to PLL)
-
-* http://patchwork.linux-mips.org/patch/10891/
-  (squash 4/6 to 3/6)
-
-* http://patchwork.linux-mips.org/patch/10892/
-  (squash 5/6 to 3/6) 
-
-* http://patchwork.linux-mips.org/patch/10893/
-  (Add missing signed-off)
-
-
-Damien.Horsley (1):
-  clk: pistachio: correct critical clock list
-
-Zdenko Pulitika (3):
-  clk: pistachio: Fix 32bit integer overflows
-  clk: pistachio: Fix override of clk-pll settings from boot loader
-  clk: pistachio: Fix PLL rate calculation in integer mode
-
- drivers/clk/pistachio/clk-pistachio.c | 19 ++++++---
- drivers/clk/pistachio/clk-pll.c       | 77 +++++++++++++++++++++++++++--------
- drivers/clk/pistachio/clk.h           | 14 +++----
- 3 files changed, 80 insertions(+), 30 deletions(-)
-
--- 
-1.9.1
+> 
+> ----8<----
+> From: Stephen Boyd <sboyd@codeaurora.org>
+> Subject: [PATCH] clk: imx: Remove unused clkdev.h include
+> 
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/imx/clk-imx6ul.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+> index aaa36650695f..c498f558e942 100644
+> --- a/drivers/clk/imx/clk-imx6ul.c
+> +++ b/drivers/clk/imx/clk-imx6ul.c
+> @@ -11,7 +11,6 @@
+>  
+>  #include <dt-bindings/clock/imx6ul-clock.h>
+>  #include <linux/clk.h>
+> -#include <linux/clkdev.h>
+>  #include <linux/err.h>
+>  #include <linux/init.h>
+>  #include <linux/io.h>
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
