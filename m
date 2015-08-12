@@ -1,70 +1,100 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <Govindraj.Raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	<stable@vger.kernel.org>, "Govindraj Raja" <govindraj.raja@imgtec.com>
-Subject: [PATCH v6 2/4] clk: pistachio: Fix override of clk-pll settings from boot loader
-Date: Wed, 26 Aug 2015 17:11:38 +0100
-Message-ID: <1440605500-13274-3-git-send-email-Govindraj.Raja@imgtec.com>
-In-Reply-To: <1440605500-13274-1-git-send-email-Govindraj.Raja@imgtec.com>
-References: <1440605500-13274-1-git-send-email-Govindraj.Raja@imgtec.com>
+Return-Path: <balbi@ti.com>
+Date: Wed, 12 Aug 2015 10:02:53 -0500
+From: Felipe Balbi <balbi@ti.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+CC: Grygorii Strashko <grygorii.strashko@ti.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Nishanth Menon <nm@ti.com>, Thomas Gleixner
+	<tglx@linutronix.de>,
+        <linux-rt-users@vger.kernel.org>, Felipe Balbi
+	<balbi@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, <linux-clk@vger.kernel.org>
+Subject: Re: Common clock framework API vs RT patchset
+Message-ID: <20150812150253.GE13884@saruman.tx.rr.com>
+Reply-To: <balbi@ti.com>
+References: <55C0A96F.80307@ti.com>
+ <alpine.DEB.2.11.1508041405290.3983@nanos>
+ <55C0D8F3.3030105@ti.com>
+ <20150804153641.GR7557@n2100.arm.linux.org.uk>
+ <55CA4BC2.4020505@ti.com>
+ <20150811192514.GB7557@n2100.arm.linux.org.uk>
+ <20150811220609.31346.15943@quantum>
+ <55CB1A86.2050802@ti.com>
+ <20150812101151.GK7557@n2100.arm.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="AGZzQgpsuUlWC1xT"
+In-Reply-To: <20150812101151.GK7557@n2100.arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+--AGZzQgpsuUlWC1xT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-PLL enable callbacks are overriding PLL mode (int/frac) and
-Noise reduction (on/off) settings set by the boot loader which
-results in the incorrect clock rate.
+On Wed, Aug 12, 2015 at 11:11:51AM +0100, Russell King - ARM Linux wrote:
+> On Wed, Aug 12, 2015 at 01:05:58PM +0300, Grygorii Strashko wrote:
+> > On 08/12/2015 01:06 AM, Michael Turquette wrote:
+> > > Quoting Russell King - ARM Linux (2015-08-11 12:25:15)
+> > >>
+> > >> clk_enable/clk_disable _should_ be usable from atomic contexts.
+> >=20
+> > Thanks Russell - above is not true on -RT.
+>=20
+> What I'm saying is that it _should_ be true.  You _should_ be able to
+> call clk_enable()/clk_disable() from atomic contexts.  It's been
+> documented since forever:
+>=20
+> /**
+>  * clk_enable - inform the system when the clock source should be running.
+>  * @clk: clock source
+>  *
+>  * If the clock can not be enabled/disabled, this should return success.
+>  *
+>  * May be called from atomic contexts.
+> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>=20
+> /**
+>  * clk_disable - inform the system when the clock source is no longer req=
+uired.
+>  * @clk: clock source
+>  *
+>  * Inform the system that a clock source is no longer required by
+>  * a driver and may be shut down.
+>  *
+>  * May be called from atomic contexts.
+> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>=20
+> If that's not true with CCF, that's a CCF bug, not a usage bug.
 
-PLL mode and noise reduction are defined by the DSMPD and DACPD bits
-of the PLL control register. PLL .enable() callbacks enable PLL
-by deasserting all power-down bits of the PLL control register,
-including DSMPD and DACPD bits, which is not necessary since
-these bits don't actually enable/disable PLL.
+in that case, CCF's clock need to be converted to raw_spin_locks, that's
+the only way to prevent its locks from being reimplemented as rt
+mutexes.
 
-This commit fixes the problem by removing DSMPD and DACPD bits
-from the "PLL enable" mask.
+--=20
+balbi
 
-Fixes: 43049b0c83f17("CLK: Pistachio: Add PLL driver")
-Cc: <stable@vger.kernel.org> # 4.1
-Reviewed-by: Andrew Bresitcker <abrestic@chromium.org>
-Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
-Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
----
- drivers/clk/pistachio/clk-pll.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+--AGZzQgpsuUlWC1xT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
-index 68066ef..9a38a2b 100644
---- a/drivers/clk/pistachio/clk-pll.c
-+++ b/drivers/clk/pistachio/clk-pll.c
-@@ -134,8 +134,7 @@ static int pll_gf40lp_frac_enable(struct clk_hw *hw)
- 	u32 val;
- 
- 	val = pll_readl(pll, PLL_CTRL3);
--	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_DACPD |
--		 PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
-+	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
- 		 PLL_FRAC_CTRL3_FOUT4PHASEPD | PLL_FRAC_CTRL3_FOUTVCOPD);
- 	pll_writel(pll, val, PLL_CTRL3);
- 
-@@ -277,7 +276,7 @@ static int pll_gf40lp_laint_enable(struct clk_hw *hw)
- 	u32 val;
- 
- 	val = pll_readl(pll, PLL_CTRL1);
--	val &= ~(PLL_INT_CTRL1_PD | PLL_INT_CTRL1_DSMPD |
-+	val &= ~(PLL_INT_CTRL1_PD |
- 		 PLL_INT_CTRL1_FOUTPOSTDIVPD | PLL_INT_CTRL1_FOUTVCOPD);
- 	pll_writel(pll, val, PLL_CTRL1);
- 
--- 
-1.9.1
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVy2AdAAoJEIaOsuA1yqREBVUP+wbNa5pHqZOlUmSHpp7l2MHW
+DrQvlU3TnTq8Et4yjnscMT3DLIAH1Doo0QyQE94PQXj2flDyJ6w/3fGfLvylJre4
+nJ2a7ifLCPcQiQSHr7X1wype2JVPQE1E4L0cEnZhGEef9N0MUr0Cu+JJP2z13Ax4
+DXqC9dqH/CYsRE3FR1A5aMd1JS5F10vaA7sL5u/ZYS+UJKTIsiMSTjL366iaKOgf
+Aqk3iQZunS6HY/08bHLtUJMfz8LNN+5ME05iK9XS9C+JDFPVtkkIzNWfMHvo8Ox4
+7OxEV3jecS2IETC3aitJ2IoLs7ITyYG6HILPomN847kg7voATmdrZb4zhFVCuprw
+xSA2g41d3Z+PvUoT+zO6T2mL7io38VcnaSvTtAy51ybvGANx5vtLDOHJZ0eAHHbk
+NpEA2SiKYGT+cPxwDKAKXFoVe8nni8KZTiqGkWIIMvxS5dlRQOa+mTKVBxEPmQvW
+RreOK0ylTYohrHeFqTyNLHfIwRR37hkotHgE0XPZHxHSa+s9ORr+azgCizTTaqRR
+1VMD3DgkNl9e/rUmBTXKebZXyR4yt2qCsW46P8A9Zn1dt15TlR6BBDo351LVePuI
+KnJD/Trzyvj6SQJIoaH5ootawQxAeD5n2hcbWKaANJFYPjKhJk2OdNiW2YTqbDHt
+QMZsBn+6uOkXXNcPUJ1N
+=F/uV
+-----END PGP SIGNATURE-----
+
+--AGZzQgpsuUlWC1xT--
