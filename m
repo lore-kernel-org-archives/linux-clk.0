@@ -1,58 +1,82 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-id: <55C43971.5010504@samsung.com>
-Date: Fri, 07 Aug 2015 13:52:01 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Olof Johansson <olof@lixom.net>,
-	Arnd Bergmann <arnd.bergmann@linaro.org>,
-	'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>,
-	'Thomas Abraham' <thomas.ab@samsung.com>,
-	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
-	'Michael Turquette' <mturquette@baylibre.com>,
-	'Tomasz Figa' <tomasz.figa@gmail.com>,
-	'Lukasz Majewski' <l.majewski@samsung.com>,
-	'Heiko Stuebner' <heiko@sntech.de>,
-	'Chanwoo Choi' <cw00.choi@samsung.com>,
-	'Kevin Hilman' <khilman@linaro.org>,
-	'Javier Martinez Canillas' <javier@dowhile0.org>,
-	'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
-	'Anand Moon' <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
- platform
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <015301d0d0a3$1396c900$3ac45b00$@kernel.org> <20150807035018.GF6325@linux>
- <20150807035156.GG6325@linux> <55C43085.8090506@samsung.com>
- <20150807043037.GH6325@linux>
-In-reply-to: <20150807043037.GH6325@linux>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.uni-paderborn.de ([131.234.142.9]:50644 "EHLO
+	mail.uni-paderborn.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753129AbbHLOyO (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 12 Aug 2015 10:54:14 -0400
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdYdgGYBRqeO4b0H17X5KE_qHrNtvZq-Y5TFqMzk8dPW+Q@mail.gmail.com>
+References: <CALcgO_49YPGoCOv23Vz9vbnq9+AN3WqvYyg9_TtvsQcz8ia2Hw@mail.gmail.com>
+	<CACRpkdYWD-XGqeZ_66i_AtG7h1M8JcbWHy-bLwjZNRSZqQmT=Q@mail.gmail.com>
+	<CACRpkdYdgGYBRqeO4b0H17X5KE_qHrNtvZq-Y5TFqMzk8dPW+Q@mail.gmail.com>
+Date: Wed, 12 Aug 2015 16:54:07 +0200
+Message-ID: <CALcgO_7Oe6EzNimSMm2K4jX_+bh9Du5adGKMDGs4Lz5wo1r18g@mail.gmail.com>
+Subject: Re: [PATCH RFC] clk-gpio-gate: use prepare/unprepare to do the GPIO work
+From: Michael Allwright <michael.allwright@upb.de>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jyri Sarha <jsarha@ti.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07.08.2015 13:30, Viresh Kumar wrote:
-> On 07-08-15, 13:13, Krzysztof Kozlowski wrote:
->> Still patches 1/6 and 6/6 need your acks. Is the patch 1/6 a
->> prerequisite for others? It does not look like a prerequisite... but it
->> was put at the beginning of the patchset.
-> 
-> Patch 1/6 is required to get boost working, that's all.. Not sure how
-> important is that. Anyway, that will work without 1/6 as well, all you
-> need to do is enable CONFIG_CPU_FREQ_BOOST_SW in you .config.
-> 
-> Anyway, it should go via pm tree and can be sent separately.
+On 12 August 2015 at 14:23, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Aug 12, 2015 at 2:20 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+>> I would prefer it to be smart like this, keep the original function
+>> names then in clk_register_gpio_gate():
+>>
+>> const struct clk_ops clk_gpio_fastpath_gate_ops = {
+>>         .enable = clk_gpio_gate_enable,
+>>         .disable = clk_gpio_gate_disable,
+>>         .is_enabled = clk_gpio_gate_is_enabled,
+>> };
+>>
+>> const struct clk_ops clk_gpio_sleep_gate_ops = {
+>>         .prepare = clk_gpio_gate_enable,
+>>         .unprepare = clk_gpio_gate_disable,
+>>         .is_enabled = clk_gpio_gate_is_enabled,
+>> };
+>>
+>> ....
+>> if (gpiod_cansleep(clk_gpio->gpiod))
+>>     init.ops = &clk_gpio_sleep_gate_ops;
+>> else
+>>     init.ops = &clk_gpio_fastpath_gate_ops;
+>>
+>> If you think it's confusing to have functions ending with
+>> _enbable and _disable in the .prepare/.unprepare callbacks,
+>> rename them ungate/gate or something.
+>
+> Or well, since you use the *_cansleep() versions in the
+> prepare/unprepare calls, maybe you need a double set
+> of functions anyway. Mea culpa.
+>
+> But certainly it should register different callbacks
+> depending on whether the pin may actually sleep
+> or not, since we have this knowledge inside the GPIO
+> library.
+>
+> Yours,
+> Linus Walleij
 
-Thanks for explanation. As fair as I understand, Bartlomiej wanted to
-merge this in a way which would avoid loosing the boost mode. Kukjin
-prepared topic branches for previous cpu-freq/clk stuff so maybe
-everything could go through PM?
+That's a nice clean solution - I like it. I was considering using the
+can sleep function of the GPIO subsystem to do this on the fly, but
+didn't consider using two structs like that.
 
-Kukjin, are you fine with that?
+I need to take a look over at that has been done in linux-next with
+clk-gpio and see if this selecting between gpio_set_value and
+gpio_set_value_cansleep can be generalised to the gpio mux clock that
+has been implemented...
 
-Best regards,
-Krzysztof
+Cheers,
 
+
+Michael Allwright
+
+PhD Student
+Paderborn Institute for Advanced Studies in Computer Science and Engineering
+
+University of Paderborn
+Office-number 02-10
+Zukunftsmeile 1
+33102 Paderborn
+Germany
