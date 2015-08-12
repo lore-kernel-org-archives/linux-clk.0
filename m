@@ -1,69 +1,42 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Doug Anderson <dianders@chromium.org>, Michael Turquette <mturquette@baylibre.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-clk@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: rockchip: register pll mux before pll itself
-Date: Tue, 25 Aug 2015 08:53:15 +0200
-Message-ID: <2414716.nTJ39zAhgn@phil>
-In-Reply-To: <20150824234319.GG14330@codeaurora.org>
-References: <7060610.CC2Q1RMG2L@phil> <CAD=FV=UG_QkU0W5tpb3Y7zxuq6X7dtQmC4m5_j9vMtJgjdiquQ@mail.gmail.com> <20150824234319.GG14330@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 12 Aug 2015 01:33:33 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Bintian Wang <bintian.wang@huawei.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, Guodong Xu <guodong.xu@linaro.org>,
+	Jian Zhang <zhangjian001@hisilicon.com>,
+	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
+	Haoju Mo <mohaoju@hisilicon.com>, Dan Zhao <dan.zhao@hisilicon.com>,
+	sunzhaosheng@hisilicon.com, victor.lixin@hisilicon.com
+Subject: Re: [PATCH v4 2/4] dt-bindings: clk: Hi6220: Document stub clock
+ driver
+Message-ID: <20150812083333.GB13623@codeaurora.org>
+References: <1438673249-6051-1-git-send-email-leo.yan@linaro.org>
+ <1438673249-6051-3-git-send-email-leo.yan@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1438673249-6051-3-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, 24. August 2015, 16:43:19 schrieb Stephen Boyd:
-> On 08/24, Doug Anderson wrote:
-> > Heiko
-> > 
-> > On Wed, Aug 19, 2015 at 6:06 AM, Heiko Stuebner <heiko@sntech.de> wrote:
-> > > The structure is xin24m -> pll -> pll-mux (xin24m,pll,xin32k). The pll
-> > > does have an init callback to make sure the boot-selected frequency is
-> > > using the expected pll settings and resets the same frequency using
-> > > the values provided in the driver if necessary.
-> > > 
-> > > The setting itself also involves remuxing the pll-mux temporarily to
-> > > the xin24m source to let the new pll rate settle. Until now this worked
-> > > flawlessly, even when it had the flaw of accessing the mux settings
-> > > before the mux actually got registered.
-> > > 
-> > > With the recent clock-core conversions this flaw became apparent in
-> > > null pointer dereference in
-> > > [<c03fc400>] (clk_hw_get_num_parents) from [<c0400df0>]
-> > > (clk_mux_get_parent+0x14/0xc8) [<c0400ddc>] (clk_mux_get_parent) from
-> > > [<c040246c>] (rockchip_rk3066_pll_set_rate+0xd8/0x320)
-> > > 
-> > > So to fix that, simply register the pll-mux before the pll, so that
-> > > it will be fully initialized when the pll clock executes its init-
-> > > callback and possibly touches the pll-mux clock.
-> > > 
-> > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > > ---
-> > > This only surfaced with the clk_core changes for 4.3, so should
-> > > probably just go on top.
-> > > 
-> > >  drivers/clk/rockchip/clk-pll.c | 63
-> > >  +++++++++++++++++++++--------------------- 1 file changed, 32
-> > >  insertions(+), 31 deletions(-)
-> > 
-> > Fixes boot crash on rk3288-veyron-jerry on next-20150824.  It'd be
-> > super great to get this landed somewhere so that we can boot linuxnext
-> > again.  :)
-> > 
-> > Tested-by: Douglas Anderson <dianders@chromium.org>
+On 08/04, Leo Yan wrote:
+> Document the new compatible for stub clock driver which is used for CPU
+> and DDR's dynamic frequency scaling.
 > 
-> So I understand the fix, but how could it have ever possibly
-> worked flawlessly? clk_mux_get_parent() should have returned
-> -EINVAL through that u8 which would have meant that the check in
-> rockchip_rk3066_pll_set_rate() for cur_parent == PLL_MODE_NORM
-> would never have been true, and we would never have switched the
-> PLL mux over. I guess we've been getting away with this because
-> we don't need to actually switch the mux at this time?
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
 
-The manual mandates the switch away from the pll source before touching the 
-pll settings, aka to the slow mode from the 24MHz source. I guess we were 
-lucky it simply still worked nevertheless.
+Applied to clk-next
 
-In normal rate changes both clocks will have been registered already, so only 
-the init callback is affected and also only runs on plls that generate the rate 
-from a different settings-touple that what we have in the rate-table, so not 
-even all plls normally.
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
