@@ -1,164 +1,64 @@
-Return-Path: <abrestic@google.com>
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Michael Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org
+Cc: linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v4 2/8] clk: Add a Raspberry Pi-specific clock driver.
+In-Reply-To: <20150811211733.31346.11122@quantum>
+References: <1437420787-32137-1-git-send-email-eric@anholt.net> <1437420787-32137-3-git-send-email-eric@anholt.net> <20150811211733.31346.11122@quantum>
+Date: Wed, 12 Aug 2015 11:04:05 -0700
+Message-ID: <87wpx04c4q.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-Sender: abrestic@google.com
-In-Reply-To: <1438868614-7672-2-git-send-email-govindraj.raja@imgtec.com>
-References: <1438868614-7672-1-git-send-email-govindraj.raja@imgtec.com>
-	<1438868614-7672-2-git-send-email-govindraj.raja@imgtec.com>
-Date: Thu, 6 Aug 2015 09:16:38 -0700
-Message-ID: <CAL1qeaHBkJqiWSR8wSqjLShFSAWku=M8+qwjbig9qGys2SAS7Q@mail.gmail.com>
-Subject: Re: [PATCH 1/6] clk: pistachio: Fix 32bit integer overflows
-From: Andrew Bresticker <abrestic@chromium.org>
-To: Govindraj Raja <govindraj.raja@imgtec.com>
-Cc: Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
-	Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Zdenko Pulitika <zdenko.pulitika@imgtec.com>,
-	Kevin Cernekee <cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>,
-	James Hartley <James.Hartley@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>,
-	James Hogan <James.Hogan@imgtec.com>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-Govindraj,
+--=-=-=
+Content-Type: text/plain
 
-On Thu, Aug 6, 2015 at 6:43 AM, Govindraj Raja
-<govindraj.raja@imgtec.com> wrote:
-> From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
->
-> This commit fixes 32bit integer overflows throughout the pll driver
-> (i.e. wherever the result of integer multiplication may exceed the
-> range of u32).
->
-> One of the functions affected by this problem is .recalc_rate. It
-> returns incorrect rate for some pll settings (not for all though)
-> which in turn results in the incorrect rate setup of pll's child
-> clocks.
->
-> Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
-> Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
-> ---
->  drivers/clk/pistachio/clk-pll.c | 26 ++++++++++++--------------
->  drivers/clk/pistachio/clk.h     | 18 +++++++++++-------
->  2 files changed, 23 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
-> index e17dada..68066ef 100644
-> --- a/drivers/clk/pistachio/clk-pll.c
-> +++ b/drivers/clk/pistachio/clk-pll.c
-> @@ -88,12 +88,10 @@ static inline void pll_lock(struct pistachio_clk_pll *pll)
->                 cpu_relax();
->  }
->
-> -static inline u32 do_div_round_closest(u64 dividend, u32 divisor)
-> +static inline u64 do_div_round_closest(u64 dividend, u64 divisor)
->  {
->         dividend += divisor / 2;
-> -       do_div(dividend, divisor);
-> -
-> -       return dividend;
-> +       return div64_u64(dividend, divisor);
->  }
->
->  static inline struct pistachio_clk_pll *to_pistachio_pll(struct clk_hw *hw)
-> @@ -173,7 +171,7 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
->         struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
->         struct pistachio_pll_rate_table *params;
->         int enabled = pll_gf40lp_frac_is_enabled(hw);
-> -       u32 val, vco, old_postdiv1, old_postdiv2;
-> +       u64 val, vco, old_postdiv1, old_postdiv2;
->         const char *name = __clk_get_name(hw->clk);
->
->         if (rate < MIN_OUTPUT_FRAC || rate > MAX_OUTPUT_FRAC)
-> @@ -183,17 +181,17 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
->         if (!params || !params->refdiv)
->                 return -EINVAL;
->
-> -       vco = params->fref * params->fbdiv / params->refdiv;
-> +       vco = div64_u64(params->fref * params->fbdiv, params->refdiv);
->         if (vco < MIN_VCO_FRAC_FRAC || vco > MAX_VCO_FRAC_FRAC)
-> -               pr_warn("%s: VCO %u is out of range %lu..%lu\n", name, vco,
-> +               pr_warn("%s: VCO %llu is out of range %lu..%lu\n", name, vco,
->                         MIN_VCO_FRAC_FRAC, MAX_VCO_FRAC_FRAC);
->
-> -       val = params->fref / params->refdiv;
-> +       val = div64_u64(params->fref, params->refdiv);
->         if (val < MIN_PFD)
-> -               pr_warn("%s: PFD %u is too low (min %lu)\n",
-> +               pr_warn("%s: PFD %llu is too low (min %lu)\n",
->                         name, val, MIN_PFD);
->         if (val > vco / 16)
-> -               pr_warn("%s: PFD %u is too high (max %u)\n",
-> +               pr_warn("%s: PFD %llu is too high (max %llu)\n",
->                         name, val, vco / 16);
->
->         val = pll_readl(pll, PLL_CTRL1);
-> @@ -237,8 +235,7 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
->                                                  unsigned long parent_rate)
->  {
->         struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
-> -       u32 val, prediv, fbdiv, frac, postdiv1, postdiv2;
-> -       u64 rate = parent_rate;
-> +       u64 val, prediv, fbdiv, frac, postdiv1, postdiv2, rate;
->
->         val = pll_readl(pll, PLL_CTRL1);
->         prediv = (val >> PLL_CTRL1_REFDIV_SHIFT) & PLL_CTRL1_REFDIV_MASK;
-> @@ -251,6 +248,7 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
->                 PLL_FRAC_CTRL2_POSTDIV2_MASK;
->         frac = (val >> PLL_FRAC_CTRL2_FRAC_SHIFT) & PLL_FRAC_CTRL2_FRAC_MASK;
->
-> +       rate = parent_rate;
->         rate *= (fbdiv << 24) + frac;
->         rate = do_div_round_closest(rate, (prediv * postdiv1 * postdiv2) << 24);
->
-> @@ -325,12 +323,12 @@ static int pll_gf40lp_laint_set_rate(struct clk_hw *hw, unsigned long rate,
->         if (!params || !params->refdiv)
->                 return -EINVAL;
->
-> -       vco = params->fref * params->fbdiv / params->refdiv;
-> +       vco = div_u64(params->fref * params->fbdiv, params->refdiv);
->         if (vco < MIN_VCO_LA || vco > MAX_VCO_LA)
->                 pr_warn("%s: VCO %u is out of range %lu..%lu\n", name, vco,
->                         MIN_VCO_LA, MAX_VCO_LA);
->
-> -       val = params->fref / params->refdiv;
-> +       val = div_u64(params->fref, params->refdiv);
->         if (val < MIN_PFD)
->                 pr_warn("%s: PFD %u is too low (min %lu)\n",
->                         name, val, MIN_PFD);
-> diff --git a/drivers/clk/pistachio/clk.h b/drivers/clk/pistachio/clk.h
-> index 52fabbc..6ea6f4b 100644
-> --- a/drivers/clk/pistachio/clk.h
-> +++ b/drivers/clk/pistachio/clk.h
-> @@ -94,14 +94,18 @@ struct pistachio_fixed_factor {
->                 .parent         = _pname,                       \
->         }
->
-> +/*
-> + * in order to avoid u32 multiplication overflow, declare all
-> + * members of this structure as u64
-> + */
+Michael Turquette <mturquette@linaro.org> writes:
 
-These parameters should all fit within 32-bits and they're not used to
-store the results of any computation, so I think it's fine to leave
-these as 32-bit values.
+> Hi Eric,
+>
+> Quoting Eric Anholt (2015-07-20 12:33:01)
+>> +void __init rpi_firmware_init_clock_provider(struct device_node *node)
+>> +{
+>> +       /* We delay construction of our struct clks until get time,
+>> +        * because we need to be able to return -EPROBE_DEFER if the
+>> +        * firmware driver isn't up yet.  clk core doesn't support
+>> +        * re-probing on -EPROBE_DEFER, but callers of clk_get can.
+>> +        */
+>> +       of_clk_add_provider(node, rpi_firmware_delayed_get_clk, node);
+>> +}
+>> +
+>> +CLK_OF_DECLARE(rpi_firmware_clocks, "raspberrypi,bcm2835-firmware-clocks",
+>> +              rpi_firmware_init_clock_provider);
+>
+> Do you require CLK_OF_DECLARE here? Could this be a platform driver
+> instead?
 
->  struct pistachio_pll_rate_table {
-> -       unsigned long fref;
-> -       unsigned long fout;
-> -       unsigned int refdiv;
-> -       unsigned int fbdiv;
-> -       unsigned int postdiv1;
-> -       unsigned int postdiv2;
-> -       unsigned int frac;
-> +       unsigned long long fref;
-> +       unsigned long long fout;
-> +       unsigned long long refdiv;
-> +       unsigned long long fbdiv;
-> +       unsigned long long postdiv1;
-> +       unsigned long long postdiv2;
-> +       unsigned long long frac;
->  };
->
->  enum pistachio_pll_type {
-> --
-> 1.9.1
->
+I'm not actually sure.  The common pattern seemed to be using
+CLK_OF_DECLARE (130 files using it versus declaring a struct
+platform_driver), and it seems to avoid a whole lot of boilerplate.
+What would the advantage be?
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJVy4qWAAoJELXWKTbR/J7o3KwQAJAra/7pyl2RZNvCrGFZ+oOX
+hnl3Ux94wIOH2nphJi5UJEYI+ULX3mT0nvQ1cK8PcjDlCCemMvY3/aqo0no4ry35
+uFsCGVXw1J0oWePpudsBq1/HOjjrNsanJGkOJxb2V0qI1mOCRHGhYVadkvUCEnC4
+d8CmkbDh46du/NNF7z9JC/RUAjjNWMFnjv7eQFiWBeutyE90Dz5HQinJudQ6AN7L
+GOO7vuy8CcRJVjWnSNj1KC9tHhF97UFU8J1DzeSgWuXCu7wQdDahY+D4K5K6s727
+chENVI7i1NBeKyLWYU8niNuswxdyTiUvUM1a9q44Tzv5PqkjkTaHC8nJWUzbgiAT
+kOA9huVAKzX/fy2ClkGRr8ppwtC5A6HSpMcBnMykj351IelDT6WOOtZuSPfiW3Ge
+jxliHuNSYL5yDjE2tsy/o7zOKoUwQkqAtL6pgKZ/sdF7MPZL3gVppvadGPU94gQ/
+GqaaOzhpVs+9KAe9AQJoC2CKouTRv1fCKCOvu3s/EEnnkIT/EY1NhliK0arPHTtu
+tEOXVm1nHOj3r/nUVABfAJwnYLUDu/QPof0mJpDMtRmsu3H9GQdYpZFkLl0p8lhk
+b5RfSkM57C9npsRHveH66l6sQttYdFtrpYXeQ2GjDg0f7+sO6/opUyyJsQw/OYdv
+hUulnqY+4UIIWFo1V0IS
+=zGnp
+-----END PGP SIGNATURE-----
+--=-=-=--
