@@ -1,97 +1,59 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 20 Aug 2015 17:15:10 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, lee.jones@linaro.org, s.hauer@pengutronix.de,
-	geert@linux-m68k.org
-Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and
- implement hand-off
-Message-ID: <20150820151510.GD30520@lukather>
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
- <20150818154552.GI2547@lukather>
- <20150818164356.31346.80341@quantum>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:34889 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753321AbbHLMX0 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 12 Aug 2015 08:23:26 -0400
+Received: by obbop1 with SMTP id op1so11166753obb.2
+        for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2015 05:23:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nDtE8k2pYjsRXajv"
-In-Reply-To: <20150818164356.31346.80341@quantum>
+In-Reply-To: <CACRpkdYWD-XGqeZ_66i_AtG7h1M8JcbWHy-bLwjZNRSZqQmT=Q@mail.gmail.com>
+References: <CALcgO_49YPGoCOv23Vz9vbnq9+AN3WqvYyg9_TtvsQcz8ia2Hw@mail.gmail.com>
+	<CACRpkdYWD-XGqeZ_66i_AtG7h1M8JcbWHy-bLwjZNRSZqQmT=Q@mail.gmail.com>
+Date: Wed, 12 Aug 2015 14:23:25 +0200
+Message-ID: <CACRpkdYdgGYBRqeO4b0H17X5KE_qHrNtvZq-Y5TFqMzk8dPW+Q@mail.gmail.com>
+Subject: Re: [PATCH RFC] clk-gpio-gate: use prepare/unprepare to do the GPIO work
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Allwright <michael.allwright@upb.de>
+Cc: Jyri Sarha <jsarha@ti.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Wed, Aug 12, 2015 at 2:20 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
---nDtE8k2pYjsRXajv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I would prefer it to be smart like this, keep the original function
+> names then in clk_register_gpio_gate():
+>
+> const struct clk_ops clk_gpio_fastpath_gate_ops = {
+>         .enable = clk_gpio_gate_enable,
+>         .disable = clk_gpio_gate_disable,
+>         .is_enabled = clk_gpio_gate_is_enabled,
+> };
+>
+> const struct clk_ops clk_gpio_sleep_gate_ops = {
+>         .prepare = clk_gpio_gate_enable,
+>         .unprepare = clk_gpio_gate_disable,
+>         .is_enabled = clk_gpio_gate_is_enabled,
+> };
+>
+> ....
+> if (gpiod_cansleep(clk_gpio->gpiod))
+>     init.ops = &clk_gpio_sleep_gate_ops;
+> else
+>     init.ops = &clk_gpio_fastpath_gate_ops;
+>
+> If you think it's confusing to have functions ending with
+> _enbable and _disable in the .prepare/.unprepare callbacks,
+> rename them ungate/gate or something.
 
-On Tue, Aug 18, 2015 at 09:43:56AM -0700, Michael Turquette wrote:
-> Quoting Maxime Ripard (2015-08-18 08:45:52)
-> > Hi Mike,
-> >=20
-> > On Fri, Aug 07, 2015 at 12:09:27PM -0700, Michael Turquette wrote:
-> > > All of the other kitchen sink stuff (DT binding, passing the flag back
-> > > to the framework when the clock consumer driver calls clk_put) was le=
-ft
-> > > out because I do not see a real use case for it. If one can demonstra=
-te
-> > > a real use case (and not a hypothetical one) then this patch series c=
-an
-> > > be expanded further.
-> >=20
-> > I think there is a very trivial use case for passing back the
-> > reference to the framework, if during the probed, we have something
-> > like:
-> >=20
-> > clk =3D clk_get()
-> > clk_prepare_enable(clk)
-> > foo_framework_register()
-> >=20
-> > if foo_framework_register fails, the sensible thing to do would be to
-> > call clk_disable_unprepare. If the clock was a critical clock, you
-> > just gated it.
->=20
-> Hmm, a good point. Creating the "pass the reference back" call is not
-> hard technically. But how to keep from abusing it? E.g. I do not want
-> that call to become an alternative to correct use of clk_enable.
->=20
-> Maybe I'll need a Coccinelle script or just some regular sed to
-> occasionally search for new users of this api and audit them?
->=20
-> I was hoping to not add any new consumer api at all :-/
+Or well, since you use the *_cansleep() versions in the
+prepare/unprepare calls, maybe you need a double set
+of functions anyway. Mea culpa.
 
-I don't think there's any abuse that can be done with the current API,
-nor do I think you need to have new functions either.
+But certainly it should register different callbacks
+depending on whether the pin may actually sleep
+or not, since we have this knowledge inside the GPIO
+library.
 
-If the clock is critical, when the customer calls
-clk_unprepare_disable on it, simply take back the reference you gave
-in the framework, and you're done. Or am I missing something?
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---nDtE8k2pYjsRXajv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJV1e7+AAoJEBx+YmzsjxAg7TkP/RWto4dY8J2TwWmo67jIWz7J
-v/TdVwSoYKew7WZjZULfHKEb/tdp6+TSOvYMud9NvtDgKpsnDczqDer6Quy4knv3
-uZOozexqcdrazKdTh3oaGmq0mj3PAsVoXUSYhbUeQweiEdVCEDze3ZrGnnTxOT2W
-pvNxWxcSu2dklSaU4QHbChFTue/8sCf6oTLa8DcqcdkFbVlgfV2fGn5CZ+Nf8hJn
-6rikIbMEY4qlRt09/LKEuyxxYwGko6W9GLJd3ifISb+o2v/mjc3k3AYjyDaIsBBB
-HTpglFI3et/Uo8kxBqHZ+NB1kSc2YkN2zDIWUOILfUiHCb2EHJa/waFVW18F6RhC
-5a8+h0HC0U9AIMfV1Ov9M8gKsZD4EWjPxGFo/ZFO0e0HBfsMBoyrGh6U3PTOoOPS
-gGcoXnATmPmlWhPR8ZhgYenIRvFtuX3plwk/7TQjZ6127YeGZxhc86KkRyWcf+Qb
-5LSOd9HGkM/7ruR1Oi531C6MOr6M4ilUsqsxT61jDzzbMk12KUEbzEoMqrBcb7U9
-VdW/yFMuwCuEJIJlFzAnaWnPpa5d0KV/SxT02iofaE9PB4e5YAIP7auw3AXHwsZN
-/V73tonsdsQbpzRxPhKkTeXlIPSVlefN8bWhqflbcM6jjk7MrDzNPIS+ShM+l7rA
-I6CIGZqXDJNd7weF0PBG
-=8CmC
------END PGP SIGNATURE-----
-
---nDtE8k2pYjsRXajv--
+Yours,
+Linus Walleij
