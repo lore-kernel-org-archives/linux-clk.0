@@ -1,46 +1,54 @@
-Return-Path: <magnus.damm@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWdmbHyv5YnFKh=ixMjPJGGyhSFyo5GqBs3S9L1H+iERQ@mail.gmail.com>
-References: <20150828091550.21731.85227.sendpatchset@little-apple>
-	<20150828091636.21731.26416.sendpatchset@little-apple>
-	<CAMuHMdWdmbHyv5YnFKh=ixMjPJGGyhSFyo5GqBs3S9L1H+iERQ@mail.gmail.com>
-Date: Fri, 28 Aug 2015 18:21:06 +0900
-Message-ID: <CANqRtoThE+coDOW1TG7cLc1sLBtOz46y=End-RGwdtbEu_5zJA@mail.gmail.com>
-Subject: Re: [PATCH v3 04/04] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock
- Domain support
-From: Magnus Damm <magnus.damm@gmail.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 12 Aug 2015 08:51:18 +0100
+From: Lee Jones <lee.jones@linaro.org>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
-	Linux-sh list <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+Message-ID: <20150812075118.GU18282@x1>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+ <20150810144811.GN3249@x1>
+ <20150810185516.2416.32293@quantum>
+ <20150811084329.GA13374@x1>
+ <55C9C82F.6060401@st.com>
+ <CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com>
+ <20150811170928.2416.70005@quantum>
+ <20150811181713.GR18282@x1>
+ <CAMuHMdXfH6JQfMnJwRA9f0pD0qbc3bNwPJd38c6=BuAgOxZ-fg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAMuHMdXfH6JQfMnJwRA9f0pD0qbc3bNwPJd38c6=BuAgOxZ-fg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+On Wed, 12 Aug 2015, Geert Uytterhoeven wrote:
 
-On Fri, Aug 28, 2015 at 6:19 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Fri, Aug 28, 2015 at 11:16 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
->> From: Magnus Damm <damm+renesas@opensource.se>
->>
->> Shmobile is all multiplatform these days, so get rid of the
->> reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
->> enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
->> MSTP depending on if they are included in the SoC or not.
->>
->> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
->> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->>
->>  Changes since V2:
->>  - Fixed patch subject typo CONFIG_SHMOBILE_MULTI -> CONFIG_ARCH_SHMOBILE_MULTI
->
-> The subject doesn't seem to match the patch at all?
+> On Tue, Aug 11, 2015 at 8:17 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> >> I think that we can come up with a reasonable DT wrapper around the
+> >> flag. I will be ecstatic if we can agree that the meaning of the flag
+> >> can be tweaked just a bit to mean, "prevent this critical clock from
+> >> being disabled, as it was enabled out of reset or by the bootloader,
+> >> until a driver claims it and calls clk_prepare_enable".
+> >
+> > Easy, how about:
+> >
+> > 'prevent_this_critical_clock_from_being_disabled_as_it_was_enabled_out_of_reset_or_by_the_bootloader_until_a_driver_claims_it_and_calls_clk_prepare_enable'
+> 
+> To make it less Linux-centric:
+> 
+> "Prevent this critical clock from being disabled implicitly by the OS, as it
+>  was enabled out of reset or by the bootloader, until it's explicitly managed
+>  by a driver."
 
-Yes, correct - I seem to have messed up something! Will fix.
+Hmm... I think you missed the giggles. :)
 
-Thanks,
-
-/ magnus
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
