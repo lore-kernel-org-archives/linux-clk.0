@@ -1,138 +1,59 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Date: Wed, 12 Aug 2015 10:34:57 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [GIT PULL] i.MX clock updates for 4.2
+Message-ID: <20150812023456.GC10035@tiger>
+References: <20150811085921.GB10035@tiger> <20150811174657.2416.1270@quantum>
 MIME-Version: 1.0
-To: Chen-Yu Tsai <wens@csie.org>, "Chen-Yu Tsai" <wens@csie.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <CAGb2v64-=1Byzo-h=7Pq=HK9Xx01KaTKT89Nx6jVWUc_kqthyg@mail.gmail.com>
-Cc: "Maxime Ripard" <maxime.ripard@free-electrons.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>,
- "linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
- "linux-clk" <linux-clk@vger.kernel.org>
-References: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
- <1438364782-3968-6-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v64nvA1K=Ya7_99-2G1LtFjcuj+qQbO1GJaqsL+yPF+Xdw@mail.gmail.com>
- <CAGb2v64-=1Byzo-h=7Pq=HK9Xx01KaTKT89Nx6jVWUc_kqthyg@mail.gmail.com>
-Message-ID: <20150811175019.2416.93864@quantum>
-Subject: Re: [PATCH v2 5/7] ARM: sun8i: Add clock indices
-Date: Tue, 11 Aug 2015 10:50:19 -0700
+In-Reply-To: <20150811174657.2416.1270@quantum>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: kernel@pengutronix.de, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Chen-Yu Tsai (2015-08-10 21:49:54)
-> On Sat, Aug 8, 2015 at 12:21 AM, Chen-Yu Tsai <wens@csie.org> wrote:
-> > On Sat, Aug 1, 2015 at 1:46 AM, Maxime Ripard
-> > <maxime.ripard@free-electrons.com> wrote:
-> >> The A23 and A33 gates have a non continuous set of clock IDs that are
-> >> valid. Add the clock-indices property to the DT to express this.
-> >>
-> >> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> >> ---
-> >>  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 15 +++++++++++++++
-> >>  1 file changed, 15 insertions(+)
-> >>
-> >> diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/=
-sun8i-a23-a33.dtsi
-> >> index 7abd0ae3143d..c318c770b6c1 100644
-> >> --- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-> >> +++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-> >> @@ -180,6 +180,15 @@
-> >>                         compatible =3D "allwinner,sun8i-a23-ahb1-gates=
--clk";
-> >>                         reg =3D <0x01c20060 0x8>;
-> >>                         clocks =3D <&ahb1>;
-> >> +                       clock-indices =3D <1>, <6>,
-> >
-> > Turns out the A33 (and I assume the same with the A23) has
-> > an ahb1 clock gate for the Security System at clock-index <5>.
-> =
+On Tue, Aug 11, 2015 at 10:46:57AM -0700, Michael Turquette wrote:
+> Hi Shawn,
+> 
+> Quoting Shawn Guo (2015-08-11 01:59:21)
+> > Hi Michael, Stephen,
+> > 
+> > The i.MX clock drivers were moved into drivers/clk/imx folder since
+> > v4.2-rc1, so I would like to send i.MX clock changes through clock tree
+> > from this cycle.  Here is my first pull request to you guys.  I'm using
+> > signed tags, same as how I work with arm-soc folks.  Let me know if
+> > there is any problem with it.
+> 
+> Everything looks good. Pulled.
 
-> Looks like the A23 does not have this one, nor the SS mod clock.
-> =
+Thanks, Mike.
 
-> > This is found in the updated A33 user manual.
-> >
-> >> +                                       <8>, <9>, <10>,
-> >> +                                       <13>, <14>,
-> >> +                                       <19>, <20>,
-> >> +                                       <21>, <24>, <26>,
-> >> +                                       <29>, <32>, <36>,
-> >> +                                       <40>, <44>, <46>,
-> >> +                                       <52>, <54>,
-> >
-> > <53> is ahb1 clock gate for msgbox, again found in A33 manual.
-> =
+> 
+> > 
+> > Also, please keep it stable, because I need to pull it into other
+> > branch as dependency which I will send via arm-soc tree.
+> 
+> Will do.
+> 
+> Also, the clock driver was not Cc'd to linux-clk mailing list nor did it
+> Cc myself or Stephen. I've taken a quick look at it and it seems fine,
+> but please post clk patches to the linux-clk mailing list in the future.
 
-> A23 has this one. Found in Allwinner kernel sources.
-> =
+I will ensure that all i.MX clock patches get Cc'd to linux-clk and you
+guys in the future.
 
-> >> +                                       <57>;
-> >
-> > <58> is ahb1 clock gate for SAT, which seems to be part of the
-> > display pipeline.
-> =
+Shawn
 
-> This one is A33 only.
-> =
-
-> I guess we should do a separate compatible for A33 AHB1 clock gates.
-
-ChenYu,
-
-I believe Maxime is on vacation. I told him that I would pick these
-patches directly. It looks like your comments can be fixed up in
-follow-up patches at a later date, correct?
-
-If so then I will apply them to clk-next.
-
-Regards,
-Mike
-
-> =
-
-> ChenYu
-> =
-
-> >>                         clock-output-names =3D "ahb1_mipidsi", "ahb1_d=
-ma",
-> >>                                         "ahb1_mmc0", "ahb1_mmc1", "ahb=
-1_mmc2",
-> >>                                         "ahb1_nand", "ahb1_sdram",
-> >> @@ -196,6 +205,8 @@
-> >>                         compatible =3D "allwinner,sun8i-a23-apb1-gates=
--clk";
-> >>                         reg =3D <0x01c20068 0x4>;
-> >>                         clocks =3D <&apb1>;
-> >> +                       clock-indices =3D <0>, <5>,
-> >> +                                       <12>, <13>;
-> >>                         clock-output-names =3D "apb1_codec", "apb1_pio=
-",
-> >>                                         "apb1_daudio0", "apb1_daudio1";
-> >>                 };
-> >> @@ -213,6 +224,10 @@
-> >>                         compatible =3D "allwinner,sun8i-a23-apb2-gates=
--clk";
-> >>                         reg =3D <0x01c2006c 0x4>;
-> >>                         clocks =3D <&apb2>;
-> >> +                       clock-indices =3D <0>, <1>,
-> >> +                                       <2>, <16>,
-> >> +                                       <17>, <18>,
-> >> +                                       <19>, <20>;
-> >>                         clock-output-names =3D "apb2_i2c0", "apb2_i2c1=
-",
-> >>                                         "apb2_i2c2", "apb2_uart0",
-> >>                                         "apb2_uart1", "apb2_uart2",
-> >> --
-> >> 2.4.6
-> >>
-> >
-> > Not sure if you want to add the clocks I mentioned together
-> > in this patch, or do a separate patch.
-> >
-> > The rest look good.
-> >
-> > ChenYu
-> =
-
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
