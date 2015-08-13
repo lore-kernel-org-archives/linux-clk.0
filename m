@@ -1,371 +1,61 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v2 2/2] clk: qcom: Add MSM8916 RPM clock driver
-Date: Mon,  3 Aug 2015 19:48:09 +0300
-Message-Id: <1438620489-32515-3-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1438620489-32515-1-git-send-email-georgi.djakov@linaro.org>
-References: <1438620489-32515-1-git-send-email-georgi.djakov@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>, Kevin Cernekee <cernekee@chromium.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: Convert __clk_get_name(hw->clk) to clk_hw_get_name(hw)
+Date: Thu, 13 Aug 2015 09:57:24 +0200
+Message-ID: <1489587.uKDjVe3x3J@diego>
+In-Reply-To: <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
+References: <1439421161-17868-1-git-send-email-sboyd@codeaurora.org> <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for clocks that are controlled by the RPM processor
-on Qualcomm msm8916 based platforms.
+Am Mittwoch, 12. August 2015, 16:12:41 schrieb Stephen Boyd:
+> Use the provider based method to get a clock's name so that we
+> can get rid of the clk member in struct clk_hw one day. Mostly
+> converted with the following coccinelle script.
+> 
+> @@
+> struct clk_hw *E;
+> @@
+> 
+> -__clk_get_name(E->clk)
+> +clk_hw_get_name(E)
+> 
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- .../devicetree/bindings/clock/qcom,rpmcc.txt       |   35 ++++
- drivers/clk/qcom/Kconfig                           |    1 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/gcc-msm8916.c                     |   13 --
- drivers/clk/qcom/rpmcc-msm8916.c                   |  196 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmcc-msm8916.h     |   44 +++++
- 6 files changed, 277 insertions(+), 13 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
- create mode 100644 drivers/clk/qcom/rpmcc-msm8916.c
- create mode 100644 include/dt-bindings/clock/qcom,rpmcc-msm8916.h
+For the Rockchip part
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-new file mode 100644
-index 000000000000..bd0fd0cd50dc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -0,0 +1,35 @@
-+Qualcomm RPM Clock Controller Binding
-+------------------------------------------------
-+The RPM is a dedicated hardware engine for managing the shared
-+SoC resources in order to keep the lowest power profile. It
-+communicates with other hardware subsystems via shared memory
-+and accepts clock requests, aggregates the requests and turns
-+the clocks on/off or scales them on demand.
-+
-+Required properties :
-+- compatible : shall contain only one of the following:
-+
-+			"qcom,rpmcc-msm8916"
-+
-+- #clock-cells : shall contain 1
-+
-+Example:
-+	smd {
-+		compatible = "qcom,smd";
-+
-+		rpm {
-+			interrupts = <0 168 1>;
-+			qcom,ipc = <&apcs 8 0>;
-+			qcom,smd-edge = <15>;
-+
-+			rpm_requests {
-+				compatible = "qcom,rpm-msm8916";
-+				qcom,smd-channels = "rpm_requests";
-+
-+				rpmcc: qcom,rpmcc {
-+					compatible = "qcom,rpmcc-msm8916";
-+					#clock-cells = <1>;
-+				};
-+			};
-+		};
-+	};
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index e347b97aa9c7..edffb57a3aff 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -52,6 +52,7 @@ config MSM_GCC_8660
- 
- config MSM_GCC_8916
- 	tristate "MSM8916 Global Clock Controller"
-+	select QCOM_CLK_SMD_RPM
- 	depends on COMMON_CLK_QCOM
- 	help
- 	  Support for the global clock controller on msm8916 devices.
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 33adf1d97da3..985c794608a7 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -17,6 +17,7 @@ obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
- obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
- obj-$(CONFIG_MSM_GCC_8660) += gcc-msm8660.o
- obj-$(CONFIG_MSM_GCC_8916) += gcc-msm8916.o
-+obj-$(CONFIG_MSM_GCC_8916) += rpmcc-msm8916.o
- obj-$(CONFIG_MSM_GCC_8960) += gcc-msm8960.o
- obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
- obj-$(CONFIG_MSM_GCC_8974) += gcc-msm8974.o
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index 3bf4fb3deef6..28ef2c771157 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -2820,19 +2820,6 @@ MODULE_DEVICE_TABLE(of, gcc_msm8916_match_table);
- 
- static int gcc_msm8916_probe(struct platform_device *pdev)
- {
--	struct clk *clk;
--	struct device *dev = &pdev->dev;
--
--	/* Temporary until RPM clocks supported */
--	clk = clk_register_fixed_rate(dev, "xo", NULL, CLK_IS_ROOT, 19200000);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
--
--	clk = clk_register_fixed_rate(dev, "sleep_clk_src", NULL,
--				      CLK_IS_ROOT, 32768);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
--
- 	return qcom_cc_probe(pdev, &gcc_msm8916_desc);
- }
- 
-diff --git a/drivers/clk/qcom/rpmcc-msm8916.c b/drivers/clk/qcom/rpmcc-msm8916.c
-new file mode 100644
-index 000000000000..60b2292dcd45
---- /dev/null
-+++ b/drivers/clk/qcom/rpmcc-msm8916.c
-@@ -0,0 +1,196 @@
-+/*
-+ * Copyright (c) 2015, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+
-+#include "clk-smd-rpm.h"
-+#include <dt-bindings/clock/qcom,rpmcc-msm8916.h>
-+
-+#define CXO_ID			0x0
-+#define QDSS_ID			0x1
-+#define BUS_SCALING		0x2
-+
-+#define PCNOC_ID		0x0
-+#define SNOC_ID			0x1
-+#define BIMC_ID			0x0
-+
-+#define BB_CLK1_ID		0x1
-+#define BB_CLK2_ID		0x2
-+#define RF_CLK1_ID		0x4
-+#define RF_CLK2_ID		0x5
-+
-+struct rpm_cc {
-+	struct clk_onecell_data data;
-+	struct clk *clks[];
-+};
-+
-+/* SMD clocks */
-+DEFINE_CLK_SMD_RPM(pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, PCNOC_ID, NULL);
-+DEFINE_CLK_SMD_RPM(snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, SNOC_ID, NULL);
-+DEFINE_CLK_SMD_RPM(bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, BIMC_ID, NULL);
-+
-+DEFINE_CLK_SMD_RPM_BRANCH(xo, xo_a, QCOM_SMD_RPM_MISC_CLK, CXO_ID, 19200000);
-+DEFINE_CLK_SMD_RPM_QDSS(qdss_clk, qdss_a_clk, QCOM_SMD_RPM_MISC_CLK, QDSS_ID);
-+
-+/* SMD_XO_BUFFER */
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(bb_clk1, bb_clk1_a, BB_CLK1_ID);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(bb_clk2, bb_clk2_a, BB_CLK2_ID);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(rf_clk1, rf_clk1_a, RF_CLK1_ID);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(rf_clk2, rf_clk2_a, RF_CLK2_ID);
-+
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(bb_clk1_pin, bb_clk1_a_pin, BB_CLK1_ID);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(bb_clk2_pin, bb_clk2_a_pin, BB_CLK2_ID);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(rf_clk1_pin, rf_clk1_a_pin, RF_CLK1_ID);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(rf_clk2_pin, rf_clk2_a_pin, RF_CLK2_ID);
-+
-+static struct clk_smd_rpm *rpmcc_msm8916_clks[] = {
-+	[RPM_XO_CLK_SRC] = &xo,
-+	[RPM_XO_A_CLK_SRC] = &xo_a,
-+	[RPM_PCNOC_CLK] = &pcnoc_clk,
-+	[RPM_PCNOC_A_CLK] = &pcnoc_a_clk,
-+	[RPM_SNOC_CLK] = &snoc_clk,
-+	[RPM_SNOC_A_CLK] = &snoc_a_clk,
-+	[RPM_BIMC_CLK] = &bimc_clk,
-+	[RPM_BIMC_A_CLK] = &bimc_a_clk,
-+	[RPM_QDSS_CLK] = &qdss_clk,
-+	[RPM_QDSS_A_CLK] = &qdss_a_clk,
-+	[RPM_BB_CLK1] = &bb_clk1,
-+	[RPM_BB_CLK1_A] = &bb_clk1_a,
-+	[RPM_BB_CLK2] = &bb_clk2,
-+	[RPM_BB_CLK2_A] = &bb_clk2_a,
-+	[RPM_RF_CLK1] = &rf_clk1,
-+	[RPM_RF_CLK1_A] = &rf_clk1_a,
-+	[RPM_RF_CLK2] = &rf_clk2,
-+	[RPM_RF_CLK2_A] = &rf_clk2_a,
-+	[RPM_BB_CLK1_PIN] = &bb_clk1_pin,
-+	[RPM_BB_CLK1_A_PIN] = &bb_clk1_a_pin,
-+	[RPM_BB_CLK2_PIN] = &bb_clk2_pin,
-+	[RPM_BB_CLK2_A_PIN] = &bb_clk2_a_pin,
-+	[RPM_RF_CLK1_PIN] = &rf_clk1_pin,
-+	[RPM_RF_CLK1_A_PIN] = &rf_clk1_a_pin,
-+	[RPM_RF_CLK2_PIN] = &rf_clk2_pin,
-+	[RPM_RF_CLK2_A_PIN] = &rf_clk2_a_pin,
-+};
-+
-+static int rpmcc_msm8916_probe(struct platform_device *pdev)
-+{
-+	struct clk **clks;
-+	struct clk *clk;
-+	struct rpm_cc *rcc;
-+	struct qcom_smd_rpm *rpm;
-+	struct clk_onecell_data *data;
-+	int num_clks = ARRAY_SIZE(rpmcc_msm8916_clks);
-+	int ret, i;
-+
-+	if (!pdev->dev.of_node)
-+		return -ENODEV;
-+
-+	rpm = dev_get_drvdata(pdev->dev.parent);
-+	if (!rpm) {
-+		dev_err(&pdev->dev, "Unable to retrieve handle to RPM\n");
-+		return -ENODEV;
-+	}
-+
-+	ret = clk_smd_rpm_enable_scaling(rpm);
-+	if (ret)
-+		return ret;
-+
-+	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*clks) * num_clks,
-+			   GFP_KERNEL);
-+	if (!rcc)
-+		return -ENOMEM;
-+
-+	clks = rcc->clks;
-+	data = &rcc->data;
-+	data->clks = clks;
-+	data->clk_num = num_clks;
-+
-+	clk = clk_register_fixed_rate(&pdev->dev, "sleep_clk_src", NULL,
-+				      CLK_IS_ROOT, 32768);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	for (i = 0; i < num_clks; i++) {
-+		if (!rpmcc_msm8916_clks[i]) {
-+			clks[i] = ERR_PTR(-ENOENT);
-+			continue;
-+		}
-+
-+		rpmcc_msm8916_clks[i]->rpm = rpm;
-+		clk = devm_clk_register(&pdev->dev, &rpmcc_msm8916_clks[i]->hw);
-+		if (IS_ERR(clk))
-+			return PTR_ERR(clk);
-+
-+		clks[i] = clk;
-+	}
-+
-+	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
-+				  data);
-+	if (ret)
-+		return ret;
-+
-+	/* Hold a vote for max rates */
-+	clk_set_rate(bimc_a_clk.hw.clk, INT_MAX);
-+	clk_prepare_enable(bimc_a_clk.hw.clk);
-+	clk_set_rate(bimc_clk.hw.clk, INT_MAX);
-+	clk_prepare_enable(bimc_clk.hw.clk);
-+	clk_set_rate(snoc_clk.hw.clk, INT_MAX);
-+	clk_prepare_enable(snoc_clk.hw.clk);
-+	clk_prepare_enable(xo.hw.clk);
-+
-+	return 0;
-+}
-+
-+static int rpmcc_msm8916_remove(struct platform_device *pdev)
-+{
-+	of_clk_del_provider(pdev->dev.of_node);
-+	return 0;
-+}
-+
-+static const struct of_device_id rpmcc_msm8916_match_table[] = {
-+	{ .compatible = "qcom,rpmcc-msm8916" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, rpmcc_msm8916_match_table);
-+
-+static struct platform_driver rpmcc_msm8916_driver = {
-+	.driver = {
-+		.name = "qcom-rpmcc-msm8916",
-+		.of_match_table = rpmcc_msm8916_match_table,
-+	},
-+	.probe = rpmcc_msm8916_probe,
-+	.remove = rpmcc_msm8916_remove,
-+};
-+
-+static int __init rpmcc_msm8916_init(void)
-+{
-+	return platform_driver_register(&rpmcc_msm8916_driver);
-+}
-+core_initcall(rpmcc_msm8916_init);
-+
-+static void __exit rpmcc_msm8916_exit(void)
-+{
-+	platform_driver_unregister(&rpmcc_msm8916_driver);
-+}
-+module_exit(rpmcc_msm8916_exit);
-+
-+MODULE_DESCRIPTION("Qualcomm MSM8916 RPM Clock Controller Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:rpmcc-msm8916");
-diff --git a/include/dt-bindings/clock/qcom,rpmcc-msm8916.h b/include/dt-bindings/clock/qcom,rpmcc-msm8916.h
-new file mode 100644
-index 000000000000..62d63940896a
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,rpmcc-msm8916.h
-@@ -0,0 +1,44 @@
-+/*
-+ * Copyright 2015 Linaro Limited
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_MSM_RPMCC_8916_H
-+#define _DT_BINDINGS_CLK_MSM_RPMCC_8916_H
-+
-+#define RPM_XO_CLK_SRC				0
-+#define RPM_XO_A_CLK_SRC			1
-+#define RPM_PCNOC_CLK				2
-+#define RPM_PCNOC_A_CLK				3
-+#define RPM_SNOC_CLK				4
-+#define RPM_SNOC_A_CLK				6
-+#define RPM_BIMC_CLK				7
-+#define RPM_BIMC_A_CLK				8
-+#define RPM_QDSS_CLK				9
-+#define RPM_QDSS_A_CLK				10
-+#define RPM_BB_CLK1				11
-+#define RPM_BB_CLK1_A				12
-+#define RPM_BB_CLK2				13
-+#define RPM_BB_CLK2_A				14
-+#define RPM_RF_CLK1				15
-+#define RPM_RF_CLK1_A				16
-+#define RPM_RF_CLK2				17
-+#define RPM_RF_CLK2_A				18
-+#define RPM_BB_CLK1_PIN				19
-+#define RPM_BB_CLK1_A_PIN			20
-+#define RPM_BB_CLK2_PIN				21
-+#define RPM_BB_CLK2_A_PIN			22
-+#define RPM_RF_CLK1_PIN				23
-+#define RPM_RF_CLK1_A_PIN			24
-+#define RPM_RF_CLK2_PIN				25
-+#define RPM_RF_CLK2_A_PIN			26
-+
-+#endif
+
+Heiko
+
+> diff --git a/drivers/clk/rockchip/clk-inverter.c
+> b/drivers/clk/rockchip/clk-inverter.c index 8054fdb5effb..7cbf43beb3c6
+> 100644
+> --- a/drivers/clk/rockchip/clk-inverter.c
+> +++ b/drivers/clk/rockchip/clk-inverter.c
+> @@ -50,7 +50,7 @@ static int rockchip_inv_set_phase(struct clk_hw *hw, int
+> degrees) val = !!degrees;
+>  	} else {
+>  		pr_err("%s: unsupported phase %d for %s\n",
+> -		       __func__, degrees, __clk_get_name(hw->clk));
+> +		       __func__, degrees, clk_hw_get_name(hw));
+>  		return -EINVAL;
+>  	}
+> 
+> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c
+> b/drivers/clk/rockchip/clk-mmc-phase.c index 77e19097bdc7..9b613426e968
+> 100644
+> --- a/drivers/clk/rockchip/clk-mmc-phase.c
+> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
+> @@ -108,7 +108,7 @@ static int rockchip_mmc_set_phase(struct clk_hw *hw, int
+> degrees) writel(HIWORD_UPDATE(raw_value, 0x07ff, mmc_clock->shift),
+> mmc_clock->reg);
+> 
+>  	pr_debug("%s->set_phase(%d) delay_nums=%u reg[0x%p]=0x%03x
+> actual_degrees=%d\n", -		__clk_get_name(hw->clk), degrees, delay_num,
+> +		clk_hw_get_name(hw), degrees, delay_num,
+>  		mmc_clock->reg, raw_value>>(mmc_clock->shift),
+>  		rockchip_mmc_get_phase(hw)
+>  	);
