@@ -1,50 +1,53 @@
-Return-Path: <romain.perier@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ig0-f180.google.com ([209.85.213.180]:36499 "EHLO
+	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752847AbbHMUzt (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 13 Aug 2015 16:55:49 -0400
 MIME-Version: 1.0
-In-Reply-To: <1440322357-2621-1-git-send-email-romain.perier@gmail.com>
-References: <1440322357-2621-1-git-send-email-romain.perier@gmail.com>
-Date: Mon, 31 Aug 2015 16:42:13 +0200
-Message-ID: <CABgxDo+otZrYoqTNK-ea=L6Dsd5p_b_MFCi4H4XJZZ25PV_qnA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: rockchip: Add pclk_peri to critical clocks on RK3066/RK3188
-From: Romain Perier <romain.perier@gmail.com>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+In-Reply-To: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
+References: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
+Date: Thu, 13 Aug 2015 22:55:48 +0200
+Message-ID: <CAGhQ9VyoepPsoLhuqFz397UnrM+n4SH0rp5Y3xfTQYvDXr=APw@mail.gmail.com>
+Subject: Re: [PATCH V3 0/5] clk: support clocks which requires parent clock on
+ during operation
+From: Joachim Eastwood <manabian@gmail.com>
+To: Dong Aisheng <aisheng.dong@freescale.com>
+Cc: linux-clk@vger.kernel.org, Ranjani.Vaidyanathan@freescale.com,
+	b20596@freescale.com, Mike Turquette <mturquette@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	r64343@freescale.com, b20788@freescale.com, b29396@freescale.com,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-ping
+Hi Dong,
 
-2015-08-23 11:32 GMT+02:00 Romain Perier <romain.perier@gmail.com>:
-> Now that the rockchip clock subsystem does clock gating with GPIO banks,
-> these are no longer enabled once during probe and no longer stay enabled
-> for eternity. When all these clocks are disabled, the parent clock pclk_peri
-> might be disabled too, as no other child claims it. So, we need to add pclk_peri
-> to the critical clocks.
+On 28 July 2015 at 15:19, Dong Aisheng <aisheng.dong@freescale.com> wrote:
+> This patch series adds support in clock framework for clocks which operations
+> requires its parent clock is on.
 >
-> Signed-off-by: Romain Perier <romain.perier@gmail.com>
-> Tested-by: Michael Niewoehner <linux@mniewoehner.de>
-> ---
->
-> changes in v2:
-> - Improved commit messages
-> - Added "Tested-by" from Michael Niewoehner, as he tested v1 and no code changed
->
->  drivers/clk/rockchip/clk-rk3188.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-> index bf20214..839a22a 100644
-> --- a/drivers/clk/rockchip/clk-rk3188.c
-> +++ b/drivers/clk/rockchip/clk-rk3188.c
-> @@ -717,6 +717,7 @@ static const char *const rk3188_critical_clocks[] __initconst = {
->         "aclk_peri",
->         "hclk_peri",
->         "pclk_cpu",
-> +       "pclk_peri",
->  };
->
->  static void __init rk3188_common_clk_init(struct device_node *np)
-> --
-> 2.1.4
->
+> Such clock type is initially met on Freescale i.MX7D platform that all clocks
+> operations, including enable/disable, rate change and re-parent, requires its
+> parent clock on. No sure if any other SoC has the similar clock type.
+
+Just noticed this patch set.
+
+One of clock-controller blocks (CCU) on lpc18xx has a similar
+requirement. The CCU is clock fanout block with gates and the gate
+registers can not be accessed if the base (parent) clock for the gate
+is not running. Doing so causes the cpu to wedge.
+
+The workaround I have locally is to check in the is_enabled gate op if
+the parent is running or not. This works fine, but I am all for a more
+generic solution in the clk framework.
+
+I'll see if I can find the time to test your patch set. Thanks for
+working on this.
+
+
+regards,
+Joachim Eastwood
