@@ -1,80 +1,124 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:20223 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751440AbbHQAhi (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 16 Aug 2015 20:37:38 -0400
-Message-id: <55D12CC9.2060602@samsung.com>
-Date: Mon, 17 Aug 2015 09:37:29 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, tomasz.figa@gmail.com,
-	kgene@kernel.org, devicetree@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/4] ARM: dts: exynos3250: Add UART2 and MMC2 dt node with
- related clocks
-References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
- <CAJKOXPfvGypFymHzXDMEA295Copi0sjpMG9oKmJ+a_BQoK+SNw@mail.gmail.com>
- <55D12C73.6090101@samsung.com>
-In-reply-to: <55D12C73.6090101@samsung.com>
-Content-type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v3 3/4] clk: qcom: Add MSM8916 gpu clocks
+Date: Thu, 13 Aug 2015 17:48:36 +0300
+Message-Id: <1439477317-1902-4-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1439477317-1902-1-git-send-email-georgi.djakov@linaro.org>
+References: <1439477317-1902-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 17.08.2015 09:36, Chanwoo Choi wrote:
-> On 08/17/2015 09:33 AM, Krzysztof Kozlowski wrote:
->> 2015-08-11 12:46 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
->>> This patch add the UART2 / MMC2 devicetree node for Exynos3250 SoC and add
->>> the related clocks (mux, divider, gate) of UART2 / MMC2 device.
->>
->> What is the benefit of adding them? Why they are needed?
-> 
-> UART2 /MMC2 are used on Exynos3250-based ARTIK-5 board[1].
-> [1] https://www.artik.io/hardware/artik-5
+Add support for the msm8916 BIMC (Bus Integrated Memory Controller)
+clocks that are needed for GPU.
 
-Thanks for explaining this. The patchset missed that information - the
-purpose. I'll start reviewing it.
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/clk/qcom/gcc-msm8916.c               |   61 ++++++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8916.h |    3 ++
+ 2 files changed, 64 insertions(+)
 
-Best regards,
-Krzysztof
-
-> 
-> Thanks,
-> Chanwoo Choi
-> 
->>
->> Best regards,
->> Krzysztof
->>
->>
->>>
->>> Chanwoo Choi (4):
->>>   clk: samsung: exynos3250: Add UART2 clock
->>>   clk: samsung: exynos3250: Add MMC2 clock
->>>   ARM: dts: Add UART2 dt node for Exynos3250 SoC
->>>   ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
->>>
->>>  arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 42 +++++++++++++++++++++++++++++++
->>>  arch/arm/boot/dts/exynos3250.dtsi         | 25 ++++++++++++++++++
->>>  drivers/clk/samsung/clk-exynos3250.c      | 15 +++++++++++
->>>  include/dt-bindings/clock/exynos3250.h    | 11 +++++++-
->>>  4 files changed, 92 insertions(+), 1 deletion(-)
->>>
->>> --
->>> 1.8.5.5
->>>
->>>
->>> _______________________________________________
->>> linux-arm-kernel mailing list
->>> linux-arm-kernel@lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> 
-> 
-
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index 83b7df476453..9a3e3504502a 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -1094,6 +1094,30 @@ static struct clk_rcg2 apss_tcu_clk_src = {
+ 	},
+ };
+ 
++static const struct freq_tbl ftbl_gcc_bimc_gpu_clk[] = {
++	F(19200000, P_XO, 1, 0, 0),
++	F(100000000, P_GPLL0, 8, 0, 0),
++	F(200000000, P_GPLL0, 4, 0, 0),
++	F(266500000, P_BIMC, 4, 0, 0),
++	F(400000000, P_GPLL0, 2, 0, 0),
++	F(533000000, P_BIMC, 2, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 bimc_gpu_clk_src = {
++	.cmd_rcgr = 0x31028,
++	.hid_width = 5,
++	.parent_map = gcc_xo_gpll0_bimc_map,
++	.freq_tbl = ftbl_gcc_bimc_gpu_clk,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "bimc_gpu_clk_src",
++		.parent_names = gcc_xo_gpll0_bimc,
++		.num_parents = 3,
++		.flags = CLK_GET_RATE_NOCACHE,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
+ static const struct freq_tbl ftbl_gcc_usb_hs_system_clk[] = {
+ 	F(80000000, P_GPLL0, 10, 0, 0),
+ 	{ }
+@@ -2420,6 +2444,40 @@ static struct clk_branch gcc_gtcu_ahb_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_bimc_gfx_clk = {
++	.halt_reg = 0x31024,
++	.clkr = {
++		.enable_reg = 0x31024,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_bimc_gfx_clk",
++			.parent_names = (const char *[]){
++				"bimc_gpu_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_bimc_gpu_clk = {
++	.halt_reg = 0x31040,
++	.clkr = {
++		.enable_reg = 0x31040,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_bimc_gpu_clk",
++			.parent_names = (const char *[]){
++				"bimc_gpu_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_jpeg_tbu_clk = {
+ 	.halt_reg = 0x12034,
+ 	.clkr = {
+@@ -2749,6 +2807,9 @@ static struct clk_regmap *gcc_msm8916_clocks[] = {
+ 	[BIMC_DDR_CLK_SRC] = &bimc_ddr_clk_src.clkr,
+ 	[GCC_APSS_TCU_CLK] = &gcc_apss_tcu_clk.clkr,
+ 	[GCC_GFX_TCU_CLK] = &gcc_gfx_tcu_clk.clkr,
++	[BIMC_GPU_CLK_SRC] = &bimc_gpu_clk_src.clkr,
++	[GCC_BIMC_GFX_CLK] = &gcc_bimc_gfx_clk.clkr,
++	[GCC_BIMC_GPU_CLK] = &gcc_bimc_gpu_clk.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_msm8916_resets[] = {
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8916.h b/include/dt-bindings/clock/qcom,gcc-msm8916.h
+index 53b39293d759..d54a9715c37e 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8916.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8916.h
+@@ -155,5 +155,8 @@
+ #define BIMC_DDR_CLK_SRC			138
+ #define GCC_APSS_TCU_CLK			139
+ #define GCC_GFX_TCU_CLK				140
++#define BIMC_GPU_CLK_SRC			141
++#define GCC_BIMC_GFX_CLK			142
++#define GCC_BIMC_GPU_CLK			143
+ 
+ #endif
