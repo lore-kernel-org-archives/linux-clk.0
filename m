@@ -1,176 +1,92 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- "Thomas Abraham" <thomas.ab@samsung.com>,
- "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
- "Kukjin Kim" <kgene.kim@samsung.com>, "Kukjin Kim" <kgene@kernel.org>,
- "Viresh Kumar" <viresh.kumar@linaro.org>,
- "Krzysztof Kozlowski" <k.kozlowski@samsung.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1438868514-8814-3-git-send-email-b.zolnierkie@samsung.com>
-Cc: "Tomasz Figa" <tomasz.figa@gmail.com>,
- "Lukasz Majewski" <l.majewski@samsung.com>,
- "Heiko Stuebner" <heiko@sntech.de>, "Chanwoo Choi" <cw00.choi@samsung.com>,
- "Kevin Hilman" <khilman@linaro.org>,
- "Javier Martinez Canillas" <javier@dowhile0.org>,
- "Tobias Jakobi" <tjakobi@math.uni-bielefeld.de>,
- "Anand Moon" <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- b.zolnierkie@samsung.com
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <1438868514-8814-3-git-send-email-b.zolnierkie@samsung.com>
-Message-ID: <20150825184013.31346.67214@quantum>
-Subject: Re: [PATCH v4 2/6] clk: samsung: exynos4x12: add cpu clock configuration
- data and instantiate cpu clock
-Date: Tue, 25 Aug 2015 11:40:13 -0700
+In-Reply-To: <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
+References: <1439421161-17868-1-git-send-email-sboyd@codeaurora.org>
+	<1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
+Date: Thu, 13 Aug 2015 10:41:09 +0200
+Message-ID: <CAMuHMdXo4ChAfbi5h0okyw18LNM5iv-rfx_AO9e_u7QAB8Vx9A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: Convert __clk_get_name(hw->clk) to clk_hw_get_name(hw)
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Tero Kristo <t-kristo@ti.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Ezequiel Garcia <ezequiel.garcia@imgtec.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Kevin Cernekee <cernekee@chromium.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	"linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org,
+	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+	Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Bartlomiej Zolnierkiewicz (2015-08-06 06:41:50)
-> With the addition of the new Samsung specific cpu-clock type, the
-> arm clock can be represented as a cpu-clock type. Add the CPU clock
-> configuration data and instantiate the CPU clock type for Exynos4x12.
-> =
-
-> Based on the earlier work by Thomas Abraham.
-> =
-
+On Thu, Aug 13, 2015 at 1:12 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> Use the provider based method to get a clock's name so that we
+> can get rid of the clk member in struct clk_hw one day. Mostly
+> converted with the following coccinelle script.
+>
+> @@
+> struct clk_hw *E;
+> @@
+>
+> -__clk_get_name(E->clk)
+> +clk_hw_get_name(E)
+>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Andrew Bresticker <abrestic@chromium.org>
+> Cc: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Kevin Cernekee <cernekee@chromium.org>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-rockchip@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Acked-by: Michael Turquette <mturquette@baylibre.com>
+>  drivers/clk/shmobile/clk-div6.c      |  2 +-
 
-> ---
->  drivers/clk/samsung/clk-exynos4.c | 50 +++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 50 insertions(+)
-> =
+For the shmobile part:
 
-> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-=
-exynos4.c
-> index 251f48d..7f370d3 100644
-> --- a/drivers/clk/samsung/clk-exynos4.c
-> +++ b/drivers/clk/samsung/clk-exynos4.c
-> @@ -1398,6 +1398,45 @@ static const struct exynos_cpuclk_cfg_data e4210_a=
-rmclk_d[] __initconst =3D {
->         {  0 },
->  };
->  =
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +static const struct exynos_cpuclk_cfg_data e4212_armclk_d[] __initconst =
-=3D {
-> +       { 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6)=
-, },
-> +       { 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6)=
-, },
-> +       { 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5)=
-, },
-> +       { 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5)=
-, },
-> +       { 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4210_CPU_DIV1(2, 4)=
-, },
-> +       { 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4210_CPU_DIV1(2, 4)=
-, },
-> +       {  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3)=
-, },
-> +       {  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3)=
-, },
-> +       {  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3)=
-, },
-> +       {  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3)=
-, },
-> +       {  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3)=
-, },
-> +       {  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3)=
-, },
-> +       {  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4210_CPU_DIV1(2, 3)=
-, },
-> +       {  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4210_CPU_DIV1(2, 3)=
-, },
-> +       {  0 },
-> +};
-> +
-> +#define E4412_CPU_DIV1(cores, hpm, copy)                               \
-> +               (((cores) << 8) | ((hpm) << 4) | ((copy) << 0))
-> +
-> +static const struct exynos_cpuclk_cfg_data e4412_armclk_d[] __initconst =
-=3D {
-> +       { 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(7, 0,=
- 6), },
-> +       { 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(6, 0,=
- 6), },
-> +       { 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(6, 0,=
- 5), },
-> +       { 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(5, 0,=
- 5), },
-> +       { 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4412_CPU_DIV1(5, 0,=
- 4), },
-> +       { 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4412_CPU_DIV1(4, 0,=
- 4), },
-> +       {  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(4, 0,=
- 3), },
-> +       {  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(3, 0,=
- 3), },
-> +       {  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(3, 0,=
- 3), },
-> +       {  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0,=
- 3), },
-> +       {  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0,=
- 3), },
-> +       {  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(1, 0,=
- 3), },
-> +       {  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4412_CPU_DIV1(1, 0,=
- 3), },
-> +       {  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4412_CPU_DIV1(0, 0,=
- 3), },
-> +       {  0 },
-> +};
-> +
->  /* register exynos4 clocks */
->  static void __init exynos4_clk_init(struct device_node *np,
->                                     enum exynos4_soc soc)
-> @@ -1491,6 +1530,17 @@ static void __init exynos4_clk_init(struct device_=
-node *np,
->                 samsung_clk_register_fixed_factor(ctx,
->                         exynos4x12_fixed_factor_clks,
->                         ARRAY_SIZE(exynos4x12_fixed_factor_clks));
-> +               if (of_machine_is_compatible("samsung,exynos4412")) {
-> +                       exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armc=
-lk",
-> +                               mout_core_p4x12[0], mout_core_p4x12[1], 0=
-x14200,
-> +                               e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d=
-),
-> +                               CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS=
-_DIV1);
-> +               } else {
-> +                       exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armc=
-lk",
-> +                               mout_core_p4x12[0], mout_core_p4x12[1], 0=
-x14200,
-> +                               e4212_armclk_d, ARRAY_SIZE(e4212_armclk_d=
-),
-> +                               CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS=
-_DIV1);
-> +               }
->         }
->  =
+Gr{oetje,eeting}s,
 
->         samsung_clk_register_alias(ctx, exynos4_aliases,
-> -- =
+                        Geert
 
-> 1.9.1
-> =
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
