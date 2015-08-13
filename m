@@ -1,45 +1,91 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 7.3 \(1878.6\))
-Subject: [PATCH v2] clk: rockchip: add pclk_cpu to the list of rk3188 critical clocks
-From: Michael Niewoehner <linux@mniewoehner.de>
-In-Reply-To: <10213368.VjAQGt7Kjq@phil>
-Date: Mon, 17 Aug 2015 21:50:53 +0200
-Message-Id: <F5234F5E-2A91-4B63-B260-3F20A4D16A9D@mniewoehner.de>
-References: <5400BEF8-5245-4F7B-845B-D326A7BC56B5@mniewoehner.de> <5275855.eah07vmf4I@phil> <9DBF9CCE-196E-43FB-BA76-BFB4B5F47A22@mniewoehner.de> <10213368.VjAQGt7Kjq@phil>
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linus.walleij@linaro.org
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	devicetree@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH v5 3/3] ARM: bcm2835: Add DT for the firmware clocks driver.
+Date: Thu, 13 Aug 2015 16:05:42 -0700
+Message-Id: <1439507142-2965-4-git-send-email-eric@anholt.net>
+In-Reply-To: <1439507142-2965-1-git-send-email-eric@anholt.net>
+References: <1439507142-2965-1-git-send-email-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-pclk_cpu needs to keep running because it is needed for devices like
-the act8865 regulator but with the recent gpio clock handling this is
-not always the case anymore. So add it to the list of critical clocks.
-
-Signed-off-by: Michael Niewoehner <linux@mniewoehner.de>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Acked-by: Lee Jones <lee@kernel.org>
 ---
-Changes in v2:
-- adapt commit message
-- add Linus Walleij to recipients, as the patch is related to the gpio clock
-  change in the rockchip pinctrl driver it should go through his tree as well
 
-drivers/clk/rockchip/clk-rk3188.c | 1 +
-1 file changed, 1 insertion(+)
+v2: Rename our compat string to mention bcm2835, and make our firmware
+    phandle be under a vendor-namespaced property.
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index e4f9d47..1c93229 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -708,6 +708,7 @@ static const char *const rk3188_critical_clocks[] __initconst = {
-	"aclk_cpu",
-	"aclk_peri",
-	"hclk_peri",
-+	"pclk_cpu",
-};
+v3: Squashed in the patches to reference the other clocks, to avoid
+    regressions now that we register all clocks at boot.  Dropped
+    Stephen's ack, since he hadn't acked the new EMMC change yet.
 
-static void __init rk3188_common_clk_init(struct device_node *np)
+ arch/arm/boot/dts/bcm2835-rpi.dtsi | 18 ++++++++++++++++++
+ arch/arm/boot/dts/bcm2835.dtsi     |  3 +--
+ 2 files changed, 19 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+index ab5474e..5d370cb 100644
+--- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
++++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+@@ -1,3 +1,4 @@
++#include <dt-bindings/clk/raspberrypi.h>
+ #include "bcm2835.dtsi"
+ 
+ / {
+@@ -20,6 +21,12 @@
+ 			compatible = "raspberrypi,bcm2835-firmware";
+ 			mboxes = <&mailbox>;
+ 		};
++
++		firmware_clocks: firmware-clocks {
++			compatible = "raspberrypi,bcm2835-firmware-clocks";
++			#clock-cells = <1>;
++			raspberrypi,firmware = <&firmware>;
++		};
+ 	};
+ };
+ 
+@@ -55,4 +62,15 @@
+ &sdhci {
+ 	status = "okay";
+ 	bus-width = <4>;
++	clocks = <&firmware_clocks RPI_CLOCK_EMMC>;
++};
++
++&uart0 {
++	clocks = <&firmware_clocks RPI_CLOCK_UART0>,
++		 <&firmware_clocks RPI_CLOCK_CORE>;
++	clock-names = "uartclk", "apb_pclk";
++};
++
++&spi {
++	clocks = <&firmware_clocks RPI_CLOCK_CORE>;
+ };
+diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
+index 301c73f..5be2862 100644
+--- a/arch/arm/boot/dts/bcm2835.dtsi
++++ b/arch/arm/boot/dts/bcm2835.dtsi
+@@ -92,11 +92,10 @@
+ 			#interrupt-cells = <2>;
+ 		};
+ 
+-		uart@7e201000 {
++		uart0: uart@7e201000 {
+ 			compatible = "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
+ 			reg = <0x7e201000 0x1000>;
+ 			interrupts = <2 25>;
+-			clock-frequency = <3000000>;
+ 			arm,primecell-periphid = <0x00241011>;
+ 		};
+ 
 -- 
-2.5.0
+2.1.4
