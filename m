@@ -1,100 +1,35 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 13 Aug 2015 11:25:10 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dong Aisheng <aisheng.dong@freescale.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mturquette@linaro.org, shawnguo@kernel.org, b29396@freescale.com,
+	linux-arm-kernel@lists.infradead.org,
+	Ranjani.Vaidyanathan@freescale.com, b20596@freescale.com,
+	r64343@freescale.com, b20788@freescale.com
+Subject: Re: [PATCH V3 1/5] clk: remove duplicated code with
+ __clk_set_parent_after
+Message-ID: <20150813182510.GQ26614@codeaurora.org>
+References: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
+ <1438089585-30103-2-git-send-email-aisheng.dong@freescale.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20150829091418.28546.8569.sendpatchset@little-apple>
-References: <20150829091323.28546.28287.sendpatchset@little-apple>
-	<20150829091418.28546.8569.sendpatchset@little-apple>
-Date: Sat, 29 Aug 2015 12:44:11 +0200
-Message-ID: <CAMuHMdU0SRV_F4Tk76AkEnVi=JHhxJReCQ_FVQkw2g_xiBtQPA@mail.gmail.com>
-Subject: Re: [PATCH v4 05/05] clk: shmobile: Make MSTP clock-output-names optional
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1438089585-30103-2-git-send-email-aisheng.dong@freescale.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Aug 29, 2015 at 11:14 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> --- 0001/drivers/clk/shmobile/clk-mstp.c
-> +++ work/drivers/clk/shmobile/clk-mstp.c        2015-08-29 18:01:00.662366518 +0900
-> @@ -199,26 +199,29 @@ static void __init cpg_mstp_clocks_init(
->         for (i = 0; i < MSTP_MAX_CLOCKS; ++i) {
->                 const char *parent_name;
->                 const char *name;
-> +               bool allocated_name;
+On 07/28, Dong Aisheng wrote:
+> __clk_set_parent_after() actually used the second argument then we
+> could put this duplicate logic in there and call it with a different
+> order of arguments in the success vs. error paths in this function.
+> 
+> Cc: Mike Turquette <mturquette@linaro.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
+> ---
 
-If you make it "const char *allocated_name = NULL;" ...
+Applied to clk-next
 
->                 u32 clkidx;
->                 int ret;
->
-> -               /* Skip clocks with no name. */
-> -               ret = of_property_read_string_index(np, "clock-output-names",
-> -                                                   i, &name);
-> -               if (ret < 0 || strlen(name) == 0)
-> -                       continue;
-> -
->                 parent_name = of_clk_get_parent_name(np, i);
->                 ret = of_property_read_u32_index(np, idxname, i, &clkidx);
->                 if (parent_name == NULL || ret < 0)
->                         break;
->
->                 if (clkidx >= MSTP_MAX_CLOCKS) {
-> -                       pr_err("%s: invalid clock %s %s index %u)\n",
-> -                              __func__, np->name, name, clkidx);
-> +                       pr_err("%s: invalid clock %s index %u)\n",
-> +                              __func__, np->name, clkidx);
->                         continue;
->                 }
->
-> +               if (of_property_read_string_index(np, "clock-output-names",
-> +                                                 i, &name) == 0) {
-> +                       allocated_name = false;
-
-... you can drop this branch...
-
-> +               } else {
-> +                       name = kasprintf(GFP_KERNEL, "%s.%u", np->name, clkidx);
-> +                       allocated_name = true;
-
-... and use "allocated_name = name = kasprintf(...);"
-
-> +               }
-> +
->                 clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
->                                                        clkidx, group);
->                 if (!IS_ERR(clks[clkidx])) {
-> @@ -231,12 +234,19 @@ static void __init cpg_mstp_clocks_init(
->                          *
->                          * FIXME: Remove this when all devices that require a
->                          * clock will be instantiated from DT.
-> +                        *
-> +                        * We currently register clkdev only when the DT
-> +                        * property clock-output-names is present.
->                          */
-> -                       clk_register_clkdev(clks[clkidx], name, NULL);
-> +                       if (!allocated_name)
-> +                               clk_register_clkdev(clks[clkidx], name, NULL);
->                 } else {
->                         pr_err("%s: failed to register %s %s clock (%ld)\n",
->                                __func__, np->name, name, PTR_ERR(clks[clkidx]));
->                 }
-> +
-> +               if (allocated_name)
-> +                       kfree(name);
-
-... and kfree(allocated_name) unconditionally.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
