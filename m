@@ -1,70 +1,67 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>, linux-clk@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 3/4 v3][RFC] arm64: renesas: Add initial r8a7795 SoC support
-Date: Thu, 20 Aug 2015 22:48:05 +0300
-Message-ID: <4206643.R1gTHQZqhM@avalon>
-In-Reply-To: <CAMuHMdWMNLf-fDsiLNFwO05i0cqBHkdM2mwC3GinwWFN4pWFZg@mail.gmail.com>
-References: <877fpdw3av.wl%kuninori.morimoto.gx@renesas.com> <12310001.Bt8qbPIiMv@avalon> <CAMuHMdWMNLf-fDsiLNFwO05i0cqBHkdM2mwC3GinwWFN4pWFZg@mail.gmail.com>
+Return-Path: <manabian@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20150811204127.31346.16729@quantum>
+References: <1436651307-24098-1-git-send-email-manabian@gmail.com>
+	<1436651307-24098-2-git-send-email-manabian@gmail.com>
+	<20150811204127.31346.16729@quantum>
+Date: Thu, 13 Aug 2015 22:43:11 +0200
+Message-ID: <CAGhQ9VwZaM_iWTkQYVTuTiyb6gCG2y6s8WFVySCHt7YHE1qbcA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: add lpc18xx creg clk driver
+From: Joachim  Eastwood <manabian@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+On 11 August 2015 at 22:41, Michael Turquette <mturquette@baylibre.com> wrote:
+> Hi Joachim,
+>
+> Quoting Joachim Eastwood (2015-07-11 14:48:26)
+>> +static void __init lpc18xx_creg_clk_init(struct device_node *np)
+>> +{
+>> +       const char *clk_32khz_parent;
+>> +       struct regmap *syscon;
+>> +
+>> +       syscon = syscon_node_to_regmap(np->parent);
+>> +       if (IS_ERR(syscon)) {
+>> +               pr_err("%s: syscon lookup failed\n", __func__);
+>> +               return;
+>> +       }
+>> +
+>> +       clk_32khz_parent = of_clk_get_parent_name(np, 0);
+>> +
+>> +       clk_creg[CREG_CLK_32KHZ] =
+>> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_32KHZ],
+>> +                                     &clk_32khz_parent, syscon);
+>> +
+>> +       clk_creg[CREG_CLK_1KHZ] =
+>> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_1KHZ],
+>> +                                     &clk_creg_clocks[CREG_CLK_32KHZ].name,
+>> +                                     syscon);
+>> +
+>> +       of_clk_add_provider(np, of_clk_src_onecell_get, &clk_base_data);
+>> +}
+>> +CLK_OF_DECLARE(lpc18xx_creg_clk, "nxp,lpc1850-creg-clk", lpc18xx_creg_clk_init);
+>
+> I'll ask the same question that Stephen asked in your CCU/CGU driver
+> series: is it necessary to use CLK_OF_DECLARE here or can you use the
+> platform device model?
 
-On Thursday 20 August 2015 09:43:34 Geert Uytterhoeven wrote:
-> On Wed, Aug 19, 2015 at 11:29 PM, Laurent Pinchart wrote:
-> >> > Also, while you're thinking about the perfect clock binding, please do
-> >> > consider dropping clock-output-names if you can. Specifying clock-names
-> >> > alongside the clocks property inside of the consumer node is a bit more
-> >> > elegant in my opinion. This is also a bit easier if you think about
-> >> > expressing your clock data with C inside of your provider driver.
-> >> 
-> >> Makes sense. I don't think anything relies on the "clock-output-names"
-> >> ... currently.
-> >> 
-> >> I was going to use it for identifying the GIC clock, though:
-> >> 
-> >> --- a/drivers/clk/shmobile/clk-mstp.c
-> >> +++ b/drivers/clk/shmobile/clk-mstp.c
-> >> @@ -144,6 +144,9 @@ cpg_mstp_clock_register(const char *name, const char
-> >> *paren init.name = name;
-> >> 
-> >>         init.ops = &cpg_mstp_clock_ops;
-> >>         init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
-> >> 
-> >> +       /* INTC-SYS is the module clock of the GIC, and must not be
-> >> disabled */
-> >> +       if (!strcmp(name, "intc-sys"))
-> >> +               init.flags |= CLK_ENABLE_HAND_OFF;
-> >> 
-> >>         init.parent_names = &parent_name;
-> >>         init.num_parents = 1;
-> >> 
-> >> (FTR, on R-Car Gen3 the clock is called "intc-ap", not "intc-sys",
-> >> doh...).
-> >> 
-> >> This does put some reliance on (undocumented) naming in DT, though, so
-> >> not
-> >> having the "clock-output-names" would solve that.
-> > 
-> > Using the clock name is indeed very messy, let's avoid that.
-> > 
-> >> However, while "intc-sys"/"intc-ap" (if existent) is always MSTP408,
-> >> MSTP408 is used for other modules on R-Car Gen1 and most older SoCs. so
-> >> it would complicate the driver code.
-> > 
-> > How about setting the flag based on information provided in DT ?
-> 
-> Like scanning DT for the GIC, and looking for its clock?
-> 
-> I don't want to add an explicit flag in DT, as it's not a hardware property,
-> but a deficiency of the current GIC driver/subsystem.
+The 32 kHz clock from the CREG block is a clock parent to the CGU
+block so it's possible that it will required early. This is all
+depends on how the boot loader initially configures the CGU.
 
-What are the changes we can fix the GIC driver in a reasonable time frame ?
+Currently in the DTS for lpc18xx cgu it has:
+clocks = <&xtal>, <&xtal32>, <...>;
+xtal32 is just a temporary placeholder until the CREG clock is in place.
 
--- 
-Regards,
 
-Laurent Pinchart
+Note that while it's possible to use the 32k clock together with PLL0
+to generate the main CPU bus clock I doubt it will be common
+configuration. It is however fully possible to do.
+
+
+regards,
+Joachim Eastwood
