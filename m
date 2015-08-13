@@ -1,34 +1,22 @@
-Return-Path: <daniel.lezcano@linaro.org>
-Return-Path: <daniel.lezcano@linaro.org>
-Message-ID: <55BF8F16.2040201@linaro.org>
-Date: Mon, 03 Aug 2015 17:56:06 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Mike Turquette <mturquette@baylibre.com>
-CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH 4/7] clocksource: cadence_ttc: Remove clk-provider.h include
-References: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org> <1436569409-27964-5-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1436569409-27964-5-git-send-email-sboyd@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Eric Anholt <eric@anholt.net>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	devicetree@vger.kernel.org
+Subject: Rasperry Pi clock support
+Date: Thu, 13 Aug 2015 16:05:39 -0700
+Message-Id: <1439507142-2965-1-git-send-email-eric@anholt.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/11/2015 01:03 AM, Stephen Boyd wrote:
-> This file doesn't use the clk provider APIs. Remove the include.
->
-> Cc: Michal Simek <michal.simek@xilinx.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+I'm also avoiding requests to set rate/state when they're a no-op, as
+apparently no-op changes to pixel clock break the firmware-configured
+display setup.  It *shouldn't* change anything, but I've confirmed
+that setting the CPU clock works fine, and after a couple of weeks of
+prodding pixel clock now, I'm at a loss for what's going on with it.
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
-
-
--- 
-  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
