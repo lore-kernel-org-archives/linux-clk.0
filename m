@@ -1,63 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-From: Michael Turquette <mturquette@baylibre.com>
-To: Michael Niewoehner <linux@mniewoehner.de>,
-	"Heiko Stuebner" <heiko@sntech.de>, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linus.walleij@linaro.org
-References: <5400BEF8-5245-4F7B-845B-D326A7BC56B5@mniewoehner.de>
- <5275855.eah07vmf4I@phil>
- <9DBF9CCE-196E-43FB-BA76-BFB4B5F47A22@mniewoehner.de>
- <10213368.VjAQGt7Kjq@phil>
- <F5234F5E-2A91-4B63-B260-3F20A4D16A9D@mniewoehner.de>
-In-Reply-To: <F5234F5E-2A91-4B63-B260-3F20A4D16A9D@mniewoehner.de>
-Message-ID: <20150825185931.31346.26497@quantum>
-Subject: Re: [PATCH v2] clk: rockchip: add pclk_cpu to the list of rk3188 critical
- clocks
-Date: Tue, 25 Aug 2015 11:59:31 -0700
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v3 2/4] clk: qcom: Add support for RCGs with shared branches
+Date: Thu, 13 Aug 2015 17:48:35 +0300
+Message-Id: <1439477317-1902-3-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1439477317-1902-1-git-send-email-georgi.djakov@linaro.org>
+References: <1439477317-1902-1-git-send-email-georgi.djakov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Michael Niewoehner (2015-08-17 12:50:53)
-> pclk_cpu needs to keep running because it is needed for devices like
-> the act8865 regulator but with the recent gpio clock handling this is
-> not always the case anymore. So add it to the list of critical clocks.
-> 
-> Signed-off-by: Michael Niewoehner <linux@mniewoehner.de>
+Some root clock generators may have child branches that are controlled
+by different CPUs. These RCGs require some special operations:
+ - some enable bits have to be toggled when we set the rate;
+ - if RCG is disabled we only cache the rate and set it later when enabled;
+ - when the RCG is disabled, the mux is set to the safe source;
 
-Patch fails to apply due to a problem with line 15. git format-patch
-problem?
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/clk/qcom/clk-rcg.h  |    4 ++-
+ drivers/clk/qcom/clk-rcg2.c |   77 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 80 insertions(+), 1 deletion(-)
 
-Regards,
-Mike
-
-> ---
-> Changes in v2:
-> - adapt commit message
-> - add Linus Walleij to recipients, as the patch is related to the gpio clock
->   change in the rockchip pinctrl driver it should go through his tree as well
-> 
-> drivers/clk/rockchip/clk-rk3188.c | 1 +
-> 1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-> index e4f9d47..1c93229 100644
-> --- a/drivers/clk/rockchip/clk-rk3188.c
-> +++ b/drivers/clk/rockchip/clk-rk3188.c
-> @@ -708,6 +708,7 @@ static const char *const rk3188_critical_clocks[] __initconst = {
->         "aclk_cpu",
->         "aclk_peri",
->         "hclk_peri",
-> +       "pclk_cpu",
-> };
-> 
-> static void __init rk3188_common_clk_init(struct device_node *np)
-> -- 
-> 2.5.0
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index 56028bb31d87..0693b9e0b15e 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -153,8 +153,8 @@ extern const struct clk_ops clk_dyn_rcg_ops;
+  * @hid_width: number of bits in half integer divider
+  * @parent_map: map from software's parent index to hardware's src_sel field
+  * @freq_tbl: frequency table
++ * @current_freq: last cached frequency when using branches with shared RCGs
+  * @clkr: regmap clock handle
+- * @lock: register lock
+  *
+  */
+ struct clk_rcg2 {
+@@ -163,12 +163,14 @@ struct clk_rcg2 {
+ 	u8			hid_width;
+ 	const struct parent_map	*parent_map;
+ 	const struct freq_tbl	*freq_tbl;
++	unsigned long		current_freq;
+ 	struct clk_regmap	clkr;
+ };
+ 
+ #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
+ 
+ extern const struct clk_ops clk_rcg2_ops;
++extern const struct clk_ops clk_rcg2_shared_ops;
+ extern const struct clk_ops clk_edp_pixel_ops;
+ extern const struct clk_ops clk_byte_ops;
+ extern const struct clk_ops clk_pixel_ops;
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 9aec1761fd29..681faf2dcdc5 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -300,6 +300,83 @@ const struct clk_ops clk_rcg2_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_ops);
+ 
++static int clk_rcg2_shared_force_enable(struct clk_hw *hw, unsigned long rate)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	const char *name = clk_hw_get_name(hw);
++	int ret, count;
++
++	/* force enable RCG */
++	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
++				 CMD_ROOT_EN, CMD_ROOT_EN);
++	if (ret)
++		return ret;
++
++	/* wait for RCG to turn ON */
++	for (count = 500; count > 0; count--) {
++		ret = clk_rcg2_is_enabled(hw);
++		if (ret)
++			break;
++		udelay(1);
++	}
++	if (!count)
++		pr_err("%s: RCG did not turn on\n", name);
++
++	/* set clock rate */
++	ret = __clk_rcg2_set_rate(hw, rate);
++	if (ret)
++		return ret;
++
++	/* clear force enable RCG */
++	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
++				 CMD_ROOT_EN, 0);
++}
++
++static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
++				    unsigned long parent_rate)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++
++	/* cache the rate */
++	rcg->current_freq = rate;
++
++	if (!__clk_is_enabled(hw->clk))
++		return 0;
++
++	return clk_rcg2_shared_force_enable(hw, rcg->current_freq);
++}
++
++static int clk_rcg2_shared_enable(struct clk_hw *hw)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	const char *name = clk_hw_get_name(hw);
++
++	if (!rcg->current_freq) {
++		pr_err("%s: Please set rate before enabling\n", name);
++		rcg->current_freq = rcg->freq_tbl[0].freq;
++	}
++
++	return clk_rcg2_shared_force_enable(hw, rcg->current_freq);
++}
++
++static void clk_rcg2_shared_disable(struct clk_hw *hw)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++
++	/* switch to XO, which is the lowest entry in the freq table */
++	clk_rcg2_shared_set_rate(hw, rcg->freq_tbl[0].freq, 0);
++}
++
++const struct clk_ops clk_rcg2_shared_ops = {
++	.enable = clk_rcg2_shared_enable,
++	.disable = clk_rcg2_shared_disable,
++	.get_parent = clk_rcg2_get_parent,
++	.recalc_rate = clk_rcg2_recalc_rate,
++	.determine_rate = clk_rcg2_determine_rate,
++	.set_rate = clk_rcg2_shared_set_rate,
++};
++EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
++
+ struct frac_entry {
+ 	int num;
+ 	int den;
