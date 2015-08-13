@@ -1,46 +1,126 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55CC56C4.8080201@linaro.org>
+Date: Thu, 13 Aug 2015 10:35:16 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20150825065932.GA29101@unicorn.suse.cz>
-References: <1439882205-10978-1-git-send-email-wens@csie.org>
- <20150824212828.GD14330@codeaurora.org> <CAGb2v67EhfgtbdLyFLd8xd6MMAnG4MGMvGLUTZxh=ag7XghvyA@mail.gmail.com>
- <20150825065932.GA29101@unicorn.suse.cz>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 25 Aug 2015 15:41:02 +0800
-Message-ID: <CAGb2v67a66VbpEs4SkDf8yCeuNxgHDtKxzpnGzxNnXvmkfZxAA@mail.gmail.com>
-Subject: Re: [PATCH] clk: Add missing header for 'bool' definition to clk-conf.h
-To: Michal Kubecek <mkubecek@suse.cz>
-Cc: Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	srv_heupstream <srv_heupstream@mediatek.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Olof Johansson <olof@lixom.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-mediatek@lists.infradead.org,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 1/5] clocksource: mediatek: do not enable GPT_CLK_EVT
+ when setup
+References: <CAGS+omD8k_Cfxv3bYyjmjtLbiavo-WmJPn0Z-CBhN_nnv65Tag@mail.gmail.com> <1437552878-3684-1-git-send-email-yingjoe.chen@mediatek.com>
+In-Reply-To: <1437552878-3684-1-git-send-email-yingjoe.chen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 25, 2015 at 2:59 PM, Michal Kubecek <mkubecek@suse.cz> wrote:
-> On Tue, Aug 25, 2015 at 10:55:28AM +0800, Chen-Yu Tsai wrote:
->> On Tue, Aug 25, 2015 at 5:28 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> > On 08/18, Chen-Yu Tsai wrote:
->> >> of_clk_set_defaults uses the type 'bool', but clk-conf.h does not
->> >> include its definition.
->> >>
->> >> This results in a compile error when only clk-conf.h is used.
->> >>
->> >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> >> Cc: stable@vger.kernel.org
->> >
->> > Why is stable Cc-ed? Is there some sort of compilation failure on
->> > stable kernels?
->>
->> There isn't for now. Though I don't see why we shouldn't fix this for
->> stable kernels as well. It's possible other people or third-party
->> vendors working with stable/LTS kernels (Android?) may run into it.
+On 07/22/2015 10:14 AM, Yingjoe Chen wrote:
+> Spurious mtk timer interrupt is noticed at boot and cause kernel
+> crash. It seems if GPT is enabled, it will latch irq status even
+> when its IRQ is disabled. When irq is enabled afterward, we see
+> spurious interrupt.
+> Change init flow to only enable GPT_CLK_SRC at mtk_timer_init.
 >
-> How about
+> Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
+> Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> ---
 >
->    - It must fix a real bug that bothers people (not a, "This could be a
->    problem..." type thing).
+> Update to my patch [1], added __init as Daniel suggest. This is the
+> only patch that need to change in that series, so I only sent this one.
 >
-> in Documentation/stable_kernel_rules.txt?
+> http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001545.html
+>
+>   drivers/clocksource/mtk_timer.c | 16 ++++++++++------
+>   1 file changed, 10 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/clocksource/mtk_timer.c b/drivers/clocksource/mtk_timer.c
+> index 68ab423..2ba5b66 100644
+> --- a/drivers/clocksource/mtk_timer.c
+> +++ b/drivers/clocksource/mtk_timer.c
+> @@ -156,9 +156,11 @@ static void mtk_timer_global_reset(struct mtk_clock_event_device *evt)
+>   	writel(0x3f, evt->gpt_base + GPT_IRQ_ACK_REG);
+>   }
+>
+> -static void
+> -mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
+> +static void __init mtk_timer_setup(struct mtk_clock_event_device *evt,
+> +				   u8 timer, u8 option, bool enable)
+>   {
+> +	u32 val;
+> +
+>   	writel(TIMER_CTRL_CLEAR | TIMER_CTRL_DISABLE,
+>   		evt->gpt_base + TIMER_CTRL_REG(timer));
+>
+> @@ -167,8 +169,10 @@ mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
+>
+>   	writel(0x0, evt->gpt_base + TIMER_CMP_REG(timer));
+>
+> -	writel(TIMER_CTRL_OP(option) | TIMER_CTRL_ENABLE,
+> -			evt->gpt_base + TIMER_CTRL_REG(timer));
+> +	val = TIMER_CTRL_OP(option);
+> +	if (enable)
+> +		val |= TIMER_CTRL_ENABLE;
+> +	writel(val, evt->gpt_base + TIMER_CTRL_REG(timer));
 
-My bad. I'll send a new version without the CC.
+Instead of the 'enable' new option, I prefer a test with 'timer' with a 
+comment:
 
-ChenYu
+	/*
+	 * the timer hw is broken in that way ... bla bla, so we only
+	 * enable the clocksource ...
+	 */
+	if (timer == GPT_CLK_SRC)
+		val |= TIMER_CTRL_ENABLE;
+
+That said, can you have a look at commit 1096be08 ?
+"clockevents: sun5i: Fix setup_irq init sequence"
+
+first and check if moving the interrupt request after the 
+clockevents_config_and_register could fix your issue.
+
+>   }
+>
+>   static void mtk_timer_enable_irq(struct mtk_clock_event_device *evt, u8 timer)
+> @@ -235,12 +239,12 @@ static void __init mtk_timer_init(struct device_node *node)
+>   	evt->ticks_per_jiffy = DIV_ROUND_UP(rate, HZ);
+>
+>   	/* Configure clock source */
+> -	mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN);
+> +	mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN, true);
+>   	clocksource_mmio_init(evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC),
+>   			node->name, rate, 300, 32, clocksource_mmio_readl_up);
+>
+>   	/* Configure clock event */
+> -	mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT);
+> +	mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT, false);
+>   	clockevents_config_and_register(&evt->dev, rate, 0x3,
+>   					0xffffffff);
+
+
+
+
+-- 
+  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
