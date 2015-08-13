@@ -1,84 +1,70 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 25 Aug 2015 08:55:56 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
-	mturquette@baylibre.com, k.kozlowski@samsung.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH-v2 2/5] mfd: 88pm800: Update the header file with 32K clk
- related macros
-Message-ID: <20150825075556.GG19409@x1>
-References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
- <1440442594-3102-4-git-send-email-vaibhav.hiremath@linaro.org>
+Return-Path: <abrestic@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1440442594-3102-4-git-send-email-vaibhav.hiremath@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: abrestic@google.com
+In-Reply-To: <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
+References: <1439421161-17868-1-git-send-email-sboyd@codeaurora.org>
+	<1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
+Date: Thu, 13 Aug 2015 09:40:07 -0700
+Message-ID: <CAL1qeaE-UJD3CBx=6feF=Hu4=gu5AtQiWwQAZmbg+6qYLhOy2Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: Convert __clk_get_name(hw->clk) to clk_hw_get_name(hw)
+From: Andrew Bresticker <abrestic@chromium.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>,
+	Kevin Cernekee <cernekee@chromium.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-omap@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
+On Wed, Aug 12, 2015 at 4:12 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> Use the provider based method to get a clock's name so that we
+> can get rid of the clk member in struct clk_hw one day. Mostly
+> converted with the following coccinelle script.
+>
+> @@
+> struct clk_hw *E;
+> @@
+>
+> -__clk_get_name(E->clk)
+> +clk_hw_get_name(E)
+>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Andrew Bresticker <abrestic@chromium.org>
+> Cc: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Kevin Cernekee <cernekee@chromium.org>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-rockchip@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-> Update header file with required macros for 32KHz buffered clock
-> output of 88PM800 family of device.
-> These macros will be used in clk provider driver.
-> 
-> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-> ---
->  include/linux/mfd/88pm80x.h | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/include/linux/mfd/88pm80x.h b/include/linux/mfd/88pm80x.h
-> index 122cfd2..0215d5f 100644
-> --- a/include/linux/mfd/88pm80x.h
-> +++ b/include/linux/mfd/88pm80x.h
-> @@ -91,6 +91,7 @@ enum {
->  /* Referance and low power registers */
->  #define PM800_LOW_POWER1		(0x20)
->  #define PM800_LOW_POWER2		(0x21)
-> +#define PM800_LOW_POWER2_XO_LJ_EN	BIT(5)
+>  drivers/clk/pistachio/clk-pll.c      |  4 ++--
 
-Some people add an extra space for register bits, which I quite like.
+For Pistachio,
 
-So:
-
-#define SOME_REGISTER_ADDRESS	0x123
-#define  SOME_BIT_VALUE		BIT(4)
-
-Feel free to use it, or not.
-
->  #define PM800_LOW_POWER_CONFIG3		(0x22)
->  #define PM800_LDOBK_FREEZE		BIT(7)
-> @@ -138,6 +139,13 @@ enum {
->  #define PM800_ALARM			BIT(5)
->  #define PM800_RTC1_USE_XO		BIT(7)
->  
-> +#define PM800_32K_OUTX_SEL_MASK		0x3
-> +/* 32KHz clk output sel mode */
-> +#define PM800_32K_OUTX_SEL_ZERO		0x0
-> +#define PM800_32K_OUTX_SEL_INT_32KHZ	0x1
-> +#define PM800_32K_OUTX_SEL_XO_32KHZ	0x2
-> +#define PM800_32K_OUTX_SEL_HIZ		0x3
-> +
->  /* Regulator Control Registers: BUCK1,BUCK5,LDO1 have DVC */
->  
->  /* buck registers */
-> @@ -208,6 +216,10 @@ enum {
->  #define PM800_PMOD_MEAS1		0x52
->  #define PM800_PMOD_MEAS2		0x53
->  
-> +/* Oscillator control */
-> +#define PM800_OSC_CNTRL1		0x50
-> +#define PM800_OSC_CNTRL1_OSC_FREERUN_EN	BIT(1)
-
-0x50 goes before 0x52 (and 0x51 if it's there).
-
->  #define PM800_GPADC0_MEAS1		0x54
->  #define PM800_GPADC0_MEAS2		0x55
->  #define PM800_GPADC1_MEAS1		0x56
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Acked-by: Andrew Bresticker <abrestic@chromium.org>
