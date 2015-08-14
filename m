@@ -1,91 +1,68 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	devicetree@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v5 3/3] ARM: bcm2835: Add DT for the firmware clocks driver.
-Date: Thu, 13 Aug 2015 16:05:42 -0700
-Message-Id: <1439507142-2965-4-git-send-email-eric@anholt.net>
-In-Reply-To: <1439507142-2965-1-git-send-email-eric@anholt.net>
-References: <1439507142-2965-1-git-send-email-eric@anholt.net>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 13 Aug 2015 18:01:09 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dong Aisheng <aisheng.dong@freescale.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mturquette@linaro.org, shawnguo@kernel.org, b29396@freescale.com,
+	linux-arm-kernel@lists.infradead.org,
+	Ranjani.Vaidyanathan@freescale.com, b20596@freescale.com,
+	r64343@freescale.com, b20788@freescale.com
+Subject: Re: [PATCH V3 4/5] clk: core: add CLK_OPS_PARENT_ON flags to support
+ clocks require parent on
+Message-ID: <20150814010109.GW26614@codeaurora.org>
+References: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
+ <1438089585-30103-5-git-send-email-aisheng.dong@freescale.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1438089585-30103-5-git-send-email-aisheng.dong@freescale.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Acked-by: Lee Jones <lee@kernel.org>
----
+On 07/28, Dong Aisheng wrote:
+> On Freescale i.MX7D platform, all clocks operations, including
+> enable/disable, rate change and re-parent, requires its parent
+> clock on. Current clock core can not support it well.
+> This patch introduce a new flag CLK_OPS_PARENT_ON to handle this
+> special case in clock core that enable its parent clock firstly for
+> each operation and disable it later after operation complete.
+> 
+> This patch fixes disaling clocks while its parent is off.
+> This is a special case that is caused by a state mis-align between
+> HW and SW in clock tree during booting.
+> Usually in uboot, we may enable all clocks in HW by default.
+> And during kernel booting time, the parent clock could be disabled in its
+> driver probe due to calling clk_prepare_enable and clk_disable_unprepare.
+> Because it's child clock is only enabled in HW while its SW usecount
+> in clock tree is still 0, so clk_disable of parent clock will gate
+> the parent clock in both HW and SW usecount ultimately.
+> Then there will be a clock is on in HW while its parent is disabled.
+> 
+> Later when clock core does clk_disable_unused, this clock disable
+> will cause system hang due to the limitation of operation requiring
+> its parent clock on.
+> 
+> Cc: Mike Turquette <mturquette@linaro.org>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
+> ---
 
-v2: Rename our compat string to mention bcm2835, and make our firmware
-    phandle be under a vendor-namespaced property.
+Sorry, I still don't agree with this patch. There's no reason we
+should be turning on clocks during late init so that we can turn
+off clocks. If there's some sort of problem in doing that we
+should figure it out and make it so that during late init we turn
+off clocks from the leaves of the tree to the root.
 
-v3: Squashed in the patches to reference the other clocks, to avoid
-    regressions now that we register all clocks at boot.  Dropped
-    Stephen's ack, since he hadn't acked the new EMMC change yet.
+I agree that there's a problem here where we don't properly
+handle keeping children clocks on if a driver comes in and turns
+off a clock in the middle of the tree before late init. That's a
+real bug, and we should fix it. Mike Turquette has been doing
+some work to have a way to indicate that certain clocks should be
+kept on until client drivers grab them. I think it will also make
+sure to up refcounts on parent clocks in the middle of the tree
+when it figures out that a child clock is enabled. Would that be
+all that we need to do to fix this problem?
 
- arch/arm/boot/dts/bcm2835-rpi.dtsi | 18 ++++++++++++++++++
- arch/arm/boot/dts/bcm2835.dtsi     |  3 +--
- 2 files changed, 19 insertions(+), 2 deletions(-)
+Also, the subject of this patch and patch 5 are the same. Why?
 
-diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
-index ab5474e..5d370cb 100644
---- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
-+++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
-@@ -1,3 +1,4 @@
-+#include <dt-bindings/clk/raspberrypi.h>
- #include "bcm2835.dtsi"
- 
- / {
-@@ -20,6 +21,12 @@
- 			compatible = "raspberrypi,bcm2835-firmware";
- 			mboxes = <&mailbox>;
- 		};
-+
-+		firmware_clocks: firmware-clocks {
-+			compatible = "raspberrypi,bcm2835-firmware-clocks";
-+			#clock-cells = <1>;
-+			raspberrypi,firmware = <&firmware>;
-+		};
- 	};
- };
- 
-@@ -55,4 +62,15 @@
- &sdhci {
- 	status = "okay";
- 	bus-width = <4>;
-+	clocks = <&firmware_clocks RPI_CLOCK_EMMC>;
-+};
-+
-+&uart0 {
-+	clocks = <&firmware_clocks RPI_CLOCK_UART0>,
-+		 <&firmware_clocks RPI_CLOCK_CORE>;
-+	clock-names = "uartclk", "apb_pclk";
-+};
-+
-+&spi {
-+	clocks = <&firmware_clocks RPI_CLOCK_CORE>;
- };
-diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
-index 301c73f..5be2862 100644
---- a/arch/arm/boot/dts/bcm2835.dtsi
-+++ b/arch/arm/boot/dts/bcm2835.dtsi
-@@ -92,11 +92,10 @@
- 			#interrupt-cells = <2>;
- 		};
- 
--		uart@7e201000 {
-+		uart0: uart@7e201000 {
- 			compatible = "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
- 			reg = <0x7e201000 0x1000>;
- 			interrupts = <2 25>;
--			clock-frequency = <3000000>;
- 			arm,primecell-periphid = <0x00241011>;
- 		};
- 
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
