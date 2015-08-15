@@ -1,175 +1,153 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v3 1/3] clk: Add safe switch hook
-Date: Wed, 12 Aug 2015 16:54:31 +0300
-Message-Id: <1439387673-13015-2-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1439387673-13015-1-git-send-email-georgi.djakov@linaro.org>
-References: <1439387673-13015-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Scott Wood <scottwood@freescale.com>
+To: Mike Turquette <mturquette@linaro.org>,
+	Tang Yuantian <Yuantian.Tang@freescale.com>
+CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Liberman Igal-B31950 <Igal.Liberman@freescale.com>,
+	Bucur Madalin-Cristian-B32716 <madalin.bucur@freescale.com>,
+	<linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
+	Scott Wood <scottwood@freescale.com>
+Subject: [PATCH v2 1/5] cpufreq: qoriq: Don't look at clock implementation details
+Date: Sat, 15 Aug 2015 01:41:18 -0500
+Message-ID: <1439620882-20449-2-git-send-email-scottwood@freescale.com>
+In-Reply-To: <1439620882-20449-1-git-send-email-scottwood@freescale.com>
+References: <1439620882-20449-1-git-send-email-scottwood@freescale.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Get the CPU clock's potential parent clocks from the clock interface
+itself, rather than manually parsing the clocks property to find a
+phandle, looking at the clock-names property of that, and assuming that
+those are valid parent clocks for the cpu clock.
 
-Sometimes clocks can't accept their parent source turning off
-while the source is reprogrammed to a different rate. Most
-notably CPU clocks require a way to switch away from the current
-PLL they're running on, reprogram that PLL to a new rate, and
-then switch back to the PLL with the new rate once they're done.
-Add a hook that drivers can implement allowing them to return a
-'safe parent' and 'safe frequency' that they can switch their
-parent to while the upstream source is reprogrammed to support
-this.
+This is necessary for cpufreq to continue working once the clocks
+are generated based on the clock driver's knowledge of the chip
+rather than a fragile device-tree description of the mux options.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Signed-off-by: Scott Wood <scottwood@freescale.com>
 ---
- drivers/clk/clk.c            |   73 +++++++++++++++++++++++++++++++++++++++---
- include/linux/clk-provider.h |    2 ++
- 2 files changed, 70 insertions(+), 5 deletions(-)
+v2: non-RFC
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 128ad748b682..df5f5b65833c 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -51,9 +51,13 @@ struct clk_core {
- 	struct clk_core		**parents;
- 	u8			num_parents;
- 	u8			new_parent_index;
-+	u8			safe_parent_index;
- 	unsigned long		rate;
- 	unsigned long		req_rate;
-+	unsigned long		old_rate;
- 	unsigned long		new_rate;
-+	unsigned long		safe_freq;
-+	struct clk_core		*safe_parent;
- 	struct clk_core		*new_parent;
- 	struct clk_core		*new_child;
- 	unsigned long		flags;
-@@ -1271,7 +1275,9 @@ out:
- static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
- 			     struct clk_core *new_parent, u8 p_index)
- {
--	struct clk_core *child;
-+	struct clk_core *child, *parent;
-+	struct clk_hw *parent_hw;
-+	unsigned long safe_freq = 0;
+ drivers/cpufreq/qoriq-cpufreq.c | 47 ++++++++++++++++-------------------------
+ 1 file changed, 18 insertions(+), 29 deletions(-)
+
+diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
+index 358f075..32ab99e 100644
+--- a/drivers/cpufreq/qoriq-cpufreq.c
++++ b/drivers/cpufreq/qoriq-cpufreq.c
+@@ -11,6 +11,7 @@
+ #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
  
- 	core->new_rate = new_rate;
- 	core->new_parent = new_parent;
-@@ -1281,6 +1287,23 @@ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
- 	if (new_parent && new_parent != core->parent)
- 		new_parent->new_child = core;
- 
-+	if (core->ops->get_safe_parent) {
-+		parent_hw = core->ops->get_safe_parent(core->hw, &safe_freq);
-+		if (parent_hw) {
-+			parent = parent_hw->core;
-+			p_index = clk_fetch_parent_index(core, parent);
-+			core->safe_parent_index = p_index;
-+			core->safe_parent = parent;
-+			if (safe_freq)
-+				core->safe_freq = safe_freq;
-+			else
-+				core->safe_freq = 0;
-+		}
-+	} else {
-+		core->safe_parent = NULL;
-+		core->safe_freq = 0;
-+	}
-+
- 	hlist_for_each_entry(child, &core->children, child_node) {
- 		child->new_rate = clk_recalc(child, new_rate);
- 		clk_calc_subtree(child, child->new_rate, NULL, 0);
-@@ -1393,14 +1416,51 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
- 						  unsigned long event)
- {
- 	struct clk_core *child, *tmp_clk, *fail_clk = NULL;
-+	struct clk_core *old_parent;
- 	int ret = NOTIFY_DONE;
- 
--	if (core->rate == core->new_rate)
-+	if (core->rate == core->new_rate && event != POST_RATE_CHANGE)
- 		return NULL;
- 
-+	switch (event) {
-+	case PRE_RATE_CHANGE:
-+		if (core->safe_parent) {
-+			if (core->safe_freq)
-+				core->ops->set_rate_and_parent(core->hw,
-+						core->safe_freq,
-+						core->safe_parent->rate,
-+						core->safe_parent_index);
-+			else
-+				core->ops->set_parent(core->hw,
-+						core->safe_parent_index);
-+		}
-+		core->old_rate = core->rate;
-+		break;
-+	case POST_RATE_CHANGE:
-+		if (core->safe_parent) {
-+			old_parent = __clk_set_parent_before(core,
-+							     core->new_parent);
-+			if (core->ops->set_rate_and_parent) {
-+				core->ops->set_rate_and_parent(core->hw,
-+						core->new_rate,
-+						core->new_parent ?
-+						core->new_parent->rate : 0,
-+						core->new_parent_index);
-+			} else if (core->ops->set_parent) {
-+				core->ops->set_parent(core->hw,
-+						core->new_parent_index);
-+			}
-+			__clk_set_parent_after(core, core->new_parent,
-+					       old_parent);
-+		}
-+		break;
-+	}
-+
- 	if (core->notifier_count) {
--		ret = __clk_notify(core, event, core->rate, core->new_rate);
--		if (ret & NOTIFY_STOP_MASK)
-+		if (event != POST_RATE_CHANGE || core->old_rate != core->rate)
-+			ret = __clk_notify(core, event, core->old_rate,
-+					   core->new_rate);
-+		if (ret & NOTIFY_STOP_MASK && event != POST_RATE_CHANGE)
- 			fail_clk = core;
- 	}
- 
-@@ -1443,7 +1503,8 @@ static void clk_change_rate(struct clk_core *core)
- 	else if (core->parent)
- 		best_parent_rate = core->parent->rate;
- 
--	if (core->new_parent && core->new_parent != core->parent) {
-+	if (core->new_parent && core->new_parent != core->parent &&
-+	    !core->safe_parent) {
- 		old_parent = __clk_set_parent_before(core, core->new_parent);
- 		trace_clk_set_parent(core, core->new_parent);
- 
-@@ -1527,6 +1588,8 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 
- 	core->req_rate = req_rate;
- 
-+	clk_propagate_rate_change(top, POST_RATE_CHANGE);
-+
- 	return ret;
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/cpufreq.h>
+ #include <linux/errno.h>
+ #include <linux/init.h>
+@@ -99,9 +100,10 @@ static u32 get_bus_freq(void)
+ 	return sysfreq;
  }
  
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 0d3128fbc14e..173f681001f2 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -202,6 +202,8 @@ struct clk_ops {
- 					  struct clk_rate_request *req);
- 	int		(*set_parent)(struct clk_hw *hw, u8 index);
- 	u8		(*get_parent)(struct clk_hw *hw);
-+	struct clk_hw	*(*get_safe_parent)(struct clk_hw *hw,
-+					    unsigned long *safe_freq);
- 	int		(*set_rate)(struct clk_hw *hw, unsigned long rate,
- 				    unsigned long parent_rate);
- 	int		(*set_rate_and_parent)(struct clk_hw *hw,
+-static struct device_node *cpu_to_clk_node(int cpu)
++static struct clk *cpu_to_clk(int cpu)
+ {
+-	struct device_node *np, *clk_np;
++	struct device_node *np;
++	struct clk *clk;
+ 
+ 	if (!cpu_present(cpu))
+ 		return NULL;
+@@ -110,37 +112,32 @@ static struct device_node *cpu_to_clk_node(int cpu)
+ 	if (!np)
+ 		return NULL;
+ 
+-	clk_np = of_parse_phandle(np, "clocks", 0);
+-	if (!clk_np)
+-		return NULL;
+-
++	clk = of_clk_get(np, 0);
+ 	of_node_put(np);
+-
+-	return clk_np;
++	return clk;
+ }
+ 
+ /* traverse cpu nodes to get cpu mask of sharing clock wire */
+ static void set_affected_cpus(struct cpufreq_policy *policy)
+ {
+-	struct device_node *np, *clk_np;
+ 	struct cpumask *dstp = policy->cpus;
++	struct clk *clk;
++	const char *ourname, *theirname;
+ 	int i;
+ 
+-	np = cpu_to_clk_node(policy->cpu);
+-	if (!np)
+-		return;
++	ourname = __clk_get_name(policy->clk);
+ 
+ 	for_each_present_cpu(i) {
+-		clk_np = cpu_to_clk_node(i);
+-		if (!clk_np)
++		clk = cpu_to_clk(i);
++		if (IS_ERR(clk)) {
++			pr_err("%s: no clock for cpu %d\n", __func__, i);
+ 			continue;
++		}
+ 
+-		if (clk_np == np)
++		theirname = __clk_get_name(clk);
++		if (!strcmp(ourname, theirname))
+ 			cpumask_set_cpu(i, dstp);
+-
+-		of_node_put(clk_np);
+ 	}
+-	of_node_put(np);
+ }
+ 
+ /* reduce the duplicated frequencies in frequency table */
+@@ -219,17 +216,12 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 		goto err_nomem2;
+ 	}
+ 
+-	pnode = of_parse_phandle(np, "clocks", 0);
+-	if (!pnode) {
+-		pr_err("%s: could not get clock information\n", __func__);
+-		goto err_nomem2;
+-	}
++	count = __clk_get_num_parents(policy->clk);
+ 
+-	count = of_property_count_strings(pnode, "clock-names");
+ 	data->pclk = kcalloc(count, sizeof(struct clk *), GFP_KERNEL);
+ 	if (!data->pclk) {
+ 		pr_err("%s: no memory\n", __func__);
+-		goto err_node;
++		goto err_nomem2;
+ 	}
+ 
+ 	table = kcalloc(count + 1, sizeof(*table), GFP_KERNEL);
+@@ -244,7 +236,7 @@ static int qoriq_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 		mask = 0x0;
+ 
+ 	for (i = 0; i < count; i++) {
+-		clk = of_clk_get(pnode, i);
++		clk = clk_get_parent_by_index(policy->clk, i);
+ 		data->pclk[i] = clk;
+ 		freq = clk_get_rate(clk);
+ 		/*
+@@ -288,10 +280,7 @@ err_nomem1:
+ 	kfree(table);
+ err_pclk:
+ 	kfree(data->pclk);
+-err_node:
+-	of_node_put(pnode);
+ err_nomem2:
+-	policy->driver_data = NULL;
+ 	kfree(data);
+ err_np:
+ 	of_node_put(np);
+-- 
+2.1.4
+
