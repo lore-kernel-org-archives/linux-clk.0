@@ -1,33 +1,74 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <scottwood@freescale.com>
+From: Scott Wood <scottwood@freescale.com>
+To: Mike Turquette <mturquette@linaro.org>, Tang Yuantian
+	<Yuantian.Tang@freescale.com>
+CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Liberman Igal-B31950
+	<Igal.Liberman@freescale.com>, Bucur Madalin-Cristian-B32716
+	<madalin.bucur@freescale.com>, <linux-clk@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<devicetree@vger.kernel.org>, Scott Wood <scottwood@freescale.com>
+Subject: [PATCH v2 0/5] clk: qoriq: Move chip-specific knowledge into driver
+Date: Sat, 15 Aug 2015 01:41:17 -0500
+Message-ID: <1439620882-20449-1-git-send-email-scottwood@freescale.com>
 MIME-Version: 1.0
-In-Reply-To: <1438262365-29164-1-git-send-email-linus.walleij@linaro.org>
-References: <1438262365-29164-1-git-send-email-linus.walleij@linaro.org>
-Date: Wed, 12 Aug 2015 14:02:50 +0200
-Message-ID: <CACRpkdZJKNph9cbJvBMQKdOCe0L8kKP=AEDaYqtBuc9vxxKPeg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk/ARM: move Ux500 PRCC bases to the device tree
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, "arm@kernel.org" <arm@kernel.org>
-Cc: linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Return-Path: scottwood@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jul 30, 2015 at 3:19 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+The existing device tree bindings are error-prone and inflexible. 
+Correct the mistake by moving the knowledge into the driver, which
+has more flexibility in describing the quirks of each chip.  This leaves
+the device tree to its proper role of identifying a programming interface
+rather than describing its individual registers.
 
-> The base addresses for the Ux500 PRCC controllers are hardcoded,
-> let's move them to the clock node in the device tree and delete
-> the constants.
->
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Ulf/Mike: please ACK this so I can take it through ARM SoC.
+For more detail, see the commit message of patch 3.
 
-It appears this needs to go through the clk tree with the rest
-(1/3, 3/3).
+Scott Wood (5):
+  cpufreq: qoriq: Don't look at clock implementation details
+  powerpc/fsl: Move fsl_guts.h out of arch/powerpc
+  clk: qoriq: Move chip-specific knowledge into driver
+  cpufreq: qoriq: Remove frequency masking and minimum
+  powerpc/fsl: Use new clockgen binding
 
-Can I have an ACK from the ARM SoC people so they know
-this is happening?
+ .../devicetree/bindings/clock/qoriq-clock.txt      |   61 +-
+ arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi         |    4 +-
+ arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi         |    8 +-
+ arch/powerpc/boot/dts/fsl/b4si-post.dtsi           |   15 -
+ arch/powerpc/boot/dts/fsl/p2041si-post.dtsi        |   18 -
+ arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi         |    8 +-
+ arch/powerpc/boot/dts/fsl/p3041si-post.dtsi        |   18 -
+ arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi         |    8 +-
+ arch/powerpc/boot/dts/fsl/p4080si-post.dtsi        |   70 --
+ arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi         |   16 +-
+ arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi         |    4 +-
+ arch/powerpc/boot/dts/fsl/p5040si-post.dtsi        |   18 -
+ arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi         |    8 +-
+ arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi     |   50 +-
+ arch/powerpc/boot/dts/fsl/qoriq-clockgen2.dtsi     |   33 +-
+ arch/powerpc/boot/dts/fsl/t1023si-post.dtsi        |   16 -
+ arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi         |    4 +-
+ arch/powerpc/boot/dts/fsl/t1040si-post.dtsi        |   44 -
+ arch/powerpc/boot/dts/fsl/t104xsi-pre.dtsi         |    8 +-
+ arch/powerpc/boot/dts/fsl/t2081si-post.dtsi        |   22 -
+ arch/powerpc/boot/dts/fsl/t208xsi-pre.dtsi         |    8 +-
+ arch/powerpc/boot/dts/fsl/t4240si-post.dtsi        |   61 -
+ arch/powerpc/boot/dts/fsl/t4240si-pre.dtsi         |   24 +-
+ arch/powerpc/platforms/85xx/mpc85xx_mds.c          |    2 +-
+ arch/powerpc/platforms/85xx/mpc85xx_rdb.c          |    2 +-
+ arch/powerpc/platforms/85xx/p1022_ds.c             |    2 +-
+ arch/powerpc/platforms/85xx/p1022_rdk.c            |    2 +-
+ arch/powerpc/platforms/85xx/smp.c                  |    2 +-
+ arch/powerpc/platforms/85xx/twr_p102x.c            |    2 +-
+ arch/powerpc/platforms/86xx/mpc8610_hpcd.c         |    2 +-
+ drivers/clk/clk-qoriq.c                            | 1260 ++++++++++++++++----
+ drivers/cpufreq/qoriq-cpufreq.c                    |  139 +--
+ drivers/iommu/fsl_pamu.c                           |    2 +-
+ .../asm/fsl_guts.h => include/linux/fsl/guts.h     |    6 +-
+ sound/soc/fsl/mpc8610_hpcd.c                       |    2 +-
+ sound/soc/fsl/p1022_ds.c                           |    2 +-
+ sound/soc/fsl/p1022_rdk.c                          |    2 +-
+ 37 files changed, 1176 insertions(+), 777 deletions(-)
+ rename arch/powerpc/include/asm/fsl_guts.h => include/linux/fsl/guts.h (98%)
 
-Yours,
-Linus Walleij
+-- 
+2.1.4
