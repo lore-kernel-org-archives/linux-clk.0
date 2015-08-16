@@ -1,39 +1,45 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20150829091407.28546.23953.sendpatchset@little-apple>
-References: <20150829091323.28546.28287.sendpatchset@little-apple>
-	<20150829091407.28546.23953.sendpatchset@little-apple>
-Date: Mon, 31 Aug 2015 10:47:23 +0200
-Message-ID: <CAMuHMdU-3Ph19QQ1jj=RHYRfKwVe+oG8ECP8Z+Nyte7Yqqur=g@mail.gmail.com>
-Subject: Re: [PATCH v4 04/05] clk: shmobile: Add r8a7795 SoC to MSTP bindings
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
-	Linux-sh list <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
+	linux-clk@vger.kernel.org,
+	ezequiel@vanguardiasur.com.ar
+Subject: [PATCH 0/2] Fix unused clock disabling on LPC18xx
+Date: Sun, 16 Aug 2015 23:08:32 +0200
+Message-Id: <1439759314-12494-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Aug 29, 2015 at 11:14 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->
-> Add r8a7795 to the MSTP DT binding documentation.
->
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+I have finally managed to track down the reason for the hang that would
+occur when disabling clocks on lpc18xx under certain conditions. These
+conditions depend on boot mode used, what the boot loader does and if
+certain devices are enabled.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+One of reasons why it took me a while was that my primary platform was
+not affected by it and the data sheet has a rather misleading typo.
 
-Gr{oetje,eeting}s,
+The hang will occur if the boot rom/loader doesn't setup USB0 clocks
+and if certain AMBA devices are enabled (PL022 SSP and maybe others).
 
-                        Geert
+Cause of the hang is that the CCU registers can not be accessed if the
+base (parent) clock is not enabled. To make sure the parent is running
+a check for this has been added to the is_enabled clk_ops callback.
+Since clocks in the CGU can be cascaded this check must also be added
+here.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Maybe this check to see if the parent clock is running clock be added
+to the clk core and enabled with a flag(?) For now this patch set fixes
+the issue seen on lpc18xx.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+Joachim Eastwood (2):
+  clk: lpc18xx-ccu: fix potential system hang when disabling unused clocks
+  clk: lpc18xx-cgu: fix potential system hang when disabling unused clocks
+
+ drivers/clk/nxp/clk-lpc18xx-ccu.c | 14 +++++++++++++
+ drivers/clk/nxp/clk-lpc18xx-cgu.c | 42 ++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 53 insertions(+), 3 deletions(-)
+
+-- 
+1.8.0
