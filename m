@@ -1,88 +1,56 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <govindraj.raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Govindraj Raja
-	<govindraj.raja@imgtec.com>
-Subject: [PATCH v2 4/4] clk: pistachio: correct critical clock list
-Date: Fri, 7 Aug 2015 17:20:13 +0100
-Message-ID: <1438964413-18876-5-git-send-email-govindraj.raja@imgtec.com>
-In-Reply-To: <1438964413-18876-1-git-send-email-govindraj.raja@imgtec.com>
-References: <1438964413-18876-1-git-send-email-govindraj.raja@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
+	linux-clk@vger.kernel.org,
+	ezequiel@vanguardiasur.com.ar
+Subject: [PATCH 1/2] clk: lpc18xx-ccu: fix potential system hang when disabling unused clocks
+Date: Sun, 16 Aug 2015 23:08:33 +0200
+Message-Id: <1439759314-12494-2-git-send-email-manabian@gmail.com>
+In-Reply-To: <1439759314-12494-1-git-send-email-manabian@gmail.com>
+References: <1439759314-12494-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: "Damien.Horsley" <Damien.Horsley@imgtec.com>
+CCU branch clock register must only be accessed while the base
+(parent) clock is running. Access with a disabled base clock
+will cause the system to hang. Fix this issue by adding code
+that check if the parent clock is running in the is_enabled
+clk_ops callback.
 
-Current critical clock list for pistachio enables
-only mips and sys clocks by default but there also
-other clocks that are not claimed by anyone and
-needs to be enabled by default.
+This hang would occur when disabling unused clocks after AMBA
+runtime pm had already disabled some of the clocks.
 
-This patch updates the critical clocks that needs
-to enabled by default.
-
-Add a separate struct to distinguish the critical clocks
-one is core clock(mips) and others are from periph_clk_*
-
-Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
-Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-Signed-off-by: Damien.Horsley <Damien.Horsley@imgtec.com>
-Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+Signed-off-by: Joachim Eastwood <manabian@gmail.com>
 ---
- drivers/clk/pistachio/clk-pistachio.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/clk/nxp/clk-lpc18xx-ccu.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
-index 8c0fe88..c4ceb5e 100644
---- a/drivers/clk/pistachio/clk-pistachio.c
-+++ b/drivers/clk/pistachio/clk-pistachio.c
-@@ -159,9 +159,15 @@ PNAME(mux_debug) = { "mips_pll_mux", "rpu_v_pll_mux",
- 		     "wifi_pll_mux", "bt_pll_mux" };
- static u32 mux_debug_idx[] = { 0x0, 0x1, 0x2, 0x4, 0x8, 0x10 };
- 
--static unsigned int pistachio_critical_clks[] __initdata = {
--	CLK_MIPS,
--	CLK_PERIPH_SYS,
-+static unsigned int pistachio_critical_clks_core[] __initdata = {
-+	CLK_MIPS
-+};
+diff --git a/drivers/clk/nxp/clk-lpc18xx-ccu.c b/drivers/clk/nxp/clk-lpc18xx-ccu.c
+index eeaee97da110..1845476e635e 100644
+--- a/drivers/clk/nxp/clk-lpc18xx-ccu.c
++++ b/drivers/clk/nxp/clk-lpc18xx-ccu.c
+@@ -180,6 +180,20 @@ static void lpc18xx_ccu_gate_disable(struct clk_hw *hw)
+ static int lpc18xx_ccu_gate_is_enabled(struct clk_hw *hw)
+ {
+ 	struct clk_gate *gate = to_clk_gate(hw);
++	struct clk *parent;
 +
-+static unsigned int pistachio_critical_clks_sys[] __initdata = {
-+	PERIPH_CLK_SYS,
-+	PERIPH_CLK_SYS_BUS,
-+	PERIPH_CLK_DDR,
-+	PERIPH_CLK_ROM,
- };
- 
- static void __init pistachio_clk_init(struct device_node *np)
-@@ -193,8 +199,8 @@ static void __init pistachio_clk_init(struct device_node *np)
- 
- 	pistachio_clk_register_provider(p);
- 
--	pistachio_clk_force_enable(p, pistachio_critical_clks,
--				   ARRAY_SIZE(pistachio_critical_clks));
-+	pistachio_clk_force_enable(p, pistachio_critical_clks_core,
-+				   ARRAY_SIZE(pistachio_critical_clks_core));
- }
- CLK_OF_DECLARE(pistachio_clk, "img,pistachio-clk", pistachio_clk_init);
- 
-@@ -261,6 +267,9 @@ static void __init pistachio_clk_periph_init(struct device_node *np)
- 				    ARRAY_SIZE(pistachio_periph_gates));
- 
- 	pistachio_clk_register_provider(p);
++	/*
++	 * The branch clock registers are only accessible
++	 * if the base (parent) clock is enabled. Register
++	 * access with a disabled base clock will hang the
++	 * system.
++	 */
++	parent = clk_get_parent(hw->clk);
++	if (IS_ERR(parent))
++		return 0;
 +
-+	pistachio_clk_force_enable(p, pistachio_critical_clks_sys,
-+				   ARRAY_SIZE(pistachio_critical_clks_sys));
++	if (!__clk_is_enabled(parent))
++		return 0;
+ 
+ 	return clk_readl(gate->reg) & LPC18XX_CCU_RUN;
  }
- CLK_OF_DECLARE(pistachio_clk_periph, "img,pistachio-clk-periph",
- 	       pistachio_clk_periph_init);
 -- 
-1.9.1
+1.8.0
