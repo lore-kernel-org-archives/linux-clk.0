@@ -1,90 +1,97 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Maxime Coquelin <maxime.coquelin@st.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <55C8AB87.3040107@st.com>
-Cc: sboyd@codeaurora.org, lee.jones@linaro.org,
-	maxime.ripard@free-electrons.com, s.hauer@pengutronix.de,
-	geert@linux-m68k.org
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
- <1438974570-20812-2-git-send-email-mturquette@baylibre.com>
- <55C8AB87.3040107@st.com>
-Message-ID: <20150810193127.2416.16149@quantum>
-Subject: Re: [PATCH RFC RFT 1/3] clk: per-user clk prepare & enable ref counts
-Date: Mon, 10 Aug 2015 12:31:27 -0700
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sender163-mail.zoho.com ([74.201.84.163]:25189 "EHLO
+	sender163-mail.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751148AbbHQSvb convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 17 Aug 2015 14:51:31 -0400
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 7.3 \(1878.6\))
+Subject: Re: [PATCH] clk: rockchip: add pclk_cpu to the list of rk3188 critical clocks
+From: Michael Niewoehner <linux@mniewoehner.de>
+In-Reply-To: <5275855.eah07vmf4I@phil>
+Date: Mon, 17 Aug 2015 20:51:14 +0200
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linus.walleij@linaro.org
+Message-Id: <9DBF9CCE-196E-43FB-BA76-BFB4B5F47A22@mniewoehner.de>
+References: <5400BEF8-5245-4F7B-845B-D326A7BC56B5@mniewoehner.de> <5275855.eah07vmf4I@phil>
+To: Heiko Stuebner <heiko@sntech.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Maxime Coquelin (2015-08-10 06:47:51)
-> Hi Mike,
+Hi Heiko,
+
+I merged yours and mine :-)
+
+
+pclk_cpu needs to keep running because it is needed for devices like
+the act8865 regulator but with the recent gpio clock handling this is
+not always the case anymore. So add it to the list of critical clocks.
+
+Signed-off-by: Michael Niewoehner <linux@mniewoehner.de>
+---
+drivers/clk/rockchip/clk-rk3188.c | 1 +
+1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index e4f9d47..1c93229 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -708,6 +708,7 @@ static const char *const rk3188_critical_clocks[] __initconst = {
+	"aclk_cpu",
+	"aclk_peri",
+	"hclk_peri",
++	"pclk_cpu",
+};
+
+static void __init rk3188_common_clk_init(struct device_node *np)
+-- 
+2.5.0
+
+
+
+
+
+Am 17.08.2015 um 20:01 schrieb Heiko Stuebner <heiko@sntech.de>:
+
+> Hi,
 > 
-> On 08/07/2015 09:09 PM, Michael Turquette wrote:
-> > This patch adds prepare and enable reference counts for the per-user
-> > handles that clock consumers have for a clock node. This patch warns if
-> > an imbalance occurs while trying to disable or unprepare a clock and
-> > aborts, leaving the hardware unaffected.
-> >
-> > Signed-off-by: Michael Turquette <mturquette@baylibre.com>
-> > ---
-> >   drivers/clk/clk.c | 10 ++++++++++
-> >   1 file changed, 10 insertions(+)
-> >
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 898052e..72feee9 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -84,6 +84,8 @@ struct clk {
-> >       unsigned long min_rate;
-> >       unsigned long max_rate;
-> >       struct hlist_node clks_node;
-> > +     unsigned int enable_count;
-> > +     unsigned int prepare_count;
-> >   };
-> >   
-> >   /***           locking             ***/
-> > @@ -600,6 +602,9 @@ void clk_unprepare(struct clk *clk)
-> >               return;
-> >   
-> >       clk_prepare_lock();
-> > +     if (WARN_ON(clk->prepare_count == 0))
-> Isn't clk_prepare_unlock()call missing here before return?
-
-Doh! Good catch.
-
-Thanks,
-Mike
-
-> > +             return;
-> > +     clk->prepare_count--;
-> >       clk_core_unprepare(clk->core);
-> >       clk_prepare_unlock();
-> >   }
-> > @@ -657,6 +662,7 @@ int clk_prepare(struct clk *clk)
-> >               return 0;
-> >   
-> >       clk_prepare_lock();
-> > +     clk->prepare_count++;
-> >       ret = clk_core_prepare(clk->core);
-> >       clk_prepare_unlock();
-> >   
-> > @@ -707,6 +713,9 @@ void clk_disable(struct clk *clk)
-> >               return;
-> >   
-> >       flags = clk_enable_lock();
-> > +     if (WARN_ON(clk->enable_count == 0))
-> Ditto.
-> > +             return;
-> > +     clk->enable_count--;
-> >       clk_core_disable(clk->core);
-> >       clk_enable_unlock(flags);
-> >   }
+> Am Montag, 17. August 2015, 19:38:22 schrieb Michael Niewoehner:
+>> gpio clock is getting disabled to save power but pclk_cpu is needed for
+>> act8865 regulator
 > 
-> Regards,
-> Maxime
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> Please refine the commit message a bit :-) . Something along
+> 
+> pclk_cpu needs to keep running and with the recent gpio clock
+> handling this is not always the case anymore. So add it to the list
+> of critical clocks.
+> 
+> 
+> and also please add "Linus Walleij <linus.walleij@linaro.org>" to the list of 
+> recipients. As the gpio clock handling change does go through his tree, the 
+> matching critical clock handling should also go through him.
+> 
+> 
+> Heiko
+> 
+>> 
+>> Signed-off-by: Michael Niewoehner <linux@mniewoehner.de>
+>> ---
+>> drivers/clk/rockchip/clk-rk3188.c | 1 +
+>> 1 file changed, 1 insertion(+)
+>> 
+>> diff --git a/drivers/clk/rockchip/clk-rk3188.c
+>> b/drivers/clk/rockchip/clk-rk3188.c index e4f9d47..1c93229 100644
+>> --- a/drivers/clk/rockchip/clk-rk3188.c
+>> +++ b/drivers/clk/rockchip/clk-rk3188.c
+>> @@ -708,6 +708,7 @@ static const char *const rk3188_critical_clocks[]
+>> __initconst = { "aclk_cpu",
+>> 	"aclk_peri",
+>> 	"hclk_peri",
+>> +	"pclk_cpu",
+>> };
+>> 
+>> static void __init rk3188_common_clk_init(struct device_node *np)
+> 
+
+
