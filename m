@@ -1,35 +1,41 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <55C24E56.3020004@codeaurora.org>
-Date: Wed, 05 Aug 2015 10:56:38 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-MIME-Version: 1.0
-To: Pawel Moll <pawel.moll@arm.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Sudeep Holla <Sudeep.Holla@arm.com>
-Subject: Re: [PATCH 1/3] clk: versatile: Switch to assigned clock parents
-References: <55BBB2FC.9030102@codeaurora.org>  <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>  <1438386285-5070-2-git-send-email-sboyd@codeaurora.org>  <1438610480.2142.14.camel@arm.com> <55BFAB11.7080600@codeaurora.org> <1438770574.2142.80.camel@arm.com>
-In-Reply-To: <1438770574.2142.80.camel@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-id: <55D13D55.5030207@samsung.com>
+Date: Mon, 17 Aug 2015 10:48:05 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Chanwoo Choi <cw00.choi@samsung.com>, s.nawrocki@samsung.com,
+	tomasz.figa@gmail.com, kgene@kernel.org
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/4] clk: samsung: exynos3250: Add MMC2 clock
+References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
+ <1439264784-30322-3-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1439264784-30322-3-git-send-email-cw00.choi@samsung.com>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/05/2015 03:29 AM, Pawel Moll wrote:
->
-> Right, that's probably my fault. The sp810 nodes appeared in the VE
-> trees very early (in terms of the "DT era"), when we weren't so strict
-> about documentation. So far, it would be fairly simple, something like
-> the text below - feel free to take it, mend it, extend it with your
-> changes and include in the series:
->
-> Thanks!
+On 11.08.2015 12:46, Chanwoo Choi wrote:
+> This patch add the MMC2 clocks (mux, divider, gate) of Exynos3250 SoC.
+> 
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos3250.c   | 9 +++++++++
+>  include/dt-bindings/clock/exynos3250.h | 7 ++++++-
+>  2 files changed, 15 insertions(+), 1 deletion(-)
 
-Great! Can you please provide your signed-off-by? I can make it up into 
-a patch with some commit text that either you or I provide and throw it 
-into the series.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+Assuming that numbers/addresses are good (reserved in my datasheet) the
+code itself looks good:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+
+Best regards,
+Krzysztof
+
+
