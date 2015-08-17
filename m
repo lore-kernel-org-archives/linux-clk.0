@@ -1,116 +1,69 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <1439820602.3414.12.camel@mtksdaap41>
-Subject: Re: [PATCH v2 1/5] clocksource: mediatek: do not enable GPT_CLK_EVT
- when setup
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-CC: Daniel Kurtz <djkurtz@chromium.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	srv_heupstream <srv_heupstream@mediatek.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Olof Johansson <olof@lixom.net>,
-	"Rob Herring" <robh+dt@kernel.org>,
-	<linux-mediatek@lists.infradead.org>,
-	"Sascha Hauer" <kernel@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	<linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Date: Mon, 17 Aug 2015 22:10:02 +0800
-In-Reply-To: <55CC56C4.8080201@linaro.org>
-References: <CAGS+omD8k_Cfxv3bYyjmjtLbiavo-WmJPn0Z-CBhN_nnv65Tag@mail.gmail.com>
-	 <1437552878-3684-1-git-send-email-yingjoe.chen@mediatek.com>
-	 <55CC56C4.8080201@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:34120 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750938AbbHQXWy convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 17 Aug 2015 19:22:54 -0400
+Received: by paccq16 with SMTP id cq16so74415656pac.1
+        for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2015 16:22:53 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+To: Matthias Brugger <matthias.bgg@gmail.com>, sboyd@codeaurora.org,
+	matthias.bgg@gmail.com
+From: Michael Turquette <mturquette@linaro.org>
+In-Reply-To: <1438355659-21558-2-git-send-email-matthias.bgg@gmail.com>
+Cc: s.hauer@pengutronix.de, jamesjj.liao@mediatek.com,
+	henryc.chen@mediatek.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, manabian@gmail.com,
+	p.zabel@pengutronix.com
+References: <1438355659-21558-1-git-send-email-matthias.bgg@gmail.com>
+ <1438355659-21558-2-git-send-email-matthias.bgg@gmail.com>
+Message-ID: <20150817232235.31346.30218@quantum>
+Subject: Re: [PATCH v4 RESEND 1/3] clk: Add regmap support
+Date: Mon, 17 Aug 2015 16:22:35 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2015-08-13 at 10:35 +0200, Daniel Lezcano wrote:
-> On 07/22/2015 10:14 AM, Yingjoe Chen wrote:
-> > Spurious mtk timer interrupt is noticed at boot and cause kernel
-> > crash. It seems if GPT is enabled, it will latch irq status even
-> > when its IRQ is disabled. When irq is enabled afterward, we see
-> > spurious interrupt.
-> > Change init flow to only enable GPT_CLK_SRC at mtk_timer_init.
-> >
-> > Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
-> > Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
-> > Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> > ---
-> >
-> > Update to my patch [1], added __init as Daniel suggest. This is the
-> > only patch that need to change in that series, so I only sent this one.
-> >
-> > http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001545.html
-> >
-> >   drivers/clocksource/mtk_timer.c | 16 ++++++++++------
-> >   1 file changed, 10 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/clocksource/mtk_timer.c b/drivers/clocksource/mtk_timer.c
-> > index 68ab423..2ba5b66 100644
-> > --- a/drivers/clocksource/mtk_timer.c
-> > +++ b/drivers/clocksource/mtk_timer.c
-> > @@ -156,9 +156,11 @@ static void mtk_timer_global_reset(struct mtk_clock_event_device *evt)
-> >   	writel(0x3f, evt->gpt_base + GPT_IRQ_ACK_REG);
-> >   }
-> >
-> > -static void
-> > -mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
-> > +static void __init mtk_timer_setup(struct mtk_clock_event_device *evt,
-> > +				   u8 timer, u8 option, bool enable)
-> >   {
-> > +	u32 val;
-> > +
-> >   	writel(TIMER_CTRL_CLEAR | TIMER_CTRL_DISABLE,
-> >   		evt->gpt_base + TIMER_CTRL_REG(timer));
-> >
-> > @@ -167,8 +169,10 @@ mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
-> >
-> >   	writel(0x0, evt->gpt_base + TIMER_CMP_REG(timer));
-> >
-> > -	writel(TIMER_CTRL_OP(option) | TIMER_CTRL_ENABLE,
-> > -			evt->gpt_base + TIMER_CTRL_REG(timer));
-> > +	val = TIMER_CTRL_OP(option);
-> > +	if (enable)
-> > +		val |= TIMER_CTRL_ENABLE;
-> > +	writel(val, evt->gpt_base + TIMER_CTRL_REG(timer));
-> 
-> Instead of the 'enable' new option, I prefer a test with 'timer' with a 
-> comment:
-> 
-> 	/*
-> 	 * the timer hw is broken in that way ... bla bla, so we only
-> 	 * enable the clocksource ...
-> 	 */
-> 	if (timer == GPT_CLK_SRC)
-> 		val |= TIMER_CTRL_ENABLE;
+Quoting Matthias Brugger (2015-07-31 08:14:17)
+> diff --git a/drivers/clk/clk-io.c b/drivers/clk/clk-io.c
+> new file mode 100644
+> index 0000000..9630ef5
+> --- /dev/null
+> +++ b/drivers/clk/clk-io.c
+> @@ -0,0 +1,48 @@
+> +/*
+> + * Copyright (C) 2015 Matthias Brugger <matthias.bgg@gmail.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +
+> +void clk_io_writel(struct clk_hw *hw, void __iomem *reg, struct regmap *regmap,
+> +                       u32 offset, u32 val)
+> +{
+> +       if (__clk_get_flags(hw->clk) & CLK_USE_REGMAP)
+> +               regmap_write(regmap, offset, val);
+> +       else
+> +               clk_writel(val, reg);
+> +}
 
-Hi Daniel,
+So we have clk_writel, which already wraps direct io accesses depending
+on arch/platform, and then this patch adds regmap support, and both of
+those are wrapped in clk_io_writel? :-/
 
-Thanks for your review.
-Since this bug happens to anyone using interrupt, I'm not sure checking
-timer and only enable it for GPT_CLK_SRC is easier to read. Anyway, I'll
-change to this in next version.
+I agree that we should merge some unified regmap support into the clock
+framework for the basic clocks, but I do not think that this is the
+right way to do it. This patch simply adds more code to already crowded
+basic clock types.
 
-> That said, can you have a look at commit 1096be08 ?
-> "clockevents: sun5i: Fix setup_irq init sequence"
-> 
-> first and check if moving the interrupt request after the 
-> clockevents_config_and_register could fix your issue.
+Replacing the basic clock types by separating policy and machine-driver
+code into separate, modular pieces is a high priority on my todo list.
+I'd like to do that first and then revisit regmap clocks instead of
+merging this series as-is.
 
-I've tested this before, see:
-
-http://lists.infradead.org/pipermail/linux-mediatek/2015-May/000539.html
-http://lists.infradead.org/pipermail/linux-mediatek/2015-May/000551.html
-
-Joe.C
-
-
+Regards,
+Mike
