@@ -1,31 +1,65 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20150812012530.GJ26614@codeaurora.org>
-References: <1438172615-11276-1-git-send-email-linus.walleij@linaro.org>
-	<20150731065008.GU3159@codeaurora.org>
-	<CACRpkdbaGU8jMQY=WpkV0ZF_KfFCq167kWCD_CropJM10RC9QQ@mail.gmail.com>
-	<20150812012530.GJ26614@codeaurora.org>
-Date: Wed, 12 Aug 2015 10:40:00 +0200
-Message-ID: <CACRpkdZ-c=gmxu2G1Bv__gtpXTHBRe4NdDn5OOg7kcdFT5-3TQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: versatile/impd1: switch order of CLCD clocks
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-id: <55D12C73.6090101@samsung.com>
+Date: Mon, 17 Aug 2015 09:36:03 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+MIME-version: 1.0
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, tomasz.figa@gmail.com,
+	kgene@kernel.org, devicetree@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/4] ARM: dts: exynos3250: Add UART2 and MMC2 dt node with
+ related clocks
+References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
+ <CAJKOXPfvGypFymHzXDMEA295Copi0sjpMG9oKmJ+a_BQoK+SNw@mail.gmail.com>
+In-reply-to: <CAJKOXPfvGypFymHzXDMEA295Copi0sjpMG9oKmJ+a_BQoK+SNw@mail.gmail.com>
+Content-type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Aug 12, 2015 at 3:25 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+On 08/17/2015 09:33 AM, Krzysztof Kozlowski wrote:
+> 2015-08-11 12:46 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
+>> This patch add the UART2 / MMC2 devicetree node for Exynos3250 SoC and add
+>> the related clocks (mux, divider, gate) of UART2 / MMC2 device.
+> 
+> What is the benefit of adding them? Why they are needed?
 
-> Ok. I'm still confused and concerned that putting the clocks into
-> the list in a certain order fixes anything.
+UART2 /MMC2 are used on Exynos3250-based ARTIK-5 board[1].
+[1] https://www.artik.io/hardware/artik-5
 
-Oh maybe it doesn't I could've been mistaken here.
-clk_find() should indeed find the right clock.
+Thanks,
+Chanwoo Choi
 
-> If this fix is valid, did you want a fixes tag on this so it goes
-> back to stable?
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+>>
+>> Chanwoo Choi (4):
+>>   clk: samsung: exynos3250: Add UART2 clock
+>>   clk: samsung: exynos3250: Add MMC2 clock
+>>   ARM: dts: Add UART2 dt node for Exynos3250 SoC
+>>   ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
+>>
+>>  arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 42 +++++++++++++++++++++++++++++++
+>>  arch/arm/boot/dts/exynos3250.dtsi         | 25 ++++++++++++++++++
+>>  drivers/clk/samsung/clk-exynos3250.c      | 15 +++++++++++
+>>  include/dt-bindings/clock/exynos3250.h    | 11 +++++++-
+>>  4 files changed, 92 insertions(+), 1 deletion(-)
+>>
+>> --
+>> 1.8.5.5
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
-Nah you can drop it, sorry for the fuzz.
-
-Yours,
-Linus Walleij
