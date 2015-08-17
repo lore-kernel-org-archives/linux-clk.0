@@ -1,53 +1,43 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <1438610480.2142.14.camel@arm.com>
-Subject: Re: [PATCH 1/3] clk: versatile: Switch to assigned clock parents
-From: Pawel Moll <pawel.moll@arm.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Sudeep Holla <Sudeep.Holla@arm.com>
-Date: Mon, 03 Aug 2015 15:01:20 +0100
-In-Reply-To: <1438386285-5070-2-git-send-email-sboyd@codeaurora.org>
-References: <55BBB2FC.9030102@codeaurora.org>
-	 <1438386285-5070-1-git-send-email-sboyd@codeaurora.org>
-	 <1438386285-5070-2-git-send-email-sboyd@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Michael Niewoehner <linux@mniewoehner.de>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org
+Subject: Re: [PATCH v2] clk: rockchip: add pclk_cpu to the list of rk3188 critical clocks
+Date: Mon, 17 Aug 2015 21:55:11 +0200
+Message-ID: <14545587.HIDVkPerl6@phil>
+In-Reply-To: <F5234F5E-2A91-4B63-B260-3F20A4D16A9D@mniewoehner.de>
+References: <5400BEF8-5245-4F7B-845B-D326A7BC56B5@mniewoehner.de> <10213368.VjAQGt7Kjq@phil> <F5234F5E-2A91-4B63-B260-3F20A4D16A9D@mniewoehner.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 2015-08-01 at 00:44 +0100, Stephen Boyd wrote:
-> @@ -179,6 +124,15 @@ static void __init clk_sp810_of_setup(struct device_node *node)
->  		sp810->timerclken[i].channel = i;
->  		sp810->timerclken[i].hw.init = &init;
->  
-> +		/*
-> +		 * If DT isn't setting the parent, force it to be
-> +		 * the 1 MHz clock without going through the framework.
-> +		 * We do this before clk_register() so that it can determine
-> +		 * the parent and setup the tree properly.
-> +		 */
-> +		if (deprecated)
-> +			init.ops->set_parent(&sp810->timerclken[i].hw, 1);
-> +
->  		sp810->timerclken[i].clk = clk_register(NULL,
->  				&sp810->timerclken[i].hw);
->  		WARN_ON(IS_ERR(sp810->timerclken[i].clk));
+Am Montag, 17. August 2015, 21:50:53 schrieb Michael Niewoehner:
+> pclk_cpu needs to keep running because it is needed for devices like
+> the act8865 regulator but with the recent gpio clock handling this is
+> not always the case anymore. So add it to the list of critical clocks.
+> 
+> Signed-off-by: Michael Niewoehner <linux@mniewoehner.de>
 
-So that's one thing I've got a (small) problem here...
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-The above change assumes that SP810 always have 32kHz clock on input 0
-and 1MHz clock on input 1. Yes, this is how it made on VExpress, but it
-doesn't have to be the case. The magic picking up the faster clock was
-added to handle all possible cases.
-
-The bottom line is: if all we care is VExpress than it works, but it's
-still a hack. Personally I don't like it, however I won't nak the patch
-because of this.
-
-Pawel
-
+> ---
+> Changes in v2:
+> - adapt commit message
+> - add Linus Walleij to recipients, as the patch is related to the gpio clock
+> change in the rockchip pinctrl driver it should go through his tree as well
+> 
+> drivers/clk/rockchip/clk-rk3188.c | 1 +
+> 1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/rockchip/clk-rk3188.c
+> b/drivers/clk/rockchip/clk-rk3188.c index e4f9d47..1c93229 100644
+> --- a/drivers/clk/rockchip/clk-rk3188.c
+> +++ b/drivers/clk/rockchip/clk-rk3188.c
+> @@ -708,6 +708,7 @@ static const char *const rk3188_critical_clocks[]
+> __initconst = { "aclk_cpu",
+> 	"aclk_peri",
+> 	"hclk_peri",
+> +	"pclk_cpu",
+> };
+> 
+> static void __init rk3188_common_clk_init(struct device_node *np)
