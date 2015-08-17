@@ -1,72 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 28 Aug 2015 14:58:51 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-To: Luis de Bethencourt <luis@debethencourt.com>
-Cc: linux-kernel@vger.kernel.org, Emilio Lopez <emilio@elopez.com.ar>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 0/5] clk: sunxi: Fix module autoload for OF platform
- driver
-Message-ID: <20150828125851.GO29389@lukather>
-References: <20150828124222.GA24923@goodgumbo.baconseed.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4ickEXl+ukcSQ/3E"
-In-Reply-To: <20150828124222.GA24923@goodgumbo.baconseed.org>
+Message-id: <55D1324F.1040908@samsung.com>
+Date: Mon, 17 Aug 2015 10:01:03 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Chanwoo Choi <cw00.choi@samsung.com>, s.nawrocki@samsung.com,
+	tomasz.figa@gmail.com, kgene@kernel.org
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/4] clk: samsung: exynos3250: Add UART2 clock
+References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
+ <1439264784-30322-2-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1439264784-30322-2-git-send-email-cw00.choi@samsung.com>
+Content-type: text/plain; charset=windows-1252
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On 11.08.2015 12:46, Chanwoo Choi wrote:
+> This patch add the UART2 clocks (mux, divider, gate) of Exynos3250 SoC.
 
---4ickEXl+ukcSQ/3E
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I could not confirm the exact numbers used ("reserved" in my datasheet)
+but the patch itself looks correct.
 
-On Fri, Aug 28, 2015 at 02:42:22PM +0200, Luis de Bethencourt wrote:
-> Hello,
->=20
-> This series add the missing MODULE_DEVICE_TABLE() for OF to eport
-> that information so modules have the correct aliases built-in
-> and autoloading works correctly.
->=20
-> A longer explanation by Javier Canillas can be found here:
-> https://lkml.org/lkml/2015/7/30/519
+Assuming that numbers/addresses are good:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On the whole serie,
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Mike, Stephen, can you apply them directly as fixes for 4.3 ?
+Best regards,
+Krzysztof
 
-Thanks,
-Maxime
+> 
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos3250.c   | 6 ++++++
+>  include/dt-bindings/clock/exynos3250.h | 6 +++++-
+>  2 files changed, 11 insertions(+), 1 deletion(-)
+> 
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---4ickEXl+ukcSQ/3E
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJV4FsLAAoJEBx+YmzsjxAgqD4QAIW714f2JIjT6rJsiHY6/6jw
-LPJfM4OxXeqSg9BtWz68UTByCY2zM5Oi6sYby2Vw8ZAR724zFVEhUngCQVLPMTJ3
-3XeDRO7pPTR/HN6g0WjKbAy0E+x32Pkp623QhAHNCI5+BuBRGWKwIHRxBV5jFOjs
-+vFV/Y+52e9sCoL7Kt6PHy1KnEyfux5Dw4DpQfbr42Nr1HBZ802YQkkPRdhmIgVp
-4K0x5gHT7FICER8ke4Te1ix6gIvQuMAXcU0rBLd4v60cLo4jGsS4KNt9VhHE+h0Z
-uLvkM1OkIdjsZILLuzOCk5FNZqbkSZGlghxaSwz3RKVyTW/lzuRRgDTWQ+TWkjOZ
-6+YOSq5s4MtexEK9zK6TQLDkbD0W7euBmolv8UOg8IzYH1CBVAsJXgFxr0Z75jCl
-q6BdLvKtDVFQnOOtqBkixJgPyJALtHu0ES7/4wXEyQgUK05q1HZhUBMm/tdN0S2u
-I8dS95jGCHMpO3ZbGEeOE2u7ehTy17WZDEVfQ5LtnlLj4Z3ssX19kwm7Ur7ltx14
-XgVYFlTfm0DpZzjxq7oCDZctVLrNZzvbvyoFgIrDWbclGS8PwgoYcRKYUkfueaXE
-E6wUHOK3WhQDRYR11Ex+njmz8VLeAZhpGm6cxLYvSv81+lv+KQSl/Ad+W99/Idh1
-9kFo+WnyN9Fa695cMPL2
-=mcmZ
------END PGP SIGNATURE-----
-
---4ickEXl+ukcSQ/3E--
