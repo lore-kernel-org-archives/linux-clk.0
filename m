@@ -1,72 +1,80 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Bintian Wang <bintian.wang@huawei.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Jian Zhang <zhangjian001@hisilicon.com>,
-	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
-	Haoju Mo <mohaoju@hisilicon.com>,
-	Dan Zhao <dan.zhao@hisilicon.com>,
-	sunzhaosheng@hisilicon.com,
-	victor.lixin@hisilicon.com
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v4 1/4] dt-bindings: arm: Hi6220: add doc for SRAM controller
-Date: Tue,  4 Aug 2015 15:27:26 +0800
-Message-Id: <1438673249-6051-2-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1438673249-6051-1-git-send-email-leo.yan@linaro.org>
-References: <1438673249-6051-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:20223 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751440AbbHQAhi (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 16 Aug 2015 20:37:38 -0400
+Message-id: <55D12CC9.2060602@samsung.com>
+Date: Mon, 17 Aug 2015 09:37:29 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, tomasz.figa@gmail.com,
+	kgene@kernel.org, devicetree@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/4] ARM: dts: exynos3250: Add UART2 and MMC2 dt node with
+ related clocks
+References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
+ <CAJKOXPfvGypFymHzXDMEA295Copi0sjpMG9oKmJ+a_BQoK+SNw@mail.gmail.com>
+ <55D12C73.6090101@samsung.com>
+In-reply-to: <55D12C73.6090101@samsung.com>
+Content-type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Document "hisilicon,hi6220-sramctrl" for SRAM controller.
+On 17.08.2015 09:36, Chanwoo Choi wrote:
+> On 08/17/2015 09:33 AM, Krzysztof Kozlowski wrote:
+>> 2015-08-11 12:46 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
+>>> This patch add the UART2 / MMC2 devicetree node for Exynos3250 SoC and add
+>>> the related clocks (mux, divider, gate) of UART2 / MMC2 device.
+>>
+>> What is the benefit of adding them? Why they are needed?
+> 
+> UART2 /MMC2 are used on Exynos3250-based ARTIK-5 board[1].
+> [1] https://www.artik.io/hardware/artik-5
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- .../devicetree/bindings/arm/hisilicon/hisilicon.txt    | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Thanks for explaining this. The patchset missed that information - the
+purpose. I'll start reviewing it.
 
-diff --git a/Documentation/devicetree/bindings/arm/hisilicon/hisilicon.txt b/Documentation/devicetree/bindings/arm/hisilicon/hisilicon.txt
-index c431c67..c733e28 100644
---- a/Documentation/devicetree/bindings/arm/hisilicon/hisilicon.txt
-+++ b/Documentation/devicetree/bindings/arm/hisilicon/hisilicon.txt
-@@ -127,6 +127,24 @@ Example:
- 		#clock-cells = <1>;
- 	};
- 
-+
-+Hisilicon Hi6220 SRAM controller
-+
-+Required properties:
-+- compatible : "hisilicon,hi6220-sramctrl", "syscon"
-+- reg : Register address and size
-+
-+Hisilicon's SoCs use sram for multiple purpose; on Hi6220 there have several
-+SRAM banks for power management, modem, security, etc. Further, use "syscon"
-+managing the common sram which can be shared by multiple modules.
-+
-+Example:
-+	/*for Hi6220*/
-+	sram: sram@fff80000 {
-+		compatible = "hisilicon,hi6220-sramctrl", "syscon";
-+		reg = <0x0 0xfff80000 0x0 0x12000>;
-+	};
-+
- -----------------------------------------------------------------------
- Hisilicon HiP01 system controller
- 
--- 
-1.9.1
+Best regards,
+Krzysztof
+
+> 
+> Thanks,
+> Chanwoo Choi
+> 
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>
+>>>
+>>> Chanwoo Choi (4):
+>>>   clk: samsung: exynos3250: Add UART2 clock
+>>>   clk: samsung: exynos3250: Add MMC2 clock
+>>>   ARM: dts: Add UART2 dt node for Exynos3250 SoC
+>>>   ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
+>>>
+>>>  arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 42 +++++++++++++++++++++++++++++++
+>>>  arch/arm/boot/dts/exynos3250.dtsi         | 25 ++++++++++++++++++
+>>>  drivers/clk/samsung/clk-exynos3250.c      | 15 +++++++++++
+>>>  include/dt-bindings/clock/exynos3250.h    | 11 +++++++-
+>>>  4 files changed, 92 insertions(+), 1 deletion(-)
+>>>
+>>> --
+>>> 1.8.5.5
+>>>
+>>>
+>>> _______________________________________________
+>>> linux-arm-kernel mailing list
+>>> linux-arm-kernel@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+> 
+> 
+
