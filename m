@@ -1,35 +1,45 @@
-Return-Path: <romain.perier@gmail.com>
-Return-Path: <romain.perier@gmail.com>
-From: Romain Perier <romain.perier@gmail.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 7.3 \(1878.6\))
+Subject: [PATCH v2] clk: rockchip: add pclk_cpu to the list of rk3188 critical clocks
+From: Michael Niewoehner <linux@mniewoehner.de>
+In-Reply-To: <10213368.VjAQGt7Kjq@phil>
+Date: Mon, 17 Aug 2015 21:50:53 +0200
+Message-Id: <F5234F5E-2A91-4B63-B260-3F20A4D16A9D@mniewoehner.de>
+References: <5400BEF8-5245-4F7B-845B-D326A7BC56B5@mniewoehner.de> <5275855.eah07vmf4I@phil> <9DBF9CCE-196E-43FB-BA76-BFB4B5F47A22@mniewoehner.de> <10213368.VjAQGt7Kjq@phil>
+To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com
-Subject: [PATCH] clk: rockchip: Add pclk_peri to critical clocks on RK3066/RK3188
-Date: Fri, 21 Aug 2015 18:10:27 +0000
-Message-Id: <1440180627-4566-1-git-send-email-romain.perier@gmail.com>
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linus.walleij@linaro.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clocks for bank GPIO3 and GPIO4 are supplied by pclk_peri. These clocks need to
-stay on, otherwise pinctrl hangs the system when the driver is probed.
+pclk_cpu needs to keep running because it is needed for devices like
+the act8865 regulator but with the recent gpio clock handling this is
+not always the case anymore. So add it to the list of critical clocks.
 
-Signed-off-by: Romain Perier <romain.perier@gmail.com>
+Signed-off-by: Michael Niewoehner <linux@mniewoehner.de>
 ---
- drivers/clk/rockchip/clk-rk3188.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v2:
+- adapt commit message
+- add Linus Walleij to recipients, as the patch is related to the gpio clock
+  change in the rockchip pinctrl driver it should go through his tree as well
+
+drivers/clk/rockchip/clk-rk3188.c | 1 +
+1 file changed, 1 insertion(+)
 
 diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index f63a642..596be81 100644
+index e4f9d47..1c93229 100644
 --- a/drivers/clk/rockchip/clk-rk3188.c
 +++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -717,6 +717,7 @@ static const char *const rk3188_critical_clocks[] __initconst = {
- 	"aclk_peri",
- 	"hclk_peri",
- 	"pclk_cpu",
-+	"pclk_peri",
- };
- 
- static void __init rk3188_common_clk_init(struct device_node *np)
+@@ -708,6 +708,7 @@ static const char *const rk3188_critical_clocks[] __initconst = {
+	"aclk_cpu",
+	"aclk_peri",
+	"hclk_peri",
++	"pclk_cpu",
+};
+
+static void __init rk3188_common_clk_init(struct device_node *np)
 -- 
-2.1.4
+2.5.0
