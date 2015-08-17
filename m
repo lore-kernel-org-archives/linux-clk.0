@@ -1,68 +1,125 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Anson Huang <b20788@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH] clk: imx: increase AXI clock rate to 264MHz for i.MX6UL
-Date: Thu, 6 Aug 2015 22:13:56 +0800
-Message-ID: <1438870436-16061-1-git-send-email-b20788@freescale.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <pankaj.dubey@samsung.com>
+Message-id: <55D15522.7080603@samsung.com>
+Date: Mon, 17 Aug 2015 08:59:38 +0530
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+MIME-version: 1.0
+To: Chanwoo Choi <cw00.choi@samsung.com>, s.nawrocki@samsung.com,
+ tomasz.figa@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [1/4] clk: samsung: exynos3250: Add UART2 clock
+References: <1439264784-30322-2-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1439264784-30322-2-git-send-email-cw00.choi@samsung.com>
+Content-type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On i.MX6UL, AXI clock rate's design target is 264MHz, but by default
-it is only set to 198MHz which is NOT good enough for performance,
-this patch increases AXI clock rate from 198MHz to 264MHz to meet
-the design target, this is done by switching its parent clock
-"periph" from 396MHz PFD to 528MHz PLL.
+Hi Chanwoo,
 
-Signed-off-by: Anson Huang <b20788@freescale.com>
----
- drivers/clk/imx/clk-imx6ul.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Thanks for this patch. Similar patch[1] was posted long back, and there 
+were some concern from your side, if you think those concerns are fixed, 
+then my patch [1] are still valid and can be taken. If it needs to be 
+rebase I am happy to do that.
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index aaa3665..01718d0 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -407,6 +407,24 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clk_data.clk_num = ARRAY_SIZE(clks);
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
- 
-+	/*
-+	 * Lower the AHB clock rate before changing the parent clock source,
-+	 * as AHB clock rate can NOT be higher than 133MHz, but its parent
-+	 * will be switched from 396MHz PFD to 528MHz PLL in order to increase
-+	 * AXI clock rate, so we need to lower AHB rate first to make sure at
-+	 * any time, AHB rate is <= 133MHz.
-+	 */
-+	clk_set_rate(clks[IMX6UL_CLK_AHB], 99000000);
-+
-+	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264MHz */
-+	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL], clks[IMX6UL_CLK_PLL3_USB_OTG]);
-+	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_CLK2]);
-+	clk_set_parent(clks[IMX6UL_CLK_PERIPH_PRE], clks[IMX6UL_CLK_PLL2_BUS]);
-+	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_PRE]);
-+
-+	/* Make sure AHB rate is 132MHz  */
-+	clk_set_rate(clks[IMX6UL_CLK_AHB], 132000000);
-+
- 	/* set perclk to from OSC */
- 	clk_set_parent(clks[IMX6UL_CLK_PERCLK_SEL], clks[IMX6UL_CLK_OSC]);
- 
--- 
-1.9.1
+[1] 
+http://lists.infradead.org/pipermail/linux-arm-kernel/2014-September/291239.html
 
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Thanks,
+Pankaj Dubey
+On Tuesday 11 August 2015 09:16 AM, Chanwoo Choi wrote:
+> This patch add the UART2 clocks (mux, divider, gate) of Exynos3250 SoC.
+>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
+> ---
+> drivers/clk/samsung/clk-exynos3250.c   | 6 ++++++
+>   include/dt-bindings/clock/exynos3250.h | 6 +++++-
+>   2 files changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+> index 538de66a759e..2105863a3ace 100644
+> --- a/drivers/clk/samsung/clk-exynos3250.c
+> +++ b/drivers/clk/samsung/clk-exynos3250.c
+> @@ -307,6 +307,7 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
+>   	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 4),
+>
+>   	/* SRC_PERIL0 */
+> +	MUX(CLK_MOUT_UART2, "mout_uart2", group_sclk_p, SRC_PERIL0, 8, 4),
+>   	MUX(CLK_MOUT_UART1, "mout_uart1", group_sclk_p, SRC_PERIL0, 4, 4),
+>   	MUX(CLK_MOUT_UART0, "mout_uart0", group_sclk_p, SRC_PERIL0, 0, 4),
+>
+> @@ -389,6 +390,7 @@ static struct samsung_div_clock div_clks[] __initdata = {
+>   	DIV(CLK_DIV_MMC0, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
+>
+>   	/* DIV_PERIL0 */
+> +	DIV(CLK_DIV_UART2, "div_uart2", "mout_uart2", DIV_PERIL0, 8, 4),
+>   	DIV(CLK_DIV_UART1, "div_uart1", "mout_uart1", DIV_PERIL0, 4, 4),
+>   	DIV(CLK_DIV_UART0, "div_uart0", "mout_uart0", DIV_PERIL0, 0, 4),
+>
+> @@ -551,6 +553,9 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+>   		GATE_SCLK_PERIL, 7, CLK_SET_RATE_PARENT, 0),
+>   	GATE(CLK_SCLK_SPI0, "sclk_spi0", "div_spi0_pre",
+>   		GATE_SCLK_PERIL, 6, CLK_SET_RATE_PARENT, 0),
+> +
+> +	GATE(CLK_SCLK_UART2, "sclk_uart2", "div_uart2",
+> +		GATE_SCLK_PERIL, 2, CLK_SET_RATE_PARENT, 0),
+>   	GATE(CLK_SCLK_UART1, "sclk_uart1", "div_uart1",
+>   		GATE_SCLK_PERIL, 1, CLK_SET_RATE_PARENT, 0),
+>   	GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0",
+> @@ -648,6 +653,7 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+>   	GATE(CLK_I2C2, "i2c2", "div_aclk_100", GATE_IP_PERIL, 8, 0, 0),
+>   	GATE(CLK_I2C1, "i2c1", "div_aclk_100", GATE_IP_PERIL, 7, 0, 0),
+>   	GATE(CLK_I2C0, "i2c0", "div_aclk_100", GATE_IP_PERIL, 6, 0, 0),
+> +	GATE(CLK_UART2, "uart2", "div_aclk_100", GATE_IP_PERIL, 2, 0, 0),
+>   	GATE(CLK_UART1, "uart1", "div_aclk_100", GATE_IP_PERIL, 1, 0, 0),
+>   	GATE(CLK_UART0, "uart0", "div_aclk_100", GATE_IP_PERIL, 0, 0, 0),
+>   };
+> diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
+> index aab088d30199..89a7d97b002c 100644
+> --- a/include/dt-bindings/clock/exynos3250.h
+> +++ b/include/dt-bindings/clock/exynos3250.h
+> @@ -78,6 +78,7 @@
+>   #define CLK_MOUT_CORE			58
+>   #define CLK_MOUT_APLL			59
+>   #define CLK_MOUT_ACLK_266_SUB		60
+> +#define CLK_MOUT_UART2			61
+>
+>   /* Dividers */
+>   #define CLK_DIV_GPL			64
+> @@ -126,6 +127,7 @@
+>   #define CLK_DIV_CORE			107
+>   #define CLK_DIV_HPM			108
+>   #define CLK_DIV_COPY			109
+> +#define CLK_DIV_UART2			110
+>
+>   /* Gates */
+>   #define CLK_ASYNC_G3D			128
+> @@ -222,6 +224,7 @@
+>   #define CLK_BLOCK_MFC			219
+>   #define CLK_BLOCK_CAM			220
+>   #define CLK_SMIES			221
+> +#define CLK_UART2			222
+>
+>   /* Special clocks */
+>   #define CLK_SCLK_JPEG			224
+> @@ -248,12 +251,13 @@
+>   #define CLK_SCLK_SPI0			245
+>   #define CLK_SCLK_UART1			246
+>   #define CLK_SCLK_UART0			247
+> +#define CLK_SCLK_UART2			248
+>
+>   /*
+>    * Total number of clocks of main CMU.
+>    * NOTE: Must be equal to last clock ID increased by one.
+>    */
+> -#define CLK_NR_CLKS			248
+> +#define CLK_NR_CLKS			249
+>
+>   /*
+>    * CMU DMC
+>
