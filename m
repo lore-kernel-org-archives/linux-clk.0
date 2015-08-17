@@ -1,74 +1,89 @@
-Return-Path: <scottwood@freescale.com>
-From: Scott Wood <scottwood@freescale.com>
-To: Mike Turquette <mturquette@linaro.org>, Tang Yuantian
-	<Yuantian.Tang@freescale.com>
-CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Liberman Igal-B31950
-	<Igal.Liberman@freescale.com>, Bucur Madalin-Cristian-B32716
-	<madalin.bucur@freescale.com>, <linux-clk@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<devicetree@vger.kernel.org>, Scott Wood <scottwood@freescale.com>
-Subject: [PATCH v2 0/5] clk: qoriq: Move chip-specific knowledge into driver
-Date: Sat, 15 Aug 2015 01:41:17 -0500
-Message-ID: <1439620882-20449-1-git-send-email-scottwood@freescale.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: scottwood@freescale.com
+Return-Path: <pankaj.dubey@samsung.com>
+Message-id: <55D1561C.90805@samsung.com>
+Date: Mon, 17 Aug 2015 09:03:48 +0530
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+MIME-version: 1.0
+To: Chanwoo Choi <cw00.choi@samsung.com>, s.nawrocki@samsung.com,
+ tomasz.figa@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [3/4] ARM: dts: Add UART2 dt node for Exynos3250 SoC
+References: <1439264784-30322-4-git-send-email-cw00.choi@samsung.com>
+In-reply-to: <1439264784-30322-4-git-send-email-cw00.choi@samsung.com>
+Content-type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The existing device tree bindings are error-prone and inflexible. 
-Correct the mistake by moving the knowledge into the driver, which
-has more flexibility in describing the quirks of each chip.  This leaves
-the device tree to its proper role of identifying a programming interface
-rather than describing its individual registers.
+Hi Chanwoo,
 
-For more detail, see the commit message of patch 3.
+Similar patch was posted here[1].
 
-Scott Wood (5):
-  cpufreq: qoriq: Don't look at clock implementation details
-  powerpc/fsl: Move fsl_guts.h out of arch/powerpc
-  clk: qoriq: Move chip-specific knowledge into driver
-  cpufreq: qoriq: Remove frequency masking and minimum
-  powerpc/fsl: Use new clockgen binding
+[1]: 
+http://lists.infradead.org/pipermail/linux-arm-kernel/2014-September/291023.html
 
- .../devicetree/bindings/clock/qoriq-clock.txt      |   61 +-
- arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi         |    4 +-
- arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi         |    8 +-
- arch/powerpc/boot/dts/fsl/b4si-post.dtsi           |   15 -
- arch/powerpc/boot/dts/fsl/p2041si-post.dtsi        |   18 -
- arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi         |    8 +-
- arch/powerpc/boot/dts/fsl/p3041si-post.dtsi        |   18 -
- arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi         |    8 +-
- arch/powerpc/boot/dts/fsl/p4080si-post.dtsi        |   70 --
- arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi         |   16 +-
- arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi         |    4 +-
- arch/powerpc/boot/dts/fsl/p5040si-post.dtsi        |   18 -
- arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi         |    8 +-
- arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi     |   50 +-
- arch/powerpc/boot/dts/fsl/qoriq-clockgen2.dtsi     |   33 +-
- arch/powerpc/boot/dts/fsl/t1023si-post.dtsi        |   16 -
- arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi         |    4 +-
- arch/powerpc/boot/dts/fsl/t1040si-post.dtsi        |   44 -
- arch/powerpc/boot/dts/fsl/t104xsi-pre.dtsi         |    8 +-
- arch/powerpc/boot/dts/fsl/t2081si-post.dtsi        |   22 -
- arch/powerpc/boot/dts/fsl/t208xsi-pre.dtsi         |    8 +-
- arch/powerpc/boot/dts/fsl/t4240si-post.dtsi        |   61 -
- arch/powerpc/boot/dts/fsl/t4240si-pre.dtsi         |   24 +-
- arch/powerpc/platforms/85xx/mpc85xx_mds.c          |    2 +-
- arch/powerpc/platforms/85xx/mpc85xx_rdb.c          |    2 +-
- arch/powerpc/platforms/85xx/p1022_ds.c             |    2 +-
- arch/powerpc/platforms/85xx/p1022_rdk.c            |    2 +-
- arch/powerpc/platforms/85xx/smp.c                  |    2 +-
- arch/powerpc/platforms/85xx/twr_p102x.c            |    2 +-
- arch/powerpc/platforms/86xx/mpc8610_hpcd.c         |    2 +-
- drivers/clk/clk-qoriq.c                            | 1260 ++++++++++++++++----
- drivers/cpufreq/qoriq-cpufreq.c                    |  139 +--
- drivers/iommu/fsl_pamu.c                           |    2 +-
- .../asm/fsl_guts.h => include/linux/fsl/guts.h     |    6 +-
- sound/soc/fsl/mpc8610_hpcd.c                       |    2 +-
- sound/soc/fsl/p1022_ds.c                           |    2 +-
- sound/soc/fsl/p1022_rdk.c                          |    2 +-
- 37 files changed, 1176 insertions(+), 777 deletions(-)
- rename arch/powerpc/include/asm/fsl_guts.h => include/linux/fsl/guts.h (98%)
+Thanks,
+Pankaj Dubey
 
--- 
-2.1.4
+On Tuesday 11 August 2015 09:16 AM, Chanwoo Choi wrote:
+> This patch add the uart2 devicetree node for Exynos3250 SoC.
+>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
+> ---
+> arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  7 +++++++
+>   arch/arm/boot/dts/exynos3250.dtsi         | 12 ++++++++++++
+>   2 files changed, 19 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+> index 5ab81c39e2c9..eac1d21c10d4 100644
+> --- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+> @@ -120,6 +120,13 @@
+>   		samsung,pin-drv = <0>;
+>   	};
+>
+> +	uart2_data: uart2-data {
+> +		samsung,pins = "gpa1-0", "gpa1-1";
+> +		samsung,pin-function = <2>;
+> +		samsung,pin-pud = <0>;
+> +		samsung,pin-drv = <0>;
+> +	};
+> +
+>   	i2c3_bus: i2c3-bus {
+>   		samsung,pins = "gpa1-2", "gpa1-3";
+>   		samsung,pin-function = <3>;
+> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+> index 2db99433e17f..02f3250766c9 100644
+> --- a/arch/arm/boot/dts/exynos3250.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+> @@ -42,6 +42,7 @@
+>   		i2c7 = &i2c_7;
+>   		serial0 = &serial_0;
+>   		serial1 = &serial_1;
+> +		serial2 = &serial_2;
+>   	};
+>
+>   	cpus {
+> @@ -435,6 +436,17 @@
+>   			status = "disabled";
+>   		};
+>
+> +		serial_2: serial@13820000 {
+> +			compatible = "samsung,exynos4210-uart";
+> +			reg = <0x13820000 0x100>;
+> +			interrupts = <0 111 0>;
+> +			clocks = <&cmu CLK_UART2>, <&cmu CLK_SCLK_UART2>;
+> +			clock-names = "uart", "clk_uart_baud0";
+> +			pinctrl-names = "default";
+> +			pinctrl-0 = <&uart2_data>;
+> +			status = "disabled";
+> +		};
+> +
+>   		i2c_0: i2c@13860000 {
+>   			#address-cells = <1>;
+>   			#size-cells = <0>;
+>
