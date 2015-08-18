@@ -1,82 +1,68 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <govindraj.raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Govindraj Raja
+	<govindraj.raja@imgtec.com>
+Subject: [PATCH v4 2/4] clk: pistachio: Fix override of clk-pll settings from boot loader
+Date: Tue, 18 Aug 2015 10:32:15 +0100
+Message-ID: <1439890337-13803-3-git-send-email-govindraj.raja@imgtec.com>
+In-Reply-To: <1439890337-13803-1-git-send-email-govindraj.raja@imgtec.com>
+References: <1439890337-13803-1-git-send-email-govindraj.raja@imgtec.com>
 MIME-Version: 1.0
-To: <balbi@ti.com>, Felipe Balbi <balbi@ti.com>,
- "Russell King - ARM Linux" <linux@arm.linux.org.uk>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20150812150253.GE13884@saruman.tx.rr.com>
-Cc: "Grygorii Strashko" <grygorii.strashko@ti.com>, "Nishanth Menon" <nm@ti.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, linux-rt-users@vger.kernel.org,
- "Felipe Balbi" <balbi@ti.com>, "Sekhar Nori" <nsekhar@ti.com>,
- linux-clk@vger.kernel.org
-References: <55C0A96F.80307@ti.com> <alpine.DEB.2.11.1508041405290.3983@nanos>
- <55C0D8F3.3030105@ti.com> <20150804153641.GR7557@n2100.arm.linux.org.uk>
- <55CA4BC2.4020505@ti.com> <20150811192514.GB7557@n2100.arm.linux.org.uk>
- <20150811220609.31346.15943@quantum> <55CB1A86.2050802@ti.com>
- <20150812101151.GK7557@n2100.arm.linux.org.uk>
- <20150812150253.GE13884@saruman.tx.rr.com>
-Message-ID: <20150812164649.31346.9236@quantum>
-Subject: Re: Common clock framework API vs RT patchset
-Date: Wed, 12 Aug 2015 09:46:49 -0700
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Felipe Balbi (2015-08-12 08:02:53)
-> On Wed, Aug 12, 2015 at 11:11:51AM +0100, Russell King - ARM Linux wrote:
-> > On Wed, Aug 12, 2015 at 01:05:58PM +0300, Grygorii Strashko wrote:
-> > > On 08/12/2015 01:06 AM, Michael Turquette wrote:
-> > > > Quoting Russell King - ARM Linux (2015-08-11 12:25:15)
-> > > >>
-> > > >> clk_enable/clk_disable _should_ be usable from atomic contexts.
-> > > =
+From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
 
-> > > Thanks Russell - above is not true on -RT.
-> > =
+PLL enable callbacks are overriding PLL mode (int/frac) and
+Noise reduction (on/off) settings set by the boot loader which
+results in the incorrect clock rate.
 
-> > What I'm saying is that it _should_ be true.  You _should_ be able to
-> > call clk_enable()/clk_disable() from atomic contexts.  It's been
-> > documented since forever:
-> > =
+PLL mode and noise reduction are defined by the DSMPD and DACPD bits
+of the PLL control register. PLL .enable() callbacks enable PLL
+by deasserting all power-down bits of the PLL control register,
+including DSMPD and DACPD bits, which is not necessary since
+these bits don't actually enable/disable PLL.
 
-> > /**
-> >  * clk_enable - inform the system when the clock source should be runni=
-ng.
-> >  * @clk: clock source
-> >  *
-> >  * If the clock can not be enabled/disabled, this should return success.
-> >  *
-> >  * May be called from atomic contexts.
-> > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > =
+This commit fixes the problem by removing DSMPD and DACPD bits
+from the "PLL enable" mask.
 
-> > /**
-> >  * clk_disable - inform the system when the clock source is no longer r=
-equired.
-> >  * @clk: clock source
-> >  *
-> >  * Inform the system that a clock source is no longer required by
-> >  * a driver and may be shut down.
-> >  *
-> >  * May be called from atomic contexts.
-> > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > =
+Reviewed-by: Andrew Bresitcker <abrestic@chromium.org>
+Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+---
+ drivers/clk/pistachio/clk-pll.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> > If that's not true with CCF, that's a CCF bug, not a usage bug.
-> =
-
-> in that case, CCF's clock need to be converted to raw_spin_locks, that's
-> the only way to prevent its locks from being reimplemented as rt
-> mutexes.
-
-I do not keep up much with rt stuff, so I am going to ask a naive
-question: is it common to simply do s/spin_lock/raw_spin_lock/g for
-driver subsystems when using rt? Sounds like that is all that is
-required...
-
-Regards,
-Mike
-
-> =
-
-> -- =
-
-> balbi
+diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
+index 68066ef..9a38a2b 100644
+--- a/drivers/clk/pistachio/clk-pll.c
++++ b/drivers/clk/pistachio/clk-pll.c
+@@ -134,8 +134,7 @@ static int pll_gf40lp_frac_enable(struct clk_hw *hw)
+ 	u32 val;
+ 
+ 	val = pll_readl(pll, PLL_CTRL3);
+-	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_DACPD |
+-		 PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
++	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
+ 		 PLL_FRAC_CTRL3_FOUT4PHASEPD | PLL_FRAC_CTRL3_FOUTVCOPD);
+ 	pll_writel(pll, val, PLL_CTRL3);
+ 
+@@ -277,7 +276,7 @@ static int pll_gf40lp_laint_enable(struct clk_hw *hw)
+ 	u32 val;
+ 
+ 	val = pll_readl(pll, PLL_CTRL1);
+-	val &= ~(PLL_INT_CTRL1_PD | PLL_INT_CTRL1_DSMPD |
++	val &= ~(PLL_INT_CTRL1_PD |
+ 		 PLL_INT_CTRL1_FOUTPOSTDIVPD | PLL_INT_CTRL1_FOUTVCOPD);
+ 	pll_writel(pll, val, PLL_CTRL1);
+ 
+-- 
+1.9.1
