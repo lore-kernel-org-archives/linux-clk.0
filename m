@@ -1,70 +1,64 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Date: Tue, 18 Aug 2015 10:24:01 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>
-Subject: [PULL] clk: at91: sama5d2 materials
-Message-ID: <20150818102401.17de779b@bbrezillon>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
- Alexandre Belloni <alexandre.belloni@free-electrons.com>,
- Nicolas Ferre <nicolas.ferre@atmel.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20150818154552.GI2547@lukather>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+ lee.jones@linaro.org, s.hauer@pengutronix.de, geert@linux-m68k.org
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <20150818154552.GI2547@lukather>
+Message-ID: <20150818164356.31346.80341@quantum>
+Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and implement
+ hand-off
+Date: Tue, 18 Aug 2015 09:43:56 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen, Mike,
+Quoting Maxime Ripard (2015-08-18 08:45:52)
+> Hi Mike,
+> =
 
-Here is a PR for the sama5d2 materials.
-I know we're already late in the release cycle and I'm not sure you can
-take this PR into account for 4.3, so if you can't could you please
-queue it for 4.4?
+> On Fri, Aug 07, 2015 at 12:09:27PM -0700, Michael Turquette wrote:
+> > All of the other kitchen sink stuff (DT binding, passing the flag back
+> > to the framework when the clock consumer driver calls clk_put) was left
+> > out because I do not see a real use case for it. If one can demonstrate
+> > a real use case (and not a hypothetical one) then this patch series can
+> > be expanded further.
+> =
 
-Thanks,
+> I think there is a very trivial use case for passing back the
+> reference to the framework, if during the probed, we have something
+> like:
+> =
 
-Boris
+> clk =3D clk_get()
+> clk_prepare_enable(clk)
+> foo_framework_register()
+> =
 
-The following changes since commit c42743f11f58646a50bc4b96da363429dca0c5e6:
+> if foo_framework_register fails, the sensible thing to do would be to
+> call clk_disable_unprepare. If the clock was a critical clock, you
+> just gated it.
 
-  clk: add bindings for the Ux500 clocks (2015-08-13 11:29:45 -0700)
+Hmm, a good point. Creating the "pass the reference back" call is not
+hard technically. But how to keep from abusing it? E.g. I do not want
+that call to become an alternative to correct use of clk_enable.
 
-are available in the git repository at:
+Maybe I'll need a Coccinelle script or just some regular sed to
+occasionally search for new users of this api and audit them?
 
-  https://github.com/bbrezillon/linux-at91.git clk/atmel-clk-next
+I was hoping to not add any new consumer api at all :-/
 
-for you to fetch changes up to 3be0527c0f8bbbb744a6a34603d6a83e511c6741:
+Regards,
+Mike
 
-  clk: at91: add generated clock driver (2015-08-18 10:11:57 +0200)
+> =
 
-----------------------------------------------------------------
-Nicolas Ferre (4):
-      clk: at91: cleanup PMC header file for PCR register fields
-      clk: at91: modify PMC peripheral clock to deal with newer register layout
-      clk: at91: add PMC sama5d2 support
-      clk: at91: add generated clock driver
+> Maxime
+> =
 
- Documentation/devicetree/bindings/clock/at91-clock.txt |  35 +++++++++++++++++++++
- arch/arm/mach-at91/Kconfig                             |   3 ++
- drivers/clk/at91/Makefile                              |   1 +
- drivers/clk/at91/clk-generated.c                       | 306 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/at91/clk-peripheral.c                      |  24 +++++++++-----
- drivers/clk/at91/pmc.c                                 |  21 +++++++++++++
- drivers/clk/at91/pmc.h                                 |   3 ++
- include/dt-bindings/clock/at91.h                       |   1 +
- include/linux/clk/at91_pmc.h                           |  22 ++++++++-----
- 9 files changed, 400 insertions(+), 16 deletions(-)
- create mode 100644 drivers/clk/at91/clk-generated.c
+> -- =
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
