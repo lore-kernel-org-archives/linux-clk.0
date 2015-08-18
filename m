@@ -1,55 +1,130 @@
-Return-Path: <maxime.coquelin@st.com>
-Message-ID: <55C9DE57.2090105@st.com>
-Date: Tue, 11 Aug 2015 13:36:55 +0200
-From: Maxime Coquelin <maxime.coquelin@st.com>
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <govindraj.raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Govindraj Raja
+	<govindraj.raja@imgtec.com>
+Subject: [PATCH v4 3/4] clk: pistachio: Fix PLL rate calculation in integer mode
+Date: Tue, 18 Aug 2015 10:32:16 +0100
+Message-ID: <1439890337-13803-4-git-send-email-govindraj.raja@imgtec.com>
+In-Reply-To: <1439890337-13803-1-git-send-email-govindraj.raja@imgtec.com>
+References: <1439890337-13803-1-git-send-email-govindraj.raja@imgtec.com>
 MIME-Version: 1.0
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Lee Jones <lee.jones@linaro.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>	<1438974570-20812-4-git-send-email-mturquette@baylibre.com>	<20150810144811.GN3249@x1>	<20150810185516.2416.32293@quantum>	<20150811084329.GA13374@x1>	<55C9C82F.6060401@st.com> <CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com>
-In-Reply-To: <CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
 
-On 08/11/2015 12:11 PM, Geert Uytterhoeven wrote:
-> Hi Maxime,
->
-> On Tue, Aug 11, 2015 at 12:02 PM, Maxime Coquelin
-> <maxime.coquelin@st.com> wrote:
->> How can we pass CLK_ENABLE_HAND_OFF flag to a specific clock on STi
->> platform?
-> Add the flag to the relevant clocks in the C code, e.g. in
-> clk_register_flexgen():
->
->          if (!strcmp(name, "clk-icn-cpu"))
->                  init.flags |= CLK_ENABLE_HAND_OFF;
-The main problem I see with this proposal
->
->> Could we imagine having a kind of "clocks-enable-hand-off" property we could
->> use in our clock controller DT node?
-> You can imagine doing "flex_flags |= CLK_ENABLE_HAND_OFF" in
-> st_of_flexgen_setup(), depending on the presence of such a property.
-Exactly, this is what I was thinking about.
+.recalc_rate callback for the fractional PLL doesn't take operating
+mode into account when calculating PLL rate. This results in
+the incorrect PLL rates when PLL is operating in integer mode.
 
->
-> However, not disabling clocks is a software policy, not a hardware description,
-> so IMHO it doesn't belong in DT.
->
-I disagree here because if these clocks get gated the system is dead, so 
-I wouldn't call this a SW Policy.
-Moreover, I don't see how this property is different from 
-assigned-clock-parents and assigned-clock-rates properties, which have 
-been accepted.
+Operating mode of fractional PLL is based on the value of the
+fractional divider. Currently it assumes that the PLL will always
+be configured in fractional mode which may not be
+the case. This may result in the wrong output frequency.
 
-Thanks,
-Maxime
+Also vco was calculated based on the current operating mode which
+makes no sense because .set_rate is setting operating mode. Instead,
+vco should be calculated using PLL settings that are about to be set.
+
+Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+---
+ drivers/clk/pistachio/clk-pll.c | 46 +++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 44 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
+index 9a38a2b..5554fa4 100644
+--- a/drivers/clk/pistachio/clk-pll.c
++++ b/drivers/clk/pistachio/clk-pll.c
+@@ -65,6 +65,10 @@
+ #define MIN_OUTPUT_FRAC			12000000UL
+ #define MAX_OUTPUT_FRAC			1600000000UL
+ 
++/* Fractional PLL operating modes */
++#define PLL_MODE_INT			1
++#define PLL_MODE_FRAC			0
++
+ struct pistachio_clk_pll {
+ 	struct clk_hw hw;
+ 	void __iomem *base;
+@@ -99,6 +103,29 @@ static inline struct pistachio_clk_pll *to_pistachio_pll(struct clk_hw *hw)
+ 	return container_of(hw, struct pistachio_clk_pll, hw);
+ }
+ 
++static inline u32 pll_frac_get_mode(struct clk_hw *hw)
++{
++	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
++	u32 val;
++
++	val = pll_readl(pll, PLL_CTRL3) & PLL_FRAC_CTRL3_DSMPD;
++	return val ? PLL_MODE_INT : PLL_MODE_FRAC;
++}
++
++static inline void pll_frac_set_mode(struct clk_hw *hw, u32 mode)
++{
++	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
++	u32 val;
++
++	val = pll_readl(pll, PLL_CTRL3);
++	if (mode == PLL_MODE_INT)
++		val |= PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_DACPD;
++	else
++		val &= ~(PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_DACPD);
++
++	pll_writel(pll, val, PLL_CTRL3);
++}
++
+ static struct pistachio_pll_rate_table *
+ pll_get_params(struct pistachio_clk_pll *pll, unsigned long fref,
+ 	       unsigned long fout)
+@@ -180,7 +207,11 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!params || !params->refdiv)
+ 		return -EINVAL;
+ 
+-	vco = div64_u64(params->fref * params->fbdiv, params->refdiv);
++	/* calculate vco */
++	vco = params->fref;
++	vco *= (params->fbdiv << 24) + params->frac;
++	vco = div64_u64(vco, params->refdiv << 24);
++
+ 	if (vco < MIN_VCO_FRAC_FRAC || vco > MAX_VCO_FRAC_FRAC)
+ 		pr_warn("%s: VCO %llu is out of range %lu..%lu\n", name, vco,
+ 			MIN_VCO_FRAC_FRAC, MAX_VCO_FRAC_FRAC);
+@@ -224,6 +255,12 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		(params->postdiv2 << PLL_FRAC_CTRL2_POSTDIV2_SHIFT);
+ 	pll_writel(pll, val, PLL_CTRL2);
+ 
++	/* set operating mode */
++	if (params->frac)
++		pll_frac_set_mode(hw, PLL_MODE_FRAC);
++	else
++		pll_frac_set_mode(hw, PLL_MODE_INT);
++
+ 	if (enabled)
+ 		pll_lock(pll);
+ 
+@@ -247,8 +284,13 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
+ 		PLL_FRAC_CTRL2_POSTDIV2_MASK;
+ 	frac = (val >> PLL_FRAC_CTRL2_FRAC_SHIFT) & PLL_FRAC_CTRL2_FRAC_MASK;
+ 
++	/* get operating mode (int/frac) and calculate rate accordingly */
+ 	rate = parent_rate;
+-	rate *= (fbdiv << 24) + frac;
++	if (pll_frac_get_mode(hw) == PLL_MODE_FRAC)
++		rate *= (fbdiv << 24) + frac;
++	else
++		rate *= (fbdiv << 24);
++
+ 	rate = do_div_round_closest(rate, (prediv * postdiv1 * postdiv2) << 24);
+ 
+ 	return rate;
+-- 
+1.9.1
