@@ -1,66 +1,74 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20150825224638.GL19120@codeaurora.org>
-References: <87lhcz7u2i.wl%kuninori.morimoto.gx@renesas.com>
-	<87k2sj7tzs.wl%kuninori.morimoto.gx@renesas.com>
-	<20150825224638.GL19120@codeaurora.org>
-Date: Wed, 26 Aug 2015 09:29:01 +0200
-Message-ID: <CAMuHMdXhroy4BVRyeeu2uEnPvVehXNjac09RKWr49LA=0Yk=0g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: shmobile: add Renesas R-Car Gen3 CPG support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Michael Turquette <mturquette@baylibre.com>, Simon Horman <horms+renesas@verge.net.au>,
-	Magnus <magnus.damm@gmail.com>, Linux-SH <linux-sh@vger.kernel.org>,
-	Linux-Kernel <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Antoine Tenart <antoine.tenart@free-electrons.com>
+To: sebastian.hesselbarth@gmail.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Antoine Tenart <antoine.tenart@free-electrons.com>,
+	zmxu@marvell.com, jszhang@marvell.com,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/6] clk: berlin: move MAX_CLKS out of drivers/clk/berlin
+Date: Tue, 18 Aug 2015 13:46:03 +0200
+Message-Id: <1439898368-11543-2-git-send-email-antoine.tenart@free-electrons.com>
+In-Reply-To: <1439898368-11543-1-git-send-email-antoine.tenart@free-electrons.com>
+References: <1439898368-11543-1-git-send-email-antoine.tenart@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Move the MAX_CLKS definition used in the Berlin clock driver outside the
+driver.
 
-On Wed, Aug 26, 2015 at 12:46 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> --- /dev/null
->> +++ b/drivers/clk/shmobile/clk-rcar-gen3.c
+Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+---
+ drivers/clk/berlin/bg2.c             | 1 -
+ drivers/clk/berlin/bg2q.c            | 1 -
+ include/dt-bindings/clock/berlin2.h  | 2 ++
+ include/dt-bindings/clock/berlin2q.h | 2 ++
+ 4 files changed, 4 insertions(+), 2 deletions(-)
 
->> +
->> +/*
->> + * Reset register definitions.
->> + */
->> +#define MODEMR 0xe6160060
->> +
->> +static u32 rcar_gen3_read_mode_pins(void)
->> +{
->> +     static u32 mode;
->> +     static bool mode_valid;
->> +
->> +     if (!mode_valid) {
->> +             void __iomem *modemr = ioremap_nocache(MODEMR, 4);
->> +
->> +             BUG_ON(!modemr);
->> +             mode = ioread32(modemr);
->> +             iounmap(modemr);
->> +             mode_valid = true;
->> +     }
->> +
->> +     return mode;
->> +}
->
-> Perhaps this should be read using a syscon?
+diff --git a/drivers/clk/berlin/bg2.c b/drivers/clk/berlin/bg2.c
+index 73153fc45ee9..469a2c57e1b4 100644
+--- a/drivers/clk/berlin/bg2.c
++++ b/drivers/clk/berlin/bg2.c
+@@ -91,7 +91,6 @@
+  *
+  */
+ 
+-#define	MAX_CLKS 41
+ static struct clk *clks[MAX_CLKS];
+ static struct clk_onecell_data clk_data;
+ static DEFINE_SPINLOCK(lock);
+diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
+index 221f40c2b850..a27958efab92 100644
+--- a/drivers/clk/berlin/bg2q.c
++++ b/drivers/clk/berlin/bg2q.c
+@@ -45,7 +45,6 @@
+ #define REG_SDIO0XIN_CLKCTL	0x0158
+ #define REG_SDIO1XIN_CLKCTL	0x015c
+ 
+-#define	MAX_CLKS 27
+ static struct clk *clks[MAX_CLKS];
+ static struct clk_onecell_data clk_data;
+ static DEFINE_SPINLOCK(lock);
+diff --git a/include/dt-bindings/clock/berlin2.h b/include/dt-bindings/clock/berlin2.h
+index 0c30800175df..97832b840beb 100644
+--- a/include/dt-bindings/clock/berlin2.h
++++ b/include/dt-bindings/clock/berlin2.h
+@@ -43,3 +43,5 @@
+ #define CLKID_VIDEO1		38
+ #define CLKID_VIDEO2		39
+ #define CLKID_TWD		40
++
++#define MAX_CLKS		41
+diff --git a/include/dt-bindings/clock/berlin2q.h b/include/dt-bindings/clock/berlin2q.h
+index 287fc3b4afb2..c79af928ae92 100644
+--- a/include/dt-bindings/clock/berlin2q.h
++++ b/include/dt-bindings/clock/berlin2q.h
+@@ -29,3 +29,5 @@
+ #define CLKID_SMEMC		24
+ #define CLKID_PCIE		25
+ #define CLKID_TWD		26
++
++#define MAX_CLKS		27
+-- 
+2.5.0
 
-Like "[PATCH/RFC 00/11] ARM: shmobile: Let CPG use syscon for MD pin values"
-(http://www.spinics.net/lists/linux-clk/msg01478.html)?
-
-It wasn't so well received...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
