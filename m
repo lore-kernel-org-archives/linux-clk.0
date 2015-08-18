@@ -1,90 +1,56 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Sat, 29 Aug 2015 18:14:18 +0900
-Message-Id: <20150829091418.28546.8569.sendpatchset@little-apple>
-In-Reply-To: <20150829091323.28546.28287.sendpatchset@little-apple>
-References: <20150829091323.28546.28287.sendpatchset@little-apple>
-Subject: [PATCH v4 05/05] clk: shmobile: Make MSTP clock-output-names optional
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20150818155203.GJ2547@lukather>
+Cc: "Lee Jones" <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, sboyd@codeaurora.org, s.hauer@pengutronix.de,
+ geert@linux-m68k.org
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+ <20150810144811.GN3249@x1> <20150810185516.2416.32293@quantum>
+ <20150811084329.GA13374@x1> <20150811170904.2416.43354@quantum>
+ <20150811183317.GT18282@x1> <20150811185827.31346.68194@quantum>
+ <20150818155203.GJ2547@lukather>
+Message-ID: <20150818163356.31346.15075@quantum>
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+Date: Tue, 18 Aug 2015 09:33:56 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Quoting Maxime Ripard (2015-08-18 08:52:03)
+> On Tue, Aug 11, 2015 at 11:58:27AM -0700, Michael Turquette wrote:
+> > For example the whole big messy fuss over the DT bindings for the
+> > simple-fb driver could have been avoided if this feature had existed
+> > then.
+> =
 
-This patch updates the MSTP driver to make the "clock-output-names"
-DT property optional instead of mandatory. In case the DT property
-is omitted then the function clk_register_clkdev() is skipped.
+> Not really, there was additional issues that would have prevented to
+> use that in simplefb too. For example the fact that you wouldn't care
+> about the clock at all if simplefb was not enabled in the kernel. Or
+> that you would like to protect the pixel clock (or its parent) from
+> having its rate changed.
 
-The default for new SoCs is to not use "clock-output-names".
+You're right, there may be more issues involved here. But as I recall
+there was interest in using simplefb to "hand-off" to a loadable module
+later on, and that was really what I was referring to.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+In that case we could "skip" simplefb having to claim and enable clocks.
+The loadable module that is the "rich" driver could just claim them as
+usual and the reference counts would be handed over at that time.
 
- Changes since V3:
- - Added support for multiple MSTP bits. =)
+But I don't mean to dig up past flamebait ;-)
 
- drivers/clk/shmobile/clk-mstp.c |   28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+Regards,
+Mike
 
---- 0001/drivers/clk/shmobile/clk-mstp.c
-+++ work/drivers/clk/shmobile/clk-mstp.c	2015-08-29 18:01:00.662366518 +0900
-@@ -199,26 +199,29 @@ static void __init cpg_mstp_clocks_init(
- 	for (i = 0; i < MSTP_MAX_CLOCKS; ++i) {
- 		const char *parent_name;
- 		const char *name;
-+		bool allocated_name;
- 		u32 clkidx;
- 		int ret;
- 
--		/* Skip clocks with no name. */
--		ret = of_property_read_string_index(np, "clock-output-names",
--						    i, &name);
--		if (ret < 0 || strlen(name) == 0)
--			continue;
--
- 		parent_name = of_clk_get_parent_name(np, i);
- 		ret = of_property_read_u32_index(np, idxname, i, &clkidx);
- 		if (parent_name == NULL || ret < 0)
- 			break;
- 
- 		if (clkidx >= MSTP_MAX_CLOCKS) {
--			pr_err("%s: invalid clock %s %s index %u)\n",
--			       __func__, np->name, name, clkidx);
-+			pr_err("%s: invalid clock %s index %u)\n",
-+			       __func__, np->name, clkidx);
- 			continue;
- 		}
- 
-+		if (of_property_read_string_index(np, "clock-output-names",
-+						  i, &name) == 0) {
-+			allocated_name = false;
-+		} else {
-+			name = kasprintf(GFP_KERNEL, "%s.%u", np->name, clkidx);
-+			allocated_name = true;
-+		}
-+
- 		clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
- 						       clkidx, group);
- 		if (!IS_ERR(clks[clkidx])) {
-@@ -231,12 +234,19 @@ static void __init cpg_mstp_clocks_init(
- 			 *
- 			 * FIXME: Remove this when all devices that require a
- 			 * clock will be instantiated from DT.
-+			 *
-+			 * We currently register clkdev only when the DT
-+			 * property clock-output-names is present.
- 			 */
--			clk_register_clkdev(clks[clkidx], name, NULL);
-+			if (!allocated_name)
-+				clk_register_clkdev(clks[clkidx], name, NULL);
- 		} else {
- 			pr_err("%s: failed to register %s %s clock (%ld)\n",
- 			       __func__, np->name, name, PTR_ERR(clks[clkidx]));
- 		}
-+
-+		if (allocated_name)
-+			kfree(name);
- 	}
- 
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &group->data);
+> =
+
+> Maxime
+> =
+
+> -- =
+
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
