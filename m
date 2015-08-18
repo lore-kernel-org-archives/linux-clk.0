@@ -1,89 +1,95 @@
-Return-Path: <wens@csie.org>
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <govindraj.raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Ezequiel Garcia
+	<ezequiel.garcia@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>
+Subject: [PATCH v4 4/4] clk: pistachio: correct critical clock list
+Date: Tue, 18 Aug 2015 10:32:17 +0100
+Message-ID: <1439890337-13803-5-git-send-email-govindraj.raja@imgtec.com>
+In-Reply-To: <1439890337-13803-1-git-send-email-govindraj.raja@imgtec.com>
+References: <1439890337-13803-1-git-send-email-govindraj.raja@imgtec.com>
 MIME-Version: 1.0
-In-Reply-To: <1438364782-3968-6-git-send-email-maxime.ripard@free-electrons.com>
-References: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
- <1438364782-3968-6-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 8 Aug 2015 00:21:17 +0800
-Message-ID: <CAGb2v64nvA1K=Ya7_99-2G1LtFjcuj+qQbO1GJaqsL+yPF+Xdw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] ARM: sun8i: Add clock indices
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Aug 1, 2015 at 1:46 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The A23 and A33 gates have a non continuous set of clock IDs that are
-> valid. Add the clock-indices property to the DT to express this.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-> index 7abd0ae3143d..c318c770b6c1 100644
-> --- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-> +++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-> @@ -180,6 +180,15 @@
->                         compatible = "allwinner,sun8i-a23-ahb1-gates-clk";
->                         reg = <0x01c20060 0x8>;
->                         clocks = <&ahb1>;
-> +                       clock-indices = <1>, <6>,
+From: "Damien.Horsley" <Damien.Horsley@imgtec.com>
 
-Turns out the A33 (and I assume the same with the A23) has
-an ahb1 clock gate for the Security System at clock-index <5>.
+Current critical clock list for pistachio enables
+only mips and sys clocks by default but there are
+also other clocks that are not claimed by anyone and
+needs to be enabled by default.
 
-This is found in the updated A33 user manual.
+This patch updates the critical clocks that need
+to be enabled by default.
 
-> +                                       <8>, <9>, <10>,
-> +                                       <13>, <14>,
-> +                                       <19>, <20>,
-> +                                       <21>, <24>, <26>,
-> +                                       <29>, <32>, <36>,
-> +                                       <40>, <44>, <46>,
-> +                                       <52>, <54>,
+Add a separate struct to distinguish the critical clocks
+as listed:
+1.) core clocks:
+	a.) mips clock
+2.) peripheral system clocks:
+	a.) sys clock
+	b.) sys_bus clock
+	c.) DDR clock
+	d.) ROM clock
 
-<53> is ahb1 clock gate for msgbox, again found in A33 manual.
+Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+Signed-off-by: Damien.Horsley <Damien.Horsley@imgtec.com>
+Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+---
+ drivers/clk/pistachio/clk-pistachio.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-> +                                       <57>;
-
-<58> is ahb1 clock gate for SAT, which seems to be part of the
-display pipeline.
-
->                         clock-output-names = "ahb1_mipidsi", "ahb1_dma",
->                                         "ahb1_mmc0", "ahb1_mmc1", "ahb1_mmc2",
->                                         "ahb1_nand", "ahb1_sdram",
-> @@ -196,6 +205,8 @@
->                         compatible = "allwinner,sun8i-a23-apb1-gates-clk";
->                         reg = <0x01c20068 0x4>;
->                         clocks = <&apb1>;
-> +                       clock-indices = <0>, <5>,
-> +                                       <12>, <13>;
->                         clock-output-names = "apb1_codec", "apb1_pio",
->                                         "apb1_daudio0", "apb1_daudio1";
->                 };
-> @@ -213,6 +224,10 @@
->                         compatible = "allwinner,sun8i-a23-apb2-gates-clk";
->                         reg = <0x01c2006c 0x4>;
->                         clocks = <&apb2>;
-> +                       clock-indices = <0>, <1>,
-> +                                       <2>, <16>,
-> +                                       <17>, <18>,
-> +                                       <19>, <20>;
->                         clock-output-names = "apb2_i2c0", "apb2_i2c1",
->                                         "apb2_i2c2", "apb2_uart0",
->                                         "apb2_uart1", "apb2_uart2",
-> --
-> 2.4.6
->
-
-Not sure if you want to add the clocks I mentioned together
-in this patch, or do a separate patch.
-
-The rest look good.
-
-ChenYu
+diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
+index 8c0fe88..c4ceb5e 100644
+--- a/drivers/clk/pistachio/clk-pistachio.c
++++ b/drivers/clk/pistachio/clk-pistachio.c
+@@ -159,9 +159,15 @@ PNAME(mux_debug) = { "mips_pll_mux", "rpu_v_pll_mux",
+ 		     "wifi_pll_mux", "bt_pll_mux" };
+ static u32 mux_debug_idx[] = { 0x0, 0x1, 0x2, 0x4, 0x8, 0x10 };
+ 
+-static unsigned int pistachio_critical_clks[] __initdata = {
+-	CLK_MIPS,
+-	CLK_PERIPH_SYS,
++static unsigned int pistachio_critical_clks_core[] __initdata = {
++	CLK_MIPS
++};
++
++static unsigned int pistachio_critical_clks_sys[] __initdata = {
++	PERIPH_CLK_SYS,
++	PERIPH_CLK_SYS_BUS,
++	PERIPH_CLK_DDR,
++	PERIPH_CLK_ROM,
+ };
+ 
+ static void __init pistachio_clk_init(struct device_node *np)
+@@ -193,8 +199,8 @@ static void __init pistachio_clk_init(struct device_node *np)
+ 
+ 	pistachio_clk_register_provider(p);
+ 
+-	pistachio_clk_force_enable(p, pistachio_critical_clks,
+-				   ARRAY_SIZE(pistachio_critical_clks));
++	pistachio_clk_force_enable(p, pistachio_critical_clks_core,
++				   ARRAY_SIZE(pistachio_critical_clks_core));
+ }
+ CLK_OF_DECLARE(pistachio_clk, "img,pistachio-clk", pistachio_clk_init);
+ 
+@@ -261,6 +267,9 @@ static void __init pistachio_clk_periph_init(struct device_node *np)
+ 				    ARRAY_SIZE(pistachio_periph_gates));
+ 
+ 	pistachio_clk_register_provider(p);
++
++	pistachio_clk_force_enable(p, pistachio_critical_clks_sys,
++				   ARRAY_SIZE(pistachio_critical_clks_sys));
+ }
+ CLK_OF_DECLARE(pistachio_clk_periph, "img,pistachio-clk-periph",
+ 	       pistachio_clk_periph_init);
+-- 
+1.9.1
