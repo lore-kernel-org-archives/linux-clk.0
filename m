@@ -1,129 +1,70 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <govindraj.raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Govindraj Raja <govindraj.raja@imgtec.com>
-Subject: [PATCH v2 3/4] clk: pistachio: Fix PLL rate calculation in integer mode
-Date: Fri, 7 Aug 2015 17:20:12 +0100
-Message-ID: <1438964413-18876-4-git-send-email-govindraj.raja@imgtec.com>
-In-Reply-To: <1438964413-18876-1-git-send-email-govindraj.raja@imgtec.com>
-References: <1438964413-18876-1-git-send-email-govindraj.raja@imgtec.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Date: Tue, 18 Aug 2015 10:24:01 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>
+Subject: [PULL] clk: at91: sama5d2 materials
+Message-ID: <20150818102401.17de779b@bbrezillon>
 MIME-Version: 1.0
-Content-Type: text/plain
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+ Nicolas Ferre <nicolas.ferre@atmel.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+Stephen, Mike,
 
-.recalc_rate callback for the fractional PLL doesn't take operating
-mode into account when calculating PLL rate. This results in
-the incorrect PLL rates when PLL is operating in integer mode.
+Here is a PR for the sama5d2 materials.
+I know we're already late in the release cycle and I'm not sure you can
+take this PR into account for 4.3, so if you can't could you please
+queue it for 4.4?
 
-Operating mode of fractional PLL is based on the value of the
-fractional divider. Currently it assumes that the PLL will always
-be configured in fractional mode which may not be
-the case. This may result in the wrong output frequency.
+Thanks,
 
-Also vco was calculated based on the current operating mode which
-makes no sense because .set_rate is setting operating mode. Instead,
-vco should be calculated using PLL settings that are about to be set.
+Boris
 
-Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
-Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
----
- drivers/clk/pistachio/clk-pll.c | 46 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 2 deletions(-)
+The following changes since commit c42743f11f58646a50bc4b96da363429dca0c5e6:
 
-diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
-index 9a38a2b..5554fa4 100644
---- a/drivers/clk/pistachio/clk-pll.c
-+++ b/drivers/clk/pistachio/clk-pll.c
-@@ -65,6 +65,10 @@
- #define MIN_OUTPUT_FRAC			12000000UL
- #define MAX_OUTPUT_FRAC			1600000000UL
- 
-+/* Fractional PLL operating modes */
-+#define PLL_MODE_INT			1
-+#define PLL_MODE_FRAC			0
-+
- struct pistachio_clk_pll {
- 	struct clk_hw hw;
- 	void __iomem *base;
-@@ -99,6 +103,29 @@ static inline struct pistachio_clk_pll *to_pistachio_pll(struct clk_hw *hw)
- 	return container_of(hw, struct pistachio_clk_pll, hw);
- }
- 
-+static inline u32 pll_frac_get_mode(struct clk_hw *hw)
-+{
-+	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
-+	u32 val;
-+
-+	val = pll_readl(pll, PLL_CTRL3) & PLL_FRAC_CTRL3_DSMPD;
-+	return val ? PLL_MODE_INT : PLL_MODE_FRAC;
-+}
-+
-+static inline void pll_frac_set_mode(struct clk_hw *hw, u32 mode)
-+{
-+	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
-+	u32 val;
-+
-+	val = pll_readl(pll, PLL_CTRL3);
-+	if (mode == PLL_MODE_INT)
-+		val |= PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_DACPD;
-+	else
-+		val &= ~(PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_DACPD);
-+
-+	pll_writel(pll, val, PLL_CTRL3);
-+}
-+
- static struct pistachio_pll_rate_table *
- pll_get_params(struct pistachio_clk_pll *pll, unsigned long fref,
- 	       unsigned long fout)
-@@ -180,7 +207,11 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (!params || !params->refdiv)
- 		return -EINVAL;
- 
--	vco = div64_u64(params->fref * params->fbdiv, params->refdiv);
-+	/* calculate vco */
-+	vco = params->fref;
-+	vco *= (params->fbdiv << 24) + params->frac;
-+	vco = div64_u64(vco, params->refdiv << 24);
-+
- 	if (vco < MIN_VCO_FRAC_FRAC || vco > MAX_VCO_FRAC_FRAC)
- 		pr_warn("%s: VCO %llu is out of range %lu..%lu\n", name, vco,
- 			MIN_VCO_FRAC_FRAC, MAX_VCO_FRAC_FRAC);
-@@ -224,6 +255,12 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
- 		(params->postdiv2 << PLL_FRAC_CTRL2_POSTDIV2_SHIFT);
- 	pll_writel(pll, val, PLL_CTRL2);
- 
-+	/* set operating mode */
-+	if (params->frac)
-+		pll_frac_set_mode(hw, PLL_MODE_FRAC);
-+	else
-+		pll_frac_set_mode(hw, PLL_MODE_INT);
-+
- 	if (enabled)
- 		pll_lock(pll);
- 
-@@ -247,8 +284,13 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
- 		PLL_FRAC_CTRL2_POSTDIV2_MASK;
- 	frac = (val >> PLL_FRAC_CTRL2_FRAC_SHIFT) & PLL_FRAC_CTRL2_FRAC_MASK;
- 
-+	/* get operating mode (int/frac) and calculate rate accordingly */
- 	rate = parent_rate;
--	rate *= (fbdiv << 24) + frac;
-+	if (pll_frac_get_mode(hw) == PLL_MODE_FRAC)
-+		rate *= (fbdiv << 24) + frac;
-+	else
-+		rate *= (fbdiv << 24);
-+
- 	rate = do_div_round_closest(rate, (prediv * postdiv1 * postdiv2) << 24);
- 
- 	return rate;
--- 
-1.9.1
+  clk: add bindings for the Ux500 clocks (2015-08-13 11:29:45 -0700)
+
+are available in the git repository at:
+
+  https://github.com/bbrezillon/linux-at91.git clk/atmel-clk-next
+
+for you to fetch changes up to 3be0527c0f8bbbb744a6a34603d6a83e511c6741:
+
+  clk: at91: add generated clock driver (2015-08-18 10:11:57 +0200)
+
+----------------------------------------------------------------
+Nicolas Ferre (4):
+      clk: at91: cleanup PMC header file for PCR register fields
+      clk: at91: modify PMC peripheral clock to deal with newer register layout
+      clk: at91: add PMC sama5d2 support
+      clk: at91: add generated clock driver
+
+ Documentation/devicetree/bindings/clock/at91-clock.txt |  35 +++++++++++++++++++++
+ arch/arm/mach-at91/Kconfig                             |   3 ++
+ drivers/clk/at91/Makefile                              |   1 +
+ drivers/clk/at91/clk-generated.c                       | 306 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/at91/clk-peripheral.c                      |  24 +++++++++-----
+ drivers/clk/at91/pmc.c                                 |  21 +++++++++++++
+ drivers/clk/at91/pmc.h                                 |   3 ++
+ include/dt-bindings/clock/at91.h                       |   1 +
+ include/linux/clk/at91_pmc.h                           |  22 ++++++++-----
+ 9 files changed, 400 insertions(+), 16 deletions(-)
+ create mode 100644 drivers/clk/at91/clk-generated.c
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
