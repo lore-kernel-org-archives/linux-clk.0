@@ -1,43 +1,89 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 3 Aug 2015 14:46:03 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Bintian Wang <bintian.wang@huawei.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, Guodong Xu <guodong.xu@linaro.org>,
-	Jian Zhang <zhangjian001@hisilicon.com>,
-	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
-	Haoju Mo <mohaoju@hisilicon.com>, Dan Zhao <dan.zhao@hisilicon.com>,
-	sunzhaosheng@hisilicon.com, victor.lixin@hisilicon.com
-Subject: Re: [PATCH v3 1/5] clk: hisi: refine parameter checking for init
-Message-ID: <20150803214603.GC21068@codeaurora.org>
-References: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
- <1438564418-15948-2-git-send-email-leo.yan@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1438564418-15948-2-git-send-email-leo.yan@linaro.org>
+Return-Path: <mathieu@codeaurora.org>
+From: Mathieu Olivari <mathieu@codeaurora.org>
+To: sboyd@codeaurora.org,
+	agross@codeaurora.org,
+	rnayak@codeaurora.org,
+	architt@codeaurora.org
+Cc: robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	linux@arm.linux.org.uk,
+	mturquette@baylibre.com,
+	mathieu@codeaurora.org,
+	mturquette@linaro.org,
+	georgi.djakov@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] ARM: qcom: Disable i2c device on gsbi4 for ipq806x
+Date: Tue, 18 Aug 2015 15:21:28 -0700
+Message-Id: <1439936488-14870-1-git-send-email-mathieu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/03, Leo Yan wrote:
-> *of_iomap()* will check the device node pointer, and if the pointer is
-> NULL it will return error code. So refine clock's init flow by checking
-> the device node with this simple way; and polish a little for the print
-> out message.
-> 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
+Disable the i2c device on gsbi4 and mark gsbi4_h and gsbi4_qup clks as
+unused. If they are enabled, clock framework will turn them off at end
+of probe. On ipq806x by design gsbi4_qup, gsbi4_h clks and i2c on gsbi4
+are meant for RPM usage. So turning them off in kernel is incorrect.
 
-Applied to clk-next
+Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
+---
+ arch/arm/boot/dts/qcom-ipq8064-ap148.dts | 9 ---------
+ drivers/clk/qcom/gcc-ipq806x.c           | 6 +++---
+ 2 files changed, 3 insertions(+), 12 deletions(-)
 
+diff --git a/arch/arm/boot/dts/qcom-ipq8064-ap148.dts b/arch/arm/boot/dts/qcom-ipq8064-ap148.dts
+index b08907a..36e2b04 100644
+--- a/arch/arm/boot/dts/qcom-ipq8064-ap148.dts
++++ b/arch/arm/boot/dts/qcom-ipq8064-ap148.dts
+@@ -46,15 +46,6 @@
+ 			serial@16340000 {
+ 				status = "ok";
+ 			};
+-
+-			i2c4: i2c@16380000 {
+-				status = "ok";
+-
+-				clock-frequency = <200000>;
+-
+-				pinctrl-0 = <&i2c4_pins>;
+-				pinctrl-names = "default";
+-			};
+ 		};
+ 
+ 		gsbi5: gsbi@1a200000 {
+diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+index 5639699..eb4065e 100644
+--- a/drivers/clk/qcom/gcc-ipq806x.c
++++ b/drivers/clk/qcom/gcc-ipq806x.c
+@@ -809,7 +809,7 @@ static struct clk_rcg gsbi6_qup_src = {
+ 			.parent_names = gcc_pxo_pll8,
+ 			.num_parents = 2,
+ 			.ops = &clk_rcg_ops,
+-			.flags = CLK_SET_PARENT_GATE,
++			.flags = CLK_SET_PARENT_GATE | CLK_IGNORE_UNUSED,
+ 		},
+ 	},
+ };
+@@ -874,7 +874,7 @@ static struct clk_branch gsbi7_qup_clk = {
+ 			.parent_names = (const char *[]){ "gsbi7_qup_src" },
+ 			.num_parents = 1,
+ 			.ops = &clk_branch_ops,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+ 		},
+ 	},
+ };
+@@ -922,7 +922,7 @@ static struct clk_branch gsbi4_h_clk = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gsbi4_h_clk",
+ 			.ops = &clk_branch_ops,
+-			.flags = CLK_IS_ROOT,
++			.flags = CLK_IS_ROOT | CLK_IGNORE_UNUSED,
+ 		},
+ 	},
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
