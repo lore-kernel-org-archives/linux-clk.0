@@ -1,72 +1,150 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:52377 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752264AbbHKTZV (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 11 Aug 2015 15:25:21 -0400
-Date: Tue, 11 Aug 2015 20:25:15 +0100
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Nishanth Menon <nm@ti.com>, Thomas Gleixner <tglx@linutronix.de>,
-	linux-rt-users@vger.kernel.org, Felipe Balbi <balbi@ti.com>,
-	Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org
-Subject: Re: Common clock framework API vs RT patchset
-Message-ID: <20150811192514.GB7557@n2100.arm.linux.org.uk>
-References: <55C0A96F.80307@ti.com>
- <alpine.DEB.2.11.1508041405290.3983@nanos>
- <55C0D8F3.3030105@ti.com>
- <20150804153641.GR7557@n2100.arm.linux.org.uk>
- <55CA4BC2.4020505@ti.com>
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <govindraj.raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Govindraj Raja
+	<govindraj.raja@imgtec.com>
+Subject: [PATCH v4 1/4] clk: pistachio: Fix 32bit integer overflows
+Date: Tue, 18 Aug 2015 10:32:14 +0100
+Message-ID: <1439890337-13803-2-git-send-email-govindraj.raja@imgtec.com>
+In-Reply-To: <1439890337-13803-1-git-send-email-govindraj.raja@imgtec.com>
+References: <1439890337-13803-1-git-send-email-govindraj.raja@imgtec.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <55CA4BC2.4020505@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 11, 2015 at 10:23:46PM +0300, Grygorii Strashko wrote:
-> Hi All,
-> 
-> On 08/04/2015 06:36 PM, Russell King - ARM Linux wrote:
-> > On Tue, Aug 04, 2015 at 10:23:31AM -0500, Nishanth Menon wrote:
-> >> Consider clk_enable/disable/set_parent/setfreq operations. none of these
-> >> operations are "atomic" from hardware point of view. instead, they are a
-> >> set of steps which culminates to moving from state A to state B of the
-> >> clock tree configuration.
-> > 
-> > There's a world of difference between clk_enable()/clk_disable() and
-> > the rest of the clk API.
-> > 
-> > clk_enable()/clk_disable() _should_ be callable from any context, since
-> > you may need to enable or disable a clock from any context.  The remainder
-> > of the clk API is callable only from contexts where sleeping is permissible.
-> > 
-> > The reason we have this split is because clk_enable()/clk_disable() have
-> > historically been used in interrupt handlers, and they're specifically
-> > not supposed to impose big delays.
-> > 
-> > Things like waiting for a PLL to re-lock is time-consuming, so it's not
-> > something I'd expect to see behind a clk_enable() implementation (the
-> > fact you can't sleep in there is a big hint.)  Such waits should be in
-> > the clk_prepare() stage instead.
-> > 
-> > Now, as for clk_enable() being interrupted - if clk_enable() is interrupted
-> > and another clk_enable() comes along for the same clock, that second
-> > clk_enable() should not return until the clock has actually been enabled,
-> > and it's up to the implementation to decode how to achieve that.  If that
-> > means a RT implementation using a raw spinlock, then that's one option
-> > (which basically would have the side effect of blocking until the preempted
-> > clk_enable() finishes its business.)  Alternatively, if we can preempt
-> > inside clk_enable(), then the clk_enable() implementation should be written
-> > to cope with that (eg, by the second clk_enable() fiddling with the hardware,
-> > and the first thread noticing that it has nothing to do.)
-> > 
-> 
-> Thanks a lot for your comments and explanations.
-> 
-> Now lock object in CCF is not a raw spinlock, so, seems, I have to update 
-> code and try to move clk_enable()/clk_disable() out of atomic context.
+From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
 
-clk_enable/clk_disable _should_ be usable from atomic contexts.
+This commit fixes 32bit integer overflows throughout the pll driver
+(i.e. wherever the result of integer multiplication may exceed the
+range of u32).
 
+One of the functions affected by this problem is .recalc_rate. It
+returns incorrect rate for some pll settings (not for all though)
+which in turn results in the incorrect rate setup of pll's child
+clocks.
+
+Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+---
+ drivers/clk/pistachio/clk-pll.c | 26 ++++++++++++--------------
+ drivers/clk/pistachio/clk.h     | 14 +++++++-------
+ 2 files changed, 19 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
+index e17dada..68066ef 100644
+--- a/drivers/clk/pistachio/clk-pll.c
++++ b/drivers/clk/pistachio/clk-pll.c
+@@ -88,12 +88,10 @@ static inline void pll_lock(struct pistachio_clk_pll *pll)
+ 		cpu_relax();
+ }
+ 
+-static inline u32 do_div_round_closest(u64 dividend, u32 divisor)
++static inline u64 do_div_round_closest(u64 dividend, u64 divisor)
+ {
+ 	dividend += divisor / 2;
+-	do_div(dividend, divisor);
+-
+-	return dividend;
++	return div64_u64(dividend, divisor);
+ }
+ 
+ static inline struct pistachio_clk_pll *to_pistachio_pll(struct clk_hw *hw)
+@@ -173,7 +171,7 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
+ 	struct pistachio_pll_rate_table *params;
+ 	int enabled = pll_gf40lp_frac_is_enabled(hw);
+-	u32 val, vco, old_postdiv1, old_postdiv2;
++	u64 val, vco, old_postdiv1, old_postdiv2;
+ 	const char *name = __clk_get_name(hw->clk);
+ 
+ 	if (rate < MIN_OUTPUT_FRAC || rate > MAX_OUTPUT_FRAC)
+@@ -183,17 +181,17 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!params || !params->refdiv)
+ 		return -EINVAL;
+ 
+-	vco = params->fref * params->fbdiv / params->refdiv;
++	vco = div64_u64(params->fref * params->fbdiv, params->refdiv);
+ 	if (vco < MIN_VCO_FRAC_FRAC || vco > MAX_VCO_FRAC_FRAC)
+-		pr_warn("%s: VCO %u is out of range %lu..%lu\n", name, vco,
++		pr_warn("%s: VCO %llu is out of range %lu..%lu\n", name, vco,
+ 			MIN_VCO_FRAC_FRAC, MAX_VCO_FRAC_FRAC);
+ 
+-	val = params->fref / params->refdiv;
++	val = div64_u64(params->fref, params->refdiv);
+ 	if (val < MIN_PFD)
+-		pr_warn("%s: PFD %u is too low (min %lu)\n",
++		pr_warn("%s: PFD %llu is too low (min %lu)\n",
+ 			name, val, MIN_PFD);
+ 	if (val > vco / 16)
+-		pr_warn("%s: PFD %u is too high (max %u)\n",
++		pr_warn("%s: PFD %llu is too high (max %llu)\n",
+ 			name, val, vco / 16);
+ 
+ 	val = pll_readl(pll, PLL_CTRL1);
+@@ -237,8 +235,7 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
+ 						 unsigned long parent_rate)
+ {
+ 	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
+-	u32 val, prediv, fbdiv, frac, postdiv1, postdiv2;
+-	u64 rate = parent_rate;
++	u64 val, prediv, fbdiv, frac, postdiv1, postdiv2, rate;
+ 
+ 	val = pll_readl(pll, PLL_CTRL1);
+ 	prediv = (val >> PLL_CTRL1_REFDIV_SHIFT) & PLL_CTRL1_REFDIV_MASK;
+@@ -251,6 +248,7 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
+ 		PLL_FRAC_CTRL2_POSTDIV2_MASK;
+ 	frac = (val >> PLL_FRAC_CTRL2_FRAC_SHIFT) & PLL_FRAC_CTRL2_FRAC_MASK;
+ 
++	rate = parent_rate;
+ 	rate *= (fbdiv << 24) + frac;
+ 	rate = do_div_round_closest(rate, (prediv * postdiv1 * postdiv2) << 24);
+ 
+@@ -325,12 +323,12 @@ static int pll_gf40lp_laint_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!params || !params->refdiv)
+ 		return -EINVAL;
+ 
+-	vco = params->fref * params->fbdiv / params->refdiv;
++	vco = div_u64(params->fref * params->fbdiv, params->refdiv);
+ 	if (vco < MIN_VCO_LA || vco > MAX_VCO_LA)
+ 		pr_warn("%s: VCO %u is out of range %lu..%lu\n", name, vco,
+ 			MIN_VCO_LA, MAX_VCO_LA);
+ 
+-	val = params->fref / params->refdiv;
++	val = div_u64(params->fref, params->refdiv);
+ 	if (val < MIN_PFD)
+ 		pr_warn("%s: PFD %u is too low (min %lu)\n",
+ 			name, val, MIN_PFD);
+diff --git a/drivers/clk/pistachio/clk.h b/drivers/clk/pistachio/clk.h
+index 52fabbc..8d45178 100644
+--- a/drivers/clk/pistachio/clk.h
++++ b/drivers/clk/pistachio/clk.h
+@@ -95,13 +95,13 @@ struct pistachio_fixed_factor {
+ 	}
+ 
+ struct pistachio_pll_rate_table {
+-	unsigned long fref;
+-	unsigned long fout;
+-	unsigned int refdiv;
+-	unsigned int fbdiv;
+-	unsigned int postdiv1;
+-	unsigned int postdiv2;
+-	unsigned int frac;
++	unsigned long long fref;
++	unsigned long long fout;
++	unsigned long long refdiv;
++	unsigned long long fbdiv;
++	unsigned long long postdiv1;
++	unsigned long long postdiv2;
++	unsigned long long frac;
+ };
+ 
+ enum pistachio_pll_type {
 -- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
+1.9.1
