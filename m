@@ -1,292 +1,71 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 12/16] ARM: shmobile: r8a7794 dtsi: Add CPG/MSTP Clock Domain
-Date: Tue,  4 Aug 2015 14:28:13 +0200
-Message-Id: <1438691297-29235-13-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
-References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 18 Aug 2015 17:52:03 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	s.hauer@pengutronix.de, geert@linux-m68k.org
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+Message-ID: <20150818155203.GJ2547@lukather>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+ <20150810144811.GN3249@x1>
+ <20150810185516.2416.32293@quantum>
+ <20150811084329.GA13374@x1>
+ <20150811170904.2416.43354@quantum>
+ <20150811183317.GT18282@x1>
+ <20150811185827.31346.68194@quantum>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="I/5syFLg1Ed7r+1G"
+In-Reply-To: <20150811185827.31346.68194@quantum>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add an appropriate "#power-domain-cells" property to the cpg_clocks
-device node, to create the CPG/MSTP Clock Domain.
 
-Add "power-domains" properties to all device nodes for devices that are
-part of the CPG/MSTP Clock Domain and can be power-managed through an
-MSTP clock.  This applies to most on-SoC devices, which have a
-one-to-one mapping from SoC device to DT device node.
+--I/5syFLg1Ed7r+1G
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-v4:
-  - Add "power-domains" properties to recently introduced mmcif0 device
-    node,
-  - Consistently add "power-domains" properties after clock and dma
-    properties,
+On Tue, Aug 11, 2015 at 11:58:27AM -0700, Michael Turquette wrote:
+> For example the whole big messy fuss over the DT bindings for the
+> simple-fb driver could have been avoided if this feature had existed
+> then.
 
-v3:
-  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
+Not really, there was additional issues that would have prevented to
+use that in simplefb too. For example the fact that you wouldn't care
+about the clock at all if simplefb was not enabled in the kernel. Or
+that you would like to protect the pixel clock (or its parent) from
+having its rate changed.
 
-v2:
-  - Add Reviewed-by,
-  - Add "power-domains" properties to recently introduced USB-DMAC
-    device nodes,
-  - Drop adding "power-domains" properties to the GIC device node, as
-    adding the INTC_SYS clock is postponed.
----
- arch/arm/boot/dts/r8a7794.dtsi | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+Maxime
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 43acf185ecc43f40..97c8e9ace5ebee1e 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -57,6 +57,7 @@
- 			     <0 143 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7794_CLK_CMT0>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		renesas,channels-mask = <0x60>;
- 
-@@ -76,6 +77,7 @@
- 			     <0 127 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_CMT1>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		renesas,channels-mask = <0xff>;
- 
-@@ -106,6 +108,7 @@
- 			     <0 16 IRQ_TYPE_LEVEL_HIGH>,
- 			     <0 17 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp4_clks R8A7794_CLK_IRQC>;
-+		power-domains = <&cpg_clocks>;
- 	};
- 
- 	pfc: pin-controller@e6060000 {
-@@ -140,6 +143,7 @@
- 				"ch12", "ch13", "ch14";
- 		clocks = <&mstp2_clks R8A7794_CLK_SYS_DMAC0>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
- 	};
-@@ -170,6 +174,7 @@
- 				"ch12", "ch13", "ch14";
- 		clocks = <&mstp2_clks R8A7794_CLK_SYS_DMAC1>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
- 	};
-@@ -182,6 +187,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -193,6 +199,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -204,6 +211,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -215,6 +223,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -226,6 +235,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x1f>, <&dmac0 0x20>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -237,6 +247,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x23>, <&dmac0 0x24>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -248,6 +259,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -259,6 +271,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -270,6 +283,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -281,6 +295,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -292,6 +307,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -303,6 +319,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -314,6 +331,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x2f>, <&dmac0 0x30>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -325,6 +343,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -336,6 +355,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -347,6 +367,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -358,6 +379,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -369,6 +391,7 @@
- 		clock-names = "sci_ick";
- 		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -377,6 +400,7 @@
- 		reg = <0 0xee700000 0 0x400>;
- 		interrupts = <0 162 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7794_CLK_ETHER>;
-+		power-domains = <&cpg_clocks>;
- 		phy-mode = "rmii";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -390,6 +414,7 @@
- 		clocks = <&mstp3_clks R8A7794_CLK_MMCIF0>;
- 		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>;
- 		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
- 		reg-io-width = <4>;
- 		status = "disabled";
- 	};
-@@ -399,6 +424,7 @@
- 		reg = <0 0xee100000 0 0x200>;
- 		interrupts = <0 165 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI0>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -407,6 +433,7 @@
- 		reg = <0 0xee140000 0 0x100>;
- 		interrupts = <0 167 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI1>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -415,6 +442,7 @@
- 		reg = <0 0xee160000 0 0x100>;
- 		interrupts = <0 168 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI2>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -441,6 +469,7 @@
- 			#clock-cells = <1>;
- 			clock-output-names = "main", "pll0", "pll1", "pll3",
- 					     "lb", "qspi", "sdh", "sd0", "z";
-+			#power-domain-cells = <0>;
- 		};
- 		/* Variable factor clocks */
- 		sd2_clk: sd2_clk@e6150078 {
--- 
-1.9.1
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--I/5syFLg1Ed7r+1G
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJV01SjAAoJEBx+YmzsjxAgc4MQAJpvZunNAMH71XJmBz7mksgN
+Q+8bDy6d2RDRCY5txGtzylb5xWbqaOBecJTlrgo5iIPkZAXzozN8t96CgNY0+eGR
+25MJNolOIzInKAsWwXu5iL/yYEv/dhgu66EW3YyUaL9dfaBxpfGOpBUWNEAXcb9H
+Ie5504SgBczaCzJmY0eUHErmF/gZny8ZyDvsKM5P4il7BYutV7O+NRKxtN62XP6I
+VzeDsGPE0LcC2+uH0/PawGKXuCpXSLVpk4irC3RD9bGNpL5cpjvhsyOBECPenH6H
+hEz0u5E4IjUk+Tfx9MeCZOhaMDdxfnvoIPs+lZSlaQAqjd8a85/2yRto+cuVESFC
+BJo7VyBje+XMgnpLSMNy6Lbft9oHMeFlvXSANxMrPxm/+g6A8oJgtrzuzkoubtiE
+vwKlasA9YACvEDiqngCpQ35a2u3R3LsrtSFiFYfB3W0OjIwwhVBLEFF1qCxYAPng
+Y6CQ9yVcbRijpW5DQRBPiBfsP90mh58iR1xnXGptdLB0jy39yYtY6lAdpyvggRNa
+B+m5v8Q1ly7ugp3yA9e7+ZoKK7Cb1peUjvoA2IZ5Z6cMptbCMnvLqWyCdkY6+xI3
+Kvuj7mklDDSZ0/bDEA6WnGH9lDmQnWiVsn/oi0PZ9e+BrrkONfClIH8uWkJWL0+8
+GIqvqkOJiNbUbQL1S90X
+=8GkP
+-----END PGP SIGNATURE-----
+
+--I/5syFLg1Ed7r+1G--
