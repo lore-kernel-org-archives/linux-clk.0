@@ -1,64 +1,96 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 15/16] clk: shmobile: mstp: Consider "zb_clk" suitable for power management
-Date: Tue,  4 Aug 2015 14:28:16 +0200
-Message-Id: <1438691297-29235-16-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
-References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20150818155854.GK2547@lukather>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+ lee.jones@linaro.org, s.hauer@pengutronix.de, geert@linux-m68k.org
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+ <20150818155854.GK2547@lukather>
+Message-ID: <20150818163931.31346.78267@quantum>
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+Date: Tue, 18 Aug 2015 09:39:31 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently the CPG/MSTP Clock Domain code looks for MSTP clocks to power
-manage a device.
+Quoting Maxime Ripard (2015-08-18 08:58:54)
+> Hi Mike,
+> =
 
-Unfortunately, on R-Mobile APE6 (r8a73a4) and SH-Mobile AG5 (sh73a0),
-the Bus State Controller (BSC) is not power-managed by an MSTP clock,
-but by a plain CPG clock (zb_clk).  Add a special case to handle this,
-so the clock is properly managed, and devices connected to the BSC work
-as expected.
+> On Fri, Aug 07, 2015 at 12:09:30PM -0700, Michael Turquette wrote:
+> > Some clocks are critical to system operation (e.g. cpu, memory, etc) and
+> > should not be gated until a driver that knows best claims such a clock
+> > and expressly gates that clock through the normal clk.h api.
+> > =
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-v4:
-  - Add Reviewed-by,
+> > The typical way to handle this is for the clk driver or some other early
+> > code to call clk_prepare_enable on this important clock as soon as it is
+> > registered and before the clk_disable_unused garbage collector kicks in.
+> > =
 
-v3:
-  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
+> > This patch introduces a formal way to handle this scenario that is
+> > provided by the clk framework. Clk driver authors can set the
+> > CLK_ENABLE_HAND_OFF flag in their clk data, which will cause the clk to
+> > be enabled in clk_register(). Then when the first clk consumer driver
+> > comes along and calls clk_get() & clk_prepare_enable(), the reference
+> > counts taken during clk registration are transfered (or handed off) to
+> > the clk consumer.
+> > =
 
-v2:
-  - New.
----
- drivers/clk/shmobile/clk-mstp.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> > At this point handling the clk is the same as any other clock which as
+> > not set the new CLK_ENABLE_HAND_OFF flag. In fact no changes to any
+> > clock consumer driver are needed for this to work.
+> =
 
-diff --git a/drivers/clk/shmobile/clk-mstp.c b/drivers/clk/shmobile/clk-mstp.c
-index b1df7b2f1e970adb..a117c3f0f257b5e1 100644
---- a/drivers/clk/shmobile/clk-mstp.c
-+++ b/drivers/clk/shmobile/clk-mstp.c
-@@ -259,6 +259,10 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *domain, struct device *dev)
- 					    "renesas,cpg-mstp-clocks"))
- 			goto found;
- 
-+		/* BSC on r8a73a4/sh73a0 uses zb_clk instead of an mstp clock*/
-+		if (!strcmp(clkspec.np->name, "zb_clk"))
-+			goto found;
-+
- 		of_node_put(clkspec.np);
- 		i++;
- 	}
--- 
-1.9.1
+> This looks fine, the only thing I'm not really fond of is the name of
+> the flag itself (and it's usually a good thing when we come to that
+> kind of bikeshedding).
 
+Agreed on the Bikeshedding Milestone!
+
+I also do not like the name, but I'm struggling to find the right one
+(as usual).
+
+> =
+
+> In my mind, the fact that we hand off the clock reference is a direct
+> result to the clock being critical (or whatever name we want to call
+> it). The hand off is a side effect, but the real information we want
+> to carry is that it should not be gated.
+
+I chose the "hand-off" name because I want to set an expectation to
+users of this feature. That expectation is that some day they will have
+a Linux device driver that claims and manages this "critical clock".
+Clearly this is not always the case. Many clocks using this feature will
+never have a driver that "owns" them.
+
+But I wanted to avoid any kind of "always on" or "easy hack to avoid
+writing proper driver code" naming convention that encourages bad
+behavior down the line.
+
+Also, the hand-off thing is sort of a big deal. If driver writers only
+thought of this as an "alway on" mechanism then subtle bugs might creep
+in where drivers are getting and disabling a clock that the author
+incorrectly thought would always be enabled. So I'd like the name to
+reflect that somehow.
+
+As always I am open to suggestions.
+
+Regards,
+Mike
+
+> =
+
+> And then the framework will know what behaviour it want to have based
+> on that information.
+> =
+
+> Maxime
+> =
+
+> -- =
+
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
