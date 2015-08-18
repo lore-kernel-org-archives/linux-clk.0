@@ -1,140 +1,123 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 05/16] clk: shmobile: rz: Add CPG/MSTP Clock Domain support
-Date: Tue,  4 Aug 2015 14:28:06 +0200
-Message-Id: <1438691297-29235-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
-References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <michael.allwright@upb.de>
+MIME-Version: 1.0
+Date: Tue, 18 Aug 2015 17:40:00 +0200
+Message-ID: <CALcgO_7+iDr6FvaUjXdRWXpTpHu8shVKS6nqQ6i9gC=9TmfBGw@mail.gmail.com>
+Subject: [RFC] Allow for gate and mux control using non-atomic GPIO
+From: Michael Allwright <michael.allwright@upb.de>
+To: Jyri Sarha <jsarha@ti.com>, ce3a@gmx.de, mturquette@baylibre.com,
+	sboyd@codeaurora.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Clock Domain support to the RZ Clock Pulse Generator (CPG) driver
-using the generic PM Domain.  This allows to power-manage the module
-clocks of SoC devices that are part of the CPG/MSTP Clock Domain using
-Runtime PM, or for system suspend/resume.
+Hi,
 
-SoC devices that are part of the CPG/MSTP Clock Domain and can be
-power-managed through an MSTP clock should be tagged in DT with a proper
-"power-domains" property.
+The current implementation of clk-gpio completely ignores the use case
+where GPIO pins may be accessed over a message based bus like SPI or
+I2C. To fix this, and following the comments in clk.h, we should use
+the prepare/unprepare methods to do the work where the GPIO operation
+would be non-atomic. I propose the following UNTESTED patch (should
+apply cleanly over linux-next).
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>From 7a21c155e561d84741ce11f0cc4c1f8c5b97d7dc Mon Sep 17 00:00:00 2001
+From: Michael Allwright <allsey87@gmail.com>
+Date: Tue, 18 Aug 2015 17:26:34 +0200
+Subject: [PATCH] Allow non-atomic GPIO ops to control gates and muxes.
+ Following the comments in clk.h, use prepare/unprepare methods to do the GPIO
+ work in cases where the specified pin can sleep
+
 ---
-v4:
-  - Add Reviewed-by,
+ drivers/clk/clk-gpio.c | 50 ++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 44 insertions(+), 6 deletions(-)
 
-v3:
-  - Add Acked-by,
-  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
-
-v2:
-  - New.
----
- .../bindings/clock/renesas,rz-cpg-clocks.txt       | 29 ++++++++++++++++++++--
- arch/arm/mach-shmobile/Kconfig                     |  1 +
- drivers/clk/shmobile/clk-rz.c                      |  3 +++
- 3 files changed, 31 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
-index b0f7ddb8cdb13750..bb51a33a1fbfbc97 100644
---- a/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
-@@ -2,6 +2,8 @@
- 
- The CPG generates core clocks for the RZ SoCs. It includes the PLL, variable
- CPU and GPU clocks, and several fixed ratio dividers.
-+The CPG also provides a Clock Domain for SoC devices, in combination with the
-+CPG Module Stop (MSTP) Clocks.
- 
- Required Properties:
- 
-@@ -14,10 +16,18 @@ Required Properties:
-   - #clock-cells: Must be 1
-   - clock-output-names: The names of the clocks. Supported clocks are "pll",
-     "i", and "g"
-+  - #power-domain-cells: Must be 0
- 
-+SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
-+through an MSTP clock should refer to the CPG device node in their
-+"power-domains" property, as documented by the generic PM domain bindings in
-+Documentation/devicetree/bindings/power/power_domain.txt.
- 
--Example
---------
-+
-+Examples
-+--------
-+
-+  - CPG device node:
- 
- 	cpg_clocks: cpg_clocks@fcfe0000 {
- 		#clock-cells = <1>;
-@@ -26,4 +36,19 @@ Example
- 		reg = <0xfcfe0000 0x18>;
- 		clocks = <&extal_clk>, <&usb_x1_clk>;
- 		clock-output-names = "pll", "i", "g";
-+		#power-domain-cells = <0>;
-+	};
-+
-+
-+  - CPG/MSTP Clock Domain member device node:
-+
-+	mtu2: timer@fcff0000 {
-+		compatible = "renesas,mtu2-r7s72100", "renesas,mtu2";
-+		reg = <0xfcff0000 0x400>;
-+		interrupts = <0 107 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tgi0a";
-+		clocks = <&mstp3_clks R7S72100_CLK_MTU2>;
-+		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
- 	};
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 5b1f9eca7c871aee..926e336d6aeb7181 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -51,6 +51,7 @@ config ARCH_EMEV2
- 
- config ARCH_R7S72100
- 	bool "RZ/A1H (R7S72100)"
-+	select PM_GENERIC_DOMAINS if PM
- 	select SYS_SUPPORTS_SH_MTU2
- 
- config ARCH_R8A73A4
-diff --git a/drivers/clk/shmobile/clk-rz.c b/drivers/clk/shmobile/clk-rz.c
-index 7e68e86309625c9e..9766e3cb595fd257 100644
---- a/drivers/clk/shmobile/clk-rz.c
-+++ b/drivers/clk/shmobile/clk-rz.c
-@@ -10,6 +10,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/clk/shmobile.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/of.h>
-@@ -99,5 +100,7 @@ static void __init rz_cpg_clocks_init(struct device_node *np)
- 	}
- 
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
-+
-+	cpg_mstp_add_clk_domain(np);
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index 10819e2..3172073 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -56,6 +56,29 @@ static int clk_gpio_gate_is_enabled(struct clk_hw *hw)
+     return gpiod_get_value(clk->gpiod);
  }
- CLK_OF_DECLARE(rz_cpg_clks, "renesas,rz-cpg-clocks", rz_cpg_clocks_init);
+
++static int clk_gpio_gate_prepare(struct clk_hw *hw)
++{
++    struct clk_gpio *clk = to_clk_gpio(hw);
++
++    gpiod_set_value_cansleep(clk->gpiod, 1);
++
++    return 0;
++}
++
++static void clk_gpio_gate_unprepare(struct clk_hw *hw)
++{
++    struct clk_gpio *clk = to_clk_gpio(hw);
++
++    gpiod_set_value_cansleep(clk->gpiod, 0);
++}
++
++static int clk_gpio_gate_is_prepared(struct clk_hw *hw)
++{
++    struct clk_gpio *clk = to_clk_gpio(hw);
++
++    return gpiod_get_value_cansleep(clk->gpiod);
++}
++
+ const struct clk_ops clk_gpio_gate_ops = {
+     .enable = clk_gpio_gate_enable,
+     .disable = clk_gpio_gate_disable,
+@@ -63,6 +86,14 @@ const struct clk_ops clk_gpio_gate_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_gpio_gate_ops);
+
++const struct clk_ops clk_sleepable_gpio_gate_ops = {
++    .enable = clk_gpio_gate_prepare,
++    .disable = clk_gpio_gate_unprepare,
++    .is_enabled = clk_gpio_gate_is_prepared,
++};
++EXPORT_SYMBOL_GPL(clk_sleepable_gpio_gate_ops);
++
++
+ /**
+  * DOC: basic clock multiplexer which can be controlled with a gpio output
+  * Traits of this clock:
+@@ -75,14 +106,14 @@ static u8 clk_gpio_mux_get_parent(struct clk_hw *hw)
+ {
+     struct clk_gpio *clk = to_clk_gpio(hw);
+
+-    return gpiod_get_value(clk->gpiod);
++    return gpiod_get_value_cansleep(clk->gpiod);
+ }
+
+ static int clk_gpio_mux_set_parent(struct clk_hw *hw, u8 index)
+ {
+     struct clk_gpio *clk = to_clk_gpio(hw);
+
+-    gpiod_set_value(clk->gpiod, index);
++    gpiod_set_value_cansleep(clk->gpiod, index);
+
+     return 0;
+ }
+@@ -170,10 +201,17 @@ struct clk *clk_register_gpio_gate(struct device
+*dev, const char *name,
+         const char *parent_name, unsigned gpio, bool active_low,
+         unsigned long flags)
+ {
+-    return clk_register_gpio(dev, name,
+-            (parent_name ? &parent_name : NULL),
+-            (parent_name ? 1 : 0), gpio, active_low, flags,
+-            &clk_gpio_gate_ops);
++    if(gpio_cansleep(gpio))
++        return clk_register_gpio(dev, name,
++                (parent_name ? &parent_name : NULL),
++                (parent_name ? 1 : 0), gpio, active_low, flags,
++                &clk_sleepable_gpio_gate_ops);
++    else
++        return clk_register_gpio(dev, name,
++                (parent_name ? &parent_name : NULL),
++                (parent_name ? 1 : 0), gpio, active_low, flags,
++                &clk_gpio_gate_ops);
++
+ }
+ EXPORT_SYMBOL_GPL(clk_register_gpio_gate);
+
 -- 
 1.9.1
