@@ -1,58 +1,48 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Fri, 7 Aug 2015 17:09:50 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Olof Johansson <olof@lixom.net>,
-	Arnd Bergmann <arnd.bergmann@linaro.org>,
-	'Thomas Abraham' <thomas.ab@samsung.com>,
-	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
-	'Michael Turquette' <mturquette@baylibre.com>,
-	'Tomasz Figa' <tomasz.figa@gmail.com>,
-	'Lukasz Majewski' <l.majewski@samsung.com>,
-	'Heiko Stuebner' <heiko@sntech.de>,
-	'Chanwoo Choi' <cw00.choi@samsung.com>,
-	'Kevin Hilman' <khilman@linaro.org>,
-	'Javier Martinez Canillas' <javier@dowhile0.org>,
-	'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
-	'Anand Moon' <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for
- Exynos4x12 platform
-Message-ID: <20150807113950.GG6939@linux>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <55C43971.5010504@samsung.com>
- <20150807051826.GJ6325@linux>
- <2061119.GBaoSb4YSL@amdc1976>
+Return-Path: <nicolas.pitre@linaro.org>
+Return-Path: <nicolas.pitre@linaro.org>
+Date: Wed, 19 Aug 2015 14:40:47 -0400 (EDT)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>
+cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] drivers/clk: appropriate __init annotation for const
+ data
+In-Reply-To: <20150811231416.31346.83289@quantum>
+Message-ID: <alpine.LFD.2.20.1508191437410.25645@knanqh.ubzr>
+References: <alpine.LFD.2.20.1507281430130.26147@knanqh.ubzr> <20150811231416.31346.83289@quantum>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <2061119.GBaoSb4YSL@amdc1976>
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07-08-15, 13:31, Bartlomiej Zolnierkiewicz wrote:
-> Users don't need to enable the config option to get boost
-> functionality working.  It is only needed to get scaling_boost_freqs
-> sysfs attribute visible (which lists available boost freqs) when
-> using cpufreq-dt driver.  Also the config option in question is not
-> user visible.
+On Tue, 11 Aug 2015, Michael Turquette wrote:
 
-By users I meant the people who will prepare the build images for the
-release. They can just enable the config option :)
+> Quoting Nicolas Pitre (2015-07-28 16:43:20)
+> > 
+> > Init data marked const should be annotated with __initconst for
+> > correctness and not __initdata.  This also fixes LTO builds that
+> > otherwise fail with section mismatch errors.
+> > 
+> > Signed-off-by: Nicolas Pitre <nico@linaro.org>
+> 
+> Thanks for the patch Nico. Applied.
 
-> The worst thing that happens if these 2 PM patches don't make it
-> in time is that there will be no scaling_boost_freqs available
-> when using cpufreq-dt driver.  Which is not very important from
-> Exynos4x12 POV as it only supports single boost freq currently.
 
-Right. So, now that your patch is Acked, send 1/6 and 6/6 separately
-to pm-list and Rafael can get them merged himself..
+Is it possible for you to amend that patch with the following?
 
-I hope, your 6/6 patch will change a bit now ?
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 5404a001c3..3f6f7ad394 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -293,7 +293,7 @@ stm32f4_rcc_lookup_clk(struct of_phandle_args *clkspec, void *data)
+ 	return clks[i];
+ }
+ 
+-static const char *const sys_parents[] __initconst =   { "hsi", NULL, "pll" };
++static const char *sys_parents[] __initdata =   { "hsi", NULL, "pll" };
+ 
+ static const struct clk_div_table ahb_div_table[] = {
+ 	{ 0x0,   1 }, { 0x1,   1 }, { 0x2,   1 }, { 0x3,   1 },
 
--- 
-viresh
+Turns out that sys_parents[] is actually written to.
+
+
+Nicolas
