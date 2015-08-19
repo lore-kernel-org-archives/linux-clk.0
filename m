@@ -1,115 +1,136 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <Govindraj.Raja@imgtec.com>
-To: "Andrew Bresticker (abrestic@chromium.org)" <abrestic@chromium.org>,
-	Zdenko Pulitika <Zdenko.Pulitika@imgtec.com>, "linux-mips@linux-mips.org"
-	<linux-mips@linux-mips.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, "Michael
- Turquette" <mturquette@baylibre.com>
-CC: Kevin Cernekee <cernekee@chromium.org>, Ralf Baechle
-	<ralf@linux-mips.org>, Andrew Bresticker <abrestic@chromium.org>, "James
- Hartley" <James.Hartley@imgtec.com>, Damien Horsley
-	<Damien.Horsley@imgtec.com>, James Hogan <James.Hogan@imgtec.com>, "Ezequiel
- Garcia" <ezequiel@vanguardiasur.com.ar>
-Subject: RE: [PATCH v2 1/4] clk: pistachio: Fix 32bit integer overflows
-Date: Wed, 12 Aug 2015 14:31:38 +0000
-Message-ID: <4BF5E8683E87FC4DA89822A5A3EB60CB6F32EA@hhmail02.hh.imgtec.org>
-References: <1438964413-18876-1-git-send-email-govindraj.raja@imgtec.com>
- <1438964413-18876-2-git-send-email-govindraj.raja@imgtec.com>
- <E3EE94C54B0A8346A2210452C2C8281D288B1B8C@hhmail02.hh.imgtec.org>
-In-Reply-To: <E3EE94C54B0A8346A2210452C2C8281D288B1B8C@hhmail02.hh.imgtec.org>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 19 Aug 2015 11:15:00 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 5/7] ARM: sun8i: Add clock indices
+Message-ID: <20150819091500.GC30520@lukather>
+References: <1438364782-3968-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1438364782-3968-6-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v64nvA1K=Ya7_99-2G1LtFjcuj+qQbO1GJaqsL+yPF+Xdw@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gr/z0/N6AeWAPJVB"
+In-Reply-To: <CAGb2v64nvA1K=Ya7_99-2G1LtFjcuj+qQbO1GJaqsL+yPF+Xdw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Andrew,
 
-> -----Original Message-----
-> From: Zdenko Pulitika
-> Sent: 10 August 2015 04:56 PM
-> To: Govindraj Raja; linux-mips@linux-mips.org; linux-clk@vger.kernel.org;
-> Stephen Boyd; Michael Turquette
-> Cc: Kevin Cernekee; Ralf Baechle; Andrew Bresticker; James Hartley; Damie=
-n
-> Horsley; James Hogan; Ezequiel Garcia
-> Subject: RE: [PATCH v2 1/4] clk: pistachio: Fix 32bit integer overflows
->=20
-> Govindraj,
->=20
-> > -----Original Message-----
-> > From: Govindraj Raja
-> > Sent: 07 August 2015 17:20
-> > To: linux-mips@linux-mips.org; linux-clk@vger.kernel.org; Stephen
-> > Boyd; Michael Turquette
-> > Cc: Zdenko Pulitika; Kevin Cernekee; Ralf Baechle; Andrew Bresticker;
-> > James Hartley; Govindraj Raja; Damien Horsley; James Hogan; Ezequiel
-> > Garcia; Govindraj Raja
-> > Subject: [PATCH v2 1/4] clk: pistachio: Fix 32bit integer overflows
+--gr/z0/N6AeWAPJVB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Chen-Yu,
+
+On Sat, Aug 08, 2015 at 12:21:17AM +0800, Chen-Yu Tsai wrote:
+> On Sat, Aug 1, 2015 at 1:46 AM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > The A23 and A33 gates have a non continuous set of clock IDs that are
+> > valid. Add the clock-indices property to the DT to express this.
 > >
-> > From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
-> >
-> > This commit fixes 32bit integer overflows throughout the pll driver (i.=
-e.
-> > wherever the result of integer multiplication may exceed the range of u=
-32).
-> >
-> > One of the functions affected by this problem is .recalc_rate. It
-> > returns incorrect rate for some pll settings (not for all though)
-> > which in turn results in the incorrect rate setup of pll's child clocks=
-.
-> >
-> > Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
-> > Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 > > ---
-> >  drivers/clk/pistachio/clk-pll.c | 26 ++++++++++++--------------
-> >  1 file changed, 12 insertions(+), 14 deletions(-)
+> >  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 15 +++++++++++++++
+> >  1 file changed, 15 insertions(+)
 > >
-> > diff --git a/drivers/clk/pistachio/clk-pll.c
-> > b/drivers/clk/pistachio/clk-pll.c index e17dada..68066ef 100644
-> > --- a/drivers/clk/pistachio/clk-pll.c
-> > +++ b/drivers/clk/pistachio/clk-pll.c
-> > @@ -88,12 +88,10 @@ static inline void pll_lock(struct pistachio_clk_pl=
-l *pll)
-> >  		cpu_relax();
-> >  }
-> >
-> > -static inline u32 do_div_round_closest(u64 dividend, u32 divisor)
-
-[...]
-
-
-> > 1.9.1
+> > diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/s=
+un8i-a23-a33.dtsi
+> > index 7abd0ae3143d..c318c770b6c1 100644
+> > --- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+> > +++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+> > @@ -180,6 +180,15 @@
+> >                         compatible =3D "allwinner,sun8i-a23-ahb1-gates-=
+clk";
+> >                         reg =3D <0x01c20060 0x8>;
+> >                         clocks =3D <&ahb1>;
+> > +                       clock-indices =3D <1>, <6>,
 >=20
-> [Zdenko Pulitika] Reverting pll_rate_table members from 64 to 32 bit re-
-> introduces multiplication overflow issue.
-> We can either 1) keep 64bit members in pll_rate_table and forget about ov=
-erflow
-> or 2) have 32 bit members but then we need to type cast them to u64 in ev=
-ery
-> multiplication expression which may overflow. In my opinion, first soluti=
-on is
-> safer and nicer, 2nd will result in ugly typecasts throughout the code an=
-d, more
-> importantly, there's a risk of overflow bug being repeated if somebody wi=
-shes to
-> modify/upgrade the existing code.
+> Turns out the A33 (and I assume the same with the A23) has
+> an ahb1 clock gate for the Security System at clock-index <5>.
+>=20
+> This is found in the updated A33 user manual.
+>=20
+> > +                                       <8>, <9>, <10>,
+> > +                                       <13>, <14>,
+> > +                                       <19>, <20>,
+> > +                                       <21>, <24>, <26>,
+> > +                                       <29>, <32>, <36>,
+> > +                                       <40>, <44>, <46>,
+> > +                                       <52>, <54>,
+>=20
+> <53> is ahb1 clock gate for msgbox, again found in A33 manual.
+>=20
+> > +                                       <57>;
+>=20
+> <58> is ahb1 clock gate for SAT, which seems to be part of the
+> display pipeline.
+>=20
+> >                         clock-output-names =3D "ahb1_mipidsi", "ahb1_dm=
+a",
+> >                                         "ahb1_mmc0", "ahb1_mmc1", "ahb1=
+_mmc2",
+> >                                         "ahb1_nand", "ahb1_sdram",
+> > @@ -196,6 +205,8 @@
+> >                         compatible =3D "allwinner,sun8i-a23-apb1-gates-=
+clk";
+> >                         reg =3D <0x01c20068 0x4>;
+> >                         clocks =3D <&apb1>;
+> > +                       clock-indices =3D <0>, <5>,
+> > +                                       <12>, <13>;
+> >                         clock-output-names =3D "apb1_codec", "apb1_pio",
+> >                                         "apb1_daudio0", "apb1_daudio1";
+> >                 };
+> > @@ -213,6 +224,10 @@
+> >                         compatible =3D "allwinner,sun8i-a23-apb2-gates-=
+clk";
+> >                         reg =3D <0x01c2006c 0x4>;
+> >                         clocks =3D <&apb2>;
+> > +                       clock-indices =3D <0>, <1>,
+> > +                                       <2>, <16>,
+> > +                                       <17>, <18>,
+> > +                                       <19>, <20>;
+> >                         clock-output-names =3D "apb2_i2c0", "apb2_i2c1",
+> >                                         "apb2_i2c2", "apb2_uart0",
+> >                                         "apb2_uart1", "apb2_uart2",
+> > --
+> > 2.4.6
+> >
+>=20
+> Not sure if you want to add the clocks I mentioned together
+> in this patch, or do a separate patch.
+>=20
+> The rest look good.
 
-Like Zdenko pointed out some operations in pll calculation may overflow wit=
-hout=20
-converting the struct pistachio_pll_rate_table members to long=20
+Thanks for your input, I'll send some new patches to deal with this.
 
-For example in below code snippet operation:
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-[..]
+--gr/z0/N6AeWAPJVB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-params->fref * params->fbdiv
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-[..]
+iQIcBAEBAgAGBQJV1EkUAAoJEBx+YmzsjxAgBM0P/1cUYOoiiRJa5TVt90u/Odj3
+3fdq/nbUYjCe3/W+MenMDqhETStalLo8rZfKl1mofx/VD6GHzui+GDGQmK1n48Mc
+vtkrO6MgAYT3VTQCEkKan2mi+HI7e/MW+YhP7X3Ovx/rKmyXrBJvpluX6EtrG9lq
+ZLaC4yHUT1Uh7y6VKIxc4YZ9cLxrlosOaupvuxxRrBkZ38B81Zt3Nxzr2/p1vRop
+0YeC4moki5r7z9KkR1qm02/ssYduRzgUnHqeFNIHygtzd6A83kG58rbbBHEmYH7s
+AgQ7JZaYXSoPDHrlma4uxNaWDHkt+srkVJeCfD/q/jchgoG+SU7BXlJwqpT8Aw8H
+8qVF/nnbg8NFSV0AvGnZcm1bvBdqQJLmekxVQjdnvH4dEMHwncNwiiWWnkqJ40y5
+9CknbWcSjDLCALeo9JzblOHaNbigNodaq2aFLvL3iRtxY0TP3TJSD7YrxYAdL7xQ
+9m5V9IMtq+eXXadpYRcM1oYILGXgxhjktTjDAvEuk/95B9+XddDMBPLTPS/esodB
+AoC4NYt2kEjGbIj8WduXkDh1GtjpDN3FqbKHO7rOxO307OyNYM/ZIY2jgFZSiTQc
+dRWZeU5TyxtgFEHmJafWTvZL1/i043JmTM7+ORxa6osgM0+GTFRXaoaGd2qv92yt
+50tt7SkYNYv8zT0HXyX6
+=3Tjt
+-----END PGP SIGNATURE-----
 
-So to be on safer side it's better to have the original code [1].
-
---
-Thanks,
-Govindraj.R
-
-[1]:
-http://patchwork.linux-mips.org/patch/10888/
+--gr/z0/N6AeWAPJVB--
