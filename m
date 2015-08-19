@@ -1,38 +1,54 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Subject: Re: [PATCH v2] clk: pxa: pxa3xx: fix CKEN register access
-References: <1438669293-6033-1-git-send-email-robert.jarzmik@free.fr>
-	<20150807235515.GF16477@codeaurora.org>
-Date: Sat, 08 Aug 2015 09:34:44 +0200
-In-Reply-To: <20150807235515.GF16477@codeaurora.org> (Stephen Boyd's message
-	of "Fri, 7 Aug 2015 16:55:15 -0700")
-Message-ID: <87614qkzcb.fsf@belgarion.home>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: Fix tipo in st,clkgen-pll documentation
+Date: Wed, 19 Aug 2015 10:48:13 +0200
+Message-Id: <1439974094-32322-2-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1439974094-32322-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1439974094-32322-1-git-send-email-gabriel.fernandez@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen Boyd <sboyd@codeaurora.org> writes:
+replace "sst,plls-c32-cx_x" by "st,plls-c32-cx_x"
 
-> On 08/04, Robert Jarzmik wrote:
->> Clocks 0 to 31 are on CKENA, and not CKENB. The clock register names
->> were inadequately inverted. As a consequence, all clock operations were
->> happening on CKENB, because almost all but 2 clocks are on CKENA.
->> 
->> As the clocks were activated by the bootloader in the former tests, it
->> escaped the testing that the wrong clock gate was manipulated. The error
->> was revealed by changing the pxa3xx-and driver to a module, where tupon
->> unloading the wrong clock was disabled in CKENB.
->> 
->> Fixes: 9bbb8a338fb2 ("clk: pxa: add pxa3xx clock driver")
->> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
->> ---
->
-> Applied to clk-fixes. Sorry, got busy last few days.
-Thanks Stephen !
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+---
+ Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Cheers.
-
+diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+index d8b168e..e2c6db0 100644
+--- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
++++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+@@ -21,8 +21,8 @@ Required properties:
+ 	"st,stih416-plls-c32-ddr",	"st,clkgen-plls-c32"
+ 	"st,stih407-plls-c32-a0",	"st,clkgen-plls-c32"
+ 	"st,stih407-plls-c32-a9",	"st,clkgen-plls-c32"
+-	"sst,plls-c32-cx_0",		"st,clkgen-plls-c32"
+-	"sst,plls-c32-cx_1",		"st,clkgen-plls-c32"
++	"st,plls-c32-cx_0",		"st,clkgen-plls-c32"
++	"st,plls-c32-cx_1",		"st,clkgen-plls-c32"
+ 
+ 	"st,stih415-gpu-pll-c32",	"st,clkgengpu-pll-c32"
+ 	"st,stih416-gpu-pll-c32",	"st,clkgengpu-pll-c32"
 -- 
-Robert
+1.9.1
+
