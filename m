@@ -1,64 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-id: <55C95BD6.7010200@samsung.com>
-Date: Tue, 11 Aug 2015 11:20:06 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Kukjin Kim <kgene@kernel.org>
-Cc: 'Viresh Kumar' <viresh.kumar@linaro.org>,
-	"'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
-	linux-arm-kernel@lists.infradead.org,
-	'Anand Moon' <linux.amoon@gmail.com>,
-	'Kevin Hilman' <khilman@linaro.org>,
-	linux-kernel@vger.kernel.org, 'Heiko Stuebner' <heiko@sntech.de>,
-	'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>,
-	'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
-	'Lukasz Majewski' <l.majewski@samsung.com>,
-	'Michael Turquette' <mturquette@baylibre.com>,
-	linux-pm@vger.kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>,
-	linux-clk@vger.kernel.org, 'Chanwoo Choi' <cw00.choi@samsung.com>,
-	'Thomas Abraham' <thomas.ab@samsung.com>,
-	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
-	'Olof Johansson' <olof@lixom.net>,
-	'Arnd Bergmann' <arnd.bergmann@linaro.org>,
-	'Javier Martinez Canillas' <javier@dowhile0.org>,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
- platform
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <2359635.Hxe4cb8zKm@amdc1976> <20150807115627.GH6939@linux>
- <1525406.7aXvVQzEDd@vostro.rjw.lan> <20150808020740.GM6939@linux>
- <55C5AF4E.3010500@samsung.com> <03ee01d0d30b$b279c490$176d4db0$@kernel.org>
-In-reply-to: <03ee01d0d30b$b279c490$176d4db0$@kernel.org>
-Content-type: text/plain; charset=windows-1252
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Wed, 19 Aug 2015 12:29:58 +0200
+From: victorien.vedrine@ophrys.net
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH] clk:mxs: Fix bug on frequency divider
+In-Reply-To: <55BBB1AC.6070102@codeaurora.org>
+References: <1438359857-11074-1-git-send-email-victorien.vedrine@ophrys.net>
+ <55BBB1AC.6070102@codeaurora.org>
+Message-ID: <1718bb213e11d665355c9f0c11c037e6@ophrys.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10.08.2015 10:27, Kukjin Kim wrote:
-> Krzysztof Kozlowski wrote:
->>
->> W dniu 08.08.2015 o 11:07, Viresh Kumar pisze:
->>> On 08-08-15, 00:24, Rafael J. Wysocki wrote:
->>>> OK, so please let me know which patches you want me to pick up.
->>>>
->>>> Ideally, I'd prefer them to be resent in a separate series with ACKs and all
->>>> with a cover letter clearly stating whose tree they are being targeted at.
->>>
->>> He already sent it separately, let me send a confirmatory mail in
->>> reply to that.
->>
->> Dear Kukjin,
->>
->> Can you apply the 2-5 of this series to v4.3? It's getting late but
->> maybe they still could go?
->>
-> Once my previous pull-request landed into arm-soc, I'll try to send out this
-> series 2-5 for v4.3.
+I'll modify the cast and propose a new version of patch.
+This patch is specific for imx28 processor and for this one there is no 
+mult_frac()
+function. I checked the other functions of imx28 clock part and I didn't 
+see a
+similar problem.
 
-Additionally (better late than never):
-Patches 2-5 tested on Trats2 board (Exynos4412)
 
-Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
+Le 2015-07-31 19:34, Stephen Boyd a écrit :
+> +Shawn
+> 
+> On 07/31/2015 09:24 AM, Victorien Vedrine wrote:
+>> On drivers/clk/mxs/clk-frac.c, the function clk_frac_round_rate 
+>> returned a bad
+>> result. The division before multiplication computes a wrong value ; 
+>> the
+>> calculation is inverted to fix the problem. The second issue is that 
+>> the exact
+>> rate have decimals and they are truncate. The consequence is that the 
+>> function
+>> clk_frac_set_rate (which use the result of clk_frac_round_rate) 
+>> computes a
+>> wrong value for the register (the rate generated can be closer to the 
+>> desired
+>> rate). The correction is : if there is decimal to the result, it is 
+>> rounded to
+>> the next larger integer.
+>> 
+>> On drivers/clk/mxs/clk-frac.c, the function clk_frac_recalc_rate 
+>> returned
+>> a bad result. The multiplication is made before the division to 
+>> compute a
+>> correct value.
+>> 
+>> The issue is reproducible by this way : Set the SAIF frequency to 
+>> 22579200Hz
+>> (it's the appropriate frequency for 44100hz sample rate for SGTL5000 
+>> codec).
+>> With the divider register (HW_CLKCTRL_SAIF0), the closest lower value 
+>> is
+>> 22573242.1875Hz (0xC0A on register). The original clk-frac functions 
+>> give 0xC09
+>> on the divider register.
+>> 
+>> Signed-off-by: Victorien Vedrine <victorien.vedrine@ophrys.net>
+>> ---
+>>   drivers/clk/mxs/clk-frac.c | 13 ++++++++++---
+>>   1 file changed, 10 insertions(+), 3 deletions(-)
+>> 
+>> diff --git a/drivers/clk/mxs/clk-frac.c b/drivers/clk/mxs/clk-frac.c
+>> index e6aa6b5..d51cf03 100644
+>> --- a/drivers/clk/mxs/clk-frac.c
+>> +++ b/drivers/clk/mxs/clk-frac.c
+>> @@ -42,11 +42,13 @@ static unsigned long clk_frac_recalc_rate(struct 
+>> clk_hw *hw,
+>>   {
+>>   	struct clk_frac *frac = to_clk_frac(hw);
+>>   	u32 div;
+>> +	u64 tmp_rate;
+>>     	div = readl_relaxed(frac->reg) >> frac->shift;
+>>   	div &= (1 << frac->width) - 1;
+>>   -	return (parent_rate >> frac->width) * div;
+>> +	tmp_rate = (u64)parent_rate * (u64)div;
+> 
+> We shouldn't need to cast both to 64 bits...
+> 
+>> +	return (unsigned long)(tmp_rate >> frac->width);
+> 
+> Isn't the cast implicit by means of the return type of this function?
+> 
+>>   }
+>>     static long clk_frac_round_rate(struct clk_hw *hw, unsigned long 
+>> rate,
+>> @@ -55,7 +57,7 @@ static long clk_frac_round_rate(struct clk_hw *hw, 
+>> unsigned long rate,
+>>   	struct clk_frac *frac = to_clk_frac(hw);
+>>   	unsigned long parent_rate = *prate;
+>>   	u32 div;
+>> -	u64 tmp;
+>> +	u64 tmp, tmp_rate, result;
+>>     	if (rate > parent_rate)
+>>   		return -EINVAL;
+>> @@ -68,7 +70,12 @@ static long clk_frac_round_rate(struct clk_hw *hw, 
+>> unsigned long rate,
+>>   	if (!div)
+>>   		return -EINVAL;
+>>   -	return (parent_rate >> frac->width) * div;
+>> +	tmp_rate = (u64)parent_rate * (u64)div;
+>> +	result = (u64)(tmp_rate >> frac->width);
+> 
+> Cast looks useless here too.
+> 
+>> +	if ((result << frac->width) < tmp_rate)
+>> +		return result + 1;
+>> +	else
+>> +		return result;
+> 
+> The else could be dropped and just be return result. Also, have you
+> see mult_frac()? I suppose we're doing shifts with width because it's
+> a power-of-2 denominator?
 
