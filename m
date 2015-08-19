@@ -1,77 +1,148 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH] clk: rockchip: disable init state before mmc card initialization
-Date: Mon, 24 Aug 2015 16:12:26 +0800
-Message-Id: <1440403946-13266-1-git-send-email-shawn.lin@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Subject: [PATCH] clk: rockchip: register pll mux before pll itself
+Date: Wed, 19 Aug 2015 15:06:55 +0200
+Message-ID: <7060610.CC2Q1RMG2L@phil>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-mmc host controller's IO input/output timing is unpredictable if
-bootloader execute tuning for HS200 mode. It might make kernel failed
-to initialize mmc card in identification mode. The root cause is
-tuning phase and degree setting for HS200 mode in bootloader aren't
-applicable to that of identification mode in kernel stage. Anyway, we
-can't force all bootloaders to disable tuning phase and degree setting
-before into kernel. Simply disable it in rockchip_clk_register_mmc.
+The structure is xin24m -> pll -> pll-mux (xin24m,pll,xin32k). The pll
+does have an init callback to make sure the boot-selected frequency is
+using the expected pll settings and resets the same frequency using
+the values provided in the driver if necessary.
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+The setting itself also involves remuxing the pll-mux temporarily to
+the xin24m source to let the new pll rate settle. Until now this worked
+flawlessly, even when it had the flaw of accessing the mux settings
+before the mux actually got registered.
+
+With the recent clock-core conversions this flaw became apparent in
+null pointer dereference in
+[<c03fc400>] (clk_hw_get_num_parents) from [<c0400df0>] (clk_mux_get_parent+0x14/0xc8)
+[<c0400ddc>] (clk_mux_get_parent) from [<c040246c>] (rockchip_rk3066_pll_set_rate+0xd8/0x320)
+
+So to fix that, simply register the pll-mux before the pll, so that
+it will be fully initialized when the pll clock executes its init-
+callback and possibly touches the pll-mux clock.
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
+This only surfaced with the clk_core changes for 4.3, so should
+probably just go on top.
 
- drivers/clk/rockchip/clk-mmc-phase.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/clk/rockchip/clk-pll.c | 63 +++++++++++++++++++++---------------------
+ 1 file changed, 32 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
-index e9f8df32..02b6f3d 100644
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -38,6 +38,9 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw *hw,
- #define ROCKCHIP_MMC_DEGREE_MASK 0x3
- #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
- #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
-+#define ROCKCHIP_MMC_INIT_STATE_DISABLE (0x1)
-+#define ROCKCHIP_MMC_INIT_STATE_SHIFT (0)
-+#define ROCKCHIP_MMC_INIT_STATE_MASK  (0x1)
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index eab4304..7737a1d 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -353,6 +353,35 @@ struct clk *rockchip_clk_register_pll(enum rockchip_pll_type pll_type,
+ 	if (!pll)
+ 		return ERR_PTR(-ENOMEM);
  
- #define PSECS_PER_SEC 1000000000000LL
- 
-@@ -119,6 +122,21 @@ static const struct clk_ops rockchip_mmc_clk_ops = {
- 	.set_phase	= rockchip_mmc_set_phase,
- };
- 
-+static void rockchip_clk_mmc_disable_init(struct rockchip_mmc_clock *mmc_clock)
-+{
-+	if (mmc_clock->shift != ROCKCHIP_MMC_INIT_STATE_SHIFT)
-+		return;
++	/* create the mux on top of the real pll */
++	pll->pll_mux_ops = &clk_mux_ops;
++	pll_mux = &pll->pll_mux;
++	pll_mux->reg = base + mode_offset;
++	pll_mux->shift = mode_shift;
++	pll_mux->mask = PLL_MODE_MASK;
++	pll_mux->flags = 0;
++	pll_mux->lock = lock;
++	pll_mux->hw.init = &init;
 +
-+	writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_DISABLE,
-+			     ROCKCHIP_MMC_INIT_STATE_MASK,
-+			     mmc_clock->shift),
-+	       mmc_clock->reg);
++	if (pll_type == pll_rk3066)
++		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
 +
-+	pr_debug("%s: clear mmc init state to %d", __func__,
-+		 (readl(mmc_clock->reg) >> (mmc_clock->shift)) &
-+		 ROCKCHIP_MMC_INIT_STATE_MASK);
-+}
++	/* the actual muxing is xin24m, pll-output, xin32k */
++	pll_parents[0] = parent_names[0];
++	pll_parents[1] = pll_name;
++	pll_parents[2] = parent_names[1];
 +
- struct clk *rockchip_clk_register_mmc(const char *name,
- 				const char *const *parent_names, u8 num_parents,
- 				void __iomem *reg, int shift)
-@@ -139,6 +157,8 @@ struct clk *rockchip_clk_register_mmc(const char *name,
- 	mmc_clock->reg = reg;
- 	mmc_clock->shift = shift;
++	init.name = name;
++	init.flags = CLK_SET_RATE_PARENT;
++	init.ops = pll->pll_mux_ops;
++	init.parent_names = pll_parents;
++	init.num_parents = ARRAY_SIZE(pll_parents);
++
++	mux_clk = clk_register(NULL, &pll_mux->hw);
++	if (IS_ERR(mux_clk))
++		goto err_mux;
++
++	/* now create the actual pll */
+ 	init.name = pll_name;
  
-+	rockchip_clk_mmc_disable_init(mmc_clock);
-+
- 	if (name)
- 		init.name = name;
+ 	/* keep all plls untouched for now */
+@@ -398,47 +427,19 @@ struct clk *rockchip_clk_register_pll(enum rockchip_pll_type pll_type,
+ 	pll->flags = clk_pll_flags;
+ 	pll->lock = lock;
  
+-	/* create the mux on top of the real pll */
+-	pll->pll_mux_ops = &clk_mux_ops;
+-	pll_mux = &pll->pll_mux;
+-	pll_mux->reg = base + mode_offset;
+-	pll_mux->shift = mode_shift;
+-	pll_mux->mask = PLL_MODE_MASK;
+-	pll_mux->flags = 0;
+-	pll_mux->lock = lock;
+-	pll_mux->hw.init = &init;
+-
+-	if (pll_type == pll_rk3066)
+-		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
+-
+ 	pll_clk = clk_register(NULL, &pll->hw);
+ 	if (IS_ERR(pll_clk)) {
+ 		pr_err("%s: failed to register pll clock %s : %ld\n",
+ 			__func__, name, PTR_ERR(pll_clk));
+-		mux_clk = pll_clk;
+ 		goto err_pll;
+ 	}
+ 
+-	/* the actual muxing is xin24m, pll-output, xin32k */
+-	pll_parents[0] = parent_names[0];
+-	pll_parents[1] = pll_name;
+-	pll_parents[2] = parent_names[1];
+-
+-	init.name = name;
+-	init.flags = CLK_SET_RATE_PARENT;
+-	init.ops = pll->pll_mux_ops;
+-	init.parent_names = pll_parents;
+-	init.num_parents = ARRAY_SIZE(pll_parents);
+-
+-	mux_clk = clk_register(NULL, &pll_mux->hw);
+-	if (IS_ERR(mux_clk))
+-		goto err_mux;
+-
+ 	return mux_clk;
+ 
+-err_mux:
+-	clk_unregister(pll_clk);
+ err_pll:
++	clk_unregister(mux_clk);
++	mux_clk = pll_clk;
++err_mux:
+ 	kfree(pll);
+ 	return mux_clk;
+ }
 -- 
-2.3.7
+2.1.4
 
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
