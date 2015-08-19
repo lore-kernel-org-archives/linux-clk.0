@@ -1,68 +1,120 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Fri, 7 Aug 2015 09:20:18 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Kukjin Kim <kgene@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Olof Johansson <olof@lixom.ne>,
-	Arnd Bergmann <arnd.bergmann@linaro.org>
-Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>,
-	'Thomas Abraham' <thomas.ab@samsung.com>,
-	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
-	'Michael Turquette' <mturquette@baylibre.com>,
-	'Krzysztof Kozlowski' <k.kozlowski@samsung.com>,
-	'Tomasz Figa' <tomasz.figa@gmail.com>,
-	'Lukasz Majewski' <l.majewski@samsung.com>,
-	'Heiko Stuebner' <heiko@sntech.de>,
-	'Chanwoo Choi' <cw00.choi@samsung.com>,
-	'Kevin Hilman' <khilman@linaro.org>,
-	'Javier Martinez Canillas' <javier@dowhile0.org>,
-	'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
-	'Anand Moon' <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for
- Exynos4x12 platform
-Message-ID: <20150807035018.GF6325@linux>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <015301d0d0a3$1396c900$3ac45b00$@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <015301d0d0a3$1396c900$3ac45b00$@kernel.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Pawel Moll <pawel.moll@arm.com>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@arm.linux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Fabian Frederick <fabf@skynet.be>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org
+Subject: [PATCH 2/2] drivers: clk: st: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x
+Date: Wed, 19 Aug 2015 10:48:14 +0200
+Message-Id: <1439974094-32322-3-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1439974094-32322-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1439974094-32322-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Cc'ing Rafael again. Guys please don't miss him for any PM related
-stuff or use get_maintainers ..
+Use a generic name for this kind of PLL
 
-Cc'ing Arnd/Olof as well to discuss the merge stuff..
+Correction in dts files are already done here:
+commit 5eb26c605909 ("ARM: STi: DT: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x")
 
-On 07-08-15, 08:53, Kukjin Kim wrote:
-> > Depends on:
-> > - next-20150806 branch of linux-next kernel tree
-> > - "[PATCH V3 00/16] OPP: Add code to support operating-points-v2 bindings"
-> >   (http://www.spinics.net/lists/arm-kernel/msg435408.html)
-> > 
-> BTW, hmm...how can we see this series in v4.3?...to be honest, I don't think it
-> can be done in v4.3 because of dependencies with PM / OPP series
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+---
+ drivers/clk/st/clkgen-fsyn.c |  8 ++++----
+ drivers/clk/st/clkgen-pll.c  | 12 ++++++------
+ 2 files changed, 10 insertions(+), 10 deletions(-)
 
-That is merged by Rafael Yesterday. That is manageable 
-
-> and previous
-> exynos CPU OPP series in each cross trees...maybe that's why you created based
-> on linux-next...any idea?
-
-So there is no build dependency with OPP patches I hope, as its all
-about using the bindings defined by them. And so you don't need to
-depend on that.
-
-You might have to rebase on the ARM tree to manage your conflicts. In
-this case you can rebase directly on ARM SoC branch which has your
-patches (rebase directly over the last patch instead of the whole
-branch) and make sure Olof knows about this and he doesn't update
-(i.e. rebase) his branch, which he might not anyway.
-
-The whole idea is to keep a single sha-id for a commit. So you can
-rebase over the published material present in ARM-SoC ..
-
+diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
+index 83ccf14..576cd03 100644
+--- a/drivers/clk/st/clkgen-fsyn.c
++++ b/drivers/clk/st/clkgen-fsyn.c
+@@ -307,7 +307,7 @@ static const struct clkgen_quadfs_data st_fs660c32_F_416 = {
+ 	.get_rate	= clk_fs660c32_dig_get_rate,
+ };
+ 
+-static const struct clkgen_quadfs_data st_fs660c32_C_407 = {
++static const struct clkgen_quadfs_data st_fs660c32_C = {
+ 	.nrst_present = true,
+ 	.nrst	= { CLKGEN_FIELD(0x2f0, 0x1, 0),
+ 		    CLKGEN_FIELD(0x2f0, 0x1, 1),
+@@ -350,7 +350,7 @@ static const struct clkgen_quadfs_data st_fs660c32_C_407 = {
+ 	.get_rate	= clk_fs660c32_dig_get_rate,
+ };
+ 
+-static const struct clkgen_quadfs_data st_fs660c32_D_407 = {
++static const struct clkgen_quadfs_data st_fs660c32_D = {
+ 	.nrst_present = true,
+ 	.nrst	= { CLKGEN_FIELD(0x2a0, 0x1, 0),
+ 		    CLKGEN_FIELD(0x2a0, 0x1, 1),
+@@ -1077,11 +1077,11 @@ static const struct of_device_id quadfs_of_match[] = {
+ 	},
+ 	{
+ 		.compatible = "st,stih407-quadfs660-C",
+-		.data = &st_fs660c32_C_407
++		.data = &st_fs660c32_C
+ 	},
+ 	{
+ 		.compatible = "st,stih407-quadfs660-D",
+-		.data = &st_fs660c32_D_407
++		.data = &st_fs660c32_D
+ 	},
+ 	{}
+ };
+diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
+index 47a38a9..b2a332c 100644
+--- a/drivers/clk/st/clkgen-pll.c
++++ b/drivers/clk/st/clkgen-pll.c
+@@ -193,7 +193,7 @@ static const struct clkgen_pll_data st_pll3200c32_407_a0 = {
+ 	.ops		= &stm_pll3200c32_ops,
+ };
+ 
+-static const struct clkgen_pll_data st_pll3200c32_407_c0_0 = {
++static const struct clkgen_pll_data st_pll3200c32_cx_0 = {
+ 	/* 407 C0 PLL0 */
+ 	.pdn_status	= CLKGEN_FIELD(0x2a0,	0x1,			8),
+ 	.locked_status	= CLKGEN_FIELD(0x2a0,	0x1,			24),
+@@ -205,7 +205,7 @@ static const struct clkgen_pll_data st_pll3200c32_407_c0_0 = {
+ 	.ops		= &stm_pll3200c32_ops,
+ };
+ 
+-static const struct clkgen_pll_data st_pll3200c32_407_c0_1 = {
++static const struct clkgen_pll_data st_pll3200c32_cx_1 = {
+ 	/* 407 C0 PLL1 */
+ 	.pdn_status	= CLKGEN_FIELD(0x2c8,	0x1,			8),
+ 	.locked_status	= CLKGEN_FIELD(0x2c8,	0x1,			24),
+@@ -624,12 +624,12 @@ static const struct of_device_id c32_pll_of_match[] = {
+ 		.data = &st_pll3200c32_407_a0,
+ 	},
+ 	{
+-		.compatible = "st,stih407-plls-c32-c0_0",
+-		.data = &st_pll3200c32_407_c0_0,
++		.compatible = "st,plls-c32-cx_0",
++		.data = &st_pll3200c32_cx_0,
+ 	},
+ 	{
+-		.compatible = "st,stih407-plls-c32-c0_1",
+-		.data = &st_pll3200c32_407_c0_1,
++		.compatible = "st,plls-c32-cx_1",
++		.data = &st_pll3200c32_cx_1,
+ 	},
+ 	{
+ 		.compatible = "st,stih407-plls-c32-a9",
 -- 
-viresh
+1.9.1
