@@ -1,75 +1,90 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Fri, 28 Aug 2015 18:16:13 +0900
-Message-Id: <20150828091613.21731.8527.sendpatchset@little-apple>
-In-Reply-To: <20150828091550.21731.85227.sendpatchset@little-apple>
-References: <20150828091550.21731.85227.sendpatchset@little-apple>
-Subject: [PATCH v3 02/04] clk: shmobile: Make MSTP clock-output-names optional
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 20 Aug 2015 17:11:43 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	s.hauer@pengutronix.de, geert@linux-m68k.org
+Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
+Message-ID: <20150820151143.GC30520@lukather>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+ <20150810144811.GN3249@x1>
+ <20150810185516.2416.32293@quantum>
+ <20150811084329.GA13374@x1>
+ <20150811170904.2416.43354@quantum>
+ <20150811183317.GT18282@x1>
+ <20150811185827.31346.68194@quantum>
+ <20150818155203.GJ2547@lukather>
+ <20150818163356.31346.15075@quantum>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="mZSo2Zk6iB5ZAp9g"
+In-Reply-To: <20150818163356.31346.15075@quantum>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
 
-This patch updates the MSTP driver to make the "clock-output-names"
-DT property optional instead of mandatory. In case the DT property
-is omitted then the function clk_register_clkdev() is skipped.
+--mZSo2Zk6iB5ZAp9g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The default for new SoCs is to not use "clock-output-names".
+On Tue, Aug 18, 2015 at 09:33:56AM -0700, Michael Turquette wrote:
+> Quoting Maxime Ripard (2015-08-18 08:52:03)
+> > On Tue, Aug 11, 2015 at 11:58:27AM -0700, Michael Turquette wrote:
+> > > For example the whole big messy fuss over the DT bindings for the
+> > > simple-fb driver could have been avoided if this feature had existed
+> > > then.
+> >=20
+> > Not really, there was additional issues that would have prevented to
+> > use that in simplefb too. For example the fact that you wouldn't care
+> > about the clock at all if simplefb was not enabled in the kernel. Or
+> > that you would like to protect the pixel clock (or its parent) from
+> > having its rate changed.
+>=20
+> You're right, there may be more issues involved here. But as I recall
+> there was interest in using simplefb to "hand-off" to a loadable module
+> later on, and that was really what I was referring to.
+>=20
+> In that case we could "skip" simplefb having to claim and enable clocks.
+> The loadable module that is the "rich" driver could just claim them as
+> usual and the reference counts would be handed over at that time.
 
-This version of the patch is kind of early, so please handle with care.
-So far the patch has only been tested with a single MSTP clock. =)
+Yep, but the issue would be broader but just the clocks, but yeah,
+you're right :)
 
-Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+> But I don't mean to dig up past flamebait ;-)
 
- drivers/clk/shmobile/clk-mstp.c |   15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+Yep, it's probably better not to :)
 
---- 0001/drivers/clk/shmobile/clk-mstp.c
-+++ work/drivers/clk/shmobile/clk-mstp.c	2015-08-28 15:03:28.002366518 +0900
-@@ -198,15 +198,12 @@ static void __init cpg_mstp_clocks_init(
- 
- 	for (i = 0; i < MSTP_MAX_CLOCKS; ++i) {
- 		const char *parent_name;
--		const char *name;
-+		const char *name = NULL;
- 		u32 clkidx;
- 		int ret;
- 
--		/* Skip clocks with no name. */
- 		ret = of_property_read_string_index(np, "clock-output-names",
- 						    i, &name);
--		if (ret < 0 || strlen(name) == 0)
--			continue;
- 
- 		parent_name = of_clk_get_parent_name(np, i);
- 		ret = of_property_read_u32_index(np, idxname, i, &clkidx);
-@@ -214,12 +211,13 @@ static void __init cpg_mstp_clocks_init(
- 			break;
- 
- 		if (clkidx >= MSTP_MAX_CLOCKS) {
--			pr_err("%s: invalid clock %s %s index %u)\n",
--			       __func__, np->name, name, clkidx);
-+			pr_err("%s: invalid clock %s index %u)\n",
-+			       __func__, np->name, clkidx);
- 			continue;
- 		}
- 
--		clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
-+		clks[clkidx] = cpg_mstp_clock_register(name ? name : np->name,
-+						       parent_name,
- 						       clkidx, group);
- 		if (!IS_ERR(clks[clkidx])) {
- 			group->data.clk_num = max(group->data.clk_num,
-@@ -232,7 +230,8 @@ static void __init cpg_mstp_clocks_init(
- 			 * FIXME: Remove this when all devices that require a
- 			 * clock will be instantiated from DT.
- 			 */
--			clk_register_clkdev(clks[clkidx], name, NULL);
-+			if (name) /* only if clock-output-names is provided */
-+				clk_register_clkdev(clks[clkidx], name, NULL);
- 		} else {
- 			pr_err("%s: failed to register %s %s clock (%ld)\n",
- 			       __func__, np->name, name, PTR_ERR(clks[clkidx]));
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--mZSo2Zk6iB5ZAp9g
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJV1e4vAAoJEBx+YmzsjxAg7LMP/1GOp/YKlzCEBSG8ksJH9CFY
+2oFUxAPKL25gQdYwneWRt/bNP4IegYeDIAKgqd25pHIu97FD+JYy5F0XBs4dcvmC
+OxI2+GfCdKFU7FU8efQv9ufwl49eKfnp1j1WhRMwH+BXwBPjDOt9VVjaa5qzg6Fo
+VpJXnoGRFBNaZuHUU2tXdXqvRLkKw8KDOQdfgCdTfVQ3w+JODmqINBMpiEIXKGjH
+pkpnPDrrsjncyqMrE715EGO1Qv0MO9Bd/YjKVmGf8K71CMdr+j8skBZdPxN3WaAc
+j8WgrMdg/TN2QSEznx/8vLkEXEjqyMc29qOETq1Ix8VFodLiKfH34omXLJ0cFzVB
+c+LEL7H1MhYwauYm9m7OBzcoqEt/0D0ZDs5fboNRrGmnv62Xz7RHhsNJMnJOGLzj
+eWVuEqJPRkwAp/rsxJaCqO1RbyMNAqQrtujsGDWerWAn/b7J4ZZGi9fVSYd+xqj3
+Lh1DytGxTUdqzWLKxf0IZlsXVb0581Av/82or4VcsbC9iJl9Uuj1dLcRwYhyE4WZ
+NgfIBi+nfiRStt2JqdbfjhOev2y6z/EiX6zqSOOsXj2mKg9UWoc4Y2RHwzBCNbUQ
+cTneBwdV76AbemNU1hqX9fIpigSHMqQ+PIbqu/Qv3XwIpnvEh6/AXPW31cZ12Uru
++ox69cMUhfUNxwzXxz5+
+=W4jt
+-----END PGP SIGNATURE-----
+
+--mZSo2Zk6iB5ZAp9g--
