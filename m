@@ -1,190 +1,75 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Mon, 10 Aug 2015 15:48:11 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, maxime.ripard@free-electrons.com,
-	s.hauer@pengutronix.de, geert@linux-m68k.org
-Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
-Message-ID: <20150810144811.GN3249@x1>
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
- <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55D5994D.9080209@ti.com>
+Date: Thu, 20 Aug 2015 12:09:33 +0300
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	Luc Verhaegen <libv@skynet.be>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	David Herrmann <dh.herrmann@gmail.com>
+Subject: Re: [PATCH 6/7] simplefb: Include clk.h
+References: <1436569409-27964-1-git-send-email-sboyd@codeaurora.org> <1436569409-27964-7-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1436569409-27964-7-git-send-email-sboyd@codeaurora.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="mmN4jeROxLiRW8DBer2QPo2T0p6AllQH4"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 07 Aug 2015, Michael Turquette wrote:
+--mmN4jeROxLiRW8DBer2QPo2T0p6AllQH4
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-> Some clocks are critical to system operation (e.g. cpu, memory, etc) and
-> should not be gated until a driver that knows best claims such a clock
-> and expressly gates that clock through the normal clk.h api.
-> 
-> The typical way to handle this is for the clk driver or some other early
-> code to call clk_prepare_enable on this important clock as soon as it is
-> registered and before the clk_disable_unused garbage collector kicks in.
-> 
-> This patch introduces a formal way to handle this scenario that is
-> provided by the clk framework. Clk driver authors can set the
-> CLK_ENABLE_HAND_OFF flag in their clk data, which will cause the clk to
-> be enabled in clk_register(). 
 
-Doesn't this patch put as right back at square one?  We still require
-each of the clock providers to know which of its clocks are critical
-on any given platform.  Only this time we're setting a flag as opposed
-to actually enabling the clock.  The code for doing so will still be
-little per-vendor hand-rolled chunks scattered all over the subsystem.
 
-Mitigating this was the whole point of my critical clocks set.  It
-appears we're not solving the problem here at all.
-
-> Then when the first clk consumer driver
-> comes along and calls clk_get() & clk_prepare_enable(), the reference
-> counts taken during clk registration are transfered (or handed off) to
-> the clk consumer.
-> 
-> At this point handling the clk is the same as any other clock which as
-> not set the new CLK_ENABLE_HAND_OFF flag. In fact no changes to any
-> clock consumer driver are needed for this to work.
-> 
-> Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+On 11/07/15 02:03, Stephen Boyd wrote:
+> This driver uses the consumer API, so include clk.h explicitly
+> instead of impliclty through the provider API.
+>=20
+> Cc: Luc Verhaegen <libv@skynet.be>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: David Herrmann <dh.herrmann@gmail.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 > ---
->  drivers/clk/clk.c            | 61 +++++++++++++++++++++++++++++++++++++++++---
->  include/linux/clk-provider.h |  3 +++
->  2 files changed, 60 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 6ec0f77..a3fdeab 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -59,6 +59,8 @@ struct clk_core {
->  	unsigned long		flags;
->  	unsigned int		enable_count;
->  	unsigned int		prepare_count;
-> +	bool			need_handoff_enable;
-> +	bool			need_handoff_prepare;
->  	unsigned long		min_rate;
->  	unsigned long		max_rate;
->  	unsigned long		accuracy;
-> @@ -656,16 +658,31 @@ static int clk_core_prepare(struct clk_core *core)
->   */
->  int clk_prepare(struct clk *clk)
->  {
-> -	int ret;
-> +	int ret = 0;
->  
->  	if (!clk)
->  		return 0;
->  
->  	clk_prepare_lock();
->  	clk->prepare_count++;
-> +
-> +	/*
-> +	 * setting CLK_ENABLE_HAND_OFF flag triggers this conditional
-> +	 *
-> +	 * need_handoff_prepare implies this clk was already prepared by
-> +	 * __clk_init. now we have a proper user, so unset the flag in our
-> +	 * internal bookkeeping. See CLK_ENABLE_HAND_OFF flag in clk-provider.h
-> +	 * for details.
-> +	 */
-> +	if (clk->core->need_handoff_prepare) {
-> +		clk->core->need_handoff_prepare = false;
-> +		goto out;
-> +	}
-> +
->  	ret = clk_core_prepare(clk->core);
-> -	clk_prepare_unlock();
->  
-> +out:
-> +	clk_prepare_unlock();
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(clk_prepare);
-> @@ -772,16 +789,31 @@ static int clk_core_enable(struct clk_core *core)
->  int clk_enable(struct clk *clk)
->  {
->  	unsigned long flags;
-> -	int ret;
-> +	int ret = 0;
->  
->  	if (!clk)
->  		return 0;
->  
->  	flags = clk_enable_lock();
->  	clk->enable_count++;
+>=20
+> Please ack so this can go through clk-tree.
+>=20
+>  drivers/video/fbdev/simplefb.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-This insinuates that we now have two users.  Same goes for the prepare
-count.
+Acked-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-What happens during disable() and unprepare()?
+ Tomi
 
-> +	/*
-> +	 * setting CLK_ENABLE_HAND_OFF flag triggers this conditional
-> +	 *
-> +	 * need_handoff_enable implies this clk was already enabled by
-> +	 * __clk_init. now we have a proper user, so unset the flag in our
-> +	 * internal bookkeeping. See CLK_ENABLE_HAND_OFF flag in clk-provider.h
-> +	 * for details.
-> +	 */
-> +	if (clk->core->need_handoff_enable) {
-> +		clk->core->need_handoff_enable = false;
-> +		goto out;
-> +	}
-> +
->  	ret = clk_core_enable(clk->core);
-> -	clk_enable_unlock(flags);
->  
-> +out:
-> +	clk_enable_unlock(flags);
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(clk_enable);
-> @@ -2447,6 +2479,27 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
->  	if (core->ops->init)
->  		core->ops->init(core->hw);
->  
-> +	/*
-> +	 * enable clocks with the CLK_ENABLE_HAND_OFF flag set
-> +	 *
-> +	 * This flag causes the framework to enable the clock at registration
-> +	 * time, which is sometimes necessary for clocks that would cause a
-> +	 * system crash when gated (e.g. cpu, memory, etc). The prepare_count
-> +	 * is migrated over to the first clk consumer to call clk_prepare().
-> +	 * Similarly the clk's enable_count is migrated to the first consumer
-> +	 * to call clk_enable().
-> +	 */
-> +	if (core->flags & CLK_ENABLE_HAND_OFF) {
-> +		core->need_handoff_prepare = true;
-> +		core->need_handoff_enable = true;
-> +		ret = clk_core_prepare(core);
-> +		if (ret)
-> +			goto out;
-> +		clk_core_enable(core);
-> +		if (ret)
-> +			goto out;
-> +	}
-> +
->  	kref_init(&core->ref);
->  out:
->  	clk_prepare_unlock();
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 06a56e5..0230900 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -31,6 +31,9 @@
->  #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
->  #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
->  #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
-> +#define CLK_ENABLE_HAND_OFF	BIT(10) /* enable clock when registered.
-> +					   hand-off enable_count & prepare_count
-> +					   to first consumer that enables clk */
->  
->  struct clk;
->  struct clk_hw;
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+--mmN4jeROxLiRW8DBer2QPo2T0p6AllQH4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJV1ZlNAAoJEPo9qoy8lh71INIP/1yITN70XqWeEAXX3od+Iuti
+iu0Fnm4kHoQ61EGXT3h4YsFNeP1tqJllG8V0ab3DItD1hCsIoa2oi6Sv+18gmoyL
+AYIA5ikrEW8O2yxY+3z+0Yr3uHbvdTFjqyRQzGkylVZ52eLkmHxs97Gk/PdEISvP
+1UEQH8ZWIQ+TyxAT+inOru+YuWIKzRcveLefQcgX9GSSAqLq1prWByO/exUsoyUl
+5Ypkb6LT9IJXMbjsR81tGVYVqMoewW8UQMWL2+cfYroOu2pI1jcwbLhZ2HAF0uXQ
+BEe/0UsIV++JuaFar1UgFYPBU//7/2EVRjLy8engGrfMI07n0tRWkp/QjSl1F1Gw
+aeJNIntsmU47RBqAOx+Zu/St68pALZwrkqHv0Cvr734Xwon/hqDH5XWjmt7/WYVd
+vs3oh11SOtoYHFVV1P1W37LQWKPiLIQWSasCnH6PdHVjV6WbKIiTFP5fH+Q7QwRv
+6p2OULWgYrQb/m+4ZOzlp9cdYBXJrsR4c6jOjukNy629ioZ7f/paKa7rEV+egICb
+8cRPwq/uzz1s9O95z6GxYTIHPZVpHHsl9pSa1pYsHID64usYwMT92T+RRelCDeiP
+M195bmNJrBTntjzMqEK07qu4zS+2H3lR35EkMVyQ8iuNVeg4hovbSM8V/bbiTmPO
+PMzO6+Hn4QNcS8opE5fN
+=Mwln
+-----END PGP SIGNATURE-----
+
+--mmN4jeROxLiRW8DBer2QPo2T0p6AllQH4--
