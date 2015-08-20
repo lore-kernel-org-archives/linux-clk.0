@@ -1,116 +1,133 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq driver
- for Exynos4x12
-Date: Mon, 03 Aug 2015 12:31:32 +0200
-Message-id: <59949991.607t9GcIyz@amdc1976>
-In-reply-to: <55BC78BE.5020102@samsung.com>
-References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
- <1438368557-2352-4-git-send-email-b.zolnierkie@samsung.com>
- <55BC78BE.5020102@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <govindraj.raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Govindraj Raja
+	<govindraj.raja@imgtec.com>
+Subject: [PATCH v5 3/4] clk: pistachio: Fix PLL rate calculation in integer mode
+Date: Thu, 20 Aug 2015 14:45:54 +0100
+Message-ID: <1440078355-8828-4-git-send-email-govindraj.raja@imgtec.com>
+In-Reply-To: <1440078355-8828-1-git-send-email-govindraj.raja@imgtec.com>
+References: <1440078355-8828-1-git-send-email-govindraj.raja@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
 
-[ added Zhang & Eduardo to Cc: ]
+.recalc_rate callback for the fractional PLL doesn't take operating
+mode into account when calculating PLL rate. This results in
+the incorrect PLL rates when PLL is operating in integer mode.
 
-Hi,
+Operating mode of fractional PLL is based on the value of the
+fractional divider. Currently it assumes that the PLL will always
+be configured in fractional mode which may not be
+the case. This may result in the wrong output frequency.
 
-On Saturday, August 01, 2015 04:43:58 PM Krzysztof Kozlowski wrote:
-> W dniu 01.08.2015 o 03:49, Bartlomiej Zolnierkiewicz pisze:
-> > The new CPU clock type allows the use of generic CPUfreq driver.
-> > Switch Exynos4x12 to using generic cpufreq driver.
-> > 
-> > Also make CPUFREQ_DT config option select Exynos thermal driver
-> > if Exynos platform support is enabled.
-> 
-> Why? I think this wasn't in your previous patch.
+Also vco was calculated based on the current operating mode which
+makes no sense because .set_rate is setting operating mode. Instead,
+vco should be calculated using PLL settings that are about to be set.
 
-Previous patch kept ARM_EXYNOS_CPU_FREQ_BOOST_SW config option
-which selected EXYNOS_THERMAL.  After recent changes (boost
-support enabled in the cpufreq-dt driver when there are turbo
-OPPs in board's dts file) ARM_EXYNOS_CPU_FREQ_BOOST_SW config
-option become redundant and was removed.  However we still
-would like to allow enabling boost support only if thermal
-support is also enabled for Exynos platforms.
+Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+---
+ drivers/clk/pistachio/clk-pll.c | 48 +++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 46 insertions(+), 2 deletions(-)
 
-[ There may be a better way to do this in the future (runtime
-  checking for thermal support being enabled) but currently
-  there seems to be no thermal infrastructure to allow this. ]
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-> Best regards,
-> Krzysztof
-> 
-> 
-> > 
-> > Please also note that the switch to use the generic cpufreq-dt
-> > driver fixes the minor issue present with the old code (support
-> > for 'boost' mode in the exynos-cpufreq driver was enabled for
-> > all supported SoCs even though 'boost' frequency was provided
-> > only for Exynos4x12 ones).
-> > 
-> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> > Cc: Kukjin Kim <kgene.kim@samsung.com>
-> > Cc: Thomas Abraham <thomas.ab@samsung.com>
-> > Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> >  arch/arm/mach-exynos/exynos.c | 2 ++
-> >  drivers/cpufreq/Kconfig       | 1 +
-> >  2 files changed, 3 insertions(+)
-> > 
-> > diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> > index 77ac021..1c47aee 100644
-> > --- a/arch/arm/mach-exynos/exynos.c
-> > +++ b/arch/arm/mach-exynos/exynos.c
-> > @@ -227,6 +227,8 @@ static void __init exynos_init_irq(void)
-> >  static const struct of_device_id exynos_cpufreq_matches[] = {
-> >  	{ .compatible = "samsung,exynos3250", .data = "cpufreq-dt" },
-> >  	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
-> > +	{ .compatible = "samsung,exynos4212", .data = "cpufreq-dt" },
-> > +	{ .compatible = "samsung,exynos4412", .data = "cpufreq-dt" },
-> >  	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
-> >  	{ /* sentinel */ }
-> >  };
-> > diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
-> > index 659879a..bf6d596 100644
-> > --- a/drivers/cpufreq/Kconfig
-> > +++ b/drivers/cpufreq/Kconfig
-> > @@ -191,6 +191,7 @@ config CPUFREQ_DT
-> >  	# if CPU_THERMAL is on and THERMAL=m, CPUFREQ_DT cannot be =y:
-> >  	depends on !CPU_THERMAL || THERMAL
-> >  	select PM_OPP
-> > +	select EXYNOS_THERMAL if ARCH_EXYNOS
-> >  	help
-> >  	  This adds a generic DT based cpufreq driver for frequency management.
-> >  	  It supports both uniprocessor (UP) and symmetric multiprocessor (SMP)
-
+diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
+index 9a38a2b..c9b4598 100644
+--- a/drivers/clk/pistachio/clk-pll.c
++++ b/drivers/clk/pistachio/clk-pll.c
+@@ -65,6 +65,12 @@
+ #define MIN_OUTPUT_FRAC			12000000UL
+ #define MAX_OUTPUT_FRAC			1600000000UL
+ 
++/* Fractional PLL operating modes */
++enum pll_mode {
++	PLL_MODE_FRAC,
++	PLL_MODE_INT,
++};
++
+ struct pistachio_clk_pll {
+ 	struct clk_hw hw;
+ 	void __iomem *base;
+@@ -99,6 +105,29 @@ static inline struct pistachio_clk_pll *to_pistachio_pll(struct clk_hw *hw)
+ 	return container_of(hw, struct pistachio_clk_pll, hw);
+ }
+ 
++static inline enum pll_mode pll_frac_get_mode(struct clk_hw *hw)
++{
++	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
++	u32 val;
++
++	val = pll_readl(pll, PLL_CTRL3) & PLL_FRAC_CTRL3_DSMPD;
++	return val ? PLL_MODE_INT : PLL_MODE_FRAC;
++}
++
++static inline void pll_frac_set_mode(struct clk_hw *hw, enum pll_mode mode)
++{
++	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
++	u32 val;
++
++	val = pll_readl(pll, PLL_CTRL3);
++	if (mode == PLL_MODE_INT)
++		val |= PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_DACPD;
++	else
++		val &= ~(PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_DACPD);
++
++	pll_writel(pll, val, PLL_CTRL3);
++}
++
+ static struct pistachio_pll_rate_table *
+ pll_get_params(struct pistachio_clk_pll *pll, unsigned long fref,
+ 	       unsigned long fout)
+@@ -180,7 +209,11 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!params || !params->refdiv)
+ 		return -EINVAL;
+ 
+-	vco = div64_u64(params->fref * params->fbdiv, params->refdiv);
++	/* calculate vco */
++	vco = params->fref;
++	vco *= (params->fbdiv << 24) + params->frac;
++	vco = div64_u64(vco, params->refdiv << 24);
++
+ 	if (vco < MIN_VCO_FRAC_FRAC || vco > MAX_VCO_FRAC_FRAC)
+ 		pr_warn("%s: VCO %llu is out of range %lu..%lu\n", name, vco,
+ 			MIN_VCO_FRAC_FRAC, MAX_VCO_FRAC_FRAC);
+@@ -224,6 +257,12 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		(params->postdiv2 << PLL_FRAC_CTRL2_POSTDIV2_SHIFT);
+ 	pll_writel(pll, val, PLL_CTRL2);
+ 
++	/* set operating mode */
++	if (params->frac)
++		pll_frac_set_mode(hw, PLL_MODE_FRAC);
++	else
++		pll_frac_set_mode(hw, PLL_MODE_INT);
++
+ 	if (enabled)
+ 		pll_lock(pll);
+ 
+@@ -247,8 +286,13 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
+ 		PLL_FRAC_CTRL2_POSTDIV2_MASK;
+ 	frac = (val >> PLL_FRAC_CTRL2_FRAC_SHIFT) & PLL_FRAC_CTRL2_FRAC_MASK;
+ 
++	/* get operating mode (int/frac) and calculate rate accordingly */
+ 	rate = parent_rate;
+-	rate *= (fbdiv << 24) + frac;
++	if (pll_frac_get_mode(hw) == PLL_MODE_FRAC)
++		rate *= (fbdiv << 24) + frac;
++	else
++		rate *= (fbdiv << 24);
++
+ 	rate = do_div_round_closest(rate, (prediv * postdiv1 * postdiv2) << 24);
+ 
+ 	return rate;
+-- 
+1.9.1
