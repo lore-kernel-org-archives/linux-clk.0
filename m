@@ -1,68 +1,70 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 31 Aug 2015 21:48:53 +0900
-Message-Id: <20150831124853.31057.38519.sendpatchset@little-apple>
-In-Reply-To: <20150831124842.31057.54534.sendpatchset@little-apple>
-References: <20150831124842.31057.54534.sendpatchset@little-apple>
-Subject: [PATCH v5 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>, linux-clk@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 3/4 v3][RFC] arm64: renesas: Add initial r8a7795 SoC support
+Date: Thu, 20 Aug 2015 22:48:05 +0300
+Message-ID: <4206643.R1gTHQZqhM@avalon>
+In-Reply-To: <CAMuHMdWMNLf-fDsiLNFwO05i0cqBHkdM2mwC3GinwWFN4pWFZg@mail.gmail.com>
+References: <877fpdw3av.wl%kuninori.morimoto.gx@renesas.com> <12310001.Bt8qbPIiMv@avalon> <CAMuHMdWMNLf-fDsiLNFwO05i0cqBHkdM2mwC3GinwWFN4pWFZg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Geert,
 
-Shmobile is all multiplatform these days, so in get rid of the
-reference to CONFIG_ARCH_SHMOBILE_MULTI in drivers/clk/shmobile/.
+On Thursday 20 August 2015 09:43:34 Geert Uytterhoeven wrote:
+> On Wed, Aug 19, 2015 at 11:29 PM, Laurent Pinchart wrote:
+> >> > Also, while you're thinking about the perfect clock binding, please do
+> >> > consider dropping clock-output-names if you can. Specifying clock-names
+> >> > alongside the clocks property inside of the consumer node is a bit more
+> >> > elegant in my opinion. This is also a bit easier if you think about
+> >> > expressing your clock data with C inside of your provider driver.
+> >> 
+> >> Makes sense. I don't think anything relies on the "clock-output-names"
+> >> ... currently.
+> >> 
+> >> I was going to use it for identifying the GIC clock, though:
+> >> 
+> >> --- a/drivers/clk/shmobile/clk-mstp.c
+> >> +++ b/drivers/clk/shmobile/clk-mstp.c
+> >> @@ -144,6 +144,9 @@ cpg_mstp_clock_register(const char *name, const char
+> >> *paren init.name = name;
+> >> 
+> >>         init.ops = &cpg_mstp_clock_ops;
+> >>         init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
+> >> 
+> >> +       /* INTC-SYS is the module clock of the GIC, and must not be
+> >> disabled */
+> >> +       if (!strcmp(name, "intc-sys"))
+> >> +               init.flags |= CLK_ENABLE_HAND_OFF;
+> >> 
+> >>         init.parent_names = &parent_name;
+> >>         init.num_parents = 1;
+> >> 
+> >> (FTR, on R-Car Gen3 the clock is called "intc-ap", not "intc-sys",
+> >> doh...).
+> >> 
+> >> This does put some reliance on (undocumented) naming in DT, though, so
+> >> not
+> >> having the "clock-output-names" would solve that.
+> > 
+> > Using the clock name is indeed very messy, let's avoid that.
+> > 
+> >> However, while "intc-sys"/"intc-ap" (if existent) is always MSTP408,
+> >> MSTP408 is used for other modules on R-Car Gen1 and most older SoCs. so
+> >> it would complicate the driver code.
+> > 
+> > How about setting the flag based on information provided in DT ?
+> 
+> Like scanning DT for the GIC, and looking for its clock?
+> 
+> I don't want to add an explicit flag in DT, as it's not a hardware property,
+> but a deficiency of the current GIC driver/subsystem.
 
-Also instead of always enabling DIV6 and MSTP adjust the Makefile
-to enable DIV6 and MSTP depending on if they are included in the
-SoC or not.
+What are the changes we can fix the GIC driver in a reasonable time frame ?
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
+-- 
+Regards,
 
- Earlier known as "clk: shmobile: Get rid of CONFIG_ARCH_SHMOBILE_MULTI"
-
- Changes since V4:
- - None
-
- Changes since V3:
- - Got rid of hunks that modified drivers/clk/Makefile
- - This to prevent build issue with non-CCF enabled SH arch
- - A nice side effect is that this patch now can be merged any time
-
- Changes since V2:
- - Fixed patch subject typo CONFIG_SHMOBILE_MULTI -> CONFIG_ARCH_SHMOBILE_MULTI
-
- drivers/clk/shmobile/Makefile |   22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
-
---- 0001/drivers/clk/shmobile/Makefile
-+++ work/drivers/clk/shmobile/Makefile	2015-08-29 16:14:57.522366518 +0900
-@@ -1,13 +1,11 @@
- obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
--obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
--obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
--obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
--obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
--obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
--obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o
--obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-div6.o
--obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-mstp.o
-+obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
+Laurent Pinchart
