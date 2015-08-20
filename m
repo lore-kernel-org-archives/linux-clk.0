@@ -1,109 +1,151 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:35034 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750735AbbHLMUi (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 12 Aug 2015 08:20:38 -0400
-Received: by obbop1 with SMTP id op1so11117040obb.2
-        for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2015 05:20:38 -0700 (PDT)
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <govindraj.raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Govindraj Raja
+	<govindraj.raja@imgtec.com>
+Subject: [PATCH v5 1/4] clk: pistachio: Fix 32bit integer overflows
+Date: Thu, 20 Aug 2015 14:45:52 +0100
+Message-ID: <1440078355-8828-2-git-send-email-govindraj.raja@imgtec.com>
+In-Reply-To: <1440078355-8828-1-git-send-email-govindraj.raja@imgtec.com>
+References: <1440078355-8828-1-git-send-email-govindraj.raja@imgtec.com>
 MIME-Version: 1.0
-In-Reply-To: <CALcgO_49YPGoCOv23Vz9vbnq9+AN3WqvYyg9_TtvsQcz8ia2Hw@mail.gmail.com>
-References: <CALcgO_49YPGoCOv23Vz9vbnq9+AN3WqvYyg9_TtvsQcz8ia2Hw@mail.gmail.com>
-Date: Wed, 12 Aug 2015 14:20:37 +0200
-Message-ID: <CACRpkdYWD-XGqeZ_66i_AtG7h1M8JcbWHy-bLwjZNRSZqQmT=Q@mail.gmail.com>
-Subject: Re: [PATCH RFC] clk-gpio-gate: use prepare/unprepare to do the GPIO work
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Allwright <michael.allwright@upb.de>
-Cc: Jyri Sarha <jsarha@ti.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Aug 10, 2015 at 4:50 PM, Michael Allwright
-<michael.allwright@upb.de> wrote:
+From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
 
-> From 19512587a6799c3cb96dc3f95d989b7c778a6f8c Mon Sep 17 00:00:00 2001
-> From: Michael Allwright <allsey87@gmail.com>
-> Date: Mon, 10 Aug 2015 16:44:05 +0200
-> Subject: [PATCH] clk-gpio-gate: use prepare/unprepare ops to control clock
->  enabling via gpiod_set_value_cansleep. This allows for GPIO expanders on I2C
->  and SPI buses
+This commit fixes 32bit integer overflows throughout the pll driver
+(i.e. wherever the result of integer multiplication may exceed the
+range of u32).
 
-Wut, the whole commit message in subject?
+One of the functions affected by this problem is .recalc_rate. It
+returns incorrect rate for some pll settings (not for all though)
+which in turn results in the incorrect rate setup of pll's child
+clocks.
 
-Did you forget to add a newline XD
+Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+---
+ drivers/clk/pistachio/clk-pll.c | 26 ++++++++++++--------------
+ drivers/clk/pistachio/clk.h     | 14 +++++++-------
+ 2 files changed, 19 insertions(+), 21 deletions(-)
 
->  static int clk_gpio_gate_enable(struct clk_hw *hw)
->  {
-> +    return 0;
-> +}
-> +
-> +static void clk_gpio_gate_disable(struct clk_hw *hw)
-> +{
-> +}
-> +
-> +static int clk_gpio_gate_is_enabled(struct clk_hw *hw)
-> +{
-> +    return 0;
-> +}
-> +
-> +static int clk_gpio_gate_prepare(struct clk_hw *hw)
-> +{
->      struct clk_gpio *clk = to_clk_gpio(hw);
->
-> -    gpiod_set_value(clk->gpiod, 1);
-> +    gpiod_set_value_cansleep(clk->gpiod, 1);
->
->      return 0;
->  }
->
-> -static void clk_gpio_gate_disable(struct clk_hw *hw)
-> +static void clk_gpio_gate_unprepare(struct clk_hw *hw)
->  {
->      struct clk_gpio *clk = to_clk_gpio(hw);
->
-> -    gpiod_set_value(clk->gpiod, 0);
-> +    gpiod_set_value_cansleep(clk->gpiod, 0);
->  }
->
-> -static int clk_gpio_gate_is_enabled(struct clk_hw *hw)
-> +static int clk_gpio_gate_is_prepared(struct clk_hw *hw)
->  {
->      struct clk_gpio *clk = to_clk_gpio(hw);
->
-> -    return gpiod_get_value(clk->gpiod);
-> +    return gpiod_get_value_cansleep(clk->gpiod);
->  }
-
-Naaaaaahh that is a too boring solution.
-
-I would prefer it to be smart like this, keep the original function
-names then in clk_register_gpio_gate():
-
-const struct clk_ops clk_gpio_fastpath_gate_ops = {
-        .enable = clk_gpio_gate_enable,
-        .disable = clk_gpio_gate_disable,
-        .is_enabled = clk_gpio_gate_is_enabled,
-};
-
-const struct clk_ops clk_gpio_sleep_gate_ops = {
-        .prepare = clk_gpio_gate_enable,
-        .unprepare = clk_gpio_gate_disable,
-        .is_enabled = clk_gpio_gate_is_enabled,
-};
-
-....
-if (gpiod_cansleep(clk_gpio->gpiod))
-    init.ops = &clk_gpio_sleep_gate_ops;
-else
-    init.ops = &clk_gpio_fastpath_gate_ops;
-
-If you think it's confusing to have functions ending with
-_enbable and _disable in the .prepare/.unprepare callbacks,
-rename them ungate/gate or something.
-
-Extra bonus if you can make an additional cleanup patch that rids the
-need to have GPIO numbers in this driver and just get GPIO
-descriptors directly from DT or whatever instead.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
+index e17dada..68066ef 100644
+--- a/drivers/clk/pistachio/clk-pll.c
++++ b/drivers/clk/pistachio/clk-pll.c
+@@ -88,12 +88,10 @@ static inline void pll_lock(struct pistachio_clk_pll *pll)
+ 		cpu_relax();
+ }
+ 
+-static inline u32 do_div_round_closest(u64 dividend, u32 divisor)
++static inline u64 do_div_round_closest(u64 dividend, u64 divisor)
+ {
+ 	dividend += divisor / 2;
+-	do_div(dividend, divisor);
+-
+-	return dividend;
++	return div64_u64(dividend, divisor);
+ }
+ 
+ static inline struct pistachio_clk_pll *to_pistachio_pll(struct clk_hw *hw)
+@@ -173,7 +171,7 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
+ 	struct pistachio_pll_rate_table *params;
+ 	int enabled = pll_gf40lp_frac_is_enabled(hw);
+-	u32 val, vco, old_postdiv1, old_postdiv2;
++	u64 val, vco, old_postdiv1, old_postdiv2;
+ 	const char *name = __clk_get_name(hw->clk);
+ 
+ 	if (rate < MIN_OUTPUT_FRAC || rate > MAX_OUTPUT_FRAC)
+@@ -183,17 +181,17 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!params || !params->refdiv)
+ 		return -EINVAL;
+ 
+-	vco = params->fref * params->fbdiv / params->refdiv;
++	vco = div64_u64(params->fref * params->fbdiv, params->refdiv);
+ 	if (vco < MIN_VCO_FRAC_FRAC || vco > MAX_VCO_FRAC_FRAC)
+-		pr_warn("%s: VCO %u is out of range %lu..%lu\n", name, vco,
++		pr_warn("%s: VCO %llu is out of range %lu..%lu\n", name, vco,
+ 			MIN_VCO_FRAC_FRAC, MAX_VCO_FRAC_FRAC);
+ 
+-	val = params->fref / params->refdiv;
++	val = div64_u64(params->fref, params->refdiv);
+ 	if (val < MIN_PFD)
+-		pr_warn("%s: PFD %u is too low (min %lu)\n",
++		pr_warn("%s: PFD %llu is too low (min %lu)\n",
+ 			name, val, MIN_PFD);
+ 	if (val > vco / 16)
+-		pr_warn("%s: PFD %u is too high (max %u)\n",
++		pr_warn("%s: PFD %llu is too high (max %llu)\n",
+ 			name, val, vco / 16);
+ 
+ 	val = pll_readl(pll, PLL_CTRL1);
+@@ -237,8 +235,7 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
+ 						 unsigned long parent_rate)
+ {
+ 	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
+-	u32 val, prediv, fbdiv, frac, postdiv1, postdiv2;
+-	u64 rate = parent_rate;
++	u64 val, prediv, fbdiv, frac, postdiv1, postdiv2, rate;
+ 
+ 	val = pll_readl(pll, PLL_CTRL1);
+ 	prediv = (val >> PLL_CTRL1_REFDIV_SHIFT) & PLL_CTRL1_REFDIV_MASK;
+@@ -251,6 +248,7 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
+ 		PLL_FRAC_CTRL2_POSTDIV2_MASK;
+ 	frac = (val >> PLL_FRAC_CTRL2_FRAC_SHIFT) & PLL_FRAC_CTRL2_FRAC_MASK;
+ 
++	rate = parent_rate;
+ 	rate *= (fbdiv << 24) + frac;
+ 	rate = do_div_round_closest(rate, (prediv * postdiv1 * postdiv2) << 24);
+ 
+@@ -325,12 +323,12 @@ static int pll_gf40lp_laint_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!params || !params->refdiv)
+ 		return -EINVAL;
+ 
+-	vco = params->fref * params->fbdiv / params->refdiv;
++	vco = div_u64(params->fref * params->fbdiv, params->refdiv);
+ 	if (vco < MIN_VCO_LA || vco > MAX_VCO_LA)
+ 		pr_warn("%s: VCO %u is out of range %lu..%lu\n", name, vco,
+ 			MIN_VCO_LA, MAX_VCO_LA);
+ 
+-	val = params->fref / params->refdiv;
++	val = div_u64(params->fref, params->refdiv);
+ 	if (val < MIN_PFD)
+ 		pr_warn("%s: PFD %u is too low (min %lu)\n",
+ 			name, val, MIN_PFD);
+diff --git a/drivers/clk/pistachio/clk.h b/drivers/clk/pistachio/clk.h
+index 52fabbc..8d45178 100644
+--- a/drivers/clk/pistachio/clk.h
++++ b/drivers/clk/pistachio/clk.h
+@@ -95,13 +95,13 @@ struct pistachio_fixed_factor {
+ 	}
+ 
+ struct pistachio_pll_rate_table {
+-	unsigned long fref;
+-	unsigned long fout;
+-	unsigned int refdiv;
+-	unsigned int fbdiv;
+-	unsigned int postdiv1;
+-	unsigned int postdiv2;
+-	unsigned int frac;
++	unsigned long long fref;
++	unsigned long long fout;
++	unsigned long long refdiv;
++	unsigned long long fbdiv;
++	unsigned long long postdiv1;
++	unsigned long long postdiv2;
++	unsigned long long frac;
+ };
+ 
+ enum pistachio_pll_type {
+-- 
+1.9.1
