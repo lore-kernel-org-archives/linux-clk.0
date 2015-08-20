@@ -1,64 +1,77 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@free-electrons.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20150818154552.GI2547@lukather>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
- lee.jones@linaro.org, s.hauer@pengutronix.de, geert@linux-m68k.org
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
- <20150818154552.GI2547@lukather>
-Message-ID: <20150818164356.31346.80341@quantum>
-Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and implement
- hand-off
-Date: Tue, 18 Aug 2015 09:43:56 -0700
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <12310001.Bt8qbPIiMv@avalon>
+References: <877fpdw3av.wl%kuninori.morimoto.gx@renesas.com>
+	<20150818002018.31346.63666@quantum>
+	<CAMuHMdXDuG5izkMCrBmTtznbFNQzXUVLKTrG9a_K=L2qbbkv5Q@mail.gmail.com>
+	<12310001.Bt8qbPIiMv@avalon>
+Date: Thu, 20 Aug 2015 09:43:34 +0200
+Message-ID: <CAMuHMdWMNLf-fDsiLNFwO05i0cqBHkdM2mwC3GinwWFN4pWFZg@mail.gmail.com>
+Subject: Re: [PATCH 3/4 v3][RFC] arm64: renesas: Add initial r8a7795 SoC support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Simon <horms@verge.net.au>,
+	Magnus <magnus.damm@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>,
+	linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Maxime Ripard (2015-08-18 08:45:52)
-> Hi Mike,
-> =
+Hi Laurent,
 
-> On Fri, Aug 07, 2015 at 12:09:27PM -0700, Michael Turquette wrote:
-> > All of the other kitchen sink stuff (DT binding, passing the flag back
-> > to the framework when the clock consumer driver calls clk_put) was left
-> > out because I do not see a real use case for it. If one can demonstrate
-> > a real use case (and not a hypothetical one) then this patch series can
-> > be expanded further.
-> =
+On Wed, Aug 19, 2015 at 11:29 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>> > Also, while you're thinking about the perfect clock binding, please do
+>> > consider dropping clock-output-names if you can. Specifying clock-names
+>> > alongside the clocks property inside of the consumer node is a bit more
+>> > elegant in my opinion. This is also a bit easier if you think about
+>> > expressing your clock data with C inside of your provider driver.
+>>
+>> Makes sense. I don't think anything relies on the "clock-output-names"
+>> ... currently.
+>>
+>> I was going to use it for identifying the GIC clock, though:
+>>
+>> --- a/drivers/clk/shmobile/clk-mstp.c
+>> +++ b/drivers/clk/shmobile/clk-mstp.c
+>> @@ -144,6 +144,9 @@ cpg_mstp_clock_register(const char *name, const char
+>> *paren init.name = name;
+>>         init.ops = &cpg_mstp_clock_ops;
+>>         init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
+>> +       /* INTC-SYS is the module clock of the GIC, and must not be disabled
+>> */
+>> +       if (!strcmp(name, "intc-sys"))
+>> +               init.flags |= CLK_ENABLE_HAND_OFF;
+>>         init.parent_names = &parent_name;
+>>         init.num_parents = 1;
+>>
+>> (FTR, on R-Car Gen3 the clock is called "intc-ap", not "intc-sys", doh...).
+>>
+>> This does put some reliance on (undocumented) naming in DT, though, so not
+>> having the "clock-output-names" would solve that.
+>
+> Using the clock name is indeed very messy, let's avoid that.
+>
+>> However, while "intc-sys"/"intc-ap" (if existent) is always MSTP408, MSTP408
+>> is used for other modules on R-Car Gen1 and most older SoCs. so it would
+>> complicate the driver code.
+>
+> How about setting the flag based on information provided in DT ?
 
-> I think there is a very trivial use case for passing back the
-> reference to the framework, if during the probed, we have something
-> like:
-> =
+Like scanning DT for the GIC, and looking for its clock?
 
-> clk =3D clk_get()
-> clk_prepare_enable(clk)
-> foo_framework_register()
-> =
+I don't want to add an explicit flag in DT, as it's not a hardware property,
+but a deficiency of the current GIC driver/subsystem.
 
-> if foo_framework_register fails, the sensible thing to do would be to
-> call clk_disable_unprepare. If the clock was a critical clock, you
-> just gated it.
+Gr{oetje,eeting}s,
 
-Hmm, a good point. Creating the "pass the reference back" call is not
-hard technically. But how to keep from abusing it? E.g. I do not want
-that call to become an alternative to correct use of clk_enable.
+                        Geert
 
-Maybe I'll need a Coccinelle script or just some regular sed to
-occasionally search for new users of this api and audit them?
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I was hoping to not add any new consumer api at all :-/
-
-Regards,
-Mike
-
-> =
-
-> Maxime
-> =
-
-> -- =
-
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
