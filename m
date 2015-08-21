@@ -1,54 +1,72 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>
+CC: linux-clk@vger.kernel.org ,
+	linux-tegra@vger.kernel.org ,
+	linux-kernel@vger.kernel.org ,
+	Vince Hsu <vinceh@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] clk: tegra: remove TEGRA_PLL_USE_LOCK for PLLD/PLLD2
+Date: Fri, 21 Aug 2015 16:33:23 +0100
+Message-ID: <1440171203-5963-1-git-send-email-jonathanh@nvidia.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <55C9C82F.6060401@st.com>
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
-	<1438974570-20812-4-git-send-email-mturquette@baylibre.com>
-	<20150810144811.GN3249@x1>
-	<20150810185516.2416.32293@quantum>
-	<20150811084329.GA13374@x1>
-	<55C9C82F.6060401@st.com>
-Date: Tue, 11 Aug 2015 12:11:05 +0200
-Message-ID: <CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com>
-Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Maxime Coquelin <maxime.coquelin@st.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
+From: Vince Hsu <vinceh@nvidia.com>
 
-On Tue, Aug 11, 2015 at 12:02 PM, Maxime Coquelin
-<maxime.coquelin@st.com> wrote:
-> How can we pass CLK_ENABLE_HAND_OFF flag to a specific clock on STi
-> platform?
+Tegra114 has a HW bug where the PLLD/PLLD2 lock bit cannot be asserted
+while turning on the Display power domain and before the clamp to this
+domain has been removed. This issue causes a timeout and aborts the power
+up sequence, even though the PLLD/PLLD2 has already locked. To avoid this,
+don't use the lock for PLLD/PLLD2, just wait 1ms and treat the clocks as
+locked.
 
-Add the flag to the relevant clocks in the C code, e.g. in
-clk_register_flexgen():
+Signed-off-by: Vince Hsu <vinceh@nvidia.com>
+[jonathanh@nvidia.com: Updated the changelog description]
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+I had originally sent this as part of the tegra generic power-domain series
+[0]. However, given that this is really a standalone fix and the
+power-domain work is on-going, I don't see any reason why this should not
+be merged now.
 
-        if (!strcmp(name, "clk-icn-cpu"))
-                init.flags |= CLK_ENABLE_HAND_OFF;
+[0] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-July/356060.html
 
-> Could we imagine having a kind of "clocks-enable-hand-off" property we could
-> use in our clock controller DT node?
+ drivers/clk/tegra/clk-tegra114.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-You can imagine doing "flex_flags |= CLK_ENABLE_HAND_OFF" in
-st_of_flexgen_setup(), depending on the presence of such a property.
-
-However, not disabling clocks is a software policy, not a hardware description,
-so IMHO it doesn't belong in DT.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index db5871519bf5..6c824e469a1b 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -454,8 +454,7 @@ static struct tegra_clk_pll_params pll_d_params = {
+ 	.lock_delay = 1000,
+ 	.div_nmp = &pllp_nmp,
+ 	.freq_table = pll_d_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
+-		 TEGRA_PLL_USE_LOCK,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON,
+ };
+ 
+ static struct tegra_clk_pll_params pll_d2_params = {
+@@ -472,8 +471,7 @@ static struct tegra_clk_pll_params pll_d2_params = {
+ 	.lock_delay = 1000,
+ 	.div_nmp = &pllp_nmp,
+ 	.freq_table = pll_d_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
+-		 TEGRA_PLL_USE_LOCK,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON,
+ };
+ 
+ static struct pdiv_map pllu_p[] = {
+-- 
+2.1.4
