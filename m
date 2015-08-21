@@ -1,60 +1,66 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-ID: <55BF4705.9030300@arm.com>
-Date: Mon, 03 Aug 2015 11:48:37 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org
+Subject: [PATCH] clk: rockchip: handle critical clocks after registrering all clocks
+Date: Fri, 21 Aug 2015 19:51:41 +0200
+Message-ID: <7786473.0oe27txQFN@phil>
 MIME-Version: 1.0
-To: Liviu Dudau <Liviu.Dudau@arm.com>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
-	"arm@kernel.org" <arm@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Punit Agrawal <Punit.Agrawal@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v6 0/8] ARM64: juno: add SCPI mailbox protocol, clock
- and CPUFreq support
-References: <1438364591-1144-1-git-send-email-sudeep.holla@arm.com> <20150803101845.GU20890@e106497-lin.cambridge.arm.com>
-In-Reply-To: <20150803101845.GU20890@e106497-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-pm-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
+Currently the registration of critical clocks is done in the function
+shared between rk3066 and rk3188 clock trees. That results in them
+getting handled maybe before all of them are registered.
 
+Therefore move the critical clock handling down to the end of the soc-
+specific clock registration function, so that all clocks are registered
+before they're maybe handled as critical clock.
 
-On 03/08/15 11:18, Liviu Dudau wrote:
-> On Fri, Jul 31, 2015 at 06:43:03PM +0100, Sudeep Holla wrote:
->> Hi ARM-SoC guys,
->>
->> It has been on the list for a while and have got all the necessary ACKs.
->> Can you please pull this series for v4.3 ?
->>
->> Regards,
->> Sudeep
->>
->> This patch series adds support for:
->>    1. SCPI(System Control and Power Interface) mailbox protocol driver.
->>       It uses ARM MHU mailbox controller driver on Juno but can work with
->>       any mailbox controllers using standard mailbox APIs
->>    2. Add support for clocks provided by SCP firmware through the SCPI
->>       interface
->>    3. Using the existing arm_big_little cpufreq driver and the newly
->>       added SCPI clock driver, it also adds support for CPU DVFS on
->>       ARM64 JUNO development platforms.
->
-> Hi Sudeep,
->
-> Is there a branch where I can pull this series from?
->
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+It looks like with the recent flexibilization of the gpio clocks in the
+pinctrl driver, we're shaking out some oddities from the clock trees.
+This is another one that surfaced.
 
-Yes, you can pull from
-git://linux-arm.org/linux-skn.git juno_dvfs
+ drivers/clk/rockchip/clk-rk3188.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Regards,
-Sudeep
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-
+rk3188.c
+index faa6695..bd88542 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -744,8 +744,6 @@ static void __init rk3188_common_clk_init(struct 
+device_node *np)
+ 
+ 	rockchip_clk_register_branches(common_clk_branches,
+ 				  ARRAY_SIZE(common_clk_branches));
+-	rockchip_clk_protect_critical(rk3188_critical_clocks,
+-				      ARRAY_SIZE(rk3188_critical_clocks));
+ 
+ 	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
+ 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
+@@ -765,6 +763,8 @@ static void __init rk3066a_clk_init(struct device_node 
+*np)
+ 			mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
+ 			&rk3066_cpuclk_data, rk3066_cpuclk_rates,
+ 			ARRAY_SIZE(rk3066_cpuclk_rates));
++	rockchip_clk_protect_critical(rk3188_critical_clocks,
++				      ARRAY_SIZE(rk3188_critical_clocks));
+ }
+ CLK_OF_DECLARE(rk3066a_cru, "rockchip,rk3066a-cru", rk3066a_clk_init);
+ 
+@@ -801,6 +801,9 @@ static void __init rk3188a_clk_init(struct device_node 
+*np)
+ 		pr_warn("%s: missing clocks to reparent aclk_cpu_pre to gpll\n",
+ 			__func__);
+ 	}
++
++	rockchip_clk_protect_critical(rk3188_critical_clocks,
++				      ARRAY_SIZE(rk3188_critical_clocks));
+ }
+ CLK_OF_DECLARE(rk3188a_cru, "rockchip,rk3188a-cru", rk3188a_clk_init);
+ 
+-- 
+2.1.4
