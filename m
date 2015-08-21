@@ -1,43 +1,73 @@
-Return-Path: <michael.allwright@upb.de>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, sjoerd.simons@collabora.co.uk
+Subject: [PATCH 1/3] clk: add flag for clocks that need to be enabled on rate changes
+Date: Fri, 21 Aug 2015 19:46:31 +0200
+Message-ID: <1929669.AsgMSusdJb@phil>
 MIME-Version: 1.0
-In-Reply-To: <CALcgO_7+iDr6FvaUjXdRWXpTpHu8shVKS6nqQ6i9gC=9TmfBGw@mail.gmail.com>
-References: <CALcgO_7+iDr6FvaUjXdRWXpTpHu8shVKS6nqQ6i9gC=9TmfBGw@mail.gmail.com>
-Date: Sun, 23 Aug 2015 12:22:09 +0200
-Message-ID: <CALcgO_64qS9OyNuN1UnEM85CsS_7Ygq3dDFXRFsKE-_8FfGA4g@mail.gmail.com>
-Subject: Re: [RFC] Allow for gate and mux control using non-atomic GPIO
-From: Michael Allwright <michael.allwright@upb.de>
-To: Jyri Sarha <jsarha@ti.com>, ce3a@gmx.de, Michael Turquette <mturquette@baylibre.com>,
-	sboyd@codeaurora.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 18 August 2015 at 17:40, Michael Allwright <michael.allwright@upb.de> wrote:
-> Hi,
->
-> The current implementation of clk-gpio completely ignores the use case
-> where GPIO pins may be accessed over a message based bus like SPI or
-> I2C. To fix this, and following the comments in clk.h, we should use
-> the prepare/unprepare methods to do the work where the GPIO operation
-> would be non-atomic. I propose the following UNTESTED patch (should
-> apply cleanly over linux-next).
->
-> From 7a21c155e561d84741ce11f0cc4c1f8c5b97d7dc Mon Sep 17 00:00:00 2001
-> From: Michael Allwright <allsey87@gmail.com>
-> Date: Tue, 18 Aug 2015 17:26:34 +0200
-> Subject: [PATCH] Allow non-atomic GPIO ops to control gates and muxes.
->  Following the comments in clk.h, use prepare/unprepare methods to do the GPIO
->  work in cases where the specified pin can sleep
+Some clocks need to be enabled to accept rate changes. This patch adds a
+new flag CLK_SET_RATE_UNGATE that lets clk_change_rate enable the clock
+before trying to change the rate and disable it again afterwards.
+This of course doesn't effect clocks that are already running at that
+point, as their refcount will only temporarily increase.
 
-Sorry about this, but this thread needs a *BUMP*
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/clk.c            | 18 ++++++++++++++++++
+ include/linux/clk-provider.h |  1 +
+ 2 files changed, 19 insertions(+)
 
-Michael Allwright
-
-PhD Student
-Paderborn Institute for Advanced Studies in Computer Science and Engineering
-
-University of Paderborn
-Office-number 02-10
-Zukunftsmeile 1
-33102 Paderborn
-Germany
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 28cd923..564f11e 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1438,6 +1438,15 @@ static void clk_change_rate(struct clk_core *core)
+ 	else if (core->parent)
+ 		best_parent_rate = core->parent->rate;
+ 
++	if (core->flags & CLK_SET_RATE_UNGATE) {
++		unsigned long flags;
++
++		clk_core_prepare(core);
++		flags = clk_enable_lock();
++		clk_core_enable(core);
++		clk_enable_unlock(flags);
++	}
++
+ 	if (core->new_parent && core->new_parent != core->parent) {
+ 		old_parent = __clk_set_parent_before(core, core->new_parent);
+ 		trace_clk_set_parent(core, core->new_parent);
+@@ -1464,6 +1473,15 @@ static void clk_change_rate(struct clk_core *core)
+ 
+ 	core->rate = clk_recalc(core, best_parent_rate);
+ 
++	if (core->flags & CLK_SET_RATE_UNGATE) {
++		unsigned long flags;
++
++		flags = clk_enable_lock();
++		clk_core_disable(core);
++		clk_enable_unlock(flags);
++		clk_core_unprepare(core);
++	}
++
+ 	if (core->notifier_count && old_rate != core->rate)
+ 		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
+ 
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 3ecc07d..21e0025 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -31,6 +31,7 @@
+ #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
+ #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
+ #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
++#define CLK_SET_RATE_UNGATE	BIT(10) /* clock needs to run to set rate */
+ 
+ struct clk;
+ struct clk_hw;
+-- 
+2.1.4
