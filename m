@@ -1,289 +1,286 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	linux-mediatek@lists.infradead.org, linaro-kernel@lists.linaro.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	"pi-cheng.chen" <pi-cheng.chen@linaro.org>
-Subject: [RESEND PATCH v5] clk: mediatek: Export CPU mux clocks for CPU frequency control
-Date: Mon, 17 Aug 2015 16:56:45 +0800
-Message-Id: <1439801805-19043-1-git-send-email-pi-cheng.chen@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com
+Cc: sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, sjoerd.simons@collabora.co.uk
+Subject: [PATCH 3/3] clk: rockchip: include downstream muxes into fractional dividers
+Date: Fri, 21 Aug 2015 19:48:22 +0200
+Message-ID: <4275248.XCb031JeuI@phil>
+In-Reply-To: <1929669.AsgMSusdJb@phil>
+References: <1929669.AsgMSusdJb@phil>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: "pi-cheng.chen" <pi-cheng.chen@linaro.org>
+Use the newly introduced possibility to combine the fractional dividers
+with their downstream muxes for all fractional dividers on currently
+supported Rockchip SoCs.
 
-This patch adds CPU mux clocks which are used by Mediatek cpufreq driver
-for intermediate clock source switching.
-
-Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
-Changes in v5:
-- Replace __initdata with __initconst to fix compiling error
+ drivers/clk/rockchip/clk-rk3188.c | 80 +++++++++++++++++++--------------------
+ drivers/clk/rockchip/clk-rk3288.c | 66 ++++++++++++++++----------------
+ 2 files changed, 74 insertions(+), 72 deletions(-)
 
-Changes in v4:
-- Fix some minor issues for v3
-- Rebase to the patch that adds 13mhz clock for MT8173[1]
-
-Changes in v3:
-- Rebase to 4.2-rc1
-- Fix some issues of v2
-
-Changes in v2:
-- Remove use of .determine_rate callback
-
-[1] http://patchwork.kernerl.xyz/patch/6777041/
----
- drivers/clk/mediatek/Makefile          |   2 +-
- drivers/clk/mediatek/clk-cpumux.c      | 127 +++++++++++++++++++++++++++++++++
- drivers/clk/mediatek/clk-cpumux.h      |  22 ++++++
- drivers/clk/mediatek/clk-mt8173.c      |  23 ++++++
- include/dt-bindings/clock/mt8173-clk.h |   4 +-
- 5 files changed, 176 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/mediatek/clk-cpumux.c
- create mode 100644 drivers/clk/mediatek/clk-cpumux.h
-
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 8e4b2a4..299917a 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -1,4 +1,4 @@
--obj-y += clk-mtk.o clk-pll.o clk-gate.o
-+obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-cpumux.o
- obj-$(CONFIG_RESET_CONTROLLER) += reset.o
- obj-y += clk-mt8135.o
- obj-y += clk-mt8173.o
-diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
-new file mode 100644
-index 0000000..fb04fe1
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-cpumux.c
-@@ -0,0 +1,127 @@
-+/*
-+ * Copyright (c) 2015 Linaro Ltd.
-+ * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/slab.h>
-+
-+#include "clk-mtk.h"
-+#include "clk-cpumux.h"
-+
-+struct mtk_clk_cpumux {
-+	struct clk_hw	hw;
-+	struct regmap	*regmap;
-+	u32		reg;
-+	u32		mask;
-+	u8		shift;
-+};
-+
-+static inline struct mtk_clk_cpumux *to_clk_mux(struct clk_hw *_hw)
-+{
-+	return container_of(_hw, struct mtk_clk_cpumux, hw);
-+}
-+
-+static u8 clk_cpumux_get_parent(struct clk_hw *hw)
-+{
-+	struct mtk_clk_cpumux *mux = to_clk_mux(hw);
-+	int num_parents = __clk_get_num_parents(hw->clk);
-+	unsigned int val;
-+
-+	regmap_read(mux->regmap, mux->reg, &val);
-+
-+	val >>= mux->shift;
-+	val &= mux->mask;
-+
-+	if (val >= num_parents)
-+		return -EINVAL;
-+
-+	return val;
-+}
-+
-+static int clk_cpumux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct mtk_clk_cpumux *mux = to_clk_mux(hw);
-+	u32 mask, val;
-+
-+	val = index << mux->shift;
-+	mask = mux->mask << mux->shift;
-+
-+	return regmap_update_bits(mux->regmap, mux->reg, mask, val);
-+}
-+
-+static const struct clk_ops clk_cpumux_ops = {
-+	.get_parent = clk_cpumux_get_parent,
-+	.set_parent = clk_cpumux_set_parent,
-+};
-+
-+static struct clk __init *mtk_clk_register_cpumux(const struct mtk_composite *mux,
-+					   struct regmap *regmap)
-+{
-+	struct mtk_clk_cpumux *cpumux;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	cpumux = kzalloc(sizeof(*cpumux), GFP_KERNEL);
-+	if (!cpumux)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = mux->name;
-+	init.ops = &clk_cpumux_ops;
-+	init.parent_names = mux->parent_names;
-+	init.num_parents = mux->num_parents;
-+	init.flags = mux->flags;
-+
-+	cpumux->reg = mux->mux_reg;
-+	cpumux->shift = mux->mux_shift;
-+	cpumux->mask = BIT(mux->mux_width) - 1;
-+	cpumux->regmap = regmap;
-+	cpumux->hw.init = &init;
-+
-+	clk = clk_register(NULL, &cpumux->hw);
-+	if (IS_ERR(clk))
-+		kfree(cpumux);
-+
-+	return clk;
-+}
-+
-+int __init mtk_clk_register_cpumuxes(struct device_node *node,
-+			      const struct mtk_composite *clks, int num,
-+			      struct clk_onecell_data *clk_data)
-+{
-+	int i;
-+	struct clk *clk;
-+	struct regmap *regmap;
-+
-+	regmap = syscon_node_to_regmap(node);
-+	if (IS_ERR(regmap)) {
-+		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
-+		       PTR_ERR(regmap));
-+		return PTR_ERR(regmap);
-+	}
-+
-+	for (i = 0; i < num; i++) {
-+		const struct mtk_composite *mux = &clks[i];
-+
-+		clk = mtk_clk_register_cpumux(mux, regmap);
-+		if (IS_ERR(clk)) {
-+			pr_err("Failed to register clk %s: %ld\n",
-+			       mux->name, PTR_ERR(clk));
-+			continue;
-+		}
-+
-+		clk_data->clks[mux->id] = clk;
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/clk/mediatek/clk-cpumux.h b/drivers/clk/mediatek/clk-cpumux.h
-new file mode 100644
-index 0000000..52c769f
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-cpumux.h
-@@ -0,0 +1,22 @@
-+/*
-+ * Copyright (c) 2015 Linaro Ltd.
-+ * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __DRV_CLK_CPUMUX_H
-+#define __DRV_CLK_CPUMUX_H
-+
-+int mtk_clk_register_cpumuxes(struct device_node *node,
-+			      const struct mtk_composite *clks, int num,
-+			      struct clk_onecell_data *clk_data);
-+
-+#endif /* __DRV_CLK_CPUMUX_H */
-diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
-index 540c5c3..053ca27 100644
---- a/drivers/clk/mediatek/clk-mt8173.c
-+++ b/drivers/clk/mediatek/clk-mt8173.c
-@@ -19,6 +19,7 @@
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index ed02bbc..faa6695 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -335,11 +335,11 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
+ 	COMPOSITE(0, "hsadc_src", mux_pll_src_gpll_cpll_p, 0,
+ 			RK2928_CLKSEL_CON(22), 0, 1, MFLAGS, 8, 8, DFLAGS,
+ 			RK2928_CLKGATE_CON(2), 6, GFLAGS),
+-	COMPOSITE_FRAC(0, "hsadc_frac", "hsadc_src", 0,
++	COMPOSITE_FRACMUX(0, "hsadc_frac", "hsadc_src", 0,
+ 			RK2928_CLKSEL_CON(23), 0,
+-			RK2928_CLKGATE_CON(2), 7, GFLAGS),
+-	MUX(0, "sclk_hsadc_out", mux_sclk_hsadc_p, 0,
+-			RK2928_CLKSEL_CON(22), 4, 2, MFLAGS),
++			RK2928_CLKGATE_CON(2), 7, GFLAGS,
++		MUX(0, "sclk_hsadc_out", mux_sclk_hsadc_p, 0,
++				RK2928_CLKSEL_CON(22), 4, 2, MFLAGS)),
+ 	INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
+ 			RK2928_CLKSEL_CON(22), 7, IFLAGS),
  
- #include "clk-mtk.h"
- #include "clk-gate.h"
-+#include "clk-cpumux.h"
+@@ -350,11 +350,11 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
+ 	COMPOSITE_NOMUX(0, "spdif_pre", "i2s_src", 0,
+ 			RK2928_CLKSEL_CON(5), 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(0), 13, GFLAGS),
+-	COMPOSITE_FRAC(0, "spdif_frac", "spdif_pre", CLK_SET_RATE_PARENT,
++	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_pll", CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(9), 0,
+-			RK2928_CLKGATE_CON(0), 14, GFLAGS),
+-	MUX(SCLK_SPDIF, "sclk_spdif", mux_sclk_spdif_p, CLK_SET_RATE_PARENT,
+-			RK2928_CLKSEL_CON(5), 8, 2, MFLAGS),
++			RK2928_CLKGATE_CON(0), 14, GFLAGS,
++		MUX(SCLK_SPDIF, "sclk_spdif", mux_sclk_spdif_p, CLK_SET_RATE_PARENT,
++				RK2928_CLKSEL_CON(5), 8, 2, MFLAGS)),
  
- #include <dt-bindings/clock/mt8173-clk.h>
+ 	/*
+ 	 * Clock-Architecture Diagram 4
+@@ -385,35 +385,35 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
+ 	COMPOSITE_NOMUX(0, "uart0_pre", "uart_src", 0,
+ 			RK2928_CLKSEL_CON(13), 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(1), 8, GFLAGS),
+-	COMPOSITE_FRAC(0, "uart0_frac", "uart0_pre", 0,
++	COMPOSITE_FRACMUX(0, "uart0_frac", "uart0_pre", 0,
+ 			RK2928_CLKSEL_CON(17), 0,
+-			RK2928_CLKGATE_CON(1), 9, GFLAGS),
+-	MUX(SCLK_UART0, "sclk_uart0", mux_sclk_uart0_p, 0,
+-			RK2928_CLKSEL_CON(13), 8, 2, MFLAGS),
++			RK2928_CLKGATE_CON(1), 9, GFLAGS,
++		MUX(SCLK_UART0, "sclk_uart0", mux_sclk_uart0_p, 0,
++				RK2928_CLKSEL_CON(13), 8, 2, MFLAGS)),
+ 	COMPOSITE_NOMUX(0, "uart1_pre", "uart_src", 0,
+ 			RK2928_CLKSEL_CON(14), 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(1), 10, GFLAGS),
+-	COMPOSITE_FRAC(0, "uart1_frac", "uart1_pre", 0,
++	COMPOSITE_FRACMUX(0, "uart1_frac", "uart1_pre", 0,
+ 			RK2928_CLKSEL_CON(18), 0,
+-			RK2928_CLKGATE_CON(1), 11, GFLAGS),
+-	MUX(SCLK_UART1, "sclk_uart1", mux_sclk_uart1_p, 0,
+-			RK2928_CLKSEL_CON(14), 8, 2, MFLAGS),
++			RK2928_CLKGATE_CON(1), 11, GFLAGS,
++		MUX(SCLK_UART1, "sclk_uart1", mux_sclk_uart1_p, 0,
++				RK2928_CLKSEL_CON(14), 8, 2, MFLAGS)),
+ 	COMPOSITE_NOMUX(0, "uart2_pre", "uart_src", 0,
+ 			RK2928_CLKSEL_CON(15), 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(1), 12, GFLAGS),
+-	COMPOSITE_FRAC(0, "uart2_frac", "uart2_pre", 0,
++	COMPOSITE_FRACMUX(0, "uart2_frac", "uart2_pre", 0,
+ 			RK2928_CLKSEL_CON(19), 0,
+-			RK2928_CLKGATE_CON(1), 13, GFLAGS),
+-	MUX(SCLK_UART2, "sclk_uart2", mux_sclk_uart2_p, 0,
+-			RK2928_CLKSEL_CON(15), 8, 2, MFLAGS),
++			RK2928_CLKGATE_CON(1), 13, GFLAGS,
++		MUX(SCLK_UART2, "sclk_uart2", mux_sclk_uart2_p, 0,
++				RK2928_CLKSEL_CON(15), 8, 2, MFLAGS)),
+ 	COMPOSITE_NOMUX(0, "uart3_pre", "uart_src", 0,
+ 			RK2928_CLKSEL_CON(16), 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(1), 14, GFLAGS),
+-	COMPOSITE_FRAC(0, "uart3_frac", "uart3_pre", 0,
++	COMPOSITE_FRACMUX(0, "uart3_frac", "uart3_pre", 0,
+ 			RK2928_CLKSEL_CON(20), 0,
+-			RK2928_CLKGATE_CON(1), 15, GFLAGS),
+-	MUX(SCLK_UART3, "sclk_uart3", mux_sclk_uart3_p, 0,
+-			RK2928_CLKSEL_CON(16), 8, 2, MFLAGS),
++			RK2928_CLKGATE_CON(1), 15, GFLAGS,
++		MUX(SCLK_UART3, "sclk_uart3", mux_sclk_uart3_p, 0,
++				RK2928_CLKSEL_CON(16), 8, 2, MFLAGS)),
  
-@@ -517,6 +518,25 @@ static const char * const i2s3_b_ck_parents[] __initconst = {
- 	"apll2_div5"
- };
+ 	GATE(SCLK_JTAG, "jtag", "ext_jtag", 0, RK2928_CLKGATE_CON(1), 3, GFLAGS),
  
-+static const char * const ca53_parents[] __initconst = {
-+	"clk26m",
-+	"armca7pll",
-+	"mainpll",
-+	"univpll"
-+};
-+
-+static const char * const ca57_parents[] __initconst = {
-+	"clk26m",
-+	"armca15pll",
-+	"mainpll",
-+	"univpll"
-+};
-+
-+static const struct mtk_composite cpu_muxes[] __initconst = {
-+	MUX(CLK_INFRA_CA53SEL, "infra_ca53_sel", ca53_parents, 0x0000, 0, 2),
-+	MUX(CLK_INFRA_CA57SEL, "infra_ca57_sel", ca57_parents, 0x0000, 2, 2),
-+};
-+
- static const struct mtk_composite top_muxes[] __initconst = {
- 	/* CLK_CFG_0 */
- 	MUX(CLK_TOP_AXI_SEL, "axi_sel", axi_parents, 0x0040, 0, 3),
-@@ -743,6 +763,9 @@ static void __init mtk_infrasys_init(struct device_node *node)
- 						clk_data);
- 	mtk_clk_register_factors(infra_divs, ARRAY_SIZE(infra_divs), clk_data);
+@@ -584,27 +584,27 @@ static struct rockchip_clk_branch rk3066a_clk_branches[] __initdata = {
+ 	COMPOSITE_NOMUX(0, "i2s0_pre", "i2s_src", 0,
+ 			RK2928_CLKSEL_CON(2), 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(0), 7, GFLAGS),
+-	COMPOSITE_FRAC(0, "i2s0_frac", "i2s0_pre", 0,
++	COMPOSITE_FRACMUX(0, "i2s0_frac", "i2s0_pre", 0,
+ 			RK2928_CLKSEL_CON(6), 0,
+-			RK2928_CLKGATE_CON(0), 8, GFLAGS),
+-	MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
+-			RK2928_CLKSEL_CON(2), 8, 2, MFLAGS),
++			RK2928_CLKGATE_CON(0), 8, GFLAGS,
++		MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
++				RK2928_CLKSEL_CON(2), 8, 2, MFLAGS)),
+ 	COMPOSITE_NOMUX(0, "i2s1_pre", "i2s_src", 0,
+ 			RK2928_CLKSEL_CON(3), 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(0), 9, GFLAGS),
+-	COMPOSITE_FRAC(0, "i2s1_frac", "i2s1_pre", 0,
++	COMPOSITE_FRACMUX(0, "i2s1_frac", "i2s1_pre", 0,
+ 			RK2928_CLKSEL_CON(7), 0,
+-			RK2928_CLKGATE_CON(0), 10, GFLAGS),
+-	MUX(SCLK_I2S1, "sclk_i2s1", mux_sclk_i2s1_p, 0,
+-			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS),
++			RK2928_CLKGATE_CON(0), 10, GFLAGS,
++		MUX(SCLK_I2S1, "sclk_i2s1", mux_sclk_i2s1_p, 0,
++				RK2928_CLKSEL_CON(3), 8, 2, MFLAGS)),
+ 	COMPOSITE_NOMUX(0, "i2s2_pre", "i2s_src", 0,
+ 			RK2928_CLKSEL_CON(4), 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(0), 11, GFLAGS),
+-	COMPOSITE_FRAC(0, "i2s2_frac", "i2s2_pre", 0,
++	COMPOSITE_FRACMUX(0, "i2s2_frac", "i2s2_pre", 0,
+ 			RK2928_CLKSEL_CON(8), 0,
+-			RK2928_CLKGATE_CON(0), 12, GFLAGS),
+-	MUX(SCLK_I2S2, "sclk_i2s2", mux_sclk_i2s2_p, 0,
+-			RK2928_CLKSEL_CON(4), 8, 2, MFLAGS),
++			RK2928_CLKGATE_CON(0), 12, GFLAGS,
++		MUX(SCLK_I2S2, "sclk_i2s2", mux_sclk_i2s2_p, 0,
++				RK2928_CLKSEL_CON(4), 8, 2, MFLAGS)),
  
-+	mtk_clk_register_cpumuxes(node, cpu_muxes, ARRAY_SIZE(cpu_muxes),
-+						clk_data);
-+
- 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
-diff --git a/include/dt-bindings/clock/mt8173-clk.h b/include/dt-bindings/clock/mt8173-clk.h
-index fa2a2bb..a17cbaa 100644
---- a/include/dt-bindings/clock/mt8173-clk.h
-+++ b/include/dt-bindings/clock/mt8173-clk.h
-@@ -188,7 +188,9 @@
- #define CLK_INFRA_PMICSPI		10
- #define CLK_INFRA_PMICWRAP		11
- #define CLK_INFRA_CLK_13M		12
--#define CLK_INFRA_NR_CLK		13
-+#define CLK_INFRA_CA53SEL		13
-+#define CLK_INFRA_CA57SEL		14
-+#define CLK_INFRA_NR_CLK		15
+ 	GATE(HCLK_I2S1, "hclk_i2s1", "hclk_cpu", 0, RK2928_CLKGATE_CON(7), 3, GFLAGS),
+ 	GATE(HCLK_I2S2, "hclk_i2s2", "hclk_cpu", 0, RK2928_CLKGATE_CON(7), 4, GFLAGS),
+@@ -691,11 +691,11 @@ static struct rockchip_clk_branch rk3188_clk_branches[] __initdata = {
+ 	COMPOSITE_NOMUX(0, "i2s0_pre", "i2s_src", 0,
+ 			RK2928_CLKSEL_CON(3), 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(0), 9, GFLAGS),
+-	COMPOSITE_FRAC(0, "i2s0_frac", "i2s0_pre", 0,
++	COMPOSITE_FRACMUX(0, "i2s0_frac", "i2s0_pre", 0,
+ 			RK2928_CLKSEL_CON(7), 0,
+-			RK2928_CLKGATE_CON(0), 10, GFLAGS),
+-	MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
+-			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS),
++			RK2928_CLKGATE_CON(0), 10, GFLAGS,
++		MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
++				RK2928_CLKSEL_CON(3), 8, 2, MFLAGS)),
  
- /* PERI_SYS */
+ 	GATE(0, "hclk_imem0", "hclk_cpu", 0, RK2928_CLKGATE_CON(4), 14, GFLAGS),
+ 	GATE(0, "hclk_imem1", "hclk_cpu", 0, RK2928_CLKGATE_CON(4), 15, GFLAGS),
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 0df5bae..18fcdb1 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -304,11 +304,11 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	COMPOSITE(0, "i2s_src", mux_pll_src_cpll_gpll_p, 0,
+ 			RK3288_CLKSEL_CON(4), 15, 1, MFLAGS, 0, 7, DFLAGS,
+ 			RK3288_CLKGATE_CON(4), 1, GFLAGS),
+-	COMPOSITE_FRAC(0, "i2s_frac", "i2s_src", CLK_SET_RATE_PARENT,
++	COMPOSITE_FRACMUX(0, "i2s_frac", "i2s_src", CLK_SET_RATE_PARENT,
+ 			RK3288_CLKSEL_CON(8), 0,
+-			RK3288_CLKGATE_CON(4), 2, GFLAGS),
+-	MUX(0, "i2s_pre", mux_i2s_pre_p, CLK_SET_RATE_PARENT,
+-			RK3288_CLKSEL_CON(4), 8, 2, MFLAGS),
++			RK3288_CLKGATE_CON(4), 2, GFLAGS,
++		MUX(0, "i2s_pre", mux_i2s_pre_p, CLK_SET_RATE_PARENT,
++				RK3288_CLKSEL_CON(4), 8, 2, MFLAGS)),
+ 	COMPOSITE_NODIV(SCLK_I2S0_OUT, "i2s0_clkout", mux_i2s_clkout_p, 0,
+ 			RK3288_CLKSEL_CON(4), 12, 1, MFLAGS,
+ 			RK3288_CLKGATE_CON(4), 0, GFLAGS),
+@@ -320,20 +320,22 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	COMPOSITE_NOMUX(0, "spdif_pre", "spdif_src", 0,
+ 			RK3288_CLKSEL_CON(5), 0, 7, DFLAGS,
+ 			RK3288_CLKGATE_CON(4), 4, GFLAGS),
+-	COMPOSITE_FRAC(0, "spdif_frac", "spdif_src", 0,
++	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_src", 0,
+ 			RK3288_CLKSEL_CON(9), 0,
+-			RK3288_CLKGATE_CON(4), 5, GFLAGS),
+-	COMPOSITE_NODIV(SCLK_SPDIF, "sclk_spdif", mux_spdif_p, 0,
+-			RK3288_CLKSEL_CON(5), 8, 2, MFLAGS,
++			RK3288_CLKGATE_CON(4), 5, GFLAGS,
++		MUX(0, "spdif_mux", mux_spdif_p, 0,
++				RK3288_CLKSEL_CON(5), 8, 2, MFLAGS)),
++	GATE(SCLK_SPDIF, "sclk_spdif", "spdif_mux", 0,
+ 			RK3288_CLKGATE_CON(4), 6, GFLAGS),
+ 	COMPOSITE_NOMUX(0, "spdif_8ch_pre", "spdif_src", 0,
+ 			RK3288_CLKSEL_CON(40), 0, 7, DFLAGS,
+ 			RK3288_CLKGATE_CON(4), 7, GFLAGS),
+-	COMPOSITE_FRAC(0, "spdif_8ch_frac", "spdif_8ch_pre", 0,
++	COMPOSITE_FRACMUX(0, "spdif_8ch_frac", "spdif_8ch_pre", 0,
+ 			RK3288_CLKSEL_CON(41), 0,
+-			RK3288_CLKGATE_CON(4), 8, GFLAGS),
+-	COMPOSITE_NODIV(SCLK_SPDIF8CH, "sclk_spdif_8ch", mux_spdif_8ch_p, 0,
+-			RK3288_CLKSEL_CON(40), 8, 2, MFLAGS,
++			RK3288_CLKGATE_CON(4), 8, GFLAGS,
++		MUX(0, "spdif_8ch_mux", mux_spdif_8ch_p, 0,
++				RK3288_CLKSEL_CON(40), 8, 2, MFLAGS)),
++	GATE(SCLK_SPDIF8CH, "sclk_spdif_8ch", "spdif_8ch_mux", 0,
+ 			RK3288_CLKGATE_CON(4), 9, GFLAGS),
  
+ 	GATE(0, "sclk_acc_efuse", "xin24m", 0,
+@@ -536,45 +538,45 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	COMPOSITE(0, "uart0_src", mux_pll_src_cpll_gll_usb_npll_p, 0,
+ 			RK3288_CLKSEL_CON(13), 13, 2, MFLAGS, 0, 7, DFLAGS,
+ 			RK3288_CLKGATE_CON(1), 8, GFLAGS),
+-	COMPOSITE_FRAC(0, "uart0_frac", "uart0_src", CLK_SET_RATE_PARENT,
++	COMPOSITE_FRACMUX(0, "uart0_frac", "uart0_src", CLK_SET_RATE_PARENT,
+ 			RK3288_CLKSEL_CON(17), 0,
+-			RK3288_CLKGATE_CON(1), 9, GFLAGS),
+-	MUX(SCLK_UART0, "sclk_uart0", mux_uart0_p, CLK_SET_RATE_PARENT,
+-			RK3288_CLKSEL_CON(13), 8, 2, MFLAGS),
++			RK3288_CLKGATE_CON(1), 9, GFLAGS,
++		MUX(SCLK_UART0, "sclk_uart0", mux_uart0_p, CLK_SET_RATE_PARENT,
++				RK3288_CLKSEL_CON(13), 8, 2, MFLAGS)),
+ 	MUX(0, "uart_src", mux_pll_src_cpll_gpll_p, 0,
+ 			RK3288_CLKSEL_CON(13), 15, 1, MFLAGS),
+ 	COMPOSITE_NOMUX(0, "uart1_src", "uart_src", 0,
+ 			RK3288_CLKSEL_CON(14), 0, 7, DFLAGS,
+ 			RK3288_CLKGATE_CON(1), 10, GFLAGS),
+-	COMPOSITE_FRAC(0, "uart1_frac", "uart1_src", CLK_SET_RATE_PARENT,
++	COMPOSITE_FRACMUX(0, "uart1_frac", "uart1_src", CLK_SET_RATE_PARENT,
+ 			RK3288_CLKSEL_CON(18), 0,
+-			RK3288_CLKGATE_CON(1), 11, GFLAGS),
+-	MUX(SCLK_UART1, "sclk_uart1", mux_uart1_p, CLK_SET_RATE_PARENT,
+-			RK3288_CLKSEL_CON(14), 8, 2, MFLAGS),
++			RK3288_CLKGATE_CON(1), 11, GFLAGS,
++		MUX(SCLK_UART1, "sclk_uart1", mux_uart1_p, CLK_SET_RATE_PARENT,
++				RK3288_CLKSEL_CON(14), 8, 2, MFLAGS)),
+ 	COMPOSITE_NOMUX(0, "uart2_src", "uart_src", 0,
+ 			RK3288_CLKSEL_CON(15), 0, 7, DFLAGS,
+ 			RK3288_CLKGATE_CON(1), 12, GFLAGS),
+-	COMPOSITE_FRAC(0, "uart2_frac", "uart2_src", CLK_SET_RATE_PARENT,
++	COMPOSITE_FRACMUX(0, "uart2_frac", "uart2_src", CLK_SET_RATE_PARENT,
+ 			RK3288_CLKSEL_CON(19), 0,
+-			RK3288_CLKGATE_CON(1), 13, GFLAGS),
+-	MUX(SCLK_UART2, "sclk_uart2", mux_uart2_p, CLK_SET_RATE_PARENT,
+-			RK3288_CLKSEL_CON(15), 8, 2, MFLAGS),
++			RK3288_CLKGATE_CON(1), 13, GFLAGS,
++		MUX(SCLK_UART2, "sclk_uart2", mux_uart2_p, CLK_SET_RATE_PARENT,
++				RK3288_CLKSEL_CON(15), 8, 2, MFLAGS)),
+ 	COMPOSITE_NOMUX(0, "uart3_src", "uart_src", 0,
+ 			RK3288_CLKSEL_CON(16), 0, 7, DFLAGS,
+ 			RK3288_CLKGATE_CON(1), 14, GFLAGS),
+-	COMPOSITE_FRAC(0, "uart3_frac", "uart3_src", CLK_SET_RATE_PARENT,
++	COMPOSITE_FRACMUX(0, "uart3_frac", "uart3_src", CLK_SET_RATE_PARENT,
+ 			RK3288_CLKSEL_CON(20), 0,
+-			RK3288_CLKGATE_CON(1), 15, GFLAGS),
+-	MUX(SCLK_UART3, "sclk_uart3", mux_uart3_p, CLK_SET_RATE_PARENT,
+-			RK3288_CLKSEL_CON(16), 8, 2, MFLAGS),
++			RK3288_CLKGATE_CON(1), 15, GFLAGS,
++		MUX(SCLK_UART3, "sclk_uart3", mux_uart3_p, CLK_SET_RATE_PARENT,
++				RK3288_CLKSEL_CON(16), 8, 2, MFLAGS)),
+ 	COMPOSITE_NOMUX(0, "uart4_src", "uart_src", 0,
+ 			RK3288_CLKSEL_CON(3), 0, 7, DFLAGS,
+ 			RK3288_CLKGATE_CON(2), 12, GFLAGS),
+-	COMPOSITE_FRAC(0, "uart4_frac", "uart4_src", CLK_SET_RATE_PARENT,
++	COMPOSITE_FRACMUX(0, "uart4_frac", "uart4_src", CLK_SET_RATE_PARENT,
+ 			RK3288_CLKSEL_CON(7), 0,
+-			RK3288_CLKGATE_CON(2), 13, GFLAGS),
+-	MUX(SCLK_UART4, "sclk_uart4", mux_uart4_p, CLK_SET_RATE_PARENT,
+-			RK3288_CLKSEL_CON(3), 8, 2, MFLAGS),
++			RK3288_CLKGATE_CON(2), 13, GFLAGS,
++		MUX(SCLK_UART4, "sclk_uart4", mux_uart4_p, CLK_SET_RATE_PARENT,
++				RK3288_CLKSEL_CON(3), 8, 2, MFLAGS)),
+ 
+ 	COMPOSITE(0, "mac_pll_src", mux_pll_src_npll_cpll_gpll_p, 0,
+ 			RK3288_CLKSEL_CON(21), 0, 2, MFLAGS, 8, 5, DFLAGS,
 -- 
-1.9.1
-
+2.1.4
