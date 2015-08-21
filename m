@@ -1,46 +1,35 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH v2] clk: pxa: pxa3xx: fix CKEN register access
-Date: Tue,  4 Aug 2015 08:21:33 +0200
-Message-Id: <1438669293-6033-1-git-send-email-robert.jarzmik@free.fr>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <romain.perier@gmail.com>
+Return-Path: <romain.perier@gmail.com>
+From: Romain Perier <romain.perier@gmail.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com
+Subject: [PATCH] clk: rockchip: Add pclk_peri to critical clocks on RK3066/RK3188
+Date: Fri, 21 Aug 2015 18:10:27 +0000
+Message-Id: <1440180627-4566-1-git-send-email-romain.perier@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clocks 0 to 31 are on CKENA, and not CKENB. The clock register names
-were inadequately inverted. As a consequence, all clock operations were
-happening on CKENB, because almost all but 2 clocks are on CKENA.
+Clocks for bank GPIO3 and GPIO4 are supplied by pclk_peri. These clocks need to
+stay on, otherwise pinctrl hangs the system when the driver is probed.
 
-As the clocks were activated by the bootloader in the former tests, it
-escaped the testing that the wrong clock gate was manipulated. The error
-was revealed by changing the pxa3xx-and driver to a module, where tupon
-unloading the wrong clock was disabled in CKENB.
-
-Fixes: 9bbb8a338fb2 ("clk: pxa: add pxa3xx clock driver")
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Romain Perier <romain.perier@gmail.com>
 ---
-Since v1: added Fixes:
----
- drivers/clk/pxa/clk-pxa3xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/rockchip/clk-rk3188.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/pxa/clk-pxa3xx.c b/drivers/clk/pxa/clk-pxa3xx.c
-index c677b9ab5367..4af4eed5f89f 100644
---- a/drivers/clk/pxa/clk-pxa3xx.c
-+++ b/drivers/clk/pxa/clk-pxa3xx.c
-@@ -126,7 +126,7 @@ PARENTS(pxa3xx_ac97_bus) = { "ring_osc_60mhz", "ac97" };
- PARENTS(pxa3xx_sbus) = { "ring_osc_60mhz", "system_bus" };
- PARENTS(pxa3xx_smemcbus) = { "ring_osc_60mhz", "smemc" };
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index f63a642..596be81 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -717,6 +717,7 @@ static const char *const rk3188_critical_clocks[] __initconst = {
+ 	"aclk_peri",
+ 	"hclk_peri",
+ 	"pclk_cpu",
++	"pclk_peri",
+ };
  
--#define CKEN_AB(bit) ((CKEN_ ## bit > 31) ? &CKENA : &CKENB)
-+#define CKEN_AB(bit) ((CKEN_ ## bit > 31) ? &CKENB : &CKENA)
- #define PXA3XX_CKEN(dev_id, con_id, parents, mult_lp, div_lp, mult_hp,	\
- 		    div_hp, bit, is_lp, flags)				\
- 	PXA_CKEN(dev_id, con_id, bit, parents, mult_lp, div_lp,		\
+ static void __init rk3188_common_clk_init(struct device_node *np)
 -- 
 2.1.4
-
