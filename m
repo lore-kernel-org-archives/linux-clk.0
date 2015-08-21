@@ -1,94 +1,173 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.uni-paderborn.de ([131.234.142.9]:53998 "EHLO
-	mail.uni-paderborn.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752341AbbHJOuz (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 10 Aug 2015 10:50:55 -0400
+Return-Path: <yingjoe.chen@mediatek.com>
+Message-ID: <1440167950.20169.29.camel@mtksdaap41>
+Subject: Re: [PATCH v2 1/5] clocksource: mediatek: do not enable GPT_CLK_EVT
+ when setup
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+CC: Daniel Kurtz <djkurtz@chromium.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Thomas Gleixner <tglx@linutronix.de>, James Liao <jamesjj.liao@mediatek.com>,
+	Russell King <linux@arm.linux.org.uk>, srv_heupstream
+	<srv_heupstream@mediatek.com>, Arnd Bergmann <arnd@arndb.de>, "open
+ list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, Catalin Marinas
+	<catalin.marinas@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Olof Johansson
+	<olof@lixom.net>, "Rob Herring" <robh+dt@kernel.org>,
+	<linux-mediatek@lists.infradead.org>, "Sascha Hauer" <kernel@pengutronix.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>, <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Date: Fri, 21 Aug 2015 22:39:10 +0800
+In-Reply-To: <55D5E40A.6080904@linaro.org>
+References: <CAGS+omD8k_Cfxv3bYyjmjtLbiavo-WmJPn0Z-CBhN_nnv65Tag@mail.gmail.com>
+		 <1437552878-3684-1-git-send-email-yingjoe.chen@mediatek.com>
+		 <55CC56C4.8080201@linaro.org> <1439820602.3414.12.camel@mtksdaap41>
+	 <55D5E40A.6080904@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Date: Mon, 10 Aug 2015 16:50:50 +0200
-Message-ID: <CALcgO_49YPGoCOv23Vz9vbnq9+AN3WqvYyg9_TtvsQcz8ia2Hw@mail.gmail.com>
-Subject: [PATCH RFC] clk-gpio-gate: use prepare/unprepare to do the GPIO work
-From: Michael Allwright <michael.allwright@upb.de>
-To: Jyri Sarha <jsarha@ti.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: yingjoe.chen@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
->From 19512587a6799c3cb96dc3f95d989b7c778a6f8c Mon Sep 17 00:00:00 2001
-From: Michael Allwright <allsey87@gmail.com>
-Date: Mon, 10 Aug 2015 16:44:05 +0200
-Subject: [PATCH] clk-gpio-gate: use prepare/unprepare ops to control clock
- enabling via gpiod_set_value_cansleep. This allows for GPIO expanders on I2C
- and SPI buses
+On Thu, 2015-08-20 at 16:28 +0200, Daniel Lezcano wrote:
+> On 08/17/2015 04:10 PM, Yingjoe Chen wrote:
+> > On Thu, 2015-08-13 at 10:35 +0200, Daniel Lezcano wrote:
+> >> On 07/22/2015 10:14 AM, Yingjoe Chen wrote:
+> >>> Spurious mtk timer interrupt is noticed at boot and cause kernel
+> >>> crash. It seems if GPT is enabled, it will latch irq status even
+> >>> when its IRQ is disabled.
+> 
+> It "seems" ?
 
----
- drivers/clk/clk-gpio-gate.c | 31 ++++++++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 7 deletions(-)
+Hi,
 
-diff --git a/drivers/clk/clk-gpio-gate.c b/drivers/clk/clk-gpio-gate.c
-index a71cabe..432edd9 100644
---- a/drivers/clk/clk-gpio-gate.c
-+++ b/drivers/clk/clk-gpio-gate.c
-@@ -22,8 +22,8 @@
-  * DOC: basic gpio gated clock which can be enabled and disabled
-  *      with gpio output
-  * Traits of this clock:
-- * prepare - clk_(un)prepare only ensures parent is (un)prepared
-- * enable - clk_enable and clk_disable are functional & control gpio
-+ * prepare - clk_(un)prepare ensures parent is (un)prepared and control gpio
-+ * enable - clk_enable and clk_disable only ensures parent is enabled/disabled
-  * rate - inherits rate from parent.  No clk_set_rate support
-  * parent - fixed parent.  No clk_set_parent support
-  */
-@@ -32,28 +32,45 @@
+Datasheet doesn't mention detail. So I did some experiments, playing
+around with registers. Based on my observation, I think this is what
+happens:
 
- static int clk_gpio_gate_enable(struct clk_hw *hw)
- {
-+    return 0;
-+}
-+
-+static void clk_gpio_gate_disable(struct clk_hw *hw)
-+{
-+}
-+
-+static int clk_gpio_gate_is_enabled(struct clk_hw *hw)
-+{
-+    return 0;
-+}
-+
-+static int clk_gpio_gate_prepare(struct clk_hw *hw)
-+{
-     struct clk_gpio *clk = to_clk_gpio(hw);
+For each GPT timer, it has ENABLE, IRQ_EN, IRQ status, IRQ_ACK, counter
+& compare.
 
--    gpiod_set_value(clk->gpiod, 1);
-+    gpiod_set_value_cansleep(clk->gpiod, 1);
+When mtk_timer_init calls mtk_timer_setup to setup GPT_CLK_EVT, it
+enable the timer but didn't set counter or compare. Both counter &
+compare is zero on reset, so GPT immediately raise IRQ status. IRQ_EN is
+still disabled now, so it didn't trigger interrupt right away.
 
-     return 0;
- }
+At end of mtk_timer_init, it calls mtk_timer_enable_irq to enable irq.
+Since IRQ status is 1 now, GPT trigger interrupt immediately. The
+interrupt is serviced by mtk_timer_interrupt. Since this is not an
+expected event, evt->dev.event_handler will be NULL and system crashed
+in the handler.
 
--static void clk_gpio_gate_disable(struct clk_hw *hw)
-+static void clk_gpio_gate_unprepare(struct clk_hw *hw)
- {
-     struct clk_gpio *clk = to_clk_gpio(hw);
+> >>> When irq is enabled afterward, we see
+> >>> spurious interrupt.
+> 
+> Doesn't have the firmware something to do with that ?
 
--    gpiod_set_value(clk->gpiod, 0);
-+    gpiod_set_value_cansleep(clk->gpiod, 0);
- }
+We have 6 GPT on mt8173, mtk timer use 2 of them. The spurious interrupt
+only happens on GPT_CLK_EVT (GPT1). Our firmware didn't touch that one,
+so it is in reset default when mtk timer driver try to enable it.
 
--static int clk_gpio_gate_is_enabled(struct clk_hw *hw)
-+static int clk_gpio_gate_is_prepared(struct clk_hw *hw)
- {
-     struct clk_gpio *clk = to_clk_gpio(hw);
+> I have a mtk 8173 board I can use next week. How do you reproduce the 
+> issue ?
+>
+> >>> Change init flow to only enable GPT_CLK_SRC at mtk_timer_init.
+> >>>
+> >>> Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
+> >>> Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+> >>> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> >>> ---
+> >>>
+> >>> Update to my patch [1], added __init as Daniel suggest. This is the
+> >>> only patch that need to change in that series, so I only sent this one.
+> >>>
+> >>> http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001545.html
+> >>>
+> >>>    drivers/clocksource/mtk_timer.c | 16 ++++++++++------
+> >>>    1 file changed, 10 insertions(+), 6 deletions(-)
+> >>>
+> >>> diff --git a/drivers/clocksource/mtk_timer.c b/drivers/clocksource/mtk_timer.c
+> >>> index 68ab423..2ba5b66 100644
+> >>> --- a/drivers/clocksource/mtk_timer.c
+> >>> +++ b/drivers/clocksource/mtk_timer.c
+> >>> @@ -156,9 +156,11 @@ static void mtk_timer_global_reset(struct mtk_clock_event_device *evt)
+> >>>    	writel(0x3f, evt->gpt_base + GPT_IRQ_ACK_REG);
+> >>>    }
+> >>>
+> >>> -static void
+> >>> -mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
+> >>> +static void __init mtk_timer_setup(struct mtk_clock_event_device *evt,
+> >>> +				   u8 timer, u8 option, bool enable)
+> >>>    {
+> >>> +	u32 val;
+> >>> +
+> >>>    	writel(TIMER_CTRL_CLEAR | TIMER_CTRL_DISABLE,
+> >>>    		evt->gpt_base + TIMER_CTRL_REG(timer));
+> >>>
+> >>> @@ -167,8 +169,10 @@ mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
+> >>>
+> >>>    	writel(0x0, evt->gpt_base + TIMER_CMP_REG(timer));
+> >>>
+> >>> -	writel(TIMER_CTRL_OP(option) | TIMER_CTRL_ENABLE,
+> >>> -			evt->gpt_base + TIMER_CTRL_REG(timer));
+> >>> +	val = TIMER_CTRL_OP(option);
+> >>> +	if (enable)
+> >>> +		val |= TIMER_CTRL_ENABLE;
+> >>> +	writel(val, evt->gpt_base + TIMER_CTRL_REG(timer));
+> >>
+> >> Instead of the 'enable' new option, I prefer a test with 'timer' with a
+> >> comment:
+> >>
+> >> 	/*
+> >> 	 * the timer hw is broken in that way ... bla bla, so we only
+> >> 	 * enable the clocksource ...
+> >> 	 */
+> >> 	if (timer == GPT_CLK_SRC)
+> >> 		val |= TIMER_CTRL_ENABLE;
+> >
+> > Hi Daniel,
+> >
+> > Thanks for your review.
+> > Since this bug happens to anyone using interrupt,
+> 
+> Can you elaborate ? I don't get the point.
+> 
+> > I'm not sure checking
+> > timer and only enable it for GPT_CLK_SRC is easier to read. Anyway, I'll
+> > change to this in next version.
+> >> That said, can you have a look at commit 1096be08 ?
+> >> "clockevents: sun5i: Fix setup_irq init sequence"
+> >>
+> >> first and check if moving the interrupt request after the
+> >> clockevents_config_and_register could fix your issue.
+> >
+> > I've tested this before, see:
+> >
+> > http://lists.infradead.org/pipermail/linux-mediatek/2015-May/000539.html
+> > http://lists.infradead.org/pipermail/linux-mediatek/2015-May/000551.html
+> 
+> I could take or ack this patch trusting it fixes the issue but there are 
+> some points that need clarifications.
+> 
+>   - Does the spurious interrupt occurs *every* time ? at each boot ?
 
--    return gpiod_get_value(clk->gpiod);
-+    return gpiod_get_value_cansleep(clk->gpiod);
- }
+Yes. If you applied this series to enable mtk timer without this fix on
+mt8173 or mt8135 you can reproduce it. It occurs for every boot.
 
- const struct clk_ops clk_gpio_gate_ops = {
-+    .prepare = clk_gpio_gate_prepare,
-+    .unprepare = clk_gpio_gate_unprepare,
-+    .is_prepared = clk_gpio_gate_is_prepared,
-     .enable = clk_gpio_gate_enable,
-     .disable = clk_gpio_gate_disable,
-     .is_enabled = clk_gpio_gate_is_enabled,
--- 
-1.9.1
+It crash before uart driver is ready, so you'll have to use earlycon to
+see the crash log.
+
+> The previous patches were supposed to fix the issue but they actually 
+> didn't. So how is tested the patch ?
+
+I'm not sure. I believe Matthias test that one on mt6589, maybe it have
+different behavior, or different timing.
+
+> Regarding the different fixes for this problem, it sounds like you are 
+> proceeding by trial and error.
+> 
+> Please give a more detailed analysis of the problem and especially check 
+> the timer is not altered by the firmware leaving it in a transient state 
+> or whatever.
+
+See above for my analysis.
+Thanks.
+
+Joe.C
