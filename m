@@ -1,286 +1,139 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com
-Cc: sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, sjoerd.simons@collabora.co.uk
-Subject: [PATCH 3/3] clk: rockchip: include downstream muxes into fractional dividers
-Date: Fri, 21 Aug 2015 19:48:22 +0200
-Message-ID: <4275248.XCb031JeuI@phil>
-In-Reply-To: <1929669.AsgMSusdJb@phil>
-References: <1929669.AsgMSusdJb@phil>
+Return-Path: <jsarha@ti.com>
+Message-ID: <55D9BC20.6020300@ti.com>
+Date: Sun, 23 Aug 2015 15:27:12 +0300
+From: Jyri Sarha <jsarha@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: Michael Allwright <michael.allwright@upb.de>, <ce3a@gmx.de>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>
+CC: <linux-clk@vger.kernel.org>
+Subject: Re: [RFC] Allow for gate and mux control using non-atomic GPIO
+References: <CALcgO_7+iDr6FvaUjXdRWXpTpHu8shVKS6nqQ6i9gC=9TmfBGw@mail.gmail.com>
+In-Reply-To: <CALcgO_7+iDr6FvaUjXdRWXpTpHu8shVKS6nqQ6i9gC=9TmfBGw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Use the newly introduced possibility to combine the fractional dividers
-with their downstream muxes for all fractional dividers on currently
-supported Rockchip SoCs.
+I did not have time to give this a full review and test, but there is 
+atleast one comment bellow.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/rockchip/clk-rk3188.c | 80 +++++++++++++++++++--------------------
- drivers/clk/rockchip/clk-rk3288.c | 66 ++++++++++++++++----------------
- 2 files changed, 74 insertions(+), 72 deletions(-)
+Best regards,
+Jyri
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index ed02bbc..faa6695 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -335,11 +335,11 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
- 	COMPOSITE(0, "hsadc_src", mux_pll_src_gpll_cpll_p, 0,
- 			RK2928_CLKSEL_CON(22), 0, 1, MFLAGS, 8, 8, DFLAGS,
- 			RK2928_CLKGATE_CON(2), 6, GFLAGS),
--	COMPOSITE_FRAC(0, "hsadc_frac", "hsadc_src", 0,
-+	COMPOSITE_FRACMUX(0, "hsadc_frac", "hsadc_src", 0,
- 			RK2928_CLKSEL_CON(23), 0,
--			RK2928_CLKGATE_CON(2), 7, GFLAGS),
--	MUX(0, "sclk_hsadc_out", mux_sclk_hsadc_p, 0,
--			RK2928_CLKSEL_CON(22), 4, 2, MFLAGS),
-+			RK2928_CLKGATE_CON(2), 7, GFLAGS,
-+		MUX(0, "sclk_hsadc_out", mux_sclk_hsadc_p, 0,
-+				RK2928_CLKSEL_CON(22), 4, 2, MFLAGS)),
- 	INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
- 			RK2928_CLKSEL_CON(22), 7, IFLAGS),
- 
-@@ -350,11 +350,11 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "spdif_pre", "i2s_src", 0,
- 			RK2928_CLKSEL_CON(5), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 13, GFLAGS),
--	COMPOSITE_FRAC(0, "spdif_frac", "spdif_pre", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_pll", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(9), 0,
--			RK2928_CLKGATE_CON(0), 14, GFLAGS),
--	MUX(SCLK_SPDIF, "sclk_spdif", mux_sclk_spdif_p, CLK_SET_RATE_PARENT,
--			RK2928_CLKSEL_CON(5), 8, 2, MFLAGS),
-+			RK2928_CLKGATE_CON(0), 14, GFLAGS,
-+		MUX(SCLK_SPDIF, "sclk_spdif", mux_sclk_spdif_p, CLK_SET_RATE_PARENT,
-+				RK2928_CLKSEL_CON(5), 8, 2, MFLAGS)),
- 
- 	/*
- 	 * Clock-Architecture Diagram 4
-@@ -385,35 +385,35 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "uart0_pre", "uart_src", 0,
- 			RK2928_CLKSEL_CON(13), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(1), 8, GFLAGS),
--	COMPOSITE_FRAC(0, "uart0_frac", "uart0_pre", 0,
-+	COMPOSITE_FRACMUX(0, "uart0_frac", "uart0_pre", 0,
- 			RK2928_CLKSEL_CON(17), 0,
--			RK2928_CLKGATE_CON(1), 9, GFLAGS),
--	MUX(SCLK_UART0, "sclk_uart0", mux_sclk_uart0_p, 0,
--			RK2928_CLKSEL_CON(13), 8, 2, MFLAGS),
-+			RK2928_CLKGATE_CON(1), 9, GFLAGS,
-+		MUX(SCLK_UART0, "sclk_uart0", mux_sclk_uart0_p, 0,
-+				RK2928_CLKSEL_CON(13), 8, 2, MFLAGS)),
- 	COMPOSITE_NOMUX(0, "uart1_pre", "uart_src", 0,
- 			RK2928_CLKSEL_CON(14), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(1), 10, GFLAGS),
--	COMPOSITE_FRAC(0, "uart1_frac", "uart1_pre", 0,
-+	COMPOSITE_FRACMUX(0, "uart1_frac", "uart1_pre", 0,
- 			RK2928_CLKSEL_CON(18), 0,
--			RK2928_CLKGATE_CON(1), 11, GFLAGS),
--	MUX(SCLK_UART1, "sclk_uart1", mux_sclk_uart1_p, 0,
--			RK2928_CLKSEL_CON(14), 8, 2, MFLAGS),
-+			RK2928_CLKGATE_CON(1), 11, GFLAGS,
-+		MUX(SCLK_UART1, "sclk_uart1", mux_sclk_uart1_p, 0,
-+				RK2928_CLKSEL_CON(14), 8, 2, MFLAGS)),
- 	COMPOSITE_NOMUX(0, "uart2_pre", "uart_src", 0,
- 			RK2928_CLKSEL_CON(15), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(1), 12, GFLAGS),
--	COMPOSITE_FRAC(0, "uart2_frac", "uart2_pre", 0,
-+	COMPOSITE_FRACMUX(0, "uart2_frac", "uart2_pre", 0,
- 			RK2928_CLKSEL_CON(19), 0,
--			RK2928_CLKGATE_CON(1), 13, GFLAGS),
--	MUX(SCLK_UART2, "sclk_uart2", mux_sclk_uart2_p, 0,
--			RK2928_CLKSEL_CON(15), 8, 2, MFLAGS),
-+			RK2928_CLKGATE_CON(1), 13, GFLAGS,
-+		MUX(SCLK_UART2, "sclk_uart2", mux_sclk_uart2_p, 0,
-+				RK2928_CLKSEL_CON(15), 8, 2, MFLAGS)),
- 	COMPOSITE_NOMUX(0, "uart3_pre", "uart_src", 0,
- 			RK2928_CLKSEL_CON(16), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(1), 14, GFLAGS),
--	COMPOSITE_FRAC(0, "uart3_frac", "uart3_pre", 0,
-+	COMPOSITE_FRACMUX(0, "uart3_frac", "uart3_pre", 0,
- 			RK2928_CLKSEL_CON(20), 0,
--			RK2928_CLKGATE_CON(1), 15, GFLAGS),
--	MUX(SCLK_UART3, "sclk_uart3", mux_sclk_uart3_p, 0,
--			RK2928_CLKSEL_CON(16), 8, 2, MFLAGS),
-+			RK2928_CLKGATE_CON(1), 15, GFLAGS,
-+		MUX(SCLK_UART3, "sclk_uart3", mux_sclk_uart3_p, 0,
-+				RK2928_CLKSEL_CON(16), 8, 2, MFLAGS)),
- 
- 	GATE(SCLK_JTAG, "jtag", "ext_jtag", 0, RK2928_CLKGATE_CON(1), 3, GFLAGS),
- 
-@@ -584,27 +584,27 @@ static struct rockchip_clk_branch rk3066a_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "i2s0_pre", "i2s_src", 0,
- 			RK2928_CLKSEL_CON(2), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 7, GFLAGS),
--	COMPOSITE_FRAC(0, "i2s0_frac", "i2s0_pre", 0,
-+	COMPOSITE_FRACMUX(0, "i2s0_frac", "i2s0_pre", 0,
- 			RK2928_CLKSEL_CON(6), 0,
--			RK2928_CLKGATE_CON(0), 8, GFLAGS),
--	MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
--			RK2928_CLKSEL_CON(2), 8, 2, MFLAGS),
-+			RK2928_CLKGATE_CON(0), 8, GFLAGS,
-+		MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
-+				RK2928_CLKSEL_CON(2), 8, 2, MFLAGS)),
- 	COMPOSITE_NOMUX(0, "i2s1_pre", "i2s_src", 0,
- 			RK2928_CLKSEL_CON(3), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 9, GFLAGS),
--	COMPOSITE_FRAC(0, "i2s1_frac", "i2s1_pre", 0,
-+	COMPOSITE_FRACMUX(0, "i2s1_frac", "i2s1_pre", 0,
- 			RK2928_CLKSEL_CON(7), 0,
--			RK2928_CLKGATE_CON(0), 10, GFLAGS),
--	MUX(SCLK_I2S1, "sclk_i2s1", mux_sclk_i2s1_p, 0,
--			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS),
-+			RK2928_CLKGATE_CON(0), 10, GFLAGS,
-+		MUX(SCLK_I2S1, "sclk_i2s1", mux_sclk_i2s1_p, 0,
-+				RK2928_CLKSEL_CON(3), 8, 2, MFLAGS)),
- 	COMPOSITE_NOMUX(0, "i2s2_pre", "i2s_src", 0,
- 			RK2928_CLKSEL_CON(4), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 11, GFLAGS),
--	COMPOSITE_FRAC(0, "i2s2_frac", "i2s2_pre", 0,
-+	COMPOSITE_FRACMUX(0, "i2s2_frac", "i2s2_pre", 0,
- 			RK2928_CLKSEL_CON(8), 0,
--			RK2928_CLKGATE_CON(0), 12, GFLAGS),
--	MUX(SCLK_I2S2, "sclk_i2s2", mux_sclk_i2s2_p, 0,
--			RK2928_CLKSEL_CON(4), 8, 2, MFLAGS),
-+			RK2928_CLKGATE_CON(0), 12, GFLAGS,
-+		MUX(SCLK_I2S2, "sclk_i2s2", mux_sclk_i2s2_p, 0,
-+				RK2928_CLKSEL_CON(4), 8, 2, MFLAGS)),
- 
- 	GATE(HCLK_I2S1, "hclk_i2s1", "hclk_cpu", 0, RK2928_CLKGATE_CON(7), 3, GFLAGS),
- 	GATE(HCLK_I2S2, "hclk_i2s2", "hclk_cpu", 0, RK2928_CLKGATE_CON(7), 4, GFLAGS),
-@@ -691,11 +691,11 @@ static struct rockchip_clk_branch rk3188_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "i2s0_pre", "i2s_src", 0,
- 			RK2928_CLKSEL_CON(3), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 9, GFLAGS),
--	COMPOSITE_FRAC(0, "i2s0_frac", "i2s0_pre", 0,
-+	COMPOSITE_FRACMUX(0, "i2s0_frac", "i2s0_pre", 0,
- 			RK2928_CLKSEL_CON(7), 0,
--			RK2928_CLKGATE_CON(0), 10, GFLAGS),
--	MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
--			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS),
-+			RK2928_CLKGATE_CON(0), 10, GFLAGS,
-+		MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
-+				RK2928_CLKSEL_CON(3), 8, 2, MFLAGS)),
- 
- 	GATE(0, "hclk_imem0", "hclk_cpu", 0, RK2928_CLKGATE_CON(4), 14, GFLAGS),
- 	GATE(0, "hclk_imem1", "hclk_cpu", 0, RK2928_CLKGATE_CON(4), 15, GFLAGS),
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 0df5bae..18fcdb1 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -304,11 +304,11 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	COMPOSITE(0, "i2s_src", mux_pll_src_cpll_gpll_p, 0,
- 			RK3288_CLKSEL_CON(4), 15, 1, MFLAGS, 0, 7, DFLAGS,
- 			RK3288_CLKGATE_CON(4), 1, GFLAGS),
--	COMPOSITE_FRAC(0, "i2s_frac", "i2s_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX(0, "i2s_frac", "i2s_src", CLK_SET_RATE_PARENT,
- 			RK3288_CLKSEL_CON(8), 0,
--			RK3288_CLKGATE_CON(4), 2, GFLAGS),
--	MUX(0, "i2s_pre", mux_i2s_pre_p, CLK_SET_RATE_PARENT,
--			RK3288_CLKSEL_CON(4), 8, 2, MFLAGS),
-+			RK3288_CLKGATE_CON(4), 2, GFLAGS,
-+		MUX(0, "i2s_pre", mux_i2s_pre_p, CLK_SET_RATE_PARENT,
-+				RK3288_CLKSEL_CON(4), 8, 2, MFLAGS)),
- 	COMPOSITE_NODIV(SCLK_I2S0_OUT, "i2s0_clkout", mux_i2s_clkout_p, 0,
- 			RK3288_CLKSEL_CON(4), 12, 1, MFLAGS,
- 			RK3288_CLKGATE_CON(4), 0, GFLAGS),
-@@ -320,20 +320,22 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "spdif_pre", "spdif_src", 0,
- 			RK3288_CLKSEL_CON(5), 0, 7, DFLAGS,
- 			RK3288_CLKGATE_CON(4), 4, GFLAGS),
--	COMPOSITE_FRAC(0, "spdif_frac", "spdif_src", 0,
-+	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_src", 0,
- 			RK3288_CLKSEL_CON(9), 0,
--			RK3288_CLKGATE_CON(4), 5, GFLAGS),
--	COMPOSITE_NODIV(SCLK_SPDIF, "sclk_spdif", mux_spdif_p, 0,
--			RK3288_CLKSEL_CON(5), 8, 2, MFLAGS,
-+			RK3288_CLKGATE_CON(4), 5, GFLAGS,
-+		MUX(0, "spdif_mux", mux_spdif_p, 0,
-+				RK3288_CLKSEL_CON(5), 8, 2, MFLAGS)),
-+	GATE(SCLK_SPDIF, "sclk_spdif", "spdif_mux", 0,
- 			RK3288_CLKGATE_CON(4), 6, GFLAGS),
- 	COMPOSITE_NOMUX(0, "spdif_8ch_pre", "spdif_src", 0,
- 			RK3288_CLKSEL_CON(40), 0, 7, DFLAGS,
- 			RK3288_CLKGATE_CON(4), 7, GFLAGS),
--	COMPOSITE_FRAC(0, "spdif_8ch_frac", "spdif_8ch_pre", 0,
-+	COMPOSITE_FRACMUX(0, "spdif_8ch_frac", "spdif_8ch_pre", 0,
- 			RK3288_CLKSEL_CON(41), 0,
--			RK3288_CLKGATE_CON(4), 8, GFLAGS),
--	COMPOSITE_NODIV(SCLK_SPDIF8CH, "sclk_spdif_8ch", mux_spdif_8ch_p, 0,
--			RK3288_CLKSEL_CON(40), 8, 2, MFLAGS,
-+			RK3288_CLKGATE_CON(4), 8, GFLAGS,
-+		MUX(0, "spdif_8ch_mux", mux_spdif_8ch_p, 0,
-+				RK3288_CLKSEL_CON(40), 8, 2, MFLAGS)),
-+	GATE(SCLK_SPDIF8CH, "sclk_spdif_8ch", "spdif_8ch_mux", 0,
- 			RK3288_CLKGATE_CON(4), 9, GFLAGS),
- 
- 	GATE(0, "sclk_acc_efuse", "xin24m", 0,
-@@ -536,45 +538,45 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	COMPOSITE(0, "uart0_src", mux_pll_src_cpll_gll_usb_npll_p, 0,
- 			RK3288_CLKSEL_CON(13), 13, 2, MFLAGS, 0, 7, DFLAGS,
- 			RK3288_CLKGATE_CON(1), 8, GFLAGS),
--	COMPOSITE_FRAC(0, "uart0_frac", "uart0_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX(0, "uart0_frac", "uart0_src", CLK_SET_RATE_PARENT,
- 			RK3288_CLKSEL_CON(17), 0,
--			RK3288_CLKGATE_CON(1), 9, GFLAGS),
--	MUX(SCLK_UART0, "sclk_uart0", mux_uart0_p, CLK_SET_RATE_PARENT,
--			RK3288_CLKSEL_CON(13), 8, 2, MFLAGS),
-+			RK3288_CLKGATE_CON(1), 9, GFLAGS,
-+		MUX(SCLK_UART0, "sclk_uart0", mux_uart0_p, CLK_SET_RATE_PARENT,
-+				RK3288_CLKSEL_CON(13), 8, 2, MFLAGS)),
- 	MUX(0, "uart_src", mux_pll_src_cpll_gpll_p, 0,
- 			RK3288_CLKSEL_CON(13), 15, 1, MFLAGS),
- 	COMPOSITE_NOMUX(0, "uart1_src", "uart_src", 0,
- 			RK3288_CLKSEL_CON(14), 0, 7, DFLAGS,
- 			RK3288_CLKGATE_CON(1), 10, GFLAGS),
--	COMPOSITE_FRAC(0, "uart1_frac", "uart1_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX(0, "uart1_frac", "uart1_src", CLK_SET_RATE_PARENT,
- 			RK3288_CLKSEL_CON(18), 0,
--			RK3288_CLKGATE_CON(1), 11, GFLAGS),
--	MUX(SCLK_UART1, "sclk_uart1", mux_uart1_p, CLK_SET_RATE_PARENT,
--			RK3288_CLKSEL_CON(14), 8, 2, MFLAGS),
-+			RK3288_CLKGATE_CON(1), 11, GFLAGS,
-+		MUX(SCLK_UART1, "sclk_uart1", mux_uart1_p, CLK_SET_RATE_PARENT,
-+				RK3288_CLKSEL_CON(14), 8, 2, MFLAGS)),
- 	COMPOSITE_NOMUX(0, "uart2_src", "uart_src", 0,
- 			RK3288_CLKSEL_CON(15), 0, 7, DFLAGS,
- 			RK3288_CLKGATE_CON(1), 12, GFLAGS),
--	COMPOSITE_FRAC(0, "uart2_frac", "uart2_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX(0, "uart2_frac", "uart2_src", CLK_SET_RATE_PARENT,
- 			RK3288_CLKSEL_CON(19), 0,
--			RK3288_CLKGATE_CON(1), 13, GFLAGS),
--	MUX(SCLK_UART2, "sclk_uart2", mux_uart2_p, CLK_SET_RATE_PARENT,
--			RK3288_CLKSEL_CON(15), 8, 2, MFLAGS),
-+			RK3288_CLKGATE_CON(1), 13, GFLAGS,
-+		MUX(SCLK_UART2, "sclk_uart2", mux_uart2_p, CLK_SET_RATE_PARENT,
-+				RK3288_CLKSEL_CON(15), 8, 2, MFLAGS)),
- 	COMPOSITE_NOMUX(0, "uart3_src", "uart_src", 0,
- 			RK3288_CLKSEL_CON(16), 0, 7, DFLAGS,
- 			RK3288_CLKGATE_CON(1), 14, GFLAGS),
--	COMPOSITE_FRAC(0, "uart3_frac", "uart3_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX(0, "uart3_frac", "uart3_src", CLK_SET_RATE_PARENT,
- 			RK3288_CLKSEL_CON(20), 0,
--			RK3288_CLKGATE_CON(1), 15, GFLAGS),
--	MUX(SCLK_UART3, "sclk_uart3", mux_uart3_p, CLK_SET_RATE_PARENT,
--			RK3288_CLKSEL_CON(16), 8, 2, MFLAGS),
-+			RK3288_CLKGATE_CON(1), 15, GFLAGS,
-+		MUX(SCLK_UART3, "sclk_uart3", mux_uart3_p, CLK_SET_RATE_PARENT,
-+				RK3288_CLKSEL_CON(16), 8, 2, MFLAGS)),
- 	COMPOSITE_NOMUX(0, "uart4_src", "uart_src", 0,
- 			RK3288_CLKSEL_CON(3), 0, 7, DFLAGS,
- 			RK3288_CLKGATE_CON(2), 12, GFLAGS),
--	COMPOSITE_FRAC(0, "uart4_frac", "uart4_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX(0, "uart4_frac", "uart4_src", CLK_SET_RATE_PARENT,
- 			RK3288_CLKSEL_CON(7), 0,
--			RK3288_CLKGATE_CON(2), 13, GFLAGS),
--	MUX(SCLK_UART4, "sclk_uart4", mux_uart4_p, CLK_SET_RATE_PARENT,
--			RK3288_CLKSEL_CON(3), 8, 2, MFLAGS),
-+			RK3288_CLKGATE_CON(2), 13, GFLAGS,
-+		MUX(SCLK_UART4, "sclk_uart4", mux_uart4_p, CLK_SET_RATE_PARENT,
-+				RK3288_CLKSEL_CON(3), 8, 2, MFLAGS)),
- 
- 	COMPOSITE(0, "mac_pll_src", mux_pll_src_npll_cpll_gpll_p, 0,
- 			RK3288_CLKSEL_CON(21), 0, 2, MFLAGS, 8, 5, DFLAGS,
--- 
-2.1.4
+On 08/18/15 18:40, Michael Allwright wrote:
+> Hi,
+>
+> The current implementation of clk-gpio completely ignores the use case
+> where GPIO pins may be accessed over a message based bus like SPI or
+> I2C. To fix this, and following the comments in clk.h, we shclk_gpio_gate_prepareould use
+> the prepare/unprepare methods to do the work where the GPIO operation
+> would be non-atomic. I propose the following UNTESTED patch (should
+> apply cleanly over linux-next).
+>
+>  From 7a21c155e561d84741ce11f0cc4c1f8c5b97d7dc Mon Sep 17 00:00:00 2001clk_gpio_gate_prepare
+> From: Michael Allwright <allsey87@gmail.com>
+> Date: Tue, 18 Aug 2015 17:26:34 +0200
+> Subject: [PATCH] Allow non-atomic GPIO ops to control gates and muxes.
+>   Following the comments in clk.h, use prepare/unprepare methods to do the GPIO
+>   work in cases where the specified pin can sleep
+>
+> ---
+>   drivers/clk/clk-gpio.c | 50 ++++++++++++++++++++++++++++++++++++++++++++------
+>   1 file changed, 44 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+> index 10819e2..3172073 100644
+> --- a/drivers/clk/clk-gpio.c
+> +++ b/drivers/clk/clk-gpio.c
+> @@ -56,6 +56,29 @@ static int clk_gpio_gate_is_enabled(struct clk_hw *hw)
+>       return gpiod_get_value(clk->gpiod);
+>   }
+>
+> +static int clk_gpio_gate_prepare(struct clk_hw *hw)
+> +{
+> +    struct clk_gpio *clk = to_clk_gpio(hw);
+> +
+> +    gpiod_set_value_cansleep(clk->gpiod, 1);
+> +
+> +    return 0;
+> +}
+> +
+> +static void clk_gpio_gate_unprepare(struct clk_hw *hw)
+> +{
+> +    struct clk_gpio *clk = to_clk_gpio(hw);
+> +clk_gpio_gate_prepare
+> +    gpiod_set_value_cansleep(clk->gpiod, 0);
+> +}
+> +
+> +static int clk_gpio_gate_is_prepared(struct clk_hw *hw)
+> +{
+> +    struct clk_gpio *clk = to_clk_gpio(hw);
+> +
+> +    return gpiod_get_value_cansleep(clk->gpiod);
+> +}
+> +
+>   const struct clk_ops clk_gpio_gate_ops = {
+>       .enable = clk_gpio_gate_enable,
+>       .disable = clk_gpio_gate_disable,
+> @@ -63,6 +86,14 @@ const struct clk_ops clk_gpio_gate_ops = {
+>   };
+>   EXPORT_SYMBOL_GPL(clk_gpio_gate_ops);
+>
+> +const struct clk_ops clk_sleepable_gpio_gate_ops = {
+> +    .enable = clk_gpio_gate_prepare,
+> +    .disable = clk_gpio_gate_unprepare,
+> +    .is_enabled = clk_gpio_gate_is_prepared,
+> +};
+> +EXPORT_SYMBOL_GPL(clk_sleepable_gpio_gate_ops);
+
+Shouldn't the .prepare .unprepare .is_prepared be assigned to *prepare() 
+functions and leave .enable etc. as null?
+
+Does this even work, doesn't the CCF complain about sleeping in 
+.enable() etc. callbacks?
+
+> +
+> +
+>   /**
+>    * DOC: basic clock multiplexer which can be controlled with a gpio output
+>    * Traits of this clock:
+> @@ -75,14 +106,14 @@ static u8 clk_gpio_mux_get_parent(struct clk_hw *hw)
+>   {
+>       struct clk_gpio *clk = to_clk_gpio(hw);
+>
+> -    return gpiod_get_value(clk->gpiod);
+> +    return gpiod_get_value_cansleep(clk->gpiod);
+>   }
+>
+>   static int clk_gpio_mux_set_parent(struct clk_hw *hw, u8 index)
+>   {
+>       struct clk_gpio *clk = to_clk_gpio(hw);
+>
+> -    gpiod_set_value(clk->gpiod, index);
+> +    gpiod_set_value_cansleep(clk->gpiod, index);
+>
+>       return 0;
+>   }
+> @@ -170,10 +201,17 @@ struct clk *clk_register_gpio_gate(struct device
+> *dev, const char *name,
+>           const char *parent_name, unsigned gpio, bool active_low,
+>           unsigned long flags)
+>   {
+> -    return clk_register_gpio(dev, name,
+> -            (parent_name ? &parent_name : NULL),
+> -            (parent_name ? 1 : 0), gpio, active_low, flags,
+> -            &clk_gpio_gate_ops);
+> +    if(gpio_cansleep(gpio))
+> +        return clk_register_gpio(dev, name,
+> +                (parent_name ? &parent_name : NULL),
+> +                (parent_name ? 1 : 0), gpio, active_low, flags,
+> +                &clk_sleepable_gpio_gate_ops);
+> +    else
+> +        return clk_register_gpio(dev, name,
+> +                (parent_name ? &parent_name : NULL),
+> +                (parent_name ? 1 : 0), gpio, active_low, flags,
+> +                &clk_gpio_gate_ops);
+> +
+>   }
+>   EXPORT_SYMBOL_GPL(clk_register_gpio_gate);
+>
