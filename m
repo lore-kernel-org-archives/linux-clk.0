@@ -1,51 +1,107 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55DD7C05.6030207@st.com>
-Date: Wed, 26 Aug 2015 10:42:45 +0200
-From: Maxime Coquelin <maxime.coquelin@st.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [RESEND PATCH] clk: rockchip: disable init state before mmc card initialization
+Date: Mon, 24 Aug 2015 12:01:19 +0200
+Message-ID: <120036049.vlT25D4un8@phil>
+In-Reply-To: <1440404863-14350-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1440404863-14350-1-git-send-email-shawn.lin@rock-chips.com>
 MIME-Version: 1.0
-To: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>
-CC: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<sboyd@codeaurora.org>, <s.hauer@pengutronix.de>,
-	<geert@linux-m68k.org>
-Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and
- implement hand-off
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com> <20150818154552.GI2547@lukather> <20150818164356.31346.80341@quantum> <20150820151510.GD30520@lukather> <20150825215051.31346.56261@quantum> <20150826065423.GR19409@x1>
-In-Reply-To: <20150826065423.GR19409@x1>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Lee,
+Hi Shawn,
 
-On 08/26/2015 08:54 AM, Lee Jones wrote:
-> On Tue, 25 Aug 2015, Michael Turquette wrote:
->
->
->> Maybe I am the one missing something? My goal was to allow the consumer
->> driver to gate the critical clock. So we need clk_disable_unused to
->> actually disable the clock for that to work.
->>
->> I think you are suggesting that clk_disable_unused should *not* disable
->> the clock if it is critical. Can you confirm that?
-> My take is that a critical clock should only be disabled when a
-> knowledgeable driver wants to gate it for a specific purpose [probably
-> using clk_disable()].  Once the aforementioned driver no longer has a
-> use for the clock [whether that happens with clk_unprepare_disable()
-> or clk_put() ...] the clock should be ungated and be provided with
-> critical status once more.
->
-How do you differentiate between a knowledgeable and non-knowledgeable 
-driver?
-Let's take the example of the clock used by the i2c on STi SoCs.
-This clock is used by i2c, and is also critical to the system, but only 
-i2c takes it.
+Am Montag, 24. August 2015, 16:27:43 schrieb Shawn Lin:
+> mmc host controller's IO input/output timing is unpredictable if
+> bootloader execute tuning for HS200 mode. It might make kernel failed
+> to initialize mmc card in identification mode. The root cause is
+> tuning phase and degree setting for HS200 mode in bootloader aren't
+> applicable to that of identification mode in kernel stage. Anyway, we
+> can't force all bootloaders to disable tuning phase and degree setting
+> before into kernel. Simply disable it in rockchip_clk_register_mmc.
+> 
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+> 
+> ---
+> 
+>  drivers/clk/rockchip/clk-mmc-phase.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c
+> b/drivers/clk/rockchip/clk-mmc-phase.c index e9f8df32..ae21592 100644
+> --- a/drivers/clk/rockchip/clk-mmc-phase.c
+> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
+> @@ -38,6 +38,9 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw
+> *hw, #define ROCKCHIP_MMC_DEGREE_MASK 0x3
+>  #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
+>  #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
+> +#define ROCKCHIP_MMC_INIT_STATE_DISABLE (0x1)
+> +#define ROCKCHIP_MMC_INIT_STATE_SHIFT (1)
+> +#define ROCKCHIP_MMC_INIT_STATE_MASK  (0x1)
 
-At first transfer, the i2c will enable the clock and then disables it.
+you don't need the "()" around primitive values. Also I don't think you need 
+the second MASK attribute, doing
+	writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_DISABLE,
+				     ROCKCHIP_MMC_INIT_STATE_DISABLE,
+				     mmc_clock->shift),
 
-What we would expect here is that the clk_disable does not gate the 
-clock, even if only user since the hand-off flag has been set.
-Else, system will freeze.
+should be enough. And thirdly I'm undecided about the naming of the constant. 
+The manual describes the init_state as "Assert init_state to soft reset the 
+CLKGEN.", so I guess I'd prefer
 
-Maxime
+	ROCKCHIP_MMC_INIT_STATE_RESET
+
+or so
+
+> 
+>  #define PSECS_PER_SEC 1000000000000LL
+> 
+> @@ -119,6 +122,21 @@ static const struct clk_ops rockchip_mmc_clk_ops = {
+>  	.set_phase	= rockchip_mmc_set_phase,
+>  };
+> 
+> +static void rockchip_clk_mmc_disable_init(struct rockchip_mmc_clock
+
+I guess similar to the thoughts above, simply name this
+	rockchip_clk_mmc_reset()
+
+or alternatively just do the reset in rockchip_clk_register_mmc directly:
+
+if (mmc_clock->shift == ROCKCHIP_MMC_INIT_STATE_SHIFT))
+	writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_DISABLE,
+				     ROCKCHIP_MMC_INIT_STATE_MASK,
+			     mmc_clock->shift),
+	       mmc_clock->reg);
+
+as the pr_debug does not really serve a purpose.
+
+
+Heiko
+
+> *mmc_clock) +{
+> +	if (mmc_clock->shift != ROCKCHIP_MMC_INIT_STATE_SHIFT)
+> +		return;
+> +
+> +	writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_DISABLE,
+> +			     ROCKCHIP_MMC_INIT_STATE_MASK,
+> +			     mmc_clock->shift),
+> +	       mmc_clock->reg);
+> +
+> +	pr_debug("%s: clear mmc init state to %d", __func__,
+> +		 (readl(mmc_clock->reg) >> (mmc_clock->shift)) &
+> +		 ROCKCHIP_MMC_INIT_STATE_MASK);
+> +}
+> +
+>  struct clk *rockchip_clk_register_mmc(const char *name,
+>  				const char *const *parent_names, u8 num_parents,
+>  				void __iomem *reg, int shift)
+> @@ -139,6 +157,8 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+>  	mmc_clock->reg = reg;
+>  	mmc_clock->shift = shift;
+> 
+> +	rockchip_clk_mmc_disable_init(mmc_clock);
+> +
+>  	if (name)
+>  		init.name = name;
