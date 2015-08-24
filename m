@@ -1,49 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 7 Aug 2015 16:45:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 17/26] clk: rockchip: Convert to clk_hw based provider
- APIs
-Message-ID: <20150807234501.GD16477@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
- <1438362246-6664-18-git-send-email-sboyd@codeaurora.org>
- <1633764.ZhyQ4HJNBu@diego>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1633764.ZhyQ4HJNBu@diego>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH] clk: rockchip: disable init state before mmc card initialization
+Date: Mon, 24 Aug 2015 16:12:26 +0800
+Message-Id: <1440403946-13266-1-git-send-email-shawn.lin@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/04, Heiko Stübner wrote:
-> Am Freitag, 31. Juli 2015, 10:03:57 schrieb Stephen Boyd:
-> > We're removing struct clk from the clk provider API, so switch
-> > this code to using the clk_hw based provider APIs.
-> > 
-> > Cc: Heiko Stuebner <heiko@sntech.de>
-> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> 
-> Looks correct to me and there are no functional changes in here anyway
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+mmc host controller's IO input/output timing is unpredictable if
+bootloader execute tuning for HS200 mode. It might make kernel failed
+to initialize mmc card in identification mode. The root cause is
+tuning phase and degree setting for HS200 mode in bootloader aren't
+applicable to that of identification mode in kernel stage. Anyway, we
+can't force all bootloaders to disable tuning phase and degree setting
+before into kernel. Simply disable it in rockchip_clk_register_mmc.
 
-Thanks. There was one bug, but I fixed it ;-)
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+---
 
----8<---
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 198261e001fa..eab430452c52 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -295,7 +295,7 @@ static void rockchip_rk3066_pll_init(struct clk_hw *hw)
+ drivers/clk/rockchip/clk-mmc-phase.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+index e9f8df32..02b6f3d 100644
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -38,6 +38,9 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw *hw,
+ #define ROCKCHIP_MMC_DEGREE_MASK 0x3
+ #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
+ #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
++#define ROCKCHIP_MMC_INIT_STATE_DISABLE (0x1)
++#define ROCKCHIP_MMC_INIT_STATE_SHIFT (0)
++#define ROCKCHIP_MMC_INIT_STATE_MASK  (0x1)
  
- 		if (!parent) {
- 			pr_warn("%s: parent of %s not available\n",
--				__func__, clk_hw_get_parent(hw));
-+				__func__, clk_hw_get_name(hw));
- 			return;
- 		}
+ #define PSECS_PER_SEC 1000000000000LL
  
-
+@@ -119,6 +122,21 @@ static const struct clk_ops rockchip_mmc_clk_ops = {
+ 	.set_phase	= rockchip_mmc_set_phase,
+ };
+ 
++static void rockchip_clk_mmc_disable_init(struct rockchip_mmc_clock *mmc_clock)
++{
++	if (mmc_clock->shift != ROCKCHIP_MMC_INIT_STATE_SHIFT)
++		return;
++
++	writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_DISABLE,
++			     ROCKCHIP_MMC_INIT_STATE_MASK,
++			     mmc_clock->shift),
++	       mmc_clock->reg);
++
++	pr_debug("%s: clear mmc init state to %d", __func__,
++		 (readl(mmc_clock->reg) >> (mmc_clock->shift)) &
++		 ROCKCHIP_MMC_INIT_STATE_MASK);
++}
++
+ struct clk *rockchip_clk_register_mmc(const char *name,
+ 				const char *const *parent_names, u8 num_parents,
+ 				void __iomem *reg, int shift)
+@@ -139,6 +157,8 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+ 	mmc_clock->reg = reg;
+ 	mmc_clock->shift = shift;
+ 
++	rockchip_clk_mmc_disable_init(mmc_clock);
++
+ 	if (name)
+ 		init.name = name;
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.3.7
+
+
