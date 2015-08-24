@@ -1,148 +1,296 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Subject: [PATCH] clk: rockchip: register pll mux before pll itself
-Date: Wed, 19 Aug 2015 15:06:55 +0200
-Message-ID: <7060610.CC2Q1RMG2L@phil>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 3/4] drivers: clk: st: Correct the pll-type for A9 for stih418
+Date: Mon, 24 Aug 2015 11:40:50 +0200
+Message-Id: <1440409251-11166-4-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1440409251-11166-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1440409251-11166-1-git-send-email-gabriel.fernandez@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The structure is xin24m -> pll -> pll-mux (xin24m,pll,xin32k). The pll
-does have an init callback to make sure the boot-selected frequency is
-using the expected pll settings and resets the same frequency using
-the values provided in the driver if necessary.
+Add support for new PLL-type for stih418 A9-PLL.
+Currently the 407_A9_PLL type being used, it is corrected with this patch
+4600c28 PLL allows to reach higher frequencies
+so its programming algorithm is extended.
 
-The setting itself also involves remuxing the pll-mux temporarily to
-the xin24m source to let the new pll rate settle. Until now this worked
-flawlessly, even when it had the flaw of accessing the mux settings
-before the mux actually got registered.
-
-With the recent clock-core conversions this flaw became apparent in
-null pointer dereference in
-[<c03fc400>] (clk_hw_get_num_parents) from [<c0400df0>] (clk_mux_get_parent+0x14/0xc8)
-[<c0400ddc>] (clk_mux_get_parent) from [<c040246c>] (rockchip_rk3066_pll_set_rate+0xd8/0x320)
-
-So to fix that, simply register the pll-mux before the pll, so that
-it will be fully initialized when the pll clock executes its init-
-callback and possibly touches the pll-mux clock.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 ---
-This only surfaced with the clk_core changes for 4.3, so should
-probably just go on top.
+ .../devicetree/bindings/clock/st/st,clkgen-pll.txt |   1 +
+ drivers/clk/st/clkgen-pll.c                        | 194 +++++++++++++++++++++
+ 2 files changed, 195 insertions(+)
 
- drivers/clk/rockchip/clk-pll.c | 63 +++++++++++++++++++++---------------------
- 1 file changed, 32 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index eab4304..7737a1d 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -353,6 +353,35 @@ struct clk *rockchip_clk_register_pll(enum rockchip_pll_type pll_type,
- 	if (!pll)
- 		return ERR_PTR(-ENOMEM);
+diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+index e2c6db0..8f84c81 100644
+--- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
++++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+@@ -23,6 +23,7 @@ Required properties:
+ 	"st,stih407-plls-c32-a9",	"st,clkgen-plls-c32"
+ 	"st,plls-c32-cx_0",		"st,clkgen-plls-c32"
+ 	"st,plls-c32-cx_1",		"st,clkgen-plls-c32"
++	"st,stih418-plls-c28-a9",	"st,clkgen-plls-c32"
  
-+	/* create the mux on top of the real pll */
-+	pll->pll_mux_ops = &clk_mux_ops;
-+	pll_mux = &pll->pll_mux;
-+	pll_mux->reg = base + mode_offset;
-+	pll_mux->shift = mode_shift;
-+	pll_mux->mask = PLL_MODE_MASK;
-+	pll_mux->flags = 0;
-+	pll_mux->lock = lock;
-+	pll_mux->hw.init = &init;
-+
-+	if (pll_type == pll_rk3066)
-+		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
-+
-+	/* the actual muxing is xin24m, pll-output, xin32k */
-+	pll_parents[0] = parent_names[0];
-+	pll_parents[1] = pll_name;
-+	pll_parents[2] = parent_names[1];
-+
-+	init.name = name;
-+	init.flags = CLK_SET_RATE_PARENT;
-+	init.ops = pll->pll_mux_ops;
-+	init.parent_names = pll_parents;
-+	init.num_parents = ARRAY_SIZE(pll_parents);
-+
-+	mux_clk = clk_register(NULL, &pll_mux->hw);
-+	if (IS_ERR(mux_clk))
-+		goto err_mux;
-+
-+	/* now create the actual pll */
- 	init.name = pll_name;
+ 	"st,stih415-gpu-pll-c32",	"st,clkgengpu-pll-c32"
+ 	"st,stih416-gpu-pll-c32",	"st,clkgengpu-pll-c32"
+diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
+index 94e5a0b..3eb4ffb 100644
+--- a/drivers/clk/st/clkgen-pll.c
++++ b/drivers/clk/st/clkgen-pll.c
+@@ -44,6 +44,13 @@ DEFINE_SPINLOCK(clkgen_a9_lock);
  
- 	/* keep all plls untouched for now */
-@@ -398,47 +427,19 @@ struct clk *rockchip_clk_register_pll(enum rockchip_pll_type pll_type,
- 	pll->flags = clk_pll_flags;
- 	pll->lock = lock;
+ #define C32_MAX_ODFS (4)
  
--	/* create the mux on top of the real pll */
--	pll->pll_mux_ops = &clk_mux_ops;
--	pll_mux = &pll->pll_mux;
--	pll_mux->reg = base + mode_offset;
--	pll_mux->shift = mode_shift;
--	pll_mux->mask = PLL_MODE_MASK;
--	pll_mux->flags = 0;
--	pll_mux->lock = lock;
--	pll_mux->hw.init = &init;
--
--	if (pll_type == pll_rk3066)
--		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
--
- 	pll_clk = clk_register(NULL, &pll->hw);
- 	if (IS_ERR(pll_clk)) {
- 		pr_err("%s: failed to register pll clock %s : %ld\n",
- 			__func__, name, PTR_ERR(pll_clk));
--		mux_clk = pll_clk;
- 		goto err_pll;
- 	}
++/*
++ * PLL configuration register bits for PLL4600 C28
++ */
++#define C28_NDIV_MASK (0xff)
++#define C28_IDF_MASK (0x7)
++#define C28_ODF_MASK (0x3f)
++
+ struct clkgen_pll_data {
+ 	struct clkgen_field pdn_status;
+ 	struct clkgen_field pdn_ctrl;
+@@ -68,6 +75,7 @@ static const struct clk_ops st_pll800c65_ops;
+ static const struct clk_ops stm_pll3200c32_ops;
+ static const struct clk_ops stm_pll3200c32_a9_ops;
+ static const struct clk_ops st_pll1200c32_ops;
++static const struct clk_ops stm_pll4600c28_ops;
  
--	/* the actual muxing is xin24m, pll-output, xin32k */
--	pll_parents[0] = parent_names[0];
--	pll_parents[1] = pll_name;
--	pll_parents[2] = parent_names[1];
--
--	init.name = name;
--	init.flags = CLK_SET_RATE_PARENT;
--	init.ops = pll->pll_mux_ops;
--	init.parent_names = pll_parents;
--	init.num_parents = ARRAY_SIZE(pll_parents);
--
--	mux_clk = clk_register(NULL, &pll_mux->hw);
--	if (IS_ERR(mux_clk))
--		goto err_mux;
--
- 	return mux_clk;
+ static const struct clkgen_pll_data st_pll1600c65_ax = {
+ 	.pdn_status	= CLKGEN_FIELD(0x0, 0x1,			19),
+@@ -256,6 +264,22 @@ static const struct clkgen_pll_data st_pll3200c32_407_a9 = {
+ 	.ops		= &stm_pll3200c32_a9_ops,
+ };
  
--err_mux:
--	clk_unregister(pll_clk);
- err_pll:
-+	clk_unregister(mux_clk);
-+	mux_clk = pll_clk;
-+err_mux:
- 	kfree(pll);
- 	return mux_clk;
++static struct clkgen_pll_data st_pll4600c28_418_a9 = {
++	/* 418 A9 */
++	.pdn_status	= CLKGEN_FIELD(0x1a8,	0x1,			0),
++	.pdn_ctrl	= CLKGEN_FIELD(0x1a8,	0x1,			0),
++	.locked_status	= CLKGEN_FIELD(0x87c,	0x1,			0),
++	.ndiv		= CLKGEN_FIELD(0x1b0,	C28_NDIV_MASK,		0),
++	.idf		= CLKGEN_FIELD(0x1a8,	C28_IDF_MASK,		25),
++	.num_odfs = 1,
++	.odf		= { CLKGEN_FIELD(0x1b0, C28_ODF_MASK,		8) },
++	.odf_gate	= { CLKGEN_FIELD(0x1ac, 0x1,			28) },
++	.switch2pll_en	= true,
++	.switch2pll	= CLKGEN_FIELD(0x1a4,	0x1,			1),
++	.lock		= &clkgen_a9_lock,
++	.ops		= &stm_pll4600c28_ops,
++};
++
+ /**
+  * DOC: Clock Generated by PLL, rate set and enabled by bootloader
+  *
+@@ -611,6 +635,163 @@ static unsigned long recalc_stm_pll1200c32(struct clk_hw *hw,
+ 	return rate;
  }
+ 
++/* PLL output structure
++ * FVCO >> /2 >> FVCOBY2 (no output)
++ *                 |> Divider (ODF) >> PHI
++ *
++ * FVCOby2 output = (input * 2 * NDIV) / IDF (assuming FRAC_CONTROL==L)
++ *
++ * Rules:
++ *   4Mhz <= INFF input <= 350Mhz
++ *   4Mhz <= INFIN (INFF / IDF) <= 50Mhz
++ *   19.05Mhz <= FVCOby2 output (PHI w ODF=1) <= 3000Mhz
++ *   1 <= i (register/dec value for IDF) <= 7
++ *   8 <= n (register/dec value for NDIV) <= 246
++ */
++
++static int clk_pll4600c28_get_params(unsigned long input, unsigned long output,
++			  struct stm_pll *pll)
++{
++
++	unsigned long i, infin, n;
++	unsigned long deviation = ~0;
++	unsigned long new_freq, new_deviation;
++
++	/* Output clock range: 19Mhz to 3000Mhz */
++	if (output < 19000000 || output > 3000000000u)
++		return -EINVAL;
++
++	/* For better jitter, IDF should be smallest and NDIV must be maximum */
++	for (i = 1; i <= 7 && deviation; i++) {
++		/* INFIN checks */
++		infin = input / i;
++		if (infin < 4000000 || infin > 50000000)
++			continue;	/* Invalid case */
++
++		n = output / (infin * 2);
++		if (n < 8 || n > 246)
++			continue;	/* Invalid case */
++		if (n < 246)
++			n++;	/* To work around 'y' when n=x.y */
++
++		for (; n >= 8 && deviation; n--) {
++			new_freq = infin * 2 * n;
++			if (new_freq < output)
++				break;	/* Optimization: shorting loop */
++
++			new_deviation = new_freq - output;
++			if (!new_deviation || new_deviation < deviation) {
++				pll->idf  = i;
++				pll->ndiv = n;
++				deviation = new_deviation;
++			}
++		}
++	}
++
++	if (deviation == ~0) /* No solution found */
++		return -EINVAL;
++
++	return 0;
++}
++
++static int clk_pll4600c28_get_rate(unsigned long input, struct stm_pll *pll,
++			unsigned long *rate)
++{
++	if (!pll->idf)
++		pll->idf = 1;
++
++	*rate = (input / pll->idf) * 2 * pll->ndiv;
++
++	return 0;
++}
++
++static unsigned long recalc_stm_pll4600c28(struct clk_hw *hw,
++				    unsigned long parent_rate)
++{
++	struct clkgen_pll *pll = to_clkgen_pll(hw);
++	struct stm_pll params;
++	unsigned long rate;
++
++	if (!clkgen_pll_is_enabled(hw) || !clkgen_pll_is_locked(hw))
++		return 0;
++
++	params.ndiv = CLKGEN_READ(pll, ndiv);
++	params.idf = CLKGEN_READ(pll, idf);
++
++	clk_pll4600c28_get_rate(parent_rate, &params, &rate);
++
++	pr_debug("%s:%s rate %lu\n", __clk_get_name(hw->clk), __func__, rate);
++
++	return rate;
++}
++
++static long round_rate_stm_pll4600c28(struct clk_hw *hw, unsigned long rate,
++				      unsigned long *prate)
++{
++	struct stm_pll params;
++
++	if (!clk_pll4600c28_get_params(*prate, rate, &params)) {
++		clk_pll4600c28_get_rate(*prate, &params, &rate);
++	} else {
++		pr_debug("%s: %s rate %ld Invalid\n", __func__,
++			 __clk_get_name(hw->clk), rate);
++		return 0;
++	}
++
++	pr_debug("%s: %s new rate %ld [ndiv=%u] [idf=%u]\n",
++		 __func__, __clk_get_name(hw->clk),
++		 rate, (unsigned int)params.ndiv,
++		 (unsigned int)params.idf);
++
++	return rate;
++}
++
++static int set_rate_stm_pll4600c28(struct clk_hw *hw, unsigned long rate,
++				   unsigned long parent_rate)
++{
++	struct clkgen_pll *pll = to_clkgen_pll(hw);
++	struct stm_pll params;
++	long hwrate;
++	unsigned long flags = 0;
++
++	if (!rate || !parent_rate)
++		return -EINVAL;
++
++	if (!clk_pll4600c28_get_params(parent_rate, rate, &params)) {
++		clk_pll4600c28_get_rate(parent_rate, &params, &hwrate);
++	} else {
++		pr_debug("%s: %s rate %ld Invalid\n", __func__,
++			 __clk_get_name(hw->clk), rate);
++		return -EINVAL;
++	}
++
++	pr_debug("%s: %s new rate %ld [ndiv=0x%x] [idf=0x%x]\n",
++		 __func__, __clk_get_name(hw->clk),
++		 hwrate, (unsigned int)params.ndiv,
++		 (unsigned int)params.idf);
++
++	if (!hwrate)
++		return -EINVAL;
++
++	pll->ndiv = params.ndiv;
++	pll->idf = params.idf;
++
++	clkgen_pll_disable(hw);
++
++	if (pll->lock)
++		spin_lock_irqsave(pll->lock, flags);
++
++	CLKGEN_WRITE(pll, ndiv, pll->ndiv);
++	CLKGEN_WRITE(pll, idf, pll->idf);
++
++	if (pll->lock)
++		spin_unlock_irqrestore(pll->lock, flags);
++
++	clkgen_pll_enable(hw);
++
++	return 0;
++}
++
+ static const struct clk_ops st_pll1600c65_ops = {
+ 	.enable		= clkgen_pll_enable,
+ 	.disable	= clkgen_pll_disable,
+@@ -648,6 +829,15 @@ static const struct clk_ops st_pll1200c32_ops = {
+ 	.recalc_rate	= recalc_stm_pll1200c32,
+ };
+ 
++static const struct clk_ops stm_pll4600c28_ops = {
++	.enable		= clkgen_pll_enable,
++	.disable	= clkgen_pll_disable,
++	.is_enabled	= clkgen_pll_is_enabled,
++	.recalc_rate	= recalc_stm_pll4600c28,
++	.round_rate	= round_rate_stm_pll4600c28,
++	.set_rate	= set_rate_stm_pll4600c28,
++};
++
+ static struct clk * __init clkgen_pll_register(const char *parent_name,
+ 				struct clkgen_pll_data	*pll_data,
+ 				void __iomem *reg,
+@@ -893,6 +1083,10 @@ static const struct of_device_id c32_pll_of_match[] = {
+ 		.compatible = "st,stih407-plls-c32-a9",
+ 		.data = &st_pll3200c32_407_a9,
+ 	},
++	{
++		.compatible = "st,stih418-plls-c28-a9",
++		.data = &st_pll4600c28_418_a9,
++	},
+ 	{}
+ };
+ 
 -- 
-2.1.4
+1.9.1
 
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
