@@ -1,41 +1,30 @@
-Return-Path: <bethencourt@gmail.com>
-Return-Path: <bethencourt@gmail.com>
-Sender: Luis de Bethencourt <bethencourt@gmail.com>
-Date: Fri, 28 Aug 2015 14:44:32 +0200
-From: Luis de Bethencourt <luis@debethencourt.com>
-To: linux-kernel@vger.kernel.org
-Cc: Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 5/5] clk: sunxi: sun9i-mmc: Fix module autoload for OF
- platform driver
-Message-ID: <20150828124432.GA26670@goodgumbo.baconseed.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 24 Aug 2015 14:28:28 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: Add missing header for 'bool' definition to
+ clk-conf.h
+Message-ID: <20150824212828.GD14330@codeaurora.org>
+References: <1439882205-10978-1-git-send-email-wens@csie.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1439882205-10978-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This platform driver has a OF device ID table but the OF module
-alias information is not created so module autoloading won't work.
+On 08/18, Chen-Yu Tsai wrote:
+> of_clk_set_defaults uses the type 'bool', but clk-conf.h does not
+> include its definition.
+> 
+> This results in a compile error when only clk-conf.h is used.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Cc: stable@vger.kernel.org
 
-Signed-off-by: Luis de Bethencourt <luis@debethencourt.com>
----
- drivers/clk/sunxi/clk-sun9i-mmc.c | 1 +
- 1 file changed, 1 insertion(+)
+Why is stable Cc-ed? Is there some sort of compilation failure on
+stable kernels?
 
-diff --git a/drivers/clk/sunxi/clk-sun9i-mmc.c b/drivers/clk/sunxi/clk-sun9i-mmc.c
-index 710c273..7618b13 100644
---- a/drivers/clk/sunxi/clk-sun9i-mmc.c
-+++ b/drivers/clk/sunxi/clk-sun9i-mmc.c
-@@ -203,6 +203,7 @@ static const struct of_device_id sun9i_a80_mmc_config_clk_dt_ids[] = {
- 	{ .compatible = "allwinner,sun9i-a80-mmc-config-clk" },
- 	{ /* sentinel */ }
- };
-+MODULE_DEVICE_TABLE(of, sun9i_a80_mmc_config_clk_dt_ids);
- 
- static struct platform_driver sun9i_a80_mmc_config_clk_driver = {
- 	.driver = {
 -- 
-2.4.6
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
