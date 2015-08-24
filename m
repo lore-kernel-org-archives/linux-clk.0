@@ -1,52 +1,62 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Romain Perier <romain.perier@gmail.com>
-Cc: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com
-Subject: Re: [PATCH] clk: rockchip: Add pclk_peri to critical clocks on RK3066/RK3188
-Date: Fri, 21 Aug 2015 20:24:25 +0200
-Message-ID: <1855234.LF6EVPIbW1@phil>
-In-Reply-To: <1440180627-4566-1-git-send-email-romain.perier@gmail.com>
-References: <1440180627-4566-1-git-send-email-romain.perier@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: robh+dt@kernel.org, mturquette@baylibre.com, lee.jones@linaro.org,
+	k.kozlowski@samsung.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Subject: [PATCH-v2 0/5] clk: 88pm800: Add new clk provider driver for 88PM800 MFD
+Date: Tue, 25 Aug 2015 00:26:28 +0530
+Message-Id: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Romain,
+88PM800 family of devices provides multiple buffered 32.768 KHz clock
+output.
+88PM800 : CLK32k_1, CLK32k_2 and CLK32k_3
+88PM860 : CLK32k_1 and CLK32k_2
 
-Am Freitag, 21. August 2015, 18:10:27 schrieb Romain Perier:
-> Clocks for bank GPIO3 and GPIO4 are supplied by pclk_peri. These clocks need
-> to stay on, otherwise pinctrl hangs the system when the driver is probed.
+This patch-series adds new clock provider driver for enabling/disabling
+buffered 32Khz clock output from 88PM800 family of device. Adds clock device to
+MFD and updates the binding documentation.
 
-I don't agree with the commit message.
-
-The issue you see does not originate from the pinctrl driver itself. Instead 
-only the new flexible clock handling causes some other (still unhandled) 
-component reyling on pclk_peri to hang the system.
-
-In the past the clocks for the gpio banks were simply enabled once during 
-probe, so pclk_peri as parent clock would also stay enabled for eternity. Now 
-we enable the gpio clocks only when necessary, which results in that pclk_peri 
-might get disabled too when no other component has claimed it - hence its 
-addition to critical clocks.
-
-Also, please note that Stephen Boyd is now also clock maintainer.
+The PATCH [1/4], created separately, as it would be easy between maintainers to
+queue it.
 
 
-> 
-> Signed-off-by: Romain Perier <romain.perier@gmail.com>
-> ---
->  drivers/clk/rockchip/clk-rk3188.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3188.c
-> b/drivers/clk/rockchip/clk-rk3188.c index f63a642..596be81 100644
-> --- a/drivers/clk/rockchip/clk-rk3188.c
-> +++ b/drivers/clk/rockchip/clk-rk3188.c
-> @@ -717,6 +717,7 @@ static const char *const rk3188_critical_clocks[]
-> __initconst = { "aclk_peri",
->  	"hclk_peri",
->  	"pclk_cpu",
-> +	"pclk_peri",
->  };
-> 
->  static void __init rk3188_common_clk_init(struct device_node *np)
+Note that, I have access to only 88PM800 and 88PM860 datasheet,
+so enabling support for only above two devices.
+
+Testing:
+  - Boot tested on 88PM860 based platform
+  - Clock enable/disable
+  - Non PM860, to make sure that it won't lead to any issues
+
+V1 => V2:
+========
+Link to  V1: https://lkml.org/lkml/2015/7/21/298
+
+  - Added new patch to the series [1/5], fixing tabbing issue in the file
+  - Removed unnecessary brackets around macro value
+  - Used devm_kcalloc variants for array allocation instead of kzalloc.
+  - Fixed all other trivial issues.
+
+Vaibhav Hiremath (5):
+  mfd: 88pm800: Fix tabbing issue
+  mfd: 88pm800: Update the header file with 32K clk related macros
+  mfd: devicetree: bindings: Add clock subdevice node information
+  clk: 88pm800: Add clk provider driver for 88pm800 family of devices
+  mfd: 88pm800: Add support for clk subdevice
+
+ Documentation/devicetree/bindings/mfd/88pm800.txt |  27 ++
+ drivers/clk/Kconfig                               |   8 +
+ drivers/clk/Makefile                              |   1 +
+ drivers/clk/clk-88pm800.c                         | 341 ++++++++++++++++++++++
+ drivers/mfd/88pm800.c                             | 150 ++++++----
+ include/linux/mfd/88pm80x.h                       |  12 +
+ 6 files changed, 475 insertions(+), 64 deletions(-)
+ create mode 100644 drivers/clk/clk-88pm800.c
+
+-- 
+1.9.1
+
