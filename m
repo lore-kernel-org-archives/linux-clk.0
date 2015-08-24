@@ -1,36 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55CA7ED7.90003@codeaurora.org>
-Date: Tue, 11 Aug 2015 16:01:43 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Message-ID: <1440426140.17418.1.camel@mtksdaap41>
+Subject: Re: [PATCH v2 1/5] clocksource: mediatek: do not enable GPT_CLK_EVT
+ when setup
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+CC: Daniel Kurtz <djkurtz@chromium.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	James Liao <jamesjj.liao@mediatek.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	srv_heupstream <srv_heupstream@mediatek.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Olof Johansson <olof@lixom.net>,
+	"Rob Herring" <robh+dt@kernel.org>,
+	<linux-mediatek@lists.infradead.org>,
+	"Sascha Hauer" <kernel@pengutronix.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	<linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Date: Mon, 24 Aug 2015 22:22:20 +0800
+In-Reply-To: <55DACCEF.8040004@linaro.org>
+References: <CAGS+omD8k_Cfxv3bYyjmjtLbiavo-WmJPn0Z-CBhN_nnv65Tag@mail.gmail.com>
+			 <1437552878-3684-1-git-send-email-yingjoe.chen@mediatek.com>
+			 <55CC56C4.8080201@linaro.org> <1439820602.3414.12.camel@mtksdaap41>
+		 <55D5E40A.6080904@linaro.org> <1440167950.20169.29.camel@mtksdaap41>
+	 <55DACCEF.8040004@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-To: Lin Huang <hl@rock-chips.com>
-CC: heiko@sntech.de, dianders@chromium.org, linus.walleij@linaro.org,
-	linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] clk: rockchip: add pclk_pd_pmu to the list of
- rk3288 critical clocks
-References: <1439287924-6988-1-git-send-email-hl@rock-chips.com>
-In-Reply-To: <1439287924-6988-1-git-send-email-hl@rock-chips.com>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/11/2015 03:12 AM, Lin Huang wrote:
-> From: Heiko Stuebner <heiko@sntech.de>
->
-> pclk_pd_pmu needs to keep running and with the upcoming gpio clock
-> handling this is not always the case anymore. So add it to the list
-> of critical clocks for now.
->
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
-> ---
->
+On Mon, 2015-08-24 at 09:51 +0200, Daniel Lezcano wrote:
+> On 08/21/2015 04:39 PM, Yingjoe Chen wrote:
+> 
+> [ ... ]
+> 
+> >>    - Does the spurious interrupt occurs *every* time ? at each boot ?
+> >
+> > Yes. If you applied this series to enable mtk timer without this fix on
+> > mt8173 or mt8135 you can reproduce it. It occurs for every boot.
+> >
+> > It crash before uart driver is ready, so you'll have to use earlycon to
+> > see the crash log.
+> 
+> Can you give me the earlycon params ?
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Hi Daniel,
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+You probably already figure this out. anyway I'm using this to enable
+earlycon:
+
+Add 'earlycon' in bootargs, and in device tree chosen part, add
+"linux,stdout-path=&uart0;"
+
+Joe.C
+
+
 
