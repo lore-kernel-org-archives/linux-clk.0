@@ -1,86 +1,137 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [RESEND PATCH] clk: rockchip: disable init state before mmc card
+ initialization
+To: Heiko Stuebner <heiko@sntech.de>
+References: <1440404863-14350-1-git-send-email-shawn.lin@rock-chips.com>
+ <120036049.vlT25D4un8@phil>
+Cc: shawn.lin@rock-chips.com, Stephen Boyd <sboyd@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Bintian Wang <bintian.wang@huawei.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Jian Zhang <zhangjian001@hisilicon.com>,
-	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
-	Haoju Mo <mohaoju@hisilicon.com>,
-	Dan Zhao <dan.zhao@hisilicon.com>,
-	sunzhaosheng@hisilicon.com,
-	victor.lixin@hisilicon.com
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v3 3/5] dt-bindings: clk: Hi6220: Document stub clock driver
-Date: Mon,  3 Aug 2015 09:13:36 +0800
-Message-Id: <1438564418-15948-4-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
-References: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
+	linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <55DB23F8.1000704@rock-chips.com>
+Date: Mon, 24 Aug 2015 22:02:32 +0800
+MIME-Version: 1.0
+In-Reply-To: <120036049.vlT25D4un8@phil>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Document the new compatible for stub clock driver which is used for CPU
-and DDR's dynamic frequency scaling.
+On 2015/8/24 18:01, Heiko Stuebner wrote:
+> Hi Shawn,
+>
+> Am Montag, 24. August 2015, 16:27:43 schrieb Shawn Lin:
+>> mmc host controller's IO input/output timing is unpredictable if
+>> bootloader execute tuning for HS200 mode. It might make kernel failed
+>> to initialize mmc card in identification mode. The root cause is
+>> tuning phase and degree setting for HS200 mode in bootloader aren't
+>> applicable to that of identification mode in kernel stage. Anyway, we
+>> can't force all bootloaders to disable tuning phase and degree setting
+>> before into kernel. Simply disable it in rockchip_clk_register_mmc.
+>>
+>> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+>>
+>> ---
+>>
+>>   drivers/clk/rockchip/clk-mmc-phase.c | 20 ++++++++++++++++++++
+>>   1 file changed, 20 insertions(+)
+>>
+>> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c
+>> b/drivers/clk/rockchip/clk-mmc-phase.c index e9f8df32..ae21592 100644
+>> --- a/drivers/clk/rockchip/clk-mmc-phase.c
+>> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
+>> @@ -38,6 +38,9 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw
+>> *hw, #define ROCKCHIP_MMC_DEGREE_MASK 0x3
+>>   #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
+>>   #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
+>> +#define ROCKCHIP_MMC_INIT_STATE_DISABLE (0x1)
+>> +#define ROCKCHIP_MMC_INIT_STATE_SHIFT (1)
+>> +#define ROCKCHIP_MMC_INIT_STATE_MASK  (0x1)
+>
+> you don't need the "()" around primitive values. Also I don't think you need
+> the second MASK attribute, doing
+> 	writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_DISABLE,
+> 				     ROCKCHIP_MMC_INIT_STATE_DISABLE,
+> 				     mmc_clock->shift),
+>
+> should be enough. And thirdly I'm undecided about the naming of the constant.
+> The manual describes the init_state as "Assert init_state to soft reset the
+> CLKGEN.", so I guess I'd prefer
+>
+> 	ROCKCHIP_MMC_INIT_STATE_RESET
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- .../devicetree/bindings/clock/hi6220-clock.txt        | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+Thanks, Heiko.
 
-diff --git a/Documentation/devicetree/bindings/clock/hi6220-clock.txt b/Documentation/devicetree/bindings/clock/hi6220-clock.txt
-index 259e30a..e4d5fea 100644
---- a/Documentation/devicetree/bindings/clock/hi6220-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/hi6220-clock.txt
-@@ -15,19 +15,36 @@ Required Properties:
- 	- "hisilicon,hi6220-sysctrl"
- 	- "hisilicon,hi6220-mediactrl"
- 	- "hisilicon,hi6220-pmctrl"
-+	- "hisilicon,hi6220-stub-clk"
- 
- - reg: physical base address of the controller and length of memory mapped
-   region.
- 
- - #clock-cells: should be 1.
- 
--For example:
-+Optional Properties:
-+
-+- hisilicon,hi6220-clk-sram: phandle to the syscon managing the SoC internal sram;
-+  the driver need use the sram to pass parameters for frequency change.
-+
-+- mboxes: use the label reference for the mailbox as the first parameter, the
-+  second parameter is the channel number.
-+
-+Example 1:
- 	sys_ctrl: sys_ctrl@f7030000 {
- 		compatible = "hisilicon,hi6220-sysctrl", "syscon";
- 		reg = <0x0 0xf7030000 0x0 0x2000>;
- 		#clock-cells = <1>;
- 	};
- 
-+Example 2:
-+	stub_clock: stub_clock {
-+		compatible = "hisilicon,hi6220-stub-clk";
-+		hisilicon,hi6220-clk-sram = <&sram>;
-+		#clock-cells = <1>;
-+		mboxes = <&mailbox 1>;
-+	};
-+
- Each clock is assigned an identifier and client nodes use this identifier
- to specify the clock which they consume.
- 
+Actually, I'm either not so sure how to naming this bit since if we are 
+used to calling a bit, reset bit, which I thought it should at least do 
+some reset either to state machine or to register value. But obvious it 
+doesn't. Moreover, Assert/Dis-assert seems like disable/enable from my 
+point. Anyway, ROCKCHIP_MMC_INIT_STATE_RESET is okay for me, but I think 
+I should add some comments for these code.
+
+>
+> or so
+>
+>>
+>>   #define PSECS_PER_SEC 1000000000000LL
+>>
+>> @@ -119,6 +122,21 @@ static const struct clk_ops rockchip_mmc_clk_ops = {
+>>   	.set_phase	= rockchip_mmc_set_phase,
+>>   };
+>>
+>> +static void rockchip_clk_mmc_disable_init(struct rockchip_mmc_clock
+>
+> I guess similar to the thoughts above, simply name this
+> 	rockchip_clk_mmc_reset()
+>
+> or alternatively just do the reset in rockchip_clk_register_mmc directly:
+>
+> if (mmc_clock->shift == ROCKCHIP_MMC_INIT_STATE_SHIFT))
+> 	writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_DISABLE,
+> 				     ROCKCHIP_MMC_INIT_STATE_MASK,
+> 			     mmc_clock->shift),
+> 	       mmc_clock->reg);
+>
+> as the pr_debug does not really serve a purpose.
+>
+
+Okay, rockchip_clk_mmc_reset is coming in v2 :)
+
+>
+> Heiko
+>
+>> *mmc_clock) +{
+>> +	if (mmc_clock->shift != ROCKCHIP_MMC_INIT_STATE_SHIFT)
+>> +		return;
+>> +
+>> +	writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_DISABLE,
+>> +			     ROCKCHIP_MMC_INIT_STATE_MASK,
+>> +			     mmc_clock->shift),
+>> +	       mmc_clock->reg);
+>> +
+>> +	pr_debug("%s: clear mmc init state to %d", __func__,
+>> +		 (readl(mmc_clock->reg) >> (mmc_clock->shift)) &
+>> +		 ROCKCHIP_MMC_INIT_STATE_MASK);
+>> +}
+>> +
+>>   struct clk *rockchip_clk_register_mmc(const char *name,
+>>   				const char *const *parent_names, u8 num_parents,
+>>   				void __iomem *reg, int shift)
+>> @@ -139,6 +157,8 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+>>   	mmc_clock->reg = reg;
+>>   	mmc_clock->shift = shift;
+>>
+>> +	rockchip_clk_mmc_disable_init(mmc_clock);
+>> +
+>>   	if (name)
+>>   		init.name = name;
+>
+>
+>
+>
+
+
 -- 
-1.9.1
+Best Regards
+Shawn Lin
+
