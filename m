@@ -1,75 +1,66 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Dan Carpenter <dan.carpenter@oracle.com>, Tomasz Figa <tomasz.figa@gmail.com>,
- Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
- Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- linux-clk@vger.kernel.org,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: samsung: fix cpu clock's flags checking
-Date: Fri, 28 Aug 2015 12:46:05 +0200
-Message-id: <7248406.UkvN4Bv1cx@amdc1976>
-In-reply-to: 
- <CABxcv=kVL94rdFgNKcxx2JOi9WRFnvhMWrpjEDcEmx7q7cEsgQ@mail.gmail.com>
-References: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
- <5591DD9B.4030507@samsung.com>
- <CABxcv=kVL94rdFgNKcxx2JOi9WRFnvhMWrpjEDcEmx7q7cEsgQ@mail.gmail.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 24 Aug 2015 16:43:19 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] clk: rockchip: register pll mux before pll itself
+Message-ID: <20150824234319.GG14330@codeaurora.org>
+References: <7060610.CC2Q1RMG2L@phil>
+ <CAD=FV=UG_QkU0W5tpb3Y7zxuq6X7dtQmC4m5_j9vMtJgjdiquQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAD=FV=UG_QkU0W5tpb3Y7zxuq6X7dtQmC4m5_j9vMtJgjdiquQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-Michael/Sylwester, could you please merge this patch?
-
-It is a bugfix for ddeac8d968d41d13a52582d6e80395a329e9b1ff ("clk:
-samsung: add infrastructure to register cpu clocks") which got
-merged in v4.2-rc1.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-On Tuesday, June 30, 2015 08:27:36 AM Javier Martinez Canillas wrote:
-> On Tue, Jun 30, 2015 at 2:06 AM, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
-> > On 30.06.2015 02:29, Bartlomiej Zolnierkiewicz wrote:
-> >> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
-> >> incorrectly used as a bit numbers.  Fix it.
-> >>
-> >> Tested on Exynos4210 based Origen board and on Exynos5250 based
-> >> Arndale board.
-> >>
-> >> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> >> Cc: Michael Turquette <mturquette@baylibre.com>
-> >> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> >> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> >> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> >> ---
-> >>  drivers/clk/samsung/clk-cpu.c | 10 +++++-----
-> >>  1 file changed, 5 insertions(+), 5 deletions(-)
+On 08/24, Doug Anderson wrote:
+> Heiko
+> 
+> On Wed, Aug 19, 2015 at 6:06 AM, Heiko Stuebner <heiko@sntech.de> wrote:
+> > The structure is xin24m -> pll -> pll-mux (xin24m,pll,xin32k). The pll
+> > does have an init callback to make sure the boot-selected frequency is
+> > using the expected pll settings and resets the same frequency using
+> > the values provided in the driver if necessary.
 > >
-> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > The setting itself also involves remuxing the pll-mux temporarily to
+> > the xin24m source to let the new pll rate settle. Until now this worked
+> > flawlessly, even when it had the flaw of accessing the mux settings
+> > before the mux actually got registered.
 > >
-> 
-> Looks good to me as well.
-> 
-> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> 
-> > Best regards,
-> > Krzysztof
+> > With the recent clock-core conversions this flaw became apparent in
+> > null pointer dereference in
+> > [<c03fc400>] (clk_hw_get_num_parents) from [<c0400df0>] (clk_mux_get_parent+0x14/0xc8)
+> > [<c0400ddc>] (clk_mux_get_parent) from [<c040246c>] (rockchip_rk3066_pll_set_rate+0xd8/0x320)
 > >
+> > So to fix that, simply register the pll-mux before the pll, so that
+> > it will be fully initialized when the pll clock executes its init-
+> > callback and possibly touches the pll-mux clock.
+> >
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> > This only surfaced with the clk_core changes for 4.3, so should
+> > probably just go on top.
+> >
+> >  drivers/clk/rockchip/clk-pll.c | 63 +++++++++++++++++++++---------------------
+> >  1 file changed, 32 insertions(+), 31 deletions(-)
 > 
-> Best regards,
-> Javier
+> Fixes boot crash on rk3288-veyron-jerry on next-20150824.  It'd be
+> super great to get this landed somewhere so that we can boot linuxnext
+> again.  :)
+> 
+> Tested-by: Douglas Anderson <dianders@chromium.org>
+
+So I understand the fix, but how could it have ever possibly
+worked flawlessly? clk_mux_get_parent() should have returned
+-EINVAL through that u8 which would have meant that the check in
+rockchip_rk3066_pll_set_rate() for cur_parent == PLL_MODE_NORM
+would never have been true, and we would never have switched the
+PLL mux over. I guess we've been getting away with this because
+we don't need to actually switch the mux at this time?
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
