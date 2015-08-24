@@ -1,148 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 3 Aug 2015 11:18:45 +0100
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "arm@kernel.org" <arm@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Punit Agrawal <Punit.Agrawal@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v6 0/8] ARM64: juno: add SCPI mailbox protocol, clock and
- CPUFreq support
-Message-ID: <20150803101845.GU20890@e106497-lin.cambridge.arm.com>
-References: <1438364591-1144-1-git-send-email-sudeep.holla@arm.com>
-MIME-Version: 1.0
-In-Reply-To: <1438364591-1144-1-git-send-email-sudeep.holla@arm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [RESEND PATCH] clk: rockchip: disable init state before mmc card initialization
+Date: Mon, 24 Aug 2015 16:27:43 +0800
+Message-Id: <1440404863-14350-1-git-send-email-shawn.lin@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 31, 2015 at 06:43:03PM +0100, Sudeep Holla wrote:
-> Hi ARM-SoC guys,
-> 
-> It has been on the list for a while and have got all the necessary ACKs.
-> Can you please pull this series for v4.3 ?
-> 
-> Regards,
-> Sudeep
-> 
-> This patch series adds support for:
->   1. SCPI(System Control and Power Interface) mailbox protocol driver.
->      It uses ARM MHU mailbox controller driver on Juno but can work with
->      any mailbox controllers using standard mailbox APIs
->   2. Add support for clocks provided by SCP firmware through the SCPI
->      interface
->   3. Using the existing arm_big_little cpufreq driver and the newly
->      added SCPI clock driver, it also adds support for CPU DVFS on
->      ARM64 JUNO development platforms.
+mmc host controller's IO input/output timing is unpredictable if
+bootloader execute tuning for HS200 mode. It might make kernel failed
+to initialize mmc card in identification mode. The root cause is
+tuning phase and degree setting for HS200 mode in bootloader aren't
+applicable to that of identification mode in kernel stage. Anyway, we
+can't force all bootloaders to disable tuning phase and degree setting
+before into kernel. Simply disable it in rockchip_clk_register_mmc.
 
-Hi Sudeep,
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-Is there a branch where I can pull this series from?
+---
 
-Best regards,
-Liviu
+ drivers/clk/rockchip/clk-mmc-phase.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-> 
-> The SCPI protocol document is available @[1],[2]
-> 
-> Changes v5->v6:
-> 	- Minor review comments on clock bindings and clock driver
-> 	- Added all the ACKs necessary
-> 
-> Changes v4->v5:
-> 	- Updated the SCPI clock bindings to correct the clock specifier
-> 	  usage and other minor updates as per review feedback
-> 	- Updated clock driver to use SCPI specifier clock specifier
-> 	  decode function
-> 	- Minor reshuffling in Juno DTS files, no functionality change
-> 
-> Changes v3->v4:
-> 	- Updated the SCPI binding based on MarkR's feedback
-> 	- Updated SCPI clock driver to incorporate Stephen Boyd's review
-> 	  comments + used clk_set_rate_range to limit the clock range
-> 	- Since no major changes are expected in SCPI DT, updated the
-> 	  Juno DTS to support SCPI and dependent device nodes.
-> 
-> Changes v2->v3:
-> 	- Minor fix in SCPI driver and added Tixy's reviewed-by tag
-> 	- Updated scpi clock driver to incorporate all the comments from
-> 	  Stephen
-> 	- Added Viresh's ack
-> 
-> Changes v1->v2:
-> 	- Updated the token handling in scpi driver as per Tixy's
-> 	  suggestion along with other review comments
-> 	- Removed multiple drivers in scpi clock as Lorenzo suggested
-> 	- Added free_opp_table in scpi-cpufreq as Viresh suggested
-> 	- Separated the DT binding document
-> 	- Moved SCPI protocol driver to drivers/firmware
-> 
-> [1] http://community.arm.com/servlet/JiveServlet/download/8401-45-18326/DUI0922B_scp_message_interface.pdf
-> [2] https://wiki.linaro.org/ARM/Juno?action=AttachFile&do=get&target=DUI0922B_scp_message_interface.pdf
-> v1: https://lkml.org/lkml/2015/4/27/232
-> v2: https://lkml.org/lkml/2015/5/14/470
-> v3: https://lkml.org/lkml/2015/5/27/220
-> v4: https://lkml.org/lkml/2015/6/8/178
-> v5: https://lkml.org/lkml/2015/7/23/270
-> 
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> 
-> Sudeep Holla (8):
->   Documentation: add DT binding for ARM System Control and Power
->     Interface(SCPI) protocol
->   firmware: add support for ARM System Control and Power Interface(SCPI)
->     protocol
->   clk: add support for clocks provided by SCP(System Control Processor)
->   clk: scpi: add support for cpufreq virtual device
->   cpufreq: arm_big_little: add SCPI interface driver
->   arm64: dts: add SRAM, MHU mailbox and SCPI support on Juno
->   arm64: dts: add CPU topology on Juno
->   arm64: dts: add clock support for all the cpus
-> 
->  Documentation/devicetree/bindings/arm/arm,scpi.txt | 150 +++++
->  MAINTAINERS                                        |  10 +
->  arch/arm64/boot/dts/arm/juno-base.dtsi             |  54 ++
->  arch/arm64/boot/dts/arm/juno-r1.dts                |  32 +
->  arch/arm64/boot/dts/arm/juno.dts                   |  32 +
->  drivers/clk/Kconfig                                |  10 +
->  drivers/clk/Makefile                               |   1 +
->  drivers/clk/clk-scpi.c                             | 325 ++++++++++
->  drivers/cpufreq/Kconfig.arm                        |   9 +
->  drivers/cpufreq/Makefile                           |   1 +
->  drivers/cpufreq/scpi-cpufreq.c                     | 124 ++++
->  drivers/firmware/Kconfig                           |  19 +
->  drivers/firmware/Makefile                          |   1 +
->  drivers/firmware/arm_scpi.c                        | 711 +++++++++++++++++++++
->  include/linux/scpi_protocol.h                      |  61 ++
->  15 files changed, 1540 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/arm,scpi.txt
->  create mode 100644 drivers/clk/clk-scpi.c
->  create mode 100644 drivers/cpufreq/scpi-cpufreq.c
->  create mode 100644 drivers/firmware/arm_scpi.c
->  create mode 100644 include/linux/scpi_protocol.h
-> 
-> -- 
-> 1.9.1
-> 
-
+diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+index e9f8df32..ae21592 100644
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -38,6 +38,9 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw *hw,
+ #define ROCKCHIP_MMC_DEGREE_MASK 0x3
+ #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
+ #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
++#define ROCKCHIP_MMC_INIT_STATE_DISABLE (0x1)
++#define ROCKCHIP_MMC_INIT_STATE_SHIFT (1)
++#define ROCKCHIP_MMC_INIT_STATE_MASK  (0x1)
+ 
+ #define PSECS_PER_SEC 1000000000000LL
+ 
+@@ -119,6 +122,21 @@ static const struct clk_ops rockchip_mmc_clk_ops = {
+ 	.set_phase	= rockchip_mmc_set_phase,
+ };
+ 
++static void rockchip_clk_mmc_disable_init(struct rockchip_mmc_clock *mmc_clock)
++{
++	if (mmc_clock->shift != ROCKCHIP_MMC_INIT_STATE_SHIFT)
++		return;
++
++	writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_DISABLE,
++			     ROCKCHIP_MMC_INIT_STATE_MASK,
++			     mmc_clock->shift),
++	       mmc_clock->reg);
++
++	pr_debug("%s: clear mmc init state to %d", __func__,
++		 (readl(mmc_clock->reg) >> (mmc_clock->shift)) &
++		 ROCKCHIP_MMC_INIT_STATE_MASK);
++}
++
+ struct clk *rockchip_clk_register_mmc(const char *name,
+ 				const char *const *parent_names, u8 num_parents,
+ 				void __iomem *reg, int shift)
+@@ -139,6 +157,8 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+ 	mmc_clock->reg = reg;
+ 	mmc_clock->shift = shift;
+ 
++	rockchip_clk_mmc_disable_init(mmc_clock);
++
+ 	if (name)
+ 		init.name = name;
+ 
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+2.3.7
+
 
