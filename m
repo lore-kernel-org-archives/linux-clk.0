@@ -1,54 +1,74 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Wed, 12 Aug 2015 08:51:18 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
-Message-ID: <20150812075118.GU18282@x1>
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
- <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
- <20150810144811.GN3249@x1>
- <20150810185516.2416.32293@quantum>
- <20150811084329.GA13374@x1>
- <55C9C82F.6060401@st.com>
- <CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com>
- <20150811170928.2416.70005@quantum>
- <20150811181713.GR18282@x1>
- <CAMuHMdXfH6JQfMnJwRA9f0pD0qbc3bNwPJd38c6=BuAgOxZ-fg@mail.gmail.com>
+Return-Path: <peter.ujfalusi@ti.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+To: Tero Kristo <t-kristo@ti.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: ti: clk-7xx: Remove hardwired ABE clock configuration
+Date: Mon, 24 Aug 2015 10:35:02 +0300
+Message-ID: <1440401702-32420-1-git-send-email-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <CAMuHMdXfH6JQfMnJwRA9f0pD0qbc3bNwPJd38c6=BuAgOxZ-fg@mail.gmail.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 12 Aug 2015, Geert Uytterhoeven wrote:
+The ABE related clocks should be configured via DT and not have it wired
+inside of the kernel.
 
-> On Tue, Aug 11, 2015 at 8:17 PM, Lee Jones <lee.jones@linaro.org> wrote:
-> >> I think that we can come up with a reasonable DT wrapper around the
-> >> flag. I will be ecstatic if we can agree that the meaning of the flag
-> >> can be tweaked just a bit to mean, "prevent this critical clock from
-> >> being disabled, as it was enabled out of reset or by the bootloader,
-> >> until a driver claims it and calls clk_prepare_enable".
-> >
-> > Easy, how about:
-> >
-> > 'prevent_this_critical_clock_from_being_disabled_as_it_was_enabled_out_of_reset_or_by_the_bootloader_until_a_driver_claims_it_and_calls_clk_prepare_enable'
-> 
-> To make it less Linux-centric:
-> 
-> "Prevent this critical clock from being disabled implicitly by the OS, as it
->  was enabled out of reset or by the bootloader, until it's explicitly managed
->  by a driver."
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+---
+Hi Tero,
 
-Hmm... I think you missed the giggles. :)
+the ABE PLL configuration can, and will be done for dra7xx in DT with the
+assigned-clocks/rate/parent feature so no need to have this anymore.
 
+Regards,
+Peter
+
+ drivers/clk/ti/clk-7xx.c | 18 +-----------------
+ 1 file changed, 1 insertion(+), 17 deletions(-)
+
+diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+index 9b5b289e6334..a911d7de3377 100644
+--- a/drivers/clk/ti/clk-7xx.c
++++ b/drivers/clk/ti/clk-7xx.c
+@@ -18,7 +18,6 @@
+ 
+ #include "clock.h"
+ 
+-#define DRA7_DPLL_ABE_DEFFREQ				180633600
+ #define DRA7_DPLL_GMAC_DEFFREQ				1000000000
+ #define DRA7_DPLL_USB_DEFFREQ				960000000
+ 
+@@ -313,27 +312,12 @@ static struct ti_dt_clk dra7xx_clks[] = {
+ int __init dra7xx_dt_clk_init(void)
+ {
+ 	int rc;
+-	struct clk *abe_dpll_mux, *sys_clkin2, *dpll_ck, *hdcp_ck;
++	struct clk *dpll_ck, *hdcp_ck;
+ 
+ 	ti_dt_clocks_register(dra7xx_clks);
+ 
+ 	omap2_clk_disable_autoidle_all();
+ 
+-	abe_dpll_mux = clk_get_sys(NULL, "abe_dpll_sys_clk_mux");
+-	sys_clkin2 = clk_get_sys(NULL, "sys_clkin2");
+-	dpll_ck = clk_get_sys(NULL, "dpll_abe_ck");
+-
+-	rc = clk_set_parent(abe_dpll_mux, sys_clkin2);
+-	if (!rc)
+-		rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ);
+-	if (rc)
+-		pr_err("%s: failed to configure ABE DPLL!\n", __func__);
+-
+-	dpll_ck = clk_get_sys(NULL, "dpll_abe_m2x2_ck");
+-	rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ * 2);
+-	if (rc)
+-		pr_err("%s: failed to configure ABE DPLL m2x2!\n", __func__);
+-
+ 	dpll_ck = clk_get_sys(NULL, "dpll_gmac_ck");
+ 	rc = clk_set_rate(dpll_ck, DRA7_DPLL_GMAC_DEFFREQ);
+ 	if (rc)
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.5.0
