@@ -1,81 +1,52 @@
-Return-Path: <vaibhav.hiremath@linaro.org>
-Return-Path: <vaibhav.hiremath@linaro.org>
-Message-ID: <55DC2B10.3080200@linaro.org>
-Date: Tue, 25 Aug 2015 14:15:04 +0530
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-MIME-Version: 1.0
-To: Lee Jones <lee.jones@linaro.org>
-CC: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
- mturquette@baylibre.com, k.kozlowski@samsung.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH-v2 2/5] mfd: 88pm800: Update the header file with 32K
- clk related macros
-References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org> <1440442594-3102-4-git-send-email-vaibhav.hiremath@linaro.org> <20150825075556.GG19409@x1>
-In-Reply-To: <20150825075556.GG19409@x1>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 4/4] ARM: STi: DT: Add support for stih418 A9 pll
+Date: Mon, 24 Aug 2015 11:40:51 +0200
+Message-Id: <1440409251-11166-5-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1440409251-11166-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1440409251-11166-1-git-send-email-gabriel.fernandez@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Add support for new PLL-type for stih418 A9-PLL.
 
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+---
+ arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Tuesday 25 August 2015 01:25 PM, Lee Jones wrote:
-> On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
->
->> Update header file with required macros for 32KHz buffered clock
->> output of 88PM800 family of device.
->> These macros will be used in clk provider driver.
->>
->> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
->> ---
->>   include/linux/mfd/88pm80x.h | 12 ++++++++++++
->>   1 file changed, 12 insertions(+)
->>
->> diff --git a/include/linux/mfd/88pm80x.h b/include/linux/mfd/88pm80x.h
->> index 122cfd2..0215d5f 100644
->> --- a/include/linux/mfd/88pm80x.h
->> +++ b/include/linux/mfd/88pm80x.h
->> @@ -91,6 +91,7 @@ enum {
->>   /* Referance and low power registers */
->>   #define PM800_LOW_POWER1		(0x20)
->>   #define PM800_LOW_POWER2		(0x21)
->> +#define PM800_LOW_POWER2_XO_LJ_EN	BIT(5)
->
-> Some people add an extra space for register bits, which I quite like.
->
-> So:
->
-> #define SOME_REGISTER_ADDRESS	0x123
-> #define  SOME_BIT_VALUE		BIT(4)
->
-> Feel free to use it, or not.
->
->>   #define PM800_LOW_POWER_CONFIG3		(0x22)
->>   #define PM800_LDOBK_FREEZE		BIT(7)
->> @@ -138,6 +139,13 @@ enum {
->>   #define PM800_ALARM			BIT(5)
->>   #define PM800_RTC1_USE_XO		BIT(7)
->>
->> +#define PM800_32K_OUTX_SEL_MASK		0x3
->> +/* 32KHz clk output sel mode */
->> +#define PM800_32K_OUTX_SEL_ZERO		0x0
->> +#define PM800_32K_OUTX_SEL_INT_32KHZ	0x1
->> +#define PM800_32K_OUTX_SEL_XO_32KHZ	0x2
->> +#define PM800_32K_OUTX_SEL_HIZ		0x3
->> +
->>   /* Regulator Control Registers: BUCK1,BUCK5,LDO1 have DVC */
->>
->>   /* buck registers */
->> @@ -208,6 +216,10 @@ enum {
->>   #define PM800_PMOD_MEAS1		0x52
->>   #define PM800_PMOD_MEAS2		0x53
->>
->> +/* Oscillator control */
->> +#define PM800_OSC_CNTRL1		0x50
->> +#define PM800_OSC_CNTRL1_OSC_FREERUN_EN	BIT(1)
->
-> 0x50 goes before 0x52 (and 0x51 if it's there).
+diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
+index 148e177..ae6d997 100644
+--- a/arch/arm/boot/dts/stih418-clock.dtsi
++++ b/arch/arm/boot/dts/stih418-clock.dtsi
+@@ -44,7 +44,7 @@
+ 
+ 			clockgen_a9_pll: clockgen-a9-pll {
+ 				#clock-cells = <1>;
+-				compatible = "st,stih407-plls-c32-a9", "st,clkgen-plls-c32";
++				compatible = "st,stih418-plls-c28-a9", "st,clkgen-plls-c32";
+ 
+ 				clocks = <&clk_sysin>;
+ 
+-- 
+1.9.1
 
-Will reorder in next version.
-
-Thanks,
-Vaibhav
