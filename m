@@ -1,72 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55DACCEF.8040004@linaro.org>
+Date: Mon, 24 Aug 2015 09:51:11 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXhroy4BVRyeeu2uEnPvVehXNjac09RKWr49LA=0Yk=0g@mail.gmail.com>
-References: <87lhcz7u2i.wl%kuninori.morimoto.gx@renesas.com>
-	<87k2sj7tzs.wl%kuninori.morimoto.gx@renesas.com>
-	<20150825224638.GL19120@codeaurora.org>
-	<CAMuHMdXhroy4BVRyeeu2uEnPvVehXNjac09RKWr49LA=0Yk=0g@mail.gmail.com>
-Date: Fri, 28 Aug 2015 19:52:43 +0900
-Message-ID: <CANqRtoTtAoDs72mQACf=0H2DZGSC=ejcECOcjBwYNzNrHxHevg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: shmobile: add Renesas R-Car Gen3 CPG support
-From: Magnus Damm <magnus.damm@gmail.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>
+CC: Daniel Kurtz <djkurtz@chromium.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	James Liao <jamesjj.liao@mediatek.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	srv_heupstream <srv_heupstream@mediatek.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Linux-SH <linux-sh@vger.kernel.org>,
-	Linux-Kernel <linux-kernel@vger.kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Olof Johansson <olof@lixom.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-mediatek@lists.infradead.org,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 1/5] clocksource: mediatek: do not enable GPT_CLK_EVT
+ when setup
+References: <CAGS+omD8k_Cfxv3bYyjmjtLbiavo-WmJPn0Z-CBhN_nnv65Tag@mail.gmail.com>		 <1437552878-3684-1-git-send-email-yingjoe.chen@mediatek.com>		 <55CC56C4.8080201@linaro.org> <1439820602.3414.12.camel@mtksdaap41>	 <55D5E40A.6080904@linaro.org> <1440167950.20169.29.camel@mtksdaap41>
+In-Reply-To: <1440167950.20169.29.camel@mtksdaap41>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+On 08/21/2015 04:39 PM, Yingjoe Chen wrote:
 
-On Wed, Aug 26, 2015 at 4:29 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Stephen,
+[ ... ]
+
+>>    - Does the spurious interrupt occurs *every* time ? at each boot ?
 >
-> On Wed, Aug 26, 2015 at 12:46 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->>> --- /dev/null
->>> +++ b/drivers/clk/shmobile/clk-rcar-gen3.c
+> Yes. If you applied this series to enable mtk timer without this fix on
+> mt8173 or mt8135 you can reproduce it. It occurs for every boot.
 >
->>> +
->>> +/*
->>> + * Reset register definitions.
->>> + */
->>> +#define MODEMR 0xe6160060
->>> +
->>> +static u32 rcar_gen3_read_mode_pins(void)
->>> +{
->>> +     static u32 mode;
->>> +     static bool mode_valid;
->>> +
->>> +     if (!mode_valid) {
->>> +             void __iomem *modemr = ioremap_nocache(MODEMR, 4);
->>> +
->>> +             BUG_ON(!modemr);
->>> +             mode = ioread32(modemr);
->>> +             iounmap(modemr);
->>> +             mode_valid = true;
->>> +     }
->>> +
->>> +     return mode;
->>> +}
->>
->> Perhaps this should be read using a syscon?
->
-> Like "[PATCH/RFC 00/11] ARM: shmobile: Let CPG use syscon for MD pin values"
-> (http://www.spinics.net/lists/linux-clk/msg01478.html)?
->
-> It wasn't so well received...
+> It crash before uart driver is ready, so you'll have to use earlycon to
+> see the crash log.
 
-I happen to think it is a great idea. At the same time I'm too lazy to
-step up. =)
+Can you give me the earlycon params ?
 
-Shall we reconsider making it mandatory for R-Car Gen3?
+Thanks.
 
-Cheers,
+  -- Daniel
 
-/ magnus
+-- 
+  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
