@@ -1,67 +1,64 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <govindraj.raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Govindraj Raja <govindraj.raja@imgtec.com>
-Subject: [PATCH v2 2/4] clk: pistachio: Fix override of clk-pll settings from boot loader
-Date: Fri, 7 Aug 2015 17:20:11 +0100
-Message-ID: <1438964413-18876-3-git-send-email-govindraj.raja@imgtec.com>
-In-Reply-To: <1438964413-18876-1-git-send-email-govindraj.raja@imgtec.com>
-References: <1438964413-18876-1-git-send-email-govindraj.raja@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: robh+dt@kernel.org, mturquette@baylibre.com, lee.jones@linaro.org,
+	k.kozlowski@samsung.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Subject: [PATCH-v2 2/5] mfd: 88pm800: Update the header file with 32K clk related macros
+Date: Tue, 25 Aug 2015 00:26:31 +0530
+Message-Id: <1440442594-3102-4-git-send-email-vaibhav.hiremath@linaro.org>
+In-Reply-To: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
+References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+Update header file with required macros for 32KHz buffered clock
+output of 88PM800 family of device.
+These macros will be used in clk provider driver.
 
-PLL enable callbacks are overriding PLL mode (int/frac) and
-Noise reduction (on/off) settings set by the boot loader which
-results in the incorrect clock rate.
-
-PLL mode and noise reduction are defined by the DSMPD and DACPD bits
-of the PLL control register. PLL .enable() callbacks enable PLL
-by deasserting all power-down bits of the PLL control register,
-including DSMPD and DACPD bits, which is not necessary since
-these bits don't actually enable/disable PLL.
-
-This commit fixes the problem by removing DSMPD and DACPD bits
-from the "PLL enable" mask.
-
-Reviewed-by: Andrew Bresitcker <abrestic@chromium.org>
-Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
-Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
 ---
- drivers/clk/pistachio/clk-pll.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ include/linux/mfd/88pm80x.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
-index 68066ef..9a38a2b 100644
---- a/drivers/clk/pistachio/clk-pll.c
-+++ b/drivers/clk/pistachio/clk-pll.c
-@@ -134,8 +134,7 @@ static int pll_gf40lp_frac_enable(struct clk_hw *hw)
- 	u32 val;
+diff --git a/include/linux/mfd/88pm80x.h b/include/linux/mfd/88pm80x.h
+index 122cfd2..0215d5f 100644
+--- a/include/linux/mfd/88pm80x.h
++++ b/include/linux/mfd/88pm80x.h
+@@ -91,6 +91,7 @@ enum {
+ /* Referance and low power registers */
+ #define PM800_LOW_POWER1		(0x20)
+ #define PM800_LOW_POWER2		(0x21)
++#define PM800_LOW_POWER2_XO_LJ_EN	BIT(5)
  
- 	val = pll_readl(pll, PLL_CTRL3);
--	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_DACPD |
--		 PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
-+	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
- 		 PLL_FRAC_CTRL3_FOUT4PHASEPD | PLL_FRAC_CTRL3_FOUTVCOPD);
- 	pll_writel(pll, val, PLL_CTRL3);
+ #define PM800_LOW_POWER_CONFIG3		(0x22)
+ #define PM800_LDOBK_FREEZE		BIT(7)
+@@ -138,6 +139,13 @@ enum {
+ #define PM800_ALARM			BIT(5)
+ #define PM800_RTC1_USE_XO		BIT(7)
  
-@@ -277,7 +276,7 @@ static int pll_gf40lp_laint_enable(struct clk_hw *hw)
- 	u32 val;
++#define PM800_32K_OUTX_SEL_MASK		0x3
++/* 32KHz clk output sel mode */
++#define PM800_32K_OUTX_SEL_ZERO		0x0
++#define PM800_32K_OUTX_SEL_INT_32KHZ	0x1
++#define PM800_32K_OUTX_SEL_XO_32KHZ	0x2
++#define PM800_32K_OUTX_SEL_HIZ		0x3
++
+ /* Regulator Control Registers: BUCK1,BUCK5,LDO1 have DVC */
  
- 	val = pll_readl(pll, PLL_CTRL1);
--	val &= ~(PLL_INT_CTRL1_PD | PLL_INT_CTRL1_DSMPD |
-+	val &= ~(PLL_INT_CTRL1_PD |
- 		 PLL_INT_CTRL1_FOUTPOSTDIVPD | PLL_INT_CTRL1_FOUTVCOPD);
- 	pll_writel(pll, val, PLL_CTRL1);
+ /* buck registers */
+@@ -208,6 +216,10 @@ enum {
+ #define PM800_PMOD_MEAS1		0x52
+ #define PM800_PMOD_MEAS2		0x53
  
++/* Oscillator control */
++#define PM800_OSC_CNTRL1		0x50
++#define PM800_OSC_CNTRL1_OSC_FREERUN_EN	BIT(1)
++
+ #define PM800_GPADC0_MEAS1		0x54
+ #define PM800_GPADC0_MEAS2		0x55
+ #define PM800_GPADC1_MEAS1		0x56
 -- 
 1.9.1
+
