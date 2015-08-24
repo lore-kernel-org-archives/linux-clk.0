@@ -1,64 +1,96 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <4206643.R1gTHQZqhM@avalon>
+References: <877fpdw3av.wl%kuninori.morimoto.gx@renesas.com>
+	<12310001.Bt8qbPIiMv@avalon>
+	<CAMuHMdWMNLf-fDsiLNFwO05i0cqBHkdM2mwC3GinwWFN4pWFZg@mail.gmail.com>
+	<4206643.R1gTHQZqhM@avalon>
+Date: Mon, 24 Aug 2015 09:51:07 +0200
+Message-ID: <CAMuHMdXdN4JgjUzLaSwqh61bZ3=NvrPHOW1xWjmyD+f=TLXDfg@mail.gmail.com>
+Subject: Re: [PATCH 3/4 v3][RFC] arm64: renesas: Add initial r8a7795 SoC support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Simon <horms@verge.net.au>,
+	Magnus <magnus.damm@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>,
 	linux-clk@vger.kernel.org,
-	kernel@pengutronix.de,
-	patchwork-lst@pengutronix.de
-Subject: [PATCH 2/8] clk: imx25: retain early UART clocks during kernel init
-Date: Thu, 27 Aug 2015 18:39:15 +0200
-Message-Id: <1440693561-28095-3-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
-References: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure to keep UART clocks enabled during kernel init if
-earlyprintk or earlycon are active.
+Hi Laurent,
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- drivers/clk/imx/clk-imx25.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+On Thu, Aug 20, 2015 at 9:48 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Thursday 20 August 2015 09:43:34 Geert Uytterhoeven wrote:
+>> On Wed, Aug 19, 2015 at 11:29 PM, Laurent Pinchart wrote:
+>> >> > Also, while you're thinking about the perfect clock binding, please do
+>> >> > consider dropping clock-output-names if you can. Specifying clock-names
+>> >> > alongside the clocks property inside of the consumer node is a bit more
+>> >> > elegant in my opinion. This is also a bit easier if you think about
+>> >> > expressing your clock data with C inside of your provider driver.
+>> >>
+>> >> Makes sense. I don't think anything relies on the "clock-output-names"
+>> >> ... currently.
+>> >>
+>> >> I was going to use it for identifying the GIC clock, though:
+>> >>
+>> >> --- a/drivers/clk/shmobile/clk-mstp.c
+>> >> +++ b/drivers/clk/shmobile/clk-mstp.c
+>> >> @@ -144,6 +144,9 @@ cpg_mstp_clock_register(const char *name, const char
+>> >> *paren init.name = name;
+>> >>
+>> >>         init.ops = &cpg_mstp_clock_ops;
+>> >>         init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
+>> >>
+>> >> +       /* INTC-SYS is the module clock of the GIC, and must not be
+>> >> disabled */
+>> >> +       if (!strcmp(name, "intc-sys"))
+>> >> +               init.flags |= CLK_ENABLE_HAND_OFF;
+>> >>
+>> >>         init.parent_names = &parent_name;
+>> >>         init.num_parents = 1;
+>> >>
+>> >> (FTR, on R-Car Gen3 the clock is called "intc-ap", not "intc-sys",
+>> >> doh...).
+>> >>
+>> >> This does put some reliance on (undocumented) naming in DT, though, so
+>> >> not
+>> >> having the "clock-output-names" would solve that.
+>> >
+>> > Using the clock name is indeed very messy, let's avoid that.
+>> >
+>> >> However, while "intc-sys"/"intc-ap" (if existent) is always MSTP408,
+>> >> MSTP408 is used for other modules on R-Car Gen1 and most older SoCs. so
+>> >> it would complicate the driver code.
+>> >
+>> > How about setting the flag based on information provided in DT ?
+>>
+>> Like scanning DT for the GIC, and looking for its clock?
+>>
+>> I don't want to add an explicit flag in DT, as it's not a hardware property,
+>> but a deficiency of the current GIC driver/subsystem.
+>
+> What are the changes we can fix the GIC driver in a reasonable time frame ?
 
-diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
-index ec1a4c1dacf1..4322ef409cc6 100644
---- a/drivers/clk/imx/clk-imx25.c
-+++ b/drivers/clk/imx/clk-imx25.c
-@@ -86,6 +86,16 @@ enum mx25_clks {
- 
- static struct clk *clk[clk_max];
- 
-+static void __init imx25_uart_disable_cb(void)
-+{
-+	clk_disable_unprepare(clk[uart_ipg_per]);
-+	clk_disable_unprepare(clk[uart1_ipg]);
-+	clk_disable_unprepare(clk[uart2_ipg]);
-+	clk_disable_unprepare(clk[uart3_ipg]);
-+	clk_disable_unprepare(clk[uart4_ipg]);
-+	clk_disable_unprepare(clk[uart5_ipg]);
-+}
-+
- static int __init __mx25_clocks_init(unsigned long osc_rate,
- 				     void __iomem *ccm_base)
- {
-@@ -233,6 +243,16 @@ static int __init __mx25_clocks_init(unsigned long osc_rate,
- 	 */
- 	clk_set_parent(clk[cko_sel], clk[ipg]);
- 
-+	if (imx_clk_keep_uart()) {
-+		clk_prepare_enable(clk[uart_ipg_per]);
-+		clk_prepare_enable(clk[uart1_ipg]);
-+		clk_prepare_enable(clk[uart2_ipg]);
-+		clk_prepare_enable(clk[uart3_ipg]);
-+		clk_prepare_enable(clk[uart4_ipg]);
-+		clk_prepare_enable(clk[uart5_ipg]);
-+		imx_clk_set_uart_disable_callback(imx25_uart_disable_cb);
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.5.0
+Very low.
+
+The GIC driver uses IRQCHIP_DECLARE(), hence it's initialized from
+of_irq_init() <- irqchip_init() <- init_IRQ() <- start_kernel().
+
+The MSTP clock driver uses CLK_OF_DECLARE(), hence it's initialized from
+of_clk_init() <- time_init() <- start_kernel(), but 7 calls later.
+
+IRQCHIP_DECLARE() doesn't support deferred probing.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvald
