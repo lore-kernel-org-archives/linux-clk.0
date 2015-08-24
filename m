@@ -1,41 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-id: <55D13D55.5030207@samsung.com>
-Date: Mon, 17 Aug 2015 10:48:05 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Chanwoo Choi <cw00.choi@samsung.com>, s.nawrocki@samsung.com,
-	tomasz.figa@gmail.com, kgene@kernel.org
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/4] clk: samsung: exynos3250: Add MMC2 clock
-References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
- <1439264784-30322-3-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1439264784-30322-3-git-send-email-cw00.choi@samsung.com>
-Content-type: text/plain; charset=windows-1252
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: robh+dt@kernel.org, mturquette@baylibre.com, lee.jones@linaro.org,
+	k.kozlowski@samsung.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Subject: [PATCH-v2 5/5] mfd: 88pm800: Add support for clk subdevice
+Date: Tue, 25 Aug 2015 00:26:34 +0530
+Message-Id: <1440442594-3102-7-git-send-email-vaibhav.hiremath@linaro.org>
+In-Reply-To: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
+References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11.08.2015 12:46, Chanwoo Choi wrote:
-> This patch add the MMC2 clocks (mux, divider, gate) of Exynos3250 SoC.
-> 
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos3250.c   | 9 +++++++++
->  include/dt-bindings/clock/exynos3250.h | 7 ++++++-
->  2 files changed, 15 insertions(+), 1 deletion(-)
+This patch adds mfd_cell/clk-subdevice for 88PM800 MFD
+(and family of devices).
 
+Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+---
+ drivers/mfd/88pm800.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-
-Assuming that numbers/addresses are good (reserved in my datasheet) the
-code itself looks good:
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-
-Best regards,
-Krzysztof
-
+diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
+index c4e097d..a928eed 100644
+--- a/drivers/mfd/88pm800.c
++++ b/drivers/mfd/88pm800.c
+@@ -173,6 +173,14 @@ static const struct mfd_cell regulator_devs[] = {
+ 	},
+ };
+ 
++static struct mfd_cell clk_devs[] = {
++	{
++		.name = "88pm80x-clk",
++		.of_compatible = "marvell,88pm800-clk",
++		.id = -1,
++	},
++};
++
+ static const struct regmap_irq pm800_irqs[] = {
+ 	/* INT0 */
+ 	[PM800_IRQ_ONKEY] = {
+@@ -344,6 +352,17 @@ static int device_regulator_init(struct pm80x_chip *chip)
+ 			ARRAY_SIZE(regulator_devs), NULL, 0, NULL);
+ }
+ 
++static int device_clk_init(struct pm80x_chip *chip)
++{
++	if (chip->type == CHIP_PM800)
++		clk_devs[0].name = "88pm800-clk";
++	else if (chip->type == CHIP_PM860)
++		clk_devs[0].name = "88pm860-clk";
++
++	return mfd_add_devices(chip->dev, 0, &clk_devs[0],
++			ARRAY_SIZE(clk_devs), NULL, 0, NULL);
++}
++
+ static int device_irq_init_800(struct pm80x_chip *chip)
+ {
+ 	struct regmap *map = chip->regmap;
+@@ -511,6 +530,12 @@ static int device_800_init(struct pm80x_chip *chip)
+ 		goto out;
+ 	}
+ 
++	ret = device_clk_init(chip);
++	if (ret) {
++		dev_err(chip->dev, "Failed to add clk subdev\n");
++		goto out;
++	}
++
+ 	return 0;
+ out_dev:
+ 	mfd_remove_devices(chip->dev);
+-- 
+1.9.1
 
