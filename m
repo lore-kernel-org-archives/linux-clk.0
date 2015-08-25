@@ -1,169 +1,86 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Nicolas Pitre <nicolas.pitre@linaro.org>, 
+To: Antoine Tenart <antoine.tenart@free-electrons.com>,
+	sebastian.hesselbarth@gmail.com, sboyd@codeaurora.org
 From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <alpine.LFD.2.20.1507281430130.26147@knanqh.ubzr>
-References: <alpine.LFD.2.20.1507281430130.26147@knanqh.ubzr>
-Message-ID: <20150811231416.31346.83289@quantum>
-Subject: Re: [PATCH] drivers/clk: appropriate __init annotation for const data
-Date: Tue, 11 Aug 2015 16:14:16 -0700
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+In-Reply-To: <1439898368-11543-2-git-send-email-antoine.tenart@free-electrons.com>
+Cc: "Antoine Tenart" <antoine.tenart@free-electrons.com>,
+	zmxu@marvell.com, jszhang@marvell.com,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+References: <1439898368-11543-1-git-send-email-antoine.tenart@free-electrons.com>
+ <1439898368-11543-2-git-send-email-antoine.tenart@free-electrons.com>
+Message-ID: <20150825202551.31346.93685@quantum>
+Subject: Re: [PATCH v2 1/6] clk: berlin: move MAX_CLKS out of drivers/clk/berlin
+Date: Tue, 25 Aug 2015 13:25:51 -0700
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Nicolas Pitre (2015-07-28 16:43:20)
+Quoting Antoine Tenart (2015-08-18 04:46:03)
+> Move the MAX_CLKS definition used in the Berlin clock driver outside the
+> driver.
 > 
-> Init data marked const should be annotated with __initconst for
-> correctness and not __initdata.  This also fixes LTO builds that
-> otherwise fail with section mismatch errors.
+> Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+
+> ---
+>  drivers/clk/berlin/bg2.c             | 1 -
+>  drivers/clk/berlin/bg2q.c            | 1 -
+>  include/dt-bindings/clock/berlin2.h  | 2 ++
+>  include/dt-bindings/clock/berlin2q.h | 2 ++
+>  4 files changed, 4 insertions(+), 2 deletions(-)
 > 
-> Signed-off-by: Nicolas Pitre <nico@linaro.org>
-
-Thanks for the patch Nico. Applied.
-
-Regards,
-Mike
-
+> diff --git a/drivers/clk/berlin/bg2.c b/drivers/clk/berlin/bg2.c
+> index 73153fc45ee9..469a2c57e1b4 100644
+> --- a/drivers/clk/berlin/bg2.c
+> +++ b/drivers/clk/berlin/bg2.c
+> @@ -91,7 +91,6 @@
+>   *
+>   */
+>  
+> -#define        MAX_CLKS 41
+>  static struct clk *clks[MAX_CLKS];
+>  static struct clk_onecell_data clk_data;
+>  static DEFINE_SPINLOCK(lock);
+> diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
+> index 221f40c2b850..a27958efab92 100644
+> --- a/drivers/clk/berlin/bg2q.c
+> +++ b/drivers/clk/berlin/bg2q.c
+> @@ -45,7 +45,6 @@
+>  #define REG_SDIO0XIN_CLKCTL    0x0158
+>  #define REG_SDIO1XIN_CLKCTL    0x015c
+>  
+> -#define        MAX_CLKS 27
+>  static struct clk *clks[MAX_CLKS];
+>  static struct clk_onecell_data clk_data;
+>  static DEFINE_SPINLOCK(lock);
+> diff --git a/include/dt-bindings/clock/berlin2.h b/include/dt-bindings/clock/berlin2.h
+> index 0c30800175df..97832b840beb 100644
+> --- a/include/dt-bindings/clock/berlin2.h
+> +++ b/include/dt-bindings/clock/berlin2.h
+> @@ -43,3 +43,5 @@
+>  #define CLKID_VIDEO1           38
+>  #define CLKID_VIDEO2           39
+>  #define CLKID_TWD              40
+> +
+> +#define MAX_CLKS               41
+> diff --git a/include/dt-bindings/clock/berlin2q.h b/include/dt-bindings/clock/berlin2q.h
+> index 287fc3b4afb2..c79af928ae92 100644
+> --- a/include/dt-bindings/clock/berlin2q.h
+> +++ b/include/dt-bindings/clock/berlin2q.h
+> @@ -29,3 +29,5 @@
+>  #define CLKID_SMEMC            24
+>  #define CLKID_PCIE             25
+>  #define CLKID_TWD              26
+> +
+> +#define MAX_CLKS               27
+> -- 
+> 2.5.0
 > 
-> diff --git a/drivers/clk/clk-asm9260.c b/drivers/clk/clk-asm9260.c
-> index 90897af8d9..25308ce09a 100644
-> --- a/drivers/clk/clk-asm9260.c
-> +++ b/drivers/clk/clk-asm9260.c
-> @@ -244,10 +244,10 @@ static const struct asm9260_gate_data asm9260_ahb_gates[] __initconst = {
->                 HW_AHBCLKCTRL1, 16 },
->  };
->  
-> -static const char __initdata *main_mux_p[] =   { NULL, NULL };
-> -static const char __initdata *i2s0_mux_p[] =   { NULL, NULL, "i2s0m_div"};
-> -static const char __initdata *i2s1_mux_p[] =   { NULL, NULL, "i2s1m_div"};
-> -static const char __initdata *clkout_mux_p[] = { NULL, NULL, "rtc"};
-> +static const char *const main_mux_p[] __initconst =   { NULL, NULL };
-> +static const char *const i2s0_mux_p[] __initconst =   { NULL, NULL, "i2s0m_div"};
-> +static const char *const i2s1_mux_p[] __initconst =   { NULL, NULL, "i2s1m_div"};
-> +static const char *const clkout_mux_p[] __initconst = { NULL, NULL, "rtc"};
->  static u32 three_mux_table[] = {0, 1, 3};
->  
->  static struct asm9260_mux_clock asm9260_mux_clks[] __initdata = {
-> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-> index 3f6f7ad394..c316454ef8 100644
-> --- a/drivers/clk/clk-stm32f4.c
-> +++ b/drivers/clk/clk-stm32f4.c
-> @@ -293,7 +293,7 @@ stm32f4_rcc_lookup_clk(struct of_phandle_args *clkspec, void *data)
->         return clks[i];
->  }
->  
-> -static const char *sys_parents[] __initdata =   { "hsi", NULL, "pll" };
-> +static const char *const sys_parents[] __initconst =   { "hsi", NULL, "pll" };
->  
->  static const struct clk_div_table ahb_div_table[] = {
->         { 0x0,   1 }, { 0x1,   1 }, { 0x2,   1 }, { 0x3,   1 },
-> diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
-> index 4563343b64..d7c7d73bd3 100644
-> --- a/drivers/clk/hisilicon/clk-hi6220.c
-> +++ b/drivers/clk/hisilicon/clk-hi6220.c
-> @@ -91,23 +91,23 @@ CLK_OF_DECLARE(hi6220_clk_ao, "hisilicon,hi6220-aoctrl", hi6220_clk_ao_init);
->  
->  
->  /* clocks in sysctrl */
-> -static const char *mmc0_mux0_p[] __initdata = { "pll_ddr_gate", "syspll", };
-> -static const char *mmc0_mux1_p[] __initdata = { "mmc0_mux0", "pll_media_gate", };
-> -static const char *mmc0_src_p[] __initdata = { "mmc0srcsel", "mmc0_div", };
-> -static const char *mmc1_mux0_p[] __initdata = { "pll_ddr_gate", "syspll", };
-> -static const char *mmc1_mux1_p[] __initdata = { "mmc1_mux0", "pll_media_gate", };
-> -static const char *mmc1_src_p[]  __initdata = { "mmc1srcsel", "mmc1_div", };
-> -static const char *mmc2_mux0_p[] __initdata = { "pll_ddr_gate", "syspll", };
-> -static const char *mmc2_mux1_p[] __initdata = { "mmc2_mux0", "pll_media_gate", };
-> -static const char *mmc2_src_p[]  __initdata = { "mmc2srcsel", "mmc2_div", };
-> -static const char *mmc0_sample_in[] __initdata = { "mmc0_sample", "mmc0_pad", };
-> -static const char *mmc1_sample_in[] __initdata = { "mmc1_sample", "mmc1_pad", };
-> -static const char *mmc2_sample_in[] __initdata = { "mmc2_sample", "mmc2_pad", };
-> -static const char *uart1_src[] __initdata = { "clk_tcxo", "clk_150m", };
-> -static const char *uart2_src[] __initdata = { "clk_tcxo", "clk_150m", };
-> -static const char *uart3_src[] __initdata = { "clk_tcxo", "clk_150m", };
-> -static const char *uart4_src[] __initdata = { "clk_tcxo", "clk_150m", };
-> -static const char *hifi_src[] __initdata = { "syspll", "pll_media_gate", };
-> +static const char *const mmc0_mux0_p[] __initconst = { "pll_ddr_gate", "syspll", };
-> +static const char *const mmc0_mux1_p[] __initconst = { "mmc0_mux0", "pll_media_gate", };
-> +static const char *const mmc0_src_p[] __initconst = { "mmc0srcsel", "mmc0_div", };
-> +static const char *const mmc1_mux0_p[] __initconst = { "pll_ddr_gate", "syspll", };
-> +static const char *const mmc1_mux1_p[] __initconst = { "mmc1_mux0", "pll_media_gate", };
-> +static const char *const mmc1_src_p[]  __initconst = { "mmc1srcsel", "mmc1_div", };
-> +static const char *const mmc2_mux0_p[] __initconst = { "pll_ddr_gate", "syspll", };
-> +static const char *const mmc2_mux1_p[] __initconst = { "mmc2_mux0", "pll_media_gate", };
-> +static const char *const mmc2_src_p[]  __initconst = { "mmc2srcsel", "mmc2_div", };
-> +static const char *const mmc0_sample_in[] __initconst = { "mmc0_sample", "mmc0_pad", };
-> +static const char *const mmc1_sample_in[] __initconst = { "mmc1_sample", "mmc1_pad", };
-> +static const char *const mmc2_sample_in[] __initconst = { "mmc2_sample", "mmc2_pad", };
-> +static const char *const uart1_src[] __initconst = { "clk_tcxo", "clk_150m", };
-> +static const char *const uart2_src[] __initconst = { "clk_tcxo", "clk_150m", };
-> +static const char *const uart3_src[] __initconst = { "clk_tcxo", "clk_150m", };
-> +static const char *const uart4_src[] __initconst = { "clk_tcxo", "clk_150m", };
-> +static const char *const hifi_src[] __initconst = { "syspll", "pll_media_gate", };
->  
->  static struct hisi_gate_clock hi6220_separated_gate_clks_sys[] __initdata = {
->         { HI6220_MMC0_CLK,      "mmc0_clk",      "mmc0_src",       CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x200, 0,  0, },
-> @@ -197,9 +197,9 @@ CLK_OF_DECLARE(hi6220_clk_sys, "hisilicon,hi6220-sysctrl", hi6220_clk_sys_init);
->  
->  
->  /* clocks in media controller */
-> -static const char *clk_1000_1200_src[] __initdata = { "pll_gpu_gate", "media_syspll_src", };
-> -static const char *clk_1440_1200_src[] __initdata = { "media_syspll_src", "media_pll_src", };
-> -static const char *clk_1000_1440_src[] __initdata = { "pll_gpu_gate", "media_pll_src", };
-> +static const char *const clk_1000_1200_src[] __initconst = { "pll_gpu_gate", "media_syspll_src", };
-> +static const char *const clk_1440_1200_src[] __initconst = { "media_syspll_src", "media_pll_src", };
-> +static const char *const clk_1000_1440_src[] __initconst = { "pll_gpu_gate", "media_pll_src", };
->  
->  static struct hisi_gate_clock hi6220_separated_gate_clks_media[] __initdata = {
->         { HI6220_DSI_PCLK,       "dsi_pclk",         "vpucodec",      CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x520, 0,  0, },
-> diff --git a/drivers/clk/versatile/clk-realview.c b/drivers/clk/versatile/clk-realview.c
-> index c8b523117f..0c1f224515 100644
-> --- a/drivers/clk/versatile/clk-realview.c
-> +++ b/drivers/clk/versatile/clk-realview.c
-> @@ -33,13 +33,13 @@ static const struct icst_params realview_oscvco_params = {
->         .idx2s          = icst307_idx2s,
->  };
->  
-> -static const struct clk_icst_desc __initdata realview_osc0_desc = {
-> +static const struct clk_icst_desc realview_osc0_desc __initconst = {
->         .params = &realview_oscvco_params,
->         .vco_offset = REALVIEW_SYS_OSC0_OFFSET,
->         .lock_offset = REALVIEW_SYS_LOCK_OFFSET,
->  };
->  
-> -static const struct clk_icst_desc __initdata realview_osc4_desc = {
-> +static const struct clk_icst_desc realview_osc4_desc __initconst = {
->         .params = &realview_oscvco_params,
->         .vco_offset = REALVIEW_SYS_OSC4_OFFSET,
->         .lock_offset = REALVIEW_SYS_LOCK_OFFSET,
-> diff --git a/drivers/clk/versatile/clk-versatile.c b/drivers/clk/versatile/clk-versatile.c
-> index 7a4f8635bd..81d59eada2 100644
-> --- a/drivers/clk/versatile/clk-versatile.c
-> +++ b/drivers/clk/versatile/clk-versatile.c
-> @@ -35,7 +35,7 @@ static const struct icst_params cp_auxosc_params = {
->         .idx2s          = icst525_idx2s,
->  };
->  
-> -static const struct clk_icst_desc __initdata cm_auxosc_desc = {
-> +static const struct clk_icst_desc cm_auxosc_desc __initconst = {
->         .params = &cp_auxosc_params,
->         .vco_offset = 0x1c,
->         .lock_offset = INTEGRATOR_HDR_LOCK_OFFSET,
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
