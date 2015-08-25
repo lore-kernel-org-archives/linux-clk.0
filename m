@@ -1,49 +1,66 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Fri, 7 Aug 2015 10:00:37 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Olof Johansson <olof@lixom.net>,
-	Arnd Bergmann <arnd.bergmann@linaro.org>,
-	'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>,
-	'Thomas Abraham' <thomas.ab@samsung.com>,
-	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
-	'Michael Turquette' <mturquette@baylibre.com>,
-	'Tomasz Figa' <tomasz.figa@gmail.com>,
-	'Lukasz Majewski' <l.majewski@samsung.com>,
-	'Heiko Stuebner' <heiko@sntech.de>,
-	'Chanwoo Choi' <cw00.choi@samsung.com>,
-	'Kevin Hilman' <khilman@linaro.org>,
-	'Javier Martinez Canillas' <javier@dowhile0.org>,
-	'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
-	'Anand Moon' <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for
- Exynos4x12 platform
-Message-ID: <20150807043037.GH6325@linux>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <015301d0d0a3$1396c900$3ac45b00$@kernel.org>
- <20150807035018.GF6325@linux>
- <20150807035156.GG6325@linux>
- <55C43085.8090506@samsung.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55DC2A51.6090008@linaro.org>
+Date: Tue, 25 Aug 2015 14:11:53 +0530
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <55C43085.8090506@samsung.com>
+To: Lee Jones <lee.jones@linaro.org>
+CC: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	mturquette@baylibre.com, k.kozlowski@samsung.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH-v2 1/5] mfd: 88pm800: Fix tabbing issue
+References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org> <1440442594-3102-2-git-send-email-vaibhav.hiremath@linaro.org> <20150825075121.GE19409@x1>
+In-Reply-To: <20150825075121.GE19409@x1>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07-08-15, 13:13, Krzysztof Kozlowski wrote:
-> Still patches 1/6 and 6/6 need your acks. Is the patch 1/6 a
-> prerequisite for others? It does not look like a prerequisite... but it
-> was put at the beginning of the patchset.
 
-Patch 1/6 is required to get boost working, that's all.. Not sure how
-important is that. Anyway, that will work without 1/6 as well, all you
-need to do is enable CONFIG_CPU_FREQ_BOOST_SW in you .config.
 
-Anyway, it should go via pm tree and can be sent separately.
+On Tuesday 25 August 2015 01:21 PM, Lee Jones wrote:
+> On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
+>
+>> Driver had coding style issues where spaces were used instead
+>> of tabs. This patch fixes them all.
+>
+> That's not all it's doing though is it?
+>
 
--- 
-viresh
+Yes, its just tabbing related fixes.
+
+
+> Please describe all of your changes.
+>
+>> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+>> ---
+>>   drivers/mfd/88pm800.c | 125 ++++++++++++++++++++++++--------------------------
+>>   1 file changed, 61 insertions(+), 64 deletions(-)
+>>
+>> diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
+>> index f104a32..c4e097d 100644
+>> --- a/drivers/mfd/88pm800.c
+>> +++ b/drivers/mfd/88pm800.c
+>> @@ -30,55 +30,55 @@
+>>   #include <linux/of_device.h>
+>>
+>>   /* Interrupt Registers */
+>> -#define PM800_INT_STATUS1		(0x05)
+>> +#define PM800_INT_STATUS1		0x05
+>>   #define PM800_ONKEY_INT_STS1		(1 << 0)
+>>   #define PM800_EXTON_INT_STS1		(1 << 1)
+>> -#define PM800_CHG_INT_STS1			(1 << 2)
+>> -#define PM800_BAT_INT_STS1			(1 << 3)
+>> -#define PM800_RTC_INT_STS1			(1 << 4)
+>> +#define PM800_CHG_INT_STS1		(1 << 2)
+>> +#define PM800_BAT_INT_STS1		(1 << 3)
+>> +#define PM800_RTC_INT_STS1		(1 << 4)
+>>   #define PM800_CLASSD_OC_INT_STS1	(1 << 5)
+>
+> These should all be replaced by BIT().
+>
+> Please fix the whole file.
+
+Will do.
+
+Thanks,
+Vaibhav
