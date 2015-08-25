@@ -1,61 +1,90 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 26 Aug 2015 15:33:25 +0900
-Message-Id: <20150826063325.5381.76761.sendpatchset@little-apple>
-Subject: [PATCH] clk: shmobile: Get rid of CONFIG_SHMOBILE_MULTI
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20150820151510.GD30520@lukather>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+ lee.jones@linaro.org, s.hauer@pengutronix.de, geert@linux-m68k.org
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <20150818154552.GI2547@lukather> <20150818164356.31346.80341@quantum>
+ <20150820151510.GD30520@lukather>
+Message-ID: <20150825215051.31346.56261@quantum>
+Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and implement
+ hand-off
+Date: Tue, 25 Aug 2015 14:50:51 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Quoting Maxime Ripard (2015-08-20 08:15:10)
+> On Tue, Aug 18, 2015 at 09:43:56AM -0700, Michael Turquette wrote:
+> > Quoting Maxime Ripard (2015-08-18 08:45:52)
+> > > Hi Mike,
+> > > =
 
-Shmobile is all multiplatform these days, so get rid of the
-reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
-enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
-MSTP depending on if they are included in the SoC or not.
+> > > On Fri, Aug 07, 2015 at 12:09:27PM -0700, Michael Turquette wrote:
+> > > > All of the other kitchen sink stuff (DT binding, passing the flag b=
+ack
+> > > > to the framework when the clock consumer driver calls clk_put) was =
+left
+> > > > out because I do not see a real use case for it. If one can demonst=
+rate
+> > > > a real use case (and not a hypothetical one) then this patch series=
+ can
+> > > > be expanded further.
+> > > =
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+> > > I think there is a very trivial use case for passing back the
+> > > reference to the framework, if during the probed, we have something
+> > > like:
+> > > =
 
- drivers/clk/Makefile          |    2 +-
- drivers/clk/shmobile/Makefile |   22 ++++++++++------------
- 2 files changed, 11 insertions(+), 13 deletions(-)
+> > > clk =3D clk_get()
+> > > clk_prepare_enable(clk)
+> > > foo_framework_register()
+> > > =
 
---- 0001/drivers/clk/Makefile
-+++ work/drivers/clk/Makefile	2015-08-26 15:18:22.852366518 +0900
-@@ -66,7 +66,7 @@ obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
- obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
- obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
- obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
--obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= shmobile/
-+obj-$(CONFIG_ARCH_SHMOBILE)		+= shmobile/
- obj-$(CONFIG_ARCH_SIRF)			+= sirf/
- obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
- obj-$(CONFIG_PLAT_SPEAR)		+= spear/
---- 0001/drivers/clk/shmobile/Makefile
-+++ work/drivers/clk/shmobile/Makefile	2015-08-26 15:16:57.742366518 +0900
-@@ -1,13 +1,11 @@
- obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
--obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
--obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
--obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
--obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
--obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
--obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o
--obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-div6.o
--obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-mstp.o
-+obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
+> > > if foo_framework_register fails, the sensible thing to do would be to
+> > > call clk_disable_unprepare. If the clock was a critical clock, you
+> > > just gated it.
+> > =
+
+> > Hmm, a good point. Creating the "pass the reference back" call is not
+> > hard technically. But how to keep from abusing it? E.g. I do not want
+> > that call to become an alternative to correct use of clk_enable.
+> > =
+
+> > Maybe I'll need a Coccinelle script or just some regular sed to
+> > occasionally search for new users of this api and audit them?
+> > =
+
+> > I was hoping to not add any new consumer api at all :-/
+> =
+
+> I don't think there's any abuse that can be done with the current API,
+> nor do I think you need to have new functions either.
+> =
+
+> If the clock is critical, when the customer calls
+> clk_unprepare_disable on it, simply take back the reference you gave
+> in the framework, and you're done. Or am I missing something?
+
+Maybe I am the one missing something? My goal was to allow the consumer
+driver to gate the critical clock. So we need clk_disable_unused to
+actually disable the clock for that to work.
+
+I think you are suggesting that clk_disable_unused should *not* disable
+the clock if it is critical. Can you confirm that?
+
+Thanks,
+Mike
+
+> =
+
+> Maxime
+> =
+
+> -- =
+
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
