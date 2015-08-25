@@ -1,79 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55C1D266.5090804@linaro.org>
-Date: Wed, 05 Aug 2015 14:37:50 +0530
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-MIME-Version: 1.0
-To: Lee Jones <lee.jones@linaro.org>
-CC: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
-	yhanin@marvell.com, haojian.zhuang@marvell.com,
-	zhouqiao@marvell.com, mturquette@baylibre.com,
-	k.kozlowski@samsung.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 4/4] mfd: 88pm800: Add support for clk subdevice
-References: <1437476823-3358-1-git-send-email-vaibhav.hiremath@linaro.org> <1437476823-3358-5-git-send-email-vaibhav.hiremath@linaro.org> <20150723155008.GS3436@x1>
-In-Reply-To: <20150723155008.GS3436@x1>
-Content-Type: text/plain; charset=utf-8; format=flowed
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	stanimir.varbanov@linaro.org, georgi.djakov@linaro.org
+Subject: [PATCH] clk: qcom: Fix MSM8916 prng clock enable bit
+Date: Tue, 25 Aug 2015 15:27:43 +0300
+Message-Id: <1440505663-6218-1-git-send-email-georgi.djakov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Fix the enable bit of the pseudorandom number generator clock.
 
+Reported-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Fixes: 3966fab8b6ab "clk: qcom: Add MSM8916 Global Clock Controller support"
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/clk/qcom/gcc-msm8916.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thursday 23 July 2015 09:20 PM, Lee Jones wrote:
-> On Tue, 21 Jul 2015, Vaibhav Hiremath wrote:
->
->> This patch adds mfd_cell/clk-subdevice for 88PM800 MFD
->> (and family of devices).
->>
->> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
->> ---
->>   drivers/mfd/88pm800.c | 25 +++++++++++++++++++++++++
->>   1 file changed, 25 insertions(+)
->>
->> diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
->> index f104a32..9723eac 100644
->> --- a/drivers/mfd/88pm800.c
->> +++ b/drivers/mfd/88pm800.c
->> @@ -173,6 +173,14 @@ static const struct mfd_cell regulator_devs[] = {
->>   	},
->>   };
->>
->> +static struct mfd_cell clk_devs[] = {
->> +	{
->> +	 .name = "88pm80x-clk",
->> +	 .of_compatible = "marvell,88pm800-clk",
->> +	 .id = -1,
->> +	},
->> +};
->
-> Why does each device in 88pm800.c have it's own mfd_cell?
->
-
-Probably, the author of the driver can comment on this. I have cc'ed
-all of them.
-
-But looking at the driver it looks like, except onkey and regulator all
-other devices need per-initialization. For example,
-
-in case of clock,
-
-static int device_clk_init(struct pm80x_chip *chip)
-{
-         if (chip->type == CHIP_PM800)
-                 clk_devs[0].name = "88pm800-clk";
-         else if (chip->type == CHIP_PM860)
-                 clk_devs[0].name = "88pm860-clk";
-
-         return mfd_add_devices(chip->dev, 0, &clk_devs[0],
-                               ARRAY_SIZE(clk_devs), NULL, 0, NULL);
-}
-
-
-
-> Take the opportunity to correct the tabbing in the remainder of the
-> file.  Make that fix-up patch 1 of this set.  Then fixup this patch.
->
-
-Ok, I will.
-
-Thanks,
-Vaibhav
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index 3bf4fb3deef6..22a4e1e732c0 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -2278,7 +2278,7 @@ static struct clk_branch gcc_prng_ahb_clk = {
+ 	.halt_check = BRANCH_HALT_VOTED,
+ 	.clkr = {
+ 		.enable_reg = 0x45004,
+-		.enable_mask = BIT(0),
++		.enable_mask = BIT(8),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_prng_ahb_clk",
+ 			.parent_names = (const char *[]){
