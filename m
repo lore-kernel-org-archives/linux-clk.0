@@ -1,60 +1,65 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Michael Niewoehner <linux@mniewoehner.de>, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org
-Subject: Re: [PATCH v2] clk: rockchip: add pclk_cpu to the list of rk3188 critical clocks
-Date: Tue, 25 Aug 2015 22:17:39 +0200
-Message-ID: <1672317.UnLkKbcVf3@phil>
-In-Reply-To: <20150825185931.31346.26497@quantum>
-References: <5400BEF8-5245-4F7B-845B-D326A7BC56B5@mniewoehner.de> <F5234F5E-2A91-4B63-B260-3F20A4D16A9D@mniewoehner.de> <20150825185931.31346.26497@quantum>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55DC49D0.1030608@linaro.org>
+Date: Tue, 25 Aug 2015 16:26:16 +0530
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: Lee Jones <lee.jones@linaro.org>
+CC: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	mturquette@baylibre.com, k.kozlowski@samsung.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH-v2 1/5] mfd: 88pm800: Fix tabbing issue
+References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org> <1440442594-3102-3-git-send-email-vaibhav.hiremath@linaro.org> <20150825075246.GF19409@x1> <55DC2C4D.1040304@linaro.org> <20150825103546.GQ19409@x1>
+In-Reply-To: <20150825103546.GQ19409@x1>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 25. August 2015, 11:59:31 schrieb Michael Turquette:
-> Quoting Michael Niewoehner (2015-08-17 12:50:53)
-> 
-> > pclk_cpu needs to keep running because it is needed for devices like
-> > the act8865 regulator but with the recent gpio clock handling this is
-> > not always the case anymore. So add it to the list of critical clocks.
-> > 
-> > Signed-off-by: Michael Niewoehner <linux@mniewoehner.de>
-> 
-> Patch fails to apply due to a problem with line 15. git format-patch
-> problem?
-
-see comment below. We triggered this problem with a change to the pinctrl 
-driver and another clock-entry to the critical clocks already went into Linus' 
-pinctrl tree. So I guess this patch should probably also go through his tree - 
-or just go in through any tree after 4.3-rc1.
 
 
-> 
-> Regards,
-> Mike
-> 
-> > ---
-> > Changes in v2:
-> > - adapt commit message
-> > - add Linus Walleij to recipients, as the patch is related to the gpio
-> > clock> 
-> >   change in the rockchip pinctrl driver it should go through his tree as
-> >   well
-> > 
-> > drivers/clk/rockchip/clk-rk3188.c | 1 +
-> > 1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/clk/rockchip/clk-rk3188.c
-> > b/drivers/clk/rockchip/clk-rk3188.c index e4f9d47..1c93229 100644
-> > --- a/drivers/clk/rockchip/clk-rk3188.c
-> > +++ b/drivers/clk/rockchip/clk-rk3188.c
-> > @@ -708,6 +708,7 @@ static const char *const rk3188_critical_clocks[]
-> > __initconst = {> 
-> >         "aclk_cpu",
-> >         "aclk_peri",
-> >         "hclk_peri",
-> > 
-> > +       "pclk_cpu",
-> > };
-> > 
-> > static void __init rk3188_common_clk_init(struct device_node *np)
+On Tuesday 25 August 2015 04:05 PM, Lee Jones wrote:
+> On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
+>
+>>
+>>
+>> On Tuesday 25 August 2015 01:22 PM, Lee Jones wrote:
+>>> On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
+>>>
+>>>> Driver had coding style issues where spaces were used instead
+>>>> of tabs. This patch fixes them all.
+>>>>
+>>>> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+>>>> ---
+>>>>   drivers/mfd/88pm800.c | 125 ++++++++++++++++++++++++--------------------------
+>>>>   1 file changed, 61 insertions(+), 64 deletions(-)
+>>>
+>>> Same comment as before.
+>>>
+>>> How similar is this file to the other one?
+>>
+>> I believe you are referring to include/linux/mfd/88pm80x.h
+>>
+>>>
+>>> Can you reduce the size by having shared register defines?
+>>>
+>>
+>> Not sure whether I understand your comment here,
+>> They are common defines.
+>
+> I guess the question was a little convoluted.
+>
+> How about; why are the extra defines in the driver?  Why aren't all of
+> them in the header file?  What is the difference between the defines
+> in the C file compared with the ones defined in the header?
+>
+
+
+I do not see any difference and need of having defines separately in C
+file.
+That's the cleanup I was referring to in another email.
+
+I will walk through the whole driver code and try to cleanup all such
+coding related issues. Probably expect separate series here.
+
+Thanks,
+Vaibhav
