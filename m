@@ -1,92 +1,95 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Bintian Wang <bintian.wang@huawei.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Jian Zhang <zhangjian001@hisilicon.com>,
-	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
-	Haoju Mo <mohaoju@hisilicon.com>,
-	Dan Zhao <dan.zhao@hisilicon.com>,
-	sunzhaosheng@hisilicon.com,
-	victor.lixin@hisilicon.com
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v4 4/4] arm64: dts: add Hi6220's stub clock node
-Date: Tue,  4 Aug 2015 15:27:29 +0800
-Message-Id: <1438673249-6051-5-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1438673249-6051-1-git-send-email-leo.yan@linaro.org>
-References: <1438673249-6051-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 25 Aug 2015 08:58:58 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	mturquette@baylibre.com, k.kozlowski@samsung.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH-v2 3/5] mfd: devicetree: bindings: Add clock subdevice
+ node information
+Message-ID: <20150825075858.GH19409@x1>
+References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
+ <1440442594-3102-5-git-send-email-vaibhav.hiremath@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1440442594-3102-5-git-send-email-vaibhav.hiremath@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable SRAM node and stub clock node for Hi6220; furthermore
-add the CPU's clock so it will be used by cpufreq-dt driver.
+On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+> This patch updates the binding documentation for optional
+> clocks node and related information for buffered 32KHz clock.
+> 
+> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/mfd/88pm800.txt | 27 +++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/88pm800.txt b/Documentation/devicetree/bindings/mfd/88pm800.txt
+> index 2c82fcb..bc6cb02 100644
+> --- a/Documentation/devicetree/bindings/mfd/88pm800.txt
+> +++ b/Documentation/devicetree/bindings/mfd/88pm800.txt
+> @@ -15,6 +15,26 @@ Optional properties :
+>    Without this both BUCK1A and BUCK1B operates independently with 3A capacity.
+>    (This property is only applicable to 88PM860)
+>  
+> +Optional nodes:
+> +- clocks: 88pm800 family of devices provide multiple buffered 32.768
+> +  KHz outputs, so to register these as clocks with common clock framework
+> +  instantiate a sub-node named "clocks". It uses the common clock binding
+> +  documented in :
+> +  [Documentation/devicetree/bindings/clock/clock-bindings.txt]
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-index b42a9b7..94b8310 100644
---- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-@@ -57,6 +57,17 @@
- 			device_type = "cpu";
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
-+			clocks = <&stub_clock 0>;
-+			clock-latency = <0>;
-+			operating-points = <
-+				/* kHz */
-+				1200000  0
-+				960000   0
-+				729000   0
-+				432000   0
-+				208000   0
-+			>;
-+			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
- 		cpu1: cpu@1 {
-@@ -136,6 +147,11 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		sram: sram@fff80000 {
-+			compatible = "hisilicon,hi6220-sramctrl", "syscon";
-+			reg = <0x0 0xfff80000 0x0 0x12000>;
-+		};
-+
- 		ao_ctrl: ao_ctrl@f7800000 {
- 			compatible = "hisilicon,hi6220-aoctrl", "syscon";
- 			reg = <0x0 0xf7800000 0x0 0x2000>;
-@@ -160,6 +176,13 @@
- 			#clock-cells = <1>;
- 		};
- 
-+		stub_clock: stub_clock {
-+			compatible = "hisilicon,hi6220-stub-clk";
-+			hisilicon,hi6220-clk-sram = <&sram>;
-+			#clock-cells = <1>;
-+			mboxes = <&mailbox 1>;
-+		};
-+
- 		uart0: uart@f8015000 {	/* console */
- 			compatible = "arm,pl011", "arm,primecell";
- 			reg = <0x0 0xf8015000 0x0 0x1000>;
+I tend to prefer relative paths.  Firstly because they're shorter and
+more succinct and secondly because if we do eventually move DT out of
+the kernel, it will be less hassle to rename each of them.
+
+> +  - #clock-cells: should be 1.
+> +
+> +  - The following is the list of clocks generated by the controller. Each clock
+> +    is assigned an identifier and client nodes use this identifier to specify
+> +    the clock which they consume.
+> +    Clock		ID           	Devices
+> +    ----------------------------------------------------------
+> +    pm800_clk32k_1	0		88PM800 and 88PM860
+> +    pm800_clk32k_2	1		88PM800 and 88PM860
+> +    pm800_clk32k_3	2		88PM800
+> +
+> +  - compatible: Should be : "marvell,88pm800-clk"
+> +
+>  88pm80x family of devices consists of varied group of sub-devices:
+>  
+>  Device		 	Supply Names	 Description
+> @@ -22,6 +42,7 @@ Device		 	Supply Names	 Description
+>  88pm80x-onkey		:		: On key
+>  88pm80x-rtc		:		: RTC
+>  88pm80x-regulator	:		: Regulators
+> +88pm80x-clk		:		: 32KHz Clk provider
+
+Nit: Alphabetical?
+
+>  Example:
+>  
+> @@ -33,6 +54,12 @@ Example:
+>  		interrupt-controller;
+>  		#interrupt-cells = <1>;
+>  
+> +		pm800clk: clocks {
+> +			compatible = "marvell,88pm800-clk";
+> +			#clock-cells = <1>;
+> +			clock-output-names = "xx", "yy", "zz";
+> +		};
+> +
+>  		regulators {
+>  			compatible = "marvell,88pm80x-regulator";
+>  
+
 -- 
-1.9.1
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
