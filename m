@@ -1,34 +1,57 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 11 Aug 2015 18:31:27 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shunqian Zheng <zhengsq@rock-chips.com>
-Cc: gregkh@linuxfoundation.org, srinivas.kandagatla@linaro.org,
-	maxime.ripard@free-electrons.com, heiko@sntech.de,
-	caesar.wang@rock-chips.com, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, dianders@chromium.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	xjq@rock-chips.com
-Subject: Re: [PATCH v2 1/5] clk: rockchip: rk3288: Add the clock id of eFuse
-Message-ID: <20150812013127.GK26614@codeaurora.org>
-References: <1439288024-13359-1-git-send-email-zhengsq@rock-chips.com>
- <1439288024-13359-2-git-send-email-zhengsq@rock-chips.com>
+Return-Path: <vaibhav.hiremath@linaro.org>
+Return-Path: <vaibhav.hiremath@linaro.org>
+Message-ID: <55DC2C4D.1040304@linaro.org>
+Date: Tue, 25 Aug 2015 14:20:21 +0530
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1439288024-13359-2-git-send-email-zhengsq@rock-chips.com>
+To: Lee Jones <lee.jones@linaro.org>
+CC: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+ mturquette@baylibre.com, k.kozlowski@samsung.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH-v2 1/5] mfd: 88pm800: Fix tabbing issue
+References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org> <1440442594-3102-3-git-send-email-vaibhav.hiremath@linaro.org> <20150825075246.GF19409@x1>
+In-Reply-To: <20150825075246.GF19409@x1>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/11, Shunqian Zheng wrote:
-> From: ZhengShunQian <zhengsq@rock-chips.com>
-> 
-> The clock id is necessary item, changing it from 0
-> then can be referred in driver and device tree.
-> 
-> Signed-off-by: ZhengShunQian <zhengsq@rock-chips.com>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> ---
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Tuesday 25 August 2015 01:22 PM, Lee Jones wrote:
+> On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
+>
+>> Driver had coding style issues where spaces were used instead
+>> of tabs. This patch fixes them all.
+>>
+>> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+>> ---
+>>   drivers/mfd/88pm800.c | 125 ++++++++++++++++++++++++--------------------------
+>>   1 file changed, 61 insertions(+), 64 deletions(-)
+>
+> Same comment as before.
+>
+> How similar is this file to the other one?
+
+I believe you are referring to include/linux/mfd/88pm80x.h
+
+>
+> Can you reduce the size by having shared register defines?
+>
+
+Not sure whether I understand your comment here,
+They are common defines.
+
+PM860 only defines are named as
+
+PM860_XXXX
+
+Similarly,
+PM805 only defines are named as
+
+PM805_XXXX
+
+
+and PM800_xxx should be common.
+
+Thanks,
+Vaibhav
