@@ -1,48 +1,117 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdbxyT=-w3jYEnRuhRWid2BRJ+ftSOTyZpbTVocN8Fj4MA@mail.gmail.com>
-References: <1438262352-29118-1-git-send-email-linus.walleij@linaro.org>
-	<20150803215129.GD21068@codeaurora.org>
-	<CACRpkdYdFAjRGMfsG4Kx=xNBACofcjFR3U1+P4U3yBmgQcFATQ@mail.gmail.com>
-	<20150811234552.GP2839@codeaurora.org>
-	<CACRpkdbxyT=-w3jYEnRuhRWid2BRJ+ftSOTyZpbTVocN8Fj4MA@mail.gmail.com>
-Date: Wed, 12 Aug 2015 13:26:08 +0200
-Message-ID: <CACRpkdaTiwkW64dFvg_=b8czRwMVE7s_whRtz_uoHeoFscjQzQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk/ARM: delete the non-DT U8500 clock implementation
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
 	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH v2 2/2] clk: lpc18xx-cgu: fix potential system hang when disabling unused clocks
+Date: Tue, 25 Aug 2015 20:34:03 +0200
+Message-Id: <1440527643-2960-3-git-send-email-manabian@gmail.com>
+In-Reply-To: <1440527643-2960-1-git-send-email-manabian@gmail.com>
+References: <1440527643-2960-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Aug 12, 2015 at 10:27 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Wed, Aug 12, 2015 at 1:45 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> On 08/10, Linus Walleij wrote:
->
->>> No you can actually apply it in isolation. I was just collecting
->>> them in one spot for testing.
->>>
->>> Can you please apply this directly to the clk tree and
->>> fix any clashes?
->>
->> Sure. Do we need to apply patches 2 and 3 too? I'm mostly trying
->> to avoid merge conflicts.
->
-> Nope these should be orthogonal, this patch only deletes stuff
-> that isn't used anywhere or in close proximity of anything else
-> that is being patched now.
+The clock consumer (CCU) of the CGU must be able to check if a CGU
+base clock is really running since access to the CCU registers
+requires a running base clock. Access with a disabled base clock will
+cause the system to hang. Fix this issue by adding code that check if
+the parent clock is running in the is_enabled clk_ops callback. Since
+certain clocks can be cascaded this must be added to all clock gates.
 
-Famous last words. Of course they are not.
+The hang would occur if the boot ROM or boot loader didn't setup and
+enable the USB0 clock. Then when the clk framework tried to access
+the CCU register it would hang the system.
 
-2/3 collides in <linux/platform_data/clk-ux500.h>.
+Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+---
 
-3/3 belongs in the clk tree anyway.
+Changes: add clk.h to get clk_get_parent().
 
-Would you mind taking in all three?
+ drivers/clk/nxp/clk-lpc18xx-cgu.c | 43 ++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 40 insertions(+), 3 deletions(-)
 
-I'll ask arm@kernel.org to provide an ACK for 2/3.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/nxp/clk-lpc18xx-cgu.c b/drivers/clk/nxp/clk-lpc18xx-cgu.c
+index e0a3cb8970ab..3d8d0ac38f96 100644
+--- a/drivers/clk/nxp/clk-lpc18xx-cgu.c
++++ b/drivers/clk/nxp/clk-lpc18xx-cgu.c
+@@ -8,6 +8,7 @@
+  * warranty of any kind, whether express or implied.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/kernel.h>
+@@ -480,6 +481,42 @@ static const struct clk_ops lpc18xx_pll1_ops = {
+ 	.recalc_rate = lpc18xx_pll1_recalc_rate,
+ };
+ 
++static int lpc18xx_cgu_gate_enabled(struct clk_hw *hw)
++{
++	return clk_gate_ops.enable(hw);
++}
++
++static void lpc18xx_cgu_gate_disable(struct clk_hw *hw)
++{
++	clk_gate_ops.disable(hw);
++}
++
++static int lpc18xx_cgu_gate_is_enabled(struct clk_hw *hw)
++{
++	struct clk *parent;
++
++	/*
++	 * The consumer of base clocks needs know if the
++	 * base clock is really enabled before it can be
++	 * accessed. It is therefore necessary to verify
++	 * this all the way up.
++	 */
++	parent = clk_get_parent(hw->clk);
++	if (IS_ERR(parent))
++		return 0;
++
++	if (!__clk_is_enabled(parent))
++		return 0;
++
++	return clk_gate_ops.is_enabled(hw);
++}
++
++static const struct clk_ops lpc18xx_gate_ops = {
++	.enable = lpc18xx_cgu_gate_enabled,
++	.disable = lpc18xx_cgu_gate_disable,
++	.is_enabled = lpc18xx_cgu_gate_is_enabled,
++};
++
+ static struct lpc18xx_cgu_pll_clk lpc18xx_cgu_src_clk_plls[] = {
+ 	LPC1XX_CGU_CLK_PLL(PLL0USB,	pll0_src_ids, pll0_ops),
+ 	LPC1XX_CGU_CLK_PLL(PLL0AUDIO,	pll0_src_ids, pll0_ops),
+@@ -510,7 +547,7 @@ static struct clk *lpc18xx_cgu_register_div(struct lpc18xx_cgu_src_clk_div *clk,
+ 	return clk_register_composite(NULL, name, parents, clk->n_parents,
+ 				      &clk->mux.hw, &clk_mux_ops,
+ 				      &clk->div.hw, &clk_divider_ops,
+-				      &clk->gate.hw, &clk_gate_ops, 0);
++				      &clk->gate.hw, &lpc18xx_gate_ops, 0);
+ }
+ 
+ 
+@@ -538,7 +575,7 @@ static struct clk *lpc18xx_register_base_clk(struct lpc18xx_cgu_base_clk *clk,
+ 	return clk_register_composite(NULL, name, parents, clk->n_parents,
+ 				      &clk->mux.hw, &clk_mux_ops,
+ 				      NULL,  NULL,
+-				      &clk->gate.hw, &clk_gate_ops, 0);
++				      &clk->gate.hw, &lpc18xx_gate_ops, 0);
+ }
+ 
+ 
+@@ -557,7 +594,7 @@ static struct clk *lpc18xx_cgu_register_pll(struct lpc18xx_cgu_pll_clk *clk,
+ 	return clk_register_composite(NULL, name, parents, clk->n_parents,
+ 				      &clk->mux.hw, &clk_mux_ops,
+ 				      &clk->pll.hw, clk->pll_ops,
+-				      &clk->gate.hw, &clk_gate_ops, 0);
++				      &clk->gate.hw, &lpc18xx_gate_ops, 0);
+ }
+ 
+ static void __init lpc18xx_cgu_register_source_clks(struct device_node *np,
+-- 
+1.8.0
