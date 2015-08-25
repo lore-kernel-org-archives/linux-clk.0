@@ -1,41 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 25 Aug 2015 08:55:56 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	mturquette@baylibre.com, k.kozlowski@samsung.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH-v2 2/5] mfd: 88pm800: Update the header file with 32K clk
+ related macros
+Message-ID: <20150825075556.GG19409@x1>
+References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
+ <1440442594-3102-4-git-send-email-vaibhav.hiremath@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20150824212828.GD14330@codeaurora.org>
-References: <1439882205-10978-1-git-send-email-wens@csie.org> <20150824212828.GD14330@codeaurora.org>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 25 Aug 2015 10:55:28 +0800
-Message-ID: <CAGb2v67EhfgtbdLyFLd8xd6MMAnG4MGMvGLUTZxh=ag7XghvyA@mail.gmail.com>
-Subject: Re: [PATCH] clk: Add missing header for 'bool' definition to clk-conf.h
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	stable@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1440442594-3102-4-git-send-email-vaibhav.hiremath@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 25, 2015 at 5:28 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 08/18, Chen-Yu Tsai wrote:
->> of_clk_set_defaults uses the type 'bool', but clk-conf.h does not
->> include its definition.
->>
->> This results in a compile error when only clk-conf.h is used.
->>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> Cc: stable@vger.kernel.org
->
-> Why is stable Cc-ed? Is there some sort of compilation failure on
-> stable kernels?
+On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
 
-There isn't for now. Though I don't see why we shouldn't fix this for
-stable kernels as well. It's possible other people or third-party
-vendors working with stable/LTS kernels (Android?) may run into it.
+> Update header file with required macros for 32KHz buffered clock
+> output of 88PM800 family of device.
+> These macros will be used in clk provider driver.
+> 
+> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+> ---
+>  include/linux/mfd/88pm80x.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/include/linux/mfd/88pm80x.h b/include/linux/mfd/88pm80x.h
+> index 122cfd2..0215d5f 100644
+> --- a/include/linux/mfd/88pm80x.h
+> +++ b/include/linux/mfd/88pm80x.h
+> @@ -91,6 +91,7 @@ enum {
+>  /* Referance and low power registers */
+>  #define PM800_LOW_POWER1		(0x20)
+>  #define PM800_LOW_POWER2		(0x21)
+> +#define PM800_LOW_POWER2_XO_LJ_EN	BIT(5)
 
-I'm perfectly fine with not Cc-ing stable. It just seemed like the
-right thing to do.
+Some people add an extra space for register bits, which I quite like.
 
+So:
 
-Regards
-ChenYu
+#define SOME_REGISTER_ADDRESS	0x123
+#define  SOME_BIT_VALUE		BIT(4)
+
+Feel free to use it, or not.
+
+>  #define PM800_LOW_POWER_CONFIG3		(0x22)
+>  #define PM800_LDOBK_FREEZE		BIT(7)
+> @@ -138,6 +139,13 @@ enum {
+>  #define PM800_ALARM			BIT(5)
+>  #define PM800_RTC1_USE_XO		BIT(7)
+>  
+> +#define PM800_32K_OUTX_SEL_MASK		0x3
+> +/* 32KHz clk output sel mode */
+> +#define PM800_32K_OUTX_SEL_ZERO		0x0
+> +#define PM800_32K_OUTX_SEL_INT_32KHZ	0x1
+> +#define PM800_32K_OUTX_SEL_XO_32KHZ	0x2
+> +#define PM800_32K_OUTX_SEL_HIZ		0x3
+> +
+>  /* Regulator Control Registers: BUCK1,BUCK5,LDO1 have DVC */
+>  
+>  /* buck registers */
+> @@ -208,6 +216,10 @@ enum {
+>  #define PM800_PMOD_MEAS1		0x52
+>  #define PM800_PMOD_MEAS2		0x53
+>  
+> +/* Oscillator control */
+> +#define PM800_OSC_CNTRL1		0x50
+> +#define PM800_OSC_CNTRL1_OSC_FREERUN_EN	BIT(1)
+
+0x50 goes before 0x52 (and 0x51 if it's there).
+
+>  #define PM800_GPADC0_MEAS1		0x54
+>  #define PM800_GPADC0_MEAS2		0x55
+>  #define PM800_GPADC1_MEAS1		0x56
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
