@@ -1,127 +1,218 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sat, 29 Aug 2015 05:55:57 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, lee.jones@linaro.org, s.hauer@pengutronix.de,
-	geert@linux-m68k.org
-Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and
- implement hand-off
-Message-ID: <20150829035557.GX29389@lukather>
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
- <20150818154552.GI2547@lukather>
- <20150818164356.31346.80341@quantum>
- <20150820151510.GD30520@lukather>
- <20150825215051.31346.56261@quantum>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 25 Aug 2015 15:46:38 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Magnus <magnus.damm@gmail.com>,
+	Linux-SH <linux-sh@vger.kernel.org>,
+	Linux-Kernel <linux-kernel@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: shmobile: add Renesas R-Car Gen3 CPG support
+Message-ID: <20150825224638.GL19120@codeaurora.org>
+References: <87lhcz7u2i.wl%kuninori.morimoto.gx@renesas.com>
+ <87k2sj7tzs.wl%kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3ioKt2kN+IccB5F4"
-In-Reply-To: <20150825215051.31346.56261@quantum>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <87k2sj7tzs.wl%kuninori.morimoto.gx@renesas.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On 08/25, Kuninori Morimoto wrote:
+> diff --git a/drivers/clk/shmobile/clk-rcar-gen3.c b/drivers/clk/shmobile/clk-rcar-gen3.c
+> new file mode 100644
+> index 0000000..098caac
+> --- /dev/null
+> +++ b/drivers/clk/shmobile/clk-rcar-gen3.c
+> @@ -0,0 +1,232 @@
+> +/*
+> + * rcar_gen3 Core CPG Clocks
+> + *
+> + * Copyright (C) 2015 Renesas Electronics Corp.
+> + *
+> + * Based on rcar_gen2 Core CPG Clocks driver.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; version 2 of the License.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/clkdev.h>
 
---3ioKt2kN+IccB5F4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Is this include used?
 
-Hi Mike,
+> +#include <linux/clk/shmobile.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/math64.h>
 
-On Tue, Aug 25, 2015 at 02:50:51PM -0700, Michael Turquette wrote:
-> Quoting Maxime Ripard (2015-08-20 08:15:10)
-> > On Tue, Aug 18, 2015 at 09:43:56AM -0700, Michael Turquette wrote:
-> > > Quoting Maxime Ripard (2015-08-18 08:45:52)
-> > > > Hi Mike,
-> > > >=20
-> > > > On Fri, Aug 07, 2015 at 12:09:27PM -0700, Michael Turquette wrote:
-> > > > > All of the other kitchen sink stuff (DT binding, passing the flag=
- back
-> > > > > to the framework when the clock consumer driver calls clk_put) wa=
-s left
-> > > > > out because I do not see a real use case for it. If one can demon=
-strate
-> > > > > a real use case (and not a hypothetical one) then this patch seri=
-es can
-> > > > > be expanded further.
-> > > >=20
-> > > > I think there is a very trivial use case for passing back the
-> > > > reference to the framework, if during the probed, we have something
-> > > > like:
-> > > >=20
-> > > > clk =3D clk_get()
-> > > > clk_prepare_enable(clk)
-> > > > foo_framework_register()
-> > > >=20
-> > > > if foo_framework_register fails, the sensible thing to do would be =
-to
-> > > > call clk_disable_unprepare. If the clock was a critical clock, you
-> > > > just gated it.
-> > >=20
-> > > Hmm, a good point. Creating the "pass the reference back" call is not
-> > > hard technically. But how to keep from abusing it? E.g. I do not want
-> > > that call to become an alternative to correct use of clk_enable.
-> > >=20
-> > > Maybe I'll need a Coccinelle script or just some regular sed to
-> > > occasionally search for new users of this api and audit them?
-> > >=20
-> > > I was hoping to not add any new consumer api at all :-/
-> >=20
-> > I don't think there's any abuse that can be done with the current API,
-> > nor do I think you need to have new functions either.
-> >=20
-> > If the clock is critical, when the customer calls
-> > clk_unprepare_disable on it, simply take back the reference you gave
-> > in the framework, and you're done. Or am I missing something?
->=20
-> Maybe I am the one missing something? My goal was to allow the consumer
-> driver to gate the critical clock. So we need clk_disable_unused to
-> actually disable the clock for that to work.
+Is this include used?
 
-Yeah, but I guess the consumer driver clock gating is not the default
-mode of operations.
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/spinlock.h>
+> +
+> +struct rcar_gen3_cpg {
+> +	struct clk_onecell_data data;
+> +	spinlock_t lock;
+> +	void __iomem *reg;
+> +};
+> +
+> +#define CPG_PLL0CR	0x00d8
+> +#define CPG_PLL2CR	0x002c
+> +
+> +/*
+> + * common function
+> + */
+> +#define rcar_clk_readl(cpg, _reg) clk_readl(cpg->reg + _reg)
 
-Under normal circumstances, it should just always leave the clock
-enabled, all the time.
+Please just use readl instead of clk_readl.
 
-> I think you are suggesting that clk_disable_unused should *not* disable
-> the clock if it is critical. Can you confirm that?
+> +
+> +/*
+> + * Reset register definitions.
+> + */
+> +#define MODEMR 0xe6160060
+> +
+> +static u32 rcar_gen3_read_mode_pins(void)
+> +{
+> +	static u32 mode;
+> +	static bool mode_valid;
+> +
+> +	if (!mode_valid) {
+> +		void __iomem *modemr = ioremap_nocache(MODEMR, 4);
+> +
+> +		BUG_ON(!modemr);
+> +		mode = ioread32(modemr);
+> +		iounmap(modemr);
+> +		mode_valid = true;
+> +	}
+> +
+> +	return mode;
+> +}
 
-By default, yes.
+Perhaps this should be read using a syscon?
 
-Now, we also have the knowledgeable driver case wanting to force the
-clock gating. I think it's an orthogonal issue, we might have the same
-use case for non-critical clocks, and since it's hard to get that done
-with the current API, and that we don't really know what a
-knowledgeable driver will look like at this point, maybe we can just
-delay this entirely until we actually have one in front of us?
+> +struct cpg_pll_config {
+> +	unsigned int extal_div;
+> +	unsigned int pll1_mult;
+> +	unsigned int pll3_mult;
+> +	unsigned int pll4_mult;
+> +};
+> +
+> +static const struct cpg_pll_config cpg_pll_configs[16] __initconst = {
 
-Maxime
+We don't actually need the 16, but ok.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+> +/* EXTAL div	PLL1	PLL3	PLL4 */
+> +	{ 1,	192,	192,	144, },
+> +	{ 1,	192,	128,	144, },
+> +	{ 0,	0,	0,	0,   }, /* Prohibited setting */
+> +	{ 1,	192,	192,	144, },
+> +	{ 1,	156,	156,	120, },
+> +	{ 1,	156,	106,	120, },
+> +	{ 0,	0,	0,	0,   }, /* Prohibited setting */
+> +	{ 1,	156,	156,	120, },
+> +	{ 1,	128,	128,	96,  },
+> +	{ 1,	128,	84,	96,  },
+> +	{ 0,	0,	0,	0,   }, /* Prohibited setting */
+> +	{ 1,	128,	128,	96,  },
+> +	{ 2,	192,	192,	144, },
+> +	{ 2,	192,	128,	144, },
+> +	{ 0,	0,	0,	0,   }, /* Prohibited setting */
+> +	{ 2,	192,	192,	144, },
+> +};
+> +
+> +/* -----------------------------------------------------------------------------
+> + * Initialization
+> + */
+> +
+> +static u32 cpg_mode __initdata;
 
---3ioKt2kN+IccB5F4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Why isn't this local to the only function that uses it?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> +
+> +static void __init rcar_gen3_cpg_clocks_init(struct device_node *np)
+> +{
+> +	const struct cpg_pll_config *config;
+> +	struct rcar_gen3_cpg *cpg;
+> +	struct clk **clks;
+> +	unsigned int i;
+> +	int num_clks;
+> +
+> +	cpg_mode = rcar_gen3_read_mode_pins();
+> +
+> +	num_clks = of_property_count_strings(np, "clock-output-names");
+> +	if (num_clks < 0) {
+> +		pr_err("%s: failed to count clocks\n", __func__);
+> +		return;
+> +	}
+> +
+> +	cpg = kzalloc(sizeof(*cpg), GFP_KERNEL);
+> +	clks = kzalloc((num_clks * sizeof(*clks)), GFP_KERNEL);
 
-iQIcBAEBAgAGBQJV4S1NAAoJEBx+YmzsjxAgd5YP/RWXRB5ych94KgHPpF4sHsWa
-ZhMW6BGvoB+o2S4EkpgpxyoKfR9BtFCZeu7BLUVOFhDIm9MPfdrQ8qbgOkDAqAVl
-q6vq7l008OEAq+3mVWe4/88X7AXp7MdpoSl3AgGAiZj1nSXNSbrFXjdMqt3xWOYP
-K1LZAgBoM0WmLJY3eMR+EwrmLQTunviUPxX57KUuMTPZVON9sjGM90EAw83DCSiL
-TJ4UwjBtAJddCRybGaGLUQznhKcH4gnV0j3sD/4o3xkI/ZnYRKfIYKU5lf2FsIA/
-n7a2ZVs5nBKc8zEg0eJq5DDtTFgekJ4+JRmkdlL5cqwHOfn7Uz8ZLnqYXS+SV71L
-vMxgZs8aCSP9LLOAl+apC/rc+oeMoyHXOspWyZ27H6DsChEed17wBZs3NTcd8Q9/
-q4letGqHhtdNwSk0PjQxkwo+DynkCaGgGra7U+TkChv/Y25fyQKAQHEZuqRM1AZS
-v6ZG9XCnto3OaMAWMuRMvzykokTn+HC/ler3MvqnNeAWzVfoGihFC+/ruEhasvrH
-2LaJXTAeszJs8jB7+FfoVBksGKGFSNvMgQv1eW93pigPcOx35EYX5zMop+XQXzXZ
-jza1ZZK7E6rc8rEExA9gG45t2MHq8s4ZRHjtW6QrjM3lBSidgewjjKU6e+A9K/n/
-z9hZ/fZdNB5u1ChjHa0N
-=nsGU
------END PGP SIGNATURE-----
+kcalloc()
 
---3ioKt2kN+IccB5F4--
+> +	if (cpg == NULL || clks == NULL) {
+> +		/* We're leaking memory on purpose, there's no point in cleaning
+> +		 * up as the system won't boot anyway.
+> +		 */
+
+kfree() does nothing on NULL, so it should be easy enough to
+delete this comment and replace it with two calls to kfree().
+
+> +		pr_err("%s: failed to allocate cpg\n", __func__);
+> +		return;
+> +	}
+> +
+> +	spin_lock_init(&cpg->lock);
+> +
+> +	cpg->data.clks = clks;
+> +	cpg->data.clk_num = num_clks;
+> +
+> +	cpg->reg = of_iomap(np, 0);
+> +	if (WARN_ON(cpg->reg == NULL))
+> +		return;
+> +
+> +	config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
+> +	if (!config->extal_div) {
+> +		pr_err("%s: Prohibited setting (cpg_mode=0x%x)\n",
+> +		       __func__, cpg_mode);
+> +		return;
+> +	}
+> +
+> +	for (i = 0; i < num_clks; ++i) {
+> +		const char *name;
+> +		struct clk *clk;
+> +
+> +		of_property_read_string_index(np, "clock-output-names", i,
+> +					      &name);
+> +
+> +		clk = rcar_gen3_cpg_register_clock(np, cpg, config, name);
+
+Is there any reason why we need to register clocks based on
+what's in DT? I would prefer to see a method where we register
+clocks based on the compatible string in DT. This would get rid
+of all the string comparisons in rcar_gen3_cpg_register_clock()
+and make for cleaner code.
+
+Furthermore, we could make this into a platform driver so that we
+can benefit from the device model.
+
+> +		if (IS_ERR(clk))
+> +			pr_err("%s: failed to register %s %s clock (%ld)\n",
+> +			       __func__, np->name, name, PTR_ERR(clk));
+> +		else
+> +			cpg->data.clks[i] = clk;
+> +	}
+> +
+> +	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
+> +}
+> +CLK_OF_DECLARE(rcar_gen3_cpg_clks, "renesas,rcar-gen3-cpg-clocks",
+> +	       rcar_gen3_cpg_clocks_init);
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
