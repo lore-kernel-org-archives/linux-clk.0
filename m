@@ -1,57 +1,78 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Shunqian Zheng <zhengsq@rock-chips.com>
-To: gregkh@linuxfoundation.org, srinivas.kandagatla@linaro.org,
-	maxime.ripard@free-electrons.com, heiko@sntech.de,
-	caesar.wang@rock-chips.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, dianders@chromium.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	xjq@rock-chips.com, ZhengShunQian <zhengsq@rock-chips.com>
-Subject: [PATCH v2 1/5] clk: rockchip: rk3288: Add the clock id of eFuse
-Date: Tue, 11 Aug 2015 18:13:40 +0800
-Message-Id: <1439288024-13359-2-git-send-email-zhengsq@rock-chips.com>
-In-Reply-To: <1439288024-13359-1-git-send-email-zhengsq@rock-chips.com>
-References: <1439288024-13359-1-git-send-email-zhengsq@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 25 Aug 2015 11:30:19 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	mturquette@baylibre.com, k.kozlowski@samsung.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH-v2 1/5] mfd: 88pm800: Fix tabbing issue
+Message-ID: <20150825103019.GP19409@x1>
+References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
+ <1440442594-3102-2-git-send-email-vaibhav.hiremath@linaro.org>
+ <20150825075121.GE19409@x1>
+ <55DC2A51.6090008@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <55DC2A51.6090008@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: ZhengShunQian <zhengsq@rock-chips.com>
+On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
+> On Tuesday 25 August 2015 01:21 PM, Lee Jones wrote:
+> >On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
+> >
+> >>Driver had coding style issues where spaces were used instead
+> >>of tabs. This patch fixes them all.
+> >
+> >That's not all it's doing though is it?
+> >
+> 
+> Yes, its just tabbing related fixes.
 
-The clock id is necessary item, changing it from 0
-then can be referred in driver and device tree.
+No, it's really not.
 
-Signed-off-by: ZhengShunQian <zhengsq@rock-chips.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/rockchip/clk-rk3288.c      | 2 +-
- include/dt-bindings/clock/rk3288-cru.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+> >Please describe all of your changes.
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 0df5bae..31c4f78 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -647,7 +647,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	GATE(0, "pclk_efuse_1024", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 2, GFLAGS),
- 	GATE(PCLK_TZPC, "pclk_tzpc", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 3, GFLAGS),
- 	GATE(PCLK_UART2, "pclk_uart2", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 9, GFLAGS),
--	GATE(0, "pclk_efuse_256", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 10, GFLAGS),
-+	GATE(PCLK_EFUSE256, "pclk_efuse_256", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 10, GFLAGS),
- 	GATE(PCLK_RKPWM, "pclk_rkpwm", "pclk_cpu", CLK_IGNORE_UNUSED, RK3288_CLKGATE_CON(11), 11, GFLAGS),
- 
- 	/* ddrctrl [DDR Controller PHY clock] gates */
-diff --git a/include/dt-bindings/clock/rk3288-cru.h b/include/dt-bindings/clock/rk3288-cru.h
-index c719aac..ab74d5e 100644
---- a/include/dt-bindings/clock/rk3288-cru.h
-+++ b/include/dt-bindings/clock/rk3288-cru.h
-@@ -164,6 +164,7 @@
- #define PCLK_DDRUPCTL1		366
- #define PCLK_PUBL1		367
- #define PCLK_WDT		368
-+#define PCLK_EFUSE256		369
- 
- /* hclk gates */
- #define HCLK_GPS		448
+... we're also taking the opportunity to remove the unnecessary
+protection surrounding some of the defined values.
+
+> >>Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+> >>---
+> >>  drivers/mfd/88pm800.c | 125 ++++++++++++++++++++++++--------------------------
+> >>  1 file changed, 61 insertions(+), 64 deletions(-)
+> >>
+> >>diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
+> >>index f104a32..c4e097d 100644
+> >>--- a/drivers/mfd/88pm800.c
+> >>+++ b/drivers/mfd/88pm800.c
+> >>@@ -30,55 +30,55 @@
+> >>  #include <linux/of_device.h>
+> >>
+> >>  /* Interrupt Registers */
+> >>-#define PM800_INT_STATUS1		(0x05)
+> >>+#define PM800_INT_STATUS1		0x05
+> >>  #define PM800_ONKEY_INT_STS1		(1 << 0)
+> >>  #define PM800_EXTON_INT_STS1		(1 << 1)
+> >>-#define PM800_CHG_INT_STS1			(1 << 2)
+> >>-#define PM800_BAT_INT_STS1			(1 << 3)
+> >>-#define PM800_RTC_INT_STS1			(1 << 4)
+> >>+#define PM800_CHG_INT_STS1		(1 << 2)
+> >>+#define PM800_BAT_INT_STS1		(1 << 3)
+> >>+#define PM800_RTC_INT_STS1		(1 << 4)
+> >>  #define PM800_CLASSD_OC_INT_STS1	(1 << 5)
+> >
+> >These should all be replaced by BIT().
+> >
+> >Please fix the whole file.
+> 
+> Will do.
+> 
+> Thanks,
+> Vaibhav
+
 -- 
-1.9.1
-
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
