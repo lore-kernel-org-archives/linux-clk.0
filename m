@@ -1,65 +1,60 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd.bergmann@linaro.org>,
- 'Thomas Abraham' <thomas.ab@samsung.com>,
- 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
- 'Michael Turquette' <mturquette@baylibre.com>,
- 'Tomasz Figa' <tomasz.figa@gmail.com>,
- 'Lukasz Majewski' <l.majewski@samsung.com>,
- 'Heiko Stuebner' <heiko@sntech.de>, 'Chanwoo Choi' <cw00.choi@samsung.com>,
- 'Kevin Hilman' <khilman@linaro.org>,
- 'Javier Martinez Canillas' <javier@dowhile0.org>,
- 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
- 'Anand Moon' <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
- platform
-Date: Fri, 07 Aug 2015 13:47:26 +0200
-Message-id: <2359635.Hxe4cb8zKm@amdc1976>
-In-reply-to: <20150807113950.GG6939@linux>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <2061119.GBaoSb4YSL@amdc1976> <20150807113950.GG6939@linux>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Michael Niewoehner <linux@mniewoehner.de>, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org
+Subject: Re: [PATCH v2] clk: rockchip: add pclk_cpu to the list of rk3188 critical clocks
+Date: Tue, 25 Aug 2015 22:17:39 +0200
+Message-ID: <1672317.UnLkKbcVf3@phil>
+In-Reply-To: <20150825185931.31346.26497@quantum>
+References: <5400BEF8-5245-4F7B-845B-D326A7BC56B5@mniewoehner.de> <F5234F5E-2A91-4B63-B260-3F20A4D16A9D@mniewoehner.de> <20150825185931.31346.26497@quantum>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday, August 07, 2015 05:09:50 PM Viresh Kumar wrote:
-> On 07-08-15, 13:31, Bartlomiej Zolnierkiewicz wrote:
-> > Users don't need to enable the config option to get boost
-> > functionality working.  It is only needed to get scaling_boost_freqs
-> > sysfs attribute visible (which lists available boost freqs) when
-> > using cpufreq-dt driver.  Also the config option in question is not
-> > user visible.
+Am Dienstag, 25. August 2015, 11:59:31 schrieb Michael Turquette:
+> Quoting Michael Niewoehner (2015-08-17 12:50:53)
 > 
-> By users I meant the people who will prepare the build images for the
-> release. They can just enable the config option :)
-
-OK.
-
-> > The worst thing that happens if these 2 PM patches don't make it
-> > in time is that there will be no scaling_boost_freqs available
-> > when using cpufreq-dt driver.  Which is not very important from
-> > Exynos4x12 POV as it only supports single boost freq currently.
+> > pclk_cpu needs to keep running because it is needed for devices like
+> > the act8865 regulator but with the recent gpio clock handling this is
+> > not always the case anymore. So add it to the list of critical clocks.
+> > 
+> > Signed-off-by: Michael Niewoehner <linux@mniewoehner.de>
 > 
-> Right. So, now that your patch is Acked, send 1/6 and 6/6 separately
-> to pm-list and Rafael can get them merged himself..
+> Patch fails to apply due to a problem with line 15. git format-patch
+> problem?
+
+see comment below. We triggered this problem with a change to the pinctrl 
+driver and another clock-entry to the critical clocks already went into Linus' 
+pinctrl tree. So I guess this patch should probably also go through his tree - 
+or just go in through any tree after 4.3-rc1.
+
+
 > 
-> I hope, your 6/6 patch will change a bit now ?
-
-Hmm, wait.  Patch 6/6 depends on earlier changes.  I cannot remove
-the config option in question now as it is currently used by
-exynos-cpufreq specific boost support.  Patch 1/6 can be applied
-now but 6/6 needs to wait for patches 2-5 to be applied first.
-
-Actually 6/6 is trivial and can be applied later in v4.3 cycle or
-even in v4.4 one.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+> Regards,
+> Mike
+> 
+> > ---
+> > Changes in v2:
+> > - adapt commit message
+> > - add Linus Walleij to recipients, as the patch is related to the gpio
+> > clock> 
+> >   change in the rockchip pinctrl driver it should go through his tree as
+> >   well
+> > 
+> > drivers/clk/rockchip/clk-rk3188.c | 1 +
+> > 1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/clk/rockchip/clk-rk3188.c
+> > b/drivers/clk/rockchip/clk-rk3188.c index e4f9d47..1c93229 100644
+> > --- a/drivers/clk/rockchip/clk-rk3188.c
+> > +++ b/drivers/clk/rockchip/clk-rk3188.c
+> > @@ -708,6 +708,7 @@ static const char *const rk3188_critical_clocks[]
+> > __initconst = {> 
+> >         "aclk_cpu",
+> >         "aclk_peri",
+> >         "hclk_peri",
+> > 
+> > +       "pclk_cpu",
+> > };
+> > 
+> > static void __init rk3188_common_clk_init(struct device_node *np)
