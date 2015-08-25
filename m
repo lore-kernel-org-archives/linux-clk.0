@@ -1,44 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Lin Huang <hl@rock-chips.com>
-To: heiko@sntech.de, dianders@chromium.org
-Cc: linux-rockchip@lists.infradead.org, huang lin <hl@rock-chips.com>,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] clk: rockchip: add pclk_pd_pmu to the list of rk3288 critical clocks
-Date: Tue,  4 Aug 2015 09:03:41 +0800
-Message-Id: <1438650222-14357-1-git-send-email-hl@rock-chips.com>
+Date: Tue, 25 Aug 2015 08:49:24 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	mturquette@baylibre.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH-v2 5/5] mfd: 88pm800: Add support for clk subdevice
+Message-ID: <20150825074924.GD19409@x1>
+References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
+ <1440442594-3102-7-git-send-email-vaibhav.hiremath@linaro.org>
+ <55DBFC40.3010603@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <55DBFC40.3010603@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: huang lin <hl@rock-chips.com>
+On Tue, 25 Aug 2015, Krzysztof Kozlowski wrote:
 
-pclk_pd_pmu needs to keep running and with the upcoming gpio clock
-handling this is not always the case anymore. So add it to the list
-of critical clocks for now.
+> On 25.08.2015 03:56, Vaibhav Hiremath wrote:
+> > This patch adds mfd_cell/clk-subdevice for 88PM800 MFD
+> > (and family of devices).
+> > 
+> > Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+> > ---
+> >  drivers/mfd/88pm800.c | 25 +++++++++++++++++++++++++
+> >  1 file changed, 25 insertions(+)
+> > 
+> > diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
+> > index c4e097d..a928eed 100644
+> > --- a/drivers/mfd/88pm800.c
+> > +++ b/drivers/mfd/88pm800.c
+> > @@ -173,6 +173,14 @@ static const struct mfd_cell regulator_devs[] = {
+> >  	},
+> >  };
+> >  
+> > +static struct mfd_cell clk_devs[] = {
+> > +	{
+> > +		.name = "88pm80x-clk",
+> > +		.of_compatible = "marvell,88pm800-clk",
+> > +		.id = -1,
+> 
+> The "-1" here stands for PLATFORM_DEVID_NONE?
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Lin Huang <hl@rock-chips.com>
----
-Changes in v2:
-Advices by Douglas Anderson
--fix commit message format error
+Right.  Please use the define, but use it in the mfd_add_devices()
+call, rather than individual cells.
 
- drivers/clk/rockchip/clk-rk3288.c | 1 +
- 1 file changed, 1 insertion(+)
+> > +	},
+> > +};
+> > +
+> >  static const struct regmap_irq pm800_irqs[] = {
+> >  	/* INT0 */
+> >  	[PM800_IRQ_ONKEY] = {
+> > @@ -344,6 +352,17 @@ static int device_regulator_init(struct pm80x_chip *chip)
+> >  			ARRAY_SIZE(regulator_devs), NULL, 0, NULL);
+> >  }
+> >  
+> > +static int device_clk_init(struct pm80x_chip *chip)
+> > +{
+> > +	if (chip->type == CHIP_PM800)
+> > +		clk_devs[0].name = "88pm800-clk";
+> > +	else if (chip->type == CHIP_PM860)
+> > +		clk_devs[0].name = "88pm860-clk";
+> > +
+> > +	return mfd_add_devices(chip->dev, 0, &clk_devs[0],
+> > +			ARRAY_SIZE(clk_devs), NULL, 0, NULL);
+> > +}
+> > +
+> >  static int device_irq_init_800(struct pm80x_chip *chip)
+> >  {
+> >  	struct regmap *map = chip->regmap;
+> > @@ -511,6 +530,12 @@ static int device_800_init(struct pm80x_chip *chip)
+> >  		goto out;
+> >  	}
+> >  
+> > +	ret = device_clk_init(chip);
+> > +	if (ret) {
+> > +		dev_err(chip->dev, "Failed to add clk subdev\n");
+> > +		goto out;
+> > +	}
+> > +
+> >  	return 0;
+> >  out_dev:
+> >  	mfd_remove_devices(chip->dev);
+> > 
+> 
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 0df5bae..9040878 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -780,6 +780,7 @@ static const char *const rk3288_critical_clocks[] __initconst = {
- 	"aclk_cpu",
- 	"aclk_peri",
- 	"hclk_peri",
-+	"pclk_pd_pmu",
- };
- 
- #ifdef CONFIG_PM_SLEEP
 -- 
-1.9.1
-
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
