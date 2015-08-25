@@ -1,309 +1,416 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 3 Aug 2015 19:13:36 +0800
-From: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	linux-mediatek@lists.infradead.org, linaro-kernel@lists.linaro.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: mediatek: Export CPU mux clocks for CPU frequency
- control
-Message-ID: <20150803111335.GA5165@gmail.com>
-References: <CAGS+omAa=3W+SZLmFaDD6uJuhXtu2zX12TsvL2etDif+mKkoVA@mail.gmail.com>
- <1436942326-19747-1-git-send-email-pi-cheng.chen@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1436942326-19747-1-git-send-email-pi-cheng.chen@linaro.org>
+Message-id: <55DBF845.4070700@samsung.com>
+Date: Tue, 25 Aug 2015 14:08:21 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+MIME-version: 1.0
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>,
+	linux-arm-kernel@lists.infradead.org
+Cc: robh+dt@kernel.org, mturquette@baylibre.com, lee.jones@linaro.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH-v2 4/5] clk: 88pm800: Add clk provider driver for 88pm800
+ family of devices
+References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
+ <1440442594-3102-6-git-send-email-vaibhav.hiremath@linaro.org>
+In-reply-to: <1440442594-3102-6-git-send-email-vaibhav.hiremath@linaro.org>
+Content-type: text/plain; charset=windows-1252
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 15, 2015 at 02:38:46PM +0800, Pi-Cheng Chen wrote:
-> From: "pi-cheng.chen" <pi-cheng.chen@linaro.org>
+On 25.08.2015 03:56, Vaibhav Hiremath wrote:
+> 88PM800 family of devices supports buffered 32KHz clock output,
+> for example,
 > 
-> This patch adds CPU mux clocks which are used by Mediatek cpufreq driver
-> for intermediate clock source switching.
-
-Hi Mike and Stephen,
-
-since the MT8173 cpufreq driver is likely going to be merged[1] and we still
-need the CPU MUX clocks consumed by MT8173 cpufreq driver, may I have some
-comments from you to get this patch moving forwards so that MT8173 cpufreq
-driver could work completely?
-
-Or the regmap supported basic clock type[2] is the prefered way?
-Thanks.
-
-Best Regards,
-Pi-Cheng
-
-[1] http://marc.info/?l=linux-pm&m=143850044118837&w=2
-[2] http://marc.info/?l=linux-kernel&m=143835585905028&w=2
-
+> 88PM800: CLK32k_1, CLK32k_2 and CLK32k_3
+> 88PM860: CLK32K_1 and CLK32K_2
 > 
-> Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-> Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+> This patch adds new clk provider driver to support enable/disable
+> of the 32KHz clock output from 88PM800 family of devices.
+> 
+> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
 > ---
-> Changes in v4:
-> - Address comments for v3
-> - Rebase to the patch that adds 13mhz clock for MT8173[1]
+>  drivers/clk/Kconfig       |   8 ++
+>  drivers/clk/Makefile      |   1 +
+>  drivers/clk/clk-88pm800.c | 341 ++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 350 insertions(+)
+>  create mode 100644 drivers/clk/clk-88pm800.c
 > 
-> Changes in v3:
-> - Rebase to 4.2-rc1
-> - Fix some issues of v2
-> 
-> Changes in v2:
-> - Remove use of .determine_rate callback
-> 
-> [1] http://patchwork.kernerl.xyz/patch/6777041/
-> ---
->  drivers/clk/mediatek/Makefile          |   2 +-
->  drivers/clk/mediatek/clk-cpumux.c      | 127 +++++++++++++++++++++++++++++++++
->  drivers/clk/mediatek/clk-cpumux.h      |  22 ++++++
->  drivers/clk/mediatek/clk-mt8173.c      |  23 ++++++
->  include/dt-bindings/clock/mt8173-clk.h |   4 +-
->  5 files changed, 176 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/clk/mediatek/clk-cpumux.c
->  create mode 100644 drivers/clk/mediatek/clk-cpumux.h
-> 
-> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-> index 8e4b2a4..299917a 100644
-> --- a/drivers/clk/mediatek/Makefile
-> +++ b/drivers/clk/mediatek/Makefile
-> @@ -1,4 +1,4 @@
-> -obj-y += clk-mtk.o clk-pll.o clk-gate.o
-> +obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-cpumux.o
->  obj-$(CONFIG_RESET_CONTROLLER) += reset.o
->  obj-y += clk-mt8135.o
->  obj-y += clk-mt8173.o
-> diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 42f7120..c34c14d 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -167,6 +167,14 @@ config COMMON_CLK_CDCE706
+>  	---help---
+>  	  This driver supports TI CDCE706 programmable 3-PLL clock synthesizer.
+>  
+> +config COMMON_CLK_88PM800
+> +	tristate "Clock driver for 88PM800 MFD"
+> +	depends on MFD_88PM800
+> +	---help---
+> +	  This driver supports 88PM800 & 88PM860 crystal oscillator
+> +	  clock. These multi-function devices have two (88PM860) or three
+> +	  (88PM800) fixed-rate output, clocked at 32KHz each.
+> +
+>  source "drivers/clk/bcm/Kconfig"
+>  source "drivers/clk/hisilicon/Kconfig"
+>  source "drivers/clk/qcom/Kconfig"
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index c4cf075..5248cd3 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -80,3 +80,4 @@ obj-$(CONFIG_X86)			+= x86/
+>  obj-$(CONFIG_ARCH_ZX)			+= zte/
+>  obj-$(CONFIG_ARCH_ZYNQ)			+= zynq/
+>  obj-$(CONFIG_H8300)		+= h8300/
+> +obj-$(CONFIG_COMMON_CLK_88PM800)	+= clk-88pm800.o
+> diff --git a/drivers/clk/clk-88pm800.c b/drivers/clk/clk-88pm800.c
 > new file mode 100644
-> index 0000000..fb04fe1
+> index 0000000..4c045e1
 > --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-cpumux.c
-> @@ -0,0 +1,127 @@
+> +++ b/drivers/clk/clk-88pm800.c
+> @@ -0,0 +1,341 @@
 > +/*
-> + * Copyright (c) 2015 Linaro Ltd.
-> + * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+> + * clk-88pm800.c - Clock driver for 88PM800 family of devices
 > + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
+> + * This driver is created based on clk-s2mps11.c
+> + *
+> + * Copyright (C) 2015 Linaro Ltd.
+> + *
+> + * This program is free software; you can redistribute  it and/or modify it
+> + * under  the terms of  the GNU General  Public License as published by the
+> + * Free Software Foundation;  either version 2 of the  License, or (at your
+> + * option) any later version.
 > + *
 > + * This program is distributed in the hope that it will be useful,
 > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
 > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 > + * GNU General Public License for more details.
+> + *
 > + */
 > +
+> +#include <linux/module.h>
+> +#include <linux/err.h>
+> +#include <linux/of.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/regmap.h>
 > +#include <linux/clk-provider.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/slab.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/mfd/88pm80x.h>
 > +
-> +#include "clk-mtk.h"
-> +#include "clk-cpumux.h"
-> +
-> +struct mtk_clk_cpumux {
-> +	struct clk_hw	hw;
-> +	struct regmap	*regmap;
-> +	u32		reg;
-> +	u32		mask;
-> +	u8		shift;
+> +/* Number of clocks output from 88pm800 family of device */
+> +enum {
+> +	PM800_CLK32K_1 = 0,
+> +	PM800_CLK32K_2,
+> +	PM800_CLK32K_3,
+> +	PM800_CLKS_NUM,
 > +};
 > +
-> +static inline struct mtk_clk_cpumux *to_clk_mux(struct clk_hw *_hw)
+> +struct pm800_clk {
+> +	struct pm80x_chip *chip;
+> +	struct device_node *clk_np;
+> +	struct clk_hw hw;
+> +	struct clk *clk;
+> +	struct clk_lookup *lookup;
+> +	u32 mask;
+> +	u32 shift;
+> +	unsigned int reg;
+> +};
+> +
+> +static struct pm800_clk *to_pm800_clk(struct clk_hw *hw)
 > +{
-> +	return container_of(_hw, struct mtk_clk_cpumux, hw);
+> +	return container_of(hw, struct pm800_clk, hw);
 > +}
 > +
-> +static u8 clk_cpumux_get_parent(struct clk_hw *hw)
+> +static int pm800_clk_prepare(struct clk_hw *hw)
 > +{
-> +	struct mtk_clk_cpumux *mux = to_clk_mux(hw);
-> +	int num_parents = __clk_get_num_parents(hw->clk);
-> +	unsigned int val;
+> +	struct pm800_clk *pm800 = to_pm800_clk(hw);
 > +
-> +	regmap_read(mux->regmap, mux->reg, &val);
+> +	/* We always want to use XO clock */
+> +	return regmap_update_bits(pm800->chip->regmap,
+> +				 pm800->reg,
+> +				 pm800->mask,
+> +				 PM800_32K_OUTX_SEL_XO_32KHZ << pm800->shift);
+> +}
 > +
-> +	val >>= mux->shift;
-> +	val &= mux->mask;
+> +static void pm800_clk_unprepare(struct clk_hw *hw)
+> +{
+> +	struct pm800_clk *pm800 = to_pm800_clk(hw);
 > +
-> +	if (val >= num_parents)
+> +	regmap_update_bits(pm800->chip->regmap, pm800->reg,
+> +				pm800->mask, ~pm800->mask);
+> +}
+> +
+> +static int pm800_clk_is_prepared(struct clk_hw *hw)
+> +{
+> +	int ret;
+> +	u32 val;
+> +	struct pm800_clk *pm800 = to_pm800_clk(hw);
+> +
+> +	ret = regmap_read(pm800->chip->regmap,
+> +				pm800->reg, &val);
+> +	if (ret < 0)
 > +		return -EINVAL;
 > +
-> +	return val;
+> +	return (val & pm800->mask) >> pm800->shift;
 > +}
 > +
-> +static int clk_cpumux_set_parent(struct clk_hw *hw, u8 index)
+> +static unsigned long pm800_clk_recalc_rate(struct clk_hw *hw,
+> +					     unsigned long parent_rate)
 > +{
-> +	struct mtk_clk_cpumux *mux = to_clk_mux(hw);
-> +	u32 mask, val;
-> +
-> +	val = index << mux->shift;
-> +	mask = mux->mask << mux->shift;
-> +
-> +	return regmap_update_bits(mux->regmap, mux->reg, mask, val);
+> +	return 32768;
 > +}
 > +
-> +static const struct clk_ops clk_cpumux_ops = {
-> +	.get_parent = clk_cpumux_get_parent,
-> +	.set_parent = clk_cpumux_set_parent,
+> +static const struct clk_ops pm800_clk_ops = {
+> +	.prepare	= pm800_clk_prepare,
+> +	.unprepare	= pm800_clk_unprepare,
+> +	.is_prepared	= pm800_clk_is_prepared,
+> +	.recalc_rate	= pm800_clk_recalc_rate,
 > +};
 > +
-> +static struct clk __init *mtk_clk_register_cpumux(const struct mtk_composite *mux,
-> +					   struct regmap *regmap)
+> +static struct clk_init_data pm800_clks_init[PM800_CLKS_NUM] = {
+> +	[PM800_CLK32K_1] = {
+> +		.name	= "pm800_clk32k_1",
+> +		.ops	= &pm800_clk_ops,
+> +		.flags	= CLK_IS_ROOT,
+> +	},
+> +	[PM800_CLK32K_2] = {
+> +		.name	= "pm800_clk32k_2",
+> +		.ops	= &pm800_clk_ops,
+> +		.flags	= CLK_IS_ROOT,
+> +	},
+> +	[PM800_CLK32K_3] = {
+> +		.name	= "pm800_clk32k_3",
+> +		.ops	= &pm800_clk_ops,
+> +		.flags	= CLK_IS_ROOT,
+> +	},
+> +};
+> +
+> +static struct clk_init_data pm860_clks_init[PM800_CLKS_NUM] = {
+> +	[PM800_CLK32K_1] = {
+> +		.name	= "pm800_clk32k_1",
+> +		.ops	= &pm800_clk_ops,
+> +		.flags	= CLK_IS_ROOT,
+> +	},
+> +	[PM800_CLK32K_2] = {
+> +		.name	= "pm800_clk32k_2",
+> +		.ops	= &pm800_clk_ops,
+> +		.flags	= CLK_IS_ROOT,
+> +	},
+> +};
+> +
+> +static int pm800_init_clk(struct pm800_clk *pm800_clks)
 > +{
-> +	struct mtk_clk_cpumux *cpumux;
-> +	struct clk *clk;
-> +	struct clk_init_data init;
+> +	int ret;
 > +
-> +	cpumux = kzalloc(sizeof(*cpumux), GFP_KERNEL);
-> +	if (!cpumux)
-> +		return ERR_PTR(-ENOMEM);
+> +	/* Enable XO_LJ : Low jitter clock of 32KHz from XO */
+> +	ret = regmap_update_bits(pm800_clks->chip->regmap, PM800_LOW_POWER2,
+> +			PM800_LOW_POWER2_XO_LJ_EN, PM800_LOW_POWER2_XO_LJ_EN);
+> +	if (ret)
+> +		return ret;
 > +
-> +	init.name = mux->name;
-> +	init.ops = &clk_cpumux_ops;
-> +	init.parent_names = mux->parent_names;
-> +	init.num_parents = mux->num_parents;
-> +	init.flags = mux->flags;
+> +	/* Enable USE_XO : Use XO clock for all internal timing reference */
+> +	ret = regmap_update_bits(pm800_clks->chip->regmap, PM800_RTC_CONTROL,
+> +			PM800_RTC1_USE_XO, PM800_RTC1_USE_XO);
+> +	if (ret)
+> +		return ret;
 > +
-> +	cpumux->reg = mux->mux_reg;
-> +	cpumux->shift = mux->mux_shift;
-> +	cpumux->mask = BIT(mux->mux_width) - 1;
-> +	cpumux->regmap = regmap;
-> +	cpumux->hw.init = &init;
+> +	/* OSC_FREERUN: Enable Osc free running mode by clearing the bit */
+> +	ret = regmap_update_bits(pm800_clks->chip->regmap, PM800_OSC_CNTRL1,
+> +			PM800_OSC_CNTRL1_OSC_FREERUN_EN, 0);
+> +	if (ret)
+> +		return ret;
 > +
-> +	clk = clk_register(NULL, &cpumux->hw);
-> +	if (IS_ERR(clk))
-> +		kfree(cpumux);
-> +
-> +	return clk;
+> +	return 0;
 > +}
 > +
-> +int __init mtk_clk_register_cpumuxes(struct device_node *node,
-> +			      const struct mtk_composite *clks, int num,
-> +			      struct clk_onecell_data *clk_data)
+> +static struct device_node *pm800_clk_parse_dt(struct platform_device *pdev,
+> +		struct clk_init_data *clks_init)
 > +{
+> +	struct pm80x_chip *chip = dev_get_drvdata(pdev->dev.parent);
+> +	struct device_node *clk_np;
 > +	int i;
-> +	struct clk *clk;
-> +	struct regmap *regmap;
 > +
-> +	regmap = syscon_node_to_regmap(node);
-> +	if (IS_ERR(regmap)) {
-> +		pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
-> +		       PTR_ERR(regmap));
-> +		return PTR_ERR(regmap);
+> +	if (!chip->dev->of_node)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	clk_np = of_get_child_by_name(chip->dev->of_node, "clocks");
+> +	if (!clk_np) {
+> +		dev_err(&pdev->dev, "could not find clock sub-node\n");
+> +		return ERR_PTR(-EINVAL);
 > +	}
 > +
-> +	for (i = 0; i < num; i++) {
-> +		const struct mtk_composite *mux = &clks[i];
+> +	for (i = 0; i < PM800_CLKS_NUM; i++) {
+> +		if (!clks_init[i].name)
+> +			continue; /* Skip clocks not present in some devices */
 > +
-> +		clk = mtk_clk_register_cpumux(mux, regmap);
-> +		if (IS_ERR(clk)) {
-> +			pr_err("Failed to register clk %s: %ld\n",
-> +			       mux->name, PTR_ERR(clk));
-> +			continue;
+> +		of_property_read_string_index(clk_np, "clock-output-names", i,
+> +				&clks_init[i].name);
+> +	}
+> +
+> +	return clk_np;
+> +}
+> +
+> +static int pm800_clk_probe(struct platform_device *pdev)
+> +{
+> +	struct pm80x_chip *chip = dev_get_drvdata(pdev->dev.parent);
+> +	struct pm800_clk *pm800_clks;
+> +	struct clk_init_data *clks_init;
+> +	static struct clk **clk_table;
+> +	static struct clk_onecell_data *of_clk_data;
+> +	int i, ret;
+> +
+> +	pm800_clks = devm_kcalloc(&pdev->dev, PM800_CLKS_NUM,
+> +				sizeof(*pm800_clks), GFP_KERNEL);
+> +	if (!pm800_clks)
+> +		return -ENOMEM;
+> +
+> +	clk_table = devm_kcalloc(&pdev->dev, PM800_CLKS_NUM,
+> +				sizeof(struct clk *), GFP_KERNEL);
+> +	if (!clk_table)
+> +		return -ENOMEM;
+> +
+> +	switch (platform_get_device_id(pdev)->driver_data) {
+> +	case CHIP_PM800:
+> +		clks_init = pm800_clks_init;
+> +		break;
+> +	case CHIP_PM860:
+> +		clks_init = pm860_clks_init;
+> +		break;
+> +	default:
+> +		dev_err(&pdev->dev, "Invalid device type\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Store clocks of_node in first element of pm800_clks array */
+> +	pm800_clks->clk_np = pm800_clk_parse_dt(pdev, clks_init);
+> +	if (IS_ERR(pm800_clks->clk_np))
+> +		return PTR_ERR(pm800_clks->clk_np);
+> +
+> +	of_clk_data = devm_kzalloc(&pdev->dev, sizeof(*of_clk_data), GFP_KERNEL);
+> +	if (!of_clk_data) {
+> +		ret = -ENOMEM;
+> +		goto err_clk_np;
+> +	}
+> +
+> +	for (i = 0; i < PM800_CLKS_NUM; i++) {
+> +		if (!clks_init[i].name)
+> +			continue; /* Skip clocks not present in some devices */
+> +
+> +		pm800_clks[i].chip = chip;
+> +		pm800_clks[i].hw.init = &clks_init[i];
+> +		/*
+> +		 * As of now, mask and shift formula below works for both
+> +		 * 88PM800 and it's family of devices,
+> +		 *
+> +		 *  PM800_RTC_MISC2:
+> +		 *      1:0	= CK_32K_OUT1_SEL
+> +		 *      3:2	= CK_32K_OUT2_SEL
+> +		 *      5:4	= CK_32K_OUT3_SEL
+> +		 */
+> +		pm800_clks[i].shift = i * 2;
+> +		pm800_clks[i].mask = PM800_32K_OUTX_SEL_MASK << pm800_clks[i].shift;
+> +		pm800_clks[i].reg = PM800_RTC_MISC2;
+> +
+> +		pm800_clks[i].clk = devm_clk_register(&pdev->dev,
+> +							&pm800_clks[i].hw);
+> +		if (IS_ERR(pm800_clks[i].clk)) {
+> +			dev_err(&pdev->dev, "Fail to register : %s\n",
+> +						clks_init[i].name);
+> +			ret = PTR_ERR(pm800_clks[i].clk);
+> +			goto err;
 > +		}
 > +
-> +		clk_data->clks[mux->id] = clk;
+> +		pm800_clks[i].lookup = clkdev_create(pm800_clks[i].clk,
+> +					clks_init[i].name, NULL);
+> +		if (!pm800_clks[i].lookup) {
+> +			ret = -ENOMEM;
+> +			goto err;
+> +		}
+> +
+> +		clk_table[i] = pm800_clks[i].clk;
+> +	}
+> +
+> +	of_clk_data->clks = clk_table;
+> +	of_clk_data->clk_num = PM800_CLKS_NUM;
+> +	ret = of_clk_add_provider(pm800_clks->clk_np, of_clk_src_onecell_get,
+> +			of_clk_data);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Fail to add OF clk provider : %d\n", ret);
+> +		goto err;
+> +	}
+> +
+> +	/* Common for all 32KHz clock output */
+> +	ret = pm800_init_clk(&pm800_clks[0]);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Failed to initialize clk : %d\n", ret);
+> +		goto err;
+
+You're missing here of_clk_del_provider().
+
+> +	}
+> +
+> +	platform_set_drvdata(pdev, pm800_clks);
+> +
+> +	return 0;
+> +
+> +err:
+> +	for (i = 0; i < PM800_CLKS_NUM; i++) {
+> +		if (pm800_clks[i].lookup)
+> +			clkdev_drop(pm800_clks[i].lookup);
+> +	}
+> +err_clk_np:
+> +	/* Drop the reference obtained in pm800_clk_parse_dt */
+> +	of_node_put(pm800_clks[0].clk_np);
+> +
+> +	return ret;
+> +}
+> +
+> +static int pm800_clk_remove(struct platform_device *pdev)
+> +{
+> +	struct pm800_clk *pm800_clks = platform_get_drvdata(pdev);
+> +	int i;
+> +
+> +	of_clk_del_provider(pm800_clks[0].clk_np);
+> +	/* Drop the reference obtained in pm800_clk_parse_dt */
+> +	of_node_put(pm800_clks[0].clk_np);
+> +
+> +	for (i = 0; i < PM800_CLKS_NUM; i++) {
+> +		if (pm800_clks[i].lookup)
+> +			clkdev_drop(pm800_clks[i].lookup);
 > +	}
 > +
 > +	return 0;
 > +}
-> diff --git a/drivers/clk/mediatek/clk-cpumux.h b/drivers/clk/mediatek/clk-cpumux.h
-> new file mode 100644
-> index 0000000..52c769f
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-cpumux.h
-> @@ -0,0 +1,22 @@
-> +/*
-> + * Copyright (c) 2015 Linaro Ltd.
-> + * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
 > +
-> +#ifndef __DRV_CLK_CPUMUX_H
-> +#define __DRV_CLK_CPUMUX_H
+> +static const struct platform_device_id pm800_clk_id[] = {
+> +	{ "88pm800-clk", CHIP_PM800},
+> +	{ "88pm860-clk", CHIP_PM860},
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(platform, pm800_clk_id);
 > +
-> +int mtk_clk_register_cpumuxes(struct device_node *node,
-> +			      const struct mtk_composite *clks, int num,
-> +			      struct clk_onecell_data *clk_data);
-> +
-> +#endif /* __DRV_CLK_CPUMUX_H */
-> diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
-> index 540c5c3..053ca27 100644
-> --- a/drivers/clk/mediatek/clk-mt8173.c
-> +++ b/drivers/clk/mediatek/clk-mt8173.c
-> @@ -19,6 +19,7 @@
->  
->  #include "clk-mtk.h"
->  #include "clk-gate.h"
-> +#include "clk-cpumux.h"
->  
->  #include <dt-bindings/clock/mt8173-clk.h>
->  
-> @@ -517,6 +518,25 @@ static const char * const i2s3_b_ck_parents[] __initconst = {
->  	"apll2_div5"
->  };
->  
-> +static const char * const ca53_parents[] __initconst = {
-> +	"clk26m",
-> +	"armca7pll",
-> +	"mainpll",
-> +	"univpll"
+> +static struct platform_driver pm800_clk_driver = {
+> +	.driver = {
+> +		.name  = "88pm80x-clk",
+> +	},
+> +	.probe = pm800_clk_probe,
+> +	.remove = pm800_clk_remove,
+> +	.id_table = pm800_clk_id,
 > +};
 > +
-> +static const char * const ca57_parents[] __initconst = {
-> +	"clk26m",
-> +	"armca15pll",
-> +	"mainpll",
-> +	"univpll"
-> +};
-> +
-> +static const struct mtk_composite cpu_muxes[] __initconst = {
-> +	MUX(CLK_INFRA_CA53SEL, "infra_ca53_sel", ca53_parents, 0x0000, 0, 2),
-> +	MUX(CLK_INFRA_CA57SEL, "infra_ca57_sel", ca57_parents, 0x0000, 2, 2),
-> +};
-> +
->  static const struct mtk_composite top_muxes[] __initconst = {
->  	/* CLK_CFG_0 */
->  	MUX(CLK_TOP_AXI_SEL, "axi_sel", axi_parents, 0x0040, 0, 3),
-> @@ -743,6 +763,9 @@ static void __init mtk_infrasys_init(struct device_node *node)
->  						clk_data);
->  	mtk_clk_register_factors(infra_divs, ARRAY_SIZE(infra_divs), clk_data);
->  
-> +	mtk_clk_register_cpumuxes(node, cpu_muxes, ARRAY_SIZE(cpu_muxes),
-> +						clk_data);
-> +
->  	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
->  	if (r)
->  		pr_err("%s(): could not register clock provider: %d\n",
-> diff --git a/include/dt-bindings/clock/mt8173-clk.h b/include/dt-bindings/clock/mt8173-clk.h
-> index fa2a2bb..a17cbaa 100644
-> --- a/include/dt-bindings/clock/mt8173-clk.h
-> +++ b/include/dt-bindings/clock/mt8173-clk.h
-> @@ -188,7 +188,9 @@
->  #define CLK_INFRA_PMICSPI		10
->  #define CLK_INFRA_PMICWRAP		11
->  #define CLK_INFRA_CLK_13M		12
-> -#define CLK_INFRA_NR_CLK		13
-> +#define CLK_INFRA_CA53SEL		13
-> +#define CLK_INFRA_CA57SEL		14
-> +#define CLK_INFRA_NR_CLK		15
->  
->  /* PERI_SYS */
->  
-> -- 
-> 1.9.1
-> 
+> +static int __init pm800_clk_init(void)
+> +{
+> +	return platform_driver_register(&pm800_clk_driver);
+> +}
+> +subsys_initcall(pm800_clk_init);
+
+Does it have to be subsys_initcall instead of regular
+module_platform_driver? Strict ordering of modules should be avoided. Do
+you require it?
+
+Rest looks fine (actually Stephen pointed some issue during previous
+review so I had easier job).
+
+Best regards,
+Krzysztof
+
