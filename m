@@ -1,136 +1,85 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
- Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
- Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v4 1/6] cpufreq: make scaling_boost_freqs sysfs attr
- available when boost is enabled
-Date: Fri, 07 Aug 2015 13:12:56 +0200
-Message-id: <1594902.Dv5JKhve0y@amdc1976>
-In-reply-to: <20150807104156.GE6939@linux>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <5184469.cOpIkgzX4h@amdc1976> <20150807104156.GE6939@linux>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-id: <55DBFC40.3010603@samsung.com>
+Date: Tue, 25 Aug 2015 14:25:20 +0900
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>,
+	linux-arm-kernel@lists.infradead.org
+Cc: robh+dt@kernel.org, mturquette@baylibre.com, lee.jones@linaro.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH-v2 5/5] mfd: 88pm800: Add support for clk subdevice
+References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
+ <1440442594-3102-7-git-send-email-vaibhav.hiremath@linaro.org>
+In-reply-to: <1440442594-3102-7-git-send-email-vaibhav.hiremath@linaro.org>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday, August 07, 2015 04:11:56 PM Viresh Kumar wrote:
-> On 07-08-15, 12:34, Bartlomiej Zolnierkiewicz wrote:
-> > > I would suggest you sending such patches as reply to the earlier
-> > > threads only, instead of a new chain. This will save your time.
-> > 
-> > Please explain it more.  This patch needs to be first for cpufreq-dt
-> > switch to be complete.  scaling_boost_freqs is available currently
-> > for exynos-cpufreq users when boost is enabled and ideally we would
-> > like it to be available immediately after the switch to cpufreq-dt.
+On 25.08.2015 03:56, Vaibhav Hiremath wrote:
+> This patch adds mfd_cell/clk-subdevice for 88PM800 MFD
+> (and family of devices).
 > 
-> I wasn't talking about the ordering of the patches here, but when to
-> send patches.
+> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+> ---
+>  drivers/mfd/88pm800.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
 > 
-> So, you now sent these patches again, but what you could have done
-> is: only send the first patch in reply to the earlier thread. And ask
-> if it looks fine. If yes, resend the whole series properly or keep
-> fixing there only..
+> diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
+> index c4e097d..a928eed 100644
+> --- a/drivers/mfd/88pm800.c
+> +++ b/drivers/mfd/88pm800.c
+> @@ -173,6 +173,14 @@ static const struct mfd_cell regulator_devs[] = {
+>  	},
+>  };
+>  
+> +static struct mfd_cell clk_devs[] = {
+> +	{
+> +		.name = "88pm80x-clk",
+> +		.of_compatible = "marvell,88pm800-clk",
+> +		.id = -1,
+
+The "-1" here stands for PLATFORM_DEVID_NONE?
+
+Best regards,
+Krzysztof
+
+> +	},
+> +};
+> +
+>  static const struct regmap_irq pm800_irqs[] = {
+>  	/* INT0 */
+>  	[PM800_IRQ_ONKEY] = {
+> @@ -344,6 +352,17 @@ static int device_regulator_init(struct pm80x_chip *chip)
+>  			ARRAY_SIZE(regulator_devs), NULL, 0, NULL);
+>  }
+>  
+> +static int device_clk_init(struct pm80x_chip *chip)
+> +{
+> +	if (chip->type == CHIP_PM800)
+> +		clk_devs[0].name = "88pm800-clk";
+> +	else if (chip->type == CHIP_PM860)
+> +		clk_devs[0].name = "88pm860-clk";
+> +
+> +	return mfd_add_devices(chip->dev, 0, &clk_devs[0],
+> +			ARRAY_SIZE(clk_devs), NULL, 0, NULL);
+> +}
+> +
+>  static int device_irq_init_800(struct pm80x_chip *chip)
+>  {
+>  	struct regmap *map = chip->regmap;
+> @@ -511,6 +530,12 @@ static int device_800_init(struct pm80x_chip *chip)
+>  		goto out;
+>  	}
+>  
+> +	ret = device_clk_init(chip);
+> +	if (ret) {
+> +		dev_err(chip->dev, "Failed to add clk subdev\n");
+> +		goto out;
+> +	}
+> +
+>  	return 0;
+>  out_dev:
+>  	mfd_remove_devices(chip->dev);
 > 
-> That makes things really fast. You don't have to resend the series and
-> people wouldn't stay away from it. I stayed away from this series to
-> find enough available time to see your 6 patches. Had it been just a
-> reply, I would have replied immediately like now.
-> 
-> Look at how updated versions in the same mail chain in case of OPP
-> series..
 
-Please find updated patch below.  It can be moved just before
-patch #6 and all patches in the series would still apply fine.
-
----------------------8<-------------------
-
->From 993ebb6fc632ec7b61654c9610c90ff4dca4be34 Mon Sep 17 00:00:00 2001
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Fri, 7 Aug 2015 13:07:51 +0200
-Subject: [PATCH] cpufreq-dt: make scaling_boost_freqs sysfs attr available
- when boost is enabled
-
-Make scaling_boost_freqs sysfs attribute is available when
-cpufreq-dt driver is used and boost support is enabled.
-
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/cpufreq/cpufreq-dt.c | 11 ++++++++++-
- include/linux/cpufreq.h      |  1 +
- 2 files changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index b9259ab..c6a3b98 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -36,6 +36,12 @@ struct private_data {
- 	unsigned int voltage_tolerance; /* in percentage */
- };
- 
-+static struct freq_attr *cpufreq_dt_attr[] = {
-+	&cpufreq_freq_attr_scaling_available_freqs,
-+	NULL,   /* Extra space for boost-attr if required */
-+	NULL,
-+};
-+
- static int set_target(struct cpufreq_policy *policy, unsigned int index)
- {
- 	struct dev_pm_opp *opp;
-@@ -182,6 +188,8 @@ try_again:
- 	return ret;
- }
- 
-+static struct cpufreq_driver dt_cpufreq_driver;
-+
- static int cpufreq_init(struct cpufreq_policy *policy)
- {
- 	struct cpufreq_frequency_table *freq_table;
-@@ -336,6 +344,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 		ret = cpufreq_enable_boost_support();
- 		if (ret)
- 			goto out_free_cpufreq_table;
-+		cpufreq_dt_attr[1] = &cpufreq_freq_attr_scaling_boost_freqs;
- 	}
- 
- 	policy->cpuinfo.transition_latency = transition_latency;
-@@ -411,7 +420,7 @@ static struct cpufreq_driver dt_cpufreq_driver = {
- 	.exit = cpufreq_exit,
- 	.ready = cpufreq_ready,
- 	.name = "cpufreq-dt",
--	.attr = cpufreq_generic_attr,
-+	.attr = cpufreq_dt_attr,
- };
- 
- static int dt_cpufreq_probe(struct platform_device *pdev)
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 95f0186..657542d 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -609,6 +609,7 @@ struct cpufreq_frequency_table *cpufreq_frequency_get_table(unsigned int cpu);
- 
- /* the following are really really optional */
- extern struct freq_attr cpufreq_freq_attr_scaling_available_freqs;
-+extern struct freq_attr cpufreq_freq_attr_scaling_boost_freqs;
- extern struct freq_attr *cpufreq_generic_attr[];
- int cpufreq_table_validate_and_show(struct cpufreq_policy *policy,
- 				      struct cpufreq_frequency_table *table);
--- 
-1.9.1
