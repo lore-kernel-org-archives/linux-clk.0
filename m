@@ -1,44 +1,37 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 28 Aug 2015 10:21:29 -0700
+Date: Tue, 25 Aug 2015 10:53:21 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk@vger.kernel.org, kuninori.morimoto.gx@renesas.com,
-	gaku.inami.xw@bp.renesas.com, mturquette@baylibre.com,
-	linux-sh@vger.kernel.org, horms@verge.net.au, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Subject: Re: [PATCH v3 00/04] Renesas R-Car Gen3 CPG support V3
-Message-ID: <20150828172129.GA19120@codeaurora.org>
-References: <20150828091550.21731.85227.sendpatchset@little-apple>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michal Kubecek <mkubecek@suse.cz>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: Add missing header for 'bool' definition to
+ clk-conf.h
+Message-ID: <20150825175321.GF19120@codeaurora.org>
+References: <1439882205-10978-1-git-send-email-wens@csie.org>
+ <20150824212828.GD14330@codeaurora.org>
+ <CAGb2v67EhfgtbdLyFLd8xd6MMAnG4MGMvGLUTZxh=ag7XghvyA@mail.gmail.com>
+ <20150825065932.GA29101@unicorn.suse.cz>
+ <CAGb2v67a66VbpEs4SkDf8yCeuNxgHDtKxzpnGzxNnXvmkfZxAA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20150828091550.21731.85227.sendpatchset@little-apple>
+In-Reply-To: <CAGb2v67a66VbpEs4SkDf8yCeuNxgHDtKxzpnGzxNnXvmkfZxAA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/28, Magnus Damm wrote:
-> Renesas R-Car Gen3 CPG support V3
+On 08/25, Chen-Yu Tsai wrote:
+> On Tue, Aug 25, 2015 at 2:59 PM, Michal Kubecek <mkubecek@suse.cz> wrote:
+> >
+> > How about
+> >
+> >    - It must fix a real bug that bothers people (not a, "This could be a
+> >    problem..." type thing).
+> >
+> > in Documentation/stable_kernel_rules.txt?
 > 
-> [PATCH v3 01/04] clk: shmobile: Get rid of CONFIG_ARCH_SHMOBILE_MULTI
-> [PATCH v3 02/04] clk: shmobile: Make MSTP clock-output-names optional
-> [PATCH v3 03/04] clk: shmobile: Add Renesas R-Car Gen3 CPG support
-> [PATCH v3 04/04] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
-> 
-> This series is the first attempt to take the CCF code from the single patch:
-> "[PATCH 1/9] clk: shmobile: add Renesas R-Car Gen3 CPG support"
-> to a full series of various CCF related updates related to R-Car Gen3.
-> 
-> In this series patch 1 and 2 get rid of CONFIG_ARCH_SHMOBILE_MULTI kconfig
-> bits and converts the MSTP CCF driver to not rely on clock-output-names. The
-> latter may need a bit more work.
-> 
-> Patch 3 and 4 introduce an updated R-Car Gen3 CPG driver where I have reworked
-> the code to not depend on clock-output-names instead of using strings simply
-> rely on RCAR_GEN3_CLK_xxx. Those must match the ABI defined in SoC specific
-> indicies such as the ones included in r8a7795-clock.h.
-> 
-> Patch 3 most likely needs to be reworked further to incorporate earlier
-> feedback from CCF maintainers.
+> My bad. I'll send a new version without the CC.
 
-Oh I should have read the cover letter first. Doh.
+No need. I'll strip off the cc when applying.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
