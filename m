@@ -1,77 +1,47 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <12310001.Bt8qbPIiMv@avalon>
-References: <877fpdw3av.wl%kuninori.morimoto.gx@renesas.com>
-	<20150818002018.31346.63666@quantum>
-	<CAMuHMdXDuG5izkMCrBmTtznbFNQzXUVLKTrG9a_K=L2qbbkv5Q@mail.gmail.com>
-	<12310001.Bt8qbPIiMv@avalon>
-Date: Thu, 20 Aug 2015 09:43:34 +0200
-Message-ID: <CAMuHMdWMNLf-fDsiLNFwO05i0cqBHkdM2mwC3GinwWFN4pWFZg@mail.gmail.com>
-Subject: Re: [PATCH 3/4 v3][RFC] arm64: renesas: Add initial r8a7795 SoC support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Simon <horms@verge.net.au>,
-	Magnus <magnus.damm@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>,
-	linux-clk@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/2] Fix unused clock disabling on LPC18xx
+Date: Tue, 25 Aug 2015 20:34:01 +0200
+Message-Id: <1440527643-2960-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Laurent,
+I have finally managed to track down the reason for the hang that would
+occur when disabling clocks on lpc18xx under certain conditions. These
+conditions depend on boot mode used, what the boot loader does and if
+certain devices are enabled.
 
-On Wed, Aug 19, 2015 at 11:29 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->> > Also, while you're thinking about the perfect clock binding, please do
->> > consider dropping clock-output-names if you can. Specifying clock-names
->> > alongside the clocks property inside of the consumer node is a bit more
->> > elegant in my opinion. This is also a bit easier if you think about
->> > expressing your clock data with C inside of your provider driver.
->>
->> Makes sense. I don't think anything relies on the "clock-output-names"
->> ... currently.
->>
->> I was going to use it for identifying the GIC clock, though:
->>
->> --- a/drivers/clk/shmobile/clk-mstp.c
->> +++ b/drivers/clk/shmobile/clk-mstp.c
->> @@ -144,6 +144,9 @@ cpg_mstp_clock_register(const char *name, const char
->> *paren init.name = name;
->>         init.ops = &cpg_mstp_clock_ops;
->>         init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
->> +       /* INTC-SYS is the module clock of the GIC, and must not be disabled
->> */
->> +       if (!strcmp(name, "intc-sys"))
->> +               init.flags |= CLK_ENABLE_HAND_OFF;
->>         init.parent_names = &parent_name;
->>         init.num_parents = 1;
->>
->> (FTR, on R-Car Gen3 the clock is called "intc-ap", not "intc-sys", doh...).
->>
->> This does put some reliance on (undocumented) naming in DT, though, so not
->> having the "clock-output-names" would solve that.
->
-> Using the clock name is indeed very messy, let's avoid that.
->
->> However, while "intc-sys"/"intc-ap" (if existent) is always MSTP408, MSTP408
->> is used for other modules on R-Car Gen1 and most older SoCs. so it would
->> complicate the driver code.
->
-> How about setting the flag based on information provided in DT ?
+One of reasons why it took me a while was that my primary platform was
+not affected by it and the data sheet has a rather misleading typo.
 
-Like scanning DT for the GIC, and looking for its clock?
+The hang will occur if the boot rom/loader doesn't setup USB0 clocks
+and if certain AMBA devices are enabled (PL022 SSP and maybe others).
 
-I don't want to add an explicit flag in DT, as it's not a hardware property,
-but a deficiency of the current GIC driver/subsystem.
+Cause of the hang is that the CCU registers can not be accessed if the
+base (parent) clock is not enabled. To make sure the parent is running
+a check for this has been added to the is_enabled clk_ops callback.
+Since clocks in the CGU can be cascaded this check must also be added
+here.
 
-Gr{oetje,eeting}s,
+Maybe this check to see if the parent clock is running clock be added
+to the clk core and enabled with a flag(?) For now this patch set fixes
+the issue seen on lpc18xx.
 
-                        Geert
+Changes since v2:
+ - Add clk.h to cgu since it uses clk_get_parent().
+ - Rebase on clk-next
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Joachim Eastwood (2):
+  clk: lpc18xx-ccu: fix potential system hang when disabling unused clocks
+  clk: lpc18xx-cgu: fix potential system hang when disabling unused clocks
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ drivers/clk/nxp/clk-lpc18xx-ccu.c | 14 +++++++++++++
+ drivers/clk/nxp/clk-lpc18xx-cgu.c | 43 ++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 54 insertions(+), 3 deletions(-)
+
+-- 
+1.8.0
