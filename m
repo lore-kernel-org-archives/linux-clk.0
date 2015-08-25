@@ -1,58 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55DACCEF.8040004@linaro.org>
-Date: Mon, 24 Aug 2015 09:51:11 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-MIME-Version: 1.0
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-CC: Daniel Kurtz <djkurtz@chromium.org>,
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	srv_heupstream <srv_heupstream@mediatek.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Olof Johansson <olof@lixom.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-mediatek@lists.infradead.org,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 1/5] clocksource: mediatek: do not enable GPT_CLK_EVT
- when setup
-References: <CAGS+omD8k_Cfxv3bYyjmjtLbiavo-WmJPn0Z-CBhN_nnv65Tag@mail.gmail.com>		 <1437552878-3684-1-git-send-email-yingjoe.chen@mediatek.com>		 <55CC56C4.8080201@linaro.org> <1439820602.3414.12.camel@mtksdaap41>	 <55D5E40A.6080904@linaro.org> <1440167950.20169.29.camel@mtksdaap41>
-In-Reply-To: <1440167950.20169.29.camel@mtksdaap41>
-Content-Type: text/plain; charset=utf-8; format=flowed
+	Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH v2] clk: rockchip: reset init state before mmc card initialization
+Date: Tue, 25 Aug 2015 08:34:36 +0800
+Message-Id: <1440462876-5457-1-git-send-email-shawn.lin@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/21/2015 04:39 PM, Yingjoe Chen wrote:
+mmc host controller's IO input/output timing is unpredictable if
+bootloader execute tuning for HS200 mode. It might make kernel failed
+to initialize mmc card in identification mode. The root cause is
+tuning phase and degree setting for HS200 mode in bootloader aren't
+applicable to that of identification mode in kernel stage. Anyway, we
+can't force all bootloaders to reset tuning phase and degree setting
+before into kernel. Simply reset it in rockchip_clk_register_mmc.
 
-[ ... ]
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
->>    - Does the spurious interrupt occurs *every* time ? at each boot ?
->
-> Yes. If you applied this series to enable mtk timer without this fix on
-> mt8173 or mt8135 you can reproduce it. It occurs for every boot.
->
-> It crash before uart driver is ready, so you'll have to use earlycon to
-> see the crash log.
+---
 
-Can you give me the earlycon params ?
+Changes in v2:
+- rename to rockchip_clk_mmc_reset
+- simplifying the code
 
-Thanks.
+ drivers/clk/rockchip/clk-mmc-phase.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-  -- Daniel
-
+diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+index e9f8df32..1d3e8fe6 100644
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -38,6 +38,8 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw *hw,
+ #define ROCKCHIP_MMC_DEGREE_MASK 0x3
+ #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
+ #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
++#define ROCKCHIP_MMC_INIT_STATE_RESET 0x1
++#define ROCKCHIP_MMC_INIT_STATE_SHIFT 1
+ 
+ #define PSECS_PER_SEC 1000000000000LL
+ 
+@@ -119,6 +121,14 @@ static const struct clk_ops rockchip_mmc_clk_ops = {
+ 	.set_phase	= rockchip_mmc_set_phase,
+ };
+ 
++static void rockchip_clk_mmc_reset(struct rockchip_mmc_clock *mmc_clock)
++{
++	if (mmc_clock->shift == ROCKCHIP_MMC_INIT_STATE_SHIFT)
++		writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_RESET,
++				     ROCKCHIP_MMC_INIT_STATE_RESET,
++				     mmc_clock->shift), mmc_clock->reg);
++}
++
+ struct clk *rockchip_clk_register_mmc(const char *name,
+ 				const char *const *parent_names, u8 num_parents,
+ 				void __iomem *reg, int shift)
+@@ -139,6 +149,12 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+ 	mmc_clock->reg = reg;
+ 	mmc_clock->shift = shift;
+ 
++	/*
++	* Assert init_state to soft reset the CLKGEN
++	* for mmc tuning phase and degree
++	*/
++	rockchip_clk_mmc_reset(mmc_clock);
++
+ 	if (name)
+ 		init.name = name;
+ 
 -- 
-  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+2.3.7
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
