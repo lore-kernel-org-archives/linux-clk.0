@@ -1,34 +1,91 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	stanimir.varbanov@linaro.org, georgi.djakov@linaro.org
-Subject: [PATCH] clk: qcom: Fix MSM8916 prng clock enable bit
-Date: Tue, 25 Aug 2015 15:27:43 +0300
-Message-Id: <1440505663-6218-1-git-send-email-georgi.djakov@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20150818102401.17de779b@bbrezillon>
+Cc: "Jean-Christophe Plagniol-Villard" <plagnioj@jcrosoft.com>,
+ "Alexandre Belloni" <alexandre.belloni@free-electrons.com>,
+ "Nicolas Ferre" <nicolas.ferre@atmel.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20150818102401.17de779b@bbrezillon>
+Message-ID: <20150825191033.31346.67237@quantum>
+Subject: Re: [PULL] clk: at91: sama5d2 materials
+Date: Tue, 25 Aug 2015 12:10:33 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Fix the enable bit of the pseudorandom number generator clock.
+Quoting Boris Brezillon (2015-08-18 01:24:01)
+> Stephen, Mike,
+> =
 
-Reported-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Fixes: 3966fab8b6ab "clk: qcom: Add MSM8916 Global Clock Controller support"
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> Here is a PR for the sama5d2 materials.
+> I know we're already late in the release cycle and I'm not sure you can
+> take this PR into account for 4.3, so if you can't could you please
+> queue it for 4.4?
+
+Queued for 4.4.
+
+Thanks,
+Mike
+
+> =
+
+> Thanks,
+> =
+
+> Boris
+> =
+
+> The following changes since commit c42743f11f58646a50bc4b96da363429dca0c5=
+e6:
+> =
+
+>   clk: add bindings for the Ux500 clocks (2015-08-13 11:29:45 -0700)
+> =
+
+> are available in the git repository at:
+> =
+
+>   https://github.com/bbrezillon/linux-at91.git clk/atmel-clk-next
+> =
+
+> for you to fetch changes up to 3be0527c0f8bbbb744a6a34603d6a83e511c6741:
+> =
+
+>   clk: at91: add generated clock driver (2015-08-18 10:11:57 +0200)
+> =
+
+> ----------------------------------------------------------------
+> Nicolas Ferre (4):
+>       clk: at91: cleanup PMC header file for PCR register fields
+>       clk: at91: modify PMC peripheral clock to deal with newer register =
+layout
+>       clk: at91: add PMC sama5d2 support
+>       clk: at91: add generated clock driver
+> =
+
+>  Documentation/devicetree/bindings/clock/at91-clock.txt |  35 +++++++++++=
+++++++++++
+>  arch/arm/mach-at91/Kconfig                             |   3 ++
+>  drivers/clk/at91/Makefile                              |   1 +
+>  drivers/clk/at91/clk-generated.c                       | 306 +++++++++++=
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
++++++++++++++++
+>  drivers/clk/at91/clk-peripheral.c                      |  24 +++++++++--=
 ---
- drivers/clk/qcom/gcc-msm8916.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/clk/at91/pmc.c                                 |  21 +++++++++++=
+++
+>  drivers/clk/at91/pmc.h                                 |   3 ++
+>  include/dt-bindings/clock/at91.h                       |   1 +
+>  include/linux/clk/at91_pmc.h                           |  22 ++++++++---=
+--
+>  9 files changed, 400 insertions(+), 16 deletions(-)
+>  create mode 100644 drivers/clk/at91/clk-generated.c
+> =
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index 3bf4fb3deef6..22a4e1e732c0 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -2278,7 +2278,7 @@ static struct clk_branch gcc_prng_ahb_clk = {
- 	.halt_check = BRANCH_HALT_VOTED,
- 	.clkr = {
- 		.enable_reg = 0x45004,
--		.enable_mask = BIT(0),
-+		.enable_mask = BIT(8),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_prng_ahb_clk",
- 			.parent_names = (const char *[]){
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
