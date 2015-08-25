@@ -1,54 +1,59 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Fabian Frederick <fabf@skynet.be>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 25 Aug 2015 11:35:46 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	mturquette@baylibre.com, k.kozlowski@samsung.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: Fix tipo in st,clkgen-pll documentation
-Date: Wed, 19 Aug 2015 10:48:13 +0200
-Message-Id: <1439974094-32322-2-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1439974094-32322-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1439974094-32322-1-git-send-email-gabriel.fernandez@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH-v2 1/5] mfd: 88pm800: Fix tabbing issue
+Message-ID: <20150825103546.GQ19409@x1>
+References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
+ <1440442594-3102-3-git-send-email-vaibhav.hiremath@linaro.org>
+ <20150825075246.GF19409@x1>
+ <55DC2C4D.1040304@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <55DC2C4D.1040304@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-replace "sst,plls-c32-cx_x" by "st,plls-c32-cx_x"
+On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
----
- Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> 
+> On Tuesday 25 August 2015 01:22 PM, Lee Jones wrote:
+> >On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
+> >
+> >>Driver had coding style issues where spaces were used instead
+> >>of tabs. This patch fixes them all.
+> >>
+> >>Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+> >>---
+> >>  drivers/mfd/88pm800.c | 125 ++++++++++++++++++++++++--------------------------
+> >>  1 file changed, 61 insertions(+), 64 deletions(-)
+> >
+> >Same comment as before.
+> >
+> >How similar is this file to the other one?
+> 
+> I believe you are referring to include/linux/mfd/88pm80x.h
+> 
+> >
+> >Can you reduce the size by having shared register defines?
+> >
+> 
+> Not sure whether I understand your comment here,
+> They are common defines.
 
-diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
-index d8b168e..e2c6db0 100644
---- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
-+++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
-@@ -21,8 +21,8 @@ Required properties:
- 	"st,stih416-plls-c32-ddr",	"st,clkgen-plls-c32"
- 	"st,stih407-plls-c32-a0",	"st,clkgen-plls-c32"
- 	"st,stih407-plls-c32-a9",	"st,clkgen-plls-c32"
--	"sst,plls-c32-cx_0",		"st,clkgen-plls-c32"
--	"sst,plls-c32-cx_1",		"st,clkgen-plls-c32"
-+	"st,plls-c32-cx_0",		"st,clkgen-plls-c32"
-+	"st,plls-c32-cx_1",		"st,clkgen-plls-c32"
- 
- 	"st,stih415-gpu-pll-c32",	"st,clkgengpu-pll-c32"
- 	"st,stih416-gpu-pll-c32",	"st,clkgengpu-pll-c32"
+I guess the question was a little convoluted.
+
+How about; why are the extra defines in the driver?  Why aren't all of
+them in the header file?  What is the difference between the defines
+in the C file compared with the ones defined in the header?
+
 -- 
-1.9.1
-
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
