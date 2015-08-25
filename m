@@ -1,69 +1,83 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:34120 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750938AbbHQXWy convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 17 Aug 2015 19:22:54 -0400
-Received: by paccq16 with SMTP id cq16so74415656pac.1
-        for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2015 16:22:53 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55DC2C9F.8000203@linaro.org>
+Date: Tue, 25 Aug 2015 14:21:43 +0530
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
 MIME-Version: 1.0
-To: Matthias Brugger <matthias.bgg@gmail.com>, sboyd@codeaurora.org,
-	matthias.bgg@gmail.com
-From: Michael Turquette <mturquette@linaro.org>
-In-Reply-To: <1438355659-21558-2-git-send-email-matthias.bgg@gmail.com>
-Cc: s.hauer@pengutronix.de, jamesjj.liao@mediatek.com,
-	henryc.chen@mediatek.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, manabian@gmail.com,
-	p.zabel@pengutronix.com
-References: <1438355659-21558-1-git-send-email-matthias.bgg@gmail.com>
- <1438355659-21558-2-git-send-email-matthias.bgg@gmail.com>
-Message-ID: <20150817232235.31346.30218@quantum>
-Subject: Re: [PATCH v4 RESEND 1/3] clk: Add regmap support
-Date: Mon, 17 Aug 2015 16:22:35 -0700
-Sender: linux-clk-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+CC: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	mturquette@baylibre.com, k.kozlowski@samsung.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH-v2 3/5] mfd: devicetree: bindings: Add clock subdevice
+ node information
+References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org> <1440442594-3102-5-git-send-email-vaibhav.hiremath@linaro.org> <20150825075858.GH19409@x1>
+In-Reply-To: <20150825075858.GH19409@x1>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Matthias Brugger (2015-07-31 08:14:17)
-> diff --git a/drivers/clk/clk-io.c b/drivers/clk/clk-io.c
-> new file mode 100644
-> index 0000000..9630ef5
-> --- /dev/null
-> +++ b/drivers/clk/clk-io.c
-> @@ -0,0 +1,48 @@
-> +/*
-> + * Copyright (C) 2015 Matthias Brugger <matthias.bgg@gmail.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +
-> +void clk_io_writel(struct clk_hw *hw, void __iomem *reg, struct regmap *regmap,
-> +                       u32 offset, u32 val)
-> +{
-> +       if (__clk_get_flags(hw->clk) & CLK_USE_REGMAP)
-> +               regmap_write(regmap, offset, val);
-> +       else
-> +               clk_writel(val, reg);
-> +}
 
-So we have clk_writel, which already wraps direct io accesses depending
-on arch/platform, and then this patch adds regmap support, and both of
-those are wrapped in clk_io_writel? :-/
 
-I agree that we should merge some unified regmap support into the clock
-framework for the basic clocks, but I do not think that this is the
-right way to do it. This patch simply adds more code to already crowded
-basic clock types.
+On Tuesday 25 August 2015 01:28 PM, Lee Jones wrote:
+> On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
+>
+>> This patch updates the binding documentation for optional
+>> clocks node and related information for buffered 32KHz clock.
+>>
+>> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> ---
+>>   Documentation/devicetree/bindings/mfd/88pm800.txt | 27 +++++++++++++++++++++++
+>>   1 file changed, 27 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/88pm800.txt b/Documentation/devicetree/bindings/mfd/88pm800.txt
+>> index 2c82fcb..bc6cb02 100644
+>> --- a/Documentation/devicetree/bindings/mfd/88pm800.txt
+>> +++ b/Documentation/devicetree/bindings/mfd/88pm800.txt
+>> @@ -15,6 +15,26 @@ Optional properties :
+>>     Without this both BUCK1A and BUCK1B operates independently with 3A capacity.
+>>     (This property is only applicable to 88PM860)
+>>
+>> +Optional nodes:
+>> +- clocks: 88pm800 family of devices provide multiple buffered 32.768
+>> +  KHz outputs, so to register these as clocks with common clock framework
+>> +  instantiate a sub-node named "clocks". It uses the common clock binding
+>> +  documented in :
+>> +  [Documentation/devicetree/bindings/clock/clock-bindings.txt]
+>
+> I tend to prefer relative paths.  Firstly because they're shorter and
+> more succinct and secondly because if we do eventually move DT out of
+> the kernel, it will be less hassle to rename each of them.
+>
+>> +  - #clock-cells: should be 1.
+>> +
+>> +  - The following is the list of clocks generated by the controller. Each clock
+>> +    is assigned an identifier and client nodes use this identifier to specify
+>> +    the clock which they consume.
+>> +    Clock		ID           	Devices
+>> +    ----------------------------------------------------------
+>> +    pm800_clk32k_1	0		88PM800 and 88PM860
+>> +    pm800_clk32k_2	1		88PM800 and 88PM860
+>> +    pm800_clk32k_3	2		88PM800
+>> +
+>> +  - compatible: Should be : "marvell,88pm800-clk"
+>> +
+>>   88pm80x family of devices consists of varied group of sub-devices:
+>>
+>>   Device		 	Supply Names	 Description
+>> @@ -22,6 +42,7 @@ Device		 	Supply Names	 Description
+>>   88pm80x-onkey		:		: On key
+>>   88pm80x-rtc		:		: RTC
+>>   88pm80x-regulator	:		: Regulators
+>> +88pm80x-clk		:		: 32KHz Clk provider
+>
+> Nit: Alphabetical?
+>
 
-Replacing the basic clock types by separating policy and machine-driver
-code into separate, modular pieces is a high priority on my todo list.
-I'd like to do that first and then revisit regmap clocks instead of
-merging this series as-is.
+Will correct both comments.
 
-Regards,
-Mike
+Thanks,
+Vaibhav
+
+
