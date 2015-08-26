@@ -1,95 +1,72 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Tue, 25 Aug 2015 08:58:58 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
-	mturquette@baylibre.com, k.kozlowski@samsung.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH-v2 3/5] mfd: devicetree: bindings: Add clock subdevice
- node information
-Message-ID: <20150825075858.GH19409@x1>
-References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
- <1440442594-3102-5-git-send-email-vaibhav.hiremath@linaro.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1440442594-3102-5-git-send-email-vaibhav.hiremath@linaro.org>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20150826063325.5381.76761.sendpatchset@little-apple>
+References: <20150826063325.5381.76761.sendpatchset@little-apple>
+Date: Wed, 26 Aug 2015 09:25:20 +0200
+Message-ID: <CAMuHMdVEaJ_HXfXj182EpO+iT2E7-hbA+OqM17QnGPWHZC7Fug@mail.gmail.com>
+Subject: Re: [PATCH] clk: shmobile: Get rid of CONFIG_SHMOBILE_MULTI
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 25 Aug 2015, Vaibhav Hiremath wrote:
+Hi Magnus,
 
-> This patch updates the binding documentation for optional
-> clocks node and related information for buffered 32KHz clock.
-> 
-> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/mfd/88pm800.txt | 27 +++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/88pm800.txt b/Documentation/devicetree/bindings/mfd/88pm800.txt
-> index 2c82fcb..bc6cb02 100644
-> --- a/Documentation/devicetree/bindings/mfd/88pm800.txt
-> +++ b/Documentation/devicetree/bindings/mfd/88pm800.txt
-> @@ -15,6 +15,26 @@ Optional properties :
->    Without this both BUCK1A and BUCK1B operates independently with 3A capacity.
->    (This property is only applicable to 88PM860)
->  
-> +Optional nodes:
-> +- clocks: 88pm800 family of devices provide multiple buffered 32.768
-> +  KHz outputs, so to register these as clocks with common clock framework
-> +  instantiate a sub-node named "clocks". It uses the common clock binding
-> +  documented in :
-> +  [Documentation/devicetree/bindings/clock/clock-bindings.txt]
+On Wed, Aug 26, 2015 at 8:33 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Shmobile is all multiplatform these days, so get rid of the
+> reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
+> enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
+> MSTP depending on if they are included in the SoC or not.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-I tend to prefer relative paths.  Firstly because they're shorter and
-more succinct and secondly because if we do eventually move DT out of
-the kernel, it will be less hassle to rename each of them.
+> --- 0001/drivers/clk/shmobile/Makefile
+> +++ work/drivers/clk/shmobile/Makefile  2015-08-26 15:16:57.742366518 +0900
+> @@ -1,13 +1,11 @@
+>  obj-$(CONFIG_ARCH_EMEV2)               += clk-emev2.o
+> -obj-$(CONFIG_ARCH_R7S72100)            += clk-rz.o
+> -obj-$(CONFIG_ARCH_R8A73A4)             += clk-r8a73a4.o
+> -obj-$(CONFIG_ARCH_R8A7740)             += clk-r8a7740.o
+> -obj-$(CONFIG_ARCH_R8A7778)             += clk-r8a7778.o
+> -obj-$(CONFIG_ARCH_R8A7779)             += clk-r8a7779.o
+> -obj-$(CONFIG_ARCH_R8A7790)             += clk-rcar-gen2.o
+> -obj-$(CONFIG_ARCH_R8A7791)             += clk-rcar-gen2.o
+> -obj-$(CONFIG_ARCH_R8A7793)             += clk-rcar-gen2.o
+> -obj-$(CONFIG_ARCH_R8A7794)             += clk-rcar-gen2.o
+> -obj-$(CONFIG_ARCH_SH73A0)              += clk-sh73a0.o
+> -obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += clk-div6.o
+> -obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += clk-mstp.o
+> +obj-$(CONFIG_ARCH_R7S72100)            += clk-rz.o clk-mstp.o
+> +obj-$(CONFIG_ARCH_R8A73A4)             += clk-r8a73a4.o clk-mstp.o clk-div6.o
+> +obj-$(CONFIG_ARCH_R8A7740)             += clk-r8a7740.o clk-mstp.o clk-div6.o
+> +obj-$(CONFIG_ARCH_R8A7778)             += clk-r8a7778.o clk-mstp.o clk-div6.o
+> +obj-$(CONFIG_ARCH_R8A7779)             += clk-r8a7779.o clk-mstp.o clk-div6.o
 
-> +  - #clock-cells: should be 1.
-> +
-> +  - The following is the list of clocks generated by the controller. Each clock
-> +    is assigned an identifier and client nodes use this identifier to specify
-> +    the clock which they consume.
-> +    Clock		ID           	Devices
-> +    ----------------------------------------------------------
-> +    pm800_clk32k_1	0		88PM800 and 88PM860
-> +    pm800_clk32k_2	1		88PM800 and 88PM860
-> +    pm800_clk32k_3	2		88PM800
-> +
-> +  - compatible: Should be : "marvell,88pm800-clk"
-> +
->  88pm80x family of devices consists of varied group of sub-devices:
->  
->  Device		 	Supply Names	 Description
-> @@ -22,6 +42,7 @@ Device		 	Supply Names	 Description
->  88pm80x-onkey		:		: On key
->  88pm80x-rtc		:		: RTC
->  88pm80x-regulator	:		: Regulators
-> +88pm80x-clk		:		: 32KHz Clk provider
+R-Car Gen1 doesn't have div6 clocks.
 
-Nit: Alphabetical?
+If you fix that,
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
->  Example:
->  
-> @@ -33,6 +54,12 @@ Example:
->  		interrupt-controller;
->  		#interrupt-cells = <1>;
->  
-> +		pm800clk: clocks {
-> +			compatible = "marvell,88pm800-clk";
-> +			#clock-cells = <1>;
-> +			clock-output-names = "xx", "yy", "zz";
-> +		};
-> +
->  		regulators {
->  			compatible = "marvell,88pm80x-regulator";
->  
+> +obj-$(CONFIG_ARCH_R8A7790)             += clk-rcar-gen2.o clk-mstp.o clk-div6.o
+> +obj-$(CONFIG_ARCH_R8A7791)             += clk-rcar-gen2.o clk-mstp.o clk-div6.o
+> +obj-$(CONFIG_ARCH_R8A7793)             += clk-rcar-gen2.o clk-mstp.o clk-div6.o
+> +obj-$(CONFIG_ARCH_R8A7794)             += clk-rcar-gen2.o clk-mstp.o clk-div6.o
+> +obj-$(CONFIG_ARCH_SH73A0)              += clk-sh73a0.o clk-mstp.o clk-div6.o
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
