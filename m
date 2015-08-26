@@ -1,76 +1,94 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <Govindraj.Raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Govindraj Raja
+	<govindraj.raja@imgtec.com>, <stable@vger.kernel.org>
+Subject: [PATCH v6 0/4] clk: pistachio: Fixes for pll calculations.
+Date: Wed, 26 Aug 2015 17:11:36 +0100
+Message-ID: <1440605500-13274-1-git-send-email-Govindraj.Raja@imgtec.com>
 MIME-Version: 1.0
-To: Yoshinori Sato <ysato@users.sourceforge.jp>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <878ub2h8tg.wl-ysato@users.sourceforge.jp>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>, uclinux-h8-devel@lists.sourceforge.jp,
- linux-clk@vger.kernel.org
-References: <1435570978-1734-1-git-send-email-geert+renesas@glider.be>
- <878ub2h8tg.wl-ysato@users.sourceforge.jp>
-Message-ID: <20150808005844.2416.62598@quantum>
-Subject: Re: [PATCH] clk: h8300: Remove "sh73a0-" part from compatible value
-Date: Fri, 07 Aug 2015 17:58:44 -0700
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Yoshinori Sato (2015-06-29 07:45:47)
-> On Mon, 29 Jun 2015 18:42:58 +0900,
-> Geert Uytterhoeven wrote:
-> > =
+From: Govindraj Raja <govindraj.raja@imgtec.com>
 
-> > Drop the bogus "sh73a0-" part (accidentally copied from shmobile?) from
-> > the compatible value.
-> =
+Patch 1/4 to 3/4 are pll calculation fixes for clock settings.
 
-> Ouch.
-> Applied. Thanks.
+Patch 4/4: Is a reword and repost based on earlier thread:
+http://patchwork.linux-mips.org/patch/10108/
 
-Sato-san,
+Series Based on 4.2-rc7
+Tested with Pistachio Bring-up-Board.
 
-Do you plan to send pull requests for h8300 clock patches in the future?
+Changes from v5:
+----------------
+Cc: <stable@vger.kernel.org> # 4.1
 
-Thanks,
-Mike
+This patch series is needed for 4.1-stable as well.
+So adding necessary commit-id for Fixes.
+Boot is broken on 4.1 stable without this patch series.
 
-> =
+Changes from v4:
+----------------
+Fixes comments from Andrew and added Andrew's
+reviewed by.
 
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> >  Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.txt | =
-2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > =
+http://patchwork.linux-mips.org/patch/11014/
+http://patchwork.linux-mips.org/patch/11016/
 
-> > diff --git a/Documentation/devicetree/bindings/clock/renesas,h8300-div-=
-clock.txt b/Documentation/devicetree/bindings/clock/renesas,h8300-div-clock=
-.txt
-> > index 36c2b528245cd48f..399e0da22348b19e 100644
-> > --- a/Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.t=
-xt
-> > +++ b/Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.t=
-xt
-> > @@ -2,7 +2,7 @@
-> >  =
 
-> >  Required Properties:
-> >  =
+Changes from v3:
+---------------
+Fixes comments to bring back the poll rate table with
+unsigned long int as discussed in below thread.
 
-> > -  - compatible: Must be "renesas,sh73a0-h8300-div-clock"
-> > +  - compatible: Must be "renesas,h8300-div-clock"
-> >  =
+http://patchwork.linux-mips.org/patch/10900/
 
-> >    - clocks: Reference to the parent clocks ("extal1" and "extal2")
-> >  =
+Changes from v2:
+---------------
+Fixes comments from Sergei as dicussed in below thread:
+http://patchwork.linux-mips.org/patch/10903/
 
-> > -- =
+Changes from v1:
+---------------
+Fix comments from Andrew.
+Topics:
 
-> > 1.9.1
-> > =
+* http://patchwork.linux-mips.org/patch/10888/
+  (Remove long conversion for pll_rate_table variables)
+	
+* http://patchwork.linux-mips.org/patch/10889/
+  (reword pll to PLL)
 
-> =
+* http://patchwork.linux-mips.org/patch/10891/
+  (squash 4/6 to 3/6)
 
-> -- =
+* http://patchwork.linux-mips.org/patch/10892/
+  (squash 5/6 to 3/6) 
 
-> Yoshinori Sato
-> <ysato@users.sourceforge.jp>
+* http://patchwork.linux-mips.org/patch/10893/
+  (Add missing signed-off)
+
+
+Damien.Horsley (1):
+  clk: pistachio: correct critical clock list
+
+Zdenko Pulitika (3):
+  clk: pistachio: Fix 32bit integer overflows
+  clk: pistachio: Fix override of clk-pll settings from boot loader
+  clk: pistachio: Fix PLL rate calculation in integer mode
+
+ drivers/clk/pistachio/clk-pistachio.c | 19 ++++++---
+ drivers/clk/pistachio/clk-pll.c       | 77 +++++++++++++++++++++++++++--------
+ drivers/clk/pistachio/clk.h           | 14 +++----
+ 3 files changed, 80 insertions(+), 30 deletions(-)
+
+-- 
+1.9.1
