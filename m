@@ -1,39 +1,60 @@
-Return-Path: <maxime.coquelin@st.com>
-Message-ID: <55C9C82F.6060401@st.com>
-Date: Tue, 11 Aug 2015 12:02:23 +0200
-From: Maxime Coquelin <maxime.coquelin@st.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 26 Aug 2015 11:36:42 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Govindraj Raja <Govindraj.Raja@imgtec.com>
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Zdenko Pulitika <zdenko.pulitika@imgtec.com>,
+	Kevin Cernekee <cernekee@chromium.org>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Andrew Bresticker <abrestic@chromium.org>,
+	James Hartley <James.Hartley@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>,
+	James Hogan <James.Hogan@imgtec.com>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	stable@vger.kernel.org,
+	Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+Subject: Re: [PATCH v6 4/4] clk: pistachio: correct critical clock list
+Message-ID: <20150826183642.GR19120@codeaurora.org>
+References: <1440605500-13274-1-git-send-email-Govindraj.Raja@imgtec.com>
+ <1440605500-13274-5-git-send-email-Govindraj.Raja@imgtec.com>
 MIME-Version: 1.0
-To: Lee Jones <lee.jones@linaro.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <maxime.ripard@free-electrons.com>,
-        <s.hauer@pengutronix.de>, <geert@linux-m68k.org>
-Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com> <1438974570-20812-4-git-send-email-mturquette@baylibre.com> <20150810144811.GN3249@x1> <20150810185516.2416.32293@quantum> <20150811084329.GA13374@x1>
-In-Reply-To: <20150811084329.GA13374@x1>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1440605500-13274-5-git-send-email-Govindraj.Raja@imgtec.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+On 08/26, Govindraj Raja wrote:
+> From: "Damien.Horsley" <Damien.Horsley@imgtec.com>
+> 
+> Current critical clock list for pistachio enables
+> only mips and sys clocks by default but there are
+> also other clocks that are not claimed by anyone and
+> needs to be enabled by default.
+> 
+> This patch updates the critical clocks that need
+> to be enabled by default.
+> 
+> Add a separate struct to distinguish the critical clocks
+> as listed:
+> 1.) core clocks:
+> 	a.) mips clock
+> 2.) peripheral system clocks:
+> 	a.) sys clock
+> 	b.) sys_bus clock
+> 	c.) DDR clock
+> 	d.) ROM clock
+> 
+> Fixes: b35d7c33419c("CLK: Pistachio: Register core clocks")
+> Cc: <stable@vger.kernel.org> # 4.1
+> Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
+> Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+> Signed-off-by: Damien.Horsley <Damien.Horsley@imgtec.com>
+> Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+> ---
 
-On 08/11/2015 10:43 AM, Lee Jones wrote:
-> On Mon, 10 Aug 2015, Michael Turquette wrote:
->
->>
->>
->> ST's driver is an unfortunate case. All of the clock data was shoved
->> into DT before we had a clue that doing so is a terrible idea.
+Applied to clk-next
 
-I tend to agree, and wouldn't do it this way if we could rewrite the 
-history.
-But now, we have to support it.
-
-How can we pass CLK_ENABLE_HAND_OFF flag to a specific clock on STi 
-platform?
-
-Could we imagine having a kind of "clocks-enable-hand-off" property we 
-could use in our clock controller DT node?
-
-Regards,
-Maxime
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
