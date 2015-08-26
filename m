@@ -1,105 +1,78 @@
-Return-Path: <tjakobi@math.uni-bielefeld.de>
-Message-ID: <55BFD524.6080102@math.uni-bielefeld.de>
-Date: Mon, 03 Aug 2015 22:55:00 +0200
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 26 Aug 2015 10:09:56 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Maxime Coquelin <maxime.coquelin@st.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, s.hauer@pengutronix.de, geert@linux-m68k.org
+Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and
+ implement hand-off
+Message-ID: <20150826090956.GW19409@x1>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <20150818154552.GI2547@lukather>
+ <20150818164356.31346.80341@quantum>
+ <20150820151510.GD30520@lukather>
+ <20150825215051.31346.56261@quantum>
+ <20150826065423.GR19409@x1>
+ <55DD7C05.6030207@st.com>
 MIME-Version: 1.0
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Tomasz Figa <tomasz.figa@gmail.com>,
- Lukasz Majewski <l.majewski@samsung.com>,
- Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi
- <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] cpufreq: use generic cpufreq drivers for
- Exynos4x12 platform
-References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
-In-Reply-To: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <55DD7C05.6030207@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+On Wed, 26 Aug 2015, Maxime Coquelin wrote:
 
-Bartlomiej Zolnierkiewicz wrote:
-> Hi,
+> Hi Lee,
 > 
-> This patch series removes the use of Exynos4x12 specific support
-> from cpufreq-exynos driver and enables the use of cpufreq-dt driver
-> for this platform.
+> On 08/26/2015 08:54 AM, Lee Jones wrote:
+> >On Tue, 25 Aug 2015, Michael Turquette wrote:
+> >
+> >
+> >>Maybe I am the one missing something? My goal was to allow the consumer
+> >>driver to gate the critical clock. So we need clk_disable_unused to
+> >>actually disable the clock for that to work.
+> >>
+> >>I think you are suggesting that clk_disable_unused should *not* disable
+> >>the clock if it is critical. Can you confirm that?
+> >My take is that a critical clock should only be disabled when a
+> >knowledgeable driver wants to gate it for a specific purpose [probably
+> >using clk_disable()].  Once the aforementioned driver no longer has a
+> >use for the clock [whether that happens with clk_unprepare_disable()
+> >or clk_put() ...] the clock should be ungated and be provided with
+> >critical status once more.
+> >
+> How do you differentiate between a knowledgeable and
+> non-knowledgeable driver?
+> Let's take the example of the clock used by the i2c on STi SoCs.
+> This clock is used by i2c, and is also critical to the system, but
+> only i2c takes it.
 > 
-> This patch series has been tested on Exynos4412 based Odroid-U3 and
-> Trats2 boards.
-I've tested this series on my Odroid-X2 (also Exynos4412) with
-powersave, performance and ondemand governor. Scaling works like
-expected, so no issues to report!
+> At first transfer, the i2c will enable the clock and then disables it.
+> 
+> What we would expect here is that the clk_disable does not gate the
+> clock, even if only user since the hand-off flag has been set.
+> Else, system will freeze.
 
-Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+The I2C driver in this instance is not a knowledgeable driver and
+should not be taking a reference to a critical clock.
 
+In the example you provide, the real issue is that the I2C driver uses
+one of the critical clock's siblings.  Without this framework, if it
+gives up the reference to its own clock and there are no users of any
+sibling clocks, the parent is gated.  This has the unfortunate effect
+of gating the entire family, critical clock included.
 
-With best wishes,
-Tobias
+These sorts of issues are precisely what we're trying to fix here.
 
+For clarification, a knowledgeable driver is one that requests an
+actual (not a sibling of) critical clock.  It's knowledgeable in the
+fact that it knows what gating the clock will do to the system, but it
+"knows best" that this is actually fine.
 
-> 
-> Depends on:
-> - next-20150730 branch of linux-next kernel tree
-> - "[PATCH V3 00/16] OPP: Add code to support operating-points-v2 bindings"
->   (http://www.spinics.net/lists/arm-kernel/msg435408.html)
-> 
-> Changes since v2
-> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/46653):
-> - rebased on top of next-20150730 branch of linux-next kernel tree
-> - ported over V3 of opp-v2 bindings support patch series
-> - put cpu0 nodes in alphabetical order in dts files
-> - added Reviewed-by tags from Javier and Krzysztof
-> - added Acked-by tag from Sylwester
-> 
-> Changes since v1
-> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/44361):
-> - rebased on top of next-20150629 branch of linux-next kernel tree
-> - rebased on top of Exynos5250 cpufreq-dt support patch series
-> - fixed if-statement in exynos4_clk_init() (noticed by Tobias Jakobi)
-> - ported over opp-v2 bindings (requested by Viresh Kumar)
-> 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
-> 
-> Bartlomiej Zolnierkiewicz (5):
->   clk: samsung: exynos4x12: add cpu clock configuration data and
->     instantiate cpu clock
->   ARM: dts: Exynos4x12: add CPU OPP and regulator supply property
->   ARM: Exynos: switch to using generic cpufreq driver for Exynos4x12
->   cpufreq: exynos: remove Exynos4x12 specific cpufreq driver support
->   cpufreq: remove no longer needed CPU_FREQ_BOOST_SW config option
-> 
->  arch/arm/boot/dts/exynos4212.dtsi               |  81 ++++++++
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   4 +
->  arch/arm/boot/dts/exynos4412-origen.dts         |   4 +
->  arch/arm/boot/dts/exynos4412-trats2.dts         |   4 +
->  arch/arm/boot/dts/exynos4412.dtsi               |  83 +++++++++
->  arch/arm/mach-exynos/exynos.c                   |   2 +
->  drivers/clk/samsung/clk-exynos4.c               |  50 +++++
->  drivers/cpufreq/Kconfig                         |   5 +-
->  drivers/cpufreq/Kconfig.arm                     |  38 ----
->  drivers/cpufreq/Makefile                        |   2 -
->  drivers/cpufreq/exynos-cpufreq.c                | 236 ------------------------
->  drivers/cpufreq/exynos-cpufreq.h                |  72 --------
->  drivers/cpufreq/exynos4x12-cpufreq.c            | 236 ------------------------
->  drivers/cpufreq/freq_table.c                    |   2 -
->  14 files changed, 229 insertions(+), 590 deletions(-)
->  delete mode 100644 drivers/cpufreq/exynos-cpufreq.c
->  delete mode 100644 drivers/cpufreq/exynos-cpufreq.h
->  delete mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
-> 
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
