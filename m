@@ -1,66 +1,65 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org
-Subject: [PATCH] clk: rockchip: handle critical clocks after registrering all clocks
-Date: Fri, 21 Aug 2015 19:51:41 +0200
-Message-ID: <7786473.0oe27txQFN@phil>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 26 Aug 2015 16:43:09 +0900
+Message-Id: <20150826074309.4298.76147.sendpatchset@little-apple>
+Subject: [PATCH v2] clk: shmobile: Get rid of CONFIG_SHMOBILE_MULTI
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently the registration of critical clocks is done in the function
-shared between rk3066 and rk3188 clock trees. That results in them
-getting handled maybe before all of them are registered.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Therefore move the critical clock handling down to the end of the soc-
-specific clock registration function, so that all clocks are registered
-before they're maybe handled as critical clock.
+Shmobile is all multiplatform these days, so get rid of the
+reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
+enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
+MSTP depending on if they are included in the SoC or not.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-It looks like with the recent flexibilization of the gpio clocks in the
-pinctrl driver, we're shaking out some oddities from the clock trees.
-This is another one that surfaced.
 
- drivers/clk/rockchip/clk-rk3188.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ Changes since V1:
+ - dropped DIV6 from R-Car Gen1 variants - thanks Geert!
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-
-rk3188.c
-index faa6695..bd88542 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -744,8 +744,6 @@ static void __init rk3188_common_clk_init(struct 
-device_node *np)
- 
- 	rockchip_clk_register_branches(common_clk_branches,
- 				  ARRAY_SIZE(common_clk_branches));
--	rockchip_clk_protect_critical(rk3188_critical_clocks,
--				      ARRAY_SIZE(rk3188_critical_clocks));
- 
- 	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
- 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-@@ -765,6 +763,8 @@ static void __init rk3066a_clk_init(struct device_node 
-*np)
- 			mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
- 			&rk3066_cpuclk_data, rk3066_cpuclk_rates,
- 			ARRAY_SIZE(rk3066_cpuclk_rates));
-+	rockchip_clk_protect_critical(rk3188_critical_clocks,
-+				      ARRAY_SIZE(rk3188_critical_clocks));
- }
- CLK_OF_DECLARE(rk3066a_cru, "rockchip,rk3066a-cru", rk3066a_clk_init);
- 
-@@ -801,6 +801,9 @@ static void __init rk3188a_clk_init(struct device_node 
-*np)
- 		pr_warn("%s: missing clocks to reparent aclk_cpu_pre to gpll\n",
- 			__func__);
- 	}
-+
-+	rockchip_clk_protect_critical(rk3188_critical_clocks,
-+				      ARRAY_SIZE(rk3188_critical_clocks));
- }
- CLK_OF_DECLARE(rk3188a_cru, "rockchip,rk3188a-cru", rk3188a_clk_init);
- 
--- 
-2.1.4
+ drivers/clk/Makefile          |    2 +-
+ drivers/clk/shmobile/Makefile |   22 ++++++++++------------
+ 2 files changed, 11 insertions(+), 13 deletions(-)
+
+--- 0001/drivers/clk/Makefile
++++ work/drivers/clk/Makefile	2015-08-26 16:39:50.052366518 +0900
+@@ -66,7 +66,7 @@ obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
+ obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
+ obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+-obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= shmobile/
++obj-$(CONFIG_ARCH_SHMOBILE)		+= shmobile/
+ obj-$(CONFIG_ARCH_SIRF)			+= sirf/
+ obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
+ obj-$(CONFIG_PLAT_SPEAR)		+= spear/
+--- 0001/drivers/clk/shmobile/Makefile
++++ work/drivers/clk/shmobile/Makefile	2015-08-26 16:40:04.832366518 +0900
+@@ -1,13 +1,11 @@
+ obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
+-obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
+-obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
+-obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
+-obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+-obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+-obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o
+-obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-div6.o
+-obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-mstp.o
++obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
