@@ -1,126 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55CC56C4.8080201@linaro.org>
-Date: Thu, 13 Aug 2015 10:35:16 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <55DD88CD.6010608@st.com>
+Date: Wed, 26 Aug 2015 11:37:17 +0200
+From: Maxime Coquelin <maxime.coquelin@st.com>
 MIME-Version: 1.0
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-CC: James Liao <jamesjj.liao@mediatek.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	srv_heupstream <srv_heupstream@mediatek.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Olof Johansson <olof@lixom.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-mediatek@lists.infradead.org,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 1/5] clocksource: mediatek: do not enable GPT_CLK_EVT
- when setup
-References: <CAGS+omD8k_Cfxv3bYyjmjtLbiavo-WmJPn0Z-CBhN_nnv65Tag@mail.gmail.com> <1437552878-3684-1-git-send-email-yingjoe.chen@mediatek.com>
-In-Reply-To: <1437552878-3684-1-git-send-email-yingjoe.chen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Lee Jones <lee.jones@linaro.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<sboyd@codeaurora.org>, <s.hauer@pengutronix.de>,
+	<geert@linux-m68k.org>
+Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and
+ implement hand-off
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com> <20150818154552.GI2547@lukather> <20150818164356.31346.80341@quantum> <20150820151510.GD30520@lukather> <20150825215051.31346.56261@quantum> <20150826065423.GR19409@x1> <55DD7C05.6030207@st.com> <20150826090956.GW19409@x1>
+In-Reply-To: <20150826090956.GW19409@x1>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/22/2015 10:14 AM, Yingjoe Chen wrote:
-> Spurious mtk timer interrupt is noticed at boot and cause kernel
-> crash. It seems if GPT is enabled, it will latch irq status even
-> when its IRQ is disabled. When irq is enabled afterward, we see
-> spurious interrupt.
-> Change init flow to only enable GPT_CLK_SRC at mtk_timer_init.
->
-> Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
-> Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
-> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> ---
->
-> Update to my patch [1], added __init as Daniel suggest. This is the
-> only patch that need to change in that series, so I only sent this one.
->
-> http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001545.html
->
->   drivers/clocksource/mtk_timer.c | 16 ++++++++++------
->   1 file changed, 10 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clocksource/mtk_timer.c b/drivers/clocksource/mtk_timer.c
-> index 68ab423..2ba5b66 100644
-> --- a/drivers/clocksource/mtk_timer.c
-> +++ b/drivers/clocksource/mtk_timer.c
-> @@ -156,9 +156,11 @@ static void mtk_timer_global_reset(struct mtk_clock_event_device *evt)
->   	writel(0x3f, evt->gpt_base + GPT_IRQ_ACK_REG);
->   }
->
-> -static void
-> -mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
-> +static void __init mtk_timer_setup(struct mtk_clock_event_device *evt,
-> +				   u8 timer, u8 option, bool enable)
->   {
-> +	u32 val;
-> +
->   	writel(TIMER_CTRL_CLEAR | TIMER_CTRL_DISABLE,
->   		evt->gpt_base + TIMER_CTRL_REG(timer));
->
-> @@ -167,8 +169,10 @@ mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
->
->   	writel(0x0, evt->gpt_base + TIMER_CMP_REG(timer));
->
-> -	writel(TIMER_CTRL_OP(option) | TIMER_CTRL_ENABLE,
-> -			evt->gpt_base + TIMER_CTRL_REG(timer));
-> +	val = TIMER_CTRL_OP(option);
-> +	if (enable)
-> +		val |= TIMER_CTRL_ENABLE;
-> +	writel(val, evt->gpt_base + TIMER_CTRL_REG(timer));
 
-Instead of the 'enable' new option, I prefer a test with 'timer' with a 
-comment:
 
-	/*
-	 * the timer hw is broken in that way ... bla bla, so we only
-	 * enable the clocksource ...
-	 */
-	if (timer == GPT_CLK_SRC)
-		val |= TIMER_CTRL_ENABLE;
-
-That said, can you have a look at commit 1096be08 ?
-"clockevents: sun5i: Fix setup_irq init sequence"
-
-first and check if moving the interrupt request after the 
-clockevents_config_and_register could fix your issue.
-
->   }
+On 08/26/2015 11:09 AM, Lee Jones wrote:
+> On Wed, 26 Aug 2015, Maxime Coquelin wrote:
 >
->   static void mtk_timer_enable_irq(struct mtk_clock_event_device *evt, u8 timer)
-> @@ -235,12 +239,12 @@ static void __init mtk_timer_init(struct device_node *node)
->   	evt->ticks_per_jiffy = DIV_ROUND_UP(rate, HZ);
+>> Hi Lee,
+>>
+>> On 08/26/2015 08:54 AM, Lee Jones wrote:
+>>> On Tue, 25 Aug 2015, Michael Turquette wrote:
+>>>
+>>>
+>>>> Maybe I am the one missing something? My goal was to allow the consumer
+>>>> driver to gate the critical clock. So we need clk_disable_unused to
+>>>> actually disable the clock for that to work.
+>>>>
+>>>> I think you are suggesting that clk_disable_unused should *not* disable
+>>>> the clock if it is critical. Can you confirm that?
+>>> My take is that a critical clock should only be disabled when a
+>>> knowledgeable driver wants to gate it for a specific purpose [probably
+>>> using clk_disable()].  Once the aforementioned driver no longer has a
+>>> use for the clock [whether that happens with clk_unprepare_disable()
+>>> or clk_put() ...] the clock should be ungated and be provided with
+>>> critical status once more.
+>>>
+>> How do you differentiate between a knowledgeable and
+>> non-knowledgeable driver?
+>> Let's take the example of the clock used by the i2c on STi SoCs.
+>> This clock is used by i2c, and is also critical to the system, but
+>> only i2c takes it.
+>>
+>> At first transfer, the i2c will enable the clock and then disables it.
+>>
+>> What we would expect here is that the clk_disable does not gate the
+>> clock, even if only user since the hand-off flag has been set.
+>> Else, system will freeze.
+> The I2C driver in this instance is not a knowledgeable driver and
+> should not be taking a reference to a critical clock.
+This is the case:
+         i2c@9840000 {
+             ...
+             clocks = <&clk_s_c0_flexgen CLK_EXT2F_A9>;
+             clock-names = "ssc";
+             ...
+         }
+
+CLK_EXT2F_A9 is a critical clock I think.
+Indeed, this clock corresponds to output 13 of clockgen c0.
+This ouput has several clock names in the datasheet, but is in reality 
+the same clock from HW point of view (i.e. "same wire"):
+
+- CLK_ICN_REG
+- CLK_TRACE_A9
+- CLK_PTI_STM
+- CLK_EXT2F_A9
+
+I'm pretty sure CLK_ICN_REG is a critical clock.
+
+Try to gate it without gating its parent, and see if system is still alive.
+
+
 >
->   	/* Configure clock source */
-> -	mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN);
-> +	mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN, true);
->   	clocksource_mmio_init(evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC),
->   			node->name, rate, 300, 32, clocksource_mmio_readl_up);
->
->   	/* Configure clock event */
-> -	mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT);
-> +	mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT, false);
->   	clockevents_config_and_register(&evt->dev, rate, 0x3,
->   					0xffffffff);
+> In the example you provide, the real issue is that the I2C driver uses
+> one of the critical clock's siblings.  Without this framework, if it
+> gives up the reference to its own clock and there are no users of any
+> sibling clocks, the parent is gated.  This has the unfortunate effect
+> of gating the entire family, critical clock included.
+I don't see why a clock used by i2c could not be a critical clock, if it 
+is used by other parts of the system that cannot be represented as 
+drivers, and rely on the clock to be always on.
 
 
 
-
--- 
-  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
