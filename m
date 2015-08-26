@@ -1,70 +1,98 @@
-Return-Path: <abrestic@google.com>
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <Govindraj.Raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	<stable@vger.kernel.org>, "Ezequiel Garcia" <ezequiel.garcia@imgtec.com>,
+	Govindraj Raja <govindraj.raja@imgtec.com>
+Subject: [PATCH v6 4/4] clk: pistachio: correct critical clock list
+Date: Wed, 26 Aug 2015 17:11:40 +0100
+Message-ID: <1440605500-13274-5-git-send-email-Govindraj.Raja@imgtec.com>
+In-Reply-To: <1440605500-13274-1-git-send-email-Govindraj.Raja@imgtec.com>
+References: <1440605500-13274-1-git-send-email-Govindraj.Raja@imgtec.com>
 MIME-Version: 1.0
-Sender: abrestic@google.com
-In-Reply-To: <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
-References: <1439421161-17868-1-git-send-email-sboyd@codeaurora.org>
-	<1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
-Date: Thu, 13 Aug 2015 09:40:07 -0700
-Message-ID: <CAL1qeaE-UJD3CBx=6feF=Hu4=gu5AtQiWwQAZmbg+6qYLhOy2Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: Convert __clk_get_name(hw->clk) to clk_hw_get_name(hw)
-From: Andrew Bresticker <abrestic@chromium.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
-	Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>,
-	Kevin Cernekee <cernekee@chromium.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-omap@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Aug 12, 2015 at 4:12 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> Use the provider based method to get a clock's name so that we
-> can get rid of the clk member in struct clk_hw one day. Mostly
-> converted with the following coccinelle script.
->
-> @@
-> struct clk_hw *E;
-> @@
->
-> -__clk_get_name(E->clk)
-> +clk_hw_get_name(E)
->
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-> Cc: Stephen Warren <swarren@wwwdotorg.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Andrew Bresticker <abrestic@chromium.org>
-> Cc: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Kevin Cernekee <cernekee@chromium.org>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-rockchip@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+From: "Damien.Horsley" <Damien.Horsley@imgtec.com>
 
->  drivers/clk/pistachio/clk-pll.c      |  4 ++--
+Current critical clock list for pistachio enables
+only mips and sys clocks by default but there are
+also other clocks that are not claimed by anyone and
+needs to be enabled by default.
 
-For Pistachio,
+This patch updates the critical clocks that need
+to be enabled by default.
 
-Acked-by: Andrew Bresticker <abrestic@chromium.org>
+Add a separate struct to distinguish the critical clocks
+as listed:
+1.) core clocks:
+	a.) mips clock
+2.) peripheral system clocks:
+	a.) sys clock
+	b.) sys_bus clock
+	c.) DDR clock
+	d.) ROM clock
+
+Fixes: b35d7c33419c("CLK: Pistachio: Register core clocks")
+Cc: <stable@vger.kernel.org> # 4.1
+Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+Signed-off-by: Damien.Horsley <Damien.Horsley@imgtec.com>
+Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+---
+ drivers/clk/pistachio/clk-pistachio.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
+index 8c0fe88..c4ceb5e 100644
+--- a/drivers/clk/pistachio/clk-pistachio.c
++++ b/drivers/clk/pistachio/clk-pistachio.c
+@@ -159,9 +159,15 @@ PNAME(mux_debug) = { "mips_pll_mux", "rpu_v_pll_mux",
+ 		     "wifi_pll_mux", "bt_pll_mux" };
+ static u32 mux_debug_idx[] = { 0x0, 0x1, 0x2, 0x4, 0x8, 0x10 };
+ 
+-static unsigned int pistachio_critical_clks[] __initdata = {
+-	CLK_MIPS,
+-	CLK_PERIPH_SYS,
++static unsigned int pistachio_critical_clks_core[] __initdata = {
++	CLK_MIPS
++};
++
++static unsigned int pistachio_critical_clks_sys[] __initdata = {
++	PERIPH_CLK_SYS,
++	PERIPH_CLK_SYS_BUS,
++	PERIPH_CLK_DDR,
++	PERIPH_CLK_ROM,
+ };
+ 
+ static void __init pistachio_clk_init(struct device_node *np)
+@@ -193,8 +199,8 @@ static void __init pistachio_clk_init(struct device_node *np)
+ 
+ 	pistachio_clk_register_provider(p);
+ 
+-	pistachio_clk_force_enable(p, pistachio_critical_clks,
+-				   ARRAY_SIZE(pistachio_critical_clks));
++	pistachio_clk_force_enable(p, pistachio_critical_clks_core,
++				   ARRAY_SIZE(pistachio_critical_clks_core));
+ }
+ CLK_OF_DECLARE(pistachio_clk, "img,pistachio-clk", pistachio_clk_init);
+ 
+@@ -261,6 +267,9 @@ static void __init pistachio_clk_periph_init(struct device_node *np)
+ 				    ARRAY_SIZE(pistachio_periph_gates));
+ 
+ 	pistachio_clk_register_provider(p);
++
++	pistachio_clk_force_enable(p, pistachio_critical_clks_sys,
++				   ARRAY_SIZE(pistachio_critical_clks_sys));
+ }
+ CLK_OF_DECLARE(pistachio_clk_periph, "img,pistachio-clk-periph",
+ 	       pistachio_clk_periph_init);
+-- 
+1.9.1
