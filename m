@@ -1,42 +1,56 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Subject: Re: [PATCH] clk: pxa: pxa3xx: fix CKEN register access
-References: <1438631907-27993-1-git-send-email-robert.jarzmik@free.fr>
-	<55C00A6B.2030508@codeaurora.org>
-Date: Tue, 04 Aug 2015 08:22:40 +0200
-In-Reply-To: <55C00A6B.2030508@codeaurora.org> (Stephen Boyd's message of
-	"Mon, 03 Aug 2015 17:42:19 -0700")
-Message-ID: <87h9ofmv2n.fsf@belgarion.home>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33761 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751368AbbHZXbo (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 26 Aug 2015 19:31:44 -0400
+Date: Thu, 27 Aug 2015 08:31:41 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Linux-sh list <linux-sh@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2] clk: shmobile: Get rid of CONFIG_SHMOBILE_MULTI
+Message-ID: <20150826233139.GB22263@verge.net.au>
+References: <20150826074309.4298.76147.sendpatchset@little-apple>
+ <CAMuHMdVXJ8Te_Rwn2WZCdXdh_+0__S6QEp7ZBzggpY-UgqtqLA@mail.gmail.com>
+ <CANqRtoS-OvQKQZE1-wEnweeZaNqXVtQb3atJ1Fy+D1=Tt-b=XQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CANqRtoS-OvQKQZE1-wEnweeZaNqXVtQb3atJ1Fy+D1=Tt-b=XQ@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen Boyd <sboyd@codeaurora.org> writes:
+On Wed, Aug 26, 2015 at 04:56:47PM +0900, Magnus Damm wrote:
+> Hi Geert,
+> 
+> On Wed, Aug 26, 2015 at 4:48 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > On Wed, Aug 26, 2015 at 9:43 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> >> From: Magnus Damm <damm+renesas@opensource.se>
+> >>
+> >> Shmobile is all multiplatform these days, so get rid of the
+> >> reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
+> >> enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
+> >> MSTP depending on if they are included in the SoC or not.
+> >>
+> >> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> >> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> ---
+> >>
+> >>  Changes since V1:
+> >>  - dropped DIV6 from R-Car Gen1 variants - thanks Geert!
+> >
+> > BTW, you forgot to mention, but it's important for Mike and Stephen to
+> > know that this should not be queued up in a branch that still has
+> > ARCH_SHMOBILE_LEGACY.
+> 
+> Right, we need to sync with the mach-shmobile integration merge order
+> with stuff from Simon. I believe the remaining legacy cleanups are
+> targeted for v4.4. So merging this in v4.4 or later would be good.
 
-> On 08/03/2015 12:58 PM, Robert Jarzmik wrote:
->> Clocks 0 to 31 are on CKENA, and not CKENB. The clock register names
->> were inadequately inverted. As a consequence, all clock operations were
->> happening on CKENB, because almost all but 2 clocks are on CKENA.
->>
->> As the clocks were activated by the bootloader in the former tests, it
->> escaped the testing that the wrong clock gate was manipulated. The error
->> was revealed by changing the pxa3xx-and driver to a module, where tupon
->> unloading the wrong clock was disabled in CKENB.
->>
->> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
->> ---
->
-> Did you want a fixes tag to send this back to stable?
-Ah yes, good point, v2 on its way.
-
-Stephen and Mike, do you think this can still get in -rc6 ?
-
-Cheers.
-
--- 
-Robert
+Yes, the remaining legacy cleanups are queued up in my renesas tree for
+v4.4.
