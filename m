@@ -1,75 +1,39 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55CB0FCD.7050303@hisilicon.com>
-Date: Wed, 12 Aug 2015 10:20:13 +0100
-From: Wei Xu <xuwei5@hisilicon.com>
+Return-Path: <magnus.damm@gmail.com>
 MIME-Version: 1.0
-To: Leo Yan <leo.yan@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
-CC: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	"Mark Rutland" <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Catalin Marinas" <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	"Michael Turquette" <mturquette@baylibre.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Bintian Wang <bintian.wang@huawei.com>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, "Guodong Xu" <guodong.xu@linaro.org>,
-	Jian Zhang <zhangjian001@hisilicon.com>,
-	"Zhenwei Wang" <Zhenwei.wang@hisilicon.com>,
-	Haoju Mo <mohaoju@hisilicon.com>,
-	Dan Zhao <dan.zhao@hisilicon.com>,
-	<sunzhaosheng@hisilicon.com>, <victor.lixin@hisilicon.com>
-Subject: Re: [PATCH v4 0/4] clk: hisilicon: support stub clock
-References: <1438673249-6051-1-git-send-email-leo.yan@linaro.org> <20150812003817.GI26614@codeaurora.org> <20150812014954.GA6215@leoy-linaro>
-In-Reply-To: <20150812014954.GA6215@leoy-linaro>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdX9pzpBhOpN8_Cn=kiAHr9vrRP19brc26b+3vUp52QwhA@mail.gmail.com>
+References: <20150826074309.4298.76147.sendpatchset@little-apple>
+	<CAMuHMdX9pzpBhOpN8_Cn=kiAHr9vrRP19brc26b+3vUp52QwhA@mail.gmail.com>
+Date: Wed, 26 Aug 2015 17:07:25 +0900
+Message-ID: <CANqRtoTKJRwg1dxy9DGL3eeBwGTFzmYrEs6kkwipw+HhO1HKdg@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: shmobile: Get rid of CONFIG_SHMOBILE_MULTI
+From: Magnus Damm <magnus.damm@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 8/12/2015 2:49 AM, Leo Yan wrote:
-> Hi Stephen,
-> 
-> On Tue, Aug 11, 2015 at 05:38:17PM -0700, Stephen Boyd wrote:
->> On 08/04, Leo Yan wrote:
->>> This series adds support for hisilicon stub clock driver. On hi6220,
->>> the bootloader needs load the firmware image and set info for OPPs;
->>> after run into kernel, the stub clock driver is used to communicate
->>> w/t firmware for cpu dynamic frequency scaling.
->>>
->>> In patch series v1/v2, the stub clock driver simply writes request in
->>> sram and send ipc to firmware; For patch series v3, the firmware has
->>> been upgraded to use mailbox, so stub clock driver will call standard
->>> mailbox APIs to request mailbox channel and send message to firmware.
->>>
->>> Patch 4 adds stub clock node into dts and it references mailbox with
->>> phandle, so patch 4 will depend on mailbox driver's patch series [1].
->>> These patches have been tested on 96board hikey and is used by cpufreq
->>> driver.
+On Wed, Aug 26, 2015 at 4:55 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Wed, Aug 26, 2015 at 9:43 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+>> From: Magnus Damm <damm+renesas@opensource.se>
 >>
->> The To: list is everyone, so I'm not sure who is supposed to
->> apply these patches. I'd like to take patches 1, 2, and 3 through
->> the clk tree though.
-> 
-> Thanks, you could take first three patches. For patch 4, i will
-> re-send it after mailbox driver's patches have been merged.
+>> Shmobile is all multiplatform these days, so get rid of the
+>> reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
+>> enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
+>> MSTP depending on if they are included in the SoC or not.
+>>
+>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+>> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> BTW, the symbol name in the subject lacks an "ARCH_" infix.
+>
+> Too many replies to the same patch, time for coffee...
 
-Hi Leo,
+Ouch, that's for V3 then...
 
-> Wei Xu, is this okay for you?
+Thanks,
 
-OK :)
-
-Best Regards,
-Wei
-
-> 
-> Thanks,
-> Leo Yan
-> 
-> .
-> 
-
+/ magnus
