@@ -1,82 +1,82 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.uni-paderborn.de ([131.234.142.9]:50644 "EHLO
-	mail.uni-paderborn.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753129AbbHLOyO (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 12 Aug 2015 10:54:14 -0400
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 26 Aug 2015 07:54:23 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, s.hauer@pengutronix.de, geert@linux-m68k.org
+Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and
+ implement hand-off
+Message-ID: <20150826065423.GR19409@x1>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <20150818154552.GI2547@lukather>
+ <20150818164356.31346.80341@quantum>
+ <20150820151510.GD30520@lukather>
+ <20150825215051.31346.56261@quantum>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdYdgGYBRqeO4b0H17X5KE_qHrNtvZq-Y5TFqMzk8dPW+Q@mail.gmail.com>
-References: <CALcgO_49YPGoCOv23Vz9vbnq9+AN3WqvYyg9_TtvsQcz8ia2Hw@mail.gmail.com>
-	<CACRpkdYWD-XGqeZ_66i_AtG7h1M8JcbWHy-bLwjZNRSZqQmT=Q@mail.gmail.com>
-	<CACRpkdYdgGYBRqeO4b0H17X5KE_qHrNtvZq-Y5TFqMzk8dPW+Q@mail.gmail.com>
-Date: Wed, 12 Aug 2015 16:54:07 +0200
-Message-ID: <CALcgO_7Oe6EzNimSMm2K4jX_+bh9Du5adGKMDGs4Lz5wo1r18g@mail.gmail.com>
-Subject: Re: [PATCH RFC] clk-gpio-gate: use prepare/unprepare to do the GPIO work
-From: Michael Allwright <michael.allwright@upb.de>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jyri Sarha <jsarha@ti.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20150825215051.31346.56261@quantum>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12 August 2015 at 14:23, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Aug 12, 2015 at 2:20 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->
->> I would prefer it to be smart like this, keep the original function
->> names then in clk_register_gpio_gate():
->>
->> const struct clk_ops clk_gpio_fastpath_gate_ops = {
->>         .enable = clk_gpio_gate_enable,
->>         .disable = clk_gpio_gate_disable,
->>         .is_enabled = clk_gpio_gate_is_enabled,
->> };
->>
->> const struct clk_ops clk_gpio_sleep_gate_ops = {
->>         .prepare = clk_gpio_gate_enable,
->>         .unprepare = clk_gpio_gate_disable,
->>         .is_enabled = clk_gpio_gate_is_enabled,
->> };
->>
->> ....
->> if (gpiod_cansleep(clk_gpio->gpiod))
->>     init.ops = &clk_gpio_sleep_gate_ops;
->> else
->>     init.ops = &clk_gpio_fastpath_gate_ops;
->>
->> If you think it's confusing to have functions ending with
->> _enbable and _disable in the .prepare/.unprepare callbacks,
->> rename them ungate/gate or something.
->
-> Or well, since you use the *_cansleep() versions in the
-> prepare/unprepare calls, maybe you need a double set
-> of functions anyway. Mea culpa.
->
-> But certainly it should register different callbacks
-> depending on whether the pin may actually sleep
-> or not, since we have this knowledge inside the GPIO
-> library.
->
-> Yours,
-> Linus Walleij
+On Tue, 25 Aug 2015, Michael Turquette wrote:
 
-That's a nice clean solution - I like it. I was considering using the
-can sleep function of the GPIO subsystem to do this on the fly, but
-didn't consider using two structs like that.
+> Quoting Maxime Ripard (2015-08-20 08:15:10)
+> > On Tue, Aug 18, 2015 at 09:43:56AM -0700, Michael Turquette wrote:
+> > > Quoting Maxime Ripard (2015-08-18 08:45:52)
+> > > > Hi Mike,
+> > > > 
+> > > > On Fri, Aug 07, 2015 at 12:09:27PM -0700, Michael Turquette wrote:
+> > > > > All of the other kitchen sink stuff (DT binding, passing the flag back
+> > > > > to the framework when the clock consumer driver calls clk_put) was left
+> > > > > out because I do not see a real use case for it. If one can demonstrate
+> > > > > a real use case (and not a hypothetical one) then this patch series can
+> > > > > be expanded further.
+> > > > 
+> > > > I think there is a very trivial use case for passing back the
+> > > > reference to the framework, if during the probed, we have something
+> > > > like:
+> > > > 
+> > > > clk = clk_get()
+> > > > clk_prepare_enable(clk)
+> > > > foo_framework_register()
+> > > > 
+> > > > if foo_framework_register fails, the sensible thing to do would be to
+> > > > call clk_disable_unprepare. If the clock was a critical clock, you
+> > > > just gated it.
+> > > 
+> > > Hmm, a good point. Creating the "pass the reference back" call is not
+> > > hard technically. But how to keep from abusing it? E.g. I do not want
+> > > that call to become an alternative to correct use of clk_enable.
+> > > 
+> > > Maybe I'll need a Coccinelle script or just some regular sed to
+> > > occasionally search for new users of this api and audit them?
+> > > 
+> > > I was hoping to not add any new consumer api at all :-/
+> > 
+> > I don't think there's any abuse that can be done with the current API,
+> > nor do I think you need to have new functions either.
+> > 
+> > If the clock is critical, when the customer calls
+> > clk_unprepare_disable on it, simply take back the reference you gave
+> > in the framework, and you're done. Or am I missing something?
+> 
+> Maybe I am the one missing something? My goal was to allow the consumer
+> driver to gate the critical clock. So we need clk_disable_unused to
+> actually disable the clock for that to work.
+> 
+> I think you are suggesting that clk_disable_unused should *not* disable
+> the clock if it is critical. Can you confirm that?
 
-I need to take a look over at that has been done in linux-next with
-clk-gpio and see if this selecting between gpio_set_value and
-gpio_set_value_cansleep can be generalised to the gpio mux clock that
-has been implemented...
+My take is that a critical clock should only be disabled when a
+knowledgeable driver wants to gate it for a specific purpose [probably
+using clk_disable()].  Once the aforementioned driver no longer has a
+use for the clock [whether that happens with clk_unprepare_disable()
+or clk_put() ...] the clock should be ungated and be provided with
+critical status once more.
 
-Cheers,
-
-
-Michael Allwright
-
-PhD Student
-Paderborn Institute for Advanced Studies in Computer Science and Engineering
-
-University of Paderborn
-Office-number 02-10
-Zukunftsmeile 1
-33102 Paderborn
-Germany
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
