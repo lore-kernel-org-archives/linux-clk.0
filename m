@@ -1,382 +1,51 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk@vger.kernel.org, kuninori.morimoto.gx@renesas.com, gaku.inami.xw@bp.renesas.com, mturquette@baylibre.com, linux-sh@vger.kernel.org, sboyd@codeaurora.org, horms@verge.net.au, geert@linux-m68k.org
-Subject: Re: [PATCH v5 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
-Date: Tue, 01 Sep 2015 09:00:57 +0300
-Message-ID: <1692617.kRMz5BT8ct@avalon>
-In-Reply-To: <20150831124904.31057.19757.sendpatchset@little-apple>
-References: <20150831124842.31057.54534.sendpatchset@little-apple> <20150831124904.31057.19757.sendpatchset@little-apple>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55DD7C05.6030207@st.com>
+Date: Wed, 26 Aug 2015 10:42:45 +0200
+From: Maxime Coquelin <maxime.coquelin@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>
+CC: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<sboyd@codeaurora.org>, <s.hauer@pengutronix.de>,
+	<geert@linux-m68k.org>
+Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and
+ implement hand-off
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com> <20150818154552.GI2547@lukather> <20150818164356.31346.80341@quantum> <20150820151510.GD30520@lukather> <20150825215051.31346.56261@quantum> <20150826065423.GR19409@x1>
+In-Reply-To: <20150826065423.GR19409@x1>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus,
+Hi Lee,
 
-Thank you for the patch.
+On 08/26/2015 08:54 AM, Lee Jones wrote:
+> On Tue, 25 Aug 2015, Michael Turquette wrote:
+>
+>
+>> Maybe I am the one missing something? My goal was to allow the consumer
+>> driver to gate the critical clock. So we need clk_disable_unused to
+>> actually disable the clock for that to work.
+>>
+>> I think you are suggesting that clk_disable_unused should *not* disable
+>> the clock if it is critical. Can you confirm that?
+> My take is that a critical clock should only be disabled when a
+> knowledgeable driver wants to gate it for a specific purpose [probably
+> using clk_disable()].  Once the aforementioned driver no longer has a
+> use for the clock [whether that happens with clk_unprepare_disable()
+> or clk_put() ...] the clock should be ungated and be provided with
+> critical status once more.
+>
+How do you differentiate between a knowledgeable and non-knowledgeable 
+driver?
+Let's take the example of the clock used by the i2c on STi SoCs.
+This clock is used by i2c, and is also critical to the system, but only 
+i2c takes it.
 
-On Monday 31 August 2015 21:49:04 Magnus Damm wrote:
-> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> 
-> This V5 patch adds initial CPG support for R-Car Generation 3 and in
-> particular the R8A7795 SoC.
-> 
-> The R-Car Gen3 clock hardware has a register write protection feature that
-> needs to be shared between the CPG function needs to be shared between
-> the CPG and MSTP hardware somehow. So far this feature is simply ignored.
-> 
-> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> ---
-> 
->  Changes since V4: (Magnus Damm <damm+renesas@opensource.se>)
->  - Simplified clks array handling - thanks Geert!
->  - Updated th DT binding documentation to reflect latest state
->  - of_property_count_strings() -> of_property_count_u32_elems() fix
-> 
->  Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
->  - Reworked driver to incorporate most feedback from Stephen Boyd - thanks!!
->  - Major things like syscon and driver model require more discussion.
->  - Added hunk to build drivers/clk/shmobile if ARCH_RENESAS is set.
-> 
->  Changes since V2: (Magnus Damm <damm+renesas@opensource.se>)
->  - Reworked driver to rely on clock index instead of strings.
->  - Dropped use of "clock-output-names".
-> 
->  Earlier versions: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->  Initial version: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> 
->  Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt | 
->  32 +
->  drivers/clk/Makefile                                     |    1
->  drivers/clk/shmobile/Makefile                            |    1
->  drivers/clk/shmobile/clk-rcar-gen3.c                     |  245 ++++++++++
->  4 files changed, 279 insertions(+)
-> 
-> --- /dev/null
-> +++
-> work/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.t
-> xt	2015-08-31 15:49:10.000000000 +0900 @@ -0,0 +1,32 @@
-> +* Renesas R-Car Gen3 Clock Pulse Generator (CPG)
-> +
-> +The CPG generates core clocks for the R-Car Gen3 SoCs. It includes three
-> PLLs
-> +and several fixed ratio dividers.
-> +
-> +Required Properties:
-> +
-> +  - compatible: Must be one of
-> +    - "renesas,r8a7795-cpg-clocks" for the r8a7795 CPG
-> +    - "renesas,rcar-gen3-cpg-clocks" for the generic R-Car Gen3 CPG
-> +
-> +  - reg: Base address and length of the memory resource used by the CPG
-> +
-> +  - clocks: References to the parent clocks: first to the EXTAL clock
-> +  - #clock-cells: Must be 1
-> +  - clock-indices: Indices of the exported clocks
+At first transfer, the i2c will enable the clock and then disables it.
 
-Do we actually need the clock-indices property, as CPG clocks are numbered 
-sequentially ? It seems to me like we could drop the property, especially 
-given that the number of clocks is hardcoded in the driver anyway.
+What we would expect here is that the clk_disable does not gate the 
+clock, even if only user since the hand-off flag has been set.
+Else, system will freeze.
 
-> +
-> +Example
-> +-------
-> +
-> +	cpg_clocks: cpg_clocks@e6150000 {
-> +		compatible = "renesas,r8a7795-cpg-clocks",
-> +			     "renesas,rcar-gen3-cpg-clocks";
-> +		reg = <0 0xe6150000 0 0x1000>;
-> +		clocks = <&extal_clk>;
-> +		#clock-cells = <1>;
-> +                clock-indices = <
-> +                             R8A7795_CLK_MAIN R8A7795_CLK_PLL0
-> +                             R8A7795_CLK_PLL1 R8A7795_CLK_PLL2
-> +                             R8A7795_CLK_PLL3 R8A7795_CLK_PLL4
-> +                >;
-> +	};
-> --- 0001/drivers/clk/Makefile
-> +++ work/drivers/clk/Makefile	2015-08-31 15:49:09.072366518 +0900
-> @@ -67,6 +67,7 @@ obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
->  obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
->  obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
->  obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= shmobile/
-> +obj-$(CONFIG_ARCH_RENESAS)		+= shmobile/
->  obj-$(CONFIG_ARCH_SIRF)			+= sirf/
->  obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
->  obj-$(CONFIG_PLAT_SPEAR)		+= spear/
-> --- 0006/drivers/clk/shmobile/Makefile
-> +++ work/drivers/clk/shmobile/Makefile	2015-08-31 15:49:09.072366518 +0900
-> @@ -8,4 +8,5 @@ obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-
->  obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
->  obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
->  obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-> +obj-$(CONFIG_ARCH_R8A7795)		+= clk-rcar-gen3.o clk-mstp.o clk-div6.o
->  obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
-> --- /dev/null
-> +++ work/drivers/clk/shmobile/clk-rcar-gen3.c	2015-08-31 
-21:10:01.102366518
-> +0900 @@ -0,0 +1,245 @@
-> +/*
-> + * rcar_gen3 Core CPG Clocks
-> + *
-> + * Copyright (C) 2015 Renesas Electronics Corp.
-> + *
-> + * Based on rcar_gen2 Core CPG Clocks driver.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; version 2 of the License.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/clk/shmobile.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +
-> +#define RCAR_GEN3_CLK_MAIN	0
-> +#define RCAR_GEN3_CLK_PLL0	1
-> +#define RCAR_GEN3_CLK_PLL1	2
-> +#define RCAR_GEN3_CLK_PLL2	3
-> +#define RCAR_GEN3_CLK_PLL3	4
-> +#define RCAR_GEN3_CLK_PLL4	5
-> +#define RCAR_GEN3_CLK_NR	6
-> +
-> +static const char * const rcar_gen3_clk_names[RCAR_GEN3_CLK_NR] = {
-> +	[RCAR_GEN3_CLK_MAIN] = "main",
-> +	[RCAR_GEN3_CLK_PLL0] = "pll0",
-> +	[RCAR_GEN3_CLK_PLL1] = "pll1",
-> +	[RCAR_GEN3_CLK_PLL2] = "pll2",
-> +	[RCAR_GEN3_CLK_PLL3] = "pll3",
-> +	[RCAR_GEN3_CLK_PLL4] = "pll4",
-> +};
-> +
-> +struct rcar_gen3_cpg {
-> +	struct clk_onecell_data data;
-> +	spinlock_t lock;
-> +	void __iomem *reg;
-> +	struct clk *clks[RCAR_GEN3_CLK_NR];
-> +};
-> +
-> +#define CPG_PLL0CR	0x00d8
-> +#define CPG_PLL2CR	0x002c
-> +
-> +/*
-> + * common function
-> + */
-> +#define rcar_clk_readl(cpg, _reg) readl(cpg->reg + _reg)
-> +
-> +/*
-> + * Reset register definitions.
-> + */
-> +#define MODEMR 0xe6160060
-> +
-> +static u32 rcar_gen3_read_mode_pins(void)
-> +{
-> +	static u32 mode;
-> +	static bool mode_valid;
-> +
-> +	if (!mode_valid) {
-> +		void __iomem *modemr = ioremap_nocache(MODEMR, 4);
-> +
-> +		BUG_ON(!modemr);
-> +		mode = ioread32(modemr);
-> +		iounmap(modemr);
-> +		mode_valid = true;
-> +	}
-> +
-> +	return mode;
-> +}
-> +
-> +/* ------------------------------------------------------------------------
-> + * CPG Clock Data
-> + */
-> +
-> +/*
-> + *   MD		EXTAL		PLL0	PLL1	PLL2	PLL3	PLL4
-> + * 14 13 19 17	(MHz)		*1	*1	*1
-> + *-------------------------------------------------------------------
-> + * 0  0  0  0	16.66 x 1	x180/2	x192/2	x144/2	x192	x144
-> + * 0  0  0  1	16.66 x 1	x180/2	x192/2	x144/2	x128	x144
-> + * 0  0  1  0	Prohibited setting
-> + * 0  0  1  1	16.66 x 1	x180/2	x192/2	x144/2	x192	x144
-> + * 0  1  0  0	20    x 1	x150/2	x156/2	x120/2	x156	x120
-> + * 0  1  0  1	20    x 1	x150/2	x156/2	x120/2	x106	x120
-> + * 0  1  1  0	Prohibited setting
-> + * 0  1  1  1	20    x 1	x150/2	x156/2	x120/2	x156	x120
-> + * 1  0  0  0	25    x 1	x120/2	x128/2	x96/2	x128	x96
-> + * 1  0  0  1	25    x 1	x120/2	x128/2	x96/2	x84	x96
-> + * 1  0  1  0	Prohibited setting
-> + * 1  0  1  1	25    x 1	x120/2	x128/2	x96/2	x128	x96
-> + * 1  1  0  0	33.33 / 2	x180/2	x192/2	x144/2	x192	x144
-> + * 1  1  0  1	33.33 / 2	x180/2	x192/2	x144/2	x128	x144
-> + * 1  1  1  0	Prohibited setting
-> + * 1  1  1  1	33.33 / 2	x180/2	x192/2	x144/2	x192	x144
-> + *
-> + * *1 : datasheet indicates VCO output (PLLx = VCO/2)
-
-As explained in a separate e-mail there's a few clocks on R8A7795 that derive 
-directly from PLL1 VCO. I thus wonder whether we shouldn't expose the PLL1 
-clock as the VCO output and create VCO/2 using a fixed factor clock in DT.
-
-> + */
-> +#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 11) | \
-> +					 (((md) & BIT(13)) >> 11) | \
-> +					 (((md) & BIT(19)) >> 18) | \
-> +					 (((md) & BIT(17)) >> 17))
-> +struct cpg_pll_config {
-> +	unsigned int extal_div;
-> +	unsigned int pll1_mult;
-> +	unsigned int pll3_mult;
-> +	unsigned int pll4_mult;
-> +};
-> +
-> +static const struct cpg_pll_config cpg_pll_configs[16] __initconst = {
-> +/* EXTAL div	PLL1	PLL3	PLL4 */
-> +	{ 1,	192,	192,	144, },
-> +	{ 1,	192,	128,	144, },
-> +	{ 0,	0,	0,	0,   }, /* Prohibited setting */
-> +	{ 1,	192,	192,	144, },
-> +	{ 1,	156,	156,	120, },
-> +	{ 1,	156,	106,	120, },
-> +	{ 0,	0,	0,	0,   }, /* Prohibited setting */
-> +	{ 1,	156,	156,	120, },
-> +	{ 1,	128,	128,	96,  },
-> +	{ 1,	128,	84,	96,  },
-> +	{ 0,	0,	0,	0,   }, /* Prohibited setting */
-> +	{ 1,	128,	128,	96,  },
-> +	{ 2,	192,	192,	144, },
-> +	{ 2,	192,	128,	144, },
-> +	{ 0,	0,	0,	0,   }, /* Prohibited setting */
-> +	{ 2,	192,	192,	144, },
-> +};
-> +
-> +/* ------------------------------------------------------------------------
-> + * Initialization
-> + */
-> +
-> +static struct clk * __init
-> +rcar_gen3_cpg_register_clock(struct device_node *np, struct rcar_gen3_cpg
-> *cpg,
-> +			     const struct cpg_pll_config *config,
-> +			     unsigned int gen3_clk)
-> +{
-> +	const char *parent_name = rcar_gen3_clk_names[RCAR_GEN3_CLK_MAIN];
-> +	unsigned int mult = 1;
-> +	unsigned int div = 1;
-> +	u32 value;
-> +
-> +	switch (gen3_clk) {
-> +	case RCAR_GEN3_CLK_MAIN:
-> +		parent_name = of_clk_get_parent_name(np, 0);
-> +		div = config->extal_div;
-> +		break;
-> +	case RCAR_GEN3_CLK_PLL0:
-> +		/* PLL0 is a configurable multiplier clock. Register it as a
-> +		 * fixed factor clock for now as there's no generic multiplier
-> +		 * clock implementation and we currently have no need to change
-> +		 * the multiplier value.
-> +		 */
-> +		value = rcar_clk_readl(cpg, CPG_PLL0CR);
-> +		mult = ((value >> 24) & ((1 << 7) - 1)) + 1;
-
-I'd find 0x3f more readable than (1 << 7) - 1 but that might just be me. Same 
-comment for PLL2.
-
-> +		break;
-> +	case RCAR_GEN3_CLK_PLL1:
-> +		mult = config->pll1_mult / 2;
-> +		break;
-> +	case RCAR_GEN3_CLK_PLL2:
-> +		/* PLL2 is a configurable multiplier clock. Register it as a
-> +		 * fixed factor clock for now as there's no generic multiplier
-> +		 * clock implementation and we currently have no need to change
-> +		 * the multiplier value.
-> +		 */
-> +		value = rcar_clk_readl(cpg, CPG_PLL2CR);
-> +		mult = ((value >> 24) & ((1 << 7) - 1)) + 1;
-> +		break;
-> +	case RCAR_GEN3_CLK_PLL3:
-> +		mult = config->pll3_mult;
-> +		break;
-> +	case RCAR_GEN3_CLK_PLL4:
-> +		mult = config->pll4_mult;
-> +		break;
-> +	default:
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	return clk_register_fixed_factor(NULL, rcar_gen3_clk_names[gen3_clk],
-> +					 parent_name, 0, mult, div);
-> +}
-> +
-> +static void __init rcar_gen3_cpg_clocks_init(struct device_node *np)
-> +{
-> +	const struct cpg_pll_config *config;
-> +	struct rcar_gen3_cpg *cpg;
-> +	u32 cpg_mode;
-> +	unsigned int i;
-> +	int num_clks;
-> +
-> +	cpg_mode = rcar_gen3_read_mode_pins();
-> +
-> +	num_clks = of_property_count_u32_elems(np, "clock-indices");
-> +	if (num_clks < 0) {
-> +		pr_err("%s: failed to count clocks\n", __func__);
-> +		return;
-> +	}
-> +
-> +	cpg = kzalloc(sizeof(*cpg), GFP_KERNEL);
-> +	if (!cpg)
-> +		return;
-> +
-> +	spin_lock_init(&cpg->lock);
-
-The spin lock is never used. I'd drop it for now, and add it back later 
-when/if needed.
-
-> +	cpg->data.clks = cpg->clks;
-> +	cpg->data.clk_num = num_clks;
-> +
-> +	cpg->reg = of_iomap(np, 0);
-> +	if (WARN_ON(cpg->reg == NULL))
-> +		return;
-> +
-> +	config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
-> +	if (!config->extal_div) {
-> +		pr_err("%s: Prohibited setting (cpg_mode=0x%x)\n",
-> +		       __func__, cpg_mode);
-> +		return;
-> +	}
-> +
-> +	for (i = 0; i < num_clks; ++i) {
-> +		struct clk *clk;
-> +		u32 idx;
-> +		int ret;
-> +
-> +		ret = of_property_read_u32_index(np, "clock-indices", i, &idx);
-> +		if (ret < 0)
-> +			break;
-> +
-> +		clk = rcar_gen3_cpg_register_clock(np, cpg, config, idx);
-> +		if (IS_ERR(clk))
-> +			pr_err("%s: failed to register %s %u clock (%ld)\n",
-> +			       __func__, np->name, idx, PTR_ERR(clk));
-> +		else
-> +			cpg->data.clks[idx] = clk;
-> +	}
-> +
-> +	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
-> +}
-> +CLK_OF_DECLARE(rcar_gen3_cpg_clks, "renesas,rcar-gen3-cpg-clocks",
-> +	       rcar_gen3_cpg_clocks_init);
-
--- 
-Regards,
-
-Laurent Pinchart
+Maxime
