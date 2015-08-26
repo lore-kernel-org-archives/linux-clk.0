@@ -1,362 +1,135 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Bintian Wang <bintian.wang@huawei.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Jian Zhang <zhangjian001@hisilicon.com>,
-	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
-	Haoju Mo <mohaoju@hisilicon.com>,
-	Dan Zhao <dan.zhao@hisilicon.com>,
-	sunzhaosheng@hisilicon.com,
-	victor.lixin@hisilicon.com
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v3 4/5] clk: Hi6220: add stub clock driver
-Date: Mon,  3 Aug 2015 09:13:37 +0800
-Message-Id: <1438564418-15948-5-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
-References: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <Govindraj.Raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	<stable@vger.kernel.org>, "Govindraj Raja" <govindraj.raja@imgtec.com>
+Subject: [PATCH v6 3/4] clk: pistachio: Fix PLL rate calculation in integer mode
+Date: Wed, 26 Aug 2015 17:11:39 +0100
+Message-ID: <1440605500-13274-4-git-send-email-Govindraj.Raja@imgtec.com>
+In-Reply-To: <1440605500-13274-1-git-send-email-Govindraj.Raja@imgtec.com>
+References: <1440605500-13274-1-git-send-email-Govindraj.Raja@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Hi6220, there have some clocks which can use mailbox channel to send
-messages to power controller to change frequency; this includes CPU, GPU
-and DDR clocks.
+From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
 
-For dynamic frequency scaling, firstly need write the frequency value to
-SRAM region, and then send message to mailbox to trigger power controller
-to handle this requirement. This driver will use syscon APIs to pass SRAM
-memory region and use common mailbox APIs for channels accessing.
+.recalc_rate callback for the fractional PLL doesn't take operating
+mode into account when calculating PLL rate. This results in
+the incorrect PLL rates when PLL is operating in integer mode.
 
-This init driver will support cpu frequency change firstly.
+Operating mode of fractional PLL is based on the value of the
+fractional divider. Currently it assumes that the PLL will always
+be configured in fractional mode which may not be
+the case. This may result in the wrong output frequency.
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Also vco was calculated based on the current operating mode which
+makes no sense because .set_rate is setting operating mode. Instead,
+vco should be calculated using PLL settings that are about to be set.
+
+Fixes: 43049b0c83f17("CLK: Pistachio: Add PLL driver")
+Cc: <stable@vger.kernel.org> # 4.1
+Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
 ---
- drivers/clk/hisilicon/Kconfig           |   2 +-
- drivers/clk/hisilicon/Makefile          |   2 +-
- drivers/clk/hisilicon/clk-hi6220-stub.c | 279 ++++++++++++++++++++++++++++++++
- 3 files changed, 281 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/hisilicon/clk-hi6220-stub.c
+ drivers/clk/pistachio/clk-pll.c | 48 +++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 46 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
-index b4165ba..2c16807 100644
---- a/drivers/clk/hisilicon/Kconfig
-+++ b/drivers/clk/hisilicon/Kconfig
-@@ -1,6 +1,6 @@
- config COMMON_CLK_HI6220
- 	bool "Hi6220 Clock Driver"
--	depends on ARCH_HISI || COMPILE_TEST
-+	depends on (ARCH_HISI || COMPILE_TEST) && MAILBOX
- 	default ARCH_HISI
- 	help
- 	  Build the Hisilicon Hi6220 clock driver based on the common clock framework.
-diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
-index 48f0116..4a1001a 100644
---- a/drivers/clk/hisilicon/Makefile
-+++ b/drivers/clk/hisilicon/Makefile
-@@ -7,4 +7,4 @@ obj-y	+= clk.o clkgate-separated.o clkdivider-hi6220.o
- obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
- obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
- obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
--obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
-+obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o clk-hi6220-stub.o
-diff --git a/drivers/clk/hisilicon/clk-hi6220-stub.c b/drivers/clk/hisilicon/clk-hi6220-stub.c
-new file mode 100644
-index 0000000..0931666
---- /dev/null
-+++ b/drivers/clk/hisilicon/clk-hi6220-stub.c
-@@ -0,0 +1,279 @@
-+/*
-+ * Hi6220 stub clock driver
-+ *
-+ * Copyright (c) 2015 Hisilicon Limited.
-+ * Copyright (c) 2015 Linaro Limited.
-+ *
-+ * Author: Leo Yan <leo.yan@linaro.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#include <linux/clkdev.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/mailbox_client.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/clock/hi6220-clock.h>
-+
-+/* Stub clocks id */
-+#define HI6220_STUB_ACPU0		0
-+#define HI6220_STUB_ACPU1		1
-+#define HI6220_STUB_GPU			2
-+#define HI6220_STUB_DDR			5
-+
-+/* Mailbox message */
-+#define HI6220_MBOX_MSG_LEN		8
-+
-+#define HI6220_MBOX_FREQ		(0xA)
-+#define HI6220_MBOX_CMD_SET		(0x3)
-+#define HI6220_MBOX_OBJ_AP		(0x0)
-+
-+/* CPU dynamic frequency scaling */
-+#define ACPU_DFS_FREQ_MAX		(0x1724)
-+#define ACPU_DFS_CUR_FREQ		(0x17CC)
-+#define ACPU_DFS_FLAG			(0x1B30)
-+#define ACPU_DFS_FREQ_REQ		(0x1B34)
-+#define ACPU_DFS_FREQ_LMT		(0x1B38)
-+#define ACPU_DFS_LOCK_FLAG		(0xAEAEAEAE)
-+
-+#define to_stub_clk(hw) container_of(hw, struct hi6220_stub_clk, hw)
-+
-+struct hi6220_stub_clk {
-+	u32 id;
-+	u32 rate;
-+
-+	struct device *dev;
-+	struct clk_hw hw;
-+
-+	struct regmap *dfs_map;
-+	struct mbox_client cl;
-+	struct mbox_chan *mbox;
+diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
+index 9a38a2b..c9b4598 100644
+--- a/drivers/clk/pistachio/clk-pll.c
++++ b/drivers/clk/pistachio/clk-pll.c
+@@ -65,6 +65,12 @@
+ #define MIN_OUTPUT_FRAC			12000000UL
+ #define MAX_OUTPUT_FRAC			1600000000UL
+ 
++/* Fractional PLL operating modes */
++enum pll_mode {
++	PLL_MODE_FRAC,
++	PLL_MODE_INT,
 +};
 +
-+struct hi6220_mbox_msg {
-+	unsigned char type;
-+	unsigned char cmd;
-+	unsigned char obj;
-+	unsigned char src;
-+	unsigned char para[4];
-+};
-+
-+union hi6220_mbox_data {
-+	unsigned int data[HI6220_MBOX_MSG_LEN];
-+	struct hi6220_mbox_msg msg;
-+};
-+
-+static unsigned int hi6220_acpu_get_freq(struct hi6220_stub_clk *stub_clk)
+ struct pistachio_clk_pll {
+ 	struct clk_hw hw;
+ 	void __iomem *base;
+@@ -99,6 +105,29 @@ static inline struct pistachio_clk_pll *to_pistachio_pll(struct clk_hw *hw)
+ 	return container_of(hw, struct pistachio_clk_pll, hw);
+ }
+ 
++static inline enum pll_mode pll_frac_get_mode(struct clk_hw *hw)
 +{
-+	unsigned int freq;
++	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
++	u32 val;
 +
-+	regmap_read(stub_clk->dfs_map, ACPU_DFS_CUR_FREQ, &freq);
-+	return freq;
++	val = pll_readl(pll, PLL_CTRL3) & PLL_FRAC_CTRL3_DSMPD;
++	return val ? PLL_MODE_INT : PLL_MODE_FRAC;
 +}
 +
-+static int hi6220_acpu_set_freq(struct hi6220_stub_clk *stub_clk,
-+				unsigned int freq)
++static inline void pll_frac_set_mode(struct clk_hw *hw, enum pll_mode mode)
 +{
-+	union hi6220_mbox_data data;
++	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
++	u32 val;
 +
-+	stub_clk->mbox = mbox_request_channel(&stub_clk->cl, 0);
-+	if (IS_ERR(stub_clk->mbox)) {
-+		dev_err(stub_clk->dev, "failed get mailbox channel\n");
-+		return PTR_ERR(stub_clk->mbox);
-+	};
++	val = pll_readl(pll, PLL_CTRL3);
++	if (mode == PLL_MODE_INT)
++		val |= PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_DACPD;
++	else
++		val &= ~(PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_DACPD);
 +
-+	/* set the frequency in sram */
-+	regmap_write(stub_clk->dfs_map, ACPU_DFS_FREQ_REQ, freq);
-+
-+	/* compound mailbox message */
-+	data.msg.type = HI6220_MBOX_FREQ;
-+	data.msg.cmd  = HI6220_MBOX_CMD_SET;
-+	data.msg.obj  = HI6220_MBOX_OBJ_AP;
-+	data.msg.src  = HI6220_MBOX_OBJ_AP;
-+
-+	mbox_send_message(stub_clk->mbox, &data);
-+	mbox_free_channel(stub_clk->mbox);
-+	return 0;
++	pll_writel(pll, val, PLL_CTRL3);
 +}
 +
-+static int hi6220_acpu_round_freq(struct hi6220_stub_clk *stub_clk,
-+				  unsigned int freq)
-+{
-+	unsigned int limit_flag, limit_freq = UINT_MAX;
-+	unsigned int max_freq;
+ static struct pistachio_pll_rate_table *
+ pll_get_params(struct pistachio_clk_pll *pll, unsigned long fref,
+ 	       unsigned long fout)
+@@ -180,7 +209,11 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!params || !params->refdiv)
+ 		return -EINVAL;
+ 
+-	vco = div64_u64(params->fref * params->fbdiv, params->refdiv);
++	/* calculate vco */
++	vco = params->fref;
++	vco *= (params->fbdiv << 24) + params->frac;
++	vco = div64_u64(vco, params->refdiv << 24);
 +
-+	/* check the constrainted frequency */
-+	regmap_read(stub_clk->dfs_map, ACPU_DFS_FLAG, &limit_flag);
-+	if (limit_flag == ACPU_DFS_LOCK_FLAG)
-+		regmap_read(stub_clk->dfs_map, ACPU_DFS_FREQ_LMT, &limit_freq);
+ 	if (vco < MIN_VCO_FRAC_FRAC || vco > MAX_VCO_FRAC_FRAC)
+ 		pr_warn("%s: VCO %llu is out of range %lu..%lu\n", name, vco,
+ 			MIN_VCO_FRAC_FRAC, MAX_VCO_FRAC_FRAC);
+@@ -224,6 +257,12 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		(params->postdiv2 << PLL_FRAC_CTRL2_POSTDIV2_SHIFT);
+ 	pll_writel(pll, val, PLL_CTRL2);
+ 
++	/* set operating mode */
++	if (params->frac)
++		pll_frac_set_mode(hw, PLL_MODE_FRAC);
++	else
++		pll_frac_set_mode(hw, PLL_MODE_INT);
 +
-+	/* check the supported maximum frequency */
-+	regmap_read(stub_clk->dfs_map, ACPU_DFS_FREQ_MAX, &max_freq);
+ 	if (enabled)
+ 		pll_lock(pll);
+ 
+@@ -247,8 +286,13 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
+ 		PLL_FRAC_CTRL2_POSTDIV2_MASK;
+ 	frac = (val >> PLL_FRAC_CTRL2_FRAC_SHIFT) & PLL_FRAC_CTRL2_FRAC_MASK;
+ 
++	/* get operating mode (int/frac) and calculate rate accordingly */
+ 	rate = parent_rate;
+-	rate *= (fbdiv << 24) + frac;
++	if (pll_frac_get_mode(hw) == PLL_MODE_FRAC)
++		rate *= (fbdiv << 24) + frac;
++	else
++		rate *= (fbdiv << 24);
 +
-+	/* calculate the real maximum frequency */
-+	max_freq = min(max_freq, limit_freq);
-+
-+	if (WARN_ON(freq > max_freq))
-+		freq = max_freq;
-+
-+	return freq;
-+}
-+
-+static unsigned long hi6220_stub_clk_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	u32 rate = 0;
-+	struct hi6220_stub_clk *stub_clk = to_stub_clk(hw);
-+
-+	switch (stub_clk->id) {
-+	case HI6220_STUB_ACPU0:
-+		rate = hi6220_acpu_get_freq(stub_clk);
-+
-+		/* convert from KHz to Hz */
-+		rate *= 1000;
-+		break;
-+
-+	default:
-+		dev_err(stub_clk->dev, "%s: un-supported clock id %d\n",
-+			__func__, stub_clk->id);
-+		break;
-+	}
-+
-+	return rate;
-+}
-+
-+static int hi6220_stub_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+                    unsigned long parent_rate)
-+{
-+	struct hi6220_stub_clk *stub_clk = to_stub_clk(hw);
-+	unsigned long new_rate = rate / 1000;  /* Khz */
-+	int ret = 0;
-+
-+	switch (stub_clk->id) {
-+	case HI6220_STUB_ACPU0:
-+		ret = hi6220_acpu_set_freq(stub_clk, new_rate);
-+		if (ret < 0)
-+			return ret;
-+
-+		break;
-+
-+	default:
-+		dev_err(stub_clk->dev, "%s: un-supported clock id %d\n",
-+			__func__, stub_clk->id);
-+		break;
-+	}
-+
-+	stub_clk->rate = new_rate;
-+
-+	pr_debug("%s: set rate=%ldKhz\n", __func__, new_rate);
-+	return ret;
-+}
-+
-+static long hi6220_stub_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long *parent_rate)
-+{
-+	struct hi6220_stub_clk *stub_clk = to_stub_clk(hw);
-+	unsigned long new_rate = rate / 1000;  /* Khz */
-+
-+	switch (stub_clk->id) {
-+	case HI6220_STUB_ACPU0:
-+		new_rate = hi6220_acpu_round_freq(stub_clk, new_rate);
-+
-+		/* convert from KHz to Hz */
-+		new_rate *= 1000;
-+		break;
-+
-+	default:
-+		dev_err(stub_clk->dev, "%s: un-supported clock id %d\n",
-+			__func__, stub_clk->id);
-+		break;
-+	}
-+
-+	return new_rate;
-+}
-+
-+static struct clk_ops hi6220_stub_clk_ops = {
-+	.recalc_rate	= hi6220_stub_clk_recalc_rate,
-+	.round_rate	= hi6220_stub_clk_round_rate,
-+	.set_rate	= hi6220_stub_clk_set_rate,
-+};
-+
-+static int hi6220_stub_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct clk_init_data init;
-+	struct hi6220_stub_clk *stub_clk;
-+	struct clk *clk;
-+	struct device_node *np = pdev->dev.of_node;
-+
-+	stub_clk = devm_kzalloc(&pdev->dev, sizeof(*stub_clk), GFP_KERNEL);
-+	if (!stub_clk)
-+		return -ENOMEM;
-+
-+	stub_clk->dfs_map = syscon_regmap_lookup_by_phandle(np,
-+				"hisilicon,hi6220-clk-sram");
-+	if (IS_ERR(stub_clk->dfs_map)) {
-+		dev_err(dev, "failed to get sram regmap\n");
-+		return PTR_ERR(stub_clk->dfs_map);
-+	}
-+
-+	stub_clk->hw.init = &init;
-+	stub_clk->dev = dev;
-+	stub_clk->id = HI6220_STUB_ACPU0;
-+
-+	/* Use mailbox client with blocking mode */
-+	stub_clk->cl.dev = &pdev->dev;
-+	stub_clk->cl.tx_done = NULL;
-+	stub_clk->cl.tx_block = true;
-+	stub_clk->cl.tx_tout = 500;
-+	stub_clk->cl.knows_txdone = false;
-+
-+	init.name = "acpu0";
-+	init.ops = &hi6220_stub_clk_ops;
-+	init.num_parents = 0;
-+	init.flags = CLK_IS_ROOT;
-+
-+	clk = clk_register(NULL, &stub_clk->hw);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	of_clk_add_provider(pdev->dev.of_node, of_clk_src_simple_get, clk);
-+
-+	/* initialize buffer to zero */
-+	regmap_write(stub_clk->dfs_map, ACPU_DFS_FLAG, 0x0);
-+	regmap_write(stub_clk->dfs_map, ACPU_DFS_FREQ_REQ, 0x0);
-+	regmap_write(stub_clk->dfs_map, ACPU_DFS_FREQ_LMT, 0x0);
-+
-+	dev_dbg(&pdev->dev, "Registered clock '%s'\n", init.name);
-+	return 0;
-+}
-+
-+static const struct of_device_id hi6220_stub_clk_of_match[] = {
-+	{ .compatible = "hisilicon,hi6220-stub-clk", },
-+	{}
-+};
-+
-+static struct platform_driver hi6220_stub_clk_driver = {
-+	.driver	= {
-+		.name = "hi6220-stub-clk",
-+		.of_match_table = of_match_ptr(hi6220_stub_clk_of_match),
-+	},
-+	.probe = hi6220_stub_clk_probe,
-+};
-+
-+static int __init hi6220_stub_clk_init(void)
-+{
-+	return platform_driver_register(&hi6220_stub_clk_driver);
-+}
-+core_initcall(hi6220_stub_clk_init);
+ 	rate = do_div_round_closest(rate, (prediv * postdiv1 * postdiv2) << 24);
+ 
+ 	return rate;
 -- 
 1.9.1
