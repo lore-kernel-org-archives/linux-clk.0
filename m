@@ -1,67 +1,70 @@
-Return-Path: <manabian@gmail.com>
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <Govindraj.Raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	<stable@vger.kernel.org>, "Govindraj Raja" <govindraj.raja@imgtec.com>
+Subject: [PATCH v6 2/4] clk: pistachio: Fix override of clk-pll settings from boot loader
+Date: Wed, 26 Aug 2015 17:11:38 +0100
+Message-ID: <1440605500-13274-3-git-send-email-Govindraj.Raja@imgtec.com>
+In-Reply-To: <1440605500-13274-1-git-send-email-Govindraj.Raja@imgtec.com>
+References: <1440605500-13274-1-git-send-email-Govindraj.Raja@imgtec.com>
 MIME-Version: 1.0
-In-Reply-To: <20150811204127.31346.16729@quantum>
-References: <1436651307-24098-1-git-send-email-manabian@gmail.com>
-	<1436651307-24098-2-git-send-email-manabian@gmail.com>
-	<20150811204127.31346.16729@quantum>
-Date: Thu, 13 Aug 2015 22:43:11 +0200
-Message-ID: <CAGhQ9VwZaM_iWTkQYVTuTiyb6gCG2y6s8WFVySCHt7YHE1qbcA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: add lpc18xx creg clk driver
-From: Joachim  Eastwood <manabian@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11 August 2015 at 22:41, Michael Turquette <mturquette@baylibre.com> wrote:
-> Hi Joachim,
->
-> Quoting Joachim Eastwood (2015-07-11 14:48:26)
->> +static void __init lpc18xx_creg_clk_init(struct device_node *np)
->> +{
->> +       const char *clk_32khz_parent;
->> +       struct regmap *syscon;
->> +
->> +       syscon = syscon_node_to_regmap(np->parent);
->> +       if (IS_ERR(syscon)) {
->> +               pr_err("%s: syscon lookup failed\n", __func__);
->> +               return;
->> +       }
->> +
->> +       clk_32khz_parent = of_clk_get_parent_name(np, 0);
->> +
->> +       clk_creg[CREG_CLK_32KHZ] =
->> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_32KHZ],
->> +                                     &clk_32khz_parent, syscon);
->> +
->> +       clk_creg[CREG_CLK_1KHZ] =
->> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_1KHZ],
->> +                                     &clk_creg_clocks[CREG_CLK_32KHZ].name,
->> +                                     syscon);
->> +
->> +       of_clk_add_provider(np, of_clk_src_onecell_get, &clk_base_data);
->> +}
->> +CLK_OF_DECLARE(lpc18xx_creg_clk, "nxp,lpc1850-creg-clk", lpc18xx_creg_clk_init);
->
-> I'll ask the same question that Stephen asked in your CCU/CGU driver
-> series: is it necessary to use CLK_OF_DECLARE here or can you use the
-> platform device model?
+From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
 
-The 32 kHz clock from the CREG block is a clock parent to the CGU
-block so it's possible that it will required early. This is all
-depends on how the boot loader initially configures the CGU.
+PLL enable callbacks are overriding PLL mode (int/frac) and
+Noise reduction (on/off) settings set by the boot loader which
+results in the incorrect clock rate.
 
-Currently in the DTS for lpc18xx cgu it has:
-clocks = <&xtal>, <&xtal32>, <...>;
-xtal32 is just a temporary placeholder until the CREG clock is in place.
+PLL mode and noise reduction are defined by the DSMPD and DACPD bits
+of the PLL control register. PLL .enable() callbacks enable PLL
+by deasserting all power-down bits of the PLL control register,
+including DSMPD and DACPD bits, which is not necessary since
+these bits don't actually enable/disable PLL.
 
+This commit fixes the problem by removing DSMPD and DACPD bits
+from the "PLL enable" mask.
 
-Note that while it's possible to use the 32k clock together with PLL0
-to generate the main CPU bus clock I doubt it will be common
-configuration. It is however fully possible to do.
+Fixes: 43049b0c83f17("CLK: Pistachio: Add PLL driver")
+Cc: <stable@vger.kernel.org> # 4.1
+Reviewed-by: Andrew Bresitcker <abrestic@chromium.org>
+Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+---
+ drivers/clk/pistachio/clk-pll.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-
-regards,
-Joachim Eastwood
+diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
+index 68066ef..9a38a2b 100644
+--- a/drivers/clk/pistachio/clk-pll.c
++++ b/drivers/clk/pistachio/clk-pll.c
+@@ -134,8 +134,7 @@ static int pll_gf40lp_frac_enable(struct clk_hw *hw)
+ 	u32 val;
+ 
+ 	val = pll_readl(pll, PLL_CTRL3);
+-	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_DACPD |
+-		 PLL_FRAC_CTRL3_DSMPD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
++	val &= ~(PLL_FRAC_CTRL3_PD | PLL_FRAC_CTRL3_FOUTPOSTDIVPD |
+ 		 PLL_FRAC_CTRL3_FOUT4PHASEPD | PLL_FRAC_CTRL3_FOUTVCOPD);
+ 	pll_writel(pll, val, PLL_CTRL3);
+ 
+@@ -277,7 +276,7 @@ static int pll_gf40lp_laint_enable(struct clk_hw *hw)
+ 	u32 val;
+ 
+ 	val = pll_readl(pll, PLL_CTRL1);
+-	val &= ~(PLL_INT_CTRL1_PD | PLL_INT_CTRL1_DSMPD |
++	val &= ~(PLL_INT_CTRL1_PD |
+ 		 PLL_INT_CTRL1_FOUTPOSTDIVPD | PLL_INT_CTRL1_FOUTVCOPD);
+ 	pll_writel(pll, val, PLL_CTRL1);
+ 
+-- 
+1.9.1
