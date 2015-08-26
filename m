@@ -1,58 +1,153 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 1/2] clk: lpc18xx-ccu: fix potential system hang when disabling unused clocks
-Date: Tue, 25 Aug 2015 20:34:02 +0200
-Message-Id: <1440527643-2960-2-git-send-email-manabian@gmail.com>
-In-Reply-To: <1440527643-2960-1-git-send-email-manabian@gmail.com>
-References: <1440527643-2960-1-git-send-email-manabian@gmail.com>
+Return-Path: <Govindraj.Raja@imgtec.com>
+From: Govindraj Raja <Govindraj.Raja@imgtec.com>
+To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
+CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
+	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
+ Bresticker" <abrestic@chromium.org>, James Hartley
+	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
+	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	<stable@vger.kernel.org>, "Govindraj Raja" <govindraj.raja@imgtec.com>
+Subject: [PATCH v6 1/4] clk: pistachio: Fix 32bit integer overflows
+Date: Wed, 26 Aug 2015 17:11:37 +0100
+Message-ID: <1440605500-13274-2-git-send-email-Govindraj.Raja@imgtec.com>
+In-Reply-To: <1440605500-13274-1-git-send-email-Govindraj.Raja@imgtec.com>
+References: <1440605500-13274-1-git-send-email-Govindraj.Raja@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-CCU branch clock register must only be accessed while the base
-(parent) clock is running. Access with a disabled base clock
-will cause the system to hang. Fix this issue by adding code
-that check if the parent clock is running in the is_enabled
-clk_ops callback.
+From: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
 
-This hang would occur when disabling unused clocks after AMBA
-runtime pm had already disabled some of the clocks.
+This commit fixes 32bit integer overflows throughout the pll driver
+(i.e. wherever the result of integer multiplication may exceed the
+range of u32).
 
-Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+One of the functions affected by this problem is .recalc_rate. It
+returns incorrect rate for some pll settings (not for all though)
+which in turn results in the incorrect rate setup of pll's child
+clocks.
+
+Fixes: 43049b0c83f17("CLK: Pistachio: Add PLL driver")
+Cc: <stable@vger.kernel.org> # 4.1
+Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Zdenko Pulitika <zdenko.pulitika@imgtec.com>
+Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
 ---
+ drivers/clk/pistachio/clk-pll.c | 26 ++++++++++++--------------
+ drivers/clk/pistachio/clk.h     | 14 +++++++-------
+ 2 files changed, 19 insertions(+), 21 deletions(-)
 
-No changes from v1.
-
- drivers/clk/nxp/clk-lpc18xx-ccu.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/clk/nxp/clk-lpc18xx-ccu.c b/drivers/clk/nxp/clk-lpc18xx-ccu.c
-index eeaee97da110..1845476e635e 100644
---- a/drivers/clk/nxp/clk-lpc18xx-ccu.c
-+++ b/drivers/clk/nxp/clk-lpc18xx-ccu.c
-@@ -180,6 +180,20 @@ static void lpc18xx_ccu_gate_disable(struct clk_hw *hw)
- static int lpc18xx_ccu_gate_is_enabled(struct clk_hw *hw)
- {
- 	struct clk_gate *gate = to_clk_gate(hw);
-+	struct clk *parent;
-+
-+	/*
-+	 * The branch clock registers are only accessible
-+	 * if the base (parent) clock is enabled. Register
-+	 * access with a disabled base clock will hang the
-+	 * system.
-+	 */
-+	parent = clk_get_parent(hw->clk);
-+	if (IS_ERR(parent))
-+		return 0;
-+
-+	if (!__clk_is_enabled(parent))
-+		return 0;
- 
- 	return clk_readl(gate->reg) & LPC18XX_CCU_RUN;
+diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
+index e17dada..68066ef 100644
+--- a/drivers/clk/pistachio/clk-pll.c
++++ b/drivers/clk/pistachio/clk-pll.c
+@@ -88,12 +88,10 @@ static inline void pll_lock(struct pistachio_clk_pll *pll)
+ 		cpu_relax();
  }
+ 
+-static inline u32 do_div_round_closest(u64 dividend, u32 divisor)
++static inline u64 do_div_round_closest(u64 dividend, u64 divisor)
+ {
+ 	dividend += divisor / 2;
+-	do_div(dividend, divisor);
+-
+-	return dividend;
++	return div64_u64(dividend, divisor);
+ }
+ 
+ static inline struct pistachio_clk_pll *to_pistachio_pll(struct clk_hw *hw)
+@@ -173,7 +171,7 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
+ 	struct pistachio_pll_rate_table *params;
+ 	int enabled = pll_gf40lp_frac_is_enabled(hw);
+-	u32 val, vco, old_postdiv1, old_postdiv2;
++	u64 val, vco, old_postdiv1, old_postdiv2;
+ 	const char *name = __clk_get_name(hw->clk);
+ 
+ 	if (rate < MIN_OUTPUT_FRAC || rate > MAX_OUTPUT_FRAC)
+@@ -183,17 +181,17 @@ static int pll_gf40lp_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!params || !params->refdiv)
+ 		return -EINVAL;
+ 
+-	vco = params->fref * params->fbdiv / params->refdiv;
++	vco = div64_u64(params->fref * params->fbdiv, params->refdiv);
+ 	if (vco < MIN_VCO_FRAC_FRAC || vco > MAX_VCO_FRAC_FRAC)
+-		pr_warn("%s: VCO %u is out of range %lu..%lu\n", name, vco,
++		pr_warn("%s: VCO %llu is out of range %lu..%lu\n", name, vco,
+ 			MIN_VCO_FRAC_FRAC, MAX_VCO_FRAC_FRAC);
+ 
+-	val = params->fref / params->refdiv;
++	val = div64_u64(params->fref, params->refdiv);
+ 	if (val < MIN_PFD)
+-		pr_warn("%s: PFD %u is too low (min %lu)\n",
++		pr_warn("%s: PFD %llu is too low (min %lu)\n",
+ 			name, val, MIN_PFD);
+ 	if (val > vco / 16)
+-		pr_warn("%s: PFD %u is too high (max %u)\n",
++		pr_warn("%s: PFD %llu is too high (max %llu)\n",
+ 			name, val, vco / 16);
+ 
+ 	val = pll_readl(pll, PLL_CTRL1);
+@@ -237,8 +235,7 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
+ 						 unsigned long parent_rate)
+ {
+ 	struct pistachio_clk_pll *pll = to_pistachio_pll(hw);
+-	u32 val, prediv, fbdiv, frac, postdiv1, postdiv2;
+-	u64 rate = parent_rate;
++	u64 val, prediv, fbdiv, frac, postdiv1, postdiv2, rate;
+ 
+ 	val = pll_readl(pll, PLL_CTRL1);
+ 	prediv = (val >> PLL_CTRL1_REFDIV_SHIFT) & PLL_CTRL1_REFDIV_MASK;
+@@ -251,6 +248,7 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
+ 		PLL_FRAC_CTRL2_POSTDIV2_MASK;
+ 	frac = (val >> PLL_FRAC_CTRL2_FRAC_SHIFT) & PLL_FRAC_CTRL2_FRAC_MASK;
+ 
++	rate = parent_rate;
+ 	rate *= (fbdiv << 24) + frac;
+ 	rate = do_div_round_closest(rate, (prediv * postdiv1 * postdiv2) << 24);
+ 
+@@ -325,12 +323,12 @@ static int pll_gf40lp_laint_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!params || !params->refdiv)
+ 		return -EINVAL;
+ 
+-	vco = params->fref * params->fbdiv / params->refdiv;
++	vco = div_u64(params->fref * params->fbdiv, params->refdiv);
+ 	if (vco < MIN_VCO_LA || vco > MAX_VCO_LA)
+ 		pr_warn("%s: VCO %u is out of range %lu..%lu\n", name, vco,
+ 			MIN_VCO_LA, MAX_VCO_LA);
+ 
+-	val = params->fref / params->refdiv;
++	val = div_u64(params->fref, params->refdiv);
+ 	if (val < MIN_PFD)
+ 		pr_warn("%s: PFD %u is too low (min %lu)\n",
+ 			name, val, MIN_PFD);
+diff --git a/drivers/clk/pistachio/clk.h b/drivers/clk/pistachio/clk.h
+index 52fabbc..8d45178 100644
+--- a/drivers/clk/pistachio/clk.h
++++ b/drivers/clk/pistachio/clk.h
+@@ -95,13 +95,13 @@ struct pistachio_fixed_factor {
+ 	}
+ 
+ struct pistachio_pll_rate_table {
+-	unsigned long fref;
+-	unsigned long fout;
+-	unsigned int refdiv;
+-	unsigned int fbdiv;
+-	unsigned int postdiv1;
+-	unsigned int postdiv2;
+-	unsigned int frac;
++	unsigned long long fref;
++	unsigned long long fout;
++	unsigned long long refdiv;
++	unsigned long long fbdiv;
++	unsigned long long postdiv1;
++	unsigned long long postdiv2;
++	unsigned long long frac;
+ };
+ 
+ enum pistachio_pll_type {
 -- 
-1.8.0
+1.9.1
