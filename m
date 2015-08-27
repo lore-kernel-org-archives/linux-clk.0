@@ -1,84 +1,79 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Olof Johansson <olof@lixom.net>,
-	Arnd Bergmann <arnd.bergmann@linaro.org>,
-	'Thomas Abraham' <thomas.ab@samsung.com>,
-	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
-	'Michael Turquette' <mturquette@baylibre.com>,
-	'Tomasz Figa' <tomasz.figa@gmail.com>,
-	'Lukasz Majewski' <l.majewski@samsung.com>,
-	'Heiko Stuebner' <heiko@sntech.de>,
-	'Chanwoo Choi' <cw00.choi@samsung.com>,
-	'Kevin Hilman' <khilman@linaro.org>,
-	'Javier Martinez Canillas' <javier@dowhile0.org>,
-	'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>,
-	'Anand Moon' <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
- platform
-Date: Fri, 07 Aug 2015 13:31:15 +0200
-Message-id: <2061119.GBaoSb4YSL@amdc1976>
-In-reply-to: <20150807051826.GJ6325@linux>
-References: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
- <55C43971.5010504@samsung.com> <20150807051826.GJ6325@linux>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 4/8] clk: imx31: retain early UART clocks during kernel init
+Date: Thu, 27 Aug 2015 18:39:17 +0200
+Message-Id: <1440693561-28095-5-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
+References: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+ kernel@pengutronix.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-Hi,
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx31.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-On Friday, August 07, 2015 10:48:26 AM Viresh Kumar wrote:
-> On 07-08-15, 13:52, Krzysztof Kozlowski wrote:
-> > Thanks for explanation. As fair as I understand, Bartlomiej wanted to
-> > merge this in a way which would avoid loosing the boost mode. Kukjin
-> > prepared topic branches for previous cpu-freq/clk stuff so maybe
-> > everything could go through PM?
-> 
-> We aren't loosing anything at all. There can be two cases here:
-> 
-> 1. Patch 1/6 and 6/6 make it to 4.3 (with suggested changes) via PM tree:
-> - All will work fine in this case, no issues at all..
-> 
-> 2. They don't make it:
-> - Even in this case, nothing will break. Users can just enable a
->   config option and that's all..
-
-Users don't need to enable the config option to get boost
-functionality working.  It is only needed to get scaling_boost_freqs
-sysfs attribute visible (which lists available boost freqs) when
-using cpufreq-dt driver.  Also the config option in question is not
-user visible.
-
-The worst thing that happens if these 2 PM patches don't make it
-in time is that there will be no scaling_boost_freqs available
-when using cpufreq-dt driver.  Which is not very important from
-Exynos4x12 POV as it only supports single boost freq currently.
-
-> So, no need to divert things into another tree this late.
-
-I agree.
-
-> Over that, Rafael will not be around for 2 weeks now (Plumbers and
-> other stuff) ..
-> 
-> So, just target the cpufreq core changes via PM tree.. rest is just
-> fine.
-> 
-> I hope that makes sense :)
-
-Yes. :)
+diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
+index fe66c40b7be2..c8da3b31f24d 100644
+--- a/drivers/clk/imx/clk-imx31.c
++++ b/drivers/clk/imx/clk-imx31.c
+@@ -62,6 +62,16 @@ enum mx31_clks {
+ static struct clk *clk[clk_max];
+ static struct clk_onecell_data clk_data;
  
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
++static void __init imx31_uart_disable_cb(void)
++{
++	clk_disable_unprepare(clk[ipg]);
++	clk_disable_unprepare(clk[uart1_gate]);
++	clk_disable_unprepare(clk[uart2_gate]);
++	clk_disable_unprepare(clk[uart3_gate]);
++	clk_disable_unprepare(clk[uart4_gate]);
++	clk_disable_unprepare(clk[uart5_gate]);
++}
++
+ int __init mx31_clocks_init(unsigned long fref)
+ {
+ 	void __iomem *base;
+@@ -199,6 +209,16 @@ int __init mx31_clocks_init(unsigned long fref)
+ 	mx31_revision();
+ 	clk_disable_unprepare(clk[iim_gate]);
+ 
++	if (imx_clk_keep_uart()) {
++		clk_prepare_enable(clk[ipg]);
++		clk_prepare_enable(clk[uart1_gate]);
++		clk_prepare_enable(clk[uart2_gate]);
++		clk_prepare_enable(clk[uart3_gate]);
++		clk_prepare_enable(clk[uart4_gate]);
++		clk_prepare_enable(clk[uart5_gate]);
++		imx_clk_set_uart_disable_callback(imx31_uart_disable_cb);
++	}
++
+ 	mxc_timer_init(MX31_GPT1_BASE_ADDR, MX31_INT_GPT, GPT_TYPE_IMX31);
+ 
+ 	return 0;
+-- 
+2.5.0
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
