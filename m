@@ -1,44 +1,81 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 28 Aug 2015 14:42:22 +0200
-From: Luis de Bethencourt <luis@debethencourt.com>
-To: linux-kernel@vger.kernel.org
-Cc: Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 0/5] clk: sunxi: Fix module autoload for OF platform driver
-Message-ID: <20150828124222.GA24923@goodgumbo.baconseed.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 3/8] clk: imx27: retain early UART clocks during kernel init
+Date: Thu, 27 Aug 2015 18:39:16 +0200
+Message-Id: <1440693561-28095-4-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
+References: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+ kernel@pengutronix.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-This series add the missing MODULE_DEVICE_TABLE() for OF to eport
-that information so modules have the correct aliases built-in
-and autoloading works correctly.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx27.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-A longer explanation by Javier Canillas can be found here:
-https://lkml.org/lkml/2015/7/30/519
+diff --git a/drivers/clk/imx/clk-imx27.c b/drivers/clk/imx/clk-imx27.c
+index d9d50d54ef2a..54fb783123a9 100644
+--- a/drivers/clk/imx/clk-imx27.c
++++ b/drivers/clk/imx/clk-imx27.c
+@@ -47,6 +47,17 @@ static const char *ssi_sel_clks[] = { "spll_gate", "mpll", };
+ static struct clk *clk[IMX27_CLK_MAX];
+ static struct clk_onecell_data clk_data;
+ 
++static void __init imx27_uart_disable_cb(void)
++{
++	clk_disable_unprepare(clk[IMX27_CLK_PER1_GATE]);
++	clk_disable_unprepare(clk[IMX27_CLK_UART1_IPG_GATE]);
++	clk_disable_unprepare(clk[IMX27_CLK_UART2_IPG_GATE]);
++	clk_disable_unprepare(clk[IMX27_CLK_UART3_IPG_GATE]);
++	clk_disable_unprepare(clk[IMX27_CLK_UART4_IPG_GATE]);
++	clk_disable_unprepare(clk[IMX27_CLK_UART5_IPG_GATE]);
++	clk_disable_unprepare(clk[IMX27_CLK_UART6_IPG_GATE]);
++}
++
+ static void __init _mx27_clocks_init(unsigned long fref)
+ {
+ 	BUG_ON(!ccm);
+@@ -163,6 +174,17 @@ static void __init _mx27_clocks_init(unsigned long fref)
+ 
+ 	clk_prepare_enable(clk[IMX27_CLK_EMI_AHB_GATE]);
+ 
++	if (imx_clk_keep_uart()) {
++		clk_prepare_enable(clk[IMX27_CLK_PER1_GATE]);
++		clk_prepare_enable(clk[IMX27_CLK_UART1_IPG_GATE]);
++		clk_prepare_enable(clk[IMX27_CLK_UART2_IPG_GATE]);
++		clk_prepare_enable(clk[IMX27_CLK_UART3_IPG_GATE]);
++		clk_prepare_enable(clk[IMX27_CLK_UART4_IPG_GATE]);
++		clk_prepare_enable(clk[IMX27_CLK_UART5_IPG_GATE]);
++		clk_prepare_enable(clk[IMX27_CLK_UART6_IPG_GATE]);
++		imx_clk_set_uart_disable_callback(imx27_uart_disable_cb);
++	}
++
+ 	imx_print_silicon_rev("i.MX27", mx27_revision());
+ }
+ 
+-- 
+2.5.0
 
-Thanks,
-Luis
 
-Luis de Bethencourt (5)
-  clk: sunxi: sun9i-mmc: Fix module autoload for OF platform driver
-  clk: sunxi: sun8i-apb0: Fix module autoload for OF platform driver
-  clk: sunxi: sun6i-ar100: Fix module autoload for OF platform driver
-  clk: sunxi: sun6i-apb0-gates: Fix module autoload for OF platform driver
-  clk: sunxi: sun6i-apb0: Fix module autoload for OF platform driver
- drivers/clk/sunxi/clk-sun6i-apb0-gates.c | 1 +
- drivers/clk/sunxi/clk-sun6i-apb0.c       | 1 +
- drivers/clk/sunxi/clk-sun6i-ar100.c      | 1 +
- drivers/clk/sunxi/clk-sun8i-apb0.c       | 1 +
- drivers/clk/sunxi/clk-sun9i-mmc.c        | 1 +
- 5 files changed, 5 insertions(+)
-
---
-2.4.6
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
