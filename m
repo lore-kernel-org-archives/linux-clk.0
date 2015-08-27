@@ -1,47 +1,60 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <55C11621.1000609@codeaurora.org>
-Date: Tue, 04 Aug 2015 12:44:33 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-MIME-Version: 1.0
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-CC: Lin Huang <hl@rock-chips.com>, dianders@chromium.org,
- linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] clk: rockchip: add pclk_pd_pmu to the list of
- rk3288 critical clocks
-References: <1438670487-27598-1-git-send-email-hl@rock-chips.com> <1588782.u2WKR6eVuV@diego> <55C113CF.2000601@codeaurora.org> <10063547.S7PvqCkF78@diego>
-In-Reply-To: <10063547.S7PvqCkF78@diego>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de
+Subject: [PATCH 5/8] clk: imx35: retain early UART clocks during kernel init
+Date: Thu, 27 Aug 2015 18:39:18 +0200
+Message-Id: <1440693561-28095-6-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
+References: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/04/2015 12:40 PM, Heiko Stübner wrote:
-> Am Dienstag, 4. August 2015, 12:34:39 schrieb Stephen Boyd:
->> On 08/04/2015 01:54 AM, Heiko Stübner wrote:
->>> Hi,
->>>
->>> Am Dienstag, 4. August 2015, 14:41:26 schrieb Lin Huang:
->>>
->>> I guess this patch then would need a
->>>
->>> From: Heiko Stuebner <heiko@sntech.de>
->>>
->>> at this point to override the author then.
->> Sounds right. Please resend the patch properly. Also, is there a 2/2? I
->> never got it.
-> Patch 2/2 is a pinctrl change, that actually depends in this patch.
-> Improved clock-handling in the pinctrl driver caused the pd_pmu clock to get
-> deactivated.
->
-> So, perhaps it might be even better to get an Ack from the clock maintainer
-> and merge both patches through the pinctrl tree?
->
->
-> In which case Linus Walleij should also be included as recipient of this patch
-> when resending.
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-Ok that's fine. We can ack it and you can take it through pinctrl if needed.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx35.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
+diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
+index 69138ba3dec7..7b2aaf123d3b 100644
+--- a/drivers/clk/imx/clk-imx35.c
++++ b/drivers/clk/imx/clk-imx35.c
+@@ -84,6 +84,14 @@ enum mx35_clks {
+ 
+ static struct clk *clk[clk_max];
+ 
++static void __init imx35_uart_disable_cb(void)
++{
++	clk_disable_unprepare(clk[ipg]);
++	clk_disable_unprepare(clk[uart1_gate]);
++	clk_disable_unprepare(clk[uart2_gate]);
++	clk_disable_unprepare(clk[uart3_gate]);
++}
++
+ int __init mx35_clocks_init(void)
+ {
+ 	void __iomem *base;
+@@ -292,6 +300,14 @@ int __init mx35_clocks_init(void)
+ 	 */
+ 	clk_prepare_enable(clk[scc_gate]);
+ 
++	if (imx_clk_keep_uart()) {
++		clk_prepare_enable(clk[ipg]);
++		clk_prepare_enable(clk[uart1_gate]);
++		clk_prepare_enable(clk[uart2_gate]);
++		clk_prepare_enable(clk[uart3_gate]);
++		imx_clk_set_uart_disable_callback(imx35_uart_disable_cb);
++	}
++
+ 	imx_print_silicon_rev("i.MX35", mx35_revision());
+ 
+ 	mxc_timer_init(MX35_GPT1_BASE_ADDR, MX35_INT_GPT, GPT_TYPE_IMX31);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.5.0
