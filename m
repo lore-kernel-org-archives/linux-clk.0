@@ -1,83 +1,80 @@
-Return-Path: <shengjiu.wang@freescale.com>
-From: Shengjiu Wang <shengjiu.wang@freescale.com>
-To: <shawnguo@kernel.org>, <kernel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH V1 1/3] ARM: imx6q: Add SPDIF_GCLK clock in clock tree
-Date: Tue, 11 Aug 2015 17:26:52 +0800
-Message-ID: <18281cc1d1229dfe5edaf87163dc4dc140663823.1439284957.git.shengjiu.wang@freescale.com>
-In-Reply-To: <cover.1439284957.git.shengjiu.wang@freescale.com>
-References: <cover.1439284957.git.shengjiu.wang@freescale.com>
-Return-Path: shengjiu.wang@freescale.com
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 8/8] clk: imx7d: retain early UART clocks during kernel init
+Date: Thu, 27 Aug 2015 18:39:21 +0200
+Message-Id: <1440693561-28095-9-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
+References: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+ kernel@pengutronix.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-As spdif driver will register SPDIF clock to regmap, regmap will do
-clk_prepare in init function, so SPDIF clock is prepared in probe, then its
-root clock (pll clock) is prepared also, which cause the arm can't enter
-low power mode.
-Add SPDIF_GCLK in clock tree which share same gate bits with SPDIF clock.
-Its root clock is ipg clock, and register it to regmap, then the issue cam
-be fixed.
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@freescale.com>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 ---
- arch/arm/boot/dts/imx6qdl.dtsi            | 2 +-
- drivers/clk/imx/clk-imx6q.c               | 4 +++-
- include/dt-bindings/clock/imx6qdl-clock.h | 3 ++-
- 3 files changed, 6 insertions(+), 3 deletions(-)
+ drivers/clk/imx/clk-imx7d.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
-index 03858d7..66913ef 100644
---- a/arch/arm/boot/dts/imx6qdl.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl.dtsi
-@@ -218,7 +218,7 @@
- 					dmas = <&sdma 14 18 0>,
- 					       <&sdma 15 18 0>;
- 					dma-names = "rx", "tx";
--					clocks = <&clks IMX6QDL_CLK_SPDIF>, <&clks IMX6QDL_CLK_OSC>,
-+					clocks = <&clks IMX6QDL_CLK_SPDIF_GCLK>, <&clks IMX6QDL_CLK_OSC>,
- 						 <&clks IMX6QDL_CLK_SPDIF>, <&clks IMX6QDL_CLK_DUMMY>,
- 						 <&clks IMX6QDL_CLK_DUMMY>, <&clks IMX6QDL_CLK_DUMMY>,
- 						 <&clks IMX6QDL_CLK_DUMMY>, <&clks IMX6QDL_CLK_DUMMY>,
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index c507bca..2487cf1 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -119,6 +119,7 @@ static unsigned int share_count_ssi1;
- static unsigned int share_count_ssi2;
- static unsigned int share_count_ssi3;
- static unsigned int share_count_mipi_core_cfg;
-+static unsigned int share_count_spdif;
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 71f3a94b472c..8daef5202841 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -363,6 +363,17 @@ static const char *pll_video_bypass_sel[] = { "pll_video_main", "pll_video_main_
  
- static inline int clk_on_imx6q(void)
+ static struct clk_onecell_data clk_data;
+ 
++static void __init imx7d_uart_disable_cb(void)
++{
++	clk_disable_unprepare(clks[IMX7D_UART1_ROOT_CLK]);
++	clk_disable_unprepare(clks[IMX7D_UART2_ROOT_CLK]);
++	clk_disable_unprepare(clks[IMX7D_UART3_ROOT_CLK]);
++	clk_disable_unprepare(clks[IMX7D_UART4_ROOT_CLK]);
++	clk_disable_unprepare(clks[IMX7D_UART5_ROOT_CLK]);
++	clk_disable_unprepare(clks[IMX7D_UART6_ROOT_CLK]);
++	clk_disable_unprepare(clks[IMX7D_UART7_ROOT_CLK]);
++}
++
+ static void __init imx7d_clocks_init(struct device_node *ccm_node)
  {
-@@ -453,7 +454,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	clk[IMX6QDL_CLK_SATA]         = imx_clk_gate2("sata",          "ahb",               base + 0x7c, 4);
- 	clk[IMX6QDL_CLK_SDMA]         = imx_clk_gate2("sdma",          "ahb",               base + 0x7c, 6);
- 	clk[IMX6QDL_CLK_SPBA]         = imx_clk_gate2("spba",          "ipg",               base + 0x7c, 12);
--	clk[IMX6QDL_CLK_SPDIF]        = imx_clk_gate2("spdif",         "spdif_podf",        base + 0x7c, 14);
-+	clk[IMX6QDL_CLK_SPDIF]        = imx_clk_gate2_shared("spdif",     "spdif_podf",     base + 0x7c, 14, &share_count_spdif);
-+	clk[IMX6QDL_CLK_SPDIF_GCLK]   = imx_clk_gate2_shared("spdif_gclk", "ipg",           base + 0x7c, 14, &share_count_spdif);
- 	clk[IMX6QDL_CLK_SSI1_IPG]     = imx_clk_gate2_shared("ssi1_ipg",      "ipg",        base + 0x7c, 18, &share_count_ssi1);
- 	clk[IMX6QDL_CLK_SSI2_IPG]     = imx_clk_gate2_shared("ssi2_ipg",      "ipg",        base + 0x7c, 20, &share_count_ssi2);
- 	clk[IMX6QDL_CLK_SSI3_IPG]     = imx_clk_gate2_shared("ssi3_ipg",      "ipg",        base + 0x7c, 22, &share_count_ssi3);
-diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
-index 8780868..bc3ad90 100644
---- a/include/dt-bindings/clock/imx6qdl-clock.h
-+++ b/include/dt-bindings/clock/imx6qdl-clock.h
-@@ -251,6 +251,7 @@
- #define IMX6QDL_CLK_VIDEO_27M			238
- #define IMX6QDL_CLK_MIPI_CORE_CFG		239
- #define IMX6QDL_CLK_MIPI_IPG			240
--#define IMX6QDL_CLK_END				241
-+#define IMX6QDL_CLK_SPDIF_GCLK			241
-+#define IMX6QDL_CLK_END				242
+ 	struct device_node *np;
+@@ -856,5 +867,16 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	/* set uart module clock's parent clock source that must be great then 80MHz */
+ 	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
  
- #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
++	if (imx_clk_keep_uart()) {
++		clk_prepare_enable(clks[IMX7D_UART1_ROOT_CLK]);
++		clk_prepare_enable(clks[IMX7D_UART2_ROOT_CLK]);
++		clk_prepare_enable(clks[IMX7D_UART3_ROOT_CLK]);
++		clk_prepare_enable(clks[IMX7D_UART4_ROOT_CLK]);
++		clk_prepare_enable(clks[IMX7D_UART5_ROOT_CLK]);
++		clk_prepare_enable(clks[IMX7D_UART6_ROOT_CLK]);
++		clk_prepare_enable(clks[IMX7D_UART7_ROOT_CLK]);
++		imx_clk_set_uart_disable_callback(imx7d_uart_disable_cb);
++	}
++
+ }
+ CLK_OF_DECLARE(imx7d, "fsl,imx7d-ccm", imx7d_clocks_init);
 -- 
-1.9.1
+2.5.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
