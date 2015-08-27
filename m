@@ -1,43 +1,130 @@
-Return-Path: <olof@lixom.net>
-Return-Path: <olof@lixom.net>
-Date: Thu, 13 Aug 2015 14:28:31 +0200
-From: Olof Johansson <olof@lixom.net>
-To: Linus Walleij <linus.walleij@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 7/8] clk: imx6: retain early UART clocks during kernel init
+Date: Thu, 27 Aug 2015 18:39:20 +0200
+Message-Id: <1440693561-28095-8-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
+References: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	"arm@kernel.org" <arm@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk/ARM: move Ux500 PRCC bases to the device tree
-Message-ID: <20150813122831.GC23581@localhost>
-References: <1438262365-29164-1-git-send-email-linus.walleij@linaro.org>
- <CACRpkdZJKNph9cbJvBMQKdOCe0L8kKP=AEDaYqtBuc9vxxKPeg@mail.gmail.com>
+ Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+ kernel@pengutronix.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CACRpkdZJKNph9cbJvBMQKdOCe0L8kKP=AEDaYqtBuc9vxxKPeg@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Aug 12, 2015 at 02:02:50PM +0200, Linus Walleij wrote:
-> On Thu, Jul 30, 2015 at 3:19 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> 
-> > The base addresses for the Ux500 PRCC controllers are hardcoded,
-> > let's move them to the clock node in the device tree and delete
-> > the constants.
-> >
-> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> > ---
-> > Ulf/Mike: please ACK this so I can take it through ARM SoC.
-> 
-> It appears this needs to go through the clk tree with the rest
-> (1/3, 3/3).
-> 
-> Can I have an ACK from the ARM SoC people so they know
-> this is happening?
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-Acked-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx6q.c  | 12 ++++++++++++
+ drivers/clk/imx/clk-imx6sl.c | 12 ++++++++++++
+ drivers/clk/imx/clk-imx6sx.c | 12 ++++++++++++
+ 3 files changed, 36 insertions(+)
 
-I'm assuming you'll keep track of/avoid conflicts yourself, so I didn't
-double-check for it.
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index d046f8e43de8..af6a6517b26c 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -130,6 +130,12 @@ static inline int clk_on_imx6dl(void)
+ 	return of_machine_is_compatible("fsl,imx6dl");
+ }
+ 
++static void __init imx6q_uart_disable_cb(void)
++{
++	clk_disable_unprepare(clk[IMX6QDL_CLK_UART_IPG]);
++	clk_disable_unprepare(clk[IMX6QDL_CLK_UART_SERIAL]);
++}
++
+ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+@@ -534,5 +540,11 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	/* All existing boards with PCIe use LVDS1 */
+ 	if (IS_ENABLED(CONFIG_PCI_IMX6))
+ 		clk_set_parent(clk[IMX6QDL_CLK_LVDS1_SEL], clk[IMX6QDL_CLK_SATA_REF_100M]);
++
++	if (imx_clk_keep_uart()) {
++		clk_prepare_enable(clk[IMX6QDL_CLK_UART_IPG]);
++		clk_prepare_enable(clk[IMX6QDL_CLK_UART_SERIAL]);
++		imx_clk_set_uart_disable_callback(imx6q_uart_disable_cb);
++	}
+ }
+ CLK_OF_DECLARE(imx6q, "fsl,imx6q-ccm", imx6q_clocks_init);
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index a0d4cf26cfa9..737a9a84f201 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -184,6 +184,12 @@ void imx6sl_set_wait_clk(bool enter)
+ 		imx6sl_enable_pll_arm(false);
+ }
+ 
++static void __init imx6sl_uart_disable_cb(void)
++{
++	clk_disable_unprepare(clks[IMX6SL_CLK_UART]);
++	clk_disable_unprepare(clks[IMX6SL_CLK_UART_SERIAL]);
++}
++
+ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+@@ -439,5 +445,11 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ 
+ 	clk_set_parent(clks[IMX6SL_CLK_LCDIF_AXI_SEL],
+ 		       clks[IMX6SL_CLK_PLL2_PFD2]);
++
++	if (imx_clk_keep_uart()) {
++		clk_prepare_enable(clks[IMX6SL_CLK_UART]);
++		clk_prepare_enable(clks[IMX6SL_CLK_UART_SERIAL]);
++		imx_clk_set_uart_disable_callback(imx6sl_uart_disable_cb);
++	}
+ }
+ CLK_OF_DECLARE(imx6sl, "fsl,imx6sl-ccm", imx6sl_clocks_init);
+diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+index 5b95c2c2bf52..ec14235659cc 100644
+--- a/drivers/clk/imx/clk-imx6sx.c
++++ b/drivers/clk/imx/clk-imx6sx.c
+@@ -135,6 +135,12 @@ static u32 share_count_ssi1;
+ static u32 share_count_ssi2;
+ static u32 share_count_ssi3;
+ 
++static void __init imx6sx_uart_disable_cb(void)
++{
++	clk_disable_unprepare(clks[IMX6SX_CLK_UART_IPG]);
++	clk_disable_unprepare(clks[IMX6SX_CLK_UART_SERIAL]);
++}
++
+ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+@@ -557,5 +563,11 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 
+ 	clk_set_parent(clks[IMX6SX_CLK_QSPI1_SEL], clks[IMX6SX_CLK_PLL2_BUS]);
+ 	clk_set_parent(clks[IMX6SX_CLK_QSPI2_SEL], clks[IMX6SX_CLK_PLL2_BUS]);
++
++	if (imx_clk_keep_uart()) {
++		clk_prepare_enable(clks[IMX6SX_CLK_UART_IPG]);
++		clk_prepare_enable(clks[IMX6SX_CLK_UART_SERIAL]);
++		imx_clk_set_uart_disable_callback(imx6sx_uart_disable_cb);
++	}
+ }
+ CLK_OF_DECLARE(imx6sx, "fsl,imx6sx-ccm", imx6sx_clocks_init);
+-- 
+2.5.0
 
 
--Olof
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
