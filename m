@@ -1,36 +1,41 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55C113CF.2000601@codeaurora.org>
-Date: Tue, 04 Aug 2015 12:34:39 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-MIME-Version: 1.0
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-CC: Lin Huang <hl@rock-chips.com>, dianders@chromium.org,
-	linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
+Return-Path: <bethencourt@gmail.com>
+Return-Path: <bethencourt@gmail.com>
+Sender: Luis de Bethencourt <bethencourt@gmail.com>
+Date: Fri, 28 Aug 2015 14:44:32 +0200
+From: Luis de Bethencourt <luis@debethencourt.com>
+To: linux-kernel@vger.kernel.org
+Cc: Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
 	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] clk: rockchip: add pclk_pd_pmu to the list of
- rk3288 critical clocks
-References: <1438670487-27598-1-git-send-email-hl@rock-chips.com> <1588782.u2WKR6eVuV@diego>
-In-Reply-To: <1588782.u2WKR6eVuV@diego>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 5/5] clk: sunxi: sun9i-mmc: Fix module autoload for OF
+ platform driver
+Message-ID: <20150828124432.GA26670@goodgumbo.baconseed.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/04/2015 01:54 AM, Heiko Stübner wrote:
-> Hi,
->
-> Am Dienstag, 4. August 2015, 14:41:26 schrieb Lin Huang:
->
-> I guess this patch then would need a
->
-> From: Heiko Stuebner <heiko@sntech.de>
->
-> at this point to override the author then.
+This platform driver has a OF device ID table but the OF module
+alias information is not created so module autoloading won't work.
 
-Sounds right. Please resend the patch properly. Also, is there a 2/2? I 
-never got it.
+Signed-off-by: Luis de Bethencourt <luis@debethencourt.com>
+---
+ drivers/clk/sunxi/clk-sun9i-mmc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/clk/sunxi/clk-sun9i-mmc.c b/drivers/clk/sunxi/clk-sun9i-mmc.c
+index 710c273..7618b13 100644
+--- a/drivers/clk/sunxi/clk-sun9i-mmc.c
++++ b/drivers/clk/sunxi/clk-sun9i-mmc.c
+@@ -203,6 +203,7 @@ static const struct of_device_id sun9i_a80_mmc_config_clk_dt_ids[] = {
+ 	{ .compatible = "allwinner,sun9i-a80-mmc-config-clk" },
+ 	{ /* sentinel */ }
+ };
++MODULE_DEVICE_TABLE(of, sun9i_a80_mmc_config_clk_dt_ids);
+ 
+ static struct platform_driver sun9i_a80_mmc_config_clk_driver = {
+ 	.driver = {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+2.4.6
