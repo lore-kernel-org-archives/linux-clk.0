@@ -1,80 +1,45 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 28 Aug 2015 10:21:29 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-clk@vger.kernel.org, kuninori.morimoto.gx@renesas.com,
+	gaku.inami.xw@bp.renesas.com, mturquette@baylibre.com,
+	linux-sh@vger.kernel.org, horms@verge.net.au, geert@linux-m68k.org,
+	laurent.pinchart@ideasonboard.com
+Subject: Re: [PATCH v3 00/04] Renesas R-Car Gen3 CPG support V3
+Message-ID: <20150828172129.GA19120@codeaurora.org>
+References: <20150828091550.21731.85227.sendpatchset@little-apple>
 MIME-Version: 1.0
-In-Reply-To: <55C9E47D.4020606@st.com>
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
-	<1438974570-20812-4-git-send-email-mturquette@baylibre.com>
-	<20150810144811.GN3249@x1>
-	<20150810185516.2416.32293@quantum>
-	<20150811084329.GA13374@x1>
-	<55C9C82F.6060401@st.com>
-	<CAMuHMdVWxpZUQk6gUhSqA4K3gpDD8wUC6SHg6HAoiC1w=3+GLw@mail.gmail.com>
-	<55C9DE57.2090105@st.com>
-	<55C9DF7B.4040308@st.com>
-	<CAMuHMdVvS2n=J5paZzXdtD0vZ4Q4m9k7XeF_MF1zV4pD-nk9aw@mail.gmail.com>
-	<55C9E47D.4020606@st.com>
-Date: Tue, 11 Aug 2015 14:34:59 +0200
-Message-ID: <CAMuHMdX0cpus6hY2ZXJiJbpe8TQsd4WZ7XTTGR_4WfH-cy_DNA@mail.gmail.com>
-Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Maxime Coquelin <maxime.coquelin@st.com>
-Cc: Lee Jones <lee.jones@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20150828091550.21731.85227.sendpatchset@little-apple>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 11, 2015 at 2:03 PM, Maxime Coquelin <maxime.coquelin@st.com> wrote:
-> On 08/11/2015 01:49 PM, Geert Uytterhoeven wrote:
->> On Tue, Aug 11, 2015 at 1:41 PM, Maxime Coquelin <maxime.coquelin@st.com>
->> wrote:
->>> On 08/11/2015 01:36 PM, Maxime Coquelin wrote:
->>>> On 08/11/2015 12:11 PM, Geert Uytterhoeven wrote:
->>>>> On Tue, Aug 11, 2015 at 12:02 PM, Maxime Coquelin
->>>>> <maxime.coquelin@st.com> wrote:
->>>>>> How can we pass CLK_ENABLE_HAND_OFF flag to a specific clock on STi
->>>>>> platform?
->>>>>
->>>>> Add the flag to the relevant clocks in the C code, e.g. in
->>>>> clk_register_flexgen():
->>>>>
->>>>>           if (!strcmp(name, "clk-icn-cpu"))
->>>>>                   init.flags |= CLK_ENABLE_HAND_OFF;
->>>
->>> The main problem I see with this proposal is that clk_register_flexgen()
->>> is
->>> called for several SoCs (STiH407/410/418...).
->>> Each of these SoCs have this clock, but maybe STiH407 will need the flag,
->>> but not STiH410 and STiH418.
->>> So I think the best place to set this information is in DT, where the
->>> differentiation is made between the SoCs.
->>
->> If (of_machine_is_compatible("st,stih410")) ...
->>
-> It works, but is it really what we want?
-> Each time we will add a new soc, we will have to patch this SoC agnostic
-> function?
-> With the number of SoCs and the number of clocks, it will be a nightmare to
-> maintain and debug, no?
+On 08/28, Magnus Damm wrote:
+> Renesas R-Car Gen3 CPG support V3
+> 
+> [PATCH v3 01/04] clk: shmobile: Get rid of CONFIG_ARCH_SHMOBILE_MULTI
+> [PATCH v3 02/04] clk: shmobile: Make MSTP clock-output-names optional
+> [PATCH v3 03/04] clk: shmobile: Add Renesas R-Car Gen3 CPG support
+> [PATCH v3 04/04] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
+> 
+> This series is the first attempt to take the CCF code from the single patch:
+> "[PATCH 1/9] clk: shmobile: add Renesas R-Car Gen3 CPG support"
+> to a full series of various CCF related updates related to R-Car Gen3.
+> 
+> In this series patch 1 and 2 get rid of CONFIG_ARCH_SHMOBILE_MULTI kconfig
+> bits and converts the MSTP CCF driver to not rely on clock-output-names. The
+> latter may need a bit more work.
+> 
+> Patch 3 and 4 introduce an updated R-Car Gen3 CPG driver where I have reworked
+> the code to not depend on clock-output-names instead of using strings simply
+> rely on RCAR_GEN3_CLK_xxx. Those must match the ABI defined in SoC specific
+> indicies such as the ones included in r8a7795-clock.h.
+> 
+> Patch 3 most likely needs to be reworked further to incorporate earlier
+> feedback from CCF maintainers.
 
-One day[*], when you will discover the presence of the small security-related
-control processor, you will finally understand why it can disable and enable
-e.g. your main CPU clock, and may want to write a driver for it. Then you can
-just remove the CLK_ENABLE_HAND_OFF flags.
+Oh I should have read the cover letter first. Doh.
 
-[*] Perhaps this day has already happened, but obviously you're not allowed
-    to discuss this on a public mailing list ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
