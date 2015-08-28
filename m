@@ -1,124 +1,55 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.139]:53394 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751637AbbH1KHf (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 28 Aug 2015 06:07:35 -0400
+Message-ID: <55E032DC.1090703@rock-chips.com>
+Date: Fri, 28 Aug 2015 18:07:24 +0800
+From: Xing Zheng <zhengxing@rock-chips.com>
 MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@free-electrons.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20150725073925.GK2564@lukather>
-Cc: "Chen-Yu Tsai" <wens@csie.org>, "Jim Quinlan" <jim2101024@gmail.com>,
- "Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>,
- Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>
-References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
- <1432241646-9511-2-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v64rqRC24wPWz5xYZv=w2QAtsCb-pd76Qynkb5NBCptXhQ@mail.gmail.com>
- <20150523074930.GI8557@lukather> <20150724000001.642.84690@quantum>
- <20150724065017.GJ2373@lukather> <20150724182619.642.11590@quantum>
- <20150725073925.GK2564@lukather>
-Message-ID: <20150811213041.31346.58562@quantum>
-Subject: Re: [PATCH v2 1/7] clk: Add a basic factor clock
-Date: Tue, 11 Aug 2015 14:30:41 -0700
+To: Heiko Stuebner <heiko@sntech.de>
+CC: linux-rockchip@lists.infradead.org,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-gpio@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 0/3] Port and support rk3036 SoC platform
+References: <1440740808-15004-1-git-send-email-zhengxing@rock-chips.com> <6551991.RUDkGfdSCp@phil>
+In-Reply-To: <6551991.RUDkGfdSCp@phil>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Maxime Ripard (2015-07-25 00:39:25)
-> Hi Mike,
-> =
+HI Heiko,
+Thank you for your reply. I will improve them as quickly as possible.
 
-> On Fri, Jul 24, 2015 at 11:26:19AM -0700, Michael Turquette wrote:
-> > > What are the issues with maintaining them? The only drawback I'm
-> > > seeing with introducing such a driver is that you can't really have a
-> > > clock that is both a divider and a multiplier, but that can be solved
-> > > by splitting it into two sub-clocks.
-> > =
+Thanks. :)
 
-> > There are a bunch of problems with the basic clock types. First is that
-> > there is some feature creep every merge window that subtly breaks an
-> > existing user (e.g. the round_rate stuff in clk-divider.c), and then
-> > there are the growing number of flags to handle corner cases that are
-> > one-off quirks for a single chip.
-> > =
+On 2015年08月28日 17:59, Heiko Stuebner wrote:
+> Hi,
+>
+> Am Freitag, 28. August 2015, 13:46:45 schrieb Xing Zheng:
+>> We need to support rk3036 soc platform via upstream, there are
+>> 3 parts for the initial release of minimum system: dts, pinctrl,
+>> and clock tree for rk3036, startup and run to init processs.
+> this is really cool that you're working on supporting the rk3036.
+> I had some comments to the individual patches, but overall it looks quite nice
+> already.
+>
+>
+> So, thanks for working on this
+> Heiko
+>
+>
+>
+>
 
-> > These make it harder to maintain, but it is possible.
-> =
 
-> Ok. It's the downside of having common code I guess, everyone wants to
-> use it, and the clocks are just more subject to it than other drivers :/
-> =
-
-> > The real problem with these basic clock types is that they are an
-> > abstraction layer at the wrong level. Each clock type implements both
-> > the policy of a given clock, as well as the machine-specific details.
-> > For example clk-divider.c has made some assumptions in the past about
-> > rounding the rate, or how to calculate the best divider; this is a
-> > matter of policy and is useful on its own. But additionally that same
-> > policy is glued to a specific implementation: memory-mapped register
-> > controls for a clock divider.
-> > =
-
-> > The I/O accessor stuff needs to be addressed at some point.  Currently
-> > the basic clock types assume specific patterns of access to
-> > memory-mapped clock registers. There are lots of other clock controls
-> > out there that talk to firmware, or over i2c, or whatever. The amount of
-> > code that has to be copy/pasted for each different type of access is
-> > 100%; i.e. we do not have abstractions at the right level such as
-> > .get_best_div(struct clk_hw *hw, unsigned long rate).
-> > =
-
-> > What I would like to see in time is a re-usable layer for clock policy
-> > (e.g. common rules for how dividers or multipliers should behave), and
-> > then have that sit on top of the machine-specific callbacks that
-> > directly touch the hardware, such as the .get_best_div callback above.
-> =
-
-> Can't that be solved by moving to regmap using Matthias' patches, or
-> at least the IO method abstraction?
-
-I need to look at those patches again, but I do not think they address
-the problem I described above: abstraction at the wrong level (or more
-specifically, combining two abstract layers into one).
-
-I'll have more bandwidth to look at this problem after the next merge
-window. The clk framework is slowly be rewritten in bits and pieces here
-on the list (shh don't tell anybody) and this is on my radar and
-Stephen's.
-
-Regards,
-Mike
-
-> =
-
-> We would then have to only provide an additional callback then for
-> providers that have specific requirements about the divider
-> calculation.
-> =
-
-> So far, I haven't had any usecase where I needed anything but having
-> the as-close-as-possible rate, so I would expect to not provide
-> anything beside whether I'd like to round down or round up, but I do
-> understand that some other might have different requirements.
-> =
-
-> > For this reason I like to limit the number of new basic clock types. If
-> > there is a single user then I'm inclined to have the author put it with
-> > the machine-specific code. But in this case since there are two users, I
-> > see the value in making a new basic clock type.
-> =
-
-> That makes sense.
-> =
-
-> Maxime
-> =
-
-> -- =
-
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
-> =
-
-> =
-
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
