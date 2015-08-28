@@ -1,105 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
+Date: Fri, 28 Aug 2015 14:42:22 +0200
+From: Luis de Bethencourt <luis@debethencourt.com>
+To: linux-kernel@vger.kernel.org
+Cc: Emilio Lopez <emilio@elopez.com.ar>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 11/16] ARM: shmobile: r8a7793 dtsi: Add CPG/MSTP Clock Domain
-Date: Tue,  4 Aug 2015 14:28:12 +0200
-Message-Id: <1438691297-29235-12-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
-References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 0/5] clk: sunxi: Fix module autoload for OF platform driver
+Message-ID: <20150828124222.GA24923@goodgumbo.baconseed.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add an appropriate "#power-domain-cells" property to the cpg_clocks
-device node, to create the CPG/MSTP Clock Domain.
+Hello,
 
-Add "power-domains" properties to all device nodes for devices that are
-part of the CPG/MSTP Clock Domain and can be power-managed through an
-MSTP clock.  This applies to most on-SoC devices, which have a
-one-to-one mapping from SoC device to DT device node.
+This series add the missing MODULE_DEVICE_TABLE() for OF to eport
+that information so modules have the correct aliases built-in
+and autoloading works correctly.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-v4:
-  - Add Reviewed-by,
+A longer explanation by Javier Canillas can be found here:
+https://lkml.org/lkml/2015/7/30/519
 
-v3:
-  - New.
----
- arch/arm/boot/dts/r8a7793.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+Thanks,
+Luis
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 3355c487d108360f..c4654047e684ff09 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -68,6 +68,7 @@
- 			     <0 143 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7793_CLK_CMT0>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		renesas,channels-mask = <0x60>;
- 
-@@ -87,6 +88,7 @@
- 			     <0 127 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7793_CLK_CMT1>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		renesas,channels-mask = <0xff>;
- 
-@@ -109,6 +111,7 @@
- 			     <0 16 IRQ_TYPE_LEVEL_HIGH>,
- 			     <0 17 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp4_clks R8A7793_CLK_IRQC>;
-+		power-domains = <&cpg_clocks>;
- 	};
- 
- 	scif0: serial@e6e60000 {
-@@ -117,6 +120,7 @@
- 		interrupts = <0 152 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7793_CLK_SCIF0>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -126,6 +130,7 @@
- 		interrupts = <0 153 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7793_CLK_SCIF1>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -134,6 +139,7 @@
- 		reg = <0 0xee700000 0 0x400>;
- 		interrupts = <0 162 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7793_CLK_ETHER>;
-+		power-domains = <&cpg_clocks>;
- 		phy-mode = "rmii";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -164,6 +170,7 @@
- 			clock-output-names = "main", "pll0", "pll1", "pll3",
- 					     "lb", "qspi", "sdh", "sd0", "z",
- 					     "rcan", "adsp";
-+			#power-domain-cells = <0>;
- 		};
- 
- 		/* Variable factor clocks */
--- 
-1.9.1
+Luis de Bethencourt (5)
+  clk: sunxi: sun9i-mmc: Fix module autoload for OF platform driver
+  clk: sunxi: sun8i-apb0: Fix module autoload for OF platform driver
+  clk: sunxi: sun6i-ar100: Fix module autoload for OF platform driver
+  clk: sunxi: sun6i-apb0-gates: Fix module autoload for OF platform driver
+  clk: sunxi: sun6i-apb0: Fix module autoload for OF platform driver
+ drivers/clk/sunxi/clk-sun6i-apb0-gates.c | 1 +
+ drivers/clk/sunxi/clk-sun6i-apb0.c       | 1 +
+ drivers/clk/sunxi/clk-sun6i-ar100.c      | 1 +
+ drivers/clk/sunxi/clk-sun8i-apb0.c       | 1 +
+ drivers/clk/sunxi/clk-sun9i-mmc.c        | 1 +
+ 5 files changed, 5 insertions(+)
 
+--
+2.4.6
