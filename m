@@ -1,53 +1,75 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Shunqian Zheng <zhengsq@rock-chips.com>
-To: gregkh@linuxfoundation.org, srinivas.kandagatla@linaro.org,
-	maxime.ripard@free-electrons.com, heiko@sntech.de,
-	caesar.wang@rock-chips.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, dianders@chromium.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	xjq@rock-chips.com, ZhengShunQian <zhengsq@rock-chips.com>
-Subject: [PATCH v2 2/5] nvmem: fix the out-of-range leak in read/write()
-Date: Tue, 11 Aug 2015 18:13:41 +0800
-Message-Id: <1439288024-13359-3-git-send-email-zhengsq@rock-chips.com>
-In-Reply-To: <1439288024-13359-1-git-send-email-zhengsq@rock-chips.com>
-References: <1439288024-13359-1-git-send-email-zhengsq@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Fri, 28 Aug 2015 18:16:13 +0900
+Message-Id: <20150828091613.21731.8527.sendpatchset@little-apple>
+In-Reply-To: <20150828091550.21731.85227.sendpatchset@little-apple>
+References: <20150828091550.21731.85227.sendpatchset@little-apple>
+Subject: [PATCH v3 02/04] clk: shmobile: Make MSTP clock-output-names optional
 List-ID: <linux-clk.vger.kernel.org>
 
-From: ZhengShunQian <zhengsq@rock-chips.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-The position to read/write must be less than max
-register size.
+This patch updates the MSTP driver to make the "clock-output-names"
+DT property optional instead of mandatory. In case the DT property
+is omitted then the function clk_register_clkdev() is skipped.
 
-Signed-off-by: ZhengShunQian <zhengsq@rock-chips.com>
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+The default for new SoCs is to not use "clock-output-names".
+
+This version of the patch is kind of early, so please handle with care.
+So far the patch has only been tested with a single MSTP clock. =)
+
+Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/nvmem/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index d3c6676..f4af8e5 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -67,7 +67,7 @@ static ssize_t bin_attr_nvmem_read(struct file *filp, struct kobject *kobj,
- 	int rc;
- 
- 	/* Stop the user from reading */
--	if (pos > nvmem->size)
-+	if (pos >= nvmem->size)
- 		return 0;
- 
- 	if (pos + count > nvmem->size)
-@@ -92,7 +92,7 @@ static ssize_t bin_attr_nvmem_write(struct file *filp, struct kobject *kobj,
- 	int rc;
- 
- 	/* Stop the user from writing */
--	if (pos > nvmem->size)
-+	if (pos >= nvmem->size)
- 		return 0;
- 
- 	if (pos + count > nvmem->size)
--- 
-1.9.1
+ drivers/clk/shmobile/clk-mstp.c |   15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
+--- 0001/drivers/clk/shmobile/clk-mstp.c
++++ work/drivers/clk/shmobile/clk-mstp.c	2015-08-28 15:03:28.002366518 +0900
+@@ -198,15 +198,12 @@ static void __init cpg_mstp_clocks_init(
+ 
+ 	for (i = 0; i < MSTP_MAX_CLOCKS; ++i) {
+ 		const char *parent_name;
+-		const char *name;
++		const char *name = NULL;
+ 		u32 clkidx;
+ 		int ret;
+ 
+-		/* Skip clocks with no name. */
+ 		ret = of_property_read_string_index(np, "clock-output-names",
+ 						    i, &name);
+-		if (ret < 0 || strlen(name) == 0)
+-			continue;
+ 
+ 		parent_name = of_clk_get_parent_name(np, i);
+ 		ret = of_property_read_u32_index(np, idxname, i, &clkidx);
+@@ -214,12 +211,13 @@ static void __init cpg_mstp_clocks_init(
+ 			break;
+ 
+ 		if (clkidx >= MSTP_MAX_CLOCKS) {
+-			pr_err("%s: invalid clock %s %s index %u)\n",
+-			       __func__, np->name, name, clkidx);
++			pr_err("%s: invalid clock %s index %u)\n",
++			       __func__, np->name, clkidx);
+ 			continue;
+ 		}
+ 
+-		clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
++		clks[clkidx] = cpg_mstp_clock_register(name ? name : np->name,
++						       parent_name,
+ 						       clkidx, group);
+ 		if (!IS_ERR(clks[clkidx])) {
+ 			group->data.clk_num = max(group->data.clk_num,
+@@ -232,7 +230,8 @@ static void __init cpg_mstp_clocks_init(
+ 			 * FIXME: Remove this when all devices that require a
+ 			 * clock will be instantiated from DT.
+ 			 */
+-			clk_register_clkdev(clks[clkidx], name, NULL);
++			if (name) /* only if clock-output-names is provided */
++				clk_register_clkdev(clks[clkidx], name, NULL);
+ 		} else {
+ 			pr_err("%s: failed to register %s %s clock (%ld)\n",
+ 			       __func__, np->name, name, PTR_ERR(clks[clkidx]));
