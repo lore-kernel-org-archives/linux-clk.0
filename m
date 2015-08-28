@@ -1,72 +1,46 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Mon, 3 Aug 2015 15:59:26 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq
- driver for Exynos4x12
-Message-ID: <20150803102926.GA21529@linux>
-References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
- <1438368557-2352-4-git-send-email-b.zolnierkie@samsung.com>
- <20150801111721.GI899@linux>
- <5201904.0cZWHobiJs@amdc1976>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5201904.0cZWHobiJs@amdc1976>
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Fri, 28 Aug 2015 18:15:50 +0900
+Message-Id: <20150828091550.21731.85227.sendpatchset@little-apple>
+Subject: [PATCH v3 00/04] Renesas R-Car Gen3 CPG support V3
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03-08-15, 12:17, Bartlomiej Zolnierkiewicz wrote:
-> 
-> Hi,
-> 
-> On Saturday, August 01, 2015 04:47:21 PM Viresh Kumar wrote:
-> > On 31-07-15, 20:49, Bartlomiej Zolnierkiewicz wrote:
-> > > diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
-> > > index 659879a..bf6d596 100644
-> > > --- a/drivers/cpufreq/Kconfig
-> > > +++ b/drivers/cpufreq/Kconfig
-> > > @@ -191,6 +191,7 @@ config CPUFREQ_DT
-> > >  	# if CPU_THERMAL is on and THERMAL=m, CPUFREQ_DT cannot be =y:
-> > >  	depends on !CPU_THERMAL || THERMAL
-> > >  	select PM_OPP
-> > > +	select EXYNOS_THERMAL if ARCH_EXYNOS
-> > >  	help
-> > >  	  This adds a generic DT based cpufreq driver for frequency management.
-> > >  	  It supports both uniprocessor (UP) and symmetric multiprocessor (SMP)
-> > 
-> > No, we shouldn't pollute generic Kconfig options with platform specific stuff.
-> 
-> The old code depended on this.  You couldn't enable boost support
-> without enabling thermal support (ARM_EXYNOS_CPU_FREQ_BOOST_SW
-> config option selected EXYNOS_THERMAL).
-> 
-> > Why don't you enable thermal in your .config?
-> 
-> It is enabled in exynos_defconfig but without the above change it
-> can disabled manually which is something that we don't want.
+Renesas R-Car Gen3 CPG support V3
 
-You are not getting it. I am not asking you to not select thermal, but
-to select it from within your architecture Kconfig option if you want.
+[PATCH v3 01/04] clk: shmobile: Get rid of CONFIG_ARCH_SHMOBILE_MULTI
+[PATCH v3 02/04] clk: shmobile: Make MSTP clock-output-names optional
+[PATCH v3 03/04] clk: shmobile: Add Renesas R-Car Gen3 CPG support
+[PATCH v3 04/04] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
 
-Over that, thermal is really an option, not a dependency. So, if
-someone manually disables it, its his problem not yours :)
+This series is the first attempt to take the CCF code from the single patch:
+"[PATCH 1/9] clk: shmobile: add Renesas R-Car Gen3 CPG support"
+to a full series of various CCF related updates related to R-Car Gen3.
 
--- 
-viresh
+In this series patch 1 and 2 get rid of CONFIG_ARCH_SHMOBILE_MULTI kconfig
+bits and converts the MSTP CCF driver to not rely on clock-output-names. The
+latter may need a bit more work.
+
+Patch 3 and 4 introduce an updated R-Car Gen3 CPG driver where I have reworked
+the code to not depend on clock-output-names instead of using strings simply
+rely on RCAR_GEN3_CLK_xxx. Those must match the ABI defined in SoC specific
+indicies such as the ones included in r8a7795-clock.h.
+
+Patch 3 most likely needs to be reworked further to incorporate earlier
+feedback from CCF maintainers.
+
+Comments are very welcome!
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
+
+ Written to be picked up independently from other R-Car Gen3 patches.
+
+ Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   31 +
+ drivers/clk/Makefile                                                     |    2 
+ drivers/clk/shmobile/Makefile                                            |   23 
+ drivers/clk/shmobile/clk-mstp.c                                          |   15 
+ drivers/clk/shmobile/clk-rcar-gen3.c                                     |  254 ++++++++++
+ 5 files changed, 304 insertions(+), 21 deletions(-)
