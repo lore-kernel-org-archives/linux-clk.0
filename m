@@ -1,53 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ig0-f180.google.com ([209.85.213.180]:36499 "EHLO
-	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752847AbbHMUzt (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 13 Aug 2015 16:55:49 -0400
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
-References: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
-Date: Thu, 13 Aug 2015 22:55:48 +0200
-Message-ID: <CAGhQ9VyoepPsoLhuqFz397UnrM+n4SH0rp5Y3xfTQYvDXr=APw@mail.gmail.com>
-Subject: Re: [PATCH V3 0/5] clk: support clocks which requires parent clock on
- during operation
-From: Joachim Eastwood <manabian@gmail.com>
-To: Dong Aisheng <aisheng.dong@freescale.com>
-Cc: linux-clk@vger.kernel.org, Ranjani.Vaidyanathan@freescale.com,
-	b20596@freescale.com, Mike Turquette <mturquette@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	r64343@freescale.com, b20788@freescale.com, b29396@freescale.com,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <CAMuHMdXhroy4BVRyeeu2uEnPvVehXNjac09RKWr49LA=0Yk=0g@mail.gmail.com>
+References: <87lhcz7u2i.wl%kuninori.morimoto.gx@renesas.com>
+	<87k2sj7tzs.wl%kuninori.morimoto.gx@renesas.com>
+	<20150825224638.GL19120@codeaurora.org>
+	<CAMuHMdXhroy4BVRyeeu2uEnPvVehXNjac09RKWr49LA=0Yk=0g@mail.gmail.com>
+Date: Fri, 28 Aug 2015 19:52:43 +0900
+Message-ID: <CANqRtoTtAoDs72mQACf=0H2DZGSC=ejcECOcjBwYNzNrHxHevg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: shmobile: add Renesas R-Car Gen3 CPG support
+From: Magnus Damm <magnus.damm@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Linux-SH <linux-sh@vger.kernel.org>,
+	Linux-Kernel <linux-kernel@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dong,
+Hi Geert,
 
-On 28 July 2015 at 15:19, Dong Aisheng <aisheng.dong@freescale.com> wrote:
-> This patch series adds support in clock framework for clocks which operations
-> requires its parent clock is on.
+On Wed, Aug 26, 2015 at 4:29 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Stephen,
 >
-> Such clock type is initially met on Freescale i.MX7D platform that all clocks
-> operations, including enable/disable, rate change and re-parent, requires its
-> parent clock on. No sure if any other SoC has the similar clock type.
+> On Wed, Aug 26, 2015 at 12:46 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>>> --- /dev/null
+>>> +++ b/drivers/clk/shmobile/clk-rcar-gen3.c
+>
+>>> +
+>>> +/*
+>>> + * Reset register definitions.
+>>> + */
+>>> +#define MODEMR 0xe6160060
+>>> +
+>>> +static u32 rcar_gen3_read_mode_pins(void)
+>>> +{
+>>> +     static u32 mode;
+>>> +     static bool mode_valid;
+>>> +
+>>> +     if (!mode_valid) {
+>>> +             void __iomem *modemr = ioremap_nocache(MODEMR, 4);
+>>> +
+>>> +             BUG_ON(!modemr);
+>>> +             mode = ioread32(modemr);
+>>> +             iounmap(modemr);
+>>> +             mode_valid = true;
+>>> +     }
+>>> +
+>>> +     return mode;
+>>> +}
+>>
+>> Perhaps this should be read using a syscon?
+>
+> Like "[PATCH/RFC 00/11] ARM: shmobile: Let CPG use syscon for MD pin values"
+> (http://www.spinics.net/lists/linux-clk/msg01478.html)?
+>
+> It wasn't so well received...
 
-Just noticed this patch set.
+I happen to think it is a great idea. At the same time I'm too lazy to
+step up. =)
 
-One of clock-controller blocks (CCU) on lpc18xx has a similar
-requirement. The CCU is clock fanout block with gates and the gate
-registers can not be accessed if the base (parent) clock for the gate
-is not running. Doing so causes the cpu to wedge.
+Shall we reconsider making it mandatory for R-Car Gen3?
 
-The workaround I have locally is to check in the is_enabled gate op if
-the parent is running or not. This works fine, but I am all for a more
-generic solution in the clk framework.
+Cheers,
 
-I'll see if I can find the time to test your patch set. Thanks for
-working on this.
-
-
-regards,
-Joachim Eastwood
+/ magnus
