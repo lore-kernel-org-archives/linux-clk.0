@@ -1,47 +1,41 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 28 Aug 2015 14:43:33 +0200
+From: Luis de Bethencourt <luis@debethencourt.com>
+To: linux-kernel@vger.kernel.org
+Cc: Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 2/5] clk: sunxi: sun6i-apb0-gates: Fix module autoload for OF
+ platform driver
+Message-ID: <20150828124333.GA26601@goodgumbo.baconseed.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20150828091636.21731.26416.sendpatchset@little-apple>
-References: <20150828091550.21731.85227.sendpatchset@little-apple>
-	<20150828091636.21731.26416.sendpatchset@little-apple>
-Date: Fri, 28 Aug 2015 11:19:06 +0200
-Message-ID: <CAMuHMdWdmbHyv5YnFKh=ixMjPJGGyhSFyo5GqBs3S9L1H+iERQ@mail.gmail.com>
-Subject: Re: [PATCH v3 04/04] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock
- Domain support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
-	Linux-sh list <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Aug 28, 2015 at 11:16 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
->
-> Shmobile is all multiplatform these days, so get rid of the
-> reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
-> enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
-> MSTP depending on if they are included in the SoC or not.
->
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->
->  Changes since V2:
->  - Fixed patch subject typo CONFIG_SHMOBILE_MULTI -> CONFIG_ARCH_SHMOBILE_MULTI
+This platform driver has a OF device ID table but the OF module
+alias information is not created so module autoloading won't work.
 
-The subject doesn't seem to match the patch at all?
+Signed-off-by: Luis de Bethencourt <luis@debethencourt.com>
+---
+ drivers/clk/sunxi/clk-sun6i-apb0-gates.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/clk/sunxi/clk-sun6i-apb0-gates.c b/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
+index 64f3e46..23d042a 100644
+--- a/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
++++ b/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
+@@ -34,6 +34,7 @@ static const struct of_device_id sun6i_a31_apb0_gates_clk_dt_ids[] = {
+ 	{ .compatible = "allwinner,sun8i-a23-apb0-gates-clk", .data = &sun8i_a23_apb0_gates },
+ 	{ /* sentinel */ }
+ };
++MODULE_DEVICE_TABLE(of, sun6i_a31_apb0_gates_clk_dt_ids);
+ 
+ static int sun6i_a31_apb0_gates_clk_probe(struct platform_device *pdev)
+ {
+-- 
+2.4.6
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
