@@ -1,61 +1,88 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular2.263xmail.com ([211.157.152.3]:55153 "EHLO
-	regular2.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751505AbbH1Frb (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 28 Aug 2015 01:47:31 -0400
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-gpio@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v1 0/3] Port and support rk3036 SoC platform
-Date: Fri, 28 Aug 2015 13:46:45 +0800
-Message-Id: <1440740808-15004-1-git-send-email-zhengxing@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-clk@vger.kernel.org, kuninori.morimoto.gx@renesas.com, linux-sh@vger.kernel.org, mturquette@baylibre.com, gaku.inami.xw@bp.renesas.com, sboyd@codeaurora.org, horms@verge.net.au, geert@linux-m68k.org
+Subject: Re: [PATCH v3 01/04] clk: shmobile: Get rid of CONFIG_ARCH_SHMOBILE_MULTI
+Date: Fri, 28 Aug 2015 22:59:25 +0300
+Message-ID: <1746913.nJHMkg2anu@avalon>
+In-Reply-To: <20150828091602.21731.21262.sendpatchset@little-apple>
+References: <20150828091550.21731.85227.sendpatchset@little-apple> <20150828091602.21731.21262.sendpatchset@little-apple>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Magnus,
 
-Hi,
-We need to support rk3036 soc platform via upstream, there are
-3 parts for the initial release of minimum system: dts, pinctrl,
-and clock tree for rk3036, startup and run to init processs.
+Thank you for the patch.
 
-Thanks.
+On Friday 28 August 2015 18:16:02 Magnus Damm wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+> 
+> Shmobile is all multiplatform these days, so get rid of the
+> reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
+> enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
+> MSTP depending on if they are included in the SoC or not.
+> 
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Assuming you have verified that adding the same object file several times to 
+obj-y won't cause any issue,
 
-Changes in v1:
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Xing Zheng (3):
-  ARM: dts: rockchip: add core rk3036 dts
-  pinctrl: rockchip: add support for the rk3036
-  clk: rockchip: add clock controller for rk3036
-
- arch/arm/boot/dts/Makefile             |    1 +
- arch/arm/boot/dts/rk3036-sdk.dts       |  362 +++++++++++++++++++++
- drivers/clk/rockchip/Makefile          |    1 +
- drivers/clk/rockchip/clk-pll.c         |  247 ++++++++++++++-
- drivers/clk/rockchip/clk-rk3036.c      |  539 ++++++++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.h             |   30 ++
- drivers/pinctrl/pinctrl-rockchip.c     |   17 +
- include/dt-bindings/clock/rk3036-cru.h |  247 +++++++++++++++
- 8 files changed, 1443 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/rk3036-sdk.dts
- create mode 100644 drivers/clk/rockchip/clk-rk3036.c
- create mode 100644 include/dt-bindings/clock/rk3036-cru.h
+> ---
+> 
+>  Changes since V2:
+>  - Fixed patch subject typo CONFIG_SHMOBILE_MULTI ->
+> CONFIG_ARCH_SHMOBILE_MULTI
+> 
+>  Changes since V1:
+>  - dropped DIV6 from R-Car Gen1 variants - thanks Geert!
+> 
+>  drivers/clk/Makefile          |    2 +-
+>  drivers/clk/shmobile/Makefile |   22 ++++++++++------------
+>  2 files changed, 11 insertions(+), 13 deletions(-)
+> 
+> --- 0001/drivers/clk/Makefile
+> +++ work/drivers/clk/Makefile	2015-08-26 16:39:50.052366518 +0900
+> @@ -66,7 +66,7 @@ obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
+>  obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
+>  obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+>  obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+> -obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= shmobile/
+> +obj-$(CONFIG_ARCH_SHMOBILE)		+= shmobile/
+>  obj-$(CONFIG_ARCH_SIRF)			+= sirf/
+>  obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
+>  obj-$(CONFIG_PLAT_SPEAR)		+= spear/
+> --- 0001/drivers/clk/shmobile/Makefile
+> +++ work/drivers/clk/shmobile/Makefile	2015-08-26 16:40:04.832366518 +0900
+> @@ -1,13 +1,11 @@
+>  obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
+> -obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
+> -obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
+> -obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
+> -obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+> -obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+> -obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
+> -obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o
+> -obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o
+> -obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o
+> -obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o
+> -obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-div6.o
+> -obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-mstp.o
+> +obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o clk-mstp.o
+> +obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-mstp.o clk-div6.o
+> +obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-mstp.o clk-div6.o
+> +obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o clk-mstp.o
+> +obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o clk-mstp.o
+> +obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
+> +obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
+> +obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
+> +obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
+> +obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
 
 -- 
-1.7.9.5
+Regards,
 
-
+Laurent Pinchart
