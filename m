@@ -1,53 +1,41 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 11 Aug 2015 16:45:52 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk/ARM: delete the non-DT U8500 clock implementation
-Message-ID: <20150811234552.GP2839@codeaurora.org>
-References: <1438262352-29118-1-git-send-email-linus.walleij@linaro.org>
- <20150803215129.GD21068@codeaurora.org>
- <CACRpkdYdFAjRGMfsG4Kx=xNBACofcjFR3U1+P4U3yBmgQcFATQ@mail.gmail.com>
+Return-Path: <bethencourt@gmail.com>
+Return-Path: <bethencourt@gmail.com>
+Sender: Luis de Bethencourt <bethencourt@gmail.com>
+Date: Fri, 28 Aug 2015 14:43:14 +0200
+From: Luis de Bethencourt <luis@debethencourt.com>
+To: linux-kernel@vger.kernel.org
+Cc: Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 1/5] clk: sunxi: sun6i-apb0: Fix module autoload for OF
+ platform driver
+Message-ID: <20150828124314.GA26550@goodgumbo.baconseed.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CACRpkdYdFAjRGMfsG4Kx=xNBACofcjFR3U1+P4U3yBmgQcFATQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/10, Linus Walleij wrote:
-> On Mon, Aug 3, 2015 at 11:51 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 07/30, Linus Walleij wrote:
-> >> This code is unused and not coming back. Let's kill it off.
-> >>
-> >> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> >> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> >> ---
-> >> Mike/Ulf: please ACK this so I can take this in through ARM
-> >> SoC.
-> >> ---
-> >>  drivers/clk/ux500/Makefile              |   1 -
-> >>  drivers/clk/ux500/u8500_clk.c           | 526 --------------------------------
-> >
-> > There's a patch in -next against this file.
-> >
-> > commit a162ca912cf792073b0b2450377fd1cd5d5c6cb5
-> > Author: Stephen Boyd <sboyd@codeaurora.org>
-> > Date:   Fri Jun 19 15:00:46 2015 -0700
-> >
-> >     clk: ux500: Remove clk.h and clkdev.h includes
-> >
-> > so I wonder why we need to take this patch through arm-soc? Would
-> > an immutable branch from the clk tree work as well?
-> 
-> No you can actually apply it in isolation. I was just collecting
-> them in one spot for testing.
-> 
-> Can you please apply this directly to the clk tree and
-> fix any clashes?
+This platform driver has a OF device ID table but the OF module
+alias information is not created so module autoloading won't work.
 
-Sure. Do we need to apply patches 2 and 3 too? I'm mostly trying
-to avoid merge conflicts.
+Signed-off-by: Luis de Bethencourt <luis@debethencourt.com>
+---
+ drivers/clk/sunxi/clk-sun6i-apb0.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/clk/sunxi/clk-sun6i-apb0.c b/drivers/clk/sunxi/clk-sun6i-apb0.c
+index 7076360..e703e18 100644
+--- a/drivers/clk/sunxi/clk-sun6i-apb0.c
++++ b/drivers/clk/sunxi/clk-sun6i-apb0.c
+@@ -61,6 +61,7 @@ static const struct of_device_id sun6i_a31_apb0_clk_dt_ids[] = {
+ 	{ .compatible = "allwinner,sun6i-a31-apb0-clk" },
+ 	{ /* sentinel */ }
+ };
++MODULE_DEVICE_TABLE(of, sun6i_a31_apb0_clk_dt_ids);
+ 
+ static struct platform_driver sun6i_a31_apb0_clk_driver = {
+ 	.driver = {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.4.6
