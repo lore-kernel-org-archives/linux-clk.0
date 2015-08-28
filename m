@@ -1,105 +1,70 @@
-Return-Path: <cw00.choi@samsung.com>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
- k.kozlowski@samsung.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, cw00.choi@samsung.com,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: [PATCH 4/4] ARM: dts: Add MSHC2 dt node for Exynos3250 SoC
-Date: Tue, 11 Aug 2015 12:46:24 +0900
-Message-id: <1439264784-30322-5-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
-References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Fri, 28 Aug 2015 18:16:36 +0900
+Message-Id: <20150828091636.21731.26416.sendpatchset@little-apple>
+In-Reply-To: <20150828091550.21731.85227.sendpatchset@little-apple>
+References: <20150828091550.21731.85227.sendpatchset@little-apple>
+Subject: [PATCH v3 04/04] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch add the MSHC2 (Mobile Storage Host Controller) devicetree node for
-Exynos3250 SoC.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Shmobile is all multiplatform these days, so get rid of the
+reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
+enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
+MSTP depending on if they are included in the SoC or not.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 35 +++++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos3250.dtsi         | 13 ++++++++++++
- 2 files changed, 48 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-index eac1d21c10d4..78b995fed6c7 100644
---- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-@@ -452,6 +452,41 @@
- 		samsung,pin-drv = <3>;
- 	};
- 
-+	sd2_clk: sd2-clk {
-+		samsung,pins = "gpk2-0";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_cmd: sd2-cmd {
-+		samsung,pins = "gpk2-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_cd: sd2-cd {
-+		samsung,pins = "gpk2-2";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_bus1: sd2-bus-width1 {
-+		samsung,pins = "gpk2-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_bus4: sd2-bus-width4 {
-+		samsung,pins = "gpk2-4", "gpk2-5", "gpk2-6";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
- 	cam_port_b_io: cam-port-b-io {
- 		samsung,pins = "gpm0-0", "gpm0-1", "gpm0-2", "gpm0-3",
- 				"gpm0-4", "gpm0-5", "gpm0-6", "gpm0-7",
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 02f3250766c9..5a91eaa26565 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -30,6 +30,7 @@
- 		pinctrl1 = &pinctrl_1;
- 		mshc0 = &mshc_0;
- 		mshc1 = &mshc_1;
-+		mshc2 = &mshc_2;
- 		spi0 = &spi_0;
- 		spi1 = &spi_1;
- 		i2c0 = &i2c_0;
-@@ -341,6 +342,18 @@
- 			status = "disabled";
- 		};
- 
-+		mshc_2: mshc@12530000 {
-+			compatible = "samsung,exynos5250-dw-mshc";
-+			reg = <0x12530000 0x1000>;
-+			interrupts = <0 144 0>;
-+			clocks = <&cmu CLK_SDMMC2>, <&cmu CLK_SCLK_MMC2>;
-+			clock-names = "biu", "ciu";
-+			fifo-depth = <0x80>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		exynos_usbphy: exynos-usbphy@125B0000 {
- 			compatible = "samsung,exynos3250-usb2-phy";
- 			reg = <0x125B0000 0x100>;
--- 
-1.8.5.5
+ Changes since V2:
+ - Fixed patch subject typo CONFIG_SHMOBILE_MULTI -> CONFIG_ARCH_SHMOBILE_MULTI
+
+ Changes since V1:
+ - dropped DIV6 from R-Car Gen1 variants - thanks Geert!
+
+ drivers/clk/Makefile          |    2 +-
+ drivers/clk/shmobile/Makefile |   22 ++++++++++------------
+ 2 files changed, 11 insertions(+), 13 deletions(-)
+
+--- 0001/drivers/clk/Makefile
++++ work/drivers/clk/Makefile	2015-08-26 16:39:50.052366518 +0900
+@@ -66,7 +66,7 @@ obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
+ obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
+ obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+-obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= shmobile/
++obj-$(CONFIG_ARCH_SHMOBILE)		+= shmobile/
+ obj-$(CONFIG_ARCH_SIRF)			+= sirf/
+ obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
+ obj-$(CONFIG_PLAT_SPEAR)		+= spear/
+--- 0001/drivers/clk/shmobile/Makefile
++++ work/drivers/clk/shmobile/Makefile	2015-08-26 16:40:04.832366518 +0900
+@@ -1,13 +1,11 @@
+ obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
+-obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
+-obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
+-obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
+-obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+-obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+-obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o
+-obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-div6.o
+-obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-mstp.o
++obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
