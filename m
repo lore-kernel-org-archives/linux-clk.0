@@ -1,218 +1,70 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 25 Aug 2015 15:46:38 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Magnus <magnus.damm@gmail.com>,
-	Linux-SH <linux-sh@vger.kernel.org>,
-	Linux-Kernel <linux-kernel@vger.kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: shmobile: add Renesas R-Car Gen3 CPG support
-Message-ID: <20150825224638.GL19120@codeaurora.org>
-References: <87lhcz7u2i.wl%kuninori.morimoto.gx@renesas.com>
- <87k2sj7tzs.wl%kuninori.morimoto.gx@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <87k2sj7tzs.wl%kuninori.morimoto.gx@renesas.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Fri, 28 Aug 2015 18:16:02 +0900
+Message-Id: <20150828091602.21731.21262.sendpatchset@little-apple>
+In-Reply-To: <20150828091550.21731.85227.sendpatchset@little-apple>
+References: <20150828091550.21731.85227.sendpatchset@little-apple>
+Subject: [PATCH v3 01/04] clk: shmobile: Get rid of CONFIG_ARCH_SHMOBILE_MULTI
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/25, Kuninori Morimoto wrote:
-> diff --git a/drivers/clk/shmobile/clk-rcar-gen3.c b/drivers/clk/shmobile/clk-rcar-gen3.c
-> new file mode 100644
-> index 0000000..098caac
-> --- /dev/null
-> +++ b/drivers/clk/shmobile/clk-rcar-gen3.c
-> @@ -0,0 +1,232 @@
-> +/*
-> + * rcar_gen3 Core CPG Clocks
-> + *
-> + * Copyright (C) 2015 Renesas Electronics Corp.
-> + *
-> + * Based on rcar_gen2 Core CPG Clocks driver.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; version 2 of the License.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/clkdev.h>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Is this include used?
+Shmobile is all multiplatform these days, so get rid of the
+reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
+enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
+MSTP depending on if they are included in the SoC or not.
 
-> +#include <linux/clk/shmobile.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/math64.h>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
 
-Is this include used?
+ Changes since V2:
+ - Fixed patch subject typo CONFIG_SHMOBILE_MULTI -> CONFIG_ARCH_SHMOBILE_MULTI
 
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/spinlock.h>
-> +
-> +struct rcar_gen3_cpg {
-> +	struct clk_onecell_data data;
-> +	spinlock_t lock;
-> +	void __iomem *reg;
-> +};
-> +
-> +#define CPG_PLL0CR	0x00d8
-> +#define CPG_PLL2CR	0x002c
-> +
-> +/*
-> + * common function
-> + */
-> +#define rcar_clk_readl(cpg, _reg) clk_readl(cpg->reg + _reg)
+ Changes since V1:
+ - dropped DIV6 from R-Car Gen1 variants - thanks Geert!
 
-Please just use readl instead of clk_readl.
+ drivers/clk/Makefile          |    2 +-
+ drivers/clk/shmobile/Makefile |   22 ++++++++++------------
+ 2 files changed, 11 insertions(+), 13 deletions(-)
 
-> +
-> +/*
-> + * Reset register definitions.
-> + */
-> +#define MODEMR 0xe6160060
-> +
-> +static u32 rcar_gen3_read_mode_pins(void)
-> +{
-> +	static u32 mode;
-> +	static bool mode_valid;
-> +
-> +	if (!mode_valid) {
-> +		void __iomem *modemr = ioremap_nocache(MODEMR, 4);
-> +
-> +		BUG_ON(!modemr);
-> +		mode = ioread32(modemr);
-> +		iounmap(modemr);
-> +		mode_valid = true;
-> +	}
-> +
-> +	return mode;
-> +}
-
-Perhaps this should be read using a syscon?
-
-> +struct cpg_pll_config {
-> +	unsigned int extal_div;
-> +	unsigned int pll1_mult;
-> +	unsigned int pll3_mult;
-> +	unsigned int pll4_mult;
-> +};
-> +
-> +static const struct cpg_pll_config cpg_pll_configs[16] __initconst = {
-
-We don't actually need the 16, but ok.
-
-> +/* EXTAL div	PLL1	PLL3	PLL4 */
-> +	{ 1,	192,	192,	144, },
-> +	{ 1,	192,	128,	144, },
-> +	{ 0,	0,	0,	0,   }, /* Prohibited setting */
-> +	{ 1,	192,	192,	144, },
-> +	{ 1,	156,	156,	120, },
-> +	{ 1,	156,	106,	120, },
-> +	{ 0,	0,	0,	0,   }, /* Prohibited setting */
-> +	{ 1,	156,	156,	120, },
-> +	{ 1,	128,	128,	96,  },
-> +	{ 1,	128,	84,	96,  },
-> +	{ 0,	0,	0,	0,   }, /* Prohibited setting */
-> +	{ 1,	128,	128,	96,  },
-> +	{ 2,	192,	192,	144, },
-> +	{ 2,	192,	128,	144, },
-> +	{ 0,	0,	0,	0,   }, /* Prohibited setting */
-> +	{ 2,	192,	192,	144, },
-> +};
-> +
-> +/* -----------------------------------------------------------------------------
-> + * Initialization
-> + */
-> +
-> +static u32 cpg_mode __initdata;
-
-Why isn't this local to the only function that uses it?
-
-> +
-> +static void __init rcar_gen3_cpg_clocks_init(struct device_node *np)
-> +{
-> +	const struct cpg_pll_config *config;
-> +	struct rcar_gen3_cpg *cpg;
-> +	struct clk **clks;
-> +	unsigned int i;
-> +	int num_clks;
-> +
-> +	cpg_mode = rcar_gen3_read_mode_pins();
-> +
-> +	num_clks = of_property_count_strings(np, "clock-output-names");
-> +	if (num_clks < 0) {
-> +		pr_err("%s: failed to count clocks\n", __func__);
-> +		return;
-> +	}
-> +
-> +	cpg = kzalloc(sizeof(*cpg), GFP_KERNEL);
-> +	clks = kzalloc((num_clks * sizeof(*clks)), GFP_KERNEL);
-
-kcalloc()
-
-> +	if (cpg == NULL || clks == NULL) {
-> +		/* We're leaking memory on purpose, there's no point in cleaning
-> +		 * up as the system won't boot anyway.
-> +		 */
-
-kfree() does nothing on NULL, so it should be easy enough to
-delete this comment and replace it with two calls to kfree().
-
-> +		pr_err("%s: failed to allocate cpg\n", __func__);
-> +		return;
-> +	}
-> +
-> +	spin_lock_init(&cpg->lock);
-> +
-> +	cpg->data.clks = clks;
-> +	cpg->data.clk_num = num_clks;
-> +
-> +	cpg->reg = of_iomap(np, 0);
-> +	if (WARN_ON(cpg->reg == NULL))
-> +		return;
-> +
-> +	config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
-> +	if (!config->extal_div) {
-> +		pr_err("%s: Prohibited setting (cpg_mode=0x%x)\n",
-> +		       __func__, cpg_mode);
-> +		return;
-> +	}
-> +
-> +	for (i = 0; i < num_clks; ++i) {
-> +		const char *name;
-> +		struct clk *clk;
-> +
-> +		of_property_read_string_index(np, "clock-output-names", i,
-> +					      &name);
-> +
-> +		clk = rcar_gen3_cpg_register_clock(np, cpg, config, name);
-
-Is there any reason why we need to register clocks based on
-what's in DT? I would prefer to see a method where we register
-clocks based on the compatible string in DT. This would get rid
-of all the string comparisons in rcar_gen3_cpg_register_clock()
-and make for cleaner code.
-
-Furthermore, we could make this into a platform driver so that we
-can benefit from the device model.
-
-> +		if (IS_ERR(clk))
-> +			pr_err("%s: failed to register %s %s clock (%ld)\n",
-> +			       __func__, np->name, name, PTR_ERR(clk));
-> +		else
-> +			cpg->data.clks[i] = clk;
-> +	}
-> +
-> +	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
-> +}
-> +CLK_OF_DECLARE(rcar_gen3_cpg_clks, "renesas,rcar-gen3-cpg-clocks",
-> +	       rcar_gen3_cpg_clocks_init);
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--- 0001/drivers/clk/Makefile
++++ work/drivers/clk/Makefile	2015-08-26 16:39:50.052366518 +0900
+@@ -66,7 +66,7 @@ obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
+ obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
+ obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+-obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= shmobile/
++obj-$(CONFIG_ARCH_SHMOBILE)		+= shmobile/
+ obj-$(CONFIG_ARCH_SIRF)			+= sirf/
+ obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
+ obj-$(CONFIG_PLAT_SPEAR)		+= spear/
+--- 0001/drivers/clk/shmobile/Makefile
++++ work/drivers/clk/shmobile/Makefile	2015-08-26 16:40:04.832366518 +0900
+@@ -1,13 +1,11 @@
+ obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
+-obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
+-obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
+-obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
+-obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+-obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+-obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o
+-obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-div6.o
+-obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-mstp.o
++obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
