@@ -1,63 +1,101 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Michael Turquette <mturquette@baylibre.com>
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: sboyd@codeaurora.org, lee.jones@linaro.org,
-	maxime.ripard@free-electrons.com, s.hauer@pengutronix.de,
-	geert@linux-m68k.org, Michael Turquette <mturquette@baylibre.com>
-Subject: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and implement hand-off
-Date: Fri,  7 Aug 2015 12:09:27 -0700
-Message-Id: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-clk@vger.kernel.org, kuninori.morimoto.gx@renesas.com, gaku.inami.xw@bp.renesas.com, mturquette@baylibre.com, linux-sh@vger.kernel.org, sboyd@codeaurora.org, horms@verge.net.au, geert@linux-m68k.org
+Subject: Re: [PATCH v3 02/04] clk: shmobile: Make MSTP clock-output-names optional
+Date: Fri, 28 Aug 2015 22:37:47 +0300
+Message-ID: <1776985.pyjG3Le2BL@avalon>
+In-Reply-To: <20150828091613.21731.8527.sendpatchset@little-apple>
+References: <20150828091550.21731.85227.sendpatchset@little-apple> <20150828091613.21731.8527.sendpatchset@little-apple>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an alternative solution to Lee's "clk: Provide support for
-always-on clocks" series[0].
+Hi Magnus,
 
-The first two patches introduce run-time checks to ensure that clock
-consumer drivers are respecting the clk.h api. The former patch checks
-for prepare and enable imbalances. The latter checks for calls to
-clk_put without first disabling and unpreparing the clk.
+Thank you for the patch.
 
-The third patch introduces a new flag, CLK_ENABLE_HAND_OFF, which
-prepares and enables a clk at registration-time. The reference counts
-(prepare & enable) are transferred to the first clock consumer driver
-that clk_get's the clk with this flag set AND calls clk_prepare or
-clk_enable.
+On Friday 28 August 2015 18:16:13 Magnus Damm wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+> 
+> This patch updates the MSTP driver to make the "clock-output-names"
+> DT property optional instead of mandatory. In case the DT property
+> is omitted then the function clk_register_clkdev() is skipped.
+> 
+> The default for new SoCs is to not use "clock-output-names".
+> 
+> This version of the patch is kind of early, so please handle with care.
+> So far the patch has only been tested with a single MSTP clock. =)
+> 
+> Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> ---
+> 
+>  drivers/clk/shmobile/clk-mstp.c |   15 +++++++--------
+>  1 file changed, 7 insertions(+), 8 deletions(-)
+> 
+> --- 0001/drivers/clk/shmobile/clk-mstp.c
+> +++ work/drivers/clk/shmobile/clk-mstp.c	2015-08-28 15:03:28.002366518 
++0900
+> @@ -198,15 +198,12 @@ static void __init cpg_mstp_clocks_init(
+> 
+>  	for (i = 0; i < MSTP_MAX_CLOCKS; ++i) {
+>  		const char *parent_name;
+> -		const char *name;
+> +		const char *name = NULL;
+>  		u32 clkidx;
+>  		int ret;
+> 
+> -		/* Skip clocks with no name. */
+>  		ret = of_property_read_string_index(np, "clock-output-names",
+>  						    i, &name);
 
-The net result is that a clock with this flag set will be enabled at
-boot and neither the clk_disable_unused garbage collector or the
-"sibling clock disables a shared parent" scenario will cause the flagged
-clock to be disabled. The first driver to come along and explicitly
-claim, prepare and enable this clock will inherit those reference
-counts. No change to clock consumer drivers is required for this to
-work. Please continue to use the clk.h api properly.
+I think we can remove this completely.
 
-In time this approach can probably replace the CLK_IGNORE_UNUSED flag
-and hopefully reduce the number of users of the clk_ignore_unused boot
-parameter.
+> -		if (ret < 0 || strlen(name) == 0)
+> -			continue;
+> 
+>  		parent_name = of_clk_get_parent_name(np, i);
+>  		ret = of_property_read_u32_index(np, idxname, i, &clkidx);
+> @@ -214,12 +211,13 @@ static void __init cpg_mstp_clocks_init(
+>  			break;
+> 
+>  		if (clkidx >= MSTP_MAX_CLOCKS) {
+> -			pr_err("%s: invalid clock %s %s index %u)\n",
+> -			       __func__, np->name, name, clkidx);
+> +			pr_err("%s: invalid clock %s index %u)\n",
+> +			       __func__, np->name, clkidx);
+>  			continue;
+>  		}
+> 
+> -		clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
+> +		clks[clkidx] = cpg_mstp_clock_register(name ? name : np->name,
 
-Finally, a quick note on comparing this series to Lee's. I went with the
-simplest approach to solve a real problem: preventing critical clocks
-from being spuriously disabled at boot, or before a their parent clock
-becomes accidentally disabled by a sibling.
+This would result in several clocks being registered with the same name. I 
+would instead construct the name with sprintf(name, "%s.%u", np->name, 
+clkidx).
 
-All of the other kitchen sink stuff (DT binding, passing the flag back
-to the framework when the clock consumer driver calls clk_put) was left
-out because I do not see a real use case for it. If one can demonstrate
-a real use case (and not a hypothetical one) then this patch series can
-be expanded further.
+> +						       parent_name,
+>  						       clkidx, group);
+>  		if (!IS_ERR(clks[clkidx])) {
+>  			group->data.clk_num = max(group->data.clk_num,
+> @@ -232,7 +230,8 @@ static void __init cpg_mstp_clocks_init(
+>  			 * FIXME: Remove this when all devices that require a
+>  			 * clock will be instantiated from DT.
+>  			 */
+> -			clk_register_clkdev(clks[clkidx], name, NULL);
+> +			if (name) /* only if clock-output-names is provided */
+> +				clk_register_clkdev(clks[clkidx], name, NULL);
 
-[0] http://lkml.kernel.org/r/<1437570255-21049-1-git-send-email-lee.jones@linaro.org>
+Better than that, as all our devices are now instantiated from DT, we can 
+remove the clk_register_clkdev() call completely as well as the FIXME comment.
 
-Michael Turquette (3):
-  clk: per-user clk prepare & enable ref counts
-  clk: clk_put WARNs if user has not disabled clk
-  clk: introduce CLK_ENABLE_HAND_OFF flag
+>  		} else {
+>  			pr_err("%s: failed to register %s %s clock (%ld)\n",
+>  			       __func__, np->name, name, PTR_ERR(clks[clkidx]));
 
- drivers/clk/clk.c            | 79 +++++++++++++++++++++++++++++++++++++++++---
- include/linux/clk-provider.h |  3 ++
- 2 files changed, 78 insertions(+), 4 deletions(-)
+name can be NULL here, I'd use "%s.%u", np->name, clkidx.
 
 -- 
-1.9.1
+Regards,
 
+Laurent Pinchart
