@@ -1,95 +1,75 @@
-Return-Path: <Govindraj.Raja@imgtec.com>
-From: Govindraj Raja <govindraj.raja@imgtec.com>
-To: <linux-mips@linux-mips.org>, <linux-clk@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>
-CC: Zdenko Pulitika <zdenko.pulitika@imgtec.com>, Kevin Cernekee
-	<cernekee@chromium.org>, Ralf Baechle <ralf@linux-mips.org>, "Andrew
- Bresticker" <abrestic@chromium.org>, James Hartley
-	<James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Damien Horsley <Damien.Horsley@imgtec.com>, James Hogan
-	<James.Hogan@imgtec.com>, "Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Ezequiel Garcia
-	<ezequiel.garcia@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>
-Subject: [PATCH v5 4/4] clk: pistachio: correct critical clock list
-Date: Thu, 20 Aug 2015 14:45:55 +0100
-Message-ID: <1440078355-8828-5-git-send-email-govindraj.raja@imgtec.com>
-In-Reply-To: <1440078355-8828-1-git-send-email-govindraj.raja@imgtec.com>
-References: <1440078355-8828-1-git-send-email-govindraj.raja@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Dan Carpenter <dan.carpenter@oracle.com>, Tomasz Figa <tomasz.figa@gmail.com>,
+ Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+ linux-clk@vger.kernel.org,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: samsung: fix cpu clock's flags checking
+Date: Fri, 28 Aug 2015 12:46:05 +0200
+Message-id: <7248406.UkvN4Bv1cx@amdc1976>
+In-reply-to: 
+ <CABxcv=kVL94rdFgNKcxx2JOi9WRFnvhMWrpjEDcEmx7q7cEsgQ@mail.gmail.com>
+References: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
+ <5591DD9B.4030507@samsung.com>
+ <CABxcv=kVL94rdFgNKcxx2JOi9WRFnvhMWrpjEDcEmx7q7cEsgQ@mail.gmail.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-From: "Damien.Horsley" <Damien.Horsley@imgtec.com>
 
-Current critical clock list for pistachio enables
-only mips and sys clocks by default but there are
-also other clocks that are not claimed by anyone and
-needs to be enabled by default.
+Michael/Sylwester, could you please merge this patch?
 
-This patch updates the critical clocks that need
-to be enabled by default.
+It is a bugfix for ddeac8d968d41d13a52582d6e80395a329e9b1ff ("clk:
+samsung: add infrastructure to register cpu clocks") which got
+merged in v4.2-rc1.
 
-Add a separate struct to distinguish the critical clocks
-as listed:
-1.) core clocks:
-	a.) mips clock
-2.) peripheral system clocks:
-	a.) sys clock
-	b.) sys_bus clock
-	c.) DDR clock
-	d.) ROM clock
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
-Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-Signed-off-by: Damien.Horsley <Damien.Horsley@imgtec.com>
-Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
----
- drivers/clk/pistachio/clk-pistachio.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
-index 8c0fe88..c4ceb5e 100644
---- a/drivers/clk/pistachio/clk-pistachio.c
-+++ b/drivers/clk/pistachio/clk-pistachio.c
-@@ -159,9 +159,15 @@ PNAME(mux_debug) = { "mips_pll_mux", "rpu_v_pll_mux",
- 		     "wifi_pll_mux", "bt_pll_mux" };
- static u32 mux_debug_idx[] = { 0x0, 0x1, 0x2, 0x4, 0x8, 0x10 };
- 
--static unsigned int pistachio_critical_clks[] __initdata = {
--	CLK_MIPS,
--	CLK_PERIPH_SYS,
-+static unsigned int pistachio_critical_clks_core[] __initdata = {
-+	CLK_MIPS
-+};
-+
-+static unsigned int pistachio_critical_clks_sys[] __initdata = {
-+	PERIPH_CLK_SYS,
-+	PERIPH_CLK_SYS_BUS,
-+	PERIPH_CLK_DDR,
-+	PERIPH_CLK_ROM,
- };
- 
- static void __init pistachio_clk_init(struct device_node *np)
-@@ -193,8 +199,8 @@ static void __init pistachio_clk_init(struct device_node *np)
- 
- 	pistachio_clk_register_provider(p);
- 
--	pistachio_clk_force_enable(p, pistachio_critical_clks,
--				   ARRAY_SIZE(pistachio_critical_clks));
-+	pistachio_clk_force_enable(p, pistachio_critical_clks_core,
-+				   ARRAY_SIZE(pistachio_critical_clks_core));
- }
- CLK_OF_DECLARE(pistachio_clk, "img,pistachio-clk", pistachio_clk_init);
- 
-@@ -261,6 +267,9 @@ static void __init pistachio_clk_periph_init(struct device_node *np)
- 				    ARRAY_SIZE(pistachio_periph_gates));
- 
- 	pistachio_clk_register_provider(p);
-+
-+	pistachio_clk_force_enable(p, pistachio_critical_clks_sys,
-+				   ARRAY_SIZE(pistachio_critical_clks_sys));
- }
- CLK_OF_DECLARE(pistachio_clk_periph, "img,pistachio-clk-periph",
- 	       pistachio_clk_periph_init);
--- 
-1.9.1
+On Tuesday, June 30, 2015 08:27:36 AM Javier Martinez Canillas wrote:
+> On Tue, Jun 30, 2015 at 2:06 AM, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+> > On 30.06.2015 02:29, Bartlomiej Zolnierkiewicz wrote:
+> >> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
+> >> incorrectly used as a bit numbers.  Fix it.
+> >>
+> >> Tested on Exynos4210 based Origen board and on Exynos5250 based
+> >> Arndale board.
+> >>
+> >> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> >> Cc: Michael Turquette <mturquette@baylibre.com>
+> >> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> >> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> >> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> >> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> >> ---
+> >>  drivers/clk/samsung/clk-cpu.c | 10 +++++-----
+> >>  1 file changed, 5 insertions(+), 5 deletions(-)
+> >
+> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> >
+> 
+> Looks good to me as well.
+> 
+> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> 
+> > Best regards,
+> > Krzysztof
+> >
+> 
+> Best regards,
+> Javier
