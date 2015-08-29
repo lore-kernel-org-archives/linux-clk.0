@@ -1,81 +1,38 @@
-Return-Path: <shunqian.zheng@gmail.com>
-Return-Path: <shunqian.zheng@gmail.com>
-From: Shunqian Zheng <zhengsq@rock-chips.com>
-To: gregkh@linuxfoundation.org,
-	srinivas.kandagatla@linaro.org,
-	maxime.ripard@free-electrons.com,
-	heiko@sntech.de,
-	caesar.wang@rock-chips.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	dianders@chromium.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	xjq@rock-chips.com,
-	ZhengShunQian <zhengsq@rock-chips.com>
-Subject: [PATCH v2 4/5] Documentation: rockchip-efuse: describe the usage of eFuse
-Date: Tue, 11 Aug 2015 18:13:43 +0800
-Message-Id: <1439288024-13359-5-git-send-email-zhengsq@rock-chips.com>
-In-Reply-To: <1439288024-13359-1-git-send-email-zhengsq@rock-chips.com>
-References: <1439288024-13359-1-git-send-email-zhengsq@rock-chips.com>
+Return-Path: <magnus.damm@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWcHvi19tBGSKSfLbb0WuqB+GkfAenXCwkeZNy99gk1Ew@mail.gmail.com>
+References: <20150828091550.21731.85227.sendpatchset@little-apple>
+	<20150828091624.21731.11014.sendpatchset@little-apple>
+	<CAMuHMdWcHvi19tBGSKSfLbb0WuqB+GkfAenXCwkeZNy99gk1Ew@mail.gmail.com>
+Date: Sat, 29 Aug 2015 18:31:01 +0900
+Message-ID: <CANqRtoQJAexS8zyH0CYFOZou3NmKHV3S0e7gu6+4YLupSgx+_A@mail.gmail.com>
+Subject: Re: [PATCH v3 03/04] clk: shmobile: Add Renesas R-Car Gen3 CPG support
+From: Magnus Damm <magnus.damm@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: ZhengShunQian <zhengsq@rock-chips.com>
+Hi Geert,
 
-This patch add the bindings document of rockchip eFuse driver.
+On Sat, Aug 29, 2015 at 5:46 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Fri, Aug 28, 2015 at 11:16 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+>> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+>>
+>> This patch adds very initial CPG support.
+>> R-Car Gen3 write function should use CPG write protection method
+>> which is shared with MSTP driver. This patch has it but not used.
+>
+> The last sentence is very confusing. I think it should be removed?
 
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: ZhengShunQian <zhengsq@rock-chips.com>
----
- .../devicetree/bindings/nvmem/rockchip-efuse.txt   | 38 ++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/nvmem/rockchip-efuse.txt
+I agree it is confusing. I've reworked the commit log message in the
+latest version.
 
-diff --git a/Documentation/devicetree/bindings/nvmem/rockchip-efuse.txt b/Documentation/devicetree/bindings/nvmem/rockchip-efuse.txt
-new file mode 100644
-index 0000000..8f86ab3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/nvmem/rockchip-efuse.txt
-@@ -0,0 +1,38 @@
-+= Rockchip eFuse device tree bindings =
-+
-+Required properties:
-+- compatible: Should be "rockchip,rockchip-efuse"
-+- reg: Should contain the registers location and exact eFuse size
-+- clocks: Should be the clock id of eFuse
-+- clock-names: Should be "pclk_efuse"
-+
-+= Data cells =
-+Are child nodes of eFuse, bindings of which as described in
-+bindings/nvmem/nvmem.txt
-+
-+Example:
-+
-+	efuse: efuse@ffb40000 {
-+		compatible = "rockchip,rockchip-efuse";
-+		reg = <0xffb40000 0x20>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		clocks = <&cru PCLK_EFUSE256>;
-+		clock-names = "pclk_efuse";
-+
-+		/* Data cells */
-+		cpu_leakage: cpu_leakage {
-+			reg = <0x17 0x1>;
-+		};
-+	};
-+
-+= Data consumers =
-+Are device nodes which consume nvmem data cells.
-+
-+Example:
-+
-+	cpu_leakage {
-+		...
-+		nvmem-cells = <&cpu_leakage>;
-+		nvmem-cell-names = "cpu_leakage";
-+	};
--- 
-1.9.1
+Thanks,
+
+/ magnus
