@@ -1,77 +1,49 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
-	k.kozlowski@samsung.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 3/4] ARM: dts: Add UART2 dt node for Exynos3250 SoC
-Date: Tue, 11 Aug 2015 12:46:23 +0900
-Message-id: <1439264784-30322-4-git-send-email-cw00.choi@samsung.com>
-In-reply-to: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
-References: <1439264784-30322-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <magnus.damm@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1746913.nJHMkg2anu@avalon>
+References: <20150828091550.21731.85227.sendpatchset@little-apple>
+	<20150828091602.21731.21262.sendpatchset@little-apple>
+	<1746913.nJHMkg2anu@avalon>
+Date: Sat, 29 Aug 2015 17:33:19 +0900
+Message-ID: <CANqRtoS-rvW5-0aZ+aKwX4Kjnuf9pahGA2jqpjRHK116MZKY1Q@mail.gmail.com>
+Subject: Re: [PATCH v3 01/04] clk: shmobile: Get rid of CONFIG_ARCH_SHMOBILE_MULTI
+From: Magnus Damm <magnus.damm@gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, SH-Linux <linux-sh@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, "Simon Horman [Horms]" <horms@verge.net.au>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch add the uart2 devicetree node for Exynos3250 SoC.
+Hi Laurent,
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  7 +++++++
- arch/arm/boot/dts/exynos3250.dtsi         | 12 ++++++++++++
- 2 files changed, 19 insertions(+)
+On Sat, Aug 29, 2015 at 4:59 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> Hi Magnus,
+>
+> Thank you for the patch.
+>
+> On Friday 28 August 2015 18:16:02 Magnus Damm wrote:
+>> From: Magnus Damm <damm+renesas@opensource.se>
+>>
+>> Shmobile is all multiplatform these days, so get rid of the
+>> reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
+>> enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
+>> MSTP depending on if they are included in the SoC or not.
+>>
+>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+>> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Assuming you have verified that adding the same object file several times to
+> obj-y won't cause any issue,
 
-diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-index 5ab81c39e2c9..eac1d21c10d4 100644
---- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-@@ -120,6 +120,13 @@
- 		samsung,pin-drv = <0>;
- 	};
- 
-+	uart2_data: uart2-data {
-+		samsung,pins = "gpa1-0", "gpa1-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
- 	i2c3_bus: i2c3-bus {
- 		samsung,pins = "gpa1-2", "gpa1-3";
- 		samsung,pin-function = <3>;
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 2db99433e17f..02f3250766c9 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -42,6 +42,7 @@
- 		i2c7 = &i2c_7;
- 		serial0 = &serial_0;
- 		serial1 = &serial_1;
-+		serial2 = &serial_2;
- 	};
- 
- 	cpus {
-@@ -435,6 +436,17 @@
- 			status = "disabled";
- 		};
- 
-+		serial_2: serial@13820000 {
-+			compatible = "samsung,exynos4210-uart";
-+			reg = <0x13820000 0x100>;
-+			interrupts = <0 111 0>;
-+			clocks = <&cmu CLK_UART2>, <&cmu CLK_SCLK_UART2>;
-+			clock-names = "uart", "clk_uart_baud0";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart2_data>;
-+			status = "disabled";
-+		};
-+
- 		i2c_0: i2c@13860000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--- 
-1.8.5.5
+Yeah. A good example of such (mis)use is in arch/arm/mach-shmobile/Kconfig.
+I've also built 32-bit shmobile_defconfig and 64-bit defconfig without issues.
 
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Thanks!
+
+/ magnus
