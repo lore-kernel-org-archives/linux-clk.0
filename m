@@ -1,106 +1,91 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.uni-paderborn.de ([131.234.142.9]:47242 "EHLO
-	mail.uni-paderborn.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964791AbbHHPGn (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sat, 8 Aug 2015 11:06:43 -0400
+Return-Path: <magnus.damm@gmail.com>
 MIME-Version: 1.0
-Date: Sat, 8 Aug 2015 16:51:28 +0200
-Message-ID: <CALcgO_6DQFaeHKyRPXzs2AB1L2z6v6M9nk2KnmE5RsjJvuXKFg@mail.gmail.com>
-Subject: clk-gpio-gate: using GPIO pin from expander chip on serial bus
-From: Michael Allwright <michael.allwright@upb.de>
-To: Jyri Sarha <jsarha@ti.com>, linux-clk@vger.kernel.org
+In-Reply-To: <20150829091346.28546.42552.sendpatchset@little-apple>
+References: <20150829091323.28546.28287.sendpatchset@little-apple>
+	<20150829091346.28546.42552.sendpatchset@little-apple>
+Date: Sat, 29 Aug 2015 18:32:10 +0900
+Message-ID: <CANqRtoTCoONvfbwoTVQpcoPFhiQrj9iWFqM65Rh4Lo9HE4hcaw@mail.gmail.com>
+Subject: Re: [PATCH v4 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk <linux-clk@vger.kernel.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
+	SH-Linux <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	"Simon Horman [Horms]" <horms@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Magnus Damm <magnus.damm@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+On Sat, Aug 29, 2015 at 6:13 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+>
+> This patch adds initial CPG support for R-Car Generation 3 and in
+> particular the R8A7795 SoC.
+>
+> The R-Car Gen3 clock hardware has a register write protection feature that
+> needs to be shared between the CPG function needs to be shared between
+> the CPG and MSTP hardware somehow. So far this feature is simply ignored.
+>
+> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> ---
+>
+>  Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
+>  - Reworked driver to incorporate most feedback from Stephen Boyd - thanks!!
+>  - Major things like syscon and driver model require more discussion.
+>  - Added hunk to build drivers/clk/shmobile if ARCH_RENESAS is set.
+>
+>  Changes since V2: (Magnus Damm <damm+renesas@opensource.se>)
+>  - Reworked driver to rely on clock index instead of strings.
+>  - Dropped use of "clock-output-names".
+>
+>  Earlier versions: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>  Initial version: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+>
+>  Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   31 +
+>  drivers/clk/Makefile                                                     |    1
+>  drivers/clk/shmobile/Makefile                                            |    1
+>  drivers/clk/shmobile/clk-rcar-gen3.c                                     |  249 ++++++++++
+>  4 files changed, 282 insertions(+)
+>
+> --- /dev/null
+> +++ work/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt       2015-08-29 16:23:54.982366518 +0900
+> @@ -0,0 +1,31 @@
+> +* Renesas R-Car Gen3 Clock Pulse Generator (CPG)
+> +
+> +The CPG generates core clocks for the R-Car Gen3 SoCs. It includes three PLLs
+> +and several fixed ratio dividers.
+> +
+> +Required Properties:
+> +
+> +  - compatible: Must be one of
+> +    - "renesas,r8a7795-cpg-clocks" for the r8a7795 CPG
+> +    - "renesas,rcar-gen3-cpg-clocks" for the generic R-Car Gen3 CPG
+> +
+> +  - reg: Base address and length of the memory resource used by the CPG
+> +
+> +  - clocks: References to the parent clocks: first to the EXTAL clock
+> +  - #clock-cells: Must be 1
+> +  - clock-output-names: The names of the clocks. Supported clocks are
+> +    "main", "pll0", "pll1", "pll2", "pll3", "pll4"
+> +
+> +
+> +Example
+> +-------
+> +
+> +       cpg_clocks: cpg_clocks@e6150000 {
+> +               compatible = "renesas,r8a7795-cpg-clocks",
+> +                            "renesas,rcar-gen3-cpg-clocks";
+> +               reg = <0 0xe6150000 0 0x1000>;
+> +               clocks = <&extal_clk>;
+> +               #clock-cells = <1>;
+> +               clock-output-names = "main", "pll0", "pll1","pll2",
+> +                                    "pll3", "pll4";
+> +       };
 
-I think I have found a small issue with the clk-gpio-gate driver. When
-using a GPIO expander connected to I2C bus to enable the clock, I
-think there is an issue regarding accessing the GPIO while holding
-a/the/one of the spinlocks that is associated with the clock framework
-[1, 2].
+Seems that I forgot update the DT binding bits. Will fix in next verison.
 
-[1] https://www.kernel.org/doc/Documentation/gpio/gpio.txt - 60
-[2] https://www.kernel.org/doc/Documentation/clk.txt - 246
+Thanks,
 
-This is these are the two reports coming back while booting the
-kernel. They happen most of the time, occasionally I can get to the
-login prompt, but then the issue reappears when I try to use the
-driver that enables the clock.
-
-[  131.068176] ------------[ cut here ]------------
-[  131.071380] WARNING: CPU: 0 PID: 1447 at
-.../drivers/gpio/gpiolib.c:1398 gpiod_set_value+0x50/0x5c()
-[  131.081359] Modules linked in: nfc mwifiex_sdio btmrvl_sdio btmrvl
-mwifiex cfg80211 bluetooth rfkill ov5640(O)
-[  131.099365] CPU: 0 PID: 1447 Comm: yavta Tainted: G        W  O
-4.1.4-custom #9
-[  131.101348] Hardware name: Generic OMAP4 (Flattened Device Tree)
-...
-[  131.151336] [<c0305a44>] (gpiod_set_value) from [<c04f45b8>]
-(clk_gpio_gate_enable+0x10/0x18)
-[  131.164672] [<c04f45b8>] (clk_gpio_gate_enable) from [<c04efb28>]
-(clk_core_enable+0x78/0x138)
-[  131.164672] [<c04efb28>] (clk_core_enable) from [<c04effd0>]
-(clk_enable+0x20/0x34)
-[  131.181335] [<c04effd0>] (clk_enable) from [<bf00093c>]
-(ov5640_s_power+0x168/0x1f0 [ov5640])
-...
-
-And a tenth of a second later:
-
-[  131.305084] BUG: spinlock cpu recursion on CPU#0, kworker/0:1/232
-[  131.311492]  lock: enable_lock+0x0/0x20, .magic: dead4ead, .owner:
-yavta/1447, .owner_cpu: 0
-[  131.311492] CPU: 0 PID: 232 Comm: kworker/0:1 Tainted: G        W
-O    4.1.4-custom #9
-[  131.321350] Hardware name: Generic OMAP4 (Flattened Device Tree)
-[  131.331329] Workqueue: pm pm_runtime_work
-[  131.339202] [<c0016a2c>] (unwind_backtrace) from [<c0012f9c>]
-(show_stack+0x10/0x14)
-[  131.341308] [<c0012f9c>] (show_stack) from [<c05d30b8>]
-(dump_stack+0x84/0x9c)
-[  131.351318] [<c05d30b8>] (dump_stack) from [<c008aed8>]
-(do_raw_spin_lock+0x190/0x1b0)
-[  131.363189] [<c008aed8>] (do_raw_spin_lock) from [<c05d9bf0>]
-(_raw_spin_lock_irqsave+0x48/0x54)
-[  131.372406] [<c05d9bf0>] (_raw_spin_lock_irqsave) from [<c04ef6f0>]
-(clk_enable_lock+0x9c/0x124)
-[  131.381317] [<c04ef6f0>] (clk_enable_lock) from [<c04f0dc8>]
-(clk_disable+0x1c/0x34)
-[  131.389709] [<c04f0dc8>] (clk_disable) from [<c002725c>]
-(_disable_clocks+0x18/0x68)
-[  131.391326] [<c002725c>] (_disable_clocks) from [<c0028600>]
-(_idle+0x10c/0x214)
-
-The first one, comes from the following lines of codes, there is also
-a relevant comment in the function docs:
-
-This function should be called from contexts where we cannot sleep,
-and will complain if the GPIO chip functions potentially sleep.
-
-/* Should be using gpio_set_value_cansleep() */
-WARN_ON(desc->chip->can_sleep);
-
-For what ever reason this isn't a problem in the regulator framework
-(I use the same GPIO expander to switch on/off fixed regulators) which
-I would have thought would have been just as system critical as the
-clock framework.
-Perhaps this can be solved by creating or allowing clocks that aren't
-so system critical that can be enabled via clk_enable_cansleep() so to
-speak? I'm sure there is cleaner solutions to this.
-
-Any thoughts?
-
-
-Michael Allwright
-
-PhD Student
-Paderborn Institute for Advanced Studies in Computer Science and Engineering
-
-University of Paderborn
-Office-number 02-10
-Zukunftsmeile 1
-33102 Paderborn
-Germany
+/ magnus
