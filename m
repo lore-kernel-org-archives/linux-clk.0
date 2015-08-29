@@ -1,370 +1,126 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	devicetree@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v5 2/3] clk: Add a Raspberry Pi-specific clock driver.
-Date: Thu, 13 Aug 2015 16:05:41 -0700
-Message-Id: <1439507142-2965-3-git-send-email-eric@anholt.net>
-In-Reply-To: <1439507142-2965-1-git-send-email-eric@anholt.net>
-References: <1439507142-2965-1-git-send-email-eric@anholt.net>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Sat, 29 Aug 2015 05:49:49 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, s.hauer@pengutronix.de, geert@linux-m68k.org
+Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and
+ implement hand-off
+Message-ID: <20150829034949.GW29389@lukather>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <20150818154552.GI2547@lukather>
+ <20150818164356.31346.80341@quantum>
+ <20150820151510.GD30520@lukather>
+ <20150825215051.31346.56261@quantum>
+ <20150826065423.GR19409@x1>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9I0HVnGRacHebCDW"
+In-Reply-To: <20150826065423.GR19409@x1>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Unfortunately, the clock manager's registers are not accessible by the
-ARM, so we have to request that the firmware modify our clocks for us.
 
-This driver only registers the clocks at the point they are requested
-by a client driver.  This is partially to support returning
--EPROBE_DEFER when the firmware driver isn't supported yet, but it
-also avoids issues with disabling "unused" clocks due to them not yet
-being connected to their consumers in the DT.
+--9I0HVnGRacHebCDW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
+On Wed, Aug 26, 2015 at 07:54:23AM +0100, Lee Jones wrote:
+> On Tue, 25 Aug 2015, Michael Turquette wrote:
+>=20
+> > Quoting Maxime Ripard (2015-08-20 08:15:10)
+> > > On Tue, Aug 18, 2015 at 09:43:56AM -0700, Michael Turquette wrote:
+> > > > Quoting Maxime Ripard (2015-08-18 08:45:52)
+> > > > > Hi Mike,
+> > > > >=20
+> > > > > On Fri, Aug 07, 2015 at 12:09:27PM -0700, Michael Turquette wrote:
+> > > > > > All of the other kitchen sink stuff (DT binding, passing the fl=
+ag back
+> > > > > > to the framework when the clock consumer driver calls clk_put) =
+was left
+> > > > > > out because I do not see a real use case for it. If one can dem=
+onstrate
+> > > > > > a real use case (and not a hypothetical one) then this patch se=
+ries can
+> > > > > > be expanded further.
+> > > > >=20
+> > > > > I think there is a very trivial use case for passing back the
+> > > > > reference to the framework, if during the probed, we have somethi=
+ng
+> > > > > like:
+> > > > >=20
+> > > > > clk =3D clk_get()
+> > > > > clk_prepare_enable(clk)
+> > > > > foo_framework_register()
+> > > > >=20
+> > > > > if foo_framework_register fails, the sensible thing to do would b=
+e to
+> > > > > call clk_disable_unprepare. If the clock was a critical clock, you
+> > > > > just gated it.
+> > > >=20
+> > > > Hmm, a good point. Creating the "pass the reference back" call is n=
+ot
+> > > > hard technically. But how to keep from abusing it? E.g. I do not wa=
+nt
+> > > > that call to become an alternative to correct use of clk_enable.
+> > > >=20
+> > > > Maybe I'll need a Coccinelle script or just some regular sed to
+> > > > occasionally search for new users of this api and audit them?
+> > > >=20
+> > > > I was hoping to not add any new consumer api at all :-/
+> > >=20
+> > > I don't think there's any abuse that can be done with the current API,
+> > > nor do I think you need to have new functions either.
+> > >=20
+> > > If the clock is critical, when the customer calls
+> > > clk_unprepare_disable on it, simply take back the reference you gave
+> > > in the framework, and you're done. Or am I missing something?
+> >=20
+> > Maybe I am the one missing something? My goal was to allow the consumer
+> > driver to gate the critical clock. So we need clk_disable_unused to
+> > actually disable the clock for that to work.
+> >=20
+> > I think you are suggesting that clk_disable_unused should *not* disable
+> > the clock if it is critical. Can you confirm that?
+>=20
+> My take is that a critical clock should only be disabled when a
+> knowledgeable driver wants to gate it for a specific purpose [probably
+> using clk_disable()].  Once the aforementioned driver no longer has a
+> use for the clock [whether that happens with clk_unprepare_disable()
+> or clk_put() ...] the clock should be ungated and be provided with
+> critical status once more.
 
-v2: Declare the mutex static (from review by Baruch Siach), merge
-    description and copyright comments.
+Agreed.
 
-v3: Update for new rpi firmware API.  Update the compatible string.
-    Make the firmware handle be under a vendor-namespaced property.
-    Make the DT indices match the firmware clock IDs.  Move the driver
-    under the firmware driver's Kconfig, since it requires it.  Move a
-    container_of() from 2 callers into the callee.
+Maxime
 
-v4: Update commit message to mention subsystem.  Add #defines for a
-    couple of bitfield checks, and use the bitfield check for
-    rpi_clk_is_on().  Return an error when appropriate in
-    rpi_clk_is_on(), and don't return specific rpi_firmware_property()
-    errors in other places when we were only returning -EINVAL.  Add
-    some comment text describing how return values work from
-    the firmware.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-v5: Restructure as a platform_driver on suggestion from Michael
-    Turquette.  This works around the -EPROBE_DEFER problem, so now we
-    can register all of our clocks at probe time.  Store the current
-    clock rate in the struct, and avoid asking for no-op changes.  It
-    appears that a no-op change of the pixel clock while the clock is
-    being used (at boot time when the KMS driver calls
-    clk_prepare_enable()) actually breaks the display.  Dropped
-    Stephen's ack since this is a pretty significant rewrite.
+--9I0HVnGRacHebCDW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
- drivers/clk/Makefile          |   1 +
- drivers/clk/clk-raspberrypi.c | 286 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 287 insertions(+)
- create mode 100644 drivers/clk/clk-raspberrypi.c
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index c4cf075..ad0a4a5 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -20,6 +20,7 @@ obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
- obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
- obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
- obj-$(CONFIG_ARCH_BCM2835)		+= clk-bcm2835.o
-+obj-$(CONFIG_RASPBERRYPI_FIRMWARE)	+= clk-raspberrypi.o
- obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
- obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
- obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
-diff --git a/drivers/clk/clk-raspberrypi.c b/drivers/clk/clk-raspberrypi.c
-new file mode 100644
-index 0000000..a65a028
---- /dev/null
-+++ b/drivers/clk/clk-raspberrypi.c
-@@ -0,0 +1,286 @@
-+/*
-+ * Implements a clock provider for the clocks controlled by the
-+ * firmware on Raspberry Pi.
-+ *
-+ * These clocks are controlled by the CLOCKMAN peripheral in the
-+ * hardware, but the ARM doesn't have access to the registers for
-+ * them.  As a result, we have to call into the firmware to get it to
-+ * enable, disable, and set their frequencies.
-+ *
-+ * We don't have an interface for getting the set of frequencies
-+ * available from the hardware.  We can request a min/max, but other
-+ * than that we have to request a frequency and take what it gives us.
-+ *
-+ * Copyright © 2015 Broadcom
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <dt-bindings/clk/raspberrypi.h>
-+#include <soc/bcm2835/raspberrypi-firmware.h>
-+
-+#define RPI_FIRMWARE_CLOCK_STATE_ENABLED		(1 << 0)
-+#define RPI_FIRMWARE_CLOCK_STATE_ERROR			(1 << 1)
-+#define RPI_FIRMWARE_SET_CLOCK_RATE_ERROR		0
-+
-+static const struct {
-+	const char *name;
-+	int flags;
-+} rpi_clocks[] = {
-+	[RPI_CLOCK_EMMC] = { "emmc", CLK_IS_ROOT },
-+	[RPI_CLOCK_UART0] = { "uart0", CLK_IS_ROOT },
-+	[RPI_CLOCK_ARM] = { "arm", CLK_IS_ROOT | CLK_IGNORE_UNUSED },
-+	[RPI_CLOCK_CORE] = { "core", CLK_IS_ROOT | CLK_IGNORE_UNUSED },
-+	[RPI_CLOCK_V3D] = { "v3d", CLK_IS_ROOT },
-+	[RPI_CLOCK_H264] = { "h264", CLK_IS_ROOT },
-+	[RPI_CLOCK_ISP] = { "isp", CLK_IS_ROOT },
-+	[RPI_CLOCK_SDRAM] = { "sdram", CLK_IS_ROOT | CLK_IGNORE_UNUSED },
-+	[RPI_CLOCK_PIXEL] = { "pixel", CLK_IS_ROOT | CLK_IGNORE_UNUSED },
-+	[RPI_CLOCK_PWM] = { "pwm", CLK_IS_ROOT },
-+};
-+
-+struct rpi_firmware_clock {
-+	/* Clock definitions in our static struct. */
-+	const char *name;
-+	int flags;
-+
-+	/* The rest are filled in at init time. */
-+	struct clk_hw hw;
-+	struct device *dev;
-+	struct rpi_firmware *firmware;
-+	uint32_t last_rate;
-+	int id;
-+};
-+
-+static int rpi_clk_is_on(struct clk_hw *hw)
-+{
-+	struct rpi_firmware_clock *rpi_clk =
-+		container_of(hw, struct rpi_firmware_clock, hw);
-+	u32 packet[2];
-+	int ret;
-+
-+	packet[0] = rpi_clk->id;
-+	packet[1] = 0;
-+	ret = rpi_firmware_property(rpi_clk->firmware,
-+				    RPI_FIRMWARE_GET_CLOCK_STATE,
-+				    &packet, sizeof(packet));
-+	/*
-+	 * The second packet field has the new clock state returned in
-+	 * the low bit, or an error flag in the second bit.
-+	 */
-+	if (ret || (packet[1] & RPI_FIRMWARE_CLOCK_STATE_ERROR)) {
-+		dev_err(rpi_clk->dev, "Failed to get clock state\n");
-+		return ret ? ret : -EINVAL;
-+	}
-+
-+	return packet[1] & RPI_FIRMWARE_CLOCK_STATE_ENABLED;
-+}
-+
-+static int rpi_clk_set_state(struct clk_hw *hw, bool on)
-+{
-+	struct rpi_firmware_clock *rpi_clk =
-+		container_of(hw, struct rpi_firmware_clock, hw);
-+	u32 packet[2];
-+	int ret;
-+
-+	if (on == (rpi_clk->last_rate != 0))
-+		return 0;
-+
-+	packet[0] = rpi_clk->id;
-+	packet[1] = on;
-+	ret = rpi_firmware_property(rpi_clk->firmware,
-+				    RPI_FIRMWARE_SET_CLOCK_STATE,
-+				    &packet, sizeof(packet));
-+	/*
-+	 * The second packet field has the new clock state returned in
-+	 * the low bit, or an error flag in the second bit.
-+	 */
-+	if (ret || (packet[1] & RPI_FIRMWARE_CLOCK_STATE_ERROR)) {
-+		dev_err(rpi_clk->dev, "Failed to set clock state\n");
-+		return ret ? ret : -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int rpi_clk_on(struct clk_hw *hw)
-+{
-+	return rpi_clk_set_state(hw, true);
-+}
-+
-+static void rpi_clk_off(struct clk_hw *hw)
-+{
-+	rpi_clk_set_state(hw, false);
-+}
-+
-+static unsigned long rpi_clk_get_rate(struct clk_hw *hw,
-+				      unsigned long parent_rate)
-+{
-+	struct rpi_firmware_clock *rpi_clk =
-+		container_of(hw, struct rpi_firmware_clock, hw);
-+	u32 packet[2];
-+	int ret;
-+
-+	packet[0] = rpi_clk->id;
-+	packet[1] = 0;
-+	ret = rpi_firmware_property(rpi_clk->firmware,
-+				    RPI_FIRMWARE_GET_CLOCK_RATE,
-+				    &packet, sizeof(packet));
-+	/*
-+	 * Note that the second packet field returns 0 on an unknown
-+	 * clock error, which would also be a reasonable value for a
-+	 * clock that's off.
-+	 */
-+	if (ret) {
-+		dev_err(rpi_clk->dev, "Failed to get clock rate\n");
-+		return 0;
-+	}
-+
-+	rpi_clk->last_rate = packet[1];
-+
-+	return packet[1];
-+}
-+
-+static int rpi_clk_set_rate(struct clk_hw *hw,
-+			    unsigned long rate, unsigned long parent_rate)
-+{
-+	struct rpi_firmware_clock *rpi_clk =
-+		container_of(hw, struct rpi_firmware_clock, hw);
-+	u32 packet[2];
-+	int ret;
-+
-+	if (rate == rpi_clk->last_rate)
-+		return 0;
-+
-+	packet[0] = rpi_clk->id;
-+	packet[1] = rate;
-+	ret = rpi_firmware_property(rpi_clk->firmware,
-+				    RPI_FIRMWARE_SET_CLOCK_RATE,
-+				    &packet, sizeof(packet));
-+	/*
-+	 * The second packet field has the new clock rate returned, or
-+	 * 0 on error.
-+	 */
-+	if (ret || packet[1] == RPI_FIRMWARE_SET_CLOCK_RATE_ERROR) {
-+		dev_err(rpi_clk->dev, "Failed to set clock rate\n");
-+		return ret;
-+	}
-+
-+	rpi_clk->last_rate = packet[1];
-+
-+	return 0;
-+}
-+
-+static long rpi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *parent_rate)
-+{
-+	/*
-+	 * The firmware will end up rounding our rate to something,
-+	 * but we don't have an interface for it.  Just return the
-+	 * requested value, and it'll get updated after the clock gets
-+	 * set.
-+	 */
-+	return rate;
-+}
-+
-+static struct clk_ops rpi_clk_ops = {
-+	.is_prepared = rpi_clk_is_on,
-+	.prepare = rpi_clk_on,
-+	.unprepare = rpi_clk_off,
-+	.recalc_rate = rpi_clk_get_rate,
-+	.set_rate = rpi_clk_set_rate,
-+	.round_rate = rpi_clk_round_rate,
-+};
-+
-+static int rpi_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *firmware_node;
-+	struct rpi_firmware *firmware;
-+	struct clk_init_data init;
-+	int i;
-+	struct clk_onecell_data *onecell;
-+
-+	firmware_node = of_parse_phandle(dev->of_node,
-+					 "raspberrypi,firmware", 0);
-+	if (!firmware_node) {
-+		dev_err(dev, "Missing firmware node\n");
-+		return -ENODEV;
-+	}
-+	firmware = rpi_firmware_get(firmware_node);
-+	if (!firmware)
-+		return -EPROBE_DEFER;
-+
-+	onecell = devm_kmalloc(dev, sizeof(*onecell), GFP_KERNEL);
-+	if (!onecell)
-+		return -ENOMEM;
-+	onecell->clk_num = ARRAY_SIZE(rpi_clocks);
-+	onecell->clks = devm_kzalloc(dev, sizeof(*onecell->clks), GFP_KERNEL);
-+	if (!onecell->clks)
-+		return -ENOMEM;
-+
-+	memset(&init, 0, sizeof(init));
-+	init.ops = &rpi_clk_ops;
-+
-+	for (i = 0; i < ARRAY_SIZE(rpi_clocks); i++) {
-+		struct rpi_firmware_clock *rpi_clk;
-+
-+		if (!rpi_clocks[i].name)
-+			continue;
-+
-+		rpi_clk = devm_kzalloc(dev, sizeof(*rpi_clk), GFP_KERNEL);
-+		if (!rpi_clk)
-+			return -ENOMEM;
-+
-+		rpi_clk->name = rpi_clocks[i].name;
-+		rpi_clk->firmware = firmware;
-+		rpi_clk->dev = dev;
-+		rpi_clk->hw.init = &init;
-+		rpi_clk->id = i;
-+		init.name = rpi_clocks[i].name;
-+		init.flags = rpi_clocks[i].flags;
-+
-+		onecell->clks[i] = devm_clk_register(&pdev->dev, &rpi_clk->hw);
-+		if (IS_ERR(onecell->clks[i]))
-+			return PTR_ERR(onecell->clks[i]);
-+
-+		/* Get the current clock rate/state, to avoid extra on
-+		 * to on transitions at boot.
-+		 */
-+		rpi_clk_get_rate(&rpi_clk->hw, 0);
-+	}
-+
-+	return of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
-+				   onecell);
-+}
-+
-+static int rpi_clk_remove(struct platform_device *pdev)
-+{
-+	of_clk_del_provider(pdev->dev.of_node);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rpi_clk_of_match[] = {
-+	{ .compatible = "raspberrypi,bcm2835-firmware-clocks", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, rpi_clk_of_match);
-+
-+static struct platform_driver rpi_clk_driver = {
-+	.driver = {
-+		.name = "raspberrypi-clk",
-+		.of_match_table = rpi_clk_of_match,
-+	},
-+	.probe		= rpi_clk_probe,
-+	.remove		= rpi_clk_remove,
-+};
-+module_platform_driver(rpi_clk_driver);
-+
-+MODULE_AUTHOR("Eric Anholt <eric@anholt.net>");
-+MODULE_DESCRIPTION("Raspberry Pi clock driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.1.4
+iQIcBAEBAgAGBQJV4SvdAAoJEBx+YmzsjxAgoxMQAJw82kRs47N40mbVej3Xx3+V
+yV11v9yYQYL7rOp8PINkcrr9tG+3h/SUHe4sbtfe95Bmrw+0GL64EnoTtPrwF/+r
+bnBFUn+qsnp9RSp04vKeMqY/zEbCpTedhWbogl2kvI7UmLYteJ5cBJzhieUcl5o3
++oINgoKnmM2u0ALXVbS/Ewl7pgZ7e7F0TSkv2B8FqZDHNhXg06PskX3qsr+vxoxH
+ZTHli0uUdvtTgVqJw3zYicABUCsu3hyiIeV4wjoJhT+7FhCp/0igqGBD1/WR+oYb
+1Dawdt4APhOj8WZMrTUMN2I7RFUqfi+bNkLuJviwCgo/UG8cTHTjDkM3+XAVrq8A
+bILyneOyWRD5IYI+qnBg6PP939MINIm45H2wBnA7VFn+orwwAT57EsX6yLT/hLtH
+MEVEQ/rW9Bc+9E55Ae/Acv6JX9U0EK7GmkWXDs7Y+pbhrMy6Ah5HBK7SPCDuFEZd
++C/1MR5mkQP0+2ab4vnQM+4eruRBwdWBBEO8Bfop/ElULP17vvBR1GVaJYLibTQh
+l9jJ7Ym7cC3Q8LBT3quERRmICxaLliF5Xev1xnZurJiuffgESzQs99yR5lKfOXmU
+g7vQ+gKixWUqQEK8gXOUqM8mVCpgkCt7AILdEQBnw+2bkryja8eD1eGu7l8nswLu
+wW27mDjODiBDv/rTAvps
+=z9kQ
+-----END PGP SIGNATURE-----
+
+--9I0HVnGRacHebCDW--
