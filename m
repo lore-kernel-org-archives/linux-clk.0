@@ -1,74 +1,36 @@
-Return-Path: <peter.ujfalusi@ti.com>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: Tero Kristo <t-kristo@ti.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: ti: clk-7xx: Remove hardwired ABE clock configuration
-Date: Mon, 24 Aug 2015 10:35:02 +0300
-Message-ID: <1440401702-32420-1-git-send-email-peter.ujfalusi@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Sat, 29 Aug 2015 18:14:07 +0900
+Message-Id: <20150829091407.28546.23953.sendpatchset@little-apple>
+In-Reply-To: <20150829091323.28546.28287.sendpatchset@little-apple>
+References: <20150829091323.28546.28287.sendpatchset@little-apple>
+Subject: [PATCH v4 04/05] clk: shmobile: Add r8a7795 SoC to MSTP bindings
 List-ID: <linux-clk.vger.kernel.org>
 
-The ABE related clocks should be configured via DT and not have it wired
-inside of the kernel.
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Add r8a7795 to the MSTP DT binding documentation.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
-Hi Tero,
 
-the ABE PLL configuration can, and will be done for dra7xx in DT with the
-assigned-clocks/rate/parent feature so no need to have this anymore.
+ Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
+ - Picked up patch floating around on ML, added change log
 
-Regards,
-Peter
+ Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt |    1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/clk/ti/clk-7xx.c | 18 +-----------------
- 1 file changed, 1 insertion(+), 17 deletions(-)
-
-diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-index 9b5b289e6334..a911d7de3377 100644
---- a/drivers/clk/ti/clk-7xx.c
-+++ b/drivers/clk/ti/clk-7xx.c
-@@ -18,7 +18,6 @@
- 
- #include "clock.h"
- 
--#define DRA7_DPLL_ABE_DEFFREQ				180633600
- #define DRA7_DPLL_GMAC_DEFFREQ				1000000000
- #define DRA7_DPLL_USB_DEFFREQ				960000000
- 
-@@ -313,27 +312,12 @@ static struct ti_dt_clk dra7xx_clks[] = {
- int __init dra7xx_dt_clk_init(void)
- {
- 	int rc;
--	struct clk *abe_dpll_mux, *sys_clkin2, *dpll_ck, *hdcp_ck;
-+	struct clk *dpll_ck, *hdcp_ck;
- 
- 	ti_dt_clocks_register(dra7xx_clks);
- 
- 	omap2_clk_disable_autoidle_all();
- 
--	abe_dpll_mux = clk_get_sys(NULL, "abe_dpll_sys_clk_mux");
--	sys_clkin2 = clk_get_sys(NULL, "sys_clkin2");
--	dpll_ck = clk_get_sys(NULL, "dpll_abe_ck");
--
--	rc = clk_set_parent(abe_dpll_mux, sys_clkin2);
--	if (!rc)
--		rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ);
--	if (rc)
--		pr_err("%s: failed to configure ABE DPLL!\n", __func__);
--
--	dpll_ck = clk_get_sys(NULL, "dpll_abe_m2x2_ck");
--	rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ * 2);
--	if (rc)
--		pr_err("%s: failed to configure ABE DPLL m2x2!\n", __func__);
--
- 	dpll_ck = clk_get_sys(NULL, "dpll_gmac_ck");
- 	rc = clk_set_rate(dpll_ck, DRA7_DPLL_GMAC_DEFFREQ);
- 	if (rc)
--- 
-2.5.0
+--- 0001/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
++++ work/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt	2015-08-29 16:18:30.672366518 +0900
+@@ -19,6 +19,7 @@ Required Properties:
+     - "renesas,r8a7791-mstp-clocks" for R8A7791 (R-Car M2-W) MSTP gate clocks
+     - "renesas,r8a7793-mstp-clocks" for R8A7793 (R-Car M2-N) MSTP gate clocks
+     - "renesas,r8a7794-mstp-clocks" for R8A7794 (R-Car E2) MSTP gate clocks
++    - "renesas,r8a7795-mstp-clocks" for R8A7795 (R-Car H3) MSTP gate clocks
+     - "renesas,sh73a0-mstp-clocks" for SH73A0 (SH-MobileAG5) MSTP gate clocks
+     and "renesas,cpg-mstp-clocks" as a fallback.
+   - reg: Base address and length of the I/O mapped registers used by the MSTP
