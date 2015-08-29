@@ -1,82 +1,90 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CANqRtoSKNBxQRkF5FKXwHTDgfLpvq6U98KqZ_QCH4G9VdMbNAg@mail.gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Sat, 29 Aug 2015 18:14:18 +0900
+Message-Id: <20150829091418.28546.8569.sendpatchset@little-apple>
+In-Reply-To: <20150829091323.28546.28287.sendpatchset@little-apple>
 References: <20150829091323.28546.28287.sendpatchset@little-apple>
-	<20150829091346.28546.42552.sendpatchset@little-apple>
-	<CAMuHMdUR7gYXoJMRGXdcReZ4fX+2SQDvTsK8Jny67GcW995_9Q@mail.gmail.com>
-	<CANqRtoSKNBxQRkF5FKXwHTDgfLpvq6U98KqZ_QCH4G9VdMbNAg@mail.gmail.com>
-Date: Mon, 31 Aug 2015 15:03:45 +0200
-Message-ID: <CAMuHMdW1OJXmT1KS_Ju4KGp6uwSVB-i-pLBGvPCLKd_FaNNN5A@mail.gmail.com>
-Subject: Re: [PATCH v4 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
-	Linux-sh list <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH v4 05/05] clk: shmobile: Make MSTP clock-output-names optional
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus,
+From: Magnus Damm <damm+renesas@opensource.se>
 
-On Mon, Aug 31, 2015 at 1:58 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
->>> --- /dev/null
->>> +++ work/drivers/clk/shmobile/clk-rcar-gen3.c   2015-08-29 16:30:59.032366518 +0900
->>> @@ -0,0 +1,249 @@
->>
->>> +#define RCAR_GEN3_CLK_MAIN     0
->>> +#define RCAR_GEN3_CLK_PLL0     1
->>> +#define RCAR_GEN3_CLK_PLL1     2
->>> +#define RCAR_GEN3_CLK_PLL2     3
->>> +#define RCAR_GEN3_CLK_PLL3     4
->>> +#define RCAR_GEN3_CLK_PLL4     5
->>
->> These values are intimately tied to R8A7795_CLK_* in
->> include/dt-bindings/clock/r8a7795-clock.h.
->> Perhaps we can use these instead?
->
-> You are right that they are connected together, but I'm not sure if I
-> prefer to include that file. If we start sharing files between the CPG
-> and the integration code then a dependency hell breaks loose when it
-> comes to merge order. If we want to share the #defines then I propose
-> that we handle that incrementally once all pieces are merged.
+This patch updates the MSTP driver to make the "clock-output-names"
+DT property optional instead of mandatory. In case the DT property
+is omitted then the function clk_register_clkdev() is skipped.
 
-OK, we can move them to include/dt-bindings/clock/rcar-gen3-clock.h
-later.
+The default for new SoCs is to not use "clock-output-names".
 
-> On R-Car Gen2 we have a single CPG driver that is potentially shared
-> across multiple SoCs in the same generation / family. In that case we
-> use strings and the clock-output-names as part of the ABI if I'm not
-> mistaken. On this driver we use clock index numbers instead, so I'd
-> like to see these defines as part of a shared DT binding ABI where new
-> SoCs can simply add new clocks at the end.
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-OK, so rcar_gen3_cpg.clks[] is really intended to be variable-sized.
+ Changes since V3:
+ - Added support for multiple MSTP bits. =)
 
-Hence I suggest to write it that way:
+ drivers/clk/shmobile/clk-mstp.c |   28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
 
-    struct rcar_gen3_cpg {
-            struct clk_onecell_data data;
-            spinlock_t lock;
-            void __iomem *reg;
-            struct clk *clks[0];
-    };
-
-Then you can allocate it with
-
-   kzalloc(sizeof(*cpg) + num_clks * sizeof(rcar_gen3_cpg.clks[0], ...)
-
-and kill RCAR_GEN3_CLK_NR (one less definition that can go out of sync).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--- 0001/drivers/clk/shmobile/clk-mstp.c
++++ work/drivers/clk/shmobile/clk-mstp.c	2015-08-29 18:01:00.662366518 +0900
+@@ -199,26 +199,29 @@ static void __init cpg_mstp_clocks_init(
+ 	for (i = 0; i < MSTP_MAX_CLOCKS; ++i) {
+ 		const char *parent_name;
+ 		const char *name;
++		bool allocated_name;
+ 		u32 clkidx;
+ 		int ret;
+ 
+-		/* Skip clocks with no name. */
+-		ret = of_property_read_string_index(np, "clock-output-names",
+-						    i, &name);
+-		if (ret < 0 || strlen(name) == 0)
+-			continue;
+-
+ 		parent_name = of_clk_get_parent_name(np, i);
+ 		ret = of_property_read_u32_index(np, idxname, i, &clkidx);
+ 		if (parent_name == NULL || ret < 0)
+ 			break;
+ 
+ 		if (clkidx >= MSTP_MAX_CLOCKS) {
+-			pr_err("%s: invalid clock %s %s index %u)\n",
+-			       __func__, np->name, name, clkidx);
++			pr_err("%s: invalid clock %s index %u)\n",
++			       __func__, np->name, clkidx);
+ 			continue;
+ 		}
+ 
++		if (of_property_read_string_index(np, "clock-output-names",
++						  i, &name) == 0) {
++			allocated_name = false;
++		} else {
++			name = kasprintf(GFP_KERNEL, "%s.%u", np->name, clkidx);
++			allocated_name = true;
++		}
++
+ 		clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
+ 						       clkidx, group);
+ 		if (!IS_ERR(clks[clkidx])) {
+@@ -231,12 +234,19 @@ static void __init cpg_mstp_clocks_init(
+ 			 *
+ 			 * FIXME: Remove this when all devices that require a
+ 			 * clock will be instantiated from DT.
++			 *
++			 * We currently register clkdev only when the DT
++			 * property clock-output-names is present.
+ 			 */
+-			clk_register_clkdev(clks[clkidx], name, NULL);
++			if (!allocated_name)
++				clk_register_clkdev(clks[clkidx], name, NULL);
+ 		} else {
+ 			pr_err("%s: failed to register %s %s clock (%ld)\n",
+ 			       __func__, np->name, name, PTR_ERR(clks[clkidx]));
+ 		}
++
++		if (allocated_name)
++			kfree(name);
+ 	}
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &group->data);
