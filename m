@@ -1,68 +1,42 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 13 Aug 2015 18:01:09 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@freescale.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mturquette@linaro.org, shawnguo@kernel.org, b29396@freescale.com,
-	linux-arm-kernel@lists.infradead.org,
-	Ranjani.Vaidyanathan@freescale.com, b20596@freescale.com,
-	r64343@freescale.com, b20788@freescale.com
-Subject: Re: [PATCH V3 4/5] clk: core: add CLK_OPS_PARENT_ON flags to support
- clocks require parent on
-Message-ID: <20150814010109.GW26614@codeaurora.org>
-References: <1438089585-30103-1-git-send-email-aisheng.dong@freescale.com>
- <1438089585-30103-5-git-send-email-aisheng.dong@freescale.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1438089585-30103-5-git-send-email-aisheng.dong@freescale.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20150828091624.21731.11014.sendpatchset@little-apple>
+References: <20150828091550.21731.85227.sendpatchset@little-apple>
+	<20150828091624.21731.11014.sendpatchset@little-apple>
+Date: Sat, 29 Aug 2015 10:46:46 +0200
+Message-ID: <CAMuHMdWcHvi19tBGSKSfLbb0WuqB+GkfAenXCwkeZNy99gk1Ew@mail.gmail.com>
+Subject: Re: [PATCH v3 03/04] clk: shmobile: Add Renesas R-Car Gen3 CPG support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/28, Dong Aisheng wrote:
-> On Freescale i.MX7D platform, all clocks operations, including
-> enable/disable, rate change and re-parent, requires its parent
-> clock on. Current clock core can not support it well.
-> This patch introduce a new flag CLK_OPS_PARENT_ON to handle this
-> special case in clock core that enable its parent clock firstly for
-> each operation and disable it later after operation complete.
-> 
-> This patch fixes disaling clocks while its parent is off.
-> This is a special case that is caused by a state mis-align between
-> HW and SW in clock tree during booting.
-> Usually in uboot, we may enable all clocks in HW by default.
-> And during kernel booting time, the parent clock could be disabled in its
-> driver probe due to calling clk_prepare_enable and clk_disable_unprepare.
-> Because it's child clock is only enabled in HW while its SW usecount
-> in clock tree is still 0, so clk_disable of parent clock will gate
-> the parent clock in both HW and SW usecount ultimately.
-> Then there will be a clock is on in HW while its parent is disabled.
-> 
-> Later when clock core does clk_disable_unused, this clock disable
-> will cause system hang due to the limitation of operation requiring
-> its parent clock on.
-> 
-> Cc: Mike Turquette <mturquette@linaro.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Signed-off-by: Dong Aisheng <aisheng.dong@freescale.com>
-> ---
+On Fri, Aug 28, 2015 at 11:16 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+>
+> This patch adds very initial CPG support.
+> R-Car Gen3 write function should use CPG write protection method
+> which is shared with MSTP driver. This patch has it but not used.
 
-Sorry, I still don't agree with this patch. There's no reason we
-should be turning on clocks during late init so that we can turn
-off clocks. If there's some sort of problem in doing that we
-should figure it out and make it so that during late init we turn
-off clocks from the leaves of the tree to the root.
+The last sentence is very confusing. I think it should be removed?
 
-I agree that there's a problem here where we don't properly
-handle keeping children clocks on if a driver comes in and turns
-off a clock in the middle of the tree before late init. That's a
-real bug, and we should fix it. Mike Turquette has been doing
-some work to have a way to indicate that certain clocks should be
-kept on until client drivers grab them. I think it will also make
-sure to up refcounts on parent clocks in the middle of the tree
-when it figures out that a child clock is enabled. Would that be
-all that we need to do to fix this problem?
+> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-Also, the subject of this patch and patch 5 are the same. Why?
+Gr{oetje,eeting}s,
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
