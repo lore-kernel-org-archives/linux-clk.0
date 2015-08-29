@@ -1,85 +1,95 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-id: <55DBFC40.3010603@samsung.com>
-Date: Tue, 25 Aug 2015 14:25:20 +0900
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-MIME-version: 1.0
-To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>,
-	linux-arm-kernel@lists.infradead.org
-Cc: robh+dt@kernel.org, mturquette@baylibre.com, lee.jones@linaro.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH-v2 5/5] mfd: 88pm800: Add support for clk subdevice
-References: <1440442594-3102-1-git-send-email-vaibhav.hiremath@linaro.org>
- <1440442594-3102-7-git-send-email-vaibhav.hiremath@linaro.org>
-In-reply-to: <1440442594-3102-7-git-send-email-vaibhav.hiremath@linaro.org>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Sat, 29 Aug 2015 18:13:57 +0900
+Message-Id: <20150829091357.28546.72024.sendpatchset@little-apple>
+In-Reply-To: <20150829091323.28546.28287.sendpatchset@little-apple>
+References: <20150829091323.28546.28287.sendpatchset@little-apple>
+Subject: [PATCH v4 03/05] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25.08.2015 03:56, Vaibhav Hiremath wrote:
-> This patch adds mfd_cell/clk-subdevice for 88PM800 MFD
-> (and family of devices).
-> 
-> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-> ---
->  drivers/mfd/88pm800.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
-> diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
-> index c4e097d..a928eed 100644
-> --- a/drivers/mfd/88pm800.c
-> +++ b/drivers/mfd/88pm800.c
-> @@ -173,6 +173,14 @@ static const struct mfd_cell regulator_devs[] = {
->  	},
->  };
->  
-> +static struct mfd_cell clk_devs[] = {
-> +	{
-> +		.name = "88pm80x-clk",
-> +		.of_compatible = "marvell,88pm800-clk",
-> +		.id = -1,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The "-1" here stands for PLATFORM_DEVID_NONE?
+Add Clock Domain support to the R-Car Gen3 Clock Pulse Generator (CPG)
+driver using the generic PM Domain.  This allows to power-manage the
+module clocks of SoC devices that are part of the CPG/MSTP Clock Domain
+using Runtime PM, or for system suspend/resume.
 
-Best regards,
-Krzysztof
+SoC devices that are part of the CPG/MSTP Clock Domain and can be
+power-managed through an MSTP clock should be tagged in DT with a proper
+"power-domains" property.
 
-> +	},
-> +};
-> +
->  static const struct regmap_irq pm800_irqs[] = {
->  	/* INT0 */
->  	[PM800_IRQ_ONKEY] = {
-> @@ -344,6 +352,17 @@ static int device_regulator_init(struct pm80x_chip *chip)
->  			ARRAY_SIZE(regulator_devs), NULL, 0, NULL);
->  }
->  
-> +static int device_clk_init(struct pm80x_chip *chip)
-> +{
-> +	if (chip->type == CHIP_PM800)
-> +		clk_devs[0].name = "88pm800-clk";
-> +	else if (chip->type == CHIP_PM860)
-> +		clk_devs[0].name = "88pm860-clk";
-> +
-> +	return mfd_add_devices(chip->dev, 0, &clk_devs[0],
-> +			ARRAY_SIZE(clk_devs), NULL, 0, NULL);
-> +}
-> +
->  static int device_irq_init_800(struct pm80x_chip *chip)
->  {
->  	struct regmap *map = chip->regmap;
-> @@ -511,6 +530,12 @@ static int device_800_init(struct pm80x_chip *chip)
->  		goto out;
->  	}
->  
-> +	ret = device_clk_init(chip);
-> +	if (ret) {
-> +		dev_err(chip->dev, "Failed to add clk subdev\n");
-> +		goto out;
-> +	}
-> +
->  	return 0;
->  out_dev:
->  	mfd_remove_devices(chip->dev);
-> 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
+ Changes since V3:
+ - Fixed so correct file is actually used. =)
+ - Took V2 from Geert but filtered out Kconfig.platforms bits
+
+ Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   26 +++++++++-
+ drivers/clk/shmobile/clk-rcar-gen3.c                                     |    2 
+ 2 files changed, 26 insertions(+), 2 deletions(-)
+
+--- 0011/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt
++++ work/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt	2015-08-29 16:41:04.842366518 +0900
+@@ -2,6 +2,8 @@
+ 
+ The CPG generates core clocks for the R-Car Gen3 SoCs. It includes three PLLs
+ and several fixed ratio dividers.
++The CPG also provides a Clock Domain for SoC devices, in combination with the
++CPG Module Stop (MSTP) Clocks.
+ 
+ Required Properties:
+ 
+@@ -15,10 +17,18 @@ Required Properties:
+   - #clock-cells: Must be 1
+   - clock-output-names: The names of the clocks. Supported clocks are
+     "main", "pll0", "pll1", "pll2", "pll3", "pll4"
++  - #power-domain-cells: Must be 0
+ 
++SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
++through an MSTP clock should refer to the CPG device node in their
++"power-domains" property, as documented by the generic PM domain bindings in
++Documentation/devicetree/bindings/power/power_domain.txt.
+ 
+-Example
+--------
++
++Examples
++--------
++
++  - CPG device node:
+ 
+ 	cpg_clocks: cpg_clocks@e6150000 {
+ 		compatible = "renesas,r8a7795-cpg-clocks",
+@@ -28,4 +38,16 @@ Example
+ 		#clock-cells = <1>;
+ 		clock-output-names = "main", "pll0", "pll1","pll2",
+ 				     "pll3", "pll4";
++		#power-domain-cells = <0>;
++	};
++
++  - CPG/MSTP Clock Domain member device node:
++
++	scif2: serial@e6e88000 {
++		compatible = "renesas,scif-r8a7795", "renesas,scif";
++		reg = <0 0xe6e88000 0 64>;
++		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp3_clks RCAR_R8A7795_CLK_SCIF2>;
++		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 	};
+--- 0011/drivers/clk/shmobile/clk-rcar-gen3.c
++++ work/drivers/clk/shmobile/clk-rcar-gen3.c	2015-08-29 16:41:04.842366518 +0900
+@@ -244,6 +244,8 @@ static void __init rcar_gen3_cpg_clocks_
+ 	}
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
++
++	cpg_mstp_add_clk_domain(np);
+ }
+ CLK_OF_DECLARE(rcar_gen3_cpg_clks, "renesas,rcar-gen3-cpg-clocks",
+ 	       rcar_gen3_cpg_clocks_init);
