@@ -1,49 +1,40 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Lin Huang <hl@rock-chips.com>
-Cc: dianders@chromium.org, linux-rockchip@lists.infradead.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] clk: rockchip: add pclk_pd_pmu to the list of rk3288 critical clocks
-Date: Tue, 04 Aug 2015 10:54:06 +0200
-Message-ID: <1588782.u2WKR6eVuV@diego>
-In-Reply-To: <1438670487-27598-1-git-send-email-hl@rock-chips.com>
-References: <1438670487-27598-1-git-send-email-hl@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 31 Aug 2015 21:48:42 +0900
+Message-Id: <20150831124842.31057.54534.sendpatchset@little-apple>
+Subject: [PATCH v5 00/05] Renesas R-Car Gen3 CPG support V5
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Renesas R-Car Gen3 CPG support V5
 
-Am Dienstag, 4. August 2015, 14:41:26 schrieb Lin Huang:
+[PATCH v5 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
+[PATCH v5 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
+[PATCH v5 03/05] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
+[PATCH v5 04/05] clk: shmobile: Add r8a7795 SoC to MSTP bindings
+[PATCH v5 05/05] clk: shmobile: Make MSTP clock-output-names optional
 
-I guess this patch then would need a
+This series is my latest attempt to provide R-Car Gen3 clock support
+through a single "easy to use" patch series for drivers/clk and DT
+documentation bits.
 
-From: Heiko Stuebner <heiko@sntech.de>
+There are no special runtime or build time dependencies. SoC / board
+specific integration code (DTS) is provided separately from this series.
 
-at this point to override the author then.
+This version includes several minor updates for all the patches.
+For details please see each individual patch.
 
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-> pclk_pd_pmu needs to keep running and with the upcoming gpio clock
-> handling this is not always the case anymore. So add it to the list
-> of critical clocks for now.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
-> ---
-> Changes in v3:
-> -match the author and Signed-off-by name
-> 
->  drivers/clk/rockchip/clk-rk3288.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3288.c
-> b/drivers/clk/rockchip/clk-rk3288.c index 0df5bae..9040878 100644
-> --- a/drivers/clk/rockchip/clk-rk3288.c
-> +++ b/drivers/clk/rockchip/clk-rk3288.c
-> @@ -780,6 +780,7 @@ static const char *const rk3288_critical_clocks[]
-> __initconst = { "aclk_cpu",
->  	"aclk_peri",
->  	"hclk_peri",
-> +	"pclk_pd_pmu",
->  };
-> 
->  #ifdef CONFIG_PM_SLEEP
+ Written to be picked up independently from other R-Car Gen3 patches.
+
+ Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt      |    1 
+ Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   58 ++
+ drivers/clk/Makefile                                                     |    1 
+ drivers/clk/shmobile/Makefile                                            |   23 
+ drivers/clk/shmobile/clk-mstp.c                                          |   28 -
+ drivers/clk/shmobile/clk-rcar-gen3.c                                     |  247 ++++++++++
+ 6 files changed, 335 insertions(+), 23 deletions(-)
