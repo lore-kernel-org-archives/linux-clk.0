@@ -1,107 +1,159 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <55AFA665.4020906@arm.com>
-Date: Wed, 22 Jul 2015 15:19:17 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>,
-	Olof Johansson <olof@lixom.net>,
-	Mike Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v4 3/8] clk: add support for clocks provided by SCP(System
- Control Processor)
-References: <1433760002-24120-1-git-send-email-sudeep.holla@arm.com> <1433760002-24120-4-git-send-email-sudeep.holla@arm.com> <20150702172310.GF4301@codeaurora.org> <5596A1B6.8020307@arm.com> <559ADC94.4080505@codeaurora.org> <559BF858.1020301@arm.com> <20150708014606.GH30412@codeaurora.org> <55A7D79B.3080305@arm.com> <20150716193114.GA17952@codeaurora.org> <55A8E434.2010709@arm.com> <55A945DF.3@codeaurora.org> <55ACB733.2080609@arm.com> <55AE8A02.9070801@codeaurora.org>
-In-Reply-To: <55AE8A02.9070801@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: ulf.hansson@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	tgih.jun@samsung.com,
+	jh80.chung@samsung.com
+Cc: linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
+Date: Mon, 31 Aug 2015 20:24:01 +0200
+Message-Id: <1441045446-30858-4-git-send-email-heiko@sntech.de>
+In-Reply-To: <1441045446-30858-1-git-send-email-heiko@sntech.de>
+References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Douglas Anderson <dianders@chromium.org>
 
+This adds logic to the MMC core to set VQMMC.  This is expected to be
+called by MMC drivers like dw_mmc as part of (or instead of) their
+start_signal_voltage_switch() callback.
 
-On 21/07/15 19:05, Stephen Boyd wrote:
-> On 07/20/2015 01:54 AM, Sudeep Holla wrote:
->>
->>
->> On 17/07/15 19:13, Stephen Boyd wrote:
->>> On 07/17/2015 04:17 AM, Sudeep Holla wrote:
->>
->> [...]
->>
->>>>
->>>> determine_rate change shouldn't affect SCPI clock driver but I remember
->>>> seeing round_rate change too on the list which returns value using the
->>>> argument from Boris. Is that planned for v4.3 ? I would need the stable
->>>> branch from this clk_hw_set_rate_range if you decide to push. Let me
->>>> know your preferences. I will post the updated version of the patch
->>>> accordingly.
->>>>
->>>
->>> We're not going to change round_rate() so it sounds like you don't need
->>> a stable branch. But you would need this new consumer API. So you still
->>> need a branch right?
->>>
->>
->> I am fine either way. If no one else need the stable branch to be shared
->> with arm-soc, I prefer to use clock consumer API for now to avoid all
->> the troubles to you guys and switch to provider API later. I will post
->> it once the both this driver and that provider API is merged, if that's
->> fine with you ?
->
-> Ok. Sounds fine as long as we don't forget.
->
+A few notes:
 
-It's ready indeed :), will post it when everything is in place.
+* When setting the signal voltage to 3.3V we do our best to make VQMMC
+  and VMMC match.  It's been reported that this makes some old cards
+  happy since they were tested back in the day before UHS when VQMMC
+  and VMMC were provided by the same regulator.  A nice side effect of
+  this is that we don't end up on the hairy edge of VQMMC (2.7V),
+  which some EEs claim is a little too close to the minimum for
+  comfort.
+  If this is not supported by the supplying regulator we try to find
+  a suitable voltage within the whole 2.7V-3.6V area of the spec.
 
-Regards,
-Sudeep
+* When setting the signal voltage to 1.8V or 1.2V we aim for that
+  specific voltage instead of picking the lowest one in the range.
 
---->8
+* We very purposely don't print errors in mmc_regulator_set_vqmmc().
+  There are cases where the MMC core will try several different
+  voltages and we don't want to pollute the logs.
 
- From 3ddf7fe5b1286efa712d4f2ba8108ce1855f3e74 Mon Sep 17 00:00:00 2001
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Fri, 17 Jul 2015 12:19:54 +0100
-Subject: [PATCH] clk: scpi: use provider clk_hw_set_rate_range API 
-instead of
-  consumer API
-
-SCPI clock provider uses the consumer API clk_set_rate_range to set
-min/max rate constraints on the clocks it provides.
-
-Commit c87c640f915a ("clk: Allow providers to configure min/max rates")
-added a separate provider API clk_hw_set_rate_range to set the min/max
-rate of a clock.
-
-This patch switches away from clk_set_rate_range consumer API to
-clk_hw_set_rate_range provider API.
-
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
-  drivers/clk/clk-scpi.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/core/core.c  | 68 ++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mmc/host.h |  7 +++++
+ 2 files changed, 75 insertions(+)
 
-diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
-index 06d0558e8f46..f7c8b7a03cfe 100644
---- a/drivers/clk/clk-scpi.c
-+++ b/drivers/clk/clk-scpi.c
-@@ -174,7 +174,7 @@ scpi_clk_ops_init(struct device *dev, const struct 
-of_device_id *match,
-
-  	clk = devm_clk_register(dev, &sclk->hw);
-  	if (!IS_ERR(clk) && max)
--		clk_set_rate_range(clk, min, max);
-+		clk_hw_set_rate_range(&sclk->hw, min, max);
-  	return clk;
-  }
-
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index 0520064..9dc0b65 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -1437,6 +1437,74 @@ int mmc_regulator_set_ocr(struct mmc_host *mmc,
+ }
+ EXPORT_SYMBOL_GPL(mmc_regulator_set_ocr);
+ 
++static int mmc_regulator_set_voltage_if_supported(struct regulator *regulator,
++						  int min_uV, int target_uV,
++						  int max_uV)
++{
++	/*
++	 * Check if supported first to avoid errors since we may try several
++	 * signal levels during power up and don't want to show errors.
++	 */
++	if (!regulator_is_supported_voltage(regulator, min_uV, max_uV))
++		return -EINVAL;
++
++	return regulator_set_voltage_triplet(regulator, min_uV, target_uV,
++					     max_uV);
++}
++
++/**
++ * mmc_regulator_set_vqmmc - Set VQMMC as per the ios
++ *
++ * For 3.3V signaling, we try to match VQMMC to VMMC as closely as possible.
++ * That will match the behavior of old boards where VQMMC and VMMC were supplied
++ * by the same supply.  The Bus Operating conditions for 3.3V signaling in the
++ * SD card spec also define VQMMC in terms of VMMC.
++ * If this is not possible we'll try the full 2.7-3.6V of the spec.
++ *
++ * For 1.2V and 1.8V signaling we'll try to get as close as possible to the
++ * requested voltage.  This is definitely a good idea for UHS where there's a
++ * separate regulator on the card that's trying to make 1.8V and it's best if
++ * we match.
++ *
++ * This function is expected to be used by a controller's
++ * start_signal_voltage_switch() function.
++ */
++int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct mmc_ios *ios)
++{
++	int volt, min_uV, max_uV;
++
++	/* If no vqmmc supply then we can't change the voltage */
++	if (IS_ERR(mmc->supply.vqmmc))
++		return -EINVAL;
++
++	switch (ios->signal_voltage) {
++	case MMC_SIGNAL_VOLTAGE_120:
++		return mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
++						1100000, 1200000, 1300000);
++	case MMC_SIGNAL_VOLTAGE_180:
++		return mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
++						1700000, 1800000, 1950000);
++	case MMC_SIGNAL_VOLTAGE_330:
++		volt = regulator_get_voltage(mmc->supply.vmmc);
++		if (volt < 0)
++			return volt;
++
++		min_uV = max(volt - 300000, 2700000);
++		max_uV = min(volt + 300000, 3600000);
++
++		/* try to stay close to vmmc at first */
++		if (!mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
++						min_uV, volt, max_uV))
++			return 0;
++
++		return mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
++						2700000, volt, 3600000);
++	default:
++		return -EINVAL;
++	}
++}
++EXPORT_SYMBOL_GPL(mmc_regulator_set_vqmmc);
++
+ #endif /* CONFIG_REGULATOR */
+ 
+ int mmc_regulator_get_supply(struct mmc_host *mmc)
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 83b81fd..a2a78eb 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -423,6 +423,7 @@ int mmc_regulator_get_ocrmask(struct regulator *supply);
+ int mmc_regulator_set_ocr(struct mmc_host *mmc,
+ 			struct regulator *supply,
+ 			unsigned short vdd_bit);
++int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct mmc_ios *ios);
+ #else
+ static inline int mmc_regulator_get_ocrmask(struct regulator *supply)
+ {
+@@ -435,6 +436,12 @@ static inline int mmc_regulator_set_ocr(struct mmc_host *mmc,
+ {
+ 	return 0;
+ }
++
++static inline int mmc_regulator_set_vqmmc(struct mmc_host *mmc,
++					  struct mmc_ios *ios)
++{
++	return -EINVAL;
++}
+ #endif
+ 
+ int mmc_regulator_get_supply(struct mmc_host *mmc);
 -- 
-1.9.1
+2.1.4
