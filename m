@@ -1,43 +1,82 @@
-Return-Path: <hl@rock-chips.com>
-From: Lin Huang <hl@rock-chips.com>
-To: heiko@sntech.de,
-	dianders@chromium.org
-Cc: linux-rockchip@lists.infradead.org,
-	Lin Huang <hl@rock-chips.com>,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] clk: rockchip: add pclk_pd_pmu to the list of rk3288 critical clocks
-Date: Tue,  4 Aug 2015 14:41:26 +0800
-Message-Id: <1438670487-27598-1-git-send-email-hl@rock-chips.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CANqRtoSKNBxQRkF5FKXwHTDgfLpvq6U98KqZ_QCH4G9VdMbNAg@mail.gmail.com>
+References: <20150829091323.28546.28287.sendpatchset@little-apple>
+	<20150829091346.28546.42552.sendpatchset@little-apple>
+	<CAMuHMdUR7gYXoJMRGXdcReZ4fX+2SQDvTsK8Jny67GcW995_9Q@mail.gmail.com>
+	<CANqRtoSKNBxQRkF5FKXwHTDgfLpvq6U98KqZ_QCH4G9VdMbNAg@mail.gmail.com>
+Date: Mon, 31 Aug 2015 15:03:45 +0200
+Message-ID: <CAMuHMdW1OJXmT1KS_Ju4KGp6uwSVB-i-pLBGvPCLKd_FaNNN5A@mail.gmail.com>
+Subject: Re: [PATCH v4 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
+	Linux-sh list <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-pclk_pd_pmu needs to keep running and with the upcoming gpio clock
-handling this is not always the case anymore. So add it to the list
-of critical clocks for now.
+Hi Magnus,
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Lin Huang <hl@rock-chips.com>
----
-Changes in v3:
--match the author and Signed-off-by name
+On Mon, Aug 31, 2015 at 1:58 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
+>>> --- /dev/null
+>>> +++ work/drivers/clk/shmobile/clk-rcar-gen3.c   2015-08-29 16:30:59.032366518 +0900
+>>> @@ -0,0 +1,249 @@
+>>
+>>> +#define RCAR_GEN3_CLK_MAIN     0
+>>> +#define RCAR_GEN3_CLK_PLL0     1
+>>> +#define RCAR_GEN3_CLK_PLL1     2
+>>> +#define RCAR_GEN3_CLK_PLL2     3
+>>> +#define RCAR_GEN3_CLK_PLL3     4
+>>> +#define RCAR_GEN3_CLK_PLL4     5
+>>
+>> These values are intimately tied to R8A7795_CLK_* in
+>> include/dt-bindings/clock/r8a7795-clock.h.
+>> Perhaps we can use these instead?
+>
+> You are right that they are connected together, but I'm not sure if I
+> prefer to include that file. If we start sharing files between the CPG
+> and the integration code then a dependency hell breaks loose when it
+> comes to merge order. If we want to share the #defines then I propose
+> that we handle that incrementally once all pieces are merged.
 
- drivers/clk/rockchip/clk-rk3288.c | 1 +
- 1 file changed, 1 insertion(+)
+OK, we can move them to include/dt-bindings/clock/rcar-gen3-clock.h
+later.
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 0df5bae..9040878 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -780,6 +780,7 @@ static const char *const rk3288_critical_clocks[] __initconst = {
- 	"aclk_cpu",
- 	"aclk_peri",
- 	"hclk_peri",
-+	"pclk_pd_pmu",
- };
- 
- #ifdef CONFIG_PM_SLEEP
--- 
-1.9.1
+> On R-Car Gen2 we have a single CPG driver that is potentially shared
+> across multiple SoCs in the same generation / family. In that case we
+> use strings and the clock-output-names as part of the ABI if I'm not
+> mistaken. On this driver we use clock index numbers instead, so I'd
+> like to see these defines as part of a shared DT binding ABI where new
+> SoCs can simply add new clocks at the end.
+
+OK, so rcar_gen3_cpg.clks[] is really intended to be variable-sized.
+
+Hence I suggest to write it that way:
+
+    struct rcar_gen3_cpg {
+            struct clk_onecell_data data;
+            spinlock_t lock;
+            void __iomem *reg;
+            struct clk *clks[0];
+    };
+
+Then you can allocate it with
+
+   kzalloc(sizeof(*cpg) + num_clks * sizeof(rcar_gen3_cpg.clks[0], ...)
+
+and kill RCAR_GEN3_CLK_NR (one less definition that can go out of sync).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
