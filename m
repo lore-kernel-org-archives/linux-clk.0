@@ -1,340 +1,87 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Archit Taneja <architt@codeaurora.org>,
-	Hai Li <hali@codeaurora.org>
-Subject: [PATCH] clk: qcom: Allow clk_set_parent() to work on display clocks
-Date: Thu, 27 Aug 2015 17:42:16 -0700
-Message-Id: <1440722536-11197-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: ulf.hansson@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	tgih.jun@samsung.com,
+	jh80.chung@samsung.com
+Cc: linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alexandru M Stan <amstan@chromium.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 7/8] ARM: dts: rockchip: Add drive/sample clocks for rk3288 dw_mmc devices
+Date: Mon, 31 Aug 2015 20:24:05 +0200
+Message-Id: <1441045446-30858-8-git-send-email-heiko@sntech.de>
+In-Reply-To: <1441045446-30858-1-git-send-email-heiko@sntech.de>
+References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Sometimes the display driver may want to change the parent PLL of
-the display clocks (byte and pixel clocks) depending on the
-use-case. Currently the parent is fixed by means of having a
-frequency table with one entry that chooses a particular parent.
-Remove this restriction and use the parent the clock is
-configured for in the hardware during clk_set_rate(). This
-requires consumers to rely on the default parent or to configure
-the parent with clk_set_parent()/assigned-clock-parents on the
-clocks before calling clk_set_rate().
+From: Alexandru M Stan <amstan@chromium.org>
 
-Cc: Archit Taneja <architt@codeaurora.org>
-Cc: Hai Li <hali@codeaurora.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+The drive/sample clocks can be phase shifted.  The drive clock
+could be used in a future patch to adjust hold times.  The sample
+clock is used for tuning.
+
+Signed-off-by: Alexandru M Stan <amstan@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/clk/qcom/clk-rcg.h      |  1 +
- drivers/clk/qcom/clk-rcg2.c     | 91 +++++++++++++++++++++++++++++++++++++----
- drivers/clk/qcom/gcc-msm8916.c  | 14 +------
- drivers/clk/qcom/mmcc-apq8084.c | 18 +-------
- drivers/clk/qcom/mmcc-msm8974.c | 11 +----
- 5 files changed, 89 insertions(+), 46 deletions(-)
+ arch/arm/boot/dts/rk3288.dtsi | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index 56028bb31d87..31f92d70e8e0 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -171,6 +171,7 @@ struct clk_rcg2 {
- extern const struct clk_ops clk_rcg2_ops;
- extern const struct clk_ops clk_edp_pixel_ops;
- extern const struct clk_ops clk_byte_ops;
-+extern const struct clk_ops clk_byte2_ops;
- extern const struct clk_ops clk_pixel_ops;
- 
- #endif
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 9aec1761fd29..d941dea6f7c7 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -485,6 +485,76 @@ const struct clk_ops clk_byte_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_byte_ops);
- 
-+static int clk_byte2_determine_rate(struct clk_hw *hw,
-+				    struct clk_rate_request *req)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	unsigned long parent_rate, div;
-+	u32 mask = BIT(rcg->hid_width) - 1;
-+	struct clk_hw *p;
-+	unsigned long rate = req->rate;
-+
-+	if (rate == 0)
-+		return -EINVAL;
-+
-+	p = req->best_parent_hw;
-+	req->best_parent_rate = parent_rate = clk_hw_round_rate(p, rate);
-+
-+	div = DIV_ROUND_UP((2 * parent_rate), rate) - 1;
-+	div = min_t(u32, div, mask);
-+
-+	req->rate = calc_rate(parent_rate, 0, 0, 0, div);
-+
-+	return 0;
-+}
-+
-+static int clk_byte2_set_rate(struct clk_hw *hw, unsigned long rate,
-+			 unsigned long parent_rate)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	struct freq_tbl f = { 0 };
-+	unsigned long div;
-+	int i, num_parents = clk_hw_get_num_parents(hw);
-+	u32 mask = BIT(rcg->hid_width) - 1;
-+	u32 cfg;
-+
-+	div = DIV_ROUND_UP((2 * parent_rate), rate) - 1;
-+	div = min_t(u32, div, mask);
-+
-+	f.pre_div = div;
-+
-+	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
-+	cfg &= CFG_SRC_SEL_MASK;
-+	cfg >>= CFG_SRC_SEL_SHIFT;
-+
-+	for (i = 0; i < num_parents; i++) {
-+		if (cfg == rcg->parent_map[i].cfg) {
-+			f.src = rcg->parent_map[i].src;
-+			return clk_rcg2_configure(rcg, &f);
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int clk_byte2_set_rate_and_parent(struct clk_hw *hw,
-+		unsigned long rate, unsigned long parent_rate, u8 index)
-+{
-+	/* Read the hardware to determine parent during set_rate */
-+	return clk_byte2_set_rate(hw, rate, parent_rate);
-+}
-+
-+const struct clk_ops clk_byte2_ops = {
-+	.is_enabled = clk_rcg2_is_enabled,
-+	.get_parent = clk_rcg2_get_parent,
-+	.set_parent = clk_rcg2_set_parent,
-+	.recalc_rate = clk_rcg2_recalc_rate,
-+	.set_rate = clk_byte2_set_rate,
-+	.set_rate_and_parent = clk_byte2_set_rate_and_parent,
-+	.determine_rate = clk_byte2_determine_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_byte2_ops);
-+
- static const struct frac_entry frac_table_pixel[] = {
- 	{ 3, 8 },
- 	{ 2, 9 },
-@@ -496,14 +566,9 @@ static const struct frac_entry frac_table_pixel[] = {
- static int clk_pixel_determine_rate(struct clk_hw *hw,
- 				    struct clk_rate_request *req)
- {
--	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
- 	unsigned long request, src_rate;
- 	int delta = 100000;
--	const struct freq_tbl *f = rcg->freq_tbl;
- 	const struct frac_entry *frac = frac_table_pixel;
--	int index = qcom_find_src_index(hw, rcg->parent_map, f->src);
--
--	req->best_parent_hw = clk_hw_get_parent_by_index(hw, index);
- 
- 	for (; frac->num; frac++) {
- 		request = (req->rate * frac->den) / frac->num;
-@@ -525,12 +590,23 @@ static int clk_pixel_set_rate(struct clk_hw *hw, unsigned long rate,
- 		unsigned long parent_rate)
- {
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
--	struct freq_tbl f = *rcg->freq_tbl;
-+	struct freq_tbl f = { 0 };
- 	const struct frac_entry *frac = frac_table_pixel;
- 	unsigned long request;
- 	int delta = 100000;
- 	u32 mask = BIT(rcg->hid_width) - 1;
--	u32 hid_div;
-+	u32 hid_div, cfg;
-+	int i, num_parents = clk_hw_get_num_parents(hw);
-+
-+	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
-+	cfg &= CFG_SRC_SEL_MASK;
-+	cfg >>= CFG_SRC_SEL_SHIFT;
-+
-+	for (i = 0; i < num_parents; i++)
-+		if (cfg == rcg->parent_map[i].cfg) {
-+			f.src = rcg->parent_map[i].src;
-+			break;
-+		}
- 
- 	for (; frac->num; frac++) {
- 		request = (rate * frac->den) / frac->num;
-@@ -555,7 +631,6 @@ static int clk_pixel_set_rate(struct clk_hw *hw, unsigned long rate,
- static int clk_pixel_set_rate_and_parent(struct clk_hw *hw, unsigned long rate,
- 		unsigned long parent_rate, u8 index)
- {
--	/* Parent index is set statically in frequency table */
- 	return clk_pixel_set_rate(hw, rate, parent_rate);
- }
- 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index 22a4e1e732c0..3de282365d8d 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -906,21 +906,15 @@ static struct clk_rcg2 gp3_clk_src = {
- 	},
- };
- 
--static struct freq_tbl ftbl_gcc_mdss_byte0_clk[] = {
--	{ .src = P_DSI0_PHYPLL_BYTE },
--	{ }
--};
--
- static struct clk_rcg2 byte0_clk_src = {
- 	.cmd_rcgr = 0x4d044,
- 	.hid_width = 5,
- 	.parent_map = gcc_xo_gpll0a_dsibyte_map,
--	.freq_tbl = ftbl_gcc_mdss_byte0_clk,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "byte0_clk_src",
- 		.parent_names = gcc_xo_gpll0a_dsibyte,
- 		.num_parents = 3,
--		.ops = &clk_byte_ops,
-+		.ops = &clk_byte2_ops,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
-@@ -968,17 +962,11 @@ static struct clk_rcg2 mdp_clk_src = {
- 	},
- };
- 
--static struct freq_tbl ftbl_gcc_mdss_pclk[] = {
--	{ .src = P_DSI0_PHYPLL_DSI },
--	{ }
--};
--
- static struct clk_rcg2 pclk0_clk_src = {
- 	.cmd_rcgr = 0x4d000,
- 	.mnd_width = 8,
- 	.hid_width = 5,
- 	.parent_map = gcc_xo_gpll0a_dsiphy_map,
--	.freq_tbl = ftbl_gcc_mdss_pclk,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "pclk0_clk_src",
- 		.parent_names = gcc_xo_gpll0a_dsiphy,
-diff --git a/drivers/clk/qcom/mmcc-apq8084.c b/drivers/clk/qcom/mmcc-apq8084.c
-index f0ee6bde11af..5d2aab7663f0 100644
---- a/drivers/clk/qcom/mmcc-apq8084.c
-+++ b/drivers/clk/qcom/mmcc-apq8084.c
-@@ -571,17 +571,11 @@ static struct clk_rcg2 jpeg2_clk_src = {
- 	},
- };
- 
--static struct freq_tbl pixel_freq_tbl[] = {
--	{ .src = P_DSI0PLL },
--	{ }
--};
--
- static struct clk_rcg2 pclk0_clk_src = {
- 	.cmd_rcgr = 0x2000,
- 	.mnd_width = 8,
- 	.hid_width = 5,
- 	.parent_map = mmcc_xo_dsi_hdmi_edp_gpll0_map,
--	.freq_tbl = pixel_freq_tbl,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "pclk0_clk_src",
- 		.parent_names = mmcc_xo_dsi_hdmi_edp_gpll0,
-@@ -596,7 +590,6 @@ static struct clk_rcg2 pclk1_clk_src = {
- 	.mnd_width = 8,
- 	.hid_width = 5,
- 	.parent_map = mmcc_xo_dsi_hdmi_edp_gpll0_map,
--	.freq_tbl = pixel_freq_tbl,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "pclk1_clk_src",
- 		.parent_names = mmcc_xo_dsi_hdmi_edp_gpll0,
-@@ -844,21 +837,15 @@ static struct clk_rcg2 cpp_clk_src = {
- 	},
- };
- 
--static struct freq_tbl byte_freq_tbl[] = {
--	{ .src = P_DSI0PLL_BYTE },
--	{ }
--};
--
- static struct clk_rcg2 byte0_clk_src = {
- 	.cmd_rcgr = 0x2120,
- 	.hid_width = 5,
- 	.parent_map = mmcc_xo_dsibyte_hdmi_edp_gpll0_map,
--	.freq_tbl = byte_freq_tbl,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "byte0_clk_src",
- 		.parent_names = mmcc_xo_dsibyte_hdmi_edp_gpll0,
- 		.num_parents = 6,
--		.ops = &clk_byte_ops,
-+		.ops = &clk_byte2_ops,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
-@@ -867,12 +854,11 @@ static struct clk_rcg2 byte1_clk_src = {
- 	.cmd_rcgr = 0x2140,
- 	.hid_width = 5,
- 	.parent_map = mmcc_xo_dsibyte_hdmi_edp_gpll0_map,
--	.freq_tbl = byte_freq_tbl,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "byte1_clk_src",
- 		.parent_names = mmcc_xo_dsibyte_hdmi_edp_gpll0,
- 		.num_parents = 6,
--		.ops = &clk_byte_ops,
-+		.ops = &clk_byte2_ops,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
-diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-index 0987bf443e1f..197700e3b2c9 100644
---- a/drivers/clk/qcom/mmcc-msm8974.c
-+++ b/drivers/clk/qcom/mmcc-msm8974.c
-@@ -522,17 +522,11 @@ static struct clk_rcg2 jpeg2_clk_src = {
- 	},
- };
- 
--static struct freq_tbl pixel_freq_tbl[] = {
--	{ .src = P_DSI0PLL },
--	{ }
--};
--
- static struct clk_rcg2 pclk0_clk_src = {
- 	.cmd_rcgr = 0x2000,
- 	.mnd_width = 8,
- 	.hid_width = 5,
- 	.parent_map = mmcc_xo_dsi_hdmi_edp_gpll0_map,
--	.freq_tbl = pixel_freq_tbl,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "pclk0_clk_src",
- 		.parent_names = mmcc_xo_dsi_hdmi_edp_gpll0,
-@@ -547,7 +541,6 @@ static struct clk_rcg2 pclk1_clk_src = {
- 	.mnd_width = 8,
- 	.hid_width = 5,
- 	.parent_map = mmcc_xo_dsi_hdmi_edp_gpll0_map,
--	.freq_tbl = pixel_freq_tbl,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "pclk1_clk_src",
- 		.parent_names = mmcc_xo_dsi_hdmi_edp_gpll0,
-@@ -785,7 +778,7 @@ static struct clk_rcg2 byte0_clk_src = {
- 		.name = "byte0_clk_src",
- 		.parent_names = mmcc_xo_dsibyte_hdmi_edp_gpll0,
- 		.num_parents = 6,
--		.ops = &clk_byte_ops,
-+		.ops = &clk_byte2_ops,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
-@@ -799,7 +792,7 @@ static struct clk_rcg2 byte1_clk_src = {
- 		.name = "byte1_clk_src",
- 		.parent_names = mmcc_xo_dsibyte_hdmi_edp_gpll0,
- 		.num_parents = 6,
--		.ops = &clk_byte_ops,
-+		.ops = &clk_byte2_ops,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 118fe74..b084bc6 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -222,8 +222,9 @@
+ 	sdmmc: dwmmc@ff0c0000 {
+ 		compatible = "rockchip,rk3288-dw-mshc";
+ 		clock-freq-min-max = <400000 150000000>;
+-		clocks = <&cru HCLK_SDMMC>, <&cru SCLK_SDMMC>;
+-		clock-names = "biu", "ciu";
++		clocks = <&cru HCLK_SDMMC>, <&cru SCLK_SDMMC>,
++			 <&cru SCLK_SDMMC_DRV>, <&cru SCLK_SDMMC_SAMPLE>;
++		clock-names = "biu", "ciu", "ciu_drv", "ciu_sample";
+ 		fifo-depth = <0x100>;
+ 		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+ 		reg = <0xff0c0000 0x4000>;
+@@ -233,8 +234,9 @@
+ 	sdio0: dwmmc@ff0d0000 {
+ 		compatible = "rockchip,rk3288-dw-mshc";
+ 		clock-freq-min-max = <400000 150000000>;
+-		clocks = <&cru HCLK_SDIO0>, <&cru SCLK_SDIO0>;
+-		clock-names = "biu", "ciu";
++		clocks = <&cru HCLK_SDIO0>, <&cru SCLK_SDIO0>,
++			 <&cru SCLK_SDIO0_DRV>, <&cru SCLK_SDIO0_SAMPLE>;
++		clock-names = "biu", "ciu", "ciu_drv", "ciu_sample";
+ 		fifo-depth = <0x100>;
+ 		interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
+ 		reg = <0xff0d0000 0x4000>;
+@@ -244,8 +246,9 @@
+ 	sdio1: dwmmc@ff0e0000 {
+ 		compatible = "rockchip,rk3288-dw-mshc";
+ 		clock-freq-min-max = <400000 150000000>;
+-		clocks = <&cru HCLK_SDIO1>, <&cru SCLK_SDIO1>;
+-		clock-names = "biu", "ciu";
++		clocks = <&cru HCLK_SDIO1>, <&cru SCLK_SDIO1>,
++			 <&cru SCLK_SDIO1_DRV>, <&cru SCLK_SDIO1_SAMPLE>;
++		clock-names = "biu", "ciu", "ciu_drv", "ciu_sample";
+ 		fifo-depth = <0x100>;
+ 		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+ 		reg = <0xff0e0000 0x4000>;
+@@ -255,8 +258,9 @@
+ 	emmc: dwmmc@ff0f0000 {
+ 		compatible = "rockchip,rk3288-dw-mshc";
+ 		clock-freq-min-max = <400000 150000000>;
+-		clocks = <&cru HCLK_EMMC>, <&cru SCLK_EMMC>;
+-		clock-names = "biu", "ciu";
++		clocks = <&cru HCLK_EMMC>, <&cru SCLK_EMMC>,
++			 <&cru SCLK_EMMC_DRV>, <&cru SCLK_EMMC_SAMPLE>;
++		clock-names = "biu", "ciu", "ciu_drv", "ciu_sample";
+ 		fifo-depth = <0x100>;
+ 		interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
+ 		reg = <0xff0f0000 0x4000>;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+2.1.4
