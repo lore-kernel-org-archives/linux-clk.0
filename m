@@ -1,60 +1,75 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: ulf.hansson@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	tgih.jun@samsung.com,
+	jh80.chung@samsung.com
+Cc: linux-mmc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	kernel@pengutronix.de,
-	patchwork-lst@pengutronix.de
-Subject: [PATCH 5/8] clk: imx35: retain early UART clocks during kernel init
-Date: Thu, 27 Aug 2015 18:39:18 +0200
-Message-Id: <1440693561-28095-6-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
-References: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alexandru M Stan <amstan@chromium.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 5/8] mmc: dw_mmc: dt-binding: Add tuning related things
+Date: Mon, 31 Aug 2015 20:24:03 +0200
+Message-Id: <1441045446-30858-6-git-send-email-heiko@sntech.de>
+In-Reply-To: <1441045446-30858-1-git-send-email-heiko@sntech.de>
+References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure to keep UART clocks enabled during kernel init if
-earlyprintk or earlycon are active.
+From: Alexandru M Stan <amstan@chromium.org>
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Add ciu_drv, ciu_sample clocks and default-sample-phase. This will later
+be used by tuning code.
+
+We do not touch ciu_drive (and by extension define default-drive-phase).
+Drive phase is mostly used to define minimum hold times, while one could
+write some code to determine what phase meets the minimum hold time
+(ex 10 degrees) this will not work with the current clock phase framework
+(which floors angles, so we'll get 0 deg, and there's no way to know what
+resolution the floors happen at). We assume that the default drive angles
+set by the hardware are good enough.
+
+Signed-off-by: Alexandru M Stan <amstan@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/clk/imx/clk-imx35.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
-index 69138ba3dec7..7b2aaf123d3b 100644
---- a/drivers/clk/imx/clk-imx35.c
-+++ b/drivers/clk/imx/clk-imx35.c
-@@ -84,6 +84,14 @@ enum mx35_clks {
+diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+index 346c609..5edadc2 100644
+--- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
++++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+@@ -42,11 +42,13 @@ Optional properties:
+ * clocks: from common clock binding: handle to biu and ciu clocks for the
+   bus interface unit clock and the card interface unit clock.
  
- static struct clk *clk[clk_max];
+-* clock-names: from common clock binding: Shall be "biu" and "ciu".
+-  If the biu clock is missing we'll simply skip enabling it.  If the
+-  ciu clock is missing we'll just assume that the clock is running at
++* clock-names: from common clock binding: Shall be "biu", "ciu", "ciu_drv" and
++  "ciu_sample".  If the biu clock is missing we'll simply skip enabling it.
++  If the ciu clock is missing we'll just assume that the clock is running at
+   clock-frequency.  It is an error to omit both the ciu clock and the
+-  clock-frequency.
++  clock-frequency.  "ciu_drv" and "ciu_sample" are used to control the clock
++  phases, "ciu_sample" is required for tuning high speed modes (if no other
++  custom tuning method is defined).
  
-+static void __init imx35_uart_disable_cb(void)
-+{
-+	clk_disable_unprepare(clk[ipg]);
-+	clk_disable_unprepare(clk[uart1_gate]);
-+	clk_disable_unprepare(clk[uart2_gate]);
-+	clk_disable_unprepare(clk[uart3_gate]);
-+}
+ * clock-frequency: should be the frequency (in Hz) of the ciu clock.  If this
+   is specified and the ciu clock is specified then we'll try to set the ciu
+@@ -75,6 +77,10 @@ Optional properties:
+ * vmmc-supply: The phandle to the regulator to use for vmmc.  If this is
+   specified we'll defer probe until we can find this regulator.
+ 
++* default-sample-phase: The default phase to set ciu_sample at probing, low
++  speeds or in case where all phases work at tuning time. If not specified
++  0 deg will be used.
 +
- int __init mx35_clocks_init(void)
- {
- 	void __iomem *base;
-@@ -292,6 +300,14 @@ int __init mx35_clocks_init(void)
- 	 */
- 	clk_prepare_enable(clk[scc_gate]);
+ Aliases:
  
-+	if (imx_clk_keep_uart()) {
-+		clk_prepare_enable(clk[ipg]);
-+		clk_prepare_enable(clk[uart1_gate]);
-+		clk_prepare_enable(clk[uart2_gate]);
-+		clk_prepare_enable(clk[uart3_gate]);
-+		imx_clk_set_uart_disable_callback(imx35_uart_disable_cb);
-+	}
-+
- 	imx_print_silicon_rev("i.MX35", mx35_revision());
- 
- 	mxc_timer_init(MX35_GPT1_BASE_ADDR, MX35_INT_GPT, GPT_TYPE_IMX31);
+ - All the MSHC controller nodes should be represented in the aliases node using
 -- 
-2.5.0
+2.1.4
