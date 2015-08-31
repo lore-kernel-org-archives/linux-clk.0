@@ -1,89 +1,68 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 18 Aug 2015 17:58:54 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, lee.jones@linaro.org, s.hauer@pengutronix.de,
-	geert@linux-m68k.org
-Subject: Re: [PATCH RFC RFT 3/3] clk: introduce CLK_ENABLE_HAND_OFF flag
-Message-ID: <20150818155854.GK2547@lukather>
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
- <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="45wMVEkw4XUbiYON"
-In-Reply-To: <1438974570-20812-4-git-send-email-mturquette@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 31 Aug 2015 21:48:53 +0900
+Message-Id: <20150831124853.31057.38519.sendpatchset@little-apple>
+In-Reply-To: <20150831124842.31057.54534.sendpatchset@little-apple>
+References: <20150831124842.31057.54534.sendpatchset@little-apple>
+Subject: [PATCH v5 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Magnus Damm <damm+renesas@opensource.se>
 
---45wMVEkw4XUbiYON
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Shmobile is all multiplatform these days, so in get rid of the
+reference to CONFIG_ARCH_SHMOBILE_MULTI in drivers/clk/shmobile/.
 
-Hi Mike,
+Also instead of always enabling DIV6 and MSTP adjust the Makefile
+to enable DIV6 and MSTP depending on if they are included in the
+SoC or not.
 
-On Fri, Aug 07, 2015 at 12:09:30PM -0700, Michael Turquette wrote:
-> Some clocks are critical to system operation (e.g. cpu, memory, etc) and
-> should not be gated until a driver that knows best claims such a clock
-> and expressly gates that clock through the normal clk.h api.
->=20
-> The typical way to handle this is for the clk driver or some other early
-> code to call clk_prepare_enable on this important clock as soon as it is
-> registered and before the clk_disable_unused garbage collector kicks in.
->=20
-> This patch introduces a formal way to handle this scenario that is
-> provided by the clk framework. Clk driver authors can set the
-> CLK_ENABLE_HAND_OFF flag in their clk data, which will cause the clk to
-> be enabled in clk_register(). Then when the first clk consumer driver
-> comes along and calls clk_get() & clk_prepare_enable(), the reference
-> counts taken during clk registration are transfered (or handed off) to
-> the clk consumer.
->=20
-> At this point handling the clk is the same as any other clock which as
-> not set the new CLK_ENABLE_HAND_OFF flag. In fact no changes to any
-> clock consumer driver are needed for this to work.
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
 
-This looks fine, the only thing I'm not really fond of is the name of
-the flag itself (and it's usually a good thing when we come to that
-kind of bikeshedding).
+ Earlier known as "clk: shmobile: Get rid of CONFIG_ARCH_SHMOBILE_MULTI"
 
-In my mind, the fact that we hand off the clock reference is a direct
-result to the clock being critical (or whatever name we want to call
-it). The hand off is a side effect, but the real information we want
-to carry is that it should not be gated.
+ Changes since V4:
+ - None
 
-And then the framework will know what behaviour it want to have based
-on that information.
+ Changes since V3:
+ - Got rid of hunks that modified drivers/clk/Makefile
+ - This to prevent build issue with non-CCF enabled SH arch
+ - A nice side effect is that this patch now can be merged any time
 
-Maxime
+ Changes since V2:
+ - Fixed patch subject typo CONFIG_SHMOBILE_MULTI -> CONFIG_ARCH_SHMOBILE_MULTI
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+ drivers/clk/shmobile/Makefile |   22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
---45wMVEkw4XUbiYON
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJV01Y+AAoJEBx+YmzsjxAg9QEP+wXnwZcHp2R9+ljT0yksn6ub
-RknuxSJk5mW2FhR6JHMREOjFH2r/6ajD+I4DIAG0+F9JWehDsbFsrB2hzVt/fipq
-QWK96Jed8jhpEz36Wx/Vx4oIBjRb/QCiriVKsvFLu5mHRZunly+nx0BxB4RNQffK
-Mbm75qFqTW4dCfVnd6JSCF+AAqLhj1gtPlY5Rrd73KMeNAmDpYhxJKZFK7yX3NTb
-w4HyuyvGMJvBWXILufuw1ZsFct+HhhICfwEpWUe6kcVJksESELRVv2yjRjZZjZvO
-QsLpTZsBsG8iJi46psYn8pQIRk93BEuJhMowWIoWoiiRBzah1xVUHive74P+hFe5
-3l6fpLwLBo3vlb0sHQEsYj516z5L5z/CAiNbv6Zdd/FlHGoNcB484tkynNPjNJXB
-vGG/ZL5v9s7/pTzewHs1zrNnqe8tnKQZsjoqVgwog6lYSKqJwD5kL6M/xekRuHiB
-mLEjjhjpQZb2vzpnWdN52d6bn/OkTBz5pCMq11bCngC7US15JyIPmeyOWQ7gPdio
-M9VEupx8GBeMtYGA1qnDurGMqsHotuPiBlHGEdnyKnmO0fD/TaUy23syLjq6kKYV
-+cZawsX9E478c3nLE7FMCB2mVpzuaEvf2lgeQ0y+XJWdaBoDFrqQp2ssMPVmkWPu
-aE2UpERd8pG3/vFuo79i
-=GtIw
------END PGP SIGNATURE-----
-
---45wMVEkw4XUbiYON--
+--- 0001/drivers/clk/shmobile/Makefile
++++ work/drivers/clk/shmobile/Makefile	2015-08-29 16:14:57.522366518 +0900
+@@ -1,13 +1,11 @@
+ obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
+-obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
+-obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
+-obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
+-obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+-obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+-obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o
+-obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-div6.o
+-obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-mstp.o
++obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
