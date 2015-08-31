@@ -1,236 +1,256 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 08/16] ARM: shmobile: r8a7779 dtsi: Add CPG/MSTP Clock Domain
-Date: Tue,  4 Aug 2015 14:28:09 +0200
-Message-Id: <1438691297-29235-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
-References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: ulf.hansson@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	tgih.jun@samsung.com,
+	jh80.chung@samsung.com
+Cc: linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alexandru M Stan <amstan@chromium.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 6/8] mmc: dw_mmc: Generic MMC tuning with the clock phase framework
+Date: Mon, 31 Aug 2015 20:24:04 +0200
+Message-Id: <1441045446-30858-7-git-send-email-heiko@sntech.de>
+In-Reply-To: <1441045446-30858-1-git-send-email-heiko@sntech.de>
+References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add an appropriate "#power-domain-cells" property to the cpg_clocks
-device node, to create the CPG/MSTP Clock Domain.
+From: Alexandru M Stan <amstan@chromium.org>
 
-Add "power-domains" properties to all device nodes for devices that are
-part of the CPG/MSTP Clock Domain and can be power-managed through an
-MSTP clock.  This applies to most on-SoC devices, which have a
-one-to-one mapping from SoC device to DT device node.
+This algorithm will try 1 degree increments, since there's no way to tell
+what resolution the underlying phase code uses. As an added bonus, doing
+many tunings yields better results since some tests are run more than once
+(ex: if the underlying driver uses 45 degree increments, the tuning code
+will try the same angle more than once).
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+It will then construct a list of good phase ranges (even ranges that cross
+360/0), will pick the biggest range then it will set the sample_clk to the
+middle of that range.
+
+We do not touch ciu_drive (and by extension define default-drive-phase).
+Drive phase is mostly used to define minimum hold times, while one could
+write some code to determine what phase meets the minimum hold time (ex 10
+degrees) this will not work with the current clock phase framework (which
+floors angles, so we'll get 0 deg, and there's no way to know what
+resolution the floors happen at). We assume that the default drive angles
+set by the hardware are good enough.
+
+If a device has device specific code (like exynos) then that will still
+take precedence, otherwise this new code will execute. If the device wants
+to tune, but has no sample_clk defined we'll return EIO with an error
+message.
+
+Signed-off-by: Alexandru M Stan <amstan@chromium.org>
+
+Convert to mmc_send_tuning()
+Fold in from the ChromeOS-tree:
+ - mmc: dw_mmc: Change tuning to only 16 phases
+ - mmc: dw_mmc: Test more phases
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
-v4:
-  - Add Reviewed-by,
+ drivers/mmc/host/dw_mmc.c  | 142 +++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mmc/dw_mmc.h |   3 +
+ 2 files changed, 145 insertions(+)
 
-v3:
-  - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
-
-v2:
-  - New.
----
- arch/arm/boot/dts/r8a7779.dtsi | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index a2b5430d32575f99..6afa909865b52b71 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -173,6 +173,7 @@
- 		reg = <0xffc70000 0x1000>;
- 		interrupts = <0 79 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C0>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index b1b7e7f..13bcde0 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -1194,6 +1194,12 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	if (drv_data && drv_data->set_ios)
+ 		drv_data->set_ios(slot->host, ios);
  
-@@ -183,6 +184,7 @@
- 		reg = <0xffc71000 0x1000>;
- 		interrupts = <0 82 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C1>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
++	/* Make sure we use phases which we can enumerate with */
++	if (!IS_ERR(slot->host->sample_clk)) {
++		clk_set_phase(slot->host->sample_clk,
++			      slot->host->default_sample_phase);
++	}
++
+ 	switch (ios->power_mode) {
+ 	case MMC_POWER_UP:
+ 		if (!IS_ERR(mmc->supply.vmmc)) {
+@@ -1414,6 +1420,127 @@ static void dw_mci_enable_sdio_irq(struct mmc_host *mmc, int enb)
+ 	spin_unlock_irqrestore(&host->irq_lock, irqflags);
+ }
  
-@@ -193,6 +195,7 @@
- 		reg = <0xffc72000 0x1000>;
- 		interrupts = <0 80 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C2>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
++#define NUM_PHASES			360
++#define TUNING_ITERATION_TO_PHASE(i)	(DIV_ROUND_UP((i) * 360, NUM_PHASES))
++
++static int dw_mci_execute_generic_tuning(struct dw_mci_slot *slot)
++{
++	struct dw_mci *host = slot->host;
++	struct mmc_host *mmc = slot->mmc;
++	int ret = 0;
++	int i;
++	bool v, prev_v = 0, first_v;
++	struct range_t {
++		int start;
++		int end; /* inclusive */
++	};
++	struct range_t *ranges;
++	unsigned int range_count = 0;
++	int longest_range_len = -1;
++	int longest_range = -1;
++	int middle_phase;
++
++	if (IS_ERR(host->sample_clk)) {
++		dev_err(host->dev, "Tuning clock (sample_clk) not defined.\n");
++		return -EIO;
++	}
++
++	ranges = kmalloc_array(NUM_PHASES / 2 + 1, sizeof(*ranges), GFP_KERNEL);
++	if (!ranges)
++		return -ENOMEM;
++
++	/* Try each phase and extract good ranges */
++	for (i = 0; i < NUM_PHASES; ) {
++		clk_set_phase(host->sample_clk, TUNING_ITERATION_TO_PHASE(i));
++
++		v = !mmc_send_tuning(mmc);
++
++		if (i == 0)
++			first_v = v;
++
++		if ((!prev_v) && v) {
++			range_count++;
++			ranges[range_count-1].start = i;
++		}
++		if (v) {
++			ranges[range_count-1].end = i;
++			i++;
++		} else if (i == NUM_PHASES - 1) {
++			/* No extra skipping rules if we're at the end */
++			i++;
++		} else {
++			/*
++			 * No need to check too close to an invalid
++			 * one since testing bad phases is slow.  Skip
++			 * 20 degrees.
++			 */
++			i += DIV_ROUND_UP(20 * NUM_PHASES, 360);
++
++			/* Always test the last one */
++			if (i >= NUM_PHASES)
++				i = NUM_PHASES - 1;
++		}
++
++		prev_v = v;
++	}
++
++	if (range_count == 0) {
++		dev_warn(host->dev, "All phases bad!");
++		ret = -EIO;
++		goto free;
++	}
++
++	/* wrap around case, merge the end points */
++	if ((range_count > 1) && first_v && v) {
++		ranges[0].start = ranges[range_count-1].start;
++		range_count--;
++	}
++
++	if (ranges[0].start == 0 && ranges[0].end == NUM_PHASES - 1) {
++		clk_set_phase(host->sample_clk, host->default_sample_phase);
++		dev_info(host->dev, "All phases work, using default phase %d.",
++			 host->default_sample_phase);
++		goto free;
++	}
++
++	/* Find the longest range */
++	for (i = 0; i < range_count; i++) {
++		int len = (ranges[i].end - ranges[i].start + 1);
++
++		if (len < 0)
++			len += NUM_PHASES;
++
++		if (longest_range_len < len) {
++			longest_range_len = len;
++			longest_range = i;
++		}
++
++		dev_dbg(host->dev, "Good phase range %d-%d (%d len)\n",
++			TUNING_ITERATION_TO_PHASE(ranges[i].start),
++			TUNING_ITERATION_TO_PHASE(ranges[i].end),
++			len
++		);
++	}
++
++	dev_dbg(host->dev, "Best phase range %d-%d (%d len)\n",
++		TUNING_ITERATION_TO_PHASE(ranges[longest_range].start),
++		TUNING_ITERATION_TO_PHASE(ranges[longest_range].end),
++		longest_range_len
++	);
++
++	middle_phase = ranges[longest_range].start + longest_range_len / 2;
++	middle_phase %= NUM_PHASES;
++	dev_info(host->dev, "Successfully tuned phase to %d\n",
++		 TUNING_ITERATION_TO_PHASE(middle_phase));
++
++	clk_set_phase(host->sample_clk,
++		      TUNING_ITERATION_TO_PHASE(middle_phase));
++
++free:
++	kfree(ranges);
++	return ret;
++}
++
+ static int dw_mci_execute_tuning(struct mmc_host *mmc, u32 opcode)
+ {
+ 	struct dw_mci_slot *slot = mmc_priv(mmc);
+@@ -1423,6 +1550,8 @@ static int dw_mci_execute_tuning(struct mmc_host *mmc, u32 opcode)
  
-@@ -203,6 +206,7 @@
- 		reg = <0xffc73000 0x1000>;
- 		interrupts = <0 81 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C3>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+ 	if (drv_data && drv_data->execute_tuning)
+ 		err = drv_data->execute_tuning(slot);
++	else
++		err = dw_mci_execute_generic_tuning(slot);
+ 	return err;
+ }
  
-@@ -212,6 +216,7 @@
- 		interrupts = <0 88 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF0>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+@@ -2741,6 +2870,11 @@ static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
+ 	if (!of_property_read_u32(np, "clock-frequency", &clock_frequency))
+ 		pdata->bus_hz = clock_frequency;
  
-@@ -221,6 +226,7 @@
- 		interrupts = <0 89 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF1>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
++	if (of_property_read_u32(np, "default-sample-phase",
++					&host->default_sample_phase)) {
++		host->default_sample_phase = 0;
++	}
++
+ 	if (drv_data && drv_data->parse_dt) {
+ 		ret = drv_data->parse_dt(host);
+ 		if (ret)
+@@ -2843,6 +2977,14 @@ int dw_mci_probe(struct dw_mci *host)
+ 		host->bus_hz = clk_get_rate(host->ciu_clk);
+ 	}
  
-@@ -230,6 +236,7 @@
- 		interrupts = <0 90 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF2>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
++	host->drv_clk = devm_clk_get(host->dev, "ciu_drv");
++	if (IS_ERR(host->drv_clk))
++		dev_dbg(host->dev, "ciu_drv not available\n");
++
++	host->sample_clk = devm_clk_get(host->dev, "ciu_sample");
++	if (IS_ERR(host->sample_clk))
++		dev_dbg(host->dev, "ciu_sample not available\n");
++
+ 	if (!host->bus_hz) {
+ 		dev_err(host->dev,
+ 			"Platform data must supply bus speed\n");
+diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
+index 134c574..40187ba 100644
+--- a/include/linux/mmc/dw_mmc.h
++++ b/include/linux/mmc/dw_mmc.h
+@@ -176,7 +176,10 @@ struct dw_mci {
+ 	void			*priv;
+ 	struct clk		*biu_clk;
+ 	struct clk		*ciu_clk;
++	struct clk		*drv_clk;
++	struct clk		*sample_clk;
+ 	struct dw_mci_slot	*slot[MAX_MCI_SLOTS];
++	int			default_sample_phase;
  
-@@ -239,6 +246,7 @@
- 		interrupts = <0 91 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF3>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -248,6 +256,7 @@
- 		interrupts = <0 92 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF4>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -257,6 +266,7 @@
- 		interrupts = <0 93 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF5>;
- 		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -278,6 +288,7 @@
- 			     <0 34 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_TMU0>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		#renesas,channels = <3>;
- 
-@@ -292,6 +303,7 @@
- 			     <0 38 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_TMU1>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		#renesas,channels = <3>;
- 
-@@ -306,6 +318,7 @@
- 			     <0 42 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_TMU2>;
- 		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
- 
- 		#renesas,channels = <3>;
- 
-@@ -317,6 +330,7 @@
- 		reg = <0xfc600000 0x2000>;
- 		interrupts = <0 100 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
-+		power-domains = <&cpg_clocks>;
- 	};
- 
- 	sdhi0: sd@ffe4c000 {
-@@ -324,6 +338,7 @@
- 		reg = <0xffe4c000 0x100>;
- 		interrupts = <0 104 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7779_CLK_SDHI0>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -332,6 +347,7 @@
- 		reg = <0xffe4d000 0x100>;
- 		interrupts = <0 105 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7779_CLK_SDHI1>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -340,6 +356,7 @@
- 		reg = <0xffe4e000 0x100>;
- 		interrupts = <0 107 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7779_CLK_SDHI2>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -348,6 +365,7 @@
- 		reg = <0xffe4f000 0x100>;
- 		interrupts = <0 106 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7779_CLK_SDHI3>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -358,6 +376,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -368,6 +387,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -378,6 +398,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
- 
-@@ -386,6 +407,7 @@
- 		reg = <0 0xfff80000 0 0x40000>;
- 		interrupts = <0 31 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7779_CLK_DU>;
-+		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 
- 		ports {
-@@ -427,6 +449,7 @@
- 			#clock-cells = <1>;
- 			clock-output-names = "plla", "z", "zs", "s",
- 					     "s1", "p", "b", "out";
-+			#power-domain-cells = <0>;
- 		};
- 
- 		/* Fixed factor clocks */
+ 	/* FIFO push and pull */
+ 	int			fifo_depth;
 -- 
-1.9.1
-
+2.1.4
