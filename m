@@ -1,40 +1,81 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1438574211-4887-1-git-send-email-hl@rock-chips.com>
-References: <1438574211-4887-1-git-send-email-hl@rock-chips.com>
-Date: Mon, 3 Aug 2015 12:57:26 -0700
-Message-ID: <CAD=FV=VpYF7+Qkw3qiuQyU4n9k7aigf_on+t-kJcBQ_kHE7Nhg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] clk: rockchip: add pclk_pd_pmu to the list of
- rk3288 critical clocks
-From: Doug Anderson <dianders@chromium.org>
-To: huang lin <hl@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: ulf.hansson@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	tgih.jun@samsung.com,
+	jh80.chung@samsung.com
+Cc: linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 8/8] ARM: dts: rockchip: add tuning related settings to veyron devices
+Date: Mon, 31 Aug 2015 20:24:06 +0200
+Message-Id: <1441045446-30858-9-git-send-email-heiko@sntech.de>
+In-Reply-To: <1441045446-30858-1-git-send-email-heiko@sntech.de>
+References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-hl,
+This allows the tuning code to run and use higher speeds on capable cards.
 
-On Sun, Aug 2, 2015 at 8:56 PM, huang lin <hl@rock-chips.com> wrote:
-> pclk_pd_pmu needs to keep running and with the upcoming gpio clock
-> handling this is not always the case anymore. So add it to the list
-> of critical clocks for now.
->
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->
-> Signed-off-by: huang lin <hl@rock-chips.com>
-> ---
->  drivers/clk/rockchip/clk-rk3288.c | 1 +
->  1 file changed, 1 insertion(+)
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ arch/arm/boot/dts/rk3288-veyron-sdmmc.dtsi | 7 ++++++-
+ arch/arm/boot/dts/rk3288-veyron.dtsi       | 6 ++++++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-Probably should get rid of the blank line between the two SoBs.
-...and probably should fix your name to be capitalized?  ...but I
-assume the maintainer can fix that when landing?  Otherwise:
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+diff --git a/arch/arm/boot/dts/rk3288-veyron-sdmmc.dtsi b/arch/arm/boot/dts/rk3288-veyron-sdmmc.dtsi
+index b5334ec..24a7a11 100644
+--- a/arch/arm/boot/dts/rk3288-veyron-sdmmc.dtsi
++++ b/arch/arm/boot/dts/rk3288-veyron-sdmmc.dtsi
+@@ -90,7 +90,7 @@
+ 	regulators {
+ 		vccio_sd: LDO_REG4 {
+ 			regulator-name = "vccio_sd";
+-			regulator-min-microvolt = <3300000>;
++			regulator-min-microvolt = <1800000>;
+ 			regulator-max-microvolt = <3300000>;
+ 			regulator-state-mem {
+ 				regulator-off-in-suspend;
+@@ -116,7 +116,12 @@
+ 	cap-sd-highspeed;
+ 	card-detect-delay = <200>;
+ 	cd-gpios = <&gpio7 5 GPIO_ACTIVE_LOW>;
++	default-sample-phase = <90>;
+ 	num-slots = <1>;
++	sd-uhs-sdr12;
++	sd-uhs-sdr25;
++	sd-uhs-sdr50;
++	sd-uhs-sdr104;
+ 	vmmc-supply = <&vcc33_sd>;
+ 	vqmmc-supply = <&vccio_sd>;
+ };
+diff --git a/arch/arm/boot/dts/rk3288-veyron.dtsi b/arch/arm/boot/dts/rk3288-veyron.dtsi
+index df7d70d..394aa80 100644
+--- a/arch/arm/boot/dts/rk3288-veyron.dtsi
++++ b/arch/arm/boot/dts/rk3288-veyron.dtsi
+@@ -194,7 +194,9 @@
+ 	broken-cd;
+ 	bus-width = <8>;
+ 	cap-mmc-highspeed;
++	default-sample-phase = <158>;
+ 	disable-wp;
++	mmc-hs200-1_8v;
+ 	mmc-pwrseq = <&emmc_pwrseq>;
+ 	non-removable;
+ 	num-slots = <1>;
+@@ -409,6 +411,10 @@
+ 	num-slots = <1>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sdio0_clk &sdio0_cmd &sdio0_bus4>;
++	sd-uhs-sdr12;
++	sd-uhs-sdr25;
++	sd-uhs-sdr50;
++	sd-uhs-sdr104;
+ 	vmmc-supply = <&vcc33_sys>;
+ 	vqmmc-supply = <&vcc18_wl>;
+ };
+-- 
+2.1.4
