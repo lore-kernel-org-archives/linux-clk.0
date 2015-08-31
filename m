@@ -2,96 +2,39 @@ Return-Path: <magnus.damm@gmail.com>
 Return-Path: <magnus.damm@gmail.com>
 From: Magnus Damm <magnus.damm@gmail.com>
 To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 31 Aug 2015 21:49:16 +0900
-Message-Id: <20150831124916.31057.13404.sendpatchset@little-apple>
+Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 31 Aug 2015 21:49:27 +0900
+Message-Id: <20150831124927.31057.69961.sendpatchset@little-apple>
 In-Reply-To: <20150831124842.31057.54534.sendpatchset@little-apple>
 References: <20150831124842.31057.54534.sendpatchset@little-apple>
-Subject: [PATCH v5 03/05] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
+Subject: [PATCH v5 04/05] clk: shmobile: Add r8a7795 SoC to MSTP bindings
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Add Clock Domain support to the R-Car Gen3 Clock Pulse Generator (CPG)
-driver using the generic PM Domain.  This allows to power-manage the
-module clocks of SoC devices that are part of the CPG/MSTP Clock Domain
-using Runtime PM, or for system suspend/resume.
+Add r8a7795 to the MSTP DT binding documentation.
 
-SoC devices that are part of the CPG/MSTP Clock Domain and can be
-power-managed through an MSTP clock should be tagged in DT with a proper
-"power-domains" property.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
 
- Changes since V4:
- - Rebased to fit on top of updated CPG DT binding document
+ Changes since V4: (Magnus Damm <damm+renesas@opensource.se>)
+ - Added Acked-by from Geert
 
- Changes since V3:
- - Fixed so correct file is actually used. =)
- - Took V2 from Geert but filtered out Kconfig.platforms bits
+ Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
+ - Picked up patch floating around on ML, added change log
 
- Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   26 +++++++++-
- drivers/clk/shmobile/clk-rcar-gen3.c                                     |    2 
- 2 files changed, 26 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt |    1 +
+ 1 file changed, 1 insertion(+)
 
---- 0007/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt
-+++ work/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt	2015-08-31 21:20:31.782366518 +0900
-@@ -2,6 +2,8 @@
- 
- The CPG generates core clocks for the R-Car Gen3 SoCs. It includes three PLLs
- and several fixed ratio dividers.
-+The CPG also provides a Clock Domain for SoC devices, in combination with the
-+CPG Module Stop (MSTP) Clocks.
- 
- Required Properties:
- 
-@@ -14,9 +16,17 @@ Required Properties:
-   - clocks: References to the parent clocks: first to the EXTAL clock
-   - #clock-cells: Must be 1
-   - clock-indices: Indices of the exported clocks
-+  - #power-domain-cells: Must be 0
- 
--Example
---------
-+SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
-+through an MSTP clock should refer to the CPG device node in their
-+"power-domains" property, as documented by the generic PM domain bindings in
-+Documentation/devicetree/bindings/power/power_domain.txt.
-+
-+Examples
-+--------
-+
-+  - CPG device node:
- 
- 	cpg_clocks: cpg_clocks@e6150000 {
- 		compatible = "renesas,r8a7795-cpg-clocks",
-@@ -29,4 +39,16 @@ Example
-                              R8A7795_CLK_PLL1 R8A7795_CLK_PLL2
-                              R8A7795_CLK_PLL3 R8A7795_CLK_PLL4
-                 >;
-+		#power-domain-cells = <0>;
-+	};
-+
-+  - CPG/MSTP Clock Domain member device node:
-+
-+	scif2: serial@e6e88000 {
-+		compatible = "renesas,scif-r8a7795", "renesas,scif";
-+		reg = <0 0xe6e88000 0 64>;
-+		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp3_clks RCAR_R8A7795_CLK_SCIF2>;
-+		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 	};
---- 0007/drivers/clk/shmobile/clk-rcar-gen3.c
-+++ work/drivers/clk/shmobile/clk-rcar-gen3.c	2015-08-31 21:17:02.242366518 +0900
-@@ -240,6 +240,8 @@ static void __init rcar_gen3_cpg_clocks_
- 	}
- 
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
-+
-+	cpg_mstp_add_clk_domain(np);
- }
- CLK_OF_DECLARE(rcar_gen3_cpg_clks, "renesas,rcar-gen3-cpg-clocks",
- 	       rcar_gen3_cpg_clocks_init);
+--- 0001/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
++++ work/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt	2015-08-29 16:18:30.672366518 +0900
+@@ -19,6 +19,7 @@ Required Properties:
+     - "renesas,r8a7791-mstp-clocks" for R8A7791 (R-Car M2-W) MSTP gate clocks
+     - "renesas,r8a7793-mstp-clocks" for R8A7793 (R-Car M2-N) MSTP gate clocks
+     - "renesas,r8a7794-mstp-clocks" for R8A7794 (R-Car E2) MSTP gate clocks
++    - "renesas,r8a7795-mstp-clocks" for R8A7795 (R-Car H3) MSTP gate clocks
+     - "renesas,sh73a0-mstp-clocks" for SH73A0 (SH-MobileAG5) MSTP gate clocks
+     and "renesas,cpg-mstp-clocks" as a fallback.
+   - reg: Base address and length of the I/O mapped registers used by the MSTP
