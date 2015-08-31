@@ -1,159 +1,68 @@
-Return-Path: <heiko@sntech.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Heiko Stuebner <heiko@sntech.de>
-To: ulf.hansson@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	tgih.jun@samsung.com,
-	jh80.chung@samsung.com
-Cc: linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+To: ulf.hansson@linaro.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, tgih.jun@samsung.com, jh80.chung@samsung.com
+Cc: linux-mmc@vger.kernel.org, linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
 	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
-Date: Mon, 31 Aug 2015 20:24:01 +0200
-Message-Id: <1441045446-30858-4-git-send-email-heiko@sntech.de>
-In-Reply-To: <1441045446-30858-1-git-send-email-heiko@sntech.de>
-References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
+Subject: [PATCH 0/8] mmc: dw_mmc: allow tuning using the clk-phase api
+Date: Mon, 31 Aug 2015 20:23:58 +0200
+Message-Id: <1441045446-30858-1-git-send-email-heiko@sntech.de>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Douglas Anderson <dianders@chromium.org>
+This series resurrects and adapts some individual patches whose sum
+enable the dw_mmc hosts on Rockchip socs to tune clock phases using
+the generic phase api (rk3288 and following have this capability).
 
-This adds logic to the MMC core to set VQMMC.  This is expected to be
-called by MMC drivers like dw_mmc as part of (or instead of) their
-start_signal_voltage_switch() callback.
+The changes to the original mmc-phase clocks are expanded by further
+findings resulting from devices being used in the field.
 
-A few notes:
+Similarly the regulator handling changes do use the brand new
+regulator_set_voltage_triplet call to allow specifying lower and upper
+limits. One possible point of discussion are the two voltage ranges
+that are tried for the 3.3V signal level. Trying to stay near vmmc
+at first and only then opening the range to the full 2.7-3.6V.
 
-* When setting the signal voltage to 3.3V we do our best to make VQMMC
-  and VMMC match.  It's been reported that this makes some old cards
-  happy since they were tested back in the day before UHS when VQMMC
-  and VMMC were provided by the same regulator.  A nice side effect of
-  this is that we don't end up on the hairy edge of VQMMC (2.7V),
-  which some EEs claim is a little too close to the minimum for
-  comfort.
-  If this is not supported by the supplying regulator we try to find
-  a suitable voltage within the whole 2.7V-3.6V area of the spec.
+This mainly circumvents a shortcoming of the regulator voltage
+setting, in that even with regulator_set_voltage_triplet the regulator
+framework will take the lowest possible voltage when the possible
+voltages are below the target voltage. While it may be ideal to solve
+this on the regulator side, I'm not seeing this appearing in the short
+term, mainly because all regulator parts (including regulator drivers)
+are keyed to selecting the lowest voltage from the range, while on the
+mmc side we know which voltages may work and trying this in two steps
+does not create to much overhead, as unsupported voltages are already
+filtered out by the regulator_is_voltage_selected calls.
 
-* When setting the signal voltage to 1.8V or 1.2V we aim for that
-  specific voltage instead of picking the lowest one in the range.
 
-* We very purposely don't print errors in mmc_regulator_set_vqmmc().
-  There are cases where the MMC core will try several different
-  voltages and we don't want to pollute the logs.
+Alexandru M Stan (3):
+  mmc: dw_mmc: dt-binding: Add tuning related things
+  mmc: dw_mmc: Generic MMC tuning with the clock phase framework
+  ARM: dts: rockchip: Add drive/sample clocks for rk3288 dw_mmc devices
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/mmc/core/core.c  | 68 ++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/mmc/host.h |  7 +++++
- 2 files changed, 75 insertions(+)
+Douglas Anderson (4):
+  clk: rockchip: Allow more precision for some mmc clock phases
+  clk: rockchip: Make calculations use rounding
+  mmc: core: Add mmc_regulator_set_vqmmc()
+  mmc: dw_mmc: Use mmc_regulator_set_vqmmc in
+    start_signal_voltage_switch
 
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index 0520064..9dc0b65 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -1437,6 +1437,74 @@ int mmc_regulator_set_ocr(struct mmc_host *mmc,
- }
- EXPORT_SYMBOL_GPL(mmc_regulator_set_ocr);
- 
-+static int mmc_regulator_set_voltage_if_supported(struct regulator *regulator,
-+						  int min_uV, int target_uV,
-+						  int max_uV)
-+{
-+	/*
-+	 * Check if supported first to avoid errors since we may try several
-+	 * signal levels during power up and don't want to show errors.
-+	 */
-+	if (!regulator_is_supported_voltage(regulator, min_uV, max_uV))
-+		return -EINVAL;
-+
-+	return regulator_set_voltage_triplet(regulator, min_uV, target_uV,
-+					     max_uV);
-+}
-+
-+/**
-+ * mmc_regulator_set_vqmmc - Set VQMMC as per the ios
-+ *
-+ * For 3.3V signaling, we try to match VQMMC to VMMC as closely as possible.
-+ * That will match the behavior of old boards where VQMMC and VMMC were supplied
-+ * by the same supply.  The Bus Operating conditions for 3.3V signaling in the
-+ * SD card spec also define VQMMC in terms of VMMC.
-+ * If this is not possible we'll try the full 2.7-3.6V of the spec.
-+ *
-+ * For 1.2V and 1.8V signaling we'll try to get as close as possible to the
-+ * requested voltage.  This is definitely a good idea for UHS where there's a
-+ * separate regulator on the card that's trying to make 1.8V and it's best if
-+ * we match.
-+ *
-+ * This function is expected to be used by a controller's
-+ * start_signal_voltage_switch() function.
-+ */
-+int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct mmc_ios *ios)
-+{
-+	int volt, min_uV, max_uV;
-+
-+	/* If no vqmmc supply then we can't change the voltage */
-+	if (IS_ERR(mmc->supply.vqmmc))
-+		return -EINVAL;
-+
-+	switch (ios->signal_voltage) {
-+	case MMC_SIGNAL_VOLTAGE_120:
-+		return mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
-+						1100000, 1200000, 1300000);
-+	case MMC_SIGNAL_VOLTAGE_180:
-+		return mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
-+						1700000, 1800000, 1950000);
-+	case MMC_SIGNAL_VOLTAGE_330:
-+		volt = regulator_get_voltage(mmc->supply.vmmc);
-+		if (volt < 0)
-+			return volt;
-+
-+		min_uV = max(volt - 300000, 2700000);
-+		max_uV = min(volt + 300000, 3600000);
-+
-+		/* try to stay close to vmmc at first */
-+		if (!mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
-+						min_uV, volt, max_uV))
-+			return 0;
-+
-+		return mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
-+						2700000, volt, 3600000);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(mmc_regulator_set_vqmmc);
-+
- #endif /* CONFIG_REGULATOR */
- 
- int mmc_regulator_get_supply(struct mmc_host *mmc)
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index 83b81fd..a2a78eb 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -423,6 +423,7 @@ int mmc_regulator_get_ocrmask(struct regulator *supply);
- int mmc_regulator_set_ocr(struct mmc_host *mmc,
- 			struct regulator *supply,
- 			unsigned short vdd_bit);
-+int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct mmc_ios *ios);
- #else
- static inline int mmc_regulator_get_ocrmask(struct regulator *supply)
- {
-@@ -435,6 +436,12 @@ static inline int mmc_regulator_set_ocr(struct mmc_host *mmc,
- {
- 	return 0;
- }
-+
-+static inline int mmc_regulator_set_vqmmc(struct mmc_host *mmc,
-+					  struct mmc_ios *ios)
-+{
-+	return -EINVAL;
-+}
- #endif
- 
- int mmc_regulator_get_supply(struct mmc_host *mmc);
+Heiko Stuebner (1):
+  ARM: dts: rockchip: add tuning related settings to veyron devices
+
+ .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |  14 +-
+ arch/arm/boot/dts/rk3288-veyron-sdmmc.dtsi         |   7 +-
+ arch/arm/boot/dts/rk3288-veyron.dtsi               |   6 +
+ arch/arm/boot/dts/rk3288.dtsi                      |  20 +--
+ drivers/clk/rockchip/clk-mmc-phase.c               |  54 ++++---
+ drivers/mmc/core/core.c                            |  68 +++++++++
+ drivers/mmc/host/dw_mmc.c                          | 159 +++++++++++++++++++--
+ include/linux/mmc/dw_mmc.h                         |   3 +
+ include/linux/mmc/host.h                           |   7 +
+ 9 files changed, 295 insertions(+), 43 deletions(-)
+
 -- 
 2.1.4
+
