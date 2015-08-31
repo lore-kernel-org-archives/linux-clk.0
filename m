@@ -1,103 +1,144 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
- Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
- Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- b.zolnierkie@samsung.com
-Subject: [PATCH v4 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
- platform
-Date: Thu, 06 Aug 2015 15:41:48 +0200
-Message-id: <1438868514-8814-1-git-send-email-b.zolnierkie@samsung.com>
+Return-Path: <magnus.damm@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUR7gYXoJMRGXdcReZ4fX+2SQDvTsK8Jny67GcW995_9Q@mail.gmail.com>
+References: <20150829091323.28546.28287.sendpatchset@little-apple>
+	<20150829091346.28546.42552.sendpatchset@little-apple>
+	<CAMuHMdUR7gYXoJMRGXdcReZ4fX+2SQDvTsK8Jny67GcW995_9Q@mail.gmail.com>
+Date: Mon, 31 Aug 2015 20:58:08 +0900
+Message-ID: <CANqRtoSKNBxQRkF5FKXwHTDgfLpvq6U98KqZ_QCH4G9VdMbNAg@mail.gmail.com>
+Subject: Re: [PATCH v4 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
+From: Magnus Damm <magnus.damm@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
+	Linux-sh list <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi Geert,
 
-This patch series removes the use of Exynos4x12 specific support
-from cpufreq-exynos driver and enables the use of cpufreq-dt driver
-for this platform.
+On Mon, Aug 31, 2015 at 5:45 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Magnus,
+>
+> On Sat, Aug 29, 2015 at 11:13 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+>> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+>>
+>> This patch adds initial CPG support for R-Car Generation 3 and in
+>> particular the R8A7795 SoC.
+>>
+>> The R-Car Gen3 clock hardware has a register write protection feature that
+>> needs to be shared between the CPG function needs to be shared between
+>> the CPG and MSTP hardware somehow. So far this feature is simply ignored.
+>>
+>> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+>> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+>> ---
+>>
+>>  Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
+>>  - Reworked driver to incorporate most feedback from Stephen Boyd - thanks!!
+>>  - Major things like syscon and driver model require more discussion.
+>>  - Added hunk to build drivers/clk/shmobile if ARCH_RENESAS is set.
+>
+> Thanks for the updates!
+>
+>>  Changes since V2: (Magnus Damm <damm+renesas@opensource.se>)
+>>  - Reworked driver to rely on clock index instead of strings.
+>
+> I had completely missed this part in the previous version...
 
-This patch series has been tested on Exynos4412 based Odroid-U3 and
-Trats2 boards.
+No worries, perhaps not so well documented. And there are many changes
+floating around...
 
-Depends on:
-- next-20150806 branch of linux-next kernel tree
-- "[PATCH V3 00/16] OPP: Add code to support operating-points-v2 bindings"
-  (http://www.spinics.net/lists/arm-kernel/msg435408.html)
+>>  - Dropped use of "clock-output-names".
+>
+>
+>> --- /dev/null
+>> +++ work/drivers/clk/shmobile/clk-rcar-gen3.c   2015-08-29 16:30:59.032366518 +0900
+>> @@ -0,0 +1,249 @@
+>
+>> +#define RCAR_GEN3_CLK_MAIN     0
+>> +#define RCAR_GEN3_CLK_PLL0     1
+>> +#define RCAR_GEN3_CLK_PLL1     2
+>> +#define RCAR_GEN3_CLK_PLL2     3
+>> +#define RCAR_GEN3_CLK_PLL3     4
+>> +#define RCAR_GEN3_CLK_PLL4     5
+>
+> These values are intimately tied to R8A7795_CLK_* in
+> include/dt-bindings/clock/r8a7795-clock.h.
+> Perhaps we can use these instead?
 
-Changes since v3
-(http://thread.gmane.org/gmane.linux.power-management.general/63464):
-- rebased on top of next-20150806 branch of linux-next kernel tree
-- made ARCH_EXYNOS config option select thermal support
-- made scaling_boost_freqs sysfs attribute available only when boost
-  support is enabled
-- added Acked-by tag from Viresh to patches #3, #4 and #5
-- added Tested-by tag from Tobias to patches #2-5
-- added Reviewed-by tag from Krzysztof to patch #4
+You are right that they are connected together, but I'm not sure if I
+prefer to include that file. If we start sharing files between the CPG
+and the integration code then a dependency hell breaks loose when it
+comes to merge order. If we want to share the #defines then I propose
+that we handle that incrementally once all pieces are merged.
 
-Changes since v2
-(http://thread.gmane.org/gmane.linux.kernel.samsung-soc/46653):
-- rebased on top of next-20150730 branch of linux-next kernel tree
-- ported over V3 of opp-v2 bindings support patch series
-- put cpu0 nodes in alphabetical order in dts files
-- added Reviewed-by tags from Javier and Krzysztof
-- added Acked-by tag from Sylwester
+On R-Car Gen2 we have a single CPG driver that is potentially shared
+across multiple SoCs in the same generation / family. In that case we
+use strings and the clock-output-names as part of the ABI if I'm not
+mistaken. On this driver we use clock index numbers instead, so I'd
+like to see these defines as part of a shared DT binding ABI where new
+SoCs can simply add new clocks at the end.
 
-Changes since v1
-(http://thread.gmane.org/gmane.linux.kernel.samsung-soc/44361):
-- rebased on top of next-20150629 branch of linux-next kernel tree
-- rebased on top of Exynos5250 cpufreq-dt support patch series
-- fixed if-statement in exynos4_clk_init() (noticed by Tobias Jakobi)
-- ported over opp-v2 bindings (requested by Viresh Kumar)
+> If we ever have a Gen3 SoC with more clocks, we have to update
+> this anyway.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+That's right!
 
+>> +struct rcar_gen3_cpg {
+>> +       struct clk_onecell_data data;
+>> +       spinlock_t lock;
+>> +       void __iomem *reg;
+>
+> If you add the clocks here, you don't have to allocate them separately
+> later:
+>
+>         struct clk clocks[...];
+>
+>> +static void __init rcar_gen3_cpg_clocks_init(struct device_node *np)
+>> +{
+>> +       const struct cpg_pll_config *config;
+>> +       struct rcar_gen3_cpg *cpg;
+>> +       struct clk **clks;
+>> +       u32 cpg_mode;
+>> +       unsigned int i;
+>> +       int num_clks;
+>> +
+>> +       cpg_mode = rcar_gen3_read_mode_pins();
+>> +
+>> +       num_clks = of_property_count_strings(np, "clock-indices");
+>> +       if (num_clks < 0) {
+>> +               pr_err("%s: failed to count clocks\n", __func__);
+>> +               return;
+>> +       }
+>> +
+>> +       cpg = kzalloc(sizeof(*cpg), GFP_KERNEL);
+>> +       clks = kcalloc(num_clks, sizeof(*clks), GFP_KERNEL);
+>
+> I.e. these 2 allocation can be combined by embedding the struct clks in
+> struct rcar_gen3_cpg...
+>
+>> +       if (cpg == NULL || clks == NULL) {
+>> +               kfree(cpg);
+>> +               kfree(clks);
+>
+> ... and there's no longer a need to kfree() anything.
 
-Bartlomiej Zolnierkiewicz (6):
-  cpufreq: make scaling_boost_freqs sysfs attr available when boost is
-    enabled
-  clk: samsung: exynos4x12: add cpu clock configuration data and
-    instantiate cpu clock
-  ARM: dts: Exynos4x12: add CPU OPP and regulator supply property
-  ARM: Exynos: switch to using generic cpufreq driver for Exynos4x12
-  cpufreq: exynos: remove Exynos4x12 specific cpufreq driver support
-  cpufreq: remove no longer needed CPU_FREQ_BOOST_SW config option
+Good idea. I'll give it a shot.
 
- arch/arm/boot/dts/exynos4212.dtsi               |  81 ++++++++
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   4 +
- arch/arm/boot/dts/exynos4412-origen.dts         |   4 +
- arch/arm/boot/dts/exynos4412-trats2.dts         |   4 +
- arch/arm/boot/dts/exynos4412.dtsi               |  83 +++++++++
- arch/arm/mach-exynos/Kconfig                    |   2 +
- arch/arm/mach-exynos/exynos.c                   |   2 +
- drivers/clk/samsung/clk-exynos4.c               |  50 +++++
- drivers/cpufreq/Kconfig                         |   4 -
- drivers/cpufreq/Kconfig.arm                     |  38 ----
- drivers/cpufreq/Makefile                        |   2 -
- drivers/cpufreq/cpufreq-dt.c                    |   3 +
- drivers/cpufreq/exynos-cpufreq.c                | 236 ------------------------
- drivers/cpufreq/exynos-cpufreq.h                |  72 --------
- drivers/cpufreq/exynos4x12-cpufreq.c            | 236 ------------------------
- drivers/cpufreq/freq_table.c                    |  10 +-
- include/linux/cpufreq.h                         |   1 +
- 17 files changed, 241 insertions(+), 591 deletions(-)
- delete mode 100644 drivers/cpufreq/exynos-cpufreq.c
- delete mode 100644 drivers/cpufreq/exynos-cpufreq.h
- delete mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
+>> +               pr_err("%s: failed to allocate cpg\n", __func__);
+>
+> There's no need to print an error on allocation failures. The system
+> will scream anyway (if there's already a console ;-).
 
--- 
-1.9.1
+Ok, will make it silent!
+
+Thanks for your comments!!
+
+Cheers,
+
+/ magnus
