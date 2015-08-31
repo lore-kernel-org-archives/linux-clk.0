@@ -1,77 +1,75 @@
-Return-Path: <l.stach@pengutronix.de>
-Message-ID: <1441038987.3652.44.camel@pengutronix.de>
-Subject: Re: [PATCH 0/8] i.MX early debug UART clock fixes
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
- kernel@pengutronix.de,  linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Date: Mon, 31 Aug 2015 18:36:27 +0200
-In-Reply-To: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
-References: <1440693561-28095-1-git-send-email-l.stach@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Victorien Vedrine <victorien.vedrine@ophrys.net>
+To: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	mturquette@baylibre.com, shawn.guo@linaro.org,
+	Victorien Vedrine <victorien.vedrine@ophrys.net>
+Subject: [PATCH v2] clk:mxs: Fix bug on frequency divider
+Date: Mon, 31 Aug 2015 10:45:07 +0200
+Message-Id: <1441010707-17178-1-git-send-email-victorien.vedrine@ophrys.net>
+In-Reply-To: <55BBB1AC.6070102@codeaurora.org>
+References: <55BBB1AC.6070102@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, den 27.08.2015, 18:39 +0200 schrieb Lucas Stach:
-> This series fixes a long standing interaction issue between the
-> kernels early debug facilities and the i.MX clock drivers.
-> 
-> Both earlyprintk and earlycon rely on the bootloader setup clocks
-> for the UARTs to be retained during kernel init. As those clocks are
-> only enabled in hardware, but not referenced in software they (or even
-> their parent clocks) may get disabled as a result of other clocks being
-> en-/disabled during boot.
-> 
-> This results in missing messages from the early debug console until the
-> regular system console takes over, or even worse system hangs in response
-> to unclocked register accesses. This renders those debugging facilities a
-> lot less useful.
-> 
-> The fix implemented here is to check if any of this early debugging is
-> enabled and keep the UART clocks referenced and enabled in that case.
-> The clocks will then only be disabled at the end of kernel init, at which
-> point the real console should have taken over and the early outputs being
-> disabled.
-> 
-> I've runtime tested this on i.MX6Q and i.MX53, other platforms are only
-> compile tested. This is mostly a mechanical change, but still I would
-> appreciate some testing.
-> 
-And Philipp noted that passing in a list of clocks from the clock
-providers look a lot better than the current direct clock enable calling
-and the needed callback.
+On drivers/clk/mxs/clk-frac.c, the function clk_frac_round_rate returned a bad
+result. The division before multiplication computes a wrong value ; the
+calculation is inverted to fix the problem. The second issue is that the exact
+rate have decimals and they are truncate. The consequence is that the function
+clk_frac_set_rate (which use the result of clk_frac_round_rate) computes a
+wrong value for the register (the rate generated can be closer to the desired
+rate). The correction is : if there is decimal to the result, it is rounded to
+the next larger integer.
+On drivers/clk/mxs/clk-frac.c, the function clk_frac_recalc_rate returned
+a bad result. The multiplication is made before the division to compute a
+correct value.
 
-I'm self-nacking this series, so I can spin a V2 with changes as above.
+Signed-off-by: Victorien Vedrine <victorien.vedrine@ophrys.net>
+---
+ drivers/clk/mxs/clk-frac.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-> Regards,
-> Lucas
-> 
-> Lucas Stach (8):
->   clk: imx: add common logic to detect early UART usage
->   clk: imx25: retain early UART clocks during kernel init
->   clk: imx27: retain early UART clocks during kernel init
->   clk: imx31: retain early UART clocks during kernel init
->   clk: imx35: retain early UART clocks during kernel init
->   clk: imx5: retain early UART clocks during kernel init
->   clk: imx6: retain early UART clocks during kernel init
->   clk: imx7d: retain early UART clocks during kernel init
-> 
->  drivers/clk/imx/clk-imx25.c       | 20 ++++++++++++++++++++
->  drivers/clk/imx/clk-imx27.c       | 22 ++++++++++++++++++++++
->  drivers/clk/imx/clk-imx31.c       | 20 ++++++++++++++++++++
->  drivers/clk/imx/clk-imx35.c       | 16 ++++++++++++++++
->  drivers/clk/imx/clk-imx51-imx53.c | 28 ++++++++++++++++++++++++++++
->  drivers/clk/imx/clk-imx6q.c       | 12 ++++++++++++
->  drivers/clk/imx/clk-imx6sl.c      | 12 ++++++++++++
->  drivers/clk/imx/clk-imx6sx.c      | 12 ++++++++++++
->  drivers/clk/imx/clk-imx7d.c       | 22 ++++++++++++++++++++++
->  drivers/clk/imx/clk.c             | 33 +++++++++++++++++++++++++++++++++
->  drivers/clk/imx/clk.h             |  2 ++
->  11 files changed, 199 insertions(+)
-> 
-
+diff --git a/drivers/clk/mxs/clk-frac.c b/drivers/clk/mxs/clk-frac.c
+index e6aa6b5..b3fa7fa 100644
+--- a/drivers/clk/mxs/clk-frac.c
++++ b/drivers/clk/mxs/clk-frac.c
+@@ -42,11 +42,13 @@ static unsigned long clk_frac_recalc_rate(struct clk_hw *hw,
+ {
+ 	struct clk_frac *frac = to_clk_frac(hw);
+ 	u32 div;
++	u64 tmp_rate;
+ 
+ 	div = readl_relaxed(frac->reg) >> frac->shift;
+ 	div &= (1 << frac->width) - 1;
+ 
+-	return (parent_rate >> frac->width) * div;
++	tmp_rate = (u64)parent_rate * div;
++	return tmp_rate >> frac->width;
+ }
+ 
+ static long clk_frac_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -55,7 +57,7 @@ static long clk_frac_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_frac *frac = to_clk_frac(hw);
+ 	unsigned long parent_rate = *prate;
+ 	u32 div;
+-	u64 tmp;
++	u64 tmp, tmp_rate, result;
+ 
+ 	if (rate > parent_rate)
+ 		return -EINVAL;
+@@ -68,7 +70,11 @@ static long clk_frac_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!div)
+ 		return -EINVAL;
+ 
+-	return (parent_rate >> frac->width) * div;
++	tmp_rate = (u64)parent_rate * div;
++	result = tmp_rate >> frac->width;
++	if ((result << frac->width) < tmp_rate)
++		result += 1;
++	return result;
+ }
+ 
+ static int clk_frac_set_rate(struct clk_hw *hw, unsigned long rate,
 -- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
+1.9.1
+
