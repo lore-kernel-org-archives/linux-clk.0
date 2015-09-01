@@ -1,45 +1,57 @@
-Return-Path: <mkubecek@suse.cz>
-Date: Tue, 25 Aug 2015 08:59:32 +0200
-From: Michal Kubecek <mkubecek@suse.cz>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] clk: Add missing header for 'bool' definition to
- clk-conf.h
-Message-ID: <20150825065932.GA29101@unicorn.suse.cz>
-References: <1439882205-10978-1-git-send-email-wens@csie.org>
- <20150824212828.GD14330@codeaurora.org>
- <CAGb2v67EhfgtbdLyFLd8xd6MMAnG4MGMvGLUTZxh=ag7XghvyA@mail.gmail.com>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-clk@vger.kernel.org, kuninori.morimoto.gx@renesas.com, gaku.inami.xw@bp.renesas.com, mturquette@baylibre.com, linux-sh@vger.kernel.org, sboyd@codeaurora.org, horms@verge.net.au, geert@linux-m68k.org
+Subject: Re: [PATCH v5 04/05] clk: shmobile: Add r8a7795 SoC to MSTP bindings
+Date: Tue, 01 Sep 2015 09:02:25 +0300
+Message-ID: <2606402.bJ14FcIpy4@avalon>
+In-Reply-To: <20150831124927.31057.69961.sendpatchset@little-apple>
+References: <20150831124842.31057.54534.sendpatchset@little-apple> <20150831124927.31057.69961.sendpatchset@little-apple>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAGb2v67EhfgtbdLyFLd8xd6MMAnG4MGMvGLUTZxh=ag7XghvyA@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 25, 2015 at 10:55:28AM +0800, Chen-Yu Tsai wrote:
-> On Tue, Aug 25, 2015 at 5:28 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 08/18, Chen-Yu Tsai wrote:
-> >> of_clk_set_defaults uses the type 'bool', but clk-conf.h does not
-> >> include its definition.
-> >>
-> >> This results in a compile error when only clk-conf.h is used.
-> >>
-> >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> >> Cc: stable@vger.kernel.org
-> >
-> > Why is stable Cc-ed? Is there some sort of compilation failure on
-> > stable kernels?
+Hello,
+
+Thank you for the patch.
+
+On Monday 31 August 2015 21:49:27 Magnus Damm wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > 
-> There isn't for now. Though I don't see why we shouldn't fix this for
-> stable kernels as well. It's possible other people or third-party
-> vendors working with stable/LTS kernels (Android?) may run into it.
+> Add r8a7795 to the MSTP DT binding documentation.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-How about 
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-   - It must fix a real bug that bothers people (not a, "This could be a
-   problem..." type thing).
+> ---
+> 
+>  Changes since V4: (Magnus Damm <damm+renesas@opensource.se>)
+>  - Added Acked-by from Geert
+> 
+>  Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
+>  - Picked up patch floating around on ML, added change log
+> 
+>  Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt |    1
+> + 1 file changed, 1 insertion(+)
+> 
+> --- 0001/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
+> +++
+> work/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt	
+20
+> 15-08-29 16:18:30.672366518 +0900 @@ -19,6 +19,7 @@ Required Properties:
+>      - "renesas,r8a7791-mstp-clocks" for R8A7791 (R-Car M2-W) MSTP gate
+> clocks - "renesas,r8a7793-mstp-clocks" for R8A7793 (R-Car M2-N) MSTP gate
+> clocks - "renesas,r8a7794-mstp-clocks" for R8A7794 (R-Car E2) MSTP gate
+> clocks +    - "renesas,r8a7795-mstp-clocks" for R8A7795 (R-Car H3) MSTP
+> gate clocks - "renesas,sh73a0-mstp-clocks" for SH73A0 (SH-MobileAG5) MSTP
+> gate clocks and "renesas,cpg-mstp-clocks" as a fallback.
+>    - reg: Base address and length of the I/O mapped registers used by the
+> MSTP
 
-in Documentation/stable_kernel_rules.txt?
+-- 
+Regards,
 
-Michal Kubecek
+Laurent Pinchart
