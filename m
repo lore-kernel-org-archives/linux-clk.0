@@ -1,40 +1,68 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, ulf.hansson@linaro.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/5] ARM: sunxi: Introduce CHIP support
-Date: Fri, 18 Sep 2015 15:18:57 +0200
-Message-ID: <13485899.XsimukeSAF@wuerfel>
-In-Reply-To: <20150918121905.GO4684@lukather>
-References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com> <2353279.QTDzFUHVnF@wuerfel> <20150918121905.GO4684@lukather>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CANqRtoSw92UoVBvTJfzGvxmYwefNndqqnj2_8iqi5O=FUeLMGA@mail.gmail.com>
+References: <20150831124842.31057.54534.sendpatchset@little-apple>
+	<20150831124904.31057.19757.sendpatchset@little-apple>
+	<1692617.kRMz5BT8ct@avalon>
+	<CANqRtoSw92UoVBvTJfzGvxmYwefNndqqnj2_8iqi5O=FUeLMGA@mail.gmail.com>
+Date: Tue, 1 Sep 2015 13:36:28 +0200
+Message-ID: <CAMuHMdWkBPhPJP5WUkDv+1psiZ9iFQv65t9QB5+qq=+Kn7L0mA@mail.gmail.com>
+Subject: Re: [PATCH v5 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
+	SH-Linux <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	"Simon Horman [Horms]" <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 18 September 2015 14:19:05 Maxime Ripard wrote:
-> 
-> There's actually two issues that are pretty orthogonal:
-> 
->   * the fact that the regulator to power the wifi chip needs to be
->     enabled before it enumerates and the driver is probed. The MMC
->     pwrseq stuff seems to fix that, even if it doesn't really fit in
->     the usual DT model.
+Hi Magnus,
 
-Ok. If there is anything missing in the pwrseq implementation or
-binding at the moment, you'll have to work with Ulf to get it to
-drive your hardware then.
+On Tue, Sep 1, 2015 at 12:59 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
+>>> +/*
+>>> + *   MD              EXTAL           PLL0    PLL1    PLL2    PLL3    PLL4
+>>> + * 14 13 19 17       (MHz)           *1      *1      *1
+>>> + *-------------------------------------------------------------------
+>>> + * 0  0  0  0        16.66 x 1       x180/2  x192/2  x144/2  x192    x144
+>>> + * 0  0  0  1        16.66 x 1       x180/2  x192/2  x144/2  x128    x144
+>>> + * 0  0  1  0        Prohibited setting
+>>> + * 0  0  1  1        16.66 x 1       x180/2  x192/2  x144/2  x192    x144
+>>> + * 0  1  0  0        20    x 1       x150/2  x156/2  x120/2  x156    x120
+>>> + * 0  1  0  1        20    x 1       x150/2  x156/2  x120/2  x106    x120
+>>> + * 0  1  1  0        Prohibited setting
+>>> + * 0  1  1  1        20    x 1       x150/2  x156/2  x120/2  x156    x120
+>>> + * 1  0  0  0        25    x 1       x120/2  x128/2  x96/2   x128    x96
+>>> + * 1  0  0  1        25    x 1       x120/2  x128/2  x96/2   x84     x96
+>>> + * 1  0  1  0        Prohibited setting
+>>> + * 1  0  1  1        25    x 1       x120/2  x128/2  x96/2   x128    x96
+>>> + * 1  1  0  0        33.33 / 2       x180/2  x192/2  x144/2  x192    x144
+>>> + * 1  1  0  1        33.33 / 2       x180/2  x192/2  x144/2  x128    x144
+>>> + * 1  1  1  0        Prohibited setting
+>>> + * 1  1  1  1        33.33 / 2       x180/2  x192/2  x144/2  x192    x144
+>>> + *
+>>> + * *1 : datasheet indicates VCO output (PLLx = VCO/2)
+>>
+>> As explained in a separate e-mail there's a few clocks on R8A7795 that derive
+>> directly from PLL1 VCO. I thus wonder whether we shouldn't expose the PLL1
+>> clock as the VCO output and create VCO/2 using a fixed factor clock in DT.
+>
+> Do you think that would reduce complexity or simplify the code? If so
+> I think we should do it. Otherwise I think it makes sense to simply
+> follow the data sheet.
 
->   * The fact that that regulator on this board is actually two
->     regulators in parallel that needs to be controlled in parallel
->     too. Here, it will probably require a new regulator driver to
->     combine two regulators into one.
+It would avoid having to apply a multiplier of two to the RPC clock.
 
-I don't yet understand what it means to control them in parallel.
-Do you mean the hardware uses two outputs to support a higher
-current than you could do with one?
+Gr{oetje,eeting}s,
 
-How critical is the timing? Would it be enough if the mmc
-code knew how to set more than one regulator and do them
-one at a time?
+                        Geert
 
-	Arnd
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
