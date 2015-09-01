@@ -1,55 +1,36 @@
-Return-Path: <sboyd@codeaurora.org>
-Message-ID: <55C10BC3.9080204@codeaurora.org>
-Date: Tue, 04 Aug 2015 12:00:19 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:33168 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752391AbbIABAi (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 31 Aug 2015 21:00:38 -0400
+Received: by paczk9 with SMTP id zk9so8305669pac.0
+        for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2015 18:00:37 -0700 (PDT)
+Received: from google.com ([2620:0:1000:1301:2932:67d0:707c:3a09])
+        by smtp.gmail.com with ESMTPSA id fr5sm11174221pdb.21.2015.08.31.18.00.36
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_2 cipher=AES128-SHA256 bits=128/128);
+        Mon, 31 Aug 2015 18:00:36 -0700 (PDT)
+Date: Mon, 31 Aug 2015 18:00:34 -0700
+From: Brian Norris <computersforpeace@gmail.com>
+To: linux-clk@vger.kernel.org
+Subject: [FYI] linux-clk has an archive!
+Message-ID: <20150901010034.GD81844@google.com>
 MIME-Version: 1.0
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-CC: Michael Turquette <mturquette@baylibre.com>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Subject: Re: [PATCH] clk: pxa: pxa3xx: fix CKEN register access
-References: <1438631907-27993-1-git-send-email-robert.jarzmik@free.fr> <55C00A6B.2030508@codeaurora.org> <87h9ofmv2n.fsf@belgarion.home> <55C0FD5E.7000705@codeaurora.org> <874mkenbsp.fsf@belgarion.home>
-In-Reply-To: <874mkenbsp.fsf@belgarion.home>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/04/2015 11:33 AM, Robert Jarzmik wrote:
-> Stephen Boyd <sboyd@codeaurora.org> writes:
->
->> On 08/03/2015 11:22 PM, Robert Jarzmik wrote:
->>> Stephen Boyd <sboyd@codeaurora.org> writes:
->>>
->>>> On 08/03/2015 12:58 PM, Robert Jarzmik wrote:
->>>>> Clocks 0 to 31 are on CKENA, and not CKENB. The clock register names
->>>>> were inadequately inverted. As a consequence, all clock operations were
->>>>> happening on CKENB, because almost all but 2 clocks are on CKENA.
->>>>>
->>>>> As the clocks were activated by the bootloader in the former tests, it
->>>>> escaped the testing that the wrong clock gate was manipulated. The error
->>>>> was revealed by changing the pxa3xx-and driver to a module, where tupon
->>>>> unloading the wrong clock was disabled in CKENB.
->>>>>
->>>>> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
->>>>> ---
->>>> Did you want a fixes tag to send this back to stable?
->>> Ah yes, good point, v2 on its way.
->>>
->>> Stephen and Mike, do you think this can still get in -rc6 ?
->>>
->> It's not a new regression for v4.2 so we'll leave it to v4.3. I'll apply it to
->> clk-next.
-> Euh how so, not "new" ?
->
-> The clock switch for pxa architecture happens just now, on v4.2, see [1]. So the
-> regression wasn't here on v4.1, but is introduced in v4.2
->
-> I know I'm terribly late, but isn't it still possible to have it in v4.2 ?
->
+Hi all,
 
-Ah ok. I wasn't aware that we switched on CCF for PXA this time around. 
-Did the commit text mean to mention the pxa3xx-nand driver? I can fix 
-that up when applying.
+AFAICT, linux-clk@vger.kernel.org has not had a proper mail archive
+until recently. There's one now available at gmane [0] and noted here
+[1]. If you know any additional archives, I'm sure
+postmaster@vger.kernel.org would be happy to know. Also, if anyone is
+able to backfill the archive [2], that would probably be useful.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Enjoy,
+Brian
+
+[0] http://dir.gmane.org/gmane.linux.kernel.clk
+[1] http://vger.kernel.org/vger-lists.html#linux-clk
+[2] http://gmane.org/import.php
