@@ -1,82 +1,289 @@
-Return-Path: <jh80.chung@samsung.com>
-Message-id: <55E682C0.6050204@samsung.com>
-Date: Wed, 02 Sep 2015 14:01:52 +0900
-From: Jaehoon Chung <jh80.chung@samsung.com>
-MIME-version: 1.0
-To: Heiko Stuebner <heiko@sntech.de>, ulf.hansson@linaro.org,
- mturquette@baylibre.com, sboyd@codeaurora.org, jh80.chung@samsung.com
-Cc: Alexandru M Stan <amstan@chromium.org>, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 5/8] mmc: dw_mmc: dt-binding: Add tuning related things
-References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
- <1441045446-30858-6-git-send-email-heiko@sntech.de>
-In-reply-to: <1441045446-30858-6-git-send-email-heiko@sntech.de>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <magnus.damm@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1692617.kRMz5BT8ct@avalon>
+References: <20150831124842.31057.54534.sendpatchset@little-apple>
+	<20150831124904.31057.19757.sendpatchset@little-apple>
+	<1692617.kRMz5BT8ct@avalon>
+Date: Tue, 1 Sep 2015 19:59:01 +0900
+Message-ID: <CANqRtoSw92UoVBvTJfzGvxmYwefNndqqnj2_8iqi5O=FUeLMGA@mail.gmail.com>
+Subject: Re: [PATCH v5 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
+From: Magnus Damm <magnus.damm@gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
+	SH-Linux <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	"Simon Horman [Horms]" <horms@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi, Heiko.
+Hi Laurent,
 
-On 09/01/2015 03:24 AM, Heiko Stuebner wrote:
-> From: Alexandru M Stan <amstan@chromium.org>
-> 
-> Add ciu_drv, ciu_sample clocks and default-sample-phase. This will later
-> be used by tuning code.
+On Tue, Sep 1, 2015 at 3:00 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> Hi Magnus,
+>
+> Thank you for the patch.
+>
+> On Monday 31 August 2015 21:49:04 Magnus Damm wrote:
+>> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+>>
+>> This V5 patch adds initial CPG support for R-Car Generation 3 and in
+>> particular the R8A7795 SoC.
+>>
+>> The R-Car Gen3 clock hardware has a register write protection feature that
+>> needs to be shared between the CPG function needs to be shared between
+>> the CPG and MSTP hardware somehow. So far this feature is simply ignored.
+>>
+>> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+>> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+>> ---
+>>
+>>  Changes since V4: (Magnus Damm <damm+renesas@opensource.se>)
+>>  - Simplified clks array handling - thanks Geert!
+>>  - Updated th DT binding documentation to reflect latest state
+>>  - of_property_count_strings() -> of_property_count_u32_elems() fix
+>>
+>>  Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
+>>  - Reworked driver to incorporate most feedback from Stephen Boyd - thanks!!
+>>  - Major things like syscon and driver model require more discussion.
+>>  - Added hunk to build drivers/clk/shmobile if ARCH_RENESAS is set.
+>>
+>>  Changes since V2: (Magnus Damm <damm+renesas@opensource.se>)
+>>  - Reworked driver to rely on clock index instead of strings.
+>>  - Dropped use of "clock-output-names".
+>>
+>>  Earlier versions: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>>  Initial version: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+>>
+>>  Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |
+>>  32 +
+>>  drivers/clk/Makefile                                     |    1
+>>  drivers/clk/shmobile/Makefile                            |    1
+>>  drivers/clk/shmobile/clk-rcar-gen3.c                     |  245 ++++++++++
+>>  4 files changed, 279 insertions(+)
+>>
+>> --- /dev/null
+>> +++
+>> work/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.t
+>> xt    2015-08-31 15:49:10.000000000 +0900 @@ -0,0 +1,32 @@
+>> +* Renesas R-Car Gen3 Clock Pulse Generator (CPG)
+>> +
+>> +The CPG generates core clocks for the R-Car Gen3 SoCs. It includes three
+>> PLLs
+>> +and several fixed ratio dividers.
+>> +
+>> +Required Properties:
+>> +
+>> +  - compatible: Must be one of
+>> +    - "renesas,r8a7795-cpg-clocks" for the r8a7795 CPG
+>> +    - "renesas,rcar-gen3-cpg-clocks" for the generic R-Car Gen3 CPG
+>> +
+>> +  - reg: Base address and length of the memory resource used by the CPG
+>> +
+>> +  - clocks: References to the parent clocks: first to the EXTAL clock
+>> +  - #clock-cells: Must be 1
+>> +  - clock-indices: Indices of the exported clocks
+>
+> Do we actually need the clock-indices property, as CPG clocks are numbered
+> sequentially ? It seems to me like we could drop the property, especially
+> given that the number of clocks is hardcoded in the driver anyway.
 
-As i know, ciu_drv and ciu_sample clocks are generated with "ciu" clock.
-But in these patch-set, ciu_drv and ciu_sample are controlled by clock framework.
-It's a little strange.
-Are there ciu_drv and ciu_sample clock on Rockchip?
+There are two reasons why they are there:
+1) I like to be able to search DT files to see which node that is
+providing what clock.
+2) When adding support for additional SoCs we may add new index to the
+driver. New SoC may get sparsely populated index lists and old ones
+will omit the recently added index.
 
-Best Regards,
-Jaehoon Chung
+>> +/*
+>> + *   MD              EXTAL           PLL0    PLL1    PLL2    PLL3    PLL4
+>> + * 14 13 19 17       (MHz)           *1      *1      *1
+>> + *-------------------------------------------------------------------
+>> + * 0  0  0  0        16.66 x 1       x180/2  x192/2  x144/2  x192    x144
+>> + * 0  0  0  1        16.66 x 1       x180/2  x192/2  x144/2  x128    x144
+>> + * 0  0  1  0        Prohibited setting
+>> + * 0  0  1  1        16.66 x 1       x180/2  x192/2  x144/2  x192    x144
+>> + * 0  1  0  0        20    x 1       x150/2  x156/2  x120/2  x156    x120
+>> + * 0  1  0  1        20    x 1       x150/2  x156/2  x120/2  x106    x120
+>> + * 0  1  1  0        Prohibited setting
+>> + * 0  1  1  1        20    x 1       x150/2  x156/2  x120/2  x156    x120
+>> + * 1  0  0  0        25    x 1       x120/2  x128/2  x96/2   x128    x96
+>> + * 1  0  0  1        25    x 1       x120/2  x128/2  x96/2   x84     x96
+>> + * 1  0  1  0        Prohibited setting
+>> + * 1  0  1  1        25    x 1       x120/2  x128/2  x96/2   x128    x96
+>> + * 1  1  0  0        33.33 / 2       x180/2  x192/2  x144/2  x192    x144
+>> + * 1  1  0  1        33.33 / 2       x180/2  x192/2  x144/2  x128    x144
+>> + * 1  1  1  0        Prohibited setting
+>> + * 1  1  1  1        33.33 / 2       x180/2  x192/2  x144/2  x192    x144
+>> + *
+>> + * *1 : datasheet indicates VCO output (PLLx = VCO/2)
+>
+> As explained in a separate e-mail there's a few clocks on R8A7795 that derive
+> directly from PLL1 VCO. I thus wonder whether we shouldn't expose the PLL1
+> clock as the VCO output and create VCO/2 using a fixed factor clock in DT.
 
-> 
-> We do not touch ciu_drive (and by extension define default-drive-phase).
-> Drive phase is mostly used to define minimum hold times, while one could
-> write some code to determine what phase meets the minimum hold time
-> (ex 10 degrees) this will not work with the current clock phase framework
-> (which floors angles, so we'll get 0 deg, and there's no way to know what
-> resolution the floors happen at). We assume that the default drive angles
-> set by the hardware are good enough.
-> 
-> Signed-off-by: Alexandru M Stan <amstan@chromium.org>
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-> index 346c609..5edadc2 100644
-> --- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-> @@ -42,11 +42,13 @@ Optional properties:
->  * clocks: from common clock binding: handle to biu and ciu clocks for the
->    bus interface unit clock and the card interface unit clock.
->  
-> -* clock-names: from common clock binding: Shall be "biu" and "ciu".
-> -  If the biu clock is missing we'll simply skip enabling it.  If the
-> -  ciu clock is missing we'll just assume that the clock is running at
-> +* clock-names: from common clock binding: Shall be "biu", "ciu", "ciu_drv" and
-> +  "ciu_sample".  If the biu clock is missing we'll simply skip enabling it.
-> +  If the ciu clock is missing we'll just assume that the clock is running at
->    clock-frequency.  It is an error to omit both the ciu clock and the
-> -  clock-frequency.
-> +  clock-frequency.  "ciu_drv" and "ciu_sample" are used to control the clock
-> +  phases, "ciu_sample" is required for tuning high speed modes (if no other
-> +  custom tuning method is defined).
->  
->  * clock-frequency: should be the frequency (in Hz) of the ciu clock.  If this
->    is specified and the ciu clock is specified then we'll try to set the ciu
-> @@ -75,6 +77,10 @@ Optional properties:
->  * vmmc-supply: The phandle to the regulator to use for vmmc.  If this is
->    specified we'll defer probe until we can find this regulator.
->  
-> +* default-sample-phase: The default phase to set ciu_sample at probing, low
-> +  speeds or in case where all phases work at tuning time. If not specified
-> +  0 deg will be used.
-> +
->  Aliases:
->  
->  - All the MSHC controller nodes should be represented in the aliases node using
-> 
+Do you think that would reduce complexity or simplify the code? If so
+I think we should do it. Otherwise I think it makes sense to simply
+follow the data sheet.
+
+>> + */
+>> +#define CPG_PLL_CONFIG_INDEX(md)     ((((md) & BIT(14)) >> 11) | \
+>> +                                      (((md) & BIT(13)) >> 11) | \
+>> +                                      (((md) & BIT(19)) >> 18) | \
+>> +                                      (((md) & BIT(17)) >> 17))
+>> +struct cpg_pll_config {
+>> +     unsigned int extal_div;
+>> +     unsigned int pll1_mult;
+>> +     unsigned int pll3_mult;
+>> +     unsigned int pll4_mult;
+>> +};
+>> +
+>> +static const struct cpg_pll_config cpg_pll_configs[16] __initconst = {
+>> +/* EXTAL div PLL1    PLL3    PLL4 */
+>> +     { 1,    192,    192,    144, },
+>> +     { 1,    192,    128,    144, },
+>> +     { 0,    0,      0,      0,   }, /* Prohibited setting */
+>> +     { 1,    192,    192,    144, },
+>> +     { 1,    156,    156,    120, },
+>> +     { 1,    156,    106,    120, },
+>> +     { 0,    0,      0,      0,   }, /* Prohibited setting */
+>> +     { 1,    156,    156,    120, },
+>> +     { 1,    128,    128,    96,  },
+>> +     { 1,    128,    84,     96,  },
+>> +     { 0,    0,      0,      0,   }, /* Prohibited setting */
+>> +     { 1,    128,    128,    96,  },
+>> +     { 2,    192,    192,    144, },
+>> +     { 2,    192,    128,    144, },
+>> +     { 0,    0,      0,      0,   }, /* Prohibited setting */
+>> +     { 2,    192,    192,    144, },
+>> +};
+>> +
+>> +/* ------------------------------------------------------------------------
+>> + * Initialization
+>> + */
+>> +
+>> +static struct clk * __init
+>> +rcar_gen3_cpg_register_clock(struct device_node *np, struct rcar_gen3_cpg
+>> *cpg,
+>> +                          const struct cpg_pll_config *config,
+>> +                          unsigned int gen3_clk)
+>> +{
+>> +     const char *parent_name = rcar_gen3_clk_names[RCAR_GEN3_CLK_MAIN];
+>> +     unsigned int mult = 1;
+>> +     unsigned int div = 1;
+>> +     u32 value;
+>> +
+>> +     switch (gen3_clk) {
+>> +     case RCAR_GEN3_CLK_MAIN:
+>> +             parent_name = of_clk_get_parent_name(np, 0);
+>> +             div = config->extal_div;
+>> +             break;
+>> +     case RCAR_GEN3_CLK_PLL0:
+>> +             /* PLL0 is a configurable multiplier clock. Register it as a
+>> +              * fixed factor clock for now as there's no generic multiplier
+>> +              * clock implementation and we currently have no need to change
+>> +              * the multiplier value.
+>> +              */
+>> +             value = rcar_clk_readl(cpg, CPG_PLL0CR);
+>> +             mult = ((value >> 24) & ((1 << 7) - 1)) + 1;
+>
+> I'd find 0x3f more readable than (1 << 7) - 1 but that might just be me. Same
+> comment for PLL2.
+
+I agree.
+
+>> +             break;
+>> +     case RCAR_GEN3_CLK_PLL1:
+>> +             mult = config->pll1_mult / 2;
+>> +             break;
+>> +     case RCAR_GEN3_CLK_PLL2:
+>> +             /* PLL2 is a configurable multiplier clock. Register it as a
+>> +              * fixed factor clock for now as there's no generic multiplier
+>> +              * clock implementation and we currently have no need to change
+>> +              * the multiplier value.
+>> +              */
+>> +             value = rcar_clk_readl(cpg, CPG_PLL2CR);
+>> +             mult = ((value >> 24) & ((1 << 7) - 1)) + 1;
+>> +             break;
+>> +     case RCAR_GEN3_CLK_PLL3:
+>> +             mult = config->pll3_mult;
+>> +             break;
+>> +     case RCAR_GEN3_CLK_PLL4:
+>> +             mult = config->pll4_mult;
+>> +             break;
+>> +     default:
+>> +             return ERR_PTR(-EINVAL);
+>> +     }
+>> +
+>> +     return clk_register_fixed_factor(NULL, rcar_gen3_clk_names[gen3_clk],
+>> +                                      parent_name, 0, mult, div);
+>> +}
+>> +
+>> +static void __init rcar_gen3_cpg_clocks_init(struct device_node *np)
+>> +{
+>> +     const struct cpg_pll_config *config;
+>> +     struct rcar_gen3_cpg *cpg;
+>> +     u32 cpg_mode;
+>> +     unsigned int i;
+>> +     int num_clks;
+>> +
+>> +     cpg_mode = rcar_gen3_read_mode_pins();
+>> +
+>> +     num_clks = of_property_count_u32_elems(np, "clock-indices");
+>> +     if (num_clks < 0) {
+>> +             pr_err("%s: failed to count clocks\n", __func__);
+>> +             return;
+>> +     }
+>> +
+>> +     cpg = kzalloc(sizeof(*cpg), GFP_KERNEL);
+>> +     if (!cpg)
+>> +             return;
+>> +
+>> +     spin_lock_init(&cpg->lock);
+>
+> The spin lock is never used. I'd drop it for now, and add it back later
+> when/if needed.
+
+Good point!
+
+>> +     cpg->data.clks = cpg->clks;
+>> +     cpg->data.clk_num = num_clks;
+>> +
+>> +     cpg->reg = of_iomap(np, 0);
+>> +     if (WARN_ON(cpg->reg == NULL))
+>> +             return;
+>> +
+>> +     config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
+>> +     if (!config->extal_div) {
+>> +             pr_err("%s: Prohibited setting (cpg_mode=0x%x)\n",
+>> +                    __func__, cpg_mode);
+>> +             return;
+>> +     }
+>> +
+>> +     for (i = 0; i < num_clks; ++i) {
+>> +             struct clk *clk;
+>> +             u32 idx;
+>> +             int ret;
+>> +
+>> +             ret = of_property_read_u32_index(np, "clock-indices", i, &idx);
+>> +             if (ret < 0)
+>> +                     break;
+>> +
+>> +             clk = rcar_gen3_cpg_register_clock(np, cpg, config, idx);
+>> +             if (IS_ERR(clk))
+>> +                     pr_err("%s: failed to register %s %u clock (%ld)\n",
+>> +                            __func__, np->name, idx, PTR_ERR(clk));
+>> +             else
+>> +                     cpg->data.clks[idx] = clk;
+>> +     }
+>> +
+>> +     of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
+>> +}
+>> +CLK_OF_DECLARE(rcar_gen3_cpg_clks, "renesas,rcar-gen3-cpg-clocks",
+>> +            rcar_gen3_cpg_clocks_init);
+
+Thanks for your comments!!
+
+/ magnus
