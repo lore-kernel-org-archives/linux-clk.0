@@ -1,54 +1,29 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Date: Mon, 3 Aug 2015 16:10:44 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq
- driver for Exynos4x12
-Message-ID: <20150803104044.GB21529@linux>
-References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
- <5201904.0cZWHobiJs@amdc1976>
- <20150803102926.GA21529@linux>
- <4532306.AVvo5hem3c@amdc1976>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <4532306.AVvo5hem3c@amdc1976>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:54103 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751825AbbIAEYm (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 1 Sep 2015 00:24:42 -0400
+Date: Mon, 31 Aug 2015 21:24:41 -0700 (PDT)
+Message-Id: <20150831.212441.2230272565330237366.davem@davemloft.net>
+To: ellis@spinics.net
+Cc: linux-clk@vger.kernel.org
+Subject: Re: [FYI] linux-clk has an archive!
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <201509010322.t813MRn8018820@spinics.net>
+References: <20150831.185402.1262370011351170156.davem@davemloft.net>
+	<201509010322.t813MRn8018820@spinics.net>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03-08-15, 12:36, Bartlomiej Zolnierkiewicz wrote:
-> I would really like it to be dependency not an option (+ I think
-> that ideally it should be checked at runtime, IOW we should be
-> checking from cpufreq-dt driver if the thermal support is enabled
-> before enabling boost support).
+From: ellis@spinics.net
+Date: Mon, 31 Aug 2015 20:22:27 -0700 (PDT)
 
-I don't think boost has any dependency on thermal support. Yeah, it
-may be true for your platform but we can't force it. People might have
-different algorithms to control boost modes, thermal is just one
-option they may look at. For few, enabling boost may not be a thermal
-issue, but power. So, they want to allow it only when they want, but
-that wouldn't burn their chip.
+>> > [4] https://www.mail-archive.com/linux-clk@vger.kernel.org/
+>> 
+>> Done.
+> 
+> And: http://www.spinics.net/lists/linux-clk/ 
 
-So, a platform can choose how it wants to have it. :)
-
--- 
-viresh
+If you actually looked at what I did, the spinics case was added.
