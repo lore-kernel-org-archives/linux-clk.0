@@ -1,67 +1,73 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mark Salter <msalter@redhat.com>,
-	Aurelien Jacquiot <a-jacquiot@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-c6x-dev@linux-c6x.org
-Subject: [PATCH] c6x: Use generic clkdev.h header
-Date: Tue, 15 Sep 2015 16:09:22 -0700
-Message-Id: <1442358562-3348-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <dianders@google.com>
+MIME-Version: 1.0
+Sender: dianders@google.com
+In-Reply-To: <CAPDyKFqJp3VuOeTh4Abkn2X6gQxNHDXwJj8N51OxxSo+Agespw@mail.gmail.com>
+References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
+	<1441045446-30858-4-git-send-email-heiko@sntech.de>
+	<CAPDyKFqJp3VuOeTh4Abkn2X6gQxNHDXwJj8N51OxxSo+Agespw@mail.gmail.com>
+Date: Wed, 2 Sep 2015 09:20:58 -0700
+Message-ID: <CAD=FV=Wy7foROYkmR+cX+NS5-=BaB36WsW1sc1XjmmdUnPCxsA@mail.gmail.com>
+Subject: Re: [PATCH 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
+From: Doug Anderson <dianders@chromium.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>,
+	Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>,
+	linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The c6x clkdev.h header is the same as the asm-generic header, so
-just use the asm-generic one.
+Ulf,
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- arch/c6x/include/asm/Kbuild   |  1 +
- arch/c6x/include/asm/clkdev.h | 22 ----------------------
- 2 files changed, 1 insertion(+), 22 deletions(-)
- delete mode 100644 arch/c6x/include/asm/clkdev.h
+On Wed, Sep 2, 2015 at 4:38 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> +/**
+>> + * mmc_regulator_set_vqmmc - Set VQMMC as per the ios
+>> + *
+>> + * For 3.3V signaling, we try to match VQMMC to VMMC as closely as possible.
+>
+> Looking at the code, I don't think this statement is entirely true.
+> Isn't it so that we will be trying with a maximum tolerance of 0.3 V
+> towards the VMMC voltage level (then fall-back to the complete range)?
+> Perhaps you can find a better way to describe that in the change log.
 
-diff --git a/arch/c6x/include/asm/Kbuild b/arch/c6x/include/asm/Kbuild
-index f17c4dc6050c..a9bc2c5106d2 100644
---- a/arch/c6x/include/asm/Kbuild
-+++ b/arch/c6x/include/asm/Kbuild
-@@ -4,6 +4,7 @@ generic-y += auxvec.h
- generic-y += barrier.h
- generic-y += bitsperlong.h
- generic-y += bugs.h
-+generic-y += clkdev.h
- generic-y += cputime.h
- generic-y += current.h
- generic-y += device.h
-diff --git a/arch/c6x/include/asm/clkdev.h b/arch/c6x/include/asm/clkdev.h
-deleted file mode 100644
-index 76a070b1c2e5..000000000000
---- a/arch/c6x/include/asm/clkdev.h
-+++ /dev/null
-@@ -1,22 +0,0 @@
--#ifndef _ASM_CLKDEV_H
--#define _ASM_CLKDEV_H
--
--#include <linux/slab.h>
--
--struct clk;
--
--static inline int __clk_get(struct clk *clk)
--{
--	return 1;
--}
--
--static inline void __clk_put(struct clk *clk)
--{
--}
--
--static inline struct clk_lookup_alloc *__clkdev_alloc(size_t size)
--{
--	return kzalloc(size, GFP_KERNEL);
--}
--
--#endif /* _ASM_CLKDEV_H */
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+If regulator_set_voltage_triplet() is ever implemented more correctly
+then the description here is correct.  ...the problem is that
+regulator_set_voltage_triplet() is still using the same shortcut that
+regulator_set_voltage_tol() was using.
 
+
+>> +int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct mmc_ios *ios)
+>> +{
+>> +       int volt, min_uV, max_uV;
+>> +
+>> +       /* If no vqmmc supply then we can't change the voltage */
+>> +       if (IS_ERR(mmc->supply.vqmmc))
+>> +               return -EINVAL;
+>
+> In general vqmmc is considered as an optional regulator and that's
+> also how host drivers treat it. So perhaps it would make sense to
+> return 0 here instead of an error code or what do you think?
+
+The idea is that since this is intended to be called by
+start_signal_voltage_switch() and having no vqmmc should be considered
+an error for start_signal_voltage_switch() then it should be an error
+here.  What do you think?
+
+
+>> +
+>> +               /* try to stay close to vmmc at first */
+>> +               if (!mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
+>> +                                               min_uV, volt, max_uV))
+>> +                       return 0;
+>> +
+>> +               return mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
+>> +                                               2700000, volt, 3600000);
+
+The whole fact that there are two calls here is really just because of
+the limitations of the current implementation of
+regulator_set_voltage_triplet().  If that implementation is ever fixed
+then we'd just need a single call.  Probably worth a comment saying
+that?
