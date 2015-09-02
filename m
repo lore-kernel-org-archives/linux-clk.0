@@ -1,47 +1,38 @@
-Return-Path: <yorksun@freescale.com>
-Subject: Re: [Patch v5] driver/clk/clk-si5338: Add common clock framework
- driver for si5338
-To: Guenter Roeck <linux@roeck-us.net>, <sboyd@codeaurora.org>
-References: <1443141970-21084-1-git-send-email-yorksun@freescale.com>
- <5604A9F0.2050600@roeck-us.net>
-CC: <linux-clk@vger.kernel.org>, Mike Turquette <mturquette@baylibre.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrey Filippov
-	<andrey@elphel.com>, Paul Bolle <pebolle@tiscali.nl>
-From: York Sun <yorksun@freescale.com>
-Message-ID: <56056268.2010507@freescale.com>
-Date: Fri, 25 Sep 2015 08:04:08 -0700
-MIME-Version: 1.0
-In-Reply-To: <5604A9F0.2050600@roeck-us.net>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: yorksun@freescale.com
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 02 Sep 2015 16:16:57 +0900
+Message-Id: <20150902071657.10870.37652.sendpatchset@little-apple>
+Subject: [PATCH v6 00/05] Renesas R-Car Gen3 CPG support V6
 List-ID: <linux-clk.vger.kernel.org>
 
+Renesas R-Car Gen3 CPG support V6
 
+[PATCH v6 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
+[PATCH v6 02/05] clk: shmobile: Add r8a7795 SoC to MSTP bindings
+[PATCH v6 03/05] clk: shmobile: Make MSTP clock-output-names optional
+[PATCH v6 04/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
+[PATCH v6 05/05] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
 
-On 09/24/2015 06:57 PM, Guenter Roeck wrote:
-> On 09/24/2015 05:46 PM, York Sun wrote:
->> SI5338 is a programmable clock generator. It has 4 sets of inputs,
->> PLL, multisynth and dividers to make 4 outputs. This driver splits
->> them into multiple clocks to comply with common clock framework.
->>
->> See Documentation/devicetree/bindings/clock/silabs,si5338.txt for
->> details.
->>
-<snip>
+This series is my latest attempt to provide R-Car Gen3 clock support
+through a single "easy to use" patch series for drivers/clk and DT
+documentation bits. New in this version is that the patches have been
+reordered to put the most stable (and acked) patches first. 
 
->> +static inline u8 si5338_reg_read(struct si5338_driver_data *drvdata, u16 reg)
->> +{
->> +	u32 val;
->> +	int ret;
->> +
->> +	ret = regmap_read(drvdata->regmap, reg, &val);
->> +	if (ret) {
->> +		dev_err(&drvdata->client->dev,
->> +			"unable to read from reg %02x: return %d\n", reg, ret);
->> +		return 0;
-> 
-> Why hide the error ?
+This version includes several minor updates for all the patches.
+For details please see each individual patch.
 
-I need to comb through all the return values as you suggested. Thanks.
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-York
+ Developed against renesas-drivers-2015-09-01-v4.2 with v5 series reverted.
+
+ Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt      |    1 
+ Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   58 ++
+ drivers/clk/Makefile                                                     |    1 
+ drivers/clk/shmobile/Makefile                                            |   23 
+ drivers/clk/shmobile/clk-mstp.c                                          |   24 
+ drivers/clk/shmobile/clk-rcar-gen3.c                                     |  243 ++++++++++
+ 6 files changed, 327 insertions(+), 23 deletions(-)
