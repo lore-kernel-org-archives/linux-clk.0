@@ -1,74 +1,44 @@
-Return-Path: <shraddha.6596@gmail.com>
-Return-Path: <shraddha.6596@gmail.com>
-From: Shraddha Barke <shraddha.6596@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shraddha Barke <shraddha.6596@gmail.com>
-Subject: [PATCH] Clk: tegra: Use module_platform_driver
-Date: Sat, 26 Sep 2015 00:40:14 +0530
-Message-Id: <1443208214-8810-1-git-send-email-shraddha.6596@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 02 Sep 2015 16:17:18 +0900
+Message-Id: <20150902071718.10870.29881.sendpatchset@little-apple>
+In-Reply-To: <20150902071657.10870.37652.sendpatchset@little-apple>
+References: <20150902071657.10870.37652.sendpatchset@little-apple>
+Subject: [PATCH v6 02/05] clk: shmobile: Add r8a7795 SoC to MSTP bindings
 List-ID: <linux-clk.vger.kernel.org>
 
-Use module_platform_driver for drivers whose init and exit functions
-only register and unregister, respectively.
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Coccinelle patch used-
+Add r8a7795 to the MSTP DT binding documentation.
 
-@a@
-identifier f, x;
-@@
--static f(...) { return platform_driver_register(&x); }
-
-@b depends on a@
-identifier e, a.x;
-@@
--static e(...) { platform_driver_unregister(&x); }
-
-@c depends on a && b@
-identifier a.f;
-declarer name module_init;
-@@
--module_init(f);
-
-@d depends on a && b && c@
-identifier b.e, a.x;
-declarer name module_exit;
-declarer name module_platform_driver;
-@@
--module_exit(e);
-+module_platform_driver(x);
-
-Signed-off-by: Shraddha Barke <shraddha.6596@gmail.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 6125333..88b4ef4 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -147,18 +147,7 @@ static struct platform_driver tegra124_dfll_fcpu_driver = {
- 		.pm = &tegra124_dfll_pm_ops,
- 	},
- };
--
--static int __init tegra124_dfll_fcpu_init(void)
--{
--	return platform_driver_register(&tegra124_dfll_fcpu_driver);
--}
--module_init(tegra124_dfll_fcpu_init);
--
--static void __exit tegra124_dfll_fcpu_exit(void)
--{
--	platform_driver_unregister(&tegra124_dfll_fcpu_driver);
--}
--module_exit(tegra124_dfll_fcpu_exit);
-+module_platform_driver(tegra124_dfll_fcpu_driver);
- 
- MODULE_DESCRIPTION("Tegra124 DFLL clock source driver");
- MODULE_LICENSE("GPL v2");
--- 
-2.1.4
+ Changes since V5: (Magnus Damm <damm+renesas@opensource.se>)
+ - Added Acked-by from Laurent
+
+ Changes since V4: (Magnus Damm <damm+renesas@opensource.se>)
+ - Added Acked-by from Geert
+
+ Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
+ - Picked up patch floating around on ML, added change log
+
+ Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- 0001/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
++++ work/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt	2015-08-29 16:18:30.672366518 +0900
+@@ -19,6 +19,7 @@ Required Properties:
+     - "renesas,r8a7791-mstp-clocks" for R8A7791 (R-Car M2-W) MSTP gate clocks
+     - "renesas,r8a7793-mstp-clocks" for R8A7793 (R-Car M2-N) MSTP gate clocks
+     - "renesas,r8a7794-mstp-clocks" for R8A7794 (R-Car E2) MSTP gate clocks
++    - "renesas,r8a7795-mstp-clocks" for R8A7795 (R-Car H3) MSTP gate clocks
+     - "renesas,sh73a0-mstp-clocks" for SH73A0 (SH-MobileAG5) MSTP gate clocks
+     and "renesas,cpg-mstp-clocks" as a fallback.
+   - reg: Base address and length of the I/O mapped registers used by the MSTP
