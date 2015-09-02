@@ -1,87 +1,74 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bl2on0111.outbound.protection.outlook.com ([65.55.169.111]:49062
-	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753896AbbIDG7M (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 4 Sep 2015 02:59:12 -0400
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
-	<linux-clk@vger.kernel.org>
-CC: <bhupesh.linux@gmail.com>, <Catalin.Marinas@arm.com>,
-	<will.deacon@arm.com>, <bhupesh.sharma@freescale.com>,
-	<olof@lixom.net>
-Subject: [PATCH v2 05/10] doc/bindings: Update clk-qoriq bindings for FSL's chassis-3.0 SoCs
-Date: Fri, 4 Sep 2015 12:27:47 +0530
-Message-ID: <1441349872-4560-6-git-send-email-bhupesh.sharma@freescale.com>
-In-Reply-To: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
-References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 02 Sep 2015 16:17:08 +0900
+Message-Id: <20150902071708.10870.37170.sendpatchset@little-apple>
+In-Reply-To: <20150902071657.10870.37652.sendpatchset@little-apple>
+References: <20150902071657.10870.37652.sendpatchset@little-apple>
+Subject: [PATCH v6 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the 'clk-qoriq' device-tree bindings for
-chassis-3.0 compliant SoCs from FSL, for e.g. LS2080A
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+Shmobile is all multiplatform these days, so in get rid of the
+reference to CONFIG_ARCH_SHMOBILE_MULTI in drivers/clk/shmobile/.
+
+Also instead of always enabling DIV6 and MSTP adjust the Makefile
+to enable DIV6 and MSTP depending on if they are included in the
+SoC or not.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- .../devicetree/bindings/clock/qoriq-clock.txt      |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-index 16a3ec4..f0a4b1c 100644
---- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-@@ -14,6 +14,7 @@ Chassis Version		Example Chips
- ---------------		-------------
- 1.0			p4080, p5020, p5040
- 2.0			t4240, b4860
-+3.0			ls2080a
- 
- 1. Clock Block Binding
- 
-@@ -32,9 +33,11 @@ Required properties:
- 	* "fsl,b4420-clockgen"
- 	* "fsl,b4860-clockgen"
- 	* "fsl,ls1021a-clockgen"
--	Chassis-version clock strings include:
-+	* "fsl,ls2080a-clockgen"
-+	Chassis clock strings include:
- 	* "fsl,qoriq-clockgen-1.0": for chassis 1.0 clocks
- 	* "fsl,qoriq-clockgen-2.0": for chassis 2.0 clocks
-+	* "fsl,qoriq-clockgen-3.0": for chassis 3.0 clocks
- - reg: Describes the address of the device's resources within the
- 	address space defined by its parent bus, and resource zero
- 	represents the clock register set
-@@ -96,18 +99,23 @@ Required properties:
- - compatible : Should include one of the following:
- 	* "fsl,qoriq-core-pll-1.0" for core PLL clocks (v1.0)
- 	* "fsl,qoriq-core-pll-2.0" for core PLL clocks (v2.0)
-+	* "fsl,qoriq-core-pll-3.0" for core PLL clocks (v3.0)
- 	* "fsl,qoriq-core-mux-1.0" for core mux clocks (v1.0)
- 	* "fsl,qoriq-core-mux-2.0" for core mux clocks (v2.0)
-+	* "fsl,qoriq-core-mux-3.0" for core mux clocks (v3.0)
- 	* "fsl,qoriq-sysclk-1.0": for input system clock (v1.0).
- 		It takes parent's clock-frequency as its clock.
- 	* "fsl,qoriq-sysclk-2.0": for input system clock (v2.0).
- 		It takes parent's clock-frequency as its clock.
-+	* "fsl,qoriq-sysclk-3.0": for input system clock (v3.0).
-+		It takes parent's clock-frequency as its clock.
- 	* "fsl,qoriq-platform-pll-1.0" for the platform PLL clock (v1.0)
- 	* "fsl,qoriq-platform-pll-2.0" for the platform PLL clock (v2.0)
-+	* "fsl,qoriq-platform-pll-3.0" for the platform PLL clock (v3.0)
- - #clock-cells: From common clock binding. The number of cells in a
--	clock-specifier. Should be <0> for "fsl,qoriq-sysclk-[1,2].0"
--	clocks, or <1> for "fsl,qoriq-core-pll-[1,2].0" clocks.
--	For "fsl,qoriq-core-pll-[1,2].0" clocks, the single
-+	clock-specifier. Should be <0> for "fsl,qoriq-sysclk-[1,2,3].0"
-+	clocks, or <1> for "fsl,qoriq-core-pll-[1,2,3].0" clocks.
-+	For "fsl,qoriq-core-pll-[1,2,3].0" clocks, the single
- 	clock-specifier cell may take the following values:
- 	* 0 - equal to the PLL frequency
- 	* 1 - equal to the PLL frequency divided by 2
--- 
-1.7.9.5
+ Earlier known as "clk: shmobile: Get rid of CONFIG_ARCH_SHMOBILE_MULTI"
 
+ Changes since V5:
+ - None
 
+ Changes since V4:
+ - Added Acked-by from Laurent
+
+ Changes since V3:
+ - Got rid of hunks that modified drivers/clk/Makefile
+ - This to prevent build issue with non-CCF enabled SH arch
+ - A nice side effect is that this patch now can be merged any time
+
+ Changes since V2:
+ - Fixed patch subject typo CONFIG_SHMOBILE_MULTI -> CONFIG_ARCH_SHMOBILE_MULTI
+
+ Changes since V1:
+ - Added Acked-by from Geert
+
+ drivers/clk/shmobile/Makefile |   22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
+
+--- 0001/drivers/clk/shmobile/Makefile
++++ work/drivers/clk/shmobile/Makefile	2015-08-29 16:14:57.522366518 +0900
+@@ -1,13 +1,11 @@
+ obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
+-obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
+-obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
+-obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
+-obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+-obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+-obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o
+-obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-div6.o
+-obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-mstp.o
++obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
