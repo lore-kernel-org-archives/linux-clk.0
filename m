@@ -1,83 +1,92 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v5 0/4] cpufreq-dt: add suspend frequency support
-Date: Tue, 08 Sep 2015 18:41:00 +0200
-Message-id: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 02 Sep 2015 16:17:28 +0900
+Message-Id: <20150902071728.10870.32730.sendpatchset@little-apple>
+In-Reply-To: <20150902071657.10870.37652.sendpatchset@little-apple>
+References: <20150902071657.10870.37652.sendpatchset@little-apple>
+Subject: [PATCH v6 03/05] clk: shmobile: Make MSTP clock-output-names optional
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+From: Magnus Damm <damm+renesas@opensource.se>
 
-This patch series adds suspend frequency support (using opp-v2
-bindings and suspend-opp functionality) to cpufreq-dt driver and
-then adds suspend opp for Exynos4412 based boards.
+This patch updates the MSTP driver to make the "clock-output-names"
+DT property optional instead of mandatory. In case the DT property
+is omitted then the function clk_register_clkdev() is skipped.
 
-This patch series fixes suspend/resume support on Exynos4412
-based Trats2 board and reboot hang on Exynos4412 based Odroid
-U3 board.
+The default for new SoCs is to not use "clock-output-names".
 
-Changes since v4:
-- removed superfluous CONFIG_PM ifdefs
-- added Acked-by tag from Krzysztof to patch #4
-- added Acked-by tag from Viresh to patches #1-3
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-Changes since v3:
-- fixed dev_pm_opp_get_suspend_opp() locking
-- shortened variable name in dev_pm_opp_get_suspend_opp()
-- adjusted cpufreq_generic_suspend() to work with cpufreq-dt
-- removed no longer needed cpufreq_dt_suspend()
-- added Acked-by tag from Viresh to patch #4
+ Changes since V5:
+ - Simplified code using const char *allocated_name - thanks Geert!
 
-Changes since v2:
-- rewrote to use suspend-opp functionality
+ Changes since V4:
+ - None
 
-Changes since v1:
-- removed superfluous ";"
+ Changes since V3:
+ - Added support for multiple MSTP bits. =)
 
-Depends on:
-- next-20150902 branch of linux-next kernel tree
+ drivers/clk/shmobile/clk-mstp.c |   24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-
-Bartlomiej Zolnierkiewicz (4):
-  PM / OPP: add dev_pm_opp_get_suspend_opp() helper
-  cpufreq: allow cpufreq_generic_suspend() to work without suspend
-    frequency
-  cpufreq-dt: add suspend frequency support
-  ARM: dts: add suspend opp to exynos4412
-
- arch/arm/boot/dts/exynos4412.dtsi |  1 +
- drivers/base/power/opp.c          | 30 ++++++++++++++++++++++++++++++
- drivers/cpufreq/cpufreq-dt.c      |  9 +++++++++
- drivers/cpufreq/cpufreq.c         |  4 ++--
- include/linux/pm_opp.h            |  6 ++++++
- 5 files changed, 48 insertions(+), 2 deletions(-)
-
--- 
-1.9.1
-
+--- 0001/drivers/clk/shmobile/clk-mstp.c
++++ work/drivers/clk/shmobile/clk-mstp.c	2015-09-02 11:52:02.182366518 +0900
+@@ -193,26 +193,26 @@ static void __init cpg_mstp_clocks_init(
+ 	for (i = 0; i < MSTP_MAX_CLOCKS; ++i) {
+ 		const char *parent_name;
+ 		const char *name;
++		const char *allocated_name = NULL;
+ 		u32 clkidx;
+ 		int ret;
+ 
+-		/* Skip clocks with no name. */
+-		ret = of_property_read_string_index(np, "clock-output-names",
+-						    i, &name);
+-		if (ret < 0 || strlen(name) == 0)
+-			continue;
+-
+ 		parent_name = of_clk_get_parent_name(np, i);
+ 		ret = of_property_read_u32_index(np, idxname, i, &clkidx);
+ 		if (parent_name == NULL || ret < 0)
+ 			break;
+ 
+ 		if (clkidx >= MSTP_MAX_CLOCKS) {
+-			pr_err("%s: invalid clock %s %s index %u)\n",
+-			       __func__, np->name, name, clkidx);
++			pr_err("%s: invalid clock %s index %u)\n",
++			       __func__, np->name, clkidx);
+ 			continue;
+ 		}
+ 
++		if (of_property_read_string_index(np, "clock-output-names",
++						  i, &name) < 0)
++			allocated_name = name = kasprintf(GFP_KERNEL, "%s.%u",
++							   np->name, clkidx);
++
+ 		clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
+ 						       clkidx, group);
+ 		if (!IS_ERR(clks[clkidx])) {
+@@ -225,12 +225,18 @@ static void __init cpg_mstp_clocks_init(
+ 			 *
+ 			 * FIXME: Remove this when all devices that require a
+ 			 * clock will be instantiated from DT.
++			 *
++			 * We currently register clkdev only when the DT
++			 * property clock-output-names is present.
+ 			 */
+-			clk_register_clkdev(clks[clkidx], name, NULL);
++			if (!allocated_name)
++				clk_register_clkdev(clks[clkidx], name, NULL);
+ 		} else {
+ 			pr_err("%s: failed to register %s %s clock (%ld)\n",
+ 			       __func__, np->name, name, PTR_ERR(clks[clkidx]));
+ 		}
++
++		kfree(allocated_name);
+ 	}
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &group->data);
