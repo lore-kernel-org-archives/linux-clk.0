@@ -1,90 +1,70 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 1/3] clk: bcm2835: Add bindings for the auxiliary peripheral clock gates.
-Date: Thu, 10 Sep 2015 15:22:28 -0700
-Message-Id: <1441923750-19404-2-git-send-email-eric@anholt.net>
-In-Reply-To: <1441923750-19404-1-git-send-email-eric@anholt.net>
-References: <1441923750-19404-1-git-send-email-eric@anholt.net>
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
+ Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ b.zolnierkie@samsung.com
+Subject: [PATCH] cpufreq-dt: add suspend frequency support
+Date: Wed, 02 Sep 2015 18:42:01 +0200
+Message-id: <1441212121-21021-1-git-send-email-b.zolnierkie@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-These will be used for enabling UART1, SPI1, and SPI2.
+Add suspend frequency support and set it to the boot frequency,
+this matches what the old exynos-cpufreq driver has been doing.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
+This patch fixes suspend/resume support on Exynos4412 based
+Trats2 board and reboot hang on Exynos4412 based Odroid U3
+board.
+
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- .../bindings/clock/brcm,bcm2835-aux-clock.txt      | 30 ++++++++++++++++++++++
- include/dt-bindings/clock/bcm2835-aux.h            | 17 ++++++++++++
- 2 files changed, 47 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
- create mode 100644 include/dt-bindings/clock/bcm2835-aux.h
+This patch supersedes "[PATCH] ARM: dts: exynos4412-odroid-*: add
+workaround for CPUfreq/reboot issue" one from yesterday.
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
-new file mode 100644
-index 0000000..f5ce80a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
-@@ -0,0 +1,30 @@
-+Broadcom BCM2835 auxiliary peripheral clocks
+ drivers/cpufreq/cpufreq-dt.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index c3583cd..c9138c7 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -329,6 +329,10 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	policy->driver_data = priv;
+ 
+ 	policy->clk = cpu_clk;
 +
-+This binding uses the common clock binding:
-+    Documentation/devicetree/bindings/clock/clock-bindings.txt
++	/* capture boot frequency */
++	policy->suspend_freq = clk_get_rate(cpu_clk) / 1000;;
 +
-+This controls the clock gating for the BCM2835 auxiliary peripherals
-+(UART, SPI1, and SPI2).
-+
-+Required properties:
-+- compatible:	Should be "brcm,bcm2835-aux-clock"
-+- #clock-cells:	Should be <1>. The permitted clock-specifier values can be
-+		  found in include/dt-bindings/clock/bcm2835-aux.h
-+- reg:		Specifies base physical address and size of the gate register
-+- clocks:	The parent clock phandle
-+
-+Example:
-+
-+	clocks: cprman@7e101000 {
-+		compatible = "brcm,bcm2835-cprman";
-+		#clock-cells = <1>;
-+		reg = <0x7e101000 0x2000>;
-+		clocks = <&clk_osc>;
-+	};
-+
-+	aux_clocks: aux-clocks@0x7e215004 {
-+		compatible = "brcm,bcm2835-aux-clock";
-+		#clock-cells = <1>;
-+		reg = <0x7e215004 0x4>;
-+		clocks = <&clocks BCM2835_CLOCK_VPU>;
-+	};
-diff --git a/include/dt-bindings/clock/bcm2835-aux.h b/include/dt-bindings/clock/bcm2835-aux.h
-new file mode 100644
-index 0000000..d91156e
---- /dev/null
-+++ b/include/dt-bindings/clock/bcm2835-aux.h
-@@ -0,0 +1,17 @@
-+/*
-+ * Copyright (C) 2015 Broadcom Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation version 2.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether express or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#define BCM2835_AUX_CLOCK_UART		0
-+#define BCM2835_AUX_CLOCK_SPI1		1
-+#define BCM2835_AUX_CLOCK_SPI2		2
-+#define BCM2835_AUX_CLOCK_COUNT		3
+ 	ret = cpufreq_table_validate_and_show(policy, freq_table);
+ 	if (ret) {
+ 		dev_err(cpu_dev, "%s: invalid frequency table: %d\n", __func__,
+@@ -419,6 +423,9 @@ static struct cpufreq_driver dt_cpufreq_driver = {
+ 	.ready = cpufreq_ready,
+ 	.name = "cpufreq-dt",
+ 	.attr = cpufreq_dt_attr,
++#ifdef CONFIG_PM
++	.suspend = cpufreq_generic_suspend,
++#endif
+ };
+ 
+ static int dt_cpufreq_probe(struct platform_device *pdev)
 -- 
-2.1.4
+1.9.1
