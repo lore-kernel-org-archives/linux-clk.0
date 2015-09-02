@@ -1,69 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:35965 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751472AbbIKLfi (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 11 Sep 2015 07:35:38 -0400
-Date: Fri, 11 Sep 2015 13:35:34 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Mikko Perttunen <mikko.perttunen@kapsi.fi>,
-	Tuomas Tynkkynen <ttynkkynen@nvidia.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: dfll: Properly protect OPP list
-Message-ID: <20150911113531.GA16323@ulmo>
-References: <1441893321-4563-1-git-send-email-thierry.reding@gmail.com>
- <20150910175144.GB15099@codeaurora.org>
- <20150911023527.GS5266@linux>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Wed, 2 Sep 2015 16:32:13 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Stefan Roese <sr@denx.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Vipul Kumar Samar <vipulkumar.samar@st.com>,
+	Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH] clk: spear600: Fix adc clock device name
+Message-ID: <20150902110213.GD26744@linux>
+References: <1441190517-20235-1-git-send-email-sr@denx.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
-In-Reply-To: <20150911023527.GS5266@linux>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1441190517-20235-1-git-send-email-sr@denx.de>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 02-09-15, 12:41, Stefan Roese wrote:
+> The device name for the adc clock is incorrect. This results in the
+> IIO ADC driver to fail while probing for the clock. This patch
+> fixes the name and the ADC driver is now started correctly.
+> 
+> Signed-off-by: Stefan Roese <sr@denx.de>
+> Cc: Vipul Kumar Samar <vipulkumar.samar@st.com>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Mike Turquette <mturquette@linaro.org>
+> ---
+>  drivers/clk/spear/spear6xx_clock.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/spear/spear6xx_clock.c b/drivers/clk/spear/spear6xx_clock.c
+> index 4f649c9..3e43244 100644
+> --- a/drivers/clk/spear/spear6xx_clock.c
+> +++ b/drivers/clk/spear/spear6xx_clock.c
+> @@ -316,7 +316,7 @@ void __init spear6xx_clk_init(void __iomem *misc_base)
+>  	/* clock derived from apb clk */
+>  	clk = clk_register_gate(NULL, "adc_clk", "apb_clk", 0, PERIP1_CLK_ENB,
+>  			ADC_CLK_ENB, 0, &_lock);
+> -	clk_register_clkdev(clk, NULL, "adc");
+> +	clk_register_clkdev(clk, NULL, "d8200000.adc");
+>  
+>  	clk = clk_register_fixed_factor(NULL, "gpio0_clk", "apb_clk", 0, 1, 1);
+>  	clk_register_clkdev(clk, NULL, "f0100000.gpio");
 
---azLHFNyN32YCQGCU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sigh. Its fixed for all other boards, but this.
 
-On Fri, Sep 11, 2015 at 08:05:27AM +0530, Viresh Kumar wrote:
-> On 10-09-15, 10:51, Stephen Boyd wrote:
-> > Don't we already have an rcu_read_lock() at the beginning of this
-> > function? I don't understand why we need to nest them in the same
-> > function.
->=20
-> +1
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-My bad, I wasn't looking closely enough. The second hunk can be dropped.
-
-Thierry
-
---azLHFNyN32YCQGCU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJV8ryBAAoJEN0jrNd/PrOh+KQP/2aIuBcTDy14pEduRd8+uCQo
-MrBUvw1C1PO0GiZXiNPGQzaDDs/3O2NnV9gs7oZo73AjHbLpeadjWiVx99b3etjm
-c5YlFdbyk34yhUdkw0us/Ux6W9bQKNhIl+TLiBtRjibYEYnv069Iv2iu4a8EJkVI
-PYH50CdpEBXsB71bfmAmV/gM8kB+wTirZfrAx7Esa6+hFvoHoxSGM2wicRFWb1/Z
-xuOo2ImWdEfs9Gyqg/Vn5dmb6aXQXdCKuujepnSLeCMwbN0tsFyd8hx6vqxeHGmG
-wEt/3hVXXNGEUyhgGHjdPsvJOwRlNbiKBcx6M3jyxe5M8KcKjbKovOqaffJS+nWz
-FIcfveK52OttVf3SD8Hsazng2P//Ro9VyZLq+egJyRvPbfSk0DCGgFQojCf/GZqJ
-fPVpWsO4eYPqLxnr+fa4AklCdj2ySe9G89QexLlIw/J44qqBg50uKzoJLQIOMQMf
-h+uV6GTA0sS6IBt+wsS/MyQd3PzOMLKvzFBNX1ZmupSiEUwKGzqhulGqC/CwpcmB
-8lvCzuV7dDZr9OqylCVwxLqmBENF1UEzY8Ng7m4pOJ0Wemc+TGHEOKs6pyYz18hu
-KqH//wZHfzPEWgil736s0YD3CCuitKdkUENCwPtbD1TWsjGtgr7O7r+AqoXkGhqD
-yax2xlK7OEMfzA82U2fs
-=9/vW
------END PGP SIGNATURE-----
-
---azLHFNyN32YCQGCU--
+-- 
+viresh
