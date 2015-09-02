@@ -1,65 +1,130 @@
-Return-Path: <B48286@freescale.com>
-From: Hou Zhiqiang <B48286@freescale.com>
-To: Li Leo <LeoLi@freescale.com>, Mark Rutland <mark.rutland@arm.com>,
-	"marc.zyngier@arm.com" <marc.zyngier@arm.com>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Catalin Marinas
-	<Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Shaohui Xie
-	<Shaohui.Xie@freescale.com>, "corbet@lwn.net" <corbet@lwn.net>, "Sharma
- Bhupesh" <bhupesh.sharma@freescale.com>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "wsa@the-dreams.de" <wsa@the-dreams.de>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "wim@iguana.be"
-	<wim@iguana.be>, Wenbin Song <Wenbin.Song@freescale.com>, Scott Wood
-	<scottwood@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>
-Subject: RE: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
-Date: Wed, 23 Sep 2015 03:05:20 +0000
-Message-ID: <CY1PR0301MB07805FA01ACAF84648C806138B440@CY1PR0301MB0780.namprd03.prod.outlook.com>
-References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
- <1442838158-2964-5-git-send-email-B48286@freescale.com>
- <20150922012403.GA1535@svinekod>
- <CY1PR0301MB078008B10188504C951076498B450@CY1PR0301MB0780.namprd03.prod.outlook.com>
- <DM2PR0301MB07342356008C1A50AB26FEFFBA450@DM2PR0301MB0734.namprd03.prod.outlook.com>
-In-Reply-To: <DM2PR0301MB07342356008C1A50AB26FEFFBA450@DM2PR0301MB0734.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset="gb2312"
+Return-Path: <magnus.damm@gmail.com>
 MIME-Version: 1.0
+In-Reply-To: <1641516.pMxNnC39aM@avalon>
+References: <20150831124842.31057.54534.sendpatchset@little-apple>
+	<1692617.kRMz5BT8ct@avalon>
+	<CANqRtoSw92UoVBvTJfzGvxmYwefNndqqnj2_8iqi5O=FUeLMGA@mail.gmail.com>
+	<1641516.pMxNnC39aM@avalon>
+Date: Wed, 2 Sep 2015 11:27:27 +0900
+Message-ID: <CANqRtoQ_21KjoT2CUzx=oReO-JSLWr3jBv7RcJWoFH+M_ZVuhw@mail.gmail.com>
+Subject: Re: [PATCH v5 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
+From: Magnus Damm <magnus.damm@gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
+	SH-Linux <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	"Simon Horman [Horms]" <horms@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGkgWWFuZy1MZW8tUjU4
-NDcyDQo+IFNlbnQ6IDIwMTXE6jnUwjIzyNUgMToyMw0KPiBUbzogSG91IFpoaXFpYW5nLUI0ODI4
-NjsgTWFyayBSdXRsYW5kOyBtYXJjLnp5bmdpZXJAYXJtLmNvbQ0KPiBDYzogbGludXgtYXJtLWtl
-cm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBDYXRhbGluIE1hcmluYXM7IFdpbGwgRGVhY29uOw0K
-PiBsaW51eC1pMmNAdmdlci5rZXJuZWwub3JnOyBsaW51eC13YXRjaGRvZ0B2Z2VyLmtlcm5lbC5v
-cmc7IGxpbnV4LQ0KPiBkb2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC1jbGtAdmdlci5rZXJuZWwu
-b3JnOyBYaWUgU2hhb2h1aS1CMjE5ODk7DQo+IGNvcmJldEBsd24ubmV0OyBTaGFybWEgQmh1cGVz
-aC1CNDUzNzA7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyB3c2FAdGhlLQ0KPiBkcmVhbXMuZGU7
-IHNib3lkQGNvZGVhdXJvcmEub3JnOyB3aW1AaWd1YW5hLmJlOyBTb25nIFdlbmJpbi1CNTM3NDc7
-IFdvb2QNCj4gU2NvdHQtQjA3NDIxOyBIdSBNaW5na2FpLUIyMTI4NA0KPiBTdWJqZWN0OiBSRTog
-W1BBVENIIDQvNl0gYXJtNjQvbHMxMDQzYTogYWRkIERUUyBmb3IgRnJlZXNjYWxlIExTMTA0M0Eg
-U29DDQo+IA0KPiA+ID4NCj4gPiA+IEhpLA0KPiA+ID4NCj4gPiA+ID4gKy9tZW1yZXNlcnZlLyAw
-eDgwMDAwMDAwIDB4MDAwMTAwMDA7DQo+ID4gPg0KPiA+ID4gV2h5IGlzIHRoaXMgbmVjZXNzYXJ5
-Pw0KPiA+DQo+ID4gVGhpcyBtZW1vcnkgcmVnaW9uIGlzIHByZS1yZXNlcnZlZCBmb3IgdGhlIHNw
-aW4tdGFibGUvcHNjaSwgYWx0aG91Z2gNCj4gPiBkaWRuJ3QgYWRkIEVuYWJsZSBtZXRob2Qgb2Yg
-c2Vjb25kYXJ5IGNvcmVzLg0KPiANCj4gQ2FuIHRoaXMgYmUgcmVzZXJ2ZWQgYnkgYm9vdGxvYWRl
-cj8NCg0KWWVzLCB0aGUgbWVtb3J5IGZvciBwc2NpIHdhcyByZXNlcnZlZCBieSB1LWJvb3QgY29k
-ZS4gQnV0IGR1ZSB0byBzcGluLXRhYmxlDQpuZWVkIHRoZSByZWxlYXNlIGFkZHJlc3MsIGlzIGl0
-IGJldHRlciBhZGRpbmcgdGhlIC9tZW1yZXNlcnZlLyBpbiBkdHMgZmlsZT8NCk9yIGFkZCBpdCBi
-eSBib290bG9hZGVyIGFuZCBmaXggdGhlIHJlbGVhc2UgYWRkcmVzcyBhY2NvcmRpbmdseT8NCg0K
-PiANCj4gPg0KPiA+ID4gSWYgdGhpcyBpcyBuZWNlc3NhcnksIHBsZWFzZSBhZGQgYSBjb21tZW50
-IHN0YXRpbmcgd2hhdCB0aGlzIGlzIGZvci4NCj4gPiA+DQo+ID4gPiA+ICsgICAgICAgICAgICAg
-ICBjcHVAMyB7DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGRldmljZV90eXBlID0g
-ImNwdSI7DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAiYXJt
-LGNvcnRleC1hNTMiOw0KPiA+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICByZWcgPSA8MHgw
-IDB4Mz47DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGNsb2NrcyA9IDwmY2xvY2tn
-ZW4gMSAwPjsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgIH07DQo+ID4gPg0KPiA+ID4gTWlzc2lu
-ZyBlbmFibGUtbWV0aG9kIHByb3BlcnRpZXMgb24gYWxsIHRoZSBzZWNvbmRhcnkgQ1BVcy4NCj4g
-PiA+DQo+ID4NCj4gPiBUaGVyZSBhcmUgdHdvIG1ldGhvZHMgKHNwaW4tdGFibGUgYW5kIHBzY2kp
-IHRvIGJyaW5nIHVwIHNlY29uZGFyeQ0KPiA+IGNvcmVzLCB3aGljaCBvbmUgZG8geW91IHRoaW5r
-IGlzIGJldHRlcj8NCj4gDQo+IERvIHdlIGhhdmUgdGhlIFBTQ0kgc3VwcG9ydCByZWFkeSBpbiBi
-b3RoIFVFRkkgYW5kIHUtYm9vdD8gIElmIG5vdCwgd2UNCj4gc2hvdWxkIHVzZSBzcGluLXRhYmxl
-IGZvciBub3cuDQo+DQoNCm91ciBpbnRlcm5hbCB1LWJvb3Qgc3VwcG9ydHMgUFNDSSBidXQgb3Bl
-bnNvdXJjZSBkb2Vzbid0IHN1cHBvcnQgaXQgZm9yIEFSTXY4Lg0KDQpUaGFua3MsDQpaaGlxaWFu
-Zw0K
+Hi Laurent,
+
+On Tue, Sep 1, 2015 at 9:30 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> Hi Magnus,
+>
+> On Tuesday 01 September 2015 19:59:01 Magnus Damm wrote:
+>> On Tue, Sep 1, 2015 at 3:00 PM, Laurent Pinchart wrote:
+>> > On Monday 31 August 2015 21:49:04 Magnus Damm wrote:
+>> >> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+>> >>
+>> >> This V5 patch adds initial CPG support for R-Car Generation 3 and in
+>> >> particular the R8A7795 SoC.
+>> >>
+>> >> The R-Car Gen3 clock hardware has a register write protection feature
+>> >> that needs to be shared between the CPG function needs to be shared
+>> >> between the CPG and MSTP hardware somehow. So far this feature is simply
+>> >> ignored.
+>> >>
+>> >> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+>> >> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>> >> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+>> >> ---
+>> >>
+>> >>  Changes since V4: (Magnus Damm <damm+renesas@opensource.se>)
+>> >>  - Simplified clks array handling - thanks Geert!
+>> >>  - Updated th DT binding documentation to reflect latest state
+>> >>  - of_property_count_strings() -> of_property_count_u32_elems() fix
+>> >>
+>> >>  Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
+>> >>  - Reworked driver to incorporate most feedback from Stephen Boyd -
+>> >>  thanks!!
+>> >>  - Major things like syscon and driver model require more discussion.
+>> >>  - Added hunk to build drivers/clk/shmobile if ARCH_RENESAS is set.
+>> >>
+>> >>  Changes since V2: (Magnus Damm <damm+renesas@opensource.se>)
+>> >>  - Reworked driver to rely on clock index instead of strings.
+>> >>  - Dropped use of "clock-output-names".
+>> >>
+>> >>  Earlier versions: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>> >>  Initial version: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+>> >>
+>> >>  Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt
+>> >>  |   32 +
+>> >>  drivers/clk/Makefile                                |    1
+>> >>  drivers/clk/shmobile/Makefile                       |    1
+>> >>  drivers/clk/shmobile/clk-rcar-gen3.c                |  245 ++++++++++
+>> >>  4 files changed, 279 insertions(+)
+>> >>
+>> >> --- /dev/null
+>> >> +++
+>> >> work/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks
+>> >> .txt
+>> >> 2015-08-31 15:49:10.000000000 +0900 @@ -0,0 +1,32 @@
+>> >> +* Renesas R-Car Gen3 Clock Pulse Generator (CPG)
+>> >> +
+>> >> +The CPG generates core clocks for the R-Car Gen3 SoCs. It includes three
+>> >> PLLs
+>> >> +and several fixed ratio dividers.
+>> >> +
+>> >> +Required Properties:
+>> >> +
+>> >> +  - compatible: Must be one of
+>> >> +    - "renesas,r8a7795-cpg-clocks" for the r8a7795 CPG
+>> >> +    - "renesas,rcar-gen3-cpg-clocks" for the generic R-Car Gen3 CPG
+>> >> +
+>> >> +  - reg: Base address and length of the memory resource used by the CPG
+>> >> +
+>> >> +  - clocks: References to the parent clocks: first to the EXTAL clock
+>> >> +  - #clock-cells: Must be 1
+>> >> +  - clock-indices: Indices of the exported clocks
+>> >
+>> > Do we actually need the clock-indices property, as CPG clocks are numbered
+>> > sequentially ? It seems to me like we could drop the property, especially
+>> > given that the number of clocks is hardcoded in the driver anyway.
+>>
+>> There are two reasons why they are there:
+>> 1) I like to be able to search DT files to see which node that is
+>> providing what clock.
+>
+> The clocks are listed in the CPG section of include/dt-bindings/clock/r8a7795-
+> clock.h so that should already give a hint. Additionally I don't think you'll
+> search the CPG core clocks very often in the DT sources as they're usually not
+> used directly by devices :-)
+
+You are right that they may not be searched very frequently. But at
+least the CPG is consistent with MSTP with this implementation. =)
+
+>> 2) When adding support for additional SoCs we may add new index to the
+>> driver. New SoC may get sparsely populated index lists and old ones
+>> will omit the recently added index.
+>
+> If the CPG core differs between SoCs shouldn't that be handled by the DT
+> compatibility string ?
+
+You know that I personally always prefered an incremental approach
+with little speculation in DT. =)
+
+So using SoC specific compat strings over generic ones would in
+general be my preferred choice. I suspect the initial developer of
+this patch simply followed the same style as Gen2 with a generic
+compat string.
+
+Does this mean that you for the r8a7795 CPG prefer SoC specific compat
+string to begin with over a more generic one? If we go for SoC
+specific compat string then perhaps we also should change file names?
+
+Thanks,
+
+/ magnus
