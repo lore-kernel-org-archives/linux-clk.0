@@ -1,54 +1,79 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bl2on0144.outbound.protection.outlook.com ([65.55.169.144]:6894
-	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1760525AbbIDUKc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 4 Sep 2015 16:10:32 -0400
-From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
-To: Li Leo <LeoLi@freescale.com>
-CC: Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
-	"bhupesh.linux@gmail.com" <bhupesh.linux@gmail.com>,
-	"will.deacon@arm.com" <will.deacon@arm.com>,
-	"olof@lixom.net" <olof@lixom.net>
-Subject: RE: [PATCH v2 01/10] arm64: Use generic Layerscape SoC family naming
- & rename LS2085A to LS2080A
-Date: Fri, 4 Sep 2015 20:10:30 +0000
-Message-ID: <BY1PR0301MB13036EDCAC8E826853A71CB282570@BY1PR0301MB1303.namprd03.prod.outlook.com>
-References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
-	<1441349872-4560-2-git-send-email-bhupesh.sharma@freescale.com>
- <CADRPPNQbTPrJ47SKsA=EaPi7xo8+0hQqEpt3wDPKMbL1vTOr9A@mail.gmail.com>
-In-Reply-To: <CADRPPNQbTPrJ47SKsA=EaPi7xo8+0hQqEpt3wDPKMbL1vTOr9A@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH v2] cpufreq-dt: add suspend frequency support
+Date: Wed, 02 Sep 2015 18:47:56 +0200
+Message-id: <1441212476-21316-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-PiBGcm9tOiBwa3UubGVvQGdtYWlsLmNvbSBbbWFpbHRvOnBrdS5sZW9AZ21haWwuY29tXQ0KPiBT
-ZW50OiBGcmlkYXksIFNlcHRlbWJlciAwNCwgMjAxNSAxMDowMSBQTQ0KPiBPbiBGcmksIFNlcCA0
-LCAyMDE1IGF0IDE6NTcgQU0sIEJodXBlc2ggU2hhcm1hDQo+IDxiaHVwZXNoLnNoYXJtYUBmcmVl
-c2NhbGUuY29tPiB3cm90ZToNCj4gPiBGcmVlc2NhbGUgd2lsbCBiZSBhIGNodXJuaW5nIG91dCBh
-IGhvc3Qgb2YgQVJNdjggYmFzZWQgU29DcyB3aGljaCB3aWxsDQo+ID4gYmUgYmFzZWQgb24gYSBz
-aW1pbGFyIG92ZXJhbGwgU29DIGFyY2hpdGVjdHVyZS4gU28sIHRoaXMgcGF0Y2gNCj4gPiBjb252
-ZXJ0cyB0aGUgZXhpc3RpbmcgaW5mcmFzdHJ1Y3R1cmUgaW4gdGhlIGFybTY0L2R0cywgYXJtNjQv
-S2NvbmZpZw0KPiA+IGFuZCBhcm02NC9jb25maWdzIHRvIHVzZSB0aGUgZ2VuZXJpYyBjb252ZW50
-aW9uIEFSQ0hfTEFZRVJTQ0FQRSBpbg0KPiA+IHBsYWNlIG9mIHRoZSBtb3JlIHNwZWNpZmljIEZT
-TF9MUzIwODVBLCB0byBzYXZlIGNvZGUgZHVwbGljYXRpb24NCj4gPiBsYXRlci1vbi4NCj4gPg0K
-PiA+IEFsc28gRnJlZXNjYWxlIGlzIHJlbmFtaW5nIExTMjA4NUEgdG8gTFMyMDgwQS4NCj4gPg0K
-PiA+IFRoaXMgcGF0Y2ggYWRkcmVzc2VzIHRoZSBhYm92ZSB0d28gcG9pbnRzLg0KPiA+DQo+ID4g
-U2lnbmVkLW9mZi1ieTogQmh1cGVzaCBTaGFybWEgPGJodXBlc2guc2hhcm1hQGZyZWVzY2FsZS5j
-b20+DQo+ID4gLS0tDQo+IHtzbmlwfQ0KPiA+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJl
-ZXNjYWxlL2ZzbC1sczIwODVhLmR0c2kNCj4gPiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2Zy
-ZWVzY2FsZS9mc2wtbHMyMDgwYS5kdHNpDQo+ID4gQEAgLTEsNyArMSw3IEBADQo+ID4gIC8qDQo+
-ID4gLSAqIERldmljZSBUcmVlIEluY2x1ZGUgZmlsZSBmb3IgRnJlZXNjYWxlIExheWVyc2NhcGUt
-MjA4NUEgZmFtaWx5IFNvQy4NCj4gPiArICogRGV2aWNlIFRyZWUgSW5jbHVkZSBmaWxlIGZvciBG
-cmVlc2NhbGUgTGF5ZXJzY2FwZS0yMDgwQSBmYW1pbHkgU29DLg0KPiA+ICAgKg0KPiA+IC0gKiBD
-b3B5cmlnaHQgKEMpIDIwMTQsIEZyZWVzY2FsZSBTZW1pY29uZHVjdG9yDQo+ID4gKyAqIENvcHly
-aWdodCAoQykgMjAxNC0xNSwgRnJlZXNjYWxlIFNlbWljb25kdWN0b3INCj4gDQo+IE5vcm1hbGx5
-IHdlIHNwZWxsIG91dCB0aGUgd2hvbGUgMjAxNS4gIFRoZSBwcmVmZXJyZWQgY29weXJpZ2h0IHRl
-bXBsYXRlDQo+IGlzOg0KPiANCj4gQ29weXJpZ2h0IDIwMTQtMjAxNSBGcmVlc2NhbGUgU2VtaWNv
-bmR1Y3RvciwgSW5jLg0KPiANCg0KT2suDQoNClJlZ2FyZHMsDQpCaHVwZXNoDQo=
+Add suspend frequency support and set it to the boot frequency,
+this matches what the old exynos-cpufreq driver has been doing.
+
+This patch fixes suspend/resume support on Exynos4412 based
+Trats2 board and reboot hang on Exynos4412 based Odroid U3
+board.
+
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+This patch supersedes "[PATCH] ARM: dts: exynos4412-odroid-*: add
+workaround for CPUfreq/reboot issue" one from yesterday.
+
+v2:
+- remove superfluous ";"
+
+ drivers/cpufreq/cpufreq-dt.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index c3583cd..c9138c7 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -329,6 +329,10 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	policy->driver_data = priv;
+ 
+ 	policy->clk = cpu_clk;
++
++	/* capture boot frequency */
++	policy->suspend_freq = clk_get_rate(cpu_clk) / 1000;
++
+ 	ret = cpufreq_table_validate_and_show(policy, freq_table);
+ 	if (ret) {
+ 		dev_err(cpu_dev, "%s: invalid frequency table: %d\n", __func__,
+@@ -419,6 +423,9 @@ static struct cpufreq_driver dt_cpufreq_driver = {
+ 	.ready = cpufreq_ready,
+ 	.name = "cpufreq-dt",
+ 	.attr = cpufreq_dt_attr,
++#ifdef CONFIG_PM
++	.suspend = cpufreq_generic_suspend,
++#endif
+ };
+ 
+ static int dt_cpufreq_probe(struct platform_device *pdev)
+-- 
+1.9.1
+
