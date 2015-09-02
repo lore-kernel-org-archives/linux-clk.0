@@ -1,64 +1,66 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 17 Sep 2015 15:24:54 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 15/16] clk: shmobile: mstp: Consider "zb_clk" suitable
- for power management
-Message-ID: <20150917222454.GW23081@codeaurora.org>
-References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
- <1438691297-29235-16-git-send-email-geert+renesas@glider.be>
- <20150917084446.GA8197@verge.net.au>
- <20150917085314.GA29509@verge.net.au>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 2 Sep 2015 09:52:35 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Bintian Wang <bintian.wang@huawei.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Jian Zhang <zhangjian001@hisilicon.com>,
+	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
+	Haoju Mo <mohaoju@hisilicon.com>,
+	Dan Zhao <dan.zhao@hisilicon.com>, sunzhaosheng@hisilicon.com,
+	victor.lixin@hisilicon.com, Tyler Baker <tyler.baker@linaro.org>
+Subject: Re: [PATCH v3 4/5] clk: Hi6220: add stub clock driver
+Message-ID: <20150902015235.GA7763@leoy-linaro>
+References: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
+ <1438564418-15948-5-git-send-email-leo.yan@linaro.org>
+ <CAMAWPa8dNOipiFFv96J5XvP1Qs7ysHBD6_-RpMGqCEdPAKxHAA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20150917085314.GA29509@verge.net.au>
+In-Reply-To: <CAMAWPa8dNOipiFFv96J5XvP1Qs7ysHBD6_-RpMGqCEdPAKxHAA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/17, Simon Horman wrote:
-> On Thu, Sep 17, 2015 at 05:45:18PM +0900, Simon Horman wrote:
-> > Hi Mike, Hi Stephen,
-> > 
-> > On Tue, Aug 04, 2015 at 02:28:16PM +0200, Geert Uytterhoeven wrote:
-> > > Currently the CPG/MSTP Clock Domain code looks for MSTP clocks to power
-> > > manage a device.
-> > > 
-> > > Unfortunately, on R-Mobile APE6 (r8a73a4) and SH-Mobile AG5 (sh73a0),
-> > > the Bus State Controller (BSC) is not power-managed by an MSTP clock,
-> > > but by a plain CPG clock (zb_clk).  Add a special case to handle this,
-> > > so the clock is properly managed, and devices connected to the BSC work
-> > > as expected.
-> > > 
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > 
-> > for one reason or another I seem to have this patch queued up in
-> > my renesas tree for v4.4, without any Acks.
-> > 
-> > I think it would be best if one of you took the patch instead.
-> > Though I'm also happy to take it with Acks.
-> > 
-> > Let me know how you would like to proceed.
+Hi Kevin,
+
+On Tue, Sep 01, 2015 at 05:28:03PM -0700, Kevin Hilman wrote:
+> On Sun, Aug 2, 2015 at 6:13 PM, Leo Yan <leo.yan@linaro.org> wrote:
+> > On Hi6220, there have some clocks which can use mailbox channel to send
+> > messages to power controller to change frequency; this includes CPU, GPU
+> > and DDR clocks.
+> >
+> > For dynamic frequency scaling, firstly need write the frequency value to
+> > SRAM region, and then send message to mailbox to trigger power controller
+> > to handle this requirement. This driver will use syscon APIs to pass SRAM
+> > memory region and use common mailbox APIs for channels accessing.
+> >
+> > This init driver will support cpu frequency change firstly.
+> >
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
 > 
-> Sorry to revise the above, I should have checked more closely
-> before I sent my previous email. I now see that I have an SoC patch
-> that depends on this one. So if possible I'd like to take this one
-> through my tree with an Ack or two.
+> The kernelci.org build/boot bot detected boot failures in
+> linux-next[1], and the failure was bisected down to this patch (landed
+> in linux-next as commit c1628a2c416da947f5afac615d53189250fa49cb.
 > 
+> I verifed that reverting this commit on top of next-20150901 gets the
+> hikey booting again.
 
-Sure.
+Thanks for reporting. This issue has been confirmed at my side, it's
+caused by the patch have added dependency with MAILBOX, will fix this
+issue and send patch.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Leo Yan
