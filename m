@@ -1,51 +1,39 @@
-Return-Path: <mark.rutland@arm.com>
-Date: Mon, 14 Sep 2015 16:19:42 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
-Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: rockchip: add critical clock for rk3368
-Message-ID: <20150914151942.GJ7002@leverpostej>
-References: <5267432.TORlj1Iv40@diego>
- <20150914141920.GF7002@leverpostej>
- <6675833.8DAAvDYooL@diego>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <6675833.8DAAvDYooL@diego>
+Return-Path: <sr@denx.de>
+From: Stefan Roese <sr@denx.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-clk@vger.kernel.org,
+	Vipul Kumar Samar <vipulkumar.samar@st.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Mike Turquette <mturquette@linaro.org>
+Subject: [PATCH] clk: spear600: Fix adc clock device name
+Date: Wed,  2 Sep 2015 12:41:57 +0200
+Message-Id: <1441190517-20235-1-git-send-email-sr@denx.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 14, 2015 at 04:06:05PM +0100, Heiko Stübner wrote:
-> Am Montag, 14. September 2015, 15:19:21 schrieb Mark Rutland:
-> > On Sun, Sep 13, 2015 at 12:20:36PM +0100, Heiko Stübner wrote:
-> > > Again a result of the gpio-clock-liberation the rk3368 needs the
-> > > pclk_pd_pmu marked as critical, to boot successfully.
-> > > 
-> > > Reported-by: Mark Rutland <mark.rutland@arm.com>
-> > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > 
-> > FWIW: Tested-by: Mark Rutland <mark.rutland@arm.com>
-> > 
-> > I'm surprised that we don't describe these as critical in the DT, given
-> > that this isn't really an internal property of the clock controller, but
-> > rather what happens to be attached to it. That ship appears to have
-> > sailed, however.
-> 
-> I wouldn't necessarily think so ... what is called critical only means "don't 
-> turn off when walking the clock-tree upwards".
-> 
-> The pclk_pd_pmu for example simply supplies some more clocks we don't handle 
-> at all currently (pclk_pmu_noc, ...). That we currently choose to ignore those 
-> [because we don't have any code nor dt-bindings to handle the components 
-> supplied] sounds very much like an implementation-specific detail, not 
-> something about the hardware.
+The device name for the adc clock is incorrect. This results in the
+IIO ADC driver to fail while probing for the clock. This patch
+fixes the name and the ADC driver is now started correctly.
 
-Sure, but the specific case that lead to this report was the fact that
-this clock (directly?) feeds the pinctrl programming interface, and that
-fact is neither described in the DT nor handled by the driver. Surely
-that should be described and handled?
+Signed-off-by: Stefan Roese <sr@denx.de>
+Cc: Vipul Kumar Samar <vipulkumar.samar@st.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Mike Turquette <mturquette@linaro.org>
+---
+ drivers/clk/spear/spear6xx_clock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Mark.
+diff --git a/drivers/clk/spear/spear6xx_clock.c b/drivers/clk/spear/spear6xx_clock.c
+index 4f649c9..3e43244 100644
+--- a/drivers/clk/spear/spear6xx_clock.c
++++ b/drivers/clk/spear/spear6xx_clock.c
+@@ -316,7 +316,7 @@ void __init spear6xx_clk_init(void __iomem *misc_base)
+ 	/* clock derived from apb clk */
+ 	clk = clk_register_gate(NULL, "adc_clk", "apb_clk", 0, PERIP1_CLK_ENB,
+ 			ADC_CLK_ENB, 0, &_lock);
+-	clk_register_clkdev(clk, NULL, "adc");
++	clk_register_clkdev(clk, NULL, "d8200000.adc");
+ 
+ 	clk = clk_register_fixed_factor(NULL, "gpio0_clk", "apb_clk", 0, 1, 1);
+ 	clk_register_clkdev(clk, NULL, "f0100000.gpio");
+-- 
+2.5.1
