@@ -1,41 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 22 Sep 2015 15:41:25 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/9] clk: rockchip: add new clock type and controller
- for rk3036
-Message-ID: <20150922224125.GK23081@codeaurora.org>
-References: <1442478540-15068-1-git-send-email-zhengxing@rock-chips.com>
- <1442478540-15068-5-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <magnus.damm@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442478540-15068-5-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <CAMuHMdVXJ8Te_Rwn2WZCdXdh_+0__S6QEp7ZBzggpY-UgqtqLA@mail.gmail.com>
+References: <20150826074309.4298.76147.sendpatchset@little-apple>
+	<CAMuHMdVXJ8Te_Rwn2WZCdXdh_+0__S6QEp7ZBzggpY-UgqtqLA@mail.gmail.com>
+Date: Wed, 2 Sep 2015 15:52:45 +0900
+Message-ID: <CANqRtoSccKdT9W_xhJ-xNQjbrJBEfGgn4uHaYM7=ieZt3gTT0g@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: shmobile: Get rid of CONFIG_SHMOBILE_MULTI
+From: Magnus Damm <magnus.damm@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/17, Xing Zheng wrote:
-> +
-> +static void rockchip_rk3036_pll_init(struct clk_hw *hw)
+Hi Geert,
 
-init ops are "discouraged". Could we do this through assigned
-rates instead?
+On Wed, Aug 26, 2015 at 4:48 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Wed, Aug 26, 2015 at 9:43 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+>> From: Magnus Damm <damm+renesas@opensource.se>
+>>
+>> Shmobile is all multiplatform these days, so get rid of the
+>> reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
+>> enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
+>> MSTP depending on if they are included in the SoC or not.
+>>
+>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+>> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>>
+>>  Changes since V1:
+>>  - dropped DIV6 from R-Car Gen1 variants - thanks Geert!
+>
+> BTW, you forgot to mention, but it's important for Mike and Stephen to
+> know that this should not be queued up in a branch that still has
+> ARCH_SHMOBILE_LEGACY.
 
-> +{
-> +	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-> +	const struct rockchip_pll_rate_table *rate;
-> +	unsigned int fbdiv, postdiv1, refdiv, postdiv2, dsmpd, frac;
-> +	unsigned long drate;
-> +	u32 pllcon;
-> +
-> +	if (!(pll->flags & ROCKCHIP_PLL_SYNC_RATE))
-> +		return;
+Allow me to clarify one thing.
 
-I don't understand what this one does though. This check isn't in
-the set rate ops.
+Your comment is true for this older version of this patch, but newer
+versions such as:
+[PATCH v5 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
+and later versions do not have this dependency on ARCH_SHMOBILE_LEGACY cleanups.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+So newer versions can be merged at any time without any special dependencies.
+
+Thanks,
+
+/ magnus
