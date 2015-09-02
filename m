@@ -1,55 +1,59 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH] clk: qcom: Make oxili GDSC parent of oxili_cx GDSC
-Date: Wed, 23 Sep 2015 12:09:22 -0700
-Message-Id: <1443035362-10914-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1438564418-15948-5-git-send-email-leo.yan@linaro.org>
+References: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
+	<1438564418-15948-5-git-send-email-leo.yan@linaro.org>
+Date: Tue, 1 Sep 2015 17:28:03 -0700
+Message-ID: <CAMAWPa8dNOipiFFv96J5XvP1Qs7ysHBD6_-RpMGqCEdPAKxHAA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] clk: Hi6220: add stub clock driver
+From: Kevin Hilman <khilman@kernel.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Bintian Wang <bintian.wang@huawei.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Jian Zhang <zhangjian001@hisilicon.com>,
+	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
+	Haoju Mo <mohaoju@hisilicon.com>,
+	Dan Zhao <dan.zhao@hisilicon.com>, sunzhaosheng@hisilicon.com,
+	victor.lixin@hisilicon.com, Tyler Baker <tyler.baker@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The oxili_cx GDSC is inside the power domain of the oxili GDSC.
-Add the dependency so that the CX domain can properly power up.
+On Sun, Aug 2, 2015 at 6:13 PM, Leo Yan <leo.yan@linaro.org> wrote:
+> On Hi6220, there have some clocks which can use mailbox channel to send
+> messages to power controller to change frequency; this includes CPU, GPU
+> and DDR clocks.
+>
+> For dynamic frequency scaling, firstly need write the frequency value to
+> SRAM region, and then send message to mailbox to trigger power controller
+> to handle this requirement. This driver will use syscon APIs to pass SRAM
+> memory region and use common mailbox APIs for channels accessing.
+>
+> This init driver will support cpu frequency change firstly.
+>
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
 
-Reported-by: Rob Clark <robdclark@gmail.com>
-Cc: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/qcom/mmcc-msm8974.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+The kernelci.org build/boot bot detected boot failures in
+linux-next[1], and the failure was bisected down to this patch (landed
+in linux-next as commit c1628a2c416da947f5afac615d53189250fa49cb.
 
-diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-index fe8320dc41db..3613db0a73e3 100644
---- a/drivers/clk/qcom/mmcc-msm8974.c
-+++ b/drivers/clk/qcom/mmcc-msm8974.c
-@@ -2615,6 +2615,7 @@ MODULE_DEVICE_TABLE(of, mmcc_msm8974_match_table);
- static int mmcc_msm8974_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
-+	int ret;
- 
- 	regmap = qcom_cc_map(pdev, &mmcc_msm8974_desc);
- 	if (IS_ERR(regmap))
-@@ -2623,7 +2624,14 @@ static int mmcc_msm8974_probe(struct platform_device *pdev)
- 	clk_pll_configure_sr_hpm_lp(&mmpll1, regmap, &mmpll1_config, true);
- 	clk_pll_configure_sr_hpm_lp(&mmpll3, regmap, &mmpll3_config, false);
- 
--	return qcom_cc_really_probe(pdev, &mmcc_msm8974_desc, regmap);
-+	ret = qcom_cc_really_probe(pdev, &mmcc_msm8974_desc, regmap);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_genpd_add_subdomain(&oxili_gdsc.pd, &oxilicx_gdsc.pd);
-+	if (ret)
-+		qcom_cc_remove(pdev);
-+	return ret;
- }
- 
- static int mmcc_msm8974_remove(struct platform_device *pdev)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I verifed that reverting this commit on top of next-20150901 gets the
+hikey booting again.
+
+Kevin
+
+[1] http://kernelci.org/boot/hi6220-hikey/
