@@ -1,109 +1,42 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 3 Sep 2015 10:34:58 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Cc: Kees Cook <keescook@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH] clk_register_clkdev: handle callers needing format string
+Message-ID: <20150903173458.GF15099@codeaurora.org>
+References: <20150724232045.GA14059@www.outflux.net>
+ <CAAObsKBp-hPknWUxJxJGPV1RTj+Q_yc+xxVG315FjQXk9_CK2g@mail.gmail.com>
+ <CAGXu5jKnvPw=LM6uynk532AzON1hoD+PmA0t-eA4oOfW=R986w@mail.gmail.com>
+ <CAAObsKAyKVM-Y4XZJZ-dPXnZZpQ4_ytovkshAXCWj6UFU7-XGw@mail.gmail.com>
+ <CAAObsKC4s8M3NgvSn2NS8jginvdnQNZmYydt_Zswz992=yTW0w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1442566130-3497-3-git-send-email-maxime.ripard@free-electrons.com>
-References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
- <1442566130-3497-3-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 18 Sep 2015 17:41:47 +0800
-Message-ID: <CAGb2v64Zx-H5L456ybjEFz-sPDy_xhO=Lxua6CFj9Dg+6y=vqQ@mail.gmail.com>
-Subject: Re: [PATCH 2/5] ARM: sun5i: Add R8 DTSI
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAAObsKC4s8M3NgvSn2NS8jginvdnQNZmYydt_Zswz992=yTW0w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 09/03, Tomeu Vizoso wrote:
+> On 5 August 2015 at 15:09, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
+> >
+> > Could this patch be removed from linux-next in the meantime?
+> 
+> Stephen, Mike,
+> 
+> the Tegra portion of this patch is wrong because it registers some
+> clocks with a dev_id of "(null)", which is really inconvenient when
+> debugging because one cannot tell from the logs if it's NULL or that
+> actual string.
+> 
+> Could this be reverted?
 
-On Fri, Sep 18, 2015 at 4:48 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The R8 is very close to the A13, but it still has a few differences,
-> notably a composite output, which the A13 lacks.
->
-> Add a DTSI based on the A13's to hold those differences.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  arch/arm/boot/dts/sun5i-r8.dtsi | 61 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 61 insertions(+)
->  create mode 100644 arch/arm/boot/dts/sun5i-r8.dtsi
->
-> diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
-> new file mode 100644
-> index 000000000000..c9ed854687ca
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/sun5i-r8.dtsi
-> @@ -0,0 +1,61 @@
-> +/*
-> + * Copyright 2015 Free Electrons
-> + * Copyright 2015 NextThing Co
-> + *
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
-> + *
-> + *  a) This file is free software; you can redistribute it and/or
-> + *     modify it under the terms of the GNU General Public License as
-> + *     published by the Free Software Foundation; either version 2 of the
-> + *     License, or (at your option) any later version.
-> + *
-> + *     This file is distributed in the hope that it will be useful,
-> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *     GNU General Public License for more details.
-> + *
-> + * Or, alternatively,
-> + *
-> + *  b) Permission is hereby granted, free of charge, to any person
-> + *     obtaining a copy of this software and associated documentation
-> + *     files (the "Software"), to deal in the Software without
-> + *     restriction, including without limitation the rights to use,
-> + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> + *     sell copies of the Software, and to permit persons to whom the
-> + *     Software is furnished to do so, subject to the following
-> + *     conditions:
-> + *
-> + *     The above copyright notice and this permission notice shall be
-> + *     included in all copies or substantial portions of the Software.
-> + *
-> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + *     OTHER DEALINGS IN THE SOFTWARE.
-> + */
-> +
-> +#include "skeleton.dtsi"
+Was this patch applied somewhere? clkdev is maintained by
+Russell, so Mike and I didn't apply this patch to begin with.
 
-This is already included by sun5i.dtsi, which is included by sun5i-a13.dtsi.
-
-> +
-> +#include "sun5i-a13.dtsi"
-> +
-> +/ {
-> +       chosen {
-> +               framebuffer@1 {
-> +                       compatible = "allwinner,simple-framebuffer",
-> +                                    "simple-framebuffer";
-> +                       allwinner,pipeline = "de_be0-lcd0-tve0";
-> +                       clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
-> +                                <&ahb_gates 44>;
-> +                       status = "disabled";
-> +               };
-> +       };
-> +};
-> --
-> 2.5.1
->
-
-The rest looks good.
-
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
