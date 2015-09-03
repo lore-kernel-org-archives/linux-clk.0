@@ -1,65 +1,100 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
- <will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
- <linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-clk@vger.kernel.org>
-Subject: [PATCH 1/6] i2c: Add i2c support to Freescale Layerscape platforms
-Date: Mon, 21 Sep 2015 20:22:33 +0800
-Message-ID: <1442838158-2964-2-git-send-email-B48286@freescale.com>
-In-Reply-To: <1442838158-2964-1-git-send-email-B48286@freescale.com>
-References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v2] clk: rockchip: reset init state before mmc card
+ initialization
+To: Heiko Stuebner <heiko@sntech.de>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+References: <1440462876-5457-1-git-send-email-shawn.lin@rock-chips.com>
+Cc: shawn.lin@rock-chips.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <55E85572.10005@rock-chips.com>
+Date: Thu, 3 Sep 2015 22:13:06 +0800
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Hou Zhiqiang <B48286@freescale.com>, Shaohui.Xie@freescale.com,
- corbet@lwn.net, bhupesh.sharma@freescale.com, mturquette@baylibre.com,
- wsa@the-dreams.de, sboyd@codeaurora.org, wim@iguana.be,
- Wenbin.Song@freescale.com, scottwood@freescale.com, Mingkai.Hu@freescale.com,
- leoli@freescale.com
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+In-Reply-To: <1440462876-5457-1-git-send-email-shawn.lin@rock-chips.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shaohui Xie <Shaohui.Xie@freescale.com>
+On 2015/8/25 8:34, Shawn Lin wrote:
+> mmc host controller's IO input/output timing is unpredictable if
+> bootloader execute tuning for HS200 mode. It might make kernel failed
+> to initialize mmc card in identification mode. The root cause is
+> tuning phase and degree setting for HS200 mode in bootloader aren't
+> applicable to that of identification mode in kernel stage. Anyway, we
+> can't force all bootloaders to reset tuning phase and degree setting
+> before into kernel. Simply reset it in rockchip_clk_register_mmc.
+>
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+>
+> ---
+>
+> Changes in v2:
+> - rename to rockchip_clk_mmc_reset
+> - simplifying the code
+>
 
-Modify the I2C_IMX config to support to Layerscape platforms.
+Hi Heiko,
 
-Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
-Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
----
- drivers/i2c/busses/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+How about the next of this patch ? :)
+Feel free to let me know if it still has something more to be done.
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 08b8617..14147ec 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -582,10 +582,10 @@ config I2C_IMG
- 
- config I2C_IMX
- 	tristate "IMX I2C interface"
--	depends on ARCH_MXC
-+	depends on ARCH_MXC || ARCH_LAYERSCAPE
- 	help
- 	  Say Y here if you want to use the IIC bus controller on
--	  the Freescale i.MX/MXC processors.
-+	  the Freescale i.MX/MXC or Layerscape processors.
- 
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called i2c-imx.
+BTW, recently, we get another report that while changing data bus width, 
+uboot do bus testing(CMD19 + CMD14) for emmc DDR52 8bit bus mode by 
+tuning the phase and degree to fit the timing fails the kernel to 
+boot-up for the same reason.
+
+
+
+>   drivers/clk/rockchip/clk-mmc-phase.c | 16 ++++++++++++++++
+>   1 file changed, 16 insertions(+)
+>
+> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+> index e9f8df32..1d3e8fe6 100644
+> --- a/drivers/clk/rockchip/clk-mmc-phase.c
+> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
+> @@ -38,6 +38,8 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw *hw,
+>   #define ROCKCHIP_MMC_DEGREE_MASK 0x3
+>   #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
+>   #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
+> +#define ROCKCHIP_MMC_INIT_STATE_RESET 0x1
+> +#define ROCKCHIP_MMC_INIT_STATE_SHIFT 1
+>
+>   #define PSECS_PER_SEC 1000000000000LL
+>
+> @@ -119,6 +121,14 @@ static const struct clk_ops rockchip_mmc_clk_ops = {
+>   	.set_phase	= rockchip_mmc_set_phase,
+>   };
+>
+> +static void rockchip_clk_mmc_reset(struct rockchip_mmc_clock *mmc_clock)
+> +{
+> +	if (mmc_clock->shift == ROCKCHIP_MMC_INIT_STATE_SHIFT)
+> +		writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_RESET,
+> +				     ROCKCHIP_MMC_INIT_STATE_RESET,
+> +				     mmc_clock->shift), mmc_clock->reg);
+> +}
+> +
+>   struct clk *rockchip_clk_register_mmc(const char *name,
+>   				const char *const *parent_names, u8 num_parents,
+>   				void __iomem *reg, int shift)
+> @@ -139,6 +149,12 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+>   	mmc_clock->reg = reg;
+>   	mmc_clock->shift = shift;
+>
+> +	/*
+> +	* Assert init_state to soft reset the CLKGEN
+> +	* for mmc tuning phase and degree
+> +	*/
+> +	rockchip_clk_mmc_reset(mmc_clock);
+> +
+>   	if (name)
+>   		init.name = name;
+>
+>
+
+
 -- 
-2.1.0.27.g96db324
+Best Regards
+Shawn Lin
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
