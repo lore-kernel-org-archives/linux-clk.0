@@ -1,33 +1,80 @@
-Return-Path: <romain.perier@gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: rockchip: reset init state before mmc card initialization
+Date: Thu, 03 Sep 2015 21:07:34 +0200
+Message-ID: <4930263.TgyPa9P2vP@phil>
+In-Reply-To: <1440462876-5457-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1440462876-5457-1-git-send-email-shawn.lin@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <20150909214705.GV15099@codeaurora.org>
-References: <1440322357-2621-1-git-send-email-romain.perier@gmail.com>
-	<CABgxDo+otZrYoqTNK-ea=L6Dsd5p_b_MFCi4H4XJZZ25PV_qnA@mail.gmail.com>
-	<CABgxDoLgqfzO-Sb_rKHe=-GuMaKWMihHhktx6sDSM6M=Q+Koaw@mail.gmail.com>
-	<20150904162402.GN15099@codeaurora.org>
-	<CABgxDo+0qN5GJdCNpQi4g_CdW67PvxsogMseRoAa5cuAbWk1wQ@mail.gmail.com>
-	<CABgxDoJRdF_k0EZLrEWXqpDrmj5LVRL24izGLJY4AmtUNOk7PQ@mail.gmail.com>
-	<20150909214705.GV15099@codeaurora.org>
-Date: Thu, 10 Sep 2015 09:05:14 +0200
-Message-ID: <CABgxDo+8xPs-GOWnWhBnVN6xXn41=Dm_pTHpDyA2uoCrg93=Mw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: rockchip: Add pclk_peri to critical clocks on RK3066/RK3188
-From: Romain Perier <romain.perier@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-It was based on linux-next few weeks ago. I will rebase it today and send a v3.
+Am Dienstag, 25. August 2015, 08:34:36 schrieb Shawn Lin:
+> mmc host controller's IO input/output timing is unpredictable if
+> bootloader execute tuning for HS200 mode. It might make kernel failed
+> to initialize mmc card in identification mode. The root cause is
+> tuning phase and degree setting for HS200 mode in bootloader aren't
+> applicable to that of identification mode in kernel stage. Anyway, we
+> can't force all bootloaders to reset tuning phase and degree setting
+> before into kernel. Simply reset it in rockchip_clk_register_mmc.
+> 
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-2015-09-09 23:47 GMT+02:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 09/09, Romain Perier wrote:
->> so, which of you does take the patch for -rc1 ?
->>
-> Is there some other patch out there that's also needed?
+I'm not 100% sure why you need the new function instead of having that 
+directly in rockchip_clk_register_mmc, but I guess that is a matter of taste 
+and I don't have a hard opinion on that, so
 
-No, that's a single patch.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-Romain
+> 
+> ---
+> 
+> Changes in v2:
+> - rename to rockchip_clk_mmc_reset
+> - simplifying the code
+> 
+>  drivers/clk/rockchip/clk-mmc-phase.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c
+> b/drivers/clk/rockchip/clk-mmc-phase.c index e9f8df32..1d3e8fe6 100644
+> --- a/drivers/clk/rockchip/clk-mmc-phase.c
+> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
+> @@ -38,6 +38,8 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw
+> *hw, #define ROCKCHIP_MMC_DEGREE_MASK 0x3
+>  #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
+>  #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
+> +#define ROCKCHIP_MMC_INIT_STATE_RESET 0x1
+> +#define ROCKCHIP_MMC_INIT_STATE_SHIFT 1
+> 
+>  #define PSECS_PER_SEC 1000000000000LL
+> 
+> @@ -119,6 +121,14 @@ static const struct clk_ops rockchip_mmc_clk_ops = {
+>  	.set_phase	= rockchip_mmc_set_phase,
+>  };
+> 
+> +static void rockchip_clk_mmc_reset(struct rockchip_mmc_clock *mmc_clock)
+> +{
+> +	if (mmc_clock->shift == ROCKCHIP_MMC_INIT_STATE_SHIFT)
+> +		writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_RESET,
+> +				     ROCKCHIP_MMC_INIT_STATE_RESET,
+> +				     mmc_clock->shift), mmc_clock->reg);
+> +}
+> +
+>  struct clk *rockchip_clk_register_mmc(const char *name,
+>  				const char *const *parent_names, u8 num_parents,
+>  				void __iomem *reg, int shift)
+> @@ -139,6 +149,12 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+> mmc_clock->reg = reg;
+>  	mmc_clock->shift = shift;
+> 
+> +	/*
+> +	* Assert init_state to soft reset the CLKGEN
+> +	* for mmc tuning phase and degree
+> +	*/
+> +	rockchip_clk_mmc_reset(mmc_clock);
+> +
+>  	if (name)
+>  		init.name = name;
