@@ -1,58 +1,56 @@
-Return-Path: <newchief@king.net.pl>
-From: Paul Osmialowski <newchief@king.net.pl>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Paul Osmialowski <pawelo@king.net.pl>
-Subject: [PATCH 0/1] add devm_of_clk_get() and devm_of_clk_get_by_name() functions
-Date: Wed, 30 Sep 2015 09:46:51 +0200
-Message-Id: <1443599212-31698-1-git-send-email-newchief@king.net.pl>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+Message-ID: <55E869F2.5020008@linaro.org>
+Date: Thu, 03 Sep 2015 18:40:34 +0300
+From: Georgi Djakov <georgi.djakov@linaro.org>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: qcom: Add support for RPM Clocks
+References: <1438620489-32515-1-git-send-email-georgi.djakov@linaro.org> <1438620489-32515-2-git-send-email-georgi.djakov@linaro.org> <20150902203154.GA15099@codeaurora.org>
+In-Reply-To: <20150902203154.GA15099@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Paul Osmialowski <pawelo@king.net.pl>
+Hi Stephen,
 
-While working on my pinctrl driver I've found lack of devres compatible
-equivalent for of_clk_get() function. I'd like to use it for the following
-(incomplete) piece of device tree configuration:
+On 09/02/2015 11:31 PM, Stephen Boyd wrote:
+> On 08/03, Georgi Djakov wrote:
+>> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+>> new file mode 100644
+>> index 000000000000..e564673ec3a5
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/clk-smd-rpm.c
 
-pinctrl: pinctrl {
-	compatible = "fsl,kinetis-pinctrl";
-	#address-cells = <1>;
-	#size-cells = <1>;
-	ranges;
+[..]
 
-	port_a@40049000 {
-		compatible = "fsl,kinetis-pin-bank";
-		reg = <0x40049000 0x1000>;
-		clocks = <&sim SIM_CLK_SCGC5_PORTA>;
-	};
+>> +static int clk_smd_rpm_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +				unsigned long parent_rate)
+>> +{
+>> +	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
+>> +	int ret = 0;
+>> +
+>> +	if (r->enabled) {
+>> +		u32 value;
+>> +		struct clk_smd_rpm *peer = r->peer;
+>> +
+>> +		/* Take peer clock's rate into account only if it's enabled. */
+>> +		if (peer->enabled)
+> 
+> This peer stuff almost doesn't even matter because we're only
+> sending active set requests. Why can't this code be updated to
+> send both active and sleep set requests? The sleep set stuff
+> won't be cached, etc., but I don't see a problem in doing both.
+> Otherwise we should drop all the peer stuff until we introduce
+> active only clocks.
 
-	port_b@4004a000 {
-		compatible = "fsl,kinetis-pin-bank";
-		reg = <0x4004a000 0x1000>;
-		clocks = <&sim SIM_CLK_SCGC5_PORTB>;
-	};
-...
-};
+Initially I tried sending both active and sleep sets, but as they are
+not cached like in downstream (yet) i got hangs during boot. Disabling
+caching in downstream kernel also caused the same hangs, so i left
+this out for now. Will try debugging it further.
 
-In my pinconf-generic compatible fsl,kinetis-pinctrl driver, I'm iterating
-over fsl,kinetis-pin-bank nodes using for_each_child_of_node(dev->of_node,
-child) along with of_match_node() in order to grab resources (I/O base
-address, clock gate).
+Will fix the rest according to your comments. Thank you!
 
-Normally, I'd have to use of_clk_get() on each pin bank device_node and
-then worry about proper resource release myself.
-
-IMHO using devres infrastructure for this is far better. This patch adds
-missing functions needed to do it that way.
-
-Paul Osmialowski (1):
-  clk: add devm_of_clk_get() and devm_of_clk_get_by_name() functions
-
- drivers/clk/clk-devres.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk.h      | 20 ++++++++++++++++++++
- 2 files changed, 66 insertions(+)
-
--- 
-2.4.9
+BR,
+Georgi
