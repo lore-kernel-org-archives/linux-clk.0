@@ -1,105 +1,104 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH v2 2/2] ARM: imx31: Do not call mxc_timer_init twice when
- booting with DT
-Date: Wed,  9 Sep 2015 11:35:15 +0200
-Message-Id: <1441791315-25390-2-git-send-email-alexander.stein@systec-electronic.com>
-In-Reply-To: <1441791315-25390-1-git-send-email-alexander.stein@systec-electronic.com>
-References: <1441791315-25390-1-git-send-email-alexander.stein@systec-electronic.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Alexander Stein <alexander.stein@systec-electronic.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v2] clk: rockchip: reset init state before mmc card
+ initialization
+To: Heiko Stuebner <heiko@sntech.de>
+References: <1440462876-5457-1-git-send-email-shawn.lin@rock-chips.com>
+ <4930263.TgyPa9P2vP@phil>
+Cc: shawn.lin@rock-chips.com, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <55E8DC74.3090200@rock-chips.com>
+Date: Fri, 4 Sep 2015 07:49:08 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+In-Reply-To: <4930263.TgyPa9P2vP@phil>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-mxc_timer_init must not be called from within mx31_clocks_init_dt. It will
-eventually be called by imx31_timer_init_dt
-(drivers/clocksource/timer-imx-gpt.c).
-This arranges the initialization code similar to clk-imx27.c
+在 2015/9/4 3:07, Heiko Stuebner 写道:
+> Am Dienstag, 25. August 2015, 08:34:36 schrieb Shawn Lin:
+>> mmc host controller's IO input/output timing is unpredictable if
+>> bootloader execute tuning for HS200 mode. It might make kernel failed
+>> to initialize mmc card in identification mode. The root cause is
+>> tuning phase and degree setting for HS200 mode in bootloader aren't
+>> applicable to that of identification mode in kernel stage. Anyway, we
+>> can't force all bootloaders to reset tuning phase and degree setting
+>> before into kernel. Simply reset it in rockchip_clk_register_mmc.
+>>
+>> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+>
+> I'm not 100% sure why you need the new function instead of having that
+> directly in rockchip_clk_register_mmc, but I guess that is a matter of taste
 
-Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
----
-* Added in v2
-* Compile tested only due to lack of hardware
+Thanks, Heiko.
+:) That's indeed my taste but might not be appropriate sometimes. Also 
+add it directly into rockchip_clk_register_mmc looks fine to me.
 
- drivers/clk/imx/clk-imx31.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+I'm prone to do it as your advice since it can reduce a function call.
 
-diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
-index fe66c40..9a49653 100644
---- a/drivers/clk/imx/clk-imx31.c
-+++ b/drivers/clk/imx/clk-imx31.c
-@@ -62,7 +62,7 @@ enum mx31_clks {
- static struct clk *clk[clk_max];
- static struct clk_onecell_data clk_data;
- 
--int __init mx31_clocks_init(unsigned long fref)
-+static void __init _mx31_clocks_init(unsigned long fref)
- {
- 	void __iomem *base;
- 	struct device_node *np;
-@@ -132,6 +132,12 @@ int __init mx31_clocks_init(unsigned long fref)
- 
- 	imx_check_clocks(clk, ARRAY_SIZE(clk));
- 
-+	clk_set_parent(clk[csi], clk[upll]);
-+	clk_prepare_enable(clk[emi_gate]);
-+	clk_prepare_enable(clk[iim_gate]);
-+	mx31_revision();
-+	clk_disable_unprepare(clk[iim_gate]);
-+
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx31-ccm");
- 
- 	if (np) {
-@@ -139,6 +145,11 @@ int __init mx31_clocks_init(unsigned long fref)
- 		clk_data.clk_num = ARRAY_SIZE(clk);
- 		of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
- 	}
-+}
-+
-+int __init mx31_clocks_init(void)
-+{
-+	_mx31_clocks_init();
- 
- 	clk_register_clkdev(clk[gpt_gate], "per", "imx-gpt.0");
- 	clk_register_clkdev(clk[ipg], "ipg", "imx-gpt.0");
-@@ -193,12 +204,6 @@ int __init mx31_clocks_init(unsigned long fref)
- 	clk_register_clkdev(clk[sdma_gate], NULL, "imx31-sdma");
- 	clk_register_clkdev(clk[iim_gate], "iim", NULL);
- 
--	clk_set_parent(clk[csi], clk[upll]);
--	clk_prepare_enable(clk[emi_gate]);
--	clk_prepare_enable(clk[iim_gate]);
--	mx31_revision();
--	clk_disable_unprepare(clk[iim_gate]);
--
- 	mxc_timer_init(MX31_GPT1_BASE_ADDR, MX31_INT_GPT, GPT_TYPE_IMX31);
- 
- 	return 0;
-@@ -217,5 +222,5 @@ int __init mx31_clocks_init_dt(void)
- 			break;
- 	}
- 
--	return mx31_clocks_init(fref);
-+	return _mx31_clocks_init(fref);
- }
+> and I don't have a hard opinion on that, so
+>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+>
+>>
+>> ---
+>>
+>> Changes in v2:
+>> - rename to rockchip_clk_mmc_reset
+>> - simplifying the code
+>>
+>>   drivers/clk/rockchip/clk-mmc-phase.c | 16 ++++++++++++++++
+>>   1 file changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c
+>> b/drivers/clk/rockchip/clk-mmc-phase.c index e9f8df32..1d3e8fe6 100644
+>> --- a/drivers/clk/rockchip/clk-mmc-phase.c
+>> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
+>> @@ -38,6 +38,8 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw
+>> *hw, #define ROCKCHIP_MMC_DEGREE_MASK 0x3
+>>   #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
+>>   #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
+>> +#define ROCKCHIP_MMC_INIT_STATE_RESET 0x1
+>> +#define ROCKCHIP_MMC_INIT_STATE_SHIFT 1
+>>
+>>   #define PSECS_PER_SEC 1000000000000LL
+>>
+>> @@ -119,6 +121,14 @@ static const struct clk_ops rockchip_mmc_clk_ops = {
+>>   	.set_phase	= rockchip_mmc_set_phase,
+>>   };
+>>
+>> +static void rockchip_clk_mmc_reset(struct rockchip_mmc_clock *mmc_clock)
+>> +{
+>> +	if (mmc_clock->shift == ROCKCHIP_MMC_INIT_STATE_SHIFT)
+>> +		writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_RESET,
+>> +				     ROCKCHIP_MMC_INIT_STATE_RESET,
+>> +				     mmc_clock->shift), mmc_clock->reg);
+>> +}
+>> +
+>>   struct clk *rockchip_clk_register_mmc(const char *name,
+>>   				const char *const *parent_names, u8 num_parents,
+>>   				void __iomem *reg, int shift)
+>> @@ -139,6 +149,12 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+>> mmc_clock->reg = reg;
+>>   	mmc_clock->shift = shift;
+>>
+>> +	/*
+>> +	* Assert init_state to soft reset the CLKGEN
+>> +	* for mmc tuning phase and degree
+>> +	*/
+>> +	rockchip_clk_mmc_reset(mmc_clock);
+>> +
+>>   	if (name)
+>>   		init.name = name;
+>
+>
+>
+>
+
+
 -- 
-2.4.6
+Best Regards
+Shawn Lin
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
