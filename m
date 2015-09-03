@@ -1,122 +1,81 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Sun, 6 Sep 2015 16:49:45 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/1] ARM: imx35: Do not call mxc_timer_init twice when
- booting with DT
-Message-ID: <20150906084945.GM30746@tiger>
-References: <1439277502-16917-1-git-send-email-alexander.stein@systec-electronic.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1439277502-16917-1-git-send-email-alexander.stein@systec-electronic.com>
+In-Reply-To: <CAAObsKAyKVM-Y4XZJZ-dPXnZZpQ4_ytovkshAXCWj6UFU7-XGw@mail.gmail.com>
+References: <20150724232045.GA14059@www.outflux.net> <CAAObsKBp-hPknWUxJxJGPV1RTj+Q_yc+xxVG315FjQXk9_CK2g@mail.gmail.com>
+ <CAGXu5jKnvPw=LM6uynk532AzON1hoD+PmA0t-eA4oOfW=R986w@mail.gmail.com> <CAAObsKAyKVM-Y4XZJZ-dPXnZZpQ4_ytovkshAXCWj6UFU7-XGw@mail.gmail.com>
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Date: Thu, 3 Sep 2015 09:57:02 +0200
+Message-ID: <CAAObsKC4s8M3NgvSn2NS8jginvdnQNZmYydt_Zswz992=yTW0w@mail.gmail.com>
+Subject: Re: [PATCH] clk_register_clkdev: handle callers needing format string
+To: Kees Cook <keescook@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 11, 2015 at 09:18:22AM +0200, Alexander Stein wrote:
-> mxc_timer_init must not be called from within mx35_clocks_init_dt. It will
-> eventually be called by imx31_timer_init_dt
-> (drivers/clocksources/timer-imx-gpt.c).
+On 5 August 2015 at 15:09, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
+> On 31 July 2015 at 21:03, Kees Cook <keescook@chromium.org> wrote:
+>> On Fri, Jul 31, 2015 at 2:13 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
+>>> On 25 July 2015 at 01:20, Kees Cook <keescook@chromium.org> wrote:
+>>>> Many callers either use NULL or const strings for the third argument of
+>>>> clk_register_clkdev. For those that do not, this is a risk for format
+>>>> strings being accidentally processed (for example in device names). This
+>>>> adds the missing "%s" arguments to make sure format strings will not leak
+>>>> into the clkdev.
+>>>>
+>>>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>>>> ---
+>>>
+>>> [...]
+>>>
+>>>> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+>>>> index 41cd87c67be6..97d9fb7e89ad 100644
+>>>> --- a/drivers/clk/tegra/clk.c
+>>>> +++ b/drivers/clk/tegra/clk.c
+>>>> @@ -296,7 +296,7 @@ void __init tegra_register_devclks(struct tegra_devclk *dev_clks, int num)
+>>>>
+>>>>         for (i = 0; i < num; i++, dev_clks++)
+>>>>                 clk_register_clkdev(clks[dev_clks->dt_id], dev_clks->con_id,
+>>>> -                               dev_clks->dev_id);
+>>>> +                               "%s", dev_clks->dev_id);
+>>>
+>>> This causes clocks to be registered with a dev_id string of "(null)",
+>>> which is causing lookups that used to succeed before to fail.
+>>
+>> Oh yuck. Yeah, clk_register_clkdev handles a NULL argument differently
+>> than other format-string style functions. Using
+>> clk_register_clkdev(..., dev_clks->dev_id ? "%s" : NULL,
+>> dev_clks->dev_id) seems really ugly to work around this, though.
+>> Perhaps the format string capability should be removed?
+>
+> Yeah, that sounds good to me. At least, I don't see as that good of an
+> idea to save a few lines of code by making the API so prone to
+> mistakes.
+>
+> Could this patch be removed from linux-next in the meantime?
 
-s/clocksources/clocksource
+Stephen, Mike,
 
-> This arranges the initialization code similar to clk-imx27.c
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
-> ---
->  drivers/clk/imx/clk-imx35.c | 49 +++++++++++++++++++++++++--------------------
+the Tegra portion of this patch is wrong because it registers some
+clocks with a dev_id of "(null)", which is really inconvenient when
+debugging because one cannot tell from the logs if it's NULL or that
+actual string.
 
-Also, while you are there, can you please fix clk-imx31.c as well?
+Could this be reverted?
 
-Shawn
+Thanks,
 
->  1 file changed, 27 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
-> index 69138ba..3e7c805 100644
-> --- a/drivers/clk/imx/clk-imx35.c
-> +++ b/drivers/clk/imx/clk-imx35.c
-> @@ -84,7 +84,7 @@ enum mx35_clks {
->  
->  static struct clk *clk[clk_max];
->  
-> -int __init mx35_clocks_init(void)
-> +static void __init _mx35_clocks_init(void)
->  {
->  	void __iomem *base;
->  	u32 pdr0, consumer_sel, hsp_sel;
-> @@ -219,6 +219,30 @@ int __init mx35_clocks_init(void)
->  
->  	imx_check_clocks(clk, ARRAY_SIZE(clk));
->  
-> +	clk_prepare_enable(clk[spba_gate]);
-> +	clk_prepare_enable(clk[gpio1_gate]);
-> +	clk_prepare_enable(clk[gpio2_gate]);
-> +	clk_prepare_enable(clk[gpio3_gate]);
-> +	clk_prepare_enable(clk[iim_gate]);
-> +	clk_prepare_enable(clk[emi_gate]);
-> +	clk_prepare_enable(clk[max_gate]);
-> +	clk_prepare_enable(clk[iomuxc_gate]);
-> +
-> +	/*
-> +	 * SCC is needed to boot via mmc after a watchdog reset. The clock code
-> +	 * before conversion to common clk also enabled UART1 (which isn't
-> +	 * handled here and not needed for mmc) and IIM (which is enabled
-> +	 * unconditionally above).
-> +	 */
-> +	clk_prepare_enable(clk[scc_gate]);
-> +
-> +	imx_print_silicon_rev("i.MX35", mx35_revision());
-> +}
-> +
-> +int __init mx35_clocks_init(void)
-> +{
-> +	_mx35_clocks_init();
-> +
->  	clk_register_clkdev(clk[pata_gate], NULL, "pata_imx");
->  	clk_register_clkdev(clk[can1_gate], NULL, "flexcan.0");
->  	clk_register_clkdev(clk[can2_gate], NULL, "flexcan.1");
-> @@ -275,25 +299,6 @@ int __init mx35_clocks_init(void)
->  	clk_register_clkdev(clk[csi_gate], NULL, "mx3-camera.0");
->  	clk_register_clkdev(clk[admux_gate], "audmux", NULL);
->  
-> -	clk_prepare_enable(clk[spba_gate]);
-> -	clk_prepare_enable(clk[gpio1_gate]);
-> -	clk_prepare_enable(clk[gpio2_gate]);
-> -	clk_prepare_enable(clk[gpio3_gate]);
-> -	clk_prepare_enable(clk[iim_gate]);
-> -	clk_prepare_enable(clk[emi_gate]);
-> -	clk_prepare_enable(clk[max_gate]);
-> -	clk_prepare_enable(clk[iomuxc_gate]);
-> -
-> -	/*
-> -	 * SCC is needed to boot via mmc after a watchdog reset. The clock code
-> -	 * before conversion to common clk also enabled UART1 (which isn't
-> -	 * handled here and not needed for mmc) and IIM (which is enabled
-> -	 * unconditionally above).
-> -	 */
-> -	clk_prepare_enable(clk[scc_gate]);
-> -
-> -	imx_print_silicon_rev("i.MX35", mx35_revision());
-> -
->  	mxc_timer_init(MX35_GPT1_BASE_ADDR, MX35_INT_GPT, GPT_TYPE_IMX31);
->  
->  	return 0;
-> @@ -301,10 +306,10 @@ int __init mx35_clocks_init(void)
->  
->  static void __init mx35_clocks_init_dt(struct device_node *ccm_node)
->  {
-> +	_mx35_clocks_init();
-> +
->  	clk_data.clks = clk;
->  	clk_data.clk_num = ARRAY_SIZE(clk);
->  	of_clk_add_provider(ccm_node, of_clk_src_onecell_get, &clk_data);
-> -
-> -	mx35_clocks_init();
->  }
->  CLK_OF_DECLARE(imx35, "fsl,imx35-ccm", mx35_clocks_init_dt);
-> -- 
-> 2.4.6
-> 
+Tomeu
+
+> Thanks,
+>
+> Tomeu
+>
+>> -Kees
+>>
+>> --
+>> Kees Cook
+>> Chrome OS Security
