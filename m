@@ -1,51 +1,39 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH 01/16] clk: at91: utmi: use pmc_read when the at91_pmc is available
-Date: Wed, 30 Sep 2015 18:10:54 +0200
-Message-Id: <1443629469-15086-2-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <magnus.damm@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <55E6DA68.5070809@cogentembedded.com>
+References: <20150902071657.10870.37652.sendpatchset@little-apple>
+	<20150902071708.10870.37170.sendpatchset@little-apple>
+	<55E6DA68.5070809@cogentembedded.com>
+Date: Thu, 3 Sep 2015 16:32:46 +0900
+Message-ID: <CANqRtoQfC5vFQbuhueU4wgxHKXU5G_d-2YRiT0RHVcizheSTSA@mail.gmail.com>
+Subject: Re: [PATCH v6 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
+From: Magnus Damm <magnus.damm@gmail.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, SH-Linux <linux-sh@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, "Simon Horman [Horms]" <horms@verge.net.au>,
+	Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-at91_pmc_read is a workaround to allow external drivers to acces some
-registers of the PMC. There is no need for it in clk-utmi.c as we aready
-have a pointer to the struct at91_pmc.
+Hi Sergei,
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- drivers/clk/at91/clk-utmi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Wed, Sep 2, 2015 at 8:15 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Hello.
+>
+> On 9/2/2015 10:17 AM, Magnus Damm wrote:
+>
+>> From: Magnus Damm <damm+renesas@opensource.se>
+>>
+>> Shmobile is all multiplatform these days, so in get rid of the
+>
+>
+>    Grammar nit: "in" not needed.
 
-diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
-index 30dd697b1668..ca561e90a60f 100644
---- a/drivers/clk/at91/clk-utmi.c
-+++ b/drivers/clk/at91/clk-utmi.c
-@@ -47,7 +47,7 @@ static int clk_utmi_prepare(struct clk_hw *hw)
- {
- 	struct clk_utmi *utmi = to_clk_utmi(hw);
- 	struct at91_pmc *pmc = utmi->pmc;
--	u32 tmp = at91_pmc_read(AT91_CKGR_UCKR) | AT91_PMC_UPLLEN |
-+	u32 tmp = pmc_read(pmc, AT91_CKGR_UCKR) | AT91_PMC_UPLLEN |
- 		  AT91_PMC_UPLLCOUNT | AT91_PMC_BIASEN;
- 
- 	pmc_write(pmc, AT91_CKGR_UCKR, tmp);
-@@ -73,7 +73,7 @@ static void clk_utmi_unprepare(struct clk_hw *hw)
- {
- 	struct clk_utmi *utmi = to_clk_utmi(hw);
- 	struct at91_pmc *pmc = utmi->pmc;
--	u32 tmp = at91_pmc_read(AT91_CKGR_UCKR) & ~AT91_PMC_UPLLEN;
-+	u32 tmp = pmc_read(pmc, AT91_CKGR_UCKR) & ~AT91_PMC_UPLLEN;
- 
- 	pmc_write(pmc, AT91_CKGR_UCKR, tmp);
- }
--- 
-2.1.4
+Thanks, will fix!
+
+Cheers,
+
+/ magnus
