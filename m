@@ -1,142 +1,59 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 23 Sep 2015 08:33:41 -0700
-From: Shawn Guo <shawnguo@kernel.org>
-To: Shengjiu Wang <shengjiu.wang@freescale.com>
-Cc: mturquette@baylibre.com, kernel@pengutronix.de, sboyd@codeaurora.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] clk: imx6: Add SPDIF_GCLK clock in clock tree
-Message-ID: <20150923153340.GK3529@tiger>
-References: <cover.1442310569.git.shengjiu.wang@freescale.com>
- <113f1cecf1d83c6b96fd23ab9d7a73d1923e0d21.1442310569.git.shengjiu.wang@freescale.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <113f1cecf1d83c6b96fd23ab9d7a73d1923e0d21.1442310569.git.shengjiu.wang@freescale.com>
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
+ Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ b.zolnierkie@samsung.com
+Subject: [PATCH v3 3/3] ARM: dts: add suspend opp to exynos4412
+Date: Thu, 03 Sep 2015 20:11:32 +0200
+Message-id: <1441303892-32004-4-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1441303892-32004-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1441303892-32004-1-git-send-email-b.zolnierkie@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 15, 2015 at 06:01:01PM +0800, Shengjiu Wang wrote:
-> As spdif driver will register SPDIF clock to regmap, regmap will do
-> clk_prepare in init function, so SPDIF clock is prepared in probe, then its
-> root clock (pll clock) is prepared also, which cause the arm can't enter
-> low power mode.
+Mark 800MHz OPP as a suspend opp for Exynos4412 based
+boards so effectively cpufreq-dt driver behavior w.r.t.
+suspend frequency matches what the old exynos-cpufreq
+driver has been doing.
 
-Can you help me understand why ARM cannot enter low power mode when pll
-clock is prepared?
+This patch fixes suspend/resume support on Exynos4412 based
+Trats2 board and reboot hang on Exynos4412 based Odroid U3
+board.
 
-Shawn
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Add SPDIF_GCLK in clock tree which share same gate bits with SPDIF clock.
-> Its root clock is ipg clock, and register it to regmap, then the issue cam
-> be fixed.
-> 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@freescale.com>
-> ---
->  drivers/clk/imx/clk-imx6q.c               | 4 +++-
->  drivers/clk/imx/clk-imx6sl.c              | 4 +++-
->  drivers/clk/imx/clk-imx6sx.c              | 1 +
->  include/dt-bindings/clock/imx6qdl-clock.h | 3 ++-
->  include/dt-bindings/clock/imx6sl-clock.h  | 3 ++-
->  include/dt-bindings/clock/imx6sx-clock.h  | 3 ++-
->  6 files changed, 13 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-> index b2c1c04..e6b5944 100644
-> --- a/drivers/clk/imx/clk-imx6q.c
-> +++ b/drivers/clk/imx/clk-imx6q.c
-> @@ -119,6 +119,7 @@ static unsigned int share_count_ssi1;
->  static unsigned int share_count_ssi2;
->  static unsigned int share_count_ssi3;
->  static unsigned int share_count_mipi_core_cfg;
-> +static unsigned int share_count_spdif;
->  
->  static inline int clk_on_imx6q(void)
->  {
-> @@ -456,7 +457,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
->  	clk[IMX6QDL_CLK_SATA]         = imx_clk_gate2("sata",          "ahb",               base + 0x7c, 4);
->  	clk[IMX6QDL_CLK_SDMA]         = imx_clk_gate2("sdma",          "ahb",               base + 0x7c, 6);
->  	clk[IMX6QDL_CLK_SPBA]         = imx_clk_gate2("spba",          "ipg",               base + 0x7c, 12);
-> -	clk[IMX6QDL_CLK_SPDIF]        = imx_clk_gate2("spdif",         "spdif_podf",        base + 0x7c, 14);
-> +	clk[IMX6QDL_CLK_SPDIF]        = imx_clk_gate2_shared("spdif",     "spdif_podf",     base + 0x7c, 14, &share_count_spdif);
-> +	clk[IMX6QDL_CLK_SPDIF_GCLK]   = imx_clk_gate2_shared("spdif_gclk", "ipg",           base + 0x7c, 14, &share_count_spdif);
->  	clk[IMX6QDL_CLK_SSI1_IPG]     = imx_clk_gate2_shared("ssi1_ipg",      "ipg",        base + 0x7c, 18, &share_count_ssi1);
->  	clk[IMX6QDL_CLK_SSI2_IPG]     = imx_clk_gate2_shared("ssi2_ipg",      "ipg",        base + 0x7c, 20, &share_count_ssi2);
->  	clk[IMX6QDL_CLK_SSI3_IPG]     = imx_clk_gate2_shared("ssi3_ipg",      "ipg",        base + 0x7c, 22, &share_count_ssi3);
-> diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-> index a0d4cf2..a73cedd 100644
-> --- a/drivers/clk/imx/clk-imx6sl.c
-> +++ b/drivers/clk/imx/clk-imx6sl.c
-> @@ -97,6 +97,7 @@ static struct clk_div_table video_div_table[] = {
->  static unsigned int share_count_ssi1;
->  static unsigned int share_count_ssi2;
->  static unsigned int share_count_ssi3;
-> +static unsigned int share_count_spdif;
->  
->  static struct clk *clks[IMX6SL_CLK_END];
->  static struct clk_onecell_data clk_data;
-> @@ -391,7 +392,8 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
->  	clks[IMX6SL_CLK_PWM4]         = imx_clk_gate2("pwm4",         "perclk",            base + 0x78, 22);
->  	clks[IMX6SL_CLK_SDMA]         = imx_clk_gate2("sdma",         "ipg",               base + 0x7c, 6);
->  	clks[IMX6SL_CLK_SPBA]         = imx_clk_gate2("spba",         "ipg",               base + 0x7c, 12);
-> -	clks[IMX6SL_CLK_SPDIF]        = imx_clk_gate2("spdif",        "spdif0_podf",       base + 0x7c, 14);
-> +	clks[IMX6SL_CLK_SPDIF]        = imx_clk_gate2_shared("spdif",     "spdif0_podf",   base + 0x7c, 14, &share_count_spdif);
-> +	clks[IMX6SL_CLK_SPDIF_GCLK]   = imx_clk_gate2_shared("spdif_gclk",  "ipg",         base + 0x7c, 14, &share_count_spdif);
->  	clks[IMX6SL_CLK_SSI1_IPG]     = imx_clk_gate2_shared("ssi1_ipg",     "ipg",        base + 0x7c, 18, &share_count_ssi1);
->  	clks[IMX6SL_CLK_SSI2_IPG]     = imx_clk_gate2_shared("ssi2_ipg",     "ipg",        base + 0x7c, 20, &share_count_ssi2);
->  	clks[IMX6SL_CLK_SSI3_IPG]     = imx_clk_gate2_shared("ssi3_ipg",     "ipg",        base + 0x7c, 22, &share_count_ssi3);
-> diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-> index 5b95c2c..f2bc511 100644
-> --- a/drivers/clk/imx/clk-imx6sx.c
-> +++ b/drivers/clk/imx/clk-imx6sx.c
-> @@ -454,6 +454,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
->  	clks[IMX6SX_CLK_SPBA]         = imx_clk_gate2("spba",          "ipg",               base + 0x7c, 12);
->  	clks[IMX6SX_CLK_AUDIO]        = imx_clk_gate2_shared("audio",  "audio_podf",        base + 0x7c, 14, &share_count_audio);
->  	clks[IMX6SX_CLK_SPDIF]        = imx_clk_gate2_shared("spdif",  "spdif_podf",        base + 0x7c, 14, &share_count_audio);
-> +	clks[IMX6SX_CLK_SPDIF_GCLK]   = imx_clk_gate2_shared("spdif_gclk",    "ipg",        base + 0x7c, 14, &share_count_audio);
->  	clks[IMX6SX_CLK_SSI1_IPG]     = imx_clk_gate2_shared("ssi1_ipg",      "ipg",        base + 0x7c, 18, &share_count_ssi1);
->  	clks[IMX6SX_CLK_SSI2_IPG]     = imx_clk_gate2_shared("ssi2_ipg",      "ipg",        base + 0x7c, 20, &share_count_ssi2);
->  	clks[IMX6SX_CLK_SSI3_IPG]     = imx_clk_gate2_shared("ssi3_ipg",      "ipg",        base + 0x7c, 22, &share_count_ssi3);
-> diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
-> index 8de173f..77985cc 100644
-> --- a/include/dt-bindings/clock/imx6qdl-clock.h
-> +++ b/include/dt-bindings/clock/imx6qdl-clock.h
-> @@ -254,6 +254,7 @@
->  #define IMX6QDL_CLK_CAAM_MEM			241
->  #define IMX6QDL_CLK_CAAM_ACLK			242
->  #define IMX6QDL_CLK_CAAM_IPG			243
-> -#define IMX6QDL_CLK_END				244
-> +#define IMX6QDL_CLK_SPDIF_GCLK			244
-> +#define IMX6QDL_CLK_END				245
->  
->  #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
-> diff --git a/include/dt-bindings/clock/imx6sl-clock.h b/include/dt-bindings/clock/imx6sl-clock.h
-> index 9ce4e42..e14573e 100644
-> --- a/include/dt-bindings/clock/imx6sl-clock.h
-> +++ b/include/dt-bindings/clock/imx6sl-clock.h
-> @@ -174,6 +174,7 @@
->  #define IMX6SL_CLK_SSI1_IPG		161
->  #define IMX6SL_CLK_SSI2_IPG		162
->  #define IMX6SL_CLK_SSI3_IPG		163
-> -#define IMX6SL_CLK_END			164
-> +#define IMX6SL_CLK_SPDIF_GCLK		164
-> +#define IMX6SL_CLK_END			165
->  
->  #endif /* __DT_BINDINGS_CLOCK_IMX6SL_H */
-> diff --git a/include/dt-bindings/clock/imx6sx-clock.h b/include/dt-bindings/clock/imx6sx-clock.h
-> index 9957091..36f0324 100644
-> --- a/include/dt-bindings/clock/imx6sx-clock.h
-> +++ b/include/dt-bindings/clock/imx6sx-clock.h
-> @@ -274,6 +274,7 @@
->  #define IMX6SX_PLL5_BYPASS		261
->  #define IMX6SX_PLL6_BYPASS		262
->  #define IMX6SX_PLL7_BYPASS		263
-> -#define IMX6SX_CLK_CLK_END		264
-> +#define IMX6SX_CLK_SPDIF_GCLK		264
-> +#define IMX6SX_CLK_CLK_END		265
->  
->  #endif /* __DT_BINDINGS_CLOCK_IMX6SX_H */
-> -- 
-> 1.9.1
-> 
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index ca0e3c1..294cfe4 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -98,6 +98,7 @@
+ 			opp-hz = /bits/ 64 <800000000>;
+ 			opp-microvolt = <1000000>;
+ 			clock-latency-ns = <200000>;
++			opp-suspend;
+ 		};
+ 		opp07 {
+ 			opp-hz = /bits/ 64 <900000000>;
+-- 
+1.9.1
