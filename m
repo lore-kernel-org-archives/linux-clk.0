@@ -1,32 +1,125 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 14 Sep 2015 14:57:28 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: at91: system: don't try to free_irq when there
- is no IRQ
-Message-ID: <20150914215728.GB23081@codeaurora.org>
-References: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1441982047-11303-2-git-send-email-alexandre.belloni@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1441982047-11303-2-git-send-email-alexandre.belloni@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <alim.akhtar@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+ k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
+ gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Subject: [PATCH 02/11] clk: samsung: exynos7: Corrects CMU_TOP0 clocks names
+Date: Fri, 04 Sep 2015 17:07:07 +0530
+Message-id: <1441366637-28001-3-git-send-email-alim.akhtar@samsung.com>
+In-reply-to: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/11, Alexandre Belloni wrote:
-> In the error path of at91_clk_register_system(), sys->irq is freed
-> unconditionally but it may not exist or be request at all.
-> 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> ---
+This patch rename CMU_TOP0 clocks names to match with user manual.
 
-Applied to clk-next
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos7.c |   67 ++++++++++++++++++++-----------------
+ 1 file changed, 37 insertions(+), 30 deletions(-)
 
+diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+index 2394bde..f9aac4a 100644
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -225,30 +225,30 @@ CLK_OF_DECLARE(exynos7_clk_topc, "samsung,exynos7-clock-topc",
+ #define ENABLE_SCLK_TOP0_PERIC3		0x0A3C
+ 
+ /* List of parent clocks for Muxes in CMU_TOP0 */
+-PNAME(mout_bus0_pll_p)	= { "fin_pll", "dout_sclk_bus0_pll" };
+-PNAME(mout_bus1_pll_p)	= { "fin_pll", "dout_sclk_bus1_pll" };
+-PNAME(mout_cc_pll_p)	= { "fin_pll", "dout_sclk_cc_pll" };
+-PNAME(mout_mfc_pll_p)	= { "fin_pll", "dout_sclk_mfc_pll" };
+-PNAME(mout_aud_pll_p)	= { "fin_pll", "dout_sclk_aud_pll" };
++PNAME(mout_top0_bus0_pll_user_p)	= { "fin_pll", "sclk_bus0_pll_a" };
++PNAME(mout_top0_bus1_pll_user_p)	= { "fin_pll", "sclk_bus1_pll_a" };
++PNAME(mout_top0_cc_pll_user_p)	= { "fin_pll", "sclk_cc_pll_a" };
++PNAME(mout_top0_mfc_pll_user_p)	= { "fin_pll", "sclk_mfc_pll_a" };
++PNAME(mout_top0_aud_pll_user_p)	= { "fin_pll", "sclk_aud_pll" };
+ 
+-PNAME(mout_top0_half_bus0_pll_p) = {"mout_top0_bus0_pll",
++PNAME(mout_top0_bus0_pll_half_p) = {"mout_top0_bus0_pll_user",
+ 	"ffac_top0_bus0_pll_div2"};
+-PNAME(mout_top0_half_bus1_pll_p) = {"mout_top0_bus1_pll",
++PNAME(mout_top0_bus1_pll_half_p) = {"mout_top0_bus1_pll_user",
+ 	"ffac_top0_bus1_pll_div2"};
+-PNAME(mout_top0_half_cc_pll_p) = {"mout_top0_cc_pll",
++PNAME(mout_top0_cc_pll_half_p) = {"mout_top0_cc_pll_user",
+ 	"ffac_top0_cc_pll_div2"};
+-PNAME(mout_top0_half_mfc_pll_p) = {"mout_top0_mfc_pll",
++PNAME(mout_top0_mfc_pll_half_p) = {"mout_top0_mfc_pll_user",
+ 	"ffac_top0_mfc_pll_div2"};
+ 
+-PNAME(mout_top0_group1) = {"mout_top0_half_bus0_pll",
+-	"mout_top0_half_bus1_pll", "mout_top0_half_cc_pll",
+-	"mout_top0_half_mfc_pll"};
++PNAME(mout_top0_group1) = {"mout_top0_bus0_pll_half",
++	"mout_top0_bus1_pll_half", "mout_top0_cc_pll_half",
++	"mout_top0_mfc_pll_half"};
+ PNAME(mout_top0_group3) = {"ioclk_audiocdclk0",
+ 	"ioclk_audiocdclk1", "ioclk_spdif_extclk",
+-	"mout_top0_aud_pll", "mout_top0_half_bus0_pll",
+-	"mout_top0_half_bus1_pll"};
+-PNAME(mout_top0_group4) = {"ioclk_audiocdclk1", "mout_top0_aud_pll",
+-	"mout_top0_half_bus0_pll", "mout_top0_half_bus1_pll"};
++	"mout_top0_aud_pll_user", "mout_top0_bus0_pll_half",
++	"mout_top0_bus1_pll_half"};
++PNAME(mout_top0_group4) = {"ioclk_audiocdclk1", "mout_top0_aud_pll_user",
++	"mout_top0_bus0_pll_half", "mout_top0_bus1_pll_half"};
+ 
+ static unsigned long top0_clk_regs[] __initdata = {
+ 	MUX_SEL_TOP00,
+@@ -270,19 +270,24 @@ static unsigned long top0_clk_regs[] __initdata = {
+ };
+ 
+ static struct samsung_mux_clock top0_mux_clks[] __initdata = {
+-	MUX(0, "mout_top0_aud_pll", mout_aud_pll_p, MUX_SEL_TOP00, 0, 1),
+-	MUX(0, "mout_top0_mfc_pll", mout_mfc_pll_p, MUX_SEL_TOP00, 4, 1),
+-	MUX(0, "mout_top0_cc_pll", mout_cc_pll_p, MUX_SEL_TOP00, 8, 1),
+-	MUX(0, "mout_top0_bus1_pll", mout_bus1_pll_p, MUX_SEL_TOP00, 12, 1),
+-	MUX(0, "mout_top0_bus0_pll", mout_bus0_pll_p, MUX_SEL_TOP00, 16, 1),
+-
+-	MUX(0, "mout_top0_half_mfc_pll", mout_top0_half_mfc_pll_p,
++	MUX(0, "mout_top0_aud_pll_user", mout_top0_aud_pll_user_p,
++		MUX_SEL_TOP00, 0, 1),
++	MUX(0, "mout_top0_mfc_pll_user", mout_top0_mfc_pll_user_p,
++		MUX_SEL_TOP00, 4, 1),
++	MUX(0, "mout_top0_cc_pll_user", mout_top0_cc_pll_user_p,
++		MUX_SEL_TOP00, 8, 1),
++	MUX(0, "mout_top0_bus1_pll_user", mout_top0_bus1_pll_user_p,
++		MUX_SEL_TOP00, 12, 1),
++	MUX(0, "mout_top0_bus0_pll_user", mout_top0_bus0_pll_user_p,
++		MUX_SEL_TOP00, 16, 1),
++
++	MUX(0, "mout_top0_mfc_pll_half", mout_top0_mfc_pll_half_p,
+ 		MUX_SEL_TOP01, 4, 1),
+-	MUX(0, "mout_top0_half_cc_pll", mout_top0_half_cc_pll_p,
++	MUX(0, "mout_top0_cc_pll_half", mout_top0_cc_pll_half_p,
+ 		MUX_SEL_TOP01, 8, 1),
+-	MUX(0, "mout_top0_half_bus1_pll", mout_top0_half_bus1_pll_p,
++	MUX(0, "mout_top0_bus1_pll_half", mout_top0_bus1_pll_half_p,
+ 		MUX_SEL_TOP01, 12, 1),
+-	MUX(0, "mout_top0_half_bus0_pll", mout_top0_half_bus0_pll_p,
++	MUX(0, "mout_top0_bus0_pll_half", mout_top0_bus0_pll_half_p,
+ 		MUX_SEL_TOP01, 16, 1),
+ 
+ 	MUX(0, "mout_aclk_peric1_66", mout_top0_group1, MUX_SEL_TOP03, 12, 2),
+@@ -357,10 +362,12 @@ static struct samsung_gate_clock top0_gate_clks[] __initdata = {
+ };
+ 
+ static struct samsung_fixed_factor_clock top0_fixed_factor_clks[] __initdata = {
+-	FFACTOR(0, "ffac_top0_bus0_pll_div2", "mout_top0_bus0_pll", 1, 2, 0),
+-	FFACTOR(0, "ffac_top0_bus1_pll_div2", "mout_top0_bus1_pll", 1, 2, 0),
+-	FFACTOR(0, "ffac_top0_cc_pll_div2", "mout_top0_cc_pll", 1, 2, 0),
+-	FFACTOR(0, "ffac_top0_mfc_pll_div2", "mout_top0_mfc_pll", 1, 2, 0),
++	FFACTOR(0, "ffac_top0_bus0_pll_div2", "mout_top0_bus0_pll_user",
++		1, 2, 0),
++	FFACTOR(0, "ffac_top0_bus1_pll_div2", "mout_top0_bus1_pll_user",
++		1, 2, 0),
++	FFACTOR(0, "ffac_top0_cc_pll_div2", "mout_top0_cc_pll_user", 1, 2, 0),
++	FFACTOR(0, "ffac_top0_mfc_pll_div2", "mout_top0_mfc_pll_user", 1, 2, 0),
+ };
+ 
+ static struct samsung_cmu_info top0_cmu_info __initdata = {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.10.4
