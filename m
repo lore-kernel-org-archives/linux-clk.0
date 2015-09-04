@@ -1,38 +1,59 @@
-Return-Path: <shengjiu.wang@freescale.com>
-From: Shengjiu Wang <shengjiu.wang@freescale.com>
-To: <shawnguo@kernel.org>, <mturquette@baylibre.com>, <kernel@pengutronix.de>,
-	<sboyd@codeaurora.org>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-	<mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-	<galak@codeaurora.org>, <linux@arm.linux.org.uk>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH V2 0/2]  fix clock issue for fsl,spdi
-Date: Tue, 15 Sep 2015 18:01:00 +0800
-Message-ID: <cover.1442310569.git.shengjiu.wang@freescale.com>
-Return-Path: shengjiu.wang@freescale.com
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+ <linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+ <linux-clk@vger.kernel.org>
+Subject: [PATCH v2 02/10] Documentation: DT: Add entry for FSL LS2080A QDS and
+ RDB boards
+Date: Fri, 4 Sep 2015 12:27:44 +0530
+Message-ID: <1441349872-4560-3-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: bhupesh.sharma@freescale.com, Catalin.Marinas@arm.com,
+ bhupesh.linux@gmail.com, will.deacon@arm.com, olof@lixom.net
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-fix clock issue for fsl,spdi in imx6.
+This patch adds a devicetree binding documentation for Freescale's
+LS2080A QDS and RDB boards.
 
-Changes in v2:
-move the dts change to another patch
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+---
+ Documentation/devicetree/bindings/arm/fsl.txt |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Shengjiu Wang (2):
-  clk: imx6: Add SPDIF_GCLK clock in clock tree
-  ARM: dts: imx6: change the core clock of spdif
-
- arch/arm/boot/dts/imx6qdl.dtsi            |  2 +-
- arch/arm/boot/dts/imx6sl.dtsi             | 16 ++++++++++++++++
- arch/arm/boot/dts/imx6sx.dtsi             |  2 +-
- drivers/clk/imx/clk-imx6q.c               |  4 +++-
- drivers/clk/imx/clk-imx6sl.c              |  4 +++-
- drivers/clk/imx/clk-imx6sx.c              |  1 +
- include/dt-bindings/clock/imx6qdl-clock.h |  3 ++-
- include/dt-bindings/clock/imx6sl-clock.h  |  3 ++-
- include/dt-bindings/clock/imx6sx-clock.h  |  3 ++-
- 9 files changed, 31 insertions(+), 7 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index 53f229a..34c88b0 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -135,3 +135,11 @@ LS2080A ARMv8 based Simulator model
+ Required root node properties:
+     - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
+ 
++LS2080A ARMv8 based QDS Board
++Required root node properties:
++    - compatible = "fsl,ls2080a-qds", "fsl,ls2080a";
++
++LS2080A ARMv8 based RDB Board
++Required root node properties:
++    - compatible = "fsl,ls2080a-rdb", "fsl,ls2080a";
++
 -- 
-1.9.1
+1.7.9.5
+
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
