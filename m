@@ -1,67 +1,53 @@
-Return-Path: <martink@posteo.de>
-From: Martin Kepplinger <martink@posteo.de>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Martin Kepplinger <martink@posteo.de>
-Subject: [PATCH] clk: imx: use sign_extend32() and abs()
-Date: Tue, 29 Sep 2015 13:32:27 +0200
-Message-Id: <1443526347-15501-1-git-send-email-martink@posteo.de>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+ <linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+ <linux-clk@vger.kernel.org>
+Subject: [PATCH v2 10/10] dts/Makefile: Add build support for LS2080a QDS &
+ RDB board DTS
+Date: Fri, 4 Sep 2015 12:35:22 +0530
+Message-ID: <1441350322-4671-4-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
+References: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: bhupesh.sharma@freescale.com, Catalin.Marinas@arm.com,
+ bhupesh.linux@gmail.com, will.deacon@arm.com, olof@lixom.net
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This simplifies the given function by getting rid of the manual
-sign extension as well as saving an absolute value in an extra
-variable.
+This patch adds build support for LS2080a QDS & RDB board DTS files
+in the arm64 DTS Makefile.
 
-Signed-off-by: Martin Kepplinger <martink@posteo.de>
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
 ---
-built and run, but please review.
+ arch/arm64/boot/dts/freescale/Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-                     martin
-
-
- drivers/clk/imx/clk-pllv2.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-pllv2.c b/drivers/clk/imx/clk-pllv2.c
-index 20889d5..b18f875 100644
---- a/drivers/clk/imx/clk-pllv2.c
-+++ b/drivers/clk/imx/clk-pllv2.c
-@@ -77,7 +77,7 @@ struct clk_pllv2 {
- static unsigned long __clk_pllv2_recalc_rate(unsigned long parent_rate,
- 		u32 dp_ctl, u32 dp_op, u32 dp_mfd, u32 dp_mfn)
- {
--	long mfi, mfn, mfd, pdf, ref_clk, mfn_abs;
-+	long mfi, mfn, mfd, pdf, ref_clk;
- 	unsigned long dbl;
- 	s64 temp;
- 
-@@ -87,19 +87,15 @@ static unsigned long __clk_pllv2_recalc_rate(unsigned long parent_rate,
- 	mfi = (dp_op & MXC_PLL_DP_OP_MFI_MASK) >> MXC_PLL_DP_OP_MFI_OFFSET;
- 	mfi = (mfi <= 5) ? 5 : mfi;
- 	mfd = dp_mfd & MXC_PLL_DP_MFD_MASK;
--	mfn = mfn_abs = dp_mfn & MXC_PLL_DP_MFN_MASK;
--	/* Sign extend to 32-bits */
--	if (mfn >= 0x04000000) {
--		mfn |= 0xFC000000;
--		mfn_abs = -mfn;
--	}
-+	mfn = dp_mfn & MXC_PLL_DP_MFN_MASK;
-+	mfn = sign_extend32(mfn, 26);
- 
- 	ref_clk = 2 * parent_rate;
- 	if (dbl != 0)
- 		ref_clk *= 2;
- 
- 	ref_clk /= (pdf + 1);
--	temp = (u64) ref_clk * mfn_abs;
-+	temp = (u64) ref_clk * abs(mfn);
- 	do_div(temp, mfd + 1);
- 	if (mfn < 0)
- 		temp = -temp;
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index 932001a..57b41c7 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -1,4 +1,4 @@
+-dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
++dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-qds.dtb fsl-ls2080a-rdb.dtb fsl-ls2080a-simu.dtb
+  
+ always		:= $(dtb-y)
+ subdir-y	:= $(dts-dirs)
 -- 
-2.1.4
+1.7.9.5
+
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
