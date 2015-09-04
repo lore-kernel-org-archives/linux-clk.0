@@ -1,125 +1,168 @@
-Return-Path: <alim.akhtar@samsung.com>
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
- k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
- gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Subject: [PATCH 02/11] clk: samsung: exynos7: Corrects CMU_TOP0 clocks names
-Date: Fri, 04 Sep 2015 17:07:07 +0530
-Message-id: <1441366637-28001-3-git-send-email-alim.akhtar@samsung.com>
-In-reply-to: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
-References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-by2on0119.outbound.protection.outlook.com ([207.46.100.119]:29378
+	"EHLO na01-by2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753896AbbIDG6y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 4 Sep 2015 02:58:54 -0400
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+	<linux-clk@vger.kernel.org>
+CC: <bhupesh.linux@gmail.com>, <Catalin.Marinas@arm.com>,
+	<will.deacon@arm.com>, <bhupesh.sharma@freescale.com>,
+	<olof@lixom.net>
+Subject: [PATCH v2 01/10] arm64: Use generic Layerscape SoC family naming & rename LS2085A to LS2080A
+Date: Fri, 4 Sep 2015 12:27:43 +0530
+Message-ID: <1441349872-4560-2-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch rename CMU_TOP0 clocks names to match with user manual.
+Freescale will be a churning out a host of ARMv8 based SoCs which
+will be based on a similar overall SoC architecture. So, this patch
+converts the existing infrastructure in the arm64/dts, arm64/Kconfig
+and arm64/configs to use the generic convention ARCH_LAYERSCAPE
+in place of the more specific FSL_LS2085A, to save code duplication
+later-on.
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Also Freescale is renaming LS2085A to LS2080A.
+
+This patch addresses the above two points.
+
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
 ---
- drivers/clk/samsung/clk-exynos7.c |   67 ++++++++++++++++++++-----------------
- 1 file changed, 37 insertions(+), 30 deletions(-)
+ Documentation/devicetree/bindings/arm/fsl.txt      |    8 ++++----
+ arch/arm64/Kconfig                                 |    6 +++---
+ arch/arm64/boot/dts/freescale/Makefile             |    2 +-
+ .../{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} |   10 +++++-----
+ .../{fsl-ls2085a.dtsi => fsl-ls2080a.dtsi}         |    6 +++---
+ arch/arm64/configs/defconfig                       |    2 +-
+ 6 files changed, 17 insertions(+), 17 deletions(-)
+ rename arch/arm64/boot/dts/freescale/{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} (90%)
+ rename arch/arm64/boot/dts/freescale/{fsl-ls2085a.dtsi => fsl-ls2080a.dtsi} (97%)
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index 2394bde..f9aac4a 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -225,30 +225,30 @@ CLK_OF_DECLARE(exynos7_clk_topc, "samsung,exynos7-clock-topc",
- #define ENABLE_SCLK_TOP0_PERIC3		0x0A3C
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index 2a3ba73..53f229a 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -128,10 +128,10 @@ Example:
+ 		reg = <0x0 0x1ee0000 0x0 0x10000>;
+ 	};
  
- /* List of parent clocks for Muxes in CMU_TOP0 */
--PNAME(mout_bus0_pll_p)	= { "fin_pll", "dout_sclk_bus0_pll" };
--PNAME(mout_bus1_pll_p)	= { "fin_pll", "dout_sclk_bus1_pll" };
--PNAME(mout_cc_pll_p)	= { "fin_pll", "dout_sclk_cc_pll" };
--PNAME(mout_mfc_pll_p)	= { "fin_pll", "dout_sclk_mfc_pll" };
--PNAME(mout_aud_pll_p)	= { "fin_pll", "dout_sclk_aud_pll" };
-+PNAME(mout_top0_bus0_pll_user_p)	= { "fin_pll", "sclk_bus0_pll_a" };
-+PNAME(mout_top0_bus1_pll_user_p)	= { "fin_pll", "sclk_bus1_pll_a" };
-+PNAME(mout_top0_cc_pll_user_p)	= { "fin_pll", "sclk_cc_pll_a" };
-+PNAME(mout_top0_mfc_pll_user_p)	= { "fin_pll", "sclk_mfc_pll_a" };
-+PNAME(mout_top0_aud_pll_user_p)	= { "fin_pll", "sclk_aud_pll" };
+-Freescale LS2085A SoC Device Tree Bindings
+-------------------------------------------
++Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
++----------------------------------------------------------------
  
--PNAME(mout_top0_half_bus0_pll_p) = {"mout_top0_bus0_pll",
-+PNAME(mout_top0_bus0_pll_half_p) = {"mout_top0_bus0_pll_user",
- 	"ffac_top0_bus0_pll_div2"};
--PNAME(mout_top0_half_bus1_pll_p) = {"mout_top0_bus1_pll",
-+PNAME(mout_top0_bus1_pll_half_p) = {"mout_top0_bus1_pll_user",
- 	"ffac_top0_bus1_pll_div2"};
--PNAME(mout_top0_half_cc_pll_p) = {"mout_top0_cc_pll",
-+PNAME(mout_top0_cc_pll_half_p) = {"mout_top0_cc_pll_user",
- 	"ffac_top0_cc_pll_div2"};
--PNAME(mout_top0_half_mfc_pll_p) = {"mout_top0_mfc_pll",
-+PNAME(mout_top0_mfc_pll_half_p) = {"mout_top0_mfc_pll_user",
- 	"ffac_top0_mfc_pll_div2"};
+-LS2085A ARMv8 based Simulator model
++LS2080A ARMv8 based Simulator model
+ Required root node properties:
+-    - compatible = "fsl,ls2085a-simu", "fsl,ls2085a";
++    - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
  
--PNAME(mout_top0_group1) = {"mout_top0_half_bus0_pll",
--	"mout_top0_half_bus1_pll", "mout_top0_half_cc_pll",
--	"mout_top0_half_mfc_pll"};
-+PNAME(mout_top0_group1) = {"mout_top0_bus0_pll_half",
-+	"mout_top0_bus1_pll_half", "mout_top0_cc_pll_half",
-+	"mout_top0_mfc_pll_half"};
- PNAME(mout_top0_group3) = {"ioclk_audiocdclk0",
- 	"ioclk_audiocdclk1", "ioclk_spdif_extclk",
--	"mout_top0_aud_pll", "mout_top0_half_bus0_pll",
--	"mout_top0_half_bus1_pll"};
--PNAME(mout_top0_group4) = {"ioclk_audiocdclk1", "mout_top0_aud_pll",
--	"mout_top0_half_bus0_pll", "mout_top0_half_bus1_pll"};
-+	"mout_top0_aud_pll_user", "mout_top0_bus0_pll_half",
-+	"mout_top0_bus1_pll_half"};
-+PNAME(mout_top0_group4) = {"ioclk_audiocdclk1", "mout_top0_aud_pll_user",
-+	"mout_top0_bus0_pll_half", "mout_top0_bus1_pll_half"};
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 318175f..65b335b 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -179,10 +179,10 @@ config ARCH_EXYNOS7
+ 	help
+ 	  This enables support for Samsung Exynos7 SoC family
  
- static unsigned long top0_clk_regs[] __initdata = {
- 	MUX_SEL_TOP00,
-@@ -270,19 +270,24 @@ static unsigned long top0_clk_regs[] __initdata = {
- };
+-config ARCH_FSL_LS2085A
+-	bool "Freescale LS2085A SOC"
++config ARCH_LAYERSCAPE
++	bool "ARMv8 based Freescale Layerscape SoC family"
+ 	help
+-	  This enables support for Freescale LS2085A SOC.
++	  This enables support for Freescale Layerscape SoC family.
  
- static struct samsung_mux_clock top0_mux_clks[] __initdata = {
--	MUX(0, "mout_top0_aud_pll", mout_aud_pll_p, MUX_SEL_TOP00, 0, 1),
--	MUX(0, "mout_top0_mfc_pll", mout_mfc_pll_p, MUX_SEL_TOP00, 4, 1),
--	MUX(0, "mout_top0_cc_pll", mout_cc_pll_p, MUX_SEL_TOP00, 8, 1),
--	MUX(0, "mout_top0_bus1_pll", mout_bus1_pll_p, MUX_SEL_TOP00, 12, 1),
--	MUX(0, "mout_top0_bus0_pll", mout_bus0_pll_p, MUX_SEL_TOP00, 16, 1),
--
--	MUX(0, "mout_top0_half_mfc_pll", mout_top0_half_mfc_pll_p,
-+	MUX(0, "mout_top0_aud_pll_user", mout_top0_aud_pll_user_p,
-+		MUX_SEL_TOP00, 0, 1),
-+	MUX(0, "mout_top0_mfc_pll_user", mout_top0_mfc_pll_user_p,
-+		MUX_SEL_TOP00, 4, 1),
-+	MUX(0, "mout_top0_cc_pll_user", mout_top0_cc_pll_user_p,
-+		MUX_SEL_TOP00, 8, 1),
-+	MUX(0, "mout_top0_bus1_pll_user", mout_top0_bus1_pll_user_p,
-+		MUX_SEL_TOP00, 12, 1),
-+	MUX(0, "mout_top0_bus0_pll_user", mout_top0_bus0_pll_user_p,
-+		MUX_SEL_TOP00, 16, 1),
-+
-+	MUX(0, "mout_top0_mfc_pll_half", mout_top0_mfc_pll_half_p,
- 		MUX_SEL_TOP01, 4, 1),
--	MUX(0, "mout_top0_half_cc_pll", mout_top0_half_cc_pll_p,
-+	MUX(0, "mout_top0_cc_pll_half", mout_top0_cc_pll_half_p,
- 		MUX_SEL_TOP01, 8, 1),
--	MUX(0, "mout_top0_half_bus1_pll", mout_top0_half_bus1_pll_p,
-+	MUX(0, "mout_top0_bus1_pll_half", mout_top0_bus1_pll_half_p,
- 		MUX_SEL_TOP01, 12, 1),
--	MUX(0, "mout_top0_half_bus0_pll", mout_top0_half_bus0_pll_p,
-+	MUX(0, "mout_top0_bus0_pll_half", mout_top0_bus0_pll_half_p,
- 		MUX_SEL_TOP01, 16, 1),
+ config ARCH_HISI
+ 	bool "Hisilicon SoC Family"
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index 4f2de3e7..932001a 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -1,4 +1,4 @@
+-dtb-$(CONFIG_ARCH_FSL_LS2085A) += fsl-ls2085a-simu.dtb
++dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
+  
+ always		:= $(dtb-y)
+ subdir-y	:= $(dts-dirs)
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2085a-simu.dts b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
+similarity index 90%
+rename from arch/arm64/boot/dts/freescale/fsl-ls2085a-simu.dts
+rename to arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
+index 82e2a6f..cf45d38 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls2085a-simu.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
+@@ -1,7 +1,7 @@
+ /*
+- * Device Tree file for Freescale LS2085a software Simulator model
++ * Device Tree file for Freescale LS2080a software Simulator model
+  *
+- * Copyright (C) 2014, Freescale Semiconductor
++ * Copyright (C) 2014-15, Freescale Semiconductor
+  *
+  * Bhupesh Sharma <bhupesh.sharma@freescale.com>
+  *
+@@ -51,11 +51,11 @@
  
- 	MUX(0, "mout_aclk_peric1_66", mout_top0_group1, MUX_SEL_TOP03, 12, 2),
-@@ -357,10 +362,12 @@ static struct samsung_gate_clock top0_gate_clks[] __initdata = {
- };
+ /dts-v1/;
  
- static struct samsung_fixed_factor_clock top0_fixed_factor_clks[] __initdata = {
--	FFACTOR(0, "ffac_top0_bus0_pll_div2", "mout_top0_bus0_pll", 1, 2, 0),
--	FFACTOR(0, "ffac_top0_bus1_pll_div2", "mout_top0_bus1_pll", 1, 2, 0),
--	FFACTOR(0, "ffac_top0_cc_pll_div2", "mout_top0_cc_pll", 1, 2, 0),
--	FFACTOR(0, "ffac_top0_mfc_pll_div2", "mout_top0_mfc_pll", 1, 2, 0),
-+	FFACTOR(0, "ffac_top0_bus0_pll_div2", "mout_top0_bus0_pll_user",
-+		1, 2, 0),
-+	FFACTOR(0, "ffac_top0_bus1_pll_div2", "mout_top0_bus1_pll_user",
-+		1, 2, 0),
-+	FFACTOR(0, "ffac_top0_cc_pll_div2", "mout_top0_cc_pll_user", 1, 2, 0),
-+	FFACTOR(0, "ffac_top0_mfc_pll_div2", "mout_top0_mfc_pll_user", 1, 2, 0),
- };
+-/include/ "fsl-ls2085a.dtsi"
++/include/ "fsl-ls2080a.dtsi"
  
- static struct samsung_cmu_info top0_cmu_info __initdata = {
+ / {
+-	model = "Freescale Layerscape 2085a software Simulator model";
+-	compatible = "fsl,ls2085a-simu", "fsl,ls2085a";
++	model = "Freescale Layerscape 2080a software Simulator model";
++	compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
+ 
+ 	ethernet@2210000 {
+ 		compatible = "smsc,lan91c111";
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+similarity index 97%
+rename from arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi
+rename to arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+index e281ceb..333d942 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+@@ -1,7 +1,7 @@
+ /*
+- * Device Tree Include file for Freescale Layerscape-2085A family SoC.
++ * Device Tree Include file for Freescale Layerscape-2080A family SoC.
+  *
+- * Copyright (C) 2014, Freescale Semiconductor
++ * Copyright (C) 2014-15, Freescale Semiconductor
+  *
+  * Bhupesh Sharma <bhupesh.sharma@freescale.com>
+  *
+@@ -50,7 +50,7 @@
+  */
+ 
+ / {
+-	compatible = "fsl,ls2085a";
++	compatible = "fsl,ls2080a";
+ 	interrupt-parent = <&gic>;
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 4e17e7e..fa6aa9f 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -32,7 +32,7 @@ CONFIG_MODULE_UNLOAD=y
+ # CONFIG_BLK_DEV_BSG is not set
+ # CONFIG_IOSCHED_DEADLINE is not set
+ CONFIG_ARCH_EXYNOS7=y
+-CONFIG_ARCH_FSL_LS2085A=y
++CONFIG_ARCH_LAYERSCAPE=y
+ CONFIG_ARCH_HISI=y
+ CONFIG_ARCH_MEDIATEK=y
+ CONFIG_ARCH_SEATTLE=y
 -- 
-1.7.10.4
+1.7.9.5
+
+
