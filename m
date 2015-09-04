@@ -1,76 +1,78 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Message-ID: <1441816863.29081.11.camel@freescale.com>
-Subject: Re: [PATCH v2 06/10] clk: qoriq: Add ls2080a support.
-From: Scott Wood <scottwood@freescale.com>
-To: Li Yang <leoli@freescale.com>
-Date: Wed, 9 Sep 2015 11:41:03 -0500
-In-Reply-To: <CADRPPNRhBObf4Am-MKFHFk6y+_PmtZGuGrfVaDPtra6h394Fog@mail.gmail.com>
-References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
- <1441349872-4560-7-git-send-email-bhupesh.sharma@freescale.com>
- <CADRPPNQsemXa2HgYZAcm+GurhimHbYVM5CL5ReDsyuzfAO=kSQ@mail.gmail.com>
- <BY1PR0301MB1303A3BD91F3E65853CC3F2E82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
- <CADRPPNRhBObf4Am-MKFHFk6y+_PmtZGuGrfVaDPtra6h394Fog@mail.gmail.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
- Sharma Bhupesh <bhupesh.sharma@freescale.com>,
- "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
- "will.deacon@arm.com" <will.deacon@arm.com>,
- "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
- "olof@lixom.net" <olof@lixom.net>, Bhupesh SHARMA <bhupesh.linux@gmail.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <alim.akhtar@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+ k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
+ gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Subject: [PATCH 04/11] clk: samsung: exynos7: Corrects CMU_CCORE clocks names
+Date: Fri, 04 Sep 2015 17:07:09 +0530
+Message-id: <1441366637-28001-5-git-send-email-alim.akhtar@samsung.com>
+In-reply-to: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2015-09-04 at 16:06 -0500, Li Yang wrote:
-> On Fri, Sep 4, 2015 at 3:09 PM, Sharma Bhupesh
-> <bhupesh.sharma@freescale.com> wrote:
-> > > From:  pku.leo@gmail.com[mailto:pku.leo@gmail.com]
-> > > Sent: Saturday, September 05, 2015 1:32 AM
-> > > On Fri, Sep 4, 2015 at 1:57 AM, Bhupesh Sharma
-> > > <bhupesh.sharma@freescale.com> wrote:
-> > > > From: Scott Wood <scottwood@freescale.com>
-> > > > 
-> > > > LS2080A is the first implementation of the chassis 3 clockgen, which
-> > > > has a different register layout than previous chips.  It is also
-> > > > little endian, unlike previous chips.
-> > > > 
-> > > > Signed-off-by: Scott Wood <scottwood@freescale.com>
-> > > > ---
-> > > 
-> > > You should probably mention here that the patch is depending on another
-> > > pending patch to apply.  And this patch should be going through the same
-> > > sub-system tree as the dependency patch.  Otherwise, there is no way it
-> > > can be applied.
-> > > 
-> > 
-> > Cover-letter already captures this:
-> > http://www.spinics.net/lists/arm-kernel/msg442910.html
-> > 
-> > See the section 'Rebasing details'. linux-clk is already copied.
-> 
-> But not all the patches are depending on the clk patches.  You should
-> probably break up the series to patches that can be applied cleanly
-> and patches that are depending on the clock patches and should go
-> through the clk tree.
+This patch rename CMU_CCROE clocks names to match with user manual.
+And also adds missing gate clock for aclk_ccore_133.
 
-The clock patches have already been acked, so they don't necessarily need to 
-go via the clock tree.  However, there are both ARM and PPC patches that 
-depend on them, so maybe we should create a topic branch?
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos7.c       |    8 ++++++--
+ include/dt-bindings/clock/exynos7-clk.h |    3 ++-
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
--Scott
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+index ba84e9b..0eb0f57 100644
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -31,6 +31,7 @@
+ #define MUX_SEL_TOPC1		0x0204
+ #define MUX_SEL_TOPC2		0x0208
+ #define MUX_SEL_TOPC3		0x020C
++#define MUX_ENABLE_TOPC2	0x0308
+ #define DIV_TOPC0		0x0600
+ #define DIV_TOPC1		0x0604
+ #define DIV_TOPC3		0x060C
+@@ -167,6 +168,9 @@ static struct samsung_gate_clock topc_gate_clks[] __initdata = {
+ 		ENABLE_SCLK_TOPC1, 1, 0, 0),
+ 	GATE(SCLK_CC_PLL_A, "sclk_cc_pll_a", "dout_sclk_cc_pll",
+ 		ENABLE_SCLK_TOPC1, 0, 0, 0),
++
++	GATE(ACLK_CCORE_133, "aclk_ccore_133", "dout_aclk_ccore_133",
++		MUX_ENABLE_TOPC2, 4, 0, 0),
+ };
+ 
+ static struct samsung_pll_clock topc_pll_clks[] __initdata = {
+@@ -544,7 +548,7 @@ CLK_OF_DECLARE(exynos7_clk_top1, "samsung,exynos7-clock-top1",
+ /*
+  * List of parent clocks for Muxes in CMU_CCORE
+  */
+-PNAME(mout_aclk_ccore_133_p)	= { "fin_pll", "dout_aclk_ccore_133" };
++PNAME(mout_aclk_ccore_133_user_p)	= { "fin_pll", "aclk_ccore_133" };
+ 
+ static unsigned long ccore_clk_regs[] __initdata = {
+ 	MUX_SEL_CCORE,
+@@ -552,7 +556,7 @@ static unsigned long ccore_clk_regs[] __initdata = {
+ };
+ 
+ static struct samsung_mux_clock ccore_mux_clks[] __initdata = {
+-	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_p,
++	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_user_p,
+ 		MUX_SEL_CCORE, 1, 1),
+ };
+ 
+diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
+index b63eba6..2e01235 100644
+--- a/include/dt-bindings/clock/exynos7-clk.h
++++ b/include/dt-bindings/clock/exynos7-clk.h
+@@ -30,7 +30,8 @@
+ #define SCLK_BUS0_PLL_A			17
+ #define SCLK_CC_PLL_B			18
+ #define SCLK_CC_PLL_A			19
+-#define TOPC_NR_CLK			20
++#define ACLK_CCORE_133			20
++#define TOPC_NR_CLK			21
+ 
+ /* TOP0 */
+ #define DOUT_ACLK_PERIC1		1
+-- 
+1.7.10.4
