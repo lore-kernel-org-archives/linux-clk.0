@@ -1,11 +1,15 @@
 Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH v4 3/8] clk: imx27: retain early UART clocks during kernel init
-Date: Mon, 21 Sep 2015 18:53:59 +0200
-Message-Id: <1442854444-4460-4-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
-References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
+To: Li Leo <LeoLi@freescale.com>
+Subject: RE: [PATCH v2 03/10] Documentation/dts: Add bindings for QIXIS FPGA
+ controller found on FSL boards
+Date: Fri, 4 Sep 2015 20:16:42 +0000
+Message-ID: <BY1PR0301MB1303E56B5462BCD0C77C7E4D82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+ <1441349872-4560-4-git-send-email-bhupesh.sharma@freescale.com>
+ <CADRPPNR11BD4WfXTWoQ28rZCd_BJuhdWu49E6jjpO29CH2s5Ow@mail.gmail.com>
+In-Reply-To: <CADRPPNR11BD4WfXTWoQ28rZCd_BJuhdWu49E6jjpO29CH2s5Ow@mail.gmail.com>
+MIME-Version: 1.0
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -13,59 +17,46 @@ List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
 List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
- kernel@pengutronix.de, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Singh Jaiprakash <jaiprakash.singh@freescale.com>,
+ Arnd Bergmann <arnd@arndb.de>, "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+ "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
+ "will.deacon@arm.com" <will.deacon@arm.com>, "olof@lixom.net" <olof@lixom.net>,
+ "bhupesh.linux@gmail.com" <bhupesh.linux@gmail.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="us-ascii"
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure to keep UART clocks enabled during kernel init if
-earlyprintk or earlycon are active.
+> From: pku.leo@gmail.com [mailto:pku.leo@gmail.com]
+> Sent: Friday, September 04, 2015 10:27 PM
+> On Fri, Sep 4, 2015 at 1:57 AM, Bhupesh Sharma
+> <bhupesh.sharma@freescale.com> wrote:
+> > This patch adds bindings for QIXIS FPGA controller found on FSL boards.
+> 
+> A general comment: when you are updating the device tree bindings.
+> You should cc the devicetree@vger.kernel.org mailing list.
+> 
+> >
+> > Some Freescale boards like LS2080AQDS/LS2080ARDB have an on-board
+> > FPGA/CPLD connected to the IFC controller. The bindings specified in
+> > this patch cater to those on-board FPGA/CPLD controllers.
+> 
+> We already have the binding defined in
+> Documentation/devicetree/bindings/powerpc/fsl/board.txt.  We probably
+> should just move it to a more generic location.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- drivers/clk/imx/clk-imx27.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Consolidation of powerpc and ARM bindings is something that needs to be
+targeted by a separate patch-series, perhaps in future.
 
-diff --git a/drivers/clk/imx/clk-imx27.c b/drivers/clk/imx/clk-imx27.c
-index d9d50d54ef2a..0d7b8df04dfa 100644
---- a/drivers/clk/imx/clk-imx27.c
-+++ b/drivers/clk/imx/clk-imx27.c
-@@ -47,6 +47,17 @@ static const char *ssi_sel_clks[] = { "spll_gate", "mpll", };
- static struct clk *clk[IMX27_CLK_MAX];
- static struct clk_onecell_data clk_data;
- 
-+static struct clk ** const uart_clks[] __initconst = {
-+	&clk[IMX27_CLK_PER1_GATE],
-+	&clk[IMX27_CLK_UART1_IPG_GATE],
-+	&clk[IMX27_CLK_UART2_IPG_GATE],
-+	&clk[IMX27_CLK_UART3_IPG_GATE],
-+	&clk[IMX27_CLK_UART4_IPG_GATE],
-+	&clk[IMX27_CLK_UART5_IPG_GATE],
-+	&clk[IMX27_CLK_UART6_IPG_GATE],
-+	NULL
-+};
-+
- static void __init _mx27_clocks_init(unsigned long fref)
- {
- 	BUG_ON(!ccm);
-@@ -163,6 +174,8 @@ static void __init _mx27_clocks_init(unsigned long fref)
- 
- 	clk_prepare_enable(clk[IMX27_CLK_EMI_AHB_GATE]);
- 
-+	imx_register_uart_clocks(uart_clks);
-+
- 	imx_print_silicon_rev("i.MX27", mx27_revision());
- }
- 
--- 
-2.5.1
+There are a number of duplications that can be looked into, but I don't
+think this patchset should depend on that.
 
-
+Regards,
+Bhupesh
 _______________________________________________
 linux-arm-kernel mailing list
 linux-arm-kernel@lists.infradead.org
