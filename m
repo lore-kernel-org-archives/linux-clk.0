@@ -1,128 +1,116 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 2/3] clk: bcm2835: Add a driver for the auxiliary peripheral clock gates.
-Date: Thu, 10 Sep 2015 15:22:29 -0700
-Message-Id: <1441923750-19404-3-git-send-email-eric@anholt.net>
-In-Reply-To: <1441923750-19404-1-git-send-email-eric@anholt.net>
-References: <1441923750-19404-1-git-send-email-eric@anholt.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:43143 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932478AbbIDLtG (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 4 Sep 2015 07:49:06 -0400
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+	k.kozlowski@samsung.com, mturquette@baylibre.com,
+	amit.daniel@samsung.com, gautam.vivek@samsung.com,
+	sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Subject: [PATCH 03/11] clk: samsung: exynos7: Corrects CMU_TOP1 clocks names
+Date: Fri, 04 Sep 2015 17:07:08 +0530
+Message-id: <1441366637-28001-4-git-send-email-alim.akhtar@samsung.com>
+In-reply-to: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-There are a pair of SPI masters and a mini UART that were last minute
-additions.  As a result, they didn't get integrated in the same way as
-the other gates off of the VPU clock in CPRMAN.
+This patch rename CMU_TOP1 clocks names to match with user manual.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- drivers/clk/bcm/Makefile          |  1 +
- drivers/clk/bcm/clk-bcm2835-aux.c | 80 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 81 insertions(+)
- create mode 100644 drivers/clk/bcm/clk-bcm2835-aux.c
+ drivers/clk/samsung/clk-exynos7.c |   50 ++++++++++++++++++++-----------------
+ 1 file changed, 27 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-index ee2349b..3082d68 100644
---- a/drivers/clk/bcm/Makefile
-+++ b/drivers/clk/bcm/Makefile
-@@ -4,4 +4,5 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
- obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
- obj-$(CONFIG_ARCH_BCM2835)	+= clk-bcm2835.o
-+obj-$(CONFIG_ARCH_BCM2835)	+= clk-bcm2835-aux.o
- obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
-diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
-new file mode 100644
-index 0000000..1efa6fb
---- /dev/null
-+++ b/drivers/clk/bcm/clk-bcm2835-aux.c
-@@ -0,0 +1,80 @@
-+/*
-+ * Copyright (C) 2015 Broadcom
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/clk/bcm2835.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <dt-bindings/clock/bcm2835-aux.h>
-+
-+static int bcm2835_aux_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct clk_onecell_data *onecell;
-+	const char *parent;
-+	struct clk *parent_clk;
-+	void __iomem *reg;
-+
-+	parent_clk = of_clk_get(dev->of_node, 0);
-+	if (IS_ERR(parent_clk))
-+		return PTR_ERR(parent_clk);
-+	parent = __clk_get_name(parent_clk);
-+
-+	reg = of_iomap(dev->of_node, 0);
-+	if (!reg)
-+		return -ENODEV;
-+
-+	onecell = kmalloc(sizeof(*onecell), GFP_KERNEL);
-+	if (!onecell)
-+		return -ENOMEM;
-+	onecell->clk_num = BCM2835_AUX_CLOCK_COUNT;
-+	onecell->clks = kzalloc(sizeof(*onecell->clks) *
-+				BCM2835_AUX_CLOCK_COUNT, GFP_KERNEL);
-+	if (!onecell->clks)
-+		return -ENOMEM;
-+
-+	onecell->clks[BCM2835_AUX_CLOCK_UART] =
-+		clk_register_gate(dev, "aux_uart", parent, 0, reg, 0, 0, NULL);
-+
-+	onecell->clks[BCM2835_AUX_CLOCK_SPI1] =
-+		clk_register_gate(dev, "aux_spi1", parent, 0, reg, 1, 0, NULL);
-+
-+	onecell->clks[BCM2835_AUX_CLOCK_SPI2] =
-+		clk_register_gate(dev, "aux_spi2", parent, 0, reg, 2, 0, NULL);
-+
-+	return of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
-+				   onecell);
-+}
-+
-+static const struct of_device_id bcm2835_aux_clk_of_match[] = {
-+	{ .compatible = "brcm,bcm2835-aux-clock", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, bcm2835_aux_clk_of_match);
-+
-+static struct platform_driver bcm2835_aux_clk_driver = {
-+	.driver = {
-+		.name = "bcm2835-aux-clk",
-+		.of_match_table = bcm2835_aux_clk_of_match,
-+	},
-+	.probe          = bcm2835_aux_clk_probe,
-+};
-+builtin_platform_driver(bcm2835_aux_clk_driver);
-+
-+MODULE_AUTHOR("Eric Anholt <eric@anholt.net>");
-+MODULE_DESCRIPTION("BCM2835 auxiliary peripheral clock driver");
-+MODULE_LICENSE("GPL v2");
+diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+index f9aac4a..ba84e9b 100644
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -409,23 +409,23 @@ CLK_OF_DECLARE(exynos7_clk_top0, "samsung,exynos7-clock-top0",
+ #define ENABLE_SCLK_TOP1_FSYS11		0x0A2C
+ 
+ /* List of parent clocks for Muxes in CMU_TOP1 */
+-PNAME(mout_top1_bus0_pll_p)	= { "fin_pll", "dout_sclk_bus0_pll" };
+-PNAME(mout_top1_bus1_pll_p)	= { "fin_pll", "dout_sclk_bus1_pll_b" };
+-PNAME(mout_top1_cc_pll_p)	= { "fin_pll", "dout_sclk_cc_pll_b" };
+-PNAME(mout_top1_mfc_pll_p)	= { "fin_pll", "dout_sclk_mfc_pll_b" };
++PNAME(mout_top1_bus0_pll_user_p)	= { "fin_pll", "sclk_bus0_pll_b" };
++PNAME(mout_top1_bus1_pll_user_p)	= { "fin_pll", "sclk_bus1_pll_b" };
++PNAME(mout_top1_cc_pll_user_p)	= { "fin_pll", "sclk_cc_pll_b" };
++PNAME(mout_top1_mfc_pll_user_p)	= { "fin_pll", "sclk_mfc_pll_b" };
+ 
+-PNAME(mout_top1_half_bus0_pll_p) = {"mout_top1_bus0_pll",
++PNAME(mout_top1_bus0_pll_half_p) = {"mout_top1_bus0_pll_user",
+ 	"ffac_top1_bus0_pll_div2"};
+-PNAME(mout_top1_half_bus1_pll_p) = {"mout_top1_bus1_pll",
++PNAME(mout_top1_bus1_pll_half_p) = {"mout_top1_bus1_pll_user",
+ 	"ffac_top1_bus1_pll_div2"};
+-PNAME(mout_top1_half_cc_pll_p) = {"mout_top1_cc_pll",
++PNAME(mout_top1_cc_pll_half_p) = {"mout_top1_cc_pll_user",
+ 	"ffac_top1_cc_pll_div2"};
+-PNAME(mout_top1_half_mfc_pll_p) = {"mout_top1_mfc_pll",
++PNAME(mout_top1_mfc_pll_half_p) = {"mout_top1_mfc_pll_user",
+ 	"ffac_top1_mfc_pll_div2"};
+ 
+-PNAME(mout_top1_group1) = {"mout_top1_half_bus0_pll",
+-	"mout_top1_half_bus1_pll", "mout_top1_half_cc_pll",
+-	"mout_top1_half_mfc_pll"};
++PNAME(mout_top1_group1) = {"mout_top1_bus0_pll_half",
++	"mout_top1_bus1_pll_half", "mout_top1_cc_pll_half",
++	"mout_top1_mfc_pll_half"};
+ 
+ static unsigned long top1_clk_regs[] __initdata = {
+ 	MUX_SEL_TOP10,
+@@ -445,20 +445,22 @@ static unsigned long top1_clk_regs[] __initdata = {
+ };
+ 
+ static struct samsung_mux_clock top1_mux_clks[] __initdata = {
+-	MUX(0, "mout_top1_mfc_pll", mout_top1_mfc_pll_p, MUX_SEL_TOP10, 4, 1),
+-	MUX(0, "mout_top1_cc_pll", mout_top1_cc_pll_p, MUX_SEL_TOP10, 8, 1),
+-	MUX(0, "mout_top1_bus1_pll", mout_top1_bus1_pll_p,
++	MUX(0, "mout_top1_mfc_pll_user", mout_top1_mfc_pll_user_p,
++		MUX_SEL_TOP10, 4, 1),
++	MUX(0, "mout_top1_cc_pll_user", mout_top1_cc_pll_user_p,
++		MUX_SEL_TOP10, 8, 1),
++	MUX(0, "mout_top1_bus1_pll_user", mout_top1_bus1_pll_user_p,
+ 		MUX_SEL_TOP10, 12, 1),
+-	MUX(0, "mout_top1_bus0_pll", mout_top1_bus0_pll_p,
++	MUX(0, "mout_top1_bus0_pll_user", mout_top1_bus0_pll_user_p,
+ 		MUX_SEL_TOP10, 16, 1),
+ 
+-	MUX(0, "mout_top1_half_mfc_pll", mout_top1_half_mfc_pll_p,
++	MUX(0, "mout_top1_mfc_pll_half", mout_top1_mfc_pll_half_p,
+ 		MUX_SEL_TOP11, 4, 1),
+-	MUX(0, "mout_top1_half_cc_pll", mout_top1_half_cc_pll_p,
++	MUX(0, "mout_top1_cc_pll_half", mout_top1_cc_pll_half_p,
+ 		MUX_SEL_TOP11, 8, 1),
+-	MUX(0, "mout_top1_half_bus1_pll", mout_top1_half_bus1_pll_p,
++	MUX(0, "mout_top1_bus1_pll_half", mout_top1_bus1_pll_half_p,
+ 		MUX_SEL_TOP11, 12, 1),
+-	MUX(0, "mout_top1_half_bus0_pll", mout_top1_half_bus0_pll_p,
++	MUX(0, "mout_top1_bus0_pll_half", mout_top1_bus0_pll_half_p,
+ 		MUX_SEL_TOP11, 16, 1),
+ 
+ 	MUX(0, "mout_aclk_fsys1_200", mout_top1_group1, MUX_SEL_TOP13, 24, 2),
+@@ -502,10 +504,12 @@ static struct samsung_gate_clock top1_gate_clks[] __initdata = {
+ };
+ 
+ static struct samsung_fixed_factor_clock top1_fixed_factor_clks[] __initdata = {
+-	FFACTOR(0, "ffac_top1_bus0_pll_div2", "mout_top1_bus0_pll", 1, 2, 0),
+-	FFACTOR(0, "ffac_top1_bus1_pll_div2", "mout_top1_bus1_pll", 1, 2, 0),
+-	FFACTOR(0, "ffac_top1_cc_pll_div2", "mout_top1_cc_pll", 1, 2, 0),
+-	FFACTOR(0, "ffac_top1_mfc_pll_div2", "mout_top1_mfc_pll", 1, 2, 0),
++	FFACTOR(0, "ffac_top1_bus0_pll_div2", "mout_top1_bus0_pll_user",
++		1, 2, 0),
++	FFACTOR(0, "ffac_top1_bus1_pll_div2", "mout_top1_bus1_pll_user",
++		1, 2, 0),
++	FFACTOR(0, "ffac_top1_cc_pll_div2", "mout_top1_cc_pll_user", 1, 2, 0),
++	FFACTOR(0, "ffac_top1_mfc_pll_div2", "mout_top1_mfc_pll_user", 1, 2, 0),
+ };
+ 
+ static struct samsung_cmu_info top1_cmu_info __initdata = {
 -- 
-2.1.4
+1.7.10.4
+
