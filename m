@@ -1,92 +1,194 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 02 Sep 2015 16:17:28 +0900
-Message-Id: <20150902071728.10870.32730.sendpatchset@little-apple>
-In-Reply-To: <20150902071657.10870.37652.sendpatchset@little-apple>
-References: <20150902071657.10870.37652.sendpatchset@little-apple>
-Subject: [PATCH v6 03/05] clk: shmobile: Make MSTP clock-output-names optional
+Return-Path: <alim.akhtar@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+ k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
+ gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Subject: [PATCH 01/11] clk: samsung: exynos7: Change the CMU_TOPC block clock
+ name
+Date: Fri, 04 Sep 2015 17:07:06 +0530
+Message-id: <1441366637-28001-2-git-send-email-alim.akhtar@samsung.com>
+In-reply-to: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Corrects the CMU_TOPC block clock name as per user manual.
+This also adds few of the missing gate clocks of topc block.
+This does not change any functionalies.
 
-This patch updates the MSTP driver to make the "clock-output-names"
-DT property optional instead of mandatory. In case the DT property
-is omitted then the function clk_register_clkdev() is skipped.
-
-The default for new SoCs is to not use "clock-output-names".
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
+ drivers/clk/samsung/clk-exynos7.c       |   90 +++++++++++++++++++------------
+ include/dt-bindings/clock/exynos7-clk.h |   11 +++-
+ 2 files changed, 67 insertions(+), 34 deletions(-)
 
- Changes since V5:
- - Simplified code using const char *allocated_name - thanks Geert!
-
- Changes since V4:
- - None
-
- Changes since V3:
- - Added support for multiple MSTP bits. =)
-
- drivers/clk/shmobile/clk-mstp.c |   24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
-
---- 0001/drivers/clk/shmobile/clk-mstp.c
-+++ work/drivers/clk/shmobile/clk-mstp.c	2015-09-02 11:52:02.182366518 +0900
-@@ -193,26 +193,26 @@ static void __init cpg_mstp_clocks_init(
- 	for (i = 0; i < MSTP_MAX_CLOCKS; ++i) {
- 		const char *parent_name;
- 		const char *name;
-+		const char *allocated_name = NULL;
- 		u32 clkidx;
- 		int ret;
+diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+index 380608b..2394bde 100644
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -35,38 +35,39 @@
+ #define DIV_TOPC1		0x0604
+ #define DIV_TOPC3		0x060C
+ #define ENABLE_ACLK_TOPC1	0x0804
++#define ENABLE_SCLK_TOPC1	0x0A04
  
--		/* Skip clocks with no name. */
--		ret = of_property_read_string_index(np, "clock-output-names",
--						    i, &name);
--		if (ret < 0 || strlen(name) == 0)
--			continue;
+ static struct samsung_fixed_factor_clock topc_fixed_factor_clks[] __initdata = {
+-	FFACTOR(0, "ffac_topc_bus0_pll_div2", "mout_bus0_pll_ctrl", 1, 2, 0),
++	FFACTOR(0, "ffac_topc_bus0_pll_div2", "mout_topc_bus0_pll", 1, 2, 0),
+ 	FFACTOR(0, "ffac_topc_bus0_pll_div4",
+ 		"ffac_topc_bus0_pll_div2", 1, 2, 0),
+-	FFACTOR(0, "ffac_topc_bus1_pll_div2", "mout_bus1_pll_ctrl", 1, 2, 0),
+-	FFACTOR(0, "ffac_topc_cc_pll_div2", "mout_cc_pll_ctrl", 1, 2, 0),
+-	FFACTOR(0, "ffac_topc_mfc_pll_div2", "mout_mfc_pll_ctrl", 1, 2, 0),
++	FFACTOR(0, "ffac_topc_bus1_pll_div2", "mout_topc_bus1_pll", 1, 2, 0),
++	FFACTOR(0, "ffac_topc_cc_pll_div2", "mout_topc_cc_pll", 1, 2, 0),
++	FFACTOR(0, "ffac_topc_mfc_pll_div2", "mout_topc_mfc_pll", 1, 2, 0),
+ };
+ 
+ /* List of parent clocks for Muxes in CMU_TOPC */
+-PNAME(mout_aud_pll_ctrl_p)	= { "fin_pll", "fout_aud_pll" };
+-PNAME(mout_bus0_pll_ctrl_p)	= { "fin_pll", "fout_bus0_pll" };
+-PNAME(mout_bus1_pll_ctrl_p)	= { "fin_pll", "fout_bus1_pll" };
+-PNAME(mout_cc_pll_ctrl_p)	= { "fin_pll", "fout_cc_pll" };
+-PNAME(mout_mfc_pll_ctrl_p)	= { "fin_pll", "fout_mfc_pll" };
++PNAME(mout_topc_aud_pll_ctrl_p)	= { "fin_pll", "fout_aud_pll" };
++PNAME(mout_topc_bus0_pll_ctrl_p)	= { "fin_pll", "fout_bus0_pll" };
++PNAME(mout_topc_bus1_pll_ctrl_p)	= { "fin_pll", "fout_bus1_pll" };
++PNAME(mout_topc_cc_pll_ctrl_p)	= { "fin_pll", "fout_cc_pll" };
++PNAME(mout_topc_mfc_pll_ctrl_p)	= { "fin_pll", "fout_mfc_pll" };
+ 
+-PNAME(mout_topc_group2) = { "mout_sclk_bus0_pll_cmuc",
+-	"mout_sclk_bus1_pll_cmuc", "mout_sclk_cc_pll_cmuc",
+-	"mout_sclk_mfc_pll_cmuc" };
++PNAME(mout_topc_group2) = { "mout_topc_bus0_pll_half",
++	"mout_topc_bus1_pll_half", "mout_topc_cc_pll_half",
++	"mout_topc_mfc_pll_half" };
+ 
+-PNAME(mout_sclk_bus0_pll_cmuc_p) = { "mout_bus0_pll_ctrl",
++PNAME(mout_topc_bus0_pll_half_p) = { "mout_topc_bus0_pll",
+ 	"ffac_topc_bus0_pll_div2", "ffac_topc_bus0_pll_div4"};
+-PNAME(mout_sclk_bus1_pll_cmuc_p) = { "mout_bus1_pll_ctrl",
++PNAME(mout_topc_bus1_pll_half_p) = { "mout_topc_bus1_pll",
+ 	"ffac_topc_bus1_pll_div2"};
+-PNAME(mout_sclk_cc_pll_cmuc_p) = { "mout_cc_pll_ctrl",
++PNAME(mout_topc_cc_pll_half_p) = { "mout_topc_cc_pll",
+ 	"ffac_topc_cc_pll_div2"};
+-PNAME(mout_sclk_mfc_pll_cmuc_p) = { "mout_mfc_pll_ctrl",
++PNAME(mout_topc_mfc_pll_half_p) = { "mout_topc_mfc_pll",
+ 	"ffac_topc_mfc_pll_div2"};
+ 
+ 
+-PNAME(mout_sclk_bus0_pll_out_p) = {"mout_bus0_pll_ctrl",
++PNAME(mout_topc_bus0_pll_out_p) = {"mout_topc_bus0_pll",
+ 	"ffac_topc_bus0_pll_div2"};
+ 
+ static unsigned long topc_clk_regs[] __initdata = {
+@@ -90,22 +91,26 @@ static unsigned long topc_clk_regs[] __initdata = {
+ };
+ 
+ static struct samsung_mux_clock topc_mux_clks[] __initdata = {
+-	MUX(0, "mout_bus0_pll_ctrl", mout_bus0_pll_ctrl_p, MUX_SEL_TOPC0, 0, 1),
+-	MUX(0, "mout_bus1_pll_ctrl", mout_bus1_pll_ctrl_p, MUX_SEL_TOPC0, 4, 1),
+-	MUX(0, "mout_cc_pll_ctrl", mout_cc_pll_ctrl_p, MUX_SEL_TOPC0, 8, 1),
+-	MUX(0, "mout_mfc_pll_ctrl", mout_mfc_pll_ctrl_p, MUX_SEL_TOPC0, 12, 1),
 -
- 		parent_name = of_clk_get_parent_name(np, i);
- 		ret = of_property_read_u32_index(np, idxname, i, &clkidx);
- 		if (parent_name == NULL || ret < 0)
- 			break;
+-	MUX(0, "mout_sclk_bus0_pll_cmuc", mout_sclk_bus0_pll_cmuc_p,
++	MUX(0, "mout_topc_bus0_pll", mout_topc_bus0_pll_ctrl_p,
++		MUX_SEL_TOPC0, 0, 1),
++	MUX(0, "mout_topc_bus1_pll", mout_topc_bus1_pll_ctrl_p,
++		MUX_SEL_TOPC0, 4, 1),
++	MUX(0, "mout_topc_cc_pll", mout_topc_cc_pll_ctrl_p,
++		MUX_SEL_TOPC0, 8, 1),
++	MUX(0, "mout_topc_mfc_pll", mout_topc_mfc_pll_ctrl_p,
++		MUX_SEL_TOPC0, 12, 1),
++	MUX(0, "mout_topc_bus0_pll_half", mout_topc_bus0_pll_half_p,
+ 		MUX_SEL_TOPC0, 16, 2),
+-	MUX(0, "mout_sclk_bus1_pll_cmuc", mout_sclk_bus1_pll_cmuc_p,
++	MUX(0, "mout_topc_bus1_pll_half", mout_topc_bus1_pll_half_p,
+ 		MUX_SEL_TOPC0, 20, 1),
+-	MUX(0, "mout_sclk_cc_pll_cmuc", mout_sclk_cc_pll_cmuc_p,
++	MUX(0, "mout_topc_cc_pll_half", mout_topc_cc_pll_half_p,
+ 		MUX_SEL_TOPC0, 24, 1),
+-	MUX(0, "mout_sclk_mfc_pll_cmuc", mout_sclk_mfc_pll_cmuc_p,
++	MUX(0, "mout_topc_mfc_pll_half", mout_topc_mfc_pll_half_p,
+ 		MUX_SEL_TOPC0, 28, 1),
  
- 		if (clkidx >= MSTP_MAX_CLOCKS) {
--			pr_err("%s: invalid clock %s %s index %u)\n",
--			       __func__, np->name, name, clkidx);
-+			pr_err("%s: invalid clock %s index %u)\n",
-+			       __func__, np->name, clkidx);
- 			continue;
- 		}
+-	MUX(0, "mout_aud_pll_ctrl", mout_aud_pll_ctrl_p, MUX_SEL_TOPC1, 0, 1),
+-	MUX(0, "mout_sclk_bus0_pll_out", mout_sclk_bus0_pll_out_p,
++	MUX(0, "mout_topc_aud_pll", mout_topc_aud_pll_ctrl_p,
++		MUX_SEL_TOPC1, 0, 1),
++	MUX(0, "mout_topc_bus0_pll_out", mout_topc_bus0_pll_out_p,
+ 		MUX_SEL_TOPC1, 16, 1),
  
-+		if (of_property_read_string_index(np, "clock-output-names",
-+						  i, &name) < 0)
-+			allocated_name = name = kasprintf(GFP_KERNEL, "%s.%u",
-+							   np->name, clkidx);
+ 	MUX(0, "mout_aclk_ccore_133", mout_topc_group2,	MUX_SEL_TOPC2, 4, 2),
+@@ -123,15 +128,15 @@ static struct samsung_div_clock topc_div_clks[] __initdata = {
+ 	DIV(DOUT_ACLK_PERIS, "dout_aclk_peris_66", "mout_aclk_peris_66",
+ 		DIV_TOPC1, 24, 4),
+ 
+-	DIV(DOUT_SCLK_BUS0_PLL, "dout_sclk_bus0_pll", "mout_sclk_bus0_pll_out",
++	DIV(DOUT_SCLK_BUS0_PLL, "dout_sclk_bus0_pll", "mout_topc_bus0_pll_out",
+ 		DIV_TOPC3, 0, 4),
+-	DIV(DOUT_SCLK_BUS1_PLL, "dout_sclk_bus1_pll", "mout_bus1_pll_ctrl",
++	DIV(DOUT_SCLK_BUS1_PLL, "dout_sclk_bus1_pll", "mout_topc_bus1_pll",
+ 		DIV_TOPC3, 8, 4),
+-	DIV(DOUT_SCLK_CC_PLL, "dout_sclk_cc_pll", "mout_cc_pll_ctrl",
++	DIV(DOUT_SCLK_CC_PLL, "dout_sclk_cc_pll", "mout_topc_cc_pll",
+ 		DIV_TOPC3, 12, 4),
+-	DIV(DOUT_SCLK_MFC_PLL, "dout_sclk_mfc_pll", "mout_mfc_pll_ctrl",
++	DIV(DOUT_SCLK_MFC_PLL, "dout_sclk_mfc_pll", "mout_topc_mfc_pll",
+ 		DIV_TOPC3, 16, 4),
+-	DIV(DOUT_SCLK_AUD_PLL, "dout_sclk_aud_pll", "mout_aud_pll_ctrl",
++	DIV(DOUT_SCLK_AUD_PLL, "dout_sclk_aud_pll", "mout_topc_aud_pll",
+ 		DIV_TOPC3, 28, 4),
+ };
+ 
+@@ -143,6 +148,25 @@ static struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initdata = {
+ static struct samsung_gate_clock topc_gate_clks[] __initdata = {
+ 	GATE(ACLK_MSCL_532, "aclk_mscl_532", "dout_aclk_mscl_532",
+ 		ENABLE_ACLK_TOPC1, 20, 0, 0),
 +
- 		clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
- 						       clkidx, group);
- 		if (!IS_ERR(clks[clkidx])) {
-@@ -225,12 +225,18 @@ static void __init cpg_mstp_clocks_init(
- 			 *
- 			 * FIXME: Remove this when all devices that require a
- 			 * clock will be instantiated from DT.
-+			 *
-+			 * We currently register clkdev only when the DT
-+			 * property clock-output-names is present.
- 			 */
--			clk_register_clkdev(clks[clkidx], name, NULL);
-+			if (!allocated_name)
-+				clk_register_clkdev(clks[clkidx], name, NULL);
- 		} else {
- 			pr_err("%s: failed to register %s %s clock (%ld)\n",
- 			       __func__, np->name, name, PTR_ERR(clks[clkidx]));
- 		}
-+
-+		kfree(allocated_name);
- 	}
++	GATE(SCLK_AUD_PLL, "sclk_aud_pll", "dout_sclk_aud_pll",
++		ENABLE_SCLK_TOPC1, 20, 0, 0),
++	GATE(SCLK_MFC_PLL_B, "sclk_mfc_pll_b", "dout_sclk_mfc_pll",
++		ENABLE_SCLK_TOPC1, 17, 0, 0),
++	GATE(SCLK_MFC_PLL_A, "sclk_mfc_pll_a", "dout_sclk_mfc_pll",
++		ENABLE_SCLK_TOPC1, 16, 0, 0),
++	GATE(SCLK_BUS1_PLL_B, "sclk_bus1_pll_b", "dout_sclk_bus1_pll",
++		ENABLE_SCLK_TOPC1, 13, 0, 0),
++	GATE(SCLK_BUS1_PLL_A, "sclk_bus1_pll_a", "dout_sclk_bus1_pll",
++		ENABLE_SCLK_TOPC1, 12, 0, 0),
++	GATE(SCLK_BUS0_PLL_B, "sclk_bus0_pll_b", "dout_sclk_bus0_pll",
++		ENABLE_SCLK_TOPC1, 5, 0, 0),
++	GATE(SCLK_BUS0_PLL_A, "sclk_bus0_pll_a", "dout_sclk_bus0_pll",
++		ENABLE_SCLK_TOPC1, 4, 0, 0),
++	GATE(SCLK_CC_PLL_B, "sclk_cc_pll_b", "dout_sclk_cc_pll",
++		ENABLE_SCLK_TOPC1, 1, 0, 0),
++	GATE(SCLK_CC_PLL_A, "sclk_cc_pll_a", "dout_sclk_cc_pll",
++		ENABLE_SCLK_TOPC1, 0, 0, 0),
+ };
  
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &group->data);
+ static struct samsung_pll_clock topc_pll_clks[] __initdata = {
+diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
+index e33c75a..b63eba6 100644
+--- a/include/dt-bindings/clock/exynos7-clk.h
++++ b/include/dt-bindings/clock/exynos7-clk.h
+@@ -21,7 +21,16 @@
+ #define ACLK_MSCL_532			8
+ #define DOUT_SCLK_AUD_PLL		9
+ #define FOUT_AUD_PLL			10
+-#define TOPC_NR_CLK			11
++#define SCLK_AUD_PLL			11
++#define SCLK_MFC_PLL_B			12
++#define SCLK_MFC_PLL_A			13
++#define SCLK_BUS1_PLL_B			14
++#define SCLK_BUS1_PLL_A			15
++#define SCLK_BUS0_PLL_B			16
++#define SCLK_BUS0_PLL_A			17
++#define SCLK_CC_PLL_B			18
++#define SCLK_CC_PLL_A			19
++#define TOPC_NR_CLK			20
+ 
+ /* TOP0 */
+ #define DOUT_ACLK_PERIC1		1
+-- 
+1.7.10.4
