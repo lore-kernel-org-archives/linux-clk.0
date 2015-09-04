@@ -1,12 +1,13 @@
 Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Date: Mon, 14 Sep 2015 15:19:21 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH] clk: rockchip: add critical clock for rk3368
-Message-ID: <20150914141920.GF7002@leverpostej>
-References: <5267432.TORlj1Iv40@diego>
 MIME-Version: 1.0
-In-Reply-To: <5267432.TORlj1Iv40@diego>
+In-Reply-To: <1441349872-4560-7-git-send-email-bhupesh.sharma@freescale.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+ <1441349872-4560-7-git-send-email-bhupesh.sharma@freescale.com>
+Date: Fri, 4 Sep 2015 15:01:55 -0500
+Message-ID: <CADRPPNQsemXa2HgYZAcm+GurhimHbYVM5CL5ReDsyuzfAO=kSQ@mail.gmail.com>
+Subject: Re: [PATCH v2 06/10] clk: qoriq: Add ls2080a support.
+From: Li Yang <leoli@freescale.com>
+To: Bhupesh Sharma <bhupesh.sharma@freescale.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -14,48 +15,36 @@ List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
 List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+Cc: Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+ marc.zyngier@arm.com, Catalin.Marinas@arm.com, will.deacon@arm.com,
+ olof@lixom.net, Scott Wood <scottwood@freescale.com>,
+ Bhupesh SHARMA <bhupesh.linux@gmail.com>, linux-clk@vger.kernel.org,
  "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-T24gU3VuLCBTZXAgMTMsIDIwMTUgYXQgMTI6MjA6MzZQTSArMDEwMCwgSGVpa28gU3TDvGJuZXIg
-d3JvdGU6Cj4gQWdhaW4gYSByZXN1bHQgb2YgdGhlIGdwaW8tY2xvY2stbGliZXJhdGlvbiB0aGUg
-cmszMzY4IG5lZWRzIHRoZQo+IHBjbGtfcGRfcG11IG1hcmtlZCBhcyBjcml0aWNhbCwgdG8gYm9v
-dCBzdWNjZXNzZnVsbHkuCj4gCj4gUmVwb3J0ZWQtYnk6IE1hcmsgUnV0bGFuZCA8bWFyay5ydXRs
-YW5kQGFybS5jb20+Cj4gU2lnbmVkLW9mZi1ieTogSGVpa28gU3R1ZWJuZXIgPGhlaWtvQHNudGVj
-aC5kZT4KCkZXSVc6IFRlc3RlZC1ieTogTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNv
-bT4KCkknbSBzdXJwcmlzZWQgdGhhdCB3ZSBkb24ndCBkZXNjcmliZSB0aGVzZSBhcyBjcml0aWNh
-bCBpbiB0aGUgRFQsIGdpdmVuCnRoYXQgdGhpcyBpc24ndCByZWFsbHkgYW4gaW50ZXJuYWwgcHJv
-cGVydHkgb2YgdGhlIGNsb2NrIGNvbnRyb2xsZXIsIGJ1dApyYXRoZXIgd2hhdCBoYXBwZW5zIHRv
-IGJlIGF0dGFjaGVkIHRvIGl0LiBUaGF0IHNoaXAgYXBwZWFycyB0byBoYXZlCnNhaWxlZCwgaG93
-ZXZlci4KClRoYW5rcywKTWFyay4KCj4gLS0tCj4gc2hvdWxkIGdvIG9uIHRvcCBvZiBjbGstZml4
-ZXMuIFNvcnJ5IG9ubHkgZmluZGluZyB0aGVzZSBwaWVjZQo+IGJ5IHBpZWNlIDotKSAuCj4gCj4g
-IGRyaXZlcnMvY2xrL3JvY2tjaGlwL2Nsay1yazMzNjguYyB8IDYgKysrKysrCj4gIDEgZmlsZSBj
-aGFuZ2VkLCA2IGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvcm9j
-a2NoaXAvY2xrLXJrMzM2OC5jIGIvZHJpdmVycy9jbGsvcm9ja2NoaXAvY2xrLXJrMzM2OC5jCj4g
-aW5kZXggOWM1ZDYxZS4uN2U2Yjc4MyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2Nsay9yb2NrY2hp
-cC9jbGstcmszMzY4LmMKPiArKysgYi9kcml2ZXJzL2Nsay9yb2NrY2hpcC9jbGstcmszMzY4LmMK
-PiBAQCAtODE4LDYgKzgxOCwxMCBAQCBzdGF0aWMgc3RydWN0IHJvY2tjaGlwX2Nsa19icmFuY2gg
-cmszMzY4X2Nsa19icmFuY2hlc1tdIF9faW5pdGRhdGEgPSB7Cj4gIAlHQVRFKDAsICJzY2xrX3Rp
-bWVyMDAiLCAieGluMjRtIiwgQ0xLX0lHTk9SRV9VTlVTRUQsIFJLMzM2OF9DTEtHQVRFX0NPTigy
-NCksIDAsIEdGTEFHUyksCj4gIH07Cj4gIAo+ICtzdGF0aWMgY29uc3QgY2hhciAqY29uc3Qgcmsz
-MzY4X2NyaXRpY2FsX2Nsb2Nrc1tdIF9faW5pdGNvbnN0ID0gewo+ICsJInBjbGtfcGRfcG11IiwK
-PiArfTsKPiArCj4gIHN0YXRpYyB2b2lkIF9faW5pdCByazMzNjhfY2xrX2luaXQoc3RydWN0IGRl
-dmljZV9ub2RlICpucCkKPiAgewo+ICAJdm9pZCBfX2lvbWVtICpyZWdfYmFzZTsKPiBAQCAtODYy
-LDYgKzg2Niw4IEBAIHN0YXRpYyB2b2lkIF9faW5pdCByazMzNjhfY2xrX2luaXQoc3RydWN0IGRl
-dmljZV9ub2RlICpucCkKPiAgCQkJCSAgIFJLMzM2OF9HUkZfU09DX1NUQVRVUzApOwo+ICAJcm9j
-a2NoaXBfY2xrX3JlZ2lzdGVyX2JyYW5jaGVzKHJrMzM2OF9jbGtfYnJhbmNoZXMsCj4gIAkJCQkg
-IEFSUkFZX1NJWkUocmszMzY4X2Nsa19icmFuY2hlcykpOwo+ICsJcm9ja2NoaXBfY2xrX3Byb3Rl
-Y3RfY3JpdGljYWwocmszMzY4X2NyaXRpY2FsX2Nsb2NrcywKPiArCQkJCSAgICAgIEFSUkFZX1NJ
-WkUocmszMzY4X2NyaXRpY2FsX2Nsb2NrcykpOwo+ICAKPiAgCXJvY2tjaGlwX2Nsa19yZWdpc3Rl
-cl9hcm1jbGsoQVJNQ0xLQiwgImFybWNsa2IiLAo+ICAJCQltdXhfYXJtY2xrYl9wLCBBUlJBWV9T
-SVpFKG11eF9hcm1jbGtiX3ApLAo+IC0tIAo+IDIuNS4xCj4gCj4gCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcg
-bGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmlu
-ZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+On Fri, Sep 4, 2015 at 1:57 AM, Bhupesh Sharma
+<bhupesh.sharma@freescale.com> wrote:
+> From: Scott Wood <scottwood@freescale.com>
+>
+> LS2080A is the first implementation of the chassis 3 clockgen, which
+> has a different register layout than previous chips.  It is also little
+> endian, unlike previous chips.
+>
+> Signed-off-by: Scott Wood <scottwood@freescale.com>
+> ---
+
+You should probably mention here that the patch is depending on
+another pending patch to apply.  And this patch should be going
+through the same sub-system tree as the dependency patch.  Otherwise,
+there is no way it can be applied.
+
+Regards,
+Leo
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
