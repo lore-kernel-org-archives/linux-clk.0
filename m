@@ -1,42 +1,44 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Mon, 7 Sep 2015 11:10:05 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Lucas Stach <l.stach@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
-	kernel@pengutronix.de, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/8] clk: imx25: retain early UART clocks during
- kernel init
-Message-ID: <20150907091005.GV9999@pengutronix.de>
-References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
- <1441382419-4343-3-git-send-email-l.stach@pengutronix.de>
- <20150906142315.GA30746@tiger>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-la0-f47.google.com ([209.85.215.47]:35410 "EHLO
+	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760139AbbIDQ44 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 4 Sep 2015 12:56:56 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20150906142315.GA30746@tiger>
+In-Reply-To: <1441349872-4560-4-git-send-email-bhupesh.sharma@freescale.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+	<1441349872-4560-4-git-send-email-bhupesh.sharma@freescale.com>
+Date: Fri, 4 Sep 2015 11:56:54 -0500
+Message-ID: <CADRPPNR11BD4WfXTWoQ28rZCd_BJuhdWu49E6jjpO29CH2s5Ow@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] Documentation/dts: Add bindings for QIXIS FPGA
+ controller found on FSL boards
+From: Li Yang <leoli@freescale.com>
+To: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, marc.zyngier@arm.com,
+	linux-clk@vger.kernel.org, Catalin.Marinas@arm.com,
+	will.deacon@arm.com, olof@lixom.net, bhupesh.linux@gmail.com,
+	Jaiprakash Singh <b44839@freescale.com>,
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Sep 06, 2015 at 10:23:15PM +0800, Shawn Guo wrote:
-> 
-> I prefer to code it like:
-> 
-> static struct clk **uart_clks[] __initdata = {
-> 	&clk[uart_ipg_per],
-> 	&clk[uart1_ipg],
-> 	&clk[uart2_ipg],
-> 	&clk[uart3_ipg],
-> 	&clk[uart4_ipg],
-> 	&clk[uart5_ipg],
-> 	NULL
-> };
+On Fri, Sep 4, 2015 at 1:57 AM, Bhupesh Sharma
+<bhupesh.sharma@freescale.com> wrote:
+> This patch adds bindings for QIXIS FPGA controller found on FSL boards.
 
-And maybe also use mx25_ as prefix to make the name unique.
+A general comment: when you are updating the device tree bindings.
+You should cc the devicetree@vger.kernel.org mailing list.
 
-Best regards
-Uwe
+>
+> Some Freescale boards like LS2080AQDS/LS2080ARDB have an on-board FPGA/CPLD
+> connected to the IFC controller. The bindings specified in this patch
+> cater to those on-board FPGA/CPLD controllers.
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+We already have the binding defined in
+Documentation/devicetree/bindings/powerpc/fsl/board.txt.  We probably
+should just move it to a more generic location.
+
+Regards,
+Leo
