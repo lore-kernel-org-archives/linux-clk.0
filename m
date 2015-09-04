@@ -1,53 +1,46 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 9 Sep 2015 14:39:10 -0700
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Date: Fri, 4 Sep 2015 09:24:02 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	SH-Linux <linux-sh@vger.kernel.org>,
-	"Simon Horman [Horms]" <horms@verge.net.au>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH][RFC] clk: Use node name and index for clock name
-Message-ID: <20150909213910.GU15099@codeaurora.org>
-References: <20150909050554.27129.68718.sendpatchset@little-apple>
- <13888179.tcIA8DJW1S@avalon>
- <CANqRtoTE+jdavqQ0i5jHu=5REtPhf1xDVfREKC0XD2Bz=rf4kQ@mail.gmail.com>
- <1981230.p8F5aT0ffl@avalon>
+To: Romain Perier <romain.perier@gmail.com>
+Subject: Re: [PATCH v2] clk: rockchip: Add pclk_peri to critical clocks on
+ RK3066/RK3188
+Message-ID: <20150904162402.GN15099@codeaurora.org>
+References: <1440322357-2621-1-git-send-email-romain.perier@gmail.com>
+ <CABgxDo+otZrYoqTNK-ea=L6Dsd5p_b_MFCi4H4XJZZ25PV_qnA@mail.gmail.com>
+ <CABgxDoLgqfzO-Sb_rKHe=-GuMaKWMihHhktx6sDSM6M=Q+Koaw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1981230.p8F5aT0ffl@avalon>
+In-Reply-To: <CABgxDoLgqfzO-Sb_rKHe=-GuMaKWMihHhktx6sDSM6M=Q+Koaw@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/09, Laurent Pinchart wrote:
-> On Wednesday 09 September 2015 14:27:58 Magnus Damm wrote:
-> > On Wed, Sep 9, 2015 at 2:14 PM, Laurent Pinchart wrote:
-> > > Another issue is that this won't guarantee that the names are unique as
-> > > multiple DT nodes can have the same name. Instead of trying to generate
-> > > unique names, would it be possible to handle clock registration and
-> > > lookup without relying on names for DT-based platforms ?
-> > 
-> > It would of course make sense to do that for the long run, but at the
-> > same time that sounds like major internal API rework since most
-> > functions operate on string clock names today. So for short term is
-> > the correct approach to use clock-output-names?
+On 09/04, Romain Perier wrote:
+> Hi all,
 > 
-> I think Stephen and Mike should comment on that.
-> 
+> just a reminder, I sent this patch two weeks ago, rk3xxx-based
+> platforms still need it, it fixes a freeze during boot.
 
-We've been murmuring about moving away from string based parent
-child relationship descriptions for some time now. Nothing very
-concrete has come out though and I haven't thought about it in
-too much detail.
-
-Why can't we call clk_get() for the clocks that we need to find
-the name of, and then call __clk_get_name() on them? Doing
-clk_get() has the nice side-effect of ordering probe for
-different clock controller drivers so that things like
-suspend/resume are done in the correct order.
+Sorry I thought that Linus W was going to pick this up? If not,
+we can take it through clk tree as a fix for -rc1.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
