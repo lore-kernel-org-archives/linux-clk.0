@@ -1,89 +1,70 @@
-Return-Path: <mark.rutland@arm.com>
-Date: Tue, 22 Sep 2015 23:15:04 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Hou Zhiqiang <B48286@freescale.com>
-Cc: Marc Zyngier <Marc.Zyngier@arm.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Catalin Marinas <Catalin.Marinas@arm.com>,
-	Will Deacon <Will.Deacon@arm.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Shaohui Xie <Shaohui.Xie@freescale.com>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	Sharma Bhupesh <bhupesh.sharma@freescale.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"wsa@the-dreams.de" <wsa@the-dreams.de>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"wim@iguana.be" <wim@iguana.be>,
-	Wenbin Song <Wenbin.Song@freescale.com>,
-	Scott Wood <scottwood@freescale.com>,
-	Hu Vincent <Mingkai.Hu@freescale.com>, Li Leo <LeoLi@freescale.com>
-Subject: Re: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
-Message-ID: <20150922221504.GA1497@svinekod>
-References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
- <1442838158-2964-5-git-send-email-B48286@freescale.com>
- <20150922012403.GA1535@svinekod>
- <CY1PR0301MB078008B10188504C951076498B450@CY1PR0301MB0780.namprd03.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <CY1PR0301MB078008B10188504C951076498B450@CY1PR0301MB0780.namprd03.prod.outlook.com>
+Return-Path: <alim.akhtar@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+ k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
+ gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Subject: [PATCH 07/11] clk: samsung: exynos7: Corrects CMU_PERIS clocks names
+Date: Fri, 04 Sep 2015 17:07:12 +0530
+Message-id: <1441366637-28001-8-git-send-email-alim.akhtar@samsung.com>
+In-reply-to: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 22, 2015 at 10:50:21AM +0100, Hou Zhiqiang wrote:
-> Hi Mark,
-> 
-> > -----Original Message-----
-> > From: Mark Rutland [mailto:mark.rutland@arm.com]
-> > Sent: 2015年9月22日 9:24
-> > To: Hou Zhiqiang-B48286; marc.zyngier@arm.com
-> > Cc: linux-arm-kernel@lists.infradead.org; Catalin Marinas; Will Deacon;
-> > linux-i2c@vger.kernel.org; linux-watchdog@vger.kernel.org; linux-
-> > doc@vger.kernel.org; linux-clk@vger.kernel.org; Xie Shaohui-B21989;
-> > corbet@lwn.net; Sharma Bhupesh-B45370; mturquette@baylibre.com; wsa@the-
-> > dreams.de; sboyd@codeaurora.org; wim@iguana.be; Song Wenbin-B53747; Wood
-> > Scott-B07421; Hu Mingkai-B21284; Li Yang-Leo-R58472
-> > Subject: Re: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
-> >
-> > Hi,
-> >
-> > > +/memreserve/ 0x80000000 0x00010000;
-> >
-> > Why is this necessary?
-> 
-> This memory region is pre-reserved for the spin-table/psci, although didn't add
-> Enable method of secondary cores.
+This patch rename CMU_PERIS clocks names to match with user manual.
+And also adds missing gate clock for aclk_peris_66.
 
-Your PSCI implementation isn't in secure memory?
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos7.c       |    7 +++++--
+ include/dt-bindings/clock/exynos7-clk.h |    3 ++-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-> > > +       ifc: ifc@1530000 {
-> > > +               compatible = "fsl,ifc", "simple-bus";
-> > > +               reg = <0x0 0x1530000 0x0 0x10000>;
-> > > +               interrupts = <0 43 0x4>;
-> > > +       };
-> >
-> > Why simple-bus?
-> 
-> There are 3 child node located in dtsi file that should be created and added
-> to platform device list.
-
-Are they usable even if the kernel knew nothing about the IFC node? If not, the
-IFC driver should probe them, and simple-bus should go.
-
-> > > +       memory@80000000 {
-> > > +               device_type = "memory";
-> > > +               reg = <0x0 0x80000000 0 0x80000000>;
-> > > +                     /* DRAM space 1 - 2 GB DRAM */
-> >
-> > I don't understand the comment. This describes 2GB at 2GB.
-> >
-> 
-> Yes, there is a 2GB space for DRAM from address 2G.
-> The DRAM address 0x0 will be remapped to SoC address 2G, this remap is done by hardware.
-
-I just realised my mistake -- I read this as "1 to 2 GB", when this is actually
-"DRAM space 1". Sorry for the noise.
-
-Thanks,
-Mark.
+diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+index 696489a..75db751 100644
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -150,6 +150,9 @@ static struct samsung_gate_clock topc_gate_clks[] __initdata = {
+ 	GATE(ACLK_MSCL_532, "aclk_mscl_532", "dout_aclk_mscl_532",
+ 		ENABLE_ACLK_TOPC1, 20, 0, 0),
+ 
++	GATE(ACLK_PERIS_66, "aclk_peris_66", "dout_aclk_peris_66",
++		ENABLE_ACLK_TOPC1, 24, 0, 0),
++
+ 	GATE(SCLK_AUD_PLL, "sclk_aud_pll", "dout_sclk_aud_pll",
+ 		ENABLE_SCLK_TOPC1, 20, 0, 0),
+ 	GATE(SCLK_MFC_PLL_B, "sclk_mfc_pll_b", "dout_sclk_mfc_pll",
+@@ -788,7 +791,7 @@ CLK_OF_DECLARE(exynos7_clk_peric1, "samsung,exynos7-clock-peric1",
+ #define ENABLE_SCLK_PERIS_SECURE_CHIPID	0x0A10
+ 
+ /* List of parent clocks for Muxes in CMU_PERIS */
+-PNAME(mout_aclk_peris_66_p) = { "fin_pll", "dout_aclk_peris_66" };
++PNAME(mout_aclk_peris_66_user_p) = { "fin_pll", "aclk_peris_66" };
+ 
+ static unsigned long peris_clk_regs[] __initdata = {
+ 	MUX_SEL_PERIS,
+@@ -800,7 +803,7 @@ static unsigned long peris_clk_regs[] __initdata = {
+ 
+ static struct samsung_mux_clock peris_mux_clks[] __initdata = {
+ 	MUX(0, "mout_aclk_peris_66_user",
+-		mout_aclk_peris_66_p, MUX_SEL_PERIS, 0, 1),
++		mout_aclk_peris_66_user_p, MUX_SEL_PERIS, 0, 1),
+ };
+ 
+ static struct samsung_gate_clock peris_gate_clks[] __initdata = {
+diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
+index 5a157f7..2876654 100644
+--- a/include/dt-bindings/clock/exynos7-clk.h
++++ b/include/dt-bindings/clock/exynos7-clk.h
+@@ -31,7 +31,8 @@
+ #define SCLK_CC_PLL_B			18
+ #define SCLK_CC_PLL_A			19
+ #define ACLK_CCORE_133			20
+-#define TOPC_NR_CLK			21
++#define ACLK_PERIS_66			21
++#define TOPC_NR_CLK			22
+ 
+ /* TOP0 */
+ #define DOUT_ACLK_PERIC1		1
+-- 
+1.7.10.4
