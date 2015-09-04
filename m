@@ -1,17 +1,11 @@
 Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-MIME-Version: 1.0
-In-Reply-To: <BY1PR0301MB13037916637C1B6E24AC259D82550@BY1PR0301MB1303.namprd03.prod.outlook.com>
-References: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
- <CADRPPNQER9UnKLazm9C6Dd7DAkDxLb4QShK64tmtahZxJJ-t=g@mail.gmail.com>
- <BY1PR0301MB130306991ACB28E4C8109DD582560@BY1PR0301MB1303.namprd03.prod.outlook.com>
- <CAL_Jsq+KJU4RiK2XWcS5BezucCmup2M-pueaaJUq7O=fA3LUxw@mail.gmail.com>
- <BY1PR0301MB13037916637C1B6E24AC259D82550@BY1PR0301MB1303.namprd03.prod.outlook.com>
-From: Rob Herring <robherring2@gmail.com>
-Date: Mon, 7 Sep 2015 15:58:07 -0500
-Message-ID: <CAL_JsqK4NQ9YRQkTM=km6N+3Cb=RAM_=2TFhtkhPWprA7VNKUg@mail.gmail.com>
-Subject: Re: [PATCH v2 07/10] dts/ls2085a: Update DTSI to add support of
- various peripherals
-To: Sharma Bhupesh <bhupesh.sharma@freescale.com>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH v2 8/8] clk: imx7d: retain early UART clocks during kernel init
+Date: Fri,  4 Sep 2015 18:00:19 +0200
+Message-Id: <1441382419-4343-9-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
+References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,86 +13,55 @@ List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
 List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Bhupesh SHARMA <bhupesh.linux@gmail.com>,
- Shaohui Xie <Shaohui.Xie@freescale.com>, Arnd Bergmann <arnd@arndb.de>,
- Huan Wang <alison.wang@freescale.com>,
- "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
- "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
- Singh Jaiprakash <jaiprakash.singh@freescale.com>,
- "will.deacon@arm.com" <will.deacon@arm.com>,
- Scott Wood <scottwood@freescale.com>,
- "Lian M.H." <Minghuan.Lian@freescale.com>, Liu Gang <Gang.Liu@freescale.com>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "olof@lixom.net" <olof@lixom.net>, Badola Nikhil <nikhil.badola@freescale.com>,
- Li Leo <LeoLi@freescale.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Xiaobo Xie <X.Xie@freescale.com>, "Lu Y.B." <yangbo.lu@freescale.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+ kernel@pengutronix.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Sep 6, 2015 at 4:03 PM, Sharma Bhupesh
-<bhupesh.sharma@freescale.com> wrote:
->> From: Rob Herring [mailto:robherring2@gmail.com]
->> Sent: Monday, September 07, 2015 2:27 AM
->> On Sat, Sep 5, 2015 at 3:37 AM, Sharma Bhupesh
->> <bhupesh.sharma@freescale.com> wrote:
->> >> From: pku.leo@gmail.com [mailto:pku.leo@gmail.com]
->> >> Sent: Saturday, September 05, 2015 2:33 AM On Fri, Sep 4, 2015 at
->> >> 2:05 AM, Bhupesh Sharma <bhupesh.sharma@freescale.com> wrote:
->> >> > This patch updates the LS2085a DTSI (DTS Include) file to add
->> >> > support for various peripherals supported by FSL LS2085a SoC, for
->> e.g.:
->> >>
->> >> The title and description here are still using the old LS2085 name.
->> >
->> > Ok.
->> >
->> > [snip] ..
->> >
->> >> > +       amba {
->> >> > +               compatible = "arm,amba-bus";
->> >> > +               #address-cells = <2>;
->> >> > +               #size-cells = <2>;
->> >> > +               ranges;
->> >> > +
->> >> > +               cluster1_core0_watchdog: wdt@c000000 {
->> >> > +                       compatible = "arm,primecell";
->> >>
->> >> Binding of Primecell requires a specific name for the device instead
->> >> of just a "arm,primecell".
->> >
->> > The sp805 driver doesn't have a compatible string like arm, sp805.
->> > You can refer to 'Documentation/devicetree/bindings/wdt' for details -
->> there is no entry for sp805 here.
->>
->> Because no one wrote it yet. Please read
->> Documentation/devicetree/bindings/arm/primecell.txt. If sp805 has no
->> binding doc, please write one.
->>
->> > Instead it relies on the 'drivers/amba/bus.c' framework to invoke the
->> > probe function of the
->> > sp805 wdt driver using the unique PRIMECELL identifiers of the sp805
->> wdt IP.
->>
->> Whether the kernel chooses to bind with the ID registers or compatible
->> strings is up to the kernel. That is independent of the bindings.
->>
->
-> Right. But wouldn't the driver require DTS awareness to handle the compatible string then.
-> Shouldn't the DTS awareness added both in terms of bindings and driver handling?
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-No. The OS is free to do device enumeration however it sees fit and
-that could change independent of the DT.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx7d.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Rob
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 71f3a94b472c..2cc31b47209b 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -363,6 +363,15 @@ static const char *pll_video_bypass_sel[] = { "pll_video_main", "pll_video_main_
+ 
+ static struct clk_onecell_data clk_data;
+ 
++static struct clk **uart_clks[] __initdata = { &clks[IMX7D_UART1_ROOT_CLK],
++					       &clks[IMX7D_UART2_ROOT_CLK],
++					       &clks[IMX7D_UART3_ROOT_CLK],
++					       &clks[IMX7D_UART4_ROOT_CLK],
++					       &clks[IMX7D_UART5_ROOT_CLK],
++					       &clks[IMX7D_UART6_ROOT_CLK],
++					       &clks[IMX7D_UART7_ROOT_CLK],
++					       NULL };
++
+ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+@@ -856,5 +865,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	/* set uart module clock's parent clock source that must be great then 80MHz */
+ 	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+ 
++	imx_register_uart_clocks(uart_clks);
++
+ }
+ CLK_OF_DECLARE(imx7d, "fsl,imx7d-ccm", imx7d_clocks_init);
+-- 
+2.5.0
 
->
-> Regards,
-> Bhupesh
 
 _______________________________________________
 linux-arm-kernel mailing list
