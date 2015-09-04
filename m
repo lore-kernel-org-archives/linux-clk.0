@@ -1,37 +1,74 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 14 Sep 2015 15:00:11 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Archit Taneja <architt@codeaurora.org>,
-	Hai Li <hali@codeaurora.org>
-Subject: Re: [PATCH] clk: qcom: Allow clk_set_parent() to work on display
- clocks
-Message-ID: <20150914220011.GH23081@codeaurora.org>
-References: <1440722536-11197-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
+To: Leo Li <pku.leo@gmail.com>, Lian M.H. <Minghuan.Lian@freescale.com>
+Subject: RE: [PATCH v2 04/10] doc/bindings: Update PCIe devicetree binding
+ documentation for LS2080A
+Date: Fri, 4 Sep 2015 20:20:03 +0000
+Message-ID: <BY1PR0301MB13037F8BC0A8E1E4258F58DE82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+ <1441349872-4560-5-git-send-email-bhupesh.sharma@freescale.com>
+ <CADRPPNRGpzWawsqLHCiv530HbtPf+9RaPzOtvy88ftwv2ffqLQ@mail.gmail.com>
+In-Reply-To: <CADRPPNRGpzWawsqLHCiv530HbtPf+9RaPzOtvy88ftwv2ffqLQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1440722536-11197-1-git-send-email-sboyd@codeaurora.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+ "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
+ "will.deacon@arm.com" <will.deacon@arm.com>, "olof@lixom.net" <olof@lixom.net>,
+ Bhupesh SHARMA <bhupesh.linux@gmail.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/27, Stephen Boyd wrote:
-> Sometimes the display driver may want to change the parent PLL of
-> the display clocks (byte and pixel clocks) depending on the
-> use-case. Currently the parent is fixed by means of having a
-> frequency table with one entry that chooses a particular parent.
-> Remove this restriction and use the parent the clock is
-> configured for in the hardware during clk_set_rate(). This
-> requires consumers to rely on the default parent or to configure
-> the parent with clk_set_parent()/assigned-clock-parents on the
-> clocks before calling clk_set_rate().
+> From: Leo Li [mailto:pku.leo@gmail.com]
+> Sent: Friday, September 04, 2015 11:27 PM
+> On Fri, Sep 4, 2015 at 1:57 AM, Bhupesh Sharma
+> <bhupesh.sharma@freescale.com> wrote:
+> > Add the documentation for compatible string "fsl,ls2080a-pcie"
+> > for Freescale's LS2080A platform.
+> >
+> > Signed-off-by: Minghuan Lian <Minghuan.Lian@freescale.com>
+> > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+> > ---
+> >  .../devicetree/bindings/pci/layerscape-pci.txt     |    3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+> > b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+> > index 6286f04..e72e68f 100644
+> > --- a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+> > +++ b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+> > @@ -4,7 +4,8 @@ This PCIe host controller is based on the Synopsis
+> > Designware PCIe IP  and thus inherits all the common properties defined
+> in designware-pcie.txt.
+> >
+> >  Required properties:
+> > -- compatible: should contain the platform identifier such as
+> "fsl,ls1021a-pcie"
+> > +- compatible: should contain the platform identifier such as
+> > +"fsl,ls1021a-pcie",
+> > +  "fsl,ls2080a-pcie".
 > 
-> Cc: Archit Taneja <architt@codeaurora.org>
-> Cc: Hai Li <hali@codeaurora.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+> Make it generic like "fsl,<chip>-pcie"
 
-Applied to clk-next
+Minghuan, if you don't have an objection, I would like to address Leo's suggestion
+in v3 of this series as I think it is a valid one.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Please share your views. 
+
+Regards,
+Bhupesh
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
