@@ -1,49 +1,52 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Wed, 30 Sep 2015 18:59:58 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Felipe Balbi <balbi@ti.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH 15/16] usb: gadget: atmel: access the PMC using regmap
-Message-ID: <20150930165958.GF3639@piout.net>
-References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1443629469-15086-16-git-send-email-alexandre.belloni@free-electrons.com>
- <20150930163102.GM32625@saruman.tx.rr.com>
- <20150930165917.GE3639@piout.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20150930165917.GE3639@piout.net>
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de
+Subject: [PATCH v2 5/8] clk: imx35: retain early UART clocks during kernel init
+Date: Fri,  4 Sep 2015 18:00:16 +0200
+Message-Id: <1441382419-4343-6-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
+References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30/09/2015 at 18:59:17 +0200, Alexandre Belloni wrote :
-> Hi,
-> 
-> On 30/09/2015 at 11:31:02 -0500, Felipe Balbi wrote :
-> > On Wed, Sep 30, 2015 at 06:11:08PM +0200, Alexandre Belloni wrote:
-> > > Use regmap to access the PMC to avoid using at91_pmc_read and
-> > > at91_pmc_write.
-> > > 
-> > > Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> > 
-> > can I take this through my tree or does it have any dependences with the rest of
-> > the series ?
-> > 
-> 
-> This actually depend on the DT change. I'd say that we can safely assume
-> that the DT change will land in the next kernel version so you could
-> take that patch in your tree.
-> 
-> Nicolas, what is your opinion?
-> 
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-Ok, I'm late to the battle :)
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx35.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
+diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
+index 69138ba3dec7..d337819f89c8 100644
+--- a/drivers/clk/imx/clk-imx35.c
++++ b/drivers/clk/imx/clk-imx35.c
+@@ -84,6 +84,12 @@ enum mx35_clks {
+ 
+ static struct clk *clk[clk_max];
+ 
++static struct clk **uart_clks[] __initdata = { &clk[ipg],
++					       &clk[uart1_gate],
++					       &clk[uart2_gate],
++					       &clk[uart3_gate],
++					       NULL };
++
+ int __init mx35_clocks_init(void)
+ {
+ 	void __iomem *base;
+@@ -292,6 +298,8 @@ int __init mx35_clocks_init(void)
+ 	 */
+ 	clk_prepare_enable(clk[scc_gate]);
+ 
++	imx_register_uart_clocks(uart_clks);
++
+ 	imx_print_silicon_rev("i.MX35", mx35_revision());
+ 
+ 	mxc_timer_init(MX35_GPT1_BASE_ADDR, MX35_INT_GPT, GPT_TYPE_IMX31);
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+2.5.0
