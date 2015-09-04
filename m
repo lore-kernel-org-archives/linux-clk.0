@@ -1,411 +1,214 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm@kernel.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Punit Agrawal <punit.agrawal@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Liviu Dudau <Liviu.Dudau@arm.com>, linux-clk@vger.kernel.org
-Subject: [PATCH REPOST v6 3/8] clk: add support for clocks provided by SCP(System Control Processor)
-Date: Wed, 16 Sep 2015 18:16:34 +0100
-Message-Id: <1442423799-23892-4-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1442423799-23892-1-git-send-email-sudeep.holla@arm.com>
-References: <1442423799-23892-1-git-send-email-sudeep.holla@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+ <linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+ <linux-clk@vger.kernel.org>
+Subject: [PATCH v2 06/10] clk: qoriq: Add ls2080a support.
+Date: Fri, 4 Sep 2015 12:27:48 +0530
+Message-ID: <1441349872-4560-7-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: bhupesh.sharma@freescale.com, Catalin.Marinas@arm.com, will.deacon@arm.com,
+ Scott Wood <scottwood@freescale.com>, olof@lixom.net, bhupesh.linux@gmail.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On some ARM based systems, a separate Cortex-M based System Control
-Processor(SCP) provides the overall power, clock, reset and system
-control. System Control and Power Interface(SCPI) Message Protocol
-is defined for the communication between the Application Cores(AP)
-and the SCP.
+From: Scott Wood <scottwood@freescale.com>
 
-This patch adds support for the clocks provided by SCP using SCPI
-protocol.
+LS2080A is the first implementation of the chassis 3 clockgen, which
+has a different register layout than previous chips.  It is also little
+endian, unlike previous chips.
 
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>
-Cc: Liviu Dudau <Liviu.Dudau@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
-Cc: linux-clk@vger.kernel.org
+Signed-off-by: Scott Wood <scottwood@freescale.com>
 ---
- MAINTAINERS            |   1 +
- drivers/clk/Kconfig    |  10 ++
- drivers/clk/Makefile   |   1 +
- drivers/clk/clk-scpi.c | 312 +++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 324 insertions(+)
- create mode 100644 drivers/clk/clk-scpi.c
+ drivers/clk/Kconfig     |    2 +-
+ drivers/clk/clk-qoriq.c |   78 +++++++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 70 insertions(+), 10 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9598821d6a37..613a116ab0f4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9154,6 +9154,7 @@ M:	Sudeep Holla <sudeep.holla@arm.com>
- L:	linux-arm-kernel@lists.infradead.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/arm/arm,scpi.txt
-+F:	drivers/clk/clk-scpi.c
- F:	drivers/firmware/arm_scpi.c
- F:	include/linux/scpi_protocol.h
- 
 diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 42f7120ca9ce..4aec54b90331 100644
+index 42f7120..9f1970c 100644
 --- a/drivers/clk/Kconfig
 +++ b/drivers/clk/Kconfig
-@@ -59,6 +59,16 @@ config COMMON_CLK_RK808
- 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
- 	  by control register.
+@@ -121,7 +121,7 @@ config COMMON_CLK_AXI_CLKGEN
  
-+config COMMON_CLK_SCPI
-+	tristate "Clock driver controlled via SCPI interface"
-+	depends on ARM_SCPI_PROTOCOL || COMPILE_TEST
-+	  ---help---
-+	  This driver provides support for clocks that are controlled
-+	  by firmware that implements the SCPI interface.
+ config CLK_QORIQ
+ 	bool "Clock driver for Freescale QorIQ platforms"
+-	depends on (PPC_E500MC || ARM) && OF
++	depends on (PPC_E500MC || ARM || ARM64) && OF
+ 	---help---
+ 	  This adds the clock driver support for Freescale QorIQ platforms
+ 	  using common clock framework.
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index d9e4402..bae82ac 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -68,7 +68,10 @@ struct clockgen;
+  * If not set, cmux freq must be >= platform pll/2
+  */
+ #define CG_CMUX_GE_PLAT		1
 +
-+	  This driver uses SCPI Message Protocol to interact with the
-+	  firmware providing all the clock controls.
-+
- config COMMON_CLK_SI5351
- 	tristate "Clock driver for SiLabs 5351A/B/C"
- 	depends on I2C
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index d08b3e5985be..a381431bd950 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
- obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
- obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
- obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
-+obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
- obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
- obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
- obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
-diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
-new file mode 100644
-index 000000000000..e8323db300e2
---- /dev/null
-+++ b/drivers/clk/clk-scpi.c
-@@ -0,0 +1,312 @@
-+/*
-+ * System Control and Power Interface (SCPI) Protocol based clock driver
-+ *
-+ * Copyright (C) 2015 ARM Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program. If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/of.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/scpi_protocol.h>
-+
-+struct scpi_clk {
-+	u32 id;
-+	struct clk_hw hw;
-+	struct scpi_dvfs_info *info;
-+	struct scpi_ops *scpi_ops;
-+};
-+
-+#define to_scpi_clk(clk) container_of(clk, struct scpi_clk, hw)
-+
-+static unsigned long scpi_clk_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
+ #define CG_PLL_8BIT		2	/* PLLCnGSR[CFG] is 8 bits, not 6 */
++#define CG_VER3			4	/* version 3 cg: reg layout different */
++#define CG_LITTLE_ENDIAN	8
+ 
+ struct clockgen_chipinfo {
+ 	const char *compat, *guts_compat;
+@@ -94,6 +97,26 @@ struct clockgen {
+ 
+ static struct clockgen clockgen;
+ 
++static void cg_out(struct clockgen *cg, u32 val, u32 __iomem *reg)
 +{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+
-+	return clk->scpi_ops->clk_get_val(clk->id);
++	if (cg->info.flags & CG_LITTLE_ENDIAN)
++		iowrite32(val, reg);
++	else
++		iowrite32be(val, reg);
 +}
 +
-+static long scpi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
++static u32 cg_in(struct clockgen *cg, u32 __iomem *reg)
 +{
-+	/*
-+	 * We can't figure out what rate it will be, so just return the
-+	 * rate back to the caller. scpi_clk_recalc_rate() will be called
-+	 * after the rate is set and we'll know what rate the clock is
-+	 * running at then.
-+	 */
-+	return rate;
++	u32 val;
++
++	if (cg->info.flags & CG_LITTLE_ENDIAN)
++		val = ioread32(reg);
++	else
++		val = ioread32be(reg);
++
++	return val;
 +}
 +
-+static int scpi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			     unsigned long parent_rate)
-+{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+
-+	return clk->scpi_ops->clk_set_val(clk->id, rate);
-+}
-+
-+static const struct clk_ops scpi_clk_ops = {
-+	.recalc_rate = scpi_clk_recalc_rate,
-+	.round_rate = scpi_clk_round_rate,
-+	.set_rate = scpi_clk_set_rate,
-+};
-+
-+/* find closest match to given frequency in OPP table */
-+static int __scpi_dvfs_round_rate(struct scpi_clk *clk, unsigned long rate)
-+{
-+	int idx;
-+	u32 fmin = 0, fmax = ~0, ftmp;
-+	const struct scpi_opp *opp = clk->info->opps;
-+
-+	for (idx = 0; idx < clk->info->count; idx++, opp++) {
-+		ftmp = opp->freq;
-+		if (ftmp >= (u32)rate) {
-+			if (ftmp <= fmax)
-+				fmax = ftmp;
-+			break;
-+		} else if (ftmp >= fmin) {
-+			fmin = ftmp;
-+		}
-+	}
-+	return fmax != ~0 ? fmax : fmin;
-+}
-+
-+static unsigned long scpi_dvfs_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+	int idx = clk->scpi_ops->dvfs_get_idx(clk->id);
-+	const struct scpi_opp *opp;
-+
-+	if (idx < 0)
-+		return 0;
-+
-+	opp = clk->info->opps + idx;
-+	return opp->freq;
-+}
-+
-+static long scpi_dvfs_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *parent_rate)
-+{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+
-+	return __scpi_dvfs_round_rate(clk, rate);
-+}
-+
-+static int __scpi_find_dvfs_index(struct scpi_clk *clk, unsigned long rate)
-+{
-+	int idx, max_opp = clk->info->count;
-+	const struct scpi_opp *opp = clk->info->opps;
-+
-+	for (idx = 0; idx < max_opp; idx++, opp++)
-+		if (opp->freq == rate)
-+			return idx;
-+	return -EINVAL;
-+}
-+
-+static int scpi_dvfs_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct scpi_clk *clk = to_scpi_clk(hw);
-+	int ret = __scpi_find_dvfs_index(clk, rate);
-+
-+	if (ret < 0)
-+		return ret;
-+	return clk->scpi_ops->dvfs_set_idx(clk->id, (u8)ret);
-+}
-+
-+static const struct clk_ops scpi_dvfs_ops = {
-+	.recalc_rate = scpi_dvfs_recalc_rate,
-+	.round_rate = scpi_dvfs_round_rate,
-+	.set_rate = scpi_dvfs_set_rate,
-+};
-+
-+static const struct of_device_id scpi_clk_match[] = {
-+	{ .compatible = "arm,scpi-dvfs-clocks", .data = &scpi_dvfs_ops, },
-+	{ .compatible = "arm,scpi-variable-clocks", .data = &scpi_clk_ops, },
-+	{}
-+};
-+
-+static struct clk *
-+scpi_clk_ops_init(struct device *dev, const struct of_device_id *match,
-+		  struct scpi_clk *sclk, const char *name)
-+{
-+	struct clk_init_data init;
-+	struct clk *clk;
-+	unsigned long min = 0, max = 0;
-+
-+	init.name = name;
-+	init.flags = CLK_IS_ROOT;
-+	init.num_parents = 0;
-+	init.ops = match->data;
-+	sclk->hw.init = &init;
-+	sclk->scpi_ops = get_scpi_ops();
-+
-+	if (init.ops == &scpi_dvfs_ops) {
-+		sclk->info = sclk->scpi_ops->dvfs_get_info(sclk->id);
-+		if (IS_ERR(sclk->info))
-+			return NULL;
-+	} else if (init.ops == &scpi_clk_ops) {
-+		if (sclk->scpi_ops->clk_get_range(sclk->id, &min, &max) || !max)
-+			return NULL;
-+	} else {
-+		return NULL;
-+	}
-+
-+	clk = devm_clk_register(dev, &sclk->hw);
-+	if (!IS_ERR(clk) && max)
-+		clk_hw_set_rate_range(&sclk->hw, min, max);
-+	return clk;
-+}
-+
-+struct scpi_clk_data {
-+	struct scpi_clk **clk;
-+	unsigned int clk_num;
-+};
-+
-+static struct clk *
-+scpi_of_clk_src_get(struct of_phandle_args *clkspec, void *data)
-+{
-+	struct scpi_clk *sclk;
-+	struct scpi_clk_data *clk_data = data;
-+	unsigned int idx = clkspec->args[0], count;
-+
-+	for (count = 0; count < clk_data->clk_num; count++) {
-+		sclk = clk_data->clk[count];
-+		if (idx == sclk->id)
-+			return sclk->hw.clk;
-+	}
-+
-+	return ERR_PTR(-EINVAL);
-+}
-+
-+static int scpi_clk_add(struct device *dev, struct device_node *np,
-+			const struct of_device_id *match)
-+{
-+	struct clk **clks;
-+	int idx, count;
-+	struct scpi_clk_data *clk_data;
-+
-+	count = of_property_count_strings(np, "clock-output-names");
-+	if (count < 0) {
-+		dev_err(dev, "%s: invalid clock output count\n", np->name);
-+		return -EINVAL;
-+	}
-+
-+	clk_data = devm_kmalloc(dev, sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->clk_num = count;
-+	clk_data->clk = devm_kcalloc(dev, count, sizeof(*clk_data->clk),
-+				     GFP_KERNEL);
-+	if (!clk_data->clk)
-+		return -ENOMEM;
-+
-+	clks = devm_kcalloc(dev, count, sizeof(*clks), GFP_KERNEL);
-+	if (!clks)
-+		return -ENOMEM;
-+
-+	for (idx = 0; idx < count; idx++) {
-+		struct scpi_clk *sclk;
-+		const char *name;
-+		u32 val;
-+
-+		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
-+		if (!sclk)
-+			return -ENOMEM;
-+
-+		if (of_property_read_string_index(np, "clock-output-names",
-+						  idx, &name)) {
-+			dev_err(dev, "invalid clock name @ %s\n", np->name);
-+			return -EINVAL;
-+		}
-+
-+		if (of_property_read_u32_index(np, "clock-indices",
-+					       idx, &val)) {
-+			dev_err(dev, "invalid clock index @ %s\n", np->name);
-+			return -EINVAL;
-+		}
-+
-+		sclk->id = val;
-+
-+		clks[idx] = scpi_clk_ops_init(dev, match, sclk, name);
-+		if (IS_ERR_OR_NULL(clks[idx]))
-+			dev_err(dev, "failed to register clock '%s'\n", name);
-+		else
-+			dev_dbg(dev, "Registered clock '%s'\n", name);
-+		clk_data->clk[idx] = sclk;
-+	}
-+
-+	return of_clk_add_provider(np, scpi_of_clk_src_get, clk_data);
-+}
-+
-+static int scpi_clocks_remove(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *child, *np = dev->of_node;
-+
-+	for_each_available_child_of_node(np, child)
-+		of_clk_del_provider(np);
-+	return 0;
-+}
-+
-+static int scpi_clocks_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *child, *np = dev->of_node;
-+	const struct of_device_id *match;
-+
-+	if (!get_scpi_ops())
-+		return -ENXIO;
-+
-+	for_each_available_child_of_node(np, child) {
-+		match = of_match_node(scpi_clk_match, child);
-+		if (!match)
-+			continue;
-+		ret = scpi_clk_add(dev, child, match);
-+		if (ret) {
-+			scpi_clocks_remove(pdev);
-+			return ret;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static const struct of_device_id scpi_clocks_ids[] = {
-+	{ .compatible = "arm,scpi-clocks", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, scpi_clocks_id);
-+
-+static struct platform_driver scpi_clocks_driver = {
-+	.driver	= {
-+		.name = "scpi_clocks",
-+		.of_match_table = scpi_clocks_ids,
+ static const struct clockgen_muxinfo p2041_cmux_grp1 = {
+ 	{
+ 		[0] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
+@@ -429,6 +452,17 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.pll_mask = 0x03,
+ 	},
+ 	{
++		.compat = "fsl,ls2080a-clockgen",
++		.cmux_groups = {
++			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
++		},
++		.cmux_to_group = {
++			0, 0, 1, 1, -1
++		},
++		.pll_mask = 0x37,
++		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
 +	},
-+	.probe = scpi_clocks_probe,
-+	.remove = scpi_clocks_remove,
-+};
-+module_platform_driver(scpi_clocks_driver);
-+
-+MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
-+MODULE_DESCRIPTION("ARM SCPI clock driver");
-+MODULE_LICENSE("GPL v2");
++	{
+ 		.compat = "fsl,p2041-clockgen",
+ 		.guts_compat = "fsl,qoriq-device-config-1.0",
+ 		.init_periph = p2041_init_periph,
+@@ -575,7 +609,7 @@ static int mux_set_parent(struct clk_hw *hw, u8 idx)
+ 		return -EINVAL;
+ 
+ 	clksel = hwc->parent_to_clksel[idx];
+-	iowrite32be((clksel << CLKSEL_SHIFT) & CLKSEL_MASK, hwc->reg);
++	cg_out(hwc->cg, (clksel << CLKSEL_SHIFT) & CLKSEL_MASK, hwc->reg);
+ 
+ 	return 0;
+ }
+@@ -586,7 +620,7 @@ static u8 mux_get_parent(struct clk_hw *hw)
+ 	u32 clksel;
+ 	s8 ret;
+ 
+-	clksel = (ioread32be(hwc->reg) & CLKSEL_MASK) >> CLKSEL_SHIFT;
++	clksel = (cg_in(hwc->cg, hwc->reg) & CLKSEL_MASK) >> CLKSEL_SHIFT;
+ 
+ 	ret = hwc->clksel_to_parent[clksel];
+ 	if (ret < 0) {
+@@ -694,6 +728,7 @@ static struct clk * __init create_one_cmux(struct clockgen *cg, int idx)
+ 	if (!hwc)
+ 		return NULL;
+ 
++	hwc->cg = cg;
+ 	hwc->reg = cg->regs + 0x20 * idx;
+ 	hwc->info = cg->info.cmux_groups[cg->info.cmux_to_group[idx]];
+ 
+@@ -704,7 +739,7 @@ static struct clk * __init create_one_cmux(struct clockgen *cg, int idx)
+ 	 * default clksel) may be inappropriately excluded on certain
+ 	 * chips.
+ 	 */
+-	clksel = (ioread32be(hwc->reg) & CLKSEL_MASK) >> CLKSEL_SHIFT;
++	clksel = (cg_in(cg, hwc->reg) & CLKSEL_MASK) >> CLKSEL_SHIFT;
+ 	div = get_pll_div(cg, hwc, clksel);
+ 	if (!div)
+ 		return NULL;
+@@ -873,13 +908,36 @@ static void __init create_one_pll(struct clockgen *cg, int idx)
+ 	if (!(cg->info.pll_mask & (1 << idx)))
+ 		return;
+ 
+-	if (idx == PLATFORM_PLL)
+-		reg = cg->regs + 0xc00;
+-	else
+-		reg = cg->regs + 0x800 + 0x20 * (idx - 1);
++	if (cg->info.flags & CG_VER3) {
++		switch (idx) {
++		case PLATFORM_PLL:
++			reg = cg->regs + 0x60080;
++			break;
++		case CGA_PLL1:
++			reg = cg->regs + 0x80;
++			break;
++		case CGA_PLL2:
++			reg = cg->regs + 0xa0;
++			break;
++		case CGB_PLL1:
++			reg = cg->regs + 0x10080;
++			break;
++		case CGB_PLL2:
++			reg = cg->regs + 0x100a0;
++			break;
++		default:
++			WARN_ONCE(1, "index %d\n", idx);
++			return;
++		}
++	} else {
++		if (idx == PLATFORM_PLL)
++			reg = cg->regs + 0xc00;
++		else
++			reg = cg->regs + 0x800 + 0x20 * (idx - 1);
++	}
+ 
+ 	/* Get the multiple of PLL */
+-	mult = ioread32be(reg);
++	mult = cg_in(cg, reg);
+ 
+ 	/* Check if this PLL is disabled */
+ 	if (mult & PLL_KILL) {
+@@ -887,7 +945,8 @@ static void __init create_one_pll(struct clockgen *cg, int idx)
+ 		return;
+ 	}
+ 
+-	if ((cg->info.flags & CG_PLL_8BIT) && idx != PLATFORM_PLL)
++	if ((cg->info.flags & CG_VER3) ||
++	    ((cg->info.flags & CG_PLL_8BIT) && idx != PLATFORM_PLL))
+ 		mult = (mult & GENMASK(8, 1)) >> 1;
+ 	else
+ 		mult = (mult & GENMASK(6, 1)) >> 1;
+@@ -1168,6 +1227,7 @@ err:
+ CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
+ 
+ /* Legacy nodes */
+ CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
 -- 
-1.9.1
+1.7.9.5
 
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
