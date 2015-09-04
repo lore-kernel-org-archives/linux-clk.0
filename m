@@ -1,57 +1,110 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel@pengutronix.de,
-	patchwork-lst@pengutronix.de
-Subject: [PATCH v3 3/8] clk: imx27: retain early UART clocks during kernel init
-Date: Mon,  7 Sep 2015 17:09:28 +0200
-Message-Id: <1441638573-6701-4-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1441638573-6701-1-git-send-email-l.stach@pengutronix.de>
-References: <1441638573-6701-1-git-send-email-l.stach@pengutronix.de>
+Return-Path: <alim.akhtar@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+ k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
+ gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Subject: [PATCH 06/11] clk: samsung: exynos7: Corrects CMU_PERIC1 clocks names
+Date: Fri, 04 Sep 2015 17:07:11 +0530
+Message-id: <1441366637-28001-7-git-send-email-alim.akhtar@samsung.com>
+In-reply-to: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure to keep UART clocks enabled during kernel init if
-earlyprintk or earlycon are active.
+This patch rename CMU_PERIC1 clocks names to match with user manual.
+And also adds missing gate clock for aclk_peric1_66.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- drivers/clk/imx/clk-imx27.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/clk/samsung/clk-exynos7.c       |   38 ++++++++++++++++---------------
+ include/dt-bindings/clock/exynos7-clk.h |    3 ++-
+ 2 files changed, 22 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx27.c b/drivers/clk/imx/clk-imx27.c
-index d9d50d54ef2a..0d7b8df04dfa 100644
---- a/drivers/clk/imx/clk-imx27.c
-+++ b/drivers/clk/imx/clk-imx27.c
-@@ -47,6 +47,17 @@ static const char *ssi_sel_clks[] = { "spll_gate", "mpll", };
- static struct clk *clk[IMX27_CLK_MAX];
- static struct clk_onecell_data clk_data;
+diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+index 782943b..696489a 100644
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -340,6 +340,8 @@ static struct samsung_div_clock top0_div_clks[] __initdata = {
+ static struct samsung_gate_clock top0_gate_clks[] __initdata = {
+ 	GATE(CLK_ACLK_PERIC0_66, "aclk_peric0_66", "dout_aclk_peric0_66",
+ 		ENABLE_ACLK_TOP03, 20, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_ACLK_PERIC1_66, "aclk_peric1_66", "dout_aclk_peric1_66",
++		ENABLE_ACLK_TOP03, 12, CLK_SET_RATE_PARENT, 0),
  
-+static struct clk ** const uart_clks[] __initconst = {
-+	&clk[IMX27_CLK_PER1_GATE],
-+	&clk[IMX27_CLK_UART1_IPG_GATE],
-+	&clk[IMX27_CLK_UART2_IPG_GATE],
-+	&clk[IMX27_CLK_UART3_IPG_GATE],
-+	&clk[IMX27_CLK_UART4_IPG_GATE],
-+	&clk[IMX27_CLK_UART5_IPG_GATE],
-+	&clk[IMX27_CLK_UART6_IPG_GATE],
-+	NULL
-+};
-+
- static void __init _mx27_clocks_init(unsigned long fref)
- {
- 	BUG_ON(!ccm);
-@@ -163,6 +174,8 @@ static void __init _mx27_clocks_init(unsigned long fref)
+ 	GATE(CLK_SCLK_SPDIF, "sclk_spdif", "dout_sclk_spdif",
+ 		ENABLE_SCLK_TOP0_PERIC0, 4, CLK_SET_RATE_PARENT, 0),
+@@ -662,15 +664,15 @@ CLK_OF_DECLARE(exynos7_clk_peric0, "samsung,exynos7-clock-peric0",
+ 	exynos7_clk_peric0_init);
  
- 	clk_prepare_enable(clk[IMX27_CLK_EMI_AHB_GATE]);
+ /* List of parent clocks for Muxes in CMU_PERIC1 */
+-PNAME(mout_aclk_peric1_66_p)	= { "fin_pll", "dout_aclk_peric1_66" };
+-PNAME(mout_sclk_uart1_p)	= { "fin_pll", "sclk_uart1" };
+-PNAME(mout_sclk_uart2_p)	= { "fin_pll", "sclk_uart2" };
+-PNAME(mout_sclk_uart3_p)	= { "fin_pll", "sclk_uart3" };
+-PNAME(mout_sclk_spi0_p)		= { "fin_pll", "sclk_spi0" };
+-PNAME(mout_sclk_spi1_p)		= { "fin_pll", "sclk_spi1" };
+-PNAME(mout_sclk_spi2_p)		= { "fin_pll", "sclk_spi2" };
+-PNAME(mout_sclk_spi3_p)		= { "fin_pll", "sclk_spi3" };
+-PNAME(mout_sclk_spi4_p)		= { "fin_pll", "sclk_spi4" };
++PNAME(mout_aclk_peric1_66_user_p)	= { "fin_pll", "aclk_peric1_66" };
++PNAME(mout_sclk_uart1_user_p)	= { "fin_pll", "sclk_uart1" };
++PNAME(mout_sclk_uart2_user_p)	= { "fin_pll", "sclk_uart2" };
++PNAME(mout_sclk_uart3_user_p)	= { "fin_pll", "sclk_uart3" };
++PNAME(mout_sclk_spi0_user_p)		= { "fin_pll", "sclk_spi0" };
++PNAME(mout_sclk_spi1_user_p)		= { "fin_pll", "sclk_spi1" };
++PNAME(mout_sclk_spi2_user_p)		= { "fin_pll", "sclk_spi2" };
++PNAME(mout_sclk_spi3_user_p)		= { "fin_pll", "sclk_spi3" };
++PNAME(mout_sclk_spi4_user_p)		= { "fin_pll", "sclk_spi4" };
  
-+	imx_register_uart_clocks(uart_clks);
-+
- 	imx_print_silicon_rev("i.MX27", mx27_revision());
- }
+ static unsigned long peric1_clk_regs[] __initdata = {
+ 	MUX_SEL_PERIC10,
+@@ -681,24 +683,24 @@ static unsigned long peric1_clk_regs[] __initdata = {
+ };
  
+ static struct samsung_mux_clock peric1_mux_clks[] __initdata = {
+-	MUX(0, "mout_aclk_peric1_66_user", mout_aclk_peric1_66_p,
++	MUX(0, "mout_aclk_peric1_66_user", mout_aclk_peric1_66_user_p,
+ 		MUX_SEL_PERIC10, 0, 1),
+ 
+-	MUX_F(0, "mout_sclk_spi0_user", mout_sclk_spi0_p,
++	MUX_F(0, "mout_sclk_spi0_user", mout_sclk_spi0_user_p,
+ 		MUX_SEL_PERIC11, 0, 1, CLK_SET_RATE_PARENT, 0),
+-	MUX_F(0, "mout_sclk_spi1_user", mout_sclk_spi1_p,
++	MUX_F(0, "mout_sclk_spi1_user", mout_sclk_spi1_user_p,
+ 		MUX_SEL_PERIC11, 4, 1, CLK_SET_RATE_PARENT, 0),
+-	MUX_F(0, "mout_sclk_spi2_user", mout_sclk_spi2_p,
++	MUX_F(0, "mout_sclk_spi2_user", mout_sclk_spi2_user_p,
+ 		MUX_SEL_PERIC11, 8, 1, CLK_SET_RATE_PARENT, 0),
+-	MUX_F(0, "mout_sclk_spi3_user", mout_sclk_spi3_p,
++	MUX_F(0, "mout_sclk_spi3_user", mout_sclk_spi3_user_p,
+ 		MUX_SEL_PERIC11, 12, 1, CLK_SET_RATE_PARENT, 0),
+-	MUX_F(0, "mout_sclk_spi4_user", mout_sclk_spi4_p,
++	MUX_F(0, "mout_sclk_spi4_user", mout_sclk_spi4_user_p,
+ 		MUX_SEL_PERIC11, 16, 1, CLK_SET_RATE_PARENT, 0),
+-	MUX(0, "mout_sclk_uart1_user", mout_sclk_uart1_p,
++	MUX(0, "mout_sclk_uart1_user", mout_sclk_uart1_user_p,
+ 		MUX_SEL_PERIC11, 20, 1),
+-	MUX(0, "mout_sclk_uart2_user", mout_sclk_uart2_p,
++	MUX(0, "mout_sclk_uart2_user", mout_sclk_uart2_user_p,
+ 		MUX_SEL_PERIC11, 24, 1),
+-	MUX(0, "mout_sclk_uart3_user", mout_sclk_uart3_p,
++	MUX(0, "mout_sclk_uart3_user", mout_sclk_uart3_user_p,
+ 		MUX_SEL_PERIC11, 28, 1),
+ };
+ 
+diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
+index ba60a20..5a157f7 100644
+--- a/include/dt-bindings/clock/exynos7-clk.h
++++ b/include/dt-bindings/clock/exynos7-clk.h
+@@ -49,7 +49,8 @@
+ #define CLK_SCLK_PCM1			13
+ #define CLK_SCLK_I2S1			14
+ #define CLK_ACLK_PERIC0_66		15
+-#define TOP0_NR_CLK			16
++#define CLK_ACLK_PERIC1_66		16
++#define TOP0_NR_CLK			17
+ 
+ /* TOP1 */
+ #define DOUT_ACLK_FSYS1_200		1
 -- 
-2.5.0
+1.7.10.4
