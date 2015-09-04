@@ -1,62 +1,103 @@
-Return-Path: <ben.dooks@codethink.co.uk>
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-To: linux-kernel@lists.codethink.co.uk
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>,
-	stable@vger.kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	t-kristo@ti.com
-Subject: [PATCH v2] clk: ti: fix dual-registration of uart4_ick
-Date: Tue, 29 Sep 2015 15:01:08 +0100
-Message-Id: <1443535268-22586-1-git-send-email-ben.dooks@codethink.co.uk>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:43124 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751661AbbIDKyz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 4 Sep 2015 06:54:55 -0400
+Message-ID: <55E9787A.7050304@arm.com>
+Date: Fri, 04 Sep 2015 11:54:50 +0100
+From: Marc Zyngier <marc.zyngier@arm.com>
+MIME-Version: 1.0
+To: Bhupesh Sharma <bhupesh.sharma@freescale.com>, arnd@arndb.de,
+	mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+CC: bhupesh.linux@gmail.com, Catalin.Marinas@arm.com,
+	will.deacon@arm.com, olof@lixom.net,
+	Jaiprakash Singh <b44839@freescale.com>,
+	Alison Wang <alison.wang@freescale.com>,
+	Liu Gang <Gang.Liu@freescale.com>,
+	Minghuan Lian <Minghuan.Lian@freescale.com>,
+	Shaohui Xie <Shaohui.Xie@freescale.com>,
+	Nikhil Badola <nikhil.badola@freescale.com>,
+	Yangbo Lu <yangbo.lu@freescale.com>,
+	Scott Wood <scottwood@freescale.com>
+Subject: Re: [PATCH v2 07/10] dts/ls2085a: Update DTSI to add support of various
+ peripherals
+References: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On the OMAP AM3517 platform the uart4_ick gets registered
-twice, causing any power managment to /dev/ttyO3 to fail
-when trying to wake the device up.
+On 04/09/15 08:05, Bhupesh Sharma wrote:
+> This patch updates the LS2085a DTSI (DTS Include) file to add
+> support for various peripherals supported by FSL LS2085a SoC, for e.g.:
+> 	- USB 3.0 Host
+> 	- PMU
+> 	- CCN-504
+> 	- Watchdog
+> 	- SATA
+> 	- SPI
+> 	- PCIe
+> 	- etc.
+> 
+> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+> Signed-off-by: Jaiprakash Singh <b44839@freescale.com>
+> Signed-off-by: Alison Wang <alison.wang@freescale.com>
+> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
+> Signed-off-by: Minghuan Lian <Minghuan.Lian@freescale.com>
+> Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
+> Signed-off-by: Nikhil Badola <nikhil.badola@freescale.com>
+> Signed-off-by: Yangbo Lu <yangbo.lu@freescale.com>
+> Signed-off-by: Scott Wood <scottwood@freescale.com>
+> ---
+>  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi |  469 +++++++++++++++++++++++-
+>  1 file changed, 459 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+> index 333d942..5fee0a7 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
 
-This solves the following oops:
+[...]
 
-[] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
-[] PC is at serial_omap_pm+0x48/0x15c
-[] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
+>  	gic: interrupt-controller@6000000 {
+>  		compatible = "arm,gic-v3";
+>  		reg = <0x0 0x06000000 0 0x10000>, /* GIC Dist */
+> -		      <0x0 0x06100000 0 0x100000>; /* GICR (RD_base + SGI_base) */
+> +		      <0x0 0x06100000 0 0x100000>, /* GICR (RD_base + SGI_base) */
+> +		      <0x0 0x0c0c0000 0 0x2000>, /* GICC */
+> +		      <0x0 0x0c0d0000 0 0x1000>, /* GICH */
+> +		      <0x0 0x0c0e0000 0 0x20000>; /* GICV */
+>  		#interrupt-cells = <3>;
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+>  		interrupt-controller;
+>  		interrupts = <1 9 0x4>;
+> +
+> +		its: gic-its@6020000 {
+> +			compatible = "arm,gic-v3-its";
+> +			msi-controller;
+> +			reg = <0x0 0x6020000 0 0x20000>;
+> +		};
+> +	};
 
-Cc: stable@vger.kernel.org
-Cc: mturquette@baylibre.com
-Cc: sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-omap@vger.kernel.org
-Cc: t-kristo@ti.com
-Cc: linux-kernel@lists.codethink.co.uk
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
---
-v2:
-	- fix omap36xx series clock registration for uart4
----
- drivers/clk/ti/clk-3xxx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[...]
 
-diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
-index 5e12f32..8d94b97 100644
---- a/drivers/clk/ti/clk-3xxx.c
-+++ b/drivers/clk/ti/clk-3xxx.c
-@@ -374,7 +374,6 @@ static struct ti_dt_clk omap3xxx_clks[] = {
- 	DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
- 	DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
- 	DT_CLK(NULL, "uart3_ick", "uart3_ick"),
--	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
- 	DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
- 	DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
- 	DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
-@@ -523,6 +522,7 @@ static struct ti_dt_clk am35xx_clks[] = {
- static struct ti_dt_clk omap36xx_clks[] = {
- 	DT_CLK(NULL, "omap_192m_alwon_fck", "omap_192m_alwon_fck"),
- 	DT_CLK(NULL, "uart4_fck", "uart4_fck"),
-+	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
- 	{ .node_name = NULL },
- };
- 
+>  	fsl_mc: fsl-mc@80c000000 {
+>  		compatible = "fsl,qoriq-mc";
+> +		#stream-id-cells = <2>;
+>  		reg = <0x00000008 0x0c000000 0 0x40>,	 /* MC portal base */
+>  		      <0x00000000 0x08340000 0 0x40000>; /* MC control reg */
+> +		lpi-parent = <&its>;
+
+I'm afraid there is no such thing as "lpi_parent" as a property. We have
+msi_parent, which is (I think) what you want, and is dealt with in the
+ITS driver. Also, you'll need to describe the DeviceIDs that can be
+generated by this device so that the ITS can be correctly programmed.
+
+Thanks,
+
+	M.
 -- 
-2.5.3
+Jazz is not dead. It just smells funny...
