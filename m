@@ -1,90 +1,87 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH 09/16] clk: at91: pmc: merge at91_pmc_init in atmel_pmc_probe
-Date: Wed, 30 Sep 2015 18:11:02 +0200
-Message-Id: <1443629469-15086-10-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bl2on0111.outbound.protection.outlook.com ([65.55.169.111]:49062
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753896AbbIDG7M (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 4 Sep 2015 02:59:12 -0400
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+	<linux-clk@vger.kernel.org>
+CC: <bhupesh.linux@gmail.com>, <Catalin.Marinas@arm.com>,
+	<will.deacon@arm.com>, <bhupesh.sharma@freescale.com>,
+	<olof@lixom.net>
+Subject: [PATCH v2 05/10] doc/bindings: Update clk-qoriq bindings for FSL's chassis-3.0 SoCs
+Date: Fri, 4 Sep 2015 12:27:47 +0530
+Message-ID: <1441349872-4560-6-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-at91_pmc_init() doesn't do much anymore, merge it in atmel_pmc_probe().
+This patch updates the 'clk-qoriq' device-tree bindings for
+chassis-3.0 compliant SoCs from FSL, for e.g. LS2080A
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
 ---
- drivers/clk/at91/pmc.c | 31 ++++++-------------------------
- 1 file changed, 6 insertions(+), 25 deletions(-)
+ .../devicetree/bindings/clock/qoriq-clock.txt      |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 45dd32bf2531..acc8f518b392 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -223,29 +223,6 @@ static const struct at91_pmc_caps sama5d3_caps = {
- 			  AT91_PMC_CFDEV,
- };
+diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+index 16a3ec4..f0a4b1c 100644
+--- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
++++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+@@ -14,6 +14,7 @@ Chassis Version		Example Chips
+ ---------------		-------------
+ 1.0			p4080, p5020, p5040
+ 2.0			t4240, b4860
++3.0			ls2080a
  
--static struct at91_pmc *__init at91_pmc_init(struct device_node *np,
--					     struct regmap *regmap,
--					     void __iomem *regbase, int virq,
--					     const struct at91_pmc_caps *caps)
--{
--	struct at91_pmc *pmc;
--
--	if (!regbase || !virq ||  !caps)
--		return NULL;
--
--	at91_pmc_base = regbase;
--
--	pmc = kzalloc(sizeof(*pmc), GFP_KERNEL);
--	if (!pmc)
--		return NULL;
--
--	pmc->regmap = regmap;
--	pmc->virq = virq;
--	pmc->caps = caps;
--
--	return pmc;
--}
--
- static const struct of_device_id atmel_pmc_dt_ids[] = {
- 	{ .compatible = "atmel,at91rm9200-pmc", .data = &at91rm9200_caps },
- 	{ .compatible = "atmel,at91sam9260-pmc", .data = &at91sam9260_caps },
-@@ -262,11 +239,12 @@ static int __init atmel_pmc_probe(struct platform_device *pdev)
- 	const struct at91_pmc_caps *caps;
- 	struct device_node *np = pdev->dev.of_node;
- 	struct at91_pmc *pmc;
--	void __iomem *regbase = of_iomap(np, 0);
- 	struct regmap *regmap;
- 	int virq;
- 	int ret = 0;
+ 1. Clock Block Binding
  
-+	at91_pmc_base = of_iomap(np, 0);
-+
- 	regmap = syscon_node_to_regmap(np);
- 	if (IS_ERR(regmap))
- 		panic("Could not retrieve syscon regmap");
-@@ -278,10 +256,13 @@ static int __init atmel_pmc_probe(struct platform_device *pdev)
- 	of_id = of_match_device(atmel_pmc_dt_ids, &pdev->dev);
- 	caps = of_id->data;
- 
--	pmc = at91_pmc_init(np, regmap, regbase, virq, caps);
-+	pmc = kzalloc(sizeof(*pmc), GFP_KERNEL);
- 	if (!pmc)
- 		return 0;
- 
-+	pmc->regmap = regmap;
-+	pmc->virq = virq;
-+	pmc->caps = caps;
- 	pmc->irqdomain = irq_domain_add_linear(pdev->dev.of_node, 32,
- 					       &pmc_irq_ops, pmc);
- 	if (!pmc->irqdomain)
+@@ -32,9 +33,11 @@ Required properties:
+ 	* "fsl,b4420-clockgen"
+ 	* "fsl,b4860-clockgen"
+ 	* "fsl,ls1021a-clockgen"
+-	Chassis-version clock strings include:
++	* "fsl,ls2080a-clockgen"
++	Chassis clock strings include:
+ 	* "fsl,qoriq-clockgen-1.0": for chassis 1.0 clocks
+ 	* "fsl,qoriq-clockgen-2.0": for chassis 2.0 clocks
++	* "fsl,qoriq-clockgen-3.0": for chassis 3.0 clocks
+ - reg: Describes the address of the device's resources within the
+ 	address space defined by its parent bus, and resource zero
+ 	represents the clock register set
+@@ -96,18 +99,23 @@ Required properties:
+ - compatible : Should include one of the following:
+ 	* "fsl,qoriq-core-pll-1.0" for core PLL clocks (v1.0)
+ 	* "fsl,qoriq-core-pll-2.0" for core PLL clocks (v2.0)
++	* "fsl,qoriq-core-pll-3.0" for core PLL clocks (v3.0)
+ 	* "fsl,qoriq-core-mux-1.0" for core mux clocks (v1.0)
+ 	* "fsl,qoriq-core-mux-2.0" for core mux clocks (v2.0)
++	* "fsl,qoriq-core-mux-3.0" for core mux clocks (v3.0)
+ 	* "fsl,qoriq-sysclk-1.0": for input system clock (v1.0).
+ 		It takes parent's clock-frequency as its clock.
+ 	* "fsl,qoriq-sysclk-2.0": for input system clock (v2.0).
+ 		It takes parent's clock-frequency as its clock.
++	* "fsl,qoriq-sysclk-3.0": for input system clock (v3.0).
++		It takes parent's clock-frequency as its clock.
+ 	* "fsl,qoriq-platform-pll-1.0" for the platform PLL clock (v1.0)
+ 	* "fsl,qoriq-platform-pll-2.0" for the platform PLL clock (v2.0)
++	* "fsl,qoriq-platform-pll-3.0" for the platform PLL clock (v3.0)
+ - #clock-cells: From common clock binding. The number of cells in a
+-	clock-specifier. Should be <0> for "fsl,qoriq-sysclk-[1,2].0"
+-	clocks, or <1> for "fsl,qoriq-core-pll-[1,2].0" clocks.
+-	For "fsl,qoriq-core-pll-[1,2].0" clocks, the single
++	clock-specifier. Should be <0> for "fsl,qoriq-sysclk-[1,2,3].0"
++	clocks, or <1> for "fsl,qoriq-core-pll-[1,2,3].0" clocks.
++	For "fsl,qoriq-core-pll-[1,2,3].0" clocks, the single
+ 	clock-specifier cell may take the following values:
+ 	* 0 - equal to the PLL frequency
+ 	* 1 - equal to the PLL frequency divided by 2
 -- 
-2.1.4
+1.7.9.5
+
+
