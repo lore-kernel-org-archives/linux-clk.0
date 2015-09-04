@@ -1,68 +1,76 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v3 0/3] cpufreq-dt: add suspend frequency support
-Date: Thu, 03 Sep 2015 20:11:29 +0200
-Message-id: <1441303892-32004-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+MIME-Version: 1.0
+In-Reply-To: <CABgxDo+otZrYoqTNK-ea=L6Dsd5p_b_MFCi4H4XJZZ25PV_qnA@mail.gmail.com>
+References: <1440322357-2621-1-git-send-email-romain.perier@gmail.com>
+ <CABgxDo+otZrYoqTNK-ea=L6Dsd5p_b_MFCi4H4XJZZ25PV_qnA@mail.gmail.com>
+Date: Fri, 4 Sep 2015 08:50:50 +0200
+Message-ID: <CABgxDoLgqfzO-Sb_rKHe=-GuMaKWMihHhktx6sDSM6M=Q+Koaw@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: rockchip: Add pclk_peri to critical clocks on
+ RK3066/RK3188
+From: Romain Perier <romain.perier@gmail.com>
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi all,
 
-This patch series adds suspend frequency support (using opp-v2
-bindings and suspend-opp functionality) to cpufreq-dt driver and
-then adds suspend opp for Exynos4412 based boards.
+just a reminder, I sent this patch two weeks ago, rk3xxx-based
+platforms still need it, it fixes a freeze during boot.
 
-This patch series fixes suspend/resume support on Exynos4412
-based Trats2 board and reboot hang on Exynos4412 based Odroid
-U3 board.
+Regards,
+Romain
 
-Changes since v2:
-- rewrited to use suspend-opp functionality
+2015-08-31 16:42 GMT+02:00 Romain Perier <romain.perier@gmail.com>:
+> ping
+>
+> 2015-08-23 11:32 GMT+02:00 Romain Perier <romain.perier@gmail.com>:
+>> Now that the rockchip clock subsystem does clock gating with GPIO banks,
+>> these are no longer enabled once during probe and no longer stay enabled
+>> for eternity. When all these clocks are disabled, the parent clock pclk_peri
+>> might be disabled too, as no other child claims it. So, we need to add pclk_peri
+>> to the critical clocks.
+>>
+>> Signed-off-by: Romain Perier <romain.perier@gmail.com>
+>> Tested-by: Michael Niewoehner <linux@mniewoehner.de>
+>> ---
+>>
+>> changes in v2:
+>> - Improved commit messages
+>> - Added "Tested-by" from Michael Niewoehner, as he tested v1 and no code changed
+>>
+>>  drivers/clk/rockchip/clk-rk3188.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+>> index bf20214..839a22a 100644
+>> --- a/drivers/clk/rockchip/clk-rk3188.c
+>> +++ b/drivers/clk/rockchip/clk-rk3188.c
+>> @@ -717,6 +717,7 @@ static const char *const rk3188_critical_clocks[] __initconst = {
+>>         "aclk_peri",
+>>         "hclk_peri",
+>>         "pclk_cpu",
+>> +       "pclk_peri",
+>>  };
+>>
+>>  static void __init rk3188_common_clk_init(struct device_node *np)
+>> --
+>> 2.1.4
+>>
 
-Changes since v1:
-- removed superfluous ";"
-
-Depends on:
-- next-20150902 branch of linux-next kernel tree
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-
-Bartlomiej Zolnierkiewicz (3):
-  PM / OPP: add dev_pm_opp_get_suspend_opp() helper
-  cpufreq-dt: add suspend frequency support
-  ARM: dts: add suspend opp to exynos4412
-
- arch/arm/boot/dts/exynos4412.dtsi |  1 +
- drivers/base/power/opp.c          | 28 ++++++++++++++++++++++++++++
- drivers/cpufreq/cpufreq-dt.c      | 32 ++++++++++++++++++++++++++++++++
- include/linux/pm_opp.h            |  6 ++++++
- 4 files changed, 67 insertions(+)
-
--- 
-1.9.1
-
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
