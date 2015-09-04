@@ -1,65 +1,36 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CANqRtoSccKdT9W_xhJ-xNQjbrJBEfGgn4uHaYM7=ieZt3gTT0g@mail.gmail.com>
-References: <20150826074309.4298.76147.sendpatchset@little-apple>
-	<CAMuHMdVXJ8Te_Rwn2WZCdXdh_+0__S6QEp7ZBzggpY-UgqtqLA@mail.gmail.com>
-	<CANqRtoSccKdT9W_xhJ-xNQjbrJBEfGgn4uHaYM7=ieZt3gTT0g@mail.gmail.com>
-Date: Wed, 2 Sep 2015 09:30:03 +0200
-Message-ID: <CAMuHMdU9B1pkSLUwW0C9_6z+AWUYEMUrFGd82QSjw6HS8A_PRw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: shmobile: Get rid of CONFIG_SHMOBILE_MULTI
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <alim.akhtar@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+ k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
+ gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Subject: [PATCH 10/11] clk: samsung: exynos7: Add missing fixed_clks to cmu_info
+Date: Fri, 04 Sep 2015 17:07:15 +0530
+Message-id: <1441366637-28001-11-git-send-email-alim.akhtar@samsung.com>
+In-reply-to: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus,
+FSYS0 fixed clocks are not added to fsys0_cmu_info, this make
+some of the usb clocks as orphan. This fixes the same.
 
-On Wed, Sep 2, 2015 at 8:52 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> On Wed, Aug 26, 2015 at 4:48 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Wed, Aug 26, 2015 at 9:43 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
->>> From: Magnus Damm <damm+renesas@opensource.se>
->>>
->>> Shmobile is all multiplatform these days, so get rid of the
->>> reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
->>> enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
->>> MSTP depending on if they are included in the SoC or not.
->>>
->>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
->>> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>> ---
->>>
->>>  Changes since V1:
->>>  - dropped DIV6 from R-Car Gen1 variants - thanks Geert!
->>
->> BTW, you forgot to mention, but it's important for Mike and Stephen to
->> know that this should not be queued up in a branch that still has
->> ARCH_SHMOBILE_LEGACY.
->
-> Allow me to clarify one thing.
->
-> Your comment is true for this older version of this patch, but newer
-> versions such as:
-> [PATCH v5 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
-> and later versions do not have this dependency on ARCH_SHMOBILE_LEGACY cleanups.
->
-> So newer versions can be merged at any time without any special dependencies.
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos7.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-That's correct, as they don't get rid of CONFIG_ARCH_SHMOBILE_MULTI in
-drivers/clk/Makefile...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+index f47a2d4..43cfee0 100644
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -936,6 +936,8 @@ static struct samsung_gate_clock fsys0_gate_clks[] __initdata = {
+ };
+ 
+ static struct samsung_cmu_info fsys0_cmu_info __initdata = {
++	.fixed_clks		= fixed_rate_clks_fsys0,
++	.nr_fixed_clks		= ARRAY_SIZE(fixed_rate_clks_fsys0),
+ 	.mux_clks		= fsys0_mux_clks,
+ 	.nr_mux_clks		= ARRAY_SIZE(fsys0_mux_clks),
+ 	.gate_clks		= fsys0_gate_clks,
+-- 
+1.7.10.4
