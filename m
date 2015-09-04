@@ -1,53 +1,71 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Sat, 19 Sep 2015 15:20:43 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com
-Subject: [GIT PULL] clk: fixes for 4.3-rc2
-Message-ID: <20150919222043.GD23081@codeaurora.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <BY1PR0301MB1303E56B5462BCD0C77C7E4D82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+ <1441349872-4560-4-git-send-email-bhupesh.sharma@freescale.com>
+ <CADRPPNR11BD4WfXTWoQ28rZCd_BJuhdWu49E6jjpO29CH2s5Ow@mail.gmail.com>
+ <BY1PR0301MB1303E56B5462BCD0C77C7E4D82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
+Date: Fri, 4 Sep 2015 16:12:59 -0500
+Message-ID: <CADRPPNQFxqNqgvrL9eVhaDX-SYRJxmGDd87zu_XHDHY6afiu3g@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] Documentation/dts: Add bindings for QIXIS FPGA
+ controller found on FSL boards
+From: Li Yang <leoli@freescale.com>
+To: Sharma Bhupesh <bhupesh.sharma@freescale.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+ "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
+ Singh Jaiprakash <jaiprakash.singh@freescale.com>,
+ "will.deacon@arm.com" <will.deacon@arm.com>, "olof@lixom.net" <olof@lixom.net>,
+ "bhupesh.linux@gmail.com" <bhupesh.linux@gmail.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 3bba75a2ec32bd5fa7024a4de3b8cf9ee113a76a:
+On Fri, Sep 4, 2015 at 3:16 PM, Sharma Bhupesh
+<bhupesh.sharma@freescale.com> wrote:
+>> From: pku.leo@gmail.com [mailto:pku.leo@gmail.com]
+>> Sent: Friday, September 04, 2015 10:27 PM
+>> On Fri, Sep 4, 2015 at 1:57 AM, Bhupesh Sharma
+>> <bhupesh.sharma@freescale.com> wrote:
+>> > This patch adds bindings for QIXIS FPGA controller found on FSL boards.
+>>
+>> A general comment: when you are updating the device tree bindings.
+>> You should cc the devicetree@vger.kernel.org mailing list.
+>>
+>> >
+>> > Some Freescale boards like LS2080AQDS/LS2080ARDB have an on-board
+>> > FPGA/CPLD connected to the IFC controller. The bindings specified in
+>> > this patch cater to those on-board FPGA/CPLD controllers.
+>>
+>> We already have the binding defined in
+>> Documentation/devicetree/bindings/powerpc/fsl/board.txt.  We probably
+>> should just move it to a more generic location.
+>
+> Consolidation of powerpc and ARM bindings is something that needs to be
+> targeted by a separate patch-series, perhaps in future.
+>
+> There are a number of duplications that can be looked into, but I don't
+> think this patchset should depend on that.
 
-  clk: rockchip: Add pclk_peri to critical clocks on RK3066/RK3188 (2015-09-10 13:55:30 -0700)
+There might be some duplication, but we shouldn't be adding more.  :)
+I would rather you directly updating that file than creating a new
+file even though the original one was in a wrong directory.
 
-are available in the git repository at:
+Regards,
+Leo
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to d34e210ed3a28050441f15228fd5ed929028d9cd:
-
-  drivers: clk: st: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x (2015-09-17 11:51:43 -0700)
-
-----------------------------------------------------------------
-A few driver fixes for tegra, rockchip, and st SoCs and a two-liner
-in the framework to avoid oops when get_parent ops return out of range
-values on tegra platforms.
-
-----------------------------------------------------------------
-Gabriel Fernandez (1):
-      drivers: clk: st: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x
-
-Heiko Stübner (1):
-      clk: rockchip: add critical clock for rk3368
-
-Mans Rullgard (1):
-      clk: check for invalid parent index of orphans in __clk_init()
-
-Thierry Reding (1):
-      clk: tegra: dfll: Properly protect OPP list
-
- drivers/clk/clk.c                 |  3 ++-
- drivers/clk/rockchip/clk-rk3368.c |  6 ++++++
- drivers/clk/st/clkgen-fsyn.c      |  8 ++++----
- drivers/clk/st/clkgen-pll.c       | 12 ++++++------
- drivers/clk/tegra/clk-dfll.c      |  8 +++++++-
- 5 files changed, 25 insertions(+), 12 deletions(-)
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
