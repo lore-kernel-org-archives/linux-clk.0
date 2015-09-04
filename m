@@ -1,65 +1,44 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Date: Wed, 2 Sep 2015 16:33:53 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Stefan Roese <sr@denx.de>, Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH] clk: spear600: Fix adc clock device name
-Message-ID: <20150902110353.GE26744@linux>
-References: <1441190517-20235-1-git-send-email-sr@denx.de>
- <20150902110213.GD26744@linux>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-la0-f41.google.com ([209.85.215.41]:35204 "EHLO
+	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932856AbbIDVbX (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 4 Sep 2015 17:31:23 -0400
+Received: by lagj9 with SMTP id j9so21656556lag.2
+        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2015 14:31:22 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20150902110213.GD26744@linux>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Vipul Kumar Samar <vipulkumar.samar@st.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+In-Reply-To: <1441350322-4671-2-git-send-email-bhupesh.sharma@freescale.com>
+References: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
+	<1441350322-4671-2-git-send-email-bhupesh.sharma@freescale.com>
+Date: Fri, 4 Sep 2015 16:31:22 -0500
+Message-ID: <CADRPPNRzW7A-D+0Bg7ELT229zQ5VKrj1PAdv8Qq9qARGP_cwnA@mail.gmail.com>
+Subject: Re: [PATCH v2 08/10] dts/ls2085a: Update Simulator DTS to add support
+ of various peripherals
+From: Li Yang <leoli@freescale.com>
+To: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, marc.zyngier@arm.com,
+	linux-clk@vger.kernel.org, Catalin.Marinas@arm.com,
+	Bhupesh SHARMA <bhupesh.linux@gmail.com>, will.deacon@arm.com,
+	olof@lixom.net
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02-09-15, 16:32, Viresh Kumar wrote:
-> On 02-09-15, 12:41, Stefan Roese wrote:
-> > The device name for the adc clock is incorrect. This results in the
-> > IIO ADC driver to fail while probing for the clock. This patch
-> > fixes the name and the ADC driver is now started correctly.
-> > 
-> > Signed-off-by: Stefan Roese <sr@denx.de>
-> > Cc: Vipul Kumar Samar <vipulkumar.samar@st.com>
-> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> > Cc: Mike Turquette <mturquette@linaro.org>
-> > ---
-> >  drivers/clk/spear/spear6xx_clock.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/spear/spear6xx_clock.c b/drivers/clk/spear/spear6xx_clock.c
-> > index 4f649c9..3e43244 100644
-> > --- a/drivers/clk/spear/spear6xx_clock.c
-> > +++ b/drivers/clk/spear/spear6xx_clock.c
-> > @@ -316,7 +316,7 @@ void __init spear6xx_clk_init(void __iomem *misc_base)
-> >  	/* clock derived from apb clk */
-> >  	clk = clk_register_gate(NULL, "adc_clk", "apb_clk", 0, PERIP1_CLK_ENB,
-> >  			ADC_CLK_ENB, 0, &_lock);
-> > -	clk_register_clkdev(clk, NULL, "adc");
-> > +	clk_register_clkdev(clk, NULL, "d8200000.adc");
-> >  
-> >  	clk = clk_register_fixed_factor(NULL, "gpio0_clk", "apb_clk", 0, 1, 1);
-> >  	clk_register_clkdev(clk, NULL, "f0100000.gpio");
-> 
-> Sigh. Its fixed for all other boards, but this.
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+On Fri, Sep 4, 2015 at 2:05 AM, Bhupesh Sharma
+<bhupesh.sharma@freescale.com> wrote:
+> This patch updates the LS2085a simulator DTS to add support of various
 
-Sending to Mike's updated email id.
+LS2080...
 
--- 
-viresh
+> peripherals which are supported on the simulator platform and explicitly
+> disables those which are yet not supported on the platform.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+I don't know if there will be any people outside Freescale would get
+this simulator.  If not, we should just remove this file.
+
+>
+> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+> ---
+>  arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts |   54 ++++++++++++++++++--
+>  1 file changed, 49 insertions(+), 5 deletions(-)
