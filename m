@@ -1,107 +1,75 @@
-Return-Path: <l.stach@pengutronix.de>
-Message-ID: <1441617354.28391.5.camel@pengutronix.de>
-Subject: Re: [PATCH v2 1/8] clk: imx: add common logic to detect early UART
- usage
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,
- patchwork-lst@pengutronix.de, kernel@pengutronix.de,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date: Mon, 07 Sep 2015 11:15:54 +0200
-In-Reply-To: <20150907090603.GU9999@pengutronix.de>
-References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
-	 <1441382419-4343-2-git-send-email-l.stach@pengutronix.de>
-	 <20150907090603.GU9999@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.131]:38823 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932854AbbIDARY (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 3 Sep 2015 20:17:24 -0400
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH v3] clk: rockchip: reset init state before mmc card initialization
+Date: Fri,  4 Sep 2015 08:15:33 +0800
+Message-Id: <1441325733-4131-1-git-send-email-shawn.lin@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, den 07.09.2015, 11:06 +0200 schrieb Uwe Kleine-König:
-> Hello Lucas,
-> 
-> On Fri, Sep 04, 2015 at 06:00:12PM +0200, Lucas Stach wrote:
-> > Both earlycon and eralyprintk depend on the bootloader setup UART
-> > clocks being retained. This patch adds the common logic to detect such
-> > situations and make the information available to the clock drivers, as
-> > well as adding the facilities to disable those clocks at the end of
-> > the kernel init.
-> > 
-> > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> > ---
-> >  drivers/clk/imx/clk.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  drivers/clk/imx/clk.h |  1 +
-> >  2 files changed, 47 insertions(+)
-> > 
-> > diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-> > index df12b5307175..3357e29e43ab 100644
-> > --- a/drivers/clk/imx/clk.c
-> > +++ b/drivers/clk/imx/clk.c
-> > @@ -73,3 +73,49 @@ void imx_cscmr1_fixup(u32 *val)
-> >  	*val ^= CSCMR1_FIXUP;
-> >  	return;
-> >  }
-> > +
-> > +static int __initdata imx_keep_uart_clocks;
-> > +static struct clk __initdata ***imx_uart_clocks;
-> > +
-> > +static int __init imx_keep_uart_clocks_param(char *str)
-> > +{
-> > +	imx_keep_uart_clocks = 1;
-> > +
-> > +	return 0;
-> > +}
-> > +__setup_param("earlycon", imx_keep_uart_earlycon,
-> > +	      imx_keep_uart_clocks_param, 0);
-> > +__setup_param("earlyprintk", imx_keep_uart_earlyprintk,
-> > +	      imx_keep_uart_clocks_param, 0);
-> > +
-> > +void __init imx_register_uart_clocks(struct clk **clks[])
-> 
-> const struct clk **clks[]?
-> 
-Yep, will do.
+mmc host controller's IO input/output timing is unpredictable if
+bootloader execute tuning for HS200 mode. It might make kernel failed
+to initialize mmc card in identification mode. The root cause is
+tuning phase and degree setting for HS200 mode in bootloader aren't
+applicable to that of identification mode in kernel stage. Anyway, we
+can't force all bootloaders to reset tuning phase and degree setting
+before into kernel. Simply reset it in rockchip_clk_register_mmc.
 
-> I wonder why you need an array of pointers to pointers of clocks. Isn't
-> one indirection less possible and more easy?
-> 
-No, this is not easily possible if we want to use the auto-discarding of
-the clocks array and a simple static initialization. The clock pointers
-are only set up after the clock drivers probe routine has run, so if I
-want to point to the actual clocks I would need to dynamically populate
-the array and either dynamically allocate it, or would need to pre-size
-the static array.
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-So this added indirection and slight complication of the the common code
-cuts out some lines of code and chances to get things wrong in the
-individual clock drivers. So I think the trade off I made here is
-justified.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+---
 
-> > +{
-> > +	if (imx_keep_uart_clocks) {
-> > +		int i;
-> > +
-> > +		imx_uart_clocks = clks;
-> > +		for (i = 0;; i++) {
-> > +			if (imx_uart_clocks[i])
-> > +				clk_prepare_enable(*imx_uart_clocks[i]);
-> > +			else
-> > +				break;
-> > +		}
-> 
-> I would have written this as:
-> 
-> 	for (i = 0; imx_uart_clocks[i]; ++i)
-> 		clk_prepare_enable(*imx_uart_clocks[i]);
-> 
-> but I guess that's a matter of taste.
-> 
-Philipp agrees with you. ;) But I like the more explicit style a bit
-more.
+Changes in v3:
+- remove the function call
+- add Heiko's tag
 
-Regards,
-Lucas
+Changes in v2:
+- rename to rockchip_clk_mmc_reset
+- simplifying the code
 
+ drivers/clk/rockchip/clk-mmc-phase.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+index 9b61342..1c8162e 100644
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -41,6 +41,8 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw *hw,
+ #define ROCKCHIP_MMC_DEGREE_MASK 0x3
+ #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
+ #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
++#define ROCKCHIP_MMC_INIT_STATE_RESET 0x1
++#define ROCKCHIP_MMC_INIT_STATE_SHIFT 1
+ 
+ #define PSECS_PER_SEC 1000000000000LL
+ 
+@@ -143,6 +145,15 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+ 	mmc_clock->reg = reg;
+ 	mmc_clock->shift = shift;
+ 
++	/*
++	 * Assert init_state to soft reset the CLKGEN
++	 * for mmc tuning phase and degree
++	 */
++	if (mmc_clock->shift == ROCKCHIP_MMC_INIT_STATE_SHIFT)
++		writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_RESET,
++				     ROCKCHIP_MMC_INIT_STATE_RESET,
++				     mmc_clock->shift), mmc_clock->reg);
++
+ 	clk = clk_register(NULL, &mmc_clock->hw);
+ 	if (IS_ERR(clk))
+ 		goto err_free;
 -- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
+2.3.7
+
+
