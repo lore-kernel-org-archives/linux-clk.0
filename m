@@ -1,76 +1,97 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH 16/16] clk: at91: pmc: drop at91_pmc_base
-Date: Wed, 30 Sep 2015 18:11:09 +0200
-Message-Id: <1443629469-15086-17-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+	linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de
+Subject: [PATCH v2 7/8] clk: imx6: retain early UART clocks during kernel init
+Date: Fri,  4 Sep 2015 18:00:18 +0200
+Message-Id: <1441382419-4343-8-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
+References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-at91_pmc_base is not used anymore, remove it along with at91_pmc_read and
-at91_pmc_write.
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 ---
- drivers/clk/at91/pmc.c       |  5 -----
- include/linux/clk/at91_pmc.h | 12 ------------
- 2 files changed, 17 deletions(-)
+ drivers/clk/imx/clk-imx6q.c  | 6 ++++++
+ drivers/clk/imx/clk-imx6sl.c | 6 ++++++
+ drivers/clk/imx/clk-imx6sx.c | 6 ++++++
+ 3 files changed, 18 insertions(+)
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 3e150967b45e..79d8cbc74be5 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -41,9 +41,6 @@ struct at91_pmc {
- 	u32 imr;
- };
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index d046f8e43de8..a8a9603f4d71 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -130,6 +130,10 @@ static inline int clk_on_imx6dl(void)
+ 	return of_machine_is_compatible("fsl,imx6dl");
+ }
  
--void __iomem *at91_pmc_base;
--EXPORT_SYMBOL_GPL(at91_pmc_base);
--
- int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 			  struct clk_range *range)
++static struct clk **uart_clks[] __initdata = { &clk[IMX6QDL_CLK_UART_IPG],
++					       &clk[IMX6QDL_CLK_UART_SERIAL],
++					       NULL };
++
+ static void __init imx6q_clocks_init(struct device_node *ccm_node)
  {
-@@ -240,8 +237,6 @@ static int __init atmel_pmc_probe(struct platform_device *pdev)
- 	int virq;
- 	int ret = 0;
+ 	struct device_node *np;
+@@ -534,5 +538,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	/* All existing boards with PCIe use LVDS1 */
+ 	if (IS_ENABLED(CONFIG_PCI_IMX6))
+ 		clk_set_parent(clk[IMX6QDL_CLK_LVDS1_SEL], clk[IMX6QDL_CLK_SATA_REF_100M]);
++
++	imx_register_uart_clocks(uart_clks);
+ }
+ CLK_OF_DECLARE(imx6q, "fsl,imx6q-ccm", imx6q_clocks_init);
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index a0d4cf26cfa9..cbad1bb7d3de 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -184,6 +184,10 @@ void imx6sl_set_wait_clk(bool enter)
+ 		imx6sl_enable_pll_arm(false);
+ }
  
--	at91_pmc_base = of_iomap(np, 0);
--
- 	regmap = syscon_node_to_regmap(np);
- 	if (IS_ERR(regmap))
- 		panic("Could not retrieve syscon regmap");
-diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
-index 7669f7618f39..b80b98b4df63 100644
---- a/include/linux/clk/at91_pmc.h
-+++ b/include/linux/clk/at91_pmc.h
-@@ -16,18 +16,6 @@
- #ifndef AT91_PMC_H
- #define AT91_PMC_H
++static struct clk **uart_clks[] __initdata = { &clks[IMX6SL_CLK_UART],
++					       &clks[IMX6SL_CLK_UART_SERIAL],
++					       NULL };
++
+ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+@@ -439,5 +443,7 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
  
--#ifndef __ASSEMBLY__
--extern void __iomem *at91_pmc_base;
--
--#define at91_pmc_read(field) \
--	readl_relaxed(at91_pmc_base + field)
--
--#define at91_pmc_write(field, value) \
--	writel_relaxed(value, at91_pmc_base + field)
--#else
--.extern at91_pmc_base
--#endif
--
- #define	AT91_PMC_SCER		0x00			/* System Clock Enable Register */
- #define	AT91_PMC_SCDR		0x04			/* System Clock Disable Register */
+ 	clk_set_parent(clks[IMX6SL_CLK_LCDIF_AXI_SEL],
+ 		       clks[IMX6SL_CLK_PLL2_PFD2]);
++
++	imx_register_uart_clocks(uart_clks);
+ }
+ CLK_OF_DECLARE(imx6sl, "fsl,imx6sl-ccm", imx6sl_clocks_init);
+diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+index 5b95c2c2bf52..b5bbcb2d3d8d 100644
+--- a/drivers/clk/imx/clk-imx6sx.c
++++ b/drivers/clk/imx/clk-imx6sx.c
+@@ -135,6 +135,10 @@ static u32 share_count_ssi1;
+ static u32 share_count_ssi2;
+ static u32 share_count_ssi3;
  
++static struct clk **uart_clks[] __initdata = { &clks[IMX6SX_CLK_UART_IPG],
++					       &clks[IMX6SX_CLK_UART_SERIAL],
++					       NULL };
++
+ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+@@ -557,5 +561,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 
+ 	clk_set_parent(clks[IMX6SX_CLK_QSPI1_SEL], clks[IMX6SX_CLK_PLL2_BUS]);
+ 	clk_set_parent(clks[IMX6SX_CLK_QSPI2_SEL], clks[IMX6SX_CLK_PLL2_BUS]);
++
++	imx_register_uart_clocks(uart_clks);
+ }
+ CLK_OF_DECLARE(imx6sx, "fsl,imx6sx-ccm", imx6sx_clocks_init);
 -- 
-2.1.4
-
+2.5.0
