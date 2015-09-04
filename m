@@ -1,68 +1,57 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <1442370091.14347.10.camel@mtksdaap41>
-Subject: Re: [PATCH 1/2] arm64: mediatek: enable MTK_TIMER
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"Michael Turquette" <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	<linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	<linux-mediatek@lists.infradead.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Olof Johansson <olof@lixom.net>, <srv_heupstream@mediatek.com>,
-	<linux-arm-kernel@lists.infradead.org>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	<linux-clk@vger.kernel.org>
-Date: Wed, 16 Sep 2015 10:21:31 +0800
-In-Reply-To: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
-References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-la0-f54.google.com ([209.85.215.54]:34674 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752295AbbIDQbV (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 4 Sep 2015 12:31:21 -0400
+Received: by laeb10 with SMTP id b10so17256865lae.1
+        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2015 09:31:20 -0700 (PDT)
 MIME-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1441349872-4560-2-git-send-email-bhupesh.sharma@freescale.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+	<1441349872-4560-2-git-send-email-bhupesh.sharma@freescale.com>
+Date: Fri, 4 Sep 2015 11:31:19 -0500
+Message-ID: <CADRPPNQbTPrJ47SKsA=EaPi7xo8+0hQqEpt3wDPKMbL1vTOr9A@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] arm64: Use generic Layerscape SoC family naming
+ & rename LS2085A to LS2080A
+From: Li Yang <leoli@freescale.com>
+To: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, marc.zyngier@arm.com,
+	linux-clk@vger.kernel.org, Catalin.Marinas@arm.com,
+	bhupesh.linux@gmail.com, will.deacon@arm.com, olof@lixom.net
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2015-09-16 at 10:04 +0800, Yingjoe Chen wrote:
-> Enable MTK_TIMER for MediaTek plaform, which will be used as
-> schedule clock.
+On Fri, Sep 4, 2015 at 1:57 AM, Bhupesh Sharma
+<bhupesh.sharma@freescale.com> wrote:
+> Freescale will be a churning out a host of ARMv8 based SoCs which
+> will be based on a similar overall SoC architecture. So, this patch
+> converts the existing infrastructure in the arm64/dts, arm64/Kconfig
+> and arm64/configs to use the generic convention ARCH_LAYERSCAPE
+> in place of the more specific FSL_LS2085A, to save code duplication
+> later-on.
+>
+> Also Freescale is renaming LS2085A to LS2080A.
+>
+> This patch addresses the above two points.
+>
+> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+> ---
+{snip}
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+> @@ -1,7 +1,7 @@
+>  /*
+> - * Device Tree Include file for Freescale Layerscape-2085A family SoC.
+> + * Device Tree Include file for Freescale Layerscape-2080A family SoC.
+>   *
+> - * Copyright (C) 2014, Freescale Semiconductor
+> + * Copyright (C) 2014-15, Freescale Semiconductor
 
-Sorry, sending this series too early without cover letter and removing
-Change-Id. Here's the cover letter:
+Normally we spell out the whole 2015.  The preferred copyright template is:
 
+Copyright 2014-2015 Freescale Semiconductor, Inc.
 
-This is actually v3 of "add GPT timer support for mt8173" series. This
-is based on v4.3-rc1 + clockevents-4.4[1] and James's mediatek-clk
-tree[2].
-
-Changes compare to previous version[3]:
-- the first two mtk_timer related changes are removed because they are
-replaced/accepted in clockevents tree.
-- Remove 'add 13mhz clock for MT8173' because it is accepted in
-mediatek-clk tree.
-- Kconfig.platforms path change.
-
-So we only have 2 patches left here.
-Matthias, can you take these and help to remove the Change-Id?
-
-
-Daniel Kurtz (1):
-  arm64: dts: mt8173: add timer node
-
-Yingjoe Chen (1):
-  arm64: mediatek: enable MTK_TIMER
-
-
-
-[1]
-https://git.linaro.org/people/daniel.lezcano/linux.git clockevents/4.4
-[2]
-http://lists.infradead.org/pipermail/linux-mediatek/2015-August/002069.html
-[3]
-http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001544.html
-
-
-
-
+- Leo
