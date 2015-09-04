@@ -1,78 +1,55 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v4 0/4] cpufreq-dt: add suspend frequency support
-Date: Mon, 07 Sep 2015 17:41:37 +0200
-Message-id: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de
+Subject: [PATCH v2 3/8] clk: imx27: retain early UART clocks during kernel init
+Date: Fri,  4 Sep 2015 18:00:14 +0200
+Message-Id: <1441382419-4343-4-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
+References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-This patch series adds suspend frequency support (using opp-v2
-bindings and suspend-opp functionality) to cpufreq-dt driver and
-then adds suspend opp for Exynos4412 based boards.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx27.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-This patch series fixes suspend/resume support on Exynos4412
-based Trats2 board and reboot hang on Exynos4412 based Odroid
-U3 board.
-
-Changes since v3:
-- fixed dev_pm_opp_get_suspend_opp() locking
-- shortened variable name in dev_pm_opp_get_suspend_opp()
-- adjusted cpufreq_generic_suspend() to work with cpufreq-dt
-- removed no longer needed cpufreq_dt_suspend()
-- added Acked-by tag from Viresh to patch #4
-
-Changes since v2:
-- rewrote to use suspend-opp functionality
-
-Changes since v1:
-- removed superfluous ";"
-
-Depends on:
-- next-20150902 branch of linux-next kernel tree
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-
-Bartlomiej Zolnierkiewicz (4):
-  PM / OPP: add dev_pm_opp_get_suspend_opp() helper
-  cpufreq: allow cpufreq_generic_suspend() to work without suspend
-    frequency
-  cpufreq-dt: add suspend frequency support
-  ARM: dts: add suspend opp to exynos4412
-
- arch/arm/boot/dts/exynos4412.dtsi |  1 +
- drivers/base/power/opp.c          | 30 ++++++++++++++++++++++++++++++
- drivers/cpufreq/cpufreq-dt.c      | 11 +++++++++++
- drivers/cpufreq/cpufreq.c         |  4 ++--
- include/linux/pm_opp.h            |  6 ++++++
- 5 files changed, 50 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/clk/imx/clk-imx27.c b/drivers/clk/imx/clk-imx27.c
+index d9d50d54ef2a..720adc5d7c24 100644
+--- a/drivers/clk/imx/clk-imx27.c
++++ b/drivers/clk/imx/clk-imx27.c
+@@ -47,6 +47,15 @@ static const char *ssi_sel_clks[] = { "spll_gate", "mpll", };
+ static struct clk *clk[IMX27_CLK_MAX];
+ static struct clk_onecell_data clk_data;
+ 
++static struct clk **uart_clks[] __initdata = { &clk[IMX27_CLK_PER1_GATE],
++					       &clk[IMX27_CLK_UART1_IPG_GATE],
++					       &clk[IMX27_CLK_UART2_IPG_GATE],
++					       &clk[IMX27_CLK_UART3_IPG_GATE],
++					       &clk[IMX27_CLK_UART4_IPG_GATE],
++					       &clk[IMX27_CLK_UART5_IPG_GATE],
++					       &clk[IMX27_CLK_UART6_IPG_GATE],
++					       NULL };
++
+ static void __init _mx27_clocks_init(unsigned long fref)
+ {
+ 	BUG_ON(!ccm);
+@@ -163,6 +172,8 @@ static void __init _mx27_clocks_init(unsigned long fref)
+ 
+ 	clk_prepare_enable(clk[IMX27_CLK_EMI_AHB_GATE]);
+ 
++	imx_register_uart_clocks(uart_clks);
++
+ 	imx_print_silicon_rev("i.MX27", mx27_revision());
+ }
+ 
 -- 
-1.9.1
-
+2.5.0
