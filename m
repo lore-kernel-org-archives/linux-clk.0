@@ -1,58 +1,48 @@
-Return-Path: <newchief@king.net.pl>
-From: Paul Osmialowski <newchief@king.net.pl>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Paul Osmialowski <pawelo@king.net.pl>
-Subject: [PATCH 0/1] add devm_of_clk_get() and devm_of_clk_get_by_name() functions
-Date: Thu, 24 Sep 2015 10:03:27 +0200
-Message-Id: <1443081808-19688-1-git-send-email-newchief@king.net.pl>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 4 Sep 2015 09:59:13 +0100
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Kees Cook <keescook@chromium.org>
+Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Nicolas Iooss <nicolas.iooss_linux@m4x.org>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk_register_clkdev: remove format string interface
+Message-ID: <20150904085912.GB21084@n2100.arm.linux.org.uk>
+References: <20150903205407.GA19702@www.outflux.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20150903205407.GA19702@www.outflux.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Paul Osmialowski <pawelo@king.net.pl>
+On Thu, Sep 03, 2015 at 01:54:07PM -0700, Kees Cook wrote:
+> Many callers either use NULL or const strings for the third argument of
+> clk_register_clkdev. For those that do not and use a non-const string,
+> this is a risk for format strings being accidentally processed (for
+> example in device names). As this interface is already used as if it
+> weren't a format string (prints nothing when NULL), and there are zero
+> users of the format strings, remove the format string interface to make
+> sure format strings will not leak into the clkdev.
+> 
+> $ git grep '\bclk_register_clkdev\b' | grep % | wc -l
+> 0
+> 
+> Unfortunately, all the internals expect a va_list even though they treat
+> a NULL format string as special. To deal with this, we must pass either
+> (..., "%s", string) or (..., NULL, NULL) so that a the va_list will be
+> created correctly (passing the name as an argument, not a format string).
 
-While working on my pinctrl driver I've found lack of devres compatible
-equivalent for of_clk_get() function. I'd like to use it for the following
-(incomplete) piece of device tree configuration:
+A more clearer way to write that would be:
 
-pinctrl: pinctrl {
-	compatible = "fsl,kinetis-pinctrl";
-	#address-cells = <1>;
-	#size-cells = <1>;
-	ranges;
+	if (dev_id)
+		cl = clkdev_create(hw, con_id, "%s", dev_id);
+	else
+		cl = clkdev_create(hw, con_id, NULL);
 
-	port_a@40049000 {
-		compatible = "fsl,kinetis-pin-bank";
-		reg = <0x40049000 0x1000>;
-		clocks = <&sim SIM_CLK_SCGC5_PORTA>;
-	};
-
-	port_b@4004a000 {
-		compatible = "fsl,kinetis-pin-bank";
-		reg = <0x4004a000 0x1000>;
-		clocks = <&sim SIM_CLK_SCGC5_PORTB>;
-	};
-...
-};
-
-In my pinconf-generic compatible fsl,kinetis-pinctrl driver, I'm iterating
-over fsl,kinetis-pin-bank nodes using for_each_child_of_node(dev->of_node,
-child) along with of_match_node() in order to grab resources (I/O base
-address, clock gate).
-
-Normally, I'd have to use of_clk_get() on each pin bank device_node and
-then worry about proper resource release myself.
-
-IMHO using devres infrastructure for this is far better. This patch adds
-missing functions needed to do it that way.
-
-Paul Osmialowski (1):
-  clk: add devm_of_clk_get() and devm_of_clk_get_by_name() functions
-
- drivers/clk/clk-devres.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk.h      | 20 ++++++++++++++++++++
- 2 files changed, 66 insertions(+)
+then it's obvious what's going on.
 
 -- 
-2.4.9
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
