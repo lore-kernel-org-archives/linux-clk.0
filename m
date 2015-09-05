@@ -1,104 +1,66 @@
-Return-Path: <sudeep.holla@arm.com>
-Subject: Re: [PATCH 2/2] arm64: dts: mt8173: add timer node
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
- <1442369095-1094-2-git-send-email-yingjoe.chen@mediatek.com>
- <55FAC570.8040307@arm.com> <1442501816.4784.3.camel@mtksdaap41>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- James Liao <jamesjj.liao@mediatek.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <Catalin.Marinas@arm.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Rob Herring <robh+dt@kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- Sascha Hauer <kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>,
- "srv_heupstream@mediatek.com" <srv_heupstream@mediatek.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Eddie Huang <eddie.huang@mediatek.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <55FAE69C.2000906@arm.com>
-Date: Thu, 17 Sep 2015 17:13:16 +0100
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bn1on0148.outbound.protection.outlook.com ([157.56.110.148]:49328
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750749AbbIEIMG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Sat, 5 Sep 2015 04:12:06 -0400
+From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
+To: Li Leo <LeoLi@freescale.com>
+CC: Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Singh Jaiprakash <jaiprakash.singh@freescale.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+	"Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
+	"will.deacon@arm.com" <will.deacon@arm.com>,
+	"olof@lixom.net" <olof@lixom.net>,
+	"bhupesh.linux@gmail.com" <bhupesh.linux@gmail.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v2 03/10] Documentation/dts: Add bindings for QIXIS FPGA
+ controller found on FSL boards
+Date: Sat, 5 Sep 2015 08:11:59 +0000
+Message-ID: <BY1PR0301MB130339BD3B988DC938AA524482560@BY1PR0301MB1303.namprd03.prod.outlook.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+	<1441349872-4560-4-git-send-email-bhupesh.sharma@freescale.com>
+	<CADRPPNR11BD4WfXTWoQ28rZCd_BJuhdWu49E6jjpO29CH2s5Ow@mail.gmail.com>
+	<BY1PR0301MB1303E56B5462BCD0C77C7E4D82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
+ <CADRPPNQFxqNqgvrL9eVhaDX-SYRJxmGDd87zu_XHDHY6afiu3g@mail.gmail.com>
+In-Reply-To: <CADRPPNQFxqNqgvrL9eVhaDX-SYRJxmGDd87zu_XHDHY6afiu3g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1442501816.4784.3.camel@mtksdaap41>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 17/09/15 15:56, Yingjoe Chen wrote:
-> On Thu, 2015-09-17 at 14:51 +0100, Sudeep Holla wrote:
->>
->> On 16/09/15 03:04, Yingjoe Chen wrote:
->>> From: Daniel Kurtz <djkurtz@chromium.org>
->>>
->>> Add device node to enable GPT timer. This timer will be
->>> used as sched clock source.
->>>
->>
->> Interesting any known issues with or advantage over the arch timers
->> to prefer it as sched clock source. I see even arch timers are present
->> in DT, hence the question. Or is it just a incorrect commit log ?
->>
->> How does this get selected as sched clock source ? I don't see
->> sched_clock_register in mtk_timer.c
->>
->> To be clear, I am not against adding this timer support, but just want
->> to know is it preferred for sched clock source ? if yes why ? better
->> resolution ?
->
-> Hi Sudeep,
->
-> Thanks for your review.
->
-> I hit the send too soon and missed cover letter, please see:
-> http://lists.infradead.org/pipermail/linux-mediatek/2015-September/002303.html
->
-
-OK
-
-> The main reason to use GPT as sched clock is it won't stop during idle.
->
->
-
-I think your are confusing the system counter with arch timers. System
-counter is always-on, but the arch timers(logic implementing timers
-comparators) might not be off when the processor is powered down.
-
-I think you need this timer and are using it for low power idle states
-in which case you will use this as a clock event and not clock source.
-It will be used as a hardware broadcast event source.
-
-There's no call to sched_clock_register in mtk_timer.c, so it can't be
-the sched clock, so you need to fix the commit log.
-
-[...]
-
->>> diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
->>> index d18ee42..d763803 100644
->>> --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
->>> +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
->>> @@ -238,6 +238,15 @@
->>>    			reg = <0 0x10007000 0 0x100>;
->>>    		};
->>>
->>> +		timer: timer@10008000 {
->>> +			compatible = "mediatek,mt8173-timer",
->>
->> Missing documentation ? I am referring upstream and it might be in some
->> patches already queued perhaps ?
->
-> This is documented in
-> Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt.
-> Do you mean I should add "mediatek,mt8173-timer" to that file?
->
-
-Yes
-
-Regards,
-Sudeep
+PiBGcm9tOiBwa3UubGVvQGdtYWlsLmNvbSBbbWFpbHRvOnBrdS5sZW9AZ21haWwuY29tXQ0KPiBT
+ZW50OiBTYXR1cmRheSwgU2VwdGVtYmVyIDA1LCAyMDE1IDI6NDMgQU0NCj4gT24gRnJpLCBTZXAg
+NCwgMjAxNSBhdCAzOjE2IFBNLCBTaGFybWEgQmh1cGVzaA0KPiA8Ymh1cGVzaC5zaGFybWFAZnJl
+ZXNjYWxlLmNvbT4gd3JvdGU6DQo+ID4+IEZyb206IHBrdS5sZW9AZ21haWwuY29tIFttYWlsdG86
+cGt1Lmxlb0BnbWFpbC5jb21dDQo+ID4+IFNlbnQ6IEZyaWRheSwgU2VwdGVtYmVyIDA0LCAyMDE1
+IDEwOjI3IFBNIE9uIEZyaSwgU2VwIDQsIDIwMTUgYXQgMTo1Nw0KPiA+PiBBTSwgQmh1cGVzaCBT
+aGFybWEgPGJodXBlc2guc2hhcm1hQGZyZWVzY2FsZS5jb20+IHdyb3RlOg0KPiA+PiA+IFRoaXMg
+cGF0Y2ggYWRkcyBiaW5kaW5ncyBmb3IgUUlYSVMgRlBHQSBjb250cm9sbGVyIGZvdW5kIG9uIEZT
+TA0KPiBib2FyZHMuDQo+ID4+DQo+ID4+IEEgZ2VuZXJhbCBjb21tZW50OiB3aGVuIHlvdSBhcmUg
+dXBkYXRpbmcgdGhlIGRldmljZSB0cmVlIGJpbmRpbmdzLg0KPiA+PiBZb3Ugc2hvdWxkIGNjIHRo
+ZSBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZyBtYWlsaW5nIGxpc3QuDQo+ID4+DQo+ID4+ID4N
+Cj4gPj4gPiBTb21lIEZyZWVzY2FsZSBib2FyZHMgbGlrZSBMUzIwODBBUURTL0xTMjA4MEFSREIg
+aGF2ZSBhbiBvbi1ib2FyZA0KPiA+PiA+IEZQR0EvQ1BMRCBjb25uZWN0ZWQgdG8gdGhlIElGQyBj
+b250cm9sbGVyLiBUaGUgYmluZGluZ3Mgc3BlY2lmaWVkDQo+ID4+ID4gaW4gdGhpcyBwYXRjaCBj
+YXRlciB0byB0aG9zZSBvbi1ib2FyZCBGUEdBL0NQTEQgY29udHJvbGxlcnMuDQo+ID4+DQo+ID4+
+IFdlIGFscmVhZHkgaGF2ZSB0aGUgYmluZGluZyBkZWZpbmVkIGluDQo+ID4+IERvY3VtZW50YXRp
+b24vZGV2aWNldHJlZS9iaW5kaW5ncy9wb3dlcnBjL2ZzbC9ib2FyZC50eHQuICBXZSBwcm9iYWJs
+eQ0KPiA+PiBzaG91bGQganVzdCBtb3ZlIGl0IHRvIGEgbW9yZSBnZW5lcmljIGxvY2F0aW9uLg0K
+PiA+DQo+ID4gQ29uc29saWRhdGlvbiBvZiBwb3dlcnBjIGFuZCBBUk0gYmluZGluZ3MgaXMgc29t
+ZXRoaW5nIHRoYXQgbmVlZHMgdG8NCj4gPiBiZSB0YXJnZXRlZCBieSBhIHNlcGFyYXRlIHBhdGNo
+LXNlcmllcywgcGVyaGFwcyBpbiBmdXR1cmUuDQo+ID4NCj4gPiBUaGVyZSBhcmUgYSBudW1iZXIg
+b2YgZHVwbGljYXRpb25zIHRoYXQgY2FuIGJlIGxvb2tlZCBpbnRvLCBidXQgSQ0KPiA+IGRvbid0
+IHRoaW5rIHRoaXMgcGF0Y2hzZXQgc2hvdWxkIGRlcGVuZCBvbiB0aGF0Lg0KPiANCj4gVGhlcmUg
+bWlnaHQgYmUgc29tZSBkdXBsaWNhdGlvbiwgYnV0IHdlIHNob3VsZG4ndCBiZSBhZGRpbmcgbW9y
+ZS4gIDopIEkNCj4gd291bGQgcmF0aGVyIHlvdSBkaXJlY3RseSB1cGRhdGluZyB0aGF0IGZpbGUg
+dGhhbiBjcmVhdGluZyBhIG5ldyBmaWxlDQo+IGV2ZW4gdGhvdWdoIHRoZSBvcmlnaW5hbCBvbmUg
+d2FzIGluIGEgd3JvbmcgZGlyZWN0b3J5Lg0KPiANCg0KSU1PIGEgUG93ZXJQQyBiaW5kaW5nIHVw
+ZGF0ZSBtYWtlcyBubyBzZW5zZSBpbiBhIEFSTSBtYWNoaW5lIHBhdGNoc2V0IHNlbnQNCm9uIGEg
+YXJtIHNwZWNpZmljIG1haWxpbmcgbGlzdC4NCg0KSSB3b3VsZCBsaWtlIHRvIHdhaXQgdG8gaGVh
+ciB3aGF0IG1haW50YWluZXJzIGhhdmUgdG8gc2F5IG9uIHRoZSBzYW1lLg0KDQpSZWdhcmRzLA0K
+Qmh1cGVzaA0K
