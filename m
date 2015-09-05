@@ -1,44 +1,41 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 02 Sep 2015 16:17:18 +0900
-Message-Id: <20150902071718.10870.29881.sendpatchset@little-apple>
-In-Reply-To: <20150902071657.10870.37652.sendpatchset@little-apple>
-References: <20150902071657.10870.37652.sendpatchset@little-apple>
-Subject: [PATCH v6 02/05] clk: shmobile: Add r8a7795 SoC to MSTP bindings
+Return-Path: <romain.perier@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20150904162402.GN15099@codeaurora.org>
+References: <1440322357-2621-1-git-send-email-romain.perier@gmail.com>
+	<CABgxDo+otZrYoqTNK-ea=L6Dsd5p_b_MFCi4H4XJZZ25PV_qnA@mail.gmail.com>
+	<CABgxDoLgqfzO-Sb_rKHe=-GuMaKWMihHhktx6sDSM6M=Q+Koaw@mail.gmail.com>
+	<20150904162402.GN15099@codeaurora.org>
+Date: Sat, 5 Sep 2015 18:12:08 +0200
+Message-ID: <CABgxDo+0qN5GJdCNpQi4g_CdW67PvxsogMseRoAa5cuAbWk1wQ@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: rockchip: Add pclk_peri to critical clocks on RK3066/RK3188
+From: Romain Perier <romain.perier@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Np,
 
-Add r8a7795 to the MSTP DT binding documentation.
+Yes it would be nice to take it for -rc1, because I think that 4.3
+won't boot without this fix
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
 
- Changes since V5: (Magnus Damm <damm+renesas@opensource.se>)
- - Added Acked-by from Laurent
+Regards,
+Romain
 
- Changes since V4: (Magnus Damm <damm+renesas@opensource.se>)
- - Added Acked-by from Geert
-
- Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
- - Picked up patch floating around on ML, added change log
-
- Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt |    1 +
- 1 file changed, 1 insertion(+)
-
---- 0001/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-+++ work/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt	2015-08-29 16:18:30.672366518 +0900
-@@ -19,6 +19,7 @@ Required Properties:
-     - "renesas,r8a7791-mstp-clocks" for R8A7791 (R-Car M2-W) MSTP gate clocks
-     - "renesas,r8a7793-mstp-clocks" for R8A7793 (R-Car M2-N) MSTP gate clocks
-     - "renesas,r8a7794-mstp-clocks" for R8A7794 (R-Car E2) MSTP gate clocks
-+    - "renesas,r8a7795-mstp-clocks" for R8A7795 (R-Car H3) MSTP gate clocks
-     - "renesas,sh73a0-mstp-clocks" for SH73A0 (SH-MobileAG5) MSTP gate clocks
-     and "renesas,cpg-mstp-clocks" as a fallback.
-   - reg: Base address and length of the I/O mapped registers used by the MSTP
+2015-09-04 18:24 GMT+02:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 09/04, Romain Perier wrote:
+>> Hi all,
+>>
+>> just a reminder, I sent this patch two weeks ago, rk3xxx-based
+>> platforms still need it, it fixes a freeze during boot.
+>
+> Sorry I thought that Linus W was going to pick this up? If not,
+> we can take it through clk tree as a fix for -rc1.
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
