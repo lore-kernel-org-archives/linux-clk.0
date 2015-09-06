@@ -1,48 +1,122 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 0/4] cpufreq-dt: add suspend frequency support
-To: Viresh Kumar <viresh.kumar@linaro.org>
-References: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
- <20150908024659.GF26760@linux> <55EE5C79.2030604@samsung.com>
- <20150908042017.GJ26760@linux>
-Cc: Kukjin Kim <kgene@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
- Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
- Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <55EE6892.3010304@samsung.com>
-Date: Tue, 08 Sep 2015 13:48:18 +0900
-MIME-version: 1.0
-In-reply-to: <20150908042017.GJ26760@linux>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <shawnguo@kernel.org>
+Date: Sun, 6 Sep 2015 16:49:45 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/1] ARM: imx35: Do not call mxc_timer_init twice when
+ booting with DT
+Message-ID: <20150906084945.GM30746@tiger>
+References: <1439277502-16917-1-git-send-email-alexander.stein@systec-electronic.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1439277502-16917-1-git-send-email-alexander.stein@systec-electronic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08.09.2015 13:20, Viresh Kumar wrote:
-> On 08-09-15, 12:56, Krzysztof Kozlowski wrote:
->> There were no comments from your side for this patchset nor for previous
->> Marek's fix. After mentioned change and Bart's re-spin, do you plan to
->> grab this patchset and send it for current v4.3 cycle?
+On Tue, Aug 11, 2015 at 09:18:22AM +0200, Alexander Stein wrote:
+> mxc_timer_init must not be called from within mx35_clocks_init_dt. It will
+> eventually be called by imx31_timer_init_dt
+> (drivers/clocksources/timer-imx-gpt.c).
+
+s/clocksources/clocksource
+
+> This arranges the initialization code similar to clk-imx27.c
 > 
-> Why do you think it should go via Kukjin's tree and not Rafael's?
+> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> ---
+>  drivers/clk/imx/clk-imx35.c | 49 +++++++++++++++++++++++++--------------------
 
-Somehow my mind stuck on solving Exynos4x12 cpufreq issues.
+Also, while you are there, can you please fix clk-imx31.c as well?
 
-Right, it should go through Rafael's, probably except DTS patch (4/4)
-because it depends on previous DTS changes. These changes are still in
-arm-soc, not in Linus' tree [0].
+Shawn
 
-Best regards,
-Krzysztof
-
-[0]
-https://git.kernel.org/cgit/linux/kernel/git/arm/arm-soc.git/commit/?h=next/late&id=f44997412e5b39b6a1231f16555120c5b2aae0ed
+>  1 file changed, 27 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
+> index 69138ba..3e7c805 100644
+> --- a/drivers/clk/imx/clk-imx35.c
+> +++ b/drivers/clk/imx/clk-imx35.c
+> @@ -84,7 +84,7 @@ enum mx35_clks {
+>  
+>  static struct clk *clk[clk_max];
+>  
+> -int __init mx35_clocks_init(void)
+> +static void __init _mx35_clocks_init(void)
+>  {
+>  	void __iomem *base;
+>  	u32 pdr0, consumer_sel, hsp_sel;
+> @@ -219,6 +219,30 @@ int __init mx35_clocks_init(void)
+>  
+>  	imx_check_clocks(clk, ARRAY_SIZE(clk));
+>  
+> +	clk_prepare_enable(clk[spba_gate]);
+> +	clk_prepare_enable(clk[gpio1_gate]);
+> +	clk_prepare_enable(clk[gpio2_gate]);
+> +	clk_prepare_enable(clk[gpio3_gate]);
+> +	clk_prepare_enable(clk[iim_gate]);
+> +	clk_prepare_enable(clk[emi_gate]);
+> +	clk_prepare_enable(clk[max_gate]);
+> +	clk_prepare_enable(clk[iomuxc_gate]);
+> +
+> +	/*
+> +	 * SCC is needed to boot via mmc after a watchdog reset. The clock code
+> +	 * before conversion to common clk also enabled UART1 (which isn't
+> +	 * handled here and not needed for mmc) and IIM (which is enabled
+> +	 * unconditionally above).
+> +	 */
+> +	clk_prepare_enable(clk[scc_gate]);
+> +
+> +	imx_print_silicon_rev("i.MX35", mx35_revision());
+> +}
+> +
+> +int __init mx35_clocks_init(void)
+> +{
+> +	_mx35_clocks_init();
+> +
+>  	clk_register_clkdev(clk[pata_gate], NULL, "pata_imx");
+>  	clk_register_clkdev(clk[can1_gate], NULL, "flexcan.0");
+>  	clk_register_clkdev(clk[can2_gate], NULL, "flexcan.1");
+> @@ -275,25 +299,6 @@ int __init mx35_clocks_init(void)
+>  	clk_register_clkdev(clk[csi_gate], NULL, "mx3-camera.0");
+>  	clk_register_clkdev(clk[admux_gate], "audmux", NULL);
+>  
+> -	clk_prepare_enable(clk[spba_gate]);
+> -	clk_prepare_enable(clk[gpio1_gate]);
+> -	clk_prepare_enable(clk[gpio2_gate]);
+> -	clk_prepare_enable(clk[gpio3_gate]);
+> -	clk_prepare_enable(clk[iim_gate]);
+> -	clk_prepare_enable(clk[emi_gate]);
+> -	clk_prepare_enable(clk[max_gate]);
+> -	clk_prepare_enable(clk[iomuxc_gate]);
+> -
+> -	/*
+> -	 * SCC is needed to boot via mmc after a watchdog reset. The clock code
+> -	 * before conversion to common clk also enabled UART1 (which isn't
+> -	 * handled here and not needed for mmc) and IIM (which is enabled
+> -	 * unconditionally above).
+> -	 */
+> -	clk_prepare_enable(clk[scc_gate]);
+> -
+> -	imx_print_silicon_rev("i.MX35", mx35_revision());
+> -
+>  	mxc_timer_init(MX35_GPT1_BASE_ADDR, MX35_INT_GPT, GPT_TYPE_IMX31);
+>  
+>  	return 0;
+> @@ -301,10 +306,10 @@ int __init mx35_clocks_init(void)
+>  
+>  static void __init mx35_clocks_init_dt(struct device_node *ccm_node)
+>  {
+> +	_mx35_clocks_init();
+> +
+>  	clk_data.clks = clk;
+>  	clk_data.clk_num = ARRAY_SIZE(clk);
+>  	of_clk_add_provider(ccm_node, of_clk_src_onecell_get, &clk_data);
+> -
+> -	mx35_clocks_init();
+>  }
+>  CLK_OF_DECLARE(imx35, "fsl,imx35-ccm", mx35_clocks_init_dt);
+> -- 
+> 2.4.6
+> 
