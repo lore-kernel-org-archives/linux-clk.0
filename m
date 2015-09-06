@@ -1,66 +1,80 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v5 4/4] ARM: dts: add suspend opp to exynos4412
-Date: Tue, 08 Sep 2015 18:41:04 +0200
-Message-id: <1441730464-7947-5-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-yk0-f178.google.com ([209.85.160.178]:36006 "EHLO
+	mail-yk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751860AbbIFU5m (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 6 Sep 2015 16:57:42 -0400
+MIME-Version: 1.0
+In-Reply-To: <BY1PR0301MB130306991ACB28E4C8109DD582560@BY1PR0301MB1303.namprd03.prod.outlook.com>
+References: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
+ <CADRPPNQER9UnKLazm9C6Dd7DAkDxLb4QShK64tmtahZxJJ-t=g@mail.gmail.com> <BY1PR0301MB130306991ACB28E4C8109DD582560@BY1PR0301MB1303.namprd03.prod.outlook.com>
+From: Rob Herring <robherring2@gmail.com>
+Date: Sun, 6 Sep 2015 15:57:22 -0500
+Message-ID: <CAL_Jsq+KJU4RiK2XWcS5BezucCmup2M-pueaaJUq7O=fA3LUxw@mail.gmail.com>
+Subject: Re: [PATCH v2 07/10] dts/ls2085a: Update DTSI to add support of
+ various peripherals
+To: Sharma Bhupesh <bhupesh.sharma@freescale.com>
+Cc: Li Leo <LeoLi@freescale.com>, Xiaobo Xie <X.Xie@freescale.com>,
+	Liu Gang <Gang.Liu@freescale.com>,
+	"Lian M.H." <Minghuan.Lian@freescale.com>,
+	Badola Nikhil <nikhil.badola@freescale.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Shaohui Xie <Shaohui.Xie@freescale.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Huan Wang <alison.wang@freescale.com>,
+	"marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+	"Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
+	Singh Jaiprakash <jaiprakash.singh@freescale.com>,
+	"will.deacon@arm.com" <will.deacon@arm.com>,
+	"olof@lixom.net" <olof@lixom.net>,
+	Scott Wood <scottwood@freescale.com>,
+	Bhupesh SHARMA <bhupesh.linux@gmail.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"Lu Y.B." <yangbo.lu@freescale.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Mark 800MHz OPP as a suspend opp for Exynos4412 based
-boards so effectively cpufreq-dt driver behavior w.r.t.
-suspend frequency matches what the old exynos-cpufreq
-driver has been doing.
+On Sat, Sep 5, 2015 at 3:37 AM, Sharma Bhupesh
+<bhupesh.sharma@freescale.com> wrote:
+>> From: pku.leo@gmail.com [mailto:pku.leo@gmail.com]
+>> Sent: Saturday, September 05, 2015 2:33 AM
+>> On Fri, Sep 4, 2015 at 2:05 AM, Bhupesh Sharma
+>> <bhupesh.sharma@freescale.com> wrote:
+>> > This patch updates the LS2085a DTSI (DTS Include) file to add support
+>> > for various peripherals supported by FSL LS2085a SoC, for e.g.:
+>>
+>> The title and description here are still using the old LS2085 name.
+>
+> Ok.
+>
+> [snip] ..
+>
+>> > +       amba {
+>> > +               compatible = "arm,amba-bus";
+>> > +               #address-cells = <2>;
+>> > +               #size-cells = <2>;
+>> > +               ranges;
+>> > +
+>> > +               cluster1_core0_watchdog: wdt@c000000 {
+>> > +                       compatible = "arm,primecell";
+>>
+>> Binding of Primecell requires a specific name for the device instead of
+>> just a "arm,primecell".
+>
+> The sp805 driver doesn't have a compatible string like arm, sp805.
+> You can refer to 'Documentation/devicetree/bindings/wdt' for details - there is no entry for sp805 here.
 
-This patch fixes suspend/resume support on Exynos4412 based
-Trats2 board and reboot hang on Exynos4412 based Odroid U3
-board.
+Because no one wrote it yet. Please read
+Documentation/devicetree/bindings/arm/primecell.txt. If sp805 has no
+binding doc, please write one.
 
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- arch/arm/boot/dts/exynos4412.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+> Instead it relies on the 'drivers/amba/bus.c' framework to invoke the probe function of the
+> sp805 wdt driver using the unique PRIMECELL identifiers of the sp805 wdt IP.
 
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index ca0e3c1..294cfe4 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -98,6 +98,7 @@
- 			opp-hz = /bits/ 64 <800000000>;
- 			opp-microvolt = <1000000>;
- 			clock-latency-ns = <200000>;
-+			opp-suspend;
- 		};
- 		opp07 {
- 			opp-hz = /bits/ 64 <900000000>;
--- 
-1.9.1
+Whether the kernel chooses to bind with the ID registers or compatible
+strings is up to the kernel. That is independent of the bindings.
 
+Rob
