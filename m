@@ -1,110 +1,96 @@
-Return-Path: <alim.akhtar@samsung.com>
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
- k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
- gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Subject: [PATCH 06/11] clk: samsung: exynos7: Corrects CMU_PERIC1 clocks names
-Date: Fri, 04 Sep 2015 17:07:11 +0530
-Message-id: <1441366637-28001-7-git-send-email-alim.akhtar@samsung.com>
-In-reply-to: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
-References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Lian M.H. <Minghuan.Lian@freescale.com>
+To: Sharma Bhupesh <bhupesh.sharma@freescale.com>, Leo Li <pku.leo@gmail.com>
+Subject: RE: [PATCH v2 04/10] doc/bindings: Update PCIe devicetree binding
+ documentation for LS2080A
+Date: Sun, 6 Sep 2015 02:25:46 +0000
+Message-ID: <DM2PR0301MB0640B355ADF0CF1AD514B2A1E2550@DM2PR0301MB0640.namprd03.prod.outlook.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+ <1441349872-4560-5-git-send-email-bhupesh.sharma@freescale.com>
+ <CADRPPNRGpzWawsqLHCiv530HbtPf+9RaPzOtvy88ftwv2ffqLQ@mail.gmail.com>
+ <BY1PR0301MB13037F8BC0A8E1E4258F58DE82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
+In-Reply-To: <BY1PR0301MB13037F8BC0A8E1E4258F58DE82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+ "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
+ "will.deacon@arm.com" <will.deacon@arm.com>, "olof@lixom.net" <olof@lixom.net>,
+ Bhupesh SHARMA <bhupesh.linux@gmail.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch rename CMU_PERIC1 clocks names to match with user manual.
-And also adds missing gate clock for aclk_peric1_66.
+Hi Bhupesh
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- drivers/clk/samsung/clk-exynos7.c       |   38 ++++++++++++++++---------------
- include/dt-bindings/clock/exynos7-clk.h |    3 ++-
- 2 files changed, 22 insertions(+), 19 deletions(-)
+I agree with Leo whose suggestion is a better.
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index 782943b..696489a 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -340,6 +340,8 @@ static struct samsung_div_clock top0_div_clks[] __initdata = {
- static struct samsung_gate_clock top0_gate_clks[] __initdata = {
- 	GATE(CLK_ACLK_PERIC0_66, "aclk_peric0_66", "dout_aclk_peric0_66",
- 		ENABLE_ACLK_TOP03, 20, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_ACLK_PERIC1_66, "aclk_peric1_66", "dout_aclk_peric1_66",
-+		ENABLE_ACLK_TOP03, 12, CLK_SET_RATE_PARENT, 0),
- 
- 	GATE(CLK_SCLK_SPDIF, "sclk_spdif", "dout_sclk_spdif",
- 		ENABLE_SCLK_TOP0_PERIC0, 4, CLK_SET_RATE_PARENT, 0),
-@@ -662,15 +664,15 @@ CLK_OF_DECLARE(exynos7_clk_peric0, "samsung,exynos7-clock-peric0",
- 	exynos7_clk_peric0_init);
- 
- /* List of parent clocks for Muxes in CMU_PERIC1 */
--PNAME(mout_aclk_peric1_66_p)	= { "fin_pll", "dout_aclk_peric1_66" };
--PNAME(mout_sclk_uart1_p)	= { "fin_pll", "sclk_uart1" };
--PNAME(mout_sclk_uart2_p)	= { "fin_pll", "sclk_uart2" };
--PNAME(mout_sclk_uart3_p)	= { "fin_pll", "sclk_uart3" };
--PNAME(mout_sclk_spi0_p)		= { "fin_pll", "sclk_spi0" };
--PNAME(mout_sclk_spi1_p)		= { "fin_pll", "sclk_spi1" };
--PNAME(mout_sclk_spi2_p)		= { "fin_pll", "sclk_spi2" };
--PNAME(mout_sclk_spi3_p)		= { "fin_pll", "sclk_spi3" };
--PNAME(mout_sclk_spi4_p)		= { "fin_pll", "sclk_spi4" };
-+PNAME(mout_aclk_peric1_66_user_p)	= { "fin_pll", "aclk_peric1_66" };
-+PNAME(mout_sclk_uart1_user_p)	= { "fin_pll", "sclk_uart1" };
-+PNAME(mout_sclk_uart2_user_p)	= { "fin_pll", "sclk_uart2" };
-+PNAME(mout_sclk_uart3_user_p)	= { "fin_pll", "sclk_uart3" };
-+PNAME(mout_sclk_spi0_user_p)		= { "fin_pll", "sclk_spi0" };
-+PNAME(mout_sclk_spi1_user_p)		= { "fin_pll", "sclk_spi1" };
-+PNAME(mout_sclk_spi2_user_p)		= { "fin_pll", "sclk_spi2" };
-+PNAME(mout_sclk_spi3_user_p)		= { "fin_pll", "sclk_spi3" };
-+PNAME(mout_sclk_spi4_user_p)		= { "fin_pll", "sclk_spi4" };
- 
- static unsigned long peric1_clk_regs[] __initdata = {
- 	MUX_SEL_PERIC10,
-@@ -681,24 +683,24 @@ static unsigned long peric1_clk_regs[] __initdata = {
- };
- 
- static struct samsung_mux_clock peric1_mux_clks[] __initdata = {
--	MUX(0, "mout_aclk_peric1_66_user", mout_aclk_peric1_66_p,
-+	MUX(0, "mout_aclk_peric1_66_user", mout_aclk_peric1_66_user_p,
- 		MUX_SEL_PERIC10, 0, 1),
- 
--	MUX_F(0, "mout_sclk_spi0_user", mout_sclk_spi0_p,
-+	MUX_F(0, "mout_sclk_spi0_user", mout_sclk_spi0_user_p,
- 		MUX_SEL_PERIC11, 0, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(0, "mout_sclk_spi1_user", mout_sclk_spi1_p,
-+	MUX_F(0, "mout_sclk_spi1_user", mout_sclk_spi1_user_p,
- 		MUX_SEL_PERIC11, 4, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(0, "mout_sclk_spi2_user", mout_sclk_spi2_p,
-+	MUX_F(0, "mout_sclk_spi2_user", mout_sclk_spi2_user_p,
- 		MUX_SEL_PERIC11, 8, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(0, "mout_sclk_spi3_user", mout_sclk_spi3_p,
-+	MUX_F(0, "mout_sclk_spi3_user", mout_sclk_spi3_user_p,
- 		MUX_SEL_PERIC11, 12, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(0, "mout_sclk_spi4_user", mout_sclk_spi4_p,
-+	MUX_F(0, "mout_sclk_spi4_user", mout_sclk_spi4_user_p,
- 		MUX_SEL_PERIC11, 16, 1, CLK_SET_RATE_PARENT, 0),
--	MUX(0, "mout_sclk_uart1_user", mout_sclk_uart1_p,
-+	MUX(0, "mout_sclk_uart1_user", mout_sclk_uart1_user_p,
- 		MUX_SEL_PERIC11, 20, 1),
--	MUX(0, "mout_sclk_uart2_user", mout_sclk_uart2_p,
-+	MUX(0, "mout_sclk_uart2_user", mout_sclk_uart2_user_p,
- 		MUX_SEL_PERIC11, 24, 1),
--	MUX(0, "mout_sclk_uart3_user", mout_sclk_uart3_p,
-+	MUX(0, "mout_sclk_uart3_user", mout_sclk_uart3_user_p,
- 		MUX_SEL_PERIC11, 28, 1),
- };
- 
-diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
-index ba60a20..5a157f7 100644
---- a/include/dt-bindings/clock/exynos7-clk.h
-+++ b/include/dt-bindings/clock/exynos7-clk.h
-@@ -49,7 +49,8 @@
- #define CLK_SCLK_PCM1			13
- #define CLK_SCLK_I2S1			14
- #define CLK_ACLK_PERIC0_66		15
--#define TOP0_NR_CLK			16
-+#define CLK_ACLK_PERIC1_66		16
-+#define TOP0_NR_CLK			17
- 
- /* TOP1 */
- #define DOUT_ACLK_FSYS1_200		1
--- 
-1.7.10.4
+Thanks,
+Minghuan 
+
+> -----Original Message-----
+> From: Sharma Bhupesh-B45370
+> Sent: Saturday, September 05, 2015 4:20 AM
+> To: Leo Li <pku.leo@gmail.com>; Lian Minghuan-B31939
+> <Minghuan.Lian@freescale.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>; Mark Rutland
+> <mark.rutland@arm.com>; linux-arm-kernel@lists.infradead.org;
+> marc.zyngier@arm.com; linux-clk@vger.kernel.org;
+> Catalin.Marinas@arm.com; will.deacon@arm.com; olof@lixom.net; Bhupesh
+> SHARMA <bhupesh.linux@gmail.com>; devicetree@vger.kernel.org
+> Subject: RE: [PATCH v2 04/10] doc/bindings: Update PCIe devicetree binding
+> documentation for LS2080A
+> 
+> > From: Leo Li [mailto:pku.leo@gmail.com]
+> > Sent: Friday, September 04, 2015 11:27 PM On Fri, Sep 4, 2015 at 1:57
+> > AM, Bhupesh Sharma <bhupesh.sharma@freescale.com> wrote:
+> > > Add the documentation for compatible string "fsl,ls2080a-pcie"
+> > > for Freescale's LS2080A platform.
+> > >
+> > > Signed-off-by: Minghuan Lian <Minghuan.Lian@freescale.com>
+> > > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+> > > ---
+> > >  .../devicetree/bindings/pci/layerscape-pci.txt     |    3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+> > > b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+> > > index 6286f04..e72e68f 100644
+> > > --- a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+> > > +++ b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+> > > @@ -4,7 +4,8 @@ This PCIe host controller is based on the Synopsis
+> > > Designware PCIe IP  and thus inherits all the common properties
+> > > defined
+> > in designware-pcie.txt.
+> > >
+> > >  Required properties:
+> > > -- compatible: should contain the platform identifier such as
+> > "fsl,ls1021a-pcie"
+> > > +- compatible: should contain the platform identifier such as
+> > > +"fsl,ls1021a-pcie",
+> > > +  "fsl,ls2080a-pcie".
+> >
+> > Make it generic like "fsl,<chip>-pcie"
+> 
+> Minghuan, if you don't have an objection, I would like to address Leo's
+> suggestion in v3 of this series as I think it is a valid one.
+> 
+> Please share your views.
+> 
+> Regards,
+> Bhupesh
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
