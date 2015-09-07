@@ -1,105 +1,47 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v4 1/4] clk: qcom: Add MSM8916 iommu clocks
-Date: Wed, 16 Sep 2015 16:24:45 +0300
-Message-Id: <1442409888-19917-2-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1442409888-19917-1-git-send-email-georgi.djakov@linaro.org>
-References: <1442409888-19917-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Sanchayan Maity <maitysanchayan@gmail.com>
+To: srinivas.kandagatla@linaro.org, gregkh@linuxfoundation.org
+Cc: maxime.ripard@free-electrons.com, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stefan@agner.ch, shawnguo@kernel.org,
+	kernel@pengutronix.de, Sanchayan Maity <maitysanchayan@gmail.com>
+Subject: [PATCH v10 2/4] ARM: dts: vfxxx: Add OCOTP node
+Date: Mon,  7 Sep 2015 13:51:36 +0530
+Message-Id: <8db23e3773adeb05aa6764bf4666a544495a8e28.1441609625.git.maitysanchayan@gmail.com>
+In-Reply-To: <cover.1441609625.git.maitysanchayan@gmail.com>
+References: <cover.1441609625.git.maitysanchayan@gmail.com>
+In-Reply-To: <cover.1441609625.git.maitysanchayan@gmail.com>
+References: <cover.1441609625.git.maitysanchayan@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the msm8916 TCU (Translation Control Unit) clocks that
-are needed for IOMMU.
+Add device tree node for the On-Chip One Time Programmable
+controller (OCOTP) on the Vybrid platform.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Signed-off-by: Sanchayan Maity <maitysanchayan@gmail.com>
 ---
- drivers/clk/qcom/gcc-msm8916.c               |   48 ++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8916.h |    3 ++
- 2 files changed, 51 insertions(+)
+ arch/arm/boot/dts/vfxxx.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index 83871b663e21..ad9316751eb2 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -2347,6 +2347,51 @@ static struct clk_branch gcc_sdcc2_apps_clk = {
- 	},
- };
+diff --git a/arch/arm/boot/dts/vfxxx.dtsi b/arch/arm/boot/dts/vfxxx.dtsi
+index 2f4b04d..140d81e 100644
+--- a/arch/arm/boot/dts/vfxxx.dtsi
++++ b/arch/arm/boot/dts/vfxxx.dtsi
+@@ -403,6 +403,14 @@
+ 				status = "disabled";
+ 			};
  
-+static struct clk_rcg2 bimc_ddr_clk_src = {
-+	.cmd_rcgr = 0x32004,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_bimc_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "bimc_ddr_clk_src",
-+		.parent_names = gcc_xo_gpll0_bimc,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+		.flags = CLK_GET_RATE_NOCACHE,
-+	},
-+};
++			ocotp: ocotp@400a5000 {
++				compatible = "fsl,vf610-ocotp";
++				#address-cells = <1>;
++				#size-cells = <1>;
++				reg = <0x400a5000 0xCF0>;
++				clocks = <&clks VF610_CLK_OCOTP>;
++			};
 +
-+static struct clk_branch gcc_apss_tcu_clk = {
-+	.halt_reg = 0x12018,
-+	.clkr = {
-+		.enable_reg = 0x4500c,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_apss_tcu_clk",
-+			.parent_names = (const char *[]){
-+				"bimc_ddr_clk_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_gfx_tcu_clk = {
-+	.halt_reg = 0x12020,
-+	.clkr = {
-+		.enable_reg = 0x4500c,
-+		.enable_mask = BIT(2),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_gfx_tcu_clk",
-+			.parent_names = (const char *[]){
-+				"bimc_ddr_clk_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_gtcu_ahb_clk = {
- 	.halt_reg = 0x12044,
- 	.clkr = {
-@@ -2730,6 +2775,9 @@ static struct clk_regmap *gcc_msm8916_clocks[] = {
- 	[GCC_VENUS0_AHB_CLK] = &gcc_venus0_ahb_clk.clkr,
- 	[GCC_VENUS0_AXI_CLK] = &gcc_venus0_axi_clk.clkr,
- 	[GCC_VENUS0_VCODEC0_CLK] = &gcc_venus0_vcodec0_clk.clkr,
-+	[BIMC_DDR_CLK_SRC] = &bimc_ddr_clk_src.clkr,
-+	[GCC_APSS_TCU_CLK] = &gcc_apss_tcu_clk.clkr,
-+	[GCC_GFX_TCU_CLK] = &gcc_gfx_tcu_clk.clkr,
- };
- 
- static struct gdsc *gcc_msm8916_gdscs[] = {
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8916.h b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-index 11566c567356..9169ae656c77 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8916.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-@@ -152,6 +152,9 @@
- #define GCC_VENUS0_AHB_CLK			135
- #define GCC_VENUS0_AXI_CLK			136
- #define GCC_VENUS0_VCODEC0_CLK			137
-+#define BIMC_DDR_CLK_SRC			138
-+#define GCC_APSS_TCU_CLK			139
-+#define GCC_GFX_TCU_CLK				140
- 
- /* Indexes for GDSCs */
- #define BIMC_GDSC				0
+ 			snvs0: snvs@400a7000 {
+ 			    compatible = "fsl,sec-v4.0-mon", "simple-bus";
+ 				#address-cells = <1>;
+-- 
+2.5.1
+
