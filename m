@@ -1,59 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1438564418-15948-5-git-send-email-leo.yan@linaro.org>
-References: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
-	<1438564418-15948-5-git-send-email-leo.yan@linaro.org>
-Date: Tue, 1 Sep 2015 17:28:03 -0700
-Message-ID: <CAMAWPa8dNOipiFFv96J5XvP1Qs7ysHBD6_-RpMGqCEdPAKxHAA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] clk: Hi6220: add stub clock driver
-From: Kevin Hilman <khilman@kernel.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
+Date: Mon, 7 Sep 2015 11:28:23 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Bintian Wang <bintian.wang@huawei.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Jian Zhang <zhangjian001@hisilicon.com>,
-	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
-	Haoju Mo <mohaoju@hisilicon.com>,
-	Dan Zhao <dan.zhao@hisilicon.com>, sunzhaosheng@hisilicon.com,
-	victor.lixin@hisilicon.com, Tyler Baker <tyler.baker@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] cpufreq-dt: add suspend frequency support
+Message-ID: <20150907055823.GC26760@linux>
+References: <1441303892-32004-1-git-send-email-b.zolnierkie@samsung.com>
+ <1441303892-32004-3-git-send-email-b.zolnierkie@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1441303892-32004-3-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Aug 2, 2015 at 6:13 PM, Leo Yan <leo.yan@linaro.org> wrote:
-> On Hi6220, there have some clocks which can use mailbox channel to send
-> messages to power controller to change frequency; this includes CPU, GPU
-> and DDR clocks.
->
-> For dynamic frequency scaling, firstly need write the frequency value to
-> SRAM region, and then send message to mailbox to trigger power controller
-> to handle this requirement. This driver will use syscon APIs to pass SRAM
-> memory region and use common mailbox APIs for channels accessing.
->
-> This init driver will support cpu frequency change firstly.
->
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+On 03-09-15, 20:11, Bartlomiej Zolnierkiewicz wrote:
+> Add suspend frequency support and if needed set it to
+> the frequency obtained from the suspend opp (can be defined
+> using opp-v2 bindings and is optional).  Also implement
+> custom suspend method (needed to not error out on platforms
+> which don't require suspend frequency).
+> 
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/cpufreq/cpufreq-dt.c | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+> +#ifdef CONFIG_PM
+> +static int cpufreq_dt_suspend(struct cpufreq_policy *policy)
+> +{
+> +	int ret;
+> +
+> +	if (!policy->suspend_freq) {
+> +		pr_debug("%s: suspend_freq not defined\n", __func__);
+> +		return 0;
+> +	}
+> +
+> +	pr_debug("%s: Setting suspend-freq: %u\n", __func__,
+> +			policy->suspend_freq);
+> +
+> +	ret = __cpufreq_driver_target(policy, policy->suspend_freq,
+> +			CPUFREQ_RELATION_H);
+> +	if (ret)
+> +		pr_err("%s: unable to set suspend-freq: %u. err: %d\n",
+> +				__func__, policy->suspend_freq, ret);
+> +
+> +	return ret;
+> +}
+> +#else
+> +#define cpufreq_dt_suspend NULL
+> +#endif
 
-The kernelci.org build/boot bot detected boot failures in
-linux-next[1], and the failure was bisected down to this patch (landed
-in linux-next as commit c1628a2c416da947f5afac615d53189250fa49cb.
+No, there is no point replicating the exactly same routine again.
+Rather modify cpufreq_generic_suspend() to not print error and instead
+do pr_debug(), on !policy->suspend_freq.
 
-I verifed that reverting this commit on top of next-20150901 gets the
-hikey booting again.
-
-Kevin
-
-[1] http://kernelci.org/boot/hi6220-hikey/
+-- 
+viresh
