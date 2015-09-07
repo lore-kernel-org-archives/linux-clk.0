@@ -1,49 +1,56 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Wed, 2 Sep 2015 16:32:13 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Stefan Roese <sr@denx.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Vipul Kumar Samar <vipulkumar.samar@st.com>,
-	Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: spear600: Fix adc clock device name
-Message-ID: <20150902110213.GD26744@linux>
-References: <1441190517-20235-1-git-send-email-sr@denx.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1441190517-20235-1-git-send-email-sr@denx.de>
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de
+Subject: [PATCH v3 8/8] clk: imx7d: retain early UART clocks during kernel init
+Date: Mon,  7 Sep 2015 17:09:33 +0200
+Message-Id: <1441638573-6701-9-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1441638573-6701-1-git-send-email-l.stach@pengutronix.de>
+References: <1441638573-6701-1-git-send-email-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02-09-15, 12:41, Stefan Roese wrote:
-> The device name for the adc clock is incorrect. This results in the
-> IIO ADC driver to fail while probing for the clock. This patch
-> fixes the name and the ADC driver is now started correctly.
-> 
-> Signed-off-by: Stefan Roese <sr@denx.de>
-> Cc: Vipul Kumar Samar <vipulkumar.samar@st.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Mike Turquette <mturquette@linaro.org>
-> ---
->  drivers/clk/spear/spear6xx_clock.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/spear/spear6xx_clock.c b/drivers/clk/spear/spear6xx_clock.c
-> index 4f649c9..3e43244 100644
-> --- a/drivers/clk/spear/spear6xx_clock.c
-> +++ b/drivers/clk/spear/spear6xx_clock.c
-> @@ -316,7 +316,7 @@ void __init spear6xx_clk_init(void __iomem *misc_base)
->  	/* clock derived from apb clk */
->  	clk = clk_register_gate(NULL, "adc_clk", "apb_clk", 0, PERIP1_CLK_ENB,
->  			ADC_CLK_ENB, 0, &_lock);
-> -	clk_register_clkdev(clk, NULL, "adc");
-> +	clk_register_clkdev(clk, NULL, "d8200000.adc");
->  
->  	clk = clk_register_fixed_factor(NULL, "gpio0_clk", "apb_clk", 0, 1, 1);
->  	clk_register_clkdev(clk, NULL, "f0100000.gpio");
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-Sigh. Its fixed for all other boards, but this.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx7d.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 71f3a94b472c..f86b68049872 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -363,6 +363,17 @@ static const char *pll_video_bypass_sel[] = { "pll_video_main", "pll_video_main_
+ 
+ static struct clk_onecell_data clk_data;
+ 
++static struct clk ** const uart_clks[] __initconst = {
++	&clks[IMX7D_UART1_ROOT_CLK],
++	&clks[IMX7D_UART2_ROOT_CLK],
++	&clks[IMX7D_UART3_ROOT_CLK],
++	&clks[IMX7D_UART4_ROOT_CLK],
++	&clks[IMX7D_UART5_ROOT_CLK],
++	&clks[IMX7D_UART6_ROOT_CLK],
++	&clks[IMX7D_UART7_ROOT_CLK],
++	NULL
++};
++
+ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+@@ -856,5 +867,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	/* set uart module clock's parent clock source that must be great then 80MHz */
+ 	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+ 
++	imx_register_uart_clocks(uart_clks);
++
+ }
+ CLK_OF_DECLARE(imx7d, "fsl,imx7d-ccm", imx7d_clocks_init);
 -- 
-viresh
+2.5.0
