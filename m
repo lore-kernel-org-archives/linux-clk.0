@@ -1,45 +1,46 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 16 Sep 2015 15:30:51 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@stlinux.com, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 0/2] ST PLL fixes for 4.3-rc2
-Message-ID: <20150916223051.GO23081@codeaurora.org>
-References: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <l.stach@pengutronix.de>
+Message-ID: <1441617505.28391.8.camel@pengutronix.de>
+Subject: Re: [PATCH v2 2/8] clk: imx25: retain early UART clocks during
+ kernel init
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,
+ patchwork-lst@pengutronix.de, kernel@pengutronix.de,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date: Mon, 07 Sep 2015 11:18:25 +0200
+In-Reply-To: <20150907091005.GV9999@pengutronix.de>
+References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
+	 <1441382419-4343-3-git-send-email-l.stach@pengutronix.de>
+	 <20150906142315.GA30746@tiger> <20150907091005.GV9999@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/16, Gabriel Fernandez wrote:
-> This patch set fixes a kernel crash :
-[..]
+Am Montag, den 07.09.2015, 11:10 +0200 schrieb Uwe Kleine-König:
+> On Sun, Sep 06, 2015 at 10:23:15PM +0800, Shawn Guo wrote:
+> > 
+> > I prefer to code it like:
+> > 
+> > static struct clk **uart_clks[] __initdata = {
+> > 	&clk[uart_ipg_per],
+> > 	&clk[uart1_ipg],
+> > 	&clk[uart2_ipg],
+> > 	&clk[uart3_ipg],
+> > 	&clk[uart4_ipg],
+> > 	&clk[uart5_ipg],
+> > 	NULL
+> > };
 > 
-> This kernel crash is due to a broken compatibility with this commit:
-> commit 5eb26c605909 ("ARM: STi: DT: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x")
+> And maybe also use mx25_ as prefix to make the name unique.
+> 
+We already have a lot of non-unique names in those files. As this is a
+static variable it will not leak into other compilation units, so I
+prefer to keep the current style of the file.
 
-It isn't clear who's supposed to apply this because the To: list
-is huge. Did you want to take this through arm-soc? If so, feel
-free to take my acked-by on the second patch. The first patch
-doesn't even apply to clk tree because the patch introducing the
-typo didn't go through our tree.
+Regards,
+Lucas
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Pengutronix e.K.             | Lucas Stach                 |
+Industrial Linux Solutions   | http://www.pengutronix.de/  |
