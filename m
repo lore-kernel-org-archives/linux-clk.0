@@ -1,52 +1,44 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <ukl@pengutronix.de>
+Date: Mon, 7 Sep 2015 11:50:29 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+	kernel@pengutronix.de, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/8] clk: imx: add common logic to detect early UART
+ usage
+Message-ID: <20150907095029.GB9999@pengutronix.de>
+References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
+ <1441382419-4343-2-git-send-email-l.stach@pengutronix.de>
+ <20150907090603.GU9999@pengutronix.de>
+ <1441617354.28391.5.camel@pengutronix.de>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20150831124904.31057.19757.sendpatchset@little-apple>
-References: <20150831124842.31057.54534.sendpatchset@little-apple>
-	<20150831124904.31057.19757.sendpatchset@little-apple>
-Date: Tue, 1 Sep 2015 16:23:26 +0200
-Message-ID: <CAMuHMdWPryV6OowY=fcB4uwyCZE50ZJOScC=-iP_6K029vBbCw@mail.gmail.com>
-Subject: Re: [PATCH v5 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
-	Linux-sh list <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1441617354.28391.5.camel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus,
+Hallo Lucas,
 
-On Mon, Aug 31, 2015 at 2:49 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> --- /dev/null
-> +++ work/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt       2015-08-31 15:49:10.000000000 +0900
-> @@ -0,0 +1,32 @@
+On Mon, Sep 07, 2015 at 11:15:54AM +0200, Lucas Stach wrote:
+> Am Montag, den 07.09.2015, 11:06 +0200 schrieb Uwe Kleine-König:
+> > I wonder why you need an array of pointers to pointers of clocks. Isn't
+> > one indirection less possible and more easy?
+> > 
+> No, this is not easily possible if we want to use the auto-discarding of
+> the clocks array and a simple static initialization. The clock pointers
+> are only set up after the clock drivers probe routine has run, so if I
+> want to point to the actual clocks I would need to dynamically populate
+> the array and either dynamically allocate it, or would need to pre-size
+> the static array.
+Ah right. An alternative would be to just store the indices, but I don't
+think this is nicer because then you additionally need a reference to
+the clk array. You don't happen to have this anyhow, do you?
 
-> +       cpg_clocks: cpg_clocks@e6150000 {
-> +               compatible = "renesas,r8a7795-cpg-clocks",
-> +                            "renesas,rcar-gen3-cpg-clocks";
-> +               reg = <0 0xe6150000 0 0x1000>;
-> +               clocks = <&extal_clk>;
-> +               #clock-cells = <1>;
-> +                clock-indices = <
-> +                             R8A7795_CLK_MAIN R8A7795_CLK_PLL0
-> +                             R8A7795_CLK_PLL1 R8A7795_CLK_PLL2
-> +                             R8A7795_CLK_PLL3 R8A7795_CLK_PLL4
-> +                >;
+Best regards
+Uwe
 
-The new "clock-indices" hunk uses spaces insteads of TABs for indentation.
-
-> +       };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
