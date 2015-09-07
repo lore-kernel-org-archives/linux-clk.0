@@ -1,52 +1,141 @@
-Return-Path: <magnus.damm@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVXJ8Te_Rwn2WZCdXdh_+0__S6QEp7ZBzggpY-UgqtqLA@mail.gmail.com>
-References: <20150826074309.4298.76147.sendpatchset@little-apple>
-	<CAMuHMdVXJ8Te_Rwn2WZCdXdh_+0__S6QEp7ZBzggpY-UgqtqLA@mail.gmail.com>
-Date: Wed, 2 Sep 2015 15:52:45 +0900
-Message-ID: <CANqRtoSccKdT9W_xhJ-xNQjbrJBEfGgn4uHaYM7=ieZt3gTT0g@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: shmobile: Get rid of CONFIG_SHMOBILE_MULTI
-From: Magnus Damm <magnus.damm@gmail.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+In-Reply-To: <1441628627-5143-1-git-send-email-tomeu.vizoso@collabora.com>
+References: <1441628627-5143-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Rob Herring <robherring2@gmail.com>
+Date: Mon, 7 Sep 2015 15:50:44 -0500
+Message-ID: <CAL_Jsq+E31JaPcp5ELS_ztSqgSrK7U4OzB9xNcNz01Ayrrm+Yg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/22] On-demand device probing
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	Felipe Balbi <balbi@ti.com>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	=?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
-
-On Wed, Aug 26, 2015 at 4:48 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Wed, Aug 26, 2015 at 9:43 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
->> From: Magnus Damm <damm+renesas@opensource.se>
->>
->> Shmobile is all multiplatform these days, so get rid of the
->> reference to CONFIG_ARCH_SHMOBILE_MULTI. Also instead of always
->> enabling DIV6 and MSTP adjust the Makefile to enable DIV6 and
->> MSTP depending on if they are included in the SoC or not.
->>
->> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
->> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->>
->>  Changes since V1:
->>  - dropped DIV6 from R-Car Gen1 variants - thanks Geert!
+On Mon, Sep 7, 2015 at 7:23 AM, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
+> Hello,
 >
-> BTW, you forgot to mention, but it's important for Mike and Stephen to
-> know that this should not be queued up in a branch that still has
-> ARCH_SHMOBILE_LEGACY.
+> I have a problem with the panel on my Tegra Chromebook taking longer
+> than expected to be ready during boot (Stéphane Marchesin reported what
+> is basically the same issue in [0]), and have looked into ordered
+> probing as a better way of solving this than moving nodes around in the
+> DT or playing with initcall levels and linking order.
+>
+> While reading the thread [1] that Alexander Holler started with his
+> series to make probing order deterministic, it occurred to me that it
+> should be possible to achieve the same by probing devices as they are
+> referenced by other devices.
+>
+> This basically reuses the information that is already implicit in the
+> probe() implementations, saving us from refactoring existing drivers or
+> adding information to DTBs.
+>
+> During review of v1 of this series Linus Walleij suggested that it
+> should be the device driver core to make sure that dependencies are
+> ready before probing a device. I gave this idea a try [2] but Mark Brown
+> pointed out to the logic duplication between the resource acquisition
+> and dependency discovery code paths (though I think it's fairly minor).
+>
+> To address that code duplication I experimented with Arnd's devm_probe
+> [3] concept of having drivers declare their dependencies instead of
+> acquiring them during probe, and while it worked [4], I don't think we
+> end up winning anything when compared to just probing devices on-demand
+> from resource getters.
+>
+> One remaining objection is to the "sprinkling" of calls to
+> of_device_probe() in the resource getters of each subsystem, but I think
+> it's the right thing to do given that the storage of resources is
+> currently subsystem-specific.
+>
+> We could avoid the above by moving resource storage into the core, but I
+> don't think there's a compelling case for that.
+>
+> I have tested this on boards with Tegra, iMX.6, Exynos, Rockchip and
+> OMAP SoCs, and these patches were enough to eliminate all the deferred
+> probes (except one in PandaBoard because omap_dma_system doesn't have a
+> firmware node as of yet).
+>
+> Have submitted a branch [5] with only these patches on top of thursday's
+> linux-next to kernelci.org and I don't see any issues that could be
+> caused by them. For some reason it currently has more passes than the
+> version of -next it's based on!
+>
+> With this series I get the kernel to output to the panel in 0.5s,
+> instead of 2.8s.
+>
+> Regards,
+>
+> Tomeu
+>
+> [0] http://lists.freedesktop.org/archives/dri-devel/2014-August/066527.html
+>
+> [1] https://lkml.org/lkml/2014/5/12/452
+>
+> [2] https://lkml.org/lkml/2015/6/17/305
+>
+> [3] http://article.gmane.org/gmane.linux.ports.arm.kernel/277689
+>
+> [4] https://lkml.org/lkml/2015/7/21/441a
+>
+> [5] https://git.collabora.com/cgit/user/tomeu/linux.git/log/?h=on-demand-probes-v6
+>
+> [6] http://kernelci.org/boot/all/job/collabora/kernel/v4.2-11902-g25d80c927f8b/
+>
+> [7] http://kernelci.org/boot/all/job/next/kernel/next-20150903/
+>
+> Changes in v4:
+> - Added bus.pre_probe callback so the probes of Primecell devices can be
+>   deferred if their device IDs cannot be yet read because of the clock
+>   driver not having probed when they are registered. Maybe this goes
+>   overboard and the matching information should be in the DT if there is
+>   one.
 
-Allow me to clarify one thing.
+Seems overboard to me or at least a separate problem. Most clocks have
+to be setup before the driver model simply because timers depend on
+clocks usually.
 
-Your comment is true for this older version of this patch, but newer
-versions such as:
-[PATCH v5 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
-and later versions do not have this dependency on ARCH_SHMOBILE_LEGACY cleanups.
-
-So newer versions can be merged at any time without any special dependencies.
-
-Thanks,
-
-/ magnus
+Rob
