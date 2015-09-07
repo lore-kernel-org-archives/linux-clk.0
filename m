@@ -1,61 +1,103 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 3 Sep 2015 10:39:07 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] clk: qcom: Add support for RPM Clocks
-Message-ID: <20150903173907.GG15099@codeaurora.org>
-References: <1438620489-32515-1-git-send-email-georgi.djakov@linaro.org>
- <1438620489-32515-2-git-send-email-georgi.djakov@linaro.org>
- <20150902203154.GA15099@codeaurora.org>
- <55E869F2.5020008@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH v3 1/8] clk: imx: add common logic to detect early UART usage
+Date: Mon,  7 Sep 2015 17:09:26 +0200
+Message-Id: <1441638573-6701-2-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1441638573-6701-1-git-send-email-l.stach@pengutronix.de>
+References: <1441638573-6701-1-git-send-email-l.stach@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+ kernel@pengutronix.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <55E869F2.5020008@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/03, Georgi Djakov wrote:
-> Hi Stephen,
-> 
-> On 09/02/2015 11:31 PM, Stephen Boyd wrote:
-> > On 08/03, Georgi Djakov wrote:
-> >> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-> >> new file mode 100644
-> >> index 000000000000..e564673ec3a5
-> >> --- /dev/null
-> >> +++ b/drivers/clk/qcom/clk-smd-rpm.c
-> 
-> [..]
-> 
-> >> +static int clk_smd_rpm_set_rate(struct clk_hw *hw, unsigned long rate,
-> >> +				unsigned long parent_rate)
-> >> +{
-> >> +	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
-> >> +	int ret = 0;
-> >> +
-> >> +	if (r->enabled) {
-> >> +		u32 value;
-> >> +		struct clk_smd_rpm *peer = r->peer;
-> >> +
-> >> +		/* Take peer clock's rate into account only if it's enabled. */
-> >> +		if (peer->enabled)
-> > 
-> > This peer stuff almost doesn't even matter because we're only
-> > sending active set requests. Why can't this code be updated to
-> > send both active and sleep set requests? The sleep set stuff
-> > won't be cached, etc., but I don't see a problem in doing both.
-> > Otherwise we should drop all the peer stuff until we introduce
-> > active only clocks.
-> 
-> Initially I tried sending both active and sleep sets, but as they are
-> not cached like in downstream (yet) i got hangs during boot. Disabling
-> caching in downstream kernel also caused the same hangs, so i left
-> this out for now. Will try debugging it further.
+Both earlycon and earlyprintk depend on the bootloader setup UART
+clocks being retained. This patch adds the common logic to detect such
+situations and make the information available to the clock drivers, as
+well as adding the facilities to disable those clocks at the end of
+the kernel init.
 
-Ok. That's mildly concerning.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk.c | 38 ++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h |  1 +
+ 2 files changed, 39 insertions(+)
 
+diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+index df12b5307175..45a073dab435 100644
+--- a/drivers/clk/imx/clk.c
++++ b/drivers/clk/imx/clk.c
+@@ -73,3 +73,41 @@ void imx_cscmr1_fixup(u32 *val)
+ 	*val ^= CSCMR1_FIXUP;
+ 	return;
+ }
++
++static int imx_keep_uart_clocks __initdata;
++static struct clk ** const *imx_uart_clocks __initdata;
++
++static int __init imx_keep_uart_clocks_param(char *str)
++{
++	imx_keep_uart_clocks = 1;
++
++	return 0;
++}
++__setup_param("earlycon", imx_keep_uart_earlycon,
++	      imx_keep_uart_clocks_param, 0);
++__setup_param("earlyprintk", imx_keep_uart_earlyprintk,
++	      imx_keep_uart_clocks_param, 0);
++
++void __init imx_register_uart_clocks(struct clk ** const clks[])
++{
++	if (imx_keep_uart_clocks) {
++		int i;
++
++		imx_uart_clocks = clks;
++		for (i = 0; imx_uart_clocks[i]; i++)
++			clk_prepare_enable(*imx_uart_clocks[i]);
++	}
++}
++
++static int __init imx_clk_disable_uart(void)
++{
++	if (imx_keep_uart_clocks) {
++		int i;
++
++		for (i = 0; imx_uart_clocks[i]; i++)
++			clk_disable_unprepare(*imx_uart_clocks[i]);
++	}
++
++	return 0;
++}
++late_initcall_sync(imx_clk_disable_uart);
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 1049b0c7d818..c94ac5c26226 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -7,6 +7,7 @@
+ extern spinlock_t imx_ccm_lock;
+ 
+ void imx_check_clocks(struct clk *clks[], unsigned int count);
++void imx_register_uart_clocks(struct clk ** const clks[]);
+ 
+ extern void imx_cscmr1_fixup(u32 *val);
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.5.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
