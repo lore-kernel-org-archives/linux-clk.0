@@ -1,70 +1,37 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel@pengutronix.de,
-	patchwork-lst@pengutronix.de
-Subject: [PATCH v2 0/8] i.MX early debug UART clock fixes
-Date: Fri,  4 Sep 2015 18:00:11 +0200
-Message-Id: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Tue, 08 Sep 2015 01:32:52 +0900
+Message-Id: <20150907163252.475.18281.sendpatchset@little-apple>
+Subject: [PATCH v7 00/05] Renesas R-Car Gen3 CPG support V7
 List-ID: <linux-clk.vger.kernel.org>
 
-This series fixes a long standing interaction issue between the
-kernels early debug facilities and the i.MX clock drivers.
+Renesas R-Car Gen3 CPG support V7
 
-Both earlyprintk and earlycon rely on the bootloader setup clocks
-for the UARTs to be retained during kernel init. As those clocks are
-only enabled in hardware, but not referenced in software they (or even
-their parent clocks) may get disabled as a result of other clocks being
-en-/disabled during boot.
+[PATCH v7 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
+[PATCH v7 02/05] clk: shmobile: Add r8a7795 SoC to MSTP bindings
+[PATCH v7 03/05] clk: shmobile: Make MSTP clock-output-names optional
+[PATCH v7 04/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
+[PATCH v7 05/05] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
 
-This results in missing messages from the early debug console until the
-regular system console takes over, or even worse system hangs in response
-to unclocked register accesses. This renders those debugging facilities a
-lot less useful.
+Here's the latest R-Car Gen3 clock support patch collection through
+a single "easy to use" patch series for drivers/clk and DT documentation
+bits. This version of the series only updates patch 4 with PLL1 divider
+removal changes as well as some clock registration rework.
 
-The fix implemented here is to check if any of this early debugging is
-enabled and keep the UART clocks referenced and enabled in that case.
-The clocks will then only be disabled at the end of kernel init, at which
-point the real console should have taken over and the early outputs being
-disabled.
+For details please see each individual patch.
 
-I've runtime tested this on i.MX6Q and i.MX53, other platforms are only
-compile tested. This is mostly a mechanical change, but still I would
-appreciate some testing.
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-Changes since v1:
-- reworked logic to require significantly less code in the individual
-  clock drivers
+ Developed against e2a147e in renesas-drivers with reverted V6 series
 
-Regards,
-Lucas
-
-Lucas Stach (8):
-  clk: imx: add common logic to detect early UART usage
-  clk: imx25: retain early UART clocks during kernel init
-  clk: imx27: retain early UART clocks during kernel init
-  clk: imx31: retain early UART clocks during kernel init
-  clk: imx35: retain early UART clocks during kernel init
-  clk: imx5: retain early UART clocks during kernel init
-  clk: imx6: retain early UART clocks during kernel init
-  clk: imx7d: retain early UART clocks during kernel init
-
- drivers/clk/imx/clk-imx25.c       | 10 +++++++++
- drivers/clk/imx/clk-imx27.c       | 11 ++++++++++
- drivers/clk/imx/clk-imx31.c       | 10 +++++++++
- drivers/clk/imx/clk-imx35.c       |  8 +++++++
- drivers/clk/imx/clk-imx51-imx53.c | 14 ++++++++++++
- drivers/clk/imx/clk-imx6q.c       |  6 +++++
- drivers/clk/imx/clk-imx6sl.c      |  6 +++++
- drivers/clk/imx/clk-imx6sx.c      |  6 +++++
- drivers/clk/imx/clk-imx7d.c       | 11 ++++++++++
- drivers/clk/imx/clk.c             | 46 +++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h             |  1 +
- 11 files changed, 129 insertions(+)
-
--- 
-2.5.0
+ Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt      |    1 
+ Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   58 ++
+ drivers/clk/Makefile                                                     |    1 
+ drivers/clk/shmobile/Makefile                                            |   23 
+ drivers/clk/shmobile/clk-mstp.c                                          |   24 
+ drivers/clk/shmobile/clk-rcar-gen3.c                                     |  244 ++++++++++
+ 6 files changed, 328 insertions(+), 23 deletions(-)
