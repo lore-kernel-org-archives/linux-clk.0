@@ -1,83 +1,69 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 7 Sep 2015 11:28:23 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] cpufreq-dt: add suspend frequency support
-Message-ID: <20150907055823.GC26760@linux>
-References: <1441303892-32004-1-git-send-email-b.zolnierkie@samsung.com>
- <1441303892-32004-3-git-send-email-b.zolnierkie@samsung.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH v3 5/8] clk: imx35: retain early UART clocks during kernel init
+Date: Mon,  7 Sep 2015 17:09:30 +0200
+Message-Id: <1441638573-6701-6-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1441638573-6701-1-git-send-email-l.stach@pengutronix.de>
+References: <1441638573-6701-1-git-send-email-l.stach@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+ kernel@pengutronix.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1441303892-32004-3-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03-09-15, 20:11, Bartlomiej Zolnierkiewicz wrote:
-> Add suspend frequency support and if needed set it to
-> the frequency obtained from the suspend opp (can be defined
-> using opp-v2 bindings and is optional).  Also implement
-> custom suspend method (needed to not error out on platforms
-> which don't require suspend frequency).
-> 
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  drivers/cpufreq/cpufreq-dt.c | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-> +#ifdef CONFIG_PM
-> +static int cpufreq_dt_suspend(struct cpufreq_policy *policy)
-> +{
-> +	int ret;
-> +
-> +	if (!policy->suspend_freq) {
-> +		pr_debug("%s: suspend_freq not defined\n", __func__);
-> +		return 0;
-> +	}
-> +
-> +	pr_debug("%s: Setting suspend-freq: %u\n", __func__,
-> +			policy->suspend_freq);
-> +
-> +	ret = __cpufreq_driver_target(policy, policy->suspend_freq,
-> +			CPUFREQ_RELATION_H);
-> +	if (ret)
-> +		pr_err("%s: unable to set suspend-freq: %u. err: %d\n",
-> +				__func__, policy->suspend_freq, ret);
-> +
-> +	return ret;
-> +}
-> +#else
-> +#define cpufreq_dt_suspend NULL
-> +#endif
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-No, there is no point replicating the exactly same routine again.
-Rather modify cpufreq_generic_suspend() to not print error and instead
-do pr_debug(), on !policy->suspend_freq.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx35.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
+diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
+index 69138ba3dec7..cbe9eee8c80b 100644
+--- a/drivers/clk/imx/clk-imx35.c
++++ b/drivers/clk/imx/clk-imx35.c
+@@ -84,6 +84,14 @@ enum mx35_clks {
+ 
+ static struct clk *clk[clk_max];
+ 
++static struct clk ** const uart_clks[] __initconst = {
++	&clk[ipg],
++	&clk[uart1_gate],
++	&clk[uart2_gate],
++	&clk[uart3_gate],
++	NULL
++};
++
+ int __init mx35_clocks_init(void)
+ {
+ 	void __iomem *base;
+@@ -292,6 +300,8 @@ int __init mx35_clocks_init(void)
+ 	 */
+ 	clk_prepare_enable(clk[scc_gate]);
+ 
++	imx_register_uart_clocks(uart_clks);
++
+ 	imx_print_silicon_rev("i.MX35", mx35_revision());
+ 
+ 	mxc_timer_init(MX35_GPT1_BASE_ADDR, MX35_INT_GPT, GPT_TYPE_IMX31);
 -- 
-viresh
+2.5.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
