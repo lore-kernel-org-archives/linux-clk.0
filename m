@@ -1,33 +1,47 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 10 Sep 2015 13:56:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org
-Subject: Re: [PATCH] clk: rockchip: handle critical clocks after registrering
- all clocks
-Message-ID: <20150910205616.GD15099@codeaurora.org>
-References: <7786473.0oe27txQFN@phil>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <7786473.0oe27txQFN@phil>
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Tue, 08 Sep 2015 01:33:14 +0900
+Message-Id: <20150907163314.475.8868.sendpatchset@little-apple>
+In-Reply-To: <20150907163252.475.18281.sendpatchset@little-apple>
+References: <20150907163252.475.18281.sendpatchset@little-apple>
+Subject: [PATCH v7 02/05] clk: shmobile: Add r8a7795 SoC to MSTP bindings
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/21, Heiko Stuebner wrote:
-> Currently the registration of critical clocks is done in the function
-> shared between rk3066 and rk3188 clock trees. That results in them
-> getting handled maybe before all of them are registered.
-> 
-> Therefore move the critical clock handling down to the end of the soc-
-> specific clock registration function, so that all clocks are registered
-> before they're maybe handled as critical clock.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Applied to clk-fixes
+Add r8a7795 to the MSTP DT binding documentation.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
+
+ Changes since V6: (Magnus Damm <damm+renesas@opensource.se>)
+ - None
+
+ Changes since V5: (Magnus Damm <damm+renesas@opensource.se>)
+ - Added Acked-by from Laurent
+
+ Changes since V4: (Magnus Damm <damm+renesas@opensource.se>)
+ - Added Acked-by from Geert
+
+ Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
+ - Picked up patch floating around on ML, added change log
+
+ Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- 0001/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
++++ work/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt	2015-08-29 16:18:30.672366518 +0900
+@@ -19,6 +19,7 @@ Required Properties:
+     - "renesas,r8a7791-mstp-clocks" for R8A7791 (R-Car M2-W) MSTP gate clocks
+     - "renesas,r8a7793-mstp-clocks" for R8A7793 (R-Car M2-N) MSTP gate clocks
+     - "renesas,r8a7794-mstp-clocks" for R8A7794 (R-Car E2) MSTP gate clocks
++    - "renesas,r8a7795-mstp-clocks" for R8A7795 (R-Car H3) MSTP gate clocks
+     - "renesas,sh73a0-mstp-clocks" for SH73A0 (SH-MobileAG5) MSTP gate clocks
+     and "renesas,cpg-mstp-clocks" as a fallback.
+   - reg: Base address and length of the I/O mapped registers used by the MSTP
