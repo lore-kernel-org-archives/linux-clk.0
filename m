@@ -1,183 +1,75 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH 03/16] ARM: at91/dt: use syscon for PMC
-Date: Wed, 30 Sep 2015 18:10:56 +0200
-Message-Id: <1443629469-15086-4-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:49375 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751224AbbIGHjz (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 7 Sep 2015 03:39:55 -0400
+Subject: Re: [PATCH 01/11] clk: samsung: exynos7: Change the CMU_TOPC block
+ clock name
+To: Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+ <1441366637-28001-2-git-send-email-alim.akhtar@samsung.com>
+ <55ED21B7.6080608@samsung.com> <55ED3C43.4000408@samsung.com>
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+	mturquette@baylibre.com, amit.daniel@samsung.com,
+	gautam.vivek@samsung.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <55ED3F42.6040703@samsung.com>
+Date: Mon, 07 Sep 2015 16:39:46 +0900
+MIME-version: 1.0
+In-reply-to: <55ED3C43.4000408@samsung.com>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The PMC is not only used to drive the clocks but also has some registers
-related to other functions. One of those is for example the USB gadget
-bias.
-Using a syscon allows to properly separate those functions.
+On 07.09.2015 16:26, Alim Akhtar wrote:
+> Hi Krzysztof,
+> 
+> On 09/07/2015 11:03 AM, Krzysztof Kozlowski wrote:
+>> On 04.09.2015 20:37, Alim Akhtar wrote:
+>>> Corrects the CMU_TOPC block clock name as per user manual.
+>>> This also adds few of the missing gate clocks of topc block.
+>>> This does not change any functionalies.
+>>
+>> s/functionalies/functionalities/
+>>
+>> Yes, it does change. After adding new gates without users, kernel will
+>> disable them. Previously these gates remained in default reset state
+>> (probably "pass") or in state set by bootloader (also "pass").
+>>
+> My bad, was not enough clear of that, what I mean is these changes does
+> not affect the working of the related IPs, yes it does change the status
+> of gate clocks.
+> Will update the commit log.
+> 
+>> Please update the changelog and of course test the patchset for any
+>> issues in different components depending on these clocks. Depending
+>> directly or indirectly.
+>>
+>> Split the patch into:
+>> 1. clean up/rename,
+>> 2. addition of new mux/gate clock.
+>>
+> This patch adds few of the gate clocks, the reason I added it here
+> because subsequent patches in this series can use it.
+> Or may I should move these new addition to the patch 02/11, as 02/11 is
+> going to use them.
+> Do you think that make sense to you?
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- arch/arm/boot/dts/at91rm9200.dtsi  | 2 +-
- arch/arm/boot/dts/at91sam9260.dtsi | 2 +-
- arch/arm/boot/dts/at91sam9261.dtsi | 2 +-
- arch/arm/boot/dts/at91sam9263.dtsi | 2 +-
- arch/arm/boot/dts/at91sam9g45.dtsi | 2 +-
- arch/arm/boot/dts/at91sam9n12.dtsi | 2 +-
- arch/arm/boot/dts/at91sam9rl.dtsi  | 2 +-
- arch/arm/boot/dts/at91sam9x5.dtsi  | 2 +-
- arch/arm/boot/dts/sama5d2.dtsi     | 2 +-
- arch/arm/boot/dts/sama5d3.dtsi     | 2 +-
- arch/arm/boot/dts/sama5d4.dtsi     | 2 +-
- 11 files changed, 11 insertions(+), 11 deletions(-)
+>From the reviewer point of view I would prefer to separate renaming from
+addition. You can rename the CMU_TOPC in patch #1, add new gates in #2
+and continue with the work (more renames).
 
-diff --git a/arch/arm/boot/dts/at91rm9200.dtsi b/arch/arm/boot/dts/at91rm9200.dtsi
-index 60edd8baebb8..39eb1e3fc6b8 100644
---- a/arch/arm/boot/dts/at91rm9200.dtsi
-+++ b/arch/arm/boot/dts/at91rm9200.dtsi
-@@ -97,7 +97,7 @@
- 			};
- 
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91rm9200-pmc";
-+				compatible = "atmel,at91rm9200-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9260.dtsi b/arch/arm/boot/dts/at91sam9260.dtsi
-index be9c027ddd97..d4884dd1c243 100644
---- a/arch/arm/boot/dts/at91sam9260.dtsi
-+++ b/arch/arm/boot/dts/at91sam9260.dtsi
-@@ -100,7 +100,7 @@
- 			};
- 
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91sam9260-pmc";
-+				compatible = "atmel,at91sam9260-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9261.dtsi b/arch/arm/boot/dts/at91sam9261.dtsi
-index ce1e3e94a40c..5e09de4eb9cd 100644
---- a/arch/arm/boot/dts/at91sam9261.dtsi
-+++ b/arch/arm/boot/dts/at91sam9261.dtsi
-@@ -568,7 +568,7 @@
- 			};
- 
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91rm9200-pmc";
-+				compatible = "atmel,at91rm9200-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9263.dtsi b/arch/arm/boot/dts/at91sam9263.dtsi
-index f1f5fa3a9e6e..93446420af25 100644
---- a/arch/arm/boot/dts/at91sam9263.dtsi
-+++ b/arch/arm/boot/dts/at91sam9263.dtsi
-@@ -93,7 +93,7 @@
- 			};
- 
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91rm9200-pmc";
-+				compatible = "atmel,at91rm9200-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9g45.dtsi b/arch/arm/boot/dts/at91sam9g45.dtsi
-index 18b8b9e29704..af8b708ac312 100644
---- a/arch/arm/boot/dts/at91sam9g45.dtsi
-+++ b/arch/arm/boot/dts/at91sam9g45.dtsi
-@@ -114,7 +114,7 @@
- 			};
- 
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91sam9g45-pmc";
-+				compatible = "atmel,at91sam9g45-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9n12.dtsi b/arch/arm/boot/dts/at91sam9n12.dtsi
-index 32bc9a189db0..95569a87b6c9 100644
---- a/arch/arm/boot/dts/at91sam9n12.dtsi
-+++ b/arch/arm/boot/dts/at91sam9n12.dtsi
-@@ -97,7 +97,7 @@
- 			};
- 
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91sam9n12-pmc";
-+				compatible = "atmel,at91sam9n12-pmc", "syscon";
- 				reg = <0xfffffc00 0x200>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9rl.dtsi b/arch/arm/boot/dts/at91sam9rl.dtsi
-index a0b90aedd3b8..6d829db4e887 100644
---- a/arch/arm/boot/dts/at91sam9rl.dtsi
-+++ b/arch/arm/boot/dts/at91sam9rl.dtsi
-@@ -814,7 +814,7 @@
- 			};
- 
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91sam9g45-pmc";
-+				compatible = "atmel,at91sam9g45-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9x5.dtsi b/arch/arm/boot/dts/at91sam9x5.dtsi
-index 747d8f070a5c..0a0ea6bce1b9 100644
---- a/arch/arm/boot/dts/at91sam9x5.dtsi
-+++ b/arch/arm/boot/dts/at91sam9x5.dtsi
-@@ -105,7 +105,7 @@
- 			};
- 
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91sam9x5-pmc";
-+				compatible = "atmel,at91sam9x5-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-index 034cd48ae28b..780c8afc7600 100644
---- a/arch/arm/boot/dts/sama5d2.dtsi
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -286,7 +286,7 @@
- 			};
- 
- 			pmc: pmc@f0014000 {
--				compatible = "atmel,sama5d2-pmc";
-+				compatible = "atmel,sama5d2-pmc", "syscon";
- 				reg = <0xf0014000 0x160>;
- 				interrupts = <74 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/sama5d3.dtsi b/arch/arm/boot/dts/sama5d3.dtsi
-index 7fa276515f11..fa054b28c2c3 100644
---- a/arch/arm/boot/dts/sama5d3.dtsi
-+++ b/arch/arm/boot/dts/sama5d3.dtsi
-@@ -906,7 +906,7 @@
- 			};
- 
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,sama5d3-pmc";
-+				compatible = "atmel,sama5d3-pmc", "syscon";
- 				reg = <0xfffffc00 0x120>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
-index 8d1de29e8da1..3ab2c83ecc8b 100644
---- a/arch/arm/boot/dts/sama5d4.dtsi
-+++ b/arch/arm/boot/dts/sama5d4.dtsi
-@@ -386,7 +386,7 @@
- 			};
- 
- 			pmc: pmc@f0018000 {
--				compatible = "atmel,sama5d3-pmc";
-+				compatible = "atmel,sama5d3-pmc", "syscon";
- 				reg = <0xf0018000 0x120>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
--- 
-2.1.4
+> 
+>> Currently it is more difficult to review the patch.
+>>
+> Thanks for your time, do you have any comments of the other patches in
+> this series?
+
+Not yet. I'll look at them in few days. So it's up to you if you want to
+send next version now or wait for my further comments.
+
+Best regards,
+Krzysztof
+
