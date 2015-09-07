@@ -1,49 +1,197 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:47516 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751642AbbIHTW7 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 8 Sep 2015 15:22:59 -0400
-Date: Tue, 8 Sep 2015 12:22:57 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Eric Anholt <eric@anholt.net>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Received: from mail.kernel.org ([198.145.29.136]:34210 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753827AbbIGGsq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Mon, 7 Sep 2015 02:48:46 -0400
+Date: Mon, 7 Sep 2015 07:48:38 +0100
+From: Lee Jones <lee@kernel.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Mike Turquette <mturquette@linaro.org>,
 	devicetree@vger.kernel.org
 Subject: Re: [PATCH 1/4] clk: bcm2835: Move under bcm/ with other Broadcom
  SoC clk drivers.
-Message-ID: <20150908192257.GQ15099@codeaurora.org>
+Message-ID: <20150907064838.GE4796@x1>
 References: <1441562263-19888-1-git-send-email-eric@anholt.net>
  <1441562263-19888-2-git-send-email-eric@anholt.net>
- <20150907064838.GE4796@x1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20150907064838.GE4796@x1>
+In-Reply-To: <1441562263-19888-2-git-send-email-eric@anholt.net>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/07, Lee Jones wrote:
-> On Sun, 06 Sep 2015, Eric Anholt wrote:
-> 
-> > clk-bcm2835.c predates the drivers under bcm/, but all the new BCM
-> > drivers are going in there so let's follow them.
-> > 
-> > Signed-off-by: Eric Anholt <eric@anholt.net>
-> > ---
-> >  drivers/clk/Makefile          |  1 -
-> >  drivers/clk/bcm/Makefile      |  1 +
-> >  drivers/clk/bcm/clk-bcm2835.c | 60 +++++++++++++++++++++++++++++++++++++++++++
-> >  drivers/clk/clk-bcm2835.c     | 60 -------------------------------------------
-> 
-> You need to resubmit this with `git format-patch -M`.
+On Sun, 06 Sep 2015, Eric Anholt wrote:
 
-You don't have to. It would have been nice if it was formatted
-with -M so that review is easier, but we can always apply the
-patch and then check the result to make sure things look the
-same.
+> clk-bcm2835.c predates the drivers under bcm/, but all the new BCM
+> drivers are going in there so let's follow them.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> ---
+>  drivers/clk/Makefile          |  1 -
+>  drivers/clk/bcm/Makefile      |  1 +
+>  drivers/clk/bcm/clk-bcm2835.c | 60 +++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/clk-bcm2835.c     | 60 -------------------------------------------
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+You need to resubmit this with `git format-patch -M`.
+
+>  4 files changed, 61 insertions(+), 61 deletions(-)
+>  create mode 100644 drivers/clk/bcm/clk-bcm2835.c
+>  delete mode 100644 drivers/clk/clk-bcm2835.c
+> 
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index c4cf075..1bdbe9b 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -19,7 +19,6 @@ endif
+>  obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
+>  obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
+>  obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
+> -obj-$(CONFIG_ARCH_BCM2835)		+= clk-bcm2835.o
+>  obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
+>  obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
+>  obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
+> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+> index 8a7a477..ee2349b 100644
+> --- a/drivers/clk/bcm/Makefile
+> +++ b/drivers/clk/bcm/Makefile
+> @@ -3,4 +3,5 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
+>  obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
+>  obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
+>  obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
+> +obj-$(CONFIG_ARCH_BCM2835)	+= clk-bcm2835.o
+>  obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> new file mode 100644
+> index 0000000..6b950ca
+> --- /dev/null
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -0,0 +1,60 @@
+> +/*
+> + * Copyright (C) 2010 Broadcom
+> + * Copyright (C) 2012 Stephen Warren
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program; if not, write to the Free Software
+> + * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/clk/bcm2835.h>
+> +#include <linux/of.h>
+> +
+> +/*
+> + * These are fixed clocks. They're probably not all root clocks and it may
+> + * be possible to turn them on and off but until this is mapped out better
+> + * it's the only way they can be used.
+> + */
+> +void __init bcm2835_init_clocks(void)
+> +{
+> +	struct clk *clk;
+> +	int ret;
+> +
+> +	clk = clk_register_fixed_rate(NULL, "sys_pclk", NULL, CLK_IS_ROOT,
+> +					250000000);
+> +	if (IS_ERR(clk))
+> +		pr_err("sys_pclk not registered\n");
+> +
+> +	clk = clk_register_fixed_rate(NULL, "apb_pclk", NULL, CLK_IS_ROOT,
+> +					126000000);
+> +	if (IS_ERR(clk))
+> +		pr_err("apb_pclk not registered\n");
+> +
+> +	clk = clk_register_fixed_rate(NULL, "uart0_pclk", NULL, CLK_IS_ROOT,
+> +					3000000);
+> +	if (IS_ERR(clk))
+> +		pr_err("uart0_pclk not registered\n");
+> +	ret = clk_register_clkdev(clk, NULL, "20201000.uart");
+> +	if (ret)
+> +		pr_err("uart0_pclk alias not registered\n");
+> +
+> +	clk = clk_register_fixed_rate(NULL, "uart1_pclk", NULL, CLK_IS_ROOT,
+> +					125000000);
+> +	if (IS_ERR(clk))
+> +		pr_err("uart1_pclk not registered\n");
+> +	ret = clk_register_clkdev(clk, NULL, "20215000.uart");
+> +	if (ret)
+> +		pr_err("uart1_pclk alias not registered\n");
+> +}
+> diff --git a/drivers/clk/clk-bcm2835.c b/drivers/clk/clk-bcm2835.c
+> deleted file mode 100644
+> index 6b950ca..0000000
+> --- a/drivers/clk/clk-bcm2835.c
+> +++ /dev/null
+> @@ -1,60 +0,0 @@
+> -/*
+> - * Copyright (C) 2010 Broadcom
+> - * Copyright (C) 2012 Stephen Warren
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2 of the License, or
+> - * (at your option) any later version.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+> - *
+> - * You should have received a copy of the GNU General Public License
+> - * along with this program; if not, write to the Free Software
+> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+> - */
+> -
+> -#include <linux/clk-provider.h>
+> -#include <linux/clkdev.h>
+> -#include <linux/clk/bcm2835.h>
+> -#include <linux/of.h>
+> -
+> -/*
+> - * These are fixed clocks. They're probably not all root clocks and it may
+> - * be possible to turn them on and off but until this is mapped out better
+> - * it's the only way they can be used.
+> - */
+> -void __init bcm2835_init_clocks(void)
+> -{
+> -	struct clk *clk;
+> -	int ret;
+> -
+> -	clk = clk_register_fixed_rate(NULL, "sys_pclk", NULL, CLK_IS_ROOT,
+> -					250000000);
+> -	if (IS_ERR(clk))
+> -		pr_err("sys_pclk not registered\n");
+> -
+> -	clk = clk_register_fixed_rate(NULL, "apb_pclk", NULL, CLK_IS_ROOT,
+> -					126000000);
+> -	if (IS_ERR(clk))
+> -		pr_err("apb_pclk not registered\n");
+> -
+> -	clk = clk_register_fixed_rate(NULL, "uart0_pclk", NULL, CLK_IS_ROOT,
+> -					3000000);
+> -	if (IS_ERR(clk))
+> -		pr_err("uart0_pclk not registered\n");
+> -	ret = clk_register_clkdev(clk, NULL, "20201000.uart");
+> -	if (ret)
+> -		pr_err("uart0_pclk alias not registered\n");
+> -
+> -	clk = clk_register_fixed_rate(NULL, "uart1_pclk", NULL, CLK_IS_ROOT,
+> -					125000000);
+> -	if (IS_ERR(clk))
+> -		pr_err("uart1_pclk not registered\n");
+> -	ret = clk_register_clkdev(clk, NULL, "20215000.uart");
+> -	if (ret)
+> -		pr_err("uart1_pclk alias not registered\n");
+> -}
