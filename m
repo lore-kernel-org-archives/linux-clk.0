@@ -1,142 +1,106 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from gabe.freedesktop.org ([131.252.210.177]:38696 "EHLO
-	gabe.freedesktop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752717AbbIFR5x (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 6 Sep 2015 13:57:53 -0400
-From: Eric Anholt <eric@anholt.net>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	devicetree@vger.kernel.org, Eric Anholt <eric@anholt.net>
-Subject: [PATCH 2/4] clk: bcm2835: Add binding docs for the new platform clock driver.
-Date: Sun,  6 Sep 2015 10:57:41 -0700
-Message-Id: <1441562263-19888-3-git-send-email-eric@anholt.net>
-In-Reply-To: <1441562263-19888-1-git-send-email-eric@anholt.net>
-References: <1441562263-19888-1-git-send-email-eric@anholt.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+MIME-Version: 1.0
+In-Reply-To: <BY1PR0301MB13037916637C1B6E24AC259D82550@BY1PR0301MB1303.namprd03.prod.outlook.com>
+References: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
+ <CADRPPNQER9UnKLazm9C6Dd7DAkDxLb4QShK64tmtahZxJJ-t=g@mail.gmail.com>
+ <BY1PR0301MB130306991ACB28E4C8109DD582560@BY1PR0301MB1303.namprd03.prod.outlook.com>
+ <CAL_Jsq+KJU4RiK2XWcS5BezucCmup2M-pueaaJUq7O=fA3LUxw@mail.gmail.com>
+ <BY1PR0301MB13037916637C1B6E24AC259D82550@BY1PR0301MB1303.namprd03.prod.outlook.com>
+From: Rob Herring <robherring2@gmail.com>
+Date: Mon, 7 Sep 2015 15:58:07 -0500
+Message-ID: <CAL_JsqK4NQ9YRQkTM=km6N+3Cb=RAM_=2TFhtkhPWprA7VNKUg@mail.gmail.com>
+Subject: Re: [PATCH v2 07/10] dts/ls2085a: Update DTSI to add support of
+ various peripherals
+To: Sharma Bhupesh <bhupesh.sharma@freescale.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Bhupesh SHARMA <bhupesh.linux@gmail.com>,
+ Shaohui Xie <Shaohui.Xie@freescale.com>, Arnd Bergmann <arnd@arndb.de>,
+ Huan Wang <alison.wang@freescale.com>,
+ "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+ "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
+ Singh Jaiprakash <jaiprakash.singh@freescale.com>,
+ "will.deacon@arm.com" <will.deacon@arm.com>,
+ Scott Wood <scottwood@freescale.com>,
+ "Lian M.H." <Minghuan.Lian@freescale.com>, Liu Gang <Gang.Liu@freescale.com>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ "olof@lixom.net" <olof@lixom.net>, Badola Nikhil <nikhil.badola@freescale.com>,
+ Li Leo <LeoLi@freescale.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Xiaobo Xie <X.Xie@freescale.com>, "Lu Y.B." <yangbo.lu@freescale.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Previously we've only supported a few fixed clocks based on
-assumptions about how the firmware sets up the clocks, but this
-binding will let us control the actual (audio power domain) clock
-manager.
+On Sun, Sep 6, 2015 at 4:03 PM, Sharma Bhupesh
+<bhupesh.sharma@freescale.com> wrote:
+>> From: Rob Herring [mailto:robherring2@gmail.com]
+>> Sent: Monday, September 07, 2015 2:27 AM
+>> On Sat, Sep 5, 2015 at 3:37 AM, Sharma Bhupesh
+>> <bhupesh.sharma@freescale.com> wrote:
+>> >> From: pku.leo@gmail.com [mailto:pku.leo@gmail.com]
+>> >> Sent: Saturday, September 05, 2015 2:33 AM On Fri, Sep 4, 2015 at
+>> >> 2:05 AM, Bhupesh Sharma <bhupesh.sharma@freescale.com> wrote:
+>> >> > This patch updates the LS2085a DTSI (DTS Include) file to add
+>> >> > support for various peripherals supported by FSL LS2085a SoC, for
+>> e.g.:
+>> >>
+>> >> The title and description here are still using the old LS2085 name.
+>> >
+>> > Ok.
+>> >
+>> > [snip] ..
+>> >
+>> >> > +       amba {
+>> >> > +               compatible = "arm,amba-bus";
+>> >> > +               #address-cells = <2>;
+>> >> > +               #size-cells = <2>;
+>> >> > +               ranges;
+>> >> > +
+>> >> > +               cluster1_core0_watchdog: wdt@c000000 {
+>> >> > +                       compatible = "arm,primecell";
+>> >>
+>> >> Binding of Primecell requires a specific name for the device instead
+>> >> of just a "arm,primecell".
+>> >
+>> > The sp805 driver doesn't have a compatible string like arm, sp805.
+>> > You can refer to 'Documentation/devicetree/bindings/wdt' for details -
+>> there is no entry for sp805 here.
+>>
+>> Because no one wrote it yet. Please read
+>> Documentation/devicetree/bindings/arm/primecell.txt. If sp805 has no
+>> binding doc, please write one.
+>>
+>> > Instead it relies on the 'drivers/amba/bus.c' framework to invoke the
+>> > probe function of the
+>> > sp805 wdt driver using the unique PRIMECELL identifiers of the sp805
+>> wdt IP.
+>>
+>> Whether the kernel chooses to bind with the ID registers or compatible
+>> strings is up to the kernel. That is independent of the bindings.
+>>
+>
+> Right. But wouldn't the driver require DTS awareness to handle the compatible string then.
+> Shouldn't the DTS awareness added both in terms of bindings and driver handling?
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- .../bindings/clock/brcm,bcm2835-cprman.txt         | 45 +++++++++++++++++++++
- include/dt-bindings/clock/bcm2835.h                | 47 ++++++++++++++++++++++
- 2 files changed, 92 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
- create mode 100644 include/dt-bindings/clock/bcm2835.h
+No. The OS is free to do device enumeration however it sees fit and
+that could change independent of the DT.
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-new file mode 100644
-index 0000000..e56a1df
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-@@ -0,0 +1,45 @@
-+Broadcom BCM2835 CPRMAN clocks
-+
-+This binding uses the common clock binding:
-+    Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+The CPRMAN clock controller generates clocks in the audio power domain
-+of the BCM2835.  There is a level of PLLs deriving from an external
-+oscillator, a level of PLL dividers that produce channels off of the
-+few PLLs, and a level of mostly-generic clock generators sourcing from
-+the PLL channels.  Most other hardware components source from the
-+clock generators, but a few (like the ARM or HDMI) will source from
-+the PLL dividers directly.
-+
-+Required properties:
-+- compatible:	Should be "brcm,bcm2835-cprman"
-+- #clock-cells:	Should be <1>. The permitted clock-specifier values can be
-+		  found in include/dt-bindings/clock/bcm2835.h
-+- reg:		Specifies base physical address and size of the registers
-+- clocks:	The external oscillator clock phandle
-+
-+Example:
-+
-+	clk_osc: clock@3 {
-+		compatible = "fixed-clock";
-+		reg = <3>;
-+		#clock-cells = <0>;
-+		clock-output-names = "osc";
-+		clock-frequency = <19200000>;
-+	};
-+
-+	clocks: cprman@7e101000 {
-+		compatible = "brcm,bcm2835-cprman";
-+		#clock-cells = <1>;
-+		reg = <0x7e101000 0x2000>;
-+		clocks = <&clk_osc>;
-+	};
-+
-+	i2c0: i2c@7e205000 {
-+		compatible = "brcm,bcm2835-i2c";
-+		reg = <0x7e205000 0x1000>;
-+		interrupts = <2 21>;
-+		clocks = <&clocks BCM2835_CLOCK_VPU>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-new file mode 100644
-index 0000000..d323efa
---- /dev/null
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -0,0 +1,47 @@
-+/*
-+ * Copyright (C) 2015 Broadcom Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation version 2.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether express or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#define BCM2835_PLLA			0
-+#define BCM2835_PLLB			1
-+#define BCM2835_PLLC			2
-+#define BCM2835_PLLD			3
-+#define BCM2835_PLLH			4
-+
-+#define BCM2835_PLLA_CORE		5
-+#define BCM2835_PLLA_PER		6
-+#define BCM2835_PLLB_ARM		7
-+#define BCM2835_PLLC_CORE0		8
-+#define BCM2835_PLLC_CORE1		9
-+#define BCM2835_PLLC_CORE2		10
-+#define BCM2835_PLLC_PER		11
-+#define BCM2835_PLLD_CORE		12
-+#define BCM2835_PLLD_PER		13
-+#define BCM2835_PLLH_RCAL		14
-+#define BCM2835_PLLH_AUX		15
-+#define BCM2835_PLLH_PIX		16
-+
-+#define BCM2835_CLOCK_TIMER		17
-+#define BCM2835_CLOCK_OTP		18
-+#define BCM2835_CLOCK_UART		19
-+#define BCM2835_CLOCK_VPU		20
-+#define BCM2835_CLOCK_V3D		21
-+#define BCM2835_CLOCK_ISP		22
-+#define BCM2835_CLOCK_H264		23
-+#define BCM2835_CLOCK_VEC		24
-+#define BCM2835_CLOCK_HSM		25
-+#define BCM2835_CLOCK_SDRAM		26
-+#define BCM2835_CLOCK_TSENS		27
-+#define BCM2835_CLOCK_EMMC		28
-+#define BCM2835_CLOCK_PERI_IMAGE	29
-+
-+#define BCM2835_CLOCK_COUNT		30
--- 
-2.1.4
+Rob
 
+>
+> Regards,
+> Bhupesh
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
