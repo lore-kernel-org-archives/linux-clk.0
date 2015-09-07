@@ -1,167 +1,64 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	devicetree@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 4/4] ARM: bcm2835: Switch to using the new clock driver support.
-Date: Sun,  6 Sep 2015 10:57:43 -0700
-Message-Id: <1441562263-19888-5-git-send-email-eric@anholt.net>
-In-Reply-To: <1441562263-19888-1-git-send-email-eric@anholt.net>
-References: <1441562263-19888-1-git-send-email-eric@anholt.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:34698 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753822AbbIGIZQ (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 7 Sep 2015 04:25:16 -0400
+From: Sanchayan Maity <maitysanchayan@gmail.com>
+To: srinivas.kandagatla@linaro.org, gregkh@linuxfoundation.org
+Cc: maxime.ripard@free-electrons.com, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stefan@agner.ch, shawnguo@kernel.org,
+	kernel@pengutronix.de, Sanchayan Maity <maitysanchayan@gmail.com>
+Subject: [PATCH v10 1/4] clk: clk-vf610: Add clock for Vybrid OCOTP controller
+Date: Mon,  7 Sep 2015 13:51:35 +0530
+Message-Id: <ca85ab571ba312ea75a4d33543e5dbb8745e7190.1441609625.git.maitysanchayan@gmail.com>
+In-Reply-To: <cover.1441609625.git.maitysanchayan@gmail.com>
+References: <cover.1441609625.git.maitysanchayan@gmail.com>
+In-Reply-To: <cover.1441609625.git.maitysanchayan@gmail.com>
+References: <cover.1441609625.git.maitysanchayan@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This will give us the ability to set the pixel and HDMI state machine
-clocks for the VC4 KMS driver, change the CPU frequency, and
-potentially gate clocks in the future (once we also write a power
-domain driver).  It also gives the uart an explicit clock reference,
-so that we don't need to change the physical addresses of the old
-fixed clk_bcm2835.c clocks for Raspberry Pi 2 port.
+Add clock support for Vybrid On-Chip One Time Programmable
+(OCOTP) controller.
 
-Two clocks get their frequencies updated as a result of this.  One is
-uart's apb_pclk, which was previously accidentally grabbing the fixed
-uart0_pclk due to the apb_pclk not having clk_register_clkdev()
-called.  The uart doesn't seem to do anything with apb_pclk other than
-make sure it's on, so that appears safe (also, as far as I can see,
-the apb clock is actually the same as the VPU clock).  The other is
-EMMC, which according to the docs was supposed to be in the 50-100Mhz
-range, but it turns out the firmware needed to change to running it at
-the 250Mhz core clock speed to avoid a bug in clock domain crossing.
+While the OCOTP block does not require explicit clock gating,
+for programming the OCOTP timing register the clock rate of
+ipg clock is required for timing calculations related to fuse
+and shadow register read sequence. We explicitly specify the
+ipg clock for OCOTP as a result.
 
-Additionally, anything using BCM2835_CLOCK_VPU will now have a correct
-clock rate if the user configures the boot-time core clock speed using
-config.txt.
-
-Signed-off-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Sanchayan Maity <maitysanchayan@gmail.com>
 ---
- arch/arm/boot/dts/bcm2835.dtsi | 52 +++++++++++++++++++++++-------------------
- 1 file changed, 28 insertions(+), 24 deletions(-)
+ drivers/clk/imx/clk-vf610.c             | 1 +
+ include/dt-bindings/clock/vf610-clock.h | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
-index 301c73f..a6a55b7 100644
---- a/arch/arm/boot/dts/bcm2835.dtsi
-+++ b/arch/arm/boot/dts/bcm2835.dtsi
-@@ -1,4 +1,5 @@
- #include <dt-bindings/pinctrl/bcm2835.h>
-+#include <dt-bindings/clock/bcm2835.h>
- #include "skeleton.dtsi"
+diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
+index bff45ea..d1b1c95 100644
+--- a/drivers/clk/imx/clk-vf610.c
++++ b/drivers/clk/imx/clk-vf610.c
+@@ -387,6 +387,7 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
  
- / {
-@@ -21,6 +22,10 @@
- 			compatible = "brcm,bcm2835-system-timer";
- 			reg = <0x7e003000 0x1000>;
- 			interrupts = <1 0>, <1 1>, <1 2>, <1 3>;
-+			/* This could be a reference to BCM2835_CLOCK_TIMER,
-+			 * but we don't have the driver using the common clock
-+			 * support yet.
-+			 */
- 			clock-frequency = <1000000>;
- 		};
+ 	clk[VF610_CLK_SNVS] = imx_clk_gate2("snvs-rtc", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(7));
+ 	clk[VF610_CLK_DAP] = imx_clk_gate("dap", "platform_bus", CCM_CCSR, 24);
++	clk[VF610_CLK_OCOTP] = imx_clk_gate("ocotp", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(5));
  
-@@ -57,6 +62,17 @@
- 			reg = <0x7e100000 0x28>;
- 		};
+ 	imx_check_clocks(clk, ARRAY_SIZE(clk));
  
-+		clocks: cprman@7e101000 {
-+			compatible = "brcm,bcm2835-cprman";
-+			#clock-cells = <1>;
-+			reg = <0x7e101000 0x2000>;
-+
-+			/* CPRMAN derives everything from the platform's
-+			 * oscillator.
-+			 */
-+			clocks = <&clk_osc>;
-+		};
-+
- 		rng@7e104000 {
- 			compatible = "brcm,bcm2835-rng";
- 			reg = <0x7e104000 0x10>;
-@@ -96,7 +112,9 @@
- 			compatible = "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
- 			reg = <0x7e201000 0x1000>;
- 			interrupts = <2 25>;
--			clock-frequency = <3000000>;
-+			clocks = <&clocks BCM2835_CLOCK_UART>,
-+				 <&clocks BCM2835_CLOCK_VPU>;
-+			clock-names = "uartclk", "apb_pclk";
- 			arm,primecell-periphid = <0x00241011>;
- 		};
+diff --git a/include/dt-bindings/clock/vf610-clock.h b/include/dt-bindings/clock/vf610-clock.h
+index d197634..56c16aa 100644
+--- a/include/dt-bindings/clock/vf610-clock.h
++++ b/include/dt-bindings/clock/vf610-clock.h
+@@ -194,6 +194,7 @@
+ #define VF610_PLL7_BYPASS		181
+ #define VF610_CLK_SNVS			182
+ #define VF610_CLK_DAP			183
+-#define VF610_CLK_END			184
++#define VF610_CLK_OCOTP         184
++#define VF610_CLK_END			185
  
-@@ -115,7 +133,7 @@
- 			compatible = "brcm,bcm2835-spi";
- 			reg = <0x7e204000 0x1000>;
- 			interrupts = <2 22>;
--			clocks = <&clk_spi>;
-+			clocks = <&clocks BCM2835_CLOCK_VPU>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -125,7 +143,7 @@
- 			compatible = "brcm,bcm2835-i2c";
- 			reg = <0x7e205000 0x1000>;
- 			interrupts = <2 21>;
--			clocks = <&clk_i2c>;
-+			clocks = <&clocks BCM2835_CLOCK_VPU>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -135,7 +153,7 @@
- 			compatible = "brcm,bcm2835-sdhci";
- 			reg = <0x7e300000 0x100>;
- 			interrupts = <2 30>;
--			clocks = <&clk_mmc>;
-+			clocks = <&clocks BCM2835_CLOCK_EMMC>;
- 			status = "disabled";
- 		};
- 
-@@ -143,7 +161,7 @@
- 			compatible = "brcm,bcm2835-i2c";
- 			reg = <0x7e804000 0x1000>;
- 			interrupts = <2 21>;
--			clocks = <&clk_i2c>;
-+			clocks = <&clocks BCM2835_CLOCK_VPU>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-@@ -165,28 +183,14 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		clk_mmc: clock@0 {
--			compatible = "fixed-clock";
--			reg = <0>;
--			#clock-cells = <0>;
--			clock-output-names = "mmc";
--			clock-frequency = <100000000>;
--		};
--
--		clk_i2c: clock@1 {
-+		/* The oscillator is the root of the clock tree. */
-+		clk_osc: clock@3 {
- 			compatible = "fixed-clock";
--			reg = <1>;
-+			reg = <3>;
- 			#clock-cells = <0>;
--			clock-output-names = "i2c";
--			clock-frequency = <250000000>;
-+			clock-output-names = "osc";
-+			clock-frequency = <19200000>;
- 		};
- 
--		clk_spi: clock@2 {
--			compatible = "fixed-clock";
--			reg = <2>;
--			#clock-cells = <0>;
--			clock-output-names = "spi";
--			clock-frequency = <250000000>;
--		};
- 	};
- };
+ #endif /* __DT_BINDINGS_CLOCK_VF610_H */
 -- 
-2.1.4
+2.5.1
+
