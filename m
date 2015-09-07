@@ -1,41 +1,107 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
-Subject: Re: [PATCH 2/3] clk: bcm2835: Add a driver for the auxiliary peripheral clock gates.
-From: Martin Sperl <martin@sperl.org>
-In-Reply-To: <1441923750-19404-3-git-send-email-eric@anholt.net>
-Date: Fri, 11 Sep 2015 12:24:50 +0200
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Message-Id: <D051D944-F10B-460F-AF10-8C177A3A7E3D@sperl.org>
-References: <1441923750-19404-1-git-send-email-eric@anholt.net> <1441923750-19404-3-git-send-email-eric@anholt.net>
-To: Eric Anholt <eric@anholt.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <l.stach@pengutronix.de>
+Message-ID: <1441617354.28391.5.camel@pengutronix.de>
+Subject: Re: [PATCH v2 1/8] clk: imx: add common logic to detect early UART
+ usage
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,
+ patchwork-lst@pengutronix.de, kernel@pengutronix.de,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date: Mon, 07 Sep 2015 11:15:54 +0200
+In-Reply-To: <20150907090603.GU9999@pengutronix.de>
+References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
+	 <1441382419-4343-2-git-send-email-l.stach@pengutronix.de>
+	 <20150907090603.GU9999@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-
-> On 11.09.2015, at 00:22, Eric Anholt <eric@anholt.net> wrote:
+Am Montag, den 07.09.2015, 11:06 +0200 schrieb Uwe Kleine-König:
+> Hello Lucas,
 > 
-> There are a pair of SPI masters and a mini UART that were last minute
-> additions.  As a result, they didn't get integrated in the same way as
-> the other gates off of the VPU clock in CPRMAN.
+> On Fri, Sep 04, 2015 at 06:00:12PM +0200, Lucas Stach wrote:
+> > Both earlycon and eralyprintk depend on the bootloader setup UART
+> > clocks being retained. This patch adds the common logic to detect such
+> > situations and make the information available to the clock drivers, as
+> > well as adding the facilities to disable those clocks at the end of
+> > the kernel init.
+> > 
+> > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> > ---
+> >  drivers/clk/imx/clk.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+> >  drivers/clk/imx/clk.h |  1 +
+> >  2 files changed, 47 insertions(+)
+> > 
+> > diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+> > index df12b5307175..3357e29e43ab 100644
+> > --- a/drivers/clk/imx/clk.c
+> > +++ b/drivers/clk/imx/clk.c
+> > @@ -73,3 +73,49 @@ void imx_cscmr1_fixup(u32 *val)
+> >  	*val ^= CSCMR1_FIXUP;
+> >  	return;
+> >  }
+> > +
+> > +static int __initdata imx_keep_uart_clocks;
+> > +static struct clk __initdata ***imx_uart_clocks;
+> > +
+> > +static int __init imx_keep_uart_clocks_param(char *str)
+> > +{
+> > +	imx_keep_uart_clocks = 1;
+> > +
+> > +	return 0;
+> > +}
+> > +__setup_param("earlycon", imx_keep_uart_earlycon,
+> > +	      imx_keep_uart_clocks_param, 0);
+> > +__setup_param("earlyprintk", imx_keep_uart_earlyprintk,
+> > +	      imx_keep_uart_clocks_param, 0);
+> > +
+> > +void __init imx_register_uart_clocks(struct clk **clks[])
 > 
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> ---
+> const struct clk **clks[]?
+> 
+Yep, will do.
 
-Tested with the spi-bcm2835aux driver and it works perfectly.
-I will now post the latest incarnation of the driver for inclusion.
+> I wonder why you need an array of pointers to pointers of clocks. Isn't
+> one indirection less possible and more easy?
+> 
+No, this is not easily possible if we want to use the auto-discarding of
+the clocks array and a simple static initialization. The clock pointers
+are only set up after the clock drivers probe routine has run, so if I
+want to point to the actual clocks I would need to dynamically populate
+the array and either dynamically allocate it, or would need to pre-size
+the static array.
 
-I have also tested with the uart1 and it works in principle.
+So this added indirection and slight complication of the the common code
+cuts out some lines of code and chances to get things wrong in the
+individual clock drivers. So I think the trade off I made here is
+justified.
 
-Note that there is one issue (as mentioned elsewhere) with uart1:
-the 8250 serial driver has a (hardcoded) internal clock divider 16,
-while the hardware has an internal divider of 8.
+> > +{
+> > +	if (imx_keep_uart_clocks) {
+> > +		int i;
+> > +
+> > +		imx_uart_clocks = clks;
+> > +		for (i = 0;; i++) {
+> > +			if (imx_uart_clocks[i])
+> > +				clk_prepare_enable(*imx_uart_clocks[i]);
+> > +			else
+> > +				break;
+> > +		}
+> 
+> I would have written this as:
+> 
+> 	for (i = 0; imx_uart_clocks[i]; ++i)
+> 		clk_prepare_enable(*imx_uart_clocks[i]);
+> 
+> but I guess that's a matter of taste.
+> 
+Philipp agrees with you. ;) But I like the more explicit style a bit
+more.
 
-This results in baud rates that are a factor of 2 higher than requested.
+Regards,
+Lucas
 
-Tested-by: Martin Sperl <kernel@martin.sperl.org>
-
+-- 
+Pengutronix e.K.             | Lucas Stach                 |
+Industrial Linux Solutions   | http://www.pengutronix.de/  |
