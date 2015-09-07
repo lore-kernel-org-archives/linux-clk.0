@@ -1,149 +1,83 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>, SH-Linux <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, "Simon Horman [Horms]" <horms@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v5 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
-Date: Tue, 01 Sep 2015 15:30:40 +0300
-Message-ID: <1641516.pMxNnC39aM@avalon>
-In-Reply-To: <CANqRtoSw92UoVBvTJfzGvxmYwefNndqqnj2_8iqi5O=FUeLMGA@mail.gmail.com>
-References: <20150831124842.31057.54534.sendpatchset@little-apple> <1692617.kRMz5BT8ct@avalon> <CANqRtoSw92UoVBvTJfzGvxmYwefNndqqnj2_8iqi5O=FUeLMGA@mail.gmail.com>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Mon, 7 Sep 2015 11:26:11 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>,
+	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] PM / OPP: add dev_pm_opp_get_suspend_opp() helper
+Message-ID: <20150907055611.GB26760@linux>
+References: <1441303892-32004-1-git-send-email-b.zolnierkie@samsung.com>
+ <1441303892-32004-2-git-send-email-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1441303892-32004-2-git-send-email-b.zolnierkie@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus,
-
-On Tuesday 01 September 2015 19:59:01 Magnus Damm wrote:
-> On Tue, Sep 1, 2015 at 3:00 PM, Laurent Pinchart wrote:
-> > On Monday 31 August 2015 21:49:04 Magnus Damm wrote:
-> >> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> >> 
-> >> This V5 patch adds initial CPG support for R-Car Generation 3 and in
-> >> particular the R8A7795 SoC.
-> >> 
-> >> The R-Car Gen3 clock hardware has a register write protection feature
-> >> that needs to be shared between the CPG function needs to be shared
-> >> between the CPG and MSTP hardware somehow. So far this feature is simply
-> >> ignored.
-> >> 
-> >> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> >> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> >> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> >> ---
-> >> 
-> >>  Changes since V4: (Magnus Damm <damm+renesas@opensource.se>)
-> >>  - Simplified clks array handling - thanks Geert!
-> >>  - Updated th DT binding documentation to reflect latest state
-> >>  - of_property_count_strings() -> of_property_count_u32_elems() fix
-> >>  
-> >>  Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
-> >>  - Reworked driver to incorporate most feedback from Stephen Boyd -
-> >>  thanks!!
-> >>  - Major things like syscon and driver model require more discussion.
-> >>  - Added hunk to build drivers/clk/shmobile if ARCH_RENESAS is set.
-> >>  
-> >>  Changes since V2: (Magnus Damm <damm+renesas@opensource.se>)
-> >>  - Reworked driver to rely on clock index instead of strings.
-> >>  - Dropped use of "clock-output-names".
-> >>  
-> >>  Earlier versions: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> >>  Initial version: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> >>  
-> >>  Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt
-> >>  |   32 +
-> >>  drivers/clk/Makefile                                |    1
-> >>  drivers/clk/shmobile/Makefile                       |    1
-> >>  drivers/clk/shmobile/clk-rcar-gen3.c                |  245 ++++++++++
-> >>  4 files changed, 279 insertions(+)
-> >> 
-> >> --- /dev/null
-> >> +++
-> >> work/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks
-> >> .txt
-> >> 2015-08-31 15:49:10.000000000 +0900 @@ -0,0 +1,32 @@
-> >> +* Renesas R-Car Gen3 Clock Pulse Generator (CPG)
-> >> +
-> >> +The CPG generates core clocks for the R-Car Gen3 SoCs. It includes three
-> >> PLLs
-> >> +and several fixed ratio dividers.
-> >> +
-> >> +Required Properties:
-> >> +
-> >> +  - compatible: Must be one of
-> >> +    - "renesas,r8a7795-cpg-clocks" for the r8a7795 CPG
-> >> +    - "renesas,rcar-gen3-cpg-clocks" for the generic R-Car Gen3 CPG
-> >> +
-> >> +  - reg: Base address and length of the memory resource used by the CPG
-> >> +
-> >> +  - clocks: References to the parent clocks: first to the EXTAL clock
-> >> +  - #clock-cells: Must be 1
-> >> +  - clock-indices: Indices of the exported clocks
-> > 
-> > Do we actually need the clock-indices property, as CPG clocks are numbered
-> > sequentially ? It seems to me like we could drop the property, especially
-> > given that the number of clocks is hardcoded in the driver anyway.
+On 03-09-15, 20:11, Bartlomiej Zolnierkiewicz wrote:
+> Add dev_pm_opp_get_suspend_opp() helper to obtain suspend opp.
 > 
-> There are two reasons why they are there:
-> 1) I like to be able to search DT files to see which node that is
-> providing what clock.
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/base/power/opp.c | 28 ++++++++++++++++++++++++++++
+>  include/linux/pm_opp.h   |  6 ++++++
+>  2 files changed, 34 insertions(+)
+> 
+> diff --git a/drivers/base/power/opp.c b/drivers/base/power/opp.c
+> index eb25449..eaafca7 100644
+> --- a/drivers/base/power/opp.c
+> +++ b/drivers/base/power/opp.c
+> @@ -341,6 +341,34 @@ unsigned long dev_pm_opp_get_max_clock_latency(struct device *dev)
+>  EXPORT_SYMBOL_GPL(dev_pm_opp_get_max_clock_latency);
+>  
+>  /**
+> + * dev_pm_opp_get_suspend_opp() - Get suspend opp
+> + * @dev:	device for which we do this operation
+> + *
+> + * Return: This function returns pointer to the suspend opp if it is
+> + * defined, otherwise it returns NULL.
+> + *
+> + * Locking: This function takes rcu_read_lock().
+> + */
+> +struct dev_pm_opp *dev_pm_opp_get_suspend_opp(struct device *dev)
+> +{
+> +	struct device_opp *dev_opp;
+> +	struct dev_pm_opp *suspend_opp;
+> +
+> +	rcu_read_lock();
 
-The clocks are listed in the CPG section of include/dt-bindings/clock/r8a7795-
-clock.h so that should already give a hint. Additionally I don't think you'll 
-search the CPG core clocks very often in the DT sources as they're usually not 
-used directly by devices :-)
+This is wrong. Please have a look at other exported APIs that return
+an OPP. RCU protected structures must be accessed from within RCU
+locks _ONLY_. But your function returns the pointer after dropping
+the locks. Which essentially means that the OPP can be freed by core,
+by the time you start using it. :)
 
-> 2) When adding support for additional SoCs we may add new index to the
-> driver. New SoC may get sparsely populated index lists and old ones
-> will omit the recently added index.
+So, in such cases, its upto the caller to ensure that locks are taken
+properly.
 
-If the CPG core differs between SoCs shouldn't that be handled by the DT 
-compatibility string ?
-
-> >> +/*
-> >> + *   MD              EXTAL           PLL0    PLL1    PLL2    PLL3   
-> >> PLL4
-> >> + * 14 13 19 17       (MHz)           *1      *1      *1
-> >> + *-------------------------------------------------------------------
-> >> + * 0  0  0  0        16.66 x 1       x180/2  x192/2  x144/2  x192   
-> >> x144
-> >> + * 0  0  0  1        16.66 x 1       x180/2  x192/2  x144/2  x128   
-> >> x144
-> >> + * 0  0  1  0        Prohibited setting
-> >> + * 0  0  1  1        16.66 x 1       x180/2  x192/2  x144/2  x192   
-> >> x144
-> >> + * 0  1  0  0        20    x 1       x150/2  x156/2  x120/2  x156   
-> >> x120
-> >> + * 0  1  0  1        20    x 1       x150/2  x156/2  x120/2  x106   
-> >> x120
-> >> + * 0  1  1  0        Prohibited setting
-> >> + * 0  1  1  1        20    x 1       x150/2  x156/2  x120/2  x156   
-> >> x120
-> >> + * 1  0  0  0        25    x 1       x120/2  x128/2  x96/2   x128    x96
-> >> + * 1  0  0  1        25    x 1       x120/2  x128/2  x96/2   x84     x96
-> >> + * 1  0  1  0        Prohibited setting
-> >> + * 1  0  1  1        25    x 1       x120/2  x128/2  x96/2   x128    x96
-> >> + * 1  1  0  0        33.33 / 2       x180/2  x192/2  x144/2  x192   
-> >> x144
-> >> + * 1  1  0  1        33.33 / 2       x180/2  x192/2  x144/2  x128   
-> >> x144
-> >> + * 1  1  1  0        Prohibited setting
-> >> + * 1  1  1  1        33.33 / 2       x180/2  x192/2  x144/2  x192   
-> >> x144
-> >> + *
-> >> + * *1 : datasheet indicates VCO output (PLLx = VCO/2)
-> > 
-> > As explained in a separate e-mail there's a few clocks on R8A7795 that
-> > derive directly from PLL1 VCO. I thus wonder whether we shouldn't expose
-> > the PLL1 clock as the VCO output and create VCO/2 using a fixed factor
-> > clock in DT.
->
-> Do you think that would reduce complexity or simplify the code? If so
-> I think we should do it. Otherwise I think it makes sense to simply
-> follow the data sheet.
-
-I've commented on this in a reply to Geert's e-mail.
+You can look at dev_pm_opp_find_freq_exact() as an example.
 
 -- 
-Regards,
-
-Laurent Pinchart
+viresh
