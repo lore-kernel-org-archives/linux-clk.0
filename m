@@ -1,76 +1,53 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [PATCH 1/2] arm64: mediatek: enable MTK_TIMER
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
- <1442370091.14347.10.camel@mtksdaap41>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- James Liao <jamesjj.liao@mediatek.com>, devicetree@vger.kernel.org,
- Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>,
- linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
- linux-mediatek@lists.infradead.org, Sascha Hauer <kernel@pengutronix.de>,
- Olof Johansson <olof@lixom.net>, srv_heupstream@mediatek.com,
- linux-arm-kernel@lists.infradead.org, Daniel Kurtz <djkurtz@chromium.org>,
- linux-clk@vger.kernel.org
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <5607F666.5010506@gmail.com>
-Date: Sun, 27 Sep 2015 16:00:06 +0200
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+Subject: Re: [PATCH v2 04/10] doc/bindings: Update PCIe devicetree binding
+ documentation for LS2080A
+Date: Mon, 07 Sep 2015 13:32:10 +0200
+Message-ID: <80094129.LHZFOe1ZPU@wuerfel>
+In-Reply-To: <1441349872-4560-5-git-send-email-bhupesh.sharma@freescale.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+ <1441349872-4560-5-git-send-email-bhupesh.sharma@freescale.com>
 MIME-Version: 1.0
-In-Reply-To: <1442370091.14347.10.camel@mtksdaap41>
-Content-Type: text/plain; charset=utf-8; format=flowed
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, marc.zyngier@arm.com, Catalin.Marinas@arm.com,
+ will.deacon@arm.com, Minghuan Lian <Minghuan.Lian@freescale.com>,
+ olof@lixom.net, bhupesh.linux@gmail.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Friday 04 September 2015 12:27:46 Bhupesh Sharma wrote:
+> @@ -4,7 +4,8 @@ This PCIe host controller is based on the Synopsis Designware PCIe IP
+>  and thus inherits all the common properties defined in designware-pcie.txt.
+>  
+>  Required properties:
+> -- compatible: should contain the platform identifier such as "fsl,ls1021a-pcie"
+> +- compatible: should contain the platform identifier such as "fsl,ls1021a-pcie",
+> +  "fsl,ls2080a-pcie".
+>  - reg: base addresses and lengths of the PCIe controller
+>  - interrupts: A list of interrupt outputs of the controller. Must contain an
+>    entry for each entry in the interrupt-names property.
+> 
 
+Are the two PCIe hosts mutually compatible? If they are, you should mandate
+one of the strings as the base model for identification, with the additional
+model being optional for identification of the specific SoC.
 
-On 16/09/15 04:21, Yingjoe Chen wrote:
-> On Wed, 2015-09-16 at 10:04 +0800, Yingjoe Chen wrote:
->> Enable MTK_TIMER for MediaTek plaform, which will be used as
->> schedule clock.
->
-> Sorry, sending this series too early without cover letter and removing
-> Change-Id. Here's the cover letter:
->
->
-> This is actually v3 of "add GPT timer support for mt8173" series. This
-> is based on v4.3-rc1 + clockevents-4.4[1] and James's mediatek-clk
-> tree[2].
->
-> Changes compare to previous version[3]:
-> - the first two mtk_timer related changes are removed because they are
-> replaced/accepted in clockevents tree.
-> - Remove 'add 13mhz clock for MT8173' because it is accepted in
-> mediatek-clk tree.
-> - Kconfig.platforms path change.
->
-> So we only have 2 patches left here.
-> Matthias, can you take these and help to remove the Change-Id?
+It would also be good to add a string with the specific version number of the
+designware PCIe block that is being used there.
 
-Yes I can take this two patches, but I don't see the mediatek-clk tree 
-accepted by the maintainers yet. As far as I can see, without the 13 MHz 
-clock [1], the sched clock won't work.
+	Arnd
 
-[1] 
-https://github.com/jamesjjliao/linux/commit/add5e89d657fa6c0e5a517890f996c796b768064
-
->
->
-> Daniel Kurtz (1):
->    arm64: dts: mt8173: add timer node
->
-> Yingjoe Chen (1):
->    arm64: mediatek: enable MTK_TIMER
->
->
->
-> [1]
-> https://git.linaro.org/people/daniel.lezcano/linux.git clockevents/4.4
-> [2]
-> http://lists.infradead.org/pipermail/linux-mediatek/2015-August/002069.html
-> [3]
-> http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001544.html
->
->
->
->
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
