@@ -1,70 +1,103 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 18 Sep 2015 08:56:12 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Scott Wood <scottwood@freescale.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Chao Xie <chao.xie@marvell.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Tero Kristo <t-kristo@ti.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH 02/26] clk: Replace __clk_get_num_parents with
- clk_hw_get_num_parents()
-Message-ID: <20150918155612.GY23081@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
- <1438362246-6664-3-git-send-email-sboyd@codeaurora.org>
- <1442535513.19102.83.camel@freescale.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442535513.19102.83.camel@freescale.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Tue, 08 Sep 2015 01:33:46 +0900
+Message-Id: <20150907163346.475.69916.sendpatchset@little-apple>
+In-Reply-To: <20150907163252.475.18281.sendpatchset@little-apple>
+References: <20150907163252.475.18281.sendpatchset@little-apple>
+Subject: [PATCH v7 05/05] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/17, Scott Wood wrote:
-> On Fri, 2015-07-31 at 10:03 -0700, Stephen Boyd wrote:
-> > Mostly converted with the following semantic patch:
-> > 
-> > @@
-> > struct clk_hw *E;
-> > @@
-> > 
-> > -__clk_get_num_parents(E->clk)
-> > +clk_hw_get_num_parents(E)
-> 
-> I don't understand why this is considered a clock provider API.  How is a 
-> clock consumer, such as cpufreq, supposed to find out the number of parents 
-> or similar information, so that it knows what its options are for calling 
-> clk_set_parent()?
-> 
-> This is the caller I had in mind:
-> http://patchwork.ozlabs.org/patch/507619/
-> 
-> Surely asking the clock to describe itself is better than what that cpufreq 
-> driver currently does, which is to look in the device tree and make 
-> assumptions about how that maps to what the clock provider driver does...
-> 
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-All the APIs that were converted were private to the common clock
-framework and in clk-provider.h, not clk.h. clk.h is the consumer
-API that's supported by more than just the common clock
-framework, so whatever we do for the consumer API needs to be put
-there.
+Add Clock Domain support to the R-Car Gen3 Clock Pulse Generator (CPG)
+driver using the generic PM Domain.  This allows to power-manage the
+module clocks of SoC devices that are part of the CPG/MSTP Clock Domain
+using Runtime PM, or for system suspend/resume.
 
-For example, we recently added a clk_has_parent() API that can be
-used to probe for possible parents of a clock. Perhaps we need
-something else in this case so that consumers can iterate over
-each parent of a clock? Feel free to suggest a consumer API.
+SoC devices that are part of the CPG/MSTP Clock Domain and can be
+power-managed through an MSTP clock should be tagged in DT with a proper
+"power-domains" property.
 
-Is there any reason why we can't use DT OPPs for the code that
-you're patching here? At a quick glance it looks like we could
-leave this driver behind and move to cpufreq-dt.c and then use
-OPPs to populate the possible frequencies and affinity.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+ Changes since V6:
+ - None
+
+ Changes since V5:
+ - Rebased to fit on top of updated CPG DT binding document
+
+ Changes since V4:
+ - Rebased to fit on top of updated CPG DT binding document
+
+ Changes since V3:
+ - Fixed so correct file is actually used. =)
+ - Took V2 from Geert but filtered out Kconfig.platforms bits
+
+ Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   26 +++++++++-
+ drivers/clk/shmobile/clk-rcar-gen3.c                                     |    2 
+ 2 files changed, 26 insertions(+), 2 deletions(-)
+
+--- 0009/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt
++++ work/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt	2015-09-02 14:41:32.942366518 +0900
+@@ -2,6 +2,8 @@
+ 
+ The CPG generates core clocks for the R-Car Gen3 SoCs. It includes three PLLs
+ and several fixed ratio dividers.
++The CPG also provides a Clock Domain for SoC devices, in combination with the
++CPG Module Stop (MSTP) Clocks.
+ 
+ Required Properties:
+ 
+@@ -14,9 +16,17 @@ Required Properties:
+   - clocks: References to the parent clocks: first to the EXTAL clock
+   - #clock-cells: Must be 1
+   - clock-indices: Indices of the exported clocks
++  - #power-domain-cells: Must be 0
+ 
+-Example
+--------
++SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
++through an MSTP clock should refer to the CPG device node in their
++"power-domains" property, as documented by the generic PM domain bindings in
++Documentation/devicetree/bindings/power/power_domain.txt.
++
++Examples
++--------
++
++  - CPG device node:
+ 
+ 	cpg_clocks: cpg_clocks@e6150000 {
+ 		compatible = "renesas,r8a7795-cpg-clocks",
+@@ -29,4 +39,16 @@ Example
+ 				R8A7795_CLK_PLL1 R8A7795_CLK_PLL2
+ 				R8A7795_CLK_PLL3 R8A7795_CLK_PLL4
+ 		>;
++		#power-domain-cells = <0>;
++	};
++
++  - CPG/MSTP Clock Domain member device node:
++
++	scif2: serial@e6e88000 {
++		compatible = "renesas,scif-r8a7795", "renesas,scif";
++		reg = <0 0xe6e88000 0 64>;
++		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp3_clks RCAR_R8A7795_CLK_SCIF2>;
++		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 	};
+--- 0009/drivers/clk/shmobile/clk-rcar-gen3.c
++++ work/drivers/clk/shmobile/clk-rcar-gen3.c	2015-09-02 14:39:35.912366518 +0900
+@@ -236,6 +236,8 @@ static void __init rcar_gen3_cpg_clocks_
+ 	}
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
++
++	cpg_mstp_add_clk_domain(np);
+ }
+ CLK_OF_DECLARE(rcar_gen3_cpg_clks, "renesas,rcar-gen3-cpg-clocks",
+ 	       rcar_gen3_cpg_clocks_init);
