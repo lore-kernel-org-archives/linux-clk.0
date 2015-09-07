@@ -1,113 +1,77 @@
-Return-Path: <newchief@king.net.pl>
-From: Paul Osmialowski <newchief@king.net.pl>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Paul Osmialowski <pawelo@king.net.pl>
-Subject: [PATCH 1/1] clk: add devm_of_clk_get() and devm_of_clk_get_by_name() functions
-Date: Thu, 24 Sep 2015 10:03:28 +0200
-Message-Id: <1443081808-19688-2-git-send-email-newchief@king.net.pl>
-In-Reply-To: <1443081808-19688-1-git-send-email-newchief@king.net.pl>
-References: <1443081808-19688-1-git-send-email-newchief@king.net.pl>
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Tue, 08 Sep 2015 01:33:03 +0900
+Message-Id: <20150907163303.475.30983.sendpatchset@little-apple>
+In-Reply-To: <20150907163252.475.18281.sendpatchset@little-apple>
+References: <20150907163252.475.18281.sendpatchset@little-apple>
+Subject: [PATCH v7 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Paul Osmialowski <pawelo@king.net.pl>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-These two functions were added to ease management of clocks obtained
-from OF device nodes.
+Shmobile is all multiplatform these days, so in get rid of the
+reference to CONFIG_ARCH_SHMOBILE_MULTI in drivers/clk/shmobile/.
 
-Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
+Also instead of always enabling DIV6 and MSTP adjust the Makefile
+to enable DIV6 and MSTP depending on if they are included in the
+SoC or not.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/clk/clk-devres.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk.h      | 20 ++++++++++++++++++++
- 2 files changed, 66 insertions(+)
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index 8f57154..197075a 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -34,6 +34,52 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
- }
- EXPORT_SYMBOL(devm_clk_get);
- 
-+#ifdef CONFIG_OF
-+
-+struct clk *devm_of_clk_get(struct device *dev, struct device_node *np,
-+			    int index)
-+{
-+	struct clk **ptr, *clk;
-+
-+	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	clk = of_clk_get(np, index);
-+	if (!IS_ERR(clk)) {
-+		*ptr = clk;
-+		devres_add(dev, ptr);
-+	} else {
-+		devres_free(ptr);
-+	}
-+
-+	return clk;
-+}
-+EXPORT_SYMBOL(devm_of_clk_get);
-+
-+struct clk *devm_of_clk_get_by_name(struct device *dev, struct device_node *np,
-+				    const char *name)
-+{
-+	struct clk **ptr, *clk;
-+
-+	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	clk = of_clk_get_by_name(np, name);
-+	if (!IS_ERR(clk)) {
-+		*ptr = clk;
-+		devres_add(dev, ptr);
-+	} else {
-+		devres_free(ptr);
-+	}
-+
-+	return clk;
-+}
-+EXPORT_SYMBOL(devm_of_clk_get_by_name);
-+
-+#endif /* CONFIG_OF */
-+
- static int devm_clk_match(struct device *dev, void *res, void *data)
- {
- 	struct clk **c = res;
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 0df4a51..d7763f1 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -504,4 +504,24 @@ static inline struct clk *of_clk_get_by_name(struct device_node *np,
- }
- #endif
- 
-+#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK) && defined(CONFIG_HAVE_CLK)
-+struct clk *devm_of_clk_get(struct device *dev, struct device_node *np,
-+			    int index);
-+struct clk *devm_of_clk_get_by_name(struct device *dev, struct device_node *np,
-+				    const char *name);
-+#else
-+static inline struct clk *devm_of_clk_get(struct device *dev,
-+					  struct device_node *np,
-+					  int index)
-+{
-+	return ERR_PTR(-ENOENT);
-+}
-+static inline struct clk *devm_of_clk_get_by_name(struct device *dev,
-+						  struct device_node *np,
-+						  const char *name)
-+{
-+	return ERR_PTR(-ENOENT);
-+}
-+#endif
-+
- #endif
--- 
-2.4.9
+ Earlier known as "clk: shmobile: Get rid of CONFIG_ARCH_SHMOBILE_MULTI"
+
+ Changes since V6:
+ - None
+
+ Changes since V5:
+ - None
+
+ Changes since V4:
+ - Added Acked-by from Laurent
+
+ Changes since V3:
+ - Got rid of hunks that modified drivers/clk/Makefile
+ - This to prevent build issue with non-CCF enabled SH arch
+ - A nice side effect is that this patch now can be merged any time
+
+ Changes since V2:
+ - Fixed patch subject typo CONFIG_SHMOBILE_MULTI -> CONFIG_ARCH_SHMOBILE_MULTI
+
+ Changes since V1:
+ - Added Acked-by from Geert
+
+ drivers/clk/shmobile/Makefile |   22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
+
+--- 0001/drivers/clk/shmobile/Makefile
++++ work/drivers/clk/shmobile/Makefile	2015-08-29 16:14:57.522366518 +0900
+@@ -1,13 +1,11 @@
+ obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
+-obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
+-obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
+-obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
+-obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+-obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+-obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o
+-obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-div6.o
+-obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-mstp.o
++obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o clk-mstp.o
++obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
++obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
