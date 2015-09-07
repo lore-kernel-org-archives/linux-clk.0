@@ -1,82 +1,78 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v5 3/4] cpufreq-dt: add suspend frequency support
-Date: Tue, 08 Sep 2015 18:41:03 +0200
-Message-id: <1441730464-7947-4-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de
+Subject: [PATCH v3 0/8] i.MX early debug UART clock fixes
+Date: Mon,  7 Sep 2015 17:09:25 +0200
+Message-Id: <1441638573-6701-1-git-send-email-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add suspend frequency support and if needed set it to
-the frequency obtained from the suspend opp (can be defined
-using opp-v2 bindings and is optional).
+This series fixes a long standing interaction issue between the
+kernels early debug facilities and the i.MX clock drivers.
 
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/cpufreq/cpufreq-dt.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Both earlyprintk and earlycon rely on the bootloader setup clocks
+for the UARTs to be retained during kernel init. As those clocks are
+only enabled in hardware, but not referenced in software they (or even
+their parent clocks) may get disabled as a result of other clocks being
+en-/disabled during boot.
 
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index c3583cd..9b5e7c9 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -196,6 +196,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	struct device *cpu_dev;
- 	struct regulator *cpu_reg;
- 	struct clk *cpu_clk;
-+	struct dev_pm_opp *suspend_opp;
- 	unsigned long min_uV = ~0, max_uV = 0;
- 	unsigned int transition_latency;
- 	bool need_update = false;
-@@ -329,6 +330,13 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	policy->driver_data = priv;
- 
- 	policy->clk = cpu_clk;
-+
-+	rcu_read_lock();
-+	suspend_opp = dev_pm_opp_get_suspend_opp(cpu_dev);
-+	if (suspend_opp)
-+		policy->suspend_freq = dev_pm_opp_get_freq(suspend_opp) / 1000;
-+	rcu_read_unlock();
-+
- 	ret = cpufreq_table_validate_and_show(policy, freq_table);
- 	if (ret) {
- 		dev_err(cpu_dev, "%s: invalid frequency table: %d\n", __func__,
-@@ -419,6 +427,7 @@ static struct cpufreq_driver dt_cpufreq_driver = {
- 	.ready = cpufreq_ready,
- 	.name = "cpufreq-dt",
- 	.attr = cpufreq_dt_attr,
-+	.suspend = cpufreq_generic_suspend,
- };
- 
- static int dt_cpufreq_probe(struct platform_device *pdev)
+This results in missing messages from the early debug console until the
+regular system console takes over, or even worse system hangs in response
+to unclocked register accesses. This renders those debugging facilities a
+lot less useful.
+
+The fix implemented here is to check if any of this early debugging is
+enabled and keep the UART clocks referenced and enabled in that case.
+The clocks will then only be disabled at the end of kernel init, at which
+point the real console should have taken over and the early outputs being
+disabled.
+
+I've runtime tested this on i.MX6Q and i.MX53, other platforms are only
+compile tested. This is mostly a mechanical change, but still I would
+appreciate some testing.
+
+Changes since v1:
+- reworked logic to require significantly less code in the individual
+  clock drivers
+
+Changes since v2:
+- fix checkpatch warning about initdata annotation placement
+- make code a bit more compact in the for(...) loops
+  (since 2 people already commented about this I made up my mind)
+- change code style in driver as requested by Shawn
+- add more const correctness
+  (note that this triggers a false positive checkpatch error in the first patch)
+
+Regards,
+Lucas
+
+Lucas Stach (8):
+  clk: imx: add common logic to detect early UART usage
+  clk: imx25: retain early UART clocks during kernel init
+  clk: imx27: retain early UART clocks during kernel init
+  clk: imx31: retain early UART clocks during kernel init
+  clk: imx35: retain early UART clocks during kernel init
+  clk: imx5: retain early UART clocks during kernel init
+  clk: imx6: retain early UART clocks during kernel init
+  clk: imx7d: retain early UART clocks during kernel init
+
+ drivers/clk/imx/clk-imx25.c       | 12 ++++++++++++
+ drivers/clk/imx/clk-imx27.c       | 13 +++++++++++++
+ drivers/clk/imx/clk-imx31.c       | 12 ++++++++++++
+ drivers/clk/imx/clk-imx35.c       | 10 ++++++++++
+ drivers/clk/imx/clk-imx51-imx53.c | 16 ++++++++++++++++
+ drivers/clk/imx/clk-imx6q.c       |  8 ++++++++
+ drivers/clk/imx/clk-imx6sl.c      |  8 ++++++++
+ drivers/clk/imx/clk-imx6sx.c      |  8 ++++++++
+ drivers/clk/imx/clk-imx7d.c       | 13 +++++++++++++
+ drivers/clk/imx/clk.c             | 38 ++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h             |  1 +
+ 11 files changed, 139 insertions(+)
+
 -- 
-1.9.1
-
+2.5.0
