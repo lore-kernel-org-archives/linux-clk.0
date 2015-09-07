@@ -1,102 +1,56 @@
-Return-Path: <jh80.chung@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=windows-1252
-Message-id: <55FA1F88.3090108@samsung.com>
-Date: Thu, 17 Sep 2015 11:03:52 +0900
-From: Jaehoon Chung <jh80.chung@samsung.com>
-To: =?windows-1252?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: ulf.hansson@linaro.org, mturquette@baylibre.com, sboyd@codeaurora.org,
- linux-mmc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Alexandru M Stan <amstan@chromium.org>,
- CPGS <cpgs@samsung.com>
-Subject: Re: [PATCH 6/8] mmc: dw_mmc: Generic MMC tuning with the clock phase
- framework
-References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
- <8878355.D5Q8mk4qcM@diego> <55F8D442.5020004@samsung.com>
- <2272810.k4vHSW5D0y@diego>
-In-reply-to: <2272810.k4vHSW5D0y@diego>
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de
+Subject: [PATCH v3 4/8] clk: imx31: retain early UART clocks during kernel init
+Date: Mon,  7 Sep 2015 17:09:29 +0200
+Message-Id: <1441638573-6701-5-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1441638573-6701-1-git-send-email-l.stach@pengutronix.de>
+References: <1441638573-6701-1-git-send-email-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-On 09/16/2015 11:52 PM, Heiko Stübner wrote:
-> Hi,
-> 
-> Am Mittwoch, 16. September 2015, 11:30:26 schrieb Jaehoon Chung:
->> On 09/16/2015 07:09 AM, Heiko Stübner wrote:
->>> Am Dienstag, 15. September 2015, 17:25:38 schrieb Jaehoon Chung:
->>>> On 09/01/2015 03:24 AM, Heiko Stuebner wrote:
->>>>> From: Alexandru M Stan <amstan@chromium.org>
->>>>>
->>>>> This algorithm will try 1 degree increments, since there's no way to
->>>>> tell
->>>>> what resolution the underlying phase code uses. As an added bonus, doing
->>>>> many tunings yields better results since some tests are run more than
->>>>> once
->>>>> (ex: if the underlying driver uses 45 degree increments, the tuning code
->>>>> will try the same angle more than once).
->>>>>
->>>>> It will then construct a list of good phase ranges (even ranges that
->>>>> cross
->>>>> 360/0), will pick the biggest range then it will set the sample_clk to
->>>>> the
->>>>> middle of that range.
->>>>>
->>>>> We do not touch ciu_drive (and by extension define default-drive-phase).
->>>>> Drive phase is mostly used to define minimum hold times, while one could
->>>>> write some code to determine what phase meets the minimum hold time (ex
->>>>> 10
->>>>> degrees) this will not work with the current clock phase framework
->>>>> (which
->>>>> floors angles, so we'll get 0 deg, and there's no way to know what
->>>>> resolution the floors happen at). We assume that the default drive
->>>>> angles
->>>>> set by the hardware are good enough.
->>>>>
->>>>> If a device has device specific code (like exynos) then that will still
->>>>> take precedence, otherwise this new code will execute. If the device
->>>>> wants
->>>>> to tune, but has no sample_clk defined we'll return EIO with an error
->>>>> message.
->>>>
->>>> Which point is "_generic_"? I don't find the code that control the
->>>> register
->>>> relevant to CLK_DRV/SMPL PHASE. It seems that posted the similar patches
->>>> at
->>>> u-boot mailing list..
->>>
->>> The "generic" part is that it uses the clk phase API for dw_mmc
->>> implementations where the clkgen controlling interface is outside the
->>> dw_mmc IP itself. So it's open for other implementations as well.
->>
->> Designware IP also has the CLK phase register(UHS_REG_EXT register)...
->> if this code is related with it, it should be located into dw-mmc.c.
-> 
-> UHS_REG_EXT is acutally "reserved" on both the rk3288 as well as the rk3368. 
-> rk3036/rk3128 (Cortex-A7) provide a bit description, but the tuning 
-> documentation still uses the controls located in the clock controller.
-> 
-> So I guess UHS_REG_EXT is the real "generic" solution.
-> 
->>> But if you are more comfortable with it, I can also move it into the
->>> dw_mmc- rockchip variant for the time being, until another user comes
->>> along.
->> I think more better that this code is located into dw_mmc-rockchip. how
->> about?
-> 
-> As described above, moving that to the rockchip part sounds sensible. And I 
-> guess we can think more about it, once a second user appears.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx31.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Sure, we can think more about this.
-As you knew, clock phase is closely related to the timing issue.
-So clock phase scheme needs to control however.
-In future, if somebody introduce the similar control as rockchip, we can discuss about it.
-
-Best Regards,
-Jaehoon Chung
-
-> 
-> 
-> Heiko
-> 
+diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
+index fe66c40b7be2..e283142f123a 100644
+--- a/drivers/clk/imx/clk-imx31.c
++++ b/drivers/clk/imx/clk-imx31.c
+@@ -62,6 +62,16 @@ enum mx31_clks {
+ static struct clk *clk[clk_max];
+ static struct clk_onecell_data clk_data;
+ 
++static struct clk ** const uart_clks[] __initconst = {
++	&clk[ipg],
++	&clk[uart1_gate],
++	&clk[uart2_gate],
++	&clk[uart3_gate],
++	&clk[uart4_gate],
++	&clk[uart5_gate],
++	NULL
++};
++
+ int __init mx31_clocks_init(unsigned long fref)
+ {
+ 	void __iomem *base;
+@@ -199,6 +209,8 @@ int __init mx31_clocks_init(unsigned long fref)
+ 	mx31_revision();
+ 	clk_disable_unprepare(clk[iim_gate]);
+ 
++	imx_register_uart_clocks(uart_clks);
++
+ 	mxc_timer_init(MX31_GPT1_BASE_ADDR, MX31_INT_GPT, GPT_TYPE_IMX31);
+ 
+ 	return 0;
+-- 
+2.5.0
