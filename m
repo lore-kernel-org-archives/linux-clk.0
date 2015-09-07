@@ -1,50 +1,78 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CANqRtoT86vwR=A5-T_a4LBJpgWT4Q0G7n9+Kso+V+uvfLufCyw@mail.gmail.com>
-References: <20150907163252.475.18281.sendpatchset@little-apple>
-	<20150907163346.475.69916.sendpatchset@little-apple>
-	<CAMuHMdVQkWcftaYR+vd-LGQTTsj8waFms4aOMvZY_DF51kn0Vg@mail.gmail.com>
-	<CANqRtoT86vwR=A5-T_a4LBJpgWT4Q0G7n9+Kso+V+uvfLufCyw@mail.gmail.com>
-Date: Tue, 8 Sep 2015 10:20:03 +0200
-Message-ID: <CAMuHMdVrd-TT54PAeiO-jgEFQ_uQDq9+8V-8j90D2WcvyAEs-w@mail.gmail.com>
-Subject: Re: [PATCH v7 05/05] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock
- Domain support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
+ Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ b.zolnierkie@samsung.com
+Subject: [PATCH v4 3/4] cpufreq-dt: add suspend frequency support
+Date: Mon, 07 Sep 2015 17:41:40 +0200
+Message-id: <1441640501-13613-4-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus,
+Add suspend frequency support and if needed set it to
+the frequency obtained from the suspend opp (can be defined
+using opp-v2 bindings and is optional).
 
-On Tue, Sep 8, 2015 at 10:18 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> On Tue, Sep 8, 2015 at 4:41 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> Hi Magnus,
->>
->> On Mon, Sep 7, 2015 at 6:33 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
->>> --- 0009/drivers/clk/shmobile/clk-rcar-gen3.c
->>> +++ work/drivers/clk/shmobile/clk-rcar-gen3.c   2015-09-02 14:39:35.912366518 +0900
->>> @@ -236,6 +236,8 @@ static void __init rcar_gen3_cpg_clocks_
->>>         }
->>
->> The above line causes fuzz when applying it.
->
-> Sorry, I forgot to refresh the patch. Will update next time I resend.
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ drivers/cpufreq/cpufreq-dt.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Don't worry, I can handle it fine.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index c3583cd..e08ae40 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -196,6 +196,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	struct device *cpu_dev;
+ 	struct regulator *cpu_reg;
+ 	struct clk *cpu_clk;
++	struct dev_pm_opp *suspend_opp;
+ 	unsigned long min_uV = ~0, max_uV = 0;
+ 	unsigned int transition_latency;
+ 	bool need_update = false;
+@@ -329,6 +330,13 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	policy->driver_data = priv;
+ 
+ 	policy->clk = cpu_clk;
++
++	rcu_read_lock();
++	suspend_opp = dev_pm_opp_get_suspend_opp(cpu_dev);
++	if (suspend_opp)
++		policy->suspend_freq = dev_pm_opp_get_freq(suspend_opp) / 1000;
++	rcu_read_unlock();
++
+ 	ret = cpufreq_table_validate_and_show(policy, freq_table);
+ 	if (ret) {
+ 		dev_err(cpu_dev, "%s: invalid frequency table: %d\n", __func__,
+@@ -419,6 +427,9 @@ static struct cpufreq_driver dt_cpufreq_driver = {
+ 	.ready = cpufreq_ready,
+ 	.name = "cpufreq-dt",
+ 	.attr = cpufreq_dt_attr,
++#ifdef CONFIG_PM
++	.suspend = cpufreq_generic_suspend,
++#endif
+ };
+ 
+ static int dt_cpufreq_probe(struct platform_device *pdev)
+-- 
+1.9.1
