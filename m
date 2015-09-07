@@ -1,103 +1,65 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	kernel@pengutronix.de,
-	patchwork-lst@pengutronix.de
-Subject: [PATCH v4 7/8] clk: imx6: retain early UART clocks during kernel init
-Date: Mon, 21 Sep 2015 18:54:03 +0200
-Message-Id: <1442854444-4460-8-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
-References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH v4 2/4] cpufreq: allow cpufreq_generic_suspend() to work
+ without suspend frequency
+Date: Mon, 07 Sep 2015 17:41:39 +0200
+Message-id: <1441640501-13613-3-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure to keep UART clocks enabled during kernel init if
-earlyprintk or earlycon are active.
+Some cpufreq drivers may set suspend frequency only for
+selected setups but still would like to use the generic
+suspend handler.  Thus don't treat !policy->suspend_freq
+condition as an incorrect one.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/clk/imx/clk-imx6q.c  | 8 ++++++++
- drivers/clk/imx/clk-imx6sl.c | 8 ++++++++
- drivers/clk/imx/clk-imx6sx.c | 8 ++++++++
- 3 files changed, 24 insertions(+)
+ drivers/cpufreq/cpufreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index b2c1c047dc94..e9ba018ac6a3 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -130,6 +130,12 @@ static inline int clk_on_imx6dl(void)
- 	return of_machine_is_compatible("fsl,imx6dl");
- }
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index b3d9368..a634fcb 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1626,8 +1626,8 @@ int cpufreq_generic_suspend(struct cpufreq_policy *policy)
+ 	int ret;
  
-+static struct clk ** const uart_clks[] __initconst = {
-+	&clk[IMX6QDL_CLK_UART_IPG],
-+	&clk[IMX6QDL_CLK_UART_SERIAL],
-+	NULL
-+};
-+
- static void __init imx6q_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
-@@ -541,5 +547,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	/* All existing boards with PCIe use LVDS1 */
- 	if (IS_ENABLED(CONFIG_PCI_IMX6))
- 		clk_set_parent(clk[IMX6QDL_CLK_LVDS1_SEL], clk[IMX6QDL_CLK_SATA_REF_100M]);
-+
-+	imx_register_uart_clocks(uart_clks);
- }
- CLK_OF_DECLARE(imx6q, "fsl,imx6q-ccm", imx6q_clocks_init);
-diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-index a0d4cf26cfa9..3c3333faae8e 100644
---- a/drivers/clk/imx/clk-imx6sl.c
-+++ b/drivers/clk/imx/clk-imx6sl.c
-@@ -184,6 +184,12 @@ void imx6sl_set_wait_clk(bool enter)
- 		imx6sl_enable_pll_arm(false);
- }
+ 	if (!policy->suspend_freq) {
+-		pr_err("%s: suspend_freq can't be zero\n", __func__);
+-		return -EINVAL;
++		pr_debug("%s: suspend_freq not defined\n", __func__);
++		return 0;
+ 	}
  
-+static struct clk ** const uart_clks[] __initconst = {
-+	&clks[IMX6SL_CLK_UART],
-+	&clks[IMX6SL_CLK_UART_SERIAL],
-+	NULL
-+};
-+
- static void __init imx6sl_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
-@@ -439,5 +445,7 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
- 
- 	clk_set_parent(clks[IMX6SL_CLK_LCDIF_AXI_SEL],
- 		       clks[IMX6SL_CLK_PLL2_PFD2]);
-+
-+	imx_register_uart_clocks(uart_clks);
- }
- CLK_OF_DECLARE(imx6sl, "fsl,imx6sl-ccm", imx6sl_clocks_init);
-diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-index 5b95c2c2bf52..f0ad8bbc12f8 100644
---- a/drivers/clk/imx/clk-imx6sx.c
-+++ b/drivers/clk/imx/clk-imx6sx.c
-@@ -135,6 +135,12 @@ static u32 share_count_ssi1;
- static u32 share_count_ssi2;
- static u32 share_count_ssi3;
- 
-+static struct clk ** const uart_clks[] __initconst = {
-+	&clks[IMX6SX_CLK_UART_IPG],
-+	&clks[IMX6SX_CLK_UART_SERIAL],
-+	NULL
-+};
-+
- static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
-@@ -557,5 +563,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 
- 	clk_set_parent(clks[IMX6SX_CLK_QSPI1_SEL], clks[IMX6SX_CLK_PLL2_BUS]);
- 	clk_set_parent(clks[IMX6SX_CLK_QSPI2_SEL], clks[IMX6SX_CLK_PLL2_BUS]);
-+
-+	imx_register_uart_clocks(uart_clks);
- }
- CLK_OF_DECLARE(imx6sx, "fsl,imx6sx-ccm", imx6sx_clocks_init);
+ 	pr_debug("%s: Setting suspend-freq: %u\n", __func__,
 -- 
-2.5.1
+1.9.1
+
