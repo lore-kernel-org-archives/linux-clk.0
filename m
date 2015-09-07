@@ -1,50 +1,42 @@
-Return-Path: <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 2/3] clk: bcm2835: Add a driver for the auxiliary
- peripheral clock gates.
-To: Eric Anholt <eric@anholt.net>
-References: <1441923750-19404-1-git-send-email-eric@anholt.net>
- <1441923750-19404-3-git-send-email-eric@anholt.net>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Lee Jones <lee@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Mike Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org
-From: Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <5600B8DA.4030406@wwwdotorg.org>
-Date: Mon, 21 Sep 2015 19:11:38 -0700
+Return-Path: <ukl@pengutronix.de>
+Date: Mon, 7 Sep 2015 11:10:05 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Lucas Stach <l.stach@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+	kernel@pengutronix.de, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/8] clk: imx25: retain early UART clocks during
+ kernel init
+Message-ID: <20150907091005.GV9999@pengutronix.de>
+References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
+ <1441382419-4343-3-git-send-email-l.stach@pengutronix.de>
+ <20150906142315.GA30746@tiger>
 MIME-Version: 1.0
-In-Reply-To: <1441923750-19404-3-git-send-email-eric@anholt.net>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20150906142315.GA30746@tiger>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/10/2015 03:22 PM, Eric Anholt wrote:
-> There are a pair of SPI masters and a mini UART that were last minute
-> additions.  As a result, they didn't get integrated in the same way as
-> the other gates off of the VPU clock in CPRMAN.
+On Sun, Sep 06, 2015 at 10:23:15PM +0800, Shawn Guo wrote:
+> 
+> I prefer to code it like:
+> 
+> static struct clk **uart_clks[] __initdata = {
+> 	&clk[uart_ipg_per],
+> 	&clk[uart1_ipg],
+> 	&clk[uart2_ipg],
+> 	&clk[uart3_ipg],
+> 	&clk[uart4_ipg],
+> 	&clk[uart5_ipg],
+> 	NULL
+> };
 
-> diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
+And maybe also use mx25_ as prefix to make the name unique.
 
-> +static int bcm2835_aux_clk_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct clk_onecell_data *onecell;
-> +	const char *parent;
-> +	struct clk *parent_clk;
-> +	void __iomem *reg;
-> +
-> +	parent_clk = of_clk_get(dev->of_node, 0);
-> +	if (IS_ERR(parent_clk))
-> +		return PTR_ERR(parent_clk);
-> +	parent = __clk_get_name(parent_clk);
+Best regards
+Uwe
 
-I think all the comments I made on probe() for the main bcm2835 clock
-driver likely apply here too.
-
-Also, is it "legal" for clock drivers to use __clk_get_name()? I thought
-that was a clock core internal function, but may be wrong. I would have
-expected to be able to pass a clock object when registering clocks
-rather than a clock name, but oh well.
-
-BTW, I like how this series shows how useful it is for someone with full
-knowledge of the HW to come up with the DT bindings for a HW module;
-once you know how the HW is actually designed, the correct binding ends
-up being a lot easier to come up with, rather than guessing:-)
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
