@@ -1,100 +1,89 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 02 Sep 2015 16:17:50 +0900
-Message-Id: <20150902071750.10870.76669.sendpatchset@little-apple>
-In-Reply-To: <20150902071657.10870.37652.sendpatchset@little-apple>
-References: <20150902071657.10870.37652.sendpatchset@little-apple>
-Subject: [PATCH v6 05/05] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
+Return-Path: <ukl@pengutronix.de>
+Date: Mon, 7 Sep 2015 11:06:03 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+	kernel@pengutronix.de, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/8] clk: imx: add common logic to detect early UART
+ usage
+Message-ID: <20150907090603.GU9999@pengutronix.de>
+References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
+ <1441382419-4343-2-git-send-email-l.stach@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1441382419-4343-2-git-send-email-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hello Lucas,
 
-Add Clock Domain support to the R-Car Gen3 Clock Pulse Generator (CPG)
-driver using the generic PM Domain.  This allows to power-manage the
-module clocks of SoC devices that are part of the CPG/MSTP Clock Domain
-using Runtime PM, or for system suspend/resume.
+On Fri, Sep 04, 2015 at 06:00:12PM +0200, Lucas Stach wrote:
+> Both earlycon and eralyprintk depend on the bootloader setup UART
+> clocks being retained. This patch adds the common logic to detect such
+> situations and make the information available to the clock drivers, as
+> well as adding the facilities to disable those clocks at the end of
+> the kernel init.
+> 
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> ---
+>  drivers/clk/imx/clk.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk.h |  1 +
+>  2 files changed, 47 insertions(+)
+> 
+> diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+> index df12b5307175..3357e29e43ab 100644
+> --- a/drivers/clk/imx/clk.c
+> +++ b/drivers/clk/imx/clk.c
+> @@ -73,3 +73,49 @@ void imx_cscmr1_fixup(u32 *val)
+>  	*val ^= CSCMR1_FIXUP;
+>  	return;
+>  }
+> +
+> +static int __initdata imx_keep_uart_clocks;
+> +static struct clk __initdata ***imx_uart_clocks;
+> +
+> +static int __init imx_keep_uart_clocks_param(char *str)
+> +{
+> +	imx_keep_uart_clocks = 1;
+> +
+> +	return 0;
+> +}
+> +__setup_param("earlycon", imx_keep_uart_earlycon,
+> +	      imx_keep_uart_clocks_param, 0);
+> +__setup_param("earlyprintk", imx_keep_uart_earlyprintk,
+> +	      imx_keep_uart_clocks_param, 0);
+> +
+> +void __init imx_register_uart_clocks(struct clk **clks[])
 
-SoC devices that are part of the CPG/MSTP Clock Domain and can be
-power-managed through an MSTP clock should be tagged in DT with a proper
-"power-domains" property.
+const struct clk **clks[]?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+I wonder why you need an array of pointers to pointers of clocks. Isn't
+one indirection less possible and more easy?
 
- Changes since V5:
- - Rebased to fit on top of updated CPG DT binding document
+> +{
+> +	if (imx_keep_uart_clocks) {
+> +		int i;
+> +
+> +		imx_uart_clocks = clks;
+> +		for (i = 0;; i++) {
+> +			if (imx_uart_clocks[i])
+> +				clk_prepare_enable(*imx_uart_clocks[i]);
+> +			else
+> +				break;
+> +		}
 
- Changes since V4:
- - Rebased to fit on top of updated CPG DT binding document
+I would have written this as:
 
- Changes since V3:
- - Fixed so correct file is actually used. =)
- - Took V2 from Geert but filtered out Kconfig.platforms bits
+	for (i = 0; imx_uart_clocks[i]; ++i)
+		clk_prepare_enable(*imx_uart_clocks[i]);
 
- Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   26 +++++++++-
- drivers/clk/shmobile/clk-rcar-gen3.c                                     |    2 
- 2 files changed, 26 insertions(+), 2 deletions(-)
+but I guess that's a matter of taste.
 
---- 0009/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt
-+++ work/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt	2015-09-02 14:41:32.942366518 +0900
-@@ -2,6 +2,8 @@
- 
- The CPG generates core clocks for the R-Car Gen3 SoCs. It includes three PLLs
- and several fixed ratio dividers.
-+The CPG also provides a Clock Domain for SoC devices, in combination with the
-+CPG Module Stop (MSTP) Clocks.
- 
- Required Properties:
- 
-@@ -14,9 +16,17 @@ Required Properties:
-   - clocks: References to the parent clocks: first to the EXTAL clock
-   - #clock-cells: Must be 1
-   - clock-indices: Indices of the exported clocks
-+  - #power-domain-cells: Must be 0
- 
--Example
---------
-+SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
-+through an MSTP clock should refer to the CPG device node in their
-+"power-domains" property, as documented by the generic PM domain bindings in
-+Documentation/devicetree/bindings/power/power_domain.txt.
-+
-+Examples
-+--------
-+
-+  - CPG device node:
- 
- 	cpg_clocks: cpg_clocks@e6150000 {
- 		compatible = "renesas,r8a7795-cpg-clocks",
-@@ -29,4 +39,16 @@ Example
- 				R8A7795_CLK_PLL1 R8A7795_CLK_PLL2
- 				R8A7795_CLK_PLL3 R8A7795_CLK_PLL4
- 		>;
-+		#power-domain-cells = <0>;
-+	};
-+
-+  - CPG/MSTP Clock Domain member device node:
-+
-+	scif2: serial@e6e88000 {
-+		compatible = "renesas,scif-r8a7795", "renesas,scif";
-+		reg = <0 0xe6e88000 0 64>;
-+		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp3_clks RCAR_R8A7795_CLK_SCIF2>;
-+		clock-names = "sci_ick";
-+		power-domains = <&cpg_clocks>;
- 	};
---- 0009/drivers/clk/shmobile/clk-rcar-gen3.c
-+++ work/drivers/clk/shmobile/clk-rcar-gen3.c	2015-09-02 14:39:35.912366518 +0900
-@@ -236,6 +236,8 @@ static void __init rcar_gen3_cpg_clocks_
- 	}
- 
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
-+
-+	cpg_mstp_add_clk_domain(np);
- }
- CLK_OF_DECLARE(rcar_gen3_cpg_clks, "renesas,rcar-gen3-cpg-clocks",
- 	       rcar_gen3_cpg_clocks_init);
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
