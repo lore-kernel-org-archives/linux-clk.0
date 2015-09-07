@@ -1,31 +1,71 @@
-Return-Path: <alim.akhtar@samsung.com>
-Message-id: <55F7E5C7.40802@samsung.com>
-Date: Tue, 15 Sep 2015 15:02:55 +0530
-From: Alim Akhtar <alim.akhtar@samsung.com>
-MIME-version: 1.0
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- linux-samsung-soc@vger.kernel.org
-Cc: tomasz.figa@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com,
- mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com,
- sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] clk: samsung: exynos7: Cleanup of clock file
-References: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
- <55F7E422.4080203@samsung.com>
-In-reply-to: <55F7E422.4080203@samsung.com>
-Content-type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Date: Mon, 7 Sep 2015 11:29:03 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] ARM: dts: add suspend opp to exynos4412
+Message-ID: <20150907055903.GD26760@linux>
+References: <1441303892-32004-1-git-send-email-b.zolnierkie@samsung.com>
+ <1441303892-32004-4-git-send-email-b.zolnierkie@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1441303892-32004-4-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sylwester,
+On 03-09-15, 20:11, Bartlomiej Zolnierkiewicz wrote:
+> Mark 800MHz OPP as a suspend opp for Exynos4412 based
+> boards so effectively cpufreq-dt driver behavior w.r.t.
+> suspend frequency matches what the old exynos-cpufreq
+> driver has been doing.
+> 
+> This patch fixes suspend/resume support on Exynos4412 based
+> Trats2 board and reboot hang on Exynos4412 based Odroid U3
+> board.
+> 
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4412.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+> index ca0e3c1..294cfe4 100644
+> --- a/arch/arm/boot/dts/exynos4412.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412.dtsi
+> @@ -98,6 +98,7 @@
+>  			opp-hz = /bits/ 64 <800000000>;
+>  			opp-microvolt = <1000000>;
+>  			clock-latency-ns = <200000>;
+> +			opp-suspend;
+>  		};
+>  		opp07 {
+>  			opp-hz = /bits/ 64 <900000000>;
 
-On 09/15/2015 02:55 PM, Sylwester Nawrocki wrote:
-> On 10/09/15 10:44, Alim Akhtar wrote:
->> Currently there are lots of ambiguity between clock names in clock file
->> and in user manual, which leads to lots of confusion for the reviewers.
->> This series attempts to cleanup the exynos7 clock file as per
->> user manual naming convention.
->> This also adds some of the missing Gate clocks which are needed
->> to complete the clock tree.
->
-> The whole series applied, thanks.
->
-Thanks!!
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+-- 
+viresh
