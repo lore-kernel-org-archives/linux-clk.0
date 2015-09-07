@@ -1,54 +1,68 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:37165 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752372AbbIUQJ2 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 21 Sep 2015 12:09:28 -0400
-Date: Mon, 21 Sep 2015 18:08:49 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-cc: Nishanth Menon <nm@ti.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	linux-rt-users@vger.kernel.org, Felipe Balbi <balbi@ti.com>,
-	Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org
-Subject: Re: Common clock framework API vs RT patchset\
-In-Reply-To: <20150921135226.GN21084@n2100.arm.linux.org.uk>
-Message-ID: <alpine.DEB.2.11.1509211729240.5606@nanos>
-References: <55C0A96F.80307@ti.com> <alpine.DEB.2.11.1508041405290.3983@nanos> <55C0D8F3.3030105@ti.com> <20150804153641.GR7557@n2100.arm.linux.org.uk> <alpine.DEB.2.11.1509211255530.5606@nanos> <20150921135226.GN21084@n2100.arm.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <tomeu.vizoso@gmail.com>
+Return-Path: <tomeu.vizoso@gmail.com>
+Sender: Tomeu Vizoso <tomeu.vizoso@gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	linux-arm-kernel@lists.infradead.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	devicetree@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-acpi@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v4 15/22] clk: Probe clk providers on demand
+Date: Mon,  7 Sep 2015 14:23:40 +0200
+Message-Id: <1441628627-5143-16-git-send-email-tomeu.vizoso@collabora.com>
+In-Reply-To: <1441628627-5143-1-git-send-email-tomeu.vizoso@collabora.com>
+References: <1441628627-5143-1-git-send-email-tomeu.vizoso@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 21 Sep 2015, Russell King - ARM Linux wrote:
-> On Mon, Sep 21, 2015 at 03:06:18PM +0200, Thomas Gleixner wrote:
-> However, due to the generally idiotic nature of Linux programmers, they've
-> totally destroyed the reason for clk_enable() and clk_disable() existing.
-> So, we now need a _third_ level of API to work around their idiotic nature,
-> maybe clk_atomic_enable() and clk_atomic_disable(), which do what the
-> original clk_enable() and clk_disable() do.
-> 
-> So, we end up needing three levels because Linux programmers are basically
-> idiots.
-> 
-> And yes, if what you've found is correct, I think those who have created
-> the crap have very much earned the prestigious title of being an "idiotic
-> programmer".
-> 
-> I'm pissed at these idiotic programmers.
+When looking up a clock through its OF node, probe it if it hasn't
+already.
 
-I'm even more pissed at the CCF "maintainers" for giving a shit about
-the sanity of the stuff they are maintaining.
+The goal is to reduce deferred probes to a minimum, as it makes it very
+cumbersome to find out why a device failed to probe, and can introduce
+very big delays in when a critical device is probed.
 
-One reason for this mess is that clk related patches go often
-unreviewed through SoC trees, which again is a problem of the
-maintainers who just let that happen.
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+---
 
-It's not enough to have an entry in MAINTAINERS along with a git tree
-in which random patches get collected.
+Changes in v4: None
+Changes in v3: None
+Changes in v2: None
 
-This 'shove crap in no matter what' mentality needs to stop if we
-don't want to end up with a completely unmaintainable nightmare.
+ drivers/clk/clk.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Thanks,
-
-	tglx
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 43e2c3ad6c31..e5fe02a11c36 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -19,6 +19,7 @@
+ #include <linux/list.h>
+ #include <linux/slab.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/device.h>
+ #include <linux/init.h>
+ #include <linux/sched.h>
+@@ -3004,6 +3005,8 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+ 	if (!clkspec)
+ 		return ERR_PTR(-EINVAL);
+ 
++	of_device_probe(clkspec->np);
++
+ 	/* Check if we have such a provider in our array */
+ 	mutex_lock(&of_clk_mutex);
+ 	list_for_each_entry(provider, &of_clk_providers, link) {
+-- 
+2.4.3
