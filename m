@@ -1,43 +1,98 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	heikki.krogerus@linux.intel.com, linux-clk@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v6 3/5] clk: rockchip: save width in struct clk_fractional_divider
-Date: Tue, 22 Sep 2015 18:54:10 +0300
-Message-Id: <1442937252-50281-4-git-send-email-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <1442937252-50281-1-git-send-email-andriy.shevchenko@linux.intel.com>
-References: <1442937252-50281-1-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Date: Tue, 8 Sep 2015 10:04:19 +0200 (CEST)
+From: Paul Osmialowski <pawelo@king.net.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 7/9] arm: twr-k70f120m: IOMUX driver for Kinetis SoC
+In-Reply-To: <CACRpkdYHBt7YJWM3Bg8ENfw7uL4fuENqW+g8YaO+P6UPBCX4HQ@mail.gmail.com>
+Message-ID: <alpine.LNX.2.00.1509080953390.31192@localhost.localdomain>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
+ <1435094387-20146-8-git-send-email-pawelo@king.net.pl>
+ <CACRpkdYHBt7YJWM3Bg8ENfw7uL4fuENqW+g8YaO+P6UPBCX4HQ@mail.gmail.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stefan Agner <stefan@agner.ch>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Jiri Slaby <jslaby@suse.cz>, linux-clk@vger.kernel.org,
+ Kees Cook <keescook@chromium.org>, Russell King <linux@arm.linux.org.uk>,
+ Nicolas Pitre <nico@linaro.org>, Magnus Damm <damm+renesas@opensource.se>,
+ Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+ Dave Martin <Dave.Martin@arm.com>, Guenter Roeck <linux@roeck-us.net>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Paul Osmialowski <pawelo@king.net.pl>, Sascha Hauer <kernel@pengutronix.de>,
+ Arnd Bergmann <arnd@arndb.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Jingchang Lu <jingchang.lu@freescale.com>,
+ Haojian Zhuang <haojian.zhuang@gmail.com>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ Rob Herring <robh+dt@kernel.org>, Simon Horman <horms+renesas@verge.net.au>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ Paul Bolle <pebolle@tiscali.nl>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Nathan Lynch <nathan_lynch@mentor.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
+ Kumar Gala <galak@codeaurora.org>, Olof Johansson <olof@lixom.net>,
+ Shawn Guo <shawnguo@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The ->mwidth and ->nwidth fields will be used by clk-fractional-divider when it
-will be switched to rational base approximation algorithm.
+Hi Linus,
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/clk/rockchip/clk.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On Tue, 14 Jul 2015, Linus Walleij wrote:
 
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 2493881..be6c7fd 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -135,9 +135,11 @@ static struct clk *rockchip_clk_register_frac_branch(const char *name,
- 	div->flags = div_flags;
- 	div->reg = base + muxdiv_offset;
- 	div->mshift = 16;
--	div->mmask = 0xffff0000;
-+	div->mwidth = 16;
-+	div->mmask = GENMASK(div->mwidth - 1, 0) << div->mshift;
- 	div->nshift = 0;
--	div->nmask = 0xffff;
-+	div->nwidth = 16;
-+	div->nmask = GENMASK(div->nwidth - 1, 0) << div->nshift;
- 	div->lock = lock;
- 	div_ops = &clk_fractional_divider_ops;
- 
--- 
-2.5.1
+> OK...
+> 
+> I want Shawn and Sascha to look at this as they worked with
+> other Freescale pin controllers. Especially I want to know if this
+> is a sibling to the other Freescale controllers or a separate hardware.
+> 
+> If it is *not* a sibling I will *insist* that it use more generic pin
+> control bindings and move away from the older Freescale-specific
+> stuff.
 
+No one answered me about that. However, I looked at other Freescale 
+pinctrl drivers and realised that no one of them (IMX, IMX1, MXS) is 
+similar to what I need to do for Kinetis, also positions of configuration 
+bits differ significantly.
+
+> 
+> There exist generic pin config bindings, see
+> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> 
+> I suggest to to function+group paring and then use generic pin config
+> with this driver unless it is a very close sibling to the existing Freescale
+> pin controllers.
+> 
+> Hint: if it is a sibling, it should share code with them.
+> 
+> There are several drivers doing generic pin control/pin config in the kernel
+> tree.
+> 
+
+I tried to analyze few of the drivers (e.g. zynq family) and can't find 
+how can I assing clock gate (clock device) to each port (PORTA, PORTB, 
+PORTC,...) which is required for Kinetis. Is generic pin control capable 
+to express that requirement or is it a time to desing my own pinctrl 
+driver (maybe somewhat improved than the one I presented so far)?
+
+This pinctrl component is somwehat critical part of BSP. Until it is not 
+sorted, I don't see a point in releasing what was developed so far.
+
+Best regards,
+Paul
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
