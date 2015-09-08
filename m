@@ -1,83 +1,65 @@
-Return-Path: <B48286@freescale.com>
-From: Hou Zhiqiang <B48286@freescale.com>
-To: Mark Rutland <mark.rutland@arm.com>
-CC: Marc Zyngier <Marc.Zyngier@arm.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Catalin Marinas
-	<Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Shaohui Xie
-	<Shaohui.Xie@freescale.com>, "corbet@lwn.net" <corbet@lwn.net>, "Sharma
- Bhupesh" <bhupesh.sharma@freescale.com>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "wsa@the-dreams.de" <wsa@the-dreams.de>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "wim@iguana.be"
-	<wim@iguana.be>, Wenbin Song <Wenbin.Song@freescale.com>, Scott Wood
-	<scottwood@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>, Li Leo
-	<LeoLi@freescale.com>
-Subject: RE: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
-Date: Wed, 23 Sep 2015 03:57:53 +0000
-Message-ID: <CY1PR0301MB078079163738A7B9EC989C278B440@CY1PR0301MB0780.namprd03.prod.outlook.com>
-References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
- <1442838158-2964-5-git-send-email-B48286@freescale.com>
- <20150922012403.GA1535@svinekod>
- <CY1PR0301MB078008B10188504C951076498B450@CY1PR0301MB0780.namprd03.prod.outlook.com>
- <20150922221504.GA1497@svinekod>
-In-Reply-To: <20150922221504.GA1497@svinekod>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH v5 2/4] cpufreq: allow cpufreq_generic_suspend() to work
+ without suspend frequency
+Date: Tue, 08 Sep 2015 18:41:02 +0200
+Message-id: <1441730464-7947-3-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTWFyayBSdXRsYW5kIFtt
-YWlsdG86bWFyay5ydXRsYW5kQGFybS5jb21dDQo+IFNlbnQ6IDIwMTXlubQ55pyIMjPml6UgNjox
-NQ0KPiBUbzogSG91IFpoaXFpYW5nLUI0ODI4Ng0KPiBDYzogTWFyYyBaeW5naWVyOyBsaW51eC1h
-cm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IENhdGFsaW4gTWFyaW5hczsNCj4gV2lsbCBE
-ZWFjb247IGxpbnV4LWkyY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXdhdGNoZG9nQHZnZXIua2Vy
-bmVsLm9yZzsNCj4gbGludXgtZG9jQHZnZXIua2VybmVsLm9yZzsgbGludXgtY2xrQHZnZXIua2Vy
-bmVsLm9yZzsgWGllIFNoYW9odWktQjIxOTg5Ow0KPiBjb3JiZXRAbHduLm5ldDsgU2hhcm1hIEJo
-dXBlc2gtQjQ1MzcwOyBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsgd3NhQHRoZS0NCj4gZHJlYW1z
-LmRlOyBzYm95ZEBjb2RlYXVyb3JhLm9yZzsgd2ltQGlndWFuYS5iZTsgU29uZyBXZW5iaW4tQjUz
-NzQ3OyBXb29kDQo+IFNjb3R0LUIwNzQyMTsgSHUgTWluZ2thaS1CMjEyODQ7IExpIFlhbmctTGVv
-LVI1ODQ3Mg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDQvNl0gYXJtNjQvbHMxMDQzYTogYWRkIERU
-UyBmb3IgRnJlZXNjYWxlIExTMTA0M0EgU29DDQo+IA0KPiBPbiBUdWUsIFNlcCAyMiwgMjAxNSBh
-dCAxMDo1MDoyMUFNICswMTAwLCBIb3UgWmhpcWlhbmcgd3JvdGU6DQo+ID4gSGkgTWFyaywNCj4g
-Pg0KPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZyb206IE1hcmsgUnV0
-bGFuZCBbbWFpbHRvOm1hcmsucnV0bGFuZEBhcm0uY29tXQ0KPiA+ID4gU2VudDogMjAxNeW5tDnm
-nIgyMuaXpSA5OjI0DQo+ID4gPiBUbzogSG91IFpoaXFpYW5nLUI0ODI4NjsgbWFyYy56eW5naWVy
-QGFybS5jb20NCj4gPiA+IENjOiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7
-IENhdGFsaW4gTWFyaW5hczsgV2lsbA0KPiA+ID4gRGVhY29uOyBsaW51eC1pMmNAdmdlci5rZXJu
-ZWwub3JnOyBsaW51eC13YXRjaGRvZ0B2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gPiBsaW51eC0gZG9j
-QHZnZXIua2VybmVsLm9yZzsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsgWGllDQo+ID4gPiBT
-aGFvaHVpLUIyMTk4OTsgY29yYmV0QGx3bi5uZXQ7IFNoYXJtYSBCaHVwZXNoLUI0NTM3MDsNCj4g
-PiA+IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyB3c2FAdGhlLSBkcmVhbXMuZGU7IHNib3lkQGNv
-ZGVhdXJvcmEub3JnOw0KPiA+ID4gd2ltQGlndWFuYS5iZTsgU29uZyBXZW5iaW4tQjUzNzQ3OyBX
-b29kIFNjb3R0LUIwNzQyMTsgSHUNCj4gPiA+IE1pbmdrYWktQjIxMjg0OyBMaSBZYW5nLUxlby1S
-NTg0NzINCj4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggNC82XSBhcm02NC9sczEwNDNhOiBhZGQg
-RFRTIGZvciBGcmVlc2NhbGUNCj4gPiA+IExTMTA0M0EgU29DDQo+ID4gPg0KPiA+ID4gSGksDQo+
-ID4gPg0KPiA+ID4gPiArL21lbXJlc2VydmUvIDB4ODAwMDAwMDAgMHgwMDAxMDAwMDsNCj4gPiA+
-DQo+ID4gPiBXaHkgaXMgdGhpcyBuZWNlc3Nhcnk/DQo+ID4NCj4gPiBUaGlzIG1lbW9yeSByZWdp
-b24gaXMgcHJlLXJlc2VydmVkIGZvciB0aGUgc3Bpbi10YWJsZS9wc2NpLCBhbHRob3VnaA0KPiA+
-IGRpZG4ndCBhZGQgRW5hYmxlIG1ldGhvZCBvZiBzZWNvbmRhcnkgY29yZXMuDQo+IA0KPiBZb3Vy
-IFBTQ0kgaW1wbGVtZW50YXRpb24gaXNuJ3QgaW4gc2VjdXJlIG1lbW9yeT8NCj4gDQoNClNvcnJ5
-LCB0aGlzIGlzIGZvciBzcGluLXRhYmxlLCBwc2NpIHdpbGwgZml4IGl0IGluIHUtYm9vdC4NCg0K
-PiA+ID4gPiArICAgICAgIGlmYzogaWZjQDE1MzAwMDAgew0KPiA+ID4gPiArICAgICAgICAgICAg
-ICAgY29tcGF0aWJsZSA9ICJmc2wsaWZjIiwgInNpbXBsZS1idXMiOw0KPiA+ID4gPiArICAgICAg
-ICAgICAgICAgcmVnID0gPDB4MCAweDE1MzAwMDAgMHgwIDB4MTAwMDA+Ow0KPiA+ID4gPiArICAg
-ICAgICAgICAgICAgaW50ZXJydXB0cyA9IDwwIDQzIDB4ND47DQo+ID4gPiA+ICsgICAgICAgfTsN
-Cj4gPiA+DQo+ID4gPiBXaHkgc2ltcGxlLWJ1cz8NCj4gPg0KPiA+IFRoZXJlIGFyZSAzIGNoaWxk
-IG5vZGUgbG9jYXRlZCBpbiBkdHNpIGZpbGUgdGhhdCBzaG91bGQgYmUgY3JlYXRlZCBhbmQNCj4g
-PiBhZGRlZCB0byBwbGF0Zm9ybSBkZXZpY2UgbGlzdC4NCj4gDQo+IEFyZSB0aGV5IHVzYWJsZSBl
-dmVuIGlmIHRoZSBrZXJuZWwga25ldyBub3RoaW5nIGFib3V0IHRoZSBJRkMgbm9kZT8gSWYNCj4g
-bm90LCB0aGUgSUZDIGRyaXZlciBzaG91bGQgcHJvYmUgdGhlbSwgYW5kIHNpbXBsZS1idXMgc2hv
-dWxkIGdvLg0KPiANCj4gPiA+ID4gKyAgICAgICBtZW1vcnlAODAwMDAwMDAgew0KPiA+ID4gPiAr
-ICAgICAgICAgICAgICAgZGV2aWNlX3R5cGUgPSAibWVtb3J5IjsNCj4gPiA+ID4gKyAgICAgICAg
-ICAgICAgIHJlZyA9IDwweDAgMHg4MDAwMDAwMCAwIDB4ODAwMDAwMDA+Ow0KPiA+ID4gPiArICAg
-ICAgICAgICAgICAgICAgICAgLyogRFJBTSBzcGFjZSAxIC0gMiBHQiBEUkFNICovDQo+ID4gPg0K
-PiA+ID4gSSBkb24ndCB1bmRlcnN0YW5kIHRoZSBjb21tZW50LiBUaGlzIGRlc2NyaWJlcyAyR0Ig
-YXQgMkdCLg0KPiA+ID4NCj4gPg0KPiA+IFllcywgdGhlcmUgaXMgYSAyR0Igc3BhY2UgZm9yIERS
-QU0gZnJvbSBhZGRyZXNzIDJHLg0KPiA+IFRoZSBEUkFNIGFkZHJlc3MgMHgwIHdpbGwgYmUgcmVt
-YXBwZWQgdG8gU29DIGFkZHJlc3MgMkcsIHRoaXMgcmVtYXAgaXMNCj4gZG9uZSBieSBoYXJkd2Fy
-ZS4NCj4gDQo+IEkganVzdCByZWFsaXNlZCBteSBtaXN0YWtlIC0tIEkgcmVhZCB0aGlzIGFzICIx
-IHRvIDIgR0IiLCB3aGVuIHRoaXMgaXMNCj4gYWN0dWFsbHkgIkRSQU0gc3BhY2UgMSIuIFNvcnJ5
-IGZvciB0aGUgbm9pc2UuDQo+IA0KDQpUaGFua3MsDQpaaGlxaWFuZw0K
+Some cpufreq drivers may set suspend frequency only for
+selected setups but still would like to use the generic
+suspend handler.  Thus don't treat !policy->suspend_freq
+condition as an incorrect one.
+
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ drivers/cpufreq/cpufreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index b3d9368..a634fcb 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1626,8 +1626,8 @@ int cpufreq_generic_suspend(struct cpufreq_policy *policy)
+ 	int ret;
+ 
+ 	if (!policy->suspend_freq) {
+-		pr_err("%s: suspend_freq can't be zero\n", __func__);
+-		return -EINVAL;
++		pr_debug("%s: suspend_freq not defined\n", __func__);
++		return 0;
+ 	}
+ 
+ 	pr_debug("%s: Setting suspend-freq: %u\n", __func__,
+-- 
+1.9.1
+
