@@ -1,90 +1,104 @@
-Return-Path: <bhupesh.sharma@freescale.com>
-From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
-To: Li Leo <LeoLi@freescale.com>, Hou Zhiqiang <B48286@freescale.com>, "Mark
- Rutland" <mark.rutland@arm.com>, "marc.zyngier@arm.com"
-	<marc.zyngier@arm.com>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Catalin Marinas
-	<Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Shaohui Xie
-	<Shaohui.Xie@freescale.com>, "corbet@lwn.net" <corbet@lwn.net>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "wsa@the-dreams.de"
-	<wsa@the-dreams.de>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"wim@iguana.be" <wim@iguana.be>, Wenbin Song <Wenbin.Song@freescale.com>,
-	Scott Wood <scottwood@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>
-Subject: RE: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
-Date: Tue, 22 Sep 2015 19:04:56 +0000
-Message-ID: <BY1PR0301MB1303F9A6F3B00F91C7B18C0682450@BY1PR0301MB1303.namprd03.prod.outlook.com>
-References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
- <1442838158-2964-5-git-send-email-B48286@freescale.com>
- <20150922012403.GA1535@svinekod>
- <CY1PR0301MB078008B10188504C951076498B450@CY1PR0301MB0780.namprd03.prod.outlook.com>
- <DM2PR0301MB07342356008C1A50AB26FEFFBA450@DM2PR0301MB0734.namprd03.prod.outlook.com>
-In-Reply-To: <DM2PR0301MB07342356008C1A50AB26FEFFBA450@DM2PR0301MB0734.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <alpine.LNX.2.00.1509080953390.31192@localhost.localdomain>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
+	<1435094387-20146-8-git-send-email-pawelo@king.net.pl>
+	<CACRpkdYHBt7YJWM3Bg8ENfw7uL4fuENqW+g8YaO+P6UPBCX4HQ@mail.gmail.com>
+	<alpine.LNX.2.00.1509080953390.31192@localhost.localdomain>
+Date: Tue, 8 Sep 2015 16:28:57 +0200
+Message-ID: <CACRpkdZ_6eXWO+3NUz-9ai5nBaKa_HyAmwYHGU46qrmfmEwyEw@mail.gmail.com>
+Subject: Re: [PATCH 7/9] arm: twr-k70f120m: IOMUX driver for Kinetis SoC
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Paul Osmialowski <pawelo@king.net.pl>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Jingchang Lu <jingchang.lu@freescale.com>,
+	Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nathan Lynch <nathan_lynch@mentor.com>,
+	Nicolas Pitre <nico@linaro.org>,
+	Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
+	Olof Johansson <olof@lixom.net>,
+	Paul Bolle <pebolle@tiscali.nl>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Stefan Agner <stefan@agner.ch>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, Sep 8, 2015 at 10:04 AM, Paul Osmialowski <pawelo@king.net.pl> wrote:
+> On Tue, 14 Jul 2015, Linus Walleij wrote:
+>
+>> I want Shawn and Sascha to look at this as they worked with
+>> other Freescale pin controllers. Especially I want to know if this
+>> is a sibling to the other Freescale controllers or a separate hardware.
+>>
+>> If it is *not* a sibling I will *insist* that it use more generic pin
+>> control bindings and move away from the older Freescale-specific
+>> stuff.
+>
+> No one answered me about that. However, I looked at other Freescale
+> pinctrl drivers and realised that no one of them (IMX, IMX1, MXS) is
+> similar to what I need to do for Kinetis, also positions of configuration
+> bits differ significantly.
 
+OK I insist on using the generic bindings then.
 
-> -----Original Message-----
-> From: Li Yang-Leo-R58472
-> Sent: Tuesday, September 22, 2015 10:53 PM
-> To: Hou Zhiqiang-B48286; Mark Rutland; marc.zyngier@arm.com
-> Cc: linux-arm-kernel@lists.infradead.org; Catalin Marinas; Will Deacon;
-> linux-i2c@vger.kernel.org; linux-watchdog@vger.kernel.org; linux-
-> doc@vger.kernel.org; linux-clk@vger.kernel.org; Xie Shaohui-B21989;
-> corbet@lwn.net; Sharma Bhupesh-B45370; mturquette@baylibre.com; wsa@the-
-> dreams.de; sboyd@codeaurora.org; wim@iguana.be; Song Wenbin-B53747; Wood
-> Scott-B07421; Hu Mingkai-B21284
-> Subject: RE: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
->=20
-> > >
-> > > Hi,
-> > >
-> > > > +/memreserve/ 0x80000000 0x00010000;
-> > >
-> > > Why is this necessary?
-> >
-> > This memory region is pre-reserved for the spin-table/psci, although
-> > didn't add Enable method of secondary cores.
->=20
-> Can this be reserved by bootloader?
+>> There exist generic pin config bindings, see
+>> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+>>
+>> I suggest to to function+group paring and then use generic pin config
+>> with this driver unless it is a very close sibling to the existing Freescale
+>> pin controllers.
+>>
+>> Hint: if it is a sibling, it should share code with them.
+>>
+>> There are several drivers doing generic pin control/pin config in the kernel
+>> tree.
+>
+> I tried to analyze few of the drivers (e.g. zynq family) and can't find
+> how can I assing clock gate (clock device) to each port (PORTA, PORTB,
+> PORTC,...) which is required for Kinetis. Is generic pin control capable
+> to express that requirement or is it a time to desing my own pinctrl
+> driver (maybe somewhat improved than the one I presented so far)?
 
-No need to reserve this for PSCI based secondary bootup.
+That has nothing to do with whether you use generic pinconf or not.
+I imagine if a pinctrl unit contains several blocks with individual
+clocks you can either:
 
-> >
-> > > If this is necessary, please add a comment stating what this is for.
-> > >
-> > > > +               cpu@3 {
-> > > > +                       device_type =3D "cpu";
-> > > > +                       compatible =3D "arm,cortex-a53";
-> > > > +                       reg =3D <0x0 0x3>;
-> > > > +                       clocks =3D <&clockgen 1 0>;
-> > > > +               };
-> > >
-> > > Missing enable-method properties on all the secondary CPUs.
-> > >
-> >
-> > There are two methods (spin-table and psci) to bring up secondary
-> > cores, which one do you think is better?
->=20
-> Do we have the PSCI support ready in both UEFI and u-boot?  If not, we
-> should use spin-table for now.
+- Let each block/bank be a device node (this is common) and assign
+  each a clocks = <&clock>;
 
-UEFI has been using PSCI with Arm Trusted Firmware (ATF) since some time. U=
--boot can also work with ATF seamlessly.
+- Keep one node and assign an array of clocks, affected block indicated
+  by the index.
+  clocks = <&clk1>, <&clk2>, <&clk3>, ... <clkN>;
+  This property is in pluralis for this reason I guess.
 
-Spin-table method is deprecated and newer patches should support PSCI. If n=
-ot, all intelligence should be left to the
-Bootloader and the Linux DTS should not mention the 'enable-method' and the=
- 'memreserve' regions.=20
+> This pinctrl component is somwehat critical part of BSP. Until it is not
+> sorted, I don't see a point in releasing what was developed so far.
 
-For details please see the LS2085A Freescale DTS already present in mainlin=
-e kernel.
+True that, you need infrastructure first. The more important that it is
+as good as possible.
 
-Regards,
-Bhupesh
+Yours,
+Linus Walleij
