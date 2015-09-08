@@ -1,11 +1,11 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Mon, 7 Sep 2015 11:26:11 +0530
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Date: Tue, 8 Sep 2015 10:40:53 +0530
 From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
 	Marek Szyprowski <m.szyprowski@samsung.com>,
 	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -21,63 +21,33 @@ Cc: Thomas Abraham <thomas.ab@samsung.com>,
 	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
 	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] PM / OPP: add dev_pm_opp_get_suspend_opp() helper
-Message-ID: <20150907055611.GB26760@linux>
-References: <1441303892-32004-1-git-send-email-b.zolnierkie@samsung.com>
- <1441303892-32004-2-git-send-email-b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v4 0/4] cpufreq-dt: add suspend frequency support
+Message-ID: <20150908051053.GA18554@linux>
+References: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
+ <20150908024659.GF26760@linux>
+ <55EE5C79.2030604@samsung.com>
+ <20150908042017.GJ26760@linux>
+ <55EE6892.3010304@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1441303892-32004-2-git-send-email-b.zolnierkie@samsung.com>
+In-Reply-To: <55EE6892.3010304@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03-09-15, 20:11, Bartlomiej Zolnierkiewicz wrote:
-> Add dev_pm_opp_get_suspend_opp() helper to obtain suspend opp.
+On 08-09-15, 13:48, Krzysztof Kozlowski wrote:
+> Somehow my mind stuck on solving Exynos4x12 cpufreq issues.
 > 
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  drivers/base/power/opp.c | 28 ++++++++++++++++++++++++++++
->  include/linux/pm_opp.h   |  6 ++++++
->  2 files changed, 34 insertions(+)
-> 
-> diff --git a/drivers/base/power/opp.c b/drivers/base/power/opp.c
-> index eb25449..eaafca7 100644
-> --- a/drivers/base/power/opp.c
-> +++ b/drivers/base/power/opp.c
-> @@ -341,6 +341,34 @@ unsigned long dev_pm_opp_get_max_clock_latency(struct device *dev)
->  EXPORT_SYMBOL_GPL(dev_pm_opp_get_max_clock_latency);
->  
->  /**
-> + * dev_pm_opp_get_suspend_opp() - Get suspend opp
-> + * @dev:	device for which we do this operation
-> + *
-> + * Return: This function returns pointer to the suspend opp if it is
-> + * defined, otherwise it returns NULL.
-> + *
-> + * Locking: This function takes rcu_read_lock().
-> + */
-> +struct dev_pm_opp *dev_pm_opp_get_suspend_opp(struct device *dev)
-> +{
-> +	struct device_opp *dev_opp;
-> +	struct dev_pm_opp *suspend_opp;
-> +
-> +	rcu_read_lock();
+> Right, it should go through Rafael's, probably except DTS patch (4/4)
+> because it depends on previous DTS changes. These changes are still in
+> arm-soc, not in Linus' tree [0].
 
-This is wrong. Please have a look at other exported APIs that return
-an OPP. RCU protected structures must be accessed from within RCU
-locks _ONLY_. But your function returns the pointer after dropping
-the locks. Which essentially means that the OPP can be freed by core,
-by the time you start using it. :)
+That's bad :(
 
-So, in such cases, its upto the caller to ensure that locks are taken
-properly.
+Anyway, 4/4 is kind of independent to this series, in the sense that
+it wouldn't harm even if it gets applied separately.
 
-You can look at dev_pm_opp_find_freq_exact() as an example.
+So, go ahead and apply 4/4 to Samsung's tree and rest of this can be
+picked by Rafael.
 
 -- 
 viresh
