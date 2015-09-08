@@ -1,30 +1,83 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 14 Sep 2015 14:59:17 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Luis de Bethencourt <luis@debethencourt.com>
-Cc: linux-kernel@vger.kernel.org, Emilio Lopez <emilio@elopez.com.ar>,
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 3/5] clk: sunxi: sun6i-ar100: Fix module autoload for OF
- platform driver
-Message-ID: <20150914215917.GE23081@codeaurora.org>
-References: <20150828124354.GA26610@goodgumbo.baconseed.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20150828124354.GA26610@goodgumbo.baconseed.org>
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH v5 0/4] cpufreq-dt: add suspend frequency support
+Date: Tue, 08 Sep 2015 18:41:00 +0200
+Message-id: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/28, Luis de Bethencourt wrote:
-> This platform driver has a OF device ID table but the OF module
-> alias information is not created so module autoloading won't work.
-> 
-> Signed-off-by: Luis de Bethencourt <luis@debethencourt.com>
-> ---
+Hi,
 
-Applied to clk-next
+This patch series adds suspend frequency support (using opp-v2
+bindings and suspend-opp functionality) to cpufreq-dt driver and
+then adds suspend opp for Exynos4412 based boards.
+
+This patch series fixes suspend/resume support on Exynos4412
+based Trats2 board and reboot hang on Exynos4412 based Odroid
+U3 board.
+
+Changes since v4:
+- removed superfluous CONFIG_PM ifdefs
+- added Acked-by tag from Krzysztof to patch #4
+- added Acked-by tag from Viresh to patches #1-3
+
+Changes since v3:
+- fixed dev_pm_opp_get_suspend_opp() locking
+- shortened variable name in dev_pm_opp_get_suspend_opp()
+- adjusted cpufreq_generic_suspend() to work with cpufreq-dt
+- removed no longer needed cpufreq_dt_suspend()
+- added Acked-by tag from Viresh to patch #4
+
+Changes since v2:
+- rewrote to use suspend-opp functionality
+
+Changes since v1:
+- removed superfluous ";"
+
+Depends on:
+- next-20150902 branch of linux-next kernel tree
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (4):
+  PM / OPP: add dev_pm_opp_get_suspend_opp() helper
+  cpufreq: allow cpufreq_generic_suspend() to work without suspend
+    frequency
+  cpufreq-dt: add suspend frequency support
+  ARM: dts: add suspend opp to exynos4412
+
+ arch/arm/boot/dts/exynos4412.dtsi |  1 +
+ drivers/base/power/opp.c          | 30 ++++++++++++++++++++++++++++++
+ drivers/cpufreq/cpufreq-dt.c      |  9 +++++++++
+ drivers/cpufreq/cpufreq.c         |  4 ++--
+ include/linux/pm_opp.h            |  6 ++++++
+ 5 files changed, 48 insertions(+), 2 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
