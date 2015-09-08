@@ -1,78 +1,66 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: ulf.hansson@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	tgih.jun@samsung.com,
-	jh80.chung@samsung.com
-Cc: linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	dianders@chromium.org,
-	amstan@chromium.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 0/8] mmc: dw_mmc-rockchip: allow tuning using the clk-phase api
-Date: Wed, 30 Sep 2015 16:07:36 +0200
-Message-Id: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH v5 4/4] ARM: dts: add suspend opp to exynos4412
+Date: Tue, 08 Sep 2015 18:41:04 +0200
+Message-id: <1441730464-7947-5-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This series resurrects and adapts some individual patches whose sum
-enable the dw_mmc hosts on Rockchip socs to tune clock phases using
-the generic phase api (rk3288 and following have this capability).
+Mark 800MHz OPP as a suspend opp for Exynos4412 based
+boards so effectively cpufreq-dt driver behavior w.r.t.
+suspend frequency matches what the old exynos-cpufreq
+driver has been doing.
 
-The changes to the original mmc-phase clocks are expanded by further
-findings resulting from devices being used in the field.
+This patch fixes suspend/resume support on Exynos4412 based
+Trats2 board and reboot hang on Exynos4412 based Odroid U3
+board.
 
-Similarly the regulator handling changes do use the brand new
-regulator_set_voltage_triplet call to allow specifying lower and upper
-limits. One possible point of discussion are the two voltage ranges
-that are tried for the 3.3V signal level. Trying to stay near vmmc
-at first and only then opening the range to the full 2.7-3.6V.
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-This mainly circumvents a shortcoming of the regulator voltage
-setting, in that even with regulator_set_voltage_triplet the regulator
-framework will take the lowest possible voltage when the possible
-voltages are below the target voltage. While it may be ideal to solve
-this on the regulator side, I'm not seeing this appearing in the short
-term, mainly because all regulator parts (including regulator drivers)
-are keyed to selecting the lowest voltage from the range, while on the
-mmc side we know which voltages may work and trying this in two steps
-does not create to much overhead, as unsupported voltages are already
-filtered out by the regulator_is_voltage_selected calls.
-
-changes since v1:
-- address comment from Jaehoon Chung and keep this local to Rockchip
-  for the time being
-- address comments from Ulf and Doug in making it more explicit
-  that the two-step 3.3V voltage setting essentially works around
-  a limitation of regulator_set_voltage_triplet
-
-Alexandru M Stan (3):
-  mmc: dw_mmc-rockchip: dt-binding: Add tuning related things
-  mmc: dw_mmc: Generic MMC tuning with the clock phase framework
-  ARM: dts: rockchip: Add drive/sample clocks for rk3288 dw_mmc devices
-
-Douglas Anderson (4):
-  clk: rockchip: Allow more precision for some mmc clock phases
-  clk: rockchip: Make calculations use rounding
-  mmc: core: Add mmc_regulator_set_vqmmc()
-  mmc: dw_mmc: Use mmc_regulator_set_vqmmc in
-    start_signal_voltage_switch
-
-Heiko Stuebner (1):
-  ARM: dts: rockchip: add tuning related settings to veyron devices
-
- .../devicetree/bindings/mmc/rockchip-dw-mshc.txt   |  13 ++
- arch/arm/boot/dts/rk3288-veyron-sdmmc.dtsi         |   7 +-
- arch/arm/boot/dts/rk3288-veyron.dtsi               |   6 +
- arch/arm/boot/dts/rk3288.dtsi                      |  20 ++-
- drivers/clk/rockchip/clk-mmc-phase.c               |  54 ++++---
- drivers/mmc/core/core.c                            |  74 ++++++++++
- drivers/mmc/host/dw_mmc-rockchip.c                 | 162 +++++++++++++++++++++
- drivers/mmc/host/dw_mmc.c                          |  17 +--
- include/linux/mmc/host.h                           |   7 +
- 9 files changed, 321 insertions(+), 39 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index ca0e3c1..294cfe4 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -98,6 +98,7 @@
+ 			opp-hz = /bits/ 64 <800000000>;
+ 			opp-microvolt = <1000000>;
+ 			clock-latency-ns = <200000>;
++			opp-suspend;
+ 		};
+ 		opp07 {
+ 			opp-hz = /bits/ 64 <900000000>;
 -- 
-2.5.1
+1.9.1
+
