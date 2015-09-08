@@ -1,128 +1,82 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH v2 1/2] ARM: imx35: Do not call mxc_timer_init twice when
- booting with DT
-Date: Wed,  9 Sep 2015 11:35:14 +0200
-Message-Id: <1441791315-25390-1-git-send-email-alexander.stein@systec-electronic.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Alexander Stein <alexander.stein@systec-electronic.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH v5 3/4] cpufreq-dt: add suspend frequency support
+Date: Tue, 08 Sep 2015 18:41:03 +0200
+Message-id: <1441730464-7947-4-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-mxc_timer_init must not be called from within mx35_clocks_init_dt. It will
-eventually be called by imx31_timer_init_dt
-(drivers/clocksource/timer-imx-gpt.c).
-This arranges the initialization code similar to clk-imx27.c
+Add suspend frequency support and if needed set it to
+the frequency obtained from the suspend opp (can be defined
+using opp-v2 bindings and is optional).
 
-Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
-Change in v2:
-* Fix typo
+ drivers/cpufreq/cpufreq-dt.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
- drivers/clk/imx/clk-imx35.c | 49 +++++++++++++++++++++++++--------------------
- 1 file changed, 27 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
-index 69138ba..3e7c805 100644
---- a/drivers/clk/imx/clk-imx35.c
-+++ b/drivers/clk/imx/clk-imx35.c
-@@ -84,7 +84,7 @@ enum mx35_clks {
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index c3583cd..9b5e7c9 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -196,6 +196,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	struct device *cpu_dev;
+ 	struct regulator *cpu_reg;
+ 	struct clk *cpu_clk;
++	struct dev_pm_opp *suspend_opp;
+ 	unsigned long min_uV = ~0, max_uV = 0;
+ 	unsigned int transition_latency;
+ 	bool need_update = false;
+@@ -329,6 +330,13 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	policy->driver_data = priv;
  
- static struct clk *clk[clk_max];
- 
--int __init mx35_clocks_init(void)
-+static void __init _mx35_clocks_init(void)
- {
- 	void __iomem *base;
- 	u32 pdr0, consumer_sel, hsp_sel;
-@@ -219,6 +219,30 @@ int __init mx35_clocks_init(void)
- 
- 	imx_check_clocks(clk, ARRAY_SIZE(clk));
- 
-+	clk_prepare_enable(clk[spba_gate]);
-+	clk_prepare_enable(clk[gpio1_gate]);
-+	clk_prepare_enable(clk[gpio2_gate]);
-+	clk_prepare_enable(clk[gpio3_gate]);
-+	clk_prepare_enable(clk[iim_gate]);
-+	clk_prepare_enable(clk[emi_gate]);
-+	clk_prepare_enable(clk[max_gate]);
-+	clk_prepare_enable(clk[iomuxc_gate]);
+ 	policy->clk = cpu_clk;
 +
-+	/*
-+	 * SCC is needed to boot via mmc after a watchdog reset. The clock code
-+	 * before conversion to common clk also enabled UART1 (which isn't
-+	 * handled here and not needed for mmc) and IIM (which is enabled
-+	 * unconditionally above).
-+	 */
-+	clk_prepare_enable(clk[scc_gate]);
++	rcu_read_lock();
++	suspend_opp = dev_pm_opp_get_suspend_opp(cpu_dev);
++	if (suspend_opp)
++		policy->suspend_freq = dev_pm_opp_get_freq(suspend_opp) / 1000;
++	rcu_read_unlock();
 +
-+	imx_print_silicon_rev("i.MX35", mx35_revision());
-+}
-+
-+int __init mx35_clocks_init(void)
-+{
-+	_mx35_clocks_init();
-+
- 	clk_register_clkdev(clk[pata_gate], NULL, "pata_imx");
- 	clk_register_clkdev(clk[can1_gate], NULL, "flexcan.0");
- 	clk_register_clkdev(clk[can2_gate], NULL, "flexcan.1");
-@@ -275,25 +299,6 @@ int __init mx35_clocks_init(void)
- 	clk_register_clkdev(clk[csi_gate], NULL, "mx3-camera.0");
- 	clk_register_clkdev(clk[admux_gate], "audmux", NULL);
+ 	ret = cpufreq_table_validate_and_show(policy, freq_table);
+ 	if (ret) {
+ 		dev_err(cpu_dev, "%s: invalid frequency table: %d\n", __func__,
+@@ -419,6 +427,7 @@ static struct cpufreq_driver dt_cpufreq_driver = {
+ 	.ready = cpufreq_ready,
+ 	.name = "cpufreq-dt",
+ 	.attr = cpufreq_dt_attr,
++	.suspend = cpufreq_generic_suspend,
+ };
  
--	clk_prepare_enable(clk[spba_gate]);
--	clk_prepare_enable(clk[gpio1_gate]);
--	clk_prepare_enable(clk[gpio2_gate]);
--	clk_prepare_enable(clk[gpio3_gate]);
--	clk_prepare_enable(clk[iim_gate]);
--	clk_prepare_enable(clk[emi_gate]);
--	clk_prepare_enable(clk[max_gate]);
--	clk_prepare_enable(clk[iomuxc_gate]);
--
--	/*
--	 * SCC is needed to boot via mmc after a watchdog reset. The clock code
--	 * before conversion to common clk also enabled UART1 (which isn't
--	 * handled here and not needed for mmc) and IIM (which is enabled
--	 * unconditionally above).
--	 */
--	clk_prepare_enable(clk[scc_gate]);
--
--	imx_print_silicon_rev("i.MX35", mx35_revision());
--
- 	mxc_timer_init(MX35_GPT1_BASE_ADDR, MX35_INT_GPT, GPT_TYPE_IMX31);
- 
- 	return 0;
-@@ -301,10 +306,10 @@ int __init mx35_clocks_init(void)
- 
- static void __init mx35_clocks_init_dt(struct device_node *ccm_node)
- {
-+	_mx35_clocks_init();
-+
- 	clk_data.clks = clk;
- 	clk_data.clk_num = ARRAY_SIZE(clk);
- 	of_clk_add_provider(ccm_node, of_clk_src_onecell_get, &clk_data);
--
--	mx35_clocks_init();
- }
- CLK_OF_DECLARE(imx35, "fsl,imx35-ccm", mx35_clocks_init_dt);
+ static int dt_cpufreq_probe(struct platform_device *pdev)
 -- 
-2.4.6
+1.9.1
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
