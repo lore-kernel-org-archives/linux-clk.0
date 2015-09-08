@@ -1,89 +1,49 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Mon, 7 Sep 2015 11:06:03 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
-	kernel@pengutronix.de, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/8] clk: imx: add common logic to detect early UART
- usage
-Message-ID: <20150907090603.GU9999@pengutronix.de>
-References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
- <1441382419-4343-2-git-send-email-l.stach@pengutronix.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:47516 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751642AbbIHTW7 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 8 Sep 2015 15:22:59 -0400
+Date: Tue, 8 Sep 2015 12:22:57 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Eric Anholt <eric@anholt.net>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/4] clk: bcm2835: Move under bcm/ with other Broadcom
+ SoC clk drivers.
+Message-ID: <20150908192257.GQ15099@codeaurora.org>
+References: <1441562263-19888-1-git-send-email-eric@anholt.net>
+ <1441562263-19888-2-git-send-email-eric@anholt.net>
+ <20150907064838.GE4796@x1>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1441382419-4343-2-git-send-email-l.stach@pengutronix.de>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20150907064838.GE4796@x1>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Lucas,
-
-On Fri, Sep 04, 2015 at 06:00:12PM +0200, Lucas Stach wrote:
-> Both earlycon and eralyprintk depend on the bootloader setup UART
-> clocks being retained. This patch adds the common logic to detect such
-> situations and make the information available to the clock drivers, as
-> well as adding the facilities to disable those clocks at the end of
-> the kernel init.
+On 09/07, Lee Jones wrote:
+> On Sun, 06 Sep 2015, Eric Anholt wrote:
 > 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> ---
->  drivers/clk/imx/clk.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/imx/clk.h |  1 +
->  2 files changed, 47 insertions(+)
+> > clk-bcm2835.c predates the drivers under bcm/, but all the new BCM
+> > drivers are going in there so let's follow them.
+> > 
+> > Signed-off-by: Eric Anholt <eric@anholt.net>
+> > ---
+> >  drivers/clk/Makefile          |  1 -
+> >  drivers/clk/bcm/Makefile      |  1 +
+> >  drivers/clk/bcm/clk-bcm2835.c | 60 +++++++++++++++++++++++++++++++++++++++++++
+> >  drivers/clk/clk-bcm2835.c     | 60 -------------------------------------------
 > 
-> diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-> index df12b5307175..3357e29e43ab 100644
-> --- a/drivers/clk/imx/clk.c
-> +++ b/drivers/clk/imx/clk.c
-> @@ -73,3 +73,49 @@ void imx_cscmr1_fixup(u32 *val)
->  	*val ^= CSCMR1_FIXUP;
->  	return;
->  }
-> +
-> +static int __initdata imx_keep_uart_clocks;
-> +static struct clk __initdata ***imx_uart_clocks;
-> +
-> +static int __init imx_keep_uart_clocks_param(char *str)
-> +{
-> +	imx_keep_uart_clocks = 1;
-> +
-> +	return 0;
-> +}
-> +__setup_param("earlycon", imx_keep_uart_earlycon,
-> +	      imx_keep_uart_clocks_param, 0);
-> +__setup_param("earlyprintk", imx_keep_uart_earlyprintk,
-> +	      imx_keep_uart_clocks_param, 0);
-> +
-> +void __init imx_register_uart_clocks(struct clk **clks[])
+> You need to resubmit this with `git format-patch -M`.
 
-const struct clk **clks[]?
-
-I wonder why you need an array of pointers to pointers of clocks. Isn't
-one indirection less possible and more easy?
-
-> +{
-> +	if (imx_keep_uart_clocks) {
-> +		int i;
-> +
-> +		imx_uart_clocks = clks;
-> +		for (i = 0;; i++) {
-> +			if (imx_uart_clocks[i])
-> +				clk_prepare_enable(*imx_uart_clocks[i]);
-> +			else
-> +				break;
-> +		}
-
-I would have written this as:
-
-	for (i = 0; imx_uart_clocks[i]; ++i)
-		clk_prepare_enable(*imx_uart_clocks[i]);
-
-but I guess that's a matter of taste.
-
-Best regards
-Uwe
+You don't have to. It would have been nice if it was formatted
+with -M so that review is easier, but we can always apply the
+patch and then check the result to make sure things look the
+same.
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
