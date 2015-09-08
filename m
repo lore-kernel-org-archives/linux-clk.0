@@ -1,33 +1,59 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 30 Sep 2015 15:38:29 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/5] ARM: sunxi: Add R8 support
-Message-ID: <20150930223829.GG18556@codeaurora.org>
-References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
- <1442566130-3497-2-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442566130-3497-2-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v4 0/4] cpufreq-dt: add suspend frequency support
+References: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
+ <20150908024659.GF26760@linux>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
+ Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <55EE5C79.2030604@samsung.com>
+Date: Tue, 08 Sep 2015 12:56:41 +0900
+MIME-version: 1.0
+In-reply-to: <20150908024659.GF26760@linux>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/18, Maxime Ripard wrote:
-> The R8 is a new Allwinner SoC based on the A13. While both are very
-> similar, there's still a few differences. Introduce a new compatible to
-> deal with them.
+On 08.09.2015 11:46, Viresh Kumar wrote:
+> On 07-09-15, 17:41, Bartlomiej Zolnierkiewicz wrote:
+>> Hi,
+>>
+>> This patch series adds suspend frequency support (using opp-v2
+>> bindings and suspend-opp functionality) to cpufreq-dt driver and
+>> then adds suspend opp for Exynos4412 based boards.
+>>
+>> This patch series fixes suspend/resume support on Exynos4412
+>> based Trats2 board and reboot hang on Exynos4412 based Odroid
+>> U3 board.
+>>
+>> Changes since v3:
+>> - fixed dev_pm_opp_get_suspend_opp() locking
+>> - shortened variable name in dev_pm_opp_get_suspend_opp()
+>> - adjusted cpufreq_generic_suspend() to work with cpufreq-dt
+>> - removed no longer needed cpufreq_dt_suspend()
+>> - added Acked-by tag from Viresh to patch #4
 > 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
+> Just a minor comment on 3/4 and after fixing that:
+> 
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Dear Kukjin,
 
-BTW, why is the entire series sent To: Mike and I? Are these
-patches intended to go through clk tree?
+There were no comments from your side for this patchset nor for previous
+Marek's fix. After mentioned change and Bart's re-spin, do you plan to
+grab this patchset and send it for current v4.3 cycle?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
