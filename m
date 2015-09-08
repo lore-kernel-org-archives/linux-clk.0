@@ -1,105 +1,146 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
-To: Marc Zyngier <marc.zyngier@arm.com>, "arnd@arndb.de" <arnd@arndb.de>,
- "mark.rutland@arm.com" <mark.rutland@arm.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH v2 07/10] dts/ls2085a: Update DTSI to add support of
- various peripherals
-Date: Wed, 9 Sep 2015 03:58:02 +0000
-Message-ID: <BY1PR0301MB13035D69FFB5617179F54DB582520@BY1PR0301MB1303.namprd03.prod.outlook.com>
-References: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
- <55E9787A.7050304@arm.com>
-In-Reply-To: <55E9787A.7050304@arm.com>
+Return-Path: <tomeu.vizoso@gmail.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: "Lu Y.B." <yangbo.lu@freescale.com>,
- Singh Jaiprakash <jaiprakash.singh@freescale.com>,
- Huan Wang <alison.wang@freescale.com>,
- "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
- "will.deacon@arm.com" <will.deacon@arm.com>,
- Scott Wood <scottwood@freescale.com>,
- "Lian M.H." <Minghuan.Lian@freescale.com>, Liu
- Gang <Gang.Liu@freescale.com>, "olof@lixom.net" <olof@lixom.net>,
- Badola Nikhil <nikhil.badola@freescale.com>,
- "bhupesh.linux@gmail.com" <bhupesh.linux@gmail.com>,
- Shaohui Xie <Shaohui.Xie@freescale.com>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Sender: tomeu.vizoso@gmail.com
+In-Reply-To: <CAL_Jsq+E31JaPcp5ELS_ztSqgSrK7U4OzB9xNcNz01Ayrrm+Yg@mail.gmail.com>
+References: <1441628627-5143-1-git-send-email-tomeu.vizoso@collabora.com> <CAL_Jsq+E31JaPcp5ELS_ztSqgSrK7U4OzB9xNcNz01Ayrrm+Yg@mail.gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Date: Tue, 8 Sep 2015 09:30:41 +0200
+Message-ID: <CAAObsKDUzk-9H2_VrVmbc=ZeRaknGcjTMY3Mauh3JVZxLz4CiA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/22] On-demand device probing
+To: Rob Herring <robherring2@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Javier Martinez Canillas <javier@osg.samsung.com>,
+	Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>,
+	Felipe Balbi <balbi@ti.com>, Linux PWM List <linux-pwm@vger.kernel.org>,
+	=?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jingoo Han <jingoohan1@gmail.com>,
+	David Airlie <airlied@linux.ie>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Grant Likely <grant.likely@linaro.org>, Sebastian Reichel <sre@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>, Alexandre Courbot <gnurou@gmail.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Vinod Koul <vinod.koul@intel.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-> From: Marc Zyngier [mailto:marc.zyngier@arm.com]
-> Sent: Friday, September 04, 2015 4:25 PM
+On 7 September 2015 at 22:50, Rob Herring <robherring2@gmail.com> wrote:
+> On Mon, Sep 7, 2015 at 7:23 AM, Tomeu Vizoso <tomeu.vizoso@collabora.com>=
+ wrote:
+>> Hello,
+>>
+>> I have a problem with the panel on my Tegra Chromebook taking longer
+>> than expected to be ready during boot (St=C3=A9phane Marchesin reported =
+what
+>> is basically the same issue in [0]), and have looked into ordered
+>> probing as a better way of solving this than moving nodes around in the
+>> DT or playing with initcall levels and linking order.
+>>
+>> While reading the thread [1] that Alexander Holler started with his
+>> series to make probing order deterministic, it occurred to me that it
+>> should be possible to achieve the same by probing devices as they are
+>> referenced by other devices.
+>>
+>> This basically reuses the information that is already implicit in the
+>> probe() implementations, saving us from refactoring existing drivers or
+>> adding information to DTBs.
+>>
+>> During review of v1 of this series Linus Walleij suggested that it
+>> should be the device driver core to make sure that dependencies are
+>> ready before probing a device. I gave this idea a try [2] but Mark Brown
+>> pointed out to the logic duplication between the resource acquisition
+>> and dependency discovery code paths (though I think it's fairly minor).
+>>
+>> To address that code duplication I experimented with Arnd's devm_probe
+>> [3] concept of having drivers declare their dependencies instead of
+>> acquiring them during probe, and while it worked [4], I don't think we
+>> end up winning anything when compared to just probing devices on-demand
+>> from resource getters.
+>>
+>> One remaining objection is to the "sprinkling" of calls to
+>> of_device_probe() in the resource getters of each subsystem, but I think
+>> it's the right thing to do given that the storage of resources is
+>> currently subsystem-specific.
+>>
+>> We could avoid the above by moving resource storage into the core, but I
+>> don't think there's a compelling case for that.
+>>
+>> I have tested this on boards with Tegra, iMX.6, Exynos, Rockchip and
+>> OMAP SoCs, and these patches were enough to eliminate all the deferred
+>> probes (except one in PandaBoard because omap_dma_system doesn't have a
+>> firmware node as of yet).
+>>
+>> Have submitted a branch [5] with only these patches on top of thursday's
+>> linux-next to kernelci.org and I don't see any issues that could be
+>> caused by them. For some reason it currently has more passes than the
+>> version of -next it's based on!
+>>
+>> With this series I get the kernel to output to the panel in 0.5s,
+>> instead of 2.8s.
+>>
+>> Regards,
+>>
+>> Tomeu
+>>
+>> [0] http://lists.freedesktop.org/archives/dri-devel/2014-August/066527.h=
+tml
+>>
+>> [1] https://lkml.org/lkml/2014/5/12/452
+>>
+>> [2] https://lkml.org/lkml/2015/6/17/305
+>>
+>> [3] http://article.gmane.org/gmane.linux.ports.arm.kernel/277689
+>>
+>> [4] https://lkml.org/lkml/2015/7/21/441a
+>>
+>> [5] https://git.collabora.com/cgit/user/tomeu/linux.git/log/?h=3Don-dema=
+nd-probes-v6
+>>
+>> [6] http://kernelci.org/boot/all/job/collabora/kernel/v4.2-11902-g25d80c=
+927f8b/
+>>
+>> [7] http://kernelci.org/boot/all/job/next/kernel/next-20150903/
+>>
+>> Changes in v4:
+>> - Added bus.pre_probe callback so the probes of Primecell devices can be
+>>   deferred if their device IDs cannot be yet read because of the clock
+>>   driver not having probed when they are registered. Maybe this goes
+>>   overboard and the matching information should be in the DT if there is
+>>   one.
+>
+> Seems overboard to me or at least a separate problem.
 
-[snip] ..
+It's a separate problem but this was preventing the series from
+working on a few boards.
 
-> >  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi |  469
-> > +++++++++++++++++++++++-
-> >  1 file changed, 459 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> > b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> > index 333d942..5fee0a7 100644
-> > --- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> > +++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> 
-> [...]
-> 
-> >  	gic: interrupt-controller@6000000 {
-> >  		compatible = "arm,gic-v3";
-> >  		reg = <0x0 0x06000000 0 0x10000>, /* GIC Dist */
-> > -		      <0x0 0x06100000 0 0x100000>; /* GICR (RD_base +
-> SGI_base) */
-> > +		      <0x0 0x06100000 0 0x100000>, /* GICR (RD_base +
-> SGI_base) */
-> > +		      <0x0 0x0c0c0000 0 0x2000>, /* GICC */
-> > +		      <0x0 0x0c0d0000 0 0x1000>, /* GICH */
-> > +		      <0x0 0x0c0e0000 0 0x20000>; /* GICV */
-> >  		#interrupt-cells = <3>;
-> > +		#address-cells = <2>;
-> > +		#size-cells = <2>;
-> > +		ranges;
-> >  		interrupt-controller;
-> >  		interrupts = <1 9 0x4>;
-> > +
-> > +		its: gic-its@6020000 {
-> > +			compatible = "arm,gic-v3-its";
-> > +			msi-controller;
-> > +			reg = <0x0 0x6020000 0 0x20000>;
-> > +		};
-> > +	};
-> 
-> [...]
-> 
-> >  	fsl_mc: fsl-mc@80c000000 {
-> >  		compatible = "fsl,qoriq-mc";
-> > +		#stream-id-cells = <2>;
-> >  		reg = <0x00000008 0x0c000000 0 0x40>,	 /* MC portal base
-> */
-> >  		      <0x00000000 0x08340000 0 0x40000>; /* MC control reg */
-> > +		lpi-parent = <&its>;
-> 
-> I'm afraid there is no such thing as "lpi_parent" as a property. We have
-> msi_parent, which is (I think) what you want, and is dealt with in the
-> ITS driver. Also, you'll need to describe the DeviceIDs that can be
-> generated by this device so that the ITS can be correctly programmed.
- 
-Oops. This should be 'msi_parent' as you point out, Marc.
+> Most clocks have
+> to be setup before the driver model simply because timers depend on
+> clocks usually.
 
-I will address these comments in v3 of the patchset.
+Yes, but in this case the apb clocks for the primecell devices are
+implemented in a normal platform driver (vexpress_osc_driver), instead
+of using CLK_OF_DECLARE.
 
 Regards,
-Bhupesh
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Tomeu
+
+> Rob
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" i=
+n
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
