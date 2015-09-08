@@ -1,126 +1,95 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	heikki.krogerus@linux.intel.com, linux-clk@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v6 4/5] clk: fractional-divider: switch to rational best approximation
-Date: Tue, 22 Sep 2015 18:54:11 +0300
-Message-Id: <1442937252-50281-5-git-send-email-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <1442937252-50281-1-git-send-email-andriy.shevchenko@linux.intel.com>
-References: <1442937252-50281-1-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 04/11] clk: samsung: exynos7: Corrects CMU_CCORE clocks
+ names
+To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+ <1441366637-28001-5-git-send-email-alim.akhtar@samsung.com>
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+ mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com,
+ sboyd@codeaurora.org, linux-clk@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <55EE8E82.8080800@samsung.com>
+Date: Tue, 08 Sep 2015 16:30:10 +0900
+MIME-version: 1.0
+In-reply-to: <1441366637-28001-5-git-send-email-alim.akhtar@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch converts the code to use rational best approximation algorithm which
-is much more precise.
+On 04.09.2015 20:37, Alim Akhtar wrote:
+> This patch rename CMU_CCROE clocks names to match with user manual.
 
-Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/clk/Kconfig                  |  1 +
- drivers/clk/clk-fractional-divider.c | 41 +++++++++++++++++++++++-------------
- 2 files changed, 27 insertions(+), 15 deletions(-)
+s/rename/renames/ (everywhere...)
+s/CCROE/CCORE/
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 42f7120..bd9f312 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -14,6 +14,7 @@ config COMMON_CLK
- 	select HAVE_CLK_PREPARE
- 	select CLKDEV_LOOKUP
- 	select SRCU
-+	select RATIONAL
- 	---help---
- 	  The common clock framework is a single definition of struct
- 	  clk, useful across many platforms, as well as an
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index 0282c76..5c4955e 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -7,13 +7,14 @@
-  *
-  * Adjustable fractional divider clock implementation.
-  * Output rate = (m / n) * parent_rate.
-+ * Uses rational best approximation algorithm.
-  */
- 
- #include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/device.h>
- #include <linux/slab.h>
--#include <linux/gcd.h>
-+#include <linux/rational.h>
- 
- #define to_clk_fd(_hw) container_of(_hw, struct clk_fractional_divider, hw)
- 
-@@ -22,7 +23,8 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
- {
- 	struct clk_fractional_divider *fd = to_clk_fd(hw);
- 	unsigned long flags = 0;
--	u32 val, m, n;
-+	unsigned long m, n;
-+	u32 val;
- 	u64 ret;
- 
- 	if (fd->lock)
-@@ -53,20 +55,30 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
- 			      unsigned long *parent_rate)
- {
- 	struct clk_fractional_divider *fd = to_clk_fd(hw);
--	unsigned maxn = (fd->nmask >> fd->nshift) + 1;
--	unsigned div;
-+	unsigned long scale;
-+	unsigned long m, n;
-+	u64 ret;
- 
- 	if (!rate || rate >= *parent_rate)
- 		return *parent_rate;
- 
--	div = gcd(*parent_rate, rate);
-+	/*
-+	 * Get rate closer to *parent_rate to guarantee there is no overflow
-+	 * for m and n. In the result it will be the nearest rate left shifted
-+	 * by (scale - fd->nwidth) bits.
-+	 */
-+	scale = fls_long(*parent_rate / rate - 1);
-+	if (scale > fd->nwidth)
-+		rate <<= scale - fd->nwidth;
- 
--	while ((*parent_rate / div) > maxn) {
--		div <<= 1;
--		rate <<= 1;
--	}
-+	rational_best_approximation(rate, *parent_rate,
-+			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
-+			&m, &n);
- 
--	return rate;
-+	ret = (u64)*parent_rate * m;
-+	do_div(ret, n);
-+
-+	return ret;
- }
- 
- static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -74,13 +86,12 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_fractional_divider *fd = to_clk_fd(hw);
- 	unsigned long flags = 0;
--	unsigned long div;
--	unsigned n, m;
-+	unsigned long m, n;
- 	u32 val;
- 
--	div = gcd(parent_rate, rate);
--	m = rate / div;
--	n = parent_rate / div;
-+	rational_best_approximation(rate, parent_rate,
-+			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
-+			&m, &n);
- 
- 	if (fd->lock)
- 		spin_lock_irqsave(fd->lock, flags);
--- 
-2.5.1
 
+> And also adds missing gate clock for aclk_ccore_133.
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos7.c       |    8 ++++++--
+>  include/dt-bindings/clock/exynos7-clk.h |    3 ++-
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+> index ba84e9b..0eb0f57 100644
+> --- a/drivers/clk/samsung/clk-exynos7.c
+> +++ b/drivers/clk/samsung/clk-exynos7.c
+> @@ -31,6 +31,7 @@
+>  #define MUX_SEL_TOPC1		0x0204
+>  #define MUX_SEL_TOPC2		0x0208
+>  #define MUX_SEL_TOPC3		0x020C
+> +#define MUX_ENABLE_TOPC2	0x0308
+>  #define DIV_TOPC0		0x0600
+>  #define DIV_TOPC1		0x0604
+>  #define DIV_TOPC3		0x060C
+> @@ -167,6 +168,9 @@ static struct samsung_gate_clock topc_gate_clks[] __initdata = {
+>  		ENABLE_SCLK_TOPC1, 1, 0, 0),
+>  	GATE(SCLK_CC_PLL_A, "sclk_cc_pll_a", "dout_sclk_cc_pll",
+>  		ENABLE_SCLK_TOPC1, 0, 0, 0),
+> +
+> +	GATE(ACLK_CCORE_133, "aclk_ccore_133", "dout_aclk_ccore_133",
+> +		MUX_ENABLE_TOPC2, 4, 0, 0),
+
+Hmmm... Shouldn't this be CLK_ENABLE_ACLK_TOPC0 register? For other
+similar clock configurations (e.g. SCLK_I2S1) the gate at the end is
+controlled, not the mux parent.
+
+Best regards,
+Krzysztof
+
+>  };
+>  
+>  static struct samsung_pll_clock topc_pll_clks[] __initdata = {
+> @@ -544,7 +548,7 @@ CLK_OF_DECLARE(exynos7_clk_top1, "samsung,exynos7-clock-top1",
+>  /*
+>   * List of parent clocks for Muxes in CMU_CCORE
+>   */
+> -PNAME(mout_aclk_ccore_133_p)	= { "fin_pll", "dout_aclk_ccore_133" };
+> +PNAME(mout_aclk_ccore_133_user_p)	= { "fin_pll", "aclk_ccore_133" };
+>  
+>  static unsigned long ccore_clk_regs[] __initdata = {
+>  	MUX_SEL_CCORE,
+> @@ -552,7 +556,7 @@ static unsigned long ccore_clk_regs[] __initdata = {
+>  };
+>  
+>  static struct samsung_mux_clock ccore_mux_clks[] __initdata = {
+> -	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_p,
+> +	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_user_p,
+>  		MUX_SEL_CCORE, 1, 1),
+>  };
+>  
+> diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
+> index b63eba6..2e01235 100644
+> --- a/include/dt-bindings/clock/exynos7-clk.h
+> +++ b/include/dt-bindings/clock/exynos7-clk.h
+> @@ -30,7 +30,8 @@
+>  #define SCLK_BUS0_PLL_A			17
+>  #define SCLK_CC_PLL_B			18
+>  #define SCLK_CC_PLL_A			19
+> -#define TOPC_NR_CLK			20
+> +#define ACLK_CCORE_133			20
+> +#define TOPC_NR_CLK			21
+>  
+>  /* TOP0 */
+>  #define DOUT_ACLK_PERIC1		1
+> 
