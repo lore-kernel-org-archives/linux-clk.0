@@ -1,79 +1,51 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v2] cpufreq-dt: add suspend frequency support
-Date: Wed, 02 Sep 2015 18:47:56 +0200
-Message-id: <1441212476-21316-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lb0-f193.google.com ([209.85.217.193]:35490 "EHLO
+	mail-lb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752730AbbIHUYz (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 8 Sep 2015 16:24:55 -0400
+Received: by lbcao8 with SMTP id ao8so7319522lbc.2
+        for <linux-clk@vger.kernel.org>; Tue, 08 Sep 2015 13:24:53 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1441349872-4560-2-git-send-email-bhupesh.sharma@freescale.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+	<1441349872-4560-2-git-send-email-bhupesh.sharma@freescale.com>
+Date: Tue, 8 Sep 2015 15:24:53 -0500
+Message-ID: <CALRxmdA=TF=N=6qELR78yhvt_uwEKyHih_08toD9oqCWYtsi0g@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] arm64: Use generic Layerscape SoC family naming
+ & rename LS2085A to LS2080A
+From: Stuart Yoder <b08248@gmail.com>
+To: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Marc Zyngier <marc.zyngier@arm.com>, linux-clk@vger.kernel.org,
+	Catalin marinas <Catalin.Marinas@arm.com>,
+	bhupesh.linux@gmail.com, Will Deacon <will.deacon@arm.com>,
+	olof@lixom.net
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add suspend frequency support and set it to the boot frequency,
-this matches what the old exynos-cpufreq driver has been doing.
+On Fri, Sep 4, 2015 at 1:57 AM, Bhupesh Sharma
+<bhupesh.sharma@freescale.com> wrote:
+> Freescale will be a churning out a host of ARMv8 based SoCs which
+> will be based on a similar overall SoC architecture. So, this patch
+> converts the existing infrastructure in the arm64/dts, arm64/Kconfig
+> and arm64/configs to use the generic convention ARCH_LAYERSCAPE
+> in place of the more specific FSL_LS2085A, to save code duplication
+> later-on.
+>
+> Also Freescale is renaming LS2085A to LS2080A.
+>
+> This patch addresses the above two points.
 
-This patch fixes suspend/resume support on Exynos4412 based
-Trats2 board and reboot hang on Exynos4412 based Odroid U3
-board.
+Suggest splitting this into 2 patches because these 2 changes are really
+orthogonal-- one patch for the ARCH config name change, one for the rename
+ls2085a to ls2080a rename.
 
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
-This patch supersedes "[PATCH] ARM: dts: exynos4412-odroid-*: add
-workaround for CPUfreq/reboot issue" one from yesterday.
+Not sure why you're describing it as "churning out a host of ARMv8 based SoCs".
+Just get to the point--  Layerscape is an SoC family so we're changing from the
+SoC specific ARCH kconfig option to a more general SoC family option.
 
-v2:
-- remove superfluous ";"
-
- drivers/cpufreq/cpufreq-dt.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index c3583cd..c9138c7 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -329,6 +329,10 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	policy->driver_data = priv;
- 
- 	policy->clk = cpu_clk;
-+
-+	/* capture boot frequency */
-+	policy->suspend_freq = clk_get_rate(cpu_clk) / 1000;
-+
- 	ret = cpufreq_table_validate_and_show(policy, freq_table);
- 	if (ret) {
- 		dev_err(cpu_dev, "%s: invalid frequency table: %d\n", __func__,
-@@ -419,6 +423,9 @@ static struct cpufreq_driver dt_cpufreq_driver = {
- 	.ready = cpufreq_ready,
- 	.name = "cpufreq-dt",
- 	.attr = cpufreq_dt_attr,
-+#ifdef CONFIG_PM
-+	.suspend = cpufreq_generic_suspend,
-+#endif
- };
- 
- static int dt_cpufreq_probe(struct platform_device *pdev)
--- 
-1.9.1
-
+Thanks,
+Stuart
