@@ -1,55 +1,76 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Vince Hsu <vinceh@nvidia.com>
-To: <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<swarren@wwwdotorg.org>, <thierry.reding@gmail.com>,
-	<gnurou@gmail.com>
-CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <vinceh@nvidia.com>,
-	Vince Hsu <vince.h@nvidia.com>
-Subject: [PATCH] clk: tegra: dfll: add missing rcu_read_unlock() for error path
-Date: Wed, 16 Sep 2015 14:14:54 +0800
-Message-ID: <1442384094-22144-1-git-send-email-vinceh@nvidia.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Message-ID: <1441816863.29081.11.camel@freescale.com>
+Subject: Re: [PATCH v2 06/10] clk: qoriq: Add ls2080a support.
+From: Scott Wood <scottwood@freescale.com>
+To: Li Yang <leoli@freescale.com>
+Date: Wed, 9 Sep 2015 11:41:03 -0500
+In-Reply-To: <CADRPPNRhBObf4Am-MKFHFk6y+_PmtZGuGrfVaDPtra6h394Fog@mail.gmail.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+ <1441349872-4560-7-git-send-email-bhupesh.sharma@freescale.com>
+ <CADRPPNQsemXa2HgYZAcm+GurhimHbYVM5CL5ReDsyuzfAO=kSQ@mail.gmail.com>
+ <BY1PR0301MB1303A3BD91F3E65853CC3F2E82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
+ <CADRPPNRhBObf4Am-MKFHFk6y+_PmtZGuGrfVaDPtra6h394Fog@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+ Sharma Bhupesh <bhupesh.sharma@freescale.com>,
+ "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
+ "will.deacon@arm.com" <will.deacon@arm.com>,
+ "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+ "olof@lixom.net" <olof@lixom.net>, Bhupesh SHARMA <bhupesh.linux@gmail.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Vince Hsu <vince.h@nvidia.com>
+On Fri, 2015-09-04 at 16:06 -0500, Li Yang wrote:
+> On Fri, Sep 4, 2015 at 3:09 PM, Sharma Bhupesh
+> <bhupesh.sharma@freescale.com> wrote:
+> > > From:  pku.leo@gmail.com[mailto:pku.leo@gmail.com]
+> > > Sent: Saturday, September 05, 2015 1:32 AM
+> > > On Fri, Sep 4, 2015 at 1:57 AM, Bhupesh Sharma
+> > > <bhupesh.sharma@freescale.com> wrote:
+> > > > From: Scott Wood <scottwood@freescale.com>
+> > > > 
+> > > > LS2080A is the first implementation of the chassis 3 clockgen, which
+> > > > has a different register layout than previous chips.  It is also
+> > > > little endian, unlike previous chips.
+> > > > 
+> > > > Signed-off-by: Scott Wood <scottwood@freescale.com>
+> > > > ---
+> > > 
+> > > You should probably mention here that the patch is depending on another
+> > > pending patch to apply.  And this patch should be going through the same
+> > > sub-system tree as the dependency patch.  Otherwise, there is no way it
+> > > can be applied.
+> > > 
+> > 
+> > Cover-letter already captures this:
+> > http://www.spinics.net/lists/arm-kernel/msg442910.html
+> > 
+> > See the section 'Rebasing details'. linux-clk is already copied.
+> 
+> But not all the patches are depending on the clk patches.  You should
+> probably break up the series to patches that can be applied cleanly
+> and patches that are depending on the clock patches and should go
+> through the clk tree.
 
-The commit e770940218028c6a5927fda45f2ca9db5d9b35e0 ("clk: tegra: dfll:
-Properly protect OPP list") added the rcu_read_{lock,unlock} but missed
-one in the error path. So add the missing one.
+The clock patches have already been acked, so they don't necessarily need to 
+go via the clock tree.  However, there are both ARM and PPC patches that 
+depend on them, so maybe we should create a topic branch?
 
-Signed-off-by: Vince Hsu <vince.h@nvidia.com>
----
-Hi,
-
-I noticed the missed unlock because we had a similar fix as the commit
-e77094021 in ChromeOS[1]. 
-
-[1] https://chromium-review.googlesource.com/#/c/223661/
+-Scott
 
 
- drivers/clk/tegra/clk-dfll.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index 4adff56dd0ef..c4e3a52e225b 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -685,8 +685,10 @@ static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long rate)
- 	rcu_read_lock();
- 
- 	opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
--	if (IS_ERR(opp))
-+	if (IS_ERR(opp)) {
-+		rcu_read_unlock();
- 		return PTR_ERR(opp);
-+	}
- 	uv = dev_pm_opp_get_voltage(opp);
- 
- 	rcu_read_unlock();
--- 
-2.1.4
-
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
