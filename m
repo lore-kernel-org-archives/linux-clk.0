@@ -1,57 +1,192 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH 11/16] ARM: at91: pm: simply call at91_pm_init
-Date: Wed, 30 Sep 2015 18:11:04 +0200
-Message-Id: <1443629469-15086-12-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-clk@vger.kernel.org, kuninori.morimoto.gx@renesas.com, gaku.inami.xw@bp.renesas.com, mturquette@baylibre.com, linux-sh@vger.kernel.org, sboyd@codeaurora.org, horms@verge.net.au, geert@linux-m68k.org
+Subject: Re: [PATCH][RFC] clk: Use node name and index for clock name
+Date: Wed, 09 Sep 2015 08:14:13 +0300
+Message-ID: <13888179.tcIA8DJW1S@avalon>
+In-Reply-To: <20150909050554.27129.68718.sendpatchset@little-apple>
+References: <20150909050554.27129.68718.sendpatchset@little-apple>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-at91_pm_init() doesn't return a value, as is the case for its callers,
-simply call it instead of returning its non-existent return value.
+Hi Magnus,
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- arch/arm/mach-at91/pm.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thank you for the patch.
 
-diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index 80e277cfcc8b..5c2b60c5a2a1 100644
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -427,7 +427,7 @@ void __init at91sam9260_pm_init(void)
- 	at91_dt_ramc();
- 	at91_pm_data.memctrl = AT91_MEMCTRL_SDRAMC;
- 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
--	return at91_pm_init();
-+	at91_pm_init();
- }
- 
- void __init at91sam9g45_pm_init(void)
-@@ -435,7 +435,7 @@ void __init at91sam9g45_pm_init(void)
- 	at91_dt_ramc();
- 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP;
- 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
--	return at91_pm_init();
-+	at91_pm_init();
- }
- 
- void __init at91sam9x5_pm_init(void)
-@@ -443,5 +443,5 @@ void __init at91sam9x5_pm_init(void)
- 	at91_dt_ramc();
- 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
- 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
--	return at91_pm_init();
-+	at91_pm_init();
- }
+On Wednesday 09 September 2015 14:05:54 Magnus Damm wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+> 
+> This patch hacks the CCF core to take clock-indices into
+> consideration when making a default clock name in case
+> clock-output-names is not provided.
+> 
+> Without this patch of_clk_get_parent_name() does not work
+> for clocks with multiple indices associated with one node.
+> 
+> Proof of concept only. Leaks memory. Not for upstream merge.
+> 
+> Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> ---
+> 
+>  Written on top of "renesas-drivers-2015-09-08-v4.2"
+>  Needed to propagate clock frequencies from CPG to MSTP.
+> 
+>  drivers/clk/clk.c                    |   46 +++++++++++++++++++------------
+>  drivers/clk/shmobile/clk-mstp.c      |    3 --
+>  drivers/clk/shmobile/clk-rcar-gen3.c |   13 +--------
+>  include/linux/clk-provider.h         |    1
+>  4 files changed, 35 insertions(+), 28 deletions(-)
+> 
+> --- 0001/drivers/clk/clk.c
+> +++ work/drivers/clk/clk.c	2015-09-09 13:48:21.992366518 +0900
+> @@ -3045,31 +3045,25 @@ int of_clk_get_parent_count(struct devic
+>  }
+>  EXPORT_SYMBOL_GPL(of_clk_get_parent_count);
+> 
+> -const char *of_clk_get_parent_name(struct device_node *np, int index)
+> +const char *of_clk_get_name(struct device_node *np, int index)
+>  {
+> -	struct of_phandle_args clkspec;
+>  	struct property *prop;
+>  	const char *clk_name;
+>  	const __be32 *vp;
+>  	u32 pv;
+> -	int rc;
+>  	int count;
+> +	bool has_indices = false;
+> 
+>  	if (index < 0)
+>  		return NULL;
+> 
+> -	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
+> -					&clkspec);
+> -	if (rc)
+> -		return NULL;
+> -
+> -	index = clkspec.args_count ? clkspec.args[0] : 0;
+>  	count = 0;
+> 
+>  	/* if there is an indices property, use it to transfer the index
+>  	 * specified into an array offset for the clock-output-names property.
+>  	 */
+> -	of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
+> +	of_property_for_each_u32(np, "clock-indices", prop, vp, pv) {
+> +		has_indices = true;
+>  		if (index == pv) {
+>  			index = count;
+>  			break;
+> @@ -3077,12 +3071,34 @@ const char *of_clk_get_parent_name(struc
+>  		count++;
+>  	}
+> 
+> -	if (of_property_read_string_index(clkspec.np, "clock-output-names",
+> -					  index,
+> -					  &clk_name) < 0)
+> -		clk_name = clkspec.np->name;
+> +	if (of_property_read_string_index(np, "clock-output-names", index,
+> +					  &clk_name) < 0) {
+> +		if (has_indices)
+> +			return kasprintf(GFP_KERNEL, "%s.%u", np->name, index);
+
+What if the clock provider has a #clock-cells larger than one ?
+
+Another issue is that this won't guarantee that the names are unique as 
+multiple DT nodes can have the same name. Instead of trying to generate unique 
+names, would it be possible to handle clock registration and lookup without 
+relying on names for DT-based platforms ?
+
+> +		else
+> +			return kstrdup_const(np->name, GFP_KERNEL);
+> +	}
+> 
+> -	of_node_put(clkspec.np);
+> +	return kstrdup_const(clk_name, GFP_KERNEL);
+> +}
+> +EXPORT_SYMBOL_GPL(of_clk_get_name);
+> +
+> +const char *of_clk_get_parent_name(struct device_node *np, int index)
+> +{
+> +	struct of_phandle_args clkspec;
+> +	const char *clk_name = NULL;
+> +	int rc;
+> +
+> +	if (index < 0)
+> +		return NULL;
+> +
+> +	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
+> +					&clkspec);
+> +	if (!rc) {
+> +		clk_name = of_clk_get_name(clkspec.np, clkspec.args_count ?
+> +					   clkspec.args[0] : 0);
+> +		of_node_put(clkspec.np);
+> +	}
+>  	return clk_name;
+>  }
+>  EXPORT_SYMBOL_GPL(of_clk_get_parent_name);
+> --- 0001/drivers/clk/shmobile/clk-mstp.c
+> +++ work/drivers/clk/shmobile/clk-mstp.c	2015-09-09 13:45:51.652366518 
++0900
+> @@ -216,8 +216,7 @@ static void __init cpg_mstp_clocks_init(
+> 
+>  		if (of_property_read_string_index(np, "clock-output-names",
+>  						  i, &name) < 0)
+> -			allocated_name = name = kasprintf(GFP_KERNEL, "%s.%u",
+> -							   np->name, clkidx);
+> +			allocated_name = name = of_clk_get_name(np, clkidx);
+> 
+>  		clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
+>  						       clkidx, group);
+> --- 0001/drivers/clk/shmobile/clk-rcar-gen3.c
+> +++ work/drivers/clk/shmobile/clk-rcar-gen3.c	2015-09-09 
+13:45:51.652366518
+> +0900 @@ -28,15 +28,6 @@
+>  #define RCAR_GEN3_CLK_PLL4	5
+>  #define RCAR_GEN3_CLK_NR	6
+> 
+> -static const char * const rcar_gen3_clk_names[RCAR_GEN3_CLK_NR] = {
+> -	[RCAR_GEN3_CLK_MAIN] = "main",
+> -	[RCAR_GEN3_CLK_PLL0] = "pll0",
+> -	[RCAR_GEN3_CLK_PLL1] = "pll1",
+> -	[RCAR_GEN3_CLK_PLL2] = "pll2",
+> -	[RCAR_GEN3_CLK_PLL3] = "pll3",
+> -	[RCAR_GEN3_CLK_PLL4] = "pll4",
+> -};
+> -
+>  struct rcar_gen3_cpg {
+>  	struct clk_onecell_data data;
+>  	void __iomem *reg;
+> @@ -116,7 +107,7 @@ rcar_gen3_cpg_register_clk(struct device
+>  			   const struct cpg_pll_config *config,
+>  			   unsigned int gen3_clk)
+>  {
+> -	const char *parent_name = rcar_gen3_clk_names[RCAR_GEN3_CLK_MAIN];
+> +	const char *parent_name = of_clk_get_name(np, RCAR_GEN3_CLK_MAIN);
+>  	unsigned int mult = 1;
+>  	unsigned int div = 1;
+>  	u32 value;
+> @@ -157,7 +148,7 @@ rcar_gen3_cpg_register_clk(struct device
+>  		return ERR_PTR(-EINVAL);
+>  	}
+> 
+> -	return clk_register_fixed_factor(NULL, rcar_gen3_clk_names[gen3_clk],
+> +	return clk_register_fixed_factor(NULL, of_clk_get_name(np, gen3_clk),
+>  					 parent_name, 0, mult, div);
+>  }
+> 
+> --- 0001/include/linux/clk-provider.h
+> +++ work/include/linux/clk-provider.h	2015-09-09 13:46:21.052366518 +0900
+> @@ -665,6 +665,7 @@ struct clk *of_clk_src_onecell_get(struc
+>  int of_clk_get_parent_count(struct device_node *np);
+>  int of_clk_parent_fill(struct device_node *np, const char **parents,
+>  		       unsigned int size);
+> +const char *of_clk_get_name(struct device_node *np, int index);
+>  const char *of_clk_get_parent_name(struct device_node *np, int index);
+> 
+>  void of_clk_init(const struct of_device_id *matches);
+
 -- 
-2.1.4
+Regards,
+
+Laurent Pinchart
