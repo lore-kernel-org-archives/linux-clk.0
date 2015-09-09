@@ -1,35 +1,84 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH 3/3] ARM: bcm2835: Add the auxiliary clocks to the device
- tree.
-To: Eric Anholt <eric@anholt.net>
-References: <1441923750-19404-1-git-send-email-eric@anholt.net>
- <1441923750-19404-4-git-send-email-eric@anholt.net>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org
-From: Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <5600BAC3.70506@wwwdotorg.org>
-Date: Mon, 21 Sep 2015 19:19:47 -0700
-MIME-Version: 1.0
-In-Reply-To: <1441923750-19404-4-git-send-email-eric@anholt.net>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: shmobile: div6: Make clock-output-names optional
+Date: Wed,  9 Sep 2015 14:58:26 +0200
+Message-Id: <1441803506-30749-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/10/2015 03:22 PM, Eric Anholt wrote:
-> These will be used for enabling UART1, SPI1, and SPI2.
+Renesas DIV6 clocks provide a single clock output.  Hence make the
+"clock-output-names" DT property optional instead of mandatory. In case
+the DT property is omitted the DT node name will be used.
 
-> diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
+Rename the variable "name" to "clk_name" to make the code more similar
+with fixed-factor-clock.c, and to avoid a conflict with a nested local
+variable while we're at it.
 
-> +		aux_clocks: aux-clocks@0x7e215004 {
-> +			compatible = "brcm,bcm2835-aux-clock";
-> +			#clock-cells = <1>;
-> +			reg = <0x7e215004 0x4>;
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ .../devicetree/bindings/clock/renesas,cpg-div6-clocks.txt   |  4 ++++
+ drivers/clk/shmobile/clk-div6.c                             | 13 +++----------
+ 2 files changed, 7 insertions(+), 10 deletions(-)
 
-Actually, I take back the ack on this patch. This HW module has two
-registers. The reg property should include both of those registers so
-that if SW needs to start using the other register at some time in the
-future, the entire set of registers is already represented in DT.
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
+index e1bdf14ac2dfdab2..361315db3d8cfb58 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
+@@ -21,6 +21,10 @@ Required Properties:
+     clocks must be specified.  For clocks with multiple parents, invalid
+     settings must be specified as "<0>".
+   - #clock-cells: Must be 0
++
++
++Optional Properties:
++
+   - clock-output-names: The name of the clock as a free-form string
+ 
+ 
+diff --git a/drivers/clk/shmobile/clk-div6.c b/drivers/clk/shmobile/clk-div6.c
+index b4c8d6746f68a7b8..57016ff9c585fc6e 100644
+--- a/drivers/clk/shmobile/clk-div6.c
++++ b/drivers/clk/shmobile/clk-div6.c
+@@ -178,10 +178,9 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 	const char **parent_names;
+ 	struct clk_init_data init;
+ 	struct div6_clock *clock;
+-	const char *name;
++	const char *clk_name = np->name;
+ 	struct clk *clk;
+ 	unsigned int i;
+-	int ret;
+ 
+ 	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
+ 	if (!clock)
+@@ -215,13 +214,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 	clock->div = (clk_readl(clock->reg) & CPG_DIV6_DIV_MASK) + 1;
+ 
+ 	/* Parse the DT properties. */
+-	ret = of_property_read_string(np, "clock-output-names", &name);
+-	if (ret < 0) {
+-		pr_err("%s: failed to get %s DIV6 clock output name\n",
+-		       __func__, np->name);
+-		goto error;
+-	}
+-
++	of_property_read_string(np, "clock-output-names", &clk_name);
+ 
+ 	for (i = 0, valid_parents = 0; i < num_parents; i++) {
+ 		const char *name = of_clk_get_parent_name(np, i);
+@@ -255,7 +248,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 	}
+ 
+ 	/* Register the clock. */
+-	init.name = name;
++	init.name = clk_name;
+ 	init.ops = &cpg_div6_clock_ops;
+ 	init.flags = CLK_IS_BASIC;
+ 	init.parent_names = parent_names;
+-- 
+1.9.1
