@@ -1,100 +1,105 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v3 3/5] clk: sunxi: pll2: Add A13 support
-Date: Tue, 29 Sep 2015 09:39:11 +0200
-Message-Id: <1443512353-28073-4-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1443512353-28073-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1443512353-28073-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
+To: Marc Zyngier <marc.zyngier@arm.com>, "arnd@arndb.de" <arnd@arndb.de>,
+ "mark.rutland@arm.com" <mark.rutland@arm.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v2 07/10] dts/ls2085a: Update DTSI to add support of
+ various peripherals
+Date: Wed, 9 Sep 2015 03:58:02 +0000
+Message-ID: <BY1PR0301MB13035D69FFB5617179F54DB582520@BY1PR0301MB1303.namprd03.prod.outlook.com>
+References: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
+ <55E9787A.7050304@arm.com>
+In-Reply-To: <55E9787A.7050304@arm.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: "Lu Y.B." <yangbo.lu@freescale.com>,
+ Singh Jaiprakash <jaiprakash.singh@freescale.com>,
+ Huan Wang <alison.wang@freescale.com>,
+ "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
+ "will.deacon@arm.com" <will.deacon@arm.com>,
+ Scott Wood <scottwood@freescale.com>,
+ "Lian M.H." <Minghuan.Lian@freescale.com>, Liu
+ Gang <Gang.Liu@freescale.com>, "olof@lixom.net" <olof@lixom.net>,
+ Badola Nikhil <nikhil.badola@freescale.com>,
+ "bhupesh.linux@gmail.com" <bhupesh.linux@gmail.com>,
+ Shaohui Xie <Shaohui.Xie@freescale.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The A13, unlike the A10 and A20, doesn't use a pass-through exception for
-the 0 value in the pre and post dividers, but increments all the values
-written in the register by one.
+> From: Marc Zyngier [mailto:marc.zyngier@arm.com]
+> Sent: Friday, September 04, 2015 4:25 PM
 
-Add an exception for both these cases to handle them nicely.
+[snip] ..
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi/clk-a10-pll2.c | 38 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 33 insertions(+), 5 deletions(-)
+> >  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi |  469
+> > +++++++++++++++++++++++-
+> >  1 file changed, 459 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+> > b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+> > index 333d942..5fee0a7 100644
+> > --- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+> > +++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+> 
+> [...]
+> 
+> >  	gic: interrupt-controller@6000000 {
+> >  		compatible = "arm,gic-v3";
+> >  		reg = <0x0 0x06000000 0 0x10000>, /* GIC Dist */
+> > -		      <0x0 0x06100000 0 0x100000>; /* GICR (RD_base +
+> SGI_base) */
+> > +		      <0x0 0x06100000 0 0x100000>, /* GICR (RD_base +
+> SGI_base) */
+> > +		      <0x0 0x0c0c0000 0 0x2000>, /* GICC */
+> > +		      <0x0 0x0c0d0000 0 0x1000>, /* GICH */
+> > +		      <0x0 0x0c0e0000 0 0x20000>; /* GICV */
+> >  		#interrupt-cells = <3>;
+> > +		#address-cells = <2>;
+> > +		#size-cells = <2>;
+> > +		ranges;
+> >  		interrupt-controller;
+> >  		interrupts = <1 9 0x4>;
+> > +
+> > +		its: gic-its@6020000 {
+> > +			compatible = "arm,gic-v3-its";
+> > +			msi-controller;
+> > +			reg = <0x0 0x6020000 0 0x20000>;
+> > +		};
+> > +	};
+> 
+> [...]
+> 
+> >  	fsl_mc: fsl-mc@80c000000 {
+> >  		compatible = "fsl,qoriq-mc";
+> > +		#stream-id-cells = <2>;
+> >  		reg = <0x00000008 0x0c000000 0 0x40>,	 /* MC portal base
+> */
+> >  		      <0x00000000 0x08340000 0 0x40000>; /* MC control reg */
+> > +		lpi-parent = <&its>;
+> 
+> I'm afraid there is no such thing as "lpi_parent" as a property. We have
+> msi_parent, which is (I think) what you want, and is dealt with in the
+> ITS driver. Also, you'll need to describe the DeviceIDs that can be
+> generated by this device so that the ITS can be correctly programmed.
+ 
+Oops. This should be 'msi_parent' as you point out, Marc.
 
-diff --git a/drivers/clk/sunxi/clk-a10-pll2.c b/drivers/clk/sunxi/clk-a10-pll2.c
-index b877cc6c3622..bae9235f7528 100644
---- a/drivers/clk/sunxi/clk-a10-pll2.c
-+++ b/drivers/clk/sunxi/clk-a10-pll2.c
-@@ -41,9 +41,15 @@
- 
- #define SUN4I_PLL2_OUTPUTS		4
- 
-+struct sun4i_pll2_data {
-+	u32	post_div_offset;
-+	u32	pre_div_flags;
-+};
-+
- static DEFINE_SPINLOCK(sun4i_a10_pll2_lock);
- 
--static void __init sun4i_pll2_setup(struct device_node *node)
-+static void __init sun4i_pll2_setup(struct device_node *node,
-+				    struct sun4i_pll2_data *data)
- {
- 	const char *clk_name = node->name, *parent;
- 	struct clk **clks, *base_clk, *prediv_clk;
-@@ -70,8 +76,7 @@ static void __init sun4i_pll2_setup(struct device_node *node)
- 					  parent, 0, reg,
- 					  SUN4I_PLL2_PRE_DIV_SHIFT,
- 					  SUN4I_PLL2_PRE_DIV_WIDTH,
--					  CLK_DIVIDER_ONE_BASED |
--					  CLK_DIVIDER_ALLOW_ZERO,
-+					  data->pre_div_flags,
- 					  &sun4i_a10_pll2_lock);
- 	if (!prediv_clk) {
- 		pr_err("Couldn't register the prediv clock\n");
-@@ -122,7 +127,7 @@ static void __init sun4i_pll2_setup(struct device_node *node)
- 	 */
- 	val = readl(reg);
- 	val &= ~(SUN4I_PLL2_POST_DIV_MASK << SUN4I_PLL2_POST_DIV_SHIFT);
--	val |= SUN4I_PLL2_POST_DIV_VALUE << SUN4I_PLL2_POST_DIV_SHIFT;
-+	val |= (SUN4I_PLL2_POST_DIV_VALUE - data->post_div_offset) << SUN4I_PLL2_POST_DIV_SHIFT;
- 	writel(val, reg);
- 
- 	of_property_read_string_index(node, "clock-output-names",
-@@ -185,4 +190,27 @@ err_free_data:
- err_unmap:
- 	iounmap(reg);
- }
--CLK_OF_DECLARE(sun4i_pll2, "allwinner,sun4i-a10-pll2-clk", sun4i_pll2_setup);
-+
-+static struct sun4i_pll2_data sun4i_a10_pll2_data = {
-+	.pre_div_flags	= CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
-+};
-+
-+static void __init sun4i_a10_pll2_setup(struct device_node *node)
-+{
-+	sun4i_pll2_setup(node, &sun4i_a10_pll2_data);
-+}
-+
-+CLK_OF_DECLARE(sun4i_a10_pll2, "allwinner,sun4i-a10-pll2-clk",
-+	       sun4i_a10_pll2_setup);
-+
-+static struct sun4i_pll2_data sun5i_a13_pll2_data = {
-+	.post_div_offset	= 1,
-+};
-+
-+static void __init sun5i_a13_pll2_setup(struct device_node *node)
-+{
-+	sun4i_pll2_setup(node, &sun5i_a13_pll2_data);
-+}
-+
-+CLK_OF_DECLARE(sun5i_a13_pll2, "allwinner,sun5i-a13-pll2-clk",
-+	       sun5i_a13_pll2_setup);
--- 
-2.5.3
+I will address these comments in v3 of the patchset.
+
+Regards,
+Bhupesh
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
