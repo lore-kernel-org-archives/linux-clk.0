@@ -1,116 +1,112 @@
-Return-Path: <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2 3/4] clk: bcm2835: Add support for programming the
- audio domain clocks.
-To: Eric Anholt <eric@anholt.net>
-References: <1441922305-2298-1-git-send-email-eric@anholt.net>
- <1441922305-2298-3-git-send-email-eric@anholt.net>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Lee Jones <lee@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Mike Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org
-From: Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <5600B663.8000501@wwwdotorg.org>
-Date: Mon, 21 Sep 2015 19:01:07 -0700
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
+To: Rob Herring <robherring2@gmail.com>
+Subject: RE: [PATCH v2 07/10] dts/ls2085a: Update DTSI to add support of
+ various peripherals
+Date: Wed, 9 Sep 2015 03:55:56 +0000
+Message-ID: <BY1PR0301MB13039907260EE04523FB278882520@BY1PR0301MB1303.namprd03.prod.outlook.com>
+References: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
+ <CADRPPNQER9UnKLazm9C6Dd7DAkDxLb4QShK64tmtahZxJJ-t=g@mail.gmail.com>
+ <BY1PR0301MB130306991ACB28E4C8109DD582560@BY1PR0301MB1303.namprd03.prod.outlook.com>
+ <CAL_Jsq+KJU4RiK2XWcS5BezucCmup2M-pueaaJUq7O=fA3LUxw@mail.gmail.com>
+ <BY1PR0301MB13037916637C1B6E24AC259D82550@BY1PR0301MB1303.namprd03.prod.outlook.com>
+ <CAL_JsqK4NQ9YRQkTM=km6N+3Cb=RAM_=2TFhtkhPWprA7VNKUg@mail.gmail.com>
+In-Reply-To: <CAL_JsqK4NQ9YRQkTM=km6N+3Cb=RAM_=2TFhtkhPWprA7VNKUg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1441922305-2298-3-git-send-email-eric@anholt.net>
-Content-Type: text/plain; charset=windows-1252
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Bhupesh SHARMA <bhupesh.linux@gmail.com>,
+ Shaohui Xie <Shaohui.Xie@freescale.com>, Arnd Bergmann <arnd@arndb.de>,
+ Huan Wang <alison.wang@freescale.com>,
+ "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+ "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
+ Singh Jaiprakash <jaiprakash.singh@freescale.com>,
+ "will.deacon@arm.com" <will.deacon@arm.com>,
+ Scott Wood <scottwood@freescale.com>,
+ "Lian M.H." <Minghuan.Lian@freescale.com>, Liu Gang <Gang.Liu@freescale.com>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ "olof@lixom.net" <olof@lixom.net>, Badola
+ Nikhil <nikhil.badola@freescale.com>, Li Leo <LeoLi@freescale.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Xiaobo Xie <X.Xie@freescale.com>, "Lu Y.B." <yangbo.lu@freescale.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/10/2015 02:58 PM, Eric Anholt wrote:
-> This adds support for enabling, disabling, and setting the rate of the
-> audio domain clocks.  It will be necessary for setting the pixel clock
-> for HDMI in the VC4 driver and let us write a cpufreq driver.  It will
-> also improve compatibility with user changes to the firmware's
-> config.txt, since our previous fixed clocks are unaware of it.
+> From: Rob Herring [mailto:robherring2@gmail.com]
+> Sent: Tuesday, September 08, 2015 2:28 AM
+> On Sun, Sep 6, 2015 at 4:03 PM, Sharma Bhupesh
+> <bhupesh.sharma@freescale.com> wrote:
+> >> From: Rob Herring [mailto:robherring2@gmail.com]
+> >> Sent: Monday, September 07, 2015 2:27 AM On Sat, Sep 5, 2015 at 3:37
+> >> AM, Sharma Bhupesh <bhupesh.sharma@freescale.com> wrote:
+> >> >> From: pku.leo@gmail.com [mailto:pku.leo@gmail.com]
+> >> >> Sent: Saturday, September 05, 2015 2:33 AM On Fri, Sep 4, 2015 at
+> >> >> 2:05 AM, Bhupesh Sharma <bhupesh.sharma@freescale.com> wrote:
+> >> >> > This patch updates the LS2085a DTSI (DTS Include) file to add
+> >> >> > support for various peripherals supported by FSL LS2085a SoC,
+> >> >> > for
+> >> e.g.:
+> >> >>
+> >> >> The title and description here are still using the old LS2085 name.
+> >> >
+> >> > Ok.
+> >> >
+> >> > [snip] ..
+> >> >
+> >> >> > +       amba {
+> >> >> > +               compatible = "arm,amba-bus";
+> >> >> > +               #address-cells = <2>;
+> >> >> > +               #size-cells = <2>;
+> >> >> > +               ranges;
+> >> >> > +
+> >> >> > +               cluster1_core0_watchdog: wdt@c000000 {
+> >> >> > +                       compatible = "arm,primecell";
+> >> >>
+> >> >> Binding of Primecell requires a specific name for the device
+> >> >> instead of just a "arm,primecell".
+> >> >
+> >> > The sp805 driver doesn't have a compatible string like arm, sp805.
+> >> > You can refer to 'Documentation/devicetree/bindings/wdt' for
+> >> > details -
+> >> there is no entry for sp805 here.
+> >>
+> >> Because no one wrote it yet. Please read
+> >> Documentation/devicetree/bindings/arm/primecell.txt. If sp805 has no
+> >> binding doc, please write one.
+> >>
+> >> > Instead it relies on the 'drivers/amba/bus.c' framework to invoke
+> >> > the probe function of the
+> >> > sp805 wdt driver using the unique PRIMECELL identifiers of the
+> >> > sp805
+> >> wdt IP.
+> >>
+> >> Whether the kernel chooses to bind with the ID registers or
+> >> compatible strings is up to the kernel. That is independent of the
+> bindings.
+> >>
+> >
+> > Right. But wouldn't the driver require DTS awareness to handle the
+> compatible string then.
+> > Shouldn't the DTS awareness added both in terms of bindings and driver
+> handling?
 > 
-> The firmware also has support for configuring the clocks through the
-> mailbox channel, but the pixel clock setup by the firmware doesn't
-> work, and it's Raspberry Pi specific anyway.  The only conflicts we
-> should have with the firmware would be if we made firmware calls that
-> result in clock management (like opening firmware V3D or ISP access,
-> which we don't support in upstream), or on hardware over-thermal or
-> under-voltage (when the firmware would rewrite PLLB to take the ARM
-> out of overclock).  If that happens, our cached .recalc_rate() results
-> would be incorrect, but that's no worse than our current state where
-> we used fixed clocks.
-> 
-> The existing fixed clocks in the code are left in place to provide
-> backwards compatibility with old device tree files.
+> No. The OS is free to do device enumeration however it sees fit and that
+> could change independent of the DT.
+ 
+Ok. Will address this in v3 of this patchset then.
 
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-
-> +/**
-> + * DOC: BCM2835 CPRMAN (clock manager for the "audio" domain)
-> + *
-> + * The clock tree on the 2835 has several levels.  There's a root
-> + * oscillator running at 19.2Mhz.  After the oscillator there are 4
-
-Nit: s/4/5.
-
-> +struct bcm2835_pll_data {
-...
-> +	/* Highest rate for the VCO before we have to use the
-> +	 * pre-divide-by-2.
-> +	 */
-
-Nit: /* should be on a line on its own I think. Similar elsewhere.
-
-> +static const struct bcm2835_pll_ana_bits bcm2835_ana_default = {
-> +	0,
-> +	0,
-> +	~((7 << 19) | (15 << 15)),
-> +	(2 << 19) | (8 << 15),
-> +	~(7 << 7),
-> +	(6 << 1),
-> +
-> +	14
-
-Nit: Elide the blank line? In some other structs too.
-
-Are there #defines or names you can use for those initializers?
-
-> +static int bcm2835_clk_probe(struct platform_device *pdev)
-
-> +	cprman = kzalloc(sizeof(*cprman), GFP_KERNEL);
-> +	if (!cprman)
-> +		return -ENOMEM;
-
-This function allocates/initializes a lot of resources without using
-devm_ versions of APIs.
-> +
-> +	spin_lock_init(&cprman->regs_lock);
-> +	cprman->dev = &pdev->dev;
-> +	cprman->regs = of_iomap(dev->of_node, 0);
-> +	if (!cprman->regs)
-> +		return -ENODEV;
-
-.. consequently if probe() fails later on (such as here) then resources
-allocated earlier are not released. probe() should either switch to APIs
-such as devm_kzalloc() or add some cleanup handling.
-
-> +	cprman->osc_name = of_clk_get_parent_name(dev->of_node, 0);
-> +	if (!cprman->osc_name)
-> +		return -ENODEV;
-> +
-> +	platform_set_drvdata(pdev, cprman);
-
-I'd expect that to happen right after allocating cprman, since it feels
-related to having allocated the cprman object.
-
-> +	onecell = kmalloc(sizeof(*onecell), GFP_KERNEL);
-> +	if (!onecell)
-> +		return -ENOMEM;
-> +	onecell->clk_num = BCM2835_CLOCK_COUNT;
-> +	onecell->clks = kzalloc(sizeof(*onecell->clks) *
-> +				BCM2835_CLOCK_COUNT, GFP_KERNEL);
-
-Does this need to be dynamically allocated? I think you can just make
-these fields in struct bcm2835_cprman; even the array of clks could be:
-
-struct clks clks[BCM2835_CLOCK_COUNT];
-
-> +	clks[BCM2835_PLLA] = bcm2835_register_pll(cprman, &bcm2835_plla_data);
-> +	clks[BCM2835_PLLB] = bcm2835_register_pll(cprman, &bcm2835_pllb_data);
-
-These can fail; shouldn't there be error-checking? Or, does
-of_clk_add_provider() check for this?
+Regards,
+Bhupesh
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
