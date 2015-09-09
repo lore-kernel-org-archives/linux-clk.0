@@ -1,125 +1,48 @@
-Return-Path: <alim.akhtar@samsung.com>
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
- k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
- gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 03/12] clk: samsung: exynos7: Corrects CMU_TOP0 clocks names
-Date: Thu, 10 Sep 2015 14:14:28 +0530
-Message-id: <1441874677-24148-4-git-send-email-alim.akhtar@samsung.com>
-In-reply-to: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
-References: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
+Return-Path: <romain.perier@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CABgxDo+0qN5GJdCNpQi4g_CdW67PvxsogMseRoAa5cuAbWk1wQ@mail.gmail.com>
+References: <1440322357-2621-1-git-send-email-romain.perier@gmail.com>
+	<CABgxDo+otZrYoqTNK-ea=L6Dsd5p_b_MFCi4H4XJZZ25PV_qnA@mail.gmail.com>
+	<CABgxDoLgqfzO-Sb_rKHe=-GuMaKWMihHhktx6sDSM6M=Q+Koaw@mail.gmail.com>
+	<20150904162402.GN15099@codeaurora.org>
+	<CABgxDo+0qN5GJdCNpQi4g_CdW67PvxsogMseRoAa5cuAbWk1wQ@mail.gmail.com>
+Date: Wed, 9 Sep 2015 19:58:48 +0200
+Message-ID: <CABgxDoJRdF_k0EZLrEWXqpDrmj5LVRL24izGLJY4AmtUNOk7PQ@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: rockchip: Add pclk_peri to critical clocks on RK3066/RK3188
+From: Romain Perier <romain.perier@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch renames CMU_TOP0 clocks names to match with user manual.
+so, which of you does take the patch for -rc1 ?
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- drivers/clk/samsung/clk-exynos7.c |   67 ++++++++++++++++++++-----------------
- 1 file changed, 37 insertions(+), 30 deletions(-)
+Regards,
+Romain
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index e11449b..84a6e50 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -232,30 +232,30 @@ CLK_OF_DECLARE(exynos7_clk_topc, "samsung,exynos7-clock-topc",
- #define ENABLE_SCLK_TOP0_PERIC3		0x0A3C
- 
- /* List of parent clocks for Muxes in CMU_TOP0 */
--PNAME(mout_bus0_pll_p)	= { "fin_pll", "dout_sclk_bus0_pll" };
--PNAME(mout_bus1_pll_p)	= { "fin_pll", "dout_sclk_bus1_pll" };
--PNAME(mout_cc_pll_p)	= { "fin_pll", "dout_sclk_cc_pll" };
--PNAME(mout_mfc_pll_p)	= { "fin_pll", "dout_sclk_mfc_pll" };
--PNAME(mout_aud_pll_p)	= { "fin_pll", "dout_sclk_aud_pll" };
-+PNAME(mout_top0_bus0_pll_user_p)	= { "fin_pll", "sclk_bus0_pll_a" };
-+PNAME(mout_top0_bus1_pll_user_p)	= { "fin_pll", "sclk_bus1_pll_a" };
-+PNAME(mout_top0_cc_pll_user_p)	= { "fin_pll", "sclk_cc_pll_a" };
-+PNAME(mout_top0_mfc_pll_user_p)	= { "fin_pll", "sclk_mfc_pll_a" };
-+PNAME(mout_top0_aud_pll_user_p)	= { "fin_pll", "sclk_aud_pll" };
- 
--PNAME(mout_top0_half_bus0_pll_p) = {"mout_top0_bus0_pll",
-+PNAME(mout_top0_bus0_pll_half_p) = {"mout_top0_bus0_pll_user",
- 	"ffac_top0_bus0_pll_div2"};
--PNAME(mout_top0_half_bus1_pll_p) = {"mout_top0_bus1_pll",
-+PNAME(mout_top0_bus1_pll_half_p) = {"mout_top0_bus1_pll_user",
- 	"ffac_top0_bus1_pll_div2"};
--PNAME(mout_top0_half_cc_pll_p) = {"mout_top0_cc_pll",
-+PNAME(mout_top0_cc_pll_half_p) = {"mout_top0_cc_pll_user",
- 	"ffac_top0_cc_pll_div2"};
--PNAME(mout_top0_half_mfc_pll_p) = {"mout_top0_mfc_pll",
-+PNAME(mout_top0_mfc_pll_half_p) = {"mout_top0_mfc_pll_user",
- 	"ffac_top0_mfc_pll_div2"};
- 
--PNAME(mout_top0_group1) = {"mout_top0_half_bus0_pll",
--	"mout_top0_half_bus1_pll", "mout_top0_half_cc_pll",
--	"mout_top0_half_mfc_pll"};
-+PNAME(mout_top0_group1) = {"mout_top0_bus0_pll_half",
-+	"mout_top0_bus1_pll_half", "mout_top0_cc_pll_half",
-+	"mout_top0_mfc_pll_half"};
- PNAME(mout_top0_group3) = {"ioclk_audiocdclk0",
- 	"ioclk_audiocdclk1", "ioclk_spdif_extclk",
--	"mout_top0_aud_pll", "mout_top0_half_bus0_pll",
--	"mout_top0_half_bus1_pll"};
--PNAME(mout_top0_group4) = {"ioclk_audiocdclk1", "mout_top0_aud_pll",
--	"mout_top0_half_bus0_pll", "mout_top0_half_bus1_pll"};
-+	"mout_top0_aud_pll_user", "mout_top0_bus0_pll_half",
-+	"mout_top0_bus1_pll_half"};
-+PNAME(mout_top0_group4) = {"ioclk_audiocdclk1", "mout_top0_aud_pll_user",
-+	"mout_top0_bus0_pll_half", "mout_top0_bus1_pll_half"};
- 
- static unsigned long top0_clk_regs[] __initdata = {
- 	MUX_SEL_TOP00,
-@@ -277,19 +277,24 @@ static unsigned long top0_clk_regs[] __initdata = {
- };
- 
- static struct samsung_mux_clock top0_mux_clks[] __initdata = {
--	MUX(0, "mout_top0_aud_pll", mout_aud_pll_p, MUX_SEL_TOP00, 0, 1),
--	MUX(0, "mout_top0_mfc_pll", mout_mfc_pll_p, MUX_SEL_TOP00, 4, 1),
--	MUX(0, "mout_top0_cc_pll", mout_cc_pll_p, MUX_SEL_TOP00, 8, 1),
--	MUX(0, "mout_top0_bus1_pll", mout_bus1_pll_p, MUX_SEL_TOP00, 12, 1),
--	MUX(0, "mout_top0_bus0_pll", mout_bus0_pll_p, MUX_SEL_TOP00, 16, 1),
--
--	MUX(0, "mout_top0_half_mfc_pll", mout_top0_half_mfc_pll_p,
-+	MUX(0, "mout_top0_aud_pll_user", mout_top0_aud_pll_user_p,
-+		MUX_SEL_TOP00, 0, 1),
-+	MUX(0, "mout_top0_mfc_pll_user", mout_top0_mfc_pll_user_p,
-+		MUX_SEL_TOP00, 4, 1),
-+	MUX(0, "mout_top0_cc_pll_user", mout_top0_cc_pll_user_p,
-+		MUX_SEL_TOP00, 8, 1),
-+	MUX(0, "mout_top0_bus1_pll_user", mout_top0_bus1_pll_user_p,
-+		MUX_SEL_TOP00, 12, 1),
-+	MUX(0, "mout_top0_bus0_pll_user", mout_top0_bus0_pll_user_p,
-+		MUX_SEL_TOP00, 16, 1),
-+
-+	MUX(0, "mout_top0_mfc_pll_half", mout_top0_mfc_pll_half_p,
- 		MUX_SEL_TOP01, 4, 1),
--	MUX(0, "mout_top0_half_cc_pll", mout_top0_half_cc_pll_p,
-+	MUX(0, "mout_top0_cc_pll_half", mout_top0_cc_pll_half_p,
- 		MUX_SEL_TOP01, 8, 1),
--	MUX(0, "mout_top0_half_bus1_pll", mout_top0_half_bus1_pll_p,
-+	MUX(0, "mout_top0_bus1_pll_half", mout_top0_bus1_pll_half_p,
- 		MUX_SEL_TOP01, 12, 1),
--	MUX(0, "mout_top0_half_bus0_pll", mout_top0_half_bus0_pll_p,
-+	MUX(0, "mout_top0_bus0_pll_half", mout_top0_bus0_pll_half_p,
- 		MUX_SEL_TOP01, 16, 1),
- 
- 	MUX(0, "mout_aclk_peric1_66", mout_top0_group1, MUX_SEL_TOP03, 12, 2),
-@@ -364,10 +369,12 @@ static struct samsung_gate_clock top0_gate_clks[] __initdata = {
- };
- 
- static struct samsung_fixed_factor_clock top0_fixed_factor_clks[] __initdata = {
--	FFACTOR(0, "ffac_top0_bus0_pll_div2", "mout_top0_bus0_pll", 1, 2, 0),
--	FFACTOR(0, "ffac_top0_bus1_pll_div2", "mout_top0_bus1_pll", 1, 2, 0),
--	FFACTOR(0, "ffac_top0_cc_pll_div2", "mout_top0_cc_pll", 1, 2, 0),
--	FFACTOR(0, "ffac_top0_mfc_pll_div2", "mout_top0_mfc_pll", 1, 2, 0),
-+	FFACTOR(0, "ffac_top0_bus0_pll_div2", "mout_top0_bus0_pll_user",
-+		1, 2, 0),
-+	FFACTOR(0, "ffac_top0_bus1_pll_div2", "mout_top0_bus1_pll_user",
-+		1, 2, 0),
-+	FFACTOR(0, "ffac_top0_cc_pll_div2", "mout_top0_cc_pll_user", 1, 2, 0),
-+	FFACTOR(0, "ffac_top0_mfc_pll_div2", "mout_top0_mfc_pll_user", 1, 2, 0),
- };
- 
- static struct samsung_cmu_info top0_cmu_info __initdata = {
--- 
-1.7.10.4
+2015-09-05 18:12 GMT+02:00 Romain Perier <romain.perier@gmail.com>:
+> Np,
+>
+> Yes it would be nice to take it for -rc1, because I think that 4.3
+> won't boot without this fix
+>
+>
+> Regards,
+> Romain
+>
+> 2015-09-04 18:24 GMT+02:00 Stephen Boyd <sboyd@codeaurora.org>:
+>> On 09/04, Romain Perier wrote:
+>>> Hi all,
+>>>
+>>> just a reminder, I sent this patch two weeks ago, rk3xxx-based
+>>> platforms still need it, it fixes a freeze during boot.
+>>
+>> Sorry I thought that Linus W was going to pick this up? If not,
+>> we can take it through clk tree as a fix for -rc1.
+>>
+>> --
+>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+>> a Linux Foundation Collaborative Project
