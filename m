@@ -1,43 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:25069 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750727AbbIJEIy (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 10 Sep 2015 00:08:54 -0400
-Subject: Re: [PATCH 11/11] clk: samsung: exynos7: Add required clock tree for
- UFS
-To: Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org
-References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
- <1441366637-28001-12-git-send-email-alim.akhtar@samsung.com>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
-	mturquette@baylibre.com, amit.daniel@samsung.com,
-	gautam.vivek@samsung.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <55F10253.6000308@samsung.com>
-Date: Thu, 10 Sep 2015 13:08:51 +0900
-MIME-version: 1.0
-In-reply-to: <1441366637-28001-12-git-send-email-alim.akhtar@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 9 Sep 2015 15:46:13 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] clk: qcom: Add support for RCGs with shared
+ branches
+Message-ID: <20150909224613.GW15099@codeaurora.org>
+References: <1439477317-1902-1-git-send-email-georgi.djakov@linaro.org>
+ <1439477317-1902-3-git-send-email-georgi.djakov@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1439477317-1902-3-git-send-email-georgi.djakov@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04.09.2015 20:37, Alim Akhtar wrote:
-> Adding required mux/div/gate clocks for UFS controller
-> present on Exynos7.
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos7.c       |  116 +++++++++++++++++++++++++++++++
->  include/dt-bindings/clock/exynos7-clk.h |   24 ++++++-
->  2 files changed, 138 insertions(+), 2 deletions(-)
-> 
+On 08/13, Georgi Djakov wrote:
+> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+> index 56028bb31d87..0693b9e0b15e 100644
+> --- a/drivers/clk/qcom/clk-rcg.h
+> +++ b/drivers/clk/qcom/clk-rcg.h
+> @@ -153,8 +153,8 @@ extern const struct clk_ops clk_dyn_rcg_ops;
+>   * @hid_width: number of bits in half integer divider
+>   * @parent_map: map from software's parent index to hardware's src_sel field
+>   * @freq_tbl: frequency table
+> + * @current_freq: last cached frequency when using branches with shared RCGs
+>   * @clkr: regmap clock handle
+> - * @lock: register lock
 
-My previous comments are fixed, rest looks good:
+Thanks.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>   *
+>   */
+>  struct clk_rcg2 {
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index 9aec1761fd29..681faf2dcdc5 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> +
+> +static int clk_rcg2_shared_enable(struct clk_hw *hw)
+> +{
+> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> +	const char *name = clk_hw_get_name(hw);
+> +
+> +	if (!rcg->current_freq) {
+> +		pr_err("%s: Please set rate before enabling\n", name);
 
-Best regards,
-Krzysztof
+Why? Can't we find the current freq during recalc_rate?
 
-
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
