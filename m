@@ -1,12 +1,15 @@
 Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/5] ARM: sun5i: Add R8 DTSI
-Date: Fri, 18 Sep 2015 10:48:47 +0200
-Message-Id: <1442566130-3497-3-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 04/10] doc/bindings: Update PCIe devicetree binding
+ documentation for LS2080A
+Date: Wed, 09 Sep 2015 11:07:14 +0200
+Message-ID: <5383634.Mln7J3sdWP@wuerfel>
+In-Reply-To: <CADRPPNR-cSSQC5sLMmoqcxX46J6hdULa_V4v2BK7T8s8pcX0cg@mail.gmail.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+ <80094129.LHZFOe1ZPU@wuerfel>
+ <CADRPPNR-cSSQC5sLMmoqcxX46J6hdULa_V4v2BK7T8s8pcX0cg@mail.gmail.com>
+MIME-Version: 1.0
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -14,96 +17,58 @@ List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
 List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
- Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org
-MIME-Version: 1.0
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ bhupesh.linux@gmail.com, Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+ Catalin.Marinas@arm.com, will.deacon@arm.com,
+ Minghuan Lian <Minghuan.Lian@freescale.com>, marc.zyngier@arm.com,
+ olof@lixom.net, Li Yang <leoli@freescale.com>, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The R8 is very close to the A13, but it still has a few differences,
-notably a composite output, which the A13 lacks.
+On Tuesday 08 September 2015 15:06:16 Li Yang wrote:
+> On Mon, Sep 7, 2015 at 6:32 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Friday 04 September 2015 12:27:46 Bhupesh Sharma wrote:
+> >> @@ -4,7 +4,8 @@ This PCIe host controller is based on the Synopsis Designware PCIe IP
+> >>  and thus inherits all the common properties defined in designware-pcie.txt.
+> >>
+> >>  Required properties:
+> >> -- compatible: should contain the platform identifier such as "fsl,ls1021a-pcie"
+> >> +- compatible: should contain the platform identifier such as "fsl,ls1021a-pcie",
+> >> +  "fsl,ls2080a-pcie".
+> >>  - reg: base addresses and lengths of the PCIe controller
+> >>  - interrupts: A list of interrupt outputs of the controller. Must contain an
+> >>    entry for each entry in the interrupt-names property.
+> >>
+> >
+> > Are the two PCIe hosts mutually compatible? If they are, you should mandate
+> > one of the strings as the base model for identification, with the additional
+> > model being optional for identification of the specific SoC.
+> 
+> It seems that controllers on these chips are not exactly the same.
+> They will get different driver data by matching the compatible
+> strings.  Probably we could define a more generic compatible string,
+> such as "fsl,layerscape-pcie" or "fsl,ls-pcie".
+> 
+> >
+> > It would also be good to add a string with the specific version number of the
+> > designware PCIe block that is being used there.
+> 
+> The binding has mentioned to reference the designware-pcie.txt.  But
+> it might be more clear to mention the designware compatible string
+> "snps,dw-pcie" again in the compatible part.  Currently there is no
+> version number defined in the designware-pcie binding.  It might be
+> hard to get this information for some SoCs.
 
-Add a DTSI based on the A13's to hold those differences.
+For most of them, the information is available and then it should be
+added. Obviously if you can't find it out, it's hard to guess and
+you have to leave it out for that particular chip.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun5i-r8.dtsi | 61 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun5i-r8.dtsi
+A lot of devices also have some internal version register that you
+can read out.
 
-diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
-new file mode 100644
-index 000000000000..c9ed854687ca
---- /dev/null
-+++ b/arch/arm/boot/dts/sun5i-r8.dtsi
-@@ -0,0 +1,61 @@
-+/*
-+ * Copyright 2015 Free Electrons
-+ * Copyright 2015 NextThing Co
-+ *
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#include "skeleton.dtsi"
-+
-+#include "sun5i-a13.dtsi"
-+
-+/ {
-+	chosen {
-+		framebuffer@1 {
-+			compatible = "allwinner,simple-framebuffer",
-+				     "simple-framebuffer";
-+			allwinner,pipeline = "de_be0-lcd0-tve0";
-+			clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
-+				 <&ahb_gates 44>;
-+			status = "disabled";
-+		}; 
-+	};
-+};
--- 
-2.5.1
-
+	Arnd
 
 _______________________________________________
 linux-arm-kernel mailing list
