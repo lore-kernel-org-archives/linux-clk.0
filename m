@@ -1,96 +1,33 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel@pengutronix.de,
-	patchwork-lst@pengutronix.de
-Subject: [PATCH v2 1/8] clk: imx: add common logic to detect early UART usage
-Date: Fri,  4 Sep 2015 18:00:12 +0200
-Message-Id: <1441382419-4343-2-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
-References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
+	Jiri Kosina <trivial@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH trivial] clk: shmobile: div6: Grammar s/They/Their/
+Date: Wed,  9 Sep 2015 14:57:11 +0200
+Message-Id: <1441803431-30460-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Both earlycon and eralyprintk depend on the bootloader setup UART
-clocks being retained. This patch adds the common logic to detect such
-situations and make the information available to the clock drivers, as
-well as adding the facilities to disable those clocks at the end of
-the kernel init.
-
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/imx/clk.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h |  1 +
- 2 files changed, 47 insertions(+)
+ Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-index df12b5307175..3357e29e43ab 100644
---- a/drivers/clk/imx/clk.c
-+++ b/drivers/clk/imx/clk.c
-@@ -73,3 +73,49 @@ void imx_cscmr1_fixup(u32 *val)
- 	*val ^= CSCMR1_FIXUP;
- 	return;
- }
-+
-+static int __initdata imx_keep_uart_clocks;
-+static struct clk __initdata ***imx_uart_clocks;
-+
-+static int __init imx_keep_uart_clocks_param(char *str)
-+{
-+	imx_keep_uart_clocks = 1;
-+
-+	return 0;
-+}
-+__setup_param("earlycon", imx_keep_uart_earlycon,
-+	      imx_keep_uart_clocks_param, 0);
-+__setup_param("earlyprintk", imx_keep_uart_earlyprintk,
-+	      imx_keep_uart_clocks_param, 0);
-+
-+void __init imx_register_uart_clocks(struct clk **clks[])
-+{
-+	if (imx_keep_uart_clocks) {
-+		int i;
-+
-+		imx_uart_clocks = clks;
-+		for (i = 0;; i++) {
-+			if (imx_uart_clocks[i])
-+				clk_prepare_enable(*imx_uart_clocks[i]);
-+			else
-+				break;
-+		}
-+	}
-+}
-+
-+static int __init imx_clk_disable_uart(void)
-+{
-+	if (imx_keep_uart_clocks) {
-+		int i;
-+
-+		for (i = 0;; i++) {
-+			if (imx_uart_clocks[i])
-+				clk_disable_unprepare(*imx_uart_clocks[i]);
-+			else
-+				break;
-+		}
-+	}
-+
-+	return 0;
-+}
-+late_initcall_sync(imx_clk_disable_uart);
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 1049b0c7d818..c4e2e282e892 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -7,6 +7,7 @@
- extern spinlock_t imx_ccm_lock;
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
+index a6889fb8a5bd2a48..e1bdf14ac2dfdab2 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
+@@ -1,7 +1,7 @@
+ * Renesas CPG DIV6 Clock
  
- void imx_check_clocks(struct clk *clks[], unsigned int count);
-+void imx_register_uart_clocks(struct clk **clks[]);
+ The CPG DIV6 clocks are variable factor clocks provided by the Clock Pulse
+-Generator (CPG). They clock input is divided by a configurable factor from 1
++Generator (CPG). Their clock input is divided by a configurable factor from 1
+ to 64.
  
- extern void imx_cscmr1_fixup(u32 *val);
- 
+ Required Properties:
 -- 
-2.5.0
+1.9.1
