@@ -1,71 +1,86 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Mon, 14 Sep 2015 16:40:28 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: at91: system: don't try to free_irq when there
- is no IRQ
-Message-ID: <20150914164028.7f38505d@bbrezillon>
-In-Reply-To: <1441982047-11303-2-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
-	<1441982047-11303-2-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <BY1PR0301MB130339BD3B988DC938AA524482560@BY1PR0301MB1303.namprd03.prod.outlook.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+ <1441349872-4560-4-git-send-email-bhupesh.sharma@freescale.com>
+ <CADRPPNR11BD4WfXTWoQ28rZCd_BJuhdWu49E6jjpO29CH2s5Ow@mail.gmail.com>
+ <BY1PR0301MB1303E56B5462BCD0C77C7E4D82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
+ <CADRPPNQFxqNqgvrL9eVhaDX-SYRJxmGDd87zu_XHDHY6afiu3g@mail.gmail.com>
+ <BY1PR0301MB130339BD3B988DC938AA524482560@BY1PR0301MB1303.namprd03.prod.outlook.com>
+Date: Wed, 9 Sep 2015 18:38:59 -0500
+Message-ID: <CADRPPNTDPBHR8S4mkT0CzO4jF0sncruZkMdir6OhrdkU6Za2OQ@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] Documentation/dts: Add bindings for QIXIS FPGA
+ controller found on FSL boards
+From: Li Yang <leoli@freescale.com>
+To: Sharma Bhupesh <bhupesh.sharma@freescale.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+ "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
+ Singh Jaiprakash <jaiprakash.singh@freescale.com>,
+ "will.deacon@arm.com" <will.deacon@arm.com>, "olof@lixom.net" <olof@lixom.net>,
+ "bhupesh.linux@gmail.com" <bhupesh.linux@gmail.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Alexandre,
+On Sat, Sep 5, 2015 at 3:11 AM, Sharma Bhupesh
+<bhupesh.sharma@freescale.com> wrote:
+>> From: pku.leo@gmail.com [mailto:pku.leo@gmail.com]
+>> Sent: Saturday, September 05, 2015 2:43 AM
+>> On Fri, Sep 4, 2015 at 3:16 PM, Sharma Bhupesh
+>> <bhupesh.sharma@freescale.com> wrote:
+>> >> From: pku.leo@gmail.com [mailto:pku.leo@gmail.com]
+>> >> Sent: Friday, September 04, 2015 10:27 PM On Fri, Sep 4, 2015 at 1:57
+>> >> AM, Bhupesh Sharma <bhupesh.sharma@freescale.com> wrote:
+>> >> > This patch adds bindings for QIXIS FPGA controller found on FSL
+>> boards.
+>> >>
+>> >> A general comment: when you are updating the device tree bindings.
+>> >> You should cc the devicetree@vger.kernel.org mailing list.
+>> >>
+>> >> >
+>> >> > Some Freescale boards like LS2080AQDS/LS2080ARDB have an on-board
+>> >> > FPGA/CPLD connected to the IFC controller. The bindings specified
+>> >> > in this patch cater to those on-board FPGA/CPLD controllers.
+>> >>
+>> >> We already have the binding defined in
+>> >> Documentation/devicetree/bindings/powerpc/fsl/board.txt.  We probably
+>> >> should just move it to a more generic location.
+>> >
+>> > Consolidation of powerpc and ARM bindings is something that needs to
+>> > be targeted by a separate patch-series, perhaps in future.
+>> >
+>> > There are a number of duplications that can be looked into, but I
+>> > don't think this patchset should depend on that.
+>>
+>> There might be some duplication, but we shouldn't be adding more.  :) I
+>> would rather you directly updating that file than creating a new file
+>> even though the original one was in a wrong directory.
+>>
+>
+> IMO a PowerPC binding update makes no sense in a ARM machine patchset sent
+> on a arm specific mailing list.
 
-On Fri, 11 Sep 2015 16:34:07 +0200
-Alexandre Belloni <alexandre.belloni@free-electrons.com> wrote:
+So the best approach is to merge the change with the original binding
+and put it into a common place.  Although there were a lot of non-arch
+specific bindings placed into the arch folder, we should stop adding
+more now.
 
-> In the error path of at91_clk_register_system(), sys->irq is freed
-> unconditionally but it may not exist or be request at all.
+Regards,
+Leo
 
-Not sure this is really needed since free_irq() seems to gracefully
-handle the case where the irq has not been previously requested [1]
-(it does not complain about invalid irq descriptors), but I guess
-this extra check cannot hurt.
-
-BTW, that's kinda weird that free_irq() accepts this case, but complains
-when you're trying to free a wrong (or already freed) shared irq handler
-[2].
-
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
-Best Regards,
-
-Boris
-
-[1]http://lxr.free-electrons.com/source/kernel/irq/manage.c#L1471
-[2]http://lxr.free-electrons.com/source/kernel/irq/manage.c#L1377
-
-> 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> ---
->  drivers/clk/at91/clk-system.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/at91/clk-system.c b/drivers/clk/at91/clk-system.c
-> index 58008b3e8bc1..3f5314344286 100644
-> --- a/drivers/clk/at91/clk-system.c
-> +++ b/drivers/clk/at91/clk-system.c
-> @@ -138,7 +138,8 @@ at91_clk_register_system(struct at91_pmc *pmc, const char *name,
->  
->  	clk = clk_register(NULL, &sys->hw);
->  	if (IS_ERR(clk)) {
-> -		free_irq(sys->irq, sys);
-> +		if (irq)
-> +			free_irq(sys->irq, sys);
->  		kfree(sys);
->  	}
->  
-
-
-
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
