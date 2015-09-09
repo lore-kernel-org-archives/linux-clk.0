@@ -1,97 +1,56 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel@pengutronix.de,
-	patchwork-lst@pengutronix.de
-Subject: [PATCH v2 7/8] clk: imx6: retain early UART clocks during kernel init
-Date: Fri,  4 Sep 2015 18:00:18 +0200
-Message-Id: <1441382419-4343-8-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
-References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bl2on0144.outbound.protection.outlook.com ([65.55.169.144]:28800
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752829AbbIIDyP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 8 Sep 2015 23:54:15 -0400
+From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
+To: Stuart Yoder <b08248@gmail.com>
+CC: Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Catalin marinas <Catalin.Marinas@arm.com>,
+	"bhupesh.linux@gmail.com" <bhupesh.linux@gmail.com>,
+	Will Deacon <will.deacon@arm.com>,
+	"olof@lixom.net" <olof@lixom.net>
+Subject: RE: [PATCH v2 01/10] arm64: Use generic Layerscape SoC family naming
+ & rename LS2085A to LS2080A
+Date: Wed, 9 Sep 2015 03:54:12 +0000
+Message-ID: <BY1PR0301MB130356EF4A122A23A370611E82520@BY1PR0301MB1303.namprd03.prod.outlook.com>
+References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+	<1441349872-4560-2-git-send-email-bhupesh.sharma@freescale.com>
+ <CALRxmdA=TF=N=6qELR78yhvt_uwEKyHih_08toD9oqCWYtsi0g@mail.gmail.com>
+In-Reply-To: <CALRxmdA=TF=N=6qELR78yhvt_uwEKyHih_08toD9oqCWYtsi0g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure to keep UART clocks enabled during kernel init if
-earlyprintk or earlycon are active.
-
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- drivers/clk/imx/clk-imx6q.c  | 6 ++++++
- drivers/clk/imx/clk-imx6sl.c | 6 ++++++
- drivers/clk/imx/clk-imx6sx.c | 6 ++++++
- 3 files changed, 18 insertions(+)
-
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index d046f8e43de8..a8a9603f4d71 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -130,6 +130,10 @@ static inline int clk_on_imx6dl(void)
- 	return of_machine_is_compatible("fsl,imx6dl");
- }
- 
-+static struct clk **uart_clks[] __initdata = { &clk[IMX6QDL_CLK_UART_IPG],
-+					       &clk[IMX6QDL_CLK_UART_SERIAL],
-+					       NULL };
-+
- static void __init imx6q_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
-@@ -534,5 +538,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	/* All existing boards with PCIe use LVDS1 */
- 	if (IS_ENABLED(CONFIG_PCI_IMX6))
- 		clk_set_parent(clk[IMX6QDL_CLK_LVDS1_SEL], clk[IMX6QDL_CLK_SATA_REF_100M]);
-+
-+	imx_register_uart_clocks(uart_clks);
- }
- CLK_OF_DECLARE(imx6q, "fsl,imx6q-ccm", imx6q_clocks_init);
-diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-index a0d4cf26cfa9..cbad1bb7d3de 100644
---- a/drivers/clk/imx/clk-imx6sl.c
-+++ b/drivers/clk/imx/clk-imx6sl.c
-@@ -184,6 +184,10 @@ void imx6sl_set_wait_clk(bool enter)
- 		imx6sl_enable_pll_arm(false);
- }
- 
-+static struct clk **uart_clks[] __initdata = { &clks[IMX6SL_CLK_UART],
-+					       &clks[IMX6SL_CLK_UART_SERIAL],
-+					       NULL };
-+
- static void __init imx6sl_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
-@@ -439,5 +443,7 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
- 
- 	clk_set_parent(clks[IMX6SL_CLK_LCDIF_AXI_SEL],
- 		       clks[IMX6SL_CLK_PLL2_PFD2]);
-+
-+	imx_register_uart_clocks(uart_clks);
- }
- CLK_OF_DECLARE(imx6sl, "fsl,imx6sl-ccm", imx6sl_clocks_init);
-diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-index 5b95c2c2bf52..b5bbcb2d3d8d 100644
---- a/drivers/clk/imx/clk-imx6sx.c
-+++ b/drivers/clk/imx/clk-imx6sx.c
-@@ -135,6 +135,10 @@ static u32 share_count_ssi1;
- static u32 share_count_ssi2;
- static u32 share_count_ssi3;
- 
-+static struct clk **uart_clks[] __initdata = { &clks[IMX6SX_CLK_UART_IPG],
-+					       &clks[IMX6SX_CLK_UART_SERIAL],
-+					       NULL };
-+
- static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
-@@ -557,5 +561,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 
- 	clk_set_parent(clks[IMX6SX_CLK_QSPI1_SEL], clks[IMX6SX_CLK_PLL2_BUS]);
- 	clk_set_parent(clks[IMX6SX_CLK_QSPI2_SEL], clks[IMX6SX_CLK_PLL2_BUS]);
-+
-+	imx_register_uart_clocks(uart_clks);
- }
- CLK_OF_DECLARE(imx6sx, "fsl,imx6sx-ccm", imx6sx_clocks_init);
--- 
-2.5.0
+PiBGcm9tOiBTdHVhcnQgWW9kZXIgW21haWx0bzpiMDgyNDhAZ21haWwuY29tXQ0KPiBTZW50OiBX
+ZWRuZXNkYXksIFNlcHRlbWJlciAwOSwgMjAxNSAxOjU1IEFNDQo+IE9uIEZyaSwgU2VwIDQsIDIw
+MTUgYXQgMTo1NyBBTSwgQmh1cGVzaCBTaGFybWENCj4gPGJodXBlc2guc2hhcm1hQGZyZWVzY2Fs
+ZS5jb20+IHdyb3RlOg0KPiA+IEZyZWVzY2FsZSB3aWxsIGJlIGEgY2h1cm5pbmcgb3V0IGEgaG9z
+dCBvZiBBUk12OCBiYXNlZCBTb0NzIHdoaWNoIHdpbGwNCj4gPiBiZSBiYXNlZCBvbiBhIHNpbWls
+YXIgb3ZlcmFsbCBTb0MgYXJjaGl0ZWN0dXJlLiBTbywgdGhpcyBwYXRjaA0KPiA+IGNvbnZlcnRz
+IHRoZSBleGlzdGluZyBpbmZyYXN0cnVjdHVyZSBpbiB0aGUgYXJtNjQvZHRzLCBhcm02NC9LY29u
+ZmlnDQo+ID4gYW5kIGFybTY0L2NvbmZpZ3MgdG8gdXNlIHRoZSBnZW5lcmljIGNvbnZlbnRpb24g
+QVJDSF9MQVlFUlNDQVBFIGluDQo+ID4gcGxhY2Ugb2YgdGhlIG1vcmUgc3BlY2lmaWMgRlNMX0xT
+MjA4NUEsIHRvIHNhdmUgY29kZSBkdXBsaWNhdGlvbg0KPiA+IGxhdGVyLW9uLg0KPiA+DQo+ID4g
+QWxzbyBGcmVlc2NhbGUgaXMgcmVuYW1pbmcgTFMyMDg1QSB0byBMUzIwODBBLg0KPiA+DQo+ID4g
+VGhpcyBwYXRjaCBhZGRyZXNzZXMgdGhlIGFib3ZlIHR3byBwb2ludHMuDQo+IA0KPiBTdWdnZXN0
+IHNwbGl0dGluZyB0aGlzIGludG8gMiBwYXRjaGVzIGJlY2F1c2UgdGhlc2UgMiBjaGFuZ2VzIGFy
+ZSByZWFsbHkNCj4gb3J0aG9nb25hbC0tIG9uZSBwYXRjaCBmb3IgdGhlIEFSQ0ggY29uZmlnIG5h
+bWUgY2hhbmdlLCBvbmUgZm9yIHRoZQ0KPiByZW5hbWUgbHMyMDg1YSB0byBsczIwODBhIHJlbmFt
+ZS4NCg0KSSB3YXMgc2VlaW5nIHRoZSBjb21waWxhdGlvbiBicmVha2luZyB1cCBhdCBwYXRjaCBs
+ZXZlbCBpZiBJIGRpZCBzby4NCldpbGwgdHJ5IHRvIHNlZSBpZiB0aGlzIGNhbiBiZSBhY2hpZXZl
+ZCB3aXRob3V0IGJyZWFraW5nIHVwIHRoZSBjb21waWxhdGlvbg0KZm9yIGluZGl2aWR1YWwgcGF0
+Y2hlcyBpbiB2My4NCiANCj4gTm90IHN1cmUgd2h5IHlvdSdyZSBkZXNjcmliaW5nIGl0IGFzICJj
+aHVybmluZyBvdXQgYSBob3N0IG9mIEFSTXY4IGJhc2VkDQo+IFNvQ3MiLg0KPiBKdXN0IGdldCB0
+byB0aGUgcG9pbnQtLSAgTGF5ZXJzY2FwZSBpcyBhbiBTb0MgZmFtaWx5IHNvIHdlJ3JlIGNoYW5n
+aW5nDQo+IGZyb20gdGhlIFNvQyBzcGVjaWZpYyBBUkNIIGtjb25maWcgb3B0aW9uIHRvIGEgbW9y
+ZSBnZW5lcmFsIFNvQyBmYW1pbHkNCj4gb3B0aW9uLg0KDQpUaGUgcHJvbG9ndWUgaXMgdG8gZGVz
+Y3JpYmUgdGhhdCBvdGhlciBBUk12OCBTb0NzIHdpdGggc2ltaWxhciBhcmNoaXRlY3R1cmUNCndp
+bGwgYmUgcHV0LW91dCwgd2hpY2ggd2lsbCBiZSBwYXJ0IG9mIHRoZSBvdmVyYWxsIExheWVyc2Nh
+cGUgZmFtaWx5LiANCg0KUmVnYXJkcywNCkJodXBlc2gNCg==
