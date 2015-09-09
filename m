@@ -1,316 +1,160 @@
-Return-Path: <acgzx@126.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v4 0/22] On-demand device probing
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+References: <1441628627-5143-1-git-send-email-tomeu.vizoso@collabora.com>
+ <CAL_Jsq+E31JaPcp5ELS_ztSqgSrK7U4OzB9xNcNz01Ayrrm+Yg@mail.gmail.com>
+ <CAAObsKDUzk-9H2_VrVmbc=ZeRaknGcjTMY3Mauh3JVZxLz4CiA@mail.gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	Felipe Balbi <balbi@ti.com>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	=?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	David Airlie <airlied@linux.ie>,
 	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/8] clk: rockchip: add new clock type and controller for rk3036
-Date: Tue, 29 Sep 2015 10:13:50 +0800
-Message-Id: <1443492833-15630-6-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1443492833-15630-1-git-send-email-zhengxing@rock-chips.com>
-References: <1443492833-15630-1-git-send-email-zhengxing@rock-chips.com>
-Sender: acgzx@126.com
+	Wolfram Sang <wsa@the-dreams.de>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Lee Jones <lee.jones@linaro.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+From: Rob Herring <robh@kernel.org>
+Message-ID: <55EF8C65.4030706@kernel.org>
+Date: Tue, 8 Sep 2015 20:33:25 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAAObsKDUzk-9H2_VrVmbc=ZeRaknGcjTMY3Mauh3JVZxLz4CiA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The rk3036's pll and clock are different with base on the rk3066(rk3188,
-rk3288, rk3368 use it), there are different adjust foctors and control
-registers, so these should be independent and separate from the series
-of rk3066s.
+On 09/08/2015 02:30 AM, Tomeu Vizoso wrote:
+> On 7 September 2015 at 22:50, Rob Herring <robherring2@gmail.com> wrote:
+>> On Mon, Sep 7, 2015 at 7:23 AM, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
+>>> Hello,
+>>>
+>>> I have a problem with the panel on my Tegra Chromebook taking longer
+>>> than expected to be ready during boot (Stéphane Marchesin reported what
+>>> is basically the same issue in [0]), and have looked into ordered
+>>> probing as a better way of solving this than moving nodes around in the
+>>> DT or playing with initcall levels and linking order.
+>>>
+>>> While reading the thread [1] that Alexander Holler started with his
+>>> series to make probing order deterministic, it occurred to me that it
+>>> should be possible to achieve the same by probing devices as they are
+>>> referenced by other devices.
+>>>
+>>> This basically reuses the information that is already implicit in the
+>>> probe() implementations, saving us from refactoring existing drivers or
+>>> adding information to DTBs.
+>>>
+>>> During review of v1 of this series Linus Walleij suggested that it
+>>> should be the device driver core to make sure that dependencies are
+>>> ready before probing a device. I gave this idea a try [2] but Mark Brown
+>>> pointed out to the logic duplication between the resource acquisition
+>>> and dependency discovery code paths (though I think it's fairly minor).
+>>>
+>>> To address that code duplication I experimented with Arnd's devm_probe
+>>> [3] concept of having drivers declare their dependencies instead of
+>>> acquiring them during probe, and while it worked [4], I don't think we
+>>> end up winning anything when compared to just probing devices on-demand
+>>> from resource getters.
+>>>
+>>> One remaining objection is to the "sprinkling" of calls to
+>>> of_device_probe() in the resource getters of each subsystem, but I think
+>>> it's the right thing to do given that the storage of resources is
+>>> currently subsystem-specific.
+>>>
+>>> We could avoid the above by moving resource storage into the core, but I
+>>> don't think there's a compelling case for that.
+>>>
+>>> I have tested this on boards with Tegra, iMX.6, Exynos, Rockchip and
+>>> OMAP SoCs, and these patches were enough to eliminate all the deferred
+>>> probes (except one in PandaBoard because omap_dma_system doesn't have a
+>>> firmware node as of yet).
+>>>
+>>> Have submitted a branch [5] with only these patches on top of thursday's
+>>> linux-next to kernelci.org and I don't see any issues that could be
+>>> caused by them. For some reason it currently has more passes than the
+>>> version of -next it's based on!
+>>>
+>>> With this series I get the kernel to output to the panel in 0.5s,
+>>> instead of 2.8s.
+>>>
+>>> Regards,
+>>>
+>>> Tomeu
+>>>
+>>> [0] http://lists.freedesktop.org/archives/dri-devel/2014-August/066527.html
+>>>
+>>> [1] https://lkml.org/lkml/2014/5/12/452
+>>>
+>>> [2] https://lkml.org/lkml/2015/6/17/305
+>>>
+>>> [3] http://article.gmane.org/gmane.linux.ports.arm.kernel/277689
+>>>
+>>> [4] https://lkml.org/lkml/2015/7/21/441a
+>>>
+>>> [5] https://git.collabora.com/cgit/user/tomeu/linux.git/log/?h=on-demand-probes-v6
+>>>
+>>> [6] http://kernelci.org/boot/all/job/collabora/kernel/v4.2-11902-g25d80c927f8b/
+>>>
+>>> [7] http://kernelci.org/boot/all/job/next/kernel/next-20150903/
+>>>
+>>> Changes in v4:
+>>> - Added bus.pre_probe callback so the probes of Primecell devices can be
+>>>   deferred if their device IDs cannot be yet read because of the clock
+>>>   driver not having probed when they are registered. Maybe this goes
+>>>   overboard and the matching information should be in the DT if there is
+>>>   one.
+>>
+>> Seems overboard to me or at least a separate problem.
+> 
+> It's a separate problem but this was preventing the series from
+> working on a few boards.
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
----
+What is the failure? Not booting? Fixing not working would certainly not
+be overboard.
 
-Changes in v3: None
+> 
+>> Most clocks have
+>> to be setup before the driver model simply because timers depend on
+>> clocks usually.
+> 
+> Yes, but in this case the apb clocks for the primecell devices are
+> implemented in a normal platform driver (vexpress_osc_driver), instead
+> of using CLK_OF_DECLARE.
 
- drivers/clk/rockchip/clk-pll.c |  243 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 242 insertions(+), 1 deletion(-)
+Okay.
 
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 7737a1d..fbd6cc8 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -2,6 +2,9 @@
-  * Copyright (c) 2014 MundoReader S.L.
-  * Author: Heiko Stuebner <heiko@sntech.de>
-  *
-+ * Copyright (c) 2015 Rockchip Electronics Co. Ltd.
-+ * Author: Xing Zheng <zhengxing@rock-chips.com>
-+ *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-  * the Free Software Foundation; either version 2 of the License, or
-@@ -19,6 +22,7 @@
- #include <linux/delay.h>
- #include <linux/clk-provider.h>
- #include <linux/regmap.h>
-+#include <linux/clk.h>
- #include "clk.h"
- 
- #define PLL_MODE_MASK		0x3
-@@ -108,6 +112,237 @@ static int rockchip_pll_wait_lock(struct rockchip_clk_pll *pll)
- }
- 
- /**
-+ * PLL used in RK3036
-+ */
-+
-+#define RK3036_PLLCON(i)			(i * 0x4)
-+#define RK3036_PLLCON0_FBDIV_MASK		0xfff
-+#define RK3036_PLLCON0_FBDIV_SHIFT		0
-+#define RK3036_PLLCON0_POSTDIV1_MASK		0x7
-+#define RK3036_PLLCON0_POSTDIV1_SHIFT		12
-+#define RK3036_PLLCON1_REFDIV_MASK		0x3f
-+#define RK3036_PLLCON1_REFDIV_SHIFT		0
-+#define RK3036_PLLCON1_POSTDIV2_MASK		0x7
-+#define RK3036_PLLCON1_POSTDIV2_SHIFT		6
-+#define RK3036_PLLCON1_DSMPD_MASK		0x1
-+#define RK3036_PLLCON1_DSMPD_SHIFT		12
-+#define RK3036_PLLCON2_FRAC_MASK		0xffffff
-+#define RK3036_PLLCON2_FRAC_SHIFT		0
-+
-+#define RK3036_PLLCON1_PWRDOWN			(1 << 13)
-+
-+static unsigned long rockchip_rk3036_pll_recalc_rate(struct clk_hw *hw,
-+						     unsigned long prate)
-+{
-+	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-+	unsigned int fbdiv, postdiv1, refdiv, postdiv2, dsmpd, frac;
-+	u64 rate64 = prate;
-+	u32 pllcon;
-+
-+	pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(0));
-+	fbdiv = ((pllcon >> RK3036_PLLCON0_FBDIV_SHIFT) & RK3036_PLLCON0_FBDIV_MASK);
-+	postdiv1 = ((pllcon >> RK3036_PLLCON0_POSTDIV1_SHIFT) & RK3036_PLLCON0_POSTDIV1_MASK);
-+
-+	pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(1));
-+	refdiv = ((pllcon >> RK3036_PLLCON1_REFDIV_SHIFT) & RK3036_PLLCON1_REFDIV_MASK);
-+	postdiv2 = ((pllcon >> RK3036_PLLCON1_POSTDIV2_SHIFT) & RK3036_PLLCON1_POSTDIV2_MASK);
-+	dsmpd = ((pllcon >> RK3036_PLLCON1_DSMPD_SHIFT) & RK3036_PLLCON1_DSMPD_MASK);
-+
-+	pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(2));
-+	frac = ((pllcon >> RK3036_PLLCON2_FRAC_SHIFT) & RK3036_PLLCON2_FRAC_MASK);
-+
-+	rate64 *= fbdiv;
-+	do_div(rate64, refdiv);
-+
-+	if (dsmpd == 0) {
-+		/* fractional mode */
-+		u64 frac_rate64 = prate * frac;
-+
-+		do_div(frac_rate64, refdiv);
-+		rate64 += frac_rate64 >> 24;
-+	}
-+
-+	do_div(rate64, postdiv1);
-+	do_div(rate64, postdiv2);
-+
-+	return (unsigned long)rate64;
-+}
-+
-+static int rockchip_rk3036_pll_set_rate(struct clk_hw *hw, unsigned long drate,
-+					unsigned long prate)
-+{
-+	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-+	const struct rockchip_pll_rate_table *rate;
-+	unsigned long old_rate = rockchip_rk3036_pll_recalc_rate(hw, prate);
-+	struct regmap *grf = rockchip_clk_get_grf();
-+	struct clk_mux *pll_mux = &pll->pll_mux;
-+	const struct clk_ops *pll_mux_ops = pll->pll_mux_ops;
-+	u32 pllcon;
-+	int rate_change_remuxed = 0;
-+	int cur_parent;
-+	int ret;
-+
-+	if (IS_ERR(grf)) {
-+		pr_debug("%s: grf regmap not available, aborting rate change\n",
-+			 __func__);
-+		return PTR_ERR(grf);
-+	}
-+
-+	pr_debug("%s: changing %s from %lu to %lu with a parent rate of %lu\n",
-+		 __func__, __clk_get_name(hw->clk), old_rate, drate, prate);
-+
-+	/* Get required rate settings from table */
-+	rate = rockchip_get_pll_settings(pll, drate);
-+	if (!rate) {
-+		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
-+			drate, __clk_get_name(hw->clk));
-+		return -EINVAL;
-+	}
-+
-+	pr_debug("%s: rate settings for %lu fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
-+		__func__, rate->rate,
-+		rate->fbdiv, rate->postdiv1, rate->refdiv, rate->postdiv2, rate->dsmpd, rate->frac);
-+
-+	cur_parent = pll_mux_ops->get_parent(&pll_mux->hw);
-+	if (cur_parent == PLL_MODE_NORM) {
-+		pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_SLOW);
-+		rate_change_remuxed = 1;
-+	}
-+
-+	/* update pll values */
-+	writel_relaxed(HIWORD_UPDATE(rate->fbdiv, RK3036_PLLCON0_FBDIV_MASK,
-+					  RK3036_PLLCON0_FBDIV_SHIFT) |
-+		       HIWORD_UPDATE(rate->postdiv1, RK3036_PLLCON0_POSTDIV1_MASK,
-+					     RK3036_PLLCON0_POSTDIV1_SHIFT),
-+		       pll->reg_base + RK3036_PLLCON(0));
-+
-+	writel_relaxed(HIWORD_UPDATE(rate->refdiv, RK3036_PLLCON1_REFDIV_MASK,
-+						   RK3036_PLLCON1_REFDIV_SHIFT) |
-+		       HIWORD_UPDATE(rate->postdiv2, RK3036_PLLCON1_POSTDIV2_MASK,
-+						     RK3036_PLLCON1_POSTDIV2_SHIFT) |
-+		       HIWORD_UPDATE(rate->dsmpd, RK3036_PLLCON1_DSMPD_MASK,
-+						  RK3036_PLLCON1_DSMPD_SHIFT),
-+		       pll->reg_base + RK3036_PLLCON(1));
-+
-+	/* GPLL CON2 is not HIWORD_MASK */
-+	pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(2));
-+	pllcon &= ~(RK3036_PLLCON2_FRAC_MASK << RK3036_PLLCON2_FRAC_SHIFT);
-+	pllcon |= rate->frac << RK3036_PLLCON2_FRAC_SHIFT;
-+	writel_relaxed(pllcon, pll->reg_base + RK3036_PLLCON(2));
-+
-+	/* wait for the pll to lock */
-+	ret = rockchip_pll_wait_lock(pll);
-+	if (ret) {
-+		pr_warn("%s: pll did not lock, trying to restore old rate %lu\n",
-+			__func__, old_rate);
-+		rockchip_rk3036_pll_set_rate(hw, old_rate, prate);
-+	}
-+
-+	if (rate_change_remuxed)
-+		pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_NORM);
-+
-+	return ret;
-+}
-+
-+static int rockchip_rk3036_pll_enable(struct clk_hw *hw)
-+{
-+	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-+
-+	writel(HIWORD_UPDATE(0, RK3036_PLLCON1_PWRDOWN, 0),
-+	       pll->reg_base + RK3036_PLLCON(1));
-+
-+	return 0;
-+}
-+
-+static void rockchip_rk3036_pll_disable(struct clk_hw *hw)
-+{
-+	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-+
-+	writel(HIWORD_UPDATE(RK3036_PLLCON1_PWRDOWN,
-+			     RK3036_PLLCON1_PWRDOWN, 0),
-+	       pll->reg_base + RK3036_PLLCON(1));
-+}
-+
-+static int rockchip_rk3036_pll_is_enabled(struct clk_hw *hw)
-+{
-+	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-+	u32 pllcon = readl(pll->reg_base + RK3036_PLLCON(1));
-+
-+	return !(pllcon & RK3036_PLLCON1_PWRDOWN);
-+}
-+
-+static void rockchip_rk3036_pll_init(struct clk_hw *hw)
-+{
-+	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
-+	const struct rockchip_pll_rate_table *rate;
-+	unsigned int fbdiv, postdiv1, refdiv, postdiv2, dsmpd, frac;
-+	unsigned long drate;
-+	u32 pllcon;
-+
-+	if (!(pll->flags & ROCKCHIP_PLL_SYNC_RATE))
-+		return;
-+
-+	drate = clk_hw_get_rate(hw);
-+	rate = rockchip_get_pll_settings(pll, drate);
-+
-+	/* when no rate setting for the current rate, rely on clk_set_rate */
-+	if (!rate)
-+		return;
-+
-+	pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(0));
-+	fbdiv = ((pllcon >> RK3036_PLLCON0_FBDIV_SHIFT) & RK3036_PLLCON0_FBDIV_MASK);
-+	postdiv1 = ((pllcon >> RK3036_PLLCON0_POSTDIV1_SHIFT) & RK3036_PLLCON0_POSTDIV1_MASK);
-+
-+	pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(1));
-+	refdiv = ((pllcon >> RK3036_PLLCON1_REFDIV_SHIFT) & RK3036_PLLCON1_REFDIV_MASK);
-+	postdiv2 = ((pllcon >> RK3036_PLLCON1_POSTDIV2_SHIFT) & RK3036_PLLCON1_POSTDIV2_MASK);
-+	dsmpd = ((pllcon >> RK3036_PLLCON1_DSMPD_SHIFT) & RK3036_PLLCON1_DSMPD_MASK);
-+
-+	pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(2));
-+	frac = ((pllcon >> RK3036_PLLCON2_FRAC_SHIFT) & RK3036_PLLCON2_FRAC_MASK);
-+
-+	pr_debug("%s: pll %s@%lu: Hz\n", __func__, __clk_get_name(hw->clk), drate);
-+	pr_debug("old - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
-+		fbdiv, postdiv1, refdiv, postdiv2, dsmpd, frac);
-+	pr_debug("new - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
-+		rate->fbdiv, rate->postdiv1, rate->refdiv, rate->postdiv2, rate->dsmpd, rate->frac);
-+
-+	if (rate->fbdiv != fbdiv || rate->postdiv1 != postdiv1 || rate->refdiv != refdiv ||
-+		rate->postdiv2 != postdiv2 || rate->dsmpd != dsmpd || rate->frac != frac) {
-+		struct clk *parent = clk_get_parent(hw->clk);
-+		unsigned long prate;
-+
-+		if (!parent) {
-+			pr_warn("%s: parent of %s not available\n",
-+				__func__, __clk_get_name(hw->clk));
-+			return;
-+		}
-+
-+		pr_debug("%s: pll %s: rate params do not match rate table, adjusting\n",
-+			 __func__, __clk_get_name(hw->clk));
-+		prate = clk_get_rate(parent);
-+		rockchip_rk3036_pll_set_rate(hw, drate, prate);
-+	}
-+}
-+
-+static const struct clk_ops rockchip_rk3036_pll_clk_norate_ops = {
-+	.recalc_rate = rockchip_rk3036_pll_recalc_rate,
-+	.enable = rockchip_rk3036_pll_enable,
-+	.disable = rockchip_rk3036_pll_disable,
-+	.is_enabled = rockchip_rk3036_pll_is_enabled,
-+};
-+
-+static const struct clk_ops rockchip_rk3036_pll_clk_ops = {
-+	.recalc_rate = rockchip_rk3036_pll_recalc_rate,
-+	.round_rate = rockchip_pll_round_rate,
-+	.set_rate = rockchip_rk3036_pll_set_rate,
-+	.enable = rockchip_rk3036_pll_enable,
-+	.disable = rockchip_rk3036_pll_disable,
-+	.is_enabled = rockchip_rk3036_pll_is_enabled,
-+	.init = rockchip_rk3036_pll_init,
-+};
-+
-+/**
-  * PLL used in RK3066, RK3188 and RK3288
-  */
- 
-@@ -363,7 +598,7 @@ struct clk *rockchip_clk_register_pll(enum rockchip_pll_type pll_type,
- 	pll_mux->lock = lock;
- 	pll_mux->hw.init = &init;
- 
--	if (pll_type == pll_rk3066)
-+	if (pll_type == pll_rk3036 || pll_type == pll_rk3066)
- 		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
- 
- 	/* the actual muxing is xin24m, pll-output, xin32k */
-@@ -408,6 +643,12 @@ struct clk *rockchip_clk_register_pll(enum rockchip_pll_type pll_type,
- 	}
- 
- 	switch (pll_type) {
-+	case pll_rk3036:
-+		if (!pll->rate_table)
-+			init.ops = &rockchip_rk3036_pll_clk_norate_ops;
-+		else
-+			init.ops = &rockchip_rk3036_pll_clk_ops;
-+		break;
- 	case pll_rk3066:
- 		if (!pll->rate_table)
- 			init.ops = &rockchip_rk3066_pll_clk_norate_ops;
--- 
-1.7.9.5
+Rob
+
