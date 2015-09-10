@@ -1,104 +1,43 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <alpine.LNX.2.00.1509080953390.31192@localhost.localdomain>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
-	<1435094387-20146-8-git-send-email-pawelo@king.net.pl>
-	<CACRpkdYHBt7YJWM3Bg8ENfw7uL4fuENqW+g8YaO+P6UPBCX4HQ@mail.gmail.com>
-	<alpine.LNX.2.00.1509080953390.31192@localhost.localdomain>
-Date: Tue, 8 Sep 2015 16:28:57 +0200
-Message-ID: <CACRpkdZ_6eXWO+3NUz-9ai5nBaKa_HyAmwYHGU46qrmfmEwyEw@mail.gmail.com>
-Subject: Re: [PATCH 7/9] arm: twr-k70f120m: IOMUX driver for Kinetis SoC
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Paul Osmialowski <pawelo@king.net.pl>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Jingchang Lu <jingchang.lu@freescale.com>,
-	Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nathan Lynch <nathan_lynch@mentor.com>,
-	Nicolas Pitre <nico@linaro.org>,
-	Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
-	Olof Johansson <olof@lixom.net>,
-	Paul Bolle <pebolle@tiscali.nl>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Stefan Agner <stefan@agner.ch>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:25069 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750727AbbIJEIy (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 10 Sep 2015 00:08:54 -0400
+Subject: Re: [PATCH 11/11] clk: samsung: exynos7: Add required clock tree for
+ UFS
+To: Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+ <1441366637-28001-12-git-send-email-alim.akhtar@samsung.com>
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+	mturquette@baylibre.com, amit.daniel@samsung.com,
+	gautam.vivek@samsung.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <55F10253.6000308@samsung.com>
+Date: Thu, 10 Sep 2015 13:08:51 +0900
+MIME-version: 1.0
+In-reply-to: <1441366637-28001-12-git-send-email-alim.akhtar@samsung.com>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 8, 2015 at 10:04 AM, Paul Osmialowski <pawelo@king.net.pl> wrote:
-> On Tue, 14 Jul 2015, Linus Walleij wrote:
->
->> I want Shawn and Sascha to look at this as they worked with
->> other Freescale pin controllers. Especially I want to know if this
->> is a sibling to the other Freescale controllers or a separate hardware.
->>
->> If it is *not* a sibling I will *insist* that it use more generic pin
->> control bindings and move away from the older Freescale-specific
->> stuff.
->
-> No one answered me about that. However, I looked at other Freescale
-> pinctrl drivers and realised that no one of them (IMX, IMX1, MXS) is
-> similar to what I need to do for Kinetis, also positions of configuration
-> bits differ significantly.
+On 04.09.2015 20:37, Alim Akhtar wrote:
+> Adding required mux/div/gate clocks for UFS controller
+> present on Exynos7.
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos7.c       |  116 +++++++++++++++++++++++++++++++
+>  include/dt-bindings/clock/exynos7-clk.h |   24 ++++++-
+>  2 files changed, 138 insertions(+), 2 deletions(-)
+> 
 
-OK I insist on using the generic bindings then.
+My previous comments are fixed, rest looks good:
 
->> There exist generic pin config bindings, see
->> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
->>
->> I suggest to to function+group paring and then use generic pin config
->> with this driver unless it is a very close sibling to the existing Freescale
->> pin controllers.
->>
->> Hint: if it is a sibling, it should share code with them.
->>
->> There are several drivers doing generic pin control/pin config in the kernel
->> tree.
->
-> I tried to analyze few of the drivers (e.g. zynq family) and can't find
-> how can I assing clock gate (clock device) to each port (PORTA, PORTB,
-> PORTC,...) which is required for Kinetis. Is generic pin control capable
-> to express that requirement or is it a time to desing my own pinctrl
-> driver (maybe somewhat improved than the one I presented so far)?
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-That has nothing to do with whether you use generic pinconf or not.
-I imagine if a pinctrl unit contains several blocks with individual
-clocks you can either:
+Best regards,
+Krzysztof
 
-- Let each block/bank be a device node (this is common) and assign
-  each a clocks = <&clock>;
 
-- Keep one node and assign an array of clocks, affected block indicated
-  by the index.
-  clocks = <&clk1>, <&clk2>, <&clk3>, ... <clkN>;
-  This property is in pluralis for this reason I guess.
-
-> This pinctrl component is somwehat critical part of BSP. Until it is not
-> sorted, I don't see a point in releasing what was developed so far.
-
-True that, you need infrastructure first. The more important that it is
-as good as possible.
-
-Yours,
-Linus Walleij
