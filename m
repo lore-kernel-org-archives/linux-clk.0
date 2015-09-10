@@ -1,105 +1,82 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] irqchip: gic: Document optional Clock and Power
- Domain properties
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>
-References: <1442261204-30931-1-git-send-email-geert+renesas@glider.be>
- <1442261204-30931-3-git-send-email-geert+renesas@glider.be>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org
-From: Rob Herring <robh@kernel.org>
-Message-ID: <55F869FD.4090900@kernel.org>
-Date: Tue, 15 Sep 2015 13:57:01 -0500
-MIME-Version: 1.0
-In-Reply-To: <1442261204-30931-3-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <alim.akhtar@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+ k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
+ gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Subject: [PATCH v2 10/12] clk: samsung: exynos7: Corrects CMU_FSYS1 clocks names
+Date: Thu, 10 Sep 2015 14:14:35 +0530
+Message-id: <1441874677-24148-11-git-send-email-alim.akhtar@samsung.com>
+In-reply-to: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
+References: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/14/2015 03:06 PM, Geert Uytterhoeven wrote:
-> Depending on the GIC variant, the GIC module has one or more clock
-> inputs. Document the optional "clocks" and "clock-names" properties,
-> and their possible values, based on the Technical Reference Manuals.
-> optional.
-> 
-> Add the optional "power-domains" property.
-> 
-> This will allow to describe in DT the relationship between the GIC and
-> the Clock and/or Power Domain topology on SoCs where this is relevant
-> and needed for proper operation.
-> 
-> Note: As the current GIC driver doesn't support Runtime PM yet, PM
-> Domain constraints must be handled elsewhere in e.g. platform code.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Note: v1 was Acked-by: Rob Herring <robh@kernel.org>, but I didn't add
->       it, due to the addition of clock-names.
+This patch renames CMU_FSYS1 clocks names to match with user manual.
+And also adds missing gate clock for aclk_fsys1_200.
 
-For both: ack.
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos7.c       |   16 ++++++++++------
+ include/dt-bindings/clock/exynos7-clk.h |    3 ++-
+ 2 files changed, 12 insertions(+), 7 deletions(-)
 
-> 
-> v2:
->   - Add "clock-names",
->   - Document clock inputs on various GIC variants.
-> 
-> Clock inputs are based on the following documentation:
->   - "ARM11 MPCore Processor Technical Reference Manual" (r2p0),
->   - "Cortex-A9 MPCore Technical Reference Manual" (r4p1, r2p0),
->   - "Cortex-A15 Technical Reference Manual" (r4p0, r2p0),
->   - "CoreLink GIC-400 Generic Interrupt Controller Technical Reference
->     Manual" (r0p1, r0p0),
->   - "PrimeCell Generic Interrupt Controller (PL390) Technical Reference
->     Manual" (r0p0).
-> 
-> I could not find clock input information in:
->   - "ARM1176JZF Development Chip Technical Reference Manual" (r0p0),
->   - "Cortex-A7 MPCore processors" (r0p5, r0p3).
-> 
-> Other:
->   - "brcm,brahma-b15-gic" seems to be always used together with
->     "arm,cortex-a15-gic".
-> 
-> No access to datasheets:
->   - "qcom,msm-8660-qgic",
->   - "qcom,msm-qgic2".
-> ---
->  Documentation/devicetree/bindings/arm/gic.txt | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/gic.txt b/Documentation/devicetree/bindings/arm/gic.txt
-> index 24742853ba460223..cc56021eb60babea 100644
-> --- a/Documentation/devicetree/bindings/arm/gic.txt
-> +++ b/Documentation/devicetree/bindings/arm/gic.txt
-> @@ -59,6 +59,21 @@ Optional
->    regions, used when the GIC doesn't have banked registers. The offset is
->    cpu-offset * cpu-nr.
->  
-> +- clocks        : List of phandle and clock-specific pairs, one for each entry
-> +  in clock-names.
-> +- clock-names   : List of names for the GIC clock input(s). Valid clock names
-> +  depend on the GIC variant:
-> +	"ic_clk" (for "arm,arm11mp-gic")
-> +	"PERIPHCLKEN" (for "arm,cortex-a15-gic")
-> +	"PERIPHCLK", "PERIPHCLKEN" (for "arm,cortex-a9-gic")
-> +	"clk" (for "arm,gic-400")
-> +	"gclk" (for "arm,pl390")
-> +
-> +- power-domains : A phandle and PM domain specifier as defined by bindings of
-> +		  the power controller specified by phandle, used when the GIC
-> +		  is part of a Power or Clock Domain.
-> +
-> +
->  Example:
->  
->  	intc: interrupt-controller@fff11000 {
-> 
-
+diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+index bf4699c..189a453 100644
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -517,6 +517,8 @@ static struct samsung_gate_clock top1_gate_clks[] __initdata = {
+ 
+ 	GATE(CLK_ACLK_FSYS0_200, "aclk_fsys0_200", "dout_aclk_fsys0_200",
+ 		ENABLE_ACLK_TOP13, 28, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_ACLK_FSYS1_200, "aclk_fsys1_200", "dout_aclk_fsys1_200",
++		ENABLE_ACLK_TOP13, 24, CLK_SET_RATE_PARENT, 0),
+ };
+ 
+ static struct samsung_fixed_factor_clock top1_fixed_factor_clks[] __initdata = {
+@@ -959,9 +961,9 @@ CLK_OF_DECLARE(exynos7_clk_fsys0, "samsung,exynos7-clock-fsys0",
+ /*
+  * List of parent clocks for Muxes in CMU_FSYS1
+  */
+-PNAME(mout_aclk_fsys1_200_p)	= { "fin_pll",  "dout_aclk_fsys1_200" };
+-PNAME(mout_sclk_mmc0_p)		= { "fin_pll", "sclk_mmc0" };
+-PNAME(mout_sclk_mmc1_p)		= { "fin_pll", "sclk_mmc1" };
++PNAME(mout_aclk_fsys1_200_user_p)	= { "fin_pll", "aclk_fsys1_200" };
++PNAME(mout_sclk_mmc0_user_p)		= { "fin_pll", "sclk_mmc0" };
++PNAME(mout_sclk_mmc1_user_p)		= { "fin_pll", "sclk_mmc1" };
+ 
+ static unsigned long fsys1_clk_regs[] __initdata = {
+ 	MUX_SEL_FSYS10,
+@@ -970,11 +972,13 @@ static unsigned long fsys1_clk_regs[] __initdata = {
+ };
+ 
+ static struct samsung_mux_clock fsys1_mux_clks[] __initdata = {
+-	MUX(0, "mout_aclk_fsys1_200_user", mout_aclk_fsys1_200_p,
++	MUX(0, "mout_aclk_fsys1_200_user", mout_aclk_fsys1_200_user_p,
+ 		MUX_SEL_FSYS10, 28, 1),
+ 
+-	MUX(0, "mout_sclk_mmc1_user", mout_sclk_mmc1_p, MUX_SEL_FSYS11, 24, 1),
+-	MUX(0, "mout_sclk_mmc0_user", mout_sclk_mmc0_p, MUX_SEL_FSYS11, 28, 1),
++	MUX(0, "mout_sclk_mmc1_user", mout_sclk_mmc1_user_p,
++		MUX_SEL_FSYS11, 24, 1),
++	MUX(0, "mout_sclk_mmc0_user", mout_sclk_mmc0_user_p,
++		MUX_SEL_FSYS11, 28, 1),
+ };
+ 
+ static struct samsung_gate_clock fsys1_gate_clks[] __initdata = {
+diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
+index 667faed..acdf2e5 100644
+--- a/include/dt-bindings/clock/exynos7-clk.h
++++ b/include/dt-bindings/clock/exynos7-clk.h
+@@ -63,7 +63,8 @@
+ #define CLK_SCLK_MMC1			7
+ #define CLK_SCLK_MMC0			8
+ #define CLK_ACLK_FSYS0_200		9
+-#define TOP1_NR_CLK			10
++#define CLK_ACLK_FSYS1_200		10
++#define TOP1_NR_CLK			11
+ 
+ /* CCORE */
+ #define PCLK_RTC			1
+-- 
+1.7.10.4
