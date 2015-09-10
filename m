@@ -1,50 +1,44 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <mark.rutland@arm.com>
-CC: <wsa@the-dreams.de>, <wim@iguana.be>, <corbet@lwn.net>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<Mingkai.Hu@freescale.com>, <Shaohui.Xie@freescale.com>,
-	<Wenbin.Song@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <leoli@freescale.com>, Hou Zhiqiang
-	<B48286@freescale.com>
-Subject: [PATCH V2 1/6] i2c: Add i2c support to Freescale Layerscape platforms
-Date: Tue, 22 Sep 2015 20:34:00 +0800
-Message-ID: <1442925245-39246-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <alim.akhtar@samsung.com>
+Message-id: <55F14504.8040001@samsung.com>
+Date: Thu, 10 Sep 2015 14:23:24 +0530
+From: Alim Akhtar <alim.akhtar@samsung.com>
+MIME-version: 1.0
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+ mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com,
+ sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 11/11] clk: samsung: exynos7: Add required clock tree for
+ UFS
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+ <1441366637-28001-12-git-send-email-alim.akhtar@samsung.com>
+ <55F10253.6000308@samsung.com>
+In-reply-to: <55F10253.6000308@samsung.com>
+Content-type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shaohui Xie <Shaohui.Xie@freescale.com>
+Hi Krzysztof,
 
-Modify the I2C_IMX config to support to Layerscape platforms.
-
-Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
-Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
----
- drivers/i2c/busses/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 08b8617..14147ec 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -582,10 +582,10 @@ config I2C_IMG
- 
- config I2C_IMX
- 	tristate "IMX I2C interface"
--	depends on ARCH_MXC
-+	depends on ARCH_MXC || ARCH_LAYERSCAPE
- 	help
- 	  Say Y here if you want to use the IIC bus controller on
--	  the Freescale i.MX/MXC processors.
-+	  the Freescale i.MX/MXC or Layerscape processors.
- 
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called i2c-imx.
--- 
-2.1.0.27.g96db324
+On 09/10/2015 09:38 AM, Krzysztof Kozlowski wrote:
+> On 04.09.2015 20:37, Alim Akhtar wrote:
+>> Adding required mux/div/gate clocks for UFS controller
+>> present on Exynos7.
+>>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> ---
+>>   drivers/clk/samsung/clk-exynos7.c       |  116 +++++++++++++++++++++++++++++++
+>>   include/dt-bindings/clock/exynos7-clk.h |   24 ++++++-
+>>   2 files changed, 138 insertions(+), 2 deletions(-)
+>>
+>
+> My previous comments are fixed, rest looks good:
+>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
+Thanks for your time and review, have re-send V2 of whole series.
+Please take a look.
+> Best regards,
+> Krzysztof
+>
+>
+>
