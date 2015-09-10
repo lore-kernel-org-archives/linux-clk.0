@@ -1,39 +1,33 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 24 Sep 2015 05:17:38 -0700
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Victorien Vedrine <victorien.vedrine@ophrys.net>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com, shawn.guo@linaro.org,
-	"Fabio.Estevam@freescale.com" <Fabio.Estevam@freescale.com>,
-	Marek Vasut <marex@denx.de>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2] clk:mxs: Fix bug on frequency divider
-Message-ID: <20150924121738.GP3529@tiger>
-References: <55BBB1AC.6070102@codeaurora.org>
- <1441010707-17178-1-git-send-email-victorien.vedrine@ophrys.net>
- <55FBBB6D.4010805@i2se.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 10 Sep 2015 13:56:16 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org
+Subject: Re: [PATCH] clk: rockchip: handle critical clocks after registrering
+ all clocks
+Message-ID: <20150910205616.GD15099@codeaurora.org>
+References: <7786473.0oe27txQFN@phil>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <55FBBB6D.4010805@i2se.com>
+In-Reply-To: <7786473.0oe27txQFN@phil>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 18, 2015 at 09:21:17AM +0200, Stefan Wahren wrote:
-> +Shawn's new address
-> +linux-arm-kernel
+On 08/21, Heiko Stuebner wrote:
+> Currently the registration of critical clocks is done in the function
+> shared between rk3066 and rk3188 clock trees. That results in them
+> getting handled maybe before all of them are registered.
 > 
-> > On drivers/clk/mxs/clk-frac.c, the function clk_frac_round_rate returned a bad
-> > result. The division before multiplication computes a wrong value ; the
-> > calculation is inverted to fix the problem. The second issue is that the exact
-> > rate have decimals and they are truncate. The consequence is that the function
-> > clk_frac_set_rate (which use the result of clk_frac_round_rate) computes a
-> > wrong value for the register (the rate generated can be closer to the desired
-> > rate). The correction is : if there is decimal to the result, it is rounded to
-> > the next larger integer.
-> > On drivers/clk/mxs/clk-frac.c, the function clk_frac_recalc_rate returned
-> > a bad result. The multiplication is made before the division to compute a
-> > correct value.
-> >
-> > Signed-off-by: Victorien Vedrine <victorien.vedrine@ophrys.net>
+> Therefore move the critical clock handling down to the end of the soc-
+> specific clock registration function, so that all clocks are registered
+> before they're maybe handled as critical clock.
+> 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+Applied to clk-fixes
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
