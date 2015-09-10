@@ -1,141 +1,116 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1441628627-5143-1-git-send-email-tomeu.vizoso@collabora.com>
-References: <1441628627-5143-1-git-send-email-tomeu.vizoso@collabora.com>
-From: Rob Herring <robherring2@gmail.com>
-Date: Mon, 7 Sep 2015 15:50:44 -0500
-Message-ID: <CAL_Jsq+E31JaPcp5ELS_ztSqgSrK7U4OzB9xNcNz01Ayrrm+Yg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/22] On-demand device probing
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:35407 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752067AbbIJNz3 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 10 Sep 2015 09:55:29 -0400
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>,
 	Stephen Warren <swarren@wwwdotorg.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Mark Brown <broonie@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>,
-	Felipe Balbi <balbi@ti.com>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	=?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Mikko Perttunen <mikko.perttunen@kapsi.fi>,
+	Tuomas Tynkkynen <ttynkkynen@nvidia.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] clk: tegra: dfll: Properly protect OPP list
+Date: Thu, 10 Sep 2015 15:55:21 +0200
+Message-Id: <1441893321-4563-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 7, 2015 at 7:23 AM, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
-> Hello,
->
-> I have a problem with the panel on my Tegra Chromebook taking longer
-> than expected to be ready during boot (Stéphane Marchesin reported what
-> is basically the same issue in [0]), and have looked into ordered
-> probing as a better way of solving this than moving nodes around in the
-> DT or playing with initcall levels and linking order.
->
-> While reading the thread [1] that Alexander Holler started with his
-> series to make probing order deterministic, it occurred to me that it
-> should be possible to achieve the same by probing devices as they are
-> referenced by other devices.
->
-> This basically reuses the information that is already implicit in the
-> probe() implementations, saving us from refactoring existing drivers or
-> adding information to DTBs.
->
-> During review of v1 of this series Linus Walleij suggested that it
-> should be the device driver core to make sure that dependencies are
-> ready before probing a device. I gave this idea a try [2] but Mark Brown
-> pointed out to the logic duplication between the resource acquisition
-> and dependency discovery code paths (though I think it's fairly minor).
->
-> To address that code duplication I experimented with Arnd's devm_probe
-> [3] concept of having drivers declare their dependencies instead of
-> acquiring them during probe, and while it worked [4], I don't think we
-> end up winning anything when compared to just probing devices on-demand
-> from resource getters.
->
-> One remaining objection is to the "sprinkling" of calls to
-> of_device_probe() in the resource getters of each subsystem, but I think
-> it's the right thing to do given that the storage of resources is
-> currently subsystem-specific.
->
-> We could avoid the above by moving resource storage into the core, but I
-> don't think there's a compelling case for that.
->
-> I have tested this on boards with Tegra, iMX.6, Exynos, Rockchip and
-> OMAP SoCs, and these patches were enough to eliminate all the deferred
-> probes (except one in PandaBoard because omap_dma_system doesn't have a
-> firmware node as of yet).
->
-> Have submitted a branch [5] with only these patches on top of thursday's
-> linux-next to kernelci.org and I don't see any issues that could be
-> caused by them. For some reason it currently has more passes than the
-> version of -next it's based on!
->
-> With this series I get the kernel to output to the panel in 0.5s,
-> instead of 2.8s.
->
-> Regards,
->
-> Tomeu
->
-> [0] http://lists.freedesktop.org/archives/dri-devel/2014-August/066527.html
->
-> [1] https://lkml.org/lkml/2014/5/12/452
->
-> [2] https://lkml.org/lkml/2015/6/17/305
->
-> [3] http://article.gmane.org/gmane.linux.ports.arm.kernel/277689
->
-> [4] https://lkml.org/lkml/2015/7/21/441a
->
-> [5] https://git.collabora.com/cgit/user/tomeu/linux.git/log/?h=on-demand-probes-v6
->
-> [6] http://kernelci.org/boot/all/job/collabora/kernel/v4.2-11902-g25d80c927f8b/
->
-> [7] http://kernelci.org/boot/all/job/next/kernel/next-20150903/
->
-> Changes in v4:
-> - Added bus.pre_probe callback so the probes of Primecell devices can be
->   deferred if their device IDs cannot be yet read because of the clock
->   driver not having probed when they are registered. Maybe this goes
->   overboard and the matching information should be in the DT if there is
->   one.
+From: Thierry Reding <treding@nvidia.com>
 
-Seems overboard to me or at least a separate problem. Most clocks have
-to be setup before the driver model simply because timers depend on
-clocks usually.
+The OPP list needs to be protected against concurrent accesses. Using
+simple RCU read locks does the trick and gets rid of the following
+lockdep warning:
 
-Rob
+	[    9.095873] ===============================
+	[    9.100050] [ INFO: suspicious RCU usage. ]
+	[    9.104313] 4.2.0-next-20150908 #1 Not tainted
+	[    9.111187] -------------------------------
+	[    9.115428] drivers/base/power/opp.c:460 Missing rcu_read_lock() or dev_opp_list_lock protection!
+	[    9.128519]
+	[    9.128519] other info that might help us debug this:
+	[    9.128519]
+	[    9.136651]
+	[    9.136651] rcu_scheduler_active = 1, debug_locks = 0
+	[    9.143222] 4 locks held by kworker/u8:0/6:
+	[    9.147409]  #0:  ("%s""deferwq"){++++.+}, at: [<c0040d8c>] process_one_work+0x118/0x4bc
+	[    9.155610]  #1:  (deferred_probe_work){+.+.+.}, at: [<c0040d8c>] process_one_work+0x118/0x4bc
+	[    9.164335]  #2:  (&dev->mutex){......}, at: [<c03b8194>] __device_attach+0x20/0x118
+	[    9.172134]  #3:  (prepare_lock){+.+...}, at: [<c054bc08>] clk_prepare_lock+0x10/0xf8
+	[    9.180365]
+	[    9.180365] stack backtrace:
+	[    9.184764] CPU: 2 PID: 6 Comm: kworker/u8:0 Not tainted 4.2.0-next-20150908 #1
+	[    9.194536] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+	[    9.200809] Workqueue: deferwq deferred_probe_work_func
+	[    9.206115] [<c001802c>] (unwind_backtrace) from [<c00135a4>] (show_stack+0x10/0x14)
+	[    9.213918] [<c00135a4>] (show_stack) from [<c02a8418>] (dump_stack+0x94/0xd4)
+	[    9.221142] [<c02a8418>] (dump_stack) from [<c03c6f6c>] (dev_pm_opp_find_freq_ceil+0x108/0x114)
+	[    9.229903] [<c03c6f6c>] (dev_pm_opp_find_freq_ceil) from [<c0551a3c>] (dfll_calculate_rate_request+0xb8/0x170)
+	[    9.240041] [<c0551a3c>] (dfll_calculate_rate_request) from [<c0551b10>] (dfll_clk_round_rate+0x1c/0x2c)
+	[    9.249560] [<c0551b10>] (dfll_clk_round_rate) from [<c054de2c>] (clk_calc_new_rates+0x1b8/0x228)
+	[    9.258473] [<c054de2c>] (clk_calc_new_rates) from [<c054e44c>] (clk_core_set_rate_nolock+0x44/0xac)
+	[    9.267647] [<c054e44c>] (clk_core_set_rate_nolock) from [<c054e4d8>] (clk_set_rate+0x24/0x34)
+	[    9.276306] [<c054e4d8>] (clk_set_rate) from [<c0512460>] (tegra124_cpufreq_probe+0x120/0x230)
+	[    9.284944] [<c0512460>] (tegra124_cpufreq_probe) from [<c03b9cbc>] (platform_drv_probe+0x44/0xac)
+	[    9.293948] [<c03b9cbc>] (platform_drv_probe) from [<c03b84c8>] (driver_probe_device+0x218/0x304)
+	[    9.302816] [<c03b84c8>] (driver_probe_device) from [<c03b69b0>] (bus_for_each_drv+0x60/0x94)
+	[    9.311397] [<c03b69b0>] (bus_for_each_drv) from [<c03b8228>] (__device_attach+0xb4/0x118)
+	[    9.313229] ata1: SATA link down (SStatus 0 SControl 300)
+	[    9.325137] [<c03b8228>] (__device_attach) from [<c03b77c8>] (bus_probe_device+0x88/0x90)
+	[    9.333360] [<c03b77c8>] (bus_probe_device) from [<c03b7be8>] (deferred_probe_work_func+0x58/0x8c)
+	[    9.342338] [<c03b7be8>] (deferred_probe_work_func) from [<c0040dfc>] (process_one_work+0x188/0x4bc)
+	[    9.351526] [<c0040dfc>] (process_one_work) from [<c004117c>] (worker_thread+0x4c/0x4f4)
+	[    9.359690] [<c004117c>] (worker_thread) from [<c0047230>] (kthread+0xe4/0xf8)
+	[    9.366970] [<c0047230>] (kthread) from [<c000f7d0>] (ret_from_fork+0x14/0x24)
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/clk/tegra/clk-dfll.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index aa026bcf5b00..8e25bd52da8c 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -632,11 +632,15 @@ static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long rate)
+ 	struct dev_pm_opp *opp;
+ 	int i, uv;
+ 
++	rcu_read_lock();
++
+ 	opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
+ 	if (IS_ERR(opp))
+ 		return PTR_ERR(opp);
+ 	uv = dev_pm_opp_get_voltage(opp);
+ 
++	rcu_read_unlock();
++
+ 	for (i = 0; i < td->i2c_lut_size; i++) {
+ 		if (regulator_list_voltage(td->vdd_reg, td->i2c_lut[i]) == uv)
+ 			return i;
+@@ -1450,6 +1454,8 @@ static int dfll_build_i2c_lut(struct tegra_dfll *td)
+ 	td->i2c_lut[0] = lut;
+ 
+ 	for (j = 1, rate = 0; ; rate++) {
++		rcu_read_lock();
++
+ 		opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
+ 		if (IS_ERR(opp))
+ 			break;
+@@ -1458,6 +1464,8 @@ static int dfll_build_i2c_lut(struct tegra_dfll *td)
+ 		if (v_opp <= td->soc->min_millivolts * 1000)
+ 			td->dvco_rate_min = dev_pm_opp_get_freq(opp);
+ 
++		rcu_read_unlock();
++
+ 		for (;;) {
+ 			v += max(1, (v_max - v) / (MAX_DFLL_VOLTAGES - j));
+ 			if (v >= v_opp)
+-- 
+2.5.0
+
