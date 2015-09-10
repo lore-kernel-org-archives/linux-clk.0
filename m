@@ -1,56 +1,53 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v2 1/4] clk: bcm2835: Move under bcm/ with other Broadcom SoC clk drivers.
-Date: Thu, 10 Sep 2015 14:58:22 -0700
-Message-Id: <1441922305-2298-1-git-send-email-eric@anholt.net>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 10 Sep 2015 13:51:55 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Niewoehner <linux@mniewoehner.de>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk@vger.kernel.org, Romain Perier <romain.perier@gmail.com>
+Subject: Re: [PATCH v2] clk: rockchip: Add pclk_peri to critical clocks on
+ RK3066/RK3188
+Message-ID: <20150910205155.GC15099@codeaurora.org>
+References: <1440322357-2621-1-git-send-email-romain.perier@gmail.com>
+ <CABgxDo+otZrYoqTNK-ea=L6Dsd5p_b_MFCi4H4XJZZ25PV_qnA@mail.gmail.com>
+ <CABgxDoLgqfzO-Sb_rKHe=-GuMaKWMihHhktx6sDSM6M=Q+Koaw@mail.gmail.com>
+ <20150904162402.GN15099@codeaurora.org>
+ <CABgxDo+0qN5GJdCNpQi4g_CdW67PvxsogMseRoAa5cuAbWk1wQ@mail.gmail.com>
+ <CABgxDoJRdF_k0EZLrEWXqpDrmj5LVRL24izGLJY4AmtUNOk7PQ@mail.gmail.com>
+ <20150909214705.GV15099@codeaurora.org>
+ <CABgxDo+8xPs-GOWnWhBnVN6xXn41=Dm_pTHpDyA2uoCrg93=Mw@mail.gmail.com>
+ <994A907A-09DB-419C-9BD5-772B379D02B3@mniewoehner.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <994A907A-09DB-419C-9BD5-772B379D02B3@mniewoehner.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-clk-bcm2835.c predates the drivers under bcm/, but all the new BCM
-drivers are going in there so let's follow them.
+On 09/10, Michael Niewoehner wrote:
+> 
+> Am 10.09.2015 um 09:05 schrieb Romain Perier <romain.perier@gmail.com>:
+> 
+> > It was based on linux-next few weeks ago. I will rebase it today and send a v3.
+> > 
+> > 2015-09-09 23:47 GMT+02:00 Stephen Boyd <sboyd@codeaurora.org>:
+> >> On 09/09, Romain Perier wrote:
+> >>> so, which of you does take the patch for -rc1 ?
+> >>> 
+> >> Is there some other patch out there that's also needed?
+> > 
+> > No, that's a single patch.
+> > 
+> > Romain
+> > 
+> 
+> Hi Stephen,
+> 
+> Romain’s patch was applied after mine in his github tree so you’ll need to apply that first: [PATCH v3] clk: rockchip: add pclk_cpu to the list of rk3188 critical clocks
+> 
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- drivers/clk/Makefile                | 1 -
- drivers/clk/bcm/Makefile            | 1 +
- drivers/clk/{ => bcm}/clk-bcm2835.c | 0
- 3 files changed, 1 insertion(+), 1 deletion(-)
- rename drivers/clk/{ => bcm}/clk-bcm2835.c (100%)
+Ah ok. Consider both applied to clk-fixes.
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index c4cf075..1bdbe9b 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -19,7 +19,6 @@ endif
- obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
- obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
- obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
--obj-$(CONFIG_ARCH_BCM2835)		+= clk-bcm2835.o
- obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
- obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
- obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
-diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-index 8a7a477..ee2349b 100644
---- a/drivers/clk/bcm/Makefile
-+++ b/drivers/clk/bcm/Makefile
-@@ -3,4 +3,5 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
- obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
-+obj-$(CONFIG_ARCH_BCM2835)	+= clk-bcm2835.o
- obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
-diff --git a/drivers/clk/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-similarity index 100%
-rename from drivers/clk/clk-bcm2835.c
-rename to drivers/clk/bcm/clk-bcm2835.c
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
