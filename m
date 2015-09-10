@@ -1,73 +1,46 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Message-ID: <1441702302.13536.3.camel@pengutronix.de>
-Subject: Re: [PATCH v3 1/8] clk: imx: add common logic to detect early UART
- usage
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Date: Tue, 08 Sep 2015 10:51:42 +0200
-In-Reply-To: <20150907185204.GB14598@pengutronix.de>
-References: <1441638573-6701-1-git-send-email-l.stach@pengutronix.de>
- <1441638573-6701-2-git-send-email-l.stach@pengutronix.de>
- <20150907185204.GB14598@pengutronix.de>
-Mime-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
- kernel@pengutronix.de, Shawn Guo <shawnguo@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH 3/3] ARM: bcm2835: Add the auxiliary clocks to the device tree.
+Date: Thu, 10 Sep 2015 15:22:30 -0700
+Message-Id: <1441923750-19404-4-git-send-email-eric@anholt.net>
+In-Reply-To: <1441923750-19404-1-git-send-email-eric@anholt.net>
+References: <1441923750-19404-1-git-send-email-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgVXdlLAoKQW0gTW9udGFnLCBkZW4gMDcuMDkuMjAxNSwgMjA6NTIgKzAyMDAgc2NocmllYiBV
-d2UgS2xlaW5lLUvDtm5pZzoKPiBIZWxsbyBMdWNhcywKPiAKPiBPbiBNb24sIFNlcCAwNywgMjAx
-NSBhdCAwNTowOToyNlBNICswMjAwLCBMdWNhcyBTdGFjaCB3cm90ZToKPiA+IEJvdGggZWFybHlj
-b24gYW5kIGVhcmx5cHJpbnRrIGRlcGVuZCBvbiB0aGUgYm9vdGxvYWRlciBzZXR1cCBVQVJUCj4g
-PiBjbG9ja3MgYmVpbmcgcmV0YWluZWQuIFRoaXMgcGF0Y2ggYWRkcyB0aGUgY29tbW9uIGxvZ2lj
-IHRvIGRldGVjdCBzdWNoCj4gPiBzaXR1YXRpb25zIGFuZCBtYWtlIHRoZSBpbmZvcm1hdGlvbiBh
-dmFpbGFibGUgdG8gdGhlIGNsb2NrIGRyaXZlcnMsIGFzCj4gPiB3ZWxsIGFzIGFkZGluZyB0aGUg
-ZmFjaWxpdGllcyB0byBkaXNhYmxlIHRob3NlIGNsb2NrcyBhdCB0aGUgZW5kIG9mCj4gPiB0aGUg
-a2VybmVsIGluaXQuCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IEx1Y2FzIFN0YWNoIDxsLnN0YWNo
-QHBlbmd1dHJvbml4LmRlPgo+ID4gLS0tCj4gPiAgZHJpdmVycy9jbGsvaW14L2Nsay5jIHwgMzgg
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPiA+ICBkcml2ZXJzL2Nsay9p
-bXgvY2xrLmggfCAgMSArCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAzOSBpbnNlcnRpb25zKCspCj4g
-PiAKPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9pbXgvY2xrLmMgYi9kcml2ZXJzL2Nsay9p
-bXgvY2xrLmMKPiA+IGluZGV4IGRmMTJiNTMwNzE3NS4uNDVhMDczZGFiNDM1IDEwMDY0NAo+ID4g
-LS0tIGEvZHJpdmVycy9jbGsvaW14L2Nsay5jCj4gPiArKysgYi9kcml2ZXJzL2Nsay9pbXgvY2xr
-LmMKPiA+IEBAIC03MywzICs3Myw0MSBAQCB2b2lkIGlteF9jc2NtcjFfZml4dXAodTMyICp2YWwp
-Cj4gPiAgCSp2YWwgXj0gQ1NDTVIxX0ZJWFVQOwo+ID4gIAlyZXR1cm47Cj4gPiAgfQo+ID4gKwo+
-ID4gK3N0YXRpYyBpbnQgaW14X2tlZXBfdWFydF9jbG9ja3MgX19pbml0ZGF0YTsKPiA+ICtzdGF0
-aWMgc3RydWN0IGNsayAqKiBjb25zdCAqaW14X3VhcnRfY2xvY2tzIF9faW5pdGRhdGE7Cj4gPiAr
-Cj4gPiArc3RhdGljIGludCBfX2luaXQgaW14X2tlZXBfdWFydF9jbG9ja3NfcGFyYW0oY2hhciAq
-c3RyKQo+ID4gK3sKPiA+ICsJaW14X2tlZXBfdWFydF9jbG9ja3MgPSAxOwo+ID4gKwo+ID4gKwly
-ZXR1cm4gMDsKPiA+ICt9Cj4gPiArX19zZXR1cF9wYXJhbSgiZWFybHljb24iLCBpbXhfa2VlcF91
-YXJ0X2Vhcmx5Y29uLAo+ID4gKwkgICAgICBpbXhfa2VlcF91YXJ0X2Nsb2Nrc19wYXJhbSwgMCk7
-Cj4gPiArX19zZXR1cF9wYXJhbSgiZWFybHlwcmludGsiLCBpbXhfa2VlcF91YXJ0X2Vhcmx5cHJp
-bnRrLAo+ID4gKwkgICAgICBpbXhfa2VlcF91YXJ0X2Nsb2Nrc19wYXJhbSwgMCk7Cj4gPiArCj4g
-PiArdm9pZCBfX2luaXQgaW14X3JlZ2lzdGVyX3VhcnRfY2xvY2tzKHN0cnVjdCBjbGsgKiogY29u
-c3QgY2xrc1tdKQo+ID4gK3sKPiA+ICsJaWYgKGlteF9rZWVwX3VhcnRfY2xvY2tzKSB7Cj4gPiAr
-CQlpbnQgaTsKPiA+ICsKPiA+ICsJCWlteF91YXJ0X2Nsb2NrcyA9IGNsa3M7Cj4gPiArCQlmb3Ig
-KGkgPSAwOyBpbXhfdWFydF9jbG9ja3NbaV07IGkrKykKPiA+ICsJCQljbGtfcHJlcGFyZV9lbmFi
-bGUoKmlteF91YXJ0X2Nsb2Nrc1tpXSk7Cj4gPiArCX0KPiA+ICt9Cj4gPiArCj4gPiArc3RhdGlj
-IGludCBfX2luaXQgaW14X2Nsa19kaXNhYmxlX3VhcnQodm9pZCkKPiA+ICt7Cj4gPiArCWlmIChp
-bXhfa2VlcF91YXJ0X2Nsb2Nrcykgewo+ID4gKwkJaW50IGk7Cj4gPiArCj4gPiArCQlmb3IgKGkg
-PSAwOyBpbXhfdWFydF9jbG9ja3NbaV07IGkrKykKPiA+ICsJCQljbGtfZGlzYWJsZV91bnByZXBh
-cmUoKmlteF91YXJ0X2Nsb2Nrc1tpXSk7Cj4gPiArCX0KPiA+ICsKPiA+ICsJcmV0dXJuIDA7Cj4g
-PiArfQo+ID4gK2xhdGVfaW5pdGNhbGxfc3luYyhpbXhfY2xrX2Rpc2FibGVfdWFydCk7Cj4gCj4g
-SSBiZXQgeW91IGRpZG4ndCB0ZXN0IGlmIHRoaXMgd29ya3Mgd2hlbiBlYXJseXByaW50ayAob3Ig
-ZWFybHljb24pIGlzCj4gcHJvdmlkZWQgb24gdGhlIGNvbW1hbmQgbGluZSBidXQgaW14X3JlZ2lz
-dGVyX3VhcnRfY2xvY2tzIGlzbid0IGNhbGxlZAo+IChlLmcuIGJlY2F1c2UgdGhpcyBpcyBhIFNh
-bXN1bmcgQ1BVIHJ1bm5pbmcgYSBtdWx0aWFyY2gga2VybmVsKS4KPiAKQWgsIGRhbW4hIFRoYW5r
-cyBmb3Igc3BvdHRpbmcuCgpSZWdhcmRzLApMdWNhcwoKLS0gClBlbmd1dHJvbml4IGUuSy4gICAg
-ICAgICAgICAgfCBMdWNhcyBTdGFjaCAgICAgICAgICAgICAgICAgfApJbmR1c3RyaWFsIExpbnV4
-IFNvbHV0aW9ucyAgIHwgaHR0cDovL3d3dy5wZW5ndXRyb25peC5kZS8gIHwKCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1h
-aWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xp
-c3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+These will be used for enabling UART1, SPI1, and SPI2.
+
+Signed-off-by: Eric Anholt <eric@anholt.net>
+---
+ arch/arm/boot/dts/bcm2835.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
+index a6a55b7..7c37956 100644
+--- a/arch/arm/boot/dts/bcm2835.dtsi
++++ b/arch/arm/boot/dts/bcm2835.dtsi
+@@ -73,6 +73,13 @@
+ 			clocks = <&clk_osc>;
+ 		};
+ 
++		aux_clocks: aux-clocks@0x7e215004 {
++			compatible = "brcm,bcm2835-aux-clock";
++			#clock-cells = <1>;
++			reg = <0x7e215004 0x4>;
++			clocks = <&clocks BCM2835_CLOCK_VPU>;
++		};
++
+ 		rng@7e104000 {
+ 			compatible = "brcm,bcm2835-rng";
+ 			reg = <0x7e104000 0x10>;
+-- 
+2.1.4
