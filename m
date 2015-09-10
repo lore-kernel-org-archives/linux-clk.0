@@ -1,109 +1,167 @@
-Return-Path: <alim.akhtar@samsung.com>
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
- k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
- gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 04/12] clk: samsung: exynos7: Corrects CMU_TOP1 clocks names
-Date: Thu, 10 Sep 2015 14:14:29 +0530
-Message-id: <1441874677-24148-5-git-send-email-alim.akhtar@samsung.com>
-In-reply-to: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
-References: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Eric Anholt <eric@anholt.net>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org, Eric Anholt <eric@anholt.net>
+Subject: [PATCH v2 4/4] ARM: bcm2835: Switch to using the new clock driver support.
+Date: Thu, 10 Sep 2015 14:58:25 -0700
+Message-Id: <1441922305-2298-4-git-send-email-eric@anholt.net>
+In-Reply-To: <1441922305-2298-1-git-send-email-eric@anholt.net>
+References: <1441922305-2298-1-git-send-email-eric@anholt.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch renames CMU_TOP1 clocks names to match with user manual.
+This will give us the ability to set the pixel and HDMI state machine
+clocks for the VC4 KMS driver, change the CPU frequency, and
+potentially gate clocks in the future (once we also write a power
+domain driver).  It also gives the uart an explicit clock reference,
+so that we don't need to change the physical addresses of the old
+fixed clk_bcm2835.c clocks for Raspberry Pi 2 port.
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Two clocks get their frequencies updated as a result of this.  One is
+uart's apb_pclk, which was previously accidentally grabbing the fixed
+uart0_pclk due to the apb_pclk not having clk_register_clkdev()
+called.  The uart doesn't seem to do anything with apb_pclk other than
+make sure it's on, so that appears safe (also, as far as I can see,
+the apb clock is actually the same as the VPU clock).  The other is
+EMMC, which according to the docs was supposed to be in the 50-100Mhz
+range, but it turns out the firmware needed to change to running it at
+the 250Mhz core clock speed to avoid a bug in clock domain crossing.
+
+Additionally, anything using BCM2835_CLOCK_VPU will now have a correct
+clock rate if the user configures the boot-time core clock speed using
+config.txt.
+
+Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
- drivers/clk/samsung/clk-exynos7.c |   50 ++++++++++++++++++++-----------------
- 1 file changed, 27 insertions(+), 23 deletions(-)
+ arch/arm/boot/dts/bcm2835.dtsi | 52 +++++++++++++++++++++++-------------------
+ 1 file changed, 28 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index 84a6e50..4bc4760a 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -416,23 +416,23 @@ CLK_OF_DECLARE(exynos7_clk_top0, "samsung,exynos7-clock-top0",
- #define ENABLE_SCLK_TOP1_FSYS11		0x0A2C
+diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
+index 301c73f..a6a55b7 100644
+--- a/arch/arm/boot/dts/bcm2835.dtsi
++++ b/arch/arm/boot/dts/bcm2835.dtsi
+@@ -1,4 +1,5 @@
+ #include <dt-bindings/pinctrl/bcm2835.h>
++#include <dt-bindings/clock/bcm2835.h>
+ #include "skeleton.dtsi"
  
- /* List of parent clocks for Muxes in CMU_TOP1 */
--PNAME(mout_top1_bus0_pll_p)	= { "fin_pll", "dout_sclk_bus0_pll" };
--PNAME(mout_top1_bus1_pll_p)	= { "fin_pll", "dout_sclk_bus1_pll_b" };
--PNAME(mout_top1_cc_pll_p)	= { "fin_pll", "dout_sclk_cc_pll_b" };
--PNAME(mout_top1_mfc_pll_p)	= { "fin_pll", "dout_sclk_mfc_pll_b" };
-+PNAME(mout_top1_bus0_pll_user_p)	= { "fin_pll", "sclk_bus0_pll_b" };
-+PNAME(mout_top1_bus1_pll_user_p)	= { "fin_pll", "sclk_bus1_pll_b" };
-+PNAME(mout_top1_cc_pll_user_p)	= { "fin_pll", "sclk_cc_pll_b" };
-+PNAME(mout_top1_mfc_pll_user_p)	= { "fin_pll", "sclk_mfc_pll_b" };
+ / {
+@@ -21,6 +22,10 @@
+ 			compatible = "brcm,bcm2835-system-timer";
+ 			reg = <0x7e003000 0x1000>;
+ 			interrupts = <1 0>, <1 1>, <1 2>, <1 3>;
++			/* This could be a reference to BCM2835_CLOCK_TIMER,
++			 * but we don't have the driver using the common clock
++			 * support yet.
++			 */
+ 			clock-frequency = <1000000>;
+ 		};
  
--PNAME(mout_top1_half_bus0_pll_p) = {"mout_top1_bus0_pll",
-+PNAME(mout_top1_bus0_pll_half_p) = {"mout_top1_bus0_pll_user",
- 	"ffac_top1_bus0_pll_div2"};
--PNAME(mout_top1_half_bus1_pll_p) = {"mout_top1_bus1_pll",
-+PNAME(mout_top1_bus1_pll_half_p) = {"mout_top1_bus1_pll_user",
- 	"ffac_top1_bus1_pll_div2"};
--PNAME(mout_top1_half_cc_pll_p) = {"mout_top1_cc_pll",
-+PNAME(mout_top1_cc_pll_half_p) = {"mout_top1_cc_pll_user",
- 	"ffac_top1_cc_pll_div2"};
--PNAME(mout_top1_half_mfc_pll_p) = {"mout_top1_mfc_pll",
-+PNAME(mout_top1_mfc_pll_half_p) = {"mout_top1_mfc_pll_user",
- 	"ffac_top1_mfc_pll_div2"};
+@@ -57,6 +62,17 @@
+ 			reg = <0x7e100000 0x28>;
+ 		};
  
--PNAME(mout_top1_group1) = {"mout_top1_half_bus0_pll",
--	"mout_top1_half_bus1_pll", "mout_top1_half_cc_pll",
--	"mout_top1_half_mfc_pll"};
-+PNAME(mout_top1_group1) = {"mout_top1_bus0_pll_half",
-+	"mout_top1_bus1_pll_half", "mout_top1_cc_pll_half",
-+	"mout_top1_mfc_pll_half"};
++		clocks: cprman@7e101000 {
++			compatible = "brcm,bcm2835-cprman";
++			#clock-cells = <1>;
++			reg = <0x7e101000 0x2000>;
++
++			/* CPRMAN derives everything from the platform's
++			 * oscillator.
++			 */
++			clocks = <&clk_osc>;
++		};
++
+ 		rng@7e104000 {
+ 			compatible = "brcm,bcm2835-rng";
+ 			reg = <0x7e104000 0x10>;
+@@ -96,7 +112,9 @@
+ 			compatible = "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
+ 			reg = <0x7e201000 0x1000>;
+ 			interrupts = <2 25>;
+-			clock-frequency = <3000000>;
++			clocks = <&clocks BCM2835_CLOCK_UART>,
++				 <&clocks BCM2835_CLOCK_VPU>;
++			clock-names = "uartclk", "apb_pclk";
+ 			arm,primecell-periphid = <0x00241011>;
+ 		};
  
- static unsigned long top1_clk_regs[] __initdata = {
- 	MUX_SEL_TOP10,
-@@ -452,20 +452,22 @@ static unsigned long top1_clk_regs[] __initdata = {
+@@ -115,7 +133,7 @@
+ 			compatible = "brcm,bcm2835-spi";
+ 			reg = <0x7e204000 0x1000>;
+ 			interrupts = <2 22>;
+-			clocks = <&clk_spi>;
++			clocks = <&clocks BCM2835_CLOCK_VPU>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
+@@ -125,7 +143,7 @@
+ 			compatible = "brcm,bcm2835-i2c";
+ 			reg = <0x7e205000 0x1000>;
+ 			interrupts = <2 21>;
+-			clocks = <&clk_i2c>;
++			clocks = <&clocks BCM2835_CLOCK_VPU>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
+@@ -135,7 +153,7 @@
+ 			compatible = "brcm,bcm2835-sdhci";
+ 			reg = <0x7e300000 0x100>;
+ 			interrupts = <2 30>;
+-			clocks = <&clk_mmc>;
++			clocks = <&clocks BCM2835_CLOCK_EMMC>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -143,7 +161,7 @@
+ 			compatible = "brcm,bcm2835-i2c";
+ 			reg = <0x7e804000 0x1000>;
+ 			interrupts = <2 21>;
+-			clocks = <&clk_i2c>;
++			clocks = <&clocks BCM2835_CLOCK_VPU>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
+@@ -165,28 +183,14 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		clk_mmc: clock@0 {
+-			compatible = "fixed-clock";
+-			reg = <0>;
+-			#clock-cells = <0>;
+-			clock-output-names = "mmc";
+-			clock-frequency = <100000000>;
+-		};
+-
+-		clk_i2c: clock@1 {
++		/* The oscillator is the root of the clock tree. */
++		clk_osc: clock@3 {
+ 			compatible = "fixed-clock";
+-			reg = <1>;
++			reg = <3>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "i2c";
+-			clock-frequency = <250000000>;
++			clock-output-names = "osc";
++			clock-frequency = <19200000>;
+ 		};
+ 
+-		clk_spi: clock@2 {
+-			compatible = "fixed-clock";
+-			reg = <2>;
+-			#clock-cells = <0>;
+-			clock-output-names = "spi";
+-			clock-frequency = <250000000>;
+-		};
+ 	};
  };
- 
- static struct samsung_mux_clock top1_mux_clks[] __initdata = {
--	MUX(0, "mout_top1_mfc_pll", mout_top1_mfc_pll_p, MUX_SEL_TOP10, 4, 1),
--	MUX(0, "mout_top1_cc_pll", mout_top1_cc_pll_p, MUX_SEL_TOP10, 8, 1),
--	MUX(0, "mout_top1_bus1_pll", mout_top1_bus1_pll_p,
-+	MUX(0, "mout_top1_mfc_pll_user", mout_top1_mfc_pll_user_p,
-+		MUX_SEL_TOP10, 4, 1),
-+	MUX(0, "mout_top1_cc_pll_user", mout_top1_cc_pll_user_p,
-+		MUX_SEL_TOP10, 8, 1),
-+	MUX(0, "mout_top1_bus1_pll_user", mout_top1_bus1_pll_user_p,
- 		MUX_SEL_TOP10, 12, 1),
--	MUX(0, "mout_top1_bus0_pll", mout_top1_bus0_pll_p,
-+	MUX(0, "mout_top1_bus0_pll_user", mout_top1_bus0_pll_user_p,
- 		MUX_SEL_TOP10, 16, 1),
- 
--	MUX(0, "mout_top1_half_mfc_pll", mout_top1_half_mfc_pll_p,
-+	MUX(0, "mout_top1_mfc_pll_half", mout_top1_mfc_pll_half_p,
- 		MUX_SEL_TOP11, 4, 1),
--	MUX(0, "mout_top1_half_cc_pll", mout_top1_half_cc_pll_p,
-+	MUX(0, "mout_top1_cc_pll_half", mout_top1_cc_pll_half_p,
- 		MUX_SEL_TOP11, 8, 1),
--	MUX(0, "mout_top1_half_bus1_pll", mout_top1_half_bus1_pll_p,
-+	MUX(0, "mout_top1_bus1_pll_half", mout_top1_bus1_pll_half_p,
- 		MUX_SEL_TOP11, 12, 1),
--	MUX(0, "mout_top1_half_bus0_pll", mout_top1_half_bus0_pll_p,
-+	MUX(0, "mout_top1_bus0_pll_half", mout_top1_bus0_pll_half_p,
- 		MUX_SEL_TOP11, 16, 1),
- 
- 	MUX(0, "mout_aclk_fsys1_200", mout_top1_group1, MUX_SEL_TOP13, 24, 2),
-@@ -509,10 +511,12 @@ static struct samsung_gate_clock top1_gate_clks[] __initdata = {
- };
- 
- static struct samsung_fixed_factor_clock top1_fixed_factor_clks[] __initdata = {
--	FFACTOR(0, "ffac_top1_bus0_pll_div2", "mout_top1_bus0_pll", 1, 2, 0),
--	FFACTOR(0, "ffac_top1_bus1_pll_div2", "mout_top1_bus1_pll", 1, 2, 0),
--	FFACTOR(0, "ffac_top1_cc_pll_div2", "mout_top1_cc_pll", 1, 2, 0),
--	FFACTOR(0, "ffac_top1_mfc_pll_div2", "mout_top1_mfc_pll", 1, 2, 0),
-+	FFACTOR(0, "ffac_top1_bus0_pll_div2", "mout_top1_bus0_pll_user",
-+		1, 2, 0),
-+	FFACTOR(0, "ffac_top1_bus1_pll_div2", "mout_top1_bus1_pll_user",
-+		1, 2, 0),
-+	FFACTOR(0, "ffac_top1_cc_pll_div2", "mout_top1_cc_pll_user", 1, 2, 0),
-+	FFACTOR(0, "ffac_top1_mfc_pll_div2", "mout_top1_mfc_pll_user", 1, 2, 0),
- };
- 
- static struct samsung_cmu_info top1_cmu_info __initdata = {
 -- 
-1.7.10.4
+2.1.4
+
