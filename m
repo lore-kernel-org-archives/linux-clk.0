@@ -1,42 +1,40 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH 02/16] clk: at91: system: don't try to free_irq when there is no IRQ
-Date: Wed, 30 Sep 2015 18:10:55 +0200
-Message-Id: <1443629469-15086-3-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:17170 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750727AbbIJEB6 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 10 Sep 2015 00:01:58 -0400
+Subject: Re: [PATCH 06/11] clk: samsung: exynos7: Corrects CMU_PERIC1 clocks
+ names
+To: Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+ <1441366637-28001-7-git-send-email-alim.akhtar@samsung.com>
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+	mturquette@baylibre.com, amit.daniel@samsung.com,
+	gautam.vivek@samsung.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <55F100B4.5020107@samsung.com>
+Date: Thu, 10 Sep 2015 13:01:56 +0900
+MIME-version: 1.0
+In-reply-to: <1441366637-28001-7-git-send-email-alim.akhtar@samsung.com>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-In the error path of at91_clk_register_system(), sys->irq is freed
-unconditionally but it may not exist or be request at all.
+On 04.09.2015 20:37, Alim Akhtar wrote:
+> This patch rename CMU_PERIC1 clocks names to match with user manual.
+> And also adds missing gate clock for aclk_peric1_66.
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos7.c       |   38 ++++++++++++++++---------------
+>  include/dt-bindings/clock/exynos7-clk.h |    3 ++-
+>  2 files changed, 22 insertions(+), 19 deletions(-)
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- drivers/clk/at91/clk-system.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-diff --git a/drivers/clk/at91/clk-system.c b/drivers/clk/at91/clk-system.c
-index 58008b3e8bc1..3f5314344286 100644
---- a/drivers/clk/at91/clk-system.c
-+++ b/drivers/clk/at91/clk-system.c
-@@ -138,7 +138,8 @@ at91_clk_register_system(struct at91_pmc *pmc, const char *name,
- 
- 	clk = clk_register(NULL, &sys->hw);
- 	if (IS_ERR(clk)) {
--		free_irq(sys->irq, sys);
-+		if (irq)
-+			free_irq(sys->irq, sys);
- 		kfree(sys);
- 	}
- 
--- 
-2.1.4
+Best regards,
+Krzysztof
+
+
