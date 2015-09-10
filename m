@@ -1,81 +1,39 @@
-Return-Path: <sudeep.holla@arm.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm@kernel.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Punit Agrawal <punit.agrawal@arm.com>,
-	"Jon Medhurst (Tixy)" <tixy@linaro.org>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH REPOST v6 4/8] clk: scpi: add support for cpufreq virtual device
-Date: Wed, 16 Sep 2015 18:16:35 +0100
-Message-Id: <1442423799-23892-5-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1442423799-23892-1-git-send-email-sudeep.holla@arm.com>
-References: <1442423799-23892-1-git-send-email-sudeep.holla@arm.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v3 2/4] clk: qcom: Add support for RCGs with shared
+ branches
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1439477317-1902-1-git-send-email-georgi.djakov@linaro.org>
+ <1439477317-1902-3-git-send-email-georgi.djakov@linaro.org>
+ <20150909224613.GW15099@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Message-ID: <55F1B0FD.4050406@linaro.org>
+Date: Thu, 10 Sep 2015 19:34:05 +0300
+MIME-Version: 1.0
+In-Reply-To: <20150909224613.GW15099@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The clocks for the CPUs are provided by SCP and are managed by this
-clock driver. So the cpufreq device needs to be added only after the
-clock get registered and removed when this driver is unloaded.
+On 09/10/2015 01:46 AM, Stephen Boyd wrote:
+> On 08/13, Georgi Djakov wrote:
+[..]
+>> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+>> index 9aec1761fd29..681faf2dcdc5 100644
+>> --- a/drivers/clk/qcom/clk-rcg2.c
+>> +++ b/drivers/clk/qcom/clk-rcg2.c
+>> +
+>> +static int clk_rcg2_shared_enable(struct clk_hw *hw)
+>> +{
+>> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+>> +	const char *name = clk_hw_get_name(hw);
+>> +
+>> +	if (!rcg->current_freq) {
+>> +		pr_err("%s: Please set rate before enabling\n", name);
+> 
+> Why? Can't we find the current freq during recalc_rate?
+> 
 
-This patch manages the cpufreq virtual device based on the clock
-availability.
+Yes, thank you!
 
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>
-Cc: Liviu Dudau <Liviu.Dudau@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Jon Medhurst (Tixy) <tixy@linaro.org>
-Cc: linux-clk@vger.kernel.org
----
- drivers/clk/clk-scpi.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
-index e8323db300e2..a201781287b3 100644
---- a/drivers/clk/clk-scpi.c
-+++ b/drivers/clk/clk-scpi.c
-@@ -34,6 +34,8 @@ struct scpi_clk {
- 
- #define to_scpi_clk(clk) container_of(clk, struct scpi_clk, hw)
- 
-+static struct platform_device *cpufreq_dev;
-+
- static unsigned long scpi_clk_recalc_rate(struct clk_hw *hw,
- 					  unsigned long parent_rate)
- {
-@@ -263,6 +265,11 @@ static int scpi_clocks_remove(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct device_node *child, *np = dev->of_node;
- 
-+	if (cpufreq_dev) {
-+		platform_device_unregister(cpufreq_dev);
-+		cpufreq_dev = NULL;
-+	}
-+
- 	for_each_available_child_of_node(np, child)
- 		of_clk_del_provider(np);
- 	return 0;
-@@ -288,6 +295,12 @@ static int scpi_clocks_probe(struct platform_device *pdev)
- 			return ret;
- 		}
- 	}
-+	/* Add the virtual cpufreq device */
-+	cpufreq_dev = platform_device_register_simple("scpi-cpufreq",
-+						      -1, NULL, 0);
-+	if (!cpufreq_dev)
-+		pr_warn("unable to register cpufreq device");
-+
- 	return 0;
- }
- 
--- 
-1.9.1
