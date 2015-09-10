@@ -1,41 +1,65 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-Date: Sun, 27 Sep 2015 23:48:06 +0100
-From: Peter Griffin <peter.griffin@linaro.org>
-To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Pankaj Dev <pankaj.dev@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@stlinux.com, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 0/2] ST PLL fixes for 4.3-rc2
-Message-ID: <20150927224806.GB18435@griffinp-ThinkPad-X1-Carbon-2nd>
-References: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Date: Thu, 10 Sep 2015 10:51:44 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Mikko Perttunen <mikko.perttunen@kapsi.fi>,
+	Tuomas Tynkkynen <ttynkkynen@nvidia.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: dfll: Properly protect OPP list
+Message-ID: <20150910175144.GB15099@codeaurora.org>
+References: <1441893321-4563-1-git-send-email-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1441893321-4563-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Gabriel,
+On 09/10, Thierry Reding wrote:
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-On Wed, 16 Sep 2015, Gabriel Fernandez wrote:
+Fixes: ?
 
-> This patch set fixes a kernel crash :
+> ---
+>  drivers/clk/tegra/clk-dfll.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+> index aa026bcf5b00..8e25bd52da8c 100644
+> --- a/drivers/clk/tegra/clk-dfll.c
+> +++ b/drivers/clk/tegra/clk-dfll.c
+> @@ -632,11 +632,15 @@ static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long rate)
+>  	struct dev_pm_opp *opp;
+>  	int i, uv;
+>  
+> +	rcu_read_lock();
+> +
+>  	opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
+>  	if (IS_ERR(opp))
+>  		return PTR_ERR(opp);
+>  	uv = dev_pm_opp_get_voltage(opp);
+>  
+> +	rcu_read_unlock();
+> +
+>  	for (i = 0; i < td->i2c_lut_size; i++) {
+>  		if (regulator_list_voltage(td->vdd_reg, td->i2c_lut[i]) == uv)
+>  			return i;
+> @@ -1450,6 +1454,8 @@ static int dfll_build_i2c_lut(struct tegra_dfll *td)
+>  	td->i2c_lut[0] = lut;
+>  
+>  	for (j = 1, rate = 0; ; rate++) {
+> +		rcu_read_lock();
 
-For the series: -
+Don't we already have an rcu_read_lock() at the beginning of this
+function? I don't understand why we need to nest them in the same
+function.
 
-Acked-by: Peter Griffin <peter.griffin@linaro.org>
-
-regards,
-
-Peter
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
