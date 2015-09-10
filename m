@@ -1,30 +1,31 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Eric Anholt <eric@anholt.net>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	devicetree@vger.kernel.org
-Subject: Raspberry Pi native clock driver
-Date: Sun,  6 Sep 2015 10:57:39 -0700
-Message-Id: <1441562263-19888-1-git-send-email-eric@anholt.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 07/11] clk: samsung: exynos7: Corrects CMU_PERIS clocks
+ names
+To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
+References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+ <1441366637-28001-8-git-send-email-alim.akhtar@samsung.com>
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+ mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com,
+ sboyd@codeaurora.org, linux-clk@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <55F100F1.3060407@samsung.com>
+Date: Thu, 10 Sep 2015 13:02:57 +0900
+MIME-version: 1.0
+In-reply-to: <1441366637-28001-8-git-send-email-alim.akhtar@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-After my last firmware clocks posting, Gordon at Raspberry Pi pointed
-that you can, in fact, touch the clocks from the ARM side.  This is
-the driver that resulted from that.  With debug printfs at boot the
-clock frequencies from .recalc_rate() are looking good, a few are
-definitely corrected compared to our previous fixed clock references,
-and I've tested that I can now get different frequencies out of the
-pixel clock for the KMS driver.
+On 04.09.2015 20:37, Alim Akhtar wrote:
+> This patch rename CMU_PERIS clocks names to match with user manual.
+> And also adds missing gate clock for aclk_peris_66.
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos7.c       |    7 +++++--
+>  include/dt-bindings/clock/exynos7-clk.h |    3 ++-
+>  2 files changed, 7 insertions(+), 3 deletions(-)
 
-Gordon and Dom took a look at the code, and while I don't have
-explicit Acked-Bys, they thought it seemed pretty sound as far as the
-hardware goes.  We'll want to sort out eventually who really owns
-which clocks between the firmware and Linux, but for now this at least
-gets us corrected frequency information on the Linux side.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
+Best regards,
+Krzysztof
