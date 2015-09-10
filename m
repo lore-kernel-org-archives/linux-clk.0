@@ -1,176 +1,96 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: ulf.hansson@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	tgih.jun@samsung.com,
-	jh80.chung@samsung.com
-Cc: linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	dianders@chromium.org,
-	amstan@chromium.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
-Date: Wed, 30 Sep 2015 16:07:39 +0200
-Message-Id: <1443622064-14362-4-git-send-email-heiko@sntech.de>
-In-Reply-To: <1443622064-14362-1-git-send-email-heiko@sntech.de>
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+Return-Path: <alim.akhtar@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+ k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
+ gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Subject: [PATCH v2 02/12] clk: samsung: exynos7: Adds missing clocks gates of
+ CMU_TOPC
+Date: Thu, 10 Sep 2015 14:14:27 +0530
+Message-id: <1441874677-24148-3-git-send-email-alim.akhtar@samsung.com>
+In-reply-to: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
+References: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Douglas Anderson <dianders@chromium.org>
+This adds some of the missing GATE clocks of CMU_TOPC block.
 
-This adds logic to the MMC core to set VQMMC.  This is expected to be
-called by MMC drivers like dw_mmc as part of (or instead of) their
-start_signal_voltage_switch() callback.
-
-A few notes:
-
-* When setting the signal voltage to 3.3V we do our best to make VQMMC
-  and VMMC match.  It's been reported that this makes some old cards
-  happy since they were tested back in the day before UHS when VQMMC
-  and VMMC were provided by the same regulator.  A nice side effect of
-  this is that we don't end up on the hairy edge of VQMMC (2.7V),
-  which some EEs claim is a little too close to the minimum for
-  comfort.
-  This is done in two steps. At first we try to find a VQMMC within
-  a 0.3V tolerance of VMMC and if this is not supported by the
-  supplying regulator we try to find a suitable voltage within the
-  whole 2.7V-3.6V area of the spec.
-
-* The two step approach is currently necessary, as the used
-  regulator_set_voltage_triplet(min, target, max) uses a simple
-  implementation that just tries two basic steps:
-	regulator_set_voltage(target, max);
-	regulator_set_voltage(min, target);
-  So with only one step with 2.7-3.6V borders, if a suitable voltage
-  is a bit below VMMC, we would directly get the lowest 2.7V
-  which some boards (like Rockchips) don't like at all.
-
-* When setting the signal voltage to 1.8V or 1.2V we aim for that
-  specific voltage instead of picking the lowest one in the range.
-
-* We very purposely don't print errors in mmc_regulator_set_vqmmc().
-  There are cases where the MMC core will try several different
-  voltages and we don't want to pollute the logs.
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- drivers/mmc/core/core.c  | 74 ++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/mmc/host.h |  7 +++++
- 2 files changed, 81 insertions(+)
+ drivers/clk/samsung/clk-exynos7.c       |   27 +++++++++++++++++++++++++++
+ include/dt-bindings/clock/exynos7-clk.h |   13 ++++++++++++-
+ 2 files changed, 39 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index 0520064..363cc98 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -1437,6 +1437,80 @@ int mmc_regulator_set_ocr(struct mmc_host *mmc,
- }
- EXPORT_SYMBOL_GPL(mmc_regulator_set_ocr);
+diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+index df061ce..e11449b 100644
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -34,7 +34,9 @@
+ #define DIV_TOPC0		0x0600
+ #define DIV_TOPC1		0x0604
+ #define DIV_TOPC3		0x060C
++#define ENABLE_ACLK_TOPC0	0x0800
+ #define ENABLE_ACLK_TOPC1	0x0804
++#define ENABLE_SCLK_TOPC1	0x0A04
  
-+static int mmc_regulator_set_voltage_if_supported(struct regulator *regulator,
-+						  int min_uV, int target_uV,
-+						  int max_uV)
-+{
-+	/*
-+	 * Check if supported first to avoid errors since we may try several
-+	 * signal levels during power up and don't want to show errors.
-+	 */
-+	if (!regulator_is_supported_voltage(regulator, min_uV, max_uV))
-+		return -EINVAL;
-+
-+	return regulator_set_voltage_triplet(regulator, min_uV, target_uV,
-+					     max_uV);
-+}
-+
-+/**
-+ * mmc_regulator_set_vqmmc - Set VQMMC as per the ios
-+ *
-+ * For 3.3V signaling, we try to match VQMMC to VMMC as closely as possible.
-+ * That will match the behavior of old boards where VQMMC and VMMC were supplied
-+ * by the same supply.  The Bus Operating conditions for 3.3V signaling in the
-+ * SD card spec also define VQMMC in terms of VMMC.
-+ * If this is not possible we'll try the full 2.7-3.6V of the spec.
-+ *
-+ * For 1.2V and 1.8V signaling we'll try to get as close as possible to the
-+ * requested voltage.  This is definitely a good idea for UHS where there's a
-+ * separate regulator on the card that's trying to make 1.8V and it's best if
-+ * we match.
-+ *
-+ * This function is expected to be used by a controller's
-+ * start_signal_voltage_switch() function.
-+ */
-+int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct mmc_ios *ios)
-+{
-+	int volt, min_uV, max_uV;
-+
-+	/* If no vqmmc supply then we can't change the voltage */
-+	if (IS_ERR(mmc->supply.vqmmc))
-+		return -EINVAL;
-+
-+	switch (ios->signal_voltage) {
-+	case MMC_SIGNAL_VOLTAGE_120:
-+		return mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
-+						1100000, 1200000, 1300000);
-+	case MMC_SIGNAL_VOLTAGE_180:
-+		return mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
-+						1700000, 1800000, 1950000);
-+	case MMC_SIGNAL_VOLTAGE_330:
-+		volt = regulator_get_voltage(mmc->supply.vmmc);
-+		if (volt < 0)
-+			return volt;
-+
-+		min_uV = max(volt - 300000, 2700000);
-+		max_uV = min(volt + 300000, 3600000);
-+
-+		/*
-+		 * Due to a limitation in the current implementation of
-+		 * regulator_set_voltage_triplet() which is taking the lowest
-+		 * voltage possible if below the target, search for a suitable
-+		 * voltage in two steps and try to stay close to vmmc
-+		 * with a 0.3V tolerance at first.
-+		 */
-+		if (!mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
-+						min_uV, volt, max_uV))
-+			return 0;
-+
-+		return mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
-+						2700000, volt, 3600000);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(mmc_regulator_set_vqmmc);
-+
- #endif /* CONFIG_REGULATOR */
+ static struct samsung_fixed_factor_clock topc_fixed_factor_clks[] __initdata = {
+ 	FFACTOR(0, "ffac_topc_bus0_pll_div2", "mout_topc_bus0_pll", 1, 2, 0),
+@@ -145,8 +147,33 @@ static struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initdata = {
+ };
  
- int mmc_regulator_get_supply(struct mmc_host *mmc)
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index 83b81fd..a2a78eb 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -423,6 +423,7 @@ int mmc_regulator_get_ocrmask(struct regulator *supply);
- int mmc_regulator_set_ocr(struct mmc_host *mmc,
- 			struct regulator *supply,
- 			unsigned short vdd_bit);
-+int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct mmc_ios *ios);
- #else
- static inline int mmc_regulator_get_ocrmask(struct regulator *supply)
- {
-@@ -435,6 +436,12 @@ static inline int mmc_regulator_set_ocr(struct mmc_host *mmc,
- {
- 	return 0;
- }
+ static struct samsung_gate_clock topc_gate_clks[] __initdata = {
++	GATE(ACLK_CCORE_133, "aclk_ccore_133", "dout_aclk_ccore_133",
++		ENABLE_ACLK_TOPC0, 4, 0, 0),
 +
-+static inline int mmc_regulator_set_vqmmc(struct mmc_host *mmc,
-+					  struct mmc_ios *ios)
-+{
-+	return -EINVAL;
-+}
- #endif
+ 	GATE(ACLK_MSCL_532, "aclk_mscl_532", "dout_aclk_mscl_532",
+ 		ENABLE_ACLK_TOPC1, 20, 0, 0),
++
++	GATE(ACLK_PERIS_66, "aclk_peris_66", "dout_aclk_peris_66",
++		ENABLE_ACLK_TOPC1, 24, 0, 0),
++
++	GATE(SCLK_AUD_PLL, "sclk_aud_pll", "dout_sclk_aud_pll",
++		ENABLE_SCLK_TOPC1, 20, 0, 0),
++	GATE(SCLK_MFC_PLL_B, "sclk_mfc_pll_b", "dout_sclk_mfc_pll",
++		ENABLE_SCLK_TOPC1, 17, 0, 0),
++	GATE(SCLK_MFC_PLL_A, "sclk_mfc_pll_a", "dout_sclk_mfc_pll",
++		ENABLE_SCLK_TOPC1, 16, 0, 0),
++	GATE(SCLK_BUS1_PLL_B, "sclk_bus1_pll_b", "dout_sclk_bus1_pll",
++		ENABLE_SCLK_TOPC1, 13, 0, 0),
++	GATE(SCLK_BUS1_PLL_A, "sclk_bus1_pll_a", "dout_sclk_bus1_pll",
++		ENABLE_SCLK_TOPC1, 12, 0, 0),
++	GATE(SCLK_BUS0_PLL_B, "sclk_bus0_pll_b", "dout_sclk_bus0_pll",
++		ENABLE_SCLK_TOPC1, 5, 0, 0),
++	GATE(SCLK_BUS0_PLL_A, "sclk_bus0_pll_a", "dout_sclk_bus0_pll",
++		ENABLE_SCLK_TOPC1, 4, 0, 0),
++	GATE(SCLK_CC_PLL_B, "sclk_cc_pll_b", "dout_sclk_cc_pll",
++		ENABLE_SCLK_TOPC1, 1, 0, 0),
++	GATE(SCLK_CC_PLL_A, "sclk_cc_pll_a", "dout_sclk_cc_pll",
++		ENABLE_SCLK_TOPC1, 0, 0, 0),
+ };
  
- int mmc_regulator_get_supply(struct mmc_host *mmc);
+ static struct samsung_pll_clock topc_pll_clks[] __initdata = {
+diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
+index e33c75a..d26fe0f 100644
+--- a/include/dt-bindings/clock/exynos7-clk.h
++++ b/include/dt-bindings/clock/exynos7-clk.h
+@@ -21,7 +21,18 @@
+ #define ACLK_MSCL_532			8
+ #define DOUT_SCLK_AUD_PLL		9
+ #define FOUT_AUD_PLL			10
+-#define TOPC_NR_CLK			11
++#define SCLK_AUD_PLL			11
++#define SCLK_MFC_PLL_B			12
++#define SCLK_MFC_PLL_A			13
++#define SCLK_BUS1_PLL_B			14
++#define SCLK_BUS1_PLL_A			15
++#define SCLK_BUS0_PLL_B			16
++#define SCLK_BUS0_PLL_A			17
++#define SCLK_CC_PLL_B			18
++#define SCLK_CC_PLL_A			19
++#define ACLK_CCORE_133			20
++#define ACLK_PERIS_66			21
++#define TOPC_NR_CLK			22
+ 
+ /* TOP0 */
+ #define DOUT_ACLK_PERIC1		1
 -- 
-2.5.1
+1.7.10.4
