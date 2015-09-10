@@ -1,69 +1,56 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH v2 2/8] clk: imx25: retain early UART clocks during kernel init
-Date: Fri,  4 Sep 2015 18:00:13 +0200
-Message-Id: <1441382419-4343-3-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
-References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
- kernel@pengutronix.de, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH v2 1/4] clk: bcm2835: Move under bcm/ with other Broadcom SoC clk drivers.
+Date: Thu, 10 Sep 2015 14:58:22 -0700
+Message-Id: <1441922305-2298-1-git-send-email-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure to keep UART clocks enabled during kernel init if
-earlyprintk or earlycon are active.
+clk-bcm2835.c predates the drivers under bcm/, but all the new BCM
+drivers are going in there so let's follow them.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
- drivers/clk/imx/clk-imx25.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/clk/Makefile                | 1 -
+ drivers/clk/bcm/Makefile            | 1 +
+ drivers/clk/{ => bcm}/clk-bcm2835.c | 0
+ 3 files changed, 1 insertion(+), 1 deletion(-)
+ rename drivers/clk/{ => bcm}/clk-bcm2835.c (100%)
 
-diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
-index ec1a4c1dacf1..e55acea762fb 100644
---- a/drivers/clk/imx/clk-imx25.c
-+++ b/drivers/clk/imx/clk-imx25.c
-@@ -86,6 +86,14 @@ enum mx25_clks {
- 
- static struct clk *clk[clk_max];
- 
-+static struct clk **uart_clks[] __initdata = { &clk[uart_ipg_per],
-+					       &clk[uart1_ipg],
-+					       &clk[uart2_ipg],
-+					       &clk[uart3_ipg],
-+					       &clk[uart4_ipg],
-+					       &clk[uart5_ipg],
-+					       NULL };
-+
- static int __init __mx25_clocks_init(unsigned long osc_rate,
- 				     void __iomem *ccm_base)
- {
-@@ -233,6 +241,8 @@ static int __init __mx25_clocks_init(unsigned long osc_rate,
- 	 */
- 	clk_set_parent(clk[cko_sel], clk[ipg]);
- 
-+	imx_register_uart_clocks(uart_clks);
-+
- 	return 0;
- }
- 
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index c4cf075..1bdbe9b 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -19,7 +19,6 @@ endif
+ obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
+ obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
+ obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
+-obj-$(CONFIG_ARCH_BCM2835)		+= clk-bcm2835.o
+ obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
+ obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
+ obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index 8a7a477..ee2349b 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -3,4 +3,5 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
+ obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
++obj-$(CONFIG_ARCH_BCM2835)	+= clk-bcm2835.o
+ obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
+diff --git a/drivers/clk/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+similarity index 100%
+rename from drivers/clk/clk-bcm2835.c
+rename to drivers/clk/bcm/clk-bcm2835.c
 -- 
-2.5.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.1.4
