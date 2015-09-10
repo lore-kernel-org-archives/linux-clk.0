@@ -1,31 +1,38 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 02/12] clk: samsung: exynos7: Adds missing clocks gates
- of CMU_TOPC
-To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
-References: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
- <1441874677-24148-3-git-send-email-alim.akhtar@samsung.com>
+Return-Path: <alim.akhtar@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
 Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
- mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com,
- sboyd@codeaurora.org, linux-clk@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <55F7B5CD.90600@samsung.com>
-Date: Tue, 15 Sep 2015 15:08:13 +0900
-MIME-version: 1.0
-In-reply-to: <1441874677-24148-3-git-send-email-alim.akhtar@samsung.com>
-Content-type: text/plain; charset=windows-1252
+ k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
+ gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Subject: [PATCH v2 11/12] clk: samsung: exynos7: Add missing fixed_clks to
+ cmu_info
+Date: Thu, 10 Sep 2015 14:14:36 +0530
+Message-id: <1441874677-24148-12-git-send-email-alim.akhtar@samsung.com>
+In-reply-to: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
+References: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10.09.2015 17:44, Alim Akhtar wrote:
-> This adds some of the missing GATE clocks of CMU_TOPC block.
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos7.c       |   27 +++++++++++++++++++++++++++
->  include/dt-bindings/clock/exynos7-clk.h |   13 ++++++++++++-
->  2 files changed, 39 insertions(+), 1 deletion(-)
+FSYS0 fixed clocks are not added to fsys0_cmu_info, this make
+some of the usb clocks as orphan. This fixes the same.
 
-
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos7.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+index 189a453..d4c6e47 100644
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -936,6 +936,8 @@ static struct samsung_gate_clock fsys0_gate_clks[] __initdata = {
+ };
+ 
+ static struct samsung_cmu_info fsys0_cmu_info __initdata = {
++	.fixed_clks		= fixed_rate_clks_fsys0,
++	.nr_fixed_clks		= ARRAY_SIZE(fixed_rate_clks_fsys0),
+ 	.mux_clks		= fsys0_mux_clks,
+ 	.nr_mux_clks		= ARRAY_SIZE(fsys0_mux_clks),
+ 	.gate_clks		= fsys0_gate_clks,
+-- 
+1.7.10.4
