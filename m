@@ -1,137 +1,90 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org
-Subject: [PATCH] clk: readd refcounting for struct clk instances
-Date: Tue, 15 Sep 2015 16:50:38 +0200
-Message-ID: <1878691.zhVxsBBBGg@diego>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH 1/3] clk: bcm2835: Add bindings for the auxiliary peripheral clock gates.
+Date: Thu, 10 Sep 2015 15:22:28 -0700
+Message-Id: <1441923750-19404-2-git-send-email-eric@anholt.net>
+In-Reply-To: <1441923750-19404-1-git-send-email-eric@anholt.net>
+References: <1441923750-19404-1-git-send-email-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-With the split into struct clk and struct clk_core, clocks lost the
-ability for nested __clk_get clkdev calls. While it stays possible to
-call __clk_get, the first call to (__)clk_put will clear the struct clk,
-making subsequent clk_put calls run into a NULL pointer dereference.
+These will be used for enabling UART1, SPI1, and SPI2.
 
-One prime example of this sits in the generic power domain code, where it
-is possible to add the clocks both by name and by passing in a struct clk
-via pm_clk_add_clk(). __pm_clk_add() in turn then calls __clk_get to
-increase the refcount, so that the original code can put the clock again.
-
-A possible call-path looks like
-clk = of_clk_get();
-pm_clk_add_clk(dev, clk);
-clk_put(clk);
-
-with pm_clk_add_clk() => __pm_clk_add() then calling __clk_get on the clk
-and later clk_put when the pm clock list gets destroyed, thus creating
-a NULL pointer deref, as the struct clk doesn't exist anymore.
-
-So add a separate refcounting for struct clk instances and only clean up
-once the refcount reaches zero.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
-I stumbled upon this while applying the new Rockchip power-domain driver,
-but I guess the underlying issue is universal and probably present since
-the original clk/clk_core split, so this probably counts as fix.
+ .../bindings/clock/brcm,bcm2835-aux-clock.txt      | 30 ++++++++++++++++++++++
+ include/dt-bindings/clock/bcm2835-aux.h            | 17 ++++++++++++
+ 2 files changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
+ create mode 100644 include/dt-bindings/clock/bcm2835-aux.h
 
- drivers/clk/clk.c | 31 +++++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 43e2c3a..7aab1a4 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -85,6 +85,7 @@ struct clk {
- 	unsigned long min_rate;
- 	unsigned long max_rate;
- 	struct hlist_node clks_node;
-+	struct kref ref;
- };
- 
- /***           locking             ***/
-@@ -2590,7 +2591,7 @@ fail_out:
- EXPORT_SYMBOL_GPL(clk_register);
- 
- /* Free memory allocated for a clock. */
--static void __clk_release(struct kref *ref)
-+static void __clk_core_release(struct kref *ref)
- {
- 	struct clk_core *core = container_of(ref, struct clk_core, ref);
- 	int i = core->num_parents;
-@@ -2606,6 +2607,18 @@ static void __clk_release(struct kref *ref)
- 	kfree(core);
- }
- 
-+static void __clk_release(struct kref *ref)
-+{
-+	struct clk *clk = container_of(ref, struct clk, ref);
+diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
+new file mode 100644
+index 0000000..f5ce80a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
+@@ -0,0 +1,30 @@
++Broadcom BCM2835 auxiliary peripheral clocks
 +
-+	hlist_del(&clk->clks_node);
-+	if ((clk->min_rate > clk->core->req_rate ||
-+	     clk->max_rate < clk->core->req_rate))
-+		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
++This binding uses the common clock binding:
++    Documentation/devicetree/bindings/clock/clock-bindings.txt
 +
-+	kfree(clk);
-+}
++This controls the clock gating for the BCM2835 auxiliary peripherals
++(UART, SPI1, and SPI2).
 +
- /*
-  * Empty clk_ops for unregistered clocks. These are used temporarily
-  * after clk_unregister() was called on a clock and until last clock
-@@ -2684,7 +2697,7 @@ void clk_unregister(struct clk *clk)
- 	if (clk->core->prepare_count)
- 		pr_warn("%s: unregistering prepared clock: %s\n",
- 					__func__, clk->core->name);
--	kref_put(&clk->core->ref, __clk_release);
-+	kref_put(&clk->core->ref, __clk_core_release);
- 
- 	clk_prepare_unlock();
- }
-@@ -2759,12 +2772,14 @@ int __clk_get(struct clk *clk)
- 			return 0;
- 
- 		kref_get(&core->ref);
-+		kref_get(&clk->ref);
- 	}
- 	return 1;
- }
- 
- void __clk_put(struct clk *clk)
- {
-+	struct clk_core *core;
- 	struct module *owner;
- 
- 	if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
-@@ -2772,19 +2787,15 @@ void __clk_put(struct clk *clk)
- 
- 	clk_prepare_lock();
- 
--	hlist_del(&clk->clks_node);
--	if (clk->min_rate > clk->core->req_rate ||
--	    clk->max_rate < clk->core->req_rate)
--		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
-+	core = clk->core;
-+	owner = core->owner;
- 
--	owner = clk->core->owner;
--	kref_put(&clk->core->ref, __clk_release);
-+	kref_put(&clk->ref, __clk_release);
-+	kref_put(&core->ref, __clk_core_release);
- 
- 	clk_prepare_unlock();
- 
- 	module_put(owner);
--
--	kfree(clk);
- }
- 
- /***        clk rate change notifiers        ***/
++Required properties:
++- compatible:	Should be "brcm,bcm2835-aux-clock"
++- #clock-cells:	Should be <1>. The permitted clock-specifier values can be
++		  found in include/dt-bindings/clock/bcm2835-aux.h
++- reg:		Specifies base physical address and size of the gate register
++- clocks:	The parent clock phandle
++
++Example:
++
++	clocks: cprman@7e101000 {
++		compatible = "brcm,bcm2835-cprman";
++		#clock-cells = <1>;
++		reg = <0x7e101000 0x2000>;
++		clocks = <&clk_osc>;
++	};
++
++	aux_clocks: aux-clocks@0x7e215004 {
++		compatible = "brcm,bcm2835-aux-clock";
++		#clock-cells = <1>;
++		reg = <0x7e215004 0x4>;
++		clocks = <&clocks BCM2835_CLOCK_VPU>;
++	};
+diff --git a/include/dt-bindings/clock/bcm2835-aux.h b/include/dt-bindings/clock/bcm2835-aux.h
+new file mode 100644
+index 0000000..d91156e
+--- /dev/null
++++ b/include/dt-bindings/clock/bcm2835-aux.h
+@@ -0,0 +1,17 @@
++/*
++ * Copyright (C) 2015 Broadcom Corporation
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation version 2.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#define BCM2835_AUX_CLOCK_UART		0
++#define BCM2835_AUX_CLOCK_SPI1		1
++#define BCM2835_AUX_CLOCK_SPI2		2
++#define BCM2835_AUX_CLOCK_COUNT		3
 -- 
-2.5.1
-
-
+2.1.4
