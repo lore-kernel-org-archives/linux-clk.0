@@ -1,97 +1,41 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Message-ID: <1441817210.29081.15.camel@freescale.com>
-Subject: Re: [PATCH v2 05/10] doc/bindings: Update clk-qoriq bindings for
- FSL's chassis-3.0 SoCs
-From: Scott Wood <scottwood@freescale.com>
-To: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-Date: Wed, 9 Sep 2015 11:46:50 -0500
-In-Reply-To: <1441349872-4560-6-git-send-email-bhupesh.sharma@freescale.com>
-References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
- <1441349872-4560-6-git-send-email-bhupesh.sharma@freescale.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, arnd@arndb.de, marc.zyngier@arm.com,
- Catalin.Marinas@arm.com, will.deacon@arm.com, olof@lixom.net,
- bhupesh.linux@gmail.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH 2/2] clk: at91: system: don't try to free_irq when there is no IRQ
+Date: Fri, 11 Sep 2015 16:34:07 +0200
+Message-Id: <1441982047-11303-2-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2015-09-04 at 12:27 +0530, Bhupesh Sharma wrote:
-> This patch updates the 'clk-qoriq' device-tree bindings for
-> chassis-3.0 compliant SoCs from FSL, for e.g. LS2080A
-> 
-> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-> ---
->  .../devicetree/bindings/clock/qoriq-clock.txt      |   16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
+In the error path of at91_clk_register_system(), sys->irq is freed
+unconditionally but it may not exist or be request at all.
 
-Why didn't you CC me on this?
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ drivers/clk/at91/clk-system.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt 
-> b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> index 16a3ec4..f0a4b1c 100644
-> --- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> @@ -14,6 +14,7 @@ Chassis Version             Example Chips
->  ---------------              -------------
->  1.0                  p4080, p5020, p5040
->  2.0                  t4240, b4860
-> +3.0                  ls2080a
->  
->  1. Clock Block Binding
->  
-> @@ -32,9 +33,11 @@ Required properties:
->       * "fsl,b4420-clockgen"
->       * "fsl,b4860-clockgen"
->       * "fsl,ls1021a-clockgen"
-> -     Chassis-version clock strings include:
-> +     * "fsl,ls2080a-clockgen"
+diff --git a/drivers/clk/at91/clk-system.c b/drivers/clk/at91/clk-system.c
+index 58008b3e8bc1..3f5314344286 100644
+--- a/drivers/clk/at91/clk-system.c
++++ b/drivers/clk/at91/clk-system.c
+@@ -138,7 +138,8 @@ at91_clk_register_system(struct at91_pmc *pmc, const char *name,
+ 
+ 	clk = clk_register(NULL, &sys->hw);
+ 	if (IS_ERR(clk)) {
+-		free_irq(sys->irq, sys);
++		if (irq)
++			free_irq(sys->irq, sys);
+ 		kfree(sys);
+ 	}
+ 
+-- 
+2.1.4
 
-We don't need to update this for every new chip.  It says "such as".
-
-> +     Chassis clock strings include:
->       * "fsl,qoriq-clockgen-1.0": for chassis 1.0 clocks
->       * "fsl,qoriq-clockgen-2.0": for chassis 2.0 clocks
-> +     * "fsl,qoriq-clockgen-3.0": for chassis 3.0 clocks
-
-With the new binding I don't see value in the generic version compatible.
-
->  - reg: Describes the address of the device's resources within the
->       address space defined by its parent bus, and resource zero
->       represents the clock register set
-> @@ -96,18 +99,23 @@ Required properties:
->  - compatible : Should include one of the following:
->       * "fsl,qoriq-core-pll-1.0" for core PLL clocks (v1.0)
->       * "fsl,qoriq-core-pll-2.0" for core PLL clocks (v2.0)
-> +     * "fsl,qoriq-core-pll-3.0" for core PLL clocks (v3.0)
->       * "fsl,qoriq-core-mux-1.0" for core mux clocks (v1.0)
->       * "fsl,qoriq-core-mux-2.0" for core mux clocks (v2.0)
-> +     * "fsl,qoriq-core-mux-3.0" for core mux clocks (v3.0)
->       * "fsl,qoriq-sysclk-1.0": for input system clock (v1.0).
->               It takes parent's clock-frequency as its clock.
->       * "fsl,qoriq-sysclk-2.0": for input system clock (v2.0).
->               It takes parent's clock-frequency as its clock.
-> +     * "fsl,qoriq-sysclk-3.0": for input system clock (v3.0).
-> +             It takes parent's clock-frequency as its clock.
->       * "fsl,qoriq-platform-pll-1.0" for the platform PLL clock (v1.0)
->       * "fsl,qoriq-platform-pll-2.0" for the platform PLL clock (v2.0)
-> +     * "fsl,qoriq-platform-pll-3.0" for the platform PLL clock (v3.0)
-
-No new legacy compatibles please.
-
--Scott
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
