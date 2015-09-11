@@ -1,119 +1,54 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Emilio Lopez <emilio@elopez.com.ar>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH 06/16] clk: at91: clk-main: factorize irq handling
-Date: Wed, 30 Sep 2015 18:10:59 +0200
-Message-Id: <1443629469-15086-7-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 4/4] ARM: sun8i: A23: Add missing msgbox gate
+Date: Fri, 11 Sep 2015 15:26:37 +0200
+Message-Id: <1441977997-29041-5-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1441977997-29041-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1441977997-29041-1-git-send-email-maxime.ripard@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The three different irq handlers are doing the same thing, factorize their
-code in a generic irq handler.
+Even though it's not mentionned in the A23 user manual, the A23 has a gate
+for the AHB1 clock to the msgbox IP. Add it to the clock-indices.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Reported-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/at91/clk-main.c | 43 ++++++++++++++++---------------------------
- 1 file changed, 16 insertions(+), 27 deletions(-)
+ arch/arm/boot/dts/sun8i-a23.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
-index c1f119748bdc..79a380cd1f4e 100644
---- a/drivers/clk/at91/clk-main.c
-+++ b/drivers/clk/at91/clk-main.c
-@@ -71,12 +71,21 @@ struct clk_sam9x5_main {
+diff --git a/arch/arm/boot/dts/sun8i-a23.dtsi b/arch/arm/boot/dts/sun8i-a23.dtsi
+index 4a85e213843b..92e6616979ea 100644
+--- a/arch/arm/boot/dts/sun8i-a23.dtsi
++++ b/arch/arm/boot/dts/sun8i-a23.dtsi
+@@ -62,8 +62,8 @@
+ 					<21>, <24>, <26>,
+ 					<29>, <32>, <36>,
+ 					<40>, <44>, <46>,
+-					<52>, <54>,
+-					<57>;
++					<52>, <53>,
++					<54>, <57>;
+ 			clock-output-names = "ahb1_mipidsi", "ahb1_dma",
+ 					"ahb1_mmc0", "ahb1_mmc1", "ahb1_mmc2",
+ 					"ahb1_nand", "ahb1_sdram",
+@@ -71,8 +71,8 @@
+ 					"ahb1_spi1", "ahb1_otg", "ahb1_ehci",
+ 					"ahb1_ohci", "ahb1_ve", "ahb1_lcd",
+ 					"ahb1_csi", "ahb1_be",	"ahb1_fe",
+-					"ahb1_gpu", "ahb1_spinlock",
+-					"ahb1_drc";
++					"ahb1_gpu", "ahb1_msgbox",
++					"ahb1_spinlock", "ahb1_drc";
+ 		};
  
- #define to_clk_sam9x5_main(hw) container_of(hw, struct clk_sam9x5_main, hw)
- 
--static irqreturn_t clk_main_osc_irq_handler(int irq, void *dev_id)
-+/* Generic structure */
-+struct clk_main {
-+	struct clk_hw hw;
-+	struct at91_pmc *pmc;
-+	unsigned int irq;
-+	wait_queue_head_t wait;
-+};
-+#define to_clk_main(hw) container_of(hw, struct clk_main, hw)
-+
-+static irqreturn_t clk_main_irq_handler(int irq, void *dev_id)
- {
--	struct clk_main_osc *osc = dev_id;
-+	struct clk_main *clkmain = dev_id;
- 
--	wake_up(&osc->wait);
--	disable_irq_nosync(osc->irq);
-+	wake_up(&clkmain->wait);
-+	disable_irq_nosync(clkmain->irq);
- 
- 	return IRQ_HANDLED;
- }
-@@ -185,7 +194,7 @@ at91_clk_register_main_osc(struct regmap *regmap,
- 
- 	init_waitqueue_head(&osc->wait);
- 	irq_set_status_flags(osc->irq, IRQ_NOAUTOEN);
--	ret = request_irq(osc->irq, clk_main_osc_irq_handler,
-+	ret = request_irq(osc->irq, clk_main_irq_handler,
- 			  IRQF_TRIGGER_HIGH, name, osc);
- 	if (ret) {
- 		kfree(osc);
-@@ -237,16 +246,6 @@ static void __init of_at91rm9200_clk_main_osc_setup(struct device_node *np)
- CLK_OF_DECLARE(at91rm9200_clk_main_osc, "atmel,at91rm9200-clk-main-osc",
- 	       of_at91rm9200_clk_main_osc_setup);
- 
--static irqreturn_t clk_main_rc_osc_irq_handler(int irq, void *dev_id)
--{
--	struct clk_main_rc_osc *osc = dev_id;
--
--	wake_up(&osc->wait);
--	disable_irq_nosync(osc->irq);
--
--	return IRQ_HANDLED;
--}
--
- static bool clk_main_rc_osc_ready(struct regmap *regmap)
- {
- 	unsigned int status;
-@@ -361,7 +360,7 @@ at91_clk_register_main_rc_osc(struct regmap *regmap,
- 
- 	init_waitqueue_head(&osc->wait);
- 	irq_set_status_flags(osc->irq, IRQ_NOAUTOEN);
--	ret = request_irq(osc->irq, clk_main_rc_osc_irq_handler,
-+	ret = request_irq(osc->irq, clk_main_irq_handler,
- 			  IRQF_TRIGGER_HIGH, name, osc);
- 	if (ret)
- 		return ERR_PTR(ret);
-@@ -529,16 +528,6 @@ static void __init of_at91rm9200_clk_main_setup(struct device_node *np)
- CLK_OF_DECLARE(at91rm9200_clk_main, "atmel,at91rm9200-clk-main",
- 	       of_at91rm9200_clk_main_setup);
- 
--static irqreturn_t clk_sam9x5_main_irq_handler(int irq, void *dev_id)
--{
--	struct clk_sam9x5_main *clkmain = dev_id;
--
--	wake_up(&clkmain->wait);
--	disable_irq_nosync(clkmain->irq);
--
--	return IRQ_HANDLED;
--}
--
- static inline bool clk_sam9x5_main_ready(struct regmap *regmap)
- {
- 	unsigned int status;
-@@ -657,7 +646,7 @@ at91_clk_register_sam9x5_main(struct regmap *regmap,
- 	clkmain->parent = status & AT91_PMC_MOSCEN ? 1 : 0;
- 	init_waitqueue_head(&clkmain->wait);
- 	irq_set_status_flags(clkmain->irq, IRQ_NOAUTOEN);
--	ret = request_irq(clkmain->irq, clk_sam9x5_main_irq_handler,
-+	ret = request_irq(clkmain->irq, clk_main_irq_handler,
- 			  IRQF_TRIGGER_HIGH, name, clkmain);
- 	if (ret)
- 		return ERR_PTR(ret);
+ 		mbus_clk: clk@01c2015c {
 -- 
-2.1.4
+2.5.1
+
