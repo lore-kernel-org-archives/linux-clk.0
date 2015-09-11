@@ -1,83 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 2/2] arm64: dts: mt8173: add timer node
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>
-References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
- <1442369095-1094-2-git-send-email-yingjoe.chen@mediatek.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
+Subject: Re: [PATCH 2/3] clk: bcm2835: Add a driver for the auxiliary peripheral clock gates.
+From: Martin Sperl <martin@sperl.org>
+In-Reply-To: <1441923750-19404-3-git-send-email-eric@anholt.net>
+Date: Fri, 11 Sep 2015 12:24:50 +0200
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <Catalin.Marinas@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	"linux-mediatek@lists.infradead.org"
-	<linux-mediatek@lists.infradead.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Olof Johansson <olof@lixom.net>,
-	"srv_heupstream@mediatek.com" <srv_heupstream@mediatek.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Eddie Huang <eddie.huang@mediatek.com>
-Message-ID: <55FAC570.8040307@arm.com>
-Date: Thu, 17 Sep 2015 14:51:44 +0100
-MIME-Version: 1.0
-In-Reply-To: <1442369095-1094-2-git-send-email-yingjoe.chen@mediatek.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+	linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Message-Id: <D051D944-F10B-460F-AF10-8C177A3A7E3D@sperl.org>
+References: <1441923750-19404-1-git-send-email-eric@anholt.net> <1441923750-19404-3-git-send-email-eric@anholt.net>
+To: Eric Anholt <eric@anholt.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
-
-On 16/09/15 03:04, Yingjoe Chen wrote:
-> From: Daniel Kurtz <djkurtz@chromium.org>
->
-> Add device node to enable GPT timer. This timer will be
-> used as sched clock source.
->
-
-Interesting any known issues with or advantage over the arch timers
-to prefer it as sched clock source. I see even arch timers are present
-in DT, hence the question. Or is it just a incorrect commit log ?
-
-How does this get selected as sched clock source ? I don't see
-sched_clock_register in mtk_timer.c
-
-To be clear, I am not against adding this timer support, but just want
-to know is it preferred for sched clock source ? if yes why ? better
-resolution ?
-
-> Change-Id: Idc4e3f0ee80b5c36cae6f0f2328f94aafcca1253
-
-^ Should be dropped
-
-> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-> Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
-> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> On 11.09.2015, at 00:22, Eric Anholt <eric@anholt.net> wrote:
+> 
+> There are a pair of SPI masters and a mini UART that were last minute
+> additions.  As a result, they didn't get integrated in the same way as
+> the other gates off of the VPU clock in CPRMAN.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 > ---
->   arch/arm64/boot/dts/mediatek/mt8173.dtsi | 9 +++++++++
->   1 file changed, 9 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> index d18ee42..d763803 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> @@ -238,6 +238,15 @@
->   			reg = <0 0x10007000 0 0x100>;
->   		};
->
-> +		timer: timer@10008000 {
-> +			compatible = "mediatek,mt8173-timer",
 
-Missing documentation ? I am referring upstream and it might be in some 
-patches already queued perhaps ?
+Tested with the spi-bcm2835aux driver and it works perfectly.
+I will now post the latest incarnation of the driver for inclusion.
 
-Regards,
-Sudeep
+I have also tested with the uart1 and it works in principle.
+
+Note that there is one issue (as mentioned elsewhere) with uart1:
+the 8250 serial driver has a (hardcoded) internal clock divider 16,
+while the hardware has an internal divider of 8.
+
+This results in baud rates that are a factor of 2 higher than requested.
+
+Tested-by: Martin Sperl <kernel@martin.sperl.org>
+
