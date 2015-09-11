@@ -1,47 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH 2/2] drivers: clk: st: Rename st_pll3200c32_407_c0_x into
- st_pll3200c32_cx_x
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Gabriel Fernandez <gabriel.fernandez@linaro.org>
-References: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
- <1442389379-9298-3-git-send-email-gabriel.fernandez@linaro.org>
- <20150917185151.GT23081@codeaurora.org>
-CC: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Fabian Frederick <fabf@skynet.be>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-	<linux-clk@vger.kernel.org>
-From: Maxime Coquelin <maxime.coquelin@st.com>
-Message-ID: <55FBBDE8.5070305@st.com>
-Date: Fri, 18 Sep 2015 09:31:52 +0200
-MIME-Version: 1.0
-In-Reply-To: <20150917185151.GT23081@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH 1/2] clk: at91: utmi: use pmc_read when the at91_pmc is available
+Date: Fri, 11 Sep 2015 16:34:06 +0200
+Message-Id: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+at91_pmc_read is a workaround to allow external drivers to acces some
+registers of the PMC. There is no need for it in clk-utmi.c as we aready
+have a pointer to the struct at91_pmc.
 
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ drivers/clk/at91/clk-utmi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 09/17/2015 08:51 PM, Stephen Boyd wrote:
-> On 09/16, Gabriel Fernandez wrote:
->> Use a generic name for this kind of PLL
->>
->> Correction in dts files are already done here:
->> commit 5eb26c605909 ("ARM: STi: DT: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x")
->>
->> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
->> ---
-> Applied to clk-fixes
->
-Thanks Stephen
+diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
+index 30dd697b1668..ca561e90a60f 100644
+--- a/drivers/clk/at91/clk-utmi.c
++++ b/drivers/clk/at91/clk-utmi.c
+@@ -47,7 +47,7 @@ static int clk_utmi_prepare(struct clk_hw *hw)
+ {
+ 	struct clk_utmi *utmi = to_clk_utmi(hw);
+ 	struct at91_pmc *pmc = utmi->pmc;
+-	u32 tmp = at91_pmc_read(AT91_CKGR_UCKR) | AT91_PMC_UPLLEN |
++	u32 tmp = pmc_read(pmc, AT91_CKGR_UCKR) | AT91_PMC_UPLLEN |
+ 		  AT91_PMC_UPLLCOUNT | AT91_PMC_BIASEN;
+ 
+ 	pmc_write(pmc, AT91_CKGR_UCKR, tmp);
+@@ -73,7 +73,7 @@ static void clk_utmi_unprepare(struct clk_hw *hw)
+ {
+ 	struct clk_utmi *utmi = to_clk_utmi(hw);
+ 	struct at91_pmc *pmc = utmi->pmc;
+-	u32 tmp = at91_pmc_read(AT91_CKGR_UCKR) & ~AT91_PMC_UPLLEN;
++	u32 tmp = pmc_read(pmc, AT91_CKGR_UCKR) & ~AT91_PMC_UPLLEN;
+ 
+ 	pmc_write(pmc, AT91_CKGR_UCKR, tmp);
+ }
+-- 
+2.1.4
+
