@@ -1,59 +1,29 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
- <linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
- <linux-clk@vger.kernel.org>
-Subject: [PATCH v2 02/10] Documentation: DT: Add entry for FSL LS2080A QDS and
- RDB boards
-Date: Fri, 4 Sep 2015 12:27:44 +0530
-Message-ID: <1441349872-4560-3-git-send-email-bhupesh.sharma@freescale.com>
-In-Reply-To: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
-References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
+Return-Path: <jacmet@gmail.com>
+Return-Path: <jacmet@gmail.com>
+Sender: Peter Korsgaard <jacmet@gmail.com>
+From: Peter Korsgaard <peter@korsgaard.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Emilio Lopez <emilio@elopez.com.ar>,  Mike Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,  linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/4] ARM: sun8i: Add the A33 AHB1 gates clock driver
+References: <1441977997-29041-1-git-send-email-maxime.ripard@free-electrons.com>
+	<1441977997-29041-3-git-send-email-maxime.ripard@free-electrons.com>
+Date: Sun, 13 Sep 2015 17:13:12 +0200
+In-Reply-To: <1441977997-29041-3-git-send-email-maxime.ripard@free-electrons.com>
+	(Maxime Ripard's message of "Fri, 11 Sep 2015 15:26:35 +0200")
+Message-ID: <87wpvu2vzr.fsf@dell.be.48ers.dk>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: bhupesh.sharma@freescale.com, Catalin.Marinas@arm.com,
- bhupesh.linux@gmail.com, will.deacon@arm.com, olof@lixom.net
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds a devicetree binding documentation for Freescale's
-LS2080A QDS and RDB boards.
+>>>>> "Maxime" == Maxime Ripard <maxime.ripard@free-electrons.com> writes:
 
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
----
- Documentation/devicetree/bindings/arm/fsl.txt |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ > The A33 has different a different gates array than the A23, add the node to
+ > the DT.
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index 53f229a..34c88b0 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -135,3 +135,11 @@ LS2080A ARMv8 based Simulator model
- Required root node properties:
-     - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
- 
-+LS2080A ARMv8 based QDS Board
-+Required root node properties:
-+    - compatible = "fsl,ls2080a-qds", "fsl,ls2080a";
-+
-+LS2080A ARMv8 based RDB Board
-+Required root node properties:
-+    - compatible = "fsl,ls2080a-rdb", "fsl,ls2080a";
-+
+NIT: 2x different.
+
+Shouldn't the a23 one then move from sun8i-a23-a33.dtsi to
+sun8i-a23.dtsi?
+
 -- 
-1.7.9.5
-
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Bye, Peter Korsgaard
