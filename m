@@ -1,50 +1,33 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Return-Path: <jacmet@gmail.com>
+Return-Path: <jacmet@gmail.com>
+Sender: Peter Korsgaard <jacmet@gmail.com>
+From: Peter Korsgaard <peter@korsgaard.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Emilio Lopez <emilio@elopez.com.ar>,  Mike Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,  linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/4] ARM: sun8i: Add the A33 AHB1 gates clock driver
+References: <1441977997-29041-1-git-send-email-maxime.ripard@free-electrons.com>
+	<1441977997-29041-3-git-send-email-maxime.ripard@free-electrons.com>
+	<87wpvu2vzr.fsf@dell.be.48ers.dk>
+Date: Sun, 13 Sep 2015 17:13:52 +0200
+In-Reply-To: <87wpvu2vzr.fsf@dell.be.48ers.dk> (Peter Korsgaard's message of
+	"Sun, 13 Sep 2015 17:13:12 +0200")
+Message-ID: <87pp1m2vyn.fsf@dell.be.48ers.dk>
 MIME-Version: 1.0
-In-Reply-To: <1441349872-4560-7-git-send-email-bhupesh.sharma@freescale.com>
-References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
- <1441349872-4560-7-git-send-email-bhupesh.sharma@freescale.com>
-Date: Fri, 4 Sep 2015 15:01:55 -0500
-Message-ID: <CADRPPNQsemXa2HgYZAcm+GurhimHbYVM5CL5ReDsyuzfAO=kSQ@mail.gmail.com>
-Subject: Re: [PATCH v2 06/10] clk: qoriq: Add ls2080a support.
-From: Li Yang <leoli@freescale.com>
-To: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
- marc.zyngier@arm.com, Catalin.Marinas@arm.com, will.deacon@arm.com,
- olof@lixom.net, Scott Wood <scottwood@freescale.com>,
- Bhupesh SHARMA <bhupesh.linux@gmail.com>, linux-clk@vger.kernel.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 4, 2015 at 1:57 AM, Bhupesh Sharma
-<bhupesh.sharma@freescale.com> wrote:
-> From: Scott Wood <scottwood@freescale.com>
->
-> LS2080A is the first implementation of the chassis 3 clockgen, which
-> has a different register layout than previous chips.  It is also little
-> endian, unlike previous chips.
->
-> Signed-off-by: Scott Wood <scottwood@freescale.com>
-> ---
+>>>>> "Peter" == Peter Korsgaard <peter@korsgaard.com> writes:
 
-You should probably mention here that the patch is depending on
-another pending patch to apply.  And this patch should be going
-through the same sub-system tree as the dependency patch.  Otherwise,
-there is no way it can be applied.
+>>>>> "Maxime" == Maxime Ripard <maxime.ripard@free-electrons.com> writes:
+ >> The A33 has different a different gates array than the A23, add the node to
+ >> the DT.
 
-Regards,
-Leo
+ > NIT: 2x different.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+ > Shouldn't the a23 one then move from sun8i-a23-a33.dtsi to
+ > sun8i-a23.dtsi?
+
+Ahh, I didn't notice patch 3.
+
+-- 
+Bye, Peter Korsgaard
