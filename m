@@ -1,137 +1,41 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 15 Sep 2015 17:39:31 -0700
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Date: Mon, 14 Sep 2015 12:54:05 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] clk: readd refcounting for struct clk instances
-Message-ID: <20150916003931.GK23081@codeaurora.org>
-References: <1878691.zhVxsBBBGg@diego>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Mikko Perttunen <mikko.perttunen@kapsi.fi>,
+	Tuomas Tynkkynen <ttynkkynen@nvidia.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: dfll: Properly protect OPP list
+Message-ID: <20150914195405.GB21561@codeaurora.org>
+References: <1441893321-4563-1-git-send-email-thierry.reding@gmail.com>
+ <20150910175144.GB15099@codeaurora.org>
+ <20150911023527.GS5266@linux>
+ <20150911113531.GA16323@ulmo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1878691.zhVxsBBBGg@diego>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20150911113531.GA16323@ulmo>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/15, Heiko Stübner wrote:
-> With the split into struct clk and struct clk_core, clocks lost the
-> ability for nested __clk_get clkdev calls. While it stays possible to
-> call __clk_get, the first call to (__)clk_put will clear the struct clk,
-> making subsequent clk_put calls run into a NULL pointer dereference.
+On 09/11, Thierry Reding wrote:
+> On Fri, Sep 11, 2015 at 08:05:27AM +0530, Viresh Kumar wrote:
+> > On 10-09-15, 10:51, Stephen Boyd wrote:
+> > > Don't we already have an rcu_read_lock() at the beginning of this
+> > > function? I don't understand why we need to nest them in the same
+> > > function.
+> > 
+> > +1
 > 
-> One prime example of this sits in the generic power domain code, where it
-> is possible to add the clocks both by name and by passing in a struct clk
-> via pm_clk_add_clk(). __pm_clk_add() in turn then calls __clk_get to
-> increase the refcount, so that the original code can put the clock again.
+> My bad, I wasn't looking closely enough. The second hunk can be dropped.
 > 
-> A possible call-path looks like
-> clk = of_clk_get();
-> pm_clk_add_clk(dev, clk);
-> clk_put(clk);
-> 
-> with pm_clk_add_clk() => __pm_clk_add() then calling __clk_get on the clk
-> and later clk_put when the pm clock list gets destroyed, thus creating
-> a NULL pointer deref, as the struct clk doesn't exist anymore.
-> 
-> So add a separate refcounting for struct clk instances and only clean up
-> once the refcount reaches zero.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-> I stumbled upon this while applying the new Rockchip power-domain driver,
-> but I guess the underlying issue is universal and probably present since
-> the original clk/clk_core split, so this probably counts as fix.
 
-Ok. The fix makes sense, but I wonder why we do this. Perhaps we
-should stop exporting __clk_get() and __clk_put() to everything
-that uses clkdev in the kernel. They're called per-user clks for
-a reason. There's one user. Now we have two users of the same
-struct clk instance, so we have to refcount it too? I hope the
-shared clk instance isn't being used to set rates in two pieces
-of code.
-
-And this only affects pm_clk_add_clk() callers right? So the only
-caller in the kernel (drivers/clk/shmobile/clk-mstp.c) doesn't
-seem to have this problem right now because it never calls
-clk_put() on the pointer it passes to pm_clk_add_clk().
-
-So what if we did the patch below? This would rely on callers not
-calling clk_put() before calling pm_clk_remove() or
-pm_clk_destroy(), and the life cycle would be clear, but the
-sharing is still there. Or we could say that after a clk is given
-to pm_clk_add_clk() that the caller shouldn't touch it anymore,
-like shmobile is doing right now. Then there's nothing to do
-besides remove the extra __clk_get() call in the pm layer.
-
-> 
-> @@ -2606,6 +2607,18 @@ static void __clk_release(struct kref *ref)
->  	kfree(core);
->  }
->  
-> +static void __clk_release(struct kref *ref)
-> +{
-> +	struct clk *clk = container_of(ref, struct clk, ref);
-> +
-> +	hlist_del(&clk->clks_node);
-> +	if ((clk->min_rate > clk->core->req_rate ||
-> +	     clk->max_rate < clk->core->req_rate))
-
-Why did we grow a pair of parenthesis?
-
-> +		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
-> +
-> +	kfree(clk);
-> +}
-> +
->  /*
->   * Empty clk_ops for unregistered clocks. These are used temporarily
->   * after clk_unregister() was called on a clock and until last clock
-
-
-diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
-index 652b5a367c1f..ef62bb3d7b26 100644
---- a/drivers/base/power/clock_ops.c
-+++ b/drivers/base/power/clock_ops.c
-@@ -31,6 +31,7 @@ struct pm_clock_entry {
- 	char *con_id;
- 	struct clk *clk;
- 	enum pce_status status;
-+	bool needs_clk_put;
- };
- 
- /**
-@@ -59,8 +60,10 @@ static inline void __pm_clk_enable(struct device *dev, struct pm_clock_entry *ce
-  */
- static void pm_clk_acquire(struct device *dev, struct pm_clock_entry *ce)
- {
--	if (!ce->clk)
-+	if (!ce->clk) {
- 		ce->clk = clk_get(dev, ce->con_id);
-+		ce->needs_clk_put = true;
-+	}
- 	if (IS_ERR(ce->clk)) {
- 		ce->status = PCE_STATUS_ERROR;
- 	} else {
-@@ -93,7 +96,7 @@ static int __pm_clk_add(struct device *dev, const char *con_id,
- 			return -ENOMEM;
- 		}
- 	} else {
--		if (IS_ERR(clk) || !__clk_get(clk)) {
-+		if (IS_ERR(clk)) {
- 			kfree(ce);
- 			return -ENOENT;
- 		}
-@@ -149,7 +152,8 @@ static void __pm_clk_remove(struct pm_clock_entry *ce)
- 
- 		if (ce->status >= PCE_STATUS_ACQUIRED) {
- 			clk_unprepare(ce->clk);
--			clk_put(ce->clk);
-+			if (ce->needs_clk_put)
-+				clk_put(ce->clk);
- 		}
- 	}
- 
+Ok. I applied the first hunk to clk-fixes.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
