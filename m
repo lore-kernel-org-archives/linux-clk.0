@@ -1,54 +1,31 @@
-Return-Path: <LeoLi@freescale.com>
-From: Li Leo <LeoLi@freescale.com>
-To: Hou Zhiqiang <B48286@freescale.com>, Mark Rutland <mark.rutland@arm.com>,
-	"marc.zyngier@arm.com" <marc.zyngier@arm.com>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Catalin Marinas
-	<Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Shaohui Xie
-	<Shaohui.Xie@freescale.com>, "corbet@lwn.net" <corbet@lwn.net>, "Sharma
- Bhupesh" <bhupesh.sharma@freescale.com>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "wsa@the-dreams.de" <wsa@the-dreams.de>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "wim@iguana.be"
-	<wim@iguana.be>, Wenbin Song <Wenbin.Song@freescale.com>, Scott Wood
-	<scottwood@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>
-Subject: RE: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
-Date: Wed, 23 Sep 2015 04:16:10 +0000
-Message-ID: <DM2PR0301MB0734302E89290593BE7D9565BA440@DM2PR0301MB0734.namprd03.prod.outlook.com>
-References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
- <1442838158-2964-5-git-send-email-B48286@freescale.com>
- <20150922012403.GA1535@svinekod>
- <CY1PR0301MB078008B10188504C951076498B450@CY1PR0301MB0780.namprd03.prod.outlook.com>
- <DM2PR0301MB07342356008C1A50AB26FEFFBA450@DM2PR0301MB0734.namprd03.prod.outlook.com>
- <CY1PR0301MB07805FA01ACAF84648C806138B440@CY1PR0301MB0780.namprd03.prod.outlook.com>
-In-Reply-To: <CY1PR0301MB07805FA01ACAF84648C806138B440@CY1PR0301MB0780.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 14 Sep 2015 14:57:24 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: at91: utmi: use pmc_read when the at91_pmc is
+ available
+Message-ID: <20150914215724.GA23081@codeaurora.org>
+References: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-> > > >
-> > > > Hi,
-> > > >
-> > > > > +/memreserve/ 0x80000000 0x00010000;
-> > > >
-> > > > Why is this necessary?
-> > >
-> > > This memory region is pre-reserved for the spin-table/psci, although
-> > > didn't add Enable method of secondary cores.
-> >
-> > Can this be reserved by bootloader?
->=20
-> Yes, the memory for psci was reserved by u-boot code. But due to spin-tab=
-le
-> need the release address, is it better adding the /memreserve/ in dts fil=
-e?
-> Or add it by bootloader and fix the release address accordingly?
+On 09/11, Alexandre Belloni wrote:
+> at91_pmc_read is a workaround to allow external drivers to acces some
+> registers of the PMC. There is no need for it in clk-utmi.c as we aready
+> have a pointer to the struct at91_pmc.
+> 
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
 
-Both the reserved memory region and cpu-release-addr should be updated by b=
-ootloader.
+Applied to clk-next
 
-Regards,
-Leo
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
