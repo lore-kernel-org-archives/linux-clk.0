@@ -1,96 +1,51 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-sh@vger.kernel.org,mturquette@baylibre.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Tue, 15 Sep 2015 19:23:07 +0900
-Message-Id: <20150915102307.15716.26976.sendpatchset@little-apple>
-In-Reply-To: <20150915102238.15716.91170.sendpatchset@little-apple>
-References: <20150915102238.15716.91170.sendpatchset@little-apple>
-Subject: [PATCH 03/05][RFC] clk: Allow NULL as parent names
+Return-Path: <mark.rutland@arm.com>
+Date: Mon, 14 Sep 2015 16:19:42 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
+Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] clk: rockchip: add critical clock for rk3368
+Message-ID: <20150914151942.GJ7002@leverpostej>
+References: <5267432.TORlj1Iv40@diego>
+ <20150914141920.GF7002@leverpostej>
+ <6675833.8DAAvDYooL@diego>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <6675833.8DAAvDYooL@diego>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Mon, Sep 14, 2015 at 04:06:05PM +0100, Heiko Stübner wrote:
+> Am Montag, 14. September 2015, 15:19:21 schrieb Mark Rutland:
+> > On Sun, Sep 13, 2015 at 12:20:36PM +0100, Heiko Stübner wrote:
+> > > Again a result of the gpio-clock-liberation the rk3368 needs the
+> > > pclk_pd_pmu marked as critical, to boot successfully.
+> > > 
+> > > Reported-by: Mark Rutland <mark.rutland@arm.com>
+> > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > 
+> > FWIW: Tested-by: Mark Rutland <mark.rutland@arm.com>
+> > 
+> > I'm surprised that we don't describe these as critical in the DT, given
+> > that this isn't really an internal property of the clock controller, but
+> > rather what happens to be attached to it. That ship appears to have
+> > sailed, however.
+> 
+> I wouldn't necessarily think so ... what is called critical only means "don't 
+> turn off when walking the clock-tree upwards".
+> 
+> The pclk_pd_pmu for example simply supplies some more clocks we don't handle 
+> at all currently (pclk_pmu_noc, ...). That we currently choose to ignore those 
+> [because we don't have any code nor dt-bindings to handle the components 
+> supplied] sounds very much like an implementation-specific detail, not 
+> something about the hardware.
 
-Relax the parent name requirement now when struct clk_init_data
-allows passing in an array of parent clocks during registration.
+Sure, but the specific case that lead to this report was the fact that
+this clock (directly?) feeds the pinctrl programming interface, and that
+fact is neither described in the DT nor handled by the driver. Surely
+that should be described and handled?
 
-With this patch the parent name pointer can be set to NULL in
-case parent clocks instead are passed in the parent array.
-
-TODO: Check if kfree_const() cleanup code needs to be updated.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- drivers/clk/clk.c |   19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
-
---- 0003/drivers/clk/clk.c
-+++ work/drivers/clk/clk.c	2015-09-15 18:32:55.420513000 +0900
-@@ -1081,7 +1081,8 @@ static int clk_fetch_parent_index(struct
- 		if (core->parents[i])
- 			continue;
- 
--		if (!strcmp(core->parent_names[i], parent->name)) {
-+		if (core->parent_names[i] && !strcmp(core->parent_names[i],
-+						     parent->name)) {
- 			core->parents[i] = clk_core_lookup(parent->name);
- 			return i;
- 		}
-@@ -1675,7 +1676,7 @@ static struct clk_core *__clk_init_paren
- 
- 	if (core->num_parents == 1) {
- 		if (IS_ERR_OR_NULL(core->parent))
--			core->parent = clk_core_lookup(core->parent_names[0]);
-+			core->parent = clk_core_get_parent_by_index(core, 0);
- 		ret = core->parent;
- 		goto out;
- 	}
-@@ -1749,7 +1750,8 @@ bool clk_has_parent(struct clk *clk, str
- 		return true;
- 
- 	for (i = 0; i < core->num_parents; i++)
--		if (strcmp(core->parent_names[i], parent_core->name) == 0)
-+		if (core->parent_names[i] && strcmp(core->parent_names[i],
-+						    parent_core->name) == 0)
- 			return true;
- 
- 	return false;
-@@ -2337,7 +2339,7 @@ static int __clk_init(struct device *dev
- 
- 	/* throw a WARN if any entries in parent_names are NULL */
- 	for (i = 0; i < core->num_parents; i++)
--		WARN(!core->parent_names[i],
-+		WARN(!core->parents && !core->parent_names[i],
- 				"%s: invalid NULL in %s's .parent_names\n",
- 				__func__, core->name);
- 
-@@ -2437,13 +2439,15 @@ static int __clk_init(struct device *dev
- 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
- 		if (orphan->num_parents && orphan->ops->get_parent) {
- 			i = orphan->ops->get_parent(orphan->hw);
--			if (!strcmp(core->name, orphan->parent_names[i]))
-+			if (orphan->parent_names[i] &&
-+			    !strcmp(core->name, orphan->parent_names[i]))
- 				clk_core_reparent(orphan, core);
- 			continue;
- 		}
- 
- 		for (i = 0; i < orphan->num_parents; i++)
--			if (!strcmp(core->name, orphan->parent_names[i])) {
-+			if (orphan->parent_names[i] &&
-+			    !strcmp(core->name, orphan->parent_names[i])) {
- 				clk_core_reparent(orphan, core);
- 				break;
- 			}
-@@ -2555,6 +2559,9 @@ struct clk *clk_register(struct device *
- 
- 	/* copy each string name in case parent_names is __initdata */
- 	for (i = 0; i < core->num_parents; i++) {
-+		if (!hw->init->parent_names[i])
-+			continue;
-+
- 		core->parent_names[i] = kstrdup_const(hw->init->parent_names[i],
- 						GFP_KERNEL);
- 		if (!core->parent_names[i]) {
+Thanks,
+Mark.
