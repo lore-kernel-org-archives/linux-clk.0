@@ -1,98 +1,196 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/2] irqchip: gic: Document optional Clock and Power Domain properties
-Date: Mon, 14 Sep 2015 22:06:44 +0200
-Message-Id: <1442261204-30931-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1442261204-30931-1-git-send-email-geert+renesas@glider.be>
-References: <1442261204-30931-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <87twqxk92u.wl%kuninori.morimoto.gx@renesas.com>
+References: <87twqxk92u.wl%kuninori.morimoto.gx@renesas.com>
+Date: Mon, 14 Sep 2015 09:14:19 +0200
+Message-ID: <CAMuHMdX=vDeUSWy2sOmLQxOSGLJ7REXEAAdXO-p4pLT5zdf7EA@mail.gmail.com>
+Subject: Re: [PATCH] clk: add CS2000 Fractional-N driver
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon <horms@verge.net.au>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Magnus <magnus.damm@gmail.com>,
+	Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Depending on the GIC variant, the GIC module has one or more clock
-inputs. Document the optional "clocks" and "clock-names" properties,
-and their possible values, based on the Technical Reference Manuals.
-optional.
+Hi Morimoto-san,
 
-Add the optional "power-domains" property.
+On Mon, Sep 14, 2015 at 4:55 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> This patch adds CS2000 Fractional-N driver as clock provider.
+> It is useful if it supports runtime clock setting, but it supports
+> fixed clock rate only at this point.
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-This will allow to describe in DT the relationship between the GIC and
-the Clock and/or Power Domain topology on SoCs where this is relevant
-and needed for proper operation.
+Thanks for your patch!
 
-Note: As the current GIC driver doesn't support Runtime PM yet, PM
-Domain constraints must be handled elsewhere in e.g. platform code.
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/cs2000-cp.txt
+> @@ -0,0 +1,20 @@
+> +CIRRUS LOGIC Fractional-N Clock Synthesizer & Clock Multiplier
+> +
+> +Required properties:
+> +
+> +- compatible:          "cirrus,cs2000-cp"
+> +- reg:                 The chip select number on the I2C bus
+> +- clocks:              common clock binding for CLK_IN, XTI/REF_CLK
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Note: v1 was Acked-by: Rob Herring <robh@kernel.org>, but I didn't add
-      it, due to the addition of clock-names.
+As you have multiple inputs, I think it makes sense to use "clock-names".
 
-v2:
-  - Add "clock-names",
-  - Document clock inputs on various GIC variants.
+> --- /dev/null
+> +++ b/drivers/clk/clk-cs2000-cp.c
+> @@ -0,0 +1,379 @@
+> +/*
+> + * CS2000  --  CIRRUS LOGIC Fractional-N Clock Synthesizer & Clock Multiplier
+> + *
+> + * Copyright (C) 2015 Renesas Electronics Corporation
+> + * Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +#include <linux/clk-provider.h>
+> +#include <linux/delay.h>
+> +#include <linux/clk.h>
+> +#include <linux/i2c.h>
+> +#include <linux/of_device.h>
+> +#include <linux/module.h>
+> +
+> +#define CLK_MAIN       0 /* CLK_IN  on datasheet */
+> +#define CLK_IN         1 /* REF_CLK on datasheet */
 
-Clock inputs are based on the following documentation:
-  - "ARM11 MPCore Processor Technical Reference Manual" (r2p0),
-  - "Cortex-A9 MPCore Technical Reference Manual" (r4p1, r2p0),
-  - "Cortex-A15 Technical Reference Manual" (r4p0, r2p0),
-  - "CoreLink GIC-400 Generic Interrupt Controller Technical Reference
-    Manual" (r0p1, r0p0),
-  - "PrimeCell Generic Interrupt Controller (PL390) Technical Reference
-    Manual" (r0p0).
+Why do you call them differently from the datasheet?
+Especially the different CLK_IN can be confusing.
 
-I could not find clock input information in:
-  - "ARM1176JZF Development Chip Technical Reference Manual" (r0p0),
-  - "Cortex-A7 MPCore processors" (r0p5, r0p3).
+> +#define cs2000_read(c, addr)           i2c_smbus_read_byte_data(c, addr)
+> +static void cs2000_write(struct i2c_client *client, u8 addr, u8 val)
+> +{
+> +       struct device *dev = &client->dev;
+> +
+> +       dev_dbg(dev, "0x%02x : 0x%02x\n", addr, val);
+> +
+> +       i2c_smbus_write_byte_data(client, addr, val);
 
-Other:
-  - "brcm,brahma-b15-gic" seems to be always used together with
-    "arm,cortex-a15-gic".
+This can fail, so the error should be propagated, and checked in all
+callers of cs2000_write().
 
-No access to datasheets:
-  - "qcom,msm-8660-qgic",
-  - "qcom,msm-qgic2".
----
- Documentation/devicetree/bindings/arm/gic.txt | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> +}
+> +
+> +static void cs2000_bset(struct i2c_client *client, u8 addr, u8 mask, u8 val)
+> +{
+> +       u32 data;
 
-diff --git a/Documentation/devicetree/bindings/arm/gic.txt b/Documentation/devicetree/bindings/arm/gic.txt
-index 24742853ba460223..cc56021eb60babea 100644
---- a/Documentation/devicetree/bindings/arm/gic.txt
-+++ b/Documentation/devicetree/bindings/arm/gic.txt
-@@ -59,6 +59,21 @@ Optional
-   regions, used when the GIC doesn't have banked registers. The offset is
-   cpu-offset * cpu-nr.
- 
-+- clocks        : List of phandle and clock-specific pairs, one for each entry
-+  in clock-names.
-+- clock-names   : List of names for the GIC clock input(s). Valid clock names
-+  depend on the GIC variant:
-+	"ic_clk" (for "arm,arm11mp-gic")
-+	"PERIPHCLKEN" (for "arm,cortex-a15-gic")
-+	"PERIPHCLK", "PERIPHCLKEN" (for "arm,cortex-a9-gic")
-+	"clk" (for "arm,gic-400")
-+	"gclk" (for "arm,pl390")
-+
-+- power-domains : A phandle and PM domain specifier as defined by bindings of
-+		  the power controller specified by phandle, used when the GIC
-+		  is part of a Power or Clock Domain.
-+
-+
- Example:
- 
- 	intc: interrupt-controller@fff11000 {
--- 
-1.9.1
+i2c_smbus_read_byte_data returns s32, and the return value will be
+negative in case of a failure.
 
+> +       data = cs2000_read(client, addr);
+
+Should check for failure.
+
+> +       data &= ~mask;
+> +       data |= (val & mask);
+> +
+> +       cs2000_write(client, addr, data);
+> +}
+
+> +static int cs2000_ratio_set(struct i2c_client *client,
+> +                           int ch, u32 rate_in, u64 rate_out)
+> +{
+> +       u32 val;
+> +       int i;
+
+unsigned int i
+
+> +       if (CH_ERR(ch))
+
+I think it's more readable to drop the CH_ERR() macro, and open code
+"(ch < 0) || (ch >= CH_MAX)" (also in cs2000_ratio_select()).
+
+> +               return -EINVAL;
+> +
+> +       /*
+> +        * ratio = rate_out / rate_in * 2^20
+> +        *
+> +        * To avoid over flow, rate_out is u64
+> +        * The result should be u32
+> +        */
+> +
+> +       val = rate_out * (1 << 20) / rate_in;
+
+Please use do_div() for 64-by-32 divides, as full 64-bit divisions are
+usually not available on 32-bit architectures.
+
+> +static int cs2000_clk_get(struct i2c_client *client,
+> +                         u32 *rate_in, u32 *rate_out)
+> +{
+> +       struct cs2000_priv *priv = i2c_get_clientdata(client);
+> +       struct device *dev = &client->dev;
+> +       struct device_node *np = dev->of_node;
+> +       struct clk *clk_main, *clk_in;
+> +
+> +       clk_main = of_clk_get(np, CLK_MAIN);
+> +       /* not yet provided */
+> +       if (IS_ERR(clk_main))
+> +               return -EPROBE_DEFER;
+> +
+> +       clk_in = of_clk_get(np, CLK_IN);
+> +       if (IS_ERR(clk_in))
+> +               return PTR_ERR(clk_in);
+
+Named clk_get(), for both?
+
+> +static int cs2000_wait_pll_lock(struct i2c_client *client)
+> +{
+> +       struct device *dev = &client->dev;
+> +       u32 val;
+> +       int i;
+
+unsigned int
+
+> +static int cs2000_version_print(struct i2c_client *client)
+> +{
+> +       struct device *dev = &client->dev;
+> +       u32 val = cs2000_read(client, DEVICE_ID);
+
+"s32 val", and please check for failures.
+
+> +       char *revision;
+
+const char *revision;
+
+> +       /* CS2000 should be 0x0 */
+> +       if (0 != (val >> 3))
+> +               return -EIO;
+> +
+> +       switch (val & 0x7) {
+> +       case 0x4:
+> +               revision = "B2 / B3";
+> +               break;
+> +       case 0x6:
+> +               revision = "C1";
+> +               break;
+> +       default:
+> +               return -EIO;
+> +       }
+> +
+> +       dev_info(dev, "revision - %s\n", revision);
+> +
+> +       return 0;
+> +}
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
