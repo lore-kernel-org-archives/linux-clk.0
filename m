@@ -1,44 +1,70 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 9 Sep 2015 15:52:30 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] clk: Add safe switch hook
-Message-ID: <20150909225230.GX15099@codeaurora.org>
-References: <1439387673-13015-1-git-send-email-georgi.djakov@linaro.org>
- <1439387673-13015-2-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Mon, 14 Sep 2015 16:31:52 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: at91: utmi: use pmc_read when the at91_pmc is
+ available
+Message-ID: <20150914163152.30cd3d9c@bbrezillon>
+In-Reply-To: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1439387673-13015-2-git-send-email-georgi.djakov@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/12, Georgi Djakov wrote:
-> From: Stephen Boyd <sboyd@codeaurora.org>
-> 
-> Sometimes clocks can't accept their parent source turning off
-> while the source is reprogrammed to a different rate. Most
-> notably CPU clocks require a way to switch away from the current
-> PLL they're running on, reprogram that PLL to a new rate, and
-> then switch back to the PLL with the new rate once they're done.
-> Add a hook that drivers can implement allowing them to return a
-> 'safe parent' and 'safe frequency' that they can switch their
-> parent to while the upstream source is reprogrammed to support
-> this.
-> 
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Hi Alexandre,
 
-Weird to be reviewing my own patch...
+On Fri, 11 Sep 2015 16:34:06 +0200
+Alexandre Belloni <alexandre.belloni@free-electrons.com> wrote:
 
-Anyway, Mike tells me that coordinated clock rates are going to
-be on the list this month. We should use those patches instead of
-this safe parent/rate stuff. If the patches don't appear soon, we
-can look into having the clock provider handle the parent/rate
-switch itself. That isn't any worse that what we've been doing in
-other providers.
+> at91_pmc_read is a workaround to allow external drivers to acces some
+> registers of the PMC. There is no need for it in clk-utmi.c as we aready
+> have a pointer to the struct at91_pmc.
+
+Indeed.
+
+> 
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+
+Thanks,
+
+Boris
+
+> ---
+>  drivers/clk/at91/clk-utmi.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
+> index 30dd697b1668..ca561e90a60f 100644
+> --- a/drivers/clk/at91/clk-utmi.c
+> +++ b/drivers/clk/at91/clk-utmi.c
+> @@ -47,7 +47,7 @@ static int clk_utmi_prepare(struct clk_hw *hw)
+>  {
+>  	struct clk_utmi *utmi = to_clk_utmi(hw);
+>  	struct at91_pmc *pmc = utmi->pmc;
+> -	u32 tmp = at91_pmc_read(AT91_CKGR_UCKR) | AT91_PMC_UPLLEN |
+> +	u32 tmp = pmc_read(pmc, AT91_CKGR_UCKR) | AT91_PMC_UPLLEN |
+>  		  AT91_PMC_UPLLCOUNT | AT91_PMC_BIASEN;
+>  
+>  	pmc_write(pmc, AT91_CKGR_UCKR, tmp);
+> @@ -73,7 +73,7 @@ static void clk_utmi_unprepare(struct clk_hw *hw)
+>  {
+>  	struct clk_utmi *utmi = to_clk_utmi(hw);
+>  	struct at91_pmc *pmc = utmi->pmc;
+> -	u32 tmp = at91_pmc_read(AT91_CKGR_UCKR) & ~AT91_PMC_UPLLEN;
+> +	u32 tmp = pmc_read(pmc, AT91_CKGR_UCKR) & ~AT91_PMC_UPLLEN;
+>  
+>  	pmc_write(pmc, AT91_CKGR_UCKR, tmp);
+>  }
+
+
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
