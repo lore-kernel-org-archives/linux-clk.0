@@ -1,107 +1,87 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
- <will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
- <linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-clk@vger.kernel.org>
-Subject: [PATCH 5/6] clk: qoriq: Add ls1043a support.
-Date: Mon, 21 Sep 2015 20:22:37 +0800
-Message-ID: <1442838158-2964-6-git-send-email-B48286@freescale.com>
-In-Reply-To: <1442838158-2964-1-git-send-email-B48286@freescale.com>
-References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+Return-Path: <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH] clk: ti: clk-7xx: Remove hardwired ABE clock
+ configuration
+To: Tero Kristo <t-kristo@ti.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <1440401702-32420-1-git-send-email-peter.ujfalusi@ti.com>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <55F68AC1.1040807@ti.com>
+Date: Mon, 14 Sep 2015 11:52:17 +0300
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Hou Zhiqiang <B48286@freescale.com>, Shaohui.Xie@freescale.com,
- corbet@lwn.net, bhupesh.sharma@freescale.com, mturquette@baylibre.com,
- wsa@the-dreams.de, sboyd@codeaurora.org, wim@iguana.be,
- Wenbin.Song@freescale.com, scottwood@freescale.com, Mingkai.Hu@freescale.com,
- leoli@freescale.com
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+In-Reply-To: <1440401702-32420-1-git-send-email-peter.ujfalusi@ti.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Hou Zhiqiang <B48286@freescale.com>
+Hi Tero,
 
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
----
- drivers/clk/clk-qoriq.c | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+On 08/24/2015 10:35 AM, Peter Ujfalusi wrote:
+> The ABE related clocks should be configured via DT and not have it wired
+> inside of the kernel.
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 7753fa3..e71927b 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -244,6 +244,28 @@ static const struct clockgen_muxinfo clockgen2_cmux_cgb = {
- 	},
- };
- 
-+static const struct clockgen_muxinfo ls1043a_hwa1 = {
-+	{
-+		{},
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
-+		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV3 },
-+		{},
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV2 },
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
-+	},
-+};
-+
-+static const struct clockgen_muxinfo ls1043a_hwa2 = {
-+	{
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV1 },
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
-+	},
-+};
-+
- static const struct clockgen_muxinfo t1023_hwa1 = {
- 	{
- 		{},
-@@ -452,6 +474,21 @@ static const struct clockgen_chipinfo chipinfo[] = {
- 		.pll_mask = 0x03,
- 	},
- 	{
-+		.compat = "fsl,ls1043a-clockgen",
-+		.init_periph = t2080_init_periph,
-+		.cmux_groups = {
-+			&t1040_cmux
-+		},
-+		.hwaccel = {
-+			&ls1043a_hwa1, &ls1043a_hwa2
-+		},
-+		.cmux_to_group = {
-+			0, -1
-+		},
-+		.pll_mask = 0x07,
-+		.flags = CG_PLL_8BIT,
-+	},
-+	{
- 		.compat = "fsl,ls2080a-clockgen",
- 		.cmux_groups = {
- 			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
-@@ -1228,6 +1265,7 @@ err:
- CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
-+CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
- 
- /* Legacy nodes */
+can you take a look at this patch? It will not cause any regression since we
+do not have audio support mainline and the pending series does not need this
+part anymore.
+
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> ---
+> Hi Tero,
+> 
+> the ABE PLL configuration can, and will be done for dra7xx in DT with the
+> assigned-clocks/rate/parent feature so no need to have this anymore.
+> 
+> Regards,
+> Peter
+> 
+>  drivers/clk/ti/clk-7xx.c | 18 +-----------------
+>  1 file changed, 1 insertion(+), 17 deletions(-)
+> 
+> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+> index 9b5b289e6334..a911d7de3377 100644
+> --- a/drivers/clk/ti/clk-7xx.c
+> +++ b/drivers/clk/ti/clk-7xx.c
+> @@ -18,7 +18,6 @@
+>  
+>  #include "clock.h"
+>  
+> -#define DRA7_DPLL_ABE_DEFFREQ				180633600
+>  #define DRA7_DPLL_GMAC_DEFFREQ				1000000000
+>  #define DRA7_DPLL_USB_DEFFREQ				960000000
+>  
+> @@ -313,27 +312,12 @@ static struct ti_dt_clk dra7xx_clks[] = {
+>  int __init dra7xx_dt_clk_init(void)
+>  {
+>  	int rc;
+> -	struct clk *abe_dpll_mux, *sys_clkin2, *dpll_ck, *hdcp_ck;
+> +	struct clk *dpll_ck, *hdcp_ck;
+>  
+>  	ti_dt_clocks_register(dra7xx_clks);
+>  
+>  	omap2_clk_disable_autoidle_all();
+>  
+> -	abe_dpll_mux = clk_get_sys(NULL, "abe_dpll_sys_clk_mux");
+> -	sys_clkin2 = clk_get_sys(NULL, "sys_clkin2");
+> -	dpll_ck = clk_get_sys(NULL, "dpll_abe_ck");
+> -
+> -	rc = clk_set_parent(abe_dpll_mux, sys_clkin2);
+> -	if (!rc)
+> -		rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ);
+> -	if (rc)
+> -		pr_err("%s: failed to configure ABE DPLL!\n", __func__);
+> -
+> -	dpll_ck = clk_get_sys(NULL, "dpll_abe_m2x2_ck");
+> -	rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ * 2);
+> -	if (rc)
+> -		pr_err("%s: failed to configure ABE DPLL m2x2!\n", __func__);
+> -
+>  	dpll_ck = clk_get_sys(NULL, "dpll_gmac_ck");
+>  	rc = clk_set_rate(dpll_ck, DRA7_DPLL_GMAC_DEFFREQ);
+>  	if (rc)
+> 
+
+
 -- 
-2.1.0.27.g96db324
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Péter
