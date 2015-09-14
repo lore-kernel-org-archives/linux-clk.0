@@ -1,44 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:35204 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932856AbbIDVbX (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 4 Sep 2015 17:31:23 -0400
-Received: by lagj9 with SMTP id j9so21656556lag.2
-        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2015 14:31:22 -0700 (PDT)
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 14 Sep 2015 16:29:45 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com
+Subject: [GIT PULL] clk: fixes for 4.3-rc1
+Message-ID: <20150914232945.GA5264@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1441350322-4671-2-git-send-email-bhupesh.sharma@freescale.com>
-References: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
-	<1441350322-4671-2-git-send-email-bhupesh.sharma@freescale.com>
-Date: Fri, 4 Sep 2015 16:31:22 -0500
-Message-ID: <CADRPPNRzW7A-D+0Bg7ELT229zQ5VKrj1PAdv8Qq9qARGP_cwnA@mail.gmail.com>
-Subject: Re: [PATCH v2 08/10] dts/ls2085a: Update Simulator DTS to add support
- of various peripherals
-From: Li Yang <leoli@freescale.com>
-To: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, marc.zyngier@arm.com,
-	linux-clk@vger.kernel.org, Catalin.Marinas@arm.com,
-	Bhupesh SHARMA <bhupesh.linux@gmail.com>, will.deacon@arm.com,
-	olof@lixom.net
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 4, 2015 at 2:05 AM, Bhupesh Sharma
-<bhupesh.sharma@freescale.com> wrote:
-> This patch updates the LS2085a simulator DTS to add support of various
+The following changes since commit ba30011577330b7e29ecb5916d89c6db9fbc5b3d:
 
-LS2080...
+  clk: s5pv210: add missing call to samsung_clk_of_add_provider() (2015-08-27 12:03:21 -0700)
 
-> peripherals which are supported on the simulator platform and explicitly
-> disables those which are yet not supported on the platform.
+are available in the git repository at:
 
-I don't know if there will be any people outside Freescale would get
-this simulator.  If not, we should just remove this file.
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
->
-> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-> ---
->  arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts |   54 ++++++++++++++++++--
->  1 file changed, 49 insertions(+), 5 deletions(-)
+for you to fetch changes up to 3bba75a2ec32bd5fa7024a4de3b8cf9ee113a76a:
+
+  clk: rockchip: Add pclk_peri to critical clocks on RK3066/RK3188 (2015-09-10 13:55:30 -0700)
+
+----------------------------------------------------------------
+A couple build fixes for drivers introduced in the merge window and a
+handful of patches to add more critical clocks on rockchip SoCs that
+are affected by newly introduced gpio clock handling.
+
+----------------------------------------------------------------
+Guenter Roeck (1):
+      clk: h8s2678: Fix compile error
+
+Heiko Stuebner (1):
+      clk: rockchip: handle critical clocks after registering all clocks
+
+Leo Yan (1):
+      clk: Hi6220: separately build stub clock driver
+
+Michael Niewoehner (1):
+      clk: rockchip: add pclk_cpu to the list of rk3188 critical clocks
+
+Romain Perier (1):
+      clk: rockchip: Add pclk_peri to critical clocks on RK3066/RK3188
+
+ drivers/clk/h8300/clk-h8s2678.c   | 1 +
+ drivers/clk/hisilicon/Kconfig     | 8 +++++++-
+ drivers/clk/hisilicon/Makefile    | 3 ++-
+ drivers/clk/rockchip/clk-rk3188.c | 9 +++++++--
+ 4 files changed, 17 insertions(+), 4 deletions(-)
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
