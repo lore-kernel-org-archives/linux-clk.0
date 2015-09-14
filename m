@@ -1,75 +1,80 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:49375 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751224AbbIGHjz (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 7 Sep 2015 03:39:55 -0400
-Subject: Re: [PATCH 01/11] clk: samsung: exynos7: Change the CMU_TOPC block
- clock name
-To: Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org
-References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
- <1441366637-28001-2-git-send-email-alim.akhtar@samsung.com>
- <55ED21B7.6080608@samsung.com> <55ED3C43.4000408@samsung.com>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
-	mturquette@baylibre.com, amit.daniel@samsung.com,
-	gautam.vivek@samsung.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <55ED3F42.6040703@samsung.com>
-Date: Mon, 07 Sep 2015 16:39:46 +0900
-MIME-version: 1.0
-In-reply-to: <55ED3C43.4000408@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/2] irqchip: gic: Add arm,pl390 support
+Date: Mon, 14 Sep 2015 22:06:43 +0200
+Message-Id: <1442261204-30931-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1442261204-30931-1-git-send-email-geert+renesas@glider.be>
+References: <1442261204-30931-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07.09.2015 16:26, Alim Akhtar wrote:
-> Hi Krzysztof,
-> 
-> On 09/07/2015 11:03 AM, Krzysztof Kozlowski wrote:
->> On 04.09.2015 20:37, Alim Akhtar wrote:
->>> Corrects the CMU_TOPC block clock name as per user manual.
->>> This also adds few of the missing gate clocks of topc block.
->>> This does not change any functionalies.
->>
->> s/functionalies/functionalities/
->>
->> Yes, it does change. After adding new gates without users, kernel will
->> disable them. Previously these gates remained in default reset state
->> (probably "pass") or in state set by bootloader (also "pass").
->>
-> My bad, was not enough clear of that, what I mean is these changes does
-> not affect the working of the related IPs, yes it does change the status
-> of gate clocks.
-> Will update the commit log.
-> 
->> Please update the changelog and of course test the patchset for any
->> issues in different components depending on these clocks. Depending
->> directly or indirectly.
->>
->> Split the patch into:
->> 1. clean up/rename,
->> 2. addition of new mux/gate clock.
->>
-> This patch adds few of the gate clocks, the reason I added it here
-> because subsequent patches in this series can use it.
-> Or may I should move these new addition to the patch 02/11, as 02/11 is
-> going to use them.
-> Do you think that make sense to you?
+Add support for the PrimeCell® Generic Interrupt Controller (PL390) to
+the GIC DT bindings and driver.
 
->From the reviewer point of view I would prefer to separate renaming from
-addition. You can rename the CMU_TOPC in patch #1, add new gates in #2
-and continue with the work (more renames).
+Currently the GIC driver treats this GIC variant the same as other GIC
+variants, but there are differences in hardware topology (e.g. clock
+inputs).
 
-> 
->> Currently it is more difficult to review the patch.
->>
-> Thanks for your time, do you have any comments of the other patches in
-> this series?
+Sort the list of compatible values while we're at it.
 
-Not yet. I'll look at them in few days. So it's up to you if you want to
-send next version now or wait for my further comments.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - New.
 
-Best regards,
-Krzysztof
+ Documentation/devicetree/bindings/arm/gic.txt | 9 +++++----
+ drivers/irqchip/irq-gic.c                     | 1 +
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/arm/gic.txt b/Documentation/devicetree/bindings/arm/gic.txt
+index 2da059a4790cb3c6..24742853ba460223 100644
+--- a/Documentation/devicetree/bindings/arm/gic.txt
++++ b/Documentation/devicetree/bindings/arm/gic.txt
+@@ -11,13 +11,14 @@ have PPIs or SGIs.
+ Main node required properties:
+ 
+ - compatible : should be one of:
+-	"arm,gic-400"
++	"arm,arm1176jzf-devchip-gic"
++	"arm,arm11mp-gic"
+ 	"arm,cortex-a15-gic"
+-	"arm,cortex-a9-gic"
+ 	"arm,cortex-a7-gic"
+-	"arm,arm11mp-gic"
++	"arm,cortex-a9-gic"
++	"arm,gic-400"
++	"arm,pl390"
+ 	"brcm,brahma-b15-gic"
+-	"arm,arm1176jzf-devchip-gic"
+ 	"qcom,msm-8660-qgic"
+ 	"qcom,msm-qgic2"
+ - interrupt-controller : Identifies the node as an interrupt controller
+diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+index 4b2255317e4764f9..81179d01f14de2fe 100644
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -1046,6 +1046,7 @@ IRQCHIP_DECLARE(cortex_a9_gic, "arm,cortex-a9-gic", gic_of_init);
+ IRQCHIP_DECLARE(cortex_a7_gic, "arm,cortex-a7-gic", gic_of_init);
+ IRQCHIP_DECLARE(msm_8660_qgic, "qcom,msm-8660-qgic", gic_of_init);
+ IRQCHIP_DECLARE(msm_qgic2, "qcom,msm-qgic2", gic_of_init);
++IRQCHIP_DECLARE(pl390, "arm,pl390", gic_of_init);
+ 
+ #endif
+ 
+-- 
+1.9.1
 
