@@ -1,73 +1,305 @@
-Return-Path: <dianders@google.com>
+Return-Path: <djkurtz@google.com>
 MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <CAPDyKFqJp3VuOeTh4Abkn2X6gQxNHDXwJj8N51OxxSo+Agespw@mail.gmail.com>
-References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
-	<1441045446-30858-4-git-send-email-heiko@sntech.de>
-	<CAPDyKFqJp3VuOeTh4Abkn2X6gQxNHDXwJj8N51OxxSo+Agespw@mail.gmail.com>
-Date: Wed, 2 Sep 2015 09:20:58 -0700
-Message-ID: <CAD=FV=Wy7foROYkmR+cX+NS5-=BaB36WsW1sc1XjmmdUnPCxsA@mail.gmail.com>
-Subject: Re: [PATCH 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
-From: Doug Anderson <dianders@chromium.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>,
-	Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>,
-	linux-clk@vger.kernel.org,
+Sender: djkurtz@google.com
+In-Reply-To: <1439801805-19043-1-git-send-email-pi-cheng.chen@linaro.org>
+References: <1439801805-19043-1-git-send-email-pi-cheng.chen@linaro.org>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Date: Mon, 14 Sep 2015 15:22:51 +0800
+Message-ID: <CAGS+omD1S=mBzREy=7Ujw9xVWMp3iCyA7zJ9KSxyQZNdX0Z2bg@mail.gmail.com>
+Subject: Re: [RESEND PATCH v5] clk: mediatek: Export CPU mux clocks for CPU
+ frequency control
+To: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>, James Liao <jamesjj.liao@mediatek.com>,
+	linux-mediatek@lists.infradead.org,
+	Linaro Kernel Mailman List <linaro-kernel@lists.linaro.org>,
+	"open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
 	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Ulf,
-
-On Wed, Sep 2, 2015 at 4:38 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> +/**
->> + * mmc_regulator_set_vqmmc - Set VQMMC as per the ios
->> + *
->> + * For 3.3V signaling, we try to match VQMMC to VMMC as closely as possible.
+On Mon, Aug 17, 2015 at 4:56 PM, Pi-Cheng Chen <pi-cheng.chen@linaro.org> wrote:
+> From: "pi-cheng.chen" <pi-cheng.chen@linaro.org>
 >
-> Looking at the code, I don't think this statement is entirely true.
-> Isn't it so that we will be trying with a maximum tolerance of 0.3 V
-> towards the VMMC voltage level (then fall-back to the complete range)?
-> Perhaps you can find a better way to describe that in the change log.
-
-If regulator_set_voltage_triplet() is ever implemented more correctly
-then the description here is correct.  ...the problem is that
-regulator_set_voltage_triplet() is still using the same shortcut that
-regulator_set_voltage_tol() was using.
-
-
->> +int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct mmc_ios *ios)
->> +{
->> +       int volt, min_uV, max_uV;
->> +
->> +       /* If no vqmmc supply then we can't change the voltage */
->> +       if (IS_ERR(mmc->supply.vqmmc))
->> +               return -EINVAL;
+> This patch adds CPU mux clocks which are used by Mediatek cpufreq driver
+> for intermediate clock source switching.
 >
-> In general vqmmc is considered as an optional regulator and that's
-> also how host drivers treat it. So perhaps it would make sense to
-> return 0 here instead of an error code or what do you think?
+> Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+> Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+> ---
+> Changes in v5:
+> - Replace __initdata with __initconst to fix compiling error
+>
+> Changes in v4:
+> - Fix some minor issues for v3
+> - Rebase to the patch that adds 13mhz clock for MT8173[1]
+>
+> Changes in v3:
+> - Rebase to 4.2-rc1
+> - Fix some issues of v2
+>
+> Changes in v2:
+> - Remove use of .determine_rate callback
+>
+> [1] http://patchwork.kernerl.xyz/patch/6777041/
+> ---
+>  drivers/clk/mediatek/Makefile          |   2 +-
+>  drivers/clk/mediatek/clk-cpumux.c      | 127 +++++++++++++++++++++++++++++++++
+>  drivers/clk/mediatek/clk-cpumux.h      |  22 ++++++
+>  drivers/clk/mediatek/clk-mt8173.c      |  23 ++++++
+>  include/dt-bindings/clock/mt8173-clk.h |   4 +-
+>  5 files changed, 176 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/clk/mediatek/clk-cpumux.c
+>  create mode 100644 drivers/clk/mediatek/clk-cpumux.h
+>
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+> index 8e4b2a4..299917a 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -1,4 +1,4 @@
+> -obj-y += clk-mtk.o clk-pll.o clk-gate.o
+> +obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-cpumux.o
+>  obj-$(CONFIG_RESET_CONTROLLER) += reset.o
+>  obj-y += clk-mt8135.o
+>  obj-y += clk-mt8173.o
+> diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
+> new file mode 100644
+> index 0000000..fb04fe1
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-cpumux.c
+> @@ -0,0 +1,127 @@
+> +/*
+> + * Copyright (c) 2015 Linaro Ltd.
+> + * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/slab.h>
+> +
+> +#include "clk-mtk.h"
+> +#include "clk-cpumux.h"
+> +
+> +struct mtk_clk_cpumux {
+> +       struct clk_hw   hw;
+> +       struct regmap   *regmap;
+> +       u32             reg;
+> +       u32             mask;
+> +       u8              shift;
+> +};
+> +
+> +static inline struct mtk_clk_cpumux *to_clk_mux(struct clk_hw *_hw)
+> +{
+> +       return container_of(_hw, struct mtk_clk_cpumux, hw);
+> +}
+> +
+> +static u8 clk_cpumux_get_parent(struct clk_hw *hw)
+> +{
+> +       struct mtk_clk_cpumux *mux = to_clk_mux(hw);
+> +       int num_parents = __clk_get_num_parents(hw->clk);
 
-The idea is that since this is intended to be called by
-start_signal_voltage_switch() and having no vqmmc should be considered
-an error for start_signal_voltage_switch() then it should be an error
-here.  What do you think?
+This will no longer compile against v4.3-rc1 due to:
+
+commit fc4a05d4b0eb1a0110ef11201bf563cd4b53fbce
+clk: Remove unused provider APIs
+
+Use the following instead:
+
+  unsigned int num_parents = clk_hw_get_num_parents(hw);
 
 
->> +
->> +               /* try to stay close to vmmc at first */
->> +               if (!mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
->> +                                               min_uV, volt, max_uV))
->> +                       return 0;
->> +
->> +               return mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
->> +                                               2700000, volt, 3600000);
 
-The whole fact that there are two calls here is really just because of
-the limitations of the current implementation of
-regulator_set_voltage_triplet().  If that implementation is ever fixed
-then we'd just need a single call.  Probably worth a comment saying
-that?
+> +       unsigned int val;
+> +
+> +       regmap_read(mux->regmap, mux->reg, &val);
+> +
+> +       val >>= mux->shift;
+> +       val &= mux->mask;
+> +
+> +       if (val >= num_parents)
+> +               return -EINVAL;
+> +
+> +       return val;
+> +}
+> +
+> +static int clk_cpumux_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +       struct mtk_clk_cpumux *mux = to_clk_mux(hw);
+> +       u32 mask, val;
+> +
+> +       val = index << mux->shift;
+> +       mask = mux->mask << mux->shift;
+> +
+> +       return regmap_update_bits(mux->regmap, mux->reg, mask, val);
+> +}
+> +
+> +static const struct clk_ops clk_cpumux_ops = {
+> +       .get_parent = clk_cpumux_get_parent,
+> +       .set_parent = clk_cpumux_set_parent,
+> +};
+> +
+> +static struct clk __init *mtk_clk_register_cpumux(const struct mtk_composite *mux,
+> +                                          struct regmap *regmap)
+> +{
+> +       struct mtk_clk_cpumux *cpumux;
+> +       struct clk *clk;
+> +       struct clk_init_data init;
+> +
+> +       cpumux = kzalloc(sizeof(*cpumux), GFP_KERNEL);
+> +       if (!cpumux)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       init.name = mux->name;
+> +       init.ops = &clk_cpumux_ops;
+> +       init.parent_names = mux->parent_names;
+> +       init.num_parents = mux->num_parents;
+> +       init.flags = mux->flags;
+> +
+> +       cpumux->reg = mux->mux_reg;
+> +       cpumux->shift = mux->mux_shift;
+> +       cpumux->mask = BIT(mux->mux_width) - 1;
+> +       cpumux->regmap = regmap;
+> +       cpumux->hw.init = &init;
+> +
+> +       clk = clk_register(NULL, &cpumux->hw);
+> +       if (IS_ERR(clk))
+> +               kfree(cpumux);
+> +
+> +       return clk;
+> +}
+> +
+> +int __init mtk_clk_register_cpumuxes(struct device_node *node,
+> +                             const struct mtk_composite *clks, int num,
+> +                             struct clk_onecell_data *clk_data)
+> +{
+> +       int i;
+> +       struct clk *clk;
+> +       struct regmap *regmap;
+> +
+> +       regmap = syscon_node_to_regmap(node);
+> +       if (IS_ERR(regmap)) {
+> +               pr_err("Cannot find regmap for %s: %ld\n", node->full_name,
+> +                      PTR_ERR(regmap));
+> +               return PTR_ERR(regmap);
+> +       }
+> +
+> +       for (i = 0; i < num; i++) {
+> +               const struct mtk_composite *mux = &clks[i];
+> +
+> +               clk = mtk_clk_register_cpumux(mux, regmap);
+> +               if (IS_ERR(clk)) {
+> +                       pr_err("Failed to register clk %s: %ld\n",
+> +                              mux->name, PTR_ERR(clk));
+> +                       continue;
+> +               }
+> +
+> +               clk_data->clks[mux->id] = clk;
+> +       }
+> +
+> +       return 0;
+> +}
+> diff --git a/drivers/clk/mediatek/clk-cpumux.h b/drivers/clk/mediatek/clk-cpumux.h
+> new file mode 100644
+> index 0000000..52c769f
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-cpumux.h
+> @@ -0,0 +1,22 @@
+> +/*
+> + * Copyright (c) 2015 Linaro Ltd.
+> + * Author: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#ifndef __DRV_CLK_CPUMUX_H
+> +#define __DRV_CLK_CPUMUX_H
+> +
+> +int mtk_clk_register_cpumuxes(struct device_node *node,
+> +                             const struct mtk_composite *clks, int num,
+> +                             struct clk_onecell_data *clk_data);
+> +
+> +#endif /* __DRV_CLK_CPUMUX_H */
+> diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
+> index 540c5c3..053ca27 100644
+> --- a/drivers/clk/mediatek/clk-mt8173.c
+> +++ b/drivers/clk/mediatek/clk-mt8173.c
+> @@ -19,6 +19,7 @@
+>
+>  #include "clk-mtk.h"
+>  #include "clk-gate.h"
+> +#include "clk-cpumux.h"
+>
+>  #include <dt-bindings/clock/mt8173-clk.h>
+>
+> @@ -517,6 +518,25 @@ static const char * const i2s3_b_ck_parents[] __initconst = {
+>         "apll2_div5"
+>  };
+>
+> +static const char * const ca53_parents[] __initconst = {
+> +       "clk26m",
+> +       "armca7pll",
+> +       "mainpll",
+> +       "univpll"
+> +};
+> +
+> +static const char * const ca57_parents[] __initconst = {
+> +       "clk26m",
+> +       "armca15pll",
+> +       "mainpll",
+> +       "univpll"
+> +};
+> +
+> +static const struct mtk_composite cpu_muxes[] __initconst = {
+> +       MUX(CLK_INFRA_CA53SEL, "infra_ca53_sel", ca53_parents, 0x0000, 0, 2),
+> +       MUX(CLK_INFRA_CA57SEL, "infra_ca57_sel", ca57_parents, 0x0000, 2, 2),
+> +};
+> +
+>  static const struct mtk_composite top_muxes[] __initconst = {
+>         /* CLK_CFG_0 */
+>         MUX(CLK_TOP_AXI_SEL, "axi_sel", axi_parents, 0x0040, 0, 3),
+> @@ -743,6 +763,9 @@ static void __init mtk_infrasys_init(struct device_node *node)
+>                                                 clk_data);
+>         mtk_clk_register_factors(infra_divs, ARRAY_SIZE(infra_divs), clk_data);
+>
+> +       mtk_clk_register_cpumuxes(node, cpu_muxes, ARRAY_SIZE(cpu_muxes),
+> +                                               clk_data);
+> +
+>         r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+>         if (r)
+>                 pr_err("%s(): could not register clock provider: %d\n",
+> diff --git a/include/dt-bindings/clock/mt8173-clk.h b/include/dt-bindings/clock/mt8173-clk.h
+> index fa2a2bb..a17cbaa 100644
+> --- a/include/dt-bindings/clock/mt8173-clk.h
+> +++ b/include/dt-bindings/clock/mt8173-clk.h
+> @@ -188,7 +188,9 @@
+>  #define CLK_INFRA_PMICSPI              10
+>  #define CLK_INFRA_PMICWRAP             11
+>  #define CLK_INFRA_CLK_13M              12
+> -#define CLK_INFRA_NR_CLK               13
+> +#define CLK_INFRA_CA53SEL              13
+> +#define CLK_INFRA_CA57SEL              14
+> +#define CLK_INFRA_NR_CLK               15
+>
+>  /* PERI_SYS */
+>
+> --
+> 1.9.1
+>
