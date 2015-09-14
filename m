@@ -1,68 +1,30 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Thu, 3 Sep 2015 08:20:19 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 14 Sep 2015 14:59:11 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Luis de Bethencourt <luis@debethencourt.com>
+Cc: linux-kernel@vger.kernel.org, Emilio Lopez <emilio@elopez.com.ar>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq-dt: add suspend frequency support
-Message-ID: <20150903025019.GA13140@linux>
-References: <1441212121-21021-1-git-send-email-b.zolnierkie@samsung.com>
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 1/5] clk: sunxi: sun6i-apb0: Fix module autoload for OF
+ platform driver
+Message-ID: <20150914215911.GC23081@codeaurora.org>
+References: <20150828124314.GA26550@goodgumbo.baconseed.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1441212121-21021-1-git-send-email-b.zolnierkie@samsung.com>
+In-Reply-To: <20150828124314.GA26550@goodgumbo.baconseed.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02-09-15, 18:42, Bartlomiej Zolnierkiewicz wrote:
-> Add suspend frequency support and set it to the boot frequency,
-> this matches what the old exynos-cpufreq driver has been doing.
+On 08/28, Luis de Bethencourt wrote:
+> This platform driver has a OF device ID table but the OF module
+> alias information is not created so module autoloading won't work.
 > 
-> This patch fixes suspend/resume support on Exynos4412 based
-> Trats2 board and reboot hang on Exynos4412 based Odroid U3
-> board.
-> 
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Luis de Bethencourt <luis@debethencourt.com>
 > ---
-> This patch supersedes "[PATCH] ARM: dts: exynos4412-odroid-*: add
-> workaround for CPUfreq/reboot issue" one from yesterday.
-> 
->  drivers/cpufreq/cpufreq-dt.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-> index c3583cd..c9138c7 100644
-> --- a/drivers/cpufreq/cpufreq-dt.c
-> +++ b/drivers/cpufreq/cpufreq-dt.c
-> @@ -329,6 +329,10 @@ static int cpufreq_init(struct cpufreq_policy *policy)
->  	policy->driver_data = priv;
->  
->  	policy->clk = cpu_clk;
-> +
-> +	/* capture boot frequency */
-> +	policy->suspend_freq = clk_get_rate(cpu_clk) / 1000;;
 
-We should be using opp-v2's suspend-opp thing for this now..
+Applied to clk-next
 
 -- 
-viresh
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
