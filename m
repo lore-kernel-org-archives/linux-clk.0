@@ -1,77 +1,46 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH 6/8] mmc: dw_mmc: Generic MMC tuning with the clock phase
- framework
-Date: Wed, 16 Sep 2015 00:09 +0200
-Message-ID: <8878355.D5Q8mk4qcM@diego>
-In-Reply-To: <55F7D602.70003@samsung.com>
-References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
- <1441045446-30858-7-git-send-email-heiko@sntech.de>
- <55F7D602.70003@samsung.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: ulf.hansson@linaro.org, Alexandru M Stan <amstan@chromium.org>,
- sboyd@codeaurora.org, mturquette@baylibre.com, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- CPGS <cpgs@samsung.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v5 0/4] cpufreq-dt: add suspend frequency support
+To: Viresh Kumar <viresh.kumar@linaro.org>
+References: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
+ <2547413.Uj7KDUeGpY@vostro.rjw.lan> <55F6728A.2070805@samsung.com>
+ <20150914071727.GB32551@linux>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
+ Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <55F67511.5000908@samsung.com>
+Date: Mon, 14 Sep 2015 16:19:45 +0900
+MIME-version: 1.0
+In-reply-to: <20150914071727.GB32551@linux>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-Am Dienstag, 15. September 2015, 17:25:38 schrieb Jaehoon Chung:
-> On 09/01/2015 03:24 AM, Heiko Stuebner wrote:
-> > From: Alexandru M Stan <amstan@chromium.org>
-> > 
-> > This algorithm will try 1 degree increments, since there's no way to tell
-> > what resolution the underlying phase code uses. As an added bonus, doing
-> > many tunings yields better results since some tests are run more than once
-> > (ex: if the underlying driver uses 45 degree increments, the tuning code
-> > will try the same angle more than once).
-> > 
-> > It will then construct a list of good phase ranges (even ranges that cross
-> > 360/0), will pick the biggest range then it will set the sample_clk to the
-> > middle of that range.
-> > 
-> > We do not touch ciu_drive (and by extension define default-drive-phase).
-> > Drive phase is mostly used to define minimum hold times, while one could
-> > write some code to determine what phase meets the minimum hold time (ex 10
-> > degrees) this will not work with the current clock phase framework (which
-> > floors angles, so we'll get 0 deg, and there's no way to know what
-> > resolution the floors happen at). We assume that the default drive angles
-> > set by the hardware are good enough.
-> > 
-> > If a device has device specific code (like exynos) then that will still
-> > take precedence, otherwise this new code will execute. If the device wants
-> > to tune, but has no sample_clk defined we'll return EIO with an error
-> > message.
+On 14.09.2015 16:17, Viresh Kumar wrote:
+> On 14-09-15, 16:08, Krzysztof Kozlowski wrote:
+>> If you want, the fourth patch can go now through your tree - the late
+>> SoC changes were pulled by Linus. No difference... I can grab it as I
+>> had other DT related fix in queue.
+>>
+>> The only important thing is to get entire patchset to 4.3 because it is
+>> a fix for regression introduced in cpufreq for exynos. Do you plan to
+>> send your part in current 4.3 cycle?
 > 
-> Which point is "_generic_"? I don't find the code that control the register
-> relevant to CLK_DRV/SMPL PHASE. It seems that posted the similar patches at
-> u-boot mailing list..
+> The first 3 patches are already part for 4.3-rc1 and so you can keep
+> the DT update in your tree now. :)
 
-The "generic" part is that it uses the clk phase API for dw_mmc 
-implementations where the clkgen controlling interface is outside the dw_mmc 
-IP itself. So it's open for other implementations as well.
+Damn it, I missed it. It solves everything, the fourth patch will go
+through platform tree.
 
-But if you are more comfortable with it, I can also move it into the dw_mmc-
-rockchip variant for the time being, until another user comes along.
-
-
-Heiko
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Best regards,
+Krzysztof
