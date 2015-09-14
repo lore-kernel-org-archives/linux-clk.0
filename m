@@ -1,56 +1,71 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel@pengutronix.de,
-	patchwork-lst@pengutronix.de
-Subject: [PATCH v3 4/8] clk: imx31: retain early UART clocks during kernel init
-Date: Mon,  7 Sep 2015 17:09:29 +0200
-Message-Id: <1441638573-6701-5-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1441638573-6701-1-git-send-email-l.stach@pengutronix.de>
-References: <1441638573-6701-1-git-send-email-l.stach@pengutronix.de>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Mon, 14 Sep 2015 16:40:28 +0200
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: at91: system: don't try to free_irq when there
+ is no IRQ
+Message-ID: <20150914164028.7f38505d@bbrezillon>
+In-Reply-To: <1441982047-11303-2-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
+	<1441982047-11303-2-git-send-email-alexandre.belloni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure to keep UART clocks enabled during kernel init if
-earlyprintk or earlycon are active.
+Hi Alexandre,
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- drivers/clk/imx/clk-imx31.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Fri, 11 Sep 2015 16:34:07 +0200
+Alexandre Belloni <alexandre.belloni@free-electrons.com> wrote:
 
-diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
-index fe66c40b7be2..e283142f123a 100644
---- a/drivers/clk/imx/clk-imx31.c
-+++ b/drivers/clk/imx/clk-imx31.c
-@@ -62,6 +62,16 @@ enum mx31_clks {
- static struct clk *clk[clk_max];
- static struct clk_onecell_data clk_data;
- 
-+static struct clk ** const uart_clks[] __initconst = {
-+	&clk[ipg],
-+	&clk[uart1_gate],
-+	&clk[uart2_gate],
-+	&clk[uart3_gate],
-+	&clk[uart4_gate],
-+	&clk[uart5_gate],
-+	NULL
-+};
-+
- int __init mx31_clocks_init(unsigned long fref)
- {
- 	void __iomem *base;
-@@ -199,6 +209,8 @@ int __init mx31_clocks_init(unsigned long fref)
- 	mx31_revision();
- 	clk_disable_unprepare(clk[iim_gate]);
- 
-+	imx_register_uart_clocks(uart_clks);
-+
- 	mxc_timer_init(MX31_GPT1_BASE_ADDR, MX31_INT_GPT, GPT_TYPE_IMX31);
- 
- 	return 0;
+> In the error path of at91_clk_register_system(), sys->irq is freed
+> unconditionally but it may not exist or be request at all.
+
+Not sure this is really needed since free_irq() seems to gracefully
+handle the case where the irq has not been previously requested [1]
+(it does not complain about invalid irq descriptors), but I guess
+this extra check cannot hurt.
+
+BTW, that's kinda weird that free_irq() accepts this case, but complains
+when you're trying to free a wrong (or already freed) shared irq handler
+[2].
+
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+
+Best Regards,
+
+Boris
+
+[1]http://lxr.free-electrons.com/source/kernel/irq/manage.c#L1471
+[2]http://lxr.free-electrons.com/source/kernel/irq/manage.c#L1377
+
+> 
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
+>  drivers/clk/at91/clk-system.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/at91/clk-system.c b/drivers/clk/at91/clk-system.c
+> index 58008b3e8bc1..3f5314344286 100644
+> --- a/drivers/clk/at91/clk-system.c
+> +++ b/drivers/clk/at91/clk-system.c
+> @@ -138,7 +138,8 @@ at91_clk_register_system(struct at91_pmc *pmc, const char *name,
+>  
+>  	clk = clk_register(NULL, &sys->hw);
+>  	if (IS_ERR(clk)) {
+> -		free_irq(sys->irq, sys);
+> +		if (irq)
+> +			free_irq(sys->irq, sys);
+>  		kfree(sys);
+>  	}
+>  
+
+
+
 -- 
-2.5.0
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
