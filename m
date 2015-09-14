@@ -1,83 +1,44 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 28 Sep 2015 16:05:23 -0700
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Date: Mon, 14 Sep 2015 12:49:54 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Paul Osmialowski <newchief@king.net.pl>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Paul Osmialowski <pawelo@king.net.pl>
-Subject: Re: [PATCH 0/1] add devm_of_clk_get() and devm_of_clk_get_by_name()
- functions
-Message-ID: <20150928230523.GR23081@codeaurora.org>
-References: <1443081808-19688-1-git-send-email-newchief@king.net.pl>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH] clk: rockchip: add critical clock for rk3368
+Message-ID: <20150914194954.GA21561@codeaurora.org>
+References: <5267432.TORlj1Iv40@diego>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443081808-19688-1-git-send-email-newchief@king.net.pl>
+In-Reply-To: <5267432.TORlj1Iv40@diego>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-rockchip@lists.infradead.org,
+ mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/24, Paul Osmialowski wrote:
-> From: Paul Osmialowski <pawelo@king.net.pl>
-> 
-> While working on my pinctrl driver I've found lack of devres compatible
-> equivalent for of_clk_get() function. I'd like to use it for the following
-> (incomplete) piece of device tree configuration:
-> 
-> pinctrl: pinctrl {
-> 	compatible = "fsl,kinetis-pinctrl";
-> 	#address-cells = <1>;
-> 	#size-cells = <1>;
-> 	ranges;
-> 
-> 	port_a@40049000 {
-> 		compatible = "fsl,kinetis-pin-bank";
-> 		reg = <0x40049000 0x1000>;
-> 		clocks = <&sim SIM_CLK_SCGC5_PORTA>;
-> 	};
-> 
-> 	port_b@4004a000 {
-> 		compatible = "fsl,kinetis-pin-bank";
-> 		reg = <0x4004a000 0x1000>;
-> 		clocks = <&sim SIM_CLK_SCGC5_PORTB>;
-> 	};
-> ...
-> };
-> 
-> In my pinconf-generic compatible fsl,kinetis-pinctrl driver, I'm iterating
-> over fsl,kinetis-pin-bank nodes using for_each_child_of_node(dev->of_node,
-> child) along with of_match_node() in order to grab resources (I/O base
-> address, clock gate).
-> 
-> Normally, I'd have to use of_clk_get() on each pin bank device_node and
-> then worry about proper resource release myself.
-> 
+On 09/13, Heiko St=FCbner wrote:
+> Again a result of the gpio-clock-liberation the rk3368 needs the
+> pclk_pd_pmu marked as critical, to boot successfully.
+> =
 
-I'd say your binding is wrong. Either the container node
-"pinctrl" is a software concept that contains the two devices for
-port_a and port_b or there's only one pinctrl device that happens
-to span some number of 0x1000 size banks. The former would be
-written as so
+> Reported-by: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
 
-	pinctrl {
-		compatible = "fsl,kenetis-pinctrl";
-		reg = <0x40049000 0x2000>;
-		clocks = <&sim SIM_CLK_SCGC5_PORTA>, <&sim SIM_CLK_SCGC5_PORTB>;
-	};
+Applied to clk-fixes
 
-and the latter would drop the container node and have two nodes
-that probed the same driver instance twice.
+-- =
 
-
- 	port_a@40049000 {
- 		compatible = "fsl,kinetis-pin-bank";
- 		reg = <0x40049000 0x1000>;
- 		clocks = <&sim SIM_CLK_SCGC5_PORTA>;
- 	};
- 
- 	port_b@4004a000 {
- 		compatible = "fsl,kinetis-pin-bank";
- 		reg = <0x4004a000 0x1000>;
- 		clocks = <&sim SIM_CLK_SCGC5_PORTB>;
- 	};
-
--- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
