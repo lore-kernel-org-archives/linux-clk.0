@@ -1,100 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v2] clk: rockchip: reset init state before mmc card
- initialization
-To: Heiko Stuebner <heiko@sntech.de>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-References: <1440462876-5457-1-git-send-email-shawn.lin@rock-chips.com>
-Cc: shawn.lin@rock-chips.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <55E85572.10005@rock-chips.com>
-Date: Thu, 3 Sep 2015 22:13:06 +0800
-MIME-Version: 1.0
-In-Reply-To: <1440462876-5457-1-git-send-email-shawn.lin@rock-chips.com>
-Content-Type: text/plain; charset=gbk; format=flowed
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mark Salter <msalter@redhat.com>,
+	Aurelien Jacquiot <a-jacquiot@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-c6x-dev@linux-c6x.org
+Subject: [PATCH] c6x: Use generic clkdev.h header
+Date: Tue, 15 Sep 2015 16:09:22 -0700
+Message-Id: <1442358562-3348-1-git-send-email-sboyd@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2015/8/25 8:34, Shawn Lin wrote:
-> mmc host controller's IO input/output timing is unpredictable if
-> bootloader execute tuning for HS200 mode. It might make kernel failed
-> to initialize mmc card in identification mode. The root cause is
-> tuning phase and degree setting for HS200 mode in bootloader aren't
-> applicable to that of identification mode in kernel stage. Anyway, we
-> can't force all bootloaders to reset tuning phase and degree setting
-> before into kernel. Simply reset it in rockchip_clk_register_mmc.
->
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
->
-> ---
->
-> Changes in v2:
-> - rename to rockchip_clk_mmc_reset
-> - simplifying the code
->
+The c6x clkdev.h header is the same as the asm-generic header, so
+just use the asm-generic one.
 
-Hi Heiko,
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ arch/c6x/include/asm/Kbuild   |  1 +
+ arch/c6x/include/asm/clkdev.h | 22 ----------------------
+ 2 files changed, 1 insertion(+), 22 deletions(-)
+ delete mode 100644 arch/c6x/include/asm/clkdev.h
 
-How about the next of this patch ? :)
-Feel free to let me know if it still has something more to be done.
-
-BTW, recently, we get another report that while changing data bus width, 
-uboot do bus testing(CMD19 + CMD14) for emmc DDR52 8bit bus mode by 
-tuning the phase and degree to fit the timing fails the kernel to 
-boot-up for the same reason.
-
-
-
->   drivers/clk/rockchip/clk-mmc-phase.c | 16 ++++++++++++++++
->   1 file changed, 16 insertions(+)
->
-> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
-> index e9f8df32..1d3e8fe6 100644
-> --- a/drivers/clk/rockchip/clk-mmc-phase.c
-> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
-> @@ -38,6 +38,8 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw *hw,
->   #define ROCKCHIP_MMC_DEGREE_MASK 0x3
->   #define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
->   #define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
-> +#define ROCKCHIP_MMC_INIT_STATE_RESET 0x1
-> +#define ROCKCHIP_MMC_INIT_STATE_SHIFT 1
->
->   #define PSECS_PER_SEC 1000000000000LL
->
-> @@ -119,6 +121,14 @@ static const struct clk_ops rockchip_mmc_clk_ops = {
->   	.set_phase	= rockchip_mmc_set_phase,
->   };
->
-> +static void rockchip_clk_mmc_reset(struct rockchip_mmc_clock *mmc_clock)
-> +{
-> +	if (mmc_clock->shift == ROCKCHIP_MMC_INIT_STATE_SHIFT)
-> +		writel(HIWORD_UPDATE(ROCKCHIP_MMC_INIT_STATE_RESET,
-> +				     ROCKCHIP_MMC_INIT_STATE_RESET,
-> +				     mmc_clock->shift), mmc_clock->reg);
-> +}
-> +
->   struct clk *rockchip_clk_register_mmc(const char *name,
->   				const char *const *parent_names, u8 num_parents,
->   				void __iomem *reg, int shift)
-> @@ -139,6 +149,12 @@ struct clk *rockchip_clk_register_mmc(const char *name,
->   	mmc_clock->reg = reg;
->   	mmc_clock->shift = shift;
->
-> +	/*
-> +	* Assert init_state to soft reset the CLKGEN
-> +	* for mmc tuning phase and degree
-> +	*/
-> +	rockchip_clk_mmc_reset(mmc_clock);
-> +
->   	if (name)
->   		init.name = name;
->
->
-
-
+diff --git a/arch/c6x/include/asm/Kbuild b/arch/c6x/include/asm/Kbuild
+index f17c4dc6050c..a9bc2c5106d2 100644
+--- a/arch/c6x/include/asm/Kbuild
++++ b/arch/c6x/include/asm/Kbuild
+@@ -4,6 +4,7 @@ generic-y += auxvec.h
+ generic-y += barrier.h
+ generic-y += bitsperlong.h
+ generic-y += bugs.h
++generic-y += clkdev.h
+ generic-y += cputime.h
+ generic-y += current.h
+ generic-y += device.h
+diff --git a/arch/c6x/include/asm/clkdev.h b/arch/c6x/include/asm/clkdev.h
+deleted file mode 100644
+index 76a070b1c2e5..000000000000
+--- a/arch/c6x/include/asm/clkdev.h
++++ /dev/null
+@@ -1,22 +0,0 @@
+-#ifndef _ASM_CLKDEV_H
+-#define _ASM_CLKDEV_H
+-
+-#include <linux/slab.h>
+-
+-struct clk;
+-
+-static inline int __clk_get(struct clk *clk)
+-{
+-	return 1;
+-}
+-
+-static inline void __clk_put(struct clk *clk)
+-{
+-}
+-
+-static inline struct clk_lookup_alloc *__clkdev_alloc(size_t size)
+-{
+-	return kzalloc(size, GFP_KERNEL);
+-}
+-
+-#endif /* _ASM_CLKDEV_H */
 -- 
-Best Regards
-Shawn Lin
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
