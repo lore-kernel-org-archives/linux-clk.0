@@ -1,108 +1,102 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
- Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
- Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- b.zolnierkie@samsung.com
-Subject: [PATCH v3 2/3] cpufreq-dt: add suspend frequency support
-Date: Thu, 03 Sep 2015 20:11:31 +0200
-Message-id: <1441303892-32004-3-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1441303892-32004-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1441303892-32004-1-git-send-email-b.zolnierkie@samsung.com>
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-sh@vger.kernel.org,mturquette@baylibre.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Tue, 15 Sep 2015 19:22:58 +0900
+Message-Id: <20150915102258.15716.22991.sendpatchset@little-apple>
+In-Reply-To: <20150915102238.15716.91170.sendpatchset@little-apple>
+References: <20150915102238.15716.91170.sendpatchset@little-apple>
+Subject: [PATCH 02/05][RFC] clk: Add parent array to struct clk_init_data
 List-ID: <linux-clk.vger.kernel.org>
 
-Add suspend frequency support and if needed set it to
-the frequency obtained from the suspend opp (can be defined
-using opp-v2 bindings and is optional).  Also implement
-custom suspend method (needed to not error out on platforms
-which don't require suspend frequency).
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Add an optional array of parent clocks to struct clk_init_data
+to allow relying on clock pointers instead of strings during
+registration of clocks. 
+
+Using this parent array the clock providers step over the line to
+become clock consumers since they can use of_clk_get() to get the
+parent clock and pass it during registration. Good or bad.
+
+Clock providers that register clocks may use the parent array
+pre-populate parent clocks to not have to rely on strings lookup.
+
+This in turn makes it possible to have clock providers using a single
+DT node with several clock-indices but omitting the clock-output-names
+property. As it is today the clock index is not taken into consideration
+when generating a default parent name in case clock-output-names is missing.
+
+TODO: Figure out how to deal with ref counting and if clock providers
+should use clk_put() or not.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/cpufreq/cpufreq-dt.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
 
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index c3583cd..ba4ca85 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -196,6 +196,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	struct device *cpu_dev;
- 	struct regulator *cpu_reg;
- 	struct clk *cpu_clk;
-+	struct dev_pm_opp *suspend_opp;
- 	unsigned long min_uV = ~0, max_uV = 0;
- 	unsigned int transition_latency;
- 	bool need_update = false;
-@@ -329,6 +330,11 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	policy->driver_data = priv;
+ drivers/clk/clk.c            |   14 +++++++++++---
+ include/linux/clk-provider.h |    2 ++
+ 2 files changed, 13 insertions(+), 3 deletions(-)
+
+--- 0001/drivers/clk/clk.c
++++ work/drivers/clk/clk.c	2015-09-15 18:30:36.390513000 +0900
+@@ -2360,8 +2360,8 @@ static int __clk_init(struct device *dev
+ 		 * for a NULL pointer.  We can always perform lazy lookups for
+ 		 * missing parents later on.
+ 		 */
+-		if (core->parents)
+-			for (i = 0; i < core->num_parents; i++)
++		for (i = 0; i < core->num_parents; i++)
++			if (core->parents && !core->parents[i])
+ 				core->parents[i] =
+ 					clk_core_lookup(core->parent_names[i]);
+ 	}
+@@ -2549,7 +2549,9 @@ struct clk *clk_register(struct device *
+ 		ret = -ENOMEM;
+ 		goto fail_parent_names;
+ 	}
+-
++	if (hw->init->parents)
++		core->parents = kcalloc(core->num_parents, sizeof(struct clk *),
++					GFP_KERNEL);
  
- 	policy->clk = cpu_clk;
-+
-+	suspend_opp = dev_pm_opp_get_suspend_opp(cpu_dev);
-+	if (suspend_opp)
-+		policy->suspend_freq = dev_pm_opp_get_freq(suspend_opp) / 1000;
-+
- 	ret = cpufreq_table_validate_and_show(policy, freq_table);
- 	if (ret) {
- 		dev_err(cpu_dev, "%s: invalid frequency table: %d\n", __func__,
-@@ -409,6 +415,31 @@ static void cpufreq_ready(struct cpufreq_policy *policy)
- 	of_node_put(np);
- }
+ 	/* copy each string name in case parent_names is __initdata */
+ 	for (i = 0; i < core->num_parents; i++) {
+@@ -2561,6 +2563,11 @@ struct clk *clk_register(struct device *
+ 		}
+ 	}
  
-+#ifdef CONFIG_PM
-+static int cpufreq_dt_suspend(struct cpufreq_policy *policy)
-+{
-+	int ret;
++	/* convert each parent pointer to struct clk_core */
++	for (i = 0; i < core->num_parents; i++)
++		if (core->parents && !IS_ERR(hw->init->parents[i]))
++			core->parents[i] = hw->init->parents[i]->core;
 +
-+	if (!policy->suspend_freq) {
-+		pr_debug("%s: suspend_freq not defined\n", __func__);
-+		return 0;
-+	}
-+
-+	pr_debug("%s: Setting suspend-freq: %u\n", __func__,
-+			policy->suspend_freq);
-+
-+	ret = __cpufreq_driver_target(policy, policy->suspend_freq,
-+			CPUFREQ_RELATION_H);
-+	if (ret)
-+		pr_err("%s: unable to set suspend-freq: %u. err: %d\n",
-+				__func__, policy->suspend_freq, ret);
-+
-+	return ret;
-+}
-+#else
-+#define cpufreq_dt_suspend NULL
-+#endif
-+
- static struct cpufreq_driver dt_cpufreq_driver = {
- 	.flags = CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK,
- 	.verify = cpufreq_generic_frequency_table_verify,
-@@ -419,6 +450,7 @@ static struct cpufreq_driver dt_cpufreq_driver = {
- 	.ready = cpufreq_ready,
- 	.name = "cpufreq-dt",
- 	.attr = cpufreq_dt_attr,
-+	.suspend = cpufreq_dt_suspend,
+ 	INIT_HLIST_HEAD(&core->clks);
+ 
+ 	hw->clk = __clk_create_clk(hw, NULL, NULL);
+@@ -2577,6 +2584,7 @@ struct clk *clk_register(struct device *
+ 	hw->clk = NULL;
+ 
+ fail_parent_names_copy:
++	kfree(core->parents);
+ 	while (--i >= 0)
+ 		kfree_const(core->parent_names[i]);
+ 	kfree(core->parent_names);
+--- 0001/include/linux/clk-provider.h
++++ work/include/linux/clk-provider.h	2015-09-15 18:17:15.000000000 +0900
+@@ -222,6 +222,7 @@ struct clk_ops {
+  * @name: clock name
+  * @ops: operations this clock supports
+  * @parent_names: array of string names for all possible parents
++ * @parents: array of pointers to all possible parents
+  * @num_parents: number of possible parents
+  * @flags: framework-level hints and quirks
+  */
+@@ -229,6 +230,7 @@ struct clk_init_data {
+ 	const char		*name;
+ 	const struct clk_ops	*ops;
+ 	const char		* const *parent_names;
++	struct clk		**parents;
+ 	u8			num_parents;
+ 	unsigned long		flags;
  };
- 
- static int dt_cpufreq_probe(struct platform_device *pdev)
--- 
-1.9.1
