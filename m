@@ -1,192 +1,105 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk@vger.kernel.org, kuninori.morimoto.gx@renesas.com, gaku.inami.xw@bp.renesas.com, mturquette@baylibre.com, linux-sh@vger.kernel.org, sboyd@codeaurora.org, horms@verge.net.au, geert@linux-m68k.org
-Subject: Re: [PATCH][RFC] clk: Use node name and index for clock name
-Date: Wed, 09 Sep 2015 08:14:13 +0300
-Message-ID: <13888179.tcIA8DJW1S@avalon>
-In-Reply-To: <20150909050554.27129.68718.sendpatchset@little-apple>
-References: <20150909050554.27129.68718.sendpatchset@little-apple>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] irqchip: gic: Document optional Clock and Power
+ Domain properties
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>
+References: <1442261204-30931-1-git-send-email-geert+renesas@glider.be>
+ <1442261204-30931-3-git-send-email-geert+renesas@glider.be>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org
+From: Rob Herring <robh@kernel.org>
+Message-ID: <55F869FD.4090900@kernel.org>
+Date: Tue, 15 Sep 2015 13:57:01 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1442261204-30931-3-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus,
-
-Thank you for the patch.
-
-On Wednesday 09 September 2015 14:05:54 Magnus Damm wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
+On 09/14/2015 03:06 PM, Geert Uytterhoeven wrote:
+> Depending on the GIC variant, the GIC module has one or more clock
+> inputs. Document the optional "clocks" and "clock-names" properties,
+> and their possible values, based on the Technical Reference Manuals.
+> optional.
 > 
-> This patch hacks the CCF core to take clock-indices into
-> consideration when making a default clock name in case
-> clock-output-names is not provided.
+> Add the optional "power-domains" property.
 > 
-> Without this patch of_clk_get_parent_name() does not work
-> for clocks with multiple indices associated with one node.
+> This will allow to describe in DT the relationship between the GIC and
+> the Clock and/or Power Domain topology on SoCs where this is relevant
+> and needed for proper operation.
 > 
-> Proof of concept only. Leaks memory. Not for upstream merge.
+> Note: As the current GIC driver doesn't support Runtime PM yet, PM
+> Domain constraints must be handled elsewhere in e.g. platform code.
 > 
-> Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
-> 
->  Written on top of "renesas-drivers-2015-09-08-v4.2"
->  Needed to propagate clock frequencies from CPG to MSTP.
-> 
->  drivers/clk/clk.c                    |   46 +++++++++++++++++++------------
->  drivers/clk/shmobile/clk-mstp.c      |    3 --
->  drivers/clk/shmobile/clk-rcar-gen3.c |   13 +--------
->  include/linux/clk-provider.h         |    1
->  4 files changed, 35 insertions(+), 28 deletions(-)
-> 
-> --- 0001/drivers/clk/clk.c
-> +++ work/drivers/clk/clk.c	2015-09-09 13:48:21.992366518 +0900
-> @@ -3045,31 +3045,25 @@ int of_clk_get_parent_count(struct devic
->  }
->  EXPORT_SYMBOL_GPL(of_clk_get_parent_count);
-> 
-> -const char *of_clk_get_parent_name(struct device_node *np, int index)
-> +const char *of_clk_get_name(struct device_node *np, int index)
->  {
-> -	struct of_phandle_args clkspec;
->  	struct property *prop;
->  	const char *clk_name;
->  	const __be32 *vp;
->  	u32 pv;
-> -	int rc;
->  	int count;
-> +	bool has_indices = false;
-> 
->  	if (index < 0)
->  		return NULL;
-> 
-> -	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
-> -					&clkspec);
-> -	if (rc)
-> -		return NULL;
-> -
-> -	index = clkspec.args_count ? clkspec.args[0] : 0;
->  	count = 0;
-> 
->  	/* if there is an indices property, use it to transfer the index
->  	 * specified into an array offset for the clock-output-names property.
->  	 */
-> -	of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
-> +	of_property_for_each_u32(np, "clock-indices", prop, vp, pv) {
-> +		has_indices = true;
->  		if (index == pv) {
->  			index = count;
->  			break;
-> @@ -3077,12 +3071,34 @@ const char *of_clk_get_parent_name(struc
->  		count++;
->  	}
-> 
-> -	if (of_property_read_string_index(clkspec.np, "clock-output-names",
-> -					  index,
-> -					  &clk_name) < 0)
-> -		clk_name = clkspec.np->name;
-> +	if (of_property_read_string_index(np, "clock-output-names", index,
-> +					  &clk_name) < 0) {
-> +		if (has_indices)
-> +			return kasprintf(GFP_KERNEL, "%s.%u", np->name, index);
+> Note: v1 was Acked-by: Rob Herring <robh@kernel.org>, but I didn't add
+>       it, due to the addition of clock-names.
 
-What if the clock provider has a #clock-cells larger than one ?
+For both: ack.
 
-Another issue is that this won't guarantee that the names are unique as 
-multiple DT nodes can have the same name. Instead of trying to generate unique 
-names, would it be possible to handle clock registration and lookup without 
-relying on names for DT-based platforms ?
-
-> +		else
-> +			return kstrdup_const(np->name, GFP_KERNEL);
-> +	}
 > 
-> -	of_node_put(clkspec.np);
-> +	return kstrdup_const(clk_name, GFP_KERNEL);
-> +}
-> +EXPORT_SYMBOL_GPL(of_clk_get_name);
+> v2:
+>   - Add "clock-names",
+>   - Document clock inputs on various GIC variants.
+> 
+> Clock inputs are based on the following documentation:
+>   - "ARM11 MPCore Processor Technical Reference Manual" (r2p0),
+>   - "Cortex-A9 MPCore Technical Reference Manual" (r4p1, r2p0),
+>   - "Cortex-A15 Technical Reference Manual" (r4p0, r2p0),
+>   - "CoreLink GIC-400 Generic Interrupt Controller Technical Reference
+>     Manual" (r0p1, r0p0),
+>   - "PrimeCell Generic Interrupt Controller (PL390) Technical Reference
+>     Manual" (r0p0).
+> 
+> I could not find clock input information in:
+>   - "ARM1176JZF Development Chip Technical Reference Manual" (r0p0),
+>   - "Cortex-A7 MPCore processors" (r0p5, r0p3).
+> 
+> Other:
+>   - "brcm,brahma-b15-gic" seems to be always used together with
+>     "arm,cortex-a15-gic".
+> 
+> No access to datasheets:
+>   - "qcom,msm-8660-qgic",
+>   - "qcom,msm-qgic2".
+> ---
+>  Documentation/devicetree/bindings/arm/gic.txt | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/gic.txt b/Documentation/devicetree/bindings/arm/gic.txt
+> index 24742853ba460223..cc56021eb60babea 100644
+> --- a/Documentation/devicetree/bindings/arm/gic.txt
+> +++ b/Documentation/devicetree/bindings/arm/gic.txt
+> @@ -59,6 +59,21 @@ Optional
+>    regions, used when the GIC doesn't have banked registers. The offset is
+>    cpu-offset * cpu-nr.
+>  
+> +- clocks        : List of phandle and clock-specific pairs, one for each entry
+> +  in clock-names.
+> +- clock-names   : List of names for the GIC clock input(s). Valid clock names
+> +  depend on the GIC variant:
+> +	"ic_clk" (for "arm,arm11mp-gic")
+> +	"PERIPHCLKEN" (for "arm,cortex-a15-gic")
+> +	"PERIPHCLK", "PERIPHCLKEN" (for "arm,cortex-a9-gic")
+> +	"clk" (for "arm,gic-400")
+> +	"gclk" (for "arm,pl390")
 > +
-> +const char *of_clk_get_parent_name(struct device_node *np, int index)
-> +{
-> +	struct of_phandle_args clkspec;
-> +	const char *clk_name = NULL;
-> +	int rc;
+> +- power-domains : A phandle and PM domain specifier as defined by bindings of
+> +		  the power controller specified by phandle, used when the GIC
+> +		  is part of a Power or Clock Domain.
 > +
-> +	if (index < 0)
-> +		return NULL;
 > +
-> +	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
-> +					&clkspec);
-> +	if (!rc) {
-> +		clk_name = of_clk_get_name(clkspec.np, clkspec.args_count ?
-> +					   clkspec.args[0] : 0);
-> +		of_node_put(clkspec.np);
-> +	}
->  	return clk_name;
->  }
->  EXPORT_SYMBOL_GPL(of_clk_get_parent_name);
-> --- 0001/drivers/clk/shmobile/clk-mstp.c
-> +++ work/drivers/clk/shmobile/clk-mstp.c	2015-09-09 13:45:51.652366518 
-+0900
-> @@ -216,8 +216,7 @@ static void __init cpg_mstp_clocks_init(
+>  Example:
+>  
+>  	intc: interrupt-controller@fff11000 {
 > 
->  		if (of_property_read_string_index(np, "clock-output-names",
->  						  i, &name) < 0)
-> -			allocated_name = name = kasprintf(GFP_KERNEL, "%s.%u",
-> -							   np->name, clkidx);
-> +			allocated_name = name = of_clk_get_name(np, clkidx);
-> 
->  		clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
->  						       clkidx, group);
-> --- 0001/drivers/clk/shmobile/clk-rcar-gen3.c
-> +++ work/drivers/clk/shmobile/clk-rcar-gen3.c	2015-09-09 
-13:45:51.652366518
-> +0900 @@ -28,15 +28,6 @@
->  #define RCAR_GEN3_CLK_PLL4	5
->  #define RCAR_GEN3_CLK_NR	6
-> 
-> -static const char * const rcar_gen3_clk_names[RCAR_GEN3_CLK_NR] = {
-> -	[RCAR_GEN3_CLK_MAIN] = "main",
-> -	[RCAR_GEN3_CLK_PLL0] = "pll0",
-> -	[RCAR_GEN3_CLK_PLL1] = "pll1",
-> -	[RCAR_GEN3_CLK_PLL2] = "pll2",
-> -	[RCAR_GEN3_CLK_PLL3] = "pll3",
-> -	[RCAR_GEN3_CLK_PLL4] = "pll4",
-> -};
-> -
->  struct rcar_gen3_cpg {
->  	struct clk_onecell_data data;
->  	void __iomem *reg;
-> @@ -116,7 +107,7 @@ rcar_gen3_cpg_register_clk(struct device
->  			   const struct cpg_pll_config *config,
->  			   unsigned int gen3_clk)
->  {
-> -	const char *parent_name = rcar_gen3_clk_names[RCAR_GEN3_CLK_MAIN];
-> +	const char *parent_name = of_clk_get_name(np, RCAR_GEN3_CLK_MAIN);
->  	unsigned int mult = 1;
->  	unsigned int div = 1;
->  	u32 value;
-> @@ -157,7 +148,7 @@ rcar_gen3_cpg_register_clk(struct device
->  		return ERR_PTR(-EINVAL);
->  	}
-> 
-> -	return clk_register_fixed_factor(NULL, rcar_gen3_clk_names[gen3_clk],
-> +	return clk_register_fixed_factor(NULL, of_clk_get_name(np, gen3_clk),
->  					 parent_name, 0, mult, div);
->  }
-> 
-> --- 0001/include/linux/clk-provider.h
-> +++ work/include/linux/clk-provider.h	2015-09-09 13:46:21.052366518 +0900
-> @@ -665,6 +665,7 @@ struct clk *of_clk_src_onecell_get(struc
->  int of_clk_get_parent_count(struct device_node *np);
->  int of_clk_parent_fill(struct device_node *np, const char **parents,
->  		       unsigned int size);
-> +const char *of_clk_get_name(struct device_node *np, int index);
->  const char *of_clk_get_parent_name(struct device_node *np, int index);
-> 
->  void of_clk_init(const struct of_device_id *matches);
 
--- 
-Regards,
-
-Laurent Pinchart
