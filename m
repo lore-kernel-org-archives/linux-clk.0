@@ -1,122 +1,109 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 4 Sep 2015 13:06:08 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Russell King <linux@arm.linux.org.uk>
-Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Nicolas Iooss <nicolas.iooss_linux@m4x.org>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] clk_register_clkdev: remove format string interface
-Message-ID: <20150904200608.GA18963@www.outflux.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Dan Carpenter <dan.carpenter@oracle.com>, Tomasz Figa <tomasz.figa@gmail.com>,
+ Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2] clk: samsung: fix cpu clock's flags checking
+Date: Tue, 15 Sep 2015 14:28:39 +0200
+Message-id: <4294976.g7Mb9GifR6@amdc1976>
+In-reply-to: <1440762575-21520-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1440762575-21520-1-git-send-email-b.zolnierkie@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Many callers either use NULL or const strings for the third argument of
-clk_register_clkdev. For those that do not and use a non-const string,
-this is a risk for format strings being accidentally processed (for
-example in device names). As this interface is already used as if it
-weren't a format string (prints nothing when NULL), and there are zero
-users of the format strings, remove the format string interface to make
-sure format strings will not leak into the clkdev.
 
-$ git grep '\bclk_register_clkdev\b' | grep % | wc -l
-0
+[ + Stephen on cc: ]
 
-Unfortunately, all the internals expect a va_list even though they treat
-a NULL format string as special. To deal with this, we must pass either
-(..., "%s", string) or (..., NULL) so that a the va_list will be created
-correctly (passing the name as an argument, not as a format string).
+On Friday, August 28, 2015 01:49:35 PM Bartlomiej Zolnierkiewicz wrote:
+> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
+> incorrectly used as a bit numbers.  Fix it.
+> 
+> Tested on Exynos4210 based Origen board and on Exynos5250 based
+> Arndale board.
+> 
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Fixes: ddeac8d96 ("clk: samsung: add infrastructure to register cpu clocks")
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@dowhile0.org>
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+> v2:
+> - added Reviewed-by, Acked-by and Fixes tags (no code changes)
+> 
+> Michael, please apply.  Thank you.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-v2:
-- make calling logic more clear, thanks to rmk.
----
- drivers/clk/clkdev.c   | 31 +++++++++++++++++++++++++------
- include/linux/clkdev.h |  3 +--
- 2 files changed, 26 insertions(+), 8 deletions(-)
+Gentle ping.
 
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index c0eaf0973bd2..3aa112974eab 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -352,11 +352,25 @@ void clkdev_drop(struct clk_lookup *cl)
- }
- EXPORT_SYMBOL(clkdev_drop);
- 
-+static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
-+						const char *con_id,
-+						const char *dev_id, ...)
-+{
-+	struct clk_lookup *cl;
-+	va_list ap;
-+
-+	va_start(ap, dev_id);
-+	cl = vclkdev_create(hw, con_id, dev_id, ap);
-+	va_end(ap);
-+
-+	return cl;
-+}
-+
- /**
-  * clk_register_clkdev - register one clock lookup for a struct clk
-  * @clk: struct clk to associate with all clk_lookups
-  * @con_id: connection ID string on device
-- * @dev_id: format string describing device name
-+ * @dev_id: string describing device name
-  *
-  * con_id or dev_id may be NULL as a wildcard, just as in the rest of
-  * clkdev.
-@@ -367,17 +381,22 @@ EXPORT_SYMBOL(clkdev_drop);
-  * after clk_register().
-  */
- int clk_register_clkdev(struct clk *clk, const char *con_id,
--	const char *dev_fmt, ...)
-+	const char *dev_id)
- {
- 	struct clk_lookup *cl;
--	va_list ap;
- 
- 	if (IS_ERR(clk))
- 		return PTR_ERR(clk);
- 
--	va_start(ap, dev_fmt);
--	cl = vclkdev_create(__clk_get_hw(clk), con_id, dev_fmt, ap);
--	va_end(ap);
-+	/*
-+	 * Since dev_id can be NULL, and NULL is handled specially, we must
-+	 * pass it as either a NULL format string, or with "%s".
-+	 */
-+	if (dev_id)
-+		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, "%s",
-+					   dev_id);
-+	else
-+		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, NULL);
- 
- 	return cl ? 0 : -ENOMEM;
- }
-diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
-index 08bffcc466de..c2c04f7cbe8a 100644
---- a/include/linux/clkdev.h
-+++ b/include/linux/clkdev.h
-@@ -44,8 +44,7 @@ struct clk_lookup *clkdev_create(struct clk *clk, const char *con_id,
- void clkdev_add_table(struct clk_lookup *, size_t);
- int clk_add_alias(const char *, const char *, const char *, struct device *);
- 
--int clk_register_clkdev(struct clk *, const char *, const char *, ...)
--	__printf(3, 4);
-+int clk_register_clkdev(struct clk *, const char *, const char *);
- int clk_register_clkdevs(struct clk *, struct clk_lookup *, size_t);
- 
- #ifdef CONFIG_COMMON_CLK
--- 
-1.9.1
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-
--- 
-Kees Cook
-Chrome OS Security
+>  drivers/clk/samsung/clk-cpu.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+> index 7c1e1f5..2fe37f7 100644
+> --- a/drivers/clk/samsung/clk-cpu.c
+> +++ b/drivers/clk/samsung/clk-cpu.c
+> @@ -164,7 +164,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+>  	 * the values for DIV_COPY and DIV_HPM dividers need not be set.
+>  	 */
+>  	div0 = cfg_data->div0;
+> -	if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
+> +	if (cpuclk->flags & CLK_CPU_HAS_DIV1) {
+>  		div1 = cfg_data->div1;
+>  		if (readl(base + E4210_SRC_CPU) & E4210_MUX_HPM_MASK)
+>  			div1 = readl(base + E4210_DIV_CPU1) &
+> @@ -185,7 +185,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+>  		alt_div = DIV_ROUND_UP(alt_prate, tmp_rate) - 1;
+>  		WARN_ON(alt_div >= MAX_DIV);
+>  
+> -		if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
+> +		if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
+>  			/*
+>  			 * In Exynos4210, ATB clock parent is also mout_core. So
+>  			 * ATB clock also needs to be mantained at safe speed.
+> @@ -206,7 +206,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+>  	writel(div0, base + E4210_DIV_CPU0);
+>  	wait_until_divider_stable(base + E4210_DIV_STAT_CPU0, DIV_MASK_ALL);
+>  
+> -	if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
+> +	if (cpuclk->flags & CLK_CPU_HAS_DIV1) {
+>  		writel(div1, base + E4210_DIV_CPU1);
+>  		wait_until_divider_stable(base + E4210_DIV_STAT_CPU1,
+>  				DIV_MASK_ALL);
+> @@ -225,7 +225,7 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+>  	unsigned long mux_reg;
+>  
+>  	/* find out the divider values to use for clock data */
+> -	if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
+> +	if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
+>  		while ((cfg_data->prate * 1000) != ndata->new_rate) {
+>  			if (cfg_data->prate == 0)
+>  				return -EINVAL;
+> @@ -240,7 +240,7 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+>  	writel(mux_reg & ~(1 << 16), base + E4210_SRC_CPU);
+>  	wait_until_mux_stable(base + E4210_STAT_CPU, 16, 1);
+>  
+> -	if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
+> +	if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
+>  		div |= (cfg_data->div0 & E4210_DIV0_ATB_MASK);
+>  		div_mask |= E4210_DIV0_ATB_MASK;
+>  	}
