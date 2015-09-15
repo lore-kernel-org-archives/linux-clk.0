@@ -1,340 +1,263 @@
-Return-Path: <magnus.damm@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWScUcBuAMcYzkTi1wV3OnkDJ7Vb86iuD_OJfzDmTKTQg@mail.gmail.com>
-References: <CAMuHMdWXpkiKwywgT37EP-iSc9sLOiWAjFzNeAE+T5KJzaNwfA@mail.gmail.com>
-	<CAMuHMdWScUcBuAMcYzkTi1wV3OnkDJ7Vb86iuD_OJfzDmTKTQg@mail.gmail.com>
-Date: Tue, 8 Sep 2015 01:54:03 +0900
-Message-ID: <CANqRtoSmr_7SGxRtvYY-d3pObuU+NPjFqTiSym2NZMWGqdAyFA@mail.gmail.com>
-Subject: Re: Regression due to dropping "clock-output-names" (was: Re: [PATCH
- v5 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>,
-	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <jh80.chung@samsung.com>
+Message-id: <55F7D602.70003@samsung.com>
+Date: Tue, 15 Sep 2015 17:25:38 +0900
+From: Jaehoon Chung <jh80.chung@samsung.com>
+MIME-version: 1.0
+To: Heiko Stuebner <heiko@sntech.de>, ulf.hansson@linaro.org,
+ mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-mmc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Alexandru M Stan <amstan@chromium.org>,
+ CPGS <cpgs@samsung.com>
+Subject: Re: [PATCH 6/8] mmc: dw_mmc: Generic MMC tuning with the clock phase
+ framework
+References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
+ <1441045446-30858-7-git-send-email-heiko@sntech.de>
+In-reply-to: <1441045446-30858-7-git-send-email-heiko@sntech.de>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert, Mike, Stephen, all,
+Dear, Heiko.
 
-On Thu, Sep 3, 2015 at 5:22 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Ping?
+On 09/01/2015 03:24 AM, Heiko Stuebner wrote:
+> From: Alexandru M Stan <amstan@chromium.org>
+> 
+> This algorithm will try 1 degree increments, since there's no way to tell
+> what resolution the underlying phase code uses. As an added bonus, doing
+> many tunings yields better results since some tests are run more than once
+> (ex: if the underlying driver uses 45 degree increments, the tuning code
+> will try the same angle more than once).
+> 
+> It will then construct a list of good phase ranges (even ranges that cross
+> 360/0), will pick the biggest range then it will set the sample_clk to the
+> middle of that range.
+> 
+> We do not touch ciu_drive (and by extension define default-drive-phase).
+> Drive phase is mostly used to define minimum hold times, while one could
+> write some code to determine what phase meets the minimum hold time (ex 10
+> degrees) this will not work with the current clock phase framework (which
+> floors angles, so we'll get 0 deg, and there's no way to know what
+> resolution the floors happen at). We assume that the default drive angles
+> set by the hardware are good enough.
+> 
+> If a device has device specific code (like exynos) then that will still
+> take precedence, otherwise this new code will execute. If the device wants
+> to tune, but has no sample_clk defined we'll return EIO with an error
+> message.
 
-Btw, I've just sent off the V7 series which still has this issue:
-[PATCH v7 00/05] Renesas R-Car Gen3 CPG support V7
+Which point is "_generic_"? I don't find the code that control the register relevant to CLK_DRV/SMPL PHASE.
+It seems that posted the similar patches at u-boot mailing list..
 
->From my point of view it looks like some core CCF changes are needed
-to allow us to drop "clock-output-names" for the CPG node. I've
-written some ugly prototype code to patch things together and I've
-pasted it in as a proof-of-concent patch below. My apologies in
-advance if gmail mangled the inline patch somehow...
+Best Regards,
+Jaehoon Chung
 
-> On Mon, Aug 31, 2015 at 5:56 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Mon, Aug 31, 2015 at 2:49 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
->>> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
->>>
->>> This V5 patch adds initial CPG support for R-Car Generation 3 and in
->>> particular the R8A7795 SoC.
->>>
->>> The R-Car Gen3 clock hardware has a register write protection feature that
->>> needs to be shared between the CPG function needs to be shared between
->>> the CPG and MSTP hardware somehow. So far this feature is simply ignored.
->>>
->>> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
->>> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
->>> ---
->>>
->>>  Changes since V4: (Magnus Damm <damm+renesas@opensource.se>)
->>>  - Simplified clks array handling - thanks Geert!
->>>  - Updated th DT binding documentation to reflect latest state
->>>  - of_property_count_strings() -> of_property_count_u32_elems() fix
->>>
->>>  Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
->>>  - Reworked driver to incorporate most feedback from Stephen Boyd - thanks!!
->>>  - Major things like syscon and driver model require more discussion.
->>>  - Added hunk to build drivers/clk/shmobile if ARCH_RENESAS is set.
->>>
->>>  Changes since V2: (Magnus Damm <damm+renesas@opensource.se>)
->>>  - Reworked driver to rely on clock index instead of strings.
->>>  - Dropped use of "clock-output-names".
->>
->> Unfortunately dropping "clock-output-names" causes a regression: it turns
->> out all fixed-factor clocks that have <&cpg_clocks R8A7795_CLK_*> as a parent
->> have lost their parent clock, and have rate zero.
->>
->> E.g. instead of
->>
->>    clock                         enable_cnt  prepare_cnt        rate
->> accuracy   phase
->> ----------------------------------------------------------------------------------------
->>  extal                                    1            1    16666600
->>    50000 0
->>     main                                  1            1     8333300
->>    50000 0
->>        pll1                               1            2   799996800
->>    50000 0
->>           cl                              0            0    16666600
->>    50000 0
->>           s3                              1            1   133332800
->>    50000 0
->>              s3d4                         1            2    33333200
->>    50000 0
->>                 mstp3_clks.10             2            2    33333200
->>    50000 0
->>
->> /sys/kernel/debug/clk/clk_summary now has:
->>
->>    clock                         enable_cnt  prepare_cnt        rate
->> accuracy   phase
->> ----------------------------------------------------------------------------------------
->>  extal                                    0            0    16666600
->>    50000 0
->>     main                                  0            0     8333300
->>    50000 0
->>        pll1                               0            0   799996800
->>    50000 0
->>  cl                                       0            0           0
->>        0 0
->>  s3                                       1            1           0
->>        0 0
->>     s3d4                                  1            2           0
->>        0 0
->>        mstp3_clks.10                      2            2           0
->>        0 0
->>
->> Surprisingly, the system still works.
->>
->> Several clock drivers (e.g. fixed-factor-clock) use of_clk_get_parent_name()
->> to find the name of the parent clock.
->> In the absence of "clock-output-names", this returns the name of the device
->> node of the parent's clock. Which is always "cpg_clocks", and no longer the
->> name of the clock matching the index.
->>
->> I believe the same issue is present for MSTP clocks, but there we don't have
->> children clocks, so it doesn't manifest itself (yet).
->>
->> A quick workaround is to just re-add the clock-output-names to r8a7795.dtsi:
->>
->>                                 clock-output-names =
->>                                         "main", "pll0", "pll1","pll2",
->>                                         "pll3", "pll4";
->>
->> Hence it seems like dropping "clock-output-names" for clocks with multiple
->> outputs is not such a good idea?
->>
->> See also my question in "Re: [PATCH 3/4 v3][RFC] arm64: renesas: Add initial
->> r8a7795 SoC support" (http://www.spinics.net/lists/linux-sh/msg44609.html):
->>
->> | BTW, was "dropping clock-output-names" a general comment for all clock
->> | drivers, or specific to the SoC's Clock Pulse Generator?
->> |
->> | For e.g. "fixed-factor-clock", the driver falls back to using the node's
->> | name if  "clock-output-names" is not present.
->> |
->> | But e.g. for MSTP clocks, that can't be done, as the clocks wouldn't have
->> | names in that case (single node with multiple clocks). Unless we start
->> | fabricating them from the node name and the indices."
->>
->> For MSTP, we started fabricating them, but that doesn't solve the
->> of_clk_get_parent_name() issue.
->>
->> Thanks for your comments!
-
-Thanks for making this very useful summary. It made it relatively easy
-for me to understand what was going on.
-
->From my side I've noticed exactly the same thing as you describe. So
-in case we have more than one clock provided by a single node the
-of_clk_get_parent_name() function will not work as expected unless
-clock-output-names is provided. More or less all of the main clock
-drivers for renesas hardware is built using a single node with
-multiple indices, and today we use clock-output-names so we have no
-issues for existing platforms.
-
-For the upcoming R-Car Gen3 SoC we were asked to get rid of
-clock-output-names if possible, but it seems that is difficult to do
-without changing core CCF code. The patch below is my proporsal how to
-fix the issue. It needs to be reworked to handle memory allocation
-properly, but hopefully there are better ways to fix this.
-
-The main portion of the patch below is based around a new function
-called of_clk_get_name(). The idea is that it will check a certain
-node if the clock-indices property is present together with
-clock-output-names. In case clock-output-names is set it will make use
-of that. If no clock-output-names is provided and no clock-indices
-then the node name is used as-is, but if clock-indices is set then a
-"%s.%u" name is generated based on node name and clock-index.
-
-Included in the patch is also some debug code and minor changes to
-make use of of_clk_get_name() from of_clk_get_parent_name() and a
-couple of Renesas-specific drivers. With this patch the debugfs clock
-frequency propagation is unbroken again, but unfortunately we now have
-memory leaks instead. =)
-
-The prototype is only written to highlight what that the problem is.
-Not for upstream merge.
-
-Not-yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- drivers/clk/clk-fixed-factor.c       |    3 ++
- drivers/clk/clk.c                    |   46 ++++++++++++++++++++++------------
- drivers/clk/shmobile/clk-mstp.c      |    3 --
- drivers/clk/shmobile/clk-rcar-gen3.c |   13 +--------
- include/linux/clk-provider.h         |    2 +
- 5 files changed, 39 insertions(+), 28 deletions(-)
-
---- 0001/drivers/clk/clk-fixed-factor.c
-+++ work/drivers/clk/clk-fixed-factor.c    2015-09-07 21:49:36.472366518 +0900
-@@ -82,6 +82,9 @@ struct clk *clk_register_fixed_factor(st
-     if (!fix)
-         return ERR_PTR(-ENOMEM);
-
-+    printk("xxxx name %s parent name %s %i %i\n", name, parent_name,
-+           mult, div);
-+
-     /* struct clk_fixed_factor assignments */
-     fix->mult = mult;
-     fix->div = div;
---- 0001/drivers/clk/clk.c
-+++ work/drivers/clk/clk.c    2015-09-07 22:08:32.472366518 +0900
-@@ -3045,31 +3045,25 @@ int of_clk_get_parent_count(struct devic
- }
- EXPORT_SYMBOL_GPL(of_clk_get_parent_count);
-
--const char *of_clk_get_parent_name(struct device_node *np, int index)
-+const char *of_clk_get_name(struct device_node *np, int index)
- {
--    struct of_phandle_args clkspec;
-     struct property *prop;
-     const char *clk_name;
-     const __be32 *vp;
-     u32 pv;
--    int rc;
-     int count;
-+    bool has_indices = false;
-
-     if (index < 0)
-         return NULL;
-
--    rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
--                    &clkspec);
--    if (rc)
--        return NULL;
--
--    index = clkspec.args_count ? clkspec.args[0] : 0;
-     count = 0;
-
-     /* if there is an indices property, use it to transfer the index
-      * specified into an array offset for the clock-output-names property.
-      */
--    of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
-+    of_property_for_each_u32(np, "clock-indices", prop, vp, pv) {
-+        has_indices = true;
-         if (index == pv) {
-             index = count;
-             break;
-@@ -3077,12 +3071,34 @@ const char *of_clk_get_parent_name(struc
-         count++;
-     }
-
--    if (of_property_read_string_index(clkspec.np, "clock-output-names",
--                      index,
--                      &clk_name) < 0)
--        clk_name = clkspec.np->name;
-+    if (of_property_read_string_index(np, "clock-output-names", index,
-+                      &clk_name) < 0) {
-+        if (has_indices)
-+            return kasprintf(GFP_KERNEL, "%s.%u", np->name, index);
-+        else
-+            return kstrdup_const(np->name, GFP_KERNEL);
-+    }
-+
-+    return kstrdup_const(clk_name, GFP_KERNEL);
-+}
-+EXPORT_SYMBOL_GPL(of_clk_get_name);
-+
-+const char *of_clk_get_parent_name(struct device_node *np, int index)
-+{
-+    struct of_phandle_args clkspec;
-+    const char *clk_name = NULL;
-+    int rc;
-+
-+    if (index < 0)
-+        return NULL;
-
--    of_node_put(clkspec.np);
-+    rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
-+                    &clkspec);
-+    if (!rc) {
-+        clk_name = of_clk_get_name(clkspec.np, clkspec.args_count ?
-+                       clkspec.args[0] : 0);
-+        of_node_put(clkspec.np);
-+    }
-     return clk_name;
- }
- EXPORT_SYMBOL_GPL(of_clk_get_parent_name);
---- 0017/drivers/clk/shmobile/clk-mstp.c
-+++ work/drivers/clk/shmobile/clk-mstp.c    2015-09-07 22:04:50.942366518 +0900
-@@ -216,8 +216,7 @@ static void __init cpg_mstp_clocks_init(
-
-         if (of_property_read_string_index(np, "clock-output-names",
-                           i, &name) < 0)
--            allocated_name = name = kasprintf(GFP_KERNEL, "%s.%u",
--                               np->name, clkidx);
-+            allocated_name = name = of_clk_get_name(np, clkidx);
-
-         clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
-                                clkidx, group);
---- 0020/drivers/clk/shmobile/clk-rcar-gen3.c
-+++ work/drivers/clk/shmobile/clk-rcar-gen3.c    2015-09-07
-21:41:38.502366518 +0900
-@@ -26,15 +26,6 @@
- #define RCAR_GEN3_CLK_PLL4    5
- #define RCAR_GEN3_CLK_NR    6
-
--static const char * const rcar_gen3_clk_names[RCAR_GEN3_CLK_NR] = {
--    [RCAR_GEN3_CLK_MAIN] = "main",
--    [RCAR_GEN3_CLK_PLL0] = "pll0",
--    [RCAR_GEN3_CLK_PLL1] = "pll1",
--    [RCAR_GEN3_CLK_PLL2] = "pll2",
--    [RCAR_GEN3_CLK_PLL3] = "pll3",
--    [RCAR_GEN3_CLK_PLL4] = "pll4",
--};
--
- struct rcar_gen3_cpg {
-     struct clk_onecell_data data;
-     void __iomem *reg;
-@@ -136,7 +127,7 @@ rcar_gen3_cpg_register_clk(struct device
-                const struct cpg_pll_config *config,
-                unsigned int gen3_clk)
- {
--    const char *parent_name = rcar_gen3_clk_names[RCAR_GEN3_CLK_MAIN];
-+    const char *parent_name = of_clk_get_name(np, RCAR_GEN3_CLK_MAIN);
-     unsigned int mult = 1;
-     unsigned int div = 1;
-     u32 value;
-@@ -177,7 +168,7 @@ rcar_gen3_cpg_register_clk(struct device
-         return ERR_PTR(-EINVAL);
-     }
-
--    return clk_register_fixed_factor(NULL, rcar_gen3_clk_names[gen3_clk],
-+    return clk_register_fixed_factor(NULL, of_clk_get_name(np, gen3_clk),
-                      parent_name, 0, mult, div);
- }
-
---- 0001/include/linux/clk-provider.h
-+++ work/include/linux/clk-provider.h    2015-09-07 21:35:54.332366518 +0900
-@@ -665,6 +665,8 @@ struct clk *of_clk_src_onecell_get(struc
- int of_clk_get_parent_count(struct device_node *np);
- int of_clk_parent_fill(struct device_node *np, const char **parents,
-                unsigned int size);
-+
-+const char *of_clk_get_name(struct device_node *np, int index);
- const char *of_clk_get_parent_name(struct device_node *np, int index);
-
- void of_clk_init(const struct of_device_id *matches);
+> 
+> Signed-off-by: Alexandru M Stan <amstan@chromium.org>
+> 
+> Convert to mmc_send_tuning()
+> Fold in from the ChromeOS-tree:
+>  - mmc: dw_mmc: Change tuning to only 16 phases
+>  - mmc: dw_mmc: Test more phases
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  drivers/mmc/host/dw_mmc.c  | 142 +++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mmc/dw_mmc.h |   3 +
+>  2 files changed, 145 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index b1b7e7f..13bcde0 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -1194,6 +1194,12 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>  	if (drv_data && drv_data->set_ios)
+>  		drv_data->set_ios(slot->host, ios);
+>  
+> +	/* Make sure we use phases which we can enumerate with */
+> +	if (!IS_ERR(slot->host->sample_clk)) {
+> +		clk_set_phase(slot->host->sample_clk,
+> +			      slot->host->default_sample_phase);
+> +	}
+> +
+>  	switch (ios->power_mode) {
+>  	case MMC_POWER_UP:
+>  		if (!IS_ERR(mmc->supply.vmmc)) {
+> @@ -1414,6 +1420,127 @@ static void dw_mci_enable_sdio_irq(struct mmc_host *mmc, int enb)
+>  	spin_unlock_irqrestore(&host->irq_lock, irqflags);
+>  }
+>  
+> +#define NUM_PHASES			360
+> +#define TUNING_ITERATION_TO_PHASE(i)	(DIV_ROUND_UP((i) * 360, NUM_PHASES))
+> +
+> +static int dw_mci_execute_generic_tuning(struct dw_mci_slot *slot)
+> +{
+> +	struct dw_mci *host = slot->host;
+> +	struct mmc_host *mmc = slot->mmc;
+> +	int ret = 0;
+> +	int i;
+> +	bool v, prev_v = 0, first_v;
+> +	struct range_t {
+> +		int start;
+> +		int end; /* inclusive */
+> +	};
+> +	struct range_t *ranges;
+> +	unsigned int range_count = 0;
+> +	int longest_range_len = -1;
+> +	int longest_range = -1;
+> +	int middle_phase;
+> +
+> +	if (IS_ERR(host->sample_clk)) {
+> +		dev_err(host->dev, "Tuning clock (sample_clk) not defined.\n");
+> +		return -EIO;
+> +	}
+> +
+> +	ranges = kmalloc_array(NUM_PHASES / 2 + 1, sizeof(*ranges), GFP_KERNEL);
+> +	if (!ranges)
+> +		return -ENOMEM;
+> +
+> +	/* Try each phase and extract good ranges */
+> +	for (i = 0; i < NUM_PHASES; ) {
+> +		clk_set_phase(host->sample_clk, TUNING_ITERATION_TO_PHASE(i));
+> +
+> +		v = !mmc_send_tuning(mmc);
+> +
+> +		if (i == 0)
+> +			first_v = v;
+> +
+> +		if ((!prev_v) && v) {
+> +			range_count++;
+> +			ranges[range_count-1].start = i;
+> +		}
+> +		if (v) {
+> +			ranges[range_count-1].end = i;
+> +			i++;
+> +		} else if (i == NUM_PHASES - 1) {
+> +			/* No extra skipping rules if we're at the end */
+> +			i++;
+> +		} else {
+> +			/*
+> +			 * No need to check too close to an invalid
+> +			 * one since testing bad phases is slow.  Skip
+> +			 * 20 degrees.
+> +			 */
+> +			i += DIV_ROUND_UP(20 * NUM_PHASES, 360);
+> +
+> +			/* Always test the last one */
+> +			if (i >= NUM_PHASES)
+> +				i = NUM_PHASES - 1;
+> +		}
+> +
+> +		prev_v = v;
+> +	}
+> +
+> +	if (range_count == 0) {
+> +		dev_warn(host->dev, "All phases bad!");
+> +		ret = -EIO;
+> +		goto free;
+> +	}
+> +
+> +	/* wrap around case, merge the end points */
+> +	if ((range_count > 1) && first_v && v) {
+> +		ranges[0].start = ranges[range_count-1].start;
+> +		range_count--;
+> +	}
+> +
+> +	if (ranges[0].start == 0 && ranges[0].end == NUM_PHASES - 1) {
+> +		clk_set_phase(host->sample_clk, host->default_sample_phase);
+> +		dev_info(host->dev, "All phases work, using default phase %d.",
+> +			 host->default_sample_phase);
+> +		goto free;
+> +	}
+> +
+> +	/* Find the longest range */
+> +	for (i = 0; i < range_count; i++) {
+> +		int len = (ranges[i].end - ranges[i].start + 1);
+> +
+> +		if (len < 0)
+> +			len += NUM_PHASES;
+> +
+> +		if (longest_range_len < len) {
+> +			longest_range_len = len;
+> +			longest_range = i;
+> +		}
+> +
+> +		dev_dbg(host->dev, "Good phase range %d-%d (%d len)\n",
+> +			TUNING_ITERATION_TO_PHASE(ranges[i].start),
+> +			TUNING_ITERATION_TO_PHASE(ranges[i].end),
+> +			len
+> +		);
+> +	}
+> +
+> +	dev_dbg(host->dev, "Best phase range %d-%d (%d len)\n",
+> +		TUNING_ITERATION_TO_PHASE(ranges[longest_range].start),
+> +		TUNING_ITERATION_TO_PHASE(ranges[longest_range].end),
+> +		longest_range_len
+> +	);
+> +
+> +	middle_phase = ranges[longest_range].start + longest_range_len / 2;
+> +	middle_phase %= NUM_PHASES;
+> +	dev_info(host->dev, "Successfully tuned phase to %d\n",
+> +		 TUNING_ITERATION_TO_PHASE(middle_phase));
+> +
+> +	clk_set_phase(host->sample_clk,
+> +		      TUNING_ITERATION_TO_PHASE(middle_phase));
+> +
+> +free:
+> +	kfree(ranges);
+> +	return ret;
+> +}
+> +
+>  static int dw_mci_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  {
+>  	struct dw_mci_slot *slot = mmc_priv(mmc);
+> @@ -1423,6 +1550,8 @@ static int dw_mci_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  
+>  	if (drv_data && drv_data->execute_tuning)
+>  		err = drv_data->execute_tuning(slot);
+> +	else
+> +		err = dw_mci_execute_generic_tuning(slot);
+>  	return err;
+>  }
+>  
+> @@ -2741,6 +2870,11 @@ static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
+>  	if (!of_property_read_u32(np, "clock-frequency", &clock_frequency))
+>  		pdata->bus_hz = clock_frequency;
+>  
+> +	if (of_property_read_u32(np, "default-sample-phase",
+> +					&host->default_sample_phase)) {
+> +		host->default_sample_phase = 0;
+> +	}
+> +
+>  	if (drv_data && drv_data->parse_dt) {
+>  		ret = drv_data->parse_dt(host);
+>  		if (ret)
+> @@ -2843,6 +2977,14 @@ int dw_mci_probe(struct dw_mci *host)
+>  		host->bus_hz = clk_get_rate(host->ciu_clk);
+>  	}
+>  
+> +	host->drv_clk = devm_clk_get(host->dev, "ciu_drv");
+> +	if (IS_ERR(host->drv_clk))
+> +		dev_dbg(host->dev, "ciu_drv not available\n");
+> +
+> +	host->sample_clk = devm_clk_get(host->dev, "ciu_sample");
+> +	if (IS_ERR(host->sample_clk))
+> +		dev_dbg(host->dev, "ciu_sample not available\n");
+> +
+>  	if (!host->bus_hz) {
+>  		dev_err(host->dev,
+>  			"Platform data must supply bus speed\n");
+> diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
+> index 134c574..40187ba 100644
+> --- a/include/linux/mmc/dw_mmc.h
+> +++ b/include/linux/mmc/dw_mmc.h
+> @@ -176,7 +176,10 @@ struct dw_mci {
+>  	void			*priv;
+>  	struct clk		*biu_clk;
+>  	struct clk		*ciu_clk;
+> +	struct clk		*drv_clk;
+> +	struct clk		*sample_clk;
+>  	struct dw_mci_slot	*slot[MAX_MCI_SLOTS];
+> +	int			default_sample_phase;
+>  
+>  	/* FIFO push and pull */
+>  	int			fifo_depth;
+> 
