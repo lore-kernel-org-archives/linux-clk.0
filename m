@@ -1,83 +1,62 @@
-Return-Path: <alim.akhtar@samsung.com>
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
- k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
- gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Subject: [PATCH 05/11] clk: samsung: exynos7: Corrects CMU_PERIC0 clocks names
-Date: Fri, 04 Sep 2015 17:07:10 +0530
-Message-id: <1441366637-28001-6-git-send-email-alim.akhtar@samsung.com>
-In-reply-to: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
-References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Tue, 15 Sep 2015 13:08:53 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Cc: pdeschrijver@nvidia.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: Unlock top rates for Tegra124 DFLL clock
+Message-ID: <20150915110852.GA2983@ulmo.nvidia.com>
+References: <1442310915-15475-1-git-send-email-mikko.perttunen@kapsi.fi>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
+In-Reply-To: <1442310915-15475-1-git-send-email-mikko.perttunen@kapsi.fi>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch rename CMU_PERIC0 clocks names to match with user manual.
-And also adds missing gate clock for aclk_peric0_66.
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- drivers/clk/samsung/clk-exynos7.c       |   12 ++++++++----
- include/dt-bindings/clock/exynos7-clk.h |    3 ++-
- 2 files changed, 10 insertions(+), 5 deletions(-)
+--GvXjxJ+pjyke8COw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index 0eb0f57..782943b 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -223,6 +223,7 @@ CLK_OF_DECLARE(exynos7_clk_topc, "samsung,exynos7-clock-topc",
- #define DIV_TOP0_PERIC1			0x0634
- #define DIV_TOP0_PERIC2			0x0638
- #define DIV_TOP0_PERIC3			0x063C
-+#define ENABLE_ACLK_TOP03		0x080C
- #define ENABLE_SCLK_TOP0_PERIC0		0x0A30
- #define ENABLE_SCLK_TOP0_PERIC1		0x0A34
- #define ENABLE_SCLK_TOP0_PERIC2		0x0A38
-@@ -337,6 +338,9 @@ static struct samsung_div_clock top0_div_clks[] __initdata = {
- };
- 
- static struct samsung_gate_clock top0_gate_clks[] __initdata = {
-+	GATE(CLK_ACLK_PERIC0_66, "aclk_peric0_66", "dout_aclk_peric0_66",
-+		ENABLE_ACLK_TOP03, 20, CLK_SET_RATE_PARENT, 0),
-+
- 	GATE(CLK_SCLK_SPDIF, "sclk_spdif", "dout_sclk_spdif",
- 		ENABLE_SCLK_TOP0_PERIC0, 4, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_PCM1, "sclk_pcm1", "dout_sclk_pcm1",
-@@ -589,8 +593,8 @@ CLK_OF_DECLARE(exynos7_clk_ccore, "samsung,exynos7-clock-ccore",
- #define ENABLE_SCLK_PERIC0		0x0A00
- 
- /* List of parent clocks for Muxes in CMU_PERIC0 */
--PNAME(mout_aclk_peric0_66_p)	= { "fin_pll", "dout_aclk_peric0_66" };
--PNAME(mout_sclk_uart0_p)	= { "fin_pll", "sclk_uart0" };
-+PNAME(mout_aclk_peric0_66_user_p)	= { "fin_pll", "aclk_peric0_66" };
-+PNAME(mout_sclk_uart0_user_p)	= { "fin_pll", "sclk_uart0" };
- 
- static unsigned long peric0_clk_regs[] __initdata = {
- 	MUX_SEL_PERIC0,
-@@ -599,9 +603,9 @@ static unsigned long peric0_clk_regs[] __initdata = {
- };
- 
- static struct samsung_mux_clock peric0_mux_clks[] __initdata = {
--	MUX(0, "mout_aclk_peric0_66_user", mout_aclk_peric0_66_p,
-+	MUX(0, "mout_aclk_peric0_66_user", mout_aclk_peric0_66_user_p,
- 		MUX_SEL_PERIC0, 0, 1),
--	MUX(0, "mout_sclk_uart0_user", mout_sclk_uart0_p,
-+	MUX(0, "mout_sclk_uart0_user", mout_sclk_uart0_user_p,
- 		MUX_SEL_PERIC0, 16, 1),
- };
- 
-diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
-index 2e01235..ba60a20 100644
---- a/include/dt-bindings/clock/exynos7-clk.h
-+++ b/include/dt-bindings/clock/exynos7-clk.h
-@@ -48,7 +48,8 @@
- #define CLK_SCLK_SPDIF			12
- #define CLK_SCLK_PCM1			13
- #define CLK_SCLK_I2S1			14
--#define TOP0_NR_CLK			15
-+#define CLK_ACLK_PERIC0_66		15
-+#define TOP0_NR_CLK			16
- 
- /* TOP1 */
- #define DOUT_ACLK_FSYS1_200		1
--- 
-1.7.10.4
+On Tue, Sep 15, 2015 at 12:55:15PM +0300, Mikko Perttunen wrote:
+> The new determine_rate prototype allows for clock rates exceeding
+> 2^31-1 Hz to be used. Switch the DFLL clock to use determine_rate
+> instead of round_rate and unlock the top rates supported by the
+> Tegra124.
+>=20
+> Signed-off-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+> ---
+>  drivers/clk/tegra/clk-dfll.c | 15 ++++++++-------
+>  drivers/clk/tegra/cvb.c      |  7 -------
+>  2 files changed, 8 insertions(+), 14 deletions(-)
+
+I've applied this to the for-4.4/clk branch in the Tegra tree.
+
+Thanks,
+Thierry
+
+--GvXjxJ+pjyke8COw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJV9/xBAAoJEN0jrNd/PrOhSoIQAIPm/JKjnp4Hlr9Z9dKXvA89
+RtDyRr4fdi0UtIA2VPS1X9n24UEK883vGz4K/kHjfvyJOCWuBKyeZvhgBdYlOEDs
+DBDuHv+oxgvFkV5oplo0BwuEMksMjq6iPpF49FrDgoChtbIgmpvrEjeOFL6qS6bm
+vsr092mvNrVoacNEoSPsDHgjw5GoNRxthzW8PkEGl9d3LjSRf7i6YVIMSJD/16bv
+pvDdZWkBIGmzfNTYZ4MW9hAtmbRqJH74p0EDOeMcWpQ4GYiNLouXQt5IWWBOM3K7
+cDn3pXHhv8LdV6Wou/QNRd5TH5zz6HkcsTHBP89TmXczU/Oq1++eBzPnBsYCHpFY
+VkcUEQugclin87N88Sd6VP0QHkm0onVP90CyDvYkceg5se0ZKY7V4kUKmzPwAJQ1
+fbanMggfXQsRW/nSZck6jTA7rdxG7g7EaRoW8CzYT5xZPZBzzgTNTLhGC4DwQhuu
+aeBnyKcVTWvrcJnzFaNTTlWWLDBD8CHaP1FeUElew1xKoTqUn1zN1RcvV4iqfRZa
+SZMoYUygWrMoTfJVKuCHTVygPqqNj/bXTR+LzGK8NvYeT0Phhhz/a00YxUoAdJW0
+7ZFEwJS5W9EzvU4kAw2zOUZJcKfSjCERP/ZsM9cjVyW/NNBc1WoY2SUDkgTem59N
+7cjTaetl65Y2gQENWFac
+=q1rV
+-----END PGP SIGNATURE-----
+
+--GvXjxJ+pjyke8COw--
