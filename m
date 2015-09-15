@@ -1,66 +1,137 @@
-Return-Path: <antoine.tenart@free-electrons.com>
-From: Antoine Tenart <antoine.tenart@free-electrons.com>
-To: sebastian.hesselbarth@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: Antoine Tenart <antoine.tenart@free-electrons.com>,
-	zmxu@marvell.com,
-	jszhang@marvell.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/6] clk: berlin: add cpuclk
-Date: Thu, 17 Sep 2015 12:15:01 +0200
-Message-Id: <1442484905-15656-3-git-send-email-antoine.tenart@free-electrons.com>
-In-Reply-To: <1442484905-15656-1-git-send-email-antoine.tenart@free-electrons.com>
-References: <1442484905-15656-1-git-send-email-antoine.tenart@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org
+Subject: [PATCH] clk: readd refcounting for struct clk instances
+Date: Tue, 15 Sep 2015 16:50:38 +0200
+Message-ID: <1878691.zhVxsBBBGg@diego>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add cpuclk in the Berlin BG2Q clock driver. This clk has a divider
-fixed to 1.
+With the split into struct clk and struct clk_core, clocks lost the
+ability for nested __clk_get clkdev calls. While it stays possible to
+call __clk_get, the first call to (__)clk_put will clear the struct clk,
+making subsequent clk_put calls run into a NULL pointer dereference.
 
-Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+One prime example of this sits in the generic power domain code, where it
+is possible to add the clocks both by name and by passing in a struct clk
+via pm_clk_add_clk(). __pm_clk_add() in turn then calls __clk_get to
+increase the refcount, so that the original code can put the clock again.
+
+A possible call-path looks like
+clk = of_clk_get();
+pm_clk_add_clk(dev, clk);
+clk_put(clk);
+
+with pm_clk_add_clk() => __pm_clk_add() then calling __clk_get on the clk
+and later clk_put when the pm clock list gets destroyed, thus creating
+a NULL pointer deref, as the struct clk doesn't exist anymore.
+
+So add a separate refcounting for struct clk instances and only clean up
+once the refcount reaches zero.
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/clk/berlin/bg2q.c            | 12 ++++++------
- include/dt-bindings/clock/berlin2q.h |  3 ++-
- 2 files changed, 8 insertions(+), 7 deletions(-)
+I stumbled upon this while applying the new Rockchip power-domain driver,
+but I guess the underlying issue is universal and probably present since
+the original clk/clk_core split, so this probably counts as fix.
 
-diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
-index a27958efab92..c2f48f3773e8 100644
---- a/drivers/clk/berlin/bg2q.c
-+++ b/drivers/clk/berlin/bg2q.c
-@@ -355,13 +355,13 @@ static void __init berlin2q_clock_setup(struct device_node *np)
- 			    gd->bit_idx, 0, &lock);
+ drivers/clk/clk.c | 31 +++++++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 43e2c3a..7aab1a4 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -85,6 +85,7 @@ struct clk {
+ 	unsigned long min_rate;
+ 	unsigned long max_rate;
+ 	struct hlist_node clks_node;
++	struct kref ref;
+ };
+ 
+ /***           locking             ***/
+@@ -2590,7 +2591,7 @@ fail_out:
+ EXPORT_SYMBOL_GPL(clk_register);
+ 
+ /* Free memory allocated for a clock. */
+-static void __clk_release(struct kref *ref)
++static void __clk_core_release(struct kref *ref)
+ {
+ 	struct clk_core *core = container_of(ref, struct clk_core, ref);
+ 	int i = core->num_parents;
+@@ -2606,6 +2607,18 @@ static void __clk_release(struct kref *ref)
+ 	kfree(core);
+ }
+ 
++static void __clk_release(struct kref *ref)
++{
++	struct clk *clk = container_of(ref, struct clk, ref);
++
++	hlist_del(&clk->clks_node);
++	if ((clk->min_rate > clk->core->req_rate ||
++	     clk->max_rate < clk->core->req_rate))
++		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
++
++	kfree(clk);
++}
++
+ /*
+  * Empty clk_ops for unregistered clocks. These are used temporarily
+  * after clk_unregister() was called on a clock and until last clock
+@@ -2684,7 +2697,7 @@ void clk_unregister(struct clk *clk)
+ 	if (clk->core->prepare_count)
+ 		pr_warn("%s: unregistering prepared clock: %s\n",
+ 					__func__, clk->core->name);
+-	kref_put(&clk->core->ref, __clk_release);
++	kref_put(&clk->core->ref, __clk_core_release);
+ 
+ 	clk_prepare_unlock();
+ }
+@@ -2759,12 +2772,14 @@ int __clk_get(struct clk *clk)
+ 			return 0;
+ 
+ 		kref_get(&core->ref);
++		kref_get(&clk->ref);
  	}
+ 	return 1;
+ }
  
--	/*
--	 * twdclk is derived from cpu/3
--	 * TODO: use cpupll until cpuclk is not available
--	 */
-+	/* cpuclk divider is fixed to 1 */
-+	clks[CLKID_CPU] =
-+		clk_register_fixed_factor(NULL, "cpu", clk_names[CPUPLL],
-+					  0, 1, 1);
-+	/* twdclk is derived from cpu/3 */
- 	clks[CLKID_TWD] =
--		clk_register_fixed_factor(NULL, "twd", clk_names[CPUPLL],
--					  0, 1, 3);
-+		clk_register_fixed_factor(NULL, "twd", "cpu", 0, 1, 3);
+ void __clk_put(struct clk *clk)
+ {
++	struct clk_core *core;
+ 	struct module *owner;
  
- 	/* check for errors on leaf clocks */
- 	for (n = 0; n < MAX_CLKS; n++) {
-diff --git a/include/dt-bindings/clock/berlin2q.h b/include/dt-bindings/clock/berlin2q.h
-index c79af928ae92..771d8739f67a 100644
---- a/include/dt-bindings/clock/berlin2q.h
-+++ b/include/dt-bindings/clock/berlin2q.h
-@@ -29,5 +29,6 @@
- #define CLKID_SMEMC		24
- #define CLKID_PCIE		25
- #define CLKID_TWD		26
-+#define CLKID_CPU		27
+ 	if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
+@@ -2772,19 +2787,15 @@ void __clk_put(struct clk *clk)
  
--#define MAX_CLKS		27
-+#define MAX_CLKS		28
+ 	clk_prepare_lock();
+ 
+-	hlist_del(&clk->clks_node);
+-	if (clk->min_rate > clk->core->req_rate ||
+-	    clk->max_rate < clk->core->req_rate)
+-		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
++	core = clk->core;
++	owner = core->owner;
+ 
+-	owner = clk->core->owner;
+-	kref_put(&clk->core->ref, __clk_release);
++	kref_put(&clk->ref, __clk_release);
++	kref_put(&core->ref, __clk_core_release);
+ 
+ 	clk_prepare_unlock();
+ 
+ 	module_put(owner);
+-
+-	kfree(clk);
+ }
+ 
+ /***        clk rate change notifiers        ***/
 -- 
-2.5.2
+2.5.1
+
+
