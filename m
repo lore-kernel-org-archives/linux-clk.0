@@ -1,69 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-clk@vger.kernel.org, Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH] clk: Remove unneeded semicolons
-Date: Thu, 17 Sep 2015 15:49:29 +0200
-Message-Id: <1442497769-7721-1-git-send-email-javier@osg.samsung.com>
+From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+To: pdeschrijver@nvidia.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, thierry.reding@gmail.com
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Subject: [PATCH] clk: tegra: Unlock top rates for Tegra124 DFLL clock
+Date: Tue, 15 Sep 2015 12:55:15 +0300
+Message-Id: <1442310915-15475-1-git-send-email-mikko.perttunen@kapsi.fi>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-There are cleary typo errors so can be removed.
+The new determine_rate prototype allows for clock rates exceeding
+2^31-1 Hz to be used. Switch the DFLL clock to use determine_rate
+instead of round_rate and unlock the top rates supported by the
+Tegra124.
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
+Signed-off-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
 ---
+ drivers/clk/tegra/clk-dfll.c | 15 ++++++++-------
+ drivers/clk/tegra/cvb.c      |  7 -------
+ 2 files changed, 8 insertions(+), 14 deletions(-)
 
- drivers/clk/clk.c                       | 2 +-
- drivers/clk/hisilicon/clk-hi6220-stub.c | 2 +-
- drivers/clk/mvebu/common.c              | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 43e2c3ad6c31..a66a6d433b1f 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1685,7 +1685,7 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
- 			"%s: multi-parent clocks must implement .get_parent\n",
- 			__func__);
- 		goto out;
--	};
-+	}
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index 4adff56..7bd309c 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -1004,24 +1004,25 @@ static unsigned long dfll_clk_recalc_rate(struct clk_hw *hw,
+ 	return td->last_unrounded_rate;
+ }
+ 
+-static long dfll_clk_round_rate(struct clk_hw *hw,
+-				unsigned long rate,
+-				unsigned long *parent_rate)
++/* Must use determine_rate since it allows for rates exceeding 2^31-1 */
++static int dfll_clk_determine_rate(struct clk_hw *hw,
++				   struct clk_rate_request *clk_req)
+ {
+ 	struct tegra_dfll *td = clk_hw_to_dfll(hw);
+ 	struct dfll_rate_req req;
+ 	int ret;
+ 
+-	ret = dfll_calculate_rate_request(td, &req, rate);
++	ret = dfll_calculate_rate_request(td, &req, clk_req->rate);
+ 	if (ret)
+ 		return ret;
  
  	/*
- 	 * Do our best to cache parent clocks in core->parents.  This prevents
-diff --git a/drivers/clk/hisilicon/clk-hi6220-stub.c b/drivers/clk/hisilicon/clk-hi6220-stub.c
-index 2c4add11c1ca..8afb40ef40ce 100644
---- a/drivers/clk/hisilicon/clk-hi6220-stub.c
-+++ b/drivers/clk/hisilicon/clk-hi6220-stub.c
-@@ -230,7 +230,7 @@ static int hi6220_stub_clk_probe(struct platform_device *pdev)
- 	if (IS_ERR(stub_clk->mbox)) {
- 		dev_err(dev, "failed get mailbox channel\n");
- 		return PTR_ERR(stub_clk->mbox);
--	};
-+	}
+-	 * Don't return the rounded rate, since it doesn't really matter as
++	 * Don't set the rounded rate, since it doesn't really matter as
+ 	 * the output rate will be voltage controlled anyway, and cpufreq
+ 	 * freaks out if any rounding happens.
+ 	 */
+-	return rate;
++
++	return 0;
+ }
  
- 	init.name = "acpu0";
- 	init.ops = &hi6220_stub_clk_ops;
-diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
-index 4a22429cd7a2..28aac67e7b92 100644
---- a/drivers/clk/mvebu/common.c
-+++ b/drivers/clk/mvebu/common.c
-@@ -165,7 +165,7 @@ void __init mvebu_coreclk_setup(struct device_node *np,
- 		clk_data.clks[2+n] = clk_register_fixed_factor(NULL, rclk_name,
- 				       cpuclk_name, 0, mult, div);
- 		WARN_ON(IS_ERR(clk_data.clks[2+n]));
--	};
-+	}
+ static int dfll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -1037,7 +1038,7 @@ static const struct clk_ops dfll_clk_ops = {
+ 	.enable		= dfll_clk_enable,
+ 	.disable	= dfll_clk_disable,
+ 	.recalc_rate	= dfll_clk_recalc_rate,
+-	.round_rate	= dfll_clk_round_rate,
++	.determine_rate	= dfll_clk_determine_rate,
+ 	.set_rate	= dfll_clk_set_rate,
+ };
  
- 	/* Register optional refclk */
- 	if (desc->get_refclk_freq) {
+diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
+index 0204e08..69c74ee 100644
+--- a/drivers/clk/tegra/cvb.c
++++ b/drivers/clk/tegra/cvb.c
+@@ -78,13 +78,6 @@ static int build_opp_table(const struct cvb_table *d,
+ 		if (!table->freq || (table->freq > max_freq))
+ 			break;
+ 
+-		/*
+-		 * FIXME after clk_round_rate/clk_determine_rate prototypes
+-		 * have been updated
+-		 */
+-		if (table->freq & (1<<31))
+-			continue;
+-
+ 		dfll_mv = get_cvb_voltage(
+ 			speedo_value, d->speedo_scale, &table->coefficients);
+ 		dfll_mv = round_cvb_voltage(dfll_mv, d->voltage_scale, align);
 -- 
-2.4.3
+2.5.0
 
