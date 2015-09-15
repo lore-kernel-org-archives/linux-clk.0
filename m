@@ -1,246 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:29350 "EHLO
-	mx0a-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757979AbbIVOQu (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 22 Sep 2015 10:16:50 -0400
-From: Jisheng Zhang <jszhang@marvell.com>
-To: <sebastian.hesselbarth@gmail.com>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <mark.rutland@arm.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	Jisheng Zhang <jszhang@marvell.com>
-Subject: [PATCH 2/5] clk: berlin: add common clk driver for newer SoCs
-Date: Tue, 22 Sep 2015 22:12:33 +0800
-Message-ID: <1442931156-5877-3-git-send-email-jszhang@marvell.com>
-In-Reply-To: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
-References: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH 6/8] mmc: dw_mmc: Generic MMC tuning with the clock phase
+ framework
+Date: Wed, 16 Sep 2015 00:09 +0200
+Message-ID: <8878355.D5Q8mk4qcM@diego>
+In-Reply-To: <55F7D602.70003@samsung.com>
+References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
+ <1441045446-30858-7-git-send-email-heiko@sntech.de>
+ <55F7D602.70003@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: ulf.hansson@linaro.org, Alexandru M Stan <amstan@chromium.org>,
+ sboyd@codeaurora.org, mturquette@baylibre.com, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ CPGS <cpgs@samsung.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add berlin-clk driver for Marvell SoCs newer than BG2, BG2CD, BG2Q.
-berlin_clk_register() is provided for registering such kind of clk.
+Hi,
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
----
- drivers/clk/berlin/Makefile |   2 +-
- drivers/clk/berlin/clk.c    | 147 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/berlin/clk.h    |  38 ++++++++++++
- 3 files changed, 186 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/berlin/clk.c
- create mode 100644 drivers/clk/berlin/clk.h
+Am Dienstag, 15. September 2015, 17:25:38 schrieb Jaehoon Chung:
+> On 09/01/2015 03:24 AM, Heiko Stuebner wrote:
+> > From: Alexandru M Stan <amstan@chromium.org>
+> > 
+> > This algorithm will try 1 degree increments, since there's no way to tell
+> > what resolution the underlying phase code uses. As an added bonus, doing
+> > many tunings yields better results since some tests are run more than once
+> > (ex: if the underlying driver uses 45 degree increments, the tuning code
+> > will try the same angle more than once).
+> > 
+> > It will then construct a list of good phase ranges (even ranges that cross
+> > 360/0), will pick the biggest range then it will set the sample_clk to the
+> > middle of that range.
+> > 
+> > We do not touch ciu_drive (and by extension define default-drive-phase).
+> > Drive phase is mostly used to define minimum hold times, while one could
+> > write some code to determine what phase meets the minimum hold time (ex 10
+> > degrees) this will not work with the current clock phase framework (which
+> > floors angles, so we'll get 0 deg, and there's no way to know what
+> > resolution the floors happen at). We assume that the default drive angles
+> > set by the hardware are good enough.
+> > 
+> > If a device has device specific code (like exynos) then that will still
+> > take precedence, otherwise this new code will execute. If the device wants
+> > to tune, but has no sample_clk defined we'll return EIO with an error
+> > message.
+> 
+> Which point is "_generic_"? I don't find the code that control the register
+> relevant to CLK_DRV/SMPL PHASE. It seems that posted the similar patches at
+> u-boot mailing list..
 
-diff --git a/drivers/clk/berlin/Makefile b/drivers/clk/berlin/Makefile
-index 747700d..741ba22 100644
---- a/drivers/clk/berlin/Makefile
-+++ b/drivers/clk/berlin/Makefile
-@@ -1,4 +1,4 @@
--obj-y += pll.o berlin2-avpll.o berlin2-pll.o berlin2-div.o
-+obj-y += pll.o clk.o berlin2-avpll.o berlin2-pll.o berlin2-div.o
- obj-$(CONFIG_MACH_BERLIN_BG2)	+= bg2.o
- obj-$(CONFIG_MACH_BERLIN_BG2CD)	+= bg2.o
- obj-$(CONFIG_MACH_BERLIN_BG2Q)	+= bg2q.o
-diff --git a/drivers/clk/berlin/clk.c b/drivers/clk/berlin/clk.c
-new file mode 100644
-index 0000000..6d64faf
---- /dev/null
-+++ b/drivers/clk/berlin/clk.c
-@@ -0,0 +1,147 @@
-+/*
-+ * Copyright (c) 2013 Marvell Technology Group Ltd.
-+ *
-+ * Author: Jisheng Zhang <jszhang@marvell.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/slab.h>
-+
-+#include "clk.h"
-+
-+#define CLKEN		(1 << 0)
-+#define CLKPLLSEL_MASK	7
-+#define CLKPLLSEL_SHIFT	1
-+#define CLKPLLSWITCH	(1 << 4)
-+#define CLKSWITCH	(1 << 5)
-+#define CLKD3SWITCH	(1 << 6)
-+#define CLKSEL_MASK	7
-+#define CLKSEL_SHIFT	7
-+
-+struct berlin_clk {
-+	struct clk_hw hw;
-+	void __iomem *base;
-+};
-+
-+#define to_berlin_clk(hw)	container_of(hw, struct berlin_clk, hw)
-+
-+static u8 clk_div[] = {1, 2, 4, 6, 8, 12, 1, 1};
-+
-+static unsigned long berlin_clk_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	u32 val, divider;
-+	struct berlin_clk *clk = to_berlin_clk(hw);
-+
-+	val = readl_relaxed(clk->base);
-+	if (val & CLKD3SWITCH)
-+		divider = 3;
-+	else {
-+		if (val & CLKSWITCH) {
-+			val >>= CLKSEL_SHIFT;
-+			val &= CLKSEL_MASK;
-+			divider = clk_div[val];
-+		} else
-+			divider = 1;
-+	}
-+
-+	return parent_rate / divider;
-+}
-+
-+static u8 berlin_clk_get_parent(struct clk_hw *hw)
-+{
-+	u32 val;
-+	struct berlin_clk *clk = to_berlin_clk(hw);
-+
-+	val = readl_relaxed(clk->base);
-+	if (val & CLKPLLSWITCH) {
-+		val >>= CLKPLLSEL_SHIFT;
-+		val &= CLKPLLSEL_MASK;
-+		return val;
-+	}
-+
-+	return 0;
-+}
-+
-+static int berlin_clk_enable(struct clk_hw *hw)
-+{
-+	u32 val;
-+	struct berlin_clk *clk = to_berlin_clk(hw);
-+
-+	val = readl_relaxed(clk->base);
-+	val |= CLKEN;
-+	writel_relaxed(val, clk->base);
-+
-+	return 0;
-+}
-+
-+static void berlin_clk_disable(struct clk_hw *hw)
-+{
-+	u32 val;
-+	struct berlin_clk *clk = to_berlin_clk(hw);
-+
-+	val = readl_relaxed(clk->base);
-+	val &= ~CLKEN;
-+	writel_relaxed(val, clk->base);
-+}
-+
-+static int berlin_clk_is_enabled(struct clk_hw *hw)
-+{
-+	u32 val;
-+	struct berlin_clk *clk = to_berlin_clk(hw);
-+
-+	val = readl_relaxed(clk->base);
-+	val &= CLKEN;
-+
-+	return val ? 1 : 0;
-+}
-+
-+static const struct clk_ops berlin_clk_ops = {
-+	.recalc_rate	= berlin_clk_recalc_rate,
-+	.get_parent	= berlin_clk_get_parent,
-+	.enable		= berlin_clk_enable,
-+	.disable	= berlin_clk_disable,
-+	.is_enabled	= berlin_clk_is_enabled,
-+};
-+
-+struct clk * __init berlin_clk_register(const char *name, int num_parents,
-+			const char **parent_names, unsigned long flags,
-+			void __iomem *base)
-+{
-+	struct clk *clk;
-+	struct berlin_clk *bclk;
-+	struct clk_init_data init;
-+
-+	bclk = kzalloc(sizeof(*bclk), GFP_KERNEL);
-+	if (!bclk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &berlin_clk_ops;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
-+	init.flags = flags;
-+
-+	bclk->base = base;
-+	bclk->hw.init = &init;
-+
-+	clk = clk_register(NULL, &bclk->hw);
-+	if (IS_ERR(clk))
-+		kfree(bclk);
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/berlin/clk.h b/drivers/clk/berlin/clk.h
-new file mode 100644
-index 0000000..502689e
---- /dev/null
-+++ b/drivers/clk/berlin/clk.h
-@@ -0,0 +1,38 @@
-+/*
-+ * Copyright (c) 2015 Marvell Technology Group Ltd.
-+ *
-+ * Author: Jisheng Zhang <jszhang@marvell.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#ifndef __BERLIN_CLK_H
-+#define __BERLIN_CLK_H
-+
-+struct gateclk_desc {
-+	const char	*name;
-+	const char	*parent_name;
-+	u8		bit_idx;
-+	unsigned long	flags;
-+};
-+
-+struct clk_desc {
-+	const char	*name;
-+	u32		offset;
-+	unsigned long	flags;
-+};
-+
-+struct clk * __init berlin_clk_register(const char *name, int num_parents,
-+			const char **parent_names, unsigned long flags,
-+			void __iomem *base);
-+#endif
--- 
-2.5.3
+The "generic" part is that it uses the clk phase API for dw_mmc 
+implementations where the clkgen controlling interface is outside the dw_mmc 
+IP itself. So it's open for other implementations as well.
 
+But if you are more comfortable with it, I can also move it into the dw_mmc-
+rockchip variant for the time being, until another user comes along.
+
+
+Heiko
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
