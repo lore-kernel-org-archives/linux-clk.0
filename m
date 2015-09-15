@@ -1,55 +1,38 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-Message-ID: <55E729B5.3020908@linaro.org>
-Date: Wed, 02 Sep 2015 19:54:13 +0300
-From: Georgi Djakov <georgi.djakov@linaro.org>
+Return-Path: <shengjiu.wang@freescale.com>
+From: Shengjiu Wang <shengjiu.wang@freescale.com>
+To: <shawnguo@kernel.org>, <mturquette@baylibre.com>, <kernel@pengutronix.de>,
+	<sboyd@codeaurora.org>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+	<mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
+	<galak@codeaurora.org>, <linux@arm.linux.org.uk>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH V2 0/2]  fix clock issue for fsl,spdi
+Date: Tue, 15 Sep 2015 18:01:00 +0800
+Message-ID: <cover.1442310569.git.shengjiu.wang@freescale.com>
+Return-Path: shengjiu.wang@freescale.com
 MIME-Version: 1.0
-To: sboyd@codeaurora.org
-CC: Georgi Djakov <georgi.djakov@linaro.org>, mturquette@baylibre.com,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Add initial support for RPM clocks
-References: <1438620489-32515-1-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1438620489-32515-1-git-send-email-georgi.djakov@linaro.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/03/2015 07:48 PM, Georgi Djakov wrote:
-> This patchset adds initial support for the clocks controlled by
-> the RPM (Resource Power Manager) processor on Qualcomm platforms.
-> It depends on Bjorn's Qualcomm SMD & RPM patches, that are now in
-> linux-next: https://lkml.org/lkml/2015/7/27/1125
-> 
-> The first patch implements the RPM clock operations, which are
-> using a shared memory for sending requests to the RPM processor.
-> The second patch adds the support of RPM clocks on the MSM8916
-> platform.
-> 
-> Changes since v1 (https://lkml.org/lkml/2015/7/9/257):
-> * Changed the driver name to clk-smd-rpm, also build it only
->   when it is needed - suggested by Srini and Bjorn.
-> * More detailed binding example.
-> * Minor changes.
-> 
-> Georgi Djakov (2):
->   clk: qcom: Add support for RPM Clocks
->   clk: qcom: Add MSM8916 RPM clock driver
-> 
->  .../devicetree/bindings/clock/qcom,rpmcc.txt       |   35 ++++
->  drivers/clk/qcom/Kconfig                           |    4 +
->  drivers/clk/qcom/Makefile                          |    2 +
->  drivers/clk/qcom/clk-smd-rpm.c                     |  165 ++++++++++++++++
->  drivers/clk/qcom/clk-smd-rpm.h                     |  139 ++++++++++++++
->  drivers/clk/qcom/gcc-msm8916.c                     |   13 --
->  drivers/clk/qcom/rpmcc-msm8916.c                   |  196 ++++++++++++++++++++
->  include/dt-bindings/clock/qcom,rpmcc-msm8916.h     |   44 +++++
->  8 files changed, 585 insertions(+), 13 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
->  create mode 100644 drivers/clk/qcom/clk-smd-rpm.c
->  create mode 100644 drivers/clk/qcom/clk-smd-rpm.h
->  create mode 100644 drivers/clk/qcom/rpmcc-msm8916.c
->  create mode 100644 include/dt-bindings/clock/qcom,rpmcc-msm8916.h
-> 
+fix clock issue for fsl,spdi in imx6.
 
-Hi Stephen, any comments on this?
-Thanks!
+Changes in v2:
+move the dts change to another patch
+
+Shengjiu Wang (2):
+  clk: imx6: Add SPDIF_GCLK clock in clock tree
+  ARM: dts: imx6: change the core clock of spdif
+
+ arch/arm/boot/dts/imx6qdl.dtsi            |  2 +-
+ arch/arm/boot/dts/imx6sl.dtsi             | 16 ++++++++++++++++
+ arch/arm/boot/dts/imx6sx.dtsi             |  2 +-
+ drivers/clk/imx/clk-imx6q.c               |  4 +++-
+ drivers/clk/imx/clk-imx6sl.c              |  4 +++-
+ drivers/clk/imx/clk-imx6sx.c              |  1 +
+ include/dt-bindings/clock/imx6qdl-clock.h |  3 ++-
+ include/dt-bindings/clock/imx6sl-clock.h  |  3 ++-
+ include/dt-bindings/clock/imx6sx-clock.h  |  3 ++-
+ 9 files changed, 31 insertions(+), 7 deletions(-)
+
+-- 
+1.9.1
