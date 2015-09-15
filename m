@@ -1,30 +1,31 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 14 Sep 2015 14:59:11 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Luis de Bethencourt <luis@debethencourt.com>
-Cc: linux-kernel@vger.kernel.org, Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 1/5] clk: sunxi: sun6i-apb0: Fix module autoload for OF
- platform driver
-Message-ID: <20150914215911.GC23081@codeaurora.org>
-References: <20150828124314.GA26550@goodgumbo.baconseed.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20150828124314.GA26550@goodgumbo.baconseed.org>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 02/12] clk: samsung: exynos7: Adds missing clocks gates
+ of CMU_TOPC
+To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
+References: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
+ <1441874677-24148-3-git-send-email-alim.akhtar@samsung.com>
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
+ mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com,
+ sboyd@codeaurora.org, linux-clk@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <55F7B5CD.90600@samsung.com>
+Date: Tue, 15 Sep 2015 15:08:13 +0900
+MIME-version: 1.0
+In-reply-to: <1441874677-24148-3-git-send-email-alim.akhtar@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/28, Luis de Bethencourt wrote:
-> This platform driver has a OF device ID table but the OF module
-> alias information is not created so module autoloading won't work.
+On 10.09.2015 17:44, Alim Akhtar wrote:
+> This adds some of the missing GATE clocks of CMU_TOPC block.
 > 
-> Signed-off-by: Luis de Bethencourt <luis@debethencourt.com>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 > ---
+>  drivers/clk/samsung/clk-exynos7.c       |   27 +++++++++++++++++++++++++++
+>  include/dt-bindings/clock/exynos7-clk.h |   13 ++++++++++++-
+>  2 files changed, 39 insertions(+), 1 deletion(-)
 
-Applied to clk-next
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
