@@ -1,140 +1,472 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Date: Sat, 19 Sep 2015 10:19:19 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jim Quinlan <jim2101024@gmail.com>
-Subject: Re: [PATCH v2 1/7] clk: Add a basic factor clock
-Message-ID: <20150919081919.GA4684@lukather>
-References: <1432241646-9511-1-git-send-email-maxime.ripard@free-electrons.com>
- <1432241646-9511-2-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v64rqRC24wPWz5xYZv=w2QAtsCb-pd76Qynkb5NBCptXhQ@mail.gmail.com>
- <20150523074930.GI8557@lukather> <20150724000001.642.84690@quantum>
- <20150724065017.GJ2373@lukather>
-MIME-Version: 1.0
-In-Reply-To: <20150724065017.GJ2373@lukather>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
- "Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>,
- Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>
-Content-Type: multipart/mixed; boundary="===============2680033303356597986=="
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v4 4/4] clk: qcom: Add MSM8916 audio clocks
+Date: Wed, 16 Sep 2015 16:24:48 +0300
+Message-Id: <1442409888-19917-5-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1442409888-19917-1-git-send-email-georgi.djakov@linaro.org>
+References: <1442409888-19917-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add support for the msm8916 audio clocks. This includes core bus,
+low-power audio and codec clocks. They are required for audio playback.
 
---===============2680033303356597986==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UIrAl4r1g2eOkvhC"
-Content-Disposition: inline
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/clk/qcom/gcc-msm8916.c               |  388 ++++++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8916.h |   16 ++
+ 2 files changed, 404 insertions(+)
 
-
---UIrAl4r1g2eOkvhC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Jim,
-
-On Fri, Jul 24, 2015 at 08:50:17AM +0200, Maxime Ripard wrote:
-> > Jim Quinlan submitted a similar patch. See here:
-> >=20
-> > http://www.spinics.net/lists/linux-clk/msg00691.html
->=20
-> It looks very similar indeed.
->=20
-> > I nacked that patch because Stephen and I are trying to figure out how
-> > the basic clock types should work going forward. Code reuse is good, but
-> > they are not very maintainable.
->=20
-> What are the issues with maintaining them? The only drawback I'm
-> seeing with introducing such a driver is that you can't really have a
-> clock that is both a divider and a multiplier, but that can be solved
-> by splitting it into two sub-clocks.
->=20
-> From a pure maintainance point of view, refusing it would mean that
-> each and every platform would have to come up with its own
-> implementation. For example, we do have clk-factors.c for sunxi that
-> does just that, and implies some cooperation from each clock driver
-> that have to provide some code to determine the various components of
-> the output formula. This can prove to be very challenging (and bug
-> prone) for clocks like the audio one we have where we have 1
-> multiplier and 2 dividers that needs some adjusting.
->=20
-> Splitting it into sub-clocks for each of these components would allow
-> to have less bugs, while keeping the whole thing very simple, and the
-> implementation on the driver side very trivial.
->=20
-> Overall, the clk-factors code we have (client side) is approximately a
-> thousand lines of code logic that could be replaced by (less) trivial
-> probing code for such a driver.
->=20
-> > Since there are two potential users of this code, I should reconsider.
->=20
-> Like I said, eventually, I'd like to leverage that code a lot more
-> than for the single clock alone, and I think it could benefit other
-> platforms too (like Jim has proven).
->=20
-> > Can you two come up with a common implementation that works for both of
-> > you?
->=20
-> Yes, sure. Jim, how do you want to go with this? Do you want to
-> resubmit your patch on top of 4.2-rc something so that I could give it
-> a try? Otherwise, I posted such a patch this week
->=20
-> https://lkml.kernel.org/r/1437235304-2208-1-git-send-email-maxime.ripard@=
-free-electrons.com
->=20
-> Can you give it a try and your feedback?
-
-Ping?
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---UIrAl4r1g2eOkvhC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJV/RqHAAoJEBx+YmzsjxAgRMEQAKfvTd6jrbrtOJZrtaCngVM6
-guaEyWvcAWvYuxyXOF4RwXTAG9IS6NgHaFK90dqPtZCHNA7ARlozVyu2SZMkvkbz
-4yOqV4DX8L16GISpxVYj7bZ+HjmE8JEjUprLAv22cIGNEuLF8IIwgCWkUUjbCDWB
-NA32NRGt2yj6Ge7IhSHqcQPzoW4Pdjdj52iIPdaHtg1A09lE8ciEETm2GiEt6t3o
-qyOESXXcVHlXwkjytiB0mPBPLkVZpSgm7Saqa+wOso/cH1ThN+bGTzMi7W48prJZ
-nGKCfx2REKXuBRJDGCEKMjxUXuJ3Wh6a6z31uz0K618znLwT6tkD8A+c06E/J2fE
-pQwzGl3VOWgU9xEO/0arxM47l0Ez9pHlGKU2zz4t6LrCgLRIaVrVsIq0zuRhf4Dr
-IyGmPKbgyOcPttIaanqesZRbV7ps5hHM07A5dPZVXXvFmyt0mQJaywGukYS04/5n
-TSofeVV+nDYWFGrIMiSaC8Bm7etlpqOZ1XL/MXivm0PjdEvOa+bTTqLdzlzmdRBj
-CExWcBJOBX21jBzpzPDG4e+O9b1XKpzzz7djINCU93pGZULdtq04FyvJ16WPErWk
-cFsQ+pQ/TisixNXHfRBOJkfFOD3GI0500fv2Qukw/MOiRT/6XOrZKQp9j4CZn6I8
-O6v9ZzxyMHOu5XRjJhjb
-=vMW5
------END PGP SIGNATURE-----
-
---UIrAl4r1g2eOkvhC--
-
-
---===============2680033303356597986==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============2680033303356597986==--
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index bd87a3e2cbeb..f7aff814368a 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -45,6 +45,9 @@ enum {
+ 	P_SLEEP_CLK,
+ 	P_DSI0_PHYPLL_BYTE,
+ 	P_DSI0_PHYPLL_DSI,
++	P_EXT_PRI_I2S,
++	P_EXT_SEC_I2S,
++	P_EXT_MCLK,
+ };
+ 
+ static const struct parent_map gcc_xo_gpll0_map[] = {
+@@ -191,6 +194,76 @@ static const char * const gcc_xo_gpll0a_gpll1_gpll2[] = {
+ 	"gpll2_vote",
+ };
+ 
++static const struct parent_map gcc_xo_gpll0_gpll1_sleep_map[] = {
++	{ P_XO, 0 },
++	{ P_GPLL0, 1 },
++	{ P_GPLL1, 2 },
++	{ P_SLEEP_CLK, 6 }
++};
++
++static const char * const gcc_xo_gpll0_gpll1_sleep[] = {
++	"xo",
++	"gpll0_vote",
++	"gpll1_vote",
++	"sleep_clk",
++};
++
++static const struct parent_map gcc_xo_gpll1_epi2s_emclk_sleep_map[] = {
++	{ P_XO, 0 },
++	{ P_GPLL1, 1 },
++	{ P_EXT_PRI_I2S, 2 },
++	{ P_EXT_MCLK, 3 },
++	{ P_SLEEP_CLK, 6 }
++};
++
++static const char * const gcc_xo_gpll1_epi2s_emclk_sleep[] = {
++	"xo",
++	"gpll1_vote",
++	"ext_pri_i2s",
++	"ext_mclk",
++	"sleep_clk",
++};
++
++static const struct parent_map gcc_xo_gpll1_esi2s_emclk_sleep_map[] = {
++	{ P_XO, 0 },
++	{ P_GPLL1, 1 },
++	{ P_EXT_SEC_I2S, 2 },
++	{ P_EXT_MCLK, 3 },
++	{ P_SLEEP_CLK, 6 }
++};
++
++static const char * const gcc_xo_gpll1_esi2s_emclk_sleep[] = {
++	"xo",
++	"gpll1_vote",
++	"ext_sec_i2s",
++	"ext_mclk",
++	"sleep_clk",
++};
++
++static const struct parent_map gcc_xo_sleep_map[] = {
++	{ P_XO, 0 },
++	{ P_SLEEP_CLK, 6 }
++};
++
++static const char * const gcc_xo_sleep[] = {
++	"xo",
++	"sleep_clk",
++};
++
++static const struct parent_map gcc_xo_gpll1_emclk_sleep_map[] = {
++	{ P_XO, 0 },
++	{ P_GPLL1, 1 },
++	{ P_EXT_MCLK, 2 },
++	{ P_SLEEP_CLK, 6 }
++};
++
++static const char * const gcc_xo_gpll1_emclk_sleep[] = {
++	"xo",
++	"gpll1_vote",
++	"ext_mclk",
++	"sleep_clk",
++};
++
+ #define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+ 
+ static struct clk_pll gpll0 = {
+@@ -1125,6 +1198,305 @@ static struct clk_rcg2 usb_hs_system_clk_src = {
+ 	},
+ };
+ 
++static const struct freq_tbl ftbl_gcc_ultaudio_ahb_clk[] = {
++	F(3200000, P_XO, 6, 0, 0),
++	F(6400000, P_XO, 3, 0, 0),
++	F(9600000, P_XO, 2, 0, 0),
++	F(19200000, P_XO, 1, 0, 0),
++	F(40000000, P_GPLL0, 10, 1, 2),
++	F(66670000, P_GPLL0, 12, 0, 0),
++	F(80000000, P_GPLL0, 10, 0, 0),
++	F(100000000, P_GPLL0, 8, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 ultaudio_ahbfabric_clk_src = {
++	.cmd_rcgr = 0x1c010,
++	.hid_width = 5,
++	.mnd_width = 8,
++	.parent_map = gcc_xo_gpll0_gpll1_sleep_map,
++	.freq_tbl = ftbl_gcc_ultaudio_ahb_clk,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "ultaudio_ahbfabric_clk_src",
++		.parent_names = gcc_xo_gpll0_gpll1_sleep,
++		.num_parents = 4,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_branch gcc_ultaudio_ahbfabric_ixfabric_clk = {
++	.halt_reg = 0x1c028,
++	.clkr = {
++		.enable_reg = 0x1c028,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_ultaudio_ahbfabric_ixfabric_clk",
++			.parent_names = (const char *[]){
++				"ultaudio_ahbfabric_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_ultaudio_ahbfabric_ixfabric_lpm_clk = {
++	.halt_reg = 0x1c024,
++	.clkr = {
++		.enable_reg = 0x1c024,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_ultaudio_ahbfabric_ixfabric_lpm_clk",
++			.parent_names = (const char *[]){
++				"ultaudio_ahbfabric_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static const struct freq_tbl ftbl_gcc_ultaudio_lpaif_i2s_clk[] = {
++	F(256000, P_XO, 5, 1, 15),
++	F(512000, P_XO, 5, 2, 15),
++	F(705600, P_GPLL1, 16, 1, 80),
++	F(768000, P_XO, 5, 1, 5),
++	F(800000, P_XO, 5, 5, 24),
++	F(1024000, P_GPLL1, 14, 1, 63),
++	F(1152000, P_XO, 1, 3, 50),
++	F(1411200, P_GPLL1, 16, 1, 40),
++	F(1536000, P_XO, 1, 2, 25),
++	F(1600000, P_XO, 12, 0, 0),
++	F(2048000, P_GPLL1, 9, 1, 49),
++	F(2400000, P_XO, 8, 0, 0),
++	F(2822400, P_GPLL1, 16, 1, 20),
++	F(3072000, P_GPLL1, 14, 1, 21),
++	F(4096000, P_GPLL1, 9, 2, 49),
++	F(4800000, P_XO, 4, 0, 0),
++	F(5644800, P_GPLL1, 16, 1, 10),
++	F(6144000, P_GPLL1, 7, 1, 21),
++	F(8192000, P_GPLL1, 9, 4, 49),
++	F(9600000, P_XO, 2, 0, 0),
++	F(11289600, P_GPLL1, 16, 1, 5),
++	F(12288000, P_GPLL1, 7, 2, 21),
++	{ }
++};
++
++static struct clk_rcg2 ultaudio_lpaif_pri_i2s_clk_src = {
++	.cmd_rcgr = 0x1c054,
++	.hid_width = 5,
++	.mnd_width = 8,
++	.parent_map = gcc_xo_gpll1_epi2s_emclk_sleep_map,
++	.freq_tbl = ftbl_gcc_ultaudio_lpaif_i2s_clk,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "ultaudio_lpaif_pri_i2s_clk_src",
++		.parent_names = gcc_xo_gpll1_epi2s_emclk_sleep,
++		.num_parents = 5,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_branch gcc_ultaudio_lpaif_pri_i2s_clk = {
++	.halt_reg = 0x1c068,
++	.clkr = {
++		.enable_reg = 0x1c068,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_ultaudio_lpaif_pri_i2s_clk",
++			.parent_names = (const char *[]){
++				"ultaudio_lpaif_pri_i2s_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_rcg2 ultaudio_lpaif_sec_i2s_clk_src = {
++	.cmd_rcgr = 0x1c06c,
++	.hid_width = 5,
++	.mnd_width = 8,
++	.parent_map = gcc_xo_gpll1_esi2s_emclk_sleep_map,
++	.freq_tbl = ftbl_gcc_ultaudio_lpaif_i2s_clk,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "ultaudio_lpaif_sec_i2s_clk_src",
++		.parent_names = gcc_xo_gpll1_esi2s_emclk_sleep,
++		.num_parents = 5,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_branch gcc_ultaudio_lpaif_sec_i2s_clk = {
++	.halt_reg = 0x1c080,
++	.clkr = {
++		.enable_reg = 0x1c080,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_ultaudio_lpaif_sec_i2s_clk",
++			.parent_names = (const char *[]){
++				"ultaudio_lpaif_sec_i2s_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_rcg2 ultaudio_lpaif_aux_i2s_clk_src = {
++	.cmd_rcgr = 0x1c084,
++	.hid_width = 5,
++	.mnd_width = 8,
++	.parent_map = gcc_xo_gpll1_emclk_sleep_map,
++	.freq_tbl = ftbl_gcc_ultaudio_lpaif_i2s_clk,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "ultaudio_lpaif_aux_i2s_clk_src",
++		.parent_names = gcc_xo_gpll1_esi2s_emclk_sleep,
++		.num_parents = 5,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_branch gcc_ultaudio_lpaif_aux_i2s_clk = {
++	.halt_reg = 0x1c098,
++	.clkr = {
++		.enable_reg = 0x1c098,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_ultaudio_lpaif_aux_i2s_clk",
++			.parent_names = (const char *[]){
++				"ultaudio_lpaif_aux_i2s_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static const struct freq_tbl ftbl_gcc_ultaudio_xo_clk[] = {
++	F(19200000, P_XO, 1, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 ultaudio_xo_clk_src = {
++	.cmd_rcgr = 0x1c034,
++	.hid_width = 5,
++	.parent_map = gcc_xo_sleep_map,
++	.freq_tbl = ftbl_gcc_ultaudio_xo_clk,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "ultaudio_xo_clk_src",
++		.parent_names = gcc_xo_sleep,
++		.num_parents = 2,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_branch gcc_ultaudio_avsync_xo_clk = {
++	.halt_reg = 0x1c04c,
++	.clkr = {
++		.enable_reg = 0x1c04c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_ultaudio_avsync_xo_clk",
++			.parent_names = (const char *[]){
++				"ultaudio_xo_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_ultaudio_stc_xo_clk = {
++	.halt_reg = 0x1c050,
++	.clkr = {
++		.enable_reg = 0x1c050,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_ultaudio_stc_xo_clk",
++			.parent_names = (const char *[]){
++				"ultaudio_xo_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static const struct freq_tbl ftbl_codec_clk[] = {
++	F(19200000, P_XO, 1, 0, 0),
++	F(11289600, P_EXT_MCLK, 1, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 codec_digcodec_clk_src = {
++	.cmd_rcgr = 0x1c09c,
++	.hid_width = 5,
++	.parent_map = gcc_xo_gpll1_emclk_sleep_map,
++	.freq_tbl = ftbl_codec_clk,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "codec_digcodec_clk_src",
++		.parent_names = gcc_xo_gpll1_emclk_sleep,
++		.num_parents = 4,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_branch gcc_codec_digcodec_clk = {
++	.halt_reg = 0x1c0b0,
++	.clkr = {
++		.enable_reg = 0x1c0b0,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_ultaudio_codec_digcodec_clk",
++			.parent_names = (const char *[]){
++				"codec_digcodec_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_ultaudio_pcnoc_mport_clk = {
++	.halt_reg = 0x1c000,
++	.clkr = {
++		.enable_reg = 0x1c000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_ultaudio_pcnoc_mport_clk",
++			.parent_names = (const char *[]){
++				"pcnoc_bfdcd_clk_src",
++			},
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_ultaudio_pcnoc_sway_clk = {
++	.halt_reg = 0x1c004,
++	.clkr = {
++		.enable_reg = 0x1c004,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_ultaudio_pcnoc_sway_clk",
++			.parent_names = (const char *[]){
++				"pcnoc_bfdcd_clk_src",
++			},
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static const struct freq_tbl ftbl_gcc_venus0_vcodec0_clk[] = {
+ 	F(100000000, P_GPLL0, 8, 0, 0),
+ 	F(160000000, P_GPLL0, 5, 0, 0),
+@@ -2839,6 +3211,22 @@ static struct clk_regmap *gcc_msm8916_clocks[] = {
+ 	[BIMC_GPU_CLK_SRC] = &bimc_gpu_clk_src.clkr,
+ 	[GCC_BIMC_GFX_CLK] = &gcc_bimc_gfx_clk.clkr,
+ 	[GCC_BIMC_GPU_CLK] = &gcc_bimc_gpu_clk.clkr,
++	[ULTAUDIO_AHBFABRIC_CLK_SRC] = &ultaudio_ahbfabric_clk_src.clkr,
++	[ULTAUDIO_LPAIF_PRI_I2S_CLK_SRC] = &ultaudio_lpaif_pri_i2s_clk_src.clkr,
++	[ULTAUDIO_LPAIF_SEC_I2S_CLK_SRC] = &ultaudio_lpaif_sec_i2s_clk_src.clkr,
++	[ULTAUDIO_LPAIF_AUX_I2S_CLK_SRC] = &ultaudio_lpaif_aux_i2s_clk_src.clkr,
++	[ULTAUDIO_XO_CLK_SRC] = &ultaudio_xo_clk_src.clkr,
++	[CODEC_DIGCODEC_CLK_SRC] = &codec_digcodec_clk_src.clkr,
++	[GCC_ULTAUDIO_PCNOC_MPORT_CLK] = &gcc_ultaudio_pcnoc_mport_clk.clkr,
++	[GCC_ULTAUDIO_PCNOC_SWAY_CLK] = &gcc_ultaudio_pcnoc_sway_clk.clkr,
++	[GCC_ULTAUDIO_AVSYNC_XO_CLK] = &gcc_ultaudio_avsync_xo_clk.clkr,
++	[GCC_ULTAUDIO_STC_XO_CLK] = &gcc_ultaudio_stc_xo_clk.clkr,
++	[GCC_ULTAUDIO_AHBFABRIC_IXFABRIC_CLK] =	&gcc_ultaudio_ahbfabric_ixfabric_clk.clkr,
++	[GCC_ULTAUDIO_AHBFABRIC_IXFABRIC_LPM_CLK] = &gcc_ultaudio_ahbfabric_ixfabric_lpm_clk.clkr,
++	[GCC_ULTAUDIO_LPAIF_PRI_I2S_CLK] = &gcc_ultaudio_lpaif_pri_i2s_clk.clkr,
++	[GCC_ULTAUDIO_LPAIF_SEC_I2S_CLK] = &gcc_ultaudio_lpaif_sec_i2s_clk.clkr,
++	[GCC_ULTAUDIO_LPAIF_AUX_I2S_CLK] = &gcc_ultaudio_lpaif_aux_i2s_clk.clkr,
++	[GCC_CODEC_DIGCODEC_CLK] = &gcc_codec_digcodec_clk.clkr,
+ };
+ 
+ static struct gdsc *gcc_msm8916_gdscs[] = {
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8916.h b/include/dt-bindings/clock/qcom,gcc-msm8916.h
+index d21501bb3d52..257e2fbedd94 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8916.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8916.h
+@@ -158,6 +158,22 @@
+ #define BIMC_GPU_CLK_SRC			141
+ #define GCC_BIMC_GFX_CLK			142
+ #define GCC_BIMC_GPU_CLK			143
++#define ULTAUDIO_LPAIF_PRI_I2S_CLK_SRC		144
++#define ULTAUDIO_LPAIF_SEC_I2S_CLK_SRC		145
++#define ULTAUDIO_LPAIF_AUX_I2S_CLK_SRC		146
++#define ULTAUDIO_XO_CLK_SRC			147
++#define ULTAUDIO_AHBFABRIC_CLK_SRC		148
++#define CODEC_DIGCODEC_CLK_SRC			149
++#define GCC_ULTAUDIO_PCNOC_MPORT_CLK		150
++#define GCC_ULTAUDIO_PCNOC_SWAY_CLK		151
++#define GCC_ULTAUDIO_AVSYNC_XO_CLK		152
++#define GCC_ULTAUDIO_STC_XO_CLK			153
++#define GCC_ULTAUDIO_AHBFABRIC_IXFABRIC_CLK	154
++#define GCC_ULTAUDIO_AHBFABRIC_IXFABRIC_LPM_CLK	155
++#define GCC_ULTAUDIO_LPAIF_PRI_I2S_CLK		156
++#define GCC_ULTAUDIO_LPAIF_SEC_I2S_CLK		157
++#define GCC_ULTAUDIO_LPAIF_AUX_I2S_CLK		158
++#define GCC_CODEC_DIGCODEC_CLK			159
+ 
+ /* Indexes for GDSCs */
+ #define BIMC_GDSC				0
