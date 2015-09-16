@@ -1,44 +1,58 @@
-Return-Path: <alim.akhtar@samsung.com>
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
- k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
- gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 5/12] clk: samsung: exynos7: Corrects CMU_CCORE clocks names
-Date: Thu, 10 Sep 2015 14:14:30 +0530
-Message-id: <1441874677-24148-6-git-send-email-alim.akhtar@samsung.com>
-In-reply-to: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
-References: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
+Return-Path: <yingjoe.chen@mediatek.com>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner
+	<tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+	<mturquette@baylibre.com>, James Liao <jamesjj.liao@mediatek.com>,
+	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas
+	<catalin.marinas@arm.com>, <linux-kernel@vger.kernel.org>, Rob Herring
+	<robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>, Sascha Hauer
+	<kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>,
+	<srv_heupstream@mediatek.com>, <linux-arm-kernel@lists.infradead.org>, Daniel
+ Kurtz <djkurtz@chromium.org>, <linux-clk@vger.kernel.org>, Eddie Huang
+	<eddie.huang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>
+Subject: [PATCH 2/2] arm64: dts: mt8173: add timer node
+Date: Wed, 16 Sep 2015 10:04:55 +0800
+Message-ID: <1442369095-1094-2-git-send-email-yingjoe.chen@mediatek.com>
+In-Reply-To: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
+References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: yingjoe.chen@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch renames CMU_CCORE clocks names to match with user manual.
+From: Daniel Kurtz <djkurtz@chromium.org>
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Add device node to enable GPT timer. This timer will be
+used as sched clock source.
+
+Change-Id: Idc4e3f0ee80b5c36cae6f0f2328f94aafcca1253
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
+Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
 ---
- drivers/clk/samsung/clk-exynos7.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index 4bc4760a..b2daf19 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -551,7 +551,7 @@ CLK_OF_DECLARE(exynos7_clk_top1, "samsung,exynos7-clock-top1",
- /*
-  * List of parent clocks for Muxes in CMU_CCORE
-  */
--PNAME(mout_aclk_ccore_133_p)	= { "fin_pll", "dout_aclk_ccore_133" };
-+PNAME(mout_aclk_ccore_133_user_p)	= { "fin_pll", "aclk_ccore_133" };
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+index d18ee42..d763803 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+@@ -238,6 +238,15 @@
+ 			reg = <0 0x10007000 0 0x100>;
+ 		};
  
- static unsigned long ccore_clk_regs[] __initdata = {
- 	MUX_SEL_CCORE,
-@@ -559,7 +559,7 @@ static unsigned long ccore_clk_regs[] __initdata = {
- };
- 
- static struct samsung_mux_clock ccore_mux_clks[] __initdata = {
--	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_p,
-+	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_user_p,
- 		MUX_SEL_CCORE, 1, 1),
- };
- 
++		timer: timer@10008000 {
++			compatible = "mediatek,mt8173-timer",
++				     "mediatek,mt6577-timer";
++			reg = <0 0x10008000 0 0x1000>;
++			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_CLK_13M>,
++				 <&topckgen CLK_TOP_RTC_SEL>;
++		};
++
+ 		pwrap: pwrap@1000d000 {
+ 			compatible = "mediatek,mt8173-pwrap";
+ 			reg = <0 0x1000d000 0 0x1000>;
 -- 
-1.7.10.4
+1.9.1
