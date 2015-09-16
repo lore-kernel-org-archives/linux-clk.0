@@ -1,87 +1,55 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: ulf.hansson@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	tgih.jun@samsung.com,
-	jh80.chung@samsung.com
-Cc: linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	dianders@chromium.org,
-	amstan@chromium.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 7/8] ARM: dts: rockchip: Add drive/sample clocks for rk3288 dw_mmc devices
-Date: Wed, 30 Sep 2015 16:07:43 +0200
-Message-Id: <1443622064-14362-8-git-send-email-heiko@sntech.de>
-In-Reply-To: <1443622064-14362-1-git-send-email-heiko@sntech.de>
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Vince Hsu <vinceh@nvidia.com>
+To: <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<swarren@wwwdotorg.org>, <thierry.reding@gmail.com>,
+	<gnurou@gmail.com>
+CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <vinceh@nvidia.com>,
+	Vince Hsu <vince.h@nvidia.com>
+Subject: [PATCH] clk: tegra: dfll: add missing rcu_read_unlock() for error path
+Date: Wed, 16 Sep 2015 14:14:54 +0800
+Message-ID: <1442384094-22144-1-git-send-email-vinceh@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Alexandru M Stan <amstan@chromium.org>
+From: Vince Hsu <vince.h@nvidia.com>
 
-The drive/sample clocks can be phase shifted.  The drive clock
-could be used in a future patch to adjust hold times.  The sample
-clock is used for tuning.
+The commit e770940218028c6a5927fda45f2ca9db5d9b35e0 ("clk: tegra: dfll:
+Properly protect OPP list") added the rcu_read_{lock,unlock} but missed
+one in the error path. So add the missing one.
 
-Signed-off-by: Alexandru M Stan <amstan@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Vince Hsu <vince.h@nvidia.com>
 ---
- arch/arm/boot/dts/rk3288.dtsi | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+Hi,
 
-diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 27a397f6..37c5a02 100644
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -225,8 +225,9 @@
- 	sdmmc: dwmmc@ff0c0000 {
- 		compatible = "rockchip,rk3288-dw-mshc";
- 		clock-freq-min-max = <400000 150000000>;
--		clocks = <&cru HCLK_SDMMC>, <&cru SCLK_SDMMC>;
--		clock-names = "biu", "ciu";
-+		clocks = <&cru HCLK_SDMMC>, <&cru SCLK_SDMMC>,
-+			 <&cru SCLK_SDMMC_DRV>, <&cru SCLK_SDMMC_SAMPLE>;
-+		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
- 		fifo-depth = <0x100>;
- 		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
- 		reg = <0xff0c0000 0x4000>;
-@@ -236,8 +237,9 @@
- 	sdio0: dwmmc@ff0d0000 {
- 		compatible = "rockchip,rk3288-dw-mshc";
- 		clock-freq-min-max = <400000 150000000>;
--		clocks = <&cru HCLK_SDIO0>, <&cru SCLK_SDIO0>;
--		clock-names = "biu", "ciu";
-+		clocks = <&cru HCLK_SDIO0>, <&cru SCLK_SDIO0>,
-+			 <&cru SCLK_SDIO0_DRV>, <&cru SCLK_SDIO0_SAMPLE>;
-+		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
- 		fifo-depth = <0x100>;
- 		interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
- 		reg = <0xff0d0000 0x4000>;
-@@ -247,8 +249,9 @@
- 	sdio1: dwmmc@ff0e0000 {
- 		compatible = "rockchip,rk3288-dw-mshc";
- 		clock-freq-min-max = <400000 150000000>;
--		clocks = <&cru HCLK_SDIO1>, <&cru SCLK_SDIO1>;
--		clock-names = "biu", "ciu";
-+		clocks = <&cru HCLK_SDIO1>, <&cru SCLK_SDIO1>,
-+			 <&cru SCLK_SDIO1_DRV>, <&cru SCLK_SDIO1_SAMPLE>;
-+		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
- 		fifo-depth = <0x100>;
- 		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
- 		reg = <0xff0e0000 0x4000>;
-@@ -258,8 +261,9 @@
- 	emmc: dwmmc@ff0f0000 {
- 		compatible = "rockchip,rk3288-dw-mshc";
- 		clock-freq-min-max = <400000 150000000>;
--		clocks = <&cru HCLK_EMMC>, <&cru SCLK_EMMC>;
--		clock-names = "biu", "ciu";
-+		clocks = <&cru HCLK_EMMC>, <&cru SCLK_EMMC>,
-+			 <&cru SCLK_EMMC_DRV>, <&cru SCLK_EMMC_SAMPLE>;
-+		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
- 		fifo-depth = <0x100>;
- 		interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
- 		reg = <0xff0f0000 0x4000>;
+I noticed the missed unlock because we had a similar fix as the commit
+e77094021 in ChromeOS[1]. 
+
+[1] https://chromium-review.googlesource.com/#/c/223661/
+
+
+ drivers/clk/tegra/clk-dfll.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index 4adff56dd0ef..c4e3a52e225b 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -685,8 +685,10 @@ static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long rate)
+ 	rcu_read_lock();
+ 
+ 	opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
+-	if (IS_ERR(opp))
++	if (IS_ERR(opp)) {
++		rcu_read_unlock();
+ 		return PTR_ERR(opp);
++	}
+ 	uv = dev_pm_opp_get_voltage(opp);
+ 
+ 	rcu_read_unlock();
 -- 
-2.5.1
+2.1.4
+
