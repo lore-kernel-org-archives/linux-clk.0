@@ -1,82 +1,77 @@
-Return-Path: <alim.akhtar@samsung.com>
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
- k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
- gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 10/12] clk: samsung: exynos7: Corrects CMU_FSYS1 clocks names
-Date: Thu, 10 Sep 2015 14:14:35 +0530
-Message-id: <1441874677-24148-11-git-send-email-alim.akhtar@samsung.com>
-In-reply-to: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
-References: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
+Return-Path: <jh80.chung@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=windows-1252
+Message-id: <55F8D442.5020004@samsung.com>
+Date: Wed, 16 Sep 2015 11:30:26 +0900
+From: Jaehoon Chung <jh80.chung@samsung.com>
+To: =?windows-1252?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: ulf.hansson@linaro.org, mturquette@baylibre.com, sboyd@codeaurora.org,
+ linux-mmc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Alexandru M Stan <amstan@chromium.org>,
+ CPGS <cpgs@samsung.com>
+Subject: Re: [PATCH 6/8] mmc: dw_mmc: Generic MMC tuning with the clock phase
+ framework
+References: <1441045446-30858-1-git-send-email-heiko@sntech.de>
+ <1441045446-30858-7-git-send-email-heiko@sntech.de>
+ <55F7D602.70003@samsung.com> <8878355.D5Q8mk4qcM@diego>
+In-reply-to: <8878355.D5Q8mk4qcM@diego>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch renames CMU_FSYS1 clocks names to match with user manual.
-And also adds missing gate clock for aclk_fsys1_200.
+Hi,
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos7.c       |   16 ++++++++++------
- include/dt-bindings/clock/exynos7-clk.h |    3 ++-
- 2 files changed, 12 insertions(+), 7 deletions(-)
+On 09/16/2015 07:09 AM, Heiko Stübner wrote:
+> Hi,
+> 
+> Am Dienstag, 15. September 2015, 17:25:38 schrieb Jaehoon Chung:
+>> On 09/01/2015 03:24 AM, Heiko Stuebner wrote:
+>>> From: Alexandru M Stan <amstan@chromium.org>
+>>>
+>>> This algorithm will try 1 degree increments, since there's no way to tell
+>>> what resolution the underlying phase code uses. As an added bonus, doing
+>>> many tunings yields better results since some tests are run more than once
+>>> (ex: if the underlying driver uses 45 degree increments, the tuning code
+>>> will try the same angle more than once).
+>>>
+>>> It will then construct a list of good phase ranges (even ranges that cross
+>>> 360/0), will pick the biggest range then it will set the sample_clk to the
+>>> middle of that range.
+>>>
+>>> We do not touch ciu_drive (and by extension define default-drive-phase).
+>>> Drive phase is mostly used to define minimum hold times, while one could
+>>> write some code to determine what phase meets the minimum hold time (ex 10
+>>> degrees) this will not work with the current clock phase framework (which
+>>> floors angles, so we'll get 0 deg, and there's no way to know what
+>>> resolution the floors happen at). We assume that the default drive angles
+>>> set by the hardware are good enough.
+>>>
+>>> If a device has device specific code (like exynos) then that will still
+>>> take precedence, otherwise this new code will execute. If the device wants
+>>> to tune, but has no sample_clk defined we'll return EIO with an error
+>>> message.
+>>
+>> Which point is "_generic_"? I don't find the code that control the register
+>> relevant to CLK_DRV/SMPL PHASE. It seems that posted the similar patches at
+>> u-boot mailing list..
+> 
+> The "generic" part is that it uses the clk phase API for dw_mmc 
+> implementations where the clkgen controlling interface is outside the dw_mmc 
+> IP itself. So it's open for other implementations as well.
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index bf4699c..189a453 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -517,6 +517,8 @@ static struct samsung_gate_clock top1_gate_clks[] __initdata = {
- 
- 	GATE(CLK_ACLK_FSYS0_200, "aclk_fsys0_200", "dout_aclk_fsys0_200",
- 		ENABLE_ACLK_TOP13, 28, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_ACLK_FSYS1_200, "aclk_fsys1_200", "dout_aclk_fsys1_200",
-+		ENABLE_ACLK_TOP13, 24, CLK_SET_RATE_PARENT, 0),
- };
- 
- static struct samsung_fixed_factor_clock top1_fixed_factor_clks[] __initdata = {
-@@ -959,9 +961,9 @@ CLK_OF_DECLARE(exynos7_clk_fsys0, "samsung,exynos7-clock-fsys0",
- /*
-  * List of parent clocks for Muxes in CMU_FSYS1
-  */
--PNAME(mout_aclk_fsys1_200_p)	= { "fin_pll",  "dout_aclk_fsys1_200" };
--PNAME(mout_sclk_mmc0_p)		= { "fin_pll", "sclk_mmc0" };
--PNAME(mout_sclk_mmc1_p)		= { "fin_pll", "sclk_mmc1" };
-+PNAME(mout_aclk_fsys1_200_user_p)	= { "fin_pll", "aclk_fsys1_200" };
-+PNAME(mout_sclk_mmc0_user_p)		= { "fin_pll", "sclk_mmc0" };
-+PNAME(mout_sclk_mmc1_user_p)		= { "fin_pll", "sclk_mmc1" };
- 
- static unsigned long fsys1_clk_regs[] __initdata = {
- 	MUX_SEL_FSYS10,
-@@ -970,11 +972,13 @@ static unsigned long fsys1_clk_regs[] __initdata = {
- };
- 
- static struct samsung_mux_clock fsys1_mux_clks[] __initdata = {
--	MUX(0, "mout_aclk_fsys1_200_user", mout_aclk_fsys1_200_p,
-+	MUX(0, "mout_aclk_fsys1_200_user", mout_aclk_fsys1_200_user_p,
- 		MUX_SEL_FSYS10, 28, 1),
- 
--	MUX(0, "mout_sclk_mmc1_user", mout_sclk_mmc1_p, MUX_SEL_FSYS11, 24, 1),
--	MUX(0, "mout_sclk_mmc0_user", mout_sclk_mmc0_p, MUX_SEL_FSYS11, 28, 1),
-+	MUX(0, "mout_sclk_mmc1_user", mout_sclk_mmc1_user_p,
-+		MUX_SEL_FSYS11, 24, 1),
-+	MUX(0, "mout_sclk_mmc0_user", mout_sclk_mmc0_user_p,
-+		MUX_SEL_FSYS11, 28, 1),
- };
- 
- static struct samsung_gate_clock fsys1_gate_clks[] __initdata = {
-diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
-index 667faed..acdf2e5 100644
---- a/include/dt-bindings/clock/exynos7-clk.h
-+++ b/include/dt-bindings/clock/exynos7-clk.h
-@@ -63,7 +63,8 @@
- #define CLK_SCLK_MMC1			7
- #define CLK_SCLK_MMC0			8
- #define CLK_ACLK_FSYS0_200		9
--#define TOP1_NR_CLK			10
-+#define CLK_ACLK_FSYS1_200		10
-+#define TOP1_NR_CLK			11
- 
- /* CCORE */
- #define PCLK_RTC			1
--- 
-1.7.10.4
+Designware IP also has the CLK phase register(UHS_REG_EXT register)...
+if this code is related with it, it should be located into dw-mmc.c.
+
+> 
+> But if you are more comfortable with it, I can also move it into the dw_mmc-
+> rockchip variant for the time being, until another user comes along.
+
+I think more better that this code is located into dw_mmc-rockchip. how about?
+
+Best Regards,
+Jaehoon Chung
+
+> 
+> 
+> Heiko
+> 
+> 
