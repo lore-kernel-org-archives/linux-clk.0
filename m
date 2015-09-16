@@ -1,92 +1,120 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
-To: Lian M.H. <Minghuan.Lian@freescale.com>, Leo Li <pku.leo@gmail.com>
-Subject: RE: [PATCH v2 04/10] doc/bindings: Update PCIe devicetree binding
- documentation for LS2080A
-Date: Sun, 6 Sep 2015 20:00:10 +0000
-Message-ID: <BY1PR0301MB1303B2794EF0CE4FCB51CE0982550@BY1PR0301MB1303.namprd03.prod.outlook.com>
-References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
- <1441349872-4560-5-git-send-email-bhupesh.sharma@freescale.com>
- <CADRPPNRGpzWawsqLHCiv530HbtPf+9RaPzOtvy88ftwv2ffqLQ@mail.gmail.com>
- <BY1PR0301MB13037F8BC0A8E1E4258F58DE82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
- <DM2PR0301MB0640B355ADF0CF1AD514B2A1E2550@DM2PR0301MB0640.namprd03.prod.outlook.com>
-In-Reply-To: <DM2PR0301MB0640B355ADF0CF1AD514B2A1E2550@DM2PR0301MB0640.namprd03.prod.outlook.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
- "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
- "will.deacon@arm.com" <will.deacon@arm.com>, "olof@lixom.net" <olof@lixom.net>,
- Bhupesh SHARMA <bhupesh.linux@gmail.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	 Pawel Moll <pawel.moll@arm.com>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 Maxime Coquelin <maxime.coquelin@st.com>,
+	 Patrice Chotard <patrice.chotard@st.com>,
+	 Russell King <linux@arm.linux.org.uk>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	 Peter Griffin <peter.griffin@linaro.org>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Fabian Frederick <fabf@skynet.be>
+Cc: devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org
+Subject: [PATCH 2/2] drivers: clk: st: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x
+Date: Wed, 16 Sep 2015 09:42:59 +0200
+Message-Id: <1442389379-9298-3-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-> From: Lian Minghuan-B31939
-> Sent: Sunday, September 06, 2015 7:56 AM
-> Hi Bhupesh
-> 
-> I agree with Leo whose suggestion is a better.
+Use a generic name for this kind of PLL
 
-Ok, thanks.
+Correction in dts files are already done here:
+commit 5eb26c605909 ("ARM: STi: DT: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x")
 
-I will make this change in v3 patchset then.
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+---
+ drivers/clk/st/clkgen-fsyn.c |  8 ++++----
+ drivers/clk/st/clkgen-pll.c  | 12 ++++++------
+ 2 files changed, 10 insertions(+), 10 deletions(-)
 
-Regards,
-Bhupesh
-
-> > From: Sharma Bhupesh-B45370
-> > Sent: Saturday, September 05, 2015 4:20 AM
-> > > From: Leo Li [mailto:pku.leo@gmail.com]
-> > > Sent: Friday, September 04, 2015 11:27 PM On Fri, Sep 4, 2015 at
-> > > 1:57 AM, Bhupesh Sharma <bhupesh.sharma@freescale.com> wrote:
-> > > > Add the documentation for compatible string "fsl,ls2080a-pcie"
-> > > > for Freescale's LS2080A platform.
-> > > >
-> > > > Signed-off-by: Minghuan Lian <Minghuan.Lian@freescale.com>
-> > > > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-> > > > ---
-> > > >  .../devicetree/bindings/pci/layerscape-pci.txt     |    3 ++-
-> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git
-> > > > a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
-> > > > b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
-> > > > index 6286f04..e72e68f 100644
-> > > > --- a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
-> > > > +++ b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
-> > > > @@ -4,7 +4,8 @@ This PCIe host controller is based on the Synopsis
-> > > > Designware PCIe IP  and thus inherits all the common properties
-> > > > defined
-> > > in designware-pcie.txt.
-> > > >
-> > > >  Required properties:
-> > > > -- compatible: should contain the platform identifier such as
-> > > "fsl,ls1021a-pcie"
-> > > > +- compatible: should contain the platform identifier such as
-> > > > +"fsl,ls1021a-pcie",
-> > > > +  "fsl,ls2080a-pcie".
-> > >
-> > > Make it generic like "fsl,<chip>-pcie"
-> >
-> > Minghuan, if you don't have an objection, I would like to address
-> > Leo's suggestion in v3 of this series as I think it is a valid one.
-> >
-> > Please share your views.
-> >
-> > Regards,
-> > Bhupesh
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
+index 83ccf14..576cd03 100644
+--- a/drivers/clk/st/clkgen-fsyn.c
++++ b/drivers/clk/st/clkgen-fsyn.c
+@@ -307,7 +307,7 @@ static const struct clkgen_quadfs_data st_fs660c32_F_416 = {
+ 	.get_rate	= clk_fs660c32_dig_get_rate,
+ };
+ 
+-static const struct clkgen_quadfs_data st_fs660c32_C_407 = {
++static const struct clkgen_quadfs_data st_fs660c32_C = {
+ 	.nrst_present = true,
+ 	.nrst	= { CLKGEN_FIELD(0x2f0, 0x1, 0),
+ 		    CLKGEN_FIELD(0x2f0, 0x1, 1),
+@@ -350,7 +350,7 @@ static const struct clkgen_quadfs_data st_fs660c32_C_407 = {
+ 	.get_rate	= clk_fs660c32_dig_get_rate,
+ };
+ 
+-static const struct clkgen_quadfs_data st_fs660c32_D_407 = {
++static const struct clkgen_quadfs_data st_fs660c32_D = {
+ 	.nrst_present = true,
+ 	.nrst	= { CLKGEN_FIELD(0x2a0, 0x1, 0),
+ 		    CLKGEN_FIELD(0x2a0, 0x1, 1),
+@@ -1077,11 +1077,11 @@ static const struct of_device_id quadfs_of_match[] = {
+ 	},
+ 	{
+ 		.compatible = "st,stih407-quadfs660-C",
+-		.data = &st_fs660c32_C_407
++		.data = &st_fs660c32_C
+ 	},
+ 	{
+ 		.compatible = "st,stih407-quadfs660-D",
+-		.data = &st_fs660c32_D_407
++		.data = &st_fs660c32_D
+ 	},
+ 	{}
+ };
+diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
+index 47a38a9..b2a332c 100644
+--- a/drivers/clk/st/clkgen-pll.c
++++ b/drivers/clk/st/clkgen-pll.c
+@@ -193,7 +193,7 @@ static const struct clkgen_pll_data st_pll3200c32_407_a0 = {
+ 	.ops		= &stm_pll3200c32_ops,
+ };
+ 
+-static const struct clkgen_pll_data st_pll3200c32_407_c0_0 = {
++static const struct clkgen_pll_data st_pll3200c32_cx_0 = {
+ 	/* 407 C0 PLL0 */
+ 	.pdn_status	= CLKGEN_FIELD(0x2a0,	0x1,			8),
+ 	.locked_status	= CLKGEN_FIELD(0x2a0,	0x1,			24),
+@@ -205,7 +205,7 @@ static const struct clkgen_pll_data st_pll3200c32_407_c0_0 = {
+ 	.ops		= &stm_pll3200c32_ops,
+ };
+ 
+-static const struct clkgen_pll_data st_pll3200c32_407_c0_1 = {
++static const struct clkgen_pll_data st_pll3200c32_cx_1 = {
+ 	/* 407 C0 PLL1 */
+ 	.pdn_status	= CLKGEN_FIELD(0x2c8,	0x1,			8),
+ 	.locked_status	= CLKGEN_FIELD(0x2c8,	0x1,			24),
+@@ -624,12 +624,12 @@ static const struct of_device_id c32_pll_of_match[] = {
+ 		.data = &st_pll3200c32_407_a0,
+ 	},
+ 	{
+-		.compatible = "st,stih407-plls-c32-c0_0",
+-		.data = &st_pll3200c32_407_c0_0,
++		.compatible = "st,plls-c32-cx_0",
++		.data = &st_pll3200c32_cx_0,
+ 	},
+ 	{
+-		.compatible = "st,stih407-plls-c32-c0_1",
+-		.data = &st_pll3200c32_407_c0_1,
++		.compatible = "st,plls-c32-cx_1",
++		.data = &st_pll3200c32_cx_1,
+ 	},
+ 	{
+ 		.compatible = "st,stih407-plls-c32-a9",
+-- 
+1.9.1
