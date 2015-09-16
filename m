@@ -1,74 +1,46 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 1 Oct 2015 08:58:59 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/5] ARM: sunxi: Add R8 support
-Message-ID: <20151001065859.GA7104@lukather>
-References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
- <1442566130-3497-2-git-send-email-maxime.ripard@free-electrons.com>
- <20150930223829.GG18556@codeaurora.org>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lBPdJKrYqo3eKYSb"
-In-Reply-To: <20150930223829.GG18556@codeaurora.org>
+In-Reply-To: <1441977997-29041-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1441977997-29041-1-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 16 Sep 2015 13:42:11 +0800
+Message-ID: <CAGb2v67oU-0_Wt8Z0JFRmAXbOamSf_tME51wB25NYkNnx3XvtA@mail.gmail.com>
+Subject: Re: [PATCH 0/4] ARM: sun8i: Fix A23 and A33 clock gates indices
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Emilio Lopez <emilio@elopez.com.ar>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On Fri, Sep 11, 2015 at 9:26 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi everyone,
+>
+> Here is a patch set that adds the missing clocks for the message box
+> in the A33 and A23 SoCs.
+>
+> In order to support that properly, the addition of a new clock driver
+> for the A33 has been needed, and we split the gates definition that
+> was previously shared to each DTSI.
+>
+> Let me know what you think,
+> Maxime
+>
+> Maxime Ripard (4):
+>   clk: sunxi: Add A33 gates support
+>   ARM: sun8i: Add the A33 AHB1 gates clock driver
+>   ARM: sun8i: Move A23 AHB1 gates out of common DTSI
+>   ARM: sun8i: A23: Add missing msgbox gate
+>
+>  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 25 -------------------------
+>  arch/arm/boot/dts/sun8i-a23.dtsi     | 25 +++++++++++++++++++++++++
+>  arch/arm/boot/dts/sun8i-a33.dtsi     | 27 +++++++++++++++++++++++++++
+>  drivers/clk/sunxi/clk-simple-gates.c |  2 ++
+>  4 files changed, 54 insertions(+), 25 deletions(-)
 
---lBPdJKrYqo3eKYSb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Apart from the small issue with the second patch's commit message,
+this series looks good.
 
-On Wed, Sep 30, 2015 at 03:38:29PM -0700, Stephen Boyd wrote:
-> On 09/18, Maxime Ripard wrote:
-> > The R8 is a new Allwinner SoC based on the A13. While both are very
-> > similar, there's still a few differences. Introduce a new compatible to
-> > deal with them.
-> >=20
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
->=20
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
->=20
-> BTW, why is the entire series sent To: Mike and I? Are these
-> patches intended to go through clk tree?
-
-I wanted to have the Ack from one of you on this patch. I usually
-prefer to have the whole serie instead of a single out of context
-patch, just let me know if you feel otherwise :)
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---lBPdJKrYqo3eKYSb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWDNmzAAoJEBx+YmzsjxAgPTMP/iNZtjaCfxHXz3Xs7zUeHBMn
-dH6x6GqMrc7q8Nwzm/nQjp9W3W7GabtF10hEMvZN0awtoyYR9Fzm4y932Wc6y5yn
-Vqt3nGOg0OVFNNZDT11F0Fwdj3xevgFqMj+tI5xrnjTng5Efyr5zRzIbr82TM2GP
-Fcogg/jOFR2QA0S1RdwciZt9k+u+HLeONl2vhHFm1rDcQSe81u7TmRS8bkfsx2i4
-TOyY/VCLCchwCHI5E3F/fO1UfusX9oW9VvfkgvzuEqAeGvEIvvRu/m7ecAmPabeg
-sX+UKBOufO9nzlq822QFajARR0b1mg7ZjtopRp06Yrcd7G6w0CeYn2lhtaViaexi
-Rxg5GDQM00Km7yeO9bwdhQIV3Xlw16QiVVPeE9EYJqw1Wjfdv8TsPEIcXWrinNWT
-EfwcOGWC9PlLLb/Z5gMK5sn+CjWvk5Jbibgc5xwQRSg2fV+R2b+4dYWkftXT6tm/
-cCmF/PlMMfFwb3G8F7n0dVlwCS5bvK8xp5yrr0yf7sRv+/PqEVPN4P2OZSFAR1XC
-fN4G+OrT/9pLBsyyAekMfPaaFxIDziF0Xk78OIHimHD0swuZVm0wL4eNsZtiXQLg
-FEzUMLvHFxGhjMzEbq53e8y1LX3l2c0I+T3NBdRmcJLSDentdL9bOpHt+6gqz11F
-WeOwns+k2MPm97aCMGjz
-=JfAI
------END PGP SIGNATURE-----
-
---lBPdJKrYqo3eKYSb--
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
