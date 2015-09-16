@@ -1,71 +1,45 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 16 Sep 2015 15:30:51 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@stlinux.com, linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH 0/2] ST PLL fixes for 4.3-rc2
+Message-ID: <20150916223051.GO23081@codeaurora.org>
+References: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1442566130-3497-2-git-send-email-maxime.ripard@free-electrons.com>
-References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
- <1442566130-3497-2-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 18 Sep 2015 17:47:44 +0800
-Message-ID: <CAGb2v65hHJDS6-Sz5Hi4a_F_cHTdBkFUzRR3a0JSE43AbDYmcw@mail.gmail.com>
-Subject: Re: [PATCH 1/5] ARM: sunxi: Add R8 support
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 18, 2015 at 4:48 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The R8 is a new Allwinner SoC based on the A13. While both are very
-> similar, there's still a few differences. Introduce a new compatible to
-> deal with them.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  arch/arm/mach-sunxi/sunxi.c   | 3 ++-
->  drivers/clk/sunxi/clk-sunxi.c | 1 +
->  2 files changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-> index 65bab2876343..8583a9ca86bd 100644
-> --- a/arch/arm/mach-sunxi/sunxi.c
-> +++ b/arch/arm/mach-sunxi/sunxi.c
-> @@ -26,10 +26,11 @@ static const char * const sunxi_board_dt_compat[] = {
->         "allwinner,sun4i-a10",
->         "allwinner,sun5i-a10s",
->         "allwinner,sun5i-a13",
-> +       "allwinner,sun5i-r8",
->         NULL,
->  };
->
-> -DT_MACHINE_START(SUNXI_DT, "Allwinner A1X (Device Tree)")
-> +DT_MACHINE_START(SUNXI_DT, "Allwinner sun4i/sun5i Families")
+On 09/16, Gabriel Fernandez wrote:
+> This patch set fixes a kernel crash :
+[..]
+> 
+> This kernel crash is due to a broken compatibility with this commit:
+> commit 5eb26c605909 ("ARM: STi: DT: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x")
 
-Nit: might want to mention the rename.
+It isn't clear who's supposed to apply this because the To: list
+is huge. Did you want to take this through arm-soc? If so, feel
+free to take my acked-by on the second patch. The first patch
+doesn't even apply to clk tree because the patch introducing the
+typo didn't go through our tree.
 
->         .dt_compat      = sunxi_board_dt_compat,
->         .init_late      = sunxi_dt_cpufreq_init,
->  MACHINE_END
-> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-> index 413070d07b3f..9c79af0c03b2 100644
-> --- a/drivers/clk/sunxi/clk-sunxi.c
-> +++ b/drivers/clk/sunxi/clk-sunxi.c
-> @@ -1196,6 +1196,7 @@ static void __init sun5i_init_clocks(struct device_node *node)
->  }
->  CLK_OF_DECLARE(sun5i_a10s_clk_init, "allwinner,sun5i-a10s", sun5i_init_clocks);
->  CLK_OF_DECLARE(sun5i_a13_clk_init, "allwinner,sun5i-a13", sun5i_init_clocks);
-> +CLK_OF_DECLARE(sun5i_r8_clk_init, "allwinner,sun5i-r8", sun5i_init_clocks);
->  CLK_OF_DECLARE(sun7i_a20_clk_init, "allwinner,sun7i-a20", sun5i_init_clocks);
->
->  static const char *sun6i_critical_clocks[] __initdata = {
-> --
-> 2.5.1
->
-
-What about Documentation/devicetree/bindings/arm/sunxi.txt and
-Documentation/arm/sunxi/README?
-
-
-Thanks
-ChenYu
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
