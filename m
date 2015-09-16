@@ -1,83 +1,44 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v2] clk:mxs: Fix bug on frequency divider
-To: Victorien Vedrine <victorien.vedrine@ophrys.net>,
-	linux-kernel@vger.kernel.org
-References: <55BBB1AC.6070102@codeaurora.org>
- <1441010707-17178-1-git-send-email-victorien.vedrine@ophrys.net>
-Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-	mturquette@baylibre.com, shawn.guo@linaro.org,
-	"Fabio.Estevam@freescale.com" <Fabio.Estevam@freescale.com>,
-	Marek Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <55FBBB6D.4010805@i2se.com>
-Date: Fri, 18 Sep 2015 09:21:17 +0200
+Return-Path: <yingjoe.chen@mediatek.com>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner
+	<tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+	<mturquette@baylibre.com>, James Liao <jamesjj.liao@mediatek.com>,
+	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas
+	<catalin.marinas@arm.com>, <linux-kernel@vger.kernel.org>, Rob Herring
+	<robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>, Sascha Hauer
+	<kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>,
+	<srv_heupstream@mediatek.com>, <linux-arm-kernel@lists.infradead.org>, Daniel
+ Kurtz <djkurtz@chromium.org>, <linux-clk@vger.kernel.org>, Yingjoe Chen
+	<yingjoe.chen@mediatek.com>
+Subject: [PATCH 1/2] arm64: mediatek: enable MTK_TIMER
+Date: Wed, 16 Sep 2015 10:04:54 +0800
+Message-ID: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <1441010707-17178-1-git-send-email-victorien.vedrine@ophrys.net>
-Content-Type: text/plain; charset=iso-8859-15
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: yingjoe.chen@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-+Shawn's new address
-+linux-arm-kernel
+Enable MTK_TIMER for MediaTek plaform, which will be used as
+schedule clock.
 
-> On drivers/clk/mxs/clk-frac.c, the function clk_frac_round_rate returned a bad
-> result. The division before multiplication computes a wrong value ; the
-> calculation is inverted to fix the problem. The second issue is that the exact
-> rate have decimals and they are truncate. The consequence is that the function
-> clk_frac_set_rate (which use the result of clk_frac_round_rate) computes a
-> wrong value for the register (the rate generated can be closer to the desired
-> rate). The correction is : if there is decimal to the result, it is rounded to
-> the next larger integer.
-> On drivers/clk/mxs/clk-frac.c, the function clk_frac_recalc_rate returned
-> a bad result. The multiplication is made before the division to compute a
-> correct value.
->
-> Signed-off-by: Victorien Vedrine <victorien.vedrine@ophrys.net>
-> ---
->  drivers/clk/mxs/clk-frac.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/mxs/clk-frac.c b/drivers/clk/mxs/clk-frac.c
-> index e6aa6b5..b3fa7fa 100644
-> --- a/drivers/clk/mxs/clk-frac.c
-> +++ b/drivers/clk/mxs/clk-frac.c
-> @@ -42,11 +42,13 @@ static unsigned long clk_frac_recalc_rate(struct clk_hw *hw,
->  {
->  	struct clk_frac *frac = to_clk_frac(hw);
->  	u32 div;
-> +	u64 tmp_rate;
->  
->  	div = readl_relaxed(frac->reg) >> frac->shift;
->  	div &= (1 << frac->width) - 1;
->  
-> -	return (parent_rate >> frac->width) * div;
-> +	tmp_rate = (u64)parent_rate * div;
-> +	return tmp_rate >> frac->width;
->  }
->  
->  static long clk_frac_round_rate(struct clk_hw *hw, unsigned long rate,
-> @@ -55,7 +57,7 @@ static long clk_frac_round_rate(struct clk_hw *hw, unsigned long rate,
->  	struct clk_frac *frac = to_clk_frac(hw);
->  	unsigned long parent_rate = *prate;
->  	u32 div;
-> -	u64 tmp;
-> +	u64 tmp, tmp_rate, result;
->  
->  	if (rate > parent_rate)
->  		return -EINVAL;
-> @@ -68,7 +70,11 @@ static long clk_frac_round_rate(struct clk_hw *hw, unsigned long rate,
->  	if (!div)
->  		return -EINVAL;
->  
-> -	return (parent_rate >> frac->width) * div;
-> +	tmp_rate = (u64)parent_rate * div;
-> +	result = tmp_rate >> frac->width;
-> +	if ((result << frac->width) < tmp_rate)
-> +		result += 1;
-> +	return result;
->  }
->  
->  static int clk_frac_set_rate(struct clk_hw *hw, unsigned long rate,
+Change-Id: Ib77a0bf01193102c755077b6e72e73e477b18e5f
+Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+---
+ arch/arm64/Kconfig.platforms | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 23800a1..8176455 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -42,6 +42,7 @@ config ARCH_MEDIATEK
+ 	bool "Mediatek MT65xx & MT81xx ARMv8 SoC"
+ 	select ARM_GIC
+ 	select PINCTRL
++	select MTK_TIMER
+ 	help
+ 	  Support for Mediatek MT65xx & MT81xx ARMv8 SoCs
+ 
+-- 
+1.9.1
