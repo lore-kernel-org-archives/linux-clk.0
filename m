@@ -1,57 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:10043 "EHLO
-	mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752885AbbIVOQr (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 22 Sep 2015 10:16:47 -0400
-From: Jisheng Zhang <jszhang@marvell.com>
-To: <sebastian.hesselbarth@gmail.com>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <mark.rutland@arm.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	Jisheng Zhang <jszhang@marvell.com>
-Subject: [PATCH 0/5] Add Marvell berlin4ct clk support
-Date: Tue, 22 Sep 2015 22:12:31 +0800
-Message-ID: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: Fix tipo in st,clkgen-pll documentation
+Date: Wed, 16 Sep 2015 09:42:58 +0200
+Message-Id: <1442389379-9298-2-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add berlin4ct clk driver. The berlin4ct SoC contains:
+replace "sst,plls-c32-cx_x" by "st,plls-c32-cx_x"
 
-two kinds of PLL: normal PLL and AVPLL. The normal PLL support is done.
-The AVPLL support is in TODO list.
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+---
+ Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-two kinds of clk: normal clk and gate clk. The normal clk supports changing
-divider, selecting clock source, disabling/enabling etc. The gate clk only
-supports disabling/enabling. Both are supported in this series.
-
-Jisheng Zhang (5):
-  clk: berlin: add common pll driver
-  clk: berlin: add common clk driver for newer SoCs
-  clk: berlin: add clk support for berlin4ct
-  dt-bindings: add binding for marvell berlin4ct SoC
-  arm64: dts: berlin4ct: add pll and clock nodes
-
- .../bindings/clock/marvell,berlin4ct.txt           |  38 +++++
- arch/arm64/boot/dts/marvell/berlin4ct.dtsi         |  38 +++++
- drivers/clk/berlin/Makefile                        |   2 +-
- drivers/clk/berlin/clk-berlin4ct.c                 | 164 +++++++++++++++++++++
- drivers/clk/berlin/clk.c                           | 147 ++++++++++++++++++
- drivers/clk/berlin/clk.h                           |  38 +++++
- drivers/clk/berlin/pll.c                           | 119 +++++++++++++++
- include/dt-bindings/clock/berlin4ct.h              |  56 +++++++
- 8 files changed, 601 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/marvell,berlin4ct.txt
- create mode 100644 drivers/clk/berlin/clk-berlin4ct.c
- create mode 100644 drivers/clk/berlin/clk.c
- create mode 100644 drivers/clk/berlin/clk.h
- create mode 100644 drivers/clk/berlin/pll.c
- create mode 100644 include/dt-bindings/clock/berlin4ct.h
-
+diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+index d8b168e..e2c6db0 100644
+--- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
++++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+@@ -21,8 +21,8 @@ Required properties:
+ 	"st,stih416-plls-c32-ddr",	"st,clkgen-plls-c32"
+ 	"st,stih407-plls-c32-a0",	"st,clkgen-plls-c32"
+ 	"st,stih407-plls-c32-a9",	"st,clkgen-plls-c32"
+-	"sst,plls-c32-cx_0",		"st,clkgen-plls-c32"
+-	"sst,plls-c32-cx_1",		"st,clkgen-plls-c32"
++	"st,plls-c32-cx_0",		"st,clkgen-plls-c32"
++	"st,plls-c32-cx_1",		"st,clkgen-plls-c32"
+ 
+ 	"st,stih415-gpu-pll-c32",	"st,clkgengpu-pll-c32"
+ 	"st,stih416-gpu-pll-c32",	"st,clkgengpu-pll-c32"
 -- 
-2.5.3
+1.9.1
 
