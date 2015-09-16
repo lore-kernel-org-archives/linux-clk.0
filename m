@@ -1,71 +1,96 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH v4 8/8] clk: imx7d: retain early UART clocks during kernel init
-Date: Mon, 21 Sep 2015 18:54:04 +0200
-Message-Id: <1442854444-4460-9-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
-References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
- kernel@pengutronix.de, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH] clk: ti: clk-7xx: Remove hardwired ABE clock
+ configuration
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <1440401702-32420-1-git-send-email-peter.ujfalusi@ti.com>
+ <55F68AC1.1040807@ti.com>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <55F90F59.60102@ti.com>
+Date: Wed, 16 Sep 2015 09:42:33 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+In-Reply-To: <55F68AC1.1040807@ti.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure to keep UART clocks enabled during kernel init if
-earlyprintk or earlycon are active.
+On 09/14/2015 11:52 AM, Peter Ujfalusi wrote:
+> Hi Tero,
+>
+> On 08/24/2015 10:35 AM, Peter Ujfalusi wrote:
+>> The ABE related clocks should be configured via DT and not have it wired
+>> inside of the kernel.
+>
+> can you take a look at this patch? It will not cause any regression since we
+> do not have audio support mainline and the pending series does not need this
+> part anymore.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- drivers/clk/imx/clk-imx7d.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+This patch looks okay to me. So, you are saying this doesn't depend on 
+anything? Isn't this causing any boot-time issues with the ABE DPLL left 
+dangling with boot setup, potentially blocking PM? I am just wondering 
+if we should group this patch with the rest of the audio support patches 
+for dra7.
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 71f3a94b472c..f86b68049872 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -363,6 +363,17 @@ static const char *pll_video_bypass_sel[] = { "pll_video_main", "pll_video_main_
- 
- static struct clk_onecell_data clk_data;
- 
-+static struct clk ** const uart_clks[] __initconst = {
-+	&clks[IMX7D_UART1_ROOT_CLK],
-+	&clks[IMX7D_UART2_ROOT_CLK],
-+	&clks[IMX7D_UART3_ROOT_CLK],
-+	&clks[IMX7D_UART4_ROOT_CLK],
-+	&clks[IMX7D_UART5_ROOT_CLK],
-+	&clks[IMX7D_UART6_ROOT_CLK],
-+	&clks[IMX7D_UART7_ROOT_CLK],
-+	NULL
-+};
-+
- static void __init imx7d_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
-@@ -856,5 +867,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	/* set uart module clock's parent clock source that must be great then 80MHz */
- 	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
- 
-+	imx_register_uart_clocks(uart_clks);
-+
- }
- CLK_OF_DECLARE(imx7d, "fsl,imx7d-ccm", imx7d_clocks_init);
--- 
-2.5.1
+-Tero
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+>> ---
+>> Hi Tero,
+>>
+>> the ABE PLL configuration can, and will be done for dra7xx in DT with the
+>> assigned-clocks/rate/parent feature so no need to have this anymore.
+>>
+>> Regards,
+>> Peter
+>>
+>>   drivers/clk/ti/clk-7xx.c | 18 +-----------------
+>>   1 file changed, 1 insertion(+), 17 deletions(-)
+>>
+>> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+>> index 9b5b289e6334..a911d7de3377 100644
+>> --- a/drivers/clk/ti/clk-7xx.c
+>> +++ b/drivers/clk/ti/clk-7xx.c
+>> @@ -18,7 +18,6 @@
+>>
+>>   #include "clock.h"
+>>
+>> -#define DRA7_DPLL_ABE_DEFFREQ				180633600
+>>   #define DRA7_DPLL_GMAC_DEFFREQ				1000000000
+>>   #define DRA7_DPLL_USB_DEFFREQ				960000000
+>>
+>> @@ -313,27 +312,12 @@ static struct ti_dt_clk dra7xx_clks[] = {
+>>   int __init dra7xx_dt_clk_init(void)
+>>   {
+>>   	int rc;
+>> -	struct clk *abe_dpll_mux, *sys_clkin2, *dpll_ck, *hdcp_ck;
+>> +	struct clk *dpll_ck, *hdcp_ck;
+>>
+>>   	ti_dt_clocks_register(dra7xx_clks);
+>>
+>>   	omap2_clk_disable_autoidle_all();
+>>
+>> -	abe_dpll_mux = clk_get_sys(NULL, "abe_dpll_sys_clk_mux");
+>> -	sys_clkin2 = clk_get_sys(NULL, "sys_clkin2");
+>> -	dpll_ck = clk_get_sys(NULL, "dpll_abe_ck");
+>> -
+>> -	rc = clk_set_parent(abe_dpll_mux, sys_clkin2);
+>> -	if (!rc)
+>> -		rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ);
+>> -	if (rc)
+>> -		pr_err("%s: failed to configure ABE DPLL!\n", __func__);
+>> -
+>> -	dpll_ck = clk_get_sys(NULL, "dpll_abe_m2x2_ck");
+>> -	rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ * 2);
+>> -	if (rc)
+>> -		pr_err("%s: failed to configure ABE DPLL m2x2!\n", __func__);
+>> -
+>>   	dpll_ck = clk_get_sys(NULL, "dpll_gmac_ck");
+>>   	rc = clk_set_rate(dpll_ck, DRA7_DPLL_GMAC_DEFFREQ);
+>>   	if (rc)
+>>
+>
+>
