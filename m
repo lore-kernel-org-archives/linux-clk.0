@@ -1,49 +1,53 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Date: Wed, 9 Sep 2015 14:47:05 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Romain Perier <romain.perier@gmail.com>
-Subject: Re: [PATCH v2] clk: rockchip: Add pclk_peri to critical clocks on
- RK3066/RK3188
-Message-ID: <20150909214705.GV15099@codeaurora.org>
-References: <1440322357-2621-1-git-send-email-romain.perier@gmail.com>
- <CABgxDo+otZrYoqTNK-ea=L6Dsd5p_b_MFCi4H4XJZZ25PV_qnA@mail.gmail.com>
- <CABgxDoLgqfzO-Sb_rKHe=-GuMaKWMihHhktx6sDSM6M=Q+Koaw@mail.gmail.com>
- <20150904162402.GN15099@codeaurora.org>
- <CABgxDo+0qN5GJdCNpQi4g_CdW67PvxsogMseRoAa5cuAbWk1wQ@mail.gmail.com>
- <CABgxDoJRdF_k0EZLrEWXqpDrmj5LVRL24izGLJY4AmtUNOk7PQ@mail.gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <55F9F0E5.7000805@kernel.org>
+Date: Thu, 17 Sep 2015 07:44:53 +0900
+From: Kukjin Kim <kgene@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CABgxDoJRdF_k0EZLrEWXqpDrmj5LVRL24izGLJY4AmtUNOk7PQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+CC: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] cpufreq-dt: add suspend frequency support
+References: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com> <20150908024659.GF26760@linux> <55EE5C79.2030604@samsung.com> <20150908042017.GJ26760@linux> <55EE6892.3010304@samsung.com> <20150908051053.GA18554@linux>
+In-Reply-To: <20150908051053.GA18554@linux>
+Content-Type: text/plain; charset=ISO-8859-1
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/09, Romain Perier wrote:
-> so, which of you does take the patch for -rc1 ?
+On 09/08/15 14:10, Viresh Kumar wrote:
+> On 08-09-15, 13:48, Krzysztof Kozlowski wrote:
+>> Somehow my mind stuck on solving Exynos4x12 cpufreq issues.
+>>
+>> Right, it should go through Rafael's, probably except DTS patch (4/4)
+>> because it depends on previous DTS changes. These changes are still in
+>> arm-soc, not in Linus' tree [0].
 > 
+> That's bad :(
+> 
+> Anyway, 4/4 is kind of independent to this series, in the sense that
+> it wouldn't harm even if it gets applied separately.
+> 
+> So, go ahead and apply 4/4 to Samsung's tree and rest of this can be
+> picked by Rafael.
+> 
+Applied 4/4 into samsung tree, thanks.
 
-Please stop top posting. I was going to take it after -rc1 is
-tagged, but I can't tell what branch this is based on. It doesn't
-apply to clk-next, nor to torvalds' tree, or linux-next. Is there
-some other patch out there that's also needed?
+- Kukjin
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
