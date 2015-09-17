@@ -1,31 +1,105 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 14 Sep 2015 14:57:24 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: at91: utmi: use pmc_read when the at91_pmc is
- available
-Message-ID: <20150914215724.GA23081@codeaurora.org>
-References: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v5 1/4] clk: qcom: Add MSM8916 iommu clocks
+Date: Thu, 17 Sep 2015 19:39:26 +0300
+Message-Id: <1442507969-18062-2-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1442507969-18062-1-git-send-email-georgi.djakov@linaro.org>
+References: <1442507969-18062-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/11, Alexandre Belloni wrote:
-> at91_pmc_read is a workaround to allow external drivers to acces some
-> registers of the PMC. There is no need for it in clk-utmi.c as we aready
-> have a pointer to the struct at91_pmc.
-> 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> ---
+Add support for the msm8916 TCU (Translation Control Unit) clocks that
+are needed for IOMMU.
 
-Applied to clk-next
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/clk/qcom/gcc-msm8916.c               |   48 ++++++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8916.h |    3 ++
+ 2 files changed, 51 insertions(+)
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index 83871b663e21..ad9316751eb2 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -2347,6 +2347,51 @@ static struct clk_branch gcc_sdcc2_apps_clk = {
+ 	},
+ };
+ 
++static struct clk_rcg2 bimc_ddr_clk_src = {
++	.cmd_rcgr = 0x32004,
++	.hid_width = 5,
++	.parent_map = gcc_xo_gpll0_bimc_map,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "bimc_ddr_clk_src",
++		.parent_names = gcc_xo_gpll0_bimc,
++		.num_parents = 3,
++		.ops = &clk_rcg2_ops,
++		.flags = CLK_GET_RATE_NOCACHE,
++	},
++};
++
++static struct clk_branch gcc_apss_tcu_clk = {
++	.halt_reg = 0x12018,
++	.clkr = {
++		.enable_reg = 0x4500c,
++		.enable_mask = BIT(1),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_apss_tcu_clk",
++			.parent_names = (const char *[]){
++				"bimc_ddr_clk_src",
++			},
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_gfx_tcu_clk = {
++	.halt_reg = 0x12020,
++	.clkr = {
++		.enable_reg = 0x4500c,
++		.enable_mask = BIT(2),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_gfx_tcu_clk",
++			.parent_names = (const char *[]){
++				"bimc_ddr_clk_src",
++			},
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_gtcu_ahb_clk = {
+ 	.halt_reg = 0x12044,
+ 	.clkr = {
+@@ -2730,6 +2775,9 @@ static struct clk_regmap *gcc_msm8916_clocks[] = {
+ 	[GCC_VENUS0_AHB_CLK] = &gcc_venus0_ahb_clk.clkr,
+ 	[GCC_VENUS0_AXI_CLK] = &gcc_venus0_axi_clk.clkr,
+ 	[GCC_VENUS0_VCODEC0_CLK] = &gcc_venus0_vcodec0_clk.clkr,
++	[BIMC_DDR_CLK_SRC] = &bimc_ddr_clk_src.clkr,
++	[GCC_APSS_TCU_CLK] = &gcc_apss_tcu_clk.clkr,
++	[GCC_GFX_TCU_CLK] = &gcc_gfx_tcu_clk.clkr,
+ };
+ 
+ static struct gdsc *gcc_msm8916_gdscs[] = {
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8916.h b/include/dt-bindings/clock/qcom,gcc-msm8916.h
+index 11566c567356..9169ae656c77 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8916.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8916.h
+@@ -152,6 +152,9 @@
+ #define GCC_VENUS0_AHB_CLK			135
+ #define GCC_VENUS0_AXI_CLK			136
+ #define GCC_VENUS0_VCODEC0_CLK			137
++#define BIMC_DDR_CLK_SRC			138
++#define GCC_APSS_TCU_CLK			139
++#define GCC_GFX_TCU_CLK				140
+ 
+ /* Indexes for GDSCs */
+ #define BIMC_GDSC				0
