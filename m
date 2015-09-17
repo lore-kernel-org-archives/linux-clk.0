@@ -1,48 +1,139 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <mark.rutland@arm.com>
-CC: <wsa@the-dreams.de>, <wim@iguana.be>, <corbet@lwn.net>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<Mingkai.Hu@freescale.com>, <Shaohui.Xie@freescale.com>,
-	<Wenbin.Song@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <leoli@freescale.com>, Hou Zhiqiang
-	<B48286@freescale.com>
-Subject: [PATCH V2 2/6] watchdog: Add support for Freescale Layerscape platforms
-Date: Tue, 22 Sep 2015 20:34:01 +0800
-Message-ID: <1442925245-39246-2-git-send-email-B48286@freescale.com>
-In-Reply-To: <1442925245-39246-1-git-send-email-B48286@freescale.com>
-References: <1442925245-39246-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/9] clk: rockchip: add new clock type and controller for rk3036
+Date: Thu, 17 Sep 2015 11:54:22 +0200
+Message-ID: <3322893.NNLQYMkRea@diego>
+In-Reply-To: <1442478540-15068-5-git-send-email-zhengxing@rock-chips.com>
+References: <1442478540-15068-1-git-send-email-zhengxing@rock-chips.com> <1442478540-15068-5-git-send-email-zhengxing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shaohui Xie <Shaohui.Xie@freescale.com>
+Hi,
 
-Modify watchdog/Kconfig file to support Layerscape platforms.
+Am Donnerstag, 17. September 2015, 16:28:55 schrieb Xing Zheng:
+> The rk3036's pll and clock are different with base on the rk3066(rk3188,
+> rk3288, rk3368 use it), there are different adjust foctors and control
+> registers, so these should be independent and separate from the series
+> of rk3066s.
+> 
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+> ---
+> 
+> Changes in v2: None
+> 
+>  drivers/clk/rockchip/clk-pll.c |  262
+> +++++++++++++++++++++++++++++++++++++++- 1 file changed, 261 insertions(+),
+> 1 deletion(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+> index 7737a1d..25b066a 100644
+> --- a/drivers/clk/rockchip/clk-pll.c
+> +++ b/drivers/clk/rockchip/clk-pll.c
+> @@ -2,6 +2,9 @@
+>   * Copyright (c) 2014 MundoReader S.L.
+>   * Author: Heiko Stuebner <heiko@sntech.de>
+>   *
+> + * Copyright (c) 2015 Rockchip Electronics Co. Ltd.
+> + * Author: Xing Zheng <zhengxing@rock-chips.com>
+> + *
+>   * This program is free software; you can redistribute it and/or modify
+>   * it under the terms of the GNU General Public License as published by
+>   * the Free Software Foundation; either version 2 of the License, or
+> @@ -19,6 +22,7 @@
+>  #include <linux/delay.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/regmap.h>
+> +#include <linux/clk.h>
+>  #include "clk.h"
+> 
+>  #define PLL_MODE_MASK		0x3
+> @@ -306,6 +310,256 @@ static void rockchip_rk3066_pll_init(struct clk_hw
+> *hw) }
+>  }
+> 
+> +/**
+> + * PLL used in RK3036
+> + */
+> +
+> +#define RK3036_PLLCON(i)			(i * 0x4)
+> +#define RK3036_PLLCON0_FBDIV_MASK		0xfff
+> +#define RK3036_PLLCON0_FBDIV_SHIFT		0
+> +#define RK3036_PLLCON0_POSTDIV1_MASK		0x7
+> +#define RK3036_PLLCON0_POSTDIV1_SHIFT		12
+> +#define RK3036_PLLCON1_REFDIV_MASK		0x3f
+> +#define RK3036_PLLCON1_REFDIV_SHIFT		0
+> +#define RK3036_PLLCON1_POSTDIV2_MASK		0x7
+> +#define RK3036_PLLCON1_POSTDIV2_SHIFT		6
+> +#define RK3036_PLLCON1_DSMPD_MASK		0x1
+> +#define RK3036_PLLCON1_DSMPD_SHIFT		12
+> +#define RK3036_PLLCON2_FRAC_MASK		0xffffff
+> +#define RK3036_PLLCON2_FRAC_SHIFT		0
+> +
+> +#define RK3036_PLLCON1_PWRDOWN			(1 << 13)
+> +#define RK3036_PLLCON1_LOCK_STATUS		(1 << 10)
+> +
+> +static int rockchip_rk3036_pll_wait_lock(struct rockchip_clk_pll *pll)
+> +{
+> +	u32 pllcon;
+> +	int delay = 24000000;
+> +
+> +	/* poll check the lock status in rk3036 xPLLCON1 */
+> +	while (delay > 0) {
+> +		pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(1));
+> +		if (pllcon & RK3036_PLLCON1_LOCK_STATUS)
+> +			return 0;
+> +
+> +		delay--;
+> +	}
+> +
+> +	pr_err("%s: timeout waiting for pll to lock\n", __func__);
+> +	return -ETIMEDOUT;
+> +}
 
-Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
-Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
----
- drivers/watchdog/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Just saw that you responded to this in the v1 thread.
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index c68edc1..2862219 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -446,7 +446,7 @@ config MAX63XX_WATCHDOG
- 
- config IMX2_WDT
- 	tristate "IMX2+ Watchdog"
--	depends on ARCH_MXC
-+	depends on ARCH_MXC || ARCH_LAYERSCAPE
- 	select REGMAP_MMIO
- 	select WATCHDOG_CORE
- 	help
--- 
-2.1.0.27.g96db324
+I don't necessarily object to this new lock function ... but if both the 
+PLLCON1 and GRF_SOC_STATUS0 register provide the same information, I'd prefer 
+to use the already existing solution.
+
+[...]
+
+> @@ -363,7 +617,7 @@ struct clk *rockchip_clk_register_pll(enum
+> rockchip_pll_type pll_type, pll_mux->lock = lock;
+>  	pll_mux->hw.init = &init;
+> 
+> -	if (pll_type == pll_rk3066)
+> +	if (pll_type == pll_rk3066 || pll_type == pll_rk3036)
+
+ordering please :-) (3036 before 3066)
+
+>  		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
+> 
+>  	/* the actual muxing is xin24m, pll-output, xin32k */
+> @@ -414,6 +668,12 @@ struct clk *rockchip_clk_register_pll(enum
+> rockchip_pll_type pll_type, else
+>  			init.ops = &rockchip_rk3066_pll_clk_ops;
+>  		break;
+> +	case pll_rk3036:
+> +		if (!pll->rate_table)
+> +			init.ops = &rockchip_rk3036_pll_clk_norate_ops;
+> +		else
+> +			init.ops = &rockchip_rk3036_pll_clk_ops;
+> +		break;
+
+same here, 3036 before 3066 please
+
+
+>  	default:
+>  		pr_warn("%s: Unknown pll type for pll clk %s\n",
+>  			__func__, name);
+
+
+apart from these small issues, this looks great :-)
+
+
+Thanks
+Heiko
