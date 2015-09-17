@@ -1,65 +1,36 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v4 4/4] ARM: dts: add suspend opp to exynos4412
-Date: Mon, 07 Sep 2015 17:41:41 +0200
-Message-id: <1441640501-13613-5-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <vinceh@nvidia.com>
+Message-ID: <55FA1496.7000003@nvidia.com>
+Date: Thu, 17 Sep 2015 09:17:10 +0800
+From: Vince Hsu <vinceh@nvidia.com>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+	<mturquette@baylibre.com>, <swarren@wwwdotorg.org>,
+	<thierry.reding@gmail.com>, <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Vince Hsu
+	<vince.h@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: dfll: add missing rcu_read_unlock() for error
+ path
+References: <1442384094-22144-1-git-send-email-vinceh@nvidia.com> <20150916221531.GN23081@codeaurora.org>
+In-Reply-To: <20150916221531.GN23081@codeaurora.org>
+Return-Path: vinceh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Mark 800MHz OPP as a suspend opp for Exynos4412 based
-boards so effectively cpufreq-dt driver behavior w.r.t.
-suspend frequency matches what the old exynos-cpufreq
-driver has been doing.
 
-This patch fixes suspend/resume support on Exynos4412 based
-Trats2 board and reboot hang on Exynos4412 based Odroid U3
-board.
 
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- arch/arm/boot/dts/exynos4412.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+On 09/17/2015 06:15 AM, Stephen Boyd wrote:
+> On 09/16, Vince Hsu wrote:
+>> From: Vince Hsu <vince.h@nvidia.com>
+>>
+>> The commit e770940218028c6a5927fda45f2ca9db5d9b35e0 ("clk: tegra: dfll:
+>> Properly protect OPP list") added the rcu_read_{lock,unlock} but missed
+>> one in the error path. So add the missing one.
+>>
+>> Signed-off-by: Vince Hsu <vince.h@nvidia.com>
+>> ---
+> I think we'll just squash this into the original patch from
+> Thierry.
+Sure. Thanks!
 
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index ca0e3c1..294cfe4 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -98,6 +98,7 @@
- 			opp-hz = /bits/ 64 <800000000>;
- 			opp-microvolt = <1000000>;
- 			clock-latency-ns = <200000>;
-+			opp-suspend;
- 		};
- 		opp07 {
- 			opp-hz = /bits/ 64 <900000000>;
--- 
-1.9.1
-
+Vince
