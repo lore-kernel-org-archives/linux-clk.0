@@ -1,70 +1,89 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Mon, 14 Sep 2015 16:31:52 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: at91: utmi: use pmc_read when the at91_pmc is
- available
-Message-ID: <20150914163152.30cd3d9c@bbrezillon>
-In-Reply-To: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <yingjoe.chen@mediatek.com>
+Message-ID: <1442501816.4784.3.camel@mtksdaap41>
+Subject: Re: [PATCH 2/2] arm64: dts: mt8173: add timer node
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	James Liao <jamesjj.liao@mediatek.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "Catalin
+ Marinas" <Catalin.Marinas@arm.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	Sascha Hauer <kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>,
+	"srv_heupstream@mediatek.com" <srv_heupstream@mediatek.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Eddie Huang
+	<eddie.huang@mediatek.com>
+Date: Thu, 17 Sep 2015 22:56:56 +0800
+In-Reply-To: <55FAC570.8040307@arm.com>
+References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
+	 <1442369095-1094-2-git-send-email-yingjoe.chen@mediatek.com>
+	 <55FAC570.8040307@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: yingjoe.chen@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Alexandre,
-
-On Fri, 11 Sep 2015 16:34:06 +0200
-Alexandre Belloni <alexandre.belloni@free-electrons.com> wrote:
-
-> at91_pmc_read is a workaround to allow external drivers to acces some
-> registers of the PMC. There is no need for it in clk-utmi.c as we aready
-> have a pointer to the struct at91_pmc.
-
-Indeed.
-
+On Thu, 2015-09-17 at 14:51 +0100, Sudeep Holla wrote:
 > 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
-Thanks,
-
-Boris
-
-> ---
->  drivers/clk/at91/clk-utmi.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> On 16/09/15 03:04, Yingjoe Chen wrote:
+> > From: Daniel Kurtz <djkurtz@chromium.org>
+> >
+> > Add device node to enable GPT timer. This timer will be
+> > used as sched clock source.
+> >
 > 
-> diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
-> index 30dd697b1668..ca561e90a60f 100644
-> --- a/drivers/clk/at91/clk-utmi.c
-> +++ b/drivers/clk/at91/clk-utmi.c
-> @@ -47,7 +47,7 @@ static int clk_utmi_prepare(struct clk_hw *hw)
->  {
->  	struct clk_utmi *utmi = to_clk_utmi(hw);
->  	struct at91_pmc *pmc = utmi->pmc;
-> -	u32 tmp = at91_pmc_read(AT91_CKGR_UCKR) | AT91_PMC_UPLLEN |
-> +	u32 tmp = pmc_read(pmc, AT91_CKGR_UCKR) | AT91_PMC_UPLLEN |
->  		  AT91_PMC_UPLLCOUNT | AT91_PMC_BIASEN;
->  
->  	pmc_write(pmc, AT91_CKGR_UCKR, tmp);
-> @@ -73,7 +73,7 @@ static void clk_utmi_unprepare(struct clk_hw *hw)
->  {
->  	struct clk_utmi *utmi = to_clk_utmi(hw);
->  	struct at91_pmc *pmc = utmi->pmc;
-> -	u32 tmp = at91_pmc_read(AT91_CKGR_UCKR) & ~AT91_PMC_UPLLEN;
-> +	u32 tmp = pmc_read(pmc, AT91_CKGR_UCKR) & ~AT91_PMC_UPLLEN;
->  
->  	pmc_write(pmc, AT91_CKGR_UCKR, tmp);
->  }
+> Interesting any known issues with or advantage over the arch timers
+> to prefer it as sched clock source. I see even arch timers are present
+> in DT, hence the question. Or is it just a incorrect commit log ?
+> 
+> How does this get selected as sched clock source ? I don't see
+> sched_clock_register in mtk_timer.c
+> 
+> To be clear, I am not against adding this timer support, but just want
+> to know is it preferred for sched clock source ? if yes why ? better
+> resolution ?
+
+Hi Sudeep,
+
+Thanks for your review.
+
+I hit the send too soon and missed cover letter, please see:
+http://lists.infradead.org/pipermail/linux-mediatek/2015-September/002303.html
+
+The main reason to use GPT as sched clock is it won't stop during idle.
 
 
+> > Change-Id: Idc4e3f0ee80b5c36cae6f0f2328f94aafcca1253
+> 
+> ^ Should be dropped
+> 
+> > Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+> > Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
+> > Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> > ---
+> >   arch/arm64/boot/dts/mediatek/mt8173.dtsi | 9 +++++++++
+> >   1 file changed, 9 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> > index d18ee42..d763803 100644
+> > --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> > +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> > @@ -238,6 +238,15 @@
+> >   			reg = <0 0x10007000 0 0x100>;
+> >   		};
+> >
+> > +		timer: timer@10008000 {
+> > +			compatible = "mediatek,mt8173-timer",
+> 
+> Missing documentation ? I am referring upstream and it might be in some 
+> patches already queued perhaps ?
 
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+This is documented in
+Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt.
+Do you mean I should add "mediatek,mt8173-timer" to that file?
+
+Joe.C
