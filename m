@@ -1,112 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH 2/2] arm64: dts: mt8173: add timer node
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>
+References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
+ <1442369095-1094-2-git-send-email-yingjoe.chen@mediatek.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v5 1/4] PM / OPP: add dev_pm_opp_get_suspend_opp() helper
-Date: Tue, 08 Sep 2015 18:41:01 +0200
-Message-id: <1441730464-7947-2-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
+	James Liao <jamesjj.liao@mediatek.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <Catalin.Marinas@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	"linux-mediatek@lists.infradead.org"
+	<linux-mediatek@lists.infradead.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Olof Johansson <olof@lixom.net>,
+	"srv_heupstream@mediatek.com" <srv_heupstream@mediatek.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Eddie Huang <eddie.huang@mediatek.com>
+Message-ID: <55FAC570.8040307@arm.com>
+Date: Thu, 17 Sep 2015 14:51:44 +0100
+MIME-Version: 1.0
+In-Reply-To: <1442369095-1094-2-git-send-email-yingjoe.chen@mediatek.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add dev_pm_opp_get_suspend_opp() helper to obtain suspend opp.
 
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/base/power/opp.c | 30 ++++++++++++++++++++++++++++++
- include/linux/pm_opp.h   |  6 ++++++
- 2 files changed, 36 insertions(+)
 
-diff --git a/drivers/base/power/opp.c b/drivers/base/power/opp.c
-index eb25449..3d948ea 100644
---- a/drivers/base/power/opp.c
-+++ b/drivers/base/power/opp.c
-@@ -341,6 +341,36 @@ unsigned long dev_pm_opp_get_max_clock_latency(struct device *dev)
- EXPORT_SYMBOL_GPL(dev_pm_opp_get_max_clock_latency);
- 
- /**
-+ * dev_pm_opp_get_suspend_opp() - Get suspend opp
-+ * @dev:	device for which we do this operation
-+ *
-+ * Return: This function returns pointer to the suspend opp if it is
-+ * defined, otherwise it returns NULL.
-+ *
-+ * Locking: This function must be called under rcu_read_lock(). opp is a rcu
-+ * protected pointer. The reason for the same is that the opp pointer which is
-+ * returned will remain valid for use with opp_get_{voltage, freq} only while
-+ * under the locked area. The pointer returned must be used prior to unlocking
-+ * with rcu_read_unlock() to maintain the integrity of the pointer.
-+ */
-+struct dev_pm_opp *dev_pm_opp_get_suspend_opp(struct device *dev)
-+{
-+	struct device_opp *dev_opp;
-+	struct dev_pm_opp *opp;
-+
-+	opp_rcu_lockdep_assert();
-+
-+	dev_opp = _find_device_opp(dev);
-+	if (IS_ERR(dev_opp))
-+		opp = NULL;
-+	else
-+		opp = dev_opp->suspend_opp;
-+
-+	return opp;
-+}
-+EXPORT_SYMBOL_GPL(dev_pm_opp_get_suspend_opp);
-+
-+/**
-  * dev_pm_opp_get_opp_count() - Get number of opps available in the opp list
-  * @dev:	device for which we do this operation
-  *
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index cab7ba5..e817722 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -34,6 +34,7 @@ bool dev_pm_opp_is_turbo(struct dev_pm_opp *opp);
- 
- int dev_pm_opp_get_opp_count(struct device *dev);
- unsigned long dev_pm_opp_get_max_clock_latency(struct device *dev);
-+struct dev_pm_opp *dev_pm_opp_get_suspend_opp(struct device *dev);
- 
- struct dev_pm_opp *dev_pm_opp_find_freq_exact(struct device *dev,
- 					      unsigned long freq,
-@@ -80,6 +81,11 @@ static inline unsigned long dev_pm_opp_get_max_clock_latency(struct device *dev)
- 	return 0;
- }
- 
-+static inline struct dev_pm_opp *dev_pm_opp_get_suspend_opp(struct device *dev)
-+{
-+	return NULL;
-+}
-+
- static inline struct dev_pm_opp *dev_pm_opp_find_freq_exact(struct device *dev,
- 					unsigned long freq, bool available)
- {
--- 
-1.9.1
+On 16/09/15 03:04, Yingjoe Chen wrote:
+> From: Daniel Kurtz <djkurtz@chromium.org>
+>
+> Add device node to enable GPT timer. This timer will be
+> used as sched clock source.
+>
 
+Interesting any known issues with or advantage over the arch timers
+to prefer it as sched clock source. I see even arch timers are present
+in DT, hence the question. Or is it just a incorrect commit log ?
+
+How does this get selected as sched clock source ? I don't see
+sched_clock_register in mtk_timer.c
+
+To be clear, I am not against adding this timer support, but just want
+to know is it preferred for sched clock source ? if yes why ? better
+resolution ?
+
+> Change-Id: Idc4e3f0ee80b5c36cae6f0f2328f94aafcca1253
+
+^ Should be dropped
+
+> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+> Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
+> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> ---
+>   arch/arm64/boot/dts/mediatek/mt8173.dtsi | 9 +++++++++
+>   1 file changed, 9 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> index d18ee42..d763803 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> @@ -238,6 +238,15 @@
+>   			reg = <0 0x10007000 0 0x100>;
+>   		};
+>
+> +		timer: timer@10008000 {
+> +			compatible = "mediatek,mt8173-timer",
+
+Missing documentation ? I am referring upstream and it might be in some 
+patches already queued perhaps ?
+
+Regards,
+Sudeep
