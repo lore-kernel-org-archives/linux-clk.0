@@ -1,51 +1,78 @@
-Return-Path: <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2] cpufreq-dt: add suspend frequency support
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-References: <1441212476-21316-1-git-send-email-b.zolnierkie@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski
- <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
- Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <55E739F5.8060000@codeaurora.org>
-Date: Wed, 2 Sep 2015 11:03:33 -0700
+Return-Path: <horms@verge.net.au>
+Date: Thu, 17 Sep 2015 17:45:18 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 15/16] clk: shmobile: mstp: Consider "zb_clk" suitable
+ for power management
+Message-ID: <20150917084446.GA8197@verge.net.au>
+References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
+ <1438691297-29235-16-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <1441212476-21316-1-git-send-email-b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1438691297-29235-16-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/02/2015 09:47 AM, Bartlomiej Zolnierkiewicz wrote:
-> Add suspend frequency support and set it to the boot frequency,
-> this matches what the old exynos-cpufreq driver has been doing.
->
-> This patch fixes suspend/resume support on Exynos4412 based
-> Trats2 board and reboot hang on Exynos4412 based Odroid U3
-> board.
->
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Hi Mike, Hi Stephen,
+
+On Tue, Aug 04, 2015 at 02:28:16PM +0200, Geert Uytterhoeven wrote:
+> Currently the CPG/MSTP Clock Domain code looks for MSTP clocks to power
+> manage a device.
+> 
+> Unfortunately, on R-Mobile APE6 (r8a73a4) and SH-Mobile AG5 (sh73a0),
+> the Bus State Controller (BSC) is not power-managed by an MSTP clock,
+> but by a plain CPG clock (zb_clk).  Add a special case to handle this,
+> so the clock is properly managed, and devices connected to the BSC work
+> as expected.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+for one reason or another I seem to have this patch queued up in
+my renesas tree for v4.4, without any Acks.
+
+I think it would be best if one of you took the patch instead.
+Though I'm also happy to take it with Acks.
+
+Let me know how you would like to proceed.
+
 > ---
-> This patch supersedes "[PATCH] ARM: dts: exynos4412-odroid-*: add
-> workaround for CPUfreq/reboot issue" one from yesterday.
-
-What do we do about cpufreq-dt users that don't want to change frequency
-during suspend?
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> v4:
+>   - Add Reviewed-by,
+> 
+> v3:
+>   - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
+> 
+> v2:
+>   - New.
+> ---
+>  drivers/clk/shmobile/clk-mstp.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/clk/shmobile/clk-mstp.c b/drivers/clk/shmobile/clk-mstp.c
+> index b1df7b2f1e970adb..a117c3f0f257b5e1 100644
+> --- a/drivers/clk/shmobile/clk-mstp.c
+> +++ b/drivers/clk/shmobile/clk-mstp.c
+> @@ -259,6 +259,10 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *domain, struct device *dev)
+>  					    "renesas,cpg-mstp-clocks"))
+>  			goto found;
+>  
+> +		/* BSC on r8a73a4/sh73a0 uses zb_clk instead of an mstp clock*/
+> +		if (!strcmp(clkspec.np->name, "zb_clk"))
+> +			goto found;
+> +
+>  		of_node_put(clkspec.np);
+>  		i++;
+>  	}
+> -- 
+> 1.9.1
+> 
