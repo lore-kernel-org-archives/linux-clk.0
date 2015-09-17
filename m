@@ -1,63 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:24640 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932944AbbIVPye (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 22 Sep 2015 11:54:34 -0400
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	heikki.krogerus@linux.intel.com, linux-clk@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v6 0/5] clk: fractional-divider: do a clean up and update
-Date: Tue, 22 Sep 2015 18:54:07 +0300
-Message-Id: <1442937252-50281-1-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <antoine.tenart@free-electrons.com>
+From: Antoine Tenart <antoine.tenart@free-electrons.com>
+To: sebastian.hesselbarth@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Antoine Tenart <antoine.tenart@free-electrons.com>,
+	zmxu@marvell.com,
+	jszhang@marvell.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 2/6] clk: berlin: add cpuclk
+Date: Thu, 17 Sep 2015 12:15:01 +0200
+Message-Id: <1442484905-15656-3-git-send-email-antoine.tenart@free-electrons.com>
+In-Reply-To: <1442484905-15656-1-git-send-email-antoine.tenart@free-electrons.com>
+References: <1442484905-15656-1-git-send-email-antoine.tenart@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The series provides a clean up for clk-fractional-divider together with moving
-it to use rational best approximation algorithm. I think the patches are
-self-explanatory.
+Add cpuclk in the Berlin BG2Q clock driver. This clk has a divider
+fixed to 1.
 
-The series was tested with 8250_dw UART driver on Intel Braswell.
+Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/berlin/bg2q.c            | 12 ++++++------
+ include/dt-bindings/clock/berlin2q.h |  3 ++-
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
-Patch 5 is an amendment to existing user of the fractional divider outside of
-clock framework.
-
-Changelog v6:
- - rebase on top of latest clk-next branch
- - add ACKs from Heikki
-
-Changelog v5:
- - drop patch 1 (there is another fix already in upstream)
- - add tags (Ack, Review)
-
-Changelog v4:
- - remove dependency to clk_div_mask() and use GENMASK() instead
- - apply changes to rockchip
- - amend 8250_dw driver to use proposed changes
-
-Changelog v3:
- - add patch 2/3 to simplify further usage
- - don't use mult_frac() due to potential overflow on 32 bit kernels
- - guarantee in ->round_rate() that m and n will not overflow
-
-Changelog v2:
- - move to rational_best_approximation() and mult_frac()
- - add patch 2/2
-
-Andy Shevchenko (5):
-  clk: fractional-divider: rename prate -> parent_rate
-  clk: fractional-divider: keep mwidth and nwidth internally
-  clk: rockchip: save width in struct clk_fractional_divider
-  clk: fractional-divider: switch to rational best approximation
-  serial: 8250_dw: allow lower reference frequencies
-
- drivers/clk/Kconfig                  |  1 +
- drivers/clk/clk-fractional-divider.c | 53 ++++++++++++++++++++++--------------
- drivers/clk/rockchip/clk.c           |  6 ++--
- drivers/tty/serial/8250/8250_dw.c    |  4 ---
- include/linux/clk-provider.h         |  3 +-
- 5 files changed, 40 insertions(+), 27 deletions(-)
-
+diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
+index a27958efab92..c2f48f3773e8 100644
+--- a/drivers/clk/berlin/bg2q.c
++++ b/drivers/clk/berlin/bg2q.c
+@@ -355,13 +355,13 @@ static void __init berlin2q_clock_setup(struct device_node *np)
+ 			    gd->bit_idx, 0, &lock);
+ 	}
+ 
+-	/*
+-	 * twdclk is derived from cpu/3
+-	 * TODO: use cpupll until cpuclk is not available
+-	 */
++	/* cpuclk divider is fixed to 1 */
++	clks[CLKID_CPU] =
++		clk_register_fixed_factor(NULL, "cpu", clk_names[CPUPLL],
++					  0, 1, 1);
++	/* twdclk is derived from cpu/3 */
+ 	clks[CLKID_TWD] =
+-		clk_register_fixed_factor(NULL, "twd", clk_names[CPUPLL],
+-					  0, 1, 3);
++		clk_register_fixed_factor(NULL, "twd", "cpu", 0, 1, 3);
+ 
+ 	/* check for errors on leaf clocks */
+ 	for (n = 0; n < MAX_CLKS; n++) {
+diff --git a/include/dt-bindings/clock/berlin2q.h b/include/dt-bindings/clock/berlin2q.h
+index c79af928ae92..771d8739f67a 100644
+--- a/include/dt-bindings/clock/berlin2q.h
++++ b/include/dt-bindings/clock/berlin2q.h
+@@ -29,5 +29,6 @@
+ #define CLKID_SMEMC		24
+ #define CLKID_PCIE		25
+ #define CLKID_TWD		26
++#define CLKID_CPU		27
+ 
+-#define MAX_CLKS		27
++#define MAX_CLKS		28
 -- 
-2.5.1
-
+2.5.2
