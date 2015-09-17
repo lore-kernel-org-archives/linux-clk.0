@@ -1,61 +1,64 @@
-Return-Path: <scottwood@freescale.com>
-From: Scott Wood <scottwood@freescale.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar
-	<viresh.kumar@linaro.org>, Russell King <linux@arm.linux.org.uk>
-CC: <linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-arm-kernel@lists.infradead.org>,
-	"Tang Yuantian" <Yuantian.Tang@freescale.com>, Scott Wood
-	<scottwood@freescale.com>
-Subject: [PATCH v3 0/5] clk: qoriq: Move chip-specific knowledge into driver
-Date: Sat, 19 Sep 2015 23:29:52 -0500
-Message-ID: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 17 Sep 2015 15:24:54 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 15/16] clk: shmobile: mstp: Consider "zb_clk" suitable
+ for power management
+Message-ID: <20150917222454.GW23081@codeaurora.org>
+References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
+ <1438691297-29235-16-git-send-email-geert+renesas@glider.be>
+ <20150917084446.GA8197@verge.net.au>
+ <20150917085314.GA29509@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: scottwood@freescale.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20150917085314.GA29509@verge.net.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-The existing device tree bindings are error-prone and inflexible. 
-Correct the mistake by moving the knowledge into the driver, which has
-more flexibility in describing the quirks of each chip.  This leaves the
-device tree to its proper role of identifying a programming interface
-rather than describing its individual registers.
+On 09/17, Simon Horman wrote:
+> On Thu, Sep 17, 2015 at 05:45:18PM +0900, Simon Horman wrote:
+> > Hi Mike, Hi Stephen,
+> > 
+> > On Tue, Aug 04, 2015 at 02:28:16PM +0200, Geert Uytterhoeven wrote:
+> > > Currently the CPG/MSTP Clock Domain code looks for MSTP clocks to power
+> > > manage a device.
+> > > 
+> > > Unfortunately, on R-Mobile APE6 (r8a73a4) and SH-Mobile AG5 (sh73a0),
+> > > the Bus State Controller (BSC) is not power-managed by an MSTP clock,
+> > > but by a plain CPG clock (zb_clk).  Add a special case to handle this,
+> > > so the clock is properly managed, and devices connected to the BSC work
+> > > as expected.
+> > > 
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > 
+> > for one reason or another I seem to have this patch queued up in
+> > my renesas tree for v4.4, without any Acks.
+> > 
+> > I think it would be best if one of you took the patch instead.
+> > Though I'm also happy to take it with Acks.
+> > 
+> > Let me know how you would like to proceed.
+> 
+> Sorry to revise the above, I should have checked more closely
+> before I sent my previous email. I now see that I have an SoC patch
+> that depends on this one. So if possible I'd like to take this one
+> through my tree with an Ack or two.
+> 
 
-For more detail, see the commit message of patch 2.
+Sure.
 
-As there are both ARM and PPC patches that depend on this patchset, I'm
-requesting ACKs from clk and cpufreq in order to put this into a topic
-branch that both ARM and PPC can pull.
-
-Scott Wood (5):
-  powerpc/fsl: Move fsl_guts.h out of arch/powerpc
-  clk: qoriq: Move chip-specific knowledge into driver
-  clk: qoriq: Add ls2080a support.
-  clk: Add consumer APIs for discovering possible parent clocks
-  cpufreq: qoriq: Don't look at clock implementation details
-
- .../devicetree/bindings/clock/qoriq-clock.txt      |   61 +-
- arch/powerpc/include/asm/fsl_guts.h                |  192 ---
- arch/powerpc/platforms/85xx/mpc85xx_mds.c          |    2 +-
- arch/powerpc/platforms/85xx/mpc85xx_rdb.c          |    2 +-
- arch/powerpc/platforms/85xx/p1022_ds.c             |    2 +-
- arch/powerpc/platforms/85xx/p1022_rdk.c            |    2 +-
- arch/powerpc/platforms/85xx/smp.c                  |    2 +-
- arch/powerpc/platforms/85xx/twr_p102x.c            |    2 +-
- arch/powerpc/platforms/86xx/mpc8610_hpcd.c         |    2 +-
- drivers/clk/Kconfig                                |    2 +-
- drivers/clk/clk-qoriq.c                            | 1316 ++++++++++++++++----
- drivers/clk/clk.c                                  |   19 +
- drivers/cpufreq/qoriq-cpufreq.c                    |  137 +-
- drivers/iommu/fsl_pamu.c                           |    2 +-
- include/linux/clk.h                                |   31 +
- include/linux/fsl/guts.h                           |  192 +++
- sound/soc/fsl/mpc8610_hpcd.c                       |    2 +-
- sound/soc/fsl/p1022_ds.c                           |    2 +-
- sound/soc/fsl/p1022_rdk.c                          |    2 +-
- 19 files changed, 1441 insertions(+), 531 deletions(-)
- delete mode 100644 arch/powerpc/include/asm/fsl_guts.h
- create mode 100644 include/linux/fsl/guts.h
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
