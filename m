@@ -1,52 +1,45 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel@pengutronix.de,
-	patchwork-lst@pengutronix.de
-Subject: [PATCH v2 5/8] clk: imx35: retain early UART clocks during kernel init
-Date: Fri,  4 Sep 2015 18:00:16 +0200
-Message-Id: <1441382419-4343-6-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
-References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 17 Sep 2015 11:51:51 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@stlinux.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] drivers: clk: st: Rename st_pll3200c32_407_c0_x into
+ st_pll3200c32_cx_x
+Message-ID: <20150917185151.GT23081@codeaurora.org>
+References: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1442389379-9298-3-git-send-email-gabriel.fernandez@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1442389379-9298-3-git-send-email-gabriel.fernandez@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure to keep UART clocks enabled during kernel init if
-earlyprintk or earlycon are active.
+On 09/16, Gabriel Fernandez wrote:
+> Use a generic name for this kind of PLL
+> 
+> Correction in dts files are already done here:
+> commit 5eb26c605909 ("ARM: STi: DT: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x")
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> ---
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- drivers/clk/imx/clk-imx35.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Applied to clk-fixes
 
-diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
-index 69138ba3dec7..d337819f89c8 100644
---- a/drivers/clk/imx/clk-imx35.c
-+++ b/drivers/clk/imx/clk-imx35.c
-@@ -84,6 +84,12 @@ enum mx35_clks {
- 
- static struct clk *clk[clk_max];
- 
-+static struct clk **uart_clks[] __initdata = { &clk[ipg],
-+					       &clk[uart1_gate],
-+					       &clk[uart2_gate],
-+					       &clk[uart3_gate],
-+					       NULL };
-+
- int __init mx35_clocks_init(void)
- {
- 	void __iomem *base;
-@@ -292,6 +298,8 @@ int __init mx35_clocks_init(void)
- 	 */
- 	clk_prepare_enable(clk[scc_gate]);
- 
-+	imx_register_uart_clocks(uart_clks);
-+
- 	imx_print_silicon_rev("i.MX35", mx35_revision());
- 
- 	mxc_timer_init(MX35_GPT1_BASE_ADDR, MX35_INT_GPT, GPT_TYPE_IMX31);
 -- 
-2.5.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
