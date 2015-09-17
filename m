@@ -1,61 +1,88 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
- <will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
- <linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-clk@vger.kernel.org>
-Subject: [PATCH 2/6] watchdog: Add support for Freescale Layerscape platforms
-Date: Mon, 21 Sep 2015 20:22:34 +0800
-Message-ID: <1442838158-2964-3-git-send-email-B48286@freescale.com>
-In-Reply-To: <1442838158-2964-1-git-send-email-B48286@freescale.com>
-References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 17 Sep 2015 17:53:14 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 15/16] clk: shmobile: mstp: Consider "zb_clk" suitable
+ for power management
+Message-ID: <20150917085314.GA29509@verge.net.au>
+References: <1438691297-29235-1-git-send-email-geert+renesas@glider.be>
+ <1438691297-29235-16-git-send-email-geert+renesas@glider.be>
+ <20150917084446.GA8197@verge.net.au>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Hou Zhiqiang <B48286@freescale.com>, Shaohui.Xie@freescale.com,
- corbet@lwn.net, bhupesh.sharma@freescale.com, mturquette@baylibre.com,
- wsa@the-dreams.de, sboyd@codeaurora.org, wim@iguana.be,
- Wenbin.Song@freescale.com, scottwood@freescale.com, Mingkai.Hu@freescale.com,
- leoli@freescale.com
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20150917084446.GA8197@verge.net.au>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shaohui Xie <Shaohui.Xie@freescale.com>
+On Thu, Sep 17, 2015 at 05:45:18PM +0900, Simon Horman wrote:
+> Hi Mike, Hi Stephen,
+> 
+> On Tue, Aug 04, 2015 at 02:28:16PM +0200, Geert Uytterhoeven wrote:
+> > Currently the CPG/MSTP Clock Domain code looks for MSTP clocks to power
+> > manage a device.
+> > 
+> > Unfortunately, on R-Mobile APE6 (r8a73a4) and SH-Mobile AG5 (sh73a0),
+> > the Bus State Controller (BSC) is not power-managed by an MSTP clock,
+> > but by a plain CPG clock (zb_clk).  Add a special case to handle this,
+> > so the clock is properly managed, and devices connected to the BSC work
+> > as expected.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> 
+> for one reason or another I seem to have this patch queued up in
+> my renesas tree for v4.4, without any Acks.
+> 
+> I think it would be best if one of you took the patch instead.
+> Though I'm also happy to take it with Acks.
+> 
+> Let me know how you would like to proceed.
 
-Modify watchdog/Kconfig file to support Layerscape platforms.
+Sorry to revise the above, I should have checked more closely
+before I sent my previous email. I now see that I have an SoC patch
+that depends on this one. So if possible I'd like to take this one
+through my tree with an Ack or two.
 
-Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
-Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
----
- drivers/watchdog/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks in advance!
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index c68edc1..2862219 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -446,7 +446,7 @@ config MAX63XX_WATCHDOG
- 
- config IMX2_WDT
- 	tristate "IMX2+ Watchdog"
--	depends on ARCH_MXC
-+	depends on ARCH_MXC || ARCH_LAYERSCAPE
- 	select REGMAP_MMIO
- 	select WATCHDOG_CORE
- 	help
--- 
-2.1.0.27.g96db324
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> > ---
+> > v4:
+> >   - Add Reviewed-by,
+> > 
+> > v3:
+> >   - Use "CPG/MSTP Clock Domain" instead of "CPG Clock Domain",
+> > 
+> > v2:
+> >   - New.
+> > ---
+> >  drivers/clk/shmobile/clk-mstp.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/clk/shmobile/clk-mstp.c b/drivers/clk/shmobile/clk-mstp.c
+> > index b1df7b2f1e970adb..a117c3f0f257b5e1 100644
+> > --- a/drivers/clk/shmobile/clk-mstp.c
+> > +++ b/drivers/clk/shmobile/clk-mstp.c
+> > @@ -259,6 +259,10 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *domain, struct device *dev)
+> >  					    "renesas,cpg-mstp-clocks"))
+> >  			goto found;
+> >  
+> > +		/* BSC on r8a73a4/sh73a0 uses zb_clk instead of an mstp clock*/
+> > +		if (!strcmp(clkspec.np->name, "zb_clk"))
+> > +			goto found;
+> > +
+> >  		of_node_put(clkspec.np);
+> >  		i++;
+> >  	}
+> > -- 
+> > 1.9.1
+> > 
