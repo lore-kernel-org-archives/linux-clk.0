@@ -1,42 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 4 Sep 2015 22:41:47 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Bintian Wang <bintian.wang@huawei.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Wei Xu <xuwei5@hisilicon.com>
-Subject: Re: [PATCH] clk: Hi6220: separately build stub clock driver
-Message-ID: <20150904144147.GA3890@leoy-linaro>
-References: <1441162667-25532-1-git-send-email-leo.yan@linaro.org>
- <7h7fo7pk5c.fsf@deeprootsystems.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <7h7fo7pk5c.fsf@deeprootsystems.com>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v5 0/4] Add support for more MSM8916 clocks
+Date: Thu, 17 Sep 2015 19:39:25 +0300
+Message-Id: <1442507969-18062-1-git-send-email-georgi.djakov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 03, 2015 at 09:01:03AM -0700, Kevin Hilman wrote:
-> Leo Yan <leo.yan@linaro.org> writes:
-> 
-> > The previous code, kernel builds Hi6220's common clock driver and stub
-> > clock driver together. Stub clock driver has introduced the dependency
-> > with CONFIG_MAILBOX, so kernel will not build Hi6220's common clock
-> > driver due ARM64's defconfig have not enabled CONFIG_MAILBOX by default.
-> >
-> > So separately build stub clock driver and common clock driver for
-> > Hi6220; and only let stub clock driver has the dependency with
-> > CONFIG_MAILBOX.
-> >
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> 
-> Tested-by: Kevin Hilman <khilman@linaro.org>
-> 
-> I verifed that this patch on top of next-20150902  fixes the hikey boot
-> failure I was seeing.
+This patchset adds support for iommu, gpu and audio clocks on
+the MSM8916 platforms.
 
-Thanks, Kevin and Stephen :)
+Changes since v4 (https://lkml.org/lkml/2015/9/16/391)
+* Implement recalc_rate() operation to initially assign the
+  current frequency value.
+
+Changes since v3 (https://lkml.org/lkml/2015/8/13/393)
+* Use recalc_rate() to find current frequency when enabling
+  a shared branch clock and there is no cached frequency yet.
+
+Changes since v2 (https://lkml.org/lkml/2015/6/5/324)
+* Dropped patch for read-only RCGs as it is not needed.
+* Updated RCGs with shared branches patch and addressed various issues
+  pointed by Stephen.
+* Rebased on clk-next.
+
+Changes since v1
+* Added a set of ops for read-only RCGs and RCGs with shared branches.
+
+Georgi Djakov (4):
+  clk: qcom: Add MSM8916 iommu clocks
+  clk: qcom: Add support for RCGs with shared branches
+  clk: qcom: Add MSM8916 gpu clocks
+  clk: qcom: Add MSM8916 audio clocks
+
+ drivers/clk/qcom/clk-rcg.h                   |    4 +-
+ drivers/clk/qcom/clk-rcg2.c                  |   91 +++++
+ drivers/clk/qcom/gcc-msm8916.c               |  497 ++++++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8916.h |   22 ++
+ 4 files changed, 613 insertions(+), 1 deletion(-)
+
