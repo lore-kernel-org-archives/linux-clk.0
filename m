@@ -1,55 +1,104 @@
-Return-Path: <tony@atomide.com>
-Date: Wed, 23 Sep 2015 08:38:12 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org, Brian Hutchinson <b.hutchman@gmail.com>,
-	Felipe Balbi <balbi@ti.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	Nishanth Menon <nm@ti.com>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Thomas Gleixner <tglx@linutronix.de>, Sekhar Nori <nsekhar@ti.com>
-Subject: Re: [PATCH] clk: ti: Fix FAPLL udelay in clk_enable with clk_prepare
-Message-ID: <20150923153812.GF23801@atomide.com>
-References: <1442956985-32642-1-git-send-email-tony@atomide.com>
- <560242EB.5070001@ti.com>
+Return-Path: <sudeep.holla@arm.com>
+Subject: Re: [PATCH 2/2] arm64: dts: mt8173: add timer node
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>
+References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
+ <1442369095-1094-2-git-send-email-yingjoe.chen@mediatek.com>
+ <55FAC570.8040307@arm.com> <1442501816.4784.3.camel@mtksdaap41>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ James Liao <jamesjj.liao@mediatek.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <Catalin.Marinas@arm.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ Sascha Hauer <kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>,
+ "srv_heupstream@mediatek.com" <srv_heupstream@mediatek.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Eddie Huang <eddie.huang@mediatek.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <55FAE69C.2000906@arm.com>
+Date: Thu, 17 Sep 2015 17:13:16 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <560242EB.5070001@ti.com>
+In-Reply-To: <1442501816.4784.3.camel@mtksdaap41>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-* Peter Ujfalusi <peter.ujfalusi@ti.com> [150922 23:17]:
-> Tony,
-> 
-> On 09/23/2015 12:23 AM, Tony Lindgren wrote:
-> > As recently pointed out (again) by Thomas and Russell, we must not
-> > wait in in clk_enable. The wait for PLL to lock needs to happen
-> > in clk_prepare instead.
-> > 
-> > It seems this is a common copy paste error with the PLL drivers,
-> > and similar fixes should be applied to other PLL drivers after
-> > testing.
-> 
-> One thing to note:
-> because of how the hwmod code works, at boot time we prepare all clocks for
-> the devices and in runtime the hwmod only uses clk_enable/disable, it will
-> never unprepare the clock(s). This will means that these clocks will be
-> enabled all the time and will never turned off.
 
-Good point, we need to check that for hwmod pm_runtime related
-functions. Basically the PLLs we can't disable until in
-pm_runtime_disable.
 
-I think the approach we need to take to be that clk_enable/disable
-is really optional clk_gate_enable/disable. And in many cases PLLs
-don't have a gate, so it's correct for pm_runtime enable/disable
-to not do anything for the PLLs.
+On 17/09/15 15:56, Yingjoe Chen wrote:
+> On Thu, 2015-09-17 at 14:51 +0100, Sudeep Holla wrote:
+>>
+>> On 16/09/15 03:04, Yingjoe Chen wrote:
+>>> From: Daniel Kurtz <djkurtz@chromium.org>
+>>>
+>>> Add device node to enable GPT timer. This timer will be
+>>> used as sched clock source.
+>>>
+>>
+>> Interesting any known issues with or advantage over the arch timers
+>> to prefer it as sched clock source. I see even arch timers are present
+>> in DT, hence the question. Or is it just a incorrect commit log ?
+>>
+>> How does this get selected as sched clock source ? I don't see
+>> sched_clock_register in mtk_timer.c
+>>
+>> To be clear, I am not against adding this timer support, but just want
+>> to know is it preferred for sched clock source ? if yes why ? better
+>> resolution ?
+>
+> Hi Sudeep,
+>
+> Thanks for your review.
+>
+> I hit the send too soon and missed cover letter, please see:
+> http://lists.infradead.org/pipermail/linux-mediatek/2015-September/002303.html
+>
 
-And the reason we don't want to change pm_runtime hooks to use
-clk_prepare_enable/disable is that then drivers can't use
-pm_runtime_irq_safe like some do currently.
+OK
+
+> The main reason to use GPT as sched clock is it won't stop during idle.
+>
+>
+
+I think your are confusing the system counter with arch timers. System
+counter is always-on, but the arch timers(logic implementing timers
+comparators) might not be off when the processor is powered down.
+
+I think you need this timer and are using it for low power idle states
+in which case you will use this as a clock event and not clock source.
+It will be used as a hardware broadcast event source.
+
+There's no call to sched_clock_register in mtk_timer.c, so it can't be
+the sched clock, so you need to fix the commit log.
+
+[...]
+
+>>> diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+>>> index d18ee42..d763803 100644
+>>> --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+>>> +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+>>> @@ -238,6 +238,15 @@
+>>>    			reg = <0 0x10007000 0 0x100>;
+>>>    		};
+>>>
+>>> +		timer: timer@10008000 {
+>>> +			compatible = "mediatek,mt8173-timer",
+>>
+>> Missing documentation ? I am referring upstream and it might be in some
+>> patches already queued perhaps ?
+>
+> This is documented in
+> Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt.
+> Do you mean I should add "mediatek,mt8173-timer" to that file?
+>
+
+Yes
 
 Regards,
-
-Tony
+Sudeep
