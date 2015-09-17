@@ -1,61 +1,95 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: Fix tipo in st,clkgen-pll documentation
-To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-References: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
- <1442389379-9298-2-git-send-email-gabriel.fernandez@linaro.org>
-Cc: Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
 	Russell King <linux@arm.linux.org.uk>,
 	Michael Turquette <mturquette@baylibre.com>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	devicetree@vger.kernel.org,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@stlinux.com, linux-clk@vger.kernel.org
-From: Rob Herring <robh@kernel.org>
-Message-ID: <56001C82.8060009@kernel.org>
-Date: Mon, 21 Sep 2015 10:04:34 -0500
-MIME-Version: 1.0
-In-Reply-To: <1442389379-9298-2-git-send-email-gabriel.fernandez@linaro.org>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-kernel-owner@vger.kernel.org
+	linux-gpio@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	rtc-linux@googlegroups.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/9] Build and support rk3036 SoC platform
+Date: Thu, 17 Sep 2015 16:28:51 +0800
+Message-Id: <1442478540-15068-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/16/2015 02:42 AM, Gabriel Fernandez wrote:
-> replace "sst,plls-c32-cx_x" by "st,plls-c32-cx_x"
 
-Ironically, the subject has a typo...
+Hi,
+we need to support rk3036 soc platform via upstream, there are
+3 primary parts for the initial release of minimum system: dts,
+pinctrl, and clock tree for rk3036, and additional, add a rtc
+hym8563 patch to fix initial invaild, we can use these startup
+and run to init processs.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Thanks.
 
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-> ---
->  Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
-> index d8b168e..e2c6db0 100644
-> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
-> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
-> @@ -21,8 +21,8 @@ Required properties:
->  	"st,stih416-plls-c32-ddr",	"st,clkgen-plls-c32"
->  	"st,stih407-plls-c32-a0",	"st,clkgen-plls-c32"
->  	"st,stih407-plls-c32-a9",	"st,clkgen-plls-c32"
-> -	"sst,plls-c32-cx_0",		"st,clkgen-plls-c32"
-> -	"sst,plls-c32-cx_1",		"st,clkgen-plls-c32"
-> +	"st,plls-c32-cx_0",		"st,clkgen-plls-c32"
-> +	"st,plls-c32-cx_1",		"st,clkgen-plls-c32"
->  
->  	"st,stih415-gpu-pll-c32",	"st,clkgengpu-pll-c32"
->  	"st,stih416-gpu-pll-c32",	"st,clkgengpu-pll-c32"
-> 
+changed in v2:
+- based on v1, add clock controller documentation
+- enable timer5 startup
+- add smp for cpu1
+- initial set time for rtc-hym8563
 
+changes since v1:
+- add dts, pinctrl and clock tree for rk3036 soc platform
+
+The patchset (9):
+9) rtc: hym8563: make sure hym8563 can be normal work
+8) ARM: rockchip: add support smp for rk3036
+7) rockchip: make sure timer5 is enabled on rk3036 platforms
+6) pinctrl: rockchip: add support for the rk3036
+5) dt-bindings: add documentation of rk3036 clock controller
+4) clk: rockchip: add new clock type and controller for rk3036
+3) clk: rockchip: add clock controller for rk3036
+2) clk: rockchip: add dt-binding header for rk3036
+1) ARM: dts: rockchip: add core rk3036 dts
+
+
+Changes in v2:
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+
+Xing Zheng (9):
+  ARM: dts: rockchip: add core rk3036 dts
+  clk: rockchip: add dt-binding header for rk3036
+  clk: rockchip: add clock controller for rk3036
+  clk: rockchip: add new clock type and controller for rk3036
+  dt-bindings: add documentation of rk3036 clock controller
+  pinctrl: rockchip: add support for the rk3036
+  rockchip: make sure timer5 is enabled on rk3036 platforms
+  ARM: rockchip: add support smp for rk3036
+  rtc: hym8563: make sure hym8563 can be normal work
+
+ .../bindings/clock/rockchip,rk3036-cru.txt         |   60 +++
+ .../bindings/pinctrl/rockchip,pinctrl.txt          |    1 +
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/rk3036-sdk.dts                   |   62 +++
+ arch/arm/boot/dts/rk3036.dtsi                      |  381 +++++++++++++++
+ arch/arm/mach-rockchip/platsmp.c                   |  121 +++++
+ arch/arm/mach-rockchip/rockchip.c                  |   22 +
+ drivers/clk/rockchip/Makefile                      |    1 +
+ drivers/clk/rockchip/clk-pll.c                     |  262 +++++++++-
+ drivers/clk/rockchip/clk-rk3036.c                  |  504 ++++++++++++++++++++
+ drivers/clk/rockchip/clk.h                         |   30 ++
+ drivers/pinctrl/pinctrl-rockchip.c                 |   17 +
+ drivers/rtc/rtc-hym8563.c                          |   93 ++++
+ include/dt-bindings/clock/rk3036-cru.h             |  198 ++++++++
+ 14 files changed, 1752 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.txt
+ create mode 100644 arch/arm/boot/dts/rk3036-sdk.dts
+ create mode 100644 arch/arm/boot/dts/rk3036.dtsi
+ create mode 100644 drivers/clk/rockchip/clk-rk3036.c
+ create mode 100644 include/dt-bindings/clock/rk3036-cru.h
+
+-- 
+1.7.9.5
