@@ -1,47 +1,59 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <mark.rutland@arm.com>
-CC: <wsa@the-dreams.de>, <wim@iguana.be>, <corbet@lwn.net>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<Mingkai.Hu@freescale.com>, <Shaohui.Xie@freescale.com>,
-	<Wenbin.Song@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <leoli@freescale.com>, Hou Zhiqiang
-	<B48286@freescale.com>
-Subject: [PATCH V2 3/6] Documentation: DT: Add entry for FSL LS1043ARDB board
-Date: Tue, 22 Sep 2015 20:34:02 +0800
-Message-ID: <1442925245-39246-3-git-send-email-B48286@freescale.com>
-In-Reply-To: <1442925245-39246-1-git-send-email-B48286@freescale.com>
-References: <1442925245-39246-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 17 Sep 2015 11:14:49 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Coquelin <maxime.coquelin@st.com>
+Cc: Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@stlinux.com, linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH 0/2] ST PLL fixes for 4.3-rc2
+Message-ID: <20150917181449.GR23081@codeaurora.org>
+References: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
+ <20150916223051.GO23081@codeaurora.org>
+ <55FA8C14.3020000@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <55FA8C14.3020000@st.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mingkai Hu <Mingkai.Hu@freescale.com>
+On 09/17, Maxime Coquelin wrote:
+> 
+> 
+> On 09/17/2015 12:30 AM, Stephen Boyd wrote:
+> >On 09/16, Gabriel Fernandez wrote:
+> >>This patch set fixes a kernel crash :
+> >[..]
+> >>This kernel crash is due to a broken compatibility with this commit:
+> >>commit 5eb26c605909 ("ARM: STi: DT: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x")
+> >It isn't clear who's supposed to apply this because the To: list
+> >is huge. Did you want to take this through arm-soc? If so, feel
+> >free to take my acked-by on the second patch. The first patch
+> >doesn't even apply to clk tree because the patch introducing the
+> >typo didn't go through our tree.
+> Indeed Stephen, I see it went through my tree (STi DT).
+> So the first patch should be taken through arm-soc.
+> The second patch, should be taken through yours I think.
+> 
 
-Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
----
- Documentation/devicetree/bindings/arm/fsl.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+Ok. That probably breaks bisectability, but if you're not
+worried, I'm not worried.
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index 34c88b0..752a685 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -131,6 +131,10 @@ Example:
- Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
- ----------------------------------------------------------------
- 
-+LS1043A ARMv8 based RDB Board
-+Required root node properties:
-+    - compatible = "fsl,ls1043a-rdb", "fsl,ls1043a";
-+
- LS2080A ARMv8 based Simulator model
- Required root node properties:
-     - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
 -- 
-2.1.0.27.g96db324
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
