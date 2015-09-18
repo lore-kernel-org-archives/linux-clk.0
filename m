@@ -1,66 +1,64 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn1on0148.outbound.protection.outlook.com ([157.56.110.148]:49328
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1750749AbbIEIMG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Sat, 5 Sep 2015 04:12:06 -0400
-From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
-To: Li Leo <LeoLi@freescale.com>
-CC: Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Singh Jaiprakash <jaiprakash.singh@freescale.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-	"Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
-	"will.deacon@arm.com" <will.deacon@arm.com>,
-	"olof@lixom.net" <olof@lixom.net>,
-	"bhupesh.linux@gmail.com" <bhupesh.linux@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v2 03/10] Documentation/dts: Add bindings for QIXIS FPGA
- controller found on FSL boards
-Date: Sat, 5 Sep 2015 08:11:59 +0000
-Message-ID: <BY1PR0301MB130339BD3B988DC938AA524482560@BY1PR0301MB1303.namprd03.prod.outlook.com>
-References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
-	<1441349872-4560-4-git-send-email-bhupesh.sharma@freescale.com>
-	<CADRPPNR11BD4WfXTWoQ28rZCd_BJuhdWu49E6jjpO29CH2s5Ow@mail.gmail.com>
-	<BY1PR0301MB1303E56B5462BCD0C77C7E4D82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
- <CADRPPNQFxqNqgvrL9eVhaDX-SYRJxmGDd87zu_XHDHY6afiu3g@mail.gmail.com>
-In-Reply-To: <CADRPPNQFxqNqgvrL9eVhaDX-SYRJxmGDd87zu_XHDHY6afiu3g@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/5] ARM: sunxi: Introduce CHIP support
+Date: Fri, 18 Sep 2015 10:48:45 +0200
+Message-Id: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+ Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-PiBGcm9tOiBwa3UubGVvQGdtYWlsLmNvbSBbbWFpbHRvOnBrdS5sZW9AZ21haWwuY29tXQ0KPiBT
-ZW50OiBTYXR1cmRheSwgU2VwdGVtYmVyIDA1LCAyMDE1IDI6NDMgQU0NCj4gT24gRnJpLCBTZXAg
-NCwgMjAxNSBhdCAzOjE2IFBNLCBTaGFybWEgQmh1cGVzaA0KPiA8Ymh1cGVzaC5zaGFybWFAZnJl
-ZXNjYWxlLmNvbT4gd3JvdGU6DQo+ID4+IEZyb206IHBrdS5sZW9AZ21haWwuY29tIFttYWlsdG86
-cGt1Lmxlb0BnbWFpbC5jb21dDQo+ID4+IFNlbnQ6IEZyaWRheSwgU2VwdGVtYmVyIDA0LCAyMDE1
-IDEwOjI3IFBNIE9uIEZyaSwgU2VwIDQsIDIwMTUgYXQgMTo1Nw0KPiA+PiBBTSwgQmh1cGVzaCBT
-aGFybWEgPGJodXBlc2guc2hhcm1hQGZyZWVzY2FsZS5jb20+IHdyb3RlOg0KPiA+PiA+IFRoaXMg
-cGF0Y2ggYWRkcyBiaW5kaW5ncyBmb3IgUUlYSVMgRlBHQSBjb250cm9sbGVyIGZvdW5kIG9uIEZT
-TA0KPiBib2FyZHMuDQo+ID4+DQo+ID4+IEEgZ2VuZXJhbCBjb21tZW50OiB3aGVuIHlvdSBhcmUg
-dXBkYXRpbmcgdGhlIGRldmljZSB0cmVlIGJpbmRpbmdzLg0KPiA+PiBZb3Ugc2hvdWxkIGNjIHRo
-ZSBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZyBtYWlsaW5nIGxpc3QuDQo+ID4+DQo+ID4+ID4N
-Cj4gPj4gPiBTb21lIEZyZWVzY2FsZSBib2FyZHMgbGlrZSBMUzIwODBBUURTL0xTMjA4MEFSREIg
-aGF2ZSBhbiBvbi1ib2FyZA0KPiA+PiA+IEZQR0EvQ1BMRCBjb25uZWN0ZWQgdG8gdGhlIElGQyBj
-b250cm9sbGVyLiBUaGUgYmluZGluZ3Mgc3BlY2lmaWVkDQo+ID4+ID4gaW4gdGhpcyBwYXRjaCBj
-YXRlciB0byB0aG9zZSBvbi1ib2FyZCBGUEdBL0NQTEQgY29udHJvbGxlcnMuDQo+ID4+DQo+ID4+
-IFdlIGFscmVhZHkgaGF2ZSB0aGUgYmluZGluZyBkZWZpbmVkIGluDQo+ID4+IERvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9wb3dlcnBjL2ZzbC9ib2FyZC50eHQuICBXZSBwcm9iYWJs
-eQ0KPiA+PiBzaG91bGQganVzdCBtb3ZlIGl0IHRvIGEgbW9yZSBnZW5lcmljIGxvY2F0aW9uLg0K
-PiA+DQo+ID4gQ29uc29saWRhdGlvbiBvZiBwb3dlcnBjIGFuZCBBUk0gYmluZGluZ3MgaXMgc29t
-ZXRoaW5nIHRoYXQgbmVlZHMgdG8NCj4gPiBiZSB0YXJnZXRlZCBieSBhIHNlcGFyYXRlIHBhdGNo
-LXNlcmllcywgcGVyaGFwcyBpbiBmdXR1cmUuDQo+ID4NCj4gPiBUaGVyZSBhcmUgYSBudW1iZXIg
-b2YgZHVwbGljYXRpb25zIHRoYXQgY2FuIGJlIGxvb2tlZCBpbnRvLCBidXQgSQ0KPiA+IGRvbid0
-IHRoaW5rIHRoaXMgcGF0Y2hzZXQgc2hvdWxkIGRlcGVuZCBvbiB0aGF0Lg0KPiANCj4gVGhlcmUg
-bWlnaHQgYmUgc29tZSBkdXBsaWNhdGlvbiwgYnV0IHdlIHNob3VsZG4ndCBiZSBhZGRpbmcgbW9y
-ZS4gIDopIEkNCj4gd291bGQgcmF0aGVyIHlvdSBkaXJlY3RseSB1cGRhdGluZyB0aGF0IGZpbGUg
-dGhhbiBjcmVhdGluZyBhIG5ldyBmaWxlDQo+IGV2ZW4gdGhvdWdoIHRoZSBvcmlnaW5hbCBvbmUg
-d2FzIGluIGEgd3JvbmcgZGlyZWN0b3J5Lg0KPiANCg0KSU1PIGEgUG93ZXJQQyBiaW5kaW5nIHVw
-ZGF0ZSBtYWtlcyBubyBzZW5zZSBpbiBhIEFSTSBtYWNoaW5lIHBhdGNoc2V0IHNlbnQNCm9uIGEg
-YXJtIHNwZWNpZmljIG1haWxpbmcgbGlzdC4NCg0KSSB3b3VsZCBsaWtlIHRvIHdhaXQgdG8gaGVh
-ciB3aGF0IG1haW50YWluZXJzIGhhdmUgdG8gc2F5IG9uIHRoZSBzYW1lLg0KDQpSZWdhcmRzLA0K
-Qmh1cGVzaA0K
+Hi,
+
+Here is a serie introducing the support for the Allwinner R8 and the
+Nextthing's CHIP.
+
+Support is almost complete for the CHIP itself, the only missing part
+for now is the WiFi chip that needs to be powered through two combined
+regulators (AXP209's LDO3 and LDO4). The audio codec is also missing
+since it's not already enabled in the DT.
+
+Both these features will be addressed eventually.
+
+Let me know what you think,
+Maxime
+
+Maxime Ripard (5):
+  ARM: sunxi: Add R8 support
+  ARM: sun5i: Add R8 DTSI
+  ARM: sun5i: dt: Move uart3 pinctrl node to common DTSI
+  ARM: sun5i: dt: Add UART3 CTS and RTS pins
+  ARM: sun5i: Add C.H.I.P DTS
+
+ arch/arm/boot/dts/Makefile          |   3 +-
+ arch/arm/boot/dts/sun5i-a10s.dtsi   |   7 -
+ arch/arm/boot/dts/sun5i-r8-chip.dts | 261 ++++++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/sun5i-r8.dtsi     |  61 +++++++++
+ arch/arm/boot/dts/sun5i.dtsi        |  14 ++
+ arch/arm/mach-sunxi/sunxi.c         |   3 +-
+ drivers/clk/sunxi/clk-sunxi.c       |   1 +
+ 7 files changed, 341 insertions(+), 9 deletions(-)
+ create mode 100644 arch/arm/boot/dts/sun5i-r8-chip.dts
+ create mode 100644 arch/arm/boot/dts/sun5i-r8.dtsi
+
+-- 
+2.5.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
