@@ -1,48 +1,71 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1442936646-30362-5-git-send-email-geert+renesas@glider.be>
-References: <1442936646-30362-1-git-send-email-geert+renesas@glider.be>
-	<1442936646-30362-5-git-send-email-geert+renesas@glider.be>
-Date: Tue, 29 Sep 2015 14:48:20 +0200
-Message-ID: <CAMuHMdW3o0WCGCXuyYJtd8nC691N62wK7NNTzTQTM7fAvCn8jg@mail.gmail.com>
-Subject: Re: [PATCH/RFC v2 4/4] clk: shmobile: rcar-gen2: Switch from old MSTP
- to new MSSR driver
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms@verge.net.au>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux PM list <linux-pm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+In-Reply-To: <1442566130-3497-2-git-send-email-maxime.ripard@free-electrons.com>
+References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1442566130-3497-2-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 18 Sep 2015 17:47:44 +0800
+Message-ID: <CAGb2v65hHJDS6-Sz5Hi4a_F_cHTdBkFUzRR3a0JSE43AbDYmcw@mail.gmail.com>
+Subject: Re: [PATCH 1/5] ARM: sunxi: Add R8 support
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 22, 2015 at 5:44 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> --- a/drivers/clk/shmobile/clk-rcar-gen2.c
-> +++ b/drivers/clk/shmobile/clk-rcar-gen2.c
-> @@ -431,7 +431,7 @@ static void __init rcar_gen2_cpg_clocks_init(struct device_node *np)
+On Fri, Sep 18, 2015 at 4:48 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The R8 is a new Allwinner SoC based on the A13. While both are very
+> similar, there's still a few differences. Introduce a new compatible to
+> deal with them.
 >
->         of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  arch/arm/mach-sunxi/sunxi.c   | 3 ++-
+>  drivers/clk/sunxi/clk-sunxi.c | 1 +
+>  2 files changed, 3 insertions(+), 1 deletion(-)
 >
-> -       cpg_mstp_add_clk_domain(np);
-> +       cpg_mssr_add_clk_domain(np);
+> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+> index 65bab2876343..8583a9ca86bd 100644
+> --- a/arch/arm/mach-sunxi/sunxi.c
+> +++ b/arch/arm/mach-sunxi/sunxi.c
+> @@ -26,10 +26,11 @@ static const char * const sunxi_board_dt_compat[] = {
+>         "allwinner,sun4i-a10",
+>         "allwinner,sun5i-a10s",
+>         "allwinner,sun5i-a13",
+> +       "allwinner,sun5i-r8",
+>         NULL,
+>  };
+>
+> -DT_MACHINE_START(SUNXI_DT, "Allwinner A1X (Device Tree)")
+> +DT_MACHINE_START(SUNXI_DT, "Allwinner sun4i/sun5i Families")
 
-Of course this should become conditional on the presence of the new
-"renesas,r8a7791-cpg-mssr" compatible value, to preserve
-backwards-compatibility with old DTSes.
+Nit: might want to mention the rename.
 
-Gr{oetje,eeting}s,
+>         .dt_compat      = sunxi_board_dt_compat,
+>         .init_late      = sunxi_dt_cpufreq_init,
+>  MACHINE_END
+> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+> index 413070d07b3f..9c79af0c03b2 100644
+> --- a/drivers/clk/sunxi/clk-sunxi.c
+> +++ b/drivers/clk/sunxi/clk-sunxi.c
+> @@ -1196,6 +1196,7 @@ static void __init sun5i_init_clocks(struct device_node *node)
+>  }
+>  CLK_OF_DECLARE(sun5i_a10s_clk_init, "allwinner,sun5i-a10s", sun5i_init_clocks);
+>  CLK_OF_DECLARE(sun5i_a13_clk_init, "allwinner,sun5i-a13", sun5i_init_clocks);
+> +CLK_OF_DECLARE(sun5i_r8_clk_init, "allwinner,sun5i-r8", sun5i_init_clocks);
+>  CLK_OF_DECLARE(sun7i_a20_clk_init, "allwinner,sun7i-a20", sun5i_init_clocks);
+>
+>  static const char *sun6i_critical_clocks[] __initdata = {
+> --
+> 2.5.1
+>
 
-                        Geert
+What about Documentation/devicetree/bindings/arm/sunxi.txt and
+Documentation/arm/sunxi/README?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks
+ChenYu
