@@ -1,39 +1,46 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:25026 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750843AbbIJEF4 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 10 Sep 2015 00:05:56 -0400
-Subject: Re: [PATCH 10/11] clk: samsung: exynos7: Add missing fixed_clks to
- cmu_info
-To: Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org
-References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
- <1441366637-28001-11-git-send-email-alim.akhtar@samsung.com>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
-	mturquette@baylibre.com, amit.daniel@samsung.com,
-	gautam.vivek@samsung.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <55F101A2.3070201@samsung.com>
-Date: Thu, 10 Sep 2015 13:05:54 +0900
-MIME-version: 1.0
-In-reply-to: <1441366637-28001-11-git-send-email-alim.akhtar@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org
+Cc: Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 4/5] ARM: sun5i: dt: Add UART3 CTS and RTS pins
+Date: Fri, 18 Sep 2015 10:48:49 +0200
+Message-Id: <1442566130-3497-5-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04.09.2015 20:37, Alim Akhtar wrote:
-> FSYS0 fixed clocks are not added to fsys0_cmu_info, this make
-> some of the usb clocks as orphan. This fixes the same.
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos7.c |    2 ++
->  1 file changed, 2 insertions(+)
+Add a separate pinctrl node for the UART3 CTS and RTS pins shared between
+the A10s and A13.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun5i.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Best regards,
-Krzysztof
-
+diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+index 433c83a321ca..7d355e52efe2 100644
+--- a/arch/arm/boot/dts/sun5i.dtsi
++++ b/arch/arm/boot/dts/sun5i.dtsi
+@@ -536,6 +536,13 @@
+ 				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+ 				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+ 			};
++
++			uart3_pins_cts_rts_a: uart3-cts-rts@0 {
++				allwinner,pins = "PG11", "PG12";
++				allwinner,function = "uart3";
++				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
++			};
+ 		};
+ 
+ 		timer@01c20c00 {
+-- 
+2.5.1
 
