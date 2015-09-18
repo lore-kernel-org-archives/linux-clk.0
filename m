@@ -1,88 +1,47 @@
-Return-Path: <hdegoede@redhat.com>
-Subject: Re: [linux-sunxi] Re: [PATCH 5/5] ARM: sun5i: Add C.H.I.P DTS
-To: Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
- <1442566130-3497-6-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v64E-gQu1U_qi2fTWiCmfgMdMR4X6yLUerV21d3E1uQ1cw@mail.gmail.com>
- <20150922124708.GZ4684@lukather>
- <CAGb2v662+mhFgv1DXz5muA+xGE99R1DVKOxtVPvJmc+tRFPXzQ@mail.gmail.com>
- <56015146.2070509@redhat.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <560158E7.1070102@redhat.com>
-Date: Tue, 22 Sep 2015 15:34:31 +0200
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH 2/2] drivers: clk: st: Rename st_pll3200c32_407_c0_x into
+ st_pll3200c32_cx_x
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Gabriel Fernandez <gabriel.fernandez@linaro.org>
+References: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1442389379-9298-3-git-send-email-gabriel.fernandez@linaro.org>
+ <20150917185151.GT23081@codeaurora.org>
+CC: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+	<linux-clk@vger.kernel.org>
+From: Maxime Coquelin <maxime.coquelin@st.com>
+Message-ID: <55FBBDE8.5070305@st.com>
+Date: Fri, 18 Sep 2015 09:31:52 +0200
 MIME-Version: 1.0
-In-Reply-To: <56015146.2070509@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20150917185151.GT23081@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-On 22-09-15 15:01, Hans de Goede wrote:
-> Hi,
->
-> On 22-09-15 14:57, Chen-Yu Tsai wrote:
->> On Tue, Sep 22, 2015 at 8:47 PM, Maxime Ripard
->> <maxime.ripard@free-electrons.com> wrote:
->
-> <snip>
->
->>>>> +&usb_otg {
->>>>> +       dr_mode = "otg";
->>>>> +       status = "okay";
->>>>> +};
->>>>> +
->>>>> +&usbphy {
->>>>> +       pinctrl-names = "default";
->>>>> +       pinctrl-0 = <&chip_id_det_pin>;
->>>>> +       status = "okay";
->>>>> +
->>>>> +       usb0_id_det-gpio = <&pio 6 2 GPIO_ACTIVE_HIGH>; /* PG2 */
->>>>
->>>> Better leave a comment here saying VBUS detection requires AXP209
->>>> usb-power-supply support.
->>>
->>> Does it? It can be powered by a battery, with or without VBUS, and
->>> that wouldn't be tied to the fact that the power-supply is USB or
->>> something else.
+
+On 09/17/2015 08:51 PM, Stephen Boyd wrote:
+> On 09/16, Gabriel Fernandez wrote:
+>> Use a generic name for this kind of PLL
 >>
->> The AXP209 VBUS / USB power-supply also doubles for VBUS detection,
->> which on most boards is done using a separate GPIO pin. Hans posted
->> support for the AXP20X power-supply driver, and support in the usb
->> phy driver using it for VBUS detection.
+>> Correction in dts files are already done here:
+>> commit 5eb26c605909 ("ARM: STi: DT: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x")
+>>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+>> ---
+> Applied to clk-fixes
 >
-> Ack.
->
->> In short, this is not about "power supply" but VBUS detection. IIRC,
->> if no VBUS detection method is provided, the phy driver just waits a
->> period of time after an ID pin change and then considers VBUS invalid.
->
-> Right, but that is a hack for boards with no / broken vbus detection
-> (or vbus control), we really want to use vbus-det where available,
-> so I agree that a TODO comment here would be good.
-
-The axp209 usb-power-supply has just been merged into
-linux-power-supply/next so even better we can simply update axp209.dtsi
-with the node, and add do the right thing in the CHIP dts right away.
-
-I'll send out all the dts patches which I've had queued up waiting
-for this driver to get merged, including the axp209.dtsi changes.
-
-Regards,
-
-Hans
-
-
-
-
-
->
-> Regards,
->
-> Hans
+Thanks Stephen
