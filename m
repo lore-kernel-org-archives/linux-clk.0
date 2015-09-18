@@ -1,103 +1,69 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH v4 1/8] clk: imx: add common logic to detect early UART usage
-Date: Mon, 21 Sep 2015 18:53:57 +0200
-Message-Id: <1442854444-4460-2-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
-References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
- kernel@pengutronix.de, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 18 Sep 2015 22:03:49 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Emilio Lopez <emilio@elopez.com.ar>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/4] ARM: sun8i: Fix A23 and A33 clock gates indices
+Message-ID: <20150918200349.GY4684@lukather>
+References: <1441977997-29041-1-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="lHWX6A2F7795X8SZ"
+In-Reply-To: <1441977997-29041-1-git-send-email-maxime.ripard@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Both earlycon and eralyprintk depend on the bootloader setup UART
-clocks being retained. This patch adds the common logic to detect such
-situations and make the information available to the clock drivers, as
-well as adding the facilities to disable those clocks at the end of
-the kernel init.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- drivers/clk/imx/clk.c | 38 ++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h |  1 +
- 2 files changed, 39 insertions(+)
+--lHWX6A2F7795X8SZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-index df12b5307175..a634b1185be3 100644
---- a/drivers/clk/imx/clk.c
-+++ b/drivers/clk/imx/clk.c
-@@ -73,3 +73,41 @@ void imx_cscmr1_fixup(u32 *val)
- 	*val ^= CSCMR1_FIXUP;
- 	return;
- }
-+
-+static int imx_keep_uart_clocks __initdata;
-+static struct clk ** const *imx_uart_clocks __initdata;
-+
-+static int __init imx_keep_uart_clocks_param(char *str)
-+{
-+	imx_keep_uart_clocks = 1;
-+
-+	return 0;
-+}
-+__setup_param("earlycon", imx_keep_uart_earlycon,
-+	      imx_keep_uart_clocks_param, 0);
-+__setup_param("earlyprintk", imx_keep_uart_earlyprintk,
-+	      imx_keep_uart_clocks_param, 0);
-+
-+void __init imx_register_uart_clocks(struct clk ** const clks[])
-+{
-+	if (imx_keep_uart_clocks) {
-+		int i;
-+
-+		imx_uart_clocks = clks;
-+		for (i = 0; imx_uart_clocks[i]; i++)
-+			clk_prepare_enable(*imx_uart_clocks[i]);
-+	}
-+}
-+
-+static int __init imx_clk_disable_uart(void)
-+{
-+	if (imx_keep_uart_clocks && imx_uart_clocks) {
-+		int i;
-+
-+		for (i = 0; imx_uart_clocks[i]; i++)
-+			clk_disable_unprepare(*imx_uart_clocks[i]);
-+	}
-+
-+	return 0;
-+}
-+late_initcall_sync(imx_clk_disable_uart);
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 1049b0c7d818..c94ac5c26226 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -7,6 +7,7 @@
- extern spinlock_t imx_ccm_lock;
- 
- void imx_check_clocks(struct clk *clks[], unsigned int count);
-+void imx_register_uart_clocks(struct clk ** const clks[]);
- 
- extern void imx_cscmr1_fixup(u32 *val);
- 
--- 
-2.5.1
+On Fri, Sep 11, 2015 at 03:26:33PM +0200, Maxime Ripard wrote:
+> Hi everyone,
+>=20
+> Here is a patch set that adds the missing clocks for the message box
+> in the A33 and A23 SoCs.
+>=20
+> In order to support that properly, the addition of a new clock driver
+> for the A33 has been needed, and we split the gates definition that
+> was previously shared to each DTSI.
+>=20
+> Let me know what you think,
+> Maxime
 
+Fixed the typo and applied.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--lHWX6A2F7795X8SZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJV/G4lAAoJEBx+YmzsjxAgPDAP/0WCjSvbeXLkFhzB80kzL/lD
+vS6WyoBcGSSLJexeAA1K2YGPfiZuGtFNrcUY+Ze4Gshicxp6ZCHkEP9N/vKGTVSR
+oTr1Z+6CxB9TC6ELynyCQM1q0vHljbhbXaiJr8odfZePuDXe1k+C22WE1psY4C43
+FOH3GBfFdh18+K6PiHY05WopHO3ejT3k/qZ1Oma1+GnwPUzftG6uyVZgRcb3jqEz
+a3QzU0xozm6VsOzdeQ55vLFVa8mvpGG+vPHdBZUrljS+658sqJqjMc7XV6oO7nfa
+7+7nmZlyjHhrxSCGeyEZp8ECpHGn2g2kzN2RSJKtJy+6O7gNZIZoCJ3tg2GMInU+
+OsFq70+s4eKBuR+nJRHyEdEJioQvJriDLMGFbAo1UqNfFwwbtcS8IhBOAMTVPbmQ
+tb23M6P8Exnu1u14nIlH4hl3M5PZ0oiXsNrtyon/TSdRkTyJGlrhSBWtaPxZmovV
+SwyCuAgKjSkPK9WFeVIsyZMkfsqZBpY+Jdm/ufZC8Ze4RHk4mJHb5qSqV1Oh1PCI
+hNbLLL46pwYJ5D/VL2h5vNoKJAIE8DFq/+M6Dn2WkT0hwmbdWMNnAy0hNLnEjADL
+/TBbZbhILczHWBqHTZzr8An7NzizR518AQLQ1OZxOf8TxoF774VfHl2v64laug6H
+JoAajhGzas58rwnB6FVN
+=/uIl
+-----END PGP SIGNATURE-----
+
+--lHWX6A2F7795X8SZ--
