@@ -1,44 +1,33 @@
-Return-Path: <ben.dooks@codethink.co.uk>
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-To: t-kristo@ti.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-omap@vger.kernel.org,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	ulf.hansson@linaro.org, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+	linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
 	linux-clk@vger.kernel.org
-Cc: linux-kernel@lists.codethink.co.uk,
-	stable@vger.kernel.org,
-	Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH] clk: ti: fix dual-registration of uart4_ick
-Date: Wed, 23 Sep 2015 15:48:34 +0100
-Message-Id: <1443019714-12926-1-git-send-email-ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH 0/5] ARM: sunxi: Introduce CHIP support
+Date: Fri, 18 Sep 2015 15:58:31 +0200
+Message-ID: <29444326.E66iiSTYyO@wuerfel>
+In-Reply-To: <20150918135538.GS4684@lukather>
+References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com> <13485899.XsimukeSAF@wuerfel> <20150918135538.GS4684@lukather>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On the OMAP AM3517 platform the uart4_ick gets registered
-twice, causing any power managment to /dev/ttyO3 to fail
-when trying to wake the device up.
+On Friday 18 September 2015 15:55:38 Maxime Ripard wrote:
+> 
+> And I don't think it's something the MMC core should deal with. The
+> device itself has a single pin to provide its power, it's the board
+> that is wired that way. The way I was seeing it was more that I needed
+> to create a regulator driver that would take two inputs, that the mmc
+> core would use. Last time I discussed it with Mark (Brown), it semes
+> like he was open to the idea, so I just need to find some time to do
+> just that.
+> 
 
-This solves the following oops:
+Ok, fair enough.
 
-[] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
-[] PC is at serial_omap_pm+0x48/0x15c
-[] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
-
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
- drivers/clk/ti/clk-3xxx.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
-index 5e12f32..2e7ef1f 100644
---- a/drivers/clk/ti/clk-3xxx.c
-+++ b/drivers/clk/ti/clk-3xxx.c
-@@ -374,7 +374,6 @@ static struct ti_dt_clk omap3xxx_clks[] = {
- 	DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
- 	DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
- 	DT_CLK(NULL, "uart3_ick", "uart3_ick"),
--	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
- 	DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
- 	DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
- 	DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
--- 
-2.5.1
+	Arnd
