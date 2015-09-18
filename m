@@ -1,53 +1,40 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 9 Sep 2015 15:46:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] clk: qcom: Add support for RCGs with shared
- branches
-Message-ID: <20150909224613.GW15099@codeaurora.org>
-References: <1439477317-1902-1-git-send-email-georgi.djakov@linaro.org>
- <1439477317-1902-3-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, ulf.hansson@linaro.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/5] ARM: sunxi: Introduce CHIP support
+Date: Fri, 18 Sep 2015 15:18:57 +0200
+Message-ID: <13485899.XsimukeSAF@wuerfel>
+In-Reply-To: <20150918121905.GO4684@lukather>
+References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com> <2353279.QTDzFUHVnF@wuerfel> <20150918121905.GO4684@lukather>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1439477317-1902-3-git-send-email-georgi.djakov@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/13, Georgi Djakov wrote:
-> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> index 56028bb31d87..0693b9e0b15e 100644
-> --- a/drivers/clk/qcom/clk-rcg.h
-> +++ b/drivers/clk/qcom/clk-rcg.h
-> @@ -153,8 +153,8 @@ extern const struct clk_ops clk_dyn_rcg_ops;
->   * @hid_width: number of bits in half integer divider
->   * @parent_map: map from software's parent index to hardware's src_sel field
->   * @freq_tbl: frequency table
-> + * @current_freq: last cached frequency when using branches with shared RCGs
->   * @clkr: regmap clock handle
-> - * @lock: register lock
+On Friday 18 September 2015 14:19:05 Maxime Ripard wrote:
+> 
+> There's actually two issues that are pretty orthogonal:
+> 
+>   * the fact that the regulator to power the wifi chip needs to be
+>     enabled before it enumerates and the driver is probed. The MMC
+>     pwrseq stuff seems to fix that, even if it doesn't really fit in
+>     the usual DT model.
 
-Thanks.
+Ok. If there is anything missing in the pwrseq implementation or
+binding at the moment, you'll have to work with Ulf to get it to
+drive your hardware then.
 
->   *
->   */
->  struct clk_rcg2 {
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index 9aec1761fd29..681faf2dcdc5 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> +
-> +static int clk_rcg2_shared_enable(struct clk_hw *hw)
-> +{
-> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> +	const char *name = clk_hw_get_name(hw);
-> +
-> +	if (!rcg->current_freq) {
-> +		pr_err("%s: Please set rate before enabling\n", name);
+>   * The fact that that regulator on this board is actually two
+>     regulators in parallel that needs to be controlled in parallel
+>     too. Here, it will probably require a new regulator driver to
+>     combine two regulators into one.
 
-Why? Can't we find the current freq during recalc_rate?
+I don't yet understand what it means to control them in parallel.
+Do you mean the hardware uses two outputs to support a higher
+current than you could do with one?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+How critical is the timing? Would it be enough if the mmc
+code knew how to set more than one regulator and do them
+one at a time?
+
+	Arnd
