@@ -1,98 +1,312 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-yk0-f169.google.com ([209.85.160.169]:36684 "EHLO
-	mail-yk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933721AbbI1NpS (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 28 Sep 2015 09:45:18 -0400
-Received: by ykdt18 with SMTP id t18so179957351ykd.3
-        for <linux-clk@vger.kernel.org>; Mon, 28 Sep 2015 06:45:18 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <CAFTCetQ1EE332AnihKFw_Emf7_E4=OcVg2sRDoq3R-siyDZgKg@mail.gmail.com>
-References: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
- <CAL_Jsq+9izV8vkrF1tK96M-VRGTMJ+GN5o=RsnCBDcnh-at5kA@mail.gmail.com> <CAFTCetQ1EE332AnihKFw_Emf7_E4=OcVg2sRDoq3R-siyDZgKg@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 28 Sep 2015 08:44:58 -0500
-Message-ID: <CAL_Jsq+NYgJ-mzbsBKmxzyMOrWsuL6o-gGMpPRERDNfdsCxfWQ@mail.gmail.com>
-Subject: Re: [PATCH v2 07/10] dts/ls2085a: Update DTSI to add support of
- various peripherals
-To: Bhupesh SHARMA <bhupesh.linux@gmail.com>
-Cc: Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Marc Zyngier <marc.zyngier@arm.com>, linux-clk@vger.kernel.org,
-	Yangbo Lu <yangbo.lu@freescale.com>,
-	Shaohui Xie <Shaohui.Xie@freescale.com>,
-	Alison Wang <alison.wang@freescale.com>,
-	Catalin Marinas <Catalin.Marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Scott Wood <scottwood@freescale.com>,
-	Minghuan Lian <Minghuan.Lian@freescale.com>,
-	Liu Gang <Gang.Liu@freescale.com>,
-	Olof Johansson <olof@lixom.net>,
-	Nikhil Badola <nikhil.badola@freescale.com>,
-	Jaiprakash Singh <b44839@freescale.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org
+Cc: Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 5/5] ARM: sun5i: Add C.H.I.P DTS
+Date: Fri, 18 Sep 2015 10:48:50 +0200
+Message-Id: <1442566130-3497-6-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 28, 2015 at 5:03 AM, Bhupesh SHARMA <bhupesh.linux@gmail.com> wrote:
-> Hi Rob,
->
-> On Sat, Sep 5, 2015 at 2:45 AM, Rob Herring <robherring2@gmail.com> wrote:
->> On Fri, Sep 4, 2015 at 2:05 AM, Bhupesh Sharma
->> <bhupesh.sharma@freescale.com> wrote:
->>> This patch updates the LS2085a DTSI (DTS Include) file to add
->>> support for various peripherals supported by FSL LS2085a SoC, for e.g.:
->>>         - USB 3.0 Host
->>>         - PMU
->>>         - CCN-504
->>>         - Watchdog
->>>         - SATA
->>>         - SPI
->>>         - PCIe
->>>         - etc.
->>>
->>> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
->>> Signed-off-by: Jaiprakash Singh <b44839@freescale.com>
->>> Signed-off-by: Alison Wang <alison.wang@freescale.com>
->>> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
->>> Signed-off-by: Minghuan Lian <Minghuan.Lian@freescale.com>
->>> Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
->>> Signed-off-by: Nikhil Badola <nikhil.badola@freescale.com>
->>> Signed-off-by: Yangbo Lu <yangbo.lu@freescale.com>
->>> Signed-off-by: Scott Wood <scottwood@freescale.com>
->>> ---
->>>  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi |  469 +++++++++++++++++++++++-
->>>  1 file changed, 459 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
->>> index 333d942..5fee0a7 100644
->>> --- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
->>> +++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
->
-> [snip..]
+The C.H.I.P. is a small SBC with an Allwinner R8, 8GB of NAND, 512MB of
+RAM, USB host and OTG, a wifi / bluetooth combo chip, an audio/video jack
+and two connectors to plug additional boards on top of it.
 
->>> @@ -139,25 +173,440 @@
->>>                              <1 10 0x8>; /* Hypervisor PPI, active-low */
->>>         };
->>>
->>> +       amba {
->>> +               compatible = "arm,amba-bus";
->>
->> Use simple-bus. "arm,amba-bus" is meaningless.
->
-> Not sure I understand your comment here. Without this
-> compatible in place I cannot see the 'drivers/amba/bus.c'
-> amba_match() function getting called which in turn will call the
-> amba_lookup() function,
-> thus invoking the probe function of the sp805_wdt driver.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/Makefile          |   3 +-
+ arch/arm/boot/dts/sun5i-r8-chip.dts | 261 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 263 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/sun5i-r8-chip.dts
 
-I'm not saying the devices are not amba_bustype devices. That has
-nothing to do with matching them. "arm,primecell" is what matters
-there. There is nothing visible to s/w about "arm,amba-bus," and it is
-ambiguous as there are multiple types of AMBA buses (APB, AHB, AXI).
-So unless you have bus level registers, use simple-bus. If you have
-doubts, try changing it and see that it still works.
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index b276174b670a..7efd37b907f1 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -599,7 +599,8 @@ dtb-$(CONFIG_MACH_SUN5I) += \
+ 	sun5i-a13-inet-98v-rev2.dtb \
+ 	sun5i-a13-olinuxino.dtb \
+ 	sun5i-a13-olinuxino-micro.dtb \
+-	sun5i-a13-utoo-p66.dtb
++	sun5i-a13-utoo-p66.dtb \
++	sun5i-r8-chip.dtb
+ dtb-$(CONFIG_MACH_SUN6I) += \
+ 	sun6i-a31-app4-evb1.dtb \
+ 	sun6i-a31-colombus.dtb \
+diff --git a/arch/arm/boot/dts/sun5i-r8-chip.dts b/arch/arm/boot/dts/sun5i-r8-chip.dts
+new file mode 100644
+index 000000000000..6cb3c4f1cd61
+--- /dev/null
++++ b/arch/arm/boot/dts/sun5i-r8-chip.dts
+@@ -0,0 +1,261 @@
++/*
++ * Copyright 2015 Free Electrons
++ * Copyright 2015 NextThing Co
++ *
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/dts-v1/;
++#include "sun5i-a13.dtsi"
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++
++/ {
++	model = "NextThing C.H.I.P.";
++	compatible = "nextthing,chip", "allwinner,sun5i-r8";
++
++	aliases {
++		i2c0 = &i2c0;
++		i2c1 = &i2c1;
++		i2c2 = &i2c2;
++		serial0 = &uart1;
++		serial1 = &uart3;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	dram_vcc: dram_vcc {
++		compatible = "regulator-fixed";
++		regulator-name = "dram-vcc";
++		regulator-min-microvolt = <1600000>;
++		regulator-max-microvolt = <1600000>;
++		vin-supply = <&ipsout>;
++		regulator-always-on;
++	};
++
++	ipsout: ipsout {
++		compatible = "regulator-fixed";
++		regulator-name = "ipsout";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++	};
++
++	usb0_vbus: usb0_vbus {
++		compatible = "regulator-fixed";
++		pinctrl-names = "default";
++		pinctrl-0 = <&chip_vbus_pin>;
++
++		regulator-name = "vbus-usb0";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		vin-supply = <&vcc_5v0>;
++		gpio = <&pio 1 10 GPIO_ACTIVE_HIGH>; /* PB10 */
++		enable-active-high;
++	};
++
++	vcc_3v3: vcc3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc-3v3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&ipsout>;
++		regulator-always-on;
++	};
++
++	vcc_5v0: vcc5v0 {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc-5v0";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		vin-supply = <&ipsout>;
++		regulator-always-on;
++	};
++};
++
++&ehci0 {
++	status = "okay";
++};
++
++&i2c0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c0_pins_a>;
++	status = "okay";
++
++	axp209: pmic@34 {
++		reg = <0x34>;
++
++		/*
++		 * The interrupt is routed through the "External Fast
++                 * Interrupt Request" pin (ball G13 of the module)
++                 * directly to the main interrupt controller, without
++                 * any other controller interfering.
++		 */
++		interrupts = <0>;
++	};
++};
++
++#include "axp209.dtsi"
++
++/*
++ * i2c1 is routed to the external pins and doesn't have any device
++ * attached to it on the C.H.I.P itself.
++ */
++&i2c1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_pins_a>;
++	status = "okay";
++};
++
++&i2c2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c2_pins_a>;
++	status = "okay";
++
++	xio: gpio@38 {
++		compatible = "nxp,pcf8574a";
++		reg = <0x38>;
++
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-parent = <&pio>;
++		interrupts = <6 0 IRQ_TYPE_EDGE_FALLING>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++};
++
++&mmc0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc0_pins_a>;
++	vmmc-supply = <&vcc_3v3>;
++	bus-width = <4>;
++	non-removable;
++	status = "okay";
++};
++
++&ohci0 {
++	status = "okay";
++};
++
++&otg_sram {
++	status = "okay";
++};
++
++&pio {
++	chip_vbus_pin: chip_vbus_pin@0 {
++	        allwinner,pins = "PB10";
++	        allwinner,function = "gpio_out";
++	        allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++	        allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
++	};
++
++	chip_id_det_pin: chip_id_det_pin@0 {
++	        allwinner,pins = "PG2";
++	        allwinner,function = "gpio_in";
++	        allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++	        allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
++	};
++};
++
++&reg_dcdc2 {
++	regulator-min-microvolt = <1000000>;
++	regulator-max-microvolt = <1400000>;
++	regulator-name = "cpuvdd";
++	regulator-always-on;
++};
++
++&reg_dcdc3 {
++	regulator-min-microvolt = <1000000>;
++	regulator-max-microvolt = <1300000>;
++	regulator-name = "corevdd";
++	regulator-always-on;
++};
++
++&reg_ldo1 {
++	regulator-name = "rtcvdd";
++};
++
++&reg_ldo2 {
++	regulator-min-microvolt = <2700000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "avcc";
++	regulator-always-on;
++};
++
++&reg_ldo5 {
++	regulator-min-microvolt = <1800000>;
++	regulator-max-microvolt = <1800000>;
++	regulator-name = "vcc-1v8";
++};
++
++&uart1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart1_pins_b>;
++	status = "okay";
++};
++
++&uart3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart3_pins_a>,
++		    <&uart3_pins_cts_rts_a>;
++	status = "okay";
++};
++
++&usb_otg {
++	dr_mode = "otg";
++	status = "okay";
++};
++
++&usbphy {
++	pinctrl-names = "default";
++	pinctrl-0 = <&chip_id_det_pin>;
++	status = "okay";
++
++	usb0_id_det-gpio = <&pio 6 2 GPIO_ACTIVE_HIGH>; /* PG2 */
++
++	usb0_vbus-supply = <&usb0_vbus>;
++	usb1_vbus-supply = <&vcc_5v0>;
++};
+-- 
+2.5.1
 
-Rob
