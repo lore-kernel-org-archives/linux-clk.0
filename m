@@ -1,45 +1,70 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 24 Sep 2015 04:57:37 -0700
-From: Shawn Guo <shawnguo@kernel.org>
-To: Shengjiu Wang <shengjiu.wang@freescale.com>
-Cc: mturquette@baylibre.com, kernel@pengutronix.de, sboyd@codeaurora.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] clk: imx6: Add SPDIF_GCLK clock in clock tree
-Message-ID: <20150924115737.GM3529@tiger>
-References: <cover.1442310569.git.shengjiu.wang@freescale.com>
- <113f1cecf1d83c6b96fd23ab9d7a73d1923e0d21.1442310569.git.shengjiu.wang@freescale.com>
- <20150923153340.GK3529@tiger>
- <20150924054321.GA32196@shlinux2>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 18 Sep 2015 08:56:12 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Scott Wood <scottwood@freescale.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Chao Xie <chao.xie@marvell.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Tero Kristo <t-kristo@ti.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH 02/26] clk: Replace __clk_get_num_parents with
+ clk_hw_get_num_parents()
+Message-ID: <20150918155612.GY23081@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+ <1438362246-6664-3-git-send-email-sboyd@codeaurora.org>
+ <1442535513.19102.83.camel@freescale.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20150924054321.GA32196@shlinux2>
+In-Reply-To: <1442535513.19102.83.camel@freescale.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 24, 2015 at 01:43:24PM +0800, Shengjiu Wang wrote:
-> On Wed, Sep 23, 2015 at 08:33:41AM -0700, Shawn Guo wrote:
-> > On Tue, Sep 15, 2015 at 06:01:01PM +0800, Shengjiu Wang wrote:
-> > > As spdif driver will register SPDIF clock to regmap, regmap will do
-> > > clk_prepare in init function, so SPDIF clock is prepared in probe, then its
-> > > root clock (pll clock) is prepared also, which cause the arm can't enter
-> > > low power mode.
+On 09/17, Scott Wood wrote:
+> On Fri, 2015-07-31 at 10:03 -0700, Stephen Boyd wrote:
+> > Mostly converted with the following semantic patch:
 > > 
-> > Can you help me understand why ARM cannot enter low power mode when pll
-> > clock is prepared?
+> > @@
+> > struct clk_hw *E;
+> > @@
 > > 
-> > Shawn
-> Hi Shawn
+> > -__clk_get_num_parents(E->clk)
+> > +clk_hw_get_num_parents(E)
 > 
->    In i.mx clock framework, when pll clk is prepared, it will be powerup. when
-> enterring low power idle mode, the powerdown bit is checked, when pll is not
-> powerdown state, chip will not enter low power idle mode.
+> I don't understand why this is considered a clock provider API.  How is a 
+> clock consumer, such as cpufreq, supposed to find out the number of parents 
+> or similar information, so that it knows what its options are for calling 
+> clk_set_parent()?
+> 
+> This is the caller I had in mind:
+> http://patchwork.ozlabs.org/patch/507619/
+> 
+> Surely asking the clock to describe itself is better than what that cpufreq 
+> driver currently does, which is to look in the device tree and make 
+> assumptions about how that maps to what the clock provider driver does...
+> 
 
-So this is not a SPDIF specific problem, and any device driver preparing
-its clock that is a child of pll clock will run into this problem,
-right?  If so, we should purchase a more generic solution than such
-device specific one.
+All the APIs that were converted were private to the common clock
+framework and in clk-provider.h, not clk.h. clk.h is the consumer
+API that's supported by more than just the common clock
+framework, so whatever we do for the consumer API needs to be put
+there.
 
-Shawn
+For example, we recently added a clk_has_parent() API that can be
+used to probe for possible parents of a clock. Perhaps we need
+something else in this case so that consumers can iterate over
+each parent of a clock? Feel free to suggest a consumer API.
+
+Is there any reason why we can't use DT OPPs for the code that
+you're patching here? At a quick glance it looks like we could
+leave this driver behind and move to cpufreq-dt.c and then use
+OPPs to populate the possible frequencies and affinity.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
