@@ -1,62 +1,62 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Tue, 15 Sep 2015 13:08:53 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Cc: pdeschrijver@nvidia.com, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: Unlock top rates for Tegra124 DFLL clock
-Message-ID: <20150915110852.GA2983@ulmo.nvidia.com>
-References: <1442310915-15475-1-git-send-email-mikko.perttunen@kapsi.fi>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [RESEND PATCH 0/2] ST PLL fixes for 4.3-rc2
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
+ <20150916223051.GO23081@codeaurora.org> <55FA8C14.3020000@st.com>
+ <20150917181449.GR23081@codeaurora.org>
+CC: Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
+	<linux-clk@vger.kernel.org>
+From: Maxime Coquelin <maxime.coquelin@st.com>
+Message-ID: <55FBBDCE.8070905@st.com>
+Date: Fri, 18 Sep 2015 09:31:26 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
-In-Reply-To: <1442310915-15475-1-git-send-email-mikko.perttunen@kapsi.fi>
+In-Reply-To: <20150917181449.GR23081@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---GvXjxJ+pjyke8COw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 15, 2015 at 12:55:15PM +0300, Mikko Perttunen wrote:
-> The new determine_rate prototype allows for clock rates exceeding
-> 2^31-1 Hz to be used. Switch the DFLL clock to use determine_rate
-> instead of round_rate and unlock the top rates supported by the
-> Tegra124.
->=20
-> Signed-off-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-> ---
->  drivers/clk/tegra/clk-dfll.c | 15 ++++++++-------
->  drivers/clk/tegra/cvb.c      |  7 -------
->  2 files changed, 8 insertions(+), 14 deletions(-)
+On 09/17/2015 08:14 PM, Stephen Boyd wrote:
+> On 09/17, Maxime Coquelin wrote:
+>>
+>> On 09/17/2015 12:30 AM, Stephen Boyd wrote:
+>>> On 09/16, Gabriel Fernandez wrote:
+>>>> This patch set fixes a kernel crash :
+>>> [..]
+>>>> This kernel crash is due to a broken compatibility with this commit:
+>>>> commit 5eb26c605909 ("ARM: STi: DT: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x")
+>>> It isn't clear who's supposed to apply this because the To: list
+>>> is huge. Did you want to take this through arm-soc? If so, feel
+>>> free to take my acked-by on the second patch. The first patch
+>>> doesn't even apply to clk tree because the patch introducing the
+>>> typo didn't go through our tree.
+>> Indeed Stephen, I see it went through my tree (STi DT).
+>> So the first patch should be taken through arm-soc.
+>> The second patch, should be taken through yours I think.
+>>
+> Ok. That probably breaks bisectability, but if you're not
+> worried, I'm not worried.
+I'm not worried about bisectability indeed, as the first patch is just 
+typo fixes in DT Bindings documentation.
 
-I've applied this to the for-4.4/clk branch in the Tegra tree.
-
-Thanks,
-Thierry
-
---GvXjxJ+pjyke8COw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJV9/xBAAoJEN0jrNd/PrOhSoIQAIPm/JKjnp4Hlr9Z9dKXvA89
-RtDyRr4fdi0UtIA2VPS1X9n24UEK883vGz4K/kHjfvyJOCWuBKyeZvhgBdYlOEDs
-DBDuHv+oxgvFkV5oplo0BwuEMksMjq6iPpF49FrDgoChtbIgmpvrEjeOFL6qS6bm
-vsr092mvNrVoacNEoSPsDHgjw5GoNRxthzW8PkEGl9d3LjSRf7i6YVIMSJD/16bv
-pvDdZWkBIGmzfNTYZ4MW9hAtmbRqJH74p0EDOeMcWpQ4GYiNLouXQt5IWWBOM3K7
-cDn3pXHhv8LdV6Wou/QNRd5TH5zz6HkcsTHBP89TmXczU/Oq1++eBzPnBsYCHpFY
-VkcUEQugclin87N88Sd6VP0QHkm0onVP90CyDvYkceg5se0ZKY7V4kUKmzPwAJQ1
-fbanMggfXQsRW/nSZck6jTA7rdxG7g7EaRoW8CzYT5xZPZBzzgTNTLhGC4DwQhuu
-aeBnyKcVTWvrcJnzFaNTTlWWLDBD8CHaP1FeUElew1xKoTqUn1zN1RcvV4iqfRZa
-SZMoYUygWrMoTfJVKuCHTVygPqqNj/bXTR+LzGK8NvYeT0Phhhz/a00YxUoAdJW0
-7ZFEwJS5W9EzvU4kAw2zOUZJcKfSjCERP/ZsM9cjVyW/NNBc1WoY2SUDkgTem59N
-7cjTaetl65Y2gQENWFac
-=q1rV
------END PGP SIGNATURE-----
-
---GvXjxJ+pjyke8COw--
+Regards,
+Maxime
