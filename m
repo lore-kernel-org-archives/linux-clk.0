@@ -1,102 +1,61 @@
-Return-Path: <alexander.stein@systec-electronic.com>
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v4 1/1] clk: imx31: Do not call mxc_timer_init twice when booting with DT
-Date: Wed, 30 Sep 2015 08:23:40 +0200
-Message-Id: <1443594220-21183-1-git-send-email-alexander.stein@systec-electronic.com>
+Return-Path: <scottwood@freescale.com>
+From: Scott Wood <scottwood@freescale.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar
+	<viresh.kumar@linaro.org>, Russell King <linux@arm.linux.org.uk>
+CC: <linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-arm-kernel@lists.infradead.org>,
+	"Tang Yuantian" <Yuantian.Tang@freescale.com>, Scott Wood
+	<scottwood@freescale.com>
+Subject: [PATCH v3 0/5] clk: qoriq: Move chip-specific knowledge into driver
+Date: Sat, 19 Sep 2015 23:29:52 -0500
+Message-ID: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: scottwood@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-mxc_timer_init must not be called from within mx31_clocks_init_dt. It will
-eventually be called by imx31_timer_init_dt
-(drivers/clocksource/timer-imx-gpt.c).
-This arranges the initialization code similar to clk-imx27.c
+The existing device tree bindings are error-prone and inflexible. 
+Correct the mistake by moving the knowledge into the driver, which has
+more flexibility in describing the quirks of each chip.  This leaves the
+device tree to its proper role of identifying a programming interface
+rather than describing its individual registers.
 
-Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
----
-Changes in v4:
-* Adjusted subject line
-* Move static fref variable to function local one
-* rebases to Shawn's imx/clk branch
+For more detail, see the commit message of patch 2.
 
-Changes in v3:
-* Fix compilation issues
-* Actually compile tested, but still untested due to lack of hardware
+As there are both ARM and PPC patches that depend on this patchset, I'm
+requesting ACKs from clk and cpufreq in order to put this into a topic
+branch that both ARM and PPC can pull.
 
-* Added in v2
-* Compile tested only due to lack of hardware
+Scott Wood (5):
+  powerpc/fsl: Move fsl_guts.h out of arch/powerpc
+  clk: qoriq: Move chip-specific knowledge into driver
+  clk: qoriq: Add ls2080a support.
+  clk: Add consumer APIs for discovering possible parent clocks
+  cpufreq: qoriq: Don't look at clock implementation details
 
- drivers/clk/imx/clk-imx31.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ .../devicetree/bindings/clock/qoriq-clock.txt      |   61 +-
+ arch/powerpc/include/asm/fsl_guts.h                |  192 ---
+ arch/powerpc/platforms/85xx/mpc85xx_mds.c          |    2 +-
+ arch/powerpc/platforms/85xx/mpc85xx_rdb.c          |    2 +-
+ arch/powerpc/platforms/85xx/p1022_ds.c             |    2 +-
+ arch/powerpc/platforms/85xx/p1022_rdk.c            |    2 +-
+ arch/powerpc/platforms/85xx/smp.c                  |    2 +-
+ arch/powerpc/platforms/85xx/twr_p102x.c            |    2 +-
+ arch/powerpc/platforms/86xx/mpc8610_hpcd.c         |    2 +-
+ drivers/clk/Kconfig                                |    2 +-
+ drivers/clk/clk-qoriq.c                            | 1316 ++++++++++++++++----
+ drivers/clk/clk.c                                  |   19 +
+ drivers/cpufreq/qoriq-cpufreq.c                    |  137 +-
+ drivers/iommu/fsl_pamu.c                           |    2 +-
+ include/linux/clk.h                                |   31 +
+ include/linux/fsl/guts.h                           |  192 +++
+ sound/soc/fsl/mpc8610_hpcd.c                       |    2 +-
+ sound/soc/fsl/p1022_ds.c                           |    2 +-
+ sound/soc/fsl/p1022_rdk.c                          |    2 +-
+ 19 files changed, 1441 insertions(+), 531 deletions(-)
+ delete mode 100644 arch/powerpc/include/asm/fsl_guts.h
+ create mode 100644 include/linux/fsl/guts.h
 
-diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
-index 5520e20..f65b8b1 100644
---- a/drivers/clk/imx/clk-imx31.c
-+++ b/drivers/clk/imx/clk-imx31.c
-@@ -72,7 +72,7 @@ static struct clk ** const uart_clks[] __initconst = {
- 	NULL
- };
- 
--int __init mx31_clocks_init(unsigned long fref)
-+static void __init _mx31_clocks_init(unsigned long fref)
- {
- 	void __iomem *base;
- 	struct device_node *np;
-@@ -142,6 +142,12 @@ int __init mx31_clocks_init(unsigned long fref)
- 
- 	imx_check_clocks(clk, ARRAY_SIZE(clk));
- 
-+	clk_set_parent(clk[csi], clk[upll]);
-+	clk_prepare_enable(clk[emi_gate]);
-+	clk_prepare_enable(clk[iim_gate]);
-+	mx31_revision();
-+	clk_disable_unprepare(clk[iim_gate]);
-+
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx31-ccm");
- 
- 	if (np) {
-@@ -149,6 +155,13 @@ int __init mx31_clocks_init(unsigned long fref)
- 		clk_data.clk_num = ARRAY_SIZE(clk);
- 		of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
- 	}
-+}
-+
-+int __init mx31_clocks_init(void)
-+{
-+	u32 fref = 26000000; /* default */
-+
-+	_mx31_clocks_init(fref);
- 
- 	clk_register_clkdev(clk[gpt_gate], "per", "imx-gpt.0");
- 	clk_register_clkdev(clk[ipg], "ipg", "imx-gpt.0");
-@@ -204,14 +217,8 @@ int __init mx31_clocks_init(unsigned long fref)
- 	clk_register_clkdev(clk[sdma_gate], NULL, "imx31-sdma");
- 	clk_register_clkdev(clk[iim_gate], "iim", NULL);
- 
--	clk_set_parent(clk[csi], clk[upll]);
--	clk_prepare_enable(clk[emi_gate]);
--	clk_prepare_enable(clk[iim_gate]);
--	mx31_revision();
--	clk_disable_unprepare(clk[iim_gate]);
- 
- 	imx_register_uart_clocks(uart_clks);
--
- 	mxc_timer_init(MX31_GPT1_BASE_ADDR, MX31_INT_GPT, GPT_TYPE_IMX31);
- 
- 	return 0;
-@@ -230,5 +237,7 @@ int __init mx31_clocks_init_dt(void)
- 			break;
- 	}
- 
--	return mx31_clocks_init(fref);
-+	_mx31_clocks_init(fref);
-+
-+	return 0;
- }
 -- 
-2.4.9
+2.1.4
