@@ -1,499 +1,193 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Mike Looijmans <mike.looijmans@topic.nl>
-To: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH v2] Add driver for the si514 clock generator chip
-Date: Thu, 17 Sep 2015 13:04:51 +0200
-Message-Id: <1442487891-20477-1-git-send-email-mike.looijmans@topic.nl>
-In-Reply-To: <1442478495-23522-1-git-send-email-mike.looijmans@topic.nl>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <scottwood@freescale.com>
+From: Scott Wood <scottwood@freescale.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar
+	<viresh.kumar@linaro.org>, Russell King <linux@arm.linux.org.uk>
+CC: <linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-arm-kernel@lists.infradead.org>,
+	"Tang Yuantian" <Yuantian.Tang@freescale.com>, Scott Wood
+	<scottwood@freescale.com>
+Subject: [PATCH v3 3/5] clk: qoriq: Add ls2080a support.
+Date: Sat, 19 Sep 2015 23:29:55 -0500
+Message-ID: <1442723397-26329-4-git-send-email-scottwood@freescale.com>
+In-Reply-To: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
+References: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: scottwood@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds the driver and devicetree documentation for the
-Silicon Labs SI514 clock generator chip. This is an I2C controlled
-oscilator capable of generating clock signals ranging from 100kHz
-to 250MHz.
+LS2080A is the first implementation of the chassis 3 clockgen, which
+has a different register layout than previous chips.  It is also little
+endian, unlike previous chips.
 
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+Signed-off-by: Scott Wood <scottwood@freescale.com>
 ---
-v2: Fix e-mail address list (using old maintainer list, sorry).
-    Rebase on master.
+v3: new patch
 
- .../devicetree/bindings/clock/silabs,si514.txt     |  27 ++
- drivers/clk/Kconfig                                |  10 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-si514.c                            | 393 +++++++++++++++++++++
- 4 files changed, 431 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/silabs,si514.txt
- create mode 100644 drivers/clk/clk-si514.c
+ drivers/clk/Kconfig     |  2 +-
+ drivers/clk/clk-qoriq.c | 77 +++++++++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 69 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/silabs,si514.txt b/Documentation/devicetree/bindings/clock/silabs,si514.txt
-new file mode 100644
-index 0000000..05964d1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/silabs,si514.txt
-@@ -0,0 +1,27 @@
-+Binding for Silicon Labs 514 programmable I2C clock generator.
-+
-+Reference
-+This binding uses the common clock binding[1]. Details about the device can be
-+found in the datasheet[2].
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+[2] Si514 datasheet
-+    http://www.silabs.com/Support%20Documents/TechnicalDocs/si514.pdf
-+
-+Required properties:
-+ - compatible: Shall be "silabs,si514"
-+ - reg: I2C device address.
-+ - #clock-cells: From common clock bindings: Shall be 0.
-+
-+Optional properties:
-+ - clock-output-names: From common clock bindings. Recommended to be "si514".
-+ - clock-frequency: Output frequency to generate. This defines the output
-+		    frequency set during boot. It can be reprogrammed during
-+		    runtime through the common clock framework.
-+
-+Example:
-+	si514: clock-generator@55 {
-+		reg = <0x55>;
-+		#clock-cells = <0>;
-+		compatible = "silabs,si514";
-+	};
 diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 42f7120..6ac7deb5 100644
+index 42f7120..9f1970c 100644
 --- a/drivers/clk/Kconfig
 +++ b/drivers/clk/Kconfig
-@@ -68,6 +68,16 @@ config COMMON_CLK_SI5351
- 	  This driver supports Silicon Labs 5351A/B/C programmable clock
- 	  generators.
+@@ -121,7 +121,7 @@ config COMMON_CLK_AXI_CLKGEN
  
-+config COMMON_CLK_SI514
-+	tristate "Clock driver for SiLabs 514 devices"
-+	depends on I2C
-+	depends on OF
-+	select REGMAP_I2C
-+	help
-+	---help---
-+	  This driver supports the Silicon Labs 514 programmable clock
-+	  generator.
+ config CLK_QORIQ
+ 	bool "Clock driver for Freescale QorIQ platforms"
+-	depends on (PPC_E500MC || ARM) && OF
++	depends on (PPC_E500MC || ARM || ARM64) && OF
+ 	---help---
+ 	  This adds the clock driver support for Freescale QorIQ platforms
+ 	  using common clock framework.
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 06281a3..8f9c93b 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -68,7 +68,10 @@ struct clockgen;
+  * If not set, cmux freq must be >= platform pll/2
+  */
+ #define CG_CMUX_GE_PLAT		1
 +
- config COMMON_CLK_SI570
- 	tristate "Clock driver for SiLabs 570 and compatible devices"
- 	depends on I2C
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index d08b3e5..6594e53 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -37,6 +37,7 @@ obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
- obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
- obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
- obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
-+obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
- obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
- obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
-diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
-new file mode 100644
-index 0000000..ca70818
---- /dev/null
-+++ b/drivers/clk/clk-si514.c
-@@ -0,0 +1,393 @@
-+/*
-+ * Driver for Silicon Labs Si514 Programmable Oscillator
-+ *
-+ * Copyright (C) 2015 Topic Embedded Products
-+ *
-+ * Author: Mike Looijmans <mike.looijmans@topic.nl>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/module.h>
-+#include <linux/i2c.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+/* I2C registers */
-+#define SI514_REG_LP		0
-+#define SI514_REG_M_FRAC1	5
-+#define SI514_REG_M_FRAC2	6
-+#define SI514_REG_M_FRAC3	7
-+#define SI514_REG_M_INT_FRAC	8
-+#define SI514_REG_M_INT		9
-+#define SI514_REG_HS_DIV	10
-+#define SI514_REG_LS_HS_DIV	11
-+#define SI514_REG_OE_STATE	14
-+#define SI514_REG_RESET		128
-+#define SI514_REG_CONTROL	132
-+
-+/* Register values */
-+#define SI514_RESET_RST		BIT(7)
-+
-+#define SI514_CONTROL_FCAL	BIT(0)
-+#define SI514_CONTROL_OE	BIT(2)
-+
-+#define SI514_MIN_FREQ	    100000U
-+#define SI514_MAX_FREQ	 250000000U
-+
-+#define FXO				  31980000U
-+
-+#define FVCO_MIN		2080000000U
-+#define FVCO_MAX		2500000000U
-+
-+#define HS_DIV_MAX	1022
-+
-+struct clk_si514 {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	struct i2c_client *i2c_client;
-+};
-+#define to_clk_si514(_hw)	container_of(_hw, struct clk_si514, hw)
-+
-+/* Multiplier/divider settings */
-+struct clk_si514_muldiv {
-+	u32 m_frac;  /* 29-bit Fractional part of multiplier M */
-+	u8 m_int; /* Integer part of multiplier M, 65..78 */
-+	u8 ls_div_bits; /* 2nd divider, as 2^x */
-+	u16 hs_div; /* 1st divider, must be even and 10<=x<=1022 */
-+};
-+
-+/* Enables or disables the output driver */
-+static int si514_enable_output(struct clk_si514 *data, bool enable)
+ #define CG_PLL_8BIT		2	/* PLLCnGSR[CFG] is 8 bits, not 6 */
++#define CG_VER3			4	/* version 3 cg: reg layout different */
++#define CG_LITTLE_ENDIAN	8
+ 
+ struct clockgen_chipinfo {
+ 	const char *compat, *guts_compat;
+@@ -94,6 +97,26 @@ struct clockgen {
+ 
+ static struct clockgen clockgen;
+ 
++static void cg_out(struct clockgen *cg, u32 val, u32 __iomem *reg)
 +{
-+	return regmap_update_bits(data->regmap, SI514_REG_CONTROL,
-+		SI514_CONTROL_OE, enable ? SI514_CONTROL_OE : 0);
-+}
-+
-+/* Retrieve clock multiplier and dividers from hardware */
-+static int si514_get_muldiv(struct clk_si514 *data,
-+	struct clk_si514_muldiv *settings)
-+{
-+	int err;
-+	u8 reg[7];
-+
-+	err = regmap_bulk_read(data->regmap, SI514_REG_M_FRAC1,
-+			reg, ARRAY_SIZE(reg));
-+	if (err)
-+		return err;
-+
-+	settings->m_frac =
-+		reg[0] |
-+		((u32)reg[1] << 8) |
-+		((u32)reg[2] << 16) |
-+		((u32)(reg[3] & 0x1F) << 24);
-+	settings->m_int = ((reg[4] & 0x3f) << 3) | (reg[3] >> 5);
-+	settings->ls_div_bits = (reg[6] >> 4) & 0x07;
-+	settings->hs_div = ((u16)(reg[6] & 0x03) << 8) | reg[5];
-+	return 0;
-+}
-+
-+/* Program clock settings into hardware */
-+static int si514_set_muldiv(struct clk_si514 *data,
-+	struct clk_si514_muldiv *settings)
-+{
-+	u8 lp;
-+	u8 reg[7];
-+	int err;
-+
-+	/* Calculate LP1/LP2 according to table 13 in the datasheet */
-+	/* 65.259980246 */
-+	if ((settings->m_int < 65) ||
-+		((settings->m_int == 65) && (settings->m_frac <= 139575831)))
-+		lp = 0x22;
-+	/* 67.859763463 */
-+	else if ((settings->m_int < 67) ||
-+		((settings->m_int == 67) && (settings->m_frac <= 461581994)))
-+		lp = 0x23;
-+	/* 72.937624981 */
-+	else if ((settings->m_int < 72) ||
-+		((settings->m_int == 72) && (settings->m_frac <= 503383578)))
-+		lp = 0x33;
-+	/* 75.843265046 */
-+	else if ((settings->m_int < 75) ||
-+		((settings->m_int == 75) && (settings->m_frac <= 452724474)))
-+		lp = 0x34;
++	if (cg->info.flags & CG_LITTLE_ENDIAN)
++		iowrite32(val, reg);
 +	else
-+		lp = 0x44;
-+
-+	err = regmap_write(data->regmap, SI514_REG_LP, lp);
-+	if (err < 0)
-+		return err;
-+
-+	reg[0] = settings->m_frac & 0xff;
-+	reg[1] = (settings->m_frac >> 8) & 0xff;
-+	reg[2] = (settings->m_frac >> 16) & 0xff;
-+	reg[3] = ((settings->m_frac >> 24) | (settings->m_int << 5)) & 0xff;
-+	reg[4] = (settings->m_int >> 3) & 0xff;
-+	reg[5] = (settings->hs_div) & 0xff;
-+	reg[6] = (((settings->hs_div) >> 8) |
-+			(settings->ls_div_bits << 4)) & 0xff;
-+
-+	err = regmap_bulk_write(data->regmap, SI514_REG_HS_DIV, reg + 5, 2);
-+	if (err < 0)
-+		return err;
-+	/* Writing to SI514_REG_M_INT_FRAC triggers the clock change, so that
-+	 * must be written last */
-+	return regmap_bulk_write(data->regmap, SI514_REG_M_FRAC1, reg, 5);
++		iowrite32be(val, reg);
 +}
 +
-+/* Calculate divider settings for a given frequency */
-+static int si514_calc_muldiv(struct clk_si514_muldiv *settings,
-+	unsigned long frequency)
++static u32 cg_in(struct clockgen *cg, u32 __iomem *reg)
 +{
-+	u64 m;
-+	u32 ls_freq;
-+	u32 tmp;
-+	u8 res;
++	u32 val;
 +
-+	if ((frequency < SI514_MIN_FREQ) || (frequency > SI514_MAX_FREQ))
-+		return -EINVAL;
++	if (cg->info.flags & CG_LITTLE_ENDIAN)
++		val = ioread32(reg);
++	else
++		val = ioread32be(reg);
 +
-+	/* Determine the minimum value of LS_DIV and resulting target freq. */
-+	ls_freq = frequency;
-+	if (frequency >= (FVCO_MIN / HS_DIV_MAX))
-+		settings->ls_div_bits = 0;
-+	else {
-+		res = 1;
-+		tmp = 2 * HS_DIV_MAX;
-+		while (tmp <= (HS_DIV_MAX*32)) {
-+			if ((frequency * tmp) >= FVCO_MIN)
-+				break; /* We're done */
-+			++res;
-+			tmp <<= 1;
-+		}
-+		settings->ls_div_bits = res;
-+		ls_freq = frequency << res;
-+	}
-+
-+	/* Determine minimum HS_DIV, round up to even number */
-+	settings->hs_div = DIV_ROUND_UP(FVCO_MIN >> 1, ls_freq) << 1;
-+
-+	/* M = LS_DIV x HS_DIV x frequency / F_XO (in fixed-point) */
-+	m = ((u64)(ls_freq * settings->hs_div) << 29) + (FXO/2);
-+	do_div(m, FXO);
-+	settings->m_frac = (u32)m & (BIT(29) - 1);
-+	settings->m_int = (u32)(m >> 29);
-+
-+	return 0;
++	return val;
 +}
 +
-+/* Calculate resulting frequency given the register settings */
-+static unsigned long si514_calc_rate(struct clk_si514_muldiv *settings)
-+{
-+	u64 m = settings->m_frac | ((u64)settings->m_int << 29);
-+
-+	return ((u32)(((m * FXO) + (FXO/2)) >> 29)) /
-+		(settings->hs_div * BIT(settings->ls_div_bits));
-+}
-+
-+static unsigned long si514_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct clk_si514 *data = to_clk_si514(hw);
-+	struct clk_si514_muldiv settings;
-+	int err;
-+
-+	err = si514_get_muldiv(data, &settings);
-+	if (err) {
-+		dev_err(&data->i2c_client->dev, "unable to retrieve settings\n");
-+		return 0;
-+	}
-+
-+	return si514_calc_rate(&settings);
-+}
-+
-+static long si514_round_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long *parent_rate)
-+{
-+	struct clk_si514_muldiv settings;
-+	int err;
-+
-+	if (!rate)
-+		return 0;
-+
-+	err = si514_calc_muldiv(&settings, rate);
-+	if (err)
-+		return err;
-+
-+	return si514_calc_rate(&settings);
-+}
-+
-+/* Update output frequency for big frequency changes (> 1000 ppm).
-+ * The chip supports <1000ppm changes "on the fly", we haven't implemented
-+ * that here. */
-+static int si514_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct clk_si514 *data = to_clk_si514(hw);
-+	struct clk_si514_muldiv settings;
-+	int err;
-+
-+	err = si514_calc_muldiv(&settings, rate);
-+	if (err)
-+		return err;
-+
-+	si514_enable_output(data, false);
-+
-+	err = si514_set_muldiv(data, &settings);
-+	if (err < 0)
-+		return err; /* Undefined state now, best to leave disabled */
-+
-+	/* Trigger calibration */
-+	err = regmap_write(data->regmap, SI514_REG_CONTROL, SI514_CONTROL_FCAL);
-+
-+	/* Applying a new frequency can take up to 10ms */
-+	usleep_range(10000, 12000);
-+
-+	si514_enable_output(data, true);
-+
-+	return err;
-+}
-+
-+static const struct clk_ops si514_clk_ops = {
-+	.recalc_rate = si514_recalc_rate,
-+	.round_rate = si514_round_rate,
-+	.set_rate = si514_set_rate,
-+};
-+
-+static bool si514_regmap_is_volatile(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SI514_REG_CONTROL:
-+	case SI514_REG_RESET:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool si514_regmap_is_writeable(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SI514_REG_LP:
-+	case SI514_REG_M_FRAC1 ... SI514_REG_LS_HS_DIV:
-+	case SI514_REG_OE_STATE:
-+	case SI514_REG_RESET:
-+	case SI514_REG_CONTROL:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static struct regmap_config si514_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.cache_type = REGCACHE_RBTREE,
-+	.max_register = SI514_REG_CONTROL,
-+	.writeable_reg = si514_regmap_is_writeable,
-+	.volatile_reg = si514_regmap_is_volatile,
-+};
-+
-+static int si514_probe(struct i2c_client *client,
-+		const struct i2c_device_id *id)
-+{
-+	struct clk_si514 *data;
-+	struct clk_init_data init;
-+	struct clk *clk;
-+	u32 initial_fout;
-+	int err;
-+
-+	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	init.ops = &si514_clk_ops;
-+	init.flags = CLK_IS_ROOT;
-+	init.num_parents = 0;
-+	data->hw.init = &init;
-+	data->i2c_client = client;
-+
-+	if (of_property_read_string(client->dev.of_node, "clock-output-names",
-+			&init.name))
-+		init.name = client->dev.of_node->name;
-+
-+	data->regmap = devm_regmap_init_i2c(client, &si514_regmap_config);
-+	if (IS_ERR(data->regmap)) {
-+		dev_err(&client->dev, "failed to allocate register map\n");
-+		return PTR_ERR(data->regmap);
-+	}
-+
-+	i2c_set_clientdata(client, data);
-+
-+	clk = devm_clk_register(&client->dev, &data->hw);
-+	if (IS_ERR(clk)) {
-+		dev_err(&client->dev, "clock registration failed\n");
-+		return PTR_ERR(clk);
-+	}
-+	err = of_clk_add_provider(client->dev.of_node, of_clk_src_simple_get,
-+			clk);
-+	if (err) {
-+		dev_err(&client->dev, "unable to add clk provider\n");
-+		return err;
-+	}
-+
-+	/* Read the requested initial output frequency from device tree */
-+	if (!of_property_read_u32(client->dev.of_node, "clock-frequency",
-+				&initial_fout)) {
-+		err = clk_set_rate(clk, initial_fout);
-+		if (err) {
-+			of_clk_del_provider(client->dev.of_node);
-+			return err;
-+		}
-+	}
-+
-+	/* Display a message indicating that we've successfully registered */
-+	dev_info(&client->dev, "registered, current frequency %lu Hz\n",
-+			clk_get_rate(clk));
-+
-+	return 0;
-+}
-+
-+static int si514_remove(struct i2c_client *client)
-+{
-+	of_clk_del_provider(client->dev.of_node);
-+	return 0;
-+}
-+
-+static const struct i2c_device_id si514_id[] = {
-+	{ "si514", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, si514_id);
-+
-+static const struct of_device_id clk_si514_of_match[] = {
-+	{ .compatible = "silabs,si514" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, clk_si514_of_match);
-+
-+static struct i2c_driver si514_driver = {
-+	.driver = {
-+		.name = "si514",
-+		.of_match_table = clk_si514_of_match,
+ static const struct clockgen_muxinfo p2041_cmux_grp1 = {
+ 	{
+ 		[0] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
+@@ -429,6 +452,17 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.pll_mask = 0x03,
+ 	},
+ 	{
++		.compat = "fsl,ls2080a-clockgen",
++		.cmux_groups = {
++			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
++		},
++		.cmux_to_group = {
++			0, 0, 1, 1, -1
++		},
++		.pll_mask = 0x37,
++		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
 +	},
-+	.probe		= si514_probe,
-+	.remove		= si514_remove,
-+	.id_table	= si514_id,
-+};
-+module_i2c_driver(si514_driver);
-+
-+MODULE_AUTHOR("Mike Looijmans <mike.looijmans@topic.nl>");
-+MODULE_DESCRIPTION("Si514 driver");
-+MODULE_LICENSE("GPL");
++	{
+ 		.compat = "fsl,p2041-clockgen",
+ 		.guts_compat = "fsl,qoriq-device-config-1.0",
+ 		.init_periph = p2041_init_periph,
+@@ -575,7 +609,7 @@ static int mux_set_parent(struct clk_hw *hw, u8 idx)
+ 		return -EINVAL;
+ 
+ 	clksel = hwc->parent_to_clksel[idx];
+-	iowrite32be((clksel << CLKSEL_SHIFT) & CLKSEL_MASK, hwc->reg);
++	cg_out(hwc->cg, (clksel << CLKSEL_SHIFT) & CLKSEL_MASK, hwc->reg);
+ 
+ 	return 0;
+ }
+@@ -586,7 +620,7 @@ static u8 mux_get_parent(struct clk_hw *hw)
+ 	u32 clksel;
+ 	s8 ret;
+ 
+-	clksel = (ioread32be(hwc->reg) & CLKSEL_MASK) >> CLKSEL_SHIFT;
++	clksel = (cg_in(hwc->cg, hwc->reg) & CLKSEL_MASK) >> CLKSEL_SHIFT;
+ 
+ 	ret = hwc->clksel_to_parent[clksel];
+ 	if (ret < 0) {
+@@ -705,7 +739,7 @@ static struct clk * __init create_one_cmux(struct clockgen *cg, int idx)
+ 	 * default clksel) may be inappropriately excluded on certain
+ 	 * chips.
+ 	 */
+-	clksel = (ioread32be(hwc->reg) & CLKSEL_MASK) >> CLKSEL_SHIFT;
++	clksel = (cg_in(cg, hwc->reg) & CLKSEL_MASK) >> CLKSEL_SHIFT;
+ 	div = get_pll_div(cg, hwc, clksel);
+ 	if (!div)
+ 		return NULL;
+@@ -874,13 +908,36 @@ static void __init create_one_pll(struct clockgen *cg, int idx)
+ 	if (!(cg->info.pll_mask & (1 << idx)))
+ 		return;
+ 
+-	if (idx == PLATFORM_PLL)
+-		reg = cg->regs + 0xc00;
+-	else
+-		reg = cg->regs + 0x800 + 0x20 * (idx - 1);
++	if (cg->info.flags & CG_VER3) {
++		switch (idx) {
++		case PLATFORM_PLL:
++			reg = cg->regs + 0x60080;
++			break;
++		case CGA_PLL1:
++			reg = cg->regs + 0x80;
++			break;
++		case CGA_PLL2:
++			reg = cg->regs + 0xa0;
++			break;
++		case CGB_PLL1:
++			reg = cg->regs + 0x10080;
++			break;
++		case CGB_PLL2:
++			reg = cg->regs + 0x100a0;
++			break;
++		default:
++			WARN_ONCE(1, "index %d\n", idx);
++			return;
++		}
++	} else {
++		if (idx == PLATFORM_PLL)
++			reg = cg->regs + 0xc00;
++		else
++			reg = cg->regs + 0x800 + 0x20 * (idx - 1);
++	}
+ 
+ 	/* Get the multiple of PLL */
+-	mult = ioread32be(reg);
++	mult = cg_in(cg, reg);
+ 
+ 	/* Check if this PLL is disabled */
+ 	if (mult & PLL_KILL) {
+@@ -888,7 +945,8 @@ static void __init create_one_pll(struct clockgen *cg, int idx)
+ 		return;
+ 	}
+ 
+-	if ((cg->info.flags & CG_PLL_8BIT) && idx != PLATFORM_PLL)
++	if ((cg->info.flags & CG_VER3) ||
++	    ((cg->info.flags & CG_PLL_8BIT) && idx != PLATFORM_PLL))
+ 		mult = (mult & GENMASK(8, 1)) >> 1;
+ 	else
+ 		mult = (mult & GENMASK(6, 1)) >> 1;
+@@ -1169,6 +1227,7 @@ err:
+ CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
+ 
+ /* Legacy nodes */
+ CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
 -- 
-1.9.1
-
+2.1.4
