@@ -1,56 +1,69 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <1442842450-29769-1-git-send-email-a.hajda@samsung.com>
-References: <1442842450-29769-1-git-send-email-a.hajda@samsung.com>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: dhowells@redhat.com, linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-cachefs@redhat.com, linux-clk@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-mips@linux-mips.org,
-	linux-mm@kvack.org, linux-omap@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org, lustre-devel@lists.lustre.org
-Subject: Re: [PATCH 00/38] Fixes related to incorrect usage of unsigned types
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH v4 5/8] clk: imx35: retain early UART clocks during kernel init
+Date: Mon, 21 Sep 2015 18:54:01 +0200
+Message-Id: <1442854444-4460-6-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+ kernel@pengutronix.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Date: Mon, 21 Sep 2015 14:42:25 +0100
-Message-ID: <17571.1442842945@warthog.procyon.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Andrzej Hajda <a.hajda@samsung.com> wrote:
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-> Semantic patch finds comparisons of types:
->     unsigned < 0
->     unsigned >= 0
-> The former is always false, the latter is always true.
-> Such comparisons are useless, so theoretically they could be
-> safely removed, but their presence quite often indicates bugs.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx35.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Or someone has left them in because they don't matter and there's the
-possibility that the type being tested might be or become signed under some
-circumstances.  If the comparison is useless, I'd expect the compiler to just
-discard it - for such cases your patch is pointless.
+diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
+index 8623cd4e49fd..ba8b33328a8d 100644
+--- a/drivers/clk/imx/clk-imx35.c
++++ b/drivers/clk/imx/clk-imx35.c
+@@ -84,6 +84,14 @@ enum mx35_clks {
+ 
+ static struct clk *clk[clk_max];
+ 
++static struct clk ** const uart_clks[] __initconst = {
++	&clk[ipg],
++	&clk[uart1_gate],
++	&clk[uart2_gate],
++	&clk[uart3_gate],
++	NULL
++};
++
+ int __init mx35_clocks_init(void)
+ {
+ 	void __iomem *base;
+@@ -296,6 +304,8 @@ int __init mx35_clocks_init(void)
+ 	 */
+ 	clk_prepare_enable(clk[scc_gate]);
+ 
++	imx_register_uart_clocks(uart_clks);
++
+ 	imx_print_silicon_rev("i.MX35", mx35_revision());
+ 
+ 	mxc_timer_init(MX35_GPT1_BASE_ADDR, MX35_INT_GPT, GPT_TYPE_IMX31);
+-- 
+2.5.1
 
-If I have, for example:
 
-	unsigned x;
-
-	if (x == 0 || x > 27)
-		give_a_range_error();
-
-I will write this as:
-
-	unsigned x;
-
-	if (x <= 0 || x > 27)
-		give_a_range_error();
-
-because it that gives a way to handle x being changed to signed at some point
-in the future for no cost.  In which case, your changing the <= to an ==
-"because the < part of the case is useless" is arguably wrong.
-
-David
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
