@@ -1,66 +1,107 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 2 Sep 2015 09:52:35 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Bintian Wang <bintian.wang@huawei.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Jian Zhang <zhangjian001@hisilicon.com>,
-	Zhenwei Wang <Zhenwei.wang@hisilicon.com>,
-	Haoju Mo <mohaoju@hisilicon.com>,
-	Dan Zhao <dan.zhao@hisilicon.com>, sunzhaosheng@hisilicon.com,
-	victor.lixin@hisilicon.com, Tyler Baker <tyler.baker@linaro.org>
-Subject: Re: [PATCH v3 4/5] clk: Hi6220: add stub clock driver
-Message-ID: <20150902015235.GA7763@leoy-linaro>
-References: <1438564418-15948-1-git-send-email-leo.yan@linaro.org>
- <1438564418-15948-5-git-send-email-leo.yan@linaro.org>
- <CAMAWPa8dNOipiFFv96J5XvP1Qs7ysHBD6_-RpMGqCEdPAKxHAA@mail.gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+ <will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+ <linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>
+Subject: [PATCH 5/6] clk: qoriq: Add ls1043a support.
+Date: Mon, 21 Sep 2015 20:22:37 +0800
+Message-ID: <1442838158-2964-6-git-send-email-B48286@freescale.com>
+In-Reply-To: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMAWPa8dNOipiFFv96J5XvP1Qs7ysHBD6_-RpMGqCEdPAKxHAA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Hou Zhiqiang <B48286@freescale.com>, Shaohui.Xie@freescale.com,
+ corbet@lwn.net, bhupesh.sharma@freescale.com, mturquette@baylibre.com,
+ wsa@the-dreams.de, sboyd@codeaurora.org, wim@iguana.be,
+ Wenbin.Song@freescale.com, scottwood@freescale.com, Mingkai.Hu@freescale.com,
+ leoli@freescale.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Kevin,
+From: Hou Zhiqiang <B48286@freescale.com>
 
-On Tue, Sep 01, 2015 at 05:28:03PM -0700, Kevin Hilman wrote:
-> On Sun, Aug 2, 2015 at 6:13 PM, Leo Yan <leo.yan@linaro.org> wrote:
-> > On Hi6220, there have some clocks which can use mailbox channel to send
-> > messages to power controller to change frequency; this includes CPU, GPU
-> > and DDR clocks.
-> >
-> > For dynamic frequency scaling, firstly need write the frequency value to
-> > SRAM region, and then send message to mailbox to trigger power controller
-> > to handle this requirement. This driver will use syscon APIs to pass SRAM
-> > memory region and use common mailbox APIs for channels accessing.
-> >
-> > This init driver will support cpu frequency change firstly.
-> >
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> 
-> The kernelci.org build/boot bot detected boot failures in
-> linux-next[1], and the failure was bisected down to this patch (landed
-> in linux-next as commit c1628a2c416da947f5afac615d53189250fa49cb.
-> 
-> I verifed that reverting this commit on top of next-20150901 gets the
-> hikey booting again.
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+ drivers/clk/clk-qoriq.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-Thanks for reporting. This issue has been confirmed at my side, it's
-caused by the patch have added dependency with MAILBOX, will fix this
-issue and send patch.
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 7753fa3..e71927b 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -244,6 +244,28 @@ static const struct clockgen_muxinfo clockgen2_cmux_cgb = {
+ 	},
+ };
+ 
++static const struct clockgen_muxinfo ls1043a_hwa1 = {
++	{
++		{},
++		{},
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV3 },
++		{},
++		{},
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV2 },
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
++	},
++};
++
++static const struct clockgen_muxinfo ls1043a_hwa2 = {
++	{
++		{},
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV1 },
++		{},
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
++	},
++};
++
+ static const struct clockgen_muxinfo t1023_hwa1 = {
+ 	{
+ 		{},
+@@ -452,6 +474,21 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.pll_mask = 0x03,
+ 	},
+ 	{
++		.compat = "fsl,ls1043a-clockgen",
++		.init_periph = t2080_init_periph,
++		.cmux_groups = {
++			&t1040_cmux
++		},
++		.hwaccel = {
++			&ls1043a_hwa1, &ls1043a_hwa2
++		},
++		.cmux_to_group = {
++			0, -1
++		},
++		.pll_mask = 0x07,
++		.flags = CG_PLL_8BIT,
++	},
++	{
+ 		.compat = "fsl,ls2080a-clockgen",
+ 		.cmux_groups = {
+ 			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
+@@ -1228,6 +1265,7 @@ err:
+ CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
+ 
+ /* Legacy nodes */
+-- 
+2.1.0.27.g96db324
 
-Thanks,
-Leo Yan
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
