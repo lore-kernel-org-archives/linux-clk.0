@@ -1,78 +1,71 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
- Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
- Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- b.zolnierkie@samsung.com
-Subject: [PATCH v4 3/4] cpufreq-dt: add suspend frequency support
-Date: Mon, 07 Sep 2015 17:41:40 +0200
-Message-id: <1441640501-13613-4-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH v4 4/8] clk: imx31: retain early UART clocks during kernel init
+Date: Mon, 21 Sep 2015 18:54:00 +0200
+Message-Id: <1442854444-4460-5-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+ kernel@pengutronix.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add suspend frequency support and if needed set it to
-the frequency obtained from the suspend opp (can be defined
-using opp-v2 bindings and is optional).
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 ---
- drivers/cpufreq/cpufreq-dt.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/clk/imx/clk-imx31.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index c3583cd..e08ae40 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -196,6 +196,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	struct device *cpu_dev;
- 	struct regulator *cpu_reg;
- 	struct clk *cpu_clk;
-+	struct dev_pm_opp *suspend_opp;
- 	unsigned long min_uV = ~0, max_uV = 0;
- 	unsigned int transition_latency;
- 	bool need_update = false;
-@@ -329,6 +330,13 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	policy->driver_data = priv;
+diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
+index 1f8383475bb3..5520e20eaceb 100644
+--- a/drivers/clk/imx/clk-imx31.c
++++ b/drivers/clk/imx/clk-imx31.c
+@@ -62,6 +62,16 @@ enum mx31_clks {
+ static struct clk *clk[clk_max];
+ static struct clk_onecell_data clk_data;
  
- 	policy->clk = cpu_clk;
++static struct clk ** const uart_clks[] __initconst = {
++	&clk[ipg],
++	&clk[uart1_gate],
++	&clk[uart2_gate],
++	&clk[uart3_gate],
++	&clk[uart4_gate],
++	&clk[uart5_gate],
++	NULL
++};
 +
-+	rcu_read_lock();
-+	suspend_opp = dev_pm_opp_get_suspend_opp(cpu_dev);
-+	if (suspend_opp)
-+		policy->suspend_freq = dev_pm_opp_get_freq(suspend_opp) / 1000;
-+	rcu_read_unlock();
-+
- 	ret = cpufreq_table_validate_and_show(policy, freq_table);
- 	if (ret) {
- 		dev_err(cpu_dev, "%s: invalid frequency table: %d\n", __func__,
-@@ -419,6 +427,9 @@ static struct cpufreq_driver dt_cpufreq_driver = {
- 	.ready = cpufreq_ready,
- 	.name = "cpufreq-dt",
- 	.attr = cpufreq_dt_attr,
-+#ifdef CONFIG_PM
-+	.suspend = cpufreq_generic_suspend,
-+#endif
- };
+ int __init mx31_clocks_init(unsigned long fref)
+ {
+ 	void __iomem *base;
+@@ -200,6 +210,8 @@ int __init mx31_clocks_init(unsigned long fref)
+ 	mx31_revision();
+ 	clk_disable_unprepare(clk[iim_gate]);
  
- static int dt_cpufreq_probe(struct platform_device *pdev)
++	imx_register_uart_clocks(uart_clks);
++
+ 	mxc_timer_init(MX31_GPT1_BASE_ADDR, MX31_INT_GPT, GPT_TYPE_IMX31);
+ 
+ 	return 0;
 -- 
-1.9.1
+2.5.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
