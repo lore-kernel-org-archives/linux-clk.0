@@ -1,68 +1,71 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 17 Sep 2015 12:31:37 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] clk: qcom: Add support for RCGs with shared
- branches
-Message-ID: <20150917193137.GU23081@codeaurora.org>
-References: <1442507969-18062-1-git-send-email-georgi.djakov@linaro.org>
- <1442507969-18062-3-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH v4 8/8] clk: imx7d: retain early UART clocks during kernel init
+Date: Mon, 21 Sep 2015 18:54:04 +0200
+Message-Id: <1442854444-4460-9-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+ kernel@pengutronix.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442507969-18062-3-git-send-email-georgi.djakov@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/17, Georgi Djakov wrote:
-> +
-> +static unsigned long
-> +clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> +{
-> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> +	unsigned long rate;
-> +	u32 cfg, hid_div, mask;
-> +
-> +	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
-> +
-> +	mask = BIT(rcg->hid_width) - 1;
-> +	hid_div = cfg >> CFG_SRC_DIV_SHIFT;
-> +	hid_div &= mask;
-> +
-> +	rate = (parent_rate * 2) / (hid_div + 1);
-> +
-> +	rcg->current_freq = rate;
-> +
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-We didn't need to copy/paste/hack the clk_rcg2_recalc_rate()
-code. I squashed this in.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx7d.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index c7b9b32742e5..b544bb302f79 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -350,20 +350,8 @@ static unsigned long
- clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 71f3a94b472c..f86b68049872 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -363,6 +363,17 @@ static const char *pll_video_bypass_sel[] = { "pll_video_main", "pll_video_main_
+ 
+ static struct clk_onecell_data clk_data;
+ 
++static struct clk ** const uart_clks[] __initconst = {
++	&clks[IMX7D_UART1_ROOT_CLK],
++	&clks[IMX7D_UART2_ROOT_CLK],
++	&clks[IMX7D_UART3_ROOT_CLK],
++	&clks[IMX7D_UART4_ROOT_CLK],
++	&clks[IMX7D_UART5_ROOT_CLK],
++	&clks[IMX7D_UART6_ROOT_CLK],
++	&clks[IMX7D_UART7_ROOT_CLK],
++	NULL
++};
++
+ static void __init imx7d_clocks_init(struct device_node *ccm_node)
  {
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
--	unsigned long rate;
--	u32 cfg, hid_div, mask;
+ 	struct device_node *np;
+@@ -856,5 +867,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	/* set uart module clock's parent clock source that must be great then 80MHz */
+ 	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
  
--	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
--
--	mask = BIT(rcg->hid_width) - 1;
--	hid_div = cfg >> CFG_SRC_DIV_SHIFT;
--	hid_div &= mask;
--
--	rate = (parent_rate * 2) / (hid_div + 1);
--
--	rcg->current_freq = rate;
--
--	return rate;
-+	return rcg->current_freq = clk_rcg2_recalc_rate(hw, parent_rate);
++	imx_register_uart_clocks(uart_clks);
++
  }
- 
- static int clk_rcg2_shared_enable(struct clk_hw *hw)
+ CLK_OF_DECLARE(imx7d, "fsl,imx7d-ccm", imx7d_clocks_init);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.5.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
