@@ -1,128 +1,61 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 30 Sep 2015 13:21:47 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] ARM: imx31: Do not call mxc_timer_init twice when
- booting with DT
-Message-ID: <20150930052147.GA18468@tiger>
-References: <1443423799-14685-1-git-send-email-alexander.stein@systec-electronic.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443423799-14685-1-git-send-email-alexander.stein@systec-electronic.com>
+Return-Path: <a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: [PATCH 14/38] clk: vt8500: fix sign of possible PLL values
+Date: Mon, 21 Sep 2015 15:33:46 +0200
+Message-id: <1442842450-29769-15-git-send-email-a.hajda@samsung.com>
+In-reply-to: <1442842450-29769-1-git-send-email-a.hajda@samsung.com>
+References: <1442842450-29769-1-git-send-email-a.hajda@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 28, 2015 at 09:03:19AM +0200, Alexander Stein wrote:
-> mxc_timer_init must not be called from within mx31_clocks_init_dt. It will
-> eventually be called by imx31_timer_init_dt
-> (drivers/clocksource/timer-imx-gpt.c).
-> This arranges the initialization code similar to clk-imx27.c
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+With unsigned values underflow in loops can occur resulting in
+theoretically infinite loops.
 
-Again, please use "clk: ..." instead of "ARM: ..." for clock patches,
-since we have moved i.MX clock drivers from arch/arm/mach-imx into
-drivers/clk/imx.
+The problem has been detected using proposed semantic patch
+scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci [1].
 
-> ---
-> Changes in v3:
-> * Fix compilation issues
-> * Actually compile tested, but still untested due to lack of hardware
-> 
-> * Added in v2
-> * Compile tested only due to lack of hardware
-> 
->  drivers/clk/imx/clk-imx31.c | 26 +++++++++++++++++---------
->  1 file changed, 17 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
-> index 1f83834..a908222 100644
-> --- a/drivers/clk/imx/clk-imx31.c
-> +++ b/drivers/clk/imx/clk-imx31.c
-> @@ -47,6 +47,8 @@ static const char *per_sel[] = { "per_div", "ipg", };
->  static const char *csi_sel[] = { "upll", "spll", };
->  static const char *fir_sel[] = { "mcu_main", "upll", "spll" };
->  
-> +static u32 fref = 26000000; /* default */
-> +
+[1]: http://permalink.gmane.org/gmane.linux.kernel/2038576
 
-We should not create this variable, and it should be kept as a local
-variable and passed around as an argument.
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/clk/clk-vt8500.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Also, the patch doesn't apply to my imx/clk branch.  Please rebase.
-
-Shawn
-
->  enum mx31_clks {
->  	dummy, ckih, ckil, mpll, spll, upll, mcu_main, hsp, ahb, nfc, ipg,
->  	per_div, per, csi, fir, csi_div, usb_div_pre, usb_div_post, fir_div_pre,
-> @@ -62,7 +64,7 @@ enum mx31_clks {
->  static struct clk *clk[clk_max];
->  static struct clk_onecell_data clk_data;
->  
-> -int __init mx31_clocks_init(unsigned long fref)
-> +static void __init _mx31_clocks_init(unsigned long fref)
->  {
->  	void __iomem *base;
->  	struct device_node *np;
-> @@ -132,6 +134,12 @@ int __init mx31_clocks_init(unsigned long fref)
->  
->  	imx_check_clocks(clk, ARRAY_SIZE(clk));
->  
-> +	clk_set_parent(clk[csi], clk[upll]);
-> +	clk_prepare_enable(clk[emi_gate]);
-> +	clk_prepare_enable(clk[iim_gate]);
-> +	mx31_revision();
-> +	clk_disable_unprepare(clk[iim_gate]);
-> +
->  	np = of_find_compatible_node(NULL, NULL, "fsl,imx31-ccm");
->  
->  	if (np) {
-> @@ -139,6 +147,11 @@ int __init mx31_clocks_init(unsigned long fref)
->  		clk_data.clk_num = ARRAY_SIZE(clk);
->  		of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
->  	}
-> +}
-> +
-> +int __init mx31_clocks_init(void)
-> +{
-> +	_mx31_clocks_init(fref);
->  
->  	clk_register_clkdev(clk[gpt_gate], "per", "imx-gpt.0");
->  	clk_register_clkdev(clk[ipg], "ipg", "imx-gpt.0");
-> @@ -194,12 +207,6 @@ int __init mx31_clocks_init(unsigned long fref)
->  	clk_register_clkdev(clk[sdma_gate], NULL, "imx31-sdma");
->  	clk_register_clkdev(clk[iim_gate], "iim", NULL);
->  
-> -	clk_set_parent(clk[csi], clk[upll]);
-> -	clk_prepare_enable(clk[emi_gate]);
-> -	clk_prepare_enable(clk[iim_gate]);
-> -	mx31_revision();
-> -	clk_disable_unprepare(clk[iim_gate]);
-> -
->  	mxc_timer_init(MX31_GPT1_BASE_ADDR, MX31_INT_GPT, GPT_TYPE_IMX31);
->  
->  	return 0;
-> @@ -208,7 +215,6 @@ int __init mx31_clocks_init(unsigned long fref)
->  int __init mx31_clocks_init_dt(void)
->  {
->  	struct device_node *np;
-> -	u32 fref = 26000000; /* default */
->  
->  	for_each_compatible_node(np, NULL, "fixed-clock") {
->  		if (!of_device_is_compatible(np, "fsl,imx-osc26m"))
-> @@ -218,5 +224,7 @@ int __init mx31_clocks_init_dt(void)
->  			break;
->  	}
->  
-> -	return mx31_clocks_init(fref);
-> +	_mx31_clocks_init(fref);
-> +
-> +	return 0;
->  }
-> -- 
-> 2.4.9
-> 
+diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
+index 37e9288..098e9fa 100644
+--- a/drivers/clk/clk-vt8500.c
++++ b/drivers/clk/clk-vt8500.c
+@@ -384,7 +384,7 @@ static void vt8500_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+ static void wm8650_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+ 				u32 *multiplier, u32 *divisor1, u32 *divisor2)
+ {
+-	u32 mul, div1, div2;
++	int mul, div1, div2;
+ 	u32 best_mul, best_div1, best_div2;
+ 	unsigned long tclk, rate_err, best_err;
+ 
+@@ -452,7 +452,7 @@ static u32 wm8750_get_filter(u32 parent_rate, u32 divisor1)
+ static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+ 				u32 *filter, u32 *multiplier, u32 *divisor1, u32 *divisor2)
+ {
+-	u32 mul, div1, div2;
++	int mul, div1, div2;
+ 	u32 best_mul, best_div1, best_div2;
+ 	unsigned long tclk, rate_err, best_err;
+ 
+@@ -496,7 +496,7 @@ static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+ static void wm8850_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+ 				u32 *multiplier, u32 *divisor1, u32 *divisor2)
+ {
+-	u32 mul, div1, div2;
++	int mul, div1, div2;
+ 	u32 best_mul, best_div1, best_div2;
+ 	unsigned long tclk, rate_err, best_err;
+ 
+-- 
+1.9.1
