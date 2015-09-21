@@ -1,71 +1,65 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/4] cpufreq-dt: add suspend frequency support
-Date: Wed, 09 Sep 2015 03:16:48 +0200
-Message-ID: <2547413.Uj7KDUeGpY@vostro.rjw.lan>
-In-Reply-To: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+ <will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+ <linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>
+Subject: [PATCH 1/6] i2c: Add i2c support to Freescale Layerscape platforms
+Date: Mon, 21 Sep 2015 20:22:33 +0800
+Message-ID: <1442838158-2964-2-git-send-email-B48286@freescale.com>
+In-Reply-To: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-pm-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Hou Zhiqiang <B48286@freescale.com>, Shaohui.Xie@freescale.com,
+ corbet@lwn.net, bhupesh.sharma@freescale.com, mturquette@baylibre.com,
+ wsa@the-dreams.de, sboyd@codeaurora.org, wim@iguana.be,
+ Wenbin.Song@freescale.com, scottwood@freescale.com, Mingkai.Hu@freescale.com,
+ leoli@freescale.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday, September 08, 2015 06:41:00 PM Bartlomiej Zolnierkiewicz wrote:
-> Hi,
-> 
-> This patch series adds suspend frequency support (using opp-v2
-> bindings and suspend-opp functionality) to cpufreq-dt driver and
-> then adds suspend opp for Exynos4412 based boards.
-> 
-> This patch series fixes suspend/resume support on Exynos4412
-> based Trats2 board and reboot hang on Exynos4412 based Odroid
-> U3 board.
-> 
-> Changes since v4:
-> - removed superfluous CONFIG_PM ifdefs
-> - added Acked-by tag from Krzysztof to patch #4
-> - added Acked-by tag from Viresh to patches #1-3
-> 
-> Changes since v3:
-> - fixed dev_pm_opp_get_suspend_opp() locking
-> - shortened variable name in dev_pm_opp_get_suspend_opp()
-> - adjusted cpufreq_generic_suspend() to work with cpufreq-dt
-> - removed no longer needed cpufreq_dt_suspend()
-> - added Acked-by tag from Viresh to patch #4
-> 
-> Changes since v2:
-> - rewrote to use suspend-opp functionality
-> 
-> Changes since v1:
-> - removed superfluous ";"
-> 
-> Depends on:
-> - next-20150902 branch of linux-next kernel tree
+From: Shaohui Xie <Shaohui.Xie@freescale.com>
 
-I've queued up [1-3/4] for the next PM pull request.
+Modify the I2C_IMX config to support to Layerscape platforms.
 
-The [4/4] has to go in separately through the platform tree.
+Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
+Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+ drivers/i2c/busses/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Rafael
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 08b8617..14147ec 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -582,10 +582,10 @@ config I2C_IMG
+ 
+ config I2C_IMX
+ 	tristate "IMX I2C interface"
+-	depends on ARCH_MXC
++	depends on ARCH_MXC || ARCH_LAYERSCAPE
+ 	help
+ 	  Say Y here if you want to use the IIC bus controller on
+-	  the Freescale i.MX/MXC processors.
++	  the Freescale i.MX/MXC or Layerscape processors.
+ 
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called i2c-imx.
+-- 
+2.1.0.27.g96db324
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
