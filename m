@@ -1,189 +1,112 @@
-Return-Path: <magnus.damm@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from www.linutronix.de ([62.245.132.108]:36204 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932285AbbIUNHN (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 21 Sep 2015 09:07:13 -0400
+Date: Mon, 21 Sep 2015 15:06:18 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+cc: Nishanth Menon <nm@ti.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	linux-rt-users@vger.kernel.org, Felipe Balbi <balbi@ti.com>,
+	Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org
+Subject: Re: Common clock framework API vs RT patchset
+In-Reply-To: <20150804153641.GR7557@n2100.arm.linux.org.uk>
+Message-ID: <alpine.DEB.2.11.1509211255530.5606@nanos>
+References: <55C0A96F.80307@ti.com> <alpine.DEB.2.11.1508041405290.3983@nanos> <55C0D8F3.3030105@ti.com> <20150804153641.GR7557@n2100.arm.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <2372675.RSIvUA3Urg@avalon>
-References: <20150831124842.31057.54534.sendpatchset@little-apple>
-	<1641516.pMxNnC39aM@avalon>
-	<CANqRtoQ_21KjoT2CUzx=oReO-JSLWr3jBv7RcJWoFH+M_ZVuhw@mail.gmail.com>
-	<2372675.RSIvUA3Urg@avalon>
-Date: Wed, 2 Sep 2015 17:24:58 +0900
-Message-ID: <CANqRtoQodB1ggaS_XkKAm4ohkOABFZo+G=Vi-_-vAY9ZijDUCg@mail.gmail.com>
-Subject: Re: [PATCH v5 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
-From: Magnus Damm <magnus.damm@gmail.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
-	SH-Linux <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	"Simon Horman [Horms]" <horms@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Laurent,
+On Tue, 4 Aug 2015, Russell King - ARM Linux wrote:
+> On Tue, Aug 04, 2015 at 10:23:31AM -0500, Nishanth Menon wrote:
+> > Consider clk_enable/disable/set_parent/setfreq operations. none of these
+> > operations are "atomic" from hardware point of view. instead, they are a
+> > set of steps which culminates to moving from state A to state B of the
+> > clock tree configuration.
+> 
+> There's a world of difference between clk_enable()/clk_disable() and
+> the rest of the clk API.
+> 
+> clk_enable()/clk_disable() _should_ be callable from any context, since
+> you may need to enable or disable a clock from any context.  The remainder
+> of the clk API is callable only from contexts where sleeping is permissible.
+> 
+> The reason we have this split is because clk_enable()/clk_disable() have
+> historically been used in interrupt handlers, and they're specifically
+> not supposed to impose big delays.
+> 
+> Things like waiting for a PLL to re-lock is time-consuming, so it's not
+> something I'd expect to see behind a clk_enable() implementation (the
+> fact you can't sleep in there is a big hint.)  Such waits should be in
+> the clk_prepare() stage instead.
 
-On Wed, Sep 2, 2015 at 2:21 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> Hi Magnus,
->
-> On Wednesday 02 September 2015 11:27:27 Magnus Damm wrote:
->> On Tue, Sep 1, 2015 at 9:30 PM, Laurent Pinchart wrote:
->> > On Tuesday 01 September 2015 19:59:01 Magnus Damm wrote:
->> >> On Tue, Sep 1, 2015 at 3:00 PM, Laurent Pinchart wrote:
->> >>> On Monday 31 August 2015 21:49:04 Magnus Damm wrote:
->> >>>> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
->> >>>>
->> >>>> This V5 patch adds initial CPG support for R-Car Generation 3 and in
->> >>>> particular the R8A7795 SoC.
->> >>>>
->> >>>> The R-Car Gen3 clock hardware has a register write protection feature
->> >>>> that needs to be shared between the CPG function needs to be shared
->> >>>> between the CPG and MSTP hardware somehow. So far this feature is
->> >>>> simply ignored.
->> >>>>
->> >>>> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
->> >>>> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->> >>>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
->> >>>> ---
->> >>>>
->> >>>>  Changes since V4: (Magnus Damm <damm+renesas@opensource.se>)
->> >>>>  - Simplified clks array handling - thanks Geert!
->> >>>>  - Updated th DT binding documentation to reflect latest state
->> >>>>  - of_property_count_strings() -> of_property_count_u32_elems() fix
->> >>>>
->> >>>>  Changes since V3: (Magnus Damm <damm+renesas@opensource.se>)
->> >>>>  - Reworked driver to incorporate most feedback from Stephen Boyd -
->> >>>>  thanks!!
->> >>>>  - Major things like syscon and driver model require more discussion.
->> >>>>  - Added hunk to build drivers/clk/shmobile if ARCH_RENESAS is set.
->> >>>>
->> >>>>  Changes since V2: (Magnus Damm <damm+renesas@opensource.se>)
->> >>>>  - Reworked driver to rely on clock index instead of strings.
->> >>>>  - Dropped use of "clock-output-names".
->> >>>>
->> >>>>  Earlier versions: Kuninori Morimoto
->> >>>>  <kuninori.morimoto.gx@renesas.com>
->> >>>>  Initial version: Gaku Inami <gaku.inami.xw@bp.renesas.com>
->> >>>>
->> >>>>  Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.
->> >>>>  txt  |   32 +
->> >>>>  drivers/clk/Makefile                                |    1
->> >>>>  drivers/clk/shmobile/Makefile                       |    1
->> >>>>  drivers/clk/shmobile/clk-rcar-gen3.c                |  245 ++++++++++
->> >>>>  4 files changed, 279 insertions(+)
->> >>>>
->> >>>> --- /dev/null
->> >>>> +++
->> >>>> work/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clo
->> >>>> cks.txt
->> >>>> 2015-08-31 15:49:10.000000000 +0900 @@ -0,0 +1,32 @@
->> >>>> +* Renesas R-Car Gen3 Clock Pulse Generator (CPG)
->> >>>> +
->> >>>> +The CPG generates core clocks for the R-Car Gen3 SoCs. It includes
->> >>>> three PLLs
->> >>>> +and several fixed ratio dividers.
->> >>>> +
->> >>>> +Required Properties:
->> >>>> +
->> >>>> +  - compatible: Must be one of
->> >>>> +    - "renesas,r8a7795-cpg-clocks" for the r8a7795 CPG
->> >>>> +    - "renesas,rcar-gen3-cpg-clocks" for the generic R-Car Gen3 CPG
->> >>>> +
->> >>>> +  - reg: Base address and length of the memory resource used by the
->> >>>> CPG
->> >>>> +
->> >>>> +  - clocks: References to the parent clocks: first to the EXTAL clock
->> >>>> +  - #clock-cells: Must be 1
->> >>>> +  - clock-indices: Indices of the exported clocks
->> >>>
->> >>> Do we actually need the clock-indices property, as CPG clocks are
->> >>> numbered sequentially ? It seems to me like we could drop the property,
->> >>> especially given that the number of clocks is hardcoded in the driver
->> >>> anyway.
->> >>
->> >> There are two reasons why they are there:
->> >> 1) I like to be able to search DT files to see which node that is
->> >> providing what clock.
->> >
->> > The clocks are listed in the CPG section of
->> > include/dt-bindings/clock/r8a7795- clock.h so that should already give a
->> > hint. Additionally I don't think you'll search the CPG core clocks very
->> > often in the DT sources as they're usually not used directly by devices
->> > :-)
->>
->> You are right that they may not be searched very frequently. But at
->> least the CPG is consistent with MSTP with this implementation. =)
->>
->> >> 2) When adding support for additional SoCs we may add new index to the
->> >> driver. New SoC may get sparsely populated index lists and old ones
->> >> will omit the recently added index.
->> >
->> > If the CPG core differs between SoCs shouldn't that be handled by the DT
->> > compatibility string ?
->>
->> You know that I personally always prefered an incremental approach
->> with little speculation in DT. =)
->>
->> So using SoC specific compat strings over generic ones would in
->> general be my preferred choice. I suspect the initial developer of
->> this patch simply followed the same style as Gen2 with a generic
->> compat string.
->>
->> Does this mean that you for the r8a7795 CPG prefer SoC specific compat
->> string to begin with over a more generic one? If we go for SoC
->> specific compat string then perhaps we also should change file names?
->
-> We use an SoC-specific compat string already so we won't be stuck in the
-> future. I would keep matching on the generic compatible string for now until
-> the unlikely future event that a Gen3 SoC would have a different CPG. I don't
-> think there's too much point in making DT bindings (and the corresponding
-> code) more complex than necessary to plan for an unlikely future hardware
-> change that we know nothing about at this point anyway.
+You wish. Drivers with loop/udelays in the enable/disable callbacks:
 
-Totally agree!
+   drivers/clk/keystone/gate.c::keystone_clk_enable() -> psc_config()
+   drivers/clk/shmobile/clk-mstp.c::cpg_mstp_clock_endisable()
+   drivers/clk/qcom/clk-branch.c::clk_branch_enable() -> clk_branch_wait()
+   drivers/clk/qcom/clk-pll.c::clk_pll_vote_enable() -> wait_for_pll()
+   drivers/clk/ti/fapll.c::ti_fapll_enable() -> ti_fapll_wait_lock()
+   drivers/clk/mmp/clk-gate.c::mmp_clk_gate_enable()
+   drivers/clk/tegra/clk-pll.c::clk_pll_enable() -> clk_pll_wait_for_lock()
+   drivers/clk/tegra/clk-pll.c::clk_plle_enable() -> clk_plle_training() [1]
+   drivers/clk/zynq/pll.c::zynq_pll_enable()
+   drivers/clk/ux500/clk-prcc.c::clk_prcc_pclk_enable()
+   drivers/clk/clk-nomadik.c::src_clk_enable()
+   drivers/clk/samsung/clk-pll.c::samsung_s3c2410_pll_enable()
+   drivers/clk/sirf/clk-common.c::usb_pll_clk_enable()
+   drivers/clk/st/clkgen-fsyn.c::quadfs_pll_enable()
+   drivers/clk/st/clkgen-mux.c::clkgena_divmux_enable()
+   drivers/gpu/drm/msm/mdp/mdp4/mdp4_lvds_pll.c::mpd4_lvds_pll_enable()
+   drivers/gpu/drm/msm/hdmi/hdmi_phy_8960.c::hdmi_pll_enable()
+   
+   [1] Worst case: timeout = jiffies + msecs_to_jiffies(100);
 
-So we discussed this over chat a bit more and the following
-observations/agreements were made:
+I'm sure that I missed quite some, but the above is horrible enough.
 
-- Magnus clarified that the clock-indices used in current Gen3 CPG
-version were selected over clock-output-names based on feedback from
-CCF maintainers that clock-output-names were best to be dropped. Both
-Laurent and Magnus agreed that getting rid of the clock-output-names
-in DT must be a good thing - especially if the CCF maintainers prefer
-that.
+> Now, as for clk_enable() being interrupted - if clk_enable() is interrupted
+> and another clk_enable() comes along for the same clock, that second
+> clk_enable() should not return until the clock has actually been enabled,
+> and it's up to the implementation to decode how to achieve that.  If that
+> means a RT implementation using a raw spinlock, then that's one option
+> (which basically would have the side effect of blocking until the preempted
+> clk_enable() finishes its business.)  Alternatively, if we can preempt
+> inside clk_enable(), then the clk_enable() implementation should be written
+> to cope with that (eg, by the second clk_enable() fiddling with the hardware,
+> and the first thread noticing that it has nothing to do.)
 
-- Removing clock-output-names from DT does however not work as-is,
-some CCF core changes may be needed. We need to work together with the
-CCF maintainers to resolve this.
+clk_enable() and clk_disable() take the enable_lock, so that's not
+different in RT from !RT. The second caller to clk_enable() has to
+wait for the first one to finish.
 
-- We did a quick study of CPG on Gen2 and noticed that r8a7790 and
-r8a7791 core clocks are not identical.
+Now what's different in RT is that the enable_lock gets converted to a
+'sleeping spinlock', which is again fine to take from interrupt
+handlers as interrupt handlers are forced into threads on RT and are
+preemptible.
 
-- On Gen2 using a generic DT compat string with possibility to add
-clocks seemed to work well when adding r8a7791 support as second SoC
-after r8a7790.
+The problem Grygorii is seeing is when code, which runs in atomic
+context even on RT (demux handlers, interrupt disabled sections ..)
+calls clk_en/disable. That results obviously in a
+might_sleep/scheduling while atomic splat.
 
-- Using clock-indices on Gen3 to allow adding new clocks over time
-with generic DT compat string match in the driver to begin with seems
-like a good way forward.
+Of course we could solve that by making enable_lock a raw_spinlock,
+but looking at the various implementations of clk_ops.enable tells me
+that this is not a brilliant idea. See the PLL loops/delays crap
+above. There is another issue:
 
-- The current style of using SoC-specific and generic DT compat
-strings in DT documentation and DTS together with generic DT compat
-string in driver (with opt-in SoC specific matcing if needed) works
-well for most on-chip devices/drivers and CPG is no exception.
+Some callbacks have their own spinlocks which then need to be
+converted to raw_spinlocks as well. Not a big deal, but some of the
+clk drivers use that very same spinlock, which is supposed to protect
+register access, for all kind of other crap, which is going to
+introduce latencies. And that's a ratsnest of locks down to
+regmap->lock ....
 
-- If a future SoC has some incompatibility when it comes to core
-clocks then we can chose to deal with this either via a DT compat
-string check or extending the number of clocks using a clock-index.
-How to handle this will most likely be a case-by-case desicion.
+So for RT the only sensible choice at the moment is to leave
+enable_lock as non raw spinlock and deal with the very few places
+where clk_enable/disable() is really called from atomic context.
 
-- Sharing clock index #defines for DT ABI through a header file is
-desired but it is OK to handle it as an incremental feature patch.
+Thanks,
 
-The above basically means that the current driver is in pretty OK
-shape, but we still need to figure out how to adjust the CCF core code
-to allow operation without clock-output-names in DT.
-
-Hope this sums up the current situation!
-
-Cheers,
-
-/ magnus
+	tglx
