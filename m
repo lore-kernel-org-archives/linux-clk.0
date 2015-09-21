@@ -1,124 +1,45 @@
-Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
-Date: Tue, 22 Sep 2015 22:26:29 +0100
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org, Brian Hutchinson <b.hutchman@gmail.com>,
-	Felipe Balbi <balbi@ti.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	Nishanth Menon <nm@ti.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Sekhar Nori <nsekhar@ti.com>
-Subject: Re: [PATCH] clk: ti: Fix FAPLL udelay in clk_enable with clk_prepare
-Message-ID: <20150922212629.GH21098@n2100.arm.linux.org.uk>
-References: <1442956985-32642-1-git-send-email-tony@atomide.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Sun, 20 Sep 2015 21:33:10 -0700
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+CC: <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH v2 0/2] Add initial support for RPM clocks
+Message-ID: <20150921043310.GO13472@usrtlx11787.corpusers.net>
+References: <1438620489-32515-1-git-send-email-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442956985-32642-1-git-send-email-tony@atomide.com>
-Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1438620489-32515-1-git-send-email-georgi.djakov@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 22, 2015 at 02:23:05PM -0700, Tony Lindgren wrote:
-> As recently pointed out (again) by Thomas and Russell, we must not
-> wait in in clk_enable. The wait for PLL to lock needs to happen
-> in clk_prepare instead.
-> 
-> It seems this is a common copy paste error with the PLL drivers,
-> and similar fixes should be applied to other PLL drivers after
-> testing.
-> 
-> Cc: Brian Hutchinson <b.hutchman@gmail.com>
-> Cc: Felipe Balbi <balbi@ti.com>
-> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-> Cc: Nishanth Menon <nm@ti.com>
-> Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>
+On Mon 03 Aug 09:48 PDT 2015, Georgi Djakov wrote:
 
-As this moves things in the right direction (and only based on that):
-
-Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
-
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Sekhar Nori <nsekhar@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
->  drivers/clk/ti/fapll.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
+> This patchset adds initial support for the clocks controlled by
+> the RPM (Resource Power Manager) processor on Qualcomm platforms.
+> It depends on Bjorn's Qualcomm SMD & RPM patches, that are now in
+> linux-next: https://lkml.org/lkml/2015/7/27/1125
 > 
-> diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
-> index f4b2e98..e1db74a 100644
-> --- a/drivers/clk/ti/fapll.c
-> +++ b/drivers/clk/ti/fapll.c
-> @@ -37,7 +37,7 @@
->  #define FAPLL_PWD_OFFSET	4
->  
->  #define MAX_FAPLL_OUTPUTS	7
-> -#define FAPLL_MAX_RETRIES	1000
-> +#define FAPLL_MAX_RETRIES	5
->  
->  #define to_fapll(_hw)		container_of(_hw, struct fapll_data, hw)
->  #define to_synth(_hw)		container_of(_hw, struct fapll_synth, hw)
-> @@ -126,7 +126,7 @@ static int ti_fapll_wait_lock(struct fapll_data *fd)
->  		if (retries-- <= 0)
->  			break;
->  
-> -		udelay(1);
-> +		usleep_range(200, 300);
->  	}
->  
->  	pr_err("%s failed to lock\n", fd->name);
-> @@ -134,7 +134,7 @@ static int ti_fapll_wait_lock(struct fapll_data *fd)
->  	return -ETIMEDOUT;
->  }
->  
-> -static int ti_fapll_enable(struct clk_hw *hw)
-> +static int ti_fapll_prepare(struct clk_hw *hw)
->  {
->  	struct fapll_data *fd = to_fapll(hw);
->  	u32 v = readl_relaxed(fd->base);
-> @@ -146,7 +146,7 @@ static int ti_fapll_enable(struct clk_hw *hw)
->  	return 0;
->  }
->  
-> -static void ti_fapll_disable(struct clk_hw *hw)
-> +static void ti_fapll_unprepare(struct clk_hw *hw)
->  {
->  	struct fapll_data *fd = to_fapll(hw);
->  	u32 v = readl_relaxed(fd->base);
-> @@ -155,7 +155,7 @@ static void ti_fapll_disable(struct clk_hw *hw)
->  	writel_relaxed(v, fd->base);
->  }
->  
-> -static int ti_fapll_is_enabled(struct clk_hw *hw)
-> +static int ti_fapll_is_prepared(struct clk_hw *hw)
->  {
->  	struct fapll_data *fd = to_fapll(hw);
->  	u32 v = readl_relaxed(fd->base);
-> @@ -261,7 +261,7 @@ static int ti_fapll_set_rate(struct clk_hw *hw, unsigned long rate,
->  	v |= pre_div_p << FAPLL_MAIN_DIV_P_SHIFT;
->  	v |= mult_n << FAPLL_MAIN_MULT_N_SHIFT;
->  	writel_relaxed(v, fd->base);
-> -	if (ti_fapll_is_enabled(hw))
-> +	if (ti_fapll_is_prepared(hw))
->  		ti_fapll_wait_lock(fd);
->  	ti_fapll_clear_bypass(fd);
->  
-> @@ -269,9 +269,9 @@ static int ti_fapll_set_rate(struct clk_hw *hw, unsigned long rate,
->  }
->  
->  static struct clk_ops ti_fapll_ops = {
-> -	.enable = ti_fapll_enable,
-> -	.disable = ti_fapll_disable,
-> -	.is_enabled = ti_fapll_is_enabled,
-> +	.prepare = ti_fapll_prepare,
-> +	.unprepare = ti_fapll_unprepare,
-> +	.is_prepared = ti_fapll_is_prepared,
->  	.recalc_rate = ti_fapll_recalc_rate,
->  	.get_parent = ti_fapll_get_parent,
->  	.round_rate = ti_fapll_round_rate,
-> -- 
-> 2.1.4
+> The first patch implements the RPM clock operations, which are
+> using a shared memory for sending requests to the RPM processor.
+> The second patch adds the support of RPM clocks on the MSM8916
+> platform.
 > 
 
--- 
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+I pulled this set into my local tree and added a MSM8974 driver; so I
+could enable cxo_a2 and load the WCNSS firmware. This works great.
+
+I do however have a problem that if I revise the gcc and mmcc drivers to
+be rooted in cxo_clk_src (like you have for 8916) the clk_set_rate() in
+msm_serial messes up my uart - way before the rpmcc driver is loaded.
+I have not debugged this further (as it wasn't needed for my usecase),
+but have you seen any issues related to this?
+
+
+Will you be able to send out v3 anytime soon, so I can rebase my 8974
+patch and send that out? Or would you be interested in me sending you my
+8974 and you can include that in your series later?
+
+Regards,
+Bjorn
