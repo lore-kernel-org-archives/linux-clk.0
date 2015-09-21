@@ -1,70 +1,103 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
- Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
- Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- b.zolnierkie@samsung.com
-Subject: [PATCH] cpufreq-dt: add suspend frequency support
-Date: Wed, 02 Sep 2015 18:42:01 +0200
-Message-id: <1441212121-21021-1-git-send-email-b.zolnierkie@samsung.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH v4 1/8] clk: imx: add common logic to detect early UART usage
+Date: Mon, 21 Sep 2015 18:53:57 +0200
+Message-Id: <1442854444-4460-2-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+ kernel@pengutronix.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add suspend frequency support and set it to the boot frequency,
-this matches what the old exynos-cpufreq driver has been doing.
+Both earlycon and eralyprintk depend on the bootloader setup UART
+clocks being retained. This patch adds the common logic to detect such
+situations and make the information available to the clock drivers, as
+well as adding the facilities to disable those clocks at the end of
+the kernel init.
 
-This patch fixes suspend/resume support on Exynos4412 based
-Trats2 board and reboot hang on Exynos4412 based Odroid U3
-board.
-
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 ---
-This patch supersedes "[PATCH] ARM: dts: exynos4412-odroid-*: add
-workaround for CPUfreq/reboot issue" one from yesterday.
+ drivers/clk/imx/clk.c | 38 ++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h |  1 +
+ 2 files changed, 39 insertions(+)
 
- drivers/cpufreq/cpufreq-dt.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index c3583cd..c9138c7 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -329,6 +329,10 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	policy->driver_data = priv;
- 
- 	policy->clk = cpu_clk;
+diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+index df12b5307175..a634b1185be3 100644
+--- a/drivers/clk/imx/clk.c
++++ b/drivers/clk/imx/clk.c
+@@ -73,3 +73,41 @@ void imx_cscmr1_fixup(u32 *val)
+ 	*val ^= CSCMR1_FIXUP;
+ 	return;
+ }
 +
-+	/* capture boot frequency */
-+	policy->suspend_freq = clk_get_rate(cpu_clk) / 1000;;
++static int imx_keep_uart_clocks __initdata;
++static struct clk ** const *imx_uart_clocks __initdata;
 +
- 	ret = cpufreq_table_validate_and_show(policy, freq_table);
- 	if (ret) {
- 		dev_err(cpu_dev, "%s: invalid frequency table: %d\n", __func__,
-@@ -419,6 +423,9 @@ static struct cpufreq_driver dt_cpufreq_driver = {
- 	.ready = cpufreq_ready,
- 	.name = "cpufreq-dt",
- 	.attr = cpufreq_dt_attr,
-+#ifdef CONFIG_PM
-+	.suspend = cpufreq_generic_suspend,
-+#endif
- };
++static int __init imx_keep_uart_clocks_param(char *str)
++{
++	imx_keep_uart_clocks = 1;
++
++	return 0;
++}
++__setup_param("earlycon", imx_keep_uart_earlycon,
++	      imx_keep_uart_clocks_param, 0);
++__setup_param("earlyprintk", imx_keep_uart_earlyprintk,
++	      imx_keep_uart_clocks_param, 0);
++
++void __init imx_register_uart_clocks(struct clk ** const clks[])
++{
++	if (imx_keep_uart_clocks) {
++		int i;
++
++		imx_uart_clocks = clks;
++		for (i = 0; imx_uart_clocks[i]; i++)
++			clk_prepare_enable(*imx_uart_clocks[i]);
++	}
++}
++
++static int __init imx_clk_disable_uart(void)
++{
++	if (imx_keep_uart_clocks && imx_uart_clocks) {
++		int i;
++
++		for (i = 0; imx_uart_clocks[i]; i++)
++			clk_disable_unprepare(*imx_uart_clocks[i]);
++	}
++
++	return 0;
++}
++late_initcall_sync(imx_clk_disable_uart);
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 1049b0c7d818..c94ac5c26226 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -7,6 +7,7 @@
+ extern spinlock_t imx_ccm_lock;
  
- static int dt_cpufreq_probe(struct platform_device *pdev)
+ void imx_check_clocks(struct clk *clks[], unsigned int count);
++void imx_register_uart_clocks(struct clk ** const clks[]);
+ 
+ extern void imx_cscmr1_fixup(u32 *val);
+ 
 -- 
-1.9.1
+2.5.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
