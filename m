@@ -1,90 +1,564 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-To: pdeschrijver@nvidia.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, thierry.reding@gmail.com
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: [PATCH] clk: tegra: Unlock top rates for Tegra124 DFLL clock
-Date: Tue, 15 Sep 2015 12:55:15 +0300
-Message-Id: <1442310915-15475-1-git-send-email-mikko.perttunen@kapsi.fi>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+ <will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+ <linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>
+Subject: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
+Date: Mon, 21 Sep 2015 20:22:36 +0800
+Message-ID: <1442838158-2964-5-git-send-email-B48286@freescale.com>
+In-Reply-To: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Hou Zhiqiang <B48286@freescale.com>, Shaohui.Xie@freescale.com,
+ corbet@lwn.net, bhupesh.sharma@freescale.com, mturquette@baylibre.com,
+ wsa@the-dreams.de, sboyd@codeaurora.org, wim@iguana.be,
+ Wenbin.Song@freescale.com, scottwood@freescale.com, Mingkai.Hu@freescale.com,
+ leoli@freescale.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The new determine_rate prototype allows for clock rates exceeding
-2^31-1 Hz to be used. Switch the DFLL clock to use determine_rate
-instead of round_rate and unlock the top rates supported by the
-Tegra124.
+From: Mingkai Hu <Mingkai.Hu@freescale.com>
 
-Signed-off-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+LS1043a is an SoC with 4 ARMv8 A53 cores and most other IP blocks
+similar to LS1021a which complies to Chassis 2.1 spec.
+
+Following levels of DTSI/DTS files have been created for the
+LS1043A SoC family:
+
+- fsl-ls1043a.dtsi:
+  DTS-Include file for FSL LS1043A SoC.
+
+Signed-off-by: Li Yang <leoli@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
+Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
 ---
- drivers/clk/tegra/clk-dfll.c | 15 ++++++++-------
- drivers/clk/tegra/cvb.c      |  7 -------
- 2 files changed, 8 insertions(+), 14 deletions(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 501 +++++++++++++++++++++++++
+ 1 file changed, 501 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
 
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index 4adff56..7bd309c 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -1004,24 +1004,25 @@ static unsigned long dfll_clk_recalc_rate(struct clk_hw *hw,
- 	return td->last_unrounded_rate;
- }
- 
--static long dfll_clk_round_rate(struct clk_hw *hw,
--				unsigned long rate,
--				unsigned long *parent_rate)
-+/* Must use determine_rate since it allows for rates exceeding 2^31-1 */
-+static int dfll_clk_determine_rate(struct clk_hw *hw,
-+				   struct clk_rate_request *clk_req)
- {
- 	struct tegra_dfll *td = clk_hw_to_dfll(hw);
- 	struct dfll_rate_req req;
- 	int ret;
- 
--	ret = dfll_calculate_rate_request(td, &req, rate);
-+	ret = dfll_calculate_rate_request(td, &req, clk_req->rate);
- 	if (ret)
- 		return ret;
- 
- 	/*
--	 * Don't return the rounded rate, since it doesn't really matter as
-+	 * Don't set the rounded rate, since it doesn't really matter as
- 	 * the output rate will be voltage controlled anyway, and cpufreq
- 	 * freaks out if any rounding happens.
- 	 */
--	return rate;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+new file mode 100644
+index 0000000..eca094d
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+@@ -0,0 +1,501 @@
++/*
++ * Device Tree Include file for Freescale Layerscape-1043A family SoC.
++ *
++ * Copyright 2014-2015, Freescale Semiconductor
++ *
++ * Mingkai Hu <Mingkai.hu@freescale.com>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPLv2 or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
 +
-+	return 0;
- }
- 
- static int dfll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -1037,7 +1038,7 @@ static const struct clk_ops dfll_clk_ops = {
- 	.enable		= dfll_clk_enable,
- 	.disable	= dfll_clk_disable,
- 	.recalc_rate	= dfll_clk_recalc_rate,
--	.round_rate	= dfll_clk_round_rate,
-+	.determine_rate	= dfll_clk_determine_rate,
- 	.set_rate	= dfll_clk_set_rate,
- };
- 
-diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
-index 0204e08..69c74ee 100644
---- a/drivers/clk/tegra/cvb.c
-+++ b/drivers/clk/tegra/cvb.c
-@@ -78,13 +78,6 @@ static int build_opp_table(const struct cvb_table *d,
- 		if (!table->freq || (table->freq > max_freq))
- 			break;
- 
--		/*
--		 * FIXME after clk_round_rate/clk_determine_rate prototypes
--		 * have been updated
--		 */
--		if (table->freq & (1<<31))
--			continue;
--
- 		dfll_mv = get_cvb_voltage(
- 			speedo_value, d->speedo_scale, &table->coefficients);
- 		dfll_mv = round_cvb_voltage(dfll_mv, d->voltage_scale, align);
++/memreserve/ 0x80000000 0x00010000;
++
++/ {
++	compatible = "fsl,ls1043a";
++	interrupt-parent = <&gic>;
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	cpus {
++		#address-cells = <2>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x0 0x0>;
++			clocks = <&clockgen 1 0>;
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x0 0x1>;
++			clocks = <&clockgen 1 0>;
++		};
++
++		cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x0 0x2>;
++			clocks = <&clockgen 1 0>;
++		};
++
++		cpu@3 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x0 0x3>;
++			clocks = <&clockgen 1 0>;
++		};
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <1 13 0x1>, /* Physical Secure PPI */
++			     <1 14 0x1>, /* Physical Non-Secure PPI */
++			     <1 11 0x1>, /* Virtual PPI */
++			     <1 10 0x1>; /* Hypervisor PPI */
++	};
++
++	pmu {
++		compatible = "arm,armv8-pmuv3";
++		interrupts = <0 106 0x4>,
++			     <0 107 0x4>,
++			     <0 95 0x4>,
++			     <0 97 0x4>;
++	};
++
++	gic: interrupt-controller@1400000 {
++		compatible = "arm,gic-400";
++		#interrupt-cells = <3>;
++		interrupt-controller;
++		reg = <0x0 0x1401000 0 0x1000>, /* GICD */
++		      <0x0 0x1402000 0 0x1000>, /* GICC */
++		      <0x0 0x1404000 0 0x2000>, /* GICH */
++		      <0x0 0x1406000 0 0x2000>; /* GICV */
++		interrupts = <1 9 0xf08>;
++	};
++
++	msi1: msi-controller1@1571000 {
++		compatible = "fsl,1s1043a-msi";
++		reg = <0x0 0x1571000 0x0 0x4>,
++		      <0x0 0x1571004 0x0 0x4>;
++		reg-names = "msiir", "msir";
++		msi-controller;
++		interrupts = <0 116 0x4>;
++	};
++
++	msi2: msi-controller2@1572000 {
++		compatible = "fsl,1s1043a-msi";
++		reg = <0x0 0x1572000 0x0 0x4>,
++		      <0x0 0x1572004 0x0 0x4>;
++		reg-names = "msiir", "msir";
++		msi-controller;
++		interrupts = <0 126 0x4>;
++	};
++
++	msi3: msi-controller3@1573000 {
++		compatible = "fsl,1s1043a-msi";
++		reg = <0x0 0x1573000 0x0 0x4>,
++		      <0x0 0x1573004 0x0 0x4>;
++		reg-names = "msiir", "msir";
++		msi-controller;
++		interrupts = <0 160 0x4>;
++	};
++
++	ifc: ifc@1530000 {
++		compatible = "fsl,ifc", "simple-bus";
++		reg = <0x0 0x1530000 0x0 0x10000>;
++		interrupts = <0 43 0x4>;
++	};
++
++	esdhc: esdhc@1560000 {
++		compatible = "fsl,ls1043a-esdhc", "fsl,esdhc";
++		reg = <0x0 0x1560000 0x0 0x10000>;
++		interrupts = <0 62 0x4>;
++		clock-frequency = <0>;
++		voltage-ranges = <1800 1800 3300 3300>;
++		sdhci,auto-cmd12;
++		big-endian;
++		bus-width = <4>;
++	};
++
++	scfg: scfg@1570000 {
++		compatible = "fsl,ls1043a-scfg", "syscon";
++		reg = <0x0 0x1570000 0x0 0x10000>;
++		big-endian;
++	};
++
++	dcfg: dcfg@1ee0000 {
++		compatible = "fsl,ls1043a-dcfg", "syscon";
++		reg = <0x0 0x1ee0000 0x0 0x10000>;
++	};
++
++	clockgen: clocking@1ee1000 {
++		compatible = "fsl,ls1043a-clockgen";
++		reg = <0x0 0x1ee1000 0x0 0x1000>;
++		#clock-cells = <2>;
++		clocks = <&sysclk>;
++		sysclk: sysclk {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <100000000>;
++			clock-output-names = "sysclk";
++		};
++	};
++
++	dspi0: dspi@2100000 {
++		compatible = "fsl,ls1043a-dspi", "fsl,ls1021a-v1.0-dspi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x0 0x2100000 0x0 0x10000>;
++		interrupts = <0 64 0x4>;
++		clock-names = "dspi";
++		clocks = <&clockgen 4 0>;
++		spi-num-chipselects = <5>;
++		big-endian;
++		status = "disabled";
++	};
++
++	dspi1: dspi@2110000 {
++		compatible = "fsl,ls1043a-dspi", "fsl,ls1021a-v1.0-dspi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x0 0x2110000 0x0 0x10000>;
++		interrupts = <0 65 0x4>;
++		clock-names = "dspi";
++		clocks = <&clockgen 4 0>;
++		spi-num-chipselects = <5>;
++		big-endian;
++		status = "disabled";
++	};
++
++	i2c0: i2c@2180000 {
++		compatible = "fsl,vf610-i2c";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x0 0x2180000 0x0 0x10000>;
++		interrupts = <0 56 0x4>;
++		clock-names = "i2c";
++		clocks = <&clockgen 4 0>;
++		dmas = <&edma0 1 39>,
++		       <&edma0 1 38>;
++		dma-names = "tx", "rx";
++		status = "disabled";
++	};
++
++	i2c1: i2c@2190000 {
++		compatible = "fsl,vf610-i2c";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x0 0x2190000 0x0 0x10000>;
++		interrupts = <0 57 0x4>;
++		clock-names = "i2c";
++		clocks = <&clockgen 4 0>;
++		status = "disabled";
++	};
++
++	i2c2: i2c@21a0000 {
++		compatible = "fsl,vf610-i2c";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x0 0x21a0000 0x0 0x10000>;
++		interrupts = <0 58 0x4>;
++		clock-names = "i2c";
++		clocks = <&clockgen 4 0>;
++		status = "disabled";
++	};
++
++	i2c3: i2c@21b0000 {
++		compatible = "fsl,vf610-i2c";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x0 0x21b0000 0x0 0x10000>;
++		interrupts = <0 59 0x4>;
++		clock-names = "i2c";
++		clocks = <&clockgen 4 0>;
++		status = "disabled";
++	};
++
++	duart0: serial@21c0500 {
++		compatible = "fsl,ns16550", "ns16550a";
++		reg = <0x00 0x21c0500 0x0 0x100>;
++		interrupts = <0 54 0x4>;
++		clocks = <&clockgen 4 0>;
++	};
++
++	duart1: serial@21c0600 {
++		compatible = "fsl,ns16550", "ns16550a";
++		reg = <0x00 0x21c0600 0x0 0x100>;
++		interrupts = <0 54 0x4>;
++		clocks = <&clockgen 4 0>;
++	};
++
++	duart2: serial@21d0500 {
++		compatible = "fsl,ns16550", "ns16550a";
++		reg = <0x0 0x21d0500 0x0 0x100>;
++		interrupts = <0 55 0x4>;
++		clocks = <&clockgen 4 0>;
++	};
++
++	duart3: serial@21d0600 {
++		compatible = "fsl,ns16550", "ns16550a";
++		reg = <0x0 0x21d0600 0x0 0x100>;
++		interrupts = <0 55 0x4>;
++		clocks = <&clockgen 4 0>;
++	};
++
++	gpio1: gpio@2300000 {
++		compatible = "fsl,ls1043a-gpio";
++		reg = <0x0 0x2300000 0x0 0x10000>;
++		interrupts = <0 66 0x4>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpio2: gpio@2310000 {
++		compatible = "fsl,ls1043a-gpio";
++		reg = <0x0 0x2310000 0x0 0x10000>;
++		interrupts = <0 67 0x4>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpio3: gpio@2320000 {
++		compatible = "fsl,ls1043a-gpio";
++		reg = <0x0 0x2320000 0x0 0x10000>;
++		interrupts = <0 68 0x4>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpio4: gpio@2330000 {
++		compatible = "fsl,ls1043a-gpio";
++		reg = <0x0 0x2330000 0x0 0x10000>;
++		interrupts = <0 134 0x4>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	lpuart0: serial@2950000 {
++		compatible = "fsl,ls1021a-lpuart";
++		reg = <0x0 0x2950000 0x0 0x1000>;
++		interrupts = <0 48 0x4>;
++		clocks = <&clockgen 0 0>;
++		clock-names = "ipg";
++		status = "disabled";
++	};
++
++	lpuart1: serial@2960000 {
++		compatible = "fsl,ls1021a-lpuart";
++		reg = <0x0 0x2960000 0x0 0x1000>;
++		interrupts = <0 49 0x4>;
++		clocks = <&clockgen 4 0>;
++		clock-names = "ipg";
++		status = "disabled";
++	};
++
++	lpuart2: serial@2970000 {
++		compatible = "fsl,ls1021a-lpuart";
++		reg = <0x0 0x2970000 0x0 0x1000>;
++		interrupts = <0 50 0x4>;
++		clocks = <&clockgen 4 0>;
++		clock-names = "ipg";
++		status = "disabled";
++	};
++
++	lpuart3: serial@2980000 {
++		compatible = "fsl,ls1021a-lpuart";
++		reg = <0x0 0x2980000 0x0 0x1000>;
++		interrupts = <0 51 0x4>;
++		clocks = <&clockgen 4 0>;
++		clock-names = "ipg";
++		status = "disabled";
++	};
++
++	lpuart4: serial@2990000 {
++		compatible = "fsl,ls1021a-lpuart";
++		reg = <0x0 0x2990000 0x0 0x1000>;
++		interrupts = <0 52 0x4>;
++		clocks = <&clockgen 4 0>;
++		clock-names = "ipg";
++		status = "disabled";
++	};
++
++	lpuart5: serial@29a0000 {
++		compatible = "fsl,ls1021a-lpuart";
++		reg = <0x0 0x29a0000 0x0 0x1000>;
++		interrupts = <0 53 0x4>;
++		clocks = <&clockgen 4 0>;
++		clock-names = "ipg";
++		status = "disabled";
++	};
++
++	wdog0: wdog@2ad0000 {
++		compatible = "fsl,ls1043a-wdt", "fsl,imx21-wdt";
++		reg = <0x0 0x2ad0000 0x0 0x10000>;
++		interrupts = <0 83 0x4>;
++		clocks = <&clockgen 4 0>;
++		clock-names = "wdog";
++		big-endian;
++	};
++
++	edma0: edma@2c00000 {
++		#dma-cells = <2>;
++		compatible = "fsl,vf610-edma";
++		reg = <0x0 0x2c00000 0x0 0x10000>,
++		      <0x0 0x2c10000 0x0 0x10000>,
++		      <0x0 0x2c20000 0x0 0x10000>;
++		interrupts = <0 103 0x4>,
++			     <0 103 0x4>;
++		interrupt-names = "edma-tx", "edma-err";
++		dma-channels = <32>;
++		big-endian;
++		clock-names = "dmamux0", "dmamux1";
++		clocks = <&clockgen 4 0>,
++			 <&clockgen 4 0>;
++	};
++
++	usb0: usb3@2f00000 {
++		compatible = "snps,dwc3";
++		reg = <0x0 0x2f00000 0x0 0x10000>;
++		interrupts = <0 60 0x4>;
++		dr_mode = "host";
++	};
++
++	usb1: usb3@3000000 {
++		compatible = "snps,dwc3";
++		reg = <0x0 0x3000000 0x0 0x10000>;
++		interrupts = <0 61 0x4>;
++		dr_mode = "host";
++	};
++	usb2: usb3@3100000 {
++		compatible = "snps,dwc3";
++		reg = <0x0 0x3100000 0x0 0x10000>;
++		interrupts = <0 63 0x4>;
++		dr_mode = "host";
++	};
++
++	pcie@3400000 {
++		compatible = "fsl,ls1043a-pcie", "snps,dw-pcie";
++		reg = <0x00 0x03400000 0x0 0x00100000   /* controller registers */
++		       0x40 0x00000000 0x0 0x00002000>; /* configuration space */
++		reg-names = "regs", "config";
++		interrupts = <0 118 0x4>, /* controller interrupt */
++			     <0 117 0x4>; /* PME interrupt */
++		interrupt-names = "intr", "pme";
++		#address-cells = <3>;
++		#size-cells = <2>;
++		device_type = "pci";
++		num-lanes = <4>;
++		bus-range = <0x0 0xff>;
++		ranges = <0x81000000 0x0 0x00000000 0x40 0x00010000 0x0 0x00010000   /* downstream I/O */
++			  0x82000000 0x0 0x40000000 0x40 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
++		msi-parent = <&msi1>;
++		#interrupt-cells = <1>;
++		interrupt-map-mask = <0 0 0 7>;
++		interrupt-map = <0000 0 0 1 &gic 0 110 0x4>,
++				<0000 0 0 2 &gic 0 111 0x4>,
++				<0000 0 0 3 &gic 0 112 0x4>,
++				<0000 0 0 4 &gic 0 113 0x4>;
++	};
++
++	pcie@3500000 {
++		compatible = "fsl,ls1043a-pcie", "snps,dw-pcie";
++		reg = <0x00 0x03500000 0x0 0x00100000   /* controller registers */
++		       0x48 0x00000000 0x0 0x00002000>; /* configuration space */
++		reg-names = "regs", "config";
++		interrupts = <0 128 0x4>,
++			     <0 127 0x4>;
++		interrupt-names = "intr", "pme";
++		#address-cells = <3>;
++		#size-cells = <2>;
++		device_type = "pci";
++		num-lanes = <2>;
++		bus-range = <0x0 0xff>;
++		ranges = <0x81000000 0x0 0x00000000 0x48 0x00010000 0x0 0x00010000   /* downstream I/O */
++			  0x82000000 0x0 0x40000000 0x48 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
++		msi-parent = <&msi2>;
++		#interrupt-cells = <1>;
++		interrupt-map-mask = <0 0 0 7>;
++		interrupt-map = <0000 0 0 1 &gic 0 120  0x4>,
++				<0000 0 0 2 &gic 0 121 0x4>,
++				<0000 0 0 3 &gic 0 122 0x4>,
++				<0000 0 0 4 &gic 0 123 0x4>;
++	};
++
++	pcie@3600000 {
++		compatible = "fsl,ls1043a-pcie", "snps,dw-pcie";
++		reg = <0x00 0x03600000 0x0 0x00100000   /* controller registers */
++		       0x50 0x00000000 0x0 0x00002000>; /* configuration space */
++		reg-names = "regs", "config";
++		interrupts = <0 162 0x4>,
++			     <0 161 0x4>;
++		interrupt-names = "intr", "pme";
++		#address-cells = <3>;
++		#size-cells = <2>;
++		device_type = "pci";
++		num-lanes = <2>;
++		bus-range = <0x0 0xff>;
++		ranges = <0x81000000 0x0 0x00000000 0x50 0x00010000 0x0 0x00010000   /* downstream I/O */
++			  0x82000000 0x0 0x40000000 0x50 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
++		msi-parent = <&msi3>;
++		#interrupt-cells = <1>;
++		interrupt-map-mask = <0 0 0 7>;
++		interrupt-map = <0000 0 0 1 &gic 0 154 0x4>,
++				<0000 0 0 2 &gic 0 155 0x4>,
++				<0000 0 0 3 &gic 0 156 0x4>,
++				<0000 0 0 4 &gic 0 157 0x4>;
++	};
++
++	memory@80000000 {
++		device_type = "memory";
++		reg = <0x0 0x80000000 0 0x80000000>;
++		      /* DRAM space 1 - 2 GB DRAM */
++	};
++
++};
 -- 
-2.5.0
+2.1.0.27.g96db324
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
