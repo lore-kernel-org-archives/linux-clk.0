@@ -1,66 +1,55 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Subject: [PATCH] clk: rockchip: add critical clock for rk3368
-Date: Sun, 13 Sep 2015 13:20:36 +0200
-Message-ID: <5267432.TORlj1Iv40@diego>
+Return-Path: <linux@roeck-us.net>
+Subject: Re: [PATCH 2/6] watchdog: Add support for Freescale Layerscape
+ platforms
+To: Zhiqiang Hou <B48286@freescale.com>,
+ linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+ will.deacon@arm.com, linux-i2c@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+ <1442838158-2964-3-git-send-email-B48286@freescale.com>
+Cc: wsa@the-dreams.de, wim@iguana.be, corbet@lwn.net,
+ mturquette@baylibre.com, sboyd@codeaurora.org, Mingkai.Hu@freescale.com,
+ Shaohui.Xie@freescale.com, Wenbin.Song@freescale.com,
+ scottwood@freescale.com, bhupesh.sharma@freescale.com, leoli@freescale.com
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <56001C7D.4050408@roeck-us.net>
+Date: Mon, 21 Sep 2015 08:04:29 -0700
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-rockchip@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+In-Reply-To: <1442838158-2964-3-git-send-email-B48286@freescale.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Again a result of the gpio-clock-liberation the rk3368 needs the
-pclk_pd_pmu marked as critical, to boot successfully.
+On 09/21/2015 05:22 AM, Zhiqiang Hou wrote:
+> From: Shaohui Xie <Shaohui.Xie@freescale.com>
+>
+> Modify watchdog/Kconfig file to support Layerscape platforms.
+>
+"Enable IMX2+ watchdog for Layerscape platforms" would be a better
+description.
 
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
-should go on top of clk-fixes. Sorry only finding these piece
-by piece :-) .
+Nitpick, so
 
- drivers/clk/rockchip/clk-rk3368.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Acked-by: Guenter Roeck <linux@roeck-us.net>
 
-diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
-index 9c5d61e..7e6b783 100644
---- a/drivers/clk/rockchip/clk-rk3368.c
-+++ b/drivers/clk/rockchip/clk-rk3368.c
-@@ -818,6 +818,10 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
- 	GATE(0, "sclk_timer00", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 0, GFLAGS),
- };
- 
-+static const char *const rk3368_critical_clocks[] __initconst = {
-+	"pclk_pd_pmu",
-+};
-+
- static void __init rk3368_clk_init(struct device_node *np)
- {
- 	void __iomem *reg_base;
-@@ -862,6 +866,8 @@ static void __init rk3368_clk_init(struct device_node *np)
- 				   RK3368_GRF_SOC_STATUS0);
- 	rockchip_clk_register_branches(rk3368_clk_branches,
- 				  ARRAY_SIZE(rk3368_clk_branches));
-+	rockchip_clk_protect_critical(rk3368_critical_clocks,
-+				      ARRAY_SIZE(rk3368_critical_clocks));
- 
- 	rockchip_clk_register_armclk(ARMCLKB, "armclkb",
- 			mux_armclkb_p, ARRAY_SIZE(mux_armclkb_p),
--- 
-2.5.1
-
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
+> Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+> ---
+>   drivers/watchdog/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index c68edc1..2862219 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -446,7 +446,7 @@ config MAX63XX_WATCHDOG
+>
+>   config IMX2_WDT
+>   	tristate "IMX2+ Watchdog"
+> -	depends on ARCH_MXC
+> +	depends on ARCH_MXC || ARCH_LAYERSCAPE
+>   	select REGMAP_MMIO
+>   	select WATCHDOG_CORE
+>   	help
+>
