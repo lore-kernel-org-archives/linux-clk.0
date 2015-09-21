@@ -1,48 +1,60 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Message-ID: <1441816797.29081.9.camel@freescale.com>
-Subject: Re: [PATCH v2 06/10] clk: qoriq: Add ls2080a support.
-From: Scott Wood <scottwood@freescale.com>
-To: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-Date: Wed, 9 Sep 2015 11:39:57 -0500
-In-Reply-To: <1441349872-4560-7-git-send-email-bhupesh.sharma@freescale.com>
-References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
- <1441349872-4560-7-git-send-email-bhupesh.sharma@freescale.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, arnd@arndb.de, marc.zyngier@arm.com,
- Catalin.Marinas@arm.com, will.deacon@arm.com, olof@lixom.net,
- bhupesh.linux@gmail.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de
+Subject: [PATCH v4 6/8] clk: imx5: retain early UART clocks during kernel init
+Date: Mon, 21 Sep 2015 18:54:02 +0200
+Message-Id: <1442854444-4460-7-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2015-09-04 at 12:27 +0530, Bhupesh Sharma wrote:
-> From: Scott Wood <scottwood@freescale.com>
-> 
-> LS2080A is the first implementation of the chassis 3 clockgen, which
-> has a different register layout than previous chips.  It is also little
-> endian, unlike previous chips.
-> 
-> Signed-off-by: Scott Wood <scottwood@freescale.com>
-> ---
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-You should add your own signoff when passing on someone else's patch.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx51-imx53.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-FWIW, I'm likely to squash this with my previous clk-qoriq patches when I 
-resubmit.
-
--Scott
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-imx53.c
+index a7e4f394be0d..c6770348d2ab 100644
+--- a/drivers/clk/imx/clk-imx51-imx53.c
++++ b/drivers/clk/imx/clk-imx51-imx53.c
+@@ -130,6 +130,20 @@ static const char *cpu_podf_sels[] = { "pll1_sw", "step_sel" };
+ static struct clk *clk[IMX5_CLK_END];
+ static struct clk_onecell_data clk_data;
+ 
++static struct clk ** const uart_clks[] __initconst = {
++	&clk[IMX5_CLK_UART1_IPG_GATE],
++	&clk[IMX5_CLK_UART1_PER_GATE],
++	&clk[IMX5_CLK_UART2_IPG_GATE],
++	&clk[IMX5_CLK_UART2_PER_GATE],
++	&clk[IMX5_CLK_UART3_IPG_GATE],
++	&clk[IMX5_CLK_UART3_PER_GATE],
++	&clk[IMX5_CLK_UART4_IPG_GATE],
++	&clk[IMX5_CLK_UART4_PER_GATE],
++	&clk[IMX5_CLK_UART5_IPG_GATE],
++	&clk[IMX5_CLK_UART5_PER_GATE],
++	NULL
++};
++
+ static void __init mx5_clocks_common_init(void __iomem *ccm_base)
+ {
+ 	clk[IMX5_CLK_DUMMY]		= imx_clk_fixed("dummy", 0);
+@@ -310,6 +324,8 @@ static void __init mx5_clocks_common_init(void __iomem *ccm_base)
+ 	clk_prepare_enable(clk[IMX5_CLK_TMAX1]);
+ 	clk_prepare_enable(clk[IMX5_CLK_TMAX2]); /* esdhc2, fec */
+ 	clk_prepare_enable(clk[IMX5_CLK_TMAX3]); /* esdhc1, esdhc4 */
++
++	imx_register_uart_clocks(uart_clks);
+ }
+ 
+ static void __init mx50_clocks_init(struct device_node *np)
+-- 
+2.5.1
