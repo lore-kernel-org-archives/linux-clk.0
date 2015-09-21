@@ -1,46 +1,32 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org
-Cc: Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 4/5] ARM: sun5i: dt: Add UART3 CTS and RTS pins
-Date: Fri, 18 Sep 2015 10:48:49 +0200
-Message-Id: <1442566130-3497-5-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <scottwood@freescale.com>
+Message-ID: <1442877225.19102.207.camel@freescale.com>
+Subject: Re: [PATCH 6/6] dts/ls1043a: add LS1043ARDB board support
+From: Scott Wood <scottwood@freescale.com>
+To: Zhiqiang Hou <B48286@freescale.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <wsa@the-dreams.de>, <wim@iguana.be>,
+	<corbet@lwn.net>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<Mingkai.Hu@freescale.com>, <Shaohui.Xie@freescale.com>,
+	<Wenbin.Song@freescale.com>, <bhupesh.sharma@freescale.com>,
+	<leoli@freescale.com>
+Date: Mon, 21 Sep 2015 18:13:45 -0500
+In-Reply-To: <1442838158-2964-7-git-send-email-B48286@freescale.com>
+References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+	 <1442838158-2964-7-git-send-email-B48286@freescale.com>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Return-Path: scottwood@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a separate pinctrl node for the UART3 CTS and RTS pins shared between
-the A10s and A13.
+On Mon, 2015-09-21 at 20:22 +0800, Zhiqiang Hou wrote:
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun5i.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+> +             cpld: board-control@2,0 {
+> +                     compatible = "fsl,ls1043ardb-cpld", "simple-bus";
+> +                     reg = <0x2 0x0 0x0000100>;
+> +             };
 
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index 433c83a321ca..7d355e52efe2 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -536,6 +536,13 @@
- 				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
- 				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
- 			};
-+
-+			uart3_pins_cts_rts_a: uart3-cts-rts@0 {
-+				allwinner,pins = "PG11", "PG12";
-+				allwinner,function = "uart3";
-+				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-+				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-+			};
- 		};
- 
- 		timer@01c20c00 {
--- 
-2.5.1
+Again, why "simple-bus"?
 
+-Scott
