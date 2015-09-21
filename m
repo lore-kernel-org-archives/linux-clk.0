@@ -1,35 +1,54 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 16 Sep 2015 15:15:31 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Vince Hsu <vinceh@nvidia.com>
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-	mturquette@baylibre.com, swarren@wwwdotorg.org,
-	thierry.reding@gmail.com, gnurou@gmail.com,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Vince Hsu <vince.h@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: dfll: add missing rcu_read_unlock() for
- error path
-Message-ID: <20150916221531.GN23081@codeaurora.org>
-References: <1442384094-22144-1-git-send-email-vinceh@nvidia.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from www.linutronix.de ([62.245.132.108]:37165 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752372AbbIUQJ2 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 21 Sep 2015 12:09:28 -0400
+Date: Mon, 21 Sep 2015 18:08:49 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+cc: Nishanth Menon <nm@ti.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	linux-rt-users@vger.kernel.org, Felipe Balbi <balbi@ti.com>,
+	Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org
+Subject: Re: Common clock framework API vs RT patchset\
+In-Reply-To: <20150921135226.GN21084@n2100.arm.linux.org.uk>
+Message-ID: <alpine.DEB.2.11.1509211729240.5606@nanos>
+References: <55C0A96F.80307@ti.com> <alpine.DEB.2.11.1508041405290.3983@nanos> <55C0D8F3.3030105@ti.com> <20150804153641.GR7557@n2100.arm.linux.org.uk> <alpine.DEB.2.11.1509211255530.5606@nanos> <20150921135226.GN21084@n2100.arm.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442384094-22144-1-git-send-email-vinceh@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/16, Vince Hsu wrote:
-> From: Vince Hsu <vince.h@nvidia.com>
+On Mon, 21 Sep 2015, Russell King - ARM Linux wrote:
+> On Mon, Sep 21, 2015 at 03:06:18PM +0200, Thomas Gleixner wrote:
+> However, due to the generally idiotic nature of Linux programmers, they've
+> totally destroyed the reason for clk_enable() and clk_disable() existing.
+> So, we now need a _third_ level of API to work around their idiotic nature,
+> maybe clk_atomic_enable() and clk_atomic_disable(), which do what the
+> original clk_enable() and clk_disable() do.
 > 
-> The commit e770940218028c6a5927fda45f2ca9db5d9b35e0 ("clk: tegra: dfll:
-> Properly protect OPP list") added the rcu_read_{lock,unlock} but missed
-> one in the error path. So add the missing one.
+> So, we end up needing three levels because Linux programmers are basically
+> idiots.
 > 
-> Signed-off-by: Vince Hsu <vince.h@nvidia.com>
-> ---
+> And yes, if what you've found is correct, I think those who have created
+> the crap have very much earned the prestigious title of being an "idiotic
+> programmer".
+> 
+> I'm pissed at these idiotic programmers.
 
-I think we'll just squash this into the original patch from
-Thierry.
+I'm even more pissed at the CCF "maintainers" for giving a shit about
+the sanity of the stuff they are maintaining.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+One reason for this mess is that clk related patches go often
+unreviewed through SoC trees, which again is a problem of the
+maintainers who just let that happen.
+
+It's not enough to have an entry in MAINTAINERS along with a git tree
+in which random patches get collected.
+
+This 'shove crap in no matter what' mentality needs to stop if we
+don't want to end up with a completely unmaintainable nightmare.
+
+Thanks,
+
+	tglx
