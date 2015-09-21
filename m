@@ -1,78 +1,61 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-id: <56012392.7020807@samsung.com>
-Date: Tue, 22 Sep 2015 11:46:58 +0200
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-MIME-version: 1.0
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: David Howells <dhowells@redhat.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	linux-kernel@vger.kernel.org, brcm80211-dev-list@broadcom.com,
-	devel@driverdev.osuosl.org, dev@openvswitch.org,
-	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-cachefs@redhat.com, linux-clk@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-mips@linux-mips.org,
-	linux-mm@kvack.org, linux-omap@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org, lustre-devel@lists.lustre.org,
-	netdev@vger.kernel.org, rtc-linux@googlegroups.com
-Subject: Re: [PATCH 00/38] Fixes related to incorrect usage of unsigned types
-References: <1442842450-29769-1-git-send-email-a.hajda@samsung.com>
- <17571.1442842945@warthog.procyon.org.uk> <56011BB9.5030004@samsung.com>
-In-reply-to: <56011BB9.5030004@samsung.com>
-Content-type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+ <will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+ <linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>
+Subject: [PATCH 2/6] watchdog: Add support for Freescale Layerscape platforms
+Date: Mon, 21 Sep 2015 20:22:34 +0800
+Message-ID: <1442838158-2964-3-git-send-email-B48286@freescale.com>
+In-Reply-To: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Hou Zhiqiang <B48286@freescale.com>, Shaohui.Xie@freescale.com,
+ corbet@lwn.net, bhupesh.sharma@freescale.com, mturquette@baylibre.com,
+ wsa@the-dreams.de, sboyd@codeaurora.org, wim@iguana.be,
+ Wenbin.Song@freescale.com, scottwood@freescale.com, Mingkai.Hu@freescale.com,
+ leoli@freescale.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/22/2015 11:13 AM, Andrzej Hajda wrote:
-> On 09/21/2015 03:42 PM, David Howells wrote:
->> Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>
->>> Semantic patch finds comparisons of types:
->>>      unsigned < 0
->>>      unsigned >= 0
->>> The former is always false, the latter is always true.
->>> Such comparisons are useless, so theoretically they could be
->>> safely removed, but their presence quite often indicates bugs.
->>
->> Or someone has left them in because they don't matter and there's the
->> possibility that the type being tested might be or become signed under some
->> circumstances.  If the comparison is useless, I'd expect the compiler to just
->> discard it - for such cases your patch is pointless.
->>
->> If I have, for example:
->>
->> 	unsigned x;
->>
->> 	if (x == 0 || x > 27)
->> 		give_a_range_error();
->>
->> I will write this as:
->>
->> 	unsigned x;
->>
->> 	if (x <= 0 || x > 27)
->> 		give_a_range_error();
->>
->> because it that gives a way to handle x being changed to signed at some point
->> in the future for no cost.  In which case, your changing the <= to an ==
->> "because the < part of the case is useless" is arguably wrong.
->
-> This is why I have not checked for such cases - I have skipped checks of type
-> 	unsigned <= 0
-> exactly for the reasons above.
->
-> However I have left two other checks as they seems to me more suspicious - they
-> are always true or false. But as Dmitry and Andrew pointed out Linus have quite
-> strong opinion against removing range checks in such cases as he finds it
-> clearer. I think it applies to patches 29-36. I am not sure about patches 26-28,37.
+From: Shaohui Xie <Shaohui.Xie@freescale.com>
 
-Dropped 30/38 and 31/38 from LED tree then.
+Modify watchdog/Kconfig file to support Layerscape platforms.
 
+Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
+Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+ drivers/watchdog/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index c68edc1..2862219 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -446,7 +446,7 @@ config MAX63XX_WATCHDOG
+ 
+ config IMX2_WDT
+ 	tristate "IMX2+ Watchdog"
+-	depends on ARCH_MXC
++	depends on ARCH_MXC || ARCH_LAYERSCAPE
+ 	select REGMAP_MMIO
+ 	select WATCHDOG_CORE
+ 	help
 -- 
-Best Regards,
-Jacek Anaszewski
+2.1.0.27.g96db324
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
