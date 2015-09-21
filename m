@@ -1,68 +1,103 @@
-Return-Path: <balbi@ti.com>
-Date: Wed, 30 Sep 2015 11:31:02 -0500
-From: Felipe Balbi <balbi@ti.com>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-CC: Nicolas Ferre <nicolas.ferre@atmel.com>,
-        Boris Brezillon
-	<boris.brezillon@free-electrons.com>,
-        Jean-Christophe Plagniol-Villard
-	<plagnioj@jcrosoft.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen
- Boyd <sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        Felipe
- Balbi <balbi@ti.com>, <linux-usb@vger.kernel.org>
-Subject: Re: [PATCH 15/16] usb: gadget: atmel: access the PMC using regmap
-Message-ID: <20150930163102.GM32625@saruman.tx.rr.com>
-Reply-To: <balbi@ti.com>
-References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1443629469-15086-16-git-send-email-alexandre.belloni@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UUMz/kfoogzZ9WLZ"
-In-Reply-To: <1443629469-15086-16-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de
+Subject: [PATCH v4 7/8] clk: imx6: retain early UART clocks during kernel init
+Date: Mon, 21 Sep 2015 18:54:03 +0200
+Message-Id: <1442854444-4460-8-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
---UUMz/kfoogzZ9WLZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-On Wed, Sep 30, 2015 at 06:11:08PM +0200, Alexandre Belloni wrote:
-> Use regmap to access the PMC to avoid using at91_pmc_read and
-> at91_pmc_write.
->=20
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx6q.c  | 8 ++++++++
+ drivers/clk/imx/clk-imx6sl.c | 8 ++++++++
+ drivers/clk/imx/clk-imx6sx.c | 8 ++++++++
+ 3 files changed, 24 insertions(+)
 
-can I take this through my tree or does it have any dependences with the re=
-st of
-the series ?
-
-cheers
-
---=20
-balbi
-
---UUMz/kfoogzZ9WLZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWDA5GAAoJEIaOsuA1yqRE8t8QAJihmwt/tzIf3jcX9OaeGrPb
-Rnoj3mGdjUnzn9+m+gOBn9e0ID3b9yZXrI+CDWlTaB78STvvshTsFOFeie6Eda2x
-Q++LcT5BxMoc5Uz1ua+pJIhKS86NktqbuNgMkP/aKKTHu/K8mt8A0MxRPt6t5/Ux
-KN/8pnn42+bhkkKRsGL+qc6pTGihjvT2g4FtYJNozGAD1uEA4QsAV5u6LCJ3F9kZ
-9WsGdY02DkIJPKhj1R5NSfOfLeLHD7JtfE1S4RDAF8wQK7n8KP9hPPBcLVSU8+Y1
-sfuVATr0qsUvAgG00c3mKKQgA+WHsG5gq+NUuzACxTDG3+2sVx8IZofCSVJgnVjp
-Kn/H++wfjA3S/UtlGLaszTlY7ait9yG5dQyK9lMZVjRWRjFi67Rpq1AKznFhZBaC
-n1o6Qdk2YkwOvcySO3cneXjFs+uiAdqa9l5ZkaZjY/8FKNYDv4KfMcMI/dgk2RfJ
-HI10DVeKu9msM6Xpcst8K/tXCFboLBRwijpKduueS/1OIbEWBxIKNIGiu6ABmohE
-ZZnuXacXUq6jGBRYzb0NukEoGAAgEXvVPbtQ2QV5Ju/BD5ptYBq9f5cnifNFrBMY
-mH2fq607+GwJ681JIFwhMbcDafkacIKg7O7jzHkhksK9Ngw5RxqI7NDUdiu16y0D
-8o+6oyl2w60UrLnmghHh
-=au80
------END PGP SIGNATURE-----
-
---UUMz/kfoogzZ9WLZ--
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index b2c1c047dc94..e9ba018ac6a3 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -130,6 +130,12 @@ static inline int clk_on_imx6dl(void)
+ 	return of_machine_is_compatible("fsl,imx6dl");
+ }
+ 
++static struct clk ** const uart_clks[] __initconst = {
++	&clk[IMX6QDL_CLK_UART_IPG],
++	&clk[IMX6QDL_CLK_UART_SERIAL],
++	NULL
++};
++
+ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+@@ -541,5 +547,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	/* All existing boards with PCIe use LVDS1 */
+ 	if (IS_ENABLED(CONFIG_PCI_IMX6))
+ 		clk_set_parent(clk[IMX6QDL_CLK_LVDS1_SEL], clk[IMX6QDL_CLK_SATA_REF_100M]);
++
++	imx_register_uart_clocks(uart_clks);
+ }
+ CLK_OF_DECLARE(imx6q, "fsl,imx6q-ccm", imx6q_clocks_init);
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index a0d4cf26cfa9..3c3333faae8e 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -184,6 +184,12 @@ void imx6sl_set_wait_clk(bool enter)
+ 		imx6sl_enable_pll_arm(false);
+ }
+ 
++static struct clk ** const uart_clks[] __initconst = {
++	&clks[IMX6SL_CLK_UART],
++	&clks[IMX6SL_CLK_UART_SERIAL],
++	NULL
++};
++
+ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+@@ -439,5 +445,7 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ 
+ 	clk_set_parent(clks[IMX6SL_CLK_LCDIF_AXI_SEL],
+ 		       clks[IMX6SL_CLK_PLL2_PFD2]);
++
++	imx_register_uart_clocks(uart_clks);
+ }
+ CLK_OF_DECLARE(imx6sl, "fsl,imx6sl-ccm", imx6sl_clocks_init);
+diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+index 5b95c2c2bf52..f0ad8bbc12f8 100644
+--- a/drivers/clk/imx/clk-imx6sx.c
++++ b/drivers/clk/imx/clk-imx6sx.c
+@@ -135,6 +135,12 @@ static u32 share_count_ssi1;
+ static u32 share_count_ssi2;
+ static u32 share_count_ssi3;
+ 
++static struct clk ** const uart_clks[] __initconst = {
++	&clks[IMX6SX_CLK_UART_IPG],
++	&clks[IMX6SX_CLK_UART_SERIAL],
++	NULL
++};
++
+ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+@@ -557,5 +563,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 
+ 	clk_set_parent(clks[IMX6SX_CLK_QSPI1_SEL], clks[IMX6SX_CLK_PLL2_BUS]);
+ 	clk_set_parent(clks[IMX6SX_CLK_QSPI2_SEL], clks[IMX6SX_CLK_PLL2_BUS]);
++
++	imx_register_uart_clocks(uart_clks);
+ }
+ CLK_OF_DECLARE(imx6sx, "fsl,imx6sx-ccm", imx6sx_clocks_init);
+-- 
+2.5.1
