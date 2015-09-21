@@ -1,38 +1,56 @@
-Return-Path: <gregkh@linuxfoundation.org>
-Date: Wed, 23 Sep 2015 08:15:38 -0700
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: t-kristo@ti.com, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@lists.codethink.co.uk, stable@vger.kernel.org
-Subject: Re: [PATCH] clk: ti: fix dual-registration of uart4_ick
-Message-ID: <20150923151538.GA20172@kroah.com>
-References: <1443019714-12926-1-git-send-email-ben.dooks@codethink.co.uk>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <1442842450-29769-1-git-send-email-a.hajda@samsung.com>
+References: <1442842450-29769-1-git-send-email-a.hajda@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: dhowells@redhat.com, linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-cachefs@redhat.com, linux-clk@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-mips@linux-mips.org,
+	linux-mm@kvack.org, linux-omap@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-wireless@vger.kernel.org, lustre-devel@lists.lustre.org
+Subject: Re: [PATCH 00/38] Fixes related to incorrect usage of unsigned types
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443019714-12926-1-git-send-email-ben.dooks@codethink.co.uk>
+Content-Type: text/plain; charset="us-ascii"
+Date: Mon, 21 Sep 2015 14:42:25 +0100
+Message-ID: <17571.1442842945@warthog.procyon.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 23, 2015 at 03:48:34PM +0100, Ben Dooks wrote:
-> On the OMAP AM3517 platform the uart4_ick gets registered
-> twice, causing any power managment to /dev/ttyO3 to fail
-> when trying to wake the device up.
-> 
-> This solves the following oops:
-> 
-> [] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
-> [] PC is at serial_omap_pm+0x48/0x15c
-> [] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
-> 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> ---
->  drivers/clk/ti/clk-3xxx.c | 1 -
->  1 file changed, 1 deletion(-)
+Andrzej Hajda <a.hajda@samsung.com> wrote:
 
-<formletter>
+> Semantic patch finds comparisons of types:
+>     unsigned < 0
+>     unsigned >= 0
+> The former is always false, the latter is always true.
+> Such comparisons are useless, so theoretically they could be
+> safely removed, but their presence quite often indicates bugs.
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read Documentation/stable_kernel_rules.txt
-for how to do this properly.
+Or someone has left them in because they don't matter and there's the
+possibility that the type being tested might be or become signed under some
+circumstances.  If the comparison is useless, I'd expect the compiler to just
+discard it - for such cases your patch is pointless.
 
-</formletter>
+If I have, for example:
+
+	unsigned x;
+
+	if (x == 0 || x > 27)
+		give_a_range_error();
+
+I will write this as:
+
+	unsigned x;
+
+	if (x <= 0 || x > 27)
+		give_a_range_error();
+
+because it that gives a way to handle x being changed to signed at some point
+in the future for no cost.  In which case, your changing the <= to an ==
+"because the < part of the case is useless" is arguably wrong.
+
+David
