@@ -1,105 +1,61 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v5 1/4] clk: qcom: Add MSM8916 iommu clocks
-Date: Thu, 17 Sep 2015 19:39:26 +0300
-Message-Id: <1442507969-18062-2-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1442507969-18062-1-git-send-email-georgi.djakov@linaro.org>
-References: <1442507969-18062-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: Fix tipo in st,clkgen-pll documentation
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+References: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1442389379-9298-2-git-send-email-gabriel.fernandez@linaro.org>
+Cc: Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@stlinux.com, linux-clk@vger.kernel.org
+From: Rob Herring <robh@kernel.org>
+Message-ID: <56001C82.8060009@kernel.org>
+Date: Mon, 21 Sep 2015 10:04:34 -0500
+MIME-Version: 1.0
+In-Reply-To: <1442389379-9298-2-git-send-email-gabriel.fernandez@linaro.org>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the msm8916 TCU (Translation Control Unit) clocks that
-are needed for IOMMU.
+On 09/16/2015 02:42 AM, Gabriel Fernandez wrote:
+> replace "sst,plls-c32-cx_x" by "st,plls-c32-cx_x"
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/gcc-msm8916.c               |   48 ++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8916.h |    3 ++
- 2 files changed, 51 insertions(+)
+Ironically, the subject has a typo...
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index 83871b663e21..ad9316751eb2 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -2347,6 +2347,51 @@ static struct clk_branch gcc_sdcc2_apps_clk = {
- 	},
- };
- 
-+static struct clk_rcg2 bimc_ddr_clk_src = {
-+	.cmd_rcgr = 0x32004,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_bimc_map,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "bimc_ddr_clk_src",
-+		.parent_names = gcc_xo_gpll0_bimc,
-+		.num_parents = 3,
-+		.ops = &clk_rcg2_ops,
-+		.flags = CLK_GET_RATE_NOCACHE,
-+	},
-+};
-+
-+static struct clk_branch gcc_apss_tcu_clk = {
-+	.halt_reg = 0x12018,
-+	.clkr = {
-+		.enable_reg = 0x4500c,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_apss_tcu_clk",
-+			.parent_names = (const char *[]){
-+				"bimc_ddr_clk_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_gfx_tcu_clk = {
-+	.halt_reg = 0x12020,
-+	.clkr = {
-+		.enable_reg = 0x4500c,
-+		.enable_mask = BIT(2),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_gfx_tcu_clk",
-+			.parent_names = (const char *[]){
-+				"bimc_ddr_clk_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_gtcu_ahb_clk = {
- 	.halt_reg = 0x12044,
- 	.clkr = {
-@@ -2730,6 +2775,9 @@ static struct clk_regmap *gcc_msm8916_clocks[] = {
- 	[GCC_VENUS0_AHB_CLK] = &gcc_venus0_ahb_clk.clkr,
- 	[GCC_VENUS0_AXI_CLK] = &gcc_venus0_axi_clk.clkr,
- 	[GCC_VENUS0_VCODEC0_CLK] = &gcc_venus0_vcodec0_clk.clkr,
-+	[BIMC_DDR_CLK_SRC] = &bimc_ddr_clk_src.clkr,
-+	[GCC_APSS_TCU_CLK] = &gcc_apss_tcu_clk.clkr,
-+	[GCC_GFX_TCU_CLK] = &gcc_gfx_tcu_clk.clkr,
- };
- 
- static struct gdsc *gcc_msm8916_gdscs[] = {
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8916.h b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-index 11566c567356..9169ae656c77 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8916.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-@@ -152,6 +152,9 @@
- #define GCC_VENUS0_AHB_CLK			135
- #define GCC_VENUS0_AXI_CLK			136
- #define GCC_VENUS0_VCODEC0_CLK			137
-+#define BIMC_DDR_CLK_SRC			138
-+#define GCC_APSS_TCU_CLK			139
-+#define GCC_GFX_TCU_CLK				140
- 
- /* Indexes for GDSCs */
- #define BIMC_GDSC				0
+Acked-by: Rob Herring <robh@kernel.org>
+
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+> index d8b168e..e2c6db0 100644
+> --- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+> +++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+> @@ -21,8 +21,8 @@ Required properties:
+>  	"st,stih416-plls-c32-ddr",	"st,clkgen-plls-c32"
+>  	"st,stih407-plls-c32-a0",	"st,clkgen-plls-c32"
+>  	"st,stih407-plls-c32-a9",	"st,clkgen-plls-c32"
+> -	"sst,plls-c32-cx_0",		"st,clkgen-plls-c32"
+> -	"sst,plls-c32-cx_1",		"st,clkgen-plls-c32"
+> +	"st,plls-c32-cx_0",		"st,clkgen-plls-c32"
+> +	"st,plls-c32-cx_1",		"st,clkgen-plls-c32"
+>  
+>  	"st,stih415-gpu-pll-c32",	"st,clkgengpu-pll-c32"
+>  	"st,stih416-gpu-pll-c32",	"st,clkgengpu-pll-c32"
+> 
+
