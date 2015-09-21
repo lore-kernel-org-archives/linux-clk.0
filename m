@@ -1,41 +1,71 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH v4 2/8] clk: imx25: retain early UART clocks during kernel init
+Date: Mon, 21 Sep 2015 18:53:58 +0200
+Message-Id: <1442854444-4460-3-git-send-email-l.stach@pengutronix.de>
+In-Reply-To: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH 2/2] clk: at91: system: don't try to free_irq when there is no IRQ
-Date: Fri, 11 Sep 2015 16:34:07 +0200
-Message-Id: <1441982047-11303-2-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1441982047-11303-1-git-send-email-alexandre.belloni@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+ Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
+ kernel@pengutronix.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-In the error path of at91_clk_register_system(), sys->irq is freed
-unconditionally but it may not exist or be request at all.
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 ---
- drivers/clk/at91/clk-system.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx25.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/clk/at91/clk-system.c b/drivers/clk/at91/clk-system.c
-index 58008b3e8bc1..3f5314344286 100644
---- a/drivers/clk/at91/clk-system.c
-+++ b/drivers/clk/at91/clk-system.c
-@@ -138,7 +138,8 @@ at91_clk_register_system(struct at91_pmc *pmc, const char *name,
+diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
+index ec1a4c1dacf1..c4c141cab444 100644
+--- a/drivers/clk/imx/clk-imx25.c
++++ b/drivers/clk/imx/clk-imx25.c
+@@ -86,6 +86,16 @@ enum mx25_clks {
  
- 	clk = clk_register(NULL, &sys->hw);
- 	if (IS_ERR(clk)) {
--		free_irq(sys->irq, sys);
-+		if (irq)
-+			free_irq(sys->irq, sys);
- 		kfree(sys);
- 	}
+ static struct clk *clk[clk_max];
+ 
++static struct clk ** const uart_clks[] __initconst = {
++	&clk[uart_ipg_per],
++	&clk[uart1_ipg],
++	&clk[uart2_ipg],
++	&clk[uart3_ipg],
++	&clk[uart4_ipg],
++	&clk[uart5_ipg],
++	NULL
++};
++
+ static int __init __mx25_clocks_init(unsigned long osc_rate,
+ 				     void __iomem *ccm_base)
+ {
+@@ -233,6 +243,8 @@ static int __init __mx25_clocks_init(unsigned long osc_rate,
+ 	 */
+ 	clk_set_parent(clk[cko_sel], clk[ipg]);
+ 
++	imx_register_uart_clocks(uart_clks);
++
+ 	return 0;
+ }
  
 -- 
-2.1.4
+2.5.1
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
