@@ -1,62 +1,111 @@
-Return-Path: <ben.dooks@codethink.co.uk>
-Message-ID: <560A8DB0.6020109@codethink.co.uk>
-Date: Tue, 29 Sep 2015 14:10:08 +0100
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-MIME-Version: 1.0
-To: Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
-CC: mturquette@baylibre.com, sboyd@codeaurora.org,
- linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@lists.codethink.co.uk, stable@vger.kernel.org
-Subject: Re: [PATCH] clk: ti: fix dual-registration of uart4_ick
-References: <1443019714-12926-1-git-send-email-ben.dooks@codethink.co.uk> <20150923173040.GI23801@atomide.com> <5604DED0.5050403@ti.com>
-In-Reply-To: <5604DED0.5050403@ti.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <tony@atomide.com>
+From: Tony Lindgren <tony@atomide.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	Brian Hutchinson <b.hutchman@gmail.com>,
+	Felipe Balbi <balbi@ti.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Nishanth Menon <nm@ti.com>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sekhar Nori <nsekhar@ti.com>
+Subject: [PATCH] clk: ti: Fix FAPLL udelay in clk_enable with clk_prepare
+Date: Tue, 22 Sep 2015 14:23:05 -0700
+Message-Id: <1442956985-32642-1-git-send-email-tony@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25/09/15 06:42, Tero Kristo wrote:
-> On 09/23/2015 08:30 PM, Tony Lindgren wrote:
->> * Ben Dooks <ben.dooks@codethink.co.uk> [150923 07:53]:
->>> On the OMAP AM3517 platform the uart4_ick gets registered
->>> twice, causing any power managment to /dev/ttyO3 to fail
->>> when trying to wake the device up.
->>>
->>> This solves the following oops:
->>>
->>> [] Unhandled fault: external abort on non-linefetch (0x1028) at
->>> 0xfa09e008
->>> [] PC is at serial_omap_pm+0x48/0x15c
->>> [] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
->>
->> No uart4 on 34xx/35xx, that got introduced with 36xx so:
->>
->> Acked-by: Tony Lindgren <tony@atomide.com>
->>
->>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
->>> ---
->>>   drivers/clk/ti/clk-3xxx.c | 1 -
->>>   1 file changed, 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
->>> index 5e12f32..2e7ef1f 100644
->>> --- a/drivers/clk/ti/clk-3xxx.c
->>> +++ b/drivers/clk/ti/clk-3xxx.c
->>> @@ -374,7 +374,6 @@ static struct ti_dt_clk omap3xxx_clks[] = {
->>>       DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
->>>       DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
->>>       DT_CLK(NULL, "uart3_ick", "uart3_ick"),
->>> -    DT_CLK(NULL, "uart4_ick", "uart4_ick"),
->>>       DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
->>>       DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
->>>       DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
-> 
-> NAK.
-> 
-> This patch is actually only partially correct, it removes the uart4_ick
-> alias for omap36xx also. It should be added back to the omap36xx clks
-> array. Care to post a v2?
+As recently pointed out (again) by Thomas and Russell, we must not
+wait in in clk_enable. The wait for PLL to lock needs to happen
+in clk_prepare instead.
 
-Thankyou for the feedback. I'll update, but do not have a device to test.
+It seems this is a common copy paste error with the PLL drivers,
+and similar fixes should be applied to other PLL drivers after
+testing.
 
+Cc: Brian Hutchinson <b.hutchman@gmail.com>
+Cc: Felipe Balbi <balbi@ti.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Nishanth Menon <nm@ti.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/clk/ti/fapll.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
+index f4b2e98..e1db74a 100644
+--- a/drivers/clk/ti/fapll.c
++++ b/drivers/clk/ti/fapll.c
+@@ -37,7 +37,7 @@
+ #define FAPLL_PWD_OFFSET	4
+ 
+ #define MAX_FAPLL_OUTPUTS	7
+-#define FAPLL_MAX_RETRIES	1000
++#define FAPLL_MAX_RETRIES	5
+ 
+ #define to_fapll(_hw)		container_of(_hw, struct fapll_data, hw)
+ #define to_synth(_hw)		container_of(_hw, struct fapll_synth, hw)
+@@ -126,7 +126,7 @@ static int ti_fapll_wait_lock(struct fapll_data *fd)
+ 		if (retries-- <= 0)
+ 			break;
+ 
+-		udelay(1);
++		usleep_range(200, 300);
+ 	}
+ 
+ 	pr_err("%s failed to lock\n", fd->name);
+@@ -134,7 +134,7 @@ static int ti_fapll_wait_lock(struct fapll_data *fd)
+ 	return -ETIMEDOUT;
+ }
+ 
+-static int ti_fapll_enable(struct clk_hw *hw)
++static int ti_fapll_prepare(struct clk_hw *hw)
+ {
+ 	struct fapll_data *fd = to_fapll(hw);
+ 	u32 v = readl_relaxed(fd->base);
+@@ -146,7 +146,7 @@ static int ti_fapll_enable(struct clk_hw *hw)
+ 	return 0;
+ }
+ 
+-static void ti_fapll_disable(struct clk_hw *hw)
++static void ti_fapll_unprepare(struct clk_hw *hw)
+ {
+ 	struct fapll_data *fd = to_fapll(hw);
+ 	u32 v = readl_relaxed(fd->base);
+@@ -155,7 +155,7 @@ static void ti_fapll_disable(struct clk_hw *hw)
+ 	writel_relaxed(v, fd->base);
+ }
+ 
+-static int ti_fapll_is_enabled(struct clk_hw *hw)
++static int ti_fapll_is_prepared(struct clk_hw *hw)
+ {
+ 	struct fapll_data *fd = to_fapll(hw);
+ 	u32 v = readl_relaxed(fd->base);
+@@ -261,7 +261,7 @@ static int ti_fapll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	v |= pre_div_p << FAPLL_MAIN_DIV_P_SHIFT;
+ 	v |= mult_n << FAPLL_MAIN_MULT_N_SHIFT;
+ 	writel_relaxed(v, fd->base);
+-	if (ti_fapll_is_enabled(hw))
++	if (ti_fapll_is_prepared(hw))
+ 		ti_fapll_wait_lock(fd);
+ 	ti_fapll_clear_bypass(fd);
+ 
+@@ -269,9 +269,9 @@ static int ti_fapll_set_rate(struct clk_hw *hw, unsigned long rate,
+ }
+ 
+ static struct clk_ops ti_fapll_ops = {
+-	.enable = ti_fapll_enable,
+-	.disable = ti_fapll_disable,
+-	.is_enabled = ti_fapll_is_enabled,
++	.prepare = ti_fapll_prepare,
++	.unprepare = ti_fapll_unprepare,
++	.is_prepared = ti_fapll_is_prepared,
+ 	.recalc_rate = ti_fapll_recalc_rate,
+ 	.get_parent = ti_fapll_get_parent,
+ 	.round_rate = ti_fapll_round_rate,
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+2.1.4
