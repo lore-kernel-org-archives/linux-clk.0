@@ -1,82 +1,47 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	kernel@pengutronix.de,
-	patchwork-lst@pengutronix.de
-Subject: [PATCH v4 0/8] i.MX early debug UART clock fixes
-Date: Mon, 21 Sep 2015 18:53:56 +0200
-Message-Id: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga03.intel.com ([134.134.136.65]:2357 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933544AbbIVPyT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 22 Sep 2015 11:54:19 -0400
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	heikki.krogerus@linux.intel.com, linux-clk@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v6 5/5] serial: 8250_dw: allow lower reference frequencies
+Date: Tue, 22 Sep 2015 18:54:12 +0300
+Message-Id: <1442937252-50281-6-git-send-email-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <1442937252-50281-1-git-send-email-andriy.shevchenko@linux.intel.com>
+References: <1442937252-50281-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This series fixes a long standing interaction issue between the
-kernels early debug facilities and the i.MX clock drivers.
+We have couple of standard but rare used baudrates which are not supported by
+1,8432MHz reference frequency. Besides that user can potentially ask for any
+baudrate (via BOTHER flag) and we currently don't fully support that. Since
+clk-fractional-divider is moved to use rational best approximation for
+reference frequency we may amend the driver to support whatever user wants.
 
-Both earlyprintk and earlycon rely on the bootloader setup clocks
-for the UARTs to be retained during kernel init. As those clocks are
-only enabled in hardware, but not referenced in software they (or even
-their parent clocks) may get disabled as a result of other clocks being
-en-/disabled during boot.
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/tty/serial/8250/8250_dw.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-This results in missing messages from the early debug console until the
-regular system console takes over, or even worse system hangs in response
-to unclocked register accesses. This renders those debugging facilities a
-lot less useful.
-
-The fix implemented here is to check if any of this early debugging is
-enabled and keep the UART clocks referenced and enabled in that case.
-The clocks will then only be disabled at the end of kernel init, at which
-point the real console should have taken over and the early outputs being
-disabled.
-
-I've runtime tested this on i.MX6Q and i.MX53, other platforms are only
-compile tested. This is mostly a mechanical change, but still I would
-appreciate some testing.
-
-Changes since v1:
-- reworked logic to require significantly less code in the individual
-  clock drivers
-
-Changes since v2:
-- fix checkpatch warning about initdata annotation placement
-- make code a bit more compact in the for(...) loops
-  (since 2 people already commented about this I made up my mind)
-- change code style in driver as requested by Shawn
-- add more const correctness
-  (note that this triggers a false positive checkpatch error in the first patch)
-
-Changes since v3:
-- make sure to only execute late_initcall code if init functions have been called
-  (fixes OOPS on others SoCs in multiplatform config)
-
-Regards,
-Lucas
-
-Lucas Stach (8):
-  clk: imx: add common logic to detect early UART usage
-  clk: imx25: retain early UART clocks during kernel init
-  clk: imx27: retain early UART clocks during kernel init
-  clk: imx31: retain early UART clocks during kernel init
-  clk: imx35: retain early UART clocks during kernel init
-  clk: imx5: retain early UART clocks during kernel init
-  clk: imx6: retain early UART clocks during kernel init
-  clk: imx7d: retain early UART clocks during kernel init
-
- drivers/clk/imx/clk-imx25.c       | 12 ++++++++++++
- drivers/clk/imx/clk-imx27.c       | 13 +++++++++++++
- drivers/clk/imx/clk-imx31.c       | 12 ++++++++++++
- drivers/clk/imx/clk-imx35.c       | 10 ++++++++++
- drivers/clk/imx/clk-imx51-imx53.c | 16 ++++++++++++++++
- drivers/clk/imx/clk-imx6q.c       |  8 ++++++++
- drivers/clk/imx/clk-imx6sl.c      |  8 ++++++++
- drivers/clk/imx/clk-imx6sx.c      |  8 ++++++++
- drivers/clk/imx/clk-imx7d.c       | 13 +++++++++++++
- drivers/clk/imx/clk.c             | 38 ++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h             |  1 +
- 11 files changed, 139 insertions(+)
-
+diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+index 06324f1..df3eddf 100644
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -224,10 +224,6 @@ static void dw8250_set_termios(struct uart_port *p, struct ktermios *termios,
+ 	if (IS_ERR(d->clk) || !old)
+ 		goto out;
+ 
+-	/* Not requesting clock rates below 1.8432Mhz */
+-	if (baud < 115200)
+-		baud = 115200;
+-
+ 	clk_disable_unprepare(d->clk);
+ 	rate = clk_round_rate(d->clk, baud * 16);
+ 	ret = clk_set_rate(d->clk, rate);
 -- 
 2.5.1
+
