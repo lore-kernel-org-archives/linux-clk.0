@@ -1,65 +1,55 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Return-Path: <scottwood@freescale.com>
+Message-ID: <1442961804.19102.294.camel@freescale.com>
+Subject: Re: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
+From: Scott Wood <scottwood@freescale.com>
 To: Mark Rutland <mark.rutland@arm.com>
-Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: rockchip: add critical clock for rk3368
-Date: Mon, 14 Sep 2015 17:24:55 +0200
-Message-ID: <5892333.KZLmY9MJYK@diego>
-In-Reply-To: <20150914151942.GJ7002@leverpostej>
-References: <5267432.TORlj1Iv40@diego> <6675833.8DAAvDYooL@diego> <20150914151942.GJ7002@leverpostej>
+CC: Hou Zhiqiang <B48286@freescale.com>, Marc Zyngier <Marc.Zyngier@arm.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Catalin Marinas
+	<Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Shaohui Xie
+	<Shaohui.Xie@freescale.com>, "corbet@lwn.net" <corbet@lwn.net>, "Sharma
+ Bhupesh" <bhupesh.sharma@freescale.com>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "wsa@the-dreams.de" <wsa@the-dreams.de>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "wim@iguana.be"
+	<wim@iguana.be>, Wenbin Song <Wenbin.Song@freescale.com>, Hu Vincent
+	<Mingkai.Hu@freescale.com>, Li Leo <LeoLi@freescale.com>, "Kushwaha
+ Prabhakar-B32579" <prabhakar@freescale.com>
+Date: Tue, 22 Sep 2015 17:43:24 -0500
+In-Reply-To: <20150922221504.GA1497@svinekod>
+References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+	 <1442838158-2964-5-git-send-email-B48286@freescale.com>
+	 <20150922012403.GA1535@svinekod>
+	 <CY1PR0301MB078008B10188504C951076498B450@CY1PR0301MB0780.namprd03.prod.outlook.com>
+	 <20150922221504.GA1497@svinekod>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Return-Path: scottwood@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, 14. September 2015, 16:19:42 schrieb Mark Rutland:
-> On Mon, Sep 14, 2015 at 04:06:05PM +0100, Heiko St=FCbner wrote:
-> > Am Montag, 14. September 2015, 15:19:21 schrieb Mark Rutland:
-> > > On Sun, Sep 13, 2015 at 12:20:36PM +0100, Heiko St=FCbner wrote:
-> > > > Again a result of the gpio-clock-liberation the rk3368 needs th=
-e
-> > > > pclk_pd_pmu marked as critical, to boot successfully.
-> > > >=20
-> > > > Reported-by: Mark Rutland <mark.rutland@arm.com>
-> > > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > >=20
-> > > FWIW: Tested-by: Mark Rutland <mark.rutland@arm.com>
-> > >=20
-> > > I'm surprised that we don't describe these as critical in the DT,=
- given
-> > > that this isn't really an internal property of the clock controll=
-er, but
-> > > rather what happens to be attached to it. That ship appears to ha=
-ve
-> > > sailed, however.
-> >=20
-> > I wouldn't necessarily think so ... what is called critical only me=
-ans
-> > "don't turn off when walking the clock-tree upwards".
-> >=20
-> > The pclk_pd_pmu for example simply supplies some more clocks we don=
-'t
-> > handle at all currently (pclk_pmu_noc, ...). That we currently choo=
-se to
-> > ignore those [because we don't have any code nor dt-bindings to han=
-dle
-> > the components supplied] sounds very much like an implementation-sp=
-ecific
-> > detail, not something about the hardware.
->=20
-> Sure, but the specific case that lead to this report was the fact tha=
-t
-> this clock (directly?) feeds the pinctrl programming interface, and t=
-hat
-> fact is neither described in the DT nor handled by the driver. Surely=
+On Tue, 2015-09-22 at 23:15 +0100, Mark Rutland wrote:
+> On Tue, Sep 22, 2015 at 10:50:21AM +0100, Hou Zhiqiang wrote:
+> > > > +       ifc:  ifc@1530000{
+> > > > +               compatible = "fsl,ifc", "simple-bus";
+> > > > +               reg = <0x0 0x1530000 0x0 0x10000>;
+> > > > +               interrupts = <0 43 0x4>;
+> > > > +       };
+> > > 
+> > > Why simple-bus?
+> > 
+> > There are 3 child node located in dtsi file that should be created and 
+> > added
+> > to platform device list.
+> 
+> Are they usable even if the kernel knew nothing about the IFC node?
 
-> that should be described and handled?
+Yes, except for NAND.
 
-nope it doesn't :-) pclk_pd_pmu feeds pclk_gpio0.
+>  If not, the IFC driver should probe them, and simple-bus should go.
 
-Before the pinctrl patch, pclk_gpio0 was just statically on all the tim=
-e, now=20
-it gets turned off when bank0 is not in use (between reads/writes and i=
-f no=20
-interrupts are enabled). This in turn makes the clock framework turn of=
-f=20
-pclk_pd_pmu (and thus its other unhandled child-clocks).
+IFC is not a new binding.  IFC nodes are expected to have simple-bus.
+
+-Scott
