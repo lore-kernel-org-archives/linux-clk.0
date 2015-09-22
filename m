@@ -1,216 +1,90 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:9491 "EHLO
-	mx0a-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757981AbbIVOQw (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 22 Sep 2015 10:16:52 -0400
-From: Jisheng Zhang <jszhang@marvell.com>
-To: <sebastian.hesselbarth@gmail.com>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <mark.rutland@arm.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	Jisheng Zhang <jszhang@marvell.com>
-Subject: [PATCH 3/5] clk: berlin: add clk support for berlin4ct
-Date: Tue, 22 Sep 2015 22:12:34 +0800
-Message-ID: <1442931156-5877-4-git-send-email-jszhang@marvell.com>
-In-Reply-To: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
-References: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
+Return-Path: <bhupesh.sharma@freescale.com>
+From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
+To: Li Leo <LeoLi@freescale.com>, Hou Zhiqiang <B48286@freescale.com>, "Mark
+ Rutland" <mark.rutland@arm.com>, "marc.zyngier@arm.com"
+	<marc.zyngier@arm.com>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Catalin Marinas
+	<Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Shaohui Xie
+	<Shaohui.Xie@freescale.com>, "corbet@lwn.net" <corbet@lwn.net>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "wsa@the-dreams.de"
+	<wsa@the-dreams.de>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"wim@iguana.be" <wim@iguana.be>, Wenbin Song <Wenbin.Song@freescale.com>,
+	Scott Wood <scottwood@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>
+Subject: RE: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
+Date: Tue, 22 Sep 2015 19:04:56 +0000
+Message-ID: <BY1PR0301MB1303F9A6F3B00F91C7B18C0682450@BY1PR0301MB1303.namprd03.prod.outlook.com>
+References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+ <1442838158-2964-5-git-send-email-B48286@freescale.com>
+ <20150922012403.GA1535@svinekod>
+ <CY1PR0301MB078008B10188504C951076498B450@CY1PR0301MB0780.namprd03.prod.outlook.com>
+ <DM2PR0301MB07342356008C1A50AB26FEFFBA450@DM2PR0301MB0734.namprd03.prod.outlook.com>
+In-Reply-To: <DM2PR0301MB07342356008C1A50AB26FEFFBA450@DM2PR0301MB0734.namprd03.prod.outlook.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch supports the gate-clk and berlin-clk in berlin4ct SoC.
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
----
- drivers/clk/berlin/Makefile        |   2 +-
- drivers/clk/berlin/clk-berlin4ct.c | 164 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 165 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/berlin/clk-berlin4ct.c
 
-diff --git a/drivers/clk/berlin/Makefile b/drivers/clk/berlin/Makefile
-index 741ba22..fe29dd3 100644
---- a/drivers/clk/berlin/Makefile
-+++ b/drivers/clk/berlin/Makefile
-@@ -1,4 +1,4 @@
--obj-y += pll.o clk.o berlin2-avpll.o berlin2-pll.o berlin2-div.o
-+obj-y += pll.o clk.o clk-berlin4ct.o berlin2-avpll.o berlin2-pll.o berlin2-div.o
- obj-$(CONFIG_MACH_BERLIN_BG2)	+= bg2.o
- obj-$(CONFIG_MACH_BERLIN_BG2CD)	+= bg2.o
- obj-$(CONFIG_MACH_BERLIN_BG2Q)	+= bg2q.o
-diff --git a/drivers/clk/berlin/clk-berlin4ct.c b/drivers/clk/berlin/clk-berlin4ct.c
-new file mode 100644
-index 0000000..b9d4a9b
---- /dev/null
-+++ b/drivers/clk/berlin/clk-berlin4ct.c
-@@ -0,0 +1,164 @@
-+/*
-+ * Copyright (c) 2015 Marvell Technology Group Ltd.
-+ *
-+ * Author: Jisheng Zhang <jszhang@marvell.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+
-+#include "clk.h"
-+
-+#define CLK_SOURCE_MAX	5
-+
-+static struct clk_onecell_data gateclk_data;
-+static struct clk_onecell_data clk_data;
-+
-+static DEFINE_SPINLOCK(lock);
-+
-+static const struct gateclk_desc berlin4ct_gates[] __initconst = {
-+	{ "tspsysclk",		"perifsysclk",	0 },
-+	{ "usb0coreclk",	"perifsysclk",	1 },
-+	{ "zspsysclk",		"perifsysclk",	2 },
-+	{ "sdiosysclk",		"perifsysclk",	3 },
-+	{ "ethcoreclk",		"perifsysclk",	4 },
-+	{ "pcie0sys",		"perifsysclk",	6 },
-+	{ "sata0core",		"perifsysclk",	7 },
-+	{ "nfcsysclk",		"perifsysclk",	8 },
-+	{ "emmcsysclk",		"perifsysclk",	9 },
-+	{ "ihb0sysclk",		"perifsysclk",	10 },
-+};
-+
-+static const struct clk_desc berlin4ct_descs[] __initconst = {
-+	{ "cpufastrefclk",	0x0 },
-+	{ "memfastrefclk",	0x4 },
-+	{ "cfgclk",		0x20,	CLK_IGNORE_UNUSED },
-+	{ "perifsysclk",	0x24,	CLK_IGNORE_UNUSED },
-+	{ "hbclk",		0x28 },
-+	{ "atbclk",		0x2c },
-+	{ "decoderclk",		0x40 },
-+	{ "decoderm3clk",	0x44 },
-+	{ "decoderpcubeclk",	0x48 },
-+	{ "encoderclk",		0x4c },
-+	{ "ovpcoreclk",		0x50 },
-+	{ "gfx2dcoreclk",	0x60 },
-+	{ "gfx3dcoreclk",	0x64 },
-+	{ "gfx3dshclk",		0x68 },
-+	{ "gfx3dsysclk",	0x6c },
-+	{ "gfx2dsysclk",	0x70 },
-+	{ "aviosysclk",		0x80 },
-+	{ "vppsysclk",		0x84 },
-+	{ "eddcclk",		0x88 },
-+	{ "aviobiuclk",		0x8c },
-+	{ "zspclk",		0xa0 },
-+	{ "tspclk",		0xc0 },
-+	{ "tsprefclk",		0xc4 },
-+	{ "ndsclk",		0xc8 },
-+	{ "nocsclk",		0xcc },
-+	{ "apbcoreclk",		0xd0,	CLK_IGNORE_UNUSED },
-+	{ "emmcclk",		0xe0 },
-+	{ "sd0clk",		0xe4 },
-+	{ "sd1clk",		0xe8 },
-+	{ "dllmstrefclk",	0xec },
-+	{ "gethrgmiiclk",	0xf0 },
-+	{ "gethrgmiisysclk",	0xf4 },
-+	{ "usim0clk",		0x100 },
-+	{ "pcietestclk",	0x110 },
-+	{ "usb2testclk",	0x120 },
-+	{ "usb3testclk",	0x124 },
-+	{ "usb3coreclk",	0x128 },
-+	{ "nfceccclk",		0x130 },
-+	{ "bcmclk",		0x140 },
-+};
-+
-+static void __init berlin4ct_gateclk_setup(struct device_node *np)
-+{
-+	int i, n, ret;
-+	void __iomem *base;
-+	struct clk **clks;
-+
-+	base = of_iomap(np, 0);
-+	if (WARN_ON(!base))
-+		return;
-+
-+	n = ARRAY_SIZE(berlin4ct_gates);
-+	clks = kzalloc(n * sizeof(struct clk *), GFP_KERNEL);
-+	if (WARN_ON(!clks))
-+		return;
-+
-+	for (i = 0; i < n; i++) {
-+		clks[i] = clk_register_gate(NULL, berlin4ct_gates[i].name,
-+				berlin4ct_gates[i].parent_name,
-+				berlin4ct_gates[i].flags, base,
-+				berlin4ct_gates[i].bit_idx, 0, &lock);
-+		WARN_ON(IS_ERR(clks[i]));
-+	}
-+
-+	gateclk_data.clks = clks;
-+	gateclk_data.clk_num = i;
-+
-+	ret = of_clk_add_provider(np, of_clk_src_onecell_get,
-+				  &gateclk_data);
-+	if (WARN_ON(ret))
-+		return;
-+
-+}
-+CLK_OF_DECLARE(berlin4ct_gateclk, "marvell,berlin4ct-gateclk",
-+	       berlin4ct_gateclk_setup);
-+
-+static void __init berlin4ct_clk_setup(struct device_node *np)
-+{
-+	int i, n, ret, num_parents;
-+	void __iomem *base;
-+	struct clk **clks;
-+	const char *parent_names[CLK_SOURCE_MAX];
-+
-+	num_parents = of_clk_get_parent_count(np);
-+	if (num_parents <= 0 || num_parents > CLK_SOURCE_MAX)
-+		return;
-+
-+	of_clk_parent_fill(np, parent_names, num_parents);
-+
-+	base = of_iomap(np, 0);
-+	if (WARN_ON(!base))
-+		return;
-+
-+	n = ARRAY_SIZE(berlin4ct_descs);
-+	clks = kzalloc(n * sizeof(struct clk *), GFP_KERNEL);
-+	if (WARN_ON(!clks))
-+		return;
-+
-+	for (i = 0; i < n; i++) {
-+		clks[i] = berlin_clk_register(berlin4ct_descs[i].name,
-+				num_parents, parent_names,
-+				berlin4ct_descs[i].flags,
-+				base + berlin4ct_descs[i].offset);
-+		WARN_ON(IS_ERR(clks[i]));
-+	}
-+
-+	clk_data.clks = clks;
-+	clk_data.clk_num = i;
-+
-+	ret = of_clk_add_provider(np, of_clk_src_onecell_get,
-+				  &clk_data);
-+	if (WARN_ON(ret))
-+		return;
-+
-+}
-+CLK_OF_DECLARE(berlin4ct_clk, "marvell,berlin4ct-clk",
-+	       berlin4ct_clk_setup);
--- 
-2.5.3
+> -----Original Message-----
+> From: Li Yang-Leo-R58472
+> Sent: Tuesday, September 22, 2015 10:53 PM
+> To: Hou Zhiqiang-B48286; Mark Rutland; marc.zyngier@arm.com
+> Cc: linux-arm-kernel@lists.infradead.org; Catalin Marinas; Will Deacon;
+> linux-i2c@vger.kernel.org; linux-watchdog@vger.kernel.org; linux-
+> doc@vger.kernel.org; linux-clk@vger.kernel.org; Xie Shaohui-B21989;
+> corbet@lwn.net; Sharma Bhupesh-B45370; mturquette@baylibre.com; wsa@the-
+> dreams.de; sboyd@codeaurora.org; wim@iguana.be; Song Wenbin-B53747; Wood
+> Scott-B07421; Hu Mingkai-B21284
+> Subject: RE: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
+>=20
+> > >
+> > > Hi,
+> > >
+> > > > +/memreserve/ 0x80000000 0x00010000;
+> > >
+> > > Why is this necessary?
+> >
+> > This memory region is pre-reserved for the spin-table/psci, although
+> > didn't add Enable method of secondary cores.
+>=20
+> Can this be reserved by bootloader?
 
+No need to reserve this for PSCI based secondary bootup.
+
+> >
+> > > If this is necessary, please add a comment stating what this is for.
+> > >
+> > > > +               cpu@3 {
+> > > > +                       device_type =3D "cpu";
+> > > > +                       compatible =3D "arm,cortex-a53";
+> > > > +                       reg =3D <0x0 0x3>;
+> > > > +                       clocks =3D <&clockgen 1 0>;
+> > > > +               };
+> > >
+> > > Missing enable-method properties on all the secondary CPUs.
+> > >
+> >
+> > There are two methods (spin-table and psci) to bring up secondary
+> > cores, which one do you think is better?
+>=20
+> Do we have the PSCI support ready in both UEFI and u-boot?  If not, we
+> should use spin-table for now.
+
+UEFI has been using PSCI with Arm Trusted Firmware (ATF) since some time. U=
+-boot can also work with ATF seamlessly.
+
+Spin-table method is deprecated and newer patches should support PSCI. If n=
+ot, all intelligence should be left to the
+Bootloader and the Linux DTS should not mention the 'enable-method' and the=
+ 'memreserve' regions.=20
+
+For details please see the LS2085A Freescale DTS already present in mainlin=
+e kernel.
+
+Regards,
+Bhupesh
