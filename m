@@ -1,59 +1,84 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Steven Miao <realmz6@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	adi-buildroot-devel@lists.sourceforge.net,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: [PATCH] blackfin: Use generic clkdev.h header
-Date: Tue, 15 Sep 2015 16:06:44 -0700
-Message-Id: <1442358404-2717-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH 00/38] Fixes related to incorrect usage of unsigned types
+To: David Howells <dhowells@redhat.com>
+References: <1442842450-29769-1-git-send-email-a.hajda@samsung.com>
+ <17571.1442842945@warthog.procyon.org.uk>
+Cc: Andrzej Hajda <a.hajda@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	linux-kernel@vger.kernel.org, brcm80211-dev-list@broadcom.com,
+	devel@driverdev.osuosl.org, dev@openvswitch.org,
+	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-cachefs@redhat.com, linux-clk@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-mips@linux-mips.org, linux-mm@kvack.org,
+	linux-omap@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+	lustre-devel@lists.lustre.org, netdev@vger.kernel.org,
+	rtc-linux@googlegroups.com
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-id: <56011BB9.5030004@samsung.com>
+Date: Tue, 22 Sep 2015 11:13:29 +0200
+MIME-version: 1.0
+In-reply-to: <17571.1442842945@warthog.procyon.org.uk>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The blackfin clkdev.h header is the same as the asm-generic
-header, so just use the asm-generic one.
+On 09/21/2015 03:42 PM, David Howells wrote:
+> Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> 
+>> Semantic patch finds comparisons of types:
+>>     unsigned < 0
+>>     unsigned >= 0
+>> The former is always false, the latter is always true.
+>> Such comparisons are useless, so theoretically they could be
+>> safely removed, but their presence quite often indicates bugs.
+> 
+> Or someone has left them in because they don't matter and there's the
+> possibility that the type being tested might be or become signed under some
+> circumstances.  If the comparison is useless, I'd expect the compiler to just
+> discard it - for such cases your patch is pointless.
+> 
+> If I have, for example:
+> 
+> 	unsigned x;
+> 
+> 	if (x == 0 || x > 27)
+> 		give_a_range_error();
+> 
+> I will write this as:
+> 
+> 	unsigned x;
+> 
+> 	if (x <= 0 || x > 27)
+> 		give_a_range_error();
+> 
+> because it that gives a way to handle x being changed to signed at some point
+> in the future for no cost.  In which case, your changing the <= to an ==
+> "because the < part of the case is useless" is arguably wrong.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- arch/blackfin/include/asm/Kbuild   |  1 +
- arch/blackfin/include/asm/clkdev.h | 16 ----------------
- 2 files changed, 1 insertion(+), 16 deletions(-)
- delete mode 100644 arch/blackfin/include/asm/clkdev.h
+This is why I have not checked for such cases - I have skipped checks of type
+	unsigned <= 0
+exactly for the reasons above.
 
-diff --git a/arch/blackfin/include/asm/Kbuild b/arch/blackfin/include/asm/Kbuild
-index 61cd1e786a14..a391f08e5565 100644
---- a/arch/blackfin/include/asm/Kbuild
-+++ b/arch/blackfin/include/asm/Kbuild
-@@ -2,6 +2,7 @@
- generic-y += auxvec.h
- generic-y += bitsperlong.h
- generic-y += bugs.h
-+generic-y += clkdev.h
- generic-y += cputime.h
- generic-y += current.h
- generic-y += device.h
-diff --git a/arch/blackfin/include/asm/clkdev.h b/arch/blackfin/include/asm/clkdev.h
-deleted file mode 100644
-index 7ac2436856a5..000000000000
---- a/arch/blackfin/include/asm/clkdev.h
-+++ /dev/null
-@@ -1,16 +0,0 @@
--#ifndef __ASM_CLKDEV__H_
--#define __ASM_CLKDEV__H_
--
--#include <linux/slab.h>
--
--static inline struct clk_lookup_alloc *__clkdev_alloc(size_t size)
--{
--	return kzalloc(size, GFP_KERNEL);
--}
--
--#ifndef CONFIG_COMMON_CLK
--#define __clk_put(clk)
--#define __clk_get(clk) ({ 1; })
--#endif
--
--#endif
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+However I have left two other checks as they seems to me more suspicious - they
+are always true or false. But as Dmitry and Andrew pointed out Linus have quite
+strong opinion against removing range checks in such cases as he finds it
+clearer. I think it applies to patches 29-36. I am not sure about patches 26-28,37.
+
+Regards
+Andrzej
+
+> 
+> David
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
