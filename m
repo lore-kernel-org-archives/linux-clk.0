@@ -1,65 +1,68 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v5 2/4] cpufreq: allow cpufreq_generic_suspend() to work
- without suspend frequency
-Date: Tue, 08 Sep 2015 18:41:02 +0200
-Message-id: <1441730464-7947-3-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1441730464-7947-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <hdegoede@redhat.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 5/5] ARM: sun5i: Add C.H.I.P DTS
+To: Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1442566130-3497-6-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v64E-gQu1U_qi2fTWiCmfgMdMR4X6yLUerV21d3E1uQ1cw@mail.gmail.com>
+ <20150922124708.GZ4684@lukather>
+ <CAGb2v662+mhFgv1DXz5muA+xGE99R1DVKOxtVPvJmc+tRFPXzQ@mail.gmail.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <56015146.2070509@redhat.com>
+Date: Tue, 22 Sep 2015 15:01:58 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAGb2v662+mhFgv1DXz5muA+xGE99R1DVKOxtVPvJmc+tRFPXzQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Some cpufreq drivers may set suspend frequency only for
-selected setups but still would like to use the generic
-suspend handler.  Thus don't treat !policy->suspend_freq
-condition as an incorrect one.
+Hi,
 
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/cpufreq/cpufreq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 22-09-15 14:57, Chen-Yu Tsai wrote:
+> On Tue, Sep 22, 2015 at 8:47 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index b3d9368..a634fcb 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -1626,8 +1626,8 @@ int cpufreq_generic_suspend(struct cpufreq_policy *policy)
- 	int ret;
- 
- 	if (!policy->suspend_freq) {
--		pr_err("%s: suspend_freq can't be zero\n", __func__);
--		return -EINVAL;
-+		pr_debug("%s: suspend_freq not defined\n", __func__);
-+		return 0;
- 	}
- 
- 	pr_debug("%s: Setting suspend-freq: %u\n", __func__,
--- 
-1.9.1
+<snip>
 
+>>>> +&usb_otg {
+>>>> +       dr_mode = "otg";
+>>>> +       status = "okay";
+>>>> +};
+>>>> +
+>>>> +&usbphy {
+>>>> +       pinctrl-names = "default";
+>>>> +       pinctrl-0 = <&chip_id_det_pin>;
+>>>> +       status = "okay";
+>>>> +
+>>>> +       usb0_id_det-gpio = <&pio 6 2 GPIO_ACTIVE_HIGH>; /* PG2 */
+>>>
+>>> Better leave a comment here saying VBUS detection requires AXP209
+>>> usb-power-supply support.
+>>
+>> Does it? It can be powered by a battery, with or without VBUS, and
+>> that wouldn't be tied to the fact that the power-supply is USB or
+>> something else.
+>
+> The AXP209 VBUS / USB power-supply also doubles for VBUS detection,
+> which on most boards is done using a separate GPIO pin. Hans posted
+> support for the AXP20X power-supply driver, and support in the usb
+> phy driver using it for VBUS detection.
+
+Ack.
+
+> In short, this is not about "power supply" but VBUS detection. IIRC,
+> if no VBUS detection method is provided, the phy driver just waits a
+> period of time after an ID pin change and then considers VBUS invalid.
+
+Right, but that is a hack for boards with no / broken vbus detection
+(or vbus control), we really want to use vbus-det where available,
+so I agree that a TODO comment here would be good.
+
+Regards,
+
+Hans
