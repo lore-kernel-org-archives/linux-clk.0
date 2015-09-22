@@ -1,110 +1,126 @@
-Return-Path: <alexander.stein@systec-electronic.com>
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 1/1] ARM: imx31: Do not call mxc_timer_init twice when booting with DT
-Date: Mon, 28 Sep 2015 09:03:19 +0200
-Message-Id: <1443423799-14685-1-git-send-email-alexander.stein@systec-electronic.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	heikki.krogerus@linux.intel.com, linux-clk@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v6 4/5] clk: fractional-divider: switch to rational best approximation
+Date: Tue, 22 Sep 2015 18:54:11 +0300
+Message-Id: <1442937252-50281-5-git-send-email-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <1442937252-50281-1-git-send-email-andriy.shevchenko@linux.intel.com>
+References: <1442937252-50281-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-mxc_timer_init must not be called from within mx31_clocks_init_dt. It will
-eventually be called by imx31_timer_init_dt
-(drivers/clocksource/timer-imx-gpt.c).
-This arranges the initialization code similar to clk-imx27.c
+This patch converts the code to use rational best approximation algorithm which
+is much more precise.
 
-Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
-Changes in v3:
-* Fix compilation issues
-* Actually compile tested, but still untested due to lack of hardware
+ drivers/clk/Kconfig                  |  1 +
+ drivers/clk/clk-fractional-divider.c | 41 +++++++++++++++++++++++-------------
+ 2 files changed, 27 insertions(+), 15 deletions(-)
 
-* Added in v2
-* Compile tested only due to lack of hardware
-
- drivers/clk/imx/clk-imx31.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
-index 1f83834..a908222 100644
---- a/drivers/clk/imx/clk-imx31.c
-+++ b/drivers/clk/imx/clk-imx31.c
-@@ -47,6 +47,8 @@ static const char *per_sel[] = { "per_div", "ipg", };
- static const char *csi_sel[] = { "upll", "spll", };
- static const char *fir_sel[] = { "mcu_main", "upll", "spll" };
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 42f7120..bd9f312 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -14,6 +14,7 @@ config COMMON_CLK
+ 	select HAVE_CLK_PREPARE
+ 	select CLKDEV_LOOKUP
+ 	select SRCU
++	select RATIONAL
+ 	---help---
+ 	  The common clock framework is a single definition of struct
+ 	  clk, useful across many platforms, as well as an
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index 0282c76..5c4955e 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -7,13 +7,14 @@
+  *
+  * Adjustable fractional divider clock implementation.
+  * Output rate = (m / n) * parent_rate.
++ * Uses rational best approximation algorithm.
+  */
  
-+static u32 fref = 26000000; /* default */
-+
- enum mx31_clks {
- 	dummy, ckih, ckil, mpll, spll, upll, mcu_main, hsp, ahb, nfc, ipg,
- 	per_div, per, csi, fir, csi_div, usb_div_pre, usb_div_post, fir_div_pre,
-@@ -62,7 +64,7 @@ enum mx31_clks {
- static struct clk *clk[clk_max];
- static struct clk_onecell_data clk_data;
+ #include <linux/clk-provider.h>
+ #include <linux/module.h>
+ #include <linux/device.h>
+ #include <linux/slab.h>
+-#include <linux/gcd.h>
++#include <linux/rational.h>
  
--int __init mx31_clocks_init(unsigned long fref)
-+static void __init _mx31_clocks_init(unsigned long fref)
+ #define to_clk_fd(_hw) container_of(_hw, struct clk_fractional_divider, hw)
+ 
+@@ -22,7 +23,8 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
  {
- 	void __iomem *base;
- 	struct device_node *np;
-@@ -132,6 +134,12 @@ int __init mx31_clocks_init(unsigned long fref)
+ 	struct clk_fractional_divider *fd = to_clk_fd(hw);
+ 	unsigned long flags = 0;
+-	u32 val, m, n;
++	unsigned long m, n;
++	u32 val;
+ 	u64 ret;
  
- 	imx_check_clocks(clk, ARRAY_SIZE(clk));
- 
-+	clk_set_parent(clk[csi], clk[upll]);
-+	clk_prepare_enable(clk[emi_gate]);
-+	clk_prepare_enable(clk[iim_gate]);
-+	mx31_revision();
-+	clk_disable_unprepare(clk[iim_gate]);
-+
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx31-ccm");
- 
- 	if (np) {
-@@ -139,6 +147,11 @@ int __init mx31_clocks_init(unsigned long fref)
- 		clk_data.clk_num = ARRAY_SIZE(clk);
- 		of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
- 	}
-+}
-+
-+int __init mx31_clocks_init(void)
-+{
-+	_mx31_clocks_init(fref);
- 
- 	clk_register_clkdev(clk[gpt_gate], "per", "imx-gpt.0");
- 	clk_register_clkdev(clk[ipg], "ipg", "imx-gpt.0");
-@@ -194,12 +207,6 @@ int __init mx31_clocks_init(unsigned long fref)
- 	clk_register_clkdev(clk[sdma_gate], NULL, "imx31-sdma");
- 	clk_register_clkdev(clk[iim_gate], "iim", NULL);
- 
--	clk_set_parent(clk[csi], clk[upll]);
--	clk_prepare_enable(clk[emi_gate]);
--	clk_prepare_enable(clk[iim_gate]);
--	mx31_revision();
--	clk_disable_unprepare(clk[iim_gate]);
--
- 	mxc_timer_init(MX31_GPT1_BASE_ADDR, MX31_INT_GPT, GPT_TYPE_IMX31);
- 
- 	return 0;
-@@ -208,7 +215,6 @@ int __init mx31_clocks_init(unsigned long fref)
- int __init mx31_clocks_init_dt(void)
+ 	if (fd->lock)
+@@ -53,20 +55,30 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
+ 			      unsigned long *parent_rate)
  {
- 	struct device_node *np;
--	u32 fref = 26000000; /* default */
+ 	struct clk_fractional_divider *fd = to_clk_fd(hw);
+-	unsigned maxn = (fd->nmask >> fd->nshift) + 1;
+-	unsigned div;
++	unsigned long scale;
++	unsigned long m, n;
++	u64 ret;
  
- 	for_each_compatible_node(np, NULL, "fixed-clock") {
- 		if (!of_device_is_compatible(np, "fsl,imx-osc26m"))
-@@ -218,5 +224,7 @@ int __init mx31_clocks_init_dt(void)
- 			break;
- 	}
+ 	if (!rate || rate >= *parent_rate)
+ 		return *parent_rate;
  
--	return mx31_clocks_init(fref);
-+	_mx31_clocks_init(fref);
+-	div = gcd(*parent_rate, rate);
++	/*
++	 * Get rate closer to *parent_rate to guarantee there is no overflow
++	 * for m and n. In the result it will be the nearest rate left shifted
++	 * by (scale - fd->nwidth) bits.
++	 */
++	scale = fls_long(*parent_rate / rate - 1);
++	if (scale > fd->nwidth)
++		rate <<= scale - fd->nwidth;
+ 
+-	while ((*parent_rate / div) > maxn) {
+-		div <<= 1;
+-		rate <<= 1;
+-	}
++	rational_best_approximation(rate, *parent_rate,
++			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
++			&m, &n);
+ 
+-	return rate;
++	ret = (u64)*parent_rate * m;
++	do_div(ret, n);
 +
-+	return 0;
++	return ret;
  }
+ 
+ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -74,13 +86,12 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clk_fractional_divider *fd = to_clk_fd(hw);
+ 	unsigned long flags = 0;
+-	unsigned long div;
+-	unsigned n, m;
++	unsigned long m, n;
+ 	u32 val;
+ 
+-	div = gcd(parent_rate, rate);
+-	m = rate / div;
+-	n = parent_rate / div;
++	rational_best_approximation(rate, parent_rate,
++			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
++			&m, &n);
+ 
+ 	if (fd->lock)
+ 		spin_lock_irqsave(fd->lock, flags);
 -- 
-2.4.9
+2.5.1
+
