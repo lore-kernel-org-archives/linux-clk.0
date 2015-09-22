@@ -1,68 +1,48 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v3 0/5] clk: sunxi: Add support for the Audio PLL
-Date: Tue, 29 Sep 2015 09:39:08 +0200
-Message-Id: <1443512353-28073-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <mark.rutland@arm.com>
+CC: <wsa@the-dreams.de>, <wim@iguana.be>, <corbet@lwn.net>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<Mingkai.Hu@freescale.com>, <Shaohui.Xie@freescale.com>,
+	<Wenbin.Song@freescale.com>, <scottwood@freescale.com>,
+	<bhupesh.sharma@freescale.com>, <leoli@freescale.com>, Hou Zhiqiang
+	<B48286@freescale.com>
+Subject: [PATCH V2 2/6] watchdog: Add support for Freescale Layerscape platforms
+Date: Tue, 22 Sep 2015 20:34:01 +0800
+Message-ID: <1442925245-39246-2-git-send-email-B48286@freescale.com>
+In-Reply-To: <1442925245-39246-1-git-send-email-B48286@freescale.com>
+References: <1442925245-39246-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+From: Shaohui Xie <Shaohui.Xie@freescale.com>
 
-This serie adds support for the PLL2 aka the Audio PLL on the
-Allwinner A10 and the later SoCs.
+Modify watchdog/Kconfig file to support Layerscape platforms.
 
-This is the last part of the audio codec support.
+Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
+Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+ drivers/watchdog/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This serie is built on top of a generic clk-multiplier driver to
-handle clock that multiply their parent clock rate (mostly PLL's), in
-order to provide the driver for the PLL2 base clock, and then adds the
-drivers for the clock that derive from the Audio PLL.
-
-Thanks!
-Maxime
-
-Changes from v2:
-  - Renamed clk-factor to clk-multiplier
-  - Added an exception for the A13 clock
-
-Changes from v1:
-  - Removed a bogus of_iomap in the mod1 clock driver
-  - Wrote the clk-factor driver
-  - Converted the PLL2 clock to that driver    
-
-Emilio López (2):
-  clk: sunxi: codec clock support
-  clk: sunxi: mod1 clock support
-
-Maxime Ripard (3):
-  clk: Add a basic multiplier clock
-  clk: sunxi: Add a driver for the PLL2
-  clk: sunxi: pll2: Add A13 support
-
- drivers/clk/Makefile                       |   1 +
- drivers/clk/clk-multiplier.c               | 176 +++++++++++++++++++++++
- drivers/clk/sunxi/Makefile                 |   3 +
- drivers/clk/sunxi/clk-a10-codec.c          |  45 ++++++
- drivers/clk/sunxi/clk-a10-mod1.c           |  84 +++++++++++
- drivers/clk/sunxi/clk-a10-pll2.c           | 216 +++++++++++++++++++++++++++++
- include/dt-bindings/clock/sun4i-a10-pll2.h |  53 +++++++
- include/linux/clk-provider.h               |  42 ++++++
- 8 files changed, 620 insertions(+)
- create mode 100644 drivers/clk/clk-multiplier.c
- create mode 100644 drivers/clk/sunxi/clk-a10-codec.c
- create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
- create mode 100644 drivers/clk/sunxi/clk-a10-pll2.c
- create mode 100644 include/dt-bindings/clock/sun4i-a10-pll2.h
-
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index c68edc1..2862219 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -446,7 +446,7 @@ config MAX63XX_WATCHDOG
+ 
+ config IMX2_WDT
+ 	tristate "IMX2+ Watchdog"
+-	depends on ARCH_MXC
++	depends on ARCH_MXC || ARCH_LAYERSCAPE
+ 	select REGMAP_MMIO
+ 	select WATCHDOG_CORE
+ 	help
 -- 
-2.5.3
+2.1.0.27.g96db324
