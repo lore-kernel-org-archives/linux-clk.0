@@ -1,105 +1,54 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Wed, 30 Sep 2015 18:17:29 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Felipe Balbi <balbi@ti.com>, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 00/16] ARM: at91: PMC driver rework
-Message-ID: <20150930161729.GD3639@piout.net>
-References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Tue, 22 Sep 2015 12:46:54 -0700
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Scott Wood <scottwood@freescale.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	Tang Yuantian <Yuantian.Tang@freescale.com>
+Subject: Re: [PATCH v3 5/5] cpufreq: qoriq: Don't look at clock
+ implementation details
+Message-ID: <20150922194654.GJ24314@linux>
+References: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
+ <1442723397-26329-6-git-send-email-scottwood@freescale.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1442723397-26329-6-git-send-email-scottwood@freescale.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen, all,
+On 19-09-15, 23:29, Scott Wood wrote:
+> Get the CPU clock's potential parent clocks from the clock interface
+> itself, rather than manually parsing the clocks property to find a
+> phandle, looking at the clock-names property of that, and assuming that
+> those are valid parent clocks for the cpu clock.
+> 
+> This is necessary now that the clocks are generated based on the clock
+> driver's knowledge of the chip rather than a fragile device-tree
+> description of the mux options.
+> 
+> We can now rely on the clock driver to ensure that the mux only exposes
+> options that are valid.  The cpufreq driver was currently being overly
+> conservative in some cases -- for example, the "min_cpufreq =
+> get_bus_freq()" restriction only applies to chips with erratum
+> A-004510, and whether the freq_mask used on p5020 is needed depends on
+> the actual frequencies of the PLLs (FWIW, p5040 has a similar
+> limitation but its .freq_mask was zero) -- and the frequency mask
+> mechanism made assumptions about particular parent clock indices that
+> are no longer valid.
+> 
+> Signed-off-by: Scott Wood <scottwood@freescale.com>
+> ---
+> v3: was patch 1/5 and patch 4/5, plus blacklist e6500 and changes
+> to clk api usage
+> 
+>  drivers/cpufreq/qoriq-cpufreq.c | 137 ++++++++++++----------------------------
+>  1 file changed, 40 insertions(+), 97 deletions(-)
 
-Please disregard 01/16 and 02/16 as they are already in clk-next.
-
-On 30/09/2015 at 18:10:53 +0200, Alexandre Belloni wrote :
-> Hi,
-> 
-> This patch set is a cleanup that properly separate drivers needing to access the
-> PMC (PM and USB) from the clock driver by exposing the PMC as a syscon.
-> 
-> This also allows to implement a fix for preempt-rt. Currently, at91 platform are
-> crashing when using preempt-rt because the irq handler are transformed in
-> threaded irq handler but at the time the pmc registers its clocks, it is not
-> possible to creat threads, leading to a NULL pointer dereference in the kernel.
-> 
-> The new infrastructure uses polling until it is late enough to register threaded
-> irqs.
-> 
-> :w
-> Cc: Felipe Balbi <balbi@ti.com>
-> Cc: linux-usb@vger.kernel.org
-> 
-> Alexandre Belloni (13):
->   clk: at91: utmi: use pmc_read when the at91_pmc is available
->   clk: at91: system: don't try to free_irq when there is no IRQ
->   ARM: at91/dt: use syscon for PMC
->   clk: at91: clk-main: factorize irq handling
->   clk: at91: make IRQ optional and register them later
->   clk: at91: pmc: merge at91_pmc_init in atmel_pmc_probe
->   clk: at91: pmc: move pmc structures to C file
->   ARM: at91: pm: simply call at91_pm_init
->   ARM: at91: pm: find and remap the pmc
->   ARM: at91: pm: move idle functions to pm.c
->   ARM: at91: remove useless includes and function prototypes
->   usb: gadget: atmel: access the PMC using regmap
->   clk: at91: pmc: drop at91_pmc_base
-> 
-> Boris Brezillon (3):
->   clk: at91: make use of syscon to share PMC registers in several
->     drivers
->   clk: at91: make use of syscon/regmap internally
->   clk: at91: only enable available IRQs
-> 
->  arch/arm/boot/dts/at91rm9200.dtsi       |   2 +-
->  arch/arm/boot/dts/at91sam9260.dtsi      |   2 +-
->  arch/arm/boot/dts/at91sam9261.dtsi      |   2 +-
->  arch/arm/boot/dts/at91sam9263.dtsi      |   2 +-
->  arch/arm/boot/dts/at91sam9g45.dtsi      |   2 +-
->  arch/arm/boot/dts/at91sam9n12.dtsi      |   2 +-
->  arch/arm/boot/dts/at91sam9rl.dtsi       |   2 +-
->  arch/arm/boot/dts/at91sam9x5.dtsi       |   2 +-
->  arch/arm/boot/dts/sama5d2.dtsi          |   2 +-
->  arch/arm/boot/dts/sama5d3.dtsi          |   2 +-
->  arch/arm/boot/dts/sama5d4.dtsi          |   2 +-
->  arch/arm/mach-at91/Kconfig              |   1 +
->  arch/arm/mach-at91/at91rm9200.c         |   2 -
->  arch/arm/mach-at91/at91sam9.c           |   2 -
->  arch/arm/mach-at91/generic.h            |  13 +-
->  arch/arm/mach-at91/pm.c                 |  69 +++++-
->  arch/arm/mach-at91/sama5.c              |   2 +-
->  drivers/clk/at91/clk-h32mx.c            |  33 ++-
->  drivers/clk/at91/clk-main.c             | 403 +++++++++++++++++++-------------
->  drivers/clk/at91/clk-master.c           | 134 +++++++----
->  drivers/clk/at91/clk-peripheral.c       | 131 +++++++----
->  drivers/clk/at91/clk-pll.c              | 190 +++++++++------
->  drivers/clk/at91/clk-plldiv.c           |  42 ++--
->  drivers/clk/at91/clk-programmable.c     |  92 ++++----
->  drivers/clk/at91/clk-slow.c             |  27 ++-
->  drivers/clk/at91/clk-smd.c              |  54 +++--
->  drivers/clk/at91/clk-system.c           | 128 ++++++----
->  drivers/clk/at91/clk-usb.c              | 121 +++++-----
->  drivers/clk/at91/clk-utmi.c             | 116 +++++----
->  drivers/clk/at91/pmc.c                  | 300 ++++++------------------
->  drivers/clk/at91/pmc.h                  |  93 +-------
->  drivers/usb/gadget/udc/atmel_usba_udc.c |  20 +-
->  drivers/usb/gadget/udc/atmel_usba_udc.h |   2 +
->  include/linux/clk/at91_pmc.h            |  12 -
->  34 files changed, 1059 insertions(+), 950 deletions(-)
-> 
-> -- 
-> 2.1.4
-> 
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+viresh
