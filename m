@@ -1,85 +1,59 @@
-Return-Path: <alim.akhtar@samsung.com>
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
- k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
- gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 06/12] clk: samsung: exynos7: Corrects CMU_PERIC0 clocks
- names
-Date: Thu, 10 Sep 2015 14:14:31 +0530
-Message-id: <1441874677-24148-7-git-send-email-alim.akhtar@samsung.com>
-In-reply-to: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
-References: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+From: Hou Zhiqiang <B48286@freescale.com>
+To: Scott Wood <scottwood@freescale.com>
+Subject: RE: [PATCH 6/6] dts/ls1043a: add LS1043ARDB board support
+Date: Tue, 22 Sep 2015 09:51:57 +0000
+Message-ID: <CY1PR0301MB0780643BCCE3A5C6BAEA22218B450@CY1PR0301MB0780.namprd03.prod.outlook.com>
+References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+ <1442838158-2964-7-git-send-email-B48286@freescale.com>
+ <1442877225.19102.207.camel@freescale.com>
+In-Reply-To: <1442877225.19102.207.camel@freescale.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: "corbet@lwn.net" <corbet@lwn.net>,
+ "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+ "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ Sharma Bhupesh <bhupesh.sharma@freescale.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "wsa@the-dreams.de" <wsa@the-dreams.de>,
+ "will.deacon@arm.com" <will.deacon@arm.com>, "wim@iguana.be" <wim@iguana.be>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Wenbin
+ Song <Wenbin.Song@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>,
+ Li Leo <LeoLi@freescale.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ Shaohui Xie <Shaohui.Xie@freescale.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch renames CMU_PERIC0 clocks names to match with user manual.
-And also adds missing gate clock for aclk_peric0_66.
-
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos7.c       |   12 ++++++++----
- include/dt-bindings/clock/exynos7-clk.h |    3 ++-
- 2 files changed, 10 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index b2daf19..b819fdd 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -226,6 +226,7 @@ CLK_OF_DECLARE(exynos7_clk_topc, "samsung,exynos7-clock-topc",
- #define DIV_TOP0_PERIC1			0x0634
- #define DIV_TOP0_PERIC2			0x0638
- #define DIV_TOP0_PERIC3			0x063C
-+#define ENABLE_ACLK_TOP03		0x080C
- #define ENABLE_SCLK_TOP0_PERIC0		0x0A30
- #define ENABLE_SCLK_TOP0_PERIC1		0x0A34
- #define ENABLE_SCLK_TOP0_PERIC2		0x0A38
-@@ -340,6 +341,9 @@ static struct samsung_div_clock top0_div_clks[] __initdata = {
- };
- 
- static struct samsung_gate_clock top0_gate_clks[] __initdata = {
-+	GATE(CLK_ACLK_PERIC0_66, "aclk_peric0_66", "dout_aclk_peric0_66",
-+		ENABLE_ACLK_TOP03, 20, CLK_SET_RATE_PARENT, 0),
-+
- 	GATE(CLK_SCLK_SPDIF, "sclk_spdif", "dout_sclk_spdif",
- 		ENABLE_SCLK_TOP0_PERIC0, 4, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_PCM1, "sclk_pcm1", "dout_sclk_pcm1",
-@@ -592,8 +596,8 @@ CLK_OF_DECLARE(exynos7_clk_ccore, "samsung,exynos7-clock-ccore",
- #define ENABLE_SCLK_PERIC0		0x0A00
- 
- /* List of parent clocks for Muxes in CMU_PERIC0 */
--PNAME(mout_aclk_peric0_66_p)	= { "fin_pll", "dout_aclk_peric0_66" };
--PNAME(mout_sclk_uart0_p)	= { "fin_pll", "sclk_uart0" };
-+PNAME(mout_aclk_peric0_66_user_p)	= { "fin_pll", "aclk_peric0_66" };
-+PNAME(mout_sclk_uart0_user_p)	= { "fin_pll", "sclk_uart0" };
- 
- static unsigned long peric0_clk_regs[] __initdata = {
- 	MUX_SEL_PERIC0,
-@@ -602,9 +606,9 @@ static unsigned long peric0_clk_regs[] __initdata = {
- };
- 
- static struct samsung_mux_clock peric0_mux_clks[] __initdata = {
--	MUX(0, "mout_aclk_peric0_66_user", mout_aclk_peric0_66_p,
-+	MUX(0, "mout_aclk_peric0_66_user", mout_aclk_peric0_66_user_p,
- 		MUX_SEL_PERIC0, 0, 1),
--	MUX(0, "mout_sclk_uart0_user", mout_sclk_uart0_p,
-+	MUX(0, "mout_sclk_uart0_user", mout_sclk_uart0_user_p,
- 		MUX_SEL_PERIC0, 16, 1),
- };
- 
-diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
-index d26fe0f..256188a 100644
---- a/include/dt-bindings/clock/exynos7-clk.h
-+++ b/include/dt-bindings/clock/exynos7-clk.h
-@@ -49,7 +49,8 @@
- #define CLK_SCLK_SPDIF			12
- #define CLK_SCLK_PCM1			13
- #define CLK_SCLK_I2S1			14
--#define TOP0_NR_CLK			15
-+#define CLK_ACLK_PERIC0_66		15
-+#define TOP0_NR_CLK			16
- 
- /* TOP1 */
- #define DOUT_ACLK_FSYS1_200		1
--- 
-1.7.10.4
+SGkgU2NvdHQsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogV29vZCBT
+Y290dC1CMDc0MjENCj4gU2VudDogMjAxNeW5tDnmnIgyMuaXpSA3OjE0DQo+IFRvOiBIb3UgWmhp
+cWlhbmctQjQ4Mjg2DQo+IENjOiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7
+IGNhdGFsaW4ubWFyaW5hc0Bhcm0uY29tOw0KPiB3aWxsLmRlYWNvbkBhcm0uY29tOyBsaW51eC1p
+MmNAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gd2F0Y2hkb2dAdmdlci5rZXJuZWwub3JnOyBs
+aW51eC1kb2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gY2xrQHZnZXIua2VybmVsLm9yZzsg
+d3NhQHRoZS1kcmVhbXMuZGU7IHdpbUBpZ3VhbmEuYmU7IGNvcmJldEBsd24ubmV0Ow0KPiBtdHVy
+cXVldHRlQGJheWxpYnJlLmNvbTsgc2JveWRAY29kZWF1cm9yYS5vcmc7IEh1IE1pbmdrYWktQjIx
+Mjg0OyBYaWUNCj4gU2hhb2h1aS1CMjE5ODk7IFNvbmcgV2VuYmluLUI1Mzc0NzsgU2hhcm1hIEJo
+dXBlc2gtQjQ1MzcwOyBMaSBZYW5nLUxlby0NCj4gUjU4NDcyDQo+IFN1YmplY3Q6IFJlOiBbUEFU
+Q0ggNi82XSBkdHMvbHMxMDQzYTogYWRkIExTMTA0M0FSREIgYm9hcmQgc3VwcG9ydA0KPiANCj4g
+T24gTW9uLCAyMDE1LTA5LTIxIGF0IDIwOjIyICswODAwLCBaaGlxaWFuZyBIb3Ugd3JvdGU6DQo+
+IA0KPiA+ICsgICAgICAgICAgICAgY3BsZDogYm9hcmQtY29udHJvbEAyLDAgew0KPiA+ICsgICAg
+ICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gImZzbCxsczEwNDNhcmRiLWNwbGQiLCAic2lt
+cGxlLWJ1cyI7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIHJlZyA9IDwweDIgMHgwIDB4MDAw
+MDEwMD47DQo+ID4gKyAgICAgICAgICAgICB9Ow0KPiANCj4gQWdhaW4sIHdoeSAic2ltcGxlLWJ1
+cyI/DQoNClRoYW5rcyBhbmQgd2lsbCByZW1vdmUgaXQgaW4gdjIuDQoNClRoYW5rcywNClpoaXFp
+YW5nDQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51
+eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVh
+ZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1h
+cm0ta2VybmVsCg==
