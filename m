@@ -1,74 +1,124 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
-To: Leo Li <pku.leo@gmail.com>, Lian M.H. <Minghuan.Lian@freescale.com>
-Subject: RE: [PATCH v2 04/10] doc/bindings: Update PCIe devicetree binding
- documentation for LS2080A
-Date: Fri, 4 Sep 2015 20:20:03 +0000
-Message-ID: <BY1PR0301MB13037F8BC0A8E1E4258F58DE82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
-References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
- <1441349872-4560-5-git-send-email-bhupesh.sharma@freescale.com>
- <CADRPPNRGpzWawsqLHCiv530HbtPf+9RaPzOtvy88ftwv2ffqLQ@mail.gmail.com>
-In-Reply-To: <CADRPPNRGpzWawsqLHCiv530HbtPf+9RaPzOtvy88ftwv2ffqLQ@mail.gmail.com>
+Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
+Date: Tue, 22 Sep 2015 22:26:29 +0100
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org, Brian Hutchinson <b.hutchman@gmail.com>,
+	Felipe Balbi <balbi@ti.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Nishanth Menon <nm@ti.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH] clk: ti: Fix FAPLL udelay in clk_enable with clk_prepare
+Message-ID: <20150922212629.GH21098@n2100.arm.linux.org.uk>
+References: <1442956985-32642-1-git-send-email-tony@atomide.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
- "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
- "will.deacon@arm.com" <will.deacon@arm.com>, "olof@lixom.net" <olof@lixom.net>,
- Bhupesh SHARMA <bhupesh.linux@gmail.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1442956985-32642-1-git-send-email-tony@atomide.com>
+Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-> From: Leo Li [mailto:pku.leo@gmail.com]
-> Sent: Friday, September 04, 2015 11:27 PM
-> On Fri, Sep 4, 2015 at 1:57 AM, Bhupesh Sharma
-> <bhupesh.sharma@freescale.com> wrote:
-> > Add the documentation for compatible string "fsl,ls2080a-pcie"
-> > for Freescale's LS2080A platform.
-> >
-> > Signed-off-by: Minghuan Lian <Minghuan.Lian@freescale.com>
-> > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-> > ---
-> >  .../devicetree/bindings/pci/layerscape-pci.txt     |    3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
-> > b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
-> > index 6286f04..e72e68f 100644
-> > --- a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
-> > +++ b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
-> > @@ -4,7 +4,8 @@ This PCIe host controller is based on the Synopsis
-> > Designware PCIe IP  and thus inherits all the common properties defined
-> in designware-pcie.txt.
-> >
-> >  Required properties:
-> > -- compatible: should contain the platform identifier such as
-> "fsl,ls1021a-pcie"
-> > +- compatible: should contain the platform identifier such as
-> > +"fsl,ls1021a-pcie",
-> > +  "fsl,ls2080a-pcie".
+On Tue, Sep 22, 2015 at 02:23:05PM -0700, Tony Lindgren wrote:
+> As recently pointed out (again) by Thomas and Russell, we must not
+> wait in in clk_enable. The wait for PLL to lock needs to happen
+> in clk_prepare instead.
 > 
-> Make it generic like "fsl,<chip>-pcie"
+> It seems this is a common copy paste error with the PLL drivers,
+> and similar fixes should be applied to other PLL drivers after
+> testing.
+> 
+> Cc: Brian Hutchinson <b.hutchman@gmail.com>
+> Cc: Felipe Balbi <balbi@ti.com>
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: Nishanth Menon <nm@ti.com>
+> Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>
 
-Minghuan, if you don't have an objection, I would like to address Leo's suggestion
-in v3 of this series as I think it is a valid one.
+As this moves things in the right direction (and only based on that):
 
-Please share your views. 
+Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
 
-Regards,
-Bhupesh
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Sekhar Nori <nsekhar@ti.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>  drivers/clk/ti/fapll.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
+> index f4b2e98..e1db74a 100644
+> --- a/drivers/clk/ti/fapll.c
+> +++ b/drivers/clk/ti/fapll.c
+> @@ -37,7 +37,7 @@
+>  #define FAPLL_PWD_OFFSET	4
+>  
+>  #define MAX_FAPLL_OUTPUTS	7
+> -#define FAPLL_MAX_RETRIES	1000
+> +#define FAPLL_MAX_RETRIES	5
+>  
+>  #define to_fapll(_hw)		container_of(_hw, struct fapll_data, hw)
+>  #define to_synth(_hw)		container_of(_hw, struct fapll_synth, hw)
+> @@ -126,7 +126,7 @@ static int ti_fapll_wait_lock(struct fapll_data *fd)
+>  		if (retries-- <= 0)
+>  			break;
+>  
+> -		udelay(1);
+> +		usleep_range(200, 300);
+>  	}
+>  
+>  	pr_err("%s failed to lock\n", fd->name);
+> @@ -134,7 +134,7 @@ static int ti_fapll_wait_lock(struct fapll_data *fd)
+>  	return -ETIMEDOUT;
+>  }
+>  
+> -static int ti_fapll_enable(struct clk_hw *hw)
+> +static int ti_fapll_prepare(struct clk_hw *hw)
+>  {
+>  	struct fapll_data *fd = to_fapll(hw);
+>  	u32 v = readl_relaxed(fd->base);
+> @@ -146,7 +146,7 @@ static int ti_fapll_enable(struct clk_hw *hw)
+>  	return 0;
+>  }
+>  
+> -static void ti_fapll_disable(struct clk_hw *hw)
+> +static void ti_fapll_unprepare(struct clk_hw *hw)
+>  {
+>  	struct fapll_data *fd = to_fapll(hw);
+>  	u32 v = readl_relaxed(fd->base);
+> @@ -155,7 +155,7 @@ static void ti_fapll_disable(struct clk_hw *hw)
+>  	writel_relaxed(v, fd->base);
+>  }
+>  
+> -static int ti_fapll_is_enabled(struct clk_hw *hw)
+> +static int ti_fapll_is_prepared(struct clk_hw *hw)
+>  {
+>  	struct fapll_data *fd = to_fapll(hw);
+>  	u32 v = readl_relaxed(fd->base);
+> @@ -261,7 +261,7 @@ static int ti_fapll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	v |= pre_div_p << FAPLL_MAIN_DIV_P_SHIFT;
+>  	v |= mult_n << FAPLL_MAIN_MULT_N_SHIFT;
+>  	writel_relaxed(v, fd->base);
+> -	if (ti_fapll_is_enabled(hw))
+> +	if (ti_fapll_is_prepared(hw))
+>  		ti_fapll_wait_lock(fd);
+>  	ti_fapll_clear_bypass(fd);
+>  
+> @@ -269,9 +269,9 @@ static int ti_fapll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  }
+>  
+>  static struct clk_ops ti_fapll_ops = {
+> -	.enable = ti_fapll_enable,
+> -	.disable = ti_fapll_disable,
+> -	.is_enabled = ti_fapll_is_enabled,
+> +	.prepare = ti_fapll_prepare,
+> +	.unprepare = ti_fapll_unprepare,
+> +	.is_prepared = ti_fapll_is_prepared,
+>  	.recalc_rate = ti_fapll_recalc_rate,
+>  	.get_parent = ti_fapll_get_parent,
+>  	.round_rate = ti_fapll_round_rate,
+> -- 
+> 2.1.4
+> 
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
