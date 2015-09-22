@@ -1,78 +1,50 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel@pengutronix.de,
-	patchwork-lst@pengutronix.de
-Subject: [PATCH v3 0/8] i.MX early debug UART clock fixes
-Date: Mon,  7 Sep 2015 17:09:25 +0200
-Message-Id: <1441638573-6701-1-git-send-email-l.stach@pengutronix.de>
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <mark.rutland@arm.com>
+CC: <wsa@the-dreams.de>, <wim@iguana.be>, <corbet@lwn.net>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<Mingkai.Hu@freescale.com>, <Shaohui.Xie@freescale.com>,
+	<Wenbin.Song@freescale.com>, <scottwood@freescale.com>,
+	<bhupesh.sharma@freescale.com>, <leoli@freescale.com>, Hou Zhiqiang
+	<B48286@freescale.com>
+Subject: [PATCH V2 1/6] i2c: Add i2c support to Freescale Layerscape platforms
+Date: Tue, 22 Sep 2015 20:34:00 +0800
+Message-ID: <1442925245-39246-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This series fixes a long standing interaction issue between the
-kernels early debug facilities and the i.MX clock drivers.
+From: Shaohui Xie <Shaohui.Xie@freescale.com>
 
-Both earlyprintk and earlycon rely on the bootloader setup clocks
-for the UARTs to be retained during kernel init. As those clocks are
-only enabled in hardware, but not referenced in software they (or even
-their parent clocks) may get disabled as a result of other clocks being
-en-/disabled during boot.
+Modify the I2C_IMX config to support to Layerscape platforms.
 
-This results in missing messages from the early debug console until the
-regular system console takes over, or even worse system hangs in response
-to unclocked register accesses. This renders those debugging facilities a
-lot less useful.
+Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
+Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+ drivers/i2c/busses/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The fix implemented here is to check if any of this early debugging is
-enabled and keep the UART clocks referenced and enabled in that case.
-The clocks will then only be disabled at the end of kernel init, at which
-point the real console should have taken over and the early outputs being
-disabled.
-
-I've runtime tested this on i.MX6Q and i.MX53, other platforms are only
-compile tested. This is mostly a mechanical change, but still I would
-appreciate some testing.
-
-Changes since v1:
-- reworked logic to require significantly less code in the individual
-  clock drivers
-
-Changes since v2:
-- fix checkpatch warning about initdata annotation placement
-- make code a bit more compact in the for(...) loops
-  (since 2 people already commented about this I made up my mind)
-- change code style in driver as requested by Shawn
-- add more const correctness
-  (note that this triggers a false positive checkpatch error in the first patch)
-
-Regards,
-Lucas
-
-Lucas Stach (8):
-  clk: imx: add common logic to detect early UART usage
-  clk: imx25: retain early UART clocks during kernel init
-  clk: imx27: retain early UART clocks during kernel init
-  clk: imx31: retain early UART clocks during kernel init
-  clk: imx35: retain early UART clocks during kernel init
-  clk: imx5: retain early UART clocks during kernel init
-  clk: imx6: retain early UART clocks during kernel init
-  clk: imx7d: retain early UART clocks during kernel init
-
- drivers/clk/imx/clk-imx25.c       | 12 ++++++++++++
- drivers/clk/imx/clk-imx27.c       | 13 +++++++++++++
- drivers/clk/imx/clk-imx31.c       | 12 ++++++++++++
- drivers/clk/imx/clk-imx35.c       | 10 ++++++++++
- drivers/clk/imx/clk-imx51-imx53.c | 16 ++++++++++++++++
- drivers/clk/imx/clk-imx6q.c       |  8 ++++++++
- drivers/clk/imx/clk-imx6sl.c      |  8 ++++++++
- drivers/clk/imx/clk-imx6sx.c      |  8 ++++++++
- drivers/clk/imx/clk-imx7d.c       | 13 +++++++++++++
- drivers/clk/imx/clk.c             | 38 ++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h             |  1 +
- 11 files changed, 139 insertions(+)
-
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 08b8617..14147ec 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -582,10 +582,10 @@ config I2C_IMG
+ 
+ config I2C_IMX
+ 	tristate "IMX I2C interface"
+-	depends on ARCH_MXC
++	depends on ARCH_MXC || ARCH_LAYERSCAPE
+ 	help
+ 	  Say Y here if you want to use the IIC bus controller on
+-	  the Freescale i.MX/MXC processors.
++	  the Freescale i.MX/MXC or Layerscape processors.
+ 
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called i2c-imx.
 -- 
-2.5.0
+2.1.0.27.g96db324
