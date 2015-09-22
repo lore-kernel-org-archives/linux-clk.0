@@ -1,84 +1,50 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: shmobile: div6: Make clock-output-names optional
-Date: Wed,  9 Sep 2015 14:58:26 +0200
-Message-Id: <1441803506-30749-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 2/3] clk: bcm2835: Add a driver for the auxiliary
+ peripheral clock gates.
+To: Eric Anholt <eric@anholt.net>
+References: <1441923750-19404-1-git-send-email-eric@anholt.net>
+ <1441923750-19404-3-git-send-email-eric@anholt.net>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Lee Jones <lee@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org
+From: Stephen Warren <swarren@wwwdotorg.org>
+Message-ID: <5600B8DA.4030406@wwwdotorg.org>
+Date: Mon, 21 Sep 2015 19:11:38 -0700
+MIME-Version: 1.0
+In-Reply-To: <1441923750-19404-3-git-send-email-eric@anholt.net>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Renesas DIV6 clocks provide a single clock output.  Hence make the
-"clock-output-names" DT property optional instead of mandatory. In case
-the DT property is omitted the DT node name will be used.
+On 09/10/2015 03:22 PM, Eric Anholt wrote:
+> There are a pair of SPI masters and a mini UART that were last minute
+> additions.  As a result, they didn't get integrated in the same way as
+> the other gates off of the VPU clock in CPRMAN.
 
-Rename the variable "name" to "clk_name" to make the code more similar
-with fixed-factor-clock.c, and to avoid a conflict with a nested local
-variable while we're at it.
+> diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- .../devicetree/bindings/clock/renesas,cpg-div6-clocks.txt   |  4 ++++
- drivers/clk/shmobile/clk-div6.c                             | 13 +++----------
- 2 files changed, 7 insertions(+), 10 deletions(-)
+> +static int bcm2835_aux_clk_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct clk_onecell_data *onecell;
+> +	const char *parent;
+> +	struct clk *parent_clk;
+> +	void __iomem *reg;
+> +
+> +	parent_clk = of_clk_get(dev->of_node, 0);
+> +	if (IS_ERR(parent_clk))
+> +		return PTR_ERR(parent_clk);
+> +	parent = __clk_get_name(parent_clk);
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
-index e1bdf14ac2dfdab2..361315db3d8cfb58 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
-@@ -21,6 +21,10 @@ Required Properties:
-     clocks must be specified.  For clocks with multiple parents, invalid
-     settings must be specified as "<0>".
-   - #clock-cells: Must be 0
-+
-+
-+Optional Properties:
-+
-   - clock-output-names: The name of the clock as a free-form string
- 
- 
-diff --git a/drivers/clk/shmobile/clk-div6.c b/drivers/clk/shmobile/clk-div6.c
-index b4c8d6746f68a7b8..57016ff9c585fc6e 100644
---- a/drivers/clk/shmobile/clk-div6.c
-+++ b/drivers/clk/shmobile/clk-div6.c
-@@ -178,10 +178,9 @@ static void __init cpg_div6_clock_init(struct device_node *np)
- 	const char **parent_names;
- 	struct clk_init_data init;
- 	struct div6_clock *clock;
--	const char *name;
-+	const char *clk_name = np->name;
- 	struct clk *clk;
- 	unsigned int i;
--	int ret;
- 
- 	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
- 	if (!clock)
-@@ -215,13 +214,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
- 	clock->div = (clk_readl(clock->reg) & CPG_DIV6_DIV_MASK) + 1;
- 
- 	/* Parse the DT properties. */
--	ret = of_property_read_string(np, "clock-output-names", &name);
--	if (ret < 0) {
--		pr_err("%s: failed to get %s DIV6 clock output name\n",
--		       __func__, np->name);
--		goto error;
--	}
--
-+	of_property_read_string(np, "clock-output-names", &clk_name);
- 
- 	for (i = 0, valid_parents = 0; i < num_parents; i++) {
- 		const char *name = of_clk_get_parent_name(np, i);
-@@ -255,7 +248,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
- 	}
- 
- 	/* Register the clock. */
--	init.name = name;
-+	init.name = clk_name;
- 	init.ops = &cpg_div6_clock_ops;
- 	init.flags = CLK_IS_BASIC;
- 	init.parent_names = parent_names;
--- 
-1.9.1
+I think all the comments I made on probe() for the main bcm2835 clock
+driver likely apply here too.
+
+Also, is it "legal" for clock drivers to use __clk_get_name()? I thought
+that was a clock core internal function, but may be wrong. I would have
+expected to be able to pass a clock object when registering clocks
+rather than a clock name, but oh well.
+
+BTW, I like how this series shows how useful it is for someone with full
+knowledge of the HW to come up with the DT bindings for a HW module;
+once you know how the HW is actually designed, the correct binding ends
+up being a lot easier to come up with, rather than guessing:-)
