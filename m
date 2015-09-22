@@ -1,95 +1,143 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 04/11] clk: samsung: exynos7: Corrects CMU_CCORE clocks
- names
-To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
-References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
- <1441366637-28001-5-git-send-email-alim.akhtar@samsung.com>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
- mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com,
- sboyd@codeaurora.org, linux-clk@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <55EE8E82.8080800@samsung.com>
-Date: Tue, 08 Sep 2015 16:30:10 +0900
-MIME-version: 1.0
-In-reply-to: <1441366637-28001-5-git-send-email-alim.akhtar@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:2727 "EHLO
+	mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757982AbbIVOQw (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 22 Sep 2015 10:16:52 -0400
+From: Jisheng Zhang <jszhang@marvell.com>
+To: <sebastian.hesselbarth@gmail.com>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <mark.rutland@arm.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	Jisheng Zhang <jszhang@marvell.com>
+Subject: [PATCH 4/5] dt-bindings: add binding for marvell berlin4ct SoC
+Date: Tue, 22 Sep 2015 22:12:35 +0800
+Message-ID: <1442931156-5877-5-git-send-email-jszhang@marvell.com>
+In-Reply-To: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
+References: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04.09.2015 20:37, Alim Akhtar wrote:
-> This patch rename CMU_CCROE clocks names to match with user manual.
+This adds a dt-binding include for Marvell berlin4ct clock IDs.
 
-s/rename/renames/ (everywhere...)
-s/CCROE/CCORE/
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+---
+ .../bindings/clock/marvell,berlin4ct.txt           | 38 +++++++++++++++
+ include/dt-bindings/clock/berlin4ct.h              | 56 ++++++++++++++++++++++
+ 2 files changed, 94 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/marvell,berlin4ct.txt
+ create mode 100644 include/dt-bindings/clock/berlin4ct.h
 
+diff --git a/Documentation/devicetree/bindings/clock/marvell,berlin4ct.txt b/Documentation/devicetree/bindings/clock/marvell,berlin4ct.txt
+new file mode 100644
+index 0000000..a489473
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/marvell,berlin4ct.txt
+@@ -0,0 +1,38 @@
++* Marvell berlin4ct Clock Controllers
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++The berlin4ct clock subsystem generates and supplies clock to various
++controllers within the berlin4ct SoC. The berlin4ct contains 3 clock controller
++blocks: pll, gateclk, berlin-clk.
++
++Required Properties:
++
++- compatible: should be one of the following.
++  - "marvell,berlin-pll" - pll compatible
++  - "marvell,berlin4ct-clk" - berlin clk compatible
++  - "marvell,berlin4ct-gateclk" - gateclk compatible
++- reg: physical base address of the clock controller and length of memory mapped
++  region. For pll, the second reg defines the bypass register base address and
++  length of memory mapped region.
++- #clock-cells: for pll should 0, for gateclk and berlin clk should be 1.
++- #bypass-shift: the bypass bit in bypass register.
++
++Example:
++
++syspll: syspll {
++	compatible = "marvell,berlin-pll";
++	reg = <0xea0200 0x14>, <0xea0710 4>;
++	#clock-cells = <0>;
++	clocks = <&osc>;
++	bypass-shift = /bits/ 8 <0>;
++};
++
++clk: clk {
++	compatible = "marvell,berlin4ct-clk";
++	reg = <0xea0720 0x144>;
++	#clock-cells = <1>;
++	clocks = <&syspll>;
++};
+diff --git a/include/dt-bindings/clock/berlin4ct.h b/include/dt-bindings/clock/berlin4ct.h
+new file mode 100644
+index 0000000..f742f6b
+--- /dev/null
++++ b/include/dt-bindings/clock/berlin4ct.h
+@@ -0,0 +1,56 @@
++/*
++ * Berlin2 BG2Q clock tree IDs
++ */
++
++/* GATE CLK */
++#define GATECLK_TSPSYS		0
++#define GATECLK_USB0CORE	1
++#define GATECLK_ZSPSYS		2
++#define GATECLK_SDIOSYS		3
++#define GATECLK_ETHCORE		4
++#define GATECLK_PCIE0SYS	5
++#define GATECLK_SATA0CORE	6
++#define GATECLK_NFCSYS		7
++#define GATECLK_EMMCSYS		8
++#define GATECLK_IHB0SYS		9
++
++/* BERLIN CLK */
++#define CLK_CPUFASTREF		0
++#define CLK_MEMFASTREF		1
++#define CLK_CFG			2
++#define CLK_PERIFSYS		3
++#define CLK_HB			4
++#define CLK_ATB			5
++#define CLK_DECODER		6
++#define CLK_DECODERM3		7
++#define CLK_DECODERPCUBE	8
++#define CLK_ENCODER		9
++#define CLK_OVPCORE		10
++#define CLK_GFX2DCORE		11
++#define CLK_GFX3DCORE		12
++#define CLK_GFX3DSH		13
++#define CLK_GFX3DSYS		14
++#define CLK_GFX2DSYS		15
++#define CLK_AVIOSYS		16
++#define CLK_VPPSYS		17
++#define CLK_EDDC		18
++#define CLK_AVIOBIU		19
++#define CLK_ZSP			20
++#define CLK_TSP			21
++#define CLK_TSPREF		22
++#define CLK_NDS			23
++#define CLK_NOCS		24
++#define CLK_APBCORE		25
++#define CLK_EMMC		26
++#define CLK_SD0			27
++#define CLK_SD1			28
++#define CLK_DLLMSTREF		29
++#define CLK_GETHRGMII		30
++#define CLK_GETHRGMIISYS	31
++#define CLK_USIM0		32
++#define CLK_PCIETEST		33
++#define CLK_USB2TEST		34
++#define CLK_USB3TEST		35
++#define CLK_USB3CORE		36
++#define CLK_NFCECC		37
++#define CLK_BCM			38
+-- 
+2.5.3
 
-> And also adds missing gate clock for aclk_ccore_133.
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos7.c       |    8 ++++++--
->  include/dt-bindings/clock/exynos7-clk.h |    3 ++-
->  2 files changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-> index ba84e9b..0eb0f57 100644
-> --- a/drivers/clk/samsung/clk-exynos7.c
-> +++ b/drivers/clk/samsung/clk-exynos7.c
-> @@ -31,6 +31,7 @@
->  #define MUX_SEL_TOPC1		0x0204
->  #define MUX_SEL_TOPC2		0x0208
->  #define MUX_SEL_TOPC3		0x020C
-> +#define MUX_ENABLE_TOPC2	0x0308
->  #define DIV_TOPC0		0x0600
->  #define DIV_TOPC1		0x0604
->  #define DIV_TOPC3		0x060C
-> @@ -167,6 +168,9 @@ static struct samsung_gate_clock topc_gate_clks[] __initdata = {
->  		ENABLE_SCLK_TOPC1, 1, 0, 0),
->  	GATE(SCLK_CC_PLL_A, "sclk_cc_pll_a", "dout_sclk_cc_pll",
->  		ENABLE_SCLK_TOPC1, 0, 0, 0),
-> +
-> +	GATE(ACLK_CCORE_133, "aclk_ccore_133", "dout_aclk_ccore_133",
-> +		MUX_ENABLE_TOPC2, 4, 0, 0),
-
-Hmmm... Shouldn't this be CLK_ENABLE_ACLK_TOPC0 register? For other
-similar clock configurations (e.g. SCLK_I2S1) the gate at the end is
-controlled, not the mux parent.
-
-Best regards,
-Krzysztof
-
->  };
->  
->  static struct samsung_pll_clock topc_pll_clks[] __initdata = {
-> @@ -544,7 +548,7 @@ CLK_OF_DECLARE(exynos7_clk_top1, "samsung,exynos7-clock-top1",
->  /*
->   * List of parent clocks for Muxes in CMU_CCORE
->   */
-> -PNAME(mout_aclk_ccore_133_p)	= { "fin_pll", "dout_aclk_ccore_133" };
-> +PNAME(mout_aclk_ccore_133_user_p)	= { "fin_pll", "aclk_ccore_133" };
->  
->  static unsigned long ccore_clk_regs[] __initdata = {
->  	MUX_SEL_CCORE,
-> @@ -552,7 +556,7 @@ static unsigned long ccore_clk_regs[] __initdata = {
->  };
->  
->  static struct samsung_mux_clock ccore_mux_clks[] __initdata = {
-> -	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_p,
-> +	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_user_p,
->  		MUX_SEL_CCORE, 1, 1),
->  };
->  
-> diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
-> index b63eba6..2e01235 100644
-> --- a/include/dt-bindings/clock/exynos7-clk.h
-> +++ b/include/dt-bindings/clock/exynos7-clk.h
-> @@ -30,7 +30,8 @@
->  #define SCLK_BUS0_PLL_A			17
->  #define SCLK_CC_PLL_B			18
->  #define SCLK_CC_PLL_A			19
-> -#define TOPC_NR_CLK			20
-> +#define ACLK_CCORE_133			20
-> +#define TOPC_NR_CLK			21
->  
->  /* TOP0 */
->  #define DOUT_ACLK_PERIC1		1
-> 
