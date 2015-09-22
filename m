@@ -1,193 +1,167 @@
-Return-Path: <scottwood@freescale.com>
-From: Scott Wood <scottwood@freescale.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar
-	<viresh.kumar@linaro.org>, Russell King <linux@arm.linux.org.uk>
-CC: <linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-arm-kernel@lists.infradead.org>,
-	"Tang Yuantian" <Yuantian.Tang@freescale.com>, Scott Wood
-	<scottwood@freescale.com>
-Subject: [PATCH v3 3/5] clk: qoriq: Add ls2080a support.
-Date: Sat, 19 Sep 2015 23:29:55 -0500
-Message-ID: <1442723397-26329-4-git-send-email-scottwood@freescale.com>
-In-Reply-To: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
-References: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jisheng Zhang <jszhang@marvell.com>
+To: <sebastian.hesselbarth@gmail.com>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <mark.rutland@arm.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	Jisheng Zhang <jszhang@marvell.com>
+Subject: [PATCH 1/5] clk: berlin: add common pll driver
+Date: Tue, 22 Sep 2015 22:12:32 +0800
+Message-ID: <1442931156-5877-2-git-send-email-jszhang@marvell.com>
+In-Reply-To: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
+References: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: scottwood@freescale.com
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-LS2080A is the first implementation of the chassis 3 clockgen, which
-has a different register layout than previous chips.  It is also little
-endian, unlike previous chips.
+Add pll driver for Marvell SoCs newer than BG2, BG2CD, BG2Q.
 
-Signed-off-by: Scott Wood <scottwood@freescale.com>
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
 ---
-v3: new patch
+ drivers/clk/berlin/Makefile |   2 +-
+ drivers/clk/berlin/pll.c    | 119 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 120 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/berlin/pll.c
 
- drivers/clk/Kconfig     |  2 +-
- drivers/clk/clk-qoriq.c | 77 +++++++++++++++++++++++++++++++++++++++++++------
- 2 files changed, 69 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 42f7120..9f1970c 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -121,7 +121,7 @@ config COMMON_CLK_AXI_CLKGEN
- 
- config CLK_QORIQ
- 	bool "Clock driver for Freescale QorIQ platforms"
--	depends on (PPC_E500MC || ARM) && OF
-+	depends on (PPC_E500MC || ARM || ARM64) && OF
- 	---help---
- 	  This adds the clock driver support for Freescale QorIQ platforms
- 	  using common clock framework.
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 06281a3..8f9c93b 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -68,7 +68,10 @@ struct clockgen;
-  * If not set, cmux freq must be >= platform pll/2
-  */
- #define CG_CMUX_GE_PLAT		1
+diff --git a/drivers/clk/berlin/Makefile b/drivers/clk/berlin/Makefile
+index 2a36ab7..747700d 100644
+--- a/drivers/clk/berlin/Makefile
++++ b/drivers/clk/berlin/Makefile
+@@ -1,4 +1,4 @@
+-obj-y += berlin2-avpll.o berlin2-pll.o berlin2-div.o
++obj-y += pll.o berlin2-avpll.o berlin2-pll.o berlin2-div.o
+ obj-$(CONFIG_MACH_BERLIN_BG2)	+= bg2.o
+ obj-$(CONFIG_MACH_BERLIN_BG2CD)	+= bg2.o
+ obj-$(CONFIG_MACH_BERLIN_BG2Q)	+= bg2q.o
+diff --git a/drivers/clk/berlin/pll.c b/drivers/clk/berlin/pll.c
+new file mode 100644
+index 0000000..9aad0b6
+--- /dev/null
++++ b/drivers/clk/berlin/pll.c
+@@ -0,0 +1,119 @@
++/*
++ * Copyright (c) 2015 Marvell Technology Group Ltd.
++ *
++ * Author: Jisheng Zhang <jszhang@marvell.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++#include <linux/kernel.h>
++#include <linux/clk-provider.h>
 +
- #define CG_PLL_8BIT		2	/* PLLCnGSR[CFG] is 8 bits, not 6 */
-+#define CG_VER3			4	/* version 3 cg: reg layout different */
-+#define CG_LITTLE_ENDIAN	8
- 
- struct clockgen_chipinfo {
- 	const char *compat, *guts_compat;
-@@ -94,6 +97,26 @@ struct clockgen {
- 
- static struct clockgen clockgen;
- 
-+static void cg_out(struct clockgen *cg, u32 val, u32 __iomem *reg)
++#define PLL_CTRL0	0x0
++#define PLL_CTRL1	0x4
++#define PLL_CTRL2	0x8
++#define PLL_CTRL3	0xC
++#define PLL_CTRL4	0x10
++#define PLL_STATUS	0x14
++
++#define PLL_SOURCE_MAX	2
++
++struct berlin_pll {
++	struct clk_hw	hw;
++	void __iomem	*ctrl;
++	void __iomem	*bypass;
++	u8		bypass_shift;
++};
++
++#define to_berlin_pll(hw)       container_of(hw, struct berlin_pll, hw)
++
++static u8 vcodiv_berlin[] = {1, 2, 4, 8, 16, 32, 64, 128};
++
++static unsigned long berlin_pll_recalc_rate(struct clk_hw *hw,
++					    unsigned long parent_rate)
 +{
-+	if (cg->info.flags & CG_LITTLE_ENDIAN)
-+		iowrite32(val, reg);
-+	else
-+		iowrite32be(val, reg);
++	u32 val, fbdiv, rfdiv, vcodivsel, bypass;
++	struct berlin_pll *pll = to_berlin_pll(hw);
++
++	bypass = readl_relaxed(pll->bypass);
++	if (bypass & (1 << pll->bypass_shift))
++		return parent_rate;
++
++	val = readl_relaxed(pll->ctrl + PLL_CTRL0);
++	fbdiv = (val >> 12) & 0x1FF;
++	rfdiv = (val >> 3) & 0x1FF;
++	val = readl_relaxed(pll->ctrl + PLL_CTRL1);
++	vcodivsel = (val >> 9) & 0x7;
++	return parent_rate * fbdiv * 4 / rfdiv /
++		vcodiv_berlin[vcodivsel];
 +}
 +
-+static u32 cg_in(struct clockgen *cg, u32 __iomem *reg)
++static u8 berlin_pll_get_parent(struct clk_hw *hw)
 +{
-+	u32 val;
++	struct berlin_pll *pll = to_berlin_pll(hw);
++	u32 bypass = readl_relaxed(pll->bypass);
 +
-+	if (cg->info.flags & CG_LITTLE_ENDIAN)
-+		val = ioread32(reg);
++	if (bypass & (1 << pll->bypass_shift))
++		return 1;
 +	else
-+		val = ioread32be(reg);
-+
-+	return val;
++		return 0;
 +}
 +
- static const struct clockgen_muxinfo p2041_cmux_grp1 = {
- 	{
- 		[0] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
-@@ -429,6 +452,17 @@ static const struct clockgen_chipinfo chipinfo[] = {
- 		.pll_mask = 0x03,
- 	},
- 	{
-+		.compat = "fsl,ls2080a-clockgen",
-+		.cmux_groups = {
-+			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
-+		},
-+		.cmux_to_group = {
-+			0, 0, 1, 1, -1
-+		},
-+		.pll_mask = 0x37,
-+		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
-+	},
-+	{
- 		.compat = "fsl,p2041-clockgen",
- 		.guts_compat = "fsl,qoriq-device-config-1.0",
- 		.init_periph = p2041_init_periph,
-@@ -575,7 +609,7 @@ static int mux_set_parent(struct clk_hw *hw, u8 idx)
- 		return -EINVAL;
- 
- 	clksel = hwc->parent_to_clksel[idx];
--	iowrite32be((clksel << CLKSEL_SHIFT) & CLKSEL_MASK, hwc->reg);
-+	cg_out(hwc->cg, (clksel << CLKSEL_SHIFT) & CLKSEL_MASK, hwc->reg);
- 
- 	return 0;
- }
-@@ -586,7 +620,7 @@ static u8 mux_get_parent(struct clk_hw *hw)
- 	u32 clksel;
- 	s8 ret;
- 
--	clksel = (ioread32be(hwc->reg) & CLKSEL_MASK) >> CLKSEL_SHIFT;
-+	clksel = (cg_in(hwc->cg, hwc->reg) & CLKSEL_MASK) >> CLKSEL_SHIFT;
- 
- 	ret = hwc->clksel_to_parent[clksel];
- 	if (ret < 0) {
-@@ -705,7 +739,7 @@ static struct clk * __init create_one_cmux(struct clockgen *cg, int idx)
- 	 * default clksel) may be inappropriately excluded on certain
- 	 * chips.
- 	 */
--	clksel = (ioread32be(hwc->reg) & CLKSEL_MASK) >> CLKSEL_SHIFT;
-+	clksel = (cg_in(cg, hwc->reg) & CLKSEL_MASK) >> CLKSEL_SHIFT;
- 	div = get_pll_div(cg, hwc, clksel);
- 	if (!div)
- 		return NULL;
-@@ -874,13 +908,36 @@ static void __init create_one_pll(struct clockgen *cg, int idx)
- 	if (!(cg->info.pll_mask & (1 << idx)))
- 		return;
- 
--	if (idx == PLATFORM_PLL)
--		reg = cg->regs + 0xc00;
--	else
--		reg = cg->regs + 0x800 + 0x20 * (idx - 1);
-+	if (cg->info.flags & CG_VER3) {
-+		switch (idx) {
-+		case PLATFORM_PLL:
-+			reg = cg->regs + 0x60080;
-+			break;
-+		case CGA_PLL1:
-+			reg = cg->regs + 0x80;
-+			break;
-+		case CGA_PLL2:
-+			reg = cg->regs + 0xa0;
-+			break;
-+		case CGB_PLL1:
-+			reg = cg->regs + 0x10080;
-+			break;
-+		case CGB_PLL2:
-+			reg = cg->regs + 0x100a0;
-+			break;
-+		default:
-+			WARN_ONCE(1, "index %d\n", idx);
-+			return;
-+		}
-+	} else {
-+		if (idx == PLATFORM_PLL)
-+			reg = cg->regs + 0xc00;
-+		else
-+			reg = cg->regs + 0x800 + 0x20 * (idx - 1);
-+	}
- 
- 	/* Get the multiple of PLL */
--	mult = ioread32be(reg);
-+	mult = cg_in(cg, reg);
- 
- 	/* Check if this PLL is disabled */
- 	if (mult & PLL_KILL) {
-@@ -888,7 +945,8 @@ static void __init create_one_pll(struct clockgen *cg, int idx)
- 		return;
- 	}
- 
--	if ((cg->info.flags & CG_PLL_8BIT) && idx != PLATFORM_PLL)
-+	if ((cg->info.flags & CG_VER3) ||
-+	    ((cg->info.flags & CG_PLL_8BIT) && idx != PLATFORM_PLL))
- 		mult = (mult & GENMASK(8, 1)) >> 1;
- 	else
- 		mult = (mult & GENMASK(6, 1)) >> 1;
-@@ -1169,6 +1227,7 @@ err:
- CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
-+CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
- 
- /* Legacy nodes */
- CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
++static const struct clk_ops berlin_pll_ops = {
++	.recalc_rate	= berlin_pll_recalc_rate,
++	.get_parent	= berlin_pll_get_parent,
++};
++
++void __init berlin_pll_setup(struct device_node *np)
++{
++	struct clk_init_data init;
++	struct berlin_pll *pll;
++	const char *parent_names[PLL_SOURCE_MAX];
++	struct clk *clk;
++	int ret, num_parents;
++
++	num_parents = of_clk_get_parent_count(np);
++	if (num_parents <= 0 || num_parents > PLL_SOURCE_MAX)
++		return;
++
++	of_clk_parent_fill(np, parent_names, num_parents);
++
++	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (WARN_ON(!pll))
++		return;
++
++	pll->ctrl = of_iomap(np, 0);
++	pll->bypass = of_iomap(np, 1);
++	ret = of_property_read_u8(np, "bypass-shift", &pll->bypass_shift);
++	if (WARN_ON(!pll->ctrl || !pll->bypass || ret))
++		return;
++
++	init.name = np->name;
++	init.ops = &berlin_pll_ops;
++	init.parent_names = parent_names;
++	init.num_parents = num_parents;
++
++	pll->hw.init = &init;
++
++	clk = clk_register(NULL, &pll->hw);
++	if (WARN_ON(IS_ERR(clk)))
++		return;
++
++	ret = of_clk_add_provider(np, of_clk_src_simple_get, clk);
++	if (WARN_ON(ret))
++		return;
++}
++CLK_OF_DECLARE(berlin_pll, "marvell,berlin-pll", berlin_pll_setup);
 -- 
-2.1.4
+2.5.3
+
