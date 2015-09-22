@@ -1,37 +1,51 @@
-Return-Path: <l.stach@pengutronix.de>
-Message-ID: <1443108993.8476.10.camel@pengutronix.de>
-Subject: Re: [PATCH v4 0/8] i.MX early debug UART clock fixes
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, kernel@pengutronix.de,
- patchwork-lst@pengutronix.de
-Date: Thu, 24 Sep 2015 17:36:33 +0200
-In-Reply-To: <20150924152016.GV3529@tiger>
-References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
-	 <20150924152016.GV3529@tiger>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 22 Sep 2015 10:09:43 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: samsung: fix cpu clock's flags checking
+Message-ID: <20150922170943.GI23081@codeaurora.org>
+References: <1440762575-21520-1-git-send-email-b.zolnierkie@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1440762575-21520-1-git-send-email-b.zolnierkie@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, den 24.09.2015, 08:20 -0700 schrieb Shawn Guo:
-> On Mon, Sep 21, 2015 at 06:53:56PM +0200, Lucas Stach wrote:
-> > This series fixes a long standing interaction issue between the
-> > kernels early debug facilities and the i.MX clock drivers.
+On 08/28, Bartlomiej Zolnierkiewicz wrote:
+> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
+> incorrectly used as a bit numbers.  Fix it.
 > 
-> This is fixing some issue but not regression.  As the change basically
-> has influence on all i.MX platforms, my take is that we should get them
-> into linux-next for extensive testing and queue for 4.4.  Agree?
+> Tested on Exynos4210 based Origen board and on Exynos5250 based
+> Arndale board.
 > 
-Absolutely, this fixes a bug which should mostly hit developers running
-with earlyprintk or earlycon, so it's definitely not fixes material.
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Fixes: ddeac8d96 ("clk: samsung: add infrastructure to register cpu clocks")
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@dowhile0.org>
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
 
-Please queue it up for 4.4.
-
-Thanks,
-Lucas
+Applied to clk-fixes
 
 -- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
