@@ -1,28 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-la0-f53.google.com ([209.85.215.53]:34703 "EHLO
-	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752691AbbIFRtZ (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 6 Sep 2015 13:49:25 -0400
-Received: by laeb10 with SMTP id b10so40357439lae.1
-        for <linux-clk@vger.kernel.org>; Sun, 06 Sep 2015 10:49:23 -0700 (PDT)
+Return-Path: <LeoLi@freescale.com>
+From: Li Leo <LeoLi@freescale.com>
+To: Mark Rutland <mark.rutland@arm.com>, Hou Zhiqiang <B48286@freescale.com>,
+	Kushwaha Prabhakar <prabhakar@freescale.com>
+CC: Marc Zyngier <Marc.Zyngier@arm.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Catalin Marinas
+	<Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Shaohui Xie
+	<Shaohui.Xie@freescale.com>, "corbet@lwn.net" <corbet@lwn.net>, "Sharma
+ Bhupesh" <bhupesh.sharma@freescale.com>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "wsa@the-dreams.de" <wsa@the-dreams.de>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "wim@iguana.be"
+	<wim@iguana.be>, Wenbin Song <Wenbin.Song@freescale.com>, Scott Wood
+	<scottwood@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>
+Subject: RE: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
+Date: Tue, 22 Sep 2015 22:39:16 +0000
+Message-ID: <DM2PR0301MB07348FE1F1D12B19FF5084EEBA450@DM2PR0301MB0734.namprd03.prod.outlook.com>
+References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+ <1442838158-2964-5-git-send-email-B48286@freescale.com>
+ <20150922012403.GA1535@svinekod>
+ <CY1PR0301MB078008B10188504C951076498B450@CY1PR0301MB0780.namprd03.prod.outlook.com>
+ <20150922221504.GA1497@svinekod>
+In-Reply-To: <20150922221504.GA1497@svinekod>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-From: Manuel Lauss <manuel.lauss@gmail.com>
-Date: Sun, 6 Sep 2015 19:48:43 +0200
-Message-ID: <CAOLZvyFF0bzHBDQSb+2UdFk5iF0JOVgYWtpJEnGTiRP-FhuXQw@mail.gmail.com>
-Subject: 4.2-rc0: cannot clk_get() clocks added with clk_add_alias()
-To: linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
-
-in arch/mips/alchemy/common/clock.c, function alchemy_clk_init(), as a last step
-a few aliases are added with clk_add_alias().  Now in
-arch/mips/alchemy/devboards/db1300.c,
-line 811, the clk_get(NULL, "aliasname") returns NULL.
-This used to work in 3.19 and got broken in 4.0.
-Is there anything I did miss?
-
-Thanks!
-       Manuel Lauss
+DQo+ID4gPiA+ICsgICAgICAgaWZjOiBpZmNAMTUzMDAwMCB7DQo+ID4gPiA+ICsgICAgICAgICAg
+ICAgICBjb21wYXRpYmxlID0gImZzbCxpZmMiLCAic2ltcGxlLWJ1cyI7DQo+ID4gPiA+ICsgICAg
+ICAgICAgICAgICByZWcgPSA8MHgwIDB4MTUzMDAwMCAweDAgMHgxMDAwMD47DQo+ID4gPiA+ICsg
+ICAgICAgICAgICAgICBpbnRlcnJ1cHRzID0gPDAgNDMgMHg0PjsNCj4gPiA+ID4gKyAgICAgICB9
+Ow0KPiA+ID4NCj4gPiA+IFdoeSBzaW1wbGUtYnVzPw0KPiA+DQo+ID4gVGhlcmUgYXJlIDMgY2hp
+bGQgbm9kZSBsb2NhdGVkIGluIGR0c2kgZmlsZSB0aGF0IHNob3VsZCBiZSBjcmVhdGVkIGFuZA0K
+PiA+IGFkZGVkIHRvIHBsYXRmb3JtIGRldmljZSBsaXN0Lg0KPiANCj4gQXJlIHRoZXkgdXNhYmxl
+IGV2ZW4gaWYgdGhlIGtlcm5lbCBrbmV3IG5vdGhpbmcgYWJvdXQgdGhlIElGQyBub2RlPyBJZiBu
+b3QsIHRoZQ0KPiBJRkMgZHJpdmVyIHNob3VsZCBwcm9iZSB0aGVtLCBhbmQgc2ltcGxlLWJ1cyBz
+aG91bGQgZ28uDQoNCkFkZGluZyB0aGUgSUZDIGRyaXZlciBvd25lciB0byB0aGUgbG9vcC4NCg0K
+UmVnYXJkcywNCkxlbw0K
