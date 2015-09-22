@@ -1,67 +1,246 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Sun, 6 Sep 2015 12:28:27 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Anson Huang <b20788@freescale.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH] clk: imx: increase AXI clock rate to 264MHz for i.MX6UL
-Message-ID: <20150906042827.GC30746@tiger>
-References: <1438870436-16061-1-git-send-email-b20788@freescale.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:29350 "EHLO
+	mx0a-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757979AbbIVOQu (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 22 Sep 2015 10:16:50 -0400
+From: Jisheng Zhang <jszhang@marvell.com>
+To: <sebastian.hesselbarth@gmail.com>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <mark.rutland@arm.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	Jisheng Zhang <jszhang@marvell.com>
+Subject: [PATCH 2/5] clk: berlin: add common clk driver for newer SoCs
+Date: Tue, 22 Sep 2015 22:12:33 +0800
+Message-ID: <1442931156-5877-3-git-send-email-jszhang@marvell.com>
+In-Reply-To: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
+References: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1438870436-16061-1-git-send-email-b20788@freescale.com>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 06, 2015 at 10:13:56PM +0800, Anson Huang wrote:
-> On i.MX6UL, AXI clock rate's design target is 264MHz, but by default
-> it is only set to 198MHz which is NOT good enough for performance,
-> this patch increases AXI clock rate from 198MHz to 264MHz to meet
-> the design target, this is done by switching its parent clock
-> "periph" from 396MHz PFD to 528MHz PLL.
-> 
-> Signed-off-by: Anson Huang <b20788@freescale.com>
+Add berlin-clk driver for Marvell SoCs newer than BG2, BG2CD, BG2Q.
+berlin_clk_register() is provided for registering such kind of clk.
 
-Applied, thanks.
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+---
+ drivers/clk/berlin/Makefile |   2 +-
+ drivers/clk/berlin/clk.c    | 147 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/berlin/clk.h    |  38 ++++++++++++
+ 3 files changed, 186 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/berlin/clk.c
+ create mode 100644 drivers/clk/berlin/clk.h
 
-But please remember to copy not only linux-clk list but also clk maintainers Michael
-and Stephen for future i.MX clock patches.
+diff --git a/drivers/clk/berlin/Makefile b/drivers/clk/berlin/Makefile
+index 747700d..741ba22 100644
+--- a/drivers/clk/berlin/Makefile
++++ b/drivers/clk/berlin/Makefile
+@@ -1,4 +1,4 @@
+-obj-y += pll.o berlin2-avpll.o berlin2-pll.o berlin2-div.o
++obj-y += pll.o clk.o berlin2-avpll.o berlin2-pll.o berlin2-div.o
+ obj-$(CONFIG_MACH_BERLIN_BG2)	+= bg2.o
+ obj-$(CONFIG_MACH_BERLIN_BG2CD)	+= bg2.o
+ obj-$(CONFIG_MACH_BERLIN_BG2Q)	+= bg2q.o
+diff --git a/drivers/clk/berlin/clk.c b/drivers/clk/berlin/clk.c
+new file mode 100644
+index 0000000..6d64faf
+--- /dev/null
++++ b/drivers/clk/berlin/clk.c
+@@ -0,0 +1,147 @@
++/*
++ * Copyright (c) 2013 Marvell Technology Group Ltd.
++ *
++ * Author: Jisheng Zhang <jszhang@marvell.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/of.h>
++#include <linux/slab.h>
++
++#include "clk.h"
++
++#define CLKEN		(1 << 0)
++#define CLKPLLSEL_MASK	7
++#define CLKPLLSEL_SHIFT	1
++#define CLKPLLSWITCH	(1 << 4)
++#define CLKSWITCH	(1 << 5)
++#define CLKD3SWITCH	(1 << 6)
++#define CLKSEL_MASK	7
++#define CLKSEL_SHIFT	7
++
++struct berlin_clk {
++	struct clk_hw hw;
++	void __iomem *base;
++};
++
++#define to_berlin_clk(hw)	container_of(hw, struct berlin_clk, hw)
++
++static u8 clk_div[] = {1, 2, 4, 6, 8, 12, 1, 1};
++
++static unsigned long berlin_clk_recalc_rate(struct clk_hw *hw,
++					unsigned long parent_rate)
++{
++	u32 val, divider;
++	struct berlin_clk *clk = to_berlin_clk(hw);
++
++	val = readl_relaxed(clk->base);
++	if (val & CLKD3SWITCH)
++		divider = 3;
++	else {
++		if (val & CLKSWITCH) {
++			val >>= CLKSEL_SHIFT;
++			val &= CLKSEL_MASK;
++			divider = clk_div[val];
++		} else
++			divider = 1;
++	}
++
++	return parent_rate / divider;
++}
++
++static u8 berlin_clk_get_parent(struct clk_hw *hw)
++{
++	u32 val;
++	struct berlin_clk *clk = to_berlin_clk(hw);
++
++	val = readl_relaxed(clk->base);
++	if (val & CLKPLLSWITCH) {
++		val >>= CLKPLLSEL_SHIFT;
++		val &= CLKPLLSEL_MASK;
++		return val;
++	}
++
++	return 0;
++}
++
++static int berlin_clk_enable(struct clk_hw *hw)
++{
++	u32 val;
++	struct berlin_clk *clk = to_berlin_clk(hw);
++
++	val = readl_relaxed(clk->base);
++	val |= CLKEN;
++	writel_relaxed(val, clk->base);
++
++	return 0;
++}
++
++static void berlin_clk_disable(struct clk_hw *hw)
++{
++	u32 val;
++	struct berlin_clk *clk = to_berlin_clk(hw);
++
++	val = readl_relaxed(clk->base);
++	val &= ~CLKEN;
++	writel_relaxed(val, clk->base);
++}
++
++static int berlin_clk_is_enabled(struct clk_hw *hw)
++{
++	u32 val;
++	struct berlin_clk *clk = to_berlin_clk(hw);
++
++	val = readl_relaxed(clk->base);
++	val &= CLKEN;
++
++	return val ? 1 : 0;
++}
++
++static const struct clk_ops berlin_clk_ops = {
++	.recalc_rate	= berlin_clk_recalc_rate,
++	.get_parent	= berlin_clk_get_parent,
++	.enable		= berlin_clk_enable,
++	.disable	= berlin_clk_disable,
++	.is_enabled	= berlin_clk_is_enabled,
++};
++
++struct clk * __init berlin_clk_register(const char *name, int num_parents,
++			const char **parent_names, unsigned long flags,
++			void __iomem *base)
++{
++	struct clk *clk;
++	struct berlin_clk *bclk;
++	struct clk_init_data init;
++
++	bclk = kzalloc(sizeof(*bclk), GFP_KERNEL);
++	if (!bclk)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &berlin_clk_ops;
++	init.parent_names = parent_names;
++	init.num_parents = num_parents;
++	init.flags = flags;
++
++	bclk->base = base;
++	bclk->hw.init = &init;
++
++	clk = clk_register(NULL, &bclk->hw);
++	if (IS_ERR(clk))
++		kfree(bclk);
++
++	return clk;
++}
+diff --git a/drivers/clk/berlin/clk.h b/drivers/clk/berlin/clk.h
+new file mode 100644
+index 0000000..502689e
+--- /dev/null
++++ b/drivers/clk/berlin/clk.h
+@@ -0,0 +1,38 @@
++/*
++ * Copyright (c) 2015 Marvell Technology Group Ltd.
++ *
++ * Author: Jisheng Zhang <jszhang@marvell.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef __BERLIN_CLK_H
++#define __BERLIN_CLK_H
++
++struct gateclk_desc {
++	const char	*name;
++	const char	*parent_name;
++	u8		bit_idx;
++	unsigned long	flags;
++};
++
++struct clk_desc {
++	const char	*name;
++	u32		offset;
++	unsigned long	flags;
++};
++
++struct clk * __init berlin_clk_register(const char *name, int num_parents,
++			const char **parent_names, unsigned long flags,
++			void __iomem *base);
++#endif
+-- 
+2.5.3
 
-Shawn
-
-> ---
->  drivers/clk/imx/clk-imx6ul.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-> index aaa3665..01718d0 100644
-> --- a/drivers/clk/imx/clk-imx6ul.c
-> +++ b/drivers/clk/imx/clk-imx6ul.c
-> @@ -407,6 +407,24 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
->  	clk_data.clk_num = ARRAY_SIZE(clks);
->  	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
->  
-> +	/*
-> +	 * Lower the AHB clock rate before changing the parent clock source,
-> +	 * as AHB clock rate can NOT be higher than 133MHz, but its parent
-> +	 * will be switched from 396MHz PFD to 528MHz PLL in order to increase
-> +	 * AXI clock rate, so we need to lower AHB rate first to make sure at
-> +	 * any time, AHB rate is <= 133MHz.
-> +	 */
-> +	clk_set_rate(clks[IMX6UL_CLK_AHB], 99000000);
-> +
-> +	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264MHz */
-> +	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL], clks[IMX6UL_CLK_PLL3_USB_OTG]);
-> +	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_CLK2]);
-> +	clk_set_parent(clks[IMX6UL_CLK_PERIPH_PRE], clks[IMX6UL_CLK_PLL2_BUS]);
-> +	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_PRE]);
-> +
-> +	/* Make sure AHB rate is 132MHz  */
-> +	clk_set_rate(clks[IMX6UL_CLK_AHB], 132000000);
-> +
->  	/* set perclk to from OSC */
->  	clk_set_parent(clks[IMX6UL_CLK_PERCLK_SEL], clks[IMX6UL_CLK_OSC]);
->  
-> -- 
-> 1.9.1
-> 
