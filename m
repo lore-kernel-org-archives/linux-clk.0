@@ -1,35 +1,61 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 16 Sep 2015 15:07:22 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] clk: qcom: Add support for RCGs with shared
- branches
-Message-ID: <20150916220722.GM23081@codeaurora.org>
-References: <1442409888-19917-1-git-send-email-georgi.djakov@linaro.org>
- <1442409888-19917-3-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Xing Zheng <zhengxing@rock-chips.com>, linux-rockchip@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/9] clk: rockchip: add new clock type and controller for rk3036
+Date: Wed, 23 Sep 2015 00:58:58 +0200
+Message-ID: <2850967.rjRj3AZerS@diego>
+In-Reply-To: <20150922224125.GK23081@codeaurora.org>
+References: <1442478540-15068-1-git-send-email-zhengxing@rock-chips.com> <1442478540-15068-5-git-send-email-zhengxing@rock-chips.com> <20150922224125.GK23081@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442409888-19917-3-git-send-email-georgi.djakov@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/16, Georgi Djakov wrote:
-> +static int clk_rcg2_shared_enable(struct clk_hw *hw)
-> +{
-> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> +
-> +	if (!rcg->current_freq) {
-> +		struct clk_hw *parent = clk_hw_get_parent(hw);
-> +		unsigned long parent_rate = clk_hw_get_rate(parent);
-> +
-> +		rcg->current_freq = clk_rcg2_recalc_rate(hw, parent_rate);
+Hi Stephen,
 
-Hmm no. I meant adding a recal_rate implementation for this
-specific type of clk_ops that assigns the current_freq value when
-it's called. I assume we're not calling enable on this clock
-before we register it with the framework.
+Am Dienstag, 22. September 2015, 15:41:25 schrieb Stephen Boyd:
+> On 09/17, Xing Zheng wrote:
+> > +
+> > +static void rockchip_rk3036_pll_init(struct clk_hw *hw)
+> 
+> init ops are "discouraged". Could we do this through assigned
+> rates instead?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+really? According to Mike that was a valid use-case when we looked for an 
+initial place for that on the rk3288 :-) .
+
+
+> > +{
+> > +	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
+> > +	const struct rockchip_pll_rate_table *rate;
+> > +	unsigned int fbdiv, postdiv1, refdiv, postdiv2, dsmpd, frac;
+> > +	unsigned long drate;
+> > +	u32 pllcon;
+> > +
+> > +	if (!(pll->flags & ROCKCHIP_PLL_SYNC_RATE))
+> > +		return;
+> 
+> I don't understand what this one does though. This check isn't in
+> the set rate ops.
+
+And it shouldn't be :-)
+
+The issue this whole thing is trying to solve is aligning the pll settings 
+which what we have in the rate table, not what the bootloader set.
+
+For example the bootloader could set up a pll at 594MHz with one set of 
+parameters and after some time - when you don't want to exchange bootloaders 
+on shipping devices anymore - it comes to light that a different set of 
+parameters for the same frequency produces for example a more stable hdmi 
+signal [I think that was the main reason for the initial change].
+
+So we're not changing the frequency x -> y, which could be easily done [and is 
+done already] via assigned-rates, but instead
+	x {params a,b,c} -> x {params d,e,f}
+so the rate itself stays the same, only the frequency generation is adapted.
+
+As for the ROCKCHIP_PLL_SYNC_RATE param, we of course don't want to sync the 
+ddr-pll for example for obvious hang-reasons.
+
+
+Heiko
