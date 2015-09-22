@@ -1,47 +1,23 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-CC: <wsa@the-dreams.de>, <wim@iguana.be>, <corbet@lwn.net>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<Mingkai.Hu@freescale.com>, <Shaohui.Xie@freescale.com>,
-	<Wenbin.Song@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <leoli@freescale.com>, Hou Zhiqiang
-	<B48286@freescale.com>
-Subject: [PATCH 3/6] Documentation: DT: Add entry for FSL LS1043ARDB board
-Date: Mon, 21 Sep 2015 20:22:35 +0800
-Message-ID: <1442838158-2964-4-git-send-email-B48286@freescale.com>
-In-Reply-To: <1442838158-2964-1-git-send-email-B48286@freescale.com>
-References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
+Return-Path: <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 3/3] ARM: bcm2835: Add the auxiliary clocks to the device
+ tree.
+To: Eric Anholt <eric@anholt.net>
+References: <1441923750-19404-1-git-send-email-eric@anholt.net>
+ <1441923750-19404-4-git-send-email-eric@anholt.net>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Lee Jones <lee@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org
+From: Stephen Warren <swarren@wwwdotorg.org>
+Message-ID: <5600B8F1.2090109@wwwdotorg.org>
+Date: Mon, 21 Sep 2015 19:12:01 -0700
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1441923750-19404-4-git-send-email-eric@anholt.net>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mingkai Hu <Mingkai.Hu@freescale.com>
+On 09/10/2015 03:22 PM, Eric Anholt wrote:
+> These will be used for enabling UART1, SPI1, and SPI2.
 
-Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
----
- Documentation/devicetree/bindings/arm/fsl.txt | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index 34c88b0..752a685 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -131,6 +131,10 @@ Example:
- Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
- ----------------------------------------------------------------
- 
-+LS1043A ARMv8 based RDB Board
-+Required root node properties:
-+    - compatible = "fsl,ls1043a-rdb", "fsl,ls1043a";
-+
- LS2080A ARMv8 based Simulator model
- Required root node properties:
-     - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
--- 
-2.1.0.27.g96db324
+Patches 1, 3,
+Acked-by: Stephen Warren <swarren@wwwdotorg.org>
