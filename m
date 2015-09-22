@@ -1,112 +1,41 @@
-Return-Path: <alim.akhtar@samsung.com>
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
- k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
- gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 07/12] clk: samsung: exynos7: Corrects CMU_PERIC1 clocks
- names
-Date: Thu, 10 Sep 2015 14:14:32 +0530
-Message-id: <1441874677-24148-8-git-send-email-alim.akhtar@samsung.com>
-In-reply-to: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
-References: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
+Return-Path: <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 4/4] ARM: bcm2835: Switch to using the new clock driver
+ support.
+To: Eric Anholt <eric@anholt.net>
+References: <1441922305-2298-1-git-send-email-eric@anholt.net>
+ <1441922305-2298-4-git-send-email-eric@anholt.net>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Lee Jones <lee@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org
+From: Stephen Warren <swarren@wwwdotorg.org>
+Message-ID: <5600B754.8000802@wwwdotorg.org>
+Date: Mon, 21 Sep 2015 19:05:08 -0700
+MIME-Version: 1.0
+In-Reply-To: <1441922305-2298-4-git-send-email-eric@anholt.net>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch renames CMU_PERIC1 clocks names to match with user manual.
-And also adds missing gate clock for aclk_peric1_66.
+On 09/10/2015 02:58 PM, Eric Anholt wrote:
+> This will give us the ability to set the pixel and HDMI state machine
+> clocks for the VC4 KMS driver, change the CPU frequency, and
+> potentially gate clocks in the future (once we also write a power
+> domain driver).  It also gives the uart an explicit clock reference,
+> so that we don't need to change the physical addresses of the old
+> fixed clk_bcm2835.c clocks for Raspberry Pi 2 port.
+> 
+> Two clocks get their frequencies updated as a result of this.  One is
+> uart's apb_pclk, which was previously accidentally grabbing the fixed
+> uart0_pclk due to the apb_pclk not having clk_register_clkdev()
+> called.  The uart doesn't seem to do anything with apb_pclk other than
+> make sure it's on, so that appears safe (also, as far as I can see,
+> the apb clock is actually the same as the VPU clock).  The other is
+> EMMC, which according to the docs was supposed to be in the 50-100Mhz
+> range, but it turns out the firmware needed to change to running it at
+> the 250Mhz core clock speed to avoid a bug in clock domain crossing.
+> 
+> Additionally, anything using BCM2835_CLOCK_VPU will now have a correct
+> clock rate if the user configures the boot-time core clock speed using
+> config.txt.
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos7.c       |   38 ++++++++++++++++---------------
- include/dt-bindings/clock/exynos7-clk.h |    3 ++-
- 2 files changed, 22 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index b819fdd..7796712 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -343,6 +343,8 @@ static struct samsung_div_clock top0_div_clks[] __initdata = {
- static struct samsung_gate_clock top0_gate_clks[] __initdata = {
- 	GATE(CLK_ACLK_PERIC0_66, "aclk_peric0_66", "dout_aclk_peric0_66",
- 		ENABLE_ACLK_TOP03, 20, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_ACLK_PERIC1_66, "aclk_peric1_66", "dout_aclk_peric1_66",
-+		ENABLE_ACLK_TOP03, 12, CLK_SET_RATE_PARENT, 0),
- 
- 	GATE(CLK_SCLK_SPDIF, "sclk_spdif", "dout_sclk_spdif",
- 		ENABLE_SCLK_TOP0_PERIC0, 4, CLK_SET_RATE_PARENT, 0),
-@@ -665,15 +667,15 @@ CLK_OF_DECLARE(exynos7_clk_peric0, "samsung,exynos7-clock-peric0",
- 	exynos7_clk_peric0_init);
- 
- /* List of parent clocks for Muxes in CMU_PERIC1 */
--PNAME(mout_aclk_peric1_66_p)	= { "fin_pll", "dout_aclk_peric1_66" };
--PNAME(mout_sclk_uart1_p)	= { "fin_pll", "sclk_uart1" };
--PNAME(mout_sclk_uart2_p)	= { "fin_pll", "sclk_uart2" };
--PNAME(mout_sclk_uart3_p)	= { "fin_pll", "sclk_uart3" };
--PNAME(mout_sclk_spi0_p)		= { "fin_pll", "sclk_spi0" };
--PNAME(mout_sclk_spi1_p)		= { "fin_pll", "sclk_spi1" };
--PNAME(mout_sclk_spi2_p)		= { "fin_pll", "sclk_spi2" };
--PNAME(mout_sclk_spi3_p)		= { "fin_pll", "sclk_spi3" };
--PNAME(mout_sclk_spi4_p)		= { "fin_pll", "sclk_spi4" };
-+PNAME(mout_aclk_peric1_66_user_p)	= { "fin_pll", "aclk_peric1_66" };
-+PNAME(mout_sclk_uart1_user_p)	= { "fin_pll", "sclk_uart1" };
-+PNAME(mout_sclk_uart2_user_p)	= { "fin_pll", "sclk_uart2" };
-+PNAME(mout_sclk_uart3_user_p)	= { "fin_pll", "sclk_uart3" };
-+PNAME(mout_sclk_spi0_user_p)		= { "fin_pll", "sclk_spi0" };
-+PNAME(mout_sclk_spi1_user_p)		= { "fin_pll", "sclk_spi1" };
-+PNAME(mout_sclk_spi2_user_p)		= { "fin_pll", "sclk_spi2" };
-+PNAME(mout_sclk_spi3_user_p)		= { "fin_pll", "sclk_spi3" };
-+PNAME(mout_sclk_spi4_user_p)		= { "fin_pll", "sclk_spi4" };
- 
- static unsigned long peric1_clk_regs[] __initdata = {
- 	MUX_SEL_PERIC10,
-@@ -684,24 +686,24 @@ static unsigned long peric1_clk_regs[] __initdata = {
- };
- 
- static struct samsung_mux_clock peric1_mux_clks[] __initdata = {
--	MUX(0, "mout_aclk_peric1_66_user", mout_aclk_peric1_66_p,
-+	MUX(0, "mout_aclk_peric1_66_user", mout_aclk_peric1_66_user_p,
- 		MUX_SEL_PERIC10, 0, 1),
- 
--	MUX_F(0, "mout_sclk_spi0_user", mout_sclk_spi0_p,
-+	MUX_F(0, "mout_sclk_spi0_user", mout_sclk_spi0_user_p,
- 		MUX_SEL_PERIC11, 0, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(0, "mout_sclk_spi1_user", mout_sclk_spi1_p,
-+	MUX_F(0, "mout_sclk_spi1_user", mout_sclk_spi1_user_p,
- 		MUX_SEL_PERIC11, 4, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(0, "mout_sclk_spi2_user", mout_sclk_spi2_p,
-+	MUX_F(0, "mout_sclk_spi2_user", mout_sclk_spi2_user_p,
- 		MUX_SEL_PERIC11, 8, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(0, "mout_sclk_spi3_user", mout_sclk_spi3_p,
-+	MUX_F(0, "mout_sclk_spi3_user", mout_sclk_spi3_user_p,
- 		MUX_SEL_PERIC11, 12, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(0, "mout_sclk_spi4_user", mout_sclk_spi4_p,
-+	MUX_F(0, "mout_sclk_spi4_user", mout_sclk_spi4_user_p,
- 		MUX_SEL_PERIC11, 16, 1, CLK_SET_RATE_PARENT, 0),
--	MUX(0, "mout_sclk_uart1_user", mout_sclk_uart1_p,
-+	MUX(0, "mout_sclk_uart1_user", mout_sclk_uart1_user_p,
- 		MUX_SEL_PERIC11, 20, 1),
--	MUX(0, "mout_sclk_uart2_user", mout_sclk_uart2_p,
-+	MUX(0, "mout_sclk_uart2_user", mout_sclk_uart2_user_p,
- 		MUX_SEL_PERIC11, 24, 1),
--	MUX(0, "mout_sclk_uart3_user", mout_sclk_uart3_p,
-+	MUX(0, "mout_sclk_uart3_user", mout_sclk_uart3_user_p,
- 		MUX_SEL_PERIC11, 28, 1),
- };
- 
-diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
-index 256188a..2876654 100644
---- a/include/dt-bindings/clock/exynos7-clk.h
-+++ b/include/dt-bindings/clock/exynos7-clk.h
-@@ -50,7 +50,8 @@
- #define CLK_SCLK_PCM1			13
- #define CLK_SCLK_I2S1			14
- #define CLK_ACLK_PERIC0_66		15
--#define TOP0_NR_CLK			16
-+#define CLK_ACLK_PERIC1_66		16
-+#define TOP0_NR_CLK			17
- 
- /* TOP1 */
- #define DOUT_ACLK_FSYS1_200		1
--- 
-1.7.10.4
+Acked-by: Stephen Warren <swarren@wwwdotorg.org>
