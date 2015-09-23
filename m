@@ -1,59 +1,38 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 0/4] cpufreq-dt: add suspend frequency support
-References: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
- <20150908024659.GF26760@linux>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>,
- Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>,
- Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <55EE5C79.2030604@samsung.com>
-Date: Tue, 08 Sep 2015 12:56:41 +0900
-MIME-version: 1.0
-In-reply-to: <20150908024659.GF26760@linux>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <gregkh@linuxfoundation.org>
+Date: Wed, 23 Sep 2015 08:15:38 -0700
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: t-kristo@ti.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@lists.codethink.co.uk, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: ti: fix dual-registration of uart4_ick
+Message-ID: <20150923151538.GA20172@kroah.com>
+References: <1443019714-12926-1-git-send-email-ben.dooks@codethink.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1443019714-12926-1-git-send-email-ben.dooks@codethink.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08.09.2015 11:46, Viresh Kumar wrote:
-> On 07-09-15, 17:41, Bartlomiej Zolnierkiewicz wrote:
->> Hi,
->>
->> This patch series adds suspend frequency support (using opp-v2
->> bindings and suspend-opp functionality) to cpufreq-dt driver and
->> then adds suspend opp for Exynos4412 based boards.
->>
->> This patch series fixes suspend/resume support on Exynos4412
->> based Trats2 board and reboot hang on Exynos4412 based Odroid
->> U3 board.
->>
->> Changes since v3:
->> - fixed dev_pm_opp_get_suspend_opp() locking
->> - shortened variable name in dev_pm_opp_get_suspend_opp()
->> - adjusted cpufreq_generic_suspend() to work with cpufreq-dt
->> - removed no longer needed cpufreq_dt_suspend()
->> - added Acked-by tag from Viresh to patch #4
+On Wed, Sep 23, 2015 at 03:48:34PM +0100, Ben Dooks wrote:
+> On the OMAP AM3517 platform the uart4_ick gets registered
+> twice, causing any power managment to /dev/ttyO3 to fail
+> when trying to wake the device up.
 > 
-> Just a minor comment on 3/4 and after fixing that:
+> This solves the following oops:
 > 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> [] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
+> [] PC is at serial_omap_pm+0x48/0x15c
+> [] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
+> 
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> ---
+>  drivers/clk/ti/clk-3xxx.c | 1 -
+>  1 file changed, 1 deletion(-)
 
-Dear Kukjin,
+<formletter>
 
-There were no comments from your side for this patchset nor for previous
-Marek's fix. After mentioned change and Bart's re-spin, do you plan to
-grab this patchset and send it for current v4.3 cycle?
+This is not the correct way to submit patches for inclusion in the
+stable kernel tree.  Please read Documentation/stable_kernel_rules.txt
+for how to do this properly.
 
-Best regards,
-Krzysztof
+</formletter>
