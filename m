@@ -1,44 +1,54 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Mon, 7 Sep 2015 11:50:29 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
-	kernel@pengutronix.de, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/8] clk: imx: add common logic to detect early UART
- usage
-Message-ID: <20150907095029.GB9999@pengutronix.de>
-References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
- <1441382419-4343-2-git-send-email-l.stach@pengutronix.de>
- <20150907090603.GU9999@pengutronix.de>
- <1441617354.28391.5.camel@pengutronix.de>
+Return-Path: <LeoLi@freescale.com>
+From: Li Leo <LeoLi@freescale.com>
+To: Hou Zhiqiang <B48286@freescale.com>, Mark Rutland <mark.rutland@arm.com>,
+	"marc.zyngier@arm.com" <marc.zyngier@arm.com>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Catalin Marinas
+	<Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Shaohui Xie
+	<Shaohui.Xie@freescale.com>, "corbet@lwn.net" <corbet@lwn.net>, "Sharma
+ Bhupesh" <bhupesh.sharma@freescale.com>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "wsa@the-dreams.de" <wsa@the-dreams.de>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "wim@iguana.be"
+	<wim@iguana.be>, Wenbin Song <Wenbin.Song@freescale.com>, Scott Wood
+	<scottwood@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>
+Subject: RE: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
+Date: Wed, 23 Sep 2015 04:16:10 +0000
+Message-ID: <DM2PR0301MB0734302E89290593BE7D9565BA440@DM2PR0301MB0734.namprd03.prod.outlook.com>
+References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+ <1442838158-2964-5-git-send-email-B48286@freescale.com>
+ <20150922012403.GA1535@svinekod>
+ <CY1PR0301MB078008B10188504C951076498B450@CY1PR0301MB0780.namprd03.prod.outlook.com>
+ <DM2PR0301MB07342356008C1A50AB26FEFFBA450@DM2PR0301MB0734.namprd03.prod.outlook.com>
+ <CY1PR0301MB07805FA01ACAF84648C806138B440@CY1PR0301MB0780.namprd03.prod.outlook.com>
+In-Reply-To: <CY1PR0301MB07805FA01ACAF84648C806138B440@CY1PR0301MB0780.namprd03.prod.outlook.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1441617354.28391.5.camel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hallo Lucas,
+> > > >
+> > > > Hi,
+> > > >
+> > > > > +/memreserve/ 0x80000000 0x00010000;
+> > > >
+> > > > Why is this necessary?
+> > >
+> > > This memory region is pre-reserved for the spin-table/psci, although
+> > > didn't add Enable method of secondary cores.
+> >
+> > Can this be reserved by bootloader?
+>=20
+> Yes, the memory for psci was reserved by u-boot code. But due to spin-tab=
+le
+> need the release address, is it better adding the /memreserve/ in dts fil=
+e?
+> Or add it by bootloader and fix the release address accordingly?
 
-On Mon, Sep 07, 2015 at 11:15:54AM +0200, Lucas Stach wrote:
-> Am Montag, den 07.09.2015, 11:06 +0200 schrieb Uwe Kleine-König:
-> > I wonder why you need an array of pointers to pointers of clocks. Isn't
-> > one indirection less possible and more easy?
-> > 
-> No, this is not easily possible if we want to use the auto-discarding of
-> the clocks array and a simple static initialization. The clock pointers
-> are only set up after the clock drivers probe routine has run, so if I
-> want to point to the actual clocks I would need to dynamically populate
-> the array and either dynamically allocate it, or would need to pre-size
-> the static array.
-Ah right. An alternative would be to just store the indices, but I don't
-think this is nicer because then you additionally need a reference to
-the clk array. You don't happen to have this anyhow, do you?
+Both the reserved memory region and cpu-release-addr should be updated by b=
+ootloader.
 
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Regards,
+Leo
