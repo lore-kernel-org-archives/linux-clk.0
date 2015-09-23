@@ -1,160 +1,128 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v4 0/22] On-demand device probing
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-References: <1441628627-5143-1-git-send-email-tomeu.vizoso@collabora.com>
- <CAL_Jsq+E31JaPcp5ELS_ztSqgSrK7U4OzB9xNcNz01Ayrrm+Yg@mail.gmail.com>
- <CAAObsKDUzk-9H2_VrVmbc=ZeRaknGcjTMY3Mauh3JVZxLz4CiA@mail.gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Mark Brown <broonie@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>,
-	Felipe Balbi <balbi@ti.com>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	=?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	Lee Jones <lee.jones@linaro.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-From: Rob Herring <robh@kernel.org>
-Message-ID: <55EF8C65.4030706@kernel.org>
-Date: Tue, 8 Sep 2015 20:33:25 -0500
+Return-Path: <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH] clk: ti: Fix FAPLL udelay in clk_enable with clk_prepare
+To: Tony Lindgren <tony@atomide.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <1442956985-32642-1-git-send-email-tony@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        Brian
+ Hutchinson <b.hutchman@gmail.com>, Felipe Balbi <balbi@ti.com>,
+        Grygorii
+ Strashko <grygorii.strashko@ti.com>,
+        Nishanth Menon <nm@ti.com>,
+        Russell King
+ - ARM Linux <linux@arm.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>, Sekhar Nori <nsekhar@ti.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <560242EB.5070001@ti.com>
+Date: Wed, 23 Sep 2015 09:12:59 +0300
 MIME-Version: 1.0
-In-Reply-To: <CAAObsKDUzk-9H2_VrVmbc=ZeRaknGcjTMY3Mauh3JVZxLz4CiA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1442956985-32642-1-git-send-email-tony@atomide.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/08/2015 02:30 AM, Tomeu Vizoso wrote:
-> On 7 September 2015 at 22:50, Rob Herring <robherring2@gmail.com> wrote:
->> On Mon, Sep 7, 2015 at 7:23 AM, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
->>> Hello,
->>>
->>> I have a problem with the panel on my Tegra Chromebook taking longer
->>> than expected to be ready during boot (StÃ©phane Marchesin reported what
->>> is basically the same issue in [0]), and have looked into ordered
->>> probing as a better way of solving this than moving nodes around in the
->>> DT or playing with initcall levels and linking order.
->>>
->>> While reading the thread [1] that Alexander Holler started with his
->>> series to make probing order deterministic, it occurred to me that it
->>> should be possible to achieve the same by probing devices as they are
->>> referenced by other devices.
->>>
->>> This basically reuses the information that is already implicit in the
->>> probe() implementations, saving us from refactoring existing drivers or
->>> adding information to DTBs.
->>>
->>> During review of v1 of this series Linus Walleij suggested that it
->>> should be the device driver core to make sure that dependencies are
->>> ready before probing a device. I gave this idea a try [2] but Mark Brown
->>> pointed out to the logic duplication between the resource acquisition
->>> and dependency discovery code paths (though I think it's fairly minor).
->>>
->>> To address that code duplication I experimented with Arnd's devm_probe
->>> [3] concept of having drivers declare their dependencies instead of
->>> acquiring them during probe, and while it worked [4], I don't think we
->>> end up winning anything when compared to just probing devices on-demand
->>> from resource getters.
->>>
->>> One remaining objection is to the "sprinkling" of calls to
->>> of_device_probe() in the resource getters of each subsystem, but I think
->>> it's the right thing to do given that the storage of resources is
->>> currently subsystem-specific.
->>>
->>> We could avoid the above by moving resource storage into the core, but I
->>> don't think there's a compelling case for that.
->>>
->>> I have tested this on boards with Tegra, iMX.6, Exynos, Rockchip and
->>> OMAP SoCs, and these patches were enough to eliminate all the deferred
->>> probes (except one in PandaBoard because omap_dma_system doesn't have a
->>> firmware node as of yet).
->>>
->>> Have submitted a branch [5] with only these patches on top of thursday's
->>> linux-next to kernelci.org and I don't see any issues that could be
->>> caused by them. For some reason it currently has more passes than the
->>> version of -next it's based on!
->>>
->>> With this series I get the kernel to output to the panel in 0.5s,
->>> instead of 2.8s.
->>>
->>> Regards,
->>>
->>> Tomeu
->>>
->>> [0] http://lists.freedesktop.org/archives/dri-devel/2014-August/066527.html
->>>
->>> [1] https://lkml.org/lkml/2014/5/12/452
->>>
->>> [2] https://lkml.org/lkml/2015/6/17/305
->>>
->>> [3] http://article.gmane.org/gmane.linux.ports.arm.kernel/277689
->>>
->>> [4] https://lkml.org/lkml/2015/7/21/441a
->>>
->>> [5] https://git.collabora.com/cgit/user/tomeu/linux.git/log/?h=on-demand-probes-v6
->>>
->>> [6] http://kernelci.org/boot/all/job/collabora/kernel/v4.2-11902-g25d80c927f8b/
->>>
->>> [7] http://kernelci.org/boot/all/job/next/kernel/next-20150903/
->>>
->>> Changes in v4:
->>> - Added bus.pre_probe callback so the probes of Primecell devices can be
->>>   deferred if their device IDs cannot be yet read because of the clock
->>>   driver not having probed when they are registered. Maybe this goes
->>>   overboard and the matching information should be in the DT if there is
->>>   one.
->>
->> Seems overboard to me or at least a separate problem.
+Tony,
+
+On 09/23/2015 12:23 AM, Tony Lindgren wrote:
+> As recently pointed out (again) by Thomas and Russell, we must not
+> wait in in clk_enable. The wait for PLL to lock needs to happen
+> in clk_prepare instead.
 > 
-> It's a separate problem but this was preventing the series from
-> working on a few boards.
+> It seems this is a common copy paste error with the PLL drivers,
+> and similar fixes should be applied to other PLL drivers after
+> testing.
 
-What is the failure? Not booting? Fixing not working would certainly not
-be overboard.
+One thing to note:
+because of how the hwmod code works, at boot time we prepare all clocks for
+the devices and in runtime the hwmod only uses clk_enable/disable, it will
+never unprepare the clock(s). This will means that these clocks will be
+enabled all the time and will never turned off.
 
+-- 
+Péter
+
+> Cc: Brian Hutchinson <b.hutchman@gmail.com>
+> Cc: Felipe Balbi <balbi@ti.com>
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: Nishanth Menon <nm@ti.com>
+> Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Sekhar Nori <nsekhar@ti.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>  drivers/clk/ti/fapll.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
 > 
->> Most clocks have
->> to be setup before the driver model simply because timers depend on
->> clocks usually.
+> diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
+> index f4b2e98..e1db74a 100644
+> --- a/drivers/clk/ti/fapll.c
+> +++ b/drivers/clk/ti/fapll.c
+> @@ -37,7 +37,7 @@
+>  #define FAPLL_PWD_OFFSET	4
+>  
+>  #define MAX_FAPLL_OUTPUTS	7
+> -#define FAPLL_MAX_RETRIES	1000
+> +#define FAPLL_MAX_RETRIES	5
+>  
+>  #define to_fapll(_hw)		container_of(_hw, struct fapll_data, hw)
+>  #define to_synth(_hw)		container_of(_hw, struct fapll_synth, hw)
+> @@ -126,7 +126,7 @@ static int ti_fapll_wait_lock(struct fapll_data *fd)
+>  		if (retries-- <= 0)
+>  			break;
+>  
+> -		udelay(1);
+> +		usleep_range(200, 300);
+>  	}
+>  
+>  	pr_err("%s failed to lock\n", fd->name);
+> @@ -134,7 +134,7 @@ static int ti_fapll_wait_lock(struct fapll_data *fd)
+>  	return -ETIMEDOUT;
+>  }
+>  
+> -static int ti_fapll_enable(struct clk_hw *hw)
+> +static int ti_fapll_prepare(struct clk_hw *hw)
+>  {
+>  	struct fapll_data *fd = to_fapll(hw);
+>  	u32 v = readl_relaxed(fd->base);
+> @@ -146,7 +146,7 @@ static int ti_fapll_enable(struct clk_hw *hw)
+>  	return 0;
+>  }
+>  
+> -static void ti_fapll_disable(struct clk_hw *hw)
+> +static void ti_fapll_unprepare(struct clk_hw *hw)
+>  {
+>  	struct fapll_data *fd = to_fapll(hw);
+>  	u32 v = readl_relaxed(fd->base);
+> @@ -155,7 +155,7 @@ static void ti_fapll_disable(struct clk_hw *hw)
+>  	writel_relaxed(v, fd->base);
+>  }
+>  
+> -static int ti_fapll_is_enabled(struct clk_hw *hw)
+> +static int ti_fapll_is_prepared(struct clk_hw *hw)
+>  {
+>  	struct fapll_data *fd = to_fapll(hw);
+>  	u32 v = readl_relaxed(fd->base);
+> @@ -261,7 +261,7 @@ static int ti_fapll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	v |= pre_div_p << FAPLL_MAIN_DIV_P_SHIFT;
+>  	v |= mult_n << FAPLL_MAIN_MULT_N_SHIFT;
+>  	writel_relaxed(v, fd->base);
+> -	if (ti_fapll_is_enabled(hw))
+> +	if (ti_fapll_is_prepared(hw))
+>  		ti_fapll_wait_lock(fd);
+>  	ti_fapll_clear_bypass(fd);
+>  
+> @@ -269,9 +269,9 @@ static int ti_fapll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  }
+>  
+>  static struct clk_ops ti_fapll_ops = {
+> -	.enable = ti_fapll_enable,
+> -	.disable = ti_fapll_disable,
+> -	.is_enabled = ti_fapll_is_enabled,
+> +	.prepare = ti_fapll_prepare,
+> +	.unprepare = ti_fapll_unprepare,
+> +	.is_prepared = ti_fapll_is_prepared,
+>  	.recalc_rate = ti_fapll_recalc_rate,
+>  	.get_parent = ti_fapll_get_parent,
+>  	.round_rate = ti_fapll_round_rate,
 > 
-> Yes, but in this case the apb clocks for the primecell devices are
-> implemented in a normal platform driver (vexpress_osc_driver), instead
-> of using CLK_OF_DECLARE.
-
-Okay.
-
-Rob
-
