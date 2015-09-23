@@ -1,70 +1,65 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-clk <linux-clk@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>, SH-Linux <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, "Simon Horman [Horms]" <horms@verge.net.au>
-Subject: Re: [PATCH v5 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
-Date: Tue, 01 Sep 2015 14:51:07 +0300
-Message-ID: <11729470.IAXP0ll3OY@avalon>
-In-Reply-To: <CAMuHMdWkBPhPJP5WUkDv+1psiZ9iFQv65t9QB5+qq=+Kn7L0mA@mail.gmail.com>
-References: <20150831124842.31057.54534.sendpatchset@little-apple> <CANqRtoSw92UoVBvTJfzGvxmYwefNndqqnj2_8iqi5O=FUeLMGA@mail.gmail.com> <CAMuHMdWkBPhPJP5WUkDv+1psiZ9iFQv65t9QB5+qq=+Kn7L0mA@mail.gmail.com>
+Return-Path: <B48286@freescale.com>
+From: Hou Zhiqiang <B48286@freescale.com>
+To: Li Leo <LeoLi@freescale.com>, Mark Rutland <mark.rutland@arm.com>,
+	"marc.zyngier@arm.com" <marc.zyngier@arm.com>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Catalin Marinas
+	<Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Shaohui Xie
+	<Shaohui.Xie@freescale.com>, "corbet@lwn.net" <corbet@lwn.net>, "Sharma
+ Bhupesh" <bhupesh.sharma@freescale.com>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "wsa@the-dreams.de" <wsa@the-dreams.de>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "wim@iguana.be"
+	<wim@iguana.be>, Wenbin Song <Wenbin.Song@freescale.com>, Scott Wood
+	<scottwood@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>
+Subject: RE: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
+Date: Wed, 23 Sep 2015 03:05:20 +0000
+Message-ID: <CY1PR0301MB07805FA01ACAF84648C806138B440@CY1PR0301MB0780.namprd03.prod.outlook.com>
+References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+ <1442838158-2964-5-git-send-email-B48286@freescale.com>
+ <20150922012403.GA1535@svinekod>
+ <CY1PR0301MB078008B10188504C951076498B450@CY1PR0301MB0780.namprd03.prod.outlook.com>
+ <DM2PR0301MB07342356008C1A50AB26FEFFBA450@DM2PR0301MB0734.namprd03.prod.outlook.com>
+In-Reply-To: <DM2PR0301MB07342356008C1A50AB26FEFFBA450@DM2PR0301MB0734.namprd03.prod.outlook.com>
+Content-Type: text/plain; charset="gb2312"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday 01 September 2015 13:36:28 Geert Uytterhoeven wrote:
-> On Tue, Sep 1, 2015 at 12:59 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> >>> +/*
-> >>> + *   MD              EXTAL           PLL0    PLL1    PLL2    PLL3   
-> >>> PLL4
-> >>> + * 14 13 19 17       (MHz)           *1      *1      *1
-> >>> + *-------------------------------------------------------------------
-> >>> + * 0  0  0  0        16.66 x 1       x180/2  x192/2  x144/2  x192   
-> >>> x144
-> >>> + * 0  0  0  1        16.66 x 1       x180/2  x192/2  x144/2  x128   
-> >>> x144
-> >>> + * 0  0  1  0        Prohibited setting
-> >>> + * 0  0  1  1        16.66 x 1       x180/2  x192/2  x144/2  x192   
-> >>> x144
-> >>> + * 0  1  0  0        20    x 1       x150/2  x156/2  x120/2  x156   
-> >>> x120
-> >>> + * 0  1  0  1        20    x 1       x150/2  x156/2  x120/2  x106   
-> >>> x120
-> >>> + * 0  1  1  0        Prohibited setting
-> >>> + * 0  1  1  1        20    x 1       x150/2  x156/2  x120/2  x156   
-> >>> x120
-> >>> + * 1  0  0  0        25    x 1       x120/2  x128/2  x96/2   x128   
-> >>> x96
-> >>> + * 1  0  0  1        25    x 1       x120/2  x128/2  x96/2   x84    
-> >>> x96
-> >>> + * 1  0  1  0        Prohibited setting
-> >>> + * 1  0  1  1        25    x 1       x120/2  x128/2  x96/2   x128   
-> >>> x96
-> >>> + * 1  1  0  0        33.33 / 2       x180/2  x192/2  x144/2  x192   
-> >>> x144
-> >>> + * 1  1  0  1        33.33 / 2       x180/2  x192/2  x144/2  x128   
-> >>> x144
-> >>> + * 1  1  1  0        Prohibited setting
-> >>> + * 1  1  1  1        33.33 / 2       x180/2  x192/2  x144/2  x192   
-> >>> x144
-> >>> + *
-> >>> + * *1 : datasheet indicates VCO output (PLLx = VCO/2)
-> >> 
-> >> As explained in a separate e-mail there's a few clocks on R8A7795 that
-> >> derive directly from PLL1 VCO. I thus wonder whether we shouldn't expose
-> >> the PLL1 clock as the VCO output and create VCO/2 using a fixed factor
-> >> clock in DT.
-> >
-> > Do you think that would reduce complexity or simplify the code? If so
-> > I think we should do it. Otherwise I think it makes sense to simply
-> > follow the data sheet.
-> 
-> It would avoid having to apply a multiplier of two to the RPC clock.
-
-And it would match the hardware clock tree topology. Applying a multiplier to 
-the RPC clock is a hack I can live with though, so I'll let you decide which 
-option is best, but in general matching the hardware seems a good idea to me.
-
--- 
-Regards,
-
-Laurent Pinchart
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGkgWWFuZy1MZW8tUjU4
+NDcyDQo+IFNlbnQ6IDIwMTXE6jnUwjIzyNUgMToyMw0KPiBUbzogSG91IFpoaXFpYW5nLUI0ODI4
+NjsgTWFyayBSdXRsYW5kOyBtYXJjLnp5bmdpZXJAYXJtLmNvbQ0KPiBDYzogbGludXgtYXJtLWtl
+cm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBDYXRhbGluIE1hcmluYXM7IFdpbGwgRGVhY29uOw0K
+PiBsaW51eC1pMmNAdmdlci5rZXJuZWwub3JnOyBsaW51eC13YXRjaGRvZ0B2Z2VyLmtlcm5lbC5v
+cmc7IGxpbnV4LQ0KPiBkb2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC1jbGtAdmdlci5rZXJuZWwu
+b3JnOyBYaWUgU2hhb2h1aS1CMjE5ODk7DQo+IGNvcmJldEBsd24ubmV0OyBTaGFybWEgQmh1cGVz
+aC1CNDUzNzA7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyB3c2FAdGhlLQ0KPiBkcmVhbXMuZGU7
+IHNib3lkQGNvZGVhdXJvcmEub3JnOyB3aW1AaWd1YW5hLmJlOyBTb25nIFdlbmJpbi1CNTM3NDc7
+IFdvb2QNCj4gU2NvdHQtQjA3NDIxOyBIdSBNaW5na2FpLUIyMTI4NA0KPiBTdWJqZWN0OiBSRTog
+W1BBVENIIDQvNl0gYXJtNjQvbHMxMDQzYTogYWRkIERUUyBmb3IgRnJlZXNjYWxlIExTMTA0M0Eg
+U29DDQo+IA0KPiA+ID4NCj4gPiA+IEhpLA0KPiA+ID4NCj4gPiA+ID4gKy9tZW1yZXNlcnZlLyAw
+eDgwMDAwMDAwIDB4MDAwMTAwMDA7DQo+ID4gPg0KPiA+ID4gV2h5IGlzIHRoaXMgbmVjZXNzYXJ5
+Pw0KPiA+DQo+ID4gVGhpcyBtZW1vcnkgcmVnaW9uIGlzIHByZS1yZXNlcnZlZCBmb3IgdGhlIHNw
+aW4tdGFibGUvcHNjaSwgYWx0aG91Z2gNCj4gPiBkaWRuJ3QgYWRkIEVuYWJsZSBtZXRob2Qgb2Yg
+c2Vjb25kYXJ5IGNvcmVzLg0KPiANCj4gQ2FuIHRoaXMgYmUgcmVzZXJ2ZWQgYnkgYm9vdGxvYWRl
+cj8NCg0KWWVzLCB0aGUgbWVtb3J5IGZvciBwc2NpIHdhcyByZXNlcnZlZCBieSB1LWJvb3QgY29k
+ZS4gQnV0IGR1ZSB0byBzcGluLXRhYmxlDQpuZWVkIHRoZSByZWxlYXNlIGFkZHJlc3MsIGlzIGl0
+IGJldHRlciBhZGRpbmcgdGhlIC9tZW1yZXNlcnZlLyBpbiBkdHMgZmlsZT8NCk9yIGFkZCBpdCBi
+eSBib290bG9hZGVyIGFuZCBmaXggdGhlIHJlbGVhc2UgYWRkcmVzcyBhY2NvcmRpbmdseT8NCg0K
+PiANCj4gPg0KPiA+ID4gSWYgdGhpcyBpcyBuZWNlc3NhcnksIHBsZWFzZSBhZGQgYSBjb21tZW50
+IHN0YXRpbmcgd2hhdCB0aGlzIGlzIGZvci4NCj4gPiA+DQo+ID4gPiA+ICsgICAgICAgICAgICAg
+ICBjcHVAMyB7DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGRldmljZV90eXBlID0g
+ImNwdSI7DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAiYXJt
+LGNvcnRleC1hNTMiOw0KPiA+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICByZWcgPSA8MHgw
+IDB4Mz47DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGNsb2NrcyA9IDwmY2xvY2tn
+ZW4gMSAwPjsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgIH07DQo+ID4gPg0KPiA+ID4gTWlzc2lu
+ZyBlbmFibGUtbWV0aG9kIHByb3BlcnRpZXMgb24gYWxsIHRoZSBzZWNvbmRhcnkgQ1BVcy4NCj4g
+PiA+DQo+ID4NCj4gPiBUaGVyZSBhcmUgdHdvIG1ldGhvZHMgKHNwaW4tdGFibGUgYW5kIHBzY2kp
+IHRvIGJyaW5nIHVwIHNlY29uZGFyeQ0KPiA+IGNvcmVzLCB3aGljaCBvbmUgZG8geW91IHRoaW5r
+IGlzIGJldHRlcj8NCj4gDQo+IERvIHdlIGhhdmUgdGhlIFBTQ0kgc3VwcG9ydCByZWFkeSBpbiBi
+b3RoIFVFRkkgYW5kIHUtYm9vdD8gIElmIG5vdCwgd2UNCj4gc2hvdWxkIHVzZSBzcGluLXRhYmxl
+IGZvciBub3cuDQo+DQoNCm91ciBpbnRlcm5hbCB1LWJvb3Qgc3VwcG9ydHMgUFNDSSBidXQgb3Bl
+bnNvdXJjZSBkb2Vzbid0IHN1cHBvcnQgaXQgZm9yIEFSTXY4Lg0KDQpUaGFua3MsDQpaaGlxaWFu
+Zw0K
