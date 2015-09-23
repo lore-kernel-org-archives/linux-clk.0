@@ -1,49 +1,83 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Return-Path: <B48286@freescale.com>
+From: Hou Zhiqiang <B48286@freescale.com>
 To: Mark Rutland <mark.rutland@arm.com>
-Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: rockchip: add critical clock for rk3368
-Date: Mon, 14 Sep 2015 17:06:05 +0200
-Message-ID: <6675833.8DAAvDYooL@diego>
-In-Reply-To: <20150914141920.GF7002@leverpostej>
-References: <5267432.TORlj1Iv40@diego> <20150914141920.GF7002@leverpostej>
+CC: Marc Zyngier <Marc.Zyngier@arm.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Catalin Marinas
+	<Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Shaohui Xie
+	<Shaohui.Xie@freescale.com>, "corbet@lwn.net" <corbet@lwn.net>, "Sharma
+ Bhupesh" <bhupesh.sharma@freescale.com>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "wsa@the-dreams.de" <wsa@the-dreams.de>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "wim@iguana.be"
+	<wim@iguana.be>, Wenbin Song <Wenbin.Song@freescale.com>, Scott Wood
+	<scottwood@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>, Li Leo
+	<LeoLi@freescale.com>
+Subject: RE: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
+Date: Wed, 23 Sep 2015 03:57:53 +0000
+Message-ID: <CY1PR0301MB078079163738A7B9EC989C278B440@CY1PR0301MB0780.namprd03.prod.outlook.com>
+References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+ <1442838158-2964-5-git-send-email-B48286@freescale.com>
+ <20150922012403.GA1535@svinekod>
+ <CY1PR0301MB078008B10188504C951076498B450@CY1PR0301MB0780.namprd03.prod.outlook.com>
+ <20150922221504.GA1497@svinekod>
+In-Reply-To: <20150922221504.GA1497@svinekod>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, 14. September 2015, 15:19:21 schrieb Mark Rutland:
-> On Sun, Sep 13, 2015 at 12:20:36PM +0100, Heiko St=FCbner wrote:
-> > Again a result of the gpio-clock-liberation the rk3368 needs the
-> > pclk_pd_pmu marked as critical, to boot successfully.
-> >=20
-> > Reported-by: Mark Rutland <mark.rutland@arm.com>
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->=20
-> FWIW: Tested-by: Mark Rutland <mark.rutland@arm.com>
->=20
-> I'm surprised that we don't describe these as critical in the DT, giv=
-en
-> that this isn't really an internal property of the clock controller, =
-but
-> rather what happens to be attached to it. That ship appears to have
-> sailed, however.
-
-I wouldn't necessarily think so ... what is called critical only means =
-"don't=20
-turn off when walking the clock-tree upwards".
-
-The pclk_pd_pmu for example simply supplies some more clocks we don't h=
-andle=20
-at all currently (pclk_pmu_noc, ...). That we currently choose to ignor=
-e those=20
-[because we don't have any code nor dt-bindings to handle the component=
-s=20
-supplied] sounds very much like an implementation-specific detail, not=20=
-
-something about the hardware.
-
-I really like the concept of critical clock handling Mike is working on=
-, which=20
-implements some sort of hand-off and keeps so marked clocks on until a =
-real=20
-components picks them up.
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTWFyayBSdXRsYW5kIFtt
+YWlsdG86bWFyay5ydXRsYW5kQGFybS5jb21dDQo+IFNlbnQ6IDIwMTXlubQ55pyIMjPml6UgNjox
+NQ0KPiBUbzogSG91IFpoaXFpYW5nLUI0ODI4Ng0KPiBDYzogTWFyYyBaeW5naWVyOyBsaW51eC1h
+cm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IENhdGFsaW4gTWFyaW5hczsNCj4gV2lsbCBE
+ZWFjb247IGxpbnV4LWkyY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXdhdGNoZG9nQHZnZXIua2Vy
+bmVsLm9yZzsNCj4gbGludXgtZG9jQHZnZXIua2VybmVsLm9yZzsgbGludXgtY2xrQHZnZXIua2Vy
+bmVsLm9yZzsgWGllIFNoYW9odWktQjIxOTg5Ow0KPiBjb3JiZXRAbHduLm5ldDsgU2hhcm1hIEJo
+dXBlc2gtQjQ1MzcwOyBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsgd3NhQHRoZS0NCj4gZHJlYW1z
+LmRlOyBzYm95ZEBjb2RlYXVyb3JhLm9yZzsgd2ltQGlndWFuYS5iZTsgU29uZyBXZW5iaW4tQjUz
+NzQ3OyBXb29kDQo+IFNjb3R0LUIwNzQyMTsgSHUgTWluZ2thaS1CMjEyODQ7IExpIFlhbmctTGVv
+LVI1ODQ3Mg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDQvNl0gYXJtNjQvbHMxMDQzYTogYWRkIERU
+UyBmb3IgRnJlZXNjYWxlIExTMTA0M0EgU29DDQo+IA0KPiBPbiBUdWUsIFNlcCAyMiwgMjAxNSBh
+dCAxMDo1MDoyMUFNICswMTAwLCBIb3UgWmhpcWlhbmcgd3JvdGU6DQo+ID4gSGkgTWFyaywNCj4g
+Pg0KPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZyb206IE1hcmsgUnV0
+bGFuZCBbbWFpbHRvOm1hcmsucnV0bGFuZEBhcm0uY29tXQ0KPiA+ID4gU2VudDogMjAxNeW5tDnm
+nIgyMuaXpSA5OjI0DQo+ID4gPiBUbzogSG91IFpoaXFpYW5nLUI0ODI4NjsgbWFyYy56eW5naWVy
+QGFybS5jb20NCj4gPiA+IENjOiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7
+IENhdGFsaW4gTWFyaW5hczsgV2lsbA0KPiA+ID4gRGVhY29uOyBsaW51eC1pMmNAdmdlci5rZXJu
+ZWwub3JnOyBsaW51eC13YXRjaGRvZ0B2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gPiBsaW51eC0gZG9j
+QHZnZXIua2VybmVsLm9yZzsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsgWGllDQo+ID4gPiBT
+aGFvaHVpLUIyMTk4OTsgY29yYmV0QGx3bi5uZXQ7IFNoYXJtYSBCaHVwZXNoLUI0NTM3MDsNCj4g
+PiA+IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyB3c2FAdGhlLSBkcmVhbXMuZGU7IHNib3lkQGNv
+ZGVhdXJvcmEub3JnOw0KPiA+ID4gd2ltQGlndWFuYS5iZTsgU29uZyBXZW5iaW4tQjUzNzQ3OyBX
+b29kIFNjb3R0LUIwNzQyMTsgSHUNCj4gPiA+IE1pbmdrYWktQjIxMjg0OyBMaSBZYW5nLUxlby1S
+NTg0NzINCj4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggNC82XSBhcm02NC9sczEwNDNhOiBhZGQg
+RFRTIGZvciBGcmVlc2NhbGUNCj4gPiA+IExTMTA0M0EgU29DDQo+ID4gPg0KPiA+ID4gSGksDQo+
+ID4gPg0KPiA+ID4gPiArL21lbXJlc2VydmUvIDB4ODAwMDAwMDAgMHgwMDAxMDAwMDsNCj4gPiA+
+DQo+ID4gPiBXaHkgaXMgdGhpcyBuZWNlc3Nhcnk/DQo+ID4NCj4gPiBUaGlzIG1lbW9yeSByZWdp
+b24gaXMgcHJlLXJlc2VydmVkIGZvciB0aGUgc3Bpbi10YWJsZS9wc2NpLCBhbHRob3VnaA0KPiA+
+IGRpZG4ndCBhZGQgRW5hYmxlIG1ldGhvZCBvZiBzZWNvbmRhcnkgY29yZXMuDQo+IA0KPiBZb3Vy
+IFBTQ0kgaW1wbGVtZW50YXRpb24gaXNuJ3QgaW4gc2VjdXJlIG1lbW9yeT8NCj4gDQoNClNvcnJ5
+LCB0aGlzIGlzIGZvciBzcGluLXRhYmxlLCBwc2NpIHdpbGwgZml4IGl0IGluIHUtYm9vdC4NCg0K
+PiA+ID4gPiArICAgICAgIGlmYzogaWZjQDE1MzAwMDAgew0KPiA+ID4gPiArICAgICAgICAgICAg
+ICAgY29tcGF0aWJsZSA9ICJmc2wsaWZjIiwgInNpbXBsZS1idXMiOw0KPiA+ID4gPiArICAgICAg
+ICAgICAgICAgcmVnID0gPDB4MCAweDE1MzAwMDAgMHgwIDB4MTAwMDA+Ow0KPiA+ID4gPiArICAg
+ICAgICAgICAgICAgaW50ZXJydXB0cyA9IDwwIDQzIDB4ND47DQo+ID4gPiA+ICsgICAgICAgfTsN
+Cj4gPiA+DQo+ID4gPiBXaHkgc2ltcGxlLWJ1cz8NCj4gPg0KPiA+IFRoZXJlIGFyZSAzIGNoaWxk
+IG5vZGUgbG9jYXRlZCBpbiBkdHNpIGZpbGUgdGhhdCBzaG91bGQgYmUgY3JlYXRlZCBhbmQNCj4g
+PiBhZGRlZCB0byBwbGF0Zm9ybSBkZXZpY2UgbGlzdC4NCj4gDQo+IEFyZSB0aGV5IHVzYWJsZSBl
+dmVuIGlmIHRoZSBrZXJuZWwga25ldyBub3RoaW5nIGFib3V0IHRoZSBJRkMgbm9kZT8gSWYNCj4g
+bm90LCB0aGUgSUZDIGRyaXZlciBzaG91bGQgcHJvYmUgdGhlbSwgYW5kIHNpbXBsZS1idXMgc2hv
+dWxkIGdvLg0KPiANCj4gPiA+ID4gKyAgICAgICBtZW1vcnlAODAwMDAwMDAgew0KPiA+ID4gPiAr
+ICAgICAgICAgICAgICAgZGV2aWNlX3R5cGUgPSAibWVtb3J5IjsNCj4gPiA+ID4gKyAgICAgICAg
+ICAgICAgIHJlZyA9IDwweDAgMHg4MDAwMDAwMCAwIDB4ODAwMDAwMDA+Ow0KPiA+ID4gPiArICAg
+ICAgICAgICAgICAgICAgICAgLyogRFJBTSBzcGFjZSAxIC0gMiBHQiBEUkFNICovDQo+ID4gPg0K
+PiA+ID4gSSBkb24ndCB1bmRlcnN0YW5kIHRoZSBjb21tZW50LiBUaGlzIGRlc2NyaWJlcyAyR0Ig
+YXQgMkdCLg0KPiA+ID4NCj4gPg0KPiA+IFllcywgdGhlcmUgaXMgYSAyR0Igc3BhY2UgZm9yIERS
+QU0gZnJvbSBhZGRyZXNzIDJHLg0KPiA+IFRoZSBEUkFNIGFkZHJlc3MgMHgwIHdpbGwgYmUgcmVt
+YXBwZWQgdG8gU29DIGFkZHJlc3MgMkcsIHRoaXMgcmVtYXAgaXMNCj4gZG9uZSBieSBoYXJkd2Fy
+ZS4NCj4gDQo+IEkganVzdCByZWFsaXNlZCBteSBtaXN0YWtlIC0tIEkgcmVhZCB0aGlzIGFzICIx
+IHRvIDIgR0IiLCB3aGVuIHRoaXMgaXMNCj4gYWN0dWFsbHkgIkRSQU0gc3BhY2UgMSIuIFNvcnJ5
+IGZvciB0aGUgbm9pc2UuDQo+IA0KDQpUaGFua3MsDQpaaGlxaWFuZw0K
