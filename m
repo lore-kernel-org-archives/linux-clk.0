@@ -1,92 +1,44 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-MIME-Version: 1.0
-In-Reply-To: <5383634.Mln7J3sdWP@wuerfel>
-References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
- <80094129.LHZFOe1ZPU@wuerfel>
- <CADRPPNR-cSSQC5sLMmoqcxX46J6hdULa_V4v2BK7T8s8pcX0cg@mail.gmail.com>
- <5383634.Mln7J3sdWP@wuerfel>
-Date: Wed, 9 Sep 2015 18:50:26 -0500
-Message-ID: <CADRPPNRekyv3dSEroh-n2e6p5nV7Q6tAW1VKHWn=Gqnc+MSs+g@mail.gmail.com>
-Subject: Re: [PATCH v2 04/10] doc/bindings: Update PCIe devicetree binding
- documentation for LS2080A
-From: Li Yang <leoli@freescale.com>
-To: Arnd Bergmann <arnd@arndb.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
- Bhupesh Sharma <bhupesh.sharma@freescale.com>, Catalin.Marinas@arm.com,
- will.deacon@arm.com, Minghuan Lian <Minghuan.Lian@freescale.com>,
- marc.zyngier@arm.com, olof@lixom.net, Bhupesh SHARMA <bhupesh.linux@gmail.com>,
- linux-clk@vger.kernel.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <ben.dooks@codethink.co.uk>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+To: t-kristo@ti.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: linux-kernel@lists.codethink.co.uk,
+	stable@vger.kernel.org,
+	Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: [PATCH] clk: ti: fix dual-registration of uart4_ick
+Date: Wed, 23 Sep 2015 15:48:34 +0100
+Message-Id: <1443019714-12926-1-git-send-email-ben.dooks@codethink.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 9, 2015 at 4:07 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Tuesday 08 September 2015 15:06:16 Li Yang wrote:
->> On Mon, Sep 7, 2015 at 6:32 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->> > On Friday 04 September 2015 12:27:46 Bhupesh Sharma wrote:
->> >> @@ -4,7 +4,8 @@ This PCIe host controller is based on the Synopsis Designware PCIe IP
->> >>  and thus inherits all the common properties defined in designware-pcie.txt.
->> >>
->> >>  Required properties:
->> >> -- compatible: should contain the platform identifier such as "fsl,ls1021a-pcie"
->> >> +- compatible: should contain the platform identifier such as "fsl,ls1021a-pcie",
->> >> +  "fsl,ls2080a-pcie".
->> >>  - reg: base addresses and lengths of the PCIe controller
->> >>  - interrupts: A list of interrupt outputs of the controller. Must contain an
->> >>    entry for each entry in the interrupt-names property.
->> >>
->> >
->> > Are the two PCIe hosts mutually compatible? If they are, you should mandate
->> > one of the strings as the base model for identification, with the additional
->> > model being optional for identification of the specific SoC.
->>
->> It seems that controllers on these chips are not exactly the same.
->> They will get different driver data by matching the compatible
->> strings.  Probably we could define a more generic compatible string,
->> such as "fsl,layerscape-pcie" or "fsl,ls-pcie".
->>
->> >
->> > It would also be good to add a string with the specific version number of the
->> > designware PCIe block that is being used there.
->>
->> The binding has mentioned to reference the designware-pcie.txt.  But
->> it might be more clear to mention the designware compatible string
->> "snps,dw-pcie" again in the compatible part.  Currently there is no
->> version number defined in the designware-pcie binding.  It might be
->> hard to get this information for some SoCs.
->
-> For most of them, the information is available and then it should be
-> added. Obviously if you can't find it out, it's hard to guess and
-> you have to leave it out for that particular chip.
+On the OMAP AM3517 platform the uart4_ick gets registered
+twice, causing any power managment to /dev/ttyO3 to fail
+when trying to wake the device up.
 
-Actually I don't know any approach to get the version number of the
-designware block used.  Maybe they are actually using the same version
-of the IP block, and the differences in the driver are actually caused
-by the differences in SoC integration.
+This solves the following oops:
 
->
-> A lot of devices also have some internal version register that you
-> can read out.
+[] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
+[] PC is at serial_omap_pm+0x48/0x15c
+[] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
 
-There doesn't seem to be this kind of register for the PCIe block.
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+ drivers/clk/ti/clk-3xxx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Minghuan,
-
-Please correct me if you know more. :)
-
-Regards,
-Leo
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
+index 5e12f32..2e7ef1f 100644
+--- a/drivers/clk/ti/clk-3xxx.c
++++ b/drivers/clk/ti/clk-3xxx.c
+@@ -374,7 +374,6 @@ static struct ti_dt_clk omap3xxx_clks[] = {
+ 	DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
+ 	DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
+ 	DT_CLK(NULL, "uart3_ick", "uart3_ick"),
+-	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
+ 	DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
+ 	DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
+ 	DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
+-- 
+2.5.1
