@@ -1,31 +1,36 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 07/11] clk: samsung: exynos7: Corrects CMU_PERIS clocks
- names
-To: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org
-References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
- <1441366637-28001-8-git-send-email-alim.akhtar@samsung.com>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
- mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com,
- sboyd@codeaurora.org, linux-clk@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <55F100F1.3060407@samsung.com>
-Date: Thu, 10 Sep 2015 13:02:57 +0900
-MIME-version: 1.0
-In-reply-to: <1441366637-28001-8-git-send-email-alim.akhtar@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <shawnguo@kernel.org>
+Date: Tue, 22 Sep 2015 18:06:08 -0700
+From: Shawn Guo <shawnguo@kernel.org>
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] ARM: imx35: Do not call mxc_timer_init twice when
+ booting with DT
+Message-ID: <20150923010608.GF3529@tiger>
+References: <1441791315-25390-1-git-send-email-alexander.stein@systec-electronic.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1441791315-25390-1-git-send-email-alexander.stein@systec-electronic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04.09.2015 20:37, Alim Akhtar wrote:
-> This patch rename CMU_PERIS clocks names to match with user manual.
-> And also adds missing gate clock for aclk_peris_66.
+On Wed, Sep 09, 2015 at 11:35:14AM +0200, Alexander Stein wrote:
+> mxc_timer_init must not be called from within mx35_clocks_init_dt. It will
+> eventually be called by imx31_timer_init_dt
+> (drivers/clocksource/timer-imx-gpt.c).
+> This arranges the initialization code similar to clk-imx27.c
 > 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
 > ---
->  drivers/clk/samsung/clk-exynos7.c       |    7 +++++--
->  include/dt-bindings/clock/exynos7-clk.h |    3 ++-
->  2 files changed, 7 insertions(+), 3 deletions(-)
+> Change in v2:
+> * Fix typo
+> 
+>  drivers/clk/imx/clk-imx35.c | 49 +++++++++++++++++++++++++--------------------
+>  1 file changed, 27 insertions(+), 22 deletions(-)
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Forgot mentioning that patches touching drivers/clk/ should be prefixed
+with 'clk: ...' in subject.  I changed the subject of the patch to
+'clk: imx35: ...' when applying.
 
-Best regards,
-Krzysztof
+Shawn
