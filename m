@@ -1,66 +1,70 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: ulf.hansson@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	tgih.jun@samsung.com,
-	jh80.chung@samsung.com
-Cc: linux-mmc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	dianders@chromium.org,
-	amstan@chromium.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 5/8] mmc: dw_mmc-rockchip: dt-binding: Add tuning related things
-Date: Wed, 30 Sep 2015 16:07:41 +0200
-Message-Id: <1443622064-14362-6-git-send-email-heiko@sntech.de>
-In-Reply-To: <1443622064-14362-1-git-send-email-heiko@sntech.de>
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+Return-Path: <l.stach@pengutronix.de>
+Message-ID: <1443002535.25479.6.camel@pengutronix.de>
+Subject: Re: [PATCH v4 1/8] clk: imx: add common logic to detect early UART
+ usage
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org, Sascha
+ Hauer <kernel@pengutronix.de>, patchwork-lst@pengutronix.de
+Date: Wed, 23 Sep 2015 12:02:15 +0200
+In-Reply-To: <CAOMZO5CDnRjxzcnxCDgXKN5SVkCxGqR5dMaectdPvVzpsb9=bQ@mail.gmail.com>
+References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
+	 <1442854444-4460-2-git-send-email-l.stach@pengutronix.de>
+	 <CAOMZO5CDnRjxzcnxCDgXKN5SVkCxGqR5dMaectdPvVzpsb9=bQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Alexandru M Stan <amstan@chromium.org>
+Am Montag, den 21.09.2015, 14:56 -0300 schrieb Fabio Estevam:
+> On Mon, Sep 21, 2015 at 1:53 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
+> > Both earlycon and eralyprintk depend on the bootloader setup UART
+> 
+> s/eralyprintk/earlyprintk
+> 
+> > clocks being retained. This patch adds the common logic to detect such
+> > situations and make the information available to the clock drivers, as
+> > well as adding the facilities to disable those clocks at the end of
+> > the kernel init.
+> 
+> > +void __init imx_register_uart_clocks(struct clk ** const clks[])
+> > +{
+> > +       if (imx_keep_uart_clocks) {
+> > +               int i;
+> > +
+> > +               imx_uart_clocks = clks;
+> > +               for (i = 0; imx_uart_clocks[i]; i++)
+> > +                       clk_prepare_enable(*imx_uart_clocks[i]);
+> 
+> It would be better to check the return value from clk_prepare_enable()
+> and propagate it in the case of error.
+> 
+I don't see any value of that. We certainly don't want to abort probing
+of the clock driver just because keeping the debug UART clocks enabled
+did not work. Everything in this series is about improving the debug
+experience, so I'm not a fan of adding code that makes it more likely to
+break (possibly unrelated) things.
 
-Add ciu_drive, ciu_sample clocks and default-sample-phase. This will later
-be used by tuning code.
+> > +
+> > +static int __init imx_clk_disable_uart(void)
+> > +{
+> > +       if (imx_keep_uart_clocks && imx_uart_clocks) {
+> > +               int i;
+> > +
+> > +               for (i = 0; imx_uart_clocks[i]; i++)
+> > +                       clk_disable_unprepare(*imx_uart_clocks[i]);
+> > +       }
+> > +
+> > +       return 0;
+> 
+> This function could be made 'void' instead.
 
-We do not touch ciu_drive (and by extension define default-drive-phase).
-Drive phase is mostly used to define minimum hold times, while one could
-write some code to determine what phase meets the minimum hold time
-(ex 10 degrees) this will not work with the current clock phase framework
-(which floors angles, so we'll get 0 deg, and there's no way to know what
-resolution the floors happen at). We assume that the default drive angles
-set by the hardware are good enough.
+This is an initcall, which have a fixed function prototype.
 
-Signed-off-by: Alexandru M Stan <amstan@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
-index c327c2d..3dc13b6 100644
---- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
-+++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
-@@ -14,6 +14,19 @@ Required Properties:
- 							before RK3288
- 	- "rockchip,rk3288-dw-mshc": for Rockchip RK3288
- 
-+Optional Properties:
-+* clocks: from common clock binding: if ciu_drive and ciu_sample are
-+  specified in clock-names, should contain handles to these clocks.
-+
-+* clock-names: Apart from the clock-names described in synopsys-dw-mshc.txt
-+  two more clocks "ciu-drive" and "ciu-sample" are supported. They are used
-+  to control the clock phases, "ciu-sample" is required for tuning high-
-+  speed modes.
-+
-+* rockchip,default-sample-phase: The default phase to set ciu_sample at
-+  probing, low speeds or in case where all phases work at tuning time.
-+  If not specified 0 deg will be used.
-+
- Example:
- 
- 	rkdwmmc0@12200000 {
+Regards,
+Lucas
 -- 
-2.5.1
+Pengutronix e.K.             | Lucas Stach                 |
+Industrial Linux Solutions   | http://www.pengutronix.de/  |
