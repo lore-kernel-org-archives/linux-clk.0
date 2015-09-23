@@ -1,69 +1,57 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH v2 8/8] clk: imx7d: retain early UART clocks during kernel init
-Date: Fri,  4 Sep 2015 18:00:19 +0200
-Message-Id: <1441382419-4343-9-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
-References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
- kernel@pengutronix.de, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <jszhang@marvell.com>
+Date: Wed, 23 Sep 2015 09:55:21 +0800
+From: Jisheng Zhang <jszhang@marvell.com>
+To: <sebastian.hesselbarth@gmail.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <mark.rutland@arm.com>, <robh+dt@kernel.org>,
+        <pawel.moll@arm.com>, <ijc+devicetree@hellion.org.uk>,
+        <galak@codeaurora.org>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/5] Add Marvell berlin4ct clk support
+Message-ID: <20150923095521.1ccea0de@xhacker>
+In-Reply-To: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
+References: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Content-Type: text/plain; charset="US-ASCII"
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure to keep UART clocks enabled during kernel init if
-earlyprintk or earlycon are active.
++ CLK maintainers
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- drivers/clk/imx/clk-imx7d.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+sorry, yesterday I pressed ENTER quickly before --to list is completed
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 71f3a94b472c..2cc31b47209b 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -363,6 +363,15 @@ static const char *pll_video_bypass_sel[] = { "pll_video_main", "pll_video_main_
- 
- static struct clk_onecell_data clk_data;
- 
-+static struct clk **uart_clks[] __initdata = { &clks[IMX7D_UART1_ROOT_CLK],
-+					       &clks[IMX7D_UART2_ROOT_CLK],
-+					       &clks[IMX7D_UART3_ROOT_CLK],
-+					       &clks[IMX7D_UART4_ROOT_CLK],
-+					       &clks[IMX7D_UART5_ROOT_CLK],
-+					       &clks[IMX7D_UART6_ROOT_CLK],
-+					       &clks[IMX7D_UART7_ROOT_CLK],
-+					       NULL };
-+
- static void __init imx7d_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
-@@ -856,5 +865,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	/* set uart module clock's parent clock source that must be great then 80MHz */
- 	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
- 
-+	imx_register_uart_clocks(uart_clks);
-+
- }
- CLK_OF_DECLARE(imx7d, "fsl,imx7d-ccm", imx7d_clocks_init);
--- 
-2.5.0
+On Tue, 22 Sep 2015 22:12:31 +0800
+Jisheng Zhang <jszhang@marvell.com> wrote:
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Add berlin4ct clk driver. The berlin4ct SoC contains:
+> 
+> two kinds of PLL: normal PLL and AVPLL. The normal PLL support is done.
+> The AVPLL support is in TODO list.
+> 
+> two kinds of clk: normal clk and gate clk. The normal clk supports changing
+> divider, selecting clock source, disabling/enabling etc. The gate clk only
+> supports disabling/enabling. Both are supported in this series.
+> 
+> Jisheng Zhang (5):
+>   clk: berlin: add common pll driver
+>   clk: berlin: add common clk driver for newer SoCs
+>   clk: berlin: add clk support for berlin4ct
+>   dt-bindings: add binding for marvell berlin4ct SoC
+>   arm64: dts: berlin4ct: add pll and clock nodes
+> 
+>  .../bindings/clock/marvell,berlin4ct.txt           |  38 +++++
+>  arch/arm64/boot/dts/marvell/berlin4ct.dtsi         |  38 +++++
+>  drivers/clk/berlin/Makefile                        |   2 +-
+>  drivers/clk/berlin/clk-berlin4ct.c                 | 164 +++++++++++++++++++++
+>  drivers/clk/berlin/clk.c                           | 147 ++++++++++++++++++
+>  drivers/clk/berlin/clk.h                           |  38 +++++
+>  drivers/clk/berlin/pll.c                           | 119 +++++++++++++++
+>  include/dt-bindings/clock/berlin4ct.h              |  56 +++++++
+>  8 files changed, 601 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/marvell,berlin4ct.txt
+>  create mode 100644 drivers/clk/berlin/clk-berlin4ct.c
+>  create mode 100644 drivers/clk/berlin/clk.c
+>  create mode 100644 drivers/clk/berlin/clk.h
+>  create mode 100644 drivers/clk/berlin/pll.c
+>  create mode 100644 include/dt-bindings/clock/berlin4ct.h
+> 
