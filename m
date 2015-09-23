@@ -1,54 +1,55 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 14 Sep 2015 16:29:45 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com
-Subject: [GIT PULL] clk: fixes for 4.3-rc1
-Message-ID: <20150914232945.GA5264@codeaurora.org>
+Return-Path: <tony@atomide.com>
+Date: Wed, 23 Sep 2015 08:38:12 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org, Brian Hutchinson <b.hutchman@gmail.com>,
+	Felipe Balbi <balbi@ti.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Nishanth Menon <nm@ti.com>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	Thomas Gleixner <tglx@linutronix.de>, Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH] clk: ti: Fix FAPLL udelay in clk_enable with clk_prepare
+Message-ID: <20150923153812.GF23801@atomide.com>
+References: <1442956985-32642-1-git-send-email-tony@atomide.com>
+ <560242EB.5070001@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <560242EB.5070001@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit ba30011577330b7e29ecb5916d89c6db9fbc5b3d:
+* Peter Ujfalusi <peter.ujfalusi@ti.com> [150922 23:17]:
+> Tony,
+> 
+> On 09/23/2015 12:23 AM, Tony Lindgren wrote:
+> > As recently pointed out (again) by Thomas and Russell, we must not
+> > wait in in clk_enable. The wait for PLL to lock needs to happen
+> > in clk_prepare instead.
+> > 
+> > It seems this is a common copy paste error with the PLL drivers,
+> > and similar fixes should be applied to other PLL drivers after
+> > testing.
+> 
+> One thing to note:
+> because of how the hwmod code works, at boot time we prepare all clocks for
+> the devices and in runtime the hwmod only uses clk_enable/disable, it will
+> never unprepare the clock(s). This will means that these clocks will be
+> enabled all the time and will never turned off.
 
-  clk: s5pv210: add missing call to samsung_clk_of_add_provider() (2015-08-27 12:03:21 -0700)
+Good point, we need to check that for hwmod pm_runtime related
+functions. Basically the PLLs we can't disable until in
+pm_runtime_disable.
 
-are available in the git repository at:
+I think the approach we need to take to be that clk_enable/disable
+is really optional clk_gate_enable/disable. And in many cases PLLs
+don't have a gate, so it's correct for pm_runtime enable/disable
+to not do anything for the PLLs.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+And the reason we don't want to change pm_runtime hooks to use
+clk_prepare_enable/disable is that then drivers can't use
+pm_runtime_irq_safe like some do currently.
 
-for you to fetch changes up to 3bba75a2ec32bd5fa7024a4de3b8cf9ee113a76a:
+Regards,
 
-  clk: rockchip: Add pclk_peri to critical clocks on RK3066/RK3188 (2015-09-10 13:55:30 -0700)
-
-----------------------------------------------------------------
-A couple build fixes for drivers introduced in the merge window and a
-handful of patches to add more critical clocks on rockchip SoCs that
-are affected by newly introduced gpio clock handling.
-
-----------------------------------------------------------------
-Guenter Roeck (1):
-      clk: h8s2678: Fix compile error
-
-Heiko Stuebner (1):
-      clk: rockchip: handle critical clocks after registering all clocks
-
-Leo Yan (1):
-      clk: Hi6220: separately build stub clock driver
-
-Michael Niewoehner (1):
-      clk: rockchip: add pclk_cpu to the list of rk3188 critical clocks
-
-Romain Perier (1):
-      clk: rockchip: Add pclk_peri to critical clocks on RK3066/RK3188
-
- drivers/clk/h8300/clk-h8s2678.c   | 1 +
- drivers/clk/hisilicon/Kconfig     | 8 +++++++-
- drivers/clk/hisilicon/Makefile    | 3 ++-
- drivers/clk/rockchip/clk-rk3188.c | 9 +++++++--
- 4 files changed, 17 insertions(+), 4 deletions(-)
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Tony
