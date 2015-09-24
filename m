@@ -1,65 +1,58 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Emilio Lopez <emilio@elopez.com.ar>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 2/4] ARM: sun8i: Add the A33 AHB1 gates clock driver
-Date: Fri, 11 Sep 2015 15:26:35 +0200
-Message-Id: <1441977997-29041-3-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1441977997-29041-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1441977997-29041-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <newchief@king.net.pl>
+From: Paul Osmialowski <newchief@king.net.pl>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Paul Osmialowski <pawelo@king.net.pl>
+Subject: [PATCH 0/1] add devm_of_clk_get() and devm_of_clk_get_by_name() functions
+Date: Thu, 24 Sep 2015 10:03:27 +0200
+Message-Id: <1443081808-19688-1-git-send-email-newchief@king.net.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-The A33 has different a different gates array than the A23, add the node to
-the DT.
+From: Paul Osmialowski <pawelo@king.net.pl>
 
-Reported-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun8i-a33.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+While working on my pinctrl driver I've found lack of devres compatible
+equivalent for of_clk_get() function. I'd like to use it for the following
+(incomplete) piece of device tree configuration:
 
-diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
-index faa7d3c1fcea..3457edb3bf50 100644
---- a/arch/arm/boot/dts/sun8i-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-@@ -72,6 +72,33 @@
- 			clock-output-names = "pll11";
- 		};
- 
-+		ahb1_gates: clk@01c20060 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun8i-a33-ahb1-gates-clk";
-+			reg = <0x01c20060 0x8>;
-+			clocks = <&ahb1>;
-+			clock-indices = <1>, <5>,
-+				        <6>, <8>, <9>,
-+				        <10>, <13>, <14>,
-+					<19>, <20>,
-+					<21>, <24>, <26>,
-+					<29>, <32>, <36>,
-+					<40>, <44>, <46>,
-+					<52>, <53>,
-+					<54>, <57>,
-+					<58>;
-+			clock-output-names = "ahb1_mipidsi", "ahb1_ss",
-+					"ahb1_dma","ahb1_mmc0", "ahb1_mmc1",
-+					"ahb1_mmc2", "ahb1_nand", "ahb1_sdram",
-+					"ahb1_hstimer", "ahb1_spi0",
-+					"ahb1_spi1", "ahb1_otg", "ahb1_ehci",
-+					"ahb1_ohci", "ahb1_ve", "ahb1_lcd",
-+					"ahb1_csi", "ahb1_be",	"ahb1_fe",
-+					"ahb1_gpu", "ahb1_msgbox",
-+					"ahb1_spinlock", "ahb1_drc",
-+					"ahb1_sat";
-+		};
-+
- 		mbus_clk: clk@01c2015c {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun8i-a23-mbus-clk";
+pinctrl: pinctrl {
+	compatible = "fsl,kinetis-pinctrl";
+	#address-cells = <1>;
+	#size-cells = <1>;
+	ranges;
+
+	port_a@40049000 {
+		compatible = "fsl,kinetis-pin-bank";
+		reg = <0x40049000 0x1000>;
+		clocks = <&sim SIM_CLK_SCGC5_PORTA>;
+	};
+
+	port_b@4004a000 {
+		compatible = "fsl,kinetis-pin-bank";
+		reg = <0x4004a000 0x1000>;
+		clocks = <&sim SIM_CLK_SCGC5_PORTB>;
+	};
+...
+};
+
+In my pinconf-generic compatible fsl,kinetis-pinctrl driver, I'm iterating
+over fsl,kinetis-pin-bank nodes using for_each_child_of_node(dev->of_node,
+child) along with of_match_node() in order to grab resources (I/O base
+address, clock gate).
+
+Normally, I'd have to use of_clk_get() on each pin bank device_node and
+then worry about proper resource release myself.
+
+IMHO using devres infrastructure for this is far better. This patch adds
+missing functions needed to do it that way.
+
+Paul Osmialowski (1):
+  clk: add devm_of_clk_get() and devm_of_clk_get_by_name() functions
+
+ drivers/clk/clk-devres.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk.h      | 20 ++++++++++++++++++++
+ 2 files changed, 66 insertions(+)
+
 -- 
-2.5.1
+2.4.9
