@@ -1,74 +1,113 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 22 Sep 2015 16:04:24 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] Re: [PATCH 5/5] ARM: sun5i: Add C.H.I.P DTS
-Message-ID: <20150922140424.GA4684@lukather>
-References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
- <1442566130-3497-6-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v64E-gQu1U_qi2fTWiCmfgMdMR4X6yLUerV21d3E1uQ1cw@mail.gmail.com>
- <20150922124708.GZ4684@lukather>
- <CAGb2v662+mhFgv1DXz5muA+xGE99R1DVKOxtVPvJmc+tRFPXzQ@mail.gmail.com>
- <56015146.2070509@redhat.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="mqHBVT07r4ObqsKY"
-In-Reply-To: <56015146.2070509@redhat.com>
+Return-Path: <newchief@king.net.pl>
+From: Paul Osmialowski <newchief@king.net.pl>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Paul Osmialowski <pawelo@king.net.pl>
+Subject: [PATCH 1/1] clk: add devm_of_clk_get() and devm_of_clk_get_by_name() functions
+Date: Thu, 24 Sep 2015 10:03:28 +0200
+Message-Id: <1443081808-19688-2-git-send-email-newchief@king.net.pl>
+In-Reply-To: <1443081808-19688-1-git-send-email-newchief@king.net.pl>
+References: <1443081808-19688-1-git-send-email-newchief@king.net.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Paul Osmialowski <pawelo@king.net.pl>
 
---mqHBVT07r4ObqsKY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+These two functions were added to ease management of clocks obtained
+from OF device nodes.
 
-On Tue, Sep 22, 2015 at 03:01:58PM +0200, Hans de Goede wrote:
-> >In short, this is not about "power supply" but VBUS detection. IIRC,
-> >if no VBUS detection method is provided, the phy driver just waits a
-> >period of time after an ID pin change and then considers VBUS invalid.
->=20
-> Right, but that is a hack for boards with no / broken vbus detection
-> (or vbus control), we really want to use vbus-det where available,
-> so I agree that a TODO comment here would be good.
+Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
+---
+ drivers/clk/clk-devres.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk.h      | 20 ++++++++++++++++++++
+ 2 files changed, 66 insertions(+)
 
-What's so special in our SoCs that makes that we can't just rely on
-the ID pin ? (which seems to be working just fine here)
-
-Other SoCs don't need to rely on such a hack as well.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---mqHBVT07r4ObqsKY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWAV/oAAoJEBx+YmzsjxAgL1wQAJhvuHyw3ueoDBogjq3RP0xI
-19UwDGKDF8eqf2gOsAsXbktnP6DzVIJJJ4JncJad/Xp10lOeyJ6G42IfMkyVjokX
-S+sWNANlQlMdKu+hJv1F6FNZBzL816GUQc8w2dRaMAbCDnW8KypBvliPDLwFzIpM
-G0KZHmmcYBsGmbzL/Fk4ik3ovBODNnPl6bxngW8sh/yb8ZwkhwZnDTRUGbZTvfTN
-BlEVsjBPvRLys0KPVAtM8gk8TNOwTouWh7xPjr1/RLNAJn4wuDj8heCLmMjlbncf
-HhyI1BGVA05BXrbKBFRvl/sr9PlpfMRCasqlTLcRp7+rsTEE6W8TVVafyjslE3n8
-CuYVHFn2tISA5lT4RZvVGlOOhZtcbM33Mp3VW/q9TMHJP5mi3M5zYxqyxEPaCS3u
-KmJ0xD7WvJL7W15M/BGPaCYfcoMz1quyhNV5X9AMq2R5klx7CokGs7jIAqu3HxGY
-QK+9uN9zHtzBivrS1yH1DnvfnO/ejCSCHN/QyMTt8XtgSRj6QgwnyMnqCMq5bMU9
-79Q3EmrXyOUtRcVUHKnFMdJBKMFAz6IlZyPVl+sB+4Mg2verwMFo65N+YG47Z2Co
-Mhn2pCJCxtweGGCWVsBd9slWPx/ppQyp8shMgG1ex/ISeU3+FBGpoDCorxPaF0K8
-AIOMpYL0hCkzc4SCqPxw
-=qaBp
------END PGP SIGNATURE-----
-
---mqHBVT07r4ObqsKY--
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index 8f57154..197075a 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -34,6 +34,52 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ }
+ EXPORT_SYMBOL(devm_clk_get);
+ 
++#ifdef CONFIG_OF
++
++struct clk *devm_of_clk_get(struct device *dev, struct device_node *np,
++			    int index)
++{
++	struct clk **ptr, *clk;
++
++	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	clk = of_clk_get(np, index);
++	if (!IS_ERR(clk)) {
++		*ptr = clk;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return clk;
++}
++EXPORT_SYMBOL(devm_of_clk_get);
++
++struct clk *devm_of_clk_get_by_name(struct device *dev, struct device_node *np,
++				    const char *name)
++{
++	struct clk **ptr, *clk;
++
++	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	clk = of_clk_get_by_name(np, name);
++	if (!IS_ERR(clk)) {
++		*ptr = clk;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return clk;
++}
++EXPORT_SYMBOL(devm_of_clk_get_by_name);
++
++#endif /* CONFIG_OF */
++
+ static int devm_clk_match(struct device *dev, void *res, void *data)
+ {
+ 	struct clk **c = res;
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 0df4a51..d7763f1 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -504,4 +504,24 @@ static inline struct clk *of_clk_get_by_name(struct device_node *np,
+ }
+ #endif
+ 
++#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK) && defined(CONFIG_HAVE_CLK)
++struct clk *devm_of_clk_get(struct device *dev, struct device_node *np,
++			    int index);
++struct clk *devm_of_clk_get_by_name(struct device *dev, struct device_node *np,
++				    const char *name);
++#else
++static inline struct clk *devm_of_clk_get(struct device *dev,
++					  struct device_node *np,
++					  int index)
++{
++	return ERR_PTR(-ENOENT);
++}
++static inline struct clk *devm_of_clk_get_by_name(struct device *dev,
++						  struct device_node *np,
++						  const char *name)
++{
++	return ERR_PTR(-ENOENT);
++}
++#endif
++
+ #endif
+-- 
+2.4.9
