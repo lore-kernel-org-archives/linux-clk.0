@@ -1,55 +1,39 @@
-Return-Path: <tony@atomide.com>
-Date: Wed, 23 Sep 2015 10:30:40 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: t-kristo@ti.com, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@lists.codethink.co.uk, stable@vger.kernel.org
-Subject: Re: [PATCH] clk: ti: fix dual-registration of uart4_ick
-Message-ID: <20150923173040.GI23801@atomide.com>
-References: <1443019714-12926-1-git-send-email-ben.dooks@codethink.co.uk>
+Return-Path: <shawnguo@kernel.org>
+Date: Thu, 24 Sep 2015 05:17:38 -0700
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Victorien Vedrine <victorien.vedrine@ophrys.net>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com, shawn.guo@linaro.org,
+	"Fabio.Estevam@freescale.com" <Fabio.Estevam@freescale.com>,
+	Marek Vasut <marex@denx.de>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2] clk:mxs: Fix bug on frequency divider
+Message-ID: <20150924121738.GP3529@tiger>
+References: <55BBB1AC.6070102@codeaurora.org>
+ <1441010707-17178-1-git-send-email-victorien.vedrine@ophrys.net>
+ <55FBBB6D.4010805@i2se.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443019714-12926-1-git-send-email-ben.dooks@codethink.co.uk>
+In-Reply-To: <55FBBB6D.4010805@i2se.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Ben Dooks <ben.dooks@codethink.co.uk> [150923 07:53]:
-> On the OMAP AM3517 platform the uart4_ick gets registered
-> twice, causing any power managment to /dev/ttyO3 to fail
-> when trying to wake the device up.
+On Fri, Sep 18, 2015 at 09:21:17AM +0200, Stefan Wahren wrote:
+> +Shawn's new address
+> +linux-arm-kernel
 > 
-> This solves the following oops:
-> 
-> [] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
-> [] PC is at serial_omap_pm+0x48/0x15c
-> [] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
+> > On drivers/clk/mxs/clk-frac.c, the function clk_frac_round_rate returned a bad
+> > result. The division before multiplication computes a wrong value ; the
+> > calculation is inverted to fix the problem. The second issue is that the exact
+> > rate have decimals and they are truncate. The consequence is that the function
+> > clk_frac_set_rate (which use the result of clk_frac_round_rate) computes a
+> > wrong value for the register (the rate generated can be closer to the desired
+> > rate). The correction is : if there is decimal to the result, it is rounded to
+> > the next larger integer.
+> > On drivers/clk/mxs/clk-frac.c, the function clk_frac_recalc_rate returned
+> > a bad result. The multiplication is made before the division to compute a
+> > correct value.
+> >
+> > Signed-off-by: Victorien Vedrine <victorien.vedrine@ophrys.net>
 
-No uart4 on 34xx/35xx, that got introduced with 36xx so:
-
-Acked-by: Tony Lindgren <tony@atomide.com>
-
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> ---
->  drivers/clk/ti/clk-3xxx.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
-> index 5e12f32..2e7ef1f 100644
-> --- a/drivers/clk/ti/clk-3xxx.c
-> +++ b/drivers/clk/ti/clk-3xxx.c
-> @@ -374,7 +374,6 @@ static struct ti_dt_clk omap3xxx_clks[] = {
->  	DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
->  	DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
->  	DT_CLK(NULL, "uart3_ick", "uart3_ick"),
-> -	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
->  	DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
->  	DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
->  	DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
-> -- 
-> 2.5.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Acked-by: Shawn Guo <shawnguo@kernel.org>
