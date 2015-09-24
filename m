@@ -1,70 +1,153 @@
-Return-Path: <l.stach@pengutronix.de>
-Message-ID: <1443002535.25479.6.camel@pengutronix.de>
-Subject: Re: [PATCH v4 1/8] clk: imx: add common logic to detect early UART
- usage
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org, Sascha
- Hauer <kernel@pengutronix.de>, patchwork-lst@pengutronix.de
-Date: Wed, 23 Sep 2015 12:02:15 +0200
-In-Reply-To: <CAOMZO5CDnRjxzcnxCDgXKN5SVkCxGqR5dMaectdPvVzpsb9=bQ@mail.gmail.com>
-References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
-	 <1442854444-4460-2-git-send-email-l.stach@pengutronix.de>
-	 <CAOMZO5CDnRjxzcnxCDgXKN5SVkCxGqR5dMaectdPvVzpsb9=bQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <shengjiu.wang@freescale.com>
+Date: Thu, 24 Sep 2015 13:43:24 +0800
+From: Shengjiu Wang <shengjiu.wang@freescale.com>
+To: Shawn Guo <shawnguo@kernel.org>
+CC: <mturquette@baylibre.com>, <kernel@pengutronix.de>,
+	<sboyd@codeaurora.org>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+	<mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
+	<galak@codeaurora.org>, <linux@arm.linux.org.uk>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH V2 1/2] clk: imx6: Add SPDIF_GCLK clock in clock tree
+Message-ID: <20150924054321.GA32196@shlinux2>
+References: <cover.1442310569.git.shengjiu.wang@freescale.com>
+ <113f1cecf1d83c6b96fd23ab9d7a73d1923e0d21.1442310569.git.shengjiu.wang@freescale.com>
+ <20150923153340.GK3529@tiger>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20150923153340.GK3529@tiger>
+Return-Path: shengjiu.wang@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, den 21.09.2015, 14:56 -0300 schrieb Fabio Estevam:
-> On Mon, Sep 21, 2015 at 1:53 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
-> > Both earlycon and eralyprintk depend on the bootloader setup UART
+On Wed, Sep 23, 2015 at 08:33:41AM -0700, Shawn Guo wrote:
+> On Tue, Sep 15, 2015 at 06:01:01PM +0800, Shengjiu Wang wrote:
+> > As spdif driver will register SPDIF clock to regmap, regmap will do
+> > clk_prepare in init function, so SPDIF clock is prepared in probe, then its
+> > root clock (pll clock) is prepared also, which cause the arm can't enter
+> > low power mode.
 > 
-> s/eralyprintk/earlyprintk
+> Can you help me understand why ARM cannot enter low power mode when pll
+> clock is prepared?
 > 
-> > clocks being retained. This patch adds the common logic to detect such
-> > situations and make the information available to the clock drivers, as
-> > well as adding the facilities to disable those clocks at the end of
-> > the kernel init.
-> 
-> > +void __init imx_register_uart_clocks(struct clk ** const clks[])
-> > +{
-> > +       if (imx_keep_uart_clocks) {
-> > +               int i;
-> > +
-> > +               imx_uart_clocks = clks;
-> > +               for (i = 0; imx_uart_clocks[i]; i++)
-> > +                       clk_prepare_enable(*imx_uart_clocks[i]);
-> 
-> It would be better to check the return value from clk_prepare_enable()
-> and propagate it in the case of error.
-> 
-I don't see any value of that. We certainly don't want to abort probing
-of the clock driver just because keeping the debug UART clocks enabled
-did not work. Everything in this series is about improving the debug
-experience, so I'm not a fan of adding code that makes it more likely to
-break (possibly unrelated) things.
+> Shawn
+Hi Shawn
 
-> > +
-> > +static int __init imx_clk_disable_uart(void)
-> > +{
-> > +       if (imx_keep_uart_clocks && imx_uart_clocks) {
-> > +               int i;
-> > +
-> > +               for (i = 0; imx_uart_clocks[i]; i++)
-> > +                       clk_disable_unprepare(*imx_uart_clocks[i]);
-> > +       }
-> > +
-> > +       return 0;
+   In i.mx clock framework, when pll clk is prepared, it will be powerup. when
+enterring low power idle mode, the powerdown bit is checked, when pll is not
+powerdown state, chip will not enter low power idle mode.
+
+best regards
+wang shengjiu
 > 
-> This function could be made 'void' instead.
-
-This is an initcall, which have a fixed function prototype.
-
-Regards,
-Lucas
--- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
+> > Add SPDIF_GCLK in clock tree which share same gate bits with SPDIF clock.
+> > Its root clock is ipg clock, and register it to regmap, then the issue cam
+> > be fixed.
+> > 
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@freescale.com>
+> > ---
+> >  drivers/clk/imx/clk-imx6q.c               | 4 +++-
+> >  drivers/clk/imx/clk-imx6sl.c              | 4 +++-
+> >  drivers/clk/imx/clk-imx6sx.c              | 1 +
+> >  include/dt-bindings/clock/imx6qdl-clock.h | 3 ++-
+> >  include/dt-bindings/clock/imx6sl-clock.h  | 3 ++-
+> >  include/dt-bindings/clock/imx6sx-clock.h  | 3 ++-
+> >  6 files changed, 13 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+> > index b2c1c04..e6b5944 100644
+> > --- a/drivers/clk/imx/clk-imx6q.c
+> > +++ b/drivers/clk/imx/clk-imx6q.c
+> > @@ -119,6 +119,7 @@ static unsigned int share_count_ssi1;
+> >  static unsigned int share_count_ssi2;
+> >  static unsigned int share_count_ssi3;
+> >  static unsigned int share_count_mipi_core_cfg;
+> > +static unsigned int share_count_spdif;
+> >  
+> >  static inline int clk_on_imx6q(void)
+> >  {
+> > @@ -456,7 +457,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+> >  	clk[IMX6QDL_CLK_SATA]         = imx_clk_gate2("sata",          "ahb",               base + 0x7c, 4);
+> >  	clk[IMX6QDL_CLK_SDMA]         = imx_clk_gate2("sdma",          "ahb",               base + 0x7c, 6);
+> >  	clk[IMX6QDL_CLK_SPBA]         = imx_clk_gate2("spba",          "ipg",               base + 0x7c, 12);
+> > -	clk[IMX6QDL_CLK_SPDIF]        = imx_clk_gate2("spdif",         "spdif_podf",        base + 0x7c, 14);
+> > +	clk[IMX6QDL_CLK_SPDIF]        = imx_clk_gate2_shared("spdif",     "spdif_podf",     base + 0x7c, 14, &share_count_spdif);
+> > +	clk[IMX6QDL_CLK_SPDIF_GCLK]   = imx_clk_gate2_shared("spdif_gclk", "ipg",           base + 0x7c, 14, &share_count_spdif);
+> >  	clk[IMX6QDL_CLK_SSI1_IPG]     = imx_clk_gate2_shared("ssi1_ipg",      "ipg",        base + 0x7c, 18, &share_count_ssi1);
+> >  	clk[IMX6QDL_CLK_SSI2_IPG]     = imx_clk_gate2_shared("ssi2_ipg",      "ipg",        base + 0x7c, 20, &share_count_ssi2);
+> >  	clk[IMX6QDL_CLK_SSI3_IPG]     = imx_clk_gate2_shared("ssi3_ipg",      "ipg",        base + 0x7c, 22, &share_count_ssi3);
+> > diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+> > index a0d4cf2..a73cedd 100644
+> > --- a/drivers/clk/imx/clk-imx6sl.c
+> > +++ b/drivers/clk/imx/clk-imx6sl.c
+> > @@ -97,6 +97,7 @@ static struct clk_div_table video_div_table[] = {
+> >  static unsigned int share_count_ssi1;
+> >  static unsigned int share_count_ssi2;
+> >  static unsigned int share_count_ssi3;
+> > +static unsigned int share_count_spdif;
+> >  
+> >  static struct clk *clks[IMX6SL_CLK_END];
+> >  static struct clk_onecell_data clk_data;
+> > @@ -391,7 +392,8 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+> >  	clks[IMX6SL_CLK_PWM4]         = imx_clk_gate2("pwm4",         "perclk",            base + 0x78, 22);
+> >  	clks[IMX6SL_CLK_SDMA]         = imx_clk_gate2("sdma",         "ipg",               base + 0x7c, 6);
+> >  	clks[IMX6SL_CLK_SPBA]         = imx_clk_gate2("spba",         "ipg",               base + 0x7c, 12);
+> > -	clks[IMX6SL_CLK_SPDIF]        = imx_clk_gate2("spdif",        "spdif0_podf",       base + 0x7c, 14);
+> > +	clks[IMX6SL_CLK_SPDIF]        = imx_clk_gate2_shared("spdif",     "spdif0_podf",   base + 0x7c, 14, &share_count_spdif);
+> > +	clks[IMX6SL_CLK_SPDIF_GCLK]   = imx_clk_gate2_shared("spdif_gclk",  "ipg",         base + 0x7c, 14, &share_count_spdif);
+> >  	clks[IMX6SL_CLK_SSI1_IPG]     = imx_clk_gate2_shared("ssi1_ipg",     "ipg",        base + 0x7c, 18, &share_count_ssi1);
+> >  	clks[IMX6SL_CLK_SSI2_IPG]     = imx_clk_gate2_shared("ssi2_ipg",     "ipg",        base + 0x7c, 20, &share_count_ssi2);
+> >  	clks[IMX6SL_CLK_SSI3_IPG]     = imx_clk_gate2_shared("ssi3_ipg",     "ipg",        base + 0x7c, 22, &share_count_ssi3);
+> > diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+> > index 5b95c2c..f2bc511 100644
+> > --- a/drivers/clk/imx/clk-imx6sx.c
+> > +++ b/drivers/clk/imx/clk-imx6sx.c
+> > @@ -454,6 +454,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+> >  	clks[IMX6SX_CLK_SPBA]         = imx_clk_gate2("spba",          "ipg",               base + 0x7c, 12);
+> >  	clks[IMX6SX_CLK_AUDIO]        = imx_clk_gate2_shared("audio",  "audio_podf",        base + 0x7c, 14, &share_count_audio);
+> >  	clks[IMX6SX_CLK_SPDIF]        = imx_clk_gate2_shared("spdif",  "spdif_podf",        base + 0x7c, 14, &share_count_audio);
+> > +	clks[IMX6SX_CLK_SPDIF_GCLK]   = imx_clk_gate2_shared("spdif_gclk",    "ipg",        base + 0x7c, 14, &share_count_audio);
+> >  	clks[IMX6SX_CLK_SSI1_IPG]     = imx_clk_gate2_shared("ssi1_ipg",      "ipg",        base + 0x7c, 18, &share_count_ssi1);
+> >  	clks[IMX6SX_CLK_SSI2_IPG]     = imx_clk_gate2_shared("ssi2_ipg",      "ipg",        base + 0x7c, 20, &share_count_ssi2);
+> >  	clks[IMX6SX_CLK_SSI3_IPG]     = imx_clk_gate2_shared("ssi3_ipg",      "ipg",        base + 0x7c, 22, &share_count_ssi3);
+> > diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
+> > index 8de173f..77985cc 100644
+> > --- a/include/dt-bindings/clock/imx6qdl-clock.h
+> > +++ b/include/dt-bindings/clock/imx6qdl-clock.h
+> > @@ -254,6 +254,7 @@
+> >  #define IMX6QDL_CLK_CAAM_MEM			241
+> >  #define IMX6QDL_CLK_CAAM_ACLK			242
+> >  #define IMX6QDL_CLK_CAAM_IPG			243
+> > -#define IMX6QDL_CLK_END				244
+> > +#define IMX6QDL_CLK_SPDIF_GCLK			244
+> > +#define IMX6QDL_CLK_END				245
+> >  
+> >  #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
+> > diff --git a/include/dt-bindings/clock/imx6sl-clock.h b/include/dt-bindings/clock/imx6sl-clock.h
+> > index 9ce4e42..e14573e 100644
+> > --- a/include/dt-bindings/clock/imx6sl-clock.h
+> > +++ b/include/dt-bindings/clock/imx6sl-clock.h
+> > @@ -174,6 +174,7 @@
+> >  #define IMX6SL_CLK_SSI1_IPG		161
+> >  #define IMX6SL_CLK_SSI2_IPG		162
+> >  #define IMX6SL_CLK_SSI3_IPG		163
+> > -#define IMX6SL_CLK_END			164
+> > +#define IMX6SL_CLK_SPDIF_GCLK		164
+> > +#define IMX6SL_CLK_END			165
+> >  
+> >  #endif /* __DT_BINDINGS_CLOCK_IMX6SL_H */
+> > diff --git a/include/dt-bindings/clock/imx6sx-clock.h b/include/dt-bindings/clock/imx6sx-clock.h
+> > index 9957091..36f0324 100644
+> > --- a/include/dt-bindings/clock/imx6sx-clock.h
+> > +++ b/include/dt-bindings/clock/imx6sx-clock.h
+> > @@ -274,6 +274,7 @@
+> >  #define IMX6SX_PLL5_BYPASS		261
+> >  #define IMX6SX_PLL6_BYPASS		262
+> >  #define IMX6SX_PLL7_BYPASS		263
+> > -#define IMX6SX_CLK_CLK_END		264
+> > +#define IMX6SX_CLK_SPDIF_GCLK		264
+> > +#define IMX6SX_CLK_CLK_END		265
+> >  
+> >  #endif /* __DT_BINDINGS_CLOCK_IMX6SX_H */
+> > -- 
+> > 1.9.1
+> > 
