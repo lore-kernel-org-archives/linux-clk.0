@@ -1,68 +1,25 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Thu, 24 Sep 2015 08:20:17 -0700
+From: Shawn Guo <shawnguo@kernel.org>
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	kernel@pengutronix.de, patchwork-lst@pengutronix.de
+Subject: Re: [PATCH v4 0/8] i.MX early debug UART clock fixes
+Message-ID: <20150924152016.GV3529@tiger>
+References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CANqRtoSw92UoVBvTJfzGvxmYwefNndqqnj2_8iqi5O=FUeLMGA@mail.gmail.com>
-References: <20150831124842.31057.54534.sendpatchset@little-apple>
-	<20150831124904.31057.19757.sendpatchset@little-apple>
-	<1692617.kRMz5BT8ct@avalon>
-	<CANqRtoSw92UoVBvTJfzGvxmYwefNndqqnj2_8iqi5O=FUeLMGA@mail.gmail.com>
-Date: Tue, 1 Sep 2015 13:36:28 +0200
-Message-ID: <CAMuHMdWkBPhPJP5WUkDv+1psiZ9iFQv65t9QB5+qq=+Kn7L0mA@mail.gmail.com>
-Subject: Re: [PATCH v5 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
-	SH-Linux <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	"Simon Horman [Horms]" <horms@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus,
+On Mon, Sep 21, 2015 at 06:53:56PM +0200, Lucas Stach wrote:
+> This series fixes a long standing interaction issue between the
+> kernels early debug facilities and the i.MX clock drivers.
 
-On Tue, Sep 1, 2015 at 12:59 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
->>> +/*
->>> + *   MD              EXTAL           PLL0    PLL1    PLL2    PLL3    PLL4
->>> + * 14 13 19 17       (MHz)           *1      *1      *1
->>> + *-------------------------------------------------------------------
->>> + * 0  0  0  0        16.66 x 1       x180/2  x192/2  x144/2  x192    x144
->>> + * 0  0  0  1        16.66 x 1       x180/2  x192/2  x144/2  x128    x144
->>> + * 0  0  1  0        Prohibited setting
->>> + * 0  0  1  1        16.66 x 1       x180/2  x192/2  x144/2  x192    x144
->>> + * 0  1  0  0        20    x 1       x150/2  x156/2  x120/2  x156    x120
->>> + * 0  1  0  1        20    x 1       x150/2  x156/2  x120/2  x106    x120
->>> + * 0  1  1  0        Prohibited setting
->>> + * 0  1  1  1        20    x 1       x150/2  x156/2  x120/2  x156    x120
->>> + * 1  0  0  0        25    x 1       x120/2  x128/2  x96/2   x128    x96
->>> + * 1  0  0  1        25    x 1       x120/2  x128/2  x96/2   x84     x96
->>> + * 1  0  1  0        Prohibited setting
->>> + * 1  0  1  1        25    x 1       x120/2  x128/2  x96/2   x128    x96
->>> + * 1  1  0  0        33.33 / 2       x180/2  x192/2  x144/2  x192    x144
->>> + * 1  1  0  1        33.33 / 2       x180/2  x192/2  x144/2  x128    x144
->>> + * 1  1  1  0        Prohibited setting
->>> + * 1  1  1  1        33.33 / 2       x180/2  x192/2  x144/2  x192    x144
->>> + *
->>> + * *1 : datasheet indicates VCO output (PLLx = VCO/2)
->>
->> As explained in a separate e-mail there's a few clocks on R8A7795 that derive
->> directly from PLL1 VCO. I thus wonder whether we shouldn't expose the PLL1
->> clock as the VCO output and create VCO/2 using a fixed factor clock in DT.
->
-> Do you think that would reduce complexity or simplify the code? If so
-> I think we should do it. Otherwise I think it makes sense to simply
-> follow the data sheet.
+This is fixing some issue but not regression.  As the change basically
+has influence on all i.MX platforms, my take is that we should get them
+into linux-next for extensive testing and queue for 4.4.  Agree?
 
-It would avoid having to apply a multiplier of two to the RPC clock.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Shawn
