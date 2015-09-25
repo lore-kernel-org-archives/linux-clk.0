@@ -1,84 +1,66 @@
-Return-Path: <balbi@ti.com>
-Date: Wed, 30 Sep 2015 11:43:39 -0500
-From: Felipe Balbi <balbi@ti.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>
-CC: <balbi@ti.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Jean-Christophe
- Plagniol-Villard <plagnioj@jcrosoft.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>
-Subject: Re: [PATCH 15/16] usb: gadget: atmel: access the PMC using regmap
-Message-ID: <20150930164339.GQ32625@saruman.tx.rr.com>
-Reply-To: <balbi@ti.com>
-References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1443629469-15086-16-git-send-email-alexandre.belloni@free-electrons.com>
- <20150930163102.GM32625@saruman.tx.rr.com>
- <560C1027.9060100@atmel.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH] clk: ti: fix dual-registration of uart4_ick
+To: Tony Lindgren <tony@atomide.com>, Ben Dooks <ben.dooks@codethink.co.uk>
+References: <1443019714-12926-1-git-send-email-ben.dooks@codethink.co.uk>
+ <20150923173040.GI23801@atomide.com>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@lists.codethink.co.uk>, <stable@vger.kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <5604DED0.5050403@ti.com>
+Date: Fri, 25 Sep 2015 08:42:40 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="O7Os1+MGCLLi8F5z"
-In-Reply-To: <560C1027.9060100@atmel.com>
+In-Reply-To: <20150923173040.GI23801@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
---O7Os1+MGCLLi8F5z
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 09/23/2015 08:30 PM, Tony Lindgren wrote:
+> * Ben Dooks <ben.dooks@codethink.co.uk> [150923 07:53]:
+>> On the OMAP AM3517 platform the uart4_ick gets registered
+>> twice, causing any power managment to /dev/ttyO3 to fail
+>> when trying to wake the device up.
+>>
+>> This solves the following oops:
+>>
+>> [] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
+>> [] PC is at serial_omap_pm+0x48/0x15c
+>> [] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
+>
+> No uart4 on 34xx/35xx, that got introduced with 36xx so:
+>
+> Acked-by: Tony Lindgren <tony@atomide.com>
+>
+>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+>> ---
+>>   drivers/clk/ti/clk-3xxx.c | 1 -
+>>   1 file changed, 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
+>> index 5e12f32..2e7ef1f 100644
+>> --- a/drivers/clk/ti/clk-3xxx.c
+>> +++ b/drivers/clk/ti/clk-3xxx.c
+>> @@ -374,7 +374,6 @@ static struct ti_dt_clk omap3xxx_clks[] = {
+>>   	DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
+>>   	DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
+>>   	DT_CLK(NULL, "uart3_ick", "uart3_ick"),
+>> -	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
+>>   	DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
+>>   	DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
+>>   	DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
 
-On Wed, Sep 30, 2015 at 06:39:03PM +0200, Nicolas Ferre wrote:
-> Le 30/09/2015 18:31, Felipe Balbi a =E9crit :
-> > On Wed, Sep 30, 2015 at 06:11:08PM +0200, Alexandre Belloni wrote:
-> >> Use regmap to access the PMC to avoid using at91_pmc_read and
-> >> at91_pmc_write.
-> >>
-> >> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> >=20
-> > can I take this through my tree or does it have any dependences with th=
-e rest of
-> > the series ?
->=20
-> Hi Felipe,
->=20
-> Well, I have the feeling that these changes would require the regmap to
-> be in place before using it. So yes, it has a strong dependency with the
-> rest of the series (and DT modifications like the 06/16 patch actually).
->=20
-> So, I think that Alexandre would agree with me that we should take the
-> whole series with us through the arm-soc tree. An alternative would be
-> to delay the inclusion of the USB part a little bit...
->=20
-> Thanks for the heads-up Felipe, Bye,
+NAK.
 
-hey no problem. I have no objections to $subject:
+This patch is actually only partially correct, it removes the uart4_ick 
+alias for omap36xx also. It should be added back to the omap36xx clks 
+array. Care to post a v2?
 
-Acked-by: Felipe Balbi <balbi@ti.com>
+-Tero
 
---=20
-balbi
-
---O7Os1+MGCLLi8F5z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWDBE7AAoJEIaOsuA1yqREuLwP/R4TT28gWm8hI1JekQV6t0EK
-XzJu2XCRx95qKgeVmg9gpurNe3onAionpehSWQSIugkhcV/4tUatwTc0tkRnXZBL
-hYapgKH2Ut3qnqdkVE9xG0kCauiz45gdAw3u/ff2cDDuLneROJkTMFx0VtnLlj33
-9vL0yIcZkOvkYh1m6q5hP9qtPMKOaoThKlYkvMWu0esMoVTjwWIMdki/yn+YyMEg
-5Y4BiGFF0WocKD4A6he2LxBtciMi/Gb8heVlW4+ibC6CNWaNBy21B6KWpUXIy7J7
-VGfbpkghomE2RogufcxHMK1w2JubCWP+FUh6eK/tObeMpHGPrpLDqRK0Lea8mBVQ
-pNOWKUvyXEvCyuZgDvcX0Q0maOH6kV6dO5LldMO8k/wgCfoG9B9gKZ0FXxVE+JOj
-AEsQ5jd0gU74W/VLUJFml8TYRZGdp6lIFwHmbxBbsTy94wWXbd4zP35+/Theb/gg
-7Tc6MI65HT7CXrDDLsf27yzYoO9mGDnaLVmfdAH+iitY4YzpxeazN0arbU5HFPS6
-JcbGx+lUK7ut9pHSJvzaHkxESuPE7Ox8Gi6aRM4UUBPMppXSVikn+sl3XU0AoAuj
-KIlYj65YfVHIqXMKlcM5JWiVygaN6QYl1qkSUV3jYLpt8RHp7MD6sClOJsBrJq+y
-xta1VSkhnkuLsC6VE8FL
-=6nY3
------END PGP SIGNATURE-----
-
---O7Os1+MGCLLi8F5z--
+>> --
+>> 2.5.1
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
