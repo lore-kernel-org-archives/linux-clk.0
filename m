@@ -1,120 +1,62 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	 Pawel Moll <pawel.moll@arm.com>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 Maxime Coquelin <maxime.coquelin@st.com>,
-	 Patrice Chotard <patrice.chotard@st.com>,
-	 Russell King <linux@arm.linux.org.uk>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	 Peter Griffin <peter.griffin@linaro.org>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Fabian Frederick <fabf@skynet.be>
-Cc: devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] drivers: clk: st: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x
-Date: Wed, 16 Sep 2015 09:42:59 +0200
-Message-Id: <1442389379-9298-3-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <scottwood@freescale.com>
+Message-ID: <1443215827.32298.130.camel@freescale.com>
+Subject: Re: [PATCH v3 5/5] cpufreq: qoriq: Don't look at clock
+ implementation details
+From: Scott Wood <scottwood@freescale.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+CC: Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Russell
+ King" <linux@arm.linux.org.uk>, <linux-clk@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-arm-kernel@lists.infradead.org>, Tang Yuantian
+	<Yuantian.Tang@freescale.com>
+Date: Fri, 25 Sep 2015 16:17:07 -0500
+In-Reply-To: <3374654.Hks5DeSGVV@vostro.rjw.lan>
+References: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
+	 <1442723397-26329-6-git-send-email-scottwood@freescale.com>
+	 <20150922194654.GJ24314@linux> <3374654.Hks5DeSGVV@vostro.rjw.lan>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Return-Path: scottwood@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Use a generic name for this kind of PLL
+On Fri, 2015-09-25 at 23:42 +0200, Rafael J. Wysocki wrote:
+> On Tuesday, September 22, 2015 12:46:54 PM Viresh Kumar wrote:
+> > On 19-09-15, 23:29, Scott Wood wrote:
+> > > Get the CPU clock's potential parent clocks from the clock interface
+> > > itself, rather than manually parsing the clocks property to find a
+> > > phandle, looking at the clock-names property of that, and assuming that
+> > > those are valid parent clocks for the cpu clock.
+> > > 
+> > > This is necessary now that the clocks are generated based on the clock
+> > > driver's knowledge of the chip rather than a fragile device-tree
+> > > description of the mux options.
+> > > 
+> > > We can now rely on the clock driver to ensure that the mux only exposes
+> > > options that are valid.  The cpufreq driver was currently being overly
+> > > conservative in some cases -- for example, the "min_cpufreq =
+> > > get_bus_freq()" restriction only applies to chips with erratum
+> > > A-004510, and whether the freq_mask used on p5020 is needed depends on
+> > > the actual frequencies of the PLLs (FWIW, p5040 has a similar
+> > > limitation but its .freq_mask was zero) -- and the frequency mask
+> > > mechanism made assumptions about particular parent clock indices that
+> > > are no longer valid.
+> > > 
+> > > Signed-off-by: Scott Wood <scottwood@freescale.com>
+> > > ---
+> > > v3: was patch 1/5 and patch 4/5, plus blacklist e6500 and changes
+> > > to clk api usage
+> > > 
+> > >  drivers/cpufreq/qoriq-cpufreq.c | 137 ++++++++++++---------------------
+> > > -------
+> > >  1 file changed, 40 insertions(+), 97 deletions(-)
+> > 
+> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
+> I'm wondering who's supposed to be merging this set?
 
-Correction in dts files are already done here:
-commit 5eb26c605909 ("ARM: STi: DT: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x")
+As I noted in the cover letter, I'm looking for acks so that I can apply 
+these to a topic branch which can be pulled through the PPC and ARM trees, 
+each of which will have patches that depend on it.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
----
- drivers/clk/st/clkgen-fsyn.c |  8 ++++----
- drivers/clk/st/clkgen-pll.c  | 12 ++++++------
- 2 files changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
-index 83ccf14..576cd03 100644
---- a/drivers/clk/st/clkgen-fsyn.c
-+++ b/drivers/clk/st/clkgen-fsyn.c
-@@ -307,7 +307,7 @@ static const struct clkgen_quadfs_data st_fs660c32_F_416 = {
- 	.get_rate	= clk_fs660c32_dig_get_rate,
- };
- 
--static const struct clkgen_quadfs_data st_fs660c32_C_407 = {
-+static const struct clkgen_quadfs_data st_fs660c32_C = {
- 	.nrst_present = true,
- 	.nrst	= { CLKGEN_FIELD(0x2f0, 0x1, 0),
- 		    CLKGEN_FIELD(0x2f0, 0x1, 1),
-@@ -350,7 +350,7 @@ static const struct clkgen_quadfs_data st_fs660c32_C_407 = {
- 	.get_rate	= clk_fs660c32_dig_get_rate,
- };
- 
--static const struct clkgen_quadfs_data st_fs660c32_D_407 = {
-+static const struct clkgen_quadfs_data st_fs660c32_D = {
- 	.nrst_present = true,
- 	.nrst	= { CLKGEN_FIELD(0x2a0, 0x1, 0),
- 		    CLKGEN_FIELD(0x2a0, 0x1, 1),
-@@ -1077,11 +1077,11 @@ static const struct of_device_id quadfs_of_match[] = {
- 	},
- 	{
- 		.compatible = "st,stih407-quadfs660-C",
--		.data = &st_fs660c32_C_407
-+		.data = &st_fs660c32_C
- 	},
- 	{
- 		.compatible = "st,stih407-quadfs660-D",
--		.data = &st_fs660c32_D_407
-+		.data = &st_fs660c32_D
- 	},
- 	{}
- };
-diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
-index 47a38a9..b2a332c 100644
---- a/drivers/clk/st/clkgen-pll.c
-+++ b/drivers/clk/st/clkgen-pll.c
-@@ -193,7 +193,7 @@ static const struct clkgen_pll_data st_pll3200c32_407_a0 = {
- 	.ops		= &stm_pll3200c32_ops,
- };
- 
--static const struct clkgen_pll_data st_pll3200c32_407_c0_0 = {
-+static const struct clkgen_pll_data st_pll3200c32_cx_0 = {
- 	/* 407 C0 PLL0 */
- 	.pdn_status	= CLKGEN_FIELD(0x2a0,	0x1,			8),
- 	.locked_status	= CLKGEN_FIELD(0x2a0,	0x1,			24),
-@@ -205,7 +205,7 @@ static const struct clkgen_pll_data st_pll3200c32_407_c0_0 = {
- 	.ops		= &stm_pll3200c32_ops,
- };
- 
--static const struct clkgen_pll_data st_pll3200c32_407_c0_1 = {
-+static const struct clkgen_pll_data st_pll3200c32_cx_1 = {
- 	/* 407 C0 PLL1 */
- 	.pdn_status	= CLKGEN_FIELD(0x2c8,	0x1,			8),
- 	.locked_status	= CLKGEN_FIELD(0x2c8,	0x1,			24),
-@@ -624,12 +624,12 @@ static const struct of_device_id c32_pll_of_match[] = {
- 		.data = &st_pll3200c32_407_a0,
- 	},
- 	{
--		.compatible = "st,stih407-plls-c32-c0_0",
--		.data = &st_pll3200c32_407_c0_0,
-+		.compatible = "st,plls-c32-cx_0",
-+		.data = &st_pll3200c32_cx_0,
- 	},
- 	{
--		.compatible = "st,stih407-plls-c32-c0_1",
--		.data = &st_pll3200c32_407_c0_1,
-+		.compatible = "st,plls-c32-cx_1",
-+		.data = &st_pll3200c32_cx_1,
- 	},
- 	{
- 		.compatible = "st,stih407-plls-c32-a9",
--- 
-1.9.1
+-Scott
