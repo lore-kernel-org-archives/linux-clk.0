@@ -1,63 +1,107 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
-To: Li Leo <LeoLi@freescale.com>
-Subject: RE: [PATCH v2 03/10] Documentation/dts: Add bindings for QIXIS FPGA
- controller found on FSL boards
-Date: Fri, 4 Sep 2015 20:16:42 +0000
-Message-ID: <BY1PR0301MB1303E56B5462BCD0C77C7E4D82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
-References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
- <1441349872-4560-4-git-send-email-bhupesh.sharma@freescale.com>
- <CADRPPNR11BD4WfXTWoQ28rZCd_BJuhdWu49E6jjpO29CH2s5Ow@mail.gmail.com>
-In-Reply-To: <CADRPPNR11BD4WfXTWoQ28rZCd_BJuhdWu49E6jjpO29CH2s5Ow@mail.gmail.com>
+Return-Path: <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH] clk: ti: clk-7xx: Remove hardwired ABE clock
+ configuration
+To: Tero Kristo <t-kristo@ti.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <1440401702-32420-1-git-send-email-peter.ujfalusi@ti.com>
+ <55F68AC1.1040807@ti.com> <55F90F59.60102@ti.com>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <5604F0D8.60402@ti.com>
+Date: Fri, 25 Sep 2015 09:59:36 +0300
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Singh Jaiprakash <jaiprakash.singh@freescale.com>,
- Arnd Bergmann <arnd@arndb.de>, "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
- "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
- "will.deacon@arm.com" <will.deacon@arm.com>, "olof@lixom.net" <olof@lixom.net>,
- "bhupesh.linux@gmail.com" <bhupesh.linux@gmail.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+In-Reply-To: <55F90F59.60102@ti.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-> From: pku.leo@gmail.com [mailto:pku.leo@gmail.com]
-> Sent: Friday, September 04, 2015 10:27 PM
-> On Fri, Sep 4, 2015 at 1:57 AM, Bhupesh Sharma
-> <bhupesh.sharma@freescale.com> wrote:
-> > This patch adds bindings for QIXIS FPGA controller found on FSL boards.
-> 
-> A general comment: when you are updating the device tree bindings.
-> You should cc the devicetree@vger.kernel.org mailing list.
-> 
-> >
-> > Some Freescale boards like LS2080AQDS/LS2080ARDB have an on-board
-> > FPGA/CPLD connected to the IFC controller. The bindings specified in
-> > this patch cater to those on-board FPGA/CPLD controllers.
-> 
-> We already have the binding defined in
-> Documentation/devicetree/bindings/powerpc/fsl/board.txt.  We probably
-> should just move it to a more generic location.
+Tero,
 
-Consolidation of powerpc and ARM bindings is something that needs to be
-targeted by a separate patch-series, perhaps in future.
+On 09/16/2015 09:42 AM, Tero Kristo wrote:
+> On 09/14/2015 11:52 AM, Peter Ujfalusi wrote:
+>> Hi Tero,
+>>
+>> On 08/24/2015 10:35 AM, Peter Ujfalusi wrote:
+>>> The ABE related clocks should be configured via DT and not have it wired
+>>> inside of the kernel.
+>>
+>> can you take a look at this patch? It will not cause any regression since we
+>> do not have audio support mainline and the pending series does not need this
+>> part anymore.
+> 
+> This patch looks okay to me. So, you are saying this doesn't depend on
+> anything? Isn't this causing any boot-time issues with the ABE DPLL left
+> dangling with boot setup, potentially blocking PM? I am just wondering if we
+> should group this patch with the rest of the audio support patches for dra7.
 
-There are a number of duplications that can be looked into, but I don't
-think this patchset should depend on that.
+Without this patch the ABE DPLL will have frequency which is not going to be
+correct to be used with the ATL. The ATL is disabled by default and only
+enabled when we use the audio. Which is not the case w/o the other series.
 
-Regards,
-Bhupesh
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+Péter
+
+> 
+> -Tero
+> 
+>>
+>>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+>>> ---
+>>> Hi Tero,
+>>>
+>>> the ABE PLL configuration can, and will be done for dra7xx in DT with the
+>>> assigned-clocks/rate/parent feature so no need to have this anymore.
+>>>
+>>> Regards,
+>>> Peter
+>>>
+>>>   drivers/clk/ti/clk-7xx.c | 18 +-----------------
+>>>   1 file changed, 1 insertion(+), 17 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+>>> index 9b5b289e6334..a911d7de3377 100644
+>>> --- a/drivers/clk/ti/clk-7xx.c
+>>> +++ b/drivers/clk/ti/clk-7xx.c
+>>> @@ -18,7 +18,6 @@
+>>>
+>>>   #include "clock.h"
+>>>
+>>> -#define DRA7_DPLL_ABE_DEFFREQ                180633600
+>>>   #define DRA7_DPLL_GMAC_DEFFREQ                1000000000
+>>>   #define DRA7_DPLL_USB_DEFFREQ                960000000
+>>>
+>>> @@ -313,27 +312,12 @@ static struct ti_dt_clk dra7xx_clks[] = {
+>>>   int __init dra7xx_dt_clk_init(void)
+>>>   {
+>>>       int rc;
+>>> -    struct clk *abe_dpll_mux, *sys_clkin2, *dpll_ck, *hdcp_ck;
+>>> +    struct clk *dpll_ck, *hdcp_ck;
+>>>
+>>>       ti_dt_clocks_register(dra7xx_clks);
+>>>
+>>>       omap2_clk_disable_autoidle_all();
+>>>
+>>> -    abe_dpll_mux = clk_get_sys(NULL, "abe_dpll_sys_clk_mux");
+>>> -    sys_clkin2 = clk_get_sys(NULL, "sys_clkin2");
+>>> -    dpll_ck = clk_get_sys(NULL, "dpll_abe_ck");
+>>> -
+>>> -    rc = clk_set_parent(abe_dpll_mux, sys_clkin2);
+>>> -    if (!rc)
+>>> -        rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ);
+>>> -    if (rc)
+>>> -        pr_err("%s: failed to configure ABE DPLL!\n", __func__);
+>>> -
+>>> -    dpll_ck = clk_get_sys(NULL, "dpll_abe_m2x2_ck");
+>>> -    rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ * 2);
+>>> -    if (rc)
+>>> -        pr_err("%s: failed to configure ABE DPLL m2x2!\n", __func__);
+>>> -
+>>>       dpll_ck = clk_get_sys(NULL, "dpll_gmac_ck");
+>>>       rc = clk_set_rate(dpll_ck, DRA7_DPLL_GMAC_DEFFREQ);
+>>>       if (rc)
+>>>
+>>
+>>
+> 
