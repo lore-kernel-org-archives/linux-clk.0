@@ -1,38 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:21585 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751694AbbIOGLh (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 15 Sep 2015 02:11:37 -0400
-Subject: Re: [PATCH v2 5/12] clk: samsung: exynos7: Corrects CMU_CCORE clocks
- names
-To: Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org
-References: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
- <1441874677-24148-6-git-send-email-alim.akhtar@samsung.com>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
-	mturquette@baylibre.com, amit.daniel@samsung.com,
-	gautam.vivek@samsung.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <55F7B693.1030903@samsung.com>
-Date: Tue, 15 Sep 2015 15:11:31 +0900
-MIME-version: 1.0
-In-reply-to: <1441874677-24148-6-git-send-email-alim.akhtar@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <yorksun@freescale.com>
+Subject: Re: [Patch v5] driver/clk/clk-si5338: Add common clock framework
+ driver for si5338
+To: Guenter Roeck <linux@roeck-us.net>, <sboyd@codeaurora.org>
+References: <1443141970-21084-1-git-send-email-yorksun@freescale.com>
+ <5604A9F0.2050600@roeck-us.net>
+CC: <linux-clk@vger.kernel.org>, Mike Turquette <mturquette@baylibre.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrey Filippov
+	<andrey@elphel.com>, Paul Bolle <pebolle@tiscali.nl>
+From: York Sun <yorksun@freescale.com>
+Message-ID: <56056268.2010507@freescale.com>
+Date: Fri, 25 Sep 2015 08:04:08 -0700
+MIME-Version: 1.0
+In-Reply-To: <5604A9F0.2050600@roeck-us.net>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: yorksun@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10.09.2015 17:44, Alim Akhtar wrote:
-> This patch renames CMU_CCORE clocks names to match with user manual.
+
+
+On 09/24/2015 06:57 PM, Guenter Roeck wrote:
+> On 09/24/2015 05:46 PM, York Sun wrote:
+>> SI5338 is a programmable clock generator. It has 4 sets of inputs,
+>> PLL, multisynth and dividers to make 4 outputs. This driver splits
+>> them into multiple clocks to comply with common clock framework.
+>>
+>> See Documentation/devicetree/bindings/clock/silabs,si5338.txt for
+>> details.
+>>
+<snip>
+
+>> +static inline u8 si5338_reg_read(struct si5338_driver_data *drvdata, u16 reg)
+>> +{
+>> +	u32 val;
+>> +	int ret;
+>> +
+>> +	ret = regmap_read(drvdata->regmap, reg, &val);
+>> +	if (ret) {
+>> +		dev_err(&drvdata->client->dev,
+>> +			"unable to read from reg %02x: return %d\n", reg, ret);
+>> +		return 0;
 > 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos7.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
+> Why hide the error ?
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+I need to comb through all the return values as you suggested. Thanks.
 
-Best regards,
-Krzysztof
-
+York
