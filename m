@@ -1,44 +1,74 @@
-Return-Path: <yingjoe.chen@mediatek.com>
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner
-	<tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	<mturquette@baylibre.com>, James Liao <jamesjj.liao@mediatek.com>,
-	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas
-	<catalin.marinas@arm.com>, <linux-kernel@vger.kernel.org>, Rob Herring
-	<robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>, Sascha Hauer
-	<kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>,
-	<srv_heupstream@mediatek.com>, <linux-arm-kernel@lists.infradead.org>, Daniel
- Kurtz <djkurtz@chromium.org>, <linux-clk@vger.kernel.org>, Yingjoe Chen
-	<yingjoe.chen@mediatek.com>
-Subject: [PATCH 1/2] arm64: mediatek: enable MTK_TIMER
-Date: Wed, 16 Sep 2015 10:04:54 +0800
-Message-ID: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yingjoe.chen@mediatek.com
+Return-Path: <shraddha.6596@gmail.com>
+Return-Path: <shraddha.6596@gmail.com>
+From: Shraddha Barke <shraddha.6596@gmail.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shraddha Barke <shraddha.6596@gmail.com>
+Subject: [PATCH] Clk: tegra: Use module_platform_driver
+Date: Sat, 26 Sep 2015 00:40:14 +0530
+Message-Id: <1443208214-8810-1-git-send-email-shraddha.6596@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable MTK_TIMER for MediaTek plaform, which will be used as
-schedule clock.
+Use module_platform_driver for drivers whose init and exit functions
+only register and unregister, respectively.
 
-Change-Id: Ib77a0bf01193102c755077b6e72e73e477b18e5f
-Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Coccinelle patch used-
+
+@a@
+identifier f, x;
+@@
+-static f(...) { return platform_driver_register(&x); }
+
+@b depends on a@
+identifier e, a.x;
+@@
+-static e(...) { platform_driver_unregister(&x); }
+
+@c depends on a && b@
+identifier a.f;
+declarer name module_init;
+@@
+-module_init(f);
+
+@d depends on a && b && c@
+identifier b.e, a.x;
+declarer name module_exit;
+declarer name module_platform_driver;
+@@
+-module_exit(e);
++module_platform_driver(x);
+
+Signed-off-by: Shraddha Barke <shraddha.6596@gmail.com>
 ---
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 23800a1..8176455 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -42,6 +42,7 @@ config ARCH_MEDIATEK
- 	bool "Mediatek MT65xx & MT81xx ARMv8 SoC"
- 	select ARM_GIC
- 	select PINCTRL
-+	select MTK_TIMER
- 	help
- 	  Support for Mediatek MT65xx & MT81xx ARMv8 SoCs
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index 6125333..88b4ef4 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -147,18 +147,7 @@ static struct platform_driver tegra124_dfll_fcpu_driver = {
+ 		.pm = &tegra124_dfll_pm_ops,
+ 	},
+ };
+-
+-static int __init tegra124_dfll_fcpu_init(void)
+-{
+-	return platform_driver_register(&tegra124_dfll_fcpu_driver);
+-}
+-module_init(tegra124_dfll_fcpu_init);
+-
+-static void __exit tegra124_dfll_fcpu_exit(void)
+-{
+-	platform_driver_unregister(&tegra124_dfll_fcpu_driver);
+-}
+-module_exit(tegra124_dfll_fcpu_exit);
++module_platform_driver(tegra124_dfll_fcpu_driver);
  
+ MODULE_DESCRIPTION("Tegra124 DFLL clock source driver");
+ MODULE_LICENSE("GPL v2");
 -- 
-1.9.1
+2.1.4
