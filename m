@@ -1,44 +1,76 @@
-Return-Path: <alim.akhtar@samsung.com>
-Message-id: <55F14504.8040001@samsung.com>
-Date: Thu, 10 Sep 2015 14:23:24 +0530
-From: Alim Akhtar <alim.akhtar@samsung.com>
-MIME-version: 1.0
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
- mturquette@baylibre.com, amit.daniel@samsung.com, gautam.vivek@samsung.com,
- sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 11/11] clk: samsung: exynos7: Add required clock tree for
- UFS
-References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
- <1441366637-28001-12-git-send-email-alim.akhtar@samsung.com>
- <55F10253.6000308@samsung.com>
-In-reply-to: <55F10253.6000308@samsung.com>
-Content-type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [PATCH 1/2] arm64: mediatek: enable MTK_TIMER
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>
+References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
+ <1442370091.14347.10.camel@mtksdaap41>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ James Liao <jamesjj.liao@mediatek.com>, devicetree@vger.kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+ linux-mediatek@lists.infradead.org, Sascha Hauer <kernel@pengutronix.de>,
+ Olof Johansson <olof@lixom.net>, srv_heupstream@mediatek.com,
+ linux-arm-kernel@lists.infradead.org, Daniel Kurtz <djkurtz@chromium.org>,
+ linux-clk@vger.kernel.org
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <5607F666.5010506@gmail.com>
+Date: Sun, 27 Sep 2015 16:00:06 +0200
+MIME-Version: 1.0
+In-Reply-To: <1442370091.14347.10.camel@mtksdaap41>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Krzysztof,
 
-On 09/10/2015 09:38 AM, Krzysztof Kozlowski wrote:
-> On 04.09.2015 20:37, Alim Akhtar wrote:
->> Adding required mux/div/gate clocks for UFS controller
->> present on Exynos7.
->>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> ---
->>   drivers/clk/samsung/clk-exynos7.c       |  116 +++++++++++++++++++++++++++++++
->>   include/dt-bindings/clock/exynos7-clk.h |   24 ++++++-
->>   2 files changed, 138 insertions(+), 2 deletions(-)
->>
+
+On 16/09/15 04:21, Yingjoe Chen wrote:
+> On Wed, 2015-09-16 at 10:04 +0800, Yingjoe Chen wrote:
+>> Enable MTK_TIMER for MediaTek plaform, which will be used as
+>> schedule clock.
 >
-> My previous comments are fixed, rest looks good:
+> Sorry, sending this series too early without cover letter and removing
+> Change-Id. Here's the cover letter:
 >
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 >
-Thanks for your time and review, have re-send V2 of whole series.
-Please take a look.
-> Best regards,
-> Krzysztof
+> This is actually v3 of "add GPT timer support for mt8173" series. This
+> is based on v4.3-rc1 + clockevents-4.4[1] and James's mediatek-clk
+> tree[2].
+>
+> Changes compare to previous version[3]:
+> - the first two mtk_timer related changes are removed because they are
+> replaced/accepted in clockevents tree.
+> - Remove 'add 13mhz clock for MT8173' because it is accepted in
+> mediatek-clk tree.
+> - Kconfig.platforms path change.
+>
+> So we only have 2 patches left here.
+> Matthias, can you take these and help to remove the Change-Id?
+
+Yes I can take this two patches, but I don't see the mediatek-clk tree 
+accepted by the maintainers yet. As far as I can see, without the 13 MHz 
+clock [1], the sched clock won't work.
+
+[1] 
+https://github.com/jamesjjliao/linux/commit/add5e89d657fa6c0e5a517890f996c796b768064
+
+>
+>
+> Daniel Kurtz (1):
+>    arm64: dts: mt8173: add timer node
+>
+> Yingjoe Chen (1):
+>    arm64: mediatek: enable MTK_TIMER
+>
+>
+>
+> [1]
+> https://git.linaro.org/people/daniel.lezcano/linux.git clockevents/4.4
+> [2]
+> http://lists.infradead.org/pipermail/linux-mediatek/2015-August/002069.html
+> [3]
+> http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001544.html
+>
 >
 >
 >
