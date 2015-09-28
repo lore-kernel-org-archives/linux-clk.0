@@ -1,139 +1,139 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: linux-clk@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v3 5/5] clk: sunxi: mod1 clock support
-Date: Tue, 29 Sep 2015 09:39:13 +0200
-Message-Id: <1443512353-28073-6-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1443512353-28073-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1443512353-28073-1-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	linux-rpi-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH v3 2/4] clk: bcm2835: Add binding docs for the new platform clock driver.
+Date: Mon, 28 Sep 2015 14:22:03 -0700
+Message-Id: <1443475325-22270-2-git-send-email-eric@anholt.net>
+In-Reply-To: <1443475325-22270-1-git-send-email-eric@anholt.net>
+References: <1443475325-22270-1-git-send-email-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Emilio López <emilio@elopez.com.ar>
+Previously we've only supported a few fixed clocks based on
+assumptions about how the firmware sets up the clocks, but this
+binding will let us control the actual (audio power domain) clock
+manager.
 
-The module 1 type of clocks consist of a gate and a mux and are used on
-the audio blocks to mux and gate the PLL2 outputs for AC97, IIS or
-SPDIF. This commit adds support for them on the sunxi clock driver.
-
-Signed-off-by: Emilio López <emilio@elopez.com.ar>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Acked-by: Stephen Warren <swarren@wwwdotorg.org>
 ---
- drivers/clk/sunxi/Makefile       |  1 +
- drivers/clk/sunxi/clk-a10-mod1.c | 84 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 85 insertions(+)
- create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
+ .../bindings/clock/brcm,bcm2835-cprman.txt         | 45 +++++++++++++++++++++
+ include/dt-bindings/clock/bcm2835.h                | 47 ++++++++++++++++++++++
+ 2 files changed, 92 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
+ create mode 100644 include/dt-bindings/clock/bcm2835.h
 
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index 70a449a419e6..cb4c299214ce 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -5,6 +5,7 @@
- obj-y += clk-sunxi.o clk-factors.o
- obj-y += clk-a10-codec.o
- obj-y += clk-a10-hosc.o
-+obj-y += clk-a10-mod1.o
- obj-y += clk-a10-pll2.o
- obj-y += clk-a20-gmac.o
- obj-y += clk-mod0.o
-diff --git a/drivers/clk/sunxi/clk-a10-mod1.c b/drivers/clk/sunxi/clk-a10-mod1.c
+diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
 new file mode 100644
-index 000000000000..490f72432a1e
+index 0000000..e56a1df
 --- /dev/null
-+++ b/drivers/clk/sunxi/clk-a10-mod1.c
-@@ -0,0 +1,84 @@
++++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
+@@ -0,0 +1,45 @@
++Broadcom BCM2835 CPRMAN clocks
++
++This binding uses the common clock binding:
++    Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++The CPRMAN clock controller generates clocks in the audio power domain
++of the BCM2835.  There is a level of PLLs deriving from an external
++oscillator, a level of PLL dividers that produce channels off of the
++few PLLs, and a level of mostly-generic clock generators sourcing from
++the PLL channels.  Most other hardware components source from the
++clock generators, but a few (like the ARM or HDMI) will source from
++the PLL dividers directly.
++
++Required properties:
++- compatible:	Should be "brcm,bcm2835-cprman"
++- #clock-cells:	Should be <1>. The permitted clock-specifier values can be
++		  found in include/dt-bindings/clock/bcm2835.h
++- reg:		Specifies base physical address and size of the registers
++- clocks:	The external oscillator clock phandle
++
++Example:
++
++	clk_osc: clock@3 {
++		compatible = "fixed-clock";
++		reg = <3>;
++		#clock-cells = <0>;
++		clock-output-names = "osc";
++		clock-frequency = <19200000>;
++	};
++
++	clocks: cprman@7e101000 {
++		compatible = "brcm,bcm2835-cprman";
++		#clock-cells = <1>;
++		reg = <0x7e101000 0x2000>;
++		clocks = <&clk_osc>;
++	};
++
++	i2c0: i2c@7e205000 {
++		compatible = "brcm,bcm2835-i2c";
++		reg = <0x7e205000 0x1000>;
++		interrupts = <2 21>;
++		clocks = <&clocks BCM2835_CLOCK_VPU>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+new file mode 100644
+index 0000000..d323efa
+--- /dev/null
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -0,0 +1,47 @@
 +/*
-+ * Copyright 2013 Emilio López
++ * Copyright (C) 2015 Broadcom Corporation
 + *
-+ * Emilio López <emilio@elopez.com.ar>
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation version 2.
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 + * GNU General Public License for more details.
 + */
 +
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
++#define BCM2835_PLLA			0
++#define BCM2835_PLLB			1
++#define BCM2835_PLLC			2
++#define BCM2835_PLLD			3
++#define BCM2835_PLLH			4
 +
-+static DEFINE_SPINLOCK(mod1_lock);
++#define BCM2835_PLLA_CORE		5
++#define BCM2835_PLLA_PER		6
++#define BCM2835_PLLB_ARM		7
++#define BCM2835_PLLC_CORE0		8
++#define BCM2835_PLLC_CORE1		9
++#define BCM2835_PLLC_CORE2		10
++#define BCM2835_PLLC_PER		11
++#define BCM2835_PLLD_CORE		12
++#define BCM2835_PLLD_PER		13
++#define BCM2835_PLLH_RCAL		14
++#define BCM2835_PLLH_AUX		15
++#define BCM2835_PLLH_PIX		16
 +
-+#define SUN4I_MOD1_ENABLE	31
-+#define SUN4I_MOD1_MUX		16
-+#define SUN4I_MOD1_MUX_WIDTH	2
-+#define SUN4I_MOD1_MAX_PARENTS	4
++#define BCM2835_CLOCK_TIMER		17
++#define BCM2835_CLOCK_OTP		18
++#define BCM2835_CLOCK_UART		19
++#define BCM2835_CLOCK_VPU		20
++#define BCM2835_CLOCK_V3D		21
++#define BCM2835_CLOCK_ISP		22
++#define BCM2835_CLOCK_H264		23
++#define BCM2835_CLOCK_VEC		24
++#define BCM2835_CLOCK_HSM		25
++#define BCM2835_CLOCK_SDRAM		26
++#define BCM2835_CLOCK_TSENS		27
++#define BCM2835_CLOCK_EMMC		28
++#define BCM2835_CLOCK_PERI_IMAGE	29
 +
-+static void __init sun4i_mod1_clk_setup(struct device_node *node)
-+{
-+	struct clk *clk;
-+	struct clk_mux *mux;
-+	struct clk_gate *gate;
-+	const char *parents[4];
-+	const char *clk_name = node->name;
-+	void __iomem *reg;
-+	int i = 0;
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg))
-+		return;
-+
-+	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		goto err_unmap;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		goto err_free_mux;
-+
-+	of_property_read_string(node, "clock-output-names", &clk_name);
-+
-+	while (i < SUN4I_MOD1_MAX_PARENTS &&
-+	       (parents[i] = of_clk_get_parent_name(node, i)) != NULL)
-+		i++;
-+
-+	gate->reg = reg;
-+	gate->bit_idx = SUN4I_MOD1_ENABLE;
-+	gate->lock = &mod1_lock;
-+	mux->reg = reg;
-+	mux->shift = SUN4I_MOD1_MUX;
-+	mux->mask = BIT(SUN4I_MOD1_MUX_WIDTH) - 1;
-+	mux->lock = &mod1_lock;
-+
-+	clk = clk_register_composite(NULL, clk_name, parents, i,
-+				     &mux->hw, &clk_mux_ops,
-+				     NULL, NULL,
-+				     &gate->hw, &clk_gate_ops, 0);
-+	if (IS_ERR(clk))
-+		goto err_free_gate;
-+
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+
-+	return;
-+
-+err_free_gate:
-+	kfree(gate);
-+err_free_mux:
-+	kfree(mux);
-+err_unmap:
-+	iounmap(reg);
-+}
-+CLK_OF_DECLARE(sun4i_mod1, "allwinner,sun4i-a10-mod1-clk",
-+	       sun4i_mod1_clk_setup);
++#define BCM2835_CLOCK_COUNT		30
 -- 
-2.5.3
+2.1.4
