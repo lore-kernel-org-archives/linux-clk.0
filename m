@@ -1,66 +1,57 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH] clk: ti: fix dual-registration of uart4_ick
-To: Tony Lindgren <tony@atomide.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-References: <1443019714-12926-1-git-send-email-ben.dooks@codethink.co.uk>
- <20150923173040.GI23801@atomide.com>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@lists.codethink.co.uk>, <stable@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <5604DED0.5050403@ti.com>
-Date: Fri, 25 Sep 2015 08:42:40 +0300
-MIME-Version: 1.0
-In-Reply-To: <20150923173040.GI23801@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH v3 1/4] clk: bcm2835: Move under bcm/ with other Broadcom SoC clk drivers.
+Date: Mon, 28 Sep 2015 14:22:02 -0700
+Message-Id: <1443475325-22270-1-git-send-email-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/23/2015 08:30 PM, Tony Lindgren wrote:
-> * Ben Dooks <ben.dooks@codethink.co.uk> [150923 07:53]:
->> On the OMAP AM3517 platform the uart4_ick gets registered
->> twice, causing any power managment to /dev/ttyO3 to fail
->> when trying to wake the device up.
->>
->> This solves the following oops:
->>
->> [] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
->> [] PC is at serial_omap_pm+0x48/0x15c
->> [] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
->
-> No uart4 on 34xx/35xx, that got introduced with 36xx so:
->
-> Acked-by: Tony Lindgren <tony@atomide.com>
->
->> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
->> ---
->>   drivers/clk/ti/clk-3xxx.c | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
->> index 5e12f32..2e7ef1f 100644
->> --- a/drivers/clk/ti/clk-3xxx.c
->> +++ b/drivers/clk/ti/clk-3xxx.c
->> @@ -374,7 +374,6 @@ static struct ti_dt_clk omap3xxx_clks[] = {
->>   	DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
->>   	DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
->>   	DT_CLK(NULL, "uart3_ick", "uart3_ick"),
->> -	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
->>   	DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
->>   	DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
->>   	DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
+clk-bcm2835.c predates the drivers under bcm/, but all the new BCM
+drivers are going in there so let's follow them.
 
-NAK.
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+---
+ drivers/clk/Makefile                | 1 -
+ drivers/clk/bcm/Makefile            | 1 +
+ drivers/clk/{ => bcm}/clk-bcm2835.c | 0
+ 3 files changed, 1 insertion(+), 1 deletion(-)
+ rename drivers/clk/{ => bcm}/clk-bcm2835.c (100%)
 
-This patch is actually only partially correct, it removes the uart4_ick 
-alias for omap36xx also. It should be added back to the omap36xx clks 
-array. Care to post a v2?
-
--Tero
-
->> --
->> 2.5.1
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index d08b3e5..9f71558 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -19,7 +19,6 @@ endif
+ obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
+ obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
+ obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
+-obj-$(CONFIG_ARCH_BCM2835)		+= clk-bcm2835.o
+ obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
+ obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
+ obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index 8a7a477..ee2349b 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -3,4 +3,5 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
+ obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
++obj-$(CONFIG_ARCH_BCM2835)	+= clk-bcm2835.o
+ obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
+diff --git a/drivers/clk/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+similarity index 100%
+rename from drivers/clk/clk-bcm2835.c
+rename to drivers/clk/bcm/clk-bcm2835.c
+-- 
+2.1.4
