@@ -1,45 +1,53 @@
-Return-Path: <alim.akhtar@samsung.com>
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
- k.kozlowski@samsung.com, mturquette@baylibre.com, amit.daniel@samsung.com,
- gautam.vivek@samsung.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 08/12] clk: samsung: exynos7: Corrects CMU_PERIS clocks names
-Date: Thu, 10 Sep 2015 14:14:33 +0530
-Message-id: <1441874677-24148-9-git-send-email-alim.akhtar@samsung.com>
-In-reply-to: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
-References: <1441874677-24148-1-git-send-email-alim.akhtar@samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 28 Sep 2015 16:13:28 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Paul Osmialowski <newchief@king.net.pl>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Paul Osmialowski <pawelo@king.net.pl>
+Subject: Re: [PATCH 1/1] clk: add devm_of_clk_get() and
+ devm_of_clk_get_by_name() functions
+Message-ID: <20150928231328.GS23081@codeaurora.org>
+References: <1443081808-19688-1-git-send-email-newchief@king.net.pl>
+ <1443081808-19688-2-git-send-email-newchief@king.net.pl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1443081808-19688-2-git-send-email-newchief@king.net.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch renames CMU_PERIS clocks names to match with user manual.
+On 09/24, Paul Osmialowski wrote:
+> From: Paul Osmialowski <pawelo@king.net.pl>
+> 
+> These two functions were added to ease management of clocks obtained
+> from OF device nodes.
+> 
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos7.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+All the words that were in the cover letter for this single patch
+should have been here in the commit text instead. If we were to
+look back on this commit text a year from now we'd learn that
+things got easier for clock management, but not *why* things got
+easier.
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index 7796712..ae6836e 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -791,7 +791,7 @@ CLK_OF_DECLARE(exynos7_clk_peric1, "samsung,exynos7-clock-peric1",
- #define ENABLE_SCLK_PERIS_SECURE_CHIPID	0x0A10
- 
- /* List of parent clocks for Muxes in CMU_PERIS */
--PNAME(mout_aclk_peris_66_p) = { "fin_pll", "dout_aclk_peris_66" };
-+PNAME(mout_aclk_peris_66_user_p) = { "fin_pll", "aclk_peris_66" };
- 
- static unsigned long peris_clk_regs[] __initdata = {
- 	MUX_SEL_PERIS,
-@@ -803,7 +803,7 @@ static unsigned long peris_clk_regs[] __initdata = {
- 
- static struct samsung_mux_clock peris_mux_clks[] __initdata = {
- 	MUX(0, "mout_aclk_peris_66_user",
--		mout_aclk_peris_66_p, MUX_SEL_PERIS, 0, 1),
-+		mout_aclk_peris_66_user_p, MUX_SEL_PERIS, 0, 1),
- };
- 
- static struct samsung_gate_clock peris_gate_clks[] __initdata = {
+Cover letters for single patches are practically useless by the
+way. That's because they duplicate the diffstat that is already
+in the patch and summarize the subject of the patch. Please don't
+send cover letters for single patches.
+
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index 0df4a51..d7763f1 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -504,4 +504,24 @@ static inline struct clk *of_clk_get_by_name(struct device_node *np,
+>  }
+>  #endif
+>  
+> +#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK) && defined(CONFIG_HAVE_CLK)
+
+Doesn't CONFIG_COMMON_CLK imply CONFIG_HAVE_CLK? So drop that
+config check? Also, devm_*() functions are documented in
+Documentation, so please update that file too, if it even makes
+sense to have this new API.
+
 -- 
-1.7.10.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
