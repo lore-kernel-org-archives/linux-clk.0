@@ -1,109 +1,58 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Sun, 6 Sep 2015 22:21:24 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-	patchwork-lst@pengutronix.de
-Subject: Re: [PATCH v2 1/8] clk: imx: add common logic to detect early UART
- usage
-Message-ID: <20150906142124.GZ30746@tiger>
-References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
- <1441382419-4343-2-git-send-email-l.stach@pengutronix.de>
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/3] ARM: bcm2835: Add the auxiliary clocks to the device tree.
+In-Reply-To: <5600BAC3.70506@wwwdotorg.org>
+References: <1441923750-19404-1-git-send-email-eric@anholt.net> <1441923750-19404-4-git-send-email-eric@anholt.net> <5600BAC3.70506@wwwdotorg.org>
+Date: Mon, 28 Sep 2015 12:26:37 -0700
+Message-ID: <87si5ymjki.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1441382419-4343-2-git-send-email-l.stach@pengutronix.de>
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 04, 2015 at 06:00:12PM +0200, Lucas Stach wrote:
-> Both earlycon and eralyprintk depend on the bootloader setup UART
-> clocks being retained. This patch adds the common logic to detect such
-> situations and make the information available to the clock drivers, as
-> well as adding the facilities to disable those clocks at the end of
-> the kernel init.
-> 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> ---
->  drivers/clk/imx/clk.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/imx/clk.h |  1 +
->  2 files changed, 47 insertions(+)
-> 
-> diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-> index df12b5307175..3357e29e43ab 100644
-> --- a/drivers/clk/imx/clk.c
-> +++ b/drivers/clk/imx/clk.c
-> @@ -73,3 +73,49 @@ void imx_cscmr1_fixup(u32 *val)
->  	*val ^= CSCMR1_FIXUP;
->  	return;
->  }
-> +
-> +static int __initdata imx_keep_uart_clocks;
+--=-=-=
+Content-Type: text/plain
 
-This gives a checkpatch warning as below.
+Stephen Warren <swarren@wwwdotorg.org> writes:
 
-WARNING: __initdata should be placed after imx_keep_uart_clocks
-#27: FILE: drivers/clk/imx/clk.c:77:
-+static int __initdata imx_keep_uart_clocks;
+> On 09/10/2015 03:22 PM, Eric Anholt wrote:
+>> These will be used for enabling UART1, SPI1, and SPI2.
+>
+>> diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
+>
+>> +		aux_clocks: aux-clocks@0x7e215004 {
+>> +			compatible = "brcm,bcm2835-aux-clock";
+>> +			#clock-cells = <1>;
+>> +			reg = <0x7e215004 0x4>;
+>
+> Actually, I take back the ack on this patch. This HW module has two
+> registers. The reg property should include both of those registers so
+> that if SW needs to start using the other register at some time in the
+> future, the entire set of registers is already represented in DT.
 
-Shawn
+If I changed it to "reg = <0x7e215000 0x8>" and use a #define for the
+clock register offset in patch 2/3, would I then have your ack?
 
-> +static struct clk __initdata ***imx_uart_clocks;
-> +
-> +static int __init imx_keep_uart_clocks_param(char *str)
-> +{
-> +	imx_keep_uart_clocks = 1;
-> +
-> +	return 0;
-> +}
-> +__setup_param("earlycon", imx_keep_uart_earlycon,
-> +	      imx_keep_uart_clocks_param, 0);
-> +__setup_param("earlyprintk", imx_keep_uart_earlyprintk,
-> +	      imx_keep_uart_clocks_param, 0);
-> +
-> +void __init imx_register_uart_clocks(struct clk **clks[])
-> +{
-> +	if (imx_keep_uart_clocks) {
-> +		int i;
-> +
-> +		imx_uart_clocks = clks;
-> +		for (i = 0;; i++) {
-> +			if (imx_uart_clocks[i])
-> +				clk_prepare_enable(*imx_uart_clocks[i]);
-> +			else
-> +				break;
-> +		}
-> +	}
-> +}
-> +
-> +static int __init imx_clk_disable_uart(void)
-> +{
-> +	if (imx_keep_uart_clocks) {
-> +		int i;
-> +
-> +		for (i = 0;; i++) {
-> +			if (imx_uart_clocks[i])
-> +				clk_disable_unprepare(*imx_uart_clocks[i]);
-> +			else
-> +				break;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +late_initcall_sync(imx_clk_disable_uart);
-> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-> index 1049b0c7d818..c4e2e282e892 100644
-> --- a/drivers/clk/imx/clk.h
-> +++ b/drivers/clk/imx/clk.h
-> @@ -7,6 +7,7 @@
->  extern spinlock_t imx_ccm_lock;
->  
->  void imx_check_clocks(struct clk *clks[], unsigned int count);
-> +void imx_register_uart_clocks(struct clk **clks[]);
->  
->  extern void imx_cscmr1_fixup(u32 *val);
->  
-> -- 
-> 2.5.0
-> 
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJWCZRtAAoJELXWKTbR/J7oJ1IQAIAG3pLxo/9VK8052WBjn0Y7
+0rhNcJkq20SPG+/BUt3524eDSLORnjIoS23jEAcalgI31srlE7MlE6CE3pilnqG2
+y/lk9YN3Eo4za2w/+rkOn2xMtDNoH/GuvL+Uxzcqex7z+u6djfTMZaRg8CMLEe4S
+Nn41YZsCfp1rfHSmKQZK1J7YkPeqgs3DonSCdmjvzVO5PZEPKHsULmXD1PbL8rGB
+ag7MMN68YUDd0axHqAmmNgkJ935QxTl0d6qWWsM1TCM00Lc8/NNpLH28gWvfQ9OT
+k6u6JFq+Ez+HFWLT8AOgWZukCBVLeyuMZYlDURPIQZnas9E6nErGOSnC7ClfyKwQ
+MRJ6DJr8czwGLufftlg9UkS5LTuOleJ6JO1IXNQwMFtFNDmRYGBY0VXjtjAG4MCb
+089o2QGiQvLFTKLbn1vu/+vZ1TzrWyIRlyrEUdDMV8ks7h6gR2w7o2TdK/KSBMeu
+br9/YbQOKt4HxEixTg4hkDyUMXsx73/aM581qDcpenSpC84BUtXYWhVigdtXM60S
+3ef4/UZUzYKQJwH2RM1VWyKvqP2alSw8Rqf7LZcdJe84Ipa2mb2aWzZobFNsnbcD
+3J1V1wBYb+OifQaNqNunmGDphDTt9vddilr7VDyjZWfjNYvWWHYztvdPPxCjTv/G
+v8D2JeT3tUlVRUKVTjpD
+=ERNW
+-----END PGP SIGNATURE-----
+--=-=-=--
