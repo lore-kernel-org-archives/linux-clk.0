@@ -1,62 +1,83 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [RESEND PATCH 0/2] ST PLL fixes for 4.3-rc2
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1442389379-9298-1-git-send-email-gabriel.fernandez@linaro.org>
- <20150916223051.GO23081@codeaurora.org> <55FA8C14.3020000@st.com>
- <20150917181449.GR23081@codeaurora.org>
-CC: Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Fabian Frederick <fabf@skynet.be>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-	<linux-clk@vger.kernel.org>
-From: Maxime Coquelin <maxime.coquelin@st.com>
-Message-ID: <55FBBDCE.8070905@st.com>
-Date: Fri, 18 Sep 2015 09:31:26 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 28 Sep 2015 16:05:23 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Paul Osmialowski <newchief@king.net.pl>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Paul Osmialowski <pawelo@king.net.pl>
+Subject: Re: [PATCH 0/1] add devm_of_clk_get() and devm_of_clk_get_by_name()
+ functions
+Message-ID: <20150928230523.GR23081@codeaurora.org>
+References: <1443081808-19688-1-git-send-email-newchief@king.net.pl>
 MIME-Version: 1.0
-In-Reply-To: <20150917181449.GR23081@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1443081808-19688-1-git-send-email-newchief@king.net.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 09/24, Paul Osmialowski wrote:
+> From: Paul Osmialowski <pawelo@king.net.pl>
+> 
+> While working on my pinctrl driver I've found lack of devres compatible
+> equivalent for of_clk_get() function. I'd like to use it for the following
+> (incomplete) piece of device tree configuration:
+> 
+> pinctrl: pinctrl {
+> 	compatible = "fsl,kinetis-pinctrl";
+> 	#address-cells = <1>;
+> 	#size-cells = <1>;
+> 	ranges;
+> 
+> 	port_a@40049000 {
+> 		compatible = "fsl,kinetis-pin-bank";
+> 		reg = <0x40049000 0x1000>;
+> 		clocks = <&sim SIM_CLK_SCGC5_PORTA>;
+> 	};
+> 
+> 	port_b@4004a000 {
+> 		compatible = "fsl,kinetis-pin-bank";
+> 		reg = <0x4004a000 0x1000>;
+> 		clocks = <&sim SIM_CLK_SCGC5_PORTB>;
+> 	};
+> ...
+> };
+> 
+> In my pinconf-generic compatible fsl,kinetis-pinctrl driver, I'm iterating
+> over fsl,kinetis-pin-bank nodes using for_each_child_of_node(dev->of_node,
+> child) along with of_match_node() in order to grab resources (I/O base
+> address, clock gate).
+> 
+> Normally, I'd have to use of_clk_get() on each pin bank device_node and
+> then worry about proper resource release myself.
+> 
+
+I'd say your binding is wrong. Either the container node
+"pinctrl" is a software concept that contains the two devices for
+port_a and port_b or there's only one pinctrl device that happens
+to span some number of 0x1000 size banks. The former would be
+written as so
+
+	pinctrl {
+		compatible = "fsl,kenetis-pinctrl";
+		reg = <0x40049000 0x2000>;
+		clocks = <&sim SIM_CLK_SCGC5_PORTA>, <&sim SIM_CLK_SCGC5_PORTB>;
+	};
+
+and the latter would drop the container node and have two nodes
+that probed the same driver instance twice.
 
 
-On 09/17/2015 08:14 PM, Stephen Boyd wrote:
-> On 09/17, Maxime Coquelin wrote:
->>
->> On 09/17/2015 12:30 AM, Stephen Boyd wrote:
->>> On 09/16, Gabriel Fernandez wrote:
->>>> This patch set fixes a kernel crash :
->>> [..]
->>>> This kernel crash is due to a broken compatibility with this commit:
->>>> commit 5eb26c605909 ("ARM: STi: DT: Rename st_pll3200c32_407_c0_x into st_pll3200c32_cx_x")
->>> It isn't clear who's supposed to apply this because the To: list
->>> is huge. Did you want to take this through arm-soc? If so, feel
->>> free to take my acked-by on the second patch. The first patch
->>> doesn't even apply to clk tree because the patch introducing the
->>> typo didn't go through our tree.
->> Indeed Stephen, I see it went through my tree (STi DT).
->> So the first patch should be taken through arm-soc.
->> The second patch, should be taken through yours I think.
->>
-> Ok. That probably breaks bisectability, but if you're not
-> worried, I'm not worried.
-I'm not worried about bisectability indeed, as the first patch is just 
-typo fixes in DT Bindings documentation.
+ 	port_a@40049000 {
+ 		compatible = "fsl,kinetis-pin-bank";
+ 		reg = <0x40049000 0x1000>;
+ 		clocks = <&sim SIM_CLK_SCGC5_PORTA>;
+ 	};
+ 
+ 	port_b@4004a000 {
+ 		compatible = "fsl,kinetis-pin-bank";
+ 		reg = <0x4004a000 0x1000>;
+ 		clocks = <&sim SIM_CLK_SCGC5_PORTB>;
+ 	};
 
-Regards,
-Maxime
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
