@@ -1,180 +1,131 @@
-Return-Path: <mark.rutland@arm.com>
-Date: Tue, 22 Sep 2015 02:24:03 +0100
-From: Mark Rutland <mark.rutland@arm.com>, marc.zyngier@arm.com
-To: Zhiqiang Hou <B48286@freescale.com>, marc.zyngier@arm.com
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Catalin Marinas <Catalin.Marinas@arm.com>,
-	Will Deacon <Will.Deacon@arm.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"Shaohui.Xie@freescale.com" <Shaohui.Xie@freescale.com>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"bhupesh.sharma@freescale.com" <bhupesh.sharma@freescale.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"wsa@the-dreams.de" <wsa@the-dreams.de>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"wim@iguana.be" <wim@iguana.be>,
-	"Wenbin.Song@freescale.com" <Wenbin.Song@freescale.com>,
-	"scottwood@freescale.com" <scottwood@freescale.com>,
-	"Mingkai.Hu@freescale.com" <Mingkai.Hu@freescale.com>,
-	"leoli@freescale.com" <leoli@freescale.com>
-Subject: Re: [PATCH 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
-Message-ID: <20150922012403.GA1535@svinekod>
-References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
- <1442838158-2964-5-git-send-email-B48286@freescale.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mturquette@baylibre.com, Kevin Hilman <khilman@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Caesar Wang <wxt@rock-chips.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2] clk: readd refcounting for struct clk instances
+Date: Mon, 28 Sep 2015 21:36:31 +0200
+Message-ID: <1541157.TohRuBEVWh@diego>
+In-Reply-To: <20150928184640.GM23081@codeaurora.org>
+References: <6257096.h7pub3XnDQ@diego> <20150928184640.GM23081@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442838158-2964-5-git-send-email-B48286@freescale.com>
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Am Montag, 28. September 2015, 11:46:40 schrieb Stephen Boyd:
+> On 09/23, Heiko St=FCbner wrote:
+> > ---
+> >=20
+> > While it may be nice to do the actual handling of the clock referen=
+ces
+> > only in the calling code, in this current use case it would create
+> > a big additional overhead.
+> >=20
+> > It looks like this so called synchronous reset on power-domain stat=
+e-
+> > changes, requiring device clocks to be turned on, is not that uncom=
+mon
+> > or rockchip-specific.
+> > For this Kevin requested that we read the clocks from the actual co=
+nsumer
+> > devices and not double-list them in the power-domain node as well.
+> >=20
+> > So when expecting pm_clk_add_clk() to work, the current powerdomain=
+ code
+> >=20
+> > can simply do when adding a device to a domain in=20
+rockchip_pd_attach_dev():
+> >     while ((clk =3D of_clk_get(dev->of_node, i++)) && !IS_ERR(clk))=
+ {
+> > =09
+> > =09dev_dbg(dev, "adding clock '%pC' to list of PM clocks\n", clk);
+> > =09error =3D pm_clk_add_clk(dev, clk);
+> > =09clk_put(clk);
+> > =09
+> >     }
+> >=20
+> > The clock gets handed off to the generic pm clock handling and thus=
 
-> +/memreserve/ 0x80000000 0x00010000;
+> > clk_put in there.
+> >=20
+> >=20
+> > On the other hand when only the rockchip power-domain code is expec=
+ted
+> > to get and put the clock, we would require a lot of new overhead, a=
+s now
+> > the code would also need to track which devices got added to what
+> > domain and also all clock-references until the device gets detached=
 
-Why is this necessary?
+> > again. So this would essentially duplicate a big part of what the
+> > genpd-code does (per-domain device-list and per-device clock-list).=
 
-If this is necessary, please add a comment stating what this is for.
+> >=20
+> > As this seems to be not uncommon, future powerdomain drivers
+> > might need that too and would also need to duplicate that handling.=
 
-> +               cpu@3 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a53";
-> +                       reg = <0x0 0x3>;
-> +                       clocks = <&clockgen 1 0>;
-> +               };
+> >=20
+> > When allowing multiple __clk_get and __clk_put calls on the other
+> > hand, the overhead for the regular case comes down to one atomic_in=
+c,
+> > atomic_sub_and_test and the function call to the new separate relea=
+se
+> > function ;-) .
+>=20
+> Why are we doing of_clk_get(), pm_clk_add_clk(), and then
+> clk_put()?  Just drop that clk_put() in the caller and remove the
+> __clk_get() inside pm_clk_add_clk() and everything works the
+> same. This patch does most of that, except it doesn't handle the
+> error path where we would need to throw a clk_put().
 
-Missing enable-method properties on all the secondary CPUs.
+I guess that was my try to keep all the gets and puts together, but als=
+o an=20
+instance of not seeing the forest for the trees. Looking at your soluti=
+on=20
+below does look actually really cool.
 
-[...]
+Would still be nice if the genpd people would speak up on their prefere=
+nce. In=20
+the worst case I'll try hunting them down at ELCE next week :-)
 
-> +       gic: interrupt-controller@1400000 {
-> +               compatible = "arm,gic-400";
-> +               #interrupt-cells = <3>;
-> +               interrupt-controller;
-> +               reg = <0x0 0x1401000 0 0x1000>, /* GICD */
-> +                     <0x0 0x1402000 0 0x1000>, /* GICC */
-> +                     <0x0 0x1404000 0 0x2000>, /* GICH */
-> +                     <0x0 0x1406000 0 0x2000>; /* GICV */
-> +               interrupts = <1 9 0xf08>;
-> +       };
+I guess for the error path, one could just set the notion that if=20
+pm_clk_add_clk returns sucessfully it has taken over the clock referenc=
+e=20
+completely and in the error case the caller should clean up?
 
-These sizes don't look right.
 
-To the best of my knowledge, GICC (and GICV) should be 0x2000 in size, while
-GICD and GICH should be 0x1000.
-
-[...]
-
-> +       ifc: ifc@1530000 {
-> +               compatible = "fsl,ifc", "simple-bus";
-> +               reg = <0x0 0x1530000 0x0 0x10000>;
-> +               interrupts = <0 43 0x4>;
-> +       };
-
-Why simple-bus?
-
-> +       clockgen: clocking@1ee1000 {
-> +               compatible = "fsl,ls1043a-clockgen";
-> +               reg = <0x0 0x1ee1000 0x0 0x1000>;
-> +               #clock-cells = <2>;
-> +               clocks = <&sysclk>;
-> +               sysclk: sysclk {
-> +                       compatible = "fixed-clock";
-> +                       #clock-cells = <0>;
-> +                       clock-frequency = <100000000>;
-> +                       clock-output-names = "sysclk";
-> +               };
-> +       };
-
-Why does this fixed clock live under the clockgen? It should live directly
-under the root node.
-
-[...]
-
-> +       pcie@3400000 {
-> +               compatible = "fsl,ls1043a-pcie", "snps,dw-pcie";
-> +               reg = <0x00 0x03400000 0x0 0x00100000   /* controller registers */
-> +                      0x40 0x00000000 0x0 0x00002000>; /* configuration space */
-> +               reg-names = "regs", "config";
-> +               interrupts = <0 118 0x4>, /* controller interrupt */
-> +                            <0 117 0x4>; /* PME interrupt */
-> +               interrupt-names = "intr", "pme";
-> +               #address-cells = <3>;
-> +               #size-cells = <2>;
-> +               device_type = "pci";
-> +               num-lanes = <4>;
-> +               bus-range = <0x0 0xff>;
-> +               ranges = <0x81000000 0x0 0x00000000 0x40 0x00010000 0x0 0x00010000   /* downstream I/O */
-> +                         0x82000000 0x0 0x40000000 0x40 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
-> +               msi-parent = <&msi1>;
-> +               #interrupt-cells = <1>;
-> +               interrupt-map-mask = <0 0 0 7>;
-> +               interrupt-map = <0000 0 0 1 &gic 0 110 0x4>,
-> +                               <0000 0 0 2 &gic 0 111 0x4>,
-> +                               <0000 0 0 3 &gic 0 112 0x4>,
-> +                               <0000 0 0 4 &gic 0 113 0x4>;
-> +       };
-> +
-> +       pcie@3500000 {
-> +               compatible = "fsl,ls1043a-pcie", "snps,dw-pcie";
-> +               reg = <0x00 0x03500000 0x0 0x00100000   /* controller registers */
-> +                      0x48 0x00000000 0x0 0x00002000>; /* configuration space */
-> +               reg-names = "regs", "config";
-> +               interrupts = <0 128 0x4>,
-> +                            <0 127 0x4>;
-> +               interrupt-names = "intr", "pme";
-> +               #address-cells = <3>;
-> +               #size-cells = <2>;
-> +               device_type = "pci";
-> +               num-lanes = <2>;
-> +               bus-range = <0x0 0xff>;
-> +               ranges = <0x81000000 0x0 0x00000000 0x48 0x00010000 0x0 0x00010000   /* downstream I/O */
-> +                         0x82000000 0x0 0x40000000 0x48 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
-> +               msi-parent = <&msi2>;
-> +               #interrupt-cells = <1>;
-> +               interrupt-map-mask = <0 0 0 7>;
-> +               interrupt-map = <0000 0 0 1 &gic 0 120  0x4>,
-> +                               <0000 0 0 2 &gic 0 121 0x4>,
-> +                               <0000 0 0 3 &gic 0 122 0x4>,
-> +                               <0000 0 0 4 &gic 0 123 0x4>;
-> +       };
-> +
-> +       pcie@3600000 {
-> +               compatible = "fsl,ls1043a-pcie", "snps,dw-pcie";
-> +               reg = <0x00 0x03600000 0x0 0x00100000   /* controller registers */
-> +                      0x50 0x00000000 0x0 0x00002000>; /* configuration space */
-> +               reg-names = "regs", "config";
-> +               interrupts = <0 162 0x4>,
-> +                            <0 161 0x4>;
-> +               interrupt-names = "intr", "pme";
-> +               #address-cells = <3>;
-> +               #size-cells = <2>;
-> +               device_type = "pci";
-> +               num-lanes = <2>;
-> +               bus-range = <0x0 0xff>;
-> +               ranges = <0x81000000 0x0 0x00000000 0x50 0x00010000 0x0 0x00010000   /* downstream I/O */
-> +                         0x82000000 0x0 0x40000000 0x50 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
-> +               msi-parent = <&msi3>;
-> +               #interrupt-cells = <1>;
-> +               interrupt-map-mask = <0 0 0 7>;
-> +               interrupt-map = <0000 0 0 1 &gic 0 154 0x4>,
-> +                               <0000 0 0 2 &gic 0 155 0x4>,
-> +                               <0000 0 0 3 &gic 0 156 0x4>,
-> +                               <0000 0 0 4 &gic 0 157 0x4>;
-> +       };
-
-You wait ages for a bus, then three show up at once...
-
-> +
-> +       memory@80000000 {
-> +               device_type = "memory";
-> +               reg = <0x0 0x80000000 0 0x80000000>;
-> +                     /* DRAM space 1 - 2 GB DRAM */
-
-I don't understand the comment. This describes 2GB at 2GB.
-
-Does the bootloader overwrite this?
-
-Thanks,
-Mark.
+>=20
+> Really, that snippet of code that loops over a device's clocks
+> and adds them to a pm domain is an example of duplicate code that
+> should go into some common layer like the PM clock stuff. Then we
+> don't have any kind of situation where we're passing struct clk
+> pointers off to other layers of code and this "problem" doesn't
+> exist.
+>=20
+> ----8<----
+> diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/cloc=
+k_ops.c
+> index acef9f9f759a..529a03e8282c 100644
+> --- a/drivers/base/power/clock_ops.c
+> +++ b/drivers/base/power/clock_ops.c
+> @@ -95,7 +95,7 @@ static int __pm_clk_add(struct device *dev, const c=
+har
+> *con_id, return -ENOMEM;
+>                 }
+>         } else {
+> -               if (IS_ERR(clk) || !__clk_get(clk)) {
+> +               if (IS_ERR(clk)) {
+>                         kfree(ce);
+>                         return -ENOENT;
+>                 }
+> @@ -129,7 +129,7 @@ int pm_clk_add(struct device *dev, const char *co=
+n_id)
+>   * @clk: Clock pointer
+>   *
+>   * Add the clock to the list of clocks used for the power management=
+ of
+> @dev. - * It will increment refcount on clock pointer, use clk_put() =
+on it
+> when done. + * Callers should not call clk_put() on @clk after callin=
+g this
+> function. */
+>  int pm_clk_add_clk(struct device *dev, struct clk *clk)
+>  {
