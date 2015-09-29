@@ -1,77 +1,62 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Tue, 08 Sep 2015 01:33:03 +0900
-Message-Id: <20150907163303.475.30983.sendpatchset@little-apple>
-In-Reply-To: <20150907163252.475.18281.sendpatchset@little-apple>
-References: <20150907163252.475.18281.sendpatchset@little-apple>
-Subject: [PATCH v7 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
+Return-Path: <ben.dooks@codethink.co.uk>
+Message-ID: <560A8DB0.6020109@codethink.co.uk>
+Date: Tue, 29 Sep 2015 14:10:08 +0100
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+MIME-Version: 1.0
+To: Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
+CC: mturquette@baylibre.com, sboyd@codeaurora.org,
+ linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@lists.codethink.co.uk, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: ti: fix dual-registration of uart4_ick
+References: <1443019714-12926-1-git-send-email-ben.dooks@codethink.co.uk> <20150923173040.GI23801@atomide.com> <5604DED0.5050403@ti.com>
+In-Reply-To: <5604DED0.5050403@ti.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 25/09/15 06:42, Tero Kristo wrote:
+> On 09/23/2015 08:30 PM, Tony Lindgren wrote:
+>> * Ben Dooks <ben.dooks@codethink.co.uk> [150923 07:53]:
+>>> On the OMAP AM3517 platform the uart4_ick gets registered
+>>> twice, causing any power managment to /dev/ttyO3 to fail
+>>> when trying to wake the device up.
+>>>
+>>> This solves the following oops:
+>>>
+>>> [] Unhandled fault: external abort on non-linefetch (0x1028) at
+>>> 0xfa09e008
+>>> [] PC is at serial_omap_pm+0x48/0x15c
+>>> [] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
+>>
+>> No uart4 on 34xx/35xx, that got introduced with 36xx so:
+>>
+>> Acked-by: Tony Lindgren <tony@atomide.com>
+>>
+>>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+>>> ---
+>>>   drivers/clk/ti/clk-3xxx.c | 1 -
+>>>   1 file changed, 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
+>>> index 5e12f32..2e7ef1f 100644
+>>> --- a/drivers/clk/ti/clk-3xxx.c
+>>> +++ b/drivers/clk/ti/clk-3xxx.c
+>>> @@ -374,7 +374,6 @@ static struct ti_dt_clk omap3xxx_clks[] = {
+>>>       DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
+>>>       DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
+>>>       DT_CLK(NULL, "uart3_ick", "uart3_ick"),
+>>> -    DT_CLK(NULL, "uart4_ick", "uart4_ick"),
+>>>       DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
+>>>       DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
+>>>       DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
+> 
+> NAK.
+> 
+> This patch is actually only partially correct, it removes the uart4_ick
+> alias for omap36xx also. It should be added back to the omap36xx clks
+> array. Care to post a v2?
 
-Shmobile is all multiplatform these days, so in get rid of the
-reference to CONFIG_ARCH_SHMOBILE_MULTI in drivers/clk/shmobile/.
+Thankyou for the feedback. I'll update, but do not have a device to test.
 
-Also instead of always enabling DIV6 and MSTP adjust the Makefile
-to enable DIV6 and MSTP depending on if they are included in the
-SoC or not.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-
- Earlier known as "clk: shmobile: Get rid of CONFIG_ARCH_SHMOBILE_MULTI"
-
- Changes since V6:
- - None
-
- Changes since V5:
- - None
-
- Changes since V4:
- - Added Acked-by from Laurent
-
- Changes since V3:
- - Got rid of hunks that modified drivers/clk/Makefile
- - This to prevent build issue with non-CCF enabled SH arch
- - A nice side effect is that this patch now can be merged any time
-
- Changes since V2:
- - Fixed patch subject typo CONFIG_SHMOBILE_MULTI -> CONFIG_ARCH_SHMOBILE_MULTI
-
- Changes since V1:
- - Added Acked-by from Geert
-
- drivers/clk/shmobile/Makefile |   22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
-
---- 0001/drivers/clk/shmobile/Makefile
-+++ work/drivers/clk/shmobile/Makefile	2015-08-29 16:14:57.522366518 +0900
-@@ -1,13 +1,11 @@
- obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
--obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
--obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
--obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
--obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
--obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
--obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o
--obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-div6.o
--obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-mstp.o
-+obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
