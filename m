@@ -1,44 +1,107 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-la0-f47.google.com ([209.85.215.47]:35410 "EHLO
-	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760139AbbIDQ44 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 4 Sep 2015 12:56:56 -0400
+Return-Path: <pawelo@king.net.pl>
+Date: Tue, 29 Sep 2015 06:45:24 +0200 (CEST)
+From: Paul Osmialowski <pawelo@king.net.pl>
+To: Stephen Boyd <sboyd@codeaurora.org>
+cc: Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Osmialowski <pawelo@king.net.pl>
+Subject: Re: [PATCH 0/1] add devm_of_clk_get() and devm_of_clk_get_by_name()
+ functions
+In-Reply-To: <20150928230523.GR23081@codeaurora.org>
+Message-ID: <alpine.LNX.2.00.1509290611050.3931@localhost.localdomain>
+References: <1443081808-19688-1-git-send-email-newchief@king.net.pl> <20150928230523.GR23081@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1441349872-4560-4-git-send-email-bhupesh.sharma@freescale.com>
-References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
-	<1441349872-4560-4-git-send-email-bhupesh.sharma@freescale.com>
-Date: Fri, 4 Sep 2015 11:56:54 -0500
-Message-ID: <CADRPPNR11BD4WfXTWoQ28rZCd_BJuhdWu49E6jjpO29CH2s5Ow@mail.gmail.com>
-Subject: Re: [PATCH v2 03/10] Documentation/dts: Add bindings for QIXIS FPGA
- controller found on FSL boards
-From: Li Yang <leoli@freescale.com>
-To: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, marc.zyngier@arm.com,
-	linux-clk@vger.kernel.org, Catalin.Marinas@arm.com,
-	will.deacon@arm.com, olof@lixom.net, bhupesh.linux@gmail.com,
-	Jaiprakash Singh <b44839@freescale.com>,
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 4, 2015 at 1:57 AM, Bhupesh Sharma
-<bhupesh.sharma@freescale.com> wrote:
-> This patch adds bindings for QIXIS FPGA controller found on FSL boards.
+Hi Stephen,
 
-A general comment: when you are updating the device tree bindings.
-You should cc the devicetree@vger.kernel.org mailing list.
+Thanks for all of your comments.
 
+On Mon, 28 Sep 2015, Stephen Boyd wrote:
+
+> I'd say your binding is wrong. Either the container node
+> "pinctrl" is a software concept that contains the two devices for
+> port_a and port_b or there's only one pinctrl device that happens
+> to span some number of 0x1000 size banks. The former would be
+> written as so
+> 
+> 	pinctrl {
+> 		compatible = "fsl,kenetis-pinctrl";
+> 		reg = <0x40049000 0x2000>;
+> 		clocks = <&sim SIM_CLK_SCGC5_PORTA>, <&sim SIM_CLK_SCGC5_PORTB>;
+> 	};
 >
-> Some Freescale boards like LS2080AQDS/LS2080ARDB have an on-board FPGA/CPLD
-> connected to the IFC controller. The bindings specified in this patch
-> cater to those on-board FPGA/CPLD controllers.
 
-We already have the binding defined in
-Documentation/devicetree/bindings/powerpc/fsl/board.txt.  We probably
-should just move it to a more generic location.
+I tried this and actually this looks similar to my first approach to this 
+driver. I wasn't happy with the fact that pin banks are so loosely coupled 
+with resources they use.
 
-Regards,
-Leo
+I thought that making pin controller a container for pin bank devices 
+would create better coupling and simply look better in DT file.
+
+With this first approach example pin definition would look like:
+
+fsl,kinetis-pins = <PORT_A 0 1 &pcfg_pull_pin_default> ...
+
+where the binding format is fsl,kinetis-pins = <bank pin function CONFIG>
+
+&pcfg_pull_pin_default is defined as:
+
+pcfg_pull_pin_default: pcfg-pull-pin-default {
+	bias-pull-pin-default;
+};
+
+...and PORT_A would have to be defined as preprocessor macro in some 
+header file:
+
+#define PORT_A   0
+#define PORT_B   1
+#define PORT_C   2
+#define PORT_D   3
+#define PORT_E   4
+#define PORT_F   5
+#define PORT_NUM 6
+
+That's another thing I'd want to avoid.
+
+I wanted a DT file which driver could use to figure out how many pin banks 
+there are, what clocks and IO ranges they use and how pins are associated 
+with banks.
+
+Now I see I pasted example from some old file (sorry for that), it differs 
+in one small detail, so again:
+
+pinctrl: pinctrl {
+        compatible = "fsl,kinetis-pinctrl";
+        #address-cells = <1>;
+        #size-cells = <1>;
+        ranges;
+
+        port_a: pin-bank@40049000 {
+                compatible = "fsl,kinetis-pin-bank";
+                reg = <0x40049000 0x1000>;
+                clocks = <&sim SIM_CLK_SCGC5_PORTA>;
+        };
+
+        port_b: pin-bank@4004a000 {
+                compatible = "fsl,kinetis-pin-bank";
+                reg = <0x4004a000 0x1000>;
+                clocks = <&sim SIM_CLK_SCGC5_PORTB>;
+        };
+...
+};
+
+Now, assuming use of of_find_node_by_phandle(), example pin definition 
+would look like:
+
+fsl,kinetis-pins = <&port_a 0 1 &pcfg_pull_pin_default> ...
+
+Things are getting connected together, no preprocessor definitions, no 
+extra header file. What can be wrong with this design?
+
+I'll prepare second iteration with updated documentation (and other 
+smaller cleanups) soon.
+
+Thanks,
+Paul
