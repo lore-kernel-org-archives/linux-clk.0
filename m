@@ -1,71 +1,49 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH v4 4/8] clk: imx31: retain early UART clocks during kernel init
-Date: Mon, 21 Sep 2015 18:54:00 +0200
-Message-Id: <1442854444-4460-5-git-send-email-l.stach@pengutronix.de>
-In-Reply-To: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
-References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, patchwork-lst@pengutronix.de,
- kernel@pengutronix.de, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <magnus.damm@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+In-Reply-To: <CAMuHMdW3o0WCGCXuyYJtd8nC691N62wK7NNTzTQTM7fAvCn8jg@mail.gmail.com>
+References: <1442936646-30362-1-git-send-email-geert+renesas@glider.be>
+	<1442936646-30362-5-git-send-email-geert+renesas@glider.be>
+	<CAMuHMdW3o0WCGCXuyYJtd8nC691N62wK7NNTzTQTM7fAvCn8jg@mail.gmail.com>
+Date: Tue, 29 Sep 2015 22:30:30 +0900
+Message-ID: <CANqRtoTMgZRU6bmp9VoK6O5xDNKc0zkf-xmepgkY2ZyYXW5-mQ@mail.gmail.com>
+Subject: Re: [PATCH/RFC v2 4/4] clk: shmobile: rcar-gen2: Switch from old MSTP
+ to new MSSR driver
+From: Magnus Damm <magnus.damm@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms@verge.net.au>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux PM list <linux-pm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Make sure to keep UART clocks enabled during kernel init if
-earlyprintk or earlycon are active.
+Hi Geert,
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- drivers/clk/imx/clk-imx31.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Tue, Sep 29, 2015 at 9:48 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Tue, Sep 22, 2015 at 5:44 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>> --- a/drivers/clk/shmobile/clk-rcar-gen2.c
+>> +++ b/drivers/clk/shmobile/clk-rcar-gen2.c
+>> @@ -431,7 +431,7 @@ static void __init rcar_gen2_cpg_clocks_init(struct device_node *np)
+>>
+>>         of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
+>>
+>> -       cpg_mstp_add_clk_domain(np);
+>> +       cpg_mssr_add_clk_domain(np);
+>
+> Of course this should become conditional on the presence of the new
+> "renesas,r8a7791-cpg-mssr" compatible value, to preserve
+> backwards-compatibility with old DTSes.
 
-diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
-index 1f8383475bb3..5520e20eaceb 100644
---- a/drivers/clk/imx/clk-imx31.c
-+++ b/drivers/clk/imx/clk-imx31.c
-@@ -62,6 +62,16 @@ enum mx31_clks {
- static struct clk *clk[clk_max];
- static struct clk_onecell_data clk_data;
- 
-+static struct clk ** const uart_clks[] __initconst = {
-+	&clk[ipg],
-+	&clk[uart1_gate],
-+	&clk[uart2_gate],
-+	&clk[uart3_gate],
-+	&clk[uart4_gate],
-+	&clk[uart5_gate],
-+	NULL
-+};
-+
- int __init mx31_clocks_init(unsigned long fref)
- {
- 	void __iomem *base;
-@@ -200,6 +210,8 @@ int __init mx31_clocks_init(unsigned long fref)
- 	mx31_revision();
- 	clk_disable_unprepare(clk[iim_gate]);
- 
-+	imx_register_uart_clocks(uart_clks);
-+
- 	mxc_timer_init(MX31_GPT1_BASE_ADDR, MX31_INT_GPT, GPT_TYPE_IMX31);
- 
- 	return 0;
--- 
-2.5.1
+Yeah, and we should probably link in both clk-mstp.o and clk-mssr.o
+for older SoCs.
 
+Cheers,
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+/ magnus
