@@ -1,55 +1,91 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Sanchayan Maity <maitysanchayan@gmail.com>
-To: srinivas.kandagatla@linaro.org, gregkh@linuxfoundation.org
-Cc: maxime.ripard@free-electrons.com, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, stefan@agner.ch, shawnguo@kernel.org,
-	kernel@pengutronix.de, Sanchayan Maity <maitysanchayan@gmail.com>
-Subject: [PATCH v10 4/4] nvmem: Add DT binding documentation for Vybrid OCOTP driver
-Date: Mon,  7 Sep 2015 13:51:38 +0530
-Message-Id: <1cec2239c020d4519aad38f42f09bf26b3d2854a.1441609625.git.maitysanchayan@gmail.com>
-In-Reply-To: <cover.1441609625.git.maitysanchayan@gmail.com>
-References: <cover.1441609625.git.maitysanchayan@gmail.com>
-In-Reply-To: <cover.1441609625.git.maitysanchayan@gmail.com>
-References: <cover.1441609625.git.maitysanchayan@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <acgzx@126.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 0/8] Build and support rk3036 SoC platform
+Date: Tue, 29 Sep 2015 10:13:45 +0800
+Message-Id: <1443492833-15630-1-git-send-email-zhengxing@rock-chips.com>
+Sender: acgzx@126.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the devicetree bindings for the Freescale Vybrid On-Chip
-OTP driver.
 
-Signed-off-by: Sanchayan Maity <maitysanchayan@gmail.com>
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- .../devicetree/bindings/nvmem/vf610-ocotp.txt         | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/nvmem/vf610-ocotp.txt
+Hi,
+  We need to support rk3036 soc platform via upstream, there are
+3 primary parts for the initial release of minimum system: dts,
+pinctrl, and clock tree for rk3036, and additional, we can use
+these startup and run to init processs.
 
-diff --git a/Documentation/devicetree/bindings/nvmem/vf610-ocotp.txt b/Documentation/devicetree/bindings/nvmem/vf610-ocotp.txt
-new file mode 100644
-index 0000000..56ed481
---- /dev/null
-+++ b/Documentation/devicetree/bindings/nvmem/vf610-ocotp.txt
-@@ -0,0 +1,19 @@
-+On-Chip OTP Memory for Freescale Vybrid
-+
-+Required Properties:
-+  compatible:
-+  - "fsl,vf610-ocotp" for VF5xx/VF6xx
-+  #address-cells : Should be 1
-+  #size-cells : Should be 1
-+  reg : Address and length of OTP controller and fuse map registers
-+  clocks : ipg clock we associate with the OCOTP peripheral
-+
-+Example for Vybrid VF5xx/VF6xx:
-+
-+	ocotp: ocotp@400a5000 {
-+		compatible = "fsl,vf610-ocotp";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		reg = <0x400a5000 0xCF0>;
-+		clocks = <&clks VF610_CLK_OCOTP>;
-+	};
+Thanks.
+
+Changed in v3:
+- optimized some codes based on v2
+- removed the patch "initial set time for rtc-hym8563" (useless)
+- removed the patch "pinctrl" (approved)
+
+Changed in v2:
+- based on v1, add clock controller documentation
+- enable timer5 startup
+- add smp for cpu1
+- initial set time for rtc-hym8563
+
+Changes in v1:
+- add dts, pinctrl and clock tree for rk3036 soc platform
+
+The patchset (8):
+8) rockchip: make sure timer5 is enabled on rk3036 platforms
+7) ARM: dts: enable smp for rk3036
+6) ARM: rockchip: add support smp for rk3036
+5) clk: rockchip: add new clock type and controller for rk3036
+4) dt-bindings: add documentation of rk3036 clock controller
+3) clk: rockchip: add clock controller for rk3036
+2) clk: rockchip: add dt-binding header for rk3036
+1) ARM: dts: rockchip: add core rk3036 dts
+
+
+Changes in v3:
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+Xing Zheng (8):
+  ARM: dts: rockchip: add core rk3036 dts
+  clk: rockchip: add dt-binding header for rk3036
+  clk: rockchip: add clock controller for rk3036
+  dt-bindings: add documentation of rk3036 clock controller
+  clk: rockchip: add new clock type and controller for rk3036
+  ARM: rockchip: add support smp for rk3036
+  ARM: dts: enable smp for rk3036
+  rockchip: make sure timer5 is enabled on rk3036 platforms
+
+ .../bindings/clock/rockchip,rk3036-cru.txt         |   56 +++
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/rk3036-evb.dts                   |   64 +++
+ arch/arm/boot/dts/rk3036.dtsi                      |  383 +++++++++++++++
+ arch/arm/mach-rockchip/platsmp.c                   |  142 ++++++
+ arch/arm/mach-rockchip/rockchip.c                  |   44 +-
+ drivers/clk/rockchip/Makefile                      |    1 +
+ drivers/clk/rockchip/clk-pll.c                     |  243 +++++++++-
+ drivers/clk/rockchip/clk-rk3036.c                  |  500 ++++++++++++++++++++
+ drivers/clk/rockchip/clk.h                         |   30 ++
+ include/dt-bindings/clock/rk3036-cru.h             |  195 ++++++++
+ 11 files changed, 1641 insertions(+), 18 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.txt
+ create mode 100644 arch/arm/boot/dts/rk3036-evb.dts
+ create mode 100644 arch/arm/boot/dts/rk3036.dtsi
+ create mode 100644 drivers/clk/rockchip/clk-rk3036.c
+ create mode 100644 include/dt-bindings/clock/rk3036-cru.h
+
 -- 
-2.5.1
-
+1.7.9.5
