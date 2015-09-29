@@ -1,68 +1,64 @@
-Return-Path: <tomeu.vizoso@gmail.com>
-Return-Path: <tomeu.vizoso@gmail.com>
-Sender: Tomeu Vizoso <tomeu.vizoso@gmail.com>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Mark Brown <broonie@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	linux-arm-kernel@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	devicetree@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-acpi@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v4 15/22] clk: Probe clk providers on demand
-Date: Mon,  7 Sep 2015 14:23:40 +0200
-Message-Id: <1441628627-5143-16-git-send-email-tomeu.vizoso@collabora.com>
-In-Reply-To: <1441628627-5143-1-git-send-email-tomeu.vizoso@collabora.com>
-References: <1441628627-5143-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CANqRtoTMgZRU6bmp9VoK6O5xDNKc0zkf-xmepgkY2ZyYXW5-mQ@mail.gmail.com>
+References: <1442936646-30362-1-git-send-email-geert+renesas@glider.be>
+	<1442936646-30362-5-git-send-email-geert+renesas@glider.be>
+	<CAMuHMdW3o0WCGCXuyYJtd8nC691N62wK7NNTzTQTM7fAvCn8jg@mail.gmail.com>
+	<CANqRtoTMgZRU6bmp9VoK6O5xDNKc0zkf-xmepgkY2ZyYXW5-mQ@mail.gmail.com>
+Date: Tue, 29 Sep 2015 15:43:37 +0200
+Message-ID: <CAMuHMdXWONWNBQocy4=PPB93BYvRuz1=3SLH6u6xLOykj+x71w@mail.gmail.com>
+Subject: Re: [PATCH/RFC v2 4/4] clk: shmobile: rcar-gen2: Switch from old MSTP
+ to new MSSR driver
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms@verge.net.au>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux PM list <linux-pm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-When looking up a clock through its OF node, probe it if it hasn't
-already.
+Hi Magnus,
 
-The goal is to reduce deferred probes to a minimum, as it makes it very
-cumbersome to find out why a device failed to probe, and can introduce
-very big delays in when a critical device is probed.
+On Tue, Sep 29, 2015 at 3:30 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> On Tue, Sep 29, 2015 at 9:48 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Tue, Sep 22, 2015 at 5:44 PM, Geert Uytterhoeven
+>> <geert+renesas@glider.be> wrote:
+>>> --- a/drivers/clk/shmobile/clk-rcar-gen2.c
+>>> +++ b/drivers/clk/shmobile/clk-rcar-gen2.c
+>>> @@ -431,7 +431,7 @@ static void __init rcar_gen2_cpg_clocks_init(struct device_node *np)
+>>>
+>>>         of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
+>>>
+>>> -       cpg_mstp_add_clk_domain(np);
+>>> +       cpg_mssr_add_clk_domain(np);
+>>
+>> Of course this should become conditional on the presence of the new
+>> "renesas,r8a7791-cpg-mssr" compatible value, to preserve
+>> backwards-compatibility with old DTSes.
+>
+> Yeah, and we should probably link in both clk-mstp.o and clk-mssr.o
+> for older SoCs.
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
----
+Yep, been there, done that (local code updated and working ;-)
 
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
+The conditional in drivers/sh/pm_runtime.c is getting a bit too gory for my
+appetite. I think we should make PM (and thus PM_GENERIC_DOMAINS) mandatory.
 
- drivers/clk/clk.c | 3 +++
- 1 file changed, 3 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 43e2c3ad6c31..e5fe02a11c36 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -19,6 +19,7 @@
- #include <linux/list.h>
- #include <linux/slab.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/device.h>
- #include <linux/init.h>
- #include <linux/sched.h>
-@@ -3004,6 +3005,8 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- 	if (!clkspec)
- 		return ERR_PTR(-EINVAL);
- 
-+	of_device_probe(clkspec->np);
-+
- 	/* Check if we have such a provider in our array */
- 	mutex_lock(&of_clk_mutex);
- 	list_for_each_entry(provider, &of_clk_providers, link) {
--- 
-2.4.3
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
