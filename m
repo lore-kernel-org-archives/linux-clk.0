@@ -1,113 +1,100 @@
-Return-Path: <magnus.damm@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20150909213910.GU15099@codeaurora.org>
-References: <20150909050554.27129.68718.sendpatchset@little-apple>
-	<13888179.tcIA8DJW1S@avalon>
-	<CANqRtoTE+jdavqQ0i5jHu=5REtPhf1xDVfREKC0XD2Bz=rf4kQ@mail.gmail.com>
-	<1981230.p8F5aT0ffl@avalon>
-	<20150909213910.GU15099@codeaurora.org>
-Date: Wed, 16 Sep 2015 18:33:48 +0900
-Message-ID: <CANqRtoTWT-ZALYDFMRy_cGNQHb30jWe-X5CeKG-zV0PN7L6vDA@mail.gmail.com>
-Subject: Re: [PATCH][RFC] clk: Use node name and index for clock name
-From: Magnus Damm <magnus.damm@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
-	SH-Linux <linux-sh@vger.kernel.org>, "Simon Horman [Horms]" <horms@verge.net.au>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v3 3/5] clk: sunxi: pll2: Add A13 support
+Date: Tue, 29 Sep 2015 09:39:11 +0200
+Message-Id: <1443512353-28073-4-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1443512353-28073-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1443512353-28073-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+The A13, unlike the A10 and A20, doesn't use a pass-through exception for
+the 0 value in the pre and post dividers, but increments all the values
+written in the register by one.
 
-Thanks for your feedback!
+Add an exception for both these cases to handle them nicely.
 
-On Thu, Sep 10, 2015 at 6:39 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 09/09, Laurent Pinchart wrote:
->> On Wednesday 09 September 2015 14:27:58 Magnus Damm wrote:
->> > On Wed, Sep 9, 2015 at 2:14 PM, Laurent Pinchart wrote:
->> > > Another issue is that this won't guarantee that the names are unique as
->> > > multiple DT nodes can have the same name. Instead of trying to generate
->> > > unique names, would it be possible to handle clock registration and
->> > > lookup without relying on names for DT-based platforms ?
->> >
->> > It would of course make sense to do that for the long run, but at the
->> > same time that sounds like major internal API rework since most
->> > functions operate on string clock names today. So for short term is
->> > the correct approach to use clock-output-names?
->>
->> I think Stephen and Mike should comment on that.
->>
->
-> We've been murmuring about moving away from string based parent
-> child relationship descriptions for some time now. Nothing very
-> concrete has come out though and I haven't thought about it in
-> too much detail.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi/clk-a10-pll2.c | 38 +++++++++++++++++++++++++++++++++-----
+ 1 file changed, 33 insertions(+), 5 deletions(-)
 
-My half-cooked attempt to fix this was posted yesterday:
-[PATCH 00/05][RFC] Clock registration without parent name
-http://www.spinics.net/lists/linux-clk/msg02960.html
-
-If you have any ideas how that series can be beaten into something you
-like then please let me know.
-
-> Why can't we call clk_get() for the clocks that we need to find
-> the name of, and then call __clk_get_name() on them? Doing
-> clk_get() has the nice side-effect of ordering probe for
-> different clock controller drivers so that things like
-> suspend/resume are done in the correct order.
-
-I think __get_clk_name() makes sense in general as long as we can
-produce some sane names for the clocks while registering.
-
-In my mind the choices we have for naming clocks for registration are:
-a) Based on the DT clock-output-names property
-b) Hard coded string defined in C code
-c) Built on DT node name and DT clock-indices property (if present -
-and no clock-output-names in DT)
-
-Maybe there are other options? I don't mind so much in general which
-one to go with, but at the same time I can see the beauty of not
-making the DT clock-output-names property mandatory from a DT
-perspective. So I like the approach of defaulting to c) but allow DT
-to override using a). In my mind all of a) -> c) above should work
-with the core clock code. Please let me know if my understanding is
-wrong.
-
-Like mentioned in earlier email, the case c) above does not work when
-using of_clk_get_parent_name(). Especially the function
-of_fixed_factor_clk_setup() tries to point out the parent using
-of_clk_get_parent_name() which prevents it from working if the parent
-clock is named following the style in c). So we cannot use fixed
-factor clocks without local patches if we go with c)..
-
-As for clk_get() vs of_clk_get() (that my patch series above is
-using), this seems to be tightly related to the driver model and how
-to register clocks. clk_get() takes a struct device pointer while
-of_clk_get() takes a struct device_node pointer.
-
-I've always been a fan of using the standard driver model (initially
-with platform devices with platform data, now DT). Over the years
-various DT-specific init methods have creeped into the kernel - I
-clearly recall such ones for clocksources, irqchip and clocks, but
-gpio and pinctrl may also be affected. I've never really understood
-the reason behind them - shouldn't using the regular driver model with
-initcall order, linking order and deferred probing be enough?
-
-Anyway, if you have time please share your ideas about naming a) - >c)
-above and what your expectation is for new drivers. Same goes for
-driver model usage - do you want us to move away from of_clk_init() to
-regular driver model? of_clk_init() seems to manage probe order
-correctly what I can tell, not sure about suspend/resume though.
-
->From my side I mainly want to make our DT interface stable. So either
-we use clock-output-names in DT to begin with and fix things
-incrementally, or we omit clock-output-names from DT from the
-beginning but if so we need to fix the clock core code so we can use
-c) (or any other options).
-
-Thanks for your help,
-
-/ magnus
+diff --git a/drivers/clk/sunxi/clk-a10-pll2.c b/drivers/clk/sunxi/clk-a10-pll2.c
+index b877cc6c3622..bae9235f7528 100644
+--- a/drivers/clk/sunxi/clk-a10-pll2.c
++++ b/drivers/clk/sunxi/clk-a10-pll2.c
+@@ -41,9 +41,15 @@
+ 
+ #define SUN4I_PLL2_OUTPUTS		4
+ 
++struct sun4i_pll2_data {
++	u32	post_div_offset;
++	u32	pre_div_flags;
++};
++
+ static DEFINE_SPINLOCK(sun4i_a10_pll2_lock);
+ 
+-static void __init sun4i_pll2_setup(struct device_node *node)
++static void __init sun4i_pll2_setup(struct device_node *node,
++				    struct sun4i_pll2_data *data)
+ {
+ 	const char *clk_name = node->name, *parent;
+ 	struct clk **clks, *base_clk, *prediv_clk;
+@@ -70,8 +76,7 @@ static void __init sun4i_pll2_setup(struct device_node *node)
+ 					  parent, 0, reg,
+ 					  SUN4I_PLL2_PRE_DIV_SHIFT,
+ 					  SUN4I_PLL2_PRE_DIV_WIDTH,
+-					  CLK_DIVIDER_ONE_BASED |
+-					  CLK_DIVIDER_ALLOW_ZERO,
++					  data->pre_div_flags,
+ 					  &sun4i_a10_pll2_lock);
+ 	if (!prediv_clk) {
+ 		pr_err("Couldn't register the prediv clock\n");
+@@ -122,7 +127,7 @@ static void __init sun4i_pll2_setup(struct device_node *node)
+ 	 */
+ 	val = readl(reg);
+ 	val &= ~(SUN4I_PLL2_POST_DIV_MASK << SUN4I_PLL2_POST_DIV_SHIFT);
+-	val |= SUN4I_PLL2_POST_DIV_VALUE << SUN4I_PLL2_POST_DIV_SHIFT;
++	val |= (SUN4I_PLL2_POST_DIV_VALUE - data->post_div_offset) << SUN4I_PLL2_POST_DIV_SHIFT;
+ 	writel(val, reg);
+ 
+ 	of_property_read_string_index(node, "clock-output-names",
+@@ -185,4 +190,27 @@ err_free_data:
+ err_unmap:
+ 	iounmap(reg);
+ }
+-CLK_OF_DECLARE(sun4i_pll2, "allwinner,sun4i-a10-pll2-clk", sun4i_pll2_setup);
++
++static struct sun4i_pll2_data sun4i_a10_pll2_data = {
++	.pre_div_flags	= CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
++};
++
++static void __init sun4i_a10_pll2_setup(struct device_node *node)
++{
++	sun4i_pll2_setup(node, &sun4i_a10_pll2_data);
++}
++
++CLK_OF_DECLARE(sun4i_a10_pll2, "allwinner,sun4i-a10-pll2-clk",
++	       sun4i_a10_pll2_setup);
++
++static struct sun4i_pll2_data sun5i_a13_pll2_data = {
++	.post_div_offset	= 1,
++};
++
++static void __init sun5i_a13_pll2_setup(struct device_node *node)
++{
++	sun4i_pll2_setup(node, &sun5i_a13_pll2_data);
++}
++
++CLK_OF_DECLARE(sun5i_a13_pll2, "allwinner,sun5i-a13-pll2-clk",
++	       sun5i_a13_pll2_setup);
+-- 
+2.5.3
