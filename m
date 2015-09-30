@@ -1,125 +1,68 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v5 3/4] clk: qcom: Add MSM8916 gpu clocks
-Date: Thu, 17 Sep 2015 19:39:28 +0300
-Message-Id: <1442507969-18062-4-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1442507969-18062-1-git-send-email-georgi.djakov@linaro.org>
-References: <1442507969-18062-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <balbi@ti.com>
+Date: Wed, 30 Sep 2015 11:31:02 -0500
+From: Felipe Balbi <balbi@ti.com>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+CC: Nicolas Ferre <nicolas.ferre@atmel.com>,
+        Boris Brezillon
+	<boris.brezillon@free-electrons.com>,
+        Jean-Christophe Plagniol-Villard
+	<plagnioj@jcrosoft.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        Felipe
+ Balbi <balbi@ti.com>, <linux-usb@vger.kernel.org>
+Subject: Re: [PATCH 15/16] usb: gadget: atmel: access the PMC using regmap
+Message-ID: <20150930163102.GM32625@saruman.tx.rr.com>
+Reply-To: <balbi@ti.com>
+References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1443629469-15086-16-git-send-email-alexandre.belloni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="UUMz/kfoogzZ9WLZ"
+In-Reply-To: <1443629469-15086-16-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the msm8916 BIMC (Bus Integrated Memory Controller)
-clocks that are needed for GPU.
+--UUMz/kfoogzZ9WLZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/gcc-msm8916.c               |   61 ++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8916.h |    3 ++
- 2 files changed, 64 insertions(+)
+On Wed, Sep 30, 2015 at 06:11:08PM +0200, Alexandre Belloni wrote:
+> Use regmap to access the PMC to avoid using at91_pmc_read and
+> at91_pmc_write.
+>=20
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index ad9316751eb2..bd87a3e2cbeb 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -1083,6 +1083,30 @@ static struct clk_rcg2 apss_tcu_clk_src = {
- 	},
- };
- 
-+static const struct freq_tbl ftbl_gcc_bimc_gpu_clk[] = {
-+	F(19200000, P_XO, 1, 0, 0),
-+	F(100000000, P_GPLL0, 8, 0, 0),
-+	F(200000000, P_GPLL0, 4, 0, 0),
-+	F(266500000, P_BIMC, 4, 0, 0),
-+	F(400000000, P_GPLL0, 2, 0, 0),
-+	F(533000000, P_BIMC, 2, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 bimc_gpu_clk_src = {
-+	.cmd_rcgr = 0x31028,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_bimc_map,
-+	.freq_tbl = ftbl_gcc_bimc_gpu_clk,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "bimc_gpu_clk_src",
-+		.parent_names = gcc_xo_gpll0_bimc,
-+		.num_parents = 3,
-+		.flags = CLK_GET_RATE_NOCACHE,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
- static const struct freq_tbl ftbl_gcc_usb_hs_system_clk[] = {
- 	F(80000000, P_GPLL0, 10, 0, 0),
- 	{ }
-@@ -2409,6 +2433,40 @@ static struct clk_branch gcc_gtcu_ahb_clk = {
- 	},
- };
- 
-+static struct clk_branch gcc_bimc_gfx_clk = {
-+	.halt_reg = 0x31024,
-+	.clkr = {
-+		.enable_reg = 0x31024,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_bimc_gfx_clk",
-+			.parent_names = (const char *[]){
-+				"bimc_gpu_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_bimc_gpu_clk = {
-+	.halt_reg = 0x31040,
-+	.clkr = {
-+		.enable_reg = 0x31040,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_bimc_gpu_clk",
-+			.parent_names = (const char *[]){
-+				"bimc_gpu_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_jpeg_tbu_clk = {
- 	.halt_reg = 0x12034,
- 	.clkr = {
-@@ -2778,6 +2836,9 @@ static struct clk_regmap *gcc_msm8916_clocks[] = {
- 	[BIMC_DDR_CLK_SRC] = &bimc_ddr_clk_src.clkr,
- 	[GCC_APSS_TCU_CLK] = &gcc_apss_tcu_clk.clkr,
- 	[GCC_GFX_TCU_CLK] = &gcc_gfx_tcu_clk.clkr,
-+	[BIMC_GPU_CLK_SRC] = &bimc_gpu_clk_src.clkr,
-+	[GCC_BIMC_GFX_CLK] = &gcc_bimc_gfx_clk.clkr,
-+	[GCC_BIMC_GPU_CLK] = &gcc_bimc_gpu_clk.clkr,
- };
- 
- static struct gdsc *gcc_msm8916_gdscs[] = {
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8916.h b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-index 9169ae656c77..d21501bb3d52 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8916.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-@@ -155,6 +155,9 @@
- #define BIMC_DDR_CLK_SRC			138
- #define GCC_APSS_TCU_CLK			139
- #define GCC_GFX_TCU_CLK				140
-+#define BIMC_GPU_CLK_SRC			141
-+#define GCC_BIMC_GFX_CLK			142
-+#define GCC_BIMC_GPU_CLK			143
- 
- /* Indexes for GDSCs */
- #define BIMC_GDSC				0
+can I take this through my tree or does it have any dependences with the re=
+st of
+the series ?
+
+cheers
+
+--=20
+balbi
+
+--UUMz/kfoogzZ9WLZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWDA5GAAoJEIaOsuA1yqRE8t8QAJihmwt/tzIf3jcX9OaeGrPb
+Rnoj3mGdjUnzn9+m+gOBn9e0ID3b9yZXrI+CDWlTaB78STvvshTsFOFeie6Eda2x
+Q++LcT5BxMoc5Uz1ua+pJIhKS86NktqbuNgMkP/aKKTHu/K8mt8A0MxRPt6t5/Ux
+KN/8pnn42+bhkkKRsGL+qc6pTGihjvT2g4FtYJNozGAD1uEA4QsAV5u6LCJ3F9kZ
+9WsGdY02DkIJPKhj1R5NSfOfLeLHD7JtfE1S4RDAF8wQK7n8KP9hPPBcLVSU8+Y1
+sfuVATr0qsUvAgG00c3mKKQgA+WHsG5gq+NUuzACxTDG3+2sVx8IZofCSVJgnVjp
+Kn/H++wfjA3S/UtlGLaszTlY7ait9yG5dQyK9lMZVjRWRjFi67Rpq1AKznFhZBaC
+n1o6Qdk2YkwOvcySO3cneXjFs+uiAdqa9l5ZkaZjY/8FKNYDv4KfMcMI/dgk2RfJ
+HI10DVeKu9msM6Xpcst8K/tXCFboLBRwijpKduueS/1OIbEWBxIKNIGiu6ABmohE
+ZZnuXacXUq6jGBRYzb0NukEoGAAgEXvVPbtQ2QV5Ju/BD5ptYBq9f5cnifNFrBMY
+mH2fq607+GwJ681JIFwhMbcDafkacIKg7O7jzHkhksK9Ngw5RxqI7NDUdiu16y0D
+8o+6oyl2w60UrLnmghHh
+=au80
+-----END PGP SIGNATURE-----
+
+--UUMz/kfoogzZ9WLZ--
