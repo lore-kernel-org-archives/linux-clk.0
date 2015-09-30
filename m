@@ -1,80 +1,102 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Thu, 17 Sep 2015 22:49:36 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <alexander.stein@systec-electronic.com>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: Remove unneeded semicolons
-Message-ID: <20150917144936.GA29113@leoy-linaro>
-References: <1442497769-7721-1-git-send-email-javier@osg.samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442497769-7721-1-git-send-email-javier@osg.samsung.com>
+Subject: [PATCH v4 1/1] clk: imx31: Do not call mxc_timer_init twice when booting with DT
+Date: Wed, 30 Sep 2015 08:23:40 +0200
+Message-Id: <1443594220-21183-1-git-send-email-alexander.stein@systec-electronic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 17, 2015 at 03:49:29PM +0200, Javier Martinez Canillas wrote:
-> There are cleary typo errors so can be removed.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> ---
-> 
->  drivers/clk/clk.c                       | 2 +-
->  drivers/clk/hisilicon/clk-hi6220-stub.c | 2 +-
->  drivers/clk/mvebu/common.c              | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 43e2c3ad6c31..a66a6d433b1f 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1685,7 +1685,7 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
->  			"%s: multi-parent clocks must implement .get_parent\n",
->  			__func__);
->  		goto out;
-> -	};
-> +	}
->  
->  	/*
->  	 * Do our best to cache parent clocks in core->parents.  This prevents
-> diff --git a/drivers/clk/hisilicon/clk-hi6220-stub.c b/drivers/clk/hisilicon/clk-hi6220-stub.c
-> index 2c4add11c1ca..8afb40ef40ce 100644
-> --- a/drivers/clk/hisilicon/clk-hi6220-stub.c
-> +++ b/drivers/clk/hisilicon/clk-hi6220-stub.c
-> @@ -230,7 +230,7 @@ static int hi6220_stub_clk_probe(struct platform_device *pdev)
->  	if (IS_ERR(stub_clk->mbox)) {
->  		dev_err(dev, "failed get mailbox channel\n");
->  		return PTR_ERR(stub_clk->mbox);
-> -	};
-> +	}
+mxc_timer_init must not be called from within mx31_clocks_init_dt. It will
+eventually be called by imx31_timer_init_dt
+(drivers/clocksource/timer-imx-gpt.c).
+This arranges the initialization code similar to clk-imx27.c
 
-Acked-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+---
+Changes in v4:
+* Adjusted subject line
+* Move static fref variable to function local one
+* rebases to Shawn's imx/clk branch
 
-Thanks,
-Leo Yan
+Changes in v3:
+* Fix compilation issues
+* Actually compile tested, but still untested due to lack of hardware
 
->  
->  	init.name = "acpu0";
->  	init.ops = &hi6220_stub_clk_ops;
-> diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
-> index 4a22429cd7a2..28aac67e7b92 100644
-> --- a/drivers/clk/mvebu/common.c
-> +++ b/drivers/clk/mvebu/common.c
-> @@ -165,7 +165,7 @@ void __init mvebu_coreclk_setup(struct device_node *np,
->  		clk_data.clks[2+n] = clk_register_fixed_factor(NULL, rclk_name,
->  				       cpuclk_name, 0, mult, div);
->  		WARN_ON(IS_ERR(clk_data.clks[2+n]));
-> -	};
-> +	}
->  
->  	/* Register optional refclk */
->  	if (desc->get_refclk_freq) {
-> -- 
-> 2.4.3
-> 
+* Added in v2
+* Compile tested only due to lack of hardware
+
+ drivers/clk/imx/clk-imx31.c | 25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
+index 5520e20..f65b8b1 100644
+--- a/drivers/clk/imx/clk-imx31.c
++++ b/drivers/clk/imx/clk-imx31.c
+@@ -72,7 +72,7 @@ static struct clk ** const uart_clks[] __initconst = {
+ 	NULL
+ };
+ 
+-int __init mx31_clocks_init(unsigned long fref)
++static void __init _mx31_clocks_init(unsigned long fref)
+ {
+ 	void __iomem *base;
+ 	struct device_node *np;
+@@ -142,6 +142,12 @@ int __init mx31_clocks_init(unsigned long fref)
+ 
+ 	imx_check_clocks(clk, ARRAY_SIZE(clk));
+ 
++	clk_set_parent(clk[csi], clk[upll]);
++	clk_prepare_enable(clk[emi_gate]);
++	clk_prepare_enable(clk[iim_gate]);
++	mx31_revision();
++	clk_disable_unprepare(clk[iim_gate]);
++
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx31-ccm");
+ 
+ 	if (np) {
+@@ -149,6 +155,13 @@ int __init mx31_clocks_init(unsigned long fref)
+ 		clk_data.clk_num = ARRAY_SIZE(clk);
+ 		of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+ 	}
++}
++
++int __init mx31_clocks_init(void)
++{
++	u32 fref = 26000000; /* default */
++
++	_mx31_clocks_init(fref);
+ 
+ 	clk_register_clkdev(clk[gpt_gate], "per", "imx-gpt.0");
+ 	clk_register_clkdev(clk[ipg], "ipg", "imx-gpt.0");
+@@ -204,14 +217,8 @@ int __init mx31_clocks_init(unsigned long fref)
+ 	clk_register_clkdev(clk[sdma_gate], NULL, "imx31-sdma");
+ 	clk_register_clkdev(clk[iim_gate], "iim", NULL);
+ 
+-	clk_set_parent(clk[csi], clk[upll]);
+-	clk_prepare_enable(clk[emi_gate]);
+-	clk_prepare_enable(clk[iim_gate]);
+-	mx31_revision();
+-	clk_disable_unprepare(clk[iim_gate]);
+ 
+ 	imx_register_uart_clocks(uart_clks);
+-
+ 	mxc_timer_init(MX31_GPT1_BASE_ADDR, MX31_INT_GPT, GPT_TYPE_IMX31);
+ 
+ 	return 0;
+@@ -230,5 +237,7 @@ int __init mx31_clocks_init_dt(void)
+ 			break;
+ 	}
+ 
+-	return mx31_clocks_init(fref);
++	_mx31_clocks_init(fref);
++
++	return 0;
+ }
+-- 
+2.4.9
