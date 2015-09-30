@@ -1,71 +1,128 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 30 Sep 2015 13:21:47 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] ARM: imx31: Do not call mxc_timer_init twice when
+ booting with DT
+Message-ID: <20150930052147.GA18468@tiger>
+References: <1443423799-14685-1-git-send-email-alexander.stein@systec-electronic.com>
 MIME-Version: 1.0
-In-Reply-To: <BY1PR0301MB1303E56B5462BCD0C77C7E4D82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
-References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
- <1441349872-4560-4-git-send-email-bhupesh.sharma@freescale.com>
- <CADRPPNR11BD4WfXTWoQ28rZCd_BJuhdWu49E6jjpO29CH2s5Ow@mail.gmail.com>
- <BY1PR0301MB1303E56B5462BCD0C77C7E4D82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
-Date: Fri, 4 Sep 2015 16:12:59 -0500
-Message-ID: <CADRPPNQFxqNqgvrL9eVhaDX-SYRJxmGDd87zu_XHDHY6afiu3g@mail.gmail.com>
-Subject: Re: [PATCH v2 03/10] Documentation/dts: Add bindings for QIXIS FPGA
- controller found on FSL boards
-From: Li Yang <leoli@freescale.com>
-To: Sharma Bhupesh <bhupesh.sharma@freescale.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
- "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
- Singh Jaiprakash <jaiprakash.singh@freescale.com>,
- "will.deacon@arm.com" <will.deacon@arm.com>, "olof@lixom.net" <olof@lixom.net>,
- "bhupesh.linux@gmail.com" <bhupesh.linux@gmail.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1443423799-14685-1-git-send-email-alexander.stein@systec-electronic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 4, 2015 at 3:16 PM, Sharma Bhupesh
-<bhupesh.sharma@freescale.com> wrote:
->> From: pku.leo@gmail.com [mailto:pku.leo@gmail.com]
->> Sent: Friday, September 04, 2015 10:27 PM
->> On Fri, Sep 4, 2015 at 1:57 AM, Bhupesh Sharma
->> <bhupesh.sharma@freescale.com> wrote:
->> > This patch adds bindings for QIXIS FPGA controller found on FSL boards.
->>
->> A general comment: when you are updating the device tree bindings.
->> You should cc the devicetree@vger.kernel.org mailing list.
->>
->> >
->> > Some Freescale boards like LS2080AQDS/LS2080ARDB have an on-board
->> > FPGA/CPLD connected to the IFC controller. The bindings specified in
->> > this patch cater to those on-board FPGA/CPLD controllers.
->>
->> We already have the binding defined in
->> Documentation/devicetree/bindings/powerpc/fsl/board.txt.  We probably
->> should just move it to a more generic location.
->
-> Consolidation of powerpc and ARM bindings is something that needs to be
-> targeted by a separate patch-series, perhaps in future.
->
-> There are a number of duplications that can be looked into, but I don't
-> think this patchset should depend on that.
+On Mon, Sep 28, 2015 at 09:03:19AM +0200, Alexander Stein wrote:
+> mxc_timer_init must not be called from within mx31_clocks_init_dt. It will
+> eventually be called by imx31_timer_init_dt
+> (drivers/clocksource/timer-imx-gpt.c).
+> This arranges the initialization code similar to clk-imx27.c
+> 
+> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
 
-There might be some duplication, but we shouldn't be adding more.  :)
-I would rather you directly updating that file than creating a new
-file even though the original one was in a wrong directory.
+Again, please use "clk: ..." instead of "ARM: ..." for clock patches,
+since we have moved i.MX clock drivers from arch/arm/mach-imx into
+drivers/clk/imx.
 
-Regards,
-Leo
+> ---
+> Changes in v3:
+> * Fix compilation issues
+> * Actually compile tested, but still untested due to lack of hardware
+> 
+> * Added in v2
+> * Compile tested only due to lack of hardware
+> 
+>  drivers/clk/imx/clk-imx31.c | 26 +++++++++++++++++---------
+>  1 file changed, 17 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
+> index 1f83834..a908222 100644
+> --- a/drivers/clk/imx/clk-imx31.c
+> +++ b/drivers/clk/imx/clk-imx31.c
+> @@ -47,6 +47,8 @@ static const char *per_sel[] = { "per_div", "ipg", };
+>  static const char *csi_sel[] = { "upll", "spll", };
+>  static const char *fir_sel[] = { "mcu_main", "upll", "spll" };
+>  
+> +static u32 fref = 26000000; /* default */
+> +
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+We should not create this variable, and it should be kept as a local
+variable and passed around as an argument.
+
+Also, the patch doesn't apply to my imx/clk branch.  Please rebase.
+
+Shawn
+
+>  enum mx31_clks {
+>  	dummy, ckih, ckil, mpll, spll, upll, mcu_main, hsp, ahb, nfc, ipg,
+>  	per_div, per, csi, fir, csi_div, usb_div_pre, usb_div_post, fir_div_pre,
+> @@ -62,7 +64,7 @@ enum mx31_clks {
+>  static struct clk *clk[clk_max];
+>  static struct clk_onecell_data clk_data;
+>  
+> -int __init mx31_clocks_init(unsigned long fref)
+> +static void __init _mx31_clocks_init(unsigned long fref)
+>  {
+>  	void __iomem *base;
+>  	struct device_node *np;
+> @@ -132,6 +134,12 @@ int __init mx31_clocks_init(unsigned long fref)
+>  
+>  	imx_check_clocks(clk, ARRAY_SIZE(clk));
+>  
+> +	clk_set_parent(clk[csi], clk[upll]);
+> +	clk_prepare_enable(clk[emi_gate]);
+> +	clk_prepare_enable(clk[iim_gate]);
+> +	mx31_revision();
+> +	clk_disable_unprepare(clk[iim_gate]);
+> +
+>  	np = of_find_compatible_node(NULL, NULL, "fsl,imx31-ccm");
+>  
+>  	if (np) {
+> @@ -139,6 +147,11 @@ int __init mx31_clocks_init(unsigned long fref)
+>  		clk_data.clk_num = ARRAY_SIZE(clk);
+>  		of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+>  	}
+> +}
+> +
+> +int __init mx31_clocks_init(void)
+> +{
+> +	_mx31_clocks_init(fref);
+>  
+>  	clk_register_clkdev(clk[gpt_gate], "per", "imx-gpt.0");
+>  	clk_register_clkdev(clk[ipg], "ipg", "imx-gpt.0");
+> @@ -194,12 +207,6 @@ int __init mx31_clocks_init(unsigned long fref)
+>  	clk_register_clkdev(clk[sdma_gate], NULL, "imx31-sdma");
+>  	clk_register_clkdev(clk[iim_gate], "iim", NULL);
+>  
+> -	clk_set_parent(clk[csi], clk[upll]);
+> -	clk_prepare_enable(clk[emi_gate]);
+> -	clk_prepare_enable(clk[iim_gate]);
+> -	mx31_revision();
+> -	clk_disable_unprepare(clk[iim_gate]);
+> -
+>  	mxc_timer_init(MX31_GPT1_BASE_ADDR, MX31_INT_GPT, GPT_TYPE_IMX31);
+>  
+>  	return 0;
+> @@ -208,7 +215,6 @@ int __init mx31_clocks_init(unsigned long fref)
+>  int __init mx31_clocks_init_dt(void)
+>  {
+>  	struct device_node *np;
+> -	u32 fref = 26000000; /* default */
+>  
+>  	for_each_compatible_node(np, NULL, "fixed-clock") {
+>  		if (!of_device_is_compatible(np, "fsl,imx-osc26m"))
+> @@ -218,5 +224,7 @@ int __init mx31_clocks_init_dt(void)
+>  			break;
+>  	}
+>  
+> -	return mx31_clocks_init(fref);
+> +	_mx31_clocks_init(fref);
+> +
+> +	return 0;
+>  }
+> -- 
+> 2.4.9
+> 
