@@ -1,58 +1,84 @@
-Return-Path: <rjw@rjwysocki.net>
-Return-Path: <rjw@rjwysocki.net>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Scott Wood <scottwood@freescale.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, Tang Yuantian <Yuantian.Tang@freescale.com>
-Subject: Re: [PATCH v3 5/5] cpufreq: qoriq: Don't look at clock implementation details
-Date: Fri, 25 Sep 2015 23:50:02 +0200
-Message-ID: <2148611.GEpYdTfpoR@vostro.rjw.lan>
-In-Reply-To: <1443215827.32298.130.camel@freescale.com>
-References: <1442723397-26329-1-git-send-email-scottwood@freescale.com> <3374654.Hks5DeSGVV@vostro.rjw.lan> <1443215827.32298.130.camel@freescale.com>
+Return-Path: <balbi@ti.com>
+Date: Wed, 30 Sep 2015 11:43:39 -0500
+From: Felipe Balbi <balbi@ti.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>
+CC: <balbi@ti.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Jean-Christophe
+ Plagniol-Villard <plagnioj@jcrosoft.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>
+Subject: Re: [PATCH 15/16] usb: gadget: atmel: access the PMC using regmap
+Message-ID: <20150930164339.GQ32625@saruman.tx.rr.com>
+Reply-To: <balbi@ti.com>
+References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1443629469-15086-16-git-send-email-alexandre.belloni@free-electrons.com>
+ <20150930163102.GM32625@saruman.tx.rr.com>
+ <560C1027.9060100@atmel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="O7Os1+MGCLLi8F5z"
+In-Reply-To: <560C1027.9060100@atmel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday, September 25, 2015 04:17:07 PM Scott Wood wrote:
-> On Fri, 2015-09-25 at 23:42 +0200, Rafael J. Wysocki wrote:
-> > On Tuesday, September 22, 2015 12:46:54 PM Viresh Kumar wrote:
-> > > On 19-09-15, 23:29, Scott Wood wrote:
-> > > > Get the CPU clock's potential parent clocks from the clock interface
-> > > > itself, rather than manually parsing the clocks property to find a
-> > > > phandle, looking at the clock-names property of that, and assuming that
-> > > > those are valid parent clocks for the cpu clock.
-> > > > 
-> > > > This is necessary now that the clocks are generated based on the clock
-> > > > driver's knowledge of the chip rather than a fragile device-tree
-> > > > description of the mux options.
-> > > > 
-> > > > We can now rely on the clock driver to ensure that the mux only exposes
-> > > > options that are valid.  The cpufreq driver was currently being overly
-> > > > conservative in some cases -- for example, the "min_cpufreq =
-> > > > get_bus_freq()" restriction only applies to chips with erratum
-> > > > A-004510, and whether the freq_mask used on p5020 is needed depends on
-> > > > the actual frequencies of the PLLs (FWIW, p5040 has a similar
-> > > > limitation but its .freq_mask was zero) -- and the frequency mask
-> > > > mechanism made assumptions about particular parent clock indices that
-> > > > are no longer valid.
-> > > > 
-> > > > Signed-off-by: Scott Wood <scottwood@freescale.com>
-> > > > ---
-> > > > v3: was patch 1/5 and patch 4/5, plus blacklist e6500 and changes
-> > > > to clk api usage
-> > > > 
-> > > >  drivers/cpufreq/qoriq-cpufreq.c | 137 ++++++++++++---------------------
-> > > > -------
-> > > >  1 file changed, 40 insertions(+), 97 deletions(-)
-> > > 
-> > > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > 
-> > I'm wondering who's supposed to be merging this set?
-> 
-> As I noted in the cover letter, I'm looking for acks so that I can apply 
-> these to a topic branch which can be pulled through the PPC and ARM trees, 
-> each of which will have patches that depend on it.
+--O7Os1+MGCLLi8F5z
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK, so no objections from the cpufreq side and you have the ACK from Viresh.
+On Wed, Sep 30, 2015 at 06:39:03PM +0200, Nicolas Ferre wrote:
+> Le 30/09/2015 18:31, Felipe Balbi a =E9crit :
+> > On Wed, Sep 30, 2015 at 06:11:08PM +0200, Alexandre Belloni wrote:
+> >> Use regmap to access the PMC to avoid using at91_pmc_read and
+> >> at91_pmc_write.
+> >>
+> >> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> >=20
+> > can I take this through my tree or does it have any dependences with th=
+e rest of
+> > the series ?
+>=20
+> Hi Felipe,
+>=20
+> Well, I have the feeling that these changes would require the regmap to
+> be in place before using it. So yes, it has a strong dependency with the
+> rest of the series (and DT modifications like the 06/16 patch actually).
+>=20
+> So, I think that Alexandre would agree with me that we should take the
+> whole series with us through the arm-soc tree. An alternative would be
+> to delay the inclusion of the USB part a little bit...
+>=20
+> Thanks for the heads-up Felipe, Bye,
 
-Thanks,
-Rafael
+hey no problem. I have no objections to $subject:
+
+Acked-by: Felipe Balbi <balbi@ti.com>
+
+--=20
+balbi
+
+--O7Os1+MGCLLi8F5z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWDBE7AAoJEIaOsuA1yqREuLwP/R4TT28gWm8hI1JekQV6t0EK
+XzJu2XCRx95qKgeVmg9gpurNe3onAionpehSWQSIugkhcV/4tUatwTc0tkRnXZBL
+hYapgKH2Ut3qnqdkVE9xG0kCauiz45gdAw3u/ff2cDDuLneROJkTMFx0VtnLlj33
+9vL0yIcZkOvkYh1m6q5hP9qtPMKOaoThKlYkvMWu0esMoVTjwWIMdki/yn+YyMEg
+5Y4BiGFF0WocKD4A6he2LxBtciMi/Gb8heVlW4+ibC6CNWaNBy21B6KWpUXIy7J7
+VGfbpkghomE2RogufcxHMK1w2JubCWP+FUh6eK/tObeMpHGPrpLDqRK0Lea8mBVQ
+pNOWKUvyXEvCyuZgDvcX0Q0maOH6kV6dO5LldMO8k/wgCfoG9B9gKZ0FXxVE+JOj
+AEsQ5jd0gU74W/VLUJFml8TYRZGdp6lIFwHmbxBbsTy94wWXbd4zP35+/Theb/gg
+7Tc6MI65HT7CXrDDLsf27yzYoO9mGDnaLVmfdAH+iitY4YzpxeazN0arbU5HFPS6
+JcbGx+lUK7ut9pHSJvzaHkxESuPE7Ox8Gi6aRM4UUBPMppXSVikn+sl3XU0AoAuj
+KIlYj65YfVHIqXMKlcM5JWiVygaN6QYl1qkSUV3jYLpt8RHp7MD6sClOJsBrJq+y
+xta1VSkhnkuLsC6VE8FL
+=6nY3
+-----END PGP SIGNATURE-----
+
+--O7Os1+MGCLLi8F5z--
