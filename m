@@ -1,42 +1,33 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
-	ulf.hansson@linaro.org
-Subject: Re: [PATCH 0/5] ARM: sunxi: Introduce CHIP support
-Date: Fri, 18 Sep 2015 11:02:33 +0200
-Message-ID: <2353279.QTDzFUHVnF@wuerfel>
-In-Reply-To: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 30 Sep 2015 15:38:29 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 1/5] ARM: sunxi: Add R8 support
+Message-ID: <20150930223829.GG18556@codeaurora.org>
 References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1442566130-3497-2-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1442566130-3497-2-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 18 September 2015 10:48:45 Maxime Ripard wrote:
+On 09/18, Maxime Ripard wrote:
+> The R8 is a new Allwinner SoC based on the A13. While both are very
+> similar, there's still a few differences. Introduce a new compatible to
+> deal with them.
 > 
-> Here is a serie introducing the support for the Allwinner R8 and the
-> Nextthing's CHIP.
-> 
-> Support is almost complete for the CHIP itself, the only missing part
-> for now is the WiFi chip that needs to be powered through two combined
-> regulators (AXP209's LDO3 and LDO4). The audio codec is also missing
-> since it's not already enabled in the DT.
-> 
-> Both these features will be addressed eventually.
-> 
-> Let me know what you think,
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
 
-Very nice!
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-When you get to the WiFi support, please loop in Ulf and me to the Cc list.
-IIRC there were some open questions about how we should handle SDIO wifi
-controllers with special requirements like this, both in general and
-in particular with this driver.
+BTW, why is the entire series sent To: Mike and I? Are these
+patches intended to go through clk tree?
 
-	Arnd
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
