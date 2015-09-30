@@ -1,96 +1,75 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: ulf.hansson@linaro.org, mturquette@baylibre.com, sboyd@codeaurora.org, Alexandru M Stan <amstan@chromium.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 5/8] mmc: dw_mmc: dt-binding: Add tuning related things
-Date: Wed, 02 Sep 2015 09:41:27 +0200
-Message-ID: <2716742.hZCgYT9c9i@phil>
-In-Reply-To: <55E682C0.6050204@samsung.com>
-References: <1441045446-30858-1-git-send-email-heiko@sntech.de> <1441045446-30858-6-git-send-email-heiko@sntech.de> <55E682C0.6050204@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH 10/16] clk: at91: pmc: move pmc structures to C file
+Date: Wed, 30 Sep 2015 18:11:03 +0200
+Message-Id: <1443629469-15086-11-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jaehoon,
+pmc.c is now the only user of struct at91_pmc*, move their definition in
+the C file.
 
-Am Mittwoch, 2. September 2015, 14:01:52 schrieb Jaehoon Chung:
-> Hi, Heiko.
-> 
-> On 09/01/2015 03:24 AM, Heiko Stuebner wrote:
-> > From: Alexandru M Stan <amstan@chromium.org>
-> > 
-> > Add ciu_drv, ciu_sample clocks and default-sample-phase. This will later
-> > be used by tuning code.
-> 
-> As i know, ciu_drv and ciu_sample clocks are generated with "ciu" clock.
-> But in these patch-set, ciu_drv and ciu_sample are controlled by clock
-> framework. It's a little strange.
-> Are there ciu_drv and ciu_sample clock on Rockchip?
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ drivers/clk/at91/pmc.c | 12 ++++++++++++
+ drivers/clk/at91/pmc.h | 12 ------------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
-Yes on Rockchip SoCs the drv and sample clock registers are residing inside 
-the clock controller and not in the dw_mmc block.
-
-See drivers/clk/rockchip/clk-mmcphase.c and clk-rk3288.c around line 490 .
-
-
-Heiko
-
-> > We do not touch ciu_drive (and by extension define default-drive-phase).
-> > Drive phase is mostly used to define minimum hold times, while one could
-> > write some code to determine what phase meets the minimum hold time
-> > (ex 10 degrees) this will not work with the current clock phase framework
-> > (which floors angles, so we'll get 0 deg, and there's no way to know what
-> > resolution the floors happen at). We assume that the default drive angles
-> > set by the hardware are good enough.
-> > 
-> > Signed-off-by: Alexandru M Stan <amstan@chromium.org>
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> > 
-> >  Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt | 14
-> >  ++++++++++---- 1 file changed, 10 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-> > b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt index
-> > 346c609..5edadc2 100644
-> > --- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-> > +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-> > 
-> > @@ -42,11 +42,13 @@ Optional properties:
-> >  * clocks: from common clock binding: handle to biu and ciu clocks for the
-> >  
-> >    bus interface unit clock and the card interface unit clock.
-> > 
-> > -* clock-names: from common clock binding: Shall be "biu" and "ciu".
-> > -  If the biu clock is missing we'll simply skip enabling it.  If the
-> > -  ciu clock is missing we'll just assume that the clock is running at
-> > +* clock-names: from common clock binding: Shall be "biu", "ciu",
-> > "ciu_drv" and +  "ciu_sample".  If the biu clock is missing we'll simply
-> > skip enabling it. +  If the ciu clock is missing we'll just assume that
-> > the clock is running at> 
-> >    clock-frequency.  It is an error to omit both the ciu clock and the
-> > 
-> > -  clock-frequency.
-> > +  clock-frequency.  "ciu_drv" and "ciu_sample" are used to control the
-> > clock +  phases, "ciu_sample" is required for tuning high speed modes (if
-> > no other +  custom tuning method is defined).
-> > 
-> >  * clock-frequency: should be the frequency (in Hz) of the ciu clock.  If
-> >  this>  
-> >    is specified and the ciu clock is specified then we'll try to set the
-> >    ciu
-> > 
-> > @@ -75,6 +77,10 @@ Optional properties:
-> >  * vmmc-supply: The phandle to the regulator to use for vmmc.  If this is
-> >  
-> >    specified we'll defer probe until we can find this regulator.
-> > 
-> > +* default-sample-phase: The default phase to set ciu_sample at probing,
-> > low +  speeds or in case where all phases work at tuning time. If not
-> > specified +  0 deg will be used.
-> > +
-> > 
-> >  Aliases:
-> >  
-> >  - All the MSHC controller nodes should be represented in the aliases node
-> >  using
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index acc8f518b392..3aa886849304 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -29,6 +29,18 @@
+ 
+ #include "pmc.h"
+ 
++struct at91_pmc_caps {
++	u32 available_irqs;
++};
++
++struct at91_pmc {
++	struct regmap *regmap;
++	int virq;
++	const struct at91_pmc_caps *caps;
++	struct irq_domain *irqdomain;
++	u32 imr;
++};
++
+ void __iomem *at91_pmc_base;
+ EXPORT_SYMBOL_GPL(at91_pmc_base);
+ 
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 3b96c53c194c..550a461c7201 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -24,18 +24,6 @@ struct clk_range {
+ 
+ #define CLK_RANGE(MIN, MAX) {.min = MIN, .max = MAX,}
+ 
+-struct at91_pmc_caps {
+-	u32 available_irqs;
+-};
+-
+-struct at91_pmc {
+-	struct regmap *regmap;
+-	int virq;
+-	const struct at91_pmc_caps *caps;
+-	struct irq_domain *irqdomain;
+-	u32 imr;
+-};
+-
+ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+ 			  struct clk_range *range);
+ 
+-- 
+2.1.4
