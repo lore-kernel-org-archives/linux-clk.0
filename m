@@ -1,96 +1,85 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: ulf.hansson@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	tgih.jun@samsung.com,
+	jh80.chung@samsung.com
+Cc: linux-mmc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Felipe Balbi <balbi@ti.com>,
-	linux-usb@vger.kernel.org
-Subject: [PATCH 15/16] usb: gadget: atmel: access the PMC using regmap
-Date: Wed, 30 Sep 2015 18:11:08 +0200
-Message-Id: <1443629469-15086-16-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	amstan@chromium.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 4/8] mmc: dw_mmc: Use mmc_regulator_set_vqmmc in start_signal_voltage_switch
+Date: Wed, 30 Sep 2015 16:07:40 +0200
+Message-Id: <1443622064-14362-5-git-send-email-heiko@sntech.de>
+In-Reply-To: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Use regmap to access the PMC to avoid using at91_pmc_read and
-at91_pmc_write.
+From: Douglas Anderson <dianders@chromium.org>
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+We've introduced a new helper in the MMC core:
+mmc_regulator_set_vqmmc().  Let's use this in dw_mmc.  Using this new
+helper has some advantages:
+
+1. We get the mmc_regulator_set_vqmmc() behavior of trying to match
+   VQMMC and VMMC when the signal voltage is 3.3V.  This ensures max
+   compatibility.
+
+2. We get rid of a few more warnings when probing unsupported
+   voltages.
+
+3. We get rid of some non-dw_mmc specific code in dw_mmc.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
-Cc: Felipe Balbi <balbi@ti.com>
-Cc: linux-usb@vger.kernel.org
- drivers/usb/gadget/udc/atmel_usba_udc.c | 20 ++++++++++----------
- drivers/usb/gadget/udc/atmel_usba_udc.h |  2 ++
- 2 files changed, 12 insertions(+), 10 deletions(-)
+ drivers/mmc/host/dw_mmc.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.c b/drivers/usb/gadget/udc/atmel_usba_udc.c
-index 3dfada8d6061..40977cd832af 100644
---- a/drivers/usb/gadget/udc/atmel_usba_udc.c
-+++ b/drivers/usb/gadget/udc/atmel_usba_udc.c
-@@ -17,7 +17,9 @@
- #include <linux/device.h>
- #include <linux/dma-mapping.h>
- #include <linux/list.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/platform_device.h>
-+#include <linux/regmap.h>
- #include <linux/usb/ch9.h>
- #include <linux/usb/gadget.h>
- #include <linux/usb/atmel_usba_udc.h>
-@@ -1888,20 +1890,15 @@ static int atmel_usba_stop(struct usb_gadget *gadget)
- #ifdef CONFIG_OF
- static void at91sam9rl_toggle_bias(struct usba_udc *udc, int is_on)
- {
--	unsigned int uckr = at91_pmc_read(AT91_CKGR_UCKR);
--
--	if (is_on)
--		at91_pmc_write(AT91_CKGR_UCKR, uckr | AT91_PMC_BIASEN);
--	else
--		at91_pmc_write(AT91_CKGR_UCKR, uckr & ~(AT91_PMC_BIASEN));
-+	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN,
-+			   is_on ? AT91_PMC_BIASEN : 0);
- }
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index fcbf552..b1b7e7f 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -1279,7 +1279,6 @@ static int dw_mci_switch_voltage(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	const struct dw_mci_drv_data *drv_data = host->drv_data;
+ 	u32 uhs;
+ 	u32 v18 = SDMMC_UHS_18V << slot->id;
+-	int min_uv, max_uv;
+ 	int ret;
  
- static void at91sam9g45_pulse_bias(struct usba_udc *udc)
- {
--	unsigned int uckr = at91_pmc_read(AT91_CKGR_UCKR);
--
--	at91_pmc_write(AT91_CKGR_UCKR, uckr & ~(AT91_PMC_BIASEN));
--	at91_pmc_write(AT91_CKGR_UCKR, uckr | AT91_PMC_BIASEN);
-+	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN, 0);
-+	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN,
-+			   AT91_PMC_BIASEN);
- }
- 
- static const struct usba_udc_errata at91sam9rl_errata = {
-@@ -1938,6 +1935,9 @@ static struct usba_ep * atmel_udc_of_init(struct platform_device *pdev,
- 		return ERR_PTR(-EINVAL);
- 
- 	udc->errata = match->data;
-+	udc->pmc = syscon_regmap_lookup_by_compatible("atmel,at91sam9g45-pmc");
-+	if (udc->errata && IS_ERR(udc->pmc))
-+		return ERR_CAST(udc->pmc);
- 
- 	udc->num_ep = 0;
- 
-diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.h b/drivers/usb/gadget/udc/atmel_usba_udc.h
-index ea448a344767..3e1c9d589dfa 100644
---- a/drivers/usb/gadget/udc/atmel_usba_udc.h
-+++ b/drivers/usb/gadget/udc/atmel_usba_udc.h
-@@ -354,6 +354,8 @@ struct usba_udc {
- 	struct dentry *debugfs_root;
- 	struct dentry *debugfs_regs;
- #endif
+ 	if (drv_data && drv_data->switch_voltage)
+@@ -1291,22 +1290,18 @@ static int dw_mci_switch_voltage(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	 * does no harm but you need to set the regulator directly.  Try both.
+ 	 */
+ 	uhs = mci_readl(host, UHS_REG);
+-	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
+-		min_uv = 2700000;
+-		max_uv = 3600000;
++	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330)
+ 		uhs &= ~v18;
+-	} else {
+-		min_uv = 1700000;
+-		max_uv = 1950000;
++	else
+ 		uhs |= v18;
+-	}
 +
-+	struct regmap *pmc;
- };
+ 	if (!IS_ERR(mmc->supply.vqmmc)) {
+-		ret = regulator_set_voltage(mmc->supply.vqmmc, min_uv, max_uv);
++		ret = mmc_regulator_set_vqmmc(mmc, ios);
  
- static inline struct usba_ep *to_usba_ep(struct usb_ep *ep)
+ 		if (ret) {
+ 			dev_dbg(&mmc->class_dev,
+-					 "Regulator set error %d: %d - %d\n",
+-					 ret, min_uv, max_uv);
++					 "Regulator set error %d - %s V\n",
++					 ret, uhs & v18 ? "1.8" : "3.3");
+ 			return ret;
+ 		}
+ 	}
 -- 
-2.1.4
+2.5.1
