@@ -1,47 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:2357 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933544AbbIVPyT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 22 Sep 2015 11:54:19 -0400
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	heikki.krogerus@linux.intel.com, linux-clk@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v6 5/5] serial: 8250_dw: allow lower reference frequencies
-Date: Tue, 22 Sep 2015 18:54:12 +0300
-Message-Id: <1442937252-50281-6-git-send-email-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <1442937252-50281-1-git-send-email-andriy.shevchenko@linux.intel.com>
-References: <1442937252-50281-1-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH 01/16] clk: at91: utmi: use pmc_read when the at91_pmc is available
+Date: Wed, 30 Sep 2015 18:10:54 +0200
+Message-Id: <1443629469-15086-2-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-We have couple of standard but rare used baudrates which are not supported by
-1,8432MHz reference frequency. Besides that user can potentially ask for any
-baudrate (via BOTHER flag) and we currently don't fully support that. Since
-clk-fractional-divider is moved to use rational best approximation for
-reference frequency we may amend the driver to support whatever user wants.
+at91_pmc_read is a workaround to allow external drivers to acces some
+registers of the PMC. There is no need for it in clk-utmi.c as we aready
+have a pointer to the struct at91_pmc.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 ---
- drivers/tty/serial/8250/8250_dw.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/clk/at91/clk-utmi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 06324f1..df3eddf 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -224,10 +224,6 @@ static void dw8250_set_termios(struct uart_port *p, struct ktermios *termios,
- 	if (IS_ERR(d->clk) || !old)
- 		goto out;
+diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
+index 30dd697b1668..ca561e90a60f 100644
+--- a/drivers/clk/at91/clk-utmi.c
++++ b/drivers/clk/at91/clk-utmi.c
+@@ -47,7 +47,7 @@ static int clk_utmi_prepare(struct clk_hw *hw)
+ {
+ 	struct clk_utmi *utmi = to_clk_utmi(hw);
+ 	struct at91_pmc *pmc = utmi->pmc;
+-	u32 tmp = at91_pmc_read(AT91_CKGR_UCKR) | AT91_PMC_UPLLEN |
++	u32 tmp = pmc_read(pmc, AT91_CKGR_UCKR) | AT91_PMC_UPLLEN |
+ 		  AT91_PMC_UPLLCOUNT | AT91_PMC_BIASEN;
  
--	/* Not requesting clock rates below 1.8432Mhz */
--	if (baud < 115200)
--		baud = 115200;
--
- 	clk_disable_unprepare(d->clk);
- 	rate = clk_round_rate(d->clk, baud * 16);
- 	ret = clk_set_rate(d->clk, rate);
+ 	pmc_write(pmc, AT91_CKGR_UCKR, tmp);
+@@ -73,7 +73,7 @@ static void clk_utmi_unprepare(struct clk_hw *hw)
+ {
+ 	struct clk_utmi *utmi = to_clk_utmi(hw);
+ 	struct at91_pmc *pmc = utmi->pmc;
+-	u32 tmp = at91_pmc_read(AT91_CKGR_UCKR) & ~AT91_PMC_UPLLEN;
++	u32 tmp = pmc_read(pmc, AT91_CKGR_UCKR) & ~AT91_PMC_UPLLEN;
+ 
+ 	pmc_write(pmc, AT91_CKGR_UCKR, tmp);
+ }
 -- 
-2.5.1
-
+2.1.4
