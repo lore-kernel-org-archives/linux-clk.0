@@ -1,227 +1,176 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: ulf.hansson@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	tgih.jun@samsung.com,
+	jh80.chung@samsung.com
+Cc: linux-mmc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH 13/16] ARM: at91: pm: move idle functions to pm.c
-Date: Wed, 30 Sep 2015 18:11:06 +0200
-Message-Id: <1443629469-15086-14-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	amstan@chromium.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
+Date: Wed, 30 Sep 2015 16:07:39 +0200
+Message-Id: <1443622064-14362-4-git-send-email-heiko@sntech.de>
+In-Reply-To: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Avoid using code from clk/at91 for PM.
-This also has the bonus effect of setting arm_pm_idle for sama5 platforms.
+From: Douglas Anderson <dianders@chromium.org>
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+This adds logic to the MMC core to set VQMMC.  This is expected to be
+called by MMC drivers like dw_mmc as part of (or instead of) their
+start_signal_voltage_switch() callback.
+
+A few notes:
+
+* When setting the signal voltage to 3.3V we do our best to make VQMMC
+  and VMMC match.  It's been reported that this makes some old cards
+  happy since they were tested back in the day before UHS when VQMMC
+  and VMMC were provided by the same regulator.  A nice side effect of
+  this is that we don't end up on the hairy edge of VQMMC (2.7V),
+  which some EEs claim is a little too close to the minimum for
+  comfort.
+  This is done in two steps. At first we try to find a VQMMC within
+  a 0.3V tolerance of VMMC and if this is not supported by the
+  supplying regulator we try to find a suitable voltage within the
+  whole 2.7V-3.6V area of the spec.
+
+* The two step approach is currently necessary, as the used
+  regulator_set_voltage_triplet(min, target, max) uses a simple
+  implementation that just tries two basic steps:
+	regulator_set_voltage(target, max);
+	regulator_set_voltage(min, target);
+  So with only one step with 2.7-3.6V borders, if a suitable voltage
+  is a bit below VMMC, we would directly get the lowest 2.7V
+  which some boards (like Rockchips) don't like at all.
+
+* When setting the signal voltage to 1.8V or 1.2V we aim for that
+  specific voltage instead of picking the lowest one in the range.
+
+* We very purposely don't print errors in mmc_regulator_set_vqmmc().
+  There are cases where the MMC core will try several different
+  voltages and we don't want to pollute the logs.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- arch/arm/mach-at91/at91rm9200.c |  2 --
- arch/arm/mach-at91/at91sam9.c   |  2 --
- arch/arm/mach-at91/generic.h    |  6 ++----
- arch/arm/mach-at91/pm.c         | 37 ++++++++++++++++++++++++++++++++-----
- arch/arm/mach-at91/sama5.c      |  2 +-
- drivers/clk/at91/pmc.c          | 15 ---------------
- 6 files changed, 35 insertions(+), 29 deletions(-)
+ drivers/mmc/core/core.c  | 74 ++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mmc/host.h |  7 +++++
+ 2 files changed, 81 insertions(+)
 
-diff --git a/arch/arm/mach-at91/at91rm9200.c b/arch/arm/mach-at91/at91rm9200.c
-index c1a7c6cc00e1..63b4fa25b48a 100644
---- a/arch/arm/mach-at91/at91rm9200.c
-+++ b/arch/arm/mach-at91/at91rm9200.c
-@@ -12,7 +12,6 @@
- #include <linux/of_platform.h>
- 
- #include <asm/mach/arch.h>
--#include <asm/system_misc.h>
- 
- #include "generic.h"
- #include "soc.h"
-@@ -33,7 +32,6 @@ static void __init at91rm9200_dt_device_init(void)
- 
- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, soc_dev);
- 
--	arm_pm_idle = at91rm9200_idle;
- 	at91rm9200_pm_init();
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index 0520064..363cc98 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -1437,6 +1437,80 @@ int mmc_regulator_set_ocr(struct mmc_host *mmc,
  }
+ EXPORT_SYMBOL_GPL(mmc_regulator_set_ocr);
  
-diff --git a/arch/arm/mach-at91/at91sam9.c b/arch/arm/mach-at91/at91sam9.c
-index 7eb64f763034..cada2a6412b3 100644
---- a/arch/arm/mach-at91/at91sam9.c
-+++ b/arch/arm/mach-at91/at91sam9.c
-@@ -62,8 +62,6 @@ static void __init at91sam9_common_init(void)
- 		soc_dev = soc_device_to_device(soc);
- 
- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, soc_dev);
--
--	arm_pm_idle = at91sam9_idle;
- }
- 
- static void __init at91sam9_dt_device_init(void)
-diff --git a/arch/arm/mach-at91/generic.h b/arch/arm/mach-at91/generic.h
-index b0fa7dc7286d..d224e195706a 100644
---- a/arch/arm/mach-at91/generic.h
-+++ b/arch/arm/mach-at91/generic.h
-@@ -18,20 +18,18 @@
- extern void __init at91_map_io(void);
- extern void __init at91_alt_map_io(void);
- 
--/* idle */
--extern void at91rm9200_idle(void);
--extern void at91sam9_idle(void);
--
- #ifdef CONFIG_PM
- extern void __init at91rm9200_pm_init(void);
- extern void __init at91sam9260_pm_init(void);
- extern void __init at91sam9g45_pm_init(void);
- extern void __init at91sam9x5_pm_init(void);
-+extern void __init sama5_pm_init(void);
- #else
- static inline void __init at91rm9200_pm_init(void) { }
- static inline void __init at91sam9260_pm_init(void) { }
- static inline void __init at91sam9g45_pm_init(void) { }
- static inline void __init at91sam9x5_pm_init(void) { }
-+static inline void __init sama5_pm_init(void) { }
- #endif
- 
- #endif /* _AT91_GENERIC_H */
-diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index 1dee29b33ff9..34f7f034c589 100644
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -31,6 +31,7 @@
- #include <asm/mach/irq.h>
- #include <asm/fncpy.h>
- #include <asm/cacheflush.h>
-+#include <asm/system_misc.h>
- 
- #include "generic.h"
- #include "pm.h"
-@@ -349,6 +350,21 @@ static __init void at91_dt_ramc(void)
- 	at91_pm_set_standby(standby);
- }
- 
-+void at91rm9200_idle(void)
++static int mmc_regulator_set_voltage_if_supported(struct regulator *regulator,
++						  int min_uV, int target_uV,
++						  int max_uV)
 +{
 +	/*
-+	 * Disable the processor clock.  The processor will be automatically
-+	 * re-enabled by an interrupt or by a reset.
++	 * Check if supported first to avoid errors since we may try several
++	 * signal levels during power up and don't want to show errors.
 +	 */
-+	writel(AT91_PMC_PCK, pmc + AT91_PMC_SCDR);
++	if (!regulator_is_supported_voltage(regulator, min_uV, max_uV))
++		return -EINVAL;
++
++	return regulator_set_voltage_triplet(regulator, min_uV, target_uV,
++					     max_uV);
 +}
 +
-+void at91sam9_idle(void)
++/**
++ * mmc_regulator_set_vqmmc - Set VQMMC as per the ios
++ *
++ * For 3.3V signaling, we try to match VQMMC to VMMC as closely as possible.
++ * That will match the behavior of old boards where VQMMC and VMMC were supplied
++ * by the same supply.  The Bus Operating conditions for 3.3V signaling in the
++ * SD card spec also define VQMMC in terms of VMMC.
++ * If this is not possible we'll try the full 2.7-3.6V of the spec.
++ *
++ * For 1.2V and 1.8V signaling we'll try to get as close as possible to the
++ * requested voltage.  This is definitely a good idea for UHS where there's a
++ * separate regulator on the card that's trying to make 1.8V and it's best if
++ * we match.
++ *
++ * This function is expected to be used by a controller's
++ * start_signal_voltage_switch() function.
++ */
++int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct mmc_ios *ios)
 +{
-+	writel(AT91_PMC_PCK, pmc + AT91_PMC_SCDR);
-+	cpu_do_idle();
++	int volt, min_uV, max_uV;
++
++	/* If no vqmmc supply then we can't change the voltage */
++	if (IS_ERR(mmc->supply.vqmmc))
++		return -EINVAL;
++
++	switch (ios->signal_voltage) {
++	case MMC_SIGNAL_VOLTAGE_120:
++		return mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
++						1100000, 1200000, 1300000);
++	case MMC_SIGNAL_VOLTAGE_180:
++		return mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
++						1700000, 1800000, 1950000);
++	case MMC_SIGNAL_VOLTAGE_330:
++		volt = regulator_get_voltage(mmc->supply.vmmc);
++		if (volt < 0)
++			return volt;
++
++		min_uV = max(volt - 300000, 2700000);
++		max_uV = min(volt + 300000, 3600000);
++
++		/*
++		 * Due to a limitation in the current implementation of
++		 * regulator_set_voltage_triplet() which is taking the lowest
++		 * voltage possible if below the target, search for a suitable
++		 * voltage in two steps and try to stay close to vmmc
++		 * with a 0.3V tolerance at first.
++		 */
++		if (!mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
++						min_uV, volt, max_uV))
++			return 0;
++
++		return mmc_regulator_set_voltage_if_supported(mmc->supply.vqmmc,
++						2700000, volt, 3600000);
++	default:
++		return -EINVAL;
++	}
 +}
++EXPORT_SYMBOL_GPL(mmc_regulator_set_vqmmc);
 +
- static void __init at91_pm_sram_init(void)
+ #endif /* CONFIG_REGULATOR */
+ 
+ int mmc_regulator_get_supply(struct mmc_host *mmc)
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 83b81fd..a2a78eb 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -423,6 +423,7 @@ int mmc_regulator_get_ocrmask(struct regulator *supply);
+ int mmc_regulator_set_ocr(struct mmc_host *mmc,
+ 			struct regulator *supply,
+ 			unsigned short vdd_bit);
++int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct mmc_ios *ios);
+ #else
+ static inline int mmc_regulator_get_ocrmask(struct regulator *supply)
  {
- 	struct gen_pool *sram_pool;
-@@ -405,7 +421,7 @@ static const struct of_device_id atmel_pmc_ids[] = {
- 	{ /* sentinel */ },
- };
- 
--static void __init at91_pm_init(void)
-+static void __init at91_pm_init(void (*pm_idle)(void))
+@@ -435,6 +436,12 @@ static inline int mmc_regulator_set_ocr(struct mmc_host *mmc,
  {
- 	struct device_node *pmc_np;
- 
-@@ -419,6 +435,9 @@ static void __init at91_pm_init(void)
- 		return;
- 	}
- 
-+	if (pm_idle)
-+		arm_pm_idle = pm_idle;
+ 	return 0;
+ }
 +
- 	at91_pm_sram_init();
- 
- 	if (at91_suspend_sram_fn)
-@@ -439,7 +458,7 @@ void __init at91rm9200_pm_init(void)
- 	at91_pm_data.uhp_udp_mask = AT91RM9200_PMC_UHP | AT91RM9200_PMC_UDP;
- 	at91_pm_data.memctrl = AT91_MEMCTRL_MC;
- 
--	at91_pm_init();
-+	at91_pm_init(at91rm9200_idle);
- }
- 
- void __init at91sam9260_pm_init(void)
-@@ -447,7 +466,7 @@ void __init at91sam9260_pm_init(void)
- 	at91_dt_ramc();
- 	at91_pm_data.memctrl = AT91_MEMCTRL_SDRAMC;
- 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
--	at91_pm_init();
-+	at91_pm_init(at91sam9_idle);
- }
- 
- void __init at91sam9g45_pm_init(void)
-@@ -455,7 +474,7 @@ void __init at91sam9g45_pm_init(void)
- 	at91_dt_ramc();
- 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP;
- 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
--	at91_pm_init();
-+	at91_pm_init(at91sam9_idle);
- }
- 
- void __init at91sam9x5_pm_init(void)
-@@ -463,5 +482,13 @@ void __init at91sam9x5_pm_init(void)
- 	at91_dt_ramc();
- 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
- 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
--	at91_pm_init();
-+	at91_pm_init(at91sam9_idle);
-+}
-+
-+void __init sama5_pm_init(void)
++static inline int mmc_regulator_set_vqmmc(struct mmc_host *mmc,
++					  struct mmc_ios *ios)
 +{
-+	at91_dt_ramc();
-+	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
-+	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
-+	at91_pm_init(NULL);
- }
-diff --git a/arch/arm/mach-at91/sama5.c b/arch/arm/mach-at91/sama5.c
-index d9cf6799aec0..df8fdf1cf66d 100644
---- a/arch/arm/mach-at91/sama5.c
-+++ b/arch/arm/mach-at91/sama5.c
-@@ -51,7 +51,7 @@ static void __init sama5_dt_device_init(void)
- 		soc_dev = soc_device_to_device(soc);
++	return -EINVAL;
++}
+ #endif
  
- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, soc_dev);
--	at91sam9x5_pm_init();
-+	sama5_pm_init();
- }
- 
- static const char *const sama5_dt_board_compat[] __initconst = {
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 3aa886849304..3e150967b45e 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -44,21 +44,6 @@ struct at91_pmc {
- void __iomem *at91_pmc_base;
- EXPORT_SYMBOL_GPL(at91_pmc_base);
- 
--void at91rm9200_idle(void)
--{
--	/*
--	 * Disable the processor clock.  The processor will be automatically
--	 * re-enabled by an interrupt or by a reset.
--	 */
--	at91_pmc_write(AT91_PMC_SCDR, AT91_PMC_PCK);
--}
--
--void at91sam9_idle(void)
--{
--	at91_pmc_write(AT91_PMC_SCDR, AT91_PMC_PCK);
--	cpu_do_idle();
--}
--
- int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 			  struct clk_range *range)
- {
+ int mmc_regulator_get_supply(struct mmc_host *mmc);
 -- 
-2.1.4
+2.5.1
