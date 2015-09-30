@@ -1,56 +1,90 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Date: Tue, 8 Sep 2015 08:16:59 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/4] cpufreq-dt: add suspend frequency support
-Message-ID: <20150908024659.GF26760@linux>
-References: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH 09/16] clk: at91: pmc: merge at91_pmc_init in atmel_pmc_probe
+Date: Wed, 30 Sep 2015 18:11:02 +0200
+Message-Id: <1443629469-15086-10-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07-09-15, 17:41, Bartlomiej Zolnierkiewicz wrote:
-> Hi,
-> 
-> This patch series adds suspend frequency support (using opp-v2
-> bindings and suspend-opp functionality) to cpufreq-dt driver and
-> then adds suspend opp for Exynos4412 based boards.
-> 
-> This patch series fixes suspend/resume support on Exynos4412
-> based Trats2 board and reboot hang on Exynos4412 based Odroid
-> U3 board.
-> 
-> Changes since v3:
-> - fixed dev_pm_opp_get_suspend_opp() locking
-> - shortened variable name in dev_pm_opp_get_suspend_opp()
-> - adjusted cpufreq_generic_suspend() to work with cpufreq-dt
-> - removed no longer needed cpufreq_dt_suspend()
-> - added Acked-by tag from Viresh to patch #4
+at91_pmc_init() doesn't do much anymore, merge it in atmel_pmc_probe().
 
-Just a minor comment on 3/4 and after fixing that:
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ drivers/clk/at91/pmc.c | 31 ++++++-------------------------
+ 1 file changed, 6 insertions(+), 25 deletions(-)
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 45dd32bf2531..acc8f518b392 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -223,29 +223,6 @@ static const struct at91_pmc_caps sama5d3_caps = {
+ 			  AT91_PMC_CFDEV,
+ };
+ 
+-static struct at91_pmc *__init at91_pmc_init(struct device_node *np,
+-					     struct regmap *regmap,
+-					     void __iomem *regbase, int virq,
+-					     const struct at91_pmc_caps *caps)
+-{
+-	struct at91_pmc *pmc;
+-
+-	if (!regbase || !virq ||  !caps)
+-		return NULL;
+-
+-	at91_pmc_base = regbase;
+-
+-	pmc = kzalloc(sizeof(*pmc), GFP_KERNEL);
+-	if (!pmc)
+-		return NULL;
+-
+-	pmc->regmap = regmap;
+-	pmc->virq = virq;
+-	pmc->caps = caps;
+-
+-	return pmc;
+-}
+-
+ static const struct of_device_id atmel_pmc_dt_ids[] = {
+ 	{ .compatible = "atmel,at91rm9200-pmc", .data = &at91rm9200_caps },
+ 	{ .compatible = "atmel,at91sam9260-pmc", .data = &at91sam9260_caps },
+@@ -262,11 +239,12 @@ static int __init atmel_pmc_probe(struct platform_device *pdev)
+ 	const struct at91_pmc_caps *caps;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct at91_pmc *pmc;
+-	void __iomem *regbase = of_iomap(np, 0);
+ 	struct regmap *regmap;
+ 	int virq;
+ 	int ret = 0;
+ 
++	at91_pmc_base = of_iomap(np, 0);
++
+ 	regmap = syscon_node_to_regmap(np);
+ 	if (IS_ERR(regmap))
+ 		panic("Could not retrieve syscon regmap");
+@@ -278,10 +256,13 @@ static int __init atmel_pmc_probe(struct platform_device *pdev)
+ 	of_id = of_match_device(atmel_pmc_dt_ids, &pdev->dev);
+ 	caps = of_id->data;
+ 
+-	pmc = at91_pmc_init(np, regmap, regbase, virq, caps);
++	pmc = kzalloc(sizeof(*pmc), GFP_KERNEL);
+ 	if (!pmc)
+ 		return 0;
+ 
++	pmc->regmap = regmap;
++	pmc->virq = virq;
++	pmc->caps = caps;
+ 	pmc->irqdomain = irq_domain_add_linear(pdev->dev.of_node, 32,
+ 					       &pmc_irq_ops, pmc);
+ 	if (!pmc->irqdomain)
 -- 
-viresh
+2.1.4
