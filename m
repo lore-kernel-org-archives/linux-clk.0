@@ -1,123 +1,43 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v4 3/4] clk: qcom: Add MSM8916 gpu clocks
-Date: Wed, 16 Sep 2015 16:24:47 +0300
-Message-Id: <1442409888-19917-4-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1442409888-19917-1-git-send-email-georgi.djakov@linaro.org>
-References: <1442409888-19917-1-git-send-email-georgi.djakov@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <Nicolas.FERRE@atmel.com>
+Subject: Re: [PATCH 15/16] usb: gadget: atmel: access the PMC using regmap
+To: <balbi@ti.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
+References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1443629469-15086-16-git-send-email-alexandre.belloni@free-electrons.com>
+ <20150930163102.GM32625@saruman.tx.rr.com>
+CC: Boris Brezillon <boris.brezillon@free-electrons.com>, "Jean-Christophe
+ Plagniol-Villard" <plagnioj@jcrosoft.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-usb@vger.kernel.org>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Message-ID: <560C1027.9060100@atmel.com>
+Date: Wed, 30 Sep 2015 18:39:03 +0200
+MIME-Version: 1.0
+In-Reply-To: <20150930163102.GM32625@saruman.tx.rr.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: nicolas.ferre@atmel.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the msm8916 BIMC (Bus Integrated Memory Controller)
-clocks that are needed for GPU.
+Le 30/09/2015 18:31, Felipe Balbi a écrit :
+> On Wed, Sep 30, 2015 at 06:11:08PM +0200, Alexandre Belloni wrote:
+>> Use regmap to access the PMC to avoid using at91_pmc_read and
+>> at91_pmc_write.
+>>
+>> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> 
+> can I take this through my tree or does it have any dependences with the rest of
+> the series ?
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/gcc-msm8916.c               |   61 ++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8916.h |    3 ++
- 2 files changed, 64 insertions(+)
+Hi Felipe,
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index ad9316751eb2..bd87a3e2cbeb 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -1083,6 +1083,30 @@ static struct clk_rcg2 apss_tcu_clk_src = {
- 	},
- };
- 
-+static const struct freq_tbl ftbl_gcc_bimc_gpu_clk[] = {
-+	F(19200000, P_XO, 1, 0, 0),
-+	F(100000000, P_GPLL0, 8, 0, 0),
-+	F(200000000, P_GPLL0, 4, 0, 0),
-+	F(266500000, P_BIMC, 4, 0, 0),
-+	F(400000000, P_GPLL0, 2, 0, 0),
-+	F(533000000, P_BIMC, 2, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 bimc_gpu_clk_src = {
-+	.cmd_rcgr = 0x31028,
-+	.hid_width = 5,
-+	.parent_map = gcc_xo_gpll0_bimc_map,
-+	.freq_tbl = ftbl_gcc_bimc_gpu_clk,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "bimc_gpu_clk_src",
-+		.parent_names = gcc_xo_gpll0_bimc,
-+		.num_parents = 3,
-+		.flags = CLK_GET_RATE_NOCACHE,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
- static const struct freq_tbl ftbl_gcc_usb_hs_system_clk[] = {
- 	F(80000000, P_GPLL0, 10, 0, 0),
- 	{ }
-@@ -2409,6 +2433,40 @@ static struct clk_branch gcc_gtcu_ahb_clk = {
- 	},
- };
- 
-+static struct clk_branch gcc_bimc_gfx_clk = {
-+	.halt_reg = 0x31024,
-+	.clkr = {
-+		.enable_reg = 0x31024,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_bimc_gfx_clk",
-+			.parent_names = (const char *[]){
-+				"bimc_gpu_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_bimc_gpu_clk = {
-+	.halt_reg = 0x31040,
-+	.clkr = {
-+		.enable_reg = 0x31040,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_bimc_gpu_clk",
-+			.parent_names = (const char *[]){
-+				"bimc_gpu_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_jpeg_tbu_clk = {
- 	.halt_reg = 0x12034,
- 	.clkr = {
-@@ -2778,6 +2836,9 @@ static struct clk_regmap *gcc_msm8916_clocks[] = {
- 	[BIMC_DDR_CLK_SRC] = &bimc_ddr_clk_src.clkr,
- 	[GCC_APSS_TCU_CLK] = &gcc_apss_tcu_clk.clkr,
- 	[GCC_GFX_TCU_CLK] = &gcc_gfx_tcu_clk.clkr,
-+	[BIMC_GPU_CLK_SRC] = &bimc_gpu_clk_src.clkr,
-+	[GCC_BIMC_GFX_CLK] = &gcc_bimc_gfx_clk.clkr,
-+	[GCC_BIMC_GPU_CLK] = &gcc_bimc_gpu_clk.clkr,
- };
- 
- static struct gdsc *gcc_msm8916_gdscs[] = {
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8916.h b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-index 9169ae656c77..d21501bb3d52 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8916.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-@@ -155,6 +155,9 @@
- #define BIMC_DDR_CLK_SRC			138
- #define GCC_APSS_TCU_CLK			139
- #define GCC_GFX_TCU_CLK				140
-+#define BIMC_GPU_CLK_SRC			141
-+#define GCC_BIMC_GFX_CLK			142
-+#define GCC_BIMC_GPU_CLK			143
- 
- /* Indexes for GDSCs */
- #define BIMC_GDSC				0
+Well, I have the feeling that these changes would require the regmap to
+be in place before using it. So yes, it has a strong dependency with the
+rest of the series (and DT modifications like the 06/16 patch actually).
+
+So, I think that Alexandre would agree with me that we should take the
+whole series with us through the arm-soc tree. An alternative would be
+to delay the inclusion of the USB part a little bit...
+
+Thanks for the heads-up Felipe, Bye,
+-- 
+Nicolas Ferre
