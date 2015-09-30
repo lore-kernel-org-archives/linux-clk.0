@@ -1,60 +1,105 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Subject: Re: [PATCH v4 4/4] ARM: dts: add suspend opp to exynos4412
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Thomas Abraham <thomas.ab@samsung.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-References: <1441640501-13613-1-git-send-email-b.zolnierkie@samsung.com>
- <1441640501-13613-5-git-send-email-b.zolnierkie@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <55EE2D14.2080203@samsung.com>
-Date: Tue, 08 Sep 2015 09:34:28 +0900
-MIME-version: 1.0
-In-reply-to: <1441640501-13613-5-git-send-email-b.zolnierkie@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-pm-owner@vger.kernel.org
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH 12/16] ARM: at91: pm: find and remap the pmc
+Date: Wed, 30 Sep 2015 18:11:05 +0200
+Message-Id: <1443629469-15086-13-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08.09.2015 00:41, Bartlomiej Zolnierkiewicz wrote:
-> Mark 800MHz OPP as a suspend opp for Exynos4412 based
-> boards so effectively cpufreq-dt driver behavior w.r.t.
-> suspend frequency matches what the old exynos-cpufreq
-> driver has been doing.
-> 
-> This patch fixes suspend/resume support on Exynos4412 based
-> Trats2 board and reboot hang on Exynos4412 based Odroid U3
-> board.
-> 
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4412.dtsi | 1 +
->  1 file changed, 1 insertion(+)
+To avoid relying on at91_pmc_read(), find the pmc node and remap it
+locally.
 
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ arch/arm/mach-at91/pm.c | 32 ++++++++++++++++++++++++++------
+ 1 file changed, 26 insertions(+), 6 deletions(-)
 
-Best regards,
-Krzysztof
-
-
+diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+index 5c2b60c5a2a1..1dee29b33ff9 100644
+--- a/arch/arm/mach-at91/pm.c
++++ b/arch/arm/mach-at91/pm.c
+@@ -35,6 +35,8 @@
+ #include "generic.h"
+ #include "pm.h"
+ 
++void __iomem *pmc;
++
+ /*
+  * FIXME: this is needed to communicate between the pinctrl driver and
+  * the PM implementation in the machine. Possibly part of the PM
+@@ -85,7 +87,7 @@ static int at91_pm_verify_clocks(void)
+ 	unsigned long scsr;
+ 	int i;
+ 
+-	scsr = at91_pmc_read(AT91_PMC_SCSR);
++	scsr = readl(pmc + AT91_PMC_SCSR);
+ 
+ 	/* USB must not be using PLLB */
+ 	if ((scsr & at91_pm_data.uhp_udp_mask) != 0) {
+@@ -99,8 +101,7 @@ static int at91_pm_verify_clocks(void)
+ 
+ 		if ((scsr & (AT91_PMC_PCK0 << i)) == 0)
+ 			continue;
+-
+-		css = at91_pmc_read(AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
++		css = readl(pmc + AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
+ 		if (css != AT91_PMC_CSS_SLOW) {
+ 			pr_err("AT91: PM - Suspend-to-RAM with PCK%d src %d\n", i, css);
+ 			return 0;
+@@ -143,8 +144,8 @@ static void at91_pm_suspend(suspend_state_t state)
+ 	flush_cache_all();
+ 	outer_disable();
+ 
+-	at91_suspend_sram_fn(at91_pmc_base, at91_ramc_base[0],
+-				at91_ramc_base[1], pm_data);
++	at91_suspend_sram_fn(pmc, at91_ramc_base[0],
++			     at91_ramc_base[1], pm_data);
+ 
+ 	outer_resume();
+ }
+@@ -394,13 +395,32 @@ static void __init at91_pm_sram_init(void)
+ 			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
+ }
+ 
++static const struct of_device_id atmel_pmc_ids[] = {
++	{ .compatible = "atmel,at91rm9200-pmc"  },
++	{ .compatible = "atmel,at91sam9260-pmc" },
++	{ .compatible = "atmel,at91sam9g45-pmc" },
++	{ .compatible = "atmel,at91sam9n12-pmc" },
++	{ .compatible = "atmel,at91sam9x5-pmc" },
++	{ .compatible = "atmel,sama5d3-pmc" },
++	{ /* sentinel */ },
++};
++
+ static void __init at91_pm_init(void)
+ {
+-	at91_pm_sram_init();
++	struct device_node *pmc_np;
+ 
+ 	if (at91_cpuidle_device.dev.platform_data)
+ 		platform_device_register(&at91_cpuidle_device);
+ 
++	pmc_np = of_find_matching_node(NULL, atmel_pmc_ids);
++	pmc = of_iomap(pmc_np, 0);
++	if (!pmc) {
++		pr_info("AT91: PM not supported, PMC not found");
++		return;
++	}
++
++	at91_pm_sram_init();
++
+ 	if (at91_suspend_sram_fn)
+ 		suspend_set_ops(&at91_pm_ops);
+ 	else
+-- 
+2.1.4
