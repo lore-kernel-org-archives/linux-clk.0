@@ -1,90 +1,119 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 18 Sep 2015 14:20:25 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH 1/5] ARM: sunxi: Add R8 support
-Message-ID: <20150918122025.GR4684@lukather>
-References: <1442566130-3497-1-git-send-email-maxime.ripard@free-electrons.com>
- <1442566130-3497-2-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v65hHJDS6-Sz5Hi4a_F_cHTdBkFUzRR3a0JSE43AbDYmcw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cGn0fZIJon5R7R2H"
-In-Reply-To: <CAGb2v65hHJDS6-Sz5Hi4a_F_cHTdBkFUzRR3a0JSE43AbDYmcw@mail.gmail.com>
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH 06/16] clk: at91: clk-main: factorize irq handling
+Date: Wed, 30 Sep 2015 18:10:59 +0200
+Message-Id: <1443629469-15086-7-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+The three different irq handlers are doing the same thing, factorize their
+code in a generic irq handler.
 
---cGn0fZIJon5R7R2H
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ drivers/clk/at91/clk-main.c | 43 ++++++++++++++++---------------------------
+ 1 file changed, 16 insertions(+), 27 deletions(-)
 
-On Fri, Sep 18, 2015 at 05:47:44PM +0800, Chen-Yu Tsai wrote:
-> On Fri, Sep 18, 2015 at 4:48 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > The R8 is a new Allwinner SoC based on the A13. While both are very
-> > similar, there's still a few differences. Introduce a new compatible to
-> > deal with them.
-> >
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  arch/arm/mach-sunxi/sunxi.c   | 3 ++-
-> >  drivers/clk/sunxi/clk-sunxi.c | 1 +
-> >  2 files changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-> > index 65bab2876343..8583a9ca86bd 100644
-> > --- a/arch/arm/mach-sunxi/sunxi.c
-> > +++ b/arch/arm/mach-sunxi/sunxi.c
-> > @@ -26,10 +26,11 @@ static const char * const sunxi_board_dt_compat[] =
-=3D {
-> >         "allwinner,sun4i-a10",
-> >         "allwinner,sun5i-a10s",
-> >         "allwinner,sun5i-a13",
-> > +       "allwinner,sun5i-r8",
-> >         NULL,
-> >  };
-> >
-> > -DT_MACHINE_START(SUNXI_DT, "Allwinner A1X (Device Tree)")
-> > +DT_MACHINE_START(SUNXI_DT, "Allwinner sun4i/sun5i Families")
->=20
-> Nit: might want to mention the rename.
-
-Indeed, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---cGn0fZIJon5R7R2H
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJV/AGJAAoJEBx+YmzsjxAg43UP/jqgHJwi1tC+wP/FCJUsGiSf
-8c+qT56Y7fOn5eIPLXWZtQ2eDrxpFJVjH8oj9RiROeoPOu3HjcLR+746e8R68pLX
-do0xx1fxzNLrLmxfrzbihLQy3XWbVs8fxiWE48HoPg4/6IAezQPHk0E5yMQQlQZc
-5DBERfa0ns7oJKhmonrQmw7C4w3Um5ViQTbFemCRUtDIMP2IksKJv6CbaEIxvxyy
-DDj731hI7qr8ElmkcKgtMoJT82VZkBk2k73efRdoMGzjqiT7mbCFMekgwdWLC01S
-wGHQm88hO4eZEUdEbxDOj/+d2SpzUhXd+rqgXzJW9BXRUcDzm8+6h8sJknS7+NG4
-lbLqgzodm2CvUoFjazU5+cAM3YZu1i20sQiEOL++wnt2+kFNeMtyAhn54eNFvh/E
-DLhDAzdyhvEbjGaSmmx3VxV08A5UGxL+69s/umiE8wP5jtaVVG7oqP42duPxG9C7
-5K/zZ/ibh65HOBpujEbxkR81eciZyF6+DoiovC9KThAvGMa90lCKR+10AeuYL3Il
-QujLcduRtrTSGYu4zZ+/7ot60+7HfXzkAqjnRo66smV/VSnsD4MLPEUmTgLBMUTx
-iaQHg1E/N+hfwRTt2vHF56kwI2iWeOY45pSAt8Az7iv1txqbaeZMcGVuCSnpNlCI
-Ojbt2g/O3O2jBBP/5LGH
-=DoL0
------END PGP SIGNATURE-----
-
---cGn0fZIJon5R7R2H--
+diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
+index c1f119748bdc..79a380cd1f4e 100644
+--- a/drivers/clk/at91/clk-main.c
++++ b/drivers/clk/at91/clk-main.c
+@@ -71,12 +71,21 @@ struct clk_sam9x5_main {
+ 
+ #define to_clk_sam9x5_main(hw) container_of(hw, struct clk_sam9x5_main, hw)
+ 
+-static irqreturn_t clk_main_osc_irq_handler(int irq, void *dev_id)
++/* Generic structure */
++struct clk_main {
++	struct clk_hw hw;
++	struct at91_pmc *pmc;
++	unsigned int irq;
++	wait_queue_head_t wait;
++};
++#define to_clk_main(hw) container_of(hw, struct clk_main, hw)
++
++static irqreturn_t clk_main_irq_handler(int irq, void *dev_id)
+ {
+-	struct clk_main_osc *osc = dev_id;
++	struct clk_main *clkmain = dev_id;
+ 
+-	wake_up(&osc->wait);
+-	disable_irq_nosync(osc->irq);
++	wake_up(&clkmain->wait);
++	disable_irq_nosync(clkmain->irq);
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -185,7 +194,7 @@ at91_clk_register_main_osc(struct regmap *regmap,
+ 
+ 	init_waitqueue_head(&osc->wait);
+ 	irq_set_status_flags(osc->irq, IRQ_NOAUTOEN);
+-	ret = request_irq(osc->irq, clk_main_osc_irq_handler,
++	ret = request_irq(osc->irq, clk_main_irq_handler,
+ 			  IRQF_TRIGGER_HIGH, name, osc);
+ 	if (ret) {
+ 		kfree(osc);
+@@ -237,16 +246,6 @@ static void __init of_at91rm9200_clk_main_osc_setup(struct device_node *np)
+ CLK_OF_DECLARE(at91rm9200_clk_main_osc, "atmel,at91rm9200-clk-main-osc",
+ 	       of_at91rm9200_clk_main_osc_setup);
+ 
+-static irqreturn_t clk_main_rc_osc_irq_handler(int irq, void *dev_id)
+-{
+-	struct clk_main_rc_osc *osc = dev_id;
+-
+-	wake_up(&osc->wait);
+-	disable_irq_nosync(osc->irq);
+-
+-	return IRQ_HANDLED;
+-}
+-
+ static bool clk_main_rc_osc_ready(struct regmap *regmap)
+ {
+ 	unsigned int status;
+@@ -361,7 +360,7 @@ at91_clk_register_main_rc_osc(struct regmap *regmap,
+ 
+ 	init_waitqueue_head(&osc->wait);
+ 	irq_set_status_flags(osc->irq, IRQ_NOAUTOEN);
+-	ret = request_irq(osc->irq, clk_main_rc_osc_irq_handler,
++	ret = request_irq(osc->irq, clk_main_irq_handler,
+ 			  IRQF_TRIGGER_HIGH, name, osc);
+ 	if (ret)
+ 		return ERR_PTR(ret);
+@@ -529,16 +528,6 @@ static void __init of_at91rm9200_clk_main_setup(struct device_node *np)
+ CLK_OF_DECLARE(at91rm9200_clk_main, "atmel,at91rm9200-clk-main",
+ 	       of_at91rm9200_clk_main_setup);
+ 
+-static irqreturn_t clk_sam9x5_main_irq_handler(int irq, void *dev_id)
+-{
+-	struct clk_sam9x5_main *clkmain = dev_id;
+-
+-	wake_up(&clkmain->wait);
+-	disable_irq_nosync(clkmain->irq);
+-
+-	return IRQ_HANDLED;
+-}
+-
+ static inline bool clk_sam9x5_main_ready(struct regmap *regmap)
+ {
+ 	unsigned int status;
+@@ -657,7 +646,7 @@ at91_clk_register_sam9x5_main(struct regmap *regmap,
+ 	clkmain->parent = status & AT91_PMC_MOSCEN ? 1 : 0;
+ 	init_waitqueue_head(&clkmain->wait);
+ 	irq_set_status_flags(clkmain->irq, IRQ_NOAUTOEN);
+-	ret = request_irq(clkmain->irq, clk_sam9x5_main_irq_handler,
++	ret = request_irq(clkmain->irq, clk_main_irq_handler,
+ 			  IRQF_TRIGGER_HIGH, name, clkmain);
+ 	if (ret)
+ 		return ERR_PTR(ret);
+-- 
+2.1.4
