@@ -1,87 +1,57 @@
-Return-Path: <peter.ujfalusi@ti.com>
-Subject: Re: [PATCH] clk: ti: clk-7xx: Remove hardwired ABE clock
- configuration
-To: Tero Kristo <t-kristo@ti.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-References: <1440401702-32420-1-git-send-email-peter.ujfalusi@ti.com>
-CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <55F68AC1.1040807@ti.com>
-Date: Mon, 14 Sep 2015 11:52:17 +0300
-MIME-Version: 1.0
-In-Reply-To: <1440401702-32420-1-git-send-email-peter.ujfalusi@ti.com>
-Content-Type: text/plain; charset="windows-1252"
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH 11/16] ARM: at91: pm: simply call at91_pm_init
+Date: Wed, 30 Sep 2015 18:11:04 +0200
+Message-Id: <1443629469-15086-12-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Tero,
+at91_pm_init() doesn't return a value, as is the case for its callers,
+simply call it instead of returning its non-existent return value.
 
-On 08/24/2015 10:35 AM, Peter Ujfalusi wrote:
-> The ABE related clocks should be configured via DT and not have it wired
-> inside of the kernel.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ arch/arm/mach-at91/pm.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-can you take a look at this patch? It will not cause any regression since we
-do not have audio support mainline and the pending series does not need this
-part anymore.
-
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> ---
-> Hi Tero,
-> 
-> the ABE PLL configuration can, and will be done for dra7xx in DT with the
-> assigned-clocks/rate/parent feature so no need to have this anymore.
-> 
-> Regards,
-> Peter
-> 
->  drivers/clk/ti/clk-7xx.c | 18 +-----------------
->  1 file changed, 1 insertion(+), 17 deletions(-)
-> 
-> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-> index 9b5b289e6334..a911d7de3377 100644
-> --- a/drivers/clk/ti/clk-7xx.c
-> +++ b/drivers/clk/ti/clk-7xx.c
-> @@ -18,7 +18,6 @@
->  
->  #include "clock.h"
->  
-> -#define DRA7_DPLL_ABE_DEFFREQ				180633600
->  #define DRA7_DPLL_GMAC_DEFFREQ				1000000000
->  #define DRA7_DPLL_USB_DEFFREQ				960000000
->  
-> @@ -313,27 +312,12 @@ static struct ti_dt_clk dra7xx_clks[] = {
->  int __init dra7xx_dt_clk_init(void)
->  {
->  	int rc;
-> -	struct clk *abe_dpll_mux, *sys_clkin2, *dpll_ck, *hdcp_ck;
-> +	struct clk *dpll_ck, *hdcp_ck;
->  
->  	ti_dt_clocks_register(dra7xx_clks);
->  
->  	omap2_clk_disable_autoidle_all();
->  
-> -	abe_dpll_mux = clk_get_sys(NULL, "abe_dpll_sys_clk_mux");
-> -	sys_clkin2 = clk_get_sys(NULL, "sys_clkin2");
-> -	dpll_ck = clk_get_sys(NULL, "dpll_abe_ck");
-> -
-> -	rc = clk_set_parent(abe_dpll_mux, sys_clkin2);
-> -	if (!rc)
-> -		rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ);
-> -	if (rc)
-> -		pr_err("%s: failed to configure ABE DPLL!\n", __func__);
-> -
-> -	dpll_ck = clk_get_sys(NULL, "dpll_abe_m2x2_ck");
-> -	rc = clk_set_rate(dpll_ck, DRA7_DPLL_ABE_DEFFREQ * 2);
-> -	if (rc)
-> -		pr_err("%s: failed to configure ABE DPLL m2x2!\n", __func__);
-> -
->  	dpll_ck = clk_get_sys(NULL, "dpll_gmac_ck");
->  	rc = clk_set_rate(dpll_ck, DRA7_DPLL_GMAC_DEFFREQ);
->  	if (rc)
-> 
-
-
+diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+index 80e277cfcc8b..5c2b60c5a2a1 100644
+--- a/arch/arm/mach-at91/pm.c
++++ b/arch/arm/mach-at91/pm.c
+@@ -427,7 +427,7 @@ void __init at91sam9260_pm_init(void)
+ 	at91_dt_ramc();
+ 	at91_pm_data.memctrl = AT91_MEMCTRL_SDRAMC;
+ 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
+-	return at91_pm_init();
++	at91_pm_init();
+ }
+ 
+ void __init at91sam9g45_pm_init(void)
+@@ -435,7 +435,7 @@ void __init at91sam9g45_pm_init(void)
+ 	at91_dt_ramc();
+ 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP;
+ 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
+-	return at91_pm_init();
++	at91_pm_init();
+ }
+ 
+ void __init at91sam9x5_pm_init(void)
+@@ -443,5 +443,5 @@ void __init at91sam9x5_pm_init(void)
+ 	at91_dt_ramc();
+ 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
+ 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
+-	return at91_pm_init();
++	at91_pm_init();
+ }
 -- 
-Péter
+2.1.4
