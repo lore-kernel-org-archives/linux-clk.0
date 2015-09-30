@@ -1,95 +1,58 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Tue, 08 Sep 2015 01:33:25 +0900
-Message-Id: <20150907163325.475.66286.sendpatchset@little-apple>
-In-Reply-To: <20150907163252.475.18281.sendpatchset@little-apple>
-References: <20150907163252.475.18281.sendpatchset@little-apple>
-Subject: [PATCH v7 03/05] clk: shmobile: Make MSTP clock-output-names optional
+Return-Path: <newchief@king.net.pl>
+From: Paul Osmialowski <newchief@king.net.pl>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Paul Osmialowski <pawelo@king.net.pl>
+Subject: [PATCH 0/1] add devm_of_clk_get() and devm_of_clk_get_by_name() functions
+Date: Wed, 30 Sep 2015 09:46:51 +0200
+Message-Id: <1443599212-31698-1-git-send-email-newchief@king.net.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Paul Osmialowski <pawelo@king.net.pl>
 
-This patch updates the MSTP driver to make the "clock-output-names"
-DT property optional instead of mandatory. In case the DT property
-is omitted then the function clk_register_clkdev() is skipped.
+While working on my pinctrl driver I've found lack of devres compatible
+equivalent for of_clk_get() function. I'd like to use it for the following
+(incomplete) piece of device tree configuration:
 
-The default for new SoCs is to not use "clock-output-names".
+pinctrl: pinctrl {
+	compatible = "fsl,kinetis-pinctrl";
+	#address-cells = <1>;
+	#size-cells = <1>;
+	ranges;
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+	port_a@40049000 {
+		compatible = "fsl,kinetis-pin-bank";
+		reg = <0x40049000 0x1000>;
+		clocks = <&sim SIM_CLK_SCGC5_PORTA>;
+	};
 
- Changes since V6:
- - None
+	port_b@4004a000 {
+		compatible = "fsl,kinetis-pin-bank";
+		reg = <0x4004a000 0x1000>;
+		clocks = <&sim SIM_CLK_SCGC5_PORTB>;
+	};
+...
+};
 
- Changes since V5:
- - Simplified code using const char *allocated_name - thanks Geert!
+In my pinconf-generic compatible fsl,kinetis-pinctrl driver, I'm iterating
+over fsl,kinetis-pin-bank nodes using for_each_child_of_node(dev->of_node,
+child) along with of_match_node() in order to grab resources (I/O base
+address, clock gate).
 
- Changes since V4:
- - None
+Normally, I'd have to use of_clk_get() on each pin bank device_node and
+then worry about proper resource release myself.
 
- Changes since V3:
- - Added support for multiple MSTP bits. =)
+IMHO using devres infrastructure for this is far better. This patch adds
+missing functions needed to do it that way.
 
- drivers/clk/shmobile/clk-mstp.c |   24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+Paul Osmialowski (1):
+  clk: add devm_of_clk_get() and devm_of_clk_get_by_name() functions
 
---- 0001/drivers/clk/shmobile/clk-mstp.c
-+++ work/drivers/clk/shmobile/clk-mstp.c	2015-09-02 11:52:02.182366518 +0900
-@@ -193,26 +193,26 @@ static void __init cpg_mstp_clocks_init(
- 	for (i = 0; i < MSTP_MAX_CLOCKS; ++i) {
- 		const char *parent_name;
- 		const char *name;
-+		const char *allocated_name = NULL;
- 		u32 clkidx;
- 		int ret;
- 
--		/* Skip clocks with no name. */
--		ret = of_property_read_string_index(np, "clock-output-names",
--						    i, &name);
--		if (ret < 0 || strlen(name) == 0)
--			continue;
--
- 		parent_name = of_clk_get_parent_name(np, i);
- 		ret = of_property_read_u32_index(np, idxname, i, &clkidx);
- 		if (parent_name == NULL || ret < 0)
- 			break;
- 
- 		if (clkidx >= MSTP_MAX_CLOCKS) {
--			pr_err("%s: invalid clock %s %s index %u)\n",
--			       __func__, np->name, name, clkidx);
-+			pr_err("%s: invalid clock %s index %u)\n",
-+			       __func__, np->name, clkidx);
- 			continue;
- 		}
- 
-+		if (of_property_read_string_index(np, "clock-output-names",
-+						  i, &name) < 0)
-+			allocated_name = name = kasprintf(GFP_KERNEL, "%s.%u",
-+							   np->name, clkidx);
-+
- 		clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
- 						       clkidx, group);
- 		if (!IS_ERR(clks[clkidx])) {
-@@ -225,12 +225,18 @@ static void __init cpg_mstp_clocks_init(
- 			 *
- 			 * FIXME: Remove this when all devices that require a
- 			 * clock will be instantiated from DT.
-+			 *
-+			 * We currently register clkdev only when the DT
-+			 * property clock-output-names is present.
- 			 */
--			clk_register_clkdev(clks[clkidx], name, NULL);
-+			if (!allocated_name)
-+				clk_register_clkdev(clks[clkidx], name, NULL);
- 		} else {
- 			pr_err("%s: failed to register %s %s clock (%ld)\n",
- 			       __func__, np->name, name, PTR_ERR(clks[clkidx]));
- 		}
-+
-+		kfree(allocated_name);
- 	}
- 
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &group->data);
+ drivers/clk/clk-devres.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk.h      | 20 ++++++++++++++++++++
+ 2 files changed, 66 insertions(+)
+
+-- 
+2.4.9
