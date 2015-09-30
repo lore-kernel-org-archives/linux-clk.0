@@ -1,86 +1,182 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-MIME-Version: 1.0
-In-Reply-To: <BY1PR0301MB130339BD3B988DC938AA524482560@BY1PR0301MB1303.namprd03.prod.outlook.com>
-References: <1441349872-4560-1-git-send-email-bhupesh.sharma@freescale.com>
- <1441349872-4560-4-git-send-email-bhupesh.sharma@freescale.com>
- <CADRPPNR11BD4WfXTWoQ28rZCd_BJuhdWu49E6jjpO29CH2s5Ow@mail.gmail.com>
- <BY1PR0301MB1303E56B5462BCD0C77C7E4D82570@BY1PR0301MB1303.namprd03.prod.outlook.com>
- <CADRPPNQFxqNqgvrL9eVhaDX-SYRJxmGDd87zu_XHDHY6afiu3g@mail.gmail.com>
- <BY1PR0301MB130339BD3B988DC938AA524482560@BY1PR0301MB1303.namprd03.prod.outlook.com>
-Date: Wed, 9 Sep 2015 18:38:59 -0500
-Message-ID: <CADRPPNTDPBHR8S4mkT0CzO4jF0sncruZkMdir6OhrdkU6Za2OQ@mail.gmail.com>
-Subject: Re: [PATCH v2 03/10] Documentation/dts: Add bindings for QIXIS FPGA
- controller found on FSL boards
-From: Li Yang <leoli@freescale.com>
-To: Sharma Bhupesh <bhupesh.sharma@freescale.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
- "Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
- Singh Jaiprakash <jaiprakash.singh@freescale.com>,
- "will.deacon@arm.com" <will.deacon@arm.com>, "olof@lixom.net" <olof@lixom.net>,
- "bhupesh.linux@gmail.com" <bhupesh.linux@gmail.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <newchief@king.net.pl>
+From: Paul Osmialowski <newchief@king.net.pl>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Paul Osmialowski <pawelo@king.net.pl>
+Subject: [PATCH v2] clk: add devm_of_clk_get() and devm_of_clk_get_by_name() functions
+Date: Wed, 30 Sep 2015 09:46:52 +0200
+Message-Id: <1443599212-31698-2-git-send-email-newchief@king.net.pl>
+In-Reply-To: <1443599212-31698-1-git-send-email-newchief@king.net.pl>
+References: <1443599212-31698-1-git-send-email-newchief@king.net.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Sep 5, 2015 at 3:11 AM, Sharma Bhupesh
-<bhupesh.sharma@freescale.com> wrote:
->> From: pku.leo@gmail.com [mailto:pku.leo@gmail.com]
->> Sent: Saturday, September 05, 2015 2:43 AM
->> On Fri, Sep 4, 2015 at 3:16 PM, Sharma Bhupesh
->> <bhupesh.sharma@freescale.com> wrote:
->> >> From: pku.leo@gmail.com [mailto:pku.leo@gmail.com]
->> >> Sent: Friday, September 04, 2015 10:27 PM On Fri, Sep 4, 2015 at 1:57
->> >> AM, Bhupesh Sharma <bhupesh.sharma@freescale.com> wrote:
->> >> > This patch adds bindings for QIXIS FPGA controller found on FSL
->> boards.
->> >>
->> >> A general comment: when you are updating the device tree bindings.
->> >> You should cc the devicetree@vger.kernel.org mailing list.
->> >>
->> >> >
->> >> > Some Freescale boards like LS2080AQDS/LS2080ARDB have an on-board
->> >> > FPGA/CPLD connected to the IFC controller. The bindings specified
->> >> > in this patch cater to those on-board FPGA/CPLD controllers.
->> >>
->> >> We already have the binding defined in
->> >> Documentation/devicetree/bindings/powerpc/fsl/board.txt.  We probably
->> >> should just move it to a more generic location.
->> >
->> > Consolidation of powerpc and ARM bindings is something that needs to
->> > be targeted by a separate patch-series, perhaps in future.
->> >
->> > There are a number of duplications that can be looked into, but I
->> > don't think this patchset should depend on that.
->>
->> There might be some duplication, but we shouldn't be adding more.  :) I
->> would rather you directly updating that file than creating a new file
->> even though the original one was in a wrong directory.
->>
->
-> IMO a PowerPC binding update makes no sense in a ARM machine patchset sent
-> on a arm specific mailing list.
+From: Paul Osmialowski <pawelo@king.net.pl>
 
-So the best approach is to merge the change with the original binding
-and put it into a common place.  Although there were a lot of non-arch
-specific bindings placed into the arch folder, we should stop adding
-more now.
+These two functions are added to ease management of clocks obtained
+from OF device nodes.
 
-Regards,
-Leo
+They are particulary useful while iterating over DT subnodes using e.g.
+for_each_child_of_node(dev->of_node, child) in order do get resources
+(i.e. clocks) for subdevices defined by these DT subnodes.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+For example:
+
+some_device {
+    compatible = "something"
+    #address-cells = <1>;
+    #size-cells = <1>;
+    ranges;
+
+    subdevice1: some_subdevice@some_address1 {
+        reg = <0xsome_address1 0xsome_size>
+        clocks = <&some_clock1>
+    }
+
+    subdevice2: some_subdevice@some_address2 {
+        reg = <0xsome_address2 0xsome_size>
+        clocks = <&some_clock2>
+    }
+}
+
+Normally, I'd have to use of_clk_get() on each subdevice node and then
+worry about proper resource release myself.
+
+IMHO using devres infrastructure for this is far better. This patch adds
+missing functions needed to do it a better way.
+
+Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
+---
+ Documentation/driver-model/devres.txt |  2 ++
+ drivers/clk/clk-devres.c              | 46 +++++++++++++++++++++++++++++++++++
+ include/linux/clk.h                   | 46 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 94 insertions(+)
+
+diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
+index 831a536..f3ad67a 100644
+--- a/Documentation/driver-model/devres.txt
++++ b/Documentation/driver-model/devres.txt
+@@ -235,6 +235,8 @@ certainly invest a bit more effort into libata core layer).
+ 
+ CLOCK
+   devm_clk_get()
++  devm_of_clk_get()
++  devm_of_clk_get_by_name()
+   devm_clk_put()
+ 
+ DMA
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index 8f57154..197075a 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -34,6 +34,52 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ }
+ EXPORT_SYMBOL(devm_clk_get);
+ 
++#ifdef CONFIG_OF
++
++struct clk *devm_of_clk_get(struct device *dev, struct device_node *np,
++			    int index)
++{
++	struct clk **ptr, *clk;
++
++	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	clk = of_clk_get(np, index);
++	if (!IS_ERR(clk)) {
++		*ptr = clk;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return clk;
++}
++EXPORT_SYMBOL(devm_of_clk_get);
++
++struct clk *devm_of_clk_get_by_name(struct device *dev, struct device_node *np,
++				    const char *name)
++{
++	struct clk **ptr, *clk;
++
++	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	clk = of_clk_get_by_name(np, name);
++	if (!IS_ERR(clk)) {
++		*ptr = clk;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return clk;
++}
++EXPORT_SYMBOL(devm_of_clk_get_by_name);
++
++#endif /* CONFIG_OF */
++
+ static int devm_clk_match(struct device *dev, void *res, void *data)
+ {
+ 	struct clk **c = res;
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 0df4a51..8f31f9a 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -504,4 +504,50 @@ static inline struct clk *of_clk_get_by_name(struct device_node *np,
+ }
+ #endif
+ 
++#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
++/**
++ * devm_of_clk_get - obtain a managed reference to a clock producer
++ *                   from device tree node (by index).
++ * @dev: device for clock "consumer"
++ * @np: device tree node
++ * @index: clock consumer index (within the node)
++ *
++ * devm_of_clk_get should not be called from within interrupt context.
++ *
++ * The clock will automatically be freed when the device is unbound
++ * from the bus.
++ */
++struct clk *devm_of_clk_get(struct device *dev, struct device_node *np,
++			    int index);
++
++/**
++ * devm_of_clk_get_by_name - obtain a managed reference to a clock producer
++ *                           from device tree node (by name).
++ * @dev: device for clock "consumer"
++ * @np: device tree node
++ * @name: clock consumer name (within the node)
++ *
++ * devm_of_clk_get_by_name should not be called from within interrupt context.
++ *
++ * The clock will automatically be freed when the device is unbound
++ * from the bus.
++ */
++struct clk *devm_of_clk_get_by_name(struct device *dev, struct device_node *np,
++				    const char *name);
++
++#else
++static inline struct clk *devm_of_clk_get(struct device *dev,
++					  struct device_node *np,
++					  int index)
++{
++	return ERR_PTR(-ENOENT);
++}
++static inline struct clk *devm_of_clk_get_by_name(struct device *dev,
++						  struct device_node *np,
++						  const char *name)
++{
++	return ERR_PTR(-ENOENT);
++}
++#endif
++
+ #endif
+-- 
+2.4.9
