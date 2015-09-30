@@ -1,47 +1,45 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH] clk: ti: clk-7xx: Remove hardwired ABE clock
- configuration
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-References: <1440401702-32420-1-git-send-email-peter.ujfalusi@ti.com>
- <55F68AC1.1040807@ti.com> <55F90F59.60102@ti.com> <5604F0D8.60402@ti.com>
-CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <5604F1CC.5080809@ti.com>
-Date: Fri, 25 Sep 2015 10:03:40 +0300
-MIME-Version: 1.0
-In-Reply-To: <5604F0D8.60402@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH 14/16] ARM: at91: remove useless includes and function prototypes
+Date: Wed, 30 Sep 2015 18:11:07 +0200
+Message-Id: <1443629469-15086-15-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/25/2015 09:59 AM, Peter Ujfalusi wrote:
-> Tero,
->
-> On 09/16/2015 09:42 AM, Tero Kristo wrote:
->> On 09/14/2015 11:52 AM, Peter Ujfalusi wrote:
->>> Hi Tero,
->>>
->>> On 08/24/2015 10:35 AM, Peter Ujfalusi wrote:
->>>> The ABE related clocks should be configured via DT and not have it wired
->>>> inside of the kernel.
->>>
->>> can you take a look at this patch? It will not cause any regression since we
->>> do not have audio support mainline and the pending series does not need this
->>> part anymore.
->>
->> This patch looks okay to me. So, you are saying this doesn't depend on
->> anything? Isn't this causing any boot-time issues with the ABE DPLL left
->> dangling with boot setup, potentially blocking PM? I am just wondering if we
->> should group this patch with the rest of the audio support patches for dra7.
->
-> Without this patch the ABE DPLL will have frequency which is not going to be
-> correct to be used with the ATL. The ATL is disabled by default and only
-> enabled when we use the audio. Which is not the case w/o the other series.
->
+Remove leftover from the previous cleanup
 
-Ok, queuing for 4.3-rc fixes.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ arch/arm/mach-at91/generic.h | 7 -------
+ 1 file changed, 7 deletions(-)
 
--Tero
+diff --git a/arch/arm/mach-at91/generic.h b/arch/arm/mach-at91/generic.h
+index d224e195706a..28ca57a2060f 100644
+--- a/arch/arm/mach-at91/generic.h
++++ b/arch/arm/mach-at91/generic.h
+@@ -11,13 +11,6 @@
+ #ifndef _AT91_GENERIC_H
+ #define _AT91_GENERIC_H
+ 
+-#include <linux/of.h>
+-#include <linux/reboot.h>
+-
+- /* Map io */
+-extern void __init at91_map_io(void);
+-extern void __init at91_alt_map_io(void);
+-
+ #ifdef CONFIG_PM
+ extern void __init at91rm9200_pm_init(void);
+ extern void __init at91sam9260_pm_init(void);
+-- 
+2.1.4
