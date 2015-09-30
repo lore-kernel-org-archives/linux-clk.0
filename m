@@ -1,98 +1,254 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org>
-Date: Tue, 8 Sep 2015 10:04:19 +0200 (CEST)
-From: Paul Osmialowski <pawelo@king.net.pl>
-To: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 7/9] arm: twr-k70f120m: IOMUX driver for Kinetis SoC
-In-Reply-To: <CACRpkdYHBt7YJWM3Bg8ENfw7uL4fuENqW+g8YaO+P6UPBCX4HQ@mail.gmail.com>
-Message-ID: <alpine.LNX.2.00.1509080953390.31192@localhost.localdomain>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
- <1435094387-20146-8-git-send-email-pawelo@king.net.pl>
- <CACRpkdYHBt7YJWM3Bg8ENfw7uL4fuENqW+g8YaO+P6UPBCX4HQ@mail.gmail.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>, Stefan Agner <stefan@agner.ch>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Jiri Slaby <jslaby@suse.cz>, linux-clk@vger.kernel.org,
- Kees Cook <keescook@chromium.org>, Russell King <linux@arm.linux.org.uk>,
- Nicolas Pitre <nico@linaro.org>, Magnus Damm <damm+renesas@opensource.se>,
- Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
- Dave Martin <Dave.Martin@arm.com>, Guenter Roeck <linux@roeck-us.net>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Paul Osmialowski <pawelo@king.net.pl>, Sascha Hauer <kernel@pengutronix.de>,
- Arnd Bergmann <arnd@arndb.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Jingchang Lu <jingchang.lu@freescale.com>,
- Haojian Zhuang <haojian.zhuang@gmail.com>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Rob Herring <robh+dt@kernel.org>, Simon Horman <horms+renesas@verge.net.au>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- Paul Bolle <pebolle@tiscali.nl>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Nathan Lynch <nathan_lynch@mentor.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>,
- Kumar Gala <galak@codeaurora.org>, Olof Johansson <olof@lixom.net>,
- Shawn Guo <shawnguo@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=linaro.org@lists.infradead.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: ulf.hansson@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	tgih.jun@samsung.com,
+	jh80.chung@samsung.com
+Cc: linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	amstan@chromium.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 6/8] mmc: dw_mmc-rockchip: MMC tuning with the clock phase framework
+Date: Wed, 30 Sep 2015 16:07:42 +0200
+Message-Id: <1443622064-14362-7-git-send-email-heiko@sntech.de>
+In-Reply-To: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Linus,
+From: Alexandru M Stan <amstan@chromium.org>
 
-On Tue, 14 Jul 2015, Linus Walleij wrote:
+This algorithm will try 1 degree increments, since there's no way to tell
+what resolution the underlying phase code uses. As an added bonus, doing
+many tunings yields better results since some tests are run more than once
+(ex: if the underlying driver uses 45 degree increments, the tuning code
+will try the same angle more than once).
 
-> OK...
-> 
-> I want Shawn and Sascha to look at this as they worked with
-> other Freescale pin controllers. Especially I want to know if this
-> is a sibling to the other Freescale controllers or a separate hardware.
-> 
-> If it is *not* a sibling I will *insist* that it use more generic pin
-> control bindings and move away from the older Freescale-specific
-> stuff.
+It will then construct a list of good phase ranges (even ranges that cross
+360/0), will pick the biggest range then it will set the sample_clk to the
+middle of that range.
 
-No one answered me about that. However, I looked at other Freescale 
-pinctrl drivers and realised that no one of them (IMX, IMX1, MXS) is 
-similar to what I need to do for Kinetis, also positions of configuration 
-bits differ significantly.
+We do not touch ciu_drive (and by extension define default-drive-phase).
+Drive phase is mostly used to define minimum hold times, while one could
+write some code to determine what phase meets the minimum hold time (ex 10
+degrees) this will not work with the current clock phase framework (which
+floors angles, so we'll get 0 deg, and there's no way to know what
+resolution the floors happen at). We assume that the default drive angles
+set by the hardware are good enough.
 
-> 
-> There exist generic pin config bindings, see
-> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> 
-> I suggest to to function+group paring and then use generic pin config
-> with this driver unless it is a very close sibling to the existing Freescale
-> pin controllers.
-> 
-> Hint: if it is a sibling, it should share code with them.
-> 
-> There are several drivers doing generic pin control/pin config in the kernel
-> tree.
-> 
+If a device has device specific code (like exynos) then that will still
+take precedence, otherwise this new code will execute. If the device wants
+to tune, but has no sample_clk defined we'll return EIO with an error
+message.
 
-I tried to analyze few of the drivers (e.g. zynq family) and can't find 
-how can I assing clock gate (clock device) to each port (PORTA, PORTB, 
-PORTC,...) which is required for Kinetis. Is generic pin control capable 
-to express that requirement or is it a time to desing my own pinctrl 
-driver (maybe somewhat improved than the one I presented so far)?
+Signed-off-by: Alexandru M Stan <amstan@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/mmc/host/dw_mmc-rockchip.c | 162 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 162 insertions(+)
 
-This pinctrl component is somwehat critical part of BSP. Until it is not 
-sorted, I don't see a point in releasing what was developed so far.
-
-Best regards,
-Paul
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
+index bc76aa2..4b3650f 100644
+--- a/drivers/mmc/host/dw_mmc-rockchip.c
++++ b/drivers/mmc/host/dw_mmc-rockchip.c
+@@ -13,12 +13,19 @@
+ #include <linux/mmc/host.h>
+ #include <linux/mmc/dw_mmc.h>
+ #include <linux/of_address.h>
++#include <linux/slab.h>
+ 
+ #include "dw_mmc.h"
+ #include "dw_mmc-pltfm.h"
+ 
+ #define RK3288_CLKGEN_DIV       2
+ 
++struct dw_mci_rockchip_priv_data {
++	struct clk		*drv_clk;
++	struct clk		*sample_clk;
++	int			default_sample_phase;
++};
++
+ static void dw_mci_rockchip_prepare_command(struct dw_mci *host, u32 *cmdr)
+ {
+ 	*cmdr |= SDMMC_CMD_USE_HOLD_REG;
+@@ -33,6 +40,7 @@ static int dw_mci_rk3288_setup_clock(struct dw_mci *host)
+ 
+ static void dw_mci_rk3288_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+ {
++	struct dw_mci_rockchip_priv_data *priv = host->priv;
+ 	int ret;
+ 	unsigned int cclkin;
+ 	u32 bus_hz;
+@@ -66,6 +74,158 @@ static void dw_mci_rk3288_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+ 		/* force dw_mci_setup_bus() */
+ 		host->current_speed = 0;
+ 	}
++
++	/* Make sure we use phases which we can enumerate with */
++	if (!IS_ERR(priv->sample_clk))
++		clk_set_phase(priv->sample_clk, priv->default_sample_phase);
++}
++
++#define NUM_PHASES			360
++#define TUNING_ITERATION_TO_PHASE(i)	(DIV_ROUND_UP((i) * 360, NUM_PHASES))
++
++static int dw_mci_rk3288_execute_tuning(struct dw_mci_slot *slot)
++{
++	struct dw_mci *host = slot->host;
++	struct dw_mci_rockchip_priv_data *priv = host->priv;
++	struct mmc_host *mmc = slot->mmc;
++	int ret = 0;
++	int i;
++	bool v, prev_v = 0, first_v;
++	struct range_t {
++		int start;
++		int end; /* inclusive */
++	};
++	struct range_t *ranges;
++	unsigned int range_count = 0;
++	int longest_range_len = -1;
++	int longest_range = -1;
++	int middle_phase;
++
++	if (IS_ERR(priv->sample_clk)) {
++		dev_err(host->dev, "Tuning clock (sample_clk) not defined.\n");
++		return -EIO;
++	}
++
++	ranges = kmalloc_array(NUM_PHASES / 2 + 1, sizeof(*ranges), GFP_KERNEL);
++	if (!ranges)
++		return -ENOMEM;
++
++	/* Try each phase and extract good ranges */
++	for (i = 0; i < NUM_PHASES; ) {
++		clk_set_phase(priv->sample_clk, TUNING_ITERATION_TO_PHASE(i));
++
++		v = !mmc_send_tuning(mmc);
++
++		if (i == 0)
++			first_v = v;
++
++		if ((!prev_v) && v) {
++			range_count++;
++			ranges[range_count-1].start = i;
++		}
++		if (v) {
++			ranges[range_count-1].end = i;
++			i++;
++		} else if (i == NUM_PHASES - 1) {
++			/* No extra skipping rules if we're at the end */
++			i++;
++		} else {
++			/*
++			 * No need to check too close to an invalid
++			 * one since testing bad phases is slow.  Skip
++			 * 20 degrees.
++			 */
++			i += DIV_ROUND_UP(20 * NUM_PHASES, 360);
++
++			/* Always test the last one */
++			if (i >= NUM_PHASES)
++				i = NUM_PHASES - 1;
++		}
++
++		prev_v = v;
++	}
++
++	if (range_count == 0) {
++		dev_warn(host->dev, "All phases bad!");
++		ret = -EIO;
++		goto free;
++	}
++
++	/* wrap around case, merge the end points */
++	if ((range_count > 1) && first_v && v) {
++		ranges[0].start = ranges[range_count-1].start;
++		range_count--;
++	}
++
++	if (ranges[0].start == 0 && ranges[0].end == NUM_PHASES - 1) {
++		clk_set_phase(priv->sample_clk, priv->default_sample_phase);
++		dev_info(host->dev, "All phases work, using default phase %d.",
++			 priv->default_sample_phase);
++		goto free;
++	}
++
++	/* Find the longest range */
++	for (i = 0; i < range_count; i++) {
++		int len = (ranges[i].end - ranges[i].start + 1);
++
++		if (len < 0)
++			len += NUM_PHASES;
++
++		if (longest_range_len < len) {
++			longest_range_len = len;
++			longest_range = i;
++		}
++
++		dev_dbg(host->dev, "Good phase range %d-%d (%d len)\n",
++			TUNING_ITERATION_TO_PHASE(ranges[i].start),
++			TUNING_ITERATION_TO_PHASE(ranges[i].end),
++			len
++		);
++	}
++
++	dev_dbg(host->dev, "Best phase range %d-%d (%d len)\n",
++		TUNING_ITERATION_TO_PHASE(ranges[longest_range].start),
++		TUNING_ITERATION_TO_PHASE(ranges[longest_range].end),
++		longest_range_len
++	);
++
++	middle_phase = ranges[longest_range].start + longest_range_len / 2;
++	middle_phase %= NUM_PHASES;
++	dev_info(host->dev, "Successfully tuned phase to %d\n",
++		 TUNING_ITERATION_TO_PHASE(middle_phase));
++
++	clk_set_phase(priv->sample_clk,
++		      TUNING_ITERATION_TO_PHASE(middle_phase));
++
++free:
++	kfree(ranges);
++	return ret;
++}
++
++static int dw_mci_rk3288_parse_dt(struct dw_mci *host)
++{
++	struct device_node *np = host->dev->of_node;
++	struct dw_mci_rockchip_priv_data *priv;
++
++	priv = devm_kzalloc(host->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	if (of_property_read_u32(np, "rockchip,default-sample-phase",
++					&priv->default_sample_phase))
++		priv->default_sample_phase = 0;
++
++	priv->drv_clk = devm_clk_get(host->dev, "ciu-drive");
++	if (IS_ERR(priv->drv_clk))
++		dev_dbg(host->dev, "ciu_drv not available\n");
++
++	priv->sample_clk = devm_clk_get(host->dev, "ciu-sample");
++	if (IS_ERR(priv->sample_clk))
++		dev_dbg(host->dev, "ciu_sample not available\n");
++
++	host->priv = priv;
++
++	return 0;
+ }
+ 
+ static int dw_mci_rockchip_init(struct dw_mci *host)
+@@ -95,6 +255,8 @@ static const struct dw_mci_drv_data rk3288_drv_data = {
+ 	.caps			= dw_mci_rk3288_dwmmc_caps,
+ 	.prepare_command        = dw_mci_rockchip_prepare_command,
+ 	.set_ios		= dw_mci_rk3288_set_ios,
++	.execute_tuning		= dw_mci_rk3288_execute_tuning,
++	.parse_dt		= dw_mci_rk3288_parse_dt,
+ 	.setup_clock    = dw_mci_rk3288_setup_clock,
+ 	.init			= dw_mci_rockchip_init,
+ };
+-- 
+2.5.1
