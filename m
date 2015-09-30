@@ -1,46 +1,82 @@
-Return-Path: <l.stach@pengutronix.de>
-Message-ID: <1441617505.28391.8.camel@pengutronix.de>
-Subject: Re: [PATCH v2 2/8] clk: imx25: retain early UART clocks during
- kernel init
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,
- patchwork-lst@pengutronix.de, kernel@pengutronix.de,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date: Mon, 07 Sep 2015 11:18:25 +0200
-In-Reply-To: <20150907091005.GV9999@pengutronix.de>
-References: <1441382419-4343-1-git-send-email-l.stach@pengutronix.de>
-	 <1441382419-4343-3-git-send-email-l.stach@pengutronix.de>
-	 <20150906142315.GA30746@tiger> <20150907091005.GV9999@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: ulf.hansson@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	tgih.jun@samsung.com,
+	jh80.chung@samsung.com
+Cc: linux-mmc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	dianders@chromium.org,
+	amstan@chromium.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 2/8] clk: rockchip: Make calculations use rounding
+Date: Wed, 30 Sep 2015 16:07:38 +0200
+Message-Id: <1443622064-14362-3-git-send-email-heiko@sntech.de>
+In-Reply-To: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, den 07.09.2015, 11:10 +0200 schrieb Uwe Kleine-König:
-> On Sun, Sep 06, 2015 at 10:23:15PM +0800, Shawn Guo wrote:
-> > 
-> > I prefer to code it like:
-> > 
-> > static struct clk **uart_clks[] __initdata = {
-> > 	&clk[uart_ipg_per],
-> > 	&clk[uart1_ipg],
-> > 	&clk[uart2_ipg],
-> > 	&clk[uart3_ipg],
-> > 	&clk[uart4_ipg],
-> > 	&clk[uart5_ipg],
-> > 	NULL
-> > };
-> 
-> And maybe also use mx25_ as prefix to make the name unique.
-> 
-We already have a lot of non-unique names in those files. As this is a
-static variable it will not leak into other compilation units, so I
-prefer to keep the current style of the file.
+From: Douglas Anderson <dianders@chromium.org>
 
-Regards,
-Lucas
+Let's use DIV_ROUND_CLOSEST for rounding, not just truncating
+division.  This lets us get closer to the right rate.
 
+Before this:
+  set_phase(86) delay_nums=26 reg[0xf000420c]=0x468 actual_degrees=83
+  set_phase(89) delay_nums=27 reg[0xf000420c]=0x46c actual_degrees=86
+
+After this:
+  set_phase(86) delay_nums=27 reg[0xf000420c]=0x46c actual_degrees=86
+  set_phase(89) delay_nums=28 reg[0xf000420c]=0x470 actual_degrees=90
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk-mmc-phase.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+index a797d86..bc24e5a 100644
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -69,7 +69,7 @@ static int rockchip_mmc_get_phase(struct clk_hw *hw)
+ 
+ 		delay_num = (raw_value & ROCKCHIP_MMC_DELAYNUM_MASK);
+ 		delay_num >>= ROCKCHIP_MMC_DELAYNUM_OFFSET;
+-		degrees += delay_num * factor / 10000;
++		degrees += DIV_ROUND_CLOSEST(delay_num * factor, 10000);
+ 	}
+ 
+ 	return degrees % 360;
+@@ -82,7 +82,7 @@ static int rockchip_mmc_set_phase(struct clk_hw *hw, int degrees)
+ 	u8 nineties, remainder;
+ 	u8 delay_num;
+ 	u32 raw_value;
+-	u64 delay;
++	u32 delay;
+ 
+ 	nineties = degrees / 90;
+ 	remainder = (degrees % 90);
+@@ -110,12 +110,13 @@ static int rockchip_mmc_set_phase(struct clk_hw *hw, int degrees)
+ 	 * Convert to delay; do a little extra work to make sure we
+ 	 * don't overflow 32-bit / 64-bit numbers.
+ 	 */
+-	delay = PSECS_PER_SEC;
++	delay = 10000000; /* PSECS_PER_SEC / 10000 / 10 */
+ 	delay *= remainder;
+-	do_div(delay, 10000);
+-	do_div(delay, (rate / 1000) * 36 * ROCKCHIP_MMC_DELAY_ELEMENT_PSEC);
++	delay = DIV_ROUND_CLOSEST(delay,
++			(rate / 1000) * 36 *
++				(ROCKCHIP_MMC_DELAY_ELEMENT_PSEC / 10));
+ 
+-	delay_num = (u8) min(delay, 255ULL);
++	delay_num = (u8) min_t(u32, delay, 255);
+ 
+ 	raw_value = delay_num ? ROCKCHIP_MMC_DELAY_SEL : 0;
+ 	raw_value |= delay_num << ROCKCHIP_MMC_DELAYNUM_OFFSET;
 -- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
+2.5.1
