@@ -1,50 +1,36 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Oct 2015 16:37:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3] clk: rockchip: reset init state before mmc card
+ initialization
+Message-ID: <20151001233701.GY19319@codeaurora.org>
+References: <1441325733-4131-1-git-send-email-shawn.lin@rock-chips.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20151001143717.20618.26365.sendpatchset@little-apple>
-References: <20151001143717.20618.26365.sendpatchset@little-apple>
-Date: Fri, 2 Oct 2015 09:43:06 +0200
-Message-ID: <CAMuHMdWxViP-f5hWEVoBY5ZSWtjSfoZ5zmqF0phq+VbFQ3PL7Q@mail.gmail.com>
-Subject: Re: [PATCH v8 00/05] Renesas R-Car Gen3 CPG support V8
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>, Michael Turquette <mturquette@baylibre.com>,
-	Linux-sh list <linux-sh@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1441325733-4131-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus,
+On 09/04, Shawn Lin wrote:
+> mmc host controller's IO input/output timing is unpredictable if
+> bootloader execute tuning for HS200 mode. It might make kernel failed
+> to initialize mmc card in identification mode. The root cause is
+> tuning phase and degree setting for HS200 mode in bootloader aren't
+> applicable to that of identification mode in kernel stage. Anyway, we
+> can't force all bootloaders to reset tuning phase and degree setting
+> before into kernel. Simply reset it in rockchip_clk_register_mmc.
+> 
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+> 
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> ---
 
-On Thu, Oct 1, 2015 at 4:37 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> Renesas R-Car Gen3 CPG support V8
->
-> [PATCH v8 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
-> [PATCH v8 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
-> [PATCH v8 03/05] clk: shmobile: Add Renesas Module Standby and Reset driver
-> [PATCH v8 04/05] clk: shmobile: Add r8a7795 MSSR support
-> [PATCH v8 05/05] drivers: sh: Handle PM_GENERIC_DOMAINS_OF=n with r8a7795 MSSR
+Applied to clk-next
 
-I have pushed this series (incl. "[PATCH] clk: shmobile: Fix r8a7795 MSSR
-support") to a new topic/gen3-cpg-v8+fix branch, which is based on v4.3-rc3.
-
-I would have preferred to base it on v4.3-rc1, but the drivers/sh patch depends
-on an important change that went into v4.3-rc3. Still, it didn't apply cleanly
-as we have more cleanups queued.
-
-Hence for next submission I suggest to split it in two (clk/shmobile and
-drivers/sh) parts, so the clk/shmobile part can be applied to v4.3-rc1 by
-the clk maintainer.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
