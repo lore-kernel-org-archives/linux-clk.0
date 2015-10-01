@@ -1,51 +1,44 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:50664 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750820AbbJOORB (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 15 Oct 2015 10:17:01 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	mark.rutland@arm.com, marc.zyngier@arm.com,
-	linux-clk@vger.kernel.org, olof@lixom.net, LeoLi@freescale.com,
-	Catalin.Marinas@arm.com, will.deacon@arm.com,
-	stuart.yoder@freescale.com,
-	Minghuan Lian <Minghuan.Lian@freescale.com>,
-	scottwood@freescale.com, bhupesh.linux@gmail.com
-Subject: Re: [PATCH v3 05/12] doc/bindings: Update Layerscape PCIe devicetree binding to be more flexible
-Date: Thu, 15 Oct 2015 16:16:57 +0200
-Message-ID: <5383901.aC2HYopUNW@wuerfel>
-In-Reply-To: <1444891672-32117-6-git-send-email-bhupesh.sharma@freescale.com>
-References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com> <1444891672-32117-6-git-send-email-bhupesh.sharma@freescale.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Thu, 01 Oct 2015 23:38:07 +0900
+Message-Id: <20151001143807.20618.67920.sendpatchset@little-apple>
+In-Reply-To: <20151001143717.20618.26365.sendpatchset@little-apple>
+References: <20151001143717.20618.26365.sendpatchset@little-apple>
+Subject: [PATCH v8 05/05] drivers: sh: Handle PM_GENERIC_DOMAINS_OF=n with r8a7795 MSSR
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday 15 October 2015 12:17:45 Bhupesh Sharma wrote:
-> 
-> +Note that since this controller derives its clocks from the Reset
-> +Configuration Word (RCW) which is used to describe the PLL settings at
-> +the time of chip-reset, the 'clocks' and 'clock-names' properties from
-> +'designware-pcie.txt' are optional for this controller.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-If this is an option for the dw-pcie block, should this description be
-added to the generic binding instead?
+If the new CPG/MSSR device node is present, but
+CONFIG_PM_GENERIC_DOMAINS_OF=n, the legacy clock domain should be
+enabled. Else the module clocks are not properly enabled when needed.
 
-> +Also as per the available Reference Manuals, there is no specific 'version'
-> +register available in the Freescale PCIe controller register set,
-> +which can allow determining the underlying Designware PCIe controller version
-> +information.
-> +
->  Required properties:
-> -- compatible: should contain the platform identifier such as "fsl,ls1021a-pcie"
-> +- compatible: should contain the platform identifier such as "fsl,<soc-name>-pcie",
-> +  "snps,dw-pcie".
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-You should document all the strings that will be needed here, otherwise a
-driver write does not know what to look for.
+ Changes since V7: (Magnus Damm <damm+renesas@opensource.se>)
+ - New patch, based on local r8a7791 patch from Geert
+   "drivers: sh: Handle CONFIG_PM_GENERIC_DOMAINS_OF=n with new CPG/MSSR"
+ - Modified to match on r8a7795
 
-If two chips have a 100% identical PCIe implementation, just use the string
-of the older chip for both.
+ drivers/sh/pm_runtime.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-	Arnd
+--- 0001/drivers/sh/pm_runtime.c
++++ work/drivers/sh/pm_runtime.c	2015-10-01 18:51:47.280513000 +0900
+@@ -36,7 +36,10 @@ static int __init sh_pm_runtime_init(voi
+ {
+ 	if (IS_ENABLED(CONFIG_ARCH_SHMOBILE)) {
+ 		if (!of_find_compatible_node(NULL, NULL,
+-					     "renesas,cpg-mstp-clocks"))
++					     "renesas,cpg-mstp-clocks") &&
++		    (IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS_OF) ||
++		     !of_find_compatible_node(NULL, NULL,
++					     "renesas,r8a7795-cpg-mssr")))
+ 			return 0;
+ 		if (IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS_OF) &&
+ 		    of_find_node_with_property(NULL, "#power-domain-cells"))
