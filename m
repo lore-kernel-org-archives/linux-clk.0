@@ -1,56 +1,51 @@
-Return-Path: <s.nawrocki@samsung.com>
-Message-id: <560E53BC.2060609@samsung.com>
-Date: Fri, 02 Oct 2015 11:51:56 +0200
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-MIME-version: 1.0
-To: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
- linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Subject: [GIT PULL] clk/samsung updates for v4.4
-Content-type: text/plain; charset=utf-8
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Oct 2015 12:06:39 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: Make oxili GDSC parent of oxili_cx GDSC
+Message-ID: <20151001190639.GI19319@codeaurora.org>
+References: <1443035362-10914-1-git-send-email-sboyd@codeaurora.org>
+ <560CED90.9050201@codeaurora.org>
+ <20151001175227.GE19319@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151001175227.GE19319@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 10/01, Stephen Boyd wrote:
+> On 10/01, Rajendra Nayak wrote:
+> > On 09/24/2015 12:39 AM, Stephen Boyd wrote:
+> > >+
+> > >+	ret = pm_genpd_add_subdomain(&oxili_gdsc.pd, &oxilicx_gdsc.pd);
+> > 
+> > We'll need pm_genpd_add_subdomain() to be EXPORT_SYMBOL_GPL'ed so
+> > clk-qcom can be built as a module.
+> 
+> Good catch! Do we need to call pm_genpd_remove_subdomain() too?
 
-The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
+Looks like yes.
 
-  Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+> 
+> > 
+> > It would also be nicer if this parent/child relationship can
+> > somehow be represented in data (struct gdsc) that gets passed to
+> > the gdsc driver which then sets it up, instead of individual
+> > clock drivers doing it.
+> 
+> Agreed. I'd rather that we do nothing besides register domains
+> and then let the core code handle hooking up domains and
+> subdomains.
 
-are available in the git repository at:
-
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-4.4
-
-for you to fetch changes up to 7993b3ebec979b23c2d7425959c9d232c452498b:
-
-  clk: samsung: exynos7: Add required clock tree for UFS (2015-09-15 11:18:15 +0200)
-
-----------------------------------------------------------------
-Fixes, improvements and addition of some missing features
-of the exynos7 clock controller driver.
-
-----------------------------------------------------------------
-Alim Akhtar (16):
-      clk: samsung: exynos7: Fix CMU TOPC block clock
-      clk: samsung: exynos7: Fix CMU TOP1 block
-      clk: samsung: exynos7: Correct nr_clk_ids for fsys0
-      clk: samsung: exynos7: Correct nr_clk_ids for fsys1
-      clk: samsung: exynos7: Change the CMU_TOPC block clock names
-      clk: samsung: exynos7: Adds missing clocks gates of CMU_TOPC
-      clk: samsung: exynos7: Correct CMU_TOP0 clocks names
-      clk: samsung: exynos7: Correct CMU_TOP1 clocks names
-      clk: samsung: exynos7: Correct CMU_CCORE clocks names
-      clk: samsung: exynos7: Correct CMU_PERIC0 clocks names
-      clk: samsung: exynos7: Correct CMU_PERIC1 clocks names
-      clk: samsung: exynos7: Correct CMU_PERIS clocks names
-      clk: samsung: exynos7: Correct CMU_FSYS0 clocks names
-      clk: samsung: exynos7: Correct CMU_FSYS1 clocks names
-      clk: samsung: exynos7: Add missing fixed_clks to cmu_info
-      clk: samsung: exynos7: Add required clock tree for UFS
-
- drivers/clk/samsung/clk-exynos7.c       |  465 +++++++++++++++++++++----------
- include/dt-bindings/clock/exynos7-clk.h |   43 ++-
- 2 files changed, 357 insertions(+), 151 deletions(-)
+A little closer inspection makes me want to skip this. PM domains
+can have multiple "master" domains, and pm_genpd_init() is the
+only API that would be able to do the linking. That API is mostly
+about initializing things to default values, so it doesn't seem
+like a good fit. I'll send a v2 with the remove part and the
+exports.
 
 -- 
-Regards,
-Sylwester
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
