@@ -1,403 +1,157 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Oct 2015 17:07:41 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Eric Anholt <eric@anholt.net>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] clk: bcm2835: Add support for programming the
- audio domain clocks.
-Message-ID: <20151002000741.GA1213@codeaurora.org>
-References: <1443475325-22270-1-git-send-email-eric@anholt.net>
- <1443475325-22270-3-git-send-email-eric@anholt.net>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 1 Oct 2015 21:56:53 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, lee.jones@linaro.org, s.hauer@pengutronix.de,
+	geert@linux-m68k.org
+Subject: Re: [PATCH RFC RFT 0/3] clk: detect per-user enable imbalances and
+ implement hand-off
+Message-ID: <20151001195653.GL7104@lukather>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <20150818154552.GI2547@lukather>
+ <20150818164356.31346.80341@quantum>
+ <20150820151510.GD30520@lukather>
+ <20150825215051.31346.56261@quantum>
+ <20150829035557.GX29389@lukather>
+ <20150930123649.3201.75689@quantum>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443475325-22270-3-git-send-email-eric@anholt.net>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="aNVUg3Xo9UgCa1D+"
+In-Reply-To: <20150930123649.3201.75689@quantum>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/28, Eric Anholt wrote:
-> +
-> +static const char *bcm2835_clock_per_parents[] = {
-> +static const char *bcm2835_clock_vpu_parents[] = {
-> +static const char *bcm2835_clock_osc_parents[] = {
 
-Can these parent arrays be const char * const ?
+--aNVUg3Xo9UgCa1D+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +	"gnd",
-> +	"xosc",
-> +	"testdebug0",
-> +	"testdebug1"
-> +};
-> +
-> +/*
-> + * Used for a 1Mhz clock for the system clocksource, and also used by
-> + * the watchdog timer and the camera pulse generator.
-> + */
-> +static struct bcm2835_clock_data bcm2835_clock_timer_data = {
-> +static struct bcm2835_clock_data bcm2835_clock_otp_data = {
-> +static struct bcm2835_clock_data bcm2835_clock_vpu_data = {
-> +static struct bcm2835_clock_data bcm2835_clock_v3d_data = {
-> +static struct bcm2835_clock_data bcm2835_clock_isp_data = {
-> +static struct bcm2835_clock_data bcm2835_clock_h264_data = {
-> +static struct bcm2835_clock_data bcm2835_clock_vec_data = {
-> +static struct bcm2835_clock_data bcm2835_clock_uart_data = {
-> +static struct bcm2835_clock_data bcm2835_clock_hsm_data = {
-> +static struct bcm2835_clock_data bcm2835_clock_sdram_data = {
-> +static struct bcm2835_clock_data bcm2835_clock_tsens_data = {
-> +static struct bcm2835_clock_data bcm2835_clock_emmc_data = {
+On Wed, Sep 30, 2015 at 05:36:49AM -0700, Michael Turquette wrote:
+> Quoting Maxime Ripard (2015-08-28 20:55:57)
+> > Hi Mike,
+> >=20
+> > On Tue, Aug 25, 2015 at 02:50:51PM -0700, Michael Turquette wrote:
+> > > Quoting Maxime Ripard (2015-08-20 08:15:10)
+> > > > On Tue, Aug 18, 2015 at 09:43:56AM -0700, Michael Turquette wrote:
+> > > > > Quoting Maxime Ripard (2015-08-18 08:45:52)
+> > > > > > Hi Mike,
+> > > > > >=20
+> > > > > > On Fri, Aug 07, 2015 at 12:09:27PM -0700, Michael Turquette wro=
+te:
+> > > > > > > All of the other kitchen sink stuff (DT binding, passing the =
+flag back
+> > > > > > > to the framework when the clock consumer driver calls clk_put=
+) was left
+> > > > > > > out because I do not see a real use case for it. If one can d=
+emonstrate
+> > > > > > > a real use case (and not a hypothetical one) then this patch =
+series can
+> > > > > > > be expanded further.
+> > > > > >=20
+> > > > > > I think there is a very trivial use case for passing back the
+> > > > > > reference to the framework, if during the probed, we have somet=
+hing
+> > > > > > like:
+> > > > > >=20
+> > > > > > clk =3D clk_get()
+> > > > > > clk_prepare_enable(clk)
+> > > > > > foo_framework_register()
+> > > > > >=20
+> > > > > > if foo_framework_register fails, the sensible thing to do would=
+ be to
+> > > > > > call clk_disable_unprepare. If the clock was a critical clock, =
+you
+> > > > > > just gated it.
+> > > > >=20
+> > > > > Hmm, a good point. Creating the "pass the reference back" call is=
+ not
+> > > > > hard technically. But how to keep from abusing it? E.g. I do not =
+want
+> > > > > that call to become an alternative to correct use of clk_enable.
+> > > > >=20
+> > > > > Maybe I'll need a Coccinelle script or just some regular sed to
+> > > > > occasionally search for new users of this api and audit them?
+> > > > >=20
+> > > > > I was hoping to not add any new consumer api at all :-/
+> > > >=20
+> > > > I don't think there's any abuse that can be done with the current A=
+PI,
+> > > > nor do I think you need to have new functions either.
+> > > >=20
+> > > > If the clock is critical, when the customer calls
+> > > > clk_unprepare_disable on it, simply take back the reference you gave
+> > > > in the framework, and you're done. Or am I missing something?
+> > >=20
+> > > Maybe I am the one missing something? My goal was to allow the consum=
+er
+> > > driver to gate the critical clock. So we need clk_disable_unused to
+> > > actually disable the clock for that to work.
+> >=20
+> > Yeah, but I guess the consumer driver clock gating is not the default
+> > mode of operations.
+> >=20
+> > Under normal circumstances, it should just always leave the clock
+> > enabled, all the time.
+> >=20
+> > > I think you are suggesting that clk_disable_unused should *not* disab=
+le
+> > > the clock if it is critical. Can you confirm that?
+> >=20
+> > By default, yes.
+> >=20
+> > Now, we also have the knowledgeable driver case wanting to force the
+> > clock gating. I think it's an orthogonal issue, we might have the same
+> > use case for non-critical clocks, and since it's hard to get that done
+> > with the current API, and that we don't really know what a
+> > knowledgeable driver will look like at this point, maybe we can just
+> > delay this entirely until we actually have one in front of us?
+>=20
+> Yes. I discussed this face to face with Lee last week at Linaro Connect.
+> I proposed the following:
+>=20
+> 1) support an always-on clk, which is enabled by the framework at
+> registration-time and can never be claimed and gated
+>=20
+> 2) support a hand-off clk, which is enabled by the framework at
+> registration-time and whose reference counts are handed off to the first
+> driver to get, prepare and enable this clk
+>=20
+> 3) forget about knowledgeable drivers because nobody needs this (yet)
+>=20
+> Lee was happy with this. Does it sound OK to you?
 
-Can all these data structures be const?
+Yep, it sounds good!
 
-> +static int bcm2835_pll_is_on(struct clk_hw *hw)
-> +{
-> +	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
-> +	struct bcm2835_cprman *cprman = pll->cprman;
-> +	const struct bcm2835_pll_data *data = pll->data;
-> +
-> +	return (cprman_read(cprman, data->a2w_ctrl_reg) &
-> +		A2W_PLL_CTRL_PRST_DISABLE);
+See you in Dublin,
 
-Useless parenthesis.
+Maxime
 
-> +}
-> +
-> +static void bcm2835_pll_choose_ndiv_and_fdiv(unsigned long rate,
-> +					     unsigned long parent_rate,
-> +					     u32 *ndiv, u32 *fdiv)
-> +{
-> +	u64 div;
-> +
-> +	div = ((u64)rate << A2W_PLL_FRAC_BITS);
-> +	do_div(div, parent_rate);
-> +
-> +	*ndiv = div >> A2W_PLL_FRAC_BITS;
-> +	*fdiv = div & ((1 << A2W_PLL_FRAC_BITS) - 1);
-> +}
-[..]
-> +static unsigned long bcm2835_pll_get_rate(struct clk_hw *hw,
-> +					  unsigned long parent_rate)
-> +{
-> +	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
-> +	struct bcm2835_cprman *cprman = pll->cprman;
-> +	const struct bcm2835_pll_data *data = pll->data;
-> +	u32 a2wctrl = cprman_read(cprman, data->a2w_ctrl_reg);
-> +	u32 ndiv, pdiv, fdiv;
-> +
-> +	if (parent_rate == 0)
-> +		return 0;
-> +
-> +	fdiv = cprman_read(cprman, data->frac_reg) & A2W_PLL_FRAC_MASK;
-> +	ndiv = (a2wctrl & A2W_PLL_CTRL_NDIV_MASK) >> A2W_PLL_CTRL_NDIV_SHIFT;
-> +	pdiv = (a2wctrl & A2W_PLL_CTRL_PDIV_MASK) >> A2W_PLL_CTRL_PDIV_SHIFT;
-> +
-> +	if (cprman_read(cprman, data->ana_reg_base + 4) &
-> +	    data->ana->fb_prediv_mask) {
-> +		ndiv *= 2;
-> +	}
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-How about a local variable so that we can put the if on one line
-and drop the braces?
+--aNVUg3Xo9UgCa1D+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> +
-> +	return bcm2835_pll_rate_from_divisors(parent_rate, ndiv, fdiv, pdiv);
-> +}
-> +
-[..]
-> +static int bcm2835_pll_on(struct clk_hw *hw)
-> +{
-> +	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
-> +	struct bcm2835_cprman *cprman = pll->cprman;
-> +	const struct bcm2835_pll_data *data = pll->data;
-> +
-> +	/* Take the PLL out of reset. */
-> +	cprman_write(cprman, data->cm_ctrl_reg,
-> +		     cprman_read(cprman, data->cm_ctrl_reg) & ~CM_PLL_ANARST);
-> +
-> +	/* Wait for the PLL to lock. */
-> +	while (!(cprman_read(cprman, CM_LOCK) & data->lock_mask))
-> +		cpu_relax();
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Is there any reasonable timeout that we can put here? Hopefully
-this isn't an infinite loop.
+iQIcBAEBAgAGBQJWDZAFAAoJEBx+YmzsjxAg4HYP/1tcc1vBLSt1SybONKZicrpU
+NzJmIkQbfO+jwW/F5iwlZh+njbMlCMKrmjfNnj63uv9FHe+YB3nOdYrTd1P8+82M
+5ZNKGavjDCL/oQzJODIVt5gyL6fwFUXMuY+3T2AUgDS41Uy0okn644NycfDobXb9
+Qj1bpvWfk8fb4IMq+T61xDKEPMc2RmITgFTKO5hfy51RKYXVw78IKIWL+JXC0aHG
+ThqybBkrWQ/MRBWcrUt5dDUFlpHrVRp4tL7+/QfRTJHzyUxWKnJYibAN/+tfQV2z
+7/hx9QMJpN+DkDQeCl4uYT886xaSUpiP256LwDDtnKdTtS84lR7cE2MdmfRZG3DY
+p/ZXa1OpW6nRmJndQuynBAsOOeqKJ9cGhMg9PsTbFpTViH2MFKT37uZ9VYIZ5q1p
+H4/aLZoPSIQLXg6ZH0NqkM1+98eC8mKxQdtvvuIBneqiyW2cwG1c3boHNc/ediZZ
+ScDfPCqyvB5get5jURS6OdlJkpOeAKJYXtbn/fI+zWGLU7JYihrPRL5iAIxzmc85
+5c/7qh2VSxHJ+qCgwmUI9ik/RkD0GjulWDTSNh3FvAuTKQtTO4pWTg+bs1cr5gEJ
++0cwonO/uaHprEPXfck39dnxR0Ptbpq106jW3ST+izI6cHJL0zDiP9gpVsO3qOKf
+OYW3Ix9fbvIioPqnwKHF
+=bwMr
+-----END PGP SIGNATURE-----
 
-> +
-> +	return 0;
-> +}
-> +
-> +static int bcm2835_pll_set_rate(struct clk_hw *hw,
-> +				unsigned long rate, unsigned long parent_rate)
-> +{
-[..]
-> +
-> +	/* Unmask the reference clock from the oscillator. */
-> +	cprman_write(cprman, A2W_XOSC_CTRL,
-> +		     cprman_read(cprman, A2W_XOSC_CTRL) |
-> +		     data->reference_enable_mask);
-> +
-> +	if (do_ana_setup_first) {
-> +		cprman_write(cprman, data->ana_reg_base + 12, ana3);
-> +		cprman_write(cprman, data->ana_reg_base + 8, ana2);
-
-ana2 never changes, so why do we need to write it again?
-
-> +		cprman_write(cprman, data->ana_reg_base + 4, ana1);
-> +		cprman_write(cprman, data->ana_reg_base + 0, ana0);
-
-Maybe this should be a function that takes a u32 array of size 4.
-
-> +	}
-> +
-> +	/* Set the PLL multiplier from the oscillator. */
-> +	cprman_write(cprman, data->frac_reg, fdiv);
-> +	cprman_write(cprman, data->a2w_ctrl_reg,
-> +		     (cprman_read(cprman, data->a2w_ctrl_reg) &
-> +		      ~(A2W_PLL_CTRL_NDIV_MASK |
-> +			A2W_PLL_CTRL_PDIV_MASK)) |
-> +		     (ndiv << A2W_PLL_CTRL_NDIV_SHIFT) |
-> +		     (pdiv << A2W_PLL_CTRL_PDIV_SHIFT));
-
-This is a 6 line write. Can we get some local variables and do
-the bit setting in different statements?
-
-> +
-> +	if (!do_ana_setup_first) {
-> +		cprman_write(cprman, data->ana_reg_base + 12, ana3);
-> +		cprman_write(cprman, data->ana_reg_base + 8, ana2);
-> +		cprman_write(cprman, data->ana_reg_base + 4, ana1);
-> +		cprman_write(cprman, data->ana_reg_base + 0, ana0);
-
-Function would help because we do this twice.
-
-> +	}
-> +
-> +	bcm2835_pll_get_rate(&pll->hw, parent_rate);
-> +
-> +	return 0;
-> +}
-> +
-[...]
-> +static unsigned long bcm2835_pll_divider_get_rate(struct clk_hw *hw,
-> +						  unsigned long parent_rate)
-> +{
-> +	struct bcm2835_pll_divider *divider =
-> +		container_of(hw, struct bcm2835_pll_divider, div.hw);
-> +	struct bcm2835_cprman *cprman = divider->cprman;
-> +	const struct bcm2835_pll_divider_data *data = divider->data;
-> +	u32 div = cprman_read(cprman, data->a2w_reg);
-> +
-> +	div &= ((1 << A2W_PLL_DIV_BITS) - 1);
-
-One too many parenthesis here.
-
-> +	if (div == 0)
-> +		div = 256;
-> +
-> +	return parent_rate / div;
-> +}
-> +
-[..]
-> +
-> +static int bcm2835_clock_is_on(struct clk_hw *hw)
-> +{
-> +	struct bcm2835_clock *clock =
-> +		container_of(hw, struct bcm2835_clock, hw);
-> +	struct bcm2835_cprman *cprman = clock->cprman;
-> +	const struct bcm2835_clock_data *data = clock->data;
-> +
-> +	/*
-> +	 * The VPU clock is always on, regardless of what we might set
-> +	 * the enable bit to.
-> +	 */
-> +	if (data->is_nonstop)
-
-Maybe the variable should be called is_vpu_clock then? Or the
-comment is going to go out of date soon.
-
-> +		return true;
-> +
-> +	return (cprman_read(cprman, data->ctl_reg) & CM_ENABLE) != 0;
-> +}
-> +
-> +static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
-> +				    unsigned long rate,
-> +				    unsigned long parent_rate)
-> +{
-> +	struct bcm2835_clock *clock =
-> +		container_of(hw, struct bcm2835_clock, hw);
-> +	const struct bcm2835_clock_data *data = clock->data;
-> +	u32 unused_frac_mask = (1 << (CM_DIV_FRAC_BITS - data->frac_bits)) - 1;
-
-We have GENMASK for this sort of stuff.
-
-> +	u64 temp = (u64)parent_rate << CM_DIV_FRAC_BITS;
-> +	u32 div;
-> +
-> +	do_div(temp, rate);
-> +	div = temp;
-> +
-> +	/* Round and mask off the unused bits */
-> +	if (unused_frac_mask != 0) {
-> +		div += unused_frac_mask >> 1;
-> +		div &= ~unused_frac_mask;
-> +	}
-> +
-> +	/* Clamp to the limits. */
-> +	div = max(div, unused_frac_mask + 1);
-> +	div = min(div, (((1 << (data->int_bits + CM_DIV_FRAC_BITS)) - 1)) &
-> +		  ~unused_frac_mask);
-> +
-> +	return div;
-> +}
-> +
-> +static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
-> +					    unsigned long parent_rate,
-> +					    u32 div)
-> +{
-> +	const struct bcm2835_clock_data *data = clock->data;
-> +	u64 temp;
-> +
-> +	/*
-> +	 * The divisor is a 12.12 fixed point field, but only some of
-> +	 * the bits are populated in any given clock.
-> +	 */
-> +	div >>= (CM_DIV_FRAC_BITS - data->frac_bits);
-
-Useless parenthesis here.
-
-> +	div &= (1 << (data->int_bits + data->frac_bits)) - 1;
-> +
-> +	if (div == 0)
-> +		return 0;
-> +
-> +	temp = (u64)parent_rate << data->frac_bits;
-> +
-> +	do_div(temp, div);
-> +
-> +	return temp;
-> +}
-> +
-> +static long bcm2835_clock_round_rate(struct clk_hw *hw,
-> +				     unsigned long rate,
-> +				     unsigned long *parent_rate)
-> +{
-> +	struct bcm2835_clock *clock =
-> +		container_of(hw, struct bcm2835_clock, hw);
-
-Would be nice to have a macro to get this onto one line
-
-	struct bcm2835_clock *clock = to_bcm2385_clock(hw);
-
-> +	u32 div = bcm2835_clock_choose_div(hw, rate, *parent_rate);
-> +
-> +	return bcm2835_clock_rate_from_divisor(clock, *parent_rate, div);
-> +}
-> +
-> +static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
-> +					    unsigned long parent_rate)
-> +{
-> +	struct bcm2835_clock *clock =
-> +		container_of(hw, struct bcm2835_clock, hw);
-> +	struct bcm2835_cprman *cprman = clock->cprman;
-> +	const struct bcm2835_clock_data *data = clock->data;
-> +	u32 div = cprman_read(cprman, data->div_reg);
-> +
-> +	return bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
-> +}
-> +
-> +static void bcm2835_clock_wait_busy(struct bcm2835_clock *clock)
-> +{
-> +	struct bcm2835_cprman *cprman = clock->cprman;
-> +	const struct bcm2835_clock_data *data = clock->data;
-> +
-> +	while (cprman_read(cprman, data->ctl_reg) & CM_BUSY)
-> +		cpu_relax();
-> +}
-> +
-> +static void bcm2835_clock_off(struct clk_hw *hw)
-> +{
-> +	struct bcm2835_clock *clock =
-> +		container_of(hw, struct bcm2835_clock, hw);
-> +	struct bcm2835_cprman *cprman = clock->cprman;
-> +	const struct bcm2835_clock_data *data = clock->data;
-> +
-> +	if (data->is_nonstop)
-
-Or we should have different clk_ops for clocks that are "nonstop" so
-that we don't do any sorts of checks here.
-
-> +		return;
-> +
-> +	spin_lock(&cprman->regs_lock);
-> +	cprman_write(cprman, data->ctl_reg,
-> +		     cprman_read(cprman, data->ctl_reg) & ~CM_ENABLE);
-> +	spin_unlock(&cprman->regs_lock);
-> +
-> +	/* BUSY will remain high until the divider completes its cycle. */
-> +	bcm2835_clock_wait_busy(clock);
-> +}
-> +
-[..]
-> +static struct clk *
-> +bcm2835_register_pll_divider(struct bcm2835_cprman *cprman,
-> +			     const struct bcm2835_pll_divider_data *data)
-> +{
-[..]
-> +	clk = clk_register(cprman->dev, &divider->div.hw);
-
-What if clk_register() fails?
-
-> +
-> +	/*
-> +	 * PLLH's channels have a fixed divide by 10 afterwards, which
-> +	 * is what our consumers are actually using.
-> +	 */
-> +	if (data->fixed_divider != 1) {
-> +		return clk_register_fixed_factor(cprman->dev, data->name,
-> +						 divider_name,
-> +						 CLK_SET_RATE_PARENT,
-> +						 1,
-> +						 data->fixed_divider);
-> +	} else {
-> +		return clk;
-> +	}
-
-Just return clk instead of the else return clk compound
-statement.
-
-> +}
-> +
-> +static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
-> +					  const struct bcm2835_clock_data *data)
-> +{
-> +	struct bcm2835_clock *clock;
-> +	struct clk_init_data init;
-> +	const char *parent;
-> +
-> +	/*
-> +	 * Most of the clock generators have a mux field, so we
-> +	 * instantiate a generic mux as our parent to handle it.
-> +	 */
-> +	if (data->num_mux_parents) {
-> +		int i;
-> +
-> +		parent = kasprintf(GFP_KERNEL, "mux_%s", data->name);
-> +		if (!parent)
-> +			return NULL;
-> +
-> +		/*
-> +		 * Replace our "xosc" references with the actual
-> +		 * oscillator's name.
-> +		 */
-> +		for (i = 0; i < data->num_mux_parents; i++) {
-> +			if (strcmp(data->parents[i], "xosc") == 0)
-> +				data->parents[i] = cprman->osc_name;
-> +		}
-
-Braces aren't needed here.
-
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--aNVUg3Xo9UgCa1D+--
