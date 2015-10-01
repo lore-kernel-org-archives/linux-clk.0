@@ -1,53 +1,28 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	agross@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	bjorn.andersson@sonymobile.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v3 7/8] clk: qcom: msm8916: Use RPMCC if it is enabled
-Date: Tue, 20 Oct 2015 19:57:59 +0300
-Message-Id: <1445360280-2347-8-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1445360280-2347-1-git-send-email-georgi.djakov@linaro.org>
-References: <1445360280-2347-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Oct 2015 16:39:59 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Martin Kepplinger <martink@posteo.de>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx: use sign_extend32() and abs()
+Message-ID: <20151001233959.GZ19319@codeaurora.org>
+References: <1443526347-15501-1-git-send-email-martink@posteo.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1443526347-15501-1-git-send-email-martink@posteo.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-The RPM clock controller driver takes care of registering the
-xo clock. Do not register it in this driver if RPM is enabled.
+On 09/29, Martin Kepplinger wrote:
+> This simplifies the given function by getting rid of the manual
+> sign extension as well as saving an absolute value in an extra
+> variable.
+> 
+> Signed-off-by: Martin Kepplinger <martink@posteo.de>
+> ---
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/gcc-msm8916.c |   16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+Applied to clk-next
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index 4bb7d8415ba7..3e1062fed230 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -3359,13 +3359,15 @@ static int gcc_msm8916_probe(struct platform_device *pdev)
- 	struct clk *clk;
- 	struct device *dev = &pdev->dev;
- 
--	/* Temporary until RPM clocks supported */
--	clk = clk_register_fixed_factor(dev, "xo", "xo_board", 0, 1, 1);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
--
--	clk_register_fixed_rate(dev, "sleep_clk_src", NULL,
--				CLK_IS_ROOT, 32768);
-+	if (!IS_ENABLED(CONFIG_QCOM_RPMCC)) {
-+		/* RPM clocks are not enabled */
-+		clk = clk_register_fixed_factor(dev, "xo", "xo_board", 0, 1, 1);
-+		if (IS_ERR(clk))
-+			return PTR_ERR(clk);
-+
-+		clk_register_fixed_rate(dev, "sleep_clk_src", NULL,
-+					CLK_IS_ROOT, 32768);
-+	}
- 
- 	return qcom_cc_probe(pdev, &gcc_msm8916_desc);
- }
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
