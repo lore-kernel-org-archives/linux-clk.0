@@ -1,99 +1,36 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Fri, 23 Oct 2015 08:33:10 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Message-ID: <20151022233310.GD29919@sirena.org.uk>
-References: <20151018195330.GB14956@sirena.org.uk>
- <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
- <5627B677.5090109@gmail.com>
- <20151021162758.GP32054@sirena.org.uk>
- <5627D6E0.5020708@gmail.com>
- <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
- <562808AF.7090406@gmail.com>
- <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
- <20151022144405.GC21861@kroah.com>
- <20151022150213.GT32532@n2100.arm.linux.org.uk>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Oct 2015 15:25:10 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Victorien Vedrine <victorien.vedrine@ophrys.net>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, shawn.guo@linaro.org
+Subject: Re: [PATCH v2] clk:mxs: Fix bug on frequency divider
+Message-ID: <20151001222510.GP19319@codeaurora.org>
+References: <55BBB1AC.6070102@codeaurora.org>
+ <1441010707-17178-1-git-send-email-victorien.vedrine@ophrys.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="J5MfuwkIyy7RmF4Q"
-In-Reply-To: <20151022150213.GT32532@n2100.arm.linux.org.uk>
-Subject: Re: [GIT PULL] On-demand device probing
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1441010707-17178-1-git-send-email-victorien.vedrine@ophrys.net>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 08/31, Victorien Vedrine wrote:
+> On drivers/clk/mxs/clk-frac.c, the function clk_frac_round_rate returned a bad
+> result. The division before multiplication computes a wrong value ; the
+> calculation is inverted to fix the problem. The second issue is that the exact
+> rate have decimals and they are truncate. The consequence is that the function
+> clk_frac_set_rate (which use the result of clk_frac_round_rate) computes a
+> wrong value for the register (the rate generated can be closer to the desired
+> rate). The correction is : if there is decimal to the result, it is rounded to
+> the next larger integer.
+> On drivers/clk/mxs/clk-frac.c, the function clk_frac_recalc_rate returned
+> a bad result. The multiplication is made before the division to compute a
+> correct value.
+> 
+> Signed-off-by: Victorien Vedrine <victorien.vedrine@ophrys.net>
+> ---
 
---J5MfuwkIyy7RmF4Q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to clk-next
 
-On Thu, Oct 22, 2015 at 04:02:13PM +0100, Russell King - ARM Linux wrote:
-
-> If it was such a problem, then in the _eight_ days that this has been
-> discussed so far, _someone_ would have sent some data showing the
-> problem.  I think the fact is, there is no data.
-
-> Someone prove me wrong.  Someone post the verifiable data showing that
-> there is a problem to be solved here.
-
-> Someone show what the specific failure cases are that are hampering
-> vendors moving forwards.  Someone show the long boot times by way of
-> kernel message log.  Someone show some evidence of the problems that
-> have been alluded to.
-
-> If no one can show some evidence, there isn't a problem here. :)
-
-Yeah, I'm not convinced the timing is *such* a big deal either - I do
-think that the log spam is a real problem but I think something much
-less invasive like the interface you proposed is good for addressing
-that.
-
---J5MfuwkIyy7RmF4Q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWKXI1AAoJECTWi3JdVIfQz30H/RIVYugSpt5G4di2CHITc0BQ
-yoflpyMikyLfYkdFzjloKeyEodeVohF661x1e/XN7zhOOoZQD712sSW2D8yBDUT6
-yrEoEHZsxe6SlCqBTUpuev2KOXoQm11HOxNsYjop+0ZDBPfYrG6xIQfu2rRlQDXM
-bSYvTXMmgOb2rTVHhORTbtwgZMAXj3K9BdybHilOAyenxrbCx1uX28RgHYJQ+QDc
-bJvszKCOLJSBYYdn3QFCazwYtS3RtZ4PZtR+ZTfNmliT6dzi5rWcm14n+bIInG6+
-XROzzllUhwfN/h4TKFS5+6PJGCE5lu8AobnBVyoSzSqBHk4uMij6zH7YWdHyHOs=
-=HDzZ
------END PGP SIGNATURE-----
-
---J5MfuwkIyy7RmF4Q--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
