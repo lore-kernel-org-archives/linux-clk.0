@@ -1,57 +1,32 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: kbuild test robot <fengguang.wu@intel.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: Use static inline functions instead of macros for dummies
-Date: Thu, 29 Oct 2015 22:12:56 +0100
-Message-Id: <1446153176-29865-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Oct 2015 15:56:38 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Zhiqiang Hou <B48286@freescale.com>
+Cc: linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+	will.deacon@arm.com, linux-i2c@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org, wsa@the-dreams.de, wim@iguana.be,
+	corbet@lwn.net, mturquette@baylibre.com, Mingkai.Hu@freescale.com,
+	Shaohui.Xie@freescale.com, Wenbin.Song@freescale.com,
+	scottwood@freescale.com, bhupesh.sharma@freescale.com,
+	leoli@freescale.com
+Subject: Re: [PATCH 5/6] clk: qoriq: Add ls1043a support.
+Message-ID: <20151001225638.GV19319@codeaurora.org>
+References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
+ <1442838158-2964-6-git-send-email-B48286@freescale.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1442838158-2964-6-git-send-email-B48286@freescale.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-if CONFIG_OF=n:
+On 09/21, Zhiqiang Hou wrote:
+> From: Hou Zhiqiang <B48286@freescale.com>
+> 
+> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+> ---
 
-    drivers/clk/clk-cs2000-cp.c: In function ‘cs2000_remove’:
-    drivers/clk/clk-cs2000-cp.c:453:22: warning: unused variable ‘np’ [-Wunused-variable]
-      struct device_node *np = dev->of_node;
-			  ^
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Convert dummies of_clk_del_provider() and of_clk_init() from macros to
-static inline functions to kill such compiler warnings.
-
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- include/linux/clk-provider.h | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index eb5a23e8bf0219ac..61d30af2a85382a8 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -717,8 +717,7 @@ static inline int of_clk_add_provider(struct device_node *np,
- {
- 	return 0;
- }
--#define of_clk_del_provider(np) \
--	{ while (0); }
-+static inline void of_clk_del_provider(struct device_node *np) {}
- static inline struct clk *of_clk_src_simple_get(
- 	struct of_phandle_args *clkspec, void *data)
- {
-@@ -743,8 +742,7 @@ static inline const char *of_clk_get_parent_name(struct device_node *np,
- {
- 	return NULL;
- }
--#define of_clk_init(matches) \
--	{ while (0); }
-+static inline void of_clk_init(const struct of_device_id *matches) {}
- #endif /* CONFIG_OF */
- 
- /*
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
