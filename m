@@ -1,60 +1,86 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:34878 "EHLO
-	mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751526AbbJ1D5v (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 27 Oct 2015 23:57:51 -0400
-Received: by vkex70 with SMTP id x70so11705909vke.2
-        for <linux-clk@vger.kernel.org>; Tue, 27 Oct 2015 20:57:48 -0700 (PDT)
+Return-Path: <yingjoe.chen@mediatek.com>
+Message-ID: <1443711053.22188.21.camel@mtksdaap41>
+Subject: Re: [PATCH 2/2] arm64: dts: mt8173: add timer node
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Mark Rutland <mark.rutland@arm.com>
+CC: Sudeep Holla <Sudeep.Holla@arm.com>, James Liao
+	<jamesjj.liao@mediatek.com>, "srv_heupstream@mediatek.com"
+	<srv_heupstream@mediatek.com>, Arnd Bergmann <arnd@arndb.de>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Catalin Marinas
+	<Catalin.Marinas@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Stephen Boyd
+	<sboyd@codeaurora.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Daniel Kurtz <djkurtz@chromium.org>, "Olof
+ Johansson" <olof@lixom.net>, Rob Herring <robh+dt@kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	Sascha Hauer <kernel@pengutronix.de>, Matthias Brugger
+	<matthias.bgg@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Eddie Huang
+	<eddie.huang@mediatek.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Date: Thu, 1 Oct 2015 22:50:53 +0800
+In-Reply-To: <20150917164108.GF12808@leverpostej>
+References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
+	 <1442369095-1094-2-git-send-email-yingjoe.chen@mediatek.com>
+	 <55FAC570.8040307@arm.com> <1442501816.4784.3.camel@mtksdaap41>
+	 <20150917164108.GF12808@leverpostej>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <BY1PR0301MB13039481CB958A3323FB03B2823E0@BY1PR0301MB1303.namprd03.prod.outlook.com>
-References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
-	<1444891672-32117-6-git-send-email-bhupesh.sharma@freescale.com>
-	<5383901.aC2HYopUNW@wuerfel>
-	<BY1PR0301MB13039481CB958A3323FB03B2823E0@BY1PR0301MB1303.namprd03.prod.outlook.com>
-Date: Wed, 28 Oct 2015 09:27:48 +0530
-Message-ID: <CAHM4w1=-qF_JL-PbyNerzRrAVfapswmaZkcqQWeoMxWbV=ghKQ@mail.gmail.com>
-Subject: Re: [PATCH v3 05/12] doc/bindings: Update Layerscape PCIe devicetree
- binding to be more flexible
-From: Pratyush Anand <pratyush.anand@gmail.com>
-To: Sharma Bhupesh <bhupesh.sharma@freescale.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Pratyush Anand <panand@redhat.com>,
-	Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	"fabrice.gasnier@st.com" <fabrice.gasnier@st.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"bhupesh.linux@gmail.com" <bhupesh.linux@gmail.com>,
-	"marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-	"Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
-	"will.deacon@arm.com" <will.deacon@arm.com>,
-	Stuart Yoder <stuart.yoder@freescale.com>,
-	Scott Wood <scottwood@freescale.com>,
-	"Lian M.H." <Minghuan.Lian@freescale.com>,
-	"olof@lixom.net" <olof@lixom.net>, Li Leo <LeoLi@freescale.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: yingjoe.chen@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Bhupesh,
+On Thu, 2015-09-17 at 17:41 +0100, Mark Rutland wrote:
+> On Thu, Sep 17, 2015 at 03:56:56PM +0100, Yingjoe Chen wrote:
+> > On Thu, 2015-09-17 at 14:51 +0100, Sudeep Holla wrote:
+> > > 
+> > > On 16/09/15 03:04, Yingjoe Chen wrote:
+> > > > From: Daniel Kurtz <djkurtz@chromium.org>
+> > > >
+> > > > Add device node to enable GPT timer. This timer will be
+> > > > used as sched clock source.
+> > > >
+> > > 
+> > > Interesting any known issues with or advantage over the arch timers
+> > > to prefer it as sched clock source. I see even arch timers are present
+> > > in DT, hence the question. Or is it just a incorrect commit log ?
+> > > 
+> > > How does this get selected as sched clock source ? I don't see
+> > > sched_clock_register in mtk_timer.c
+> > > 
+> > > To be clear, I am not against adding this timer support, but just want
+> > > to know is it preferred for sched clock source ? if yes why ? better
+> > > resolution ?
+> > 
+> > Hi Sudeep,
+> > 
+> > Thanks for your review.
+> > 
+> > I hit the send too soon and missed cover letter, please see:
+> > http://lists.infradead.org/pipermail/linux-mediatek/2015-September/002303.html
+> > 
+> > The main reason to use GPT as sched clock is it won't stop during idle.
+> 
+> You don't mean sched clock, you just mean a clock_event_device.
+> 
+> A sched_clock is a high-precision clocksource that is read from (which
+> by definition requires the CPUs to be non-idle). It doesn't have
+> anything to do with interrupts and therefore cannot wake devices from
+> idle.
+> 
+> While the clock_event_device for the generic timer can't necessarily
+> wake CPUs from idle. The generic timer system counter counts even if
+> CPUs are idle, so the generic timer is fine as a sched_clock. 
 
+Hi, Mark,
 
-On Fri, Oct 16, 2015 at 1:41 AM, Sharma Bhupesh
-<bhupesh.sharma@freescale.com> wrote:
-> I think this can be moved to the generic bindings for DWC3 PCIe driver. However
-> I cannot vouch if the same is true for usage of this IP in other SoCs and it
-> will not break existing drivers if this property is not defined in their SoC DTSI.
->
-> So adding a few old ST colleagues (Pratyush, Gabriel, Fabrice), who I am sure have used this IP in ST SoCs
-> for their comments as well.
+Thanks for your info and sorry for late reply. 
 
-Sorry for delayed response. Was on leave and away from internet.
+I notice ARM ARM said the arch timer shouldn't stop when idle, but
+unfortunately that not true for mt8173. The last CPU enter idle can
+choose to enter deep idle mode and the counter value would be lost. Our
+firmware backup/recover the counter so it looks like it is stopped.
 
->
-> So the question would be - do you think it will be ok to make the clock related
-> properties optional in 'designware-pcie.txt' rather than required.
+We will change the firmware to add missing count when back from deep
+idle to make it looks like the counter never stop.
 
-I think they should have been optional.
-
-~Pratyush
+Joe.C
