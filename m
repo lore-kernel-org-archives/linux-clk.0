@@ -1,40 +1,30 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Oct 2015 15:12:17 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] clk: rockchip: don't use clk_ APIs in the pll
+ init-callback
+Message-ID: <20151001221217.GM19319@codeaurora.org>
+References: <2341478.8ucNaho7mA@diego>
 MIME-Version: 1.0
-In-Reply-To: <20151015192626.GO4558@codeaurora.org>
-References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
-	<1444916813-31024-10-git-send-email-linus.walleij@linaro.org>
-	<20151015192626.GO4558@codeaurora.org>
-Date: Mon, 26 Oct 2015 14:14:15 +0100
-Message-ID: <CACRpkdZUzTsMcFrudF6RRU5_1Njr=8L_XRUEmAWqvEnoJQ96Cw@mail.gmail.com>
-Subject: Re: [PATCH 09/13] clk: versatile-icst: add device tree support
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <2341478.8ucNaho7mA@diego>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Oct 15, 2015 at 9:26 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 10/15, Linus Walleij wrote:
->> +
->> +     if (of_device_is_compatible(np, "arm,syscon-icst525"))
->> +             icst_desc.params = &icst525_params;
->> +     else if (of_device_is_compatible(np, "arm,syscon-icst307"))
->> +             icst_desc.params = &icst307_params;
->
-> I guess if we add anymore here we should use an of_device_id
-> array instead.
+On 10/01, Heiko Stübner wrote:
+> Separate the update of pll registers from the actual set_rate function
+> so that the init callback does not need to access clk-API functions.
+> 
+> As we now have separated the getting and setting of the pll parameters
+> we can also directly use these new functions in other places too.
+> 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
 
-As it happens those two are gonna be it.
+Applied to clk-next
 
-ARM never created any more integrated ICST devices, and
-they stopped using them since. Those two are the required
-ones.
-
-(Fixing all other comments.)
-
-Yours,
-Linus Walleij
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
