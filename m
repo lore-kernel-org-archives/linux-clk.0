@@ -1,99 +1,35 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn1bon0141.outbound.protection.outlook.com ([157.56.111.141]:29547
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751010AbbJWTxE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 23 Oct 2015 15:53:04 -0400
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
-	<linux-clk@vger.kernel.org>, <olof@lixom.net>
-CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
-	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
-	<LeoLi@freescale.com>, <scottwood@freescale.com>,
-	<stuart.yoder@freescale.com>
-Subject: [PATCH v4 01/12] arm64: Use generic Layerscape SoC family naming
-Date: Sat, 24 Oct 2015 01:01:50 +0530
-Message-ID: <1445628721-10483-2-git-send-email-bhupesh.sharma@freescale.com>
-In-Reply-To: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
-References: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Oct 2015 15:23:43 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-kernel@vger.kernel.org,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 08/19] clk: st: fix handling result of
+ of_property_count_strings
+Message-ID: <20151001222343.GO19319@codeaurora.org>
+References: <1443103227-25612-1-git-send-email-a.hajda@samsung.com>
+ <1443103227-25612-9-git-send-email-a.hajda@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1443103227-25612-9-git-send-email-a.hajda@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Freescale will be a spinning-out a set of ARMv8 based SoCs which
-will be based on a similar overall SoC architecture. So, this patch
-converts the existing infrastructure in the arm64/dts, arm64/Kconfig
-and arm64/configs to use the generic convention ARCH_LAYERSCAPE
-in place of the more specific FSL_LS2085A, to save code duplication
-later-on.
+On 09/24, Andrzej Hajda wrote:
+> The function can return negative value.
+> 
+> The problem has been detected using proposed semantic patch
+> scripts/coccinelle/tests/assign_signed_to_unsigned.cocci [1].
+> 
+> [1]: http://permalink.gmane.org/gmane.linux.kernel/2046107
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
 
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
----
- Documentation/devicetree/bindings/arm/fsl.txt |    4 ++--
- arch/arm64/Kconfig.platforms                  |    6 +++---
- arch/arm64/boot/dts/freescale/Makefile        |    2 +-
- arch/arm64/configs/defconfig                  |    2 +-
- 4 files changed, 7 insertions(+), 7 deletions(-)
+Applied to clk-next
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index 2a3ba73..744b4de 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -128,8 +128,8 @@ Example:
- 		reg = <0x0 0x1ee0000 0x0 0x10000>;
- 	};
- 
--Freescale LS2085A SoC Device Tree Bindings
--------------------------------------------
-+Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
-+----------------------------------------------------------------
- 
- LS2085A ARMv8 based Simulator model
- Required root node properties:
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 967571d..4043c35 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -29,10 +29,10 @@ config ARCH_EXYNOS7
- 	help
- 	  This enables support for Samsung Exynos7 SoC family
- 
--config ARCH_FSL_LS2085A
--	bool "Freescale LS2085A SOC"
-+config ARCH_LAYERSCAPE
-+	bool "ARMv8 based Freescale Layerscape SoC family"
- 	help
--	  This enables support for Freescale LS2085A SOC.
-+	  This enables support for the Freescale Layerscape SoC family.
- 
- config ARCH_HISI
- 	bool "Hisilicon SoC Family"
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 4f2de3e7..fc6fca3c 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -1,4 +1,4 @@
--dtb-$(CONFIG_ARCH_FSL_LS2085A) += fsl-ls2085a-simu.dtb
-+dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2085a-simu.dtb
-  
- always		:= $(dtb-y)
- subdir-y	:= $(dts-dirs)
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index fc97b84..49f416a 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -34,7 +34,7 @@ CONFIG_MODULE_UNLOAD=y
- CONFIG_ARCH_BCM_IPROC=y
- CONFIG_ARCH_BERLIN=y
- CONFIG_ARCH_EXYNOS7=y
--CONFIG_ARCH_FSL_LS2085A=y
-+CONFIG_ARCH_LAYERSCAPE=y
- CONFIG_ARCH_HISI=y
- CONFIG_ARCH_MEDIATEK=y
- CONFIG_ARCH_ROCKCHIP=y
 -- 
-1.7.9.5
-
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
