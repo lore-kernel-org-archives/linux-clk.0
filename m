@@ -1,51 +1,95 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Wed, 21 Oct 2015 10:41:32 +0200
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Gregory CLEMENT
- <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>,
- Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH] clk: Make of_clk_get_parent_name() robust with
- #clock-cells = 1
-Message-ID: <20151021104132.183626f8@free-electrons.com>
-In-Reply-To: <1444951178-18733-1-git-send-email-sboyd@codeaurora.org>
-References: <20151015215648.2024f611@free-electrons.com>
-	<1444951178-18733-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <17200614.QxCe8zAb7I@diego>
+References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+	<1443622064-14362-4-git-send-email-heiko@sntech.de>
+	<CAPDyKFrTNF6RUWs6UdBGoyrp+zzrLf8qAHgBL4xV6fjK_HM_yw@mail.gmail.com>
+	<17200614.QxCe8zAb7I@diego>
+Date: Thu, 1 Oct 2015 11:54:24 +0200
+Message-ID: <CAPDyKFpis8XnvrppHq7q_7DQeN2UiEpykNTJ=1iJJ9AGOHTW6Q@mail.gmail.com>
+Subject: Re: [PATCH v2 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"tgih.jun@samsung.com" <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>,
+	linux-mmc <linux-mmc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Doug Anderson <dianders@chromium.org>,
+	Alexandru Stan <amstan@chromium.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen,
+On 30 September 2015 at 16:55, Heiko St=C3=BCbner <heiko@sntech.de> wrote:
+> Am Mittwoch, 30. September 2015, 16:42:05 schrieb Ulf Hansson:
+>> On 30 September 2015 at 16:07, Heiko Stuebner <heiko@sntech.de> wrote:
+>> > From: Douglas Anderson <dianders@chromium.org>
+>> >
+>> > This adds logic to the MMC core to set VQMMC.  This is expected to be
+>> > called by MMC drivers like dw_mmc as part of (or instead of) their
+>> > start_signal_voltage_switch() callback.
+>> >
+>> > A few notes:
+>> >
+>> > * When setting the signal voltage to 3.3V we do our best to make VQMMC
+>> >
+>> >   and VMMC match.  It's been reported that this makes some old cards
+>> >   happy since they were tested back in the day before UHS when VQMMC
+>> >   and VMMC were provided by the same regulator.  A nice side effect of
+>> >   this is that we don't end up on the hairy edge of VQMMC (2.7V),
+>> >   which some EEs claim is a little too close to the minimum for
+>> >   comfort.
+>> >   This is done in two steps. At first we try to find a VQMMC within
+>> >   a 0.3V tolerance of VMMC and if this is not supported by the
+>> >   supplying regulator we try to find a suitable voltage within the
+>> >   whole 2.7V-3.6V area of the spec.
+>> >
+>> > * The two step approach is currently necessary, as the used
+>> >
+>> >   regulator_set_voltage_triplet(min, target, max) uses a simple
+>> >
+>> >   implementation that just tries two basic steps:
+>> >         regulator_set_voltage(target, max);
+>> >         regulator_set_voltage(min, target);
+>> >
+>> >   So with only one step with 2.7-3.6V borders, if a suitable voltage
+>> >   is a bit below VMMC, we would directly get the lowest 2.7V
+>> >   which some boards (like Rockchips) don't like at all.
+>> >
+>> > * When setting the signal voltage to 1.8V or 1.2V we aim for that
+>> >
+>> >   specific voltage instead of picking the lowest one in the range.
+>> >
+>> > * We very purposely don't print errors in mmc_regulator_set_vqmmc().
+>> >
+>> >   There are cases where the MMC core will try several different
+>> >   voltages and we don't want to pollute the logs.
+>> >
+>> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+>>
+>> This looks good to me!
+>
+> very cool :-)
+>
+>
+>> Once all are happy with the patches, can we take the mmc patches via
+>> my mmc tree or does it all have to go together?
+>
+> The clock changes of course only touch internals of the phase-clocks, so
+> should have no problem going through another tree.
 
-On Thu, 15 Oct 2015 16:19:38 -0700, Stephen Boyd wrote:
-> If a clock provider has #clock-cells = 1 and we call
-> of_clk_get_parent_name() on it we may end up returning the name
-> of the provider node if the provider doesn't have a
-> clock-output-names property. This doesn't make sense, especially
-> when you consider that calling of_clk_get_parent_name() on such a
-> node with different indices will return the same name each time.
-> 
-> Let's try getting the clock from the framework via of_clk_get()
-> instead, and only fallback to the node name if we have a provider
-> with #clock-cells = 0. This way, we can't hand out the same name
-> for different clocks when we don't actually know their names.
-> 
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/clk.c | 22 ++++++++++++++++++++--
->  1 file changed, 20 insertions(+), 2 deletions(-)
+What happens if I take mmc and dt changes, wouldn't I need the clock
+patches as well?
 
-Tested-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+>
+> For the devicetree part I'm unsure. If the boards enable the tuning-relat=
+ed
+> settings without the new voltage handling, 2.7V gets set on all Rockchip
+> boards which doesn't work on those at all.
+>
+> So either the dts patches would need to go into your tree, I would need a
+> stable branch or we could simply postpone dts changes for the next cycle.
+>
 
-I tested on top of 4.3-rc5 and the Armada XP per-CPU clocks are now
-properly parented with their common parent "cpuclk".
-
-Thanks!
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Kind regards
+Uffe
