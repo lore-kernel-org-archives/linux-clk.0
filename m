@@ -1,71 +1,48 @@
-Return-Path: <pku.leo@gmail.com>
-MIME-Version: 1.0
-Sender: pku.leo@gmail.com
-In-Reply-To: <1445587282-29529-4-git-send-email-B48286@freescale.com>
-References: <1445587282-29529-1-git-send-email-B48286@freescale.com>
-	<1445587282-29529-4-git-send-email-B48286@freescale.com>
-Date: Mon, 26 Oct 2015 17:45:22 -0500
-Message-ID: <CADRPPNSdZS0DrxauhA8AmWQrZMLUs06fxLyp4kXonooESVRiXw@mail.gmail.com>
-Subject: Re: [PATCH V6 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
-From: Li Yang <leoli@freescale.com>
-To: Zhiqiang Hou <B48286@freescale.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, linux-watchdog@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>, Shaohui Xie <Shaohui.Xie@freescale.com>, corbet@lwn.net,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>, mturquette@baylibre.com, wsa@the-dreams.de,
-	sboyd@codeaurora.org, wim@iguana.be, Wenbin Song <Wenbin.Song@freescale.com>,
-	Scott Wood <scottwood@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>, linux@roeck-us.net
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.131]:49037 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753783AbbJAIql convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2015 04:46:41 -0400
+Content-Type: text/plain;
+	charset=gb2312
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v3 5/8] clk: rockchip: add new clock type and controller for rk3036
+From: zhengxing <zhengxing@rock-chips.com>
+In-Reply-To: <17410513.afcQr96dHz@diego>
+Date: Thu, 1 Oct 2015 16:46:21 +0800
+Cc: linux-rockchip@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-Id: <39D164F7-3461-42FE-8D5D-B30756C86DD8@rock-chips.com>
+References: <1443492833-15630-1-git-send-email-zhengxing@rock-chips.com> <1443492833-15630-6-git-send-email-zhengxing@rock-chips.com> <17410513.afcQr96dHz@diego>
+To: =?GB2312?Q?Heiko_St=A8=B9bner?= <heiko@sntech.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 23, 2015 at 3:01 AM, Zhiqiang Hou <B48286@freescale.com> wrote:
-> From: Mingkai Hu <Mingkai.Hu@freescale.com>
->
-> LS1043a is an SoC with 4 ARMv8 A53 cores and most other IP blocks
-> similar to LS1021a which complies to Chassis 2.1 spec.
->
-> Following levels of DTSI/DTS files have been created for the
-> LS1043A SoC family:
->
-> - fsl-ls1043a.dtsi:
->   DTS-Include file for FSL LS1043A SoC.
->
-> Signed-off-by: Li Yang <leoli@freescale.com>
-> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
-> Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
-> Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
 
-Hi Arnd,
+Hi Heiko,
 
-Can you also review and merge the LS1043 device tree related patches
-in the series(3/6,4/6,6/6)?
+发自我的 iPad
+> 在 2015年10月1日，16:12，Heiko Stübner <heiko@sntech.de> 写道：
+> 
+> Am Dienstag, 29. September 2015, 10:13:50 schrieb Xing Zheng:
+>> The rk3036's pll and clock are different with base on the rk3066(rk3188,
+>> rk3288, rk3368 use it), there are different adjust foctors and control
+>> registers, so these should be independent and separate from the series
+>> of rk3066s.
+> 
+> subject should probably be like
+> clk: rockchip: add new pll-type for rk3036 and similar socs
+OK.
+> 
+> And the general handling should probably be implemented similar to the example 
+> I posted in the v2 thread yesterday. [of course folded in and not as a 
+> separate patch ;-) ]
+> 
+> Heiko
+> 
+OK, because I just received and saw this patch, and I will test and update it into next version patchset.
 
-Regards,
-Leo
 
-> ---
-> V6:
->  - No change.
->
-> V5:
->  - Move gic, timer and pmu nodes out of SoC node.
->
-> V4:
->  - Add soc node with simple-bus compatible.
->  - Add property interrupt-affinity for armv8 pmuv3 node.
->
-> V3:
->  - Add device tree node for SATA.
->  - Remove properity enable-method for all cpu node.
->    Remove reserved memory region for spin-table.
->
-> V2:
->  - Add secondary core boot method.
->  - Move out the sysclk node from the clockgen node.
->  - Correct the reg size of GICC.
->
->  arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 525 +++++++++++++++++++++++++
->  1 file changed, 525 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+Thank you. :)
