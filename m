@@ -1,116 +1,73 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:43143 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932478AbbIDLtG (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 4 Sep 2015 07:49:06 -0400
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
-	k.kozlowski@samsung.com, mturquette@baylibre.com,
-	amit.daniel@samsung.com, gautam.vivek@samsung.com,
-	sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Subject: [PATCH 03/11] clk: samsung: exynos7: Corrects CMU_TOP1 clocks names
-Date: Fri, 04 Sep 2015 17:07:08 +0530
-Message-id: <1441366637-28001-4-git-send-email-alim.akhtar@samsung.com>
-In-reply-to: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
-References: <1441366637-28001-1-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1443678253.1714.2.camel@mtksdaap41>
+Subject: [GIT PULL] clk: mediatek: New clocks support and fixes
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>
+CC: Yingjoe Chen <yingjoe.chen@mediatek.com>,
+	<linux-mediatek@lists.infradead.org>, Pi-Cheng Chen
+	<pi-cheng.chen@linaro.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+Date: Thu, 1 Oct 2015 13:44:13 +0800
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch rename CMU_TOP1 clocks names to match with user manual.
+This is a collection of new Mediatek clocks support and fixes. These
+patches come from Joe [1] and me [2], including clock
+support for subsystems, GPT and some minor fixes.
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- drivers/clk/samsung/clk-exynos7.c |   50 ++++++++++++++++++++-----------------
- 1 file changed, 27 insertions(+), 23 deletions(-)
+[1] https://patchwork.kernel.org/patch/6777041/
+[2] https://lkml.org/lkml/2015/8/10/194
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index f9aac4a..ba84e9b 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -409,23 +409,23 @@ CLK_OF_DECLARE(exynos7_clk_top0, "samsung,exynos7-clock-top0",
- #define ENABLE_SCLK_TOP1_FSYS11		0x0A2C
- 
- /* List of parent clocks for Muxes in CMU_TOP1 */
--PNAME(mout_top1_bus0_pll_p)	= { "fin_pll", "dout_sclk_bus0_pll" };
--PNAME(mout_top1_bus1_pll_p)	= { "fin_pll", "dout_sclk_bus1_pll_b" };
--PNAME(mout_top1_cc_pll_p)	= { "fin_pll", "dout_sclk_cc_pll_b" };
--PNAME(mout_top1_mfc_pll_p)	= { "fin_pll", "dout_sclk_mfc_pll_b" };
-+PNAME(mout_top1_bus0_pll_user_p)	= { "fin_pll", "sclk_bus0_pll_b" };
-+PNAME(mout_top1_bus1_pll_user_p)	= { "fin_pll", "sclk_bus1_pll_b" };
-+PNAME(mout_top1_cc_pll_user_p)	= { "fin_pll", "sclk_cc_pll_b" };
-+PNAME(mout_top1_mfc_pll_user_p)	= { "fin_pll", "sclk_mfc_pll_b" };
- 
--PNAME(mout_top1_half_bus0_pll_p) = {"mout_top1_bus0_pll",
-+PNAME(mout_top1_bus0_pll_half_p) = {"mout_top1_bus0_pll_user",
- 	"ffac_top1_bus0_pll_div2"};
--PNAME(mout_top1_half_bus1_pll_p) = {"mout_top1_bus1_pll",
-+PNAME(mout_top1_bus1_pll_half_p) = {"mout_top1_bus1_pll_user",
- 	"ffac_top1_bus1_pll_div2"};
--PNAME(mout_top1_half_cc_pll_p) = {"mout_top1_cc_pll",
-+PNAME(mout_top1_cc_pll_half_p) = {"mout_top1_cc_pll_user",
- 	"ffac_top1_cc_pll_div2"};
--PNAME(mout_top1_half_mfc_pll_p) = {"mout_top1_mfc_pll",
-+PNAME(mout_top1_mfc_pll_half_p) = {"mout_top1_mfc_pll_user",
- 	"ffac_top1_mfc_pll_div2"};
- 
--PNAME(mout_top1_group1) = {"mout_top1_half_bus0_pll",
--	"mout_top1_half_bus1_pll", "mout_top1_half_cc_pll",
--	"mout_top1_half_mfc_pll"};
-+PNAME(mout_top1_group1) = {"mout_top1_bus0_pll_half",
-+	"mout_top1_bus1_pll_half", "mout_top1_cc_pll_half",
-+	"mout_top1_mfc_pll_half"};
- 
- static unsigned long top1_clk_regs[] __initdata = {
- 	MUX_SEL_TOP10,
-@@ -445,20 +445,22 @@ static unsigned long top1_clk_regs[] __initdata = {
- };
- 
- static struct samsung_mux_clock top1_mux_clks[] __initdata = {
--	MUX(0, "mout_top1_mfc_pll", mout_top1_mfc_pll_p, MUX_SEL_TOP10, 4, 1),
--	MUX(0, "mout_top1_cc_pll", mout_top1_cc_pll_p, MUX_SEL_TOP10, 8, 1),
--	MUX(0, "mout_top1_bus1_pll", mout_top1_bus1_pll_p,
-+	MUX(0, "mout_top1_mfc_pll_user", mout_top1_mfc_pll_user_p,
-+		MUX_SEL_TOP10, 4, 1),
-+	MUX(0, "mout_top1_cc_pll_user", mout_top1_cc_pll_user_p,
-+		MUX_SEL_TOP10, 8, 1),
-+	MUX(0, "mout_top1_bus1_pll_user", mout_top1_bus1_pll_user_p,
- 		MUX_SEL_TOP10, 12, 1),
--	MUX(0, "mout_top1_bus0_pll", mout_top1_bus0_pll_p,
-+	MUX(0, "mout_top1_bus0_pll_user", mout_top1_bus0_pll_user_p,
- 		MUX_SEL_TOP10, 16, 1),
- 
--	MUX(0, "mout_top1_half_mfc_pll", mout_top1_half_mfc_pll_p,
-+	MUX(0, "mout_top1_mfc_pll_half", mout_top1_mfc_pll_half_p,
- 		MUX_SEL_TOP11, 4, 1),
--	MUX(0, "mout_top1_half_cc_pll", mout_top1_half_cc_pll_p,
-+	MUX(0, "mout_top1_cc_pll_half", mout_top1_cc_pll_half_p,
- 		MUX_SEL_TOP11, 8, 1),
--	MUX(0, "mout_top1_half_bus1_pll", mout_top1_half_bus1_pll_p,
-+	MUX(0, "mout_top1_bus1_pll_half", mout_top1_bus1_pll_half_p,
- 		MUX_SEL_TOP11, 12, 1),
--	MUX(0, "mout_top1_half_bus0_pll", mout_top1_half_bus0_pll_p,
-+	MUX(0, "mout_top1_bus0_pll_half", mout_top1_bus0_pll_half_p,
- 		MUX_SEL_TOP11, 16, 1),
- 
- 	MUX(0, "mout_aclk_fsys1_200", mout_top1_group1, MUX_SEL_TOP13, 24, 2),
-@@ -502,10 +504,12 @@ static struct samsung_gate_clock top1_gate_clks[] __initdata = {
- };
- 
- static struct samsung_fixed_factor_clock top1_fixed_factor_clks[] __initdata = {
--	FFACTOR(0, "ffac_top1_bus0_pll_div2", "mout_top1_bus0_pll", 1, 2, 0),
--	FFACTOR(0, "ffac_top1_bus1_pll_div2", "mout_top1_bus1_pll", 1, 2, 0),
--	FFACTOR(0, "ffac_top1_cc_pll_div2", "mout_top1_cc_pll", 1, 2, 0),
--	FFACTOR(0, "ffac_top1_mfc_pll_div2", "mout_top1_mfc_pll", 1, 2, 0),
-+	FFACTOR(0, "ffac_top1_bus0_pll_div2", "mout_top1_bus0_pll_user",
-+		1, 2, 0),
-+	FFACTOR(0, "ffac_top1_bus1_pll_div2", "mout_top1_bus1_pll_user",
-+		1, 2, 0),
-+	FFACTOR(0, "ffac_top1_cc_pll_div2", "mout_top1_cc_pll_user", 1, 2, 0),
-+	FFACTOR(0, "ffac_top1_mfc_pll_div2", "mout_top1_mfc_pll_user", 1, 2, 0),
- };
- 
- static struct samsung_cmu_info top1_cmu_info __initdata = {
--- 
-1.7.10.4
+----------------------------------------------------------------
 
+The following changes since commit 9ffecb10283508260936b96022d4ee43a7798b4c:
+
+  Linux 4.3-rc3 (2015-09-27 07:50:08 -0400)
+
+are available in the git repository at:
+
+  https://github.com/jamesjjliao/linux.git v4.3-rc3-clk
+
+for you to fetch changes up to cdb2bab78aff97101da767b9643fbd692af4623b:
+
+  clk: mediatek: Add USB clock support in MT8173 APMIXEDSYS (2015-05-20 15:59:21 +0800)
+
+----------------------------------------------------------------
+
+James Liao (8):
+  clk: mediatek: Removed unused dpi_ck clock from MT8173
+  clk: mediatek: Remove unused code from MT8173.
+  clk: mediatek: Add __initdata and __init for data and functions
+  clk: mediatek: Add fixed clocks support for Mediatek SoC.
+  clk: mediatek: Fix rate and dependency of MT8173 clocks
+  dt-bindings: ARM: Mediatek: Document devicetree bindings for clock
+    controllers
+  clk: mediatek: Add subsystem clocks of MT8173
+  clk: mediatek: Add USB clock support in MT8173 APMIXEDSYS
+
+Joe.C (1):
+  clk: mediatek: add 13mhz clock for MT8173
+
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |   22 ++
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |   22 ++
+ .../bindings/arm/mediatek/mediatek,vdecsys.txt     |   22 ++
+ .../bindings/arm/mediatek/mediatek,vencltsys.txt   |   22 ++
+ .../bindings/arm/mediatek/mediatek,vencsys.txt     |   22 ++
+ drivers/clk/mediatek/Makefile                      |    2 +-
+ drivers/clk/mediatek/clk-apmixed.c                 |  107 ++++++
+ drivers/clk/mediatek/clk-gate.c                    |    2 +-
+ drivers/clk/mediatek/clk-mt8173.c                  |  347 +++++++++++++++++++-
+ drivers/clk/mediatek/clk-mtk.c                     |   36 +-
+ drivers/clk/mediatek/clk-mtk.h                     |   24 +-
+ drivers/clk/mediatek/clk-pll.c                     |    7 +-
+ include/dt-bindings/clock/mt8173-clk.h             |  104 +++++-
+ 13 files changed, 705 insertions(+), 34 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,vencltsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
+ create mode 100644 drivers/clk/mediatek/clk-apmixed.c
