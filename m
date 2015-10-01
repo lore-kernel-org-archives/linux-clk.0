@@ -1,40 +1,121 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 15 Oct 2015 12:28:59 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@arm.linux.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 07/13] clk: versatile-icst: refactor to allocate regmap
- separately
-Message-ID: <20151015192859.GQ4558@codeaurora.org>
-References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
- <1444916813-31024-8-git-send-email-linus.walleij@linaro.org>
+Return-Path: <yingjoe.chen@mediatek.com>
+Message-ID: <1443710016.22188.10.camel@mtksdaap41>
+Subject: Re: [PATCH 2/2] arm64: dts: mt8173: add timer node
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	James Liao <jamesjj.liao@mediatek.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "Catalin
+ Marinas" <Catalin.Marinas@arm.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	Sascha Hauer <kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>,
+	"srv_heupstream@mediatek.com" <srv_heupstream@mediatek.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Eddie Huang
+	<eddie.huang@mediatek.com>
+Date: Thu, 1 Oct 2015 22:33:36 +0800
+In-Reply-To: <55FAE69C.2000906@arm.com>
+References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
+	 <1442369095-1094-2-git-send-email-yingjoe.chen@mediatek.com>
+	 <55FAC570.8040307@arm.com> <1442501816.4784.3.camel@mtksdaap41>
+	 <55FAE69C.2000906@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1444916813-31024-8-git-send-email-linus.walleij@linaro.org>
+Return-Path: yingjoe.chen@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/15, Linus Walleij wrote:
-> @@ -140,21 +141,16 @@ static const struct clk_ops icst_ops = {
->  	.set_rate = icst_set_rate,
->  };
->  
-> -struct clk *icst_clk_register(struct device *dev,
-> +struct clk *icst_clk_setup(struct device *dev,
+On Thu, 2015-09-17 at 17:13 +0100, Sudeep Holla wrote:
+> 
+> On 17/09/15 15:56, Yingjoe Chen wrote:
+> > On Thu, 2015-09-17 at 14:51 +0100, Sudeep Holla wrote:
+> >>
+> >> On 16/09/15 03:04, Yingjoe Chen wrote:
+> >>> From: Daniel Kurtz <djkurtz@chromium.org>
+> >>>
+> >>> Add device node to enable GPT timer. This timer will be
+> >>> used as sched clock source.
+> >>>
+> >>
+> >> Interesting any known issues with or advantage over the arch timers
+> >> to prefer it as sched clock source. I see even arch timers are present
+> >> in DT, hence the question. Or is it just a incorrect commit log ?
+> >>
+> >> How does this get selected as sched clock source ? I don't see
+> >> sched_clock_register in mtk_timer.c
+> >>
+> >> To be clear, I am not against adding this timer support, but just want
+> >> to know is it preferred for sched clock source ? if yes why ? better
+> >> resolution ?
+> >
+> > Hi Sudeep,
+> >
+> > Thanks for your review.
+> >
+> > I hit the send too soon and missed cover letter, please see:
+> > http://lists.infradead.org/pipermail/linux-mediatek/2015-September/002303.html
+> >
+> 
+> OK
+> 
+> > The main reason to use GPT as sched clock is it won't stop during idle.
+> >
+> >
+> 
+> I think your are confusing the system counter with arch timers. System
+> counter is always-on, but the arch timers(logic implementing timers
+> comparators) might not be off when the processor is powered down.
+> 
+> I think you need this timer and are using it for low power idle states
+> in which case you will use this as a clock event and not clock source.
+> It will be used as a hardware broadcast event source.
+> 
+> There's no call to sched_clock_register in mtk_timer.c, so it can't be
+> the sched clock, so you need to fix the commit log.
 
-This needs static now.
+Hi Sudeep,
 
->  			const struct clk_icst_desc *desc,
->  			const char *name,
->  			const char *parent_name,
-> -			void __iomem *base)
+Sorry for late reply.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+For sched_clock_register, please see
+http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001547.html
+which was accepted in
+https://git.linaro.org/people/daniel.lezcano/linux.git/shortlog/refs/heads/clockevents/4.4
+
+
+You are right it is also used as clock event. I think we don't need to
+mention those detail in commit message, so I'll change to just:
+
+"Add device node to enable GPT timer."
+
+> 
+> [...]
+> 
+> >>> diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> >>> index d18ee42..d763803 100644
+> >>> --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> >>> +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+> >>> @@ -238,6 +238,15 @@
+> >>>    			reg = <0 0x10007000 0 0x100>;
+> >>>    		};
+> >>>
+> >>> +		timer: timer@10008000 {
+> >>> +			compatible = "mediatek,mt8173-timer",
+> >>
+> >> Missing documentation ? I am referring upstream and it might be in some
+> >> patches already queued perhaps ?
+> >
+> > This is documented in
+> > Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt.
+> > Do you mean I should add "mediatek,mt8173-timer" to that file?
+> >
+> 
+> Yes
+
+Will do in next round.
+Thanks
+
+Joe.C
