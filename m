@@ -1,119 +1,58 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Thu, 1 Oct 2015 22:38:37 +0200
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Nicolas Ferre
- <nicolas.ferre@atmel.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Jean-Christophe
- Plagniol-Villard <plagnioj@jcrosoft.com>, Alexandre Belloni
- <alexandre.belloni@free-electrons.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PULL] clk: at91: sama5d2 materials
-Message-ID: <20151001223837.583b8b2d@bbrezillon>
-In-Reply-To: <20151001194747.GK19319@codeaurora.org>
-References: <20150818102401.17de779b@bbrezillon>
-	<20150825191033.31346.67237@quantum>
-	<20151001194747.GK19319@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Oct 2015 15:20:55 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: York Sun <yorksun@freescale.com>, linux-clk@vger.kernel.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Andrey Filippov <andrey@elphel.com>,
+	Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [Patch v5] driver/clk/clk-si5338: Add common clock framework
+ driver for si5338
+Message-ID: <20151001222055.GN19319@codeaurora.org>
+References: <1443141970-21084-1-git-send-email-yorksun@freescale.com>
+ <5604A9F0.2050600@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5604A9F0.2050600@roeck-us.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-
-On Thu, 1 Oct 2015 12:47:48 -0700
-Stephen Boyd <sboyd@codeaurora.org> wrote:
-
-> On 08/25, Michael Turquette wrote:
-> > Quoting Boris Brezillon (2015-08-18 01:24:01)
-> > > Stephen, Mike,
-> > > 
-> > > Here is a PR for the sama5d2 materials.
-> > > I know we're already late in the release cycle and I'm not sure you can
-> > > take this PR into account for 4.3, so if you can't could you please
-> > > queue it for 4.4?
-> > 
-> > Queued for 4.4.
-> > 
-> > Thanks,
-> > Mike
-> > 
-> > > 
-> > > Thanks,
-> > > 
-> > > Boris
-> > > 
-> > > The following changes since commit c42743f11f58646a50bc4b96da363429dca0c5e6:
-> > > 
+On 09/24, Guenter Roeck wrote:
+> On 09/24/2015 05:46 PM, York Sun wrote:
+> >+			/* may have some garbage in high bits,
+> >+			 * will be cut of by mask
+> >+			 */
 > 
-> This commit was in clk-next and then got rebased. clk-next isn't
-> stable, please don't base pull requests on it. If you have some
-> dependency on the patches in there then we need to know so that
-> we can provide some branch.
+> Does the clock subsystem use network subsystem style multiline comments ?
 
-Yes, sorry about that, I'll base my future PR on linus' master branch.
+No. We follow the traditional multi-line commenting style as in
+Documentation/CodingStyle.
+
+> >+		return ret;
+> >+	}
+> >+
+> >+	/* Check if si5338 exists */
+> >+	if ((n & REG5338_DEV_CONFIG2_MASK) != REG5338_DEV_CONFIG2_VAL) {
+> >+		dev_err(&client->dev,
+> >+			"Chip returned unexpected value from reg %d: %d, expected %d. It is not %s\n",
+> 
+> 0x%x for register values ?
+
+Or %#x
 
 > 
-> I cherry-picked the 4 patches to clk-next. I had to squash in this fix
-> to get it to compile. Please check.
-
-Thanks, looks good to me.
-Nicolas, can you test it on a real platform?
-
+> >+			REG5338_DEV_CONFIG2, n, REG5338_DEV_CONFIG2_VAL,
+> >+			id->name);
+> >+		return -EIO;
+> >+	}
+> >+
+> >+	dev_info(&client->dev, "Chip %s is found\n", id->name);
 > 
-> ---8<----
-> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-> index 631123ca6f85..abc80949e1dd 100644
-> --- a/drivers/clk/at91/clk-generated.c
-> +++ b/drivers/clk/at91/clk-generated.c
-> @@ -99,22 +99,22 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
->  					struct clk_rate_request *req)
->  {
->  	struct clk_generated *gck = to_clk_generated(hw);
-> -	struct clk *parent = NULL;
-> +	struct clk_hw *parent = NULL;
->  	long best_rate = -EINVAL;
->  	unsigned long tmp_rate, min_rate;
->  	int best_diff = -1;
->  	int tmp_diff;
->  	int i;
->  
-> -	for (i = 0; i < __clk_get_num_parents(hw->clk); i++) {
-> +	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
->  		u32 div;
->  		unsigned long parent_rate;
->  
-> -		parent = clk_get_parent_by_index(hw->clk, i);
-> +		parent = clk_hw_get_parent_by_index(hw, i);
->  		if (!parent)
->  			continue;
->  
-> -		parent_rate = __clk_get_rate(parent);
-> +		parent_rate = clk_hw_get_rate(parent);
->  		min_rate = DIV_ROUND_CLOSEST(parent_rate, GENERATED_MAX_DIV + 1);
->  		if (!parent_rate ||
->  		    (gck->range.max && min_rate > gck->range.max))
-> @@ -128,7 +128,7 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
->  				best_rate = tmp_rate;
->  				best_diff = tmp_diff;
->  				req->best_parent_rate = parent_rate;
-> -				req->best_parent_hw = __clk_get_hw(parent);
-> +				req->best_parent_hw = parent;
->  			}
->  
->  			if (!best_diff || tmp_rate < req->rate)
-> @@ -156,7 +156,7 @@ static int clk_generated_set_parent(struct clk_hw *hw, u8 index)
->  {
->  	struct clk_generated *gck = to_clk_generated(hw);
->  
-> -	if (index >= __clk_get_num_parents(hw->clk))
-> +	if (index >= clk_hw_get_num_parents(hw))
->  		return -EINVAL;
->  
->  	gck->parent_id = index;
+> I personally dislike that noise.
 > 
 
-
+Me too.
 
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
