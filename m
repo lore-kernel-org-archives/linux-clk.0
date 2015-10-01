@@ -1,99 +1,88 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
-	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
-	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
-	<B48286@freescale.com>
-Subject: [PATCH V4 5/6] clk: qoriq: Add ls1043a support.
-Date: Thu, 15 Oct 2015 20:13:00 +0800
-Message-ID: <1444911181-21696-5-git-send-email-B48286@freescale.com>
-In-Reply-To: <1444911181-21696-1-git-send-email-B48286@freescale.com>
-References: <1444911181-21696-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20151001143748.20618.7279.sendpatchset@little-apple>
+References: <20151001143717.20618.26365.sendpatchset@little-apple>
+	<20151001143748.20618.7279.sendpatchset@little-apple>
+Date: Thu, 1 Oct 2015 17:28:29 +0200
+Message-ID: <CAMuHMdV=kKS+R4SFHrmZL5pntpdAP1tR1kRyKKsW0fD1nVrj1w@mail.gmail.com>
+Subject: Re: [PATCH v8 03/05] clk: shmobile: Add Renesas Module Standby and
+ Reset driver
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Hou Zhiqiang <B48286@freescale.com>
+Hi Magnus,
 
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
----
-This patch has been acked in V3 by Stephen Boyd [sboyd@codeaurora.org].
+On Thu, Oct 1, 2015 at 4:37 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Add a driver for the Renesas Module Standby and Software Reset module
+> found in several Renesas SoCs.
+>
+> This driver is based on the existing R-Car MSTP driver, and is intended
+> to replace it.
+> The existing driver is limited to Module Standby, and has bindings that
+> are difficult to extend to more register sets for e.g. reset control.
+>
+> TODO:
+>   - Implement module reset handling,
+>   - Write binding documentation.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-V4: V3 V2
- - No change.
+Thanks, I'm happy you like it!
 
- drivers/clk/clk-qoriq.c | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+> ---
+>
+>  Changes since V7: (Magnus Damm <damm+renesas@opensource.se>)
+>  - New patch, took local v3 patch from Geert and removed r8a7791 references.
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 8f9c93b..b189688 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -244,6 +244,28 @@ static const struct clockgen_muxinfo clockgen2_cmux_cgb = {
- 	},
- };
- 
-+static const struct clockgen_muxinfo ls1043a_hwa1 = {
-+	{
-+		{},
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
-+		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV3 },
-+		{},
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV2 },
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
-+	},
-+};
-+
-+static const struct clockgen_muxinfo ls1043a_hwa2 = {
-+	{
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV1 },
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
-+	},
-+};
-+
- static const struct clockgen_muxinfo t1023_hwa1 = {
- 	{
- 		{},
-@@ -452,6 +474,21 @@ static const struct clockgen_chipinfo chipinfo[] = {
- 		.pll_mask = 0x03,
- 	},
- 	{
-+		.compat = "fsl,ls1043a-clockgen",
-+		.init_periph = t2080_init_periph,
-+		.cmux_groups = {
-+			&t1040_cmux
-+		},
-+		.hwaccel = {
-+			&ls1043a_hwa1, &ls1043a_hwa2
-+		},
-+		.cmux_to_group = {
-+			0, -1
-+		},
-+		.pll_mask = 0x07,
-+		.flags = CG_PLL_8BIT,
-+	},
-+	{
- 		.compat = "fsl,ls2080a-clockgen",
- 		.cmux_groups = {
- 			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
-@@ -1227,6 +1264,7 @@ err:
- CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
-+CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
- 
- /* Legacy nodes */
--- 
-2.1.0.27.g96db324
+You forgot one reference indicated below.
+
+>  drivers/clk/shmobile/clk-mssr.c |  392 +++++++++++++++++++++++++++++++++++++++
+>  include/linux/clk/shmobile.h    |    2
+>  2 files changed, 394 insertions(+)
+>
+> --- /dev/null
+> +++ work/drivers/clk/shmobile/clk-mssr.c        2015-10-01 18:38:50.320513000 +0900
+> @@ -0,0 +1,392 @@
+
+> +#ifdef CONFIG_PM_GENERIC_DOMAINS_OF
+> +static int cpg_mssr_attach_dev(struct generic_pm_domain *domain,
+> +                              struct device *dev)
+> +{
+> +       struct device_node *np = dev->of_node;
+> +       struct of_phandle_args clkspec;
+> +       struct clk *clk;
+> +       int i = 0;
+> +       int error;
+> +
+> +       while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
+> +                                          &clkspec)) {
+> +               if (of_device_is_compatible(clkspec.np,
+> +                                           "renesas,r8a7791-cpg-mssr"))
+
+renesas,r8a7795-cpg-mssr
+
+Else it won't manage the module clocks, and things may fail miserably.
+
+> +                       goto found;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
