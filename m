@@ -1,155 +1,53 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Magnus Damm <damm+renesas@opensource.se>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 1/2] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
-Date: Tue, 20 Oct 2015 20:49:59 +0200
-Message-Id: <1445367000-11525-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1445367000-11525-1-git-send-email-geert+renesas@glider.be>
-References: <1445367000-11525-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Thu, 01 Oct 2015 23:37:17 +0900
+Message-Id: <20151001143717.20618.26365.sendpatchset@little-apple>
+Subject: [PATCH v8 00/05] Renesas R-Car Gen3 CPG support V8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse
-Generator) and MSSR (Module Standby and Software Reset) blocks are
-intimately connected, and share the same register block.
+Renesas R-Car Gen3 CPG support V8
 
-Hence it makes sense to describe these two blocks using a
-single device node in DT, instead of using a hierarchical structure with
-multiple nodes, using a mix of generic and SoC-specific bindings.
+[PATCH v8 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
+[PATCH v8 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
+[PATCH v8 03/05] clk: shmobile: Add Renesas Module Standby and Reset driver
+[PATCH v8 04/05] clk: shmobile: Add r8a7795 MSSR support
+[PATCH v8 05/05] drivers: sh: Handle PM_GENERIC_DOMAINS_OF=n with r8a7795 MSSR
 
-These new DT bindings are intended to replace the existing DT bindings
-for CPG core clocks ("renesas,*-cpg-clocks", "renesas,cpg-div6-clock")
-and module clocks ("renesas,*-mstp-clocks"), at least for new SoCs.
+Here's an updated R-Car Gen3 clock support patch collection through
+a single "easy to use" patch series for drivers/clk and DT documentation
+bits. This version of the series moves over from MSTP to MSSR so the
+patches below are replaced with patch 3-5 above:
 
-This will make it easier to add module reset support later, which is
-currently not implemented, and difficult to achieve using the existing
-bindings due to the intertwined register layout.
+[PATCH v7 02/05] clk: shmobile: Add r8a7795 SoC to MSTP bindings
+[PATCH v7 03/05] clk: shmobile: Make MSTP clock-output-names optional
+[PATCH v7 05/05] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Michael Turquette <mturquette@baylibre.com>
-Reviewed-by: Magnus Damm <damm+renesas@opensource.se>
+With this V8 series the integration DT bits for MSTP need to be converted
+into MSSR format, an updated integration series will be posted sometime soon.
+
+Apart from MSSR conversion this series requires "clock-output-names" however
+patch 2/5 still needs to be updated. Patch 3/5 and/or patch 4/5 also need
+to be extended to include DT binding information. Apart from lacking DT
+binding documentation I would say that the DT interface is becoming more
+and more stable, so soon it should be possible to fix the integration bits.
+
+For more details please see each individual patch.
+
+Thanks to Geert for doing the heavy lifting with the MSSR driver.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
-v5:
-  - Add Acked-by, Reviewed-by,
-  - Drop r8a7791.
 
-v4:
-  - No changes,
+ Developed against 61a7cf8 in renesas-drivers:
 
-v3:
-  - Integrate CPG and MSSR,
-
-v2:
-  - Switch from MSTP to MSSR.
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt | 69 ++++++++++++++++++++++
- include/dt-bindings/clock/renesas-cpg-mssr.h       | 15 +++++
- 2 files changed, 84 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
- create mode 100644 include/dt-bindings/clock/renesas-cpg-mssr.h
-
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-new file mode 100644
-index 0000000000000000..59297d34b2084429
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -0,0 +1,69 @@
-+* Renesas Clock Pulse Generator / Module Standby and Software Reset
-+
-+On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse Generator)
-+and MSSR (Module Standby and Software Reset) blocks are intimately connected,
-+and share the same register block.
-+
-+They provide the following functionalities:
-+  - The CPG block generates various core clocks,
-+  - The MSSR block provides two functions:
-+      1. Module Standby, providing a Clock Domain to control the clock supply
-+	 to individual SoC devices,
-+      2. Reset Control, to perform a software reset of individual SoC devices.
-+
-+Required Properties:
-+  - compatible: Must be one of:
-+      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC
-+
-+  - reg: Base address and length of the memory resource used by the CPG/MSSR
-+    block
-+
-+  - clocks: References to external parent clocks, one entry for each entry in
-+    clock-names
-+  - clock-names: List of external parent clock names. Valid names are:
-+      - "extal" (r8a7795)
-+      - "extalr" (r8a7795)
-+
-+  - #clock-cells: Must be 2
-+      - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
-+	and a core clock reference, as defined in
-+	<dt-bindings/clock/*-cpg-mssr.h>.
-+      - For module clocks, the two clock specifier cells must be "CPG_MOD" and
-+	a module number, as defined in the datasheet.
-+
-+  - #power-domain-cells: Must be 0
-+      - SoC devices that are part of the CPG/MSSR Clock Domain and can be
-+	power-managed through Module Standby should refer to the CPG device
-+	node in their "power-domains" property, as documented by the generic PM
-+	Domain bindings in
-+	Documentation/devicetree/bindings/power/power_domain.txt.
-+
-+
-+Examples
-+--------
-+
-+  - CPG device node:
-+
-+	cpg: clock-controller@e6150000 {
-+		compatible = "renesas,r8a7795-cpg-mssr";
-+		reg = <0 0xe6150000 0 0x1000>;
-+		clocks = <&extal_clk>, <&extalr_clk>;
-+		clock-names = "extal", "extalr";
-+		#clock-cells = <2>;
-+		#power-domain-cells = <0>;
-+	};
-+
-+
-+  - CPG/MSSR Clock Domain member device node:
-+
-+	scif2: serial@e6e88000 {
-+		compatible = "renesas,scif-r8a7795", "renesas,scif";
-+		reg = <0 0xe6e88000 0 64>;
-+		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_MOD 310>;
-+		clock-names = "sci_ick";
-+		dmas = <&dmac1 0x13>, <&dmac1 0x12>;
-+		dma-names = "tx", "rx";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-diff --git a/include/dt-bindings/clock/renesas-cpg-mssr.h b/include/dt-bindings/clock/renesas-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..569a3cc33ffb5bc7
---- /dev/null
-+++ b/include/dt-bindings/clock/renesas-cpg-mssr.h
-@@ -0,0 +1,15 @@
-+/*
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__
-+
-+#define CPG_CORE			0	/* Core Clock */
-+#define CPG_MOD				1	/* Module Clock */
-+
-+#endif /* __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__ */
--- 
-1.9.1
+Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   58 +
+ drivers/clk/Makefile                                                     |    1 
+ drivers/clk/shmobile/Makefile                                            |   25 
+ drivers/clk/shmobile/clk-mssr.c                                          |  393 ++++++++++
+ drivers/clk/shmobile/clk-rcar-gen3.c                                     |  244 ++++++
+ drivers/sh/pm_runtime.c                                                  |    5 
+ include/linux/clk/shmobile.h                                             |    2 
+ 7 files changed, 712 insertions(+), 16 deletions(-)
