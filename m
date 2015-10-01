@@ -1,56 +1,64 @@
-Return-Path: <rjui@broadcom.com>
-Subject: Re: [PATCH v2 0/3] clk: Broadcom BCM63138 support
-To: Florian Fainelli <f.fainelli@gmail.com>, <linux-clk@vger.kernel.org>
-References: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com>
-CC: <bcm-kernel-feedback-list@broadcom.com>, <devicetree@vger.kernel.org>,
-	<jonmason@broadcom.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-	<linux@arm.linux.org.uk>, <sbranden@broadcom.com>
-From: Ray Jui <rjui@broadcom.com>
-Message-ID: <562EFCAA.9010100@broadcom.com>
-Date: Mon, 26 Oct 2015 21:25:14 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:54239 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750785AbbJAWii (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2015 18:38:38 -0400
+Date: Thu, 1 Oct 2015 15:38:36 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jisheng Zhang <jszhang@marvell.com>
+Cc: sebastian.hesselbarth@gmail.com, catalin.marinas@arm.com,
+	will.deacon@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+	pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] clk: berlin: add common clk driver for newer SoCs
+Message-ID: <20151001223836.GR19319@codeaurora.org>
+References: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
+ <1442931156-5877-3-git-send-email-jszhang@marvell.com>
 MIME-Version: 1.0
-In-Reply-To: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Return-Path: rjui@broadcom.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1442931156-5877-3-git-send-email-jszhang@marvell.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On 09/22, Jisheng Zhang wrote:
+> +
+> +static u8 clk_div[] = {1, 2, 4, 6, 8, 12, 1, 1};
+> +
+> +static unsigned long berlin_clk_recalc_rate(struct clk_hw *hw,
+> +					unsigned long parent_rate)
+> +{
+> +	u32 val, divider;
+> +	struct berlin_clk *clk = to_berlin_clk(hw);
+> +
+> +	val = readl_relaxed(clk->base);
+> +	if (val & CLKD3SWITCH)
+> +		divider = 3;
+> +	else {
+> +		if (val & CLKSWITCH) {
+> +			val >>= CLKSEL_SHIFT;
+> +			val &= CLKSEL_MASK;
+> +			divider = clk_div[val];
+> +		} else
+> +			divider = 1;
+> +	}
 
+How about we drop the clk_div array and use code?
 
-On 10/26/2015 8:53 PM, Florian Fainelli wrote:
-> Hi all,
->
-> This patch series adds support for the Broadcom BCM63138 DSL SoCs
-> clocking framework.
->
-> Since the HW is identical to the one found in Broadcom iProc SoCs, but the
-> integration is different (obviously), there is still a new compatible string
-> introduced just in case we happen to find issues in the future.
->
-> This applies on top of clk/next as of
-> 679c51cffc3b316bd89ecc91ef92603dd6d4fc68 ("clk: Add stubs for of_clk_*() APIs when CONFIG_OF=n")
->
-> Since there is an obvious dependency between patch 2 and 3, we can either
-> merge this through the Clock tree or via a future arm-soc pull requests
-> for Broadcom SoCs.
->
-> Florian Fainelli (3):
->    clk: iproc: Extend binding to cover BCM63138
->    clk: bcm: Add BCM63138 clock support
->    ARM: dts: BCM63xx: Add ARMPLL device tree nodes
->
->   .../bindings/clock/brcm,iproc-clocks.txt           |  5 +++
->   arch/arm/boot/dts/bcm63138.dtsi                    | 39 ++++++++++++++++------
->   drivers/clk/bcm/Kconfig                            | 10 ++++++
->   drivers/clk/bcm/Makefile                           |  1 +
->   drivers/clk/bcm/clk-bcm63xx.c                      | 22 ++++++++++++
->   5 files changed, 67 insertions(+), 10 deletions(-)
->   create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
->
+		if (val & CLKSWITCH) {
+			val >>= CLKSEL_SHIFT;
+			val &= CLKSEL_MASK;
+		}
 
-The entire patch set looks good to me.
+		divider = 1
+		if (val < 6)
+			divider <<= val;
 
-Reviewed-by: Ray Jui <rjui@broadcom.com>
+> +
+> +	return parent_rate / divider;
+> +}
 
-Thanks,
-
-Ray
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
