@@ -1,99 +1,102 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-sunxi@googlegroups.com,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v6 4/5] clk: sunxi: codec clock support
-Date: Tue, 20 Oct 2015 09:36:48 +0200
-Message-Id: <1445326609-6314-5-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1445326609-6314-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1445326609-6314-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Oct 2015 12:47:48 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PULL] clk: at91: sama5d2 materials
+Message-ID: <20151001194747.GK19319@codeaurora.org>
+References: <20150818102401.17de779b@bbrezillon>
+ <20150825191033.31346.67237@quantum>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20150825191033.31346.67237@quantum>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Emilio López <emilio@elopez.com.ar>
+On 08/25, Michael Turquette wrote:
+> Quoting Boris Brezillon (2015-08-18 01:24:01)
+> > Stephen, Mike,
+> > 
+> > Here is a PR for the sama5d2 materials.
+> > I know we're already late in the release cycle and I'm not sure you can
+> > take this PR into account for 4.3, so if you can't could you please
+> > queue it for 4.4?
+> 
+> Queued for 4.4.
+> 
+> Thanks,
+> Mike
+> 
+> > 
+> > Thanks,
+> > 
+> > Boris
+> > 
+> > The following changes since commit c42743f11f58646a50bc4b96da363429dca0c5e6:
+> > 
 
-The codec clock on sun4i, sun5i and sun7i is a simple gate with PLL2 as
-parent. Add a driver for such a clock.
+This commit was in clk-next and then got rebased. clk-next isn't
+stable, please don't base pull requests on it. If you have some
+dependency on the patches in there then we need to know so that
+we can provide some branch.
 
-Signed-off-by: Emilio López <emilio@elopez.com.ar>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi/Makefile        |  1 +
- drivers/clk/sunxi/clk-a10-codec.c | 44 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 45 insertions(+)
- create mode 100644 drivers/clk/sunxi/clk-a10-codec.c
+I cherry-picked the 4 patches to clk-next. I had to squash in this fix
+to get it to compile. Please check.
 
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index c658a18ba7cb..70a449a419e6 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -3,6 +3,7 @@
- #
+---8<----
+diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+index 631123ca6f85..abc80949e1dd 100644
+--- a/drivers/clk/at91/clk-generated.c
++++ b/drivers/clk/at91/clk-generated.c
+@@ -99,22 +99,22 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+ 					struct clk_rate_request *req)
+ {
+ 	struct clk_generated *gck = to_clk_generated(hw);
+-	struct clk *parent = NULL;
++	struct clk_hw *parent = NULL;
+ 	long best_rate = -EINVAL;
+ 	unsigned long tmp_rate, min_rate;
+ 	int best_diff = -1;
+ 	int tmp_diff;
+ 	int i;
  
- obj-y += clk-sunxi.o clk-factors.o
-+obj-y += clk-a10-codec.o
- obj-y += clk-a10-hosc.o
- obj-y += clk-a10-pll2.o
- obj-y += clk-a20-gmac.o
-diff --git a/drivers/clk/sunxi/clk-a10-codec.c b/drivers/clk/sunxi/clk-a10-codec.c
-new file mode 100644
-index 000000000000..ac321d6a0df5
---- /dev/null
-+++ b/drivers/clk/sunxi/clk-a10-codec.c
-@@ -0,0 +1,44 @@
-+/*
-+ * Copyright 2013 Emilio López
-+ *
-+ * Emilio López <emilio@elopez.com.ar>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+
-+#define SUN4I_CODEC_GATE	31
-+
-+static void __init sun4i_codec_clk_setup(struct device_node *node)
-+{
-+	struct clk *clk;
-+	const char *clk_name = node->name, *parent_name;
-+	void __iomem *reg;
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg))
-+		return;
-+
-+	of_property_read_string(node, "clock-output-names", &clk_name);
-+	parent_name = of_clk_get_parent_name(node, 0);
-+
-+	clk = clk_register_gate(NULL, clk_name, parent_name,
-+				CLK_SET_RATE_PARENT, reg,
-+				SUN4I_CODEC_GATE, 0, NULL);
-+
-+	if (!IS_ERR(clk))
-+		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+}
-+CLK_OF_DECLARE(sun4i_codec, "allwinner,sun4i-a10-codec-clk",
-+	       sun4i_codec_clk_setup);
+-	for (i = 0; i < __clk_get_num_parents(hw->clk); i++) {
++	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+ 		u32 div;
+ 		unsigned long parent_rate;
+ 
+-		parent = clk_get_parent_by_index(hw->clk, i);
++		parent = clk_hw_get_parent_by_index(hw, i);
+ 		if (!parent)
+ 			continue;
+ 
+-		parent_rate = __clk_get_rate(parent);
++		parent_rate = clk_hw_get_rate(parent);
+ 		min_rate = DIV_ROUND_CLOSEST(parent_rate, GENERATED_MAX_DIV + 1);
+ 		if (!parent_rate ||
+ 		    (gck->range.max && min_rate > gck->range.max))
+@@ -128,7 +128,7 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+ 				best_rate = tmp_rate;
+ 				best_diff = tmp_diff;
+ 				req->best_parent_rate = parent_rate;
+-				req->best_parent_hw = __clk_get_hw(parent);
++				req->best_parent_hw = parent;
+ 			}
+ 
+ 			if (!best_diff || tmp_rate < req->rate)
+@@ -156,7 +156,7 @@ static int clk_generated_set_parent(struct clk_hw *hw, u8 index)
+ {
+ 	struct clk_generated *gck = to_clk_generated(hw);
+ 
+-	if (index >= __clk_get_num_parents(hw->clk))
++	if (index >= clk_hw_get_num_parents(hw))
+ 		return -EINVAL;
+ 
+ 	gck->parent_id = index;
+
 -- 
-2.6.2
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
