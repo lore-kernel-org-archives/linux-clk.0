@@ -1,79 +1,188 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
- <linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
- <linux-clk@vger.kernel.org>, <olof@lixom.net>
-Subject: [PATCH v4 10/12] dts/ls2080a: Remove text about writing to Free
- Software Foundation
-Date: Sat, 24 Oct 2015 01:01:59 +0530
-Message-ID: <1445628721-10483-11-git-send-email-bhupesh.sharma@freescale.com>
-In-Reply-To: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
-References: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
+Return-Path: <lee@kernel.org>
+Date: Thu, 1 Oct 2015 13:25:55 +0100
+From: Lee Jones <lee@kernel.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 4/4] ARM: bcm2835: Switch to using the new clock
+ driver support.
+Message-ID: <20151001122555.GV3214@x1>
+References: <1443475325-22270-1-git-send-email-eric@anholt.net>
+ <1443475325-22270-4-git-send-email-eric@anholt.net>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: LeoLi@freescale.com, bhupesh.sharma@freescale.com, Catalin.Marinas@arm.com,
- will.deacon@arm.com, stuart.yoder@freescale.com, scottwood@freescale.com,
- bhupesh.linux@gmail.com
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1443475325-22270-4-git-send-email-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Checkpatch complains about the text suggesting writing to
-Free Software Foundation for GPLv2 license copy.
+On Mon, 28 Sep 2015, Eric Anholt wrote:
 
-This patch removes the same from the .dtsi and .dts
+> This will give us the ability to set the pixel and HDMI state machine
+> clocks for the VC4 KMS driver, change the CPU frequency, and
+> potentially gate clocks in the future (once we also write a power
+> domain driver).  It also gives the uart an explicit clock reference,
+> so that we don't need to change the physical addresses of the old
+> fixed clk_bcm2835.c clocks for Raspberry Pi 2 port.
+> 
+> Two clocks get their frequencies updated as a result of this.  One is
+> uart's apb_pclk, which was previously accidentally grabbing the fixed
+> uart0_pclk due to the apb_pclk not having clk_register_clkdev()
+> called.  The uart doesn't seem to do anything with apb_pclk other than
+> make sure it's on, so that appears safe (also, as far as I can see,
+> the apb clock is actually the same as the VPU clock).  The other is
+> EMMC, which according to the docs was supposed to be in the 50-100Mhz
+> range, but it turns out the firmware needed to change to running it at
+> the 250Mhz core clock speed to avoid a bug in clock domain crossing.
+> 
+> Additionally, anything using BCM2835_CLOCK_VPU will now have a correct
+> clock rate if the user configures the boot-time core clock speed using
+> config.txt.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+> ---
+>  arch/arm/boot/dts/bcm2835.dtsi | 52 +++++++++++++++++++++++-------------------
+>  1 file changed, 28 insertions(+), 24 deletions(-)
 
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
----
- arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts |    5 -----
- arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |    5 -----
- 2 files changed, 10 deletions(-)
+Couple of small nits.
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-index 3676c02..505d038 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-@@ -20,11 +20,6 @@
-  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  *     GNU General Public License for more details.
-  *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this library; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-  * Or, alternatively,
-  *
-  *  b) Permission is hereby granted, free of charge, to any person
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-index 7247ea4..3b2a679 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-@@ -20,11 +20,6 @@
-  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  *     GNU General Public License for more details.
-  *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this library; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-  * Or, alternatively,
-  *
-  *  b) Permission is hereby granted, free of charge, to any person
--- 
-1.7.9.5
+> diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
+> index 301c73f..a6a55b7 100644
+> --- a/arch/arm/boot/dts/bcm2835.dtsi
+> +++ b/arch/arm/boot/dts/bcm2835.dtsi
+> @@ -1,4 +1,5 @@
+>  #include <dt-bindings/pinctrl/bcm2835.h>
+> +#include <dt-bindings/clock/bcm2835.h>
+>  #include "skeleton.dtsi"
+>  
+>  / {
+> @@ -21,6 +22,10 @@
+>  			compatible = "brcm,bcm2835-system-timer";
+>  			reg = <0x7e003000 0x1000>;
+>  			interrupts = <1 0>, <1 1>, <1 2>, <1 3>;
+> +			/* This could be a reference to BCM2835_CLOCK_TIMER,
+> +			 * but we don't have the driver using the common clock
+> +			 * support yet.
+> +			 */
 
+Nit: Please use correct multi-line comment formatting.
 
+>From Documentation/CodingStyle:
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+/*
+ * This is the preferred style for multi-line
+ * comments in the Linux kernel source code.
+ * Please use it consistently.
+ *
+ * Description:  A column of asterisks on the left side,
+ * with beginning and ending almost-blank lines.
+ */
+
+>  			clock-frequency = <1000000>;
+>  		};
+>  
+> @@ -57,6 +62,17 @@
+>  			reg = <0x7e100000 0x28>;
+>  		};
+>  
+> +		clocks: cprman@7e101000 {
+> +			compatible = "brcm,bcm2835-cprman";
+> +			#clock-cells = <1>;
+> +			reg = <0x7e101000 0x2000>;
+> +
+> +			/* CPRMAN derives everything from the platform's
+> +			 * oscillator.
+> +			 */
+
+As above.
+
+> +			clocks = <&clk_osc>;
+> +		};
+> +
+>  		rng@7e104000 {
+>  			compatible = "brcm,bcm2835-rng";
+>  			reg = <0x7e104000 0x10>;
+> @@ -96,7 +112,9 @@
+>  			compatible = "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
+>  			reg = <0x7e201000 0x1000>;
+>  			interrupts = <2 25>;
+> -			clock-frequency = <3000000>;
+> +			clocks = <&clocks BCM2835_CLOCK_UART>,
+> +				 <&clocks BCM2835_CLOCK_VPU>;
+> +			clock-names = "uartclk", "apb_pclk";
+>  			arm,primecell-periphid = <0x00241011>;
+>  		};
+>  
+> @@ -115,7 +133,7 @@
+>  			compatible = "brcm,bcm2835-spi";
+>  			reg = <0x7e204000 0x1000>;
+>  			interrupts = <2 22>;
+> -			clocks = <&clk_spi>;
+> +			clocks = <&clocks BCM2835_CLOCK_VPU>;
+>  			#address-cells = <1>;
+>  			#size-cells = <0>;
+>  			status = "disabled";
+> @@ -125,7 +143,7 @@
+>  			compatible = "brcm,bcm2835-i2c";
+>  			reg = <0x7e205000 0x1000>;
+>  			interrupts = <2 21>;
+> -			clocks = <&clk_i2c>;
+> +			clocks = <&clocks BCM2835_CLOCK_VPU>;
+>  			#address-cells = <1>;
+>  			#size-cells = <0>;
+>  			status = "disabled";
+> @@ -135,7 +153,7 @@
+>  			compatible = "brcm,bcm2835-sdhci";
+>  			reg = <0x7e300000 0x100>;
+>  			interrupts = <2 30>;
+> -			clocks = <&clk_mmc>;
+> +			clocks = <&clocks BCM2835_CLOCK_EMMC>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -143,7 +161,7 @@
+>  			compatible = "brcm,bcm2835-i2c";
+>  			reg = <0x7e804000 0x1000>;
+>  			interrupts = <2 21>;
+> -			clocks = <&clk_i2c>;
+> +			clocks = <&clocks BCM2835_CLOCK_VPU>;
+>  			#address-cells = <1>;
+>  			#size-cells = <0>;
+>  			status = "disabled";
+> @@ -165,28 +183,14 @@
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  
+> -		clk_mmc: clock@0 {
+> -			compatible = "fixed-clock";
+> -			reg = <0>;
+> -			#clock-cells = <0>;
+> -			clock-output-names = "mmc";
+> -			clock-frequency = <100000000>;
+> -		};
+> -
+> -		clk_i2c: clock@1 {
+> +		/* The oscillator is the root of the clock tree. */
+> +		clk_osc: clock@3 {
+>  			compatible = "fixed-clock";
+> -			reg = <1>;
+> +			reg = <3>;
+>  			#clock-cells = <0>;
+> -			clock-output-names = "i2c";
+> -			clock-frequency = <250000000>;
+> +			clock-output-names = "osc";
+> +			clock-frequency = <19200000>;
+>  		};
+>  
+> -		clk_spi: clock@2 {
+> -			compatible = "fixed-clock";
+> -			reg = <2>;
+> -			#clock-cells = <0>;
+> -			clock-output-names = "spi";
+> -			clock-frequency = <250000000>;
+> -		};
+>  	};
+>  };
